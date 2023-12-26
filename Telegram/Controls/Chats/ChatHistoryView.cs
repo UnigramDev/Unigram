@@ -281,7 +281,7 @@ namespace Telegram.Controls.Chats
             }
         }
 
-        public async Task ScrollToItem(MessageViewModel item, VerticalAlignment alignment, MessageBubbleHighlightOptions options, double? pixel = null, ScrollIntoViewAlignment direction = ScrollIntoViewAlignment.Leading, bool? disableAnimation = null)
+        public async void ScrollToItem(MessageViewModel item, VerticalAlignment alignment, MessageBubbleHighlightOptions options, double? pixel = null, ScrollIntoViewAlignment direction = ScrollIntoViewAlignment.Leading, bool? disableAnimation = null, TaskCompletionSource<bool> tsc = null)
         {
             Suspend();
 
@@ -302,7 +302,7 @@ namespace Telegram.Controls.Chats
                 // TODO: experimental
                 if (ViewModel.Items.ContainsKey(item.Id))
                 {
-                    Logger.Debug("selectorItem == null, but item exists, retry");
+                    Logger.Debug("selectorItem == null, but item is known, retry");
 
                     await ScrollIntoViewAsync(item, direction, false);
                     selectorItem = handler.ContainerFromItem(item.Id);
@@ -377,6 +377,8 @@ namespace Telegram.Controls.Chats
                 ViewChanging();
                 ViewChanged?.Invoke(scrollViewer, null);
             }
+
+            tsc?.TrySetResult(true);
         }
 
         private void TryFocus(SelectorItem selectorItem, MessageBubbleHighlightOptions options)
@@ -398,6 +400,8 @@ namespace Telegram.Controls.Chats
         {
             if (ItemsPanelRoot == null)
             {
+                Logger.Info("ItemsPanelRoot == null");
+
                 // Some actions cause IsItemsHostInvalid to become true.
                 // If this is the case, ItemsPanelRoot will return null, and scrolling may not work.
                 // The current code should not invalidate the ItemsHost, but if this happens, we try to be prepared.

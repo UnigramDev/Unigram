@@ -978,11 +978,7 @@ namespace Telegram.ViewModels
                     }
                 }
 
-                var field = HistoryField;
-                if (field != null)
-                {
-                    await field.ScrollToItem(already, alignment, alignment == VerticalAlignment.Center ? new MessageBubbleHighlightOptions(highlight) : null, pixel, direction ?? ScrollIntoViewAlignment.Leading, disableAnimation);
-                }
+                HistoryField?.ScrollToItem(already, alignment, alignment == VerticalAlignment.Center ? new MessageBubbleHighlightOptions(highlight) : null, pixel, direction ?? ScrollIntoViewAlignment.Leading, disableAnimation);
 
                 if (previousId.HasValue && !_repliesStack.Contains(previousId.Value))
                 {
@@ -1046,6 +1042,11 @@ namespace Telegram.ViewModels
 
                     NotifyMessageSliceLoaded();
 
+                    if (replied.TryGetValue(maxId, out already))
+                    {
+                        HistoryField?.ScrollToItem(already, alignment, alignment == VerticalAlignment.Center ? new MessageBubbleHighlightOptions(highlight) : null, pixel, direction ?? ScrollIntoViewAlignment.Leading, disableAnimation);
+                    }
+
                     IsLastSliceLoaded = null;
                     IsFirstSliceLoaded = IsEndReached();
 
@@ -1068,8 +1069,6 @@ namespace Telegram.ViewModels
 
                 LoadPinnedMessagesSliceAsync(maxId);
             }
-
-            await LoadMessageSliceAsync(previousId, maxId, alignment, pixel, direction, disableAnimation, highlight, true);
         }
 
         private async Task<LoadSliceResult> LoadMessageSliceImpl(Chat chat, long maxId, VerticalAlignment alignment, ScrollIntoViewAlignment? direction, double? pixel)

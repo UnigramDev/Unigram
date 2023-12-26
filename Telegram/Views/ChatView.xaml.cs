@@ -481,9 +481,11 @@ namespace Telegram.Views
 
                 await panel.UpdateLayoutAsync();
 
-                if (message.IsOutgoing && message.SendingState is MessageSendingStatePending && !Messages.IsBottomReached)
+                if (message.IsOutgoing && pending && !Messages.IsBottomReached)
                 {
-                    await Messages.ScrollToItem(message, VerticalAlignment.Bottom, new MessageBubbleHighlightOptions(false, false));
+                    var tsc = new TaskCompletionSource<bool>();
+                    Messages.ScrollToItem(message, VerticalAlignment.Bottom, new MessageBubbleHighlightOptions(false, false), tsc: tsc);
+                    await tsc.Task;
                 }
 
                 var withinViewport = panel.FirstVisibleIndex <= args.NewStartingIndex && panel.LastVisibleIndex >= args.NewStartingIndex;

@@ -56,7 +56,7 @@ namespace Telegram.ViewModels
     {
         #region Reply
 
-        public async void MessageReplyPrevious()
+        public void MessageReplyPrevious()
         {
             MessageViewModel last = null;
 
@@ -73,11 +73,11 @@ namespace Telegram.ViewModels
             if (last != null)
             {
                 ReplyToMessage(last);
-                await HistoryField?.ScrollToItem(last, VerticalAlignment.Center, new MessageBubbleHighlightOptions(false));
+                HistoryField?.ScrollToItem(last, VerticalAlignment.Center, new MessageBubbleHighlightOptions(false));
             }
         }
 
-        public async void MessageReplyNext()
+        public void MessageReplyNext()
         {
             MessageViewModel last = null;
 
@@ -90,7 +90,7 @@ namespace Telegram.ViewModels
             if (last != null)
             {
                 ReplyToMessage(last);
-                await HistoryField?.ScrollToItem(last, VerticalAlignment.Center, new MessageBubbleHighlightOptions(false));
+                HistoryField?.ScrollToItem(last, VerticalAlignment.Center, new MessageBubbleHighlightOptions(false));
             }
             else
             {
@@ -753,13 +753,13 @@ namespace Telegram.ViewModels
 
         #region Edit
 
-        public async void EditLastMessage()
+        public void EditLastMessage()
         {
             var last = Items.LastOrDefault(x => x.CanBeEdited);
             if (last != null)
             {
                 EditMessage(last);
-                await HistoryField?.ScrollToItem(last, VerticalAlignment.Center, new MessageBubbleHighlightOptions(false));
+                HistoryField?.ScrollToItem(last, VerticalAlignment.Center, new MessageBubbleHighlightOptions(false));
             }
         }
 

@@ -161,11 +161,7 @@ namespace Telegram.ViewModels
             var already = Items.LastOrDefault();
             if (already != null)
             {
-                var field = HistoryField;
-                if (field != null)
-                {
-                    await field.ScrollToItem(already, VerticalAlignment.Bottom, null, int.MaxValue, ScrollIntoViewAlignment.Leading, true);
-                }
+                HistoryField?.ScrollToItem(already, VerticalAlignment.Bottom, null, int.MaxValue, ScrollIntoViewAlignment.Leading, true);
             }
         }
 
