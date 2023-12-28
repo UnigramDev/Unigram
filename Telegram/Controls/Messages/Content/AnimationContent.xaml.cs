@@ -317,6 +317,10 @@ namespace Telegram.Controls.Messages.Content
             {
                 _message.ClientService.DownloadFile(file.Id, 30);
             }
+            else if (_message.Content is MessageText text && text.WebPage.HasText())
+            {
+                _message.Delegate.OpenWebPage(text.WebPage);
+            }
             else
             {
                 _message.Delegate.OpenMedia(_message, this);

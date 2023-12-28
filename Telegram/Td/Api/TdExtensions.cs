@@ -550,14 +550,6 @@ namespace Telegram.Td.Api
             return false;
         }
 
-        public static bool IsInstantGallery(this WebPage webPage)
-        {
-            return webPage.InstantViewVersion != 0 &&
-                (string.Equals(webPage.SiteName, "twitter", StringComparison.OrdinalIgnoreCase) ||
-                 string.Equals(webPage.SiteName, "instagram", StringComparison.OrdinalIgnoreCase) ||
-                 string.Equals(webPage.Type, "telegram_album", StringComparison.OrdinalIgnoreCase));
-        }
-
         public static bool CodeEquals(this Error error, ErrorCode code)
         {
             if (error == null)
@@ -1365,6 +1357,39 @@ namespace Telegram.Td.Api
         public static Photo ToPhoto(this ChatPhoto chatPhoto)
         {
             return new Photo(false, chatPhoto.Minithumbnail, chatPhoto.Sizes);
+        }
+
+        public static bool IsInstantGallery(this WebPage webPage)
+        {
+            return webPage.InstantViewVersion != 0 &&
+                (string.Equals(webPage.SiteName, "twitter", StringComparison.OrdinalIgnoreCase) ||
+                 string.Equals(webPage.SiteName, "instagram", StringComparison.OrdinalIgnoreCase) ||
+                 string.Equals(webPage.Type, "telegram_album", StringComparison.OrdinalIgnoreCase));
+        }
+
+        public static bool HasText(this WebPage webPage)
+        {
+            if (!string.IsNullOrWhiteSpace(webPage.SiteName))
+            {
+                return true;
+
+            }
+
+            if (!string.IsNullOrWhiteSpace(webPage.Title))
+            {
+                return true;
+            }
+            else if (!string.IsNullOrWhiteSpace(webPage.Author))
+            {
+                return true;
+            }
+
+            if (!string.IsNullOrWhiteSpace(webPage.Description?.Text))
+            {
+                return true;
+            }
+
+            return false;
         }
 
         public static bool HasMedia(this WebPage webPage)

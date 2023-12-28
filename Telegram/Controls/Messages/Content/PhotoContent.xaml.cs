@@ -462,17 +462,13 @@ namespace Telegram.Controls.Messages.Content
             {
                 _message.ClientService.DownloadFile(file.Id, 30);
             }
+            else if (_message.Content is MessageText text && text.WebPage.HasText())
+            {
+                _message.Delegate.OpenWebPage(text.WebPage);
+            }
             else
             {
-                if (_message.Content is MessageText text && text.WebPage?.EmbedUrl?.Length > 0)
-                {
-                    _message.Delegate.OpenUrl(text.WebPage.Url, false);
-                    //await EmbedUrlView.GetForCurrentView().ShowAsync(_message, text.WebPage, () => this);
-                }
-                else
-                {
-                    _message.Delegate.OpenMedia(_message, this);
-                }
+                _message.Delegate.OpenMedia(_message, this);
             }
         }
     }

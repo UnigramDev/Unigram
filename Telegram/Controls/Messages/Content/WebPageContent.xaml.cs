@@ -150,7 +150,7 @@ namespace Telegram.Controls.Messages.Content
             Texture.Source = null;
             UpdateManager.Unsubscribe(this, ref _fileToken, true);
 
-            UpdateWebPage(webPage, out bool empty);
+            UpdateWebPage(webPage);
             UpdateInstantView(webPage);
 
             if (webPage.HasMedia())
@@ -163,7 +163,7 @@ namespace Telegram.Controls.Messages.Content
                     OverflowArea.Margin = new Thickness(0, 0, 0, 8);
                     ButtonLine.Margin = new Thickness(0, 0, 0, 0);
 
-                    UpdateContent(message, webPage, empty);
+                    UpdateContent(message, webPage);
                     UpdateInstantView(webPage, _instantViewToken.Token);
                 }
                 else
@@ -286,7 +286,7 @@ namespace Telegram.Controls.Messages.Content
             }
         }
 
-        private void UpdateContent(MessageViewModel message, WebPage webPage, bool empty)
+        private void UpdateContent(MessageViewModel message, WebPage webPage)
         {
             MediaPanel.Visibility = Visibility.Visible;
 
@@ -315,7 +315,6 @@ namespace Telegram.Controls.Messages.Content
                 Media.Child = new AnimationContent(message)
                 {
                     MaxWidth = maxWidth,
-                    IsEnabled = empty
                 };
             }
             else if (webPage.Audio != null)
@@ -351,7 +350,6 @@ namespace Telegram.Controls.Messages.Content
                 Media.Child = new PhotoContent(message)
                 {
                     MaxWidth = maxWidth,
-                    IsEnabled = empty
                 };
             }
             else
@@ -421,7 +419,7 @@ namespace Telegram.Controls.Messages.Content
 
         public void Mockup(WebPage webPage)
         {
-            UpdateWebPage(webPage, out _);
+            UpdateWebPage(webPage);
 
             SmallPanel.Visibility = Visibility.Collapsed;
             Media.Visibility = Visibility.Collapsed;
@@ -453,9 +451,9 @@ namespace Telegram.Controls.Messages.Content
             }
         }
 
-        private void UpdateWebPage(WebPage webPage, out bool empty)
+        private void UpdateWebPage(WebPage webPage)
         {
-            empty = true;
+            var empty = true;
 
             if (string.Equals(webPage.Type, "telegram_background", StringComparison.OrdinalIgnoreCase))
             {
