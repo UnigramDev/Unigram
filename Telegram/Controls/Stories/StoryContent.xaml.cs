@@ -1,4 +1,10 @@
-﻿using LibVLCSharp.Shared;
+﻿//
+// Copyright Fela Ameghino 2015-2023
+//
+// Distributed under the GNU General Public License v3.0. (See accompanying
+// file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
+//
+using LibVLCSharp.Shared;
 using LinqToVisualTree;
 using Microsoft.Graphics.Canvas;
 using Microsoft.Graphics.Canvas.Geometry;
@@ -87,10 +93,10 @@ namespace Telegram.Controls.Stories
                 if (_player != null)
                 {
                     _player.Stop();
+                    _player.ESSelected -= OnESSelected;
                     _player.Vout -= OnVout;
                     _player.Buffering -= OnBuffering;
                     _player.EndReached -= OnEndReached;
-                    //_player.Stopped -= OnStopped;
 
                     _player.Dispose();
                     _player = null;
@@ -1142,7 +1148,6 @@ namespace Telegram.Controls.Stories
             //_library.Log += _library_Log;
 
             _player = new MediaPlayer(_library);
-            _player.EnableHardwareDecoding = true;
             _player.ESSelected += OnESSelected;
             _player.Vout += OnVout;
             _player.Buffering += OnBuffering;

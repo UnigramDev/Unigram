@@ -1,4 +1,10 @@
-﻿using System.Linq;
+﻿//
+// Copyright Fela Ameghino 2015-2023
+//
+// Distributed under the GNU General Public License v3.0. (See accompanying
+// file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
+//
+using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Telegram.Common;
@@ -14,6 +20,7 @@ namespace Telegram.ViewModels
 {
     public partial class DialogViewModel
     {
+        private readonly object _languageLock = new();
         private StringBuilder _languageBuilder;
         private int _languageMessages;
         private int _languageSlices;
@@ -58,13 +65,16 @@ namespace Telegram.ViewModels
                 return;
             }
 
-            _languageBuilder ??= new();
-
-            foreach (var paragraph in message.Text.Paragraphs)
+            lock (_languageLock)
             {
-                if (paragraph.Type is not TextParagraphTypeMonospace)
+                _languageBuilder ??= new();
+
+                foreach (var paragraph in message.Text.Paragraphs)
                 {
-                    _languageBuilder.Prepend(message.Text.Text.Substring(paragraph.Offset, paragraph.Length), "\n");
+                    if (paragraph.Type is not TextParagraphTypeMonospace)
+                    {
+                        _languageBuilder.Prepend(message.Text.Text.Substring(paragraph.Offset, paragraph.Length), "\n");
+                    }
                 }
             }
 
@@ -96,8 +106,11 @@ namespace Telegram.ViewModels
 
             if (enough || complete)
             {
-                _languageDetected = LanguageIdentification.IdentifyLanguage(_languageBuilder.ToString());
-                _languageBuilder = null;
+                lock (_languageLock)
+                {
+                    _languageDetected = LanguageIdentification.IdentifyLanguage(_languageBuilder.ToString());
+                    _languageBuilder = null;
+                }
 
                 Logger.Info(_languageDetected);
                 Dispatcher.Dispatch(UpdateChatIsTranslatable);
