@@ -570,6 +570,9 @@ to: {1}</value>
   <data name="ActionSetSameWallpaperForThisChatSelf" xml:space="preserve">
     <value>You set the same wallpaper as your chat partner.</value>
   </data>
+  <data name="ActionSetWallpaperForThisChannel" xml:space="preserve">
+    <value>Channel set a new wallpaper</value>
+  </data>
   <data name="ActionSetWallpaperForThisChat" xml:space="preserve">
     <value>{0} set a new wallpaper for this chat.</value>
   </data>
@@ -3493,6 +3496,9 @@ Learn more at telegram.org</value>
   <data name="EventLogChangedStickersSet" xml:space="preserve">
     <value>un1 changed the group sticker set</value>
   </data>
+  <data name="EventLogChangedWallpaper" xml:space="preserve">
+    <value>un1 changed channel wallpaper</value>
+  </data>
   <data name="EventLogChannelJoined" xml:space="preserve">
     <value>un1 joined the channel</value>
   </data>
@@ -3663,6 +3669,9 @@ Learn more at telegram.org</value>
   </data>
   <data name="EventLogRemovedStickersSet" xml:space="preserve">
     <value>un1 removed the group sticker set</value>
+  </data>
+  <data name="EventLogRemovedWallpaper" xml:space="preserve">
+    <value>un1 removed channel wallpaper</value>
   </data>
   <data name="EventLogRestrictedChangeInfo" xml:space="preserve">
     <value>Change info</value>

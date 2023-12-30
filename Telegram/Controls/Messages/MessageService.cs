@@ -225,6 +225,19 @@ namespace Telegram.Controls.Messages
                     label.Text = Strings.ViewWallpaperAction;
                 }
             }
+            else if (message.Content is MessageChatEvent { Action: ChatEventBackgroundChanged backgroundChanged })
+            {
+                var photo = FindName("Photo") as ChatBackgroundPresenter;
+                var view = FindName("View") as Border;
+
+                if (photo == null || backgroundChanged.NewBackground == null)
+                {
+                    return;
+                }
+
+                photo.UpdateSource(message.ClientService, backgroundChanged.NewBackground.Background, true);
+                view.Visibility = Visibility.Collapsed;
+            }
         }
 
         public static string GetText(MessageViewModel message)
@@ -316,6 +329,7 @@ namespace Telegram.Controls.Messages
                     ChatEventAccentColorChanged accentColorChanged => UpdateChatEventAccentColorChanged(message, accentColorChanged, active),
                     ChatEventProfileAccentColorChanged profileAccentColorChanged => UpdateChatEventProfileAccentColorChanged(message, profileAccentColorChanged, active),
                     ChatEventEmojiStatusChanged emojiStatusChanged => UpdateChatEventEmojiStatusChanged(message, emojiStatusChanged, active),
+                    ChatEventBackgroundChanged backgroundChanged => UpdateChatEventBackgroundChanged(message, backgroundChanged, active),
                     //ChatEventActiveUsernamesChanged activeUsernamesChanged => UpdateChatEventActiveUsernames(message, activeUsernamesChanged, active),
                     _ => (string.Empty, null)
                 },
@@ -487,6 +501,25 @@ namespace Telegram.Controls.Messages
                     content = content.Remove(index2, 3);
                     content = content.Insert(index2, Strings.EventLogEmojiNone);
                 }
+            }
+
+            return (content, entities);
+        }
+
+        private static (string Text, IList<TextEntity> Entities) UpdateChatEventBackgroundChanged(MessageViewModel message, ChatEventBackgroundChanged backgroundChanged, bool active)
+        {
+            var content = string.Empty;
+            var entities = active ? new List<TextEntity>() : null;
+
+            var fromUser = message.GetSender();
+
+            if (backgroundChanged.NewBackground != null)
+            {
+                content = ReplaceWithLink(Strings.EventLogChangedWallpaper, "un1", fromUser, entities);
+            }
+            else
+            {
+                content = ReplaceWithLink(Strings.EventLogRemovedWallpaper, "un1", fromUser, entities);
             }
 
             return (content, entities);
@@ -1441,7 +1474,11 @@ namespace Telegram.Controls.Messages
             var content = string.Empty;
             var entities = active ? new List<TextEntity>() : null;
 
-            if (chatSetBackground.OldBackgroundMessageId != 0)
+            if (message.IsChannelPost)
+            {
+                content = Strings.ActionSetWallpaperForThisChannel;
+            }
+            else if (chatSetBackground.OldBackgroundMessageId != 0)
             {
                 if (message.IsOutgoing)
                 {

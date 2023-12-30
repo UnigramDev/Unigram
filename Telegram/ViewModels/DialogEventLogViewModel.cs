@@ -273,6 +273,7 @@ namespace Telegram.ViewModels
                         //message.Content = new MessageChatEvent(item, true);
                         message.Content = GetMessageContent(item, channel);
                         break;
+                    case ChatEventBackgroundChanged:
                     case ChatEventAvailableReactionsChanged:
                     case ChatEventHasProtectedContentToggled:
                     case ChatEventSignMessagesToggled:

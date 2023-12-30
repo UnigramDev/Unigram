@@ -734,7 +734,8 @@ namespace Telegram.Views
                 {
                     return "ServiceMessagePhotoTemplate";
                 }
-                else if (message.Content is MessageChatSetBackground setBackground && setBackground.OldBackgroundMessageId == 0)
+                else if (message.Content is MessageChatSetBackground { OldBackgroundMessageId: 0 }
+                    || message.Content is MessageChatEvent { Action: ChatEventBackgroundChanged { NewBackground: not null } })
                 {
                     return "ServiceMessageBackgroundTemplate";
                 }
