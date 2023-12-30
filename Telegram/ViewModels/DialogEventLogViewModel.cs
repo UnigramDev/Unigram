@@ -297,6 +297,7 @@ namespace Telegram.ViewModels
                     case ChatEventForumTopicPinned:
                     case ChatEventForumTopicToggleIsClosed:
                     case ChatEventAccentColorChanged:
+                    case ChatEventProfileAccentColorChanged:
                         message = GetMessage(_chat.Id, channel, item);
                         message.Content = new MessageChatEvent(item);
                         break;

@@ -3475,6 +3475,9 @@ Learn more at telegram.org</value>
   <data name="EventLogChangedPeerColorIcon" xml:space="preserve">
     <value>un1 changed channel color and icon from {0} to {1}</value>
   </data>
+  <data name="EventLogChangedProfileColorIcon" xml:space="preserve">
+    <value>un1 changed channel profile color and icon from {0} to {1}</value>
+  </data>
   <data name="EventLogChangedStickersSet" xml:space="preserve">
     <value>un1 changed the group sticker set</value>
   </data>

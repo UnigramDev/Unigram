@@ -314,6 +314,7 @@ namespace Telegram.Controls.Messages
                     ChatEventForumTopicPinned forumTopicPinned => UpdateChatEventForumTopicPinned(message, forumTopicPinned, active),
                     ChatEventForumTopicToggleIsClosed forumTopicToggleIsClosed => UpdateChatEventForumTopicToggleIsClosed(message, forumTopicToggleIsClosed, active),
                     ChatEventAccentColorChanged accentColorChanged => UpdateChatEventAccentColorChanged(message, accentColorChanged, active),
+                    ChatEventProfileAccentColorChanged profileAccentColorChanged => UpdateChatEventProfileAccentColorChanged(message, profileAccentColorChanged, active),
                     //ChatEventActiveUsernamesChanged activeUsernamesChanged => UpdateChatEventActiveUsernames(message, activeUsernamesChanged, active),
                     _ => (string.Empty, null)
                 },
@@ -371,6 +372,46 @@ namespace Telegram.Controls.Messages
                 if (accentColorChanged.NewBackgroundCustomEmojiId != 0)
                 {
                     entities.Add(new TextEntity(index2, 3, new TextEntityTypeCustomEmoji(accentColorChanged.NewBackgroundCustomEmojiId)));
+                }
+                else
+                {
+                    content = content.Remove(index2, 3);
+                    content = content.Insert(index2, Strings.EventLogEmojiNone);
+                }
+            }
+
+            return (content, entities);
+        }
+
+        private static (string Text, IList<TextEntity> Entities) UpdateChatEventProfileAccentColorChanged(MessageViewModel message, ChatEventProfileAccentColorChanged profileAccentColorChanged, bool active)
+        {
+            var content = string.Empty;
+            var entities = active ? new List<TextEntity>() : null;
+
+            var fromUser = message.GetSender();
+
+            content = ReplaceWithLink(Strings.EventLogChangedProfileColorIcon, "un1", fromUser, entities);
+
+            var index1 = content.IndexOf("{0}");
+            if (index1 != -1)
+            {
+                if (profileAccentColorChanged.OldProfileBackgroundCustomEmojiId != 0)
+                {
+                    entities.Add(new TextEntity(index1, 3, new TextEntityTypeCustomEmoji(profileAccentColorChanged.OldProfileBackgroundCustomEmojiId)));
+                }
+                else
+                {
+                    content = content.Remove(index1, 3);
+                    content = content.Insert(index1, Strings.EventLogEmojiNone);
+                }
+            }
+
+            var index2 = content.IndexOf("{1}");
+            if (index2 != -1)
+            {
+                if (profileAccentColorChanged.NewProfileBackgroundCustomEmojiId != 0)
+                {
+                    entities.Add(new TextEntity(index2, 3, new TextEntityTypeCustomEmoji(profileAccentColorChanged.NewProfileBackgroundCustomEmojiId)));
                 }
                 else
                 {
