@@ -980,6 +980,12 @@ namespace Telegram.ViewModels
 
         #region Supergroup
 
+        public void OpenSimilarChat(Chat chat)
+        {
+            ClientService.Send(new OpenChatSimilarChat(_chat.Id, chat.Id));
+            NavigationService.NavigateToChat(chat);
+        }
+
         public void OpenAdmins()
         {
             var chat = _chat;

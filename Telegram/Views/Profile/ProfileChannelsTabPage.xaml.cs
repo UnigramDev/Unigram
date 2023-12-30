@@ -23,7 +23,7 @@ namespace Telegram.Views.Profile
         {
             if (e.ClickedItem is Chat chat)
             {
-                ViewModel.NavigationService.NavigateToChat(chat);
+                ViewModel.OpenSimilarChat(chat);
             }
         }
 
