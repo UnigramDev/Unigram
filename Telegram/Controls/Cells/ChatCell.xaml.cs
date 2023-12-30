@@ -227,7 +227,7 @@ namespace Telegram.Controls.Cells
 
             UpdateChatTitle(chat);
             UpdateChatPhoto(chat);
-            UpdateChatType(chat);
+            UpdateChatEmojiStatus(chat);
             UpdateNotificationSettings(chat);
 
             PinnedIcon.Visibility = Visibility.Collapsed;
@@ -645,6 +645,16 @@ namespace Telegram.Controls.Cells
             SelectionOutline.RadiusY = Photo.Shape == ProfilePictureShape.Ellipse ? 24 : 12;
         }
 
+        public void UpdateChatEmojiStatus(Chat chat)
+        {
+            if (_clientService == null || !_templateApplied)
+            {
+                return;
+            }
+
+            Identity.SetStatus(_clientService, chat);
+        }
+
         public void UpdateChatActiveStories(ChatActiveStories activeStories)
         {
             if (_clientService == null || !_templateApplied)
@@ -686,11 +696,6 @@ namespace Telegram.Controls.Cells
                     ? Visibility.Visible
                     : Visibility.Collapsed;
             }
-        }
-
-        private void UpdateChatType(Chat chat)
-        {
-            Identity.SetStatus(_clientService, chat);
         }
 
         public void UpdateChatVideoChat(Chat chat)
@@ -921,7 +926,7 @@ namespace Telegram.Controls.Cells
 
             UpdateChatTitle(chat);
             UpdateChatPhoto(chat);
-            UpdateChatType(chat);
+            UpdateChatEmojiStatus(chat);
 
             UpdateChatLastMessage(chat, position);
             //UpdateChatReadInbox(chat);

@@ -1848,6 +1848,13 @@ namespace Telegram.Services
                     value.DefaultDisableNotification = updateChatDefaultDisableNotification.DefaultDisableNotification;
                 }
             }
+            else if (update is UpdateChatEmojiStatus updateChatEmojiStatus)
+            {
+                if (_chats.TryGetValue(updateChatEmojiStatus.ChatId, out Chat value))
+                {
+                    value.EmojiStatus = updateChatEmojiStatus.EmojiStatus;
+                }
+            }
             else if (update is UpdateChatMessageSender updateChatMessageSender)
             {
                 if (_chats.TryGetValue(updateChatMessageSender.ChatId, out Chat value))

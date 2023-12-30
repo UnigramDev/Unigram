@@ -64,6 +64,7 @@ namespace Telegram.ViewModels
                 .Subscribe<UpdateUserStatus>(Handle)
                 .Subscribe<UpdateChatTitle>(Handle)
                 .Subscribe<UpdateChatPhoto>(Handle)
+                .Subscribe<UpdateChatEmojiStatus>(Handle)
                 .Subscribe<UpdateChatTheme>(Handle)
                 .Subscribe<UpdateChatBackground>(Handle)
                 .Subscribe<UpdateChatNotificationSettings>(Handle)
@@ -249,6 +250,14 @@ namespace Telegram.ViewModels
             if (update.ChatId == _chat?.Id)
             {
                 BeginOnUIThread(() => Delegate?.UpdateChatPhoto(_chat));
+            }
+        }
+
+        public void Handle(UpdateChatEmojiStatus update)
+        {
+            if (update.ChatId == _chat?.Id)
+            {
+                BeginOnUIThread(() => Delegate?.UpdateChatEmojiStatus(_chat));
             }
         }
 

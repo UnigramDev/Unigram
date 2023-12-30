@@ -568,6 +568,7 @@ namespace Telegram.Controls
 
             UpdateChatTitle(chat);
             UpdateChatPhoto(chat);
+            UpdateChatEmojiStatus(chat);
 
             UpdateChatActiveStories(chat);
 
@@ -619,6 +620,11 @@ namespace Telegram.Controls
             }
         }
 
+        public void UpdateChatEmojiStatus(Chat chat)
+        {
+            Identity.SetStatus(ViewModel.ClientService, chat);
+        }
+
         public void UpdateChatActiveStories(Chat chat)
         {
             Segments.SetChat(ViewModel.ClientService, chat, 140);
@@ -638,8 +644,6 @@ namespace Telegram.Controls
             UpdateProfileAccentColor(chat, user.ProfileAccentColorId, user.ProfileBackgroundCustomEmojiId);
 
             Subtitle.Text = LastSeenConverter.GetLabel(user, true);
-
-            Identity.SetStatus(ViewModel.ClientService, user);
 
             UserPhone.Badge = PhoneNumber.Format(user.PhoneNumber);
             UserPhone.Visibility = string.IsNullOrEmpty(user.PhoneNumber) ? Visibility.Collapsed : Visibility.Visible;
@@ -770,8 +774,6 @@ namespace Telegram.Controls
 
             Description.Content = Strings.DescriptionPlaceholder;
 
-            Identity.ClearStatus();
-
             UserPhone.Visibility = Visibility.Collapsed;
             Location.Visibility = Visibility.Collapsed;
             Username.Visibility = Visibility.Collapsed;
@@ -856,8 +858,6 @@ namespace Telegram.Controls
             }
 
             Description.Content = Strings.DescriptionPlaceholder;
-
-            Identity.SetStatus(group);
 
             if (group.HasActiveUsername(out string username))
             {

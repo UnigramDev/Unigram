@@ -304,6 +304,11 @@ namespace Telegram.Views
             Handle(update.ChatId, (chatView, chat) => chatView.UpdateChatPhoto(chat));
         }
 
+        public void Handle(UpdateChatEmojiStatus update)
+        {
+            Handle(update.ChatId, (chatView, chat) => chatView.UpdateChatEmojiStatus(chat));
+        }
+
         public void Handle(UpdateChatVideoChat update)
         {
             Handle(update.ChatId, (chatView, chat) => chatView.UpdateChatVideoChat(chat));
@@ -901,6 +906,7 @@ namespace Telegram.Views
                 .Subscribe<UpdateChatUnreadReactionCount>(Handle)
                 .Subscribe<UpdateChatTitle>(Handle)
                 .Subscribe<UpdateChatPhoto>(Handle)
+                .Subscribe<UpdateChatEmojiStatus>(Handle)
                 .Subscribe<UpdateChatVideoChat>(Handle)
                 .Subscribe<UpdateUserStatus>(Handle)
                 .Subscribe<UpdateUser>(Handle)

@@ -3576,6 +3576,7 @@ namespace Telegram.Views
         {
             UpdateChatTitle(chat);
             UpdateChatPhoto(chat);
+            UpdateChatEmojiStatus(chat);
 
             UpdateChatActiveStories(chat);
 
@@ -3760,6 +3761,11 @@ namespace Telegram.Views
                 Photo.SetChat(ViewModel.ClientService, chat, 36);
                 Photo.IsEnabled = true;
             }
+        }
+
+        public void UpdateChatEmojiStatus(Chat chat)
+        {
+            Identity.SetStatus(_viewModel.ClientService, chat);
         }
 
         public void UpdateChatActiveStories(Chat chat)
@@ -4418,15 +4424,6 @@ namespace Telegram.Views
             btnSendMessage.SlowModeDelay = 0;
             btnSendMessage.SlowModeDelayExpiresIn = 0;
 
-            if (user.Id != ViewModel.ClientService.Options.MyId)
-            {
-                Identity.SetStatus(ViewModel.ClientService, user);
-            }
-            else
-            {
-                Identity.ClearStatus();
-            }
-
             if (!secret)
             {
                 ShowArea();
@@ -4535,8 +4532,6 @@ namespace Telegram.Views
 
         public void UpdateBasicGroup(Chat chat, BasicGroup group)
         {
-            Identity.ClearStatus();
-
             if (group.UpgradedToSupergroupId != 0)
             {
                 ShowAction(Strings.OpenSupergroup, true);
@@ -4606,8 +4601,6 @@ namespace Telegram.Views
 
         public void UpdateSupergroup(Chat chat, Supergroup group)
         {
-            Identity.SetStatus(group);
-
             if (ViewModel.Type == DialogType.EventLog)
             {
                 ShowAction(Strings.Settings, true);
