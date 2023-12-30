@@ -269,7 +269,7 @@ namespace Telegram.Controls.Messages
                 MessageScreenshotTaken screenshotTaken => UpdateScreenshotTaken(message, screenshotTaken, active),
                 MessageSuggestProfilePhoto suggestProfilePhoto => UpdateSuggestProfilePhoto(message, suggestProfilePhoto, active),
                 MessageSupergroupChatCreate supergroupChatCreate => UpdateSupergroupChatCreate(message, supergroupChatCreate, active),
-                MessageUserShared userShared => UpdateUserShared(message, userShared, active),
+                MessageUsersShared usersShared => UpdateUsersShared(message, usersShared, active),
                 MessageVideoChatEnded videoChatEnded => UpdateVideoChatEnded(message, videoChatEnded, active),
                 MessageVideoChatScheduled videoChatScheduled => UpdateVideoChatScheduled(message, videoChatScheduled, active),
                 MessageVideoChatStarted videoChatStarted => UpdateVideoChatStarted(message, videoChatStarted, active),
@@ -314,7 +314,6 @@ namespace Telegram.Controls.Messages
                     ChatEventForumTopicPinned forumTopicPinned => UpdateChatEventForumTopicPinned(message, forumTopicPinned, active),
                     ChatEventForumTopicToggleIsClosed forumTopicToggleIsClosed => UpdateChatEventForumTopicToggleIsClosed(message, forumTopicToggleIsClosed, active),
                     ChatEventAccentColorChanged accentColorChanged => UpdateChatEventAccentColorChanged(message, accentColorChanged, active),
-                    ChatEventBackgroundCustomEmojiChanged backgroundCustomEmojiChanged => UpdateChatEventBackgroundCustomEmojiChanged(message, backgroundCustomEmojiChanged, active),
                     //ChatEventActiveUsernamesChanged activeUsernamesChanged => UpdateChatEventActiveUsernames(message, activeUsernamesChanged, active),
                     _ => (string.Empty, null)
                 },
@@ -350,27 +349,14 @@ namespace Telegram.Controls.Messages
 
             var fromUser = message.GetSender();
 
-            content = ReplaceWithLink(Strings.EventLogChangedColor, "un1", fromUser, entities);
-            content = string.Format(content, accentColorChanged.OldAccentColorId, accentColorChanged.NewAccentColorId);
-
-            return (content, entities);
-        }
-
-        private static (string Text, IList<TextEntity> Entities) UpdateChatEventBackgroundCustomEmojiChanged(MessageViewModel message, ChatEventBackgroundCustomEmojiChanged backgroundCustomEmojiChanged, bool active)
-        {
-            var content = string.Empty;
-            var entities = active ? new List<TextEntity>() : null;
-
-            var fromUser = message.GetSender();
-
-            content = ReplaceWithLink(Strings.EventLogChangedEmoji, "un1", fromUser, entities);
+            content = ReplaceWithLink(Strings.EventLogChangedPeerColorIcon, "un1", fromUser, entities);
 
             var index1 = content.IndexOf("{0}");
             if (index1 != -1)
             {
-                if (backgroundCustomEmojiChanged.OldBackgroundCustomEmojiId != 0)
+                if (accentColorChanged.OldBackgroundCustomEmojiId != 0)
                 {
-                    entities.Add(new TextEntity(index1, 3, new TextEntityTypeCustomEmoji(backgroundCustomEmojiChanged.OldBackgroundCustomEmojiId)));
+                    entities.Add(new TextEntity(index1, 3, new TextEntityTypeCustomEmoji(accentColorChanged.OldBackgroundCustomEmojiId)));
                 }
                 else
                 {
@@ -382,9 +368,9 @@ namespace Telegram.Controls.Messages
             var index2 = content.IndexOf("{1}");
             if (index2 != -1)
             {
-                if (backgroundCustomEmojiChanged.NewBackgroundCustomEmojiId != 0)
+                if (accentColorChanged.NewBackgroundCustomEmojiId != 0)
                 {
-                    entities.Add(new TextEntity(index2, 3, new TextEntityTypeCustomEmoji(backgroundCustomEmojiChanged.NewBackgroundCustomEmojiId)));
+                    entities.Add(new TextEntity(index2, 3, new TextEntityTypeCustomEmoji(accentColorChanged.NewBackgroundCustomEmojiId)));
                 }
                 else
                 {
@@ -2092,15 +2078,15 @@ namespace Telegram.Controls.Messages
             return (content, entities);
         }
 
-        private static (string, IList<TextEntity>) UpdateUserShared(MessageViewModel message, MessageUserShared userShared, bool active)
+        private static (string, IList<TextEntity>) UpdateUsersShared(MessageViewModel message, MessageUsersShared usersShared, bool active)
         {
             var content = string.Empty;
             var entities = active ? new List<TextEntity>() : null;
 
             var chat = message.Chat;
-            if (chat != null && message.ClientService.TryGetUser(userShared.UserId, out User sharedUser))
+            if (chat != null)
             {
-                content = ReplaceWithLink(Strings.ActionRequestedPeer, "un1", sharedUser, entities);
+                content = ReplaceWithLink(Strings.ActionRequestedPeer, "un1", usersShared.UserIds, message.ClientService, entities);
                 content = ReplaceWithLink(content, "un2", chat, entities);
             }
             else if (chat != null)

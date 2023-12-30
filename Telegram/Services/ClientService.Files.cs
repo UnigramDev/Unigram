@@ -426,6 +426,17 @@ namespace Telegram.Services
                     ProcessFiles(chatEvent.Action);
                 }
             }
+            else if (target is ChatEventBackgroundChanged chatEventBackgroundChanged)
+            {
+                if (chatEventBackgroundChanged.NewBackground != null)
+                {
+                    ProcessFiles(chatEventBackgroundChanged.NewBackground);
+                }
+                if (chatEventBackgroundChanged.OldBackground != null)
+                {
+                    ProcessFiles(chatEventBackgroundChanged.OldBackground);
+                }
+            }
             else if (target is ChatEventMessageDeleted chatEventMessageDeleted)
             {
                 if (chatEventMessageDeleted.Message != null)
@@ -1509,6 +1520,27 @@ namespace Telegram.Services
                     profilePhoto.Small = ProcessFile(profilePhoto.Small);
                 }
             }
+            else if (target is PublicForwardMessage publicForwardMessage)
+            {
+                if (publicForwardMessage.Message != null)
+                {
+                    ProcessFiles(publicForwardMessage.Message);
+                }
+            }
+            else if (target is PublicForwards publicForwards)
+            {
+                foreach (var item in publicForwards.Forwards)
+                {
+                    ProcessFiles(item);
+                }
+            }
+            else if (target is PublicForwardStory publicForwardStory)
+            {
+                if (publicForwardStory.Story != null)
+                {
+                    ProcessFiles(publicForwardStory.Story);
+                }
+            }
             else if (target is PushMessageContentAnimation pushMessageContentAnimation)
             {
                 if (pushMessageContentAnimation.Animation != null)
@@ -1778,6 +1810,34 @@ namespace Telegram.Services
                     ProcessFiles(storyContentVideo.Video);
                 }
             }
+            else if (target is StoryInteraction storyInteraction)
+            {
+                if (storyInteraction.Type != null)
+                {
+                    ProcessFiles(storyInteraction.Type);
+                }
+            }
+            else if (target is StoryInteractions storyInteractions)
+            {
+                foreach (var item in storyInteractions.Interactions)
+                {
+                    ProcessFiles(item);
+                }
+            }
+            else if (target is StoryInteractionTypeForward storyInteractionTypeForward)
+            {
+                if (storyInteractionTypeForward.Message != null)
+                {
+                    ProcessFiles(storyInteractionTypeForward.Message);
+                }
+            }
+            else if (target is StoryInteractionTypeRepost storyInteractionTypeRepost)
+            {
+                if (storyInteractionTypeRepost.Story != null)
+                {
+                    ProcessFiles(storyInteractionTypeRepost.Story);
+                }
+            }
             else if (target is StoryVideo storyVideo)
             {
                 if (storyVideo.Thumbnail != null)
@@ -1894,6 +1954,13 @@ namespace Telegram.Services
                     ProcessFiles(item);
                 }
             }
+            else if (target is UpdateDefaultBackground updateDefaultBackground)
+            {
+                if (updateDefaultBackground.Background != null)
+                {
+                    ProcessFiles(updateDefaultBackground.Background);
+                }
+            }
             else if (target is UpdateFile updateFile)
             {
                 if (updateFile.File != null)
@@ -1955,13 +2022,6 @@ namespace Telegram.Services
                 foreach (var item in updateNotificationGroup.AddedNotifications)
                 {
                     ProcessFiles(item);
-                }
-            }
-            else if (target is UpdateSelectedBackground updateSelectedBackground)
-            {
-                if (updateSelectedBackground.Background != null)
-                {
-                    ProcessFiles(updateSelectedBackground.Background);
                 }
             }
             else if (target is UpdateServiceNotification updateServiceNotification)

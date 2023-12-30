@@ -3657,7 +3657,7 @@ namespace Telegram.Views
             {
                 var current = _viewModel.Chat.Background?.Background;
                 current ??= ActualTheme == ElementTheme.Light ? theme?.LightSettings.Background : theme?.DarkSettings.Background;
-                current ??= ViewModel.ClientService.GetSelectedBackground(ActualTheme == ElementTheme.Dark);
+                current ??= ViewModel.ClientService.GetDefaultBackground(ActualTheme == ElementTheme.Dark);
 
                 if (_loadedThemeTask != null)
                 {

@@ -572,27 +572,37 @@ namespace Telegram.Controls.Cells
 
         public void UpdateStoryViewer(IClientService clientService, ContainerContentChangingEventArgs args, TypedEventHandler<ListViewBase, ContainerContentChangingEventArgs> callback)
         {
-            var viewer = args.Item as StoryViewer;
-
-            var user = clientService.GetUser(viewer.UserId);
-            if (user == null)
-            {
-                return;
-            }
+            var interaction = args.Item as StoryInteraction;
 
             if (args.Phase == 0)
             {
-                TitleLabel.Text = user.FullName();
+                if (clientService.TryGetUser(interaction.ActorId, out User user))
+                {
+                    TitleLabel.Text = user.FullName();
+                }
+                else if (clientService.TryGetChat(interaction.ActorId, out Chat chat))
+                {
+                    TitleLabel.Text = chat.Title;
+                }
             }
             else if (args.Phase == 1)
             {
-                SubtitleLabel.Text = Locale.FormatDateAudio(viewer.ViewDate);
+                SubtitleLabel.Text = Locale.FormatDateAudio(interaction.InteractionDate);
             }
             else if (args.Phase == 2)
             {
-                Segments.SetUser(clientService, user, 36);
-                Photo.SetUser(clientService, user, 36);
-                Identity.SetStatus(clientService, user);
+                if (clientService.TryGetUser(interaction.ActorId, out User user))
+                {
+                    Segments.SetUser(clientService, user, 36);
+                    Photo.SetUser(clientService, user, 36);
+                    Identity.SetStatus(clientService, user);
+                }
+                else if (clientService.TryGetChat(interaction.ActorId, out Chat chat))
+                {
+                    Segments.SetChat(clientService, chat, 36);
+                    Photo.SetChat(clientService, chat, 36);
+                    Identity.SetStatus(clientService, chat);
+                }
             }
 
             if (args.Phase < 2)

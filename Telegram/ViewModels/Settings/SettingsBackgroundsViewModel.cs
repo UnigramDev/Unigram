@@ -35,7 +35,7 @@ namespace Telegram.ViewModels.Settings
 
         public override void Subscribe()
         {
-            Aggregator.Subscribe<UpdateSelectedBackground>(this, Handle);
+            Aggregator.Subscribe<UpdateDefaultBackground>(this, Handle);
         }
 
         protected override async Task OnNavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
@@ -48,7 +48,7 @@ namespace Telegram.ViewModels.Settings
             var dark = Settings.Appearance.IsDarkTheme();
             var freeform = dark ? new[] { 0x6C7FA6, 0x2E344B, 0x7874A7, 0x333258 } : new[] { 0xDBDDBB, 0x6BA587, 0xD5D88D, 0x88B884 };
 
-            var background = ClientService.SelectedBackground;
+            var background = ClientService.DefaultBackground;
             var predefined = new Background(Constants.WallpaperColorId, true, dark, string.Empty,
                 new Document(string.Empty, "application/x-tgwallpattern", null, null, TdExtensions.GetLocalFile("Assets\\Background.tgv", "Background")),
                 new BackgroundTypePattern(new BackgroundFillFreeformGradient(freeform), dark ? 100 : 50, dark, false));
@@ -58,7 +58,7 @@ namespace Telegram.ViewModels.Settings
                 predefined
             };
 
-            var response = await ClientService.SendAsync(new GetBackgrounds(dark));
+            var response = await ClientService.SendAsync(new GetInstalledBackgrounds(dark));
             if (response is Backgrounds wallpapers)
             {
                 items.AddRange(wallpapers.BackgroundsValue.Where(x => x.Type is not BackgroundTypePattern || x.Type is BackgroundTypePattern pattern && (pattern.IsInverted == dark || dark)));
@@ -104,7 +104,7 @@ namespace Telegram.ViewModels.Settings
 
         public DiffObservableCollection<Background> Items { get; private set; }
 
-        public void Handle(UpdateSelectedBackground update)
+        public void Handle(UpdateDefaultBackground update)
         {
             this.BeginOnUIThread(Refresh);
         }
@@ -208,7 +208,7 @@ namespace Telegram.ViewModels.Settings
                 return;
             }
 
-            var response = await ClientService.SendAsync(new ResetBackgrounds());
+            var response = await ClientService.SendAsync(new ResetInstalledBackgrounds());
             if (response is Ok)
             {
                 await OnNavigatedToAsync(null, NavigationMode.Refresh, null);
@@ -246,7 +246,7 @@ namespace Telegram.ViewModels.Settings
                 return;
             }
 
-            var response = await ClientService.SendAsync(new RemoveBackground(background.Id));
+            var response = await ClientService.SendAsync(new RemoveInstalledBackground(background.Id));
             if (response is Ok)
             {
                 await OnNavigatedToAsync(null, NavigationMode.Refresh, null);

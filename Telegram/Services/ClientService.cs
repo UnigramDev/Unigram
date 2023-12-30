@@ -85,8 +85,8 @@ namespace Telegram.Services
 
         UpdateSpeechRecognitionTrial SpeechRecognitionTrial { get; }
 
-        Background GetSelectedBackground(bool darkTheme);
-        Background SelectedBackground { get; }
+        Background GetDefaultBackground(bool darkTheme);
+        Background DefaultBackground { get; }
 
         Task<AuthorizationState> GetAuthorizationStateAsync();
         AuthorizationState AuthorizationState { get; }
@@ -516,9 +516,6 @@ namespace Telegram.Services
         private void InitializeReady()
         {
             Send(new LoadChats(new ChatListMain(), 20));
-
-            UpdateVersion();
-
             //InitializeStickers();
         }
 
@@ -583,14 +580,6 @@ namespace Telegram.Services
 
             color = null;
             return false;
-        }
-
-        private void UpdateVersion()
-        {
-            if (_settings.UpdateVersion(out string previousVersion))
-            {
-                Send(new AddApplicationChangelog(previousVersion));
-            }
         }
 
         public void CleanUp()
@@ -911,9 +900,9 @@ namespace Telegram.Services
 
         public string AnimationSearchProvider => _animationSearchParameters?.Provider;
 
-        public Background SelectedBackground => GetSelectedBackground(_settings.Appearance.IsDarkTheme());
+        public Background DefaultBackground => GetDefaultBackground(_settings.Appearance.IsDarkTheme());
 
-        public Background GetSelectedBackground(bool darkTheme)
+        public Background GetDefaultBackground(bool darkTheme)
         {
             if (darkTheme)
             {
@@ -1890,18 +1879,14 @@ namespace Telegram.Services
                     value.HasScheduledMessages = updateChatHasScheduledMessages.HasScheduledMessages;
                 }
             }
-            else if (update is UpdateChatAccentColor updateChatAccentColor)
+            else if (update is UpdateChatAccentColors updateChatAccentColors)
             {
-                if (_chats.TryGetValue(updateChatAccentColor.ChatId, out Chat value))
+                if (_chats.TryGetValue(updateChatAccentColors.ChatId, out Chat value))
                 {
-                    value.AccentColorId = updateChatAccentColor.AccentColorId;
-                }
-            }
-            else if (update is UpdateChatBackgroundCustomEmoji updateChatBackgroundCustomEmoji)
-            {
-                if (_chats.TryGetValue(updateChatBackgroundCustomEmoji.ChatId, out Chat value))
-                {
-                    value.BackgroundCustomEmojiId = updateChatBackgroundCustomEmoji.BackgroundCustomEmojiId;
+                    value.AccentColorId = updateChatAccentColors.AccentColorId;
+                    value.BackgroundCustomEmojiId = updateChatAccentColors.BackgroundCustomEmojiId;
+                    value.ProfileAccentColorId = updateChatAccentColors.ProfileAccentColorId;
+                    value.ProfileBackgroundCustomEmojiId = updateChatAccentColors.ProfileBackgroundCustomEmojiId;
                 }
             }
             else if (update is UpdateChatBlockList updateChatBlockList)
@@ -2125,15 +2110,15 @@ namespace Telegram.Services
             {
                 _secretChats[updateSecretChat.SecretChat.Id] = updateSecretChat.SecretChat;
             }
-            else if (update is UpdateSelectedBackground updateSelectedBackground)
+            else if (update is UpdateDefaultBackground updateDefaultBackground)
             {
-                if (updateSelectedBackground.ForDarkTheme)
+                if (updateDefaultBackground.ForDarkTheme)
                 {
-                    _selectedBackgroundDark = updateSelectedBackground.Background;
+                    _selectedBackgroundDark = updateDefaultBackground.Background;
                 }
                 else
                 {
-                    _selectedBackground = updateSelectedBackground.Background;
+                    _selectedBackground = updateDefaultBackground.Background;
                 }
             }
             else if (update is UpdateSpeechRecognitionTrial updateSpeechRecognitionTrial)

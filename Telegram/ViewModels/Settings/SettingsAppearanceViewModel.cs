@@ -95,11 +95,11 @@ namespace Telegram.ViewModels.Settings
             {
                 if (background != null && chatTheme.Name != "\U0001F3E0")
                 {
-                    ClientService.Send(new SetBackground(new InputBackgroundRemote(background.Id), background.Type, forDarkTheme));
+                    ClientService.Send(new SetDefaultBackground(new InputBackgroundRemote(background.Id), background.Type, forDarkTheme));
                 }
                 else
                 {
-                    ClientService.Send(new SetBackground(null, null, forDarkTheme));
+                    ClientService.Send(new SetDefaultBackground(null, null, forDarkTheme));
                 }
             }
 

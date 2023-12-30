@@ -76,7 +76,7 @@ namespace Telegram.ViewModels.Stories
             Content = story.Content;
             PrivacySettings = story.PrivacySettings;
             InteractionInfo = story.InteractionInfo;
-            CanGetViewers = story.CanGetViewers;
+            CanGetInteractions = story.CanGetInteractions;
             CanBeReplied = story.CanBeReplied;
             CanBeForwarded = story.CanBeForwarded;
             CanToggleIsPinned = story.CanToggleIsPinned;
@@ -109,7 +109,7 @@ namespace Telegram.ViewModels.Stories
         /// <summary>
         /// True, users viewed the story can be received through getStoryViewers.
         /// </summary>
-        public bool CanGetViewers { get; private set; }
+        public bool CanGetInteractions { get; private set; }
 
         /// <summary>
         /// True, if the story can be replied in the chat with the story sender.

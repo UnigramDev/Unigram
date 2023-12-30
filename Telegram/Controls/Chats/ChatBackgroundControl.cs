@@ -50,7 +50,7 @@ namespace Telegram.Controls.Chats
 
         private void OnLoaded(object sender, RoutedEventArgs e)
         {
-            _aggregator?.Subscribe<UpdateSelectedBackground>(this, Handle);
+            _aggregator?.Subscribe<UpdateDefaultBackground>(this, Handle);
         }
 
         private void OnUnloaded(object sender, RoutedEventArgs e)
@@ -60,7 +60,7 @@ namespace Telegram.Controls.Chats
 
         private bool IsDarkTheme => WindowContext.Current.ActualTheme == ElementTheme.Dark;
 
-        public void Handle(UpdateSelectedBackground update)
+        public void Handle(UpdateDefaultBackground update)
         {
             this.BeginOnUIThread(() =>
             {
@@ -78,9 +78,9 @@ namespace Telegram.Controls.Chats
         {
             _clientService = clientService;
             _aggregator = aggregator;
-            _aggregator?.Subscribe<UpdateSelectedBackground>(this, Handle);
+            _aggregator?.Subscribe<UpdateDefaultBackground>(this, Handle);
 
-            var background = clientService.GetSelectedBackground(IsDarkTheme);
+            var background = clientService.GetDefaultBackground(IsDarkTheme);
 
             SyncBackgroundWithChatTheme(ref background, IsDarkTheme, out int dimming);
             UpdateBackground(background, IsDarkTheme, dimming);

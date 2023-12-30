@@ -196,7 +196,7 @@ namespace Telegram.ViewModels
 
             if (_item.Type is BackgroundTypePattern or BackgroundTypeFill)
             {
-                var response = await ClientService.SendAsync(new GetBackgrounds());
+                var response = await ClientService.SendAsync(new GetInstalledBackgrounds());
                 if (response is Backgrounds backgrounds)
                 {
                     var patterns = backgrounds.BackgroundsValue.Where(x => x.Type is BackgroundTypePattern)
@@ -491,7 +491,7 @@ namespace Telegram.ViewModels
                 }
                 else
                 {
-                    ClientService.Send(new SetBackground(background.Background, background.Type, background.ForDarkTheme));
+                    ClientService.Send(new SetDefaultBackground(background.Background, background.Type, background.ForDarkTheme));
                 }
             }
         }
