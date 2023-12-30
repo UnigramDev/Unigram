@@ -7503,6 +7503,9 @@ and enter your phone number.</value>
   <data name="StoryViewLocation" xml:space="preserve">
     <value>View Location &gt;</value>
   </data>
+  <data name="StoryViewMessage" xml:space="preserve">
+    <value>View Message &gt;</value>
+  </data>
   <data name="StoryViewsSortDescription" xml:space="preserve">
     <value>Choose the order for the list of viewers.</value>
   </data>

@@ -1059,16 +1059,17 @@ namespace Telegram.Controls.Stories
             ActiveCard.Resume(StoryPauseSource.Flyout);
         }
 
-        public void ShowTeachingTip(FrameworkElement target, string text, TeachingTipPlacementMode placement = TeachingTipPlacementMode.TopRight)
+        public TeachingTip ShowTeachingTip(FrameworkElement target, string text, TeachingTipPlacementMode placement = TeachingTipPlacementMode.TopRight)
         {
-            ShowTeachingTip(target, text, null, placement);
+            return ShowTeachingTip(target, text, null, placement);
         }
 
-        public void ShowTeachingTip(FrameworkElement target, string text, AnimatedImageSource icon, TeachingTipPlacementMode placement = TeachingTipPlacementMode.TopRight)
+        public TeachingTip ShowTeachingTip(FrameworkElement target, string text, AnimatedImageSource icon, TeachingTipPlacementMode placement = TeachingTipPlacementMode.TopRight)
         {
             var tip = ToastPopup.Show(target, text, icon, placement, ElementTheme.Dark);
             tip.Closing += TeachingTip_Closing;
             ActiveCard.Suspend(StoryPauseSource.TeachingTip);
+            return tip;
         }
 
         private void TeachingTip_Closing(TeachingTip sender, TeachingTipClosingEventArgs args)

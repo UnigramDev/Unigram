@@ -558,10 +558,17 @@ namespace Telegram.Controls.Stories
         {
             if (sender is HyperlinkButton element && element.Tag is StoryArea area)
             {
+                TeachingTip toast = null;
+
                 if (area.Type is StoryAreaTypeLocation or StoryAreaTypeVenue)
                 {
                     var window = element.Ancestors<StoriesWindow>().FirstOrDefault();
-                    window?.ShowTeachingTip(element.Content as Border, Strings.StoryViewLocation, TeachingTipPlacementMode.Top);
+                    toast = window?.ShowTeachingTip(element.Content as Border, Strings.StoryViewLocation, TeachingTipPlacementMode.Top);
+                }
+                else if (area.Type is StoryAreaTypeMessage)
+                {
+                    var window = element.Ancestors<StoriesWindow>().FirstOrDefault();
+                    toast = window?.ShowTeachingTip(element.Content as Border, Strings.StoryViewMessage, TeachingTipPlacementMode.Top);
                 }
             }
         }
