@@ -5358,6 +5358,26 @@ namespace Telegram
         public static string EventLogChangedEmoji => Resource.GetString("EventLogChangedEmoji");
         
         /// <summary>
+        /// Localized resource similar to "un1 changed channel emoji status to {1}"
+        /// </summary>
+        public static string EventLogChangedEmojiStatus => Resource.GetString("EventLogChangedEmojiStatus");
+        
+        /// <summary>
+        /// Localized resource similar to "un1 changed channel emoji status to {1} (for {2})"
+        /// </summary>
+        public static string EventLogChangedEmojiStatusFor => Resource.GetString("EventLogChangedEmojiStatusFor");
+        
+        /// <summary>
+        /// Localized resource similar to "un1 changed channel emoji status from {0} to {1}"
+        /// </summary>
+        public static string EventLogChangedEmojiStatusFrom => Resource.GetString("EventLogChangedEmojiStatusFrom");
+        
+        /// <summary>
+        /// Localized resource similar to "un1 changed channel emoji status from {0} to {1} (for {2})"
+        /// </summary>
+        public static string EventLogChangedEmojiStatusFromFor => Resource.GetString("EventLogChangedEmojiStatusFromFor");
+        
+        /// <summary>
         /// Localized resource similar to "un1 changed the group link:"
         /// </summary>
         public static string EventLogChangedGroupLink => Resource.GetString("EventLogChangedGroupLink");

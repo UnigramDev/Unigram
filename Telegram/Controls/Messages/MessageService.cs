@@ -315,6 +315,7 @@ namespace Telegram.Controls.Messages
                     ChatEventForumTopicToggleIsClosed forumTopicToggleIsClosed => UpdateChatEventForumTopicToggleIsClosed(message, forumTopicToggleIsClosed, active),
                     ChatEventAccentColorChanged accentColorChanged => UpdateChatEventAccentColorChanged(message, accentColorChanged, active),
                     ChatEventProfileAccentColorChanged profileAccentColorChanged => UpdateChatEventProfileAccentColorChanged(message, profileAccentColorChanged, active),
+                    ChatEventEmojiStatusChanged emojiStatusChanged => UpdateChatEventEmojiStatusChanged(message, emojiStatusChanged, active),
                     //ChatEventActiveUsernamesChanged activeUsernamesChanged => UpdateChatEventActiveUsernames(message, activeUsernamesChanged, active),
                     _ => (string.Empty, null)
                 },
@@ -412,6 +413,74 @@ namespace Telegram.Controls.Messages
                 if (profileAccentColorChanged.NewProfileBackgroundCustomEmojiId != 0)
                 {
                     entities.Add(new TextEntity(index2, 3, new TextEntityTypeCustomEmoji(profileAccentColorChanged.NewProfileBackgroundCustomEmojiId)));
+                }
+                else
+                {
+                    content = content.Remove(index2, 3);
+                    content = content.Insert(index2, Strings.EventLogEmojiNone);
+                }
+            }
+
+            return (content, entities);
+        }
+
+        private static (string Text, IList<TextEntity> Entities) UpdateChatEventEmojiStatusChanged(MessageViewModel message, ChatEventEmojiStatusChanged emojiStatusChanged, bool active)
+        {
+            var content = string.Empty;
+            var entities = active ? new List<TextEntity>() : null;
+
+            var fromUser = message.GetSender();
+
+            if (emojiStatusChanged.NewEmojiStatus != null)
+            {
+                // TODO: FormatTtl may not return the right value
+                if (emojiStatusChanged.NewEmojiStatus.ExpirationDate != 0)
+                {
+                    if (emojiStatusChanged.OldEmojiStatus != null)
+                    {
+                        content = ReplaceWithLink(Strings.EventLogChangedEmojiStatusFromFor, "un1", fromUser, entities);
+                        content = string.Format(content, "{0}", "{1}", Locale.FormatTtl(emojiStatusChanged.NewEmojiStatus.ExpirationDate - message.Date));
+                    }
+                    else
+                    {
+                        content = ReplaceWithLink(Strings.EventLogChangedEmojiStatusFor, "un1", fromUser, entities);
+                        content = string.Format(content, "{0}", "{1}", Locale.FormatTtl(emojiStatusChanged.NewEmojiStatus.ExpirationDate - message.Date));
+                    }
+                }
+                else if (emojiStatusChanged.OldEmojiStatus != null)
+                {
+                    content = ReplaceWithLink(Strings.EventLogChangedEmojiStatusFrom, "un1", fromUser, entities);
+                }
+                else
+                {
+                    content = ReplaceWithLink(Strings.EventLogChangedEmojiStatus, "un1", fromUser, entities);
+                }
+            }
+            else
+            {
+                content = ReplaceWithLink(Strings.EventLogChangedEmojiStatusFrom, "un1", fromUser, entities);
+            }
+
+            var index1 = content.IndexOf("{0}");
+            if (index1 != -1)
+            {
+                if (emojiStatusChanged.OldEmojiStatus != null)
+                {
+                    entities.Add(new TextEntity(index1, 3, new TextEntityTypeCustomEmoji(emojiStatusChanged.OldEmojiStatus.CustomEmojiId)));
+                }
+                else
+                {
+                    content = content.Remove(index1, 3);
+                    content = content.Insert(index1, Strings.EventLogEmojiNone);
+                }
+            }
+
+            var index2 = content.IndexOf("{1}");
+            if (index2 != -1)
+            {
+                if (emojiStatusChanged.NewEmojiStatus != null)
+                {
+                    entities.Add(new TextEntity(index2, 3, new TextEntityTypeCustomEmoji(emojiStatusChanged.NewEmojiStatus.CustomEmojiId)));
                 }
                 else
                 {

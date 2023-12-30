@@ -3457,6 +3457,18 @@ Learn more at telegram.org</value>
   <data name="EventLogChangedEmoji" xml:space="preserve">
     <value>un1 changed channel emoji from {0} to {1}</value>
   </data>
+  <data name="EventLogChangedEmojiStatus" xml:space="preserve">
+    <value>un1 changed channel emoji status to {1}</value>
+  </data>
+  <data name="EventLogChangedEmojiStatusFor" xml:space="preserve">
+    <value>un1 changed channel emoji status to {1} (for {2})</value>
+  </data>
+  <data name="EventLogChangedEmojiStatusFrom" xml:space="preserve">
+    <value>un1 changed channel emoji status from {0} to {1}</value>
+  </data>
+  <data name="EventLogChangedEmojiStatusFromFor" xml:space="preserve">
+    <value>un1 changed channel emoji status from {0} to {1} (for {2})</value>
+  </data>
   <data name="EventLogChangedGroupLink" xml:space="preserve">
     <value>un1 changed the group link:</value>
   </data>
