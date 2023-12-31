@@ -151,7 +151,7 @@ namespace Telegram.Common
             }
         }
 
-        public async void NavigateToChat(Chat chat, long? message = null, long? thread = null, string accessToken = null, NavigationState state = null, bool scheduled = false, bool force = true, bool createNewWindow = false)
+        public async void NavigateToChat(Chat chat, long? message = null, long? thread = null, string accessToken = null, NavigationState state = null, bool scheduled = false, bool force = true, bool createNewWindow = false, bool clearBackStack = false)
         {
             if (Dispatcher.HasThreadAccess is false)
             {
@@ -324,6 +324,11 @@ namespace Telegram.Common
                         FrameFacade.RaiseNavigated(chat.Id);
                         Frame.ForwardStack.Clear();
 
+                        if (clearBackStack)
+                        {
+                            GoBackAt(0, false);
+                        }
+
                         OverlayWindow.Current?.TryHide(ContentDialogResult.None);
                     }
                     else
@@ -357,7 +362,13 @@ namespace Telegram.Common
                             parameter = chat.Id;
                         }
 
-                        Navigate(target, parameter, state, info);
+                        if (Navigate(target, parameter, state, info))
+                        {
+                            if (clearBackStack)
+                            {
+                                GoBackAt(0, false);
+                            }
+                        }
                     }
                 }
             }

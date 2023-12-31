@@ -1667,9 +1667,7 @@ namespace Telegram.Views
                 }
                 else
                 {
-                    MasterDetail.NavigationService.NavigateToChat(chat, force: false);
-                    MasterDetail.NavigationService.GoBackAt(0, false);
-
+                    MasterDetail.NavigationService.NavigateToChat(chat, force: false, clearBackStack: true);
                     HideTopicList();
                 }
             }
