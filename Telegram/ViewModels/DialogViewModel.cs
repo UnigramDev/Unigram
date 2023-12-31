@@ -756,14 +756,18 @@ namespace Telegram.ViewModels
                 lastMessageId = chat.LastMessage?.Id ?? long.MaxValue;
             }
 
-            if (TryGetLastVisibleMessageId(out long id, out _) && id < lastReadMessageId)
+            if (TryGetLastVisibleMessageId(out long lastVisibleId, out int lastVisibleIndex))
             {
-                return LoadMessageSliceAsync(null, lastReadMessageId, VerticalAlignment.Top, disableAnimation: false);
+                var firstNonVisibleId = lastVisibleIndex < Items.Count - 1
+                    ? Items[lastVisibleIndex + 1].Id
+                    : lastVisibleId;
+                if (firstNonVisibleId < lastReadMessageId)
+                {
+                    return LoadMessageSliceAsync(null, lastReadMessageId, VerticalAlignment.Top, disableAnimation: false);
+                }
             }
-            else
-            {
-                return LoadMessageSliceAsync(null, lastMessageId, VerticalAlignment.Top, disableAnimation: false);
-            }
+
+            return LoadMessageSliceAsync(null, lastMessageId, VerticalAlignment.Top, disableAnimation: false);
         }
 
         private bool TryGetLastVisibleMessageId(out long id, out int index)
