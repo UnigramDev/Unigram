@@ -406,12 +406,19 @@ namespace Telegram.ViewModels.Drawers
                 return null;
             }
 
-            IList<AvailableReaction> source = available.TopReactions.Take(6).ToList();
+            var sum = available.TopReactions.Count
+                + available.RecentReactions.Count
+                + available.PopularReactions.Count;
+
+            var select = available.AllowCustomEmoji || sum > 7;
+            var count = select ? 6 : 7;
+
+            IList<AvailableReaction> source = available.TopReactions.Take(count).ToList();
             IList<AvailableReaction> additional = available.RecentReactions.Count > 0
                 ? available.RecentReactions
                 : available.PopularReactions;
 
-            if (source.Count < 6)
+            if (source.Count < count)
             {
                 available.TopReactions
                     .Select(x => x.Type)
@@ -434,7 +441,7 @@ namespace Telegram.ViewModels.Drawers
 
                     source.Add(item);
 
-                    if (source.Count == 6)
+                    if (source.Count == count)
                     {
                         break;
                     }
