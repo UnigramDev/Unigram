@@ -619,7 +619,7 @@ namespace Telegram.Controls.Messages
         private void Photo_Click(object sender, RoutedEventArgs e)
         {
             var message = _message;
-            if (message == null)
+            if (message?.Delegate == null)
             {
                 return;
             }
@@ -976,17 +976,17 @@ namespace Telegram.Controls.Messages
                 var title = string.Empty;
                 var bold = true;
 
-                if (message.ForwardInfo?.Origin is MessageOriginUser fromUser)
+                if (message.ForwardInfo?.Origin is MessageOriginUser fromUser && message.ClientService.TryGetUser(fromUser.SenderUserId, out User fromUserUser))
                 {
-                    title = message.ClientService.GetUser(fromUser.SenderUserId)?.FullName();
+                    title = fromUserUser.FullName();
                 }
-                else if (message.ForwardInfo?.Origin is MessageOriginChat fromChat)
+                else if (message.ForwardInfo?.Origin is MessageOriginChat fromChat && message.ClientService.TryGetChat(fromChat.SenderChatId, out Chat fromChatChat))
                 {
-                    title = message.ClientService.GetTitle(message.ClientService.GetChat(fromChat.SenderChatId));
+                    title = fromChatChat.Title;
                 }
-                else if (message.ForwardInfo?.Origin is MessageOriginChannel fromChannel)
+                else if (message.ForwardInfo?.Origin is MessageOriginChannel fromChannel && message.ClientService.TryGetChat(fromChannel.ChatId, out Chat fromChannelChat))
                 {
-                    title = message.ClientService.GetTitle(message.ClientService.GetChat(fromChannel.ChatId));
+                    title = fromChannelChat.Title;
                 }
                 else if (message.ForwardInfo?.Origin is MessageOriginHiddenUser fromHiddenUser)
                 {
