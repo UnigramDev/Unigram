@@ -70,6 +70,8 @@ namespace Telegram.Controls.Chats
         private void OnUnloaded(object sender, RoutedEventArgs e)
         {
             XamlRoot.Changed -= OnRasterizationScaleChanged;
+
+            UpdateManager.Unsubscribe(this, ref _fileToken, true);
         }
 
         private void OnRasterizationScaleChanged(XamlRoot sender, XamlRootChangedEventArgs args)

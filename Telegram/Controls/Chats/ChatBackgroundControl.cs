@@ -190,6 +190,10 @@ namespace Telegram.Controls.Chats
                 return prevWallpaper.IsBlurred == nextWallpaper.IsBlurred
                     && prev.Document?.DocumentValue.Id == next.Document?.DocumentValue.Id;
             }
+            else if (prev.Type is BackgroundTypeChatTheme prevChatTheme && next.Type is BackgroundTypeChatTheme nextChatTheme)
+            {
+                return string.Equals(prevChatTheme.ThemeName, nextChatTheme.ThemeName);
+            }
 
             return Equals(prev, next);
         }
