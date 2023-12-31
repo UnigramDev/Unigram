@@ -4,7 +4,6 @@
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
-using Microsoft.Graphics.Canvas.UI.Xaml;
 using System;
 using Telegram.Common;
 using Telegram.Controls;
@@ -36,8 +35,6 @@ namespace Telegram.Views.Calls
 
         private VoipGroupManager _manager;
         private bool _disposed;
-
-        private readonly ButtonWavesDrawable _drawable = new();
 
         private readonly DispatcherTimer _scheduledTimer;
         private readonly DispatcherTimer _debouncerTimer;
@@ -582,11 +579,6 @@ namespace Telegram.Views.Calls
             }
 
             await this.ShowPopupAsync(_clientService.SessionId, typeof(ChooseChatsPopup), new ChooseChatsConfigurationGroupCall(call));
-        }
-
-        private void AudioCanvas_Draw(CanvasControl sender, CanvasDrawEventArgs args)
-        {
-            _drawable.Draw(sender, args.DrawingSession);
         }
 
         private readonly ScrollViewer _scrollingHost;

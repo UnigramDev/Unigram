@@ -34,6 +34,23 @@ namespace Telegram.Composition
             return surfaceBrush;
         }
 
+        public static CompositionBrush CreateRedirectBrush(this Compositor compositor, Visual source, Vector2 sourceOffset, Vector2 sourceSize)
+        {
+            // Create a VisualSurface positioned at the same location as this control and feed that
+            // through the color effect.
+            var surfaceBrush = compositor.CreateSurfaceBrush();
+            var surface = compositor.CreateVisualSurface();
+
+            // Select the source visual and the offset/size of this control in that element's space.
+            surface.SourceVisual = source;
+            surface.SourceOffset = sourceOffset;
+            surface.SourceSize = sourceSize;
+            surfaceBrush.Surface = surface;
+            surfaceBrush.Stretch = CompositionStretch.Fill;
+
+            return surfaceBrush;
+        }
+
         public static SpriteVisual CreateRedirectVisual(this Compositor compositor, UIElement source, Vector2 sourceOffset, Vector2 sourceSize, bool freeze = false)
         {
             var redirect = compositor.CreateSpriteVisual();

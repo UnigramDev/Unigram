@@ -192,6 +192,7 @@
     <Compile Include="Charts\LookupTableInterpolator.cs" />
     <Compile Include="Collections\SynchronizedList.cs" />
     <Compile Include="Common\BezierPoint.cs" />
+    <Compile Include="Composition\CompositionVoiceBlobVisual.cs" />
     <Compile Include="Composition\CompositionBlobVisual.cs" />
     <Compile Include="Composition\CompositionCurveVisual.cs" />
     <Compile Include="Composition\CompositionVSync.cs" />
@@ -234,7 +235,6 @@
       <DependentUpon>ChatTranslateBar.xaml</DependentUpon>
     </Compile>
     <Compile Include="Controls\FrameworkElementEx.cs" />
-    <Compile Include="Controls\Media\WaveDrawable.cs" />
     <Compile Include="Controls\Messages\Content\StickerContent.xaml.cs">
       <DependentUpon>StickerContent.xaml</DependentUpon>
     </Compile>

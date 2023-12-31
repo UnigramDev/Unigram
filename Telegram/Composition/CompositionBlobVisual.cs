@@ -58,9 +58,9 @@ namespace Telegram.Composition
             _visual.Shapes.Add(largeShape);
             _visual.Shapes.Add(smallShape);
 
-            _smallBlob = new CompositionBlobShape(smallShape, size, 8, 0.1f, 0.5f, 0.2f, 0.6f, 0.45f, 0.55f, 0.2f);
-            _mediumBlob = new CompositionBlobShape(mediumShape, size, 8, 1, 1, 0.9f, 4, 0.55f, 0.87f, 0.2f);
-            _largeBlob = new CompositionBlobShape(largeShape, size, 8, 1, 1, 0.9f, 4, 0.57f, 1.0f, 0.2f);
+            _smallBlob = new CompositionBlobShape(smallShape, size, 8, 0.1f, 0.5f, 0.2f, 0.6f, 0.45f, 0.55f);
+            _mediumBlob = new CompositionBlobShape(mediumShape, size, 8, 1, 1, 0.9f, 4, 0.55f, 0.87f);
+            _largeBlob = new CompositionBlobShape(largeShape, size, 8, 1, 1, 0.9f, 4, 0.57f, 1.0f);
 
             ElementCompositionPreview.SetElementChildVisual(element, _visual);
 
@@ -219,7 +219,6 @@ namespace Telegram.Composition
 
         private readonly float _minScale;
         private readonly float _maxScale;
-        private readonly float _scaleSpeed;
 
         private readonly bool _isCircle;
 
@@ -252,7 +251,7 @@ namespace Telegram.Composition
 
         private readonly Random _random = new();
 
-        public CompositionBlobShape(CompositionSpriteShape shape, Vector2 size, int pointsCount, float minRandomness, float maxRandomness, float minSpeed, float maxSpeed, float minScale, float maxScale, float scaleSpeed)
+        public CompositionBlobShape(CompositionSpriteShape shape, Vector2 size, int pointsCount, float minRandomness, float maxRandomness, float minSpeed, float maxSpeed, float minScale, float maxScale)
         {
             _shape = shape;
             _shapeLayer = shape.Geometry as CompositionPathGeometry;
@@ -266,8 +265,6 @@ namespace Telegram.Composition
             _maxSpeed = maxSpeed;
             _minScale = minScale;
             _maxScale = maxScale;
-            _scaleSpeed = scaleSpeed;
-
 
             var angle = (MathF.PI * 2) / (float)pointsCount;
             _smoothness = ((4 / 3) * MathF.Tan(angle / 4)) / MathF.Sin(angle / 2) / 2;

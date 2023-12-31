@@ -4,8 +4,6 @@
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
-using Microsoft.Graphics.Canvas;
-using Microsoft.Graphics.Canvas.Brushes;
 using Microsoft.Graphics.Canvas.UI.Xaml;
 using System;
 using System.Collections.Concurrent;
@@ -14,6 +12,7 @@ using System.Collections.Immutable;
 using System.Linq;
 using System.Numerics;
 using Telegram.Common;
+using Telegram.Composition;
 using Telegram.Controls;
 using Telegram.Controls.Cells;
 using Telegram.Controls.Media;
@@ -59,7 +58,7 @@ namespace Telegram.Views.Calls
         private readonly Dictionary<string, GroupCallParticipantGridCell> _prevList = new();
         private readonly Dictionary<string, GroupCallParticipantGridCell> _listCells = new();
 
-        private readonly ButtonWavesDrawable _drawable = new();
+        private readonly CompositionVoiceBlobVisual _visual;
 
         private readonly DispatcherTimer _scheduledTimer;
         private readonly DispatcherTimer _debouncerTimer;
@@ -77,6 +76,8 @@ namespace Telegram.Views.Calls
 
             _clientService = clientService;
             _aggregator = aggregator;
+
+            _visual = new CompositionVoiceBlobVisual(AudioBlob, 300, 300, 1.5f);
 
             _dispatcherQueue = DispatcherQueue.GetForCurrentThread();
 
@@ -306,7 +307,7 @@ namespace Telegram.Views.Calls
             RemoveChildren(false);
             RemoveChildren(true);
 
-            AudioCanvas.RemoveFromVisualTree();
+            _visual.StopAnimating();
         }
 
         private void RemoveChildren(bool list)
@@ -416,8 +417,8 @@ namespace Telegram.Views.Calls
                     column.Width = new GridLength(48 + 12 + 12, GridUnitType.Pixel);
                 }
 
-                _drawable.SetSize(true);
-                AudioCanvas.Margin = new Thickness(-126, -126, -126, -126);
+                _visual.Scale = new Vector3(0.5f);
+                AudioBlob.Margin = new Thickness(-126, -126, -126, -126);
 
                 Audio.Width = Lottie.Width = 48;
                 Audio.Height = Lottie.Height = 48;
@@ -432,9 +433,9 @@ namespace Telegram.Views.Calls
                 Grid.SetColumn(Video, 1);
                 Grid.SetColumn(VideoInfo, 1);
 
-                Grid.SetColumn(AudioCanvas, 2);
-                Grid.SetRow(AudioCanvas, 1);
-                Grid.SetRowSpan(AudioCanvas, 1);
+                Grid.SetColumn(AudioBlob, 2);
+                Grid.SetRow(AudioBlob, 1);
+                Grid.SetRowSpan(AudioBlob, 1);
 
                 Grid.SetColumn(Audio, 2);
                 Grid.SetRow(Audio, 1);
@@ -487,8 +488,8 @@ namespace Telegram.Views.Calls
                     column.Width = new GridLength(1, GridUnitType.Auto);
                 }
 
-                _drawable.SetSize(false);
-                AudioCanvas.Margin = new Thickness(-102, -102, -102, -102);
+                _visual.Scale = new Vector3(1);
+                AudioBlob.Margin = new Thickness(-102, -102, -102, -102);
 
                 Audio.Width = Lottie.Width = 96;
                 Audio.Height = Lottie.Height = 96;
@@ -503,9 +504,9 @@ namespace Telegram.Views.Calls
                 Grid.SetColumn(Video, 0);
                 Grid.SetColumn(VideoInfo, 0);
 
-                Grid.SetColumn(AudioCanvas, 1);
-                Grid.SetRow(AudioCanvas, 0);
-                Grid.SetRowSpan(AudioCanvas, 3);
+                Grid.SetColumn(AudioBlob, 1);
+                Grid.SetRow(AudioBlob, 0);
+                Grid.SetRowSpan(AudioBlob, 3);
 
                 Grid.SetColumn(Audio, 1);
                 Grid.SetRow(Audio, 0);
@@ -700,7 +701,7 @@ namespace Telegram.Views.Calls
 
             var root = ElementCompositionPreview.GetElementVisual(BottomRoot);
             var list = ElementCompositionPreview.GetElementVisual(ScrollingHost);
-            var audio1 = ElementCompositionPreview.GetElementVisual(AudioCanvas);
+            var audio1 = ElementCompositionPreview.GetElementVisual(AudioBlob);
             var audio2 = ElementCompositionPreview.GetElementVisual(Lottie);
             var audioInfo = ElementCompositionPreview.GetElementVisual(AudioInfo);
             var video = ElementCompositionPreview.GetElementVisual(Video);
@@ -725,7 +726,7 @@ namespace Telegram.Views.Calls
 
             ElementCompositionPreview.SetIsTranslationEnabled(BottomRoot, true);
             ElementCompositionPreview.SetIsTranslationEnabled(ScrollingHost, true);
-            ElementCompositionPreview.SetIsTranslationEnabled(AudioCanvas, true);
+            ElementCompositionPreview.SetIsTranslationEnabled(AudioBlob, true);
             ElementCompositionPreview.SetIsTranslationEnabled(Lottie, true);
             ElementCompositionPreview.SetIsTranslationEnabled(AudioInfo, true);
             ElementCompositionPreview.SetIsTranslationEnabled(Video, true);
@@ -1008,7 +1009,8 @@ namespace Telegram.Views.Calls
 
                 if (level.AudioSource == 0)
                 {
-                    _drawable.SetAmplitude(Math.Min(8500, value * 4000) / 8500);
+                    _visual.UpdateLevel(value);
+                    //_drawable.SetAmplitude(Math.Min(8500, value * 4000) / 8500);
                 }
 
                 if (participants.TryGetFromAudioSourceId(level.AudioSource, out var participant))
@@ -1226,7 +1228,7 @@ namespace Telegram.Views.Calls
                 }
             }
             //else if (currentUser != null && currentUser.CanBeUnmutedForAllUsers)
-            else if (currentUser != null && currentUser.CanUnmuteSelf && _service.IsMuted)
+            else if (currentUser != null && _service.IsMuted || (currentUser.IsMutedForAllUsers && currentUser.CanUnmuteSelf))
             {
                 SetButtonState(ButtonState.Mute);
             }
@@ -1353,18 +1355,18 @@ namespace Telegram.Views.Calls
             switch (colors)
             {
                 case ButtonColors.Disabled:
-                    _drawable.SetColors(0xff57A4FE, 0xffF05459, 0xff766EE9);
-                    AudioCanvas.Invalidate();
+                    _visual.SetColorStops(0xff57A4FE, 0xffF05459, 0xff766EE9);
+                    StartAnimating();
                     Settings.Background = new SolidColorBrush { Color = Color.FromArgb(0x66, 0x76, 0x6E, 0xE9) };
                     break;
                 case ButtonColors.Unmute:
-                    _drawable.SetColors(0xFF0078ff, 0xFF33c659);
-                    AudioCanvas.Invalidate();
+                    _visual.SetColorStops(0xFF0078ff, 0xFF33c659);
+                    StartAnimating();
                     Settings.Background = new SolidColorBrush { Color = Color.FromArgb(0x66, 0x33, 0xc6, 0x59) };
                     break;
                 case ButtonColors.Mute:
-                    _drawable.SetColors(0xFF59c7f8, 0xFF0078ff);
-                    AudioCanvas.Invalidate();
+                    _visual.SetColorStops(0xFF59c7f8, 0xFF0078ff);
+                    StartAnimating();
                     Settings.Background = new SolidColorBrush { Color = Color.FromArgb(0x66, 0x00, 0x78, 0xff) };
                     break;
             }
@@ -1373,6 +1375,19 @@ namespace Telegram.Views.Calls
 
             UpdateVideo();
             UpdateScreen();
+        }
+
+        private void StartAnimating()
+        {
+            if (PowerSavingPolicy.AreMaterialsEnabled && ApiInfo.CanAnimatePaths)
+            {
+                _visual.StartAnimating();
+            }
+            else
+            {
+                _visual.StopAnimating();
+                _visual.Clear();
+            }
         }
 
         private void UpdateVideo()
@@ -1711,11 +1726,6 @@ namespace Telegram.Views.Calls
             }
 
             await this.ShowPopupAsync(_clientService.SessionId, typeof(ChooseChatsPopup), new ChooseChatsConfigurationGroupCall(call));
-        }
-
-        private void AudioCanvas_Draw(CanvasControl sender, CanvasDrawEventArgs args)
-        {
-            _drawable.Draw(sender, args.DrawingSession);
         }
 
         private void OnChoosingItemContainer(ListViewBase sender, ChoosingItemContainerEventArgs args)
@@ -2376,6 +2386,15 @@ namespace Telegram.Views.Calls
 
             _bottomRootCollapsed = !show;
 
+            if (show)
+            {
+                StartAnimating();
+            }
+            else
+            {
+                _visual.StopAnimating();
+            }
+
             var anim = Window.Current.Compositor.CreateScalarKeyFrameAnimation();
             anim.InsertKeyFrame(0, show ? 0 : 1);
             anim.InsertKeyFrame(1, show ? 1 : 0);
@@ -2417,209 +2436,6 @@ namespace Telegram.Views.Calls
             visual.StartAnimation("Translation", animation);
 
             UpdateVisibleParticipants(false);
-        }
-    }
-
-    public class ButtonWavesDrawable
-    {
-        private readonly BlobDrawable _buttonWaveDrawable = new BlobDrawable(3);
-        private readonly BlobDrawable _tinyWaveDrawable = new BlobDrawable(6);
-        private readonly BlobDrawable _bigWaveDrawable = new BlobDrawable(9);
-
-        private float _amplitude;
-        private float _animateAmplitudeDiff;
-        private float _animateToAmplitude;
-
-        private bool _small;
-
-        private uint[] _stops;
-
-        public ButtonWavesDrawable()
-        {
-            //this.buttonWaveDrawable.minRadius = 57.0f;
-            //this.buttonWaveDrawable.maxRadius = 63.0f;
-            //this.buttonWaveDrawable.generateBlob();
-            //this.tinyWaveDrawable.minRadius = 62.0f;
-            //this.tinyWaveDrawable.maxRadius = 72.0f;
-            //this.tinyWaveDrawable.generateBlob();
-            //this.bigWaveDrawable.minRadius = 65.0f;
-            //this.bigWaveDrawable.maxRadius = 75.0f;
-            //this.bigWaveDrawable.generateBlob();
-            _buttonWaveDrawable.minRadius = 48.0f;
-            _buttonWaveDrawable.maxRadius = 48.0f;
-            _buttonWaveDrawable.GenerateBlob();
-            _tinyWaveDrawable.minRadius = 50.0f;
-            _tinyWaveDrawable.maxRadius = 50.0f;
-            _tinyWaveDrawable.GenerateBlob();
-            _bigWaveDrawable.minRadius = 52.0f;
-            _bigWaveDrawable.maxRadius = 52.0f;
-            _bigWaveDrawable.GenerateBlob();
-            _tinyWaveDrawable.paint.A = 38;
-            _bigWaveDrawable.paint.A = 76;
-        }
-
-        public void SetSize(bool small)
-        {
-            _small = small;
-            _buttonWaveDrawable.minRadius = small ? 24 : 48.0f;
-            _buttonWaveDrawable.maxRadius = small ? 24 : 48.0f;
-            _buttonWaveDrawable.GenerateBlob();
-            _tinyWaveDrawable.minRadius = small ? 25 : 50.0f;
-            _tinyWaveDrawable.maxRadius = small ? 25 : 50.0f;
-            _tinyWaveDrawable.GenerateBlob();
-            _bigWaveDrawable.minRadius = small ? 26 : 52.0f;
-            _bigWaveDrawable.maxRadius = small ? 26 : 52.0f;
-            _bigWaveDrawable.GenerateBlob();
-        }
-
-        public void SetAmplitude(float amplitude)
-        {
-            _animateToAmplitude = amplitude;
-            _animateAmplitudeDiff = (amplitude - _amplitude) / ((BlobDrawable.AMPLITUDE_SPEED * 500.0f) + 100.0f);
-        }
-
-        public void SetColors(params uint[] stops)
-        {
-            if (_stops != null && stops.SequenceEqual(_stops))
-            {
-                return;
-            }
-
-            _stops = stops;
-            _layerGradient = null;
-        }
-
-        private ulong _lastUpdateTime;
-
-        private CanvasRenderTarget _target;
-        private CanvasImageBrush _layer;
-        private CanvasRadialGradientBrush _layerGradient;
-        private CanvasRadialGradientBrush _maskGradient;
-
-        public void Draw(CanvasControl view, CanvasDrawingSession canvas)
-        {
-            ulong elapsedRealtime = Logger.TickCount;
-            ulong access = elapsedRealtime - _lastUpdateTime;
-            ulong unused = _lastUpdateTime = elapsedRealtime;
-            if (access > 20)
-            {
-                access = 17;
-            }
-            ulong j = access;
-
-            //this.tinyWaveDrawable.minRadius = 62.0f;
-            //this.tinyWaveDrawable.maxRadius = 62.0f + (20.0f * BlobDrawable.FORM_SMALL_MAX);
-            //this.bigWaveDrawable.minRadius = 65.0f;
-            //this.bigWaveDrawable.maxRadius = 65.0f + (20.0f * BlobDrawable.FORM_BIG_MAX);
-            //this.buttonWaveDrawable.minRadius = 57.0f;
-            //this.buttonWaveDrawable.maxRadius = 57.0f + (12.0f * BlobDrawable.FORM_BUTTON_MAX);
-            _tinyWaveDrawable.minRadius = 50.0f;
-            _tinyWaveDrawable.maxRadius = 50.0f + (20.0f * BlobDrawable.FORM_SMALL_MAX);
-            _bigWaveDrawable.minRadius = 52.0f;
-            _bigWaveDrawable.maxRadius = 52.0f + (20.0f * BlobDrawable.FORM_BIG_MAX);
-            _buttonWaveDrawable.minRadius = 48.0f;
-            _buttonWaveDrawable.maxRadius = 48.0f + (12.0f * BlobDrawable.FORM_BUTTON_MAX);
-
-            if (_small)
-            {
-                _tinyWaveDrawable.minRadius /= 2;
-                _tinyWaveDrawable.maxRadius /= 2;
-                _bigWaveDrawable.minRadius /= 2;
-                _bigWaveDrawable.maxRadius /= 2;
-                _buttonWaveDrawable.minRadius /= 2;
-                _buttonWaveDrawable.maxRadius /= 2;
-            }
-
-            if (_animateToAmplitude != _amplitude)
-            {
-                _amplitude += (_animateAmplitudeDiff * j);
-
-                if (_animateAmplitudeDiff > 0.0f)
-                {
-                    if (_amplitude > _animateToAmplitude)
-                    {
-                        _amplitude = _animateToAmplitude;
-                    }
-                }
-                else if (_amplitude < _animateToAmplitude)
-                {
-                    _amplitude = _animateToAmplitude;
-                }
-                view.Invalidate();
-            }
-
-            _bigWaveDrawable.Update(_amplitude, 1.0f);
-            _tinyWaveDrawable.Update(_amplitude, 1.0f);
-            _buttonWaveDrawable.Update(_amplitude, 0.4f);
-
-            _target ??= new CanvasRenderTarget(canvas, 300, 300);
-
-            using (var session = _target.CreateDrawingSession())
-            {
-                _maskGradient ??= new CanvasRadialGradientBrush(session, Color.FromArgb(0x77, 0xFF, 0xFF, 0xFF), Color.FromArgb(0x00, 0xFF, 0xFF, 0xFF))
-                {
-                    Center = new Vector2(150, 150)
-                };
-
-                float bigScale = BlobDrawable.SCALE_BIG_MIN + (BlobDrawable.SCALE_BIG * _amplitude);
-                float tinyScale = BlobDrawable.SCALE_SMALL_MIN + (BlobDrawable.SCALE_SMALL * _amplitude);
-                float glowScale = bigScale * BlobDrawable.LIGHT_GRADIENT_SIZE + 0.7f;
-
-                _maskGradient.RadiusX = 84 * glowScale;
-                _maskGradient.RadiusY = 84 * glowScale;
-
-                if (_small)
-                {
-                    _maskGradient.RadiusX /= 2;
-                    _maskGradient.RadiusY /= 2;
-                }
-
-                session.Clear(Colors.Transparent);
-                session.FillEllipse(new Vector2(150, 150), _maskGradient.RadiusX, _maskGradient.RadiusY, _maskGradient);
-                session.Transform = Matrix3x2.CreateScale(bigScale, new Vector2(150, 150));
-                _bigWaveDrawable.Draw(session, 150, 150);
-                session.Transform = Matrix3x2.CreateScale(tinyScale, new Vector2(150, 150));
-                _tinyWaveDrawable.Draw(session, 150, 150);
-                session.Transform = Matrix3x2.Identity;
-                _buttonWaveDrawable.Draw(session, 150, 150);
-            }
-
-            _layer ??= new CanvasImageBrush(canvas, _target);
-
-            using (var layer = canvas.CreateLayer(_layer))
-            {
-                if (_layerGradient == null && _stops != null)
-                {
-                    var stops = new CanvasGradientStop[_stops.Length];
-
-                    for (int i = 0; i < _stops.Length; i++)
-                    {
-                        stops[i] = new CanvasGradientStop
-                        {
-                            Color = ColorEx.FromHex(_stops[i]),
-                            Position = i / (_stops.Length - 1f)
-                        };
-                    }
-
-                    _layerGradient = new CanvasRadialGradientBrush(canvas, stops);
-                    _layerGradient.RadiusX = MathF.Sqrt(200 * 200 + 200 * 200);
-                    _layerGradient.RadiusY = MathF.Sqrt(200 * 200 + 200 * 200);
-                    _layerGradient.Center = new Vector2(300, 0);
-                    //_layerGradient.RadiusX = 120;
-                    //_layerGradient.RadiusY = 120;
-                    //_layerGradient.Center = new Vector2(150 + 70, 150 - 70);
-                }
-
-                if (_layerGradient != null)
-                {
-                    canvas.FillRectangle(0, 0, 300, 300, _layerGradient);
-                }
-            }
-
-            if (PowerSavingPolicy.AreCallsAnimated)
-            {
-                view.Invalidate();
-            }
         }
     }
 
