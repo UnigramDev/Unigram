@@ -215,12 +215,12 @@ namespace Telegram.ViewModels
 
         public int Verbosity
         {
-            get => Array.IndexOf(_verbosityIndexer, Settings.VerbosityLevel);
+            get => Array.IndexOf(_verbosityIndexer, SettingsService.Current.VerbosityLevel);
             set
             {
-                if (value >= 0 && value < _verbosityIndexer.Length && Settings.VerbosityLevel != _verbosityIndexer[value])
+                if (value >= 0 && value < _verbosityIndexer.Length && SettingsService.Current.VerbosityLevel != _verbosityIndexer[value])
                 {
-                    Client.Execute(new SetLogVerbosityLevel(Settings.VerbosityLevel = _verbosityIndexer[value]));
+                    Client.Execute(new SetLogVerbosityLevel(SettingsService.Current.VerbosityLevel = _verbosityIndexer[value]));
                     RaisePropertyChanged();
                 }
             }

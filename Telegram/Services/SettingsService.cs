@@ -311,7 +311,7 @@ namespace Telegram.Services
         private static VoIPSettings _voip;
         public VoIPSettings VoIP => _voip ??= new VoIPSettings();
 
-        private int? _verbosityLevel;
+        private static int? _verbosityLevel;
         public int VerbosityLevel
         {
             get => _verbosityLevel ??= GetValueOrDefault(_local, "VerbosityLevel", Constants.DEBUG ? 4 : 2);
