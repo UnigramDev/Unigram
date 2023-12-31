@@ -1018,11 +1018,12 @@
                                       ItemContainerStyle="{StaticResource DefaultListViewItemStyle}"
                                       ItemClick="ListView_ItemClick"
                                       IsItemClickEnabled="True"
+                                      ChoosingItemContainer="Calls_ChoosingItemContainer"
                                       ContainerContentChanging="Calls_ContainerContentChanging"
                                       SelectionMode="None">
                                 <ListView.ItemTemplate>
                                     <DataTemplate>
-                                        <cells:CallCell ContextRequested="Call_ContextRequested" />
+                                        <cells:CallCell />
                                     </DataTemplate>
                                 </ListView.ItemTemplate>
                                 <!--<ListView.ItemContainerTransitions>

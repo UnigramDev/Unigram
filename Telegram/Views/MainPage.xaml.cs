@@ -2099,6 +2099,19 @@ namespace Telegram.Views
             args.Handled = true;
         }
 
+        private void Calls_ChoosingItemContainer(ListViewBase sender, ChoosingItemContainerEventArgs args)
+        {
+            if (args.ItemContainer == null)
+            {
+                args.ItemContainer = new TextListViewItem();
+                args.ItemContainer.Style = sender.ItemContainerStyle;
+                args.ItemContainer.ContentTemplate = sender.ItemTemplate;
+                args.ItemContainer.ContextRequested += Call_ContextRequested;
+            }
+
+            args.IsContainerPrepared = true;
+        }
+
         private void Calls_ContainerContentChanging(ListViewBase sender, ContainerContentChangingEventArgs args)
         {
             if (args.InRecycleQueue)
