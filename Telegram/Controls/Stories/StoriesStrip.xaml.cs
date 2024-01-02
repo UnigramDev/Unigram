@@ -237,7 +237,7 @@ namespace Telegram.Controls.Stories
                         return;
                     }
 
-                    var transform = container.TransformToVisual(Window.Current.Content);
+                    var transform = container.TransformToVisual(null);
                     var point = transform.TransformPoint(new Point());
 
                     var origin = new Rect(point.X + 8 + 4, point.Y + 12 + 4, 40, 40);
@@ -258,7 +258,7 @@ namespace Telegram.Controls.Stories
             var container = ScrollingHost.ContainerFromItem(activeStories) as SelectorItem;
             if (container != null)
             {
-                var transform = container.TransformToVisual(Window.Current.Content);
+                var transform = container.TransformToVisual(null);
                 var point = transform.TransformPoint(new Point());
 
                 return new Rect(point.X + 8 + 4, point.Y + 12 + 4, 40, 40);

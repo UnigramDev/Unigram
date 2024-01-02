@@ -2667,7 +2667,7 @@ namespace Telegram.Controls.Messages
 
         private Rect GetStoryOrigin(ActiveStoriesViewModel activeStories)
         {
-            var transform = Reply.TransformToVisual(Window.Current.Content);
+            var transform = Reply.TransformToVisual(null);
             var point = transform.TransformPoint(new Windows.Foundation.Point());
 
             return new Rect(point.X + 10, point.Y + 4, 36, 36);

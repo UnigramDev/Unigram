@@ -123,7 +123,7 @@ namespace Telegram.Controls.Messages.Content
                     var reference = RandomAccessStreamReference.CreateFromStream(stream);
                     var system = await Windows.ApplicationModel.Contacts.ContactManager.ConvertVCardToContactAsync(reference);
 
-                    var transform = TransformToVisual(Window.Current.Content);
+                    var transform = TransformToVisual(null);
                     var point = transform.TransformPoint(new Point());
 
                     Windows.ApplicationModel.Contacts.ContactManager.ShowContactCard(system, new Rect(point.X, point.Y, ActualWidth, ActualHeight));

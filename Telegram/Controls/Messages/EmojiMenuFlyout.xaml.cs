@@ -118,7 +118,7 @@ namespace Telegram.Controls.Messages
 
         private void Initialize(IClientService clientService, FrameworkElement element, EmojiFlyoutAlignment alignment, EmojiDrawerViewModel viewModel = null)
         {
-            var transform = element.TransformToVisual(Window.Current.Content);
+            var transform = element.TransformToVisual(null);
             var position = transform.TransformPoint(new Point());
 
             var count = 8;

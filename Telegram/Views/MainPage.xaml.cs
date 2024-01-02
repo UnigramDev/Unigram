@@ -3451,7 +3451,7 @@ namespace Telegram.Views
                     var container = ChatsList.ContainerFromItem(story.Chat) as SelectorItem;
                     if (container != null)
                     {
-                        var transform = container.TransformToVisual(Window.Current.Content);
+                        var transform = container.TransformToVisual(null);
                         var point = transform.TransformPoint(new Point());
 
                         return new Rect(point.X + 4 + 8, point.Y + 4 + 8, 40, 40);

@@ -52,7 +52,7 @@ namespace Telegram.Controls
                 return;
             }
 
-            var transform = TransformToVisual(Window.Current.Content);
+            var transform = TransformToVisual(null);
             var point = transform.TransformPoint(new Point());
 
             var pointz = new Rect(point.X + 4, point.Y + 4, side - 8, side - 8);

@@ -690,7 +690,7 @@ namespace Telegram.Views
             {
                 segments.Open(ViewModel.NavigationService, ViewModel.ClientService, chat, 36, story =>
                 {
-                    var transform = Segments.TransformToVisual(Window.Current.Content);
+                    var transform = Segments.TransformToVisual(null);
                     var point = transform.TransformPoint(new Point());
 
                     return new Rect(point.X + 4, point.Y + 4, 28, 28);
@@ -3386,7 +3386,7 @@ namespace Telegram.Views
                 var segments = button.FindName("Segments") as ActiveStoriesSegments;
                 if (segments != null)
                 {
-                    var transform = segments.TransformToVisual(Window.Current.Content);
+                    var transform = segments.TransformToVisual(null);
                     var point = transform.TransformPoint(new Windows.Foundation.Point());
 
                     var origin = new Rect(point.X + 4, point.Y + 4, 112, 112);
@@ -3403,7 +3403,7 @@ namespace Telegram.Views
                     var window = new StoriesWindow();
                     window.Update(viewModel, activeStories, StoryOpenOrigin.Mention, origin, _ =>
                     {
-                        var transform = segments.TransformToVisual(Window.Current.Content);
+                        var transform = segments.TransformToVisual(null);
                         var point = transform.TransformPoint(new Windows.Foundation.Point());
 
                         return new Rect(point.X + 4, point.Y + 4, 112, 112);
