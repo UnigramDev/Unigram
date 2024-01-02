@@ -1,0 +1,135 @@
+<local:HostedPage x:Class="Telegram.Views.Supergroups.SupergroupProfileColorPage"
+                  xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                  xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                  xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                  xmlns:local="using:Telegram.Views"
+                  xmlns:common="using:Telegram.Common"
+                  xmlns:cells="using:Telegram.Controls.Cells"
+                  xmlns:controls="using:Telegram.Controls"
+                  xmlns:chats="using:Telegram.Controls.Chats"
+                  xmlns:messages="using:Telegram.Controls.Messages"
+                  xmlns:primitives="using:Microsoft.UI.Xaml.Controls.Primitives"
+                  xmlns:popups="using:Telegram.Views.Popups"
+                  mc:Ignorable="d">
+
+    <Page.Transitions>
+        <TransitionCollection>
+            <NavigationThemeTransition>
+                <SlideNavigationTransitionInfo Effect="FromRight" />
+            </NavigationThemeTransition>
+        </TransitionCollection>
+    </Page.Transitions>
+
+    <local:HostedPage.Action>
+        <Button Content="{CustomResource Save}"
+                Style="{StaticResource AccentButtonStyle}"
+                Click="{x:Bind ViewModel.Commit}" />
+    </local:HostedPage.Action>
+
+    <Grid>
+        <ScrollViewer x:Name="ScrollingHost"
+                      VerticalScrollBarVisibility="Auto"
+                      VerticalScrollMode="Auto">
+            <controls:SettingsPanel>
+                <popups:ChooseNameColorView x:Name="NameView"
+                                            SelectedAccentColor="{x:Bind ViewModel.SelectedAccentColor, Mode=TwoWay}"
+                                            SelectedCustomEmojiId="{x:Bind ViewModel.SelectedCustomEmojiId, Mode=TwoWay}"
+                                            RequiredLevel="{x:Bind ViewModel.CustomEmojiRequiredLevel, Mode=OneWay}" />
+
+                <controls:HeaderedControl>
+                    <GridView x:Name="List"
+                              Background="{ThemeResource SettingsItemBackground}"
+                              BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                              ItemsSource="{x:Bind ViewModel.ChatThemes}"
+                              SelectedItem="{x:Bind ViewModel.SelectedChatTheme, Mode=TwoWay}"
+                              SelectionMode="Single"
+                              SingleSelectionFollowsFocus="False"
+                              ChoosingItemContainer="OnChoosingItemContainer"
+                              ContainerContentChanging="OnContainerContentChanging"
+                              ScrollViewer.HorizontalScrollBarVisibility="Auto"
+                              ScrollViewer.HorizontalScrollMode="Auto"
+                              ScrollViewer.VerticalScrollBarVisibility="Disabled"
+                              ScrollViewer.VerticalScrollMode="Disabled"
+                              ItemContainerTransitions="{x:Null}"
+                              Padding="12,16,0,12">
+                        <GridView.ItemTemplate>
+                            <DataTemplate>
+                                <cells:ChatThemeCell Width="87" />
+                            </DataTemplate>
+                        </GridView.ItemTemplate>
+                        <GridView.ItemContainerStyle>
+                            <Style TargetType="GridViewItem"
+                                   BasedOn="{StaticResource DefaultGridViewItemStyle}">
+                                <Setter Property="HorizontalContentAlignment"
+                                        Value="Stretch" />
+                            </Style>
+                        </GridView.ItemContainerStyle>
+                        <GridView.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <ItemsStackPanel Orientation="Horizontal" />
+                            </ItemsPanelTemplate>
+                        </GridView.ItemsPanel>
+                        <GridView.Footer>
+                            <Border Width="12" />
+                        </GridView.Footer>
+                    </GridView>
+
+                    <controls:BadgeButton Style="{StaticResource GlyphBadgeButtonStyle}"
+                                          Glyph="&#xE9E7;"
+                                          IsChevronVisible="True">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition />
+                                <ColumnDefinition />
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Text="{CustomResource ChatWallpaper}" />
+                            <controls:BadgeControl x:Name="CustomBackgroundInfo"
+                                                   Text="{x:Bind ConvertRequiredLevel(ViewModel.CustomBackgroundRequiredLevel, CustomBackgroundInfo), Mode=OneWay}"
+                                                   Background="{ThemeResource PremiumLinearGradientBrush}"
+                                                   FontFamily="{StaticResource EmojiThemeFontFamilyWithSymbols}"
+                                                   VerticalAlignment="Bottom"
+                                                   Margin="4,0,0,0"
+                                                   Grid.Column="1" />
+                        </Grid>
+                    </controls:BadgeButton>
+                </controls:HeaderedControl>
+
+                <popups:ChooseProfileColorView x:Name="ProfileView"
+                                               SelectedAccentColor="{x:Bind ViewModel.SelectedProfileAccentColor, Mode=TwoWay}"
+                                               SelectedCustomEmojiId="{x:Bind ViewModel.SelectedProfileCustomEmojiId, Mode=TwoWay}"
+                                               RequiredLevel="{x:Bind ViewModel.ProfileCustomEmojiRequiredLevel, Mode=OneWay}" />
+
+                <controls:HeaderedControl Footer="{CustomResource ChannelEmojiStatusInfo}">
+                    <Grid>
+                        <controls:BadgeButton x:Name="EmojiStatus"
+                                              Click="EmojiStatus_Click">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition />
+                                    <ColumnDefinition />
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Text="{CustomResource ChannelEmojiStatus}" />
+                                <controls:BadgeControl x:Name="EmojiStatusInfo"
+                                                       Text="{x:Bind ConvertRequiredLevel(ViewModel.EmojiStatusRequiredLevel, EmojiStatusInfo), Mode=OneWay}"
+                                                       Background="{ThemeResource PremiumLinearGradientBrush}"
+                                                       FontFamily="{StaticResource EmojiThemeFontFamilyWithSymbols}"
+                                                       VerticalAlignment="Bottom"
+                                                       Margin="4,0,0,0"
+                                                       Grid.Column="1" />
+                            </Grid>
+                        </controls:BadgeButton>
+                        <controls:AnimatedImage x:Name="Animated"
+                                                FrameSize="20,20"
+                                                DecodeFrameType="Logical"
+                                                Width="20"
+                                                Height="20"
+                                                HorizontalAlignment="Right"
+                                                Margin="0,0,16,0"
+                                                IsHitTestVisible="False" />
+                    </Grid>
+                </controls:HeaderedControl>
+            </controls:SettingsPanel>
+        </ScrollViewer>
+    </Grid>
+</local:HostedPage>

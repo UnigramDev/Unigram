@@ -32,6 +32,7 @@ namespace Telegram.Controls.Cells
             var settings = ActualTheme == ElementTheme.Light ? theme.LightSettings : theme.DarkSettings;
             if (settings == null)
             {
+                NoTheme.Text = theme.IsChannel ? Strings.ChannelNoWallpaper : Strings.ChatNoTheme;
                 NoTheme.Visibility = Visibility.Visible;
 
                 Preview.Visibility = Visibility.Collapsed;

@@ -9,6 +9,7 @@ using Microsoft.UI.Xaml.Media;
 using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
+using Telegram.Common;
 using Telegram.Controls.Media;
 using Telegram.Controls.Messages;
 using Telegram.Navigation;
@@ -85,14 +86,42 @@ namespace Telegram.Views.Popups
 
                 Identity.SetStatus(clientService, user);
 
-                Badge.Content = Strings.UserProfileIcon;
-                ColorHint.Text = Strings.UserProfileHint;
+                BadgeText.Text = Strings.UserProfileIcon;
+                ProfileColor.Footer = Strings.UserProfileHint;
+                Reset.Content = Strings.UserProfileColorReset;
+                PrimaryButtonText = Strings.UserColorApplyIcon;
+            }
+            else if (clientService.TryGetChat(sender, out Chat chat))
+            {
+                customEmojiId = chat.ProfileBackgroundCustomEmojiId;
+                accentColorId = chat.ProfileAccentColorId;
+
+                Segments.UpdateSegments(140, false, true);
+                Photo.SetChat(clientService, chat, 140);
+
+                Title.Text = chat.Title;
+
+                if (clientService.TryGetSupergroup(chat, out Supergroup supergroup))
+                {
+                    if (clientService.TryGetSupergroupFull(chat, out SupergroupFullInfo supergroupFull))
+                    {
+                        Subtitle.Text = Locale.Declension(supergroup.IsChannel ? Strings.R.Subscribers : Strings.R.Members, supergroupFull.MemberCount);
+                    }
+                    else
+                    {
+                        Subtitle.Text = Locale.Declension(supergroup.IsChannel ? Strings.R.Subscribers : Strings.R.Members, supergroup.MemberCount);
+                    }
+                }
+
+                Identity.SetStatus(clientService, chat);
+
+                BadgeText.Text = Strings.ChannelProfileLogo;
+                ProfileColor.Footer = Strings.ChannelProfileInfo;
                 Reset.Content = Strings.UserProfileColorReset;
                 PrimaryButtonText = Strings.UserColorApplyIcon;
             }
 
             var accent = colors.FirstOrDefault(x => x.Id == accentColorId);
-            accent ??= colors.FirstOrDefault();
 
             if (customEmojiId != 0)
             {
@@ -114,12 +143,11 @@ namespace Telegram.Views.Popups
                 Animated.ReplacementColor = null;
             }
 
-            CustomEmojiId = customEmojiId;
+            SelectedCustomEmojiId = customEmojiId;
+            SelectedAccentColor = accent;
+
             List.SelectedItem = accent;
-
-            //BackgroundControl.Update(clientService, null);
-
-            UpdateProfileAccentColor(null, accent.Id, customEmojiId);
+            UpdateProfileAccentColor(null, accent?.Id ?? -1, customEmojiId);
         }
 
         #region Recycle
@@ -160,33 +188,23 @@ namespace Telegram.Views.Popups
 
         #endregion
 
-        public long CustomEmojiId { get; private set; }
-
-        public int ColorId
-        {
-            get
-            {
-                if (List.SelectedItem is ProfileColor colors)
-                {
-                    return colors.Id;
-                }
-
-                return -1;
-            }
-        }
-
         private void OnSelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            //Message1.UpdateMockup(_clientService, _customEmojiId, IndexToId);
-            UpdateProfileAccentColor(null, ColorId, CustomEmojiId);
-
             if (List.SelectedItem is ProfileColor accent)
             {
+                SelectedAccentColor = accent;
+
                 var colors = accent.ForTheme(_actualTheme);
                 Animated.ReplacementColor = new SolidColorBrush(colors.PaletteColors[0]);
+                UpdateProfileAccentColor(null, accent.Id, SelectedCustomEmojiId);
+            }
+            else
+            {
+                SelectedAccentColor = null;
+                UpdateProfileAccentColor(null, -1, SelectedCustomEmojiId);
             }
 
-            Reset.Visibility = ColorId == -1
+            Reset.Visibility = SelectedAccentColor == null
                 ? Visibility.Collapsed
                 : Visibility.Visible;
         }
@@ -199,19 +217,31 @@ namespace Telegram.Views.Popups
 
         private void Reset_Click(object sender, RoutedEventArgs e)
         {
-            CustomEmojiId = 0;
+            SelectedCustomEmojiId = 0;
             List.SelectedItem = null;
 
-            UpdateProfileAccentColor(null, ColorId, CustomEmojiId);
+            UpdateProfileAccentColor(null, SelectedAccentColor?.Id ?? -1, SelectedCustomEmojiId);
+
             Animated.Source = null;
+            Badge.Badge = Strings.UserReplyIconOff;
         }
 
         private void Flyout_EmojiSelected(object sender, EmojiSelectedEventArgs e)
         {
-            CustomEmojiId = e.CustomEmojiId;
+            SelectedCustomEmojiId = e.CustomEmojiId;
 
-            UpdateProfileAccentColor(null, ColorId, CustomEmojiId);
-            Animated.Source = new CustomEmojiFileSource(_clientService, CustomEmojiId);
+            UpdateProfileAccentColor(null, SelectedAccentColor?.Id ?? -1, SelectedCustomEmojiId);
+
+            if (e.CustomEmojiId != 0)
+            {
+                Animated.Source = new CustomEmojiFileSource(_clientService, SelectedCustomEmojiId);
+                Badge.Badge = string.Empty;
+            }
+            else
+            {
+                Animated.Source = null;
+                Badge.Badge = Strings.UserReplyIconOff;
+            }
         }
 
         private void NameColor_SizeChanged(object sender, SizeChangedEventArgs e)
@@ -220,7 +250,7 @@ namespace Telegram.Views.Popups
             {
                 var width = e.NewSize.Width;
 
-                content.Width = width;
+                //content.Width = width;
                 content.Height = width;
 
                 content.CornerRadius = new CornerRadius(width / 2);
@@ -380,5 +410,47 @@ namespace Telegram.Views.Popups
 
             HeaderGlow.Background = radial2;
         }
+
+        public int RequiredLevel
+        {
+            set
+            {
+                if (value > 0)
+                {
+                    BadgeInfo.Text = Icons.LockClosedFilled14 + Icons.Spacing + string.Format(Strings.BoostLevel, value);
+                    BadgeInfo.Visibility = Visibility.Visible;
+                }
+                else
+                {
+                    BadgeInfo.Visibility = Visibility.Collapsed;
+                }
+            }
+        }
+
+        #region SelectedAccentColor
+
+        public ProfileColor SelectedAccentColor
+        {
+            get { return (ProfileColor)GetValue(SelectedAccentColorProperty); }
+            set { SetValue(SelectedAccentColorProperty, value); }
+        }
+
+        public static readonly DependencyProperty SelectedAccentColorProperty =
+            DependencyProperty.Register("SelectedAccentColor", typeof(ProfileColor), typeof(ChooseProfileColorView), new PropertyMetadata(null));
+
+        #endregion
+
+        #region SelectedCustomEmojiId
+
+        public long SelectedCustomEmojiId
+        {
+            get { return (long)GetValue(SelectedCustomEmojiIdProperty); }
+            set { SetValue(SelectedCustomEmojiIdProperty, value); }
+        }
+
+        public static readonly DependencyProperty SelectedCustomEmojiIdProperty =
+            DependencyProperty.Register("SelectedCustomEmojiId", typeof(long), typeof(ChooseProfileColorView), new PropertyMetadata(0L));
+
+        #endregion
     }
 }

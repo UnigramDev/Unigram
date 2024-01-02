@@ -20,6 +20,7 @@ namespace Telegram.Td.Api
             LightThemeColors = new ProfileColors(accent.LightThemeColors);
 
             Id = accent.Id;
+            MinChatBoostLevel = accent.MinChatBoostLevel;
         }
 
         public ProfileColors ForTheme(ElementTheme theme)
@@ -48,6 +49,11 @@ namespace Telegram.Td.Api
         /// Profile accent color identifier.
         /// </summary>
         public int Id { get; }
+
+        /// <summary>
+        /// The minimum chat boost level required to use the color.
+        /// </summary>
+        public int MinChatBoostLevel { get; }
     }
 
     public class ProfileColors

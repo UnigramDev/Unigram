@@ -198,7 +198,9 @@
     <Compile Include="Composition\CompositionVSync.cs" />
     <Compile Include="Composition\Extensions.cs" />
     <Compile Include="Composition\Interop.cs" />
-    <Compile Include="Controls\Media\BlobDrawable.cs" />
+    <Compile Include="Controls\Cells\ChatBoostFeaturesCell.xaml.cs">
+      <DependentUpon>ChatBoostFeaturesCell.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Common\FrameworkElementState.cs" />
     <Compile Include="Common\MathEx.cs" />
     <Compile Include="Common\MathFEx.cs" />
@@ -788,6 +790,7 @@
     <Compile Include="ViewModels\Settings\Password\SettingsPasswordIntroViewModel.cs" />
     <Compile Include="ViewModels\Settings\Privacy\SettingsPrivacyShowBioViewModel.cs" />
     <Compile Include="ViewModels\Settings\SettingsPowerSavingViewModel.cs" />
+    <Compile Include="ViewModels\Supergroups\SupergroupProfileColorViewModel.cs" />
     <Compile Include="ViewModels\Settings\SettingsProfileColorViewModel.cs" />
     <Compile Include="ViewModels\Settings\SettingsProxyViewModel.cs" />
     <Compile Include="ViewModels\Stories\ActiveStoriesViewModel.cs" />
@@ -861,6 +864,9 @@
     </Compile>
     <Compile Include="Views\Chats\ChatStoriesPage.xaml.cs">
       <DependentUpon>ChatStoriesPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Chats\Popups\ChatBoostFeaturesPopup.xaml.cs">
+      <DependentUpon>ChatBoostFeaturesPopup.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Chats\Popups\ChatBoostPopup.xaml.cs">
       <DependentUpon>ChatBoostPopup.xaml</DependentUpon>
@@ -1322,9 +1328,6 @@
     <Compile Include="Views\Profile\ProfileVoiceTabPage.xaml.cs">
       <DependentUpon>ProfileVoiceTabPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\Popups\ChooseNameColorPopup.xaml.cs">
-      <DependentUpon>ChooseNameColorPopup.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Views\Settings\LoginEmail\SettingsLoginEmailCodePopup.xaml.cs">
       <DependentUpon>SettingsLoginEmailCodePopup.xaml</DependentUpon>
     </Compile>
@@ -1492,6 +1495,9 @@
     </Compile>
     <Compile Include="Views\Supergroups\Popups\SupergroupChooseMemberPopup.xaml.cs">
       <DependentUpon>SupergroupChooseMemberPopup.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Supergroups\SupergroupProfileColorPage.xaml.cs">
+      <DependentUpon>SupergroupProfileColorPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Supergroups\SupergroupAdministratorsPage.xaml.cs">
       <DependentUpon>SupergroupAdministratorsPage.xaml</DependentUpon>
@@ -1903,6 +1909,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Controls\Cells\ChartCell.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\Cells\ChatBoostFeaturesCell.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -2339,6 +2349,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\Chats\ChatStoriesPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\Chats\Popups\ChatBoostFeaturesPopup.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

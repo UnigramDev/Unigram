@@ -1450,14 +1450,74 @@ Please enable Unigram in the Startup Apps Settings.</value>
   <data name="BoostExpireOn" xml:space="preserve">
     <value>boost expires on {0}</value>
   </data>
+  <data name="BoostFeatureBackground_one" xml:space="preserve">
+    <value>{0} Channel Background</value>
+  </data>
+  <data name="BoostFeatureBackground_other" xml:space="preserve">
+    <value>{0} Channel Backgrounds</value>
+  </data>
+  <data name="BoostFeatureCustomBackground" xml:space="preserve">
+    <value>Custom Channel Background</value>
+  </data>
+  <data name="BoostFeatureCustomReaction_one" xml:space="preserve">
+    <value>{0} Custom Reaction</value>
+  </data>
+  <data name="BoostFeatureCustomReaction_other" xml:space="preserve">
+    <value>{0} Custom Reactions</value>
+  </data>
+  <data name="BoostFeatureEmojiStatuses" xml:space="preserve">
+    <value>{0} Emoji Statuses</value>
+  </data>
+  <data name="BoostFeatureNameColor_other" xml:space="preserve">
+    <value>{0} Channel Name Colors</value>
+  </data>
+  <data name="BoostFeatureProfileColor_other" xml:space="preserve">
+    <value>{0} Colors for Channel Cover</value>
+  </data>
+  <data name="BoostFeatureProfileIcon" xml:space="preserve">
+    <value>Custom Logo for Channel Cover</value>
+  </data>
+  <data name="BoostFeatureReplyColor_one" xml:space="preserve">
+    <value>{0} Styles for Links and Quotes</value>
+  </data>
+  <data name="BoostFeatureReplyColor_other" xml:space="preserve">
+    <value>{0} Styles for Links and Quotes</value>
+  </data>
+  <data name="BoostFeatureReplyIcon" xml:space="preserve">
+    <value>Custom Logo for Links and Quotes</value>
+  </data>
+  <data name="BoostFeatureStoriesPerDay_one" xml:space="preserve">
+    <value>{0} Story Per Day</value>
+  </data>
+  <data name="BoostFeatureStoriesPerDay_other" xml:space="preserve">
+    <value>{0} Stories Per Day</value>
+  </data>
   <data name="BoostingCongratulations" xml:space="preserve">
     <value>Congratulations!</value>
   </data>
   <data name="BoostingDate" xml:space="preserve">
     <value>Date</value>
   </data>
+  <data name="BoostingEnableColor" xml:space="preserve">
+    <value>Enable Colors</value>
+  </data>
+  <data name="BoostingEnableEmojiStatus" xml:space="preserve">
+    <value>Unlock Emoji Status</value>
+  </data>
+  <data name="BoostingEnableLinkIcon" xml:space="preserve">
+    <value>Unlock Link Icons</value>
+  </data>
+  <data name="BoostingEnableProfileColor" xml:space="preserve">
+    <value>Unlock Profile Colors</value>
+  </data>
+  <data name="BoostingEnableProfileIcon" xml:space="preserve">
+    <value>Unlock Profile Icons</value>
+  </data>
   <data name="BoostingEnableStoriesForChannel" xml:space="preserve">
     <value>Enable Stories for The Channel</value>
+  </data>
+  <data name="BoostingEnableWallpaper" xml:space="preserve">
+    <value>Unlock Wallpaper</value>
   </data>
   <data name="BoostingFrom" xml:space="preserve">
     <value>From</value>
@@ -1648,6 +1708,9 @@ Subscription for {1}.</value>
   <data name="BoostingIncompleteGiveaway" xml:space="preserve">
     <value>Incomplete Giveaway</value>
   </data>
+  <data name="BoostingIncreaseLevel" xml:space="preserve">
+    <value>Increase Story Limit</value>
+  </data>
   <data name="BoostingLinkAllows" xml:space="preserve">
     <value>This link allows you to activate
 a **Telegram Premium** subscription.</value>
@@ -1720,6 +1783,15 @@ from **{0}**.</value>
   </data>
   <data name="BoostingYouWereSelected" xml:space="preserve">
     <value>You were selected by the channel</value>
+  </data>
+  <data name="BoostLevel" xml:space="preserve">
+    <value>Level {0}</value>
+  </data>
+  <data name="BoostLevelPlus" xml:space="preserve">
+    <value>Level {0}+</value>
+  </data>
+  <data name="BoostLevelUnlocks" xml:space="preserve">
+    <value>Level {0} Unlocks:</value>
   </data>
   <data name="BoostLinkButton" xml:space="preserve">
     <value>BOOST</value>
@@ -2064,6 +2136,9 @@ Note: if you forget your passcode, you&apos;ll need to log out or reinstall the 
   <data name="ChannelAntiSpamInfo2" xml:space="preserve">
     <value>You can manage anti-spam settings in {0}.</value>
   </data>
+  <data name="ChannelAppearanceUpdated" xml:space="preserve">
+    <value>Channel appearance has been updated</value>
+  </data>
   <data name="ChannelBlacklist" xml:space="preserve">
     <value>Removed Users</value>
   </data>
@@ -2151,6 +2226,12 @@ Note: if you forget your passcode, you&apos;ll need to log out or reinstall the 
   <data name="ChannelEditPermissions" xml:space="preserve">
     <value>Edit permissions</value>
   </data>
+  <data name="ChannelEmojiStatus" xml:space="preserve">
+    <value>Channel Emoji Status</value>
+  </data>
+  <data name="ChannelEmojiStatusInfo" xml:space="preserve">
+    <value>Choose a status that will be shown next to the channel&apos;s name.</value>
+  </data>
   <data name="ChannelHideMembers" xml:space="preserve">
     <value>Hide Members</value>
   </data>
@@ -2220,6 +2301,45 @@ Note: if you forget your passcode, you&apos;ll need to log out or reinstall the 
   <data name="ChannelNeedBoostsDescriptionLevelNext" xml:space="preserve">
     <value>This channel needs {0} to be able to post {1} per day. Help make it possible!</value>
   </data>
+  <data name="ChannelNeedBoostsForColorDescription" xml:space="preserve">
+    <value>Your channel needs to reach **Level {0}** to change channel color.
+
+Ask your **Premium** subscribers to boost your channel with this link:
+</value>
+  </data>
+  <data name="ChannelNeedBoostsForCustomWallpaperDescription" xml:space="preserve">
+    <value>Your channel needs to reach **Level {0}** to change channel wallpaper to custom photo.
+
+Ask your **Premium** subscribers to boost your channel with this link:</value>
+  </data>
+  <data name="ChannelNeedBoostsForEmojiStatusDescription" xml:space="preserve">
+    <value>Your channel needs to reach **Level {0}** to set channel emoji status.
+
+Ask your **Premium** subscribers to boost your channel with this link:</value>
+  </data>
+  <data name="ChannelNeedBoostsForProfileColorDescription" xml:space="preserve">
+    <value>Your channel needs to reach **Level {0}** to change channel profile color to selected.
+
+Ask your **Premium** subscribers to boost your channel with this link:</value>
+  </data>
+  <data name="ChannelNeedBoostsForProfileIconDescription" xml:space="preserve">
+    <value>Your channel needs to reach **Level {0}** to change channel profile icon.
+
+Ask your **Premium** subscribers to boost your channel with this link:</value>
+  </data>
+  <data name="ChannelNeedBoostsForReplyIconDescription" xml:space="preserve">
+    <value>Your channel needs to reach **Level {0}** to change channel link style icon.
+
+Ask your **Premium** subscribers to boost your channel with this link:</value>
+  </data>
+  <data name="ChannelNeedBoostsForWallpaperDescription" xml:space="preserve">
+    <value>Your channel needs to reach **Level {0}** to change channel wallpaper.
+
+Ask your **Premium** subscribers to boost your channel with this link:</value>
+  </data>
+  <data name="ChannelNoWallpaper" xml:space="preserve">
+    <value>No Wallpaper</value>
+  </data>
   <data name="ChannelOtherMembers" xml:space="preserve">
     <value>Other members</value>
   </data>
@@ -2238,6 +2358,12 @@ Note: if you forget your passcode, you&apos;ll need to log out or reinstall the 
   <data name="ChannelPrivateLinkHelp" xml:space="preserve">
     <value>People can join your channel by following this link. You can revoke the link at any time.</value>
   </data>
+  <data name="ChannelProfileInfo" xml:space="preserve">
+    <value>Choose a color and a logo for the channel&apos;s profile.</value>
+  </data>
+  <data name="ChannelProfileLogo" xml:space="preserve">
+    <value>Profile Logo</value>
+  </data>
   <data name="ChannelPublic" xml:space="preserve">
     <value>Public Channel</value>
   </data>
@@ -2252,6 +2378,12 @@ Note: if you forget your passcode, you&apos;ll need to log out or reinstall the 
   </data>
   <data name="ChannelReplyIconHint" xml:space="preserve">
     <value>Select an icon to create a custom pattern for replies to your messages.</value>
+  </data>
+  <data name="ChannelReplyInfo" xml:space="preserve">
+    <value>Choose a color for the name of your channel, the links it sends, and replies to its messages.</value>
+  </data>
+  <data name="ChannelReplyLogo" xml:space="preserve">
+    <value>Reply Logo</value>
   </data>
   <data name="Channels_one" xml:space="preserve">
     <value>{0} channel</value>

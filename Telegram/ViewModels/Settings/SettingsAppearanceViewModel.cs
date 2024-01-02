@@ -66,8 +66,8 @@ namespace Telegram.ViewModels.Settings
                 Background = GetDefaultBackground(true)
             };
 
-            var defaultTheme = new ChatThemeViewModel(ClientService, "\U0001F3E0", defaultLight, defaultDark);
-            var themes = ClientService.GetChatThemes().Select(x => new ChatThemeViewModel(ClientService, x));
+            var defaultTheme = new ChatThemeViewModel(ClientService, "\U0001F3E0", false);
+            var themes = ClientService.GetChatThemes().Select(x => new ChatThemeViewModel(ClientService, x, false));
 
             ChatThemes.AddRange(new[] { defaultTheme }.Union(themes));
 
@@ -360,20 +360,22 @@ namespace Telegram.ViewModels.Settings
 
         public string Name { get; }
 
-        public ChatThemeViewModel(IClientService clientService, ChatTheme chatTheme)
+        public bool IsChannel { get; }
+
+        public ChatThemeViewModel(IClientService clientService, ChatTheme chatTheme, bool isChannel)
         {
             ClientService = clientService;
             DarkSettings = chatTheme.DarkSettings;
             LightSettings = chatTheme.LightSettings;
             Name = chatTheme.Name;
+            IsChannel = IsChannel;
         }
 
-        public ChatThemeViewModel(IClientService clientService, string name, ThemeSettings lightSettings, ThemeSettings darkSettings)
+        public ChatThemeViewModel(IClientService clientService, string name, bool isChannel)
         {
             ClientService = clientService;
-            DarkSettings = darkSettings;
-            LightSettings = lightSettings;
             Name = name;
+            IsChannel = isChannel;
         }
 
         public static implicit operator ChatTheme(ChatThemeViewModel chatTheme)

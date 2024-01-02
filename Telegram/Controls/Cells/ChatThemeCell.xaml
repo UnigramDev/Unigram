@@ -42,7 +42,7 @@
                    FontSize="14"
                    Visibility="Collapsed"
                    VerticalAlignment="Center"
-                   Margin="12,8"
+                   Margin="2,8"
                    Grid.RowSpan="2" />
 
         <TextBlock x:Name="Name"

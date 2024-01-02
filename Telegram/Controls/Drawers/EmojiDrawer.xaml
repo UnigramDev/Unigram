@@ -9,8 +9,7 @@
              xmlns:viewModels="using:Telegram.ViewModels.Drawers"
              mc:Ignorable="d"
              d:DesignHeight="300"
-             d:DesignWidth="400"
-             Loaded="OnLoaded">
+             d:DesignWidth="400">
 
     <UserControl.Resources>
         <CollectionViewSource x:Name="EmojiCollection"
@@ -169,6 +168,7 @@
                   ItemClick="ListView_ItemClick"
                   IsItemClickEnabled="True"
                   SelectionMode="None"
+                  Loaded="OnLoaded"
                   Grid.Row="1">
             <common:FluidGridView.Triggers>
                 <common:FluidGridViewTrigger RowsOrColumns="8" />

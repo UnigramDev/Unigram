@@ -352,11 +352,11 @@ namespace Telegram.ViewModels.Supergroups
             }
         }
 
-        public async void EditColor()
+        public void EditColor()
         {
             if (_chat is Chat chat)
             {
-                await ShowPopupAsync(new ChooseNameColorPopup(ClientService, new MessageSenderChat(chat.Id)));
+                NavigationService.Navigate(typeof(SupergroupProfileColorPage), chat.Id);
             }
         }
 

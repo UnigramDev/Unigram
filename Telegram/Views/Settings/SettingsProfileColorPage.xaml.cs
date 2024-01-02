@@ -45,12 +45,12 @@ namespace Telegram.Views.Settings
                 {
                     var changed = false;
 
-                    if (user.AccentColorId != NameView.ColorId || user.BackgroundCustomEmojiId != NameView.CustomEmojiId)
+                    if (user.AccentColorId != NameView.SelectedAccentColor?.Id || user.BackgroundCustomEmojiId != NameView.SelectedCustomEmojiId)
                     {
                         changed = true;
                     }
 
-                    if (user.ProfileAccentColorId != ProfileView.ColorId || user.ProfileBackgroundCustomEmojiId != ProfileView.CustomEmojiId)
+                    if (user.ProfileAccentColorId != ProfileView.SelectedAccentColor?.Id || user.ProfileBackgroundCustomEmojiId != ProfileView.SelectedCustomEmojiId)
                     {
                         changed = true;
                     }
@@ -87,15 +87,15 @@ namespace Telegram.Views.Settings
                 {
                     var changed = false;
 
-                    if (user.AccentColorId != NameView.ColorId || user.BackgroundCustomEmojiId != NameView.CustomEmojiId)
+                    if (user.AccentColorId != NameView.SelectedAccentColor?.Id || user.BackgroundCustomEmojiId != NameView.SelectedCustomEmojiId)
                     {
-                        ViewModel.ClientService.Send(new SetAccentColor(NameView.ColorId, NameView.CustomEmojiId));
+                        ViewModel.ClientService.Send(new SetAccentColor(NameView.SelectedAccentColor.Id, NameView.SelectedCustomEmojiId));
                         changed = true;
                     }
 
-                    if (user.ProfileAccentColorId != ProfileView.ColorId || user.ProfileBackgroundCustomEmojiId != ProfileView.CustomEmojiId)
+                    if (user.ProfileAccentColorId != ProfileView.SelectedAccentColor?.Id || user.ProfileBackgroundCustomEmojiId != ProfileView.SelectedCustomEmojiId)
                     {
-                        ViewModel.ClientService.Send(new SetProfileAccentColor(ProfileView.ColorId, ProfileView.CustomEmojiId));
+                        ViewModel.ClientService.Send(new SetProfileAccentColor(ProfileView.SelectedAccentColor?.Id ?? -1, ProfileView.SelectedCustomEmojiId));
                         changed = true;
                     }
 
@@ -112,43 +112,5 @@ namespace Telegram.Views.Settings
                 }
             }
         }
-
-        //private void Navigation_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        //{
-        //    UserControl showView = Navigation.SelectedIndex == 0
-        //        ? NameView
-        //        : ProfileView;
-        //    UserControl hideView = Navigation.SelectedIndex == 1
-        //        ? NameView
-        //        : ProfileView;
-
-        //    showView.Visibility = Visibility.Visible;
-        //    hideView.Visibility = Visibility.Collapsed;
-
-        //    // TODO: animation?
-        //    //ContentRoot.Height = showView.ActualHeight;
-
-        //    //var show = ElementCompositionPreview.GetElementVisual(showView);
-        //    //var hide = ElementCompositionPreview.GetElementVisual(hideView);
-
-        //    //var compositor = show.Compositor;
-        //    //var batch = compositor.CreateScopedBatch(CompositionBatchTypes.Animation);
-
-        //    //batch.Completed += (s, args) =>
-        //    //{
-
-        //    //};
-
-        //    //batch.End();
-
-        //    //_currentView = showView;
-
-        //    PurchaseCommand.Content = showView switch
-        //    {
-        //        ChooseNameColorView name => name.PrimaryButtonText,
-        //        ChooseProfileColorView profile => profile.PrimaryButtonText,
-        //        _ => string.Empty
-        //    };
-        //}
     }
 }

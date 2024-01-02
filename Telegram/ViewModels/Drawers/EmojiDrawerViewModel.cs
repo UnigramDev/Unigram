@@ -23,6 +23,7 @@ namespace Telegram.ViewModels.Drawers
         Chat,
         Reactions,
         EmojiStatus,
+        ChatEmojiStatus,
         ChatPhoto,
         UserPhoto,
         Background,
@@ -296,6 +297,10 @@ namespace Telegram.ViewModels.Drawers
             {
                 return GetDefaultStatusAsync();
             }
+            else if (mode == EmojiDrawerMode.ChatEmojiStatus)
+            {
+                return GetDefaultChatStatusAsync();
+            }
 
             Function func = _mode switch
             {
@@ -348,6 +353,62 @@ namespace Telegram.ViewModels.Drawers
             return await ClientService.SendAsync(new GetCustomEmojiStickers(emoji));
         }
 
+        private async Task<BaseObject> GetDefaultChatStatusAsync()
+        {
+            var themedResponse = await ClientService.SendAsync(new GetThemedChatEmojiStatuses()) as EmojiStatuses;
+            var recentResponse = await ClientService.SendAsync(new GetRecentEmojiStatuses()) as EmojiStatuses;
+            var defaulResponse = await ClientService.SendAsync(new GetDefaultChatEmojiStatuses()) as EmojiStatuses;
+
+            var disallowedResponse = await ClientService.SendAsync(new GetDisallowedChatEmojiStatuses()) as EmojiStatuses;
+
+            var themed = themedResponse?.CustomEmojiIds ?? Array.Empty<long>();
+            var recent = recentResponse?.CustomEmojiIds ?? Array.Empty<long>();
+            var defaul = defaulResponse?.CustomEmojiIds ?? Array.Empty<long>();
+            var disall = disallowedResponse?.CustomEmojiIds ?? Array.Empty<long>();
+
+            var emoji = new List<long>();
+            var delay = new List<long>();
+
+            foreach (var status in themed.Union(recent.Union(defaul)))
+            {
+                if (disall.Contains(status))
+                {
+                    continue;
+                }
+
+                if (emoji.Count < 8 * 5 - 1 && !emoji.Contains(status))
+                {
+                    emoji.Add(status);
+                }
+                else if (!delay.Contains(status))
+                {
+                    delay.Add(status);
+                }
+            }
+
+            // TODO: why the order by???
+            //if (response is Stickers stickers)
+            //{
+            //    _reactionTopSet.Update(stickers.StickersValue.OrderBy(x => emoji.IndexOf(x.FullType is StickerFullTypeCustomEmoji customEmoji ? customEmoji.CustomEmojiId : 0)), true);
+            //}
+
+            return await ClientService.SendAsync(new GetCustomEmojiStickers(emoji));
+        }
+
+        private bool Filter(StickerSetInfo info)
+        {
+            if (_mode == EmojiDrawerMode.Background)
+            {
+                return info.NeedsRepainting;
+            }
+            else if (_mode == EmojiDrawerMode.ChatEmojiStatus)
+            {
+                return info.IsAllowedAsChatEmojiStatus;
+            }
+
+            return true;
+        }
+
         private async Task<IEnumerable<StickerSetViewModel>> GetInstalledSets()
         {
             if (_installedSets != null)
@@ -362,7 +423,7 @@ namespace Telegram.ViewModels.Drawers
             {
                 var installedSets = new Dictionary<long, StickerSetViewModel>();
 
-                var filtered = sets.Sets.Where(x => _mode != EmojiDrawerMode.Background || x.NeedsRepainting).ToList();
+                var filtered = sets.Sets.Where(x => Filter(x)).ToList();
                 if (filtered.Count > 0)
                 {
                     var result3 = await ClientService.SendAsync(new GetStickerSet(filtered[0].Id));
@@ -384,12 +445,10 @@ namespace Telegram.ViewModels.Drawers
                         continue;
                     }
 
-                    if (_mode == EmojiDrawerMode.Background && !item.NeedsRepainting)
+                    if (Filter(item))
                     {
-                        continue;
+                        installedSets[item.Id] = new StickerSetViewModel(ClientService, item);
                     }
-
-                    installedSets[item.Id] = new StickerSetViewModel(ClientService, item);
                 }
 
                 _installedSets = installedSets;

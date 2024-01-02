@@ -81,8 +81,8 @@ namespace Telegram.Views.Popups
 
                 Message1.Mockup(clientService, Strings.UserColorPreview, sender, Strings.UserColorPreviewReply, webPage, false, DateTime.Now);
 
-                Badge.Content = Strings.UserReplyIcon;
-                ColorHint.Text = Strings.UserColorHint;
+                BadgeText.Text = Strings.UserReplyIcon;
+                NameColor.Footer = Strings.UserColorHint;
                 PrimaryButtonText = Strings.UserColorApplyIcon;
             }
             else if (clientService.TryGetChat(sender, out Chat chat))
@@ -99,8 +99,8 @@ namespace Telegram.Views.Popups
 
                 Message1.Mockup(clientService, Strings.ChannelColorPreview, sender, Strings.ChannelColorPreviewReply, webPage, false, DateTime.Now);
 
-                Badge.Content = Strings.ChannelReplyIcon;
-                ColorHint.Text = Strings.ChannelColorHint;
+                BadgeText.Text = Strings.ChannelReplyLogo;
+                NameColor.Footer = Strings.ChannelReplyInfo;
                 PrimaryButtonText = Strings.ChannelColorApply;
             }
 
@@ -124,9 +124,10 @@ namespace Telegram.Views.Popups
                 Animated.ReplacementColor = null;
             }
 
-            CustomEmojiId = customEmojiId;
-            List.SelectedItem = accent;
+            SelectedCustomEmojiId = customEmojiId;
+            SelectedAccentColor = accent;
 
+            List.SelectedItem = accent;
             BackgroundControl.Update(clientService, null);
         }
 
@@ -170,27 +171,13 @@ namespace Telegram.Views.Popups
 
         #endregion
 
-        public long CustomEmojiId { get; set; }
-
-        public int ColorId
-        {
-            get
-            {
-                if (List.SelectedItem is NameColor colors)
-                {
-                    return colors.Id;
-                }
-
-                return 0;
-            }
-        }
-
         private void OnSelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            Message1.UpdateMockup(_clientService, CustomEmojiId, ColorId);
-
             if (List.SelectedItem is NameColor accent)
             {
+                SelectedAccentColor = accent;
+
+                Message1.UpdateMockup(_clientService, SelectedCustomEmojiId, accent.Id);
                 Animated.ReplacementColor = new SolidColorBrush(accent.LightThemeColors[0]);
             }
         }
@@ -203,10 +190,20 @@ namespace Telegram.Views.Popups
 
         private void Flyout_EmojiSelected(object sender, EmojiSelectedEventArgs e)
         {
-            CustomEmojiId = e.CustomEmojiId;
+            SelectedCustomEmojiId = e.CustomEmojiId;
 
-            Message1.UpdateMockup(_clientService, CustomEmojiId, ColorId);
-            Animated.Source = new CustomEmojiFileSource(_clientService, CustomEmojiId);
+            Message1.UpdateMockup(_clientService, SelectedCustomEmojiId, SelectedAccentColor.Id);
+
+            if (e.CustomEmojiId != 0)
+            {
+                Animated.Source = new CustomEmojiFileSource(_clientService, SelectedCustomEmojiId);
+                Badge.Badge = string.Empty;
+            }
+            else
+            {
+                Animated.Source = null;
+                Badge.Badge = Strings.UserReplyIconOff;
+            }
         }
 
         private void NameColor_SizeChanged(object sender, SizeChangedEventArgs e)
@@ -215,7 +212,7 @@ namespace Telegram.Views.Popups
             {
                 var width = e.NewSize.Width;
 
-                content.Width = width;
+                //content.Width = width;
                 content.Height = width;
 
                 content.CornerRadius = new CornerRadius(width / 2);
@@ -227,5 +224,47 @@ namespace Telegram.Views.Popups
                 };
             }
         }
+
+        public int RequiredLevel
+        {
+            set
+            {
+                if (value > 0)
+                {
+                    BadgeInfo.Text = Icons.LockClosedFilled14 + Icons.Spacing + string.Format(Strings.BoostLevel, value);
+                    BadgeInfo.Visibility = Visibility.Visible;
+                }
+                else
+                {
+                    BadgeInfo.Visibility = Visibility.Collapsed;
+                }
+            }
+        }
+
+        #region SelectedAccentColor
+
+        public NameColor SelectedAccentColor
+        {
+            get { return (NameColor)GetValue(SelectedAccentColorProperty); }
+            set { SetValue(SelectedAccentColorProperty, value); }
+        }
+
+        public static readonly DependencyProperty SelectedAccentColorProperty =
+            DependencyProperty.Register("SelectedAccentColor", typeof(NameColor), typeof(ChooseNameColorView), new PropertyMetadata(null));
+
+        #endregion
+
+        #region SelectedCustomEmojiId
+
+        public long SelectedCustomEmojiId
+        {
+            get { return (long)GetValue(SelectedCustomEmojiIdProperty); }
+            set { SetValue(SelectedCustomEmojiIdProperty, value); }
+        }
+
+        public static readonly DependencyProperty SelectedCustomEmojiIdProperty =
+            DependencyProperty.Register("SelectedCustomEmojiId", typeof(long), typeof(ChooseNameColorView), new PropertyMetadata(0L));
+
+        #endregion
     }
 }
