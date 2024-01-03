@@ -101,11 +101,13 @@ namespace Telegram.ViewModels
         public void Dispose()
         {
             Aggregator.Unsubscribe(Chats.Items);
+            Aggregator.Unsubscribe(Stories.Items);
             Aggregator.Unsubscribe(this);
 
             if (Dispatcher != null && Dispatcher.HasThreadAccess)
             {
                 Chats.Items.Clear();
+                Stories.Items.Clear();
             }
 
             Children.Clear();
