@@ -55,7 +55,7 @@ namespace Telegram.Controls.Chats
             _viewModel = viewModel;
 
             var chat = _viewModel.Chat;
-            var defaultTheme = new ChatThemeViewModel(viewModel.ClientService, "\u274C", false);
+            var defaultTheme = new ChatThemeViewModel(viewModel.ClientService, "\u274C", null, null, false);
             var themes = viewModel.ClientService.GetChatThemes().Select(x => new ChatThemeViewModel(viewModel.ClientService, x, false));
 
             var items = new[] { defaultTheme }.Union(themes).ToList();
