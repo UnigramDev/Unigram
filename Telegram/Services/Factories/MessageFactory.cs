@@ -223,17 +223,24 @@ namespace Telegram.Services.Factories
             }
             else if (!asFile && file.ContentType.StartsWith("audio/", StringComparison.OrdinalIgnoreCase))
             {
-                var props = await file.Properties.GetMusicPropertiesAsync();
-                var duration = (int)props.Duration.TotalSeconds;
-
-                var title = props.Title;
-                var performer = string.IsNullOrEmpty(props.AlbumArtist) ? props.Artist : props.AlbumArtist;
-
-                return new InputMessageFactory
+                try
                 {
-                    InputFile = generated,
-                    Delegate = (inputFile, caption) => new InputMessageAudio(inputFile, thumbnail, duration, title, performer, caption)
-                };
+                    var props = await file.Properties.GetMusicPropertiesAsync();
+                    var duration = (int)props.Duration.TotalSeconds;
+
+                    var title = props.Title;
+                    var performer = string.IsNullOrEmpty(props.AlbumArtist) ? props.Artist : props.AlbumArtist;
+
+                    return new InputMessageFactory
+                    {
+                        InputFile = generated,
+                        Delegate = (inputFile, caption) => new InputMessageAudio(inputFile, thumbnail, duration, title, performer, caption)
+                    };
+                }
+                catch
+                {
+                    // All the remote procedure calls must be wrapped in a try-catch block
+                }
             }
 
             return new InputMessageFactory
