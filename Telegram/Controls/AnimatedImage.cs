@@ -20,6 +20,8 @@ using Telegram.Native;
 using Telegram.Navigation;
 using Telegram.Streams;
 using Windows.Foundation;
+using Windows.Graphics.Imaging;
+using Windows.Storage;
 using Windows.Storage.Streams;
 using Windows.System;
 using Windows.UI;
@@ -512,7 +514,7 @@ namespace Telegram.Controls
         {
             //Logger.Debug();
             LayoutRoot = GetTemplateChild(nameof(LayoutRoot)) as Border;
-            
+
             _templateApplied = true;
             _rasterizationScale = XamlRoot.RasterizationScale;
 
@@ -1698,6 +1700,10 @@ namespace Telegram.Controls
                     animation.Dispose();
                 }
             }
+            else
+            {
+                _delegates.TryRemove(work.CorrelationId, out _);
+            }
         }
 
         private void LoadCachedVideo(WorkItem work)
@@ -1723,9 +1729,13 @@ namespace Telegram.Controls
                     animation.Dispose();
                 }
             }
+            else
+            {
+                _delegates.TryRemove(work.CorrelationId, out _);
+            }
         }
 
-        private void LoadWebP(WorkItem work, LocalFileSource local)
+        private async void LoadWebP(WorkItem work, LocalFileSource local)
         {
             var animation = PlaceholderImageHelper.DrawWebP(local.FilePath, work.Presentation.PixelWidth, out Size size);
             if (animation != null)
@@ -1737,6 +1747,48 @@ namespace Telegram.Controls
                 else
                 {
                     //animation.Dispose();
+                }
+            }
+            else
+            {
+                try
+                {
+                    // If the image fails to decode as WebP, we try to decode it again using system image decoders.
+                    var file = await StorageFile.GetFileFromPathAsync(local.FilePath);
+
+                    using var stream = await file.OpenReadAsync();
+                    var decoder = await BitmapDecoder.CreateAsync(stream);
+                    var transform = new BitmapTransform();
+
+                    if (decoder.PixelWidth > work.Presentation.PixelWidth || decoder.PixelHeight > work.Presentation.PixelWidth)
+                    {
+                        var ratioX = (double)work.Presentation.PixelWidth / decoder.PixelWidth;
+                        var ratioY = (double)work.Presentation.PixelWidth / decoder.PixelHeight;
+                        var ratio = Math.Min(ratioX, ratioY);
+
+                        transform.ScaledWidth = (uint)(decoder.PixelWidth * ratio);
+                        transform.ScaledHeight = (uint)(decoder.PixelHeight * ratio);
+
+                        size = new Size(transform.ScaledWidth, transform.ScaledHeight);
+                    }
+                    else
+                    {
+                        size = new Size(decoder.PixelWidth, decoder.PixelHeight);
+                    }
+
+                    var pixels = await decoder.GetPixelDataAsync(BitmapPixelFormat.Bgra8, BitmapAlphaMode.Premultiplied, transform, ExifOrientationMode.IgnoreExifOrientation, ColorManagementMode.DoNotColorManage);
+                    var bytes = pixels.DetachPixelData();
+
+                    animation = BufferSurface.Create(bytes);
+
+                    if (TryGetDelegate(work.CorrelationId, out var target))
+                    {
+                        target.Ready(new WebpAnimatedImageTask(animation, size, work.Presentation));
+                    }
+                }
+                catch
+                {
+                    _delegates.TryRemove(work.CorrelationId, out _);
                 }
             }
         }

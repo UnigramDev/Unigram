@@ -25,24 +25,34 @@ namespace winrt::Telegram::Native::implementation
 
         static size_t _counter;
 
+        BufferSurface(winrt::array_view<uint8_t const> data) :
+            m_buffer((uint8_t*)malloc(data.size())),
+            m_length(data.size())
+        {
+            memcpy(m_buffer, data.data(), data.size());
+        }
+
         BufferSurface(uint32_t size) :
             m_buffer((uint8_t*)malloc(size)),
             m_length(size)
         {
-            OutputDebugStringFormat(L"Create %d\n", ++_counter);
         }
 
         ~BufferSurface()
         {
             free(m_buffer);
             m_buffer = nullptr;
-
-            OutputDebugStringFormat(L"Free %d\n", _counter--);
         }
 
         static IBuffer Create(uint32_t size)
         {
             auto info = winrt::make_self<winrt::Telegram::Native::implementation::BufferSurface>(size);
+            return info.as<IBuffer>();
+        }
+
+        static IBuffer Create(winrt::array_view<uint8_t const> data)
+        {
+            auto info = winrt::make_self<winrt::Telegram::Native::implementation::BufferSurface>(data);
             return info.as<IBuffer>();
         }
 

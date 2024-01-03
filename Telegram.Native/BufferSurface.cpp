@@ -6,8 +6,6 @@
 
 namespace winrt::Telegram::Native::implementation
 {
-    size_t BufferSurface::_counter = 0;
-
     //uint8_t* LottieSurface::Pixels()
     //{
     //    return m_pixels;
