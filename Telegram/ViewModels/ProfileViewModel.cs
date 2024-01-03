@@ -180,6 +180,7 @@ namespace Telegram.ViewModels
                 .Subscribe<UpdateChatTitle>(Handle)
                 .Subscribe<UpdateChatPhoto>(Handle)
                 .Subscribe<UpdateChatEmojiStatus>(Handle)
+                .Subscribe<UpdateChatAccentColors>(Handle)
                 .Subscribe<UpdateChatActiveStories>(Handle)
                 .Subscribe<UpdateChatNotificationSettings>(Handle);
         }
@@ -321,6 +322,14 @@ namespace Telegram.ViewModels
             if (update.ChatId == _chat?.Id)
             {
                 BeginOnUIThread(() => Delegate?.UpdateChatEmojiStatus(_chat));
+            }
+        }
+
+        public void Handle(UpdateChatAccentColors update)
+        {
+            if (update.ChatId == _chat?.Id)
+            {
+                BeginOnUIThread(() => Delegate?.UpdateChatAccentColors(_chat));
             }
         }
 

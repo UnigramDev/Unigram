@@ -237,12 +237,12 @@ namespace Telegram.Controls
 
         private void OnActualThemeChanged(FrameworkElement sender, object args)
         {
-            if (_actualTheme == sender.ActualTheme || !ViewModel.ClientService.TryGetUser(ViewModel.Chat, out User user))
+            if (_actualTheme == sender.ActualTheme)
             {
                 return;
             }
 
-            UpdateProfileAccentColor(ViewModel.Chat, user.ProfileAccentColorId, user.ProfileBackgroundCustomEmojiId);
+            UpdateChatAccentColors(ViewModel.Chat);
         }
 
         private async void Photo_Click(object sender, RoutedEventArgs e)
@@ -360,11 +360,11 @@ namespace Telegram.Controls
 
         #region Delegate
 
-        private void UpdateProfileAccentColor(Chat chat, int colorId, long customEmojiId)
+        public void UpdateChatAccentColors(Chat chat)
         {
             _actualTheme = WindowContext.Current.ActualTheme;
 
-            if (ViewModel.ClientService.TryGetProfileColor(colorId, out ProfileColor color))
+            if (ViewModel.ClientService.TryGetProfileColor(chat.ProfileAccentColorId, out ProfileColor color))
             {
                 var colors = color.ForTheme(_actualTheme);
 
@@ -428,9 +428,9 @@ namespace Telegram.Controls
                 UpdateIcons(chat, false);
             }
 
-            if (customEmojiId != 0)
+            if (chat.ProfileBackgroundCustomEmojiId != 0)
             {
-                Pattern.Source = new CustomEmojiFileSource(ViewModel.ClientService, customEmojiId);
+                Pattern.Source = new CustomEmojiFileSource(ViewModel.ClientService, chat.ProfileBackgroundCustomEmojiId);
             }
             else
             {
@@ -569,6 +569,7 @@ namespace Telegram.Controls
             UpdateChatTitle(chat);
             UpdateChatPhoto(chat);
             UpdateChatEmojiStatus(chat);
+            UpdateChatAccentColors(chat);
 
             UpdateChatActiveStories(chat);
 
@@ -641,8 +642,6 @@ namespace Telegram.Controls
 
         public void UpdateUser(Chat chat, User user, bool secret)
         {
-            UpdateProfileAccentColor(chat, user.ProfileAccentColorId, user.ProfileBackgroundCustomEmojiId);
-
             Subtitle.Text = LastSeenConverter.GetLabel(user, true);
 
             UserPhone.Badge = PhoneNumber.Format(user.PhoneNumber);
@@ -768,8 +767,6 @@ namespace Telegram.Controls
 
         public void UpdateBasicGroup(Chat chat, BasicGroup group)
         {
-            UpdateProfileAccentColor(chat, -1, 0);
-
             Subtitle.Text = Locale.Declension(Strings.R.Members, group.MemberCount);
 
             Description.Content = Strings.DescriptionPlaceholder;
@@ -846,8 +843,6 @@ namespace Telegram.Controls
 
         public void UpdateSupergroup(Chat chat, Supergroup group)
         {
-            UpdateProfileAccentColor(chat, -1, 0);
-
             if (ViewModel.Topic != null)
             {
                 Subtitle.Text = string.Format(Strings.TopicProfileStatus, chat.Title);

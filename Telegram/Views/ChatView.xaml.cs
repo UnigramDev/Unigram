@@ -3768,6 +3768,11 @@ namespace Telegram.Views
             Identity.SetStatus(_viewModel.ClientService, chat);
         }
 
+        public void UpdateChatAccentColors(Chat chat)
+        {
+            // Not needed in chat view
+        }
+
         public void UpdateChatActiveStories(Chat chat)
         {
             Segments.SetChat(ViewModel.ClientService, chat, 36);
