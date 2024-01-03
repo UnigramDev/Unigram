@@ -60,7 +60,8 @@ namespace Telegram.Controls.Messages
 
         public event EventHandler<EmojiSelectedEventArgs> EmojiSelected;
 
-        public static EmojiMenuFlyout ShowAt(FrameworkElement element, MessageViewModel message, MessageBubble bubble, AvailableReactions reactions)
+        public event EventHandler Opened;
+
         public static EmojiMenuFlyout ShowAt(FrameworkElement element, MessageViewModel message, MessageBubble bubble, AvailableReactions reactions, EmojiDrawerViewModel viewModel)
         {
             return new EmojiMenuFlyout(element, message, bubble, reactions, viewModel);
@@ -312,6 +313,7 @@ namespace Telegram.Controls.Messages
             clip.Offset = new Vector2(36, yy);
 
             var batch = compositor.CreateScopedBatch(CompositionBatchTypes.Animation);
+            batch.Completed += Batch_Completed;
 
             var opacity = compositor.CreateScalarKeyFrameAnimation();
 
@@ -474,6 +476,11 @@ namespace Telegram.Controls.Messages
 
             ElementCompositionPreview.SetElementChildVisual(Presenter, container);
             Perspective.Depth = apothem * 20;
+        }
+
+        private void Batch_Completed(object sender, CompositionBatchCompletedEventArgs args)
+        {
+            Opened?.Invoke(this, EventArgs.Empty);
         }
 
         public static float ToRadians(float angleIn10thofaDegree)

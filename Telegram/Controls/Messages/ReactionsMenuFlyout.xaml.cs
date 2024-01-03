@@ -89,9 +89,9 @@ namespace Telegram.Controls.Messages
 
         private async void Initialize(AvailableReactions available, IClientService clientService, MenuFlyout flyout)
         {
-            var last = flyout.Items.LastOrDefault();
-            var presenter = last.Ancestors<MenuFlyoutPresenter>().FirstOrDefault();
-            presenter.Unloaded += Presenter_Unloaded;
+            var first = flyout.Items[0];
+            var presenter = first.Ancestors<MenuFlyoutPresenter>().FirstOrDefault();
+            flyout.Closed += Flyout_Closed;
 
             presenter.PreviewKeyDown += Presenter_PreviewKeyDown;
             Presenter.PreviewKeyDown += OnPreviewKeyDown;
@@ -387,9 +387,9 @@ namespace Telegram.Controls.Messages
                     e.Handled = true;
                 }
             }
-                }
+        }
 
-        private void Presenter_Unloaded(object sender, RoutedEventArgs e)
+        private void Flyout_Closed(object sender, object e)
         {
             _popup.IsOpen = false;
         }
@@ -451,20 +451,30 @@ namespace Telegram.Controls.Messages
 
         private void Expand_Click(object sender, RoutedEventArgs e)
         {
+            _flyout.Closed -= Flyout_Closed;
+
             if (_story != null)
             {
-                var flyout = EmojiMenuFlyout.ShowAt(this, _story, _reserved, _reactions);
+                var flyout = EmojiMenuFlyout.ShowAt(this, _story, _reserved, _reactions, _viewModel);
                 flyout.Loaded += (s, args) =>
                 {
                     _flyout.Hide();
                 };
+                flyout.Opened += (s, args) =>
+                {
+                    _popup.IsOpen = false;
+                };
             }
             else if (_message != null)
             {
-                var flyout = EmojiMenuFlyout.ShowAt(this, _message, _bubble, _reactions);
+                var flyout = EmojiMenuFlyout.ShowAt(this, _message, _bubble, _reactions, _viewModel);
                 flyout.Loaded += (s, args) =>
                 {
                     _flyout.Hide();
+                };
+                flyout.Opened += (s, args) =>
+                {
+                    _popup.IsOpen = false;
                 };
             }
         }
