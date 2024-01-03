@@ -112,7 +112,7 @@ namespace Telegram.Controls.Messages
             _presenter = presenter;
             _popup = new Popup();
 
-            var transform = presenter.TransformToVisual(Window.Current.Content);
+            var transform = presenter.TransformToVisual(null);
             var position = transform.TransformPoint(new Point());
 
             var sum = available.TopReactions.Count

@@ -268,7 +268,7 @@ namespace Telegram.Controls
             {
                 segments.Open(ViewModel.NavigationService, ViewModel.ClientService, chat, 140, story =>
                 {
-                    var transform = Segments.TransformToVisual(Window.Current.Content);
+                    var transform = Segments.TransformToVisual(null);
                     var point = transform.TransformPoint(new Point());
 
                     return new Rect(point.X + 4, point.Y + 4, 132, 132);
