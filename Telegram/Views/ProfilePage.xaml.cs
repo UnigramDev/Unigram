@@ -204,6 +204,11 @@ namespace Telegram.Views
             ProfileHeader.UpdateChatPhoto(chat);
         }
 
+        public void UpdateChatEmojiStatus(Chat chat)
+        {
+            ProfileHeader.UpdateChatEmojiStatus(chat);
+        }
+
         public void UpdateChatActiveStories(Chat chat)
         {
             ProfileHeader.UpdateChatActiveStories(chat);
