@@ -1009,8 +1009,10 @@ namespace Telegram.Views.Calls
 
                 if (level.AudioSource == 0)
                 {
-                    _visual.UpdateLevel(value);
-                    //_drawable.SetAmplitude(Math.Min(8500, value * 4000) / 8500);
+                    if (PowerSavingPolicy.AreMaterialsEnabled && ApiInfo.CanAnimatePaths)
+                    {
+                        _visual.UpdateLevel(value);
+                    }
                 }
 
                 if (participants.TryGetFromAudioSourceId(level.AudioSource, out var participant))

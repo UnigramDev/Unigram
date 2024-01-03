@@ -156,11 +156,6 @@ namespace Telegram.ViewModels
             set => Set(ref _isUpdateAvailable, value);
         }
 
-        public void ReturnToCall()
-        {
-            _voipService.Show();
-        }
-
         public void Handle(UpdateAppVersion update)
         {
             BeginOnUIThread(() => UpdateAppVersion(update.Update));

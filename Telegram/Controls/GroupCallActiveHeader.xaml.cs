@@ -33,7 +33,7 @@ namespace Telegram.Controls
             _curveVisual = new CompositionCurveVisual(Curve, 0, 0, 1.5f);
         }
 
-        public void Update(IVoipService service)
+        public void Update(IVoipService value)
         {
 #if ENABLE_CALLS
             if (_service != null)
@@ -42,9 +42,10 @@ namespace Telegram.Controls
                 _service.AudioLevelUpdated -= OnAudioLevelUpdated;
             }
 
-            if (service != null && service?.Call != null)
+            _service = value;
+
+            if (_service != null && _service?.Call != null)
             {
-                _service = service;
                 _service.MutedChanged += OnMutedChanged;
                 _service.AudioLevelUpdated += OnAudioLevelUpdated;
 
@@ -63,9 +64,17 @@ namespace Telegram.Controls
                 Audio.Visibility = Visibility.Collapsed;
                 Dismiss.Visibility = Visibility.Collapsed;
 
-                if (service.ClientService.TryGetUser(service.Call.UserId, out User user))
+                try
                 {
-                    TitleInfo.Text = user.FullName();
+                    if (value.ClientService.TryGetUser(value.Call.UserId, out User user))
+                    {
+                        TitleInfo.Text = user.FullName();
+                    }
+                }
+                catch
+                {
+                    // TODO: there's a race condition happening here for obvious reasons.
+                    // Try-catching until the code is actually properly refactored.
                 }
             }
             else
@@ -76,7 +85,7 @@ namespace Telegram.Controls
 #endif
         }
 
-        public void Update(IVoipGroupService service)
+        public void Update(IVoipGroupService value)
         {
 #if ENABLE_CALLS
             if (_groupService != null)
@@ -85,9 +94,10 @@ namespace Telegram.Controls
                 _groupService.AudioLevelsUpdated -= OnAudioLevelsUpdated;
             }
 
-            if (service != null && service?.Chat != null && service?.Call != null)
+            _groupService = value;
+
+            if (_groupService?.Chat != null && _groupService?.Call != null)
             {
-                _groupService = service;
                 _groupService.MutedChanged += OnMutedChanged;
                 _groupService.AudioLevelsUpdated += OnAudioLevelsUpdated;
 
@@ -106,7 +116,7 @@ namespace Telegram.Controls
                 Audio.Visibility = Visibility.Visible;
                 Dismiss.Visibility = Visibility.Visible;
 
-                TitleInfo.Text = service.Call.Title.Length > 0 ? service.Call.Title : service.ClientService.GetTitle(service.Chat);
+                TitleInfo.Text = _groupService.Call.Title.Length > 0 ? _groupService.Call.Title : _groupService.ClientService.GetTitle(_groupService.Chat);
                 Audio.IsChecked = !_groupService.IsMuted;
                 Automation.SetToolTip(Audio, _groupService.IsMuted ? Strings.VoipGroupUnmute : Strings.VoipGroupMute);
             }
@@ -174,8 +184,6 @@ namespace Telegram.Controls
 
         private void OnAudioLevelUpdated(object sender, float average)
         {
-            Logger.Info(average);
-
             if (PowerSavingPolicy.AreMaterialsEnabled && ApiInfo.CanAnimatePaths)
             {
                 _curveVisual.UpdateLevel(average);

@@ -129,11 +129,19 @@
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
             </Grid.RowDefinitions>
-            <controls:ProfilePicture x:Name="Image"
-                                     Width="140"
-                                     Height="140"
-                                     HorizontalAlignment="Center"
-                                     VerticalAlignment="Center" />
+            <Grid Width="140"
+                  Height="140"
+                  HorizontalAlignment="Center"
+                  VerticalAlignment="Center">
+                <Border x:Name="Blob"
+                        Width="280"
+                        Height="280"
+                        Margin="-70" />
+                <controls:ProfilePicture x:Name="Image"
+                                         Width="280"
+                                         Height="280"
+                                         Margin="-70" />
+            </Grid>
 
             <!--<TextBlock x:Name="FromLabel" Tapped="DebugString_Tapped" Text="Fela Ameghino" TextAlignment="Center" Style="{StaticResource SubheaderTextBlockStyle}" VerticalAlignment="Bottom"/>-->
             <TextBlock x:Name="FromLabel"

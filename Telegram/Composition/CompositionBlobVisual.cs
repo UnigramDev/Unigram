@@ -10,6 +10,7 @@ namespace Telegram.Composition
     public class CompositionBlobVisual
     {
         private readonly ShapeVisual _visual;
+        private readonly Visual _smallVisual;
 
         private readonly CompositionBlobShape _smallBlob;
         private readonly CompositionBlobShape _mediumBlob;
@@ -26,7 +27,7 @@ namespace Telegram.Composition
 
         private bool _animating;
 
-        public CompositionBlobVisual(UIElement element, float width, float height, float maxLevel)
+        public CompositionBlobVisual(UIElement element, float width, float height, float maxLevel, Visual smallVisual = null)
         {
             _maxLevel = maxLevel;
 
@@ -58,6 +59,13 @@ namespace Telegram.Composition
             _visual.Shapes.Add(largeShape);
             _visual.Shapes.Add(smallShape);
 
+            if (smallVisual != null)
+            {
+                _smallVisual = smallVisual;
+                _smallVisual.CenterPoint = new Vector3(halfSize, 0);
+                _smallVisual.Scale = new Vector3(0.45f);
+            }
+
             _smallBlob = new CompositionBlobShape(smallShape, size, 8, 0.1f, 0.5f, 0.2f, 0.6f, 0.45f, 0.55f);
             _mediumBlob = new CompositionBlobShape(mediumShape, size, 8, 1, 1, 0.9f, 4, 0.55f, 0.87f);
             _largeBlob = new CompositionBlobShape(largeShape, size, 8, 1, 1, 0.9f, 4, 0.57f, 1.0f);
@@ -81,6 +89,8 @@ namespace Telegram.Composition
             _smallBlob.Level = _presentationAudioLevel;
             _mediumBlob.Level = _presentationAudioLevel;
             _largeBlob.Level = _presentationAudioLevel;
+
+            SmallLevel = _presentationAudioLevel;
         }
 
         private Color _fillColor;
@@ -203,6 +213,24 @@ namespace Telegram.Composition
         {
             _mediumBlob.Clear();
             _largeBlob.Clear();
+        }
+
+        private float _smallLevel;
+        public float SmallLevel
+        {
+            get => _smallLevel;
+            set
+            {
+                if (_smallVisual != null && MathF.Abs(value - _smallLevel) > 0.01)
+                {
+                    var lv = 0.45f + (0.55f - 0.45f) * value;
+                    var animation = Window.Current.Compositor.CreateVector3KeyFrameAnimation();
+                    animation.InsertKeyFrame(1, new Vector3(lv));
+                    _smallVisual.StartAnimation("Scale", animation);
+                }
+
+                _smallLevel = value;
+            }
         }
     }
 

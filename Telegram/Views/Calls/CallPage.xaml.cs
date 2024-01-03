@@ -9,6 +9,7 @@ using System;
 using System.Numerics;
 using System.Threading.Tasks;
 using Telegram.Common;
+using Telegram.Composition;
 using Telegram.Controls;
 using Telegram.Controls.Media;
 using Telegram.Native.Calls;
@@ -38,6 +39,8 @@ namespace Telegram.Views.Calls
         private readonly SpriteVisual _blurVisual;
         private readonly CompositionEffectBrush _blurBrush;
         private readonly Compositor _compositor;
+
+        private readonly CompositionBlobVisual _visual;
 
         private bool _collapsed = true;
 
@@ -75,6 +78,15 @@ namespace Telegram.Views.Calls
 
             _service = voipService;
             _service.MutedChanged += OnMutedChanged;
+            _service.AudioLevelUpdated += OnAudioLevelUpdated;
+
+            _visual = new CompositionBlobVisual(Blob, 280, 280, 1.5f, ElementCompositionPreview.GetElementVisual(Image));
+            _visual.FillColor = Colors.White;
+
+            if (PowerSavingPolicy.AreMaterialsEnabled && ApiInfo.CanAnimatePaths)
+            {
+                _visual.StartAnimating();
+            }
 
             _dispatcherQueue = DispatcherQueue.GetForCurrentThread();
 
@@ -297,6 +309,7 @@ namespace Telegram.Views.Calls
             _durationTimer.Stop();
 
             _service.MutedChanged -= OnMutedChanged;
+            _service.AudioLevelUpdated -= OnAudioLevelUpdated;
 
             if (_manager != null)
             {
@@ -315,6 +328,14 @@ namespace Telegram.Views.Calls
         private void OnMutedChanged(object sender, EventArgs e)
         {
             _dispatcherQueue.TryEnqueue(() => Audio.IsChecked = !_service.IsMuted);
+        }
+
+        private void OnAudioLevelUpdated(object sender, float average)
+        {
+            if (PowerSavingPolicy.AreMaterialsEnabled && ApiInfo.CanAnimatePaths)
+            {
+                _visual.UpdateLevel(average);
+            }
         }
 
         public void Connect(VoipManager controller)
@@ -400,6 +421,23 @@ namespace Telegram.Views.Calls
                 BackgroundPanel.Visibility = args.Video == VoipVideoState.Inactive
                     ? Visibility.Collapsed
                     : Visibility.Visible;
+
+                if (args.Video == VoipVideoState.Inactive)
+                {
+                    if (PowerSavingPolicy.AreMaterialsEnabled && ApiInfo.CanAnimatePaths)
+                    {
+                        _visual.StartAnimating();
+                    }
+                    else
+                    {
+                        _visual.StopAnimating();
+                        _visual.Clear();
+                    }
+                }
+                else
+                {
+                    _visual.StopAnimating();
+                }
             });
         }
 
@@ -439,7 +477,7 @@ namespace Telegram.Views.Calls
             var user = _clientService.GetUser(call.UserId);
             if (user != null)
             {
-                Image.SetUser(_clientService, user, 140);
+                Image.SetUser(_clientService, user, 280);
 
                 //if (user.ProfilePhoto != null)
                 //{
@@ -475,7 +513,7 @@ namespace Telegram.Views.Calls
                 for (int i = 0; i < ready.Emojis.Count; i++)
                 {
                     var textLarge = FindName($"LargeEmoji{i}") as TextBlock;
-                    textLarge.Text = ready.Emojis[i];
+                    textLarge.Text = ready.Emojis[i] + "\uFE0F";
                 }
             }
 
