@@ -55,8 +55,6 @@ namespace Telegram.Services.ViewService
 
         internal static void OnWindowCreated()
         {
-            _mainWindowCreated.TrySetResult(true);
-
             var view = CoreApplication.GetCurrentView();
             if (!view.IsMain && !view.IsHosted)
             {
@@ -67,6 +65,11 @@ namespace Telegram.Services.ViewService
                 SynchronizationContext.SetSynchronizationContext(new SecondaryViewSynchronizationContextDecorator(control,
                     SynchronizationContext.Current));
             }
+        }
+
+        internal static void OnWindowLoaded()
+        {
+            _mainWindowCreated.TrySetResult(true);
         }
 
         public bool IsSupported => true;

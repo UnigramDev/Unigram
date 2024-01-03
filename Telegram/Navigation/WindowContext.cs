@@ -168,11 +168,29 @@ namespace Telegram.Navigation
             {
                 _window.Content = value;
 
-                if (value != null && _locked != null)
+                if (value != null)
                 {
-                    value.Visibility = Visibility.Collapsed;
+                    if (_locked != null)
+                    {
+                        value.Visibility = Visibility.Collapsed;
+                    }
+
+                    if (value is FrameworkElement element)
+                    {
+                        element.Loaded += OnLoaded;
+                    }
                 }
             }
+        }
+
+        private void OnLoaded(object sender, RoutedEventArgs e)
+        {
+            if (sender is FrameworkElement element)
+            {
+                element.Loaded -= OnLoaded;
+            }
+
+            ViewService.OnWindowLoaded();
         }
 
         public Size Size { get; set; }
