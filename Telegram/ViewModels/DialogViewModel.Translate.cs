@@ -94,26 +94,26 @@ namespace Telegram.ViewModels
                 return;
             }
 
-            if (_languageDetected != null || _languageBuilder == null || !ClientService.IsPremium)
+            lock (_languageLock)
             {
-                return;
-            }
+                if (_languageDetected != null || _languageBuilder == null || !ClientService.IsPremium)
+                {
+                    return;
+                }
 
-            _languageSlices++;
+                _languageSlices++;
 
-            var enough = _languageSlices == 2 || _languageMessages >= 10;
-            var complete = IsFirstSliceLoaded is true && IsLastSliceLoaded is true;
+                var enough = _languageSlices == 2 || _languageMessages >= 10;
+                var complete = IsFirstSliceLoaded is true && IsLastSliceLoaded is true;
 
-            if (enough || complete)
-            {
-                lock (_languageLock)
+                if (enough || complete)
                 {
                     _languageDetected = LanguageIdentification.IdentifyLanguage(_languageBuilder.ToString());
                     _languageBuilder = null;
-                }
 
-                Logger.Info(_languageDetected);
-                Dispatcher.Dispatch(UpdateChatIsTranslatable);
+                    Logger.Info(_languageDetected);
+                    Dispatcher.Dispatch(UpdateChatIsTranslatable);
+                }
             }
         }
 
