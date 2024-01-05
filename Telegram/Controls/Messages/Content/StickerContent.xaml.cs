@@ -148,7 +148,7 @@ namespace Telegram.Controls.Messages.Content
             }
 
             var autoPlayStickers = message.Content is MessageSticker && PowerSavingPolicy.AutoPlayStickersInChats;
-            var autoPlayEmojis = message.Content is MessageAnimatedEmoji && PowerSavingPolicy.AutoPlayStickersInChats;
+            var autoPlayEmojis = message.Content is MessageAnimatedEmoji && sticker.FullType is StickerFullTypeCustomEmoji && PowerSavingPolicy.AutoPlayStickersInChats;
 
             using (Player.BeginBatchUpdate())
             {
