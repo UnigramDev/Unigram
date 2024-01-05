@@ -104,6 +104,7 @@ namespace Telegram.Views.Settings
                         ToastPopup.Show(Strings.UserColorApplied, new LocalFileSource("ms-appx:///Assets/Toasts/Success.tgs"));
                     }
 
+                    _confirmed = true;
                     Frame.GoBack();
                 }
                 else
