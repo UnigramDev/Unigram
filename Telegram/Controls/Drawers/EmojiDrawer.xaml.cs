@@ -120,7 +120,7 @@ namespace Telegram.Controls.Drawers
                 {
                     List.ItemsSource = EmojiCollection.View;
                 }
-                else
+                else if (ViewModel != null)
                 {
                     List.ItemsSource = await Emoji.SearchAsync(ViewModel.ClientService, SearchField.Text, _selected, _mode);
                 }
