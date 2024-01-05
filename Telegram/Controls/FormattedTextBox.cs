@@ -1394,6 +1394,11 @@ namespace Telegram.Controls
         {
             BeginUndoGroup();
 
+            if (range.Expand(TextRangeUnit.Hidden) != 0 && Emoticon.Data.ContainsKey(Document.Selection.Text))
+            {
+                range.Delete(TextRangeUnit.Hidden, 1);
+            }
+
             range.SetText(TextSetOptions.None, string.Empty);
             range.SetText(TextSetOptions.None, $"{emoji};{customEmojiId}");
             range.CharacterFormat.Hidden = FormatEffect.On;
