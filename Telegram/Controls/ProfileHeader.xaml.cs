@@ -1289,7 +1289,7 @@ namespace Telegram.Controls
                     {
                         data = textUrl.Url;
                         MessageHelper.SetEntityData(hyperlink, textUrl.Url);
-                        ToolTipService.SetToolTip(hyperlink, textUrl.Url);
+                        Extensions.SetToolTip(hyperlink, textUrl.Url);
                     }
                     else if (entity.Type is TextEntityTypeMentionName mentionName)
                     {

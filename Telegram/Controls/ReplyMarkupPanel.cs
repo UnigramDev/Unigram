@@ -5,6 +5,7 @@
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
 using System;
+using Telegram.Common;
 using Telegram.Controls.Media;
 using Telegram.Navigation;
 using Telegram.Td.Api;
@@ -142,7 +143,7 @@ namespace Telegram.Controls
                     {
                         case InlineKeyboardButtonTypeUrl typeUrl:
                             button.Glyph = "\uE9B7";
-                            ToolTipService.SetToolTip(button, typeUrl.Url);
+                            Extensions.SetToolTip(button, typeUrl.Url);
                             break;
                         case InlineKeyboardButtonTypeLoginUrl:
                             button.Glyph = "\uE9B7";

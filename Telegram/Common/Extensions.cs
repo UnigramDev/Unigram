@@ -10,6 +10,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
@@ -49,6 +50,29 @@ namespace Telegram.Common
 {
     public static class Extensions
     {
+        public static void SetToolTip(DependencyObject element, object value, [CallerMemberName] string member = "", [CallerFilePath] string filePath = "", [CallerLineNumber] int line = 0)
+        {
+            if (ApiInfo.IsStoreRelease || value == null)
+            {
+                ToolTipService.SetToolTip(element, value);
+            }
+            else
+            {
+                var tooltip = new ToolTip
+                {
+                    Content = value,
+                    Tag = element.GetType().Name
+                };
+
+                tooltip.Opened += (s, args) =>
+                {
+                    Logger.Info("ToolTip opened", member, filePath, line);
+                };
+
+                ToolTipService.SetToolTip(element, tooltip);
+            }
+        }
+
         // TODO: this is a duplicat of INavigationService.ShowPopupAsync, and it's needed by GamePage, GroupCallPage and LiveStreamPage.
         // Must be removed at some point.
         public static Task<ContentDialogResult> ShowPopupAsync(this Page frame, int sessionId, Type sourcePopupType, object parameter = null, TaskCompletionSource<object> tsc = null)

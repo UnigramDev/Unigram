@@ -280,7 +280,7 @@ namespace Telegram.Controls.Messages.Content
                                 MessageHelper.SetEntityData(hyperlink, textUrl.Url);
                                 MessageHelper.SetEntityType(hyperlink, entity.Type);
 
-                                ToolTipService.SetToolTip(hyperlink, textUrl.Url);
+                                Extensions.SetToolTip(hyperlink, textUrl.Url);
                             }
                             else if (entity.Type is TextEntityTypeMentionName mentionName)
                             {

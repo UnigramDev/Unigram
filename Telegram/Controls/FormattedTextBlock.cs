@@ -455,7 +455,7 @@ namespace Telegram.Controls
                         if (entity.Type is TextEntityTypeCode)
                         {
                             var hyperlink = new Hyperlink();
-                            hyperlink.Click += (s, args) => Entity_Click(entity.Offset, entity.Length, entity.Type, data);
+                            hyperlink.Click += (s, args) => Entity_Click(hyperlink, entity.Offset, entity.Length, entity.Type, data);
                             hyperlink.Foreground = TextBlock.Foreground;
                             hyperlink.UnderlineStyle = UnderlineStyle.None;
 
@@ -493,7 +493,7 @@ namespace Telegram.Controls
                         if (_ignoreSpoilers is false && entity.HasFlag(Common.TextStyle.Spoiler))
                         {
                             var hyperlink = new Hyperlink();
-                            hyperlink.Click += (s, args) => Entity_Click(entity.Offset, entity.Length, new TextEntityTypeSpoiler(), null);
+                            hyperlink.Click += (s, args) => Entity_Click(hyperlink, entity.Offset, entity.Length, new TextEntityTypeSpoiler(), null);
                             hyperlink.Foreground = null;
                             hyperlink.UnderlineStyle = UnderlineStyle.None;
                             hyperlink.FontFamily = BootStrapper.Current.Resources["SpoilerFontFamily"] as FontFamily;
@@ -519,14 +519,14 @@ namespace Telegram.Controls
                                     MessageHelper.SetEntityData(hyperlink, textUrl.Url);
                                     MessageHelper.SetEntityType(hyperlink, entity.Type);
 
-                                    ToolTipService.SetToolTip(hyperlink, textUrl.Url);
+                                    Extensions.SetToolTip(hyperlink, textUrl.Url);
                                 }
                                 else if (entity.Type is TextEntityTypeMentionName mentionName)
                                 {
                                     data = mentionName.UserId;
                                 }
 
-                                hyperlink.Click += (s, args) => Entity_Click(entity.Offset, entity.Length, entity.Type, null);
+                                hyperlink.Click += (s, args) => Entity_Click(hyperlink, entity.Offset, entity.Length, entity.Type, null);
                                 hyperlink.Foreground = HyperlinkForeground ?? GetBrush("MessageForegroundLinkBrush");
                                 hyperlink.UnderlineStyle = HyperlinkStyle;
                                 hyperlink.FontWeight = HyperlinkFontWeight;
@@ -549,7 +549,7 @@ namespace Telegram.Controls
                                 //    data = text.Substring(original.Offset, original.Length);
                                 //}
 
-                                hyperlink.Click += (s, args) => Entity_Click(entity.Offset, entity.Length, entity.Type, data);
+                                hyperlink.Click += (s, args) => Entity_Click(hyperlink, entity.Offset, entity.Length, entity.Type, data);
                                 hyperlink.Foreground = HyperlinkForeground ?? GetBrush("MessageForegroundLinkBrush");
                                 hyperlink.UnderlineStyle = HyperlinkStyle;
                                 hyperlink.FontWeight = HyperlinkFontWeight;
@@ -974,7 +974,7 @@ namespace Telegram.Controls
             }
         }
 
-        private void Entity_Click(int offset, int length, TextEntityType type, object data)
+        private void Entity_Click(Hyperlink sender, int offset, int length, TextEntityType type, object data)
         {
             foreach (Paragraph block in TextBlock.Blocks)
             {

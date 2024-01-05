@@ -10,7 +10,6 @@ using Telegram.Common;
 using Telegram.Td.Api;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Automation;
-using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
 
 namespace Telegram.Controls
@@ -42,7 +41,7 @@ namespace Telegram.Controls
             Percentage.Visibility = results ? Visibility.Visible : Visibility.Collapsed;
             Percentage.Text = $"{option.VotePercentage}%";
 
-            ToolTipService.SetToolTip(Percentage, results ? votes : null);
+            Extensions.SetToolTip(Percentage, results ? votes : null);
 
             Text.Text = option.Text;
 
