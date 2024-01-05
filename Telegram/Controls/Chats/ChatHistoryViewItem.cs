@@ -5,6 +5,7 @@
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
 using System;
+using System.Collections.Generic;
 using System.Numerics;
 using Telegram.Common;
 using Telegram.Controls.Messages;
@@ -52,7 +53,7 @@ namespace Telegram.Controls.Chats
             _typeName = typeName;
 
             Connected += OnLoaded;
-            Disconnected += OnUnloaded;
+            //Disconnected += OnUnloaded;
 
             AddHandler(PointerPressedEvent, new PointerEventHandler(OnPointerPressed), true);
         }
@@ -96,6 +97,9 @@ namespace Telegram.Controls.Chats
             {
                 _hasInitialLoadedEventFired = true;
 
+                _existingItems ??= new();
+                _existingItems.Add(this);
+
                 _hitTest = ElementCompositionPreview.GetElementVisual(this);
                 _visual = ElementCompositionPreview.GetElementVisual(_presenter);
 
@@ -128,6 +132,24 @@ namespace Telegram.Controls.Chats
                 _tracker.Dispose();
                 _tracker = null;
             }
+        }
+
+        [ThreadStatic]
+        private static HashSet<ChatHistoryViewItem> _existingItems;
+
+        public static void UnloadExistingItems()
+        {
+            if (_existingItems == null)
+            {
+                return;
+            }
+
+            foreach (var item in _existingItems)
+            {
+                item.OnUnloaded(null, null);
+            }
+
+            _existingItems = null;
         }
 
         private void ConfigureInteractionTracker()
