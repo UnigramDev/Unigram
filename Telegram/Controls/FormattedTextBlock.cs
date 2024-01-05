@@ -208,13 +208,20 @@ namespace Telegram.Controls
 
                 if (startBlock == endBlock)
                 {
-                    if (startBlock is TextElement element)
+                    try
                     {
-                        TextBlock.Select(element.ContentStart, element.ContentEnd);
+                        if (startBlock is TextElement element)
+                        {
+                            TextBlock.Select(element.ContentStart, element.ContentEnd);
+                        }
+                        else if (startBlock is RichTextBlock block)
+                        {
+                            TextBlock.Select(block.ContentStart, block.ContentEnd);
+                        }
                     }
-                    else if (startBlock is RichTextBlock block)
+                    catch
                     {
-                        TextBlock.Select(block.ContentStart, block.ContentEnd);
+                        // All the remote procedure calls must be wrapped in a try-catch block
                     }
                 }
             }
