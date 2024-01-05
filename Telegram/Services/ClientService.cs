@@ -227,17 +227,17 @@ namespace Telegram.Services
         private readonly Dictionary<long, long> _usersToChats = new();
 
         private readonly Dictionary<long, User> _users = new();
-        private readonly Dictionary<long, UserFullInfo> _usersFull = new();
+        private readonly ConcurrentDictionary<long, UserFullInfo> _usersFull = new();
 
         private readonly Dictionary<long, BasicGroup> _basicGroups = new();
-        private readonly Dictionary<long, BasicGroupFullInfo> _basicGroupsFull = new();
+        private readonly ConcurrentDictionary<long, BasicGroupFullInfo> _basicGroupsFull = new();
 
         private readonly Dictionary<long, Supergroup> _supergroups = new();
-        private readonly Dictionary<long, SupergroupFullInfo> _supergroupsFull = new();
+        private readonly ConcurrentDictionary<long, SupergroupFullInfo> _supergroupsFull = new();
 
         private readonly Dictionary<ChatMessageId, ForumTopicInfo> _topics = new();
 
-        private readonly Dictionary<int, ChatListUnreadCount> _unreadCounts = new();
+        private readonly ConcurrentDictionary<int, ChatListUnreadCount> _unreadCounts = new();
 
         private readonly Dictionary<int, File> _files = new();
 
