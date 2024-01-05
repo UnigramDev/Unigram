@@ -330,7 +330,7 @@
                         <!-- TODO: find a way to get rid of this -->
                         <local:ReactionsPanel x:Name="MediaReactions"
                                               MaxWidth="{StaticResource MessageMaxWidth}"
-                                              HorizontalAlignment="Left"
+                                              HorizontalAlignment="Stretch"
                                               Padding="0,2,0,0"
                                               Grid.Column="1"
                                               Grid.Row="2" />
