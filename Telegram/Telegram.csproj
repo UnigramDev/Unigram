@@ -1496,6 +1496,9 @@
     <Compile Include="Views\Supergroups\Popups\SupergroupChooseMemberPopup.xaml.cs">
       <DependentUpon>SupergroupChooseMemberPopup.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\Supergroups\SupergroupMembersPage.xaml.cs">
+      <DependentUpon>SupergroupMembersPage.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\Supergroups\SupergroupProfileColorPage.xaml.cs">
       <DependentUpon>SupergroupProfileColorPage.xaml</DependentUpon>
     </Compile>
@@ -1516,9 +1519,6 @@
     </Compile>
     <Compile Include="Views\Supergroups\SupergroupEditTypePage.xaml.cs">
       <DependentUpon>SupergroupEditTypePage.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\Supergroups\SupergroupMembersView.xaml.cs">
-      <DependentUpon>SupergroupMembersView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Supergroups\SupergroupPermissionsPage.xaml.cs">
       <DependentUpon>SupergroupPermissionsPage.xaml</DependentUpon>
@@ -2752,10 +2752,6 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Views\Popups\ChooseNameColorPopup.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
     <Page Include="Views\Settings\LoginEmail\SettingsLoginEmailCodePopup.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -3012,6 +3008,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Views\Supergroups\SupergroupMembersPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Views\Supergroups\SupergroupProfileColorPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -3039,10 +3039,6 @@
     <Page Include="Views\Supergroups\SupergroupEditTypePage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Views\Supergroups\SupergroupMembersView.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
     </Page>
     <Page Include="Views\Supergroups\SupergroupPermissionsPage.xaml">
       <Generator>MSBuild:Compile</Generator>

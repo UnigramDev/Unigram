@@ -65,7 +65,7 @@ namespace Telegram.ViewModels.Supergroups
             Members.Remove(member);
 
             var response = await ClientService.SendAsync(new SetChatMemberStatus(chat.Id, member.MemberId, status));
-            if (response is Error)
+            if (response is Error && index < Members.Count)
             {
                 Members.Insert(index, member);
             }

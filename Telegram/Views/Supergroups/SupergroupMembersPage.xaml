@@ -6,6 +6,7 @@
                   xmlns:selectors="using:Telegram.Selectors"
                   xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
                   xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                  xmlns:cells="using:Telegram.Controls.Cells"
                   mc:Ignorable="d">
 
     <Page.Transitions>
@@ -16,53 +17,6 @@
         </TransitionCollection>
     </Page.Transitions>
 
-    <UserControl.Resources>
-        <DataTemplate x:Key="MemberTemplate">
-            <Grid Padding="12,6"
-                  Background="{ThemeResource SettingsItemBackground}"
-                  BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}">
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition Height="Auto" />
-                </Grid.RowDefinitions>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="Auto" />
-                    <ColumnDefinition />
-                    <ColumnDefinition Width="Auto" />
-                </Grid.ColumnDefinitions>
-                <controls:ProfilePicture IsEnabled="False"
-                                         Width="36"
-                                         Height="36"
-                                         Margin="0,0,12,0"
-                                         Grid.RowSpan="2" />
-
-                <TextBlock TextWrapping="NoWrap"
-                           TextTrimming="CharacterEllipsis"
-                           Grid.Column="1"
-                           VerticalAlignment="Bottom"
-                           Grid.Row="0" />
-
-                <TextBlock Style="{StaticResource CaptionTextBlockStyle}"
-                           Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"
-                           VerticalAlignment="Top"
-                           TextTrimming="CharacterEllipsis"
-                           TextWrapping="NoWrap"
-                           Grid.Column="1"
-                           Grid.Row="1"
-                           MaxLines="1" />
-
-                <TextBlock Style="{StaticResource CaptionTextBlockStyle}"
-                           Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"
-                           VerticalAlignment="Center"
-                           TextTrimming="CharacterEllipsis"
-                           TextWrapping="NoWrap"
-                           Grid.Column="2"
-                           Grid.RowSpan="2"
-                           MaxLines="1" />
-            </Grid>
-        </DataTemplate>
-    </UserControl.Resources>
-
     <Grid Background="{ThemeResource SettingsPageBackground}">
         <controls:TableListView x:Name="ScrollingHost"
                                 ItemsSource="{x:Bind ViewModel.Members, Mode=OneWay}"
@@ -72,6 +26,12 @@
                                 ContainerContentChanging="OnContainerContentChanging"
                                 SelectionMode="None"
                                 Grid.Row="1">
+            <ListView.ItemTemplate>
+                <DataTemplate>
+                    <cells:ProfileCell Background="{ThemeResource SettingsItemBackground}"
+                                       BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}" />
+                </DataTemplate>
+            </ListView.ItemTemplate>
             <ListView.Header>
                 <controls:SettingsPanel x:Name="ListHeader"
                                         IsHeader="True">
@@ -114,20 +74,6 @@
                     </controls:HeaderedControl>
                 </controls:SettingsPanel>
             </ListView.Header>
-            <ListView.ItemTemplateSelector>
-                <selectors:MemberTemplateSelector ItemTemplate="{StaticResource MemberTemplate}">
-                    <selectors:MemberTemplateSelector.GroupTemplate>
-                        <DataTemplate x:DataType="x:String">
-                            <Border Margin="-12,0"
-                                    Background="{ThemeResource PageSubHeaderBackgroundBrush}">
-                                <TextBlock Text="{x:Bind}"
-                                           Padding="12,0,0,0"
-                                           Style="{StaticResource SettingsGroupTextBlockStyle}" />
-                            </Border>
-                        </DataTemplate>
-                    </selectors:MemberTemplateSelector.GroupTemplate>
-                </selectors:MemberTemplateSelector>
-            </ListView.ItemTemplateSelector>
             <ListView.Footer>
                 <Border MaxWidth="640">
                     <TextBlock x:Name="Footer"

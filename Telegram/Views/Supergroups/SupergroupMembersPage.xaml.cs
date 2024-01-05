@@ -6,8 +6,8 @@
 //
 using Telegram.Common;
 using Telegram.Controls;
+using Telegram.Controls.Cells;
 using Telegram.Controls.Media;
-using Telegram.Converters;
 using Telegram.Navigation;
 using Telegram.Td.Api;
 using Telegram.ViewModels.Delegates;
@@ -34,30 +34,6 @@ namespace Telegram.Views.Supergroups
             SearchField.Focus(FocusState.Keyboard);
         }
 
-        private bool _isLocked;
-
-        private bool _isEmbedded;
-        public bool IsEmbedded
-        {
-            get => _isEmbedded;
-            set => Update(value, _isLocked);
-        }
-
-        public void Update(bool embedded, bool locked)
-        {
-            _isEmbedded = embedded;
-            _isLocked = locked;
-
-            ListHeader.Visibility = embedded ? Visibility.Collapsed : Visibility.Visible;
-            ScrollingHost.Padding = new Thickness(0, embedded ? 12 : embedded ? 12 + 16 : 16, 0, 0);
-            //ListHeader.Height = embedded && !locked ? 12 : embedded ? 12 + 16 : 16;
-
-            if (embedded)
-            {
-                Footer.Visibility = Visibility.Collapsed;
-            }
-        }
-
         private void ListView_ItemClick(object sender, ItemClickEventArgs e)
         {
             if (e.ClickedItem is ChatMember member)
@@ -78,8 +54,6 @@ namespace Telegram.Views.Supergroups
                 return;
             }
 
-            var flyout = new MenuFlyout();
-
             ChatMemberStatus status = null;
             if (chat.Type is ChatTypeBasicGroup basic)
             {
@@ -94,6 +68,8 @@ namespace Telegram.Views.Supergroups
             {
                 return;
             }
+
+            var flyout = new MenuFlyout();
 
             if (chat.Type is ChatTypeSupergroup)
             {
@@ -171,17 +147,8 @@ namespace Telegram.Views.Supergroups
             {
                 args.ItemContainer = new TableListViewItem();
                 args.ItemContainer.Style = sender.ItemContainerStyle;
+                args.ItemContainer.ContentTemplate = sender.ItemTemplate;
                 args.ItemContainer.ContextRequested += Member_ContextRequested;
-
-                if (sender.ItemTemplateSelector == null)
-                {
-                    args.ItemContainer.ContentTemplate = sender.ItemTemplate;
-                }
-            }
-
-            if (sender.ItemTemplateSelector != null)
-            {
-                args.ItemContainer.ContentTemplate = sender.ItemTemplateSelector.SelectTemplate(args.Item, args.ItemContainer);
             }
 
             args.IsContainerPrepared = true;
@@ -193,66 +160,10 @@ namespace Telegram.Views.Supergroups
             {
                 return;
             }
-
-            var content = args.ItemContainer.ContentTemplateRoot as Grid;
-
-            var member = args.Item as ChatMember;
-            if (member == null)
+            else if (args.ItemContainer.ContentTemplateRoot is ProfileCell cell)
             {
-                return;
+                cell.UpdateSupergroupMember(ViewModel.ClientService, args, OnContainerContentChanging);
             }
-
-            var user = ViewModel.ClientService.GetMessageSender(member.MemberId) as User;
-            if (user == null)
-            {
-                return;
-            }
-
-            if (args.Phase == 0)
-            {
-                var title = content.Children[1] as TextBlock;
-                title.Text = user.FullName();
-            }
-            else if (args.Phase == 1)
-            {
-                var subtitle = content.Children[2] as TextBlock;
-                var label = content.Children[3] as TextBlock;
-
-                if (_isEmbedded)
-                {
-                    subtitle.Text = LastSeenConverter.GetLabel(user, false);
-
-                    if (member.Status is ChatMemberStatusAdministrator administrator)
-                    {
-                        label.Text = string.IsNullOrEmpty(administrator.CustomTitle) ? Strings.ChannelAdmin : administrator.CustomTitle;
-                    }
-                    else if (member.Status is ChatMemberStatusCreator creator)
-                    {
-                        label.Text = string.IsNullOrEmpty(creator.CustomTitle) ? Strings.ChannelCreator : creator.CustomTitle;
-                    }
-                    else
-                    {
-                        label.Text = string.Empty;
-                    }
-                }
-                else
-                {
-                    subtitle.Text = ChannelParticipantToTypeConverter.Convert(ViewModel.ClientService, member);
-                    label.Text = string.Empty;
-                }
-            }
-            else if (args.Phase == 2)
-            {
-                var photo = content.Children[0] as ProfilePicture;
-                photo.SetUser(ViewModel.ClientService, user, 36);
-            }
-
-            if (args.Phase < 2)
-            {
-                args.RegisterUpdateCallback(OnContainerContentChanging);
-            }
-
-            args.Handled = true;
         }
 
         #endregion
