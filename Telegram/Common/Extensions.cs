@@ -60,8 +60,7 @@ namespace Telegram.Common
             {
                 var tooltip = new ToolTip
                 {
-                    Content = value,
-                    Tag = element.GetType().Name
+                    Content = value
                 };
 
                 tooltip.Opened += (s, args) =>
