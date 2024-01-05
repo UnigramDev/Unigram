@@ -2050,7 +2050,7 @@ namespace Telegram.Views
 
                 if (header.WebPagePreview.HasLargeMedia)
                 {
-                    flyout.CreateFlyoutItem(ChangeForceMedia, header, header.LinkPreviewOptions.ForceSmallMedia ? Strings.LinkMediaLarger : Strings.LinkMediaSmaller, header.LinkPreviewOptions.ForceLargeMedia ? Icons.Shrink : Icons.Enlarge);
+                    flyout.CreateFlyoutItem(ChangeForceMedia, header, header.LinkPreviewOptions.ForceSmallMedia ? Strings.LinkMediaLarger : Strings.LinkMediaSmaller, header.LinkPreviewOptions.ForceSmallMedia ? Icons.Enlarge : Icons.Shrink);
                 }
 
                 flyout.CreateFlyoutSeparator();

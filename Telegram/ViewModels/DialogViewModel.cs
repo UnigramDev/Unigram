@@ -2427,7 +2427,21 @@ namespace Telegram.ViewModels
         protected override LinkPreviewOptions DisableWebPreview()
         {
             var header = _composerHeader;
-            return header?.LinkPreviewOptions;
+            if (header?.LinkPreviewOptions != null)
+            {
+                return new LinkPreviewOptions
+                {
+                    ForceLargeMedia = header.LinkPreviewOptions.ForceLargeMedia,
+                    ForceSmallMedia = header.LinkPreviewOptions.ForceSmallMedia,
+                    ShowAboveText = header.LinkPreviewOptions.ShowAboveText,
+                    IsDisabled = header.LinkPreviewOptions.IsDisabled,
+                    Url = header.LinkPreviewOptions.ForceLargeMedia || header.LinkPreviewOptions.ForceSmallMedia
+                        ? header.WebPageUrl ?? string.Empty
+                        : string.Empty
+                };
+            }
+
+            return null;
         }
 
         protected override async Task<bool> BeforeSendMessageAsync(FormattedText formattedText)
