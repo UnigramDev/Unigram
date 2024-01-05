@@ -14,9 +14,9 @@ using System.Numerics;
 using System.Threading.Tasks;
 using Telegram.Collections;
 using Telegram.Common;
+using Telegram.Composition;
 using Telegram.Controls;
 using Telegram.Controls.Media;
-using Telegram.Native;
 using Telegram.Navigation;
 using Telegram.Navigation.Services;
 using Telegram.Services;
@@ -879,11 +879,17 @@ namespace Telegram.Views.Host
                     await Test();
                 }
 
-                var bitmap = ScreenshotManager.Capture();
-                Transition.Background = new ImageBrush { ImageSource = bitmap, AlignmentX = AlignmentX.Center, AlignmentY = AlignmentY.Center, RelativeTransform = new ScaleTransform { ScaleY = -1, CenterY = 0.5 } };
+                var visual = Window.Current.Compositor.CreateRedirectVisual(this, Vector2.Zero, ActualSize, true);
+                await VisualUtilities.WaitForCompositionRenderedAsync();
+
+                ElementCompositionPreview.SetElementChildVisual(Transition, visual);
+
+                //var bitmap = ScreenshotManager.Capture();
+                //Transition.Background = new ImageBrush { ImageSource = bitmap, AlignmentX = AlignmentX.Center, AlignmentY = AlignmentY.Center, RelativeTransform = new ScaleTransform { ScaleY = -1, CenterY = 0.5 } };
 
                 Theme.Visibility = Visibility.Visible;
-                Theme.Foreground = new SolidColorBrush(Windows.UI.Colors.White);
+                Theme.Foreground = new SolidColorBrush(ActualTheme != ElementTheme.Dark ? Windows.UI.Colors.White : Windows.UI.Colors.Black);
+                //Theme.Foreground = new SolidColorBrush(Windows.UI.Colors.White);
 
                 var actualWidth = (float)ActualWidth;
                 var actualHeight = (float)ActualHeight;
@@ -895,16 +901,17 @@ namespace Telegram.Views.Host
                 var diaginal = MathF.Sqrt((width * width) + (width * width));
 
                 var device = CanvasDevice.GetSharedDevice();
+                var expand = false; // ActualTheme == ElementTheme.Dark;
 
-                var rect1 = CanvasGeometry.CreateRectangle(device, 0, 0, ActualTheme == ElementTheme.Light ? actualWidth : 0, ActualTheme == ElementTheme.Light ? actualHeight : 0);
+                var rect1 = CanvasGeometry.CreateRectangle(device, 0, 0, expand ? 0 : actualWidth, expand ? 0 : actualHeight);
 
-                var elli1 = CanvasGeometry.CreateCircle(device, point.X + 24, point.Y + 24, ActualTheme == ElementTheme.Dark ? 0 : diaginal);
+                var elli1 = CanvasGeometry.CreateCircle(device, point.X + 24, point.Y + 24, expand ? 0 : diaginal);
                 var group1 = CanvasGeometry.CreateGroup(device, new[] { elli1, rect1 }, CanvasFilledRegionDetermination.Alternate);
 
-                var elli2 = CanvasGeometry.CreateCircle(device, point.X + 24, point.Y + 24, ActualTheme == ElementTheme.Dark ? diaginal : 0);
+                var elli2 = CanvasGeometry.CreateCircle(device, point.X + 24, point.Y + 24, expand ? diaginal : 0);
                 var group2 = CanvasGeometry.CreateGroup(device, new[] { elli2, rect1 }, CanvasFilledRegionDetermination.Alternate);
 
-                var visual = ElementCompositionPreview.GetElementVisual(Transition);
+                //var visual = ElementCompositionPreview.GetElementVisual(Transition);
                 var ellipse = visual.Compositor.CreatePathGeometry(new CompositionPath(group2));
                 var clip = visual.Compositor.CreateGeometricClip(ellipse);
 
@@ -914,12 +921,15 @@ namespace Telegram.Views.Host
                 batch.Completed += (s, args) =>
                 {
                     visual.Clip = null;
-                    Transition.Background = null;
+                    visual.Brush = visual.Compositor.CreateColorBrush(Windows.UI.Colors.Transparent);
+                    //Transition.Background = null;
+
+                    ElementCompositionPreview.SetElementChildVisual(Transition, visual.Compositor.CreateSpriteVisual());
                     Theme.Foreground = new SolidColorBrush(ActualTheme == ElementTheme.Dark ? Windows.UI.Colors.White : Windows.UI.Colors.Black);
                 };
 
                 CompositionEasingFunction ease;
-                if (ActualTheme == ElementTheme.Dark)
+                if (expand)
                 {
                     ease = visual.Compositor.CreateCubicBezierEasingFunction(new Vector2(.42f, 0), new Vector2(1, 1));
                 }
