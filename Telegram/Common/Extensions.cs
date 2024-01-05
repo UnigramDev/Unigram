@@ -279,6 +279,12 @@ namespace Telegram.Common
                 index += paragraph.Padding;
             }
 
+            // Adjust the offset if the selection ends on the text block itself
+            if (pointer.Offset == textBlock.ContentEnd.Offset && pointer.Parent is RichTextBlock)
+            {
+                index += 2;
+            }
+
             return pointer.Offset - index;
         }
 

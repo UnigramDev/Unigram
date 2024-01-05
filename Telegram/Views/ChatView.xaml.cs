@@ -866,7 +866,7 @@ namespace Telegram.Views
                 else
                 {
                     var focused = FocusManager.GetFocusedElement();
-                    if (focused is MessageSelector selector && MessageCopy_Loaded(selector.Message))
+                    if (focused is MessageSelector selector && selector.Message != null && MessageCopy_Loaded(selector.Message))
                     {
                         ViewModel.CopyMessage(selector.Message);
                         args.Handled = true;
@@ -895,10 +895,10 @@ namespace Telegram.Views
                                     {
                                         ViewModel.CopyMessage(quote);
                                     }
-
-                                    args.Handled = true;
                                 }
                             }
+
+                            args.Handled = true;
                         }
                     }
                 }
