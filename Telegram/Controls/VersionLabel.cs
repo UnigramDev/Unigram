@@ -74,12 +74,16 @@ namespace Telegram.Controls
                 _ => " Direct"
             };
 
+            var revision = version.Revision > 0
+                ? string.Format(" ({0})", version.Revision)
+                : string.Empty;
+
             if (version.Build > 0)
             {
-                return string.Format("{0}.{1}.{2} ({3}) {4}{5}", version.Major, version.Minor, version.Build, version.Revision, packageId.Architecture, type);
+                return string.Format("{0}.{1}.{2}{3} {4}{5}", version.Major, version.Minor, version.Build, revision, packageId.Architecture, type);
             }
 
-            return string.Format("{0}.{1} ({2}) {3}{4}", version.Major, version.Minor, version.Revision, packageId.Architecture, type);
+            return string.Format("{0}.{1}{2} {3}{4}", version.Major, version.Minor, revision, packageId.Architecture, type);
         }
     }
 }
