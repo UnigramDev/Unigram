@@ -5,7 +5,6 @@
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
 using Microsoft.Graphics.Canvas.Geometry;
-using Microsoft.UI.Xaml.Controls;
 using System;
 using System.Collections.Generic;
 using System.Numerics;
@@ -606,7 +605,7 @@ namespace Telegram.Controls.Cells
                 {
                     result = string.Format(format, _clientService.GetTitle(message.ForwardInfo?.Origin, message.ImportInfo));
                 }
-                else if (message.IsOutgoing)
+                else if (message.SenderId.IsUser(_clientService.Options.MyId))
                 {
                     result = string.Format(format, Strings.FromYou);
                 }
@@ -629,10 +628,10 @@ namespace Telegram.Controls.Cells
                         result = string.Format(format, fromUser.Id);
                     }
                 }
-                //else if (fromChat != null && fromChat.Id != topic.Id)
-                //{
-                //    result = string.Format(format, fromChat.Title);
-                //}
+                else if (fromChat != null && fromChat.Id != chat.Id)
+                {
+                    result = string.Format(format, fromChat.Title);
+                }
             }
 
             if (message.Content is MessageGame gameMedia)

@@ -1390,12 +1390,9 @@ namespace Telegram.Controls.Cells
                 {
                     return string.Format(format, clientService.GetTitle(message.ForwardInfo?.Origin, message.ImportInfo));
                 }
-                else if (message.IsOutgoing)
+                else if (message.SenderId.IsUser(clientService.Options.MyId))
                 {
-                    if (!(chat.Type is ChatTypePrivate priv && priv.UserId == fromUser?.Id) && !message.IsChannelPost)
-                    {
-                        return string.Format(format, Strings.FromYou);
-                    }
+                    return string.Format(format, Strings.FromYou);
                 }
                 else if (fromUser != null)
                 {
