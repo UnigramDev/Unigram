@@ -795,16 +795,7 @@ namespace Telegram.Views.Popups
 
         private void List_ItemClick(object sender, ItemClickEventArgs e)
         {
-            if (ViewModel.Options.CanPostMessages && e.ClickedItem is Chat chat && (ViewModel.ClientService.IsSavedMessages(chat) || ViewModel.SelectionMode == ListViewSelectionMode.None))
-            {
-                if (ViewModel.SelectedItems.Empty())
-                {
-                    ViewModel.SelectedItems = new MvxObservableCollection<Chat>(new[] { chat });
-                    ViewModel.SendCommand.Execute();
-
-                    Hide();
-                }
-            }
+            ItemClick(e.ClickedItem as Chat);
         }
 
         private async void ListView_ItemClick(object sender, ItemClickEventArgs e)
@@ -833,7 +824,7 @@ namespace Telegram.Views.Popups
             }
 
             var chat = item as Chat;
-            if (chat == null)
+            if (chat == null || ItemClick(chat))
             {
                 return;
             }
@@ -871,6 +862,25 @@ namespace Telegram.Views.Popups
             {
                 ChatsPanel.SelectedItem = chat;
             }
+
+            ItemClick(chat);
+        }
+
+        private bool ItemClick(Chat chat)
+        {
+            if (ViewModel.Options.CanPostMessages && (ViewModel.ClientService.IsSavedMessages(chat) || ViewModel.SelectionMode == ListViewSelectionMode.None))
+            {
+                if (ViewModel.SelectedItems.Empty())
+                {
+                    ViewModel.SelectedItems = new MvxObservableCollection<Chat>(new[] { chat });
+                    ViewModel.SendCommand.Execute();
+
+                    Hide();
+                    return true;
+                }
+            }
+
+            return false;
         }
 
         private void OnOpened(ContentDialog sender, ContentDialogOpenedEventArgs args)
