@@ -171,7 +171,7 @@ namespace Telegram.Controls
                 tsc.TrySetResult(ContentDialogResult.Secondary);
             };
 
-            host.Disconnect(popup);
+            host.Connect(popup);
             popup.IsOpen = true;
             return tsc.Task;
         }
@@ -213,7 +213,7 @@ namespace Telegram.Controls
                 tsc.TrySetResult(ContentDialogResult.Secondary);
             };
 
-            host.Disconnect(popup);
+            host.Connect(popup);
             popup.IsOpen = true;
             return tsc.Task;
         }

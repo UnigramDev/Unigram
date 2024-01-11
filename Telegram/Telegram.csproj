@@ -785,9 +785,6 @@
     <Compile Include="ViewModels\Folders\ShareFolderViewModel.cs" />
     <Compile Include="Td\Api\MessageId.cs" />
     <Compile Include="Collections\Handlers\SearchResultDiffHandler.cs" />
-    <Compile Include="ViewModels\Settings\Password\SettingsPasswordCreateViewModel.cs" />
-    <Compile Include="ViewModels\Settings\Password\SettingsPasswordHintViewModel.cs" />
-    <Compile Include="ViewModels\Settings\Password\SettingsPasswordIntroViewModel.cs" />
     <Compile Include="ViewModels\Settings\Privacy\SettingsPrivacyShowBioViewModel.cs" />
     <Compile Include="ViewModels\Settings\SettingsPowerSavingViewModel.cs" />
     <Compile Include="ViewModels\Supergroups\SupergroupProfileColorViewModel.cs" />
@@ -918,6 +915,30 @@
     </Compile>
     <Compile Include="Views\Popups\ChooseProfileColorView.xaml.cs">
       <DependentUpon>ChooseProfileColorView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Settings\Password\SettingsPasswordCreatePopup.xaml.cs">
+      <DependentUpon>SettingsPasswordCreatePopup.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Settings\Password\SettingsPasswordHintPopup.xaml.cs">
+      <DependentUpon>SettingsPasswordHintPopup.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Settings\Password\SettingsPasswordDonePopup.xaml.cs">
+      <DependentUpon>SettingsPasswordDonePopup.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Settings\Password\SettingsPasswordIntroPopup.xaml.cs">
+      <DependentUpon>SettingsPasswordIntroPopup.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Settings\Password\SettingsPasswordEmailCodePopup.xaml.cs">
+      <DependentUpon>SettingsPasswordEmailCodePopup.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Settings\Password\SettingsPasswordEmailAddressPopup.xaml.cs">
+      <DependentUpon>SettingsPasswordEmailAddressPopup.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Settings\Password\SettingsPasswordConfirmPopup.xaml.cs">
+      <DependentUpon>SettingsPasswordConfirmPopup.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Settings\SettingsPasswordPage.xaml.cs">
+      <DependentUpon>SettingsPasswordPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Settings\SettingsProfileColorPage.xaml.cs">
       <DependentUpon>SettingsProfileColorPage.xaml</DependentUpon>
@@ -1077,7 +1098,6 @@
     <Compile Include="Services\ViewService\SecondaryViewSynchronizationContextDecorator.cs" />
     <Compile Include="Services\ViewService\ViewLifetimeControl.cs" />
     <Compile Include="Services\ViewService\ViewService.cs" />
-    <Compile Include="Triggers\EnumTrigger.cs" />
     <Compile Include="ViewModels\BackgroundViewModel.cs" />
     <Compile Include="ViewModels\BasicGroups\BasicGroupCreateStep1ViewModel.cs" />
     <Compile Include="ViewModels\CallsViewModel.cs" />
@@ -1125,9 +1145,6 @@
     <Compile Include="ViewModels\MessageViewModel.cs" />
     <Compile Include="ViewModels\ProfileViewModel.cs" />
     <Compile Include="ViewModels\SendLocationViewModel.cs" />
-    <Compile Include="ViewModels\Settings\Password\SettingsPasswordConfirmViewModel.cs" />
-    <Compile Include="ViewModels\Settings\Password\SettingsPasswordDoneViewModel.cs" />
-    <Compile Include="ViewModels\Settings\Password\SettingsPasswordEmailViewModel.cs" />
     <Compile Include="ViewModels\Settings\Privacy\SettingsPrivacyAllowCallsViewModel.cs" />
     <Compile Include="ViewModels\Settings\Privacy\SettingsPrivacyAllowChatInvitesViewModel.cs" />
     <Compile Include="ViewModels\Settings\Privacy\SettingsPrivacyAllowFindingByPhoneNumberViewModel.cs" />
@@ -1352,24 +1369,6 @@
     <Compile Include="Views\ProfilePage.xaml.cs">
       <DependentUpon>ProfilePage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\Settings\Password\SettingsPasswordConfirmPage.xaml.cs">
-      <DependentUpon>SettingsPasswordConfirmPage.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\Settings\Password\SettingsPasswordCreatePage.xaml.cs">
-      <DependentUpon>SettingsPasswordCreatePage.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\Settings\Password\SettingsPasswordEmailPage.xaml.cs">
-      <DependentUpon>SettingsPasswordEmailPage.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\Settings\Password\SettingsPasswordDonePage.xaml.cs">
-      <DependentUpon>SettingsPasswordDonePage.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\Settings\Password\SettingsPasswordHintPage.xaml.cs">
-      <DependentUpon>SettingsPasswordHintPage.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\Settings\Password\SettingsPasswordIntroPage.xaml.cs">
-      <DependentUpon>SettingsPasswordIntroPage.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Views\Settings\Phone\ChangePhoneNumberPopup.xaml.cs">
       <DependentUpon>ChangePhoneNumberPopup.xaml</DependentUpon>
     </Compile>
@@ -1453,9 +1452,6 @@
     </Compile>
     <Compile Include="Views\Settings\SettingsPasscodePage.xaml.cs">
       <DependentUpon>SettingsPasscodePage.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\Settings\SettingsPasswordPage.xaml.cs">
-      <DependentUpon>SettingsPasswordPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Settings\SettingsProfilePage.xaml.cs">
       <DependentUpon>SettingsProfilePage.xaml</DependentUpon>
@@ -1634,7 +1630,7 @@
     <Content Include="Assets\Animations\TwoFactorSetupDone.tgs" />
     <Content Include="Assets\Animations\TwoFactorSetupHint.tgs" />
     <Content Include="Assets\Animations\TwoFactorSetupIntro.tgs" />
-    <Content Include="Assets\Animations\TwoFactorSetupMail.tgs" />
+    <Content Include="Assets\Animations\TwoFactorSetupCode.tgs" />
     <Content Include="Assets\Animations\Compass.tgs" />
     <Content Include="Assets\Animations\ChatListFolders.tgs" />
     <Content Include="Assets\Fonts\Telegram.ttf" />
@@ -1685,6 +1681,7 @@
       <Link>Assets\grammars.dat</Link>
     </Content>
     <Content Include="Assets\Emoji\microsoft.ttf" />
+    <Content Include="Assets\Animations\TwoFactorSetupMail.tgs" />
     <None Include="Assets\i420.hlsl" />
     <Content Include="Assets\Images\Reply.scale-100.png" />
     <Content Include="Assets\Images\Reply.scale-125.png" />
@@ -2417,6 +2414,38 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Views\Popups\ChooseProfileColorView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\Settings\Password\SettingsPasswordCreatePopup.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\Settings\Password\SettingsPasswordHintPopup.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\Settings\Password\SettingsPasswordDonePopup.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\Settings\Password\SettingsPasswordIntroPopup.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\Settings\Password\SettingsPasswordEmailCodePopup.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\Settings\Password\SettingsPasswordEmailAddressPopup.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\Settings\Password\SettingsPasswordConfirmPopup.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\Settings\SettingsPasswordPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

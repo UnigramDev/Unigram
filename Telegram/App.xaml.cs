@@ -24,7 +24,6 @@ using Telegram.ViewModels.Folders;
 using Telegram.ViewModels.Payments;
 using Telegram.ViewModels.Premium;
 using Telegram.ViewModels.Settings;
-using Telegram.ViewModels.Settings.Password;
 using Telegram.ViewModels.Settings.Privacy;
 using Telegram.ViewModels.Supergroups;
 using Telegram.ViewModels.Users;
@@ -40,7 +39,6 @@ using Telegram.Views.Payments;
 using Telegram.Views.Popups;
 using Telegram.Views.Premium.Popups;
 using Telegram.Views.Settings;
-using Telegram.Views.Settings.Password;
 using Telegram.Views.Settings.Popups;
 using Telegram.Views.Settings.Privacy;
 using Telegram.Views.Stories.Popups;
@@ -425,12 +423,6 @@ namespace Telegram
                 SettingsPrivacyShowPhotoPage privacyShowPhotoPage => TypeResolver.Current.Resolve<SettingsPrivacyShowPhotoViewModel, IUserDelegate>(privacyShowPhotoPage, sessionId),
                 SettingsPrivacyShowStatusPage => TypeResolver.Current.Resolve<SettingsPrivacyShowStatusViewModel>(sessionId),
                 SettingsPrivacyShowBioPage => TypeResolver.Current.Resolve<SettingsPrivacyShowBioViewModel>(sessionId),
-                SettingsPasswordConfirmPage => TypeResolver.Current.Resolve<SettingsPasswordConfirmViewModel>(sessionId),
-                SettingsPasswordCreatePage => TypeResolver.Current.Resolve<SettingsPasswordCreateViewModel>(sessionId),
-                SettingsPasswordDonePage => TypeResolver.Current.Resolve<SettingsPasswordDoneViewModel>(sessionId),
-                SettingsPasswordEmailPage => TypeResolver.Current.Resolve<SettingsPasswordEmailViewModel>(sessionId),
-                SettingsPasswordHintPage => TypeResolver.Current.Resolve<SettingsPasswordHintViewModel>(sessionId),
-                SettingsPasswordIntroPage => TypeResolver.Current.Resolve<SettingsPasswordIntroViewModel>(sessionId),
 
                 PaymentFormPage => TypeResolver.Current.Resolve<PaymentFormViewModel>(sessionId),
                 MessageStatisticsPage => TypeResolver.Current.Resolve<MessageStatisticsViewModel>(sessionId),

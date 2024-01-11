@@ -21,6 +21,7 @@ using Telegram.Views;
 using Telegram.Views.Payments;
 using Telegram.Views.Premium.Popups;
 using Telegram.Views.Settings;
+using Telegram.Views.Settings.Password;
 using Telegram.Views.Settings.Popups;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.UI.WindowManagement;
@@ -447,6 +448,58 @@ namespace Telegram.Common
                     }
                 }
             }
+        }
+
+        public async Task<PasswordState> NavigateToPasswordAsync()
+        {
+            var intro = new SettingsPasswordIntroPopup();
+
+            if (ContentDialogResult.Primary != await intro.ShowQueuedAsync())
+            {
+                return null;
+            }
+
+            var password = new SettingsPasswordCreatePopup();
+
+            if (ContentDialogResult.Primary != await password.ShowQueuedAsync())
+            {
+                return null;
+            }
+
+            var hint = new SettingsPasswordHintPopup(null, null, password.Password);
+
+            if (ContentDialogResult.Primary != await hint.ShowQueuedAsync())
+            {
+                return null;
+            }
+
+            var emailAddress = new SettingsPasswordEmailAddressPopup(ClientService, new SetPassword(string.Empty, password.Password, hint.Hint, true, string.Empty));
+
+            if (ContentDialogResult.Primary != await emailAddress.ShowQueuedAsync())
+            {
+                return null;
+            }
+
+            PasswordState passwordState;
+
+            if (emailAddress.PasswordState?.RecoveryEmailAddressCodeInfo != null)
+            {
+                var emailCode = new SettingsPasswordEmailCodePopup(ClientService, emailAddress.PasswordState?.RecoveryEmailAddressCodeInfo, SettingsPasswordEmailCodeType.New);
+
+                if (ContentDialogResult.Primary != await emailCode.ShowQueuedAsync())
+                {
+                    return null;
+                }
+
+                passwordState = emailCode.PasswordState;
+            }
+            else
+            {
+                passwordState = emailAddress.PasswordState;
+            }
+
+            await new SettingsPasswordDonePopup().ShowQueuedAsync();
+            return passwordState;
         }
     }
 }

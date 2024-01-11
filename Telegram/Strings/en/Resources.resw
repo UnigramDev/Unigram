@@ -61,6 +61,9 @@
   <data name="Abort" xml:space="preserve">
     <value>Abort</value>
   </data>
+  <data name="AbortPasswordMenu" xml:space="preserve">
+    <value>Abort Setup</value>
+  </data>
   <data name="AboutPremiumDescription" xml:space="preserve">
     <value>While the free version of Telegram already gives its users more than any other messaging application, **Telegram Premium** pushes its capabilities even further.</value>
   </data>
@@ -2017,6 +2020,12 @@ It will be able to access your **IP address** and basic device info.</value>
   <data name="Cancel" xml:space="preserve">
     <value>Cancel</value>
   </data>
+  <data name="CancelEmailQuestion" xml:space="preserve">
+    <value>Are you sure you want to abort recovery email setup?</value>
+  </data>
+  <data name="CancelEmailQuestionTitle" xml:space="preserve">
+    <value>Abort setup</value>
+  </data>
   <data name="CancelLinkExpired" xml:space="preserve">
     <value>Link is invalid or expired.</value>
   </data>
@@ -3425,6 +3434,12 @@ If the number above is correct, please wait for the verification code.</value>
   <data name="EmailNotAllowed" xml:space="preserve">
     <value>This email domain is not allowed.</value>
   </data>
+  <data name="EmailPasswordConfirmText2" xml:space="preserve">
+    <value>To complete Two-Step Verification Setup, check your email (don&apos;t forget the spam folder) and enter the code we just sent you.</value>
+  </data>
+  <data name="EmailPasswordConfirmText3" xml:space="preserve">
+    <value>To complete reсoverу email setup, check {0} (don&apos;t forget the spam folder) and enter the code we just sent you.</value>
+  </data>
   <data name="Emoji" xml:space="preserve">
     <value>Emoji</value>
   </data>
@@ -3540,6 +3555,9 @@ Learn more at telegram.org</value>
   </data>
   <data name="EnterNewFirstPasscode" xml:space="preserve">
     <value>Enter a passcode</value>
+  </data>
+  <data name="EnterPassword" xml:space="preserve">
+    <value>Enter password</value>
   </data>
   <data name="EnterThemeName" xml:space="preserve">
     <value>Enter theme name</value>
@@ -5025,6 +5043,9 @@ Upgrade to **Telegram Premium** to increase this limit to **{1}**.</value>
   <data name="LoginPasswordText" xml:space="preserve">
     <value>You have Two-Step Verification enabled, so your account is protected with an additional password.</value>
   </data>
+  <data name="LoginPasswordTextShort" xml:space="preserve">
+    <value>Two-Step Verification enabled. Your account is protected with an additional password.</value>
+  </data>
   <data name="LoginWithQrCode" xml:space="preserve">
     <value>Quick log in using QR code</value>
   </data>
@@ -5818,6 +5839,9 @@ messages from multiple devices.</value>
   <data name="PasswordHintText" xml:space="preserve">
     <value>Create a hint for your password</value>
   </data>
+  <data name="PasswordRecovery" xml:space="preserve">
+    <value>Password Recovery</value>
+  </data>
   <data name="Paste" xml:space="preserve">
     <value>Paste</value>
   </data>
@@ -6603,6 +6627,9 @@ Payments will go directly to the developer of {0}. Telegram cannot provide any g
   <data name="RecoveryEmail" xml:space="preserve">
     <value>Recovery email</value>
   </data>
+  <data name="RecoveryEmailSubtitle" xml:space="preserve">
+    <value>You can set a recovery email to be able to reset your password and restore access to your Telegram account.</value>
+  </data>
   <data name="RecoveryEmailTitle" xml:space="preserve">
     <value>Recovery Email</value>
   </data>
@@ -6779,6 +6806,12 @@ Payments will go directly to the developer of {0}. Telegram cannot provide any g
   <data name="RequestToJoinSent" xml:space="preserve">
     <value>Join request sent</value>
   </data>
+  <data name="ResendCode" xml:space="preserve">
+    <value>Resend Code</value>
+  </data>
+  <data name="ResendCodeInfo" xml:space="preserve">
+    <value>The verification code was sent to your email.</value>
+  </data>
   <data name="Reset" xml:space="preserve">
     <value>Reset</value>
   </data>
@@ -6824,6 +6857,9 @@ Payments will go directly to the developer of {0}. Telegram cannot provide any g
   <data name="ResetNotificationsAlert" xml:space="preserve">
     <value>Are you sure you want to reset all notification settings to default?</value>
   </data>
+  <data name="ResetPassword" xml:space="preserve">
+    <value>Reset password</value>
+  </data>
   <data name="ResetStatistics" xml:space="preserve">
     <value>Reset Statistics</value>
   </data>
@@ -6855,6 +6891,12 @@ Payments will go directly to the developer of {0}. Telegram cannot provide any g
   </data>
   <data name="RestoreEmailTrouble" xml:space="preserve">
     <value>Unable to access {0}?</value>
+  </data>
+  <data name="RestoreEmailTroubleNoEmail" xml:space="preserve">
+    <value>Having trouble accessing your email?</value>
+  </data>
+  <data name="RestoreEmailTroubleText2" xml:space="preserve">
+    <value>If you don’t have access to your recovery email, your remaining options are either to remember your password or wait 7 days until your password is reset.</value>
   </data>
   <data name="RestorePasswordNoEmailText" xml:space="preserve">
     <value>Since you didn&apos;t provide a recovery email when setting up your password, your remaining options are either to remember your password or to reset your account.</value>
@@ -8094,8 +8136,23 @@ If you are not comfortable with Telegram&apos;s modest needs, it won&apos;t be p
   <data name="TurnPasswordOffQuestion" xml:space="preserve">
     <value>Are you sure you want to disable your password?</value>
   </data>
+  <data name="TurnPasswordOffQuestionTitle" xml:space="preserve">
+    <value>Disable password</value>
+  </data>
   <data name="TwoStepVerification" xml:space="preserve">
     <value>Two-Step Verification</value>
+  </data>
+  <data name="TwoStepVerificationPasswordReturnSettings" xml:space="preserve">
+    <value>Return to Settings</value>
+  </data>
+  <data name="TwoStepVerificationPasswordSet" xml:space="preserve">
+    <value>Password Set!</value>
+  </data>
+  <data name="TwoStepVerificationPasswordSetInfo" xml:space="preserve">
+    <value>This password will be required when you log in on a new device in addition to the code you get in the SMS.</value>
+  </data>
+  <data name="TwoStepVerificationSetPassword" xml:space="preserve">
+    <value>Set Password</value>
   </data>
   <data name="TypeMessage" xml:space="preserve">
     <value>Message</value>
@@ -8550,6 +8607,9 @@ However, it is currently available for purchase. **Learn more…**</value>
   </data>
   <data name="UseSystemSpellChecker" xml:space="preserve">
     <value>Use System Spell Checker</value>
+  </data>
+  <data name="VerificationCode" xml:space="preserve">
+    <value>Verification Code</value>
   </data>
   <data name="VersionAndUpdates" xml:space="preserve">
     <value>Version and Updates</value>
@@ -9046,6 +9106,9 @@ If you forget your password, you will lose access to your Telegram account. Ther
   </data>
   <data name="YourNewEmail" xml:space="preserve">
     <value>Your new email</value>
+  </data>
+  <data name="YourPassword" xml:space="preserve">
+    <value>Your Password</value>
   </data>
   <data name="YourPhone" xml:space="preserve">
     <value>Your Phone</value>

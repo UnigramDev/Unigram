@@ -200,6 +200,24 @@ namespace Telegram.Common
             }
         }
 
+        public static Task<PasswordState> NavigateToPasswordAsync(this INavigationService service)
+        {
+            if (service is TLNavigationService serviceEx)
+            {
+                return serviceEx.NavigateToPasswordAsync();
+            }
+
+            return Task.FromResult<PasswordState>(null);
+        }
+
+        public static void NavigateToPassword(this INavigationService service)
+        {
+            if (service is TLNavigationService serviceEx)
+            {
+                _ = serviceEx.NavigateToPasswordAsync();
+            }
+        }
+
         public static void ShowLimitReached(this INavigationService service, PremiumLimitType limit)
         {
             if (service is TLNavigationService serviceEx)

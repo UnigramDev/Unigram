@@ -26,7 +26,6 @@ using Telegram.Td.Api;
 using Telegram.ViewModels.Chats;
 using Telegram.Views.Chats;
 using Telegram.Views.Popups;
-using Telegram.Views.Settings;
 using Telegram.Views.Users;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.Foundation;
@@ -1207,9 +1206,9 @@ namespace Telegram.ViewModels
                         }
 
                         var confirm = await ShowPopupAsync(builder.ToString(), Strings.EditAdminTransferAlertTitle, primary, Strings.Cancel);
-                        if (confirm == ContentDialogResult.Primary && !error.Message.Equals("PASSWORD_MISSING"))
+                        if (confirm == ContentDialogResult.Primary && error.Message.Equals("PASSWORD_MISSING"))
                         {
-                            NavigationService.Navigate(typeof(SettingsPasswordPage));
+                            NavigationService.NavigateToPassword();
                         }
                     }
                     else if (error.Message.Equals("PASSWORD_HASH_INVALID"))

@@ -14,7 +14,6 @@ using Telegram.Services;
 using Telegram.Td.Api;
 using Telegram.ViewModels.Delegates;
 using Telegram.Views.Popups;
-using Telegram.Views.Settings;
 using Telegram.Views.Supergroups.Popups;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
@@ -567,7 +566,7 @@ namespace Telegram.ViewModels.Supergroups
                 var confirm = await ShowPopupAsync(null, builder.ToString(), Strings.EditAdminTransferAlertTitle, primary, Strings.Cancel);
                 if (confirm == ContentDialogResult.Primary && canTransfer is CanTransferOwnershipResultPasswordNeeded)
                 {
-                    NavigationService.Navigate(typeof(SettingsPasswordPage));
+                    NavigationService.NavigateToPassword();
                 }
             }
             else if (canTransfer is CanTransferOwnershipResultOk)

@@ -1,3 +1,9 @@
+//
+// Copyright Fela Ameghino 2015-2023
+//
+// Distributed under the GNU General Public License v3.0. (See accompanying
+// file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
+//
 namespace Telegram.Views
 {
     public class TypeLocator
@@ -650,38 +656,13 @@ namespace Telegram.Views
                         _clientService,
                         _settingsService,
                         _eventAggregator);
+                case nameof(Telegram.ViewModels.Supergroups.SupergroupProfileColorViewModel):
+                    return (T)(object)new Telegram.ViewModels.Supergroups.SupergroupProfileColorViewModel(
+                        _clientService,
+                        _settingsService,
+                        _eventAggregator);
                 case nameof(Telegram.ViewModels.Settings.SettingsPasswordViewModel):
                     return (T)(object)new Telegram.ViewModels.Settings.SettingsPasswordViewModel(
-                        _clientService,
-                        _settingsService,
-                        _eventAggregator);
-                case nameof(Telegram.ViewModels.Settings.Password.SettingsPasswordIntroViewModel):
-                    return (T)(object)new Telegram.ViewModels.Settings.Password.SettingsPasswordIntroViewModel(
-                        _clientService,
-                        _settingsService,
-                        _eventAggregator);
-                case nameof(Telegram.ViewModels.Settings.Password.SettingsPasswordCreateViewModel):
-                    return (T)(object)new Telegram.ViewModels.Settings.Password.SettingsPasswordCreateViewModel(
-                        _clientService,
-                        _settingsService,
-                        _eventAggregator);
-                case nameof(Telegram.ViewModels.Settings.Password.SettingsPasswordHintViewModel):
-                    return (T)(object)new Telegram.ViewModels.Settings.Password.SettingsPasswordHintViewModel(
-                        _clientService,
-                        _settingsService,
-                        _eventAggregator);
-                case nameof(Telegram.ViewModels.Settings.Password.SettingsPasswordEmailViewModel):
-                    return (T)(object)new Telegram.ViewModels.Settings.Password.SettingsPasswordEmailViewModel(
-                        _clientService,
-                        _settingsService,
-                        _eventAggregator);
-                case nameof(Telegram.ViewModels.Settings.Password.SettingsPasswordConfirmViewModel):
-                    return (T)(object)new Telegram.ViewModels.Settings.Password.SettingsPasswordConfirmViewModel(
-                        _clientService,
-                        _settingsService,
-                        _eventAggregator);
-                case nameof(Telegram.ViewModels.Settings.Password.SettingsPasswordDoneViewModel):
-                    return (T)(object)new Telegram.ViewModels.Settings.Password.SettingsPasswordDoneViewModel(
                         _clientService,
                         _settingsService,
                         _eventAggregator);

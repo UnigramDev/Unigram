@@ -31,6 +31,7 @@ namespace Telegram.Views.Settings.LoginEmail
         private async void ContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
         {
             var address = PrimaryInput.Text;
+
             if (string.IsNullOrEmpty(address) || !address.IsValidEmailAddress())
             {
                 VisualUtilities.ShakeView(PrimaryInput);

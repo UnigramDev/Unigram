@@ -311,22 +311,39 @@ namespace Telegram.ViewModels.Settings
             {
                 if (passwordState.HasPassword)
                 {
-                    NavigationService.Navigate(typeof(SettingsPasswordPage));
+                    var popup = new SettingsPasswordConfirmPopup(ClientService, passwordState);
+
+                    var confirm = await ShowPopupAsync(popup);
+                    if (confirm == ContentDialogResult.Primary && !string.IsNullOrEmpty(popup.Password))
+                    {
+                        NavigationService.Navigate(typeof(SettingsPasswordPage), popup.Password);
+                    }
+                    else if (popup.RecoveryEmailAddressCodeInfo != null)
+                    {
+                        var emailCode = new SettingsPasswordEmailCodePopup(ClientService, popup.RecoveryEmailAddressCodeInfo, SettingsPasswordEmailCodeType.Recovery);
+
+                        if (ContentDialogResult.Primary == await ShowPopupAsync(emailCode))
+                        {
+                            await ShowPopupAsync(new SettingsPasswordDonePopup());
+                        }
+                    }
                 }
                 else if (passwordState.RecoveryEmailAddressCodeInfo != null)
                 {
-                    var state = new NavigationState
-                    {
-                        { "pattern", passwordState.RecoveryEmailAddressCodeInfo.EmailAddressPattern },
-                        { "length", passwordState.RecoveryEmailAddressCodeInfo.Length }
-                    };
+                    var emailCode = new SettingsPasswordEmailCodePopup(ClientService, passwordState.RecoveryEmailAddressCodeInfo, SettingsPasswordEmailCodeType.Continue);
 
-                    NavigationService.Navigate(typeof(SettingsPasswordConfirmPage), state: state);
+                    if (ContentDialogResult.Primary == await ShowPopupAsync(emailCode))
+                    {
+                        await ShowPopupAsync(new SettingsPasswordDonePopup());
+                    }
                 }
                 else
                 {
-                    NavigationService.Navigate(typeof(SettingsPasswordIntroPage));
+                    passwordState = await NavigationService.NavigateToPasswordAsync();
                 }
+
+                HasPassword = passwordState?.HasPassword ?? false;
+                HasEmailAddress = passwordState?.LoginEmailAddressPattern.Length > 0;
             }
         }
 
@@ -338,7 +355,7 @@ namespace Telegram.ViewModels.Settings
         public async void ChangeEmail()
         {
             var response = await ClientService.SendAsync(new GetPasswordState());
-            if (response is PasswordState passwordState)
+            if (response is PasswordState passwordState && passwordState.LoginEmailAddressPattern.Length > 0)
             {
                 var confirm = await ShowPopupAsync(Strings.EmailLoginChangeMessage, passwordState.LoginEmailAddressPattern, Strings.ChangeEmail, Strings.Cancel);
                 if (confirm == ContentDialogResult.Primary)
@@ -351,6 +368,10 @@ namespace Telegram.ViewModels.Settings
                         await ShowPopupAsync(new SettingsLoginEmailCodePopup(ClientService, address.CodeInfo));
                     }
                 }
+            }
+            else
+            {
+                HasEmailAddress = false;
             }
         }
 

@@ -940,13 +940,21 @@ namespace Telegram.Controls
 
         private void SeekImpl(string marker)
         {
+            var pause = false;
+
             lock (_lock)
             {
+                pause = _playing > 0;
+
                 _nextMarker = marker;
                 _loopCount = 0;
             }
 
-            PauseImpl();
+            if (pause)
+            {
+                PauseImpl();
+            }
+
             PlayImpl();
         }
 

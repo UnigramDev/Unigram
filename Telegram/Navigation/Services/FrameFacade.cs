@@ -141,8 +141,6 @@ namespace Telegram.Navigation.Services
 
         internal NavigationService NavigationService { get; set; }
 
-        public static string LastNavigatedPageType { get; private set; }
-
         public bool Navigate(Type page, object parameter, NavigationTransitionInfo infoOverride)
         {
             Logger.Info();
@@ -151,8 +149,6 @@ namespace Telegram.Navigation.Services
             {
                 infoOverride = new SuppressNavigationTransitionInfo();
             }
-
-            LastNavigatedPageType = page.Name;
 
             if (Frame.Navigate(page, parameter, infoOverride))
             {

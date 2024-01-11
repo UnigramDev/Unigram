@@ -11,6 +11,7 @@ using Telegram.Common;
 using Telegram.Controls;
 using Telegram.Services.ViewService;
 using Telegram.Views;
+using Telegram.Views.Settings;
 using Windows.ApplicationModel.Core;
 using Windows.Foundation;
 using Windows.UI.Xaml;
@@ -112,6 +113,12 @@ namespace Telegram.Navigation.Services
     // DOCS: https://github.com/Windows-XAML/Template10/wiki/Docs-%7C-NavigationService
     public partial class NavigationService : INavigationService
     {
+        private static readonly HashSet<Type> _unallowedTypes = new HashSet<Type>
+        {
+            typeof(SettingsPasswordPage),
+            typeof(SettingsPasscodePage)
+        };
+
         private readonly IViewService viewService = new ViewService();
         public FrameFacade FrameFacade { get; }
         public bool IsInMainView { get; }
@@ -137,14 +144,14 @@ namespace Telegram.Navigation.Services
 
         public void GoBackAt(int index, bool back = true)
         {
-            while (Frame.BackStackDepth > index + 1)
+            while (FrameFacade.BackStackDepth > index + 1)
             {
                 RemoveFromBackStack(index + 1);
             }
 
-            if (Frame.CanGoBack && back)
+            if (FrameFacade.CanGoBack && back)
             {
-                Frame.GoBack();
+                FrameFacade.GoBack();
             }
             else
             {
@@ -238,6 +245,14 @@ namespace Telegram.Navigation.Services
             };
             FrameFacade.Navigated += async (s, e) =>
             {
+                if (e.NavigationMode == NavigationMode.Back && Frame.ForwardStack.Count > 0)
+                {
+                    if (_unallowedTypes.Contains(Frame.ForwardStack[0].SourcePageType))
+                    {
+                        Frame.ForwardStack.Clear();
+                    }
+                }
+
                 var parameter = e.Parameter;
                 if (parameter is string cacheKey && e.SourcePageType == typeof(ChatPage))
                 {
