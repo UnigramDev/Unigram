@@ -997,9 +997,24 @@ namespace Telegram.Common
             }
         }
 
+        public static T GetChild<T>(this DependencyObject parentContainer) where T : FrameworkElement
+        {
+            return parentContainer.Descendants<T>().FirstOrDefault();
+        }
+
         public static T GetChild<T>(this DependencyObject parentContainer, string controlName) where T : FrameworkElement
         {
             return parentContainer.Descendants<T>().FirstOrDefault(x => x.Name.Equals(controlName));
+        }
+
+        public static T GetParent<T>(this DependencyObject parentContainer) where T : FrameworkElement
+        {
+            return parentContainer.Ancestors<T>().FirstOrDefault();
+        }
+
+        public static T GetParent<T>(this DependencyObject parentContainer, string controlName) where T : FrameworkElement
+        {
+            return parentContainer.Ancestors<T>().FirstOrDefault(x => x.Name.Equals(controlName));
         }
 
         public static async Task UpdateLayoutAsync(this FrameworkElement element, bool update = false)

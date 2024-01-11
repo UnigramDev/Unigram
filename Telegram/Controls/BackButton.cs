@@ -4,7 +4,9 @@
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+using Telegram.Common;
 using Telegram.Navigation;
+using Windows.UI.Xaml.Controls;
 
 namespace Telegram.Controls
 {
@@ -18,7 +20,33 @@ namespace Telegram.Controls
 
         private void OnClick(object sender, Windows.UI.Xaml.RoutedEventArgs e)
         {
-            BootStrapper.Current.RaiseBackRequested();
+            var page = this.GetParent<Page>();
+            if (page != null)
+            {
+                if (page is INavigablePage navigable)
+                {
+                    var args = new BackRequestedRoutedEventArgs();
+                    navigable.OnBackRequested(args);
+
+                    if (args.Handled)
+                    {
+                        return;
+                    }
+                }
+
+                if (page.DataContext is ViewModelBase viewModel && viewModel.NavigationService.CanGoBack)
+                {
+                    viewModel.NavigationService.GoBack();
+                }
+                else if (page.Frame.CanGoBack)
+                {
+                    page.Frame.GoBack();
+                }
+            }
+            else
+            {
+                BootStrapper.Current.RaiseBackRequested();
+            }
         }
     }
 }
