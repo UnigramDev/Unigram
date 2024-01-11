@@ -50,7 +50,7 @@ namespace Telegram.Controls.Stories
 
         private void OnCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
-            if (ScrollingHost.Items.Count > 0)
+            if (_collapsed || ScrollingHost.Items.Count > 0)
             {
                 UpdateIndexes();
             }
@@ -614,6 +614,8 @@ namespace Telegram.Controls.Stories
                 return;
             }
 
+            Logger.Info();
+
             _collapsed = true;
             Collapsing?.Invoke(this, EventArgs.Empty);
 
@@ -666,6 +668,8 @@ namespace Telegram.Controls.Stories
             {
                 return;
             }
+
+            Logger.Info();
 
             _collapsed = false;
             Expanding?.Invoke(this, EventArgs.Empty);
