@@ -8,7 +8,6 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Telegram.Collections;
 using Telegram.Common;
-using Telegram.Navigation;
 using Telegram.Navigation.Services;
 using Telegram.Services;
 using Telegram.Td.Api;
@@ -18,7 +17,7 @@ using Windows.UI.Xaml.Navigation;
 
 namespace Telegram.ViewModels.Supergroups
 {
-    public class SupergroupEditLinkedChatViewModel : ViewModelBase, IDelegable<ISupergroupDelegate>, IHandle
+    public class SupergroupEditLinkedChatViewModel : SupergroupViewModelBase, IDelegable<ISupergroupDelegate>, IHandle
     {
         public ISupergroupDelegate Delegate { get; set; }
 
@@ -246,7 +245,7 @@ namespace Telegram.ViewModels.Supergroups
 
                 if (linkedChat.Type is ChatTypeBasicGroup)
                 {
-                    linkedChat = await ClientService.SendAsync(new UpgradeBasicGroupChatToSupergroupChat(linkedChat.Id)) as Chat;
+                    linkedChat = await UpgradeAsync(linkedChat);
                 }
 
                 if (linkedChat == null)

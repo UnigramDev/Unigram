@@ -19,7 +19,29 @@ using Windows.UI.Xaml.Navigation;
 
 namespace Telegram.ViewModels.Supergroups
 {
-    public abstract class SupergroupEditViewModelBase : ViewModelBase, IDelegable<ISupergroupEditDelegate>, IHandle
+    public abstract class SupergroupViewModelBase : ViewModelBase
+    {
+        public SupergroupViewModelBase(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator)
+            : base(clientService, settingsService, aggregator)
+        {
+        }
+
+        protected async Task<Chat> UpgradeAsync(Chat oldChat)
+        {
+            var response = await ClientService.SendAsync(new UpgradeBasicGroupChatToSupergroupChat(oldChat.Id));
+            if (response is Chat newChat && newChat.Type is ChatTypeSupergroup supergroup)
+            {
+                NavigationService.ReplaceChatInBackStack(oldChat.Id, newChat.Id);
+                await ClientService.SendAsync(new GetSupergroupFullInfo(supergroup.SupergroupId));
+
+                return newChat;
+            }
+
+            return oldChat;
+        }
+    }
+
+    public abstract class SupergroupEditViewModelBase : SupergroupViewModelBase, IDelegable<ISupergroupEditDelegate>, IHandle
     {
         public ISupergroupEditDelegate Delegate { get; set; }
 

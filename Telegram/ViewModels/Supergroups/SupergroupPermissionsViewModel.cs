@@ -312,7 +312,7 @@ namespace Telegram.ViewModels.Supergroups
             {
                 if (_slowModeDelay != 0)
                 {
-                    chat = await ClientService.SendAsync(new UpgradeBasicGroupChatToSupergroupChat(chat.Id)) as Chat;
+                    chat = await UpgradeAsync(chat);
                 }
                 else
                 {

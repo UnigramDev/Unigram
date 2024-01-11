@@ -341,7 +341,28 @@ namespace Telegram.Common
             return false;
         }
 
+        public static void ReplaceChatInBackStack(this INavigationService service, long oldChatId, long newChatId)
+        {
+            for (int i = service.Frame.BackStackDepth - 1; i >= 0; i--)
+            {
+                var item = service.Frame.BackStack[i];
 
+                if (service.TryGetChatFromParameter(item.Parameter, out long chatId))
+                {
+                    if (chatId == oldChatId)
+                    {
+                        if (item.Parameter is string cacheKey && service.CacheKeyToChatId.ContainsKey(cacheKey))
+                        {
+                            service.CacheKeyToChatId[cacheKey] = newChatId;
+                        }
+                        else
+                        {
+                            service.Frame.BackStack[i] = new PageStackEntry(item.SourcePageType, newChatId, item.NavigationTransitionInfo);
+                        }
+                    }
+                }
+            }
+        }
 
         public static Task<T> NavigateWithResult<T>(this INavigationService service, Type type, object parameter = null)
         {
