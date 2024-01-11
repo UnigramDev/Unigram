@@ -4,12 +4,10 @@
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
-using LinqToVisualTree;
 using Microsoft.Graphics.Canvas.Geometry;
 using Microsoft.UI.Xaml.Controls;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Numerics;
 using System.Runtime.CompilerServices;
 using System.Text;
@@ -2359,7 +2357,7 @@ namespace Telegram.Controls.Messages
                 var index = ClientEx.SearchQuote(caption, options.Quote);
                 if (index >= 0)
                 {
-                    var rich = Message.Descendants<RichTextBlock>().FirstOrDefault();
+                    var rich = Message.GetChild<RichTextBlock>();
 
                     var fontSize = Theme.Current.MessageFontSize * BootStrapper.Current.TextScaleFactor;
                     var quoteSize = (Theme.Current.MessageFontSize - 2) * BootStrapper.Current.TextScaleFactor;

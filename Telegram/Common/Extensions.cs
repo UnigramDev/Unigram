@@ -997,24 +997,64 @@ namespace Telegram.Common
             }
         }
 
-        public static T GetChild<T>(this DependencyObject parentContainer) where T : FrameworkElement
+        public static T GetChild<T>(this DependencyObject parentContainer)
         {
             return parentContainer.Descendants<T>().FirstOrDefault();
         }
 
-        public static T GetChild<T>(this DependencyObject parentContainer, string controlName) where T : FrameworkElement
+        public static T GetChild<T>(this DependencyObject parentContainer, Func<T, bool> predicate)
         {
-            return parentContainer.Descendants<T>().FirstOrDefault(x => x.Name.Equals(controlName));
+            return parentContainer.Descendants<T>().FirstOrDefault(predicate);
         }
 
-        public static T GetParent<T>(this DependencyObject parentContainer) where T : FrameworkElement
+        public static T GetChildOrSelf<T>(this DependencyObject parentContainer)
         {
-            return parentContainer.Ancestors<T>().FirstOrDefault();
+            if (parentContainer is T child)
+            {
+                return child;
+            }
+
+            return parentContainer.Descendants<T>().FirstOrDefault();
         }
 
-        public static T GetParent<T>(this DependencyObject parentContainer, string controlName) where T : FrameworkElement
+        public static T GetChildOrSelf<T>(this DependencyObject parentContainer, Func<T, bool> predicate)
         {
-            return parentContainer.Ancestors<T>().FirstOrDefault(x => x.Name.Equals(controlName));
+            if (parentContainer is T child)
+            {
+                return child;
+            }
+
+            return parentContainer.Descendants<T>().FirstOrDefault(predicate);
+        }
+
+        public static T GetParent<T>(this DependencyObject childContainer)
+        {
+            return childContainer.Ancestors<T>().FirstOrDefault();
+        }
+
+        public static T GetParent<T>(this DependencyObject childContainer, Func<T, bool> predicate)
+        {
+            return childContainer.Ancestors<T>().FirstOrDefault(predicate);
+        }
+
+        public static T GetParentOrSelf<T>(this DependencyObject childContainer)
+        {
+            if (childContainer is T parent)
+            {
+                return parent;
+            }
+
+            return childContainer.Ancestors<T>().FirstOrDefault();
+        }
+
+        public static T GetParentOrSelf<T>(this DependencyObject childContainer, Func<T, bool> predicate)
+        {
+            if (childContainer is T parent)
+            {
+                return parent;
+            }
+
+            return childContainer.Ancestors<T>().FirstOrDefault(predicate);
         }
 
         public static async Task UpdateLayoutAsync(this FrameworkElement element, bool update = false)

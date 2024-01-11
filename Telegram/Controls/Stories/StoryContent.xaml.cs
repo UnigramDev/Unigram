@@ -5,7 +5,6 @@
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
 using LibVLCSharp.Shared;
-using LinqToVisualTree;
 using Microsoft.Graphics.Canvas;
 using Microsoft.Graphics.Canvas.Geometry;
 using Microsoft.UI.Xaml.Controls;
@@ -562,12 +561,12 @@ namespace Telegram.Controls.Stories
 
                 if (area.Type is StoryAreaTypeLocation or StoryAreaTypeVenue)
                 {
-                    var window = element.Ancestors<StoriesWindow>().FirstOrDefault();
+                    var window = element.GetParent<StoriesWindow>();
                     toast = window?.ShowTeachingTip(element.Content as Border, Strings.StoryViewLocation, TeachingTipPlacementMode.Top);
                 }
                 else if (area.Type is StoryAreaTypeMessage)
                 {
-                    var window = element.Ancestors<StoriesWindow>().FirstOrDefault();
+                    var window = element.GetParent<StoriesWindow>();
                     toast = window?.ShowTeachingTip(element.Content as Border, Strings.StoryViewMessage, TeachingTipPlacementMode.Top);
                 }
             }
@@ -1319,7 +1318,7 @@ namespace Telegram.Controls.Stories
         {
             if (sender is FrameworkElement element)
             {
-                var window = element.Ancestors<StoriesWindow>().FirstOrDefault();
+                var window = element.GetParent<StoriesWindow>();
                 window?.ShowTeachingTip(element, Strings.StoryNoSound, TeachingTipPlacementMode.BottomLeft);
             }
         }
@@ -1356,7 +1355,7 @@ namespace Telegram.Controls.Stories
                     return;
                 }
 
-                var window = element.Ancestors<StoriesWindow>().FirstOrDefault();
+                var window = element.GetParent<StoriesWindow>();
                 window?.ShowTeachingTip(element, message, TeachingTipPlacementMode.BottomLeft);
             }
         }

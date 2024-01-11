@@ -4,7 +4,6 @@
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
-using LinqToVisualTree;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -245,7 +244,7 @@ namespace Telegram.Views.Popups
                 return;
             }
 
-            var inner = container.Descendants<TextBox>().FirstOrDefault();
+            var inner = container.GetChild<TextBox>();
             if (inner == null)
             {
                 return;

@@ -4,11 +4,9 @@
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
-using LinqToVisualTree;
 using Microsoft.Graphics.Canvas;
 using Microsoft.Graphics.Canvas.Geometry;
 using System;
-using System.Linq;
 using System.Numerics;
 using Telegram.Common;
 using Telegram.Navigation;
@@ -90,7 +88,7 @@ namespace Telegram.Controls.Messages
         private async void Initialize(AvailableReactions available, IClientService clientService, MenuFlyout flyout)
         {
             var first = flyout.Items[0];
-            var presenter = first.Ancestors<MenuFlyoutPresenter>().FirstOrDefault();
+            var presenter = first.GetParent<MenuFlyoutPresenter>();
             flyout.Closed += Flyout_Closed;
 
             presenter.PreviewKeyDown += Presenter_PreviewKeyDown;

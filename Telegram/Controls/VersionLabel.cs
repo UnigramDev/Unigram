@@ -1,6 +1,4 @@
-﻿using LinqToVisualTree;
-using System.Linq;
-using Telegram.Common;
+﻿using Telegram.Common;
 using Telegram.Controls.Media;
 using Telegram.Views;
 using Windows.ApplicationModel;
@@ -40,7 +38,7 @@ namespace Telegram.Controls
                 }
                 else
                 {
-                    var frame = this.Ancestors<Frame>().FirstOrDefault();
+                    var frame = this.GetParent<Frame>();
                     frame?.Navigate(typeof(DiagnosticsPage));
                 }
             }

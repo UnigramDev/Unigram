@@ -1,7 +1,5 @@
-﻿using LinqToVisualTree;
-using Microsoft.UI.Xaml.Controls;
+﻿using Microsoft.UI.Xaml.Controls;
 using System;
-using System.Linq;
 using System.Numerics;
 using System.Threading.Tasks;
 using Telegram.Common;
@@ -753,7 +751,7 @@ namespace Telegram.Controls.Stories
         {
             if (sender is UIElement element)
             {
-                sender = element.Ancestors<StoryContent>().FirstOrDefault();
+                sender = element.GetParent<StoryContent>();
             }
 
             if (sender is StoryContent story)

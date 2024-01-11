@@ -4,8 +4,6 @@
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
-using LinqToVisualTree;
-using System.Linq;
 using System.Threading.Tasks;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -180,12 +178,12 @@ namespace Telegram.Common
             //    return bubble.ScrollingHost;
             //}
 
-            return listViewBase.Descendants<ScrollViewer>().FirstOrDefault();
+            return listViewBase.GetChild<ScrollViewer>();
         }
 
         public static void SetVerticalPadding(this ScrollViewer scrollViewer, double padding)
         {
-            var scrollBar = scrollViewer.Descendants<ScrollBar>().FirstOrDefault(x => x.Orientation == Orientation.Vertical);
+            var scrollBar = scrollViewer.GetChild<ScrollBar>(x => x.Orientation == Orientation.Vertical);
             if (scrollBar != null)
             {
                 scrollBar.Margin = new Thickness(0, padding, 0, 0);

@@ -4,10 +4,8 @@
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
-using LinqToVisualTree;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using Telegram.Controls;
 using Telegram.Navigation;
@@ -300,7 +298,7 @@ namespace Telegram.Common
                     }
 
                     // This is horrible here but I don't want to bloat this method with dozens of parameters.
-                    var masterDetailPanel = Window.Current.Content.Descendants<MasterDetailPanel>().FirstOrDefault();
+                    var masterDetailPanel = Window.Current.Content.GetChild<MasterDetailPanel>();
                     if (masterDetailPanel != null)
                     {
                         await OpenAsync(target, parameter, size: new Windows.Foundation.Size(masterDetailPanel.ActualDetailWidth, masterDetailPanel.ActualHeight));

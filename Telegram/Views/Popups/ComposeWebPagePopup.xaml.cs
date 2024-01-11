@@ -1,5 +1,4 @@
-﻿using LinqToVisualTree;
-using System;
+﻿using System;
 using System.Linq;
 using Telegram.Common;
 using Telegram.Controls;
@@ -71,7 +70,7 @@ namespace Telegram.Views.Popups
             {
                 bubble.Loaded += Message_Loaded;
 
-                var formatted = bubble.Descendants<FormattedTextBlock>().FirstOrDefault();
+                var formatted = bubble.GetChild<FormattedTextBlock>();
                 if (formatted != null)
                 {
                     formatted.TextEntityClick += Formatted_TextEntityClick;
@@ -89,7 +88,7 @@ namespace Telegram.Views.Popups
                     ? Message2
                     : Message1;
 
-                var preview = bubble.Descendants<WebPageContent>().FirstOrDefault();
+                var preview = bubble.GetChild<WebPageContent>();
                 preview?.ShowSkeleton();
 
                 var options = new LinkPreviewOptions(false, (string)e.Data, text.LinkPreviewOptions.ForceSmallMedia, text.LinkPreviewOptions.ForceLargeMedia, text.WebPage.ShowAboveText);

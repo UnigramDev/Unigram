@@ -4,7 +4,6 @@
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
-using LinqToVisualTree;
 using Microsoft.Graphics.Canvas;
 using Microsoft.Graphics.Canvas.Geometry;
 using System;
@@ -295,10 +294,10 @@ namespace Telegram.Views
                 return BackgroundControl;
             }
 
-            var masterDetailPanel = this.Ancestors<MasterDetailPanel>().FirstOrDefault();
+            var masterDetailPanel = this.GetParent<MasterDetailPanel>();
             if (masterDetailPanel != null)
             {
-                return masterDetailPanel.Descendants<ChatBackgroundControl>().FirstOrDefault();
+                return masterDetailPanel.GetChild<ChatBackgroundControl>();
             }
 
             return null;
@@ -579,7 +578,7 @@ namespace Telegram.Views
 
                     if (i == args.NewStartingIndex && animateSendout)
                     {
-                        var bubble = owner.Descendants<MessageBubble>().FirstOrDefault();
+                        var bubble = owner.GetChild<MessageBubble>();
                         var reply = message.ReplyToState != MessageReplyToState.Hidden && message.ReplyTo != null;
                         var more = ButtonMore.Visibility == Visibility.Visible ? 40 : 0;
 
@@ -873,7 +872,7 @@ namespace Telegram.Views
                     }
                     else if (focused is RichTextBlock textBlock)
                     {
-                        var message = textBlock.Ancestors<MessageSelector>().FirstOrDefault()?.Message;
+                        var message = textBlock.GetParent<MessageSelector>()?.Message;
                         if (message != null)
                         {
                             var selectionStart = textBlock.SelectionStart.OffsetToIndex(message.Text);
@@ -2137,7 +2136,7 @@ namespace Telegram.Views
             }
             else if (message.Content is MessageAlbum album && args.OriginalSource is DependencyObject originaSource)
             {
-                var ancestor = originaSource.AncestorsAndSelf<IContent>().FirstOrDefault();
+                var ancestor = originaSource.GetParentOrSelf<IContent>();
                 if (ancestor?.Message != null)
                 {
                     message = ancestor.Message;
@@ -4961,7 +4960,7 @@ namespace Telegram.Views
 
             //protected override string GetFullDescriptionCore()
             //{
-            var view = _owner.Ancestors<ChatView>().FirstOrDefault();
+            var view = _owner.GetParent<ChatView>();
             if (view != null)
             {
                 return view.GetAutomationName();

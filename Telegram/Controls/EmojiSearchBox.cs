@@ -134,13 +134,13 @@ namespace Telegram.Controls
                 return;
             }
 
-            var placeholder = TextField.GetChild<TextBlock>("PlaceholderTextContentPresenter");
+            var placeholder = TextField.GetChild<TextBlock>(x => x.Name.Equals("PlaceholderTextContentPresenter"));
             if (placeholder == null)
             {
                 return;
             }
 
-            var element = TextField.GetChild<ScrollViewer>("ContentElement");
+            var element = TextField.GetChild<ScrollViewer>(x => x.Name.Equals("ContentElement"));
             if (element == null)
             {
                 return;

@@ -1,7 +1,5 @@
-﻿using LinqToVisualTree;
-using System;
+﻿using System;
 using System.Collections.Specialized;
-using System.Linq;
 using System.Numerics;
 using Telegram.Common;
 using Telegram.Controls.Cells;
@@ -364,7 +362,7 @@ namespace Telegram.Controls.Stories
             {
                 if (value.IsLoaded)
                 {
-                    scrollViewer = ControlledList.Descendants<ScrollViewer>().FirstOrDefault();
+                    scrollViewer = ControlledList.GetScrollViewer();
                 }
                 else
                 {

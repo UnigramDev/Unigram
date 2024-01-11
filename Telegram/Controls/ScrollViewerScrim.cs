@@ -4,8 +4,6 @@
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
-using LinqToVisualTree;
-using System.Linq;
 using System.Numerics;
 using Telegram.Common;
 using Windows.UI.Composition;
@@ -96,7 +94,7 @@ namespace Telegram.Controls
             {
                 if (value.IsLoaded)
                 {
-                    scrollViewer = ScrollingHost.Descendants<ScrollViewer>().FirstOrDefault();
+                    scrollViewer = ScrollingHost.GetChild<ScrollViewer>();
                 }
                 else
                 {

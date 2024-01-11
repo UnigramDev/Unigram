@@ -4,10 +4,8 @@
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
-using LinqToVisualTree;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using Telegram.Common;
 using Telegram.Streams;
 using Telegram.Td.Api;
@@ -150,7 +148,7 @@ namespace Telegram.Controls.Drawers
 
         private void Stickers_Loaded(object sender, RoutedEventArgs e)
         {
-            var scrollingHost = List.Descendants<ScrollViewer>().FirstOrDefault();
+            var scrollingHost = List.GetChild<ScrollViewer>();
             if (scrollingHost != null)
             {
                 scrollingHost.VerticalSnapPointsType = SnapPointsType.None;

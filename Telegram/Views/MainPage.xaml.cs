@@ -4,7 +4,6 @@
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
-using LinqToVisualTree;
 using Microsoft.UI.Xaml.Controls;
 using System;
 using System.Collections.Generic;
@@ -2080,7 +2079,7 @@ namespace Telegram.Views
             button.Content = entry.Text;
             button.IconSource = entry.Icon;
 
-            var icon = button.Descendants<Microsoft.UI.Xaml.Controls.AnimatedIcon>().FirstOrDefault() as UIElement;
+            var icon = button.GetChild<AnimatedIcon>();
             icon?.InvalidateMeasure();
 
             if (entry.Parent == null)
