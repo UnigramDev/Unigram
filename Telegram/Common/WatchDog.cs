@@ -18,6 +18,8 @@ using Windows.Storage;
 using Windows.System;
 using Windows.System.Profile;
 using Windows.UI.Xaml;
+using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Media;
 using File = System.IO.File;
 
 namespace Telegram
@@ -96,6 +98,20 @@ namespace Telegram
                     {
                         SettingsService.Current.Diagnostics.LastCrashWasLayoutCycle = true;
                         SettingsService.Current.Diagnostics.UseLayoutRounding = false;
+                    }
+                }
+                else if (args.Exception is NotSupportedException)
+                {
+                    var popups = VisualTreeHelper.GetOpenPopups(Window.Current);
+
+                    foreach (var popup in popups)
+                    {
+                        if (popup.Child is ToolTip tooltip)
+                        {
+                            tooltip.IsOpen = false;
+                            tooltip.IsOpen = true;
+                            tooltip.IsOpen = false;
+                        }
                     }
                 }
 

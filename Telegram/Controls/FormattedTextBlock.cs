@@ -74,6 +74,7 @@ namespace Telegram.Controls
         private ulong _expandSelectionDeadline;
 
         private readonly List<FormattedParagraph> _codeBlocks = new();
+        private readonly List<Hyperlink> _links = new();
 
         private TextHighlighter _spoiler;
         private bool _invalidateSpoilers;
@@ -234,14 +235,6 @@ namespace Telegram.Controls
 
             _query = null;
             _spoiler = null;
-
-            Cleanup();
-        }
-
-        public void Cleanup()
-        {
-            // TODO: clear inlines here?
-            // Probably not needed
         }
 
         private void Adjust()
@@ -347,6 +340,12 @@ namespace Telegram.Controls
 
                 if (_templateApplied)
                 {
+                    foreach (var link in _links)
+                    {
+                        ToolTipService.SetToolTip(link, null);
+                    }
+
+                    _links.Clear();
                     _codeBlocks.Clear();
                     TextBlock.Blocks.Clear();
                 }
@@ -367,6 +366,12 @@ namespace Telegram.Controls
 
                 if (_templateApplied)
                 {
+                    foreach (var link in _links)
+                    {
+                        ToolTipService.SetToolTip(link, null);
+                    }
+
+                    _links.Clear();
                     _codeBlocks.Clear();
                     TextBlock.Blocks.Clear();
                 }
@@ -398,6 +403,12 @@ namespace Telegram.Controls
             var directBlock = direct.GetXamlDirectObject(TextBlock);
             var blocks = direct.GetXamlDirectObjectProperty(directBlock, XamlPropertyIndex.RichTextBlock_Blocks);
 
+            foreach (var link in _links)
+            {
+                ToolTipService.SetToolTip(link, null);
+            }
+
+            _links.Clear();
             _codeBlocks.Clear();
             direct.ClearCollection(blocks);
 
@@ -534,7 +545,8 @@ namespace Telegram.Controls
                                     MessageHelper.SetEntityData(hyperlink, textUrl.Url);
                                     MessageHelper.SetEntityType(hyperlink, entity.Type);
 
-                                    Extensions.SetToolTip(hyperlink, textUrl.Url);
+                                    _links.Add(hyperlink);
+                                    ToolTipService.SetToolTip(hyperlink, textUrl.Url);
                                 }
                                 else if (entity.Type is TextEntityTypeMentionName mentionName)
                                 {
@@ -568,6 +580,9 @@ namespace Telegram.Controls
                                 hyperlink.Foreground = HyperlinkForeground ?? GetBrush("MessageForegroundLinkBrush");
                                 hyperlink.UnderlineStyle = HyperlinkStyle;
                                 hyperlink.FontWeight = HyperlinkFontWeight;
+                                hyperlink.UnderlineStyle = entity.Type is TextEntityTypeUrl
+                                    ? UnderlineStyle.Single
+                                    : UnderlineStyle.None;
 
                                 //if (entity.Type is TextEntityTypeUrl || entity.Type is TextEntityTypeEmailAddress || entity.Type is TextEntityTypeBankCardNumber)
                                 {
@@ -982,17 +997,6 @@ namespace Telegram.Controls
 
         private void Entity_Click(Hyperlink sender, int offset, int length, TextEntityType type, object data)
         {
-            foreach (Paragraph block in TextBlock.Blocks)
-            {
-                foreach (var element in block.Inlines)
-                {
-                    if (element is Hyperlink)
-                    {
-                        ToolTipService.SetToolTip(element, null);
-                    }
-                }
-            }
-
             TextEntityClick?.Invoke(this, new TextEntityClickEventArgs(offset, length, type, data));
         }
 
