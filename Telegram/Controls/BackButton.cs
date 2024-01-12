@@ -20,6 +20,16 @@ namespace Telegram.Controls
 
         private void OnClick(object sender, Windows.UI.Xaml.RoutedEventArgs e)
         {
+            var master = this.GetParent<MasterDetailView>();
+            if (master != null)
+            {
+                if (master.NavigationService != null && master.NavigationService.CanGoBack)
+                {
+                    master.NavigationService.GoBack();
+                    return;
+                }
+            }
+
             var page = this.GetParent<Page>();
             if (page != null)
             {
@@ -37,16 +47,16 @@ namespace Telegram.Controls
                 if (page.DataContext is ViewModelBase viewModel && viewModel.NavigationService.CanGoBack)
                 {
                     viewModel.NavigationService.GoBack();
+                    return;
                 }
-                else if (page.Frame.CanGoBack)
+                else if (page.Frame != null && page.Frame.CanGoBack)
                 {
                     page.Frame.GoBack();
+                    return;
                 }
             }
-            else
-            {
-                BootStrapper.Current.RaiseBackRequested();
-            }
+
+            BootStrapper.Current.RaiseBackRequested();
         }
     }
 }
