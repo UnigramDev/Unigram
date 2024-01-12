@@ -195,7 +195,7 @@ namespace Telegram.Views.Stories.Popups
                 if (args.Item is StoryInteraction interaction)
                 {
                     cell.UpdateStoryViewer(ViewModel.ClientService, args, OnContainerContentChanging);
-                    animated.Source = interaction.Type is StoryInteractionTypeView view
+                    animated.Source = interaction.Type is StoryInteractionTypeView view && view.ChosenReactionType != null
                         ? new ReactionFileSource(ViewModel.ClientService, view.ChosenReactionType)
                         : null;
                 }
