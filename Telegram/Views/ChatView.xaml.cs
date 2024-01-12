@@ -43,6 +43,7 @@ using Windows.Foundation;
 using Windows.UI.Composition;
 using Windows.UI.Core;
 using Windows.UI.Text;
+using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Automation.Peers;
 using Windows.UI.Xaml.Controls;
@@ -3733,6 +3734,12 @@ namespace Telegram.Views
             }
 
             Title.Text = ChatTitle;
+
+            if (!WindowContext.Current.IsInMainView)
+            {
+                // Would be cool to do this in MasterDetailView
+                ApplicationView.GetForCurrentView().Title = ChatTitle;
+            }
         }
 
         public string ChatTitle { get; private set; }

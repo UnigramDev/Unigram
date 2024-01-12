@@ -6,15 +6,12 @@
 //
 using Microsoft.UI.Xaml.Controls;
 using System;
-using Telegram.Common;
 using Telegram.Controls;
 using Telegram.Navigation;
 using Telegram.Navigation.Services;
 using Telegram.Services;
 using Telegram.Services.Keyboard;
-using Telegram.Td.Api;
 using Windows.ApplicationModel.Core;
-using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 
@@ -45,15 +42,11 @@ namespace Telegram.Views.Host
             //Grid.SetRow(navigationService.Frame, 2);
             //LayoutRoot.Children.Add(navigationService.Frame);
 
-            if (navigationService is TLNavigationService service && service.ClientService != null)
-            {
-                var user = service.ClientService.GetUser(service.ClientService.Options.MyId);
-                if (user != null)
-                {
-                    StateLabel.Text = string.Format("{0} - {1}", user.FullName(), "Unigram");
-                    ApplicationView.GetForCurrentView().Title = user.FullName();
-                }
-            }
+#if DEBUG && !MOCKUP
+            StateLabel.Text = Strings.AppName;
+#else
+            StateLabel.Text = "Unigram";
+#endif
 
             var clientService = TypeResolver.Current.Resolve<IClientService>(navigationService.SessionId);
             var settingsService = TypeResolver.Current.Resolve<ISettingsService>(navigationService.SessionId);
