@@ -12,8 +12,10 @@ using Telegram.Navigation;
 using Telegram.Navigation.Services;
 using Telegram.Services;
 using Telegram.Services.ViewService;
+using Telegram.Streams;
 using Telegram.Td.Api;
 using Telegram.ViewModels;
+using Telegram.ViewModels.Payments;
 using Telegram.ViewModels.Settings;
 using Telegram.Views;
 using Telegram.Views.Payments;
@@ -100,7 +102,7 @@ namespace Telegram.Common
         {
             var parameters = new ViewServiceParams
             {
-                Title = message.Content is MessageInvoice invoice && invoice.ReceiptMessageId == 0 ? Strings.PaymentCheckout : Strings.PaymentReceipt,
+                Title = message.Content is MessageInvoice { ReceiptMessageId: 0 } ? Strings.PaymentCheckout : Strings.PaymentReceipt,
                 Width = 380,
                 Height = 580,
                 PersistentId = "Payments",
@@ -110,7 +112,6 @@ namespace Telegram.Common
                     nav.Navigate(typeof(PaymentFormPage), new InputInvoiceMessage(message.ChatId, message.Id));
 
                     return BootStrapper.Current.CreateRootElement(nav);
-
                 }
             };
 
@@ -119,6 +120,13 @@ namespace Telegram.Common
 
         public async void NavigateToInvoice(InputInvoice inputInvoice)
         {
+            var response = await ClientService.SendAsync(new GetPaymentForm(inputInvoice, Theme.Current.Parameters));
+            if (response is not PaymentForm paymentForm)
+            {
+                ToastPopup.Show(Strings.PaymentInvoiceLinkInvalid, new LocalFileSource("ms-appx:///Assets/Toasts/Info.tgs"));
+                return;
+            }
+
             var parameters = new ViewServiceParams
             {
                 Title = Strings.PaymentCheckout,
@@ -128,7 +136,7 @@ namespace Telegram.Common
                 Content = control =>
                 {
                     var nav = BootStrapper.Current.NavigationServiceFactory(BootStrapper.BackButton.Ignore, SessionId, "Payments" + Guid.NewGuid(), false);
-                    nav.Navigate(typeof(PaymentFormPage), inputInvoice);
+                    nav.Navigate(typeof(PaymentFormPage), new PaymentFormArgs(inputInvoice, paymentForm));
 
                     return BootStrapper.Current.CreateRootElement(nav);
 

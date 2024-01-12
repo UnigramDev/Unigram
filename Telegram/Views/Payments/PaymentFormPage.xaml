@@ -8,7 +8,8 @@
                   xmlns:payments="using:Telegram.Controls.Payments"
                   xmlns:converters="using:Telegram.Converters"
                   xmlns:local="using:Telegram.Views"
-                  mc:Ignorable="d">
+                  mc:Ignorable="d"
+                  Title="{x:Bind ConvertTitle(ViewModel.IsReceipt, ViewModel.Invoice.IsTest), Mode=OneWay, FallbackValue=Checkout}">
 
     <Page.Transitions>
         <TransitionCollection>
@@ -103,19 +104,11 @@
     </Page.Resources>
 
     <Grid Background="{ThemeResource SettingsPageBackground}">
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto" />
-            <RowDefinition />
-        </Grid.RowDefinitions>
-        <ContentControl Content="{x:Bind ConvertTitle(ViewModel.IsReceipt, ViewModel.Invoice.IsTest), Mode=OneWay, FallbackValue=Checkout}"
-                        Style="{StaticResource NavigationViewTitleHeaderContentControlTextStyle}"
-                        Margin="24,5,0,0" />
-
         <ScrollViewer x:Name="ScrollingHost"
                       VerticalScrollBarVisibility="Auto"
                       VerticalScrollMode="Auto"
                       Grid.Row="1">
-            <StackPanel Padding="0,0,0,60">
+            <controls:SettingsPanel>
                 <controls:HeaderedControl Background="{ThemeResource SettingsItemBackground}">
                     <Grid BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
                           Padding="12,8"
@@ -263,7 +256,7 @@
                                           Style="{StaticResource SubtitleBadgeButtonStyle}" />
                 </controls:HeaderedControl>
 
-            </StackPanel>
+            </controls:SettingsPanel>
         </ScrollViewer>
 
         <Grid VerticalAlignment="Bottom"

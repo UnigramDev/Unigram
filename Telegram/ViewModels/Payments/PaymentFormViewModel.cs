@@ -21,6 +21,19 @@ using Windows.UI.Xaml.Navigation;
 
 namespace Telegram.ViewModels.Payments
 {
+    public class PaymentFormArgs
+    {
+        public PaymentFormArgs(InputInvoice inputInvoice, PaymentForm paymentForm)
+        {
+            InputInvoice = inputInvoice;
+            PaymentForm = paymentForm;
+        }
+
+        public InputInvoice InputInvoice { get; }
+
+        public PaymentForm PaymentForm { get; }
+    }
+
     public class PaymentFormViewModel : ViewModelBase
     {
         public PaymentFormViewModel(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator)
@@ -55,17 +68,26 @@ namespace Telegram.ViewModels.Payments
             {
                 await InitializeForm(invoiceName);
             }
+            else if (parameter is PaymentFormArgs paymentForm)
+            {
+                await InitializeForm(paymentForm.InputInvoice, paymentForm.PaymentForm);
+            }
         }
 
         private async Task InitializeForm(InputInvoice invoice)
         {
-            IsReceipt = false;
-
             var paymentForm = await ClientService.SendAsync(new GetPaymentForm(invoice, Theme.Current.Parameters)) as PaymentForm;
             if (paymentForm == null)
             {
                 return;
             }
+
+            await InitializeForm(invoice, paymentForm);
+        }
+
+        private async Task InitializeForm(InputInvoice invoice, PaymentForm paymentForm)
+        {
+            IsReceipt = false;
 
             InputInvoice = invoice;
             PaymentForm = paymentForm;
