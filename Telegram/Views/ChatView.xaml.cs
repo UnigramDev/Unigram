@@ -481,7 +481,7 @@ namespace Telegram.Views
 
                 await panel.UpdateLayoutAsync();
 
-                if (message.IsOutgoing && pending && !Messages.IsBottomReached)
+                if (message.IsOutgoing && message.SendingState is MessageSendingStatePending { SendingId: not 0 } && !Messages.IsBottomReached)
                 {
                     var tsc = new TaskCompletionSource<bool>();
                     Messages.ScrollToItem(message, VerticalAlignment.Bottom, new MessageBubbleHighlightOptions(false, false), tsc: tsc);
