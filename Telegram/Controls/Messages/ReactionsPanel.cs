@@ -12,7 +12,9 @@ using Telegram.Td.Api;
 using Telegram.ViewModels;
 using Windows.Foundation;
 using Windows.UI.Xaml;
+using Windows.UI.Xaml.Automation.Peers;
 using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media.Animation;
 
 namespace Telegram.Controls.Messages
@@ -29,10 +31,17 @@ namespace Telegram.Controls.Messages
 
         public ReactionsPanel()
         {
+            TabFocusNavigation = KeyboardNavigationMode.Once;
+
             ChildrenTransitions = new TransitionCollection
             {
                 new RepositionThemeTransition()
             };
+        }
+
+        protected override AutomationPeer OnCreateAutomationPeer()
+        {
+            return new ReactionsPanelAutomationPeer(this);
         }
 
         public bool HasReactions => _reactions.Count > 0 || _customReactions.Count > 0;
@@ -388,6 +397,19 @@ namespace Telegram.Controls.Messages
             }
 
             return finalSize;
+        }
+    }
+
+    public class ReactionsPanelAutomationPeer : FrameworkElementAutomationPeer
+    {
+        public ReactionsPanelAutomationPeer(ReactionsPanel owner)
+            : base(owner)
+        {
+        }
+
+        protected override AutomationControlType GetAutomationControlTypeCore()
+        {
+            return AutomationControlType.List;
         }
     }
 }

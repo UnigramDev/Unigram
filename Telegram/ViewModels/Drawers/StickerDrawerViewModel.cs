@@ -625,6 +625,16 @@ namespace Telegram.ViewModels.Drawers
 
             return new ReactionTypeEmoji(Emoji);
         }
+
+        public override string ToString()
+        {
+            if (FullType is StickerFullTypeCustomEmoji)
+            {
+                return string.Format(Strings.AccDescrCustomEmoji, Emoji);
+            }
+
+            return Emoji ?? base.ToString();
+        }
     }
 
     public class MoreStickerViewModel : StickerViewModel

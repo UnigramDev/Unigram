@@ -932,7 +932,7 @@ namespace Telegram.Views
                     return;
                 }
 
-                if (args.VirtualKey == VirtualKey.Up && (focused is TextBox || focused is RichEditBox))
+                if (args.VirtualKey == VirtualKey.Up && (focused is TextBox or RichEditBox or ReactionButton))
                 {
                     return;
                 }
@@ -975,7 +975,7 @@ namespace Telegram.Views
                     return;
                 }
 
-                if (args.VirtualKey == VirtualKey.Down && (focused is TextBox || focused is RichEditBox))
+                if (args.VirtualKey == VirtualKey.Down && (focused is TextBox or RichEditBox or ReactionButton))
                 {
                     return;
                 }
