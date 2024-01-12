@@ -456,10 +456,9 @@ namespace Telegram.Services
                     else
                     {
                         // If notification sound is not yet available
-                        // download it and show the notification without sound.
+                        // download it and show the notification as is.
 
                         _clientService.DownloadFile(notificationSound.Sound.Id, 32);
-                        silent = true;
                     }
                 }
             }
@@ -567,6 +566,11 @@ namespace Telegram.Services
                     }
 
                     notification.RemoteId += group;
+                }
+
+                if (silent)
+                {
+                    notification.SuppressPopup = true;
                 }
 
                 notifier.Show(notification);
