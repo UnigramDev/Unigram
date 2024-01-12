@@ -432,6 +432,14 @@ namespace Telegram.Controls
                     direct.SetDoubleProperty(paragraph, XamlPropertyIndex.TextElement_FontSize, Theme.Current.MessageFontSize);
                 }
 
+                // TODO: we use DetectFromContent, but this could be used too:
+                //direct.SetEnumProperty(paragraph, XamlPropertyIndex.Block_TextAlignment, part.Direction switch
+                //{
+                //    TextDirectionality.LeftToRight => (uint)TextAlignment.Left,
+                //    TextDirectionality.RightToLeft => (uint)TextAlignment.Right,
+                //    _ => (uint)TextAlignment.DetectFromContent
+                //});
+
                 if (part.Type is TextParagraphTypeQuote)
                 {
                     var last = part == styled.Paragraphs[^1];
@@ -689,27 +697,18 @@ namespace Telegram.Controls
 
             if (AdjustLineEnding && styled.Paragraphs.Count > 0)
             {
-                //var direction = NativeUtils.GetDirectionality(text);
-
                 var direction = styled.Paragraphs[^1].Direction;
                 if (direction == TextDirectionality.RightToLeft && LocaleService.Current.FlowDirection == FlowDirection.LeftToRight)
                 {
-                    TextBlock.FlowDirection = FlowDirection.RightToLeft;
                     Adjust();
                 }
                 else if (direction == TextDirectionality.LeftToRight && LocaleService.Current.FlowDirection == FlowDirection.RightToLeft)
                 {
-                    TextBlock.FlowDirection = FlowDirection.LeftToRight;
                     Adjust();
                 }
-                else
+                else if (lastType is not null)
                 {
-                    TextBlock.FlowDirection = LocaleService.Current.FlowDirection;
-
-                    if (lastType is not null)
-                    {
-                        Adjust();
-                    }
+                    Adjust();
                 }
             }
         }

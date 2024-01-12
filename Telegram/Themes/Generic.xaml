@@ -1167,7 +1167,8 @@
                                        TextTrimming="{TemplateBinding TextTrimming}"
                                        MaxLines="{TemplateBinding MaxLines}"
                                        OverflowContentTarget="{TemplateBinding OverflowContentTarget}"
-                                       TextReadingOrder="DetectFromContent"
+                                       HorizontalTextAlignment="DetectFromContent"
+                                       TextReadingOrder="UseFlowDirection"
                                        OpticalMarginAlignment="None" />
                     </Grid>
                 </ControlTemplate>
