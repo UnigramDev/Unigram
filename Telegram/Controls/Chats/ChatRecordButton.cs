@@ -120,7 +120,7 @@ namespace Telegram.Controls.Chats
             Icon.PointerCanceled += OnPointerCanceled;
             Icon.PointerCaptureLost += OnPointerCaptureLost;
 
-            _icon = ElementCompositionPreview.GetElementVisual(Icon);
+            _icon = ElementComposition.GetElementVisual(Icon);
             _icon.Opacity = IsRestricted ? 0.2f : 1;
 
             base.OnApplyTemplate();

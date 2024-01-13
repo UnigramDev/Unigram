@@ -178,7 +178,7 @@ namespace Telegram.Controls
                 element.SizeChanged += OnSizeChanged;
 
                 _elements[i] = element;
-                _visuals[i] = ElementCompositionPreview.GetElementVisual(_elements[i]);
+                _visuals[i] = ElementComposition.GetElementVisual(_elements[i]);
                 ElementCompositionPreview.SetIsTranslationEnabled(_elements[i], true);
             }
 

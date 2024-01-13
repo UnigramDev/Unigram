@@ -100,8 +100,8 @@ namespace Telegram.Controls.Chats
                 _existingItems ??= new();
                 _existingItems.Add(this);
 
-                _hitTest = ElementCompositionPreview.GetElementVisual(this);
-                _visual = ElementCompositionPreview.GetElementVisual(_presenter);
+                _hitTest = ElementComposition.GetElementVisual(this);
+                _visual = ElementComposition.GetElementVisual(_presenter);
 
                 _compositor = _hitTest.Compositor;
                 _container = _compositor.CreateContainerVisual();

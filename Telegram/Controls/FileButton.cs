@@ -194,8 +194,8 @@ namespace Telegram.Controls
                 var labelShow = _label == ContentPresenter1 ? ContentPresenter2 : ContentPresenter1;
                 var labelHide = _label == ContentPresenter1 ? ContentPresenter1 : ContentPresenter2;
 
-                var visualShow = ElementCompositionPreview.GetElementVisual(labelShow);
-                var visualHide = ElementCompositionPreview.GetElementVisual(labelHide);
+                var visualShow = ElementComposition.GetElementVisual(labelShow);
+                var visualHide = ElementComposition.GetElementVisual(labelHide);
 
                 var compositor = visualShow.Compositor;
 

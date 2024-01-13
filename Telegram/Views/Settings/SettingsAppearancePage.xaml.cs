@@ -28,7 +28,7 @@ namespace Telegram.Views.Settings
             InitializeComponent();
             Title = Strings.Appearance;
 
-            var preview = ElementCompositionPreview.GetElementVisual(Preview);
+            var preview = ElementComposition.GetElementVisual(Preview);
             preview.Clip = preview.Compositor.CreateInsetClip();
         }
 

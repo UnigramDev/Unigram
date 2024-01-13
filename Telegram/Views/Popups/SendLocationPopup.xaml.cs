@@ -52,8 +52,8 @@ namespace Telegram.Views.Popups
 
             Loaded += OnLoaded;
 
-            _accuracy = ElementCompositionPreview.GetElementVisual(Accuracy);
-            _position = ElementCompositionPreview.GetElementVisual(Position);
+            _accuracy = ElementComposition.GetElementVisual(Accuracy);
+            _position = ElementComposition.GetElementVisual(Position);
 
             _position.CenterPoint = new Vector3(20, 48, 0);
             _position.Scale = Vector3.Zero;

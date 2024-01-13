@@ -53,15 +53,15 @@ namespace Telegram.Controls
             ElementCompositionPreview.SetIsTranslationEnabled(CoreArrow, true);
             ElementCompositionPreview.SetIsTranslationEnabled(PrevArrow, true);
 
-            var next = ElementCompositionPreview.GetElementVisual(NextArrow);
-            var core = ElementCompositionPreview.GetElementVisual(CoreArrow);
-            var prev = ElementCompositionPreview.GetElementVisual(PrevArrow);
+            var next = ElementComposition.GetElementVisual(NextArrow);
+            var core = ElementComposition.GetElementVisual(CoreArrow);
+            var prev = ElementComposition.GetElementVisual(PrevArrow);
 
             next.Opacity =
                 core.Opacity = 0;
 
-            _valueRoot = ElementCompositionPreview.GetElementVisual(ValueRoot);
-            _thumb = ElementCompositionPreview.GetElementVisual(Thumb);
+            _valueRoot = ElementComposition.GetElementVisual(ValueRoot);
+            _thumb = ElementComposition.GetElementVisual(Thumb);
 
             _thumbClip = CompositionDevice.CreateRectangleClip(Thumb.Children[0]);
             _thumbClip.Set(20, 20, 20, 0);
@@ -97,9 +97,9 @@ namespace Telegram.Controls
                 _valueRoot.Clip = clip = _valueRoot.Compositor.CreateInsetClip();
             }
 
-            var next = ElementCompositionPreview.GetElementVisual(NextArrow);
-            var core = ElementCompositionPreview.GetElementVisual(CoreArrow);
-            var prev = ElementCompositionPreview.GetElementVisual(PrevArrow);
+            var next = ElementComposition.GetElementVisual(NextArrow);
+            var core = ElementComposition.GetElementVisual(CoreArrow);
+            var prev = ElementComposition.GetElementVisual(PrevArrow);
 
             var half = Thumb.ActualSize.X / 2;
             var duration = TimeSpan.FromSeconds(0.333 * 1);

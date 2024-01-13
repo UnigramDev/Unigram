@@ -196,8 +196,8 @@ namespace Telegram.Controls
             ElementCompositionPreview.SetIsTranslationEnabled(Blocks, true);
 
             var props = ElementCompositionPreview.GetScrollViewerManipulationPropertySet(ContentElement);
-            var visual = ElementCompositionPreview.GetElementVisual(Blocks);
-            //var wrap = ElementCompositionPreview.GetElementVisual(Wrap);
+            var visual = ElementComposition.GetElementVisual(Blocks);
+            //var wrap = CompositionExtensions.GetElementVisual(Wrap);
 
             //wrap.Clip = visual.Compositor.CreateInsetClip();
 

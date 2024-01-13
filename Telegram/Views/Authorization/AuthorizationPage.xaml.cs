@@ -80,11 +80,11 @@ namespace Telegram.Views.Authorization
 
             await PhonePanel.UpdateLayoutAsync();
 
-            var logo1 = ElementCompositionPreview.GetElementVisual(Logo1);
-            var logo2 = ElementCompositionPreview.GetElementVisual(Logo2);
-            var token = ElementCompositionPreview.GetElementVisual(TokenRoot);
-            var inner1 = ElementCompositionPreview.GetElementVisual(TokenInnerPanel);
-            var inner2 = ElementCompositionPreview.GetElementVisual(PhoneInnerPanel);
+            var logo1 = ElementComposition.GetElementVisual(Logo1);
+            var logo2 = ElementComposition.GetElementVisual(Logo2);
+            var token = ElementComposition.GetElementVisual(TokenRoot);
+            var inner1 = ElementComposition.GetElementVisual(TokenInnerPanel);
+            var inner2 = ElementComposition.GetElementVisual(PhoneInnerPanel);
 
             var transform1 = Logo2Panel.TransformToVisual(Logo1Panel);
             var point1 = transform1.TransformPoint(new Point()).ToVector2();
@@ -162,11 +162,11 @@ namespace Telegram.Views.Authorization
 
             await TokenPanel.UpdateLayoutAsync();
 
-            var logo1 = ElementCompositionPreview.GetElementVisual(Logo1);
-            var logo2 = ElementCompositionPreview.GetElementVisual(Logo2);
-            var token = ElementCompositionPreview.GetElementVisual(TokenRoot);
-            var inner1 = ElementCompositionPreview.GetElementVisual(TokenInnerPanel);
-            var inner2 = ElementCompositionPreview.GetElementVisual(PhoneInnerPanel);
+            var logo1 = ElementComposition.GetElementVisual(Logo1);
+            var logo2 = ElementComposition.GetElementVisual(Logo2);
+            var token = ElementComposition.GetElementVisual(TokenRoot);
+            var inner1 = ElementComposition.GetElementVisual(TokenInnerPanel);
+            var inner2 = ElementComposition.GetElementVisual(PhoneInnerPanel);
 
             var transform1 = Logo2Panel.TransformToVisual(Logo1Panel);
             var point1 = transform1.TransformPoint(new Point()).ToVector2();
@@ -281,7 +281,7 @@ namespace Telegram.Views.Authorization
             //opacity.InsertKeyFrame(1.0f, 1);
             //token.StartAnimation("Opacity", opacity);
 
-            var placeholder = ElementCompositionPreview.GetElementVisual(TokenPlaceholder);
+            var placeholder = ElementComposition.GetElementVisual(TokenPlaceholder);
 
             opacity.InsertKeyFrame(0.0f, 1);
             opacity.InsertKeyFrame(1.0f, 0);

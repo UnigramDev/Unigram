@@ -598,7 +598,7 @@ namespace Telegram.Views.Calls
             anim.InsertKeyFrame(0, show ? 0 : 1);
             anim.InsertKeyFrame(1, show ? 1 : 0);
 
-            var root = ElementCompositionPreview.GetElementVisual(BottomPanel);
+            var root = ElementComposition.GetElementVisual(BottomPanel);
 
             root.StartAnimation("Opacity", anim);
         }

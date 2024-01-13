@@ -76,8 +76,8 @@ namespace Telegram.Controls.Chats
             _collapsed = !show;
             Visibility = Visibility.Visible;
 
-            var parent = ElementCompositionPreview.GetElementVisual(_parent);
-            var visual = ElementCompositionPreview.GetElementVisual(this);
+            var parent = ElementComposition.GetElementVisual(_parent);
+            var visual = ElementComposition.GetElementVisual(this);
             visual.Clip = visual.Compositor.CreateInsetClip();
 
             var batch = visual.Compositor.CreateScopedBatch(CompositionBatchTypes.Animation);
@@ -157,9 +157,9 @@ namespace Telegram.Controls.Chats
             var transform = TranslateRoot.TransformToVisual(show ? ShowOriginal : TranslateTo);
             var point = transform.TransformPoint(new Windows.Foundation.Point()).ToVector2();
 
-            var visual1 = ElementCompositionPreview.GetElementVisual(show ? ShowOriginal : TranslateTo);
-            var visual2 = ElementCompositionPreview.GetElementVisual(show ? TranslateTo : ShowOriginal);
-            var visual3 = ElementCompositionPreview.GetElementVisual(Icon);
+            var visual1 = ElementComposition.GetElementVisual(show ? ShowOriginal : TranslateTo);
+            var visual2 = ElementComposition.GetElementVisual(show ? TranslateTo : ShowOriginal);
+            var visual3 = ElementComposition.GetElementVisual(Icon);
 
             AutomationProperties.SetName(Translate, show ? ShowOriginal.Text : TranslateTo.Text);
 

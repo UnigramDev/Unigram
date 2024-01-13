@@ -54,8 +54,8 @@ namespace Telegram.Controls
 
             if (_label1 != null && _label2 != null)
             {
-                _visual1 = _visual = ElementCompositionPreview.GetElementVisual(_label1);
-                _visual2 = ElementCompositionPreview.GetElementVisual(_label2);
+                _visual1 = _visual = ElementComposition.GetElementVisual(_label1);
+                _visual2 = ElementComposition.GetElementVisual(_label2);
 
                 if (_label2 is TextBlock text2)
                 {

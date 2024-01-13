@@ -73,7 +73,7 @@ namespace Telegram.Controls.Chats
 
             _controlledPanel = value;
 
-            _stickersPanel = ElementCompositionPreview.GetElementVisual(ControlledPanel.Presenter);
+            _stickersPanel = ElementComposition.GetElementVisual(ControlledPanel.Presenter);
             _stickersShadow = ElementCompositionPreview.GetElementChildVisual(ControlledPanel.Shadow);
 
             _stickersTimer = new DispatcherTimer();

@@ -140,8 +140,8 @@ namespace Telegram.Controls.Cells
 
             ToolTipService.SetToolTip(BriefInfo, tooltip);
 
-            _selectionPhoto = ElementCompositionPreview.GetElementVisual(Photo);
-            _selectionOutline = ElementCompositionPreview.GetElementVisual(SelectionOutline);
+            _selectionPhoto = ElementComposition.GetElementVisual(Photo);
+            _selectionOutline = ElementComposition.GetElementVisual(SelectionOutline);
             _selectionPhoto.CenterPoint = new Vector3(24);
             _selectionOutline.CenterPoint = new Vector3(24);
             _selectionOutline.Opacity = 0;

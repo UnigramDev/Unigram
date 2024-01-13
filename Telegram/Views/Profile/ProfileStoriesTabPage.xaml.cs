@@ -163,7 +163,7 @@ namespace Telegram.Views.Profile
             _manageCollapsed = !show;
             ManagePanel.Visibility = Visibility.Visible;
 
-            var manage = ElementCompositionPreview.GetElementVisual(ManagePanel);
+            var manage = ElementComposition.GetElementVisual(ManagePanel);
             ElementCompositionPreview.SetIsTranslationEnabled(ManagePanel, true);
             manage.Opacity = show ? 0 : 1;
 

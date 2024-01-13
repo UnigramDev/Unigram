@@ -682,8 +682,8 @@ namespace Telegram.Views.Popups
                 SearchField.ControlledList = SearchPanel.Root;
             }
 
-            var chats = ElementCompositionPreview.GetElementVisual(ChatListPanel);
-            var panel = ElementCompositionPreview.GetElementVisual(SearchPanel);
+            var chats = ElementComposition.GetElementVisual(ChatListPanel);
+            var panel = ElementComposition.GetElementVisual(SearchPanel);
 
             chats.CenterPoint = panel.CenterPoint = new Vector3(ChatListPanel.ActualSize / 2, 0);
 

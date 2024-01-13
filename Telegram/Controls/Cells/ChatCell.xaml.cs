@@ -172,8 +172,8 @@ namespace Telegram.Controls.Cells
 
             Segments.Click += Segments_Click;
 
-            _selectionPhoto = ElementCompositionPreview.GetElementVisual(Segments);
-            _selectionOutline = ElementCompositionPreview.GetElementVisual(SelectionOutline);
+            _selectionPhoto = ElementComposition.GetElementVisual(Segments);
+            _selectionOutline = ElementComposition.GetElementVisual(SelectionOutline);
             _selectionPhoto.CenterPoint = new Vector3(24);
             _selectionOutline.CenterPoint = new Vector3(24);
             _selectionOutline.Opacity = 0;
@@ -727,7 +727,7 @@ namespace Telegram.Controls.Cells
                     OnlineBadge = GetTemplateChild(nameof(OnlineBadge)) as Border;
                     OnlineHeart = GetTemplateChild(nameof(OnlineHeart)) as Border;
 
-                    _onlineBadge = ElementCompositionPreview.GetElementVisual(OnlineBadge);
+                    _onlineBadge = ElementComposition.GetElementVisual(OnlineBadge);
                     _onlineBadge.CenterPoint = new Vector3(6);
                     //_onlineBadge.Opacity = 0;
                     //_onlineBadge.Scale = new Vector3(0);
@@ -973,7 +973,7 @@ namespace Telegram.Controls.Cells
 
             //ElementCompositionPreview.SetIsTranslationEnabled(LayoutRoot, true);
 
-            //var visual = ElementCompositionPreview.GetElementVisual(LayoutRoot);
+            //var visual = CompositionExtensions.GetElementVisual(LayoutRoot);
             //visual.Clip ??= visual.Compositor.CreateInsetClip();
 
             //var x = LayoutRoot.ActualSize.X + 24;
@@ -1004,7 +1004,7 @@ namespace Telegram.Controls.Cells
 
             if (CompactBadgeRoot != null)
             {
-                var badge = ElementCompositionPreview.GetElementVisual(CompactBadgeRoot);
+                var badge = ElementComposition.GetElementVisual(CompactBadgeRoot);
                 badge.CenterPoint = new Vector3(UnreadBadge.ActualSize.X / 2 + 2, UnreadBadge.ActualSize.Y / 2 + 2, 0);
 
                 if (animate)

@@ -39,7 +39,7 @@ namespace Telegram.Views.Popups
             Message1.Mockup(Strings.BackgroundPreviewLine1, false, DateTime.Now.AddSeconds(-25));
             Message2.Mockup(Strings.BackgroundPreviewLine2, true, DateTime.Now);
 
-            ElementCompositionPreview.GetElementVisual(ContentPanel).Clip = Window.Current.Compositor.CreateInsetClip();
+            ElementComposition.GetElementVisual(ContentPanel).Clip = Window.Current.Compositor.CreateInsetClip();
         }
 
         private void Color_Click(object sender, RoutedEventArgs e)

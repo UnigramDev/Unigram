@@ -59,7 +59,7 @@ namespace Telegram.Controls
 
         private void Part_SizeChanged(object sender, SizeChangedEventArgs e)
         {
-            var visual = ElementCompositionPreview.GetElementVisual(sender as UIElement);
+            var visual = ElementComposition.GetElementVisual(sender as UIElement);
             var point = e.NewSize.ToVector2();
 
             if (sender == PrevPart)
@@ -213,8 +213,8 @@ namespace Telegram.Controls
                 ChangePartText(ref PrevPart, nameof(PrevPart), prevValue, true, true);
                 ChangePartText(ref NextPart, nameof(NextPart), nextValue, true);
 
-                var prevVisual = ElementCompositionPreview.GetElementVisual(PrevPart);
-                var nextVisual = ElementCompositionPreview.GetElementVisual(NextPart);
+                var prevVisual = ElementComposition.GetElementVisual(PrevPart);
+                var nextVisual = ElementComposition.GetElementVisual(NextPart);
 
                 var easing = prevVisual.Compositor.CreateCubicBezierEasingFunction(new Vector2(0.25f, 0.1f), new Vector2(0.25f, 1));
 
@@ -264,7 +264,7 @@ namespace Telegram.Controls
 
             if (TextAlignment == TextAlignment.Left && SuffixPart != null)
             {
-                var suffixVisual = ElementCompositionPreview.GetElementVisual(SuffixPart);
+                var suffixVisual = ElementComposition.GetElementVisual(SuffixPart);
 
                 var slide = suffixVisual.Compositor.CreateScalarKeyFrameAnimation();
                 slide.InsertKeyFrame(0, oldSize.X - newSize.X);
@@ -274,7 +274,7 @@ namespace Telegram.Controls
             }
             else if (TextAlignment == TextAlignment.Right && PrefixPart != null)
             {
-                var prefixVisual = ElementCompositionPreview.GetElementVisual(PrefixPart);
+                var prefixVisual = ElementComposition.GetElementVisual(PrefixPart);
 
                 var slide = prefixVisual.Compositor.CreateScalarKeyFrameAnimation();
                 slide.InsertKeyFrame(0, newSize.X - oldSize.X);

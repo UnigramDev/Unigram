@@ -424,10 +424,10 @@ namespace Telegram.Controls.Stories
             storiesVisualOffsetAnimation.SetReferenceParameter("_", _progress);
             headerVisualOffsetAnimation.SetReferenceParameter("_", _progress);
 
-            var titleVisual = ElementCompositionPreview.GetElementVisual(TitleBarrr);
-            var storiesVisual = ElementCompositionPreview.GetElementVisual(this);
-            var headerVisual = ElementCompositionPreview.GetElementVisual(Header);
-            var showVisual = ElementCompositionPreview.GetElementVisual(Show);
+            var titleVisual = ElementComposition.GetElementVisual(TitleBarrr);
+            var storiesVisual = ElementComposition.GetElementVisual(this);
+            var headerVisual = ElementComposition.GetElementVisual(Header);
+            var showVisual = ElementComposition.GetElementVisual(Show);
 
             storiesVisual.Clip = clip;
 
@@ -455,7 +455,7 @@ namespace Telegram.Controls.Stories
                     "-80 + 84 * _.Progress");
                 tabsVisualOffsetAnimation.SetReferenceParameter("_", _progress);
 
-                var tabsVisual = ElementCompositionPreview.GetElementVisual(ChatTabs);
+                var tabsVisual = ElementComposition.GetElementVisual(ChatTabs);
                 tabsVisual.Properties.InsertVector3("Translation", Vector3.Zero);
                 tabsVisual.StartAnimation("Translation.Y", tabsVisualOffsetAnimation);
             }
@@ -640,7 +640,7 @@ namespace Telegram.Controls.Stories
                 translation.Duration = Constants.FastAnimation;
 
                 ElementCompositionPreview.SetIsTranslationEnabled(ControlledList, true);
-                var boh = ElementCompositionPreview.GetElementVisual(ControlledList);
+                var boh = ElementComposition.GetElementVisual(ControlledList);
 
                 _progress.StartAnimation("Progress", animation);
                 boh.StartAnimation("Translation.Y", translation);
@@ -698,7 +698,7 @@ namespace Telegram.Controls.Stories
                 translation.Duration = Constants.FastAnimation;
 
                 ElementCompositionPreview.SetIsTranslationEnabled(ControlledList, true);
-                var boh = ElementCompositionPreview.GetElementVisual(ControlledList);
+                var boh = ElementComposition.GetElementVisual(ControlledList);
 
                 _progress.StartAnimation("Progress", animation);
                 boh.StartAnimation("Translation.Y", translation);

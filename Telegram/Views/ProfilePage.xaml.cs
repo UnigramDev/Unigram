@@ -55,9 +55,9 @@ namespace Telegram.Views
         private void InitializeScrolling()
         {
             var properties = ElementCompositionPreview.GetScrollViewerManipulationPropertySet(ScrollingHost);
-            var visual = ElementCompositionPreview.GetElementVisual(HeaderPanel);
-            var border = ElementCompositionPreview.GetElementVisual(CardBackground);
-            var clipper = ElementCompositionPreview.GetElementVisual(ClipperBackground);
+            var visual = ElementComposition.GetElementVisual(HeaderPanel);
+            var border = ElementComposition.GetElementVisual(CardBackground);
+            var clipper = ElementComposition.GetElementVisual(ClipperBackground);
 
             ElementCompositionPreview.SetIsTranslationEnabled(HeaderPanel, true);
             ElementCompositionPreview.SetIsTranslationEnabled(BackButton, true);
@@ -103,7 +103,7 @@ namespace Telegram.Views
                 MediaFrame.Navigate(tab.Type, null, new SuppressNavigationTransitionInfo());
             }
 
-            var visual4 = ElementCompositionPreview.GetElementVisual(BackButton);
+            var visual4 = ElementComposition.GetElementVisual(BackButton);
             visual4.CenterPoint = new Vector3(24, 16, 0);
 
             if (ProfileHeader.Visibility == Visibility.Visible)
@@ -157,7 +157,7 @@ namespace Telegram.Views
             _dateHeaderCollapsed = !show;
             DateHeader.Visibility = show || animate ? Visibility.Visible : Visibility.Collapsed;
 
-            _dateHeaderPanel ??= ElementCompositionPreview.GetElementVisual(DateHeader);
+            _dateHeaderPanel ??= ElementComposition.GetElementVisual(DateHeader);
 
             if (!animate)
             {
@@ -456,7 +456,7 @@ namespace Telegram.Views
             _manageCollapsed = !show;
             ManagePanel.Visibility = Visibility.Visible;
 
-            var manage = ElementCompositionPreview.GetElementVisual(ManagePanel);
+            var manage = ElementComposition.GetElementVisual(ManagePanel);
             ElementCompositionPreview.SetIsTranslationEnabled(ManagePanel, true);
             manage.Opacity = show ? 0 : 1;
 

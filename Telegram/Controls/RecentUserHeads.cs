@@ -135,7 +135,7 @@ namespace Telegram.Controls
             for (int i = 0; i < _items.Count; i++)
             {
                 var container = CreateContainer(_items[i]);
-                var visual = ElementCompositionPreview.GetElementVisual(container);
+                var visual = ElementComposition.GetElementVisual(container);
 
                 visual.Offset = new Vector3(i * (_itemSize + 4 - _itemOverlap), 0, 0);
 
@@ -319,7 +319,7 @@ namespace Telegram.Controls
         {
             Canvas.SetZIndex(container, -index);
 
-            var visual = ElementCompositionPreview.GetElementVisual(container);
+            var visual = ElementComposition.GetElementVisual(container);
             visual.Offset = new Vector3(index * (_itemSize + 4 - _itemOverlap), 0, 0);
             visual.CenterPoint = new Vector3((_itemSize + 4) / 2);
 
@@ -342,7 +342,7 @@ namespace Telegram.Controls
         {
             Canvas.SetZIndex(container, -index);
 
-            var child = ElementCompositionPreview.GetElementVisual(container);
+            var child = ElementComposition.GetElementVisual(container);
             child.CenterPoint = new Vector3((_itemSize + 4) / 2);
 
             var removingScale = Window.Current.Compositor.CreateVector3KeyFrameAnimation();
@@ -363,7 +363,7 @@ namespace Telegram.Controls
         {
             Canvas.SetZIndex(container, -newIndex);
 
-            var child = ElementCompositionPreview.GetElementVisual(container);
+            var child = ElementComposition.GetElementVisual(container);
             var offset = Window.Current.Compositor.CreateVector3KeyFrameAnimation();
 
             if (oldIndex >= 0)
@@ -393,7 +393,7 @@ namespace Telegram.Controls
                 offset.InsertKeyFrame(1, new Vector3(diff / 2, 0, 0));
                 //offset.Duration = TimeSpan.FromSeconds(1);
 
-                var visual = ElementCompositionPreview.GetElementVisual(_layoutRoot);
+                var visual = ElementComposition.GetElementVisual(_layoutRoot);
                 visual.StartAnimation("Translation", offset);
             }
             else if (HorizontalAlignment == HorizontalAlignment.Right)
@@ -411,7 +411,7 @@ namespace Telegram.Controls
                 offset.InsertKeyFrame(1, new Vector3());
                 //offset.Duration = TimeSpan.FromSeconds(10);
 
-                var visual = ElementCompositionPreview.GetElementVisual(_layoutRoot);
+                var visual = ElementComposition.GetElementVisual(_layoutRoot);
                 //visual.StartAnimation("Translation", offset);
             }
         }

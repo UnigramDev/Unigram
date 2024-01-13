@@ -80,7 +80,7 @@ namespace Telegram.Views.Calls
             _service.MutedChanged += OnMutedChanged;
             _service.AudioLevelUpdated += OnAudioLevelUpdated;
 
-            _visual = new CompositionBlobVisual(Blob, 280, 280, 1.5f, ElementCompositionPreview.GetElementVisual(Image));
+            _visual = new CompositionBlobVisual(Blob, 280, 280, 1.5f, CompositionExtensions.GetElementVisual(Image));
             _visual.FillColor = Colors.White;
 
             if (PowerSavingPolicy.AreMaterialsEnabled && ApiInfo.CanAnimatePaths)
@@ -100,8 +100,8 @@ namespace Telegram.Views.Calls
 
             #region Composition
 
-            _descriptionVisual = ElementCompositionPreview.GetElementVisual(DescriptionLabel);
-            _largeVisual = ElementCompositionPreview.GetElementVisual(LargePanel);
+            _descriptionVisual = CompositionExtensions.GetElementVisual(DescriptionLabel);
+            _largeVisual = CompositionExtensions.GetElementVisual(LargePanel);
             _compositor = _largeVisual.Compositor;
 
             var graphicsEffect = new GaussianBlurEffect
@@ -136,7 +136,7 @@ namespace Telegram.Views.Calls
 
             //Window.Current.SetTitleBar(BlurPanel);
 
-            _viewfinder = ElementCompositionPreview.GetElementVisual(ViewfinderPanel);
+            _viewfinder = CompositionExtensions.GetElementVisual(ViewfinderPanel);
 
             ViewfinderPanel.PointerPressed += Viewfinder_PointerPressed;
             ViewfinderPanel.PointerMoved += Viewfinder_PointerMoved;

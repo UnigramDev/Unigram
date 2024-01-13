@@ -79,11 +79,11 @@ namespace Telegram.Controls.Gallery
         {
             InitializeComponent();
 
-            _layout = ElementCompositionPreview.GetElementVisual(LayoutRoot);
+            _layout = ElementComposition.GetElementVisual(LayoutRoot);
 
-            _layer = ElementCompositionPreview.GetElementVisual(Layer);
-            _layerFullScreen = ElementCompositionPreview.GetElementVisual(LayerFullScreen);
-            _bottom = ElementCompositionPreview.GetElementVisual(BottomPanel);
+            _layer = ElementComposition.GetElementVisual(Layer);
+            _layerFullScreen = ElementComposition.GetElementVisual(LayerFullScreen);
+            _bottom = ElementComposition.GetElementVisual(BottomPanel);
 
             _layer.Opacity = 0;
             _layerFullScreen.Opacity = 0;
@@ -161,10 +161,10 @@ namespace Telegram.Controls.Gallery
             _transportCollapsed = !show;
             BottomPanel.Visibility = Visibility.Visible;
 
-            var parent = ElementCompositionPreview.GetElementVisual(BottomPanel);
-            var next = ElementCompositionPreview.GetElementVisual(NextButton);
-            var prev = ElementCompositionPreview.GetElementVisual(PrevButton);
-            var back = ElementCompositionPreview.GetElementVisual(BackButton);
+            var parent = ElementComposition.GetElementVisual(BottomPanel);
+            var next = ElementComposition.GetElementVisual(NextButton);
+            var prev = ElementComposition.GetElementVisual(PrevButton);
+            var back = ElementComposition.GetElementVisual(BackButton);
 
             parent.Opacity = next.Opacity = prev.Opacity = back.Opacity = 1;
 

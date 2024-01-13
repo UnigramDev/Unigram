@@ -77,7 +77,7 @@ namespace Telegram.Controls
             PopupRoot.Margin = new Thickness(0, 0, 0, newValue ? 0 : -PopupRoot.ActualHeight);
             PopupRoot.Visibility = Visibility.Visible;
 
-            var visual = ElementCompositionPreview.GetElementVisual(PopupRoot);
+            var visual = ElementComposition.GetElementVisual(PopupRoot);
             visual.Clip = visual.Compositor.CreateInsetClip();
 
             var clip = visual.Compositor.CreateScalarKeyFrameAnimation();

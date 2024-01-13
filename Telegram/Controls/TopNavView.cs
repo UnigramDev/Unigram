@@ -231,7 +231,7 @@ namespace Telegram.Controls
 
         private void PlayIndicatorAnimations(UIElement indicator, float from, float to, Vector2 beginSize, Vector2 endSize, bool isOutgoing)
         {
-            Visual visual = ElementCompositionPreview.GetElementVisual(indicator);
+            Visual visual = ElementComposition.GetElementVisual(indicator);
             Compositor comp = visual.Compositor;
 
             Vector2 size = indicator.RenderSize.ToVector2();
@@ -308,7 +308,7 @@ namespace Telegram.Controls
             if (element != null)
             {
                 element.Opacity = desiredOpacity;
-                Visual visual = ElementCompositionPreview.GetElementVisual(element);
+                Visual visual = ElementComposition.GetElementVisual(element);
                 if (visual != null)
                 {
                     visual.Offset = new Vector3(0.0f, 0.0f, 0.0f);

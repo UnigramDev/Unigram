@@ -27,7 +27,7 @@ namespace Telegram.Common
                 return;
             }
 
-            var visual = ElementCompositionPreview.GetElementVisual(inner);
+            var visual = ElementComposition.GetElementVisual(inner);
 
             var animation = visual.Compositor.CreateScalarKeyFrameAnimation();
             animation.Duration = TimeSpan.FromMilliseconds(50 * 6);
@@ -71,7 +71,7 @@ namespace Telegram.Common
             }
 
             var scale = GetIsScaleEnabled(d);
-            var visual = ElementCompositionPreview.GetElementVisual(sender);
+            var visual = ElementComposition.GetElementVisual(sender);
 
             sender.Visibility = Visibility.Visible;
 

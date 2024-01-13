@@ -41,7 +41,7 @@ namespace Telegram.Controls.Drawers
         {
             InitializeComponent();
 
-            ElementCompositionPreview.GetElementVisual(this).Clip = Window.Current.Compositor.CreateInsetClip();
+            ElementComposition.GetElementVisual(this).Clip = Window.Current.Compositor.CreateInsetClip();
 
             _handler = new AnimatedListHandler(List, AnimatedListType.Stickers);
             _toolbarHandler = new AnimatedListHandler(Toolbar, AnimatedListType.Stickers);

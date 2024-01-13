@@ -2076,7 +2076,7 @@ namespace Telegram.Controls.Messages
             MoveCorners();
 
             var content = _message?.GeneratedContent ?? _message?.Content;
-            var panel = ElementCompositionPreview.GetElementVisual(ContentPanel);
+            var panel = ElementComposition.GetElementVisual(ContentPanel);
 
             if (content is MessageText)
             {
@@ -2100,10 +2100,10 @@ namespace Telegram.Controls.Messages
                     CrossPanel = GetTemplateChild(nameof(CrossPanel)) as Border;
                 }
 
-                var cross = ElementCompositionPreview.GetElementVisual(CrossPanel);
+                var cross = ElementComposition.GetElementVisual(CrossPanel);
                 cross.StartAnimation("Opacity", outOpacity);
 
-                var background = ElementCompositionPreview.GetElementVisual(BackgroundPanel);
+                var background = ElementComposition.GetElementVisual(BackgroundPanel);
                 background.CenterPoint = new Vector3(0, reply ? 0 : ContentPanel.ActualSize.Y / 2, 0);
                 background.StartAnimation("Scale", crossScale);
 
@@ -2121,10 +2121,10 @@ namespace Telegram.Controls.Messages
                 }
             }
 
-            var header = ElementCompositionPreview.GetElementVisual(Header);
-            var text = ElementCompositionPreview.GetElementVisual(Message);
-            var media = ElementCompositionPreview.GetElementVisual(Media);
-            var footer = ElementCompositionPreview.GetElementVisual(Footer);
+            var header = ElementComposition.GetElementVisual(Header);
+            var text = ElementComposition.GetElementVisual(Message);
+            var media = ElementComposition.GetElementVisual(Media);
+            var footer = ElementComposition.GetElementVisual(Footer);
 
             var scale = Window.Current.Compositor.CreateVector3KeyFrameAnimation();
             scale.InsertKeyFrame(0, new Vector3(xScale, 1, 1));
@@ -2256,17 +2256,17 @@ namespace Telegram.Controls.Messages
             anim.InsertKeyFrame(0, new Vector3(prev / next, 1));
             anim.InsertKeyFrame(1, Vector3.One);
 
-            var panel = ElementCompositionPreview.GetElementVisual(ContentPanel);
+            var panel = ElementComposition.GetElementVisual(ContentPanel);
             panel.CenterPoint = new Vector3(outgoing ? next.X : 0, 0, 0);
             panel.StartAnimation("Scale", anim);
 
             var factor = Window.Current.Compositor.CreateExpressionAnimation("Vector3(1 / content.Scale.X, 1 / content.Scale.Y, 1)");
             factor.SetReferenceParameter("content", panel);
 
-            var header = ElementCompositionPreview.GetElementVisual(Header);
-            var text = ElementCompositionPreview.GetElementVisual(Message);
-            var media = ElementCompositionPreview.GetElementVisual(Media);
-            var footer = ElementCompositionPreview.GetElementVisual(Footer);
+            var header = ElementComposition.GetElementVisual(Header);
+            var text = ElementComposition.GetElementVisual(Message);
+            var media = ElementComposition.GetElementVisual(Media);
+            var footer = ElementComposition.GetElementVisual(Footer);
 
             var headerLeft = (float)Header.Margin.Left;
             var textLeft = (float)Message.Margin.Left;
@@ -2287,7 +2287,7 @@ namespace Telegram.Controls.Messages
 
             if (Reactions != null)
             {
-                var reactions = ElementCompositionPreview.GetElementVisual(Reactions);
+                var reactions = ElementComposition.GetElementVisual(Reactions);
                 reactions.CenterPoint = new Vector3(0, Reactions.ActualSize.Y, 0);
                 reactions.StartAnimation("Scale", factor);
             }

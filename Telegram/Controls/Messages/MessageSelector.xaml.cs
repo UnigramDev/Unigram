@@ -239,7 +239,7 @@ namespace Telegram.Controls.Messages
 
             if (Icon != null)
             {
-                var icon = ElementCompositionPreview.GetElementVisual(Icon);
+                var icon = ElementComposition.GetElementVisual(Icon);
                 icon.Properties.InsertVector3("Translation", new Vector3(_isSelectionEnabled ? 36 : 0, 0, 0));
             }
 
@@ -265,7 +265,7 @@ namespace Telegram.Controls.Messages
             }
             else
             {
-                var presenter = ElementCompositionPreview.GetElementVisual(Presenter);
+                var presenter = ElementComposition.GetElementVisual(Presenter);
                 presenter.Properties.InsertVector3("Translation", new Vector3(_isSelectionEnabled && (message.IsChannelPost || !message.IsOutgoing) ? 36 : 0, 0, 0));
             }
         }
@@ -290,7 +290,7 @@ namespace Telegram.Controls.Messages
 
                 CreateIcon();
 
-                var presenter = ElementCompositionPreview.GetElementVisual(Presenter);
+                var presenter = ElementComposition.GetElementVisual(Presenter);
                 var incoming = message.IsChannelPost || !message.IsOutgoing;
 
                 if (animate)
@@ -307,7 +307,7 @@ namespace Telegram.Controls.Messages
                     {
                         UpdateIcon(IsChecked is true, true);
 
-                        var icon = ElementCompositionPreview.GetElementVisual(Icon);
+                        var icon = ElementComposition.GetElementVisual(Icon);
                         icon.CenterPoint = new Vector3(12, 12, 0);
                         icon.StartAnimation("Scale", scale);
 
@@ -332,7 +332,7 @@ namespace Telegram.Controls.Messages
                     {
                         UpdateIcon(IsChecked is true, false);
 
-                        var icon = ElementCompositionPreview.GetElementVisual(Icon);
+                        var icon = ElementComposition.GetElementVisual(Icon);
                         icon.Properties.InsertVector3("Translation", new Vector3(value && !IsAlbumChild ? 36 : 0, 0, 0));
                         icon.Scale = value ? Vector3.One : Vector3.Zero;
                     }

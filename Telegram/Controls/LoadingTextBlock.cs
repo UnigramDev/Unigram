@@ -159,8 +159,8 @@ namespace Telegram.Controls
             fadeIn.InsertKeyFrame(0, 0);
             fadeIn.InsertKeyFrame(1, 1);
 
-            var visual2 = ElementCompositionPreview.GetElementVisual(_placeholder);
-            var visual1 = ElementCompositionPreview.GetElementVisual(_presenter);
+            var visual2 = ElementComposition.GetElementVisual(_placeholder);
+            var visual1 = ElementComposition.GetElementVisual(_presenter);
 
             visual1.StartAnimation("Opacity", fadeIn);
 

@@ -114,7 +114,7 @@ namespace Telegram.Controls
             var presenter = GetTemplateChild("Presenter") as UIElement;
             if (presenter != null)
             {
-                _content = ElementCompositionPreview.GetElementVisual(presenter);
+                _content = ElementComposition.GetElementVisual(presenter);
             }
         }
 

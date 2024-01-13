@@ -100,8 +100,8 @@ namespace Telegram.Controls.Chats
             _collapsed = !show;
             Visibility = Visibility.Visible;
 
-            var parent = ElementCompositionPreview.GetElementVisual(_parent);
-            var visual = ElementCompositionPreview.GetElementVisual(this);
+            var parent = ElementComposition.GetElementVisual(_parent);
+            var visual = ElementComposition.GetElementVisual(this);
             visual.Clip = visual.Compositor.CreateInsetClip();
 
             var batch = visual.Compositor.CreateScopedBatch(CompositionBatchTypes.Animation);

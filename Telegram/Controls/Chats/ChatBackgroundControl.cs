@@ -40,7 +40,7 @@ namespace Telegram.Controls.Chats
             _presenter = new ChatBackgroundPresenter();
             _compositor = Window.Current.Compositor;
 
-            ElementCompositionPreview.GetElementVisual(this).Clip = _compositor.CreateInsetClip();
+            ElementComposition.GetElementVisual(this).Clip = _compositor.CreateInsetClip();
 
             Children.Add(_presenter);
 

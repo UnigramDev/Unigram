@@ -915,7 +915,7 @@ namespace Telegram.Views.Host
                 var elli2 = CanvasGeometry.CreateCircle(device, point.X + 24, point.Y + 24, expand ? diaginal : 0);
                 var group2 = CanvasGeometry.CreateGroup(device, new[] { elli2, rect1 }, CanvasFilledRegionDetermination.Alternate);
 
-                //var visual = ElementCompositionPreview.GetElementVisual(Transition);
+                //var visual = CompositionExtensions.GetElementVisual(Transition);
                 var ellipse = visual.Compositor.CreatePathGeometry(new CompositionPath(group2));
                 var clip = visual.Compositor.CreateGeometricClip(ellipse);
 
@@ -1045,10 +1045,10 @@ namespace Telegram.Views.Host
 
             ElementCompositionPreview.SetIsTranslationEnabled(Info, true);
 
-            var theme = ElementCompositionPreview.GetElementVisual(Theme);
-            var photo = ElementCompositionPreview.GetElementVisual(Photo);
-            var info = ElementCompositionPreview.GetElementVisual(Info);
-            var accounts = ElementCompositionPreview.GetElementVisual(Accounts);
+            var theme = CompositionExtensions.GetElementVisual(Theme);
+            var photo = CompositionExtensions.GetElementVisual(Photo);
+            var info = CompositionExtensions.GetElementVisual(Info);
+            var accounts = CompositionExtensions.GetElementVisual(Accounts);
             var compositor = theme.Compositor;
 
             var ease = compositor.CreateCubicBezierEasingFunction(new Vector2(0.1f, 0.9f), new Vector2(0.2f, 1.0f));
@@ -1108,10 +1108,10 @@ namespace Telegram.Views.Host
                 Accounts.Visibility = Visibility.Collapsed;
             };
 
-            var theme = ElementCompositionPreview.GetElementVisual(Theme);
-            var photo = ElementCompositionPreview.GetElementVisual(Photo);
-            var info = ElementCompositionPreview.GetElementVisual(Info);
-            var accounts = ElementCompositionPreview.GetElementVisual(Accounts);
+            var theme = CompositionExtensions.GetElementVisual(Theme);
+            var photo = CompositionExtensions.GetElementVisual(Photo);
+            var info = CompositionExtensions.GetElementVisual(Info);
+            var accounts = CompositionExtensions.GetElementVisual(Accounts);
             var compositor = theme.Compositor;
 
             var ease = compositor.CreateCubicBezierEasingFunction(new Vector2(0.1f, 0.9f), new Vector2(0.2f, 1.0f));

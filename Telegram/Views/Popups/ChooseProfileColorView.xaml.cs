@@ -67,7 +67,7 @@ namespace Telegram.Views.Popups
 
             List.ItemsSource = colors;
 
-            var preview = ElementCompositionPreview.GetElementVisual(HeaderRoot);
+            var preview = ElementComposition.GetElementVisual(HeaderRoot);
             preview.Clip = preview.Compositor.CreateInsetClip();
 
             var customEmojiId = 0L;
@@ -342,7 +342,7 @@ namespace Telegram.Views.Popups
             var surface = compositor.CreateVisualSurface();
 
             // Select the source visual and the offset/size of this control in that element's space.
-            surface.SourceVisual = ElementCompositionPreview.GetElementVisual(Pattern);
+            surface.SourceVisual = ElementComposition.GetElementVisual(Pattern);
             surface.SourceOffset = new Vector2(0, 0);
             surface.SourceSize = new Vector2(1000, 320);
             surfaceBrush.Surface = surface;

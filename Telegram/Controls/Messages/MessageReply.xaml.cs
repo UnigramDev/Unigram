@@ -51,7 +51,7 @@ namespace Telegram.Controls.Messages
             var animated = GetTemplateChild("Animated") as AnimatedImage;
             var layoutRoot = GetTemplateChild("LayoutRoot") as Border;
 
-            var visual = ElementCompositionPreview.GetElementVisual(animated);
+            var visual = ElementComposition.GetElementVisual(animated);
             var compositor = visual.Compositor;
 
             // Create a VisualSurface positioned at the same location as this control and feed that

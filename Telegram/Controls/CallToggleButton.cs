@@ -35,8 +35,8 @@ namespace Telegram.Controls
             var presenter1 = GetTemplateChild("CrossBackground") as Path;
             var presenter2 = GetTemplateChild("CrossForeground") as Path;
 
-            var visual1 = ElementCompositionPreview.GetElementVisual(presenter1);
-            var visual2 = ElementCompositionPreview.GetElementVisual(presenter2);
+            var visual1 = ElementComposition.GetElementVisual(presenter1);
+            var visual2 = ElementComposition.GetElementVisual(presenter2);
 
             var hangup = IsChecked == true;
 

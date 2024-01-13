@@ -219,7 +219,7 @@ namespace Telegram.Controls
                 return;
             }
 
-            var visualIn = ElementCompositionPreview.GetElementVisual(element);
+            var visualIn = ElementComposition.GetElementVisual(element);
             var offsetIn = visualIn.Compositor.CreateVector3KeyFrameAnimation();
             offsetIn.InsertKeyFrame(0, new System.Numerics.Vector3(leftToRight ? -48 : 48, 0, 0));
             offsetIn.InsertKeyFrame(1, new System.Numerics.Vector3());

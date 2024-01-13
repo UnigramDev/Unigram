@@ -123,7 +123,7 @@ namespace Telegram.Controls.Stories
 
         private void OnSizeChanged(object sender, SizeChangedEventArgs e)
         {
-            var root = ElementCompositionPreview.GetElementVisual(Content);
+            var root = ElementComposition.GetElementVisual(Content);
             var compositor = root.Compositor;
 
             var rect1 = CanvasGeometry.CreateRoundedRectangle(null, 0, 0, ActualSize.X, ActualSize.Y, _open ? 8 : 8 * 2.5f, _open ? 8 : 8 * 2.5f);
@@ -242,13 +242,13 @@ namespace Telegram.Controls.Stories
 
             Canvas.SetZIndex(ActiveRoot, open ? 1 : 0);
 
-            var root = ElementCompositionPreview.GetElementVisual(Content);
-            var mini = ElementCompositionPreview.GetElementVisual(MiniInside);
+            var root = ElementComposition.GetElementVisual(Content);
+            var mini = ElementComposition.GetElementVisual(MiniInside);
 
-            var inactive = ElementCompositionPreview.GetElementVisual(InactiveRoot);
-            var active = ElementCompositionPreview.GetElementVisual(ActiveRoot);
+            var inactive = ElementComposition.GetElementVisual(InactiveRoot);
+            var active = ElementComposition.GetElementVisual(ActiveRoot);
 
-            var visual = ElementCompositionPreview.GetElementVisual(MiniInside);
+            var visual = ElementComposition.GetElementVisual(MiniInside);
             visual.CenterPoint = new Vector3(MiniInside.ActualSize / 2, 0);
 
             mini.Opacity = 1;
@@ -581,13 +581,13 @@ namespace Telegram.Controls.Stories
 
             Canvas.SetZIndex(ActiveRoot, to == 3 ? 1 : 0);
 
-            var root = ElementCompositionPreview.GetElementVisual(Content);
-            var mini = ElementCompositionPreview.GetElementVisual(MiniInside);
+            var root = ElementComposition.GetElementVisual(Content);
+            var mini = ElementComposition.GetElementVisual(MiniInside);
 
-            var inactive = ElementCompositionPreview.GetElementVisual(InactiveRoot);
-            var active = ElementCompositionPreview.GetElementVisual(ActiveRoot);
+            var inactive = ElementComposition.GetElementVisual(InactiveRoot);
+            var active = ElementComposition.GetElementVisual(ActiveRoot);
 
-            var visual = ElementCompositionPreview.GetElementVisual(MiniInside);
+            var visual = ElementComposition.GetElementVisual(MiniInside);
             visual.CenterPoint = new Vector3(MiniInside.ActualSize / 2, 0);
 
             mini.Opacity = 1;
@@ -908,7 +908,7 @@ namespace Telegram.Controls.Stories
 
         private void OnPointerPressed(object sender, PointerRoutedEventArgs e)
         {
-            var active = ElementCompositionPreview.GetElementVisual(ActiveRoot);
+            var active = ElementComposition.GetElementVisual(ActiveRoot);
             var opacity = active.Compositor.CreateScalarKeyFrameAnimation();
             opacity.InsertKeyFrame(0, 1);
             opacity.InsertKeyFrame(1, 0);
@@ -920,7 +920,7 @@ namespace Telegram.Controls.Stories
 
         private void OnPointerReleased(object sender, PointerRoutedEventArgs e)
         {
-            var active = ElementCompositionPreview.GetElementVisual(ActiveRoot);
+            var active = ElementComposition.GetElementVisual(ActiveRoot);
             var opacity = active.Compositor.CreateScalarKeyFrameAnimation();
             opacity.InsertKeyFrame(0, 0);
             opacity.InsertKeyFrame(1, 1);
@@ -1022,10 +1022,10 @@ namespace Telegram.Controls.Stories
             var relativeX = reoffset.X - (point.X + 8);
             var relativeY = reoffset.Y - (point.Y + 18);
 
-            var photo = ElementCompositionPreview.GetElementVisual(Photo);
-            var layout = ElementCompositionPreview.GetElementVisual(LayoutRoot);
-            var caption = ElementCompositionPreview.GetElementVisual(CaptionPanel);
-            var visual = ElementCompositionPreview.GetElementVisual(Content);
+            var photo = ElementComposition.GetElementVisual(Photo);
+            var layout = ElementComposition.GetElementVisual(LayoutRoot);
+            var caption = ElementComposition.GetElementVisual(CaptionPanel);
+            var visual = ElementComposition.GetElementVisual(Content);
             ElementCompositionPreview.SetIsTranslationEnabled(CaptionPanel, true);
             ElementCompositionPreview.SetIsTranslationEnabled(Content, true);
 
@@ -1451,7 +1451,7 @@ namespace Telegram.Controls.Stories
             //CaptionPanel.ColumnDefinitions[0].MaxWidth = ActualWidth - ShowMore.ActualWidth;
             //CaptionPanel.ColumnDefinitions[1].MinWidth = ShowMore.ActualWidth;
 
-            var visual = ElementCompositionPreview.GetElementVisual(ShowMore);
+            var visual = ElementComposition.GetElementVisual(ShowMore);
             ElementCompositionPreview.SetIsTranslationEnabled(ShowMore, true);
 
             var width = CaptionPanel.ActualSize.X - 24;
@@ -1466,7 +1466,7 @@ namespace Telegram.Controls.Stories
         {
             Overflow.LayoutUpdated -= Overflow_LayoutUpdated;
 
-            var visual = ElementCompositionPreview.GetElementVisual(ShowMore);
+            var visual = ElementComposition.GetElementVisual(ShowMore);
             ElementCompositionPreview.SetIsTranslationEnabled(ShowMore, true);
 
             var width = CaptionPanel.ActualSize.X - 24;
@@ -1489,8 +1489,8 @@ namespace Telegram.Controls.Stories
             var prev = e.PreviousSize.ToVector2();
             var next = e.NewSize.ToVector2();
 
-            var overlay = ElementCompositionPreview.GetElementVisual(CaptionOverlay);
-            var visual = ElementCompositionPreview.GetElementVisual(CaptionPanel);
+            var overlay = ElementComposition.GetElementVisual(CaptionOverlay);
+            var visual = ElementComposition.GetElementVisual(CaptionPanel);
 
             var opacity = visual.Compositor.CreateScalarKeyFrameAnimation();
             opacity.InsertKeyFrame(0, Overflow.MaxLines == 0 ? 0 : 1);
@@ -1506,7 +1506,7 @@ namespace Telegram.Controls.Stories
 
         private void InactivePanel_SizeChanged(object sender, SizeChangedEventArgs e)
         {
-            var visual = ElementCompositionPreview.GetElementVisual(MiniInside);
+            var visual = ElementComposition.GetElementVisual(MiniInside);
             visual.CenterPoint = new Vector3(MiniInside.ActualSize / 2, 0);
         }
 

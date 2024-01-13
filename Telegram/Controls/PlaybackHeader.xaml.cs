@@ -49,8 +49,8 @@ namespace Telegram.Controls
             Slider.AddHandler(PointerCanceledEvent, new PointerEventHandler(Slider_PointerCanceled), true);
             Slider.AddHandler(PointerCaptureLostEvent, new PointerEventHandler(Slider_PointerCaptureLost), true);
 
-            _visual1 = ElementCompositionPreview.GetElementVisual(Label1);
-            _visual2 = ElementCompositionPreview.GetElementVisual(Label2);
+            _visual1 = ElementComposition.GetElementVisual(Label1);
+            _visual2 = ElementComposition.GetElementVisual(Label2);
 
             _visual = _visual1;
         }

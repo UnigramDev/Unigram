@@ -253,7 +253,7 @@ namespace Telegram.Controls.Messages
 
             LayoutRoot.Padding = new Thickness(16, 36, 16, 16);
 
-            var rootVisual = ElementCompositionPreview.GetElementVisual(LayoutRoot);
+            var rootVisual = ElementComposition.GetElementVisual(LayoutRoot);
             var compositor = rootVisual.Compositor;
 
             var pillShadow = compositor.CreateDropShadow();
@@ -299,10 +299,10 @@ namespace Telegram.Controls.Messages
 
             //return;
 
-            var visualPill = ElementCompositionPreview.GetElementVisual(Pill);
+            var visualPill = ElementComposition.GetElementVisual(Pill);
             visualPill.CenterPoint = new Vector3(alignment == EmojiFlyoutAlignment.TopLeft ? 36 / 2 : width - 36 / 2, yy + 36 / 2, 0);
 
-            var visualExpand = ElementCompositionPreview.GetElementVisual(Expand);
+            var visualExpand = ElementComposition.GetElementVisual(Expand);
             visualExpand.CenterPoint = new Vector3(32 / 2f, 24 / 2f, 0);
 
             var clip = compositor.CreateRoundedRectangleGeometry();
@@ -314,7 +314,7 @@ namespace Telegram.Controls.Messages
 
             var opacity = compositor.CreateScalarKeyFrameAnimation();
 
-            var drawer = ElementCompositionPreview.GetElementVisual(Presenter);
+            var drawer = ElementComposition.GetElementVisual(Presenter);
 
             opacity.InsertKeyFrame(0, 0);
             opacity.InsertKeyFrame(1, 0.24f);
@@ -324,7 +324,7 @@ namespace Telegram.Controls.Messages
 
             pillShadow.StartAnimation("Opacity", opacity);
 
-            var test = ElementCompositionPreview.GetElementVisual(LayoutRoot);
+            var test = ElementComposition.GetElementVisual(LayoutRoot);
             test.CenterPoint = new Vector3(220, 138, 0); // 148
             drawer.Clip = compositor.CreateGeometricClip(clip);
             visualPill.Clip = compositor.CreateGeometricClip(clip);
@@ -422,7 +422,7 @@ namespace Telegram.Controls.Messages
                 var surface1 = compositor.CreateVisualSurface();
                 var surfaceBrush1 = compositor.CreateSurfaceBrush();
 
-                surface1.SourceVisual = ElementCompositionPreview.GetElementVisual(view);
+                surface1.SourceVisual = ElementComposition.GetElementVisual(view);
                 surface1.SourceSize = new Vector2(width, 8);
                 surface1.SourceOffset = new Vector2(0, height - (20 - (i * 8)));
 

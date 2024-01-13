@@ -47,8 +47,8 @@ namespace Telegram.Views.Popups
             {
                 _timer.Stop();
 
-                var visual1 = ElementCompositionPreview.GetElementVisual(DonePanel);
-                var visual2 = ElementCompositionPreview.GetElementVisual(Cooldown);
+                var visual1 = ElementComposition.GetElementVisual(DonePanel);
+                var visual2 = ElementComposition.GetElementVisual(Cooldown);
 
                 var translation = visual1.Compositor.CreateScalarKeyFrameAnimation();
                 translation.InsertKeyFrame(0, 0);

@@ -47,7 +47,7 @@ namespace Telegram.Controls.Cells
                 ScreenSharing.Text = Icons.SmallScreencastFilled;
             }
 
-            var header = ElementCompositionPreview.GetElementVisual(Header);
+            var header = ElementComposition.GetElementVisual(Header);
             header.Opacity = 0;
         }
 
@@ -149,7 +149,7 @@ namespace Telegram.Controls.Cells
             //anim.InsertKeyFrame(0, show ? 0 : 1);
             anim.InsertKeyFrame(1, show ? 1 : 0);
 
-            var info = ElementCompositionPreview.GetElementVisual(Info);
+            var info = ElementComposition.GetElementVisual(Info);
             info.StartAnimation("Opacity", anim);
 
             if (IsSelected || !show)
@@ -184,7 +184,7 @@ namespace Telegram.Controls.Cells
             var anim = Window.Current.Compositor.CreateScalarKeyFrameAnimation();
             anim.InsertKeyFrame(1, show ? 1 : 0);
 
-            var header = ElementCompositionPreview.GetElementVisual(Header);
+            var header = ElementComposition.GetElementVisual(Header);
             header.StartAnimation("Opacity", anim);
         }
 
@@ -201,7 +201,7 @@ namespace Telegram.Controls.Cells
 
             if (show)
             {
-                var paused = ElementCompositionPreview.GetElementVisual(PausedRoot);
+                var paused = ElementComposition.GetElementVisual(PausedRoot);
 
                 var graphicsEffect = new GaussianBlurEffect
                 {

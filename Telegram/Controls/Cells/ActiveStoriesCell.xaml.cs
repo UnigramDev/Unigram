@@ -83,13 +83,13 @@ namespace Telegram.Controls.Cells
                 return;
             }
 
-            var visual = ElementCompositionPreview.GetElementVisual(container);
-            var ciccio = ElementCompositionPreview.GetElementVisual(PhotoCiccio);
-            var photo = ElementCompositionPreview.GetElementVisual(PhotoRoot);
-            var title = ElementCompositionPreview.GetElementVisual(Title);
-            var gradient = ElementCompositionPreview.GetElementVisual(SegmentsRoot);
-            var cross1 = ElementCompositionPreview.GetElementVisual(Segments);
-            var cross2 = ElementCompositionPreview.GetElementVisual(SegmentsSmall);
+            var visual = ElementComposition.GetElementVisual(container);
+            var ciccio = ElementComposition.GetElementVisual(PhotoCiccio);
+            var photo = ElementComposition.GetElementVisual(PhotoRoot);
+            var title = ElementComposition.GetElementVisual(Title);
+            var gradient = ElementComposition.GetElementVisual(SegmentsRoot);
+            var cross1 = ElementComposition.GetElementVisual(Segments);
+            var cross2 = ElementComposition.GetElementVisual(SegmentsSmall);
 
             var included = index >= f && index <= l;
             var clamp = Math.Clamp(index, f, l);
@@ -249,13 +249,13 @@ namespace Telegram.Controls.Cells
 
         public void Disconnect(SelectorItem container)
         {
-            var visual = ElementCompositionPreview.GetElementVisual(container);
-            var ciccio = ElementCompositionPreview.GetElementVisual(PhotoCiccio);
-            var photo = ElementCompositionPreview.GetElementVisual(PhotoRoot);
-            var title = ElementCompositionPreview.GetElementVisual(Title);
-            var gradient = ElementCompositionPreview.GetElementVisual(SegmentsRoot);
-            var cross1 = ElementCompositionPreview.GetElementVisual(Segments);
-            var cross2 = ElementCompositionPreview.GetElementVisual(SegmentsSmall);
+            var visual = ElementComposition.GetElementVisual(container);
+            var ciccio = ElementComposition.GetElementVisual(PhotoCiccio);
+            var photo = ElementComposition.GetElementVisual(PhotoRoot);
+            var title = ElementComposition.GetElementVisual(Title);
+            var gradient = ElementComposition.GetElementVisual(SegmentsRoot);
+            var cross1 = ElementComposition.GetElementVisual(Segments);
+            var cross2 = ElementComposition.GetElementVisual(SegmentsSmall);
 
             ElementCompositionPreview.SetIsTranslationEnabled(container, true);
             ElementCompositionPreview.SetIsTranslationEnabled(Title, true);

@@ -229,10 +229,10 @@ namespace Telegram.Views.Chats.Popups
 
             Progress.Value = show ? _status.BoostCount + 1 : _status.BoostCount;
 
-            var visual1 = ElementCompositionPreview.GetElementVisual(Description);
-            var visual2 = ElementCompositionPreview.GetElementVisual(DescriptionBoosted);
+            var visual1 = ElementComposition.GetElementVisual(Description);
+            var visual2 = ElementComposition.GetElementVisual(DescriptionBoosted);
 
-            var panel = ElementCompositionPreview.GetElementVisual(DescriptionRoot);
+            var panel = ElementComposition.GetElementVisual(DescriptionRoot);
             panel.Clip ??= panel.Compositor.CreateInsetClip();
 
             var compositor = visual1.Compositor;

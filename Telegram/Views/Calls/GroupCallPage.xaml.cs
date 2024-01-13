@@ -626,8 +626,8 @@ namespace Telegram.Views.Calls
 
         private void TransformDocked()
         {
-            var root = ElementCompositionPreview.GetElementVisual(BottomRoot);
-            var list = ElementCompositionPreview.GetElementVisual(ScrollingHost);
+            var root = CompositionExtensions.GetElementVisual(BottomRoot);
+            var list = CompositionExtensions.GetElementVisual(ScrollingHost);
 
             ElementCompositionPreview.SetIsTranslationEnabled(BottomRoot, true);
             ElementCompositionPreview.SetIsTranslationEnabled(ScrollingHost, true);
@@ -699,19 +699,19 @@ namespace Telegram.Views.Calls
                 return;
             }
 
-            var root = ElementCompositionPreview.GetElementVisual(BottomRoot);
-            var list = ElementCompositionPreview.GetElementVisual(ScrollingHost);
-            var audio1 = ElementCompositionPreview.GetElementVisual(AudioBlob);
-            var audio2 = ElementCompositionPreview.GetElementVisual(Lottie);
-            var audioInfo = ElementCompositionPreview.GetElementVisual(AudioInfo);
-            var video = ElementCompositionPreview.GetElementVisual(Video);
-            var videoInfo = ElementCompositionPreview.GetElementVisual(VideoInfo);
-            var screen = ElementCompositionPreview.GetElementVisual(Screen);
-            var screenInfo = ElementCompositionPreview.GetElementVisual(ScreenInfo);
-            var settings = ElementCompositionPreview.GetElementVisual(Settings);
-            var settingsInfo = ElementCompositionPreview.GetElementVisual(SettingsInfo);
-            var leave = ElementCompositionPreview.GetElementVisual(Leave);
-            var leaveInfo = ElementCompositionPreview.GetElementVisual(LeaveInfo);
+            var root = CompositionExtensions.GetElementVisual(BottomRoot);
+            var list = CompositionExtensions.GetElementVisual(ScrollingHost);
+            var audio1 = CompositionExtensions.GetElementVisual(AudioBlob);
+            var audio2 = CompositionExtensions.GetElementVisual(Lottie);
+            var audioInfo = CompositionExtensions.GetElementVisual(AudioInfo);
+            var video = CompositionExtensions.GetElementVisual(Video);
+            var videoInfo = CompositionExtensions.GetElementVisual(VideoInfo);
+            var screen = CompositionExtensions.GetElementVisual(Screen);
+            var screenInfo = CompositionExtensions.GetElementVisual(ScreenInfo);
+            var settings = CompositionExtensions.GetElementVisual(Settings);
+            var settingsInfo = CompositionExtensions.GetElementVisual(SettingsInfo);
+            var leave = CompositionExtensions.GetElementVisual(Leave);
+            var leaveInfo = CompositionExtensions.GetElementVisual(LeaveInfo);
 
             var expanded = next is ParticipantsGridMode.Expanded or ParticipantsGridMode.Docked;
 
@@ -1056,8 +1056,8 @@ namespace Telegram.Views.Calls
 
         private void UpdateGroupCallParticipantLevel(Border waveElement, ProfilePicture photoElement, float value)
         {
-            var wave = ElementCompositionPreview.GetElementVisual(waveElement);
-            var photo = ElementCompositionPreview.GetElementVisual(photoElement);
+            var wave = CompositionExtensions.GetElementVisual(waveElement);
+            var photo = CompositionExtensions.GetElementVisual(photoElement);
 
             var amplitude = Math.Min(value, 1);
 
@@ -1791,7 +1791,7 @@ namespace Telegram.Views.Calls
 
             if (containerContentChanging)
             {
-                var element = ElementCompositionPreview.GetElementVisual(wave);
+                var element = CompositionExtensions.GetElementVisual(wave);
                 element.Scale = new Vector3(0.9f);
             }
 
@@ -2401,7 +2401,7 @@ namespace Telegram.Views.Calls
             anim.InsertKeyFrame(0, show ? 0 : 1);
             anim.InsertKeyFrame(1, show ? 1 : 0);
 
-            var root = ElementCompositionPreview.GetElementVisual(BottomPanel);
+            var root = CompositionExtensions.GetElementVisual(BottomPanel);
 
             root.StartAnimation("Opacity", anim);
         }
@@ -2425,7 +2425,7 @@ namespace Telegram.Views.Calls
                 return;
             }
 
-            var visual = ElementCompositionPreview.GetElementVisual(panel);
+            var visual = CompositionExtensions.GetElementVisual(panel);
             ElementCompositionPreview.SetIsTranslationEnabled(panel, true);
 
             var prev = e.PreviousSize.ToVector2();
@@ -2638,7 +2638,7 @@ namespace Telegram.Views.Calls
                         {
                             ElementCompositionPreview.SetIsTranslationEnabled(Children[index], true);
 
-                            var visual = ElementCompositionPreview.GetElementVisual(Children[index]);
+                            var visual = CompositionExtensions.GetElementVisual(Children[index]);
                             var offset = Window.Current.Compositor.CreateVector3KeyFrameAnimation();
                             offset.InsertKeyFrame(0, new Vector3((float)(prev.X - point.X), (float)(prev.Y - point.Y), 0));
                             offset.InsertKeyFrame(1, Vector3.Zero);
@@ -2648,7 +2648,7 @@ namespace Telegram.Views.Calls
 
                         if (prev.Width != size.Width || prev.Height != size.Height)
                         {
-                            var visual = ElementCompositionPreview.GetElementVisual(Children[index]);
+                            var visual = CompositionExtensions.GetElementVisual(Children[index]);
                             var scale = Window.Current.Compositor.CreateVector3KeyFrameAnimation();
                             scale.InsertKeyFrame(0, new Vector3((float)(prev.Width / size.Width), (float)(prev.Height / size.Height), 0));
                             scale.InsertKeyFrame(1, Vector3.One);

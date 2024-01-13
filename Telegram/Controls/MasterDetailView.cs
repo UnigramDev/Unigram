@@ -209,11 +209,11 @@ namespace Telegram.Controls
 
             _backgroundType = show;
 
-            var visual = ElementCompositionPreview.GetElementVisual(BackgroundPart);
-            var border = ElementCompositionPreview.GetElementVisual(BorderPart);
-            var material = ElementCompositionPreview.GetElementVisual(MaterialPart);
-            var bread = ElementCompositionPreview.GetElementVisual(DetailHeaderPresenter);
-            var button = ElementCompositionPreview.GetElementVisual(BackButton);
+            var visual = ElementComposition.GetElementVisual(BackgroundPart);
+            var border = ElementComposition.GetElementVisual(BorderPart);
+            var material = ElementComposition.GetElementVisual(MaterialPart);
+            var bread = ElementComposition.GetElementVisual(DetailHeaderPresenter);
+            var button = ElementComposition.GetElementVisual(BackButton);
 
             ShowHideDetailHeader(show == BackgroundKind.Material);
 
@@ -335,15 +335,15 @@ namespace Telegram.Controls
             ElementCompositionPreview.SetIsTranslationEnabled(DetailAction, true);
             ElementCompositionPreview.SetIsTranslationEnabled(BackButton, true);
 
-            var detailVisual = ElementCompositionPreview.GetElementVisual(DetailPresenter);
+            var detailVisual = ElementComposition.GetElementVisual(DetailPresenter);
             detailVisual.Clip = Window.Current.Compositor.CreateInsetClip();
 
-            var detailVisual2 = ElementCompositionPreview.GetElementVisual(DetailHeaderPresenter2);
+            var detailVisual2 = ElementComposition.GetElementVisual(DetailHeaderPresenter2);
             detailVisual2.Clip = Window.Current.Compositor.CreateInsetClip();
 
-            var visual1 = ElementCompositionPreview.GetElementVisual(DetailHeaderBackground);
-            var visual2 = ElementCompositionPreview.GetElementVisual(DetailHeaderPresenter);
-            var visual4 = ElementCompositionPreview.GetElementVisual(BackButton);
+            var visual1 = ElementComposition.GetElementVisual(DetailHeaderBackground);
+            var visual2 = ElementComposition.GetElementVisual(DetailHeaderPresenter);
+            var visual4 = ElementComposition.GetElementVisual(BackButton);
 
             visual4.CenterPoint = new Vector3(24, 16, 0);
             visual2.CenterPoint = new Vector3(0, -20, 0);
@@ -471,7 +471,7 @@ namespace Telegram.Controls
 
         private void ShowHideDetailHeader(bool show)
         {
-            var detailVisual = ElementCompositionPreview.GetElementVisual(DetailPresenter);
+            var detailVisual = ElementComposition.GetElementVisual(DetailPresenter);
             detailVisual.Clip = Window.Current.Compositor.CreateInsetClip();
 
             if (detailVisual.Clip is InsetClip clip)
@@ -509,10 +509,10 @@ namespace Telegram.Controls
                 return;
             }
 
-            var visual1 = ElementCompositionPreview.GetElementVisual(DetailHeaderBackground);
-            var visual2 = ElementCompositionPreview.GetElementVisual(DetailHeaderPresenter);
-            var visual3 = ElementCompositionPreview.GetElementVisual(DetailAction);
-            var visual4 = ElementCompositionPreview.GetElementVisual(BackButton);
+            var visual1 = ElementComposition.GetElementVisual(DetailHeaderBackground);
+            var visual2 = ElementComposition.GetElementVisual(DetailHeaderPresenter);
+            var visual3 = ElementComposition.GetElementVisual(DetailAction);
+            var visual4 = ElementComposition.GetElementVisual(BackButton);
 
             // min out: 0.583
             // max out: 1

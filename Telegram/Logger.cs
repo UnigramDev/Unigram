@@ -49,11 +49,11 @@ namespace Telegram
 
         public static void Error(Exception exception, [CallerMemberName] string member = "", [CallerFilePath] string filePath = "", [CallerLineNumber] int line = 0)
         {
+            Log(LogLevel.Error, exception.ToString(), member, filePath, line);
+
 #if !DEBUG
             Microsoft.AppCenter.Crashes.Crashes.TrackError(exception, attachments: Microsoft.AppCenter.Crashes.ErrorAttachmentLog.AttachmentWithText(Dump(), "crash.txt"));
 #endif
-
-            Log(LogLevel.Error, exception.ToString(), member, filePath, line);
         }
 
         public static void Info(object message = null, [CallerMemberName] string member = "", [CallerFilePath] string filePath = "", [CallerLineNumber] int line = 0)

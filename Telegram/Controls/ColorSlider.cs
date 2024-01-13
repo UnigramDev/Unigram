@@ -104,7 +104,7 @@ namespace Telegram.Controls
 
             _thumb = (FrameworkElement)GetTemplateChild("Thumb");
 
-            _thumbVisual = ElementCompositionPreview.GetElementVisual(_thumb);
+            _thumbVisual = ElementComposition.GetElementVisual(_thumb);
             _thumbVisual.CenterPoint = new Vector3(24);
             _thumbVisual.Scale = new Vector3(0.5f);
 

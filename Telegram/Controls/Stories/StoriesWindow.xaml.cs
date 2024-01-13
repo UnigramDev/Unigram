@@ -89,10 +89,10 @@ namespace Telegram.Controls.Stories
 
         private void StoriesWindow_Loaded(object sender, RoutedEventArgs e)
         {
-            var layer = ElementCompositionPreview.GetElementVisual(Layer);
-            var backButton = ElementCompositionPreview.GetElementVisual(BackButton);
-            var viewport = ElementCompositionPreview.GetElementVisual(Viewport);
-            var composer = ElementCompositionPreview.GetElementVisual(Composer);
+            var layer = ElementComposition.GetElementVisual(Layer);
+            var backButton = ElementComposition.GetElementVisual(BackButton);
+            var viewport = ElementComposition.GetElementVisual(Viewport);
+            var composer = ElementComposition.GetElementVisual(Composer);
             ElementCompositionPreview.SetIsTranslationEnabled(Composer, true);
 
             var opacity = composer.Compositor.CreateScalarKeyFrameAnimation();
@@ -112,7 +112,7 @@ namespace Telegram.Controls.Stories
                 }
                 else
                 {
-                    var visual = ElementCompositionPreview.GetElementVisual(child);
+                    var visual = ElementComposition.GetElementVisual(child);
                     visual.StartAnimation("Opacity", opacity);
                 }
             }
@@ -143,10 +143,10 @@ namespace Telegram.Controls.Stories
 
             ActiveCard?.Suspend(StoryPauseSource.Window);
 
-            var layer = ElementCompositionPreview.GetElementVisual(Layer);
-            var backButton = ElementCompositionPreview.GetElementVisual(BackButton);
-            var viewport = ElementCompositionPreview.GetElementVisual(Viewport);
-            var composer = ElementCompositionPreview.GetElementVisual(Composer);
+            var layer = ElementComposition.GetElementVisual(Layer);
+            var backButton = ElementComposition.GetElementVisual(BackButton);
+            var viewport = ElementComposition.GetElementVisual(Viewport);
+            var composer = ElementComposition.GetElementVisual(Composer);
             ElementCompositionPreview.SetIsTranslationEnabled(Composer, true);
 
             var batch = layer.Compositor.CreateScopedBatch(Windows.UI.Composition.CompositionBatchTypes.Animation);
@@ -173,7 +173,7 @@ namespace Telegram.Controls.Stories
                     var origin = _closing(viewModel);
                     if (origin.IsEmpty)
                     {
-                        var visual = ElementCompositionPreview.GetElementVisual(child);
+                        var visual = ElementComposition.GetElementVisual(child);
                         visual.StartAnimation("Opacity", opacity);
                     }
                     else
@@ -183,7 +183,7 @@ namespace Telegram.Controls.Stories
                 }
                 else
                 {
-                    var visual = ElementCompositionPreview.GetElementVisual(child);
+                    var visual = ElementComposition.GetElementVisual(child);
                     visual.StartAnimation("Opacity", opacity);
                 }
             }
@@ -414,7 +414,7 @@ namespace Telegram.Controls.Stories
                 var index = _indexes[i];
                 var real = _index + index - 3;
 
-                var visual = ElementCompositionPreview.GetElementVisual(LayoutRoot.Children[i]);
+                var visual = ElementComposition.GetElementVisual(LayoutRoot.Children[i]);
                 visual.CenterPoint = new Vector3(x / 2, y / 2, 0);
                 visual.Scale = new Vector3(index == 3 ? 1 : 0.4f);
 
@@ -563,7 +563,7 @@ namespace Telegram.Controls.Stories
 
                 ElementCompositionPreview.SetIsTranslationEnabled(LayoutRoot.Children[i], true);
 
-                var visual = ElementCompositionPreview.GetElementVisual(LayoutRoot.Children[i]);
+                var visual = ElementComposition.GetElementVisual(LayoutRoot.Children[i]);
 
                 //var from = ItemOffset(previous);
                 //var to = ItemOffset(index);

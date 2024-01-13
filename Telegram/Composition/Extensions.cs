@@ -6,6 +6,22 @@ using Windows.UI.Composition;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Hosting;
 
+namespace Windows.UI.Xaml.Hosting
+{
+    public static class ElementComposition
+    {
+        public static Visual GetElementVisual(UIElement element)
+        {
+            if (element == null)
+            {
+                Telegram.Logger.Error(new ArgumentNullException(nameof(element), Environment.StackTrace));
+            }
+
+            return ElementCompositionPreview.GetElementVisual(element);
+        }
+    }
+}
+
 namespace Telegram.Composition
 {
     public static class CompositionExtensions
@@ -18,7 +34,7 @@ namespace Telegram.Composition
             var surface = compositor.CreateVisualSurface();
 
             // Select the source visual and the offset/size of this control in that element's space.
-            surface.SourceVisual = ElementCompositionPreview.GetElementVisual(source);
+            surface.SourceVisual = ElementComposition.GetElementVisual(source);
             surface.SourceOffset = sourceOffset;
             surface.SourceSize = sourceSize;
             surfaceBrush.Surface = surface;

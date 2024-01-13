@@ -24,8 +24,8 @@ namespace Telegram.Controls.Cells
             ElementCompositionPreview.SetIsTranslationEnabled(UnselectedIcon, true);
             ElementCompositionPreview.SetIsTranslationEnabled(SelectedIcon, true);
 
-            var iconUnselected = ElementCompositionPreview.GetElementVisual(UnselectedIcon);
-            var iconSelected = ElementCompositionPreview.GetElementVisual(SelectedIcon);
+            var iconUnselected = ElementComposition.GetElementVisual(UnselectedIcon);
+            var iconSelected = ElementComposition.GetElementVisual(SelectedIcon);
 
             iconUnselected.Opacity = 1;
             iconSelected.Opacity = 0;
@@ -43,10 +43,10 @@ namespace Telegram.Controls.Cells
 
             var compositor = Window.Current.Compositor;
 
-            var iconUnselected = ElementCompositionPreview.GetElementVisual(UnselectedIcon);
-            var iconSelected = ElementCompositionPreview.GetElementVisual(SelectedIcon);
+            var iconUnselected = ElementComposition.GetElementVisual(UnselectedIcon);
+            var iconSelected = ElementComposition.GetElementVisual(SelectedIcon);
 
-            var title = ElementCompositionPreview.GetElementVisual(Title);
+            var title = ElementComposition.GetElementVisual(Title);
 
             if (next == "PointerOver")
             {

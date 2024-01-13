@@ -148,8 +148,8 @@ namespace Telegram.Controls
 
             _placeholderCollapsed = !show;
 
-            var visual1 = ElementCompositionPreview.GetElementVisual(placeholder);
-            var visual2 = ElementCompositionPreview.GetElementVisual(element);
+            var visual1 = ElementComposition.GetElementVisual(placeholder);
+            var visual2 = ElementComposition.GetElementVisual(element);
             var anim = visual1.Compositor.CreateScalarKeyFrameAnimation();
             anim.InsertKeyFrame(show ? 0 : 1, 0);
             anim.InsertKeyFrame(show ? 1 : 0, 1);

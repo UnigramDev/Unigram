@@ -655,7 +655,7 @@ namespace Telegram.Controls
             var surface = compositor.CreateVisualSurface();
 
             // Select the source visual and the offset/size of this control in that element's space.
-            surface.SourceVisual = ElementCompositionPreview.GetElementVisual(LayoutRoot);
+            surface.SourceVisual = ElementComposition.GetElementVisual(LayoutRoot);
             surface.SourceOffset = offset;
             surface.SourceSize = actualSize;
             surfaceBrush.Surface = surface;

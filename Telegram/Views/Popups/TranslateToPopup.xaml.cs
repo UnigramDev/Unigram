@@ -186,7 +186,7 @@ namespace Telegram.Views.Popups
             _noResultCollapsed = !show;
             NoResult.Visibility = Visibility.Visible;
 
-            var visual = ElementCompositionPreview.GetElementVisual(NoResult);
+            var visual = ElementComposition.GetElementVisual(NoResult);
             var animation = visual.Compositor.CreateScalarKeyFrameAnimation();
             animation.InsertKeyFrame(0, show ? 0 : 1);
             animation.InsertKeyFrame(1, show ? 1 : 0);

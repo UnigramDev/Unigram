@@ -493,8 +493,8 @@ namespace Telegram.Views.Popups
             _backButtonCollapsed = !show;
             BackButton.Visibility = Visibility.Visible;
 
-            var visual1 = ElementCompositionPreview.GetElementVisual(BackButton);
-            var visual2 = ElementCompositionPreview.GetElementVisual(Title);
+            var visual1 = ElementComposition.GetElementVisual(BackButton);
+            var visual2 = ElementComposition.GetElementVisual(Title);
 
             var batch = visual1.Compositor.CreateScopedBatch(CompositionBatchTypes.Animation);
             batch.Completed += (s, args) =>
@@ -593,7 +593,7 @@ namespace Telegram.Views.Popups
             Grid.SetRowSpan(View, 2);
             MainButton.Visibility = Visibility.Visible;
 
-            var visual = ElementCompositionPreview.GetElementVisual(MainButton);
+            var visual = ElementComposition.GetElementVisual(MainButton);
             var batch = visual.Compositor.CreateScopedBatch(CompositionBatchTypes.Animation);
             batch.Completed += (s, args) =>
             {

@@ -87,10 +87,10 @@ namespace Telegram.Controls
             var transform = CommandSpace.TransformToVisual(ContentElement);
             var point = transform.TransformPoint(new Point()).ToVector2();
 
-            var visual = ElementCompositionPreview.GetElementVisual(this);
-            var content = ElementCompositionPreview.GetElementVisual(ContentElement);
-            var background = ElementCompositionPreview.GetElementVisual(BackgroundElement);
-            var border = ElementCompositionPreview.GetElementVisual(BorderElement);
+            var visual = CompositionExtensions.GetElementVisual(this);
+            var content = CompositionExtensions.GetElementVisual(ContentElement);
+            var background = CompositionExtensions.GetElementVisual(BackgroundElement);
+            var border = CompositionExtensions.GetElementVisual(BorderElement);
 
             var clip = compositor.CreateInsetClip();
             content.Clip = clip;

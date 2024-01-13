@@ -56,7 +56,7 @@ namespace Telegram.Controls.Gallery
             var view = ApplicationView.GetForCurrentView();
             view.TitleBar.ButtonForegroundColor = Colors.White;
 
-            var visual = ElementCompositionPreview.GetElementVisual(ControlsRoot);
+            var visual = ElementComposition.GetElementVisual(ControlsRoot);
             visual.Opacity = 0;
         }
 
@@ -122,7 +122,7 @@ namespace Telegram.Controls.Gallery
 
             _transportCollapsed = !show;
 
-            var visual = ElementCompositionPreview.GetElementVisual(ControlsRoot);
+            var visual = ElementComposition.GetElementVisual(ControlsRoot);
             var opacity = visual.Compositor.CreateScalarKeyFrameAnimation();
             opacity.InsertKeyFrame(0, show ? 0 : 1);
             opacity.InsertKeyFrame(1, show ? 1 : 0);

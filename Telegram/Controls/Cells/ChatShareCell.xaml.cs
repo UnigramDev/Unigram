@@ -35,8 +35,8 @@ namespace Telegram.Controls.Cells
             Connected += OnLoaded;
             Disconnected += OnUnloaded;
 
-            _selectionPhoto = ElementCompositionPreview.GetElementVisual(Photo);
-            _selectionOutline = ElementCompositionPreview.GetElementVisual(SelectionOutline);
+            _selectionPhoto = ElementComposition.GetElementVisual(Photo);
+            _selectionOutline = ElementComposition.GetElementVisual(SelectionOutline);
             _selectionPhoto.CenterPoint = new Vector3(18);
             _selectionOutline.CenterPoint = new Vector3(18);
             _selectionOutline.Opacity = 0;

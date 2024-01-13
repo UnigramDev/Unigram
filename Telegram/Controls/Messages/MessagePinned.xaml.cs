@@ -46,11 +46,11 @@ namespace Telegram.Controls.Messages
         {
             InitializeComponent();
 
-            var root = ElementCompositionPreview.GetElementVisual(this);
+            var root = ElementComposition.GetElementVisual(this);
             root.Clip = root.Compositor.CreateInsetClip();
 
-            _textVisual1 = ElementCompositionPreview.GetElementVisual(TextLabel1);
-            _textVisual2 = ElementCompositionPreview.GetElementVisual(TextLabel2);
+            _textVisual1 = ElementComposition.GetElementVisual(TextLabel1);
+            _textVisual2 = ElementComposition.GetElementVisual(TextLabel2);
 
             _textVisual = _textVisual1;
 
@@ -252,8 +252,8 @@ namespace Telegram.Controls.Messages
             _collapsed = !show;
             Visibility = Visibility.Visible;
 
-            var parent = ElementCompositionPreview.GetElementVisual(_parent);
-            var visual = ElementCompositionPreview.GetElementVisual(this);
+            var parent = ElementComposition.GetElementVisual(_parent);
+            var visual = ElementComposition.GetElementVisual(this);
             visual.Clip = visual.Compositor.CreateInsetClip();
 
             var batch = visual.Compositor.CreateScopedBatch(CompositionBatchTypes.Animation);

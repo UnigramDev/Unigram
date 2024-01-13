@@ -114,8 +114,8 @@ namespace Telegram.Controls
             _propertySet.InsertScalar("TopInset", _topInset);
             _propertySet.InsertScalar("BottomInset", _bottomInset);
 
-            var top = ElementCompositionPreview.GetElementVisual(_topScrim);
-            var bottom = ElementCompositionPreview.GetElementVisual(_bottomScrim);
+            var top = ElementComposition.GetElementVisual(_topScrim);
+            var bottom = ElementComposition.GetElementVisual(_bottomScrim);
             var props = ElementCompositionPreview.GetScrollViewerManipulationPropertySet(scrollViewer);
 
             var topAnimation = Window.Current.Compositor.CreateExpressionAnimation("Clamp(-(Scroll.Translation.Y / Props.TopInset), 0, 1)");
@@ -173,7 +173,7 @@ namespace Telegram.Controls
                 {
                     _bottomScrim.Height = _bottomInset;
 
-                    var bottom = ElementCompositionPreview.GetElementVisual(_bottomScrim);
+                    var bottom = ElementComposition.GetElementVisual(_bottomScrim);
                     bottom.CenterPoint = new Vector3(0, _bottomInset, 0);
                 }
             }

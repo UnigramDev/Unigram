@@ -94,7 +94,7 @@ namespace Telegram.Controls.Gallery
                 _ => 0
             };
 
-            var visual = ElementCompositionPreview.GetElementVisual(this);
+            var visual = ElementComposition.GetElementVisual(this);
             visual.CenterPoint = new Vector3(ActualSize / 2, 0);
             visual.Clip ??= visual.Compositor.CreateInsetClip();
 
@@ -116,14 +116,14 @@ namespace Telegram.Controls.Gallery
                 anim.InsertKeyFrame(0, new Vector3(prev / next, 1));
                 anim.InsertKeyFrame(1, Vector3.One);
 
-                var panel = ElementCompositionPreview.GetElementVisual(Children[0]);
+                var panel = ElementComposition.GetElementVisual(Children[0]);
                 panel.CenterPoint = new Vector3(next.X / 2, next.Y / 2, 0);
                 panel.StartAnimation("Scale", anim);
 
                 var factor = Window.Current.Compositor.CreateExpressionAnimation("Vector3(1 / content.Scale.X, 1 / content.Scale.Y, 1)");
                 factor.SetReferenceParameter("content", panel);
 
-                var button = ElementCompositionPreview.GetElementVisual(Button);
+                var button = ElementComposition.GetElementVisual(Button);
                 button.CenterPoint = new Vector3(Button.ActualSize.X / 2, Button.ActualSize.Y / 2, 0);
                 button.StartAnimation("Scale", factor);
             }

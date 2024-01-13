@@ -195,7 +195,7 @@ namespace Telegram.Controls.Messages
             var elli1 = CanvasGeometry.CreateRoundedRectangle(device, width - actualWidth + 18 + 16, height + height + 5, presenter.ActualSize.X, 860, 8, 8);
             var group1 = CanvasGeometry.CreateGroup(device, new[] { elli1, rect1 }, CanvasFilledRegionDetermination.Alternate);
 
-            var rootVisual = ElementCompositionPreview.GetElementVisual(LayoutRoot);
+            var rootVisual = ElementComposition.GetElementVisual(LayoutRoot);
             var compositor = rootVisual.Compositor;
             rootVisual.Clip = rootVisual.Compositor.CreateGeometricClip(rootVisual.Compositor.CreatePathGeometry(new CompositionPath(group1)));
 
@@ -222,11 +222,11 @@ namespace Telegram.Controls.Messages
             _popup.AllowFocusOnInteraction = false;
             _popup.IsOpen = true;
 
-            var visualPill = ElementCompositionPreview.GetElementVisual(Pill);
+            var visualPill = ElementComposition.GetElementVisual(Pill);
             visualPill.CenterPoint = new Vector3(height / 2, height / 2, 0);
             visualPill.CenterPoint = new Vector3(width - height / 2, height / 2, 0);
 
-            var visualExpand = ElementCompositionPreview.GetElementVisual(Expand);
+            var visualExpand = ElementComposition.GetElementVisual(Expand);
             visualExpand.CenterPoint = new Vector3(32 / 2f, 24 / 2f, 0);
 
             var clip = compositor.CreateRoundedRectangleGeometry();
@@ -273,7 +273,7 @@ namespace Telegram.Controls.Messages
             move.DelayTime = TimeSpan.FromMilliseconds(100);
             move.Duration = Constants.FastAnimation;
 
-            var viewVisual = ElementCompositionPreview.GetElementVisual(Presenter);
+            var viewVisual = ElementComposition.GetElementVisual(Presenter);
             viewVisual.CenterPoint = new Vector3(height / 2, height / 2, 0);
             viewVisual.CenterPoint = new Vector3(width - height / 2, height / 2, 0);
             viewVisual.StartAnimation("Scale", scalePill);

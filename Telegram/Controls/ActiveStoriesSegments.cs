@@ -122,7 +122,7 @@ namespace Telegram.Controls
             {
                 if (Content is UIElement element && !_hasActiveStories)
                 {
-                    var visual = ElementCompositionPreview.GetElementVisual(element);
+                    var visual = ElementComposition.GetElementVisual(element);
                     visual.CenterPoint = new Vector3(side / 2);
                     visual.Scale = new Vector3((side - 8f) / side);
                 }
@@ -146,7 +146,7 @@ namespace Telegram.Controls
             }
             else if (_hasActiveStories && Content is UIElement element)
             {
-                var visual = ElementCompositionPreview.GetElementVisual(element);
+                var visual = ElementComposition.GetElementVisual(element);
                 visual.Scale = Vector3.One;
 
                 ElementCompositionPreview.SetElementChildVisual(this, visual.Compositor.CreateSpriteVisual());
@@ -161,7 +161,7 @@ namespace Telegram.Controls
                 {
                     if (Content is UIElement element)
                     {
-                        var visual = ElementCompositionPreview.GetElementVisual(element);
+                        var visual = ElementComposition.GetElementVisual(element);
                         visual.Scale = Vector3.One;
 
                         ElementCompositionPreview.SetElementChildVisual(this, visual.Compositor.CreateSpriteVisual());
@@ -184,7 +184,7 @@ namespace Telegram.Controls
             {
                 if (Content is UIElement element)
                 {
-                    var visual = ElementCompositionPreview.GetElementVisual(element);
+                    var visual = ElementComposition.GetElementVisual(element);
                     visual.CenterPoint = new Vector3(side / 2);
                     visual.Scale = new Vector3((side - 8f) / side);
                 }
@@ -213,7 +213,7 @@ namespace Telegram.Controls
         {
             if (Content is UIElement elementa && !_hasActiveStories)
             {
-                var visual = ElementCompositionPreview.GetElementVisual(elementa);
+                var visual = ElementComposition.GetElementVisual(elementa);
                 visual.CenterPoint = new Vector3(side / 2);
                 visual.Scale = new Vector3((side - 8f) / side);
             }
@@ -229,7 +229,7 @@ namespace Telegram.Controls
             {
                 if (Content is UIElement elementa && !_hasActiveStories)
                 {
-                    var visual = ElementCompositionPreview.GetElementVisual(elementa);
+                    var visual = ElementComposition.GetElementVisual(elementa);
                     visual.CenterPoint = new Vector3(side / 2);
                     visual.Scale = new Vector3((side - unreadThickness * 4) / side);
                 }
@@ -239,7 +239,7 @@ namespace Telegram.Controls
             }
             else if (_hasActiveStories && Content is UIElement element)
             {
-                var visual = ElementCompositionPreview.GetElementVisual(element);
+                var visual = ElementComposition.GetElementVisual(element);
                 visual.Scale = Vector3.One;
 
                 _hasActiveStories = false;

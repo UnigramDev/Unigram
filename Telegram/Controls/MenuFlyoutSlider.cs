@@ -220,7 +220,7 @@ namespace Telegram.Controls
         {
             if (HorizontalDecreaseRect != null && !double.IsNaN(HorizontalDecreaseRect.ActualWidth))
             {
-                var visual = ElementCompositionPreview.GetElementVisual(HorizontalDecreaseRect);
+                var visual = ElementComposition.GetElementVisual(HorizontalDecreaseRect);
                 visual.Clip ??= visual.Compositor.CreateInsetClip();
 
                 if (visual.Clip is InsetClip inset)

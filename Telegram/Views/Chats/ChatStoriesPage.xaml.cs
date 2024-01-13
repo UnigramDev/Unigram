@@ -153,7 +153,7 @@ namespace Telegram.Views.Chats
             _manageCollapsed = !show;
             ManagePanel.Visibility = Visibility.Visible;
 
-            var manage = ElementCompositionPreview.GetElementVisual(ManagePanel);
+            var manage = ElementComposition.GetElementVisual(ManagePanel);
             manage.Opacity = show ? 0 : 1;
 
             var batch = manage.Compositor.CreateScopedBatch(CompositionBatchTypes.Animation);

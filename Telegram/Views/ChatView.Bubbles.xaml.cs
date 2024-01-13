@@ -707,7 +707,7 @@ namespace Telegram.Views
                     var child = VisualTreeHelper.GetChild(container, 0) as UIElement;
                     if (child != null)
                     {
-                        var visual = ElementCompositionPreview.GetElementVisual(child);
+                        var visual = ElementComposition.GetElementVisual(child);
                         visual.StartAnimation("Offset.Y", anim);
                     }
                 }

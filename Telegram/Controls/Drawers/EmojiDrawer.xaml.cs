@@ -76,7 +76,7 @@ namespace Telegram.Controls.Drawers
         {
             InitializeComponent();
 
-            ElementCompositionPreview.GetElementVisual(this).Clip = Window.Current.Compositor.CreateInsetClip();
+            ElementComposition.GetElementVisual(this).Clip = Window.Current.Compositor.CreateInsetClip();
 
             var header = DropShadowEx.Attach(Separator);
             header.Clip = header.Compositor.CreateInsetClip(0, 40, 0, -40);
@@ -396,9 +396,9 @@ namespace Telegram.Controls.Drawers
 
                 var show = !_emojiCollapsed;
 
-                var toolbar = ElementCompositionPreview.GetElementVisual(Toolbar3);
-                var pill = ElementCompositionPreview.GetElementVisual(ToolbarPill);
-                var panel = ElementCompositionPreview.GetElementVisual(Toolbar2.ItemsPanelRoot);
+                var toolbar = ElementComposition.GetElementVisual(Toolbar3);
+                var pill = ElementComposition.GetElementVisual(ToolbarPill);
+                var panel = ElementComposition.GetElementVisual(Toolbar2.ItemsPanelRoot);
 
                 ElementCompositionPreview.SetIsTranslationEnabled(Toolbar2.ItemsPanelRoot, true);
 
@@ -495,7 +495,7 @@ namespace Telegram.Controls.Drawers
                     continue;
                 }
 
-                var visual = ElementCompositionPreview.GetElementVisual(child);
+                var visual = ElementComposition.GetElementVisual(child);
 
                 var from = i;
                 if (elements[i] == Toolbar)
@@ -672,7 +672,7 @@ namespace Telegram.Controls.Drawers
                         var distance = xd + yd - 1;
                         distance = yd;
 
-                        var visual = ElementCompositionPreview.GetElementVisual(content);
+                        var visual = ElementComposition.GetElementVisual(content);
                         var scale = visual.Compositor.CreateVector3KeyFrameAnimation();
                         scale.InsertKeyFrame(0, Vector3.Zero);
                         scale.InsertKeyFrame(1, Vector3.One);

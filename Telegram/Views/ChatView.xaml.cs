@@ -136,13 +136,13 @@ namespace Telegram.Views
 
             InitializeStickers();
 
-            //ElementCompositionPreview.GetElementVisual(this).Clip = Window.Current.Compositor.CreateInsetClip();
+            //CompositionExtensions.GetElementVisual(this).Clip = Window.Current.Compositor.CreateInsetClip();
             ElementCompositionPreview.SetIsTranslationEnabled(ButtonMore, true);
             ElementCompositionPreview.SetIsTranslationEnabled(TextFieldPanel, true);
             ElementCompositionPreview.SetIsTranslationEnabled(btnAttach, true);
             ElementCompositionPreview.SetIsTranslationEnabled(ListAutocomplete, true);
 
-            _rootVisual = ElementCompositionPreview.GetElementVisual(TextArea);
+            _rootVisual = ElementComposition.GetElementVisual(TextArea);
 
             if (DateHeaderPanel != null)
             {
@@ -154,8 +154,8 @@ namespace Telegram.Views
                     ShowHideDateHeader(false, true);
                 };
 
-                _dateHeaderPanel = ElementCompositionPreview.GetElementVisual(DateHeaderRelative);
-                _dateHeader = ElementCompositionPreview.GetElementVisual(DateHeader);
+                _dateHeaderPanel = ElementComposition.GetElementVisual(DateHeaderRelative);
+                _dateHeader = ElementComposition.GetElementVisual(DateHeader);
 
                 _dateHeaderPanel.Clip = Window.Current.Compositor.CreateInsetClip();
             }
@@ -457,7 +457,7 @@ namespace Telegram.Views
                     var container = Messages.ContainerFromIndex(i) as SelectorItem;
                     var child = VisualTreeHelper.GetChild(container, 0) as UIElement;
 
-                    var visual = ElementCompositionPreview.GetElementVisual(child);
+                    var visual = ElementComposition.GetElementVisual(child);
                     visual.StartAnimation("Offset", anim);
                 }
 
@@ -515,7 +515,7 @@ namespace Telegram.Views
 
                 if (animateSendout)
                 {
-                    var messages = ElementCompositionPreview.GetElementVisual(Messages);
+                    var messages = ElementComposition.GetElementVisual(Messages);
 
                     batch.Completed += (s, args) =>
                     {
@@ -575,7 +575,7 @@ namespace Telegram.Views
                         continue;
                     }
 
-                    var visual = ElementCompositionPreview.GetElementVisual(child);
+                    var visual = ElementComposition.GetElementVisual(child);
 
                     if (i == args.NewStartingIndex && animateSendout)
                     {
@@ -1158,8 +1158,8 @@ namespace Telegram.Views
             //elementShow.Visibility = Visibility.Visible;
             //elementHide.Visibility = Visibility.Collapsed;
 
-            var visualHide = ElementCompositionPreview.GetElementVisual(elementHide);
-            var visualShow = ElementCompositionPreview.GetElementVisual(elementShow);
+            var visualHide = ElementComposition.GetElementVisual(elementHide);
+            var visualShow = ElementComposition.GetElementVisual(elementShow);
 
             visualHide.CenterPoint = new Vector3(24);
             visualShow.CenterPoint = new Vector3(24);
@@ -1202,9 +1202,9 @@ namespace Telegram.Views
 
             if (editing && editing != _oldEditing || empty != _oldEmpty)
             {
-                var scheduled = ElementCompositionPreview.GetElementVisual(btnScheduled);
-                var commands = ElementCompositionPreview.GetElementVisual(btnCommands);
-                var markup = ElementCompositionPreview.GetElementVisual(btnMarkup);
+                var scheduled = ElementComposition.GetElementVisual(btnScheduled);
+                var commands = ElementComposition.GetElementVisual(btnCommands);
+                var markup = ElementComposition.GetElementVisual(btnMarkup);
 
                 scheduled.CenterPoint = new Vector3(24);
                 commands.CenterPoint = new Vector3(24);
@@ -1734,10 +1734,10 @@ namespace Telegram.Views
             //    return;
             //}
 
-            var composer = ElementCompositionPreview.GetElementVisual(drawer);
-            var messages = ElementCompositionPreview.GetElementVisual(Messages);
-            var textArea = ElementCompositionPreview.GetElementVisual(TextArea);
-            var textMain = ElementCompositionPreview.GetElementVisual(TextMain);
+            var composer = ElementComposition.GetElementVisual(drawer);
+            var messages = ElementComposition.GetElementVisual(Messages);
+            var textArea = ElementComposition.GetElementVisual(TextArea);
+            var textMain = ElementComposition.GetElementVisual(TextMain);
 
             ElementCompositionPreview.SetIsTranslationEnabled(TextMain, true);
 
@@ -2473,7 +2473,7 @@ namespace Telegram.Views
 
                     if (pictures.Children.Count > 0)
                     {
-                        var visual = ElementCompositionPreview.GetElementVisual(picture);
+                        var visual = ElementComposition.GetElementVisual(picture);
                         visual.Clip = clip;
                     }
 
@@ -3229,7 +3229,7 @@ namespace Telegram.Views
 
             TextArea.IsEnabled = !show;
 
-            var manage = ElementCompositionPreview.GetElementVisual(ManagePanel);
+            var manage = ElementComposition.GetElementVisual(ManagePanel);
             manage.StopAnimation("Opacity");
 
             var batch = Window.Current.Compositor.CreateScopedBatch(CompositionBatchTypes.Animation);
@@ -3362,7 +3362,7 @@ namespace Telegram.Views
 
         private void DateHeaderPanel_SizeChanged(object sender, SizeChangedEventArgs e)
         {
-            ElementCompositionPreview.GetElementVisual(sender as UIElement).CenterPoint = new Vector3((float)e.NewSize.Width / 2f, (float)e.NewSize.Height / 2f, 0);
+            ElementComposition.GetElementVisual(sender as UIElement).CenterPoint = new Vector3((float)e.NewSize.Width / 2f, (float)e.NewSize.Height / 2f, 0);
         }
 
         private void ItemsStackPanel_Loading(FrameworkElement sender, object args)
@@ -4135,9 +4135,9 @@ namespace Telegram.Views
                 return;
             }
 
-            var composer = ElementCompositionPreview.GetElementVisual(ComposerHeader);
-            var messages = ElementCompositionPreview.GetElementVisual(Messages);
-            var textArea = ElementCompositionPreview.GetElementVisual(TextArea);
+            var composer = ElementComposition.GetElementVisual(ComposerHeader);
+            var messages = ElementComposition.GetElementVisual(Messages);
+            var textArea = ElementComposition.GetElementVisual(TextArea);
 
             var value = show ? 48 : 0;
 
@@ -4247,9 +4247,9 @@ namespace Telegram.Views
             _botCommandsCollapsed = !show;
             ButtonMore.Visibility = Visibility.Visible;
 
-            var more = ElementCompositionPreview.GetElementVisual(ButtonMore);
-            var field = ElementCompositionPreview.GetElementVisual(TextFieldPanel);
-            var attach = ElementCompositionPreview.GetElementVisual(btnAttach);
+            var more = ElementComposition.GetElementVisual(ButtonMore);
+            var field = ElementComposition.GetElementVisual(TextFieldPanel);
+            var attach = ElementComposition.GetElementVisual(btnAttach);
 
             var batch = Window.Current.Compositor.CreateScopedBatch(CompositionBatchTypes.Animation);
             batch.Completed += (s, args) =>
@@ -4301,7 +4301,7 @@ namespace Telegram.Views
 
             var source = ListAutocomplete.ItemsSource;
 
-            var list = ElementCompositionPreview.GetElementVisual(ListAutocomplete);
+            var list = ElementComposition.GetElementVisual(ListAutocomplete);
             list.StopAnimation("Translation");
 
             await ListAutocomplete.UpdateLayoutAsync();
@@ -4388,7 +4388,7 @@ namespace Telegram.Views
                 ReplyMarkupPanel.Margin = new Thickness();
             }
 
-            var messages = ElementCompositionPreview.GetElementVisual(Messages);
+            var messages = ElementComposition.GetElementVisual(Messages);
             if (messages.Clip is InsetClip messagesClip)
             {
                 messagesClip.TopInset = -44;
@@ -4413,7 +4413,7 @@ namespace Telegram.Views
                 ShowHideAutocomplete(false);
 
                 //var diff = (float)ListAutocomplete.ActualHeight;
-                //var visual = ElementCompositionPreview.GetElementVisual(ListAutocomplete);
+                //var visual = CompositionExtensions.GetElementVisual(ListAutocomplete);
 
                 //var anim = Window.Current.Compositor.CreateSpringVector3Animation();
                 //anim.InitialValue = new Vector3();
@@ -4880,7 +4880,7 @@ namespace Telegram.Views
                     var child = VisualTreeHelper.GetChild(container, 0) as UIElement;
                     if (child != null)
                     {
-                        var visual = ElementCompositionPreview.GetElementVisual(child);
+                        var visual = ElementComposition.GetElementVisual(child);
                         visual.StartAnimation("Offset.Y", anim);
                     }
                 }

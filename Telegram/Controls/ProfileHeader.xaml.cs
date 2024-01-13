@@ -50,7 +50,7 @@ namespace Telegram.Controls
 
             animated.Ready += OnReady;
 
-            var visual = ElementCompositionPreview.GetElementVisual(animated);
+            var visual = ElementComposition.GetElementVisual(animated);
             var compositor = visual.Compositor;
 
             // Create a VisualSurface positioned at the same location as this control and feed that
@@ -284,12 +284,12 @@ namespace Telegram.Controls
         {
             Pattern.Update((float)(verticalOffset / HeaderRoot.ActualHeight));
 
-            var visual = ElementCompositionPreview.GetElementVisual(Segments);
+            var visual = ElementComposition.GetElementVisual(Segments);
             visual.CenterPoint = new Vector3(70, 70, 0);
             visual.Scale = new Vector3(1 - (float)(verticalOffset / HeaderRoot.ActualHeight));
 
-            var title = ElementCompositionPreview.GetElementVisual(LabelTitle);
-            var subtitle = ElementCompositionPreview.GetElementVisual(Subtitle);
+            var title = ElementComposition.GetElementVisual(LabelTitle);
+            var subtitle = ElementComposition.GetElementVisual(Subtitle);
 
             title.CenterPoint = new Vector3(LabelTitle.ActualSize.X / 2, LabelTitle.ActualSize.Y, 0);
             subtitle.CenterPoint = new Vector3(Subtitle.ActualSize.X / 2, 0, 0);
@@ -300,12 +300,12 @@ namespace Telegram.Controls
             _properties = properties.Compositor.CreatePropertySet();
             _properties.InsertScalar("targetY", HeaderRoot.ActualSize.Y);
 
-            var target = ElementCompositionPreview.GetElementVisual(this);
-            var controls = ElementCompositionPreview.GetElementVisual(ControlsRoot);
-            var title = ElementCompositionPreview.GetElementVisual(LabelTitle);
-            var subtitle = ElementCompositionPreview.GetElementVisual(Subtitle);
-            var buttons = ElementCompositionPreview.GetElementVisual(Buttons);
-            var root = ElementCompositionPreview.GetElementVisual(HeaderRoot);
+            var target = ElementComposition.GetElementVisual(this);
+            var controls = ElementComposition.GetElementVisual(ControlsRoot);
+            var title = ElementComposition.GetElementVisual(LabelTitle);
+            var subtitle = ElementComposition.GetElementVisual(Subtitle);
+            var buttons = ElementComposition.GetElementVisual(Buttons);
+            var root = ElementComposition.GetElementVisual(HeaderRoot);
 
             ElementCompositionPreview.SetIsTranslationEnabled(Buttons, true);
             ElementCompositionPreview.SetIsTranslationEnabled(HeaderRoot, true);
@@ -449,7 +449,7 @@ namespace Telegram.Controls
             var surface = compositor.CreateVisualSurface();
 
             // Select the source visual and the offset/size of this control in that element's space.
-            surface.SourceVisual = ElementCompositionPreview.GetElementVisual(Pattern);
+            surface.SourceVisual = ElementComposition.GetElementVisual(Pattern);
             surface.SourceOffset = new Vector2(0, 0);
             surface.SourceSize = new Vector2(1000, 320);
             surfaceBrush.Surface = surface;

@@ -44,8 +44,8 @@ namespace Telegram.Controls
             _label1 = _label = GetTemplateChild("ContentPresenter1") as TextBlock;
             _label2 = GetTemplateChild("ContentPresenter2") as TextBlock;
 
-            _visual1 = _visual = ElementCompositionPreview.GetElementVisual(_label1);
-            _visual2 = ElementCompositionPreview.GetElementVisual(_label2);
+            _visual1 = _visual = ElementComposition.GetElementVisual(_label1);
+            _visual2 = ElementComposition.GetElementVisual(_label2);
 
             _label2.Text = string.Empty;
 
