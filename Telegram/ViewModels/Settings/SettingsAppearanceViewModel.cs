@@ -99,7 +99,7 @@ namespace Telegram.ViewModels.Settings
                 }
                 else
                 {
-                    ClientService.Send(new SetDefaultBackground(null, null, forDarkTheme));
+                    ClientService.Send(new DeleteDefaultBackground(forDarkTheme));
                 }
             }
 
@@ -107,7 +107,7 @@ namespace Telegram.ViewModels.Settings
             SetBackground(chatTheme.DarkSettings?.Background, true);
 
             Settings.Appearance.ChatTheme = chatTheme;
-            Settings.Appearance.UpdateNightMode();
+            Settings.Appearance.UpdateNightMode(updateBackground: false);
 
             _selectedChatTheme = chatTheme;
             RaisePropertyChanged(nameof(SelectedChatTheme));
