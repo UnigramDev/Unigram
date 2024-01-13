@@ -61,6 +61,10 @@ namespace Telegram.Views
         private IEnumerable<int> GetSessionsToInitialize()
         {
             var folders = Directory.GetDirectories(ApplicationData.Current.LocalFolder.Path);
+
+            var toBeDeleted = new HashSet<string>();
+            var toBeInitialized = 0;
+
             foreach (var folder in folders)
             {
                 if (int.TryParse(Path.GetFileName(folder), out int session))
@@ -68,20 +72,35 @@ namespace Telegram.Views
                     var container = ApplicationData.Current.LocalSettings.CreateContainer($"{session}", ApplicationDataCreateDisposition.Always);
                     if (container.Values.ContainsKey("UserId"))
                     {
+                        toBeInitialized++;
                         yield return session;
                     }
                     else
                     {
-                        Task.Factory.StartNew((path) =>
-                        {
-                            try
-                            {
-                                Directory.Delete((string)path, true);
-                            }
-                            catch { }
-                        }, folder);
+                        toBeDeleted.Add(folder);
+
                     }
                 }
+            }
+
+            // We delete unauthorized sessions only if there's some active one.
+            // This is just to remember proxy settings for the user in case they restart the app.
+            if (toBeInitialized > 0 && toBeDeleted.Count > 0)
+            {
+                Task.Factory.StartNew(() =>
+                {
+                    foreach (var path in toBeDeleted)
+                    {
+                        try
+                        {
+                            Directory.Delete(path, true);
+                        }
+                        catch
+                        {
+                            // Directory or files might be locked
+                        }
+                    }
+                });
             }
         }
 
