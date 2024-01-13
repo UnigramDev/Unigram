@@ -393,15 +393,9 @@ namespace Telegram.Common
                 while (index != -1)
                 {
                     var direction = NativeUtils.GetDirectionality(text, previous, index - previous);
-                    if (indexes == null || indexes[^1].Direction != direction)
-                    {
-                        indexes ??= new();
-                        indexes.Add(new Break(index, 1, direction));
-                    }
-                    else if (indexes != null)
-                    {
-                        indexes[^1] = new Break(index, 1, direction);
-                    }
+
+                    indexes ??= new();
+                    indexes.Add(new Break(index, 1, direction));
 
                     previous = index + 1;
                     index = text.IndexOf('\n', index + 1, limit - index);
