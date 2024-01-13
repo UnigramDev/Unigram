@@ -144,10 +144,16 @@ namespace Telegram.Controls.Gallery
             _delegate = delegato;
             _item = item;
 
-            _appliedRotation = 0;
+            _appliedRotation = item?.RotationAngle switch
+            {
+                RotationAngle.Angle90 => 90,
+                RotationAngle.Angle180 => 180,
+                RotationAngle.Angle270 => 270,
+                _ => 0
+            };
 
             Tag = item;
-            RotationAngle = RotationAngle.Angle0;
+            RotationAngle = item?.RotationAngle ?? RotationAngle.Angle0;
             Background = null;
             Texture.Source = null;
 

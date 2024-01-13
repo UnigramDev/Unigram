@@ -1093,7 +1093,7 @@ namespace Telegram.Controls.Gallery
         {
             if (LayoutRoot.CurrentElement is AspectView view)
             {
-                view.RotationAngle = view.RotationAngle switch
+                ViewModel.SelectedItem.RotationAngle = view.RotationAngle = view.RotationAngle switch
                 {
                     RotationAngle.Angle0 => RotationAngle.Angle270,
                     RotationAngle.Angle270 => RotationAngle.Angle180,
