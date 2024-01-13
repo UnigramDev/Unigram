@@ -424,7 +424,7 @@ namespace Telegram.Views.Host
                     _navigationViewItems.Insert(1, RootDestination.AddAccount);
                 }
 
-                if (items.Count > 0)
+                if (items.Count > 1)
                 {
                     foreach (var item in items.OrderByDescending(x => { int index = Array.IndexOf(SettingsService.Current.AccountsSelectorOrder, x.Id); return index < 0 ? x.Id : index; }))
                     {
@@ -743,7 +743,11 @@ namespace Telegram.Views.Host
             {
                 if (session.IsActive)
                 {
-                    if (SettingsService.Current.Diagnostics.ShowMemoryUsage)
+                    var alt = WindowContext.IsKeyDown(Windows.System.VirtualKey.Menu);
+                    var ctrl = WindowContext.IsKeyDown(Windows.System.VirtualKey.Control);
+                    var shift = WindowContext.IsKeyDown(Windows.System.VirtualKey.Shift);
+
+                    if (SettingsService.Current.Diagnostics.ShowMemoryUsage && alt && !ctrl && !shift)
                     {
                         TestDestroy();
                     }

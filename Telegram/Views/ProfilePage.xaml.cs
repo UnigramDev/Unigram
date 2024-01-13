@@ -341,7 +341,7 @@ namespace Telegram.Views
 
         private void OnViewChanged(object sender, ScrollViewerViewChangedEventArgs e)
         {
-            BackButton.RequestedTheme = ScrollingHost.VerticalOffset < ProfileHeader.ActualHeight
+            BackButton.RequestedTheme = ScrollingHost.VerticalOffset < ProfileHeader.ActualHeight - 16
                 ? ProfileHeader.HeaderTheme
                 : ElementTheme.Default;
 

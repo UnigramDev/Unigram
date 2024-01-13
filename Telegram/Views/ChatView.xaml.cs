@@ -4373,7 +4373,7 @@ namespace Telegram.Views
 
             if (radius > 0)
             {
-                TextArea.MaxWidth = ChatRecord.MaxWidth = ChatFooter.MaxWidth = ManagePanel.MaxWidth = InlinePanel.MaxWidth = Separator.MaxWidth =
+                TextArea.MaxWidth = ChatRecord.MaxWidth = ChatFooter.MaxWidth = ManagePanel.MaxWidth = InlinePanel.MaxWidth = Separator.MaxWidth = ReplyMarkupPanel.MaxWidth =
                     SettingsService.Current.IsAdaptiveWideEnabled ? 1000 : double.PositiveInfinity;
                 TextArea.Margin = ChatRecord.Margin = ChatFooter.Margin = ManagePanel.Margin = Separator.Margin = new Thickness(12, 0, 12, 8);
                 InlinePanel.Margin = new Thickness(12, 0, 12, -radius);
@@ -4381,7 +4381,7 @@ namespace Telegram.Views
             }
             else
             {
-                TextArea.MaxWidth = ChatRecord.MaxWidth = ChatFooter.MaxWidth = ManagePanel.MaxWidth = InlinePanel.MaxWidth = Separator.MaxWidth =
+                TextArea.MaxWidth = ChatRecord.MaxWidth = ChatFooter.MaxWidth = ManagePanel.MaxWidth = InlinePanel.MaxWidth = Separator.MaxWidth = ReplyMarkupPanel.MaxWidth =
                     SettingsService.Current.IsAdaptiveWideEnabled ? 1024 : double.PositiveInfinity;
                 TextArea.Margin = ChatRecord.Margin = ChatFooter.Margin = ManagePanel.Margin = Separator.Margin = new Thickness();
                 InlinePanel.Margin = new Thickness();

@@ -203,7 +203,6 @@ namespace Telegram.Controls.Gallery
         {
             if (_mediaPlayer != null)
             {
-                //_mediaPlayer.PositionChanged -= OnPositionChanged;
                 _mediaPlayer.TimeChanged -= OnTimeChanged;
                 _mediaPlayer.LengthChanged -= OnLengthChanged;
                 _mediaPlayer.EndReached -= OnEndReached;
@@ -217,7 +216,6 @@ namespace Telegram.Controls.Gallery
 
             if (_mediaPlayer != null)
             {
-                //_mediaPlayer.PositionChanged += OnPositionChanged;
                 _mediaPlayer.TimeChanged += OnTimeChanged;
                 _mediaPlayer.LengthChanged += OnLengthChanged;
                 _mediaPlayer.EndReached += OnEndReached;

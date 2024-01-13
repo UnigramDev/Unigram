@@ -52,7 +52,7 @@
                 </ItemsPanelTemplate>
             </GridView.ItemsPanel>
             <GridView.Header>
-                <controls:SettingsPanel IsHeader="True">
+                <controls:SettingsPanel>
                     <controls:HeaderedControl x:Name="Header"
                                               x:Load="{x:Bind ViewModel.IsPinned}"
                                               Footer="{CustomResource ProfileStoriesArchiveHint}"

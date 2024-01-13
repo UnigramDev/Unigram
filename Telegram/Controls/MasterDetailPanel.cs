@@ -176,7 +176,7 @@ namespace Telegram.Controls
             return new Rect(x, y, Math.Max(0, width), Math.Max(0, height));
         }
 
-        private double CountDialogsWidthFromRatio(double width, double ratio)
+        public static double CountDialogsWidthFromRatio(double width, double ratio)
         {
             var result = Math.Round(width * ratio);
             result = Math.Max(result, columnMinimalWidthLeft);

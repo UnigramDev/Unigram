@@ -17,6 +17,8 @@ namespace Telegram.Controls.Media
         public const string ZWNJ = "\u200C";
         public const string Spacing = "\u2004\u200A";
 
+        public const string ReplyInAnotherChat = "\uEA3F";
+
         public const string PictureInPictureEnter = "\uE92C";
         public const string PictureInPictureExit = "\uE92D";
 
@@ -64,6 +66,7 @@ namespace Telegram.Controls.Media
         public const string AddCircle = "\uF164";
         public const string SubtractCircle = "\uF166";
 
+        public const string ArrowDownloadFilled24 = "\uEA5C";
         public const string ArrowDownload = "\uE118";
         public const string DownloadSmall = "\uE92A";
         public const string Dismiss = "\uE711";

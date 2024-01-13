@@ -9,8 +9,8 @@
                     xmlns:messages="using:Telegram.Controls.Messages"
                     xmlns:stories="using:Telegram.Controls.Stories"
                     xmlns:navigation="using:Telegram.Navigation.Services"
-                    xmlns:windows11="http://schemas.microsoft.com/winfx/2006/xaml/presentation?IsApiContractPresent(Windows.Foundation.UniversalApiContract, 13)"
-                    xmlns:windows10="http://schemas.microsoft.com/winfx/2006/xaml/presentation?IsApiContractNotPresent(Windows.Foundation.UniversalApiContract, 13)">
+                    xmlns:windows11="http://schemas.microsoft.com/winfx/2006/xaml/presentation?IsApiContractPresent(Windows.Foundation.UniversalApiContract, 14)"
+                    xmlns:windows10="http://schemas.microsoft.com/winfx/2006/xaml/presentation?IsApiContractNotPresent(Windows.Foundation.UniversalApiContract, 14)">
 
     <ResourceDictionary.MergedDictionaries>
         <ResourceDictionary Source="ms-appx:///Controls/Cells/ChatCell.xaml" />
@@ -690,6 +690,10 @@
     </Style>
 
     <Style TargetType="messages:ReactionButton">
+        <Setter Property="CornerRadius"
+                Value="12" />
+        <Setter Property="UseSystemFocusVisuals"
+                Value="True" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="messages:ReactionButton">
@@ -5656,7 +5660,7 @@
                                            HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
                                            VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
                                            AutomationProperties.AccessibilityView="Raw"
-                                           Text="&#xE717;"
+                                           Text="&#xEA5F;"
                                            FontSize="{TemplateBinding FontSize}" />
                             </Border>
                         </Border>

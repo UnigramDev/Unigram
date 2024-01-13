@@ -24,8 +24,8 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="local:ChatCell">
-                    <Grid Height="64"
-                          Background="Transparent">
+                    <Grid Background="Transparent"
+                          Height="64">
                         <VisualStateManager.VisualStateGroups>
                             <VisualStateGroup>
                                 <VisualState x:Name="Normal" />
@@ -262,7 +262,7 @@
                                    RadiusX="4"
                                    RadiusY="4"
                                    Visibility="Collapsed"
-                                   Grid.ColumnSpan="2"
+                                   Grid.ColumnSpan="3"
                                    Grid.RowSpan="2" />
                     </Grid>
                 </ControlTemplate>

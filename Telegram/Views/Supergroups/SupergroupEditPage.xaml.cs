@@ -242,6 +242,7 @@ namespace Telegram.Views.Supergroups
             //Title.IsReadOnly = !group.CanChangeInfo();
             //About.IsReadOnly = !group.CanChangeInfo();
 
+            ChatType.Glyph = Icons.People;
             ChatType.Content = Strings.GroupType;
             ChatType.Badge = Strings.TypePrivateGroup;
             ChatType.Visibility = group.Status is ChatMemberStatusCreator ? Visibility.Visible : Visibility.Collapsed;

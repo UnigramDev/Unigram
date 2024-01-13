@@ -133,6 +133,9 @@
   <data name="AccDescrContactSorting" xml:space="preserve">
     <value>Change sorting</value>
   </data>
+  <data name="AccDescrCustomEmoji" xml:space="preserve">
+    <value>{0}, custom emoji</value>
+  </data>
   <data name="AccDescrEmojiButton" xml:space="preserve">
     <value>Emoji, stickers, and GIFs</value>
   </data>
@@ -228,6 +231,9 @@
   </data>
   <data name="AccDescrPlayerSpeed" xml:space="preserve">
     <value>2X playback</value>
+  </data>
+  <data name="AccDescrPremium" xml:space="preserve">
+    <value>Premium account</value>
   </data>
   <data name="AccDescrPrevious" xml:space="preserve">
     <value>Previous</value>
@@ -3948,6 +3954,9 @@ Duration: {1}</value>
   <data name="Fade" xml:space="preserve">
     <value>Fade</value>
   </data>
+  <data name="FakeMessage" xml:space="preserve">
+    <value>FAKE</value>
+  </data>
   <data name="FallbackTooltip" xml:space="preserve">
     <value>public photo</value>
   </data>
@@ -4670,6 +4679,9 @@ They can still join via an invite link as long as they are not on the Removed Us
   </data>
   <data name="IVInteractionsChartTitle" xml:space="preserve">
     <value>IV Interactions</value>
+  </data>
+  <data name="JoinGroup" xml:space="preserve">
+    <value>JOIN GROUP</value>
   </data>
   <data name="JoinRequests_one" xml:space="preserve">
     <value>{0} join request</value>
@@ -5911,6 +5923,9 @@ messages from multiple devices.</value>
   <data name="PaymentInvoice" xml:space="preserve">
     <value>INVOICE</value>
   </data>
+  <data name="PaymentInvoiceLinkInvalid" xml:space="preserve">
+    <value>Invalid invoice</value>
+  </data>
   <data name="PaymentNoShippingMethod" xml:space="preserve">
     <value>Sorry, it is not possible to deliver to your address.</value>
   </data>
@@ -7000,6 +7015,9 @@ The channel &quot;**{1}**&quot; will become private.</value>
   </data>
   <data name="SavingContentTitle" xml:space="preserve">
     <value>Content protection</value>
+  </data>
+  <data name="ScamMessage" xml:space="preserve">
+    <value>SCAM</value>
   </data>
   <data name="Schedule" xml:space="preserve">
     <value>Schedule</value>
