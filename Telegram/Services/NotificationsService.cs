@@ -575,7 +575,7 @@ namespace Telegram.Services
 
                 notifier.Show(notification);
 
-                if (soundFile != null)
+                if (soundFile != null && notifier.Setting == NotificationSetting.Enabled)
                 {
                     SoundEffects.Play(soundFile);
                 }
