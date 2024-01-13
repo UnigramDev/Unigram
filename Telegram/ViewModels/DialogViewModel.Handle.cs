@@ -539,6 +539,8 @@ namespace Telegram.ViewModels
                 {
                     using (await _loadMoreLock.WaitAsync())
                     {
+                        List<MessageViewModel> toBeDeleted = null;
+
                         for (int i = 0; i < Items.Count; i++)
                         {
                             var message = Items[i];
@@ -564,8 +566,9 @@ namespace Telegram.ViewModels
                                             invalidated = false;
 
                                             _groupedMessages.TryRemove(message.MediaAlbumId, out _);
-                                            Items.RemoveAt(i);
-                                            i--;
+
+                                            toBeDeleted ??= new();
+                                            toBeDeleted.Add(message);
                                         }
 
                                         found = true;
@@ -586,8 +589,8 @@ namespace Telegram.ViewModels
 
                             if (table.Contains(message.Id))
                             {
-                                Items.RemoveAt(i);
-                                i--;
+                                toBeDeleted ??= new();
+                                toBeDeleted.Add(message);
                             }
                             else if (message.ReplyTo is MessageReplyToMessage replyToMessage && table.Contains(replyToMessage.MessageId))
                             {
@@ -599,8 +602,18 @@ namespace Telegram.ViewModels
 
                             if (i >= 0 && i == Items.Count - 1 && Items[i].Content is MessageHeaderUnread)
                             {
-                                Items.RemoveAt(i);
-                                i--;
+                                toBeDeleted ??= new();
+                                toBeDeleted.Add(message);
+                            }
+                        }
+
+                        if (toBeDeleted != null)
+                        {
+                            //Delegate?.UpdateDeleteMessages(_chat, toBeDeleted);
+
+                            foreach (var item in toBeDeleted)
+                            {
+                                Items.Remove(item);
                             }
                         }
                     }

@@ -4818,6 +4818,77 @@ namespace Telegram.Views
             }
         }
 
+        public void UpdateDeleteMessages(Chat chat, IList<MessageViewModel> messages)
+        {
+            if (messages.Count > 1)
+            {
+                return;
+            }
+
+            if (_messageIdToSelector.TryGetValue(messages[0].Id, out SelectorItem selector))
+            {
+                AnimateSizeChanged(messages[0], selector);
+            }
+        }
+
+        private void AnimateSizeChanged(MessageViewModel message, SelectorItem selector)
+        {
+            var next = new Vector2(0, 0);
+            var prev = selector.ActualSize;
+
+            var diff = next.Y - prev.Y;
+
+            var panel = Messages.ItemsPanelRoot as ItemsStackPanel;
+            if (panel == null || prev.Y == next.Y || Math.Abs(diff) <= 2)
+            {
+                return;
+            }
+
+            var index = Messages.IndexFromContainer(selector);
+            //if (index < panel.LastVisibleIndex)
+            //{
+            //    return;
+            //}
+
+            if (index >= panel.FirstVisibleIndex && index <= panel.LastVisibleIndex)
+            {
+                var direction = panel.ItemsUpdatingScrollMode == ItemsUpdatingScrollMode.KeepItemsInView ? -1 : 1;
+                var edge = (index == panel.LastVisibleIndex && direction == 1) || index == panel.FirstVisibleIndex && direction == -1;
+
+                if (edge && !Messages.VisualContains(selector))
+                {
+                    direction *= -1;
+                }
+
+                var first = direction == 1 ? panel.FirstCacheIndex : index + 1;
+                var last = direction == 1 ? index : panel.LastCacheIndex;
+
+                var batch = Window.Current.Compositor.CreateScopedBatch(CompositionBatchTypes.Animation);
+                var anim = Window.Current.Compositor.CreateScalarKeyFrameAnimation();
+                anim.InsertKeyFrame(0, diff * direction);
+                anim.InsertKeyFrame(1, 0);
+                //anim.Duration = TimeSpan.FromSeconds(5);
+
+                for (int i = first; i <= last; i++)
+                {
+                    var container = Messages.ContainerFromIndex(i) as SelectorItem;
+                    if (container == null)
+                    {
+                        continue;
+                    }
+
+                    var child = VisualTreeHelper.GetChild(container, 0) as UIElement;
+                    if (child != null)
+                    {
+                        var visual = ElementCompositionPreview.GetElementVisual(child);
+                        visual.StartAnimation("Offset.Y", anim);
+                    }
+                }
+
+                batch.End();
+            }
+        }
+
         #endregion
 
         private void TextField_Sending(object sender, EventArgs e)

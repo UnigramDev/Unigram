@@ -42,6 +42,8 @@ namespace Telegram.ViewModels.Delegates
 
         void UpdateGroupCall(Chat chat, GroupCall groupCall);
 
+        void UpdateDeleteMessages(Chat chat, IList<MessageViewModel> messages);
+
 
 
         void PlayMessage(MessageViewModel message, FrameworkElement target);
