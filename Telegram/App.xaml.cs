@@ -404,6 +404,7 @@ namespace Telegram
                 SettingsPasswordPage => TypeResolver.Current.Resolve<SettingsPasswordViewModel>(sessionId),
                 SettingsPrivacyAndSecurityPage => TypeResolver.Current.Resolve<SettingsPrivacyAndSecurityViewModel>(sessionId),
                 SettingsProxyPage => TypeResolver.Current.Resolve<SettingsProxyViewModel>(sessionId),
+                SettingsProxyPopup => TypeResolver.Current.Resolve<SettingsProxyViewModel>(sessionId),
                 SettingsShortcutsPage => TypeResolver.Current.Resolve<SettingsShortcutsViewModel>(sessionId),
                 SettingsThemesPage => TypeResolver.Current.Resolve<SettingsThemesViewModel>(sessionId),
                 SettingsWebSessionsPage => TypeResolver.Current.Resolve<SettingsWebSessionsViewModel>(sessionId),

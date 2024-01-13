@@ -1351,6 +1351,9 @@
     <Compile Include="Views\Settings\LoginEmail\SettingsLoginEmailAddressPopup.xaml.cs">
       <DependentUpon>SettingsLoginEmailAddressPopup.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\Settings\SettingsProxyPopup.xaml.cs">
+      <DependentUpon>SettingsProxyPopup.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\Stories\Popups\StoryInteractionsPopup.xaml.cs">
       <DependentUpon>StoryInteractionsPopup.xaml</DependentUpon>
     </Compile>
@@ -2786,6 +2789,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Views\Settings\LoginEmail\SettingsLoginEmailAddressPopup.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\Settings\SettingsProxyPopup.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

@@ -372,5 +372,8 @@ namespace Telegram.Controls
             DependencyProperty.Register("ContentMaxHeight", typeof(double), typeof(ContentPopup), new PropertyMetadata(568d));
 
         #endregion
+
+        // TODO: terrible naming, this is used to prevent NavigatedFrom logic on temporary hide
+        public bool IsFinalized { get; set; } = true;
     }
 }

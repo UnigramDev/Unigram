@@ -9,6 +9,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Telegram.Collections;
 using Telegram.Common;
+using Telegram.Controls;
 using Telegram.Navigation;
 using Telegram.Navigation.Services;
 using Telegram.Services;
@@ -31,6 +32,8 @@ namespace Telegram.ViewModels.Settings
         private readonly INetworkService _networkService;
         private int _systemProxyId;
         private bool _ready;
+
+        public ContentPopup Popup { get; set; }
 
         public SettingsProxyViewModel(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator, INetworkService networkService)
             : base(clientService, settingsService, aggregator)
@@ -299,7 +302,8 @@ namespace Telegram.ViewModels.Settings
         public async void Add()
         {
             var popup = new ProxyPopup();
-            var confirm = await ShowPopupAsync(popup);
+
+            var confirm = await ShowPopupAsync2(popup);
             if (confirm != ContentDialogResult.Primary)
             {
                 return;
@@ -335,7 +339,8 @@ namespace Telegram.ViewModels.Settings
             SelectedItems.Clear();
 
             var popup = new ProxyPopup(connection);
-            var confirm = await ShowPopupAsync(popup);
+
+            var confirm = await ShowPopupAsync2(popup);
             if (confirm != ContentDialogResult.Primary)
             {
                 return;
@@ -359,7 +364,7 @@ namespace Telegram.ViewModels.Settings
         {
             SelectedItems.Clear();
 
-            var confirm = await ShowPopupAsync(Strings.DeleteProxyConfirm, Strings.DeleteProxyTitle, Strings.OK, Strings.Cancel);
+            var confirm = await ShowPopupAsync2(Strings.DeleteProxyConfirm, Strings.DeleteProxyTitle, Strings.OK, Strings.Cancel);
             if (confirm != ContentDialogResult.Primary)
             {
                 return;
@@ -379,7 +384,7 @@ namespace Telegram.ViewModels.Settings
             var selected = SelectedItems.ToList();
             SelectedItems.Clear();
 
-            var confirm = await ShowPopupAsync(Strings.DeleteProxyMultiConfirm, Strings.DeleteProxyTitle, Strings.OK, Strings.Cancel);
+            var confirm = await ShowPopupAsync2(Strings.DeleteProxyMultiConfirm, Strings.DeleteProxyTitle, Strings.OK, Strings.Cancel);
             if (confirm != ContentDialogResult.Primary)
             {
                 return;
@@ -411,6 +416,49 @@ namespace Telegram.ViewModels.Settings
             {
                 await ShowPopupAsync(typeof(ChooseChatsPopup), new ChooseChatsConfigurationPostLink(httpUrl));
             }
+        }
+
+        public async Task<ContentDialogResult> ShowPopupAsync2(string message, string title = null, string primary = null, string secondary = null, bool destructive = false)
+        {
+            if (Popup == null)
+            {
+                return await ShowPopupAsync(message, title, primary, secondary, destructive);
+            }
+
+            if (Popup != null)
+            {
+                Popup.IsFinalized = false;
+                Popup.Hide();
+                Popup.IsFinalized = true;
+            }
+
+            var confirm = await ShowPopupAsync(target: null, message, title, primary, secondary, destructive);
+
+            if (Popup != null)
+            {
+                _ = Popup.ShowQueuedAsync();
+            }
+
+            return confirm;
+        }
+
+        public async Task<ContentDialogResult> ShowPopupAsync2(ContentPopup popup)
+        {
+            if (Popup != null)
+            {
+                Popup.IsFinalized = false;
+                Popup.Hide();
+                Popup.IsFinalized = true;
+            }
+
+            var confirm = await ShowPopupAsync(popup);
+
+            if (Popup != null)
+            {
+                _ = Popup.ShowQueuedAsync();
+            }
+
+            return confirm;
         }
     }
 

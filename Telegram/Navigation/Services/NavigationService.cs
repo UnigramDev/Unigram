@@ -409,9 +409,12 @@ namespace Telegram.Navigation.Services
 
                     void OnClosed(ContentDialog sender, ContentDialogClosedEventArgs args)
                     {
-                        viewModel.NavigatedFrom(null, false);
-                        popup.OnNavigatedFrom();
-                        popup.Closed -= OnClosed;
+                        if (popup.IsFinalized)
+                        {
+                            viewModel.NavigatedFrom(null, false);
+                            popup.OnNavigatedFrom();
+                            popup.Closed -= OnClosed;
+                        }
                     }
 
                     popup.DataContext = viewModel;
