@@ -91,6 +91,8 @@ namespace Telegram.Controls
 
         public bool AdjustLineEnding { get; set; }
 
+        public bool HasLineEnding { get; private set; }
+
         private bool _hasCodeBlocks;
         public bool HasCodeBlocks
         {
@@ -235,14 +237,6 @@ namespace Telegram.Controls
 
             _query = null;
             _spoiler = null;
-        }
-
-        private void Adjust()
-        {
-            if (TextBlock?.Blocks.Count > 0 && TextBlock.Blocks[^1] is Paragraph existing)
-            {
-                TextBlock.Blocks.Add(new Paragraph());
-            }
         }
 
         public bool IgnoreSpoilers
@@ -694,38 +688,38 @@ namespace Telegram.Controls
                 _spoiler = null;
             }
 
+            var topPadding = 0d;
+            var bottomPadding = 0d;
+
             if (firstType is TextParagraphTypeMonospace { Language.Length: > 0 })
             {
-                Below.Margin = new Thickness(0, 22 + 6, 0, 0);
-                TextBlock.Margin = new Thickness(0, 22 + 6, 0, 0);
+                topPadding = 22 + 6;
             }
             else if (firstType is not null)
             {
-                Below.Margin = new Thickness(0, 6, 0, 0);
-                TextBlock.Margin = new Thickness(0, 6, 0, 0);
-            }
-            else
-            {
-                Below.Margin = new Thickness();
-                TextBlock.Margin = new Thickness();
+                topPadding = 6;
             }
 
             if (AdjustLineEnding && styled.Paragraphs.Count > 0)
             {
-                var direction = styled.Paragraphs[^1].Direction;
-                if (direction == TextDirectionality.RightToLeft && LocaleService.Current.FlowDirection == FlowDirection.LeftToRight)
+                var locale = LocaleService.Current.FlowDirection;
+                var direction = styled.Paragraphs[^1].Direction switch
                 {
-                    Adjust();
-                }
-                else if (direction == TextDirectionality.LeftToRight && LocaleService.Current.FlowDirection == FlowDirection.RightToLeft)
+                    TextDirectionality.LeftToRight => FlowDirection.LeftToRight,
+                    TextDirectionality.RightToLeft => FlowDirection.RightToLeft,
+                    _ => locale
+                };
+
+                if (direction != locale || lastType is not null)
                 {
-                    Adjust();
-                }
-                else if (lastType is not null)
-                {
-                    Adjust();
+                    bottomPadding = Theme.Current.MessageFontSize * 1.33;
                 }
             }
+
+            HasLineEnding = bottomPadding > 0;
+
+            Below.Margin = new Thickness(0, topPadding, 0, 0);
+            TextBlock.Margin = new Thickness(0, topPadding, 0, 0);
         }
 
         private void OnSizeChanged(object sender, SizeChangedEventArgs e)

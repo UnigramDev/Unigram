@@ -172,12 +172,16 @@ namespace Telegram.Controls.Messages
                 var maxWidth = availableWidth;
                 var footerWidth = footer.DesiredSize.Width + footer.Margin.Left + footer.Margin.Right;
 
-                if (ForceNewLine)
+                var fontSize = Theme.Current.MessageFontSize * BootStrapper.Current.TextScaleFactor;
+
+                if (text.HasLineEnding)
+                {
+                    return new Size(0, fontSize * 1.33);
+                }
+                else if (ForceNewLine)
                 {
                     return new Size(Math.Max(0, footerWidth - 16), 0);
                 }
-
-                var fontSize = Theme.Current.MessageFontSize * BootStrapper.Current.TextScaleFactor;
 
                 var width = text.DesiredSize.Width;
                 var bounds = ContentEnd(availableWidth, fontSize);
