@@ -5,6 +5,7 @@
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
 
+using System;
 using Telegram.Common;
 
 namespace Telegram.Services.Settings
@@ -105,6 +106,17 @@ namespace Telegram.Services.Settings
         {
             get => _lastCrashWasLayoutCycle ??= GetValueOrDefault("LastCrashWasLayoutCycle", false);
             set => AddOrUpdateValue(ref _lastCrashWasLayoutCycle, "LastCrashWasLayoutCycle", value);
+        }
+
+        private DateTime? _lasCrashReported;
+        public DateTime LastCrashReported
+        {
+            get => _lasCrashReported ??= DateTime.FromFileTimeUtc(GetValueOrDefault("LastCrashReported", 2650467743999999999 /* DateTime.MaxValue */));
+            set
+            {
+                _lasCrashReported = value;
+                AddOrUpdateValue("LastCrashReported", value.ToFileTimeUtc());
+            }
         }
 
         private bool? _hidePhoneNumber;

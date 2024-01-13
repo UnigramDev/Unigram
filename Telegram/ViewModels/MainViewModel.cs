@@ -413,7 +413,7 @@ namespace Telegram.ViewModels
                 Task.Run(() => _cloudUpdateService.UpdateAsync(false));
             }
 
-            if (ApiInfo.IsPackagedRelease && WatchDog.HasCrashedInLastSession && !_shown)
+            if (ApiInfo.IsPackagedRelease && WatchDog.HasCrashedInLastSession && !_shown && DateTime.UtcNow.Date != SettingsService.Current.Diagnostics.LastCrashReported.Date)
             {
                 _shown = true;
 
@@ -433,7 +433,18 @@ namespace Telegram.ViewModels
                     var confirm = await ShowPopupAsync("It seems that the app terminated unexpectedly. Do you want to report this problem?", "Something went wrong", "OK", "Cancel");
                     if (confirm == ContentDialogResult.Primary)
                     {
-                        MessageHelper.NavigateToUsername(ClientService, NavigationService, "unigraminsiders", null, null);
+                        SettingsService.Current.Diagnostics.LastCrashReported = DateTime.UtcNow;
+
+                        var chat = await ClientService.SendAsync(new SearchPublicChat("unigraminsiders")) as Chat;
+                        if (chat != null)
+                        {
+                            var service = new DeviceInfoService();
+                            var payload = "Hi, I just had a crash, can you please help me? My app version is {0}, running {1} on a {2}.";
+                            payload = string.Format(payload, service.ApplicationVersion, service.FullSystemVersion, service.DeviceModel);
+
+                            ClientService.Send(new SendMessage(chat.Id, 0, null, null, null, new InputMessageText(new FormattedText(payload, Array.Empty<TextEntity>()), null, false)));
+                            NavigationService.NavigateToChat(chat);
+                        }
                     }
                 }
             }
