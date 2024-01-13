@@ -136,7 +136,7 @@ namespace Telegram.Views
 
             InitializeStickers();
 
-            //CompositionExtensions.GetElementVisual(this).Clip = Window.Current.Compositor.CreateInsetClip();
+            //ElementComposition.GetElementVisual(this).Clip = Window.Current.Compositor.CreateInsetClip();
             ElementCompositionPreview.SetIsTranslationEnabled(ButtonMore, true);
             ElementCompositionPreview.SetIsTranslationEnabled(TextFieldPanel, true);
             ElementCompositionPreview.SetIsTranslationEnabled(btnAttach, true);
@@ -4413,7 +4413,7 @@ namespace Telegram.Views
                 ShowHideAutocomplete(false);
 
                 //var diff = (float)ListAutocomplete.ActualHeight;
-                //var visual = CompositionExtensions.GetElementVisual(ListAutocomplete);
+                //var visual = ElementComposition.GetElementVisual(ListAutocomplete);
 
                 //var anim = Window.Current.Compositor.CreateSpringVector3Animation();
                 //anim.InitialValue = new Vector3();

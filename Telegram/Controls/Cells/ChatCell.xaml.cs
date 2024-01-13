@@ -973,7 +973,7 @@ namespace Telegram.Controls.Cells
 
             //ElementCompositionPreview.SetIsTranslationEnabled(LayoutRoot, true);
 
-            //var visual = CompositionExtensions.GetElementVisual(LayoutRoot);
+            //var visual = ElementComposition.GetElementVisual(LayoutRoot);
             //visual.Clip ??= visual.Compositor.CreateInsetClip();
 
             //var x = LayoutRoot.ActualSize.X + 24;

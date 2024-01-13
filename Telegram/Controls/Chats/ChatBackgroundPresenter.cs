@@ -330,7 +330,7 @@ namespace Telegram.Controls.Chats
                 };
             }
 
-            //var visual = CompositionExtensions.GetElementVisual(Canvas);
+            //var visual = ElementComposition.GetElementVisual(Canvas);
             //var animation = visual.Compositor.CreateScalarKeyFrameAnimation();
             //animation.InsertKeyFrame(0, 0);
             //animation.InsertKeyFrame(1, 1);

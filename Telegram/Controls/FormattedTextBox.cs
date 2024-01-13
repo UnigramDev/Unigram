@@ -197,7 +197,7 @@ namespace Telegram.Controls
 
             var props = ElementCompositionPreview.GetScrollViewerManipulationPropertySet(ContentElement);
             var visual = ElementComposition.GetElementVisual(Blocks);
-            //var wrap = CompositionExtensions.GetElementVisual(Wrap);
+            //var wrap = ElementComposition.GetElementVisual(Wrap);
 
             //wrap.Clip = visual.Compositor.CreateInsetClip();
 

@@ -28,11 +28,11 @@ namespace Telegram.Controls.Chats
 
             ElementCompositionPreview.SetIsTranslationEnabled(Ellipse, true);
 
-            _ellipseVisual = CompositionExtensions.GetElementVisual(Ellipse);
-            _elapsedVisual = CompositionExtensions.GetElementVisual(ElapsedPanel);
-            _slideVisual = CompositionExtensions.GetElementVisual(SlidePanel);
-            _recordVisual = CompositionExtensions.GetElementVisual(this);
-            _rootVisual = CompositionExtensions.GetElementVisual(this);
+            _ellipseVisual = ElementComposition.GetElementVisual(Ellipse);
+            _elapsedVisual = ElementComposition.GetElementVisual(ElapsedPanel);
+            _slideVisual = ElementComposition.GetElementVisual(SlidePanel);
+            _recordVisual = ElementComposition.GetElementVisual(this);
+            _rootVisual = ElementComposition.GetElementVisual(this);
 
             _ellipseVisual.CenterPoint = new Vector3(80);
             _ellipseVisual.Scale = new Vector3(0);

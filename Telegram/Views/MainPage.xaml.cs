@@ -659,8 +659,8 @@ namespace Telegram.Views
             ChatsList.Margin = new Thickness(0, topPadding, 0, 0);
             DialogsPanel.Margin = new Thickness(0, 0, 0, -40);
 
-            var visual = CompositionExtensions.GetElementVisual(DialogsPanel);
-            var header = CompositionExtensions.GetElementVisual(ChatTabsView);
+            var visual = ElementComposition.GetElementVisual(DialogsPanel);
+            var header = ElementComposition.GetElementVisual(ChatTabsView);
             header.Clip = visual.Compositor.CreateInsetClip();
 
             var batch = visual.Compositor.CreateScopedBatch(CompositionBatchTypes.Animation);
@@ -732,10 +732,10 @@ namespace Telegram.Views
             ChatTabsLeft.Visibility = Visibility.Visible;
             ChatsList.Margin = new Thickness(0, Stories.TopPadding, 0, -40);
 
-            var parent = CompositionExtensions.GetElementVisual(ChatsList);
+            var parent = ElementComposition.GetElementVisual(ChatsList);
 
-            var visual = CompositionExtensions.GetElementVisual(element);
-            var header = CompositionExtensions.GetElementVisual(ChatTabsView);
+            var visual = ElementComposition.GetElementVisual(element);
+            var header = ElementComposition.GetElementVisual(ChatTabsView);
 
             parent.Clip = null;
 
@@ -959,8 +959,8 @@ namespace Telegram.Views
             Playback.Visibility = Visibility.Visible;
             await Playback.UpdateLayoutAsync();
 
-            var detail = CompositionExtensions.GetElementVisual(MasterDetail.NavigationService.Frame);
-            var playback = CompositionExtensions.GetElementVisual(Playback);
+            var detail = ElementComposition.GetElementVisual(MasterDetail.NavigationService.Frame);
+            var playback = ElementComposition.GetElementVisual(Playback);
 
             var batch = detail.Compositor.CreateScopedBatch(CompositionBatchTypes.Animation);
             batch.Completed += (s, args) =>
@@ -1854,8 +1854,8 @@ namespace Telegram.Views
                 Stories.Collapse();
             }
 
-            var chats = CompositionExtensions.GetElementVisual(DialogsPanel);
-            var panel = CompositionExtensions.GetElementVisual(DialogsSearchPanel);
+            var chats = ElementComposition.GetElementVisual(DialogsPanel);
+            var panel = ElementComposition.GetElementVisual(DialogsSearchPanel);
 
             chats.CenterPoint = panel.CenterPoint = new Vector3(DialogsPanel.ActualSize / 2, 0);
 
@@ -2360,12 +2360,12 @@ namespace Telegram.Views
                 ToggleActiveCompleted();
             }
 
-            var presenter = CompositionExtensions.GetElementVisual(ArchivedChatsPresenter);
-            var parent = CompositionExtensions.GetElementVisual(ChatsList);
+            var presenter = ElementComposition.GetElementVisual(ArchivedChatsPresenter);
+            var parent = ElementComposition.GetElementVisual(ChatsList);
 
-            var chats = CompositionExtensions.GetElementVisual(element);
-            var panel = CompositionExtensions.GetElementVisual(ArchivedChatsPanel);
-            //var compact = CompositionExtensions.GetElementVisual(ArchivedChatsCompactPanel);
+            var chats = ElementComposition.GetElementVisual(element);
+            var panel = ElementComposition.GetElementVisual(ArchivedChatsPanel);
+            //var compact = ElementComposition.GetElementVisual(ArchivedChatsCompactPanel);
 
             presenter.Clip = chats.Compositor.CreateInsetClip();
             parent.Clip = chats.Compositor.CreateInsetClip();
@@ -2448,8 +2448,8 @@ namespace Telegram.Views
                 await ArchivedChatsPanel.UpdateLayoutAsync();
             }
 
-            var parent = CompositionExtensions.GetElementVisual(ChatsList);
-            var chats = CompositionExtensions.GetElementVisual(element);
+            var parent = ElementComposition.GetElementVisual(ChatsList);
+            var chats = ElementComposition.GetElementVisual(element);
 
             parent.Clip = chats.Compositor.CreateInsetClip();
             chats.StopAnimation("Offset");
@@ -2560,7 +2560,7 @@ namespace Telegram.Views
             _manageCollapsed = !show;
             ManagePanel.Visibility = Visibility.Visible;
 
-            var manage = CompositionExtensions.GetElementVisual(ManagePanel);
+            var manage = ElementComposition.GetElementVisual(ManagePanel);
             //manage.Offset = new Vector3(show ? -20 : 12, 8, 0);
             manage.Opacity = show ? 0 : 1;
 
@@ -3341,8 +3341,8 @@ namespace Telegram.Views
 
             var scrollingHost = VisualTreeHelper.GetChild(element, 1) as UIElement;
 
-            var chats = CompositionExtensions.GetElementVisual(element);
-            var panel = CompositionExtensions.GetElementVisual(TopicListPresenter);
+            var chats = ElementComposition.GetElementVisual(element);
+            var panel = ElementComposition.GetElementVisual(TopicListPresenter);
 
             var compositor = chats.Compositor;
 
@@ -3408,7 +3408,7 @@ namespace Telegram.Views
                 return;
             }
 
-            var chats = CompositionExtensions.GetElementVisual(element);
+            var chats = ElementComposition.GetElementVisual(element);
             if (chats.Clip is InsetClip inset && inset.RightInset != 0 && TopicListPresenter != null)
             {
                 inset.RightInset = TopicListPresenter.ActualSize.X;
