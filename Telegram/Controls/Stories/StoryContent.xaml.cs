@@ -267,7 +267,7 @@ namespace Telegram.Controls.Stories
             var clip1 = compositor.CreateGeometricClip(geometry1);
             root.Clip = clip1;
 
-            if (story == null)
+            if (story == null || _unloaded)
             {
                 return;
             }
@@ -648,7 +648,7 @@ namespace Telegram.Controls.Stories
         {
             CollapseCaption();
 
-            if (story.Content is StoryContentVideo video)
+            if (story.Content is StoryContentVideo video && !_unloaded)
             {
                 Progress.Update(_viewModel.Items.IndexOf(_viewModel.SelectedItem), _viewModel.Items.Count, video.Video.Duration);
 
@@ -678,7 +678,7 @@ namespace Telegram.Controls.Stories
                     FindName(nameof(Video));
                 }
             }
-            else if (!_loading)
+            else if (!_loading && !_unloaded)
             {
                 _timer.Stop();
                 _timer.Start();
@@ -1149,6 +1149,11 @@ namespace Telegram.Controls.Stories
 
         private void Video_Initialized(object sender, LibVLCSharp.Platforms.Windows.InitializedEventArgs e)
         {
+            if (_unloaded)
+            {
+                return;
+            }
+
             // Generating plugins cache requires a breakpoint in bank.c#662
             _library = new LibVLC(e.SwapChainOptions); //"--quiet", "--reset-plugins-cache");
             //_library.Log += _library_Log;

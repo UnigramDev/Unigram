@@ -108,16 +108,27 @@ namespace Telegram.Controls.Gallery
             _inactivityTimer.Stop();
             ShowHideTransport(true);
 
-            var point = e.GetCurrentPoint(Controls);
-            if (point.Position.X < 0
-                || point.Position.Y < 0
-                || point.Position.X > Controls.ActualWidth
-                || point.Position.Y > Controls.ActualHeight)
+            base.OnPointerMoved(e);
+
+            if (e.OriginalSource is FrameworkElement element)
             {
-                _inactivityTimer.Start();
+                var button = element.GetParentOrSelf<ButtonBase>();
+                if (button != null)
+                {
+                    return;
+                }
             }
 
-            base.OnPointerMoved(e);
+            _inactivityTimer.Start();
+
+            //var point = e.GetCurrentPoint(Controls);
+            //if (point.Position.X < 0
+            //    || point.Position.Y < 0
+            //    || point.Position.X > Controls.ActualWidth
+            //    || point.Position.Y > Controls.ActualHeight)
+            //{
+            //    _inactivityTimer.Start();
+            //}
         }
 
         private void OnPointerReleased(object sender, PointerRoutedEventArgs e)
@@ -150,15 +161,17 @@ namespace Telegram.Controls.Gallery
         }
 
         private bool _transportCollapsed = false;
+        private bool _transportFocused = false;
 
         private void ShowHideTransport(bool show)
         {
-            if (show != _transportCollapsed)
+            if (show != _transportCollapsed || (_transportFocused && !show))
             {
                 return;
             }
 
             _transportCollapsed = !show;
+            BottomPanel.IsHitTestVisible = false;
             BottomPanel.Visibility = Visibility.Visible;
 
             var parent = ElementComposition.GetElementVisual(BottomPanel);
@@ -171,10 +184,7 @@ namespace Telegram.Controls.Gallery
             var batch = parent.Compositor.CreateScopedBatch(CompositionBatchTypes.Animation);
             batch.Completed += (s, args) =>
             {
-                if (_transportCollapsed)
-                {
-                    BottomPanel.Visibility = Visibility.Collapsed;
-                }
+                BottomPanel.IsHitTestVisible = !_transportCollapsed;
             };
 
             var opacity = parent.Compositor.CreateScalarKeyFrameAnimation();
@@ -186,6 +196,21 @@ namespace Telegram.Controls.Gallery
             back.StartAnimation("Opacity", opacity);
 
             batch.End();
+        }
+
+        private void Transport_GotFocus(object sender, RoutedEventArgs e)
+        {
+            if (e.OriginalSource is Control control && control.FocusState is FocusState.Keyboard or FocusState.Programmatic)
+            {
+                _transportFocused = true;
+                ShowHideTransport(true);
+            }
+        }
+
+        private void Transport_LostFocus(object sender, RoutedEventArgs e)
+        {
+            _transportFocused = false;
+            _inactivityTimer.Start();
         }
 
         public void Handle(UpdateDeleteMessages update)
@@ -781,7 +806,7 @@ namespace Telegram.Controls.Gallery
         protected override Size ArrangeOverride(Size finalSize)
         {
             LayoutRoot.Width = finalSize.Width;
-            LayoutRoot.Height = finalSize.Height - Padding.Top;
+            LayoutRoot.Height = Math.Max(0, finalSize.Height - Padding.Top);
 
             // TODO: setting a max width/height to the element causes a weird clipping effect if
             // the final calculated size is actually larger than that to accomodate for rotation
@@ -1093,13 +1118,18 @@ namespace Telegram.Controls.Gallery
         {
             if (LayoutRoot.CurrentElement is AspectView view)
             {
-                ViewModel.SelectedItem.RotationAngle = view.RotationAngle = view.RotationAngle switch
+                view.RotationAngle = view.RotationAngle switch
                 {
                     RotationAngle.Angle0 => RotationAngle.Angle270,
                     RotationAngle.Angle270 => RotationAngle.Angle180,
                     RotationAngle.Angle180 => RotationAngle.Angle90,
                     _ => RotationAngle.Angle0
                 };
+
+                if (ViewModel.SelectedItem != null)
+                {
+                    ViewModel.SelectedItem.RotationAngle = view.RotationAngle;
+                }
             }
         }
 
