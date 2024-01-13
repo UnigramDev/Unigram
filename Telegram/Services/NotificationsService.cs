@@ -754,7 +754,14 @@ namespace Telegram.Services
             var brief = ChatCell.UpdateBriefLabel(chat, message, false, true, out _);
             var clean = brief.ReplaceSpoilers();
 
-            return ChatCell.UpdateFromLabel(_clientService, chat, message) + clean.Text;
+            var content = ChatCell.UpdateFromLabel(_clientService, chat, message) + clean.Text;
+
+            if (message.SenderId.IsUser(_clientService.Options.MyId))
+            {
+                return string.Format("\U0001F4C5 {0}", content);
+            }
+
+            return content;
         }
 
         private string GetPhoto(Chat chat)
