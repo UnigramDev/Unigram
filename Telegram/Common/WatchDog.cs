@@ -84,8 +84,6 @@ namespace Telegram
 
             BootStrapper.Current.UnhandledException += (s, args) =>
             {
-                Logger.Error("UnhandledException 0x" + args.Exception.HResult.ToString("X4"));
-
                 if (args.Exception is LayoutCycleException)
                 {
                     Analytics.TrackEvent("LayoutCycleException", new Dictionary<string, string>
@@ -255,21 +253,26 @@ namespace Telegram
                 $"Memory usage level: {MemoryManager.AppMemoryUsageLevel}\n" +
                 $"Memory usage limit: {memoryUsageLimit}\n" +
                 $"Time since last update: {next - prev}s\n" +
-                $"Update count: {count}\n" + 
+                $"Update count: {count}\n" +
                 $"Layout rounding: {SettingsService.Current.Diagnostics.UseLayoutRounding}\n" +
-                $"Tabs on the left: {SettingsService.Current.IsLeftTabsEnabled}\n" +
-                $"HRESULT: 0x{exception.HResult:X4}\n";
+                $"Tabs on the left: {SettingsService.Current.IsLeftTabsEnabled}\n";
 
             if (WindowContext.Current != null)
             {
                 var scaling = (WindowContext.Current.RasterizationScale * 100).ToString("N0");
+                var text = (BootStrapper.Current.TextScaleFactor * 100).ToString("N0");
                 var size = WindowContext.Current.Size;
 
+                var ratio = SettingsService.Current.DialogsWidthRatio;
+                var width = MasterDetailPanel.CountDialogsWidthFromRatio(size.Width, ratio);
+
                 info += $"Screen scaling: {scaling}%\n" +
-                    $"Window size: {size.Width}x{size.Height}\n";
+                    $"Text scaling: {text}%\n" +
+                    $"Window size: {size.Width}x{size.Height}\n" +
+                    $"Column width: {ratio} ({width})\n";
             }
 
-            info += "\n";
+            info += $"HRESULT: 0x{exception.HResult:X4}\n" + "\n";
 
             var dump = Logger.Dump();
             var payload = info + dump;
