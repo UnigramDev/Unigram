@@ -397,10 +397,11 @@ namespace Telegram.Controls
                 return PlaceholderImage.GetGlyph(Icons.GhostFilled, long.MinValue);
             }
 
-            if (chat.Photo?.Minithumbnail != null)
+            var minithumbnail = chat.Photo?.Minithumbnail;
+            if (minithumbnail != null)
             {
                 var bitmap = new BitmapImage();
-                PlaceholderHelper.GetBlurred(bitmap, chat.Photo.Minithumbnail.Data);
+                PlaceholderHelper.GetBlurred(bitmap, minithumbnail.Data);
                 return bitmap;
             }
 
@@ -470,10 +471,11 @@ namespace Telegram.Controls
                 return PlaceholderImage.GetGlyph(Icons.GhostFilled, long.MinValue);
             }
 
-            if (user.ProfilePhoto?.Minithumbnail != null)
+            var minithumbnail = user.ProfilePhoto?.Minithumbnail;
+            if (minithumbnail != null)
             {
                 var bitmap = new BitmapImage();
-                PlaceholderHelper.GetBlurred(bitmap, user.ProfilePhoto.Minithumbnail.Data);
+                PlaceholderHelper.GetBlurred(bitmap, minithumbnail.Data);
                 return bitmap;
             }
 
