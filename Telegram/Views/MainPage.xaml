@@ -134,7 +134,6 @@
                     </Canvas>
 
                     <controls:CustomEmojiIcon x:Name="LogoEmoji"
-                                              x:Load="False"
                                               HorizontalAlignment="Center"
                                               VerticalAlignment="Center" />
                 </Grid>

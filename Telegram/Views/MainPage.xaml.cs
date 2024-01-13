@@ -833,16 +833,15 @@ namespace Telegram.Views
             {
                 LogoBasic.Visibility = Visibility.Collapsed;
                 LogoPremium.Visibility = Visibility.Collapsed;
-
-                FindName(nameof(LogoEmoji));
+                LogoEmoji.Visibility = Visibility.Visible;
                 LogoEmoji.Source = new CustomEmojiFileSource(_clientService, user.EmojiStatus.CustomEmojiId);
             }
             else
             {
                 LogoBasic.Visibility = _clientService.IsPremium ? Visibility.Collapsed : Visibility.Visible;
                 LogoPremium.Visibility = _clientService.IsPremium ? Visibility.Visible : Visibility.Collapsed;
-
-                UnloadObject(LogoEmoji);
+                LogoEmoji.Visibility = Visibility.Collapsed;
+                LogoEmoji.Source = null;
             }
         }
 
