@@ -27,7 +27,7 @@ namespace Telegram.Entities
 
         public int Duration { get; private set; }
 
-        public static new async Task<StorageAudio> CreateAsync(StorageFile file)
+        public static async Task<StorageAudio> CreateAsync(StorageFile file, BasicProperties basic)
         {
             try
             {
@@ -36,7 +36,6 @@ namespace Telegram.Entities
                     return null;
                 }
 
-                var basic = await file.GetBasicPropertiesAsync();
                 var audio = await file.Properties.GetMusicPropertiesAsync();
 
                 return new StorageAudio(file, basic, audio);

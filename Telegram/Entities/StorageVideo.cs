@@ -42,7 +42,7 @@ namespace Telegram.Entities
         public override uint Width => Properties.GetWidth();
         public override uint Height => Properties.GetHeight();
 
-        public static new async Task<StorageVideo> CreateAsync(StorageFile file)
+        public static async Task<StorageVideo> CreateAsync(StorageFile file, BasicProperties basic)
         {
             try
             {
@@ -57,9 +57,7 @@ namespace Telegram.Entities
                     return null;
                 }
 
-                var basic = await file.GetBasicPropertiesAsync();
                 var video = await file.Properties.GetVideoPropertiesAsync();
-
                 if ((video.Width > 0 && video.Height > 0) || (profile.Video.Width > 0 && profile.Video.Height > 0))
                 {
                     return new StorageVideo(file, basic, video, profile);

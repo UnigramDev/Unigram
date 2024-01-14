@@ -155,6 +155,26 @@ namespace Telegram.Views.Popups
         {
             InitializeComponent();
 
+            var builder = new StringBuilder();
+
+            foreach (var item in items)
+            {
+                switch (item)
+                {
+                    case StoragePhoto photo:
+                        builder.Prepend(string.Format("photo {0}x{1}", photo.Width, photo.Height), ", ");
+                        break;
+                    case StorageVideo video:
+                        builder.Prepend(string.Format("video {0}x{1}", video.Width, video.Height), ", ");
+                        break;
+                    default:
+                        builder.Prepend("file", ", ");
+                        break;
+                }
+            }
+
+            Logger.Info(builder);
+
             PrimaryButtonText = Strings.Send;
             SecondaryButtonText = Strings.Cancel;
 
@@ -454,7 +474,7 @@ namespace Telegram.Views.Popups
                             destination.GetOutputStreamAt(0));
                     }
 
-                    var photo = await StoragePhoto.CreateAsync(cache);
+                    var photo = await StorageMedia.CreateAsync(cache);
                     if (photo != null)
                     {
                         Items.Add(photo);

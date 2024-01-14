@@ -177,14 +177,47 @@ namespace Telegram.Entities
             {
                 return null;
             }
-            else if (file.ContentType.Equals("video/mp4"))
+
+            BasicProperties basicProperties;
+            try
             {
-                return await StorageVideo.CreateAsync(file);
+                basicProperties = await file.GetBasicPropertiesAsync();
             }
-            else
+            catch
             {
-                return await StoragePhoto.CreateAsync(file);
+                return null;
             }
+
+            if (file.FileType.Equals(".jpeg", StringComparison.OrdinalIgnoreCase) ||
+                file.FileType.Equals(".jpg", StringComparison.OrdinalIgnoreCase) ||
+                file.FileType.Equals(".png", StringComparison.OrdinalIgnoreCase) ||
+                file.FileType.Equals(".bmp", StringComparison.OrdinalIgnoreCase) ||
+                file.FileType.Equals(".gif", StringComparison.OrdinalIgnoreCase))
+            {
+                var photo = await StoragePhoto.CreateAsync(file, basicProperties);
+                if (photo != null)
+                {
+                    return photo;
+                }
+            }
+            else if (file.FileType.Equals(".mp4", StringComparison.OrdinalIgnoreCase))
+            {
+                var video = await StorageVideo.CreateAsync(file, basicProperties);
+                if (video != null)
+                {
+                    return video;
+                }
+            }
+            else if (file.ContentType.StartsWith("audio/", StringComparison.OrdinalIgnoreCase))
+            {
+                var audio = await StorageAudio.CreateAsync(file, basicProperties);
+                if (audio != null)
+                {
+                    return audio;
+                }
+            }
+
+            return new StorageDocument(file, basicProperties);
         }
 
         public static async Task<IList<StorageMedia>> CreateAsync(IEnumerable<IStorageItem> items)
@@ -193,49 +226,10 @@ namespace Telegram.Entities
 
             foreach (StorageFile file in items.OfType<StorageFile>())
             {
-                if (file.FileType.Equals(".jpeg", StringComparison.OrdinalIgnoreCase) ||
-                    file.FileType.Equals(".jpg", StringComparison.OrdinalIgnoreCase) ||
-                    file.FileType.Equals(".png", StringComparison.OrdinalIgnoreCase) ||
-                    file.FileType.Equals(".bmp", StringComparison.OrdinalIgnoreCase) ||
-                    file.FileType.Equals(".gif", StringComparison.OrdinalIgnoreCase))
+                var media = await CreateAsync(file);
+                if (media != null)
                 {
-                    var photo = await StoragePhoto.CreateAsync(file);
-                    if (photo != null)
-                    {
-                        results.Add(photo);
-                    }
-                    else
-                    {
-                        results.Add(new StorageDocument(file, await file.GetBasicPropertiesAsync()));
-                    }
-                }
-                else if (file.FileType.Equals(".mp4", StringComparison.OrdinalIgnoreCase))
-                {
-                    var video = await StorageVideo.CreateAsync(file);
-                    if (video != null)
-                    {
-                        results.Add(video);
-                    }
-                    else
-                    {
-                        results.Add(new StorageDocument(file, await file.GetBasicPropertiesAsync()));
-                    }
-                }
-                else if (file.ContentType.StartsWith("audio/", StringComparison.OrdinalIgnoreCase))
-                {
-                    var audio = await StorageAudio.CreateAsync(file);
-                    if (audio != null)
-                    {
-                        results.Add(audio);
-                    }
-                    else
-                    {
-                        results.Add(new StorageDocument(file, await file.GetBasicPropertiesAsync()));
-                    }
-                }
-                else
-                {
-                    results.Add(new StorageDocument(file, await file.GetBasicPropertiesAsync()));
+                    results.Add(media);
                 }
             }
 

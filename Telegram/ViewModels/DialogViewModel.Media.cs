@@ -125,7 +125,6 @@ namespace Telegram.ViewModels
                 if (package.AvailableFormats.Contains(StandardDataFormats.Bitmap))
                 {
                     var bitmap = await package.GetBitmapAsync();
-                    var media = new List<StorageFile>();
 
                     var fileName = string.Format("image_{0:yyyy}-{0:MM}-{0:dd}_{0:HH}-{0:mm}-{0:ss}.png", DateTime.Now);
                     var cache = await ApplicationData.Current.TemporaryFolder.CreateFileAsync(fileName, CreationCollisionOption.GenerateUniqueName);
@@ -138,31 +137,39 @@ namespace Telegram.ViewModels
                             destination.GetOutputStreamAt(0));
                     }
 
-                    media.Add(cache);
-
-                    var captionElements = new List<string>();
-
-                    if (package.AvailableFormats.Contains(StandardDataFormats.Text))
+                    var media = await StorageMedia.CreateAsync(cache);
+                    if (media == null)
                     {
-                        var text = await package.GetTextAsync();
-                        captionElements.Add(text);
+                        return;
                     }
 
-                    FormattedText caption = null;
-                    if (captionElements.Count > 0)
-                    {
-                        var resultCaption = string.Join(Environment.NewLine, captionElements);
-                        caption = new FormattedText(resultCaption, Array.Empty<TextEntity>())
-                            .Substring(0, ClientService.Options.MessageCaptionLengthMax);
-                    }
+                    media.IsScreenshot = true;
 
-                    var items = await StorageMedia.CreateAsync(media);
-                    if (items.Count > 0)
+                    var header = _composerHeader;
+                    if (header?.EditingMessage != null)
                     {
-                        items[0].IsScreenshot = true;
+                        await EditMediaAsync(media);
                     }
+                    else
+                    {
+                        var captionElements = new List<string>();
 
-                    SendFileExecute(items, caption);
+                        if (package.AvailableFormats.Contains(StandardDataFormats.Text))
+                        {
+                            var text = await package.GetTextAsync();
+                            captionElements.Add(text);
+                        }
+
+                        FormattedText caption = null;
+                        if (captionElements.Count > 0)
+                        {
+                            var resultCaption = string.Join(Environment.NewLine, captionElements);
+                            caption = new FormattedText(resultCaption, Array.Empty<TextEntity>())
+                                .Substring(0, ClientService.Options.MessageCaptionLengthMax);
+                        }
+
+                        SendFileExecute(new[] { media }, caption);
+                    }
                 }
                 else if (package.AvailableFormats.Contains(StandardDataFormats.WebLink))
                 {
@@ -308,14 +315,17 @@ namespace Telegram.ViewModels
 
         public async Task EditMediaAsync(StorageFile file)
         {
+            var storage = await StorageMedia.CreateAsync(file);
+            if (storage != null)
+            {
+                await EditMediaAsync(storage);
+            }
+        }
+
+        public async Task EditMediaAsync(StorageMedia storage)
+        {
             var header = _composerHeader;
             if (header?.EditingMessage == null)
-            {
-                return;
-            }
-
-            var storage = await StorageMedia.CreateAsync(file);
-            if (storage == null)
             {
                 return;
             }
