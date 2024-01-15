@@ -35,7 +35,7 @@ namespace Telegram.Controls
                 _ => Strings.UnlockPremium
             };
 
-            return Show(Extensions.ReplacePremiumLink(text), new LocalFileSource("ms-appx:///Assets/Toasts/Info.tgs"));
+            return Show(Extensions.ReplacePremiumLink(text), new LocalFileSource("ms-appx:///Assets/Toasts/Premium.tgs"));
         }
 
         public static TeachingTip Show(string text, ElementTheme requestedTheme = ElementTheme.Dark, TimeSpan? dismissAfter = null)

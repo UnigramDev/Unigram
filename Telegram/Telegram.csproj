@@ -1859,6 +1859,7 @@
     <Content Include="Assets\Toasts\Forward.tgs" />
     <Content Include="Assets\Toasts\Error.tgs" />
     <Content Include="Assets\Toasts\Archived.tgs" />
+    <Content Include="Assets\Toasts\Premium.tgs" />
     <None Include="Telegram_StoreKey.pfx" />
     <None Include="Telegram_TemporaryKey.pfx" />
   </ItemGroup>
