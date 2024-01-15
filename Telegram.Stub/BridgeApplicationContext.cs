@@ -62,10 +62,20 @@ namespace Telegram.Stub
                 {
                     Connect();
                 }
+
+                if (local.Values.ContainsKey("AddLocalhostExemption"))
+                {
+                    // Already registered
+                }
+                else
+                {
+                    AddLocalhostExemption();
+                    local.Values.Add("AddLocalhostExemption", true);
+                }
             }
             catch
             {
-                _notifyIcon.Visible = true;
+                // Can happen
             }
         }
 
