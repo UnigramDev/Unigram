@@ -559,7 +559,7 @@ namespace Telegram.Controls.Chats
                     }
                 }
             }
-            else
+            else if (_recognizer.IsActive)
             {
                 _recognizer.CompleteGesture();
             }
@@ -730,7 +730,7 @@ namespace Telegram.Controls.Chats
                     _recognizer.CompleteGesture();
                 }
             }
-            else
+            else if (_recognizer.IsActive)
             {
                 _recognizer.CompleteGesture();
             }
