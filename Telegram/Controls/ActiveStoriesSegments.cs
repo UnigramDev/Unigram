@@ -77,12 +77,15 @@ namespace Telegram.Controls
                 var activeStories = new ActiveStoriesViewModel(clientService, settings, aggregator, chatActiveStories);
                 await activeStories.Wait;
 
-                var viewModel = new StoryListViewModel(clientService, settings, aggregator, activeStories);
-                viewModel.NavigationService = navigationService;
+                if (activeStories.Items.Count > 0 && activeStories.SelectedItem != null)
+                {
+                    var viewModel = new StoryListViewModel(clientService, settings, aggregator, activeStories);
+                    viewModel.NavigationService = navigationService;
 
-                var window = new StoriesWindow();
-                window.Update(viewModel, activeStories, StoryOpenOrigin.ProfilePhoto, pointz, origin);
-                _ = window.ShowAsync();
+                    var window = new StoriesWindow();
+                    window.Update(viewModel, activeStories, StoryOpenOrigin.ProfilePhoto, pointz, origin);
+                    _ = window.ShowAsync();
+                }
             }
 
             SetChat(clientService, chat, side);
