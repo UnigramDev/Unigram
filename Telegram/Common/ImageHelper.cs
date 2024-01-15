@@ -44,60 +44,71 @@ namespace Telegram.Common
 
         public static async Task<SizeInt32> GetScaleAsync(StorageFile file, bool allowMultipleFrames = false, int requestedMinSide = 1280, BitmapEditState editState = null)
         {
-            using (var source = await file.OpenReadAsync())
+            try
             {
-                var decoder = await BitmapDecoder.CreateAsync(source);
-                if (decoder.FrameCount > 1 && !allowMultipleFrames)
+                using (var source = await file.OpenReadAsync())
                 {
-                    return new SizeInt32 { Width = 0, Height = 0 };
-                }
+                    var decoder = await BitmapDecoder.CreateAsync(source);
+                    if (decoder.FrameCount > 1 && !allowMultipleFrames)
+                    {
+                        return new SizeInt32 { Width = 0, Height = 0 };
+                    }
 
-                var width = decoder.PixelWidth;
-                var height = decoder.PixelHeight;
+                    var width = decoder.PixelWidth;
+                    var height = decoder.PixelHeight;
 
-                if (editState?.Rectangle is Rect crop)
-                {
-                    width = (uint)(crop.Width * decoder.PixelWidth);
-                    height = (uint)(crop.Height * decoder.PixelHeight);
-                }
+                    if (editState?.Rectangle is Rect crop)
+                    {
+                        width = (uint)(crop.Width * decoder.PixelWidth);
+                        height = (uint)(crop.Height * decoder.PixelHeight);
+                    }
 
-                if (width > requestedMinSide || height > requestedMinSide)
-                {
-                    double ratioX = (double)requestedMinSide / width;
-                    double ratioY = (double)requestedMinSide / height;
-                    double ratio = Math.Min(ratioX, ratioY);
+                    if (width > requestedMinSide || height > requestedMinSide)
+                    {
+                        double ratioX = (double)requestedMinSide / width;
+                        double ratioY = (double)requestedMinSide / height;
+                        double ratio = Math.Min(ratioX, ratioY);
+
+                        if (editState != null && editState.Rotation is BitmapRotation.Clockwise90Degrees or BitmapRotation.Clockwise270Degrees)
+                        {
+                            return new SizeInt32
+                            {
+                                Width = (int)(height * ratio),
+                                Height = (int)(width * ratio)
+                            };
+                        }
+
+                        return new SizeInt32
+                        {
+                            Width = (int)(width * ratio),
+                            Height = (int)(height * ratio)
+                        };
+                    }
 
                     if (editState != null && editState.Rotation is BitmapRotation.Clockwise90Degrees or BitmapRotation.Clockwise270Degrees)
                     {
                         return new SizeInt32
                         {
-                            Width = (int)(height * ratio),
-                            Height = (int)(width * ratio)
+                            Width = (int)(height),
+                            Height = (int)(width)
                         };
                     }
 
                     return new SizeInt32
                     {
-                        Width = (int)(width * ratio),
-                        Height = (int)(height * ratio)
+                        Width = (int)(width),
+                        Height = (int)(height)
                     };
-                }
-
-                if (editState != null && editState.Rotation is BitmapRotation.Clockwise90Degrees or BitmapRotation.Clockwise270Degrees)
-                {
-                    return new SizeInt32
-                    {
-                        Width = (int)(height),
-                        Height = (int)(width)
-                    };
-                }
-
+                };
+            }
+            catch
+            {
                 return new SizeInt32
                 {
-                    Width = (int)(width),
-                    Height = (int)(height)
+                    Width = 0,
+                    Height = 0
                 };
-            };
+            }
         }
 
 
