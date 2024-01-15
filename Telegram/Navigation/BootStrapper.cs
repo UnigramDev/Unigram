@@ -615,9 +615,17 @@ namespace Telegram.Navigation
 
             CallOnInitialize(false, e);
 
-            if (WindowContext.Current.Content == null)
+            if (WindowContext.Current?.Content == null)
             {
-                WindowContext.Current.Content = CreateRootElement(e);
+                // This can happen from ShareTarget
+                if (WindowContext.Current == null)
+                {
+                    Window.Current.Content = CreateRootElement(e);
+                }
+                else
+                {
+                    WindowContext.Current.Content = CreateRootElement(e);
+                }
             }
             else
             {
