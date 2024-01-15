@@ -50,7 +50,7 @@ namespace Telegram.Controls.Messages
                 }
                 else if (_sticker is Sticker sticker)
                 {
-                    return Locale.Declension(Strings.R.AccDescrNumberOfPeopleReactions, interaction.TotalCount, sticker.Emoji);
+                    return Locale.Declension(Strings.R.AccDescrNumberOfPeopleReactions, interaction.TotalCount, string.Format(Strings.AccDescrCustomEmoji, sticker.Emoji));
                 }
             }
 

@@ -247,16 +247,11 @@ namespace Telegram.Controls.Messages
 
         public string GetAutomationName()
         {
-            if (_message == null)
+            if (_message is not MessageViewModel message)
             {
                 return null;
             }
 
-            return UpdateAutomation(_message);
-        }
-
-        public string UpdateAutomation(MessageViewModel message)
-        {
             var chat = message.Chat;
 
             var title = string.Empty;
@@ -399,7 +394,25 @@ namespace Telegram.Controls.Messages
                 builder.Append(Locale.Declension(Strings.R.AccDescrNumberOfViews, message.InteractionInfo.ViewCount));
             }
 
-            builder.Append(".");
+            // TODO: this is a bit brutal, but we don't have corresponding reaction emoji in the data
+            // so for now this is the best way to do this:
+            static void AppendReactions(StringBuilder builder, ReactionsPanel panel)
+            {
+                foreach (ReactionButton button in panel.Children)
+                {
+                    builder.Append(". ");
+                    builder.Append(button.GetAutomationName());
+                }
+            }
+
+            if (Reactions != null && Reactions.Children.Count > 0)
+            {
+                AppendReactions(builder, Reactions);
+            }
+            else if (MediaReactions != null && MediaReactions.Children.Count > 0)
+            {
+                AppendReactions(builder, MediaReactions);
+            }
 
             return builder.ToString();
         }
