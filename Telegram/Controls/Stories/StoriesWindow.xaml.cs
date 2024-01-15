@@ -703,31 +703,40 @@ namespace Telegram.Controls.Stories
         private void Interactions_DeleteClick(object sender, RoutedEventArgs e)
         {
             var user = ViewModel.Items[_index];
-            var story = user.SelectedItem;
 
-            DeleteStory(story);
+            var story = user.SelectedItem;
+            if (story != null)
+            {
+                DeleteStory(story);
+            }
         }
 
         private async void Interactions_ViewersClick(object sender, RoutedEventArgs e)
         {
             var user = ViewModel.Items[_index];
+
             var story = user.SelectedItem;
-
-            ActiveCard.Suspend(StoryPauseSource.Popup);
-
-            var confirm = await ViewModel.ShowPopupAsync(typeof(StoryInteractionsPopup), story, requestedTheme: ElementTheme.Dark);
-            if (await ContinuePopupAsync(confirm == ContentDialogResult.Primary, new PremiumStoryFeaturePermanentViewsHistory()))
+            if (story != null)
             {
-                ActiveCard.Resume(StoryPauseSource.Popup);
+                ActiveCard.Suspend(StoryPauseSource.Popup);
+
+                var confirm = await ViewModel.ShowPopupAsync(typeof(StoryInteractionsPopup), story, requestedTheme: ElementTheme.Dark);
+                if (await ContinuePopupAsync(confirm == ContentDialogResult.Primary, new PremiumStoryFeaturePermanentViewsHistory()))
+                {
+                    ActiveCard.Resume(StoryPauseSource.Popup);
+                }
             }
         }
 
         private void Interactions_ShareClick(object sender, RoutedEventArgs e)
         {
             var user = ViewModel.Items[_index];
-            var story = user.SelectedItem;
 
-            ShareStory(story);
+            var story = user.SelectedItem;
+            if (story != null)
+            {
+                ShareStory(story);
+            }
         }
 
         private async Task<bool> ContinuePopupAsync(bool shouldPurchase, PremiumStoryFeature feature)
