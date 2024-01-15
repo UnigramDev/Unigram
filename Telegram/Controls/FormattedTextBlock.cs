@@ -384,7 +384,7 @@ namespace Telegram.Controls
             }
 
             // PERF: fast path if both model and view have one paragraph with one run
-            if (styled != null && styled.Paragraphs.Count == 1 && styled.Paragraphs[0].Entities.Count == 0 && styled.Text.Length > 0)
+            if (styled != null && styled.Paragraphs.Count == 1 && styled.Paragraphs[0].Entities.Count == 0 && styled.Text.Length > 0 && !HasLineEnding && !HasCodeBlocks)
             {
                 if (TextBlock.Blocks.Count == 1 && TextBlock.Blocks[0] is Paragraph paragraph && paragraph.Inlines.Count == 1 && paragraph.Inlines[0] is Run run)
                 {
@@ -417,6 +417,8 @@ namespace Telegram.Controls
             TextParagraphType lastType = null;
             TextParagraphType firstType = null;
 
+            var locale = LocaleService.Current.FlowDirection;
+
             var text = styled.Text;
             var workaround = 0;
 
@@ -445,6 +447,13 @@ namespace Telegram.Controls
                 //    _ => (uint)TextAlignment.DetectFromContent
                 //});
 
+                var direction = part.Direction switch
+                {
+                    TextDirectionality.LeftToRight => FlowDirection.LeftToRight,
+                    TextDirectionality.RightToLeft => FlowDirection.RightToLeft,
+                    _ => locale
+                };
+
                 if (part.Type is TextParagraphTypeQuote)
                 {
                     var last = part == styled.Paragraphs[^1];
@@ -459,7 +468,7 @@ namespace Telegram.Controls
                 {
                     if (entity.Offset > previous)
                     {
-                        direct.AddToCollection(inlines, CreateDirectRun(direct, text.Substring(previous, entity.Offset - previous), fontSize: fontSize));
+                        direct.AddToCollection(inlines, CreateDirectRun(direct, text.Substring(previous, entity.Offset - previous), direction, fontSize: fontSize));
                     }
 
                     if (entity.Length + entity.Offset > text.Length)
@@ -479,13 +488,13 @@ namespace Telegram.Controls
                             hyperlink.Foreground = TextBlock.Foreground;
                             hyperlink.UnderlineStyle = UnderlineStyle.None;
 
-                            hyperlink.Inlines.Add(CreateRun(data, fontFamily: new FontFamily("Consolas"), fontSize: fontSize));
+                            hyperlink.Inlines.Add(CreateRun(data, direction, fontFamily: new FontFamily("Consolas"), fontSize: fontSize));
                             direct.AddToCollection(inlines, direct.GetXamlDirectObject(hyperlink));
                         }
                         else
                         {
                             direct.SetObjectProperty(paragraph, XamlPropertyIndex.TextElement_FontFamily, new FontFamily("Consolas"));
-                            direct.AddToCollection(inlines, CreateDirectRun(direct, data));
+                            direct.AddToCollection(inlines, CreateDirectRun(direct, data, direction));
 
                             preformatted = true;
 
@@ -609,15 +618,31 @@ namespace Telegram.Controls
                             var inline = new InlineUIContainer();
                             inline.Child = player;
 
+                            // We are working around multiple issues here:
+                            // ZWNJ is always added right after a custom emoji to make sure that the line height always matches Segoe UI.
+                            // RTL/LTR mark is added in case the custom emoji is the first element in the Paragraph.
+                            // This is needed because we can't use TextReadingOrder = DetectFromContent due to a bug
+                            // that causes text selection and hit tests to follow the flow direction rather than the reading order.
+                            // Because of this, we're forced to use TextReadingOrder = UseFlowDirection, and to set each
+                            // Run.FlowDirection to the one calculated by calling GetStringTypeEx on the text of each paragraph.
+                            // Since InlineUIContainer doesn't have a FlowDirection property (and the child flow direction seems to be ignored)
+                            // the first custom emoji in a paragraph with reading order different from the one of the app, would appear on the
+                            // wrong side of the block, thus we add a RTL/LTR mark right before, and the RichTextBlock seems to respect this.
+
+                            if (entity.Offset == 0 && direction != locale)
+                            {
+                                direct.AddToCollection(inlines, CreateDirectRun(direct, direction == FlowDirection.RightToLeft ? Icons.RTL : Icons.LTR, direction));
+                            }
+
                             // TODO: see if there's a better way
                             direct.AddToCollection(inlines, direct.GetXamlDirectObject(inline));
-                            direct.AddToCollection(inlines, CreateDirectRun(direct, Icons.ZWNJ));
+                            direct.AddToCollection(inlines, CreateDirectRun(direct, Icons.ZWNJ, direction));
 
                             workaround++;
                         }
                         else
                         {
-                            var run = CreateDirectRun(direct, text.Substring(entity.Offset, entity.Length), fontSize: fontSize);
+                            var run = CreateDirectRun(direct, text.Substring(entity.Offset, entity.Length), direction, fontSize: fontSize);
                             var decorations = TextDecorations.None;
 
                             if (entity.HasFlag(Common.TextStyle.Underline))
@@ -652,11 +677,11 @@ namespace Telegram.Controls
 
                 if (text.Length > previous)
                 {
-                    direct.AddToCollection(inlines, CreateDirectRun(direct, text.Substring(previous), fontSize: fontSize));
+                    direct.AddToCollection(inlines, CreateDirectRun(direct, text.Substring(previous), direction, fontSize: fontSize));
                 }
 
                 // ZWJ is added to workaround a crash caused by emoji ad the end of a paragraph that is being highlighted
-                direct.AddToCollection(inlines, CreateDirectRun(direct, Icons.ZWJ));
+                direct.AddToCollection(inlines, CreateDirectRun(direct, Icons.ZWJ, direction));
                 direct.AddToCollection(blocks, paragraph);
 
                 if (part.Offset == 0)
@@ -702,7 +727,6 @@ namespace Telegram.Controls
 
             if (AdjustLineEnding && styled.Paragraphs.Count > 0)
             {
-                var locale = LocaleService.Current.FlowDirection;
                 var direction = styled.Paragraphs[^1].Direction switch
                 {
                     TextDirectionality.LeftToRight => FlowDirection.LeftToRight,
@@ -769,11 +793,12 @@ namespace Telegram.Controls
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private Run CreateRun(string text, FontWeight? fontWeight = null, FontFamily fontFamily = null, double fontSize = 0)
+        private Run CreateRun(string text, FlowDirection direction, FontWeight? fontWeight = null, FontFamily fontFamily = null, double fontSize = 0)
         {
             var direct = XamlDirect.GetDefault();
             var run = direct.CreateInstance(XamlTypeIndex.Run);
             direct.SetStringProperty(run, XamlPropertyIndex.Run_Text, text);
+            direct.SetEnumProperty(run, XamlPropertyIndex.Run_FlowDirection, (uint)direction);
 
             if (fontWeight != null)
             {
@@ -794,10 +819,11 @@ namespace Telegram.Controls
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private IXamlDirectObject CreateDirectRun(XamlDirect direct, string text, FontWeight? fontWeight = null, FontFamily fontFamily = null, double fontSize = 0)
+        private IXamlDirectObject CreateDirectRun(XamlDirect direct, string text, FlowDirection direction, FontWeight? fontWeight = null, FontFamily fontFamily = null, double fontSize = 0)
         {
             var run = direct.CreateInstance(XamlTypeIndex.Run);
             direct.SetStringProperty(run, XamlPropertyIndex.Run_Text, text);
+            direct.SetEnumProperty(run, XamlPropertyIndex.Run_FlowDirection, (uint)direction);
 
             if (fontWeight != null)
             {

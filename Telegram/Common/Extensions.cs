@@ -251,7 +251,7 @@ namespace Telegram.Common
                 // Element start
                 index++;
 
-                if (OffsetToIndex(block.Inlines, pointer, ref index))
+                if (OffsetToIndex(textBlock, block.Inlines, pointer, ref index))
                 {
                     break;
                 }
@@ -287,7 +287,7 @@ namespace Telegram.Common
             return pointer.Offset - index;
         }
 
-        private static bool OffsetToIndex(InlineCollection inlines, TextPointer pointer, ref int index)
+        private static bool OffsetToIndex(RichTextBlock textBlock, InlineCollection inlines, TextPointer pointer, ref int index)
         {
             foreach (var element in inlines)
             {
@@ -299,11 +299,11 @@ namespace Telegram.Common
                 // Element start
                 index++;
 
-                if (element is Span span && OffsetToIndex(span.Inlines, pointer, ref index))
+                if (element is Span span && OffsetToIndex(textBlock, span.Inlines, pointer, ref index))
                 {
                     return true;
                 }
-                if (element is Run { Text: Icons.ZWNJ })
+                if (element is Run { Text: Icons.ZWNJ or Icons.RTL or Icons.LTR })
                 {
                     index++;
                 }
