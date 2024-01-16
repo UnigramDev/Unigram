@@ -232,10 +232,13 @@ namespace Telegram.Common
                         return frame;
                     });
 
-                    var bitmap = new WriteableBitmap(width, height);
-                    BufferSurface.Copy(buffer, bitmap.PixelBuffer);
+                    if (width > 0 && height > 0)
+                    {
+                        var bitmap = new WriteableBitmap(width, height);
+                        BufferSurface.Copy(buffer, bitmap.PixelBuffer);
 
-                    return bitmap;
+                        return bitmap;
+                    }
                 }
                 else
                 {
@@ -243,10 +246,9 @@ namespace Telegram.Common
                     return await GetPreviewBitmapAsync(imageStream, requestedMinSide);
                 }
             }
-            catch
-            {
-                return null;
-            }
+            catch { }
+
+            return null;
         }
 
         public static async Task<ImageSource> GetPreviewBitmapAsync(IRandomAccessStream source, int requestedMinSide = 1280)

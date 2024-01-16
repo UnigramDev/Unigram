@@ -1472,13 +1472,13 @@ namespace Telegram.Controls
     {
         private readonly IBuffer _animation;
 
-        public WebpAnimatedImageTask(IBuffer animation, Size size, AnimatedImagePresentation presentation)
+        public WebpAnimatedImageTask(IBuffer animation, int pixelWidth, int pixelHeight, AnimatedImagePresentation presentation)
             : base(presentation)
         {
             _animation = animation;
 
-            PixelWidth = (int)size.Width; // animation.PixelWidth;
-            PixelHeight = (int)size.Height; // animation.PixelHeight;
+            PixelWidth = pixelWidth;
+            PixelHeight = pixelHeight;
 
             Interval = TimeSpan.FromMilliseconds(1000d / 30);
         }
@@ -1693,15 +1693,20 @@ namespace Telegram.Controls
 
         private void LoadLottie(WorkItem work, LocalFileSource local)
         {
-            var animation = LottieAnimation.LoadFromFile(local.FilePath, work.Presentation.PixelWidth, work.Presentation.PixelHeight, work.Presentation.IsCachingEnabled, work.Presentation.Source.ColorReplacements, work.Presentation.Source.FitzModifier);
-            if (animation != null)
+            static bool IsValid(AnimatedImagePresentation presentation)
             {
                 // TODO: check if animation is valid
                 // Width, height, frame rate...
+                return presentation.PixelWidth > 0
+                    && presentation.PixelHeight > 0;
+            }
 
-                if (TryGetDelegate(work.CorrelationId, out var target))
+            var animation = LottieAnimation.LoadFromFile(local.FilePath, work.Presentation.PixelWidth, work.Presentation.PixelHeight, work.Presentation.IsCachingEnabled, work.Presentation.Source.ColorReplacements, work.Presentation.Source.FitzModifier);
+            if (animation != null)
+            {
+                if (IsValid(work.Presentation))
                 {
-                    target.Ready(new LottieAnimatedImageTask(animation, work.Presentation));
+                    NotifyDelegate(work.CorrelationId, animation, new LottieAnimatedImageTask(animation, work.Presentation));
                 }
                 else
                 {
@@ -1716,21 +1721,21 @@ namespace Telegram.Controls
 
         private void LoadCachedVideo(WorkItem work)
         {
+            static bool IsValid(CachedVideoAnimation animation)
+            {
+                // TODO: check if animation is valid
+                // Width, height, frame rate...
+                return animation.PixelWidth > 0
+                    && animation.PixelHeight > 0
+                    && !double.IsNaN(animation.FrameRate);
+            }
+
             var animation = CachedVideoAnimation.LoadFromFile(work.Presentation.Source, work.Presentation.PixelWidth, work.Presentation.PixelHeight, work.Presentation.IsCachingEnabled);
             if (animation != null)
             {
-                static bool IsValid(CachedVideoAnimation animation)
+                if (IsValid(animation))
                 {
-                    // TODO: check if animation is valid
-                    // Width, height, frame rate...
-                    return animation.PixelWidth > 0
-                        && animation.PixelHeight > 0
-                        && !double.IsNaN(animation.FrameRate);
-                }
-
-                if (IsValid(animation) && TryGetDelegate(work.CorrelationId, out var target))
-                {
-                    target.Ready(new VideoAnimatedImageTask(animation, work.Presentation));
+                    NotifyDelegate(work.CorrelationId, animation, new VideoAnimatedImageTask(animation, work.Presentation));
                 }
                 else
                 {
@@ -1745,16 +1750,21 @@ namespace Telegram.Controls
 
         private async void LoadWebP(WorkItem work, LocalFileSource local)
         {
-            var animation = PlaceholderImageHelper.DrawWebP(local.FilePath, work.Presentation.PixelWidth, out Size size);
+            static bool IsValid(IBuffer animation, int pixelWidth, int pixelHeight)
+            {
+                // TODO: check if animation is valid
+                // Width, height, frame rate...
+                return pixelWidth > 0
+                    && pixelHeight > 0
+                    && animation.Length == pixelWidth * pixelHeight * 4;
+            }
+
+            var animation = PlaceholderImageHelper.DrawWebP(local.FilePath, work.Presentation.PixelWidth, out int pixelWidth, out int pixelHeight);
             if (animation != null)
             {
-                if (TryGetDelegate(work.CorrelationId, out var target))
+                if (IsValid(animation, pixelWidth, pixelHeight))
                 {
-                    target.Ready(new WebpAnimatedImageTask(animation, size, work.Presentation));
-                }
-                else
-                {
-                    //animation.Dispose();
+                    NotifyDelegate(work.CorrelationId, null, new WebpAnimatedImageTask(animation, pixelWidth, pixelHeight, work.Presentation));
                 }
             }
             else
@@ -1777,11 +1787,13 @@ namespace Telegram.Controls
                         transform.ScaledWidth = (uint)(decoder.PixelWidth * ratio);
                         transform.ScaledHeight = (uint)(decoder.PixelHeight * ratio);
 
-                        size = new Size(transform.ScaledWidth, transform.ScaledHeight);
+                        pixelWidth = (int)transform.ScaledWidth;
+                        pixelHeight = (int)transform.ScaledHeight;
                     }
                     else
                     {
-                        size = new Size(decoder.PixelWidth, decoder.PixelHeight);
+                        pixelWidth = (int)decoder.PixelWidth;
+                        pixelHeight = (int)decoder.PixelHeight;
                     }
 
                     var pixels = await decoder.GetPixelDataAsync(BitmapPixelFormat.Bgra8, BitmapAlphaMode.Premultiplied, transform, ExifOrientationMode.IgnoreExifOrientation, ColorManagementMode.DoNotColorManage);
@@ -1789,9 +1801,9 @@ namespace Telegram.Controls
 
                     animation = BufferSurface.Create(bytes);
 
-                    if (TryGetDelegate(work.CorrelationId, out var target))
+                    if (IsValid(animation, pixelWidth, pixelHeight))
                     {
-                        target.Ready(new WebpAnimatedImageTask(animation, size, work.Presentation));
+                        NotifyDelegate(work.CorrelationId, null, new WebpAnimatedImageTask(animation, pixelWidth, pixelHeight, work.Presentation));
                     }
                 }
                 catch
@@ -1799,6 +1811,26 @@ namespace Telegram.Controls
                     _delegates.TryRemove(work.CorrelationId, out _);
                 }
             }
+        }
+
+        private bool NotifyDelegate(int correlationId, IDisposable disposable, AnimatedImageTask task)
+        {
+            static bool IsValid(AnimatedImageTask task)
+            {
+                // TODO: check if animation is valid
+                // Width, height, frame rate...
+                return task.PixelWidth > 0
+                    && task.PixelHeight > 0;
+            }
+
+            if (IsValid(task) && TryGetDelegate(correlationId, out var target))
+            {
+                target.Ready(task);
+                return true;
+            }
+
+            disposable?.Dispose();
+            return false;
         }
 
         private bool TryGetDelegate(int correlationId, out AnimatedImagePresenter target)

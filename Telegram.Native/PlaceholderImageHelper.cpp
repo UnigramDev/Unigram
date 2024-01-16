@@ -141,9 +141,10 @@ namespace winrt::Telegram::Native::implementation
         }
     };
 
-    IBuffer PlaceholderImageHelper::DrawWebP(hstring fileName, int32_t maxWidth, Windows::Foundation::Size& size) noexcept
+    IBuffer PlaceholderImageHelper::DrawWebP(hstring fileName, int32_t maxWidth, int32_t& pixelWidth, int32_t& pixelHeight) noexcept
     {
-        size = Windows::Foundation::Size{ 0,0 };
+        pixelWidth = 0;
+        pixelHeight = 0;
 
         FILE* file = _wfopen(fileName.data(), L"rb");
         if (file == NULL)
@@ -208,8 +209,8 @@ namespace winrt::Telegram::Native::implementation
                 height = (int)(iter.height * ratio);
             }
 
-            size.Width = width;
-            size.Height = height;
+            pixelWidth = width;
+            pixelHeight = height;
 
             surface = Telegram::Native::BufferSurface::Create(width * 4 * height);
             auto pixels = surface.data();
@@ -760,27 +761,27 @@ namespace winrt::Telegram::Native::implementation
             UINT32 length = entity.Length();
             auto name = winrt::get_class_name(entity.Type());
 
-            if (name == L"Telegram.Td.Api.TextEntityTypeBold")
+            if (name == winrt::name_of<TextEntityTypeBold>())
             {
                 ReturnIfFailed(result, textLayout->SetFontWeight(DWRITE_FONT_WEIGHT_SEMI_BOLD, { startPosition, length }));
             }
-            else if (name == L"Telegram.Td.Api.TextEntityTypeItalic")
+            else if (name == winrt::name_of<TextEntityTypeItalic>())
             {
                 ReturnIfFailed(result, textLayout->SetFontStyle(DWRITE_FONT_STYLE_ITALIC, { startPosition, length }));
             }
-            else if (name == L"Telegram.Td.Api.TextEntityTypeStrikethrough")
+            else if (name == winrt::name_of<TextEntityTypeStrikethrough>())
             {
                 ReturnIfFailed(result, textLayout->SetStrikethrough(TRUE, { startPosition, length }));
             }
-            else if (name == L"Telegram.Td.Api.TextEntityTypeUnderline")
+            else if (name == winrt::name_of<TextEntityTypeUnderline>())
             {
                 ReturnIfFailed(result, textLayout->SetUnderline(TRUE, { startPosition, length }));
             }
-            //else if (name == L"Telegram.Td.Api.TextEntityTypeCustomEmoji")
+            //else if (name == winrt::name_of<TextEntityTypeCustomEmoji>())
             //{
             //    textLayout->SetInlineObject(m_customEmoji.get(), { startPosition, length });
             //}
-            else if (name == L"Telegram.Td.Api.TextEntityTypeCode" || name == L"Telegram.Td.Api.TextEntityTypePre" || name == L"Telegram.Td.Api.TextEntityTypePreCode")
+            else if (name == winrt::name_of<TextEntityTypeCode>() || name == winrt::name_of<TextEntityTypePre>() || name == winrt::name_of<TextEntityTypePreCode>())
             {
                 ReturnIfFailed(result, textLayout->SetFontCollection(m_systemCollection.get(), { startPosition, length }));
                 ReturnIfFailed(result, textLayout->SetFontFamilyName(L"Consolas", { startPosition, length }));
@@ -834,27 +835,27 @@ namespace winrt::Telegram::Native::implementation
             UINT32 length = entity.Length();
             auto name = winrt::get_class_name(entity.Type());
 
-            if (name == L"Telegram.Td.Api.TextEntityTypeBold")
+            if (name == winrt::name_of<TextEntityTypeBold>())
             {
                 ReturnIfFailed(result, textLayout->SetFontWeight(DWRITE_FONT_WEIGHT_SEMI_BOLD, { startPosition, length }));
             }
-            else if (name == L"Telegram.Td.Api.TextEntityTypeItalic")
+            else if (name == winrt::name_of<TextEntityTypeItalic>())
             {
                 ReturnIfFailed(result, textLayout->SetFontStyle(DWRITE_FONT_STYLE_ITALIC, { startPosition, length }));
             }
-            else if (name == L"Telegram.Td.Api.TextEntityTypeStrikethrough")
+            else if (name == winrt::name_of<TextEntityTypeStrikethrough>())
             {
                 ReturnIfFailed(result, textLayout->SetStrikethrough(TRUE, { startPosition, length }));
             }
-            else if (name == L"Telegram.Td.Api.TextEntityTypeUnderline")
+            else if (name == winrt::name_of<TextEntityTypeUnderline>())
             {
                 ReturnIfFailed(result, textLayout->SetUnderline(TRUE, { startPosition, length }));
             }
-            //else if (name == L"Telegram.Td.Api.TextEntityTypeCustomEmoji")
+            //else if (name == winrt::name_of<TextEntityTypeCustomEmoji>())
             //{
             //    textLayout->SetInlineObject(m_customEmoji.get(), { startPosition, length });
             //}
-            else if (name == L"Telegram.Td.Api.TextEntityTypeCode" || name == L"Telegram.Td.Api.TextEntityTypePre" || name == L"Telegram.Td.Api.TextEntityTypePreCode")
+            else if (name == winrt::name_of<TextEntityTypeCode>() ||  name == winrt::name_of<TextEntityTypePre>() || name == winrt::name_of<TextEntityTypePreCode>())
             {
                 ReturnIfFailed(result, textLayout->SetFontCollection(m_systemCollection.get(), { startPosition, length }));
                 ReturnIfFailed(result, textLayout->SetFontFamilyName(L"Consolas", { startPosition, length }));

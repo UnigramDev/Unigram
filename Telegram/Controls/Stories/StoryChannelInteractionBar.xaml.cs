@@ -348,20 +348,25 @@ namespace Telegram.Controls.Stories
             width = (int)(width * dpi);
             height = (int)(height * dpi);
 
-            var bitmap = new WriteableBitmap(width, height);
-            var buffer = new PixelBuffer(bitmap);
-
-            await Task.Run(() =>
+            if (width > 0 && height > 0)
             {
-                var animation = LottieAnimation.LoadFromFile(path, width, height, false, null);
-                if (animation != null)
-                {
-                    animation.RenderSync(buffer, frame);
-                    animation.Dispose();
-                }
-            });
+                var bitmap = new WriteableBitmap(width, height);
+                var buffer = new PixelBuffer(bitmap);
 
-            return bitmap;
+                await Task.Run(() =>
+                {
+                    var animation = LottieAnimation.LoadFromFile(path, width, height, false, null);
+                    if (animation != null)
+                    {
+                        animation.RenderSync(buffer, frame);
+                        animation.Dispose();
+                    }
+                });
+
+                return bitmap;
+            }
+
+            return null;
         }
 
         protected override void OnApplyTemplate()

@@ -11,7 +11,6 @@ using System.IO.Compression;
 using System.Threading.Tasks;
 using System.Xml.Linq;
 using Telegram.Native;
-using Telegram.Navigation;
 using Telegram.Services;
 using Telegram.Td.Api;
 using Windows.Foundation;
@@ -227,37 +226,10 @@ namespace Telegram.Common
         {
             try
             {
-                var buffer = PlaceholderImageHelper.DrawWebP(path, (int)maxWidth, out Size size);
-                if (size.Width > 0 && size.Height > 0)
+                var buffer = PlaceholderImageHelper.DrawWebP(path, (int)maxWidth, out int pixelWidth, out int pixelHeight);
+                if (pixelWidth > 0 && pixelHeight > 0)
                 {
-                    var bitmap = new WriteableBitmap((int)size.Width, (int)size.Height);
-                    BufferSurface.Copy(buffer, bitmap.PixelBuffer);
-
-                    return bitmap;
-                }
-                else
-                {
-                    return UriEx.ToBitmap(path);
-                }
-            }
-            catch { }
-
-            return null;
-        }
-
-        public static async Task<ImageSource> GetWebPFrameAsync(string path, double maxWidth = 512)
-        {
-            try
-            {
-                maxWidth = maxWidth < 512 ? maxWidth * WindowContext.Current.RasterizationScale : maxWidth;
-                maxWidth = Math.Min(maxWidth, 512);
-
-                Size size;
-
-                var buffer = await Task.Run(() => PlaceholderImageHelper.DrawWebP(path, (int)maxWidth, out size));
-                if (size.Width > 0 && size.Height > 0)
-                {
-                    var bitmap = new WriteableBitmap((int)size.Width, (int)size.Height);
+                    var bitmap = new WriteableBitmap(pixelWidth, pixelHeight);
                     BufferSurface.Copy(buffer, bitmap.PixelBuffer);
 
                     return bitmap;

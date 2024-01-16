@@ -8,7 +8,7 @@ namespace Telegram.Native
 		static PlaceholderImageHelper Current{ get; };
 
 		static void WriteBytes(Windows.Foundation.Collections.IVector<byte> hash, Windows.Storage.Streams.IRandomAccessStream randomAccessStream);
-		static Windows.Storage.Streams.IBuffer DrawWebP(String fileName, Int32 maxWidth, out Windows.Foundation.Size size);
+		static Windows.Storage.Streams.IBuffer DrawWebP(String fileName, Int32 maxWidth, out Int32 pixelWidth, out Int32 pixelHeight);
 
 		void Encode(Windows.Storage.Streams.IBuffer source, Windows.Storage.Streams.IRandomAccessStream destination, Int32 width, Int32 height);
 
