@@ -348,7 +348,7 @@ namespace Telegram.Controls.Stories
         {
             var title = 40;
             var search = 32;
-            var padding = 4 + (collapsed || !TabsLeftCollapsed ? 0 : 36);
+            var padding = 4 + (collapsed /*|| !TabsLeftCollapsed*/ ? 0 : 36);
             //var padding = 8 + (ChatTabs == null || ChatTabs.Visibility == Visibility.Collapsed || !TabsLeftCollapsed ? 0 : 32);
             //var padding = ChatTabs == null || ChatTabs.Visibility == Visibility.Collapsed || !TabsLeftCollapsed ? 0 : 40;
 
@@ -369,6 +369,17 @@ namespace Telegram.Controls.Stories
                     value.Loaded += OnLoaded;
                     return;
                 }
+            }
+
+            if (_scrollViewer != null)
+            {
+                _scrollViewer.ViewChanged -= ScrollViewer_ViewChanged;
+                _scrollViewer.ViewChanging -= Scroller_ViewChanging;
+
+                _scrollViewer.DirectManipulationStarted -= Scroller_DirectManipulationStarted;
+                _scrollViewer.DirectManipulationCompleted -= Scroller_DirectManipulationCompleted;
+
+                ControlledList.SizeChanged -= ControlledList_SizeChanged;
             }
 
             _scrollViewer = scrollViewer;
