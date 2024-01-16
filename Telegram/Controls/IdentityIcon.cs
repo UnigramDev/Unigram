@@ -92,7 +92,7 @@ namespace Telegram.Controls
             {
                 if (clientService.IsPremiumAvailable && chat.EmojiStatus != null)
                 {
-                    CurrentType = IdentityIconType.Premium;
+                    CurrentType = IdentityIconType.None;
                     UnloadObject(ref Icon);
 
                     LoadObject(ref Status, nameof(Status));

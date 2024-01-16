@@ -402,9 +402,18 @@ namespace Telegram.Controls.Cells
 
                     builder.Append(", ");
 
-                    if (user.IsVerified)
+                    var identity = Identity?.CurrentType switch
                     {
-                        builder.Append(Strings.AccDescrVerified);
+                        IdentityIconType.Fake => Strings.FakeMessage,
+                        IdentityIconType.Scam => Strings.ScamMessage,
+                        IdentityIconType.Premium => Strings.AccDescrPremium,
+                        IdentityIconType.Verified => Strings.AccDescrVerified,
+                        _ => null
+                    };
+
+                    if (identity != null)
+                    {
+                        builder.Append(identity);
                         builder.Append(", ");
                     }
 
@@ -430,9 +439,18 @@ namespace Telegram.Controls.Cells
                 builder.Append(clientService.GetTitle(chat));
                 builder.Append(", ");
 
-                if (clientService.TryGetSupergroup(chat, out Supergroup supergroup) && supergroup.IsVerified)
+                var identity = Identity?.CurrentType switch
                 {
-                    builder.Append(Strings.AccDescrVerified);
+                    IdentityIconType.Fake => Strings.FakeMessage,
+                    IdentityIconType.Scam => Strings.ScamMessage,
+                    IdentityIconType.Premium => Strings.AccDescrPremium,
+                    IdentityIconType.Verified => Strings.AccDescrVerified,
+                    _ => null
+                };
+
+                if (identity != null)
+                {
+                    builder.Append(identity);
                     builder.Append(", ");
                 }
             }
