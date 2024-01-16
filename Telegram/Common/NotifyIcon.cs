@@ -62,7 +62,7 @@ namespace Telegram.Common
                 values.Add("Exit", true);
             }
 
-            await SendMessageAsync(values);
+            await SendMessageAsync(values, _pendingExit == null);
 
             _pendingExit?.TrySetResult(true);
             _pendingExit = null;
@@ -84,7 +84,7 @@ namespace Telegram.Common
                 {
                     Logger.Debug("Trying to kill");
 
-                    var task = SendMessageAsync("Exit");
+                    var task = SendMessageAsync("Exit", reconnect: false);
                     var result = await Task.WhenAny(task, Task.Delay(200));
 
                     if (task != result)
@@ -93,10 +93,10 @@ namespace Telegram.Common
                         await EnqueueExitAsync();
                     }
                 }
-                catch
+                catch (Exception ex)
                 {
                     // All the remote procedure calls must be wrapped in a try-catch block
-                    Logger.Debug("Exception while trying to kill");
+                    Logger.Error(ex);
                 }
             }
         }
@@ -123,12 +123,12 @@ namespace Telegram.Common
             _ = SendMessageAsync(new ValueSet { { "UnreadCount", unreadCount }, { "UnreadUnmutedCount", unreadMutedCount } });
         }
 
-        private static Task<AppServiceResponse> SendMessageAsync(string message, object parameter = null)
+        private static Task<AppServiceResponse> SendMessageAsync(string message, object parameter = null, bool reconnect = true)
         {
-            return SendMessageAsync(new ValueSet { { message, parameter ?? true } });
+            return SendMessageAsync(new ValueSet { { message, parameter ?? true } }, reconnect);
         }
 
-        private static async Task<AppServiceResponse> SendMessageAsync(ValueSet message)
+        private static async Task<AppServiceResponse> SendMessageAsync(ValueSet message, bool reconnect = true)
         {
             if (_connection != null)
             {
@@ -138,14 +138,24 @@ namespace Telegram.Common
                     if (response.Status != AppServiceResponseStatus.Success)
                     {
                         Logger.Error(response.Status);
+
+                        if (reconnect)
+                        {
+                            Cancel();
+                        }
                     }
 
                     return response;
                 }
-                catch
+                catch (Exception ex)
                 {
                     // All the remote procedure calls must be wrapped in a try-catch block
-                    Logger.Error();
+                    Logger.Error(ex);
+
+                    if (reconnect)
+                    {
+                        Cancel();
+                    }
                 }
             }
 
