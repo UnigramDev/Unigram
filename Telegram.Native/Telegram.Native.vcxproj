@@ -344,6 +344,7 @@
     <ClInclude Include="libyuv\include\libyuv\convert_from.h" />
     <ClInclude Include="libyuv\include\libyuv\convert_from_argb.h" />
     <ClInclude Include="libyuv\include\libyuv\cpu_id.h" />
+    <ClInclude Include="libyuv\include\libyuv\loongson_intrinsics.h" />
     <ClInclude Include="libyuv\include\libyuv\macros_msa.h" />
     <ClInclude Include="libyuv\include\libyuv\mjpeg_decoder.h" />
     <ClInclude Include="libyuv\include\libyuv\planar_functions.h" />
@@ -353,6 +354,7 @@
     <ClInclude Include="libyuv\include\libyuv\row.h" />
     <ClInclude Include="libyuv\include\libyuv\scale.h" />
     <ClInclude Include="libyuv\include\libyuv\scale_argb.h" />
+    <ClInclude Include="libyuv\include\libyuv\scale_rgb.h" />
     <ClInclude Include="libyuv\include\libyuv\scale_row.h" />
     <ClInclude Include="libyuv\include\libyuv\scale_uv.h" />
     <ClInclude Include="libyuv\include\libyuv\version.h" />
@@ -922,6 +924,27 @@
     </ClCompile>
     <ClCompile Include="Highlight\SyntaxToken.cpp" />
     <ClCompile Include="Highlight\TextToken.cpp" />
+    <ClCompile Include="libyuv\source\rotate_lsx.cc">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="libyuv\source\row_lasx.cc">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="libyuv\source\row_lsx.cc">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="libyuv\source\row_rvv.cc">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="libyuv\source\scale_lsx.cc">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="libyuv\source\scale_rgb.cc">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="libyuv\source\scale_rvv.cc">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
     <ClCompile Include="LokiRng.cpp">
       <DependentUpon>LokiRng.idl</DependentUpon>
       <SubType>Code</SubType>
@@ -972,9 +995,6 @@
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="libyuv\source\compare_gcc.cc">
-      <PrecompiledHeader>NotUsing</PrecompiledHeader>
-    </ClCompile>
-    <ClCompile Include="libyuv\source\compare_mmi.cc">
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="libyuv\source\compare_msa.cc">
@@ -1037,9 +1057,6 @@
     <ClCompile Include="libyuv\source\rotate_gcc.cc">
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="libyuv\source\rotate_mmi.cc">
-      <PrecompiledHeader>NotUsing</PrecompiledHeader>
-    </ClCompile>
     <ClCompile Include="libyuv\source\rotate_msa.cc">
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
     </ClCompile>
@@ -1059,9 +1076,6 @@
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="libyuv\source\row_gcc.cc">
-      <PrecompiledHeader>NotUsing</PrecompiledHeader>
-    </ClCompile>
-    <ClCompile Include="libyuv\source\row_mmi.cc">
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="libyuv\source\row_msa.cc">
@@ -1089,9 +1103,6 @@
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="libyuv\source\scale_gcc.cc">
-      <PrecompiledHeader>NotUsing</PrecompiledHeader>
-    </ClCompile>
-    <ClCompile Include="libyuv\source\scale_mmi.cc">
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="libyuv\source\scale_msa.cc">

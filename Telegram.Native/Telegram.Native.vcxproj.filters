@@ -401,25 +401,13 @@
     <ClCompile Include="..\Libraries\libutf\utfutf.c">
       <Filter>libtextclassifier\libutf</Filter>
     </ClCompile>
-    <ClCompile Include="libyuv\source\compare_mmi.cc">
-      <Filter>libyuv\source</Filter>
-    </ClCompile>
     <ClCompile Include="libyuv\source\compare_msa.cc">
-      <Filter>libyuv\source</Filter>
-    </ClCompile>
-    <ClCompile Include="libyuv\source\rotate_mmi.cc">
       <Filter>libyuv\source</Filter>
     </ClCompile>
     <ClCompile Include="libyuv\source\rotate_msa.cc">
       <Filter>libyuv\source</Filter>
     </ClCompile>
-    <ClCompile Include="libyuv\source\row_mmi.cc">
-      <Filter>libyuv\source</Filter>
-    </ClCompile>
     <ClCompile Include="libyuv\source\row_msa.cc">
-      <Filter>libyuv\source</Filter>
-    </ClCompile>
-    <ClCompile Include="libyuv\source\scale_mmi.cc">
       <Filter>libyuv\source</Filter>
     </ClCompile>
     <ClCompile Include="libyuv\source\scale_msa.cc">
@@ -734,6 +722,27 @@
     </ClCompile>
     <ClCompile Include="..\Libraries\libprisma\libprisma\TokenList.cpp">
       <Filter>Highlight</Filter>
+    </ClCompile>
+    <ClCompile Include="libyuv\source\rotate_lsx.cc">
+      <Filter>libyuv\source</Filter>
+    </ClCompile>
+    <ClCompile Include="libyuv\source\row_lasx.cc">
+      <Filter>libyuv\source</Filter>
+    </ClCompile>
+    <ClCompile Include="libyuv\source\row_lsx.cc">
+      <Filter>libyuv\source</Filter>
+    </ClCompile>
+    <ClCompile Include="libyuv\source\row_rvv.cc">
+      <Filter>libyuv\source</Filter>
+    </ClCompile>
+    <ClCompile Include="libyuv\source\scale_lsx.cc">
+      <Filter>libyuv\source</Filter>
+    </ClCompile>
+    <ClCompile Include="libyuv\source\scale_rgb.cc">
+      <Filter>libyuv\source</Filter>
+    </ClCompile>
+    <ClCompile Include="libyuv\source\scale_rvv.cc">
+      <Filter>libyuv\source</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -1159,6 +1168,12 @@
     </ClInclude>
     <ClInclude Include="..\Libraries\libprisma\libprisma\TokenList.h">
       <Filter>Highlight</Filter>
+    </ClInclude>
+    <ClInclude Include="libyuv\include\libyuv\loongson_intrinsics.h">
+      <Filter>libyuv\include\libyuv</Filter>
+    </ClInclude>
+    <ClInclude Include="libyuv\include\libyuv\scale_rgb.h">
+      <Filter>libyuv\include\libyuv</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
