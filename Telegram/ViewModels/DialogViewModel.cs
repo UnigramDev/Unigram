@@ -2476,7 +2476,7 @@ namespace Telegram.ViewModels
             var factory = header.EditingMessageMedia;
             if (factory != null)
             {
-                var input = factory.Delegate(factory.InputFile, header.EditingMessageCaption);
+                var input = factory.Delegate(factory.InputFile, formattedText);
 
                 var response = await ClientService.SendAsync(new SendMessageAlbum(editing.ChatId, editing.MessageThreadId, null, Constants.PreviewOnly, new[] { input }));
                 if (response is Messages messages && messages.MessagesValue.Count == 1)
@@ -4141,9 +4141,7 @@ namespace Telegram.ViewModels
         public InputTextQuote ReplyToQuote { get; set; }
 
         public MessageViewModel EditingMessage { get; set; }
-
         public InputMessageFactory EditingMessageMedia { get; set; }
-        public FormattedText EditingMessageCaption { get; set; }
 
         public WebPage WebPagePreview { get; set; }
         public string WebPageUrl { get; set; }
