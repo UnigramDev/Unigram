@@ -228,6 +228,20 @@ namespace Telegram.Views
             }
 
             var result = Title.Text.TrimEnd('.', ',');
+            var identity = Identity.CurrentType switch
+            {
+                IdentityIconType.Fake => Strings.FakeMessage,
+                IdentityIconType.Scam => Strings.ScamMessage,
+                IdentityIconType.Premium => Strings.AccDescrPremium,
+                IdentityIconType.Verified => Strings.AccDescrVerified,
+                _ => null
+            };
+
+            if (identity != null)
+            {
+                result += ", " + identity;
+            }
+
             if (ChatActionLabel.Text.Length > 0)
             {
                 result += ", " + ChatActionLabel.Text;
