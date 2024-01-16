@@ -2019,6 +2019,9 @@ namespace Telegram.Views
             flyout.CreateFlyoutItem(async () => await TextField.ScheduleAsync(false), self ? Strings.SetReminder : Strings.ScheduleMessage, Icons.CalendarClock);
 
             flyout.ShowAt(sender, FlyoutPlacementMode.TopEdgeAlignedRight);
+
+            // Supposedly cancels click by touch
+            sender.ReleasePointerCaptures();
         }
 
         private void Reply_ContextRequested(UIElement sender, ContextRequestedEventArgs args)
