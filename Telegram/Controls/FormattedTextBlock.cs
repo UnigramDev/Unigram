@@ -238,6 +238,11 @@ namespace Telegram.Controls
             _query = null;
             _spoiler = null;
 
+            foreach (var link in _links)
+            {
+                ToolTipService.SetToolTip(link, null);
+            }
+
             _links.Clear();
             _codeBlocks.Clear();
         }
