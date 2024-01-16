@@ -5708,6 +5708,9 @@ Stories</value>
   <data name="OpenGroup" xml:space="preserve">
     <value>VIEW GROUP</value>
   </data>
+  <data name="OpenImageUnsupported" xml:space="preserve">
+    <value>Sorry, Telegram can&apos;t process that type of image.</value>
+  </data>
   <data name="OpenInExternalApp" xml:space="preserve">
     <value>Open in...</value>
   </data>
