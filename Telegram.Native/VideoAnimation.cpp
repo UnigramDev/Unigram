@@ -485,26 +485,26 @@ namespace winrt::Telegram::Native::implementation
             {
                 if (frame->format == AV_PIX_FMT_YUVA420P)
                 {
-                    libyuv::I420AlphaToARGBMatrix(frame->data[0], frame->linesize[0], frame->data[2], frame->linesize[2], frame->data[1], frame->linesize[1], frame->data[3], frame->linesize[3], (uint8_t*)pixels, width * 4, &libyuv::kYvuI601Constants, width, height, 1);
+                    libyuv::I420AlphaToARGBMatrix(frame->data[0], frame->linesize[0], frame->data[1], frame->linesize[1], frame->data[2], frame->linesize[2], frame->data[3], frame->linesize[3], pixels, width * 4, &libyuv::kYvuI601Constants, width, height, 1);
                 }
                 else if (frame->format == AV_PIX_FMT_YUV444P)
                 {
-                    libyuv::H444ToARGB(frame->data[0], frame->linesize[0], frame->data[2], frame->linesize[2], frame->data[1], frame->linesize[1], (uint8_t*)pixels, width * 4, width, height);
+                    libyuv::H444ToABGR(frame->data[0], frame->linesize[0], frame->data[2], frame->linesize[2], frame->data[1], frame->linesize[1], pixels, width * 4, width, height);
                 }
                 else if (frame->format == AV_PIX_FMT_YUV420P || frame->format == AV_PIX_FMT_YUVJ420P)
                 {
                     if (frame->colorspace == AVColorSpace::AVCOL_SPC_BT709)
                     {
-                        libyuv::H420ToABGR(frame->data[0], frame->linesize[0], frame->data[2], frame->linesize[2], frame->data[1], frame->linesize[1], (uint8_t*)pixels, width * 4, width, height);
+                        libyuv::H420ToABGR(frame->data[0], frame->linesize[0], frame->data[2], frame->linesize[2], frame->data[1], frame->linesize[1], pixels, width * 4, width, height);
                     }
                     else
                     {
-                        libyuv::I420ToABGR(frame->data[0], frame->linesize[0], frame->data[2], frame->linesize[2], frame->data[1], frame->linesize[1], (uint8_t*)pixels, width * 4, width, height);
+                        libyuv::I420ToABGR(frame->data[0], frame->linesize[0], frame->data[2], frame->linesize[2], frame->data[1], frame->linesize[1], pixels, width * 4, width, height);
                     }
                 }
                 else if (frame->format == AV_PIX_FMT_RGBA)
                 {
-                    libyuv::ARGBToABGR(frame->data[0], frame->linesize[0], (uint8_t*)pixels, width * 4, width, height);
+                    libyuv::ARGBToABGR(frame->data[0], frame->linesize[0], pixels, width * 4, width, height);
                 }
             }
             else
