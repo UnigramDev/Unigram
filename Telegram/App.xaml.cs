@@ -108,12 +108,7 @@ namespace Telegram
 
             if (args.TaskInstance.TriggerDetails is AppServiceTriggerDetails appService && string.Equals(appService.CallerPackageFamilyName, Package.Current.Id.FamilyName))
             {
-                NotifyIcon.Connect(appService.AppServiceConnection, args.TaskInstance.GetDeferral());
-
-                args.TaskInstance.Canceled += (s, e) =>
-                {
-                    NotifyIcon.Cancel();
-                };
+                NotifyIcon.Connect(appService.AppServiceConnection, args.TaskInstance);
             }
             else
             {

@@ -6,6 +6,7 @@
 //
 using Microsoft.AppCenter.Crashes;
 using System;
+using Telegram.Common;
 using Telegram.Converters;
 using Telegram.ViewModels;
 using Windows.UI.Xaml;
@@ -39,6 +40,11 @@ namespace Telegram.Views
         private void Crash_Click(object sender, RoutedEventArgs e)
         {
             throw new TestCrashException();
+        }
+
+        private void Bridge_Click(object sender, RoutedEventArgs e)
+        {
+            NotifyIcon.Debug("Message received");
         }
     }
 }

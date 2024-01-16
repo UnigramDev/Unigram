@@ -132,6 +132,8 @@
                 </controls:HeaderedControl>
 
                 <controls:HeaderedControl>
+                    <controls:BadgeButton Content="Bridge debug"
+                                          Click="Bridge_Click" />
                     <controls:BadgeButton Content="Crash the app &#x2620;"
                                           Click="Crash_Click" />
                 </controls:HeaderedControl>

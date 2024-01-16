@@ -7,6 +7,7 @@
 using System;
 using System.Diagnostics;
 using System.Threading.Tasks;
+using Telegram.Controls;
 using Telegram.Navigation;
 using Windows.ApplicationModel;
 using Windows.ApplicationModel.AppService;
@@ -40,13 +41,14 @@ namespace Telegram.Common
 
         public static bool IsConnected => _connection != null;
 
-        public static async void Connect(AppServiceConnection connection, BackgroundTaskDeferral deferral)
+        public static async void Connect(AppServiceConnection connection, IBackgroundTaskInstance task)
         {
             _connection = connection;
             _connection.RequestReceived += OnRequestReceived;
             _connection.ServiceClosed += OnServiceClosed;
 
-            _deferral = deferral;
+            _deferral = task.GetDeferral();
+            task.Canceled += OnCanceled;
 
             var values = new ValueSet
             {
@@ -60,13 +62,13 @@ namespace Telegram.Common
                 values.Add("Exit", true);
             }
 
-            await _connection.SendMessageAsync(values);
+            await SendMessageAsync(values);
 
             _pendingExit?.TrySetResult(true);
             _pendingExit = null;
         }
 
-        public static Task EnqueueExitAsync()
+        private static Task EnqueueExitAsync()
         {
             _pendingExit = new TaskCompletionSource<bool>();
             Cancel();
@@ -80,64 +82,74 @@ namespace Telegram.Common
             {
                 try
                 {
-                    var task = _connection.SendMessageAsync("Exit").AsTask();
+                    Logger.Debug("Trying to kill");
+
+                    var task = SendMessageAsync("Exit");
                     var result = await Task.WhenAny(task, Task.Delay(200));
 
                     if (task != result)
                     {
+                        Logger.Debug("Failed to kill");
                         await EnqueueExitAsync();
                     }
                 }
                 catch
                 {
                     // All the remote procedure calls must be wrapped in a try-catch block
+                    Logger.Debug("Exception while trying to kill");
                 }
             }
         }
 
-        public static async Task DebugAsync(string value)
+        public static async void Debug(string value)
         {
-            if (_connection != null)
+            var response = await SendMessageAsync("Debug", value);
+            if (response?.Status == AppServiceResponseStatus.Success)
             {
-                try
+                if (response.Message.TryGet<string>("Debug", out var message))
                 {
-                    await _connection.SendMessageAsync("Debug", value);
-                }
-                catch
-                {
-                    // All the remote procedure calls must be wrapped in a try-catch block
+                    await MessagePopup.ShowAsync(message);
                 }
             }
         }
 
         public static void LoopbackExempt(bool enabled)
         {
-            if (_connection != null)
-            {
-                try
-                {
-                    _ = _connection.SendMessageAsync("LoopbackExempt", enabled);
-                }
-                catch
-                {
-                    // All the remote procedure calls must be wrapped in a try-catch block
-                }
-            }
+            _ = SendMessageAsync("LoopbackExempt", enabled);
         }
 
         public static void SendUnreadCount(int unreadCount, int unreadMutedCount)
+        {
+            _ = SendMessageAsync(new ValueSet { { "UnreadCount", unreadCount }, { "UnreadUnmutedCount", unreadMutedCount } });
+        }
+
+        private static Task<AppServiceResponse> SendMessageAsync(string message, object parameter = null)
+        {
+            return SendMessageAsync(new ValueSet { { message, parameter ?? true } });
+        }
+
+        private static async Task<AppServiceResponse> SendMessageAsync(ValueSet message)
         {
             if (_connection != null)
             {
                 try
                 {
-                    _ = _connection.SendMessageAsync(new ValueSet { { "UnreadCount", unreadCount }, { "UnreadUnmutedCount", unreadMutedCount } });
+                    var response = await _connection.SendMessageAsync(message);
+                    if (response.Status != AppServiceResponseStatus.Success)
+                    {
+                        Logger.Error(response.Status);
+                    }
+
+                    return response;
                 }
                 catch
                 {
                     // All the remote procedure calls must be wrapped in a try-catch block
+                    Logger.Error();
                 }
             }
+
+            return null;
         }
 
         private static async void OnRequestReceived(AppServiceConnection sender, AppServiceRequestReceivedEventArgs args)
@@ -154,10 +166,17 @@ namespace Telegram.Common
             _connection.ServiceClosed -= OnServiceClosed;
             _connection = null;
 
+            Logger.Debug(args.Status);
             Cancel();
         }
 
-        public static void Cancel()
+        private static void OnCanceled(IBackgroundTaskInstance sender, BackgroundTaskCancellationReason reason)
+        {
+            Logger.Debug(reason);
+            Cancel();
+        }
+
+        private static void Cancel()
         {
             if (_deferral != null)
             {

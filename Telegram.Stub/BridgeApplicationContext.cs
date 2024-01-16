@@ -293,6 +293,7 @@ namespace Telegram.Stub
             if (args.Request.Message.TryGet("Debug", out string debug))
             {
                 MessageBox.Show(debug);
+                response.Add("Debug", debug);
             }
 
             try
