@@ -1043,11 +1043,14 @@ namespace Telegram.Controls
 
             _activated = Window.Current.CoreWindow.ActivationMode != CoreWindowActivationMode.Deactivated;
 
+            // Automatically pause only if looping
+            if (_presentation.LoopCount != 1)
+            {
+                _activated = true;
+                _loader.Activated += OnActivated;
+            }
+
             _createdResourcesLock.Release();
-
-            //RegisterEvents();
-
-            _loader.Activated += OnActivated;
             RegisterRendering();
         }
 

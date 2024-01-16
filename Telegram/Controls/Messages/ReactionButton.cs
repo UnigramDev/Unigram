@@ -293,6 +293,9 @@ namespace Telegram.Controls.Messages
                             Icon.Play();
                         }
 
+                        _centerCompleted = true;
+                        _aroundCompleted = false;
+
                         var presenter = Presenter;
                         var popup = Overlay;
 
@@ -341,6 +344,9 @@ namespace Telegram.Controls.Messages
 
             if (center.Local.IsDownloadingCompleted && around.Local.IsDownloadingCompleted)
             {
+                _centerCompleted = false;
+                _aroundCompleted = false;
+
                 var presenter = Presenter;
                 var popup = Overlay;
 
@@ -399,8 +405,13 @@ namespace Telegram.Controls.Messages
             }
         }
 
+        private bool _centerCompleted;
+        private bool _aroundCompleted;
+
         private void Start()
         {
+            Logger.Info();
+
             var presenter = Presenter;
             if (presenter == null)
             {
@@ -412,22 +423,39 @@ namespace Telegram.Controls.Messages
 
         private void Continue1()
         {
+            Logger.Info();
+
+            _centerCompleted = true;
+
+            if (_aroundCompleted)
+            {
+                Continue();
+            }
+        }
+
+        private void Continue2()
+        {
+            Logger.Info();
+
+            _aroundCompleted = true;
+
+            if (_centerCompleted)
+            {
+                Continue();
+            }
+        }
+
+        private void Continue()
+        {
             var presenter = Presenter;
-            if (presenter == null)
+            var popup = Overlay;
+
+            if (presenter == null || popup == null)
             {
                 return;
             }
 
             presenter.Opacity = 1;
-        }
-
-        private void Continue2()
-        {
-            var popup = Overlay;
-            if (popup == null)
-            {
-                return;
-            }
 
             popup.IsOpen = false;
             popup.Child = null;
