@@ -237,6 +237,9 @@ namespace Telegram.Controls
 
             _query = null;
             _spoiler = null;
+
+            _links.Clear();
+            _codeBlocks.Clear();
         }
 
         public bool IgnoreSpoilers
