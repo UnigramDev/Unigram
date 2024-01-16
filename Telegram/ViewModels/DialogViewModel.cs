@@ -522,16 +522,19 @@ namespace Telegram.ViewModels
 
                 System.Diagnostics.Debug.WriteLine("DialogViewModel: LoadNextSliceAsync");
 
+                MessageViewModel fromMessage;
                 long fromMessageId;
                 int offset;
 
                 if (direction == PanelScrollingDirection.Backward)
                 {
+                    fromMessage = Items.Count > 0 ? Items[0] : null;
                     fromMessageId = Items.FirstId;
                     offset = 0;
                 }
                 else
                 {
+                    fromMessage = null;
                     fromMessageId = Items.LastId;
                     offset = -49;
                 }
@@ -563,15 +566,26 @@ namespace Telegram.ViewModels
                 }
 
                 var tsc = new TaskCompletionSource<MessageCollection>();
-                void handler(BaseObject result)
+                async void handler(BaseObject result)
                 {
+                    IList<Message> temp = null;
                     if (result is FoundChatMessages foundChatMessages)
                     {
-                        tsc.SetResult(new MessageCollection(Items.Ids, foundChatMessages.Messages, CreateMessage));
+                        temp = foundChatMessages.Messages;
                     }
                     else if (result is Messages messages)
                     {
-                        tsc.SetResult(new MessageCollection(Items.Ids, messages.MessagesValue, CreateMessage));
+                        temp = messages.MessagesValue;
+                    }
+
+                    if (temp != null)
+                    {
+                        if (direction == PanelScrollingDirection.Backward && temp.Empty())
+                        {
+                            await AddHeaderAsync(temp, fromMessage?.Get());
+                        }
+
+                        tsc.SetResult(new MessageCollection(Items.Ids, temp, CreateMessage));
                     }
                     else
                     {
@@ -599,11 +613,7 @@ namespace Telegram.ViewModels
                             Items.RawAddRange(replied, true, out bool empty);
                         }
                     }
-                    else if (direction == PanelScrollingDirection.Backward)
-                    {
-                        await AddHeaderAsync();
-                    }
-                    else
+                    else if (direction != PanelScrollingDirection.Backward)
                     {
                         SetScrollMode(ItemsUpdatingScrollMode.KeepLastItemInView, true);
                     }
@@ -626,9 +636,8 @@ namespace Telegram.ViewModels
             }
         }
 
-        protected async Task AddHeaderAsync()
+        protected async Task AddHeaderAsync(IList<Message> messages, Message previous)
         {
-            var previous = Items.FirstOrDefault();
             if (previous != null && (previous.Content is MessageHeaderDate || (previous.Content is MessageText && previous.Id == 0)))
             {
                 return;
@@ -678,36 +687,36 @@ namespace Telegram.ViewModels
                     content = new MessageText(text, null, null);
                 }
 
-                Items.Insert(0, CreateMessage(new Message(0, new MessageSenderUser(user.Id), chat.Id, null, null, false, false, false, false, false, false, true, false, false, false, false, false, false, false, false, false, false, false, 0, 0, null, null, null, null, null, 0, null, 0, 0, 0, string.Empty, 0, string.Empty, content, null)));
+                messages.Add(new Message(0, new MessageSenderUser(user.Id), chat.Id, null, null, false, false, false, false, false, false, true, false, false, false, false, false, false, false, false, false, false, false, 0, 0, null, null, null, null, null, 0, null, 0, 0, 0, string.Empty, 0, string.Empty, content, null));
                 return;
             }
 
         AddDate:
             if (_topic == null && _thread != null)
             {
-                var replied = _thread.Messages.OrderBy(x => x.Id)
-                    .Select(x => CreateMessage(x))
-                    .ToList();
-
-                ProcessMessages(chat, replied);
+                var replied = _thread.Messages.OrderBy(x => x.Id).ToList();
+                var empty = previous == null;
 
                 previous = replied[0];
 
-                if (Items.Count > 0)
+                if (empty)
                 {
-                    Items.Insert(0, CreateMessage(new Message(0, previous.SenderId, previous.ChatId, null, null, previous.IsOutgoing, false, false, false, false, false, true, false, false, false, false, false, false, false, false, previous.IsChannelPost, previous.IsTopicMessage, false, previous.Date, 0, null, null, null, null, null, 0, null, 0, 0, 0, string.Empty, 0, string.Empty, new MessageCustomServiceAction(Strings.DiscussionStarted), null)));
+                    messages.Add(new Message(0, previous.SenderId, previous.ChatId, null, null, previous.IsOutgoing, false, false, false, false, false, true, false, false, false, false, false, false, false, false, previous.IsChannelPost, previous.IsTopicMessage, false, previous.Date, 0, null, null, null, null, null, 0, null, 0, 0, 0, string.Empty, 0, string.Empty, new MessageCustomServiceAction(Strings.NoComments), null));
                 }
                 else
                 {
-                    Items.Insert(0, CreateMessage(new Message(0, previous.SenderId, previous.ChatId, null, null, previous.IsOutgoing, false, false, false, false, false, true, false, false, false, false, false, false, false, false, previous.IsChannelPost, previous.IsTopicMessage, false, previous.Date, 0, null, null, null, null, null, 0, null, 0, 0, 0, string.Empty, 0, string.Empty, new MessageCustomServiceAction(Strings.NoComments), null)));
+                    messages.Add(new Message(0, previous.SenderId, previous.ChatId, null, null, previous.IsOutgoing, false, false, false, false, false, true, false, false, false, false, false, false, false, false, previous.IsChannelPost, previous.IsTopicMessage, false, previous.Date, 0, null, null, null, null, null, 0, null, 0, 0, 0, string.Empty, 0, string.Empty, new MessageCustomServiceAction(Strings.DiscussionStarted), null));
                 }
 
-                Items.Insert(0, previous);
-                Items.Insert(0, CreateMessage(new Message(0, previous.SenderId, previous.ChatId, null, null, previous.IsOutgoing, false, false, false, false, false, true, false, false, false, false, false, false, false, false, previous.IsChannelPost, previous.IsTopicMessage, false, previous.Date, 0, null, null, null, null, null, 0, null, 0, 0, 0, string.Empty, 0, string.Empty, new MessageHeaderDate(), null)));
+                for (int i = replied.Count - 1; i >= 0; i--)
+                {
+                    messages.Add(replied[i]);
+                }
             }
-            else if (previous != null)
+            
+            if (previous != null)
             {
-                Items.Insert(0, CreateMessage(new Message(0, previous.SenderId, previous.ChatId, null, null, previous.IsOutgoing, false, false, false, false, false, true, false, false, false, false, false, false, false, false, previous.IsChannelPost, previous.IsTopicMessage, false, previous.Date, 0, null, null, null, null, null, 0, null, 0, 0, 0, string.Empty, 0, string.Empty, new MessageHeaderDate(), null)));
+                messages.Add(new Message(0, previous.SenderId, previous.ChatId, null, null, previous.IsOutgoing, false, false, false, false, false, true, false, false, false, false, false, false, false, false, previous.IsChannelPost, previous.IsTopicMessage, false, previous.Date, 0, null, null, null, null, null, 0, null, 0, 0, 0, string.Empty, 0, string.Empty, new MessageHeaderDate(), null));
             }
         }
 
@@ -1056,15 +1065,6 @@ namespace Telegram.ViewModels
 
                     UpdateDetectedLanguage();
 
-                    if (_topic == null && _thread != null && _thread.Messages.Any(x => x.Id == maxId))
-                    {
-                        await AddHeaderAsync();
-                    }
-                    else if (replied.Empty())
-                    {
-                        await AddHeaderAsync();
-                    }
-
                     await AddSponsoredMessagesAsync();
                 }
 
@@ -1293,7 +1293,7 @@ namespace Telegram.ViewModels
                     }
 
                     scrollMode = ItemsUpdatingScrollMode.KeepItemsInView;
-                    values = firstVisibleIndex == -1
+                    values = firstVisibleIndex == -1 || messages.MessagesValue.Count == firstVisibleIndex + 1
                         ? messages.MessagesValue
                         : messages.MessagesValue.Take(firstVisibleIndex + 1);
                 }
@@ -1301,6 +1301,18 @@ namespace Telegram.ViewModels
                 {
                     scrollMode = direction == ScrollIntoViewAlignment.Default ? ItemsUpdatingScrollMode.KeepLastItemInView : ItemsUpdatingScrollMode.KeepItemsInView;
                     values = messages.MessagesValue;
+                }
+
+                if (values is IList<Message> temp)
+                {
+                    if (_topic == null && _thread != null && (maxId == 0 || _thread.Messages.Any(x => x.Id == maxId)))
+                    {
+                        await AddHeaderAsync(temp, temp.Count > 0 ? temp[^1] : null);
+                    }
+                    else if (temp.Empty())
+                    {
+                        await AddHeaderAsync(temp, null);
+                    }
                 }
 
                 var replied = new MessageCollection(null, values, CreateMessage);
@@ -3584,7 +3596,7 @@ namespace Telegram.ViewModels
         {
             foreach (var item in source)
             {
-                if (exclude != null && exclude.Contains(item.Id))
+                if (item.Id != 0 && exclude != null && exclude.Contains(item.Id))
                 {
                     continue;
                 }
@@ -3643,7 +3655,7 @@ namespace Telegram.ViewModels
                 Add(message);
                 empty = false;
 
-                if (i == source.Count - 1)
+                if (message.Id != 0 && message.Id > _last)
                 {
                     _last = message.Id;
                 }
@@ -3674,7 +3686,7 @@ namespace Telegram.ViewModels
                 Insert(0, message);
                 empty = false;
 
-                if (i == 0)
+                if (message.Id != 0 && message.Id < _first)
                 {
                     _first = message.Id;
                 }
