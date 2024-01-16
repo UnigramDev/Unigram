@@ -11,6 +11,7 @@ using Telegram.Td.Api;
 using Telegram.ViewModels;
 using Telegram.ViewModels.Chats;
 using Windows.UI.Xaml;
+using Windows.UI.Xaml.Automation.Peers;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Documents;
 using Windows.UI.Xaml.Hosting;
@@ -33,7 +34,7 @@ namespace Telegram.Controls.Chats
             _debouncer = new EventDebouncer<TextChangedEventArgs>(Constants.TypingTimeout, handler => Field.TextChanged += new TextChangedEventHandler(handler));
             _debouncer.Invoked += (s, args) =>
             {
-                if (Field.State != ChatSearchState.Members)
+                if (Field.State != ChatSearchState.Members && !AutomationPeer.ListenerExists(AutomationEvents.LiveRegionChanged))
                 {
                     ViewModel?.Search(Field.Text, Field.From, Field.Filter?.Filter);
                 }
