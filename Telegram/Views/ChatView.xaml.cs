@@ -2023,11 +2023,11 @@ namespace Telegram.Views
                         Position = header.ReplyToQuote.Position
                     };
 
-                    flyout.CreateFlyoutItem(ViewModel.QuoteToMessageInAnotherChat, quote, Strings.ReplyToAnotherChat, Icons.ReplyInAnotherChat);
+                    flyout.CreateFlyoutItem(ViewModel.QuoteToMessageInAnotherChat, quote, Strings.ReplyToAnotherChat, Icons.Replace);
                 }
                 else
                 {
-                    flyout.CreateFlyoutItem(ViewModel.ReplyToMessageInAnotherChat, header.ReplyToMessage, Strings.ReplyToAnotherChat, Icons.ReplyInAnotherChat);
+                    flyout.CreateFlyoutItem(ViewModel.ReplyToMessageInAnotherChat, header.ReplyToMessage, Strings.ReplyToAnotherChat, Icons.Replace);
                 }
 
                 flyout.CreateFlyoutSeparator();
@@ -4051,18 +4051,18 @@ namespace Telegram.Views
                 {
                     switch (editing.Content)
                     {
-                        case MessageAnimation animation:
-                        case MessageAudio audio:
-                        case MessageDocument document:
-                            ButtonAttach.Glyph = Icons.AttachArrowRight24;
+                        case MessageAnimation:
+                        case MessageAudio:
+                        case MessageDocument:
+                            ButtonAttach.Glyph = Icons.Replace;
                             ButtonAttach.IsEnabled = true;
                             break;
                         case MessagePhoto photo:
-                            ButtonAttach.Glyph = !photo.IsSecret ? Icons.AttachArrowRight24 : Icons.Attach24;
+                            ButtonAttach.Glyph = !photo.IsSecret ? Icons.Replace : Icons.Attach24;
                             ButtonAttach.IsEnabled = !photo.IsSecret;
                             break;
                         case MessageVideo video:
-                            ButtonAttach.Glyph = !video.IsSecret ? Icons.AttachArrowRight24 : Icons.Attach24;
+                            ButtonAttach.Glyph = !video.IsSecret ? Icons.Replace : Icons.Attach24;
                             ButtonAttach.IsEnabled = !video.IsSecret;
                             break;
                         default:

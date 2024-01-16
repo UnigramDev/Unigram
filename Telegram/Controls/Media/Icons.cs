@@ -19,8 +19,6 @@ namespace Telegram.Controls.Media
         public const string ZWNJ = "\u200C";
         public const string Spacing = "\u2004\u200A";
 
-        public const string ReplyInAnotherChat = "\uEA3F";
-
         public const string PictureInPictureEnter = "\uE92C";
         public const string PictureInPictureExit = "\uE92D";
 
@@ -52,8 +50,9 @@ namespace Telegram.Controls.Media
 
         public const string Attach = "\uE917";
         public const string Attach24 = "\uE9D8";
-        public const string AttachArrowRight = "\uE918";
-        public const string AttachArrowRight24 = "\uE9DD";
+
+        public const string Replace = "\uEA3F";
+        public const string Replace24 = "\uEA60";
 
         public const string MoveUp = "\uEA44";
         public const string MoveDown = "\uEA43";
