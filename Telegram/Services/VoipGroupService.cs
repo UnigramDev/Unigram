@@ -1180,7 +1180,11 @@ namespace Telegram.Services
                     };
 
                     _lifetime = await _viewService.OpenAsync(parameters);
-                    _lifetime.Released += ApplicationView_Released;
+
+                    if (_lifetime != null)
+                    {
+                        _lifetime.Released += ApplicationView_Released;
+                    }
 
                     //Aggregator.Publish(new UpdateCallDialog(call, true));
                 }

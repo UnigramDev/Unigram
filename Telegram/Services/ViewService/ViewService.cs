@@ -109,34 +109,43 @@ namespace Telegram.Services.ViewService
         {
             await _mainWindowCreated.Task;
 
-            var newView = CoreApplication.CreateNewView();
-            var tsc = new TaskCompletionSource<ViewLifetimeControl>();
-
-            newView.DispatcherQueue.TryEnqueue(() =>
+            try
             {
-                var newWindow = Window.Current;
-                var newAppView = ApplicationView.GetForCurrentView();
+                // Throws when called while suspending or resuming:
+                // https://devblogs.microsoft.com/oldnewthing/20210920-00/?p=105711
+                var newView = CoreApplication.CreateNewView();
+                var tsc = new TaskCompletionSource<ViewLifetimeControl>();
 
-                newAppView.Title = parameters.Title ?? string.Empty;
-                newAppView.PersistedStateId = parameters.PersistentId ?? string.Empty;
+                newView.DispatcherQueue.TryEnqueue(() =>
+                {
+                    var newWindow = Window.Current;
+                    var newAppView = ApplicationView.GetForCurrentView();
 
-                var control = ViewLifetimeControl.GetForCurrentView();
-                newWindow.Content = parameters.Content(control);
-                newWindow.Activate();
+                    newAppView.Title = parameters.Title ?? string.Empty;
+                    newAppView.PersistedStateId = parameters.PersistentId ?? string.Empty;
 
-                tsc.SetResult(control);
-            });
+                    var control = ViewLifetimeControl.GetForCurrentView();
+                    newWindow.Content = parameters.Content(control);
+                    newWindow.Activate();
 
-            var control = await tsc.Task;
+                    tsc.SetResult(control);
+                });
 
-            var preferences = ViewModePreferences.CreateDefault(parameters.ViewMode);
-            if (parameters.Width != 0 && parameters.Height != 0)
-            {
-                preferences.CustomSize = new Size(parameters.Width, parameters.Height);
+                var control = await tsc.Task;
+
+                var preferences = ViewModePreferences.CreateDefault(parameters.ViewMode);
+                if (parameters.Width != 0 && parameters.Height != 0)
+                {
+                    preferences.CustomSize = new Size(parameters.Width, parameters.Height);
+                }
+
+                await ApplicationViewSwitcher.TryShowAsViewModeAsync(control.Id, parameters.ViewMode, preferences);
+                return control;
             }
-
-            await ApplicationViewSwitcher.TryShowAsViewModeAsync(control.Id, parameters.ViewMode, preferences);
-            return control;
+            catch
+            {
+                return null;
+            }
         }
 
         public async Task<ViewLifetimeControl> OpenAsync(Type page, object parameter = null, string title = null,
@@ -175,31 +184,40 @@ namespace Telegram.Services.ViewService
 
             await _mainWindowCreated.Task;
 
-            var newView = CoreApplication.CreateNewView();
-            var tsc = new TaskCompletionSource<ViewLifetimeControl>();
-
-            newView.DispatcherQueue.TryEnqueue(() =>
+            try
             {
-                var newWindow = Window.Current;
-                var newAppView = ApplicationView.GetForCurrentView();
+                // Throws when called while suspending or resuming:
+                // https://devblogs.microsoft.com/oldnewthing/20210920-00/?p=105711
+                var newView = CoreApplication.CreateNewView();
+                var tsc = new TaskCompletionSource<ViewLifetimeControl>();
 
-                newAppView.Title = title;
-                newAppView.PersistedStateId = "Floating";
+                newView.DispatcherQueue.TryEnqueue(() =>
+                {
+                    var newWindow = Window.Current;
+                    var newAppView = ApplicationView.GetForCurrentView();
 
-                var nav = BootStrapper.Current.NavigationServiceFactory(BootStrapper.BackButton.Ignore, session, id, false);
-                nav.Navigate(page, parameter);
+                    newAppView.Title = title;
+                    newAppView.PersistedStateId = "Floating";
 
-                var control = ViewLifetimeControl.GetForCurrentView();
-                newWindow.Content = BootStrapper.Current.CreateRootElement(nav);
-                newWindow.Activate();
+                    var nav = BootStrapper.Current.NavigationServiceFactory(BootStrapper.BackButton.Ignore, session, id, false);
+                    nav.Navigate(page, parameter);
 
-                tsc.SetResult(control);
-            });
+                    var control = ViewLifetimeControl.GetForCurrentView();
+                    newWindow.Content = BootStrapper.Current.CreateRootElement(nav);
+                    newWindow.Activate();
 
-            var control = await tsc.Task;
+                    tsc.SetResult(control);
+                });
 
-            await ApplicationViewSwitcher.TryShowAsStandaloneAsync(control.Id, ViewSizePreference.Default, currentView.Id, ViewSizePreference.UseHalf);
-            return control;
+                var control = await tsc.Task;
+
+                await ApplicationViewSwitcher.TryShowAsStandaloneAsync(control.Id, ViewSizePreference.Default, currentView.Id, ViewSizePreference.UseHalf);
+                return control;
+            }
+            catch
+            {
+                return null;
+            }
         }
     }
 }

@@ -830,7 +830,11 @@ namespace Telegram.Services
                 };
 
                 _callLifetime = await _viewService.OpenAsync(parameters);
-                _callLifetime.Released += ApplicationView_Released;
+
+                if (_callLifetime != null)
+                {
+                    _callLifetime.Released += ApplicationView_Released;
+                }
             }
 
             var callPage = _callPage;
