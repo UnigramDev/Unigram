@@ -74,9 +74,7 @@ namespace Telegram.Controls
             {
                 _hasInitialLoadedEventFired = false;
 
-                _interactionSource.Dispose();
-                _interactionSource = null;
-
+                _tracker.InteractionSources.RemoveAll();
                 _tracker.Dispose();
                 _tracker = null;
             }

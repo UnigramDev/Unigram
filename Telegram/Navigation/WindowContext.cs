@@ -153,10 +153,6 @@ namespace Telegram.Navigation
             NavigationServices.ForEach(x => x.Suspend());
             NavigationServices.Clear();
 
-            // This is needed because of a bug in Composition that causes the app to crash
-            // whenever a new InteractionTracker is created for the same UIElement.
-            ChatHistoryViewItem.UnloadExistingItems();
-
             _window.Activated -= OnActivated;
             _window.Closed -= OnClosed;
             _window.CoreWindow.ResizeStarted -= OnResizeStarted;

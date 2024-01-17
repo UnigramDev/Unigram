@@ -5,7 +5,6 @@
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
 using System;
-using System.Collections.Generic;
 using System.Numerics;
 using Telegram.Common;
 using Telegram.Controls.Messages;
@@ -39,6 +38,7 @@ namespace Telegram.Controls.Chats
         private bool _hasInitialLoadedEventFired;
         private InteractionTracker _tracker;
         private VisualInteractionSource _interactionSource;
+        private bool _interacting;
 
         private bool _requiresArrange;
 
@@ -53,7 +53,7 @@ namespace Telegram.Controls.Chats
             _typeName = typeName;
 
             Connected += OnLoaded;
-            //Disconnected += OnUnloaded;
+            Disconnected += OnUnloaded;
 
             AddHandler(PointerPressedEvent, new PointerEventHandler(OnPointerPressed), true);
         }
@@ -79,6 +79,11 @@ namespace Telegram.Controls.Chats
                 _requiresArrange = true;
                 _presenter = GetTemplateChild("ContentBorder") as FrameworkElement;
             }
+
+            if (_presenter != null)
+            {
+                ElementCompositionPreview.SetIsTranslationEnabled(_presenter, true);
+            }
         }
 
         protected override Size ArrangeOverride(Size finalSize)
@@ -96,9 +101,6 @@ namespace Telegram.Controls.Chats
             if (!_hasInitialLoadedEventFired && _presenter != null && (SettingsService.Current.SwipeToReply || SettingsService.Current.SwipeToShare))
             {
                 _hasInitialLoadedEventFired = true;
-
-                _existingItems ??= new();
-                _existingItems.Add(this);
 
                 _hitTest = ElementComposition.GetElementVisual(this);
                 _visual = ElementComposition.GetElementVisual(_presenter);
@@ -126,35 +128,15 @@ namespace Telegram.Controls.Chats
             {
                 _hasInitialLoadedEventFired = false;
 
-                _interactionSource.Dispose();
-                _interactionSource = null;
-
+                _tracker.InteractionSources.RemoveAll();
                 _tracker.Dispose();
                 _tracker = null;
             }
         }
 
-        [ThreadStatic]
-        private static HashSet<ChatHistoryViewItem> _existingItems;
-
-        public static void UnloadExistingItems()
-        {
-            if (_existingItems == null)
-            {
-                return;
-            }
-
-            foreach (var item in _existingItems)
-            {
-                item.OnUnloaded(null, null);
-            }
-
-            _existingItems = null;
-        }
-
         private void ConfigureInteractionTracker()
         {
-            _interactionSource = VisualInteractionSource.Create(_hitTest);
+            _interactionSource ??= VisualInteractionSource.Create(_hitTest);
 
             //Configure for x-direction panning
             _interactionSource.ManipulationRedirectionMode = VisualInteractionSourceRedirectionMode.CapableTouchpadOnly;
@@ -174,6 +156,12 @@ namespace Telegram.Controls.Chats
 
             //ConfigureAnimations(_visual, null);
             ConfigureRestingPoints();
+
+            if (_interacting)
+            {
+                _interacting = false;
+                _visual.Properties.InsertVector3("Translation", Vector3.Zero);
+            }
         }
 
         private void ConfigureRestingPoints()
@@ -192,7 +180,7 @@ namespace Telegram.Controls.Chats
             //var photoOffsetExp = _visual.Compositor.CreateExpressionAnimation("tracker.Position.X > 0 && !tracker.CanReply || tracker.Position.X <= 0 && !tracker.CanShare ? 0 : Max(-72, Min(72, -tracker.Position.X))");
             //var photoOffsetExp = _visual.Compositor.CreateExpressionAnimation("-tracker.Position.X");
             offsetExp.SetReferenceParameter("tracker", _tracker);
-            visual.StartAnimation("Offset.X", offsetExp);
+            visual.StartAnimation("Translation.X", offsetExp);
         }
 
         #region ContentMargin
@@ -346,11 +334,13 @@ namespace Telegram.Controls.Chats
 
         public void IdleStateEntered(InteractionTracker sender, InteractionTrackerIdleStateEnteredArgs args)
         {
+            _interacting = false;
             ConfigureAnimations(_visual, null);
         }
 
         public void InteractingStateEntered(InteractionTracker sender, InteractionTrackerInteractingStateEnteredArgs args)
         {
+            _interacting = true;
             ConfigureAnimations(_visual, null);
         }
 
