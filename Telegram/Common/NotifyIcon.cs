@@ -172,10 +172,6 @@ namespace Telegram.Common
 
         private static void OnServiceClosed(AppServiceConnection sender, AppServiceClosedEventArgs args)
         {
-            _connection.RequestReceived -= OnRequestReceived;
-            _connection.ServiceClosed -= OnServiceClosed;
-            _connection = null;
-
             Logger.Debug(args.Status);
             Cancel();
         }
@@ -188,6 +184,13 @@ namespace Telegram.Common
 
         private static void Cancel()
         {
+            if (_connection != null)
+            {
+                _connection.RequestReceived -= OnRequestReceived;
+                _connection.ServiceClosed -= OnServiceClosed;
+                _connection = null;
+            }
+
             if (_deferral != null)
             {
                 _deferral.Complete();

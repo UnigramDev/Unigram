@@ -126,6 +126,8 @@ namespace Telegram.Stub
 
         private async void Exit(object sender, EventArgs e)
         {
+            _closeRequested = false;
+
             if (_connection != null)
             {
                 _connection.RequestReceived -= OnRequestReceived;
@@ -282,17 +284,15 @@ namespace Telegram.Stub
 
             if (args.Request.Message.ContainsKey("Exit"))
             {
+                _closeRequested = false;
+
                 _connection.RequestReceived -= OnRequestReceived;
                 _connection.ServiceClosed -= OnServiceClosed;
-                _connection.Dispose();
-
-                _notifyIcon.Dispose();
-                Application.Exit();
             }
 
             if (args.Request.Message.TryGet("Debug", out string debug))
             {
-                MessageBox.Show(debug);
+                _ = Task.Run(() => MessageBox.Show(debug));
                 response.Add("Debug", debug);
             }
 
@@ -307,6 +307,13 @@ namespace Telegram.Stub
             finally
             {
                 deferral.Complete();
+            }
+
+            if (args.Request.Message.ContainsKey("Exit"))
+            {
+                _connection.Dispose();
+                _notifyIcon.Dispose();
+                Application.Exit();
             }
         }
 
