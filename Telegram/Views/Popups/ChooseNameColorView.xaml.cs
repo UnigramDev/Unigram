@@ -5,7 +5,6 @@
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using Telegram.Controls.Media;
 using Telegram.Controls.Messages;
@@ -25,7 +24,6 @@ namespace Telegram.Views.Popups
     public sealed partial class ChooseNameColorView : UserControl
     {
         private IClientService _clientService;
-        private MessageSender _sender;
 
         public ChooseNameColorView()
         {
@@ -39,26 +37,8 @@ namespace Telegram.Views.Popups
             //Title = Strings.UserColorTitle;
 
             _clientService = clientService;
-            _sender = sender;
 
-            var peerColors = clientService.AccentColors;
-            var peerColorsAvailable = clientService.AvailableAccentColors;
-
-            if (peerColors == null || peerColorsAvailable == null)
-            {
-                return;
-            }
-
-            var colors = new List<NameColor>();
-
-            foreach (var id in peerColorsAvailable)
-            {
-                if (peerColors.TryGetValue(id, out NameColor value))
-                {
-                    colors.Add(value);
-                }
-            }
-
+            var colors = clientService.GetAvailableAccentColors();
             List.ItemsSource = colors;
 
             var preview = ElementComposition.GetElementVisual(Preview);

@@ -30,7 +30,7 @@
         <ScrollViewer x:Name="ScrollingHost"
                       VerticalScrollBarVisibility="Auto"
                       VerticalScrollMode="Auto">
-            <controls:SettingsPanel IsHeader="True">
+            <controls:SettingsPanel>
                 <popups:ChooseNameColorView x:Name="NameView" />
 
                 <popups:ChooseProfileColorView x:Name="ProfileView" />

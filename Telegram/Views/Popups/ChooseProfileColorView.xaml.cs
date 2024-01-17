@@ -6,7 +6,6 @@
 //
 using Microsoft.Graphics.Canvas.Effects;
 using Microsoft.UI.Xaml.Media;
-using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
 using Telegram.Common;
@@ -47,24 +46,7 @@ namespace Telegram.Views.Popups
             _clientService = clientService;
             _sender = sender;
 
-            var peerColors = clientService.ProfileColors;
-            var peerColorsAvailable = clientService.AvailableProfileColors;
-
-            if (peerColors == null || peerColorsAvailable == null)
-            {
-                return;
-            }
-
-            var colors = new List<ProfileColor>();
-
-            foreach (var id in peerColorsAvailable)
-            {
-                if (peerColors.TryGetValue(id, out ProfileColor value))
-                {
-                    colors.Add(value);
-                }
-            }
-
+            var colors = clientService.GetAvailableProfileColors();
             List.ItemsSource = colors;
 
             var preview = ElementComposition.GetElementVisual(HeaderRoot);
@@ -148,6 +130,10 @@ namespace Telegram.Views.Popups
 
             List.SelectedItem = accent;
             UpdateProfileAccentColor(null, accent?.Id ?? -1, customEmojiId);
+
+            Reset.Visibility = SelectedAccentColor == null
+                ? Visibility.Collapsed
+                : Visibility.Visible;
         }
 
         #region Recycle

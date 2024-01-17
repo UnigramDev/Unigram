@@ -59,11 +59,8 @@ namespace Telegram.Services
         IOptionsService Options { get; }
         JsonValueObject Config { get; }
 
-        IDictionary<int, NameColor> AccentColors { get; }
-        IList<int> AvailableAccentColors { get; }
-
-        IDictionary<int, ProfileColor> ProfileColors { get; }
-        IList<int> AvailableProfileColors { get; }
+        IList<NameColor> GetAvailableAccentColors();
+        IList<ProfileColor> GetAvailableProfileColors();
 
         NameColor GetAccentColor(int id);
         bool TryGetProfileColor(int id, out ProfileColor color);
@@ -560,6 +557,48 @@ namespace Telegram.Services
 
         public IDictionary<int, ProfileColor> ProfileColors { get; private set; }
         public IList<int> AvailableProfileColors { get; private set; }
+
+        public IList<NameColor> GetAvailableAccentColors()
+        {
+            if (AccentColors == null || AvailableAccentColors == null)
+            {
+                return Array.Empty<NameColor>();
+            }
+
+            IList<NameColor> colors = null;
+
+            foreach (var id in AvailableAccentColors)
+            {
+                if (AccentColors.TryGetValue(id, out NameColor value))
+                {
+                    colors ??= new List<NameColor>();
+                    colors.Add(value);
+                }
+            }
+
+            return colors ?? Array.Empty<NameColor>();
+        }
+
+        public IList<ProfileColor> GetAvailableProfileColors()
+        {
+            if (ProfileColors == null || AvailableProfileColors == null)
+            {
+                return Array.Empty<ProfileColor>();
+            }
+
+            IList<ProfileColor> colors = null;
+
+            foreach (var id in AvailableProfileColors)
+            {
+                if (ProfileColors.TryGetValue(id, out ProfileColor value))
+                {
+                    colors ??= new List<ProfileColor>();
+                    colors.Add(value);
+                }
+            }
+
+            return colors ?? Array.Empty<ProfileColor>();
+        }
 
         public NameColor GetAccentColor(int id)
         {
