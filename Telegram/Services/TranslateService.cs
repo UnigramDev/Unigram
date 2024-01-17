@@ -18,8 +18,8 @@ namespace Telegram.Services
 {
     public interface ITranslateService
     {
-        bool CanTranslateText(string text);
-        bool CanTranslateText(FormattedText text);
+        bool CanTranslateText(string text, bool entireChat = false);
+        bool CanTranslateText(FormattedText text, bool entireChat = false);
 
         bool CanTranslate(string language, bool entireChat);
 
@@ -68,17 +68,17 @@ namespace Telegram.Services
             return culture.DisplayName;
         }
 
-        public bool CanTranslateText(FormattedText text)
+        public bool CanTranslateText(FormattedText text, bool entireChat = false)
         {
             if (text == null)
             {
                 return false;
             }
 
-            return CanTranslateText(text.Text);
+            return CanTranslateText(text.Text, entireChat);
         }
 
-        public bool CanTranslateText(string text)
+        public bool CanTranslateText(string text, bool entireChat = false)
         {
             if (string.IsNullOrEmpty(text))
             {
@@ -86,7 +86,7 @@ namespace Telegram.Services
             }
 
             var language = LanguageIdentification.IdentifyLanguage(text);
-            return CanTranslate(language, false);
+            return CanTranslate(language, entireChat);
         }
 
         public bool CanTranslate(string language, bool entireChat)
@@ -163,7 +163,7 @@ namespace Telegram.Services
                 }
             }
 
-            if (CanTranslateText(message.Text.Text))
+            if (CanTranslateText(message.Text.Text, true))
             {
                 message.TranslatedText = new MessageTranslateResultPending();
 
