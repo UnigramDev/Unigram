@@ -1055,7 +1055,7 @@ namespace Telegram.ViewModels
 
                     NotifyMessageSliceLoaded();
 
-                    if (replied.TryGetValue(maxId, out already))
+                    if (Items.TryGetValue(maxId, out already))
                     {
                         HistoryField?.ScrollToItem(already, alignment, alignment == VerticalAlignment.Center ? new MessageBubbleHighlightOptions(highlight) : null, pixel, direction ?? ScrollIntoViewAlignment.Leading, disableAnimation);
                     }
