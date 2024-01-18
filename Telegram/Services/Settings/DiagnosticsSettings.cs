@@ -80,6 +80,13 @@ namespace Telegram.Services.Settings
             set => AddOrUpdateValue(ref _enableWebViewDevTools, "EnableWebViewDevTools", value);
         }
 
+        private bool? _bridgeDebug;
+        public bool BridgeDebug
+        {
+            get => _bridgeDebug ??= GetValueOrDefault("BridgeDebug", false);
+            set => AddOrUpdateValue(ref _bridgeDebug, "BridgeDebug", value);
+        }
+
         private long? _storageMaxTimeFromLastAccess;
         public long StorageMaxTimeFromLastAccess
         {
@@ -92,6 +99,13 @@ namespace Telegram.Services.Settings
         {
             get => _useStorageOptimizer ??= GetValueOrDefault("UseStorageOptimizer", false);
             set => AddOrUpdateValue(ref _useStorageOptimizer, "UseStorageOptimizer", value);
+        }
+
+        private bool? _xamlDiagnostics;
+        public bool XamlDiagnostics
+        {
+            get => _xamlDiagnostics ??= GetValueOrDefault("XamlDiagnostics", true);
+            set => AddOrUpdateValue(ref _xamlDiagnostics, "XamlDiagnostics", value);
         }
 
         private bool? _lastCrashWasLayoutCycle;

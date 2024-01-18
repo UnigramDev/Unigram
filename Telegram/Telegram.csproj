@@ -1533,6 +1533,7 @@
     <Compile Include="Controls\ProgressVoice.cs" />
     <Compile Include="Converters\LastSeenConverter.cs" />
     <Compile Include="ViewModels\InstantViewModel.cs" />
+    <Content Include="Telegram.Diagnostics.dll" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="App.xaml.cs">
