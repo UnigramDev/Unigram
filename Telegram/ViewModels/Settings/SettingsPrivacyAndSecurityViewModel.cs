@@ -519,7 +519,7 @@ namespace Telegram.ViewModels.Settings
             }
             else if (ClientService.IsPremiumAvailable)
             {
-                ToastPopup.Show(new PremiumFeatureVoiceRecognition());
+                ToastPopup.Show(NavigationService, new PremiumFeatureVoiceRecognition());
             }
         }
 

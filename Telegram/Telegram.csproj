@@ -958,12 +958,6 @@
     <Compile Include="Views\Popups\ChooseSoundPopup.xaml.cs">
       <DependentUpon>ChooseSoundPopup.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\Popups\ComposeWebPagePopup.xaml.cs">
-      <DependentUpon>ComposeWebPagePopup.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\Popups\ComposeInfoPopup.xaml.cs">
-      <DependentUpon>ComposeInfoPopup.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Views\Popups\CreateChatPhotoPopup.xaml.cs">
       <DependentUpon>CreateChatPhotoPopup.xaml</DependentUpon>
     </Compile>
@@ -2477,14 +2471,6 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\Popups\ComposeWebPagePopup.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Views\Popups\ComposeInfoPopup.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
     <Page Include="Views\Popups\CreateChatPhotoPopup.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -2821,30 +2807,6 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Views\Settings\Password\SettingsPasswordConfirmPage.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Views\Settings\Password\SettingsPasswordCreatePage.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Views\Settings\Password\SettingsPasswordEmailPage.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Views\Settings\Password\SettingsPasswordDonePage.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Views\Settings\Password\SettingsPasswordHintPage.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Views\Settings\Password\SettingsPasswordIntroPage.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
     <Page Include="Views\Settings\Phone\ChangePhoneNumberPopup.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -2954,10 +2916,6 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Views\Settings\SettingsPasscodePage.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Views\Settings\SettingsPasswordPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

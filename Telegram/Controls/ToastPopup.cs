@@ -9,6 +9,7 @@ using System;
 using System.Threading.Tasks;
 using Telegram.Common;
 using Telegram.Navigation;
+using Telegram.Navigation.Services;
 using Telegram.Streams;
 using Telegram.Td;
 using Telegram.Td.Api;
@@ -25,7 +26,7 @@ namespace Telegram.Controls
 {
     public class ToastPopup
     {
-        public static TeachingTip Show(PremiumFeature source)
+        public static async void Show(INavigationService navigationService, PremiumFeature source)
         {
             var text = source switch
             {
@@ -35,7 +36,13 @@ namespace Telegram.Controls
                 _ => Strings.UnlockPremium
             };
 
-            return Show(Extensions.ReplacePremiumLink(text), new LocalFileSource("ms-appx:///Assets/Toasts/Premium.tgs"));
+            var markdown = ClientEx.ParseMarkdown(text);
+
+            var confirm = await ShowActionAsync(markdown, Strings.Add, new LocalFileSource("ms-appx:///Assets/Toasts/Premium.tgs"));
+            if (confirm == ContentDialogResult.Primary)
+            {
+                navigationService.ShowPromo(new PremiumSourceFeature(source));
+            }
         }
 
         public static TeachingTip Show(string text, ElementTheme requestedTheme = ElementTheme.Dark, TimeSpan? dismissAfter = null)
