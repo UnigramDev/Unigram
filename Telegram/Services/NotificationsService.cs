@@ -436,7 +436,7 @@ namespace Telegram.Services
                 return;
             }
 
-            var caption = GetCaption(chat);
+            var caption = GetCaption(chat, silent);
             var content = GetContent(chat, message);
             var launch = GetLaunch(chat, message);
             var picture = GetPhoto(chat);
@@ -476,7 +476,7 @@ namespace Telegram.Services
 
             if (UpdateAsync(chat))
             {
-                await UpdateToast(caption, content, $"{_sessionService.Id}", silent || soundId == 0, soundFile, launch, $"{id}", $"{groupId}", picture, dateTime, canReply);
+                await UpdateToast(caption, content, $"{_sessionService.Id}", silent, silent || soundId == 0, soundFile, launch, $"{id}", $"{groupId}", picture, dateTime, canReply);
             }
         }
 
@@ -509,7 +509,7 @@ namespace Telegram.Services
             }
         }
 
-        private async Task UpdateToast(string caption, string message, string account, bool silent, Td.Api.File soundFile, string launch, string tag, string group, string picture, string date, bool canReply)
+        private async Task UpdateToast(string caption, string message, string account, bool suppressPopup, bool silent, Td.Api.File soundFile, string launch, string tag, string group, string picture, string date, bool canReply)
         {
             var xml = $"<toast launch='{launch}' displayTimestamp='{date}'>";
             xml += "<visual><binding template='ToastGeneric'>";
@@ -568,10 +568,7 @@ namespace Telegram.Services
                     notification.RemoteId += group;
                 }
 
-                if (silent)
-                {
-                    notification.SuppressPopup = true;
-                }
+                notification.SuppressPopup = suppressPopup;
 
                 notifier.Show(notification);
 
@@ -734,14 +731,21 @@ namespace Telegram.Services
 
 
 
-        private string GetCaption(Chat chat)
+        private string GetCaption(Chat chat, bool silent)
         {
             if (chat.Type is ChatTypeSecret)
             {
                 return Strings.AppName;
             }
 
-            return _clientService.GetTitle(chat);
+            var title = _clientService.GetTitle(chat);
+
+            if (silent)
+            {
+                return string.Format("\U0001F515 {0}", title);
+            }
+
+            return title;
         }
 
         private string GetContent(Chat chat, Message message)
