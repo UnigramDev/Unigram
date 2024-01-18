@@ -227,7 +227,7 @@ namespace Telegram.Navigation
 
         protected sealed override void OnLaunched(LaunchActivatedEventArgs e)
         {
-            Logger.Info();
+            Logger.Info(e.Kind);
             WatchDog.Launch(e.PreviousExecutionState);
             CallInternalLaunchAsync(e);
         }
@@ -246,7 +246,7 @@ namespace Telegram.Navigation
         /// </summary>
         private void InternalLaunch(LaunchActivatedEventArgs e)
         {
-            Logger.Info($"Previous:{e.PreviousExecutionState}");
+            Logger.Info($"Previous: {e.PreviousExecutionState}");
 
             PrelaunchActivated = e.PrelaunchActivated;
 
@@ -484,7 +484,7 @@ namespace Telegram.Navigation
         /// </summary>
         public virtual void OnInitialize(IActivatedEventArgs args)
         {
-            Logger.Info($"Virtual {nameof(IActivatedEventArgs)}:{args.Kind}");
+            Logger.Info($"Virtual Kind: {args.Kind}");
         }
 
         /// <summary>
@@ -497,7 +497,7 @@ namespace Telegram.Navigation
         /// </summary>
         public virtual Task OnSuspendingAsync(object s, SuspendingEventArgs e)
         {
-            Logger.Info($"Virtual {nameof(SuspendingEventArgs)}:{e.SuspendingOperation}");
+            Logger.Info($"Virtual Operation: {e.SuspendingOperation}");
 
             return Task.CompletedTask;
         }
@@ -516,7 +516,7 @@ namespace Telegram.Navigation
         /// </remarks>
         public virtual void OnResuming(object s, object e, AppExecutionState previousExecutionState)
         {
-            Logger.Info($"Virtual, {nameof(previousExecutionState)}:{previousExecutionState}");
+            Logger.Info($"Virtual, Previous: {previousExecutionState}");
         }
 
         #endregion
@@ -532,7 +532,7 @@ namespace Telegram.Navigation
         /// </summary>
         public INavigationService NavigationServiceFactory(BackButton backButton, int session, string id, bool root)
         {
-            Logger.Info($"{nameof(backButton)}:{backButton}");
+            Logger.Info($"{nameof(backButton)}: {backButton}");
 
             return NavigationServiceFactory(backButton, new Frame(), session, id, root);
         }
@@ -542,7 +542,7 @@ namespace Telegram.Navigation
         /// </summary>
         protected virtual INavigationService CreateNavigationService(Frame frame, int session, string id, bool root)
         {
-            Logger.Info($"Frame:{frame}");
+            Logger.Info($"Frame: {frame}");
 
             return new NavigationService(frame, session, id);
         }
@@ -556,7 +556,7 @@ namespace Telegram.Navigation
         /// </summary>
         public INavigationService NavigationServiceFactory(BackButton backButton, Frame frame, int session, string id, bool root)
         {
-            Logger.Info($"{nameof(backButton)}:{backButton} {nameof(frame)}:{frame}");
+            Logger.Info($"{nameof(backButton)}: {backButton} {nameof(frame)}: {frame}");
 
             frame.Content = null;
 
@@ -601,7 +601,7 @@ namespace Telegram.Navigation
             }
         }
 
-        private readonly Dictionary<string, States> CurrentStateHistory = new Dictionary<string, States>();
+        private readonly Dictionary<string, States> CurrentStateHistory = new();
 
         private void InitializeFrame(IActivatedEventArgs e)
         {
@@ -611,7 +611,7 @@ namespace Telegram.Navigation
                 This is private because there's no reason for the developer to call this.
             */
 
-            Logger.Info($"{nameof(IActivatedEventArgs)}:{e.Kind}");
+            Logger.Info($"Kind: {e.Kind}");
 
             CallOnInitialize(false, e);
 
@@ -763,7 +763,7 @@ namespace Telegram.Navigation
         /// </summary>
         public static AdditionalKinds DetermineStartCause(IActivatedEventArgs args)
         {
-            Logger.Info($"{nameof(IActivatedEventArgs)}:{args.Kind}");
+            Logger.Info($"Kind: {args.Kind}");
 
             if (args is ToastNotificationActivatedEventArgs)
             {
@@ -797,7 +797,7 @@ namespace Telegram.Navigation
                 if (DetermineStartCause(e) == AdditionalKinds.Primary || launchedEvent?.TileId == "")
                 {
                     restored = await nav.LoadAsync();
-                    Logger.Info($"{nameof(restored)}:{restored}", member: nameof(nav.LoadAsync));
+                    Logger.Info($"{nameof(restored)}: {restored}", member: nameof(nav.LoadAsync));
                 }
                 return restored;
             }
@@ -832,7 +832,7 @@ namespace Telegram.Navigation
                         // call view model suspend (OnNavigatedfrom)
                         // date the cache (which marks the date/time it was suspended)
                         nav.FrameFacade.SetFrameState(CacheDateKey, DateTime.Now.ToString());
-                        Logger.Info($"Nav.FrameId:{nav.FrameFacade.FrameId}");
+                        Logger.Info($"Nav.FrameId: {nav.FrameFacade.FrameId}");
                         await nav.Dispatcher.DispatchAsync(async () => await nav.SuspendingAsync());
                     }
                     catch (Exception ex)

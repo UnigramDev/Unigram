@@ -62,6 +62,7 @@ namespace Telegram
         }
 
         private static readonly List<string> _lastCalls = new();
+        private static readonly object _lock = new();
 
         [SuppressUnmanagedCodeSecurity]
         [DllImport("kernel32.dll")]
@@ -91,11 +92,14 @@ namespace Telegram
                 entry = string.Format(FormatWithoutMessage, (time - diff) / 10_000_000d, level, Path.GetFileName(filePath), line, member);
             }
 
-            _lastCalls.Add(entry);
-
-            if (_lastCalls.Count > 50)
+            lock (_lock)
             {
-                _lastCalls.RemoveAt(0);
+                _lastCalls.Add(entry);
+
+                if (_lastCalls.Count > 50)
+                {
+                    _lastCalls.RemoveAt(0);
+                }
             }
 
             if ((int)level <= SettingsService.Current.VerbosityLevel && (level != LogLevel.Debug || message != null))

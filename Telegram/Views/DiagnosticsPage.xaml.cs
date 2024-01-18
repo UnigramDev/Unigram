@@ -4,7 +4,6 @@
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
-using Microsoft.AppCenter.Crashes;
 using System;
 using Telegram.Common;
 using Telegram.Converters;
@@ -39,7 +38,15 @@ namespace Telegram.Views
 
         private void Crash_Click(object sender, RoutedEventArgs e)
         {
-            throw new TestCrashException();
+            if (sender is FrameworkElement element)
+            {
+                element.SizeChanged += (s, args) =>
+                {
+                    element.Height++;
+                };
+
+                element.Height = element.ActualHeight + 1;
+            }
         }
 
         private void Bridge_Click(object sender, RoutedEventArgs e)

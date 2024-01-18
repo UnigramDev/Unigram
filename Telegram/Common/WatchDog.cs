@@ -86,17 +86,8 @@ namespace Telegram
             {
                 if (args.Exception is LayoutCycleException)
                 {
-                    Analytics.TrackEvent("LayoutCycleException", new Dictionary<string, string>
-                    {
-                        { "UseLayoutRounding", SettingsService.Current.Diagnostics.UseLayoutRounding.ToString() },
-                        { "TabsAlignedLeft", SettingsService.Current.IsLeftTabsEnabled.ToString() },
-                    });
-
-                    if (ApiInfo.IsPackagedRelease)
-                    {
-                        SettingsService.Current.Diagnostics.LastCrashWasLayoutCycle = true;
-                        SettingsService.Current.Diagnostics.UseLayoutRounding = false;
-                    }
+                    Analytics.TrackEvent("LayoutCycleException");
+                    SettingsService.Current.Diagnostics.LastCrashWasLayoutCycle = true;
                 }
                 else if (args.Exception is NotSupportedException)
                 {
@@ -197,7 +188,14 @@ namespace Telegram
 
         public static void FatalErrorCallback(string message)
         {
-            Crashes.TrackCrash(new UnmanagedException(message));
+            if (message.Contains("libvlc.dll") || message.Contains("libvlccore.dll"))
+            {
+                Crashes.TrackCrash(new LibVLCException(message));
+            }
+            else
+            {
+                Crashes.TrackCrash(new UnmanagedException(message));
+            }
         }
 
         private static void FatalErrorCallback(int verbosityLevel, string message)
@@ -254,11 +252,11 @@ namespace Telegram
                 $"Memory usage limit: {memoryUsageLimit}\n" +
                 $"Time since last update: {next - prev}s\n" +
                 $"Update count: {count}\n" +
-                $"Layout rounding: {SettingsService.Current.Diagnostics.UseLayoutRounding}\n" +
                 $"Tabs on the left: {SettingsService.Current.IsLeftTabsEnabled}\n";
 
             if (WindowContext.Current != null)
             {
+                var reader = AutomationPeer.ListenerExists(AutomationEvents.LiveRegionChanged);
                 var scaling = (WindowContext.Current.RasterizationScale * 100).ToString("N0");
                 var text = (BootStrapper.Current.TextScaleFactor * 100).ToString("N0");
                 var size = WindowContext.Current.Size;
@@ -266,7 +264,8 @@ namespace Telegram
                 var ratio = SettingsService.Current.DialogsWidthRatio;
                 var width = MasterDetailPanel.CountDialogsWidthFromRatio(size.Width, ratio);
 
-                info += $"Screen scaling: {scaling}%\n" +
+                info += $"Screen reader: {reader}\n" +
+                    $"Screen scaling: {scaling}%\n" +
                     $"Text scaling: {text}%\n" +
                     $"Window size: {size.Width}x{size.Height}\n" +
                     $"Column width: {ratio} ({width})\n";
@@ -299,6 +298,14 @@ namespace Telegram
     public class UnmanagedException : Exception
     {
         public UnmanagedException(string message)
+            : base(message)
+        {
+        }
+    }
+
+    public class LibVLCException : Exception
+    {
+        public LibVLCException(string message)
             : base(message)
         {
         }

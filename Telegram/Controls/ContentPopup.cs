@@ -41,8 +41,6 @@ namespace Telegram.Controls
             DefaultStyleKey = typeof(ContentPopup);
             DefaultButton = ContentDialogButton.Primary;
 
-            UseLayoutRounding = SettingsService.Current.Diagnostics.UseLayoutRounding;
-
             if (Window.Current.Content is FrameworkElement element)
             {
                 var app = BootStrapper.Current.RequestedTheme == ApplicationTheme.Dark ? ElementTheme.Dark : ElementTheme.Light;

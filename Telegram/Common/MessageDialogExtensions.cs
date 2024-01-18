@@ -35,6 +35,8 @@ namespace Telegram.Common
                 await _currentDialogShowRequest.Task;
             }
 
+            Logger.Info(dialog.GetType().Name);
+
             var request = _currentDialogShowRequest = new TaskCompletionSource<ContentDialog>();
             var result = await dialog.ShowAsync();
             _currentDialogShowRequest = null;

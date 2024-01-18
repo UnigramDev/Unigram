@@ -123,6 +123,11 @@ namespace Telegram.Common
                         TargetType = typeof(ScrollBar)
                     };
 
+                    // Microsoft recommends turning off layout rounding for VerticalPanningRoot and/or HorizontalPanningRoot.
+                    // We do it for the whole thing because it's just easier.
+                    // https://github.com/microsoft/microsoft-ui-xaml/issues/3779#issuecomment-1896403485
+                    style.Setters.Add(new Setter(UIElement.UseLayoutRoundingProperty, false));
+
                     this.Add(typeof(ScrollBar), style);
                 }
                 else

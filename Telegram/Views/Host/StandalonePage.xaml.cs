@@ -32,7 +32,6 @@ namespace Telegram.Views.Host
 
         public StandalonePage(INavigationService navigationService)
         {
-            UseLayoutRounding = SettingsService.Current.Diagnostics.UseLayoutRounding;
             RequestedTheme = SettingsService.Current.Appearance.GetCalculatedElementTheme();
             InitializeComponent();
 
