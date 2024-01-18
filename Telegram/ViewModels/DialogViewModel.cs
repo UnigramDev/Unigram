@@ -1022,6 +1022,8 @@ namespace Telegram.ViewModels
                 return;
             }
 
+            var loadMore = PanelScrollingDirection.None;
+
             using (await _loadMoreLock.WaitAsync())
             {
                 if (_loadingSlice || _chat?.Id != chat.Id)
@@ -1058,6 +1060,28 @@ namespace Telegram.ViewModels
                     if (Items.TryGetValue(maxId, out already))
                     {
                         HistoryField?.ScrollToItem(already, alignment, alignment == VerticalAlignment.Center ? new MessageBubbleHighlightOptions(highlight) : null, pixel, direction ?? ScrollIntoViewAlignment.Leading, disableAnimation);
+
+                        if (previousId.HasValue && !_repliesStack.Contains(previousId.Value))
+                        {
+                            _repliesStack.Push(previousId.Value);
+                        }
+                    }
+                    else if (maxId == 0)
+                    {
+                        if (_thread != null)
+                        {
+                            ScrollToTop();
+                        }
+                        else
+                        {
+                            ScrollToBottom();
+                        }
+                    }
+
+                    // If the response contains a single item, immediately load more in the past
+                    if (slice.Items.Count == 1)
+                    {
+                        loadMore = PanelScrollingDirection.Backward;
                     }
 
                     IsLastSliceLoaded = null;
@@ -1072,6 +1096,11 @@ namespace Telegram.ViewModels
                 IsLoading = false;
 
                 LoadPinnedMessagesSliceAsync(maxId);
+            }
+
+            if (loadMore != PanelScrollingDirection.None)
+            {
+                await LoadNextSliceAsync(loadMore);
             }
         }
 

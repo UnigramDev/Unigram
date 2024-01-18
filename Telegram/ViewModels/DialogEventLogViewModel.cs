@@ -203,7 +203,7 @@ namespace Telegram.ViewModels
 
                     if (empty)
                     {
-                        await AddHeaderAsync();
+                        //await AddHeaderAsync();
                     }
                 }
 
