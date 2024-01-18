@@ -395,7 +395,7 @@ namespace Telegram.Controls
                 formatting.CreateFlyoutSeparator();
                 formatting.CreateFlyoutItem(!mention, CreateLink, clone.Link.Length > 0 ? Strings.EditLink : Strings.CreateLink, Icons.Link, VirtualKey.K);
                 formatting.CreateFlyoutSeparator();
-                formatting.CreateFlyoutItem(length && !IsDefault(format), ToggleRegular, Strings.Regular, null, VirtualKey.N, VirtualKeyModifiers.Control | VirtualKeyModifiers.Shift);
+                formatting.CreateFlyoutItem(length && !IsDefaultFormat(selection), ToggleRegular, Strings.Regular, null, VirtualKey.N, VirtualKeyModifiers.Control | VirtualKeyModifiers.Shift);
 
                 flyout.Items.Add(formatting);
             }
@@ -584,6 +584,19 @@ namespace Telegram.Controls
             {
                 range.CharacterFormat.Name = Document.GetDefaultCharacterFormat().Name;
             }
+        }
+
+        protected bool IsDefaultFormat(ITextRange range)
+        {
+            var start = Document.GetRange(range.StartPosition, range.StartPosition);
+            start.MoveEnd(TextRangeUnit.CharacterFormat, 1);
+
+            if (start.EndPosition >= range.EndPosition)
+            {
+                return IsDefault(range.CharacterFormat);
+            }
+
+            return false;
         }
 
         protected bool IsDefault(ITextCharacterFormat format)
@@ -779,7 +792,7 @@ namespace Telegram.Controls
             {
                 CreateLink();
             }
-            else if (sender.Key == VirtualKey.N && sender.Modifiers == (VirtualKeyModifiers.Control | VirtualKeyModifiers.Shift) && length && !IsDefault(format))
+            else if (sender.Key == VirtualKey.N && sender.Modifiers == (VirtualKeyModifiers.Control | VirtualKeyModifiers.Shift) && length /*&& !IsDefault(format)*/)
             {
                 ToggleRegular();
             }
