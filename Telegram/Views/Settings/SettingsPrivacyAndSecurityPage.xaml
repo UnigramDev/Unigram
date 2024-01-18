@@ -108,6 +108,7 @@
                                           Content="{CustomResource PrivacyVoiceMessages}"
                                           Badge="{x:Bind ViewModel.AllowPrivateVoiceAndVideoNoteMessages.Badge, Mode=OneWay}"
                                           ChevronGlyph="{x:Bind ConvertVoiceMessagesChevron(ViewModel.IsPremium), Mode=OneWay}"
+                                          IsPremiumVisible="{x:Bind ViewModel.IsPremium, Mode=OneWay}"
                                           Style="{StaticResource GlyphBadgeButtonStyle}"
                                           Click="{x:Bind ViewModel.OpenVoiceMessages}"
                                           IsChevronVisible="True"

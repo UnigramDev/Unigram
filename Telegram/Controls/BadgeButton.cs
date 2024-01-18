@@ -24,6 +24,7 @@ namespace Telegram.Controls
         private BadgeButtonAutomationPeer _peer;
 
         private UIElement Chevron;
+        private UIElement Premium;
 
         public BadgeButton()
         {
@@ -36,6 +37,12 @@ namespace Telegram.Controls
             {
                 Chevron = GetTemplateChild(nameof(Chevron)) as UIElement;
                 Chevron.Visibility = Visibility.Visible;
+            }
+
+            if (IsPremiumVisible)
+            {
+                Premium = GetTemplateChild(nameof(Premium)) as UIElement;
+                Premium.Visibility = Visibility.Visible;
             }
 
             base.OnApplyTemplate();
@@ -122,6 +129,35 @@ namespace Telegram.Controls
 
         #endregion
 
+        #region IsPremiumVisible
+
+        public bool IsPremiumVisible
+        {
+            get { return (bool)GetValue(IsPremiumVisibleProperty); }
+            set { SetValue(IsPremiumVisibleProperty, value); }
+        }
+
+        public static readonly DependencyProperty IsPremiumVisibleProperty =
+            DependencyProperty.Register("IsPremiumVisible", typeof(bool), typeof(BadgeButton), new PropertyMetadata(false, OnPremiumVisibleChanged));
+
+        private static void OnPremiumVisibleChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            var sender = d as BadgeButton;
+            if (sender?.Premium != null || (bool)e.NewValue)
+            {
+                sender.Premium ??= sender.GetTemplateChild(nameof(sender.Premium)) as UIElement;
+
+                if (sender.Premium != null)
+                {
+                    sender.Premium.Visibility = (bool)e.NewValue
+                        ? Visibility.Visible
+                        : Visibility.Collapsed;
+                }
+            }
+        }
+
+        #endregion
+
         #region IsChevronVisible
 
         public bool IsChevronVisible
@@ -136,11 +172,16 @@ namespace Telegram.Controls
         private static void OnChevronVisibleChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             var sender = d as BadgeButton;
-            if (sender?.Chevron != null)
+            if (sender?.Chevron != null || (bool)e.NewValue)
             {
-                sender.Chevron.Visibility = (bool)e.NewValue
-                    ? Visibility.Visible
-                    : Visibility.Collapsed;
+                sender.Chevron ??= sender.GetTemplateChild(nameof(sender.Chevron)) as UIElement;
+
+                if (sender.Chevron != null)
+                {
+                    sender.Chevron.Visibility = (bool)e.NewValue
+                        ? Visibility.Visible
+                        : Visibility.Collapsed;
+                }
             }
         }
 
