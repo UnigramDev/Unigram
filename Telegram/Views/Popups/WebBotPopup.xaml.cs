@@ -690,10 +690,11 @@ namespace Telegram.Views.Popups
                     _closeNeedConfirmation = false;
                     Hide();
                 }
-
-                return;
             }
+        }
 
+        private void OnClosed(ContentDialog sender, ContentDialogClosedEventArgs args)
+        {
             View.Close();
         }
 

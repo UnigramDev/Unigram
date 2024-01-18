@@ -11,7 +11,8 @@
                        Padding="0"
                        HorizontalContentAlignment="Stretch"
                        VerticalContentAlignment="Stretch"
-                       Closing="OnClosing">
+                       Closing="OnClosing"
+                       Closed="OnClosed">
 
     <Grid CornerRadius="8">
         <Grid.RowDefinitions>
