@@ -247,45 +247,56 @@ namespace Telegram.Services
 
         public void Handle(UpdateUnreadMessageCount update)
         {
-            if (!_settings.Notifications.CountUnreadMessages || !_sessionService.IsActive)
+            if (update.ChatList is not ChatListMain || !_settings.Notifications.CountUnreadMessages || !_sessionService.IsActive)
             {
                 return;
             }
 
-            if (update.ChatList is ChatListMain)
+            if (_settings.Notifications.IncludeMutedChats)
             {
-                if (_settings.Notifications.IncludeMutedChats)
-                {
-                    _unreadCount.Set(update.UnreadCount);
-                }
-                else
-                {
-                    _unreadCount.Set(update.UnreadUnmutedCount);
-                }
-
-                NotifyIcon.SendUnreadCount(_settings.Notifications.IncludeMutedChats ? update.UnreadCount : 0, update.UnreadUnmutedCount);
+                _unreadCount.Set(update.UnreadCount);
             }
+            else
+            {
+                _unreadCount.Set(update.UnreadUnmutedCount);
+            }
+
+            SendUnreadCount(update.UnreadCount, update.UnreadUnmutedCount);
         }
 
         public void Handle(UpdateUnreadChatCount update)
         {
-            if (_settings.Notifications.CountUnreadMessages || !_sessionService.IsActive)
+            if (update.ChatList is not ChatListMain || _settings.Notifications.CountUnreadMessages || !_sessionService.IsActive)
             {
                 return;
             }
 
-            if (update.ChatList is ChatListMain)
+            if (_settings.Notifications.IncludeMutedChats)
             {
-                if (_settings.Notifications.IncludeMutedChats)
-                {
-                    _unreadCount.Set(update.UnreadCount);
-                }
-                else
-                {
-                    _unreadCount.Set(update.UnreadUnmutedCount);
-                }
+                _unreadCount.Set(update.UnreadCount);
+            }
+            else
+            {
+                _unreadCount.Set(update.UnreadUnmutedCount);
+            }
 
-                NotifyIcon.SendUnreadCount(_settings.Notifications.IncludeMutedChats ? update.UnreadCount : 0, update.UnreadUnmutedCount);
+            SendUnreadCount(update.UnreadCount, update.UnreadUnmutedCount);
+        }
+
+        private int _notifyIconUnreadCount;
+        private int _notifyIconUnreadUnmutedCount;
+
+        private void SendUnreadCount(int unreadCount, int unreadUnmutedCount)
+        {
+            unreadCount = Math.Min(_settings.Notifications.IncludeMutedChats ? unreadCount : 0, 1);
+            unreadUnmutedCount = Math.Min(unreadUnmutedCount, 1);
+
+            if (unreadCount != _notifyIconUnreadCount || unreadUnmutedCount != _notifyIconUnreadUnmutedCount)
+            {
+                _notifyIconUnreadCount = unreadCount;
+                _notifyIconUnreadUnmutedCount = unreadUnmutedCount;
+
+                NotifyIcon.SendUnreadCount(unreadCount, unreadUnmutedCount);
             }
         }
 
