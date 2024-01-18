@@ -363,6 +363,11 @@ namespace Telegram.Controls
                     DetailFrame.Navigated += OnNavigated;
                     DetailPresenter.Children.Add(DetailFrame);
 
+                    if (DetailFrame.Content is Page)
+                    {
+                        OnNavigated(DetailFrame, null);
+                    }
+
                     if (HasMaster)
                     {
                         if (DetailFrame.CurrentSourcePageType == null)
@@ -414,7 +419,7 @@ namespace Telegram.Controls
 
         private void OnNavigated(object sender, NavigationEventArgs e)
         {
-            if (e.Content is HostedPage hosted)
+            if (DetailFrame.Content is HostedPage hosted)
             {
                 DetailFooter = hosted.Action;
 
