@@ -602,7 +602,7 @@ namespace Telegram.Common
         public static Dictionary<string, (Color Color, SolidColorBrush Brush)> Dark => _dark ??= new()
         {
             { "MessageForegroundBrush", (Color.FromArgb(0xFF, 0xE4, 0xEC, 0xF2), new SolidColorBrush(Color.FromArgb(0xFF, 0xE4, 0xEC, 0xF2))) },
-            { "MessageForegroundLinkBrush", (Color.FromArgb(0xFF, 0xFF, 0xFF, 0xFF), new SolidColorBrush(Color.FromArgb(0xFF, 0xFF, 0xFF, 0xFF))) },
+            { "MessageForegroundLinkBrush", (Color.FromArgb(0xFF, 0x71, 0xBB, 0xE7), new SolidColorBrush(Color.FromArgb(0xFF, 0x71, 0xBB, 0xE7))) },
             { "MessageBackgroundBrush", (Color.FromArgb(0xFF, 0x2B, 0x52, 0x78), new SolidColorBrush(Color.FromArgb(0xFF, 0x2B, 0x52, 0x78))) },
             { "MessageElevationBrush", (Color.FromArgb(0x1D, 0x3A, 0xC3, 0x46), new SolidColorBrush(Color.FromArgb(0x1D, 0x3A, 0xC3, 0x46))) },
             { "MessageSubtleLabelBrush", (Color.FromArgb(0xFF, 0x7D, 0xA8, 0xD3), new SolidColorBrush(Color.FromArgb(0xFF, 0x7D, 0xA8, 0xD3))) },
@@ -720,7 +720,7 @@ namespace Telegram.Common
         public static Dictionary<string, (Color Color, SolidColorBrush Brush)> Dark => _dark ??= new()
         {
             { "MessageForegroundBrush", (Color.FromArgb(0xFF, 0xF5, 0xF5, 0xF5), new SolidColorBrush(Color.FromArgb(0xFF, 0xF5, 0xF5, 0xF5))) },
-            { "MessageForegroundLinkBrush", (Color.FromArgb(0xFF, 0xFF, 0xFF, 0xFF), new SolidColorBrush(Color.FromArgb(0xFF, 0xFF, 0xFF, 0xFF))) },
+            { "MessageForegroundLinkBrush", (Color.FromArgb(0xFF, 0x71, 0xBB, 0xE7), new SolidColorBrush(Color.FromArgb(0xFF, 0x71, 0xBB, 0xE7))) },
             { "MessageBackgroundBrush", (Color.FromArgb(0xFF, 0x18, 0x25, 0x33), new SolidColorBrush(Color.FromArgb(0xFF, 0x18, 0x25, 0x33))) },
             { "MessageElevationBrush", (Color.FromArgb(0x29, 0x74, 0x8E, 0xA2), new SolidColorBrush(Color.FromArgb(0x29, 0x74, 0x8E, 0xA2))) },
             { "MessageSubtleLabelBrush", (Color.FromArgb(0xFF, 0x6D, 0x7F, 0x8F), new SolidColorBrush(Color.FromArgb(0xFF, 0x6D, 0x7F, 0x8F))) },

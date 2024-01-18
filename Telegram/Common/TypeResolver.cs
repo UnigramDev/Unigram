@@ -150,7 +150,12 @@ namespace Telegram.Views
             }
         }
 
-        public TService Resolve<TService>(int session = int.MaxValue)
+        public TService Resolve<TService>()
+        {
+            return Resolve<TService>(int.MaxValue);
+        }
+
+        public TService Resolve<TService>(int session)
         {
             if (session == int.MaxValue)
             {
@@ -185,7 +190,14 @@ namespace Telegram.Views
             return result != null;
         }
 
-        public TService Resolve<TService, TDelegate>(TDelegate delegato, int session = int.MaxValue)
+        public TService Resolve<TService, TDelegate>(TDelegate delegato)
+            where TService : IDelegable<TDelegate>
+            where TDelegate : IViewModelDelegate
+        {
+            return Resolve<TService, TDelegate>(delegato, int.MaxValue);
+        }
+
+        public TService Resolve<TService, TDelegate>(TDelegate delegato, int session)
             where TService : IDelegable<TDelegate>
             where TDelegate : IViewModelDelegate
         {

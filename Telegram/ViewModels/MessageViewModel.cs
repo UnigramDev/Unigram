@@ -165,7 +165,7 @@ namespace Telegram.ViewModels
 
         private bool GetCanBeShared()
         {
-            if (SchedulingState != null)
+            if (SchedulingState != null || !CanBeSaved)
             {
                 return false;
             }

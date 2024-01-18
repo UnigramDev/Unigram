@@ -75,7 +75,7 @@ namespace Telegram.Controls.Drawers
             var debouncer = new EventDebouncer<TextChangedEventArgs>(Constants.TypingTimeout, handler => SearchField.TextChanged += new TextChangedEventHandler(handler));
             debouncer.Invoked += (s, args) =>
             {
-                ViewModel.Search(SearchField.Text);
+                ViewModel?.Search(SearchField.Text);
             };
         }
 

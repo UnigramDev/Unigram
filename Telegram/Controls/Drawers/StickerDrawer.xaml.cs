@@ -372,6 +372,21 @@ namespace Telegram.Controls.Drawers
 
         private void Toolbar_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
+            if (_updatingSelectedItem)
+            {
+                return;
+            }
+
+            _updatingSelectedItem = true;
+            VisualUtilities.QueueCallbackForCompositionRendering(UpdateSelectedItem);
+        }
+
+        private bool _updatingSelectedItem;
+
+        private void UpdateSelectedItem()
+        {
+            _updatingSelectedItem = false;
+
             if (Toolbar.SelectedItem != null)
             {
                 _ = Toolbar.ScrollToItem2(Toolbar.SelectedItem, VerticalAlignment.Center);

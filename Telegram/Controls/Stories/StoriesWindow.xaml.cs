@@ -76,6 +76,8 @@ namespace Telegram.Controls.Stories
 
         protected override void OnPointerWheelChanged(PointerRoutedEventArgs e)
         {
+            // TODO: optimize for touch screen, change direction and decrease speed.
+
             var point = e.GetCurrentPoint(this);
             var direction = point.Properties.MouseWheelDelta > 0
                 ? Direction.Backward

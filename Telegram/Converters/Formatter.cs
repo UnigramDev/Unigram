@@ -5,6 +5,7 @@
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
 using System;
+using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using Telegram.Common;
@@ -32,6 +33,8 @@ namespace Telegram.Converters
         public static DateTimeFormatter DayMonthAbbreviatedYear { get; private set; }
         public static DateTimeFormatter DayOfWeekAbbreviated { get; private set; }
 
+        public static IList<string> Languages { get; }
+
         static Formatter()
         {
             var culture = NativeUtils.GetCurrentCulture();
@@ -44,6 +47,8 @@ namespace Telegram.Converters
             {
                 languages.Insert(0, culture);
             }
+
+            Languages = languages;
 
             ShortDate = new DateTimeFormatter("shortdate", languages, region, calendar, clock);
             ShortTime = new DateTimeFormatter("shorttime", languages, region, calendar, clock);

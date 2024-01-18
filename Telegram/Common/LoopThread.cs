@@ -32,7 +32,7 @@ namespace Telegram.Common
         {
             lock (_timerLock)
             {
-                _tick.Invoke(this, EventArgs.Empty);
+                _tick?.Invoke(this, EventArgs.Empty);
             }
         }
 

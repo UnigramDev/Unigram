@@ -1300,6 +1300,10 @@ namespace Telegram.ViewModels
                     await ShowPopupAsync(new WebBotPopup(ClientService, NavigationService, user, webAppInfo, null, chat));
                 }
             }
+            else if (keyboardButton.Type is KeyboardButtonTypeRequestUsers requestUsers)
+            {
+
+            }
         }
 
         public async void OpenMiniApp(AttachmentMenuBot bot)

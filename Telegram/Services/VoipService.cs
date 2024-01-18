@@ -421,6 +421,7 @@ namespace Telegram.Services
                     if (outgoing)
                     {
                         // I'm not sure if RequestNewOutgoingCall is the right method to call, but it seem to work.
+                        // TODO: this moves the focus from the call window to the main window :(
                         _systemCall = _coordinator.RequestNewOutgoingCall(
                             $"{user.Id}",
                             user.FullName(),
@@ -440,6 +441,7 @@ namespace Telegram.Services
                             return null;
                         }
 
+                        // TODO: this moves the focus from the call window to the main window :(
                         _systemCall = _coordinator.RequestNewIncomingCall(
                             $"{user.Id}",
                             user.FullName(),

@@ -1105,15 +1105,15 @@
                     <Border x:Name="btnAttach"
                             Grid.Column="1"
                             Grid.Row="1">
-                        <controls:GlyphButton x:Name="ButtonAttach"
-                                              Click="Attach_Click"
-                                              Glyph="&#xE9D8;"
-                                              AllowFocusOnInteraction="False"
-                                              VerticalAlignment="Bottom"
-                                              FontFamily="{StaticResource TelegramThemeFontFamily}"
-                                              FontSize="{StaticResource GlyphLargeFontSize}"
-                                              AutomationProperties.Name="{CustomResource AccDescrAttachButton}"
-                                              ToolTipService.ToolTip="{CustomResource AccDescrAttachButton}" />
+                        <controls:AnimatedGlyphButton x:Name="ButtonAttach"
+                                                      Click="Attach_Click"
+                                                      Glyph="&#xE9D8;"
+                                                      AllowFocusOnInteraction="False"
+                                                      VerticalAlignment="Bottom"
+                                                      FontFamily="{StaticResource TelegramThemeFontFamily}"
+                                                      FontSize="{StaticResource GlyphLargeFontSize}"
+                                                      AutomationProperties.Name="{CustomResource AccDescrAttachButton}"
+                                                      ToolTipService.ToolTip="{CustomResource AccDescrAttachButton}" />
                     </Border>
 
                     <Grid x:Name="ButtonsPanel"

@@ -448,6 +448,11 @@ namespace Telegram.Controls
                     }
 
                     ShowHideDetailHeader(true);
+
+                    //if (AutomationPeer.ListenerExists(AutomationEvents.LiveRegionChanged))
+                    //{
+                    //    VisualUtilities.QueueCallbackForCompositionRendering(() => DetailHeaderPresenter.Focus(FocusState.Keyboard));
+                    //}
                 }
                 else
                 {

@@ -162,10 +162,11 @@ namespace Telegram.Common
         {
             if (Dispatcher.HasThreadAccess is false)
             {
-                Logger.Info(Environment.StackTrace);
+                // This should not happen but it currently does when scheduling a file
+                Logger.Error(Environment.StackTrace);
 
-                // Throwing here should get the exception to AppCenter early enough to actually have a stack trace.
-                throw new InvalidOperationException();
+                Dispatcher.Dispatch(() => NavigateToChat(chat, message, thread, accessToken, state, scheduled, force, createNewWindow, clearBackStack));
+                return;
             }
 
             if (chat == null)

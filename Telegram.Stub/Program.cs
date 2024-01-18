@@ -20,22 +20,24 @@ namespace Telegram.Stub
         const string MUTEX_NAME = "UnigramBridgeMutex";
 #endif
 
+        static readonly Mutex _mutex = new Mutex(true, MUTEX_NAME);
+
         /// <summary>
         /// The main entry point for the application.
         /// </summary>
         [STAThread]
         static void Main()
         {
-            if (!Mutex.TryOpenExisting(MUTEX_NAME, out _))
+            if (_mutex.WaitOne(0, true))
             {
                 Application.ThreadException += OnThreadException;
                 AppDomain.CurrentDomain.UnhandledException += OnUnhandledException;
 
-                Mutex mutex = new Mutex(false, MUTEX_NAME);
                 Application.EnableVisualStyles();
                 Application.SetCompatibleTextRenderingDefault(false);
                 Application.Run(new BridgeApplicationContext());
-                mutex.Close();
+                
+                _mutex.ReleaseMutex();
             }
         }
 

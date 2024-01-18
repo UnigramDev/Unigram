@@ -748,7 +748,7 @@ namespace winrt::Telegram::Native::implementation
         winrt::com_ptr<IDWriteTextLayout> textLayout;
         ReturnIfFailed(result, m_dwriteFactory->CreateTextLayout(
             text.data(),					// The string to be laid out and formatted.
-            wcslen(text.data()),			// The length of the string.
+            text.size(),        			// The length of the string.
             m_appleFormat.get(),			// The text format to apply to the string (contains font information, etc).
             width,							// The width of the layout box.
             INFINITY,						// The height of the layout box.
@@ -822,7 +822,7 @@ namespace winrt::Telegram::Native::implementation
         winrt::com_ptr<IDWriteTextLayout> textLayout;
         ReturnIfFailed(result, m_dwriteFactory->CreateTextLayout(
             text.data(),					// The string to be laid out and formatted.
-            wcslen(text.data()),			// The length of the string.
+            text.size(),        			// The length of the string.
             m_appleFormat.get(),			// The text format to apply to the string (contains font information, etc).
             width,							// The width of the layout box.
             INFINITY,						// The height of the layout box.

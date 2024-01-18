@@ -8,6 +8,7 @@ using Microsoft.Win32;
 using System;
 using System.Diagnostics;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 using Windows.ApplicationModel;
 using Windows.ApplicationModel.AppService;
@@ -78,6 +79,76 @@ namespace Telegram.Stub
                 // Can happen
             }
         }
+
+        /*[DllImport("..\\Telegram.Diagnostics.dll")]
+        public static extern int start(uint pid, uint framework);
+
+        private void LaunchLayoutCycleMonitor(uint pid)
+        {
+            var process = Process.GetCurrentProcess();
+            var fullPath = process.MainModule.FileName;
+
+            var path = Path.GetDirectoryName(fullPath);
+            path = Path.GetDirectoryName(path);
+            path = Path.Combine(path, "Telegram.Diagnostics.dll");
+
+            AllowAppContainerAccess(path);
+
+            //if (!AllowAppContainerAccess(path))
+            //{
+            //    MessageBox.Show("AllowAppContainerAccess");
+            //    return;
+            //}
+
+            var hr = start(pid, 1);
+
+            var exception = Marshal.GetExceptionForHR(hr);
+            if (exception != null)
+            {
+                MessageBox.Show(exception.ToString());
+            }
+            else
+            {
+                MessageBox.Show("All good");
+            }
+        }
+
+        [DllImport("Advapi32.dll", SetLastError = true)]
+        private static extern bool ConvertStringSecurityDescriptorToSecurityDescriptor(string StringSecurityDescriptor, uint StringSDRevision, out IntPtr SecurityDescriptor, out UIntPtr SecurityDescriptorSize);
+
+        [DllImport("advapi32.dll", CharSet = CharSet.Unicode, SetLastError = true)]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        public static extern bool GetSecurityDescriptorDacl(IntPtr pSecurityDescriptor, [MarshalAs(UnmanagedType.Bool)] out bool bDaclPresent, ref IntPtr pDacl, [MarshalAs(UnmanagedType.Bool)] out bool bDaclDefaulted);
+
+        [DllImport("advapi32.dll")]
+        public static extern int SetNamedSecurityInfo(
+                    String pObjectName,
+                    int ObjectType,
+                    int SecurityInfo,
+                    IntPtr psidOwner,
+                    IntPtr psidGroup,
+                    IntPtr pDacl,
+                    IntPtr pSacl);
+
+        private bool AllowAppContainerAccess(string path)
+        {
+            var success = ConvertStringSecurityDescriptorToSecurityDescriptor("D:(A;;GRGX;;;S-1-15-2-1)(A;;GRGX;;;S-1-15-2-2)", 1, out IntPtr sd, out UIntPtr sd_length);
+            if (success)
+            {
+                IntPtr dacl = IntPtr.Zero;
+                success = GetSecurityDescriptorDacl(sd, out bool present, ref dacl, out bool defaulted);
+
+                if (success)
+                {
+                    var result = SetNamedSecurityInfo(path, 1, 4, IntPtr.Zero, IntPtr.Zero, dacl, IntPtr.Zero);
+                    success = result == 0;
+                }
+
+                Marshal.FreeHGlobal(sd);
+            }
+
+            return success;
+        }*/
 
         private void OnSessionEnded(object sender, SessionEndedEventArgs e)
         {
@@ -154,6 +225,8 @@ namespace Telegram.Stub
 
         private async void Connect()
         {
+            Logger.Info();
+
             if (_connection != null)
             {
                 return;
@@ -224,22 +297,30 @@ namespace Telegram.Stub
 
         private async void OnRequestReceived(AppServiceConnection sender, AppServiceRequestReceivedEventArgs args)
         {
+            Logger.Info();
+
             var deferral = args.GetDeferral();
             var response = new ValueSet();
 
             if (args.Request.Message.TryGet("ProcessId", out int processId))
             {
+                Logger.Info("ProcessId");
+
                 _processId = processId;
                 response.Add("ProcessId", Process.GetCurrentProcess().Id);
             }
 
             if (args.Request.Message.TryGet("OpenText", out string openText))
             {
+                Logger.Info("OpenText");
+
                 _openMenuItem.Text = openText;
             }
 
             if (args.Request.Message.TryGet("ExitText", out string exitText))
             {
+                Logger.Info("ExitText");
+
                 _exitMenuItem.Text = exitText;
             }
 
@@ -262,6 +343,8 @@ namespace Telegram.Stub
 
             if (args.Request.Message.TryGet("UnreadCount", out int unreadCount) && args.Request.Message.TryGet("UnreadUnmutedCount", out int unreadUnmutedCount))
             {
+                Logger.Info("UnreadCount");
+
                 if (unreadCount > 0 || unreadUnmutedCount > 0)
                 {
                     _notifyIcon.Icon = unreadUnmutedCount > 0 ? Properties.Resources.Unmuted : Properties.Resources.Muted;
@@ -274,16 +357,19 @@ namespace Telegram.Stub
 
             if (args.Request.Message.ContainsKey("LoopbackExempt"))
             {
+                Logger.Info("LoopbackExempt");
                 AddLocalhostExemption();
             }
 
             if (args.Request.Message.ContainsKey("CloseRequested"))
             {
+                Logger.Info("CloseRequested");
                 _closeRequested = true;
             }
 
             if (args.Request.Message.ContainsKey("Exit"))
             {
+                Logger.Info("Exit");
                 _closeRequested = false;
 
                 _connection.RequestReceived -= OnRequestReceived;
@@ -292,25 +378,35 @@ namespace Telegram.Stub
 
             if (args.Request.Message.TryGet("Debug", out string debug))
             {
+                Logger.Info("Debug");
                 _ = Task.Run(() => MessageBox.Show(debug));
                 response.Add("Debug", debug);
             }
 
             try
             {
-                await args.Request.SendResponseAsync(response);
+                var status = await args.Request.SendResponseAsync(response);
+                if (status != AppServiceResponseStatus.Success)
+                {
+                    Logger.Error(status);
+                }
             }
             catch
             {
+                Logger.Info("Failed");
+
                 // All the remote procedure calls must be wrapped in a try-catch block
             }
             finally
             {
+                Logger.Info("Completed");
                 deferral.Complete();
             }
 
             if (args.Request.Message.ContainsKey("Exit"))
             {
+                Logger.Info("Exit");
+
                 _connection.Dispose();
                 _notifyIcon.Dispose();
                 Application.Exit();
@@ -319,6 +415,8 @@ namespace Telegram.Stub
 
         private void OnServiceClosed(AppServiceConnection sender, AppServiceClosedEventArgs args)
         {
+            Logger.Info("_closeRequested: " + _closeRequested);
+
             _connection.RequestReceived -= OnRequestReceived;
             _connection.ServiceClosed -= OnServiceClosed;
             _connection.Dispose();

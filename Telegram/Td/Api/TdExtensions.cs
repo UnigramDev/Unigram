@@ -1261,11 +1261,6 @@ namespace Telegram.Td.Api
             return message.Content.GetCaption();
         }
 
-        public static StyledText GetText(this MessageContent content)
-        {
-            return TextStyleRun.GetText(GetCaption(content));
-        }
-
         public static FormattedText GetCaption(this MessageContent content)
         {
             return content switch

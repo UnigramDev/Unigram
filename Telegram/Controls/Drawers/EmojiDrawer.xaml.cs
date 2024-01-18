@@ -390,6 +390,11 @@ namespace Telegram.Controls.Drawers
                 return;
             }
 
+            if (Toolbar2.ItemsPanelRoot == null)
+            {
+                return;
+            }
+
             if (Toolbar.SelectedItem == null != _emojiCollapsed || collapse)
             {
                 _emojiCollapsed = Toolbar.SelectedItem == null;

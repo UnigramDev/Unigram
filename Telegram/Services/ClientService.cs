@@ -535,7 +535,14 @@ namespace Telegram.Services
                         var diff = now - date;
                         if (diff.TotalDays >= 3)
                         {
-                            System.IO.File.Delete(file);
+                            try
+                            {
+                                System.IO.File.Delete(file);
+                            }
+                            catch
+                            {
+                                // File might be in use
+                            }
                         }
                     }
                 }

@@ -178,7 +178,7 @@ namespace Telegram.Services.ViewService
 
             if (oldControl != null)
             {
-                await ApplicationViewSwitcher.SwitchAsync(oldControl.Id, WindowContext.Current.Id, ApplicationViewSwitchingOptions.Default);
+                await ApplicationViewSwitcher.SwitchAsync(oldControl.Id);
                 return oldControl;
             }
 
@@ -211,7 +211,7 @@ namespace Telegram.Services.ViewService
 
                 var control = await tsc.Task;
 
-                await ApplicationViewSwitcher.TryShowAsStandaloneAsync(control.Id, ViewSizePreference.Default, currentView.Id, ViewSizePreference.UseHalf);
+                await ApplicationViewSwitcher.TryShowAsStandaloneAsync(control.Id);
                 return control;
             }
             catch

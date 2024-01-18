@@ -429,6 +429,11 @@ namespace Telegram.Controls.Gallery
 
             _unloaded = true;
 
+            if (Video != null)
+            {
+                Video.Initialized -= OnInitialized;
+            }
+
             Task.Run(() =>
             {
                 if (_mediaPlayer != null)

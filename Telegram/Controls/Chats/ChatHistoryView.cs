@@ -432,6 +432,15 @@ namespace Telegram.Controls.Chats
                 ScrollIntoView(item, alignment);
                 panel.UpdateLayout();
 
+                //if (index < panel.FirstCacheIndex || index > panel.LastCacheIndex)
+                //{
+                //    panel.UpdateLayout();
+                //}
+                //else
+                //{
+                //    Logger.Info("Item is in the cached range");
+                //}
+
                 return;
             }
 
@@ -557,6 +566,10 @@ namespace Telegram.Controls.Chats
                     {
                         _recognizer.CompleteGesture();
                     }
+                }
+                else if (_recognizer.IsActive)
+                {
+                    _recognizer.CompleteGesture();
                 }
             }
             else if (_recognizer.IsActive)

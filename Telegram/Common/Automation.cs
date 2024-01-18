@@ -178,6 +178,10 @@ namespace Telegram.Common
 
                 return $"{user.FullName()}: {summary}";
             }
+            //else if (message.IsChannelPost)
+            //{
+            //    return summary;
+            //}
             else if (message.ClientService.TryGetChat(message.SenderId, out Chat chat))
             {
                 return $"{chat.Title}: {summary}";

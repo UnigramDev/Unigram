@@ -43,10 +43,10 @@ namespace Telegram.ViewModels.Users
                 Items.Add(new GalleryChatPhoto(clientService, user, userFull.Photo));
             }
 
-            if (userFull.PublicPhoto != null && userFull.Photo == null && user.Id != clientService.Options.MyId)
+            if (userFull.PublicPhoto != null && (userFull.Photo == null || user.Id != clientService.Options.MyId))
             {
                 _additionalPhotos++;
-                Items.Add(new GalleryChatPhoto(clientService, user, userFull.PublicPhoto, 0, false, true));
+                Items.Add(new GalleryChatPhoto(clientService, user, userFull.PublicPhoto, 0, false, user.Id == clientService.Options.MyId));
             }
 
             SelectedItem = Items[0];

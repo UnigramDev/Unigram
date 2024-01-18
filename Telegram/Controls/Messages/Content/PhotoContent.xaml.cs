@@ -11,6 +11,7 @@ using Telegram.Td.Api;
 using Telegram.ViewModels;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Hosting;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Media.Imaging;
 
@@ -68,6 +69,16 @@ namespace Telegram.Controls.Messages.Content
             {
                 UpdateMessage(_message);
             }
+        }
+
+        private void Texture_ImageOpened(object sender, RoutedEventArgs e)
+        {
+            var visual = ElementCompositionPreview.GetElementVisual(LayoutRoot.Children[0]);
+            var animation = visual.Compositor.CreateScalarKeyFrameAnimation();
+            animation.InsertKeyFrame(0, 0);
+            animation.InsertKeyFrame(1, 1);
+
+            visual.StartAnimation("Opacity", animation);
         }
 
         #endregion
@@ -180,21 +191,17 @@ namespace Telegram.Controls.Messages.Content
                     _message.ClientService.DownloadFile(file.Id, 32);
                 }
 
-                //Button.Glyph = Icons.Cancel;
                 Button.SetGlyph(file.Id, MessageContentState.Downloading);
                 Button.Progress = (double)file.Local.DownloadedSize / size;
 
                 Button.Opacity = 1;
-                //Overlay.Opacity = 0;
             }
             else if (file.Remote.IsUploadingActive || message.SendingState is MessageSendingStateFailed)
             {
-                //Button.Glyph = Icons.Cancel;
                 Button.SetGlyph(file.Id, MessageContentState.Uploading);
                 Button.Progress = (double)file.Remote.UploadedSize / size;
 
                 Button.Opacity = 1;
-                //Overlay.Opacity = 0;
 
                 if (isSecret || string.IsNullOrEmpty(file.Local.Path))
                 {
@@ -207,18 +214,15 @@ namespace Telegram.Controls.Messages.Content
             }
             else if (canBeDownloaded)
             {
-                //Button.Glyph = Icons.Download;
                 Button.SetGlyph(file.Id, MessageContentState.Download);
                 Button.Progress = 0;
 
                 Button.Opacity = 1;
-                //Overlay.Opacity = 0;
             }
             else
             {
                 if (isSecret)
                 {
-                    //Button.Glyph = Icons.Ttl;
                     Button.SetGlyph(file.Id, MessageContentState.Ttl);
                     Button.Progress = 1;
 
@@ -238,20 +242,18 @@ namespace Telegram.Controls.Messages.Content
                 }
                 else
                 {
-                    //Button.Glyph = message.SendingState is MessageSendingStatePending ? Icons.Confirm : Icons.Play;
-                    Button.SetGlyph(file.Id, message.SendingState is MessageSendingStatePending && message.MediaAlbumId != 0 ? MessageContentState.Confirm : MessageContentState.Photo);
                     Button.Progress = 1;
 
                     if (message.Content is MessageText text && text.WebPage?.EmbedUrl?.Length > 0 || (message.SendingState is MessageSendingStatePending && message.MediaAlbumId != 0))
                     {
+                        Button.SetGlyph(file.Id, message.SendingState is MessageSendingStatePending && message.MediaAlbumId != 0 ? MessageContentState.Confirm : MessageContentState.Play);
                         Button.Opacity = 1;
                     }
                     else
                     {
+                        Button.SetGlyph(file.Id, MessageContentState.Photo);
                         Button.Opacity = 0;
                     }
-
-                    //Overlay.Opacity = 0;
 
                     if (hasSpoiler && _hidden)
                     {

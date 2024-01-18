@@ -1675,7 +1675,7 @@ namespace Telegram.Controls.Messages
             else if (content is MessageSticker)
             {
                 Media.Child = new StickerContent(message);
-                }
+            }
             else if (content is MessageVenue)
             {
                 Media.Child = new VenueContent(message);
@@ -1746,8 +1746,6 @@ namespace Telegram.Controls.Messages
                 _ => message.Text
             };
 
-            Panel.Text = textz;
-
             if (textz != null)
             {
                 Message.SetText(message.ClientService, textz, message.GeneratedContent is MessageBigEmoji ? 32 : 0);
@@ -1758,6 +1756,13 @@ namespace Telegram.Controls.Messages
 
                 return;
             }
+            //else
+            //{
+            //    ContentPanel.MaxWidth = 432;
+            //    Message.Visibility = Visibility.Collapsed;
+
+            //    return;
+            //}
 
             var content = message.GeneratedContent ?? message.Content;
             if (content is MessageText text)
