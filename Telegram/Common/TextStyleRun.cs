@@ -558,7 +558,29 @@ namespace Telegram.Common
         Quote = 512,
     }
 
-    public record StyledText(string Text, IList<StyledParagraph> Paragraphs);
+    public class StyledText
+    {
+        public StyledText(string text, IList<StyledParagraph> paragraphs)
+        {
+            Text = text;
+            Paragraphs = paragraphs;
+
+            if (paragraphs.Count == 1)
+            {
+                var paragraph = paragraphs[0];
+                var plain = text.Length > 0
+                    && paragraph.Entities.Count == 0;
+
+                IsPlain = plain;
+            }
+        }
+
+        public string Text { get; }
+
+        public IList<StyledParagraph> Paragraphs { get; }
+
+        public bool IsPlain { get; }
+    }
 
     public class StyledParagraph
     {

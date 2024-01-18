@@ -89,9 +89,23 @@ namespace Telegram.Controls
             DefaultStyleKey = typeof(FormattedTextBlock);
         }
 
+        public StyledText Text => _text;
+
         public bool AdjustLineEnding { get; set; }
 
-        public bool HasLineEnding { get; private set; }
+        private bool _hasLineEnding;
+        public bool HasLineEnding
+        {
+            get => _hasLineEnding;
+            set
+            {
+                if (_hasLineEnding != value)
+                {
+                    _hasLineEnding = value;
+                    //InvalidateMeasure();
+                }
+            }
+        }
 
         private bool _hasCodeBlocks;
         public bool HasCodeBlocks
@@ -233,7 +247,7 @@ namespace Telegram.Controls
         public void Clear()
         {
             _clientService = null;
-            _text = null;
+            //_text = null;
 
             _query = null;
             _spoiler = null;
@@ -391,10 +405,23 @@ namespace Telegram.Controls
                 return;
             }
 
+            var locale = LocaleService.Current.FlowDirection;
+
             // PERF: fast path if both model and view have one paragraph with one run
-            if (styled != null && styled.Paragraphs.Count == 1 && styled.Paragraphs[0].Entities.Count == 0 && styled.Text.Length > 0 && !HasLineEnding && !HasCodeBlocks)
+            if (styled != null && styled.IsPlain && !HasCodeBlocks)
             {
-                if (TextBlock.Blocks.Count == 1 && TextBlock.Blocks[0] is Paragraph paragraph && paragraph.Inlines.Count == 1 && paragraph.Inlines[0] is Run run)
+                var direction = styled.Paragraphs[0].Direction switch
+                {
+                    TextDirectionality.LeftToRight => FlowDirection.LeftToRight,
+                    TextDirectionality.RightToLeft => FlowDirection.RightToLeft,
+                    _ => locale
+                };
+
+                if (TextBlock.Blocks.Count == 1
+                    && TextBlock.Blocks[0] is Paragraph paragraph
+                    && paragraph.Inlines.Count == 1
+                    && paragraph.Inlines[0] is Run run
+                    && run.FlowDirection == direction)
                 {
                     run.Text = styled.Text;
                     return;
@@ -424,8 +451,6 @@ namespace Telegram.Controls
             var preformatted = false;
             TextParagraphType lastType = null;
             TextParagraphType firstType = null;
-
-            var locale = LocaleService.Current.FlowDirection;
 
             var text = styled.Text;
             var workaround = 0;
@@ -492,7 +517,7 @@ namespace Telegram.Controls
                         if (entity.Type is TextEntityTypeCode)
                         {
                             var hyperlink = new Hyperlink();
-                            hyperlink.Click += (s, args) => Entity_Click(hyperlink, entity.Offset, entity.Length, entity.Type, data);
+                            hyperlink.Click += (s, args) => Entity_Click(entity.Offset, entity.Length, entity.Type, data);
                             hyperlink.Foreground = TextBlock.Foreground;
                             hyperlink.UnderlineStyle = UnderlineStyle.None;
 
@@ -530,7 +555,7 @@ namespace Telegram.Controls
                         if (_ignoreSpoilers is false && entity.HasFlag(Common.TextStyle.Spoiler))
                         {
                             var hyperlink = new Hyperlink();
-                            hyperlink.Click += (s, args) => Entity_Click(hyperlink, entity.Offset, entity.Length, new TextEntityTypeSpoiler(), null);
+                            hyperlink.Click += (s, args) => Entity_Click(entity.Offset, entity.Length, new TextEntityTypeSpoiler(), null);
                             hyperlink.Foreground = null;
                             hyperlink.UnderlineStyle = UnderlineStyle.None;
                             hyperlink.FontFamily = BootStrapper.Current.Resources["SpoilerFontFamily"] as FontFamily;
@@ -564,7 +589,7 @@ namespace Telegram.Controls
                                     data = mentionName.UserId;
                                 }
 
-                                hyperlink.Click += (s, args) => Entity_Click(hyperlink, entity.Offset, entity.Length, entity.Type, null);
+                                hyperlink.Click += (s, args) => Entity_Click(entity.Offset, entity.Length, entity.Type, null);
                                 hyperlink.Foreground = HyperlinkForeground ?? GetBrush("MessageForegroundLinkBrush");
                                 hyperlink.UnderlineStyle = HyperlinkStyle;
                                 hyperlink.FontWeight = HyperlinkFontWeight;
@@ -587,7 +612,7 @@ namespace Telegram.Controls
                                 //    data = text.Substring(original.Offset, original.Length);
                                 //}
 
-                                hyperlink.Click += (s, args) => Entity_Click(hyperlink, entity.Offset, entity.Length, entity.Type, data);
+                                hyperlink.Click += (s, args) => Entity_Click(entity.Offset, entity.Length, entity.Type, data);
                                 hyperlink.Foreground = HyperlinkForeground ?? GetBrush("MessageForegroundLinkBrush");
                                 hyperlink.UnderlineStyle = HyperlinkStyle;
                                 hyperlink.FontWeight = HyperlinkFontWeight;
@@ -722,7 +747,7 @@ namespace Telegram.Controls
             }
 
             var topPadding = 0d;
-            var bottomPadding = 0d;
+            var bottomPadding = false;
 
             if (firstType is TextParagraphTypeMonospace { Language.Length: > 0 })
             {
@@ -744,11 +769,11 @@ namespace Telegram.Controls
 
                 if (direction != locale || lastType is not null)
                 {
-                    bottomPadding = Theme.Current.MessageFontSize * 1.33;
+                    bottomPadding = true;
                 }
             }
 
-            HasLineEnding = bottomPadding > 0;
+            HasLineEnding = bottomPadding;
 
             Below.Margin = new Thickness(0, topPadding, 0, 0);
             TextBlock.Margin = new Thickness(0, topPadding, 0, 0);
@@ -1023,7 +1048,7 @@ namespace Telegram.Controls
             }
         }
 
-        private void Entity_Click(Hyperlink sender, int offset, int length, TextEntityType type, object data)
+        private void Entity_Click(int offset, int length, TextEntityType type, object data)
         {
             TextEntityClick?.Invoke(this, new TextEntityClickEventArgs(offset, length, type, data));
         }

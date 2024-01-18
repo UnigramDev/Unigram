@@ -19,9 +19,6 @@ namespace Telegram.Controls.Messages
         // Needed for Text CanvasTextLayout
         public bool ForceNewLine { get; set; }
 
-        // Needed for Text CanvasTextLayout
-        public StyledText Text { get; set; }
-
         // Needed for Measure
         public MessageReply Reply { get; set; }
 
@@ -106,13 +103,15 @@ namespace Telegram.Controls.Messages
             var reactionsWidth = reactions?.DesiredSize.Width ?? 0;
             var reactionsHeight = reactions?.DesiredSize.Height ?? 0;
 
+            var finalWidth = Math.Max(Math.Max(reactionsWidth, footer.DesiredSize.Width), width);
+            var finalHeight = text.DesiredSize.Height + media.DesiredSize.Height + reactionsHeight + margin.Height;
+
             if (Reply != null)
             {
-                Reply.ContentWidth = Math.Max(Math.Max(reactionsWidth, footer.DesiredSize.Width), width);
+                Reply.ContentWidth = finalWidth;
             }
 
-            return new Size(Math.Max(Math.Max(reactionsWidth, footer.DesiredSize.Width), width),
-                text.DesiredSize.Height + media.DesiredSize.Height + reactionsHeight + margin.Height);
+            return new Size(finalWidth, finalHeight);
         }
 
         protected override Size ArrangeOverride(Size finalSize)
@@ -172,7 +171,7 @@ namespace Telegram.Controls.Messages
                 var maxWidth = availableWidth;
                 var footerWidth = footer.DesiredSize.Width + footer.Margin.Left + footer.Margin.Right;
 
-                var fontSize = Theme.Current.MessageFontSize * BootStrapper.Current.TextScaleFactor;
+                var fontSize = Theme.Current.MessageFontSize;
 
                 if (text.HasLineEnding)
                 {
@@ -184,7 +183,7 @@ namespace Telegram.Controls.Messages
                 }
 
                 var width = text.DesiredSize.Width;
-                var bounds = ContentEnd(availableWidth, fontSize);
+                var bounds = ContentEnd(text.Text, availableWidth, fontSize * BootStrapper.Current.TextScaleFactor);
 
                 var diff = width - bounds;
                 if (diff < footerWidth /*|| _placeholderVertical*/)
@@ -203,9 +202,8 @@ namespace Telegram.Controls.Messages
             return new Size(marginLeft, marginBottom);
         }
 
-        private float ContentEnd(double availableWidth, double fontSize)
+        private float ContentEnd(StyledText caption, double availableWidth, double fontSize)
         {
-            var caption = Text;
             if (caption?.Paragraphs.Count == 0 || string.IsNullOrEmpty(caption?.Text))
             {
                 return 0;
