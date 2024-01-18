@@ -10,8 +10,11 @@ using System.Threading.Tasks;
 
 namespace Telegram.Common
 {
+    // TODO: rename to CriticalSection because it sounds cooler
     public class DisposableMutex : IDisposable
     {
+        private readonly SemaphoreSlim _semaphore;
+
         public DisposableMutex()
         {
             _semaphore = new SemaphoreSlim(1, 1);
@@ -20,6 +23,12 @@ namespace Telegram.Common
         public void Dispose()
         {
             _semaphore.Release();
+        }
+
+        public IDisposable Wait()
+        {
+            _semaphore.Wait();
+            return this;
         }
 
         public async Task<IDisposable> WaitAsync()
@@ -33,7 +42,5 @@ namespace Telegram.Common
             await _semaphore.WaitAsync(cancellationToken);
             return this;
         }
-
-        private readonly SemaphoreSlim _semaphore;
     }
 }
