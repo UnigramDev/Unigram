@@ -125,9 +125,10 @@ namespace Telegram.Controls.Cells
         private BadgeControl UnreadBadge;
         private Rectangle DropVisual;
         private TextBlock UnreadMentionsLabel;
-        private TextBlock FromLabel;
+        private Run FromLabel;
+        private Run DraftLabel;
         private RichTextBlock BriefText;
-        private Paragraph BriefLabel;
+        private Span BriefLabel;
         private ImageBrush Minithumbnail;
         private Rectangle SelectionOutline;
         private ActiveStoriesSegments Segments;
@@ -156,9 +157,10 @@ namespace Telegram.Controls.Cells
             UnreadBadge = GetTemplateChild(nameof(UnreadBadge)) as BadgeControl;
             DropVisual = GetTemplateChild(nameof(DropVisual)) as Rectangle;
             UnreadMentionsLabel = GetTemplateChild(nameof(UnreadMentionsLabel)) as TextBlock;
-            FromLabel = GetTemplateChild(nameof(FromLabel)) as TextBlock;
+            FromLabel = GetTemplateChild(nameof(FromLabel)) as Run;
+            DraftLabel = GetTemplateChild(nameof(DraftLabel)) as Run;
             BriefText = GetTemplateChild(nameof(BriefText)) as RichTextBlock;
-            BriefLabel = GetTemplateChild(nameof(BriefLabel)) as Paragraph;
+            BriefLabel = GetTemplateChild(nameof(BriefLabel)) as Span;
             Minithumbnail = GetTemplateChild(nameof(Minithumbnail)) as ImageBrush;
             SelectionOutline = GetTemplateChild(nameof(SelectionOutline)) as Rectangle;
             Segments = GetTemplateChild(nameof(Segments)) as ActiveStoriesSegments;
@@ -526,19 +528,28 @@ namespace Telegram.Controls.Cells
 
             position ??= chat.GetPosition(_chatList);
 
-            FromLabel.Text = UpdateFromLabel(chat, position, out bool draft);
+            var from = UpdateFromLabel(chat, position, out bool draft);
 
-            if (draft && !_draft)
+            if (draft)
             {
-                _draft = true;
-                FromLabel.Foreground = BootStrapper.Current.Resources["DangerButtonBackground"] as Brush;
+                DraftLabel.Text = from;
+
+                if (!_draft)
+                {
+                    FromLabel.Text = Icons.ZWJ;
+                }
             }
-            else if (_draft && !draft)
+            else
             {
-                _draft = false;
-                FromLabel.ClearValue(TextBlock.ForegroundProperty);
+                FromLabel.Text = from;
+
+                if (_draft)
+                {
+                    DraftLabel.Text = Icons.ZWJ;
+                }
             }
 
+            _draft = draft;
             _dateLabel = UpdateTimeLabel(chat, position);
             _stateLabel = UpdateStateIcon(chat.LastReadOutboxMessageId, chat, chat.DraftMessage, chat.LastMessage, chat.LastMessage?.SendingState);
             TimeLabel.Text = _stateLabel + "\u00A0" + _dateLabel;
@@ -699,20 +710,14 @@ namespace Telegram.Controls.Cells
                 ChatActionIndicator.UpdateAction(commonAction);
                 ChatActionIndicator.Visibility = Visibility.Visible;
                 TypingLabel.Visibility = Visibility.Visible;
-                FromLabel.Visibility = Visibility.Collapsed;
                 BriefText.Visibility = Visibility.Collapsed;
-                MinithumbnailPanel.Visibility = Visibility.Collapsed;
             }
             else
             {
                 ChatActionIndicator.Visibility = Visibility.Collapsed;
                 ChatActionIndicator.UpdateAction(null);
                 TypingLabel.Visibility = Visibility.Collapsed;
-                FromLabel.Visibility = Visibility.Visible;
                 BriefText.Visibility = Visibility.Visible;
-                MinithumbnailPanel.Visibility = Minithumbnail.ImageSource != null
-                    ? Visibility.Visible
-                    : Visibility.Collapsed;
             }
         }
 
@@ -1101,7 +1106,6 @@ namespace Telegram.Controls.Cells
             {
                 var clean = message.ReplaceSpoilers();
                 var previous = 0;
-                var hasCustomEmoji = false;
 
                 if (message.Entities != null)
                 {
@@ -1125,22 +1129,22 @@ namespace Telegram.Controls.Cells
                         var inline = new InlineUIContainer();
                         inline.Child = new CustomEmojiContainer(BriefText, player);
 
+                        // If the Span starts with a InlineUIContainer the RichTextBlock bugs and shows ellipsis
+                        if (BriefLabel.Inlines.Empty())
+                        {
+                            BriefLabel.Inlines.Add(Icons.ZWNJ);
+                        }
+
                         BriefLabel.Inlines.Add(inline);
                         BriefLabel.Inlines.Add(Icons.ZWNJ);
 
                         previous = entity.Offset + entity.Length;
-                        hasCustomEmoji = true;
                     }
                 }
 
                 if (clean.Text.Length > previous)
                 {
                     BriefLabel.Inlines.Add(new Run { Text = clean.Text.Substring(previous) });
-                }
-
-                if (hasCustomEmoji)
-                {
-
                 }
             }
         }
