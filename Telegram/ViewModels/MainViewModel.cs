@@ -409,8 +409,7 @@ namespace Telegram.ViewModels
 
             if (mode == NavigationMode.New)
             {
-                Task.Run(() => _contactsService.JumpListAsync());
-                Task.Run(() => _cloudUpdateService.UpdateAsync(false));
+                _ = Task.Run(() => _contactsService.JumpListAsync());
             }
 
             if (ApiInfo.IsPackagedRelease && WatchDog.HasCrashedInLastSession && !_shown && DateTime.UtcNow.Date != SettingsService.Current.Diagnostics.LastCrashReported.Date)

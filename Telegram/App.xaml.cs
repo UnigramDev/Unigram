@@ -176,7 +176,9 @@ namespace Telegram
             }
 
             var navService = WindowContext.Current.NavigationServices.GetByFrameId($"{TypeResolver.Current.Lifetime.ActiveItem.Id}");
+
             var service = TypeResolver.Current.Resolve<IClientService>();
+            var update = TypeResolver.Current.Resolve<ICloudUpdateService>();
 
             if (service?.AuthorizationState != null)
             {
@@ -184,7 +186,7 @@ namespace Telegram
             }
 
             var context = WindowContext.Current.Dispatcher;
-            _ = Task.Run(() => OnStartSync(startKind, context));
+            _ = Task.Run(() => OnStartSync(startKind, context, update));
 
             if (startKind != StartKind.Launch)
             {
@@ -235,7 +237,7 @@ namespace Telegram
             return new TLNavigationService(TypeResolver.Current.Resolve<IClientService>(session), TypeResolver.Current.Resolve<IViewService>(session), frame, session, id);
         }
 
-        private async void OnStartSync(StartKind startKind, IDispatcherContext context)
+        private async void OnStartSync(StartKind startKind, IDispatcherContext context, ICloudUpdateService updateService)
         {
             await RequestExtendedExecutionSessionAsync();
             await Toast.RegisterBackgroundTasks();
@@ -266,6 +268,11 @@ namespace Telegram
             }
 
             Windows.ApplicationModel.Core.CoreApplication.EnablePrelaunch(true);
+
+            if (updateService != null)
+            {
+                await updateService.UpdateAsync(false);
+            }
         }
 
         private async Task RequestExtendedExecutionSessionAsync()
@@ -322,7 +329,7 @@ namespace Telegram
             // #2034: Will this work? No one knows.
             SettingsService.Current.Appearance.UpdateNightMode(null);
 
-            OnStartSync(StartKind.Activate, WindowContext.Current.Dispatcher);
+            OnStartSync(StartKind.Activate, WindowContext.Current.Dispatcher, null);
         }
 
         public override Task OnSuspendingAsync(object s, SuspendingEventArgs e)
