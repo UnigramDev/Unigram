@@ -99,7 +99,7 @@ namespace Telegram.Controls.Stories
             var count = _last - _first + 1;
             if (count > 0 && _collapsed)
             {
-                Show.Width = Math.Max(32, count * 24 - 16);
+                Show.Width = count * 12 + 12 + 8;
                 Show.Visibility = Visibility.Visible;
             }
             else
@@ -438,7 +438,6 @@ namespace Telegram.Controls.Stories
             var titleVisual = ElementComposition.GetElementVisual(TitleBarrr);
             var storiesVisual = ElementComposition.GetElementVisual(this);
             var headerVisual = ElementComposition.GetElementVisual(Header);
-            var showVisual = ElementComposition.GetElementVisual(Show);
 
             storiesVisual.Clip = clip;
 
@@ -449,11 +448,9 @@ namespace Telegram.Controls.Stories
             ElementCompositionPreview.SetIsTranslationEnabled(TitleBarrr, true);
             ElementCompositionPreview.SetIsTranslationEnabled(this, true);
             ElementCompositionPreview.SetIsTranslationEnabled(Header, true);
-            ElementCompositionPreview.SetIsTranslationEnabled(Show, true);
 
             titleVisual.StartAnimation("Translation.X", titleVisualOffsetAnimation);
             storiesVisual.StartAnimation("Translation.X", storiesVisualOffsetAnimationX);
-            showVisual.StartAnimation("Translation.X", storiesVisualOffsetAnimationX);
             clip.StartAnimation("RightInset", storiesVisualOffsetAnimationX);
             storiesVisual.StartAnimation("Translation.Y", storiesVisualOffsetAnimation);
             headerVisual.StartAnimation("Translation.Y", headerVisualOffsetAnimation);
