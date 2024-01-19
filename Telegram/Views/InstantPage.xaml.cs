@@ -35,6 +35,19 @@ using Windows.UI.Xaml.Shapes;
 
 namespace Telegram.Views
 {
+    public class InstantPageArgs
+    {
+        public InstantPageArgs(WebPageInstantView instantView, string url)
+        {
+            InstantView = instantView;
+            Url = url;
+        }
+
+        public WebPageInstantView InstantView { get; }
+
+        public string Url { get; set; }
+    }
+
     public sealed partial class InstantPage : HostedPage
     {
         public InstantViewModel ViewModel => DataContext as InstantViewModel;
@@ -83,35 +96,16 @@ namespace Telegram.Views
             ViewModel.Gallery.SelectedItem = null;
             _anchors.Clear();
 
-            var url = e.Parameter as string;
-            if (url == null || !Uri.TryCreate(url, UriKind.Absolute, out Uri uri))
+            var args = e.Parameter as InstantPageArgs;
+            if (args?.InstantView == null || !Uri.TryCreate(args.Url, UriKind.Absolute, out Uri uri))
             {
                 return;
             }
 
-            ViewModel.IsLoading = true;
+            ViewModel.ShareLink = uri;
+            ViewModel.ShareTitle = args.Url;
 
-            var response = await ViewModel.ClientService.SendAsync(new GetWebPageInstantView(url, true));
-            if (response is WebPageInstantView instantView)
-            {
-                ViewModel.ShareLink = uri;
-                ViewModel.ShareTitle = url;
-
-                UpdateView(instantView);
-                ViewModel.IsLoading = false;
-
-                //if (uri.Fragment.Length > 0 && _anchors.TryGetValue(uri.Fragment.Substring(1), out Border anchor))
-                //{
-                //    await ScrollingHost.ScrollToItem(anchor, SnapPointsAlignment.Near, false);
-                //}
-            }
-            else
-            {
-                await Launcher.LaunchUriAsync(uri);
-                Frame.GoBack();
-            }
-
-            base.OnNavigatedTo(e);
+            UpdateView(args.InstantView);
         }
 
         private WebPageInstantView _instantView;

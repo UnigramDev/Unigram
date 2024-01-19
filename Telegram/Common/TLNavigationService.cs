@@ -49,37 +49,19 @@ namespace Telegram.Common
 
         public IClientService ClientService => _clientService;
 
-        public async void NavigateToInstant(string url)
+        public async void NavigateToInstant(string url, string fallbackUrl = null)
         {
-            //if (ApiInformation.IsTypePresent("Windows.UI.WindowManagement.AppWindow"))
-            //{
-            //    _instantWindows.TryGetValue(url, out AppWindow window);
-            //    if (window == null)
-            //    {
-            //        var nav = BootStrapper.Current.NavigationServiceFactory(BootStrapper.BackButton.Ignore, BootStrapper.ExistingContent.Exclude, 0, "0", false);
-            //        var frame = BootStrapper.Current.CreateRootElement(nav);
-            //        nav.Navigate(typeof(InstantPage), url);
-
-            //        window = await AppWindow.TryCreateAsync();
-            //        window.PersistedStateId = "InstantView";
-            //        window.TitleBar.ExtendsContentIntoTitleBar = true;
-            //        window.Closed += (s, args) =>
-            //        {
-            //            _instantWindows.Remove(url);
-            //            frame = null;
-            //            window = null;
-            //        };
-
-            //        _instantWindows[url] = window;
-            //        ElementCompositionPreview.SetAppWindowContent(window, frame);
-            //    }
-
-            //    await window.TryShowAsync();
-            //    window.RequestMoveAdjacentToCurrentView();
-            //}
-            //else
+            var response = await ClientService.SendAsync(new GetWebPageInstantView(url, true));
+            if (response is WebPageInstantView instantView)
             {
-                Navigate(typeof(InstantPage), url);
+                Navigate(typeof(InstantPage), new InstantPageArgs(instantView, url));
+            }
+            else
+            {
+                if (Uri.TryCreate(fallbackUrl ?? url, UriKind.Absolute, out Uri uri))
+                {
+                    await Windows.System.Launcher.LaunchUriAsync(uri);
+                }
             }
         }
 

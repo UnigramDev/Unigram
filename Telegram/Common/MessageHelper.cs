@@ -392,7 +392,7 @@ namespace Telegram.Common
             }
             else if (internalLink is InternalLinkTypeInstantView instantView)
             {
-                navigation.NavigateToInstant(instantView.Url);
+                navigation.NavigateToInstant(instantView.Url, instantView.FallbackUrl);
             }
             else if (internalLink is InternalLinkTypeInvoice invoice)
             {
