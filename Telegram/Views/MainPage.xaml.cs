@@ -1830,7 +1830,17 @@ namespace Telegram.Views
 
         private void UpdateHeader()
         {
-            ChatsOptions.Visibility = rpMasterTitlebar.SelectedIndex == 0 ? Visibility.Visible : Visibility.Collapsed;
+            if (rpMasterTitlebar.SelectedIndex == 0)
+            {
+                ChatsOptions.Visibility = Visibility.Visible;
+                SearchField.Padding = new Thickness(10, 5, 40, 6);
+            }
+            else
+            {
+                ChatsOptions.Visibility = Visibility.Collapsed;
+                SearchField.Padding = new Thickness(10, 5, 6, 6);
+            }
+
             SearchField.PlaceholderText = rpMasterTitlebar.SelectedIndex == 3 ? Strings.SearchInSettings : Strings.Search;
         }
 
