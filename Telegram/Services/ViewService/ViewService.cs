@@ -19,8 +19,6 @@ namespace Telegram.Services.ViewService
 {
     public interface IViewService
     {
-        public bool IsSupported { get; }
-
         ///<summary>
         /// Creates and opens new secondary view        
         /// </summary>
@@ -72,11 +70,9 @@ namespace Telegram.Services.ViewService
             _mainWindowCreated.TrySetResult(true);
         }
 
-        public bool IsSupported => true;
-
         public Task<ViewLifetimeControl> OpenAsync(ViewServiceParams parameters)
         {
-            if (IsSupported)
+            if (ApiInfo.HasMultipleViews)
             {
                 try
                 {
@@ -101,7 +97,8 @@ namespace Telegram.Services.ViewService
                         await ApplicationViewSwitcher.TryShowAsStandaloneAsync(ApplicationView.GetForCurrentView().Id);
                     }
                 });
-                return null;
+
+                return Task.FromResult(ViewLifetimeControl.Facade());
             }
         }
 

@@ -5,6 +5,7 @@
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
 using System;
+using System.Threading.Tasks;
 using Telegram.Common;
 using Telegram.Controls;
 using Telegram.Controls.Media;
@@ -13,6 +14,7 @@ using Telegram.Native.Calls;
 using Telegram.Navigation;
 using Telegram.Services;
 using Telegram.Td.Api;
+using Telegram.Views.Host;
 using Telegram.Views.Popups;
 using Windows.Devices.Enumeration;
 using Windows.Devices.Input;
@@ -434,6 +436,17 @@ namespace Telegram.Views.Calls
             this.BeginOnUIThread(() => UpdateNetworkState(_service.Call, _service.CurrentUser, args.IsConnected));
         }
 
+        private Task ConsolidateAsync()
+        {
+            if (Window.Current.Content is RootPage root)
+            {
+                root.PresentContent(null);
+                return Task.CompletedTask;
+            }
+
+            return WindowContext.Current.ConsolidateAsync();
+        }
+
         private async void Leave_Click(object sender, RoutedEventArgs e)
         {
             var chat = _service?.Chat;
@@ -441,7 +454,7 @@ namespace Telegram.Views.Calls
 
             if (chat == null || call == null)
             {
-                await WindowContext.Current.ConsolidateAsync();
+                await ConsolidateAsync();
                 return;
             }
 
@@ -461,13 +474,13 @@ namespace Telegram.Views.Calls
                 if (confirm == ContentDialogResult.Primary)
                 {
                     Dispose(popup.IsChecked == true);
-                    await WindowContext.Current.ConsolidateAsync();
+                    await ConsolidateAsync();
                 }
             }
             else
             {
                 Dispose(false);
-                await WindowContext.Current.ConsolidateAsync();
+                await ConsolidateAsync();
             }
         }
 
@@ -478,7 +491,7 @@ namespace Telegram.Views.Calls
 
             if (chat == null || call == null)
             {
-                await WindowContext.Current.ConsolidateAsync();
+                await ConsolidateAsync();
                 return;
             }
 
@@ -493,7 +506,7 @@ namespace Telegram.Views.Calls
             if (confirm == ContentDialogResult.Primary)
             {
                 Dispose(true);
-                await WindowContext.Current.ConsolidateAsync();
+                await ConsolidateAsync();
             }
         }
 

@@ -14,7 +14,6 @@ using Telegram.Common;
 using Telegram.Controls;
 using Telegram.Converters;
 using Telegram.Native.Calls;
-using Telegram.Navigation;
 using Telegram.Services.Updates;
 using Telegram.Services.ViewService;
 using Telegram.Td.Api;
@@ -218,32 +217,6 @@ namespace Telegram.Services
                 return;
             }
 
-            //var call = Call;
-            //if (call != null)
-            //{
-            //    var callUser = ClientService.GetUser(call.UserId);
-            //    if (callUser != null && callUser.Id != user.Id)
-            //    {
-            //        var confirm = await MessagePopup.ShowAsync(string.Format(Strings.VoipOngoingAlert, callUser.GetFullName(), user.GetFullName()), Strings.VoipOngoingAlertTitle, Strings.OK, Strings.Cancel);
-            //        if (confirm == ContentDialogResult.Primary)
-            //        {
-
-            //        }
-            //    }
-            //    else
-            //    {
-            //        Show();
-            //    }
-
-            //    return;
-            //}
-
-            var permissions = await MediaDeviceWatcher.CheckAccessAsync(true, false);
-            if (permissions == false)
-            {
-                return;
-            }
-
             await JoinAsyncInternal(chat, chat.VideoChat.GroupCallId, null);
         }
 
@@ -343,6 +316,15 @@ namespace Telegram.Services
             var response = await ClientService.SendAsync(new GetGroupCall(groupCallId));
             if (response is GroupCall groupCall)
             {
+                if (!groupCall.IsRtmpStream)
+                {
+                    var permissions = await MediaDeviceWatcher.CheckAccessAsync(true, false);
+                    if (permissions == false)
+                    {
+                        return;
+                    }
+                }
+
                 var unix = await ClientService.SendAsync(new GetOption("unix_time")) as OptionValueInteger;
                 if (unix == null)
                 {
@@ -1206,7 +1188,7 @@ namespace Telegram.Services
                 if (lifetime != null)
                 {
                     _lifetime = null;
-                    await lifetime.Dispatcher.DispatchAsync(() => WindowContext.Current.ConsolidateAsync());
+                    await lifetime.ConsolidateAsync();
                 }
             }
         }

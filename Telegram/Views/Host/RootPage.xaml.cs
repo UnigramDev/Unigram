@@ -799,7 +799,15 @@ namespace Telegram.Views.Host
 
         public void PresentContent(UIElement element)
         {
+            if (Transition.Child is IDisposable disposable)
+            {
+                disposable.Dispose();
+            }
+
             Transition.Child = element;
+            Navigation.Visibility = element != null
+                ? Visibility.Collapsed
+                : Visibility.Visible;
         }
 
         public void UpdateSessions()

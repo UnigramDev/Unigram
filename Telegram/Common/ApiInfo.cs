@@ -21,6 +21,9 @@ namespace Telegram.Common
         private static bool? _isDesktop;
         public static bool IsDesktop => _isDesktop ??= string.Equals(AnalyticsInfo.VersionInfo.DeviceFamily, "Windows.Desktop");
 
+        private static bool? _isXbox;
+        public static bool IsXbox => _isXbox ??= string.Equals(AnalyticsInfo.VersionInfo.DeviceFamily, "Windows.Xbox");
+
         private static bool? _isMediaSupported;
         public static bool IsMediaSupported => _isMediaSupported ??= NativeUtils.IsMediaSupported();
 
@@ -28,6 +31,8 @@ namespace Telegram.Common
         public static bool HasDownloadFolder => _hasDownloadFolder ??= IsDesktop;
 
         public static bool HasCacheOnly => !HasDownloadFolder;
+
+        public static bool HasMultipleViews => !IsXbox;
 
         private static bool? _hasKnownFolders;
         public static bool HasKnownFolders => _hasKnownFolders ??= ApiInformation.IsEnumNamedValuePresent("Windows.Storage.KnownFolderId", "DownloadsFolder");

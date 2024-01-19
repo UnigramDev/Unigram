@@ -11,6 +11,7 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
 using System.Numerics;
+using System.Threading.Tasks;
 using Telegram.Common;
 using Telegram.Composition;
 using Telegram.Controls;
@@ -23,6 +24,7 @@ using Telegram.Services;
 using Telegram.Streams;
 using Telegram.Td.Api;
 using Telegram.ViewModels.Delegates;
+using Telegram.Views.Host;
 using Telegram.Views.Popups;
 using Windows.Devices.Enumeration;
 using Windows.Foundation;
@@ -1074,6 +1076,17 @@ namespace Telegram.Views.Calls
             photo.StartAnimation("Scale", inner);
         }
 
+        private Task ConsolidateAsync()
+        {
+            if (Window.Current.Content is RootPage root)
+            {
+                root.PresentContent(null);
+                return Task.CompletedTask;
+            }
+
+            return WindowContext.Current.ConsolidateAsync();
+        }
+
         private async void Leave_Click(object sender, RoutedEventArgs e)
         {
             var chat = _service?.Chat;
@@ -1081,7 +1094,7 @@ namespace Telegram.Views.Calls
 
             if (chat == null || call == null)
             {
-                await WindowContext.Current.ConsolidateAsync();
+                await ConsolidateAsync();
                 return;
             }
 
@@ -1101,13 +1114,13 @@ namespace Telegram.Views.Calls
                 if (confirm == ContentDialogResult.Primary)
                 {
                     Dispose(popup.IsChecked == true);
-                    await WindowContext.Current.ConsolidateAsync();
+                    await ConsolidateAsync();
                 }
             }
             else
             {
                 Dispose(false);
-                await WindowContext.Current.ConsolidateAsync();
+                await ConsolidateAsync();
             }
         }
 
@@ -1118,7 +1131,7 @@ namespace Telegram.Views.Calls
 
             if (chat == null || call == null)
             {
-                await WindowContext.Current.ConsolidateAsync();
+                await ConsolidateAsync();
                 return;
             }
 
@@ -1133,7 +1146,7 @@ namespace Telegram.Views.Calls
             if (confirm == ContentDialogResult.Primary)
             {
                 Dispose(true);
-                await WindowContext.Current.ConsolidateAsync();
+                await ConsolidateAsync();
             }
         }
 
@@ -1141,7 +1154,7 @@ namespace Telegram.Views.Calls
         {
             if (_service == null)
             {
-                await WindowContext.Current.ConsolidateAsync();
+                await ConsolidateAsync();
                 return;
             }
 
@@ -1230,7 +1243,7 @@ namespace Telegram.Views.Calls
                 }
             }
             //else if (currentUser != null && currentUser.CanBeUnmutedForAllUsers)
-            else if (currentUser != null && _service.IsMuted || (currentUser.IsMutedForAllUsers && currentUser.CanUnmuteSelf))
+            else if (currentUser != null && (_service.IsMuted || (currentUser.IsMutedForAllUsers && currentUser.CanUnmuteSelf)))
             {
                 SetButtonState(ButtonState.Mute);
             }

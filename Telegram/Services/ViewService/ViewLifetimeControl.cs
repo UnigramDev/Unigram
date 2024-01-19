@@ -28,7 +28,9 @@
 
 using System;
 using System.Collections.Concurrent;
+using System.Threading.Tasks;
 using Telegram.Navigation;
+using Telegram.Views.Host;
 using Windows.UI.Core;
 using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
@@ -86,11 +88,43 @@ namespace Telegram.Services.ViewService
         public Window Window { get; }
         #endregion
 
+        public static ViewLifetimeControl Facade()
+        {
+            return new ViewLifetimeControl(null);
+        }
+
+        public Task ConsolidateAsync()
+        {
+            if (Dispatcher.HasThreadAccess)
+            {
+                return ConsolidateAsyncImpl();
+            }
+
+            return Dispatcher.DispatchAsync(ConsolidateAsyncImpl);
+        }
+
+        private Task ConsolidateAsyncImpl()
+        {
+            if (Window.Current.Content is RootPage root)
+            {
+                root.PresentContent(null);
+                return Task.CompletedTask;
+            }
+
+            return WindowContext.Current.ConsolidateAsync();
+        }
+
         private ViewLifetimeControl(CoreWindow newWindow)
         {
             Window = Window.Current;
             Dispatcher = WindowContext.Current.Dispatcher;
-            Id = ApplicationView.GetApplicationViewIdForWindow(newWindow);
+            Id = ApplicationView.GetApplicationViewIdForWindow(Window.Current.CoreWindow);
+
+            if (newWindow == null)
+            {
+                // Only happens on Xbox
+                return;
+            }
 
             // This class will automatically tell the view when its time to close
             // or stay alive in a few cases

@@ -11,7 +11,6 @@ using System.Threading.Tasks;
 using Telegram.Common;
 using Telegram.Controls;
 using Telegram.Native.Calls;
-using Telegram.Navigation;
 using Telegram.Services.Updates;
 using Telegram.Services.ViewService;
 using Telegram.Td.Api;
@@ -22,6 +21,8 @@ using Windows.ApplicationModel.Calls;
 using Windows.Devices.Enumeration;
 using Windows.Graphics.Capture;
 using Windows.Storage;
+using Windows.UI.ViewManagement;
+using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 
 namespace Telegram.Services
@@ -97,7 +98,7 @@ namespace Telegram.Services
         private VoipPhoneCall _systemCall;
 #endif
 
-        private ViewLifetimeControl _callLifetime;
+        private ViewLifetimeControl _lifetime;
 
         public VoipService(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator, IViewService viewService)
             : base(clientService, settingsService, aggregator)
@@ -831,11 +832,11 @@ namespace Telegram.Services
                     Content = control => _callPage = new CallPage(ClientService, Aggregator, this)
                 };
 
-                _callLifetime = await _viewService.OpenAsync(parameters);
+                _lifetime = await _viewService.OpenAsync(parameters);
 
-                if (_callLifetime != null)
+                if (_lifetime != null)
                 {
-                    _callLifetime.Released += ApplicationView_Released;
+                    _lifetime.Released += ApplicationView_Released;
                 }
             }
 
@@ -861,27 +862,18 @@ namespace Telegram.Services
         {
             _callPage = null;
 
-            var lifetime = _callLifetime;
+            var lifetime = _lifetime;
             if (lifetime != null)
             {
-                _callLifetime = null;
-
-                await lifetime.Dispatcher.DispatchAsync(async () =>
-                {
-                    if (lifetime.Window.Content is CallPage callPage)
-                    {
-                        callPage.Dispose();
-                    }
-
-                    await WindowContext.Current.ConsolidateAsync();
-                });
+                _lifetime = null;
+                await lifetime.ConsolidateAsync();
             }
         }
 
         private void ApplicationView_Released(object sender, EventArgs e)
         {
             _callPage = null;
-            _callLifetime = null;
+            _lifetime = null;
 #endif
         }
     }
