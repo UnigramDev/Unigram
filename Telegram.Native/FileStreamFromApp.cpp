@@ -34,13 +34,13 @@ namespace winrt::Telegram::Native::implementation
 
     bool FileStreamFromApp::IsValid()
     {
-        slim_lock_guard const guard(m_lock);
+        std::lock_guard const guard(m_lock);
         return m_handle != INVALID_HANDLE_VALUE;
     }
 
     bool FileStreamFromApp::Seek(int64_t offset)
     {
-        slim_lock_guard const guard(m_lock);
+        std::lock_guard const guard(m_lock);
 
         if (m_handle != INVALID_HANDLE_VALUE)
         {
@@ -55,7 +55,7 @@ namespace winrt::Telegram::Native::implementation
 
     int32_t FileStreamFromApp::Read(int64_t pointer, uint32_t length)
     {
-        slim_lock_guard const guard(m_lock);
+        std::lock_guard const guard(m_lock);
 
         if (m_handle != INVALID_HANDLE_VALUE)
         {
@@ -71,7 +71,7 @@ namespace winrt::Telegram::Native::implementation
 
     void FileStreamFromApp::Close()
     {
-        slim_lock_guard const guard(m_lock);
+        std::lock_guard const guard(m_lock);
 
         if (m_handle != INVALID_HANDLE_VALUE)
         {

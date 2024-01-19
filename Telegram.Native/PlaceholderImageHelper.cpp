@@ -28,7 +28,7 @@ using namespace winrt::Windows::UI::Xaml::Media::Imaging;
 
 namespace winrt::Telegram::Native::implementation
 {
-    winrt::slim_mutex PlaceholderImageHelper::s_criticalSection;
+    std::mutex PlaceholderImageHelper::s_criticalSection;
     winrt::com_ptr<PlaceholderImageHelper> PlaceholderImageHelper::s_current{ nullptr };
 
     class CustomEmojiInlineObject
@@ -263,7 +263,7 @@ namespace winrt::Telegram::Native::implementation
 
     winrt::Telegram::Native::SurfaceImage PlaceholderImageHelper::Create(int32_t pixelWidth, int32_t pixelHeight)
     {
-        slim_lock_guard const guard(m_criticalSection);
+        std::lock_guard const guard(m_criticalSection);
 
         auto surface = winrt::make_self<SurfaceImage>(m_d2dDevice.get(), pixelWidth, pixelHeight);
         return surface.as<winrt::Telegram::Native::SurfaceImage>();
@@ -271,7 +271,7 @@ namespace winrt::Telegram::Native::implementation
 
     HRESULT PlaceholderImageHelper::Invalidate(winrt::Telegram::Native::SurfaceImage imageSource, IBuffer buffer)
     {
-        slim_lock_guard const guard(m_criticalSection);
+        std::lock_guard const guard(m_criticalSection);
         HRESULT result;
 
         com_ptr<SurfaceImage> source = imageSource.as<SurfaceImage>();
@@ -308,7 +308,7 @@ namespace winrt::Telegram::Native::implementation
 
     HRESULT PlaceholderImageHelper::DrawSvg(hstring path, Color foreground, IRandomAccessStream randomAccessStream, double dpi, Windows::Foundation::Size& size)
     {
-        slim_lock_guard const guard(m_criticalSection);
+        std::lock_guard const guard(m_criticalSection);
         HRESULT result;
 
         auto data = winrt::to_string(path);
@@ -438,7 +438,7 @@ namespace winrt::Telegram::Native::implementation
 
     HRESULT PlaceholderImageHelper::DrawThumbnailPlaceholder(hstring fileName, float blurAmount, IRandomAccessStream randomAccessStream)
     {
-        slim_lock_guard const guard(m_criticalSection);
+        std::lock_guard const guard(m_criticalSection);
         HRESULT result;
 
         HANDLE file = CreateFile2FromAppW(fileName.data(), GENERIC_READ, FILE_SHARE_READ, OPEN_EXISTING, nullptr);
@@ -468,7 +468,7 @@ namespace winrt::Telegram::Native::implementation
 
     HRESULT PlaceholderImageHelper::DrawThumbnailPlaceholder(IVector<uint8_t> bytes, float blurAmount, IRandomAccessStream randomAccessStream)
     {
-        slim_lock_guard const guard(m_criticalSection);
+        std::lock_guard const guard(m_criticalSection);
         HRESULT result;
 
         winrt::com_ptr<IStream> stream;
@@ -495,7 +495,7 @@ namespace winrt::Telegram::Native::implementation
     }
     HRESULT PlaceholderImageHelper::DrawThumbnailPlaceholder(IVector<uint8_t> bytes, float blurAmount, IBuffer randomAccessStream)
     {
-        slim_lock_guard const guard(m_criticalSection);
+        std::lock_guard const guard(m_criticalSection);
         HRESULT result;
 
         winrt::com_ptr<IStream> stream;
@@ -740,7 +740,7 @@ namespace winrt::Telegram::Native::implementation
 
     HRESULT PlaceholderImageHelper::ContentEndImpl(hstring text, IVector<TextEntity> entities, double fontSize, double width, float2& offset)
     {
-        slim_lock_guard const guard(m_criticalSection);
+        std::lock_guard const guard(m_criticalSection);
         HRESULT result;
 
         ReturnIfFailed(result, CreateTextFormat(fontSize));
@@ -813,7 +813,7 @@ namespace winrt::Telegram::Native::implementation
 
     HRESULT PlaceholderImageHelper::RangeMetricsImpl(hstring text, int32_t offset, int32_t length, IVector<TextEntity> entities, double fontSize, double width, bool rtl, IVector<Windows::Foundation::Rect>& rects)
     {
-        slim_lock_guard const guard(m_criticalSection);
+        std::lock_guard const guard(m_criticalSection);
         HRESULT result;
 
         ReturnIfFailed(result, CreateTextFormat(fontSize));

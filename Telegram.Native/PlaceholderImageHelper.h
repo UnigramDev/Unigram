@@ -42,7 +42,7 @@ namespace winrt::Telegram::Native::implementation
 
         static winrt::Telegram::Native::PlaceholderImageHelper Current()
         {
-            slim_lock_guard const guard(s_criticalSection);
+            std::lock_guard const guard(s_criticalSection);
 
             if (s_current == nullptr)
             {
@@ -87,7 +87,7 @@ namespace winrt::Telegram::Native::implementation
 
 
     private:
-        static winrt::slim_mutex s_criticalSection;
+        static std::mutex s_criticalSection;
         static winrt::com_ptr<PlaceholderImageHelper> s_current;
 
         winrt::com_ptr<ID2D1Factory1> m_d2dFactory;
@@ -104,7 +104,7 @@ namespace winrt::Telegram::Native::implementation
         winrt::com_ptr<IDWriteInlineObject> m_customEmoji;
         winrt::com_ptr<IDWriteTextFormat> m_appleFormat;
         winrt::com_ptr<ID2D1Effect> m_gaussianBlurEffect;
-        winrt::slim_mutex m_criticalSection;
+        std::mutex m_criticalSection;
     };
 } // namespace winrt::Telegram::Native::implementation
 

@@ -12,7 +12,7 @@ namespace winrt::Telegram::Native::implementation
     {
         static winrt::Telegram::Native::HttpProxyWatcher Current()
         {
-            auto lock = critical_section::scoped_lock(s_criticalSection);
+            std::lock_guard const guard(s_criticalSection);
 
             if (s_current == nullptr)
             {
@@ -67,7 +67,7 @@ namespace winrt::Telegram::Native::implementation
         }
 
     private:
-        static critical_section s_criticalSection;
+        static std::mutex s_criticalSection;
         static winrt::com_ptr<HttpProxyWatcher> s_current;
 
         static void ThreadLoop(HttpProxyWatcher* watcher);

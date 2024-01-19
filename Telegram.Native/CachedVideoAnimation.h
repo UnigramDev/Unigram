@@ -29,7 +29,7 @@ namespace winrt::Telegram::Native::implementation
 
         void Close()
         {
-            slim_lock_guard const guard(s_locks[m_cacheKey]);
+            std::lock_guard const guard(s_locks[m_cacheKey]);
 
             if (m_decompressBuffer)
             {
@@ -76,7 +76,7 @@ namespace winrt::Telegram::Native::implementation
 
         static void CompressThreadProc();
 
-        static winrt::slim_mutex s_compressLock;
+        static std::mutex s_compressLock;
         static bool s_compressStarted;
         static std::thread s_compressWorker;
         static WorkQueue s_compressQueue;
@@ -84,7 +84,7 @@ namespace winrt::Telegram::Native::implementation
         bool m_caching;
         bool m_readyToCache;
 
-        static std::map<std::string, winrt::slim_mutex> s_locks;
+        static std::map<std::string, std::mutex> s_locks;
 
         IVideoAnimationSource m_file{ nullptr };
         winrt::com_ptr<VideoAnimation> m_animation;

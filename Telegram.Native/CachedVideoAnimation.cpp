@@ -13,9 +13,9 @@
 
 namespace winrt::Telegram::Native::implementation
 {
-    std::map<std::string, winrt::slim_mutex> CachedVideoAnimation::s_locks;
+    std::map<std::string, std::mutex> CachedVideoAnimation::s_locks;
 
-    winrt::slim_mutex CachedVideoAnimation::s_compressLock;
+    std::mutex CachedVideoAnimation::s_compressLock;
     bool CachedVideoAnimation::s_compressStarted;
     std::thread CachedVideoAnimation::s_compressWorker;
     WorkQueue CachedVideoAnimation::s_compressQueue;
@@ -87,7 +87,7 @@ namespace winrt::Telegram::Native::implementation
                 info->m_cacheFile += L".cache";
                 info->m_precache = true;
 
-                slim_lock_guard const guard(s_locks[info->m_cacheKey]);
+                std::lock_guard const guard(s_locks[info->m_cacheKey]);
 
                 HANDLE precacheFile = CreateFile2(info->m_cacheFile.c_str(), GENERIC_READ, 0, OPEN_EXISTING, NULL);
                 if (precacheFile != INVALID_HANDLE_VALUE)
@@ -197,7 +197,7 @@ namespace winrt::Telegram::Native::implementation
             uint32_t offset = m_fileOffsets[m_frameIndex];
             if (offset > 0)
             {
-                slim_lock_guard const guard(s_locks[m_cacheKey]);
+                std::lock_guard const guard(s_locks[m_cacheKey]);
 
                 HANDLE precacheFile = CreateFile2(m_cacheFile.c_str(), GENERIC_READ, 0, OPEN_EXISTING, NULL);
                 if (precacheFile != INVALID_HANDLE_VALUE)
@@ -274,7 +274,7 @@ namespace winrt::Telegram::Native::implementation
             m_caching = true;
             s_compressQueue.push_work(WorkItem(get_weak(), m_pixelWidth, m_pixelHeight));
 
-            slim_lock_guard const guard(s_compressLock);
+            std::lock_guard const guard(s_compressLock);
 
             if (!s_compressStarted)
             {
@@ -312,7 +312,7 @@ namespace winrt::Telegram::Native::implementation
                 auto w = work->w;
                 auto h = work->h;
 
-                slim_lock_guard const guard(s_locks[item->m_cacheKey]);
+                std::lock_guard const guard(s_locks[item->m_cacheKey]);
 
                 HANDLE precacheFile = CreateFile2(item->m_cacheFile.c_str(), GENERIC_READ | GENERIC_WRITE, 0, OPEN_EXISTING, NULL);
                 if (precacheFile != INVALID_HANDLE_VALUE)

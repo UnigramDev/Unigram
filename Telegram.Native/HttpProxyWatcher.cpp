@@ -6,7 +6,7 @@
 
 namespace winrt::Telegram::Native::implementation
 {
-    critical_section HttpProxyWatcher::s_criticalSection;
+    std::mutex HttpProxyWatcher::s_criticalSection;
     winrt::com_ptr<HttpProxyWatcher> HttpProxyWatcher::s_current{ nullptr };
 
     HttpProxyWatcher::HttpProxyWatcher()
