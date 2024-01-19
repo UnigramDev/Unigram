@@ -781,10 +781,18 @@ namespace Telegram.Services
 
         private string GetPhoto(Chat chat)
         {
-            if (chat.Photo != null && chat.Photo.Small.Local.IsDownloadingCompleted)
+            try
             {
-                var relative = Path.GetRelativePath(ApplicationData.Current.LocalFolder.Path, chat.Photo.Small.Local.Path);
-                return "ms-appdata:///local/" + relative.Replace('\\', '/');
+                var photo = chat.Photo;
+                if (photo != null && photo.Small.Local.IsDownloadingCompleted)
+                {
+                    var relative = Path.GetRelativePath(ApplicationData.Current.LocalFolder.Path, photo.Small.Local.Path);
+                    return "ms-appdata:///local/" + relative.Replace('\\', '/');
+                }
+            }
+            catch
+            {
+                // TODO: race condition
             }
 
             return string.Empty;
