@@ -15,13 +15,16 @@ using Telegram.Services;
 using Telegram.Td.Api;
 using Telegram.Views.Popups;
 using Windows.Devices.Enumeration;
+using Windows.Devices.Input;
 using Windows.System.Display;
 using Windows.UI;
+using Windows.UI.Composition;
 using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
 using Windows.UI.Xaml.Hosting;
+using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 
 namespace Telegram.Views.Calls
@@ -36,6 +39,7 @@ namespace Telegram.Views.Calls
         private VoipGroupManager _manager;
         private bool _disposed;
 
+        private readonly DispatcherTimer _inactivityTimer;
         private readonly DispatcherTimer _scheduledTimer;
         private readonly DispatcherTimer _debouncerTimer;
 
@@ -47,6 +51,15 @@ namespace Telegram.Views.Calls
 
             _clientService = clientService;
             _aggregator = aggregator;
+
+            _inactivityTimer = new DispatcherTimer();
+            _inactivityTimer.Interval = TimeSpan.FromSeconds(2);
+            _inactivityTimer.Tick += (s, args) =>
+            {
+                _inactivityTimer.Stop();
+                ShowHideTransport(false);
+            };
+            _inactivityTimer.Start();
 
             _scheduledTimer = new DispatcherTimer();
             _scheduledTimer.Interval = TimeSpan.FromSeconds(1);
@@ -92,6 +105,94 @@ namespace Telegram.Views.Calls
             OnAvailableStreamsChanged();
         }
 
+        protected override void OnPointerMoved(PointerRoutedEventArgs e)
+        {
+            _inactivityTimer.Stop();
+            ShowHideTransport(true);
+
+            base.OnPointerMoved(e);
+
+            if (e.OriginalSource is FrameworkElement element)
+            {
+                var button = element.GetParentOrSelf<ButtonBase>();
+                if (button != null)
+                {
+                    return;
+                }
+            }
+
+            _inactivityTimer.Start();
+        }
+
+        protected override void OnPointerReleased(PointerRoutedEventArgs e)
+        {
+            if (e.Pointer.PointerDeviceType != PointerDeviceType.Mouse)
+            {
+                _inactivityTimer.Stop();
+                ShowHideTransport(true);
+            }
+
+            base.OnPointerReleased(e);
+        }
+
+        private bool _transportCollapsed = false;
+        private bool _transportFocused = false;
+        private bool _transportUnavailable = false;
+
+        private void ShowHideTransport(bool show)
+        {
+            if (show != _transportCollapsed || ((_transportFocused || _transportUnavailable) && !show))
+            {
+                return;
+            }
+
+            _transportCollapsed = !show;
+            TopButtons.IsHitTestVisible = false;
+            BottomPanel.IsHitTestVisible = false;
+
+            var top = ElementComposition.GetElementVisual(TopButtons);
+            var top1 = ElementComposition.GetElementVisual(TitlePanel);
+            var top2 = ElementComposition.GetElementVisual(TopShadow);
+            var top3 = ElementComposition.GetElementVisual(SubtitleInfo);
+            var bottom = ElementComposition.GetElementVisual(BottomPanel);
+            var bottom1 = ElementComposition.GetElementVisual(BottomShadow);
+
+            var batch = top.Compositor.CreateScopedBatch(CompositionBatchTypes.Animation);
+            batch.Completed += (s, args) =>
+            {
+                TopButtons.IsHitTestVisible = !_transportCollapsed;
+                BottomPanel.IsHitTestVisible = !_transportCollapsed;
+            };
+
+            var opacity = top.Compositor.CreateScalarKeyFrameAnimation();
+            opacity.InsertKeyFrame(0, show ? 0 : 1);
+            opacity.InsertKeyFrame(1, show ? 1 : 0);
+
+            top.StartAnimation("Opacity", opacity);
+            top1.StartAnimation("Opacity", opacity);
+            top2.StartAnimation("Opacity", opacity);
+            top3.StartAnimation("Opacity", opacity);
+            bottom.StartAnimation("Opacity", opacity);
+            bottom1.StartAnimation("Opacity", opacity);
+
+            batch.End();
+        }
+
+        private void Transport_GotFocus(object sender, RoutedEventArgs e)
+        {
+            if (e.OriginalSource is Control control && control.FocusState is FocusState.Keyboard or FocusState.Programmatic)
+            {
+                _transportFocused = true;
+                ShowHideTransport(true);
+            }
+        }
+
+        private void Transport_LostFocus(object sender, RoutedEventArgs e)
+        {
+            _transportFocused = false;
+            _inactivityTimer.Start();
+        }
+
         private void OnAvailableStreamsChanged(object sender, EventArgs e)
         {
             this.BeginOnUIThread(OnAvailableStreamsChanged);
@@ -101,11 +202,17 @@ namespace Telegram.Views.Calls
         {
             if (_service.AvailableStreamsCount > 0)
             {
+                _transportUnavailable = false;
+                _inactivityTimer.Start();
+
                 NoStream.Visibility = Visibility.Collapsed;
                 Viewport.Visibility = Visibility.Visible;
             }
             else
             {
+                _transportUnavailable = true;
+                ShowHideTransport(true);
+
                 if (_clientService.TryGetSupergroup(_service.Chat, out Supergroup supergroup))
                 {
                     TextBlockHelper.SetMarkdown(NoStream, supergroup.Status is ChatMemberStatusCreator ? Strings.NoRtmpStreamFromAppOwner : string.Format(Strings.NoRtmpStreamFromAppViewer, _service.Chat.Title));
