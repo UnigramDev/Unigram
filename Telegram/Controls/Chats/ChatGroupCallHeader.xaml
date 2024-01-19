@@ -42,6 +42,9 @@
             <ColumnDefinition Width="Auto" />
             <ColumnDefinition Width="Auto" />
         </Grid.ColumnDefinitions>
+        <Border BorderBrush="{ThemeResource NavigationViewContentGridBorderBrush}"
+                BorderThickness="0,0,0,1"
+                Grid.ColumnSpan="3" />
 
         <TextBlock x:Name="Label"
                    Margin="12,-2,0,0"
