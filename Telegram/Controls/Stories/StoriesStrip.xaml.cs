@@ -321,6 +321,17 @@ namespace Telegram.Controls.Stories
             }
         }
 
+        private bool _isVisible = true;
+        public bool IsVisible
+        {
+            get => _isVisible;
+            set
+            {
+                _isVisible = value;
+                _progress?.InsertBoolean("Visible", value);
+            }
+        }
+
         public bool TabsTopCollapsed { get; set; } = true;
 
         private ListView _controlledList;
@@ -406,6 +417,7 @@ namespace Telegram.Controls.Stories
             _progressAnimation.Properties.InsertBoolean("Collapsed", true);
 
             _progress = compositor.CreatePropertySet();
+            _progress.InsertBoolean("Visible", _isVisible);
             _progress.InsertScalar("Padding", TabsLeftCollapsed ? 32 : 0);
             _progress.InsertScalar("First", _first);
             _progress.InsertScalar("Last", _last);
@@ -419,7 +431,7 @@ namespace Telegram.Controls.Stories
             ForEach(_progress, _progressAnimation);
 
             var titleVisualOffsetAnimation = compositor.CreateExpressionAnimation(
-                "_.Count > 0 ? (24 + (12 * _.Count)) * (1 - _.Progress) : 0");
+                "_.Visible && _.Count > 0 ? (24 + (12 * _.Count)) * (1 - _.Progress) : 0");
 
             var storiesVisualOffsetAnimationX = compositor.CreateExpressionAnimation(
                 "(_.Padding - _.First * 12) * (1 - _.Progress)");

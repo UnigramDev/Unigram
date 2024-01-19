@@ -702,7 +702,9 @@ namespace Telegram.Views
 
             Stories.TabsLeftCollapsed = !show;
 
-            TitleBarrr.Margin = new Thickness(show ? 14 : 48, 0, 0, 0);
+            var pad = MasterDetail.MasterVisibility != Visibility.Visible || show;
+
+            TitleBarrr.Margin = new Thickness(pad ? 14 : 48, 0, pad ? -50 : 10, 0);
 
             Photo.Width = show ? 72 : 48;
             Photo.Visibility = show || MasterDetail.MasterVisibility == Visibility.Visible
@@ -1485,6 +1487,11 @@ namespace Telegram.Views
 
         private void OnMasterVisibilityChanged(object sender, EventArgs e)
         {
+            var pad = MasterDetail.MasterVisibility != Visibility.Visible || !_tabsLeftCollapsed;
+
+            TitleBarrr.Margin = new Thickness(pad ? 14 : 48, 0, pad ? -50 : 10, 0);
+
+            Stories.IsVisible = MasterDetail.MasterVisibility == Visibility.Visible;
             Photo.Visibility = MasterDetail.MasterVisibility == Visibility.Visible || !_tabsLeftCollapsed
                 ? Visibility.Visible
                 : Visibility.Collapsed;
