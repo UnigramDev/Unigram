@@ -37,10 +37,21 @@ namespace Telegram.Entities
             }
 
             LoadPreview();
+
+            if (profile.Video.Width > 0 && profile.Video.Height > 0)
+            {
+                Width = profile.Video.Width;
+                Height = profile.Video.Height;
+            }
+            else
+            {
+                Width = props.GetWidth();
+                Height = props.GetHeight();
+            }
         }
 
-        public override uint Width => Properties.GetWidth();
-        public override uint Height => Properties.GetHeight();
+        public override uint Width { get; }
+        public override uint Height { get; }
 
         public static async Task<StorageVideo> CreateAsync(StorageFile file, BasicProperties basic)
         {
