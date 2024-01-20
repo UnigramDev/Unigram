@@ -3071,8 +3071,11 @@ namespace Telegram.Views
 
             if (viewModel.SelectionMode != ListViewSelectionMode.Multiple)
             {
-                flyout.CreateFlyoutSeparator();
-                flyout.CreateFlyoutItem(viewModel.OpenChat, chat, Strings.OpenInNewWindow, Icons.WindowNew);
+                if (ApiInfo.HasMultipleViews)
+                {
+                    flyout.CreateFlyoutSeparator();
+                    flyout.CreateFlyoutItem(viewModel.OpenChat, chat, Strings.OpenInNewWindow, Icons.WindowNew);
+                }
 
                 if (allowSelection)
                 {
