@@ -13,6 +13,7 @@ using Telegram.Services;
 using Telegram.Services.Factories;
 using Telegram.Td.Api;
 using Telegram.ViewModels.Delegates;
+using Telegram.Views;
 using Telegram.Views.Popups;
 using Windows.System;
 using Windows.UI.Xaml.Navigation;
@@ -42,10 +43,13 @@ namespace Telegram.ViewModels
 
         protected override async Task OnNavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
         {
-            var response = await ClientService.SendAsync(new GetWebPagePreview(new FormattedText((string)parameter, Array.Empty<TextEntity>()), null));
-            if (response is WebPage webPage)
+            if (parameter is InstantPageArgs args)
             {
-                Title = webPage.SiteName;
+                var response = await ClientService.SendAsync(new GetWebPagePreview(new FormattedText(args.Url, Array.Empty<TextEntity>()), null));
+                if (response is WebPage webPage)
+                {
+                    Title = webPage.SiteName;
+                }
             }
         }
 

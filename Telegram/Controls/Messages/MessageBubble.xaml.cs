@@ -1058,7 +1058,7 @@ namespace Telegram.Controls.Messages
 
             if (shown)
             {
-                var title = message.Delegate.GetAdminTitle(message);
+                var title = message.Delegate?.GetAdminTitle(message);
                 if (shown && !message.IsOutgoing && !string.IsNullOrEmpty(title))
                 {
                     LoadObject(ref AdminLabel, nameof(AdminLabel));

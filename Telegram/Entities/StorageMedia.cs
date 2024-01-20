@@ -224,13 +224,20 @@ namespace Telegram.Entities
         {
             var results = new List<StorageMedia>();
 
-            foreach (StorageFile file in items.OfType<StorageFile>())
+            try
             {
-                var media = await CreateAsync(file);
-                if (media != null)
+                foreach (StorageFile file in items.OfType<StorageFile>())
                 {
-                    results.Add(media);
+                    var media = await CreateAsync(file);
+                    if (media != null)
+                    {
+                        results.Add(media);
+                    }
                 }
+            }
+            catch
+            {
+                // All the remote procedure calls must be wrapped in a try-catch block
             }
 
             return results;

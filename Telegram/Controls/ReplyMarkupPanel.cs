@@ -137,7 +137,7 @@ namespace Telegram.Controls
                     button.Style = BootStrapper.Current.Resources["ReplyInlineMarkupButtonStyle"] as Style;
                     button.Margin = new Thickness(1, 2, 1, 0);
 
-                    button.Content = item.Text;
+                    button.Content = item.Text.Replace('\n', ' ');
 
                     switch (item.Type)
                     {

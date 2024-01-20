@@ -46,6 +46,11 @@ namespace Telegram.Views
         public WebPageInstantView InstantView { get; }
 
         public string Url { get; set; }
+
+        public override string ToString()
+        {
+            return Url;
+        }
     }
 
     public sealed partial class InstantPage : HostedPage

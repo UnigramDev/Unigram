@@ -51,14 +51,14 @@ namespace Telegram.Controls
         {
             if (_initialized || _closed)
             {
-                return !_closed;
+                goto Cleanup;
             }
 
             var succeeded = await _presenter.EnsureInitializedAsync();
             if (succeeded || _closed || _presenter is not ChromiumWebPresenter)
             {
                 _initialized = true;
-                return !_closed;
+                goto Cleanup;
             }
 
             _presenter.EventReceived -= OnEventReceived;
@@ -75,7 +75,8 @@ namespace Telegram.Controls
                 _presenter.Close();
             }
 
-            return !_closed;
+        Cleanup:
+            return !_closed && _presenter is ChromiumWebPresenter;
         }
 
         private void OnEventReceived(object sender, WebViewerEventReceivedEventArgs e)

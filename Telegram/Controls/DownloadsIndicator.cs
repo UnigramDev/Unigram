@@ -92,7 +92,7 @@ namespace Telegram.Controls
             {
                 var foreground = ActualTheme == ElementTheme.Light ? Colors.Black : Colors.White;
                 var background = ActualTheme == ElementTheme.Light ? Colors.White : Colors.Black;
-                var stroke = ActualTheme == ElementTheme.Light ? Color.FromArgb(0xFF, 0xE6, 0xE6, 0xE6) : Color.FromArgb(0xFF, 0x1F, 0x1F, 0x1F);
+                var stroke = Theme.Accent; //ActualTheme == ElementTheme.Light ? Color.FromArgb(0xFF, 0xE6, 0xE6, 0xE6) : Color.FromArgb(0xFF, 0x1F, 0x1F, 0x1F);
                 var accent = Theme.Accent;
 
                 _visualSource.SetColorProperty("Foreground", foreground);
