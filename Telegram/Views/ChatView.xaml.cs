@@ -6,6 +6,7 @@
 //
 using Microsoft.Graphics.Canvas;
 using Microsoft.Graphics.Canvas.Geometry;
+using Microsoft.UI.Xaml.Controls;
 using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
@@ -829,10 +830,12 @@ namespace Telegram.Views
             var focused = FocusManager.GetFocusedElement();
             if (focused is null or (not TextBox and not RichEditBox))
             {
-                var popups = VisualTreeHelper.GetOpenPopups(Window.Current);
-                if (popups.Count > 0)
+                foreach (var popup in VisualTreeHelper.GetOpenPopups(Window.Current))
                 {
-                    return;
+                    if (popup.Child is not ToolTip and not TeachingTip)
+                    {
+                        return;
+                    }
                 }
 
                 TextField.Focus(FocusState.Keyboard);
