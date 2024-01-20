@@ -52,7 +52,14 @@ namespace Telegram.Views.Settings
                 Username.Badge = Strings.UsernameEmpty;
             }
 
-            ProfileColor.SetUser(ViewModel.ClientService, user);
+            if (ViewModel.IsPremiumAvailable)
+            {
+                ProfileColor.SetUser(ViewModel.ClientService, user);
+            }
+            else
+            {
+                NameColor.Visibility = Visibility.Collapsed;
+            }
         }
 
         public void UpdateUserFullInfo(Chat chat, User user, UserFullInfo fullInfo, bool secret, bool accessToken)

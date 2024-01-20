@@ -87,7 +87,8 @@
                                           Glyph="&#xE9E7;"
                                           IsChevronVisible="True" />
 
-                    <controls:BadgeButton Content="{CustomResource YourNameColor}"
+                    <controls:BadgeButton x:Name="NameColor"
+                                          Content="{CustomResource YourNameColor}"
                                           Style="{StaticResource GlyphBadgeButtonStyle}"
                                           Click="{x:Bind ViewModel.ChangeProfileColor}"
                                           Glyph="&#xE2B1;"

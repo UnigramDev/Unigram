@@ -115,10 +115,17 @@ namespace Telegram.Views.Supergroups
 
             if (group.IsChannel && group.CanChangeInfo())
             {
-                ChannelColor.Visibility = Visibility.Visible;
                 ChannelSignMessages.Visibility = Visibility.Visible;
 
-                ProfileColor.SetChat(ViewModel.ClientService, chat);
+                if (ViewModel.IsPremiumAvailable)
+                {
+                    ChannelColor.Visibility = Visibility.Visible;
+                    ProfileColor.SetChat(ViewModel.ClientService, chat);
+                }
+                else
+                {
+                    ChannelColor.Visibility = Visibility.Collapsed;
+                }
             }
             else
             {

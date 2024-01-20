@@ -40,7 +40,14 @@ namespace Telegram.Views.Settings
 
             if (ViewModel.ClientService.TryGetUser(ViewModel.ClientService.Options.MyId, out User user))
             {
-                ProfileColor.SetUser(ViewModel.ClientService, user);
+                if (ViewModel.IsPremiumAvailable)
+                {
+                    ProfileColor.SetUser(ViewModel.ClientService, user);
+                }
+                else
+                {
+                    NameColor.Visibility = Visibility.Collapsed;
+                }
 
                 Message1.Mockup(ViewModel.ClientService, Strings.FontSizePreviewLine1, user, Strings.FontSizePreviewReply, false, DateTime.Now.AddSeconds(-25));
                 Message2.Mockup(Strings.FontSizePreviewLine2, true, DateTime.Now);
