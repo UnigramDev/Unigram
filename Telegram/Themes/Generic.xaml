@@ -2762,14 +2762,8 @@
                                         <RowDefinition Height="Auto" />
                                     </Grid.RowDefinitions>
                                     <ScrollViewer x:Name="ContentScrollViewer"
-                                                  HorizontalScrollBarVisibility="Disabled"
-                                                  VerticalScrollBarVisibility="Disabled"
-                                                  HorizontalScrollMode="Disabled"
-                                                  VerticalScrollMode="Disabled"
-                                                  ZoomMode="Disabled"
-                                                  CanContentRenderOutsideBounds="True"
-                                                  Margin="{ThemeResource ContentDialogContentScrollViewerMargin}"
-                                                  IsTabStop="False">
+                                                  Visibility="Collapsed" />
+                                    <Border Margin="{ThemeResource ContentDialogContentScrollViewerMargin}">
                                         <Grid>
                                             <Grid.RowDefinitions>
                                                 <RowDefinition Height="Auto" />
@@ -2812,7 +2806,7 @@
                                                               Grid.Row="1"
                                                               TextWrapping="Wrap" />
                                         </Grid>
-                                    </ScrollViewer>
+                                    </Border>
                                     <Grid x:Name="CommandSpace"
                                           Grid.Row="1"
                                           HorizontalAlignment="Stretch"

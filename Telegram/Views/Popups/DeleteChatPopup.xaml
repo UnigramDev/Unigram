@@ -45,7 +45,7 @@
                    Style="{StaticResource BodyTextBlockStyle}" />
 
         <CheckBox x:Name="CheckBox"
-                  Margin="0,16,0,0"
+                  Margin="0,16,0,-8"
                   Visibility="Collapsed"
                   Grid.Row="2" />
     </StackPanel>

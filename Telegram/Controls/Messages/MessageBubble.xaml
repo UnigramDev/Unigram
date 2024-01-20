@@ -323,6 +323,7 @@
 
                         <controls:ReplyMarkupPanel x:Name="Markup"
                                                    x:Load="False"
+                                                   MaxWidth="{StaticResource MessageMaxWidth}"
                                                    Grid.Column="1"
                                                    Grid.Row="1" />
 
