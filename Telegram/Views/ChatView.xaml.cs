@@ -2565,7 +2565,10 @@ namespace Telegram.Views
         {
             if (ViewModel.Type is not DialogType.History and not DialogType.Pinned)
             {
-                return false;
+                if (ViewModel.Type is not DialogType.Thread || ViewModel.Topic == null)
+                {
+                    return false;
+                }
             }
 
             if (message.SchedulingState != null || message.IsService)
