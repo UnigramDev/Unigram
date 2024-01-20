@@ -521,28 +521,40 @@ namespace Telegram.Services
             // Flush animated stickers cache files that have not been accessed in three days
             Task.Factory.StartNew(() =>
             {
+                static IEnumerable<string> GetFiles(string path)
+                {
+                    try
+                    {
+                        if (System.IO.Directory.Exists(path))
+                        {
+                            return System.IO.Directory.GetFiles(path, "*.cache");
+                        }
+                    }
+                    catch
+                    {
+
+                    }
+
+                    return Enumerable.Empty<string>();
+                }
+
                 var now = DateTime.Now;
                 var path = System.IO.Path.Combine(ApplicationData.Current.LocalFolder.Path, $"{_session}", "stickers");
 
-                if (System.IO.Directory.Exists(path))
+                foreach (var file in GetFiles(path))
                 {
-                    var files = System.IO.Directory.GetFiles(path, "*.cache");
+                    var date = System.IO.File.GetLastAccessTime(file);
 
-                    foreach (var file in files)
+                    var diff = now - date;
+                    if (diff.TotalDays >= 3)
                     {
-                        var date = System.IO.File.GetLastAccessTime(file);
-
-                        var diff = now - date;
-                        if (diff.TotalDays >= 3)
+                        try
                         {
-                            try
-                            {
-                                System.IO.File.Delete(file);
-                            }
-                            catch
-                            {
-                                // File might be in use
-                            }
+                            System.IO.File.Delete(file);
+                        }
+                        catch
+                        {
+                            // File might be in use
                         }
                     }
                 }
