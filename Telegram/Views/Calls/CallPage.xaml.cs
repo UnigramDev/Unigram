@@ -479,28 +479,6 @@ namespace Telegram.Views.Calls
             {
                 Image.SetUser(_clientService, user, 280);
 
-                //if (user.ProfilePhoto != null)
-                //{
-                //    var file = user.ProfilePhoto.Big;
-                //    if (file.Local.IsDownloadingCompleted)
-                //    {
-                //        Image.Source = new BitmapImage(UriEx.GetLocal(file.Local.Path));
-                //        BackgroundPanel.Background = new SolidColorBrush(Colors.Transparent);
-                //    }
-                //    else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive)
-                //    {
-                //        Image.Source = null;
-                //        BackgroundPanel.Background = PlaceholderHelper.GetBrush(user.Id);
-
-                //        _clientService?.DownloadFile(file.Id, 1, 0);
-                //    }
-                //}
-                //else
-                //{
-                //    Image.Source = null;
-                //    BackgroundPanel.Background = PlaceholderHelper.GetBrush(user.Id);
-                //}
-
                 FromLabel.Text = user.FullName();
                 DescriptionLabel.Text = string.Format(Strings.CallEmojiKeyTooltip, user.FirstName);
 

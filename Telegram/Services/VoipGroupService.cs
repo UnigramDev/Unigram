@@ -1172,7 +1172,14 @@ namespace Telegram.Services
                 }
                 else
                 {
-                    await ApplicationViewSwitcher.SwitchAsync(_lifetime.Id);
+                    try
+                    {
+                        await ApplicationViewSwitcher.SwitchAsync(_lifetime.Id);
+                    }
+                    catch
+                    {
+                        // All the remote procedure calls must be wrapped in a try-catch block
+                    }
                 }
             }
 #endif

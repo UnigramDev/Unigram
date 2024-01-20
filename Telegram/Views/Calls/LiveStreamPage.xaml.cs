@@ -433,7 +433,13 @@ namespace Telegram.Views.Calls
 
         private void OnNetworkStateUpdated(VoipGroupManager sender, GroupNetworkStateChangedEventArgs args)
         {
-            this.BeginOnUIThread(() => UpdateNetworkState(_service.Call, _service.CurrentUser, args.IsConnected));
+            this.BeginOnUIThread(() =>
+            {
+                if (_service != null)
+                {
+                    UpdateNetworkState(_service.Call, _service.CurrentUser, args.IsConnected);
+                }
+            });
         }
 
         private Task ConsolidateAsync()

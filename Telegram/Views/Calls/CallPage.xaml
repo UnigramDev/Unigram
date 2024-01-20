@@ -133,14 +133,14 @@
                   Height="140"
                   HorizontalAlignment="Center"
                   VerticalAlignment="Center">
-                <Border x:Name="Blob"
-                        Width="280"
-                        Height="280"
-                        Margin="-70" />
-                <controls:ProfilePicture x:Name="Image"
-                                         Width="280"
-                                         Height="280"
-                                         Margin="-70" />
+                <Grid Width="280"
+                      Height="280"
+                      Margin="-70">
+                    <Border x:Name="Blob" />
+                    <controls:ProfilePicture x:Name="Image"
+                                             Width="280"
+                                             Height="280" />
+                </Grid>
             </Grid>
 
             <!--<TextBlock x:Name="FromLabel" Tapped="DebugString_Tapped" Text="Fela Ameghino" TextAlignment="Center" Style="{StaticResource SubheaderTextBlockStyle}" VerticalAlignment="Bottom"/>-->
