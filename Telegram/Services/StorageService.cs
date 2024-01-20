@@ -400,13 +400,13 @@ namespace Telegram.Services
                 return new DownloadFolder(false, Strings.DownloadFolderDefault);
             }
 
-            public static IAsyncOperation<StorageFolder> GetDefaultFolderAsync()
+            public static async Task<StorageFolder> GetDefaultFolderAsync()
             {
                 if (ApiInfo.HasKnownFolders)
                 {
                     try
                     {
-                        return KnownFolders.GetFolderAsync(KnownFolderId.DownloadsFolder);
+                        return await KnownFolders.GetFolderAsync(KnownFolderId.DownloadsFolder);
                     }
                     catch
                     {
@@ -477,6 +477,7 @@ namespace Telegram.Services
             {
                 try
                 {
+                    // Access to entries should probably be locked around the app...
                     if (SAP.FutureAccessList.Entries.Count >= SAP.FutureAccessList.MaximumItemsAllowed - 10)
                     {
                         for (int i = SAP.FutureAccessList.Entries.Count - 1; i >= 0; i--)
