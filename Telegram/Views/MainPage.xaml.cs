@@ -1534,7 +1534,7 @@ namespace Telegram.Views
                 {
                     // If we come from selection we need to delay this as ItemClick comes before SelectionChanged,
                     // hence, if we unselect here, the ListView internal code will re-select the item right away.
-                    VisualUtilities.QueueCallbackForCompositionRendering(() => ChatsList.ClearValue(Selector.SelectedItemProperty));
+                    VisualUtilities.QueueCallbackForCompositionRendered(() => ChatsList.ClearValue(Selector.SelectedItemProperty));
                 }
                 else
                 {
@@ -2655,10 +2655,14 @@ namespace Telegram.Views
 
         public async void SetSelectedItem(Chat chat)
         {
+            await System.Threading.Tasks.Task.Delay(100);
+
             if (ViewModel.Chats.SelectionMode != ListViewSelectionMode.Multiple)
             {
-                await System.Threading.Tasks.Task.Delay(100);
                 ChatsList.SelectedItem = chat;
+
+                // TODO: would be great, but doesn't seem to work well enough :(
+                //VisualUtilities.QueueCallbackForCompositionRendered(() => ChatsList.SelectedItem = chat);
             }
         }
 
@@ -2666,20 +2670,27 @@ namespace Telegram.Views
         {
             if (ViewModel.Chats.SelectionMode == ListViewSelectionMode.Multiple)
             {
-                foreach (var item in chats)
+                try
                 {
-                    if (!ChatsList.SelectedItems.Contains(item))
+                    foreach (var item in chats)
                     {
-                        ChatsList.SelectedItems.Add(item);
+                        if (!ChatsList.SelectedItems.Contains(item))
+                        {
+                            ChatsList.SelectedItems.Add(item);
+                        }
+                    }
+
+                    foreach (Chat item in ChatsList.SelectedItems)
+                    {
+                        if (!chats.Contains(item))
+                        {
+                            ChatsList.SelectedItems.Remove(item);
+                        }
                     }
                 }
-
-                foreach (Chat item in ChatsList.SelectedItems)
+                catch
                 {
-                    if (!chats.Contains(item))
-                    {
-                        ChatsList.SelectedItems.Remove(item);
-                    }
+                    // SelectedItems likes to throw
                 }
             }
         }
