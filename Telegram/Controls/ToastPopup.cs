@@ -104,6 +104,8 @@ namespace Telegram.Controls
 
         public static TeachingTip ShowToastImpl(Window app, FrameworkElement target, FormattedText text, FrameworkElement icon, TeachingTipPlacementMode placement, ElementTheme requestedTheme = ElementTheme.Dark, TimeSpan? dismissAfter = null)
         {
+            Logger.Info();
+
             var label = new TextBlock
             {
                 TextWrapping = TextWrapping.Wrap
@@ -158,6 +160,8 @@ namespace Telegram.Controls
 
                 void handler(object sender, object e)
                 {
+                    Logger.Info("closed");
+
                     timer.Tick -= handler;
                     toast.IsOpen = false;
                 }
@@ -231,6 +235,8 @@ namespace Telegram.Controls
 
                 void handler(object sender, RoutedEventArgs e)
                 {
+                    Logger.Info("closed");
+
                     tsc.TrySetResult(ContentDialogResult.Primary);
                     undo.Click -= handler;
 

@@ -119,9 +119,19 @@ namespace Telegram
         private const string FormatWithMessage = "[{0:F3}][{2}:{3}][{4}] {5}";
         private const string FormatWithoutMessage = "[{0:F3}][{2}:{3}][{4}]";
 
-        public static string Dump()
+        public static unsafe string Dump()
         {
-            return string.Join('\n', _lastCalls);
+            lock (_lock)
+            {
+                // We use UtcNow instead of Now because Now is expensive.
+                long diff = 116444736000000000;
+                long time = 0;
+
+                GetSystemTimeAsFileTime(&time);
+
+                _lastCalls.Add(string.Format("[0:F3] Bump", (time - diff) / 10_000_000d));
+                return string.Join('\n', _lastCalls);
+            }
         }
     }
 }

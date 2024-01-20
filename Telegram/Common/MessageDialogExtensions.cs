@@ -42,6 +42,7 @@ namespace Telegram.Common
             _currentDialogShowRequest = null;
             request.SetResult(dialog);
 
+            Logger.Info(dialog.GetType().Name + ", closed");
             return result;
         }
 

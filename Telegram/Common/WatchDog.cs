@@ -85,13 +85,13 @@ namespace Telegram
         public static void Initialize()
         {
             NativeUtils.SetFatalErrorCallback(FatalErrorCallback);
-
-            Client.SetLogMessageCallback(Constants.DEBUG ? 5 : 0, FatalErrorCallback);
+            Client.SetLogMessageCallback(0, FatalErrorCallback);
 
             BootStrapper.Current.UnhandledException += (s, args) =>
             {
                 if (args.Exception is LayoutCycleException)
                 {
+                    Logger.Info("LayoutCycleException");
                     Analytics.TrackEvent("LayoutCycleException");
                     SettingsService.Current.Diagnostics.LastCrashWasLayoutCycle = true;
                 }
@@ -239,16 +239,6 @@ namespace Telegram
         {
             if (verbosityLevel != 0)
             {
-#if DEBUG
-                if (verbosityLevel == 1 && message.Contains("File remote location was changed from"))
-                {
-                    var source = Path.Combine(ApplicationData.Current.LocalFolder.Path, "tdlib_log.txt");
-                    var destination = Path.ChangeExtension(source, ".backup");
-
-                    File.Copy(source, destination, true);
-                }
-#endif
-
                 return;
             }
 
@@ -273,6 +263,7 @@ namespace Telegram
         private static void Track(string reportId, Exception exception)
         {
             var version = VersionLabel.GetVersion();
+            var language = LocaleService.Current.Id;
 
             var next = DateTime.Now.ToTimestamp();
             var prev = SettingsService.Current.Diagnostics.LastUpdateTime;
@@ -284,6 +275,7 @@ namespace Telegram
 
             var info =
                 $"Current version: {version}\n" +
+                $"Current language: {language}\n" +
                 $"Memory usage: {memoryUsage}\n" +
                 $"Memory usage level: {MemoryManager.AppMemoryUsageLevel}\n" +
                 $"Memory usage limit: {memoryUsageLimit}\n" +
