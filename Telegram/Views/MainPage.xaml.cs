@@ -1959,6 +1959,7 @@ namespace Telegram.Views
                 else
                 {
                     ContactsPanel.Visibility = Visibility.Collapsed;
+                    FindName(nameof(ContactsSearchListView));
 
                     var items = ViewModel.Contacts.Search = new SearchUsersCollection(ViewModel.ClientService, SearchField.Text);
                     await items.LoadMoreItemsAsync(0);
