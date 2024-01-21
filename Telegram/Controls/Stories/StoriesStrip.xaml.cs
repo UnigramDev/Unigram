@@ -26,7 +26,9 @@ namespace Telegram.Controls.Stories
         {
             InitializeComponent();
 
-            _scrollDebouncer = new EventDebouncer<NotifyCollectionChangedEventArgs>(100, handler => ViewModel.Items.CollectionChanged += new NotifyCollectionChangedEventHandler(handler));
+            _scrollDebouncer = new EventDebouncer<NotifyCollectionChangedEventArgs>(100,
+                handler => ViewModel.Items.CollectionChanged += new NotifyCollectionChangedEventHandler(handler),
+                handler => ViewModel.Items.CollectionChanged -= new NotifyCollectionChangedEventHandler(handler));
 
             _scrollTracker = new DispatcherTimer();
             _scrollTracker.Interval = TimeSpan.FromMilliseconds(33);
