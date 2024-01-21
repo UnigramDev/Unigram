@@ -104,7 +104,7 @@ namespace Telegram.Services.Settings
         private bool? _xamlDiagnostics;
         public bool XamlDiagnostics
         {
-            get => _xamlDiagnostics ??= GetValueOrDefault("XamlDiagnostics", true);
+            get => _xamlDiagnostics ??= GetValueOrDefault("XamlDiagnostics", ApiInfo.IsPackagedRelease);
             set => AddOrUpdateValue(ref _xamlDiagnostics, "XamlDiagnostics", value);
         }
 
@@ -164,7 +164,7 @@ namespace Telegram.Services.Settings
         private bool? _nativeTimeFormatter;
         public bool NativeTimeFormatter
         {
-            get => _nativeTimeFormatter ??= GetValueOrDefault("NativeTimeFormatter", ApiInfo.IsPackagedRelease);
+            get => _nativeTimeFormatter ??= GetValueOrDefault("NativeTimeFormatter", true);
             set => AddOrUpdateValue(ref _nativeTimeFormatter, "NativeTimeFormatter", value);
         }
 
