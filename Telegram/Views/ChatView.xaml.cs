@@ -4826,6 +4826,18 @@ namespace Telegram.Views
             //ShowHideBotCommands(false);
         }
 
+        public void UpdateChatVideoChat(Chat chat, VideoChat videoChat)
+        {
+            if (chat.Type is ChatTypeBasicGroup or ChatTypeSupergroup)
+            {
+                if (videoChat.GroupCallId == 0)
+                {
+                    GroupCall.ShowHide(false);
+                    Call.Visibility = Visibility.Collapsed;
+                }
+            }
+        }
+
         public void UpdateGroupCall(Chat chat, GroupCall groupCall)
         {
             if (GroupCall.UpdateGroupCall(chat, groupCall))

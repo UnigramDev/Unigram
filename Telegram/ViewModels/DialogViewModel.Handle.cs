@@ -69,6 +69,7 @@ namespace Telegram.ViewModels
                 .Subscribe<UpdateChatBackground>(Handle)
                 .Subscribe<UpdateChatNotificationSettings>(Handle)
                 .Subscribe<UpdateChatOnlineMemberCount>(Handle)
+                .Subscribe<UpdateChatVideoChat>(Handle)
                 .Subscribe<UpdateGroupCall>(Handle)
                 .Subscribe<UpdateSpeechRecognitionTrial>(Handle);
         }
@@ -209,7 +210,7 @@ namespace Telegram.ViewModels
         {
             if (_chat?.Id == update.ChatId)
             {
-                //BeginOnUIThread(() => Delegate?.UpdateGroupCall(_chat, update.GroupCall));
+                BeginOnUIThread(() => Delegate?.UpdateChatVideoChat(_chat, update.VideoChat));
             }
         }
 

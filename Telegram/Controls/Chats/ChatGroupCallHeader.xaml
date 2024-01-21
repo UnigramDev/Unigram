@@ -71,6 +71,7 @@
         <controls:BadgeButton x:Name="JoinButton"
                               Content="{CustomResource VoipChatJoin}"
                               Style="{StaticResource PillButtonStyle}"
+                              Typography.NumeralAlignment="Tabular"
                               FontWeight="SemiBold"
                               HorizontalAlignment="Right"
                               VerticalAlignment="Center"

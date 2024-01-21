@@ -906,7 +906,6 @@ namespace Telegram.Views.Calls
 
                     FindName(nameof(ScheduledPanel));
                     SubtitleInfo.Text = _service.IsChannel ? Strings.VoipChannelScheduledVoiceChat : Strings.VoipGroupScheduledVoiceChat;
-                    ParticipantsPanel.Visibility = Visibility.Collapsed;
                     ScheduledInfo.Text = duration < TimeSpan.Zero ? Strings.VoipChatLateBy : Strings.VoipChatStartsIn;
                     StartsAt.Text = call.GetStartsAt();
                     StartsIn.Text = call.GetStartsIn();
@@ -975,7 +974,6 @@ namespace Telegram.Views.Calls
                     SubtitleInfo.Margin = new Thickness(padding > 0 ? padding + 4 : 12, -8, 0, 12);
 
                     SubtitleInfo.Text = Locale.Declension(Strings.R.Participants, call.ParticipantCount);
-                    ParticipantsPanel.Visibility = Visibility.Visible;
 
                     UpdateVideo();
                     UpdateScreen();
@@ -1419,7 +1417,7 @@ namespace Telegram.Views.Calls
                 return;
             }
 
-            if (service.CanEnableVideo)
+            if (service.CanEnableVideo && service.Call?.ScheduledStartDate == 0)
             {
                 switch (_prevColors)
                 {

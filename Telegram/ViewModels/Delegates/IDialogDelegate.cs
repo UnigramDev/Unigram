@@ -31,6 +31,7 @@ namespace Telegram.ViewModels.Delegates
         void UpdateChatMessageSender(Chat chat, MessageSender defaultMessageSenderId);
         void UpdateChatPendingJoinRequests(Chat chat);
         void UpdateChatIsTranslatable(Chat chat, string language);
+        void UpdateChatVideoChat(Chat chat, VideoChat videoChat);
 
         void UpdatePinnedMessage(Chat chat, bool known);
         void UpdateCallbackQueryAnswer(Chat chat, MessageViewModel answer);

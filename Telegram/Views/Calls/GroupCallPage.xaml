@@ -326,6 +326,7 @@
             <TextBlock x:Name="StartsIn"
                        FontWeight="Bold"
                        TextAlignment="Center"
+                       Typography.NumeralAlignment="Tabular"
                        Style="{StaticResource HeaderTextBlockStyle}"
                        Foreground="{StaticResource VideoChatPurpleBrush}" />
 
