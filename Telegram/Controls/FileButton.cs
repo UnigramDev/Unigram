@@ -76,7 +76,17 @@ namespace Telegram.Controls
         public double InternalProgress
         {
             get => (double)GetValue(ProgressProperty);
-            set => SetValue(ProgressProperty, value);
+            set
+            {
+                try
+                {
+                    SetValue(ProgressProperty, value);
+                }
+                catch (Exception ex)
+                {
+                    Logger.Error(ex);
+                }
+            }
         }
 
         public static readonly DependencyProperty ProgressProperty =

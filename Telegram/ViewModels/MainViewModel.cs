@@ -25,7 +25,6 @@ using Telegram.ViewModels.Stories;
 using Telegram.Views;
 using Telegram.Views.Folders;
 using Telegram.Views.Popups;
-using Telegram.Views.Settings;
 using Telegram.Views.Settings.Popups;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
@@ -421,10 +420,19 @@ namespace Telegram.ViewModels
 
                 if (layoutCycle)
                 {
-                    var confirm = await ShowPopupAsync("The app terminated unexpectedly due to a layout cycle, because of this some layout optimizations have been disabled. You can re-enable layout optimizations at any time from Settings > Advanced > Use Layout Rounding.", "Something went wrong", "OK", "Show me");
-                    if (confirm == ContentDialogResult.Secondary)
+                    var confirm = await ShowPopupAsync("The app terminated unexpectedly due to a layout cycle, please report this problem immediately.", "Something went wrong", "OK", "Cancel");
+                    if (confirm == ContentDialogResult.Primary)
                     {
-                        NavigationService.Navigate(typeof(SettingsAdvancedPage));
+                        var chat = await ClientService.SendAsync(new SearchPublicChat("unigraminsiders")) as Chat;
+                        if (chat != null)
+                        {
+                            var service = new DeviceInfoService();
+                            var payload = "Hi, I just had a layout cycle, can you please help me? My app version is {0}, running {1} on a {2}.";
+                            payload = string.Format(payload, service.ApplicationVersion, service.FullSystemVersion, service.DeviceModel);
+
+                            ClientService.Send(new SendMessage(chat.Id, 0, null, null, null, new InputMessageText(new FormattedText(payload, Array.Empty<TextEntity>()), null, false)));
+                            NavigationService.NavigateToChat(chat);
+                        }
                     }
                 }
                 else

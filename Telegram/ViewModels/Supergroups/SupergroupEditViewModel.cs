@@ -380,6 +380,8 @@ namespace Telegram.ViewModels.Supergroups
         {
             if (_chat is Chat chat)
             {
+                Logger.Info(chat.Type);
+
                 var updated = await ClientService.SendAsync(new GetChat(chat.Id)) as Chat ?? chat;
                 var popup = new DeleteChatPopup(ClientService, updated, null, false, true);
 

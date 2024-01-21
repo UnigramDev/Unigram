@@ -46,7 +46,7 @@ namespace Telegram.Common
                 this.Add("ThreadStackLayout", new StackLayout());
 
                 UpdateEmojiSet();
-                UpdateScrolls();
+                //UpdateScrolls();
             }
             catch { }
 

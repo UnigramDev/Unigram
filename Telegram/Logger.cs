@@ -129,7 +129,7 @@ namespace Telegram
 
                 GetSystemTimeAsFileTime(&time);
 
-                _lastCalls.Add(string.Format("[0:F3] Bump", (time - diff) / 10_000_000d));
+                _lastCalls.Add(string.Format("[{0:F3}] Bump", (time - diff) / 10_000_000d));
                 return string.Join('\n', _lastCalls);
             }
         }

@@ -304,6 +304,8 @@ namespace Telegram.ViewModels
 
         public async void DeleteChat(Chat chat)
         {
+            Logger.Info(chat.Type);
+
             var updated = await ClientService.SendAsync(new GetChat(chat.Id)) as Chat ?? chat;
             var popup = new DeleteChatPopup(ClientService, updated, Items.ChatList, false);
 
@@ -421,6 +423,8 @@ namespace Telegram.ViewModels
 
         public async void ClearChat(Chat chat)
         {
+            Logger.Info(chat.Type);
+
             var updated = await ClientService.SendAsync(new GetChat(chat.Id)) as Chat ?? chat;
             var dialog = new DeleteChatPopup(ClientService, updated, Items.ChatList, true);
 

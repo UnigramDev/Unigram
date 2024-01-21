@@ -2767,6 +2767,8 @@ namespace Telegram.ViewModels
                 return;
             }
 
+            Logger.Info(chat.Type);
+
             var updated = await ClientService.SendAsync(new GetChat(chat.Id)) as Chat ?? chat;
             var dialog = new DeleteChatPopup(ClientService, updated, null, false);
 
@@ -2812,6 +2814,8 @@ namespace Telegram.ViewModels
             {
                 return;
             }
+
+            Logger.Info(chat.Type);
 
             var updated = await ClientService.SendAsync(new GetChat(chat.Id)) as Chat ?? chat;
             var dialog = new DeleteChatPopup(ClientService, updated, null, true);

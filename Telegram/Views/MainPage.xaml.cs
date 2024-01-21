@@ -818,6 +818,8 @@ namespace Telegram.Views
                 var scrollViewer = ChatsList.GetScrollViewer();
                 if (scrollViewer != null && scrollViewer.VerticalOffset > 50)
                 {
+                    Logger.Info("ChangeView");
+
                     scrollViewer.ChangeView(null, 0, null);
                     args.Handled = true;
                 }
@@ -2270,6 +2272,8 @@ namespace Telegram.Views
                 }
                 else
                 {
+                    Logger.Info("ChangeView");
+
                     var scrollingHost = ChatsList.GetScrollViewer();
                     scrollingHost?.ChangeView(null, 0, null);
                 }
