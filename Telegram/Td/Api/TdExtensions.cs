@@ -1709,9 +1709,11 @@ namespace Telegram.Td.Api
             {
                 return message.ForwardInfo.FromChatId != 0;
             }
-            else if (message.ForwardInfo?.Origin is MessageOriginChannel)
+            else if (message.ForwardInfo?.Origin is MessageOriginChannel originChannel)
             {
-                return message.ForwardInfo.FromChatId != 0;
+                return message.ForwardInfo.FromChatId != 0
+                    && message.ForwardInfo.FromChatId == originChannel.ChatId
+                    && message.ForwardInfo.FromMessageId == originChannel.MessageId;
             }
             else if (message.ForwardInfo?.Origin is MessageOriginHiddenUser)
             {
