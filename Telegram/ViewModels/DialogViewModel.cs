@@ -3695,6 +3695,7 @@ namespace Telegram.ViewModels
             }
 
             _suppressOperations = false;
+            _suppressNext = false;
         }
 
         public void RawInsertRange(int index, IList<MessageViewModel> source, bool filter, out bool empty)
@@ -3726,6 +3727,7 @@ namespace Telegram.ViewModels
             }
 
             _suppressOperations = false;
+            _suppressPrev = false;
         }
 
         public void RawReplaceWith(IEnumerable<MessageViewModel> source)
