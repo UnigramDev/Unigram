@@ -21,13 +21,13 @@ namespace Telegram.Controls
     {
         protected override Size MeasureOverride(Size availableSize)
         {
-            Logger.Debug();
+            Logger.Debug(string.Format("{0}, {1}", Name, availableSize));
             return base.MeasureOverride(availableSize);
         }
 
         protected override Size ArrangeOverride(Size finalSize)
         {
-            Logger.Debug();
+            Logger.Debug(string.Format("{0}, {1}", Name, finalSize));
             return base.ArrangeOverride(finalSize);
         }
     }
