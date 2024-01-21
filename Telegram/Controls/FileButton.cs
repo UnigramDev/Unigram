@@ -75,12 +75,12 @@ namespace Telegram.Controls
 
         public double InternalProgress
         {
-            get => (double)GetValue(ProgressProperty);
+            get => (double)GetValue(InternalProgressProperty);
             set
             {
                 try
                 {
-                    SetValue(ProgressProperty, value);
+                    SetValue(InternalProgressProperty, value);
                 }
                 catch (Exception ex)
                 {
@@ -89,7 +89,7 @@ namespace Telegram.Controls
             }
         }
 
-        public static readonly DependencyProperty ProgressProperty =
+        public static readonly DependencyProperty InternalProgressProperty =
             DependencyProperty.Register("InternalProgress", typeof(double), typeof(FileButton), new PropertyMetadata(0.0));
 
         #endregion
@@ -331,17 +331,7 @@ namespace Telegram.Controls
             _shouldEnqueueProgress = true;
 
             var batch = compositor.CreateScopedBatch(CompositionBatchTypes.Animation);
-            batch.Completed += (s, args) =>
-            {
-                if (_state == MessageContentState.Downloading)
-                {
-                    OnGlyphChanged(Icons.Cancel, Icons.ArrowDownload, true, Strings.AccActionCancelDownload, false);
-                    InternalProgress = _enqueuedProgress;
-                }
-
-                _shouldEnqueueProgress = false;
-                //_container.Children.RemoveAll();
-            };
+            batch.Completed += OnDownloadingCompleted;
 
             var animLeft = compositor.CreateScalarKeyFrameAnimation();
             animLeft.InsertKeyFrame(0, 1);
@@ -373,6 +363,18 @@ namespace Telegram.Controls
 
             arrowPath.StartAnimation("TrimStart", animBody);
             arrowPath.StartAnimation("TrimEnd", animBodyEnd);
+        }
+
+        private void OnDownloadingCompleted(object sender, CompositionBatchCompletedEventArgs args)
+        {
+            if (_state == MessageContentState.Downloading && this.IsConnected())
+            {
+                OnGlyphChanged(Icons.Cancel, Icons.ArrowDownload, true, Strings.AccActionCancelDownload, false);
+                InternalProgress = _enqueuedProgress;
+            }
+
+            _shouldEnqueueProgress = false;
+            //_container.Children.RemoveAll();
         }
 
         private CompositionPath GetArrowShape()

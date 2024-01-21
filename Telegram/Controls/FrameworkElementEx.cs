@@ -12,6 +12,14 @@ namespace Telegram.Controls
     // Name of the file is FrameworkElementEx.cs because supposedly this code should be
     // added to all classes inheriting FrameworkElement, but this isn't really possible in C#.
 
+    public static class FrameworkElementEx
+    {
+        public static bool IsConnected(this FrameworkElement element)
+        {
+            return Windows.UI.Xaml.Media.VisualTreeHelper.GetParent(element) != null;
+        }
+    }
+
     // TODO: would be great to find a way to have this as a template.
 
     public class ControlEx : Control
