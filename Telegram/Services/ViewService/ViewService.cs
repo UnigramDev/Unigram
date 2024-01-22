@@ -89,17 +89,26 @@ namespace Telegram.Services.ViewService
             }
             else
             {
-                _ = CoreApplication.MainView.Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, async () =>
-                {
-                    if (Window.Current.Content is RootPage root)
-                    {
-                        root.PresentContent(parameters.Content(null));
-                        await ApplicationViewSwitcher.TryShowAsStandaloneAsync(ApplicationView.GetForCurrentView().Id);
-                    }
-                });
-
-                return Task.FromResult(ViewLifetimeControl.Facade());
+                return FacadeAsync(parameters);
             }
+        }
+
+        private async Task<ViewLifetimeControl> FacadeAsync(ViewServiceParams parameters)
+        {
+            var tsc = new TaskCompletionSource<ViewLifetimeControl>();
+
+            await CoreApplication.MainView.Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, async () =>
+            {
+                if (Window.Current.Content is RootPage root)
+                {
+                    root.PresentContent(parameters.Content(null));
+                    await ApplicationViewSwitcher.TryShowAsStandaloneAsync(ApplicationView.GetForCurrentView().Id);
+                }
+
+                tsc.SetResult(ViewLifetimeControl.Facade());
+            });
+
+            return await tsc.Task;
         }
 
         private async Task<ViewLifetimeControl> OpenAsyncInternal(ViewServiceParams parameters)

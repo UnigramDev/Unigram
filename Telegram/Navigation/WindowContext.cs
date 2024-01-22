@@ -77,8 +77,6 @@ namespace Telegram.Navigation
 
             window.CoreWindow.DispatcherQueue.ShutdownCompleted += OnShutdownCompleted;
 
-            Size = new Size(window.Bounds.Width, window.Bounds.Height);
-
             #region Legacy code
 
             ApplicationView.GetForCurrentView().SetPreferredMinSize(new Size(320, 500));
@@ -93,7 +91,13 @@ namespace Telegram.Navigation
                 Lock(true);
             }
 
+            ApplicationView.GetForCurrentView().VisibleBoundsChanged += OnVisibleBoundsChanged;
             ApplicationView.GetForCurrentView().Consolidated += OnConsolidated;
+        }
+
+        private void OnVisibleBoundsChanged(ApplicationView sender, object args)
+        {
+            Logger.Debug(sender.VisibleBounds);
         }
 
         private void OnShutdownCompleted(Windows.System.DispatcherQueue sender, object args)
@@ -193,8 +197,6 @@ namespace Telegram.Navigation
             ViewService.OnWindowLoaded();
         }
 
-        public Size Size { get; set; }
-
         public ElementTheme ActualTheme => _window.Content is FrameworkElement element
             ? element.ActualTheme
             : SettingsService.Current.Appearance.GetCalculatedElementTheme();
@@ -238,7 +240,7 @@ namespace Telegram.Navigation
 
         private void OnResizeStarted(CoreWindow sender, object args)
         {
-            Logger.Debug();
+            Logger.Debug(sender.Bounds);
 
             if (_window.Content is FrameworkElement element)
             {
@@ -251,9 +253,7 @@ namespace Telegram.Navigation
 
         private void OnResizeCompleted(CoreWindow sender, object args)
         {
-            Logger.Debug();
-
-            Size = new Size(sender.Bounds.Width, sender.Bounds.Height);
+            Logger.Debug(sender.Bounds);
 
             if (_window.Content is FrameworkElement element)
             {

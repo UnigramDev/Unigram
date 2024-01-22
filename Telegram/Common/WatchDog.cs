@@ -288,7 +288,7 @@ namespace Telegram
                 var reader = AutomationPeer.ListenerExists(AutomationEvents.LiveRegionChanged);
                 var scaling = (WindowContext.Current.RasterizationScale * 100).ToString("N0");
                 var text = (BootStrapper.Current.TextScaleFactor * 100).ToString("N0");
-                var size = WindowContext.Current.Size;
+                var size = Window.Current.Bounds;
 
                 var ratio = SettingsService.Current.DialogsWidthRatio;
                 var width = MasterDetailPanel.CountDialogsWidthFromRatio(size.Width, ratio);
