@@ -39,6 +39,7 @@ namespace Telegram.Controls.Messages.Content
         private Ellipse Holder;
         private ImageBrush Texture;
         private FileButton Button;
+        private Border ViewOnce;
         private AnimatedImage Player;
         private Border Overlay;
         private TextBlock Subtitle;
@@ -50,6 +51,7 @@ namespace Telegram.Controls.Messages.Content
             Holder = GetTemplateChild(nameof(Holder)) as Ellipse;
             Texture = GetTemplateChild(nameof(Texture)) as ImageBrush;
             Button = GetTemplateChild(nameof(Button)) as FileButton;
+            ViewOnce = GetTemplateChild(nameof(ViewOnce)) as Border;
             Player = GetTemplateChild(nameof(Player)) as AnimatedImage;
             Overlay = GetTemplateChild(nameof(Overlay)) as Border;
             Subtitle = GetTemplateChild(nameof(Subtitle)) as TextBlock;
@@ -87,6 +89,10 @@ namespace Telegram.Controls.Messages.Content
             {
                 Subtitle.Text = videoNote.GetDuration();
             }
+
+            ViewOnce.Visibility = message.SelfDestructType is MessageSelfDestructTypeImmediately
+                ? Visibility.Visible
+                : Visibility.Collapsed;
 
             UpdateThumbnail(message, videoNote, videoNote.Thumbnail?.File, true, isSecret);
 

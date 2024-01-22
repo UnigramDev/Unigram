@@ -57,6 +57,7 @@ namespace Telegram.Controls.Messages.Content
         #region InitializeComponent
 
         private FileButton Button;
+        private Border ViewOnce;
         private ProgressVoice Progress;
         private TextBlock Subtitle;
         private ToggleButton Recognize;
@@ -68,6 +69,7 @@ namespace Telegram.Controls.Messages.Content
         protected override void OnApplyTemplate()
         {
             Button = GetTemplateChild(nameof(Button)) as FileButton;
+            ViewOnce = GetTemplateChild(nameof(ViewOnce)) as Border;
             Progress = GetTemplateChild(nameof(Progress)) as ProgressVoice;
             Subtitle = GetTemplateChild(nameof(Subtitle)) as TextBlock;
             Recognize = GetTemplateChild(nameof(Recognize)) as ToggleButton;
@@ -102,12 +104,15 @@ namespace Telegram.Controls.Messages.Content
             message.PlaybackService.SourceChanged += OnPlaybackStateChanged;
 
             Progress.UpdateWaveform(voiceNote);
+            ViewOnce.Visibility = message.SelfDestructType is MessageSelfDestructTypeImmediately
+                ? Visibility.Visible
+                : Visibility.Collapsed;
 
-            if (message.ClientService.IsPremium && message.SchedulingState == null)
+            if (message.ClientService.IsPremium && message.SchedulingState == null && message.SelfDestructType == null)
             {
                 Recognize.Visibility = Visibility.Visible;
             }
-            else if (message.ClientService.IsPremiumAvailable && message.SchedulingState == null)
+            else if (message.ClientService.IsPremiumAvailable && message.SchedulingState == null && message.SelfDestructType == null)
             {
                 var duration = voiceNote.Duration <= message.ClientService.SpeechRecognitionTrial.MaxMediaDuration;
                 var received = message.IsSaved || !message.IsOutgoing;

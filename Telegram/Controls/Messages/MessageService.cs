@@ -289,6 +289,8 @@ namespace Telegram.Controls.Messages
                 MessageWebAppDataSent webAppDataSent => UpdateWebAppDataSent(message, webAppDataSent, active),
                 MessageExpiredPhoto expiredPhoto => UpdateExpiredPhoto(message, expiredPhoto, active),
                 MessageExpiredVideo expiredVideo => UpdateExpiredVideo(message, expiredVideo, active),
+                MessageExpiredVideoNote expiredVideoNote => UpdateExpiredVideoNote(message, expiredVideoNote, active),
+                MessageExpiredVoiceNote expiredVoiceNote => UpdateExpiredVoiceNote(message, expiredVoiceNote, active),
                 MessageAsyncStory story => UpdateStory(message, story, active),
                 MessageStory story => UpdateStory(message, story, active),
                 // Local types:
@@ -2260,6 +2262,16 @@ namespace Telegram.Controls.Messages
         private static (string, IList<TextEntity>) UpdateExpiredVideo(MessageViewModel message, MessageExpiredVideo expiredVideo, bool active)
         {
             return (Strings.AttachVideoExpired, null);
+        }
+
+        private static (string, IList<TextEntity>) UpdateExpiredVideoNote(MessageViewModel message, MessageExpiredVideoNote expiredVideoNote, bool active)
+        {
+            return (Strings.AttachRoundExpired, null);
+        }
+
+        private static (string, IList<TextEntity>) UpdateExpiredVoiceNote(MessageViewModel message, MessageExpiredVoiceNote expiredVoiceNote, bool active)
+        {
+            return (Strings.AttachVoiceExpired, null);
         }
 
         private static (string, IList<TextEntity>) UpdateStory(MessageViewModel message, MessageAsyncStory story, bool active)

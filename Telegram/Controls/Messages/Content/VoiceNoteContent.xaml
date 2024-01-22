@@ -221,6 +221,23 @@
                             <controls:FileButton x:Name="Button"
                                                  Style="{StaticResource InlineFileButtonStyle}" />
                         </Border>
+                        <Border x:Name="ViewOnce"
+                                Width="24"
+                                Height="24"
+                                CornerRadius="12"
+                                Margin="0,0,-6,-4"
+                                BorderThickness="2"
+                                BorderBrush="{ThemeResource MessageBackgroundBrush}"
+                                Background="{ThemeResource MessageMediaBackgroundBrush}"
+                                HorizontalAlignment="Right"
+                                VerticalAlignment="Bottom"
+                                UseLayoutRounding="False"
+                                IsHitTestVisible="False">
+                            <TextBlock Text="&#xE918;"
+                                       Foreground="#FFFFFF"
+                                       FontSize="20"
+                                       FontFamily="{StaticResource SymbolThemeFontFamily}" />
+                        </Border>
                         <StackPanel Margin="8,0,0,2"
                                     VerticalAlignment="Center"
                                     Grid.Column="1">

@@ -1143,6 +1143,9 @@ Please take a look at the &lt;a href=&quot;https://telegram.org/faq#general-ques
   <data name="AttachRound" xml:space="preserve">
     <value>Video message</value>
   </data>
+  <data name="AttachRoundExpired" xml:space="preserve">
+    <value>Expired video message</value>
+  </data>
   <data name="AttachSticker" xml:space="preserve">
     <value>Sticker</value>
   </data>
@@ -1157,6 +1160,9 @@ Please take a look at the &lt;a href=&quot;https://telegram.org/faq#general-ques
   </data>
   <data name="AttachVideoExpired" xml:space="preserve">
     <value>Expired video</value>
+  </data>
+  <data name="AttachVoiceExpired" xml:space="preserve">
+    <value>Expired voice message</value>
   </data>
   <data name="AudioAutodownload" xml:space="preserve">
     <value>Voice messages</value>

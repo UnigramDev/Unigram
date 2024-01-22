@@ -1229,7 +1229,7 @@ namespace Telegram.Controls.Cells
             }
             else if (message.Content is MessageVideoNote videoNote)
             {
-                if (videoNote.VideoNote.Minithumbnail == null || videoNote.IsSecret || forceEmoji)
+                if (videoNote.VideoNote.Minithumbnail == null || videoNote.IsSecret || forceEmoji || message.SelfDestructType is not null)
                 {
                     return Text("\U0001F4F9 " + Strings.AttachRound);
                 }
