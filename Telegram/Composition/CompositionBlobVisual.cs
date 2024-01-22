@@ -62,7 +62,7 @@ namespace Telegram.Composition
             if (smallVisual != null)
             {
                 _smallVisual = smallVisual;
-                _smallVisual.CenterPoint = new Vector3(halfSize, 0);
+                _smallVisual.CenterPoint = new Vector3(width / 2, height / 2, 0);
                 _smallVisual.Scale = new Vector3(0.45f);
             }
 
