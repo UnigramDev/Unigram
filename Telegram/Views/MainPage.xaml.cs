@@ -2935,7 +2935,13 @@ namespace Telegram.Views
                 return;
             }
 
-            var user = UsersListView.ItemFromContainer(sender) as User;
+            var item = UsersListView.ItemFromContainer(sender);
+            var user = item as User;
+            
+            if (item is SearchResult result)
+            {
+                user = result.User;
+            }
 
             var flyout = new MenuFlyout();
             flyout.CreateFlyoutItem(ViewModel.Contacts.SendMessage, user, Strings.SendMessage, Icons.ChatEmpty);
