@@ -249,7 +249,7 @@ namespace Telegram.Services
 
 #endif
 
-        public async void Start(long chatId, bool video)
+        public void Start(long chatId, bool video)
         {
             var chat = ClientService.GetChat(chatId);
             if (chat == null)
@@ -257,61 +257,9 @@ namespace Telegram.Services
                 return;
             }
 
-            var user = ClientService.GetUser(chat);
-            if (user == null)
+            if (ClientService.TryGetUser(chat, out User user))
             {
-                return;
-            }
-
-            var call = Call;
-            if (call != null)
-            {
-                var callUser = ClientService.GetUser(call.UserId);
-                if (callUser != null && callUser.Id != user.Id)
-                {
-                    var confirm = await MessagePopup.ShowAsync(string.Format(Strings.VoipOngoingAlert, callUser.FullName(), user.FullName()), Strings.VoipOngoingAlertTitle, Strings.OK, Strings.Cancel);
-                    if (confirm == ContentDialogResult.Primary)
-                    {
-
-                    }
-                }
-                else
-                {
-                    Show();
-                }
-
-                return;
-            }
-
-            var fullInfo = ClientService.GetUserFull(user.Id);
-            if (fullInfo != null && fullInfo.HasPrivateCalls)
-            {
-                await MessagePopup.ShowAsync(string.Format(Strings.CallNotAvailable, user.FirstName), Strings.VoipFailed, Strings.OK);
-                return;
-            }
-
-            var permissions = await MediaDeviceWatcher.CheckAccessAsync(video, false);
-            if (permissions == false)
-            {
-                return;
-            }
-
-            var protocol = VoipManager.Protocol;
-
-            var response = await ClientService.SendAsync(new CreateCall(user.Id, protocol, video));
-            if (response is Error error)
-            {
-                if (error.Code == 400 && error.Message.Equals("PARTICIPANT_VERSION_OUTDATED"))
-                {
-                    var message = video
-                        ? Strings.VoipPeerVideoOutdated
-                        : Strings.VoipPeerOutdated;
-                    await MessagePopup.ShowAsync(string.Format(message, user.FirstName), Strings.AppName, Strings.OK);
-                }
-                else if (error.Code == 400 && error.Message.Equals("USER_PRIVACY_RESTRICTED"))
-                {
-                    await MessagePopup.ShowAsync(string.Format(Strings.CallNotAvailable, user.FullName()), Strings.AppName, Strings.OK);
-                }
+                StartWithUser(user.Id, video);
             }
         }
 
@@ -558,18 +506,15 @@ namespace Telegram.Services
                 {
                     if (pending.IsCreated && pending.IsReceived)
                     {
+                        if (ClientService.TryGetUser(update.Call.UserId, out User user))
+                        {
+                            await InitializeSystemCallAsync(user, update.Call.IsOutgoing);
+                        }
+
                         if (_systemCall == null || update.Call.IsOutgoing)
                         {
                             SoundEffects.Play(update.Call.IsOutgoing ? SoundEffect.VoipRingback : SoundEffect.VoipIncoming);
                         }
-
-                        var user = ClientService.GetUser(update.Call.UserId);
-                        if (user == null)
-                        {
-                            return;
-                        }
-
-                        await InitializeSystemCallAsync(user, update.Call.IsOutgoing);
                     }
                 }
                 else if (update.Call.State is CallStateExchangingKeys exchangingKeys)
@@ -818,6 +763,11 @@ namespace Telegram.Services
             if (call.State is CallStatePending && !call.IsOutgoing && _systemCall != null)
             {
                 return;
+            }
+
+            if (_systemCall == null && ApiInfo.IsVoipSupported && call.IsValidState() && ClientService.TryGetUser(call.UserId, out User user))
+            {
+                await InitializeSystemCallAsync(user, call.IsOutgoing);
             }
 
             if (_callPage == null)
