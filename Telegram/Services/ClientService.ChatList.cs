@@ -40,7 +40,12 @@ namespace Telegram.Services
             Monitor.Exit(_chatList);
         }
 
-        public async Task<Chats> GetChatListAsync(ChatList chatList, int offset, int limit)
+        public Task<Chats> GetChatListAsync(ChatList chatList, int offset, int limit)
+        {
+            return GetChatListAsyncImpl(chatList, offset, limit, false);
+        }
+
+        public async Task<Chats> GetChatListAsyncImpl(ChatList chatList, int offset, int limit, bool reentrancy)
         {
             Monitor.Enter(_chatList);
 
@@ -57,7 +62,7 @@ namespace Telegram.Services
 #if MOCKUP
             _haveFullChatList[index] = true;
 #else
-            if (!_haveFullChatList[index] && count > sorted.Count)
+            if (!_haveFullChatList[index] && count > sorted.Count && !reentrancy)
             {
                 Monitor.Exit(_chatList);
 
@@ -77,7 +82,7 @@ namespace Telegram.Services
                     }
 
                     // Chats have already been received through updates, let's retry request
-                    return await GetChatListAsync(chatList, offset, limit);
+                    return await GetChatListAsyncImpl(chatList, offset, limit, true);
                 }
 
                 return null;
