@@ -475,8 +475,7 @@ namespace Telegram.Services
                     SystemVersion = _deviceInfoService.SystemVersion,
                     SystemLanguageCode = _deviceInfoService.SystemLanguageCode,
                     DeviceModel = deviceModel,
-                    UseTestDc = _settings.UseTestDC,
-                    EnableStorageOptimizer = SettingsService.Current.Diagnostics.UseStorageOptimizer
+                    UseTestDc = _settings.UseTestDC
                 });
                 _client.Send(new GetApplicationConfig(), UpdateConfig);
             });

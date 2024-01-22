@@ -5,18 +5,16 @@
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
 using System;
-using Telegram.Collections;
 using Telegram.Common;
 using Telegram.Controls;
-using Telegram.Converters;
+using Telegram.Controls.Cells;
+using Telegram.Streams;
+using Telegram.Td;
 using Telegram.Td.Api;
 using Telegram.ViewModels;
 using Telegram.ViewModels.Supergroups;
-using Windows.UI;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Documents;
-using Windows.UI.Xaml.Media;
 
 namespace Telegram.Views.Supergroups.Popups
 {
@@ -75,10 +73,8 @@ namespace Telegram.Views.Supergroups.Popups
             };
         }
 
-        private void ListView_ItemClick(object sender, ItemClickEventArgs e)
+        private async void ListView_ItemClick(object sender, ItemClickEventArgs e)
         {
-            Hide();
-
             var chat = ViewModel.Chat;
             var messageSender = GetSender(e.ClickedItem);
 
@@ -86,6 +82,27 @@ namespace Telegram.Views.Supergroups.Popups
             {
                 return;
             }
+
+            if (ViewModel.Mode == SupergroupChooseMemberMode.Promote && ViewModel.ClientService.TryGetUser(messageSender, out User tempUser))
+            {
+                var response = await ViewModel.ClientService.SendAsync(new CanSendMessageToUser(tempUser.Id, true));
+                if (response is CanSendMessageToUserResultUserRestrictsNewChats)
+                {
+                    var text = string.Format(Strings.MessageLockedPremiumLocked, tempUser.FirstName);
+                    var markdown = ClientEx.ParseMarkdown(text);
+
+                    var confirm = await ToastPopup.ShowActionAsync(markdown, Strings.UserBlockedNonPremiumButton, new LocalFileSource("ms-appx:///Assets/Toasts/Premium.tgs"));
+                    if (confirm == ContentDialogResult.Primary)
+                    {
+                        Hide();
+                        ViewModel.NavigationService.ShowPromo();
+                    }
+
+                    return;
+                }
+            }
+
+            Hide();
 
             if (ViewModel.Mode == SupergroupChooseMemberMode.Block)
             {
@@ -105,7 +122,7 @@ namespace Telegram.Views.Supergroups.Popups
                     return;
                 }
 
-                ViewModel.NavigationService.ShowPopupAsync(sourcePopupType, new SupergroupEditMemberArgs(chat.Id, messageSender));
+                _ = ViewModel.NavigationService.ShowPopupAsync(sourcePopupType, new SupergroupEditMemberArgs(chat.Id, messageSender));
             }
         }
 
@@ -138,108 +155,25 @@ namespace Telegram.Views.Supergroups.Popups
             {
                 return;
             }
-
-            var content = args.ItemContainer.ContentTemplateRoot as Grid;
-            var member = args.Item as ChatMember;
-
-            var user = ViewModel.ClientService.GetMessageSender(member.MemberId) as User;
-            if (user == null)
+            else if (args.ItemContainer.ContentTemplateRoot is ProfileCell content)
             {
-                return;
+                content.UpdateSupergroupMember(ViewModel.ClientService, args, OnContainerContentChanging);
             }
-
-            if (args.Phase == 0)
-            {
-                var title = content.Children[1] as TextBlock;
-                title.Text = user.FullName();
-            }
-            else if (args.Phase == 1)
-            {
-                var subtitle = content.Children[2] as TextBlock;
-                subtitle.Text = ChannelParticipantToTypeConverter.Convert(ViewModel.ClientService, member);
-            }
-            else if (args.Phase == 2)
-            {
-                var photo = content.Children[0] as ProfilePicture;
-                photo.SetUser(ViewModel.ClientService, user, 36);
-            }
-
-            if (args.Phase < 2)
-            {
-                args.RegisterUpdateCallback(OnContainerContentChanging);
-            }
-
-            args.Handled = true;
         }
 
         private void Search_ContainerContentChanging(ListViewBase sender, ContainerContentChangingEventArgs args)
         {
-            if (args.InRecycleQueue)
+            if (args.ItemContainer.ContentTemplateRoot is ProfileCell content)
             {
-                //var photo = content.Children[0] as ProfilePicture;
-                //photo.Source = null;
-
-                return;
-            }
-
-            var result = args.Item as SearchResult;
-            var chat = result.Chat;
-            var user = result.User ?? ViewModel.ClientService.GetUser(chat);
-
-            if (user == null)
-            {
-                return;
-            }
-
-            var content = args.ItemContainer.ContentTemplateRoot as Grid;
-            if (content == null)
-            {
-                return;
-            }
-
-            if (args.Phase == 0)
-            {
-                var title = content.Children[1] as TextBlock;
-                title.Text = user.FullName();
-            }
-            else if (args.Phase == 1)
-            {
-                var subtitle = content.Children[2] as TextBlock;
-                if (result.IsPublic)
+                if (args.InRecycleQueue)
                 {
-                    subtitle.Text = $"@{user.ActiveUsername(result.Query)}";
+                    content.RecycleSearchResult();
                 }
                 else
                 {
-                    subtitle.Text = LastSeenConverter.GetLabel(user, true);
-                }
-
-                if (subtitle.Text.StartsWith($"@{result.Query}", StringComparison.OrdinalIgnoreCase))
-                {
-                    var highligher = new TextHighlighter();
-                    highligher.Foreground = new SolidColorBrush(Colors.Red);
-                    highligher.Background = new SolidColorBrush(Colors.Transparent);
-                    highligher.Ranges.Add(new TextRange { StartIndex = 1, Length = result.Query.Length });
-
-                    subtitle.TextHighlighters.Add(highligher);
-                }
-                else
-                {
-                    subtitle.TextHighlighters.Clear();
+                    content.UpdateSearchResult(ViewModel.ClientService, args, Search_ContainerContentChanging);
                 }
             }
-            else if (args.Phase == 2)
-            {
-                var photo = content.Children[0] as ProfilePicture;
-                photo.SetUser(ViewModel.ClientService, user, 36);
-            }
-
-            if (args.Phase < 2)
-            {
-                args.RegisterUpdateCallback(Search_ContainerContentChanging);
-            }
-
-            args.Handled = true;
         }
 
         #endregion
@@ -273,7 +207,7 @@ namespace Telegram.Views.Supergroups.Popups
             else
             {
                 ContentPanel.Visibility = Visibility.Collapsed;
-                ViewModel.Search = new SearchMembersAndUsersCollection(ViewModel.ClientService, ViewModel.Chat.Id, new ChatMembersFilterMembers(), SearchField.Text);
+                ViewModel.UpdateSearch(SearchField.Text);
             }
         }
     }

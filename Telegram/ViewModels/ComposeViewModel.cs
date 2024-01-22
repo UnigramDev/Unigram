@@ -578,8 +578,9 @@ namespace Telegram.ViewModels
                 return;
             }
 
+            // TODO: 172 selfDestructType
             var reply = GetReply(true);
-            var input = new InputMessageVoiceNote(await file.ToGeneratedAsync(ConversionType.Opus), duration, Array.Empty<byte>(), caption);
+            var input = new InputMessageVoiceNote(await file.ToGeneratedAsync(ConversionType.Opus), duration, Array.Empty<byte>(), caption, null);
 
             await SendMessageAsync(reply, input, options);
         }

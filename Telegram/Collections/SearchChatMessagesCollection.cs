@@ -72,7 +72,8 @@ namespace Telegram.Collections
                         offset = 0;
                     }
 
-                    function = new SearchChatMessages(_chatId, _query, _sender, fromMessageId, offset, (int)count, _filter, _threadId);
+                    // TODO: 172 savedMessagesTopic
+                    function = new SearchChatMessages(_chatId, _query, _sender, fromMessageId, offset, (int)count, _filter, _threadId, null);
                 }
 
                 var response = await _clientService.SendAsync(function);

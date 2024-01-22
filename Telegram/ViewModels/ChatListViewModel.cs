@@ -959,6 +959,51 @@ namespace Telegram.ViewModels
             Query = query;
             Type = type;
         }
+
+        private bool? _restrictsNewChats;
+        public bool? RestrictsNewChats
+        {
+            get => _restrictsNewChats;
+            set => Set(ref _restrictsNewChats, value);
+        }
+
+        public void CanSendMessageToUser()
+        {
+            long? userId;
+            if (Chat?.Type is ChatTypePrivate privata)
+            {
+                userId = privata.UserId;
+            }
+            else if (Chat?.Type is ChatTypeSecret secret)
+            {
+                userId = secret.UserId;
+            }
+            else
+            {
+                userId = User?.Id;
+            }
+
+            if (userId == null || _clientService == null || _restrictsNewChats.HasValue)
+            {
+                return;
+            }
+
+            _restrictsNewChats = false;
+
+            var dispatcher = WindowContext.Current.Dispatcher;
+            if (dispatcher == null)
+            {
+                return;
+            }
+
+            _clientService.Send(new CanSendMessageToUser(userId.Value, false), result =>
+            {
+                if (result is CanSendMessageToUserResultUserRestrictsNewChats)
+                {
+                    dispatcher.Dispatch(() => RestrictsNewChats = true);
+                }
+            });
+        }
     }
 }
 

@@ -703,6 +703,20 @@ namespace Telegram.Services
                     ProcessFiles(item);
                 }
             }
+            else if (target is FoundSavedMessagesTopic foundSavedMessagesTopic)
+            {
+                if (foundSavedMessagesTopic.LastMessage != null)
+                {
+                    ProcessFiles(foundSavedMessagesTopic.LastMessage);
+                }
+            }
+            else if (target is FoundSavedMessagesTopics foundSavedMessagesTopics)
+            {
+                foreach (var item in foundSavedMessagesTopics.Topics)
+                {
+                    ProcessFiles(item);
+                }
+            }
             else if (target is FoundWebApp foundWebApp)
             {
                 if (foundWebApp.WebApp != null)

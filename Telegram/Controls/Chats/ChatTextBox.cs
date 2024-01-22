@@ -594,13 +594,13 @@ namespace Telegram.Controls.Chats
 
                     if (_emoji == null)
                     {
-                        var response = await _clientService.SendAsync(new SearchEmojis(_query, false, new[] { _inputLanguage }));
-                        if (response is Emojis emojis)
+                        var response = await _clientService.SendAsync(new SearchEmojis(_query, new[] { _inputLanguage }));
+                        if (response is EmojiKeywords emojis)
                         {
-                            var results = emojis.EmojisValue.Reverse();
+                            IEnumerable<EmojiKeyword> results = emojis.EmojiKeywordsValue;
                             results = results.OrderBy(x =>
                             {
-                                var index = SettingsService.Current.Emoji.RecentEmoji.IndexOf(x);
+                                var index = SettingsService.Current.Emoji.RecentEmoji.IndexOf(x.Emoji);
                                 if (index < 0)
                                 {
                                     return int.MaxValue;
@@ -613,7 +613,7 @@ namespace Telegram.Controls.Chats
 
                             foreach (var emoji in results)
                             {
-                                Add(new EmojiData(emoji));
+                                Add(new EmojiData(emoji.Emoji));
                                 count++;
                             }
                         }

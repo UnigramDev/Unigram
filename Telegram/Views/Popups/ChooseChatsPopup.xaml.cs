@@ -823,6 +823,25 @@ namespace Telegram.Views.Popups
                 }
             }
 
+            if (ViewModel.SearchChats.CanSendMessageToUser && ViewModel.ClientService.TryGetUser(item as Chat, out User tempUser))
+            {
+                var response = await ViewModel.ClientService.SendAsync(new CanSendMessageToUser(tempUser.Id, true));
+                if (response is CanSendMessageToUserResultUserRestrictsNewChats)
+                {
+                    var text = string.Format(Strings.MessageLockedPremiumLocked, tempUser.FirstName);
+                    var markdown = ClientEx.ParseMarkdown(text);
+
+                    var confirm = await ToastPopup.ShowActionAsync(markdown, Strings.UserBlockedNonPremiumButton, new LocalFileSource("ms-appx:///Assets/Toasts/Premium.tgs"));
+                    if (confirm == ContentDialogResult.Primary)
+                    {
+                        Hide();
+                        ViewModel.NavigationService.ShowPromo();
+                    }
+
+                    return;
+                }
+            }
+
             var chat = item as Chat;
             if (chat == null || ItemClick(chat))
             {

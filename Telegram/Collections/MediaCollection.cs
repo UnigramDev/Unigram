@@ -40,7 +40,8 @@ namespace Telegram.Collections
             {
                 var count = 0u;
 
-                var response = await _clientService.SendAsync(new SearchChatMessages(_chatId, _query, null, _lastMaxId, 0, 50, _filter, _threadId));
+                // TODO: 172 savedMessagesTopic
+                var response = await _clientService.SendAsync(new SearchChatMessages(_chatId, _query, null, _lastMaxId, 0, 50, _filter, _threadId, null));
                 if (response is FoundChatMessages messages)
                 {
                     if (messages.NextFromMessageId != 0)

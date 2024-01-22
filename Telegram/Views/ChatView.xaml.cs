@@ -2380,7 +2380,7 @@ namespace Telegram.Views
 
         private static bool CanGetMessageViewers(MessageViewModel message, bool reactions = true)
         {
-            if (reactions && message.InteractionInfo?.Reactions.Count > 0)
+            if (reactions && message.InteractionInfo?.Reactions?.Reactions.Count > 0)
             {
                 // Thread root message is reported as saved.
                 if (message.IsSaved)
@@ -2449,7 +2449,7 @@ namespace Telegram.Views
                 {
                     if (reacted < viewers.Count)
                     {
-                        text = string.Format(Locale.Declension(Strings.R.Reacted, reacted, false), string.Format("{0}/{1}", message.InteractionInfo.Reactions.Count, viewers.Count));
+                        text = string.Format(Locale.Declension(Strings.R.Reacted, reacted, false), string.Format("{0}/{1}", message.InteractionInfo.Reactions.Reactions.Count, viewers.Count));
                     }
                     else
                     {

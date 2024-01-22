@@ -48,9 +48,9 @@ namespace Telegram.Td.Api
 
         public static int TotalReactions(this MessageInteractionInfo info)
         {
-            if (info != null)
+            if (info?.Reactions != null)
             {
-                return info.Reactions.Sum(x => x.TotalCount);
+                return info.Reactions.Reactions.Sum(x => x.TotalCount);
             }
 
             return 0;
@@ -1703,17 +1703,17 @@ namespace Telegram.Td.Api
         {
             if (message.ForwardInfo?.Origin is MessageOriginUser)
             {
-                return message.ForwardInfo.FromChatId != 0;
+                return message.ForwardInfo.Source != null;
             }
             else if (message.ForwardInfo?.Origin is MessageOriginChat)
             {
-                return message.ForwardInfo.FromChatId != 0;
+                return message.ForwardInfo.Source != null;
             }
             else if (message.ForwardInfo?.Origin is MessageOriginChannel originChannel)
             {
-                return message.ForwardInfo.FromChatId != 0
-                    && message.ForwardInfo.FromChatId == originChannel.ChatId
-                    && message.ForwardInfo.FromMessageId == originChannel.MessageId;
+                return message.ForwardInfo.Source != null
+                    && message.ForwardInfo.Source.ChatId == originChannel.ChatId
+                    && message.ForwardInfo.Source.MessageId == originChannel.MessageId;
             }
             else if (message.ForwardInfo?.Origin is MessageOriginHiddenUser)
             {
@@ -1875,9 +1875,14 @@ namespace Telegram.Td.Api
             }
         }
 
-        public static bool IsChosen(this IEnumerable<MessageReaction> reactions, ReactionType type)
+        public static bool IsChosen(this MessageReactions reactions, ReactionType type)
         {
-            return reactions.Where(x => x.IsChosen)
+            if (reactions == null)
+            {
+                return false;
+            }
+
+            return reactions.Reactions.Where(x => x.IsChosen)
                 .Select(x => x.Type)
                 .Any(x => x.AreTheSame(type));
         }

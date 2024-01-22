@@ -35,7 +35,7 @@ namespace Telegram.ViewModels
             {
                 ReplyToMessage(message);
             }
-            else if (message.InteractionInfo != null && message.InteractionInfo.Reactions.IsChosen(ClientService.DefaultReaction))
+            else if (message.InteractionInfo?.Reactions != null && message.InteractionInfo.Reactions.IsChosen(ClientService.DefaultReaction))
             {
                 ClientService.SendAsync(new RemoveMessageReaction(message.ChatId, message.Id, ClientService.DefaultReaction));
             }
@@ -106,10 +106,11 @@ namespace Telegram.ViewModels
 
             if (message.ChatId == ClientService.Options.RepliesBotChatId)
             {
-                if (message.ForwardInfo?.Origin is MessageOriginUser or MessageOriginChat)
+                // TODO: 172 is this correct?
+                if (message.ForwardInfo?.Origin is MessageOriginUser or MessageOriginChat && message.ForwardInfo?.Source != null)
                 {
-                    chatId = message.ForwardInfo.FromChatId;
-                    threadId = message.ForwardInfo.FromMessageId;
+                    chatId = message.ForwardInfo.Source.ChatId;
+                    threadId = message.ForwardInfo.Source.MessageId;
 
                     messageId = threadId;
                 }

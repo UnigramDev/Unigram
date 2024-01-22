@@ -49,7 +49,7 @@ namespace Telegram.Controls.Messages
         public async void UpdateMessageReactions(MessageViewModel message, bool animate = false)
         {
             var reactions = message?.InteractionInfo?.Reactions;
-            if (reactions == null || reactions.Count == 0 || message?.ChatId != _chatId || message?.Id != _messageId)
+            if (reactions == null || reactions == null || message?.ChatId != _chatId || message?.Id != _messageId)
             {
                 _prevValue = null;
 
@@ -59,7 +59,7 @@ namespace Telegram.Controls.Messages
                 Children.Clear();
             }
 
-            if (reactions?.Count > 0)
+            if (reactions?.Reactions.Count > 0)
             {
                 List<long> missingCustomEmoji = null;
                 List<string> missingEmoji = null;
@@ -119,16 +119,16 @@ namespace Telegram.Controls.Messages
 
                 if (_prevValue == null)
                 {
-                    for (int i = 0; i < reactions.Count; i++)
+                    for (int i = 0; i < reactions.Reactions.Count; i++)
                     {
-                        UpdateItem(reactions[i], null, i);
+                        UpdateItem(reactions.Reactions[i], null, i);
                     }
                 }
                 else
                 {
                     // PERF: run diff asynchronously?
                     var prev = _prevValue ?? Array.Empty<MessageReaction>();
-                    var diff = DiffUtil.CalculateDiff(prev, reactions, this, Constants.DiffOptions);
+                    var diff = DiffUtil.CalculateDiff(prev, reactions.Reactions, this, Constants.DiffOptions);
 
                     foreach (var step in diff.Steps)
                     {
@@ -168,7 +168,7 @@ namespace Telegram.Controls.Messages
                 _chatId = message?.ChatId ?? 0;
                 _messageId = message?.Id ?? 0;
 
-                _prevValue = reactions?.ToArray();
+                _prevValue = reactions?.Reactions.ToArray();
 
                 if (missingCustomEmoji != null)
                 {

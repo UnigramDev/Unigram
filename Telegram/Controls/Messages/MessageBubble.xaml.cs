@@ -95,7 +95,7 @@ namespace Telegram.Controls.Messages
                 }
                 else if (IsFullMedia(content))
                 {
-                    return _message.InteractionInfo?.Reactions.Count > 0;
+                    return _message.InteractionInfo?.Reactions?.Reactions.Count > 0;
                 }
 
                 return false;
@@ -775,9 +775,9 @@ namespace Telegram.Controls.Messages
             }
             else if (message.IsSaved)
             {
-                if (message.ForwardInfo?.Origin is MessageOriginUser or MessageOriginChat)
+                if (message.ForwardInfo?.Origin is MessageOriginUser or MessageOriginChat && message.ForwardInfo.Source != null)
                 {
-                    message.Delegate.OpenChat(message.ForwardInfo.FromChatId, message.ForwardInfo.FromMessageId);
+                    message.Delegate.OpenChat(message.ForwardInfo.Source.ChatId, message.ForwardInfo.Source.MessageId);
                 }
                 else if (message.ForwardInfo?.Origin is MessageOriginChannel fromChannel)
                 {
@@ -1392,7 +1392,7 @@ namespace Telegram.Controls.Messages
             {
                 Reactions?.UpdateMessageReactions(null);
 
-                if (message.InteractionInfo?.Reactions.Count > 0)
+                if (message.InteractionInfo?.Reactions?.Reactions.Count > 0)
                 {
                     LoadObject(ref MediaReactions, nameof(MediaReactions));
                     MediaReactions.UpdateMessageReactions(message, animate);
@@ -1406,7 +1406,7 @@ namespace Telegram.Controls.Messages
             {
                 MediaReactions?.UpdateMessageReactions(null);
 
-                if (message.InteractionInfo?.Reactions.Count > 0)
+                if (message.InteractionInfo?.Reactions?.Reactions.Count > 0)
                 {
                     LoadObject(ref Reactions, nameof(Reactions));
                     Reactions.UpdateMessageReactions(message, animate);

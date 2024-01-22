@@ -217,7 +217,8 @@ namespace Telegram.ViewModels.Profile
 
             for (int i = 0; i < filters.Length; i++)
             {
-                var response = await ClientService.SendAsync(new GetChatMessageCount(chat.Id, filters[i], false));
+                // TODO: 172 savedMessagesTopic
+                var response = await ClientService.SendAsync(new GetChatMessageCount(chat.Id, filters[i], null, false));
                 if (response is Count count)
                 {
                     SharedCount[i] = count.CountValue;

@@ -3245,7 +3245,7 @@ namespace Telegram.Views
             var flyout = new MenuFlyout();
             var topic = TopicList.ItemFromContainer(sender) as ForumTopic;
 
-            var canManage = CanManageTopic(chat, supergroup, topic);
+            var canManage = CanCreateTopics(chat, supergroup, topic);
 
             if (canManage && topic.Info.IsGeneral)
             {
@@ -3286,7 +3286,7 @@ namespace Telegram.Views
             flyout.ShowAt(sender, args);
         }
 
-        private bool CanManageTopic(Chat chat, Supergroup supergroup, ForumTopic topic)
+        private bool CanCreateTopics(Chat chat, Supergroup supergroup, ForumTopic topic)
         {
             if (supergroup.Status is ChatMemberStatusCreator || (supergroup.Status is ChatMemberStatusAdministrator admin && (admin.Rights.CanPinMessages || supergroup.IsChannel && admin.Rights.CanEditMessages)))
             {
@@ -3294,10 +3294,10 @@ namespace Telegram.Views
             }
             else if (supergroup.Status is ChatMemberStatusRestricted restricted)
             {
-                return restricted.Permissions.CanManageTopics;
+                return restricted.Permissions.CanCreateTopics;
             }
 
-            return chat.Permissions.CanManageTopics;
+            return chat.Permissions.CanCreateTopics;
         }
 
         #endregion

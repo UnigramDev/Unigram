@@ -38,7 +38,7 @@ namespace Telegram.ViewModels.Chats
                 var limit = 20;
                 var offset = -limit / 2;
 
-                var response = await ClientService.SendAsync(new SearchChatMessages(_chat.Id, string.Empty, null, 0, offset, limit, new SearchMessagesFilterChatPhoto(), 0));
+                var response = await ClientService.SendAsync(new SearchChatMessages(_chat.Id, string.Empty, null, 0, offset, limit, new SearchMessagesFilterChatPhoto(), 0, null));
                 if (response is FoundChatMessages messages)
                 {
                     TotalItems = messages.TotalCount;

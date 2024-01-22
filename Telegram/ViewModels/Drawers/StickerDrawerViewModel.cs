@@ -710,17 +710,17 @@ namespace Telegram.ViewModels.Drawers
                     }
                     else
                     {
-                        var emojis = await _clientService.SendAsync(new SearchEmojis(_query, false, new[] { _inputLanguage })) as Emojis;
+                        var emojis = await _clientService.SendAsync(new SearchEmojis(_query, new[] { _inputLanguage })) as EmojiKeywords;
                         if (emojis != null)
                         {
-                            for (int i = 0; i < Math.Min(10, emojis.EmojisValue.Count); i++)
+                            for (int i = 0; i < Math.Min(10, emojis.EmojiKeywordsValue.Count); i++)
                             {
-                                var response = await _clientService.SendAsync(new GetStickers(_type, emojis.EmojisValue[i], 100, _chatId));
+                                var response = await _clientService.SendAsync(new GetStickers(_type, emojis.EmojiKeywordsValue[i].Emoji, 100, _chatId));
                                 if (response is Stickers stickers && stickers.StickersValue.Count > 0)
                                 {
                                     Add(new StickerSetViewModel(_clientService,
-                                        new StickerSetInfo(0, emojis.EmojisValue[i], "emoji", null, Array.Empty<ClosedVectorPath>(), false, false, false, new StickerFormatWebp(), _type, false, false, false, stickers.StickersValue.Count, stickers.StickersValue),
-                                        new StickerSet(0, emojis.EmojisValue[i], "emoji", null, Array.Empty<ClosedVectorPath>(), false, false, false, new StickerFormatWebp(), _type, false, false, false, stickers.StickersValue, Array.Empty<Emojis>())));
+                                        new StickerSetInfo(0, emojis.EmojiKeywordsValue[i].Emoji, "emoji", null, Array.Empty<ClosedVectorPath>(), false, false, false, new StickerFormatWebp(), _type, false, false, false, stickers.StickersValue.Count, stickers.StickersValue),
+                                        new StickerSet(0, emojis.EmojiKeywordsValue[i].Emoji, "emoji", null, Array.Empty<ClosedVectorPath>(), false, false, false, new StickerFormatWebp(), _type, false, false, false, stickers.StickersValue, Array.Empty<Emojis>())));
                                 }
                             }
                         }

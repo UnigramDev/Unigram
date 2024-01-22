@@ -63,7 +63,8 @@ namespace Telegram.ViewModels.Chats
                 var limit = 20;
                 var offset = -limit / 2;
 
-                var response = await ClientService.SendAsync(new SearchChatMessages(_chatId, string.Empty, null, fromMessageId, offset, limit, _filter, _threadId));
+                // TODO: 172 savedMessagesTopic
+                var response = await ClientService.SendAsync(new SearchChatMessages(_chatId, string.Empty, null, fromMessageId, offset, limit, _filter, _threadId, null));
                 if (response is FoundChatMessages messages)
                 {
                     TotalItems = messages.TotalCount;
@@ -98,7 +99,8 @@ namespace Telegram.ViewModels.Chats
 
             if (_firstItem is GalleryMessage first)
             {
-                var response = await ClientService.SendAsync(new GetChatMessagePosition(first.ChatId, first.Id, _filter, _threadId));
+                // TODO: 172 savedMessagesTopic
+                var response = await ClientService.SendAsync(new GetChatMessagePosition(first.ChatId, first.Id, _filter, _threadId, null));
                 if (response is Count count)
                 {
                     _firstPosition = count.CountValue;
@@ -127,7 +129,8 @@ namespace Telegram.ViewModels.Chats
                 var limit = 21;
                 var offset = _isMirrored ? -limit + 1 : 0;
 
-                var response = await ClientService.SendAsync(new SearchChatMessages(_chatId, string.Empty, null, fromMessageId, offset, limit, _filter, _threadId));
+                // TODO: 172 savedMessagesTopic
+                var response = await ClientService.SendAsync(new SearchChatMessages(_chatId, string.Empty, null, fromMessageId, offset, limit, _filter, _threadId, null));
                 if (response is FoundChatMessages messages)
                 {
                     TotalItems = messages.TotalCount;
@@ -164,7 +167,8 @@ namespace Telegram.ViewModels.Chats
                 var limit = 21;
                 var offset = _isMirrored ? 0 : -limit + 1;
 
-                var response = await ClientService.SendAsync(new SearchChatMessages(_chatId, string.Empty, null, fromMessageId, offset, limit, _filter, _threadId));
+                // TODO: 172 savedMessagesTopic
+                var response = await ClientService.SendAsync(new SearchChatMessages(_chatId, string.Empty, null, fromMessageId, offset, limit, _filter, _threadId, null));
                 if (response is FoundChatMessages messages)
                 {
                     TotalItems = messages.TotalCount;
