@@ -78,7 +78,7 @@
         <Grid MaxWidth="1000"
               Margin="24,0">
             <controls:BackButton x:Name="BackButton"
-                                 Margin="-4,18,0,0"
+                                 Margin="0,18,0,0"
                                  CornerRadius="20"
                                  Glyph="&#xE93E;"
                                  Width="48"
