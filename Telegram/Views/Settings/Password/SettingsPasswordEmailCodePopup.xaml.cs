@@ -85,9 +85,18 @@ namespace Telegram.Views.Settings.Password
             var confirm = await MessagePopup.ShowAsync(target: null, Strings.CancelEmailQuestion, Strings.CancelEmailQuestionTitle, Strings.Abort, Strings.Cancel, destructive: true);
             if (confirm == ContentDialogResult.Primary)
             {
-                // TODO: API is missing from TDLib.
-                _aborted = true;
-                Hide();
+                var response = await _clientService.SendAsync(new CancelRecoveryEmailAddressVerification());
+                if (response is PasswordState passwordState)
+                {
+                    PasswordState = passwordState;
+
+                    _aborted = true;
+                    Hide();
+                }
+                else if (response is Error error)
+                {
+                    await MessagePopup.ShowAsync(target: null, error.Message, Strings.AppName, Strings.OK);
+                }
             }
         }
 
