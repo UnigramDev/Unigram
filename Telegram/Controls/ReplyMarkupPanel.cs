@@ -128,6 +128,18 @@ namespace Telegram.Controls
                 for (int i = 0; i < row.Count; i++)
                 {
                     var item = row[i];
+                    //var builder = new StringBuilder();
+
+                    //foreach (var line in item.Text.Split('\n'))
+                    //{
+                    //    if (builder.Length > 0)
+                    //    {
+                    //        builder.Append(" ");
+                    //    }
+
+                    //    builder.Append(line.Trim());
+                    //}
+
                     var button = new GlyphButton();
                     button.Tag = item;
                     button.HorizontalAlignment = HorizontalAlignment.Stretch;

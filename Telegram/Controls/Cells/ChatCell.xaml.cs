@@ -1371,7 +1371,7 @@ namespace Telegram.Controls.Cells
 
         private string UpdateFromLabel(Chat chat, ChatPosition position, out bool draft)
         {
-            if (position?.Source is ChatSourcePublicServiceAnnouncement psa && !string.IsNullOrEmpty(psa.Text))
+            if (position?.Source is ChatSourcePublicServiceAnnouncement { Text.Length: > 0 })
             {
                 draft = false;
                 return string.Empty;

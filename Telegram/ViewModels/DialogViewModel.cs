@@ -1565,6 +1565,11 @@ namespace Telegram.ViewModels
                         StorySenderChatId = story.StorySenderChatId
                     };
                 }
+                else if (message.Content is MessageContact contact && contact.Contact.PhoneNumber == "999888777666")
+                {
+                    message.SenderId = new MessageSenderUser(contact.Contact.UserId);
+                    message.Content = new MessageChatAddMembers(new[] { contact.Contact.UserId });
+                }
 
                 ProcessEmoji(message);
                 ProcessReplies(chat, message);
@@ -2101,7 +2106,7 @@ namespace Telegram.ViewModels
                         Remove("as last item is chat.LastMessage");
                     }
                 }
-                }
+            }
             catch
             {
                 Remove("exception");
@@ -2630,8 +2635,14 @@ namespace Telegram.ViewModels
 
                     ToastPopup.Show(text, new LocalFileSource("ms-appx:///Assets/Toasts/JoinRequested.tgs"));
                 }
-                }
             }
+            else
+            {
+#if DEBUG
+                ClientService.Send(new AddLocalMessage(chat.Id, new MessageSenderChat(chat.Id), null, true, new InputMessageContact(new Contact("999888777666", "SIMILAR", "CHANNELS", string.Empty, ClientService.Options.MyId))));
+#endif
+            }
+        }
 
         #endregion
 
@@ -3539,6 +3550,11 @@ namespace Telegram.ViewModels
 
                 if (group.IsChannel)
                 {
+#if DEBUG
+                    ClientService.Send(new AddLocalMessage(chat.Id, new MessageSenderChat(chat.Id), null, true, new InputMessageContact(new Contact("999888777666", "SIMILAR", "CHANNELS", string.Empty, ClientService.Options.MyId))));
+                    return;
+#endif
+
                     if (group.Status is ChatMemberStatusLeft || (group.Status is ChatMemberStatusCreator creator && !creator.IsMember))
                     {
                         JoinChannel();

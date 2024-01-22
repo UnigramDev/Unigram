@@ -617,6 +617,11 @@ namespace Telegram.ViewModels
                                 Items.Remove(item);
                             }
                         }
+
+                        if (Items.Count > 0 && Items[^1].Content is MessageHeaderUnread)
+                        {
+                            Items.RemoveAt(Items.Count - 1);
+                        }
                     }
 
                     foreach (var id in update.MessageIds)

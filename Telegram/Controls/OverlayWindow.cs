@@ -172,6 +172,8 @@ namespace Telegram.Controls
 
             Padding = new Thickness(0, 40, 0, 0);
 
+            Logger.Info();
+
             _closing = false;
             _popupHost.IsOpen = true;
 
@@ -301,6 +303,8 @@ namespace Telegram.Controls
             {
                 return;
             }
+
+            Logger.Info();
 
             _result = result;
             _popupHost.IsOpen = false;

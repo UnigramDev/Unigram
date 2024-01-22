@@ -22,7 +22,6 @@ using Telegram.ViewModels.Payments;
 using Telegram.ViewModels.Premium;
 using Telegram.ViewModels.Profile;
 using Telegram.ViewModels.Settings;
-using Telegram.ViewModels.Settings.Password;
 using Telegram.ViewModels.Settings.Privacy;
 using Telegram.ViewModels.Supergroups;
 using Telegram.ViewModels.Users;
@@ -156,12 +155,6 @@ namespace Telegram
                 typeof(SettingsAutoDeleteViewModel),
                 typeof(SettingsProfileViewModel),
                 typeof(SettingsPasswordViewModel),
-                typeof(SettingsPasswordIntroViewModel),
-                typeof(SettingsPasswordCreateViewModel),
-                typeof(SettingsPasswordHintViewModel),
-                typeof(SettingsPasswordEmailViewModel),
-                typeof(SettingsPasswordConfirmViewModel),
-                typeof(SettingsPasswordDoneViewModel),
                 typeof(SettingsPasscodeViewModel),
                 typeof(SettingsStickersViewModel),
                 typeof(SettingsLanguageViewModel),
