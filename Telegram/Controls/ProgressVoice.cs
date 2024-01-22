@@ -70,7 +70,7 @@ namespace Telegram.Controls
             var maxVoiceLength = 30.0;
             var minVoiceLength = 2.0;
 
-            var minVoiceWidth = 68.0;
+            var minVoiceWidth = 72.0;
             var maxVoiceWidth = 226.0;
 
             var calcDuration = Math.Max(minVoiceLength, Math.Min(maxVoiceLength, duration));
