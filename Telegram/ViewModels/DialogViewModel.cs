@@ -1673,6 +1673,9 @@ namespace Telegram.ViewModels
                         var first = album.Messages.FirstOrDefault();
                         if (first != null)
                         {
+                            group.Item1.IsFirst = first.IsFirst;
+                            group.Item1.IsLast = album.Messages[^1].IsLast;
+
                             group.Item1.UpdateWith(first);
                         }
                     }
