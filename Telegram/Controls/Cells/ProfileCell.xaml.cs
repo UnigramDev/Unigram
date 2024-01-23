@@ -248,6 +248,8 @@ namespace Telegram.Controls.Cells
             args.Handled = true;
         }
 
+        private SearchResult _searchResult;
+
         public void UpdateSearchResult(IClientService clientService, ContainerContentChangingEventArgs args, TypedEventHandler<ListViewBase, ContainerContentChangingEventArgs> callback)
         {
             var result = args.Item as SearchResult;
@@ -256,15 +258,9 @@ namespace Telegram.Controls.Cells
 
             if (args.Phase == 0)
             {
-                TitleLabel.Style = BootStrapper.Current.Resources[result?.Chat?.Type is ChatTypeSecret ? "SecretBodyTextBlockStyle" : "BodyTextBlockStyle"] as Style;
+                RecycleSearchResult();
 
-                if (result.Chat != null)
-                {
-                    TitleLabel.Text = clientService.GetTitle(result.Chat);
-                }
-                else if (result.User != null)
-                {
-                }
+                TitleLabel.Style = BootStrapper.Current.Resources[result?.Chat?.Type is ChatTypeSecret ? "SecretBodyTextBlockStyle" : "BodyTextBlockStyle"] as Style;
 
                 if (result.Chat != null)
                 {
@@ -274,6 +270,40 @@ namespace Telegram.Controls.Cells
                 {
                     TitleLabel.Text = result.User.FullName();
                     Identity.SetStatus(clientService, result.User);
+                }
+
+                long? userId;
+                if (result.Chat?.Type is ChatTypePrivate privata)
+                {
+                    userId = privata.UserId;
+                }
+                else if (result.Chat?.Type is ChatTypeSecret secret)
+                {
+                    userId = secret.UserId;
+                }
+                else
+                {
+                    userId = result.User?.Id;
+                }
+
+                if (userId == null || result.RestrictsNewChats is false or null)
+                {
+                    if (RestrictsNewChats != null)
+                    {
+                        RestrictsNewChats.Visibility = Visibility.Collapsed;
+                    }
+
+                    if (userId != null)
+                    {
+                        _searchResult = result;
+                        _searchResult.PropertyChanged += SearchResult_PropertyChanged;
+                        _searchResult.CanSendMessageToUser();
+                    }
+                }
+                else if (userId != null)
+                {
+                    RestrictsNewChats ??= FindName(nameof(RestrictsNewChats)) as Border;
+                    RestrictsNewChats.Visibility = Visibility.Visible;
                 }
             }
             else if (args.Phase == 1)
@@ -368,6 +398,50 @@ namespace Telegram.Controls.Cells
             }
 
             args.Handled = true;
+        }
+
+        public void RecycleSearchResult()
+        {
+            if (_searchResult != null)
+            {
+                _searchResult.PropertyChanged -= SearchResult_PropertyChanged;
+                _searchResult = null;
+            }
+        }
+
+        private void SearchResult_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        {
+            if (sender is SearchResult result && result == _searchResult)
+            {
+                long? userId;
+                if (result.Chat?.Type is ChatTypePrivate privata)
+                {
+                    userId = privata.UserId;
+                }
+                else if (result.Chat?.Type is ChatTypeSecret secret)
+                {
+                    userId = secret.UserId;
+                }
+                else
+                {
+                    userId = result.User?.Id;
+                }
+
+                if (userId == null || result.RestrictsNewChats is false or null)
+                {
+                    if (RestrictsNewChats != null)
+                    {
+                        RestrictsNewChats.Visibility = Visibility.Collapsed;
+                    }
+                }
+                else if (userId != null)
+                {
+                    RestrictsNewChats ??= FindName(nameof(RestrictsNewChats)) as Border;
+                    RestrictsNewChats.Visibility = Visibility.Visible;
+                }
+
+                RecycleSearchResult();
+            }
         }
 
         public void UpdateChatSharedMembers(IClientService clientService, ContainerContentChangingEventArgs args, TypedEventHandler<ListViewBase, ContainerContentChangingEventArgs> callback)

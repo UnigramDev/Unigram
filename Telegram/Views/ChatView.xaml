@@ -870,54 +870,49 @@
                 </ListView.Header>
             </chats:ChatHistoryView>
 
-            <Border x:Name="Yolo2"
-                    x:Load="False"
-                    Visibility="Collapsed"
-                    Background="{ThemeResource MessageServiceBackgroundBrush}"
-                    HorizontalAlignment="Center"
-                    VerticalAlignment="Center"
-                    Padding="12,5,12,7"
-                    Margin="12"
-                    CornerRadius="{ThemeResource MessageServiceCornerRadius}">
-                <TextBlock x:Name="EmptyLabel"
-                           Foreground="White"
-                           Style="{StaticResource CaptionTextBlockStyle}" />
-            </Border>
+            <messages:MessageService x:Name="RestrictsNewChats"
+                                     x:Load="False"
+                                     Click="RestrictsNewChats_Click"
+                                     HorizontalAlignment="Center"
+                                     VerticalAlignment="Center"
+                                     Padding="12,0,12,0"
+                                     Width="216">
+                <StackPanel>
+                    <Border Background="{ThemeResource MessageServiceBackgroundBrush}"
+                            CornerRadius="60"
+                            HorizontalAlignment="Center"
+                            Margin="0,12,0,12">
+                        <controls:AnimatedImage Source="ms-appx:///Assets/Animations/RestrictsNewChats.tgs"
+                                                Width="120"
+                                                Height="120"
+                                                FrameSize="120,120"
+                                                DecodeFrameType="Logical"
+                                                IsViewportAware="True"
+                                                LoopCount="1" />
+                    </Border>
 
-            <StackPanel x:Name="Yolo1"
-                        x:Load="False"
-                        Visibility="Collapsed"
-                        Background="{ThemeResource MessageServiceBackgroundBrush}"
-                        HorizontalAlignment="Center"
-                        VerticalAlignment="Center"
-                        Padding="12,6,12,6"
-                        Margin="12"
-                        CornerRadius="{ThemeResource MessageServiceCornerRadius}">
-                <FontIcon Glyph="&#xE753;"
-                          Foreground="White"
-                          FontSize="64" />
-                <TextBlock Text="{CustomResource ChatYourSelfTitle}"
-                           Foreground="White"
-                           Style="{StaticResource BaseTextBlockStyle}" />
-                <TextBlock Foreground="White"
-                           Style="{StaticResource BodyTextBlockStyle}">
-                    <Run Text="•" />
-                    <Run Text="{CustomResource ChatYourSelfDescription1}" />
-                    <LineBreak />
-                    <Run Text="•" />
-                    <Run Text="{CustomResource ChatYourSelfDescription2}" />
-                    <LineBreak />
-                    <Run Text="•" />
-                    <Run Text="{CustomResource ChatYourSelfDescription3}" />
-                    <LineBreak />
-                    <Run Text="•" />
-                    <Run Text="{CustomResource ChatYourSelfDescription4}" />
-                </TextBlock>
-            </StackPanel>
 
-            <!--<Border Visibility="{x:Bind (Visibility)ViewModel.IsEmpty, Mode=OneWay}" HorizontalAlignment="Center" VerticalAlignment="Center" CornerRadius="18">
-                 <ProgressRing Width="36" Height="36" IsActive="{x:Bind ViewModel.IsEmpty, Mode=OneWay}" Foreground="White" Background="{StaticResource MessageServiceBackgroundBrush}" Style="{StaticResource SkypeProgressRingStyle}"/>
-                 </Border>-->
+                    <TextBlock x:Name="RestrictsNewChatsText"
+                               Foreground="#FFFFFF"
+                               TextAlignment="Center"
+                               Style="{StaticResource BodyTextBlockStyle}"
+                               FontFamily="{StaticResource EmojiThemeFontFamilyWithSymbols}"
+                               Padding="0,0,0,4"
+                               Margin="0,0,0,8" />
+
+                    <Border Background="{ThemeResource MessageServiceBackgroundBrush}"
+                            CornerRadius="{ThemeResource MessageOverlayCornerRadius}"
+                            HorizontalAlignment="Center"
+                            Padding="12,4,12,4"
+                            Margin="0,0,0,12">
+                        <TextBlock Text="{CustomResource MessagePremiumUnlock}"
+                                   Foreground="#FFFFFF"
+                                   TextAlignment="Center"
+                                   Style="{StaticResource CaptionTextBlockStyle}" />
+                    </Border>
+                </StackPanel>
+            </messages:MessageService>
+
 
             <chats:ChatHistoryArrows x:Name="Arrows"
                                      UnreadCount="{x:Bind ViewModel.UnreadCount, Mode=OneWay}"

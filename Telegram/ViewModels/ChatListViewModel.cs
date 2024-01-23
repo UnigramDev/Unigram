@@ -920,8 +920,11 @@ namespace Telegram.ViewModels
         None
     }
 
-    public class SearchResult
+    // TODO: always load User when creating by Chat
+    public class SearchResult : BindableBase
     {
+        private readonly IClientService _clientService;
+
         public Chat Chat { get; set; }
         public User User { get; set; }
         public ForumTopic Topic { get; set; }
@@ -932,22 +935,28 @@ namespace Telegram.ViewModels
 
         public bool IsPublic => Type == SearchResultType.PublicChats;
 
-        public SearchResult(Chat chat, string query, SearchResultType type)
+        public SearchResult(IClientService clientService, Chat chat, string query, SearchResultType type)
         {
+            _clientService = clientService;
+
             Chat = chat;
             Query = query;
             Type = type;
         }
 
-        public SearchResult(Chat chat)
+        public SearchResult(IClientService clientService, Chat chat)
         {
+            _clientService = clientService;
+
             Chat = chat;
             Query = string.Empty;
             Type = SearchResultType.None;
         }
 
-        public SearchResult(User user, string query, SearchResultType type)
+        public SearchResult(IClientService clientService, User user, string query, SearchResultType type)
         {
+            _clientService = clientService;
+
             User = user;
             Query = query;
             Type = type;

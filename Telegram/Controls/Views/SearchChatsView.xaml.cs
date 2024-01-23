@@ -60,6 +60,11 @@ namespace Telegram.Controls.Views
         {
             if (args.InRecycleQueue)
             {
+                if (args.ItemContainer.ContentTemplateRoot is ProfileCell content)
+                {
+                    content.RecycleSearchResult();
+                }
+
                 return;
             }
             else if (args.Item is IKeyedCollection header)

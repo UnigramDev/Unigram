@@ -17,6 +17,8 @@ using Telegram.Controls.Cells;
 using Telegram.Controls.Media;
 using Telegram.Navigation;
 using Telegram.Services;
+using Telegram.Streams;
+using Telegram.Td;
 using Telegram.Td.Api;
 using Telegram.ViewModels;
 using Telegram.ViewModels.Drawers;
@@ -81,7 +83,7 @@ namespace Telegram.Views.Popups
             AllowSelf = false,
             CanPostMessages = false,
             CanInviteUsers = false,
-            CanShareContact = true,
+            CanShareContact = false,
             ShowChats = false,
             ShowContacts = true
         };

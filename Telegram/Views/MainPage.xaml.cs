@@ -2022,23 +2022,17 @@ namespace Telegram.Views
 
         private void DialogsSearchListView_ContainerContentChanging(ListViewBase sender, ContainerContentChangingEventArgs args)
         {
-            if (args.InRecycleQueue)
+            if (args.ItemContainer.ContentTemplateRoot is ProfileCell content)
             {
-                return;
-            }
-            else if (args.Item is SearchResult result)
-            {
-                var content = args.ItemContainer.ContentTemplateRoot as ProfileCell;
-                if (content == null)
+                if (args.InRecycleQueue)
                 {
-                    return;
+                    content.RecycleSearchResult();
                 }
-
-                args.ItemContainer.Tag = result.Chat;
-                content.UpdateSearchResult(_clientService, args, DialogsSearchListView_ContainerContentChanging);
+                else
+                {
+                    content.UpdateSearchResult(_clientService, args, DialogsSearchListView_ContainerContentChanging);
+                }
             }
-
-            args.Handled = true;
         }
 
         private void UsersListView_ChoosingItemContainer(ListViewBase sender, ChoosingItemContainerEventArgs args)

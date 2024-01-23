@@ -30,6 +30,11 @@ namespace Telegram.ViewModels.Supergroups
             set => Set(ref _search, value);
         }
 
+        public void UpdateSearch(string query)
+        {
+            Search = new SearchMembersAndUsersCollection(ClientService, Chat.Id, query, Mode == SupergroupChooseMemberMode.Promote);
+        }
+
         public override Task NavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
         {
             if (parameter is SupergroupChooseMemberArgs args)

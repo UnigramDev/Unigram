@@ -4558,7 +4558,7 @@ namespace Telegram.Views
             btnSendMessage.SlowModeDelay = 0;
             btnSendMessage.SlowModeDelayExpiresIn = 0;
 
-            if (!secret)
+            if (!secret && !user.RestrictsNewChats)
             {
                 ShowArea();
             }
@@ -4596,7 +4596,7 @@ namespace Telegram.Views
             {
                 ShowAction(Strings.BotStart, true);
             }
-            else if (!secret)
+            else if (!secret && !user.RestrictsNewChats)
             {
                 ShowArea();
             }
@@ -4644,7 +4644,49 @@ namespace Telegram.Views
             }
         }
 
+        public void UpdateUserRestrictsNewChats(Chat chat, User user, CanSendMessageToUserResult result)
+        {
+            if (result is CanSendMessageToUserResultOk)
+            {
+                ShowArea();
+            }
+            else if (result is CanSendMessageToUserResultUserIsDeleted)
+            {
+                ShowAction(Strings.DeleteThisChat, true);
+            }
+            else if (result is CanSendMessageToUserResultUserRestrictsNewChats)
+            {
+                var text = string.Format(Strings.OnlyPremiumCanMessage, user.FirstName);
+                var markdown = Extensions.ReplacePremiumLink(text, null);
 
+                var textBlock = new TextBlock
+                {
+                    TextWrapping = TextWrapping.Wrap,
+                    TextAlignment = TextAlignment.Center,
+                    Style = App.Current.Resources["InfoBodyTextBlockStyle"] as Style
+                };
+
+                TextBlockHelper.SetFormattedText(textBlock, markdown);
+
+                _replyEnabled = false;
+                ButtonAction.IsEnabled = true;
+                ButtonAction.Content = textBlock;
+
+                _actionCollapsed = false;
+                ButtonAction.Visibility = Visibility.Visible;
+                ChatFooter.Visibility = Visibility.Visible;
+                TextArea.Visibility = Visibility.Collapsed;
+            }
+
+            if (result is CanSendMessageToUserResultUserRestrictsNewChats)
+            {
+                ShowHideRestrictsNewChats(true, user);
+            }
+            else
+            {
+                ShowHideRestrictsNewChats(false, null);
+            }
+        }
 
         public void UpdateSecretChat(Chat chat, SecretChat secretChat)
         {
@@ -5138,6 +5180,38 @@ namespace Telegram.Views
         {
             _focusState.Set(FocusState.Programmatic);
             ViewModel.ChatActionManager.CancelTyping();
+        }
+
+        private void RestrictsNewChats_Click(object sender, RoutedEventArgs e)
+        {
+            ViewModel.NavigationService.ShowPromo();
+        }
+
+        private bool _restrictsNewChatsCollapsed = true;
+
+        private void ShowHideRestrictsNewChats(bool show, User user)
+        {
+            if (_restrictsNewChatsCollapsed != show)
+            {
+                return;
+            }
+
+            _restrictsNewChatsCollapsed = !show;
+            RestrictsNewChats ??= FindName(nameof(RestrictsNewChats)) as MessageService;
+
+            if (show)
+            {
+                if (user != null)
+                {
+                    TextBlockHelper.SetMarkdown(RestrictsNewChatsText, string.Format(Strings.MessageLockedPremium, user.FirstName));
+                }
+
+                RestrictsNewChats.Visibility = Visibility.Visible;
+            }
+            else
+            {
+                RestrictsNewChats.Visibility = Visibility.Collapsed;
+            }
         }
     }
 

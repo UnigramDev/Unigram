@@ -1988,6 +1988,7 @@ namespace Telegram.ViewModels
 
                 Delegate?.UpdateSecretChat(chat, secret);
                 Delegate?.UpdateUser(chat, item, true);
+                Delegate?.UpdateUserRestrictsNewChats(chat, null, null);
 
                 if (cache != null)
                 {
@@ -2002,6 +2003,7 @@ namespace Telegram.ViewModels
                 var cache = ClientService.GetBasicGroupFull(basic.BasicGroupId);
 
                 Delegate?.UpdateBasicGroup(chat, item);
+                Delegate?.UpdateUserRestrictsNewChats(chat, null, null);
 
                 if (cache != null)
                 {
@@ -2017,6 +2019,7 @@ namespace Telegram.ViewModels
                 var cache = ClientService.GetSupergroupFull(super.SupergroupId);
 
                 Delegate?.UpdateSupergroup(chat, item);
+                Delegate?.UpdateUserRestrictsNewChats(chat, null, null);
 
                 if (cache != null)
                 {

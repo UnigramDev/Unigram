@@ -5246,6 +5246,12 @@ Minimum length is 5 characters.</value>
   <data name="MessageLifetimeYouRemoved" xml:space="preserve">
     <value>You disabled the self-destruct timer</value>
   </data>
+  <data name="MessageLockedPremium" xml:space="preserve">
+    <value>Subscribe to **Premium** to message **{0}**.</value>
+  </data>
+  <data name="MessageLockedPremiumLocked" xml:space="preserve">
+    <value>**{0}** only accepts messages from contacts and Premium users.</value>
+  </data>
   <data name="MessageOptionsReplySubtitle" xml:space="preserve">
     <value>You can select a specific part to quote</value>
   </data>
@@ -5257,6 +5263,9 @@ Minimum length is 5 characters.</value>
   </data>
   <data name="MessagePlayed_other" xml:space="preserve">
     <value>{0} Played</value>
+  </data>
+  <data name="MessagePremiumUnlock" xml:space="preserve">
+    <value>Get Premium</value>
   </data>
   <data name="MessagePreview" xml:space="preserve">
     <value>Show Message Previews</value>
@@ -5697,6 +5706,14 @@ Stories</value>
   </data>
   <data name="OnlyAllowThisReactions" xml:space="preserve">
     <value>Only allow these reactions</value>
+  </data>
+  <data name="OnlyPremiumCanMessage" xml:space="preserve">
+    <value>{0} only accepts messages from Premium users.
+**Learn more...**</value>
+  </data>
+  <data name="OnlyPremiumCanReply" xml:space="preserve">
+    <value>Only Premium users can reply to {0}.
+**Learn more...**</value>
   </data>
   <data name="Open" xml:space="preserve">
     <value>Open</value>
@@ -8534,6 +8551,9 @@ If you are not comfortable with Telegram&apos;s modest needs, it won&apos;t be p
   </data>
   <data name="UserBioInfo" xml:space="preserve">
     <value>You can add a few lines about yourself. Anyone who opens your profile will see this text.</value>
+  </data>
+  <data name="UserBlockedNonPremiumButton" xml:space="preserve">
+    <value>View</value>
   </data>
   <data name="UserColorApplied" xml:space="preserve">
     <value>Your name color has been updated!</value>

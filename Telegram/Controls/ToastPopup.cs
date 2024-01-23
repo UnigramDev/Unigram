@@ -26,18 +26,12 @@ namespace Telegram.Controls
 {
     public class ToastPopup
     {
-        public static async void ShowOption(INavigationService navigationService)
+        public static void ShowOption(INavigationService navigationService)
         {
-            var markdown = ClientEx.ParseMarkdown(Strings.OptionPremiumRequiredMessage);
-
-            var confirm = await ShowActionAsync(markdown, Strings.OptionPremiumRequiredButton, new LocalFileSource("ms-appx:///Assets/Toasts/Premium.tgs"));
-            if (confirm == ContentDialogResult.Primary)
-            {
-                navigationService.ShowPromo();
-            }
+            ShowPromo(navigationService, Strings.OptionPremiumRequiredMessage, Strings.OptionPremiumRequiredButton, null);
         }
 
-        public static async void ShowFeature(INavigationService navigationService, PremiumFeature source)
+        public static void ShowFeature(INavigationService navigationService, PremiumFeature source)
         {
             var text = source switch
             {
@@ -46,12 +40,17 @@ namespace Telegram.Controls
                 _ => Strings.UnlockPremium
             };
 
+            ShowPromo(navigationService, text, Strings.OptionPremiumRequiredButton, new PremiumSourceFeature(source));
+        }
+
+        public static async void ShowPromo(INavigationService navigationService, string text, string action, PremiumSource source)
+        {
             var markdown = ClientEx.ParseMarkdown(text);
 
-            var confirm = await ShowActionAsync(markdown, Strings.OptionPremiumRequiredButton, new LocalFileSource("ms-appx:///Assets/Toasts/Premium.tgs"));
+            var confirm = await ShowActionAsync(markdown, action, new LocalFileSource("ms-appx:///Assets/Toasts/Premium.tgs"));
             if (confirm == ContentDialogResult.Primary)
             {
-                navigationService.ShowPromo(new PremiumSourceFeature(source));
+                navigationService.ShowPromo(source);
             }
         }
 
