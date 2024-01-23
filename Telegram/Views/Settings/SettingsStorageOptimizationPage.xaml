@@ -613,6 +613,7 @@
             <ListView.ItemTemplate>
                 <DataTemplate>
                     <controls:FauxCheckBox Style="{StaticResource DefaultCheckBoxStyle}"
+                                           IsFaux="True"
                                            Margin="0,6,0,6">
                         <StackPanel>
                             <TextBlock TextWrapping="NoWrap"

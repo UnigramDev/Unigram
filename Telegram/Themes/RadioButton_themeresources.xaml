@@ -338,7 +338,8 @@
                             <ColumnDefinition Width="*" />
                         </Grid.ColumnDefinitions>
 
-                        <Grid VerticalAlignment="Center"
+                        <Grid x:Name="Chevron"
+                              VerticalAlignment="Center"
                               Height="32">
                             <Ellipse x:Name="OuterEllipse"
                                      Width="20"

@@ -130,6 +130,7 @@ namespace Telegram.Controls.Cells
                         var check = new FauxCheckBox();
                         check.Style = BootStrapper.Current.Resources["LineCheckBoxStyle"] as Style;
                         check.Content = line.line.name;
+                        check.IsFaux = true;
                         check.IsChecked = line.enabled;
                         check.Background = new SolidColorBrush(line.lineColor);
                         check.Margin = new Thickness(12, 0, 0, 12);

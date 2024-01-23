@@ -70,8 +70,7 @@ namespace Telegram.ViewModels.Settings.Privacy
         {
             if (IsPremiumAvailable && !IsPremium)
             {
-                // TODO: 172 wrong feature
-                ToastPopup.Show(NavigationService, new PremiumFeatureAccentColor());
+                ToastPopup.ShowOption(NavigationService);
             }
         }
 

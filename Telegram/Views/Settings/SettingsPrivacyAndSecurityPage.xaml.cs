@@ -5,7 +5,6 @@
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
 using Telegram.Common;
-using Telegram.Controls.Media;
 using Telegram.ViewModels.Settings;
 using Windows.UI.Xaml.Navigation;
 
@@ -30,11 +29,6 @@ namespace Telegram.Views.Settings
         }
 
         #region Binding
-
-        private string ConvertVoiceMessagesChevron(bool premium)
-        {
-            return premium ? Icons.ChevronRight : Icons.LockClosed;
-        }
 
         private string ConvertNewChat(bool? value)
         {

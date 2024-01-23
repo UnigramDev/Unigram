@@ -5759,6 +5759,12 @@ Stories</value>
   <data name="OptionHint" xml:space="preserve">
     <value>Option</value>
   </data>
+  <data name="OptionPremiumRequiredButton" xml:space="preserve">
+    <value>Unlock</value>
+  </data>
+  <data name="OptionPremiumRequiredMessage" xml:space="preserve">
+    <value>Subscribe to **Telegram Premium** to select this option.</value>
+  </data>
   <data name="Orange" xml:space="preserve">
     <value>Orange</value>
   </data>
@@ -6476,8 +6482,10 @@ Payments will go directly to the developer of {0}. Telegram cannot provide any g
   <data name="PrivacyVoiceMessagesInfo2" xml:space="preserve">
     <value>You can add users or entire groups as exceptions that will override the settings above.</value>
   </data>
-  <data name="PrivacyVoiceMessagesPremiumOnly" xml:space="preserve">
-    <value>Only subscribers of *Telegram Premium* can restrict receiving voice messages.</value>
+  <data name="PrivacyVoiceMessagesPremiumOnly2" xml:space="preserve">
+    <value>Subscribe to Telegram Premium to restrict who can send you voice or video messages.
+
+**What is Telegram Premium?**</value>
   </data>
   <data name="PrivacyVoiceMessagesTitle" xml:space="preserve">
     <value>Who can send me voice or video messages?</value>

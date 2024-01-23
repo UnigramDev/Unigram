@@ -528,14 +528,7 @@ namespace Telegram.ViewModels.Settings
 
         public void OpenVoiceMessages()
         {
-            if (ClientService.IsPremium)
-            {
-                NavigationService.Navigate(typeof(SettingsPrivacyAllowPrivateVoiceAndVideoNoteMessagesPage));
-            }
-            else if (ClientService.IsPremiumAvailable)
-            {
-                ToastPopup.Show(NavigationService, new PremiumFeatureVoiceRecognition());
-            }
+            NavigationService.Navigate(typeof(SettingsPrivacyAllowPrivateVoiceAndVideoNoteMessagesPage));
         }
 
         public void OpenMessages()

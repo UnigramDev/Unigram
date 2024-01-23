@@ -109,7 +109,7 @@ namespace Telegram.Views.Settings
                 }
                 else
                 {
-                    ToastPopup.Show(ViewModel.NavigationService, new PremiumFeatureAccentColor());
+                    ToastPopup.ShowFeature(ViewModel.NavigationService, new PremiumFeatureAccentColor());
                 }
             }
         }

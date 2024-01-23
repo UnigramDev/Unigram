@@ -26,11 +26,21 @@ namespace Telegram.Controls
 {
     public class ToastPopup
     {
-        public static async void Show(INavigationService navigationService, PremiumFeature source)
+        public static async void ShowOption(INavigationService navigationService)
+        {
+            var markdown = ClientEx.ParseMarkdown(Strings.OptionPremiumRequiredMessage);
+
+            var confirm = await ShowActionAsync(markdown, Strings.OptionPremiumRequiredButton, new LocalFileSource("ms-appx:///Assets/Toasts/Premium.tgs"));
+            if (confirm == ContentDialogResult.Primary)
+            {
+                navigationService.ShowPromo();
+            }
+        }
+
+        public static async void ShowFeature(INavigationService navigationService, PremiumFeature source)
         {
             var text = source switch
             {
-                PremiumFeatureVoiceRecognition => Strings.PrivacyVoiceMessagesPremiumOnly.Replace(" *Telegram Premium* ", " **Telegram Premium** "),
                 PremiumFeatureAccentColor => Strings.UserColorApplyPremium,
                 PremiumFeatureRealTimeChatTranslation => Strings.ShowTranslateChatButtonLocked,
                 _ => Strings.UnlockPremium
@@ -38,7 +48,7 @@ namespace Telegram.Controls
 
             var markdown = ClientEx.ParseMarkdown(text);
 
-            var confirm = await ShowActionAsync(markdown, Strings.Add, new LocalFileSource("ms-appx:///Assets/Toasts/Premium.tgs"));
+            var confirm = await ShowActionAsync(markdown, Strings.OptionPremiumRequiredButton, new LocalFileSource("ms-appx:///Assets/Toasts/Premium.tgs"));
             if (confirm == ContentDialogResult.Primary)
             {
                 navigationService.ShowPromo(new PremiumSourceFeature(source));

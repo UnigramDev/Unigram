@@ -6,11 +6,10 @@
 //
 using Telegram.ViewModels.Settings;
 using Windows.UI.Xaml;
-using Windows.UI.Xaml.Controls;
 
 namespace Telegram.Controls
 {
-    public class PrivacyRadioButton : RadioButton
+    public class PrivacyRadioButton : FauxRadioButton
     {
         #region Type
 
@@ -69,18 +68,5 @@ namespace Telegram.Controls
 
             base.OnToggle();
         }
-
-        #region IsFaux
-
-        public bool IsFaux
-        {
-            get { return (bool)GetValue(IsFauxProperty); }
-            set { SetValue(IsFauxProperty, value); }
-        }
-
-        public static readonly DependencyProperty IsFauxProperty =
-            DependencyProperty.Register("IsFaux", typeof(bool), typeof(PrivacyRadioButton), new PropertyMetadata(false));
-
-        #endregion
     }
 }

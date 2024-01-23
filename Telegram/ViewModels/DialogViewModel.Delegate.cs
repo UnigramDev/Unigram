@@ -429,9 +429,10 @@ namespace Telegram.ViewModels
                     builder.Append(string.Format(Strings.TranscriptionTrialEndWaitOrBuy, Formatter.DateAt(trial.NextResetDate)));
                 }
 
-                var text = Extensions.ReplacePremiumLink(builder.ToString());
+                var text = builder.ToString();
+                var markdown = Extensions.ReplacePremiumLink(text, new PremiumFeatureVoiceRecognition());
 
-                ToastPopup.Show(text, new LocalFileSource("ms-appx:///Assets/Toasts/Transcribe.tgs"));
+                ToastPopup.Show(markdown, new LocalFileSource("ms-appx:///Assets/Toasts/Transcribe.tgs"));
             }
         }
 

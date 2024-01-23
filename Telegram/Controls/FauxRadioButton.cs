@@ -9,8 +9,22 @@ using Windows.UI.Xaml.Controls;
 
 namespace Telegram.Controls
 {
+    // TODO: RadioButtonEx?
     public class FauxRadioButton : RadioButton
     {
+        private UIElement Chevron;
+
+        protected override void OnApplyTemplate()
+        {
+            if (IsChevronVisible is false)
+            {
+                Chevron = GetTemplateChild(nameof(Chevron)) as UIElement;
+                Chevron.Opacity = 0;
+            }
+
+            base.OnApplyTemplate();
+        }
+
         protected override void OnToggle()
         {
             if (IsFaux)
@@ -30,7 +44,34 @@ namespace Telegram.Controls
         }
 
         public static readonly DependencyProperty IsFauxProperty =
-            DependencyProperty.Register("IsFaux", typeof(bool), typeof(FauxRadioButton), new PropertyMetadata(true));
+            DependencyProperty.Register("IsFaux", typeof(bool), typeof(FauxRadioButton), new PropertyMetadata(false));
+
+        #endregion
+
+        #region IsChevronVisible
+
+        public bool IsChevronVisible
+        {
+            get { return (bool)GetValue(IsChevronVisibleProperty); }
+            set { SetValue(IsChevronVisibleProperty, value); }
+        }
+
+        public static readonly DependencyProperty IsChevronVisibleProperty =
+            DependencyProperty.Register("IsChevronVisible", typeof(bool), typeof(FauxRadioButton), new PropertyMetadata(true, OnChevronVisibleChanged));
+
+        private static void OnChevronVisibleChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            var sender = d as FauxRadioButton;
+            if (sender?.Chevron != null || (bool)e.NewValue)
+            {
+                sender.Chevron ??= sender.GetTemplateChild(nameof(sender.Chevron)) as UIElement;
+
+                if (sender.Chevron != null)
+                {
+                    sender.Chevron.Opacity = (bool)e.NewValue ? 1 : 0;
+                }
+            }
+        }
 
         #endregion
     }

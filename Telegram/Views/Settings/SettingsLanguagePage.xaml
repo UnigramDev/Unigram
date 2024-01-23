@@ -34,16 +34,18 @@
 
                         <Grid BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}">
                             <controls:FauxCheckBox Click="{x:Bind ViewModel.ChangeTranslateChat}"
+                                                   IsFaux="True"
+                                                   IsChevronVisible="{x:Bind ViewModel.IsPremium, Mode=OneWay}"
                                                    IsChecked="{x:Bind ViewModel.TranslateChats, Mode=OneWay}"
                                                    Content="{CustomResource ShowTranslateChatButton}"
                                                    Style="{StaticResource SettingsCheckBoxStyle}" />
                             <TextBlock x:Name="TranslateChatsLock"
                                        x:Load="{x:Bind ViewModel.IsPremium, Mode=OneWay, Converter={StaticResource BooleanNegationConverter}}"
-                                       Text="&#xE9BE;"
+                                       Text="&#xEA25;"
                                        Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"
                                        FontFamily="{StaticResource SymbolThemeFontFamily}"
-                                       FontSize="16"
-                                       Padding="22,14,0,0"
+                                       FontSize="20"
+                                       Padding="20,12,0,0"
                                        IsHitTestVisible="False" />
                         </Grid>
 
