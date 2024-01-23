@@ -98,6 +98,7 @@ namespace Telegram.Controls.Chats
                 else
                 {
                     Field.Focus(FocusState.Keyboard);
+                    Field.SelectAll();
                 }
             };
 

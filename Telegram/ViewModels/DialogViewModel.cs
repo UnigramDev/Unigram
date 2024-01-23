@@ -3210,6 +3210,7 @@ namespace Telegram.ViewModels
             }
             else
             {
+                // TODO: focus and select search bar
                 Search = null;
             }
         }

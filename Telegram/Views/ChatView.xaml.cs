@@ -816,6 +816,27 @@ namespace Telegram.Views
 
         public void Search()
         {
+            var focused = FocusManager.GetFocusedElement();
+            if (focused is RichTextBlock textBlock)
+            {
+                var message = textBlock.GetParent<MessageSelector>()?.Message;
+                if (message != null)
+                {
+                    var selectionStart = textBlock.SelectionStart.OffsetToIndex(message.Text);
+                    var selectionEnd = textBlock.SelectionEnd.OffsetToIndex(message.Text);
+
+                    if (selectionEnd - selectionStart > 0)
+                    {
+                        var caption = message.GetCaption();
+                        if (caption != null && caption.Text.Length >= selectionEnd && selectionEnd > 0 && selectionStart >= 0)
+                        {
+                            ViewModel.SearchExecute(caption.Text.Substring(selectionStart, selectionEnd - selectionStart));
+                            return;
+                        }
+                    }
+                }
+            }
+
             ViewModel.SearchExecute(string.Empty);
         }
 
