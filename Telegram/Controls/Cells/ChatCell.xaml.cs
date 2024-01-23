@@ -1191,13 +1191,9 @@ namespace Telegram.Controls.Cells
         {
             thumbnail = null;
 
-            if (chat.DraftMessage != null && draft)
+            if (chat.DraftMessage?.InputMessageText is InputMessageText draftText && draft)
             {
-                switch (chat.DraftMessage.InputMessageText)
-                {
-                    case InputMessageText text:
-                        return text.Text;
-                }
+                return draftText.Text;
             }
 
             static FormattedText Text(string text)
@@ -1376,14 +1372,10 @@ namespace Telegram.Controls.Cells
                 draft = false;
                 return string.Empty;
             }
-            else if (chat.DraftMessage != null)
+            else if (chat.DraftMessage is not null)
             {
-                switch (chat.DraftMessage.InputMessageText)
-                {
-                    case InputMessageText:
-                        draft = true;
-                        return string.Format("{0}: \u200B​​​", Strings.Draft);
-                }
+                draft = true;
+                return string.Format("{0}: \u200B​​​", Strings.Draft);
             }
 
             var message = chat.LastMessage;
