@@ -288,11 +288,11 @@ namespace Telegram.Controls
             visual.CenterPoint = new Vector3(70, 70, 0);
             visual.Scale = new Vector3(1 - (float)(verticalOffset / HeaderRoot.ActualHeight));
 
-            var title = ElementComposition.GetElementVisual(LabelTitle);
-            var subtitle = ElementComposition.GetElementVisual(Subtitle);
+            var title = ElementComposition.GetElementVisual(TitleRoot);
+            var subtitle = ElementComposition.GetElementVisual(SubtitleRoot);
 
-            title.CenterPoint = new Vector3(LabelTitle.ActualSize.X / 2, LabelTitle.ActualSize.Y, 0);
-            subtitle.CenterPoint = new Vector3(Subtitle.ActualSize.X / 2, 0, 0);
+            title.CenterPoint = new Vector3(TitleRoot.ActualSize.X / 2, TitleRoot.ActualSize.Y, 0);
+            subtitle.CenterPoint = new Vector3(SubtitleRoot.ActualSize.X / 2, 0, 0);
         }
 
         public void InitializeScrolling(CompositionPropertySet properties)
@@ -302,13 +302,15 @@ namespace Telegram.Controls
 
             var target = ElementComposition.GetElementVisual(this);
             var controls = ElementComposition.GetElementVisual(ControlsRoot);
-            var title = ElementComposition.GetElementVisual(LabelTitle);
-            var subtitle = ElementComposition.GetElementVisual(Subtitle);
+            var title = ElementComposition.GetElementVisual(TitleRoot);
+            var subtitle = ElementComposition.GetElementVisual(SubtitleRoot);
             var buttons = ElementComposition.GetElementVisual(Buttons);
             var root = ElementComposition.GetElementVisual(HeaderRoot);
 
             ElementCompositionPreview.SetIsTranslationEnabled(Buttons, true);
             ElementCompositionPreview.SetIsTranslationEnabled(HeaderRoot, true);
+            ElementCompositionPreview.SetIsTranslationEnabled(TitleRoot, true);
+            ElementCompositionPreview.SetIsTranslationEnabled(SubtitleRoot, true);
 
             //var rootExp = "clamp(-scrollViewer.Translation.Y - (this.Target.Size.Y - 48 + 0), 0, target.Size.Y - this.Target.Size.Y)";
             var rootExp = "clamp(-scrollViewer.Translation.Y - (this.Target.Size.Y - 48 + 16), 0, target.Size.Y - this.Target.Size.Y)";
@@ -352,9 +354,9 @@ namespace Telegram.Controls
             root.StartAnimation("Translation.Y", rootTranslation);
             buttons.StartAnimation("Translation.Y", buttonsTranslation);
             buttons.StartAnimation("Opacity", buttonsOpacity);
-            title.StartAnimation("Offset.Y", titleTranslation);
+            title.StartAnimation("Translation.Y", titleTranslation);
             title.StartAnimation("Scale", titleScale);
-            subtitle.StartAnimation("Offset.Y", titleTranslation);
+            subtitle.StartAnimation("Translation.Y", titleTranslation);
             subtitle.StartAnimation("Scale", subtitleScale);
         }
 
@@ -642,7 +644,7 @@ namespace Telegram.Controls
 
         public void UpdateUser(Chat chat, User user, bool secret)
         {
-            Subtitle.Text = LastSeenConverter.GetLabel(user, true);
+            UpdateUserStatus(chat, user);
 
             UserPhone.Badge = PhoneNumber.Format(user.PhoneNumber);
             UserPhone.Visibility = string.IsNullOrEmpty(user.PhoneNumber) ? Visibility.Collapsed : Visibility.Visible;
@@ -740,6 +742,18 @@ namespace Telegram.Controls
         public void UpdateUserStatus(Chat chat, User user)
         {
             Subtitle.Text = LastSeenConverter.GetLabel(user, true);
+
+            var when = user.Status switch
+            {
+                UserStatusLastMonth lastMonth => lastMonth.ByMyPrivacySettings,
+                UserStatusLastWeek lastWeek => lastWeek.ByMyPrivacySettings,
+                UserStatusRecently recently => recently.ByMyPrivacySettings,
+                _ => false
+            };
+
+            SubtitleWhen.Visibility = when
+                ? Visibility.Visible
+                : Visibility.Collapsed;
         }
 
 
@@ -768,6 +782,7 @@ namespace Telegram.Controls
         public void UpdateBasicGroup(Chat chat, BasicGroup group)
         {
             Subtitle.Text = Locale.Declension(Strings.R.Members, group.MemberCount);
+            SubtitleWhen.Visibility = Visibility.Collapsed;
 
             Description.Content = Strings.DescriptionPlaceholder;
 
@@ -846,10 +861,12 @@ namespace Telegram.Controls
             if (ViewModel.Topic != null)
             {
                 Subtitle.Text = string.Format(Strings.TopicProfileStatus, chat.Title);
+                SubtitleWhen.Visibility = Visibility.Collapsed;
             }
             else
             {
                 Subtitle.Text = Locale.Declension(group.IsChannel ? Strings.R.Subscribers : Strings.R.Members, group.MemberCount);
+                SubtitleWhen.Visibility = Visibility.Collapsed;
             }
 
             Description.Content = Strings.DescriptionPlaceholder;
@@ -933,10 +950,12 @@ namespace Telegram.Controls
             if (ViewModel.Topic != null)
             {
                 Subtitle.Text = string.Format(Strings.TopicProfileStatus, chat.Title);
+                SubtitleWhen.Visibility = Visibility.Collapsed;
             }
             else
             {
                 Subtitle.Text = Locale.Declension(group.IsChannel ? Strings.R.Subscribers : Strings.R.Members, fullInfo.MemberCount);
+                SubtitleWhen.Visibility = Visibility.Collapsed;
             }
 
             GetEntities(fullInfo.Description);

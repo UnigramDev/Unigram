@@ -2245,7 +2245,11 @@ namespace Telegram.Views
                 flyout.CreateFlyoutItem(MessageSendNow_Loaded, ViewModel.SendNowMessage, message, Strings.MessageScheduleSend, Icons.Send);
                 flyout.CreateFlyoutItem(MessageReschedule_Loaded, ViewModel.RescheduleMessage, message, Strings.MessageScheduleEditTime, Icons.CalendarClock);
 
-                if (CanGetMessageViewers(message))
+                if (CanGetMessageReadDate(message))
+                {
+                    LoadMessageReadDate(message, flyout);
+                }
+                else if (CanGetMessageViewers(message))
                 {
                     LoadMessageViewers(message, flyout);
                 }
@@ -2528,6 +2532,81 @@ namespace Telegram.Views
             else
             {
                 placeholder.Text = Strings.NobodyViewed;
+            }
+        }
+
+        private static bool CanGetMessageReadDate(MessageViewModel message, bool reactions = true)
+        {
+            if (message.Chat.LastReadOutboxMessageId < message.Id || !message.CanGetReadDate)
+            {
+                return false;
+            }
+
+            var viewed = message.Content switch
+            {
+                MessageVoiceNote voiceNote => voiceNote.IsListened,
+                MessageVideoNote videoNote => videoNote.IsViewed,
+                _ => true
+            };
+
+            if (viewed)
+            {
+                return true;
+            }
+
+            return false;
+        }
+
+        private async void LoadMessageReadDate(MessageViewModel message, MenuFlyout flyout)
+        {
+            static async Task<MessageReadDate> GetMessageReadDateAsync(MessageViewModel message)
+            {
+                if (CanGetMessageReadDate(message, false))
+                {
+                    var response = await message.ClientService.SendAsync(new GetMessageReadDate(message.ChatId, message.Id));
+                    if (response is MessageReadDate readDate)
+                    {
+                        return readDate;
+                    }
+                }
+
+                return null;
+            }
+
+            var played = message.Content is MessageVoiceNote or MessageVideoNote;
+            var placeholder = new MenuFlyoutReadDateItem();
+            placeholder.Text = "...";
+            placeholder.Icon = new FontIcon
+            {
+                Glyph = played ? Icons.Play : Icons.Seen,
+                FontSize = 20,
+                FontFamily = BootStrapper.Current.Resources["TelegramThemeFontFamily"] as FontFamily,
+            };
+
+            flyout.Items.Add(placeholder);
+            flyout.CreateFlyoutSeparator();
+
+            // Width must be fixed because viewers are loaded asynchronously
+            placeholder.FontSize = 12;
+            placeholder.Width = 200;
+
+            var readDate = await GetMessageReadDateAsync(message);
+            if (readDate is MessageReadDateRead readDateRead)
+            {
+                placeholder.Text = Formatter.ReadDate(readDateRead.ReadDate);
+            }
+            else if (readDate is MessageReadDateMyPrivacyRestricted)
+            {
+                placeholder.Command = new RelayCommand(ViewModel.ShowReadDate);
+
+                placeholder.Text = Strings.PmRead;
+                placeholder.ShowWhenVisibility = Visibility.Visible;
+            }
+            else
+            {
+                // TooOld, Unread, UserPrivacyRestricted.
+                // Should be hidden in this case, but hiding breaks the animation.
+                placeholder.Text = Strings.PmReadUnknown;
             }
         }
 

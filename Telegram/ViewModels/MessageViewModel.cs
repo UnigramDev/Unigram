@@ -271,6 +271,8 @@ namespace Telegram.ViewModels
             _message.CanGetMessageThread = message.CanGetMessageThread;
             _message.CanGetStatistics = message.CanGetStatistics;
             _message.CanBeRepliedInAnotherChat = message.CanBeRepliedInAnotherChat;
+            _message.CanGetViewers = message.CanGetViewers;
+            _message.CanGetReadDate = message.CanGetReadDate;
             _message.ChatId = message.ChatId;
             _message.ContainsUnreadMention = message.ContainsUnreadMention;
             //_message.Content = message.Content;
@@ -378,6 +380,7 @@ namespace Telegram.ViewModels
         public bool CanGetMessageThread => _message.CanGetMessageThread;
         public bool CanGetStatistics => _message.CanGetStatistics;
         public bool CanGetViewers => _message.CanGetViewers;
+        public bool CanGetReadDate => _message.CanGetReadDate;
         public bool IsOutgoing { get => _message.IsOutgoing; set => _message.IsOutgoing = value; }
         public bool IsPinned { get => _message.IsPinned; set => _message.IsPinned = value; }
         public bool HasTimestampedMedia => _message.HasTimestampedMedia;

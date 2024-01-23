@@ -101,35 +101,61 @@
                                           DecodeFrameType="Logical" />
             </Border>
 
-            <Border VerticalAlignment="Bottom"
-                    HorizontalAlignment="Center"
-                    Grid.Row="1">
-                <Grid x:Name="LabelTitle">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition />
-                        <ColumnDefinition Width="Auto" />
-                    </Grid.ColumnDefinitions>
-                    <TextBlock x:Name="Title"
-                               TextWrapping="NoWrap"
-                               TextTrimming="CharacterEllipsis"
-                               TextAlignment="Center"
-                               IsTextSelectionEnabled="True"
-                               Style="{StaticResource SubtitleTextBlockStyle}"
-                               FontFamily="{ThemeResource EmojiThemeFontFamily}" />
+            <Grid x:Name="TitleRoot"
+                  VerticalAlignment="Bottom"
+                  HorizontalAlignment="Center"
+                  Grid.Row="1">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+                <TextBlock x:Name="Title"
+                           TextWrapping="NoWrap"
+                           TextTrimming="CharacterEllipsis"
+                           TextAlignment="Center"
+                           IsTextSelectionEnabled="True"
+                           Style="{StaticResource SubtitleTextBlockStyle}"
+                           FontFamily="{ThemeResource EmojiThemeFontFamily}" />
 
-                    <controls:IdentityIcon x:Name="Identity"
-                                           VerticalAlignment="Bottom"
-                                           Margin="4,0,0,4"
-                                           Grid.Column="1" />
-                </Grid>
-            </Border>
-            <Border VerticalAlignment="Top"
-                    Grid.Row="2">
+                <controls:IdentityIcon x:Name="Identity"
+                                       VerticalAlignment="Bottom"
+                                       Margin="4,0,0,4"
+                                       Grid.Column="1" />
+            </Grid>
+            <Grid x:Name="SubtitleRoot"
+                  HorizontalAlignment="Center"
+                  VerticalAlignment="Top"
+                  Grid.Row="2">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
                 <TextBlock x:Name="Subtitle"
                            Style="{StaticResource BodyTextBlockStyle}"
                            Foreground="{ThemeResource PageHeaderDisabledBrush}"
                            TextAlignment="Center" />
-            </Border>
+
+                <Button x:Name="SubtitleWhen"
+                        Click="{x:Bind ViewModel.ShowLastSeen}"
+                        VerticalAlignment="Bottom"
+                        FontSize="11"
+                        HorizontalContentAlignment="Stretch"
+                        VerticalContentAlignment="Stretch"
+                        Padding="0"
+                        Margin="4,0,0,0"
+                        CornerRadius="8"
+                        Height="16"
+                        Grid.Column="1">
+                    <TextBlock Text="when?"
+                               TextLineBounds="Tight"
+                               TextAlignment="Center"
+                               OpticalMarginAlignment="TrimSideBearings"
+                               FontSize="11"
+                               Padding="4,0,4,0"
+                               VerticalAlignment="Center"
+                               Typography.NumeralAlignment="Tabular" />
+                </Button>
+            </Grid>
 
             <Grid x:Name="Buttons"
                   ColumnSpacing="8"

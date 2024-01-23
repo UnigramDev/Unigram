@@ -3203,6 +3203,29 @@ namespace Telegram.ViewModels
 
         #endregion
 
+        #region Show read date
+
+        public async void ShowReadDate()
+        {
+            if (ClientService.TryGetUser(_chat, out User user))
+            {
+                var popup = new ChangePrivacyPopup(user, ChangePrivacyType.ReadDate, IsPremium, IsPremiumAvailable);
+
+                var confirm = await ShowPopupAsync(popup);
+                if (confirm == ContentDialogResult.Primary)
+                {
+                    ClientService.Send(new SetReadDatePrivacySettings(new ReadDatePrivacySettings(true)));
+                    ToastPopup.Show(Strings.PremiumReadSet, new LocalFileSource("ms-appx:///Assets/Toasts/Info.tgs"));
+                }
+                else if (confirm == ContentDialogResult.Secondary && IsPremiumAvailable && !IsPremium)
+                {
+                    NavigationService.ShowPromo(new PremiumSourceFeature(new PremiumFeatureAdvancedChatManagement()));
+                }
+            }
+        }
+
+        #endregion
+
         #region Search
 
         public void SearchExecute(string query)

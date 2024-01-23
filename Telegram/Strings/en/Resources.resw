@@ -6143,6 +6143,24 @@ Payments will go directly to the developer of {0}. Telegram cannot provide any g
   <data name="PleaseReEnterPassword" xml:space="preserve">
     <value>Re-enter your password</value>
   </data>
+  <data name="PmRead" xml:space="preserve">
+    <value>read</value>
+  </data>
+  <data name="PmReadDateTimeAt" xml:space="preserve">
+    <value>read {0} at {1}</value>
+  </data>
+  <data name="PmReadShowWhen" xml:space="preserve">
+    <value>show when</value>
+  </data>
+  <data name="PmReadTodayAt" xml:space="preserve">
+    <value>read today at {0}</value>
+  </data>
+  <data name="PmReadUnknown" xml:space="preserve">
+    <value>read time unknown</value>
+  </data>
+  <data name="PmReadYesterdayAt" xml:space="preserve">
+    <value>read yesterday at {0}</value>
+  </data>
   <data name="Points_one" xml:space="preserve">
     <value>{0}</value>
   </data>
@@ -6179,6 +6197,30 @@ Payments will go directly to the developer of {0}. Telegram cannot provide any g
   <data name="PowerUsage" xml:space="preserve">
     <value>Power Saving</value>
   </data>
+  <data name="PremiumLastSeenButton1" xml:space="preserve">
+    <value>Show My Last Seen</value>
+  </data>
+  <data name="PremiumLastSeenButton2" xml:space="preserve">
+    <value>Subscribe to Telegram Premium</value>
+  </data>
+  <data name="PremiumLastSeenHeader1" xml:space="preserve">
+    <value>Show Your Last Seen</value>
+  </data>
+  <data name="PremiumLastSeenHeader2" xml:space="preserve">
+    <value>Upgrade to Premium</value>
+  </data>
+  <data name="PremiumLastSeenSet" xml:space="preserve">
+    <value>Your last seen time is now visible.</value>
+  </data>
+  <data name="PremiumLastSeenText1" xml:space="preserve">
+    <value>To see **{0}** Last Seen time, either start showing your own Last Seen time...</value>
+  </data>
+  <data name="PremiumLastSeenText1Locked" xml:space="preserve">
+    <value>To see **{0}** Last Seen time, start showing your own Last Seen time.</value>
+  </data>
+  <data name="PremiumLastSeenText2" xml:space="preserve">
+    <value>Subscribing will let you see **{0}’s** Last Seen status without showing yours.</value>
+  </data>
   <data name="PremiumMore" xml:space="preserve">
     <value>More</value>
   </data>
@@ -6187,6 +6229,9 @@ Payments will go directly to the developer of {0}. Telegram cannot provide any g
   </data>
   <data name="PremiumNeededForBoosting" xml:space="preserve">
     <value>Only **Telegram Premium** subscribers can boost channels. Do you want to subscribe to **Telegram Premium**?</value>
+  </data>
+  <data name="PremiumOr" xml:space="preserve">
+    <value>or</value>
   </data>
   <data name="PremiumPreviewAdvancedChatManagement" xml:space="preserve">
     <value>Advanced Chat Management</value>
@@ -6289,6 +6334,30 @@ Payments will go directly to the developer of {0}. Telegram cannot provide any g
   </data>
   <data name="PremiumPreviewWallpaperDescription" xml:space="preserve">
     <value>Set custom wallpapers for you and your chat partner.</value>
+  </data>
+  <data name="PremiumReadButton1" xml:space="preserve">
+    <value>Show My Read Time</value>
+  </data>
+  <data name="PremiumReadButton2" xml:space="preserve">
+    <value>Subscribe to Telegram Premium</value>
+  </data>
+  <data name="PremiumReadHeader1" xml:space="preserve">
+    <value>Show Your Read Date</value>
+  </data>
+  <data name="PremiumReadHeader2" xml:space="preserve">
+    <value>Upgrade to Premium</value>
+  </data>
+  <data name="PremiumReadSet" xml:space="preserve">
+    <value>Your read times are now visible.</value>
+  </data>
+  <data name="PremiumReadText1" xml:space="preserve">
+    <value>To see when **{0}** read the message, either start showing your own read time...</value>
+  </data>
+  <data name="PremiumReadText1Locked" xml:space="preserve">
+    <value>To see when **{0}** read the message, start showing your own read time.</value>
+  </data>
+  <data name="PremiumReadText2" xml:space="preserve">
+    <value>Subscribing will let you see **{0}’s** read time without showing yours.</value>
   </data>
   <data name="PremiumStickers" xml:space="preserve">
     <value>Premium Stickers</value>
@@ -7583,6 +7652,9 @@ and enter your phone number.</value>
   </data>
   <data name="StatisticViews" xml:space="preserve">
     <value>Views</value>
+  </data>
+  <data name="StatusHiddenShow" xml:space="preserve">
+    <value>when?</value>
   </data>
   <data name="StealthMode" xml:space="preserve">
     <value>Stealth Mode</value>

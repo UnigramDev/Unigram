@@ -281,6 +281,22 @@ namespace Telegram.Converters
             return $"{option.Title} - {FormatAmount(amount, currency)}";
         }
 
+        public static string ReadDate(int value)
+        {
+            var dateTime = ToLocalTime(value);
+
+            if (dateTime.Date == DateTime.Now.Date)
+            {
+                return string.Format(Strings.PmReadTodayAt, ShortTime.Format(dateTime));
+            }
+            else if (dateTime.Date == DateTime.Now.Date.AddDays(-1))
+            {
+                return string.Format(Strings.PmReadYesterdayAt, ShortTime.Format(dateTime));
+            }
+
+            return string.Format(Strings.PmReadDateTimeAt, ShortDate.Format(dateTime), ShortTime.Format(dateTime));
+        }
+
         public static string DateExtended(int value)
         {
             var dateTime = ToLocalTime(value);
