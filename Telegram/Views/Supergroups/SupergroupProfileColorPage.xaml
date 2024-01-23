@@ -35,7 +35,7 @@
                 <popups:ChooseNameColorView x:Name="NameView"
                                             SelectedAccentColor="{x:Bind ViewModel.SelectedAccentColor, Mode=TwoWay}"
                                             SelectedCustomEmojiId="{x:Bind ViewModel.SelectedCustomEmojiId, Mode=TwoWay}"
-                                            RequiredLevel="{x:Bind ViewModel.CustomEmojiRequiredLevel, Mode=OneWay}" />
+                                            RequiredLevel="{x:Bind ViewModel.MinBackgroundCustomEmojiBoostLevel, Mode=OneWay}" />
 
                 <controls:HeaderedControl>
                     <GridView x:Name="List"
@@ -85,7 +85,7 @@
                             </Grid.ColumnDefinitions>
                             <TextBlock Text="{CustomResource ChatWallpaper}" />
                             <controls:BadgeControl x:Name="CustomBackgroundInfo"
-                                                   Text="{x:Bind ConvertRequiredLevel(ViewModel.CustomBackgroundRequiredLevel, CustomBackgroundInfo), Mode=OneWay}"
+                                                   Text="{x:Bind ConvertRequiredLevel(ViewModel.MinCustomBackgroundBoostLevel, CustomBackgroundInfo), Mode=OneWay}"
                                                    Background="{ThemeResource PremiumLinearGradientBrush}"
                                                    FontFamily="{StaticResource EmojiThemeFontFamilyWithSymbols}"
                                                    VerticalAlignment="Bottom"
@@ -98,7 +98,7 @@
                 <popups:ChooseProfileColorView x:Name="ProfileView"
                                                SelectedAccentColor="{x:Bind ViewModel.SelectedProfileAccentColor, Mode=TwoWay}"
                                                SelectedCustomEmojiId="{x:Bind ViewModel.SelectedProfileCustomEmojiId, Mode=TwoWay}"
-                                               RequiredLevel="{x:Bind ViewModel.ProfileCustomEmojiRequiredLevel, Mode=OneWay}" />
+                                               RequiredLevel="{x:Bind ViewModel.MinProfileBackgroundCustomEmojiBoostLevel, Mode=OneWay}" />
 
                 <controls:HeaderedControl Footer="{CustomResource ChannelEmojiStatusInfo}">
                     <Grid>
@@ -111,7 +111,7 @@
                                 </Grid.ColumnDefinitions>
                                 <TextBlock Text="{CustomResource ChannelEmojiStatus}" />
                                 <controls:BadgeControl x:Name="EmojiStatusInfo"
-                                                       Text="{x:Bind ConvertRequiredLevel(ViewModel.EmojiStatusRequiredLevel, EmojiStatusInfo), Mode=OneWay}"
+                                                       Text="{x:Bind ConvertRequiredLevel(ViewModel.MinEmojiStatusBoostLevel, EmojiStatusInfo), Mode=OneWay}"
                                                        Background="{ThemeResource PremiumLinearGradientBrush}"
                                                        FontFamily="{StaticResource EmojiThemeFontFamilyWithSymbols}"
                                                        VerticalAlignment="Bottom"

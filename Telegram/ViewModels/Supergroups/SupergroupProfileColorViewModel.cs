@@ -70,51 +70,17 @@ namespace Telegram.ViewModels.Supergroups
                 _features = features;
                 _status = status;
 
-                var chatThemeRequiredLevel = int.MaxValue;
-                var customBackgroundRequiredLevel = int.MaxValue;
-                var customEmojiRequiredLevel = int.MaxValue;
-                var profileCustomEmojiRequiredLevel = int.MaxValue;
-                var emojiStatusRequiredLevel = int.MaxValue;
+                MinChatThemeBackgroundBoostLevel = features.MinChatThemeBackgroundBoostLevel;
+                MinCustomBackgroundBoostLevel = features.MinCustomBackgroundBoostLevel;
+                MinBackgroundCustomEmojiBoostLevel = features.MinBackgroundCustomEmojiBoostLevel;
+                MinProfileBackgroundCustomEmojiBoostLevel = features.MinProfileBackgroundCustomEmojiBoostLevel;
+                MinEmojiStatusBoostLevel = features.MinEmojiStatusBoostLevel;
 
-                foreach (var item in features.Features)
-                {
-                    if (item.ChatThemeBackgroundCount > 0)
-                    {
-                        chatThemeRequiredLevel = Math.Min(chatThemeRequiredLevel, item.Level);
-                    }
-
-                    if (item.CanSetCustomBackground)
-                    {
-                        customBackgroundRequiredLevel = Math.Min(customBackgroundRequiredLevel, item.Level);
-                    }
-
-                    if (item.CanSetBackgroundCustomEmoji)
-                    {
-                        customEmojiRequiredLevel = Math.Min(customEmojiRequiredLevel, item.Level);
-                    }
-
-                    if (item.CanSetProfileBackgroundCustomEmoji)
-                    {
-                        profileCustomEmojiRequiredLevel = Math.Min(profileCustomEmojiRequiredLevel, item.Level);
-                    }
-
-                    if (item.CanSetEmojiStatus)
-                    {
-                        emojiStatusRequiredLevel = Math.Min(emojiStatusRequiredLevel, item.Level);
-                    }
-                }
-
-                ChatThemeRequiredLevel = status.Level < chatThemeRequiredLevel ? chatThemeRequiredLevel : 0;
-                CustomBackgroundRequiredLevel = status.Level < customBackgroundRequiredLevel ? customBackgroundRequiredLevel : 0;
-                CustomEmojiRequiredLevel = status.Level < customEmojiRequiredLevel ? customEmojiRequiredLevel : 0;
-                ProfileCustomEmojiRequiredLevel = status.Level < profileCustomEmojiRequiredLevel ? profileCustomEmojiRequiredLevel : 0;
-                EmojiStatusRequiredLevel = status.Level < emojiStatusRequiredLevel ? emojiStatusRequiredLevel : 0;
-
-                RaisePropertyChanged(nameof(ChatThemeRequiredLevel));
-                RaisePropertyChanged(nameof(CustomBackgroundRequiredLevel));
-                RaisePropertyChanged(nameof(CustomEmojiRequiredLevel));
-                RaisePropertyChanged(nameof(ProfileCustomEmojiRequiredLevel));
-                RaisePropertyChanged(nameof(EmojiStatusRequiredLevel));
+                RaisePropertyChanged(nameof(MinChatThemeBackgroundBoostLevel));
+                RaisePropertyChanged(nameof(MinCustomBackgroundBoostLevel));
+                RaisePropertyChanged(nameof(MinBackgroundCustomEmojiBoostLevel));
+                RaisePropertyChanged(nameof(MinProfileBackgroundCustomEmojiBoostLevel));
+                RaisePropertyChanged(nameof(MinEmojiStatusBoostLevel));
             }
         }
 
@@ -163,15 +129,15 @@ namespace Telegram.ViewModels.Supergroups
             }
         }
 
-        public int ChatThemeRequiredLevel { get; private set; }
+        public int MinChatThemeBackgroundBoostLevel { get; private set; }
 
-        public int CustomBackgroundRequiredLevel { get; private set; }
+        public int MinCustomBackgroundBoostLevel { get; private set; }
 
-        public int CustomEmojiRequiredLevel { get; private set; }
+        public int MinBackgroundCustomEmojiBoostLevel { get; private set; }
 
-        public int ProfileCustomEmojiRequiredLevel { get; private set; }
+        public int MinProfileBackgroundCustomEmojiBoostLevel { get; private set; }
 
-        public int EmojiStatusRequiredLevel { get; private set; }
+        public int MinEmojiStatusBoostLevel { get; private set; }
 
         protected Chat _chat;
         public Chat Chat
@@ -274,10 +240,10 @@ namespace Telegram.ViewModels.Supergroups
                 level = SelectedAccentColor.MinChatBoostLevel;
             }
 
-            if (SelectedCustomEmojiId != 0 && CustomEmojiRequiredLevel > level)
+            if (SelectedCustomEmojiId != 0 && MinBackgroundCustomEmojiBoostLevel > level)
             {
                 feature = ChatBoostFeature.BackgroundCustomEmoji;
-                level = CustomEmojiRequiredLevel;
+                level = MinBackgroundCustomEmojiBoostLevel;
             }
 
             if (SelectedProfileAccentColor != null && SelectedProfileAccentColor.MinChatBoostLevel > level)
@@ -286,22 +252,22 @@ namespace Telegram.ViewModels.Supergroups
                 level = SelectedProfileAccentColor.MinChatBoostLevel;
             }
 
-            if (SelectedProfileCustomEmojiId != 0 && ProfileCustomEmojiRequiredLevel > level)
+            if (SelectedProfileCustomEmojiId != 0 && MinProfileBackgroundCustomEmojiBoostLevel > level)
             {
                 feature = ChatBoostFeature.ProfileBackgroundCustomEmoji;
-                level = ProfileCustomEmojiRequiredLevel;
+                level = MinProfileBackgroundCustomEmojiBoostLevel;
             }
 
-            if (SelectedEmojiStatus != null && EmojiStatusRequiredLevel > level)
+            if (SelectedEmojiStatus != null && MinEmojiStatusBoostLevel > level)
             {
                 feature = ChatBoostFeature.EmojiStatus;
-                level = EmojiStatusRequiredLevel;
+                level = MinEmojiStatusBoostLevel;
             }
 
-            if (SelectedChatTheme?.DarkSettings != null && ChatThemeRequiredLevel > level)
+            if (SelectedChatTheme?.DarkSettings != null && MinChatThemeBackgroundBoostLevel > level)
             {
                 feature = ChatBoostFeature.ChatTheme;
-                level = ChatThemeRequiredLevel;
+                level = MinChatThemeBackgroundBoostLevel;
             }
 
             return level;
