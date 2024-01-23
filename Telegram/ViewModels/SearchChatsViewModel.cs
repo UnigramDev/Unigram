@@ -35,6 +35,7 @@ namespace Telegram.ViewModels
 
         private CancellationTokenSource _cancellation = new();
 
+        private string _prevQuery;
         private string _nextOffset;
 
         public SearchChatsViewModel(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator)
@@ -99,7 +100,12 @@ namespace Telegram.ViewModels
 
         private bool CanUpdateQuery(string value)
         {
-            UpdateQueryOffline(value);
+            if (string.Equals(value, _prevQuery))
+            {
+                return false;
+            }
+
+            UpdateQueryOffline(_prevQuery = value);
             return value.Length > 0;
         }
 
