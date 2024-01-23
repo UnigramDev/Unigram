@@ -113,6 +113,16 @@
                                           Click="{x:Bind ViewModel.OpenVoiceMessages}"
                                           IsChevronVisible="True"
                                           Glyph="&#xE720;" />
+
+                    <controls:BadgeButton x:Name="PrivacyMessages"
+                                          x:Load="{x:Bind ViewModel.IsPremiumAvailable, Mode=OneWay}"
+                                          Content="{CustomResource PrivacyMessages}"
+                                          Badge="{x:Bind ConvertNewChat(ViewModel.AllowNewChatsFromUnknownUsers), Mode=OneWay}"
+                                          IsPremiumVisible="{x:Bind ViewModel.IsPremium, Mode=OneWay}"
+                                          Style="{StaticResource GlyphBadgeButtonStyle}"
+                                          Click="{x:Bind ViewModel.OpenMessages}"
+                                          IsChevronVisible="True"
+                                          Glyph="&#xE8BD;" />
                 </controls:HeaderedControl>
 
                 <controls:HeaderedControl>

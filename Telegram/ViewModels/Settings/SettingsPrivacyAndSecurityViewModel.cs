@@ -128,6 +128,14 @@ namespace Telegram.ViewModels.Settings
                 }
             });
 
+            ClientService.Send(new GetNewChatPrivacySettings(), result =>
+            {
+                if (result is NewChatPrivacySettings settings)
+                {
+                    BeginOnUIThread(() => AllowNewChatsFromUnknownUsers = settings.AllowNewChatsFromUnknownUsers);
+                }
+            });
+
             if (ApiInfo.IsPackagedRelease && ClientService.Options.CanIgnoreSensitiveContentRestrictions)
             {
                 ClientService.Send(new GetOption("ignore_sensitive_content_restrictions"), result =>
@@ -155,6 +163,13 @@ namespace Telegram.ViewModels.Settings
         public SettingsPrivacyAllowCallsViewModel AllowCallsRules => _allowCallsRules;
         public SettingsPrivacyAllowChatInvitesViewModel AllowChatInvitesRules => _allowChatInvitesRules;
         public SettingsPrivacyAllowPrivateVoiceAndVideoNoteMessagesViewModel AllowPrivateVoiceAndVideoNoteMessages => _allowPrivateVoiceAndVideoNoteMessages;
+
+        private bool? _allowNewChatsFromUnknownUsers;
+        public bool? AllowNewChatsFromUnknownUsers
+        {
+            get => _allowNewChatsFromUnknownUsers;
+            set => Set(ref _allowNewChatsFromUnknownUsers, value);
+        }
 
         private int _accountTtl;
         public int AccountTtl
@@ -523,6 +538,10 @@ namespace Telegram.ViewModels.Settings
             }
         }
 
+        public void OpenMessages()
+        {
+            NavigationService.Navigate(typeof(SettingsPrivacyNewChatPage));
+        }
 
         public override async void RaisePropertyChanged([CallerMemberName] string propertyName = null)
         {

@@ -36,6 +36,16 @@ namespace Telegram.Views.Settings
             return premium ? Icons.ChevronRight : Icons.LockClosed;
         }
 
+        private string ConvertNewChat(bool? value)
+        {
+            return value switch
+            {
+                true => Strings.LastSeenEverybody,
+                false => Strings.PrivacyMessagesContactsAndPremium,
+                _ => null
+            };
+        }
+
         private string ConvertOnOff(bool value)
         {
             return value ? Strings.NotificationsOn : Strings.NotificationsOff;

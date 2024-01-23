@@ -6390,6 +6390,20 @@ Payments will go directly to the developer of {0}. Telegram cannot provide any g
   <data name="PrivacyLastSeen" xml:space="preserve">
     <value>Last Seen &amp; Online</value>
   </data>
+  <data name="PrivacyMessages" xml:space="preserve">
+    <value>Messages</value>
+  </data>
+  <data name="PrivacyMessagesContactsAndPremium" xml:space="preserve">
+    <value>My Contacts and Premium users</value>
+  </data>
+  <data name="PrivacyMessagesInfo" xml:space="preserve">
+    <value>You can restrict messages from users who are not in your contacts and don&apos;t have Premium.
+
+**What is Telegram Premium?**</value>
+  </data>
+  <data name="PrivacyMessagesTitle" xml:space="preserve">
+    <value>Who can send me messages?</value>
+  </data>
   <data name="PrivacyP2P" xml:space="preserve">
     <value>Peer-to-Peer Calls</value>
   </data>

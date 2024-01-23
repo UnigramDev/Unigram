@@ -53,7 +53,8 @@ namespace Telegram.Views.Profile
 
         private FormattedText ConvertMoreSimilar(int totalCount)
         {
-            return Extensions.ReplacePremiumLink(string.Format(Strings.MoreSimilarText, "**100**"));
+            var text = string.Format(Strings.MoreSimilarText, "**100**");
+            return Extensions.ReplacePremiumLink(text, new PremiumFeatureIncreasedLimits());
         }
     }
 }

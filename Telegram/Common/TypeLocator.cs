@@ -640,6 +640,11 @@ namespace Telegram.Views
                         _clientService,
                         _settingsService,
                         _eventAggregator);
+                case nameof(Telegram.ViewModels.Settings.Privacy.SettingsPrivacyNewChatViewModel):
+                    return (T)(object)new Telegram.ViewModels.Settings.Privacy.SettingsPrivacyNewChatViewModel(
+                        _clientService,
+                        _settingsService,
+                        _eventAggregator);
                 case nameof(Telegram.ViewModels.Settings.SettingsAutoDeleteViewModel):
                     return (T)(object)new Telegram.ViewModels.Settings.SettingsAutoDeleteViewModel(
                         _clientService,

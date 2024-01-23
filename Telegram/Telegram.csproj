@@ -786,6 +786,7 @@
     <Compile Include="Td\Api\MessageId.cs" />
     <Compile Include="Collections\Handlers\SearchResultDiffHandler.cs" />
     <Compile Include="ViewModels\Settings\Privacy\SettingsPrivacyShowBioViewModel.cs" />
+    <Compile Include="ViewModels\Settings\Privacy\SettingsPrivacyNewChatViewModel.cs" />
     <Compile Include="ViewModels\Settings\SettingsPowerSavingViewModel.cs" />
     <Compile Include="ViewModels\Supergroups\SupergroupProfileColorViewModel.cs" />
     <Compile Include="ViewModels\Settings\SettingsProfileColorViewModel.cs" />
@@ -936,6 +937,9 @@
     </Compile>
     <Compile Include="Views\Settings\Password\SettingsPasswordConfirmPopup.xaml.cs">
       <DependentUpon>SettingsPasswordConfirmPopup.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Settings\Privacy\SettingsPrivacyNewChatPage.xaml.cs">
+      <DependentUpon>SettingsPrivacyNewChatPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Settings\SettingsPasswordPage.xaml.cs">
       <DependentUpon>SettingsPasswordPage.xaml</DependentUpon>
@@ -2445,6 +2449,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Views\Settings\Password\SettingsPasswordConfirmPopup.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\Settings\Privacy\SettingsPrivacyNewChatPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

@@ -30,7 +30,7 @@ namespace Telegram.ViewModels.Settings
 
         protected override Task OnNavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
         {
-            UpdatePrivacyAsync();
+            UpdatePrivacy();
             return Task.CompletedTask;
         }
 
@@ -43,22 +43,22 @@ namespace Telegram.ViewModels.Settings
         {
             if (update.Setting.TypeEquals(_inputKey))
             {
-                UpdatePrivacy(update.Rules);
+                UpdatePrivacyImpl(update.Rules);
             }
         }
 
-        private void UpdatePrivacyAsync()
+        private void UpdatePrivacy()
         {
             ClientService.Send(new GetUserPrivacySettingRules(_inputKey), result =>
             {
                 if (result is UserPrivacySettingRules rules)
                 {
-                    UpdatePrivacy(rules);
+                    UpdatePrivacyImpl(rules);
                 }
             });
         }
 
-        private void UpdatePrivacy(UserPrivacySettingRules rules)
+        private void UpdatePrivacyImpl(UserPrivacySettingRules rules)
         {
             PrivacyValue? primary = null;
             var badge = string.Empty;

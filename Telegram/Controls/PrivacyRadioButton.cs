@@ -12,19 +12,6 @@ namespace Telegram.Controls
 {
     public class PrivacyRadioButton : RadioButton
     {
-        public PrivacyRadioButton()
-        {
-            Click += OnClick;
-        }
-
-        private void OnClick(object sender, RoutedEventArgs e)
-        {
-            if (Value != Type)
-            {
-                Value = Type;
-            }
-        }
-
         #region Type
 
         public PrivacyValue Type
@@ -67,5 +54,33 @@ namespace Telegram.Controls
                 ClearValue(IsCheckedProperty);
             }
         }
+
+        protected override void OnToggle()
+        {
+            if (IsFaux)
+            {
+                return;
+            }
+
+            if (Value != Type)
+            {
+                Value = Type;
+            }
+
+            base.OnToggle();
+        }
+
+        #region IsFaux
+
+        public bool IsFaux
+        {
+            get { return (bool)GetValue(IsFauxProperty); }
+            set { SetValue(IsFauxProperty, value); }
+        }
+
+        public static readonly DependencyProperty IsFauxProperty =
+            DependencyProperty.Register("IsFaux", typeof(bool), typeof(PrivacyRadioButton), new PropertyMetadata(false));
+
+        #endregion
     }
 }

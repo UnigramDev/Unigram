@@ -177,7 +177,7 @@ namespace Telegram.Controls
 
         public static Task<ContentDialogResult> ShowActionAsync(string text, string action, AnimatedImageSource icon, ElementTheme requestedTheme = ElementTheme.Dark, TimeSpan? dismissAfter = null)
         {
-            return ShowActionAsync(null, ClientEx.GetMarkdownText(text), action, icon, TeachingTipPlacementMode.Center, requestedTheme, dismissAfter);
+            return ShowActionAsync(null, ClientEx.ParseMarkdown(text), action, icon, TeachingTipPlacementMode.Center, requestedTheme, dismissAfter);
         }
 
         public static Task<ContentDialogResult> ShowActionAsync(FormattedText text, string action, AnimatedImageSource icon, ElementTheme requestedTheme = ElementTheme.Dark, TimeSpan? dismissAfter = null)
@@ -209,7 +209,7 @@ namespace Telegram.Controls
 
         public static Task<ContentDialogResult> ShowActionAsync(string text, string action, FrameworkElement icon, ElementTheme requestedTheme = ElementTheme.Dark, TimeSpan? dismissAfter = null)
         {
-            return ShowActionAsync(null, ClientEx.GetMarkdownText(text), action, icon, TeachingTipPlacementMode.Center, requestedTheme, dismissAfter);
+            return ShowActionAsync(null, ClientEx.ParseMarkdown(text), action, icon, TeachingTipPlacementMode.Center, requestedTheme, dismissAfter);
         }
 
         public static Task<ContentDialogResult> ShowActionAsync(FormattedText text, string action, FrameworkElement icon, ElementTheme requestedTheme = ElementTheme.Dark, TimeSpan? dismissAfter = null)
@@ -263,7 +263,7 @@ namespace Telegram.Controls
 
         public static Task<ContentDialogResult> ShowCountdownAsync(string text, string action, TimeSpan dismissAfter, ElementTheme requestedTheme = ElementTheme.Dark)
         {
-            return ShowCountdownAsync(null, ClientEx.GetMarkdownText(text), action, dismissAfter, TeachingTipPlacementMode.Center, requestedTheme);
+            return ShowCountdownAsync(null, ClientEx.ParseMarkdown(text), action, dismissAfter, TeachingTipPlacementMode.Center, requestedTheme);
         }
 
         public static Task<ContentDialogResult> ShowCountdownAsync(FormattedText text, string action, TimeSpan dismissAfter, ElementTheme requestedTheme = ElementTheme.Dark)

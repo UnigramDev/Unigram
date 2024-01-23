@@ -391,12 +391,13 @@ namespace Telegram.Common
             }
         }
 
-        public static FormattedText ReplacePremiumLink(string text)
+        public static FormattedText ReplacePremiumLink(string text, PremiumFeature feature)
         {
             var markdown = ClientEx.ParseMarkdown(text);
             if (markdown.Entities.Count == 1)
             {
-                // TODO: replace with link
+                // TODO: premium source
+                markdown.Entities[0].Type = new TextEntityTypeTextUrl("tg://premium_offer");
             }
 
             return markdown;
