@@ -359,7 +359,7 @@ namespace Telegram.ViewModels.Settings
             RestrictedBadge = GetBadge(_restrictedUsers.UserIds, _restrictedChatMembers.ChatIds);
         }
 
-        public async void Save()
+        public virtual async void Save()
         {
             var response = await SendAsync();
             if (response is Ok)

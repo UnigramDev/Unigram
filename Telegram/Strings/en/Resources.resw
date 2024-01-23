@@ -4524,6 +4524,14 @@ They can still join via an invite link as long as they are not on the Removed Us
   <data name="HidePinnedMessages" xml:space="preserve">
     <value>HIDE PINNED MESSAGES</value>
   </data>
+  <data name="HideReadTime" xml:space="preserve">
+    <value>Hide Read Time</value>
+  </data>
+  <data name="HideReadTimeInfo" xml:space="preserve">
+    <value>Hide the time when you read messages from people who can’t see your last seen. If you turn this on, their read time will also be hidden from you (unless you are a Premium user).
+
+This setting does not affect group chats.</value>
+  </data>
   <data name="HideRecentViews" xml:space="preserve">
     <value>Hide Recent Views</value>
   </data>
@@ -6395,6 +6403,18 @@ Payments will go directly to the developer of {0}. Telegram cannot provide any g
   </data>
   <data name="PrivacyLastSeen" xml:space="preserve">
     <value>Last Seen &amp; Online</value>
+  </data>
+  <data name="PrivacyLastSeenPremium" xml:space="preserve">
+    <value>Subscribe to Telegram Premium</value>
+  </data>
+  <data name="PrivacyLastSeenPremiumForPremium" xml:space="preserve">
+    <value>Subscribed to Telegram Premium</value>
+  </data>
+  <data name="PrivacyLastSeenPremiumInfo" xml:space="preserve">
+    <value>If you subscribe to Premium, you will see other users’ last seen and read time even if you hid yours from them (unless they specifically restricted it).</value>
+  </data>
+  <data name="PrivacyLastSeenPremiumInfoForPremium" xml:space="preserve">
+    <value>Because you are a Telegram Premium subscriber, you will see the last seen and read time of all users who are sharing it with you – even if you are hiding yours.</value>
   </data>
   <data name="PrivacyMessages" xml:space="preserve">
     <value>Messages</value>

@@ -22,6 +22,20 @@ namespace Telegram.Views.Settings.Privacy
 
         #region Binding
 
+        private string ConvertPremiumFooter(bool premium)
+        {
+            return premium
+                ? Strings.PrivacyLastSeenPremiumInfoForPremium
+                : Strings.PrivacyLastSeenPremiumInfo;
+        }
+
+        private string ConvertPremiumText(bool premium)
+        {
+            return premium
+                ? Strings.PrivacyLastSeenPremiumForPremium
+                : Strings.PrivacyLastSeenPremium;
+        }
+
         private Visibility ConvertNever(PrivacyValue value)
         {
             return value is PrivacyValue.AllowAll or PrivacyValue.AllowContacts ? Visibility.Visible : Visibility.Collapsed;
