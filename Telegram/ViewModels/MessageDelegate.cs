@@ -19,7 +19,7 @@ using Telegram.Services.Settings;
 using Telegram.Td.Api;
 using Telegram.ViewModels.Delegates;
 using Telegram.ViewModels.Gallery;
-using Telegram.Views.Popups;
+using Telegram.Views;
 using Windows.UI.Xaml;
 
 namespace Telegram.ViewModels
@@ -140,19 +140,12 @@ namespace Telegram.ViewModels
 
         public async void OpenFile(File file)
         {
-            // TODO: Replace with IStorageService.OpenFileAsync
-
-            var permanent = await ClientService.GetPermanentFileAsync(file);
-            if (permanent != null)
+            // TODO: I don't like retrieving services this way
+            var service = TypeResolver.Current.Resolve<IStorageService>(ClientService.SessionId);
+            if (service != null)
             {
-                if (file.Local.Path.EndsWith(".unigram-theme"))
-                {
-                    await ShowPopupAsync(new ThemePreviewPopup(permanent));
-                }
-                else
-                {
-                    await Windows.System.Launcher.LaunchFileAsync(permanent);
-                }
+                await service.OpenFileAsync(file);
+                return;
             }
         }
 

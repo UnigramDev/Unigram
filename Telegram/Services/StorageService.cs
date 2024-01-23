@@ -124,7 +124,7 @@ namespace Telegram.Services
 
         public Task OpenFileAsync(File file)
         {
-            return OpenFileAsync(file);
+            return OpenFileAsync(file, null);
         }
 
         public Task OpenFileWithAsync(File file)
@@ -146,7 +146,10 @@ namespace Telegram.Services
 
             try
             {
-                var opened = await Launcher.LaunchFileAsync(permanent, options);
+                var opened = options != null
+                    ? await Launcher.LaunchFileAsync(permanent, options)
+                    : await Launcher.LaunchFileAsync(permanent);
+
                 if (opened)
                 {
                     return;
