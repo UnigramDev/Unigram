@@ -47,9 +47,17 @@ namespace Telegram.ViewModels
             MessageId = threadId;
         }
 
+        public ChatNavigationArgs(long chatId, SavedMessagesTopic savedMessagesTopic)
+        {
+            ChatId = chatId;
+            SavedMessagesTopic = savedMessagesTopic;
+        }
+
         public long ChatId { get; }
 
         public long MessageId { get; }
+
+        public SavedMessagesTopic SavedMessagesTopic { get; }
     }
 
     public partial class DialogViewModel : ComposeViewModel, IDelegable<IDialogDelegate>
@@ -170,6 +178,13 @@ namespace Telegram.ViewModels
             set => Set(ref _topic, value);
         }
 
+        protected SavedMessagesTopic _savedMessagesTopic;
+        public SavedMessagesTopic SavedMessagesTopic
+        {
+            get => _savedMessagesTopic;
+            set => Set(ref _savedMessagesTopic, value);
+        }
+
         protected Chat _chat;
         public override Chat Chat
         {
@@ -183,15 +198,28 @@ namespace Telegram.ViewModels
         private string _lastSeen;
         public string LastSeen
         {
-            get => _type == DialogType.EventLog ? Strings.EventLog : _lastSeen;
-            set { Set(ref _lastSeen, value); RaisePropertyChanged(nameof(Subtitle)); }
+            get => _type switch
+            {
+                DialogType.EventLog => Strings.EventLog,
+                DialogType.SavedMessagesTopic => Strings.SavedMessagesTab,
+                _ => _lastSeen
+            };
+            set
+            {
+                Set(ref _lastSeen, value);
+                RaisePropertyChanged(nameof(Subtitle));
+            }
         }
 
         private string _onlineCount;
         public string OnlineCount
         {
             get => _onlineCount;
-            set { Set(ref _onlineCount, value); RaisePropertyChanged(nameof(Subtitle)); }
+            set
+            {
+                Set(ref _onlineCount, value);
+                RaisePropertyChanged(nameof(Subtitle));
+            }
         }
 
         public virtual string Subtitle
@@ -206,15 +234,15 @@ namespace Telegram.ViewModels
 
                 if (chat.Type is ChatTypePrivate or ChatTypeSecret)
                 {
-                    return _lastSeen;
+                    return LastSeen;
                 }
 
-                if (Topic == null && !string.IsNullOrEmpty(_onlineCount) && !string.IsNullOrEmpty(_lastSeen))
+                if (Topic == null && !string.IsNullOrEmpty(OnlineCount) && !string.IsNullOrEmpty(LastSeen))
                 {
-                    return string.Format("{0}, {1}", _lastSeen, _onlineCount);
+                    return string.Format("{0}, {1}", LastSeen, OnlineCount);
                 }
 
-                return _lastSeen;
+                return LastSeen;
             }
         }
 
@@ -453,7 +481,13 @@ namespace Telegram.ViewModels
             return chat.LastMessage?.Id == last.Id;
         }
 
-        public bool? IsFirstSliceLoaded { get; set; }
+        private bool? _isFirstSliceLoaded;
+        public bool? IsFirstSliceLoaded
+        {
+            get => _isFirstSliceLoaded;
+            set => Set(ref _isFirstSliceLoaded, value);
+        }
+
         public bool? IsLastSliceLoaded { get; set; }
 
         private bool _isEmpty = true;
@@ -501,7 +535,7 @@ namespace Telegram.ViewModels
             // Backward => Going to top, to the past
             // Forward => Going to bottom, to the present
 
-            if (_type is not DialogType.History and not DialogType.Thread and not DialogType.Pinned)
+            if (_type is not DialogType.History and not DialogType.Thread and not DialogType.Pinned and not DialogType.SavedMessagesTopic)
             {
                 return;
             }
@@ -555,7 +589,11 @@ namespace Telegram.ViewModels
                 }
 
                 Function func;
-                if (_topic != null)
+                if (_savedMessagesTopic != null)
+                {
+                    func = new GetSavedMessagesTopicHistory(_savedMessagesTopic, fromMessageId, offset, 50);
+                }
+                else if (_topic != null)
                 {
                     func = new GetMessageThreadHistory(chat.Id, _topic.Info.MessageThreadId, fromMessageId, offset, 50);
                 }
@@ -565,7 +603,6 @@ namespace Telegram.ViewModels
                 }
                 else if (_type == DialogType.Pinned)
                 {
-                    // TODO: 172 savedMessagesTopic
                     func = new SearchChatMessages(chat.Id, string.Empty, null, fromMessageId, offset, 50, new SearchMessagesFilterPinned(), 0, null);
                 }
                 else
@@ -863,7 +900,6 @@ namespace Telegram.ViewModels
                 //Delegate?.UpdatePinnedMessage(chat, null, chat.PinnedMessageId != 0);
                 //Delegate?.UpdatePinnedMessage(chat, true);
 
-                // TODO: 172 savedMessagesTopic
                 var count = await ClientService.SendAsync(new GetChatMessageCount(chat.Id, filter, null, true)) as Count;
                 if (count != null)
                 {
@@ -894,7 +930,6 @@ namespace Telegram.ViewModels
                 limit = 100;
             }
 
-            // TODO: 172 savedMessagesTopic
             var func = new SearchChatMessages(chat.Id, string.Empty, null, maxId, offset, limit, new SearchMessagesFilterPinned(), 0, null);
 
             var tsc = new TaskCompletionSource<List<MessageViewModel>>();
@@ -951,7 +986,7 @@ namespace Telegram.ViewModels
 
         public async Task LoadMessageSliceAsync(long? previousId, long maxId, VerticalAlignment alignment = VerticalAlignment.Center, double? pixel = null, ScrollIntoViewAlignment? direction = null, bool? disableAnimation = null, TextQuote highlight = null, bool second = false)
         {
-            if (_type is not DialogType.History and not DialogType.Thread and not DialogType.Pinned)
+            if (_type is not DialogType.History and not DialogType.Thread and not DialogType.Pinned and not DialogType.SavedMessagesTopic)
             {
                 NotifyMessageSliceLoaded();
                 return;
@@ -1067,6 +1102,9 @@ namespace Telegram.ViewModels
 
                     NotifyMessageSliceLoaded();
 
+                    IsLastSliceLoaded = null;
+                    IsFirstSliceLoaded = IsEndReached();
+
                     if (Items.TryGetValue(maxId, out already))
                     {
                         HistoryField?.ScrollToItem(already, alignment, alignment == VerticalAlignment.Center ? new MessageBubbleHighlightOptions(highlight) : null, pixel, direction ?? ScrollIntoViewAlignment.Leading, disableAnimation);
@@ -1094,9 +1132,6 @@ namespace Telegram.ViewModels
                         loadMore = PanelScrollingDirection.Backward;
                     }
 
-                    IsLastSliceLoaded = null;
-                    IsFirstSliceLoaded = IsEndReached();
-
                     UpdateDetectedLanguage();
 
                     await AddSponsoredMessagesAsync();
@@ -1117,7 +1152,11 @@ namespace Telegram.ViewModels
         private async Task<LoadSliceResult> LoadMessageSliceImpl(Chat chat, long maxId, VerticalAlignment alignment, ScrollIntoViewAlignment? direction, double? pixel)
         {
             Task<BaseObject> func;
-            if (_topic != null)
+            if (_savedMessagesTopic != null)
+            {
+                func = ClientService.SendAsync(new GetSavedMessagesTopicHistory(_savedMessagesTopic, maxId, -25, 50));
+            }
+            else if (_topic != null)
             {
                 // TODO: Workaround, should be removed some day
                 await ClientService.SendAsync(new GetMessage(chat.Id, _topic.Info.MessageThreadId));
@@ -1776,20 +1815,28 @@ namespace Telegram.ViewModels
         {
             if (parameter is ChatNavigationArgs args)
             {
-                Topic = await ClientService.SendAsync(new GetForumTopic(args.ChatId, args.MessageId)) as ForumTopic;
-                Thread = await ClientService.SendAsync(new GetMessageThread(args.ChatId, args.MessageId)) as MessageThreadInfo;
-
-                if (Topic != null)
+                if (args.SavedMessagesTopic != null)
                 {
                     parameter = args.ChatId;
-                }
-                else if (Thread != null)
-                {
-                    parameter = Thread.ChatId;
+                    SavedMessagesTopic = args.SavedMessagesTopic;
                 }
                 else
                 {
-                    return;
+                    Topic = await ClientService.SendAsync(new GetForumTopic(args.ChatId, args.MessageId)) as ForumTopic;
+                    Thread = await ClientService.SendAsync(new GetMessageThread(args.ChatId, args.MessageId)) as MessageThreadInfo;
+
+                    if (Topic != null)
+                    {
+                        parameter = args.ChatId;
+                    }
+                    else if (Thread != null)
+                    {
+                        parameter = Thread.ChatId;
+                    }
+                    else
+                    {
+                        return;
+                    }
                 }
             }
 
@@ -1844,6 +1891,12 @@ namespace Telegram.ViewModels
 
                 state.Remove("message_id");
                 LoadMessageSliceAsync(null, navigation);
+            }
+            else if (_type == DialogType.SavedMessagesTopic)
+            {
+                Logger.Debug(string.Format("{0} - Loadings saved messages topic", chat.Id));
+
+                LoadMessageSliceAsync(null, long.MaxValue, VerticalAlignment.Bottom);
             }
             else
             {
@@ -2075,6 +2128,11 @@ namespace Telegram.ViewModels
             IsFirstSliceLoaded = null;
 
             ClientService.Send(new CloseChat(chat.Id));
+
+            if (_type is not DialogType.History and not DialogType.Thread)
+            {
+                return;
+            }
 
             void Remove(string reason)
             {
@@ -2846,6 +2904,41 @@ namespace Telegram.ViewModels
             }
         }
 
+        public async void DeleteTopic()
+        {
+            var topic = _savedMessagesTopic;
+            if (topic == null)
+            {
+                return;
+            }
+
+            string message;
+            string title;
+            string primary;
+
+            if (topic is SavedMessagesTopicMyNotes)
+            {
+                message = Strings.ClearHistoryMyNotesMessage;
+                title = Strings.ClearHistoryMyNotesTitle;
+                primary = Strings.Delete;
+            }
+            else
+            {
+                var chatTitle = ClientService.GetTitle(topic);
+
+                message = string.Format(Strings.ClearHistoryMessageSingle, chatTitle);
+                title = string.Format(Strings.ClearHistoryTitleSingle, chatTitle);
+                primary = Strings.Remove;
+            }
+
+            var confirm = await ShowPopupAsync(message, title, primary, Strings.Cancel);
+            if (confirm == ContentDialogResult.Primary)
+            {
+                NavigationService.GoBack();
+                ClientService.Send(new DeleteSavedMessagesTopicHistory(topic));
+            }
+        }
+
         #endregion
 
         #region Clear history
@@ -3519,6 +3612,13 @@ namespace Telegram.ViewModels
             if (_type == DialogType.EventLog)
             {
                 FilterExecute();
+            }
+            else if (_type == DialogType.SavedMessagesTopic)
+            {
+                if (SavedMessagesTopic is SavedMessagesTopicSavedFromChat savedFromChat && ClientService.TryGetChat(savedFromChat.ChatId, out Chat savedChat))
+                {
+                    NavigationService.NavigateToChat(savedChat);
+                }
             }
             else if (_type == DialogType.Pinned)
             {
@@ -4312,6 +4412,7 @@ namespace Telegram.ViewModels
         Thread,
         Pinned,
         ScheduledMessages,
+        SavedMessagesTopic,
         EventLog
     }
 }

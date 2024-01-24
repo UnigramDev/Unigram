@@ -18,6 +18,7 @@ using Telegram.Navigation.Services;
 using Telegram.Services;
 using Telegram.Td.Api;
 using Telegram.ViewModels.Delegates;
+using Telegram.Views;
 using Telegram.Views.Popups;
 using Telegram.Views.Profile;
 using Windows.UI.Xaml.Controls;
@@ -45,12 +46,13 @@ namespace Telegram.ViewModels.Profile
 
         private readonly IMessageDelegate _messageDelegate;
 
+        protected readonly ProfileSavedChatsTabViewModel _savedChatsViewModel;
         protected readonly ProfileStoriesTabViewModel _storiesTabViewModel;
         protected readonly ProfileGroupsTabViewModel _groupsTabViewModel;
         protected readonly ProfileChannelsTabViewModel _channelsTabViewModel;
         protected readonly ProfileMembersTabViewModel _membersTabVieModel;
 
-        public ProfileTabsViewModel(IClientService clientService, ISettingsService settingsService, IStorageService storageService, IEventAggregator aggregator, IPlaybackService playbackService, ProfileStoriesTabViewModel profileStoriesTabViewModel, ProfileGroupsTabViewModel profileGroupsTabViewModel, ProfileChannelsTabViewModel profileChannelsTabViewModel, ProfileMembersTabViewModel profileMembersTabViewModel)
+        public ProfileTabsViewModel(IClientService clientService, ISettingsService settingsService, IStorageService storageService, IEventAggregator aggregator, IPlaybackService playbackService)
             : base(clientService, settingsService, aggregator)
         {
             _playbackService = playbackService;
@@ -58,16 +60,18 @@ namespace Telegram.ViewModels.Profile
 
             _messageDelegate = new MessageDelegate(this);
 
-            _storiesTabViewModel = profileStoriesTabViewModel;
-            _groupsTabViewModel = profileGroupsTabViewModel;
-            _channelsTabViewModel = profileChannelsTabViewModel;
-            _membersTabVieModel = profileMembersTabViewModel;
+            _savedChatsViewModel = TypeResolver.Current.Resolve<ProfileSavedChatsTabViewModel>(clientService.SessionId);
+            _storiesTabViewModel = TypeResolver.Current.Resolve<ProfileStoriesTabViewModel>(clientService.SessionId);
+            _groupsTabViewModel = TypeResolver.Current.Resolve<ProfileGroupsTabViewModel>(clientService.SessionId);
+            _channelsTabViewModel = TypeResolver.Current.Resolve<ProfileChannelsTabViewModel>(clientService.SessionId);
+            _membersTabVieModel = TypeResolver.Current.Resolve<ProfileMembersTabViewModel>(clientService.SessionId);
             _membersTabVieModel.IsEmbedded = true;
 
-            Children.Add(profileStoriesTabViewModel);
-            Children.Add(profileGroupsTabViewModel);
-            Children.Add(profileChannelsTabViewModel);
-            Children.Add(profileMembersTabViewModel);
+            Children.Add(_savedChatsViewModel);
+            Children.Add(_storiesTabViewModel);
+            Children.Add(_groupsTabViewModel);
+            Children.Add(_channelsTabViewModel);
+            Children.Add(_membersTabVieModel);
 
             Items = new ObservableCollection<ProfileTabItem>();
 
@@ -108,6 +112,13 @@ namespace Telegram.ViewModels.Profile
         {
             get => _topic;
             set => Set(ref _topic, value);
+        }
+
+        protected SavedMessagesTopic _savedMessagesTopic;
+        public SavedMessagesTopic SavedMessagesTopic
+        {
+            get => _savedMessagesTopic;
+            set => Set(ref _savedMessagesTopic, value);
         }
 
         protected override async Task OnNavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
@@ -154,7 +165,11 @@ namespace Telegram.ViewModels.Profile
 
         private async Task UpdateTabsAsync(Chat chat)
         {
-            if (chat.Type is ChatTypePrivate or ChatTypeSecret)
+            if (_savedMessagesTopic != null)
+            {
+                await UpdateSharedCountAsync(chat);
+            }
+            else if (chat.Type is ChatTypePrivate or ChatTypeSecret)
             {
                 var user = ClientService.GetUser(chat);
                 var cached = ClientService.GetUserFull(chat);
@@ -162,7 +177,11 @@ namespace Telegram.ViewModels.Profile
                 // This should really rarely happen
                 cached ??= await ClientService.SendAsync(new GetUserFullInfo(user.Id)) as UserFullInfo;
 
-                if (cached != null && cached.HasPinnedStories)
+                if (user.Id == ClientService.Options.MyId)
+                {
+                    AddTab(new ProfileTabItem(Strings.SavedDialogsTab, typeof(ProfileSavedChatsTabPage)));
+                }
+                else if (cached != null && cached.HasPinnedStories)
                 {
                     AddTab(new ProfileTabItem(Strings.ProfileStories, typeof(ProfileStoriesTabPage)));
                 }
@@ -217,8 +236,7 @@ namespace Telegram.ViewModels.Profile
 
             for (int i = 0; i < filters.Length; i++)
             {
-                // TODO: 172 savedMessagesTopic
-                var response = await ClientService.SendAsync(new GetChatMessageCount(chat.Id, filters[i], null, false));
+                var response = await ClientService.SendAsync(new GetChatMessageCount(chat.Id, filters[i], _savedMessagesTopic, false));
                 if (response is Count count)
                 {
                     SharedCount[i] = count.CountValue;
@@ -308,7 +326,7 @@ namespace Telegram.ViewModels.Profile
         {
             if (sender is SearchMessagesFilter filter)
             {
-                return new MediaCollection(ClientService, Chat.Id, ThreadId, filter, query);
+                return new MediaCollection(ClientService, Chat.Id, ThreadId, SavedMessagesTopic, filter, query);
             }
 
             return null;
@@ -338,7 +356,7 @@ namespace Telegram.ViewModels.Profile
                 return;
             }
 
-            NavigationService.NavigateToChat(chat, message: message.Id);
+            NavigationService.NavigateToChat(chat, message.Id, _thread?.MessageThreadId, _savedMessagesTopic);
         }
 
         #endregion
@@ -442,7 +460,7 @@ namespace Telegram.ViewModels.Profile
             }
 
             var sameUser = messages.All(x => x.SenderId.AreTheSame(first.SenderId));
-            var dialog = new DeleteMessagesPopup(ClientService, items.Where(x => x != null).ToArray());
+            var dialog = new DeleteMessagesPopup(ClientService, SavedMessagesTopic, items.Where(x => x != null).ToArray());
 
             var confirm = await ShowPopupAsync(dialog);
             if (confirm != ContentDialogResult.Primary)

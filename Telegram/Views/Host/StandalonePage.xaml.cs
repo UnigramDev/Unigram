@@ -89,13 +89,8 @@ namespace Telegram.Views.Host
                 e.SourcePageType == typeof(ChatThreadPage) ||
                 e.SourcePageType == typeof(ChatScheduledPage) ||
                 e.SourcePageType == typeof(ChatEventLogPage) ||
-                e.SourcePageType == typeof(BlankPage); //||
-                                                       //frame.CurrentSourcePageType == typeof(ChatPage) ||
-                                                       //frame.CurrentSourcePageType == typeof(ChatPinnedPage) ||
-                                                       //frame.CurrentSourcePageType == typeof(ChatThreadPage) ||
-                                                       //frame.CurrentSourcePageType == typeof(ChatScheduledPage) ||
-                                                       //frame.CurrentSourcePageType == typeof(ChatEventLogPage) ||
-                                                       //frame.CurrentSourcePageType == typeof(BlankPage);
+                e.SourcePageType == typeof(ChatSavedPage) ||
+                e.SourcePageType == typeof(BlankPage);
 
             var type = allowed ? BackgroundKind.Background : BackgroundKind.Material;
 

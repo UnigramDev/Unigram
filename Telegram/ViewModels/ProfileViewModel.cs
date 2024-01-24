@@ -42,8 +42,8 @@ namespace Telegram.ViewModels
         private readonly INotificationsService _notificationsService;
         private readonly ITranslateService _translateService;
 
-        public ProfileViewModel(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator, IPlaybackService playbackService, IVoipService voipService, IVoipGroupService voipGroupService, INotificationsService notificationsService, IStorageService storageService, ITranslateService translateService, ProfileStoriesTabViewModel profileStoriesTabViewModel, ProfileGroupsTabViewModel profileGroupsTabViewModel, ProfileChannelsTabViewModel profileChannelsTabViewModel, ProfileMembersTabViewModel profileMembersTabViewModel)
-            : base(clientService, settingsService, storageService, aggregator, playbackService, profileStoriesTabViewModel, profileGroupsTabViewModel, profileChannelsTabViewModel, profileMembersTabViewModel)
+        public ProfileViewModel(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator, IPlaybackService playbackService, IVoipService voipService, IVoipGroupService voipGroupService, INotificationsService notificationsService, IStorageService storageService, ITranslateService translateService)
+            : base(clientService, settingsService, storageService, aggregator, playbackService)
         {
             _voipService = voipService;
             _voipGroupService = voipGroupService;
@@ -55,6 +55,7 @@ namespace Telegram.ViewModels
 
         public ITranslateService TranslateService => _translateService;
 
+        public ProfileSavedChatsTabViewModel SavedChatsTab => _savedChatsViewModel;
         public ProfileStoriesTabViewModel StoriesTab => _storiesTabViewModel;
         public ProfileGroupsTabViewModel GroupsTab => _groupsTabViewModel;
         public ProfileChannelsTabViewModel ChannelsTab => _channelsTabViewModel;
@@ -80,12 +81,15 @@ namespace Telegram.ViewModels
             {
                 parameter = args.ChatId;
 
-                if (ClientService.TryGetTopicInfo(args.ChatId, args.MessageId, out ForumTopicInfo info))
+                if (args.SavedMessagesTopic != null)
+                {
+                    SavedMessagesTopic = args.SavedMessagesTopic;
+                }
+                else if (ClientService.TryGetTopicInfo(args.ChatId, args.MessageId, out ForumTopicInfo info))
                 {
                     Topic = info;
                 }
             }
-
 
             var chatId = (long)parameter;
 
@@ -1018,6 +1022,11 @@ namespace Telegram.ViewModels
         {
             ClientService.Send(new OpenChatSimilarChat(_chat.Id, chat.Id));
             NavigationService.NavigateToChat(chat);
+        }
+
+        public void OpenSavedMessagesTopic(SavedMessagesTopic topic)
+        {
+            NavigationService.NavigateToChat(_chat.Id, topic: topic);
         }
 
         public void OpenAdmins()

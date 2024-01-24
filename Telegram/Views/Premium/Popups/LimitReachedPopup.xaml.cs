@@ -83,6 +83,7 @@ namespace Telegram.Views.Premium.Popups
                         lockedValue = Strings.LimitReachedFolderLinksLocked;
                         premiumValue = Strings.LimitReachedFolderLinksPremium;
                         break;
+                    case PremiumLimitTypePinnedSavedMessagesTopicCount:
                     case PremiumLimitTypePinnedArchivedChatCount:
                     case PremiumLimitTypePinnedChatCount:
                         iconValue = Icons.PinFilled;
@@ -219,6 +220,8 @@ namespace Telegram.Views.Premium.Popups
                     return CreateLimit(type, clientService.Options.ChatFolderCountMax);
                 case PremiumLimitTypeCreatedPublicChatCount:
                     return CreateLimit(type, 500);
+                case PremiumLimitTypePinnedSavedMessagesTopicCount:
+                    return CreateLimit(type, clientService.Options.PinnedSavedMessagesTopicCountMax);
                 case PremiumLimitTypePinnedArchivedChatCount:
                     return CreateLimit(type, clientService.Options.PinnedArchivedChatCountMax);
                 case PremiumLimitTypePinnedChatCount:

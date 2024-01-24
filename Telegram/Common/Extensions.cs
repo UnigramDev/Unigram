@@ -973,6 +973,42 @@ namespace Telegram.Common
             }
         }
 
+        public static int BinarySearch<TItem, TSearch>(this IList<TItem> list, TSearch value, Func<TSearch, TItem, int> comparer)
+        {
+            int lower = 0;
+            int upper = list.Count - 1;
+
+            while (lower <= upper)
+            {
+                int middle = lower + (upper - lower) / 2;
+                int comparisonResult = comparer(value, list[middle]);
+                if (comparisonResult < 0)
+                {
+                    upper = middle - 1;
+                }
+                else if (comparisonResult > 0)
+                {
+                    lower = middle + 1;
+                }
+                else
+                {
+                    return middle;
+                }
+            }
+
+            return ~lower;
+        }
+
+        public static int BinarySearch<TItem>(this IList<TItem> list, TItem value)
+        {
+            return BinarySearch(list, value, Comparer<TItem>.Default);
+        }
+
+        public static int BinarySearch<TItem>(this IList<TItem> list, TItem value, IComparer<TItem> comparer)
+        {
+            return list.BinarySearch(value, comparer.Compare);
+        }
+
         public static Hyperlink GetHyperlinkFromPoint(this RichTextBlock text, Point point)
         {
             var position = text.GetPositionFromPoint(point);

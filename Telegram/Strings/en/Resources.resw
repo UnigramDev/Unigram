@@ -849,6 +849,9 @@ to: {1}</value>
   <data name="AndMoreTyping_other" xml:space="preserve">
     <value>and {0} more are typing</value>
   </data>
+  <data name="AnonymousForward" xml:space="preserve">
+    <value>Author Hidden</value>
+  </data>
   <data name="AnonymousNumber" xml:space="preserve">
     <value>Anonymous Number</value>
   </data>
@@ -1069,6 +1072,12 @@ You can use Telegram on all your devices at once and use several accounts in the
   <data name="AreYouSureUnblockContact" xml:space="preserve">
     <value>Are you sure you want to unblock this user?</value>
   </data>
+  <data name="AreYouSureUnsaveFewMessages" xml:space="preserve">
+    <value>Are you sure you want to delete these messages?</value>
+  </data>
+  <data name="AreYouSureUnsaveSingleMessage" xml:space="preserve">
+    <value>Are you sure you want to remove this message from Saved Messages?</value>
+  </data>
   <data name="AreYouSureWebSessions" xml:space="preserve">
     <value>Are you sure you want to disconnect all websites where you logged in with Telegram?</value>
   </data>
@@ -1172,6 +1181,9 @@ Please take a look at the &lt;a href=&quot;https://telegram.org/faq#general-ques
   </data>
   <data name="AudioUnknownTitle" xml:space="preserve">
     <value>Unknown title</value>
+  </data>
+  <data name="AuthorHiddenDescription" xml:space="preserve">
+    <value>Senders of these messages restricted to link their name when forwarding.</value>
   </data>
   <data name="AutoDeleteConfirm" xml:space="preserve">
     <value>Confirm</value>
@@ -2699,8 +2711,26 @@ Minimum length is 5 characters.</value>
   <data name="ClearHistory" xml:space="preserve">
     <value>Clear History</value>
   </data>
+  <data name="ClearHistoryMessageMultiple_other" xml:space="preserve">
+    <value>Are you sure you want to unsave messages from {0} chats?</value>
+  </data>
+  <data name="ClearHistoryMessageSingle" xml:space="preserve">
+    <value>Are you sure you want to unsave messages from {0}?</value>
+  </data>
+  <data name="ClearHistoryMyNotesMessage" xml:space="preserve">
+    <value>Are you sure you want to delete all your notes?</value>
+  </data>
+  <data name="ClearHistoryMyNotesTitle" xml:space="preserve">
+    <value>Delete all your notes</value>
+  </data>
   <data name="ClearHistoryOptionAlso" xml:space="preserve">
     <value>Also clear history for {0}</value>
+  </data>
+  <data name="ClearHistoryTitleMultiple_other" xml:space="preserve">
+    <value>Unsave messages from {0} chats</value>
+  </data>
+  <data name="ClearHistoryTitleSingle" xml:space="preserve">
+    <value>Unsave messages from {0}</value>
   </data>
   <data name="ClearMediaCache" xml:space="preserve">
     <value>Clear Cache</value>
@@ -5397,6 +5427,9 @@ to unlock up to {0} similar channels.</value>
   <data name="MuteNotifications" xml:space="preserve">
     <value>Mute Forever</value>
   </data>
+  <data name="MyNotes" xml:space="preserve">
+    <value>My Notes</value>
+  </data>
   <data name="MyStory" xml:space="preserve">
     <value>My Story</value>
   </data>
@@ -7120,6 +7153,9 @@ The channel &quot;**{1}**&quot; will become private.</value>
   <data name="SaveChangesAlertTitle" xml:space="preserve">
     <value>Save changes?</value>
   </data>
+  <data name="SavedDialogsTab" xml:space="preserve">
+    <value>Chats</value>
+  </data>
   <data name="SavedGifsLimitSubtitle" xml:space="preserve">
     <value>Save up to {0} GIFs in your Favorite GIFs</value>
   </data>
@@ -7128,6 +7164,18 @@ The channel &quot;**{1}**&quot; will become private.</value>
   </data>
   <data name="SavedMessages" xml:space="preserve">
     <value>Saved Messages</value>
+  </data>
+  <data name="SavedMessagesTab" xml:space="preserve">
+    <value>Saved Messages</value>
+  </data>
+  <data name="SavedOpenChannel" xml:space="preserve">
+    <value>OPEN CHANNEL</value>
+  </data>
+  <data name="SavedOpenChat" xml:space="preserve">
+    <value>OPEN CHAT</value>
+  </data>
+  <data name="SavedOpenGroup" xml:space="preserve">
+    <value>OPEN GROUP</value>
   </data>
   <data name="SaveForNotifications" xml:space="preserve">
     <value>Save for Notifications</value>
@@ -8437,6 +8485,12 @@ If you are not comfortable with Telegram&apos;s modest needs, it won&apos;t be p
   </data>
   <data name="UnsavedChanges" xml:space="preserve">
     <value>Unsaved Changes</value>
+  </data>
+  <data name="UnsaveMessagesTitle" xml:space="preserve">
+    <value>Unsave {0}</value>
+  </data>
+  <data name="UnsaveSingleMessagesTitle" xml:space="preserve">
+    <value>Unsave message</value>
   </data>
   <data name="UnsupportedAttachment" xml:space="preserve">
     <value>Unsupported attachment</value>

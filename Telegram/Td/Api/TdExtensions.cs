@@ -66,6 +66,24 @@ namespace Telegram.Td.Api
             return string.Equals(x.ToString(), y.ToString());
         }
 
+        public static bool AreTheSame(this SavedMessagesTopic x, SavedMessagesTopic y)
+        {
+            if (x is SavedMessagesTopicAuthorHidden)
+            {
+                return y is SavedMessagesTopicAuthorHidden;
+            }
+            else if (x is SavedMessagesTopicMyNotes)
+            {
+                return y is SavedMessagesTopicMyNotes;
+            }
+            else if (x is SavedMessagesTopicSavedFromChat xChat && y is SavedMessagesTopicSavedFromChat yChat)
+            {
+                return xChat.ChatId == yChat.ChatId;
+            }
+
+            return false;
+        }
+
         public static long UserId(this ChatBoost boost)
         {
             return boost.Source switch
@@ -1711,6 +1729,12 @@ namespace Telegram.Td.Api
             }
             else if (message.ForwardInfo?.Origin is MessageOriginChannel originChannel)
             {
+                // TODO: not fully correct
+                if (message.ChatId == savedMessagesId)
+                {
+                    return message.ForwardInfo.Source != null;
+                }
+
                 return message.ForwardInfo.Source != null
                     && message.ForwardInfo.Source.ChatId == originChannel.ChatId
                     && message.ForwardInfo.Source.MessageId == originChannel.MessageId;
@@ -1725,6 +1749,24 @@ namespace Telegram.Td.Api
             }
 
             return false;
+        }
+
+        // TODO: not fully correct
+        public static bool HasSameOrigin(this MessageForwardInfo forwardInfo)
+        {
+            if (forwardInfo == null)
+            {
+                return true;
+            }
+
+            if (forwardInfo?.Origin is MessageOriginChannel originChannel)
+            {
+                return forwardInfo.Source != null
+                    && forwardInfo.Source.ChatId == originChannel.ChatId
+                    && forwardInfo.Source.MessageId == originChannel.MessageId;
+            }
+
+            return true;
         }
 
         public static string FullName(this User user)

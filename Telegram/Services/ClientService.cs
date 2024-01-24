@@ -91,6 +91,7 @@ namespace Telegram.Services
 
         string GetTitle(Chat chat, bool tiny = false);
         string GetTitle(long chatId, bool tiny = false);
+        string GetTitle(SavedMessagesTopic topic);
         string GetTitle(MessageOrigin origin, MessageImportInfo import);
 
         bool TryGetCachedReaction(string emoji, out EmojiReaction value);
@@ -1008,6 +1009,24 @@ namespace Telegram.Services
             }
 
             return chat.Title;
+        }
+
+        public string GetTitle(SavedMessagesTopic topic)
+        {
+            if (topic is SavedMessagesTopicMyNotes)
+            {
+                return Strings.MyNotes;
+            }
+            else if (topic is SavedMessagesTopicAuthorHidden)
+            {
+                return Strings.AnonymousForward;
+            }
+            else if (topic is SavedMessagesTopicSavedFromChat savedFromChat && TryGetChat(savedFromChat.ChatId, out Chat chat))
+            {
+                return GetTitle(chat);
+            }
+
+            return Strings.AnonymousForward;
         }
 
         public string GetTitle(MessageOrigin origin, MessageImportInfo import)

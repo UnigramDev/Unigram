@@ -371,11 +371,13 @@
     <Compile Include="ViewModels\Chats\ChatStoriesViewModel.cs" />
     <Compile Include="ViewModels\ChooseChatsViewModel.cs" />
     <Compile Include="ViewModels\ComposeViewModel.cs" />
+    <Compile Include="ViewModels\DialogSavedViewModel.cs" />
     <Compile Include="ViewModels\DialogViewModel.Translate.cs" />
     <Compile Include="Td\Api\MessageTranslateResult.cs" />
     <Compile Include="ViewModels\Profile\ProfileChannelsTabViewModel.cs" />
     <Compile Include="ViewModels\Profile\ProfileGroupsTabViewModel.cs" />
     <Compile Include="ViewModels\Profile\ProfileMembersTabViewModel.cs" />
+    <Compile Include="ViewModels\Profile\ProfileSavedChatsTabViewModel.cs" />
     <Compile Include="ViewModels\Profile\ProfileStoriesTabViewModel.cs" />
     <Compile Include="ViewModels\Profile\ProfileTabsViewModel.cs" />
     <Compile Include="ViewModels\SearchChatsViewModel.cs" />
@@ -870,6 +872,9 @@
     <Compile Include="Views\Chats\Popups\ChatBoostPopup.xaml.cs">
       <DependentUpon>ChatBoostPopup.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\ChatSavedPage.xaml.cs">
+      <DependentUpon>ChatSavedPage.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\ChatThreadPage.xaml.cs">
       <DependentUpon>ChatThreadPage.xaml</DependentUpon>
     </Compile>
@@ -920,6 +925,9 @@
     </Compile>
     <Compile Include="Views\Premium\Popups\ChangePrivacyPopup.xaml.cs">
       <DependentUpon>ChangePrivacyPopup.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Profile\ProfileSavedChatsTabPage.xaml.cs">
+      <DependentUpon>ProfileSavedChatsTabPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Settings\Password\SettingsPasswordCreatePopup.xaml.cs">
       <DependentUpon>SettingsPasswordCreatePopup.xaml</DependentUpon>
@@ -2371,6 +2379,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Views\ChatSavedPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Views\ChatThreadPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -2432,6 +2444,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Views\Premium\Popups\ChangePrivacyPopup.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\Profile\ProfileSavedChatsTabPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

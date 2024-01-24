@@ -204,6 +204,9 @@ namespace Telegram.Controls.Media
         public const string Archive = "\uE7B8";
         public const string ArchiveFilled = "\uEA0E";
 
+        public const string MyNotesFilled = "\uEA61";
+        public const string AuthorHiddenFilled = "\uEA62";
+
         public const string StoriesOff = "\uEA2D";
         public const string StoriesPinned = "\uE9AC";
         public const string StoriesPinnedOff = "\uE9D2";

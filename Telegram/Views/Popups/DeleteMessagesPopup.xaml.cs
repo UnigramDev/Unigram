@@ -17,14 +17,14 @@ namespace Telegram.Views.Popups
 {
     public sealed partial class DeleteMessagesPopup : ContentPopup
     {
-        public DeleteMessagesPopup(IClientService clientService, IList<Message> messages)
+        public DeleteMessagesPopup(IClientService clientService, SavedMessagesTopic topic, IList<Message> messages)
         {
             InitializeComponent();
 
             Title = messages.Count == 1
-                ? Strings.DeleteSingleMessagesTitle
-                : string.Format(Strings.DeleteMessagesTitle, Locale.Declension(Strings.R.messages, messages.Count));
-            PrimaryButtonText = Strings.OK;
+                ? topic == null ? Strings.DeleteSingleMessagesTitle : Strings.UnsaveSingleMessagesTitle
+                : string.Format(topic == null ? Strings.DeleteMessagesTitle : Strings.UnsaveMessagesTitle, Locale.Declension(Strings.R.messages, messages.Count));
+            PrimaryButtonText = topic == null ? Strings.Delete : Strings.Remove;
             SecondaryButtonText = Strings.Cancel;
 
             var first = messages.FirstOrDefault();
@@ -42,7 +42,7 @@ namespace Telegram.Views.Popups
             var user = clientService.GetUser(chat);
 
             var sameUser = messages.All(x => x.SenderId.AreTheSame(first.SenderId));
-            if (sameUser && !first.IsOutgoing && clientService.TryGetSupergroup(chat, out Supergroup supergroup) && !supergroup.IsChannel)
+            if (sameUser && topic == null && !first.IsOutgoing && clientService.TryGetSupergroup(chat, out Supergroup supergroup) && !supergroup.IsChannel)
             {
                 RevokeCheck.Visibility = Visibility.Collapsed;
                 ReportSpamCheck.Visibility = Visibility.Visible;
@@ -97,7 +97,13 @@ namespace Telegram.Views.Popups
                 var canBeDeletedOnlyForSelf = messages.All(x => x.CanBeDeletedOnlyForSelf);
                 var anyCanBeDeletedForAllUsers = messages.Any(x => x.IsOutgoing && x.CanBeDeletedForAllUsers);
 
-                if (chat.Type is ChatTypePrivate or ChatTypeBasicGroup)
+                if (topic != null)
+                {
+                    TextBlockHelper.SetMarkdown(Message, messages.Count == 1
+                        ? Strings.AreYouSureUnsaveSingleMessage
+                        : Strings.AreYouSureUnsaveFewMessages);
+                }
+                else if (chat.Type is ChatTypePrivate or ChatTypeBasicGroup)
                 {
                     if (anyCanBeDeletedForAllUsers && !canBeDeletedForAllUsers)
                     {

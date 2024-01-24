@@ -673,6 +673,8 @@ namespace Telegram.Controls.Messages
             }
         }
 
+        private bool _outgoingAction;
+
         private void UpdateAction(MessageViewModel message)
         {
             var chat = message?.Chat;
@@ -681,6 +683,8 @@ namespace Telegram.Controls.Messages
                 return;
             }
 
+            // TODO: this probably needs to go in MessageViewModel
+            var outgoing = (message.IsOutgoing && !message.IsChannelPost) || (message.IsSaved && message.ForwardInfo?.Source is { IsOutgoing: true });
             var content = message.GeneratedContent ?? message.Content;
             var light = content is MessageSticker
                 or MessageDice
@@ -691,13 +695,7 @@ namespace Telegram.Controls.Messages
             var info = message.InteractionInfo?.ReplyInfo;
             if (info != null && light && message.IsChannelPost && message.CanGetMessageThread)
             {
-                if (Action == null)
-                {
-                    Action = GetTemplateChild(nameof(Action)) as Border;
-                    ActionButton = GetTemplateChild(nameof(ActionButton)) as GlyphButton;
-
-                    ActionButton.Click += Action_Click;
-                }
+                FindAction(outgoing);
 
                 ActionButton.Glyph = Icons.ChatEmptyFilled16;
                 Action.Visibility = Visibility.Visible;
@@ -718,13 +716,7 @@ namespace Telegram.Controls.Messages
                 }
                 else
                 {
-                    if (Action == null)
-                    {
-                        Action = GetTemplateChild(nameof(Action)) as Border;
-                        ActionButton = GetTemplateChild(nameof(ActionButton)) as GlyphButton;
-
-                        ActionButton.Click += Action_Click;
-                    }
+                    FindAction(outgoing);
 
                     ActionButton.Glyph = Icons.ArrowRightFilled16;
                     Action.Visibility = Visibility.Visible;
@@ -734,13 +726,7 @@ namespace Telegram.Controls.Messages
             }
             else if (message.CanBeShared)
             {
-                if (Action == null)
-                {
-                    Action = GetTemplateChild(nameof(Action)) as Border;
-                    ActionButton = GetTemplateChild(nameof(ActionButton)) as GlyphButton;
-
-                    ActionButton.Click += Action_Click;
-                }
+                FindAction(outgoing);
 
                 ActionButton.Glyph = Icons.ShareFilled;
                 Action.Visibility = Visibility.Visible;
@@ -750,6 +736,30 @@ namespace Telegram.Controls.Messages
             else if (Action != null)
             {
                 Action.Visibility = Visibility.Collapsed;
+            }
+        }
+
+        private void FindAction(bool outgoing)
+        {
+            if (Action == null)
+            {
+                Action = GetTemplateChild(nameof(Action)) as Border;
+                ActionButton = GetTemplateChild(nameof(ActionButton)) as GlyphButton;
+
+                ActionButton.Click += Action_Click;
+            }
+
+            if (outgoing && !_outgoingAction)
+            {
+                _outgoingAction = true;
+                Action.Margin = new Thickness(0, 0, 8, 0);
+                Grid.SetColumn(Action, 0);
+            }
+            else if (_outgoingAction && !outgoing)
+            {
+                _outgoingAction = false;
+                Action.Margin = new Thickness(8, 0, 0, 0);
+                Grid.SetColumn(Action, 2);
             }
         }
 
@@ -816,6 +826,8 @@ namespace Telegram.Controls.Messages
                 return;
             }
 
+            // TODO: this probably needs to go in MessageViewModel
+            var outgoing = (message.IsOutgoing && !message.IsChannelPost) || (message.IsSaved && message.ForwardInfo?.Source is { IsOutgoing: true });
             var content = message.GeneratedContent ?? message.Content;
             var light = content is MessageSticker
                 or MessageDice
@@ -827,7 +839,7 @@ namespace Telegram.Controls.Messages
             var header = false;
             var forward = false;
 
-            if (!light && message.IsFirst && message.IsSaved)
+            if (!light && message.IsFirst && message.IsSaved && !outgoing)
             {
                 var title = string.Empty;
                 var foreground = default(SolidColorBrush);
@@ -947,7 +959,7 @@ namespace Telegram.Controls.Messages
                     ForwardLabel.Visibility = Visibility.Visible;
                 }
             }
-            else if (message.ForwardInfo != null && !message.IsSaved)
+            else if (message.ForwardInfo != null && (!message.IsSaved || !message.ForwardInfo.HasSameOrigin()))
             {
                 LoadForwardLabel();
                 forward = true;

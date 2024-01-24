@@ -53,7 +53,7 @@ namespace Telegram.Views
             {
                 Arrows.IsVisible = false;
             }
-            else if (ViewModel.Type is DialogType.History or DialogType.Thread)
+            else if (ViewModel.Type is DialogType.History or DialogType.Thread or DialogType.SavedMessagesTopic)
             {
                 Arrows.IsVisible = true;
             }
@@ -386,7 +386,7 @@ namespace Telegram.Views
                     GalleryViewModelBase viewModel;
                     if (message.Content is MessageAnimation)
                     {
-                        viewModel = new ChatGalleryViewModel(ViewModel.ClientService, ViewModel.StorageService, ViewModel.Aggregator, message.ChatId, ViewModel.ThreadId, message);
+                        viewModel = new ChatGalleryViewModel(ViewModel.ClientService, ViewModel.StorageService, ViewModel.Aggregator, message.ChatId, ViewModel.ThreadId, ViewModel.SavedMessagesTopic, message);
                     }
                     else
                     {
@@ -747,11 +747,11 @@ namespace Telegram.Views
                 return "ServiceMessageTemplate";
             }
 
-            if (message.IsChannelPost || message.IsSaved)
+            if (message.IsChannelPost || (message.IsSaved && message.ForwardInfo?.Source is { IsOutgoing: false }))
             {
                 return "FriendMessageTemplate";
             }
-            else if (message.IsOutgoing)
+            else if (message.IsOutgoing || message.ForwardInfo?.Source is { IsOutgoing: true })
             {
                 return "UserMessageTemplate";
             }

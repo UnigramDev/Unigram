@@ -56,6 +56,9 @@ namespace Telegram.Controls.Cells
 
         private Message _message;
 
+        private FoundSavedMessagesTopic _savedMessagesTopic;
+        private bool _savedMessagesTopicPinned;
+
         private int _thumbnailId;
 
         private string _dateLabel;
@@ -195,6 +198,10 @@ namespace Telegram.Controls.Cells
             {
                 UpdateMessage(_clientService, _message);
             }
+            else if (_savedMessagesTopic != null)
+            {
+                UpdateSavedMessagesTopic(_clientService, _savedMessagesTopic, _savedMessagesTopicPinned);
+            }
         }
 
         private void Segments_Click(object sender, RoutedEventArgs e)
@@ -209,6 +216,71 @@ namespace Telegram.Controls.Cells
             _clientService = clientService;
 
             Update(chat, chatList);
+        }
+
+        public void UpdateSavedMessagesTopic(IClientService clientService, FoundSavedMessagesTopic savedMessagesTopic, bool pinned)
+        {
+            _clientService = clientService;
+            _savedMessagesTopic = savedMessagesTopic;
+            _savedMessagesTopicPinned = pinned;
+
+            if (!_templateApplied)
+            {
+                return;
+            }
+
+            var message = savedMessagesTopic.LastMessage;
+
+            if (savedMessagesTopic.Topic is SavedMessagesTopicSavedFromChat savedFromChat && clientService.TryGetChat(savedFromChat.ChatId, out Chat chat))
+            {
+                UpdateChatTitle(chat);
+                UpdateChatPhoto(chat);
+                UpdateChatEmojiStatus(chat);
+
+                if (message != null)
+                {
+                    FromLabel.Text = UpdateFromLabel(clientService, chat, message);
+                }
+            }
+            else
+            {
+                if (savedMessagesTopic.Topic is SavedMessagesTopicMyNotes)
+                {
+                    TitleLabel.Text = Strings.MyNotes;
+                    Photo.Source = PlaceholderImage.GetGlyph(Icons.MyNotesFilled, 5);
+                    Photo.Shape = ProfilePictureShape.Ellipse;
+                    Identity.ClearStatus();
+                }
+                else if (savedMessagesTopic.Topic is SavedMessagesTopicAuthorHidden)
+                {
+                    TitleLabel.Text = Strings.AnonymousForward;
+                    Photo.Source = PlaceholderImage.GetGlyph(Icons.AuthorHiddenFilled, 5);
+                    Photo.Shape = ProfilePictureShape.Ellipse;
+                    Identity.ClearStatus();
+                }
+
+                if (message != null)
+                {
+                    FromLabel.Text = UpdateFromLabel(clientService, null, message);
+                }
+            }
+
+            UnreadBadge.Visibility = Visibility.Collapsed;
+            UnreadMentionsBadge.Visibility = Visibility.Collapsed;
+            PinnedIcon.Visibility = pinned
+                ? Visibility.Visible
+                : Visibility.Collapsed;
+
+            if (message != null)
+            {
+                _dateLabel = Formatter.DateExtended(message.Date);
+                _stateLabel = string.Empty;
+
+                TimeLabel.Text = _stateLabel + "\u00A0" + _dateLabel;
+
+                UpdateBriefLabel(UpdateBriefLabel(null, message, false, false, out MinithumbnailId thumbnail));
+                UpdateMinithumbnail(thumbnail);
+            }
         }
 
         public void UpdateMessage(IClientService clientService, Message message)
@@ -1191,7 +1263,7 @@ namespace Telegram.Controls.Cells
         {
             thumbnail = null;
 
-            if (chat.DraftMessage?.InputMessageText is InputMessageText draftText && draft)
+            if (draft && chat?.DraftMessage?.InputMessageText is InputMessageText draftText)
             {
                 return draftText.Text;
             }
@@ -1452,13 +1524,13 @@ namespace Telegram.Controls.Cells
                     || clientService.TryGetChat(message.SenderId, out senderChat);
             }
 
-            if (chat.Type is ChatTypeBasicGroup)
+            if (chat?.Type is ChatTypeBasicGroup)
             {
                 senderChat = null;
                 return clientService.TryGetUser(message.SenderId, out senderUser);
             }
 
-            if (chat.Type is ChatTypeSupergroup supergroup)
+            if (chat?.Type is ChatTypeSupergroup supergroup)
             {
                 senderUser = null;
                 senderChat = null;

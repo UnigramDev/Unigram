@@ -347,7 +347,7 @@ namespace Telegram.ViewModels
                         }
                         else
                         {
-                            viewModel = new ChatGalleryViewModel(ClientService, _storageService, Aggregator, message.ChatId, ThreadId, message);
+                            viewModel = new ChatGalleryViewModel(ClientService, _storageService, Aggregator, message.ChatId, ThreadId, SavedMessagesTopic, message);
                         }
                     }
 

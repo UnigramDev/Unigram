@@ -237,7 +237,7 @@ namespace Telegram.ViewModels
             {
                 return false;
             }
-            else if (IsSaved)
+            else if (IsSaved && ForwardInfo?.Source is { IsOutgoing: false })
             {
                 return true;
             }
@@ -295,6 +295,17 @@ namespace Telegram.ViewModels
             _message.ViaBotUserId = message.ViaBotUserId;
             _message.InteractionInfo = message.InteractionInfo;
             _message.UnreadReactions = message.UnreadReactions;
+            _message.RestrictionReason = message.RestrictionReason;
+            _message.SavedMessagesTopic = message.SavedMessagesTopic;
+            _message.ImportInfo = message.ImportInfo;
+            _message.IsTopicMessage = message.IsTopicMessage;
+            _message.HasTimestampedMedia = message.HasTimestampedMedia;
+            _message.CanReportReactions = message.CanReportReactions;
+            _message.CanGetMediaTimestampLinks = message.CanGetMediaTimestampLinks;
+            _message.CanGetAddedReactions = message.CanGetAddedReactions;
+            _message.SchedulingState = message.SchedulingState;
+
+            _isSaved = null;
 
             if (_message.Content is MessageAlbum album)
             {

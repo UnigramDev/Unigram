@@ -265,7 +265,7 @@ namespace Telegram.ViewModels
             }
 
             var sameUser = messages.All(x => x.SenderId.AreTheSame(first.SenderId));
-            var dialog = new DeleteMessagesPopup(ClientService, items.Where(x => x != null).ToArray());
+            var dialog = new DeleteMessagesPopup(ClientService, SavedMessagesTopic, items.Where(x => x != null).ToArray());
 
             var confirm = await ShowPopupAsync(dialog);
             if (confirm != ContentDialogResult.Primary)

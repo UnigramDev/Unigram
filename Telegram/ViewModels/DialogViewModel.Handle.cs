@@ -499,6 +499,10 @@ namespace Telegram.ViewModels
 
                 return message.SchedulingState == null && message.MessageThreadId == ThreadId;
             }
+            else if (_type == DialogType.SavedMessagesTopic)
+            {
+                return message.SchedulingState == null && message.SavedMessagesTopic.AreTheSame(_savedMessagesTopic);
+            }
             else if (_type == DialogType.Pinned)
             {
                 return message.SchedulingState == null && message.IsPinned;

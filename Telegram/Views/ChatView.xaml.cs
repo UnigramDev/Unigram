@@ -691,6 +691,17 @@ namespace Telegram.Views
             {
                 SearchMask.Update(ViewModel.Search);
             }
+            else if (e.PropertyName.Equals(nameof(ViewModel.IsFirstSliceLoaded)))
+            {
+                if (Messages.ScrollingHost == null || (Messages.ScrollingHost.ScrollableHeight - Messages.ScrollingHost.VerticalOffset < 40 && ViewModel.IsFirstSliceLoaded != false))
+                {
+                    Arrows.IsVisible = false;
+                }
+                else if (ViewModel.Type is DialogType.History or DialogType.Thread or DialogType.SavedMessagesTopic)
+                {
+                    Arrows.IsVisible = true;
+                }
+            }
         }
 
         private void Segments_Click(object sender, RoutedEventArgs e)
@@ -1458,7 +1469,11 @@ namespace Telegram.Views
                 return;
             }
 
-            if (ViewModel.Topic != null)
+            if (ViewModel.SavedMessagesTopic != null)
+            {
+                ViewModel.NavigationService.Navigate(typeof(ProfilePage), new ChatNavigationArgs(chat.Id, ViewModel.SavedMessagesTopic), infoOverride: new SlideNavigationTransitionInfo { Effect = SlideNavigationTransitionEffect.FromRight });
+            }
+            else if (ViewModel.Topic != null)
             {
                 ViewModel.NavigationService.Navigate(typeof(ProfilePage), new ChatNavigationArgs(chat.Id, ViewModel.ThreadId), infoOverride: new SlideNavigationTransitionInfo { Effect = SlideNavigationTransitionEffect.FromRight });
             }
@@ -1891,6 +1906,14 @@ namespace Telegram.Views
             var supergroup = chat.Type is ChatTypeSupergroup supergroupType ? ViewModel.ClientService.GetSupergroup(supergroupType.SupergroupId) : null;
 
             flyout.CreateFlyoutItem(Search, Strings.Search, Icons.Search, VirtualKey.F);
+
+            if (ViewModel.Type is DialogType.SavedMessagesTopic)
+            {
+                flyout.CreateFlyoutItem(ViewModel.DeleteTopic, Strings.DeleteChatUser, Icons.Delete, destructive: true);
+
+                flyout.ShowAt(sender as Button, FlyoutPlacementMode.BottomEdgeAlignedRight);
+                return;
+            }
 
             if (_compactCollapsed && user != null && user.Id != ViewModel.ClientService.Options.MyId && ViewModel.ClientService.TryGetUserFull(user.Id, out UserFullInfo userFull))
             {
@@ -3847,6 +3870,21 @@ namespace Telegram.Views
             {
                 ChatTitle = ViewModel.ClientService.IsSavedMessages(chat) ? Strings.Reminders : Strings.ScheduledMessages;
             }
+            else if (ViewModel.Type == DialogType.SavedMessagesTopic)
+            {
+                if (ViewModel.SavedMessagesTopic is SavedMessagesTopicMyNotes)
+                {
+                    ChatTitle = Strings.MyNotes;
+                }
+                else if (ViewModel.SavedMessagesTopic is SavedMessagesTopicAuthorHidden)
+                {
+                    ChatTitle = Strings.AnonymousForward;
+                }
+                else if (ViewModel.SavedMessagesTopic is SavedMessagesTopicSavedFromChat savedFromChat && ViewModel.ClientService.TryGetChat(savedFromChat.ChatId, out Chat savedChat))
+                {
+                    ChatTitle = ViewModel.ClientService.GetTitle(savedChat);
+                }
+            }
             else if (chat.Type is ChatTypeSecret)
             {
                 ChatTitle = Icons.LockClosedFilled14 + "\u00A0" + ViewModel.ClientService.GetTitle(chat);
@@ -3884,6 +3922,26 @@ namespace Telegram.Views
                     Photo.IsEnabled = false;
                 }
             }
+            else if (ViewModel.Type == DialogType.SavedMessagesTopic)
+            {
+                UnloadObject(Icon);
+
+                if (ViewModel.SavedMessagesTopic is SavedMessagesTopicMyNotes)
+                {
+                    Photo.Source = PlaceholderImage.GetGlyph(Icons.MyNotesFilled, 5);
+                    Photo.Shape = ProfilePictureShape.Ellipse;
+                }
+                else if (ViewModel.SavedMessagesTopic is SavedMessagesTopicAuthorHidden)
+                {
+                    Photo.Source = PlaceholderImage.GetGlyph(Icons.AuthorHiddenFilled, 5);
+                    Photo.Shape = ProfilePictureShape.Ellipse;
+                }
+                else if (ViewModel.SavedMessagesTopic is SavedMessagesTopicSavedFromChat savedFromChat && ViewModel.ClientService.TryGetChat(savedFromChat.ChatId, out Chat savedChat))
+                {
+                    Photo.SetChat(ViewModel.ClientService, savedChat, 36);
+                    Photo.IsEnabled = true;
+                }
+            }
             else
             {
                 UnloadObject(Icon);
@@ -3894,7 +3952,25 @@ namespace Telegram.Views
 
         public void UpdateChatEmojiStatus(Chat chat)
         {
-            Identity.SetStatus(_viewModel.ClientService, chat);
+            if (ViewModel.Type == DialogType.SavedMessagesTopic)
+            {
+                if (ViewModel.SavedMessagesTopic is SavedMessagesTopicMyNotes)
+                {
+                    Identity.ClearStatus();
+                }
+                else if (ViewModel.SavedMessagesTopic is SavedMessagesTopicAuthorHidden)
+                {
+                    Identity.ClearStatus();
+                }
+                else if (ViewModel.SavedMessagesTopic is SavedMessagesTopicSavedFromChat savedFromChat && ViewModel.ClientService.TryGetChat(savedFromChat.ChatId, out Chat savedChat))
+                {
+                    Identity.SetStatus(_viewModel.ClientService, savedChat);
+                }
+            }
+            else
+            {
+                Identity.SetStatus(_viewModel.ClientService, chat);
+            }
         }
 
         public void UpdateChatAccentColors(Chat chat)
@@ -4576,7 +4652,33 @@ namespace Telegram.Views
 
         public void UpdateUserFullInfo(Chat chat, User user, UserFullInfo fullInfo, bool secret, bool accessToken)
         {
-            if (ViewModel.Type == DialogType.Pinned)
+            if (ViewModel.Type == DialogType.SavedMessagesTopic)
+            {
+                if (ViewModel.SavedMessagesTopic is SavedMessagesTopicMyNotes)
+                {
+                    ShowArea();
+                }
+                else if (ViewModel.SavedMessagesTopic is SavedMessagesTopicAuthorHidden)
+                {
+                    ShowAction(Strings.AuthorHiddenDescription, false);
+                }
+                else if (ViewModel.SavedMessagesTopic is SavedMessagesTopicSavedFromChat savedFromChat && ViewModel.ClientService.TryGetChat(savedFromChat.ChatId, out Chat savedChat))
+                {
+                    if (savedChat.Type is ChatTypePrivate)
+                    {
+                        ShowAction(Strings.SavedOpenChat, true);
+                    }
+                    else if (savedChat.Type is ChatTypeSupergroup { IsChannel: true })
+                    {
+                        ShowAction(Strings.SavedOpenChannel, true);
+                    }
+                    else
+                    {
+                        ShowAction(Strings.SavedOpenGroup, true);
+                    }
+                }
+            }
+            else if (ViewModel.Type == DialogType.Pinned)
             {
                 ShowAction(Strings.UnpinAllMessages, true);
             }

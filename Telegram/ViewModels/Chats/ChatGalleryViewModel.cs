@@ -19,6 +19,7 @@ namespace Telegram.ViewModels.Chats
 
         private readonly long _chatId;
         private readonly long _threadId;
+        private readonly SavedMessagesTopic _savedMessagesTopic;
 
         private readonly SearchMessagesFilter _filter;
 
@@ -26,7 +27,7 @@ namespace Telegram.ViewModels.Chats
 
         private readonly MvxObservableCollection<GalleryMedia> _group;
 
-        public ChatGalleryViewModel(IClientService clientService, IStorageService storageService, IEventAggregator aggregator, long chatId, long threadId, MessageWithOwner selected, bool mirrored = false)
+        public ChatGalleryViewModel(IClientService clientService, IStorageService storageService, IEventAggregator aggregator, long chatId, long threadId, SavedMessagesTopic savedMessagesTopic, MessageWithOwner selected, bool mirrored = false)
             : base(clientService, storageService, aggregator)
         {
             _isMirrored = mirrored;
@@ -35,6 +36,7 @@ namespace Telegram.ViewModels.Chats
 
             _chatId = chatId;
             _threadId = threadId;
+            _savedMessagesTopic = savedMessagesTopic;
 
             if (selected.Content is MessageAnimation)
             {
@@ -63,8 +65,7 @@ namespace Telegram.ViewModels.Chats
                 var limit = 20;
                 var offset = -limit / 2;
 
-                // TODO: 172 savedMessagesTopic
-                var response = await ClientService.SendAsync(new SearchChatMessages(_chatId, string.Empty, null, fromMessageId, offset, limit, _filter, _threadId, null));
+                var response = await ClientService.SendAsync(new SearchChatMessages(_chatId, string.Empty, null, fromMessageId, offset, limit, _filter, _threadId, _savedMessagesTopic));
                 if (response is FoundChatMessages messages)
                 {
                     TotalItems = messages.TotalCount;
@@ -99,8 +100,7 @@ namespace Telegram.ViewModels.Chats
 
             if (_firstItem is GalleryMessage first)
             {
-                // TODO: 172 savedMessagesTopic
-                var response = await ClientService.SendAsync(new GetChatMessagePosition(first.ChatId, first.Id, _filter, _threadId, null));
+                var response = await ClientService.SendAsync(new GetChatMessagePosition(first.ChatId, first.Id, _filter, _threadId, _savedMessagesTopic));
                 if (response is Count count)
                 {
                     _firstPosition = count.CountValue;
@@ -129,8 +129,7 @@ namespace Telegram.ViewModels.Chats
                 var limit = 21;
                 var offset = _isMirrored ? -limit + 1 : 0;
 
-                // TODO: 172 savedMessagesTopic
-                var response = await ClientService.SendAsync(new SearchChatMessages(_chatId, string.Empty, null, fromMessageId, offset, limit, _filter, _threadId, null));
+                var response = await ClientService.SendAsync(new SearchChatMessages(_chatId, string.Empty, null, fromMessageId, offset, limit, _filter, _threadId, _savedMessagesTopic));
                 if (response is FoundChatMessages messages)
                 {
                     TotalItems = messages.TotalCount;
@@ -167,8 +166,7 @@ namespace Telegram.ViewModels.Chats
                 var limit = 21;
                 var offset = _isMirrored ? 0 : -limit + 1;
 
-                // TODO: 172 savedMessagesTopic
-                var response = await ClientService.SendAsync(new SearchChatMessages(_chatId, string.Empty, null, fromMessageId, offset, limit, _filter, _threadId, null));
+                var response = await ClientService.SendAsync(new SearchChatMessages(_chatId, string.Empty, null, fromMessageId, offset, limit, _filter, _threadId, _savedMessagesTopic));
                 if (response is FoundChatMessages messages)
                 {
                     TotalItems = messages.TotalCount;
@@ -204,5 +202,18 @@ namespace Telegram.ViewModels.Chats
         }
 
         public override MvxObservableCollection<GalleryMedia> Group => _group;
+
+        public override void View()
+        {
+            FirstItem = null;
+
+            var message = _selectedItem as GalleryMessage;
+            if (message == null || !message.CanView)
+            {
+                return;
+            }
+
+            NavigationService.NavigateToChat(message.ChatId, message.Id, _threadId != 0 ? _threadId : null, _savedMessagesTopic);
+        }
     }
 }

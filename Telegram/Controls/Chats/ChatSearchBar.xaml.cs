@@ -60,7 +60,11 @@ namespace Telegram.Controls.Chats
 
             if (viewModel != null)
             {
-                var history = viewModel.Dialog.Type is not DialogType.History and not DialogType.Thread;
+                var history = viewModel.Dialog.Type is
+                    not DialogType.History and
+                    not DialogType.Thread and
+                    not DialogType.SavedMessagesTopic;
+
                 SearchPrevious.Visibility = history ? Visibility.Collapsed : Visibility.Visible;
                 SearchNext.Visibility = history ? Visibility.Collapsed : Visibility.Visible;
                 ToolsPanel.Visibility = history ? Visibility.Collapsed : Visibility.Visible;

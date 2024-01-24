@@ -19,6 +19,7 @@ namespace Telegram.Collections
 
         private readonly long _chatId;
         private readonly long _threadId;
+        private readonly SavedMessagesTopic _savedMessagesTopic;
         private readonly string _query;
         private readonly MessageSender _sender;
         private readonly bool _secretChat;
@@ -30,12 +31,13 @@ namespace Telegram.Collections
 
         private readonly SearchMessagesFilter _filter;
 
-        public SearchChatMessagesCollection(IClientService clientService, long chatId, long threadId, string query, MessageSender sender, long fromMessageId, SearchMessagesFilter filter)
+        public SearchChatMessagesCollection(IClientService clientService, long chatId, long threadId, SavedMessagesTopic savedMessagesTopic, string query, MessageSender sender, long fromMessageId, SearchMessagesFilter filter)
         {
             _clientService = clientService;
 
             _chatId = chatId;
             _threadId = threadId;
+            _savedMessagesTopic = savedMessagesTopic;
             _query = query;
             _sender = sender;
             _fromMessageId = fromMessageId;
@@ -72,8 +74,7 @@ namespace Telegram.Collections
                         offset = 0;
                     }
 
-                    // TODO: 172 savedMessagesTopic
-                    function = new SearchChatMessages(_chatId, _query, _sender, fromMessageId, offset, (int)count, _filter, _threadId, null);
+                    function = new SearchChatMessages(_chatId, _query, _sender, fromMessageId, offset, (int)count, _filter, _threadId, _savedMessagesTopic);
                 }
 
                 var response = await _clientService.SendAsync(function);
