@@ -743,13 +743,27 @@ namespace winrt::Telegram::Native::implementation
         std::lock_guard const guard(m_criticalSection);
         HRESULT result;
 
-        ReturnIfFailed(result, CreateTextFormat(fontSize));
+        //ReturnIfFailed(result, CreateTextFormat(fontSize));
+
+        winrt::com_ptr<IDWriteTextFormat> textFormat;
+        ReturnIfFailed(result, m_dwriteFactory->CreateTextFormat(
+            L"Segoe UI Emoji",						// font family name
+            m_fontCollection.get(),			        // system font collection
+            DWRITE_FONT_WEIGHT_NORMAL,				// font weight 
+            DWRITE_FONT_STYLE_NORMAL,				// font style
+            DWRITE_FONT_STRETCH_NORMAL,				// default font stretch
+            fontSize,								// font size
+            L"",									// locale name
+            textFormat.put()
+        ));
+        ReturnIfFailed(result, textFormat->SetTextAlignment(DWRITE_TEXT_ALIGNMENT_LEADING));
+        ReturnIfFailed(result, textFormat->SetParagraphAlignment(DWRITE_PARAGRAPH_ALIGNMENT_NEAR));
 
         winrt::com_ptr<IDWriteTextLayout> textLayout;
         ReturnIfFailed(result, m_dwriteFactory->CreateTextLayout(
             text.data(),					// The string to be laid out and formatted.
             text.size(),        			// The length of the string.
-            m_appleFormat.get(),			// The text format to apply to the string (contains font information, etc).
+            textFormat.get(),			    // The text format to apply to the string (contains font information, etc).
             width,							// The width of the layout box.
             INFINITY,						// The height of the layout box.
             textLayout.put()				// The IDWriteTextLayout interface pointer.
@@ -816,14 +830,29 @@ namespace winrt::Telegram::Native::implementation
         std::lock_guard const guard(m_criticalSection);
         HRESULT result;
 
-        ReturnIfFailed(result, CreateTextFormat(fontSize));
-        ReturnIfFailed(result, m_appleFormat->SetReadingDirection(rtl ? DWRITE_READING_DIRECTION_RIGHT_TO_LEFT : DWRITE_READING_DIRECTION_LEFT_TO_RIGHT));
+        //ReturnIfFailed(result, CreateTextFormat(fontSize));
+        //ReturnIfFailed(result, m_appleFormat->SetReadingDirection(rtl ? DWRITE_READING_DIRECTION_RIGHT_TO_LEFT : DWRITE_READING_DIRECTION_LEFT_TO_RIGHT));
+
+        winrt::com_ptr<IDWriteTextFormat> textFormat;
+        ReturnIfFailed(result, m_dwriteFactory->CreateTextFormat(
+            L"Segoe UI Emoji",						// font family name
+            m_fontCollection.get(),			        // system font collection
+            DWRITE_FONT_WEIGHT_NORMAL,				// font weight 
+            DWRITE_FONT_STYLE_NORMAL,				// font style
+            DWRITE_FONT_STRETCH_NORMAL,				// default font stretch
+            fontSize,								// font size
+            L"",									// locale name
+            textFormat.put()
+        ));
+        ReturnIfFailed(result, textFormat->SetTextAlignment(DWRITE_TEXT_ALIGNMENT_LEADING));
+        ReturnIfFailed(result, textFormat->SetParagraphAlignment(DWRITE_PARAGRAPH_ALIGNMENT_NEAR));
+        ReturnIfFailed(result, textFormat->SetReadingDirection(rtl ? DWRITE_READING_DIRECTION_RIGHT_TO_LEFT : DWRITE_READING_DIRECTION_LEFT_TO_RIGHT));
 
         winrt::com_ptr<IDWriteTextLayout> textLayout;
         ReturnIfFailed(result, m_dwriteFactory->CreateTextLayout(
             text.data(),					// The string to be laid out and formatted.
             text.size(),        			// The length of the string.
-            m_appleFormat.get(),			// The text format to apply to the string (contains font information, etc).
+            textFormat.get(),			    // The text format to apply to the string (contains font information, etc).
             width,							// The width of the layout box.
             INFINITY,						// The height of the layout box.
             textLayout.put()				// The IDWriteTextLayout interface pointer.
