@@ -469,11 +469,13 @@
         <Grid x:Name="Header"
               Height="{StaticResource NavigationViewTopPaneHeight}"
               Canvas.ZIndex="3">
-            <Grid x:Name="InfoPanel">
+            <Border BorderBrush="{ThemeResource NavigationViewContentGridBorderBrush}"
+                    BorderThickness="0,0,0,1" />
+            <Grid x:Name="HeaderLeft"
+                  HorizontalAlignment="Left"
+                  Canvas.ZIndex="1">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto" />
-                    <ColumnDefinition Width="Auto" />
-                    <ColumnDefinition />
                     <ColumnDefinition Width="Auto" />
                 </Grid.ColumnDefinitions>
                 <controls:BackButton x:Name="BackButton"
@@ -513,117 +515,123 @@
                                           HorizontalAlignment="Center"
                                           Grid.Column="1" />
 
-                <local:ChatHeaderButton x:Name="Profile"
-                                        Click="Profile_Click"
-                                        Style="{StaticResource EmptyHyperlinkButtonStyle}"
-                                        HorizontalContentAlignment="Stretch"
-                                        Grid.Column="2">
-                    <Grid Background="Transparent"
-                          VerticalAlignment="Center"
-                          Margin="0,-2,0,2"
-                          Grid.Column="2">
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="Auto" />
-                            <RowDefinition Height="Auto" />
-                        </Grid.RowDefinitions>
-                        <Grid HorizontalAlignment="Left">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition />
-                                <ColumnDefinition Width="Auto" />
-                            </Grid.ColumnDefinitions>
-                            <TextBlock x:Name="Title"
-                                       Foreground="{ThemeResource PageHeaderForegroundBrush}"
-                                       Style="{StaticResource BaseTextBlockStyle}"
-                                       FontFamily="{ThemeResource EmojiThemeFontFamilyWithSymbols}"
+            </Grid>
+
+            <local:ChatHeaderButton x:Name="Profile"
+                                    Click="Profile_Click"
+                                    Style="{StaticResource AccentTextButtonStyle}"
+                                    HorizontalAlignment="Stretch"
+                                    VerticalAlignment="Stretch"
+                                    HorizontalContentAlignment="Stretch"
+                                    VerticalContentAlignment="Stretch"
+                                    BorderThickness="0"
+                                    CornerRadius="0"
+                                    Padding="0">
+                <Grid Background="Transparent"
+                      VerticalAlignment="Center"
+                      Margin="0,-2,0,2">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+                    <Grid HorizontalAlignment="Left">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                        <TextBlock x:Name="Title"
+                                   Foreground="{ThemeResource PageHeaderForegroundBrush}"
+                                   Style="{StaticResource BaseTextBlockStyle}"
+                                   FontFamily="{ThemeResource EmojiThemeFontFamilyWithSymbols}"
+                                   TextWrapping="NoWrap"
+                                   TextTrimming="CharacterEllipsis"
+                                   MaxLines="1" />
+
+                        <controls:IdentityIcon x:Name="Identity"
+                                               VerticalAlignment="Bottom"
+                                               Margin="4,0,0,2"
+                                               Grid.Column="1" />
+                    </Grid>
+
+                    <Grid Visibility="{x:Bind ViewModel.LastSeen, Mode=OneWay, Converter={StaticResource NullToVisibilityConverter}}"
+                          Grid.Row="1">
+                        <TextBlock x:Name="Subtitle"
+                                   Text="{x:Bind ViewModel.Subtitle, Mode=OneWay}"
+                                   Foreground="{ThemeResource PageHeaderDisabledBrush}"
+                                   Style="{StaticResource CaptionTextBlockStyle}"
+                                   TextWrapping="NoWrap"
+                                   TextTrimming="CharacterEllipsis" />
+                        <StackPanel x:Name="ChatActionPanel"
+                                    Orientation="Horizontal"
+                                    Visibility="Collapsed">
+                            <chats:ChatActionIndicator x:Name="ChatActionIndicator"
+                                                       Fill="{ThemeResource PageHeaderHighlightBrush}"
+                                                       VerticalAlignment="Bottom"
+                                                       Width="20"
+                                                       Height="20"
+                                                       Margin="0,-2,4,-2" />
+                            <TextBlock x:Name="ChatActionLabel"
                                        TextWrapping="NoWrap"
                                        TextTrimming="CharacterEllipsis"
-                                       MaxLines="1" />
-
-                            <controls:IdentityIcon x:Name="Identity"
-                                                   VerticalAlignment="Bottom"
-                                                   Margin="4,0,0,2"
-                                                   Grid.Column="1" />
-                        </Grid>
-
-                        <Grid Visibility="{x:Bind ViewModel.LastSeen, Mode=OneWay, Converter={StaticResource NullToVisibilityConverter}}"
-                              Grid.Row="1">
-                            <TextBlock x:Name="Subtitle"
-                                       Text="{x:Bind ViewModel.Subtitle, Mode=OneWay}"
-                                       Foreground="{ThemeResource PageHeaderDisabledBrush}"
+                                       Foreground="{ThemeResource PageHeaderHighlightBrush}"
+                                       FontFamily="{ThemeResource EmojiThemeFontFamily}"
                                        Style="{StaticResource CaptionTextBlockStyle}"
-                                       TextWrapping="NoWrap"
-                                       TextTrimming="CharacterEllipsis" />
-                            <StackPanel x:Name="ChatActionPanel"
-                                        Orientation="Horizontal"
-                                        Visibility="Collapsed">
-                                <chats:ChatActionIndicator x:Name="ChatActionIndicator"
-                                                           Fill="{ThemeResource PageHeaderHighlightBrush}"
-                                                           VerticalAlignment="Bottom"
-                                                           Width="20"
-                                                           Height="20"
-                                                           Margin="0,-2,4,-2" />
-                                <TextBlock x:Name="ChatActionLabel"
-                                           TextWrapping="NoWrap"
-                                           TextTrimming="CharacterEllipsis"
-                                           Foreground="{ThemeResource PageHeaderHighlightBrush}"
-                                           FontFamily="{ThemeResource EmojiThemeFontFamily}"
-                                           Style="{StaticResource CaptionTextBlockStyle}"
-                                           VerticalAlignment="Top" />
-                            </StackPanel>
-                        </Grid>
+                                       VerticalAlignment="Top" />
+                        </StackPanel>
                     </Grid>
-                </local:ChatHeaderButton>
+                </Grid>
+            </local:ChatHeaderButton>
 
-                <Grid x:Name="Options"
-                      Grid.Column="3">
+            <Grid x:Name="Options"
+                  SizeChanged="Options_SizeChanged"
+                  HorizontalAlignment="Right">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+                <Grid x:Name="SecondaryOptions">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="Auto" />
                         <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="Auto" />
                     </Grid.ColumnDefinitions>
-                    <Grid x:Name="SecondaryOptions">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="Auto" />
-                            <ColumnDefinition Width="Auto" />
-                            <ColumnDefinition Width="Auto" />
-                        </Grid.ColumnDefinitions>
-                        <controls:GlyphButton x:Name="VideoCall"
-                                              Visibility="Collapsed"
-                                              Click="{x:Bind ViewModel.VideoCall}"
-                                              Style="{StaticResource HeaderGlyphButtonStyle}"
-                                              Glyph="&#xE714;"
-                                              FontSize="20"
-                                              AutomationProperties.Name="{CustomResource VideoCall}"
-                                              ToolTipService.ToolTip="{CustomResource VideoCall}"
-                                              Margin="0,0,-4,0" />
+                    <controls:GlyphButton x:Name="VideoCall"
+                                          Visibility="Collapsed"
+                                          Click="{x:Bind ViewModel.VideoCall}"
+                                          Style="{StaticResource HeaderGlyphButtonStyle}"
+                                          Glyph="&#xE714;"
+                                          FontSize="20"
+                                          AutomationProperties.Name="{CustomResource VideoCall}"
+                                          ToolTipService.ToolTip="{CustomResource VideoCall}"
+                                          Margin="0,0,-4,0" />
 
-                        <controls:GlyphButton x:Name="Call"
-                                              Visibility="Collapsed"
-                                              Click="{x:Bind ViewModel.VoiceCall}"
-                                              Style="{StaticResource HeaderGlyphButtonStyle}"
-                                              Glyph="&#xE717;"
-                                              AutomationProperties.Name="{CustomResource Call}"
-                                              ToolTipService.ToolTip="{CustomResource Call}"
-                                              Margin="0,0,-4,0"
-                                              Grid.Column="1" />
+                    <controls:GlyphButton x:Name="Call"
+                                          Visibility="Collapsed"
+                                          Click="{x:Bind ViewModel.VoiceCall}"
+                                          Style="{StaticResource HeaderGlyphButtonStyle}"
+                                          Glyph="&#xE717;"
+                                          AutomationProperties.Name="{CustomResource Call}"
+                                          ToolTipService.ToolTip="{CustomResource Call}"
+                                          Margin="0,0,-4,0"
+                                          Grid.Column="1" />
 
-                        <controls:GlyphButton Click="{x:Bind Search}"
-                                              Style="{StaticResource HeaderGlyphButtonStyle}"
-                                              Glyph="&#xE721;"
-                                              AutomationProperties.Name="{CustomResource Search}"
-                                              ToolTipService.ToolTip="{CustomResource Search}"
-                                              Margin="0,0,-4,0"
-                                              Grid.Column="2" />
+                    <controls:GlyphButton x:Name="SearchOption"
+                                          Click="{x:Bind Search}"
+                                          Style="{StaticResource HeaderGlyphButtonStyle}"
+                                          Glyph="&#xE721;"
+                                          AutomationProperties.Name="{CustomResource Search}"
+                                          ToolTipService.ToolTip="{CustomResource Search}"
+                                          Margin="0,0,-4,0"
+                                          Grid.Column="2" />
 
-                    </Grid>
-                    <controls:MoreButton Click="Menu_ContextRequested"
-                                         Grid.Column="1" />
                 </Grid>
+                <controls:MoreButton Click="Menu_ContextRequested"
+                                     Grid.Column="1" />
             </Grid>
-            <Border BorderBrush="{ThemeResource NavigationViewContentGridBorderBrush}"
-                    BorderThickness="0,0,0,1" />
         </Grid>
 
         <StackPanel x:Name="ClipperOuter"
+                    VerticalAlignment="Top"
                     Canvas.ZIndex="2"
                     Grid.Row="2">
             <chats:ChatGroupCallHeader x:Name="GroupCall"
@@ -716,10 +724,6 @@
                                    ContainerContentChanging="OnContainerContentChanging"
                                    Margin="0,0,0,8"
                                    Grid.ColumnSpan="2">
-                <ListView.Resources>
-                    <CornerRadius x:Key="ListViewItemCornerRadius">0</CornerRadius>
-                    <CornerRadius x:Key="ListViewItemCheckBoxCornerRadius">0</CornerRadius>
-                </ListView.Resources>
                 <ListView.ItemsPanel>
                     <ItemsPanelTemplate>
                         <ItemsStackPanel Loading="ItemsStackPanel_Loading"
@@ -1161,6 +1165,7 @@
 
                             <!-- Button to use bot commands, bots/groups only -->
                             <Border x:Name="btnCommands"
+                                    VerticalAlignment="Bottom"
                                     Grid.Column="2">
                                 <controls:GlyphButton x:Name="ButtonCommands"
                                                       Click="Commands_Click"
@@ -1177,6 +1182,7 @@
 
                             <!-- Button to use bot keyboard, bots/groups only -->
                             <Border x:Name="btnMarkup"
+                                    VerticalAlignment="Bottom"
                                     Grid.Column="2">
                                 <controls:AnimatedGlyphButton x:Name="ButtonMarkup"
                                                               Click="Markup_Click"

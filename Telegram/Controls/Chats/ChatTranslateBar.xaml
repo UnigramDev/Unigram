@@ -25,6 +25,7 @@
                 Style="{StaticResource AccentTextButtonStyle}"
                 HorizontalAlignment="Stretch"
                 BorderThickness="0"
+                CornerRadius="0"
                 Grid.ColumnSpan="2">
             <Grid x:Name="TranslateRoot">
                 <TextBlock x:Name="Icon"

@@ -5213,6 +5213,11 @@ namespace Telegram.Views
                 RestrictsNewChats.Visibility = Visibility.Collapsed;
             }
         }
+
+        private void Options_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            Profile.Padding = new Thickness(HeaderLeft.ActualWidth, 0, e.NewSize.Width, 0);
+        }
     }
 
     public enum StickersPanelMode
@@ -5221,7 +5226,7 @@ namespace Telegram.Views
         Overlay
     }
 
-    public class ChatHeaderButton : HyperlinkButton
+    public class ChatHeaderButton : Button
     {
         protected override AutomationPeer OnCreateAutomationPeer()
         {
@@ -5229,7 +5234,7 @@ namespace Telegram.Views
         }
     }
 
-    public class ChatHeaderButtonAutomationPeer : HyperlinkButtonAutomationPeer
+    public class ChatHeaderButtonAutomationPeer : ButtonAutomationPeer
     {
         private readonly ChatHeaderButton _owner;
 
