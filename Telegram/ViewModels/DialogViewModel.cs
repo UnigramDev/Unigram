@@ -613,24 +613,19 @@ namespace Telegram.ViewModels
                 var tsc = new TaskCompletionSource<MessageCollection>();
                 async void handler(BaseObject result)
                 {
-                    IList<Message> temp = null;
                     if (result is FoundChatMessages foundChatMessages)
                     {
-                        temp = foundChatMessages.Messages;
-                    }
-                    else if (result is Messages messages)
-                    {
-                        temp = messages.MessagesValue;
+                        result = await PreloadAlbumsAsync(chat.Id, foundChatMessages);
                     }
 
-                    if (temp != null)
+                    if (result is Messages messages)
                     {
-                        if (direction == PanelScrollingDirection.Backward && temp.Empty())
+                        if (direction == PanelScrollingDirection.Backward && messages.MessagesValue.Empty())
                         {
-                            await AddHeaderAsync(temp, fromMessage?.Get());
+                            await AddHeaderAsync(messages.MessagesValue, fromMessage?.Get());
                         }
 
-                        tsc.SetResult(new MessageCollection(Items.Ids, temp, CreateMessage));
+                        tsc.SetResult(new MessageCollection(Items.Ids, messages.MessagesValue, CreateMessage));
                     }
                     else
                     {
@@ -1149,6 +1144,39 @@ namespace Telegram.ViewModels
             }
         }
 
+        private async Task<Messages> PreloadAlbumsAsync(long chatId, FoundChatMessages foundChatMessages)
+        {
+            for (int i = foundChatMessages.Messages.Count - 1; i >= 0; i--)
+            {
+                var message = foundChatMessages.Messages[i];
+                if (message.MediaAlbumId == 0)
+                {
+                    continue;
+                }
+
+                var response = await ClientService.SendAsync(new GetChatHistory(chatId, message.Id, -10, 10, false));
+                if (response is Messages album
+                    && album.MessagesValue.Count > 1
+                    && album.MessagesValue[^1].Id == message.Id)
+                {
+                    for (int j = album.MessagesValue.Count - 2; j >= 0; j--)
+                    {
+                        var part = album.MessagesValue[j];
+                        if (part.MediaAlbumId == message.MediaAlbumId)
+                        {
+                            foundChatMessages.Messages.Insert(i--, album.MessagesValue[j]);
+                        }
+                        else
+                        {
+                            break;
+                        }
+                    }
+                }
+            }
+
+            return new Messages(0, foundChatMessages.Messages);
+        }
+
         private async Task<LoadSliceResult> LoadMessageSliceImpl(Chat chat, long maxId, VerticalAlignment alignment, ScrollIntoViewAlignment? direction, double? pixel)
         {
             Task<BaseObject> func;
@@ -1231,7 +1259,7 @@ namespace Telegram.ViewModels
             var response = await func;
             if (response is FoundChatMessages foundChatMessages)
             {
-                response = new Messages(foundChatMessages.TotalCount, foundChatMessages.Messages);
+                response = await PreloadAlbumsAsync(chat.Id, foundChatMessages);
             }
 
             if (response is Messages messages)
