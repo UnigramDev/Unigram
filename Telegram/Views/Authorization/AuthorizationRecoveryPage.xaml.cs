@@ -5,15 +5,15 @@
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
 using Telegram.Common;
+using Telegram.Controls;
 using Telegram.ViewModels.Authorization;
 using Windows.UI.Xaml;
-using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Navigation;
 
 namespace Telegram.Views.Authorization
 {
-    public sealed partial class AuthorizationRecoveryPage : Page
+    public sealed partial class AuthorizationRecoveryPage : CorePage
     {
         public AuthorizationRecoveryViewModel ViewModel => DataContext as AuthorizationRecoveryViewModel;
 
@@ -31,6 +31,13 @@ namespace Telegram.Views.Authorization
         protected override void OnNavigatedFrom(NavigationEventArgs e)
         {
             ViewModel.PropertyChanged -= OnPropertyChanged;
+        }
+
+        protected override void OnLayoutMetricsChanged(SystemOverlayMetrics metrics)
+        {
+            Back.HorizontalAlignment = metrics.LeftInset > 0
+                ? HorizontalAlignment.Right
+                : HorizontalAlignment.Left;
         }
 
         private void OnPropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)

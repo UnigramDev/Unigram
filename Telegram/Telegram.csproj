@@ -236,6 +236,7 @@
     <Compile Include="Controls\Chats\ChatTranslateBar.xaml.cs">
       <DependentUpon>ChatTranslateBar.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\CorePage.cs" />
     <Compile Include="Controls\FrameworkElementEx.cs" />
     <Compile Include="Controls\MenuFlyoutReadDate.cs" />
     <Compile Include="Controls\Messages\Content\StickerContent.xaml.cs">

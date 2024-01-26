@@ -1,14 +1,14 @@
-<Page x:Class="Telegram.Views.Authorization.AuthorizationCodePage"
-      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-      xmlns:local="using:Telegram.Views"
-      xmlns:common="using:Telegram.Common"
-      xmlns:controls="using:Telegram.Controls"
-      xmlns:muxc="using:Microsoft.UI.Xaml.Controls"
-      xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-      Loaded="OnLoaded"
-      mc:Ignorable="d">
+<controls:CorePage x:Class="Telegram.Views.Authorization.AuthorizationCodePage"
+                   xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                   xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                   xmlns:local="using:Telegram.Views"
+                   xmlns:common="using:Telegram.Common"
+                   xmlns:controls="using:Telegram.Controls"
+                   xmlns:muxc="using:Microsoft.UI.Xaml.Controls"
+                   xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                   xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                   Loaded="OnLoaded"
+                   mc:Ignorable="d">
 
     <Page.Transitions>
         <TransitionCollection>
@@ -76,6 +76,6 @@
 
         <Border x:Name="TitleBar"
                 Background="Transparent" />
-        <controls:BackButton />
+        <controls:BackButton x:Name="Back" />
     </Grid>
-</Page>
+</controls:CorePage>

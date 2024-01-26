@@ -319,8 +319,25 @@ namespace Telegram.Controls.Stories
             set
             {
                 _tabsLeftCollapsed = value;
-                _progress?.InsertScalar("Padding", value ? 32 : 0);
+                UpdatePadding();
             }
+        }
+
+        private float _systemOverlayLeftInset;
+        public float SystemOverlayLeftInset
+        {
+            get => _systemOverlayLeftInset;
+            set
+            {
+                _systemOverlayLeftInset = value;
+                UpdatePadding();
+            }
+        }
+
+        private void UpdatePadding()
+        {
+            _progress?.InsertBoolean("RightToLeft", _systemOverlayLeftInset > 0);
+            _progress?.InsertScalar("Padding", _systemOverlayLeftInset > 0 ? _systemOverlayLeftInset : _tabsLeftCollapsed ? 32 : 0);
         }
 
         private bool _isVisible = true;
@@ -420,7 +437,8 @@ namespace Telegram.Controls.Stories
 
             _progress = compositor.CreatePropertySet();
             _progress.InsertBoolean("Visible", _isVisible);
-            _progress.InsertScalar("Padding", TabsLeftCollapsed ? 32 : 0);
+            _progress.InsertBoolean("RightToLeft", false);
+            _progress.InsertScalar("Padding", _systemOverlayLeftInset > 0 ? _systemOverlayLeftInset - (_tabsLeftCollapsed ? 0 : 72) : _tabsLeftCollapsed ? 32 : 0);
             _progress.InsertScalar("First", _first);
             _progress.InsertScalar("Last", _last);
             _progress.InsertScalar("Count", _last - _first + 1);
@@ -433,7 +451,7 @@ namespace Telegram.Controls.Stories
             ForEach(_progress, _progressAnimation);
 
             var titleVisualOffsetAnimation = compositor.CreateExpressionAnimation(
-                "_.Visible && _.Count > 0 ? (24 + (12 * _.Count)) * (1 - _.Progress) : 0");
+                "_.RightToLeft ? 0 : _.Visible && _.Count > 0 ? (24 + (12 * _.Count)) * (1 - _.Progress) : 0");
 
             var storiesVisualOffsetAnimationX = compositor.CreateExpressionAnimation(
                 "(_.Padding - _.First * 12) * (1 - _.Progress)");

@@ -7,20 +7,20 @@
 using System;
 using System.Numerics;
 using Telegram.Common;
+using Telegram.Controls;
 using Telegram.Streams;
 using Telegram.ViewModels.Authorization;
 using Telegram.ViewModels.Delegates;
 using Windows.Foundation;
 using Windows.UI.Composition;
 using Windows.UI.Xaml;
-using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Hosting;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Navigation;
 
 namespace Telegram.Views.Authorization
 {
-    public sealed partial class AuthorizationPage : Page, ISignInDelegate
+    public sealed partial class AuthorizationPage : CorePage, ISignInDelegate
     {
         public AuthorizationViewModel ViewModel => DataContext as AuthorizationViewModel;
 
@@ -34,13 +34,21 @@ namespace Telegram.Views.Authorization
 
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
-            ViewModel.PropertyChanged += OnPropertyChanged;
             Frame.ForwardStack.Clear();
+
+            ViewModel.PropertyChanged += OnPropertyChanged;
         }
 
         protected override void OnNavigatedFrom(NavigationEventArgs e)
         {
             ViewModel.PropertyChanged -= OnPropertyChanged;
+        }
+
+        protected override void OnLayoutMetricsChanged(SystemOverlayMetrics metrics)
+        {
+            Back.HorizontalAlignment = metrics.LeftInset > 0
+                ? HorizontalAlignment.Right
+                : HorizontalAlignment.Left;
         }
 
         private void OnPropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)

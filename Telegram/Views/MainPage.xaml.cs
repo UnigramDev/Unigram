@@ -37,7 +37,6 @@ using Telegram.Views.Host;
 using Telegram.Views.Popups;
 using Telegram.Views.Settings;
 using Telegram.Views.Users;
-using Windows.ApplicationModel.Core;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.Foundation;
 using Windows.UI.Composition;
@@ -55,7 +54,7 @@ using Point = Windows.Foundation.Point;
 
 namespace Telegram.Views
 {
-    public sealed partial class MainPage : Page, IRootContentPage, INavigatingPage, IChatListDelegate
+    public sealed partial class MainPage : CorePage, IRootContentPage, INavigatingPage, IChatListDelegate
     {
         private MainViewModel _viewModel;
         public MainViewModel ViewModel => _viewModel ??= DataContext as MainViewModel;
@@ -79,7 +78,6 @@ namespace Telegram.Views
             ViewModel.Chats.Delegate = this;
             ViewModel.PlaybackService.SourceChanged += OnPlaybackSourceChanged;
 
-            InitializeTitleBar();
             InitializeSearch();
             InitializeLock();
 
@@ -181,34 +179,42 @@ namespace Telegram.Views
             catch { }
         }
 
-        private void InitializeTitleBar()
+        protected override void OnLayoutMetricsChanged(SystemOverlayMetrics metrics)
         {
-            var sender = CoreApplication.GetCurrentView().TitleBar;
-            sender.IsVisibleChanged += OnLayoutMetricsChanged;
-            sender.LayoutMetricsChanged += OnLayoutMetricsChanged;
+            TitleBarrr.ColumnDefinitions[0].Width = new GridLength(metrics.LeftInset > 0 ? 138 : 0, GridUnitType.Pixel);
+            TitleBarrr.ColumnDefinitions[4].Width = new GridLength(metrics.RightInset > 0 ? 138 : 0, GridUnitType.Pixel);
 
-            OnLayoutMetricsChanged(sender, null);
+            Grid.SetColumn(TitleBarLogo, metrics.LeftInset > 0 ? 3 : 1);
+            TitleText.FlowDirection = metrics.LeftInset > 0
+                ? FlowDirection.RightToLeft
+                : FlowDirection.LeftToRight;
+
+            TitleBarLogo.Margin = metrics.LeftInset > 0
+                ? new Thickness(4, 0, -10, 0)
+                : new Thickness(-10, 0, 4, 0);
+
+            Photo.HorizontalAlignment = metrics.LeftInset > 0
+                ? HorizontalAlignment.Right
+                : HorizontalAlignment.Left;
+
+            Stories.SystemOverlayLeftInset = metrics.LeftInset > 0 ? 138 : 0;
+
+            UpdateTitleBarMargins();
         }
 
-        private void OnLayoutMetricsChanged(CoreApplicationViewTitleBar sender, object args)
+        private void UpdateTitleBarMargins()
         {
-            try
+            var pad = MasterDetail.MasterVisibility != Visibility.Visible || !_tabsLeftCollapsed;
+            var left = pad ? 14 : 48;
+            var right = pad ? -50 : 10;
+
+            if (TitleText.FlowDirection == FlowDirection.LeftToRight)
             {
-                TitleBarrr.ColumnDefinitions[0].Width = new GridLength(Math.Max(sender.SystemOverlayLeftInset, 0), GridUnitType.Pixel);
-                TitleBarrr.ColumnDefinitions[4].Width = new GridLength(Math.Max(sender.SystemOverlayRightInset, 0), GridUnitType.Pixel);
-
-                Grid.SetColumn(TitleBarLogo, sender.SystemOverlayLeftInset > 0 ? 3 : 1);
-                StateLabel.FlowDirection = sender.SystemOverlayLeftInset > 0
-                    ? FlowDirection.RightToLeft
-                    : FlowDirection.LeftToRight;
-
-                Photo.HorizontalAlignment = sender.SystemOverlayLeftInset > 0
-                    ? HorizontalAlignment.Right
-                    : HorizontalAlignment.Left;
+                TitleBarrr.Margin = new Thickness(left, 0, right, 0);
             }
-            catch
+            else
             {
-                // Most likely InvalidComObjectException
+                TitleBarrr.Margin = new Thickness(right, 0, left, 0);
             }
         }
 
@@ -702,9 +708,7 @@ namespace Telegram.Views
 
             Stories.TabsLeftCollapsed = !show;
 
-            var pad = MasterDetail.MasterVisibility != Visibility.Visible || show;
-
-            TitleBarrr.Margin = new Thickness(pad ? 14 : 48, 0, pad ? -50 : 10, 0);
+            UpdateTitleBarMargins();
 
             Photo.Width = show ? 72 : 48;
             Photo.Visibility = show || MasterDetail.MasterVisibility == Visibility.Visible
@@ -1015,10 +1019,6 @@ namespace Telegram.Views
         {
             Window.Current.CoreWindow.CharacterReceived -= OnCharacterReceived;
             WindowContext.Current.InputListener.KeyDown -= OnAcceleratorKeyActivated;
-
-            var titleBar = CoreApplication.GetCurrentView().TitleBar;
-            titleBar.IsVisibleChanged -= OnLayoutMetricsChanged;
-            titleBar.LayoutMetricsChanged -= OnLayoutMetricsChanged;
 
             Bindings.StopTracking();
 
@@ -1485,9 +1485,7 @@ namespace Telegram.Views
 
         private void OnMasterVisibilityChanged(object sender, EventArgs e)
         {
-            var pad = MasterDetail.MasterVisibility != Visibility.Visible || !_tabsLeftCollapsed;
-
-            TitleBarrr.Margin = new Thickness(pad ? 14 : 48, 0, pad ? -50 : 10, 0);
+            UpdateTitleBarMargins();
 
             Stories.IsVisible = MasterDetail.MasterVisibility == Visibility.Visible;
             Photo.Visibility = MasterDetail.MasterVisibility == Visibility.Visible || !_tabsLeftCollapsed
@@ -2853,7 +2851,7 @@ namespace Telegram.Views
                         args.Handled = true;
                     }
                 }
-                
+
                 if (args.NewFocusedElement is ChatListListViewItem item)
                 {
                     // Let's disable the awkward focus rect that would appear on activation.
@@ -2927,7 +2925,7 @@ namespace Telegram.Views
 
             var item = UsersListView.ItemFromContainer(sender);
             var user = item as User;
-            
+
             if (item is SearchResult result)
             {
                 user = result.User;
