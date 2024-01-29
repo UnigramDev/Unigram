@@ -173,6 +173,10 @@ namespace Telegram.Services
         ForumTopicInfo GetTopicInfo(long chatId, long messageThreadId);
         bool TryGetTopicInfo(long chatId, long messageThreadId, out ForumTopicInfo value);
 
+        SavedMessagesTags GetSavedMessagesTags();
+        MessageTag GetSavedMessagesTag(ReactionType reaction);
+        bool TryGetSavedMessagesTag(ReactionType reaction, out MessageTag value);
+
         bool IsAnimationSaved(int id);
         bool IsStickerRecent(int id);
         bool IsStickerFavorite(int id);
@@ -271,6 +275,30 @@ namespace Telegram.Services
         private UpdateChatThemes _chatThemes;
 
         private UpdateStoryStealthMode _storyStealthMode = new();
+
+        private Dictionary<ReactionType, MessageTag> _savedMessagesTags = new(new ReactionTypeEqualityComparer());
+
+        private class ReactionTypeEqualityComparer : IEqualityComparer<ReactionType>
+        {
+            public bool Equals(ReactionType x, ReactionType y)
+            {
+                return x.AreTheSame(y);
+            }
+
+            public int GetHashCode(ReactionType obj)
+            {
+                if (obj is ReactionTypeEmoji emoji)
+                {
+                    return emoji.Emoji.GetHashCode();
+                }
+                else if (obj is ReactionTypeCustomEmoji customEmoji)
+                {
+                    return customEmoji.CustomEmojiId.GetHashCode();
+                }
+
+                return obj.GetHashCode();
+            }
+        }
 
         private TaskCompletionSource<bool> _authorizationStateTask = new();
         private AuthorizationState _authorizationState;
@@ -1664,6 +1692,41 @@ namespace Telegram.Services
 
 
 
+        public SavedMessagesTags GetSavedMessagesTags()
+        {
+            lock (_savedMessagesTags)
+            {
+                return new SavedMessagesTags(_savedMessagesTags.Values
+                    .Where(x => x.Count > 0)
+                    .Select(x => new SavedMessagesTag(x.Tag, x.Label, x.Count))
+                    .OrderByDescending(x => x.Count)
+                    .ToList());
+            }
+        }
+
+        public MessageTag GetSavedMessagesTag(ReactionType reaction)
+        {
+            lock (_savedMessagesTags)
+            {
+                if (_savedMessagesTags.TryGetValue(reaction, out MessageTag value))
+                {
+                    return value;
+                }
+            }
+
+            return null;
+        }
+
+        public bool TryGetSavedMessagesTag(ReactionType reaction, out MessageTag value)
+        {
+            lock (_savedMessagesTags)
+            {
+                return _savedMessagesTags.TryGetValue(reaction, out value);
+            }
+        }
+
+
+
         public bool IsStickerRecent(int id)
         {
             if (_recentStickers != null)
@@ -2300,6 +2363,34 @@ namespace Telegram.Services
 
                 AvailableProfileColors = updateProfileAccentColors.AvailableAccentColorIds.ToList();
                 ProfileColors = colors;
+            }
+            else if (update is UpdateSavedMessagesTags updateSavedMessagesTags)
+            {
+                lock (_savedMessagesTags)
+                {
+                    var temp = new List<MessageTag>(updateSavedMessagesTags.Tags.Tags.Count);
+
+                    foreach (var tag in updateSavedMessagesTags.Tags.Tags)
+                    {
+                        if (_savedMessagesTags.TryGetValue(tag.Tag, out MessageTag cache))
+                        {
+                            cache.Count = tag.Count;
+                            cache.Label = tag.Label;
+                            temp.Add(cache);
+                        }
+                        else
+                        {
+                            temp.Add(new MessageTag(tag));
+                        }
+                    }
+
+                    _savedMessagesTags.Clear();
+
+                    foreach (var tag in temp)
+                    {
+                        _savedMessagesTags[tag.Tag] = tag;
+                    }
+                }
             }
 
             _aggregator.Publish(update);

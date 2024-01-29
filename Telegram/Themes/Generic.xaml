@@ -692,6 +692,8 @@
     <Style TargetType="messages:ReactionButton">
         <Setter Property="CornerRadius"
                 Value="12" />
+        <Setter Property="MinWidth"
+                Value="44" />
         <Setter Property="UseSystemFocusVisuals"
                 Value="True" />
         <Setter Property="Template">
@@ -699,7 +701,7 @@
                 <ControlTemplate TargetType="messages:ReactionButton">
                     <Grid x:Name="LayoutRoot"
                           Background="{ThemeResource MessageReactionBackgroundBrush}"
-                          CornerRadius="12">
+                          CornerRadius="{TemplateBinding CornerRadius}">
                         <VisualStateManager.VisualStateGroups>
                             <VisualStateGroup x:Name="CommonStates">
                                 <VisualState x:Name="Normal" />
@@ -778,6 +780,157 @@
         </Setter>
     </Style>
 
+    <Style TargetType="messages:ReactionAsTagButton">
+        <Setter Property="CornerRadius"
+                Value="0" />
+        <Setter Property="MinWidth"
+                Value="44" />
+        <Setter Property="UseSystemFocusVisuals"
+                Value="True" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="messages:ReactionAsTagButton">
+                    <Grid>
+                        <VisualStateManager.VisualStateGroups>
+                            <VisualStateGroup x:Name="CommonStates">
+                                <VisualState x:Name="Normal" />
+                                <VisualState x:Name="PointerOver" />
+                                <VisualState x:Name="Pressed" />
+                                <VisualState x:Name="Checked">
+                                    <VisualState.Setters>
+                                        <Setter Target="LayoutRoot.Fill"
+                                                Value="{ThemeResource MessageReactionChosenBackgroundBrush}" />
+                                        <Setter Target="Count.Foreground"
+                                                Value="{ThemeResource MessageReactionChosenForegroundBrush}" />
+                                    </VisualState.Setters>
+                                </VisualState>
+                                <VisualState x:Name="CheckedPointerOver">
+                                    <VisualState.Setters>
+                                        <Setter Target="LayoutRoot.Fill"
+                                                Value="{ThemeResource MessageReactionChosenBackgroundBrush}" />
+                                        <Setter Target="Count.Foreground"
+                                                Value="{ThemeResource MessageReactionChosenForegroundBrush}" />
+                                    </VisualState.Setters>
+                                </VisualState>
+                                <VisualState x:Name="CheckedPressed">
+                                    <VisualState.Setters>
+                                        <Setter Target="LayoutRoot.Fill"
+                                                Value="{ThemeResource MessageReactionChosenBackgroundBrush}" />
+                                        <Setter Target="Count.Foreground"
+                                                Value="{ThemeResource MessageReactionChosenForegroundBrush}" />
+                                    </VisualState.Setters>
+                                </VisualState>
+                            </VisualStateGroup>
+                        </VisualStateManager.VisualStateGroups>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition />
+                        </Grid.ColumnDefinitions>
+                        <messages:ReactionAsTagPath x:Name="LayoutRoot"
+                                                    Fill="{ThemeResource MessageReactionBackgroundBrush}"
+                                                    Grid.ColumnSpan="2" />
+
+                        <Grid Margin="0,-4">
+                            <Image x:Name="Presenter"
+                                   Width="32"
+                                   Height="32" />
+                            <local:CustomEmojiIcon x:Name="Icon"
+                                                   x:Load="False" />
+                            <Popup x:Name="Overlay"
+                                   IsHitTestVisible="False"
+                                   Margin="-32"
+                                   Width="96"
+                                   Height="96" />
+                        </Grid>
+
+                        <local:AnimatedTextBlock x:Name="Count"
+                                                 x:Load="False"
+                                                 Visibility="Collapsed"
+                                                 Foreground="{ThemeResource MessageReactionForegroundBrush}"
+                                                 TextStyle="{StaticResource CaptionTextBlockStyle}"
+                                                 VerticalAlignment="Center"
+                                                 AutomationProperties.AccessibilityView="Raw"
+                                                 IsTabStop="False"
+                                                 Margin="0,1,20,2"
+                                                 Grid.Column="1" />
+                    </Grid>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style TargetType="messages:SavedMessagesTagButton">
+        <Setter Property="CornerRadius"
+                Value="0" />
+        <Setter Property="MinWidth"
+                Value="44" />
+        <Setter Property="UseSystemFocusVisuals"
+                Value="True" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="messages:SavedMessagesTagButton">
+                    <Grid>
+                        <VisualStateManager.VisualStateGroups>
+                            <VisualStateGroup x:Name="CommonStates">
+                                <VisualState x:Name="Normal" />
+                                <VisualState x:Name="PointerOver" />
+                                <VisualState x:Name="Pressed" />
+                                <VisualState x:Name="Checked">
+                                    <VisualState.Setters>
+                                        <Setter Target="LayoutRoot.Fill"
+                                                Value="{ThemeResource MessageReactionChosenBackgroundBrush}" />
+                                        <Setter Target="Count.Foreground"
+                                                Value="{ThemeResource MessageReactionChosenForegroundBrush}" />
+                                    </VisualState.Setters>
+                                </VisualState>
+                                <VisualState x:Name="CheckedPointerOver">
+                                    <VisualState.Setters>
+                                        <Setter Target="LayoutRoot.Fill"
+                                                Value="{ThemeResource MessageReactionChosenBackgroundBrush}" />
+                                        <Setter Target="Count.Foreground"
+                                                Value="{ThemeResource MessageReactionChosenForegroundBrush}" />
+                                    </VisualState.Setters>
+                                </VisualState>
+                                <VisualState x:Name="CheckedPressed">
+                                    <VisualState.Setters>
+                                        <Setter Target="LayoutRoot.Fill"
+                                                Value="{ThemeResource MessageReactionChosenBackgroundBrush}" />
+                                        <Setter Target="Count.Foreground"
+                                                Value="{ThemeResource MessageReactionChosenForegroundBrush}" />
+                                    </VisualState.Setters>
+                                </VisualState>
+                            </VisualStateGroup>
+                        </VisualStateManager.VisualStateGroups>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition />
+                        </Grid.ColumnDefinitions>
+                        <messages:SavedMessagesTagPath x:Name="LayoutRoot"
+                                                       Fill="{ThemeResource MessageReactionBackgroundBrush}"
+                                                       Grid.ColumnSpan="2" />
+
+                        <Grid Margin="0,-4">
+                            <Image x:Name="Presenter"
+                                   Width="32"
+                                   Height="32" />
+                            <local:CustomEmojiIcon x:Name="Icon"
+                                                   x:Load="False" />
+                        </Grid>
+
+                        <local:AnimatedTextBlock x:Name="Count"
+                                                 x:Load="False"
+                                                 Foreground="{ThemeResource MessageReactionForegroundBrush}"
+                                                 TextStyle="{StaticResource CaptionTextBlockStyle}"
+                                                 VerticalAlignment="Center"
+                                                 AutomationProperties.AccessibilityView="Raw"
+                                                 IsTabStop="False"
+                                                 Margin="0,1,8,2"
+                                                 Grid.Column="1" />
+                    </Grid>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
 
     <Style TargetType="stories:StoryReactionButton">
         <Setter Property="Template">

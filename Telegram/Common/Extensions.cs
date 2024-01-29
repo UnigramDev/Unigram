@@ -110,6 +110,24 @@ namespace Telegram.Common
             return Task.FromResult(ContentDialogResult.None);
         }
 
+        public static void AddCubicBezier(this PathFigure figure, Point controlPoint1, Point controlPoint2, Point endPoint)
+        {
+            figure.Segments.Add(new BezierSegment
+            {
+                Point1 = controlPoint1,
+                Point2 = controlPoint2,
+                Point3 = endPoint
+            });
+        }
+
+        public static void AddLine(this PathFigure figure, double x, double y)
+        {
+            figure.Segments.Add(new LineSegment
+            {
+                Point = new Point(x, y),
+            });
+        }
+
         public static void ForEach<T>(this ListViewBase listView, Action<SelectorItem, T> handler) where T : class
         {
             int lastCacheIndex;

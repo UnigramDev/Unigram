@@ -4,6 +4,7 @@
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+using System;
 using System.Numerics;
 using Telegram.Common;
 using Telegram.Navigation;
@@ -36,7 +37,7 @@ namespace Telegram.Controls.Chats
             {
                 if (Field.State != ChatSearchState.Members && !AutomationPeer.ListenerExists(AutomationEvents.LiveRegionChanged))
                 {
-                    ViewModel?.Search(Field.Text, Field.From, Field.Filter?.Filter);
+                    ViewModel?.Search(Field.Text, Field.From, Field.Filter?.Filter, ViewModel.SavedMessagesTag);
                 }
             };
         }
@@ -50,8 +51,11 @@ namespace Telegram.Controls.Chats
 
             _empty = viewModel == null;
 
-            DataContext = viewModel;
-            Bindings.Update();
+            if (viewModel != null)
+            {
+                DataContext = viewModel;
+                Bindings.Update();
+            }
 
             Field.Text = viewModel?.Query ?? string.Empty;
             Field.From = null;
@@ -86,8 +90,16 @@ namespace Telegram.Controls.Chats
             _collapsed = !show;
             Visibility = Visibility.Visible;
 
+            IsHitTestVisible = show;
+
+            ShowHideSavedTags(show);
+
             var visual = ElementComposition.GetElementVisual(TopPanel);
-            visual.Clip = visual.Compositor.CreateInsetClip();
+            var header = ElementComposition.GetElementVisual(_viewHeader);
+            var clipper = ElementComposition.GetElementVisual(_viewClipperOuter);
+            clipper.Clip = null; //visual.Compositor.CreateInsetClip();
+
+            ElementCompositionPreview.SetIsTranslationEnabled(_viewClipperOuter, true);
 
             var batch = visual.Compositor.CreateScopedBatch(Windows.UI.Composition.CompositionBatchTypes.Animation);
             batch.Completed += (s, args) =>
@@ -97,6 +109,7 @@ namespace Telegram.Controls.Chats
 
                 if (_collapsed)
                 {
+                    DataContext = null;
                     Visibility = Visibility.Collapsed;
                 }
                 else
@@ -106,18 +119,92 @@ namespace Telegram.Controls.Chats
                 }
             };
 
+            var height = _viewClipperOuter.ActualSize.Y - _viewDate.ActualSize.Y;
+            Logger.Info(height);
+
+            var clip = visual.Compositor.CreateScalarKeyFrameAnimation();
+            clip.InsertKeyFrame(show ? 1 : 0, height - 48);
+            clip.InsertKeyFrame(show ? 0 : 1, -48);
+            clip.Duration = TimeSpan.FromSeconds(0.167); //Constants.FastAnimation;
+
+            var offset = visual.Compositor.CreateVector3KeyFrameAnimation();
+            offset.InsertKeyFrame(show ? 1 : 0, new Vector3(0, -height, 0));
+            offset.InsertKeyFrame(show ? 0 : 1, new Vector3());
+            offset.Duration = TimeSpan.FromSeconds(0.167); //Constants.FastAnimation;
+
+            //clipper.Clip.StartAnimation("TopInset", clip);
+            clipper.StartAnimation("Translation", offset);
+
+            var opacity1 = visual.Compositor.CreateScalarKeyFrameAnimation();
+            opacity1.InsertKeyFrame(show ? 0 : 1, 0);
+            opacity1.InsertKeyFrame(show ? 1 : 0, 1);
+            opacity1.Duration = TimeSpan.FromSeconds(0.167); //Constants.FastAnimation;
+
+            var opacity2 = visual.Compositor.CreateScalarKeyFrameAnimation();
+            opacity2.InsertKeyFrame(show ? 0 : 1, 1);
+            opacity2.InsertKeyFrame(show ? 1 : 0, 0);
+            opacity2.Duration = TimeSpan.FromSeconds(0.167); //Constants.FastAnimation;
+
+            visual.StartAnimation("Opacity", opacity1);
+            //header.StartAnimation("Opacity", opacity2);
+
+            batch.End();
+        }
+
+        private bool _savedTagsCollapsed = true;
+
+        private void ShowHideSavedTags(bool show)
+        {
+            if (_savedTagsCollapsed != show)
+            {
+                return;
+            }
+
+            _savedTagsCollapsed = !show;
+            Field.PlaceholderText = show
+                ? Strings.SavedTagSearchHint
+                : Strings.Search;
+
+            var visual = ElementComposition.GetElementVisual(SecondaryRoot);
+            var visual1 = ElementComposition.GetElementVisual(TagsRoot);
+            var date = ElementComposition.GetElementVisual(_viewDate);
+            visual1.Clip = visual.Compositor.CreateInsetClip();
+            visual.Clip = visual.Compositor.CreateInsetClip();
+
+            ElementCompositionPreview.SetIsTranslationEnabled(SecondaryRoot, true);
+            ElementCompositionPreview.SetIsTranslationEnabled(_viewDate, true);
+
+            var batch = visual.Compositor.CreateScopedBatch(Windows.UI.Composition.CompositionBatchTypes.Animation);
+            batch.Completed += (s, args) =>
+            {
+                visual.Clip = null;
+                //visual.Offset = new Vector3();
+            };
+
             var clip = visual.Compositor.CreateScalarKeyFrameAnimation();
             clip.InsertKeyFrame(show ? 0 : 1, 48);
-            clip.InsertKeyFrame(show ? 1 : 0, 0);
-            clip.Duration = Constants.FastAnimation;
+            clip.InsertKeyFrame(show ? 1 : 0, -48);
+            clip.Duration = TimeSpan.FromSeconds(0.167); //Constants.FastAnimation;
+
+            var clip1 = visual.Compositor.CreateScalarKeyFrameAnimation();
+            clip1.InsertKeyFrame(show ? 0 : 1, 48);
+            clip1.InsertKeyFrame(show ? 1 : 0, 0);
+            clip1.Duration = TimeSpan.FromSeconds(0.167); //Constants.FastAnimation;
 
             var offset = visual.Compositor.CreateVector3KeyFrameAnimation();
             offset.InsertKeyFrame(show ? 0 : 1, new Vector3(0, -48, 0));
             offset.InsertKeyFrame(show ? 1 : 0, new Vector3());
-            offset.Duration = Constants.FastAnimation;
+            offset.Duration = TimeSpan.FromSeconds(0.167); //Constants.FastAnimation;
 
+            var translation = visual.Compositor.CreateVector3KeyFrameAnimation();
+            translation.InsertKeyFrame(show ? 0 : 1, new Vector3(0, 0, 0));
+            translation.InsertKeyFrame(show ? 1 : 0, new Vector3(0, 48, 0));
+            translation.Duration = TimeSpan.FromSeconds(0.167); //Constants.FastAnimation;
+
+            visual1.Clip.StartAnimation("TopInset", clip1);
             visual.Clip.StartAnimation("TopInset", clip);
-            visual.StartAnimation("Offset", offset);
+            visual.StartAnimation("Translation", offset);
+            date.StartAnimation("Translation", translation);
 
             batch.End();
         }
@@ -190,6 +277,15 @@ namespace Telegram.Controls.Chats
             return string.Format("{0}/{1}", index + 1, count);
         }
 
+        private object ConvertTag(SavedMessagesTags tags)
+        {
+            Tags.UpdateMessageReactions(ViewModel, tags);
+            Tags.Visibility = tags?.Tags.Count > 0
+                ? Visibility.Visible
+                : Visibility.Collapsed;
+            return null;
+        }
+
         #endregion
 
         private void OnTextChanged(object sender, TextChangedEventArgs e)
@@ -217,7 +313,7 @@ namespace Telegram.Controls.Chats
             if (e.Key == Windows.System.VirtualKey.Enter && !shift && Field.State != ChatSearchState.Members)
             {
                 _debouncer.Cancel();
-                ViewModel?.Search(Field.Text, Field.From, Field.Filter?.Filter);
+                ViewModel?.Search(Field.Text, Field.From, Field.Filter?.Filter, ViewModel.SavedMessagesTag);
                 e.Handled = true;
             }
             else if (e.Key == Windows.System.VirtualKey.Enter && shift && Field.State != ChatSearchState.Members)
@@ -235,7 +331,7 @@ namespace Telegram.Controls.Chats
         private void Search_Click(object sender, RoutedEventArgs e)
         {
             _debouncer.Cancel();
-            ViewModel?.Search(Field.Text, Field.From, Field.Filter?.Filter);
+            ViewModel?.Search(Field.Text, Field.From, Field.Filter?.Filter, ViewModel.SavedMessagesTag);
         }
 
         private void Delete_Click(object sender, RoutedEventArgs e)
@@ -363,6 +459,17 @@ namespace Telegram.Controls.Chats
             }
 
             return true;
+        }
+
+        private UIElement _viewHeader;
+        private UIElement _viewClipperOuter;
+        private UIElement _viewDate;
+
+        public void InitializeParent(UIElement header, UIElement clipperOuter, UIElement date)
+        {
+            _viewHeader = header;
+            _viewClipperOuter = clipperOuter;
+            _viewDate = date;
         }
     }
 }

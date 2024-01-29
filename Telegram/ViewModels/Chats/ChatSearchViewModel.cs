@@ -35,7 +35,7 @@ namespace Telegram.ViewModels.Chats
 
             if (!string.IsNullOrEmpty(query))
             {
-                Search(query, null, null);
+                Search(query, null, null, null);
             }
         }
 
@@ -101,6 +101,34 @@ namespace Telegram.ViewModels.Chats
         {
             get => _filter;
             set => Set(ref _filter, value);
+        }
+
+        private ReactionType _savedMessagesTag;
+        public ReactionType SavedMessagesTag
+        {
+            get => _savedMessagesTag;
+            set
+            {
+                var reaction = _savedMessagesTag ?? value;
+
+                if (Set(ref _savedMessagesTag, value))
+                {
+                    Dialog.UpdateSavedMessagesTag(value, _filterByTag, reaction);
+                }
+            }
+        }
+
+        private bool _filterByTag = true;
+        public bool FilterByTag
+        {
+            get => _filterByTag;
+            set
+            {
+                if (Set(ref _filterByTag, value))
+                {
+                    Dialog.UpdateSavedMessagesTag(_savedMessagesTag, value, _savedMessagesTag);
+                }
+            }
         }
 
         public ICollection Filters
@@ -189,7 +217,7 @@ namespace Telegram.ViewModels.Chats
             }
         }
 
-        public async void Search(string query, MessageSender from, SearchMessagesFilter filter)
+        public async void Search(string query, MessageSender from, SearchMessagesFilter filter, ReactionType savedMessagesTag)
         {
             static bool FromEquals(MessageSender x, MessageSender y)
             {
@@ -209,7 +237,7 @@ namespace Telegram.ViewModels.Chats
             {
                 await Dialog.LoadEventLogSliceAsync(query);
             }
-            else if (string.Equals(_query, query) && FromEquals(_from, from) && _filter?.GetType() == filter?.GetType() && PreviousCanExecute())
+            else if (string.Equals(_query, query) && FromEquals(_from, from) && _filter?.GetType() == filter?.GetType() && _savedMessagesTag.AreTheSame(savedMessagesTag) && PreviousCanExecute())
             {
                 PreviousExecute();
             }
@@ -218,6 +246,7 @@ namespace Telegram.ViewModels.Chats
                 From = from;
                 Filter = filter;
                 Query = query;
+                SavedMessagesTag = savedMessagesTag;
 
                 var chat = _dialog.Chat;
                 if (chat == null)
@@ -241,7 +270,7 @@ namespace Telegram.ViewModels.Chats
                 //    fromMessageId = _dialog.Items[panel.LastVisibleIndex].Id;
                 //}
 
-                var collection = new SearchChatMessagesCollection(ClientService, chat.Id, _dialog.ThreadId, _dialog.SavedMessagesTopic, query, from, fromMessageId, filter);
+                var collection = new SearchChatMessagesCollection(ClientService, chat.Id, _dialog.ThreadId, _dialog.SavedMessagesTopic, query, from, fromMessageId, filter, savedMessagesTag);
 
                 var result = await collection.LoadMoreItemsAsync(100);
                 if (result.Count > 0)
@@ -340,6 +369,7 @@ namespace Telegram.ViewModels.Chats
             Autocomplete = null;
             Query = null;
             From = null;
+            SavedMessagesTag = null;
             Items = null;
             SelectedItem = null;
         }

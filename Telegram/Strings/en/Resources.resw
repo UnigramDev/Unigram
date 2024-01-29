@@ -7177,6 +7177,33 @@ The channel &quot;**{1}**&quot; will become private.</value>
   <data name="SavedOpenGroup" xml:space="preserve">
     <value>OPEN GROUP</value>
   </data>
+  <data name="SavedTagFilterByTag" xml:space="preserve">
+    <value>Filter by Tag</value>
+  </data>
+  <data name="SavedTagHideOtherMessages" xml:space="preserve">
+    <value>Hide Other Messages</value>
+  </data>
+  <data name="SavedTagLabelPlaceholder" xml:space="preserve">
+    <value>Name</value>
+  </data>
+  <data name="SavedTagLabelTag" xml:space="preserve">
+    <value>Add Name</value>
+  </data>
+  <data name="SavedTagLabelTagText" xml:space="preserve">
+    <value>You can label your emoji tag with a text name.</value>
+  </data>
+  <data name="SavedTagRemoveTag" xml:space="preserve">
+    <value>Remove Tag</value>
+  </data>
+  <data name="SavedTagRenameTag" xml:space="preserve">
+    <value>Edit Name</value>
+  </data>
+  <data name="SavedTagSearchHint" xml:space="preserve">
+    <value>Search messages or tags</value>
+  </data>
+  <data name="SavedTagShowOtherMessages" xml:space="preserve">
+    <value>Show Other Messages</value>
+  </data>
   <data name="SaveForNotifications" xml:space="preserve">
     <value>Save for Notifications</value>
   </data>

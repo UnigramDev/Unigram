@@ -12,6 +12,7 @@ using Telegram.Td.Api;
 using Telegram.ViewModels;
 using Windows.Foundation;
 using Windows.System;
+using Windows.UI.Xaml;
 using Windows.UI.Xaml.Automation.Peers;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
@@ -20,12 +21,12 @@ using Windows.UI.Xaml.Media.Imaging;
 
 namespace Telegram.Controls.Messages
 {
-    public class ReactionButton : ToggleButton
+    public class ReactionButton : ToggleButtonEx
     {
         private Image Presenter;
         private CustomEmojiIcon Icon;
         private Popup Overlay;
-        private AnimatedTextBlock Count;
+        protected AnimatedTextBlock Count;
         private RecentUserHeads RecentChoosers;
 
         public ReactionButton()
@@ -57,8 +58,8 @@ namespace Telegram.Controls.Messages
             return null;
         }
 
-        private MessageViewModel _message;
-        private MessageReaction _interaction;
+        protected MessageViewModel _message;
+        protected MessageReaction _interaction;
         private EmojiReaction _reaction;
         private Sticker _sticker;
         private UnreadReaction _unread;
@@ -158,26 +159,26 @@ namespace Telegram.Controls.Messages
             Icon.Source = new DelayedFileSource(message.ClientService, value.StickerValue);
         }
 
-        private void UpdateInteraction(MessageViewModel message, MessageReaction interaction, bool recycled)
+        protected virtual void UpdateInteraction(MessageViewModel message, MessageReaction interaction, bool recycled)
         {
             IsChecked = interaction.IsChosen;
 
             if (interaction.TotalCount > interaction.RecentSenderIds.Count)
             {
                 Count ??= GetTemplateChild(nameof(Count)) as AnimatedTextBlock;
-                Count.Visibility = Windows.UI.Xaml.Visibility.Visible;
+                Count.Visibility = Visibility.Visible;
 
                 Count.Text = Formatter.ShortNumber(interaction.TotalCount);
 
                 if (RecentChoosers != null)
                 {
-                    RecentChoosers.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
+                    RecentChoosers.Visibility = Visibility.Collapsed;
                 }
             }
             else
             {
                 RecentChoosers ??= GetRecentChoosers();
-                RecentChoosers.Visibility = Windows.UI.Xaml.Visibility.Visible;
+                RecentChoosers.Visibility = Visibility.Visible;
 
                 var destination = RecentChoosers.Items;
                 var origin = interaction.RecentSenderIds;
@@ -194,7 +195,7 @@ namespace Telegram.Controls.Messages
 
                 if (Count != null)
                 {
-                    Count.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
+                    Count.Visibility = Visibility.Collapsed;
                 }
             }
         }
@@ -209,7 +210,7 @@ namespace Telegram.Controls.Messages
 
         private void RecentChoosers_RecentUserHeadChanged(ProfilePicture photo, MessageSender sender)
         {
-            if (_message.ClientService.TryGetUser(sender, out Telegram.Td.Api.User user))
+            if (_message.ClientService.TryGetUser(sender, out Td.Api.User user))
             {
                 photo.SetUser(_message.ClientService, user, 20);
             }
@@ -247,21 +248,32 @@ namespace Telegram.Controls.Messages
             //base.OnToggle();
         }
 
-        private void OnClick(object sender, Windows.UI.Xaml.RoutedEventArgs e)
+        private void OnClick(object sender, RoutedEventArgs e)
         {
             var chosen = _interaction;
-            if (chosen == null || Presenter == null)
+            if (chosen != null && Presenter != null)
             {
-                return;
+                OnClick(_message, chosen);
             }
 
+
+            //if (_isTag)
+            //{
+            //    ContextMenuRequested();
+            //    return;
+            //}
+
+        }
+
+        protected virtual void OnClick(MessageViewModel message, MessageReaction chosen)
+        {
             if (chosen.IsChosen)
             {
-                _message.ClientService.Send(new RemoveMessageReaction(_message.ChatId, _message.Id, chosen.Type));
+                message.ClientService.Send(new RemoveMessageReaction(message.ChatId, message.Id, chosen.Type));
             }
             else
             {
-                _message.ClientService.Send(new AddMessageReaction(_message.ChatId, _message.Id, chosen.Type, false, false));
+                message.ClientService.Send(new AddMessageReaction(message.ChatId, message.Id, chosen.Type, false, false));
             }
 
             if (chosen.IsChosen is false)

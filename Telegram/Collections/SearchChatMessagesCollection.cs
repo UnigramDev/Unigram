@@ -22,6 +22,7 @@ namespace Telegram.Collections
         private readonly SavedMessagesTopic _savedMessagesTopic;
         private readonly string _query;
         private readonly MessageSender _sender;
+        private readonly ReactionType _savedMessagesTag;
         private readonly bool _secretChat;
 
         private long _fromMessageId;
@@ -31,7 +32,7 @@ namespace Telegram.Collections
 
         private readonly SearchMessagesFilter _filter;
 
-        public SearchChatMessagesCollection(IClientService clientService, long chatId, long threadId, SavedMessagesTopic savedMessagesTopic, string query, MessageSender sender, long fromMessageId, SearchMessagesFilter filter)
+        public SearchChatMessagesCollection(IClientService clientService, long chatId, long threadId, SavedMessagesTopic savedMessagesTopic, string query, MessageSender sender, long fromMessageId, SearchMessagesFilter filter, ReactionType savedMessagesTag)
         {
             _clientService = clientService;
 
@@ -42,6 +43,7 @@ namespace Telegram.Collections
             _sender = sender;
             _fromMessageId = fromMessageId;
             _filter = filter;
+            _savedMessagesTag = savedMessagesTag;
 
             if (clientService.TryGetChat(chatId, out Chat chat))
             {
@@ -74,7 +76,14 @@ namespace Telegram.Collections
                         offset = 0;
                     }
 
-                    function = new SearchChatMessages(_chatId, _query, _sender, fromMessageId, offset, (int)count, _filter, _threadId, _savedMessagesTopic);
+                    if (_savedMessagesTag != null)
+                    {
+                        function = new SearchSavedMessages(_savedMessagesTag, _query, fromMessageId, offset, (int)count);
+                    }
+                    else
+                    {
+                        function = new SearchChatMessages(_chatId, _query, _sender, fromMessageId, offset, (int)count, _filter, _threadId, _savedMessagesTopic);
+                    }
                 }
 
                 var response = await _clientService.SendAsync(function);

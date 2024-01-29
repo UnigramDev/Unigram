@@ -71,7 +71,8 @@ namespace Telegram.ViewModels
                 .Subscribe<UpdateChatOnlineMemberCount>(Handle)
                 .Subscribe<UpdateChatVideoChat>(Handle)
                 .Subscribe<UpdateGroupCall>(Handle)
-                .Subscribe<UpdateSpeechRecognitionTrial>(Handle);
+                .Subscribe<UpdateSpeechRecognitionTrial>(Handle)
+                .Subscribe<UpdateSavedMessagesTags>(Handle);
         }
 
         public void Handle(UpdateSpeechRecognitionTrial update)
@@ -80,6 +81,14 @@ namespace Telegram.ViewModels
             {
                 _needsUpdateSpeechRecognitionTrial = false;
                 BeginOnUIThread(() => ShowSpeechRecognitionTrial(update.LeftCount > 0 ? 1 : 2));
+            }
+        }
+
+        public void Handle(UpdateSavedMessagesTags update)
+        {
+            if (_chat?.Id == ClientService.Options.MyId)
+            {
+                BeginOnUIThread(() => SavedMessagesTags = ClientService.GetSavedMessagesTags());
             }
         }
 

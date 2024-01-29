@@ -214,6 +214,7 @@ namespace Telegram.Views
 
         private void OnNavigatedTo()
         {
+            SearchMask.InitializeParent(Header, ClipperOuter, DateHeaderRelative);
             GroupCall.InitializeParent(ClipperOuter, ViewModel.ClientService);
             JoinRequests.InitializeParent(ClipperJoinRequests, ViewModel.ClientService);
             TranslateHeader.InitializeParent(ClipperTranslate);
@@ -412,7 +413,7 @@ namespace Telegram.Views
 
             StickersPanel.MaxWidth = SettingsService.Current.IsAdaptiveWideEnabled ? 1024 : double.PositiveInfinity;
 
-            Options.Visibility = ViewModel.Type == DialogType.History
+            Options.Visibility = ViewModel.Type is DialogType.History or DialogType.SavedMessagesTopic
                 ? Visibility.Visible
                 : Visibility.Collapsed;
 
@@ -2197,6 +2198,13 @@ namespace Telegram.Views
                     }
                 }
 
+                var reaction = children.FirstOrDefault(x => x is ReactionAsTagButton) as ReactionAsTagButton;
+                if (reaction != null)
+                {
+                    reaction.OnContextRequested();
+                    return;
+                }
+
                 if (message.Content is MessageAlbum album)
                 {
                     var child = children.FirstOrDefault(x => x is IContent) as IContent;
@@ -3748,6 +3756,10 @@ namespace Telegram.Views
             Call.Visibility = Visibility.Collapsed;
             VideoCall.Visibility = Visibility.Collapsed;
 
+            SearchOption.Glyph = chat.Id == ViewModel.ClientService.Options.MyId
+                ? Icons.TagSearch
+                : Icons.Search;
+
             // We want to collapse the bar only of we know that there's no call at all
             if (chat.VideoChat.GroupCallId == 0)
             {
@@ -4660,7 +4672,11 @@ namespace Telegram.Views
 
         public void UpdateUserFullInfo(Chat chat, User user, UserFullInfo fullInfo, bool secret, bool accessToken)
         {
-            if (ViewModel.Type == DialogType.SavedMessagesTopic)
+            if (ViewModel.Search?.SavedMessagesTag != null)
+            {
+                ShowAction(ViewModel.Search.FilterByTag ? Strings.SavedTagShowOtherMessages : Strings.SavedTagHideOtherMessages, true);
+            }
+            else if (ViewModel.Type == DialogType.SavedMessagesTopic)
             {
                 if (ViewModel.SavedMessagesTopic is SavedMessagesTopicMyNotes)
                 {
