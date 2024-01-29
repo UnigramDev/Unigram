@@ -397,7 +397,11 @@ namespace Telegram.ViewModels.Supergroups
 
             Members.Remove(member);
 
-            var response = await ClientService.SendAsync(new SetChatMemberStatus(chat.Id, member.MemberId, new ChatMemberStatusMember()));
+            ChatMemberStatus status = member.Status is ChatMemberStatusRestricted { IsMember: true }
+                ? new ChatMemberStatusMember()
+                : new ChatMemberStatusLeft();
+
+            var response = await ClientService.SendAsync(new SetChatMemberStatus(chat.Id, member.MemberId, status));
             if (response is Error)
             {
                 Members.Insert(index, member);
