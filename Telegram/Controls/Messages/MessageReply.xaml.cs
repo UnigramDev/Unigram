@@ -222,6 +222,8 @@ namespace Telegram.Controls.Messages
         private bool _light;
         private NameColor _accent;
 
+        private bool _quote;
+
         #region Overrides
 
         private static readonly CornerRadius _defaultRadius = new(2);
@@ -268,6 +270,7 @@ namespace Telegram.Controls.Messages
                     ServiceLabel.Text += ", ";
                 }
 
+                _quote = quote;
                 Quote.Visibility = quote
                     ? Visibility.Visible
                     : Visibility.Collapsed;
@@ -390,7 +393,7 @@ namespace Telegram.Controls.Messages
 
         protected override Size MeasureOverride(Size availableSize)
         {
-            if (ContentWidth > 0 && ContentWidth <= availableSize.Width)
+            if (ContentWidth > 0 && ContentWidth <= availableSize.Width && !_quote)
             {
                 LayoutRoot.Measure(new Size(Math.Max(144, ContentWidth), availableSize.Height));
                 return LayoutRoot.DesiredSize;
@@ -401,7 +404,7 @@ namespace Telegram.Controls.Messages
 
         protected override Size ArrangeOverride(Size finalSize)
         {
-            if (ContentWidth > 0 && ContentWidth <= finalSize.Width)
+            if (ContentWidth > 0 && ContentWidth <= finalSize.Width && !_quote)
             {
                 LayoutRoot.Arrange(new Rect(0, 0, finalSize.Width, LayoutRoot.DesiredSize.Height));
                 return new Size(finalSize.Width, LayoutRoot.DesiredSize.Height);

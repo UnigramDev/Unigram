@@ -19,7 +19,8 @@
                 BorderThickness="0,0,0,1"
                 Grid.ColumnSpan="2" />
 
-        <Grid x:Name="LayoutRoot">
+        <Grid x:Name="LayoutRoot"
+              Grid.ColumnSpan="2">
 
         </Grid>
 

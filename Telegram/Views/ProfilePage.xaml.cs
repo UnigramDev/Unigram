@@ -323,7 +323,7 @@ namespace Telegram.Views
         private void ProfileHeader_SizeChanged(object sender, SizeChangedEventArgs e)
         {
             _properties.InsertScalar("ActualHeight", ProfileHeader.ActualSize.Y + 16);
-            ViewModel.HeaderHeight = e.NewSize.Height;
+            ViewModel.HeaderHeight = Math.Max(e.NewSize.Height, 48 + 10);
             MediaFrame.MinHeight = ScrollingHost.ActualHeight + e.NewSize.Height - 48;
         }
 
