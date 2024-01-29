@@ -25,6 +25,7 @@ namespace Telegram.Views.Popups
             InitializeComponent();
 
             View.CalendarIdentifier = GlobalizationPreferences.Calendars.FirstOrDefault();
+            View.FirstDayOfWeek = GlobalizationPreferences.WeekStartsOn;
             View.Language = NativeUtils.GetCurrentCulture();
 
             if (date.HasValue)
