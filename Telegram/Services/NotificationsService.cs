@@ -635,9 +635,10 @@ namespace Telegram.Services
                 var launchArg = $"session={_sessionService.Id}&user_id={user.Id}";
                 var icon = new Uri("ms-appx:///Assets/Logos/Square44x44Logo.png");
 
-#if DEBUG
-                displayName += " BETA";
-#endif
+                if (Constants.DEBUG)
+                {
+                    displayName += " BETA";
+                }
 
                 var collection = new ToastCollection($"{_sessionService.Id}", displayName, launchArg, icon);
                 await ToastNotificationManager.GetDefault().GetToastCollectionManager().SaveToastCollectionAsync(collection);

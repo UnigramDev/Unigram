@@ -125,12 +125,10 @@ namespace Telegram.Controls
             Current = this;
             Margin = new Thickness();
 
-#if DEBUG
-            if (DataContext is INavigable navigable && navigable.NavigationService == null)
+            if (Constants.DEBUG && DataContext is INavigable navigable && navigable.NavigationService == null)
             {
                 throw new InvalidOperationException();
             }
-#endif
 
             var previous = _callback;
 

@@ -2367,23 +2367,24 @@ namespace Telegram.Views
                 flyout.CreateFlyoutItem(MessageUnvotePoll_Loaded, ViewModel.UnvotePoll, message, Strings.Unvote, Icons.ArrowUndo);
                 flyout.CreateFlyoutItem(MessageStopPoll_Loaded, ViewModel.StopPoll, message, Strings.StopPoll, Icons.LockClosed);
 
-#if DEBUG
-                var file = message.GetFile();
-                if (file != null && (file.Local.IsDownloadingActive || file.Local.IsDownloadingCompleted))
+                if (Constants.DEBUG)
                 {
-                    flyout.CreateFlyoutItem(x =>
+                    var file = message.GetFile();
+                    if (file != null && (file.Local.IsDownloadingActive || file.Local.IsDownloadingCompleted))
                     {
-                        var file = x.GetFile();
-                        if (file == null)
+                        flyout.CreateFlyoutItem(x =>
                         {
-                            return;
-                        }
+                            var file = x.GetFile();
+                            if (file == null)
+                            {
+                                return;
+                            }
 
-                        ViewModel.ClientService.CancelDownloadFile(file);
-                        ViewModel.ClientService.Send(new DeleteFileW(file.Id));
-                    }, message, "Delete from disk", Icons.Delete);
+                            ViewModel.ClientService.CancelDownloadFile(file);
+                            ViewModel.ClientService.Send(new DeleteFileW(file.Id));
+                        }, message, "Delete from disk", Icons.Delete);
+                    }
                 }
-#endif
 
                 if (message.CanBeSaved is false && flyout.Items.Count > 0 && ViewModel.Chat.HasProtectedContent)
                 {

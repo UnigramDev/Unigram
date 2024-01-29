@@ -2754,11 +2754,9 @@ namespace Telegram.ViewModels
                     ToastPopup.Show(text, new LocalFileSource("ms-appx:///Assets/Toasts/JoinRequested.tgs"));
                 }
             }
-            else
+            else if (Constants.DEBUG)
             {
-#if DEBUG
                 ClientService.Send(new AddLocalMessage(chat.Id, new MessageSenderChat(chat.Id), null, true, new InputMessageContact(new Contact("999888777666", "SIMILAR", "CHANNELS", string.Empty, ClientService.Options.MyId))));
-#endif
             }
         }
 
@@ -3734,10 +3732,11 @@ namespace Telegram.ViewModels
 
                 if (group.IsChannel)
                 {
-#if DEBUG
-                    ClientService.Send(new AddLocalMessage(chat.Id, new MessageSenderChat(chat.Id), null, true, new InputMessageContact(new Contact("999888777666", "SIMILAR", "CHANNELS", string.Empty, ClientService.Options.MyId))));
-                    return;
-#endif
+                    if (Constants.DEBUG)
+                    {
+                        ClientService.Send(new AddLocalMessage(chat.Id, new MessageSenderChat(chat.Id), null, true, new InputMessageContact(new Contact("999888777666", "SIMILAR", "CHANNELS", string.Empty, ClientService.Options.MyId))));
+                        return;
+                    }
 
                     if (group.Status is ChatMemberStatusLeft || (group.Status is ChatMemberStatusCreator creator && !creator.IsMember))
                     {

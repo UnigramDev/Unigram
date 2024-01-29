@@ -327,7 +327,7 @@ namespace Telegram.Views.Host
             Photo.SetUser(clientService, user, 48);
             NameLabel.Text = user.FullName();
 
-            if (clientService.Options.TestMode || SettingsService.Current.Diagnostics.HidePhoneNumber)
+            if (SettingsService.Current.Diagnostics.HidePhoneNumber)
             {
                 PhoneLabel.Text = "+42 --- --- ----";
             }

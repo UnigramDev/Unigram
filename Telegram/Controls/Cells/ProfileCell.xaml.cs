@@ -61,7 +61,7 @@ namespace Telegram.Controls.Cells
 
             if (phoneNumber)
             {
-                if (clientService.Options.TestMode || SettingsService.Current.Diagnostics.HidePhoneNumber)
+                if (SettingsService.Current.Diagnostics.HidePhoneNumber)
                 {
                     SubtitleLabel.Text = "+42 --- --- ----";
                 }

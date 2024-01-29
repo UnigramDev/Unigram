@@ -168,20 +168,24 @@ namespace LibVLCSharp.Platforms.Windows
                 var creationFlags =
                     DeviceCreationFlags.BgraSupport | DeviceCreationFlags.VideoSupport;
 
-#if DEBUG
-                creationFlags |= DeviceCreationFlags.Debug;
-
-                try
+                if (Telegram.Constants.DEBUG)
                 {
-                    dxgiFactory = new SharpDX.DXGI.Factory2(true);
+                    creationFlags |= DeviceCreationFlags.Debug;
+
+                    try
+                    {
+                        dxgiFactory = new SharpDX.DXGI.Factory2(true);
+                    }
+                    catch (SharpDXException)
+                    {
+                        dxgiFactory = new SharpDX.DXGI.Factory2(false);
+                    }
                 }
-                catch (SharpDXException)
+                else
                 {
                     dxgiFactory = new SharpDX.DXGI.Factory2(false);
                 }
-#else
-                dxgiFactory = new SharpDX.DXGI.Factory2(false);
-#endif
+
                 _d3D11Device = null;
                 int i_adapter = 0;
                 int adapterCount = dxgiFactory.GetAdapterCount();

@@ -129,7 +129,7 @@ namespace Telegram.Services.Settings
         private bool? _hidePhoneNumber;
         public bool HidePhoneNumber
         {
-            get => _hidePhoneNumber ??= GetValueOrDefault("HidePhoneNumber", false);
+            get => _hidePhoneNumber ??= GetValueOrDefault("HidePhoneNumber", Constants.DEBUG);
             set => AddOrUpdateValue(ref _hidePhoneNumber, "HidePhoneNumber", value);
         }
 

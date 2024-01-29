@@ -105,12 +105,12 @@ namespace Telegram.Views
                 MemoryUsageTimer_Tick(null, null);
             }
 
-#if DEBUG
-            FocusManager.GettingFocus += OnGettingFocus;
-#endif
+            if (Constants.DEBUG)
+            {
+                FocusManager.GettingFocus += OnGettingFocus;
+            }
         }
 
-#if DEBUG
         private void OnGettingFocus(object sender, GettingFocusEventArgs args)
         {
             Logger.Info(string.Format("New: {0}, Old: {1}, {2}, {3} ~> {4}",
@@ -118,7 +118,6 @@ namespace Telegram.Views
                 args.OldFocusedElement?.GetType().Name ?? "null",
                 args.Direction, args.InputDevice, args.FocusState));
         }
-#endif
 
         private void MemoryUsageTimer_Tick(object sender, object e)
         {
@@ -172,9 +171,10 @@ namespace Telegram.Views
                     _memoryUsageTimer.Stop();
                 }
 
-#if DEBUG
-                FocusManager.GettingFocus -= OnGettingFocus;
-#endif
+                if (Constants.DEBUG)
+                {
+                    FocusManager.GettingFocus -= OnGettingFocus;
+                }
             }
             catch { }
         }
@@ -558,11 +558,9 @@ namespace Telegram.Views
         private void HideState()
         {
             State.IsIndeterminate = false;
-#if DEBUG && !MOCKUP
-            StateLabel.Text = Strings.AppName;
-#else
-            StateLabel.Text = "Unigram";
-#endif
+            StateLabel.Text = Constants.DEBUG
+                ? Strings.AppName
+                : "Unigram";
 
             try
             {

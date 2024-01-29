@@ -227,7 +227,7 @@ namespace Telegram
         {
             if (message.Contains("libvlc.dll") || message.Contains("libvlccore.dll"))
             {
-                Crashes.TrackCrash(new LibVLCException(message));
+                Crashes.TrackCrash(new LibVLCSharp.Shared.VLCException(message));
             }
             else
             {
@@ -332,14 +332,6 @@ namespace Telegram
     public class UnmanagedException : Exception
     {
         public UnmanagedException(string message)
-            : base(message)
-        {
-        }
-    }
-
-    public class LibVLCException : Exception
-    {
-        public LibVLCException(string message)
             : base(message)
         {
         }

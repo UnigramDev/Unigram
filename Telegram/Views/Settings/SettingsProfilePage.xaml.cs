@@ -34,7 +34,7 @@ namespace Telegram.Views.Settings
         {
             Photo.SetUser(ViewModel.ClientService, user, 96);
 
-            if (ViewModel.ClientService.Options.TestMode || SettingsService.Current.Diagnostics.HidePhoneNumber)
+            if (SettingsService.Current.Diagnostics.HidePhoneNumber)
             {
                 PhoneNumber.Badge = "+42 --- --- ----";
             }
