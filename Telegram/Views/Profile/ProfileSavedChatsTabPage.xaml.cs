@@ -9,22 +9,43 @@ using Telegram.Controls;
 using Telegram.Controls.Cells;
 using Telegram.Controls.Media;
 using Telegram.Td.Api;
+using Telegram.ViewModels.Delegates;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Controls.Primitives;
 using Windows.UI.Xaml.Input;
 
 namespace Telegram.Views.Profile
 {
-    public sealed partial class ProfileSavedChatsTabPage : ProfileTabPage
+    public sealed partial class ProfileSavedChatsTabPage : ProfileTabPage, ISavedMessagesChatsDelegate
     {
         public ProfileSavedChatsTabPage()
         {
             InitializeComponent();
+
+            Connected += OnConnected;
+            Disconnected += OnDisconnected;
+        }
+
+        private void OnConnected(object sender, RoutedEventArgs e)
+        {
+            if (ViewModel != null)
+            {
+                ViewModel.SavedChatsTab.Delegate = this;
+            }
+        }
+
+        private void OnDisconnected(object sender, RoutedEventArgs e)
+        {
+            if (ViewModel != null)
+            {
+                ViewModel.SavedChatsTab.Delegate = null;
+            }
         }
 
         private void ListView_ItemClick(object sender, ItemClickEventArgs e)
         {
-            if (e.ClickedItem is FoundSavedMessagesTopic topic)
+            if (e.ClickedItem is SavedMessagesChat topic)
             {
                 ViewModel.OpenSavedMessagesTopic(topic.Topic);
             }
@@ -49,21 +70,21 @@ namespace Telegram.Views.Profile
             {
                 return;
             }
-            else if (args.ItemContainer.ContentTemplateRoot is Grid content && args.Item is FoundSavedMessagesTopic savedMessagesTopic)
+            else if (args.ItemContainer.ContentTemplateRoot is Grid content && args.Item is SavedMessagesChat savedMessagesTopic)
             {
                 if (content.Children[0] is ChatCell cell)
                 {
-                    cell.UpdateSavedMessagesTopic(ViewModel.ClientService, savedMessagesTopic, ViewModel.SavedChatsTab.IsPinned(savedMessagesTopic));
+                    cell.UpdateSavedMessagesTopic(ViewModel.ClientService, savedMessagesTopic);
                 }
             }
         }
 
         private void OnContextRequested(UIElement sender, ContextRequestedEventArgs args)
         {
-            var topic = ScrollingHost.ItemFromContainer(sender) as FoundSavedMessagesTopic;
+            var topic = ScrollingHost.ItemFromContainer(sender) as SavedMessagesChat;
             var flyout = new MenuFlyout();
 
-            if (ViewModel.SavedChatsTab.IsPinned(topic))
+            if (topic.IsPinned)
             {
                 flyout.CreateFlyoutItem(ViewModel.SavedChatsTab.UnpinTopic, topic, Strings.UnpinFromTop, Icons.PinOff);
             }
@@ -75,6 +96,21 @@ namespace Telegram.Views.Profile
             flyout.CreateFlyoutItem(ViewModel.SavedChatsTab.DeleteTopic, topic, Strings.Delete, Icons.Delete, destructive: true);
 
             flyout.ShowAt(sender, args);
+        }
+
+        public void UpdateSavedMessagesTopicLastMessage(SavedMessagesChat topic)
+        {
+            this.BeginOnUIThread(() =>
+            {
+                var container = ScrollingHost.ContainerFromItem(topic) as SelectorItem;
+                if (container?.ContentTemplateRoot is Grid content)
+                {
+                    if (content.Children[0] is ChatCell cell)
+                    {
+                        cell.UpdateSavedMessagesTopic(ViewModel.ClientService, topic);
+                    }
+                }
+            });
         }
     }
 }

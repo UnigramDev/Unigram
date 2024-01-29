@@ -56,8 +56,7 @@ namespace Telegram.Controls.Cells
 
         private Message _message;
 
-        private FoundSavedMessagesTopic _savedMessagesTopic;
-        private bool _savedMessagesTopicPinned;
+        private SavedMessagesChat _savedMessagesTopic;
 
         private int _thumbnailId;
 
@@ -200,7 +199,7 @@ namespace Telegram.Controls.Cells
             }
             else if (_savedMessagesTopic != null)
             {
-                UpdateSavedMessagesTopic(_clientService, _savedMessagesTopic, _savedMessagesTopicPinned);
+                UpdateSavedMessagesTopic(_clientService, _savedMessagesTopic);
             }
         }
 
@@ -218,11 +217,10 @@ namespace Telegram.Controls.Cells
             Update(chat, chatList);
         }
 
-        public void UpdateSavedMessagesTopic(IClientService clientService, FoundSavedMessagesTopic savedMessagesTopic, bool pinned)
+        public void UpdateSavedMessagesTopic(IClientService clientService, SavedMessagesChat savedMessagesTopic)
         {
             _clientService = clientService;
             _savedMessagesTopic = savedMessagesTopic;
-            _savedMessagesTopicPinned = pinned;
 
             if (!_templateApplied)
             {
@@ -265,9 +263,10 @@ namespace Telegram.Controls.Cells
                 }
             }
 
+            MutedIcon.Visibility = Visibility.Collapsed;
             UnreadBadge.Visibility = Visibility.Collapsed;
             UnreadMentionsBadge.Visibility = Visibility.Collapsed;
-            PinnedIcon.Visibility = pinned
+            PinnedIcon.Visibility = savedMessagesTopic.IsPinned
                 ? Visibility.Visible
                 : Visibility.Collapsed;
 
@@ -1517,7 +1516,7 @@ namespace Telegram.Controls.Cells
                 return false;
             }
 
-            if (message.IsOutgoing)
+            if (message.IsOutgoing && message.ChatId != clientService.Options.MyId)
             {
                 senderChat = null;
                 return clientService.TryGetUser(message.SenderId, out senderUser)

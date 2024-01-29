@@ -46,6 +46,8 @@ namespace Telegram.Services
         Task<Chats> GetChatListAsync(ChatList chatList, int offset, int limit);
         Task<Chats> GetStoryListAsync(StoryList storyList, int offset, int limit);
 
+        Task<IList<SavedMessagesChat>> GetSavedMessagesChatsAsync(int offset, int limit);
+
         int SessionId { get; }
     }
 
@@ -239,6 +241,8 @@ namespace Telegram.Services
 
         private readonly Dictionary<int, File> _files = new();
 
+        private readonly SavedMessagesManager _savedMessagesManager;
+
         private UnconfirmedSession _unconfirmedSession;
 
         private IList<string> _diceEmojis;
@@ -290,6 +294,8 @@ namespace Telegram.Services
             _locale = locale;
             _options = new OptionsService(this);
             _aggregator = aggregator;
+
+            _savedMessagesManager = new SavedMessagesManager(this, aggregator);
 
             _processFilesDelegate = new Action<BaseObject>(ProcessFiles);
 
@@ -1108,6 +1114,11 @@ namespace Telegram.Services
             return result;
         }
 
+        public Task<IList<SavedMessagesChat>> GetSavedMessagesChatsAsync(int offset, int limit)
+        {
+            return _savedMessagesManager.GetSavedMessagesChatsAsync(offset, limit);
+        }
+
         public Chat GetChat(long id)
         {
             if (_chats.TryGetValue(id, out Chat value))
@@ -1821,6 +1832,24 @@ namespace Telegram.Services
                 {
                     _usersToChats[privata.UserId] = updateNewChat.Chat.Id;
                 }
+            }
+            else if (update is UpdateNewMessage updateNewMessage)
+            {
+                if (updateNewMessage.Message.ChatId == Options.MyId && updateNewMessage.Message.SavedMessagesTopic != null)
+                {
+                    _savedMessagesManager.UpdateNewMessage(updateNewMessage.Message);
+                }
+            }
+            else if (update is UpdateDeleteMessages updateDeleteMessages)
+            {
+                if (updateDeleteMessages.ChatId == Options.MyId && updateDeleteMessages.IsPermanent && !updateDeleteMessages.FromCache)
+                {
+                    _savedMessagesManager.UpdateDeleteMessages(updateDeleteMessages.MessageIds);
+                }
+            }
+            else if (update is UpdatePinnedSavedMessagesTopics updatePinnedSavedMessagesTopics)
+            {
+                _savedMessagesManager.Handle(updatePinnedSavedMessagesTopics);
             }
             else if (update is UpdateAuthorizationState updateAuthorizationState)
             {

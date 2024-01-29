@@ -193,6 +193,10 @@
     <Compile Include="Collections\SynchronizedList.cs" />
     <Compile Include="Common\AutomaticDragHelper.cs" />
     <Compile Include="Common\BezierPoint.cs" />
+    <Compile Include="Td\Api\UpdateSavedMessagesChatLastMessage.cs" />
+    <Compile Include="Td\Api\UpdateSavedMessagesChatOrder.cs" />
+    <Compile Include="Td\Api\SavedMessagesChat.cs" />
+    <Compile Include="Td\SavedMessagesManager.cs" />
     <Compile Include="Composition\CompositionVoiceBlobVisual.cs" />
     <Compile Include="Composition\CompositionBlobVisual.cs" />
     <Compile Include="Composition\CompositionCurveVisual.cs" />
@@ -373,6 +377,7 @@
     <Compile Include="ViewModels\Chats\ChatStoriesViewModel.cs" />
     <Compile Include="ViewModels\ChooseChatsViewModel.cs" />
     <Compile Include="ViewModels\ComposeViewModel.cs" />
+    <Compile Include="ViewModels\Delegates\ISavedMessagesChatsDelegate.cs" />
     <Compile Include="ViewModels\DialogSavedViewModel.cs" />
     <Compile Include="ViewModels\DialogViewModel.Translate.cs" />
     <Compile Include="Td\Api\MessageTranslateResult.cs" />

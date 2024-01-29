@@ -5,6 +5,7 @@
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
 using Telegram.Common;
+using Telegram.Controls;
 using Telegram.Controls.Chats;
 using Telegram.Controls.Media;
 using Telegram.Navigation;
@@ -16,7 +17,7 @@ using Windows.UI.Xaml.Input;
 
 namespace Telegram.Views.Profile
 {
-    public class ProfileTabPage : Page, INavigablePage
+    public class ProfileTabPage : PageEx, INavigablePage
     {
         public ProfileViewModel ViewModel => DataContext as ProfileViewModel;
 
