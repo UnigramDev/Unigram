@@ -34,6 +34,8 @@ namespace Telegram.Controls.Messages.Content
 
         #region InitializeComponent
 
+        private AutomaticDragHelper ButtonDrag;
+
         private AspectView LayoutRoot;
         private Image Texture;
         private FileButton Button;
@@ -51,7 +53,12 @@ namespace Telegram.Controls.Messages.Content
             Overlay = GetTemplateChild(nameof(Overlay)) as FileButton;
             Subtitle = GetTemplateChild(nameof(Subtitle)) as TextBlock;
 
+            ButtonDrag = new AutomaticDragHelper(Button, true);
+            ButtonDrag.StartDetectingDrag();
+
             Button.Click += Play_Click;
+            Button.DragStarting += Button_DragStarting;
+
             Player.PositionChanged += Player_PositionChanged;
             Overlay.Click += Button_Click;
 
@@ -445,6 +452,11 @@ namespace Telegram.Controls.Messages.Content
             {
                 _message.Delegate.OpenMedia(_message, this);
             }
+        }
+
+        private void Button_DragStarting(UIElement sender, DragStartingEventArgs args)
+        {
+            MessageHelper.DragStarting(_message, args);
         }
 
         private void Play_Click(object sender, RoutedEventArgs e)

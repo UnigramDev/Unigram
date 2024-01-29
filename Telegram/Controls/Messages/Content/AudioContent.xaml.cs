@@ -17,6 +17,7 @@ using Windows.UI.Xaml.Media;
 
 namespace Telegram.Controls.Messages.Content
 {
+    // TODO: turn the whole control into a Button
     public sealed class AudioContent : ControlEx, IContent
     {
         private MessageViewModel _message;
@@ -40,6 +41,8 @@ namespace Telegram.Controls.Messages.Content
 
         #region InitializeComponent
 
+        private AutomaticDragHelper ButtonDrag;
+
         private Border Texture;
         private FileButton Button;
         private Grid DownloadPanel;
@@ -57,7 +60,12 @@ namespace Telegram.Controls.Messages.Content
             Title = GetTemplateChild(nameof(Title)) as TextBlock;
             Subtitle = GetTemplateChild(nameof(Subtitle)) as TextBlock;
 
+            ButtonDrag = new AutomaticDragHelper(Button, true);
+            ButtonDrag.StartDetectingDrag();
+
             Button.Click += Button_Click;
+            Button.DragStarting += Button_DragStarting;
+
             Download.Click += Download_Click;
 
             _templateApplied = true;
@@ -449,6 +457,11 @@ namespace Telegram.Controls.Messages.Content
             {
                 _message.Delegate.PlayMessage(_message);
             }
+        }
+
+        private void Button_DragStarting(UIElement sender, DragStartingEventArgs args)
+        {
+            MessageHelper.DragStarting(_message, args);
         }
 
         private void Download_Click(object sender, RoutedEventArgs e)

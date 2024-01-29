@@ -23,6 +23,7 @@ using Windows.UI.Xaml.Hosting;
 
 namespace Telegram.Controls.Messages.Content
 {
+    // TODO: turn the whole control into a Button
     public sealed class VoiceNoteContent : ControlEx, IContentWithFile
     {
         private MessageViewModel _message;
@@ -56,6 +57,8 @@ namespace Telegram.Controls.Messages.Content
 
         #region InitializeComponent
 
+        private AutomaticDragHelper ButtonDrag;
+
         private FileButton Button;
         private Border ViewOnce;
         private ProgressVoice Progress;
@@ -74,7 +77,12 @@ namespace Telegram.Controls.Messages.Content
             Subtitle = GetTemplateChild(nameof(Subtitle)) as TextBlock;
             Recognize = GetTemplateChild(nameof(Recognize)) as ToggleButton;
 
+            ButtonDrag = new AutomaticDragHelper(Button, true);
+            ButtonDrag.StartDetectingDrag();
+
             Button.Click += Button_Click;
+            Button.DragStarting += Button_DragStarting;
+
             Recognize.Click += Recognize_Click;
             Recognize.Checked += Recognize_Checked;
             Recognize.Unchecked += Recognize_Checked;
@@ -502,6 +510,11 @@ namespace Telegram.Controls.Messages.Content
                     _message.Delegate.PlayMessage(_message);
                 }
             }
+        }
+
+        private void Button_DragStarting(UIElement sender, DragStartingEventArgs args)
+        {
+            MessageHelper.DragStarting(_message, args);
         }
 
         private void Recognize_Click(object sender, RoutedEventArgs e)

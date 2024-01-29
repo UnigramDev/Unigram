@@ -1609,7 +1609,14 @@ namespace Telegram.Views
 
         private void OnDragOver(object sender, DragEventArgs e)
         {
-            e.AcceptedOperation = DataPackageOperation.Copy;
+            if (e.DataView.Contains("application/x-tl-message"))
+            {
+                e.AcceptedOperation = DataPackageOperation.None;
+            }
+            else
+            {
+                e.AcceptedOperation = DataPackageOperation.Copy;
+            }
         }
 
         private async void OnDrop(object sender, DragEventArgs e)

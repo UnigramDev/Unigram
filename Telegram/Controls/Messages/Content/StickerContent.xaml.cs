@@ -34,10 +34,14 @@ namespace Telegram.Controls.Messages.Content
             _message = message;
 
             DefaultStyleKey = typeof(StickerContent);
+
             Click += Button_Click;
+            DragStarting += Button_DragStarting;
         }
 
         #region InitializeComponent
+
+        private AutomaticDragHelper ButtonDrag;
 
         private AspectView LayoutRoot;
         private AnimatedImage Player;
@@ -50,6 +54,9 @@ namespace Telegram.Controls.Messages.Content
             LayoutRoot = GetTemplateChild(nameof(LayoutRoot)) as AspectView;
             Player = GetTemplateChild(nameof(Player)) as AnimatedImage;
             Player.Ready += Player_Ready;
+
+            ButtonDrag = new AutomaticDragHelper(this, true);
+            ButtonDrag.StartDetectingDrag();
 
             _templateApplied = true;
 
@@ -289,6 +296,11 @@ namespace Telegram.Controls.Messages.Content
                     Player.Play();
                 }
             }
+        }
+
+        private void Button_DragStarting(UIElement sender, DragStartingEventArgs args)
+        {
+            MessageHelper.DragStarting(_message, args);
         }
 
         public void PlayInteraction(MessageViewModel message, Sticker interaction)

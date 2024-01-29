@@ -32,6 +32,7 @@ using Windows.ApplicationModel;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.ApplicationModel.Resources.Core;
 using Windows.Foundation;
+using Windows.Storage;
 using Windows.Storage.Streams;
 using Windows.System;
 using Windows.UI.Xaml;
@@ -170,6 +171,48 @@ namespace Telegram.Common
             }
         }
 
+        public static async void DragStarting(MessageViewModel message, DragStartingEventArgs args)
+        {
+            var file = message?.GetFile();
+            if (file != null && file.Local.IsDownloadingCompleted)
+            {
+                var deferral = args.GetDeferral();
+
+                try
+                {
+                    var item = await StorageFile.GetFileFromPathAsync(file.Local.Path);
+
+                    args.Data.RequestedOperation = DataPackageOperation.Copy;
+                    args.Data.SetStorageItems(new[] { item });
+
+                    using (var stream = new InMemoryRandomAccessStream())
+                    {
+                        using (var writer = new DataWriter(stream.GetOutputStreamAt(0)))
+                        {
+                            writer.WriteInt64(message.ChatId);
+                            writer.WriteInt64(message.Id);
+
+                            await writer.FlushAsync();
+                            await writer.StoreAsync();
+                        }
+
+                        stream.Seek(0);
+                        args.Data.SetData("application/x-tl-message", stream.CloneStream());
+                    }
+
+                    args.DragUI.SetContentFromDataPackage();
+                }
+                catch
+                {
+                    // All the remote procedure calls must be wrapped in a try-catch block
+                }
+                finally
+                {
+                    deferral.Complete();
+                }
+            }
+        }
+
         public static async Task<FormattedText> PasteTextAsync(DataPackageView package)
         {
             if (package.AvailableFormats.Contains(StandardDataFormats.Text))
@@ -181,7 +224,7 @@ namespace Telegram.Common
                 {
                     var data = await package.GetDataAsync("application/x-tl-field-tags") as IRandomAccessStream;
                     var reader = new DataReader(data.GetInputStreamAt(0));
-                    
+
                     await reader.LoadAsync((uint)data.Size);
 
                     var count = reader.ReadInt32();

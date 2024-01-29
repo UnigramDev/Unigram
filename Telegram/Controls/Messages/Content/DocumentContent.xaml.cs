@@ -9,7 +9,6 @@ using Telegram.Common;
 using Telegram.Converters;
 using Telegram.Td.Api;
 using Telegram.ViewModels;
-using Windows.Storage;
 using Windows.UI;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -18,6 +17,7 @@ using Windows.UI.Xaml.Media.Imaging;
 
 namespace Telegram.Controls.Messages.Content
 {
+    // TODO: turn the whole control into a Button
     public sealed class DocumentContent : Control, IContent
     {
         private MessageViewModel _message;
@@ -35,6 +35,8 @@ namespace Telegram.Controls.Messages.Content
 
         #region InitializeComponent
 
+        private AutomaticDragHelper ButtonDrag;
+
         private Border Texture;
         private FileButton Button;
         private TextBlock Title;
@@ -48,7 +50,11 @@ namespace Telegram.Controls.Messages.Content
             Title = GetTemplateChild(nameof(Title)) as TextBlock;
             Subtitle = GetTemplateChild(nameof(Subtitle)) as TextBlock;
 
+            ButtonDrag = new AutomaticDragHelper(Button, true);
+            ButtonDrag.StartDetectingDrag();
+
             Button.Click += Button_Click;
+            Button.DragStarting += Button_DragStarting;
 
             _templateApplied = true;
 
@@ -299,23 +305,9 @@ namespace Telegram.Controls.Messages.Content
             }
         }
 
-        private async void Button_DragStarting(UIElement sender, DragStartingEventArgs args)
+        private void Button_DragStarting(UIElement sender, DragStartingEventArgs args)
         {
-            var document = GetContent(_message);
-            if (document == null)
-            {
-                return;
-            }
-
-            var file = document.DocumentValue;
-            if (file.Local.IsDownloadingCompleted)
-            {
-                var item = await StorageFile.GetFileFromPathAsync(file.Local.Path);
-
-                args.AllowedOperations = Windows.ApplicationModel.DataTransfer.DataPackageOperation.Copy;
-                args.Data.SetStorageItems(new[] { item });
-                args.DragUI.SetContentFromDataPackage();
-            }
+            MessageHelper.DragStarting(_message, args);
         }
     }
 }
