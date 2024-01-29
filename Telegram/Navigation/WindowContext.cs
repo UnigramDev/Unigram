@@ -366,16 +366,16 @@ namespace Telegram.Navigation
                         service.Navigate(typeof(AuthorizationPage));
                         break;
                     case AuthorizationStateWaitCode:
-                        service.Navigate(typeof(AuthorizationCodePage));
+                        service.Navigate(typeof(AuthorizationCodePage), navigationStackEnabled: false);
                         break;
                     case AuthorizationStateWaitEmailAddress:
-                        service.Navigate(typeof(AuthorizationEmailAddressPage));
+                        service.Navigate(typeof(AuthorizationEmailAddressPage), navigationStackEnabled: false);
                         break;
                     case AuthorizationStateWaitEmailCode:
-                        service.Navigate(typeof(AuthorizationEmailCodePage));
+                        service.Navigate(typeof(AuthorizationEmailCodePage), navigationStackEnabled: false);
                         break;
                     case AuthorizationStateWaitRegistration:
-                        service.Navigate(typeof(AuthorizationRegistrationPage));
+                        service.Navigate(typeof(AuthorizationRegistrationPage), navigationStackEnabled: false);
                         break;
                     case AuthorizationStateWaitPassword waitPassword:
                         if (!string.IsNullOrEmpty(waitPassword.RecoveryEmailAddressPattern))
@@ -383,7 +383,7 @@ namespace Telegram.Navigation
                             await MessagePopup.ShowAsync(string.Format(Strings.RestoreEmailSent, waitPassword.RecoveryEmailAddressPattern), Strings.AppName, Strings.OK);
                         }
 
-                        service.Navigate(typeof(AuthorizationPasswordPage));
+                        service.Navigate(typeof(AuthorizationPasswordPage), navigationStackEnabled: false);
                         break;
                 }
             }

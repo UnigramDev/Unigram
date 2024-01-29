@@ -52,16 +52,16 @@ namespace Telegram.Common
                     }
                     break;
                 case AuthorizationStateWaitCode:
-                    Navigate(typeof(AuthorizationCodePage));
+                    Navigate(typeof(AuthorizationCodePage), navigationStackEnabled: false);
                     break;
                 case AuthorizationStateWaitEmailAddress:
-                    Navigate(typeof(AuthorizationEmailAddressPage));
+                    Navigate(typeof(AuthorizationEmailAddressPage), navigationStackEnabled: false);
                     break;
                 case AuthorizationStateWaitEmailCode:
-                    Navigate(typeof(AuthorizationEmailCodePage));
+                    Navigate(typeof(AuthorizationEmailCodePage), navigationStackEnabled: false);
                     break;
                 case AuthorizationStateWaitRegistration:
-                    Navigate(typeof(AuthorizationRegistrationPage));
+                    Navigate(typeof(AuthorizationRegistrationPage), navigationStackEnabled: false);
                     break;
                 case AuthorizationStateWaitPassword waitPassword:
                     if (!string.IsNullOrEmpty(waitPassword.RecoveryEmailAddressPattern))
@@ -69,7 +69,9 @@ namespace Telegram.Common
                         await MessagePopup.ShowAsync(string.Format(Strings.RestoreEmailSent, waitPassword.RecoveryEmailAddressPattern), Strings.AppName, Strings.OK);
                     }
 
-                    Navigate(string.IsNullOrEmpty(waitPassword.RecoveryEmailAddressPattern) ? typeof(AuthorizationPasswordPage) : typeof(AuthorizationRecoveryPage));
+                    Navigate(string.IsNullOrEmpty(waitPassword.RecoveryEmailAddressPattern)
+                        ? typeof(AuthorizationPasswordPage)
+                        : typeof(AuthorizationRecoveryPage), navigationStackEnabled: false);
                     break;
             }
         }

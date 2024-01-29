@@ -224,19 +224,19 @@ namespace Telegram.Views.Host
                         service.AddToBackStack(typeof(BlankPage));
                         break;
                     case AuthorizationStateWaitCode:
-                        service.Navigate(typeof(AuthorizationCodePage));
+                        service.Navigate(typeof(AuthorizationCodePage), navigationStackEnabled: false);
                         break;
                     case AuthorizationStateWaitEmailAddress:
-                        service.Navigate(typeof(AuthorizationEmailAddressPage));
+                        service.Navigate(typeof(AuthorizationEmailAddressPage), navigationStackEnabled: false);
                         break;
                     case AuthorizationStateWaitEmailCode:
-                        service.Navigate(typeof(AuthorizationEmailCodePage));
+                        service.Navigate(typeof(AuthorizationEmailCodePage), navigationStackEnabled: false);
                         break;
                     case AuthorizationStateWaitRegistration:
-                        service.Navigate(typeof(AuthorizationRegistrationPage));
+                        service.Navigate(typeof(AuthorizationRegistrationPage), navigationStackEnabled: false);
                         break;
                     case AuthorizationStateWaitPassword:
-                        service.Navigate(typeof(AuthorizationPasswordPage));
+                        service.Navigate(typeof(AuthorizationPasswordPage), navigationStackEnabled: false);
                         break;
                 }
 

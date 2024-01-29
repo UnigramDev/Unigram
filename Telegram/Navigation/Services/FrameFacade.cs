@@ -141,7 +141,7 @@ namespace Telegram.Navigation.Services
 
         internal NavigationService NavigationService { get; set; }
 
-        public bool Navigate(Type page, object parameter, NavigationTransitionInfo infoOverride)
+        public bool Navigate(Type page, object parameter, NavigationTransitionInfo infoOverride, bool navigationStackEnabled = true)
         {
             Logger.Info();
 
@@ -150,14 +150,16 @@ namespace Telegram.Navigation.Services
                 infoOverride = new SuppressNavigationTransitionInfo();
             }
 
-            if (Frame.Navigate(page, parameter, infoOverride))
+            if (navigationStackEnabled is false)
             {
-                return page.Equals(Frame.Content?.GetType());
+                return Frame.NavigateToType(page, parameter, new FrameNavigationOptions
+                {
+                    TransitionInfoOverride = infoOverride,
+                    IsNavigationStackEnabled = navigationStackEnabled
+                });
             }
-            else
-            {
-                return false;
-            }
+
+            return Frame.Navigate(page, parameter, infoOverride);
         }
 
         public int BackStackDepth => Frame.BackStackDepth;

@@ -29,7 +29,7 @@ namespace Telegram.Navigation.Services
 
         object Content { get; }
 
-        bool Navigate(Type page, object parameter = null, NavigationState state = null, NavigationTransitionInfo infoOverride = null);
+        bool Navigate(Type page, object parameter = null, NavigationState state = null, NavigationTransitionInfo infoOverride = null, bool navigationStackEnabled = true);
 
         event EventHandler<NavigatingEventArgs> Navigating;
 
@@ -432,7 +432,7 @@ namespace Telegram.Navigation.Services
 
         public event EventHandler<NavigatingEventArgs> Navigating;
 
-        public bool Navigate(Type page, object parameter = null, NavigationState state = null, NavigationTransitionInfo infoOverride = null)
+        public bool Navigate(Type page, object parameter = null, NavigationState state = null, NavigationTransitionInfo infoOverride = null, bool navigationStackEnabled = true)
         {
             Logger.Info($"Page: {page}, Parameter: {parameter}, NavigationTransitionInfo: {infoOverride}");
 
@@ -477,7 +477,7 @@ namespace Telegram.Navigation.Services
                 CacheKeyToChatId[cacheKey] = chatId;
             }
 
-            return FrameFacade.Navigate(page, parameter, infoOverride);
+            return FrameFacade.Navigate(page, parameter, infoOverride, navigationStackEnabled);
         }
 
         public event EventHandler<CancelEventArgs<Type>> BeforeSavingNavigation;
