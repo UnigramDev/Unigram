@@ -62,6 +62,10 @@ namespace Telegram.Controls.Gallery
             set
             {
                 FullScreenButton.IsChecked = value;
+                FullScreenButton.Visibility = ApiInfo.IsXbox
+                    ? Visibility.Collapsed
+                    : Visibility.Visible;
+
                 Automation.SetToolTip(FullScreenButton, value ? Strings.AccDescrExitFullScreen : Strings.AccDescrFullScreen);
             }
         }

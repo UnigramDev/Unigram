@@ -366,7 +366,7 @@ namespace Telegram.Controls.Gallery
 
                 var applicationView = ApplicationView.GetForCurrentView();
 
-                _wasFullScreen = applicationView.IsFullScreenMode;
+                _wasFullScreen = applicationView.IsFullScreenMode || ApiInfo.IsXbox;
 
                 if (CanUnconstrainFromRootBounds && !_wasFullScreen)
                 {
@@ -416,30 +416,32 @@ namespace Telegram.Controls.Gallery
 
         private void OnVisibleBoundsChanged(ApplicationView sender, object args)
         {
-            if (_lastFullScreen != sender.IsFullScreenMode)
+            var fullScreen = sender.IsFullScreenMode || ApiInfo.IsXbox;
+
+            if (_lastFullScreen != fullScreen)
             {
+                _lastFullScreen = fullScreen;
+
                 //Window.Current.Content.Visibility = sender.IsFullScreenMode
                 //    ? Visibility.Collapsed
                 //    : Visibility.Visible;
 
-                Controls.IsFullScreen = sender.IsFullScreenMode;
-                Padding = new Thickness(0, sender.IsFullScreenMode ? 0 : 40, 0, 0);
+                Controls.IsFullScreen = fullScreen;
+                Padding = new Thickness(0, fullScreen ? 0 : 40, 0, 0);
 
                 if (LayoutRoot.CurrentElement is GalleryContent container)
                 {
-                    container.Stretch = sender.IsFullScreenMode
+                    container.Stretch = fullScreen
                         ? Stretch.UniformToFill
                         : Stretch.Uniform;
                 }
 
                 var anim = Window.Current.Compositor.CreateScalarKeyFrameAnimation();
-                anim.InsertKeyFrame(0, sender.IsFullScreenMode ? 0 : 1);
-                anim.InsertKeyFrame(1, sender.IsFullScreenMode ? 1 : 0);
+                anim.InsertKeyFrame(0, fullScreen ? 0 : 1);
+                anim.InsertKeyFrame(1, fullScreen ? 1 : 0);
 
                 _layerFullScreen.StartAnimation("Opacity", anim);
             }
-
-            _lastFullScreen = sender.IsFullScreenMode;
         }
 
         private void OnCollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
@@ -1126,7 +1128,7 @@ namespace Telegram.Controls.Gallery
                     _ => RotationAngle.Angle0
                 };
 
-                if (ViewModel.SelectedItem != null)
+                if (ViewModel?.SelectedItem != null)
                 {
                     ViewModel.SelectedItem.RotationAngle = view.RotationAngle;
                 }

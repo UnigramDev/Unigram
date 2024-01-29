@@ -99,6 +99,24 @@ namespace Telegram.Views.Host
             Navigation.Content = _navigationService.Frame;
 
             DropShadowEx.Attach(ThemeShadow);
+
+            if (ApiInfo.IsXbox)
+            {
+                var application = ApplicationView.GetForCurrentView();
+                application.VisibleBoundsChanged += OnVisibleBoundsChanged;
+                application.SetDesiredBoundsMode(ApplicationViewBoundsMode.UseCoreWindow);
+
+                OnVisibleBoundsChanged(application, null);
+            }
+        }
+
+        private void OnVisibleBoundsChanged(ApplicationView sender, object args)
+        {
+            LayoutRoot.Margin = new Thickness(
+                sender.VisibleBounds.Left,
+                sender.VisibleBounds.Top,
+                sender.VisibleBounds.Left,
+                sender.VisibleBounds.Top);
         }
 
         public INavigationService NavigationService

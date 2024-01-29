@@ -2,6 +2,7 @@
 using Microsoft.Web.WebView2.Core;
 using System;
 using System.Threading.Tasks;
+using Telegram.Common;
 using Telegram.Native;
 using Telegram.Services;
 using Windows.Data.Json;
@@ -257,7 +258,7 @@ namespace Telegram.Controls
         {
             try
             {
-                if (SettingsService.Current.Diagnostics.ForceEdgeHtml)
+                if (SettingsService.Current.Diagnostics.ForceEdgeHtml || !ApiInfo.IsDesktop)
                 {
                     return false;
                 }
