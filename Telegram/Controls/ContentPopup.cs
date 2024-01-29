@@ -133,6 +133,11 @@ namespace Telegram.Controls
             ElementCompositionPreview.SetElementChildVisual(AnimationElement, null);
         }
 
+        public virtual void OnCreate()
+        {
+
+        }
+
         public virtual void OnNavigatedTo()
         {
 

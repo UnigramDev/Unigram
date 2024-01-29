@@ -71,11 +71,9 @@ namespace Telegram.Views.Popups
                     FindName(nameof(Number));
                     break;
             }
-
-            Opened += OnOpened;
         }
 
-        private void OnOpened(ContentDialog sender, ContentDialogOpenedEventArgs args)
+        public override void OnCreate()
         {
             if (string.IsNullOrEmpty(Header))
             {
@@ -184,7 +182,7 @@ namespace Telegram.Views.Popups
             IsPrimaryButtonEnabled = Password.Password.Length >= MinLength;
         }
 
-        private void Number_ValueChanged(Microsoft.UI.Xaml.Controls.NumberBox sender, Microsoft.UI.Xaml.Controls.NumberBoxValueChangedEventArgs args)
+        private void Number_ValueChanged(NumberBox sender, NumberBoxValueChangedEventArgs args)
         {
             IsPrimaryButtonEnabled = args.NewValue >= 0 && args.NewValue <= Maximum;
         }
