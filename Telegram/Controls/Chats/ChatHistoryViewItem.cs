@@ -124,13 +124,16 @@ namespace Telegram.Controls.Chats
 
         private void OnUnloaded(object sender, RoutedEventArgs e)
         {
-            if (_hasInitialLoadedEventFired)
+            if (_hasInitialLoadedEventFired && !_interacting)
             {
                 _hasInitialLoadedEventFired = false;
 
                 _tracker.InteractionSources.RemoveAll();
                 _tracker.Dispose();
                 _tracker = null;
+
+                _interactionSource.Dispose();
+                _interactionSource = null;
             }
         }
 
@@ -257,7 +260,7 @@ namespace Telegram.Controls.Chats
 
         public void ValuesChanged(InteractionTracker sender, InteractionTrackerValuesChangedArgs args)
         {
-            if (_indicator == null && (_tracker.Position.X > 0.0001f || _tracker.Position.X < -0.0001f) /*&& Math.Abs(e.Cumulative.Translation.X) >= 45*/)
+            if (_indicator == null && (sender.Position.X > 0.0001f || sender.Position.X < -0.0001f) /*&& Math.Abs(e.Cumulative.Translation.X) >= 45*/)
             {
                 var sprite = _compositor.CreateSpriteVisual();
                 sprite.Size = new Vector2(30, 30);
@@ -296,7 +299,7 @@ namespace Telegram.Controls.Chats
                 //ElementCompositionPreview.SetElementChildVisual(this, _container);
             }
 
-            var offset = (_tracker.Position.X > 0 && !_reply) || (_tracker.Position.X <= 0 && !_share) ? 0 : Math.Max(0, Math.Min(72, Math.Abs(_tracker.Position.X)));
+            var offset = (sender.Position.X > 0 && !_reply) || (sender.Position.X <= 0 && !_share) ? 0 : Math.Max(0, Math.Min(72, Math.Abs(sender.Position.X)));
 
             var abs = Math.Abs(offset);
             var percent = abs / 72f;
@@ -306,8 +309,8 @@ namespace Telegram.Controls.Chats
 
             if (_indicator != null)
             {
-                _indicator.Offset = new Vector3(_tracker.Position.X > 0 ? width - percent * 60 : -30 + percent * 55, (height - 30) / 2, 0);
-                _indicator.Scale = new Vector3(_tracker.Position.X > 0 ? 0.8f + percent * 0.2f : -(0.8f + percent * 0.2f), 0.8f + percent * 0.2f, 1);
+                _indicator.Offset = new Vector3(sender.Position.X > 0 ? width - percent * 60 : -30 + percent * 55, (height - 30) / 2, 0);
+                _indicator.Scale = new Vector3(sender.Position.X > 0 ? 0.8f + percent * 0.2f : -(0.8f + percent * 0.2f), 0.8f + percent * 0.2f, 1);
                 _indicator.Opacity = percent;
             }
         }
@@ -316,11 +319,11 @@ namespace Telegram.Controls.Chats
         {
             if (ContentTemplateRoot is MessageSelector selector && selector.Message != null)
             {
-                if (_tracker.Position.X >= 72 && _reply)
+                if (sender.Position.X >= 72 && _reply)
                 {
                     _owner.ViewModel.ReplyToMessage(selector.Message);
                 }
-                else if (_tracker.Position.X <= -72 && _share)
+                else if (sender.Position.X <= -72 && _share)
                 {
                     _owner.ViewModel.ForwardMessage(selector.Message);
                 }
@@ -335,7 +338,15 @@ namespace Telegram.Controls.Chats
         public void IdleStateEntered(InteractionTracker sender, InteractionTrackerIdleStateEnteredArgs args)
         {
             _interacting = false;
-            ConfigureAnimations(_visual, null);
+
+            if (IsDisconnected)
+            {
+                OnUnloaded(null, null);
+            }
+            else
+            {
+                ConfigureAnimations(_visual, null);
+            }
         }
 
         public void InteractingStateEntered(InteractionTracker sender, InteractionTrackerInteractingStateEnteredArgs args)
