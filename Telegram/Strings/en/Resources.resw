@@ -9009,6 +9009,15 @@ However, it is currently available for purchase. **Learn more…**</value>
   <data name="VoipConnecting" xml:space="preserve">
     <value>Connecting</value>
   </data>
+  <data name="VoipDeviceCamera" xml:space="preserve">
+    <value>Camera</value>
+  </data>
+  <data name="VoipDeviceInput" xml:space="preserve">
+    <value>Microphone</value>
+  </data>
+  <data name="VoipDeviceOutput" xml:space="preserve">
+    <value>Speakers and Headphones</value>
+  </data>
   <data name="VoipEndCall" xml:space="preserve">
     <value>End call</value>
   </data>
@@ -9229,6 +9238,9 @@ Participants will see that the chat is being recorded.</value>
   </data>
   <data name="VoipStopVideo" xml:space="preserve">
     <value>Stop Video</value>
+  </data>
+  <data name="VoipStreamWith" xml:space="preserve">
+    <value>Stream with...</value>
   </data>
   <data name="VoipTapToMute" xml:space="preserve">
     <value>You&apos;re Live</value>

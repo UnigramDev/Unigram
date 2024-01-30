@@ -1557,7 +1557,7 @@ namespace Telegram.Views.Calls
                 var outputId = _service.CurrentAudioOutput;
 
                 var video = new MenuFlyoutSubItem();
-                video.Text = "Webcam";
+                video.Text = Strings.VoipDeviceCamera;
                 video.Icon = MenuFlyoutHelper.CreateIcon(Icons.Camera);
 
                 _dispatcherQueue.TryEnqueue(DispatcherQueuePriority.Normal, async () =>
@@ -1586,7 +1586,7 @@ namespace Telegram.Views.Calls
                 };
 
                 var input = new MenuFlyoutSubItem();
-                input.Text = "Microphone";
+                input.Text = Strings.VoipDeviceInput;
                 input.Icon = MenuFlyoutHelper.CreateIcon(Icons.MicOn);
                 input.Items.Add(defaultInput);
 
@@ -1616,7 +1616,7 @@ namespace Telegram.Views.Calls
                 };
 
                 var output = new MenuFlyoutSubItem();
-                output.Text = "Speaker";
+                output.Text = Strings.VoipDeviceOutput;
                 output.Icon = MenuFlyoutHelper.CreateIcon(Icons.Speaker3);
                 output.Items.Add(defaultOutput);
 

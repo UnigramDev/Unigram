@@ -565,7 +565,7 @@ namespace Telegram.Views.Calls
                 };
 
                 var output = new MenuFlyoutSubItem();
-                output.Text = "Speaker";
+                output.Text = Strings.VoipDeviceOutput;
                 output.Icon = MenuFlyoutHelper.CreateIcon(Icons.Speaker3);
                 output.Items.Add(defaultOutput);
 
@@ -593,7 +593,7 @@ namespace Telegram.Views.Calls
                 if (supergroup.Status is ChatMemberStatusCreator)
                 {
                     flyout.CreateFlyoutSeparator();
-                    flyout.CreateFlyoutItem(StreamWith, "Stream with...", Icons.Live);
+                    flyout.CreateFlyoutItem(StreamWith, Strings.VoipStreamWith, Icons.Live);
                 }
             }
             else if (chat.Type is ChatTypeBasicGroup && _clientService.TryGetBasicGroup(chat, out BasicGroup basicGroup))
@@ -601,7 +601,7 @@ namespace Telegram.Views.Calls
                 if (basicGroup.Status is ChatMemberStatusCreator)
                 {
                     flyout.CreateFlyoutSeparator();
-                    flyout.CreateFlyoutItem(StreamWith, "Stream with...", Icons.Live);
+                    flyout.CreateFlyoutItem(StreamWith, Strings.VoipStreamWith, Icons.Live);
                 }
             }
 

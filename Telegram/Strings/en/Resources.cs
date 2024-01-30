@@ -13793,6 +13793,21 @@ namespace Telegram
         public static string VoipConnecting => Resource.GetString("VoipConnecting");
         
         /// <summary>
+        /// Localized resource similar to "Camera"
+        /// </summary>
+        public static string VoipDeviceCamera => Resource.GetString("VoipDeviceCamera");
+        
+        /// <summary>
+        /// Localized resource similar to "Microphone"
+        /// </summary>
+        public static string VoipDeviceInput => Resource.GetString("VoipDeviceInput");
+        
+        /// <summary>
+        /// Localized resource similar to "Speakers and Headphones"
+        /// </summary>
+        public static string VoipDeviceOutput => Resource.GetString("VoipDeviceOutput");
+        
+        /// <summary>
         /// Localized resource similar to "End call"
         /// </summary>
         public static string VoipEndCall => Resource.GetString("VoipEndCall");
@@ -14158,6 +14173,11 @@ namespace Telegram
         /// Localized resource similar to "Stop Video"
         /// </summary>
         public static string VoipStopVideo => Resource.GetString("VoipStopVideo");
+        
+        /// <summary>
+        /// Localized resource similar to "Stream with..."
+        /// </summary>
+        public static string VoipStreamWith => Resource.GetString("VoipStreamWith");
         
         /// <summary>
         /// Localized resource similar to "You're Live"

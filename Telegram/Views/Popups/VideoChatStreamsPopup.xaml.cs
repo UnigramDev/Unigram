@@ -23,7 +23,7 @@ namespace Telegram.Views.Popups
             _clientService = clientService;
             _chatId = chatId;
 
-            Title = "Stream with...";
+            Title = Strings.VoipStreamWith;
             Schedule.Visibility = start
                 ? Windows.UI.Xaml.Visibility.Visible
                 : Windows.UI.Xaml.Visibility.Collapsed;
