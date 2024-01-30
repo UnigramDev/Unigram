@@ -1067,23 +1067,21 @@ namespace Telegram.Controls.Chats
 
                 public async Task StartAsync()
                 {
+                    MediaEncodingProfile profile;
                     if (m_isVideo)
                     {
-                        var profile = MediaEncodingProfile.CreateMp4(VideoEncodingQuality.Auto);
-                        //m_lowLag = await m_mediaCapture.PrepareLowLagRecordToStorageFileAsync(profile, m_file);
-
-                        //await m_lowLag.StartAsync();
-                        await m_mediaCapture.StartRecordToStorageFileAsync(profile, m_file);
+                        profile = MediaEncodingProfile.CreateMp4(VideoEncodingQuality.Auto);
                     }
                     else
                     {
-                        var wavEncodingProfile = MediaEncodingProfile.CreateWav(AudioEncodingQuality.High);
-                        wavEncodingProfile.Audio.BitsPerSample = 16;
-                        wavEncodingProfile.Audio.SampleRate = 48000;
-                        wavEncodingProfile.Audio.ChannelCount = 1;
-
-                        await m_mediaCapture.StartRecordToStorageFileAsync(wavEncodingProfile, m_file);
+                        profile = MediaEncodingProfile.CreateWav(AudioEncodingQuality.High);
+                        profile.Audio.BitsPerSample = 16;
+                        profile.Audio.SampleRate = 48000;
+                        profile.Audio.ChannelCount = 1;
                     }
+
+                    m_lowLag = await m_mediaCapture.PrepareLowLagRecordToStorageFileAsync(profile, m_file);
+                    await m_lowLag.StartAsync();
                 }
 
                 public async Task StopAsync()
