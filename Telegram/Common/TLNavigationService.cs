@@ -164,6 +164,16 @@ namespace Telegram.Common
                     return;
                 }
 
+                if (user.Id == _clientService.Options.MyId)
+                {
+                    var settings = TypeResolver.Current.Resolve<ISettingsService>(_clientService.SessionId);
+                    if (settings != null && settings.SavedViewAsChats)
+                    {
+                        Navigate(typeof(ProfilePage), chat.Id);
+                        return;
+                    }
+                }
+
                 if (user.RestrictionReason.Length > 0)
                 {
                     await MessagePopup.ShowAsync(user.RestrictionReason, Strings.AppName, Strings.OK);
@@ -375,6 +385,11 @@ namespace Telegram.Common
                         {
                             target = typeof(ChatPage);
                             parameter = chat.Id;
+
+                            if (CurrentPageType == typeof(ProfilePage) && CurrentPageParam is long profileId && profileId == chat.Id)
+                            {
+                                info = new SlideNavigationTransitionInfo { Effect = SlideNavigationTransitionEffect.FromLeft };
+                            }
                         }
 
                         if (Navigate(target, parameter, state, info))

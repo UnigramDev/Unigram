@@ -7204,6 +7204,12 @@ The channel &quot;**{1}**&quot; will become private.</value>
   <data name="SavedTagShowOtherMessages" xml:space="preserve">
     <value>Show Other Messages</value>
   </data>
+  <data name="SavedViewAsChats" xml:space="preserve">
+    <value>View as Chats</value>
+  </data>
+  <data name="SavedViewAsMessages" xml:space="preserve">
+    <value>View as Messages</value>
+  </data>
   <data name="SaveForNotifications" xml:space="preserve">
     <value>Save for Notifications</value>
   </data>

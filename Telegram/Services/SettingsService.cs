@@ -74,6 +74,8 @@ namespace Telegram.Services
         bool AreSmoothTransitionsEnabled { get; set; }
         bool AreMaterialsEnabled { get; set; }
 
+        bool SavedViewAsChats { get; set; }
+
         bool UseSystemProxy { get; set; }
         int LastProxyId { get; set; }
 
@@ -384,6 +386,13 @@ namespace Telegram.Services
         {
             get => _areMaterialsEnabled ??= GetValueOrDefault(_local, "AreMaterialsEnabled", true);
             set => AddOrUpdateValue(ref _areMaterialsEnabled, _local, "AreMaterialsEnabled", value);
+        }
+
+        private static bool? _savedViewAsChats;
+        public bool SavedViewAsChats
+        {
+            get => _savedViewAsChats ??= GetValueOrDefault(_local, "SavedViewAsChats", false);
+            set => AddOrUpdateValue(ref _savedViewAsChats, _local, "SavedViewAsChats", value);
         }
 
         private static bool? _isTrayVisible;

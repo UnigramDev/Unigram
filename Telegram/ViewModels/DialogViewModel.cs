@@ -35,6 +35,7 @@ using Windows.UI.Text;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
+using Windows.UI.Xaml.Media.Animation;
 using Windows.UI.Xaml.Navigation;
 using Point = Windows.Foundation.Point;
 
@@ -2991,6 +2992,39 @@ namespace Telegram.ViewModels
 
                     ClientService.Send(new DeleteChatHistory(updated.Id, true, false));
                 }
+            }
+        }
+
+        public void ViewAsChats()
+        {
+            Settings.SavedViewAsChats = true;
+            OpenProfile();
+        }
+
+        public void OpenProfile()
+        {
+            var chat = _chat;
+            if (chat == null)
+            {
+                return;
+            }
+
+            if (ClientService.IsRepliesChat(chat))
+            {
+                return;
+            }
+
+            if (SavedMessagesTopic != null)
+            {
+                NavigationService.Navigate(typeof(ProfilePage), new ChatNavigationArgs(chat.Id, SavedMessagesTopic), infoOverride: new SlideNavigationTransitionInfo { Effect = SlideNavigationTransitionEffect.FromRight });
+            }
+            else if (Topic != null)
+            {
+                NavigationService.Navigate(typeof(ProfilePage), new ChatNavigationArgs(chat.Id, ThreadId), infoOverride: new SlideNavigationTransitionInfo { Effect = SlideNavigationTransitionEffect.FromRight });
+            }
+            else
+            {
+                NavigationService.Navigate(typeof(ProfilePage), chat.Id, infoOverride: new SlideNavigationTransitionInfo { Effect = SlideNavigationTransitionEffect.FromRight });
             }
         }
 

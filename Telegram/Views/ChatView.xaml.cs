@@ -53,7 +53,6 @@ using Windows.UI.Xaml.Documents;
 using Windows.UI.Xaml.Hosting;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
-using Windows.UI.Xaml.Media.Animation;
 using Point = Windows.Foundation.Point;
 using VirtualKey = Windows.System.VirtualKey;
 
@@ -1459,29 +1458,7 @@ namespace Telegram.Views
 
         private void Profile_Click(object sender, RoutedEventArgs e)
         {
-            var chat = ViewModel.Chat;
-            if (chat == null)
-            {
-                return;
-            }
-
-            if (ViewModel.ClientService.IsRepliesChat(chat))
-            {
-                return;
-            }
-
-            if (ViewModel.SavedMessagesTopic != null)
-            {
-                ViewModel.NavigationService.Navigate(typeof(ProfilePage), new ChatNavigationArgs(chat.Id, ViewModel.SavedMessagesTopic), infoOverride: new SlideNavigationTransitionInfo { Effect = SlideNavigationTransitionEffect.FromRight });
-            }
-            else if (ViewModel.Topic != null)
-            {
-                ViewModel.NavigationService.Navigate(typeof(ProfilePage), new ChatNavigationArgs(chat.Id, ViewModel.ThreadId), infoOverride: new SlideNavigationTransitionInfo { Effect = SlideNavigationTransitionEffect.FromRight });
-            }
-            else
-            {
-                ViewModel.NavigationService.Navigate(typeof(ProfilePage), chat.Id, infoOverride: new SlideNavigationTransitionInfo { Effect = SlideNavigationTransitionEffect.FromRight });
-            }
+            ViewModel.OpenProfile();
         }
 
         private void Attach_Click(object sender, RoutedEventArgs e)
@@ -1912,6 +1889,11 @@ namespace Telegram.Views
             var secret = chat.Type is ChatTypeSecret;
             var basicGroup = chat.Type is ChatTypeBasicGroup basicGroupType ? ViewModel.ClientService.GetBasicGroup(basicGroupType.BasicGroupId) : null;
             var supergroup = chat.Type is ChatTypeSupergroup supergroupType ? ViewModel.ClientService.GetSupergroup(supergroupType.SupergroupId) : null;
+
+            if (user != null && user.Id == ViewModel.ClientService.Options.MyId && ViewModel.SavedMessagesTopic == null)
+            {
+                flyout.CreateFlyoutItem(ViewModel.ViewAsChats, Strings.SavedViewAsChats, Icons.AppsListDetails);
+            }
 
             flyout.CreateFlyoutItem(Search, Strings.Search, Icons.Search, VirtualKey.F);
 

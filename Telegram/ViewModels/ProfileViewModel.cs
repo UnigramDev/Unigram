@@ -371,6 +371,11 @@ namespace Telegram.ViewModels
                 return;
             }
 
+            if (chat.Id == ClientService.Options.MyId)
+            {
+                Settings.SavedViewAsChats = false;
+            }
+
             if (NavigationService.IsChatOpen(chat.Id))
             {
                 NavigationService.GoBack();

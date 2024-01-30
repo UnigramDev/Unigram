@@ -9,6 +9,7 @@ using System.ComponentModel;
 using System.Numerics;
 using Telegram.Collections;
 using Telegram.Common;
+using Telegram.Controls.Media;
 using Telegram.Converters;
 using Telegram.Navigation;
 using Telegram.Td.Api;
@@ -20,6 +21,7 @@ using Telegram.Views.Profile;
 using Windows.UI.Composition;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Controls.Primitives;
 using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Hosting;
 using Windows.UI.Xaml.Media.Animation;
@@ -190,8 +192,9 @@ namespace Telegram.Views
         {
             ProfileHeader.UpdateChat(chat);
 
-            UpdateChatTitle(chat);
-            UpdateChatPhoto(chat);
+            Menu.Visibility = chat.Id == ViewModel.ClientService.Options.MyId && ViewModel.SavedMessagesTopic == null
+                ? Visibility.Visible
+                : Visibility.Collapsed;
         }
 
         public void UpdateChatTitle(Chat chat)
@@ -427,6 +430,25 @@ namespace Telegram.Views
             {
                 MediaFrame.Navigate(page.Type, null, new SuppressNavigationTransitionInfo());
             }
+        }
+
+        private void Menu_ContextRequested(object sender, RoutedEventArgs e)
+        {
+            var flyout = new MenuFlyout();
+
+            var chat = ViewModel.Chat;
+            if (chat == null)
+            {
+                return;
+            }
+
+            var user = chat.Type is ChatTypePrivate or ChatTypeSecret ? ViewModel.ClientService.GetUser(chat) : null;
+            if (user != null && user.Id == ViewModel.ClientService.Options.MyId)
+            {
+                flyout.CreateFlyoutItem(ViewModel.SendMessage, Strings.SavedViewAsMessages, Icons.ChatEmpty);
+            }
+
+            flyout.ShowAt(sender as Button, FlyoutPlacementMode.BottomEdgeAlignedRight);
         }
 
         #region Selection
