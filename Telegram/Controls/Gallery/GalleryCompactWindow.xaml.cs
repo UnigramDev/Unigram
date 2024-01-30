@@ -18,13 +18,12 @@ using Windows.UI;
 using Windows.UI.Core;
 using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
-using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Hosting;
 using Windows.UI.Xaml.Input;
 
 namespace Telegram.Controls.Gallery
 {
-    public sealed partial class GalleryCompactWindow : UserControl
+    public sealed partial class GalleryCompactWindow : UserControlEx
     {
         private readonly DispatcherQueue _dispatcherQueue;
         private readonly LifoActionWorker _playbackQueue;
@@ -84,6 +83,7 @@ namespace Telegram.Controls.Gallery
         private void OnUnloaded(object sender, RoutedEventArgs e)
         {
             Current = null;
+            Controls.Unload();
 
             Task.Run(() =>
             {

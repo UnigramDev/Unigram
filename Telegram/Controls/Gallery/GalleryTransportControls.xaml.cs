@@ -23,6 +23,7 @@ namespace Telegram.Controls.Gallery
 
         private bool _loopingEnabled;
         private bool _playing;
+        private bool _unloaded;
 
         public GalleryTransportControls()
         {
@@ -214,6 +215,12 @@ namespace Telegram.Controls.Gallery
                 _mediaPlayer.Paused -= OnPaused;
                 _mediaPlayer.Stopped -= OnStopped;
                 _mediaPlayer.VolumeChanged -= OnVolumeChanged;
+            }
+
+            if (_unloaded)
+            {
+                _mediaPlayer = null;
+                return;
             }
 
             _mediaPlayer = mediaPlayer;
@@ -579,6 +586,7 @@ namespace Telegram.Controls.Gallery
 
         public void Unload()
         {
+            _unloaded = true;
             Attach(null);
         }
     }
