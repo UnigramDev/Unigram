@@ -1219,7 +1219,7 @@ namespace Telegram.ViewModels
                         var part = album.MessagesValue[j];
                         if (part.MediaAlbumId == message.MediaAlbumId)
                         {
-                            foundChatMessages.Messages.Insert(i--, album.MessagesValue[j]);
+                            foundChatMessages.Messages.Insert(i, album.MessagesValue[j]);
                         }
                         else
                         {
@@ -1765,6 +1765,8 @@ namespace Telegram.ViewModels
                     var groupBase = new Message();
                     groupBase.Content = media;
                     groupBase.Date = message.Date;
+                    groupBase.SenderId = message.SenderId;
+                    groupBase.ForwardInfo = message.ForwardInfo;
 
                     group = CreateMessage(groupBase);
 
@@ -4188,9 +4190,22 @@ namespace Telegram.ViewModels
             }
         }
 
+        public void RawRemoveAt(int index)
+        {
+            _suppressOperations = true;
+            RemoveAt(index);
+            _suppressOperations = false;
+        }
+
         protected override void RemoveItem(int index)
         {
             _messages?.Remove(this[index].Id);
+
+            if (_suppressOperations)
+            {
+                base.RemoveItem(index);
+                return;
+            }
 
             var next = index > 0 ? this[index - 1] : null;
             var previous = index < Count - 1 ? this[index + 1] : null;
