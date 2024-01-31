@@ -4508,7 +4508,7 @@ namespace Telegram
         public static string CustomCallInfo => Resource.GetString("CustomCallInfo");
         
         /// <summary>
-        /// Localized resource similar to "You won't see Last Seen or Online statuses for people with whom you don't share yours. Approximate times will be shown instead (recently, within a week, within a month)."
+        /// Localized resource similar to "Unless you are a Premium user, you won't see Last Seen or Online statuses for people with whom you don't share yours. Approximate times will be shown instead (recently, within a week, within a month)."
         /// </summary>
         public static string CustomHelp => Resource.GetString("CustomHelp");
         
@@ -4816,6 +4816,11 @@ namespace Telegram
         /// Localized resource similar to "Show Peer IDs"
         /// </summary>
         public static string DiagnosticsShowPeerIds => Resource.GetString("DiagnosticsShowPeerIds");
+        
+        /// <summary>
+        /// Localized resource similar to "Use Layout Rounding"
+        /// </summary>
+        public static string DiagnosticsUseLayoutRounding => Resource.GetString("DiagnosticsUseLayoutRounding");
         
         /// <summary>
         /// Localized resource similar to "Send a {0} emoji to try your luck."
@@ -10135,6 +10140,11 @@ namespace Telegram
         /// Localized resource similar to "You can add users or entire groups as exceptions that will override the settings above."
         /// </summary>
         public static string PrivacyVoiceMessagesInfo2 => Resource.GetString("PrivacyVoiceMessagesInfo2");
+        
+        /// <summary>
+        /// Localized resource similar to "Only subscribers of *Telegram Premium* can restrict receiving voice messages."
+        /// </summary>
+        public static string PrivacyVoiceMessagesPremiumOnly => Resource.GetString("PrivacyVoiceMessagesPremiumOnly");
         
         /// <summary>
         /// Localized resource similar to "Subscribe to Telegram Premium to restrict who can send you voice or video messages.
