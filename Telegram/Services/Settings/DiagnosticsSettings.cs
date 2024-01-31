@@ -168,6 +168,13 @@ namespace Telegram.Services.Settings
             set => AddOrUpdateValue(ref _nativeTimeFormatter, "NativeTimeFormatter", value);
         }
 
+        private bool? _disablePackageManager;
+        public bool DisablePackageManager
+        {
+            get => _disablePackageManager ??= GetValueOrDefault("DisablePackageManager", false);
+            set => AddOrUpdateValue(ref _disablePackageManager, "DisablePackageManager", value);
+        }
+
         public bool IsLastErrorDiskFull { get; set; }
     }
 }

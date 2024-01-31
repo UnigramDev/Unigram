@@ -2777,6 +2777,12 @@ Minimum length is 5 characters.</value>
   <data name="CloseTopic" xml:space="preserve">
     <value>Close topic</value>
   </data>
+  <data name="CloudUpdateInstallingText" xml:space="preserve">
+    <value>A new version of Unigram is being installed...</value>
+  </data>
+  <data name="CloudUpdateInstallingTitle" xml:space="preserve">
+    <value>Hold on</value>
+  </data>
   <data name="Code" xml:space="preserve">
     <value>Code</value>
   </data>

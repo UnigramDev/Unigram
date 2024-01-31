@@ -99,6 +99,7 @@
     <uap:Capability Name="contacts" />
     <uap3:Capability Name="backgroundMediaPlayback" />
     <uap6:Capability Name="graphicsCapture" />
+    <rescap:Capability Name="packageManagement" />
     <rescap:Capability Name="oneProcessVoIP" />
     <rescap:Capability Name="confirmAppClose" />
     <DeviceCapability Name="location" />
