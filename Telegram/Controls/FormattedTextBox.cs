@@ -1407,19 +1407,16 @@ namespace Telegram.Controls
         {
             BeginUndoGroup();
 
-            if (range.Expand(TextRangeUnit.Hidden) != 0 && Emoticon.Data.ContainsKey(Document.Selection.Text))
+            var plain = range.GetClone();
+            if (plain.Expand(TextRangeUnit.Hidden) != 0 && Emoticon.Data.ContainsKey(plain.Text))
             {
-                range.Delete(TextRangeUnit.Hidden, 1);
+                plain.Delete(TextRangeUnit.Hidden, 1);
+                range = plain;
             }
 
-            range.SetText(TextSetOptions.None, string.Empty);
-            range.SetText(TextSetOptions.None, $"{emoji};{customEmojiId}");
+            range.SetText(TextSetOptions.None, $"{emoji};{customEmojiId}\uEA4F");
+            range.SetRange(range.StartPosition, range.EndPosition - 1);
             range.CharacterFormat.Hidden = FormatEffect.On;
-            range.Gravity = RangeGravity.Forward;
-
-            var end = Document.GetRange(range.EndPosition, range.EndPosition);
-            end.SetText(TextSetOptions.Unhide, "\uEA4F");
-            end.Gravity = RangeGravity.Backward;
 
             EndUndoGroup();
         }
@@ -1517,8 +1514,6 @@ namespace Telegram.Controls
             }
 
             var range = Document.GetRange(0, 0);
-            var rects = 0;
-
             var firstCall = true;
 
             HashSet<long> emoji = null;
@@ -1536,18 +1531,12 @@ namespace Telegram.Controls
                 if (range.CharacterFormat.Hidden == FormatEffect.On && range.Link.Length == 0)
                 {
                     var follow = Document.GetRange(range.EndPosition, range.EndPosition);
-                    if (follow.Character != '\uEA4F')
-                    {
-                        continue;
-                    }
-
-                    range.GetRect(PointOptions.None, out Rect rect, out _);
-                    rects++;
-
-                    if (IsCustomEmoji(range, out _, out long customEmojiId))
+                    if (follow.Character == '\uEA4F' && IsCustomEmoji(range, out _, out long customEmojiId))
                     {
                         emoji ??= new();
                         emoji.Add(customEmojiId);
+
+                        range.GetRect(PointOptions.None, out Rect rect, out _);
 
                         positions ??= new();
                         positions.Add(new EmojiPosition
