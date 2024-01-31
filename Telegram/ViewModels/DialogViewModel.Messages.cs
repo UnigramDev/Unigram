@@ -1014,6 +1014,13 @@ namespace Telegram.ViewModels
                 text = caption.Text;
                 chatId = message.ChatId;
                 messageId = message.Id;
+
+                if (message.Content is MessageAlbum album && album.Messages.Count > 0)
+                {
+                    messageId = album.IsMedia
+                        ? album.Messages[0].Id
+                        : album.Messages[^1].Id;
+                }
             }
 
             var language = LanguageIdentification.IdentifyLanguage(text);
