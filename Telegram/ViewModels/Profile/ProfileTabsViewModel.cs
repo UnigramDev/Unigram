@@ -7,7 +7,6 @@
 using Rg.DiffUtils;
 using System;
 using System.Collections.Generic;
-using System.Collections.Immutable;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
@@ -274,7 +273,7 @@ namespace Telegram.ViewModels.Profile
         {
             if (update.ChatId == _chat?.Id && !update.FromCache)
             {
-                var table = update.MessageIds.ToImmutableHashSet();
+                var table = update.MessageIds.ToHashSet();
 
                 BeginOnUIThread(() =>
                 {
@@ -288,7 +287,7 @@ namespace Telegram.ViewModels.Profile
             }
         }
 
-        private void UpdateDeleteMessages(IList<MessageWithOwner> target, ImmutableHashSet<long> table)
+        private void UpdateDeleteMessages(IList<MessageWithOwner> target, HashSet<long> table)
         {
             for (int i = 0; i < target.Count; i++)
             {

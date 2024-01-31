@@ -6,7 +6,7 @@
 //
 using System;
 using System.Collections.Generic;
-using System.Collections.Immutable;
+using System.Linq;
 using Telegram.Collections;
 using Telegram.Common;
 using Telegram.Controls.Messages;
@@ -547,7 +547,7 @@ namespace Telegram.ViewModels
         {
             if (update.ChatId == _chat?.Id && !update.FromCache)
             {
-                var table = update.MessageIds.ToImmutableHashSet();
+                var table = update.MessageIds.ToHashSet();
 
                 BeginOnUIThread(async () =>
                 {

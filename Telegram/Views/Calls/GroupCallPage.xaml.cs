@@ -8,7 +8,6 @@ using Microsoft.Graphics.Canvas.UI.Xaml;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Collections.Immutable;
 using System.Linq;
 using System.Numerics;
 using System.Threading.Tasks;
@@ -2329,7 +2328,7 @@ namespace Telegram.Views.Calls
                 }
             }
 
-            foreach (var item in prev.Keys.ToImmutableArray())
+            foreach (var item in prev.Keys.ToArray())
             {
                 if (next.ContainsKey(item))
                 {
