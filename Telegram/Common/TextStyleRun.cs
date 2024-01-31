@@ -361,13 +361,10 @@ namespace Telegram.Common
 
             public int Length;
 
-            public TextDirectionality? Direction;
-
-            public Break(int offset, int length, TextDirectionality? direction = null)
+            public Break(int offset, int length)
             {
                 Offset = offset;
                 Length = length;
-                Direction = direction;
             }
 
             public override string ToString()
@@ -392,10 +389,8 @@ namespace Telegram.Common
 
                 while (index != -1)
                 {
-                    var direction = NativeUtils.GetDirectionality(text, previous, index - previous);
-
                     indexes ??= new();
-                    indexes.Add(new Break(index, 1, direction));
+                    indexes.Add(new Break(index, 1));
 
                     previous = index + 1;
                     index = text.IndexOf('\n', index + 1, limit - index);
@@ -434,20 +429,7 @@ namespace Telegram.Common
 
             if (text.Length > previous)
             {
-                var ziocane = Break(previous, text.Length - 1);
-                if (ziocane <= text.Length && indexes != null)
-                {
-                    var direction = NativeUtils.GetDirectionality(text, ziocane);
-                    if (direction == indexes[^1].Direction)
-                    {
-                        indexes.RemoveAt(indexes.Count - 1);
-                    }
-
-                    if (indexes.Count == 0)
-                    {
-                        indexes = null;
-                    }
-                }
+                Break(previous, text.Length - 1);
             }
 
             if (indexes != null)
@@ -459,7 +441,7 @@ namespace Telegram.Common
                 // District is used to avoid that, but it would be better to fix the algorithm.
                 foreach (var index in indexes.DistinctBy(x => x.Offset).OrderBy(x => x.Offset))
                 {
-                    list.Add(Split(text, entities, prev, index.Offset - prev, index.Direction, index.Length));
+                    list.Add(Split(text, entities, prev, index.Offset - prev, null, index.Length));
                     prev = index.Offset + index.Length;
                 }
 
