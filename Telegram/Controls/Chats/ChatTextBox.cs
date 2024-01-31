@@ -597,23 +597,25 @@ namespace Telegram.Controls.Chats
                         var response = await _clientService.SendAsync(new SearchEmojis(_query, new[] { _inputLanguage }));
                         if (response is EmojiKeywords emojis)
                         {
-                            IEnumerable<EmojiKeyword> results = emojis.EmojiKeywordsValue;
-                            results = results.OrderBy(x =>
-                            {
-                                var index = SettingsService.Current.Emoji.RecentEmoji.IndexOf(x.Emoji);
-                                if (index < 0)
+                            var results = emojis.EmojiKeywordsValue
+                                .DistinctBy(x => x.Emoji)
+                                .Select(x => x.Emoji)
+                                .OrderBy(x =>
                                 {
-                                    return int.MaxValue;
-                                }
+                                    var index = SettingsService.Current.Emoji.RecentEmoji.IndexOf(x);
+                                    if (index < 0)
+                                    {
+                                        return int.MaxValue;
+                                    }
 
-                                return index;
-                            });
+                                    return index;
+                                });
 
                             _emoji = string.Join(" ", results);
 
                             foreach (var emoji in results)
                             {
-                                Add(new EmojiData(emoji.Emoji));
+                                Add(new EmojiData(emoji));
                                 count++;
                             }
                         }

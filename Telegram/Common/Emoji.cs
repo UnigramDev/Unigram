@@ -248,7 +248,7 @@ namespace Telegram.Common
             {
                 if (clientService.IsPremium)
                 {
-                    var stickers = await SearchAsync(clientService, suggestions.EmojiKeywordsValue.Select(x => x.Emoji));
+                    var stickers = await SearchAsync(clientService, suggestions.EmojiKeywordsValue.DistinctBy(x => x.Emoji).Select(x => x.Emoji));
 
                     foreach (var item in stickers)
                     {
@@ -258,7 +258,7 @@ namespace Telegram.Common
 
                 if (mode == EmojiDrawerMode.Chat)
                 {
-                    foreach (var item in suggestions.EmojiKeywordsValue)
+                    foreach (var item in suggestions.EmojiKeywordsValue.DistinctBy(x => x.Emoji))
                     {
                         var emoji = item.Emoji;
                         if (EmojiGroupInternal._skinEmojis.Contains(emoji) || EmojiGroupInternal._skinEmojis.Contains(emoji.TrimEnd('\uFE0F')))
