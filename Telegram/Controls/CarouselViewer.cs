@@ -7,6 +7,7 @@
 using System;
 using System.Numerics;
 using Telegram.Common;
+using Telegram.Composition;
 using Telegram.Navigation;
 using Windows.Devices.Input;
 using Windows.Foundation;
@@ -50,7 +51,7 @@ namespace Telegram.Controls
     public delegate void CarouselViewChangedEventHandler(object sender, CarouselViewChangedEventArgs e);
     public delegate void CarouselViewChangingEventHandler(object sender, CarouselViewChangingEventArgs e);
 
-    public class CarouselViewer : Grid, IInteractionTrackerOwner
+    public class CarouselViewer : Grid
     {
         private bool _requiresArrange;
         private ulong _scrolling;
@@ -87,17 +88,22 @@ namespace Telegram.Controls
                 ElementCompositionPreview.SetElementChildVisual(this, _hitTest);
                 ConfigureInteractionTracker();
             }
+
+            if (_trackerOwner != null)
+            {
+                _trackerOwner.InertiaStateEntered += OnInertiaStateEntered;
+                _trackerOwner.InteractingStateEntered += OnInteractingStateEntered;
+                _trackerOwner.IdleStateEntered += OnIdleStateEntered;
+            }
         }
 
         private void OnUnloaded(object sender, RoutedEventArgs e)
         {
-            if (_hasInitialLoadedEventFired)
+            if (_trackerOwner != null)
             {
-                _hasInitialLoadedEventFired = false;
-
-                _tracker.InteractionSources.RemoveAll();
-                _tracker.Dispose();
-                _tracker = null;
+                _trackerOwner.InertiaStateEntered -= OnInertiaStateEntered;
+                _trackerOwner.InteractingStateEntered -= OnInteractingStateEntered;
+                _trackerOwner.IdleStateEntered -= OnIdleStateEntered;
             }
         }
 
@@ -290,6 +296,7 @@ namespace Telegram.Controls
         private bool _hasInitialLoadedEventFired;
         private bool _hasConfiguredElements;
 
+        private WeakInteractionTrackerOwner _trackerOwner;
         private InteractionTracker _tracker;
         private VisualInteractionSource _interactionSource;
 
@@ -312,8 +319,10 @@ namespace Telegram.Controls
             _interactionSource.PositionXChainingMode = InteractionChainingMode.Never;
             _interactionSource.IsPositionXRailsEnabled = true;
 
+            _trackerOwner = new WeakInteractionTrackerOwner();
+
             //Create tracker and associate interaction source
-            _tracker = InteractionTracker.CreateWithOwner(Window.Current.Compositor, this);
+            _tracker = InteractionTracker.CreateWithOwner(Window.Current.Compositor, _trackerOwner);
             _tracker.InteractionSources.Add(_interactionSource);
 
             _tracker.Properties.InsertScalar("RestingValue", _restingValue);
@@ -427,12 +436,7 @@ namespace Telegram.Controls
             visual1.Visual.StartAnimation("Translation.X", offset1);
         }
 
-        public void ValuesChanged(InteractionTracker sender, InteractionTrackerValuesChangedArgs args)
-        {
-
-        }
-
-        public void InertiaStateEntered(InteractionTracker sender, InteractionTrackerInertiaStateEnteredArgs args)
+        private void OnInertiaStateEntered(InteractionTracker sender, InteractionTrackerInertiaStateEnteredArgs args)
         {
             if (args.ModifiedRestingPosition?.X is float position)
             {
@@ -453,7 +457,7 @@ namespace Telegram.Controls
             _viewChanged = CarouselDirection.None;
         }
 
-        public void IdleStateEntered(InteractionTracker sender, InteractionTrackerIdleStateEnteredArgs args)
+        private void OnIdleStateEntered(InteractionTracker sender, InteractionTrackerIdleStateEnteredArgs args)
         {
             //_tracker.TryUpdatePosition(Vector3.Zero);
             //ConfigureAnimations(0);
@@ -465,19 +469,9 @@ namespace Telegram.Controls
             }
         }
 
-        public void InteractingStateEntered(InteractionTracker sender, InteractionTrackerInteractingStateEnteredArgs args)
+        private void OnInteractingStateEntered(InteractionTracker sender, InteractionTrackerInteractingStateEnteredArgs args)
         {
             ConfigureAnimations(_restingValue);
-        }
-
-        public void RequestIgnored(InteractionTracker sender, InteractionTrackerRequestIgnoredArgs args)
-        {
-
-        }
-
-        public void CustomAnimationStateEntered(InteractionTracker sender, InteractionTrackerCustomAnimationStateEnteredArgs args)
-        {
-
         }
 
         #endregion

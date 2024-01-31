@@ -35,7 +35,7 @@ namespace Telegram.Controls
         }
     }
 
-    public class ChatListListView : TopNavView, IInteractionTrackerOwner
+    public class ChatListListView : TopNavView
     {
         public ChatListViewModel ViewModel => DataContext as ChatListViewModel;
 
@@ -64,20 +64,6 @@ namespace Telegram.Controls
             Ghost = GetTemplateChild(nameof(Ghost)) as Border;
 
             base.OnApplyTemplate();
-        }
-
-        private void OnUnloaded(object sender, RoutedEventArgs e)
-        {
-            _itemToSelector.Clear();
-
-            if (_hasInitialLoadedEventFired)
-            {
-                _hasInitialLoadedEventFired = false;
-
-                _tracker.InteractionSources.RemoveAll();
-                _tracker.Dispose();
-                _tracker = null;
-            }
         }
 
         public bool TryGetChatAndCell(long chatId, out Chat chat, out ChatCell cell)
@@ -243,6 +229,7 @@ namespace Telegram.Controls
         private ContainerVisual _indicator;
 
         private bool _hasInitialLoadedEventFired;
+        private WeakInteractionTrackerOwner _trackerOwner;
         private InteractionTracker _tracker;
         private VisualInteractionSource _interactionSource;
 
@@ -269,6 +256,29 @@ namespace Telegram.Controls
                 ElementCompositionPreview.SetElementChildVisual(this, _container);
                 ConfigureInteractionTracker();
             }
+
+            if (_trackerOwner != null)
+            {
+                _trackerOwner.ValuesChanged += OnValuesChanged;
+                _trackerOwner.InertiaStateEntered += OnInertiaStateEntered;
+                _trackerOwner.InteractingStateEntered += OnInteractingStateEntered;
+                _trackerOwner.IdleStateEntered += OnIdleStateEntered;
+                _trackerOwner.CustomAnimationStateEntered += OnCustomAnimationStateEntered;
+            }
+        }
+
+        private void OnUnloaded(object sender, RoutedEventArgs e)
+        {
+            _itemToSelector.Clear();
+
+            if (_trackerOwner != null)
+            {
+                _trackerOwner.ValuesChanged -= OnValuesChanged;
+                _trackerOwner.InertiaStateEntered -= OnInertiaStateEntered;
+                _trackerOwner.InteractingStateEntered -= OnInteractingStateEntered;
+                _trackerOwner.IdleStateEntered -= OnIdleStateEntered;
+                _trackerOwner.CustomAnimationStateEntered -= OnCustomAnimationStateEntered;
+            }
         }
 
         private void ConfigureInteractionTracker()
@@ -281,8 +291,10 @@ namespace Telegram.Controls
             _interactionSource.PositionXChainingMode = InteractionChainingMode.Never;
             _interactionSource.IsPositionXRailsEnabled = true;
 
+            _trackerOwner = new WeakInteractionTrackerOwner();
+
             //Create tracker and associate interaction source
-            _tracker = InteractionTracker.CreateWithOwner(_visual.Compositor, this);
+            _tracker = InteractionTracker.CreateWithOwner(_visual.Compositor, _trackerOwner);
             _tracker.InteractionSources.Add(_interactionSource);
 
             _tracker.MaxPosition = new Vector3(72);
@@ -343,7 +355,7 @@ namespace Telegram.Controls
             }
         }
 
-        public void ValuesChanged(InteractionTracker sender, InteractionTrackerValuesChangedArgs args)
+        private void OnValuesChanged(InteractionTracker sender, InteractionTrackerValuesChangedArgs args)
         {
             if (_indicator == null && (_tracker.Position.X > 0.0001f || _tracker.Position.X < -0.0001f) /*&& Math.Abs(e.Cumulative.Translation.X) >= 45*/)
             {
@@ -397,7 +409,7 @@ namespace Telegram.Controls
             }
         }
 
-        public void InertiaStateEntered(InteractionTracker sender, InteractionTrackerInertiaStateEnteredArgs args)
+        private void OnInertiaStateEntered(InteractionTracker sender, InteractionTrackerInertiaStateEnteredArgs args)
         {
             var position = _tracker.Position;
             if (position.X >= 72 && CanGoNext || position.X <= -72 && CanGoPrev)
@@ -412,22 +424,17 @@ namespace Telegram.Controls
             }
         }
 
-        public void IdleStateEntered(InteractionTracker sender, InteractionTrackerIdleStateEnteredArgs args)
+        private void OnIdleStateEntered(InteractionTracker sender, InteractionTrackerIdleStateEnteredArgs args)
         {
             ConfigureAnimations(false);
         }
 
-        public void InteractingStateEntered(InteractionTracker sender, InteractionTrackerInteractingStateEnteredArgs args)
+        private void OnInteractingStateEntered(InteractionTracker sender, InteractionTrackerInteractingStateEnteredArgs args)
         {
             ConfigureAnimations(true);
         }
 
-        public void RequestIgnored(InteractionTracker sender, InteractionTrackerRequestIgnoredArgs args)
-        {
-
-        }
-
-        public void CustomAnimationStateEntered(InteractionTracker sender, InteractionTrackerCustomAnimationStateEnteredArgs args)
+        private void OnCustomAnimationStateEntered(InteractionTracker sender, InteractionTrackerCustomAnimationStateEnteredArgs args)
         {
             _tracker.Properties.InsertBoolean("FromAnimation", _fromAnimation = true);
         }

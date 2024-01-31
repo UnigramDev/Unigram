@@ -193,6 +193,7 @@
     <Compile Include="Collections\SynchronizedList.cs" />
     <Compile Include="Common\AutomaticDragHelper.cs" />
     <Compile Include="Common\BezierPoint.cs" />
+    <Compile Include="Composition\WeakInteractionTrackerOwner.cs" />
     <Compile Include="Controls\Messages\ReactionAsTagButton.cs" />
     <Compile Include="Td\Api\UpdateSavedMessagesChatLastMessage.cs" />
     <Compile Include="Td\Api\UpdateSavedMessagesChatOrder.cs" />
