@@ -39,13 +39,11 @@ namespace Telegram.ViewModels.Profile
 
         private void Handle(UpdateSavedMessagesChatOrder update)
         {
-            Logger.Info(update.Order);
             BeginOnUIThread(() => UpdateChatOrder(update.Topic, update.Order, true));
         }
 
         private void Handle(UpdateSavedMessagesChatLastMessage update)
         {
-            Logger.Info(update.Order);
             BeginOnUIThread(() => UpdateChatOrder(update.Topic, update.Order, true));
         }
 

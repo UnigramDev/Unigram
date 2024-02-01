@@ -19,7 +19,8 @@ namespace Telegram.Td
 
         private readonly Dictionary<long, long> _messageToTopics = new();
 
-        private readonly object _lock = new();
+        private readonly object _syncRoot = new();
+        private readonly object _syncList = new();
         private bool _haveFullList;
 
         public SavedMessagesManager(IClientService clientService, IEventAggregator aggregator)
@@ -30,60 +31,69 @@ namespace Telegram.Td
 
         public void UpdateNewMessage(Message message)
         {
-            if (message.SavedMessagesTopic != null && _order.Count > 0)
+            lock (_syncRoot)
             {
-                var id = Id(message.SavedMessagesTopic);
-                var order = Order(id, message);
-
-                var pinned = _pinnedIds.Contains(id);
-
-                if (order > _order.Max.Order)
+                if (message.SavedMessagesTopic != null && _order.Count > 0)
                 {
+                    var id = Id(message.SavedMessagesTopic);
+                    var order = Order(id, message);
 
-                    UpdateSavedMessagesTopicOrder(new SavedMessagesChat(id, message, pinned, order));
-                }
-                else
-                {
-                    UpdateSavedMessagesTopicOrder(new SavedMessagesChat(id, message, pinned, 0));
+                    var pinned = _pinnedIds.Contains(id);
+
+                    if (order > _order.Max.Order)
+                    {
+
+                        UpdateSavedMessagesTopicOrder(new SavedMessagesChat(id, message, pinned, order));
+                    }
+                    else
+                    {
+                        UpdateSavedMessagesTopicOrder(new SavedMessagesChat(id, message, pinned, 0));
+                    }
                 }
             }
         }
 
         public void UpdateDeleteMessages(IList<long> messageIds)
         {
-            foreach (var id in messageIds)
+            lock (_syncRoot)
             {
-                if (_messageToTopics.TryGetValue(id, out var topicId) && _topics.TryGetValue(topicId, out SavedMessagesChat topic))
+                foreach (var id in messageIds)
                 {
-                    // TODO: UpdateSavedMessagesTopicOrder zero or UpdateSavedMessagesTopicLastMessage null
-
-                    UpdateSavedMessagesTopicOrder(new SavedMessagesChat(topicId, null, topic.IsPinned, topic.Order));
-
-                    SavedMessagesTopic item = topicId switch
+                    if (_messageToTopics.TryGetValue(id, out var topicId) && _topics.TryGetValue(topicId, out SavedMessagesChat topic))
                     {
-                        1 => new SavedMessagesTopicMyNotes(),
-                        2 => new SavedMessagesTopicAuthorHidden(),
-                        _ => new SavedMessagesTopicSavedFromChat(topicId)
-                    };
+                        UpdateSavedMessagesTopicOrder(new SavedMessagesChat(topicId, null, topic.IsPinned, topic.Order));
 
-                    _clientService.Send(new GetSavedMessagesTopicHistory(item, 0, 0, 1), UpdateSavedMessagesTopicLastMessage);
+                        SavedMessagesTopic item = topicId switch
+                        {
+                            1 => new SavedMessagesTopicMyNotes(),
+                            2 => new SavedMessagesTopicAuthorHidden(),
+                            _ => new SavedMessagesTopicSavedFromChat(topicId)
+                        };
+
+                        _clientService.Send(new GetSavedMessagesTopicHistory(item, 0, 0, 1), result =>
+                        {
+                            if (result is Messages messages && messages.MessagesValue.Count > 0)
+                            {
+                                UpdateNewMessage(messages.MessagesValue[0]);
+                            }
+                            else if (!topic.IsPinned)
+                            {
+                                UpdateSavedMessagesTopicOrder(new SavedMessagesChat(topicId, null, topic.IsPinned, 0));
+                            }
+                        });
+                    }
                 }
-            }
-        }
-
-        private void UpdateSavedMessagesTopicLastMessage(BaseObject result)
-        {
-            if (result is Messages messages)
-            {
-                UpdateNewMessage(messages.MessagesValue[0]);
             }
         }
 
         public void Handle(UpdatePinnedSavedMessagesTopics update)
         {
-            if (_order.Count > 0)
+            lock (_syncRoot)
             {
-                _clientService.Send(new GetPinnedSavedMessagesTopics(), UpdatePinnedSavedMessagesTopics);
+                if (_order.Count > 0)
+                {
+                    _clientService.Send(new GetPinnedSavedMessagesTopics(), UpdatePinnedSavedMessagesTopics);
+                }
             }
         }
 
@@ -94,50 +104,53 @@ namespace Telegram.Td
                 return;
             }
 
-            var toBeRemoved = new List<OrderedTopic>(_pinnedIds.Count);
-            var toBeAdded = new List<OrderedTopic>(topics.Topics.Count);
-
-            var messages = new Dictionary<long, Message>(topics.Topics.Count);
-
-            for (int i = 0; i < _pinnedIds.Count; i++)
+            lock (_syncRoot)
             {
-                toBeRemoved.Add(new OrderedTopic(_pinnedIds[i], long.MaxValue - i));
-            }
+                var toBeRemoved = new List<OrderedTopic>(_pinnedIds.Count);
+                var toBeAdded = new List<OrderedTopic>(topics.Topics.Count);
 
-            _pinnedIds.Clear();
+                var messages = new Dictionary<long, Message>(topics.Topics.Count);
 
-            for (int i = 0; i < topics.Topics.Count; i++)
-            {
-                var id = Id(topics.Topics[i].Topic);
-                toBeAdded.Add(new OrderedTopic(id, long.MaxValue - i));
-                messages.Add(id, topics.Topics[i].LastMessage);
-
-                _pinnedIds.Add(id);
-            }
-
-            foreach (var item in toBeAdded)
-            {
-                toBeRemoved.Remove(item);
-            }
-
-            foreach (var item in toBeRemoved)
-            {
-                toBeAdded.Remove(item);
-            }
-
-            foreach (var item in toBeRemoved)
-            {
-                if (_topics.TryGetValue(item.TopicId, out var topic))
+                for (int i = 0; i < _pinnedIds.Count; i++)
                 {
-                    UpdateSavedMessagesTopicOrder(new SavedMessagesChat(topic.Id, topic.LastMessage, false, topic.LastMessage.Id));
+                    toBeRemoved.Add(new OrderedTopic(_pinnedIds[i], long.MaxValue - i));
                 }
-            }
 
-            foreach (var item in toBeAdded)
-            {
-                if (messages.TryGetValue(item.TopicId, out var message))
+                _pinnedIds.Clear();
+
+                for (int i = 0; i < topics.Topics.Count; i++)
                 {
-                    UpdateSavedMessagesTopicOrder(new SavedMessagesChat(item.TopicId, message, true, item.Order));
+                    var id = Id(topics.Topics[i].Topic);
+                    toBeAdded.Add(new OrderedTopic(id, long.MaxValue - i));
+                    messages.Add(id, topics.Topics[i].LastMessage);
+
+                    _pinnedIds.Add(id);
+                }
+
+                foreach (var item in toBeAdded)
+                {
+                    toBeRemoved.Remove(item);
+                }
+
+                foreach (var item in toBeRemoved)
+                {
+                    toBeAdded.Remove(item);
+                }
+
+                foreach (var item in toBeRemoved)
+                {
+                    if (_topics.TryGetValue(item.TopicId, out var topic))
+                    {
+                        UpdateSavedMessagesTopicOrder(new SavedMessagesChat(topic.Id, topic.LastMessage, false, topic.LastMessage.Id));
+                    }
+                }
+
+                foreach (var item in toBeAdded)
+                {
+                    if (messages.TryGetValue(item.TopicId, out var message))
+                    {
+                        UpdateSavedMessagesTopicOrder(new SavedMessagesChat(item.TopicId, message, true, item.Order));
+                    }
                 }
             }
         }
@@ -149,57 +162,67 @@ namespace Telegram.Td
                 return;
             }
 
-            foreach (var topic in topics.Topics)
+            lock (_syncRoot)
             {
-                var id = Id(topic.Topic);
-                var order = Order(id, topic.LastMessage);
+                foreach (var topic in topics.Topics)
+                {
+                    var id = Id(topic.Topic);
+                    var order = Order(id, topic.LastMessage);
 
-                UpdateSavedMessagesTopicOrder(new SavedMessagesChat(id, topic.LastMessage, false, order));
+                    UpdateSavedMessagesTopicOrder(new SavedMessagesChat(id, topic.LastMessage, false, order));
+                }
             }
         }
 
         private void UpdateSavedMessagesTopicOrder(SavedMessagesChat topic)
         {
-            var id = topic.Id;
-            var order = topic.Order;
-
-            if (_topics.TryGetValue(id, out var cached))
+            lock (_syncRoot)
             {
-                var prev = cached.Order;
+                var id = topic.Id;
+                var order = topic.Order;
 
-                if (cached.LastMessage != null)
+                if (_topics.TryGetValue(id, out var cached))
                 {
-                    _messageToTopics.Remove(cached.LastMessage.Id);
-                }
+                    var prev = cached.Order;
 
-                if (topic.LastMessage != null)
-                {
-                    _messageToTopics[topic.LastMessage.Id] = id;
-                }
+                    if (cached.LastMessage != null)
+                    {
+                        _messageToTopics.Remove(cached.LastMessage.Id);
+                    }
 
-                cached.LastMessage = topic.LastMessage;
-                cached.IsPinned = topic.IsPinned;
-                cached.Order = order;
+                    if (topic.LastMessage != null)
+                    {
+                        _messageToTopics[topic.LastMessage.Id] = id;
+                    }
 
-                if (prev != order)
-                {
-                    _order.Remove(new OrderedTopic(id, prev));
-                    topic = cached;
+                    cached.LastMessage = topic.LastMessage;
+                    cached.IsPinned = topic.IsPinned;
+                    cached.Order = order;
+
+                    if (prev != order)
+                    {
+                        _order.Remove(new OrderedTopic(id, prev));
+                        topic = cached;
+                    }
+                    else
+                    {
+                        _aggregator.Publish(new UpdateSavedMessagesChatLastMessage(cached, cached.LastMessage, prev));
+                        return;
+                    }
                 }
                 else
                 {
-                    _aggregator.Publish(new UpdateSavedMessagesChatLastMessage(cached, cached.LastMessage, prev));
-                    return;
-                }
-            }
-            else
-            {
-                _messageToTopics[topic.LastMessage.Id] = id;
-                _topics.Add(id, topic);
-            }
+                    if (topic.LastMessage != null)
+                    {
+                        _messageToTopics[topic.LastMessage.Id] = id;
+                    }
 
-            _order.Add(new OrderedTopic(id, order));
-            _aggregator.Publish(new UpdateSavedMessagesChatOrder(topic, order));
+                    _topics.Add(id, topic);
+                }
+
+                _order.Add(new OrderedTopic(id, order));
+                _aggregator.Publish(new UpdateSavedMessagesChatOrder(topic, order));
+            }
         }
 
         private long Id(SavedMessagesTopic topic)
@@ -232,7 +255,7 @@ namespace Telegram.Td
 
         public async Task<IList<SavedMessagesChat>> GetSavedMessagesTopicsAsyncImpl(int offset, int limit, bool reentrancy)
         {
-            Monitor.Enter(_lock);
+            Monitor.Enter(_syncList);
 
             var count = offset + limit;
             var sorted = _order;
@@ -242,7 +265,7 @@ namespace Telegram.Td
 #else
             if (!_haveFullList && count > sorted.Count && !reentrancy)
             {
-                Monitor.Exit(_lock);
+                Monitor.Exit(_syncList);
 
                 var response = await LoadTopicsAsync(count - sorted.Count);
                 if (response is Ok or Error)
@@ -286,7 +309,7 @@ namespace Telegram.Td
                 }
             }
 
-            Monitor.Exit(_lock);
+            Monitor.Exit(_syncList);
             return result;
         }
 
@@ -294,7 +317,13 @@ namespace Telegram.Td
 
         private async Task<BaseObject> LoadTopicsAsync(int count)
         {
-            if (_order.Count == 0)
+            var pinned = false;
+            lock (_syncRoot)
+            {
+                pinned = _order.Count == 0;
+            }
+
+            if (pinned)
             {
                 var response = await _clientService.SendAsync(new GetPinnedSavedMessagesTopics());
                 if (response is FoundSavedMessagesTopics found)

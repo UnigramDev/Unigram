@@ -164,7 +164,7 @@ namespace Telegram.Common
                     return;
                 }
 
-                if (user.Id == _clientService.Options.MyId)
+                if (user.Id == _clientService.Options.MyId && topic == null)
                 {
                     var settings = TypeResolver.Current.Resolve<ISettingsService>(_clientService.SessionId);
                     if (settings != null && settings.SavedViewAsChats)
