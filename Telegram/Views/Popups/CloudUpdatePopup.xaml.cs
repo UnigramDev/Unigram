@@ -32,6 +32,7 @@ namespace Telegram.Views.Popups
 
         public void UpdateProgress(DeploymentProgress progress)
         {
+            Status.IsIndeterminate = progress.state == DeploymentProgressState.Queued || progress.percentage == 0;
             Status.Value = progress.percentage;
         }
     }

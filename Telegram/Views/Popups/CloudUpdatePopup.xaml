@@ -41,6 +41,7 @@
                    Grid.Row="2" />
 
         <muxc:ProgressBar x:Name="Status"
+                          IsIndeterminate="True"
                           Margin="0,24,0,0"
                           Grid.Row="3" />
     </Grid>
