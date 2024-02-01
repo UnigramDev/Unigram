@@ -81,8 +81,9 @@ namespace Telegram.Common
             double dx = Math.Abs(testPoint.X - dragRectangleCenter.X);
             double dy = Math.Abs(testPoint.Y - dragRectangleCenter.Y);
 
-            double maxDx = GetSystemMetrics(SM_CXDRAG);
-            double maxDy = GetSystemMetrics(SM_CYDRAG);
+            // TODO: GetSystemMetrics fails when compiling RELEASE
+            double maxDx = 4; // GetSystemMetrics(SM_CXDRAG);
+            double maxDy = 4; // GetSystemMetrics(SM_CYDRAG);
 
             maxDx *= UIELEMENT_MOUSE_DRAG_THRESHOLD_MULTIPLIER;
             maxDy *= UIELEMENT_MOUSE_DRAG_THRESHOLD_MULTIPLIER;
