@@ -4,6 +4,7 @@
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+using Rg.DiffUtils;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -106,9 +107,23 @@ namespace Telegram.Controls.Chats
             }
         }
 
-        private void SetAutocomplete(IAutocompleteCollection collection)
+        private void SetAutocomplete(IAutocompleteCollection collection, bool recycle = false)
         {
-            ViewModel.Autocomplete = collection;
+            if (collection != null)
+            {
+                if (ViewModel.Autocomplete is AutocompleteCollection autocomplete && recycle)
+                {
+                    autocomplete.Update(collection);
+                }
+                else
+                {
+                    ViewModel.Autocomplete = new AutocompleteCollection(collection);
+                }
+            }
+            else
+            {
+                ViewModel.Autocomplete = null;
+            }
         }
 
         protected override void OnKeyDown(KeyRoutedEventArgs e)
@@ -213,7 +228,7 @@ namespace Telegram.Controls.Chats
                 }
             }
             else if ((e.Key == VirtualKey.Tab || e.Key == VirtualKey.Enter) && ControlledList != null && ControlledList.Items.Count > 0 && ViewModel.Autocomplete != null
-                && ((ViewModel.Autocomplete is SearchStickersCollection && ControlledList.SelectedItem != null) || ViewModel.Autocomplete is not SearchStickersCollection))
+                && ((ViewModel.Autocomplete.InsertOnKeyDown is false && ControlledList.SelectedItem != null) || ViewModel.Autocomplete.InsertOnKeyDown))
             {
                 var shift = WindowContext.IsKeyDown(VirtualKey.Shift);
                 if (shift)
@@ -315,7 +330,7 @@ namespace Telegram.Controls.Chats
         {
             if (_isMenuExpanded)
             {
-                if (ViewModel.Autocomplete is not AutocompleteList<UserCommand>)
+                if (ViewModel.Autocomplete is not AutocompleteList)
                 {
                     ClearInlineBotResults();
                     SetAutocomplete(GetCommands(string.Empty));
@@ -342,11 +357,17 @@ namespace Telegram.Controls.Chats
             }
 
             var query = text.Substring(0, Math.Min(Document.Selection.EndPosition, text.Length));
+            var prev = ViewModel.Autocomplete;
 
-            if (TryGetAutocomplete(text, query, ViewModel.Autocomplete, fromTextChanging, out var autocomplete))
+            if (prev is AutocompleteCollection collection)
+            {
+                prev = collection.Source;
+            }
+
+            if (TryGetAutocomplete(text, query, prev, fromTextChanging, out var autocomplete, out bool recycle))
             {
                 ClearInlineBotResults();
-                SetAutocomplete(autocomplete);
+                SetAutocomplete(autocomplete, recycle);
             }
             else
             {
@@ -373,14 +394,16 @@ namespace Telegram.Controls.Chats
             }
         }
 
-        private bool TryGetAutocomplete(string text, string query, IAutocompleteCollection prev, bool fromTextChanging, out IAutocompleteCollection autocomplete)
+        private bool TryGetAutocomplete(string text, string query, IAutocompleteCollection prev, bool fromTextChanging, out IAutocompleteCollection autocomplete, out bool recycle)
         {
+            autocomplete = null;
+            recycle = false;
+
             if (Emoji.ContainsSingleEmoji(text) && ViewModel.ComposerHeader?.EditingMessage == null)
             {
                 var chat = ViewModel.Chat;
                 if (chat?.Permissions.CanSendOtherMessages == false)
                 {
-                    autocomplete = null;
                     return false;
                 }
 
@@ -388,7 +411,6 @@ namespace Telegram.Controls.Chats
                 {
                     if (supergroup.Status is ChatMemberStatusRestricted restricted && !restricted.Permissions.CanSendOtherMessages)
                     {
-                        autocomplete = null;
                         return false;
                     }
                 }
@@ -409,7 +431,6 @@ namespace Telegram.Controls.Chats
                     var chat = ViewModel.Chat;
                     if (chat == null)
                     {
-                        autocomplete = null;
                         return false;
                     }
 
@@ -448,6 +469,7 @@ namespace Telegram.Controls.Chats
                     }
 
                     autocomplete = new SearchStickersCollection(ViewModel.ClientService, ViewModel.Settings, true, result, ViewModel.Chat?.Id ?? 0);
+                    recycle = prev is SearchStickersCollection { IsCustomEmoji: true };
                     return true;
                 }
                 else if (entity == AutocompleteEntity.Emoji && fromTextChanging)
@@ -459,11 +481,12 @@ namespace Telegram.Controls.Chats
                     }
 
                     autocomplete = new EmojiCollection(ViewModel.ClientService, result, ViewModel.Chat.Id);
+                    recycle = prev is EmojiCollection;
                     return true;
                 }
                 else if (entity == AutocompleteEntity.Command && index == 0)
                 {
-                    if (prev is AutocompleteList<UserCommand> && prev.Query.Equals(result))
+                    if (prev is AutocompleteList && prev.Query.Equals(result))
                     {
                         autocomplete = prev;
                         return true;
@@ -478,12 +501,12 @@ namespace Telegram.Controls.Chats
             return false;
         }
 
-        private AutocompleteList<UserCommand> GetCommands(string command)
+        private AutocompleteList GetCommands(string command)
         {
             var all = ViewModel.BotCommands;
             if (all != null)
             {
-                var results = new AutocompleteList<UserCommand>(command, all.Where(x => x.Item.Command.ToLower().StartsWith(command, StringComparison.OrdinalIgnoreCase)));
+                var results = new AutocompleteList(command, all.Where(x => x.Item.Command.ToLower().StartsWith(command, StringComparison.OrdinalIgnoreCase)));
                 if (results.Count > 0)
                 {
                     return results;
@@ -493,7 +516,7 @@ namespace Telegram.Controls.Chats
             return null;
         }
 
-        public class UsernameCollection : MvxObservableCollection<Telegram.Td.Api.User>, IAutocompleteCollection, ISupportIncrementalLoading
+        public class UsernameCollection : MvxObservableCollection<object>, IAutocompleteCollection, ISupportIncrementalLoading
         {
             private readonly IClientService _clientService;
             private readonly long _chatId;
@@ -565,6 +588,8 @@ namespace Telegram.Controls.Chats
             public string Query => _query;
 
             public Orientation Orientation => Orientation.Vertical;
+
+            public bool InsertOnKeyDown => true;
         }
 
         public class EmojiCollection : MvxObservableCollection<object>, IAutocompleteCollection, ISupportIncrementalLoading
@@ -644,9 +669,11 @@ namespace Telegram.Controls.Chats
             public string Query => _query;
 
             public Orientation Orientation => Orientation.Horizontal;
+
+            public bool InsertOnKeyDown => true;
         }
 
-        public class SearchHashtagsCollection : MvxObservableCollection<string>, IAutocompleteCollection, ISupportIncrementalLoading
+        public class SearchHashtagsCollection : MvxObservableCollection<object>, IAutocompleteCollection, ISupportIncrementalLoading
         {
             private readonly IClientService _clientService;
             private readonly string _query;
@@ -685,6 +712,8 @@ namespace Telegram.Controls.Chats
             public string Query => _query;
 
             public Orientation Orientation => Orientation.Vertical;
+
+            public bool InsertOnKeyDown => true;
         }
 
         public async Task SendAsync(bool disableNotification = false)
@@ -922,23 +951,178 @@ namespace Telegram.Controls.Chats
         #endregion
     }
 
-    public interface IAutocompleteCollection : ICollection
+    public interface IAutocompleteCollection : ICollection, IEnumerable<object>
     {
         public string Query { get; }
 
         public Orientation Orientation { get; }
+
+        public bool InsertOnKeyDown { get; }
     }
 
-    public class AutocompleteList<T> : List<T>, IAutocompleteCollection
+    public class AutocompleteList : List<object>, IAutocompleteCollection
     {
         public string Query { get; }
 
         public Orientation Orientation { get; set; } = Orientation.Vertical;
 
-        public AutocompleteList(string query, IEnumerable<T> collection)
+        public bool InsertOnKeyDown { get; } = true;
+
+        public AutocompleteList(string query, IEnumerable<object> collection)
             : base(collection)
         {
             Query = query;
+        }
+    }
+
+    public class AutocompleteDiffHandler : IDiffHandler<object>
+    {
+        public bool CompareItems(object oldItem, object newItem)
+        {
+            if (oldItem is EmojiData oldEmoji && newItem is EmojiData newEmoji)
+            {
+                return oldEmoji.Value == newEmoji.Value;
+            }
+            else if (oldItem is Sticker oldSticker && newItem is Sticker newSticker)
+            {
+                return oldSticker.Id == newSticker.Id && oldSticker.SetId == newSticker.SetId;
+            }
+
+            return false;
+        }
+
+        public void UpdateItem(object oldItem, object newItem)
+        {
+
+        }
+    }
+
+    public class AutocompleteCollection : DiffObservableCollection<object>, ISupportIncrementalLoading, IAutocompleteCollection
+    {
+        private readonly DisposableMutex _mutex = new();
+        private CancellationTokenSource _token;
+
+        private IAutocompleteCollection _source;
+        private ISupportIncrementalLoading _incrementalSource;
+
+        private bool _initialized;
+
+        public AutocompleteCollection(IAutocompleteCollection collection)
+            : base(collection, new AutocompleteDiffHandler(), Constants.DiffOptions)
+        {
+            _source = collection;
+            _incrementalSource = collection as ISupportIncrementalLoading;
+        }
+
+        public IAutocompleteCollection Source => _source;
+
+        public async void Update(IAutocompleteCollection source)
+        {
+            _token?.Cancel();
+
+            if (source is ISupportIncrementalLoading incremental && incremental.HasMoreItems)
+            {
+                var token = new CancellationTokenSource();
+
+                _token = token;
+
+                _source = source;
+                _incrementalSource = incremental;
+
+                if (_initialized)
+                {
+                    using (await _mutex.WaitAsync())
+                    {
+                        await incremental.LoadMoreItemsAsync(0);
+
+                        // 100% redundant
+                        if (token.IsCancellationRequested)
+                        {
+                            return;
+                        }
+
+                        var diff = await Task.Run(() => DiffUtil.CalculateDiff(this, source, DefaultDiffHandler, DefaultOptions));
+                        ReplaceDiff(diff);
+                        UpdateEmpty();
+
+                        if (Count < 1 && incremental.HasMoreItems)
+                        {
+                            // This is 100% illegal and will cause a lot
+                            // but really a lot of problems for sure.
+                            Add(default);
+                        }
+                    }
+                }
+            }
+        }
+
+        public IAsyncOperation<LoadMoreItemsResult> LoadMoreItemsAsync(uint count)
+        {
+            return AsyncInfo.Run(async _ =>
+            {
+                using (await _mutex.WaitAsync())
+                {
+                    _initialized = true;
+                    _token?.Cancel();
+
+                    var token = _token = new CancellationTokenSource();
+                    var result = await _incrementalSource?.LoadMoreItemsAsync(count);
+
+                    // 100% redundant
+                    if (token.IsCancellationRequested)
+                    {
+                        return result;
+                    }
+
+                    if (result.Count > 0)
+                    {
+                        var diff = await Task.Run(() => DiffUtil.CalculateDiff(this, _source, DefaultDiffHandler, DefaultOptions));
+                        ReplaceDiff(diff);
+                        UpdateEmpty();
+                    }
+
+                    return result;
+                }
+            });
+        }
+
+        public bool HasMoreItems
+        {
+            get
+            {
+                if (_incrementalSource != null)
+                {
+                    return _incrementalSource.HasMoreItems;
+                }
+
+                _initialized = true;
+                return false;
+            }
+        }
+
+        private bool _isEmpty = true;
+        public bool IsEmpty
+        {
+            get => _isEmpty;
+            private set
+            {
+                if (_isEmpty != value)
+                {
+                    _isEmpty = value;
+                    OnPropertyChanged(new PropertyChangedEventArgs(nameof(IsEmpty)));
+                }
+            }
+        }
+
+        public string Query => _source.Query;
+
+        public Orientation Orientation => _source.Orientation;
+
+        public bool InsertOnKeyDown => _source.InsertOnKeyDown;
+
+        private void UpdateEmpty()
+        {
+            IsEmpty = Count == 0;
         }
     }
 }

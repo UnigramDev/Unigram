@@ -46,6 +46,7 @@ using Windows.UI.Core;
 using Windows.UI.Text;
 using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
+using Windows.UI.Xaml.Automation;
 using Windows.UI.Xaml.Automation.Peers;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
@@ -3655,6 +3656,12 @@ namespace Telegram.Views
 
                 var animated = content.Children[0] as AnimatedImage;
                 animated.Source = new DelayedFileSource(_viewModel.ClientService, sticker);
+
+                AutomationProperties.SetName(args.ItemContainer, sticker.Emoji);
+            }
+            else if (args.Item is EmojiData emoji)
+            {
+                AutomationProperties.SetName(args.ItemContainer, emoji.Value);
             }
 
             args.Handled = true;

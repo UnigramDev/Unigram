@@ -16,7 +16,7 @@ using Windows.UI.Xaml.Data;
 
 namespace Telegram.Collections
 {
-    public class SearchStickersCollection : MvxObservableCollection<Sticker>, IAutocompleteCollection, ISupportIncrementalLoading
+    public class SearchStickersCollection : MvxObservableCollection<object>, IAutocompleteCollection, ISupportIncrementalLoading
     {
         private readonly IClientService _clientService;
         private readonly ISettingsService _settings;
@@ -93,5 +93,7 @@ namespace Telegram.Collections
         public string Query => _query;
 
         public Orientation Orientation => Orientation.Horizontal;
+
+        public bool InsertOnKeyDown => false;
     }
 }
