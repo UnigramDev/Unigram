@@ -29,19 +29,38 @@ namespace Telegram.ViewModels
             Delegate?.ViewVisibleMessages();
         }
 
-        public void DoubleTapped(MessageViewModel message)
+        public void DoubleTapped(MessageViewModel message, bool alternate)
         {
-            if (Settings.Appearance.IsQuickReplySelected)
+            if (Settings.Appearance.IsQuickReplySelected || alternate)
+            {
+                if (alternate)
+                {
+                    ReactToMessage(message, ClientService.DefaultReaction);
+                }
+                else
+                {
+                    ReplyToMessage(message);
+                }
+            }
+            else if (alternate)
             {
                 ReplyToMessage(message);
             }
-            else if (message.InteractionInfo?.Reactions != null && message.InteractionInfo.Reactions.IsChosen(ClientService.DefaultReaction))
+            else
             {
-                ClientService.SendAsync(new RemoveMessageReaction(message.ChatId, message.Id, ClientService.DefaultReaction));
+                ReactToMessage(message, ClientService.DefaultReaction);
+            }
+        }
+
+        private void ReactToMessage(MessageViewModel message, ReactionType reaction)
+        {
+            if (message.InteractionInfo?.Reactions != null && message.InteractionInfo.Reactions.IsChosen(reaction))
+            {
+                ClientService.Send(new RemoveMessageReaction(message.ChatId, message.Id, reaction));
             }
             else
             {
-                ClientService.SendAsync(new AddMessageReaction(message.ChatId, message.Id, ClientService.DefaultReaction, false, false));
+                ClientService.Send(new AddMessageReaction(message.ChatId, message.Id, reaction, false, false));
             }
         }
 

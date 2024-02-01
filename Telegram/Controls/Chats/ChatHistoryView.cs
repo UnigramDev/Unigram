@@ -11,6 +11,7 @@ using System.Threading.Tasks;
 using Telegram.Collections;
 using Telegram.Common;
 using Telegram.Controls.Messages;
+using Telegram.Navigation;
 using Telegram.ViewModels;
 using Telegram.ViewModels.Delegates;
 using Windows.Devices.Input;
@@ -22,6 +23,7 @@ using Windows.UI.Xaml.Controls.Primitives;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Point = Windows.Foundation.Point;
+using VirtualKey = Windows.System.VirtualKey;
 
 namespace Telegram.Controls.Chats
 {
@@ -547,7 +549,7 @@ namespace Telegram.Controls.Chats
             var message = ItemFromContainer(selector) as MessageViewModel;
             if (message != null)
             {
-                ViewModel.DoubleTapped(message);
+                ViewModel.DoubleTapped(message, WindowContext.IsKeyDown(VirtualKey.Control));
             }
         }
 
