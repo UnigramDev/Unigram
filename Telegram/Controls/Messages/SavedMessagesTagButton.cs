@@ -130,7 +130,7 @@ namespace Telegram.Controls.Messages
             _presenterId = value.StickerValue.Id;
 
             Icon ??= GetTemplateChild(nameof(Icon)) as CustomEmojiIcon;
-            Icon.Source = new DelayedFileSource(viewModel.ClientService, value.StickerValue);
+            Icon.Source = new DelayedFileSource(viewModel.ClientService, value);
         }
 
         private void UpdateInteraction(ChatSearchViewModel viewModel, SavedMessagesTag tag, bool recycled)

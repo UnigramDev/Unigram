@@ -73,7 +73,7 @@ namespace Telegram.Controls.Cells.Premium
                 var sticker = _stickers[index];
                 if (sticker.FullType is StickerFullTypeRegular regular)
                 {
-                    Animation1.Source = new DelayedFileSource(_clientService, sticker.StickerValue);
+                    Animation1.Source = new DelayedFileSource(_clientService, sticker);
                     PremiumAnimation1.Source = new DelayedFileSource(_clientService, regular.PremiumAnimation);
                 }
             }

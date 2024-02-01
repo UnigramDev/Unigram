@@ -156,7 +156,7 @@ namespace Telegram.Controls.Messages
             _presenterId = value.StickerValue.Id;
 
             Icon ??= GetTemplateChild(nameof(Icon)) as CustomEmojiIcon;
-            Icon.Source = new DelayedFileSource(message.ClientService, value.StickerValue);
+            Icon.Source = new DelayedFileSource(message.ClientService, value);
         }
 
         protected virtual void UpdateInteraction(MessageViewModel message, MessageReaction interaction, bool recycled)

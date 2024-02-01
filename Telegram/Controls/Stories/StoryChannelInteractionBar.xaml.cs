@@ -303,7 +303,7 @@ namespace Telegram.Controls.Stories
             _presenterId = value.StickerValue.Id;
 
             Icon ??= GetTemplateChild(nameof(Icon)) as CustomEmojiIcon;
-            Icon.Source = new DelayedFileSource(story.ClientService, value.StickerValue);
+            Icon.Source = new DelayedFileSource(story.ClientService, value);
         }
 
         private void UpdateInteraction(StoryViewModel story, ReactionType interaction, bool recycled)

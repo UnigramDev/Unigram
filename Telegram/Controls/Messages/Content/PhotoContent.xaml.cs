@@ -79,7 +79,7 @@ namespace Telegram.Controls.Messages.Content
 
         private void Texture_ImageOpened(object sender, RoutedEventArgs e)
         {
-            var visual = ElementCompositionPreview.GetElementVisual(LayoutRoot.Children[0]);
+            var visual = ElementComposition.GetElementVisual(LayoutRoot.Children[0]);
             var animation = visual.Compositor.CreateScalarKeyFrameAnimation();
             animation.InsertKeyFrame(0, 0);
             animation.InsertKeyFrame(1, 1);

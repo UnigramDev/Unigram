@@ -56,7 +56,7 @@ namespace Telegram.Views.Settings
                     using (Icon.BeginBatchUpdate())
                     {
                         Icon.FrameSize = new Size(32, 32);
-                        Icon.Source = new DelayedFileSource(ViewModel.ClientService, emojiReaction.CenterAnimation.StickerValue);
+                        Icon.Source = new DelayedFileSource(ViewModel.ClientService, emojiReaction.CenterAnimation);
                     }
                 }
             }
