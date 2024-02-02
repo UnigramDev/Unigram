@@ -102,12 +102,18 @@ namespace Telegram.Views.Profile
         {
             this.BeginOnUIThread(() =>
             {
+                var clientService = ViewModel?.ClientService;
+                if (clientService == null)
+                {
+                    return;
+                }
+
                 var container = ScrollingHost.ContainerFromItem(topic) as SelectorItem;
                 if (container?.ContentTemplateRoot is Grid content)
                 {
                     if (content.Children[0] is ChatCell cell)
                     {
-                        cell.UpdateSavedMessagesTopic(ViewModel.ClientService, topic);
+                        cell.UpdateSavedMessagesTopic(clientService, topic);
                     }
                 }
             });
