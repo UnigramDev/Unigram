@@ -2999,8 +2999,22 @@ namespace Telegram.ViewModels
 
         public void ViewAsChats()
         {
+            var chat = _chat;
+            if (chat == null)
+            {
+                return;
+            }
+
             Settings.SavedViewAsChats = true;
-            OpenProfile();
+
+            var target = typeof(ProfilePage);
+            var parameter = chat.Id;
+
+            NavigationService.GoBackAt(0, false);
+
+            NavigationService.Frame.BackStack.Add(new PageStackEntry(target, parameter, null));
+            NavigationService.GoBack(infoOverride: new SlideNavigationTransitionInfo { Effect = SlideNavigationTransitionEffect.FromLeft });
+            NavigationService.Frame.ForwardStack.Clear();
         }
 
         public void OpenProfile()

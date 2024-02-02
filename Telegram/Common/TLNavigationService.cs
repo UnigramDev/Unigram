@@ -169,7 +169,7 @@ namespace Telegram.Common
                     var settings = TypeResolver.Current.Resolve<ISettingsService>(_clientService.SessionId);
                     if (settings != null && settings.SavedViewAsChats)
                     {
-                        Navigate(typeof(ProfilePage), chat.Id);
+                        Navigate(typeof(ProfilePage), chat.Id, infoOverride: new SuppressNavigationTransitionInfo());
                         return;
                     }
                 }
@@ -388,7 +388,18 @@ namespace Telegram.Common
 
                             if (CurrentPageType == typeof(ProfilePage) && CurrentPageParam is long profileId && profileId == chat.Id)
                             {
-                                info = new SlideNavigationTransitionInfo { Effect = SlideNavigationTransitionEffect.FromLeft };
+                                var cacheKey = Guid.NewGuid().ToString();
+                                var chatId = (long)parameter;
+
+                                parameter = cacheKey;
+                                CacheKeyToChatId[cacheKey] = chatId;
+
+                                GoBackAt(0, false);
+
+                                Frame.BackStack.Add(new Windows.UI.Xaml.Navigation.PageStackEntry(target, parameter, null));
+                                GoBack(infoOverride: new SlideNavigationTransitionInfo { Effect = SlideNavigationTransitionEffect.FromRight });
+                                Frame.ForwardStack.Clear();
+                                return;
                             }
                         }
 
