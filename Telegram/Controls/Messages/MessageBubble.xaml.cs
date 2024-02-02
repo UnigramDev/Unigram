@@ -355,7 +355,7 @@ namespace Telegram.Controls.Messages
                 builder.Append($"{Strings.EditedMessage}, ");
             }
 
-            var date = string.Format(Strings.TodayAtFormatted, Formatter.ShortTime.Format(Formatter.ToLocalTime(message.Date)));
+            var date = string.Format(Strings.TodayAtFormatted, Formatter.Time(message.Date));
             if (message.IsOutgoing)
             {
                 builder.Append(string.Format(Strings.AccDescrSentDate, date));

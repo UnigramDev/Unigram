@@ -202,7 +202,7 @@ namespace Telegram.Controls.Messages.Content
             string message2;
             if (giveaway.Parameters.OnlyNewMembers)
             {
-                var creationTime = Formatter.ShortTime.Format(Formatter.ToLocalTime(creationTimeStamp));
+                var creationTime = Formatter.Time(creationTimeStamp);
                 var creationDate = Formatter.DayMonthFull.Format(Formatter.ToLocalTime(creationTimeStamp));
 
                 if (giveaway.Parameters.AdditionalChatIds.Count > 0)

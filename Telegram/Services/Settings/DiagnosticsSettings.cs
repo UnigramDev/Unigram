@@ -153,13 +153,6 @@ namespace Telegram.Services.Settings
             set => AddOrUpdateValue(ref _forceEdgeHtml, "ForceEdgeHtml", value);
         }
 
-        private bool? _nativeTimeFormatter;
-        public bool NativeTimeFormatter
-        {
-            get => _nativeTimeFormatter ??= GetValueOrDefault("NativeTimeFormatter", true);
-            set => AddOrUpdateValue(ref _nativeTimeFormatter, "NativeTimeFormatter", value);
-        }
-
         private bool? _disablePackageManager;
         public bool DisablePackageManager
         {
