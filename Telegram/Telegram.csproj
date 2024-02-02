@@ -195,6 +195,7 @@
     <Compile Include="Common\BezierPoint.cs" />
     <Compile Include="Composition\WeakInteractionTrackerOwner.cs" />
     <Compile Include="Controls\Messages\ReactionAsTagButton.cs" />
+    <Compile Include="Common\AsyncMediaPlayer.cs" />
     <Compile Include="Td\Api\UpdateSavedMessagesChatLastMessage.cs" />
     <Compile Include="Td\Api\UpdateSavedMessagesChatOrder.cs" />
     <Compile Include="Td\Api\SavedMessagesChat.cs" />

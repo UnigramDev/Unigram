@@ -59,9 +59,8 @@
         </Style>
     </UserControl.Resources>
 
-    <Grid>
-        <Grid x:Name="LayoutRoot"
-              Background="Black">
+    <Grid Background="Black">
+        <Grid x:Name="LayoutRoot">
 
             <Image x:Name="Texture1"
                    Stretch="UniformToFill"

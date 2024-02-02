@@ -12,15 +12,12 @@ using System;
 using System.Diagnostics;
 using System.Linq;
 using System.Numerics;
-using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 using Telegram.Common;
 using Telegram.Controls.Media;
 using Telegram.Controls.Messages;
 using Telegram.Streams;
 using Telegram.Td.Api;
 using Telegram.ViewModels.Stories;
-using Windows.Storage;
 using Windows.UI;
 using Windows.UI.Composition;
 using Windows.UI.Xaml;
@@ -52,17 +49,11 @@ namespace Telegram.Controls.Stories
 
     public sealed partial class StoryContent : UserControl
     {
-        private readonly Windows.System.DispatcherQueue _dispatcherQueue;
-        private readonly LifoActionWorker _playbackQueue;
-
         private volatile bool _unloaded;
 
         public StoryContent()
         {
             InitializeComponent();
-
-            _dispatcherQueue = Windows.System.DispatcherQueue.GetForCurrentThread();
-            _playbackQueue = new LifoActionWorker();
 
             _texture = Texture1;
 
@@ -87,26 +78,11 @@ namespace Telegram.Controls.Stories
             _unloaded = true;
             Logger.Info();
 
-            Task.Run(() =>
-            {
-                if (_player != null)
-                {
-                    _player.Stop();
-                    _player.ESSelected -= OnESSelected;
-                    _player.Vout -= OnVout;
-                    _player.Buffering -= OnBuffering;
-                    _player.EndReached -= OnEndReached;
-
-                    _player.Dispose();
-                    _player = null;
-                }
-
-                _library?.Dispose();
-                _library = null;
-
-                _mediaStream?.Dispose();
-                _mediaStream = null;
-            });
+            _player.ESSelected -= OnESSelected;
+            _player.Vout -= OnVout;
+            _player.Buffering -= OnBuffering;
+            _player.EndReached -= OnEndReached;
+            _player.Close();
         }
 
         private void CollapseCaption()
@@ -640,7 +616,7 @@ namespace Telegram.Controls.Stories
         {
             if (_player != null && !_unloaded && stream != null)
             {
-                _player.Play(new LibVLCSharp.Shared.Media(_library, stream));
+                _player.Play(stream);
             }
         }
 
@@ -658,11 +634,11 @@ namespace Telegram.Controls.Stories
                 if (_player != null)
                 {
                     _mediaStream = stream;
-                    _playbackQueue.Enqueue(() => Play(_mediaStream));
+                    Play(_mediaStream);
                 }
                 else if (Video != null)
                 {
-                    if (Video.IsLoaded)
+                    if (Video.IsConnected)
                     {
                         _mediaStream = stream;
                         Video_Initialized(Video, new LibVLCSharp.Platforms.Windows.InitializedEventArgs(Video.SwapChainOptions));
@@ -688,10 +664,7 @@ namespace Telegram.Controls.Stories
 
         private void Deactivate(StoryViewModel story)
         {
-            if (_player != null)
-            {
-                _playbackQueue.Enqueue(_player.Stop);
-            }
+            _player?.Stop();
 
             //UnloadVideo();
             CollapseCaption();
@@ -806,10 +779,7 @@ namespace Telegram.Controls.Stories
             _fileId = file.Id;
             Logger.Info();
 
-            if (_player != null)
-            {
-                _playbackQueue.Enqueue(_player.Stop);
-            }
+            _player?.Stop();
 
             if (_type == StoryType.Photo)
             {
@@ -1154,81 +1124,68 @@ namespace Telegram.Controls.Stories
                 return;
             }
 
-            // Generating plugins cache requires a breakpoint in bank.c#662
-            _library = new LibVLC(e.SwapChainOptions); //"--quiet", "--reset-plugins-cache");
-            //_library.Log += _library_Log;
+            Logger.Info();
 
-            _player = new MediaPlayer(_library);
+            _player = new AsyncMediaPlayer(e.SwapChainOptions);
             _player.ESSelected += OnESSelected;
             _player.Vout += OnVout;
             _player.Buffering += OnBuffering;
             _player.EndReached += OnEndReached;
-            //_player.Stopped += OnStopped;
-
-            //_player.FileCaching = 1;
 
             if (_mediaStream != null)
             {
-                _playbackQueue.Enqueue(() => Play(_mediaStream));
+                Play(_mediaStream);
             }
         }
 
-        private void OnStopped(object sender, EventArgs e)
+        private void OnVout(AsyncMediaPlayer sender, MediaPlayerVoutEventArgs e)
         {
-            _dispatcherQueue.TryEnqueue(Video.Clear);
+            _loading = false;
+            ElementCompositionPreview.SetElementChildVisual(ActiveRoot, Window.Current.Compositor.CreateSpriteVisual());
+
+            Texture1.Source = null;
+            Texture2.Source = null;
         }
 
-        private void OnVout(object sender, MediaPlayerVoutEventArgs e)
-        {
-            _dispatcherQueue.TryEnqueue(() =>
-            {
-                _loading = false;
-                ElementCompositionPreview.SetElementChildVisual(ActiveRoot, Window.Current.Compositor.CreateSpriteVisual());
-
-                Texture1.Source = null;
-                Texture2.Source = null;
-            });
-        }
-
-        private void OnESSelected(object sender, MediaPlayerESSelectedEventArgs e)
+        private void OnESSelected(AsyncMediaPlayer sender, MediaPlayerESSelectedEventArgs e)
         {
             if (e.Type == TrackType.Video && e.Id != -1)
             {
-                //_dispatcherQueue.TryEnqueue(UpdateStretch);
+                //UpdateStretch();
             }
             else if (e.Type == TrackType.Audio && e.Id != -1)
             {
-                _dispatcherQueue.TryEnqueue(() => _player.Mute = _viewModel.Settings.VolumeMuted);
+                _player.Mute(_viewModel.Settings.VolumeMuted);
             }
         }
 
         private void UpdateStretch()
         {
-            var videoTrack = GetVideoTrack(_player);
-            if (videoTrack is not VideoTrack track)
-            {
-                return;
-            }
+            //var videoTrack = GetVideoTrack(_player);
+            //if (videoTrack is not VideoTrack track)
+            //{
+            //    return;
+            //}
 
-            var trackWidth = track.Width;
-            var trackHeight = track.Height;
+            //var trackWidth = track.Width;
+            //var trackHeight = track.Height;
 
-            if (trackWidth == 0 || trackHeight == 0)
-            {
-                _player.Scale = 0;
-            }
-            else
-            {
-                if (track.SarNum != track.SarDen)
-                {
-                    trackWidth = trackWidth * track.SarNum / track.SarDen;
-                }
+            //if (trackWidth == 0 || trackHeight == 0)
+            //{
+            //    _player.Scale(0);
+            //}
+            //else
+            //{
+            //    if (track.SarNum != track.SarDen)
+            //    {
+            //        trackWidth = trackWidth * track.SarNum / track.SarDen;
+            //    }
 
-                var width = (Video.ActualSize.X * XamlRoot.RasterizationScale) / trackWidth;
-                var height = (Video.ActualSize.Y * XamlRoot.RasterizationScale) / trackHeight;
+            //    var width = (Video.ActualSize.X * XamlRoot.RasterizationScale) / trackWidth;
+            //    var height = (Video.ActualSize.Y * XamlRoot.RasterizationScale) / trackHeight;
 
-                _player.Scale = (float)Math.Max(width, height);
-            }
+            //    _player.Scale((float)Math.Max(width, height));
+            //}
         }
 
         private VideoTrack? GetVideoTrack(MediaPlayer mediaPlayer)
@@ -1260,59 +1217,37 @@ namespace Telegram.Controls.Stories
             }
         }
 
-
-        private static readonly Regex _videoLooking = new("using (.*?) module \"(.*?)\" from (.*?)$", RegexOptions.Compiled);
-        private static readonly object _syncObject = new();
-
-        private void _library_Log(object sender, LogEventArgs e)
+        private void OnEndReached(AsyncMediaPlayer sender, EventArgs e)
         {
-            Debug.WriteLine(e.FormattedLog);
-
-            lock (_syncObject)
-            {
-                var match = _videoLooking.Match(e.FormattedLog);
-                if (match.Success)
-                {
-                    System.IO.File.AppendAllText(ApplicationData.Current.LocalFolder.Path + "\\vlc.txt", string.Format("{2}\n", match.Groups[1].Value, match.Groups[2].Value, match.Groups[3].Value));
-                }
-            }
+            Completed?.Invoke(this, EventArgs.Empty);
         }
 
-        private void OnEndReached(object sender, EventArgs e)
-        {
-            _dispatcherQueue.TryEnqueue(() => Completed?.Invoke(this, EventArgs.Empty));
-        }
-
-        private void OnBuffering(object sender, MediaPlayerBufferingEventArgs e)
+        private void OnBuffering(AsyncMediaPlayer sender, MediaPlayerBufferingEventArgs e)
         {
             //Logger.Debug(e.Cache);
 
-            _dispatcherQueue.TryEnqueue(() =>
+            if (e.Cache == 100 && _loading)
             {
-                if (e.Cache == 100 && _loading)
-                {
-                    _loading = false;
-                    ElementCompositionPreview.SetElementChildVisual(ActiveRoot, Window.Current.Compositor.CreateSpriteVisual());
+                _loading = false;
+                ElementCompositionPreview.SetElementChildVisual(ActiveRoot, Window.Current.Compositor.CreateSpriteVisual());
 
-                    if (_viewModel?.SelectedItem != null && _viewModel.SelectedItem.ChatId != _openedChatId && _viewModel.SelectedItem.StoryId != _openedStoryId)
-                    {
-                        _openedChatId = _viewModel.SelectedItem.ChatId;
-                        _openedStoryId = _viewModel.SelectedItem.StoryId;
-                        _viewModel.ClientService.Send(new OpenStory(_openedChatId, _openedStoryId));
-                    }
-                }
-                else if (e.Cache < 100 && !_loading)
+                if (_viewModel?.SelectedItem != null && _viewModel.SelectedItem.ChatId != _openedChatId && _viewModel.SelectedItem.StoryId != _openedStoryId)
                 {
-                    _loading = true;
-                    ShowSkeleton();
+                    _openedChatId = _viewModel.SelectedItem.ChatId;
+                    _openedStoryId = _viewModel.SelectedItem.StoryId;
+                    _viewModel.ClientService.Send(new OpenStory(_openedChatId, _openedStoryId));
                 }
-            });
+            }
+            else if (e.Cache < 100 && !_loading)
+            {
+                _loading = true;
+                ShowSkeleton();
+            }
         }
 
         private Image _texture;
 
-        private LibVLC _library;
-        private MediaPlayer _player;
+        private AsyncMediaPlayer _player;
 
         private StoryContentPhotoTimer _timer;
         private bool _paused;
@@ -1375,7 +1310,7 @@ namespace Telegram.Controls.Stories
             {
                 if (_type == StoryType.Video)
                 {
-                    _playbackQueue.Enqueue(() => _player?.SetPause(true));
+                    _player?.Pause(true);
                 }
                 else
                 {
@@ -1394,7 +1329,7 @@ namespace Telegram.Controls.Stories
             {
                 if (_type == StoryType.Video)
                 {
-                    _playbackQueue.Enqueue(() => _player?.SetPause(false));
+                    _player?.Pause(false);
                 }
                 else
                 {
@@ -1420,11 +1355,7 @@ namespace Telegram.Controls.Stories
         private void Mute_Click(object sender, RoutedEventArgs e)
         {
             _viewModel.Settings.VolumeMuted = Mute.IsChecked is false;
-
-            if (_player != null)
-            {
-                _playbackQueue.Enqueue(() => _player.Mute = _viewModel.Settings.VolumeMuted);
-            }
+            _player?.Mute(_viewModel.Settings.VolumeMuted);
         }
 
         private void Caption_Click(object sender, RoutedEventArgs e)
