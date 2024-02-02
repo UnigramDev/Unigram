@@ -195,6 +195,10 @@ namespace Telegram.Views
             Menu.Visibility = chat.Id == ViewModel.ClientService.Options.MyId && ViewModel.SavedMessagesTopic == null
                 ? Visibility.Visible
                 : Visibility.Collapsed;
+
+            BackButton.RequestedTheme = ScrollingHost.VerticalOffset < ProfileHeader.ActualHeight - 16 || !ProfileHeader.IsLoaded
+                ? ProfileHeader.HeaderTheme
+                : ElementTheme.Default;
         }
 
         public void UpdateChatTitle(Chat chat)
@@ -215,6 +219,10 @@ namespace Telegram.Views
         public void UpdateChatAccentColors(Chat chat)
         {
             ProfileHeader.UpdateChatAccentColors(chat);
+
+            BackButton.RequestedTheme = ScrollingHost.VerticalOffset < ProfileHeader.ActualHeight - 16
+                ? ProfileHeader.HeaderTheme
+                : ElementTheme.Default;
         }
 
         public void UpdateChatActiveStories(Chat chat)
