@@ -5,9 +5,15 @@
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
 using System;
+using Telegram.Common;
+using Telegram.Navigation;
+using Telegram.Services;
+using Telegram.Streams;
 using Telegram.Td.Api;
 using Telegram.ViewModels;
+using Telegram.Views;
 using Windows.ApplicationModel;
+using Windows.Services.Store;
 using Windows.System;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -64,7 +70,51 @@ namespace Telegram.Controls.Messages.Content
 
         private async void Button_Click(object sender, RoutedEventArgs e)
         {
-            await Launcher.LaunchUriAsync(new Uri("ms-windows-store://pdp/?PFN=" + Package.Current.Id.FamilyName));
+            Button.ShowSkeleton();
+
+            if (ApiInfo.IsStoreRelease || _message == null)
+            {
+                try
+                {
+                    var context = StoreContext.GetDefault();
+
+                    var updates = await context.GetAppAndOptionalStorePackageUpdatesAsync();
+                    if (updates == null && updates.Count == 0)
+                    {
+                        ToastPopup.Show(Strings.CheckForUpdatesInfo, new LocalFileSource("ms-appx:///Assets/Toasts/Info.tgs"));
+                    }
+                }
+                catch
+                {
+                    // All the remote procedure calls must be wrapped in a try-catch block
+                }
+                finally
+                {
+                    await Launcher.LaunchUriAsync(new Uri("ms-windows-store://pdp/?PFN=" + Package.Current.Id.FamilyName));
+                }
+            }
+            else
+            {
+                var service = TypeResolver.Current.Resolve<ICloudUpdateService>(_message.ClientService.SessionId);
+                if (service != null)
+                {
+                    if (service.NextUpdate == null)
+                    {
+                        await service.UpdateAsync(true);
+                    }
+
+                    if (service.NextUpdate != null)
+                    {
+                        await CloudUpdateService.LaunchAsync(WindowContext.Current.Dispatcher, false);
+                    }
+                    else
+                    {
+                        ToastPopup.Show(Strings.CheckForUpdatesInfo, new LocalFileSource("ms-appx:///Assets/Toasts/Info.tgs"));
+                    }
+                }
+            }
+
+            Button.HideSkeleton();
         }
     }
 }
