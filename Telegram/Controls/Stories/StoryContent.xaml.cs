@@ -78,11 +78,14 @@ namespace Telegram.Controls.Stories
             _unloaded = true;
             Logger.Info();
 
-            _player.ESSelected -= OnESSelected;
-            _player.Vout -= OnVout;
-            _player.Buffering -= OnBuffering;
-            _player.EndReached -= OnEndReached;
-            _player.Close();
+            if (_player != null)
+            {
+                _player.ESSelected -= OnESSelected;
+                _player.Vout -= OnVout;
+                _player.Buffering -= OnBuffering;
+                _player.EndReached -= OnEndReached;
+                _player.Close();
+            }
         }
 
         private void CollapseCaption()
