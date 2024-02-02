@@ -82,6 +82,7 @@ namespace Telegram.Controls.Messages.Content
                     if (updates == null && updates.Count == 0)
                     {
                         ToastPopup.Show(Strings.CheckForUpdatesInfo, new LocalFileSource("ms-appx:///Assets/Toasts/Info.tgs"));
+                        return;
                     }
                 }
                 catch
