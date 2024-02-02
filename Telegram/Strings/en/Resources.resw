@@ -9227,6 +9227,12 @@ Participants will see that the chat is being recorded.</value>
   <data name="VoipPeerVideoOutdated" xml:space="preserve">
     <value>**{0}**&apos;s app does not support video calls. They need to update their app before you can call them.</value>
   </data>
+  <data name="VoipPlatformUnsupportedText" xml:space="preserve">
+    <value>This feature is not supported on your Windows edition. Consider installing the [Media Feature Pack for Windows N](https://support.microsoft.com/en-us/windows/media-feature-pack-for-windows-n-8622b390-4ce6-43c9-9b42-549e5328e407) to access this feature.</value>
+  </data>
+  <data name="VoipPlatformUnsupportedTitle" xml:space="preserve">
+    <value>Feature not supported</value>
+  </data>
   <data name="VoipRateCallAlert" xml:space="preserve">
     <value>Please rate the quality of your Telegram call</value>
   </data>

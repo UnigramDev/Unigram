@@ -265,6 +265,11 @@ namespace Telegram.Services
 
         public async void StartWithUser(long userId, bool video)
         {
+            if (await MediaDeviceWatcher.CheckIfUnsupportedAsync())
+            {
+                return;
+            }
+
             var user = ClientService.GetUser(userId);
             if (user == null)
             {

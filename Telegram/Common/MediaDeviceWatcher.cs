@@ -189,6 +189,17 @@ namespace Telegram.Common
 
         #region Device Access
 
+        public static async Task<bool> CheckIfUnsupportedAsync()
+        {
+            if (ApiInfo.IsMediaSupported)
+            {
+                return false;
+            }
+
+            await MessagePopup.ShowAsync(Strings.VoipPlatformUnsupportedText, Strings.VoipPlatformUnsupportedTitle, Strings.OK);
+            return true;
+        }
+
         public static async Task<bool> CheckAccessAsync(bool video, bool required = true, ElementTheme requestedTheme = ElementTheme.Default)
         {
             try

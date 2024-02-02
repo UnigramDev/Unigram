@@ -208,9 +208,13 @@ namespace Telegram.Services
             return null;
         }
 
-
         public async Task JoinAsync(long chatId)
         {
+            if (await MediaDeviceWatcher.CheckIfUnsupportedAsync())
+            {
+                return;
+            }
+
             var chat = ClientService.GetChat(chatId);
             if (chat == null || chat.VideoChat.GroupCallId == 0)
             {
@@ -227,6 +231,11 @@ namespace Telegram.Services
 
         public async Task CreateAsync(long chatId)
         {
+            if (await MediaDeviceWatcher.CheckIfUnsupportedAsync())
+            {
+                return;
+            }
+
             var chat = ClientService.GetChat(chatId);
             if (chat == null || chat.VideoChat.GroupCallId != 0)
             {
