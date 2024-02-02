@@ -104,23 +104,18 @@ namespace Telegram.Views
 
             _loadedThemeTask = new TaskCompletionSource<bool>();
 
-            _typeToItemHashSetMapping.Add("UserMessageTemplate", new HashSet<SelectorItem>());
-            _typeToItemHashSetMapping.Add("FriendMessageTemplate", new HashSet<SelectorItem>());
-            _typeToItemHashSetMapping.Add("ServiceMessageTemplate", new HashSet<SelectorItem>());
-            _typeToItemHashSetMapping.Add("ServiceMessagePhotoTemplate", new HashSet<SelectorItem>());
-            _typeToItemHashSetMapping.Add("ServiceMessageBackgroundTemplate", new HashSet<SelectorItem>());
-            _typeToItemHashSetMapping.Add("ServiceMessageUnreadTemplate", new HashSet<SelectorItem>());
-            _typeToItemHashSetMapping.Add("ServiceMessageGiftTemplate", new HashSet<SelectorItem>());
-            _typeToItemHashSetMapping.Add("EmptyMessageTemplate", new HashSet<SelectorItem>());
+            void AddStrategy(ChatHistoryViewItemType type, DataTemplate template, int minimum = 0)
+            {
+                _typeToStrategy.Add(type, new(template, minimum));
+            }
 
-            _typeToTemplateMapping.Add("UserMessageTemplate", Resources["UserMessageTemplate"] as DataTemplate);
-            _typeToTemplateMapping.Add("FriendMessageTemplate", Resources["FriendMessageTemplate"] as DataTemplate);
-            _typeToTemplateMapping.Add("ServiceMessageTemplate", Resources["ServiceMessageTemplate"] as DataTemplate);
-            _typeToTemplateMapping.Add("ServiceMessagePhotoTemplate", Resources["ServiceMessagePhotoTemplate"] as DataTemplate);
-            _typeToTemplateMapping.Add("ServiceMessageBackgroundTemplate", Resources["ServiceMessageBackgroundTemplate"] as DataTemplate);
-            _typeToTemplateMapping.Add("ServiceMessageUnreadTemplate", Resources["ServiceMessageUnreadTemplate"] as DataTemplate);
-            _typeToTemplateMapping.Add("ServiceMessageGiftTemplate", Resources["ServiceMessageGiftTemplate"] as DataTemplate);
-            _typeToTemplateMapping.Add("EmptyMessageTemplate", Resources["EmptyMessageTemplate"] as DataTemplate);
+            AddStrategy(ChatHistoryViewItemType.Outgoing, OutgoingMessageTemplate, 20);
+            AddStrategy(ChatHistoryViewItemType.Incoming, IncomingMessageTemplate, 20);
+            AddStrategy(ChatHistoryViewItemType.Service, ServiceMessageTemplate);
+            AddStrategy(ChatHistoryViewItemType.ServiceUnread, ServiceMessageUnreadTemplate);
+            AddStrategy(ChatHistoryViewItemType.ServicePhoto, ServiceMessagePhotoTemplate);
+            AddStrategy(ChatHistoryViewItemType.ServiceBackground, ServiceMessageBackgroundTemplate);
+            AddStrategy(ChatHistoryViewItemType.ServiceGift, ServiceMessageGiftTemplate);
 
             _focusState = new DebouncedProperty<FocusState>(100, FocusText, CanFocusText);
 
@@ -129,6 +124,13 @@ namespace Telegram.Views
                 _myPeople = true;
                 WindowContext.Current.ContactPanel.LaunchFullAppRequested += ContactPanel_LaunchFullAppRequested;
                 WatchDog.TrackEvent("ContactPanel");
+            }
+
+            if (SettingsService.Current.Diagnostics.ChoosingItemContainer == 2)
+            {
+                Messages.ChoosingItemContainer -= OnChoosingItemContainer;
+                Messages.PreparingContainerForItem += OnPreparingContainerForItem;
+                Messages.ItemTemplateSelector = new TestSelector(this);
             }
 
             Messages.Delegate = this;
@@ -977,7 +979,7 @@ namespace Telegram.Views
                 }
 
                 var focused = FocusManager.GetFocusedElement();
-                if (focused is Selector or SelectorItem or MessageSelector or Microsoft.UI.Xaml.Controls.ItemsRepeater or ChatCell or PlaybackSlider)
+                if (focused is Selector or SelectorItem or MessageSelector or MessageService or ItemsRepeater or ChatCell or PlaybackSlider)
                 {
                     return;
                 }
@@ -1020,7 +1022,7 @@ namespace Telegram.Views
                 }
 
                 var focused = FocusManager.GetFocusedElement();
-                if (focused is Selector or SelectorItem or MessageSelector or Microsoft.UI.Xaml.Controls.ItemsRepeater or ChatCell or PlaybackSlider)
+                if (focused is Selector or SelectorItem or MessageSelector or MessageService or ItemsRepeater or ChatCell or PlaybackSlider)
                 {
                     return;
                 }

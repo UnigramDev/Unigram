@@ -186,11 +186,9 @@
             </Setter>
         </Style>
 
-        <DataTemplate x:Key="EmptyMessageTemplate" />
-
         <!-- Region Service -->
 
-        <DataTemplate x:Key="ServiceMessagePhotoTemplate">
+        <DataTemplate x:Name="ServiceMessagePhotoTemplate">
             <messages:MessageService x:Name="Service"
                                      Click="ServiceMessage_Click"
                                      Margin="0,4,0,0"
@@ -237,7 +235,7 @@
             </messages:MessageService>
         </DataTemplate>
 
-        <DataTemplate x:Key="ServiceMessageBackgroundTemplate">
+        <DataTemplate x:Name="ServiceMessageBackgroundTemplate">
             <messages:MessageService x:Name="Service"
                                      Click="ServiceMessage_Click"
                                      Margin="0,4,0,0"
@@ -279,7 +277,7 @@
             </messages:MessageService>
         </DataTemplate>
 
-        <DataTemplate x:Key="ServiceMessageGiftTemplate">
+        <DataTemplate x:Name="ServiceMessageGiftTemplate">
             <messages:MessageService x:Name="Service"
                                      Click="ServiceMessage_Click"
                                      Margin="0,4,0,0"
@@ -330,7 +328,7 @@
             </messages:MessageService>
         </DataTemplate>
 
-        <DataTemplate x:Key="ServiceMessageTemplate">
+        <DataTemplate x:Name="ServiceMessageTemplate">
             <messages:MessageService Click="ServiceMessage_Click"
                                      Margin="0,4,0,0"
                                      Padding="12,2,12,0">
@@ -348,30 +346,34 @@
             </messages:MessageService>
         </DataTemplate>
 
-        <DataTemplate x:Key="ServiceMessageUnreadTemplate">
-            <Grid AutomationProperties.Name="{CustomResource UnreadMessages}"
-                  Margin="-12,4,-12,0"
-                  Background="{ThemeResource MessageServiceBackgroundBrush}">
-                <TextBlock Text="{CustomResource UnreadMessages}"
-                           Foreground="#FFFFFF"
-                           Padding="0"
-                           Margin="0,4"
-                           TextAlignment="Center"
-                           Style="{StaticResource SettingsGroupTextBlockStyle}" />
+        <DataTemplate x:Name="ServiceMessageUnreadTemplate">
+            <messages:MessageService AutomationProperties.Name="{CustomResource UnreadMessages}"
+                                     HorizontalAlignment="Stretch"
+                                     CornerRadius="0"
+                                     Margin="0,4,0,0"
+                                     Padding="0">
+                <Grid>
+                    <TextBlock Text="{CustomResource UnreadMessages}"
+                               Foreground="#FFFFFF"
+                               Padding="0"
+                               Margin="0,3,0,5"
+                               TextAlignment="Center"
+                               Style="{StaticResource SettingsGroupTextBlockStyle}" />
 
-                <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}"
-                          Foreground="#FFFFFF"
-                          Glyph="&#xE0E5;"
-                          FontSize="16"
-                          HorizontalAlignment="Right"
-                          VerticalAlignment="Center"
-                          Margin="0,2,18,0" />
-            </Grid>
+                    <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}"
+                              Foreground="#FFFFFF"
+                              Glyph="&#xE0E5;"
+                              FontSize="16"
+                              HorizontalAlignment="Right"
+                              VerticalAlignment="Center"
+                              Margin="0,0,24,0" />
+                </Grid>
+            </messages:MessageService>
         </DataTemplate>
 
         <!-- EndRegion -->
 
-        <DataTemplate x:Key="UserMessageTemplate">
+        <DataTemplate x:Name="OutgoingMessageTemplate">
             <messages:MessageSelector>
                 <messages:MessageBubble x:Name="Bubble"
                                         HorizontalAlignment="Right">
@@ -382,7 +384,7 @@
             </messages:MessageSelector>
         </DataTemplate>
 
-        <DataTemplate x:Key="FriendMessageTemplate">
+        <DataTemplate x:Name="IncomingMessageTemplate">
             <messages:MessageSelector>
                 <messages:MessageBubble x:Name="Bubble"
                                         HorizontalAlignment="Left">
@@ -724,6 +726,9 @@
                                    ContainerContentChanging="OnContainerContentChanging"
                                    Margin="0,0,0,8"
                                    Grid.ColumnSpan="2">
+                <ListView.Resources>
+                    <CornerRadius x:Key="ListViewItemCornerRadius">0</CornerRadius>
+                </ListView.Resources>
                 <ListView.ItemsPanel>
                     <ItemsPanelTemplate>
                         <ItemsStackPanel Loading="ItemsStackPanel_Loading"
@@ -732,124 +737,35 @@
                                          VerticalAlignment="Bottom" />
                     </ItemsPanelTemplate>
                 </ListView.ItemsPanel>
-                <ListView.ItemContainerStyleSelector>
-                    <selectors:MessageStyleSelector>
-                        <selectors:MessageStyleSelector.MessageStyle>
-                            <Style TargetType="ListViewItem"
-                                   BasedOn="{StaticResource DefaultListViewItemStyle}">
-                                <Setter Property="FontFamily"
-                                        Value="{ThemeResource ContentControlThemeFontFamily}" />
-                                <Setter Property="FontSize"
-                                        Value="{ThemeResource ControlContentThemeFontSize}" />
-                                <Setter Property="Background"
-                                        Value="Transparent" />
-                                <Setter Property="Foreground"
-                                        Value="{ThemeResource SystemControlForegroundBaseHighBrush}" />
-                                <Setter Property="TabNavigation"
-                                        Value="Local" />
-                                <Setter Property="IsHoldingEnabled"
-                                        Value="True" />
-                                <Setter Property="IsTabStop"
-                                        Value="False" />
-                                <Setter Property="Padding"
-                                        Value="0,0,0,0" />
-                                <Setter Property="HorizontalContentAlignment"
-                                        Value="Stretch" />
-                                <Setter Property="VerticalContentAlignment"
-                                        Value="Stretch" />
-                                <Setter Property="MinWidth"
-                                        Value="{ThemeResource ListViewItemMinWidth}" />
-                                <Setter Property="MinHeight"
-                                        Value="0" />
-                            </Style>
-                        </selectors:MessageStyleSelector.MessageStyle>
-                        <selectors:MessageStyleSelector.ExpandedStyle>
-                            <Style TargetType="ListViewItem"
-                                   BasedOn="{StaticResource MessageListViewItemStyle}">
-                                <Setter Property="FontFamily"
-                                        Value="{ThemeResource ContentControlThemeFontFamily}" />
-                                <Setter Property="FontSize"
-                                        Value="{ThemeResource ControlContentThemeFontSize}" />
-                                <Setter Property="Background"
-                                        Value="Transparent" />
-                                <Setter Property="Foreground"
-                                        Value="{ThemeResource SystemControlForegroundBaseHighBrush}" />
-                                <Setter Property="TabNavigation"
-                                        Value="Local" />
-                                <Setter Property="IsTabStop"
-                                        Value="False" />
-                                <Setter Property="IsHoldingEnabled"
-                                        Value="True" />
-                                <Setter Property="Padding"
-                                        Value="0,0,0,0" />
-                                <Setter Property="HorizontalContentAlignment"
-                                        Value="Stretch" />
-                                <Setter Property="VerticalContentAlignment"
-                                        Value="Stretch" />
-                                <Setter Property="MinWidth"
-                                        Value="{ThemeResource ListViewItemMinWidth}" />
-                                <Setter Property="MinHeight"
-                                        Value="0" />
-                            </Style>
-                        </selectors:MessageStyleSelector.ExpandedStyle>
-                        <selectors:MessageStyleSelector.ServiceStyle>
-                            <Style TargetType="ListViewItem">
-                                <Setter Property="FontFamily"
-                                        Value="{ThemeResource ContentControlThemeFontFamily}" />
-                                <Setter Property="FontSize"
-                                        Value="{ThemeResource ControlContentThemeFontSize}" />
-                                <Setter Property="Background"
-                                        Value="Transparent" />
-                                <Setter Property="Foreground"
-                                        Value="{ThemeResource SystemControlForegroundBaseHighBrush}" />
-                                <Setter Property="TabNavigation"
-                                        Value="Local" />
-                                <Setter Property="IsHoldingEnabled"
-                                        Value="True" />
-                                <Setter Property="Padding"
-                                        Value="12,0,12,0" />
-                                <Setter Property="HorizontalContentAlignment"
-                                        Value="Stretch" />
-                                <Setter Property="VerticalContentAlignment"
-                                        Value="Stretch" />
-                                <Setter Property="MinWidth"
-                                        Value="{ThemeResource ListViewItemMinWidth}" />
-                                <Setter Property="MinHeight"
-                                        Value="0" />
-                                <Setter Property="Template">
-                                    <Setter.Value>
-                                        <ControlTemplate TargetType="ListViewItem">
-                                            <ListViewItemPresenter x:Name="ContentBorder"
-                                                                   ContentTransitions="{TemplateBinding ContentTransitions}"
-                                                                   SelectionCheckMarkVisualEnabled="False"
-                                                                   CheckBrush="{x:Null}"
-                                                                   CheckBoxBrush="{x:Null}"
-                                                                   DragBackground="{ThemeResource ListViewItemDragBackgroundThemeBrush}"
-                                                                   DragForeground="{ThemeResource ListViewItemDragForegroundThemeBrush}"
-                                                                   FocusBorderBrush="{ThemeResource SystemControlForegroundAltHighBrush}"
-                                                                   FocusSecondaryBorderBrush="{ThemeResource SystemControlForegroundBaseHighBrush}"
-                                                                   PlaceholderBackground="{ThemeResource ListViewItemPlaceholderBackgroundThemeBrush}"
-                                                                   PointerOverBackground="Transparent"
-                                                                   PointerOverForeground="{ThemeResource SystemControlHighlightAltBaseHighBrush}"
-                                                                   SelectedBackground="Transparent"
-                                                                   SelectedForeground="{ThemeResource SystemControlForegroundBaseHighBrush}"
-                                                                   SelectedPointerOverBackground="{ThemeResource SystemControlHighlightListLowBrush}"
-                                                                   PressedBackground="Transparent"
-                                                                   SelectedPressedBackground="{ThemeResource SystemControlHighlightListMediumBrush}"
-                                                                   DisabledOpacity="{ThemeResource ListViewItemDisabledThemeOpacity}"
-                                                                   DragOpacity="{ThemeResource ListViewItemDragThemeOpacity}"
-                                                                   ReorderHintOffset="{ThemeResource ListViewItemReorderHintThemeOffset}"
-                                                                   HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
-                                                                   VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"
-                                                                   ContentMargin="{TemplateBinding Padding}"
-                                                                   CheckMode="Overlay" />
-                                        </ControlTemplate>
-                                    </Setter.Value>
-                                </Setter>
-                            </Style>
-                        </selectors:MessageStyleSelector.ServiceStyle>
-                    </selectors:MessageStyleSelector>
-                </ListView.ItemContainerStyleSelector>
+                <ListView.ItemContainerStyle>
+                    <Style TargetType="ListViewItem"
+                           BasedOn="{StaticResource DefaultListViewItemStyle}">
+                        <Setter Property="FontFamily"
+                                Value="{ThemeResource ContentControlThemeFontFamily}" />
+                        <Setter Property="FontSize"
+                                Value="{ThemeResource ControlContentThemeFontSize}" />
+                        <Setter Property="Background"
+                                Value="Transparent" />
+                        <Setter Property="Foreground"
+                                Value="{ThemeResource SystemControlForegroundBaseHighBrush}" />
+                        <Setter Property="TabNavigation"
+                                Value="Local" />
+                        <Setter Property="IsHoldingEnabled"
+                                Value="True" />
+                        <Setter Property="IsTabStop"
+                                Value="False" />
+                        <Setter Property="Padding"
+                                Value="0,0,0,0" />
+                        <Setter Property="HorizontalContentAlignment"
+                                Value="Stretch" />
+                        <Setter Property="VerticalContentAlignment"
+                                Value="Stretch" />
+                        <Setter Property="MinWidth"
+                                Value="{ThemeResource ListViewItemMinWidth}" />
+                        <Setter Property="MinHeight"
+                                Value="0" />
+                    </Style>
+                </ListView.ItemContainerStyle>
                 <ListView.Header>
                     <Grid Padding="0,48,0,0">
                         <!--<Grid.RowDefinitions>

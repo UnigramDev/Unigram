@@ -479,6 +479,15 @@ namespace Telegram.Controls.Chats
             }
         }
 
+        protected override DependencyObject GetContainerForItemOverride()
+        {
+            var selector = new ChatHistoryViewItem(this, ChatHistoryViewItemType.Incoming);
+            PreparingContainerForItem?.Invoke(this, selector);
+            return selector;
+        }
+
+        public event EventHandler<ChatHistoryViewItem> PreparingContainerForItem;
+
         #region Selection
 
         public bool IsSelectionEnabled
@@ -487,7 +496,6 @@ namespace Telegram.Controls.Chats
             set { SetValue(IsSelectionEnabledProperty, value); }
         }
 
-        // Using a DependencyProperty as the backing store for IsSelectionEnabled.  This enables animation, styling, binding, etc...
         public static readonly DependencyProperty IsSelectionEnabledProperty =
             DependencyProperty.Register("IsSelectionEnabled", typeof(bool), typeof(ChatHistoryView), new PropertyMetadata(false, OnSelectionEnabledChanged));
 

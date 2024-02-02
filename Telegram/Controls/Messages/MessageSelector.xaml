@@ -19,9 +19,8 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="local:MessageSelector">
-                    <Grid x:Name="LayoutRoot"
-                          Background="Transparent"
-                          Margin="-36,0,0,0">
+                    <Grid x:Name="RootGrid"
+                          Background="Transparent">
                         <VisualStateManager.VisualStateGroups>
                             <VisualStateGroup x:Name="CommonStates">
                                 <VisualState x:Name="Normal" />
@@ -30,7 +29,7 @@
                                 <VisualState x:Name="Disabled" />
                                 <VisualState x:Name="Checked">
                                     <Storyboard>
-                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="LayoutRoot"
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="RootGrid"
                                                                        Storyboard.TargetProperty="Background">
                                             <DiscreteObjectKeyFrame KeyTime="0"
                                                                     Value="{ThemeResource ListViewItemBackgroundSelected}" />
@@ -39,7 +38,7 @@
                                 </VisualState>
                                 <VisualState x:Name="CheckedPointerOver">
                                     <Storyboard>
-                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="LayoutRoot"
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="RootGrid"
                                                                        Storyboard.TargetProperty="Background">
                                             <DiscreteObjectKeyFrame KeyTime="0"
                                                                     Value="{ThemeResource ListViewItemBackgroundSelectedPointerOver}" />
@@ -48,7 +47,7 @@
                                 </VisualState>
                                 <VisualState x:Name="CheckedPressed">
                                     <Storyboard>
-                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="LayoutRoot"
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="RootGrid"
                                                                        Storyboard.TargetProperty="Background">
                                             <DiscreteObjectKeyFrame KeyTime="0"
                                                                     Value="{ThemeResource ListViewItemBackgroundSelectedPressed}" />
@@ -58,19 +57,15 @@
                                 <VisualState x:Name="CheckedDisabled" />
                             </VisualStateGroup>
                         </VisualStateManager.VisualStateGroups>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="36" />
-                            <ColumnDefinition />
-                        </Grid.ColumnDefinitions>
                         <Border x:Name="Icon"
                                 x:Load="False"
                                 Canvas.ZIndex="1"
                                 AutomationProperties.AccessibilityView="Raw"
-                                VerticalAlignment="Bottom"
+                                HorizontalAlignment="Left"
+                                VerticalAlignment="Center"
                                 Margin="12,0,0,3"
                                 Width="24"
                                 Height="24" />
-
 
                         <ContentPresenter x:Name="Presenter"
                                           Control.IsTemplateFocusTarget="True"

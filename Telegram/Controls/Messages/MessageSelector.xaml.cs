@@ -5,18 +5,23 @@
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
 using Microsoft.UI.Xaml.Controls;
+using System;
 using System.Linq;
 using System.Numerics;
 using Telegram.Assets.Icons;
 using Telegram.Common;
+using Telegram.Composition;
 using Telegram.Controls.Chats;
 using Telegram.Controls.Messages.Content;
 using Telegram.Services;
 using Telegram.Td.Api;
 using Telegram.ViewModels;
+using Windows.Foundation;
 using Windows.UI.Composition;
+using Windows.UI.Composition.Interactions;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Automation.Peers;
+using Windows.UI.Xaml.Automation.Provider;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Hosting;
 using Windows.UI.Xaml.Input;
@@ -24,10 +29,8 @@ using Windows.UI.Xaml.Media;
 
 namespace Telegram.Controls.Messages
 {
-    public sealed partial class MessageSelector : CheckBox
+    public sealed partial class MessageSelector : ToggleButtonEx
     {
-        private readonly FrameworkElementState _manager;
-
         private Border Icon;
         private ContentPresenter Presenter;
 
@@ -42,8 +45,10 @@ namespace Telegram.Controls.Messages
         {
             DefaultStyleKey = typeof(MessageSelector);
 
-            _manager = new FrameworkElementState(this);
-            _manager.Unloaded += OnUnloaded;
+            Connected += OnLoaded;
+            Disconnected += OnUnloaded;
+
+            AddHandler(PointerPressedEvent, new PointerEventHandler(OnPointerPressed), true);
         }
 
         public MessageSelector(MessageViewModel message, UIElement child)
@@ -53,8 +58,50 @@ namespace Telegram.Controls.Messages
             Content = child;
         }
 
+        private void OnLoaded(object sender, RoutedEventArgs e)
+        {
+            if (!_hasInitialLoadedEventFired && RootGrid != null && (SettingsService.Current.SwipeToReply || SettingsService.Current.SwipeToShare))
+            {
+                _hasInitialLoadedEventFired = true;
+
+                _hitTest = ElementComposition.GetElementVisual(this);
+                _visual = ElementComposition.GetElementVisual(RootGrid);
+
+                _compositor = _hitTest.Compositor;
+                _container ??= _compositor.CreateContainerVisual();
+
+                if (_requiresArrange)
+                {
+                    _container.Size = ActualSize;
+                }
+                else
+                {
+                    _container.RelativeSizeAdjustment = Vector2.One;
+                }
+
+                ElementCompositionPreview.SetElementChildVisual(this, _container);
+                ConfigureInteractionTracker();
+            }
+
+            if (_trackerOwner != null)
+            {
+                _trackerOwner.ValuesChanged += OnValuesChanged;
+                _trackerOwner.InertiaStateEntered += OnInertiaStateEntered;
+                _trackerOwner.InteractingStateEntered += OnInteractingStateEntered;
+                _trackerOwner.IdleStateEntered += OnIdleStateEntered;
+            }
+        }
+
         private void OnUnloaded(object sender, RoutedEventArgs e)
         {
+            if (_trackerOwner != null)
+            {
+                _trackerOwner.ValuesChanged -= OnValuesChanged;
+                _trackerOwner.InertiaStateEntered -= OnInertiaStateEntered;
+                _trackerOwner.InteractingStateEntered -= OnInteractingStateEntered;
+                _trackerOwner.IdleStateEntered -= OnIdleStateEntered;
+            }
+
             if (_message != null)
             {
                 Recycle();
@@ -109,7 +156,7 @@ namespace Telegram.Controls.Messages
                 }
                 else
                 {
-                    Icon.VerticalAlignment = VerticalAlignment.Bottom;
+                    Icon.VerticalAlignment = VerticalAlignment.Center;
                     Icon.HorizontalAlignment = HorizontalAlignment.Left;
                     Icon.Margin = new Thickness(28, 0, 0, 4);
                 }
@@ -129,6 +176,9 @@ namespace Telegram.Controls.Messages
         protected override void OnApplyTemplate()
         {
             base.OnApplyTemplate();
+
+            RootGrid = GetTemplateChild(nameof(RootGrid)) as Grid;
+            ElementCompositionPreview.SetIsTranslationEnabled(RootGrid, true);
 
             Presenter = GetTemplateChild(nameof(Presenter)) as ContentPresenter;
             ElementCompositionPreview.SetIsTranslationEnabled(Presenter, true);
@@ -165,7 +215,7 @@ namespace Telegram.Controls.Messages
         {
             base.OnPointerPressed(e);
 
-            if (e.OriginalSource is Grid grid && grid.Name == "LayoutRoot")
+            if (e.OriginalSource == RootGrid)
             {
                 _owner?.OnPointerPressed(this, e);
             }
@@ -175,7 +225,7 @@ namespace Telegram.Controls.Messages
         {
             base.OnPointerEntered(e);
 
-            if (e.OriginalSource is Grid grid && grid.Name == "LayoutRoot")
+            if (e.OriginalSource == RootGrid)
             {
                 _owner?.OnPointerEntered(this, e);
             }
@@ -185,7 +235,7 @@ namespace Telegram.Controls.Messages
         {
             base.OnPointerMoved(e);
 
-            if (e.OriginalSource is Grid grid && grid.Name == "LayoutRoot")
+            if (e.OriginalSource == RootGrid)
             {
                 _owner?.OnPointerMoved(this, e);
             }
@@ -195,7 +245,7 @@ namespace Telegram.Controls.Messages
         {
             base.OnPointerReleased(e);
 
-            if (e.OriginalSource is Grid grid && grid.Name == "LayoutRoot")
+            if (e.OriginalSource == RootGrid)
             {
                 _owner?.OnPointerReleased(this, e);
             }
@@ -205,7 +255,7 @@ namespace Telegram.Controls.Messages
         {
             base.OnPointerCanceled(e);
 
-            if (e.OriginalSource is Grid grid && grid.Name == "LayoutRoot")
+            if (e.OriginalSource == RootGrid)
             {
                 _owner?.OnPointerCanceled(this, e);
             }
@@ -229,9 +279,7 @@ namespace Telegram.Controls.Messages
                 return;
             }
 
-            _isSelected = selected;
-
-            IsChecked = selected;
+            IsChecked = _isSelected = selected;
             Presenter.IsHitTestVisible = !_isSelectionEnabled || IsAlbum;
 
             CreateIcon();
@@ -240,7 +288,7 @@ namespace Telegram.Controls.Messages
             if (Icon != null)
             {
                 var icon = ElementComposition.GetElementVisual(Icon);
-                icon.Properties.InsertVector3("Translation", new Vector3(_isSelectionEnabled ? 36 : 0, 0, 0));
+                icon.Properties.InsertVector3("Translation", new Vector3(_isSelectionEnabled ? 0 : -36, 0, 0));
             }
 
             if (IsAlbumChild)
@@ -266,7 +314,7 @@ namespace Telegram.Controls.Messages
             else
             {
                 var presenter = ElementComposition.GetElementVisual(Presenter);
-                presenter.Properties.InsertVector3("Translation", new Vector3(_isSelectionEnabled && (message.IsChannelPost || !message.IsOutgoing) ? 36 : 0, 0, 0));
+                presenter.Offset = new Vector3(_isSelectionEnabled && (message.IsChannelPost || !message.IsOutgoing) ? 36 : 0, 0, 0);
             }
         }
 
@@ -283,9 +331,9 @@ namespace Telegram.Controls.Messages
 
             if (_message is MessageViewModel message)
             {
-                _isSelected = value && message.Delegate.SelectedItems.ContainsKey(message.Id);
+                var selected = value && message.Delegate.SelectedItems.ContainsKey(message.Id);
 
-                IsChecked = _isSelected;
+                IsChecked = _isSelected = selected;
                 Presenter.IsHitTestVisible = !value || IsAlbum;
 
                 CreateIcon();
@@ -295,9 +343,9 @@ namespace Telegram.Controls.Messages
 
                 if (animate)
                 {
-                    var offset = Window.Current.Compositor.CreateVector3KeyFrameAnimation();
-                    offset.InsertKeyFrame(0, new Vector3(value ? 0 : 36, 0, 0));
-                    offset.InsertKeyFrame(1, new Vector3(value ? 36 : 0, 0, 0));
+                    var offset = Window.Current.Compositor.CreateScalarKeyFrameAnimation();
+                    offset.InsertKeyFrame(0, value ? -36 : 0);
+                    offset.InsertKeyFrame(1, value ? 0 : -36);
 
                     var scale = Window.Current.Compositor.CreateVector3KeyFrameAnimation();
                     scale.InsertKeyFrame(0, value ? Vector3.Zero : Vector3.One);
@@ -313,17 +361,20 @@ namespace Telegram.Controls.Messages
 
                         if (!IsAlbumChild)
                         {
-                            icon.StartAnimation("Translation", offset);
+                            icon.StartAnimation("Translation.X", offset);
                         }
                     }
 
                     if (incoming && !IsAlbumChild)
                     {
-                        presenter.StartAnimation("Translation", offset);
+                        offset.InsertKeyFrame(0, value ? 0 : 36);
+                        offset.InsertKeyFrame(1, value ? 36 : 0);
+
+                        presenter.StartAnimation("Offset.X", offset);
                     }
                     else
                     {
-                        presenter.Properties.InsertVector3("Translation", Vector3.Zero);
+                        presenter.Offset = Vector3.Zero;
                     }
                 }
                 else
@@ -333,13 +384,13 @@ namespace Telegram.Controls.Messages
                         UpdateIcon(IsChecked is true, false);
 
                         var icon = ElementComposition.GetElementVisual(Icon);
-                        icon.Properties.InsertVector3("Translation", new Vector3(value && !IsAlbumChild ? 36 : 0, 0, 0));
+                        icon.Properties.InsertVector3("Translation", new Vector3(value && !IsAlbumChild ? 0 : -36, 0, 0));
                         icon.Scale = value ? Vector3.One : Vector3.Zero;
                     }
 
                     if (!IsAlbumChild)
                     {
-                        presenter.Properties.InsertVector3("Translation", new Vector3(value && incoming ? 36 : 0, 0, 0));
+                        presenter.Offset = new Vector3(value && incoming ? 36 : 0, 0, 0);
                     }
                 }
             }
@@ -365,13 +416,19 @@ namespace Telegram.Controls.Messages
                     selected = message.Delegate.SelectedItems.ContainsKey(message.Id);
                 }
 
-                _isSelected = _isSelectionEnabled && selected;
+                selected = _isSelectionEnabled && selected;
 
-                IsChecked = _isSelected;
-                Presenter.IsHitTestVisible = !_isSelectionEnabled || IsAlbum;
+                if (selected != _isSelected)
+                {
+                    IsChecked = _isSelected = selected;
+                    Presenter.IsHitTestVisible = !_isSelectionEnabled || IsAlbum;
 
-                CreateIcon();
-                UpdateIcon(IsChecked is true, true);
+                    CreateIcon();
+                    UpdateIcon(IsChecked is true, true);
+
+                    var peer = FrameworkElementAutomationPeer.CreatePeerForElement(this);
+                    peer?.RaiseAutomationEvent(AutomationEvents.SelectionItemPatternOnElementSelected);
+                }
             }
         }
 
@@ -438,42 +495,317 @@ namespace Telegram.Controls.Messages
         {
             return new MessageSelectorAutomationPeer(this);
         }
-    }
 
-    public class MessageSelectorAutomationPeer : CheckBoxAutomationPeer
-    {
-        private readonly MessageSelector _owner;
-        private readonly IClientService _clientService;
+        #region Moved from ChatHistoryViewItem
 
-        public MessageSelectorAutomationPeer(MessageSelector owner)
-            : base(owner)
+        private Visual _hitTest;
+        private Visual _visual;
+        private Compositor _compositor;
+        private ContainerVisual _container;
+        private ContainerVisual _indicator;
+
+        private bool _hasInitialLoadedEventFired;
+        private WeakInteractionTrackerOwner _trackerOwner;
+        private InteractionTracker _tracker;
+        private VisualInteractionSource _interactionSource;
+        private bool _interacting;
+
+        private readonly bool _requiresArrange = !ApiInfo.IsWindows11;
+
+        private bool _share;
+        private bool _reply;
+
+        private Grid RootGrid;
+
+        protected override Size ArrangeOverride(Size finalSize)
         {
-            _owner = owner;
+            if (_container != null && _requiresArrange)
+            {
+                _container.Size = finalSize.ToVector2();
+            }
+
+            return base.ArrangeOverride(finalSize);
         }
 
-        public MessageSelectorAutomationPeer(MessageSelector owner, IClientService clientService)
-            : base(owner)
+        private void ConfigureInteractionTracker()
         {
-            _owner = owner;
-            _clientService = clientService;
+            _interactionSource = VisualInteractionSource.Create(_hitTest);
+
+            //Configure for x-direction panning
+            _interactionSource.ManipulationRedirectionMode = VisualInteractionSourceRedirectionMode.CapableTouchpadOnly;
+            _interactionSource.PositionXSourceMode = InteractionSourceMode.EnabledWithInertia;
+            _interactionSource.PositionXChainingMode = InteractionChainingMode.Never;
+            _interactionSource.IsPositionXRailsEnabled = true;
+
+            _trackerOwner = new WeakInteractionTrackerOwner();
+
+            //Create tracker and associate interaction source
+            _tracker = InteractionTracker.CreateWithOwner(_compositor, _trackerOwner);
+            _tracker.InteractionSources.Add(_interactionSource);
+
+            _tracker.MaxPosition = new Vector3(_reply ? 72 : 0);
+            _tracker.MinPosition = new Vector3(_share ? -72 : 0);
+
+            _tracker.Properties.InsertBoolean("CanReply", _reply);
+            _tracker.Properties.InsertBoolean("CanShare", _share);
+
+            //ConfigureAnimations(_visual, null);
+            ConfigureRestingPoints();
+
+            if (_interacting)
+            {
+                _interacting = false;
+                _visual.Properties.InsertVector3("Translation", Vector3.Zero);
+            }
         }
 
-        protected override string GetNameCore()
+        private void ConfigureRestingPoints()
         {
-            if (_owner.Content is MessageBubble bubble)
+            var neutralX = InteractionTrackerInertiaRestingValue.Create(_compositor);
+            neutralX.Condition = _compositor.CreateExpressionAnimation("true");
+            neutralX.RestingValue = _compositor.CreateExpressionAnimation("0");
+
+            _tracker.ConfigurePositionXInertiaModifiers(new InteractionTrackerInertiaModifier[] { neutralX });
+        }
+
+        private void ConfigureAnimations(Visual visual, Visual indicator)
+        {
+            // Create an animation that changes the offset of the photoVisual and shadowVisual based on the manipulation progress
+            var offsetExp = _compositor.CreateExpressionAnimation("(tracker.Position.X > 0 && !tracker.CanReply) || (tracker.Position.X <= 0 && !tracker.CanShare) ? 0 : -tracker.Position.X");
+            //var photoOffsetExp = _visual.Compositor.CreateExpressionAnimation("tracker.Position.X > 0 && !tracker.CanReply || tracker.Position.X <= 0 && !tracker.CanShare ? 0 : Max(-72, Min(72, -tracker.Position.X))");
+            //var photoOffsetExp = _visual.Compositor.CreateExpressionAnimation("-tracker.Position.X");
+            offsetExp.SetReferenceParameter("tracker", _tracker);
+            visual.StartAnimation("Translation.X", offsetExp);
+        }
+
+        private void OnPointerPressed(object sender, PointerRoutedEventArgs e)
+        {
+            if (e.Pointer.PointerDeviceType != Windows.Devices.Input.PointerDeviceType.Mouse)
             {
-                return bubble.GetAutomationName() ?? base.GetNameCore();
+                try
+                {
+                    _interactionSource.TryRedirectForManipulation(e.GetCurrentPoint(this));
+                }
+                catch (Exception)
+                {
+                    // Ignoring the failed redirect to prevent app crashing
+                }
             }
-            else if (_owner.ContentTemplateRoot is MessageBubble child)
+        }
+
+        public void PrepareForItemOverride(MessageViewModel message, bool canReply)
+        {
+            var share = SettingsService.Current.SwipeToShare && message.CanBeForwarded;
+            var reply = SettingsService.Current.SwipeToReply && (canReply || message.CanBeRepliedInAnotherChat);
+
+            if (_tracker != null)
             {
-                return child.GetAutomationName() ?? base.GetNameCore();
-            }
-            else if (_owner.Content is Message message && _clientService != null)
-            {
-                return Automation.GetDescription(_clientService, message);
+                if (_share != share)
+                {
+                    _tracker.Properties.InsertBoolean("CanShare", share);
+                    _tracker.MinPosition = new Vector3(share ? -72 : 0);
+                }
+
+                if (_reply != reply)
+                {
+                    _tracker.Properties.InsertBoolean("CanReply", reply);
+                    _tracker.MaxPosition = new Vector3(reply ? 72 : 0);
+                }
+
+                if (_tracker.Position.X != 0)
+                {
+                    _tracker.TryUpdatePosition(new Vector3());
+                }
+
+                try
+                {
+                    if (_visual != null && _visual.Offset.X != 0)
+                    {
+                        _visual.Offset = new Vector3();
+                    }
+                }
+                catch
+                {
+                    // ???
+                }
             }
 
-            return base.GetNameCore();
+            _share = share;
+            _reply = reply;
+        }
+
+        private void OnValuesChanged(InteractionTracker sender, InteractionTrackerValuesChangedArgs args)
+        {
+            if (_indicator == null && (sender.Position.X > 0.0001f || sender.Position.X < -0.0001f) /*&& Math.Abs(e.Cumulative.Translation.X) >= 45*/)
+            {
+                var sprite = _compositor.CreateSpriteVisual();
+                sprite.Size = new Vector2(30, 30);
+                sprite.CenterPoint = new Vector3(15);
+
+                var surface = LoadedImageSurface.StartLoadFromUri(new Uri("ms-appx:///Assets/Images/Reply.png"));
+                void handler(LoadedImageSurface s, LoadedImageSourceLoadCompletedEventArgs args)
+                {
+                    s.LoadCompleted -= handler;
+                    sprite.Brush = _compositor.CreateSurfaceBrush(s);
+                }
+
+                surface.LoadCompleted += handler;
+
+                var ellipse = _compositor.CreateEllipseGeometry();
+                ellipse.Radius = new Vector2(15);
+
+                var ellipseShape = _compositor.CreateSpriteShape(ellipse);
+                ellipseShape.FillBrush = _compositor.CreateColorBrush((Windows.UI.Color)Navigation.BootStrapper.Current.Resources["MessageServiceBackgroundColor"]);
+                ellipseShape.Offset = new Vector2(15);
+
+                var shape = _compositor.CreateShapeVisual();
+                shape.Shapes.Add(ellipseShape);
+                shape.Size = new Vector2(30, 30);
+
+                _indicator = _compositor.CreateContainerVisual();
+                _indicator.Children.InsertAtBottom(shape);
+                _indicator.Children.InsertAtTop(sprite);
+                _indicator.Size = new Vector2(30, 30);
+                _indicator.CenterPoint = new Vector3(15);
+                _indicator.Scale = new Vector3();
+
+                _container.Children.InsertAtTop(_indicator);
+
+                //ElementCompositionPreview.SetElementChildVisual(this, _indicator);
+                //ElementCompositionPreview.SetElementChildVisual(this, _container);
+            }
+
+            var offset = (sender.Position.X > 0 && !_reply) || (sender.Position.X <= 0 && !_share) ? 0 : Math.Max(0, Math.Min(72, Math.Abs(sender.Position.X)));
+
+            var abs = Math.Abs(offset);
+            var percent = abs / 72f;
+
+            var width = (float)ActualWidth;
+            var height = (float)ActualHeight;
+
+            if (_indicator != null)
+            {
+                _indicator.Offset = new Vector3(sender.Position.X > 0 ? width - percent * 60 : -30 + percent * 55, (height - 30) / 2, 0);
+                _indicator.Scale = new Vector3(sender.Position.X > 0 ? 0.8f + percent * 0.2f : -(0.8f + percent * 0.2f), 0.8f + percent * 0.2f, 1);
+                _indicator.Opacity = percent;
+            }
+        }
+
+        private void OnInertiaStateEntered(InteractionTracker sender, InteractionTrackerInertiaStateEnteredArgs args)
+        {
+            if (Message != null)
+            {
+                if (sender.Position.X >= 72 && _reply)
+                {
+                    _owner.ViewModel.ReplyToMessage(Message);
+                }
+                else if (sender.Position.X <= -72 && _share)
+                {
+                    _owner.ViewModel.ForwardMessage(Message);
+                }
+            }
+        }
+
+        private void OnIdleStateEntered(InteractionTracker sender, InteractionTrackerIdleStateEnteredArgs args)
+        {
+            _interacting = false;
+
+            if (IsDisconnected)
+            {
+                OnUnloaded(null, null);
+            }
+            else
+            {
+                ConfigureAnimations(_visual, null);
+            }
+        }
+
+        private void OnInteractingStateEntered(InteractionTracker sender, InteractionTrackerInteractingStateEnteredArgs args)
+        {
+            _interacting = true;
+            ConfigureAnimations(_visual, null);
+        }
+
+        #endregion
+
+        public class MessageSelectorAutomationPeer : ToggleButtonAutomationPeer, ISelectionItemProvider
+        {
+            private readonly MessageSelector _owner;
+
+            public MessageSelectorAutomationPeer(MessageSelector owner)
+                : base(owner)
+            {
+                _owner = owner;
+            }
+
+            protected override string GetNameCore()
+            {
+                if (_owner.Content is MessageBubble bubble)
+                {
+                    return bubble.GetAutomationName() ?? base.GetNameCore();
+                }
+                else if (_owner.ContentTemplateRoot is MessageBubble child)
+                {
+                    return child.GetAutomationName() ?? base.GetNameCore();
+                }
+
+                return base.GetNameCore();
+            }
+
+            protected override object GetPatternCore(PatternInterface patternInterface)
+            {
+                if (patternInterface == PatternInterface.SelectionItem)
+                {
+                    return this;
+                }
+                else if (patternInterface == PatternInterface.Toggle)
+                {
+                    return null;
+                }
+
+                return base.GetPatternCore(patternInterface);
+            }
+
+            protected override AutomationControlType GetAutomationControlTypeCore()
+            {
+                return AutomationControlType.ListItem;
+            }
+
+            protected override int GetPositionInSetCore()
+            {
+                return 1 + _owner._owner.Items.IndexOf(_owner.Message);
+            }
+
+            protected override int GetSizeOfSetCore()
+            {
+                return _owner._owner.Items.Count;
+            }
+
+            public void AddToSelection()
+            {
+                _owner._owner.SelectedItems.Add(_owner.Message);
+            }
+
+            public void RemoveFromSelection()
+            {
+                _owner._owner.SelectedItems.Remove(_owner.Message);
+            }
+
+            public void Select()
+            {
+                _owner._owner.SelectedItems.Add(_owner.Message);
+            }
+
+            public bool IsSelected => _owner._isSelected;
+
+            public IRawElementProviderSimple SelectionContainer
+            {
+                get
+                {
+                    var peer = CreatePeerForElement(_owner._owner);
+                    return ProviderFromPeer(peer);
+                }
+            }
         }
     }
 }

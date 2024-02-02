@@ -175,6 +175,13 @@ namespace Telegram.Services.Settings
             set => AddOrUpdateValue(ref _disablePackageManager, "DisablePackageManager", value);
         }
 
+        private int? _choosingItemContainer;
+        public int ChoosingItemContainer
+        {
+            get => _choosingItemContainer ??= GetValueOrDefault("ChoosingItemContainer", 0);
+            set => AddOrUpdateValue(ref _choosingItemContainer, "ChoosingItemContainer", value);
+        }
+
         public bool IsLastErrorDiskFull { get; set; }
     }
 }

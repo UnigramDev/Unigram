@@ -64,6 +64,14 @@
                     <CheckBox IsChecked="{x:Bind ViewModel.PreferIpv6, Mode=TwoWay}"
                               Content="{CustomResource ConnectWithIPv6}"
                               Style="{StaticResource SettingsCheckBoxStyle}" />
+
+                    <controls:BadgeButton Content="Choosing Item Container">
+                        <controls:BadgeButton.Badge>
+                            <controls:SettingsComboBox ItemsSource="{x:Bind ViewModel.ChoosingItemContainerOptions}"
+                                                       SelectedIndex="{x:Bind ViewModel.ChoosingItemContainer, Mode=TwoWay}"
+                                                       DisplayMemberPath="Text" />
+                        </controls:BadgeButton.Badge>
+                    </controls:BadgeButton>
                 </controls:HeaderedControl>
 
                 <controls:HeaderedControl Header="Crash Mitigation">
