@@ -3,9 +3,7 @@ using Microsoft.AppCenter.Analytics;
 using Microsoft.AppCenter.Crashes;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
-using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using Telegram.Common;
 using Telegram.Controls;
@@ -71,9 +69,6 @@ namespace Telegram
         private static string _lastSessionErrorReportId;
         private static bool _lastSessionTerminatedUnexpectedly;
 
-        [DllImport("Telegram.Diagnostics.dll")]
-        private static extern int start(uint pid, uint framework);
-
         static WatchDog()
         {
             _crashLog = Path.Combine(ApplicationData.Current.LocalFolder.Path, "crash.log");
@@ -113,18 +108,6 @@ namespace Telegram
                 args.Handled = args.Exception is not LayoutCycleException;
             };
 
-            if (Constants.DEBUG && !Debugger.IsAttached)
-            {
-                var process = Process.GetCurrentProcess();
-                var hr = start((uint)process.Id, 1);
-
-                var ex = Marshal.GetExceptionForHR(hr);
-                if (ex != null)
-                {
-                    Crashes.TrackError(ex);
-                }
-            }
-
             if (_disabled)
             {
                 return;
@@ -162,13 +145,6 @@ namespace Telegram
                 if (path.Length > 0 && File.Exists(path))
                 {
                     var data = File.ReadAllText(path);
-
-                    var layout = GetLayoutCyclePath();
-                    if (layout.Length > 0 && File.Exists(layout))
-                    {
-                        data += "\n\n" + File.ReadAllText(layout);
-                    }
-
                     return new[] { ErrorAttachmentLog.AttachmentWithText(data, "crash.txt") };
                 }
 
@@ -182,18 +158,6 @@ namespace Telegram
                     { "DeviceFamily", AnalyticsInfo.VersionInfo.DeviceFamily },
                     { "Architecture", Package.Current.Id.Architecture.ToString() }
                 });
-
-            if (SettingsService.Current.Diagnostics.XamlDiagnostics)
-            {
-                var process = Process.GetCurrentProcess();
-                var hr = start((uint)process.Id, 1);
-
-                var ex = Marshal.GetExceptionForHR(hr);
-                if (ex != null)
-                {
-                    Crashes.TrackError(ex);
-                }
-            }
         }
 
         public static void TrackEvent(string name)
@@ -313,11 +277,6 @@ namespace Telegram
         {
             Directory.CreateDirectory(_reports);
             return Path.Combine(ApplicationData.Current.LocalFolder.Path, _reports, reportId + ".appcenter");
-        }
-
-        private static string GetLayoutCyclePath()
-        {
-            return Path.Combine(ApplicationData.Current.LocalFolder.Path, "LayoutCycle.txt");
         }
 
         public static void Suspend()

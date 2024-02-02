@@ -6,7 +6,6 @@
 //
 
 using System;
-using Telegram.Common;
 
 namespace Telegram.Services.Settings
 {
@@ -99,13 +98,6 @@ namespace Telegram.Services.Settings
         {
             get => _useStorageOptimizer ??= GetValueOrDefault("UseStorageOptimizer", false);
             set => AddOrUpdateValue(ref _useStorageOptimizer, "UseStorageOptimizer", value);
-        }
-
-        private bool? _xamlDiagnostics;
-        public bool XamlDiagnostics
-        {
-            get => _xamlDiagnostics ??= GetValueOrDefault("XamlDiagnostics", ApiInfo.IsPackagedRelease);
-            set => AddOrUpdateValue(ref _xamlDiagnostics, "XamlDiagnostics", value);
         }
 
         private bool? _lastCrashWasLayoutCycle;
