@@ -3491,6 +3491,21 @@ namespace Telegram.Views
             }
         }
 
+        public Task UpdateLayoutAsync()
+        {
+            if (ChatsList.IsConnected)
+            {
+                if (ChatsList.ItemsPanelRoot != null)
+                {
+                    return ChatsList.ItemsPanelRoot.UpdateLayoutAsync();
+                }
+
+                return ChatsList.UpdateLayoutAsync();
+            }
+
+            return Task.CompletedTask;
+        }
+
         #region Chat List
 
         private void Chats_DragItemsStarting(object sender, DragItemsStartingEventArgs e)

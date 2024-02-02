@@ -5,6 +5,7 @@
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using Telegram.Td.Api;
 
 namespace Telegram.ViewModels.Delegates
@@ -23,5 +24,7 @@ namespace Telegram.ViewModels.Delegates
         void UpdateChatLastMessage(Chat chat);
 
         void UpdateChatFolders();
+
+        Task UpdateLayoutAsync();
     }
 }

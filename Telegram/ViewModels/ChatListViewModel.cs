@@ -646,61 +646,61 @@ namespace Telegram.ViewModels
 
             private async Task<LoadMoreItemsResult> LoadMoreItemsAsync()
             {
-                using (await _loadMoreLock.WaitAsync())
+                using var guard = await _loadMoreLock.WaitAsync();
+                var totalCount = 0u;
+
+                var response = await _clientService.GetChatListAsync(_chatList, Count, 20);
+                if (response is Telegram.Td.Api.Chats chats)
                 {
-                    var response = await _clientService.GetChatListAsync(_chatList, Count, 20);
-                    if (response is Telegram.Td.Api.Chats chats)
+                    if (_viewModel.Delegate != null)
                     {
-                        var totalCount = 0u;
-
-                        foreach (var chat in _clientService.GetChats(chats.ChatIds))
-                        {
-                            var order = chat.GetOrder(_chatList);
-                            if (order != 0)
-                            {
-                                // TODO: is this redundant?
-                                var next = NextIndexOf(chat, order);
-                                if (next >= 0)
-                                {
-                                    if (_chats.Contains(chat.Id))
-                                    {
-                                        Remove(chat);
-                                    }
-
-                                    _chats.Add(chat.Id);
-                                    Insert(Math.Min(Count, next), chat);
-
-                                    if (chat.Id == _viewModel._selectedItem)
-                                    {
-                                        _viewModel.Delegate?.SetSelectedItem(chat);
-                                    }
-
-                                    totalCount++;
-                                }
-
-                                _lastChatId = chat.Id;
-                                _lastOrder = order;
-                            }
-                        }
-
-                        IsEmpty = Count == 0;
-
-                        _hasMoreItems = chats.ChatIds.Count > 0;
-                        Subscribe();
-
-                        _viewModel.IsLoading = false;
-                        _viewModel.Delegate?.SetSelectedItems(_viewModel.SelectedItems);
-
-                        if (_hasMoreItems == false)
-                        {
-                            OnPropertyChanged(new PropertyChangedEventArgs("HasMoreItems"));
-                        }
-
-                        return new LoadMoreItemsResult { Count = totalCount };
+                        // Exp: does this affect layout cycles?
+                        await _viewModel.Delegate.UpdateLayoutAsync();
                     }
 
-                    return new LoadMoreItemsResult { Count = 0 };
+                    foreach (var chat in _clientService.GetChats(chats.ChatIds))
+                    {
+                        var order = chat.GetOrder(_chatList);
+                        if (order != 0)
+                        {
+                            // TODO: is this redundant?
+                            var next = NextIndexOf(chat, order);
+                            if (next >= 0)
+                            {
+                                if (_chats.Contains(chat.Id))
+                                {
+                                    Remove(chat);
+                                }
+
+                                _chats.Add(chat.Id);
+                                Insert(Math.Min(Count, next), chat);
+
+                                if (chat.Id == _viewModel._selectedItem)
+                                {
+                                    _viewModel.Delegate?.SetSelectedItem(chat);
+                                }
+
+                                totalCount++;
+                            }
+
+                            _lastChatId = chat.Id;
+                            _lastOrder = order;
+                        }
+                    }
+
+                    IsEmpty = Count == 0;
+
+                    _hasMoreItems = chats.ChatIds.Count > 0;
+                    Subscribe();
+
+                    _viewModel.IsLoading = false;
+                    _viewModel.Delegate?.SetSelectedItems(_viewModel.SelectedItems);
                 }
+
+                return new LoadMoreItemsResult
+                {
+                    Count = totalCount
+                };
             }
 
             private void Subscribe()
@@ -779,49 +779,26 @@ namespace Telegram.ViewModels
                 }
             }
 
-            private async void UpdateChatOrder(Chat chat, long order, bool lastMessage)
+            private void UpdateChatOrder(Chat chat, long order, bool lastMessage)
             {
-                using (await _loadMoreLock.WaitAsync())
+                if (order > 0 && (order > _lastOrder || (order == _lastOrder && chat.Id >= _lastChatId)))
                 {
-                    if (order > 0 && (order > _lastOrder || (order == _lastOrder && chat.Id >= _lastChatId)))
+                    var next = NextIndexOf(chat, order);
+                    if (next >= 0)
                     {
-                        var next = NextIndexOf(chat, order);
-                        if (next >= 0)
+                        if (_chats.Contains(chat.Id))
                         {
-                            if (_chats.Contains(chat.Id))
-                            {
-                                Remove(chat);
-                            }
-
-                            _chats.Add(chat.Id);
-                            Insert(Math.Min(Count, next), chat);
-
-                            if (next == Count - 1)
-                            {
-                                _lastChatId = chat.Id;
-                                _lastOrder = order;
-                            }
-
-                            if (chat.Id == _viewModel._selectedItem)
-                            {
-                                _viewModel.Delegate?.SetSelectedItem(chat);
-                            }
-                            if (_viewModel.SelectedItems.Contains(chat))
-                            {
-                                _viewModel.Delegate?.SetSelectedItems(_viewModel.SelectedItems);
-                            }
-
-                            IsEmpty = Count == 0;
+                            Remove(chat);
                         }
-                        else if (lastMessage)
+
+                        _chats.Add(chat.Id);
+                        Insert(Math.Min(Count, next), chat);
+
+                        if (next == Count - 1)
                         {
-                            _viewModel.Delegate?.UpdateChatLastMessage(chat);
+                            _lastChatId = chat.Id;
+                            _lastOrder = order;
                         }
-                    }
-                    else if (_chats.Contains(chat.Id))
-                    {
-                        _chats.Remove(chat.Id);
-                        Remove(chat);
 
                         if (chat.Id == _viewModel._selectedItem)
                         {
@@ -829,17 +806,37 @@ namespace Telegram.ViewModels
                         }
                         if (_viewModel.SelectedItems.Contains(chat))
                         {
-                            _viewModel.SelectedItems.Remove(chat);
                             _viewModel.Delegate?.SetSelectedItems(_viewModel.SelectedItems);
                         }
 
                         IsEmpty = Count == 0;
-
-                        //if (!_hasMoreItems)
-                        //{
-                        //    await LoadMoreItemsAsync(0);
-                        //}
                     }
+                    else if (lastMessage)
+                    {
+                        _viewModel.Delegate?.UpdateChatLastMessage(chat);
+                    }
+                }
+                else if (_chats.Contains(chat.Id))
+                {
+                    _chats.Remove(chat.Id);
+                    Remove(chat);
+
+                    if (chat.Id == _viewModel._selectedItem)
+                    {
+                        _viewModel.Delegate?.SetSelectedItem(chat);
+                    }
+                    if (_viewModel.SelectedItems.Contains(chat))
+                    {
+                        _viewModel.SelectedItems.Remove(chat);
+                        _viewModel.Delegate?.SetSelectedItems(_viewModel.SelectedItems);
+                    }
+
+                    IsEmpty = Count == 0;
+
+                    //if (!_hasMoreItems)
+                    //{
+                    //    await LoadMoreItemsAsync(0);
+                    //}
                 }
             }
 
@@ -901,9 +898,14 @@ namespace Telegram.ViewModels
                     if (_isEmpty != value)
                     {
                         _isEmpty = value;
-                        OnPropertyChanged(new PropertyChangedEventArgs(nameof(IsEmpty)));
+                        _viewModel.Dispatcher?.Dispatch(NotifyChanged, Windows.System.DispatcherQueuePriority.Low);
                     }
                 }
+            }
+            
+            private void NotifyChanged()
+            {
+                OnPropertyChanged(new PropertyChangedEventArgs(nameof(IsEmpty)));
             }
         }
     }
