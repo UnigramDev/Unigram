@@ -1408,10 +1408,11 @@ namespace Telegram.Controls
             BeginUndoGroup();
 
             var plain = range.GetClone();
-            if (plain.Expand(TextRangeUnit.Hidden) != 0 && Emoticon.Data.ContainsKey(plain.Text))
+            plain.Move(TextRangeUnit.Hidden, -1);
+
+            if (plain.Expand(TextRangeUnit.Hidden) != 0 && plain.EndPosition == range.StartPosition && Emoticon.Data.ContainsKey(plain.Text))
             {
                 plain.Delete(TextRangeUnit.Hidden, 1);
-                range = plain;
             }
 
             range.SetText(TextSetOptions.None, $"{emoji};{customEmojiId}\uEA4F");
