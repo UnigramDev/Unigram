@@ -40,19 +40,26 @@ namespace Telegram.Views.Premium.Popups
 
         private readonly Color[] _gradient = new Color[]
         {
-            Color.FromArgb(0xFF, 0xF2, 0x87, 0x2C),
-            Color.FromArgb(0xFF, 0xEC, 0x7C, 0x47),
-            Color.FromArgb(0xFF, 0xE7, 0x72, 0x62),
-            Color.FromArgb(0xFF, 0xE1, 0x68, 0x7E),
-            Color.FromArgb(0xFF, 0xDC, 0x5D, 0x99),
-            Color.FromArgb(0xFF, 0xC9, 0x60, 0xBF),
-            Color.FromArgb(0xFF, 0xB4, 0x64, 0xE7),
-            Color.FromArgb(0xFF, 0x9B, 0x70, 0xFF),
-            Color.FromArgb(0xFF, 0x73, 0x8E, 0xFF),
-            Color.FromArgb(0xFF, 0x55, 0xA5, 0xFF),
-            Color.FromArgb(0xFF, 0x51, 0xB2, 0xC3),
-            Color.FromArgb(0xFF, 0x4F, 0xBC, 0x95),
-            Color.FromArgb(0xFF, 0x4C, 0xC5, 0x67),
+            Color.FromArgb(0xFF, 0xef, 0x69, 0x22),
+            Color.FromArgb(0xFF, 0xe9, 0x5a, 0x2c),
+            Color.FromArgb(0xFF, 0xe7, 0x4e, 0x33),
+            Color.FromArgb(0xFF, 0xe5, 0x49, 0x37),
+            Color.FromArgb(0xFF, 0xe3, 0x43, 0x3c),
+            Color.FromArgb(0xFF, 0xdb, 0x37, 0x4b),
+            Color.FromArgb(0xFF, 0xcb, 0x3e, 0x6d),
+            Color.FromArgb(0xFF, 0xbc, 0x43, 0x95),
+            Color.FromArgb(0xFF, 0xab, 0x4a, 0xc4),
+            Color.FromArgb(0xFF, 0xa3, 0x4c, 0xd7),
+            Color.FromArgb(0xFF, 0x9b, 0x4f, 0xed),
+            Color.FromArgb(0xFF, 0x89, 0x58, 0xff),
+            Color.FromArgb(0xFF, 0x67, 0x6b, 0xff),
+            Color.FromArgb(0xFF, 0x61, 0x72, 0xff),
+            Color.FromArgb(0xFF, 0x5b, 0x79, 0xff),
+            Color.FromArgb(0xFF, 0x44, 0x92, 0xff),
+            Color.FromArgb(0xFF, 0x42, 0x9b, 0xd5),
+            Color.FromArgb(0xFF, 0x41, 0xa6, 0xa5),
+            Color.FromArgb(0xFF, 0x3e, 0xb2, 0x6d),
+            Color.FromArgb(0xFF, 0x3d, 0xbd, 0x4a),
         };
 
         private void OnContainerContentChanging(ListViewBase sender, ContainerContentChangingEventArgs args)
@@ -77,13 +84,11 @@ namespace Telegram.Views.Premium.Popups
                     iconValue = Icons.PaintBrushFilled;
                     titleValue = Strings.PremiumPreviewProfileColor;
                     subtitleValue = Strings.PremiumPreviewProfileColorDescription;
-                    badge = true;
                     break;
                 case PremiumFeatureBackgroundForBoth:
                     iconValue = Icons.WallpaperFilled;
                     titleValue = Strings.PremiumPreviewWallpaper;
                     subtitleValue = Strings.PremiumPreviewWallpaperDescription;
-                    badge = true;
                     break;
                 case PremiumFeatureAdvancedChatManagement:
                     iconValue = Icons.ChatFilled;
@@ -110,7 +115,7 @@ namespace Telegram.Views.Premium.Popups
                     subtitleValue = Strings.PremiumPreviewNoAdsDescription;
                     break;
                 case PremiumFeatureEmojiStatus:
-                    iconValue = Icons.ReactionFilled24;
+                    iconValue = Icons.HandOpenHeartFilled;
                     titleValue = Strings.PremiumPreviewEmojiStatus;
                     subtitleValue = Strings.PremiumPreviewEmojiStatusDescription;
                     break;
@@ -138,6 +143,12 @@ namespace Telegram.Views.Premium.Popups
                     iconValue = Icons.TranslateFilled;
                     titleValue = Strings.PremiumPreviewTranslations;
                     subtitleValue = Strings.PremiumPreviewTranslationsDescription;
+                    break;
+                case PremiumFeatureSavedMessagesTags:
+                    iconValue = Icons.TagFilled;
+                    titleValue = Strings.PremiumPreviewTags2;
+                    subtitleValue = Strings.PremiumPreviewTagsDescription2;
+                    badge = true;
                     break;
                 case PremiumFeatureUniqueReactions:
                     iconValue = Icons.HeartFilled;
@@ -173,7 +184,16 @@ namespace Telegram.Views.Premium.Popups
             subtitle.Text = subtitleValue;
             icon.Text = iconValue;
             iconPanel.Background = new SolidColorBrush(_gradient[index]);
-            badgeControl.Visibility = badge ? Windows.UI.Xaml.Visibility.Visible : Windows.UI.Xaml.Visibility.Collapsed;
+
+            if (badge)
+            {
+                badgeControl.Background = new SolidColorBrush(_gradient[index]);
+                badgeControl.Visibility = Windows.UI.Xaml.Visibility.Visible;
+            }
+            else
+            {
+                badgeControl.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
+            }
 
             args.Handled = true;
         }

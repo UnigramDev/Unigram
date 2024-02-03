@@ -40,6 +40,7 @@ namespace Telegram.Views.Premium.Popups
             {
                 new PremiumStoryFeaturePriorityOrder(),
                 new PremiumStoryFeatureStealthMode(),
+                new PremiumStoryFeatureVideoQuality(),
                 new PremiumStoryFeaturePermanentViewsHistory(),
                 new PremiumStoryFeatureCustomExpirationDuration(),
                 new PremiumStoryFeatureSaveStories(),
@@ -119,6 +120,11 @@ namespace Telegram.Views.Premium.Popups
                     iconValue = Icons.Stories;
                     titleValue = Strings.PremiumStoriesStealth;
                     subtitleValue = Strings.PremiumStoriesStealthDescription;
+                    break;
+                case PremiumStoryFeatureVideoQuality:
+                    iconValue = Icons.Stories;
+                    titleValue = Strings.PremiumStoriesQuality;
+                    subtitleValue = Strings.PremiumStoriesQualityDescription;
                     break;
                 case PremiumStoryFeaturePermanentViewsHistory:
                     iconValue = Icons.Stories;

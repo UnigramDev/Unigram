@@ -6370,6 +6370,12 @@ Payments will go directly to the developer of {0}. Telegram cannot provide any g
   <data name="PremiumPreviewStoriesDescription" xml:space="preserve">
     <value>Unlimited posting, priority order, stealth mode, permanent view history and more.</value>
   </data>
+  <data name="PremiumPreviewTags2" xml:space="preserve">
+    <value>Tags in Saved Messages</value>
+  </data>
+  <data name="PremiumPreviewTagsDescription2" xml:space="preserve">
+    <value>Organize your Saved Messages with tags for quicker access.</value>
+  </data>
   <data name="PremiumPreviewTranslations" xml:space="preserve">
     <value>Real-Time Translation</value>
   </data>
@@ -6444,6 +6450,12 @@ Payments will go directly to the developer of {0}. Telegram cannot provide any g
   </data>
   <data name="PremiumStoriesPriorityDescription" xml:space="preserve">
     <value>Get more views as your stories are always displayed first.</value>
+  </data>
+  <data name="PremiumStoriesQuality" xml:space="preserve">
+    <value>Higher quality</value>
+  </data>
+  <data name="PremiumStoriesQualityDescription" xml:space="preserve">
+    <value>View video stories in double the resolution.</value>
   </data>
   <data name="PremiumStoriesSaveToGallery" xml:space="preserve">
     <value>Save Stories to Gallery</value>
