@@ -6,7 +6,7 @@
 //
 using System;
 using System.Collections.Generic;
-using System.Linq;
+using Telegram.Common;
 
 namespace Telegram.Collections
 {
@@ -27,7 +27,7 @@ namespace Telegram.Collections
 
         protected override void InsertItem(int index, T item)
         {
-            index = Array.BinarySearch(Items.ToArray(), item, _comparer);
+            index = Items.BinarySearch(item, _comparer);
             if (index >= 0)
             {
                 ; /*throw new ArgumentException("Cannot insert duplicated items");*/
