@@ -150,14 +150,15 @@ namespace Telegram.Navigation.Services
                 infoOverride = new SuppressNavigationTransitionInfo();
             }
 
-            if (navigationStackEnabled is false)
-            {
-                return Frame.NavigateToType(page, parameter, new FrameNavigationOptions
-                {
-                    TransitionInfoOverride = infoOverride,
-                    IsNavigationStackEnabled = navigationStackEnabled
-                });
-            }
+            // THIS CRASHES EVERYTHING!!!
+            //if (navigationStackEnabled is false)
+            //{
+            //    return Frame.NavigateToType(page, parameter, new FrameNavigationOptions
+            //    {
+            //        TransitionInfoOverride = infoOverride,
+            //        IsNavigationStackEnabled = navigationStackEnabled
+            //    });
+            //}
 
             return Frame.Navigate(page, parameter, infoOverride);
         }
