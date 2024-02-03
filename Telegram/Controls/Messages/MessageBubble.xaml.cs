@@ -2280,7 +2280,8 @@ namespace Telegram.Controls.Messages
             var prev = e.PreviousSize.ToVector2();
             var next = e.NewSize.ToVector2();
 
-            var outgoing = message.IsOutgoing && !message.IsChannelPost;
+            // TODO: this probably needs to go in MessageViewModel
+            var outgoing = (message.IsOutgoing && !message.IsChannelPost) || (message.IsSaved && message.ForwardInfo?.Source is { IsOutgoing: true });
 
             var anim = Window.Current.Compositor.CreateVector3KeyFrameAnimation();
             anim.InsertKeyFrame(0, new Vector3(prev / next, 1));
