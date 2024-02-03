@@ -180,7 +180,20 @@ namespace Telegram.Controls.Messages.Content
                 Subtitle.Text = Strings.AttachGame;
                 Overlay.Opacity = 1;
             }
-            else if (isSecret is false)
+            else if (isSecret)
+            {
+                if (message.SelfDestructType is MessageSelfDestructTypeTimer selfDestructTypeTimer)
+                {
+                    Subtitle.Text = Icons.PlayFilled12 + "\u2004\u200A" + Locale.FormatTtl(selfDestructTypeTimer.SelfDestructTime, true);
+                }
+                else
+                {
+                    Subtitle.Text = Icons.ArrowClockwiseFilled12 + "\u2004\u200A1";
+                }
+
+                Overlay.Opacity = 1;
+            }
+            else
             {
                 Overlay.Opacity = 0;
             }
@@ -233,18 +246,8 @@ namespace Telegram.Controls.Messages.Content
                     Button.Progress = 1;
 
                     Button.Opacity = 1;
-                    Overlay.Opacity = 1;
 
                     Texture.ImageSource = null;
-
-                    if (message.SelfDestructType is MessageSelfDestructTypeTimer selfDestructTypeTimer)
-                    {
-                        Subtitle.Text = Icons.PlayFilled12 + "\u2004\u200A" + Locale.FormatTtl(selfDestructTypeTimer.SelfDestructTime, true);
-                    }
-                    else
-                    {
-                        Subtitle.Text = Icons.ArrowClockwiseFilled12 + "\u2004\u200A1";
-                    }
                 }
                 else
                 {
