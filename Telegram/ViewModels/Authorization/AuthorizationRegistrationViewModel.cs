@@ -88,7 +88,7 @@ namespace Telegram.ViewModels.Authorization
                 }
             }
 
-            var response = await ClientService.SendAsync(new RegisterUser(_firstName ?? string.Empty, _lastName ?? string.Empty));
+            var response = await ClientService.SendAsync(new RegisterUser(_firstName ?? string.Empty, _lastName ?? string.Empty, false));
             if (response is Error error)
             {
 

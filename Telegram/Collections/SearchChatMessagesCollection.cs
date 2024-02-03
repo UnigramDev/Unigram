@@ -78,7 +78,7 @@ namespace Telegram.Collections
 
                     if (_savedMessagesTag != null)
                     {
-                        function = new SearchSavedMessages(_savedMessagesTag, _query, fromMessageId, offset, (int)count);
+                        function = new SearchSavedMessages(_savedMessagesTopic, _savedMessagesTag, _query, fromMessageId, offset, (int)count);
                     }
                     else
                     {

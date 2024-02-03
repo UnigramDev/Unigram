@@ -662,7 +662,7 @@ namespace Telegram.ViewModels
                 Function func;
                 if (Search?.SavedMessagesTag != null)
                 {
-                    func = new SearchSavedMessages(Search.SavedMessagesTag, string.Empty, fromMessageId, -25, 50);
+                    func = new SearchSavedMessages(_savedMessagesTopic, Search.SavedMessagesTag, string.Empty, fromMessageId, -25, 50);
                 }
                 else if (_savedMessagesTopic != null)
                 {
@@ -1237,7 +1237,7 @@ namespace Telegram.ViewModels
             Task<BaseObject> func;
             if (Search?.SavedMessagesTag != null && Search.FilterByTag)
             {
-                func = ClientService.SendAsync(new SearchSavedMessages(Search.SavedMessagesTag, string.Empty, maxId, -25, 50));
+                func = ClientService.SendAsync(new SearchSavedMessages(_savedMessagesTopic, Search.SavedMessagesTag, string.Empty, maxId, -25, 50));
             }
             else if (_savedMessagesTopic != null)
             {
