@@ -26,9 +26,7 @@ using Telegram.ViewModels.Users;
 using Telegram.Views;
 using Windows.Devices.Input;
 using Windows.Foundation;
-using Windows.Media.Playback;
 using Windows.UI.Composition;
-using Windows.UI.Core;
 using Windows.UI.Input;
 using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
@@ -250,32 +248,6 @@ namespace Telegram.Controls.Gallery
         public void OpenItem(GalleryMedia item)
         {
             OnBackRequested(new BackRequestedRoutedEventArgs());
-        }
-
-        private async void OnSourceChanged()
-        {
-            //var source = _mediaPlayer == null || _mediaPlayer.Source == null;
-            //await Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
-            //{
-            //    Element0.IsHitTestVisible = source;
-            //    Element1.IsHitTestVisible = source;
-            //    Element2.IsHitTestVisible = source;
-            //});
-        }
-
-        private async void OnVolumeChanged(MediaPlayer sender, object args)
-        {
-            SettingsService.Current.VolumeLevel = sender.Volume;
-
-            await Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
-            {
-                //Transport.Volume = sender.Volume;
-            });
-        }
-
-        private void OnMediaOpened(MediaPlayer sender, object args)
-        {
-            sender.Volume = SettingsService.Current.VolumeLevel;
         }
 
         public static Task<ContentDialogResult> ShowAsync(ViewModelBase viewModelBase, IStorageService storageService, Chat chat, Func<FrameworkElement> closing = null)

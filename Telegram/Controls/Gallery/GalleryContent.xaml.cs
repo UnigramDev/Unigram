@@ -9,7 +9,6 @@ using System;
 using System.Diagnostics;
 using System.Numerics;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 using Telegram.Common;
 using Telegram.Services;
 using Telegram.Streams;
@@ -18,7 +17,6 @@ using Telegram.ViewModels.Delegates;
 using Telegram.ViewModels.Gallery;
 using Windows.Foundation;
 using Windows.Storage;
-using Windows.System;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Hosting;
@@ -52,15 +50,9 @@ namespace Telegram.Controls.Gallery
             set => Button.IsEnabled = value;
         }
 
-        private readonly DispatcherQueue _dispatcherQueue;
-        private readonly LifoActionWorker _playbackQueue;
-
         public GalleryContent()
         {
             InitializeComponent();
-
-            _dispatcherQueue = DispatcherQueue.GetForCurrentThread();
-            _playbackQueue = new LifoActionWorker();
 
             RotationAngleChanged += OnRotationAngleChanged;
             SizeChanged += OnSizeChanged;
@@ -317,8 +309,7 @@ namespace Telegram.Controls.Gallery
             }
         }
 
-        private LibVLC _library;
-        private MediaPlayer _mediaPlayer;
+        private AsyncMediaPlayer _player;
 
         private RemoteFileStream _fileStream;
         private GalleryTransportControls _controls;
@@ -349,7 +340,7 @@ namespace Telegram.Controls.Gallery
 
                 controls.Attach(item, file);
 
-                if (_mediaPlayer == null)
+                if (_player == null)
                 {
                     _controls = controls;
                     _fileStream = new RemoteFileStream(item.ClientService, file);
@@ -358,15 +349,12 @@ namespace Telegram.Controls.Gallery
                 }
                 else
                 {
-                    controls.Attach(_mediaPlayer);
+                    controls.Attach(_player);
 
                     _fileStream = null;
                     _controls = null;
-                    _playbackQueue.Enqueue(() =>
-                    {
-                        _mediaPlayer.Play(new LibVLCSharp.Shared.Media(_library, new RemoteFileStream(item.ClientService, file)));
-                        _mediaPlayer.Time = position;
-                    });
+                    _player.Play(new RemoteFileStream(item.ClientService, file));
+                    _player.Time = position;
                 }
             }
             catch { }
@@ -374,29 +362,15 @@ namespace Telegram.Controls.Gallery
 
         private void OnInitialized(object sender, LibVLCSharp.Platforms.Windows.InitializedEventArgs e)
         {
-            _library = new LibVLC(e.SwapChainOptions);
-            //_library.Log += _library_Log;
-
-            _mediaPlayer = new MediaPlayer(_library);
-            //_mediaPlayer.EndReached += OnEndReached;
-            _mediaPlayer.Stopped += OnStopped;
-            //_mediaPlayer.VolumeChanged += OnVolumeChanged;
-            //_mediaPlayer.SourceChanged += OnSourceChanged;
-            //_mediaPlayer.MediaOpened += OnMediaOpened;
-            //_mediaPlayer.PlaybackSession.PlaybackStateChanged += OnPlaybackStateChanged;
+            _player = new AsyncMediaPlayer(e.SwapChainOptions);
+            _player.Stopped += OnStopped;
 
             var stream = _fileStream;
             var position = _initialPosition;
 
-            _controls.Attach(_mediaPlayer);
-            _playbackQueue.Enqueue(() =>
-            {
-                if (_mediaPlayer != null && !_unloaded)
-                {
-                    _mediaPlayer.Play(new LibVLCSharp.Shared.Media(_library, stream));
-                    _mediaPlayer.Time = position;
-                }
-            });
+            _controls.Attach(_player);
+            _player.Play(stream);
+            _player.Time = position;
 
             _controls = null;
             _fileStream = null;
@@ -434,39 +408,11 @@ namespace Telegram.Controls.Gallery
                 Video.Initialized -= OnInitialized;
             }
 
-            Task.Run(() =>
+            if (_player != null)
             {
-                if (_mediaPlayer != null)
-                {
-                    _mediaPlayer.Stopped -= OnStopped;
-
-                    _mediaPlayer.Stop();
-                    _mediaPlayer.Dispose();
-                }
-
-                _mediaPlayer = null;
-
-                _library?.Dispose();
-                _library = null;
-
-                _fileStream?.Close();
-                _fileStream = null;
-            });
-        }
-
-        private void OnEndReached(object sender, EventArgs e)
-        {
-            _playbackQueue.Enqueue(Stop);
-        }
-
-        private void Stop()
-        {
-            if (_unloaded)
-            {
-                return;
+                _player.Stopped -= OnStopped;
+                _player.Close();
             }
-
-            _mediaPlayer?.Stop();
         }
 
         private void OnStopped(object sender, EventArgs e)
@@ -474,19 +420,19 @@ namespace Telegram.Controls.Gallery
             if (_stopped)
             {
                 _stopped = false;
-                _dispatcherQueue.TryEnqueue(Video.Clear);
+                Video.Clear();
             }
         }
 
         public void Stop(out int fileId, out long position)
         {
-            if (_mediaPlayer != null && !_unloaded)
+            if (_player != null && !_unloaded)
             {
                 fileId = _fileId;
-                position = _mediaPlayer.Time;
+                position = _player.Time;
 
                 _stopped = true;
-                _playbackQueue.Enqueue(Stop);
+                _player.Stop();
             }
             else
             {

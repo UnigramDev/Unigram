@@ -24,6 +24,7 @@ namespace Telegram.Common
         private readonly LibVLC _library;
         private readonly MediaPlayer _player;
 
+        private readonly object _closeLock = new();
         private bool _closed;
 
         public AsyncMediaPlayer(string[] options)
@@ -35,18 +36,28 @@ namespace Telegram.Common
             //_library.Log += _library_Log;
 
             _player = new MediaPlayer(_library);
+
+            // Stories
             _player.ESSelected += OnESSelected;
             _player.Vout += OnVout;
             _player.Buffering += OnBuffering;
             _player.EndReached += OnEndReached;
-            //_player.Stopped += OnStopped;
+
+            // Gallery
+            _player.TimeChanged += OnTimeChanged;
+            _player.LengthChanged += OnLengthChanged;
+            //_player.EndReached += OnEndReached;
+            _player.Playing += OnPlaying;
+            _player.Paused += OnPaused;
+            _player.Stopped += OnStopped;
+            _player.VolumeChanged += OnVolumeChanged;
 
             //_player.FileCaching = 1;
         }
 
         public void Play(RemoteFileStream stream)
         {
-            Enqueue(() => PlayImpl(stream), true);
+            Write(() => PlayImpl(stream), true);
         }
 
         private void PlayImpl(RemoteFileStream stream)
@@ -54,9 +65,19 @@ namespace Telegram.Common
             _player.Play(new Media(_library, stream));
         }
 
+        public void Play()
+        {
+            Write(() => PlayImpl());
+        }
+
+        private void PlayImpl()
+        {
+            _player.Play();
+        }
+
         public void Stop()
         {
-            Enqueue(StopImpl);
+            Write(StopImpl);
         }
 
         private void StopImpl()
@@ -64,9 +85,9 @@ namespace Telegram.Common
             _player.Stop();
         }
 
-        public void Pause(bool pause)
+        public void Pause(bool pause = true)
         {
-            Enqueue(() => PauseImpl(pause));
+            Write(() => PauseImpl(pause));
         }
 
         private void PauseImpl(bool pause)
@@ -74,29 +95,51 @@ namespace Telegram.Common
             _player.SetPause(pause);
         }
 
-        public void Mute(bool mute)
+        public VLCState State => Read(() => _player.State);
+
+        public bool IsPlaying => Read(() => _player.IsPlaying);
+
+        public bool Mute
         {
-            Enqueue(() => MuteImpl(mute));
+            get => Read(() => _player.Mute);
+            set => Write(() => _player.Mute = value);
         }
 
-        private void MuteImpl(bool mute)
+        public long Length => Read(() => _player.Length);
+
+        public long Time
         {
-            _player.Mute = mute;
+            get => Read(() => _player.Time);
+            set => Write(() => _player.Time = value);
         }
 
-        public void Scale(float scale)
+        public void AddTime(long value)
         {
-            Enqueue(() => ScaleImpl(scale));
+            Write(() => _player.Time += value);
         }
 
-        private void ScaleImpl(float scale)
+        public float Scale
         {
-            _player.Scale = scale;
+            get => Read(() => _player.Scale);
+            set => Write(() => _player.Scale = value);
+        }
+
+        public float Rate
+        {
+            get => Read(() => _player.Rate);
+            set => Write(() => _player.Rate = value);
+        }
+
+        public int Volume
+        {
+            get => Read(() => _player.Volume);
+            set => Write(() => _player.Volume = value);
         }
 
         public void Close()
         {
-            Enqueue(CloseImpl);
+            _workQueue.Clear();
+            Write(CloseImpl);
         }
 
         private void CloseImpl()
@@ -107,10 +150,19 @@ namespace Telegram.Common
             _player.Vout -= OnVout;
             _player.Buffering -= OnBuffering;
             _player.EndReached -= OnEndReached;
+            _player.TimeChanged -= OnTimeChanged;
+            _player.LengthChanged -= OnLengthChanged;
+            _player.Playing -= OnPlaying;
+            _player.Paused -= OnPaused;
+            _player.Stopped -= OnStopped;
+            _player.VolumeChanged -= OnVolumeChanged;
             _player.Stop();
 
-            _player.Dispose();
-            _library.Dispose();
+            lock (_closeLock)
+            {
+                _player.Dispose();
+                _library.Dispose();
+            }
         }
 
         #region Events
@@ -119,6 +171,12 @@ namespace Telegram.Common
         public event TypedEventHandler<AsyncMediaPlayer, MediaPlayerESSelectedEventArgs> ESSelected;
         public event TypedEventHandler<AsyncMediaPlayer, EventArgs> EndReached;
         public event TypedEventHandler<AsyncMediaPlayer, MediaPlayerBufferingEventArgs> Buffering;
+        public event TypedEventHandler<AsyncMediaPlayer, MediaPlayerTimeChangedEventArgs> TimeChanged;
+        public event TypedEventHandler<AsyncMediaPlayer, MediaPlayerLengthChangedEventArgs> LengthChanged;
+        public event TypedEventHandler<AsyncMediaPlayer, EventArgs> Playing;
+        public event TypedEventHandler<AsyncMediaPlayer, EventArgs> Paused;
+        public event TypedEventHandler<AsyncMediaPlayer, EventArgs> Stopped;
+        public event TypedEventHandler<AsyncMediaPlayer, MediaPlayerVolumeChangedEventArgs> VolumeChanged;
 
         private void OnVout(object sender, MediaPlayerVoutEventArgs e)
         {
@@ -138,6 +196,36 @@ namespace Telegram.Common
         private void OnBuffering(object sender, MediaPlayerBufferingEventArgs e)
         {
             _dispatcherQueue.TryEnqueue(() => Buffering?.Invoke(this, e));
+        }
+
+        private void OnTimeChanged(object sender, MediaPlayerTimeChangedEventArgs e)
+        {
+            _dispatcherQueue.TryEnqueue(() => TimeChanged?.Invoke(this, e));
+        }
+
+        private void OnLengthChanged(object sender, MediaPlayerLengthChangedEventArgs e)
+        {
+            _dispatcherQueue.TryEnqueue(() => LengthChanged?.Invoke(this, e));
+        }
+
+        private void OnPlaying(object sender, EventArgs e)
+        {
+            _dispatcherQueue.TryEnqueue(() => Playing?.Invoke(this, e));
+        }
+
+        private void OnPaused(object sender, EventArgs e)
+        {
+            _dispatcherQueue.TryEnqueue(() => Paused?.Invoke(this, e));
+        }
+
+        private void OnStopped(object sender, EventArgs e)
+        {
+            _dispatcherQueue.TryEnqueue(() => Stopped?.Invoke(this, e));
+        }
+
+        private void OnVolumeChanged(object sender, MediaPlayerVolumeChangedEventArgs e)
+        {
+            _dispatcherQueue.TryEnqueue(() => VolumeChanged?.Invoke(this, e));
         }
 
         #endregion
@@ -171,7 +259,20 @@ namespace Telegram.Common
 
         private long _workVersion;
 
-        private void Enqueue(Action action, bool versioned = false)
+        private T Read<T>(Func<T> value)
+        {
+            lock (_closeLock)
+            {
+                if (_closed)
+                {
+                    return default;
+                }
+
+                return value();
+            }
+        }
+
+        private void Write(Action action, bool versioned = false, bool close = false)
         {
             var version = versioned
                 ? Interlocked.Increment(ref _workVersion)

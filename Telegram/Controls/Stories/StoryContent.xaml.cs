@@ -1158,7 +1158,7 @@ namespace Telegram.Controls.Stories
             }
             else if (e.Type == TrackType.Audio && e.Id != -1)
             {
-                _player.Mute(_viewModel.Settings.VolumeMuted);
+                _player.Mute = _viewModel.Settings.VolumeMuted;
             }
         }
 
@@ -1358,7 +1358,11 @@ namespace Telegram.Controls.Stories
         private void Mute_Click(object sender, RoutedEventArgs e)
         {
             _viewModel.Settings.VolumeMuted = Mute.IsChecked is false;
-            _player?.Mute(_viewModel.Settings.VolumeMuted);
+
+            if (_player != null)
+            {
+                _player.Mute = _viewModel.Settings.VolumeMuted;
+            }
         }
 
         private void Caption_Click(object sender, RoutedEventArgs e)
