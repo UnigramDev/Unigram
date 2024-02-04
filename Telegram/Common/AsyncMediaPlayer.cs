@@ -27,7 +27,7 @@ namespace Telegram.Common
         private readonly object _closeLock = new();
         private bool _closed;
 
-        public AsyncMediaPlayer(string[] options)
+        public AsyncMediaPlayer(params string[] options)
         {
             _dispatcherQueue = DispatcherQueue.GetForCurrentThread();
 
@@ -144,8 +144,6 @@ namespace Telegram.Common
 
         private void CloseImpl()
         {
-            _closed = true;
-
             _player.ESSelected -= OnESSelected;
             _player.Vout -= OnVout;
             _player.Buffering -= OnBuffering;
@@ -160,6 +158,8 @@ namespace Telegram.Common
 
             lock (_closeLock)
             {
+                _closed = true;
+
                 _player.Dispose();
                 _library.Dispose();
             }
@@ -272,7 +272,7 @@ namespace Telegram.Common
             }
         }
 
-        private void Write(Action action, bool versioned = false, bool close = false)
+        private void Write(Action action, bool versioned = false)
         {
             var version = versioned
                 ? Interlocked.Increment(ref _workVersion)
