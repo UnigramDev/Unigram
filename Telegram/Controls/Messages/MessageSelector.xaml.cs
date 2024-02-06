@@ -802,8 +802,13 @@ namespace Telegram.Controls.Messages
             {
                 get
                 {
-                    var peer = CreatePeerForElement(_owner._owner);
-                    return ProviderFromPeer(peer);
+                    if (_owner._owner != null)
+                    {
+                        var peer = FrameworkElementAutomationPeer.CreatePeerForElement(_owner._owner);
+                        return ProviderFromPeer(peer);
+                    }
+
+                    return null;
                 }
             }
         }

@@ -511,7 +511,7 @@ namespace winrt::Telegram::Native::implementation
             {
                 // In loving memory of the attempted upgrade to FFmpeg 6.1
 
-                //auto dstWidth = FFALIGN(width, 16);s
+                //auto dstWidth = FFALIGN(width, 16);
                 //auto dstDiff = dstWidth - width;
 
                 //auto srcWidth = frame->linesize[0] - width;
