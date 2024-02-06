@@ -479,15 +479,6 @@ namespace Telegram.Controls.Chats
             }
         }
 
-        protected override DependencyObject GetContainerForItemOverride()
-        {
-            var selector = new ChatHistoryViewItem(this, ChatHistoryViewItemType.Incoming);
-            PreparingContainerForItem?.Invoke(this, selector);
-            return selector;
-        }
-
-        public event EventHandler<ChatHistoryViewItem> PreparingContainerForItem;
-
         #region Selection
 
         public bool IsSelectionEnabled

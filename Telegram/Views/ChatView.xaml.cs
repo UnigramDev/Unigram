@@ -126,13 +126,6 @@ namespace Telegram.Views
                 WatchDog.TrackEvent("ContactPanel");
             }
 
-            if (SettingsService.Current.Diagnostics.ChoosingItemContainer == 2)
-            {
-                Messages.ChoosingItemContainer -= OnChoosingItemContainer;
-                Messages.PreparingContainerForItem += OnPreparingContainerForItem;
-                Messages.ItemTemplateSelector = new TestSelector(this);
-            }
-
             Messages.Delegate = this;
             Messages.ItemsSource = _messages;
             Messages.RegisterPropertyChangedCallback(ListViewBase.SelectionModeProperty, List_SelectionModeChanged);

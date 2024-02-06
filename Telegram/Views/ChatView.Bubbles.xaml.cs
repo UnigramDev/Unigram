@@ -15,7 +15,6 @@ using Telegram.Controls.Gallery;
 using Telegram.Controls.Messages;
 using Telegram.Converters;
 using Telegram.Navigation;
-using Telegram.Services;
 using Telegram.Td.Api;
 using Telegram.ViewModels;
 using Telegram.ViewModels.Chats;
@@ -539,15 +538,6 @@ namespace Telegram.Views
                     // Suggestion matches what we want, so remove it from the recycle queue
                     relevantHashSet.Queue.Remove(args.ItemContainer);
                 }
-                // v1, old behavior
-                else if (SettingsService.Current.Diagnostics.ChoosingItemContainer == 0)
-                {
-                    // The ItemContainer's datatemplate does not match the needed
-                    // datatemplate.
-                    // Don't remove it from the recycle queue, since XAML will resuggest it later
-                    args.ItemContainer = null;
-                }
-                // v2, new behavior trying to workaround the issue
                 else
                 {
                     // TODO: threshold could be made dynamic...
@@ -568,6 +558,7 @@ namespace Telegram.Views
                         return false;
                     }
 
+                    // Code inside this branch is the one recommended by Microsoft, that bugs in some scenarios.
                     if (ShouldCreateNewContainer())
                     {
                         // The ItemContainer's datatemplate does not match the needed
@@ -637,10 +628,7 @@ namespace Telegram.Views
             if (args.InRecycleQueue)
             {
                 // XAML has indicated that the item is no longer being shown, so add it to the recycle queue
-                if (SettingsService.Current.Diagnostics.ChoosingItemContainer < 2)
-                {
-                    _typeToStrategy[container.TypeName].Queue.Add(args.ItemContainer);
-                }
+                _typeToStrategy[container.TypeName].Queue.Add(args.ItemContainer);
 
                 if (args.ItemContainer.ContentTemplateRoot is MessageSelector selector)
                 {
@@ -824,24 +812,6 @@ namespace Telegram.Views
             }
 
             return ChatHistoryViewItemType.Incoming;
-        }
-
-        class TestSelector : DataTemplateSelector
-        {
-            private readonly ChatView _chatView;
-
-            public TestSelector(ChatView chatView)
-            {
-                _chatView = chatView;
-            }
-
-            protected override DataTemplate SelectTemplateCore(object item, DependencyObject container)
-            {
-                var typeName = _chatView.SelectTemplateCore(item);
-                var relevantHashSet = _chatView._typeToStrategy[typeName];
-
-                return relevantHashSet.ItemTemplate;
-            }
         }
 
         public bool HasContainerForItem(long id)
