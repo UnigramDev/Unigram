@@ -33,6 +33,7 @@
                       VerticalScrollMode="Auto">
             <controls:SettingsPanel>
                 <popups:ChooseNameColorView x:Name="NameView"
+                                            ChatTheme="{x:Bind ViewModel.SelectedChatTheme, Mode=OneWay}"
                                             SelectedAccentColor="{x:Bind ViewModel.SelectedAccentColor, Mode=TwoWay}"
                                             SelectedCustomEmojiId="{x:Bind ViewModel.SelectedCustomEmojiId, Mode=TwoWay}"
                                             RequiredLevel="{x:Bind ViewModel.MinBackgroundCustomEmojiBoostLevel, Mode=OneWay}" />

@@ -20,37 +20,37 @@
             </StackPanel>
 
             <Border BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
-                    BorderThickness="0,1" />
+                    BorderThickness="0,0,0,1" />
         </Grid>
 
         <GridView x:Name="List"
-                    Background="{ThemeResource SettingsItemBackground}"
-                    BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
-                    BorderThickness="0,0,0,1"
-                    SelectionMode="Single"
-                    SelectionChanged="OnSelectionChanged"
-                    ChoosingItemContainer="OnChoosingItemContainer"
-                    ContainerContentChanging="OnContainerContentChanging"
-                    ItemContainerTransitions="{x:Null}"
-                    Padding="10,10,0,10"
-                    common:FluidGridView.OrientationOnly="False"
-                    common:FluidGridView.Padding="0,0,10,0"
-                    Grid.Row="1">
+                  Background="{ThemeResource SettingsItemBackground}"
+                  BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                  BorderThickness="0,0,0,1"
+                  SelectionMode="Single"
+                  SelectionChanged="OnSelectionChanged"
+                  ChoosingItemContainer="OnChoosingItemContainer"
+                  ContainerContentChanging="OnContainerContentChanging"
+                  ItemContainerTransitions="{x:Null}"
+                  Padding="10,10,0,10"
+                  common:FluidGridView.OrientationOnly="False"
+                  common:FluidGridView.Padding="0,0,10,0"
+                  Grid.Row="1">
             <common:FluidGridView.Triggers>
                 <common:LengthGridViewTrigger ItemLength="40" />
             </common:FluidGridView.Triggers>
             <GridView.ItemTemplate>
                 <DataTemplate>
                     <Grid SizeChanged="NameColor_SizeChanged"
-                            Background="Blue"
-                            CornerRadius="20">
+                          Background="Blue"
+                          CornerRadius="20">
                         <Polygon Points="40,0 40,40 0,40" />
 
                         <Rectangle Width="16"
-                                    Height="16"
-                                    RadiusX="2"
-                                    RadiusY="2"
-                                    RenderTransformOrigin="0.5,0.5">
+                                   Height="16"
+                                   RadiusX="2"
+                                   RadiusY="2"
+                                   RenderTransformOrigin="0.5,0.5">
                             <Rectangle.RenderTransform>
                                 <RotateTransform Angle="45" />
                             </Rectangle.RenderTransform>
@@ -60,7 +60,7 @@
             </GridView.ItemTemplate>
             <GridView.ItemContainerStyle>
                 <Style TargetType="GridViewItem"
-                        BasedOn="{StaticResource DefaultGridViewItemStyle}">
+                       BasedOn="{StaticResource DefaultGridViewItemStyle}">
                     <Setter Property="HorizontalContentAlignment"
                             Value="Stretch" />
                     <Setter Property="Margin"
@@ -114,10 +114,10 @@
                                     <ContentPresenter />
 
                                     <Ellipse x:Name="SelectionIndicatorBorder"
-                                                Stroke="{ThemeResource ContentDialogBackground}"
-                                                StrokeThickness="2"
-                                                Margin="2"
-                                                Opacity="0" />
+                                             Stroke="{ThemeResource ContentDialogBackground}"
+                                             StrokeThickness="2"
+                                             Margin="2"
+                                             Opacity="0" />
                                 </Grid>
                             </ControlTemplate>
                         </Setter.Value>
@@ -136,7 +136,7 @@
 
         <Grid Grid.Row="2">
             <controls:BadgeButton x:Name="Badge"
-                                    Click="Badge_Click">
+                                  Click="Badge_Click">
                 <Grid>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition />
@@ -144,12 +144,12 @@
                     </Grid.ColumnDefinitions>
                     <TextBlock x:Name="BadgeText" />
                     <controls:BadgeControl x:Name="BadgeInfo"
-                                            Visibility="Collapsed"
-                                            Background="{ThemeResource PremiumLinearGradientBrush}"
-                                            FontFamily="{StaticResource EmojiThemeFontFamilyWithSymbols}"
-                                            VerticalAlignment="Bottom"
-                                            Margin="4,0,0,0"
-                                            Grid.Column="1" />
+                                           Visibility="Collapsed"
+                                           Background="{ThemeResource PremiumLinearGradientBrush}"
+                                           FontFamily="{StaticResource EmojiThemeFontFamilyWithSymbols}"
+                                           VerticalAlignment="Bottom"
+                                           Margin="4,0,0,0"
+                                           Grid.Column="1" />
                 </Grid>
             </controls:BadgeButton>
             <controls:AnimatedImage x:Name="Animated"

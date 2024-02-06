@@ -113,8 +113,15 @@ namespace Telegram.Views.Popups
                 Animated.Source = new CustomEmojiFileSource(clientService, customEmojiId);
                 //Animated.ReplacementColor = new SolidColorBrush(accent.LightThemeColors[0]);
 
-                var temp = accent.ForTheme(_actualTheme);
-                Animated.ReplacementColor = new SolidColorBrush(temp.PaletteColors[0]);
+                var temp = accent?.ForTheme(_actualTheme);
+                if (temp != null)
+                {
+                    Animated.ReplacementColor = new SolidColorBrush(temp.PaletteColors[0]);
+                }
+                else
+                {
+                    Animated.ReplacementColor = null;
+                }
             }
             else
             {

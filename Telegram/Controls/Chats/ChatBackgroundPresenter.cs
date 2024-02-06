@@ -229,6 +229,19 @@ namespace Telegram.Controls.Chats
                     UpdateManager.Subscribe(this, clientService, file, ref _fileToken, UpdateFile, true);
                 }
             }
+            else if (background.Type is BackgroundTypeChatTheme typeChatTheme)
+            {
+                var chatTheme = clientService.GetChatTheme(typeChatTheme.ThemeName);
+                if (chatTheme != null)
+                {
+                    // TODO: support light/dark changed
+                    background = ActualTheme == ElementTheme.Light
+                        ? chatTheme.LightSettings?.Background
+                        : chatTheme.DarkSettings?.Background;
+
+                    UpdateSource(clientService, background, thumbnail);
+                }
+            }
         }
 
         private void UpdateWallpaper(File file)

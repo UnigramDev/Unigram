@@ -64,6 +64,8 @@ namespace Telegram.Views.Popups
                 BadgeText.Text = Strings.UserReplyIcon;
                 NameColor.Footer = Strings.UserColorHint;
                 PrimaryButtonText = Strings.UserColorApplyIcon;
+
+                BackgroundControl.Update(clientService, null);
             }
             else if (clientService.TryGetChat(sender, out Chat chat))
             {
@@ -82,6 +84,8 @@ namespace Telegram.Views.Popups
                 BadgeText.Text = Strings.ChannelReplyLogo;
                 NameColor.Footer = Strings.ChannelReplyInfo;
                 PrimaryButtonText = Strings.ChannelColorApply;
+
+                BackgroundControl.UpdateChat(clientService, chat.Background, clientService.GetChatTheme(chat.ThemeName));
             }
 
             var accent = colors.FirstOrDefault(x => x.Id == accentColorId);
@@ -108,7 +112,6 @@ namespace Telegram.Views.Popups
             SelectedAccentColor = accent;
 
             List.SelectedItem = accent;
-            BackgroundControl.Update(clientService, null);
         }
 
         #region Recycle
@@ -244,6 +247,29 @@ namespace Telegram.Views.Popups
 
         public static readonly DependencyProperty SelectedCustomEmojiIdProperty =
             DependencyProperty.Register("SelectedCustomEmojiId", typeof(long), typeof(ChooseNameColorView), new PropertyMetadata(0L));
+
+        #endregion
+
+        #region ChatTheme
+
+        public ChatTheme ChatTheme
+        {
+            get { return (ChatTheme)GetValue(ChatThemeProperty); }
+            set { SetValue(ChatThemeProperty, value); }
+        }
+
+        public static readonly DependencyProperty ChatThemeProperty =
+            DependencyProperty.Register("ChatTheme", typeof(ChatTheme), typeof(ChooseNameColorView), new PropertyMetadata(null, OnChatThemeChanged));
+
+        private static void OnChatThemeChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            ((ChooseNameColorView)d).OnChatThemeChanged(e.NewValue as ChatTheme, e.OldValue as ChatTheme);
+        }
+
+        private void OnChatThemeChanged(ChatTheme newValue, ChatTheme oldValue)
+        {
+            BackgroundControl.UpdateChat(_clientService, null, newValue);
+        }
 
         #endregion
     }

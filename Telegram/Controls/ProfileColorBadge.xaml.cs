@@ -44,7 +44,7 @@ namespace Telegram.Controls
 
         public void SetChat(IClientService clientService, Chat chat)
         {
-            SetColors(clientService, chat.AccentColorId, -1);
+            SetColors(clientService, chat.AccentColorId, chat.ProfileAccentColorId);
         }
 
         private void SetColors(IClientService clientService, int nameId, int profileId)

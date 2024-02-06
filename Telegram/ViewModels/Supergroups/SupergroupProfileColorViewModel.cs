@@ -60,7 +60,17 @@ namespace Telegram.ViewModels.Supergroups
                 return;
             }
 
-            SelectedChatTheme = string.IsNullOrEmpty(chat.ThemeName) ? ChatThemes[0] : ChatThemes.FirstOrDefault(x => x.Name == chat.ThemeName);
+            var themeName = chat.Background?.Background.Type is BackgroundTypeChatTheme typeChatTheme
+                ? typeChatTheme.ThemeName
+                : chat.ThemeName;
+
+            SelectedChatTheme = string.IsNullOrEmpty(themeName) ? ChatThemes[0] : ChatThemes.FirstOrDefault(x => x.Name == themeName);
+
+            SelectedAccentColor = ClientService.GetAccentColor(chat.AccentColorId);
+            SelectedCustomEmojiId = chat.BackgroundCustomEmojiId;
+            SelectedProfileAccentColor = ClientService.GetProfileColor(chat.ProfileAccentColorId);
+            SelectedProfileCustomEmojiId = chat.ProfileBackgroundCustomEmojiId;
+            SelectedEmojiStatus = chat.EmojiStatus;
 
             var response1 = await ClientService.SendAsync(new GetChatBoostFeatures());
             var response2 = await ClientService.SendAsync(new GetChatBoostStatus(chat.Id));
@@ -70,17 +80,16 @@ namespace Telegram.ViewModels.Supergroups
                 _features = features;
                 _status = status;
 
-                MinChatThemeBackgroundBoostLevel = features.MinChatThemeBackgroundBoostLevel;
-                MinCustomBackgroundBoostLevel = features.MinCustomBackgroundBoostLevel;
-                MinBackgroundCustomEmojiBoostLevel = features.MinBackgroundCustomEmojiBoostLevel;
-                MinProfileBackgroundCustomEmojiBoostLevel = features.MinProfileBackgroundCustomEmojiBoostLevel;
-                MinEmojiStatusBoostLevel = features.MinEmojiStatusBoostLevel;
+                int MinLevelOrZero(int level)
+                {
+                    return level < status.Level ? 0 : level;
+                }
 
-                RaisePropertyChanged(nameof(MinChatThemeBackgroundBoostLevel));
-                RaisePropertyChanged(nameof(MinCustomBackgroundBoostLevel));
-                RaisePropertyChanged(nameof(MinBackgroundCustomEmojiBoostLevel));
-                RaisePropertyChanged(nameof(MinProfileBackgroundCustomEmojiBoostLevel));
-                RaisePropertyChanged(nameof(MinEmojiStatusBoostLevel));
+                MinChatThemeBackgroundBoostLevel = MinLevelOrZero(features.MinChatThemeBackgroundBoostLevel);
+                MinCustomBackgroundBoostLevel = MinLevelOrZero(features.MinCustomBackgroundBoostLevel);
+                MinBackgroundCustomEmojiBoostLevel = MinLevelOrZero(features.MinBackgroundCustomEmojiBoostLevel);
+                MinProfileBackgroundCustomEmojiBoostLevel = MinLevelOrZero(features.MinProfileBackgroundCustomEmojiBoostLevel);
+                MinEmojiStatusBoostLevel = MinLevelOrZero(features.MinEmojiStatusBoostLevel);
             }
         }
 
@@ -117,7 +126,15 @@ namespace Telegram.ViewModels.Supergroups
                 changed = true;
             }
 
-            if (SelectedChatTheme?.Name != chat.ThemeName)
+            var prevChatTheme = chat.Background?.Background.Type is BackgroundTypeChatTheme typeChatTheme
+                ? typeChatTheme.ThemeName
+                : chat.ThemeName;
+
+            var nextChatTheme = SelectedChatTheme?.LightSettings != null
+                ? SelectedChatTheme.Name
+                : string.Empty;
+
+            if (prevChatTheme != nextChatTheme)
             {
                 changed = true;
             }
@@ -129,15 +146,40 @@ namespace Telegram.ViewModels.Supergroups
             }
         }
 
-        public int MinChatThemeBackgroundBoostLevel { get; private set; }
+        private int _minChatThemeBackgroundBoostLevel;
+        public int MinChatThemeBackgroundBoostLevel
+        {
+            get => _minChatThemeBackgroundBoostLevel;
+            set => Set(ref _minChatThemeBackgroundBoostLevel, value);
+        }
 
-        public int MinCustomBackgroundBoostLevel { get; private set; }
+        private int _minCustomBackgroundBoostLevel;
+        public int MinCustomBackgroundBoostLevel
+        {
+            get => _minCustomBackgroundBoostLevel;
+            set => Set(ref _minCustomBackgroundBoostLevel, value);
+        }
 
-        public int MinBackgroundCustomEmojiBoostLevel { get; private set; }
+        private int _minBackgroundCustomEmojiBoostLevel;
+        public int MinBackgroundCustomEmojiBoostLevel
+        {
+            get => _minBackgroundCustomEmojiBoostLevel;
+            set => Set(ref _minBackgroundCustomEmojiBoostLevel, value);
+        }
 
-        public int MinProfileBackgroundCustomEmojiBoostLevel { get; private set; }
+        private int _minProfileBackgroundCustomEmojiBoostLevel;
+        public int MinProfileBackgroundCustomEmojiBoostLevel
+        {
+            get => _minProfileBackgroundCustomEmojiBoostLevel;
+            set => Set(ref _minProfileBackgroundCustomEmojiBoostLevel, value);
+        }
 
-        public int MinEmojiStatusBoostLevel { get; private set; }
+        private int _minEmojiStatusBoostLevel;
+        public int MinEmojiStatusBoostLevel
+        {
+            get => _minEmojiStatusBoostLevel;
+            set => Set(ref _minEmojiStatusBoostLevel, value);
+        }
 
         protected Chat _chat;
         public Chat Chat
@@ -331,10 +373,18 @@ namespace Telegram.ViewModels.Supergroups
                 ClientService.Send(new SetChatEmojiStatus(chat.Id, SelectedEmojiStatus));
             }
 
-            if (SelectedChatTheme?.Name != chat.ThemeName)
+            var prevChatTheme = chat.Background?.Background.Type is BackgroundTypeChatTheme typeChatTheme
+                ? typeChatTheme.ThemeName
+                : chat.ThemeName;
+
+            var nextChatTheme = SelectedChatTheme?.LightSettings != null
+                ? SelectedChatTheme.Name
+                : string.Empty;
+
+            if (prevChatTheme != nextChatTheme)
             {
                 changed = true;
-                ClientService.Send(new SetChatTheme(chat.Id, SelectedChatTheme?.Name ?? string.Empty));
+                ClientService.Send(new SetChatTheme(chat.Id, nextChatTheme));
             }
 
             if (changed)
@@ -342,6 +392,7 @@ namespace Telegram.ViewModels.Supergroups
                 ToastPopup.Show(Strings.ChannelAppearanceUpdated, new LocalFileSource("ms-appx:///Assets/Toasts/Success.tgs"));
             }
 
+            _confirmed = true;
             NavigationService.GoBack();
         }
     }
