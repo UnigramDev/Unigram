@@ -36,5 +36,12 @@ namespace Telegram.Services.Settings
             get => _videoSpeed ??= GetValueOrDefault("VideoSpeed", 1.0);
             set => AddOrUpdateValue(ref _videoSpeed, "VideoSpeed", value);
         }
+
+        private bool? _highQuality;
+        public bool HighQuality
+        {
+            get => _highQuality ??= GetValueOrDefault("HighQuality", true);
+            set => AddOrUpdateValue(ref _highQuality, "HighQuality", value);
+        }
     }
 }

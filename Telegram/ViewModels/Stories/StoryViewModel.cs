@@ -198,20 +198,32 @@ namespace Telegram.ViewModels.Stories
                     ClientService.DownloadFile(thumbnail.Photo.Id, 30);
                 }
             }
-            else if (Content is StoryContentVideo video)
+            else if (Content is StoryContentVideo videoContent)
             {
-                var file = video.Video.Video;
+                var video = SelectVideoFile(videoContent);
+
+                var file = video.Video;
                 if (file != null && file.Local.CanBeDownloaded && !file.Local.IsDownloadingCompleted)
                 {
-                    ClientService.DownloadFile(file.Id, 32, 0, video.Video.PreloadPrefixSize);
+                    ClientService.DownloadFile(file.Id, 32, 0, video.PreloadPrefixSize);
                 }
 
-                var thumbnail = video.Video.Thumbnail;
+                var thumbnail = video.Thumbnail;
                 if (thumbnail != null && thumbnail.File.Local.CanBeDownloaded && !thumbnail.File.Local.IsDownloadingCompleted)
                 {
                     ClientService.DownloadFile(thumbnail.File.Id, 30);
                 }
             }
+        }
+
+        private StoryVideo SelectVideoFile(StoryContentVideo video)
+        {
+            //if (video.AlternativeVideo == null || (SettingsService.Current.Playback.HighQuality && ClientService.IsPremium))
+            {
+                return video.Video;
+            }
+
+            return video.AlternativeVideo;
         }
 
         public File GetFile()

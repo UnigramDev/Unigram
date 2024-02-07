@@ -528,7 +528,7 @@
                                     VerticalContentAlignment="Stretch"
                                     BorderThickness="0"
                                     CornerRadius="0"
-                                    Padding="0">
+                                    Padding="92,0,0,0">
                 <Grid Background="Transparent"
                       VerticalAlignment="Center"
                       Margin="0,-2,0,2">

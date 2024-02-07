@@ -6,6 +6,7 @@ using Telegram.Common;
 using Telegram.Controls.Media;
 using Telegram.Controls.Messages;
 using Telegram.Navigation;
+using Telegram.Services;
 using Telegram.Services.Keyboard;
 using Telegram.Streams;
 using Telegram.Td.Api;
@@ -143,6 +144,7 @@ namespace Telegram.Controls.Stories
             _done = true;
             e.Handled = true;
 
+            IsHitTestVisible = false;
             ActiveCard?.Suspend(StoryPauseSource.Window);
 
             var layer = ElementComposition.GetElementVisual(Layer);
@@ -305,6 +307,8 @@ namespace Telegram.Controls.Stories
 
         private void Update(StoryListViewModel viewModel, ActiveStoriesViewModel activeStories)
         {
+            Logger.Info();
+
             if (_viewModel != viewModel)
             {
                 _viewModel = viewModel;
@@ -491,6 +495,8 @@ namespace Telegram.Controls.Stories
 
         private bool Move(Direction direction, int increment = 1, bool force = false)
         {
+            Logger.Info();
+
             if (!force)
             {
                 var user = _viewModel.Items[_index];
@@ -942,6 +948,11 @@ namespace Telegram.Controls.Stories
 
             flyout.CreateFlyoutItem(ViewModel.ShowProfile, activeStories, archived ? Strings.UnarchiveStories : Strings.ArchivePeerStories, archived ? Icons.Unarchive : Icons.Archive);
 
+            //if (activeStories.IsMyStory || story.ClientService.IsPremium || story.ClientService.IsPremiumAvailable)
+            //{
+            //    flyout.CreateFlyoutItem(QualityStory, story, "Quality thing");
+            //}
+
             if (story.CanBeForwarded && story.Content is StoryContentPhoto or StoryContentVideo && (activeStories.IsMyStory || story.ClientService.IsPremium || story.ClientService.IsPremiumAvailable))
             {
                 flyout.CreateFlyoutItem(SaveStory, story, story.Content is StoryContentPhoto ? Strings.SavePhoto : Strings.SaveVideo, activeStories.IsMyStory || story.ClientService.IsPremium ? Icons.SaveAs : Icons.SaveAsLocked);
@@ -1043,6 +1054,12 @@ namespace Telegram.Controls.Stories
                     ActiveCard.Resume(StoryPauseSource.Popup);
                 }
             }
+        }
+
+        private void QualityStory(StoryViewModel story)
+        {
+            SettingsService.Current.Playback.HighQuality = !SettingsService.Current.Playback.HighQuality;
+            ActiveCard.UpdateQuality();
         }
 
         private async void SaveStory(StoryViewModel story)

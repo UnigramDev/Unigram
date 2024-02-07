@@ -34,7 +34,7 @@
                               IsSourceGrouped="True" />
     </Page.Resources>
 
-    <Grid>
+    <Grid x:Name="LayoutRoot">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition />

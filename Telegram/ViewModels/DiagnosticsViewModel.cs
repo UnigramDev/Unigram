@@ -237,26 +237,6 @@ namespace Telegram.ViewModels
 
 
 
-        public int ChoosingItemContainer
-        {
-            get => SettingsService.Current.Diagnostics.ChoosingItemContainer;
-            set
-            {
-                if (value >= 0 && value < 3 && SettingsService.Current.Diagnostics.ChoosingItemContainer != value)
-                {
-                    SettingsService.Current.Diagnostics.ChoosingItemContainer = value;
-                    RaisePropertyChanged();
-                }
-            }
-        }
-
-        public List<SettingsOptionItem<int>> ChoosingItemContainerOptions { get; } = new()
-        {
-            new SettingsOptionItem<int>(0, "v0"),
-            new SettingsOptionItem<int>(1, "v1"),
-            new SettingsOptionItem<int>(2, "v2"),
-        };
-
         #region Send logs
 
         public void SendCalls()

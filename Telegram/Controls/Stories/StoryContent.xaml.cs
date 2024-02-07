@@ -139,6 +139,8 @@ namespace Telegram.Controls.Stories
 
         public void Update(ActiveStoriesViewModel activeStories, bool open, int index)
         {
+            Logger.Info();
+
             _viewModel = activeStories;
             _index = index;
 
@@ -271,6 +273,15 @@ namespace Telegram.Controls.Stories
             _storyId = story.StoryId;
         }
 
+        public void UpdateQuality()
+        {
+            var story = ViewModel?.SelectedItem;
+            if (story != null)
+            {
+                Activate(story);
+            }
+        }
+
         private void Update(StoryViewModel story)
         {
             Subtitle.Text = Locale.FormatRelativeShort(story.Date);
@@ -296,40 +307,42 @@ namespace Telegram.Controls.Stories
                     ? Visibility.Collapsed
                     : Visibility.Visible;
 
-            if (story.Content is StoryContentPhoto photo)
+            if (story.Content is StoryContentPhoto photoContent)
             {
-                var file = photo.Photo.GetBig();
+                var file = photoContent.Photo.GetBig();
                 if (file != null)
                 {
                     UpdatePhoto(story, file.Photo, true);
                 }
 
-                var thumbnail = photo.Photo.GetSmall();
+                var thumbnail = photoContent.Photo.GetSmall();
                 if (thumbnail != null /*&& (file == null || !file.Photo.Local.IsDownloadingCompleted)*/)
                 {
-                    UpdateThumbnail(story, thumbnail.Photo, photo.Photo.Minithumbnail, true);
+                    UpdateThumbnail(story, thumbnail.Photo, photoContent.Photo.Minithumbnail, true);
                 }
 
                 Mute.Visibility = Visibility.Collapsed;
                 MutePlaceholder.Visibility = Visibility.Collapsed;
             }
-            else if (story.Content is StoryContentVideo video)
+            else if (story.Content is StoryContentVideo videoContent)
             {
-                var thumbnail = video.Video.Thumbnail;
+                var video = SelectVideoFile(videoContent);
+
+                var thumbnail = video.Thumbnail;
                 if (thumbnail != null /*&& (file == null || !file.Photo.Local.IsDownloadingCompleted)*/)
                 {
-                    UpdateThumbnail(story, thumbnail.File, video.Video.Minithumbnail, true);
+                    UpdateThumbnail(story, thumbnail.File, video.Minithumbnail, true);
                 }
 
-                UpdateVideo(story, /*video.AlternativeVideo?.Video ??*/ video.Video.Video, true);
+                UpdateVideo(story, /*video.AlternativeVideo?.Video ??*/ video.Video, true);
 
                 Mute.Visibility = Visibility.Visible;
-                MutePlaceholder.Visibility = video.Video.IsAnimation
+                MutePlaceholder.Visibility = video.IsAnimation
                     ? Visibility.Visible
                     : Visibility.Collapsed;
 
-                Mute.IsEnabled = !video.Video.IsAnimation;
-                Mute.IsChecked = !video.Video.IsAnimation && !_viewModel.Settings.VolumeMuted;
+                Mute.IsEnabled = !video.IsAnimation;
+                Mute.IsChecked = !video.IsAnimation && !_viewModel.Settings.VolumeMuted;
             }
 
             if (string.IsNullOrEmpty(story.Caption?.Text))
@@ -627,12 +640,12 @@ namespace Telegram.Controls.Stories
         {
             CollapseCaption();
 
-            if (story.Content is StoryContentVideo video && !_unloaded)
+            if (story.Content is StoryContentVideo videoContent && !_unloaded)
             {
-                Progress.Update(_viewModel.Items.IndexOf(_viewModel.SelectedItem), _viewModel.Items.Count, video.Video.Duration);
+                var video = SelectVideoFile(videoContent);
+                var stream = new RemoteFileStream(story.ClientService, video.Video);
 
-                var file = video.Video.Video;
-                var stream = new RemoteFileStream(story.ClientService, file);
+                Progress.Update(_viewModel.Items.IndexOf(_viewModel.SelectedItem), _viewModel.Items.Count, video.Duration);
 
                 if (_player != null)
                 {
@@ -705,6 +718,16 @@ namespace Telegram.Controls.Stories
         private void UpdateVideo(object target, File file)
         {
             UpdateVideo(_viewModel.SelectedItem, file, false);
+        }
+
+        private StoryVideo SelectVideoFile(StoryContentVideo video)
+        {
+            //if (video.AlternativeVideo == null || (SettingsService.Current.Playback.HighQuality && _viewModel.IsPremium))
+            {
+                return video.Video;
+            }
+
+            return video.AlternativeVideo;
         }
 
         private void UpdateThumbnail(StoryViewModel story, File file, Minithumbnail minithumbnail, bool download)
@@ -849,7 +872,8 @@ namespace Telegram.Controls.Stories
             //    _mediaStream = null;
             //}
 
-            var video = story.Content as StoryContentVideo;
+            var videoContent = story.Content as StoryContentVideo;
+            var video = SelectVideoFile(videoContent);
 
             //_loading = true;
             //ShowSkeleton();
@@ -862,7 +886,7 @@ namespace Telegram.Controls.Stories
             Canvas.SetZIndex(prev, -1);
 
             // Preloaded?
-            if (file.Local.DownloadedPrefixSize >= video.Video.PreloadPrefixSize)
+            if (file.Local.DownloadedPrefixSize >= video.PreloadPrefixSize)
             {
                 if (_type == StoryType.Photo && Video != null)
                 {
@@ -874,7 +898,7 @@ namespace Telegram.Controls.Stories
                 Video?.Clear();
             }
 
-            story.ClientService.DownloadFile(file.Id, 32, 0, video.Video.PreloadPrefixSize);
+            story.ClientService.DownloadFile(file.Id, 32, 0, video.PreloadPrefixSize);
 
             _type = StoryType.Video;
         }
@@ -1646,8 +1670,6 @@ namespace Telegram.Controls.Stories
 
                 Children.Add(rectangle);
             }
-
-
         }
     }
 }
