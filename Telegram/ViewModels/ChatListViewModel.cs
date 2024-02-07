@@ -725,7 +725,7 @@ namespace Telegram.ViewModels
 
             public void Handle(UpdateChatPosition update)
             {
-                if (update.Position.List.ListEquals(_chatList))
+                if (update.Position.List.AreTheSame(_chatList))
                 {
                     Handle(update.ChatId, update.Position.Order);
                 }

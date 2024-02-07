@@ -827,7 +827,7 @@ namespace Telegram.Views
                     args.Handled = true;
                 }
                 else if (ViewModel.Chats.Items.ChatList is ChatListArchive
-                    || ViewModel.Folders.Count > 0 && !ViewModel.Chats.Items.ChatList.ListEquals(ViewModel.Folders[0].ChatList))
+                    || ViewModel.Folders.Count > 0 && !ViewModel.Chats.Items.ChatList.AreTheSame(ViewModel.Folders[0].ChatList))
                 {
                     UpdateFolder(ViewModel.Folders.Count > 0 ? ViewModel.Folders[0] : ChatFolderViewModel.Main);
                     args.Handled = true;

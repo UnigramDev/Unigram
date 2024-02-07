@@ -1829,7 +1829,7 @@ namespace Telegram.Services
                     int i;
                     for (i = 0; i < value.Positions.Count; i++)
                     {
-                        if (value.Positions[i].List.ToId() == updateChatPosition.Position.List.ToId())
+                        if (ChatListEqualityComparer.Instance.Equals(value.Positions[i].List, updateChatPosition.Position.List))
                         {
                             break;
                         }

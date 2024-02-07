@@ -197,7 +197,7 @@ namespace Telegram.ViewModels
         {
             foreach (var folder in _folders)
             {
-                if (folder.ChatList is ChatListFolder && folder.ChatList.ListEquals(update.ChatList))
+                if (folder.ChatList is ChatListFolder && folder.ChatList.AreTheSame(update.ChatList))
                 {
                     BeginOnUIThread(() => folder.UpdateCount(update));
                 }

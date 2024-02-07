@@ -14,29 +14,28 @@ namespace Telegram.Services
 {
     public partial class ClientService
     {
-        private readonly NewDictionary<int, SortedSet<OrderedChat>> _chatList = new NewDictionary<int, SortedSet<OrderedChat>>();
-        private readonly DefaultDictionary<int, bool> _haveFullChatList = new DefaultDictionary<int, bool>();
+        private readonly NewDictionary<ChatList, SortedSet<OrderedChat>> _chatList = new(ChatListEqualityComparer.Instance);
+        private readonly DefaultDictionary<ChatList, bool> _haveFullChatList = new(ChatListEqualityComparer.Instance);
 
         private void SetChatPositions(Chat chat, IList<ChatPosition> positions)
         {
             Monitor.Enter(_chatList);
-            //Monitor.Enter(chat);
 
             foreach (var position in chat.Positions)
             {
-                var chatList = _chatList[position.List.ToId()];
-                chatList?.Remove(new OrderedChat(chat.Id, position));
+                _chatList[position.List].Remove(new OrderedChat(chat.Id, position));
             }
 
             chat.Positions = positions;
 
             foreach (var position in chat.Positions)
             {
-                var chatList = _chatList[position.List.ToId()];
-                chatList?.Add(new OrderedChat(chat.Id, position));
+                if (position.Order != 0)
+                {
+                    _chatList[position.List].Add(new OrderedChat(chat.Id, position));
+                }
             }
 
-            //Monitor.Exit(chat);
             Monitor.Exit(_chatList);
         }
 
@@ -49,20 +48,13 @@ namespace Telegram.Services
         {
             Monitor.Enter(_chatList);
 
-            var index = chatList switch
-            {
-                ChatListArchive => 1,
-                ChatListFolder folder => folder.ChatFolderId,
-                _ => 0
-            };
-
             var count = offset + limit;
-            var sorted = _chatList[index];
+            var sorted = _chatList[chatList];
 
 #if MOCKUP
             _haveFullChatList[index] = true;
 #else
-            if (!_haveFullChatList[index] && count > sorted.Count && !reentrancy)
+            if (!_haveFullChatList[chatList] && count > sorted.Count && !reentrancy)
             {
                 Monitor.Exit(_chatList);
 
@@ -73,7 +65,7 @@ namespace Telegram.Services
                     {
                         if (error.Code == 404)
                         {
-                            _haveFullChatList[index] = true;
+                            _haveFullChatList[chatList] = true;
                         }
                         else
                         {
@@ -151,8 +143,42 @@ namespace Telegram.Services
         }
     }
 
+    class ChatListEqualityComparer : IEqualityComparer<ChatList>
+    {
+        public static readonly ChatListEqualityComparer Instance = new();
+
+        public bool Equals(ChatList x, ChatList y)
+        {
+            return x.AreTheSame(y);
+        }
+
+        public int GetHashCode(ChatList obj)
+        {
+            if (obj is ChatListMain or null)
+            {
+                return 0;
+            }
+            else if (obj is ChatListArchive)
+            {
+                return 1;
+            }
+            else if (obj is ChatListFolder folder)
+            {
+                return folder.ChatFolderId;
+            }
+
+            return -1;
+        }
+    }
+
     class NewDictionary<TKey, TValue> : Dictionary<TKey, TValue> where TValue : new()
     {
+        public NewDictionary(IEqualityComparer<TKey> comparer)
+            : base(comparer)
+        {
+
+        }
+
         public new TValue this[TKey key]
         {
             get
@@ -173,6 +199,12 @@ namespace Telegram.Services
 
     class DefaultDictionary<TKey, TValue> : Dictionary<TKey, TValue>
     {
+        public DefaultDictionary(IEqualityComparer<TKey> comparer)
+            : base(comparer)
+        {
+
+        }
+
         public new TValue this[TKey key]
         {
             get

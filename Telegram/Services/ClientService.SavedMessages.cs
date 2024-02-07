@@ -20,15 +20,16 @@ namespace Telegram.Services
         private void SetSavedMessagesTopicOrder(SavedMessagesTopic topic, long order)
         {
             Monitor.Enter(_savedMessages);
-            //Monitor.Enter(chat);
 
             _savedMessages.Remove(new OrderedTopic(topic.Id, topic.Order));
 
             topic.Order = order;
 
-            _savedMessages.Add(new OrderedTopic(topic.Id, order));
+            if (order != 0)
+            {
+                _savedMessages.Add(new OrderedTopic(topic.Id, order));
+            }
 
-            //Monitor.Exit(chat);
             Monitor.Exit(_savedMessages);
         }
 

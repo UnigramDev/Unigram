@@ -316,24 +316,6 @@ namespace Telegram.Td.Api
             return false;
         }
 
-        public static int ToId(this ChatList chatList)
-        {
-            if (chatList is ChatListMain or null)
-            {
-                return 0;
-            }
-            else if (chatList is ChatListArchive)
-            {
-                return 1;
-            }
-            else if (chatList is ChatListFolder folder)
-            {
-                return folder.ChatFolderId;
-            }
-
-            return -1;
-        }
-
         #region Json
 
         public static bool GetNamedBoolean(this JsonValueObject json, string key, bool defaultValue)
@@ -532,7 +514,7 @@ namespace Telegram.Td.Api
             return freeform.Colors.Select(x => x.ToColor()).ToArray();
         }
 
-        public static bool ListEquals(this ChatList x, ChatList y, bool allowNull = true)
+        public static bool AreTheSame(this ChatList x, ChatList y, bool allowNull = true)
         {
             if ((x is ChatListMain || x == null) && (y is ChatListMain || (y == null && allowNull)))
             {
@@ -545,6 +527,20 @@ namespace Telegram.Td.Api
             else if (x is ChatListFolder folderX && y is ChatListFolder folderY)
             {
                 return folderX.ChatFolderId == folderY.ChatFolderId;
+            }
+
+            return false;
+        }
+
+        public static bool AreTheSame(this StoryList x, StoryList y)
+        {
+            if (x is StoryListMain)
+            {
+                return y is StoryListMain;
+            }
+            else if (x is StoryListArchive)
+            {
+                return y is StoryListArchive;
             }
 
             return false;
@@ -1605,7 +1601,7 @@ namespace Telegram.Td.Api
 
             for (int i = 0; i < chat.Positions.Count; i++)
             {
-                if (chat.Positions[i].List.ListEquals(chatList))
+                if (chat.Positions[i].List.AreTheSame(chatList))
                 {
                     Monitor.Exit(chat);
                     return chat.Positions[i];
@@ -1627,7 +1623,7 @@ namespace Telegram.Td.Api
 
             for (int i = 0; i < chat.Positions.Count; i++)
             {
-                if (chat.Positions[i].List.ListEquals(chatList))
+                if (chat.Positions[i].List.AreTheSame(chatList))
                 {
                     Monitor.Exit(chat);
                     return chat.Positions[i].Order;
@@ -1642,7 +1638,7 @@ namespace Telegram.Td.Api
         {
             for (int i = 0; i < positions.Count; i++)
             {
-                if (positions[i].List.ListEquals(chatList))
+                if (positions[i].List.AreTheSame(chatList))
                 {
                     return positions[i].Order;
                 }
