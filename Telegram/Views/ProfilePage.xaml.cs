@@ -418,7 +418,10 @@ namespace Telegram.Views
                 _ => -1
             };
 
-            if (lastCacheIndex == scrollingHost.Items.Count - 1 && scrollingHost.ItemsSource is ISupportIncrementalLoading supportIncrementalLoading && supportIncrementalLoading.HasMoreItems)
+            var needsMore = lastCacheIndex == scrollingHost.Items.Count - 1;
+            needsMore |= scrollingHost.ActualHeight < ScrollingHost.ActualHeight;
+
+            if (needsMore && scrollingHost.ItemsSource is ISupportIncrementalLoading supportIncrementalLoading && supportIncrementalLoading.HasMoreItems)
             {
                 var result = await supportIncrementalLoading.LoadMoreItemsAsync(50);
                 loadedMore = result.Count;
