@@ -364,7 +364,7 @@ namespace Telegram.ViewModels
 
         public void Handle(UpdateChatActionBar update)
         {
-            if (update.ChatId == _chat?.Id)
+            if (update.ChatId == _chat?.Id && _type == DialogType.History)
             {
                 BeginOnUIThread(() => Delegate?.UpdateChatActionBar(_chat));
             }

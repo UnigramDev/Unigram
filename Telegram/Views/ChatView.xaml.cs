@@ -3994,7 +3994,14 @@ namespace Telegram.Views
 
         public void UpdateChatActionBar(Chat chat)
         {
-            ActionBar.UpdateChatActionBar(chat);
+            if (ViewModel.Type == DialogType.History)
+            {
+                ActionBar.UpdateChatActionBar(chat);
+            }
+            else
+            {
+                ActionBar.UpdateChatActionBar(null);
+            }
         }
 
         public void UpdateChatDefaultDisableNotification(Chat chat, bool defaultDisableNotification)

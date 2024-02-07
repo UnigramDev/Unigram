@@ -38,6 +38,12 @@ namespace Telegram.Controls.Chats
 
         public void UpdateChatActionBar(Chat chat)
         {
+            if (chat == null)
+            {
+                ShowHide(false);
+                return;
+            }
+
             if (chat.ActionBar != null)
             {
                 LayoutRoot.ColumnDefinitions.Clear();
