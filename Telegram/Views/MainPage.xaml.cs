@@ -1689,7 +1689,7 @@ namespace Telegram.Views
             {
                 ViewModel.Chats.SelectedItem = chat.Id;
 
-                if (chat.ViewAsTopics)
+                if (chat.ViewAsTopics && chat.Type is ChatTypeSupergroup)
                 {
                     if (ViewModel.Chats.SelectedItem != ViewModel.Topics.Chat?.Id)
                     {

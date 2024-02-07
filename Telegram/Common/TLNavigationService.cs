@@ -164,14 +164,10 @@ namespace Telegram.Common
                     return;
                 }
 
-                if (user.Id == _clientService.Options.MyId && savedMessagesTopicId == null)
+                if (user.Id == _clientService.Options.MyId && chat.ViewAsTopics && savedMessagesTopicId == null)
                 {
-                    var settings = TypeResolver.Current.Resolve<ISettingsService>(_clientService.SessionId);
-                    if (settings != null && settings.SavedViewAsChats)
-                    {
-                        Navigate(typeof(ProfilePage), chat.Id, infoOverride: new SuppressNavigationTransitionInfo());
-                        return;
-                    }
+                    Navigate(typeof(ProfilePage), chat.Id, infoOverride: new SuppressNavigationTransitionInfo());
+                    return;
                 }
 
                 if (user.RestrictionReason.Length > 0)

@@ -3016,7 +3016,7 @@ namespace Telegram.ViewModels
             }
         }
 
-        public void ViewAsChats()
+        public async void ViewAsChats()
         {
             var chat = _chat;
             if (chat == null)
@@ -3024,7 +3024,7 @@ namespace Telegram.ViewModels
                 return;
             }
 
-            Settings.SavedViewAsChats = true;
+            await ClientService.SendAsync(new ToggleChatViewAsTopics(chat.Id, true));
 
             var target = typeof(ProfilePage);
             var parameter = chat.Id;

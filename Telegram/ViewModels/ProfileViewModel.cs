@@ -368,7 +368,7 @@ namespace Telegram.ViewModels
             }
         }
 
-        public void SendMessage()
+        public async void SendMessage()
         {
             var chat = _chat;
             if (chat == null)
@@ -378,7 +378,7 @@ namespace Telegram.ViewModels
 
             if (chat.Id == ClientService.Options.MyId)
             {
-                Settings.SavedViewAsChats = false;
+                await ClientService.SendAsync(new ToggleChatViewAsTopics(chat.Id, false));
             }
 
             if (NavigationService.IsChatOpen(chat.Id))
