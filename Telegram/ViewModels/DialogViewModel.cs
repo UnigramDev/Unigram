@@ -1826,7 +1826,8 @@ namespace Telegram.ViewModels
             if (message.ReplyTo is MessageReplyToMessage replyToMessage)
             {
                 if (_thread?.ChatId == replyToMessage.ChatId &&
-                    _thread?.Messages[^1].Id == replyToMessage.MessageId)
+                    _thread?.Messages[^1].Id == replyToMessage.MessageId &&
+                    replyToMessage.Quote == null)
                 {
                     message.ReplyToState = MessageReplyToState.Hidden;
                     return;
