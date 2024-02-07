@@ -52,7 +52,8 @@ namespace Telegram
             Log(LogLevel.Error, exception.ToString(), member, filePath, line);
 
 #if !DEBUG
-            Microsoft.AppCenter.Crashes.Crashes.TrackError(exception, attachments: Microsoft.AppCenter.Crashes.ErrorAttachmentLog.AttachmentWithText(Dump(), "crash.txt"));
+            var report = WatchDog.BuildReport(exception);
+            Microsoft.AppCenter.Crashes.Crashes.TrackError(exception, attachments: Microsoft.AppCenter.Crashes.ErrorAttachmentLog.AttachmentWithText(report, "crash.txt"));
 #endif
         }
 

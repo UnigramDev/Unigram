@@ -226,6 +226,14 @@ namespace Telegram
 
         private static void Track(string reportId, Exception exception)
         {
+            var report = BuildReport(exception);
+
+            File.WriteAllText(_crashLog, reportId);
+            File.WriteAllText(GetErrorReportPath(reportId), report);
+        }
+
+        public static string BuildReport(Exception exception)
+        {
             var version = VersionLabel.GetVersion();
             var language = LocaleService.Current.Id;
 
@@ -265,12 +273,10 @@ namespace Telegram
             }
 
             info += $"HRESULT: 0x{exception.HResult:X4}\n" + "\n";
+            info += Environment.StackTrace + "\n\n";
 
             var dump = Logger.Dump();
-            var payload = info + dump;
-
-            File.WriteAllText(_crashLog, reportId);
-            File.WriteAllText(GetErrorReportPath(reportId), payload);
+            return info + dump;
         }
 
         private static string GetErrorReportPath(string reportId)
