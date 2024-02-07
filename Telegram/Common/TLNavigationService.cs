@@ -397,7 +397,7 @@ namespace Telegram.Common
                                 GoBackAt(0, false);
 
                                 Frame.BackStack.Add(new Windows.UI.Xaml.Navigation.PageStackEntry(target, parameter, null));
-                                GoBack(infoOverride: new SlideNavigationTransitionInfo { Effect = SlideNavigationTransitionEffect.FromRight });
+                                GoBack(state, new SlideNavigationTransitionInfo { Effect = SlideNavigationTransitionEffect.FromRight });
                                 Frame.ForwardStack.Clear();
                                 return;
                             }
