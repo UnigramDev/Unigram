@@ -357,6 +357,8 @@ namespace Telegram.Controls
 
         protected override Size MeasureOverride(Size availableSize)
         {
+            Logger.Info(availableSize);
+
             if (Owner != null)
             {
                 return Owner.DoMeasure(availableSize);
@@ -367,6 +369,8 @@ namespace Telegram.Controls
 
         protected override Size ArrangeOverride(Size finalSize)
         {
+            Logger.Info(finalSize);
+
             if (Owner != null)
             {
                 return Owner.DoArrange(finalSize);

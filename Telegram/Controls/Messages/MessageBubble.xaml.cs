@@ -1148,7 +1148,7 @@ namespace Telegram.Controls.Messages
             if (ForwardLabel == null)
             {
                 ForwardLabel = GetTemplateChild(nameof(ForwardLabel)) as TextBlock;
-                
+
                 ForwardRun = ForwardLabel.Inlines[0] as Run;
                 ForwardLink = ForwardLabel.Inlines[2] as Hyperlink;
                 ForwardLinkRun = ForwardLink.Inlines[0] as Run;

@@ -437,6 +437,9 @@ namespace Telegram.ViewModels
                 }
                 else
                 {
+                    // For now, we just ignore any other crash.
+                    return;
+
                     var confirm = await ShowPopupAsync("It seems that the app terminated unexpectedly. Do you want to report this problem?", "Something went wrong", "OK", "Cancel");
                     if (confirm == ContentDialogResult.Primary)
                     {

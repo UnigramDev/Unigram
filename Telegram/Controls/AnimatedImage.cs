@@ -613,63 +613,78 @@ namespace Telegram.Controls
 
             if (_effectBrush != null)
             {
-                _effectBrush.Properties.InsertColor("Tint.Color", replacement.Color);
-                return;
+                try
+                {
+                    _effectBrush.Properties.InsertColor("Tint.Color", replacement.Color);
+                    return;
+                }
+                catch (Exception ex)
+                {
+                    // If it throws, let's rebuild the brush
+                    Logger.Error(ex);
+                }
             }
 
-            var compositor = Window.Current.Compositor;
-
-            // Build an effect that takes the source image and uses the alpha channel and replaces all other channels with
-            // the ReplacementColor's RGB.
-            var colorMatrixEffect = new ColorMatrixEffect();
-            colorMatrixEffect.Source = new CompositionEffectSourceParameter("Source");
-            var colorMatrix = new Matrix5x4();
-
-            // If the ReplacementColor is not transparent then use the RGB values as the new color. Otherwise
-            // just show the target by using an Identity colorMatrix.
-            if (_replacementColor.A != 0)
+            try
             {
-                colorMatrix.M51 = colorMatrix.M52 = colorMatrix.M53 = colorMatrix.M44 = 1;
+                var compositor = Window.Current.Compositor;
+
+                // Build an effect that takes the source image and uses the alpha channel and replaces all other channels with
+                // the ReplacementColor's RGB.
+                var colorMatrixEffect = new ColorMatrixEffect();
+                colorMatrixEffect.Source = new CompositionEffectSourceParameter("Source");
+                var colorMatrix = new Matrix5x4();
+
+                // If the ReplacementColor is not transparent then use the RGB values as the new color. Otherwise
+                // just show the target by using an Identity colorMatrix.
+                if (_replacementColor.A != 0)
+                {
+                    colorMatrix.M51 = colorMatrix.M52 = colorMatrix.M53 = colorMatrix.M44 = 1;
+                }
+                else
+                {
+                    colorMatrix.M11 = colorMatrix.M22 = colorMatrix.M33 = colorMatrix.M44 = 1;
+                }
+
+                colorMatrixEffect.ColorMatrix = colorMatrix;
+
+                var tintEffect = new TintEffect();
+                tintEffect.Name = "Tint";
+                tintEffect.Source = colorMatrixEffect;
+                tintEffect.Color = _replacementColor;
+
+                var effectFactory = compositor.CreateEffectFactory(tintEffect, new[] { "Tint.Color" });
+
+                var actualSize = FrameSize.ToVector2();
+                var offset = Vector2.Zero;
+
+                // Create a VisualSurface positioned at the same location as this control and feed that
+                // through the color effect.
+                var surfaceBrush = compositor.CreateSurfaceBrush();
+                surfaceBrush.Stretch = CompositionStretch.None;
+                var surface = compositor.CreateVisualSurface();
+
+                // Select the source visual and the offset/size of this control in that element's space.
+                surface.SourceVisual = ElementComposition.GetElementVisual(LayoutRoot);
+                surface.SourceOffset = offset;
+                surface.SourceSize = actualSize;
+                surfaceBrush.Surface = surface;
+                surfaceBrush.Stretch = CompositionStretch.None;
+
+                _effectBrush = effectFactory.CreateBrush();
+                _effectBrush.SetSourceParameter("Source", surfaceBrush);
+
+                var visual = compositor.CreateSpriteVisual();
+                visual.Size = actualSize;
+                visual.Brush = _effectBrush;
+
+                LayoutRoot.Opacity = 0;
+                ElementCompositionPreview.SetElementChildVisual(this, visual);
             }
-            else
+            catch (Exception ex)
             {
-                colorMatrix.M11 = colorMatrix.M22 = colorMatrix.M33 = colorMatrix.M44 = 1;
+                Logger.Error(ex);
             }
-
-            colorMatrixEffect.ColorMatrix = colorMatrix;
-
-            var tintEffect = new TintEffect();
-            tintEffect.Name = "Tint";
-            tintEffect.Source = colorMatrixEffect;
-            tintEffect.Color = _replacementColor;
-
-            var effectFactory = compositor.CreateEffectFactory(tintEffect, new[] { "Tint.Color" });
-
-            var actualSize = FrameSize.ToVector2();
-            var offset = Vector2.Zero;
-
-            // Create a VisualSurface positioned at the same location as this control and feed that
-            // through the color effect.
-            var surfaceBrush = compositor.CreateSurfaceBrush();
-            surfaceBrush.Stretch = CompositionStretch.None;
-            var surface = compositor.CreateVisualSurface();
-
-            // Select the source visual and the offset/size of this control in that element's space.
-            surface.SourceVisual = ElementComposition.GetElementVisual(LayoutRoot);
-            surface.SourceOffset = offset;
-            surface.SourceSize = actualSize;
-            surfaceBrush.Surface = surface;
-            surfaceBrush.Stretch = CompositionStretch.None;
-
-            _effectBrush = effectFactory.CreateBrush();
-            _effectBrush.SetSourceParameter("Source", surfaceBrush);
-
-            var visual = compositor.CreateSpriteVisual();
-            visual.Size = actualSize;
-            visual.Brush = _effectBrush;
-
-            LayoutRoot.Opacity = 0;
-            ElementCompositionPreview.SetElementChildVisual(this, visual);
         }
 
         #endregion

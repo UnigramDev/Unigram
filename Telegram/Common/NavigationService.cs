@@ -301,6 +301,13 @@ namespace Telegram.Common
                     return args.ChatId;
                 }
             }
+            //else if (service.CurrentPageType == typeof(ChatSavedPage))
+            //{
+            //    if (service.CurrentPageParam is SavedMessagesTopicSavedFromChat savedFromChat)
+            //    {
+            //        return savedFromChat.ChatId;
+            //    }
+            //}
 
             for (int i = service.Frame.BackStackDepth - 1; i >= 0; i--)
             {
@@ -319,6 +326,13 @@ namespace Telegram.Common
                         return args.ChatId;
                     }
                 }
+                //else if (entry.SourcePageType == typeof(ChatSavedPage))
+                //{
+                //    if (entry.Parameter is SavedMessagesTopicSavedFromChat savedFromChat)
+                //    {
+                //        return savedFromChat.ChatId;
+                //    }
+                //}
             }
 
             return 0;

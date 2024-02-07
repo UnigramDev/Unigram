@@ -229,12 +229,12 @@ namespace Telegram.Controls.Messages
             if (IsChecked is true)
             {
                 _viewModel.SavedMessagesTag = null;
-                ClearValue(RadioButton.IsCheckedProperty);
+                ClearValue(IsCheckedProperty);
             }
             else
             {
                 _viewModel.SavedMessagesTag = _tag.Tag;
-                SetValue(RadioButton.IsCheckedProperty, true);
+                SetValue(IsCheckedProperty, true);
             }
         }
 

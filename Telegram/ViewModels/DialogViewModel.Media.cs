@@ -107,7 +107,7 @@ namespace Telegram.ViewModels
         {
             try
             {
-                if (package.AvailableFormats.Contains("application/x-tl-message"))
+                if (false && package.AvailableFormats.Contains("application/x-tl-message"))
                 {
                     var data = await package.GetDataAsync("application/x-tl-message") as IRandomAccessStream;
                     var reader = new DataReader(data.GetInputStreamAt(0));
@@ -120,6 +120,8 @@ namespace Telegram.ViewModels
                     {
                         return;
                     }
+
+                    // TODO: this is a forward
                 }
 
                 if (package.AvailableFormats.Contains(StandardDataFormats.Bitmap))

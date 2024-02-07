@@ -53,7 +53,6 @@ namespace LibVLCSharp.Platforms.Windows
         private void OnDisconnected(object sender, RoutedEventArgs e)
         {
             Application.Current.Suspending -= OnSuspending;
-
             DestroySwapChain();
         }
 
@@ -85,7 +84,11 @@ namespace LibVLCSharp.Platforms.Windows
 
         private void OnSizeChanged(object sender, SizeChangedEventArgs e)
         {
-            if (_loaded)
+            if (IsDisconnected)
+            {
+                DestroySwapChain();
+            }
+            else if (_loaded)
             {
                 UpdateSize();
             }
@@ -160,13 +163,21 @@ namespace LibVLCSharp.Platforms.Windows
         {
             // Do not create the swapchain when the VideoView is collapsed.
             if (_panel == null || _panel.ActualHeight == 0)
+            {
                 return;
+            }
+
+            if (IsDisconnected)
+            {
+                DestroySwapChain();
+                return;
+            }
 
             SharpDX.DXGI.Factory2 dxgiFactory = null;
             try
             {
                 var creationFlags =
-                    DeviceCreationFlags.BgraSupport | DeviceCreationFlags.VideoSupport;
+                    DeviceCreationFlags.BgraSupport /*| DeviceCreationFlags.VideoSupport*/;
 
                 if (Telegram.Constants.DEBUG)
                 {

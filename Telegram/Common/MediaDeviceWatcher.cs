@@ -196,6 +196,9 @@ namespace Telegram.Common
                 return false;
             }
 
+            // VoIP isn't supported on Windows N because:
+            // - MediaCapture is used for capturing video (no alternatives on WinRT)
+            // - MediaFoundation is used for encoding/decoding video frames (can fallback for WebRTC's software)
             await MessagePopup.ShowAsync(Strings.VoipPlatformUnsupportedText, Strings.VoipPlatformUnsupportedTitle, Strings.OK);
             return true;
         }

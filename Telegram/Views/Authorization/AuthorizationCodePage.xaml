@@ -31,7 +31,7 @@
                     Grid.Row="1">
             <controls:AnimatedImage FrameSize="160,160"
                                     DecodeFrameType="Logical"
-                                    Source="{x:Bind ConvertAnimation(ViewModel.CodeInfo), FallbackValue=''}"
+                                    Source="{x:Bind ConvertAnimation(ViewModel.CodeInfo), FallbackValue='ms-appx:///Assets/Animations/AuthorizationStateWaitCode.tgs'}"
                                     AutoPlay="True"
                                     LoopCount="1"
                                     IsCachingEnabled="False"
