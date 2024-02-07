@@ -452,6 +452,8 @@ namespace Telegram.Controls
             TextParagraphType lastType = null;
             TextParagraphType firstType = null;
 
+            var alignment = TextAlignment;
+
             var text = styled.Text;
             var workaround = 0;
 
@@ -479,6 +481,11 @@ namespace Telegram.Controls
                 //    TextDirectionality.RightToLeft => (uint)TextAlignment.Right,
                 //    _ => (uint)TextAlignment.DetectFromContent
                 //});
+
+                if (alignment == TextAlignment.Center)
+                {
+                    direct.SetEnumProperty(paragraph, XamlPropertyIndex.Block_TextAlignment, (uint)alignment);
+                }
 
                 var direction = part.Direction switch
                 {
