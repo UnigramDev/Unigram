@@ -539,8 +539,8 @@ namespace Telegram.ViewModels
 
         public bool IsEndReached()
         {
-            var chat = _chat;
-            if (chat?.LastMessage == null)
+            var lastMessage = _savedMessagesTopic?.LastMessage ?? _chat?.LastMessage;
+            if (lastMessage == null)
             {
                 return false;
             }
@@ -556,7 +556,7 @@ namespace Telegram.ViewModels
                 return true;
             }
 
-            return chat.LastMessage?.Id == last.Id;
+            return lastMessage.Id == last.Id;
         }
 
         private bool? _isFirstSliceLoaded;
@@ -872,7 +872,12 @@ namespace Telegram.ViewModels
             long lastReadMessageId;
             long lastMessageId;
 
-            if (_topic is ForumTopic topic)
+            if (_savedMessagesTopic is SavedMessagesTopic savedMessagesTopic)
+            {
+                lastReadMessageId = savedMessagesTopic.LastMessage?.Id ?? long.MaxValue;
+                lastMessageId = savedMessagesTopic.LastMessage?.Id ?? long.MaxValue;
+            }
+            else if (_topic is ForumTopic topic)
             {
                 lastReadMessageId = topic.LastReadInboxMessageId;
                 lastMessageId = topic.LastMessage?.Id ?? long.MaxValue;
@@ -1341,7 +1346,12 @@ namespace Telegram.ViewModels
                     long lastReadMessageId;
                     long lastMessageId;
 
-                    if (_topic is ForumTopic topic)
+                    if (_savedMessagesTopic is SavedMessagesTopic savedMessagesTopic)
+                    {
+                        lastReadMessageId = savedMessagesTopic.LastMessage?.Id ?? long.MaxValue;
+                        lastMessageId = savedMessagesTopic.LastMessage?.Id ?? long.MaxValue;
+                    }
+                    else if (_topic is ForumTopic topic)
                     {
                         lastReadMessageId = topic.LastReadInboxMessageId;
                         lastMessageId = topic.LastMessage?.Id ?? long.MaxValue;
@@ -1444,11 +1454,6 @@ namespace Telegram.ViewModels
                             break;
                         }
                     }
-                }
-
-                if (firstVisibleIndex == -1)
-                {
-                    System.Diagnostics.Debugger.Break();
                 }
 
                 IEnumerable<Message> values;
@@ -1995,38 +2000,35 @@ namespace Telegram.ViewModels
                 state.Remove("message_id");
                 LoadMessageSliceAsync(null, navigation);
             }
-            else if (_type == DialogType.SavedMessagesTopic)
-            {
-                Logger.Debug(string.Format("{0} - Loadings saved messages topic", chat.Id));
-
-                LoadMessageSliceAsync(null, long.MaxValue, VerticalAlignment.Bottom);
-            }
             else
             {
-                bool TryRemove(long chatId, out long v1, out long v2)
-                {
-                    var a = Settings.Chats.TryRemove(chat.Id, ThreadId, ChatSetting.ReadInboxMaxId, out v1);
-                    var b = Settings.Chats.TryRemove(chat.Id, ThreadId, ChatSetting.Index, out v2);
-                    return a && b;
-                }
-
                 long lastReadMessageId;
                 long lastMessageId;
+                long secondaryId;
 
-                if (_topic is ForumTopic topic)
+                if (_savedMessagesTopic is SavedMessagesTopic savedMessagesTopic)
+                {
+                    lastReadMessageId = 0;
+                    lastMessageId = savedMessagesTopic.LastMessage?.Id ?? long.MaxValue;
+                    secondaryId = savedMessagesTopic.Id;
+                }
+                else if (_topic is ForumTopic topic)
                 {
                     lastReadMessageId = topic.LastReadInboxMessageId;
                     lastMessageId = topic.LastMessage?.Id ?? long.MaxValue;
+                    secondaryId = ThreadId; // topic.Info.MessageThreadId;
                 }
                 else if (_thread is MessageThreadInfo thread)
                 {
                     lastReadMessageId = thread.ReplyInfo?.LastReadInboxMessageId ?? long.MaxValue;
                     lastMessageId = thread.ReplyInfo?.LastMessageId ?? long.MaxValue;
+                    secondaryId = ThreadId; //; thread.MessageThreadId;
                 }
                 else
                 {
                     lastReadMessageId = chat.LastReadInboxMessageId;
                     lastMessageId = chat.LastMessage?.Id ?? long.MaxValue;
+                    secondaryId = 0;
                 }
 
                 // TODO: verify this is valid in all cases
@@ -2035,11 +2037,18 @@ namespace Telegram.ViewModels
                     lastReadMessageId = lastMessageId;
                 }
 
+                bool TryRemove(long chatId, out long v1, out long v2)
+                {
+                    var a = Settings.Chats.TryRemove(chat.Id, secondaryId, ChatSetting.ReadInboxMaxId, out v1);
+                    var b = Settings.Chats.TryRemove(chat.Id, secondaryId, ChatSetting.Index, out v2);
+                    return a && b;
+                }
+
                 if (TryRemove(chat.Id, out long readInboxMaxId, out long start) &&
                     readInboxMaxId == lastReadMessageId &&
                     start <= lastReadMessageId)
                 {
-                    if (Settings.Chats.TryRemove(chat.Id, ThreadId, ChatSetting.Pixel, out double pixel))
+                    if (Settings.Chats.TryRemove(chat.Id, secondaryId, ChatSetting.Pixel, out double pixel))
                     {
                         Logger.Debug(string.Format("{0} - Loading messages from specific pixel", chat.Id));
                         LoadMessageSliceAsync(null, start, VerticalAlignment.Bottom, pixel);
@@ -2243,14 +2252,38 @@ namespace Telegram.ViewModels
 
             ClientService.Send(new CloseChat(chat.Id));
 
-            if (_type is not DialogType.History and not DialogType.Thread)
+            if (_type is not DialogType.History and not DialogType.Thread and not DialogType.SavedMessagesTopic)
             {
                 return;
             }
 
+            long lastReadMessageId;
+            long secondaryId;
+
+            if (_savedMessagesTopic is SavedMessagesTopic savedMessagesTopic)
+            {
+                lastReadMessageId = 0;
+                secondaryId = savedMessagesTopic.Id;
+            }
+            else if (_topic is ForumTopic topic)
+            {
+                lastReadMessageId = topic.LastReadInboxMessageId;
+                secondaryId = ThreadId; // topic.Info.MessageThreadId;
+            }
+            else if (_thread is MessageThreadInfo thread)
+            {
+                lastReadMessageId = thread.ReplyInfo.LastReadInboxMessageId;
+                secondaryId = ThreadId; //; thread.MessageThreadId;
+            }
+            else
+            {
+                lastReadMessageId = chat.LastReadInboxMessageId;
+                secondaryId = 0;
+            }
+
             void Remove(string reason)
             {
-                Settings.Chats.Clear(chat.Id, ThreadId);
+                Settings.Chats.Clear(chat.Id, secondaryId);
                 Logger.Debug(string.Format("{0} - Removing scrolling position, {1}", chat.Id, reason));
             }
 
@@ -2265,25 +2298,10 @@ namespace Telegram.ViewModels
 
                     if (lastVisibleId != 0 && lastVisibleId != chat.LastMessage?.Id)
                     {
-                        long lastReadMessageId;
-
-                        if (_topic is ForumTopic topic)
-                        {
-                            lastReadMessageId = topic.LastReadInboxMessageId;
-                        }
-                        else if (_thread is MessageThreadInfo thread)
-                        {
-                            lastReadMessageId = thread.ReplyInfo.LastReadInboxMessageId;
-                        }
-                        else
-                        {
-                            lastReadMessageId = chat.LastReadInboxMessageId;
-                        }
-
                         if (firstNonVisibleId < lastReadMessageId)
                         {
-                            Settings.Chats[chat.Id, ThreadId, ChatSetting.ReadInboxMaxId] = lastReadMessageId;
-                            Settings.Chats[chat.Id, ThreadId, ChatSetting.Index] = lastVisibleId;
+                            Settings.Chats[chat.Id, secondaryId, ChatSetting.ReadInboxMaxId] = lastReadMessageId;
+                            Settings.Chats[chat.Id, secondaryId, ChatSetting.Index] = lastVisibleId;
 
                             var container = field.ContainerFromIndex(lastVisibleIndex) as ListViewItem;
                             if (container != null)
@@ -2291,12 +2309,12 @@ namespace Telegram.ViewModels
                                 var transform = container.TransformToVisual(field);
                                 var position = transform.TransformPoint(new Point());
 
-                                Settings.Chats[chat.Id, ThreadId, ChatSetting.Pixel] = field.ActualHeight - (position.Y + container.ActualHeight);
+                                Settings.Chats[chat.Id, secondaryId, ChatSetting.Pixel] = field.ActualHeight - (position.Y + container.ActualHeight);
                                 Logger.Debug(string.Format("{0} - Saving scrolling position, message: {1}, pixel: {2}", chat.Id, lastVisibleId, field.ActualHeight - (position.Y + container.ActualHeight)));
                             }
                             else
                             {
-                                Settings.Chats.TryRemove(chat.Id, ThreadId, ChatSetting.Pixel, out double pixel);
+                                Settings.Chats.TryRemove(chat.Id, secondaryId, ChatSetting.Pixel, out double pixel);
                                 Logger.Debug(string.Format("{0} - Saving scrolling position, message: {1}, pixel: none", chat.Id, lastVisibleId));
                             }
                         }
