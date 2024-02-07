@@ -76,7 +76,7 @@ namespace Telegram.ViewModels.Chats
 
         protected override async Task OnNavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
         {
-            if (parameter is not ChatNavigationArgs args)
+            if (parameter is not ChatMessageIdNavigationArgs args)
             {
                 return;
             }

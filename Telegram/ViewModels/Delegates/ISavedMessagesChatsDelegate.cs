@@ -4,6 +4,6 @@ namespace Telegram.ViewModels.Delegates
 {
     public interface ISavedMessagesChatsDelegate : IViewModelDelegate
     {
-        void UpdateSavedMessagesTopicLastMessage(SavedMessagesChat topic);
+        void UpdateSavedMessagesTopicLastMessage(SavedMessagesTopic topic);
     }
 }

@@ -77,15 +77,20 @@ namespace Telegram.ViewModels
 
         protected override Task OnNavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
         {
-            if (parameter is ChatNavigationArgs args)
+            if (parameter is ChatSavedMessagesTopicIdNavigationArgs savedMessagesTopicIdArgs)
+            {
+                parameter = savedMessagesTopicIdArgs.ChatId;
+
+                if (ClientService.TryGetSavedMessagesTopic(savedMessagesTopicIdArgs.SavedMessagesTopicId, out SavedMessagesTopic topic))
+                {
+                    SavedMessagesTopic = topic;
+                }
+            }
+            else if (parameter is ChatMessageIdNavigationArgs args)
             {
                 parameter = args.ChatId;
 
-                if (args.SavedMessagesTopic != null)
-                {
-                    SavedMessagesTopic = args.SavedMessagesTopic;
-                }
-                else if (ClientService.TryGetTopicInfo(args.ChatId, args.MessageId, out ForumTopicInfo info))
+                if (ClientService.TryGetTopicInfo(args.ChatId, args.MessageId, out ForumTopicInfo info))
                 {
                     Topic = info;
                 }
@@ -1031,7 +1036,7 @@ namespace Telegram.ViewModels
 
         public void OpenSavedMessagesTopic(SavedMessagesTopic topic)
         {
-            NavigationService.NavigateToChat(_chat.Id, topic: topic);
+            NavigationService.NavigateToChat(_chat.Id, savedMessagesTopicId: topic.Id);
         }
 
         public void OpenAdmins()

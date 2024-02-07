@@ -14,10 +14,8 @@ namespace Telegram.ViewModels.Profile
 {
     public class ProfileSavedChatsTabViewModel : ViewModelBase, IHandle, IIncrementalCollectionOwner, IDelegable<ISavedMessagesChatsDelegate>
     {
-        private readonly HashSet<SavedMessagesTopic> _pinnedTopics = new();
+        private readonly HashSet<long> _pinnedTopics = new();
         private readonly HashSet<long> _topics = new();
-
-        private string _nextOffset = string.Empty;
 
         private readonly DisposableMutex _loadMoreLock = new();
         private long _lastTopicId;
@@ -28,110 +26,117 @@ namespace Telegram.ViewModels.Profile
         public ProfileSavedChatsTabViewModel(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator)
             : base(clientService, settingsService, aggregator)
         {
-            Items = new IncrementalCollection<SavedMessagesChat>(this);
+            Items = new IncrementalCollection<SavedMessagesTopic>(this);
         }
 
         public override void Subscribe()
         {
-            Aggregator.Subscribe<UpdateSavedMessagesChatOrder>(this, Handle)
-                .Subscribe<UpdateSavedMessagesChatLastMessage>(Handle);
         }
 
-        private void Handle(UpdateSavedMessagesChatOrder update)
+        private void Handle(UpdateSavedMessagesTopic update)
         {
-            BeginOnUIThread(() => UpdateChatOrder(update.Topic, update.Order, true));
+            BeginOnUIThread(() => UpdateChatOrder(update.Topic, update.Topic.Order, true));
         }
 
-        private void Handle(UpdateSavedMessagesChatLastMessage update)
-        {
-            BeginOnUIThread(() => UpdateChatOrder(update.Topic, update.Order, true));
-        }
-
-        public IncrementalCollection<SavedMessagesChat> Items { get; private set; }
+        public IncrementalCollection<SavedMessagesTopic> Items { get; private set; }
 
         public async Task<LoadMoreItemsResult> LoadMoreItemsAsync(uint count)
         {
+            using var guard = await _loadMoreLock.WaitAsync();
+
             var totalCount = 0u;
 
-            using (await _loadMoreLock.WaitAsync())
+            var response = await ClientService.GetSavedMessagesChatsAsync(Items.Count, 20);
+            if (response is IList<SavedMessagesTopic> topics)
             {
-                var response = await ClientService.GetSavedMessagesChatsAsync(Items.Count, 20);
-                if (response is IList<SavedMessagesChat> topics)
+                foreach (var topic in topics)
                 {
-                    foreach (var topic in topics)
+                    if (topic.IsPinned)
                     {
-                        var order = topic.Order;
-                        if (order != 0)
+                        _pinnedTopics.Add(topic.Id);
+                    }
+                    else
+                    {
+                        _pinnedTopics.Remove(topic.Id);
+                    }
+
+                    var order = topic.Order;
+                    if (order != 0)
+                    {
+                        // TODO: is this redundant?
+                        var next = NextIndexOf(topic, order);
+                        if (next >= 0)
                         {
-                            // TODO: is this redundant?
-                            var next = NextIndexOf(topic, order);
-                            if (next >= 0)
+                            if (_topics.Contains(topic.Id))
                             {
-                                if (_topics.Contains(topic.Id))
-                                {
-                                    Items.Remove(topic);
-                                }
-
-                                _topics.Add(topic.Id);
-                                Items.Insert(Math.Min(Items.Count, next), topic);
-
-                                totalCount++;
+                                Items.Remove(topic);
                             }
 
-                            _lastTopicId = topic.Id;
-                            _lastOrder = order;
-                        }
-                    }
+                            _topics.Add(topic.Id);
+                            Items.Insert(Math.Min(Items.Count, next), topic);
 
-                    HasMoreItems = topics.Count > 0;
-                    Subscribe();
+                            totalCount++;
+                        }
+
+                        _lastTopicId = topic.Id;
+                        _lastOrder = order;
+                    }
                 }
 
-                return new LoadMoreItemsResult
-                {
-                    Count = totalCount
-                };
+                HasMoreItems = topics.Count > 0;
+                Aggregator.Subscribe<UpdateSavedMessagesTopic>(this, Handle);
             }
-        }
 
-        private async void UpdateChatOrder(SavedMessagesChat topic, long order, bool lastMessage)
-        {
-            using (await _loadMoreLock.WaitAsync())
+            return new LoadMoreItemsResult
             {
-                if (order > 0 && (order > _lastOrder || (order == _lastOrder && topic.Id >= _lastTopicId)))
+                Count = totalCount
+            };
+        }
+
+        private void UpdateChatOrder(SavedMessagesTopic topic, long order, bool lastMessage)
+        {
+            if (order > 0 && (order > _lastOrder || (order == _lastOrder && topic.Id >= _lastTopicId)))
+            {
+                if (topic.IsPinned)
                 {
-                    var next = NextIndexOf(topic, order);
-                    if (next >= 0)
+                    _pinnedTopics.Add(topic.Id);
+                }
+                else
+                {
+                    _pinnedTopics.Remove(topic.Id);
+                }
+
+                var next = NextIndexOf(topic, order);
+                if (next >= 0)
+                {
+                    if (_topics.Contains(topic.Id))
                     {
-                        if (_topics.Contains(topic.Id))
-                        {
-                            Items.Remove(topic);
-                        }
-
-                        _topics.Add(topic.Id);
-                        Items.Insert(Math.Min(Items.Count, next), topic);
-
-                        if (next == Items.Count - 1)
-                        {
-                            _lastTopicId = topic.Id;
-                            _lastOrder = order;
-                        }
+                        Items.Remove(topic);
                     }
-                    else if (lastMessage)
+
+                    _topics.Add(topic.Id);
+                    Items.Insert(Math.Min(Items.Count, next), topic);
+
+                    if (next == Items.Count - 1)
                     {
-                        //_viewModel.Delegate?.UpdateChatLastMessage(topic);
-                        Delegate?.UpdateSavedMessagesTopicLastMessage(topic);
+                        _lastTopicId = topic.Id;
+                        _lastOrder = order;
                     }
                 }
-                else if (_topics.Contains(topic.Id))
+                else if (lastMessage)
                 {
-                    _topics.Remove(topic.Id);
-                    Items.Remove(topic);
+                    //_viewModel.Delegate?.UpdateChatLastMessage(topic);
+                    Delegate?.UpdateSavedMessagesTopicLastMessage(topic);
                 }
+            }
+            else if (_topics.Contains(topic.Id))
+            {
+                _topics.Remove(topic.Id);
+                Items.Remove(topic);
             }
         }
 
-        private int NextIndexOf(SavedMessagesChat topic, long order)
+        private int NextIndexOf(SavedMessagesTopic topic, long order)
         {
             var prev = -1;
             var next = 0;
@@ -158,21 +163,17 @@ namespace Telegram.ViewModels.Profile
 
         public bool HasMoreItems { get; private set; } = true;
 
-        public bool IsPinned(SavedMessagesChat topic)
+        public bool IsPinned(SavedMessagesTopic topic)
         {
-            return _pinnedTopics.Contains(topic.Topic);
+            return _pinnedTopics.Contains(topic.Id);
         }
 
 
-        public void PinTopic(SavedMessagesChat topic)
+        public void PinTopic(SavedMessagesTopic topic)
         {
             if (_pinnedTopics.Count < ClientService.Options.PinnedSavedMessagesTopicCountMax)
             {
-                _pinnedTopics.Add(topic.Topic);
-                Items.Remove(topic);
-                Items.Insert(0, topic);
-
-                ClientService.Send(new ToggleSavedMessagesTopicIsPinned(topic.Topic, true));
+                ClientService.Send(new ToggleSavedMessagesTopicIsPinned(topic.Id, true));
             }
             else
             {
@@ -180,27 +181,18 @@ namespace Telegram.ViewModels.Profile
             }
         }
 
-        public void UnpinTopic(SavedMessagesChat topic)
+        public void UnpinTopic(SavedMessagesTopic topic)
         {
-            _pinnedTopics.Remove(topic.Topic);
-            Items.Remove(topic);
-
-            var index = Items.BinarySearch(topic.LastMessage.Date, (x, y) => y.LastMessage.Date.CompareTo(x));
-            if (index < 0 && (index < Items.Count - 1 || !HasMoreItems))
-            {
-                Items.Insert(~index, topic);
-            }
-
-            ClientService.Send(new ToggleSavedMessagesTopicIsPinned(topic.Topic, false));
+            ClientService.Send(new ToggleSavedMessagesTopicIsPinned(topic.Id, false));
         }
 
-        public async void DeleteTopic(SavedMessagesChat topic)
+        public async void DeleteTopic(SavedMessagesTopic topic)
         {
             string message;
             string title;
             string primary;
 
-            if (topic.Topic is SavedMessagesTopicMyNotes)
+            if (topic.Type is SavedMessagesTopicTypeMyNotes)
             {
                 message = Strings.ClearHistoryMyNotesMessage;
                 title = Strings.ClearHistoryMyNotesTitle;
@@ -208,7 +200,7 @@ namespace Telegram.ViewModels.Profile
             }
             else
             {
-                var chatTitle = ClientService.GetTitle(topic.Topic);
+                var chatTitle = ClientService.GetTitle(topic);
 
                 message = string.Format(Strings.ClearHistoryMessageSingle, chatTitle);
                 title = string.Format(Strings.ClearHistoryTitleSingle, chatTitle);
@@ -219,7 +211,7 @@ namespace Telegram.ViewModels.Profile
             if (confirm == ContentDialogResult.Primary)
             {
                 Items.Remove(topic);
-                ClientService.Send(new DeleteSavedMessagesTopicHistory(topic.Topic));
+                ClientService.Send(new DeleteSavedMessagesTopicHistory(topic.Id));
             }
         }
     }

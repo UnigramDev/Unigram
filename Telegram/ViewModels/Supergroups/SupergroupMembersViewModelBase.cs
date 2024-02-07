@@ -43,7 +43,11 @@ namespace Telegram.ViewModels.Supergroups
 
         protected override Task OnNavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
         {
-            if (parameter is ChatNavigationArgs args)
+            if (parameter is ChatSavedMessagesTopicIdNavigationArgs savedMessagesTopicIdArgs)
+            {
+                parameter = savedMessagesTopicIdArgs.ChatId;
+            }
+            else if (parameter is ChatMessageIdNavigationArgs args)
             {
                 parameter = args.ChatId;
             }

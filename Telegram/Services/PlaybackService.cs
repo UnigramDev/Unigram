@@ -61,7 +61,7 @@ namespace Telegram.Services
 
         void Clear();
 
-        void Play(MessageWithOwner message, long threadId = 0);
+        void Play(MessageWithOwner message, long threadId = 0, long savedMessagesTopicId = 0);
 
         TimeSpan Position { get; }
         TimeSpan Duration { get; }
@@ -97,6 +97,7 @@ namespace Telegram.Services
         private WM.SystemMediaTransportControls _transport;
 
         private long _threadId;
+        private long _savedMessagesTopicId;
 
         private List<PlaybackItem> _items;
 
@@ -566,7 +567,7 @@ namespace Telegram.Services
             Dispose(true);
         }
 
-        public void Play(MessageWithOwner message, long threadId)
+        public void Play(MessageWithOwner message, long threadId, long savedMessagesTopicId)
         {
             _transport ??= WM.SystemMediaTransportControls.GetForCurrentView();
 
@@ -574,12 +575,12 @@ namespace Telegram.Services
             {
                 lock (_mediaPlayerLock)
                 {
-                    _ = PlayAsync(message, threadId);
+                    _ = PlayAsync(message, threadId, savedMessagesTopicId);
                 }
             });
         }
 
-        public async Task PlayAsync(MessageWithOwner message, long threadId)
+        public async Task PlayAsync(MessageWithOwner message, long threadId, long savedMessagesTopicId)
         {
             if (message == null)
             {
@@ -587,7 +588,7 @@ namespace Telegram.Services
             }
 
             var previous = _items;
-            if (previous != null && _threadId == threadId)
+            if (previous != null && _threadId == threadId && _savedMessagesTopicId == savedMessagesTopicId)
             {
                 var already = previous.FirstOrDefault(x => x.Message.Id == message.Id && x.Message.ChatId == message.ChatId);
                 if (already != null)
@@ -604,6 +605,7 @@ namespace Telegram.Services
 
             _items.Add(item);
             _threadId = threadId;
+            _savedMessagesTopicId = savedMessagesTopicId;
 
             SetSource(null, item);
 
@@ -616,7 +618,7 @@ namespace Telegram.Services
             var filter = message.Content is MessageAudio ? new SearchMessagesFilterAudio() : (SearchMessagesFilter)new SearchMessagesFilterVoiceNote();
 
             // TODO: 172 savedMessagesTopic
-            var response = await message.ClientService.SendAsync(new SearchChatMessages(message.ChatId, string.Empty, null, message.Id, offset, 100, filter, _threadId, null));
+            var response = await message.ClientService.SendAsync(new SearchChatMessages(message.ChatId, string.Empty, null, message.Id, offset, 100, filter, _threadId, _savedMessagesTopicId));
             if (response is FoundChatMessages messages)
             {
                 foreach (var add in message.Content is MessageAudio ? messages.Messages.OrderBy(x => x.Id) : messages.Messages.OrderByDescending(x => x.Id))

@@ -19,7 +19,7 @@ namespace Telegram.Collections
 
         private readonly long _chatId;
         private readonly long _threadId;
-        private readonly SavedMessagesTopic _savedMessagesTopic;
+        private readonly long _savedMessagesTopicId;
         private readonly string _query;
         private readonly MessageSender _sender;
         private readonly ReactionType _savedMessagesTag;
@@ -32,13 +32,13 @@ namespace Telegram.Collections
 
         private readonly SearchMessagesFilter _filter;
 
-        public SearchChatMessagesCollection(IClientService clientService, long chatId, long threadId, SavedMessagesTopic savedMessagesTopic, string query, MessageSender sender, long fromMessageId, SearchMessagesFilter filter, ReactionType savedMessagesTag)
+        public SearchChatMessagesCollection(IClientService clientService, long chatId, long threadId, long savedMessagesTopicId, string query, MessageSender sender, long fromMessageId, SearchMessagesFilter filter, ReactionType savedMessagesTag)
         {
             _clientService = clientService;
 
             _chatId = chatId;
             _threadId = threadId;
-            _savedMessagesTopic = savedMessagesTopic;
+            _savedMessagesTopicId = savedMessagesTopicId;
             _query = query;
             _sender = sender;
             _fromMessageId = fromMessageId;
@@ -78,11 +78,11 @@ namespace Telegram.Collections
 
                     if (_savedMessagesTag != null)
                     {
-                        function = new SearchSavedMessages(_savedMessagesTopic, _savedMessagesTag, _query, fromMessageId, offset, (int)count);
+                        function = new SearchSavedMessages(_savedMessagesTopicId, _savedMessagesTag, _query, fromMessageId, offset, (int)count);
                     }
                     else
                     {
-                        function = new SearchChatMessages(_chatId, _query, _sender, fromMessageId, offset, (int)count, _filter, _threadId, _savedMessagesTopic);
+                        function = new SearchChatMessages(_chatId, _query, _sender, fromMessageId, offset, (int)count, _filter, _threadId, _savedMessagesTopicId);
                     }
                 }
 

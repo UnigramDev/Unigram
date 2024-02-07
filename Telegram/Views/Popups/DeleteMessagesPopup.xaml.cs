@@ -17,14 +17,14 @@ namespace Telegram.Views.Popups
 {
     public sealed partial class DeleteMessagesPopup : ContentPopup
     {
-        public DeleteMessagesPopup(IClientService clientService, SavedMessagesTopic topic, IList<Message> messages)
+        public DeleteMessagesPopup(IClientService clientService, long savedMessagesTopicId, IList<Message> messages)
         {
             InitializeComponent();
 
             Title = messages.Count == 1
-                ? topic == null ? Strings.DeleteSingleMessagesTitle : Strings.UnsaveSingleMessagesTitle
-                : string.Format(topic == null ? Strings.DeleteMessagesTitle : Strings.UnsaveMessagesTitle, Locale.Declension(Strings.R.messages, messages.Count));
-            PrimaryButtonText = topic == null ? Strings.Delete : Strings.Remove;
+                ? savedMessagesTopicId == 0 ? Strings.DeleteSingleMessagesTitle : Strings.UnsaveSingleMessagesTitle
+                : string.Format(savedMessagesTopicId == 0 ? Strings.DeleteMessagesTitle : Strings.UnsaveMessagesTitle, Locale.Declension(Strings.R.messages, messages.Count));
+            PrimaryButtonText = savedMessagesTopicId == 0 ? Strings.Delete : Strings.Remove;
             SecondaryButtonText = Strings.Cancel;
 
             var first = messages.FirstOrDefault();
@@ -42,7 +42,7 @@ namespace Telegram.Views.Popups
             var user = clientService.GetUser(chat);
 
             var sameUser = messages.All(x => x.SenderId.AreTheSame(first.SenderId));
-            if (sameUser && topic == null && !first.IsOutgoing && clientService.TryGetSupergroup(chat, out Supergroup supergroup) && !supergroup.IsChannel)
+            if (sameUser && savedMessagesTopicId == 0 && !first.IsOutgoing && clientService.TryGetSupergroup(chat, out Supergroup supergroup) && !supergroup.IsChannel)
             {
                 RevokeCheck.Visibility = Visibility.Collapsed;
                 ReportSpamCheck.Visibility = Visibility.Visible;
@@ -97,7 +97,7 @@ namespace Telegram.Views.Popups
                 var canBeDeletedOnlyForSelf = messages.All(x => x.CanBeDeletedOnlyForSelf);
                 var anyCanBeDeletedForAllUsers = messages.Any(x => x.IsOutgoing && x.CanBeDeletedForAllUsers);
 
-                if (topic != null)
+                if (savedMessagesTopicId != 0)
                 {
                     TextBlockHelper.SetMarkdown(Message, messages.Count == 1
                         ? Strings.AreYouSureUnsaveSingleMessage

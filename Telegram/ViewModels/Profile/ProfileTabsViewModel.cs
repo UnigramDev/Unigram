@@ -113,6 +113,8 @@ namespace Telegram.ViewModels.Profile
             set => Set(ref _topic, value);
         }
 
+        public long SavedMessagesTopicId => SavedMessagesTopic?.Id ?? 0;
+
         protected SavedMessagesTopic _savedMessagesTopic;
         public SavedMessagesTopic SavedMessagesTopic
         {
@@ -122,7 +124,11 @@ namespace Telegram.ViewModels.Profile
 
         protected override async Task OnNavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
         {
-            if (parameter is ChatNavigationArgs args)
+            if (parameter is ChatSavedMessagesTopicIdNavigationArgs savedMessagesTopicIdArgs)
+            {
+                parameter = savedMessagesTopicIdArgs.ChatId;
+            }
+            else if (parameter is ChatMessageIdNavigationArgs args)
             {
                 parameter = args.ChatId;
             }
@@ -235,7 +241,7 @@ namespace Telegram.ViewModels.Profile
 
             for (int i = 0; i < filters.Length; i++)
             {
-                var response = await ClientService.SendAsync(new GetChatMessageCount(chat.Id, filters[i], _savedMessagesTopic, false));
+                var response = await ClientService.SendAsync(new GetChatMessageCount(chat.Id, filters[i], SavedMessagesTopicId, false));
                 if (response is Count count)
                 {
                     SharedCount[i] = count.CountValue;
@@ -325,7 +331,7 @@ namespace Telegram.ViewModels.Profile
         {
             if (sender is SearchMessagesFilter filter)
             {
-                return new MediaCollection(ClientService, Chat.Id, ThreadId, SavedMessagesTopic, filter, query);
+                return new MediaCollection(ClientService, Chat.Id, ThreadId, SavedMessagesTopicId, filter, query);
             }
 
             return null;
@@ -355,7 +361,7 @@ namespace Telegram.ViewModels.Profile
                 return;
             }
 
-            NavigationService.NavigateToChat(chat, message.Id, _thread?.MessageThreadId, _savedMessagesTopic);
+            NavigationService.NavigateToChat(chat, message.Id, ThreadId, SavedMessagesTopicId);
         }
 
         #endregion
@@ -459,7 +465,7 @@ namespace Telegram.ViewModels.Profile
             }
 
             var sameUser = messages.All(x => x.SenderId.AreTheSame(first.SenderId));
-            var dialog = new DeleteMessagesPopup(ClientService, SavedMessagesTopic, items.Where(x => x != null).ToArray());
+            var dialog = new DeleteMessagesPopup(ClientService, SavedMessagesTopicId, items.Where(x => x != null).ToArray());
 
             var confirm = await ShowPopupAsync(dialog);
             if (confirm != ContentDialogResult.Primary)

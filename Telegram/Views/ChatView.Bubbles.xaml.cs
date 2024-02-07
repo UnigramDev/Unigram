@@ -386,7 +386,7 @@ namespace Telegram.Views
                     GalleryViewModelBase viewModel;
                     if (message.Content is MessageAnimation)
                     {
-                        viewModel = new ChatGalleryViewModel(ViewModel.ClientService, ViewModel.StorageService, ViewModel.Aggregator, message.ChatId, ViewModel.ThreadId, ViewModel.SavedMessagesTopic, message);
+                        viewModel = new ChatGalleryViewModel(ViewModel.ClientService, ViewModel.StorageService, ViewModel.Aggregator, message.ChatId, ViewModel.ThreadId, ViewModel.SavedMessagesTopicId, message);
                     }
                     else
                     {

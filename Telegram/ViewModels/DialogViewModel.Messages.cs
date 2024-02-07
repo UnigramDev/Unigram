@@ -265,7 +265,7 @@ namespace Telegram.ViewModels
             }
 
             var sameUser = messages.All(x => x.SenderId.AreTheSame(first.SenderId));
-            var dialog = new DeleteMessagesPopup(ClientService, SavedMessagesTopic, items.Where(x => x != null).ToArray());
+            var dialog = new DeleteMessagesPopup(ClientService, SavedMessagesTopicId, items.Where(x => x != null).ToArray());
 
             var confirm = await ShowPopupAsync(dialog);
             if (confirm != ContentDialogResult.Primary)
@@ -649,7 +649,7 @@ namespace Telegram.ViewModels
 
         public void OpenMessageStatistics(MessageViewModel message)
         {
-            NavigationService.Navigate(typeof(MessageStatisticsPage), new ChatNavigationArgs(message.ChatId, message.Id));
+            NavigationService.Navigate(typeof(MessageStatisticsPage), new ChatMessageIdNavigationArgs(message.ChatId, message.Id));
         }
 
         #endregion
@@ -1121,7 +1121,7 @@ namespace Telegram.ViewModels
                 var bot = message.GetViaBotUser();
                 if (bot != null)
                 {
-                    InformativeMessage = CreateMessage(new Message(0, new MessageSenderUser(bot.Id), 0, null, null, false, false, false, false, false, false, true, false, false, false, false, false, false, false, false, false, false, false, false, 0, 0, null, null, null, null, null, 0, null, null, 0, 0, 0, string.Empty, 0, string.Empty, new MessageText(new FormattedText(Strings.Loading, Array.Empty<TextEntity>()), null, null), null));
+                    InformativeMessage = CreateMessage(new Message(0, new MessageSenderUser(bot.Id), 0, null, null, false, false, false, false, false, false, true, false, false, false, false, false, false, false, false, false, false, false, false, 0, 0, null, null, null, null, null, 0, 0, null, 0, 0, 0, string.Empty, 0, string.Empty, new MessageText(new FormattedText(Strings.Loading, Array.Empty<TextEntity>()), null, null), null));
                 }
 
                 var response = await ClientService.SendAsync(new GetCallbackQueryAnswer(chat.Id, message.Id, new CallbackQueryPayloadData(callback.Data)));
@@ -1144,7 +1144,7 @@ namespace Telegram.ViewModels
                                 return;
                             }
 
-                            InformativeMessage = CreateMessage(new Message(0, new MessageSenderUser(bot.Id), 0, null, null, false, false, false, false, false, false, true, false, false, false, false, false, false, false, false, false, false, false, false, 0, 0, null, null, null, null, null, 0, null, null, 0, 0, 0, string.Empty, 0, string.Empty, new MessageText(new FormattedText(answer.Text, Array.Empty<TextEntity>()), null, null), null));
+                            InformativeMessage = CreateMessage(new Message(0, new MessageSenderUser(bot.Id), 0, null, null, false, false, false, false, false, false, true, false, false, false, false, false, false, false, false, false, false, false, false, 0, 0, null, null, null, null, null, 0, 0, null, 0, 0, 0, string.Empty, 0, string.Empty, new MessageText(new FormattedText(answer.Text, Array.Empty<TextEntity>()), null, null), null));
                         }
                     }
                     else if (!string.IsNullOrEmpty(answer.Url))

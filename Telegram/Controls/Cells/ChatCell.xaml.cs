@@ -56,7 +56,7 @@ namespace Telegram.Controls.Cells
 
         private Message _message;
 
-        private SavedMessagesChat _savedMessagesTopic;
+        private SavedMessagesTopic _savedMessagesTopic;
 
         private int _thumbnailId;
 
@@ -217,7 +217,7 @@ namespace Telegram.Controls.Cells
             Update(chat, chatList);
         }
 
-        public void UpdateSavedMessagesTopic(IClientService clientService, SavedMessagesChat savedMessagesTopic)
+        public void UpdateSavedMessagesTopic(IClientService clientService, SavedMessagesTopic savedMessagesTopic)
         {
             _clientService = clientService;
             _savedMessagesTopic = savedMessagesTopic;
@@ -229,7 +229,7 @@ namespace Telegram.Controls.Cells
 
             var message = savedMessagesTopic.LastMessage;
 
-            if (savedMessagesTopic.Topic is SavedMessagesTopicSavedFromChat savedFromChat && clientService.TryGetChat(savedFromChat.ChatId, out Chat chat))
+            if (savedMessagesTopic.Type is SavedMessagesTopicTypeSavedFromChat savedFromChat && clientService.TryGetChat(savedFromChat.ChatId, out Chat chat))
             {
                 UpdateChatTitle(chat);
                 UpdateChatPhoto(chat);
@@ -242,14 +242,14 @@ namespace Telegram.Controls.Cells
             }
             else
             {
-                if (savedMessagesTopic.Topic is SavedMessagesTopicMyNotes)
+                if (savedMessagesTopic.Type is SavedMessagesTopicTypeMyNotes)
                 {
                     TitleLabel.Text = Strings.MyNotes;
                     Photo.Source = PlaceholderImage.GetGlyph(Icons.MyNotesFilled, 5);
                     Photo.Shape = ProfilePictureShape.Ellipse;
                     Identity.ClearStatus();
                 }
-                else if (savedMessagesTopic.Topic is SavedMessagesTopicAuthorHidden)
+                else if (savedMessagesTopic.Type is SavedMessagesTopicTypeAuthorHidden)
                 {
                     TitleLabel.Text = Strings.AnonymousForward;
                     Photo.Source = PlaceholderImage.GetGlyph(Icons.AuthorHiddenFilled, 5);

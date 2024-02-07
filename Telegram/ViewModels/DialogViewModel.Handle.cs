@@ -94,7 +94,7 @@ namespace Telegram.ViewModels
                 //}
                 //else
                 {
-                    ClientService.Send(new GetSavedMessagesTags(_savedMessagesTopic), result =>
+                    ClientService.Send(new GetSavedMessagesTags(SavedMessagesTopicId), result =>
                     {
                         if (result is SavedMessagesTags tags)
                         {
@@ -523,7 +523,7 @@ namespace Telegram.ViewModels
             }
             else if (_type == DialogType.SavedMessagesTopic)
             {
-                return message.SchedulingState == null && message.SavedMessagesTopic.AreTheSame(_savedMessagesTopic);
+                return message.SchedulingState == null && message.SavedMessagesTopicId == SavedMessagesTopicId;
             }
             else if (_type == DialogType.Pinned)
             {

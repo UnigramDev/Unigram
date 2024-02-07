@@ -65,7 +65,7 @@ namespace Telegram.Views.Profile
             var element = sender as FrameworkElement;
             var message = element.Tag as MessageWithOwner;
 
-            var viewModel = new ChatGalleryViewModel(ViewModel.ClientService, ViewModel.StorageService, ViewModel.Aggregator, message.ChatId, ViewModel.ThreadId, ViewModel.SavedMessagesTopic, message, true);
+            var viewModel = new ChatGalleryViewModel(ViewModel.ClientService, ViewModel.StorageService, ViewModel.Aggregator, message.ChatId, ViewModel.ThreadId, ViewModel.SavedMessagesTopicId, message, true);
             viewModel.NavigationService = ViewModel.NavigationService;
             await GalleryWindow.ShowAsync(viewModel, () => element);
         }

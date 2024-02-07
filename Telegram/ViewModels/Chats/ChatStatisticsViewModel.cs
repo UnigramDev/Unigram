@@ -100,7 +100,7 @@ namespace Telegram.ViewModels.Chats
         {
             if (item is MessageInteractionCounters message)
             {
-                NavigationService.Navigate(typeof(MessageStatisticsPage), new ChatNavigationArgs(message.Message.ChatId, message.Message.Id));
+                NavigationService.Navigate(typeof(MessageStatisticsPage), new ChatMessageIdNavigationArgs(message.Message.ChatId, message.Message.Id));
             }
             else if (item is StoryInteractionCounters story)
             {

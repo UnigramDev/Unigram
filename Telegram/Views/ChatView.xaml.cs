@@ -2000,7 +2000,7 @@ namespace Telegram.Views
             var basicGroup = chat.Type is ChatTypeBasicGroup basicGroupType ? ViewModel.ClientService.GetBasicGroup(basicGroupType.BasicGroupId) : null;
             var supergroup = chat.Type is ChatTypeSupergroup supergroupType ? ViewModel.ClientService.GetSupergroup(supergroupType.SupergroupId) : null;
 
-            if (user != null && user.Id == ViewModel.ClientService.Options.MyId && ViewModel.SavedMessagesTopic == null)
+            if (user != null && user.Id == ViewModel.ClientService.Options.MyId && ViewModel.SavedMessagesTopicId == 0)
             {
                 flyout.CreateFlyoutItem(ViewModel.ViewAsChats, Strings.SavedViewAsChats, Icons.AppsListDetails);
             }
@@ -3990,15 +3990,15 @@ namespace Telegram.Views
             }
             else if (ViewModel.Type == DialogType.SavedMessagesTopic)
             {
-                if (ViewModel.SavedMessagesTopic is SavedMessagesTopicMyNotes)
+                if (ViewModel.SavedMessagesTopic?.Type is SavedMessagesTopicTypeMyNotes)
                 {
                     ChatTitle = Strings.MyNotes;
                 }
-                else if (ViewModel.SavedMessagesTopic is SavedMessagesTopicAuthorHidden)
+                else if (ViewModel.SavedMessagesTopic?.Type is SavedMessagesTopicTypeAuthorHidden)
                 {
                     ChatTitle = Strings.AnonymousForward;
                 }
-                else if (ViewModel.SavedMessagesTopic is SavedMessagesTopicSavedFromChat savedFromChat && ViewModel.ClientService.TryGetChat(savedFromChat.ChatId, out Chat savedChat))
+                else if (ViewModel.SavedMessagesTopic?.Type is SavedMessagesTopicTypeSavedFromChat savedFromChat && ViewModel.ClientService.TryGetChat(savedFromChat.ChatId, out Chat savedChat))
                 {
                     ChatTitle = ViewModel.ClientService.GetTitle(savedChat);
                 }
@@ -4044,17 +4044,17 @@ namespace Telegram.Views
             {
                 UnloadObject(Icon);
 
-                if (ViewModel.SavedMessagesTopic is SavedMessagesTopicMyNotes)
+                if (ViewModel.SavedMessagesTopic?.Type is SavedMessagesTopicTypeMyNotes)
                 {
                     Photo.Source = PlaceholderImage.GetGlyph(Icons.MyNotesFilled, 5);
                     Photo.Shape = ProfilePictureShape.Ellipse;
                 }
-                else if (ViewModel.SavedMessagesTopic is SavedMessagesTopicAuthorHidden)
+                else if (ViewModel.SavedMessagesTopic?.Type is SavedMessagesTopicTypeAuthorHidden)
                 {
                     Photo.Source = PlaceholderImage.GetGlyph(Icons.AuthorHiddenFilled, 5);
                     Photo.Shape = ProfilePictureShape.Ellipse;
                 }
-                else if (ViewModel.SavedMessagesTopic is SavedMessagesTopicSavedFromChat savedFromChat && ViewModel.ClientService.TryGetChat(savedFromChat.ChatId, out Chat savedChat))
+                else if (ViewModel.SavedMessagesTopic?.Type is SavedMessagesTopicTypeSavedFromChat savedFromChat && ViewModel.ClientService.TryGetChat(savedFromChat.ChatId, out Chat savedChat))
                 {
                     Photo.SetChat(ViewModel.ClientService, savedChat, 36);
                     Photo.IsEnabled = true;
@@ -4072,15 +4072,15 @@ namespace Telegram.Views
         {
             if (ViewModel.Type == DialogType.SavedMessagesTopic)
             {
-                if (ViewModel.SavedMessagesTopic is SavedMessagesTopicMyNotes)
+                if (ViewModel.SavedMessagesTopic?.Type is SavedMessagesTopicTypeMyNotes)
                 {
                     Identity.ClearStatus();
                 }
-                else if (ViewModel.SavedMessagesTopic is SavedMessagesTopicAuthorHidden)
+                else if (ViewModel.SavedMessagesTopic?.Type is SavedMessagesTopicTypeAuthorHidden)
                 {
                     Identity.ClearStatus();
                 }
-                else if (ViewModel.SavedMessagesTopic is SavedMessagesTopicSavedFromChat savedFromChat && ViewModel.ClientService.TryGetChat(savedFromChat.ChatId, out Chat savedChat))
+                else if (ViewModel.SavedMessagesTopic?.Type is SavedMessagesTopicTypeSavedFromChat savedFromChat && ViewModel.ClientService.TryGetChat(savedFromChat.ChatId, out Chat savedChat))
                 {
                     Identity.SetStatus(_viewModel.ClientService, savedChat);
                 }
@@ -4783,15 +4783,15 @@ namespace Telegram.Views
             }
             else if (ViewModel.Type == DialogType.SavedMessagesTopic)
             {
-                if (ViewModel.SavedMessagesTopic is SavedMessagesTopicMyNotes)
+                if (ViewModel.SavedMessagesTopic?.Type is SavedMessagesTopicTypeMyNotes)
                 {
                     ShowArea();
                 }
-                else if (ViewModel.SavedMessagesTopic is SavedMessagesTopicAuthorHidden)
+                else if (ViewModel.SavedMessagesTopic?.Type is SavedMessagesTopicTypeAuthorHidden)
                 {
                     ShowAction(Strings.AuthorHiddenDescription, false);
                 }
-                else if (ViewModel.SavedMessagesTopic is SavedMessagesTopicSavedFromChat savedFromChat && ViewModel.ClientService.TryGetChat(savedFromChat.ChatId, out Chat savedChat))
+                else if (ViewModel.SavedMessagesTopic?.Type is SavedMessagesTopicTypeSavedFromChat savedFromChat && ViewModel.ClientService.TryGetChat(savedFromChat.ChatId, out Chat savedChat))
                 {
                     if (savedChat.Type is ChatTypePrivate)
                     {

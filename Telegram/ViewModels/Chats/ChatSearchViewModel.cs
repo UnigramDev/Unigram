@@ -270,7 +270,7 @@ namespace Telegram.ViewModels.Chats
                 //    fromMessageId = _dialog.Items[panel.LastVisibleIndex].Id;
                 //}
 
-                var collection = new SearchChatMessagesCollection(ClientService, chat.Id, _dialog.ThreadId, _dialog.SavedMessagesTopic, query, from, fromMessageId, filter, savedMessagesTag);
+                var collection = new SearchChatMessagesCollection(ClientService, chat.Id, _dialog.ThreadId, _dialog.SavedMessagesTopicId, query, from, fromMessageId, filter, savedMessagesTag);
 
                 var result = await collection.LoadMoreItemsAsync(100);
                 if (result.Count > 0)

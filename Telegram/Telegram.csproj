@@ -196,10 +196,7 @@
     <Compile Include="Composition\WeakInteractionTrackerOwner.cs" />
     <Compile Include="Controls\Messages\ReactionAsTagButton.cs" />
     <Compile Include="Common\AsyncMediaPlayer.cs" />
-    <Compile Include="Td\Api\UpdateSavedMessagesChatLastMessage.cs" />
-    <Compile Include="Td\Api\UpdateSavedMessagesChatOrder.cs" />
-    <Compile Include="Td\Api\SavedMessagesChat.cs" />
-    <Compile Include="Td\SavedMessagesManager.cs" />
+    <Compile Include="Services\ClientService.SavedMessages.cs" />
     <Compile Include="Composition\CompositionVoiceBlobVisual.cs" />
     <Compile Include="Composition\CompositionBlobVisual.cs" />
     <Compile Include="Composition\CompositionCurveVisual.cs" />

@@ -45,9 +45,9 @@ namespace Telegram.Views.Profile
 
         private void ListView_ItemClick(object sender, ItemClickEventArgs e)
         {
-            if (e.ClickedItem is SavedMessagesChat topic)
+            if (e.ClickedItem is SavedMessagesTopic topic)
             {
-                ViewModel.OpenSavedMessagesTopic(topic.Topic);
+                ViewModel.OpenSavedMessagesTopic(topic);
             }
         }
 
@@ -70,7 +70,7 @@ namespace Telegram.Views.Profile
             {
                 return;
             }
-            else if (args.ItemContainer.ContentTemplateRoot is Grid content && args.Item is SavedMessagesChat savedMessagesTopic)
+            else if (args.ItemContainer.ContentTemplateRoot is Grid content && args.Item is SavedMessagesTopic savedMessagesTopic)
             {
                 if (content.Children[0] is ChatCell cell)
                 {
@@ -81,7 +81,7 @@ namespace Telegram.Views.Profile
 
         private void OnContextRequested(UIElement sender, ContextRequestedEventArgs args)
         {
-            var topic = ScrollingHost.ItemFromContainer(sender) as SavedMessagesChat;
+            var topic = ScrollingHost.ItemFromContainer(sender) as SavedMessagesTopic;
             var flyout = new MenuFlyout();
 
             if (topic.IsPinned)
@@ -98,7 +98,7 @@ namespace Telegram.Views.Profile
             flyout.ShowAt(sender, args);
         }
 
-        public void UpdateSavedMessagesTopicLastMessage(SavedMessagesChat topic)
+        public void UpdateSavedMessagesTopicLastMessage(SavedMessagesTopic topic)
         {
             this.BeginOnUIThread(() =>
             {

@@ -703,20 +703,6 @@ namespace Telegram.Services
                     ProcessFiles(item);
                 }
             }
-            else if (target is FoundSavedMessagesTopic foundSavedMessagesTopic)
-            {
-                if (foundSavedMessagesTopic.LastMessage != null)
-                {
-                    ProcessFiles(foundSavedMessagesTopic.LastMessage);
-                }
-            }
-            else if (target is FoundSavedMessagesTopics foundSavedMessagesTopics)
-            {
-                foreach (var item in foundSavedMessagesTopics.Topics)
-                {
-                    ProcessFiles(item);
-                }
-            }
             else if (target is FoundWebApp foundWebApp)
             {
                 if (foundWebApp.WebApp != null)
@@ -1716,6 +1702,13 @@ namespace Telegram.Services
                     ProcessFiles(richTextUrl.Text);
                 }
             }
+            else if (target is SavedMessagesTopic savedMessagesTopic)
+            {
+                if (savedMessagesTopic.LastMessage != null)
+                {
+                    ProcessFiles(savedMessagesTopic.LastMessage);
+                }
+            }
             else if (target is SponsoredMessage sponsoredMessage)
             {
                 if (sponsoredMessage.Content != null)
@@ -2036,6 +2029,13 @@ namespace Telegram.Services
                 foreach (var item in updateNotificationGroup.AddedNotifications)
                 {
                     ProcessFiles(item);
+                }
+            }
+            else if (target is UpdateSavedMessagesTopic updateSavedMessagesTopic)
+            {
+                if (updateSavedMessagesTopic.Topic != null)
+                {
+                    ProcessFiles(updateSavedMessagesTopic.Topic);
                 }
             }
             else if (target is UpdateServiceNotification updateServiceNotification)

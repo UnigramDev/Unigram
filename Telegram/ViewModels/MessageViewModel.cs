@@ -296,7 +296,7 @@ namespace Telegram.ViewModels
             _message.InteractionInfo = message.InteractionInfo;
             _message.UnreadReactions = message.UnreadReactions;
             _message.RestrictionReason = message.RestrictionReason;
-            _message.SavedMessagesTopic = message.SavedMessagesTopic;
+            _message.SavedMessagesTopicId = message.SavedMessagesTopicId;
             _message.ImportInfo = message.ImportInfo;
             _message.IsTopicMessage = message.IsTopicMessage;
             _message.HasTimestampedMedia = message.HasTimestampedMedia;

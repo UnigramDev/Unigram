@@ -46,7 +46,7 @@ namespace Telegram.Services
         Task<Chats> GetChatListAsync(ChatList chatList, int offset, int limit);
         Task<Chats> GetStoryListAsync(StoryList storyList, int offset, int limit);
 
-        Task<IList<SavedMessagesChat>> GetSavedMessagesChatsAsync(int offset, int limit);
+        Task<IList<SavedMessagesTopic>> GetSavedMessagesChatsAsync(int offset, int limit);
 
         int SessionId { get; }
     }
@@ -124,6 +124,8 @@ namespace Telegram.Services
         bool CanInviteUsers(Chat chat);
 
         BaseObject GetMessageSender(MessageSender sender);
+
+        bool TryGetSavedMessagesTopic(long savedMessagesTopicId, out SavedMessagesTopic topic);
 
         bool TryGetChat(long chatId, out Chat chat);
         bool TryGetChat(MessageSender sender, out Chat value);
@@ -226,6 +228,8 @@ namespace Telegram.Services
         private readonly ConcurrentDictionary<long, ConcurrentDictionary<MessageSender, ChatAction>> _chatActions = new();
         private readonly ConcurrentDictionary<ChatMessageId, ConcurrentDictionary<MessageSender, ChatAction>> _topicActions = new();
 
+        private readonly ConcurrentDictionary<long, SavedMessagesTopic> _savedMessagesTopics = new();
+
         private readonly Dictionary<int, SecretChat> _secretChats = new();
 
         private readonly Dictionary<long, long> _usersToChats = new();
@@ -244,8 +248,6 @@ namespace Telegram.Services
         private readonly ConcurrentDictionary<int, ChatListUnreadCount> _unreadCounts = new();
 
         private readonly Dictionary<int, File> _files = new();
-
-        private readonly SavedMessagesManager _savedMessagesManager;
 
         private UnconfirmedSession _unconfirmedSession;
 
@@ -322,8 +324,6 @@ namespace Telegram.Services
             _locale = locale;
             _options = new OptionsService(this);
             _aggregator = aggregator;
-
-            _savedMessagesManager = new SavedMessagesManager(this, aggregator);
 
             _processFilesDelegate = new Action<BaseObject>(ProcessFiles);
 
@@ -1057,15 +1057,15 @@ namespace Telegram.Services
 
         public string GetTitle(SavedMessagesTopic topic)
         {
-            if (topic is SavedMessagesTopicMyNotes)
+            if (topic?.Type is SavedMessagesTopicTypeMyNotes)
             {
                 return Strings.MyNotes;
             }
-            else if (topic is SavedMessagesTopicAuthorHidden)
+            else if (topic?.Type is SavedMessagesTopicTypeAuthorHidden)
             {
                 return Strings.AnonymousForward;
             }
-            else if (topic is SavedMessagesTopicSavedFromChat savedFromChat && TryGetChat(savedFromChat.ChatId, out Chat chat))
+            else if (topic?.Type is SavedMessagesTopicTypeSavedFromChat savedFromChat && TryGetChat(savedFromChat.ChatId, out Chat chat))
             {
                 return GetTitle(chat);
             }
@@ -1150,11 +1150,6 @@ namespace Telegram.Services
             }
 
             return result;
-        }
-
-        public Task<IList<SavedMessagesChat>> GetSavedMessagesChatsAsync(int offset, int limit)
-        {
-            return _savedMessagesManager.GetSavedMessagesChatsAsync(offset, limit);
         }
 
         public Chat GetChat(long id)
@@ -1298,10 +1293,14 @@ namespace Telegram.Services
             return null;
         }
 
+        public bool TryGetSavedMessagesTopic(long savedMessagesTopicId, out SavedMessagesTopic topic)
+        {
+            return _savedMessagesTopics.TryGetValue(savedMessagesTopicId, out topic);
+        }
+
         public bool TryGetChat(long chatId, out Chat chat)
         {
-            chat = GetChat(chatId);
-            return chat != null;
+            return _chats.TryGetValue(chatId, out chat);
         }
 
         public bool TryGetChat(MessageSender sender, out Chat value)
@@ -1894,23 +1893,29 @@ namespace Telegram.Services
                     _usersToChats[privata.UserId] = updateNewChat.Chat.Id;
                 }
             }
-            else if (update is UpdateNewMessage updateNewMessage)
+            else if (update is UpdateSavedMessagesTopic updateSavedMessagesTopic)
             {
-                if (updateNewMessage.Message.ChatId == Options.MyId && updateNewMessage.Message.SavedMessagesTopic != null)
+                if (_savedMessagesTopics.TryGetValue(updateSavedMessagesTopic.Topic.Id, out SavedMessagesTopic topic))
                 {
-                    _savedMessagesManager.UpdateNewMessage(updateNewMessage.Message);
+                    Monitor.Enter(topic);
+                    SetSavedMessagesTopicOrder(topic, updateSavedMessagesTopic.Topic.Order);
+                    Monitor.Exit(topic);
+
+                    topic.DraftMessage = updateSavedMessagesTopic.Topic.DraftMessage;
+                    topic.LastMessage = updateSavedMessagesTopic.Topic.LastMessage;
+                    topic.IsPinned = updateSavedMessagesTopic.Topic.IsPinned;
+                    topic.Order = updateSavedMessagesTopic.Topic.Order;
+
+                    updateSavedMessagesTopic.Topic = topic;
                 }
-            }
-            else if (update is UpdateDeleteMessages updateDeleteMessages)
-            {
-                if (updateDeleteMessages.ChatId == Options.MyId && updateDeleteMessages.IsPermanent && !updateDeleteMessages.FromCache)
+                else
                 {
-                    _savedMessagesManager.UpdateDeleteMessages(updateDeleteMessages.MessageIds);
+                    Monitor.Enter(updateSavedMessagesTopic.Topic);
+                    SetSavedMessagesTopicOrder(updateSavedMessagesTopic.Topic, updateSavedMessagesTopic.Topic.Order);
+                    Monitor.Exit(updateSavedMessagesTopic.Topic);
+
+                    _savedMessagesTopics[updateSavedMessagesTopic.Topic.Id] = updateSavedMessagesTopic.Topic;
                 }
-            }
-            else if (update is UpdatePinnedSavedMessagesTopics updatePinnedSavedMessagesTopics)
-            {
-                _savedMessagesManager.Handle(updatePinnedSavedMessagesTopics);
             }
             else if (update is UpdateAuthorizationState updateAuthorizationState)
             {
@@ -2366,7 +2371,7 @@ namespace Telegram.Services
             {
                 lock (_savedMessagesTags)
                 {
-                    if (updateSavedMessagesTags.SavedMessagesTopic == null)
+                    if (updateSavedMessagesTags.SavedMessagesTopicId == 0)
                     {
                         var temp = new List<MessageTag>(updateSavedMessagesTags.Tags.Tags.Count);
 
