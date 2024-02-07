@@ -65,6 +65,7 @@ namespace Telegram.Services
         IList<ProfileColor> GetAvailableProfileColors();
 
         NameColor GetAccentColor(int id);
+        ProfileColor GetProfileColor(int id);
         bool TryGetProfileColor(int id, out ProfileColor color);
 
         ReactionType DefaultReaction { get; }
@@ -661,6 +662,16 @@ namespace Telegram.Services
             }
 
             return new NameColor(id);
+        }
+
+        public ProfileColor GetProfileColor(int id)
+        {
+            if (ProfileColors != null && ProfileColors.TryGetValue(id, out var accentColor))
+            {
+                return accentColor;
+            }
+
+            return null;
         }
 
         public bool TryGetProfileColor(int id, out ProfileColor color)
