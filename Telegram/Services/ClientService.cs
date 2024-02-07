@@ -174,7 +174,6 @@ namespace Telegram.Services
         ForumTopicInfo GetTopicInfo(long chatId, long messageThreadId);
         bool TryGetTopicInfo(long chatId, long messageThreadId, out ForumTopicInfo value);
 
-        SavedMessagesTags GetSavedMessagesTags();
         MessageTag GetSavedMessagesTag(ReactionType reaction);
         bool TryGetSavedMessagesTag(ReactionType reaction, out MessageTag value);
 
@@ -277,7 +276,7 @@ namespace Telegram.Services
 
         private UpdateStoryStealthMode _storyStealthMode = new();
 
-        private Dictionary<ReactionType, MessageTag> _savedMessagesTags = new(new ReactionTypeEqualityComparer());
+        private readonly Dictionary<ReactionType, MessageTag> _savedMessagesTags = new(new ReactionTypeEqualityComparer());
 
         private class ReactionTypeEqualityComparer : IEqualityComparer<ReactionType>
         {
@@ -1703,18 +1702,6 @@ namespace Telegram.Services
 
 
 
-        public SavedMessagesTags GetSavedMessagesTags()
-        {
-            lock (_savedMessagesTags)
-            {
-                return new SavedMessagesTags(_savedMessagesTags.Values
-                    .Where(x => x.Count > 0)
-                    .Select(x => new SavedMessagesTag(x.Tag, x.Label, x.Count))
-                    .OrderByDescending(x => x.Count)
-                    .ToList());
-            }
-        }
-
         public MessageTag GetSavedMessagesTag(ReactionType reaction)
         {
             lock (_savedMessagesTags)
@@ -2379,27 +2366,30 @@ namespace Telegram.Services
             {
                 lock (_savedMessagesTags)
                 {
-                    var temp = new List<MessageTag>(updateSavedMessagesTags.Tags.Tags.Count);
-
-                    foreach (var tag in updateSavedMessagesTags.Tags.Tags)
+                    if (updateSavedMessagesTags.SavedMessagesTopic == null)
                     {
-                        if (_savedMessagesTags.TryGetValue(tag.Tag, out MessageTag cache))
-                        {
-                            cache.Count = tag.Count;
-                            cache.Label = tag.Label;
-                            temp.Add(cache);
-                        }
-                        else
-                        {
-                            temp.Add(new MessageTag(tag));
-                        }
-                    }
+                        var temp = new List<MessageTag>(updateSavedMessagesTags.Tags.Tags.Count);
 
-                    _savedMessagesTags.Clear();
+                        foreach (var tag in updateSavedMessagesTags.Tags.Tags)
+                        {
+                            if (_savedMessagesTags.TryGetValue(tag.Tag, out MessageTag cache))
+                            {
+                                cache.Count = tag.Count;
+                                cache.Label = tag.Label;
+                                temp.Add(cache);
+                            }
+                            else
+                            {
+                                temp.Add(new MessageTag(tag));
+                            }
+                        }
 
-                    foreach (var tag in temp)
-                    {
-                        _savedMessagesTags[tag.Tag] = tag;
+                        _savedMessagesTags.Clear();
+
+                        foreach (var tag in temp)
+                        {
+                            _savedMessagesTags[tag.Tag] = tag;
+                        }
                     }
                 }
             }

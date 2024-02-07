@@ -58,6 +58,8 @@ namespace Telegram.ViewModels
             set => _viewModel.Dispatcher = value;
         }
 
+        public virtual ReactionType SavedMessagesTag { get; set; }
+
 
 
         public virtual bool CanBeDownloaded(object content, File file)
@@ -397,6 +399,20 @@ namespace Telegram.ViewModels
         public override Chat Chat => _viewModel.Chat;
 
         #region Facades
+
+        public override ReactionType SavedMessagesTag
+        {
+            get => _viewModel.Search?.SavedMessagesTag;
+            set
+            {
+                if (_viewModel.Search == null)
+                {
+                    _viewModel.SearchExecute(string.Empty);
+                }
+
+                _viewModel.Search.SavedMessagesTag = value;
+            }
+        }
 
         public override void ForwardMessage(MessageViewModel message) => _viewModel.ForwardMessage(message);
 

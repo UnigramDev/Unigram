@@ -48,17 +48,8 @@ namespace Telegram.Controls.Messages
 
         public async void UpdateMessageReactions(ChatSearchViewModel viewModel, SavedMessagesTags tags)
         {
-            if (tags == null)
-            {
-                _prevValue = null;
-
-                _reactions.Clear();
-                _customReactions.Clear();
-
-                Children.Clear();
-            }
-
-            if (tags?.Tags.Count > 0)
+            var items = tags?.Tags.Where(x => x.Count > 0).ToArray() ?? Array.Empty<SavedMessagesTag>();
+            if (items.Length > 0)
             {
                 List<long> missingCustomEmoji = null;
                 List<string> missingEmoji = null;
@@ -93,16 +84,16 @@ namespace Telegram.Controls.Messages
 
                 if (_prevValue == null)
                 {
-                    for (int i = 0; i < tags.Tags.Count; i++)
+                    for (int i = 0; i < items.Length; i++)
                     {
-                        UpdateItem(tags.Tags[i], null, i);
+                        UpdateItem(items[i], null, i);
                     }
                 }
                 else
                 {
                     // PERF: run diff asynchronously?
                     var prev = _prevValue ?? Array.Empty<SavedMessagesTag>();
-                    var diff = DiffUtil.CalculateDiff(prev, tags.Tags, this, Constants.DiffOptions);
+                    var diff = DiffUtil.CalculateDiff(prev, items, this, Constants.DiffOptions);
 
                     foreach (var step in diff.Steps)
                     {
@@ -139,7 +130,7 @@ namespace Telegram.Controls.Messages
                     }
                 }
 
-                _prevValue = tags?.Tags.ToArray();
+                _prevValue = items;
 
                 if (missingCustomEmoji != null)
                 {
@@ -170,6 +161,15 @@ namespace Telegram.Controls.Messages
                         }
                     }
                 }
+            }
+            else
+            {
+                _prevValue = null;
+
+                _reactions.Clear();
+                _customReactions.Clear();
+
+                Children.Clear();
             }
         }
 

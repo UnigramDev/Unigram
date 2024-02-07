@@ -511,6 +511,42 @@ namespace Telegram.Controls.Messages
 
             base.OnKeyDown(e);
         }
+
+        //private CompositionPath GetClipGeometry(float width)
+        //{
+        //    CanvasGeometry result;
+        //    using (var builder = new CanvasPathBuilder(null))
+        //    {
+        //        var far = 28f;
+
+        //        var blp = width - (far - 14.4508f);
+        //        var brp = width - (far - 20.1773f);
+        //        var trp = width - (far - 14.4108f);
+
+        //        var brp1trp2 = width - (far - 16.6541f);
+        //        var brp2trp1 = width - (far - 18.7758f);
+
+        //        var tipep = width - (far - 27.1917f);
+        //        var tipp12 = width - (far - 28.2705f);
+
+        //        builder.BeginFigure(5.53846f, 0);
+        //        builder.AddCubicBezier(new Vector2(2.47964f, 0), new Vector2(0, 2.47964f), new Vector2(0, 5.53846f));
+        //        builder.AddLine(0, 18.4638f);
+        //        builder.AddCubicBezier(new Vector2(0, 21.5225f), new Vector2(2.47964f, 24.0022f), new Vector2(5.53846f, 24.0022f));
+        //        builder.AddLine(blp, 24.0022f);
+        //        builder.AddCubicBezier(new Vector2(brp1trp2, 24.0022f), new Vector2(brp2trp1, 22.9825f), new Vector2(brp, 21.2308f));
+        //        builder.AddLine(tipep, 14.3088f);
+        //        builder.AddCubicBezier(new Vector2(tipp12, 12.9603f), new Vector2(tipp12, 11.0442f), new Vector2(tipep, 9.69554f));
+        //        builder.AddLine(brp, 2.77148f);
+        //        builder.AddCubicBezier(new Vector2(brp2trp1, 1.01976f), new Vector2(brp1trp2, 0), new Vector2(trp, 0));
+        //        builder.AddLine(5.53846f, 0);
+        //        builder.EndFigure(CanvasFigureLoop.Closed);
+        //        builder.AddGeometry(CanvasGeometry.CreateEllipse(null, width - (far - 17), 9 + 3, 3, 3));
+
+        //        result = CanvasGeometry.CreatePath(builder);
+        //    }
+        //    return new CompositionPath(result);
+        //}
     }
 
     public class ReactionButtonAutomationPeer : ToggleButtonAutomationPeer

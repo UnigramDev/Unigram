@@ -27,6 +27,8 @@ namespace Telegram.ViewModels.Delegates
 
         bool IsSelectionEnabled { get; }
 
+        ReactionType SavedMessagesTag { get; set; }
+
         void Select(MessageViewModel message);
         void Unselect(MessageViewModel message);
 

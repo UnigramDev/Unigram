@@ -79,20 +79,25 @@ namespace Telegram.Controls.Messages
         {
             if (sender == _tag && e.PropertyName == nameof(MessageTag.Label))
             {
-                if (string.IsNullOrEmpty(_tag?.Label))
-                {
-                    if (Count != null)
-                    {
-                        Count.Visibility = Visibility.Collapsed;
-                    }
-                }
-                else
-                {
-                    Count ??= GetTemplateChild(nameof(Count)) as AnimatedTextBlock;
-                    Count.Visibility = Visibility.Visible;
+                this.BeginOnUIThread(UpdateLabel);
+            }
+        }
 
-                    Count.Text = _tag.Label;
+        private void UpdateLabel()
+        {
+            if (string.IsNullOrEmpty(_tag?.Label))
+            {
+                if (Count != null)
+                {
+                    Count.Visibility = Visibility.Collapsed;
                 }
+            }
+            else
+            {
+                Count ??= GetTemplateChild(nameof(Count)) as AnimatedTextBlock;
+                Count.Visibility = Visibility.Visible;
+
+                Count.Text = _tag.Label;
             }
         }
 
@@ -107,15 +112,32 @@ namespace Telegram.Controls.Messages
 
         protected override void OnClick(MessageViewModel message, MessageReaction chosen)
         {
+            if (!message.ClientService.IsPremium)
+            {
+                if (message.ClientService.IsPremiumAvailable)
+                {
+                    message.Delegate.NavigationService.ShowPromo(new PremiumSourceFeature(new PremiumFeatureSavedMessagesTags()));
+                }
+
+                return;
+            }
+
             var flyout = new MenuFlyout();
 
             var tag = _message.ClientService.GetSavedMessagesTag(chosen.Type);
+            var selected = _message.Delegate.SavedMessagesTag;
+
             var edit = string.IsNullOrEmpty(tag?.Label)
                 ? Strings.SavedTagLabelTag
                 : Strings.SavedTagRenameTag;
 
-            flyout.CreateFlyoutItem(() => { }, Strings.SavedTagFilterByTag, Icons.TagFilter);
+            if (selected == null || !chosen.Type.AreTheSame(selected))
+            {
+                flyout.CreateFlyoutItem(FilterByTag, Strings.SavedTagFilterByTag, Icons.TagFilter);
+            }
+
             flyout.CreateFlyoutItem(RenameTag, edit, Icons.TagEdit);
+            flyout.CreateFlyoutSeparator();
             flyout.CreateFlyoutItem(RemoveTag, Strings.SavedTagRemoveTag, Icons.TagOff, destructive: true);
 
             FlyoutPlacementMode placement;
@@ -134,6 +156,17 @@ namespace Telegram.Controls.Messages
             }
 
             flyout.ShowAt(this, placement);
+        }
+
+        private void FilterByTag()
+        {
+            var chosen = _interaction;
+            if (chosen == null)
+            {
+                return;
+            }
+
+            _message.Delegate.SavedMessagesTag = chosen.Type;
         }
 
         private async void RenameTag()

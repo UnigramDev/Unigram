@@ -386,7 +386,7 @@ namespace Telegram.ViewModels
                 return false;
             }
 
-            if (tag != null && TryGetLastVisibleMessageIdAndPixel(out long lastVisibleId, out double? lastVisiblePixel))
+            if (lastTag != null && TryGetLastVisibleMessageIdAndPixel(out long lastVisibleId, out double? lastVisiblePixel))
             {
                 _ = LoadMessageSliceAsync(null, lastVisibleId, VerticalAlignment.Bottom, lastVisiblePixel, onlyRemote: true);
             }
@@ -662,7 +662,7 @@ namespace Telegram.ViewModels
                 Function func;
                 if (Search?.SavedMessagesTag != null)
                 {
-                    func = new SearchSavedMessages(_savedMessagesTopic, Search.SavedMessagesTag, string.Empty, fromMessageId, -25, 50);
+                    func = new SearchSavedMessages(_savedMessagesTopic, Search.SavedMessagesTag, string.Empty, fromMessageId, offset, 50);
                 }
                 else if (_savedMessagesTopic != null)
                 {
@@ -695,12 +695,13 @@ namespace Telegram.ViewModels
 
                     if (result is Messages messages)
                     {
-                        if (direction == PanelScrollingDirection.Backward && messages.MessagesValue.Empty())
+                        var endReached = messages.MessagesValue.Empty();
+                        if (endReached && direction == PanelScrollingDirection.Backward)
                         {
                             await AddHeaderAsync(messages.MessagesValue, fromMessage?.Get());
                         }
 
-                        tsc.SetResult(new MessageCollection(Items.Ids, messages.MessagesValue, CreateMessage));
+                        tsc.SetResult(new MessageCollection(Items.Ids, messages.MessagesValue, CreateMessage, endReached));
                     }
                     else
                     {
@@ -735,12 +736,12 @@ namespace Telegram.ViewModels
 
                     if (direction == PanelScrollingDirection.Backward)
                     {
-                        IsLastSliceLoaded = replied.Count == 0;
+                        IsLastSliceLoaded = replied.IsEndReached;
                         UpdateDetectedLanguage();
                     }
                     else
                     {
-                        IsFirstSliceLoaded = replied.Count == 0 || IsEndReached();
+                        IsFirstSliceLoaded = replied.IsEndReached || IsEndReached();
                     }
                 }
 
@@ -1480,7 +1481,7 @@ namespace Telegram.ViewModels
                     }
                 }
 
-                var replied = new MessageCollection(null, values, CreateMessage);
+                var replied = new MessageCollection(null, values, CreateMessage, false);
                 return new LoadSliceResult(replied, maxId, scrollMode, alignment, pixel);
             }
 
@@ -2125,8 +2126,13 @@ namespace Telegram.ViewModels
 
                 if (privata.UserId == ClientService.Options.MyId)
                 {
-                    ClientService.Send(new GetSavedMessagesTags());
-                    SavedMessagesTags = ClientService.GetSavedMessagesTags();
+                    ClientService.Send(new GetSavedMessagesTags(_savedMessagesTopic), result =>
+                    {
+                        if (result is SavedMessagesTags tags)
+                        {
+                            BeginOnUIThread(() => SavedMessagesTags = tags);
+                        }
+                    });
                 }
             }
             else if (chat.Type is ChatTypeSecret secretType)
@@ -3938,13 +3944,18 @@ namespace Telegram.ViewModels
 
         public Action<IEnumerable<MessageViewModel>> AttachChanged;
 
+        // Used in sub-collection
+        public bool IsEndReached { get; }
+
         public MessageCollection()
         {
             _messages = new();
         }
 
-        public MessageCollection(ICollection<long> exclude, IEnumerable<Message> source, Func<Message, bool, MessageViewModel> create)
+        public MessageCollection(ICollection<long> exclude, IEnumerable<Message> source, Func<Message, bool, MessageViewModel> create, bool endReached)
         {
+            IsEndReached = endReached;
+
             foreach (var item in source)
             {
                 if (item.Id != 0 && exclude != null && exclude.Contains(item.Id))

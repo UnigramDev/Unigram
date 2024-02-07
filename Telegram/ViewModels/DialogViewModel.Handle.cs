@@ -88,7 +88,20 @@ namespace Telegram.ViewModels
         {
             if (_chat?.Id == ClientService.Options.MyId)
             {
-                BeginOnUIThread(() => SavedMessagesTags = ClientService.GetSavedMessagesTags());
+                //if (update.SavedMessagesTopic.AreTheSame(_savedMessagesTopic))
+                //{
+                //    BeginOnUIThread(() => SavedMessagesTags = update.Tags);
+                //}
+                //else
+                {
+                    ClientService.Send(new GetSavedMessagesTags(_savedMessagesTopic), result =>
+                    {
+                        if (result is SavedMessagesTags tags)
+                        {
+                            BeginOnUIThread(() => SavedMessagesTags = tags);
+                        }
+                    });
+                }
             }
         }
 
