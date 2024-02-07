@@ -763,6 +763,120 @@ namespace Telegram.Views
 
             _loadedThemeTask?.TrySetResult(true);
             _updateThemeTask?.TrySetResult(true);
+
+            LeakTest(false);
+        }
+
+        private bool _testLeak;
+
+        public void LeakTest(bool enable)
+        {
+            if (!_testLeak)
+            {
+                if (enable)
+                {
+                    _testLeak = true;
+                }
+                return;
+            }
+
+            _viewModel = null;
+            DataContext = null;
+
+            ContentPanel.Children.Clear();
+            LayoutRoot.Children.Clear();
+            ClipperOuter.Children.Clear();
+
+            LayoutRoot = null;
+            FilledState = null;
+            SidebarState = null;
+            KeyboardPlaceholder = null;
+            BackgroundControl = null;
+            Header = null;
+            ClipperOuter = null;
+            ContentPanel = null;
+            ReplyMarkupPanel = null;
+            StickersPanel = null;
+            Separator = null;
+            TextArea = null;
+            ChatRecord = null;
+            ChatFooter = null;
+            ManagePanel = null;
+            SearchMask = null;
+            ButtonManage = null;
+            ManageCount = null;
+            ButtonForward = null;
+            ButtonDelete = null;
+            ButtonAction = null;
+            TextRoot = null;
+            TextMain = null;
+            ComposerHeader = null;
+            ButtonMore = null;
+            TextFieldPanel = null;
+            btnAttach = null;
+            ButtonsPanel = null;
+            SecondaryButtonsPanel = null;
+            ButtonStickers = null;
+            ButtonRecord = null;
+            btnSendMessage = null;
+            btnEdit = null;
+            btnVoiceMessage = null;
+            btnScheduled = null;
+            ButtonSilent = null;
+            ButtonTimer = null;
+            btnCommands = null;
+            btnMarkup = null;
+            ButtonMarkup = null;
+            ButtonCommands = null;
+            ButtonScheduled = null;
+            ButtonAttach = null;
+            TextField = null;
+            PhotoMore = null;
+            ComposerHeaderGlyph = null;
+            ComposerHeaderUpload = null;
+            ComposerHeaderCancel = null;
+            ComposerHeaderReference = null;
+            ReplyMarkup = null;
+            Messages = null;
+            Arrows = null;
+            InlinePanel = null;
+            ListInline = null;
+            ListAutocomplete = null;
+            GroupCall = null;
+            ClipperJoinRequests = null;
+            JoinRequests = null;
+            ClipperActionBar = null;
+            ActionBar = null;
+            ClipperTranslate = null;
+            TranslateHeader = null;
+            Clipper = null;
+            ClipperBackground = null;
+            PinnedMessage = null;
+            CallbackQueryAnswerPanel = null;
+            DateHeaderRelative = null;
+            DateHeaderPanel = null;
+            DateHeader = null;
+            DateHeaderLabel = null;
+            CallbackQueryAnswer = null;
+            HeaderLeft = null;
+            BackButton = null;
+            Segments = null;
+            Icon = null;
+            Profile = null;
+            Options = null;
+            SecondaryOptions = null;
+            VideoCall = null;
+            Call = null;
+            Subtitle = null;
+            ChatActionPanel = null;
+            ChatActionIndicator = null;
+            ChatActionLabel = null;
+            Title = null;
+            Identity = null;
+            Photo = null;
+            Show = null;
+            Hide = null;
+            FlyoutArea = null;
         }
 
         private void Window_Activated(object sender, WindowActivatedEventArgs e)

@@ -4,6 +4,7 @@
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+using LinqToVisualTree;
 using Microsoft.Graphics.Canvas;
 using Microsoft.Graphics.Canvas.Geometry;
 using Microsoft.UI.Xaml.Controls;
@@ -100,14 +101,14 @@ namespace Telegram.Views.Host
 
             DropShadowEx.Attach(ThemeShadow);
 
-            if (ApiInfo.IsXbox)
-            {
-                var application = ApplicationView.GetForCurrentView();
-                application.VisibleBoundsChanged += OnVisibleBoundsChanged;
-                application.SetDesiredBoundsMode(ApplicationViewBoundsMode.UseCoreWindow);
+            //if (ApiInfo.IsXbox)
+            //{
+            //    var application = ApplicationView.GetForCurrentView();
+            //    application.VisibleBoundsChanged += OnVisibleBoundsChanged;
+            //    application.SetDesiredBoundsMode(ApplicationViewBoundsMode.UseCoreWindow);
 
-                OnVisibleBoundsChanged(application, null);
-            }
+            //    OnVisibleBoundsChanged(application, null);
+            //}
         }
 
         private void OnVisibleBoundsChanged(ApplicationView sender, object args)
@@ -691,6 +692,20 @@ namespace Telegram.Views.Host
         private void TestDestroy()
         {
             Destroy(_navigationService);
+
+            var frames = this.Descendants<Frame>().ToList();
+
+            foreach (var frame in frames)
+            {
+                if (frame.Content is MainPage main)
+                {
+                    main.LeakTest(true);
+                }
+                else if (frame.Content is Page page && page.Content is ChatView chat)
+                {
+                    chat.LeakTest(true);
+                }
+            }
 
             var butt = new RepeatButton();
             butt.HorizontalAlignment = HorizontalAlignment.Center;

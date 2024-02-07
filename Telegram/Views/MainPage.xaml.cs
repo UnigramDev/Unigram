@@ -10,6 +10,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Numerics;
+using System.Threading.Tasks;
 using Telegram.Collections;
 using Telegram.Common;
 using Telegram.Composition;
@@ -1021,6 +1022,8 @@ namespace Telegram.Views
             Bindings.StopTracking();
 
             _unloaded = true;
+
+            LeakTest(false);
         }
 
         private void OnCharacterReceived(CoreWindow sender, CharacterReceivedEventArgs args)
@@ -1066,6 +1069,8 @@ namespace Telegram.Views
             {
                 if (SettingsService.Current.Diagnostics.ShowMemoryUsage && command == ShortcutCommand.Quit)
                 {
+                    //Benchmark();
+
                     GC.Collect();
                     GC.WaitForPendingFinalizers();
                     GC.Collect();
@@ -1076,6 +1081,34 @@ namespace Telegram.Views
                 ProcessChatCommands(command, args);
                 ProcessFolderCommands(command, args);
                 ProcessAppCommands(command, args);
+            }
+        }
+
+        private async void Benchmark()
+        {
+            var pinned = ViewModel.Chats.Items.LastOrDefault(x => x.GetPosition(null).IsPinned);
+            var index = ViewModel.Chats.Items.IndexOf(pinned);
+
+            var next1 = ViewModel.Chats.Items[index + 1];
+            var next2 = ViewModel.Chats.Items[index + 2];
+            var next3 = ViewModel.Chats.Items[index + 3];
+
+            var order = next2.GetOrder(null);
+
+            for (int i = 0; i < 10000; i++)
+            {
+                if (i % 2 == 0)
+                {
+                    ViewModel.Chats.Items.Handle(next1.Id, order - 1);
+                    ViewModel.Chats.Items.Handle(next3.Id, order + 1);
+                }
+                else
+                {
+                    ViewModel.Chats.Items.Handle(next3.Id, order - 1);
+                    ViewModel.Chats.Items.Handle(next1.Id, order + 1);
+                }
+
+                await VisualUtilities.WaitForCompositionRenderingAsync();
             }
         }
 
@@ -3596,6 +3629,88 @@ namespace Telegram.Views
         }
 
         #endregion
+
+        private bool _testLeak;
+
+        public void LeakTest(bool enable)
+        {
+            if (!_testLeak)
+            {
+                if (enable)
+                {
+                    _testLeak = true;
+                }
+
+                return;
+            }
+
+            _viewModel = null;
+            LayoutRoot.Children.Clear();
+
+            LayoutRoot = null;
+            NavigationResults = null;
+            ContactsResults = null;
+            State = null;
+            TitleBarrr = null;
+            ChatTabsLeft = null;
+            Photo = null;
+            MasterDetail = null;
+            Confetti = null;
+            Playback = null;
+            CallBanner = null;
+            Header = null;
+            rpMasterTitlebar = null;
+            Stories = null;
+            Calls = null;
+            SettingsRoot = null;
+            SettingsView = null;
+            CallsRoot = null;
+            CallsList = null;
+            ContactsRoot = null;
+            ContactsSearchListView = null;
+            ContactsPanel = null;
+            UsersListView = null;
+            DialogsSearchPanel = null;
+            DialogsPanel = null;
+            ChatsPanel = null;
+            Downloads = null;
+            ManagePanel = null;
+            ButtonManage = null;
+            ManageCount = null;
+            ManageMute = null;
+            ManageMark = null;
+            ManageClear = null;
+            UpdateShadow = null;
+            UpdateCloud = null;
+            ChatListHeader = null;
+            ChatsList = null;
+            TopicListPresenter = null;
+            EmptyState = null;
+            TopicList = null;
+            UnconfirmedCard = null;
+            ArchivedChatsPresenter = null;
+            ArchivedChatsPanel = null;
+            ArchivedChats = null;
+            ChatTabs = null;
+            ChatTabsView = null;
+            ChatFolders = null;
+            MainHeader = null;
+            SearchField = null;
+            ChatsOptions = null;
+            ComposeButton = null;
+            Proxy = null;
+            Lock = null;
+            ChatFoldersSide = null;
+            TitleBarHandle = null;
+            TitleBarLogo = null;
+            TitleText = null;
+            StateLabel = null;
+            MemoryLabel = null;
+            LogoBasic = null;
+            LogoPremium = null;
+            LogoEmoji = null;
+
+        }
     }
 
     public enum HostedNavigationMode
