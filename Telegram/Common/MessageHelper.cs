@@ -295,7 +295,8 @@ namespace Telegram.Common
             if (!url.StartsWith("http://")
                 && !url.StartsWith("https://")
                 && !url.StartsWith("tg:")
-                && !url.StartsWith("ftp:"))
+                && !url.StartsWith("ftp:")
+                && !url.StartsWith("mailto:"))
             {
                 url = "http://" + url;
             }
