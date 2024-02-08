@@ -327,6 +327,11 @@ namespace Telegram.Controls
                 var indicator = topElement.GetSelectionIndicator(true);
                 if (indicator != null)
                 {
+                    if (topElement.IsSelected)
+                    {
+                        _activeIndicator = indicator;
+                    }
+
                     ResetElementAnimationProperties(indicator, topElement.IsSelected ? 1 : 0);
                 }
             }
