@@ -1638,7 +1638,7 @@ namespace Telegram.Views
                 MasterDetail.NavigationService.NavigateToChat(
                     message.ChatId,
                     message: message.Id,
-                    thread: message.IsTopicMessage ? message.MessageThreadId : null,
+                    thread: message.IsTopicMessage ? message.MessageThreadId : 0,
                     force: false);
             }
             else
@@ -1709,7 +1709,7 @@ namespace Telegram.Views
             else if (item is ForumTopic topic)
             {
                 ViewModel.Chats.SelectedItem = ViewModel.Topics.Chat?.Id;
-                MasterDetail.NavigationService.NavigateToThread(ViewModel.Topics.Chat, topic.Info.MessageThreadId);
+                MasterDetail.NavigationService.NavigateToChat(ViewModel.Topics.Chat, thread: topic.Info.MessageThreadId);
             }
         }
 

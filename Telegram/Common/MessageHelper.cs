@@ -769,11 +769,12 @@ namespace Telegram.Common
                 {
                     if (info.MessageThreadId != 0)
                     {
-                        navigation.NavigateToThread(info.ChatId, info.Message.Id, message: info.Message.Id);
+                        // TODO: should thread be info.MessageThreadId?
+                        navigation.NavigateToChat(info.ChatId, info.Message.Id, thread: info.Message.Id);
                     }
                     else
                     {
-                        navigation.NavigateToChat(info.ChatId, message: info.Message.Id);
+                        navigation.NavigateToChat(info.ChatId, info.Message.Id);
                     }
                 }
                 else

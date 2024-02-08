@@ -213,7 +213,7 @@ namespace Telegram.ViewModels.Chats
                 return;
             }
 
-            NavigationService.NavigateToChat(message.ChatId, message.Id, _threadId != 0 ? _threadId : null, _savedMessagesTopicId);
+            NavigationService.NavigateToChat(message.ChatId, message.Id, _threadId, _savedMessagesTopicId);
         }
     }
 }

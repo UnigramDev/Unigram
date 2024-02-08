@@ -136,22 +136,6 @@ namespace Telegram.Common
             }
         }
 
-        public static void NavigateToThread(this INavigationService service, Chat chat, long thread, long? message = null, NavigationState state = null)
-        {
-            if (service is TLNavigationService serviceEx)
-            {
-                serviceEx.NavigateToChat(chat, message, thread, state: state);
-            }
-        }
-
-        public static void NavigateToThread(this INavigationService service, long chatId, long thread, long? message = null, NavigationState state = null)
-        {
-            if (service is TLNavigationService serviceEx)
-            {
-                serviceEx.NavigateToChat(chatId, message, thread, state: state);
-            }
-        }
-
         public static void NavigateToUser(this INavigationService service, long userId, bool toChat = false)
         {
             if (service is TLNavigationService serviceEx)
@@ -160,7 +144,7 @@ namespace Telegram.Common
             }
         }
 
-        public static void NavigateToChat(this INavigationService service, Chat chat, long? message = null, long? thread = null, long? savedMessagesTopicId = null, string accessToken = null, NavigationState state = null, bool scheduled = false, bool force = true, bool createNewWindow = false, bool clearBackStack = false)
+        public static void NavigateToChat(this INavigationService service, Chat chat, long? message = null, long thread = 0, long savedMessagesTopicId = 0, string accessToken = null, NavigationState state = null, bool scheduled = false, bool force = true, bool createNewWindow = false, bool clearBackStack = false)
         {
             if (service is TLNavigationService serviceEx)
             {
@@ -168,7 +152,7 @@ namespace Telegram.Common
             }
         }
 
-        public static void NavigateToChat(this INavigationService service, long chatId, long? message = null, long? thread = null, long? savedMessagesTopicId = null, string accessToken = null, NavigationState state = null, bool scheduled = false, bool force = true, bool createNewWindow = false)
+        public static void NavigateToChat(this INavigationService service, long chatId, long? message = null, long thread = 0, long savedMessagesTopicId = 0, string accessToken = null, NavigationState state = null, bool scheduled = false, bool force = true, bool createNewWindow = false)
         {
             if (service is TLNavigationService serviceEx)
             {

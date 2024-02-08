@@ -152,7 +152,7 @@ namespace Telegram.ViewModels
             var response = await ClientService.SendAsync(new GetMessageThread(chatId, threadId));
             if (response is MessageThreadInfo)
             {
-                NavigationService.NavigateToThread(chatId, threadId, messageId);
+                NavigationService.NavigateToChat(chatId, messageId, thread: threadId);
             }
         }
 

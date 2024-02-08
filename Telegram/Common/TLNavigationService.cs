@@ -140,7 +140,7 @@ namespace Telegram.Common
             }
         }
 
-        public async void NavigateToChat(Chat chat, long? message = null, long? thread = null, long? savedMessagesTopicId = null, string accessToken = null, NavigationState state = null, bool scheduled = false, bool force = true, bool createNewWindow = false, bool clearBackStack = false)
+        public async void NavigateToChat(Chat chat, long? message = null, long thread = 0, long savedMessagesTopicId = 0, string accessToken = null, NavigationState state = null, bool scheduled = false, bool force = true, bool createNewWindow = false, bool clearBackStack = false)
         {
             if (Dispatcher.HasThreadAccess is false)
             {
@@ -164,7 +164,7 @@ namespace Telegram.Common
                     return;
                 }
 
-                if (user.Id == _clientService.Options.MyId && chat.ViewAsTopics && savedMessagesTopicId == null)
+                if (user.Id == _clientService.Options.MyId && chat.ViewAsTopics && savedMessagesTopicId == 0)
                 {
                     Navigate(typeof(ProfilePage), chat.Id, infoOverride: new SuppressNavigationTransitionInfo());
                     return;
@@ -212,7 +212,7 @@ namespace Telegram.Common
             }
 
             // TODO: do current page matching for ChatSavedPage and ChatThreadPage as well.
-            if (Frame.Content is ChatPage page && page.ViewModel != null && chat.Id.Equals((long)CurrentPageParam) && thread == null && savedMessagesTopicId == null && !scheduled && !createNewWindow)
+            if (Frame.Content is ChatPage page && page.ViewModel != null && chat.Id.Equals((long)CurrentPageParam) && thread == 0 && savedMessagesTopicId == 0 && !scheduled && !createNewWindow)
             {
                 var viewModel = page.ViewModel;
                 if (message != null)
@@ -283,15 +283,15 @@ namespace Telegram.Common
                     Type target;
                     object parameter;
 
-                    if (thread != null)
+                    if (thread != 0)
                     {
                         target = typeof(ChatThreadPage);
-                        parameter = new ChatMessageIdNavigationArgs(chat.Id, thread.Value);
+                        parameter = new ChatMessageIdNavigationArgs(chat.Id, thread);
                     }
-                    else if (savedMessagesTopicId != null)
+                    else if (savedMessagesTopicId != 0)
                     {
                         target = typeof(ChatSavedPage);
-                        parameter = new ChatSavedMessagesTopicIdNavigationArgs(chat.Id, savedMessagesTopicId.Value);
+                        parameter = new ChatSavedMessagesTopicIdNavigationArgs(chat.Id, savedMessagesTopicId);
                     }
                     else if (scheduled)
                     {
@@ -318,7 +318,7 @@ namespace Telegram.Common
                 else
                 {
                     // TODO: do current page matching for ChatSavedPage and ChatThreadPage as well.
-                    if (Frame.Content is ChatPage chatPage && thread == null && savedMessagesTopicId == null && !scheduled && !force)
+                    if (Frame.Content is ChatPage chatPage && thread == 0 && savedMessagesTopicId == 0 && !scheduled && !force)
                     {
                         chatPage.ViewModel.NavigatedFrom(null, false);
 
@@ -344,10 +344,10 @@ namespace Telegram.Common
                         NavigationTransitionInfo info = null;
                         object parameter;
 
-                        if (thread != null)
+                        if (thread != 0)
                         {
                             target = typeof(ChatThreadPage);
-                            parameter = new ChatMessageIdNavigationArgs(chat.Id, thread.Value);
+                            parameter = new ChatMessageIdNavigationArgs(chat.Id, thread);
 
                             if (CurrentPageType == typeof(ChatPage) && chat.Id.Equals((long)CurrentPageParam))
                             {
@@ -358,10 +358,10 @@ namespace Telegram.Common
                                 info = new SuppressNavigationTransitionInfo();
                             }
                         }
-                        else if (savedMessagesTopicId != null)
+                        else if (savedMessagesTopicId != 0)
                         {
                             target = typeof(ChatSavedPage);
-                            parameter = new ChatSavedMessagesTopicIdNavigationArgs(chat.Id, savedMessagesTopicId.Value);
+                            parameter = new ChatSavedMessagesTopicIdNavigationArgs(chat.Id, savedMessagesTopicId);
 
                             if (CurrentPageType == typeof(ChatPage) && chat.Id.Equals((long)CurrentPageParam))
                             {
@@ -411,7 +411,7 @@ namespace Telegram.Common
             }
         }
 
-        public async void NavigateToChat(long chatId, long? message = null, long? thread = null, long? savedMessagesTopicId = null, string accessToken = null, NavigationState state = null, bool scheduled = false, bool force = true, bool createNewWindow = false)
+        public async void NavigateToChat(long chatId, long? message = null, long thread = 0, long savedMessagesTopicId = 0, string accessToken = null, NavigationState state = null, bool scheduled = false, bool force = true, bool createNewWindow = false)
         {
             var chat = _clientService.GetChat(chatId);
 
