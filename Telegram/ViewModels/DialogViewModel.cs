@@ -915,7 +915,13 @@ namespace Telegram.ViewModels
                 var panel = field.ItemsPanelRoot as ItemsStackPanel;
                 if (panel != null && panel.LastVisibleIndex >= 0 && panel.LastVisibleIndex < Items.Count && Items.Count > 0)
                 {
-                    id = Items[panel.LastVisibleIndex].Id;
+                    var item = Items[panel.LastVisibleIndex];
+                    if (item.Content is MessageAlbum album)
+                    {
+                        item = album.Messages.LastOrDefault();
+                    }
+
+                    id = item.Id;
                     index = panel.LastVisibleIndex;
                     return true;
                 }
@@ -934,7 +940,13 @@ namespace Telegram.ViewModels
                 var panel = field.ItemsPanelRoot as ItemsStackPanel;
                 if (panel != null && panel.FirstVisibleIndex >= 0 && panel.FirstVisibleIndex < Items.Count && Items.Count > 0)
                 {
-                    id = Items[panel.FirstVisibleIndex].Id;
+                    var item = Items[panel.FirstVisibleIndex];
+                    if (item.Content is MessageAlbum album)
+                    {
+                        item = album.Messages.FirstOrDefault();
+                    }
+
+                    id = item.Id;
                     return true;
                 }
             }
@@ -1196,8 +1208,6 @@ namespace Telegram.ViewModels
                     }
 
                     UpdateDetectedLanguage();
-
-                    await AddSponsoredMessagesAsync();
                 }
 
                 _loadingSlice = false;
