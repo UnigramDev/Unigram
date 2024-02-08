@@ -303,7 +303,7 @@ namespace Telegram.Collections
             }
 
             var removedItems = new List<T>(count);
-            for (int i = start; i < count; i++)
+            for (int i = start; i <= end; i++)
             {
                 removedItems.Add(this[i]);
             }

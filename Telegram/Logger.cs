@@ -135,4 +135,13 @@ namespace Telegram
             }
         }
     }
+
+    public class RuntimeException : Exception
+    {
+        public RuntimeException(Exception innerException)
+            : base(innerException.Message, innerException)
+        {
+
+        }
+    }
 }

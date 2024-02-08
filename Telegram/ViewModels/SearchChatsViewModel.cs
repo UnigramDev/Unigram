@@ -380,7 +380,7 @@ namespace Telegram.ViewModels
 
         public int Index { get; set; }
 
-        public int Displacement => Index + (Key != null && Count > 0 ? 1 : 0);
+        public int TotalIndex => Index + (Key != null && Count > 0 ? 1 : 0);
 
         public int TotalCount => Count + (Key != null && Count > 0 ? 1 : 0);
 

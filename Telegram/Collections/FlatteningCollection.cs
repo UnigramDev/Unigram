@@ -10,11 +10,11 @@ using System.Collections.Specialized;
 
 namespace Telegram.Collections
 {
-    public interface IKeyedCollection : ICollection, INotifyCollectionChanged
+    public interface IKeyedCollection : ICollection, IList, INotifyCollectionChanged
     {
         int Index { get; set; }
 
-        int Displacement { get; }
+        int TotalIndex { get; }
 
         int TotalCount { get; }
 
@@ -76,14 +76,14 @@ namespace Telegram.Collections
 
         private void Insert(IKeyedCollection collection, int newStartingIndex, IList newItems)
         {
-            if (newStartingIndex == 0 && newItems.Count == collection.Count)
+            if (newStartingIndex == 0 && newItems.Count == collection.Count && collection.Count > 0)
             {
                 Insert(collection.Index, collection);
             }
 
             foreach (var item in newItems)
             {
-                Insert(collection.Displacement + newStartingIndex, item);
+                Insert(collection.TotalIndex + newStartingIndex, item);
                 newStartingIndex++;
             }
         }
@@ -92,7 +92,7 @@ namespace Telegram.Collections
         {
             for (int i = oldStartingIndex; i < oldStartingIndex + oldItemsCount; i++)
             {
-                RemoveAt(collection.Displacement + i);
+                RemoveAt(collection.TotalIndex + i);
             }
 
             if (collection.Count == 0 && oldItemsCount > 0)
@@ -112,6 +112,8 @@ namespace Telegram.Collections
             {
                 RemoveAt(collection.Index);
             }
+
+            Insert(collection, 0, collection);
         }
 
         private void UpdateIndexes(IKeyedCollection from)

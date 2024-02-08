@@ -1725,16 +1725,13 @@ namespace Telegram.Controls
                 if (IsValid(work.Presentation))
                 {
                     NotifyDelegate(work.CorrelationId, animation, new LottieAnimatedImageTask(animation, work.Presentation));
+                    return;
                 }
-                else
-                {
-                    animation.Dispose();
-                }
+
+                animation.Dispose();
             }
-            else
-            {
-                _delegates.TryRemove(work.CorrelationId, out _);
-            }
+
+            _delegates.TryRemove(work.CorrelationId, out _);
         }
 
         private void LoadCachedVideo(WorkItem work)
@@ -1754,16 +1751,13 @@ namespace Telegram.Controls
                 if (IsValid(animation))
                 {
                     NotifyDelegate(work.CorrelationId, animation, new VideoAnimatedImageTask(animation, work.Presentation));
+                    return;
                 }
-                else
-                {
-                    animation.Dispose();
-                }
+
+                animation.Dispose();
             }
-            else
-            {
-                _delegates.TryRemove(work.CorrelationId, out _);
-            }
+
+            _delegates.TryRemove(work.CorrelationId, out _);
         }
 
         private async void LoadWebP(WorkItem work, LocalFileSource local)
@@ -1783,6 +1777,7 @@ namespace Telegram.Controls
                 if (IsValid(animation, pixelWidth, pixelHeight))
                 {
                     NotifyDelegate(work.CorrelationId, null, new WebpAnimatedImageTask(animation, pixelWidth, pixelHeight, work.Presentation));
+                    return;
                 }
             }
             else
@@ -1822,13 +1817,16 @@ namespace Telegram.Controls
                     if (IsValid(animation, pixelWidth, pixelHeight))
                     {
                         NotifyDelegate(work.CorrelationId, null, new WebpAnimatedImageTask(animation, pixelWidth, pixelHeight, work.Presentation));
+                        return;
                     }
                 }
                 catch
                 {
-                    _delegates.TryRemove(work.CorrelationId, out _);
+                    // All the remote procedure calls must be wrapped in a try-catch block
                 }
             }
+
+            _delegates.TryRemove(work.CorrelationId, out _);
         }
 
         private bool NotifyDelegate(int correlationId, IDisposable disposable, AnimatedImageTask task)
