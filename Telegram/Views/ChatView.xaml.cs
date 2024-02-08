@@ -689,14 +689,7 @@ namespace Telegram.Views
             }
             else if (e.PropertyName.Equals(nameof(ViewModel.IsFirstSliceLoaded)))
             {
-                if (Messages.ScrollingHost == null || (Messages.ScrollingHost.ScrollableHeight - Messages.ScrollingHost.VerticalOffset < 40 && ViewModel.IsFirstSliceLoaded != false))
-                {
-                    Arrows.IsVisible = false;
-                }
-                else if (ViewModel.Type is DialogType.History or DialogType.Thread or DialogType.SavedMessagesTopic)
-                {
-                    Arrows.IsVisible = true;
-                }
+                UpdateArrowVisibility();
             }
         }
 

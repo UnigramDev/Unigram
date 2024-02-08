@@ -43,22 +43,37 @@ namespace Telegram.Views
                 return;
             }
 
-            Arrows.IsVisible = false;
+            UpdateArrowVisibility();
             ViewVisibleMessages(false);
         }
 
         private void OnViewChanged(object sender, ScrollViewerViewChangedEventArgs e)
         {
-            if (Messages.ScrollingHost.ScrollableHeight - Messages.ScrollingHost.VerticalOffset < 40 && ViewModel.IsFirstSliceLoaded != false)
+            UpdateArrowVisibility();
+            ViewVisibleMessages(false);
+        }
+
+        private void UpdateArrowVisibility()
+        {
+            if (ViewModel.Type is not DialogType.History and not DialogType.Thread and not DialogType.SavedMessagesTopic)
             {
                 Arrows.IsVisible = false;
-            }
-            else if (ViewModel.Type is DialogType.History or DialogType.Thread or DialogType.SavedMessagesTopic)
-            {
-                Arrows.IsVisible = true;
+                return;
             }
 
-            ViewVisibleMessages(false);
+            if (Messages.ScrollingHost == null || Messages.ScrollingHost.ScrollableHeight == 0)
+            {
+                Arrows.IsVisible = false;
+                return;
+            }
+
+            if (Messages.ScrollingHost == null || Messages.ScrollingHost.ScrollableHeight - Messages.ScrollingHost.VerticalOffset < 40)
+            {
+                Arrows.IsVisible = ViewModel.IsFirstSliceLoaded == false;
+                return;
+            }
+
+            Arrows.IsVisible = true;
         }
 
         private void UnloadVisibleMessages()

@@ -542,7 +542,7 @@ namespace Telegram.ViewModels
             var lastMessage = _savedMessagesTopic?.LastMessage ?? _chat?.LastMessage;
             if (lastMessage == null)
             {
-                return false;
+                return Items.Empty();
             }
 
             var last = Items.LastOrDefault();
@@ -2246,9 +2246,6 @@ namespace Telegram.ViewModels
 
             DisposeSearch();
             IsSelectionEnabled = false;
-
-            IsLastSliceLoaded = null;
-            IsFirstSliceLoaded = null;
 
             ClientService.Send(new CloseChat(chat.Id));
 
@@ -3984,8 +3981,6 @@ namespace Telegram.ViewModels
 
         public MessageCollection(ICollection<long> exclude, IEnumerable<Message> source, Func<Message, bool, MessageViewModel> create, bool endReached)
         {
-            IsEndReached = endReached;
-
             foreach (var item in source)
             {
                 if (item.Id != 0 && exclude != null && exclude.Contains(item.Id))
@@ -3995,6 +3990,8 @@ namespace Telegram.ViewModels
 
                 Insert(0, create(item, true /* forLanguageStatistics */));
             }
+
+            IsEndReached = endReached || Count == 0;
         }
 
         //~MessageCollection()
