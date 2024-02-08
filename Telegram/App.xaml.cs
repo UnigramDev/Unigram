@@ -146,7 +146,7 @@ namespace Telegram
 
             if (TypeResolver.Current.Passcode.IsEnabled)
             {
-                TypeResolver.Current.Passcode.Lock();
+                TypeResolver.Current.Passcode.Lock(true);
                 InactivityHelper.Initialize(TypeResolver.Current.Passcode.AutolockTimeout);
             }
         }
