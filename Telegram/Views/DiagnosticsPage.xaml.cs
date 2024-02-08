@@ -9,6 +9,7 @@ using Telegram.Common;
 using Telegram.Converters;
 using Telegram.ViewModels;
 using Windows.UI.Xaml;
+using Windows.UI.Xaml.Hosting;
 
 namespace Telegram.Views
 {
@@ -38,6 +39,9 @@ namespace Telegram.Views
 
         private void Crash_Click(object sender, RoutedEventArgs e)
         {
+            ElementCompositionPreview.GetElementVisual(null);
+            return;
+
             if (sender is FrameworkElement element)
             {
                 element.SizeChanged += (s, args) =>
