@@ -4,6 +4,7 @@
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+using System.Linq;
 using Telegram.Common;
 using Telegram.Controls;
 using Telegram.Controls.Cells;
@@ -24,7 +25,9 @@ namespace Telegram.Views.Chats.Popups
 
             _status = status;
 
-            ScrollingHost.ItemsSource = features.Features;
+            ScrollingHost.ItemsSource = features.Features
+                .Where(x => x.Level > status.Level)
+                .ToList();
 
             Link.Text = status.BoostUrl.Replace("https://", string.Empty);
 
@@ -96,7 +99,7 @@ namespace Telegram.Views.Chats.Popups
             }
             else if (args.ItemContainer.ContentTemplateRoot is ChatBoostFeaturesCell cell && args.Item is ChatBoostLevelFeatures features)
             {
-                cell.UpdateCell(features);
+                cell.UpdateCell(features, args.ItemIndex);
             }
         }
 

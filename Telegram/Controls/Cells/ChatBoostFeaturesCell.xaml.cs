@@ -18,9 +18,9 @@ namespace Telegram.Controls.Cells
             this.InitializeComponent();
         }
 
-        public void UpdateCell(ChatBoostLevelFeatures features)
+        public void UpdateCell(ChatBoostLevelFeatures features, int index)
         {
-            Level.Text = string.Format(features.Level == 1 ? Strings.BoostLevelUnlocks : Strings.BoostLevel, features.Level);
+            Level.Text = string.Format(index == 0 ? Strings.BoostLevelUnlocks : Strings.BoostLevel, features.Level);
 
             UpdateFeature(features.StoryPerDayCount, StoriesIcon, StoriesText, Strings.R.BoostFeatureStoriesPerDay);
             UpdateFeature(features.CustomEmojiReactionCount, ReactionsIcon, ReactionsText, Strings.R.BoostFeatureCustomReaction);
