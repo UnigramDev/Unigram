@@ -566,6 +566,8 @@ namespace Telegram.Views.Host
 
         private void UpdateContainerContent(SelectorItem container, object item)
         {
+            container.Opacity = 1;
+
             if (item is ISessionService session)
             {
                 var content = container.ContentTemplateRoot as Grid;
@@ -666,8 +668,7 @@ namespace Telegram.Views.Host
                         break;
 
                     case RootDestination.ShowAccounts:
-                        content.Text = Icons.Spacing;
-                        content.Glyph = string.Empty;
+                        container.Opacity = 0;
                         break;
                 }
             }
