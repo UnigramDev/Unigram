@@ -2781,7 +2781,7 @@ Minimum length is 5 characters.</value>
     <value>A new version of Unigram is being installed...</value>
   </data>
   <data name="CloudUpdateInstallingTitle" xml:space="preserve">
-    <value>Hold on</value>
+    <value>Please wait...</value>
   </data>
   <data name="Code" xml:space="preserve">
     <value>Code</value>
