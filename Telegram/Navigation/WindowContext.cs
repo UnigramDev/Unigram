@@ -312,7 +312,7 @@ namespace Telegram.Navigation
                 _window.Content.Visibility = Visibility.Collapsed;
             }
 
-            _locked = new PasscodePage(biometrics);
+            _locked = new PasscodePage(biometrics && IsInMainView);
 
             void handler(ContentDialog s, ContentDialogClosingEventArgs args)
             {

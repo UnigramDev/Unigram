@@ -2042,7 +2042,7 @@ namespace Telegram.Views
 
         private void Lock_Click(object sender, RoutedEventArgs e)
         {
-            ViewModel.Passcode.Lock();
+            ViewModel.Passcode.Lock(false);
         }
 
         private void DialogsSearchListView_ContainerContentChanging(ListViewBase sender, ContainerContentChangingEventArgs args)

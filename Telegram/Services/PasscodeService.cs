@@ -31,7 +31,7 @@ namespace Telegram.Services
 
         bool IsLockscreenRequired { get; }
 
-        void Lock();
+        void Lock(bool biometrics);
         void Unlock();
 
         bool TryUnlock(string passcode);
@@ -60,7 +60,7 @@ namespace Telegram.Services
 
         private void OnInactivityDetected(object sender, EventArgs e)
         {
-            Lock();
+            Lock(false);
         }
 
         public int RetryIn => (int)Math.Ceiling(UpdateRetryIn() / 1000);
@@ -92,7 +92,7 @@ namespace Telegram.Services
         public bool IsLockscreenRequired =>
             IsEnabled && ((AutolockTimeout > 0 && CloseTime < DateTime.MaxValue && CloseTime > DateTime.UtcNow.AddSeconds(-AutolockTimeout)) || IsLocked);
 
-        public void Lock()
+        public void Lock(bool biometrics)
         {
             if (IsEnabled)
             {
@@ -100,7 +100,7 @@ namespace Telegram.Services
                 _settingsService.CloseTime = DateTime.MaxValue;
                 Publish(true);
 
-                WindowContext.ForEach(window => window.Lock(false));
+                WindowContext.ForEach(window => window.Lock(biometrics));
             }
         }
 
