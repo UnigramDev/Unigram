@@ -413,6 +413,9 @@ namespace Telegram.Controls.Gallery
                 _player.Stopped -= OnStopped;
                 _player.Close();
             }
+
+            UpdateManager.Unsubscribe(this, ref _fileToken);
+            UpdateManager.Unsubscribe(this, ref _thumbnailToken, true);
         }
 
         private void OnStopped(object sender, EventArgs e)
