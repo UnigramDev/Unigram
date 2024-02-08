@@ -8,7 +8,6 @@ using Telegram.Common;
 using Telegram.Navigation;
 using Telegram.ViewModels;
 using Telegram.ViewModels.Delegates;
-using Windows.UI.Xaml.Navigation;
 
 namespace Telegram.Views
 {
@@ -19,11 +18,7 @@ namespace Telegram.Views
         public ChatPage()
         {
             InitializeComponent();
-            NavigationCacheMode = ApiInfo.IsXbox
-                ? NavigationCacheMode.Disabled
-                : Constants.DEBUG
-                ? NavigationCacheMode.Disabled
-                : NavigationCacheMode.Required;
+            NavigationCacheMode = ApiInfo.NavigationCacheMode;
         }
 
         public override string GetTitle()

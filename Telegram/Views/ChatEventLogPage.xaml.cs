@@ -4,10 +4,10 @@
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+using Telegram.Common;
 using Telegram.Navigation;
 using Telegram.ViewModels;
 using Telegram.ViewModels.Delegates;
-using Windows.UI.Xaml.Navigation;
 
 namespace Telegram.Views
 {
@@ -18,7 +18,7 @@ namespace Telegram.Views
         public ChatEventLogPage()
         {
             InitializeComponent();
-            NavigationCacheMode = NavigationCacheMode.Required;
+            NavigationCacheMode = ApiInfo.NavigationCacheMode;
         }
 
         public override string GetTitle()

@@ -8,6 +8,7 @@ using Telegram.Native;
 using Windows.ApplicationModel;
 using Windows.Foundation.Metadata;
 using Windows.System.Profile;
+using Windows.UI.Xaml.Navigation;
 
 namespace Telegram.Common
 {
@@ -60,5 +61,11 @@ namespace Telegram.Common
 
             return _build >= compare;
         }
+
+        public static NavigationCacheMode NavigationCacheMode => IsXbox
+                ? NavigationCacheMode.Disabled
+                : Constants.DEBUG
+                ? NavigationCacheMode.Required
+                : NavigationCacheMode.Required;
     }
 }
