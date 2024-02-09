@@ -7,15 +7,12 @@
 using LibVLCSharp.Shared;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
-using System.Text.RegularExpressions;
-using System.Threading.Tasks;
+using Telegram.Common;
 using Telegram.Streams;
 using Telegram.Td.Api;
 using Telegram.ViewModels;
 using Windows.Foundation;
-using Windows.Storage;
 using WM = Windows.Media;
 
 namespace Telegram.Services
@@ -88,8 +85,7 @@ namespace Telegram.Services
     {
         private readonly ISettingsService _settingsService;
 
-        private LibVLC _library;
-        private MediaPlayer _mediaPlayer;
+        private AsyncMediaPlayer _player;
         private readonly object _mediaPlayerLock = new();
 
         private readonly PlaybackPositionChangedEventArgs _positionChanged = new();
@@ -164,17 +160,20 @@ namespace Telegram.Services
 
         #endregion
 
-        private void OnMediaChanged(object sender, MediaPlayerMediaChangedEventArgs args)
+        private void OnBuffering(object sender, MediaPlayerBufferingEventArgs args)
         {
-            var item = CurrentPlayback;
-            if (item != null)
+            if (args.Cache == 100)
             {
-                var message = item.Message;
-                var webPage = message.Content is MessageText text ? text.WebPage : null;
-
-                if ((message.Content is MessageVideoNote videoNote && !videoNote.IsViewed && !message.IsOutgoing) || (message.Content is MessageVoiceNote voiceNote && !voiceNote.IsListened && !message.IsOutgoing))
+                var item = CurrentPlayback;
+                if (item != null)
                 {
-                    message.ClientService.Send(new OpenMessageContent(message.ChatId, message.Id));
+                    var message = item.Message;
+                    var webPage = message.Content is MessageText text ? text.WebPage : null;
+
+                    if ((message.Content is MessageVideoNote videoNote && !videoNote.IsViewed && !message.IsOutgoing) || (message.Content is MessageVoiceNote voiceNote && !voiceNote.IsListened && !message.IsOutgoing))
+                    {
+                        message.ClientService.Send(new OpenMessageContent(message.ChatId, message.Id));
+                    }
                 }
             }
         }
@@ -208,7 +207,7 @@ namespace Telegram.Services
             //    sender.PlaybackRate = _playbackSpeed;
             //}
 
-            switch (_mediaPlayer.State)
+            switch (_player.State)
             {
                 case VLCState.Playing:
                     //sender.MediaPlayer.SystemMediaTransportControls.PlaybackStatus = MediaPlaybackStatus.Playing;
@@ -224,13 +223,13 @@ namespace Telegram.Services
             }
         }
 
-        private void OnTimeChanged(object sender, MediaPlayerTimeChangedEventArgs args)
+        private void OnTimeChanged(AsyncMediaPlayer sender, MediaPlayerTimeChangedEventArgs args)
         {
             _positionChanged.Position = TimeSpan.FromMilliseconds(args.Time);
             PositionChanged?.Invoke(this, _positionChanged);
         }
 
-        private void OnLengthChanged(object sender, MediaPlayerLengthChangedEventArgs args)
+        private void OnLengthChanged(AsyncMediaPlayer sender, MediaPlayerLengthChangedEventArgs args)
         {
             _positionChanged.Duration = TimeSpan.FromMilliseconds(args.Length);
             PositionChanged?.Invoke(this, _positionChanged);
@@ -355,7 +354,7 @@ namespace Telegram.Services
 
                 Run(player =>
                 {
-                    player.SetRate((float)value);
+                    player.Rate = (float)value;
                     //player.SystemMediaTransportControls.PlaybackRate = value;
                 });
             }
@@ -376,7 +375,7 @@ namespace Telegram.Services
             Run(PauseImpl);
         }
 
-        public void PauseImpl(MediaPlayer player)
+        public void PauseImpl(AsyncMediaPlayer player)
         {
             if (player.CanPause)
             {
@@ -390,12 +389,12 @@ namespace Telegram.Services
             Run(PlayImpl);
         }
 
-        public void PlayImpl(MediaPlayer player)
+        public void PlayImpl(AsyncMediaPlayer player)
         {
             if (CurrentPlayback is PlaybackItem item)
             {
                 _playbackSpeed = item.CanChangePlaybackRate ? _settingsService.Playback.AudioSpeed : 1;
-                player.SetRate((float)_playbackSpeed);
+                player.Rate = (float)_playbackSpeed;
             }
 
             if (player.State == VLCState.Ended)
@@ -407,32 +406,26 @@ namespace Telegram.Services
             PlaybackState = PlaybackState.Playing;
         }
 
-        private void Run(Action<MediaPlayer> action)
+        private void Run(Action<AsyncMediaPlayer> action)
         {
-            Task.Run(() =>
+            lock (_mediaPlayerLock)
             {
-                lock (_mediaPlayerLock)
+                if (_player != null)
                 {
-                    if (_mediaPlayer != null)
-                    {
-                        action(_mediaPlayer);
-                    }
+                    action(_player);
                 }
-            });
+            }
         }
 
-        private void Run<T>(Action<MediaPlayer, T> action, T arg)
+        private void Run<T>(Action<AsyncMediaPlayer, T> action, T arg)
         {
-            Task.Run(() =>
+            lock (_mediaPlayerLock)
             {
-                lock (_mediaPlayerLock)
+                if (_player != null)
                 {
-                    if (_mediaPlayer != null)
-                    {
-                        action(_mediaPlayer, arg);
-                    }
+                    action(_player, arg);
                 }
-            });
+            }
         }
 
         public void Seek(TimeSpan span)
@@ -440,7 +433,7 @@ namespace Telegram.Services
             Run(SeekImpl, span);
         }
 
-        private void SeekImpl(MediaPlayer player, TimeSpan span)
+        private void SeekImpl(AsyncMediaPlayer player, TimeSpan span)
         {
             // Workaround for OGG files. It's unclear why this is needed,
             // but it's likely caused by our LibVLC build configuration,
@@ -454,11 +447,11 @@ namespace Telegram.Services
 
                 if (playing is false)
                 {
-                    player.SetPause(true);
+                    player.Pause(true);
                 }
             }
 
-            player.SeekTo(span);
+            player.Time = (long)span.TotalMilliseconds;
 
             _positionChanged.Position = span;
             PositionChanged?.Invoke(this, _positionChanged);
@@ -469,7 +462,7 @@ namespace Telegram.Services
             Run(MoveNextImpl);
         }
 
-        public void MoveNextImpl(MediaPlayer player)
+        public void MoveNextImpl(AsyncMediaPlayer player)
         {
             var items = _items;
             if (items == null)
@@ -500,7 +493,7 @@ namespace Telegram.Services
             Run(MovePreviousImpl);
         }
 
-        public void MovePreviousImpl(MediaPlayer player)
+        public void MovePreviousImpl(AsyncMediaPlayer player)
         {
             var items = _items;
             if (items == null)
@@ -526,7 +519,7 @@ namespace Telegram.Services
             }
         }
 
-        private void SetSource(MediaPlayer player, List<PlaybackItem> items, int index)
+        private void SetSource(AsyncMediaPlayer player, List<PlaybackItem> items, int index)
         {
             if (index >= 0 && index <= items.Count - 1)
             {
@@ -534,7 +527,7 @@ namespace Telegram.Services
             }
         }
 
-        private void SetSource(MediaPlayer player, PlaybackItem item)
+        private void SetSource(AsyncMediaPlayer player, PlaybackItem item)
         {
             try
             {
@@ -543,8 +536,8 @@ namespace Telegram.Services
                 _playbackSpeed = item.CanChangePlaybackRate ? _settingsService.Playback.AudioSpeed : 1;
                 CurrentPlayback = item;
 
-                player.SetRate((float)_playbackSpeed);
-                player.Play(new Media(_library, item.Stream));
+                player.Rate = (float)_playbackSpeed;
+                player.Play(new RemoteFileStream(item.ClientService, item.Document));
                 PlaybackState = PlaybackState.Playing;
             }
             catch
@@ -558,7 +551,7 @@ namespace Telegram.Services
             Run(ClearImpl);
         }
 
-        public void ClearImpl(MediaPlayer player)
+        public void ClearImpl(AsyncMediaPlayer player)
         {
             PlaybackState = PlaybackState.None;
 
@@ -567,21 +560,10 @@ namespace Telegram.Services
             Dispose(true);
         }
 
-        public void Play(MessageWithOwner message, long threadId, long savedMessagesTopicId)
+        public async void Play(MessageWithOwner message, long threadId, long savedMessagesTopicId)
         {
             _transport ??= WM.SystemMediaTransportControls.GetForCurrentView();
 
-            Task.Run(() =>
-            {
-                lock (_mediaPlayerLock)
-                {
-                    _ = PlayAsync(message, threadId, savedMessagesTopicId);
-                }
-            });
-        }
-
-        public async Task PlayAsync(MessageWithOwner message, long threadId, long savedMessagesTopicId)
-        {
             if (message == null)
             {
                 return;
@@ -654,8 +636,7 @@ namespace Telegram.Services
         {
             GetProperties(message, out File file, out bool speed);
 
-            var stream = new RemoteFileStream(message.ClientService, file);
-            var item = new PlaybackItem(stream)
+            var item = new PlaybackItem(file)
             {
                 Message = message,
                 CanChangePlaybackRate = speed
@@ -720,9 +701,8 @@ namespace Telegram.Services
 
         private void Dispose(bool full)
         {
-            if (_mediaPlayer != null)
+            if (_player != null)
             {
-                _mediaPlayer.Stop();
                 //_mediaPlayer.CommandManager.IsEnabled = false;
 
                 if (full)
@@ -731,101 +711,66 @@ namespace Telegram.Services
 
                     //_mediaPlayer.SystemMediaTransportControls.ButtonPressed -= Transport_ButtonPressed;
                     //_mediaPlayer.PlaybackSession.PlaybackStateChanged -= OnPlaybackStateChanged;
-                    _mediaPlayer.TimeChanged -= OnTimeChanged;
-                    _mediaPlayer.LengthChanged -= OnLengthChanged;
-                    _mediaPlayer.EncounteredError -= OnEncounteredError;
-                    _mediaPlayer.EndReached -= OnEndReached;
-                    _mediaPlayer.MediaChanged -= OnMediaChanged;
-                    _mediaPlayer.Dispose();
+                    _player.TimeChanged -= OnTimeChanged;
+                    _player.LengthChanged -= OnLengthChanged;
+                    _player.EncounteredError -= OnEncounteredError;
+                    _player.EndReached -= OnEndReached;
+                    _player.Buffering -= OnBuffering;
+                    _player.Close();
 
-                    _mediaPlayer = null;
+                    lock (_mediaPlayerLock)
+                    {
+                        _player = null;
+                    }
                 }
-            }
-
-            if (_items != null)
-            {
-                foreach (var item in _items)
+                else
                 {
-                    item.Dispose();
-                    //item.Stream.Dispose();
+                    _player.Stop();
                 }
-
-                _items = null;
             }
+
+            _items = null;
         }
 
-        private MediaPlayer Create()
+        private AsyncMediaPlayer Create()
         {
-            if (_mediaPlayer == null)
+            if (_player == null)
             {
-                // Generating plugins cache requires a breakpoint in bank.c#662
-                _library = new LibVLC(); //"--quiet", "--reset-plugins-cache");
-                //_library.Log += _library_Log;
-
-                _mediaPlayer = new MediaPlayer(_library);
+                _player = new AsyncMediaPlayer();
                 //_mediaPlayer.SystemMediaTransportControls.AutoRepeatMode = _settingsService.Playback.RepeatMode;
                 //_mediaPlayer.SystemMediaTransportControls.ButtonPressed += Transport_ButtonPressed;
                 //_mediaPlayer.PlaybackSession.PlaybackStateChanged += OnPlaybackStateChanged;
-                _mediaPlayer.TimeChanged += OnTimeChanged;
-                _mediaPlayer.LengthChanged += OnLengthChanged;
-                _mediaPlayer.EncounteredError += OnEncounteredError;
-                _mediaPlayer.EndReached += OnEndReached;
-                _mediaPlayer.MediaChanged += OnMediaChanged;
+                _player.TimeChanged += OnTimeChanged;
+                _player.LengthChanged += OnLengthChanged;
+                _player.EncounteredError += OnEncounteredError;
+                _player.EndReached += OnEndReached;
+                _player.Buffering += OnBuffering;
                 //_mediaPlayer.CommandManager.IsEnabled = false;
-                _mediaPlayer.Volume = (int)Math.Round(_settingsService.VolumeLevel * 100);
+                _player.Volume = (int)Math.Round(_settingsService.VolumeLevel * 100);
 
                 _transport.ButtonPressed += Transport_ButtonPressed;
             }
 
-            return _mediaPlayer;
-        }
-
-        private static readonly Regex _videoLooking = new("using (.*?) module \"(.*?)\" from (.*?)$", RegexOptions.Compiled);
-        private static readonly object _syncObject = new();
-
-        private void _library_Log(object sender, LogEventArgs e)
-        {
-            Debug.WriteLine(e.FormattedLog);
-
-            lock (_syncObject)
-            {
-                var match = _videoLooking.Match(e.FormattedLog);
-                if (match.Success)
-                {
-                    System.IO.File.AppendAllText(ApplicationData.Current.LocalFolder.Path + "\\vlc.txt", string.Format("{2}\n", match.Groups[1].Value, match.Groups[2].Value, match.Groups[3].Value));
-                }
-            }
+            return _player;
         }
     }
 
     public class PlaybackItem
     {
+        public IClientService ClientService => Message.ClientService;
+
         public MessageWithOwner Message { get; set; }
 
-        public RemoteFileStream Stream { get; set; }
+        public File Document { get; set; }
 
         public string Title { get; set; }
         public string Performer { get; set; }
 
         public bool CanChangePlaybackRate { get; set; }
 
-        public PlaybackItem(RemoteFileStream stream)
+        public PlaybackItem(File document)
         {
-            Stream = stream;
-        }
-
-        public void Dispose()
-        {
-            try
-            {
-                Stream?.Dispose();
-            }
-            catch
-            {
-                Logger.Error();
-            }
-
-            Stream = null;
+            Document = document;
         }
     }
 }

@@ -10,16 +10,16 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Text.RegularExpressions;
 using System.Threading;
+using Telegram.Navigation;
 using Telegram.Streams;
 using Windows.Foundation;
 using Windows.Storage;
-using Windows.System;
 
 namespace Telegram.Common
 {
     public class AsyncMediaPlayer
     {
-        private readonly DispatcherQueue _dispatcherQueue;
+        private readonly IDispatcherContext _dispatcherQueue;
 
         private readonly LibVLC _library;
         private readonly MediaPlayer _player;
@@ -31,7 +31,10 @@ namespace Telegram.Common
 
         public AsyncMediaPlayer(params string[] options)
         {
-            _dispatcherQueue = DispatcherQueue.GetForCurrentThread();
+            _dispatcherQueue = WindowContext.Current.Dispatcher;
+            
+            // This should be not needed
+            _dispatcherQueue ??= WindowContext.Main.Dispatcher;
 
             // Generating plugins cache requires a breakpoint in bank.c#662
             _library = new LibVLC(options); //"--quiet", "--reset-plugins-cache");
@@ -54,7 +57,11 @@ namespace Telegram.Common
             _player.Stopped += OnStopped;
             _player.VolumeChanged += OnVolumeChanged;
 
-            //_player.FileCaching = 1;
+            // Music
+            //_player.TimeChanged += OnTimeChanged;
+            //_player.LengthChanged += OnLengthChanged;
+            _player.EncounteredError += OnEncounteredError;
+            //_player.EndReached += OnEndReached;
         }
 
         public void Play(RemoteFileStream input)
@@ -95,6 +102,8 @@ namespace Telegram.Common
         public VLCState State => Read(() => _player.State);
 
         public bool IsPlaying => Read(() => _player.IsPlaying);
+
+        public bool CanPause => Read(() => _player.CanPause);
 
         public bool Mute
         {
@@ -151,9 +160,8 @@ namespace Telegram.Common
             _player.Paused -= OnPaused;
             _player.Stopped -= OnStopped;
             _player.VolumeChanged -= OnVolumeChanged;
+            _player.EncounteredError -= OnEncounteredError;
             _player.Stop();
-
-            _player.Media = null;
 
             if (_input != null)
             {
@@ -182,55 +190,61 @@ namespace Telegram.Common
         public event TypedEventHandler<AsyncMediaPlayer, EventArgs> Paused;
         public event TypedEventHandler<AsyncMediaPlayer, EventArgs> Stopped;
         public event TypedEventHandler<AsyncMediaPlayer, MediaPlayerVolumeChangedEventArgs> VolumeChanged;
+        public event TypedEventHandler<AsyncMediaPlayer, EventArgs> EncounteredError;
 
         private void OnVout(object sender, MediaPlayerVoutEventArgs e)
         {
-            _dispatcherQueue.TryEnqueue(() => Vout?.Invoke(this, e));
+            _dispatcherQueue.Dispatch(() => Vout?.Invoke(this, e));
         }
 
         private void OnESSelected(object sender, MediaPlayerESSelectedEventArgs e)
         {
-            _dispatcherQueue.TryEnqueue(() => ESSelected?.Invoke(this, e));
+            _dispatcherQueue.Dispatch(() => ESSelected?.Invoke(this, e));
         }
 
         private void OnEndReached(object sender, EventArgs e)
         {
-            _dispatcherQueue.TryEnqueue(() => EndReached?.Invoke(this, e));
+            _dispatcherQueue.Dispatch(() => EndReached?.Invoke(this, e));
         }
 
         private void OnBuffering(object sender, MediaPlayerBufferingEventArgs e)
         {
-            _dispatcherQueue.TryEnqueue(() => Buffering?.Invoke(this, e));
+            _dispatcherQueue.Dispatch(() => Buffering?.Invoke(this, e));
         }
 
         private void OnTimeChanged(object sender, MediaPlayerTimeChangedEventArgs e)
         {
-            _dispatcherQueue.TryEnqueue(() => TimeChanged?.Invoke(this, e));
+            _dispatcherQueue.Dispatch(() => TimeChanged?.Invoke(this, e));
         }
 
         private void OnLengthChanged(object sender, MediaPlayerLengthChangedEventArgs e)
         {
-            _dispatcherQueue.TryEnqueue(() => LengthChanged?.Invoke(this, e));
+            _dispatcherQueue.Dispatch(() => LengthChanged?.Invoke(this, e));
         }
 
         private void OnPlaying(object sender, EventArgs e)
         {
-            _dispatcherQueue.TryEnqueue(() => Playing?.Invoke(this, e));
+            _dispatcherQueue.Dispatch(() => Playing?.Invoke(this, e));
         }
 
         private void OnPaused(object sender, EventArgs e)
         {
-            _dispatcherQueue.TryEnqueue(() => Paused?.Invoke(this, e));
+            _dispatcherQueue.Dispatch(() => Paused?.Invoke(this, e));
         }
 
         private void OnStopped(object sender, EventArgs e)
         {
-            _dispatcherQueue.TryEnqueue(() => Stopped?.Invoke(this, e));
+            _dispatcherQueue.Dispatch(() => Stopped?.Invoke(this, e));
         }
 
         private void OnVolumeChanged(object sender, MediaPlayerVolumeChangedEventArgs e)
         {
-            _dispatcherQueue.TryEnqueue(() => VolumeChanged?.Invoke(this, e));
+            _dispatcherQueue.Dispatch(() => VolumeChanged?.Invoke(this, e));
+        }
+
+        private void OnEncounteredError(object sender, EventArgs e)
+        {
+            _dispatcherQueue.Dispatch(() => EncounteredError?.Invoke(this, e));
         }
 
         #endregion
