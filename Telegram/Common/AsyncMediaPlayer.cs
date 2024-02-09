@@ -24,6 +24,8 @@ namespace Telegram.Common
         private readonly LibVLC _library;
         private readonly MediaPlayer _player;
 
+        private MediaInput _input;
+
         private readonly object _closeLock = new();
         private bool _closed;
 
@@ -55,44 +57,39 @@ namespace Telegram.Common
             //_player.FileCaching = 1;
         }
 
-        public void Play(RemoteFileStream stream)
+        public void Play(RemoteFileStream input)
         {
-            Write(() => PlayImpl(stream), true);
+            Write(valid => PlayImpl(input, valid));
         }
 
-        private void PlayImpl(RemoteFileStream stream)
+        private void PlayImpl(MediaInput input, bool play)
         {
-            _player.Play(new Media(_library, stream));
+            if (play)
+            {
+                _player.Play(new Media(_library, input));
+
+                _input?.Dispose();
+                _input = input;
+            }
+            else
+            {
+                input.Dispose();
+            }
         }
 
         public void Play()
         {
-            Write(() => PlayImpl());
-        }
-
-        private void PlayImpl()
-        {
-            _player.Play();
+            Write(() => _player.Play());
         }
 
         public void Stop()
         {
-            Write(StopImpl);
-        }
-
-        private void StopImpl()
-        {
-            _player.Stop();
+            Write(() => _player.Stop());
         }
 
         public void Pause(bool pause = true)
         {
-            Write(() => PauseImpl(pause));
-        }
-
-        private void PauseImpl(bool pause)
-        {
-            _player.SetPause(pause);
+            Write(() => _player.SetPause(pause));
         }
 
         public VLCState State => Read(() => _player.State);
@@ -156,12 +153,20 @@ namespace Telegram.Common
             _player.VolumeChanged -= OnVolumeChanged;
             _player.Stop();
 
+            _player.Media = null;
+
+            if (_input != null)
+            {
+                _input.Dispose();
+                _input = null;
+            }
+
             lock (_closeLock)
             {
                 _closed = true;
 
-                _player.Dispose();
-                _library.Dispose();
+                //_player.Dispose();
+                //_library.Dispose();
             }
         }
 
@@ -272,13 +277,19 @@ namespace Telegram.Common
             }
         }
 
-        private void Write(Action action, bool versioned = false)
+        private void Write(Action action)
         {
-            var version = versioned
-                ? Interlocked.Increment(ref _workVersion)
-                : 0;
+            Write(new WorkItem(action));
+        }
 
-            _workQueue.Push(new WorkItem(action, version));
+        private void Write(Action<bool> action)
+        {
+            Write(new VersionedWorkItem(action, Interlocked.Increment(ref _workVersion)));
+        }
+
+        private void Write(object workItem)
+        {
+            _workQueue.Push(workItem);
 
             lock (_workLock)
             {
@@ -309,9 +320,13 @@ namespace Telegram.Common
 
                 try
                 {
-                    if (work.Version == 0 || work.Version == Interlocked.Read(ref _workVersion))
+                    if (work is VersionedWorkItem versioned)
                     {
-                        work.Action();
+                        versioned.Action(versioned.Version == Interlocked.Read(ref _workVersion));
+                    }
+                    else if (work is WorkItem item)
+                    {
+                        item.Action();
                     }
                 }
                 catch
@@ -327,14 +342,15 @@ namespace Telegram.Common
             }
         }
 
-        record WorkItem(Action Action, long Version);
+        record WorkItem(Action Action);
+        record VersionedWorkItem(Action<bool> Action, long Version);
 
         class WorkQueue
         {
             private readonly object _workAvailable = new();
-            private readonly Queue<WorkItem> _work = new();
+            private readonly Queue<object> _work = new();
 
-            public void Push(WorkItem item)
+            public void Push(object item)
             {
                 lock (_workAvailable)
                 {
@@ -349,7 +365,7 @@ namespace Telegram.Common
                 }
             }
 
-            public WorkItem WaitAndPop()
+            public object WaitAndPop()
             {
                 lock (_workAvailable)
                 {
