@@ -108,6 +108,11 @@ namespace Telegram.Controls
 
             XamlRoot.Changed += OnRasterizationScaleChanged;
             ReplacementColor?.RegisterColorChangedCallback(OnReplacementColorChanged, ref _replacementColorToken);
+
+            if (Source != null)
+            {
+                Source.OutlineChanged += OnOutlineChanged;
+            }
         }
 
         private void OnUnloaded(object sender, RoutedEventArgs e)
@@ -116,6 +121,11 @@ namespace Telegram.Controls
 
             XamlRoot.Changed -= OnRasterizationScaleChanged;
             ReplacementColor?.UnregisterColorChangedCallback(ref _replacementColorToken);
+
+            if (Source != null)
+            {
+                Source.OutlineChanged -= OnOutlineChanged;
+            }
         }
 
         public bool IsPlaying => _delayedPlay || _state == PlayingState.Playing;
@@ -388,7 +398,7 @@ namespace Telegram.Controls
                 oldValue.OutlineChanged -= OnOutlineChanged;
             }
 
-            if (e.NewValue is AnimatedImageSource newValue)
+            if (e.NewValue is AnimatedImageSource newValue && IsConnected)
             {
                 newValue.OutlineChanged += OnOutlineChanged;
             }
