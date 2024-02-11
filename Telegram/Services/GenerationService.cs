@@ -231,12 +231,19 @@ namespace Telegram.Services
                 var file = await StorageApplicationPermissions.FutureAccessList.GetFileAsync(args[0]);
                 var temp = await StorageFile.GetFileFromPathAsync(update.DestinationPath);
 
+                var maxSize = 1280;
+
+                if (SettingsService.Current.Diagnostics.SendLargePhotos)
+                {
+                    maxSize = 2560;
+                }
+
                 if (args.Length > 3)
                 {
                     var editState = JsonConvert.DeserializeObject<BitmapEditState>(args[2]);
                     var rectangle = editState.Rectangle;
 
-                    await ImageHelper.CropAsync(file, temp, rectangle, rotation: editState.Rotation, flip: editState.Flip);
+                    await ImageHelper.CropAsync(file, temp, rectangle, maxSize, rotation: editState.Rotation, flip: editState.Flip);
 
                     var drawing = editState.Strokes;
                     if (drawing != null && drawing.Count > 0)
@@ -246,7 +253,7 @@ namespace Telegram.Services
                 }
                 else
                 {
-                    await ImageHelper.ScaleAsync(BitmapEncoder.JpegEncoderId, file, temp, 1280, true);
+                    await ImageHelper.ScaleAsync(BitmapEncoder.JpegEncoderId, file, temp, maxSize, true);
                 }
 
                 _clientService.Send(new FinishFileGeneration(update.GenerationId, null));
