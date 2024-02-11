@@ -11,6 +11,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Telegram.Native;
 using Telegram.Td;
 using Telegram.Td.Api;
 using Telegram.ViewModels;
@@ -547,7 +548,7 @@ namespace Telegram.Services
         private void InitializeReady()
         {
             Send(new LoadChats(new ChatListMain(), 20));
-            //InitializeStickers();
+            Send(new SearchEmojis("cucumber", new[] { NativeUtils.GetKeyboardCulture() }));
         }
 
         private void InitializeFlush()
