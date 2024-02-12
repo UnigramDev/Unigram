@@ -90,7 +90,7 @@ namespace Telegram.Controls
             }
             else if (clientService.TryGetSupergroup(chat, out Supergroup supergroup))
             {
-                if (clientService.IsPremiumAvailable && chat.EmojiStatus != null)
+                if (clientService.IsPremiumAvailable && chat.EmojiStatus != null && !supergroup.IsFake && !supergroup.IsScam)
                 {
                     CurrentType = IdentityIconType.None;
                     UnloadObject(ref Icon);
@@ -121,7 +121,7 @@ namespace Telegram.Controls
                 return;
             }
 
-            if (clientService.IsPremiumAvailable && user.EmojiStatus != null && (!chatList || user.Id != clientService.Options.MyId))
+            if (clientService.IsPremiumAvailable && user.EmojiStatus != null && !user.IsFake && !user.IsScam && (!chatList || user.Id != clientService.Options.MyId))
             {
                 CurrentType = IdentityIconType.Premium;
                 UnloadObject(ref Icon);
