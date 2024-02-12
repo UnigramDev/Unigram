@@ -10,15 +10,19 @@ using System.Text;
 using Telegram.Common;
 using Telegram.Controls;
 using Telegram.Controls.Gallery;
+using Telegram.Controls.Stories;
 using Telegram.Converters;
 using Telegram.Services.Updates;
 using Telegram.Streams;
 using Telegram.Td.Api;
 using Telegram.ViewModels.Chats;
 using Telegram.ViewModels.Gallery;
+using Telegram.ViewModels.Stories;
 using Telegram.Views;
 using Telegram.Views.Popups;
+using Windows.Foundation;
 using Windows.UI.Xaml;
+using Point = Windows.Foundation.Point;
 
 namespace Telegram.ViewModels
 {
@@ -330,6 +334,31 @@ namespace Telegram.ViewModels
                         }
                     }
                 }
+            }
+            else if (message.Content is MessageAsyncStory story && story.Story != null)
+            {
+                Rect GetOrigin(ActiveStoriesViewModel activeStories)
+                {
+                    var transform = target.TransformToVisual(null);
+                    var point = transform.TransformPoint(new Point());
+
+                    return new Rect(point.X, point.Y, target.ActualWidth, target.ActualHeight);
+                }
+
+                var transform = target.TransformToVisual(null);
+
+                var point = transform.TransformPoint(new Point());
+                var origin = new Rect(point.X, point.Y, target.ActualWidth, target.ActualHeight);
+
+                var storyViewModel = new StoryViewModel(ClientService, story.Story);
+                var activeStories = new ActiveStoriesViewModel(ClientService, Settings, Aggregator, storyViewModel);
+
+                var viewModel = new StoryListViewModel(ClientService, Settings, Aggregator, activeStories);
+                viewModel.NavigationService = NavigationService;
+
+                var window = new StoriesWindow();
+                window.Update(viewModel, activeStories, StoryOpenOrigin.Card, origin, GetOrigin);
+                _ = window.ShowAsync();
             }
             else
             {
