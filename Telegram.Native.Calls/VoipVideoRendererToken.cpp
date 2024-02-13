@@ -3,6 +3,15 @@
 
 namespace winrt::Telegram::Native::Calls::implementation
 {
+    VoipVideoRendererToken::VoipVideoRendererToken(std::shared_ptr<VoipVideoRenderer> sink, CanvasControl canvasControl)
+        : m_sink(sink),
+        m_audioSource(0),
+        m_endpointId(L""),
+        m_sourceGroups(),
+        m_canvasControl(std::make_shared<CanvasControl>(canvasControl))
+    {
+    }
+
     VoipVideoRendererToken::VoipVideoRendererToken(std::shared_ptr<VoipVideoRenderer> sink, int32_t audioSource, hstring endpointId, IVector<GroupCallVideoSourceGroup> sourceGroups, CanvasControl canvasControl)
         : m_sink(sink),
         m_audioSource(audioSource),
@@ -54,10 +63,10 @@ namespace winrt::Telegram::Native::Calls::implementation
 
     void VoipVideoRendererToken::Stop()
     {
-        m_canvasControl.reset();
-        m_canvasControl = nullptr;
-
         m_sink.reset();
         m_sink = nullptr;
+
+        m_canvasControl.reset();
+        m_canvasControl = nullptr;
     }
 }

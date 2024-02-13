@@ -72,6 +72,7 @@ namespace Telegram.Views.Calls
         public CallPage(IClientService clientService, IEventAggregator aggregator, IVoipService voipService)
         {
             InitializeComponent();
+            Logger.Info();
 
             _clientService = clientService;
             _aggregator = aggregator;
@@ -308,6 +309,9 @@ namespace Telegram.Views.Calls
             _debugTimer.Stop();
             _durationTimer.Stop();
 
+            _incomingToken?.Stop();
+            _outgoingToken?.Stop();
+
             _service.MutedChanged -= OnMutedChanged;
             _service.AudioLevelUpdated -= OnAudioLevelUpdated;
 
@@ -360,7 +364,8 @@ namespace Telegram.Views.Calls
 
             if (_manager != controller)
             {
-                controller.SetIncomingVideoOutput(BackgroundPanel);
+                _incomingToken?.Stop();
+                _incomingToken = controller.SetIncomingVideoOutput(BackgroundPanel);
             }
 
             controller.StateUpdated += OnStateUpdated;
@@ -392,7 +397,8 @@ namespace Telegram.Views.Calls
                 Video.IsChecked = capturer is VoipVideoCapture;
                 ViewfinderPanel.Visibility = Visibility.Visible;
 
-                capturer.SetOutput(Viewfinder, false);
+                _outgoingToken?.Stop();
+                _outgoingToken = capturer.SetOutput(Viewfinder, false);
             }
             else if (capturer == null && !_capturerWasNull)
             {
@@ -599,7 +605,8 @@ namespace Telegram.Views.Calls
                         SignalBarsLabel.Visibility = Visibility.Visible;
                         StartUpdatingCallDuration();
 
-                        sender.SetIncomingVideoOutput(BackgroundPanel);
+                        _incomingToken?.Stop();
+                        _incomingToken = sender.SetIncomingVideoOutput(BackgroundPanel);
                         break;
                     case VoipState.Failed:
                         //switch (sender.GetLastError())
@@ -815,7 +822,8 @@ namespace Telegram.Views.Calls
             {
                 ViewfinderPanel.Visibility = Visibility.Visible;
 
-                capturer.SetOutput(Viewfinder, false);
+                _outgoingToken?.Stop();
+                _outgoingToken = capturer.SetOutput(Viewfinder, false);
             }
             else
             {
@@ -832,6 +840,9 @@ namespace Telegram.Views.Calls
                 _service.IsMuted = Audio.IsChecked == false;
             }
         }
+
+        private VoipVideoRendererToken _outgoingToken;
+        private VoipVideoRendererToken _incomingToken;
 
         private void Menu_ContextRequested(object sender, RoutedEventArgs e)
         {
@@ -855,7 +866,8 @@ namespace Telegram.Views.Calls
                     deviceItem.IsChecked = videoId == device.Id;
                     deviceItem.Click += (s, args) =>
                     {
-                        _service.SetVideoInput(device.Id, Viewfinder);
+                        _outgoingToken?.Stop();
+                        _outgoingToken = _service.SetVideoInput(device.Id, Viewfinder);
                     };
 
                     video.Items.Add(deviceItem);

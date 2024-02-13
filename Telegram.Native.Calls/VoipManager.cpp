@@ -5,6 +5,8 @@
 #include <stddef.h>
 #include <memory>
 
+#include "VoipVideoRendererToken.h"
+
 #include "api/media_stream_interface.h"
 #include "api/create_peerconnection_factory.h"
 #include "api/peer_connection_interface.h"
@@ -271,7 +273,7 @@ namespace winrt::Telegram::Native::Calls::implementation
     }
 
     //void SetIncomingVideoOutput(std::shared_ptr<rtc::VideoSinkInterface<webrtc::VideoFrame>> sink);
-    void VoipManager::SetIncomingVideoOutput(winrt::Microsoft::Graphics::Canvas::UI::Xaml::CanvasControl canvas)
+    winrt::Telegram::Native::Calls::VoipVideoRendererToken VoipManager::SetIncomingVideoOutput(winrt::Microsoft::Graphics::Canvas::UI::Xaml::CanvasControl canvas)
     {
         if (m_impl)
         {
@@ -279,12 +281,15 @@ namespace winrt::Telegram::Native::Calls::implementation
             {
                 m_renderer = std::make_shared<VoipVideoRenderer>(canvas, false, false);
                 m_impl->setIncomingVideoOutput(m_renderer);
+                return *winrt::make_self<VoipVideoRendererToken>(m_renderer, canvas);
             }
             else
             {
                 m_renderer.reset();
             }
         }
+
+        return nullptr;
     }
 
 

@@ -71,7 +71,7 @@ namespace winrt::Telegram::Native::Calls::implementation
         void SetEchoCancellationStrength(int strength);
 
         bool SupportsVideo();
-        void SetIncomingVideoOutput(winrt::Microsoft::Graphics::Canvas::UI::Xaml::CanvasControl canvas);
+        winrt::Telegram::Native::Calls::VoipVideoRendererToken SetIncomingVideoOutput(winrt::Microsoft::Graphics::Canvas::UI::Xaml::CanvasControl canvas);
 
         void SetAudioInputDevice(hstring id);
         void SetAudioOutputDevice(hstring id);

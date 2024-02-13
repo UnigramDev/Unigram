@@ -74,6 +74,7 @@ namespace Telegram.Views.Calls
         public GroupCallPage(IClientService clientService, IEventAggregator aggregator, IVoipGroupService voipService)
         {
             InitializeComponent();
+            Logger.Info();
 
             _clientService = clientService;
             _aggregator = aggregator;

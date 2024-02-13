@@ -15,6 +15,7 @@ namespace winrt::Telegram::Native::Calls::implementation
 {
     struct VoipVideoRendererToken : VoipVideoRendererTokenT<VoipVideoRendererToken>
     {
+        VoipVideoRendererToken(std::shared_ptr<VoipVideoRenderer> sink, CanvasControl canvasControl);
         VoipVideoRendererToken(std::shared_ptr<VoipVideoRenderer> sink, int32_t audioSource, hstring endpointId, IVector<GroupCallVideoSourceGroup> sourceGroups, CanvasControl canvasControl);
 
         int32_t AudioSource();

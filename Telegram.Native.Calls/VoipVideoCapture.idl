@@ -1,4 +1,5 @@
 import "Telegram.Native.Calls.idl";
+import "VoipVideoRendererToken.idl";
 
 namespace Telegram.Native.Calls
 {
@@ -6,8 +7,8 @@ namespace Telegram.Native.Calls
     unsealed runtimeclass VoipCaptureBase : Windows.Foundation.IClosable
     {
         void SetState(VoipVideoState state);
-        void SetOutput(Microsoft.Graphics.Canvas.UI.Xaml.CanvasControl canvas);
-        void SetOutput(Microsoft.Graphics.Canvas.UI.Xaml.CanvasControl canvas, Boolean enableBlur);
+        VoipVideoRendererToken SetOutput(Microsoft.Graphics.Canvas.UI.Xaml.CanvasControl canvas);
+        VoipVideoRendererToken SetOutput(Microsoft.Graphics.Canvas.UI.Xaml.CanvasControl canvas, Boolean enableBlur);
     }
 
 

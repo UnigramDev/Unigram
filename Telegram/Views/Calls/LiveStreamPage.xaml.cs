@@ -50,6 +50,7 @@ namespace Telegram.Views.Calls
         public LiveStreamPage(IClientService clientService, IEventAggregator aggregator, IVoipGroupService voipService)
         {
             InitializeComponent();
+            Logger.Info();
 
             _clientService = clientService;
             _aggregator = aggregator;

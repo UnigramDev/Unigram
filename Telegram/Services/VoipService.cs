@@ -40,9 +40,9 @@ namespace Telegram.Services
         string CurrentAudioOutput { get; set; }
         string CurrentVideoInput { get; set; }
 
-        void SetVideoInput(string value, CanvasControl canvas);
-
 #if ENABLE_CALLS
+        VoipVideoRendererToken SetVideoInput(string value, CanvasControl canvas);
+
         bool IsMuted { get; set; }
         event EventHandler MutedChanged;
         event EventHandler<float> AudioLevelUpdated;
@@ -460,17 +460,19 @@ namespace Telegram.Services
             set => _videoWatcher.Set(value);
         }
 
-        public void SetVideoInput(string value, CanvasControl canvas)
+#if ENABLE_CALLS
+        public VoipVideoRendererToken SetVideoInput(string value, CanvasControl canvas)
         {
             _videoWatcher.Set(value);
 
-#if ENABLE_CALLS
             if (_capturer is VoipVideoCapture capturer)
             {
-                capturer.SetOutput(canvas, false);
+                return capturer.SetOutput(canvas, false);
             }
-#endif
+
+            return null;
         }
+#endif
 
         public string CurrentAudioInput
         {
