@@ -276,10 +276,10 @@ namespace Telegram.ViewModels.Supergroups
 
             var level = 0;
 
-            if (SelectedAccentColor != null && SelectedAccentColor.MinChatBoostLevel > level)
+            if (SelectedAccentColor != null && SelectedAccentColor.MinChannelChatBoostLevel > level)
             {
                 feature = ChatBoostFeature.AccentColor;
-                level = SelectedAccentColor.MinChatBoostLevel;
+                level = SelectedAccentColor.MinChannelChatBoostLevel;
             }
 
             if (SelectedCustomEmojiId != 0 && MinBackgroundCustomEmojiBoostLevel > level)
@@ -288,10 +288,10 @@ namespace Telegram.ViewModels.Supergroups
                 level = MinBackgroundCustomEmojiBoostLevel;
             }
 
-            if (SelectedProfileAccentColor != null && SelectedProfileAccentColor.MinChatBoostLevel > level)
+            if (SelectedProfileAccentColor != null && SelectedProfileAccentColor.MinChannelChatBoostLevel > level)
             {
                 feature = ChatBoostFeature.ProfileAccentColor;
-                level = SelectedProfileAccentColor.MinChatBoostLevel;
+                level = SelectedProfileAccentColor.MinChannelChatBoostLevel;
             }
 
             if (SelectedProfileCustomEmojiId != 0 && MinProfileBackgroundCustomEmojiBoostLevel > level)

@@ -22,7 +22,7 @@ namespace Telegram.Td.Api
 
             BuiltInAccentColorId = accent.BuiltInAccentColorId;
             Id = accent.Id;
-            MinChatBoostLevel = accent.MinChatBoostLevel;
+            MinChannelChatBoostLevel = accent.MinChannelChatBoostLevel;
         }
 
         private IList<Color> Populate(IList<int> source)
@@ -90,6 +90,6 @@ namespace Telegram.Td.Api
         /// <summary>
         /// The minimum chat boost level required to use the color.
         /// </summary>
-        public int MinChatBoostLevel { get; }
+        public int MinChannelChatBoostLevel { get; }
     }
 }
