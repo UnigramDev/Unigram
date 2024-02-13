@@ -34,7 +34,12 @@ namespace Telegram.Services
             Monitor.Exit(_storyList);
         }
 
-        public async Task<Chats> GetStoryListAsync(StoryList storyList, int offset, int limit)
+        public Task<Chats> GetStoryListAsync(StoryList storyList, int offset, int limit)
+        {
+            return GetStoryListAsyncImpl(storyList, offset, limit, false);
+        }
+
+        public async Task<Chats> GetStoryListAsyncImpl(StoryList storyList, int offset, int limit, bool reentrancy)
         {
             Monitor.Enter(_storyList);
 
@@ -60,7 +65,7 @@ namespace Telegram.Services
                     }
 
                     // Chats have already been received through updates, let's retry request
-                    return await GetStoryListAsync(storyList, offset, limit);
+                    return await GetStoryListAsyncImpl(storyList, offset, limit, true);
                 }
 
                 return null;
