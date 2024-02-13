@@ -198,7 +198,7 @@ namespace Telegram.Controls.Messages.Content
             BitmapImage source = null;
             Image brush = Texture;
 
-            if (animation.Thumbnail != null && animation.Thumbnail.Format is ThumbnailFormatJpeg)
+            if (animation.Thumbnail is { Format: ThumbnailFormatJpeg })
             {
                 if (file.Local.IsDownloadingCompleted)
                 {

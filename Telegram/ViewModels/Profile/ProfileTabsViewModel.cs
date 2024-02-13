@@ -236,7 +236,7 @@ namespace Telegram.ViewModels.Profile
                 new SearchMessagesFilterUrl(),
                 new SearchMessagesFilterAudio(),
                 new SearchMessagesFilterVoiceNote(),
-                //new SearchMessagesFilterAnimation(),
+                new SearchMessagesFilterAnimation(),
             };
 
             for (int i = 0; i < filters.Length; i++)
@@ -255,6 +255,7 @@ namespace Telegram.ViewModels.Profile
                             SearchMessagesFilterUrl => new ProfileTabItem(Strings.SharedLinksTab2, typeof(ProfileLinksTabPage)),
                             SearchMessagesFilterAudio => new ProfileTabItem(Strings.SharedMusicTab2, typeof(ProfileMusicTabPage)),
                             SearchMessagesFilterVoiceNote => new ProfileTabItem(Strings.SharedVoiceTab2, typeof(ProfileVoiceTabPage)),
+                            SearchMessagesFilterAnimation => new ProfileTabItem(Strings.SharedGIFsTab2, typeof(ProfileAnimationsTabPage)),
                             _ => null
                         };
 

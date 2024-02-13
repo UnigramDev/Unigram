@@ -7546,6 +7546,9 @@ The channel &quot;**{1}**&quot; will become private.</value>
   <data name="SharedFilesTab2" xml:space="preserve">
     <value>Files</value>
   </data>
+  <data name="SharedGIFsTab2" xml:space="preserve">
+    <value>GIFs</value>
+  </data>
   <data name="SharedGroupsTab2" xml:space="preserve">
     <value>Groups</value>
   </data>

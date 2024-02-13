@@ -11592,6 +11592,11 @@ namespace Telegram
         public static string SharedFilesTab2 => Resource.GetString("SharedFilesTab2");
         
         /// <summary>
+        /// Localized resource similar to "GIFs"
+        /// </summary>
+        public static string SharedGIFsTab2 => Resource.GetString("SharedGIFsTab2");
+        
+        /// <summary>
         /// Localized resource similar to "Groups"
         /// </summary>
         public static string SharedGroupsTab2 => Resource.GetString("SharedGroupsTab2");

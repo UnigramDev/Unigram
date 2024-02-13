@@ -99,7 +99,7 @@ namespace Telegram.Views.Popups
             Aspect.MaxHeight = 420;
             Aspect.Constraint = animation;
 
-            if (animation.Thumbnail != null && animation.Thumbnail.Format is ThumbnailFormatJpeg)
+            if (animation.Thumbnail is { Format: ThumbnailFormatJpeg })
             {
                 UpdateThumbnail(animation.Thumbnail.File, true);
             }

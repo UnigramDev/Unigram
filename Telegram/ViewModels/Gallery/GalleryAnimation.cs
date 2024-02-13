@@ -37,7 +37,7 @@ namespace Telegram.ViewModels.Gallery
 
         public override File GetThumbnail()
         {
-            if (_animation.Thumbnail?.Format is ThumbnailFormatJpeg)
+            if (_animation.Thumbnail is { Format: ThumbnailFormatJpeg })
             {
                 return _animation.Thumbnail.File;
             }
