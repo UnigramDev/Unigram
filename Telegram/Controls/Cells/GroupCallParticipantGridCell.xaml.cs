@@ -242,10 +242,7 @@ namespace Telegram.Controls.Cells
                 PausedRoot.Visibility = Visibility.Collapsed;
                 Scrim.Visibility = Visibility.Visible;
 
-                _pausedBrush?.Dispose();
                 _pausedBrush = null;
-
-                _pausedVisual?.Dispose();
                 _pausedVisual = null;
             }
         }

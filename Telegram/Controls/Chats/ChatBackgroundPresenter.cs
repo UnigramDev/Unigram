@@ -384,10 +384,7 @@ namespace Telegram.Controls.Chats
             {
                 ElementCompositionPreview.SetElementChildVisual(this, null);
 
-                _blurBrush?.Dispose();
                 _blurBrush = null;
-
-                _blurVisual?.Dispose();
                 _blurVisual = null;
             }
         }

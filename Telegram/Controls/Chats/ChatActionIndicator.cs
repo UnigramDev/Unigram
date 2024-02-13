@@ -43,18 +43,6 @@ namespace Telegram.Controls.Chats
                 return;
             }
 
-            if (_previous != null)
-            {
-                _previous.Dispose();
-                _previous = null;
-            }
-
-            if (_props != null)
-            {
-                _props.Dispose();
-                _props = null;
-            }
-
             var color = Fill?.Color ?? Colors.Black;
             var visual = GetVisual(type, Window.Current.Compositor, color, out _props);
 

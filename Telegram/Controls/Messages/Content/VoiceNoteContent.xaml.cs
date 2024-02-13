@@ -193,10 +193,7 @@ namespace Telegram.Controls.Messages.Content
             {
                 RecognizedIcon.Visibility = Visibility.Collapsed;
 
-                _previous?.Dispose();
                 _previous = null;
-
-                _props?.Dispose();
                 _props = null;
 
                 ElementCompositionPreview.SetElementChildVisual(RecognizedIcon, null);

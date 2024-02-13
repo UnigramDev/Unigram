@@ -302,18 +302,6 @@ namespace Telegram.Controls.Chats
 
             if (IsRuntimeCompatible())
             {
-                if (_previous != null)
-                {
-                    _previous.Dispose();
-                    _previous = null;
-                }
-
-                if (_props != null)
-                {
-                    _props.Dispose();
-                    _props = null;
-                }
-
                 var animate = oldValue != StickersTab.None;
                 var visual = GetVisual(newValue, oldValue, animate, Window.Current.Compositor, out var source, out _props);
 
