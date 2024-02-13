@@ -2077,6 +2077,18 @@ It will be able to access your **IP address** and basic device info.</value>
   <data name="CancelLinkExpired" xml:space="preserve">
     <value>Link is invalid or expired.</value>
   </data>
+  <data name="CancelPasswordReset" xml:space="preserve">
+    <value>Cancel the password reset process? If you request a new reset later, it will take another 7 days.</value>
+  </data>
+  <data name="CancelPasswordResetNo" xml:space="preserve">
+    <value>NO</value>
+  </data>
+  <data name="CancelPasswordResetYes" xml:space="preserve">
+    <value>YES</value>
+  </data>
+  <data name="CancelReset" xml:space="preserve">
+    <value>Cancel reset</value>
+  </data>
   <data name="CanJoin_one" xml:space="preserve">
     <value>{0} can join</value>
   </data>
@@ -7099,6 +7111,9 @@ Payments will go directly to the developer of {0}. Telegram cannot provide any g
   <data name="ResetPassword" xml:space="preserve">
     <value>Reset password</value>
   </data>
+  <data name="ResetPasswordWait" xml:space="preserve">
+    <value>You recently requested a password reset that was canceled. Please wait {0} before making a new request.</value>
+  </data>
   <data name="ResetStatistics" xml:space="preserve">
     <value>Reset Statistics</value>
   </data>
@@ -7140,8 +7155,14 @@ Payments will go directly to the developer of {0}. Telegram cannot provide any g
   <data name="RestorePasswordNoEmailText" xml:space="preserve">
     <value>Since you didn&apos;t provide a recovery email when setting up your password, your remaining options are either to remember your password or to reset your account.</value>
   </data>
+  <data name="RestorePasswordNoEmailText2" xml:space="preserve">
+    <value>Since you didn’t provide a recovery email when setting up your password, your remaining options are either to remember your password or wait 7 days until your password is reset.</value>
+  </data>
   <data name="RestorePasswordNoEmailTitle" xml:space="preserve">
     <value>Sorry</value>
+  </data>
+  <data name="RestorePasswordResetIn" xml:space="preserve">
+    <value>You can reset your password in {0}.</value>
   </data>
   <data name="Restrictions_one" xml:space="preserve">
     <value>{0} restriction</value>

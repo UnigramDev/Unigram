@@ -3121,6 +3121,26 @@ namespace Telegram
         public static string CancelLinkExpired => Resource.GetString("CancelLinkExpired");
         
         /// <summary>
+        /// Localized resource similar to "Cancel the password reset process? If you request a new reset later, it will take another 7 days."
+        /// </summary>
+        public static string CancelPasswordReset => Resource.GetString("CancelPasswordReset");
+        
+        /// <summary>
+        /// Localized resource similar to "NO"
+        /// </summary>
+        public static string CancelPasswordResetNo => Resource.GetString("CancelPasswordResetNo");
+        
+        /// <summary>
+        /// Localized resource similar to "YES"
+        /// </summary>
+        public static string CancelPasswordResetYes => Resource.GetString("CancelPasswordResetYes");
+        
+        /// <summary>
+        /// Localized resource similar to "Cancel reset"
+        /// </summary>
+        public static string CancelReset => Resource.GetString("CancelReset");
+        
+        /// <summary>
         /// Localized resource similar to "Can't boost too often!"
         /// </summary>
         public static string CantBoostTooOften => Resource.GetString("CantBoostTooOften");
@@ -10868,6 +10888,11 @@ namespace Telegram
         public static string ResetPassword => Resource.GetString("ResetPassword");
         
         /// <summary>
+        /// Localized resource similar to "You recently requested a password reset that was canceled. Please wait {0} before making a new request."
+        /// </summary>
+        public static string ResetPasswordWait => Resource.GetString("ResetPasswordWait");
+        
+        /// <summary>
         /// Localized resource similar to "Reset Statistics"
         /// </summary>
         public static string ResetStatistics => Resource.GetString("ResetStatistics");
@@ -10935,9 +10960,19 @@ namespace Telegram
         public static string RestorePasswordNoEmailText => Resource.GetString("RestorePasswordNoEmailText");
         
         /// <summary>
+        /// Localized resource similar to "Since you didn’t provide a recovery email when setting up your password, your remaining options are either to remember your password or wait 7 days until your password is reset."
+        /// </summary>
+        public static string RestorePasswordNoEmailText2 => Resource.GetString("RestorePasswordNoEmailText2");
+        
+        /// <summary>
         /// Localized resource similar to "Sorry"
         /// </summary>
         public static string RestorePasswordNoEmailTitle => Resource.GetString("RestorePasswordNoEmailTitle");
+        
+        /// <summary>
+        /// Localized resource similar to "You can reset your password in {0}."
+        /// </summary>
+        public static string RestorePasswordResetIn => Resource.GetString("RestorePasswordResetIn");
         
         /// <summary>
         /// Localized resource similar to "Restrict saving content"
