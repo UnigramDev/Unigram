@@ -198,7 +198,7 @@ namespace Telegram.ViewModels.Profile
                     AddTab(new ProfileTabItem(Strings.SharedGroupsTab2, typeof(ProfileGroupsTabPage)));
                 }
             }
-            else if (chat.Type is ChatTypeSupergroup typeSupergroup && typeSupergroup.IsChannel)
+            else if (chat.Type is ChatTypeSupergroup typeSupergroup)
             {
                 var supergroup = ClientService.GetSupergroup(chat);
                 var cached = ClientService.GetSupergroupFull(chat);
@@ -212,14 +212,24 @@ namespace Telegram.ViewModels.Profile
                 }
 
                 await UpdateSharedCountAsync(chat);
-                await _channelsTabViewModel.LoadMoreItemsAsync(0);
 
-                if (_channelsTabViewModel.Items.Count > 0)
+                if (typeSupergroup.IsChannel)
                 {
-                    AddTab(new ProfileTabItem(Strings.SimilarChannelsTab, typeof(ProfileChannelsTabPage)));
+                    await _channelsTabViewModel.LoadMoreItemsAsync(0);
+
+                    if (_channelsTabViewModel.Items.Count > 0)
+                    {
+                        AddTab(new ProfileTabItem(Strings.SimilarChannelsTab, typeof(ProfileChannelsTabPage)));
+                    }
+                }
+                else
+                {
+                    AddTab(new ProfileTabItem(Strings.ChannelMembers, typeof(ProfileMembersTabPage)));
+
+                    await UpdateSharedCountAsync(chat);
                 }
             }
-            else if (chat.Type is ChatTypeBasicGroup || Chat.Type is ChatTypeSupergroup supergroup && !supergroup.IsChannel)
+            else if (chat.Type is ChatTypeBasicGroup)
             {
                 AddTab(new ProfileTabItem(Strings.ChannelMembers, typeof(ProfileMembersTabPage)));
 

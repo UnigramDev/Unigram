@@ -109,7 +109,7 @@ namespace Telegram.Controls
             {
                 UpdateActiveStories(clientService, chat.Id, user.HasActiveStories, user.HasUnreadActiveStories, side);
             }
-            else if (clientService != null && chat?.Type is ChatTypeSupergroup typeSupergroup && typeSupergroup.IsChannel && clientService.TryGetSupergroup(typeSupergroup.SupergroupId, out Supergroup supergroup))
+            else if (clientService != null && chat?.Type is ChatTypeSupergroup typeSupergroup && clientService.TryGetSupergroup(typeSupergroup.SupergroupId, out Supergroup supergroup))
             {
                 UpdateActiveStories(clientService, chat.Id, supergroup.HasActiveStories, supergroup.HasUnreadActiveStories, side);
             }
