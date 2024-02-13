@@ -304,6 +304,7 @@ namespace Telegram.ViewModels
             _message.CanGetMediaTimestampLinks = message.CanGetMediaTimestampLinks;
             _message.CanGetAddedReactions = message.CanGetAddedReactions;
             _message.SchedulingState = message.SchedulingState;
+            _message.SenderBoostCount = message.SenderBoostCount;
 
             _isSaved = null;
 
@@ -400,6 +401,7 @@ namespace Telegram.ViewModels
         public long ChatId => _message.ChatId;
         public long MessageThreadId => _message.MessageThreadId;
         public MessageSender SenderId => _message.SenderId;
+        public int SenderBoostCount => _message.SenderBoostCount;
         public long Id => _message.Id;
 
         private void SetContent(MessageContent content)
