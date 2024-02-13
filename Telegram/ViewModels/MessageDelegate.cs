@@ -172,9 +172,9 @@ namespace Telegram.ViewModels
             {
                 return GetAdminTitle(senderUser.UserId);
             }
-            else if (message.SenderId is MessageSenderChat && !message.IsChannelPost)
+            else if (message.SenderId is MessageSenderChat senderChat && !message.IsChannelPost)
             {
-                return message.AuthorSignature.Length > 0 ? message.AuthorSignature : string.Empty;
+                return message.AuthorSignature.Length > 0 ? message.AuthorSignature : senderChat.ChatId == Chat.Id ? Strings.ChannelAdmin : string.Empty;
             }
 
             return string.Empty;

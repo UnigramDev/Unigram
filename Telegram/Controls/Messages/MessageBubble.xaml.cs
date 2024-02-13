@@ -827,7 +827,7 @@ namespace Telegram.Controls.Messages
             }
 
             // TODO: this probably needs to go in MessageViewModel
-            var outgoing = (message.IsOutgoing && !message.IsChannelPost) || (message.IsSaved && message.ForwardInfo?.Source is { IsOutgoing: true });
+            var outgoing = (message.IsOutgoing && !message.IsChannelPost && message.SenderId is MessageSenderUser) || (message.IsSaved && message.ForwardInfo?.Source is { IsOutgoing: true });
             var content = message.GeneratedContent ?? message.Content;
             var light = content is MessageSticker
                 or MessageDice
@@ -884,7 +884,7 @@ namespace Telegram.Controls.Messages
                 HeaderLinkRun.Text = title;
                 Identity.ClearStatus();
             }
-            else if (!light && message.IsFirst && !message.IsOutgoing && !message.IsChannelPost && (chat.Type is ChatTypeBasicGroup || chat.Type is ChatTypeSupergroup))
+            else if (!light && message.IsFirst && !outgoing && !message.IsChannelPost && (chat.Type is ChatTypeBasicGroup || chat.Type is ChatTypeSupergroup))
             {
                 if (message.ClientService.TryGetUser(message.SenderId, out User senderUser))
                 {
@@ -892,12 +892,23 @@ namespace Telegram.Controls.Messages
                     header = true;
                     shown = true;
 
-                    var foreground = message.ClientService.GetAccentBrush(senderUser.AccentColorId);
                     var title = senderUser.FullName();
+                    var foreground = message.IsOutgoing && !message.IsChannelPost
+                        ? null
+                        : message.ClientService.GetAccentBrush(senderUser.AccentColorId);
 
-                    HeaderLink.Foreground = foreground;
+                    if (foreground != null)
+                    {
+                        HeaderLink.Foreground = foreground;
+                        Identity.Foreground = foreground.WithOpacity(0.6);
+                    }
+                    else
+                    {
+                        HeaderLink.ClearValue(TextElement.ForegroundProperty);
+                        Identity.Foreground = HeaderLabel.Foreground.WithOpacity(0.6);
+                    }
+
                     HeaderLinkRun.Text = title;
-                    Identity.Foreground = foreground.WithOpacity(0.6);
                     Identity.SetStatus(message.ClientService, senderUser);
                 }
                 else if (message.ClientService.TryGetChat(message.SenderId, out Chat senderChat))
@@ -906,12 +917,23 @@ namespace Telegram.Controls.Messages
                     header = true;
                     shown = true;
 
-                    var foreground = message.ClientService.GetAccentBrush(senderChat.AccentColorId);
                     var title = senderChat.Title;
+                    var foreground = message.IsOutgoing && !message.IsChannelPost
+                        ? null
+                        : message.ClientService.GetAccentBrush(senderChat.AccentColorId);
 
-                    HeaderLink.Foreground = foreground;
+                    if (foreground != null)
+                    {
+                        HeaderLink.Foreground = foreground;
+                        Identity.Foreground = foreground.WithOpacity(0.6);
+                    }
+                    else
+                    {
+                        HeaderLink.ClearValue(TextElement.ForegroundProperty);
+                        Identity.Foreground = HeaderLabel.Foreground.WithOpacity(0.6);
+                    }
+
                     HeaderLinkRun.Text = title;
-                    Identity.Foreground = foreground.WithOpacity(0.6);
                     Identity.SetStatus(message.ClientService, senderChat);
                 }
             }
@@ -1079,11 +1101,17 @@ namespace Telegram.Controls.Messages
                         title += " ";
                     }
 
-                    var icon = message.SenderBoostCount > 1 ? Icons.Boosters212 : Icons.Boosters12;
-                    title += $"{icon} {message.SenderBoostCount}";
+                    if (message.SenderBoostCount > 1)
+                    {
+                        title += $"{Icons.Boosters212} {message.SenderBoostCount}";
+                    }
+                    else
+                    {
+                        title += Icons.Boosters12;
+                    }
                 }
 
-                if (shown && !message.IsOutgoing && !string.IsNullOrEmpty(title))
+                if (shown && !outgoing && !string.IsNullOrEmpty(title))
                 {
                     LoadObject(ref AdminLabel, nameof(AdminLabel));
                     AdminLabel.Text = title;
@@ -1465,6 +1493,9 @@ namespace Telegram.Controls.Messages
 
             Panel.ForceNewLine = message?.GeneratedContent is MessageBigEmoji;
 
+            // TODO: this probably needs to go in MessageViewModel
+            var outgoing = (message.IsOutgoing && !message.IsChannelPost && message.SenderId is MessageSenderUser) || (message.IsSaved && message.ForwardInfo?.Source is { IsOutgoing: true });
+
             var content = message.GeneratedContent ?? message.Content;
             if (content is MessageText text)
             {
@@ -1494,7 +1525,7 @@ namespace Telegram.Controls.Messages
                 var top = 0;
                 var bottom = 0;
 
-                if (message.IsFirst && !message.IsOutgoing && !message.IsChannelPost && (chat.Type is ChatTypeBasicGroup || chat.Type is ChatTypeSupergroup))
+                if (message.IsFirst && !outgoing && !message.IsChannelPost && (chat.Type is ChatTypeBasicGroup || chat.Type is ChatTypeSupergroup))
                 {
                     top = 4;
                 }
@@ -1533,7 +1564,7 @@ namespace Telegram.Controls.Messages
                 ContentPanel.Padding = new Thickness(0);
                 Media.Margin = new Thickness(0);
 
-                if (message.IsOutgoing && !message.IsChannelPost)
+                if (outgoing)
                 {
                     FooterToLightMedia(true);
                     Grid.SetRow(Footer, 3);

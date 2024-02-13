@@ -248,6 +248,7 @@
                                            x:Load="False"
                                            Text="{CustomResource ChatAdmin}"
                                            Foreground="{ThemeResource MessageSubtleLabelBrush}"
+                                           FontFamily="{ThemeResource EmojiThemeFontFamilyWithSymbols}"
                                            Style="{StaticResource CaptionTextBlockStyle}"
                                            HorizontalAlignment="Right"
                                            Margin="4,0,0,2"
