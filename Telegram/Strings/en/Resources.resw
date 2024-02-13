@@ -4465,6 +4465,15 @@ about Telegram?</value>
   <data name="GroupName" xml:space="preserve">
     <value>Group name</value>
   </data>
+  <data name="GroupNotRestrictBoosters" xml:space="preserve">
+    <value>Do Not Restrict Boosters</value>
+  </data>
+  <data name="GroupNotRestrictBoostersInfo" xml:space="preserve">
+    <value>Turn this on to always allow users who boosted your group to send messages and media.</value>
+  </data>
+  <data name="GroupNotRestrictBoostersInfo2" xml:space="preserve">
+    <value>Choose how many boosts a user must give to the group to bypass restrictions on sending messages.</value>
+  </data>
   <data name="Groups_one" xml:space="preserve">
     <value>{0} group</value>
   </data>

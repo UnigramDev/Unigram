@@ -1071,6 +1071,18 @@ namespace Telegram.Controls.Messages
             if (shown)
             {
                 var title = message.Delegate?.GetAdminTitle(message);
+
+                if (message.SenderBoostCount > 0 && !outgoing)
+                {
+                    if (title.Length > 0)
+                    {
+                        title += " ";
+                    }
+
+                    var icon = message.SenderBoostCount > 1 ? Icons.Boosters212 : Icons.Boosters12;
+                    title += $"{icon} {message.SenderBoostCount}";
+                }
+
                 if (shown && !message.IsOutgoing && !string.IsNullOrEmpty(title))
                 {
                     LoadObject(ref AdminLabel, nameof(AdminLabel));
