@@ -278,6 +278,7 @@ namespace Telegram.ViewModels
                     case ChatEventHasProtectedContentToggled:
                     case ChatEventSignMessagesToggled:
                     case ChatEventStickerSetChanged:
+                    case ChatEventCustomEmojiStickerSetChanged:
                     case ChatEventInvitesToggled:
                     case ChatEventIsAllHistoryAvailableToggled:
                     case ChatEventMemberJoinedByInviteLink:

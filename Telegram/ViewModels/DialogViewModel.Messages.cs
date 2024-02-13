@@ -1567,6 +1567,10 @@ namespace Telegram.ViewModels
                 {
                     await StickersPopup.ShowAsync(stickerSetChanged.NewStickerSetId);
                 }
+                else if (chatEvent.Action is ChatEventCustomEmojiStickerSetChanged customEmojiStickerSetChanged && customEmojiStickerSetChanged.NewStickerSetId != 0)
+                {
+                    await StickersPopup.ShowAsync(customEmojiStickerSetChanged.NewStickerSetId);
+                }
             }
             else if (message.Content is MessageVideoChatStarted or MessageVideoChatScheduled)
             {

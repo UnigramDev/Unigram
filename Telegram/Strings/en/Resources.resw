@@ -594,6 +594,9 @@ to: {1}</value>
   <data name="ActionSetWallpaperForThisChatSelfBoth" xml:space="preserve">
     <value>You set a new wallpaper for {0} and you.</value>
   </data>
+  <data name="ActionSetWallpaperForThisGroup" xml:space="preserve">
+    <value>Group set a new wallpaper</value>
+  </data>
   <data name="ActionSkip" xml:space="preserve">
     <value>Skip</value>
   </data>
@@ -3694,6 +3697,9 @@ Learn more at telegram.org</value>
   <data name="EventLogChangedEmoji" xml:space="preserve">
     <value>un1 changed channel emoji from {0} to {1}</value>
   </data>
+  <data name="EventLogChangedEmojiPack" xml:space="preserve">
+    <value>un1 changed the group emoji pack</value>
+  </data>
   <data name="EventLogChangedEmojiStatus" xml:space="preserve">
     <value>un1 changed channel emoji status to {1}</value>
   </data>
@@ -3888,6 +3894,9 @@ Learn more at telegram.org</value>
   </data>
   <data name="EventLogPromotedTitle" xml:space="preserve">
     <value>Title: {0}</value>
+  </data>
+  <data name="EventLogRemovedEmojiPack" xml:space="preserve">
+    <value>un1 removed the group emoji pack</value>
   </data>
   <data name="EventLogRemovedGroupLink" xml:space="preserve">
     <value>un1 removed the group link</value>
