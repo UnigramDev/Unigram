@@ -17,12 +17,14 @@ namespace Telegram.Views.Chats.Popups
 {
     public sealed partial class ChatBoostFeaturesPopup : ContentPopup
     {
+        private readonly bool _channel;
         private readonly ChatBoostStatus _status;
 
-        public ChatBoostFeaturesPopup(ChatBoostStatus status, ChatBoostFeatures features, ChatBoostFeature feature, int requiredLevel)
+        public ChatBoostFeaturesPopup(bool channel, ChatBoostStatus status, ChatBoostFeatures features, ChatBoostFeature feature, int requiredLevel)
         {
             InitializeComponent();
 
+            _channel = channel;
             _status = status;
 
             ScrollingHost.ItemsSource = features.Features
@@ -99,7 +101,7 @@ namespace Telegram.Views.Chats.Popups
             }
             else if (args.ItemContainer.ContentTemplateRoot is ChatBoostFeaturesCell cell && args.Item is ChatBoostLevelFeatures features)
             {
-                cell.UpdateCell(features, args.ItemIndex);
+                cell.UpdateCell(_channel, features, args.ItemIndex);
             }
         }
 

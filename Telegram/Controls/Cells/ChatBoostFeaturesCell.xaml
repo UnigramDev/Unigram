@@ -171,5 +171,29 @@
                    Style="{StaticResource BodyTextBlockStyle}"
                    Grid.Column="1"
                    Grid.Row="10" />
+
+        <TextBlock x:Name="VoiceToTextIcon"
+                   Text="&#xF164;"
+                   Foreground="{ThemeResource InkToolbarAccentColorThemeBrush}"
+                   FontFamily="{StaticResource SymbolThemeFontFamily}"
+                   Margin="0,0,8,0"
+                   FontSize="20"
+                   Grid.Row="9" />
+        <TextBlock x:Name="VoiceToTextText"
+                   Style="{StaticResource BodyTextBlockStyle}"
+                   Grid.Column="1"
+                   Grid.Row="9" />
+
+        <TextBlock x:Name="CustomEmojiPackIcon"
+                   Text="&#xF164;"
+                   Foreground="{ThemeResource InkToolbarAccentColorThemeBrush}"
+                   FontFamily="{StaticResource SymbolThemeFontFamily}"
+                   Margin="0,0,8,0"
+                   FontSize="20"
+                   Grid.Row="10" />
+        <TextBlock x:Name="CustomEmojiPackText"
+                   Style="{StaticResource BodyTextBlockStyle}"
+                   Grid.Column="1"
+                   Grid.Row="10" />
     </Grid>
 </UserControl>

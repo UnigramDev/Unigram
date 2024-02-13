@@ -1483,8 +1483,20 @@ Please enable Unigram in the Startup Apps Settings.</value>
   <data name="BoostFeatureBackground_other" xml:space="preserve">
     <value>{0} Channel Backgrounds</value>
   </data>
+  <data name="BoostFeatureBackgroundGroup_one" xml:space="preserve">
+    <value>{0} Group Background</value>
+  </data>
+  <data name="BoostFeatureBackgroundGroup_other" xml:space="preserve">
+    <value>{0} Group Backgrounds</value>
+  </data>
   <data name="BoostFeatureCustomBackground" xml:space="preserve">
     <value>Custom Channel Background</value>
+  </data>
+  <data name="BoostFeatureCustomBackgroundGroup" xml:space="preserve">
+    <value>Custom Group Background</value>
+  </data>
+  <data name="BoostFeatureCustomEmojiPack" xml:space="preserve">
+    <value>Custom Emoji Pack</value>
   </data>
   <data name="BoostFeatureCustomReaction_one" xml:space="preserve">
     <value>{0} Custom Reaction</value>
@@ -1501,8 +1513,17 @@ Please enable Unigram in the Startup Apps Settings.</value>
   <data name="BoostFeatureProfileColor_other" xml:space="preserve">
     <value>{0} Colors for Channel Cover</value>
   </data>
+  <data name="BoostFeatureProfileColorGroup_other" xml:space="preserve">
+    <value>{0} Colors for Group Cover</value>
+  </data>
   <data name="BoostFeatureProfileIcon" xml:space="preserve">
     <value>Custom Logo for Channel Cover</value>
+  </data>
+  <data name="BoostFeatureProfileIconGroup" xml:space="preserve">
+    <value>Custom Logo for Group Cover</value>
+  </data>
+  <data name="BoostFeatureRealTimeTranslations" xml:space="preserve">
+    <value>Real-Time Translations</value>
   </data>
   <data name="BoostFeatureReplyColor_one" xml:space="preserve">
     <value>{0} Styles for Links and Quotes</value>
@@ -1518,6 +1539,9 @@ Please enable Unigram in the Startup Apps Settings.</value>
   </data>
   <data name="BoostFeatureStoriesPerDay_other" xml:space="preserve">
     <value>{0} Stories Per Day</value>
+  </data>
+  <data name="BoostFeatureVoiceToTextConversion" xml:space="preserve">
+    <value>Voice-to-Text Conversion</value>
   </data>
   <data name="BoostingCongratulations" xml:space="preserve">
     <value>Congratulations!</value>

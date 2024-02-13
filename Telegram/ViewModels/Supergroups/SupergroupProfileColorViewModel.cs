@@ -72,7 +72,7 @@ namespace Telegram.ViewModels.Supergroups
             SelectedProfileCustomEmojiId = chat.ProfileBackgroundCustomEmojiId;
             SelectedEmojiStatus = chat.EmojiStatus;
 
-            var response1 = await ClientService.SendAsync(new GetChatBoostFeatures());
+            var response1 = await ClientService.SendAsync(new GetChatBoostFeatures(chat.Type is ChatTypeSupergroup { IsChannel: true }));
             var response2 = await ClientService.SendAsync(new GetChatBoostStatus(chat.Id));
 
             if (response1 is ChatBoostFeatures features && response2 is ChatBoostStatus status)
@@ -346,7 +346,7 @@ namespace Telegram.ViewModels.Supergroups
             var required = UpdateRequiredLevel(out var feature);
             if (required > status.Level)
             {
-                await ShowPopupAsync(new ChatBoostFeaturesPopup(status, _features, feature, required));
+                await ShowPopupAsync(new ChatBoostFeaturesPopup(chat.Type is ChatTypeSupergroup { IsChannel: true }, status, _features, feature, required));
                 return;
             }
 
