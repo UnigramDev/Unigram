@@ -19,6 +19,9 @@ namespace Telegram.Controls.Media
         public const string ZWNJ = "\u200C";
         public const string Spacing = "\u2004\u200A";
 
+        public const string Boosters12 = "\uEA6A";
+        public const string Boosters212 = "\uEA6B";
+
         public static string TagFilter = "\uEA63";
         public static string TagEdit = "\uEA64";
         public static string TagSearch = "\uEA65";

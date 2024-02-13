@@ -28,29 +28,8 @@ namespace Telegram.Views.Supergroups
             InitializeComponent();
             Title = Strings.ChannelPermissions;
 
-            InitializeTicks();
-        }
-
-        private void InitializeTicks()
-        {
-            int j = 0;
-            for (int i = 0; i < 7; i++)
-            {
-                var label = new TextBlock { Text = ConvertSlowModeTick(i), TextAlignment = TextAlignment.Center, HorizontalAlignment = HorizontalAlignment.Stretch, Style = BootStrapper.Current.Resources["InfoCaptionTextBlockStyle"] as Style };
-                Grid.SetColumn(label, j);
-
-                SlowmodeTicks.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Auto) });
-
-                if (i < 6)
-                {
-                    SlowmodeTicks.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
-                }
-
-                SlowmodeTicks.Children.Add(label);
-                j += 2;
-            }
-
-            Grid.SetColumnSpan(Slowmode, SlowmodeTicks.ColumnDefinitions.Count);
+            SliderHelper.InitializeTicks(Slowmode, SlowmodeTicks, 7, ConvertSlowModeTick);
+            SliderHelper.InitializeTicks(Boosters, BoostersTicks, 5, ConvertBoostersTick);
         }
 
         public void Search()
@@ -163,7 +142,7 @@ namespace Telegram.Views.Supergroups
             }
         }
 
-        private string ConvertSlowModeTick(double value)
+        private string ConvertSlowModeTick(int value)
         {
             var seconds = 0;
             switch (value)
@@ -233,6 +212,19 @@ namespace Telegram.Views.Supergroups
                     return string.Format(Strings.SlowmodeInfoSelected, Locale.Declension(Strings.R.Hours, value / 60 / 60));
                 }
             }
+        }
+
+        private string ConvertBoostersTick(int value)
+        {
+            var icon = value > 0 ? Icons.Boosters212 : Icons.Boosters12;
+            return $"{icon} {value + 1}";
+        }
+
+        private string ConvertBoostersFooter(bool unrestrict)
+        {
+            return unrestrict
+                ? Strings.GroupNotRestrictBoostersInfo2
+                : Strings.GroupNotRestrictBoostersInfo;
         }
 
         private string ConvertCanSendCount(int count)

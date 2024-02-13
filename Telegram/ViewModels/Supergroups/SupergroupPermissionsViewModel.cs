@@ -44,6 +44,16 @@ namespace Telegram.ViewModels.Supergroups
             CanSendPolls = chat.Permissions.CanSendPolls;
             CanAddWebPagePreviews = chat.Permissions.CanAddWebPagePreviews;
             CanSendBasicMessages = chat.Permissions.CanSendBasicMessages;
+
+            if (ClientService.TryGetSupergroup(chat, out Supergroup supergroup)
+                && ClientService.TryGetSupergroupFull(chat, out SupergroupFullInfo fullInfo))
+            {
+                if (supergroup.CanRestrictMembers())
+                {
+                    UnrestrictBoosters = fullInfo.UnrestrictBoostCount > 0;
+                    UnrestrictBoostCount = fullInfo.UnrestrictBoostCount;
+                }
+            }
         }
 
         #region Flags
@@ -55,6 +65,7 @@ namespace Telegram.ViewModels.Supergroups
             set
             {
                 Set(ref _canSendBasicMessages, value);
+                RaisePropertyChanged(nameof(CanUnrestrictBoosters));
 
                 // Don't allow send media
                 if (!value && _canAddWebPagePreviews)
@@ -71,6 +82,7 @@ namespace Telegram.ViewModels.Supergroups
             set
             {
                 Set(ref _canSendMediaMessages, value);
+                RaisePropertyChanged(nameof(CanUnrestrictBoosters));
 
                 if (value.HasValue)
                 {
@@ -93,6 +105,8 @@ namespace Telegram.ViewModels.Supergroups
 
             Set(ref _canSendCount, count, nameof(CanSendCount));
             Set(ref _canSendMediaMessages, count == 0 ? false : count == 9 ? true : null, nameof(CanSendMediaMessages));
+
+            RaisePropertyChanged(nameof(CanUnrestrictBoosters));
         }
 
         private int Count()
@@ -274,7 +288,48 @@ namespace Telegram.ViewModels.Supergroups
         public int SlowModeDelay
         {
             get => _slowModeDelay;
-            set => Set(ref _slowModeDelay, value);
+            set
+            {
+                Set(ref _slowModeDelay, value);
+                RaisePropertyChanged(nameof(CanUnrestrictBoosters));
+            }
+        }
+
+        private int _unrestrictBoostCount;
+        public int UnrestrictBoostCount
+        {
+            get => _unrestrictBoostCount;
+            set => Set(ref _unrestrictBoostCount, value);
+        }
+
+        private bool _unrestrictBoosters;
+        public bool UnrestrictBoosters
+        {
+            get => _unrestrictBoosters;
+            set => Set(ref _unrestrictBoosters, value);
+        }
+
+        public bool CanUnrestrictBoosters
+        {
+            get
+            {
+                if (ClientService.TryGetSupergroup(Chat, out Supergroup supergroup) && supergroup.CanRestrictMembers())
+                {
+                    return !CanSendPhotos
+                        || !CanSendVideos
+                        || !CanSendOtherMessages
+                        || !CanSendAudios
+                        || !CanSendDocuments
+                        || !CanSendVoiceNotes
+                        || !CanSendVideoNotes
+                        || !CanSendPolls
+                        || !CanAddWebPagePreviews
+                        || !CanSendBasicMessages
+                        || SlowModeDelay > 0;
+                }
+
+                return false;
+            }
         }
 
         public async void Continue()
@@ -327,6 +382,12 @@ namespace Telegram.ViewModels.Supergroups
                 return;
             }
 
+            var supergroup = ClientService.GetSupergroup(chat);
+            if (supergroup == null)
+            {
+                return;
+            }
+
             var fullInfo = ClientService.GetSupergroupFull(chat);
             if (fullInfo == null)
             {
@@ -337,6 +398,15 @@ namespace Telegram.ViewModels.Supergroups
             {
                 var slowMode = await ClientService.SendAsync(new SetChatSlowModeDelay(chat.Id, _slowModeDelay));
                 if (slowMode is Error)
+                {
+                    return;
+                }
+            }
+
+            if (fullInfo.UnrestrictBoostCount != _unrestrictBoostCount && supergroup.CanRestrictMembers())
+            {
+                var unrestrictBoostCount = await ClientService.SendAsync(new SetSupergroupUnrestrictBoostCount(supergroup.Id, _unrestrictBoostCount));
+                if (unrestrictBoostCount is Error)
                 {
                     return;
                 }
