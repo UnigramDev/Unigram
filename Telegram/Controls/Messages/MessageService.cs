@@ -204,7 +204,7 @@ namespace Telegram.Controls.Messages
                 }
 
                 photo.UpdateSource(message.ClientService, chatSetBackground.Background.Background, true);
-                view.Visibility = message.IsOutgoing
+                view.Visibility = message.IsOutgoing || message.Chat.Type is not ChatTypePrivate
                     ? Visibility.Collapsed
                     : Visibility.Visible;
 
@@ -300,6 +300,7 @@ namespace Telegram.Controls.Messages
                     ChatEventHasProtectedContentToggled hasProtectedContentToggled => UpdateHasProtectedContentToggled(message, hasProtectedContentToggled, active),
                     ChatEventSignMessagesToggled signMessagesToggled => UpdateSignMessagesToggled(message, signMessagesToggled, active),
                     ChatEventStickerSetChanged stickerSetChanged => UpdateStickerSetChanged(message, stickerSetChanged, active),
+                    ChatEventCustomEmojiStickerSetChanged customemojiStickerSetChanged => UpdateCustomEmojiStickerSetChanged(message, customemojiStickerSetChanged, active),
                     ChatEventInvitesToggled invitesToggled => UpdateInvitesToggled(message, invitesToggled, active),
                     ChatEventIsAllHistoryAvailableToggled isAllHistoryAvailableToggled => UpdateIsAllHistoryAvailableToggled(message, isAllHistoryAvailableToggled, active),
                     ChatEventLinkedChatChanged linkedChatChanged => UpdateLinkedChatChanged(message, linkedChatChanged, active),
@@ -637,6 +638,25 @@ namespace Telegram.Controls.Messages
             else
             {
                 content = ReplaceWithLink(Strings.EventLogChangedStickersSet, "un1", fromUser, entities);
+            }
+
+            return (content, entities);
+        }
+
+        private static (string Text, IList<TextEntity> Entities) UpdateCustomEmojiStickerSetChanged(MessageViewModel message, ChatEventCustomEmojiStickerSetChanged customEmojiStickerSetChanged, bool active)
+        {
+            var content = string.Empty;
+            var entities = active ? new List<TextEntity>() : null;
+
+            var fromUser = message.GetSender();
+
+            if (customEmojiStickerSetChanged.NewStickerSetId == 0)
+            {
+                content = ReplaceWithLink(Strings.EventLogRemovedEmojiPack, "un1", fromUser, entities);
+            }
+            else
+            {
+                content = ReplaceWithLink(Strings.EventLogChangedEmojiPack, "un1", fromUser, entities);
             }
 
             return (content, entities);
@@ -1507,6 +1527,10 @@ namespace Telegram.Controls.Messages
                 content = chatSetBackground.OnlyForSelf
                     ? string.Format(Strings.ActionSetWallpaperForThisChat, user.FirstName)
                     : string.Format(Strings.ActionSetWallpaperForThisChatBoth, user.FirstName);
+            }
+            else
+            {
+                content = Strings.ActionSetWallpaperForThisGroup;
             }
 
             return (content, entities);
