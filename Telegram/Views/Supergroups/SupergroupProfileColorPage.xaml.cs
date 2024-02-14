@@ -25,7 +25,7 @@ namespace Telegram.Views.Supergroups
         public SupergroupProfileColorPage()
         {
             InitializeComponent();
-            Title = Strings.Appearance;
+            Title = Strings.ChannelColorTitle2;
         }
 
         protected override void OnNavigatedTo(NavigationEventArgs e)

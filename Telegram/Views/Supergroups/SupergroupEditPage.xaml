@@ -108,7 +108,7 @@
                     </controls:BadgeButton>
 
                     <controls:BadgeButton x:Name="ChannelColor"
-                                          Content="{CustomResource ChannelColor}"
+                                          Content="{CustomResource ChangeChannelNameColor2}"
                                           Style="{StaticResource GlyphBadgeButtonStyle}"
                                           Click="{x:Bind ViewModel.EditColor}"
                                           Glyph="&#xE2B1;"

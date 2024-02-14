@@ -113,10 +113,10 @@ namespace Telegram.Views.Supergroups
             InviteLinkPanel.Visibility = group.CanInviteUsers() ? Visibility.Visible : Visibility.Collapsed;
             GroupStickersPanel.Visibility = Visibility.Collapsed;
 
-            if (group.IsChannel && group.CanChangeInfo())
-            {
-                ChannelSignMessages.Visibility = Visibility.Visible;
+            ChannelSignMessages.Visibility = group.CanChangeInfo() && group.IsChannel ? Visibility.Visible : Visibility.Collapsed;
 
+            if (group.CanChangeInfo())
+            {
                 if (ViewModel.IsPremiumAvailable)
                 {
                     ChannelColor.Visibility = Visibility.Visible;
