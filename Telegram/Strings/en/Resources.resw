@@ -2122,6 +2122,9 @@ It will be able to access your **IP address** and basic device info.</value>
   <data name="Change" xml:space="preserve">
     <value>Change</value>
   </data>
+  <data name="ChangeChannelNameColor2" xml:space="preserve">
+    <value>Appearance</value>
+  </data>
   <data name="ChangeChatBackground" xml:space="preserve">
     <value>Change Chat Wallpaper</value>
   </data>
@@ -2264,6 +2267,9 @@ Note: if you forget your passcode, you&apos;ll need to log out or reinstall the 
   </data>
   <data name="ChannelColorTitle" xml:space="preserve">
     <value>Your Channel Color</value>
+  </data>
+  <data name="ChannelColorTitle2" xml:space="preserve">
+    <value>Appearance</value>
   </data>
   <data name="ChannelColorUnsaved" xml:space="preserve">
     <value>Unsaved Changes</value>
@@ -6382,11 +6388,23 @@ Payments will go directly to the developer of {0}. Telegram cannot provide any g
   <data name="PremiumPreviewEmojiStatusDescription" xml:space="preserve">
     <value>Choose from thousands of emoji to display current activity next to your name.</value>
   </data>
+  <data name="PremiumPreviewLastSeen" xml:space="preserve">
+    <value>Last Seen Times</value>
+  </data>
+  <data name="PremiumPreviewLastSeenDescription" xml:space="preserve">
+    <value>View the last seen and read times of others even if you hide yours.</value>
+  </data>
   <data name="PremiumPreviewLimits" xml:space="preserve">
     <value>Doubled Limits</value>
   </data>
   <data name="PremiumPreviewLimitsDescription" xml:space="preserve">
     <value>Up to {0} channels, {1} folders, {2} pins, {3} public links, {4} accounts and more.</value>
+  </data>
+  <data name="PremiumPreviewMessagePrivacy" xml:space="preserve">
+    <value>Message Privacy</value>
+  </data>
+  <data name="PremiumPreviewMessagePrivacyDescription" xml:space="preserve">
+    <value>Restrict people you don&apos;t know from sending you messages.</value>
   </data>
   <data name="PremiumPreviewNoAds" xml:space="preserve">
     <value>No Ads</value>
