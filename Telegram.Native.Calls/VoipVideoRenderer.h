@@ -56,6 +56,33 @@ struct VoipVideoRenderer : public rtc::VideoSinkInterface<webrtc::VideoFrame>
     CanvasBitmap m_bitmapU{ nullptr };
     CanvasBitmap m_bitmapV{ nullptr };
 
+    void ReleaseShader()
+    {
+        if (m_shader)
+        {
+            m_shader.Close();
+            m_shader = nullptr;
+        }
+
+        if (m_bitmapY)
+        {
+            m_bitmapY.Close();
+            m_bitmapY = nullptr;
+        }
+
+        if (m_bitmapU)
+        {
+            m_bitmapU.Close();
+            m_bitmapU = nullptr;
+        }
+
+        if (m_bitmapV)
+        {
+            m_bitmapV.Close();
+            m_bitmapV = nullptr;
+        }
+    }
+
     VoipVideoRenderer(CanvasControl canvas, /*Stretch stretch = Stretch::UniformToFill,*/ bool flip = false, bool enableBlur = false)
     {
         m_canvasControl = std::make_shared<CanvasControl>(canvas);
@@ -140,8 +167,15 @@ struct VoipVideoRenderer : public rtc::VideoSinkInterface<webrtc::VideoFrame>
                     args.DrawingSession().DrawImage(m_blur, x, y);
                 }
 
-                args.DrawingSession().Transform(matrix * make_float3x2_scale(m_flip ? -scale : scale, scale, float2(width / 2, height / 2)));
-                args.DrawingSession().DrawImage(m_shader, x, y);
+                try
+                {
+                    args.DrawingSession().Transform(matrix * make_float3x2_scale(m_flip ? -scale : scale, scale, float2(width / 2, height / 2)));
+                    args.DrawingSession().DrawImage(m_shader, x, y);
+                }
+                catch (...)
+                {
+                    ReleaseShader();
+                }
             }
             });
     }
@@ -166,29 +200,7 @@ struct VoipVideoRenderer : public rtc::VideoSinkInterface<webrtc::VideoFrame>
             m_blur = nullptr;
         }
 
-        if (m_shader)
-        {
-            m_shader.Close();
-            m_shader = nullptr;
-        }
-
-        if (m_bitmapY)
-        {
-            m_bitmapY.Close();
-            m_bitmapY = nullptr;
-        }
-
-        if (m_bitmapU)
-        {
-            m_bitmapU.Close();
-            m_bitmapU = nullptr;
-        }
-
-        if (m_bitmapV)
-        {
-            m_bitmapV.Close();
-            m_bitmapV = nullptr;
-        }
+        ReleaseShader();
     }
 
     void OnFrame(const webrtc::VideoFrame& frame) override
@@ -211,6 +223,8 @@ struct VoipVideoRenderer : public rtc::VideoSinkInterface<webrtc::VideoFrame>
 
         if (m_bitmapY == nullptr || m_bitmapY.SizeInPixels().Width != width || m_bitmapY.SizeInPixels().Height != height)
         {
+            winrt::slim_lock_guard const drawGuard(m_drawLock);
+
             auto creator = m_canvasControl->as<ICanvasResourceCreatorWithDpi>();
             auto format = DirectXPixelFormat::R8UIntNormalized;
 
