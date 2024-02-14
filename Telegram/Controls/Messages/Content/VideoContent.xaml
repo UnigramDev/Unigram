@@ -38,7 +38,7 @@
                                                 IsHitTestVisible="False" />
 
                         <controls:FileButton x:Name="Overlay"
-                                             Padding="8,4,8,4"
+                                             Padding="6,1,6,3"
                                              Margin="4"
                                              CornerRadius="{ThemeResource MessageOverlayCornerRadius}"
                                              Style="{StaticResource SmallImmersiveFileButtonStyle}">

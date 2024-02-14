@@ -149,7 +149,7 @@
                                         CornerRadius="{ThemeResource MessageOverlayCornerRadius}"
                                         HorizontalAlignment="Right"
                                         VerticalAlignment="Bottom"
-                                        Padding="8,4,8,4"
+                                        Padding="6,1,6,3"
                                         Margin="4">
                                     <TextBlock x:Name="Subtitle"
                                                Style="{StaticResource CaptionTextBlockStyle}"

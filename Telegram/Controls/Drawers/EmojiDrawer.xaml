@@ -56,7 +56,7 @@
                   CornerRadius="{ThemeResource MessageOverlayCornerRadius}"
                   HorizontalAlignment="Center"
                   VerticalAlignment="Center"
-                  Padding="6,2,6,3">
+                  Padding="6,1,6,3">
                 <TextBlock Style="{StaticResource CaptionTextBlockStyle}"
                            Foreground="White"
                            TextAlignment="Right"

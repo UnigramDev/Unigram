@@ -40,7 +40,7 @@
                                                     Foreground="White"
                                                     VerticalAlignment="Top"
                                                     HorizontalAlignment="Left"
-                                                    Padding="8,2,8,4"
+                                                    Padding="6,1,6,3"
                                                     Margin="4" />
                         </controls:AspectView>
                     </StackPanel>
