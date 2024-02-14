@@ -91,7 +91,7 @@ namespace Telegram.Views.Premium.Popups
                     subtitleValue = Strings.PremiumPreviewWallpaperDescription;
                     break;
                 case PremiumFeatureAdvancedChatManagement:
-                    iconValue = Icons.ChatFilled;
+                    iconValue = Icons.ChatSettingsFilled;
                     titleValue = Strings.PremiumPreviewAdvancedChatManagement;
                     subtitleValue = Strings.PremiumPreviewAdvancedChatManagementDescription;
                     break;
@@ -169,6 +169,18 @@ namespace Telegram.Views.Premium.Popups
                     iconValue = Icons.MicOnFilled;
                     titleValue = Strings.PremiumPreviewVoiceToText;
                     subtitleValue = Strings.PremiumPreviewVoiceToTextDescription;
+                    break;
+                case PremiumFeatureLastSeenTimes:
+                    iconValue = Icons.LastSeenFilled;
+                    titleValue = Strings.PremiumPreviewLastSeen;
+                    subtitleValue = Strings.PremiumPreviewLastSeenDescription;
+                    badge = true;
+                    break;
+                case PremiumFeatureMessagePrivacy:
+                    iconValue = Icons.ChatLockedFilled;
+                    titleValue = Strings.PremiumPreviewMessagePrivacy;
+                    subtitleValue = Strings.PremiumPreviewMessagePrivacyDescription;
+                    badge = true;
                     break;
             }
 

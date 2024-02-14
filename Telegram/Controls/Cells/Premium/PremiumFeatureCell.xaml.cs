@@ -104,6 +104,10 @@ namespace Telegram.Controls.Cells.Premium
                     titleValue = Strings.PremiumPreviewTranslations;
                     subtitleValue = Strings.PremiumPreviewTranslationsDescription;
                     break;
+                case PremiumFeatureSavedMessagesTags:
+                    titleValue = Strings.PremiumPreviewTags2;
+                    subtitleValue = Strings.PremiumPreviewTagsDescription2;
+                    break;
                 case PremiumFeatureUniqueReactions:
                     titleValue = Strings.PremiumPreviewReactions2;
                     subtitleValue = Strings.PremiumPreviewReactions2Description;
@@ -119,6 +123,14 @@ namespace Telegram.Controls.Cells.Premium
                 case PremiumFeatureVoiceRecognition:
                     titleValue = Strings.PremiumPreviewVoiceToText;
                     subtitleValue = Strings.PremiumPreviewVoiceToTextDescription;
+                    break;
+                case PremiumFeatureLastSeenTimes:
+                    titleValue = Strings.PremiumPreviewLastSeen;
+                    subtitleValue = Strings.PremiumPreviewLastSeenDescription;
+                    break;
+                case PremiumFeatureMessagePrivacy:
+                    titleValue = Strings.PremiumPreviewMessagePrivacy;
+                    subtitleValue = Strings.PremiumPreviewMessagePrivacyDescription;
                     break;
             }
 
