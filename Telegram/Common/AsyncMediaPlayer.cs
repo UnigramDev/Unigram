@@ -24,6 +24,7 @@ namespace Telegram.Common
         private readonly LibVLC _library;
         private readonly MediaPlayer _player;
 
+        private Media _media;
         private MediaInput _input;
 
         private readonly object _closeLock = new();
@@ -73,7 +74,18 @@ namespace Telegram.Common
         {
             if (play)
             {
-                _player.Play(new Media(_library, input));
+                var media = new Media(_library, input);
+
+                _player.Play(media);
+
+                // We need to retain both Media and MediaInput due to the bad (IMHO) design of libvlc API.
+                // When creating a Media from a MediaInput, some callbacks are registered to access the stream.
+                // The problem is that the library creates a GC handle in MediaInput that is then used by Media
+                // to register the aforementioned callbacks. What happens, in my understanding, is that there are
+                // some good chances that MediaInput is disposed before Media, and due to that the GC handle is deleted
+                // and this causes an access violation in libvlccore when trying to raise the callbacks for the media.
+                _media?.Dispose();
+                _media = media;
 
                 _input?.Dispose();
                 _input = input;
@@ -162,6 +174,13 @@ namespace Telegram.Common
             _player.VolumeChanged -= OnVolumeChanged;
             _player.EncounteredError -= OnEncounteredError;
             _player.Stop();
+            _player.Media = null;
+
+            if (_media != null)
+            {
+                _media?.Dispose();
+                _media = null;
+            }
 
             if (_input != null)
             {
