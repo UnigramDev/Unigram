@@ -16,7 +16,7 @@ namespace LibVLCSharp.Shared
         {
             [DllImport(Constants.LibraryName, CallingConvention = CallingConvention.Cdecl,
                 EntryPoint = "libvlc_media_discoverer_new")]
-            internal static extern IntPtr LibVLCMediaDiscovererNew(IntPtr libvlc, IntPtr name);
+            internal static extern IntPtr LibVLCMediaDiscovererNew(LibVLC libvlc, IntPtr name);
 
             [DllImport(Constants.LibraryName, CallingConvention = CallingConvention.Cdecl,
                 EntryPoint = "libvlc_media_discoverer_start")]
@@ -47,19 +47,27 @@ namespace LibVLCSharp.Shared
             internal static extern IntPtr LibVLCMediaDiscovererMediaList(IntPtr discovererMediaList);
         }
 
+        private static IntPtr Create(LibVLC libVLC, string name)
+        {
+            var nameUtf8 = name.ToUtf8();
+            return MarshalUtils.PerformInteropAndFree(() =>
+                Native.LibVLCMediaDiscovererNew(libVLC, nameUtf8), nameUtf8);
+        }
+
         /// <summary>
         /// Media discoverer constructor
         /// </summary>
         /// <param name="libVLC">libvlc instance this will be attached to</param>
         /// <param name="name">name from one of LibVLC.MediaDiscoverers</param>
         public MediaDiscoverer(LibVLC libVLC, string name)
-            : base(() =>
-            {
-                var nameUtf8 = name.ToUtf8();
-                return MarshalUtils.PerformInteropAndFree(() =>
-                    Native.LibVLCMediaDiscovererNew(libVLC.NativeReference, nameUtf8), nameUtf8);
-            }, Native.LibVLCMediaDiscovererRelease)
+            : base(Create(libVLC, name))
         {
+        }
+
+        protected override bool ReleaseHandle()
+        {
+            Native.LibVLCMediaDiscovererRelease(handle);
+            return true;
         }
 
         /// <summary>
@@ -67,18 +75,18 @@ namespace LibVLCSharp.Shared
         /// To stop it, call MediaDiscover::stop() or destroy the object directly.
         /// </summary>
         /// <returns>false in case of error, true otherwise</returns>
-        public bool Start() => Native.LibVLCMediaDiscovererStart(NativeReference) == 0;
+        public bool Start() => Native.LibVLCMediaDiscovererStart(handle) == 0;
 
         /// <summary>
         /// Stop media discovery.
         /// </summary>
-        public void Stop() => Native.LibVLCMediaDiscovererStop(NativeReference);
+        public void Stop() => Native.LibVLCMediaDiscovererStop(handle);
 
         /// <summary>
         /// Get media service discover object its localized name.
         /// under v3 only
         /// </summary>
-        public string LocalizedName => Native.LibVLCMediaDiscovererLocalizedName(NativeReference).FromUtf8();
+        public string LocalizedName => Native.LibVLCMediaDiscovererLocalizedName(handle).FromUtf8();
 
         /// <summary>
         /// Get event manager from media service discover object.
@@ -90,7 +98,7 @@ namespace LibVLCSharp.Shared
             {
                 if (_eventManager == null)
                 {
-                    var ptr = Native.LibVLCMediaDiscovererEventManager(NativeReference);
+                    var ptr = Native.LibVLCMediaDiscovererEventManager(handle);
                     if (ptr == IntPtr.Zero) return null;
                     _eventManager = new MediaDiscovererEventManager(ptr);
                 }
@@ -101,7 +109,7 @@ namespace LibVLCSharp.Shared
         /// <summary>
         /// Query if media service discover object is running.
         /// </summary>
-        public bool IsRunning => NativeReference != IntPtr.Zero && Native.LibVLCMediaDiscovererIsRunning(NativeReference) != 0;
+        public bool IsRunning => !IsInvalid && Native.LibVLCMediaDiscovererIsRunning(handle) != 0;
 
         /// <summary>
         /// The MediaList attached to this MediaDiscoverer
@@ -112,9 +120,9 @@ namespace LibVLCSharp.Shared
             {
                 if (_mediaList == null)
                 {
-                    if (IsDisposed || NativeReference == IntPtr.Zero) return null;
+                    if (IsInvalid || IsClosed) return null;
 
-                    var ptr = Native.LibVLCMediaDiscovererMediaList(NativeReference);
+                    var ptr = Native.LibVLCMediaDiscovererMediaList(handle);
                     if (ptr == IntPtr.Zero) return null;
                     _mediaList = new MediaList(ptr);
                 }

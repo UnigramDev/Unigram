@@ -21,7 +21,7 @@ namespace LibVLCSharp.Shared
         /// <returns>true if same instance, false otherwise</returns>
         protected bool Equals(LibVLC other)
         {
-            return NativeReference.Equals(other.NativeReference);
+            return handle.Equals(other.handle);
         }
 
         /// <summary>
@@ -59,7 +59,7 @@ namespace LibVLCSharp.Shared
         /// <returns></returns>
         public override int GetHashCode()
         {
-            return NativeReference.GetHashCode();
+            return handle.GetHashCode();
         }
 
         [StructLayout(LayoutKind.Explicit, Size = 0)]
@@ -238,9 +238,8 @@ namespace LibVLCSharp.Shared
         /// <param name="options">list of arguments, in the form "--option=value"</param>
         /// <returns>the libvlc instance or NULL in case of error</returns>
         public LibVLC(params string[] options)
-            : base(() => MarshalUtils.CreateWithOptions(PatchOptions(options), Native.LibVLCNew), Native.LibVLCRelease)
+            : base(MarshalUtils.CreateWithOptions(PatchOptions(options), Native.LibVLCNew))
         {
-            _gcHandle = GCHandle.Alloc(this);
         }
 
         /// <summary>
@@ -285,9 +284,14 @@ namespace LibVLCSharp.Shared
         /// <param name="enableDebugLogs">enable verbose debug logs</param>
         /// <param name="options">list of arguments (should be NULL)</param>
         public LibVLC(bool enableDebugLogs, params string[] options)
-            : base(() => MarshalUtils.CreateWithOptions(PatchOptions(options, enableDebugLogs), Native.LibVLCNew), Native.LibVLCRelease)
+            : base(MarshalUtils.CreateWithOptions(PatchOptions(options, enableDebugLogs), Native.LibVLCNew))
         {
-            _gcHandle = GCHandle.Alloc(this);
+        }
+
+        protected override bool ReleaseHandle()
+        {
+            Native.LibVLCRelease(handle);
+            return true;
         }
 
         /// <summary>
@@ -329,8 +333,11 @@ namespace LibVLCSharp.Shared
             if (disposing)
             {
                 UnsetDialogHandlers();
-                Native.LibVLCLogUnset(NativeReference);
-                _gcHandle.Free();
+                Native.LibVLCLogUnset(handle);
+
+                if (_gcHandle.IsAllocated)
+                    _gcHandle.Free();
+
                 _exitCallback = null;
                 _log = null;
             }
@@ -346,7 +353,7 @@ namespace LibVLCSharp.Shared
         /// <returns></returns>
         public static bool operator ==(LibVLC libvlc1, LibVLC libvlc2)
         {
-            return libvlc1?.NativeReference == libvlc2?.NativeReference;
+            return libvlc1?.handle == libvlc2?.handle;
         }
 
         /// <summary>
@@ -357,7 +364,7 @@ namespace LibVLCSharp.Shared
         /// <returns></returns>
         public static bool operator !=(LibVLC libvlc1, LibVLC libvlc2)
         {
-            return libvlc1?.NativeReference != libvlc2?.NativeReference;
+            return libvlc1?.handle != libvlc2?.handle;
         }
 
 #if DESKTOP
@@ -397,12 +404,15 @@ namespace LibVLCSharp.Shared
             _exitCallback = cb;
             if (cb == null)
             {
-                Native.LibVLCSetExitHandler(NativeReference, IntPtr.Zero, IntPtr.Zero);
+                Native.LibVLCSetExitHandler(handle, IntPtr.Zero, IntPtr.Zero);
             }
             else
             {
+                if (!_gcHandle.IsAllocated)
+                    _gcHandle = GCHandle.Alloc(this);
+
                 Native.LibVLCSetExitHandler(
-                    NativeReference,
+                    handle,
                     Marshal.GetFunctionPointerForDelegate(ExitCallbackHandle),
                     GCHandle.ToIntPtr(_gcHandle));
             }
@@ -420,7 +430,7 @@ namespace LibVLCSharp.Shared
             var nameUtf8 = name.ToUtf8();
             var httpUtf8 = http.ToUtf8();
 
-            MarshalUtils.PerformInteropAndFree(() => Native.LibVLCSetUserAgent(NativeReference, nameUtf8, httpUtf8), nameUtf8, httpUtf8);
+            MarshalUtils.PerformInteropAndFree(() => Native.LibVLCSetUserAgent(handle, nameUtf8, httpUtf8), nameUtf8, httpUtf8);
         }
 
         /// <summary>
@@ -437,7 +447,7 @@ namespace LibVLCSharp.Shared
             var versionUtf8 = version.ToUtf8();
             var iconUtf8 = icon.ToUtf8();
 
-            MarshalUtils.PerformInteropAndFree(() => Native.LibVLCSetAppId(NativeReference, idUtf8, versionUtf8, iconUtf8),
+            MarshalUtils.PerformInteropAndFree(() => Native.LibVLCSetAppId(handle, idUtf8, versionUtf8, iconUtf8),
                 idUtf8, versionUtf8, iconUtf8);
         }
 
@@ -493,8 +503,11 @@ namespace LibVLCSharp.Shared
                     _log += value;
                     if (_logSubscriberCount == 0)
                     {
+                        if (!_gcHandle.IsAllocated)
+                            _gcHandle = GCHandle.Alloc(this);
+
                         // First subscriber, registering log handler
-                        Native.LibVLCLogSet(NativeReference, LogCallbackHandle, GCHandle.ToIntPtr(_gcHandle));
+                        Native.LibVLCLogSet(handle, LogCallbackHandle, GCHandle.ToIntPtr(_gcHandle));
                     }
 
                     _logSubscriberCount++;
@@ -512,7 +525,7 @@ namespace LibVLCSharp.Shared
                     }
                     if (_logSubscriberCount == 0)
                     {
-                        Native.LibVLCLogUnset(NativeReference);
+                        Native.LibVLCLogUnset(handle);
                     }
                 }
             }
@@ -527,7 +540,7 @@ namespace LibVLCSharp.Shared
         /// <para>libvlc_module_description_t</para>
         /// <para>libvlc_module_description_list_release</para>
         /// </remarks>
-        public ModuleDescription[] AudioFilters => MarshalUtils.Retrieve(() => Native.LibVLCAudioFilterListGet(NativeReference),
+        public ModuleDescription[] AudioFilters => MarshalUtils.Retrieve(() => Native.LibVLCAudioFilterListGet(handle),
             MarshalUtils.PtrToStructure<ModuleDescriptionStructure>,
             s => s.Build(),
             module => module.Next,
@@ -542,7 +555,7 @@ namespace LibVLCSharp.Shared
         /// <para>libvlc_module_description_t</para>
         /// <para>libvlc_module_description_list_release</para>
         /// </remarks>
-        public ModuleDescription[] VideoFilters => MarshalUtils.Retrieve(() => Native.LibVLCVideoFilterListGet(NativeReference),
+        public ModuleDescription[] VideoFilters => MarshalUtils.Retrieve(() => Native.LibVLCVideoFilterListGet(handle),
             MarshalUtils.PtrToStructure<ModuleDescriptionStructure>,
             s => s.Build(),
             module => module.Next,
@@ -555,7 +568,7 @@ namespace LibVLCSharp.Shared
         /// <para>libvlc_audio_output_t .</para>
         /// <para>In case of error, NULL is returned.</para>
         /// </remarks>
-        public AudioOutputDescription[] AudioOutputs => MarshalUtils.Retrieve(() => Native.LibVLCAudioOutputListGet(NativeReference),
+        public AudioOutputDescription[] AudioOutputs => MarshalUtils.Retrieve(() => Native.LibVLCAudioOutputListGet(handle),
             ptr => MarshalUtils.PtrToStructure<AudioOutputDescriptionStructure>(ptr),
             s => s.Build(),
             s => s.Next,
@@ -586,7 +599,7 @@ namespace LibVLCSharp.Shared
             {
                 var audioOutputNameUtf8 = audioOutputName.ToUtf8();
                 return MarshalUtils.PerformInteropAndFree(() =>
-                    Native.LibVLCAudioOutputDeviceListGet(NativeReference, audioOutputNameUtf8), audioOutputNameUtf8);
+                    Native.LibVLCAudioOutputDeviceListGet(handle, audioOutputNameUtf8), audioOutputNameUtf8);
             },
             MarshalUtils.PtrToStructure<AudioOutputDeviceStructure>,
             s => s.Build(),
@@ -598,7 +611,7 @@ namespace LibVLCSharp.Shared
         /// <returns>the number of media discoverer services (0 on error)</returns>
         /// <remarks>LibVLC 3.0.0 and later.</remarks>
         public MediaDiscovererDescription[] MediaDiscoverers(MediaDiscovererCategory discovererCategory) =>
-            MarshalUtils.Retrieve(NativeReference, discovererCategory,
+            MarshalUtils.Retrieve(handle, discovererCategory,
                 (IntPtr nativeRef, MediaDiscovererCategory enumType, out IntPtr array) => Native.LibVLCMediaDiscovererListGet(nativeRef, enumType, out array),
             MarshalUtils.PtrToStructure<MediaDiscovererDescriptionStructure>,
             m => m.Build(),
@@ -627,7 +640,10 @@ namespace LibVLCSharp.Shared
             _displayProgress = displayProgress ?? throw new ArgumentNullException(nameof(displayProgress));
             _updateProgress = updateProgress ?? throw new ArgumentNullException(nameof(updateProgress));
 
-            Native.LibVLCDialogSetCallbacks(NativeReference, DialogCb, GCHandle.ToIntPtr(_gcHandle));
+            if (!_gcHandle.IsAllocated)
+                _gcHandle = GCHandle.Alloc(this);
+
+            Native.LibVLCDialogSetCallbacks(handle, DialogCb, GCHandle.ToIntPtr(_gcHandle));
         }
 
         /// <summary>
@@ -637,7 +653,7 @@ namespace LibVLCSharp.Shared
         {
             if (DialogHandlersSet)
             {
-                Native.LibVLCDialogSetCallbacks(NativeReference, default, IntPtr.Zero);
+                Native.LibVLCDialogSetCallbacks(handle, default, IntPtr.Zero);
                 _error = null;
                 _login = null;
                 _question = null;
@@ -716,7 +732,7 @@ namespace LibVLCSharp.Shared
         /// List of available renderers used to create RendererDiscoverer objects
         /// Note: LibVLC 3.0.0 and later
         /// </summary>
-        public RendererDescription[] RendererList => MarshalUtils.Retrieve(NativeReference,
+        public RendererDescription[] RendererList => MarshalUtils.Retrieve(handle,
             (IntPtr nativeRef, out IntPtr array) => Native.LibVLCRendererDiscovererGetList(nativeRef, out array),
             MarshalUtils.PtrToStructure<RendererDescriptionStructure>,
             m => m.Build(),
@@ -747,7 +763,7 @@ namespace LibVLCSharp.Shared
         }
 
         /// <summary>Increments the native reference counter for this libvlc instance</summary>
-        internal void Retain() => Native.LibVLCRetain(NativeReference);
+        internal void Retain() => Native.LibVLCRetain(handle);
 
         /// <summary>The version of the LibVLC engine currently used by LibVLCSharp</summary>
         public string Version => Native.LibVLCVersion().FromUtf8()!;

@@ -17,7 +17,7 @@ namespace LibVLCSharp.Shared
         {
             [DllImport(Constants.LibraryName, CallingConvention = CallingConvention.Cdecl,
                 EntryPoint = "libvlc_renderer_discoverer_new")]
-            internal static extern IntPtr LibVLCRendererDiscovererNew(IntPtr libvlc, IntPtr name);
+            internal static extern IntPtr LibVLCRendererDiscovererNew(LibVLC libvlc, IntPtr name);
 
             [DllImport(Constants.LibraryName, CallingConvention = CallingConvention.Cdecl,
                 EntryPoint = "libvlc_renderer_discoverer_release")]
@@ -36,6 +36,22 @@ namespace LibVLCSharp.Shared
             internal static extern IntPtr LibVLCRendererDiscovererEventManager(IntPtr rendererDiscoverer);
         }
 
+        private static IntPtr Create(LibVLC libVLC, string name = null)
+        {
+            if (string.IsNullOrEmpty(name))
+            {
+#if APPLE
+                name = Bonjour;
+#else
+                name = Mdns;
+#endif
+            }
+
+            var nameUtf8 = name.ToUtf8();
+            return MarshalUtils.PerformInteropAndFree(() =>
+                Native.LibVLCRendererDiscovererNew(libVLC, nameUtf8), nameUtf8);
+        }
+
         /// <summary>
         /// Create a new renderer discoverer with a LibVLC and protocol name depending on host platform
         /// </summary>
@@ -45,22 +61,14 @@ namespace LibVLCSharp.Shared
         /// or let libvlcsharp find it for you
         /// </param>
         public RendererDiscoverer(LibVLC libVLC, string name = null)
-            : base(() =>
-            {
-                if (string.IsNullOrEmpty(name))
-                {
-#if APPLE
-                    name = Bonjour;
-#else
-                    name = Mdns;
-#endif
-                }
-
-                var nameUtf8 = name.ToUtf8();
-                return MarshalUtils.PerformInteropAndFree(() =>
-                    Native.LibVLCRendererDiscovererNew(libVLC.NativeReference, nameUtf8), nameUtf8);
-            }, Native.LibVLCRendererDiscovererRelease)
+            : base(Create(libVLC, name))
         {
+        }
+
+        protected override bool ReleaseHandle()
+        {
+            Native.LibVLCRendererDiscovererRelease(handle);
+            return true;
         }
 
         private RendererDiscovererEventManager EventManager
@@ -69,7 +77,7 @@ namespace LibVLCSharp.Shared
             {
                 if (_eventManager == null)
                 {
-                    var eventManagerPtr = Native.LibVLCRendererDiscovererEventManager(NativeReference);
+                    var eventManagerPtr = Native.LibVLCRendererDiscovererEventManager(handle);
                     _eventManager = new RendererDiscovererEventManager(eventManagerPtr);
                 }
                 return _eventManager;
@@ -80,12 +88,12 @@ namespace LibVLCSharp.Shared
         /// Start the renderer discovery
         /// </summary>
         /// <returns>true if start successful</returns>
-        public bool Start() => Native.LibVLCRendererDiscovererStart(NativeReference) == 0;
+        public bool Start() => Native.LibVLCRendererDiscovererStart(handle) == 0;
 
         /// <summary>
         /// Stop the renderer discovery
         /// </summary>
-        public void Stop() => Native.LibVLCRendererDiscovererStop(NativeReference);
+        public void Stop() => Native.LibVLCRendererDiscovererStop(handle);
 
         /// <summary>
         /// Raised when a renderer item has been found
@@ -142,34 +150,40 @@ namespace LibVLCSharp.Shared
         }
 
         internal RendererItem(IntPtr reference) :
-            base(() => reference, Native.LibVLCRendererItemRelease)
+            base(reference)
         {
             Native.LibVLCRendererItemHold(reference);
+        }
+
+        protected override bool ReleaseHandle()
+        {
+            Native.LibVLCRendererItemRelease(handle);
+            return true;
         }
 
         /// <summary>
         /// Name of the renderer item
         /// </summary>
-        public string Name => Native.LibVLCRendererItemName(NativeReference).FromUtf8();
+        public string Name => Native.LibVLCRendererItemName(handle).FromUtf8();
 
         /// <summary>
         /// Type of the renderer item
         /// </summary>
-        public string Type => Native.LibVLCRendererItemType(NativeReference).FromUtf8();
+        public string Type => Native.LibVLCRendererItemType(handle).FromUtf8();
 
         /// <summary>
         /// IconUri of the renderer item
         /// </summary>
-        public string IconUri => Native.LibVLCRendererItemIconUri(NativeReference).FromUtf8();
+        public string IconUri => Native.LibVLCRendererItemIconUri(handle).FromUtf8();
 
         /// <summary>
         /// true if the renderer item can render video
         /// </summary>
-        public bool CanRenderVideo => (Native.LibVLCRendererItemFlags(NativeReference) & VideoRenderer) != 0;
+        public bool CanRenderVideo => (Native.LibVLCRendererItemFlags(handle) & VideoRenderer) != 0;
 
         /// <summary>
         /// true if the renderer item can render audio
         /// </summary>
-        public bool CanRenderAudio => (Native.LibVLCRendererItemFlags(NativeReference) & AudioRenderer) != 0;
+        public bool CanRenderAudio => (Native.LibVLCRendererItemFlags(handle) & AudioRenderer) != 0;
     }
 }
