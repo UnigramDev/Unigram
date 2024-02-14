@@ -4,11 +4,19 @@
 #include "NativeUtils.g.cpp"
 #endif
 
-#include "Helpers\LibraryHelper.h"
+#include "Helpers/COMHelper.h"
+#include "Helpers/LibraryHelper.h"
 #include "DebugUtils.h"
+
+#include "FatalError.h"
+
+#include <roerrorapi.h>
 
 #include <winrt/Windows.Data.Xml.Dom.h>
 #include <winrt/Windows.UI.Notifications.h>
+#include <winrt/Windows.ApplicationModel.Core.h>
+#include <winrt/Windows.Foundation.h>
+#include <winrt/Windows.Foundation.Collections.h>
 
 typedef
 BOOL
@@ -18,6 +26,8 @@ BOOL
 
 using namespace winrt::Windows::Data::Xml::Dom;
 using namespace winrt::Windows::UI::Notifications;
+using namespace winrt::Windows::ApplicationModel::Core;
+using namespace winrt::Windows::Foundation::Collections;
 
 namespace winrt::Telegram::Native::implementation
 {
@@ -26,6 +36,147 @@ namespace winrt::Telegram::Native::implementation
     void NativeUtils::SetFatalErrorCallback(FatalErrorCallback callback)
     {
         Callback = callback;
+    }
+
+    winrt::Telegram::Native::FatalError NativeUtils::GetFatalError(bool onlyNative)
+    {
+        HRESULT result;
+
+        IRestrictedErrorInfo* info;
+        winrt::com_ptr<ILanguageExceptionErrorInfo2> info2;
+        winrt::com_ptr<IUnknown> language;
+        winrt::com_ptr<IRestrictedErrorInfoContext> context;
+        STOWED_EXCEPTION_INFORMATION_V2* stowed;
+
+        CleanupIfFailed(result, GetRestrictedErrorInfo(&info));
+        CleanupIfFailed(result, info->QueryInterface(info2.put()));
+        CleanupIfFailed(result, info2->GetLanguageException(language.put()));
+
+        if (language != nullptr && onlyNative)
+        {
+            // Language exceptions are from CoreCLR
+            return nullptr;
+        }
+
+        CleanupIfFailed(result, info->QueryInterface(context.put()));
+        CleanupIfFailed(result, context->GetContext(&stowed));
+
+        if (stowed != nullptr && stowed->ExceptionForm == 1 && stowed->Header.Signature == 'SE02')
+        {
+            std::wstring trace;
+            auto frames = winrt::single_threaded_vector<FatalErrorFrame>();
+
+            for (int i = 0; i < stowed->StackTraceWords; ++i)
+            {
+                PVOID pointer;
+                if (stowed->StackTraceWordSize == 4)
+                {
+                    auto addresses = (UINT32**)stowed->StackTrace;
+                    pointer = *(addresses + i);
+                }
+                else if (stowed->StackTraceWordSize == 8)
+                {
+                    auto addresses = (UINT64**)stowed->StackTrace;
+                    pointer = *(addresses + i);
+                }
+                else
+                {
+                    continue;
+                }
+
+                void* moduleBaseVoid = nullptr;
+                RtlPcToFileHeader(pointer, &moduleBaseVoid);
+
+                auto moduleBase = (const unsigned char*)moduleBaseVoid;
+                if (moduleBase != nullptr)
+                {
+                    wchar_t modulePath[MAX_PATH];
+                    const wchar_t* moduleFilename = modulePath;
+                    GetModuleFileName((HMODULE)moduleBase, modulePath, MAX_PATH);
+
+                    int moduleFilenamePos = std::wstring(modulePath).find_last_of(L"\\");
+                    if (moduleFilenamePos >= 0)
+                    {
+                        moduleFilename += moduleFilenamePos + 1;
+                    }
+
+                    trace += wstrprintf(L"   at %s+0x%08lx\n", moduleFilename, (uint32_t)((unsigned char*)pointer - moduleBase));
+                    frames.Append({ (intptr_t)pointer, (intptr_t)moduleBase });
+                }
+                else
+                {
+                    trace += wstrprintf(L"   at %s+0x%016llx\n", L"unknown", (uint64_t)pointer);
+                }
+            }
+
+            if (frames.Size())
+            {
+                BSTR description;
+                BSTR restrictedDescription;
+                BSTR reserved;
+                HRESULT hresult;
+                info->GetErrorDetails(&description, &hresult, &restrictedDescription, &reserved);
+
+                auto error = winrt::make_self<FatalError>(stowed->ResultCode, hstring(description), hstring(trace), frames);
+                return error.as<winrt::Telegram::Native::FatalError>();
+            }
+        }
+
+    Cleanup:
+        return nullptr;
+    }
+
+    // From http://davidpritchard.org/archives/907
+    winrt::Telegram::Native::FatalError NativeUtils::GetBackTrace(DWORD code)
+    {
+        constexpr uint32_t TRACE_MAX_STACK_FRAMES = 99;
+        void* stack[TRACE_MAX_STACK_FRAMES];
+
+        ULONG hash;
+        const int numFrames = CaptureStackBackTrace(1, TRACE_MAX_STACK_FRAMES, stack, &hash);
+        auto frames = winrt::single_threaded_vector<FatalErrorFrame>();
+
+        std::wstring trace;
+        std::wstring description;
+
+        if (code != 0)
+        {
+            const wchar_t* message = GetExceptionMessage(code);
+            description += wstrprintf(L"Unhandled exception: %s\n", message);
+        }
+
+        for (int i = 0; i < numFrames; ++i)
+        {
+            PVOID pointer = (unsigned char*)stack[i];
+
+            void* moduleBaseVoid = nullptr;
+            RtlPcToFileHeader(stack[i], &moduleBaseVoid);
+
+            auto moduleBase = (const unsigned char*)moduleBaseVoid;
+            wchar_t modulePath[MAX_PATH];
+            const wchar_t* moduleFilename = modulePath;
+
+            if (moduleBase != nullptr)
+            {
+                GetModuleFileName((HMODULE)moduleBase, modulePath, MAX_PATH);
+
+                int moduleFilenamePos = std::wstring(modulePath).find_last_of(L"\\");
+                if (moduleFilenamePos >= 0)
+                {
+                    moduleFilename += moduleFilenamePos + 1;
+                }
+
+                trace += wstrprintf(L"   at %s+0x%08lx\n", moduleFilename, (uint32_t)((unsigned char*)pointer - moduleBase));
+                frames.Append({ (intptr_t)pointer, (intptr_t)moduleBase });
+            }
+            else
+            {
+                trace += wstrprintf(L"   at %s+0x%016llx\n", L"unknown", (uint64_t)pointer);
+            }
+        }
+
+        auto error = winrt::make_self<FatalError>(code, hstring(description), hstring(trace), frames);
+        return error.as<winrt::Telegram::Native::FatalError>();
     }
 
     bool NativeUtils::FileExists(hstring path)
@@ -431,11 +582,6 @@ namespace winrt::Telegram::Native::implementation
         }
 
         return result != E_NOTIMPL;
-    }
-
-    hstring NativeUtils::GetBacktrace()
-    {
-        return hstring(::GetBacktrace(0));
     }
 
     void NativeUtils::Crash()

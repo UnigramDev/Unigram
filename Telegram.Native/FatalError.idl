@@ -1,0 +1,18 @@
+namespace Telegram.Native
+{ 
+    struct FatalErrorFrame
+    {
+        Int64 NativeIP;
+        Int64 NativeImageBase;
+    };
+
+    [default_interface]
+    runtimeclass FatalError 
+    {
+        FatalError(Int32 resultCode, String message, String stackTrace, Windows.Foundation.Collections.IVector<FatalErrorFrame> frames);
+        Int32 ResultCode { get; };
+        String Message { get; };
+        String StackTrace { get; };
+        Windows.Foundation.Collections.IVector<FatalErrorFrame> Frames { get; };
+    }
+}

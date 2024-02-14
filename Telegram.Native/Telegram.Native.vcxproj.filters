@@ -1212,5 +1212,6 @@
     <Midl Include="FileStreamFromApp.idl" />
     <Midl Include="LokiRng.idl" />
     <Midl Include="SurfaceImage.idl" />
+    <Midl Include="FatalError.idl" />
   </ItemGroup>
 </Project>

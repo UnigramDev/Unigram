@@ -317,6 +317,10 @@
       <DependentUpon>Composition\DirectRectangleClip.idl</DependentUpon>
     </ClInclude>
     <ClInclude Include="DebugUtils.h" />
+    <ClInclude Include="FatalError.h">
+      <DependentUpon>FatalError.idl</DependentUpon>
+      <SubType>Code</SubType>
+    </ClInclude>
     <ClInclude Include="FileStreamFromApp.h">
       <DependentUpon>FileStreamFromApp.idl</DependentUpon>
       <SubType>Code</SubType>
@@ -918,6 +922,10 @@
     <ClCompile Include="..\Libraries\libwebp\src\utils\utils.c">
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="FatalError.cpp">
+      <DependentUpon>FatalError.idl</DependentUpon>
+      <SubType>Code</SubType>
+    </ClCompile>
     <ClCompile Include="FileStreamFromApp.cpp">
       <DependentUpon>FileStreamFromApp.idl</DependentUpon>
       <SubType>Code</SubType>
@@ -1176,6 +1184,9 @@
     </Midl>
     <Midl Include="Composition\CompositionDevice.idl" />
     <Midl Include="Composition\DirectRectangleClip.idl" />
+    <Midl Include="FatalError.idl">
+      <SubType>Designer</SubType>
+    </Midl>
     <Midl Include="FileStreamFromApp.idl">
       <SubType>Designer</SubType>
     </Midl>
@@ -1214,7 +1225,7 @@
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
     <Import Project="..\packages\Microsoft.Windows.CppWinRT.2.0.230706.1\build\native\Microsoft.Windows.CppWinRT.targets" Condition="Exists('..\packages\Microsoft.Windows.CppWinRT.2.0.230706.1\build\native\Microsoft.Windows.CppWinRT.targets')" />
-    <Import Project="..\packages\Telegram.Td.UWP.1.8.25\build\native\Telegram.Td.UWP.targets" Condition="Exists('..\packages\Telegram.Td.UWP.1.8.25\build\native\Telegram.Td.UWP.targets')" />
+    <Import Project="..\packages\Telegram.Td.UWP.1.8.26\build\native\Telegram.Td.UWP.targets" Condition="Exists('..\packages\Telegram.Td.UWP.1.8.26\build\native\Telegram.Td.UWP.targets')" />
   </ImportGroup>
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>
@@ -1222,6 +1233,6 @@
     </PropertyGroup>
     <Error Condition="!Exists('..\packages\Microsoft.Windows.CppWinRT.2.0.230706.1\build\native\Microsoft.Windows.CppWinRT.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.Windows.CppWinRT.2.0.230706.1\build\native\Microsoft.Windows.CppWinRT.props'))" />
     <Error Condition="!Exists('..\packages\Microsoft.Windows.CppWinRT.2.0.230706.1\build\native\Microsoft.Windows.CppWinRT.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.Windows.CppWinRT.2.0.230706.1\build\native\Microsoft.Windows.CppWinRT.targets'))" />
-    <Error Condition="!Exists('..\packages\Telegram.Td.UWP.1.8.25\build\native\Telegram.Td.UWP.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Telegram.Td.UWP.1.8.25\build\native\Telegram.Td.UWP.targets'))" />
+    <Error Condition="!Exists('..\packages\Telegram.Td.UWP.1.8.26\build\native\Telegram.Td.UWP.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Telegram.Td.UWP.1.8.26\build\native\Telegram.Td.UWP.targets'))" />
   </Target>
 </Project>

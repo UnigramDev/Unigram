@@ -7,8 +7,6 @@
 #include <sstream>
 #include <vector>
 
-using namespace winrt::Windows::Foundation;
-
 namespace winrt::Telegram::Native::implementation
 {
     struct NativeUtils : NativeUtilsT<NativeUtils>
@@ -41,8 +39,8 @@ namespace winrt::Telegram::Native::implementation
         static bool IsMediaSupported();
 
         static void SetFatalErrorCallback(FatalErrorCallback action);
-
-        static hstring GetBacktrace();
+        static winrt::Telegram::Native::FatalError GetFatalError(bool onlyNative);
+        static winrt::Telegram::Native::FatalError GetBackTrace(DWORD code);
 
         static void Crash();
 

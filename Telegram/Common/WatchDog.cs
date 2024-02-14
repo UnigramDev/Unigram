@@ -4,6 +4,7 @@ using Microsoft.AppCenter.Crashes;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 using Telegram.Common;
 using Telegram.Controls;
@@ -121,6 +122,18 @@ namespace Telegram
                 args.SetObserved();
             };
 
+            Crashes.UnhandledErrorDetected = () =>
+            {
+                try
+                {
+                    return ToException(NativeUtils.GetFatalError(false));
+                }
+                catch
+                {
+                    return null;
+                }
+            };
+
             Crashes.CreatingErrorReport += (s, args) =>
             {
                 Track(args.ReportId, args.Exception);
@@ -187,16 +200,44 @@ namespace Telegram
             }
         }
 
-        public static void FatalErrorCallback(string message)
+        class StackFrame : NativeStackFrame
         {
-            if (message.Contains("libvlc.dll") || message.Contains("libvlccore.dll"))
+            private FatalErrorFrame _frame;
+
+            public StackFrame(FatalErrorFrame frame)
             {
-                Crashes.TrackCrash(new LibVLCSharp.Shared.VLCException(message));
+                _frame = frame;
             }
-            else
+
+            public override IntPtr GetNativeIP()
             {
-                Crashes.TrackCrash(new UnmanagedException(message));
+                return (IntPtr)_frame.NativeIP;
             }
+
+            public override IntPtr GetNativeImageBase()
+            {
+                return (IntPtr)_frame.NativeImageBase;
+            }
+        }
+
+        public static void FatalErrorCallback(FatalError error)
+        {
+            Crashes.TrackCrash(ToException(error));
+        }
+
+        private static Exception ToException(FatalError error)
+        {
+            if (error == null)
+            {
+                return null;
+            }
+
+            if (error.StackTrace.Contains("libvlc.dll") || error.StackTrace.Contains("libvlccore.dll"))
+            {
+                return new VLCException(error.Message, error.StackTrace, error.Frames.Select(x => new StackFrame(x)));
+            }
+
+            return new NativeException(error.Message, error.StackTrace, error.Frames.Select(x => new StackFrame(x)));
         }
 
         private static void FatalErrorCallback(int verbosityLevel, string message)
@@ -294,10 +335,10 @@ namespace Telegram
         }
     }
 
-    public class UnmanagedException : Exception
+    public class VLCException : NativeException
     {
-        public UnmanagedException(string message)
-            : base(message)
+        public VLCException(string message, string stackTrace, IEnumerable<NativeStackFrame> frames)
+            : base(message, stackTrace, frames)
         {
         }
     }
