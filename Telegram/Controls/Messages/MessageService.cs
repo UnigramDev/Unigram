@@ -291,6 +291,7 @@ namespace Telegram.Controls.Messages
                 MessageExpiredVideo expiredVideo => UpdateExpiredVideo(message, expiredVideo, active),
                 MessageExpiredVideoNote expiredVideoNote => UpdateExpiredVideoNote(message, expiredVideoNote, active),
                 MessageExpiredVoiceNote expiredVoiceNote => UpdateExpiredVoiceNote(message, expiredVoiceNote, active),
+                MessageChatBoost chatBoost => UpdateChatBoost(message, chatBoost, active),
                 MessageAsyncStory story => UpdateStory(message, story, active),
                 MessageStory story => UpdateStory(message, story, active),
                 // Local types:
@@ -2296,6 +2297,32 @@ namespace Telegram.Controls.Messages
         private static (string, IList<TextEntity>) UpdateExpiredVoiceNote(MessageViewModel message, MessageExpiredVoiceNote expiredVoiceNote, bool active)
         {
             return (Strings.AttachVoiceExpired, null);
+        }
+
+        private static (string, IList<TextEntity>) UpdateChatBoost(MessageViewModel message, MessageChatBoost chatBoost, bool active)
+        {
+            var content = string.Empty;
+            var entities = active ? new List<TextEntity>() : null;
+
+            if (chatBoost.BoostCount > 1)
+            {
+                content = Locale.Declension(Strings.R.BoostingBoostsGroupByUserServiceMsgCount, chatBoost.BoostCount, "un1");
+            }
+            else
+            {
+                content = string.Format(Strings.BoostingBoostsGroupByUserServiceMsg, "un1");
+            }
+
+            if (message.ClientService.TryGetUser(message.SenderId, out User user))
+            {
+                content = ReplaceWithLink(content, "un1", user, entities);
+            }
+            else if (message.ClientService.TryGetChat(message.SenderId, out Chat chat))
+            {
+                content = ReplaceWithLink(content, "un1", chat, entities);
+            }
+
+            return (content, entities);
         }
 
         private static (string, IList<TextEntity>) UpdateStory(MessageViewModel message, MessageAsyncStory story, bool active)

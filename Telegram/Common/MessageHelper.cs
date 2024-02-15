@@ -20,6 +20,7 @@ using Telegram.Td;
 using Telegram.Td.Api;
 using Telegram.ViewModels;
 using Telegram.ViewModels.Stories;
+using Telegram.ViewModels.Supergroups;
 using Telegram.Views;
 using Telegram.Views.Chats.Popups;
 using Telegram.Views.Folders;
@@ -626,12 +627,13 @@ namespace Telegram.Common
                     return;
                 }
 
+                var response1 = await clientService.SendAsync(new GetChatBoostFeatures(chat.Type is ChatTypeSupergroup { IsChannel: true }));
                 var response2 = await clientService.SendAsync(new GetAvailableChatBoostSlots());
                 var response3 = await clientService.SendAsync(new GetChatBoostStatus(linkInfo.ChatId));
 
-                if (response2 is ChatBoostSlots result && response3 is ChatBoostStatus status)
+                if (response1 is ChatBoostFeatures features && response2 is ChatBoostSlots slots && response3 is ChatBoostStatus status)
                 {
-                    await new ChatBoostPopup(clientService, navigation, chat, status, result).ShowQueuedAsync();
+                    await new ChatBoostFeaturesPopup(clientService, navigation, chat, status, slots, features, ChatBoostFeature.None, 0).ShowQueuedAsync();
                 }
             }
         }

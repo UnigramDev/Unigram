@@ -1969,8 +1969,6 @@
                     ResourceKey="SystemControlBackgroundChromeWhiteBrush" />
     <StaticResource x:Key="StartButtonForegroundPressed"
                     ResourceKey="SystemControlBackgroundChromeWhiteBrush" />
-    <StaticResource x:Key="StartButtonForegroundDisabled"
-                    ResourceKey="SystemControlDisabledBaseMediumLowBrush" />
     <StaticResource x:Key="StartButtonBorderBrush"
                     ResourceKey="SystemControlForegroundTransparentBrush" />
     <StaticResource x:Key="StartButtonBorderBrushPointerOver"
@@ -2064,7 +2062,7 @@
                                         <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ContentPresenter"
                                                                        Storyboard.TargetProperty="Foreground">
                                             <DiscreteObjectKeyFrame KeyTime="0"
-                                                                    Value="{ThemeResource StartButtonForegroundDisabled}" />
+                                                                    Value="{ThemeResource AccentButtonForegroundDisabled}" />
                                         </ObjectAnimationUsingKeyFrames>
                                     </Storyboard>
                                 </VisualState>
@@ -2191,7 +2189,7 @@
                                         <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ContentPresenter"
                                                                        Storyboard.TargetProperty="Foreground">
                                             <DiscreteObjectKeyFrame KeyTime="0"
-                                                                    Value="{ThemeResource StartButtonForegroundDisabled}" />
+                                                                    Value="{ThemeResource AccentButtonForegroundDisabled}" />
                                         </ObjectAnimationUsingKeyFrames>
                                     </Storyboard>
                                 </VisualState>

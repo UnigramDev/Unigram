@@ -248,6 +248,55 @@ namespace Telegram.Controls.Cells
             args.Handled = true;
         }
 
+        public void UpdateBoostSlot(IClientService clientService, ContainerContentChangingEventArgs args, TypedEventHandler<ListViewBase, ContainerContentChangingEventArgs> callback)
+        {
+            var slot = args.Item as ChatBoostSlot;
+            if (slot == null)
+            {
+                return;
+            }
+
+            args.ItemContainer.IsEnabled = slot.CooldownUntilDate == 0;
+
+            var chat = clientService.GetChat(slot.CurrentlyBoostedChatId);
+            if (chat == null)
+            {
+                return;
+            }
+
+            if (args.Phase == 0)
+            {
+                TitleLabel.Text = chat.Title;
+            }
+            else if (args.Phase == 1)
+            {
+                var diff = slot.CooldownUntilDate - DateTime.Now.ToTimestamp();
+                if (diff > 0)
+                {
+                    SubtitleLabel.Text = string.Format(Strings.BoostingAvailableIn, diff.GetDuration());
+                }
+                else
+                {
+                    SubtitleLabel.Text = string.Format(Strings.BoostExpireOn, Formatter.Date(slot.ExpirationDate));
+                }
+            }
+            else if (args.Phase == 2)
+            {
+                Photo.SetChat(clientService, chat, 36);
+                Identity.SetStatus(clientService, chat);
+
+                SelectionOutline.RadiusX = 18;
+                SelectionOutline.RadiusY = 18;
+            }
+
+            if (args.Phase < 2)
+            {
+                args.RegisterUpdateCallback(callback);
+            }
+
+            args.Handled = true;
+        }
+
         private SearchResult _searchResult;
 
         public void UpdateSearchResult(IClientService clientService, ContainerContentChangingEventArgs args, TypedEventHandler<ListViewBase, ContainerContentChangingEventArgs> callback)

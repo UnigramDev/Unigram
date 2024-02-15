@@ -2025,6 +2025,19 @@ namespace Telegram.Td.Api
             }
         }
 
+        public static string GetDuration(this int totalSeconds)
+        {
+            var duration = TimeSpan.FromSeconds(totalSeconds);
+            if (duration.TotalHours >= 1)
+            {
+                return duration.ToString("h\\:mm\\:ss");
+            }
+            else
+            {
+                return duration.ToString("mm\\:ss");
+            }
+        }
+
 
 
 

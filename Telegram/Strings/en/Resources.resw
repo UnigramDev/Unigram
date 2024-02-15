@@ -1546,6 +1546,18 @@ Please enable Unigram in the Startup Apps Settings.</value>
   <data name="BoostFeatureVoiceToTextConversion" xml:space="preserve">
     <value>Voice-to-Text Conversion</value>
   </data>
+  <data name="BoostGroup" xml:space="preserve">
+    <value>Boost Group</value>
+  </data>
+  <data name="BoostingAvailableIn" xml:space="preserve">
+    <value>available in {0}</value>
+  </data>
+  <data name="BoostingBoostsGroupByUserServiceMsg" xml:space="preserve">
+    <value>{0} boosted the group</value>
+  </data>
+  <data name="BoostingBoostsGroupByUserServiceMsgCount_other" xml:space="preserve">
+    <value>{1} boosted the group {0} times</value>
+  </data>
   <data name="BoostingCongratulations" xml:space="preserve">
     <value>Congratulations!</value>
   </data>
@@ -1575,6 +1587,15 @@ Please enable Unigram in the Startup Apps Settings.</value>
   </data>
   <data name="BoostingFrom" xml:space="preserve">
     <value>From</value>
+  </data>
+  <data name="BoostingGetMoreBoostByGifting" xml:space="preserve">
+    <value>To boost **{0}**, get more boosts by gifting **Telegram Premium** to a friend.</value>
+  </data>
+  <data name="BoostingGetMoreBoostByGiftingCount_one" xml:space="preserve">
+    <value>To boost **{1}**, get **{0}** more boost by gifting **Telegram Premium** to a friend.</value>
+  </data>
+  <data name="BoostingGetMoreBoostByGiftingCount_other" xml:space="preserve">
+    <value>To boost **{1}**, get **{0}** more boosts by gifting **Telegram Premium** to a friend.</value>
   </data>
   <data name="BoostingGift" xml:space="preserve">
     <value>Gift</value>
@@ -1780,8 +1801,29 @@ a **Telegram Premium** subscription.</value>
     <value>This link was used to activate
 a **Telegram Premium** subscription.</value>
   </data>
+  <data name="BoostingMoreBoostsNeeded" xml:space="preserve">
+    <value>More Boosts Needed</value>
+  </data>
+  <data name="BoostingPremiumUserCanBoostGroupWithLink" xml:space="preserve">
+    <value>**Premium** users can boost your group with this link:</value>
+  </data>
   <data name="BoostingReason" xml:space="preserve">
     <value>Reason</value>
+  </data>
+  <data name="BoostingReassignBoost" xml:space="preserve">
+    <value>Reassign Boost</value>
+  </data>
+  <data name="BoostingReassignBoosts" xml:space="preserve">
+    <value>Reassign Boosts</value>
+  </data>
+  <data name="BoostingReassignBoostTextLink" xml:space="preserve">
+    <value>**gift Telegram Premium**</value>
+  </data>
+  <data name="BoostingReassignBoostTextPluralWithLink_one" xml:space="preserve">
+    <value>To boost **{1}**, reassign a previous boost or {2} to a friend to get **{0}** additional boost.</value>
+  </data>
+  <data name="BoostingReassignBoostTextPluralWithLink_other" xml:space="preserve">
+    <value>To boost **{1}**, reassign a previous boost or {2} to a friend to get **{0}** additional boosts.</value>
   </data>
   <data name="BoostingReceivedGiftFrom" xml:space="preserve">
     <value>You&apos;ve received a gift
@@ -2373,6 +2415,14 @@ Note: if you forget your passcode, you&apos;ll need to log out or reinstall the 
   <data name="ChannelNeedBoostsAlreadyBoostedDescriptionLevelNext" xml:space="preserve">
     <value>This channel needs {0} to be able to post {1} per day.</value>
   </data>
+  <data name="ChannelNeedBoostsDescription" xml:space="preserve">
+    <value>Your channel needs {0} to enable posting stories.
+
+Ask your Premium subscribers to boost your channel with this link:</value>
+  </data>
+  <data name="ChannelNeedBoostsDescriptionForNewFeatures" xml:space="preserve">
+    <value>**{0}** needs {1} to unlock new features.</value>
+  </data>
   <data name="ChannelNeedBoostsDescriptionLevel1" xml:space="preserve">
     <value>This channel needs {0} to enable stories. Help make it possible!</value>
   </data>
@@ -2533,6 +2583,12 @@ They can still join via an invite link as long as they are not on the Removed Us
 
 You can use a–z, 0–9 and underscores.
 Minimum length is 5 characters.</value>
+  </data>
+  <data name="ChannelWallpaper" xml:space="preserve">
+    <value>Channel Wallpaper</value>
+  </data>
+  <data name="ChannelWallpaper2Info" xml:space="preserve">
+    <value>Set a wallpaper that will be visible for everyone reading your channel.</value>
   </data>
   <data name="Characters_one" xml:space="preserve">
     <value>{0} character</value>
@@ -2698,6 +2754,12 @@ Minimum length is 5 characters.</value>
   </data>
   <data name="Checking" xml:space="preserve">
     <value>Checking...</value>
+  </data>
+  <data name="CheckPhoneNumberNo" xml:space="preserve">
+    <value>No</value>
+  </data>
+  <data name="CheckPhoneNumberYes" xml:space="preserve">
+    <value>Yes</value>
   </data>
   <data name="CheckYourEmail" xml:space="preserve">
     <value>Check Your Email</value>
@@ -4510,11 +4572,71 @@ about Telegram?</value>
   <data name="GroupDeletedUndo" xml:space="preserve">
     <value>Group deleted</value>
   </data>
+  <data name="GroupEmojiPack" xml:space="preserve">
+    <value>Group Emoji Pack</value>
+  </data>
+  <data name="GroupEmojiPackInfo" xml:space="preserve">
+    <value>Choose an emoji pack that will be available to all members within the group.</value>
+  </data>
+  <data name="GroupEmojiStatus" xml:space="preserve">
+    <value>Group Emoji Status</value>
+  </data>
+  <data name="GroupEmojiStatusInfo" xml:space="preserve">
+    <value>Choose a status that will be shown next to the group&apos;s name.</value>
+  </data>
   <data name="GroupMembersChartTitle" xml:space="preserve">
     <value>Group members</value>
   </data>
   <data name="GroupName" xml:space="preserve">
     <value>Group name</value>
+  </data>
+  <data name="GroupNeedBoostsDescription" xml:space="preserve">
+    <value>Your group needs {0} to enable posting stories.
+
+Ask your **Premium** members to boost your group with this link:</value>
+  </data>
+  <data name="GroupNeedBoostsDescriptionForNewFeatures" xml:space="preserve">
+    <value>**{0}** needs {1} to unlock new features.</value>
+  </data>
+  <data name="GroupNeedBoostsForColorDescription" xml:space="preserve">
+    <value>Your group needs to reach **Level {0}** to change group color to selected.
+
+Ask your **Premium** members to boost your group with this link:</value>
+  </data>
+  <data name="GroupNeedBoostsForCustomEmojiPackDescription" xml:space="preserve">
+    <value>Your group needs to reach **Level {0}** to set group emoji pack.
+
+Ask your **Premium** members to boost your group with this link:</value>
+  </data>
+  <data name="GroupNeedBoostsForCustomWallpaperDescription" xml:space="preserve">
+    <value>Your group needs to reach **Level {0}** to change group wallpaper to custom photo.
+
+Ask your **Premium** members to boost your group with this link:</value>
+  </data>
+  <data name="GroupNeedBoostsForEmojiStatusDescription" xml:space="preserve">
+    <value>Your group needs to reach **Level {0}** to set group emoji status.
+
+Ask your **Premium** members to boost your group with this link:</value>
+  </data>
+  <data name="GroupNeedBoostsForProfileColorDescription" xml:space="preserve">
+    <value>Your group needs to reach **Level {0}** to change group profile color to selected.
+
+Ask your **Premium** members to boost your group with this link:</value>
+  </data>
+  <data name="GroupNeedBoostsForProfileIconDescription" xml:space="preserve">
+    <value>Your group needs to reach **Level {0}** to change group profile icon.
+
+Ask your **Premium** members to boost your group with this link:</value>
+  </data>
+  <data name="GroupNeedBoostsForReplyIconDescription" xml:space="preserve">
+    <value>Your group needs to reach **Level {0}** to change group link style icon.
+
+Ask your **Premium** members to boost your group with this link:</value>
+  </data>
+  <data name="GroupNeedBoostsForWallpaperDescription" xml:space="preserve">
+    <value>Your group needs to reach **Level {0}** to change group wallpaper.
+
+Ask your **Premium** members to boost your group with this link:</value>
   </data>
   <data name="GroupNotRestrictBoosters" xml:space="preserve">
     <value>Do Not Restrict Boosters</value>
@@ -4524,6 +4646,9 @@ about Telegram?</value>
   </data>
   <data name="GroupNotRestrictBoostersInfo2" xml:space="preserve">
     <value>Choose how many boosts a user must give to the group to bypass restrictions on sending messages.</value>
+  </data>
+  <data name="GroupProfileInfo" xml:space="preserve">
+    <value>Choose a color and a logo for the group&apos;s profile.</value>
   </data>
   <data name="Groups_one" xml:space="preserve">
     <value>{0} group</value>
@@ -4581,6 +4706,12 @@ about Telegram?</value>
 
 They can still join via an invite link as long as they are not on the Removed Users list.</value>
   </data>
+  <data name="GroupWallpaper" xml:space="preserve">
+    <value>Group Wallpaper</value>
+  </data>
+  <data name="GroupWallpaper2Info" xml:space="preserve">
+    <value>Set a wallpaper that will be visible for everyone reading your group.</value>
+  </data>
   <data name="GrowthChartTitle" xml:space="preserve">
     <value>Growth</value>
   </data>
@@ -4589,6 +4720,9 @@ They can still join via an invite link as long as they are not on the Removed Us
   </data>
   <data name="HelpUpgradeChannel" xml:space="preserve">
     <value>Help Upgrade This Channel</value>
+  </data>
+  <data name="HelpUpgradeGroup" xml:space="preserve">
+    <value>Help Upgrade This Group</value>
   </data>
   <data name="HidAccount" xml:space="preserve">
     <value>The account was hidden by the user</value>
@@ -5604,6 +5738,9 @@ to unlock up to {0} similar channels.</value>
   <data name="NoComments" xml:space="preserve">
     <value>No comments here yet...</value>
   </data>
+  <data name="NoEmojiPack" xml:space="preserve">
+    <value>No emoji pack</value>
+  </data>
   <data name="NoMessages" xml:space="preserve">
     <value>No messages here yet...</value>
   </data>
@@ -5626,6 +5763,9 @@ Please make sure you entered the right Server URL and Stream Key in your app.</v
   </data>
   <data name="NoSound" xml:space="preserve">
     <value>No sound</value>
+  </data>
+  <data name="NoStickerSet" xml:space="preserve">
+    <value>No sticker set</value>
   </data>
   <data name="NoStoriesSubtitle" xml:space="preserve">
     <value>Open the Archive to select stories you want to be displayed on your profile.</value>
@@ -6344,10 +6484,13 @@ Payments will go directly to the developer of {0}. Telegram cannot provide any g
     <value>More</value>
   </data>
   <data name="PremiumNeeded" xml:space="preserve">
-    <value>Premium needed!</value>
+    <value>Premium Needed</value>
   </data>
   <data name="PremiumNeededForBoosting" xml:space="preserve">
     <value>Only **Telegram Premium** subscribers can boost channels. Do you want to subscribe to **Telegram Premium**?</value>
+  </data>
+  <data name="PremiumNeededForBoostingGroup" xml:space="preserve">
+    <value>Only **Telegram Premium** subscribers can boost groups. Do you want subscribe to **Telegram Premium?**</value>
   </data>
   <data name="PremiumOr" xml:space="preserve">
     <value>or</value>
