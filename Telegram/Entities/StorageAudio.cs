@@ -6,39 +6,56 @@
 //
 using System;
 using System.Threading.Tasks;
+using Telegram.Native;
 using Windows.Storage;
-using Windows.Storage.FileProperties;
 
 namespace Telegram.Entities
 {
     public class StorageAudio : StorageMedia
     {
-        public StorageAudio(StorageFile file, BasicProperties basic, MusicProperties props)
-            : base(file, basic)
+        private StorageAudio(StorageFile file, ulong fileSize, double totalMilliseconds, string title, string performer)
+            : base(file, fileSize)
         {
-            Title = props.Title;
-            Performer = props.AlbumArtist;
-            Duration = (int)props.Duration.TotalSeconds;
+            Title = title;
+            Performer = performer;
+            TotalSeconds = (int)Math.Floor(totalMilliseconds / 1000);
         }
 
-        public string Title { get; private set; }
+        public string Title { get; }
 
-        public string Performer { get; private set; }
+        public string Performer { get; }
 
-        public int Duration { get; private set; }
+        public int TotalSeconds { get; }
 
-        public static async Task<StorageAudio> CreateAsync(StorageFile file, BasicProperties basic)
+        public string Duration
+        {
+            get
+            {
+                var duration = TimeSpan.FromSeconds(TotalSeconds);
+                if (duration.TotalHours >= 1)
+                {
+                    return duration.ToString("h\\:mm\\:ss");
+                }
+                else
+                {
+                    return duration.ToString("mm\\:ss");
+                }
+            }
+        }
+
+        public static async Task<StorageAudio> CreateAsync(StorageFile file, ulong fileSize)
         {
             try
             {
-                if (!file.IsAvailable)
+                using var stream = await file.OpenReadAsync();
+                using var animation = await Task.Run(() => VideoAnimation.LoadFromFile(new VideoAnimationStreamSource(stream), true, false, true));
+
+                if (animation != null && animation.Duration > 0 && animation.HasAudio && !animation.HasVideo)
                 {
-                    return null;
+                    return new StorageAudio(file, fileSize, animation.Duration, animation.Title, animation.Artist);
                 }
 
-                var audio = await file.Properties.GetMusicPropertiesAsync();
-
-                return new StorageAudio(file, basic, audio);
+                return null;
             }
             catch
             {

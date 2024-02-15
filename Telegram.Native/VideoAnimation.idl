@@ -15,7 +15,7 @@ namespace Telegram.Native
     [default_interface]
     runtimeclass VideoAnimation : Windows.Foundation.IClosable
     {
-        static VideoAnimation LoadFromFile(IVideoAnimationSource file, Boolean preview, Boolean limitFps);
+        static VideoAnimation LoadFromFile(IVideoAnimationSource file, Boolean preview, Boolean limitFps, Boolean probe);
 
         void Stop();
         void PrepareToSeek();
@@ -29,5 +29,13 @@ namespace Telegram.Native
         Double FrameRate{ get; };
 
         Int32 Duration{ get; };
+
+        Int32 Rotation{ get; };
+
+        String Title{ get; };
+        String Artist{ get; };
+
+        Boolean HasVideo{ get; };
+        Boolean HasAudio{ get; };
     }
 } // namespace Telegram.Native

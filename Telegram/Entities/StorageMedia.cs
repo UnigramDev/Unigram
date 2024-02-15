@@ -20,12 +20,12 @@ namespace Telegram.Entities
 {
     public abstract class StorageMedia : BindableBase
     {
-        public StorageMedia(StorageFile file, BasicProperties basic)
+        public StorageMedia(StorageFile file, ulong fileSize)
         {
             File = file;
             //DateModified = basic.DateModified;
             //ItemDate = basic.ItemDate;
-            Size = basic.Size;
+            Size = fileSize;
 
             EditState = new BitmapEditState();
         }
@@ -100,8 +100,8 @@ namespace Telegram.Entities
 
         public bool IsScreenshot { get; set; }
 
-        public virtual uint Width { get; }
-        public virtual uint Height { get; }
+        public virtual int Width { get; }
+        public virtual int Height { get; }
 
         protected BitmapEditState _editState;
         public BitmapEditState EditState
@@ -145,7 +145,7 @@ namespace Telegram.Entities
             {
                 try
                 {
-                    _bitmap = await ImageHelper.GetPreviewBitmapAsync(File);
+                    _bitmap = await ImageHelper.GetPreviewBitmapAsync(this);
                 }
                 catch { }
             }
@@ -156,7 +156,7 @@ namespace Telegram.Entities
             {
                 try
                 {
-                    _preview = await ImageHelper.CropAndPreviewAsync(File, editState);
+                    _preview = await ImageHelper.CropAndPreviewAsync(this, editState);
                 }
                 catch
                 {
@@ -171,9 +171,9 @@ namespace Telegram.Entities
             RaisePropertyChanged(nameof(Preview));
         }
 
-        public static async Task<StorageMedia> CreateAsync(StorageFile file)
+        public static async Task<StorageMedia> CreateAsync(StorageFile file, bool probe = true)
         {
-            if (file == null)
+            if (file == null || !file.IsAvailable)
             {
                 return null;
             }
@@ -188,13 +188,18 @@ namespace Telegram.Entities
                 return null;
             }
 
+            if (probe is false)
+            {
+                return new StorageDocument(file, basicProperties.Size);
+            }
+
             if (file.FileType.Equals(".jpeg", StringComparison.OrdinalIgnoreCase) ||
                 file.FileType.Equals(".jpg", StringComparison.OrdinalIgnoreCase) ||
                 file.FileType.Equals(".png", StringComparison.OrdinalIgnoreCase) ||
                 file.FileType.Equals(".bmp", StringComparison.OrdinalIgnoreCase) ||
                 file.FileType.Equals(".gif", StringComparison.OrdinalIgnoreCase))
             {
-                var photo = await StoragePhoto.CreateAsync(file, basicProperties);
+                var photo = await StoragePhoto.CreateAsync(file, basicProperties.Size);
                 if (photo != null)
                 {
                     return photo;
@@ -202,22 +207,23 @@ namespace Telegram.Entities
             }
             else if (file.FileType.Equals(".mp4", StringComparison.OrdinalIgnoreCase))
             {
-                var video = await StorageVideo.CreateAsync(file, basicProperties);
+                var video = await StorageVideo.CreateAsync(file, basicProperties.Size);
                 if (video != null)
                 {
                     return video;
                 }
             }
-            else if (file.ContentType.StartsWith("audio/", StringComparison.OrdinalIgnoreCase))
+            else if (file.FileType.Equals(".mp3", StringComparison.OrdinalIgnoreCase)
+                || file.FileType.Equals(".flac", StringComparison.OrdinalIgnoreCase))
             {
-                var audio = await StorageAudio.CreateAsync(file, basicProperties);
+                var audio = await StorageAudio.CreateAsync(file, basicProperties.Size);
                 if (audio != null)
                 {
                     return audio;
                 }
             }
 
-            return new StorageDocument(file, basicProperties);
+            return new StorageDocument(file, basicProperties.Size);
         }
 
         public static async Task<IList<StorageMedia>> CreateAsync(IEnumerable<IStorageItem> items)

@@ -48,9 +48,10 @@ namespace Telegram.Services.Factories
 
 
 
-        public static async Task<InputMessageFactory> CreatePhotoAsync(StorageFile file, bool spoiler = false, MessageSelfDestructType ttl = null, BitmapEditState editState = null)
+        public static async Task<InputMessageFactory> CreatePhotoAsync(StoragePhoto photo, bool spoiler = false, MessageSelfDestructType ttl = null, BitmapEditState editState = null)
         {
             var conversionType = ConversionType.Compress;
+            var file = photo.File;
 
             var size = await ImageHelper.GetScaleAsync(file, editState: editState);
             if (size.Width == 0 || size.Height == 0)
@@ -79,45 +80,39 @@ namespace Telegram.Services.Factories
             };
         }
 
-        public static async Task<InputMessageFactory> CreateVideoAsync(StorageFile file, bool animated, bool spoiler = false, MessageSelfDestructType ttl = null, MediaEncodingProfile profile = null, VideoTransformEffectDefinition transform = null)
+        public static async Task<InputMessageFactory> CreateVideoAsync(StorageVideo video, bool animated, bool spoiler = false, MessageSelfDestructType ttl = null, VideoTransformEffectDefinition transform = null)
         {
-            var basicProps = await file.GetBasicPropertiesAsync();
-            var videoProps = await file.Properties.GetVideoPropertiesAsync();
+            var duration = video.TotalSeconds;
+            var videoWidth = video.Width;
+            var videoHeight = video.Height;
 
-            //var thumbnail = await ImageHelper.GetVideoThumbnailAsync(file, videoProps, transform);
-
-            var duration = (int)videoProps.Duration.TotalSeconds;
-            var videoWidth = (int)videoProps.GetWidth();
-            var videoHeight = (int)videoProps.GetHeight();
-
-            if (profile != null)
+            var conversion = new VideoConversion
             {
-                videoWidth = videoProps.Orientation is VideoOrientation.Rotate180 or VideoOrientation.Normal ? (int)profile.Video.Width : (int)profile.Video.Height;
-                videoHeight = videoProps.Orientation is VideoOrientation.Rotate180 or VideoOrientation.Normal ? (int)profile.Video.Height : (int)profile.Video.Width;
-            }
+                Mute = animated
+            };
 
-            var conversion = new VideoConversion();
-            if (profile != null)
+            //var profile = await video.GetEncodingAsync();
+            //if (profile != null)
+            //{
+            //    conversion.Transcode = true;
+            //    conversion.Mute = animated;
+            //    conversion.Width = profile.Video.Width;
+            //    conversion.Height = profile.Video.Height;
+            //    conversion.Bitrate = profile.Video.Bitrate;
+            //}
+
+            if (transform != null)
             {
                 //conversion.Transcode = true;
-                conversion.Mute = animated;
-                //conversion.Width = profile.Video.Width;
-                //conversion.Height = profile.Video.Height;
-                //conversion.Bitrate = profile.Video.Bitrate;
-
-                if (transform != null)
-                {
-                    //conversion.Transcode = true;
-                    conversion.Transform = true;
-                    conversion.Rotation = transform.Rotation;
-                    conversion.OutputSize = transform.OutputSize;
-                    conversion.Mirror = transform.Mirror;
-                    conversion.CropRectangle = transform.CropRectangle;
-                }
+                conversion.Transform = true;
+                conversion.Rotation = transform.Rotation;
+                conversion.OutputSize = transform.OutputSize;
+                conversion.Mirror = transform.Mirror;
+                conversion.CropRectangle = transform.CropRectangle;
             }
 
-            var generated = await file.ToGeneratedAsync(ConversionType.Transcode, JsonConvert.SerializeObject(conversion));
-            var thumbnail = await file.ToVideoThumbnailAsync(conversion, ConversionType.TranscodeThumbnail, JsonConvert.SerializeObject(conversion));
+            var generated = await video.File.ToGeneratedAsync(ConversionType.Transcode, JsonConvert.SerializeObject(conversion));
+            var thumbnail = await video.File.ToVideoThumbnailAsync(conversion, ConversionType.TranscodeThumbnail, JsonConvert.SerializeObject(conversion));
 
             if (animated && ttl == null)
             {
@@ -186,8 +181,10 @@ namespace Telegram.Services.Factories
             };
         }
 
-        public static async Task<InputMessageFactory> CreateDocumentAsync(StorageFile file, bool asFile, bool asScreenshot)
+        public static async Task<InputMessageFactory> CreateDocumentAsync(StorageMedia media, bool asFile, bool asScreenshot)
         {
+            var file = media.File;
+
             var generated = await file.ToGeneratedAsync(asScreenshot ? ConversionType.Screenshot : ConversionType.Copy);
             var thumbnail = new InputThumbnail(await file.ToGeneratedAsync(ConversionType.DocumentThumbnail), 0, 0);
 
@@ -222,26 +219,18 @@ namespace Telegram.Services.Factories
             {
                 // TODO
             }
-            else if (!asFile && file.ContentType.StartsWith("audio/", StringComparison.OrdinalIgnoreCase))
+            else if (!asFile && media is StorageAudio audio)
             {
-                try
-                {
-                    var props = await file.Properties.GetMusicPropertiesAsync();
-                    var duration = (int)props.Duration.TotalSeconds;
+                var duration = audio.TotalSeconds;
 
-                    var title = props.Title;
-                    var performer = string.IsNullOrEmpty(props.AlbumArtist) ? props.Artist : props.AlbumArtist;
+                var title = audio.Title;
+                var performer = audio.Performer;
 
-                    return new InputMessageFactory
-                    {
-                        InputFile = generated,
-                        Delegate = (inputFile, caption) => new InputMessageAudio(inputFile, thumbnail, duration, title, performer, caption)
-                    };
-                }
-                catch
+                return new InputMessageFactory
                 {
-                    // All the remote procedure calls must be wrapped in a try-catch block
-                }
+                    InputFile = generated,
+                    Delegate = (inputFile, caption) => new InputMessageAudio(inputFile, thumbnail, duration, title, performer, caption)
+                };
             }
 
             return new InputMessageFactory

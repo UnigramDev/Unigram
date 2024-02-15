@@ -121,7 +121,7 @@ namespace winrt::Telegram::Native::implementation
             audio_stream = nullptr;
         }
 
-        static winrt::Telegram::Native::VideoAnimation LoadFromFile(IVideoAnimationSource file, bool preview, bool limitFps);
+        static winrt::Telegram::Native::VideoAnimation LoadFromFile(IVideoAnimationSource file, bool preview, bool limitFps, bool probe);
 
         VideoAnimation() = default;
 
@@ -154,6 +154,31 @@ namespace winrt::Telegram::Native::implementation
             return duration;
         }
 
+        int Rotation()
+        {
+            return rotation;
+        }
+
+        hstring Artist()
+        {
+            return artist;
+        }
+
+        hstring Title()
+        {
+            return title;
+        }
+
+        bool HasVideo()
+        {
+            return video_stream_idx != -1;
+        }
+
+        bool HasAudio()
+        {
+            return audio_stream_idx != -1;
+        }
+
     private:
         void decode_frame(uint8_t* pixels, int32_t width, int32_t height);
         static void requestFd(VideoAnimation* info);
@@ -169,6 +194,7 @@ namespace winrt::Telegram::Native::implementation
         IVideoAnimationSource file{ nullptr };
         HANDLE fileEvent = INVALID_HANDLE_VALUE;
         int video_stream_idx = -1;
+        int audio_stream_idx = -1;
         AVStream* video_stream = nullptr;
         AVStream* audio_stream = nullptr;
         AVCodecContext* video_dec_ctx = nullptr;
@@ -200,6 +226,9 @@ namespace winrt::Telegram::Native::implementation
         int32_t rotation = 0;
         int32_t duration = 0;
         double framerate = 0;
+
+        hstring artist;
+        hstring title;
 
         enum Waiting
         {

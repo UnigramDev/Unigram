@@ -8,34 +8,28 @@ using System;
 using System.Threading.Tasks;
 using Windows.Graphics.Imaging;
 using Windows.Storage;
-using Windows.Storage.FileProperties;
 
 namespace Telegram.Entities
 {
     public class StoragePhoto : StorageMedia
     {
-        private readonly uint _width;
-        private readonly uint _height;
+        private readonly int _width;
+        private readonly int _height;
 
-        public StoragePhoto(StorageFile file, BasicProperties basic, uint width, uint height)
-            : base(file, basic)
+        private StoragePhoto(StorageFile file, ulong fileSize, uint width, uint height)
+            : base(file, fileSize)
         {
-            _width = width;
-            _height = height;
+            _width = (int)width;
+            _height = (int)height;
         }
 
-        public override uint Width => _width;
-        public override uint Height => _height;
+        public override int Width => _width;
+        public override int Height => _height;
 
-        public static async Task<StoragePhoto> CreateAsync(StorageFile file, BasicProperties basic)
+        public static async Task<StoragePhoto> CreateAsync(StorageFile file, ulong fileSize)
         {
             try
             {
-                if (!file.IsAvailable)
-                {
-                    return null;
-                }
-
                 using (var source = await file.OpenReadAsync())
                 {
                     var bitmap = await BitmapDecoder.CreateAsync(source);
@@ -46,7 +40,7 @@ namespace Telegram.Entities
 
                     if (bitmap.PixelWidth > 0 && bitmap.PixelHeight > 0)
                     {
-                        return new StoragePhoto(file, basic, bitmap.PixelWidth, bitmap.PixelHeight);
+                        return new StoragePhoto(file, fileSize, bitmap.PixelWidth, bitmap.PixelHeight);
                     }
                 }
 

@@ -136,7 +136,7 @@ namespace winrt::Telegram::Native::implementation
 
     bool CachedVideoAnimation::Load(IVideoAnimationSource file, int32_t width, int32_t height)
     {
-        m_animation = VideoAnimation::LoadFromFile(file, false, false).as<VideoAnimation>();
+        m_animation = VideoAnimation::LoadFromFile(file, false, false, false).as<VideoAnimation>();
         if (m_animation == nullptr)
         {
             return false;

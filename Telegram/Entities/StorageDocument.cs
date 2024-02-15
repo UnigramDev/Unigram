@@ -5,14 +5,13 @@
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
 using Windows.Storage;
-using Windows.Storage.FileProperties;
 
 namespace Telegram.Entities
 {
     public class StorageDocument : StorageMedia
     {
-        public StorageDocument(StorageFile file, BasicProperties basic)
-            : base(file, basic)
+        public StorageDocument(StorageFile file, ulong fileSize)
+            : base(file, fileSize)
         {
         }
     }

@@ -6,72 +6,76 @@
 //
 using System;
 using System.Threading.Tasks;
-using Telegram.Common;
 using Telegram.Converters;
+using Telegram.Native;
 using Windows.Foundation;
 using Windows.Media.Effects;
 using Windows.Media.MediaProperties;
 using Windows.Storage;
-using Windows.Storage.FileProperties;
 
 namespace Telegram.Entities
 {
     public class StorageVideo : StorageMedia
     {
-        public StorageVideo(StorageFile file, BasicProperties basic, VideoProperties props, MediaEncodingProfile profile)
-            : base(file, basic)
+        private StorageVideo(StorageFile file, ulong fileSize, double totalMilliseconds, int width, int height)
+            : base(file, fileSize)
         {
-            Properties = props;
-            Profile = profile;
+            //videoDuration = props.Duration.TotalMilliseconds;
 
-            videoDuration = props.Duration.TotalMilliseconds;
+            //originalSize = (long)basic.Size;
+            //originalWidth = (int)props.GetWidth();
+            //originalHeight = (int)props.GetHeight();
+            //originalBitrate = bitrate = (int)props.Bitrate; //(trackBitrate / 100000 * 100000);
 
-            originalSize = (long)basic.Size;
-            originalWidth = (int)props.GetWidth();
-            originalHeight = (int)props.GetHeight();
-            originalBitrate = bitrate = (int)props.Bitrate; //(trackBitrate / 100000 * 100000);
+            //if (bitrate > 900000)
+            //{
+            //    bitrate = 900000;
+            //}
 
-            if (bitrate > 900000)
-            {
-                bitrate = 900000;
-            }
+            TotalSeconds = (int)Math.Floor(totalMilliseconds / 1000);
+
+            Width = width;
+            Height = height;
 
             LoadPreview();
 
-            if (profile.Video.Width > 0 && profile.Video.Height > 0)
-            {
-                Width = profile.Video.Width;
-                Height = profile.Video.Height;
-            }
-            else
-            {
-                Width = props.GetWidth();
-                Height = props.GetHeight();
-            }
+            //if (profile.Video.Width > 0 && profile.Video.Height > 0)
+            //{
+            //    Width = profile.Video.Width;
+            //    Height = profile.Video.Height;
+            //}
+            //else
+            //{
+            //    Width = props.GetWidth();
+            //    Height = props.GetHeight();
+            //}
         }
 
-        public override uint Width { get; }
-        public override uint Height { get; }
+        public override int Width { get; }
+        public override int Height { get; }
 
-        public static async Task<StorageVideo> CreateAsync(StorageFile file, BasicProperties basic)
+        public static async Task<StorageVideo> CreateAsync(StorageFile file, ulong fileSize)
         {
             try
             {
-                if (!file.IsAvailable)
-                {
-                    return null;
-                }
+                using var stream = await file.OpenReadAsync();
+                using var animation = await Task.Run(() => VideoAnimation.LoadFromFile(new VideoAnimationStreamSource(stream), true, false, true));
 
-                var profile = await MediaEncodingProfile.CreateFromFileAsync(file);
-                if (profile.Video == null)
+                if (animation != null && animation.Duration > 0 && animation.PixelWidth > 0 && animation.PixelHeight > 0)
                 {
-                    return null;
-                }
+                    var width = animation.PixelWidth;
+                    var height = animation.PixelHeight;
 
-                var video = await file.Properties.GetVideoPropertiesAsync();
-                if ((video.Width > 0 && video.Height > 0) || (profile.Video.Width > 0 && profile.Video.Height > 0))
-                {
-                    return new StorageVideo(file, basic, video, profile);
+                    switch (animation.Rotation)
+                    {
+                        case 90:
+                        case 270:
+                            width = animation.PixelHeight;
+                            height = animation.PixelWidth;
+                            break;
+                    }
+
+                    return new StorageVideo(file, fileSize, animation.Duration, width, height);
                 }
 
                 return null;
@@ -82,21 +86,19 @@ namespace Telegram.Entities
             }
         }
 
-        public VideoProperties Properties { get; private set; }
-
-        public MediaEncodingProfile Profile { get; private set; }
-
         public override void Refresh()
         {
             base.Refresh();
             LoadPreview();
         }
 
+        public int TotalSeconds { get; }
+
         public string Duration
         {
             get
             {
-                var duration = Properties.Duration;
+                var duration = TimeSpan.FromSeconds(TotalSeconds);
                 if (duration.TotalHours >= 1)
                 {
                     return duration.ToString("h\\:mm\\:ss");
@@ -220,8 +222,8 @@ namespace Telegram.Entities
 
         public async Task<MediaEncodingProfile> GetEncodingAsync()
         {
-            int originalWidth = (int)Properties.Width;
-            int originalHeight = (int)Properties.Height;
+            int originalWidth = Width;
+            int originalHeight = Height;
 
             if (_editState is BitmapEditState state && state.Rectangle is Rect rectangle)
             {

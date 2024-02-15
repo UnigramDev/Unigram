@@ -62,6 +62,36 @@ namespace winrt::Telegram::Native::implementation
         return 0;
     }
 
+    static int find_best_stream(int* stream_idx, AVFormatContext* fmt_ctx, enum AVMediaType type)
+    {
+        int ret, stream_index;
+        AVStream* st;
+        const AVCodec* dec = NULL;
+        AVDictionary* opts = NULL;
+
+        ret = av_find_best_stream(fmt_ctx, type, -1, -1, NULL, 0);
+        if (ret < 0)
+        {
+            return ret;
+        }
+        else
+        {
+            stream_index = ret;
+            st = fmt_ctx->streams[stream_index];
+
+            dec = avcodec_find_decoder(st->codecpar->codec_id);
+            if (!dec)
+            {
+                //OutputDebugStringFormat(L"failed to find %s codec", av_get_media_type_string(type));
+                return AVERROR(EINVAL);
+            }
+
+            *stream_idx = stream_index;
+        }
+
+        return 0;
+    }
+
     void VideoAnimation::requestFd(VideoAnimation* info)
     {
         info->fd = CreateFile2FromAppW(info->file.FilePath().data(), GENERIC_READ, FILE_SHARE_READ | FILE_SHARE_WRITE | FILE_SHARE_DELETE, OPEN_EXISTING, nullptr);
@@ -132,7 +162,7 @@ namespace winrt::Telegram::Native::implementation
         OutputDebugStringA(buffer);
     }
 
-    winrt::Telegram::Native::VideoAnimation VideoAnimation::LoadFromFile(IVideoAnimationSource file, bool preview, bool limitFps)
+    winrt::Telegram::Native::VideoAnimation VideoAnimation::LoadFromFile(IVideoAnimationSource file, bool preview, bool limitFps, bool probe)
     {
         auto info = winrt::make_self<VideoAnimation>();
         file.SeekCallback(0);
@@ -183,31 +213,91 @@ namespace winrt::Telegram::Native::implementation
             info->video_stream = info->fmt_ctx->streams[info->video_stream_idx];
         }
 
-        if (info->video_stream == nullptr)
+        find_best_stream(&info->audio_stream_idx, info->fmt_ctx, AVMEDIA_TYPE_AUDIO);
+
+        if (!probe)
         {
-            //OutputDebugStringFormat(L"can't find video stream in the input, aborting %s", info->src);
-            //delete info;
-            return nullptr;
+            if (info->video_stream == nullptr)
+            {
+                //OutputDebugStringFormat(L"can't find video stream in the input, aborting %s", info->src);
+                //delete info;
+                return nullptr;
+            }
+
+            info->frame = av_frame_alloc();
+            if (info->frame == nullptr)
+            {
+                //OutputDebugStringFormat(L"can't allocate frame %s", info->src);
+                //delete info;
+                return nullptr;
+            }
+
+            info->pkt = av_packet_alloc();
+            if (info->pkt == nullptr)
+            {
+                //OutputDebugStringFormat(L"can't allocate packet %s", info->src);
+                //delete info;
+                return nullptr;
+            }
         }
 
-        info->frame = av_frame_alloc();
-        if (info->frame == nullptr)
+        if (info->video_dec_ctx != nullptr)
         {
-            //OutputDebugStringFormat(L"can't allocate frame %s", info->src);
-            //delete info;
-            return nullptr;
+            info->pixelWidth = info->video_dec_ctx->width;
+            info->pixelHeight = info->video_dec_ctx->height;
+
+            //float pixelWidthHeightRatio = info->video_dec_ctx->sample_aspect_ratio.num / info->video_dec_ctx->sample_aspect_ratio.den; TODO support
+            AVDictionaryEntry* rotate_tag = av_dict_get(info->video_stream->metadata, "rotate", NULL, 0);
+            if (rotate_tag && *rotate_tag->value && strcmp(rotate_tag->value, "0"))
+            {
+                char* tail;
+                info->rotation = (int)av_strtod(rotate_tag->value, &tail);
+                if (*tail)
+                {
+                    info->rotation = 0;
+                }
+            }
+            else
+            {
+                info->rotation = 0;
+            }
+
+            if (info->video_stream->codecpar->codec_id == AV_CODEC_ID_H264)
+            {
+                info->framerate = av_q2d(info->video_stream->avg_frame_rate);
+            }
+            else
+            {
+                info->framerate = av_q2d(info->video_stream->r_frame_rate);
+            }
+
+            info->limitFps = limitFps && info->framerate > 30;
+        }
+        else
+        {
+            info->pixelWidth = 0;
+            info->pixelHeight = 0;
         }
 
-        info->pkt = av_packet_alloc();
-        if (info->pkt == nullptr)
+        AVDictionaryEntry* title_tag = av_dict_get(info->fmt_ctx->metadata, "title", NULL, 0);
+        if (title_tag && title_tag->value)
         {
-            //OutputDebugStringFormat(L"can't allocate packet %s", info->src);
-            //delete info;
-            return nullptr;
+            info->title = winrt::to_hstring(title_tag->key);
         }
 
-        info->pixelWidth = info->video_dec_ctx->width;
-        info->pixelHeight = info->video_dec_ctx->height;
+        AVDictionaryEntry* artist_tag = av_dict_get(info->fmt_ctx->metadata, "album_artist", NULL, 0);
+        if (artist_tag && artist_tag->value)
+        {
+            info->artist = winrt::to_hstring(artist_tag->key);
+        }
+        else
+        {
+            artist_tag = av_dict_get(info->fmt_ctx->metadata, "artist", NULL, 0);
+            if (artist_tag && artist_tag->value)
+            {
+                info->artist = winrt::to_hstring(artist_tag->key);
+            }
+        }
 
         //int requestedMaxSide = 420;
 
@@ -218,38 +308,12 @@ namespace winrt::Telegram::Native::implementation
         info->maxWidth = info->pixelWidth; // (int)(info->video_dec_ctx->width * ratio);
         info->maxHeight = info->pixelHeight; // (int)(info->video_dec_ctx->height * ratio);
 
+        //OutputDebugStringFormat(L"successfully opened file %s", info->src);
 
-        //float pixelWidthHeightRatio = info->video_dec_ctx->sample_aspect_ratio.num / info->video_dec_ctx->sample_aspect_ratio.den; TODO support
-        AVDictionaryEntry* rotate_tag = av_dict_get(info->video_stream->metadata, "rotate", NULL, 0);
-        if (rotate_tag && *rotate_tag->value && strcmp(rotate_tag->value, "0"))
-        {
-            char* tail;
-            info->rotation = (int)av_strtod(rotate_tag->value, &tail);
-            if (*tail)
-            {
-                info->rotation = 0;
-            }
-        }
-        else
-        {
-            info->rotation = 0;
-        }
         info->duration = (int32_t)(info->fmt_ctx->duration * 1000 / AV_TIME_BASE);
         //(int32_t) (1000 * info->video_stream->duration * av_q2d(info->video_stream->time_base));
         //env->ReleaseIntArrayElements(data, dataArr, 0);
 
-        if (info->video_stream->codecpar->codec_id == AV_CODEC_ID_H264)
-        {
-            info->framerate = av_q2d(info->video_stream->avg_frame_rate);
-        }
-        else
-        {
-            info->framerate = av_q2d(info->video_stream->r_frame_rate);
-        }
-
-        //OutputDebugStringFormat(L"successfully opened file %s", info->src);
-
-        info->limitFps = limitFps && info->framerate > 30;
         return info.as<winrt::Telegram::Native::VideoAnimation>();
     }
 

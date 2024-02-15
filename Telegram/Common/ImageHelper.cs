@@ -197,19 +197,19 @@ namespace Telegram.Common
             return resizedImageFile;
         }
 
-        public static async Task<ImageSource> GetPreviewBitmapAsync(StorageFile sourceFile, int requestedMinSide = 1280)
+        public static async Task<ImageSource> GetPreviewBitmapAsync(StorageMedia source, int requestedMinSide = 1280)
         {
             try
             {
-                if (sourceFile.FileType.Equals(".mp4"))
+                if (source is StorageVideo)
                 {
                     int width = 0;
                     int height = 0;
 
                     var buffer = await Task.Run(async () =>
                     {
-                        using var videoStream = await sourceFile.OpenReadAsync();
-                        using var animation = VideoAnimation.LoadFromFile(new VideoAnimationStreamSource(videoStream), false, false);
+                        using var videoStream = await source.File.OpenReadAsync();
+                        using var animation = VideoAnimation.LoadFromFile(new VideoAnimationStreamSource(videoStream), false, false, false);
 
                         if (animation.PixelWidth > requestedMinSide || animation.PixelHeight > requestedMinSide)
                         {
@@ -240,9 +240,9 @@ namespace Telegram.Common
                         return bitmap;
                     }
                 }
-                else
+                else if (source is StoragePhoto)
                 {
-                    using var imageStream = await sourceFile.OpenReadAsync();
+                    using var imageStream = await source.File.OpenReadAsync();
                     return await GetPreviewBitmapAsync(imageStream, requestedMinSide);
                 }
             }
@@ -424,14 +424,14 @@ namespace Telegram.Common
             return (new Rect(x, y, w, h), new Size(ratioW, ratioH));
         }
 
-        public static async Task<ImageSource> CropAndPreviewAsync(StorageFile sourceFile, BitmapEditState editState)
+        public static async Task<ImageSource> CropAndPreviewAsync(StorageMedia source, BitmapEditState editState)
         {
-            if (sourceFile.FileType.Equals(".mp4"))
+            if (source is StorageVideo)
             {
                 return await Task.Run(async () =>
                 {
-                    using var videoStream = await sourceFile.OpenReadAsync();
-                    using var animation = VideoAnimation.LoadFromFile(new VideoAnimationStreamSource(videoStream), false, false);
+                    using var videoStream = await source.File.OpenReadAsync();
+                    using var animation = VideoAnimation.LoadFromFile(new VideoAnimationStreamSource(videoStream), false, false, false);
 
                     int width = animation.PixelWidth;
                     int height = animation.PixelHeight;
@@ -447,7 +447,7 @@ namespace Telegram.Common
             }
             else
             {
-                using var imageStream = await sourceFile.OpenReadAsync();
+                using var imageStream = await source.File.OpenReadAsync();
                 return await CropAndPreviewAsync(imageStream, editState);
             }
         }
@@ -523,12 +523,12 @@ namespace Telegram.Common
 
         public static async Task<IRandomAccessStream> OpenReadAsync(StorageFile sourceFile)
         {
-            if (sourceFile.FileType.Equals(".mp4"))
+            if (sourceFile.FileType.Equals(".mp4", StringComparison.OrdinalIgnoreCase))
             {
                 return await Task.Run(async () =>
                 {
                     using var videoStream = await sourceFile.OpenReadAsync();
-                    using var animation = VideoAnimation.LoadFromFile(new VideoAnimationStreamSource(videoStream), false, false);
+                    using var animation = VideoAnimation.LoadFromFile(new VideoAnimationStreamSource(videoStream), false, false, false);
 
                     int width = animation.PixelWidth;
                     int height = animation.PixelHeight;
