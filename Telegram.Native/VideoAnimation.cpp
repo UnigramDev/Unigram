@@ -282,20 +282,20 @@ namespace winrt::Telegram::Native::implementation
         AVDictionaryEntry* title_tag = av_dict_get(info->fmt_ctx->metadata, "title", NULL, 0);
         if (title_tag && title_tag->value)
         {
-            info->title = winrt::to_hstring(title_tag->key);
+            info->title = winrt::to_hstring(title_tag->value);
         }
 
         AVDictionaryEntry* artist_tag = av_dict_get(info->fmt_ctx->metadata, "album_artist", NULL, 0);
         if (artist_tag && artist_tag->value)
         {
-            info->artist = winrt::to_hstring(artist_tag->key);
+            info->artist = winrt::to_hstring(artist_tag->value);
         }
         else
         {
             artist_tag = av_dict_get(info->fmt_ctx->metadata, "artist", NULL, 0);
             if (artist_tag && artist_tag->value)
             {
-                info->artist = winrt::to_hstring(artist_tag->key);
+                info->artist = winrt::to_hstring(artist_tag->value);
             }
         }
 
