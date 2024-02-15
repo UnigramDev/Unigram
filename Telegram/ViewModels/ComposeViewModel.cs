@@ -855,7 +855,7 @@ namespace Telegram.ViewModels
             }
 
             var applied = await BeforeSendMessageAsync(formattedText);
-            if (applied)
+            if (applied || string.IsNullOrEmpty(formattedText.Text))
             {
                 return null;
             }
