@@ -42,6 +42,8 @@
                     CornerRadius="12"
                     Grid.Column="1">
                 <TextBlock x:Name="Level"
+                           Style="{StaticResource CaptionTextBlockStyle}"
+                           FontWeight="SemiBold"
                            Foreground="#FFFFFF"
                            VerticalAlignment="Center"
                            Margin="8,1,8,3" />
@@ -53,10 +55,10 @@
                     Grid.Column="2" />
         </Grid>
         <TextBlock x:Name="StoriesIcon"
-                   Text="&#xF164;"
+                   Text="&#xE9D3;"
                    Foreground="{ThemeResource InkToolbarAccentColorThemeBrush}"
                    FontFamily="{StaticResource SymbolThemeFontFamily}"
-                   Margin="0,0,8,0"
+                   Margin="0,0,8,8"
                    FontSize="20"
                    Grid.Row="1" />
         <TextBlock x:Name="StoriesText"
@@ -68,7 +70,7 @@
                    Text="&#xF164;"
                    Foreground="{ThemeResource InkToolbarAccentColorThemeBrush}"
                    FontFamily="{StaticResource SymbolThemeFontFamily}"
-                   Margin="0,0,8,0"
+                   Margin="0,0,8,8"
                    FontSize="20"
                    Grid.Row="2" />
         <TextBlock x:Name="ReactionsText"
@@ -80,7 +82,7 @@
                    Text="&#xF164;"
                    Foreground="{ThemeResource InkToolbarAccentColorThemeBrush}"
                    FontFamily="{StaticResource SymbolThemeFontFamily}"
-                   Margin="0,0,8,0"
+                   Margin="0,0,8,8"
                    FontSize="20"
                    Grid.Row="3" />
         <TextBlock x:Name="NameColorsText"
@@ -89,10 +91,10 @@
                    Grid.Row="3" />
 
         <TextBlock x:Name="StylesIcon"
-                   Text="&#xF164;"
+                   Text="&#xE9F8;"
                    Foreground="{ThemeResource InkToolbarAccentColorThemeBrush}"
                    FontFamily="{StaticResource SymbolThemeFontFamily}"
-                   Margin="0,0,8,0"
+                   Margin="0,0,8,8"
                    FontSize="20"
                    Grid.Row="4" />
         <TextBlock x:Name="StylesText"
@@ -104,7 +106,7 @@
                    Text="&#xF164;"
                    Foreground="{ThemeResource InkToolbarAccentColorThemeBrush}"
                    FontFamily="{StaticResource SymbolThemeFontFamily}"
-                   Margin="0,0,8,0"
+                   Margin="0,0,8,8"
                    FontSize="20"
                    Grid.Row="5" />
         <TextBlock x:Name="NameIconsText"
@@ -113,10 +115,10 @@
                    Grid.Row="5" />
 
         <TextBlock x:Name="EmojiStatusIcon"
-                   Text="&#xF164;"
+                   Text="&#xEA70;"
                    Foreground="{ThemeResource InkToolbarAccentColorThemeBrush}"
                    FontFamily="{StaticResource SymbolThemeFontFamily}"
-                   Margin="0,0,8,0"
+                   Margin="0,0,8,8"
                    FontSize="20"
                    Grid.Row="6" />
         <TextBlock x:Name="EmojiStatusText"
@@ -125,10 +127,10 @@
                    Grid.Row="6" />
 
         <TextBlock x:Name="ProfileColorsIcon"
-                   Text="&#xF164;"
+                   Text="&#xE2B1;"
                    Foreground="{ThemeResource InkToolbarAccentColorThemeBrush}"
                    FontFamily="{StaticResource SymbolThemeFontFamily}"
-                   Margin="0,0,8,0"
+                   Margin="0,0,8,8"
                    FontSize="20"
                    Grid.Row="7" />
         <TextBlock x:Name="ProfileColorsText"
@@ -137,10 +139,10 @@
                    Grid.Row="7" />
 
         <TextBlock x:Name="ProfileIconsIcon"
-                   Text="&#xF164;"
+                   Text="&#xEA73;"
                    Foreground="{ThemeResource InkToolbarAccentColorThemeBrush}"
                    FontFamily="{StaticResource SymbolThemeFontFamily}"
-                   Margin="0,0,8,0"
+                   Margin="0,0,8,8"
                    FontSize="20"
                    Grid.Row="8" />
         <TextBlock x:Name="ProfileIconsText"
@@ -149,10 +151,10 @@
                    Grid.Row="8" />
 
         <TextBlock x:Name="BackgroundsIcon"
-                   Text="&#xF164;"
+                   Text="&#xEA72;"
                    Foreground="{ThemeResource InkToolbarAccentColorThemeBrush}"
                    FontFamily="{StaticResource SymbolThemeFontFamily}"
-                   Margin="0,0,8,0"
+                   Margin="0,0,8,8"
                    FontSize="20"
                    Grid.Row="9" />
         <TextBlock x:Name="BackgroundsText"
@@ -161,10 +163,10 @@
                    Grid.Row="9" />
 
         <TextBlock x:Name="CustomBackgroundIcon"
-                   Text="&#xF164;"
+                   Text="&#xEA71;"
                    Foreground="{ThemeResource InkToolbarAccentColorThemeBrush}"
                    FontFamily="{StaticResource SymbolThemeFontFamily}"
-                   Margin="0,0,8,0"
+                   Margin="0,0,8,8"
                    FontSize="20"
                    Grid.Row="10" />
         <TextBlock x:Name="CustomBackgroundText"
@@ -173,10 +175,10 @@
                    Grid.Row="10" />
 
         <TextBlock x:Name="VoiceToTextIcon"
-                   Text="&#xF164;"
+                   Text="&#xE720;"
                    Foreground="{ThemeResource InkToolbarAccentColorThemeBrush}"
                    FontFamily="{StaticResource SymbolThemeFontFamily}"
-                   Margin="0,0,8,0"
+                   Margin="0,0,8,8"
                    FontSize="20"
                    Grid.Row="9" />
         <TextBlock x:Name="VoiceToTextText"
@@ -185,10 +187,10 @@
                    Grid.Row="9" />
 
         <TextBlock x:Name="CustomEmojiPackIcon"
-                   Text="&#xF164;"
+                   Text="&#xEA6F;"
                    Foreground="{ThemeResource InkToolbarAccentColorThemeBrush}"
                    FontFamily="{StaticResource SymbolThemeFontFamily}"
-                   Margin="0,0,8,0"
+                   Margin="0,0,8,8"
                    FontSize="20"
                    Grid.Row="10" />
         <TextBlock x:Name="CustomEmojiPackText"

@@ -64,6 +64,9 @@ namespace Telegram.Controls.Cells
 
                 Grid.SetRow(icon, index + 1);
                 Grid.SetRow(text, index + 1);
+
+                icon.Visibility = Visibility.Visible;
+                text.Visibility = Visibility.Visible;
             }
             else
             {
@@ -80,6 +83,9 @@ namespace Telegram.Controls.Cells
 
                 Grid.SetRow(icon, index + 1);
                 Grid.SetRow(text, index + 1);
+
+                icon.Visibility = Visibility.Visible;
+                text.Visibility = Visibility.Visible;
             }
             else
             {
