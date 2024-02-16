@@ -44,7 +44,7 @@ namespace Telegram.Controls
 
         public void SetChat(IClientService clientService, Chat chat)
         {
-            SetColors(clientService, chat.AccentColorId, chat.ProfileAccentColorId);
+            SetColors(clientService, chat.Type is ChatTypeSupergroup { IsChannel: true } ? chat.AccentColorId : -1, chat.ProfileAccentColorId);
         }
 
         private void SetColors(IClientService clientService, int nameId, int profileId)
@@ -79,16 +79,25 @@ namespace Telegram.Controls
                 ProfilePrimary.Visibility = Visibility.Collapsed;
             }
 
-            var name = clientService.GetAccentColor(nameId);
-            var color = name.ForTheme(theme);
+            if (nameId >= 0)
+            {
+                var name = clientService.GetAccentColor(nameId);
+                var color = name.ForTheme(theme);
 
-            NamePrimary.Background = new SolidColorBrush(color[0]);
-            NameSecondary.Fill = color.Count > 1
-                ? new SolidColorBrush(color[1])
-                : null;
-            NameTertiary.Fill = color.Count > 2
-                ? new SolidColorBrush(color[2])
-                : null;
+                NamePrimary.Background = new SolidColorBrush(color[0]);
+                NameSecondary.Fill = color.Count > 1
+                    ? new SolidColorBrush(color[1])
+                    : null;
+                NameTertiary.Fill = color.Count > 2
+                    ? new SolidColorBrush(color[2])
+                    : null;
+
+                NamePrimary.Visibility = Visibility.Visible;
+            }
+            else
+            {
+                NamePrimary.Visibility = Visibility.Collapsed;
+            }
         }
     }
 }
