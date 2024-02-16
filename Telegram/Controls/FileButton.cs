@@ -82,9 +82,9 @@ namespace Telegram.Controls
                 {
                     SetValue(InternalProgressProperty, value);
                 }
-                catch (Exception ex)
+                catch
                 {
-                    Logger.Error(ex);
+                    // All the remote procedure calls must be wrapped in a try-catch block
                 }
             }
         }

@@ -494,7 +494,7 @@ namespace Telegram.Services
                         }
                     }
                 }
-                catch (Exception ex)
+                catch
                 {
                     // All the remote procedure calls must be wrapped in a try-catch block
 
@@ -505,9 +505,9 @@ namespace Telegram.Services
                     // The only solution that I can think of, is to just clear the list when this happens
                     // Hoping that this situation is isolated enough not to be an actual problem.
 
-#if !DEBUG
-                    Microsoft.AppCenter.Crashes.Crashes.TrackError(ex);
-#endif
+                    // Can throw:
+                    // - ArgumentException
+                    // - FileNotFoundException
 
                     SAP.FutureAccessList.Clear();
                 }

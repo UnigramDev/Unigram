@@ -685,20 +685,34 @@ namespace Telegram.Controls
 
         private void ContextPaste_Click()
         {
-            var args = new HandledEventArgs(false);
-            var package = Clipboard.GetContent();
+            try
+            {
+                var args = new HandledEventArgs(false);
+                var package = Clipboard.GetContent();
 
-            OnPaste(args, package);
+                OnPaste(args, package);
+            }
+            catch
+            {
+                // All the remote procedure calls must be wrapped in a try-catch block
+            }
         }
 
         private void OnPaste(object sender, TextControlPasteEventArgs e)
         {
-            var args = new HandledEventArgs(false);
-            var package = Clipboard.GetContent();
+            try
+            {
+                var args = new HandledEventArgs(false);
+                var package = Clipboard.GetContent();
 
-            OnPaste(args, package);
+                OnPaste(args, package);
 
-            e.Handled = args.Handled;
+                e.Handled = args.Handled;
+            }
+            catch
+            {
+                // All the remote procedure calls must be wrapped in a try-catch block
+            }
         }
 
         protected virtual async void OnPaste(HandledEventArgs e, DataPackageView package)

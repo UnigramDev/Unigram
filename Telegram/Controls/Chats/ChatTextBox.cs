@@ -130,14 +130,21 @@ namespace Telegram.Controls.Chats
         {
             if (e.Key == VirtualKey.Space && Document.Selection.Length == 0)
             {
-                var clone = Document.Selection.GetClone();
-                if (clone.EndPosition > Document.Selection.EndPosition && AreTheSame(clone.CharacterFormat, Document.Selection.CharacterFormat))
+                try
                 {
+                    var clone = Document.Selection.GetClone();
+                    if (clone.EndPosition > Document.Selection.EndPosition && AreTheSame(clone.CharacterFormat, Document.Selection.CharacterFormat))
+                    {
 
+                    }
+                    else
+                    {
+                        Document.Selection.CharacterFormat = Document.GetDefaultCharacterFormat();
+                    }
                 }
-                else
+                catch
                 {
-                    Document.Selection.CharacterFormat = Document.GetDefaultCharacterFormat();
+                    // All the remote procedure calls must be wrapped in a try-catch block
                 }
             }
             else if (e.Key is VirtualKey.Up or VirtualKey.Down)
