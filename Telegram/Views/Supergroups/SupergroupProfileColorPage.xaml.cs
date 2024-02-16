@@ -31,9 +31,20 @@ namespace Telegram.Views.Supergroups
             Title = Strings.ChannelColorTitle2;
         }
 
-        protected override void OnNavigatedTo(NavigationEventArgs e)
+        protected override async void OnNavigatedTo(NavigationEventArgs e)
         {
             ProfileView.Initialize(ViewModel.ClientService, new MessageSenderChat(ViewModel.Chat.Id));
+
+            if (ViewModel.Chat.EmojiStatus != null)
+            {
+                AnimatedStatus.Source = new CustomEmojiFileSource(ViewModel.ClientService, ViewModel.Chat.EmojiStatus.CustomEmojiId);
+                EmojiStatus.Badge = string.Empty;
+            }
+            else
+            {
+                AnimatedStatus.Source = null;
+                EmojiStatus.Badge = Strings.UserReplyIconOff;
+            }
 
             if (ViewModel.Chat.Type is ChatTypeSupergroup { IsChannel: true })
             {
@@ -62,6 +73,26 @@ namespace Telegram.Views.Supergroups
                 WallpaperLabel.Text = Strings.GroupWallpaper;
                 EmojiStatusRoot.Footer = Strings.GroupEmojiStatusInfo;
                 EmojiStatusLabel.Text = Strings.GroupEmojiStatus;
+
+                if (ViewModel.ClientService.TryGetSupergroupFull(ViewModel.Chat, out SupergroupFullInfo fullInfo))
+                {
+                    if (fullInfo.CustomEmojiStickerSetId != 0)
+                    {
+                        var response = await ViewModel.ClientService.SendAsync(new GetStickerSet(fullInfo.CustomEmojiStickerSetId));
+                        if (response is StickerSet set)
+                        {
+                            var thumbnail = set.GetThumbnail();
+                            if (thumbnail != null)
+                            {
+                                AnimatedPack.Source = new DelayedFileSource(ViewModel.ClientService, thumbnail);
+                            }
+                            else
+                            {
+                                AnimatedPack.Source = null;
+                            }
+                        }
+                    }
+                }
             }
         }
 
