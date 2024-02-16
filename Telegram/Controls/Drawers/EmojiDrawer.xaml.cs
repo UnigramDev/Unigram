@@ -157,6 +157,7 @@ namespace Telegram.Controls.Drawers
                 _ => EmojiSearchType.Default
             });
 
+            ViewModel.OpenChat(chat);
             ViewModel.Update();
         }
 

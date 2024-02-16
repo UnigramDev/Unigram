@@ -180,6 +180,16 @@ namespace Telegram.ViewModels.Drawers
             }
         }
 
+        private long _customEmojiSetId;
+
+        public void OpenChat(Chat chat)
+        {
+            if (chat != null && ClientService.TryGetSupergroupFull(chat, out SupergroupFullInfo fullInfo))
+            {
+                _customEmojiSetId = fullInfo.CustomEmojiStickerSetId;
+            }
+        }
+
         public async void Update()
         {
             if (_updated && _mode == EmojiDrawerMode.Chat)
@@ -423,31 +433,30 @@ namespace Telegram.ViewModels.Drawers
             {
                 var installedSets = new Dictionary<long, StickerSetViewModel>();
 
-                var filtered = sets.Sets.Where(x => Filter(x)).ToList();
-                if (filtered.Count > 0)
+                if (_mode == EmojiDrawerMode.Chat && _customEmojiSetId != 0)
                 {
-                    var result3 = await ClientService.SendAsync(new GetStickerSet(filtered[0].Id));
-                    if (result3 is StickerSet set)
+                    var result3 = await ClientService.SendAsync(new GetStickerSet(_customEmojiSetId));
+                    if (result3 is StickerSet supergroupSet)
                     {
-                        installedSets[set.Id] = new StickerSetViewModel(ClientService, sets.Sets[0], set);
-                    }
-
-                    for (int i = installedSets.Count; i < filtered.Count; i++)
-                    {
-                        installedSets[filtered[i].Id] = new StickerSetViewModel(ClientService, filtered[i]);
+                        installedSets[supergroupSet.Id] = new StickerSetViewModel(ClientService, supergroupSet);
                     }
                 }
 
-                foreach (var item in trending.Sets)
+                foreach (var info in sets.Sets.Union(trending.Sets))
                 {
-                    if (installedSets.ContainsKey(item.Id))
+                    if (!installedSets.ContainsKey(info.Id) && Filter(info))
                     {
-                        continue;
-                    }
+                        if (installedSets.Count == 0)
+                        {
+                            var result3 = await ClientService.SendAsync(new GetStickerSet(info.Id));
+                            if (result3 is StickerSet set)
+                            {
+                                installedSets[info.Id] = new StickerSetViewModel(ClientService, info, set);
+                                continue;
+                            }
+                        }
 
-                    if (Filter(item))
-                    {
-                        installedSets[item.Id] = new StickerSetViewModel(ClientService, item);
+                        installedSets[info.Id] = new StickerSetViewModel(ClientService, info);
                     }
                 }
 
