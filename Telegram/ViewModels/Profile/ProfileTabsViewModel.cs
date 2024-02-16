@@ -211,10 +211,9 @@ namespace Telegram.ViewModels.Profile
                     AddTab(new ProfileTabItem(Strings.ProfileStories, typeof(ProfileStoriesTabPage)));
                 }
 
-                await UpdateSharedCountAsync(chat);
-
                 if (typeSupergroup.IsChannel)
                 {
+                    await UpdateSharedCountAsync(chat);
                     await _channelsTabViewModel.LoadMoreItemsAsync(0);
 
                     if (_channelsTabViewModel.Items.Count > 0)
@@ -225,14 +224,12 @@ namespace Telegram.ViewModels.Profile
                 else
                 {
                     AddTab(new ProfileTabItem(Strings.ChannelMembers, typeof(ProfileMembersTabPage)));
-
                     await UpdateSharedCountAsync(chat);
                 }
             }
             else if (chat.Type is ChatTypeBasicGroup)
             {
                 AddTab(new ProfileTabItem(Strings.ChannelMembers, typeof(ProfileMembersTabPage)));
-
                 await UpdateSharedCountAsync(chat);
             }
         }
