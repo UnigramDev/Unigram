@@ -1,5 +1,5 @@
 //
-// Copyright Fela Ameghino 2015-2023
+// Copyright Fela Ameghino 2015-2024
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
@@ -64,19 +64,19 @@ namespace Telegram.Views
 
         private async void Share_Click(object sender, RoutedEventArgs e)
         {
-            await this.ShowPopupAsync(_shareMessage.ClientService.SessionId, typeof(ChooseChatsPopup), new ChooseChatsConfigurationShareMessage(_shareMessage.Get()));
+            await this.ShowPopupAsync(_shareMessage.ClientService.SessionId, typeof(ChooseChatsPopup), new ChooseChatsConfigurationShareMessage(_shareMessage.ChatId, _shareMessage.Id));
         }
 
         private async void View_EventReceived(object sender, WebViewerEventReceivedEventArgs e)
         {
             if (e.EventName == "share_game")
             {
-                await this.ShowPopupAsync(_shareMessage.ClientService.SessionId, typeof(ChooseChatsPopup), new ChooseChatsConfigurationShareMessage(_shareMessage.Get(), false));
+                await this.ShowPopupAsync(_shareMessage.ClientService.SessionId, typeof(ChooseChatsPopup), new ChooseChatsConfigurationShareMessage(_shareMessage.ChatId, _shareMessage.Id, false));
             }
 
             else if (e.EventName == "share_score")
             {
-                await this.ShowPopupAsync(_shareMessage.ClientService.SessionId, typeof(ChooseChatsPopup), new ChooseChatsConfigurationShareMessage(_shareMessage.Get(), true));
+                await this.ShowPopupAsync(_shareMessage.ClientService.SessionId, typeof(ChooseChatsPopup), new ChooseChatsConfigurationShareMessage(_shareMessage.ChatId, _shareMessage.Id, true));
             }
         }
     }

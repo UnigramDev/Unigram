@@ -44,6 +44,7 @@
                               ItemsSource="{x:Bind ViewModel.ChatThemes}"
                               SelectedItem="{x:Bind ViewModel.SelectedChatTheme, Mode=TwoWay}"
                               SelectionMode="Single"
+                              SingleSelectionFollowsFocus="False"
                               ChoosingItemContainer="OnChoosingItemContainer"
                               ContainerContentChanging="OnContainerContentChanging"
                               ScrollViewer.HorizontalScrollBarVisibility="Auto"
@@ -74,17 +75,28 @@
                         </GridView.Footer>
                     </GridView>
 
-                    <controls:BadgeButton Content="{CustomResource ShowAllThemes}"
+                    <controls:BadgeButton Content="{CustomResource ChatThemes}"
                                           Style="{StaticResource GlyphBadgeButtonStyle}"
                                           Click="{x:Bind ViewModel.OpenThemes}"
                                           Glyph="&#xE90E;"
                                           IsChevronVisible="True" />
 
-                    <controls:BadgeButton Content="{CustomResource ChatBackground}"
+                    <controls:BadgeButton Content="{CustomResource ChatWallpaper}"
                                           Style="{StaticResource GlyphBadgeButtonStyle}"
                                           Click="{x:Bind ViewModel.OpenWallpaper}"
                                           Glyph="&#xE9E7;"
                                           IsChevronVisible="True" />
+
+                    <controls:BadgeButton x:Name="NameColor"
+                                          Content="{CustomResource YourNameColor}"
+                                          Style="{StaticResource GlyphBadgeButtonStyle}"
+                                          Click="{x:Bind ViewModel.ChangeProfileColor}"
+                                          Glyph="&#xE2B1;"
+                                          IsChevronVisible="True">
+                        <controls:BadgeButton.Badge>
+                            <controls:ProfileColorBadge x:Name="ProfileColor" />
+                        </controls:BadgeButton.Badge>
+                    </controls:BadgeButton>
                 </controls:HeaderedControl>
 
                 <controls:HeaderedControl>
@@ -187,10 +199,6 @@
                               Content="{CustomResource UseSystemSpellChecker}"
                               Style="{StaticResource SettingsCheckBoxStyle}" />
 
-                    <CheckBox IsChecked="{x:Bind ViewModel.IsSendByEnterEnabled, Mode=TwoWay}"
-                              Content="{CustomResource SendByEnter}"
-                              Style="{StaticResource SettingsCheckBoxStyle}" />
-
                     <CheckBox IsChecked="{x:Bind ViewModel.IsReplaceEmojiEnabled, Mode=TwoWay}"
                               Content="{CustomResource ReplaceEmoji}"
                               Style="{StaticResource SettingsCheckBoxStyle}" />
@@ -199,9 +207,18 @@
                               Content="{CustomResource AdaptiveLayout}"
                               Style="{StaticResource SettingsCheckBoxStyle}" />
 
+                    <controls:BadgeButton Content="{CustomResource SendByEnter2}"
+                                          Style="{StaticResource GlyphBadgeButtonStyle}"
+                                          Glyph="&#xE919;">
+                        <controls:BadgeButton.Badge>
+                            <controls:SettingsComboBox ItemsSource="{x:Bind ViewModel.SendByOptions}"
+                                                       SelectedIndex="{x:Bind ViewModel.SendBy, Mode=TwoWay}"
+                                                       DisplayMemberPath="Text" />
+                        </controls:BadgeButton.Badge>
+                    </controls:BadgeButton>
                     <controls:BadgeButton Content="{CustomResource DistanceUnits}"
                                           Style="{StaticResource GlyphBadgeButtonStyle}"
-                                          Glyph="&#xEA01;">
+                                          Glyph="&#xE1C4;">
                         <controls:BadgeButton.Badge>
                             <controls:SettingsComboBox ItemsSource="{x:Bind ViewModel.DistanceUnitOptions}"
                                                        SelectedIndex="{x:Bind ViewModel.DistanceUnit, Mode=TwoWay}"

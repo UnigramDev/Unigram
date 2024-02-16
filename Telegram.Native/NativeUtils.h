@@ -25,10 +25,15 @@ namespace winrt::Telegram::Native::implementation
 
         //[DefaultOverload]
         static winrt::Telegram::Native::TextDirectionality GetDirectionality(hstring value);
+        static winrt::Telegram::Native::TextDirectionality GetDirectionality(hstring value, int32_t offset);
+        static winrt::Telegram::Native::TextDirectionality GetDirectionality(hstring value, int32_t offset, int32_t length);
         //static int32_t GetDirectionality(char16 value);
 
         static hstring GetCurrentCulture();
         static hstring GetKeyboardCulture();
+
+        static hstring FormatTime(int value);
+        static hstring FormatDate(int value);
 
         static bool IsFileReadable(hstring path);
         static bool IsFileReadable(hstring path, int64_t& fileSize, int64_t& fileTime);

@@ -572,6 +572,7 @@
                         </VisualStateManager.VisualStateGroups>
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="56" />
+                            <ColumnDefinition Width="Auto" />
                             <ColumnDefinition />
                             <ColumnDefinition Width="Auto" />
                             <ColumnDefinition Width="Auto" />
@@ -594,6 +595,18 @@
                                           Padding="0,11,12,12"
                                           VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"
                                           Grid.Column="1" />
+
+                        <TextBlock x:Name="Premium"
+                                   x:Load="False"
+                                   Text="&#xE9B5;"
+                                   Foreground="{ThemeResource PremiumObliqueGradientBrush}"
+                                   FontFamily="{StaticResource SymbolThemeFontFamily}"
+                                   FontSize="16"
+                                   VerticalAlignment="Center"
+                                   Visibility="Collapsed"
+                                   Margin="-8,0,12,0"
+                                   Grid.Column="2" />
+
                         <ContentControl x:Name="BadgePresenter"
                                         Content="{TemplateBinding Badge}"
                                         Visibility="{TemplateBinding BadgeVisibility}"
@@ -603,7 +616,8 @@
                                         HorizontalContentAlignment="Right"
                                         VerticalContentAlignment="Center"
                                         IsTabStop="False"
-                                        Grid.Column="1">
+                                        Grid.Column="1"
+                                        Grid.ColumnSpan="2">
                             <ContentControl.ContentTransitions>
                                 <TransitionCollection>
                                     <EntranceThemeTransition />
@@ -623,7 +637,7 @@
                                    VerticalAlignment="Center"
                                    FontFamily="{StaticResource SymbolThemeFontFamily}"
                                    Margin="-6,0,6,0"
-                                   Grid.Column="3" />
+                                   Grid.Column="4" />
                     </Grid>
                 </ControlTemplate>
             </Setter.Value>
@@ -838,9 +852,10 @@
                                    AutomationProperties.AccessibilityView="Raw"
                                    Text="{TemplateBinding Glyph}"
                                    FontFamily="{StaticResource SymbolThemeFontFamily}"
-                                   Margin="8" />
+                                   Margin="8,8,8,4" />
 
                         <ContentPresenter x:Name="ContentPresenter"
+                                          FontSize="12"
                                           FontFamily="{TemplateBinding FontFamily}"
                                           AutomationProperties.AccessibilityView="Raw"
                                           ContentTemplate="{TemplateBinding ContentTemplate}"

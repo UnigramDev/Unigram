@@ -29,6 +29,7 @@
   <ItemDefinitionGroup>
     <Link>
       <AdditionalDependencies>avcodec.lib;avformat.lib;avutil.lib;swscale.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <DelayLoadDLLs>Mfplat.dll;%(DelayLoadDLLs)</DelayLoadDLLs>
     </Link>
   </ItemDefinitionGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
@@ -113,8 +114,7 @@
       <!-- /Zc:__cplusplus -->
       <!--Temporarily disable cppwinrt heap enforcement to work around xaml compiler generated std::shared_ptr use -->
       <AdditionalOptions Condition="'$(CppWinRTHeapEnforcement)'==''">/DWINRT_NO_MAKE_DETECTION %(AdditionalOptions)</AdditionalOptions>
-      <DisableSpecificWarnings>
-      </DisableSpecificWarnings>
+      <DisableSpecificWarnings>4996</DisableSpecificWarnings>
       <PreprocessorDefinitions>_WINRT_DLL;WIN32_LEAN_AND_MEAN;WINRT_LEAN_AND_MEAN;_SILENCE_CXX17_RESULT_OF_DEPRECATION_WARNING;_SILENCE_ALL_CXX20_DEPRECATION_WARNINGS;_USE_MATH_DEFINES;TGCALLS_UWP_DESKTOP;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalUsingDirectories>$(WindowsSDK_WindowsMetadata);$(AdditionalUsingDirectories)</AdditionalUsingDirectories>
       <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">.\rnnoise\include;..\Libraries\tgcalls\tgcalls;..\Libraries\tgcalls;C:\webrtc\src;C:\webrtc\src\third_party\abseil-cpp;C:\webrtc\src\third_party\libyuv\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
@@ -159,13 +159,16 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="..\Libraries\tgcalls\tgcalls\ChannelManager.h" />
+    <ClInclude Include="..\Libraries\tgcalls\tgcalls\DirectConnectionChannel.h" />
     <ClInclude Include="..\Libraries\tgcalls\tgcalls\FieldTrialsConfig.h" />
     <ClInclude Include="..\Libraries\tgcalls\tgcalls\group\AudioStreamingPartInternal.h" />
     <ClInclude Include="..\Libraries\tgcalls\tgcalls\group\AudioStreamingPartPersistentDecoder.h" />
     <ClInclude Include="..\Libraries\tgcalls\tgcalls\group\AVIOContextImpl.h" />
     <ClInclude Include="..\Libraries\tgcalls\tgcalls\utils\gzip.h" />
     <ClInclude Include="..\Libraries\tgcalls\tgcalls\v2\ContentNegotiation.h" />
+    <ClInclude Include="..\Libraries\tgcalls\tgcalls\v2\DirectNetworkingImpl.h" />
     <ClInclude Include="..\Libraries\tgcalls\tgcalls\v2\ExternalSignalingConnection.h" />
+    <ClInclude Include="..\Libraries\tgcalls\tgcalls\v2\InstanceNetworking.h" />
     <ClInclude Include="..\Libraries\tgcalls\tgcalls\v2\InstanceV2Impl.h" />
     <ClInclude Include="..\Libraries\tgcalls\tgcalls\v2\InstanceV2ReferenceImpl.h" />
     <ClInclude Include="..\Libraries\tgcalls\tgcalls\v2\NativeNetworkingImpl.h" />
@@ -298,6 +301,9 @@
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="..\Libraries\tgcalls\tgcalls\v2\ContentNegotiation.cpp">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\Libraries\tgcalls\tgcalls\v2\DirectNetworkingImpl.cpp">
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="..\Libraries\tgcalls\tgcalls\v2\ExternalSignalingConnection.cpp">
@@ -544,7 +550,7 @@
   <ImportGroup Label="ExtensionTargets">
     <Import Project="..\packages\Win2D.uwp.1.26.0\build\native\Win2D.uwp.targets" Condition="Exists('..\packages\Win2D.uwp.1.26.0\build\native\Win2D.uwp.targets')" />
     <Import Project="..\packages\Microsoft.Windows.CppWinRT.2.0.230706.1\build\native\Microsoft.Windows.CppWinRT.targets" Condition="Exists('..\packages\Microsoft.Windows.CppWinRT.2.0.230706.1\build\native\Microsoft.Windows.CppWinRT.targets')" />
-    <Import Project="..\packages\Telegram.Td.UWP.1.8.19\build\native\Telegram.Td.UWP.targets" Condition="Exists('..\packages\Telegram.Td.UWP.1.8.19\build\native\Telegram.Td.UWP.targets')" />
+    <Import Project="..\packages\Telegram.Td.UWP.1.8.25\build\native\Telegram.Td.UWP.targets" Condition="Exists('..\packages\Telegram.Td.UWP.1.8.25\build\native\Telegram.Td.UWP.targets')" />
   </ImportGroup>
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>
@@ -553,6 +559,6 @@
     <Error Condition="!Exists('..\packages\Win2D.uwp.1.26.0\build\native\Win2D.uwp.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Win2D.uwp.1.26.0\build\native\Win2D.uwp.targets'))" />
     <Error Condition="!Exists('..\packages\Microsoft.Windows.CppWinRT.2.0.230706.1\build\native\Microsoft.Windows.CppWinRT.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.Windows.CppWinRT.2.0.230706.1\build\native\Microsoft.Windows.CppWinRT.props'))" />
     <Error Condition="!Exists('..\packages\Microsoft.Windows.CppWinRT.2.0.230706.1\build\native\Microsoft.Windows.CppWinRT.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.Windows.CppWinRT.2.0.230706.1\build\native\Microsoft.Windows.CppWinRT.targets'))" />
-    <Error Condition="!Exists('..\packages\Telegram.Td.UWP.1.8.19\build\native\Telegram.Td.UWP.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Telegram.Td.UWP.1.8.19\build\native\Telegram.Td.UWP.targets'))" />
+    <Error Condition="!Exists('..\packages\Telegram.Td.UWP.1.8.25\build\native\Telegram.Td.UWP.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Telegram.Td.UWP.1.8.25\build\native\Telegram.Td.UWP.targets'))" />
   </Target>
 </Project>

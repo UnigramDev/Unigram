@@ -1,5 +1,5 @@
 //
-// Copyright Fela Ameghino 2015-2023
+// Copyright Fela Ameghino 2015-2024
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
@@ -245,47 +245,58 @@ namespace Telegram.Services
             }
         }
 
-        public async void Handle(UpdateUnreadMessageCount update)
+        public void Handle(UpdateUnreadMessageCount update)
         {
-            if (!_settings.Notifications.CountUnreadMessages || !_sessionService.IsActive)
+            if (update.ChatList is not ChatListMain || !_settings.Notifications.CountUnreadMessages || !_sessionService.IsActive)
             {
                 return;
             }
 
-            if (update.ChatList is ChatListMain)
+            if (_settings.Notifications.IncludeMutedChats)
             {
-                if (_settings.Notifications.IncludeMutedChats)
-                {
-                    _unreadCount.Set(update.UnreadCount);
-                }
-                else
-                {
-                    _unreadCount.Set(update.UnreadUnmutedCount);
-                }
-
-                await SystemTray.SendUnreadCountAsync(_settings.Notifications.IncludeMutedChats ? update.UnreadCount : 0, update.UnreadUnmutedCount);
+                _unreadCount.Set(update.UnreadCount);
             }
+            else
+            {
+                _unreadCount.Set(update.UnreadUnmutedCount);
+            }
+
+            SendUnreadCount(update.UnreadCount, update.UnreadUnmutedCount);
         }
 
-        public async void Handle(UpdateUnreadChatCount update)
+        public void Handle(UpdateUnreadChatCount update)
         {
-            if (_settings.Notifications.CountUnreadMessages || !_sessionService.IsActive)
+            if (update.ChatList is not ChatListMain || _settings.Notifications.CountUnreadMessages || !_sessionService.IsActive)
             {
                 return;
             }
 
-            if (update.ChatList is ChatListMain)
+            if (_settings.Notifications.IncludeMutedChats)
             {
-                if (_settings.Notifications.IncludeMutedChats)
-                {
-                    _unreadCount.Set(update.UnreadCount);
-                }
-                else
-                {
-                    _unreadCount.Set(update.UnreadUnmutedCount);
-                }
+                _unreadCount.Set(update.UnreadCount);
+            }
+            else
+            {
+                _unreadCount.Set(update.UnreadUnmutedCount);
+            }
 
-                await SystemTray.SendUnreadCountAsync(_settings.Notifications.IncludeMutedChats ? update.UnreadCount : 0, update.UnreadUnmutedCount);
+            SendUnreadCount(update.UnreadCount, update.UnreadUnmutedCount);
+        }
+
+        private int _notifyIconUnreadCount;
+        private int _notifyIconUnreadUnmutedCount;
+
+        private void SendUnreadCount(int unreadCount, int unreadUnmutedCount)
+        {
+            unreadCount = Math.Min(_settings.Notifications.IncludeMutedChats ? unreadCount : 0, 1);
+            unreadUnmutedCount = Math.Min(unreadUnmutedCount, 1);
+
+            if (unreadCount != _notifyIconUnreadCount || unreadUnmutedCount != _notifyIconUnreadUnmutedCount)
+            {
+                _notifyIconUnreadCount = unreadCount;
+                _notifyIconUnreadUnmutedCount = unreadUnmutedCount;
+
+                NotifyIcon.SendUnreadCount(unreadCount, unreadUnmutedCount);
             }
         }
 
@@ -436,7 +447,7 @@ namespace Telegram.Services
                 return;
             }
 
-            var caption = GetCaption(chat);
+            var caption = GetCaption(chat, silent);
             var content = GetContent(chat, message);
             var launch = GetLaunch(chat, message);
             var picture = GetPhoto(chat);
@@ -456,17 +467,16 @@ namespace Telegram.Services
                     else
                     {
                         // If notification sound is not yet available
-                        // download it and show the notification without sound.
+                        // download it and show the notification as is.
 
                         _clientService.DownloadFile(notificationSound.Sound.Id, 32);
-                        silent = true;
                     }
                 }
             }
 
             var showPreview = _settings.Notifications.GetShowPreview(chat);
 
-            if (chat.Type is ChatTypeSecret || !showPreview || TLContainer.Current.Passcode.IsLockscreenRequired)
+            if (chat.Type is ChatTypeSecret || !showPreview || TypeResolver.Current.Passcode.IsLockscreenRequired)
             {
                 caption = Strings.AppName;
                 content = Strings.YouHaveNewMessage;
@@ -477,7 +487,7 @@ namespace Telegram.Services
 
             if (UpdateAsync(chat))
             {
-                await UpdateToast(caption, content, $"{_sessionService.Id}", silent || soundId == 0, soundFile, launch, $"{id}", $"{groupId}", picture, dateTime, canReply);
+                await UpdateToast(caption, content, $"{_sessionService.Id}", silent, silent || soundId == 0, soundFile, launch, $"{id}", $"{groupId}", picture, dateTime, canReply);
             }
         }
 
@@ -510,7 +520,7 @@ namespace Telegram.Services
             }
         }
 
-        private async Task UpdateToast(string caption, string message, string account, bool silent, Td.Api.File soundFile, string launch, string tag, string group, string picture, string date, bool canReply)
+        private async Task UpdateToast(string caption, string message, string account, bool suppressPopup, bool silent, Td.Api.File soundFile, string launch, string tag, string group, string picture, string date, bool canReply)
         {
             var xml = $"<toast launch='{launch}' displayTimestamp='{date}'>";
             xml += "<visual><binding template='ToastGeneric'>";
@@ -569,9 +579,11 @@ namespace Telegram.Services
                     notification.RemoteId += group;
                 }
 
+                notification.SuppressPopup = suppressPopup;
+
                 notifier.Show(notification);
 
-                if (soundFile != null)
+                if (soundFile != null && notifier.Setting == NotificationSetting.Enabled)
                 {
                     SoundEffects.Play(soundFile);
                 }
@@ -604,26 +616,15 @@ namespace Telegram.Services
 
         public string GetLaunch(Chat chat, Message message)
         {
-            var launch = string.Format(CultureInfo.InvariantCulture, "msg_id={0}", message.Id);
+            var launch = string.Format(CultureInfo.InvariantCulture, "chat_id={0}", chat.Id);
+            launch = string.Format(CultureInfo.InvariantCulture, "{0}&amp;session={1}", launch, _clientService.SessionId);
 
-            if (chat.Type is ChatTypePrivate privata)
+            if (chat.Type is not ChatTypePrivate and not ChatTypeSecret)
             {
-                launch = string.Format(CultureInfo.InvariantCulture, "{0}&amp;from_id={1}", launch, privata.UserId);
-            }
-            else if (chat.Type is ChatTypeSecret secret)
-            {
-                launch = string.Format(CultureInfo.InvariantCulture, "{0}&amp;secret_id={1}", launch, secret.SecretChatId);
-            }
-            else if (chat.Type is ChatTypeSupergroup supergroup)
-            {
-                launch = string.Format(CultureInfo.InvariantCulture, "{0}&amp;channel_id={1}", launch, supergroup.SupergroupId);
-            }
-            else if (chat.Type is ChatTypeBasicGroup basicGroup)
-            {
-                launch = string.Format(CultureInfo.InvariantCulture, "{0}&amp;chat_id={1}", launch, basicGroup.BasicGroupId);
+                launch = string.Format(CultureInfo.InvariantCulture, "{0}&amp;msg_id={1}", launch, message.Id);
             }
 
-            return string.Format(CultureInfo.InvariantCulture, "{0}&amp;session={1}", launch, _clientService.SessionId);
+            return launch;
         }
 
         private async void CreateToastCollection(User user)
@@ -634,9 +635,10 @@ namespace Telegram.Services
                 var launchArg = $"session={_sessionService.Id}&user_id={user.Id}";
                 var icon = new Uri("ms-appx:///Assets/Logos/Square44x44Logo.png");
 
-#if DEBUG
-                displayName += " BETA";
-#endif
+                if (Constants.DEBUG)
+                {
+                    displayName += " BETA";
+                }
 
                 var collection = new ToastCollection($"{_sessionService.Id}", displayName, launchArg, icon);
                 await ToastNotificationManager.GetDefault().GetToastCollectionManager().SaveToastCollectionAsync(collection);
@@ -683,17 +685,16 @@ namespace Telegram.Services
             if (data.TryGetValue("action", out string action))
             {
                 var chat = default(Chat);
-                if (data.TryGetValue("from_id", out string from_id) && int.TryParse(from_id, out int fromId))
+                if (data.TryGetValue("chat_id", out string chat_id) && long.TryParse(chat_id, out long chatId))
                 {
-                    chat = await _clientService.SendAsync(new CreatePrivateChat(fromId, false)) as Chat;
-                }
-                else if (data.TryGetValue("channel_id", out string channel_id) && int.TryParse(channel_id, out int channelId))
-                {
-                    chat = await _clientService.SendAsync(new CreateSupergroupChat(channelId, false)) as Chat;
-                }
-                else if (data.TryGetValue("chat_id", out string chat_id) && int.TryParse(chat_id, out int chatId))
-                {
-                    chat = await _clientService.SendAsync(new CreateBasicGroupChat(chatId, false)) as Chat;
+                    if (_clientService.TryGetChat(chatId, out chat))
+                    {
+
+                    }
+                    else
+                    {
+                        chat = await _clientService.SendAsync(new GetChat(chatId)) as Chat;
+                    }
                 }
 
                 if (chat == null)
@@ -706,8 +707,8 @@ namespace Telegram.Services
                     var messageText = text.Replace("\r\n", "\n").Replace('\v', '\n').Replace('\r', '\n');
                     var formatted = ClientEx.ParseMarkdown(messageText);
 
-                    var replyToMsgId = data.ContainsKey("msg_id") ? new MessageReplyToMessage(chat.Id, long.Parse(data["msg_id"])) : null;
-                    var response = await _clientService.SendAsync(new SendMessage(chat.Id, 0, replyToMsgId, new MessageSendOptions(false, true, false, false, null, 0), null, new InputMessageText(formatted, false, false)));
+                    var replyToMsgId = data.ContainsKey("msg_id") ? new InputMessageReplyToMessage(0, long.Parse(data["msg_id"]), null) : null;
+                    var response = await _clientService.SendAsync(new SendMessage(chat.Id, 0, replyToMsgId, new MessageSendOptions(false, true, false, false, null, 0, false), null, new InputMessageText(formatted, null, false)));
 
                     if (chat.Type is ChatTypePrivate && chat.LastMessage != null)
                     {
@@ -742,14 +743,21 @@ namespace Telegram.Services
 
 
 
-        private string GetCaption(Chat chat)
+        private string GetCaption(Chat chat, bool silent)
         {
             if (chat.Type is ChatTypeSecret)
             {
                 return Strings.AppName;
             }
 
-            return _clientService.GetTitle(chat);
+            var title = _clientService.GetTitle(chat);
+
+            if (silent)
+            {
+                return string.Format("\U0001F515 {0}", title);
+            }
+
+            return title;
         }
 
         private string GetContent(Chat chat, Message message)
@@ -759,18 +767,33 @@ namespace Telegram.Services
                 return Strings.YouHaveNewMessage;
             }
 
-            var brief = ChatCell.UpdateBriefLabel(chat, message, false);
+            var brief = ChatCell.UpdateBriefLabel(chat, message, false, true, out _);
             var clean = brief.ReplaceSpoilers();
 
-            return ChatCell.UpdateFromLabel(_clientService, chat, message) + clean.Text;
+            var content = ChatCell.UpdateFromLabel(_clientService, chat, message) + clean.Text;
+
+            if (message.SenderId.IsUser(_clientService.Options.MyId))
+            {
+                return string.Format("\U0001F4C5 {0}", content);
+            }
+
+            return content;
         }
 
         private string GetPhoto(Chat chat)
         {
-            if (chat.Photo != null && chat.Photo.Small.Local.IsDownloadingCompleted)
+            try
             {
-                var relative = Path.GetRelativePath(ApplicationData.Current.LocalFolder.Path, chat.Photo.Small.Local.Path);
-                return "ms-appdata:///local/" + relative.Replace('\\', '/');
+                var photo = chat.Photo;
+                if (photo != null && photo.Small.Local.IsDownloadingCompleted)
+                {
+                    var relative = Path.GetRelativePath(ApplicationData.Current.LocalFolder.Path, photo.Small.Local.Path);
+                    return "ms-appdata:///local/" + relative.Replace('\\', '/');
+                }
+            }
+            catch
+            {
+                // TODO: race condition
             }
 
             return string.Empty;

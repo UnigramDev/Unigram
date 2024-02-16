@@ -8,12 +8,13 @@
                        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
                        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
                        xmlns:maps="using:Windows.UI.Xaml.Controls.Maps"
-                       VerticalContentAlignment="Stretch"
                        mc:Ignorable="d"
+                       VerticalContentAlignment="Stretch"
+                       Padding="0,24,0,0"
                        Opened="OnOpened"
                        Closed="OnClosed">
 
-    <Grid Margin="-24,0,-24,-24">
+    <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition />

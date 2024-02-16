@@ -1,9 +1,16 @@
-﻿using System;
+﻿//
+// Copyright Fela Ameghino 2015-2024
+//
+// Distributed under the GNU General Public License v3.0. (See accompanying
+// file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
+//
+using System;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
 using Telegram.Collections;
 using Telegram.Common;
+using Telegram.Controls;
 using Telegram.Controls.Stories;
 using Telegram.Navigation;
 using Telegram.Navigation.Services;
@@ -12,7 +19,6 @@ using Telegram.Td.Api;
 using Telegram.ViewModels.Stories;
 using Telegram.Views.Chats;
 using Windows.Foundation;
-using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Navigation;
@@ -88,7 +94,7 @@ namespace Telegram.ViewModels.Chats
                 Items.Remove(story);
             }
 
-            Window.Current.ShowTeachingTip(IsPinned ? Strings.StoryRemovedFromProfile : Strings.StorySavedToProfile);
+            ToastPopup.Show(IsPinned ? Strings.StoryRemovedFromProfile : Strings.StorySavedToProfile);
         }
 
         public void ToggleSelectedStories()
@@ -105,7 +111,7 @@ namespace Telegram.ViewModels.Chats
                 }
             }
 
-            Window.Current.ShowTeachingTip(Locale.Declension(IsPinned ? Strings.R.StoriesRemovedFromProfile : Strings.R.StoriesSavedToProfile, selection.Length));
+            ToastPopup.Show(Locale.Declension(IsPinned ? Strings.R.StoriesRemovedFromProfile : Strings.R.StoriesSavedToProfile, selection.Length));
             UnselectStories();
         }
 
@@ -159,7 +165,7 @@ namespace Telegram.ViewModels.Chats
             viewModel.NavigationService = NavigationService;
 
             var window = new StoriesWindow();
-            window.Update(viewModel, activeStories, StoryOrigin.Card, origin, closing);
+            window.Update(viewModel, activeStories, StoryOpenOrigin.Card, origin, closing);
             _ = window.ShowAsync();
         }
 

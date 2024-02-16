@@ -1,13 +1,13 @@
 //
-// Copyright Fela Ameghino 2015-2023
+// Copyright Fela Ameghino 2015-2024
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+using Telegram.Common;
 using Telegram.Navigation;
 using Telegram.ViewModels;
 using Telegram.ViewModels.Delegates;
-using Windows.UI.Xaml.Navigation;
 
 namespace Telegram.Views
 {
@@ -15,32 +15,15 @@ namespace Telegram.Views
     {
         public DialogViewModel ViewModel => DataContext as DialogViewModel;
 
-        public ChatView View => Content as ChatView;
-
         public ChatPage()
         {
             InitializeComponent();
-
-            Content = new ChatView(CreateViewModel, SetTitle);
-            NavigationCacheMode = NavigationCacheMode.Required;
+            NavigationCacheMode = ApiInfo.NavigationCacheMode;
         }
 
-        private DialogViewModel CreateViewModel(IDialogDelegate delegato, int sessionId)
+        public override string GetTitle()
         {
-            var viewModel = TLContainer.Current.Resolve<DialogViewModel, IDialogDelegate>(delegato, sessionId);
-            DataContext = viewModel;
-
-            return viewModel;
-        }
-
-        private void SetTitle(string title)
-        {
-            Title = title;
-        }
-
-        protected override void OnNavigatingFrom(NavigatingCancelEventArgs e)
-        {
-            View.OnNavigatingFrom(e.SourcePageType);
+            return View.ChatTitle;
         }
 
         public void OnBackRequested(BackRequestedRoutedEventArgs args)
@@ -67,7 +50,9 @@ namespace Telegram.Views
 
         public void Activate(int sessionId)
         {
-            View.Activate(sessionId);
+            var viewModel = TypeResolver.Current.Resolve<DialogViewModel, IDialogDelegate>(View, sessionId);
+            DataContext = viewModel;
+            View.Activate(viewModel);
         }
 
         public void PopupOpened()

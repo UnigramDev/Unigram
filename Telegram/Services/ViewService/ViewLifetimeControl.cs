@@ -1,5 +1,5 @@
 //
-// Copyright Fela Ameghino 2015-2023
+// Copyright Fela Ameghino 2015-2024
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
@@ -28,8 +28,9 @@
 
 using System;
 using System.Collections.Concurrent;
-using System.Threading;
+using System.Threading.Tasks;
 using Telegram.Navigation;
+using Telegram.Views.Host;
 using Windows.UI.Core;
 using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
@@ -84,16 +85,46 @@ namespace Telegram.Services.ViewService
         #endregion
 
         #region WindowWrapper
-        public WindowContext WindowWrapper { get; }
         public Window Window { get; }
         #endregion
 
+        public static ViewLifetimeControl Facade()
+        {
+            return new ViewLifetimeControl(null);
+        }
+
+        public Task ConsolidateAsync()
+        {
+            if (Dispatcher.HasThreadAccess)
+            {
+                return ConsolidateAsyncImpl();
+            }
+
+            return Dispatcher.DispatchAsync(ConsolidateAsyncImpl);
+        }
+
+        private Task ConsolidateAsyncImpl()
+        {
+            if (Window.Current.Content is RootPage root)
+            {
+                root.PresentContent(null);
+                return Task.CompletedTask;
+            }
+
+            return WindowContext.Current.ConsolidateAsync();
+        }
+
         private ViewLifetimeControl(CoreWindow newWindow)
         {
-            WindowWrapper = WindowContext.Current;
-            Dispatcher = WindowWrapper.Dispatcher;
             Window = Window.Current;
-            Id = WindowWrapper.Id;
+            Dispatcher = WindowContext.Current.Dispatcher;
+            Id = ApplicationView.GetApplicationViewIdForWindow(Window.Current.CoreWindow);
+
+            if (newWindow == null)
+            {
+                // Only happens on Xbox
+                return;
+            }
 
             // This class will automatically tell the view when its time to close
             // or stay alive in a few cases
@@ -145,30 +176,9 @@ namespace Telegram.Services.ViewService
                 InternalReleased?.Invoke(this, new EventArgs());
                 WindowControlsMap.TryRemove(Id, out _);
 
-                static void handler(object sender, RoutedEventArgs e)
-                {
-                    if (sender is FrameworkElement element)
-                    {
-                        element.Loaded -= handler;
-                    }
-
-                    WindowContext.Current = null;
-                }
-
-                if (Window.Current.Content is FrameworkElement element)
-                {
-                    element.Loaded += handler;
-                }
-
                 // Explicitly calling Close breaks everything
                 Window.Current.Content = null;
                 Window.Current.Close();
-
-                // TODO: needed? From some tests, this prevented the whole Window root to be garbage collected
-                if (SynchronizationContext.Current is SecondaryViewSynchronizationContextDecorator decorator)
-                {
-                    SynchronizationContext.SetSynchronizationContext(decorator.Context);
-                }
             }
         }
 
@@ -182,17 +192,6 @@ namespace Telegram.Services.ViewService
             /*BUG: use this strange way to get Id as for ShareTarget hosted window on desktop version ApplicationView.GetForCurrentView() throws "Catastrofic failure" COMException.
               Link to question on msdn: https://social.msdn.microsoft.com/Forums/security/en-US/efa50111-043a-4007-8af8-2b53f72ba207/uwp-c-xaml-comexception-catastrofic-failure-due-to-applicationviewgetforcurrentview-in?forum=wpdevelop  */
             return WindowControlsMap.GetOrAdd(ApplicationView.GetApplicationViewIdForWindow(wnd), id => new ViewLifetimeControl(wnd));
-        }
-
-        /// <summary>
-        /// Tries to retrieve existing instance of <see cref="ViewLifetimeControl"/> for current <see cref="CoreWindow"/>
-        /// </summary>
-        /// <returns>Instance of <see cref="ViewLifetimeControl"/> that is associated with current window or <value>null</value> if no calls to <see cref="GetForCurrentView"/> were made
-        /// before.</returns>
-        public static ViewLifetimeControl TryGetForCurrentView()
-        {
-            WindowControlsMap.TryGetValue(ApplicationView.GetApplicationViewIdForWindow(Window.Current.CoreWindow), out ViewLifetimeControl res);
-            return res;
         }
 
         // Signals that the view is being interacted with by another view,

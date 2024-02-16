@@ -67,6 +67,7 @@
                                              ItemClick="Emojis_ItemClick" />
                     </Border>
                     <TextBlock x:Name="EmojisPermission"
+                               Visibility="Collapsed"
                                VerticalAlignment="Center"
                                TextAlignment="Center"
                                Margin="12"
@@ -80,6 +81,7 @@
                                                  x:Load="False" />
                     </Border>
                     <TextBlock x:Name="AnimationsPermission"
+                               Visibility="Collapsed"
                                VerticalAlignment="Center"
                                TextAlignment="Center"
                                Margin="12"
@@ -93,6 +95,7 @@
                                                x:Load="False" />
                     </Border>
                     <TextBlock x:Name="StickersPermission"
+                               Visibility="Collapsed"
                                VerticalAlignment="Center"
                                TextAlignment="Center"
                                Margin="12"

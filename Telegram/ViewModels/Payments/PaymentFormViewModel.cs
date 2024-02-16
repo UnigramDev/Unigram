@@ -1,5 +1,5 @@
 //
-// Copyright Fela Ameghino 2015-2023
+// Copyright Fela Ameghino 2015-2024
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
@@ -21,10 +21,21 @@ using Windows.UI.Xaml.Navigation;
 
 namespace Telegram.ViewModels.Payments
 {
+    public class PaymentFormArgs
+    {
+        public PaymentFormArgs(InputInvoice inputInvoice, PaymentForm paymentForm)
+        {
+            InputInvoice = inputInvoice;
+            PaymentForm = paymentForm;
+        }
+
+        public InputInvoice InputInvoice { get; }
+
+        public PaymentForm PaymentForm { get; }
+    }
+
     public class PaymentFormViewModel : ViewModelBase
     {
-        private readonly bool _save;
-
         public PaymentFormViewModel(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator)
             : base(clientService, settingsService, aggregator)
         {
@@ -57,17 +68,26 @@ namespace Telegram.ViewModels.Payments
             {
                 await InitializeForm(invoiceName);
             }
+            else if (parameter is PaymentFormArgs paymentForm)
+            {
+                await InitializeForm(paymentForm.InputInvoice, paymentForm.PaymentForm);
+            }
         }
 
         private async Task InitializeForm(InputInvoice invoice)
         {
-            IsReceipt = false;
-
-            var paymentForm = await ClientService.SendAsync(new GetPaymentForm(invoice, new ThemeParameters())) as PaymentForm;
+            var paymentForm = await ClientService.SendAsync(new GetPaymentForm(invoice, Theme.Current.Parameters)) as PaymentForm;
             if (paymentForm == null)
             {
                 return;
             }
+
+            await InitializeForm(invoice, paymentForm);
+        }
+
+        private async Task InitializeForm(InputInvoice invoice, PaymentForm paymentForm)
+        {
+            IsReceipt = false;
 
             InputInvoice = invoice;
             PaymentForm = paymentForm;

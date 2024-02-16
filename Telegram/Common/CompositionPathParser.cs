@@ -1,5 +1,5 @@
 //
-// Copyright Fela Ameghino 2015-2023
+// Copyright Fela Ameghino 2015-2024
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
@@ -41,43 +41,43 @@ namespace Telegram.Common
             return new CompositionPath(Parse(null, contours));
         }
 
-        public static CanvasGeometry Parse(ICanvasResourceCreator sender, IList<ClosedVectorPath> contours, float scale = 1.0f)
+        public static CanvasGeometry Parse(ICanvasResourceCreator sender, IList<ClosedVectorPath> contours)
         {
             using var builder = new CanvasPathBuilder(sender);
 
             foreach (var path in contours)
             {
-                static void BeginFigure(CanvasPathBuilder builder, Point point, float scale)
-                {
-                    builder.BeginFigure((float)point.X * scale, (float)point.Y * scale);
-                }
+                var open = true;
 
-                static void AddLine(CanvasPathBuilder builder, Point point, float scale)
+                for (int i = 0; i <= path.Commands.Count; i++)
                 {
-                    builder.AddLine((float)point.X * scale, (float)point.Y * scale);
-                }
-
-                var last = path.Commands[^1];
-                if (last is VectorPathCommandLine lastLine)
-                {
-                    BeginFigure(builder, lastLine.EndPoint, scale);
-                }
-                else if (last is VectorPathCommandCubicBezierCurve lastCubicBezierCurve)
-                {
-                    BeginFigure(builder, lastCubicBezierCurve.EndPoint, scale);
-                }
-
-                foreach (var command in path.Commands)
-                {
+                    var command = path.Commands[i % path.Commands.Count];
                     if (command is VectorPathCommandLine line)
                     {
-                        AddLine(builder, line.EndPoint, scale);
+                        var point = line.EndPoint;
+                        if (open)
+                        {
+                            open = false;
+                            builder.BeginFigure((float)point.X, (float)point.Y);
+                        }
+                        else
+                        {
+                            builder.AddLine((float)point.X, (float)point.Y);
+                        }
                     }
                     else if (command is VectorPathCommandCubicBezierCurve cubicBezierCurve)
                     {
-                        builder.AddCubicBezier(cubicBezierCurve.StartControlPoint.ToVector2(scale),
-                            cubicBezierCurve.EndControlPoint.ToVector2(scale),
-                            cubicBezierCurve.EndPoint.ToVector2(scale));
+                        if (open)
+                        {
+                            open = false;
+                            builder.BeginFigure((float)cubicBezierCurve.EndPoint.X, (float)cubicBezierCurve.EndPoint.Y);
+                        }
+                        else
+                        {
+                            builder.AddCubicBezier(cubicBezierCurve.StartControlPoint.ToVector2(),
+                                cubicBezierCurve.EndControlPoint.ToVector2(),
+                                cubicBezierCurve.EndPoint.ToVector2());
+                        }
                     }
                 }
 
@@ -120,50 +120,43 @@ namespace Telegram.Common
 
         public static CompositionAnimation CreateThumbnail(float width, float height, CompositionPath path, out ShapeVisual visual, bool animated = true)
         {
-            var transparent = Color.FromArgb(0x00, 0x7A, 0x8A, 0x96);
-            var foregroundColor = Color.FromArgb(0x33, 0x7A, 0x8A, 0x96);
             var backgroundColor = Color.FromArgb(0x33, 0x7A, 0x8A, 0x96);
 
-            var gradient = Window.Current.Compositor.CreateLinearGradientBrush();
-            gradient.StartPoint = new Vector2(0, 0);
-            gradient.EndPoint = new Vector2(1, 0);
-            gradient.ColorStops.Add(Window.Current.Compositor.CreateColorGradientStop(0.0f, transparent));
-            gradient.ColorStops.Add(Window.Current.Compositor.CreateColorGradientStop(0.5f, foregroundColor));
-            gradient.ColorStops.Add(Window.Current.Compositor.CreateColorGradientStop(1.0f, transparent));
-
-            var background = Window.Current.Compositor.CreateRectangleGeometry();
-            background.Size = new Vector2(width, height);
+            var background = Window.Current.Compositor.CreatePathGeometry(path);
             var backgroundShape = Window.Current.Compositor.CreateSpriteShape(background);
             backgroundShape.FillBrush = Window.Current.Compositor.CreateColorBrush(backgroundColor);
 
-            var foreground = Window.Current.Compositor.CreateRectangleGeometry();
-            foreground.Size = new Vector2(width, height);
-            var foregroundShape = Window.Current.Compositor.CreateSpriteShape(foreground);
-            foregroundShape.FillBrush = gradient;
-
-            var clip = Window.Current.Compositor.CreateGeometricClip(Window.Current.Compositor.CreatePathGeometry(path));
-            clip.ViewBox = Window.Current.Compositor.CreateViewBox();
-            clip.ViewBox.Size = new Vector2(width, height);
-            clip.ViewBox.Stretch = CompositionStretch.UniformToFill;
-
             visual = Window.Current.Compositor.CreateShapeVisual();
-            visual.Clip = clip;
             visual.Shapes.Add(backgroundShape);
-            visual.Shapes.Add(foregroundShape);
             visual.RelativeSizeAdjustment = Vector2.One;
             visual.ViewBox = Window.Current.Compositor.CreateViewBox();
             visual.ViewBox.Size = new Vector2(width, height);
-            visual.ViewBox.Stretch = CompositionStretch.UniformToFill;
+            visual.ViewBox.Stretch = CompositionStretch.Uniform;
 
             if (animated)
             {
+                var transparent = Color.FromArgb(0x00, 0x7A, 0x8A, 0x96);
+                var foregroundColor = Color.FromArgb(0x33, 0x7A, 0x8A, 0x96);
+
+                var gradient = Window.Current.Compositor.CreateLinearGradientBrush();
+                gradient.StartPoint = new Vector2(0, 0);
+                gradient.EndPoint = new Vector2(1, 0);
+                gradient.ColorStops.Add(Window.Current.Compositor.CreateColorGradientStop(0.0f, transparent));
+                gradient.ColorStops.Add(Window.Current.Compositor.CreateColorGradientStop(0.5f, foregroundColor));
+                gradient.ColorStops.Add(Window.Current.Compositor.CreateColorGradientStop(1.0f, transparent));
+
+                var foregroundShape = Window.Current.Compositor.CreateSpriteShape(background);
+                foregroundShape.FillBrush = gradient;
+
+                visual.Shapes.Add(foregroundShape);
+
                 var animation = Window.Current.Compositor.CreateVector2KeyFrameAnimation();
                 animation.InsertKeyFrame(0, new Vector2(-width, 0));
                 animation.InsertKeyFrame(1, new Vector2(width, 0));
                 animation.IterationBehavior = AnimationIterationBehavior.Forever;
                 animation.Duration = TimeSpan.FromSeconds(1);
 
-                foregroundShape.StartAnimation("Offset", animation);
+                gradient.StartAnimation("Offset", animation);
 
                 return animation;
             }
@@ -205,7 +198,7 @@ namespace Telegram.Common
             public PathSegment(SegmentType type = SegmentType.M, float[] data = null)
             {
                 this.type = type;
-                this.data = data ?? new float[0];
+                this.data = data ?? Array.Empty<float>();
             }
 
             public bool isAbsolute()

@@ -1,5 +1,5 @@
 //
-// Copyright Fela Ameghino 2015-2023
+// Copyright Fela Ameghino 2015-2024
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
@@ -14,8 +14,6 @@ using Telegram.Services;
 using Telegram.Td.Api;
 using Telegram.ViewModels.Delegates;
 using Telegram.Views.Popups;
-using Telegram.Views.Settings;
-using Telegram.Views.Supergroups;
 using Telegram.Views.Supergroups.Popups;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
@@ -511,12 +509,6 @@ namespace Telegram.ViewModels.Supergroups
             if (response is Ok)
             {
                 Delegate?.Hide();
-
-                if (NavigationService.CurrentPageType == typeof(SupergroupAddAdministratorPage))
-                {
-                    NavigationService.GoBack();
-                    NavigationService.Frame.ForwardStack.Clear();
-                }
             }
             else
             {
@@ -574,7 +566,7 @@ namespace Telegram.ViewModels.Supergroups
                 var confirm = await ShowPopupAsync(null, builder.ToString(), Strings.EditAdminTransferAlertTitle, primary, Strings.Cancel);
                 if (confirm == ContentDialogResult.Primary && canTransfer is CanTransferOwnershipResultPasswordNeeded)
                 {
-                    NavigationService.Navigate(typeof(SettingsPasswordPage));
+                    NavigationService.NavigateToPassword();
                 }
             }
             else if (canTransfer is CanTransferOwnershipResultOk)
@@ -617,12 +609,6 @@ namespace Telegram.ViewModels.Supergroups
             if (response is Ok)
             {
                 Delegate?.Hide();
-
-                if (NavigationService.CurrentPageType == typeof(SupergroupAddAdministratorPage))
-                {
-                    NavigationService.GoBack();
-                    NavigationService.Frame.ForwardStack.Clear();
-                }
             }
             else
             {

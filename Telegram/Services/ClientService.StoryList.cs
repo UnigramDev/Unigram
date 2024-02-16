@@ -1,5 +1,5 @@
 //
-// Copyright Fela Ameghino 2015-2023
+// Copyright Fela Ameghino 2015-2024
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
@@ -14,47 +14,23 @@ namespace Telegram.Services
 {
     public partial class ClientService
     {
-        private readonly NewDictionary<int, SortedSet<OrderedActiveStories>> _storyList = new();
-        private readonly DefaultDictionary<int, bool> _haveFullStoryList = new();
+        private readonly NewDictionary<StoryList, SortedSet<OrderedActiveStories>> _storyList = new(StoryListEqualityComparer.Instance);
+        private readonly DefaultDictionary<StoryList, bool> _haveFullStoryList = new(StoryListEqualityComparer.Instance);
 
         private void SetActiveStoriesPositions(ChatActiveStories next, ChatActiveStories prev)
         {
             Monitor.Enter(_storyList);
-            //Monitor.Enter(chat);
-
-            int prevIndex = -1;
-            int nextIndex;
 
             if (prev != null)
             {
-                prevIndex = prev.List switch
-                {
-                    StoryListArchive => 1,
-                    StoryListMain or _ => 0
-                };
-
-                var storyList = _storyList[prevIndex];
-                storyList?.Remove(new OrderedActiveStories(prev.ChatId, prev.Order));
+                _storyList[prev.List].Remove(new OrderedActiveStories(prev.ChatId, prev.Order));
             }
 
+            if (next.Order != 0)
             {
-                nextIndex = next.List switch
-                {
-                    StoryListArchive => 1,
-                    StoryListMain or _ => 0
-                };
-
-                var storyList = _storyList[nextIndex];
-                storyList?.Add(new OrderedActiveStories(next.ChatId, next.Order));
+                _storyList[next.List].Add(new OrderedActiveStories(next.ChatId, next.Order));
             }
 
-            // TODO: remove when this is added to TDLib.
-            if (prevIndex != nextIndex && prevIndex != -1)
-            {
-                _aggregator.Publish(new UpdateChatActiveStories(new ChatActiveStories(prev.ChatId, prev.List, 0, prev.MaxReadStoryId, prev.Stories)));
-            }
-
-            //Monitor.Exit(chat);
             Monitor.Exit(_storyList);
         }
 
@@ -62,19 +38,13 @@ namespace Telegram.Services
         {
             Monitor.Enter(_storyList);
 
-            var index = storyList switch
-            {
-                StoryListArchive => 1,
-                StoryListMain or _ => 0
-            };
-
             var count = offset + limit;
-            var sorted = _storyList[index];
+            var sorted = _storyList[storyList];
 
 #if MOCKUP
             _haveFullStoryList[index] = true;
 #else
-            if (!_haveFullStoryList[index] && count > sorted.Count)
+            if (!_haveFullStoryList[storyList] && count > sorted.Count)
             {
                 Monitor.Exit(_storyList);
 
@@ -85,7 +55,7 @@ namespace Telegram.Services
                     {
                         if (error.Code == 404)
                         {
-                            _haveFullStoryList[index] = true;
+                            _haveFullStoryList[storyList] = true;
                         }
                     }
 
@@ -158,4 +128,29 @@ namespace Telegram.Services
             }
         }
     }
+
+    class StoryListEqualityComparer : IEqualityComparer<StoryList>
+    {
+        public static readonly StoryListEqualityComparer Instance = new();
+
+        public bool Equals(StoryList x, StoryList y)
+        {
+            return x.AreTheSame(y);
+        }
+
+        public int GetHashCode(StoryList obj)
+        {
+            if (obj is StoryListMain)
+            {
+                return 0;
+            }
+            else if (obj is StoryListArchive)
+            {
+                return 1;
+            }
+
+            return -1;
+        }
+    }
+
 }

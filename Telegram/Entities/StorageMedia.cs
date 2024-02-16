@@ -1,5 +1,5 @@
 //
-// Copyright Fela Ameghino 2015-2023
+// Copyright Fela Ameghino 2015-2024
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
@@ -98,6 +98,8 @@ namespace Telegram.Entities
 
         public bool IsSecret => _ttl != null;
 
+        public bool IsScreenshot { get; set; }
+
         public virtual uint Width { get; }
         public virtual uint Height { get; }
 
@@ -175,66 +177,67 @@ namespace Telegram.Entities
             {
                 return null;
             }
-            else if (file.ContentType.Equals("video/mp4"))
+
+            BasicProperties basicProperties;
+            try
             {
-                return await StorageVideo.CreateAsync(file);
+                basicProperties = await file.GetBasicPropertiesAsync();
             }
-            else
+            catch
             {
-                return await StoragePhoto.CreateAsync(file);
+                return null;
             }
+
+            if (file.FileType.Equals(".jpeg", StringComparison.OrdinalIgnoreCase) ||
+                file.FileType.Equals(".jpg", StringComparison.OrdinalIgnoreCase) ||
+                file.FileType.Equals(".png", StringComparison.OrdinalIgnoreCase) ||
+                file.FileType.Equals(".bmp", StringComparison.OrdinalIgnoreCase) ||
+                file.FileType.Equals(".gif", StringComparison.OrdinalIgnoreCase))
+            {
+                var photo = await StoragePhoto.CreateAsync(file, basicProperties);
+                if (photo != null)
+                {
+                    return photo;
+                }
+            }
+            else if (file.FileType.Equals(".mp4", StringComparison.OrdinalIgnoreCase))
+            {
+                var video = await StorageVideo.CreateAsync(file, basicProperties);
+                if (video != null)
+                {
+                    return video;
+                }
+            }
+            else if (file.ContentType.StartsWith("audio/", StringComparison.OrdinalIgnoreCase))
+            {
+                var audio = await StorageAudio.CreateAsync(file, basicProperties);
+                if (audio != null)
+                {
+                    return audio;
+                }
+            }
+
+            return new StorageDocument(file, basicProperties);
         }
 
         public static async Task<IList<StorageMedia>> CreateAsync(IEnumerable<IStorageItem> items)
         {
             var results = new List<StorageMedia>();
 
-            foreach (StorageFile file in items.OfType<StorageFile>())
+            try
             {
-                if (file.FileType.Equals(".jpeg", StringComparison.OrdinalIgnoreCase) ||
-                    file.FileType.Equals(".jpg", StringComparison.OrdinalIgnoreCase) ||
-                    file.FileType.Equals(".png", StringComparison.OrdinalIgnoreCase) ||
-                    file.FileType.Equals(".bmp", StringComparison.OrdinalIgnoreCase) ||
-                    file.FileType.Equals(".gif", StringComparison.OrdinalIgnoreCase))
+                foreach (StorageFile file in items.OfType<StorageFile>())
                 {
-                    var photo = await StoragePhoto.CreateAsync(file);
-                    if (photo != null)
+                    var media = await CreateAsync(file);
+                    if (media != null)
                     {
-                        results.Add(photo);
-                    }
-                    else
-                    {
-                        results.Add(new StorageDocument(file, await file.GetBasicPropertiesAsync()));
+                        results.Add(media);
                     }
                 }
-                else if (file.FileType.Equals(".mp4", StringComparison.OrdinalIgnoreCase))
-                {
-                    var video = await StorageVideo.CreateAsync(file);
-                    if (video != null)
-                    {
-                        results.Add(video);
-                    }
-                    else
-                    {
-                        results.Add(new StorageDocument(file, await file.GetBasicPropertiesAsync()));
-                    }
-                }
-                else if (file.ContentType.StartsWith("audio/", StringComparison.OrdinalIgnoreCase))
-                {
-                    var audio = await StorageAudio.CreateAsync(file);
-                    if (audio != null)
-                    {
-                        results.Add(audio);
-                    }
-                    else
-                    {
-                        results.Add(new StorageDocument(file, await file.GetBasicPropertiesAsync()));
-                    }
-                }
-                else
-                {
-                    results.Add(new StorageDocument(file, await file.GetBasicPropertiesAsync()));
-                }
+            }
+            catch
+            {
+                // All the remote procedure calls must be wrapped in a try-catch block
             }
 
             return results;

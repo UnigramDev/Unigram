@@ -7,10 +7,12 @@
                        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
                        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
                        mc:Ignorable="d"
-                       PrimaryButtonText="OK">
+                       PrimaryButtonText="OK"
+                       Padding="24,12,24,24">
 
     <Grid>
         <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
             <RowDefinition />
         </Grid.RowDefinitions>
@@ -23,9 +25,18 @@
                                 Height="140"
                                 Margin="0,0,0,12" />
 
+        <TextBlock Text="{CustomResource ChangePhoneNumber}"
+                   FontSize="20"
+                   FontFamily="XamlAutoFontFamily"
+                   FontWeight="SemiBold"
+                   TextAlignment="Center"
+                   VerticalAlignment="Top"
+                   Margin="0,0,0,8"
+                   Grid.Row="1" />
+
         <TextBlock common:TextBlockHelper.Markdown="{CustomResource PhoneNumberHelp}"
                    Style="{StaticResource BodyTextBlockStyle}"
                    TextAlignment="Center"
-                   Grid.Row="1" />
+                   Grid.Row="2" />
     </Grid>
 </controls:ContentPopup>

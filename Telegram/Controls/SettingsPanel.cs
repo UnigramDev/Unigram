@@ -1,5 +1,5 @@
 ﻿//
-// Copyright Fela Ameghino 2015-2023
+// Copyright Fela Ameghino 2015-2024
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
@@ -28,8 +28,6 @@ namespace Telegram.Controls
 
         protected override Size MeasureOverride(Size availableSize)
         {
-            Logger.Debug();
-
             var accumulated = IsFooter ? 0 : 64d;
 
             foreach (UIElement child in Children)
@@ -60,8 +58,6 @@ namespace Telegram.Controls
 
         protected override Size ArrangeOverride(Size finalSize)
         {
-            Logger.Debug();
-
             var accumulated = IsFooter ? 0 : 64d;
 
             foreach (var child in Children)

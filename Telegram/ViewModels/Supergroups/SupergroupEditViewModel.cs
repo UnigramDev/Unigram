@@ -1,5 +1,5 @@
 //
-// Copyright Fela Ameghino 2015-2023
+// Copyright Fela Ameghino 2015-2024
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
@@ -17,6 +17,7 @@ using Telegram.Views;
 using Telegram.Views.Chats;
 using Telegram.Views.Popups;
 using Telegram.Views.Supergroups;
+using Telegram.Views.Supergroups.Popups;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
 
@@ -351,6 +352,14 @@ namespace Telegram.ViewModels.Supergroups
             }
         }
 
+        public void EditColor()
+        {
+            if (_chat is Chat chat)
+            {
+                NavigationService.Navigate(typeof(SupergroupProfileColorPage), chat.Id);
+            }
+        }
+
         public void Links()
         {
             if (_chat is Chat chat)
@@ -371,6 +380,8 @@ namespace Telegram.ViewModels.Supergroups
         {
             if (_chat is Chat chat)
             {
+                Logger.Info(chat.Type);
+
                 var updated = await ClientService.SendAsync(new GetChat(chat.Id)) as Chat ?? chat;
                 var popup = new DeleteChatPopup(ClientService, updated, null, false, true);
 
@@ -393,7 +404,7 @@ namespace Telegram.ViewModels.Supergroups
                 var response = await ClientService.SendAsync(request);
                 if (response is Ok)
                 {
-                    NavigationService.RemovePeerFromStack(chat.Id);
+                    NavigationService.RemoveChatFromStack(chat.Id);
                 }
                 else if (response is Error error)
                 {
@@ -408,7 +419,7 @@ namespace Telegram.ViewModels.Supergroups
         {
             if (_chat is Chat chat)
             {
-                NavigationService.Navigate(typeof(SupergroupReactionsPage), chat.Id);
+                NavigationService.ShowPopupAsync(typeof(SupergroupReactionsPopup), chat.Id);
             }
         }
 

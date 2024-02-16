@@ -1,5 +1,5 @@
 //
-// Copyright Fela Ameghino 2015-2023
+// Copyright Fela Ameghino 2015-2024
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
@@ -11,6 +11,7 @@ using System.Collections.Generic;
 using System.Numerics;
 using Telegram.Common;
 using Telegram.Native;
+using Telegram.Td.Api;
 using Windows.Foundation;
 using Windows.UI;
 using Windows.UI.Composition;
@@ -144,7 +145,6 @@ namespace Telegram.Controls
                 return;
             }
 
-            Logger.Debug();
             InvalidateMeasure();
 
             await this.UpdateLayoutAsync();
@@ -159,8 +159,8 @@ namespace Telegram.Controls
             fadeIn.InsertKeyFrame(0, 0);
             fadeIn.InsertKeyFrame(1, 1);
 
-            var visual2 = ElementCompositionPreview.GetElementVisual(_placeholder);
-            var visual1 = ElementCompositionPreview.GetElementVisual(_presenter);
+            var visual2 = ElementComposition.GetElementVisual(_placeholder);
+            var visual1 = ElementComposition.GetElementVisual(_presenter);
 
             visual1.StartAnimation("Opacity", fadeIn);
 
@@ -241,8 +241,6 @@ namespace Telegram.Controls
 
         protected override Size MeasureOverride(Size availableSize)
         {
-            Logger.Debug();
-
             availableSize = base.MeasureOverride(availableSize);
 
             if (HorizontalAlignment != HorizontalAlignment.Stretch)
@@ -265,8 +263,6 @@ namespace Telegram.Controls
 
         protected override Size ArrangeOverride(Size finalSize)
         {
-            Logger.Debug();
-
             finalSize = base.ArrangeOverride(finalSize);
 
             if (_placeholder.DesiredSize.Width == 0)
@@ -279,7 +275,7 @@ namespace Telegram.Controls
 
             var left = (float)Padding.Left;
             var top = (float)Padding.Top;
-            var rects = PlaceholderImageHelper.Current.LineMetrics(PlaceholderText ?? string.Empty, _placeholder.FontSize, _placeholder.DesiredSize.Width - Padding.Left - Padding.Right, IsPlaceholderRightToLeft);
+            var rects = PlaceholderImageHelper.Current.LineMetrics(PlaceholderText ?? string.Empty, Array.Empty<TextEntity>(), _placeholder.FontSize, _placeholder.DesiredSize.Width - Padding.Left - Padding.Right, IsPlaceholderRightToLeft);
 
             foreach (var rect in rects)
             {

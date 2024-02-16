@@ -1,5 +1,5 @@
 //
-// Copyright Fela Ameghino 2015-2023
+// Copyright Fela Ameghino 2015-2024
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
@@ -7,20 +7,20 @@
 using System;
 using System.Numerics;
 using Telegram.Common;
+using Telegram.Controls;
 using Telegram.Streams;
 using Telegram.ViewModels.Authorization;
 using Telegram.ViewModels.Delegates;
 using Windows.Foundation;
 using Windows.UI.Composition;
 using Windows.UI.Xaml;
-using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Hosting;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Navigation;
 
 namespace Telegram.Views.Authorization
 {
-    public sealed partial class AuthorizationPage : Page, ISignInDelegate
+    public sealed partial class AuthorizationPage : CorePage, ISignInDelegate
     {
         public AuthorizationViewModel ViewModel => DataContext as AuthorizationViewModel;
 
@@ -35,12 +35,18 @@ namespace Telegram.Views.Authorization
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
             ViewModel.PropertyChanged += OnPropertyChanged;
-            Frame.ForwardStack.Clear();
         }
 
         protected override void OnNavigatedFrom(NavigationEventArgs e)
         {
             ViewModel.PropertyChanged -= OnPropertyChanged;
+        }
+
+        protected override void OnLayoutMetricsChanged(SystemOverlayMetrics metrics)
+        {
+            Back.HorizontalAlignment = metrics.LeftInset > 0
+                ? HorizontalAlignment.Right
+                : HorizontalAlignment.Left;
         }
 
         private void OnPropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
@@ -80,11 +86,11 @@ namespace Telegram.Views.Authorization
 
             await PhonePanel.UpdateLayoutAsync();
 
-            var logo1 = ElementCompositionPreview.GetElementVisual(Logo1);
-            var logo2 = ElementCompositionPreview.GetElementVisual(Logo2);
-            var token = ElementCompositionPreview.GetElementVisual(TokenRoot);
-            var inner1 = ElementCompositionPreview.GetElementVisual(TokenInnerPanel);
-            var inner2 = ElementCompositionPreview.GetElementVisual(PhoneInnerPanel);
+            var logo1 = ElementComposition.GetElementVisual(Logo1);
+            var logo2 = ElementComposition.GetElementVisual(Logo2);
+            var token = ElementComposition.GetElementVisual(TokenRoot);
+            var inner1 = ElementComposition.GetElementVisual(TokenInnerPanel);
+            var inner2 = ElementComposition.GetElementVisual(PhoneInnerPanel);
 
             var transform1 = Logo2Panel.TransformToVisual(Logo1Panel);
             var point1 = transform1.TransformPoint(new Point()).ToVector2();
@@ -162,11 +168,11 @@ namespace Telegram.Views.Authorization
 
             await TokenPanel.UpdateLayoutAsync();
 
-            var logo1 = ElementCompositionPreview.GetElementVisual(Logo1);
-            var logo2 = ElementCompositionPreview.GetElementVisual(Logo2);
-            var token = ElementCompositionPreview.GetElementVisual(TokenRoot);
-            var inner1 = ElementCompositionPreview.GetElementVisual(TokenInnerPanel);
-            var inner2 = ElementCompositionPreview.GetElementVisual(PhoneInnerPanel);
+            var logo1 = ElementComposition.GetElementVisual(Logo1);
+            var logo2 = ElementComposition.GetElementVisual(Logo2);
+            var token = ElementComposition.GetElementVisual(TokenRoot);
+            var inner1 = ElementComposition.GetElementVisual(TokenInnerPanel);
+            var inner2 = ElementComposition.GetElementVisual(PhoneInnerPanel);
 
             var transform1 = Logo2Panel.TransformToVisual(Logo1Panel);
             var point1 = transform1.TransformPoint(new Point()).ToVector2();
@@ -281,7 +287,7 @@ namespace Telegram.Views.Authorization
             //opacity.InsertKeyFrame(1.0f, 1);
             //token.StartAnimation("Opacity", opacity);
 
-            var placeholder = ElementCompositionPreview.GetElementVisual(TokenPlaceholder);
+            var placeholder = ElementComposition.GetElementVisual(TokenPlaceholder);
 
             opacity.InsertKeyFrame(0.0f, 1);
             opacity.InsertKeyFrame(1.0f, 0);

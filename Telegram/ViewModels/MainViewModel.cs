@@ -1,5 +1,5 @@
 //
-// Copyright Fela Ameghino 2015-2023
+// Copyright Fela Ameghino 2015-2024
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
@@ -11,6 +11,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
 using Telegram.Common;
+using Telegram.Controls;
 using Telegram.Controls.Media;
 using Telegram.Navigation;
 using Telegram.Navigation.Services;
@@ -25,7 +26,6 @@ using Telegram.Views;
 using Telegram.Views.Folders;
 using Telegram.Views.Popups;
 using Telegram.Views.Settings.Popups;
-using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
 
@@ -78,7 +78,7 @@ namespace Telegram.ViewModels
             SearchChats = new SearchChatsViewModel(clientService, settingsService, aggregator);
             Stories = new StoryListViewModel(clientService, settingsService, aggregator, new StoryListMain());
             Topics = new TopicListViewModel(clientService, settingsService, aggregator, pushService, 0);
-            Contacts = new ContactsViewModel(clientService, settingsService, aggregator);
+            Contacts = new ContactsViewModel(clientService, settingsService, voipService, aggregator);
             Calls = new CallsViewModel(clientService, settingsService, aggregator);
             Settings = new SettingsViewModel(clientService, settingsService, storageService, aggregator, settingsSearchService);
 
@@ -89,22 +89,24 @@ namespace Telegram.ViewModels
             Children.Add(Settings);
 
             // Any additional child
-            Children.Add(_voipService as ViewModelBase);
             Children.Add(SearchChats);
             Children.Add(Topics);
             Children.Add(Stories);
 
+            UpdateChatFolders(ClientService.ChatFolders, ClientService.MainChatListPosition);
             Subscribe();
         }
 
         public void Dispose()
         {
             Aggregator.Unsubscribe(Chats.Items);
+            Aggregator.Unsubscribe(Stories.Items);
             Aggregator.Unsubscribe(this);
 
             if (Dispatcher != null && Dispatcher.HasThreadAccess)
             {
                 Chats.Items.Clear();
+                Stories.Items.Clear();
             }
 
             Children.Clear();
@@ -155,11 +157,6 @@ namespace Telegram.ViewModels
             set => Set(ref _isUpdateAvailable, value);
         }
 
-        public void ReturnToCall()
-        {
-            _voipService.Show();
-        }
-
         public void Handle(UpdateAppVersion update)
         {
             BeginOnUIThread(() => UpdateAppVersion(update.Update));
@@ -200,7 +197,7 @@ namespace Telegram.ViewModels
         {
             foreach (var folder in _folders)
             {
-                if (folder.ChatList is ChatListFolder && folder.ChatList.ListEquals(update.ChatList))
+                if (folder.ChatList is ChatListFolder && folder.ChatList.AreTheSame(update.ChatList))
                 {
                     BeginOnUIThread(() => folder.UpdateCount(update));
                 }
@@ -251,11 +248,16 @@ namespace Telegram.ViewModels
                 var folders = chatFolders.ToList();
                 var index = Math.Min(mainChatListPosition, folders.Count);
 
-                folders.Insert(index, new ChatFolderInfo { Id = Constants.ChatListMain, Title = Strings.FilterAllChats, Icon = new ChatFolderIcon("All") });
+                folders.Insert(index, new ChatFolderInfo
+                {
+                    Id = Constants.ChatListMain,
+                    Title = Strings.FilterAllChats,
+                    Icon = new ChatFolderIcon("All")
+                });
 
-                Merge(Folders, folders);
+                Merge(Folders, folders, selected, out bool updateSelection);
 
-                if (Chats.Items.ChatList is ChatListFolder already && already.ChatFolderId != selected)
+                if (SelectedFolder == null || updateSelection || (Chats.Items.ChatList is ChatListFolder already && already.ChatFolderId != selected))
                 {
                     SelectedFolder = Folders[0];
                 }
@@ -285,10 +287,14 @@ namespace Telegram.ViewModels
                 Folders.Clear();
                 SelectedFolder = ChatFolderViewModel.Main;
             }
+
+            Chats.Delegate?.UpdateChatFolders();
         }
 
-        private void Merge(IList<ChatFolderViewModel> destination, IList<ChatFolderInfo> origin)
+        private void Merge(IList<ChatFolderViewModel> destination, IList<ChatFolderInfo> origin, int selectedFolderId, out bool updateSelection)
         {
+            updateSelection = false;
+
             if (destination.Count > 0)
             {
                 for (int i = 0; i < destination.Count; i++)
@@ -307,6 +313,11 @@ namespace Telegram.ViewModels
 
                     if (index == -1)
                     {
+                        if (selectedFolderId == user.ChatFolderId)
+                        {
+                            updateSelection = true;
+                        }
+
                         destination.Remove(user);
                         i--;
                     }
@@ -355,26 +366,17 @@ namespace Telegram.ViewModels
 
         public List<IEnumerable<ChatFolderViewModel>> NavigationItems { get; private set; }
 
+        private ChatFolderViewModel _selectedFolder;
         public ChatFolderViewModel SelectedFolder
         {
-            get
-            {
-                if (Chats.Items.ChatList is ChatListFolder folder && _folders != null)
-                {
-                    return _folders.FirstOrDefault(x => x.ChatFolderId == folder.ChatFolderId);
-                }
-
-                return _folders?.FirstOrDefault(x => x.ChatList is ChatListMain);
-            }
+            get => _selectedFolder;
             set
             {
-                if (Chats.Items.ChatList.ListEquals(value.ChatList))
+                if (Set(ref _selectedFolder, value))
                 {
-                    return;
+                    Logger.Info();
+                    Chats.SetFolder(value.ChatList);
                 }
-
-                Chats.SetFolder(value.ChatList);
-                RaisePropertyChanged();
             }
         }
 
@@ -406,18 +408,54 @@ namespace Telegram.ViewModels
 
             if (mode == NavigationMode.New)
             {
-                Task.Run(() => _contactsService.JumpListAsync());
-                Task.Run(() => _cloudUpdateService.UpdateAsync(false));
+                _ = Task.Run(() => _contactsService.JumpListAsync());
             }
 
-            if (ApiInfo.IsPackagedRelease && WatchDog.HasCrashedInLastSession && !_shown)
+            if (ApiInfo.IsPackagedRelease && WatchDog.HasCrashedInLastSession && !_shown && DateTime.UtcNow.Date != SettingsService.Current.Diagnostics.LastCrashReported.Date)
             {
                 _shown = true;
 
-                var confirm = await ShowPopupAsync("It seems that the app terminated unexpectedly. Do you want to report this problem?", "Something went wrong", "OK", "Cancel");
-                if (confirm == ContentDialogResult.Primary)
+                var layoutCycle = SettingsService.Current.Diagnostics.LastCrashWasLayoutCycle;
+                SettingsService.Current.Diagnostics.LastCrashWasLayoutCycle = false;
+
+                if (layoutCycle)
                 {
-                    MessageHelper.NavigateToUsername(ClientService, NavigationService, "unigraminsiders", null, null);
+                    var confirm = await ShowPopupAsync("The app terminated unexpectedly due to a layout cycle, please report this problem immediately.", "Something went wrong", "OK", "Cancel");
+                    if (confirm == ContentDialogResult.Primary)
+                    {
+                        var chat = await ClientService.SendAsync(new SearchPublicChat("unigraminsiders")) as Chat;
+                        if (chat != null)
+                        {
+                            var service = new DeviceInfoService();
+                            var payload = "Hi, I just had a layout cycle, can you please help me? My app version is {0}, running {1} on a {2}.";
+                            payload = string.Format(payload, service.ApplicationVersion, service.FullSystemVersion, service.DeviceModel);
+
+                            ClientService.Send(new SendMessage(chat.Id, 0, null, null, null, new InputMessageText(new FormattedText(payload, Array.Empty<TextEntity>()), null, false)));
+                            NavigationService.NavigateToChat(chat);
+                        }
+                    }
+                }
+                else
+                {
+                    // For now, we just ignore any other crash.
+                    return;
+
+                    var confirm = await ShowPopupAsync("It seems that the app terminated unexpectedly. Do you want to report this problem?", "Something went wrong", "OK", "Cancel");
+                    if (confirm == ContentDialogResult.Primary)
+                    {
+                        SettingsService.Current.Diagnostics.LastCrashReported = DateTime.UtcNow;
+
+                        var chat = await ClientService.SendAsync(new SearchPublicChat("unigraminsiders")) as Chat;
+                        if (chat != null)
+                        {
+                            var service = new DeviceInfoService();
+                            var payload = "Hi, I just had a crash, can you please help me? My app version is {0}, running {1} on a {2}.";
+                            payload = string.Format(payload, service.ApplicationVersion, service.FullSystemVersion, service.DeviceModel);
+
+                            ClientService.Send(new SendMessage(chat.Id, 0, null, null, null, new InputMessageText(new FormattedText(payload, Array.Empty<TextEntity>()), null, false)));
+                            NavigationService.NavigateToChat(chat);
+                        }
+                    }
                 }
             }
 
@@ -445,7 +483,7 @@ namespace Telegram.ViewModels
         public SettingsViewModel Settings { get; }
 
 
-        
+
         public void ConfirmSession()
         {
             var session = ClientService.UnconfirmedSession;
@@ -464,7 +502,7 @@ namespace Telegram.ViewModels
             var markdown = new FormattedText(message, new[] { entity });
             var text = ClientEx.ParseMarkdown(markdown);
 
-            Window.Current.ShowTeachingTip(text, new LocalFileSource("ms-appx:///Assets/Toasts/Success.tgs"));
+            ToastPopup.Show(text, new LocalFileSource("ms-appx:///Assets/Toasts/Success.tgs"));
         }
 
         public async void DenySession()
@@ -484,7 +522,7 @@ namespace Telegram.ViewModels
 
         public async void UpdateApp()
         {
-            await CloudUpdateService.LaunchAsync(Dispatcher);
+            await CloudUpdateService.LaunchAsync(Dispatcher, false);
         }
 
         public async void CreateSecretChat()
@@ -539,10 +577,14 @@ namespace Telegram.ViewModels
 
         public async void AddToFolder(ChatFolderViewModel folder)
         {
-            var viewModel = TLContainer.Current.Resolve<FolderViewModel>();
+            var viewModel = TypeResolver.Current.Resolve<FolderViewModel>(SessionId);
             await viewModel.NavigatedToAsync(folder.ChatFolderId, NavigationMode.New, null);
-            await viewModel.AddIncludeAsync();
-            await viewModel.SendAsync();
+
+            if (viewModel.Folder != null)
+            {
+                await viewModel.AddIncludeAsync();
+                await viewModel.SendAsync();
+            }
         }
 
         public async void MarkFolderAsRead(ChatFolderViewModel folder)
@@ -584,13 +626,13 @@ namespace Telegram.ViewModels
 
     public class ChatFolderViewModel : BindableBase
     {
-        public static ChatFolderViewModel Main => new ChatFolderViewModel(new ChatListMain())
+        public static ChatFolderViewModel Main => new(new ChatListMain())
         {
             ChatFolderId = Constants.ChatListMain,
             Title = Strings.FilterAllChats
         };
 
-        public static ChatFolderViewModel Archive => new ChatFolderViewModel(new ChatListArchive())
+        public static ChatFolderViewModel Archive => new(new ChatListArchive())
         {
             ChatFolderId = Constants.ChatListArchive,
             Title = Strings.ArchivedChats

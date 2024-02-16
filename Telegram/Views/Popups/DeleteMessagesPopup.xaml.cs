@@ -1,5 +1,5 @@
 //
-// Copyright Fela Ameghino 2015-2023
+// Copyright Fela Ameghino 2015-2024
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Telegram.Common;
 using Telegram.Controls;
+using Telegram.Converters;
 using Telegram.Services;
 using Telegram.Td.Api;
 using Windows.UI.Xaml;
@@ -16,14 +17,14 @@ namespace Telegram.Views.Popups
 {
     public sealed partial class DeleteMessagesPopup : ContentPopup
     {
-        public DeleteMessagesPopup(IClientService clientService, IList<Message> messages)
+        public DeleteMessagesPopup(IClientService clientService, long savedMessagesTopicId, IList<Message> messages)
         {
             InitializeComponent();
 
             Title = messages.Count == 1
-                ? Strings.DeleteSingleMessagesTitle
-                : string.Format(Strings.DeleteMessagesTitle, Locale.Declension(Strings.R.messages, messages.Count));
-            PrimaryButtonText = Strings.OK;
+                ? savedMessagesTopicId == 0 ? Strings.DeleteSingleMessagesTitle : Strings.UnsaveSingleMessagesTitle
+                : string.Format(savedMessagesTopicId == 0 ? Strings.DeleteMessagesTitle : Strings.UnsaveMessagesTitle, Locale.Declension(Strings.R.messages, messages.Count));
+            PrimaryButtonText = savedMessagesTopicId == 0 ? Strings.Delete : Strings.Remove;
             SecondaryButtonText = Strings.Cancel;
 
             var first = messages.FirstOrDefault();
@@ -41,7 +42,7 @@ namespace Telegram.Views.Popups
             var user = clientService.GetUser(chat);
 
             var sameUser = messages.All(x => x.SenderId.AreTheSame(first.SenderId));
-            if (sameUser && !first.IsOutgoing && clientService.TryGetSupergroup(chat, out Supergroup supergroup) && !supergroup.IsChannel)
+            if (sameUser && savedMessagesTopicId == 0 && !first.IsOutgoing && clientService.TryGetSupergroup(chat, out Supergroup supergroup) && !supergroup.IsChannel)
             {
                 RevokeCheck.Visibility = Visibility.Collapsed;
                 ReportSpamCheck.Visibility = Visibility.Visible;
@@ -96,7 +97,13 @@ namespace Telegram.Views.Popups
                 var canBeDeletedOnlyForSelf = messages.All(x => x.CanBeDeletedOnlyForSelf);
                 var anyCanBeDeletedForAllUsers = messages.Any(x => x.IsOutgoing && x.CanBeDeletedForAllUsers);
 
-                if (chat.Type is ChatTypePrivate or ChatTypeBasicGroup)
+                if (savedMessagesTopicId != 0)
+                {
+                    TextBlockHelper.SetMarkdown(Message, messages.Count == 1
+                        ? Strings.AreYouSureUnsaveSingleMessage
+                        : Strings.AreYouSureUnsaveFewMessages);
+                }
+                else if (chat.Type is ChatTypePrivate or ChatTypeBasicGroup)
                 {
                     if (anyCanBeDeletedForAllUsers && !canBeDeletedForAllUsers)
                     {
@@ -132,9 +139,17 @@ namespace Telegram.Views.Popups
                 }
                 else
                 {
-                    TextBlockHelper.SetMarkdown(Message, messages.Count == 1
-                        ? Strings.AreYouSureDeleteSingleMessage
-                        : Strings.AreYouSureDeleteFewMessages);
+                    if (messages.Count == 1 && messages[0].Content is MessagePremiumGiveaway giveaway)
+                    {
+                        Title = Strings.BoostingGiveawayDeleteMsgTitle;
+                        TextBlockHelper.SetMarkdown(Message, string.Format(Strings.BoostingGiveawayDeleteMsgText, Formatter.DateAt(giveaway.Parameters.WinnersSelectionDate)));
+                    }
+                    else
+                    {
+                        TextBlockHelper.SetMarkdown(Message, messages.Count == 1
+                            ? Strings.AreYouSureDeleteSingleMessage
+                            : Strings.AreYouSureDeleteFewMessages);
+                    }
                 }
             }
         }

@@ -16,7 +16,7 @@ namespace winrt::Telegram::Native::implementation
         void Close();
 
     private:        
-        winrt::slim_mutex m_lock;
+        std::mutex m_lock;
         HANDLE m_handle;
     };
 }

@@ -1,11 +1,12 @@
 ﻿//
-// Copyright Fela Ameghino 2015-2023
+// Copyright Fela Ameghino 2015-2024
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
 using System;
 using Telegram.Td.Api;
+using Telegram.ViewModels.Drawers;
 using Windows.ApplicationModel;
 using Path = System.IO.Path;
 
@@ -26,6 +27,24 @@ namespace Telegram.Streams
             FileSize = file.Size;
 
             Id = file.Id;
+        }
+
+        public LocalFileSource(Sticker sticker)
+            : this(sticker.StickerValue)
+        {
+            Width = sticker.Width;
+            Height = sticker.Height;
+            Outline = sticker.Outline;
+            NeedsRepainting = sticker.FullType is StickerFullTypeCustomEmoji { NeedsRepainting: true };
+        }
+
+        public LocalFileSource(StickerViewModel sticker)
+            : this(sticker.StickerValue)
+        {
+            Width = sticker.Width;
+            Height = sticker.Height;
+            Outline = sticker.Outline;
+            NeedsRepainting = sticker.FullType is StickerFullTypeCustomEmoji { NeedsRepainting: true };
         }
 
         public LocalFileSource(string path)

@@ -1,5 +1,5 @@
 //
-// Copyright Fela Ameghino 2015-2023
+// Copyright Fela Ameghino 2015-2024
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
@@ -81,8 +81,6 @@ namespace Telegram.Controls
 
         private void OnSizeChanged(object sender, SizeChangedEventArgs e)
         {
-            Logger.Debug();
-
             UpdateSpectrumPointer(new Point(_color.H / 360 * e.NewSize.Width, (1 - _color.S) * e.NewSize.Height), false);
         }
 

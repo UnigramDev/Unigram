@@ -1,5 +1,5 @@
 //
-// Copyright Fela Ameghino 2015-2023
+// Copyright Fela Ameghino 2015-2024
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
@@ -17,7 +17,9 @@ using Telegram.Td.Api;
 using Telegram.ViewModels.Settings.Privacy;
 using Telegram.Views.Popups;
 using Telegram.Views.Settings;
+using Telegram.Views.Settings.LoginEmail;
 using Telegram.Views.Settings.Password;
+using Telegram.Views.Settings.Popups;
 using Telegram.Views.Settings.Privacy;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -126,6 +128,14 @@ namespace Telegram.ViewModels.Settings
                 }
             });
 
+            ClientService.Send(new GetNewChatPrivacySettings(), result =>
+            {
+                if (result is NewChatPrivacySettings settings)
+                {
+                    BeginOnUIThread(() => AllowNewChatsFromUnknownUsers = settings.AllowNewChatsFromUnknownUsers);
+                }
+            });
+
             if (ApiInfo.IsPackagedRelease && ClientService.Options.CanIgnoreSensitiveContentRestrictions)
             {
                 ClientService.Send(new GetOption("ignore_sensitive_content_restrictions"), result =>
@@ -153,6 +163,13 @@ namespace Telegram.ViewModels.Settings
         public SettingsPrivacyAllowCallsViewModel AllowCallsRules => _allowCallsRules;
         public SettingsPrivacyAllowChatInvitesViewModel AllowChatInvitesRules => _allowChatInvitesRules;
         public SettingsPrivacyAllowPrivateVoiceAndVideoNoteMessagesViewModel AllowPrivateVoiceAndVideoNoteMessages => _allowPrivateVoiceAndVideoNoteMessages;
+
+        private bool? _allowNewChatsFromUnknownUsers;
+        public bool? AllowNewChatsFromUnknownUsers
+        {
+            get => _allowNewChatsFromUnknownUsers;
+            set => Set(ref _allowNewChatsFromUnknownUsers, value);
+        }
 
         private int _accountTtl;
         public int AccountTtl
@@ -309,22 +326,39 @@ namespace Telegram.ViewModels.Settings
             {
                 if (passwordState.HasPassword)
                 {
-                    NavigationService.Navigate(typeof(SettingsPasswordPage));
+                    var popup = new SettingsPasswordConfirmPopup(ClientService, passwordState);
+
+                    var confirm = await ShowPopupAsync(popup);
+                    if (confirm == ContentDialogResult.Primary && !string.IsNullOrEmpty(popup.Password))
+                    {
+                        NavigationService.Navigate(typeof(SettingsPasswordPage), popup.Password);
+                    }
+                    else if (popup.RecoveryEmailAddressCodeInfo != null)
+                    {
+                        var emailCode = new SettingsPasswordEmailCodePopup(ClientService, popup.RecoveryEmailAddressCodeInfo, SettingsPasswordEmailCodeType.Recovery);
+
+                        if (ContentDialogResult.Primary == await ShowPopupAsync(emailCode))
+                        {
+                            await ShowPopupAsync(new SettingsPasswordDonePopup());
+                        }
+                    }
                 }
                 else if (passwordState.RecoveryEmailAddressCodeInfo != null)
                 {
-                    var state = new NavigationState
-                    {
-                        { "pattern", passwordState.RecoveryEmailAddressCodeInfo.EmailAddressPattern },
-                        { "length", passwordState.RecoveryEmailAddressCodeInfo.Length }
-                    };
+                    var emailCode = new SettingsPasswordEmailCodePopup(ClientService, passwordState.RecoveryEmailAddressCodeInfo, SettingsPasswordEmailCodeType.Continue);
 
-                    NavigationService.Navigate(typeof(SettingsPasswordConfirmPage), state: state);
+                    if (ContentDialogResult.Primary == await ShowPopupAsync(emailCode))
+                    {
+                        await ShowPopupAsync(new SettingsPasswordDonePopup());
+                    }
                 }
                 else
                 {
-                    NavigationService.Navigate(typeof(SettingsPasswordIntroPage));
+                    passwordState = await NavigationService.NavigateToPasswordAsync();
                 }
+
+                HasPassword = passwordState?.HasPassword ?? false;
+                HasEmailAddress = passwordState?.LoginEmailAddressPattern.Length > 0;
             }
         }
 
@@ -336,10 +370,29 @@ namespace Telegram.ViewModels.Settings
         public async void ChangeEmail()
         {
             var response = await ClientService.SendAsync(new GetPasswordState());
-            if (response is PasswordState passwordState)
+            if (response is PasswordState passwordState && passwordState.LoginEmailAddressPattern.Length > 0)
             {
                 var confirm = await ShowPopupAsync(Strings.EmailLoginChangeMessage, passwordState.LoginEmailAddressPattern, Strings.ChangeEmail, Strings.Cancel);
+                if (confirm == ContentDialogResult.Primary)
+                {
+                    var address = new SettingsLoginEmailAddressPopup(ClientService);
+
+                    var coconfirm = await ShowPopupAsync(address);
+                    if (coconfirm == ContentDialogResult.Primary)
+                    {
+                        await ShowPopupAsync(new SettingsLoginEmailCodePopup(ClientService, address.CodeInfo));
+                    }
+                }
             }
+            else
+            {
+                HasEmailAddress = false;
+            }
+        }
+
+        public void ArchiveSettings()
+        {
+            ShowPopupAsync(new SettingsArchivePopup(ClientService));
         }
 
         public async void ClearDrafts()
@@ -473,22 +526,15 @@ namespace Telegram.ViewModels.Settings
             NavigationService.Navigate(typeof(SettingsPrivacyAllowChatInvitesPage));
         }
 
-        public async void OpenVoiceMessages()
+        public void OpenVoiceMessages()
         {
-            if (ClientService.IsPremium)
-            {
-                NavigationService.Navigate(typeof(SettingsPrivacyAllowPrivateVoiceAndVideoNoteMessagesPage));
-            }
-            else if (ClientService.IsPremiumAvailable)
-            {
-                var confirm = await ShowPopupAsync(Strings.PrivacyVoiceMessagesPremiumOnly, Strings.PrivacyVoiceMessages, Strings.OK, Strings.Cancel);
-                if (confirm == ContentDialogResult.Primary)
-                {
-                    NavigationService.ShowPromo(/*new PremiumSourceFeature(new PremiumFeaturePrivateVoiceAndVideoMessages)*/);
-                }
-            }
+            NavigationService.Navigate(typeof(SettingsPrivacyAllowPrivateVoiceAndVideoNoteMessagesPage));
         }
 
+        public void OpenMessages()
+        {
+            NavigationService.Navigate(typeof(SettingsPrivacyNewChatPage));
+        }
 
         public override async void RaisePropertyChanged([CallerMemberName] string propertyName = null)
         {

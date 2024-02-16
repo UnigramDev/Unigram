@@ -11,9 +11,10 @@
                        Background="{ThemeResource PageBackgroundDarkBrush}"
                        PrimaryButtonText="Button1"
                        PrimaryButtonClick="ContentDialog_PrimaryButtonClick"
-                       SecondaryButtonClick="ContentDialog_SecondaryButtonClick">
+                       SecondaryButtonClick="ContentDialog_SecondaryButtonClick"
+                       Padding="0,12,0,0">
 
-    <Grid Margin="-24,-12,-24,-24">
+    <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition />

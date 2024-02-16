@@ -1,5 +1,5 @@
 //
-// Copyright Fela Ameghino 2015-2023
+// Copyright Fela Ameghino 2015-2024
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
@@ -135,7 +135,7 @@ namespace Telegram.Views.Popups
             //}
 
             var title = Strings.ProxySettings;
-            var link = new Uri(MeUrlPrefixConverter.Convert(TLContainer.Current.Resolve<IClientService>(), $"socks?{string.Join("&", builder)}"));
+            var link = new Uri(MeUrlPrefixConverter.Convert(TypeResolver.Current.Resolve<IClientService>(), $"socks?{string.Join("&", builder)}"));
 
             // TODO: currently not used
             //await new ChooseChatsPopup().ShowAsync(link, title);

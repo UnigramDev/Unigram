@@ -29,24 +29,29 @@ namespace Telegram.Views.Stories.Popups
             SecondaryButtonText = Strings.Close;
         }
 
-        private void OnLoaded(object sender, RoutedEventArgs e)
+        private void OnOpened(ContentDialog sender, ContentDialogOpenedEventArgs args)
         {
             ShowHideSkeleton();
 
             if (ScrollingHost.ItemsPanelRoot != null)
             {
-                ScrollingHost.ItemsPanelRoot.MinHeight = ScrollingHost.ActualHeight;
+                ScrollingHost.ItemsPanelRoot.MinHeight = ScrollingHost.ActualHeight - 24;
             }
         }
 
         public override void OnNavigatedTo()
         {
             var story = ViewModel.Story;
-            if (story?.InteractionInfo != null && story.CanGetViewers && (story.ClientService.IsPremium || !story.HasExpiredViewers))
+            if (story?.InteractionInfo != null && story.CanGetInteractions && (story.ClientService.IsPremium || story.InteractionInfo.ReactionCount > 0))
             {
                 ViewModel.Items.CollectionChanged += OnCollectionChanged;
 
-                if (story.InteractionInfo.ViewCount >= 9)
+                var premium = story.ClientService.IsPremium;
+                var count = story.HasExpiredViewers
+                    ? story.InteractionInfo.ReactionCount 
+                    : story.InteractionInfo.ViewCount;
+
+                if (count >= 9)
                 {
                     VerticalContentAlignment = VerticalAlignment.Stretch;
                     ScrollingHost.Height = double.NaN;
@@ -54,38 +59,42 @@ namespace Telegram.Views.Stories.Popups
                 else
                 {
                     VerticalContentAlignment = VerticalAlignment.Center;
-                    ScrollingHost.Height = story.InteractionInfo.ViewCount * 48;
+                    ScrollingHost.Height = count * 48 + 24;
                 }
 
                 PrimaryButtonText = string.Empty;
 
-                SearchField.Visibility = story.InteractionInfo.ViewCount >= 15
+                SearchField.Visibility = premium && story.InteractionInfo.ViewCount >= 15
                     ? Visibility.Visible
                     : Visibility.Collapsed;
 
-                SortBy.Visibility = story.InteractionInfo.ReactionCount >= 10
+                SortBy.Visibility =  premium && story.InteractionInfo.ReactionCount >= 10
                     ? Visibility.Visible
                     : Visibility.Collapsed;
 
-                Navigation.Visibility = story.PrivacySettings is not StoryPrivacySettingsEveryone || story.InteractionInfo.ViewCount < 20
-                    ? Visibility.Collapsed
-                    : Visibility.Visible;
-
-                if (story.PrivacySettings is not StoryPrivacySettingsEveryone || story.InteractionInfo.ViewCount < 20)
+                if (story.PrivacySettings is not StoryPrivacySettingsEveryone || story.InteractionInfo.ViewCount < 20 || !premium)
                 {
                     Navigation.Visibility = Visibility.Collapsed;
-                    Title = Locale.Declension(Strings.R.Views, story.InteractionInfo.ViewCount);
+                    Title = premium
+                        ? Locale.Declension(Strings.R.Views, story.InteractionInfo.ViewCount)
+                        : Locale.Declension(Strings.R.Likes, story.InteractionInfo.ReactionCount);
 
-                    LayoutRoot.Margin = new Thickness(-24, 0, -24, -24);
+                    Padding = new Thickness(0, 24, 0, 0);
                     SortBy.Margin = new Thickness(0, -36, 24, 12);
+
+                    ExpiredFooter.Visibility = count < story.InteractionInfo.ViewCount
+                        ? Visibility.Visible
+                        : Visibility.Collapsed;
                 }
                 else
                 {
                     Navigation.Visibility = Visibility.Visible;
                     Title = string.Empty;
 
-                    LayoutRoot.Margin = new Thickness(-24, -24, -24, -24);
+                    Padding = new Thickness(0);
                     SortBy.Margin = new Thickness(0, 0, 24, 0);
+
+                    ExpiredFooter.Visibility = Visibility.Collapsed;
                 }
             }
             else
@@ -110,7 +119,9 @@ namespace Telegram.Views.Stories.Popups
                     ? Locale.Declension(Strings.R.Views, story.InteractionInfo.ViewCount)
                     : Strings.StatisticViews;
 
-                LayoutRoot.Margin = new Thickness(-24, -24, -24, -24);
+                Padding = new Thickness(0);
+
+                ExpiredFooter.Visibility = Visibility.Collapsed;
             }
         }
 
@@ -137,39 +148,37 @@ namespace Telegram.Views.Stories.Popups
 
         private void OnContextRequested(UIElement sender, ContextRequestedEventArgs args)
         {
-            var element = sender as FrameworkElement;
-            var viewer = ScrollingHost.ItemFromContainer(sender) as StoryViewer;
-
-            if (viewer == null || !ViewModel.ClientService.TryGetUser(viewer.UserId, out User user))
+            var interaction = ScrollingHost.ItemFromContainer(sender) as StoryInteraction;
+            if (interaction == null || !ViewModel.ClientService.TryGetUser(interaction.ActorId, out User user))
             {
                 return;
             }
 
             var flyout = new MenuFlyout();
 
-            if (viewer.BlockList is null)
+            if (interaction.BlockList is null)
             {
-                flyout.CreateFlyoutItem(ViewModel.HideStories, viewer, string.Format(Strings.StoryHideFrom, user.FirstName), Icons.StoriesOff);
+                flyout.CreateFlyoutItem(ViewModel.HideStories, interaction, string.Format(Strings.StoryHideFrom, user.FirstName), Icons.StoriesOff);
             }
-            else if (viewer.BlockList is BlockListStories)
+            else if (interaction.BlockList is BlockListStories)
             {
-                flyout.CreateFlyoutItem(ViewModel.ShowStories, viewer, string.Format(Strings.StoryShowTo, user.FirstName), Icons.Stories);
+                flyout.CreateFlyoutItem(ViewModel.ShowStories, interaction, string.Format(Strings.StoryShowTo, user.FirstName), Icons.Stories);
             }
 
             if (user.IsContact)
             {
-                flyout.CreateFlyoutItem(DeleteContact, viewer, Strings.DeleteContact, Icons.Delete, destructive: true);
+                flyout.CreateFlyoutItem(DeleteContact, interaction, Strings.DeleteContact, Icons.Delete, destructive: true);
             }
-            else if (viewer.BlockList is not BlockListMain)
+            else if (interaction.BlockList is not BlockListMain)
             {
-                flyout.CreateFlyoutItem(BlockUser, viewer, Strings.BlockUser, Icons.HandRight, destructive: true);
+                flyout.CreateFlyoutItem(BlockUser, interaction, Strings.BlockUser, Icons.HandRight, destructive: true);
             }
-            else if (viewer.BlockList is BlockListMain)
+            else if (interaction.BlockList is BlockListMain)
             {
-                flyout.CreateFlyoutItem(ViewModel.UnblockUser, viewer, Strings.Unblock, Icons.HandRight);
+                flyout.CreateFlyoutItem(ViewModel.UnblockUser, interaction, Strings.Unblock, Icons.HandRight);
             }
 
-            args.ShowAt(flyout, element);
+            flyout.ShowAt(sender, args);
         }
 
         private void OnContainerContentChanging(ListViewBase sender, ContainerContentChangingEventArgs args)
@@ -183,11 +192,11 @@ namespace Telegram.Views.Stories.Popups
                 var cell = content.Children[0] as ProfileCell;
                 var animated = content.Children[1] as CustomEmojiIcon;
 
-                if (args.Item is StoryViewer viewer)
+                if (args.Item is StoryInteraction interaction)
                 {
                     cell.UpdateStoryViewer(ViewModel.ClientService, args, OnContainerContentChanging);
-                    animated.Source = viewer.ChosenReactionType != null
-                        ? new ReactionFileSource(ViewModel.ClientService, viewer.ChosenReactionType)
+                    animated.Source = interaction.Type is StoryInteractionTypeView view && view.ChosenReactionType != null
+                        ? new ReactionFileSource(ViewModel.ClientService, view.ChosenReactionType)
                         : null;
                 }
             }
@@ -199,14 +208,14 @@ namespace Telegram.Views.Stories.Popups
             ViewModel.OpenChat(e.ClickedItem);
         }
 
-        private void DeleteContact(StoryViewer viewer)
+        private void DeleteContact(StoryInteraction interaction)
         {
-            ViewModel.DeleteContact(viewer, ScrollingHost.ContainerFromItem(viewer));
+            ViewModel.DeleteContact(interaction, ScrollingHost.ContainerFromItem(interaction));
         }
 
-        private void BlockUser(StoryViewer viewer)
+        private void BlockUser(StoryInteraction interaction)
         {
-            ViewModel.BlockUser(viewer, ScrollingHost.ContainerFromItem(viewer));
+            ViewModel.BlockUser(interaction, ScrollingHost.ContainerFromItem(interaction));
         }
 
         private void SortBy_ContextRequested(object sender, RoutedEventArgs e)
@@ -251,6 +260,11 @@ namespace Telegram.Views.Stories.Popups
 
         private void ShowSkeleton()
         {
+            if (ViewModel?.Story?.InteractionInfo == null)
+            {
+                return;
+            }
+
             var size = ScrollingHost.ActualSize;
             var itemHeight = 6 + 36 + 6;
 

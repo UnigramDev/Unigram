@@ -1,5 +1,5 @@
 //
-// Copyright Fela Ameghino 2015-2023
+// Copyright Fela Ameghino 2015-2024
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
@@ -8,6 +8,9 @@ using Microsoft.Graphics.Canvas.Geometry;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Numerics;
+using Telegram.Common;
+using Telegram.Controls.Media;
+using Telegram.Navigation;
 using Telegram.Services;
 using Telegram.Streams;
 using Telegram.Td.Api;
@@ -43,11 +46,11 @@ namespace Telegram.Controls.Messages
         {
             InitializeComponent();
 
-            var root = ElementCompositionPreview.GetElementVisual(this);
+            var root = ElementComposition.GetElementVisual(this);
             root.Clip = root.Compositor.CreateInsetClip();
 
-            _textVisual1 = ElementCompositionPreview.GetElementVisual(TextLabel1);
-            _textVisual2 = ElementCompositionPreview.GetElementVisual(TextLabel2);
+            _textVisual1 = ElementComposition.GetElementVisual(TextLabel1);
+            _textVisual2 = ElementComposition.GetElementVisual(TextLabel2);
 
             _textVisual = _textVisual1;
 
@@ -84,7 +87,7 @@ namespace Telegram.Controls.Messages
             ElementCompositionPreview.SetIsTranslationEnabled(parent, true);
         }
 
-        private readonly Queue<(Chat, MessageViewModel, bool, int, int)> _queue = new Queue<(Chat, MessageViewModel, bool, int, int)>();
+        private readonly Queue<(Chat, MessageViewModel, bool, int, int)> _queue = new();
         private bool _playing;
 
         public void UpdateMessage(Chat chat, MessageViewModel message, bool known, int value, int maximum, bool intermediate)
@@ -249,8 +252,8 @@ namespace Telegram.Controls.Messages
             _collapsed = !show;
             Visibility = Visibility.Visible;
 
-            var parent = ElementCompositionPreview.GetElementVisual(_parent);
-            var visual = ElementCompositionPreview.GetElementVisual(this);
+            var parent = ElementComposition.GetElementVisual(_parent);
+            var visual = ElementComposition.GetElementVisual(this);
             visual.Clip = visual.Compositor.CreateInsetClip();
 
             var batch = visual.Compositor.CreateScopedBatch(CompositionBatchTypes.Animation);
@@ -259,11 +262,7 @@ namespace Telegram.Controls.Messages
                 visual.Clip = null;
                 parent.Properties.InsertVector3("Translation", Vector3.Zero);
 
-                if (show)
-                {
-                    _collapsed = false;
-                }
-                else
+                if (_collapsed)
                 {
                     Visibility = Visibility.Collapsed;
                 }
@@ -335,7 +334,7 @@ namespace Telegram.Controls.Messages
             }
         }
 
-        protected override void SetText(IClientService clientService, MessageSender sender, string title, string service, FormattedText text)
+        protected override void SetText(IClientService clientService, bool outgoing, MessageSender sender, string title, string service, FormattedText text, bool quote, bool white)
         {
             _alternativeText = title + ": ";
             TitleLabel.Text = title;
@@ -345,16 +344,25 @@ namespace Telegram.Controls.Messages
 
             if (!string.IsNullOrEmpty(service))
             {
-                _alternativeText += service += ", ";
+                _alternativeText += service;
+
+                if (!string.IsNullOrEmpty(text?.Text))
+                {
+                    _alternativeText += ", " + text.Text;
+                }
+            }
+            else if (!string.IsNullOrEmpty(text?.Text))
+            {
+                _alternativeText += text.Text;
             }
 
             if (!string.IsNullOrEmpty(text?.Text) && !string.IsNullOrEmpty(service))
             {
-                _alternativeText += ", " + text.Text;
                 serviceShow.Text += ", ";
             }
 
             var messageShow = _textVisual == _textVisual1 ? MessageLabel2 : MessageLabel1;
+            var labelShow = _textVisual == _textVisual1 ? TextLabel2 : TextLabel1;
             messageShow.Inlines.Clear();
 
             if (text != null)
@@ -379,14 +387,15 @@ namespace Telegram.Controls.Messages
                         //MessageLabel.Inlines.Add(new Run { Text = clean.Substring(entity.Offset, entity.Length), FontFamily = BootStrapper.Current.Resources["SpoilerFontFamily"] as FontFamily });
 
                         var player = new CustomEmojiIcon();
+                        player.LoopCount = 0;
                         player.Source = new CustomEmojiFileSource(clientService, customEmoji.CustomEmojiId);
-                        player.Margin = new Thickness(0, -4, 0, -4);
-                        player.IsHitTestVisible = false;
+                        player.Style = BootStrapper.Current.Resources["MessageCustomEmojiStyle"] as Style;
 
                         var inline = new InlineUIContainer();
-                        inline.Child = player;
+                        inline.Child = new CustomEmojiContainer(labelShow, player, -2);
 
                         messageShow.Inlines.Add(inline);
+                        messageShow.Inlines.Add(Icons.ZWNJ);
 
                         previous = entity.Offset + entity.Length;
                     }
@@ -418,7 +427,7 @@ namespace Telegram.Controls.Messages
         }
     }
 
-    public class MessagePinnedLine : Control
+    public class MessagePinnedLine : ControlEx
     {
         private readonly CompositionSpriteShape _back;
         private readonly CompositionSpriteShape _fore;
@@ -464,6 +473,23 @@ namespace Telegram.Controls.Messages
             _maskPath = mask;
 
             ElementCompositionPreview.SetElementChildVisual(this, visual);
+
+            Connected += OnLoaded;
+            Disconnected += OnUnloaded;
+        }
+
+        private void OnLoaded(object sender, RoutedEventArgs e)
+        {
+            if (_strokeToken == 0 && _fore != null)
+            {
+                Stroke?.RegisterColorChangedCallback(OnStrokeChanged, ref _strokeToken);
+                OnStrokeChanged(Stroke, SolidColorBrush.ColorProperty);
+            }
+        }
+
+        private void OnUnloaded(object sender, RoutedEventArgs e)
+        {
+            Stroke?.UnregisterColorChangedCallback(ref _strokeToken);
         }
 
         #region Stroke
@@ -482,20 +508,27 @@ namespace Telegram.Controls.Messages
         private static void OnStrokeChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             var sender = d as MessagePinnedLine;
-            var solid = e.NewValue as SolidColorBrush;
+            var prev = e.OldValue as SolidColorBrush;
+            var next = e.NewValue as SolidColorBrush;
 
-            if (e.OldValue is SolidColorBrush old && sender._strokeToken != 0)
-            {
-                old.UnregisterPropertyChangedCallback(SolidColorBrush.ColorProperty, sender._strokeToken);
-            }
+            sender.OnStrokeChanged(prev, next);
+        }
 
-            if (solid == null || sender._fore == null)
+        private void OnStrokeChanged(SolidColorBrush oldValue, SolidColorBrush newValue)
+        {
+            oldValue?.UnregisterColorChangedCallback(ref _strokeToken);
+
+            if (newValue == null || _fore == null)
             {
                 return;
             }
 
-            sender._fore.FillBrush = Window.Current.Compositor.CreateColorBrush(solid.Color);
-            sender._strokeToken = solid.RegisterPropertyChangedCallback(SolidColorBrush.ColorProperty, sender.OnStrokeChanged);
+            _fore.FillBrush = Window.Current.Compositor.CreateColorBrush(newValue.Color);
+
+            if (IsConnected)
+            {
+                newValue.RegisterColorChangedCallback(OnStrokeChanged, ref _strokeToken);
+            }
         }
 
         private void OnStrokeChanged(DependencyObject sender, DependencyProperty dp)

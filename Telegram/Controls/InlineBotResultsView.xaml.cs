@@ -1,5 +1,5 @@
 //
-// Copyright Fela Ameghino 2015-2023
+// Copyright Fela Ameghino 2015-2024
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
@@ -83,7 +83,7 @@ namespace Telegram.Controls
             {
                 if (content.Children[0] is Image image)
                 {
-                    image.Source = new BitmapImage(UriEx.ToLocal(file.Local.Path));
+                    image.Source = UriEx.ToBitmap(file.Local.Path);
                 }
             }
         }
@@ -98,7 +98,7 @@ namespace Telegram.Controls
                 }
                 else
                 {
-                    image.Source = new BitmapImage(UriEx.ToLocal(file.Local.Path));
+                    image.Source = UriEx.ToBitmap(file.Local.Path);
                 }
             }
         }
@@ -150,11 +150,11 @@ namespace Telegram.Controls
             {
                 if (sender.ItemsPanel == VerticalStack)
                 {
-                    args.ItemContainer = new ListViewItem();
+                    args.ItemContainer = new TextListViewItem();
                 }
                 else
                 {
-                    args.ItemContainer = new GridViewItem
+                    args.ItemContainer = new TextGridViewItem
                     {
                         Margin = new Thickness(2)
                     };
@@ -206,7 +206,7 @@ namespace Telegram.Controls
 
                     if (file.Local.IsDownloadingCompleted)
                     {
-                        image.Source = new BitmapImage(UriEx.ToLocal(file.Local.Path));
+                        image.Source = UriEx.ToBitmap(file.Local.Path);
                     }
                     else
                     {
@@ -345,7 +345,7 @@ namespace Telegram.Controls
                 {
                     if (file.Local.IsDownloadingCompleted)
                     {
-                        thumb.Source = new BitmapImage(UriEx.ToLocal(file.Local.Path));
+                        thumb.Source = UriEx.ToBitmap(file.Local.Path);
                     }
                     else
                     {
@@ -367,6 +367,8 @@ namespace Telegram.Controls
                     thumb.Source = PlaceholderImage.GetNameForChat(title.Text, title.Text.GetHashCode());
                 }
             }
+
+            args.Handled = true;
         }
 
         private async void ItemsWrapGrid_Loading(FrameworkElement sender, object args)

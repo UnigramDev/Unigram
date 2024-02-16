@@ -1,5 +1,5 @@
 //
-// Copyright Fela Ameghino 2015-2023
+// Copyright Fela Ameghino 2015-2024
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
@@ -9,6 +9,7 @@ using System.Numerics;
 using System.Runtime.CompilerServices;
 using Telegram.Controls.Cells;
 using Telegram.Converters;
+using Telegram.Common;
 using Telegram.Td.Api;
 using Telegram.ViewModels;
 using Windows.UI;
@@ -20,7 +21,7 @@ using Windows.UI.Xaml.Media;
 
 namespace Telegram.Controls.Messages
 {
-    public sealed class MessageFooter : Control
+    public sealed class MessageFooter : ControlEx
     {
         private MessageTicksState _ticksState;
         private long _ticksHash;
@@ -39,32 +40,22 @@ namespace Telegram.Controls.Messages
         {
             DefaultStyleKey = typeof(MessageFooter);
 
-            Loaded += OnLoaded;
-            Unloaded += OnUnloaded;
+            Connected += OnLoaded;
+            Disconnected += OnUnloaded;
         }
 
         private void OnLoaded(object sender, RoutedEventArgs e)
         {
-            if (Stroke is SolidColorBrush stroke && _strokeToken == 0 && _container != null)
+            if (_strokeToken == 0 && _shapes != null)
             {
-                var brush = Window.Current.Compositor.CreateColorBrush(stroke.Color);
-
-                foreach (var shape in _shapes)
-                {
-                    shape.StrokeBrush = brush;
-                }
-
-                _strokeToken = stroke.RegisterPropertyChangedCallback(SolidColorBrush.ColorProperty, OnStrokeChanged);
+                Stroke?.RegisterColorChangedCallback(OnStrokeChanged, ref _strokeToken);
+                OnStrokeChanged(Stroke, SolidColorBrush.ColorProperty);
             }
         }
 
         private void OnUnloaded(object sender, RoutedEventArgs e)
         {
-            if (Stroke is SolidColorBrush stroke && _strokeToken != 0)
-            {
-                stroke.UnregisterPropertyChangedCallback(SolidColorBrush.ColorProperty, _strokeToken);
-                _strokeToken = 0;
-            }
+            Stroke?.UnregisterColorChangedCallback(ref _strokeToken);
         }
 
         #region InitializeComponent
@@ -131,23 +122,23 @@ namespace Telegram.Controls.Messages
         {
             if (message.SchedulingState is MessageSchedulingStateSendAtDate sendAtDate)
             {
-                _dateLabel = Formatter.Date(sendAtDate.SendDate);
+                _dateLabel = Formatter.Time(sendAtDate.SendDate);
             }
             else if (message.SchedulingState is MessageSchedulingStateSendWhenOnline)
             {
                 _dateLabel = string.Empty;
             }
-            else if (message.ForwardInfo?.Origin is MessageForwardOriginMessageImport)
+            else if (message.ImportInfo != null)
             {
-                var original = Formatter.ToLocalTime(message.ForwardInfo.Date);
+                var original = Formatter.ToLocalTime(message.ImportInfo.Date);
                 var date = Formatter.ShortDate.Format(original);
                 var time = Formatter.ShortTime.Format(original);
 
-                _dateLabel = string.Format("{0}, {1} {2} {3}", date, time, "Imported", Formatter.Date(message.Date));
+                _dateLabel = string.Format("{0}, {1} {2} {3}", date, time, "Imported", Formatter.Time(message.Date));
             }
             else if (message.Date > 0)
             {
-                _dateLabel = Formatter.Date(message.Date);
+                _dateLabel = Formatter.Time(message.Date);
             }
             else
             {
@@ -190,7 +181,7 @@ namespace Telegram.Controls.Messages
             {
                 _authorLabel = $"{message.AuthorSignature}, ";
             }
-            else if (message.ForwardInfo?.Origin is MessageForwardOriginChannel fromChannel && !string.IsNullOrEmpty(fromChannel.AuthorSignature))
+            else if (message.ForwardInfo?.Origin is MessageOriginChannel fromChannel && !string.IsNullOrEmpty(fromChannel.AuthorSignature))
             {
                 _authorLabel = $"{fromChannel.AuthorSignature}, ";
             }
@@ -464,7 +455,7 @@ namespace Telegram.Controls.Messages
         private void OnStrokeChanged(DependencyObject sender, DependencyProperty dp)
         {
             var solid = sender as SolidColorBrush;
-            if (solid == null || _container == null)
+            if (solid == null || _shapes == null)
             {
                 return;
             }

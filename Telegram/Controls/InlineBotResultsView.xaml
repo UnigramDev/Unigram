@@ -123,7 +123,7 @@
                                           FontWeight="SemiBold"
                                           Padding="12,3,12,5"
                                           Margin="4"
-                                          Height="32"/>
+                                          Height="32" />
                 </ListView.Header>
             </ListView>
         </Grid>

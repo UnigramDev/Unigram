@@ -1,5 +1,5 @@
 //
-// Copyright Fela Ameghino 2015-2023
+// Copyright Fela Ameghino 2015-2024
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
@@ -11,9 +11,9 @@ using Telegram.Common;
 using Telegram.Controls;
 using Telegram.Services.ViewService;
 using Telegram.Views;
+using Telegram.Views.Settings;
 using Windows.ApplicationModel.Core;
 using Windows.Foundation;
-using Windows.System;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media.Animation;
@@ -29,7 +29,7 @@ namespace Telegram.Navigation.Services
 
         object Content { get; }
 
-        bool Navigate(Type page, object parameter = null, NavigationState state = null, NavigationTransitionInfo infoOverride = null);
+        bool Navigate(Type page, object parameter = null, NavigationState state = null, NavigationTransitionInfo infoOverride = null, bool navigationStackEnabled = true);
 
         event EventHandler<NavigatingEventArgs> Navigating;
 
@@ -113,6 +113,12 @@ namespace Telegram.Navigation.Services
     // DOCS: https://github.com/Windows-XAML/Template10/wiki/Docs-%7C-NavigationService
     public partial class NavigationService : INavigationService
     {
+        private static readonly HashSet<Type> _unallowedTypes = new HashSet<Type>
+        {
+            typeof(SettingsPasswordPage),
+            typeof(SettingsPasscodePage)
+        };
+
         private readonly IViewService viewService = new ViewService();
         public FrameFacade FrameFacade { get; }
         public bool IsInMainView { get; }
@@ -138,14 +144,14 @@ namespace Telegram.Navigation.Services
 
         public void GoBackAt(int index, bool back = true)
         {
-            while (Frame.BackStackDepth > index + 1)
+            while (FrameFacade.BackStackDepth > index + 1)
             {
                 RemoveFromBackStack(index + 1);
             }
 
-            if (Frame.CanGoBack && back)
+            if (FrameFacade.CanGoBack && back)
             {
-                Frame.GoBack();
+                FrameFacade.GoBack();
             }
             else
             {
@@ -186,9 +192,9 @@ namespace Telegram.Navigation.Services
 
         public NavigationService(Frame frame, int session, string id)
         {
-            IsInMainView = CoreApplication.MainView == CoreApplication.GetCurrentView();
+            IsInMainView = WindowContext.Current.IsInMainView;
+            Dispatcher = WindowContext.Current.Dispatcher;
             SessionId = session;
-            Dispatcher = new DispatcherContext(DispatcherQueue.GetForCurrentThread());
             FrameFacade = new FrameFacade(this, frame, id);
             FrameFacade.Navigating += (s, e) =>
             {
@@ -204,7 +210,7 @@ namespace Telegram.Navigation.Services
                     {
                         if (page is HostedPage hosted)
                         {
-                            BackStack.Add(new NavigationStackItem(CurrentPageType, CurrentPageParam, hosted.Title, hosted.NavigationMode));
+                            BackStack.Add(new NavigationStackItem(CurrentPageType, CurrentPageParam, hosted.GetTitle(), hosted.NavigationMode));
                         }
                         else
                         {
@@ -233,12 +239,20 @@ namespace Telegram.Navigation.Services
 
                     if (page is IActivablePage cleanup)
                     {
-                        cleanup.Deactivate(e.SourcePageType != e.TargetPageType);
+                        cleanup.Deactivate(e.SourcePageType != page.GetType());
                     }
                 }
             };
             FrameFacade.Navigated += async (s, e) =>
             {
+                if (e.NavigationMode == NavigationMode.Back && Frame.ForwardStack.Count > 0)
+                {
+                    if (_unallowedTypes.Contains(Frame.ForwardStack[0].SourcePageType))
+                    {
+                        Frame.ForwardStack.Clear();
+                    }
+                }
+
                 var parameter = e.Parameter;
                 if (parameter is string cacheKey && e.SourcePageType == typeof(ChatPage))
                 {
@@ -279,9 +293,9 @@ namespace Telegram.Navigation.Services
             }
         }
 
-        private INavigable ViewModelForPage(Page page)
+        private INavigable ViewModelForPage(Page page, bool allowCreate = false)
         {
-            if (page.DataContext is not INavigable or null)
+            if (page.DataContext is not INavigable or null && allowCreate)
             {
                 // to support dependency injection, but keeping it optional.
                 var viewModel = BootStrapper.Current.ViewModelForPage(page, SessionId);
@@ -342,6 +356,10 @@ namespace Telegram.Navigation.Services
                 {
                     cleanup.Activate(SessionId);
                 }
+                else if (page is BlankPage blank)
+                {
+                    blank.Activate(SessionId);
+                }
 
                 //if (mode == NavigationMode.New)
                 //{
@@ -349,7 +367,7 @@ namespace Telegram.Navigation.Services
                 //    pageState?.Clear();
                 //}
 
-                var dataContext = ViewModelForPage(page);
+                var dataContext = ViewModelForPage(page, true);
                 if (dataContext != null)
                 {
                     // prepare for state load
@@ -391,8 +409,12 @@ namespace Telegram.Navigation.Services
 
                     void OnClosed(ContentDialog sender, ContentDialogClosedEventArgs args)
                     {
-                        viewModel.NavigatedFrom(null, false);
-                        popup.Closed -= OnClosed;
+                        if (popup.IsFinalized)
+                        {
+                            viewModel.NavigatedFrom(null, false);
+                            popup.OnNavigatedFrom();
+                            popup.Closed -= OnClosed;
+                        }
                     }
 
                     popup.DataContext = viewModel;
@@ -410,7 +432,7 @@ namespace Telegram.Navigation.Services
 
         public event EventHandler<NavigatingEventArgs> Navigating;
 
-        public bool Navigate(Type page, object parameter = null, NavigationState state = null, NavigationTransitionInfo infoOverride = null)
+        public bool Navigate(Type page, object parameter = null, NavigationState state = null, NavigationTransitionInfo infoOverride = null, bool navigationStackEnabled = true)
         {
             Logger.Info($"Page: {page}, Parameter: {parameter}, NavigationTransitionInfo: {infoOverride}");
 
@@ -455,7 +477,7 @@ namespace Telegram.Navigation.Services
                 CacheKeyToChatId[cacheKey] = chatId;
             }
 
-            return FrameFacade.Navigate(page, parameter, infoOverride);
+            return FrameFacade.Navigate(page, parameter, infoOverride, navigationStackEnabled);
         }
 
         public event EventHandler<CancelEventArgs<Type>> BeforeSavingNavigation;

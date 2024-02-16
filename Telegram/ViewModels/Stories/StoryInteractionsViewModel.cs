@@ -1,4 +1,9 @@
-﻿using System;
+﻿//
+// Copyright Fela Ameghino 2015-2024
+//
+// Distributed under the GNU General Public License v3.0. (See accompanying
+// file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
+//
 using System.Threading;
 using System.Threading.Tasks;
 using Telegram.Collections;
@@ -10,7 +15,6 @@ using Telegram.Services;
 using Telegram.Streams;
 using Telegram.Td.Api;
 using Telegram.ViewModels.Stories;
-using Telegram.Views;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Data;
@@ -103,9 +107,9 @@ namespace Telegram.ViewModels
             return Task.CompletedTask;
         }
 
-        public async void BlockUser(StoryViewer viewer, DependencyObject container)
+        public async void BlockUser(StoryInteraction interaction, DependencyObject container)
         {
-            if (ClientService.TryGetUser(viewer.UserId, out User user))
+            if (ClientService.TryGetUser(interaction.ActorId, out User user))
             {
                 var confirm = await MessagePopup.ShowAsync(
                     container as FrameworkElement,
@@ -117,15 +121,15 @@ namespace Telegram.ViewModels
 
                 if (confirm == ContentDialogResult.Primary)
                 {
-                    viewer.BlockList = new BlockListMain();
-                    ClientService.Send(new SetMessageSenderBlockList(new MessageSenderUser(viewer.UserId), new BlockListMain()));
+                    interaction.BlockList = new BlockListMain();
+                    ClientService.Send(new SetMessageSenderBlockList(interaction.ActorId, new BlockListMain()));
                 }
             }
         }
 
-        public async void DeleteContact(StoryViewer viewer, DependencyObject container)
+        public async void DeleteContact(StoryInteraction interaction, DependencyObject container)
         {
-            if (ClientService.TryGetUser(viewer.UserId, out User user))
+            if (ClientService.TryGetUser(interaction.ActorId, out User user))
             {
                 var confirm = await MessagePopup.ShowAsync(
                     container as FrameworkElement,
@@ -137,41 +141,41 @@ namespace Telegram.ViewModels
 
                 if (confirm == ContentDialogResult.Primary)
                 {
-                    ClientService.Send(new RemoveContacts(new[] { viewer.UserId }));
+                    ClientService.Send(new RemoveContacts(new[] { user.Id }));
                 }
             }
         }
 
-        public void HideStories(StoryViewer viewer)
+        public void HideStories(StoryInteraction interaction)
         {
-            if (ClientService.TryGetUser(viewer.UserId, out User user))
+            if (ClientService.TryGetUser(interaction.ActorId, out User user))
             {
-                viewer.BlockList = new BlockListStories();
+                interaction.BlockList = new BlockListStories();
 
-                ClientService.Send(new SetMessageSenderBlockList(new MessageSenderUser(user.Id), new BlockListStories()));
-                Window.Current.ShowTeachingTip(string.Format(Strings.StoryHiddenHint, user.FirstName), new LocalFileSource("ms-appx:///Assets/Toasts/Info.tgs"));
+                ClientService.Send(new SetMessageSenderBlockList(interaction.ActorId, new BlockListStories()));
+                ToastPopup.Show(string.Format(Strings.StoryHiddenHint, user.FirstName), new LocalFileSource("ms-appx:///Assets/Toasts/Info.tgs"));
             }
         }
 
-        public void ShowStories(StoryViewer viewer)
+        public void ShowStories(StoryInteraction interaction)
         {
-            if (ClientService.TryGetUser(viewer.UserId, out User user))
+            if (ClientService.TryGetUser(interaction.ActorId, out User user))
             {
-                viewer.BlockList = null;
+                interaction.BlockList = null;
 
-                ClientService.Send(new SetMessageSenderBlockList(new MessageSenderUser(user.Id), null));
-                Window.Current.ShowTeachingTip(string.Format(Strings.StoryShownHint, user.FirstName), new LocalFileSource("ms-appx:///Assets/Toasts/Info.tgs"));
+                ClientService.Send(new SetMessageSenderBlockList(interaction.ActorId, null));
+                ToastPopup.Show(string.Format(Strings.StoryShownHint, user.FirstName), new LocalFileSource("ms-appx:///Assets/Toasts/Info.tgs"));
             }
         }
 
-        public void UnblockUser(StoryViewer viewer)
+        public void UnblockUser(StoryInteraction interaction)
         {
-            if (ClientService.TryGetUser(viewer.UserId, out User user))
+            if (ClientService.TryGetUser(interaction.ActorId, out User user))
             {
-                viewer.BlockList = null;
+                interaction.BlockList = null;
 
-                ClientService.Send(new SetMessageSenderBlockList(new MessageSenderUser(user.Id), null));
-                Window.Current.ShowTeachingTip(string.Format(Strings.StoryShownHint, user.FirstName), new LocalFileSource("ms-appx:///Assets/Toasts/Info.tgs"));
+                ClientService.Send(new SetMessageSenderBlockList(interaction.ActorId, null));
+                ToastPopup.Show(string.Format(Strings.StoryShownHint, user.FirstName), new LocalFileSource("ms-appx:///Assets/Toasts/Info.tgs"));
             }
         }
 
@@ -189,13 +193,13 @@ namespace Telegram.ViewModels
             var totalCount = 0u;
             var token = _nextToken = new CancellationTokenSource();
 
-            var response = await ClientService.SendAsync(new GetStoryViewers(_story.StoryId, Query ?? string.Empty, OnlyContacts > 0, SortBy == StoryInteractionsSortBy.Reaction, _nextOffset, 50));
-            if (response is StoryViewers viewers && !token.IsCancellationRequested)
+            var response = await ClientService.SendAsync(new GetStoryInteractions(_story.StoryId, Query ?? string.Empty, OnlyContacts > 0, false, SortBy == StoryInteractionsSortBy.Reaction, _nextOffset, 50));
+            if (response is StoryInteractions interactions && !token.IsCancellationRequested)
             {
-                _nextOffset = viewers.NextOffset;
-                HasMoreItems = viewers.NextOffset.Length > 0;
+                _nextOffset = interactions.NextOffset;
+                HasMoreItems = interactions.NextOffset.Length > 0;
 
-                foreach (var item in viewers.Viewers)
+                foreach (var item in interactions.Interactions)
                 {
                     totalCount++;
                     Items.Add(item);
@@ -210,32 +214,16 @@ namespace Telegram.ViewModels
 
         public bool HasMoreItems { get; private set; } = true;
 
-        public async void OpenChat(object clickedItem)
+        public void OpenChat(object clickedItem)
         {
             if (clickedItem is AddedReaction addedReaction)
             {
-                if (addedReaction.SenderId is MessageSenderChat senderChat)
-                {
-                    NavigationService.Navigate(typeof(ProfilePage), senderChat.ChatId);
-                }
-                else if (addedReaction.SenderId is MessageSenderUser senderUser)
-                {
-                    var response = await ClientService.SendAsync(new CreatePrivateChat(senderUser.UserId, true));
-                    if (response is Chat chat)
-                    {
-                        NavigationService.Navigate(typeof(ProfilePage), chat.Id);
-                    }
-                }
+                NavigationService.NavigateToSender(addedReaction.SenderId);
             }
             else if (clickedItem is MessageViewer messageViewer)
             {
-                var response = await ClientService.SendAsync(new CreatePrivateChat(messageViewer.UserId, true));
-                if (response is Chat chat)
-                {
-                    NavigationService.Navigate(typeof(ProfilePage), chat.Id);
-                }
+                NavigationService.NavigateToUser(messageViewer.UserId);
             }
         }
     }
-
 }

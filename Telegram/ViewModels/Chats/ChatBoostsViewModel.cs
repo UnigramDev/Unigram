@@ -1,11 +1,17 @@
-﻿using System.Threading.Tasks;
+﻿//
+// Copyright Fela Ameghino 2015-2024
+//
+// Distributed under the GNU General Public License v3.0. (See accompanying
+// file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
+//
+using System;
+using System.Threading.Tasks;
 using Telegram.Collections;
 using Telegram.Common;
 using Telegram.Navigation;
 using Telegram.Navigation.Services;
 using Telegram.Services;
 using Telegram.Td.Api;
-using Telegram.Views;
 using Telegram.Views.Popups;
 using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Navigation;
@@ -92,16 +98,11 @@ namespace Telegram.ViewModels.Chats
                 {
                     Level = status.Level;
                     CurrentLevelBoostCount = status.CurrentLevelBoostCount;
-                    NextLevelBoostCount = status.NextLevelBoostCount;
+                    NextLevelBoostCount = Math.Max(status.BoostCount, status.NextLevelBoostCount);
                     BoostCount = status.BoostCount;
                     PremiumMemberCount = status.PremiumMemberCount;
                     PremiumMemberPercentage = status.PremiumMemberPercentage;
-                }
-
-                response = await ClientService.SendAsync(new GetChatBoostLink(chatId));
-                if (response is ChatBoostLink link)
-                {
-                    Link = link.Link.Replace("https://", string.Empty);
+                    Link = status.BoostUrl.Replace("https://", string.Empty);
                 }
             }
         }
@@ -110,7 +111,7 @@ namespace Telegram.ViewModels.Chats
         {
             var total = 0u;
 
-            var response = await ClientService.SendAsync(new GetChatBoosts(_chatId, _nextOffset, 50));
+            var response = await ClientService.SendAsync(new GetChatBoosts(_chatId, false, _nextOffset, 50));
             if (response is FoundChatBoosts boosts)
             {
                 foreach (var item in boosts.Boosts)
@@ -145,9 +146,21 @@ namespace Telegram.ViewModels.Chats
 
         public void OpenProfile(ChatBoost chatBoost)
         {
-            if (chatBoost.UserId != ClientService.Options.MyId)
+            var userId = chatBoost.Source switch
             {
-                NavigationService.Navigate(typeof(ProfilePage), chatBoost.UserId);
+                ChatBoostSourceGiftCode giftCode => giftCode.UserId,
+                ChatBoostSourceGiveaway giveaway => giveaway.UserId,
+                ChatBoostSourcePremium premium => premium.UserId,
+                _ => 0
+            };
+
+            if (userId != 0 && userId != ClientService.Options.MyId)
+            {
+                NavigationService.NavigateToUser(userId);
+            }
+            else if (userId == 0)
+            {
+
             }
         }
     }

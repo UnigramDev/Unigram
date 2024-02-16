@@ -1,5 +1,5 @@
 //
-// Copyright Fela Ameghino 2015-2023
+// Copyright Fela Ameghino 2015-2024
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
@@ -7,6 +7,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Telegram.Native;
 using Telegram.Td.Api;
 
 namespace Telegram.Common
@@ -38,7 +39,7 @@ namespace Telegram.Common
 
         public bool HasFlag(TextStyle flag)
         {
-            return Flags.HasFlag(flag);
+            return (Flags & flag) != 0;
         }
 
         private void Merge(TextStyleRun run)
@@ -118,6 +119,10 @@ namespace Telegram.Common
                 else if (entity.Type is TextEntityTypeItalic)
                 {
                     newRun.Flags = TextStyle.Italic;
+                }
+                else if (entity.Type is TextEntityTypeBlockQuote)
+                {
+                    newRun.Flags = TextStyle.Quote;
                 }
                 else if (entity.Type is TextEntityTypeCode or TextEntityTypePre or TextEntityTypePreCode)
                 {
@@ -286,6 +291,10 @@ namespace Telegram.Common
                     {
                         CreateOrMerge(run.Offset, run.Length, results, new TextEntityTypeSpoiler());
                     }
+                    if (run.HasFlag(TextStyle.Quote))
+                    {
+                        CreateOrMerge(run.Offset, run.Length, results, new TextEntityTypeBlockQuote());
+                    }
 
                     if (run.Type != null)
                     {
@@ -333,69 +342,94 @@ namespace Telegram.Common
 
         public static StyledText GetText(FormattedText text)
         {
-            return new StyledText
+            if (string.IsNullOrEmpty(text?.Text))
             {
-                Text = text.Text,
-                Paragraphs = GetParagraphs(text.Text, text.Entities)
-            };
+                return null;
+            }
+
+            return new StyledText(text.Text, GetParagraphs(text.Text, text.Entities));
         }
 
         public static StyledText GetText(string text, IList<TextEntity> entities)
         {
-            return new StyledText
+            return new StyledText(text, GetParagraphs(text, entities ?? Array.Empty<TextEntity>()));
+        }
+
+        struct Break
+        {
+            public int Offset;
+
+            public int Length;
+
+            public Break(int offset, int length)
             {
-                Text = text,
-                Paragraphs = GetParagraphs(text, entities ?? Array.Empty<TextEntity>())
-            };
+                Offset = offset;
+                Length = length;
+            }
+
+            public override string ToString()
+            {
+                return Offset.ToString();
+            }
         }
 
         private static IList<StyledParagraph> GetParagraphs(string text, IList<TextEntity> entities)
         {
-            List<int> indexes = null;
+            List<Break> indexes = null;
             var previous = 0;
 
-            foreach (var entity in entities)
+            int Break(int previous, int limit)
             {
-                if (entity.Type is TextEntityTypePre or TextEntityTypePreCode)
+                if (limit - previous < 0)
                 {
-                    var offset = entity.Offset;
+                    return previous;
+                }
 
-                    // It can happen that the line break happens within the code formatting
-                    if (offset > 0 && text[offset] == '\n' && text[offset - 1] != '\n')
-                    {
-                        offset++;
-                    }
+                var index = text.IndexOf('\n', previous, limit - previous);
 
-                    var index = text.IndexOf('\n', previous, offset - previous);
-                    if (index == -1 && offset > 0)
+                while (index != -1)
+                {
+                    indexes ??= new();
+                    indexes.Add(new Break(index, 1));
+
+                    previous = index + 1;
+                    index = text.IndexOf('\n', index + 1, limit - index);
+                }
+
+                return previous;
+            }
+
+            for (int i = 0; i < entities.Count; i++)
+            {
+                var entity = entities[i];
+                if (entity.Type is TextEntityTypePre or TextEntityTypePreCode or TextEntityTypeBlockQuote)
+                {
+                    if (entity.Offset > 0 && text[entity.Offset - 1] != '\n')
                     {
                         indexes ??= new();
-                        indexes.Add(offset);
+                        indexes.Add(new Break(entity.Offset, 0));
                     }
 
-                    while (index != -1)
+                    Break(previous, entity.Offset);
+
+                    if (text.Length > entity.Offset + entity.Length && text[entity.Offset + entity.Length] != '\n' && text[entity.Offset + entity.Length - 1] != '\n')
                     {
                         indexes ??= new();
-                        indexes.Add(index);
-
-                        index = text.IndexOf('\n', index + 1, offset - index - 1);
+                        indexes.Add(new Break(entity.Offset + entity.Length, 0));
+                    }
+                    else if (text.Length > entity.Offset + entity.Length && text[entity.Offset + entity.Length - 1] == '\n')
+                    {
+                        indexes ??= new();
+                        indexes.Add(new Break(entity.Offset + entity.Length - 1, 1));
                     }
 
-                    previous = entity.Offset + entity.Length - 1;
+                    previous = entity.Offset + entity.Length;
                 }
             }
 
             if (text.Length > previous)
             {
-                var index = text.IndexOf('\n', previous);
-
-                while (index != -1)
-                {
-                    indexes ??= new();
-                    indexes.Add(index);
-
-                    index = text.IndexOf('\n', index + 1);
-                }
+                Break(previous, text.Length - 1);
             }
 
             if (indexes != null)
@@ -403,22 +437,17 @@ namespace Telegram.Common
                 var prev = 0;
                 var list = new List<StyledParagraph>();
 
-                for (int i = 0; i < indexes.Count; i++)
+                // The code may generate duplicate indexes (example: https://t.me/c/1896357006/2)
+                // District is used to avoid that, but it would be better to fix the algorithm.
+                foreach (var index in indexes.DistinctBy(x => x.Offset).OrderBy(x => x.Offset))
                 {
-                    var length = indexes[i] - prev;
-                    var regular = text[indexes[i]] == '\n';
-
-                    if (length > 0 || regular)
-                    {
-                        list.Add(Split(text, entities, prev, length));
-                    }
-
-                    prev = indexes[i] + (regular ? 1 : 0);
+                    list.Add(Split(text, entities, prev, index.Offset - prev, null, index.Length));
+                    prev = index.Offset + index.Length;
                 }
 
                 if (text.Length > prev)
                 {
-                    list.Add(Split(text, entities, prev, text.Length - prev));
+                    list.Add(Split(text, entities, prev, text.Length - prev, null, 0));
                 }
 
                 return list;
@@ -426,68 +455,71 @@ namespace Telegram.Common
 
             return new[]
             {
-                new StyledParagraph
-                {
-                    Offset = 0,
-                    Length = text.Length,
-                    Runs = GetRuns(text, entities)
-                }
+                new StyledParagraph(text, 0, text.Length, entities)
             };
         }
 
-        private static StyledParagraph Split(string text, IList<TextEntity> entities, long startIndex, long length)
+        private static StyledParagraph Split(string text, IList<TextEntity> entities, int startIndex, int length, TextDirectionality? direction, int padding)
         {
             if (length <= 0)
             {
-                return new StyledParagraph
-                {
-                    Offset = (int)startIndex,
-                    Length = (int)length,
-                    Runs = Array.Empty<TextStyleRun>()
-                };
+                return new StyledParagraph(string.Empty, startIndex, length, null);
             }
 
-            var message = text.Substring((int)startIndex, Math.Min(text.Length - (int)startIndex, (int)length));
+            var message = text.Substring(startIndex, Math.Min(text.Length - startIndex, length));
             IList<TextEntity> sub = null;
 
             foreach (var entity in entities)
             {
-                // Included, Included
-                if (entity.Offset > startIndex && entity.Offset + entity.Length <= startIndex + length)
+                if (GetRelativeRange(entity.Offset, entity.Length, startIndex, length, out int newOffset, out int newLength))
                 {
-                    var replace = new TextEntity { Offset = entity.Offset - (int)startIndex, Length = entity.Length, Type = entity.Type };
                     sub ??= new List<TextEntity>();
-                    sub.Add(replace);
-                }
-                // Before, Included
-                else if (entity.Offset <= startIndex && entity.Offset + entity.Length > startIndex && entity.Offset + entity.Length < startIndex + length)
-                {
-                    var replace = new TextEntity { Offset = 0, Length = entity.Length - ((int)startIndex - entity.Offset), Type = entity.Type };
-                    sub ??= new List<TextEntity>();
-                    sub.Add(replace);
-                }
-                // Included, After
-                else if (entity.Offset > startIndex && entity.Offset < startIndex + length && entity.Offset + entity.Length > startIndex + length)
-                {
-                    var replace = new TextEntity { Offset = entity.Offset - (int)startIndex, Length = ((int)startIndex + (int)length) + entity.Offset, Type = entity.Type };
-                    sub ??= new List<TextEntity>();
-                    sub.Add(replace);
-                }
-                // Before, After
-                else if (entity.Offset <= startIndex && entity.Offset + entity.Length >= startIndex + length)
-                {
-                    var replace = new TextEntity { Offset = 0, Length = message.Length, Type = entity.Type };
-                    sub ??= new List<TextEntity>();
-                    sub.Add(replace);
+                    sub.Add(new TextEntity
+                    {
+                        Offset = newOffset,
+                        Length = newLength,
+                        Type = entity.Type
+                    });
                 }
             }
 
-            return new StyledParagraph
+            return new StyledParagraph(message, startIndex, message.Length, sub, direction, padding);
+        }
+
+        public static bool GetRelativeRange(int offset, int length, int relativeOffset, int relativeLength, out int newOffset, out int newLength)
+        {
+            // Included, Included
+            if (offset > relativeOffset && offset + length <= relativeOffset + relativeLength)
             {
-                Offset = (int)startIndex,
-                Length = message.Length,
-                Runs = GetRuns(message, sub)
-            };
+                newOffset = offset - relativeOffset;
+                newLength = length;
+            }
+            // Before, Included
+            else if (offset <= relativeOffset && offset + length > relativeOffset && offset + length < relativeOffset + relativeLength)
+            {
+                newOffset = 0;
+                newLength = length - (relativeOffset - offset);
+            }
+            // Included, After
+            else if (offset > relativeOffset && offset < relativeOffset + relativeLength && offset + length > relativeOffset + relativeLength)
+            {
+                newOffset = offset - relativeOffset;
+                newLength = (relativeOffset + relativeLength) - offset;
+            }
+            // Before, After
+            else if (offset <= relativeOffset && offset + length >= relativeOffset + relativeLength)
+            {
+                newOffset = 0;
+                newLength = relativeLength;
+            }
+            else
+            {
+                newOffset = -1;
+                newLength = length;
+                return false;
+            }
+
+            return true;
         }
 
         #endregion
@@ -504,22 +536,100 @@ namespace Telegram.Common
         Spoiler = 32,
         Mention = 64,
         Url = 128,
-        Emoji = 256
+        Emoji = 256,
+        Quote = 512,
     }
 
     public class StyledText
     {
-        public string Text { get; set; }
+        public StyledText(string text, IList<StyledParagraph> paragraphs)
+        {
+            Text = text;
+            Paragraphs = paragraphs;
 
-        public IList<StyledParagraph> Paragraphs { get; set; }
+            if (paragraphs.Count == 1)
+            {
+                var paragraph = paragraphs[0];
+                var plain = text.Length > 0
+                    && paragraph.Entities.Count == 0;
+
+                IsPlain = plain;
+            }
+        }
+
+        public string Text { get; }
+
+        public IList<StyledParagraph> Paragraphs { get; }
+
+        public bool IsPlain { get; }
     }
 
     public class StyledParagraph
     {
-        public int Offset { get; set; }
+        public StyledParagraph(string text, IList<TextEntity> entities)
+            : this(text, 0, text.Length, entities)
+        {
 
-        public int Length { get; set; }
+        }
 
-        public IList<TextStyleRun> Runs { get; set; }
+        public StyledParagraph(string text, int offset, int length, IList<TextEntity> entities, TextDirectionality? direction = null, int padding = 0)
+        {
+            Offset = offset;
+            Length = length;
+            Entities = entities ?? Array.Empty<TextEntity>();
+            Runs = TextStyleRun.GetRuns(text, entities);
+            Direction = direction ?? NativeUtils.GetDirectionality(text);
+            Padding = length > 0 ? padding : 1;
+
+            if (entities?.Count > 0)
+            {
+                Type = entities[0].Type switch
+                {
+                    TextEntityTypePreCode preCode => new TextParagraphTypeMonospace(preCode.Language),
+                    TextEntityTypePre => new TextParagraphTypeMonospace(),
+                    TextEntityTypeBlockQuote => new TextParagraphTypeQuote(),
+                    _ => null
+                };
+            }
+        }
+
+        public int Offset { get; }
+
+        public int Length { get; }
+
+        public IList<TextEntity> Entities { get; }
+
+        public IList<TextStyleRun> Runs { get; }
+
+        public TextDirectionality Direction { get; }
+
+        public int Padding { get; }
+
+        public TextParagraphType Type { get; }
+    }
+
+    public interface TextParagraphType
+    {
+
+    }
+
+    public class TextParagraphTypeQuote : TextParagraphType
+    {
+
+    }
+
+    public class TextParagraphTypeMonospace : TextParagraphType
+    {
+        public TextParagraphTypeMonospace(string language)
+        {
+            Language = language;
+        }
+
+        public TextParagraphTypeMonospace()
+        {
+            Language = string.Empty;
+        }
+
+        public string Language { get; }
     }
 }

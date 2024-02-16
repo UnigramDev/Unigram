@@ -14,6 +14,7 @@ extern "C"
 #include <libavutil/eval.h>
 #include <libswscale/swscale.h>
 #include <libavutil/imgutils.h>
+#include <libavcodec/avcodec.h>
 }
 
 static const std::string av_make_error_str(int errnum)
@@ -57,6 +58,17 @@ namespace winrt::Telegram::Native::implementation
 
         void Close()
         {
+            // Flush the decoder by sending NULL to avcodec_send_packet
+            if (has_decoded_frames && video_dec_ctx && frame && avcodec_send_packet(video_dec_ctx, NULL) >= 0)
+            {
+                // Receive and process the remaining frames
+                while (avcodec_receive_frame(video_dec_ctx, frame) >= 0)
+                {
+                    // Process the remaining decoded frames
+                    // ...
+                }
+            }
+
             if (video_dec_ctx)
             {
                 avcodec_close(video_dec_ctx);
@@ -72,6 +84,11 @@ namespace winrt::Telegram::Native::implementation
                 av_frame_free(&frame);
                 frame = nullptr;
             }
+            if (pkt)
+            {
+                av_packet_free(&pkt);
+                pkt = nullptr;
+            }
             if (ioContext != nullptr)
             {
                 if (ioContext->buffer)
@@ -86,15 +103,18 @@ namespace winrt::Telegram::Native::implementation
                 sws_freeContext(sws_ctx);
                 sws_ctx = nullptr;
             }
+            if (dst_data != nullptr)
+            {
+                free(dst_data);
+                dst_data = nullptr;
+            }
             if (fd != INVALID_HANDLE_VALUE)
             {
                 CloseHandle(fd);
                 fd = INVALID_HANDLE_VALUE;
-                //close(fd);
-                //fd = -1;
             }
 
-            av_packet_unref(&orig_pkt);
+            //av_packet_unref(&orig_pkt);
 
             video_stream_idx = -1;
             video_stream = nullptr;
@@ -114,11 +134,13 @@ namespace winrt::Telegram::Native::implementation
 
         int PixelWidth()
         {
+            return maxWidth;
             return pixelWidth;
         }
 
         int PixelHeight()
         {
+            return maxHeight;
             return pixelHeight;
         }
 
@@ -133,7 +155,7 @@ namespace winrt::Telegram::Native::implementation
         }
 
     private:
-        int decode_packet(VideoAnimation* info, int* got_frame);
+        void decode_frame(uint8_t* pixels, int32_t width, int32_t height);
         static void requestFd(VideoAnimation* info);
         static int readCallback(void* opaque, uint8_t* buf, int buf_size);
         static int64_t seekCallback(void* opaque, int64_t offset, int whence);
@@ -152,13 +174,12 @@ namespace winrt::Telegram::Native::implementation
         AVCodecContext* video_dec_ctx = nullptr;
         AVFrame* frame = nullptr;
         bool has_decoded_frames = false;
-        AVPacket pkt;
-        AVPacket orig_pkt;
+        AVPacket* pkt;
+        //AVPacket orig_pkt;
         bool stopped = false;
         bool seeking = false;
 
-        uint8_t* dst_data[1];
-        int32_t dst_linesize[1];
+        uint8_t* dst_data;
 
         struct SwsContext* sws_ctx = nullptr;
 
@@ -168,19 +189,26 @@ namespace winrt::Telegram::Native::implementation
         //int64_t last_seek_p = 0;
 
         bool limitFps;
-        const int64_t limitedDuration = 1000 / 30;
-
-        int64_t prevFrame = 0;
-        int64_t prevDuration = 0;
-
-        int64_t nextFrame = 0;
+        double prevFrame = -1;
 
         int32_t pixelWidth = 0;
         int32_t pixelHeight = 0;
 
+        int32_t maxWidth = 0;
+        int32_t maxHeight = 0;
+
         int32_t rotation = 0;
         int32_t duration = 0;
         double framerate = 0;
+
+        enum Waiting
+        {
+            ReadFrame = 0,
+            SendPacket = 1,
+            ReceiveFrame = 2
+        };
+
+        Waiting waiting = Waiting::ReadFrame;
     };
 } // namespace winrt::Telegram::Native::implementation
 

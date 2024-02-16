@@ -9,8 +9,7 @@
              xmlns:viewModels="using:Telegram.ViewModels.Drawers"
              mc:Ignorable="d"
              d:DesignHeight="300"
-             d:DesignWidth="400"
-             Loaded="OnLoaded">
+             d:DesignWidth="400">
 
     <UserControl.Resources>
         <CollectionViewSource x:Name="EmojiCollection"
@@ -47,7 +46,8 @@
                                         DecodeFrameType="Logical"
                                         Width="32"
                                         Height="32"
-                                        Ready="Player_Ready" />
+                                        Ready="Player_Ready"
+                                        ReplacementColor="{ThemeResource TelegramForegroundAccentBrush}" />
             </Grid>
         </DataTemplate>
 
@@ -168,6 +168,7 @@
                   ItemClick="ListView_ItemClick"
                   IsItemClickEnabled="True"
                   SelectionMode="None"
+                  Loaded="OnLoaded"
                   Grid.Row="1">
             <common:FluidGridView.Triggers>
                 <common:FluidGridViewTrigger RowsOrColumns="8" />
@@ -447,18 +448,19 @@
                                                             DecodeFrameType="Logical"
                                                             Ready="Toolbar_Ready"
                                                             Width="24"
-                                                            Height="24" />
+                                                            Height="24"
+                                                            ReplacementColor="{ThemeResource TelegramForegroundAccentBrush}" />
                                 </Grid>
                             </DataTemplate>
                         </selectors:StickerSetTemplateSelector.ItemTemplate>
                         <selectors:StickerSetTemplateSelector.GroupTemplate>
-                            <DataTemplate x:DataType="viewModels:StickerSetViewModel">
+                            <DataTemplate>
                                 <controls:ProfilePicture Margin="6"
                                                          IsEnabled="False" />
                             </DataTemplate>
                         </selectors:StickerSetTemplateSelector.GroupTemplate>
                         <selectors:StickerSetTemplateSelector.RecentsTemplate>
-                            <DataTemplate x:DataType="viewModels:StickerSetViewModel">
+                            <DataTemplate>
                                 <Border Background="Transparent">
                                     <FontIcon Glyph="&#xE911;"
                                               FontFamily="{StaticResource TelegramThemeFontFamily}" />
@@ -466,7 +468,7 @@
                             </DataTemplate>
                         </selectors:StickerSetTemplateSelector.RecentsTemplate>
                         <selectors:StickerSetTemplateSelector.FavedTemplate>
-                            <DataTemplate x:DataType="viewModels:StickerSetViewModel">
+                            <DataTemplate>
                                 <Border Background="Transparent">
                                     <FontIcon Glyph="&#xE734;"
                                               Style="{StaticResource DefaultFontIconStyle}" />

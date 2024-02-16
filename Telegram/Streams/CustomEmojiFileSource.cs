@@ -1,5 +1,5 @@
 ﻿//
-// Copyright Fela Ameghino 2015-2023
+// Copyright Fela Ameghino 2015-2024
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
@@ -16,10 +16,12 @@ namespace Telegram.Streams
         private readonly long _customEmojiId;
 
         public CustomEmojiFileSource(IClientService clientService, long customEmojiId)
-            : base(clientService, null)
+            : base(clientService, null as File)
         {
             _clientService = clientService;
             _customEmojiId = customEmojiId;
+
+            DownloadFile(null, null);
         }
 
         public override long Id => _customEmojiId;
@@ -28,7 +30,7 @@ namespace Telegram.Streams
         {
             if (_file != null && _file.Local.IsDownloadingCompleted)
             {
-                handler(sender, _file);
+                handler?.Invoke(sender, _file);
             }
             else
             {
@@ -37,7 +39,15 @@ namespace Telegram.Streams
                     var response = await _clientService.SendAsync(new GetCustomEmojiStickers(new[] { _customEmojiId }));
                     if (response is Stickers stickers && stickers.StickersValue.Count == 1)
                     {
-                        _file = stickers.StickersValue[0].StickerValue;
+                        var sticker = stickers.StickersValue[0];
+
+                        _file = sticker.StickerValue;
+                        Width = sticker.Width;
+                        Height = sticker.Height;
+                        Outline = sticker.Outline;
+                        NeedsRepainting = sticker.FullType is StickerFullTypeCustomEmoji { NeedsRepainting: true };
+
+                        OnOutlineChanged();
                     }
                 }
 
@@ -47,13 +57,16 @@ namespace Telegram.Streams
                 }
                 else if (_file.Local.IsDownloadingCompleted)
                 {
-                    handler(sender, _file);
+                    handler?.Invoke(sender, _file);
                     return;
                 }
 
-                UpdateManager.Subscribe(sender, _clientService, _file, ref _fileToken, handler, true);
+                if (handler != null)
+                {
+                    UpdateManager.Subscribe(sender, _clientService, _file, ref _fileToken, handler, true);
+                }
 
-                if (_file.Local.CanBeDownloaded && !_file.Local.IsDownloadingActive)
+                if (_file.Local.CanBeDownloaded /*&& !_file.Local.IsDownloadingActive*/)
                 {
                     _clientService.DownloadFile(_file.Id, 16);
                 }

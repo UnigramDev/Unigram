@@ -1,5 +1,5 @@
 //
-// Copyright Fela Ameghino 2015-2023
+// Copyright Fela Ameghino 2015-2024
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
@@ -27,7 +27,7 @@ namespace Telegram.Entities
         public override uint Width => _width;
         public override uint Height => _height;
 
-        public static new async Task<StoragePhoto> CreateAsync(StorageFile file)
+        public static async Task<StoragePhoto> CreateAsync(StorageFile file, BasicProperties basic)
         {
             try
             {
@@ -39,8 +39,6 @@ namespace Telegram.Entities
                 using (var source = await file.OpenReadAsync())
                 {
                     var bitmap = await BitmapDecoder.CreateAsync(source);
-                    var basic = await file.GetBasicPropertiesAsync();
-
                     if (bitmap.PixelWidth >= 20 * bitmap.PixelHeight || bitmap.PixelHeight >= 20 * bitmap.PixelWidth)
                     {
                         return null;

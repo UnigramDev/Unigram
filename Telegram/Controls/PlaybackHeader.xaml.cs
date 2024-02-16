@@ -1,5 +1,5 @@
 //
-// Copyright Fela Ameghino 2015-2023
+// Copyright Fela Ameghino 2015-2024
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
@@ -49,8 +49,8 @@ namespace Telegram.Controls
             Slider.AddHandler(PointerCanceledEvent, new PointerEventHandler(Slider_PointerCanceled), true);
             Slider.AddHandler(PointerCaptureLostEvent, new PointerEventHandler(Slider_PointerCaptureLost), true);
 
-            _visual1 = ElementCompositionPreview.GetElementVisual(Label1);
-            _visual2 = ElementCompositionPreview.GetElementVisual(Label2);
+            _visual1 = ElementComposition.GetElementVisual(Label1);
+            _visual2 = ElementComposition.GetElementVisual(Label2);
 
             _visual = _visual1;
         }
@@ -188,7 +188,7 @@ namespace Telegram.Controls
 
                 UpdateSpeed(int.MaxValue);
 
-                ViewButton.Padding = new Thickness(48 + 6, 0, 40 * 2 + 48 + 12, 0);
+                ViewButton.Padding = new Thickness(48, 0, 40 * 2 + 48 + 12, 0);
             }
             else if (message.Content is MessageAudio || webPage?.Audio != null)
             {
@@ -216,7 +216,7 @@ namespace Telegram.Controls
                 UpdateSpeed(audio.Duration);
                 UpdateRepeat();
 
-                ViewButton.Padding = new Thickness(40 * 3 + 12, 0, 40 * 2 + 48 + 12, 0);
+                ViewButton.Padding = new Thickness(40 * 3 + 8, 0, 40 * 4 + 8, 0);
             }
         }
 
@@ -471,42 +471,12 @@ namespace Telegram.Controls
             {
                 return;
             }
-
-            if (args.Item is PlaybackItem item && args.ItemContainer.ContentTemplateRoot is SharedAudioCell cell)
+            else if (args.Item is PlaybackItem item && args.ItemContainer.ContentTemplateRoot is SharedAudioCell cell)
             {
+                AutomationProperties.SetName(args.ItemContainer, Automation.GetSummary(item.Message, true, false));
+
                 cell.UpdateMessage(_playbackService, item.Message);
-
-                var message = item.Message;
-                var webPage = message.Content is MessageText text ? text.WebPage : null;
-
-                if (message.Content is MessageVoiceNote || message.Content is MessageVideoNote || webPage?.VoiceNote != null || webPage?.VideoNote != null)
-                {
-                    if (_clientService.TryGetUser(message.SenderId, out Telegram.Td.Api.User senderUser))
-                    {
-                        AutomationProperties.SetName(args.ItemContainer, senderUser.Id == _clientService.Options.MyId ? Strings.ChatYourSelfName : senderUser.FullName());
-                    }
-                    else if (_clientService.TryGetChat(message.SenderId, out Chat senderChat))
-                    {
-                        AutomationProperties.SetName(args.ItemContainer, _clientService.GetTitle(senderChat));
-                    }
-                }
-                else if (message.Content is MessageAudio || webPage?.Audio != null)
-                {
-                    var audio = message.Content is MessageAudio messageAudio ? messageAudio.Audio : webPage?.Audio;
-                    if (audio == null)
-                    {
-                        return;
-                    }
-
-                    if (audio.Performer.Length > 0 && audio.Title.Length > 0)
-                    {
-                        AutomationProperties.SetName(args.ItemContainer, $"{audio.Title} - {audio.Performer}");
-                    }
-                    else
-                    {
-                        AutomationProperties.SetName(args.ItemContainer, audio.FileName);
-                    }
-                }
+                args.Handled = true;
             }
         }
 

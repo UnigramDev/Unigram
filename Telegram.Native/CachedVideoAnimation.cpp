@@ -13,9 +13,9 @@
 
 namespace winrt::Telegram::Native::implementation
 {
-    std::map<std::string, winrt::slim_mutex> CachedVideoAnimation::s_locks;
+    std::map<std::string, std::mutex> CachedVideoAnimation::s_locks;
 
-    winrt::slim_mutex CachedVideoAnimation::s_compressLock;
+    std::mutex CachedVideoAnimation::s_compressLock;
     bool CachedVideoAnimation::s_compressStarted;
     std::thread CachedVideoAnimation::s_compressWorker;
     WorkQueue CachedVideoAnimation::s_compressQueue;
@@ -87,7 +87,7 @@ namespace winrt::Telegram::Native::implementation
                 info->m_cacheFile += L".cache";
                 info->m_precache = true;
 
-                slim_lock_guard const guard(s_locks[info->m_cacheKey]);
+                std::lock_guard const guard(s_locks[info->m_cacheKey]);
 
                 HANDLE precacheFile = CreateFile2(info->m_cacheFile.c_str(), GENERIC_READ, 0, OPEN_EXISTING, NULL);
                 if (precacheFile != INVALID_HANDLE_VALUE)
@@ -192,12 +192,12 @@ namespace winrt::Telegram::Native::implementation
             return;
         }
 
-        if (m_precache && m_maxFrameSize <= m_pixelWidth * m_pixelHeight * 4 && m_imageSize == m_pixelWidth * m_pixelHeight * 4)
+        if (m_precache && m_imageSize == m_pixelWidth * m_pixelHeight * 4)
         {
             uint32_t offset = m_fileOffsets[m_frameIndex];
             if (offset > 0)
             {
-                slim_lock_guard const guard(s_locks[m_cacheKey]);
+                std::lock_guard const guard(s_locks[m_cacheKey]);
 
                 HANDLE precacheFile = CreateFile2(m_cacheFile.c_str(), GENERIC_READ, 0, OPEN_EXISTING, NULL);
                 if (precacheFile != INVALID_HANDLE_VALUE)
@@ -215,8 +215,6 @@ namespace winrt::Telegram::Native::implementation
                         if (ReadFileReturn(precacheFile, m_decompressBuffer, sizeof(uint8_t) * frameSize, &read))
                         {
                             LZ4_decompress_safe((const char*)m_decompressBuffer, (char*)pixels, frameSize, m_pixelWidth * m_pixelHeight * 4);
-                            //qoi_desc desc;
-                            //qoi_decode_2((const void*)m_decompressBuffer, frameSize, &desc, 4, pixels);
                             loadedFromCache = true;
 
                             if (rendered)
@@ -276,7 +274,7 @@ namespace winrt::Telegram::Native::implementation
             m_caching = true;
             s_compressQueue.push_work(WorkItem(get_weak(), m_pixelWidth, m_pixelHeight));
 
-            slim_lock_guard const guard(s_compressLock);
+            std::lock_guard const guard(s_compressLock);
 
             if (!s_compressStarted)
             {
@@ -314,7 +312,7 @@ namespace winrt::Telegram::Native::implementation
                 auto w = work->w;
                 auto h = work->h;
 
-                slim_lock_guard const guard(s_locks[item->m_cacheKey]);
+                std::lock_guard const guard(s_locks[item->m_cacheKey]);
 
                 HANDLE precacheFile = CreateFile2(item->m_cacheFile.c_str(), GENERIC_READ | GENERIC_WRITE, 0, OPEN_EXISTING, NULL);
                 if (precacheFile != INVALID_HANDLE_VALUE)
@@ -331,7 +329,6 @@ namespace winrt::Telegram::Native::implementation
 
                     if (w + h > oldW + oldH)
                     {
-                        //bound = w * h * (4 + 1) + QOI_HEADER_SIZE + sizeof(qoi_padding);
                         bound = LZ4_compressBound(w * h * 4);
                         compressBuffer = new uint8_t[bound];
                         pixels = new uint8_t[w * h * 4];
@@ -347,14 +344,6 @@ namespace winrt::Telegram::Native::implementation
 
                         item->m_animation->RenderSync(pixels, item->m_pixelWidth, item->m_pixelHeight, false, seconds, completed);
 
-                        //qoi_desc desc;
-                        //desc.width = w;
-                        //desc.height = h;
-                        //desc.channels = 4;
-                        //desc.colorspace = QOI_SRGB;
-
-                        //uint32_t size;
-                        //qoi_encode_2((const void*)pixels, &desc, compressBuffer, &size);
                         uint32_t size = (uint32_t)LZ4_compress_default((const char*)pixels, (char*)compressBuffer, w * h * 4, bound);
 
                         if (size > item->m_maxFrameSize && item->m_decompressBuffer != nullptr)

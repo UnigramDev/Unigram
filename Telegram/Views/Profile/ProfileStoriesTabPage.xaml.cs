@@ -1,13 +1,18 @@
-﻿using Telegram.Common;
+﻿using System.Numerics;
+using Telegram.Common;
 using Telegram.Controls.Cells;
 using Telegram.Controls.Media;
+using Telegram.Td.Api;
 using Telegram.ViewModels.Stories;
 using Windows.Foundation;
+using Windows.UI.Composition;
 using Windows.UI.Xaml;
+using Windows.UI.Xaml.Automation;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
 using Windows.UI.Xaml.Hosting;
 using Windows.UI.Xaml.Input;
+using Point = Windows.Foundation.Point;
 
 namespace Telegram.Views.Profile
 {
@@ -36,9 +41,7 @@ namespace Telegram.Views.Profile
 
         private void OnContextRequested(UIElement sender, ContextRequestedEventArgs args)
         {
-            var element = sender as FrameworkElement;
             var story = ScrollingHost.ItemFromContainer(sender) as StoryViewModel;
-
             if (story == null)
             {
                 return;
@@ -63,7 +66,7 @@ namespace Telegram.Views.Profile
                 flyout.CreateFlyoutItem(ViewModel.StoriesTab.SelectStory, story, Strings.Select, Icons.CheckmarkCircle);
             }
 
-            args.ShowAt(flyout, element);
+            flyout.ShowAt(sender, args);
         }
 
         private void OnContainerContentChanging(ListViewBase sender, ContainerContentChangingEventArgs args)
@@ -72,17 +75,19 @@ namespace Telegram.Views.Profile
             {
                 return;
             }
+            else if (args.ItemContainer.ContentTemplateRoot is StoryCell content && args.Item is StoryViewModel story)
+            {
+                AutomationProperties.SetName(args.ItemContainer, story.Content is StoryContentPhoto ? Strings.AttachPhoto : story.Content is StoryContentVideo ? Strings.AttachVideo : Strings.Story);
 
-            var story = args.Item as StoryViewModel;
-            var content = args.ItemContainer.ContentTemplateRoot as StoryCell;
-
-            content.Update(story);
+                content.Update(story);
+                args.Handled = true;
+            }
         }
 
         private void List_ItemClick(object sender, ItemClickEventArgs e)
         {
             var container = ScrollingHost.ContainerFromItem(e.ClickedItem) as SelectorItem;
-            var transform = container.TransformToVisual(Window.Current.Content);
+            var transform = container.TransformToVisual(null);
 
             var point = transform.TransformPoint(new Point());
             var origin = new Rect(point.X, point.Y, container.ActualWidth, container.ActualHeight);
@@ -95,7 +100,7 @@ namespace Telegram.Views.Profile
             var container = ScrollingHost.ContainerFromItem(activeStories.SelectedItem) as SelectorItem;
             if (container != null)
             {
-                var transform = container.TransformToVisual(Window.Current.Content);
+                var transform = container.TransformToVisual(null);
                 var point = transform.TransformPoint(new Point());
 
                 return new Rect(point.X, point.Y, container.ActualWidth, container.ActualHeight);
@@ -138,5 +143,52 @@ namespace Telegram.Views.Profile
 
         #endregion
 
+
+        #region Selection
+
+        private void OnSelectionModeChanged(DependencyObject sender, DependencyProperty dp)
+        {
+            ShowHideManagePanel(ScrollingHost.SelectionMode == ListViewSelectionMode.Multiple);
+        }
+
+        private bool _manageCollapsed = true;
+
+        private void ShowHideManagePanel(bool show)
+        {
+            if (_manageCollapsed != show)
+            {
+                return;
+            }
+
+            _manageCollapsed = !show;
+            ManagePanel.Visibility = Visibility.Visible;
+
+            var manage = ElementComposition.GetElementVisual(ManagePanel);
+            ElementCompositionPreview.SetIsTranslationEnabled(ManagePanel, true);
+            manage.Opacity = show ? 0 : 1;
+
+            var batch = manage.Compositor.CreateScopedBatch(CompositionBatchTypes.Animation);
+            batch.Completed += (s, args) =>
+            {
+                ManagePanel.Visibility = _manageCollapsed
+                    ? Visibility.Collapsed
+                    : Visibility.Visible;
+            };
+
+            var offset1 = manage.Compositor.CreateVector3KeyFrameAnimation();
+            offset1.InsertKeyFrame(show ? 0 : 1, new Vector3(0, 48, 0));
+            offset1.InsertKeyFrame(show ? 1 : 0, new Vector3(0, 0, 0));
+
+            var opacity1 = manage.Compositor.CreateScalarKeyFrameAnimation();
+            opacity1.InsertKeyFrame(show ? 0 : 1, 0);
+            opacity1.InsertKeyFrame(show ? 1 : 0, 1);
+
+            manage.StartAnimation("Translation", offset1);
+            manage.StartAnimation("Opacity", opacity1);
+
+            batch.End();
+        }
+
+        #endregion
     }
 }

@@ -1,5 +1,5 @@
 //
-// Copyright Fela Ameghino 2015-2023
+// Copyright Fela Ameghino 2015-2024
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
@@ -124,6 +124,8 @@ namespace Telegram.Views.Premium.Popups
             prevLimit.Text = limit.DefaultValue.ToString();
             nextLimit.Text = limit.PremiumValue.ToString();
             nextPanel.Background = new SolidColorBrush(_gradient[Math.Min(args.ItemIndex, _gradient.Length - 1)]);
+
+            args.Handled = true;
         }
 
         private void PurchaseShadow_Loaded(object sender, Windows.UI.Xaml.RoutedEventArgs e)

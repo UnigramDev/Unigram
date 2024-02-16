@@ -601,8 +601,8 @@ void ScaleRowUp2_Bilinear_NEON(const uint8_t* src_ptr,
       "umlal       v4.8h, v1.8b, v31.8b          \n"  // 3*near+far (2, odd)
       "umlal       v5.8h, v0.8b, v31.8b          \n"  // 3*near+far (2, even)
 
-      "mov         v0.8h, v4.8h                  \n"
-      "mov         v1.8h, v5.8h                  \n"
+      "mov         v0.16b, v4.16b                \n"
+      "mov         v1.16b, v5.16b                \n"
       "mla         v4.8h, v2.8h, v30.8h          \n"  // 9 3 3 1 (1, odd)
       "mla         v5.8h, v3.8h, v30.8h          \n"  // 9 3 3 1 (1, even)
       "mla         v2.8h, v0.8h, v30.8h          \n"  // 9 3 3 1 (2, odd)
@@ -642,7 +642,7 @@ void ScaleRowUp2_Linear_12_NEON(const uint16_t* src_ptr,
       "ld1         {v1.8h}, [%1], #16            \n"  // 12345678 (16b)
       "prfm        pldl1keep, [%0, 448]          \n"  // prefetch 7 lines ahead
 
-      "mov         v2.8h, v0.8h                  \n"
+      "mov         v2.16b, v0.16b                \n"
       "mla         v0.8h, v1.8h, v31.8h          \n"  // 3*near+far (odd)
       "mla         v1.8h, v2.8h, v31.8h          \n"  // 3*near+far (even)
 
@@ -679,7 +679,7 @@ void ScaleRowUp2_Bilinear_12_NEON(const uint16_t* src_ptr,
       "ld1         {v3.8h}, [%2], #16            \n"  // 12345678 (16b)
       "prfm        pldl1keep, [%0, 448]          \n"  // prefetch 7 lines ahead
 
-      "mov         v0.8h, v2.8h                  \n"
+      "mov         v0.16b, v2.16b                \n"
       "mla         v2.8h, v3.8h, v31.8h          \n"  // 3*near+far (odd)
       "mla         v3.8h, v0.8h, v31.8h          \n"  // 3*near+far (even)
 
@@ -687,12 +687,12 @@ void ScaleRowUp2_Bilinear_12_NEON(const uint16_t* src_ptr,
       "ld1         {v5.8h}, [%3], #16            \n"  // 12345678 (16b)
       "prfm        pldl1keep, [%1, 448]          \n"  // prefetch 7 lines ahead
 
-      "mov         v0.8h, v4.8h                  \n"
+      "mov         v0.16b, v4.16b                \n"
       "mla         v4.8h, v5.8h, v31.8h          \n"  // 3*near+far (odd)
       "mla         v5.8h, v0.8h, v31.8h          \n"  // 3*near+far (even)
 
-      "mov         v0.8h, v4.8h                  \n"
-      "mov         v1.8h, v5.8h                  \n"
+      "mov         v0.16b, v4.16b                \n"
+      "mov         v1.16b, v5.16b                \n"
       "mla         v4.8h, v2.8h, v31.8h          \n"  // 9 3 3 1 (1, odd)
       "mla         v5.8h, v3.8h, v31.8h          \n"  // 9 3 3 1 (1, even)
       "mla         v2.8h, v0.8h, v31.8h          \n"  // 9 3 3 1 (2, odd)
@@ -887,8 +887,8 @@ void ScaleUVRowUp2_Bilinear_NEON(const uint8_t* src_ptr,
       "umlal       v4.8h, v1.8b, v31.8b          \n"  // 3*near+far (2, odd)
       "umlal       v5.8h, v0.8b, v31.8b          \n"  // 3*near+far (2, even)
 
-      "mov         v0.8h, v4.8h                  \n"
-      "mov         v1.8h, v5.8h                  \n"
+      "mov         v0.16b, v4.16b                \n"
+      "mov         v1.16b, v5.16b                \n"
       "mla         v4.8h, v2.8h, v30.8h          \n"  // 9 3 3 1 (1, odd)
       "mla         v5.8h, v3.8h, v30.8h          \n"  // 9 3 3 1 (1, even)
       "mla         v2.8h, v0.8h, v30.8h          \n"  // 9 3 3 1 (2, odd)
@@ -1117,101 +1117,6 @@ void ScaleFilterCols_NEON(uint8_t* dst_ptr,
 }
 
 #undef LOAD2_DATA8_LANE
-
-// 16x2 -> 16x1
-void ScaleFilterRows_NEON(uint8_t* dst_ptr,
-                          const uint8_t* src_ptr,
-                          ptrdiff_t src_stride,
-                          int dst_width,
-                          int source_y_fraction) {
-  int y_fraction = 256 - source_y_fraction;
-  asm volatile(
-      "cmp         %w4, #0                       \n"
-      "b.eq        100f                          \n"
-      "add         %2, %2, %1                    \n"
-      "cmp         %w4, #64                      \n"
-      "b.eq        75f                           \n"
-      "cmp         %w4, #128                     \n"
-      "b.eq        50f                           \n"
-      "cmp         %w4, #192                     \n"
-      "b.eq        25f                           \n"
-
-      "dup         v5.8b, %w4                    \n"
-      "dup         v4.8b, %w5                    \n"
-      // General purpose row blend.
-      "1:                                        \n"
-      "ld1         {v0.16b}, [%1], #16           \n"
-      "ld1         {v1.16b}, [%2], #16           \n"
-      "subs        %w3, %w3, #16                 \n"
-      "umull       v6.8h, v0.8b, v4.8b           \n"
-      "umull2      v7.8h, v0.16b, v4.16b         \n"
-      "prfm        pldl1keep, [%1, 448]          \n"  // prefetch 7 lines ahead
-      "umlal       v6.8h, v1.8b, v5.8b           \n"
-      "umlal2      v7.8h, v1.16b, v5.16b         \n"
-      "prfm        pldl1keep, [%2, 448]          \n"
-      "rshrn       v0.8b, v6.8h, #8              \n"
-      "rshrn2      v0.16b, v7.8h, #8             \n"
-      "st1         {v0.16b}, [%0], #16           \n"
-      "b.gt        1b                            \n"
-      "b           99f                           \n"
-
-      // Blend 25 / 75.
-      "25:                                       \n"
-      "ld1         {v0.16b}, [%1], #16           \n"
-      "ld1         {v1.16b}, [%2], #16           \n"
-      "subs        %w3, %w3, #16                 \n"
-      "urhadd      v0.16b, v0.16b, v1.16b        \n"
-      "prfm        pldl1keep, [%1, 448]          \n"  // prefetch 7 lines ahead
-      "urhadd      v0.16b, v0.16b, v1.16b        \n"
-      "prfm        pldl1keep, [%2, 448]          \n"
-      "st1         {v0.16b}, [%0], #16           \n"
-      "b.gt        25b                           \n"
-      "b           99f                           \n"
-
-      // Blend 50 / 50.
-      "50:                                       \n"
-      "ld1         {v0.16b}, [%1], #16           \n"
-      "ld1         {v1.16b}, [%2], #16           \n"
-      "subs        %w3, %w3, #16                 \n"
-      "prfm        pldl1keep, [%1, 448]          \n"  // prefetch 7 lines ahead
-      "urhadd      v0.16b, v0.16b, v1.16b        \n"
-      "prfm        pldl1keep, [%2, 448]          \n"
-      "st1         {v0.16b}, [%0], #16           \n"
-      "b.gt        50b                           \n"
-      "b           99f                           \n"
-
-      // Blend 75 / 25.
-      "75:                                       \n"
-      "ld1         {v1.16b}, [%1], #16           \n"
-      "ld1         {v0.16b}, [%2], #16           \n"
-      "subs        %w3, %w3, #16                 \n"
-      "urhadd      v0.16b, v0.16b, v1.16b        \n"
-      "prfm        pldl1keep, [%1, 448]          \n"  // prefetch 7 lines ahead
-      "urhadd      v0.16b, v0.16b, v1.16b        \n"
-      "prfm        pldl1keep, [%2, 448]          \n"
-      "st1         {v0.16b}, [%0], #16           \n"
-      "b.gt        75b                           \n"
-      "b           99f                           \n"
-
-      // Blend 100 / 0 - Copy row unchanged.
-      "100:                                      \n"
-      "ld1         {v0.16b}, [%1], #16           \n"
-      "subs        %w3, %w3, #16                 \n"
-      "prfm        pldl1keep, [%1, 448]          \n"  // prefetch 7 lines ahead
-      "st1         {v0.16b}, [%0], #16           \n"
-      "b.gt        100b                          \n"
-
-      "99:                                       \n"
-      "st1         {v0.b}[15], [%0]              \n"
-      : "+r"(dst_ptr),            // %0
-        "+r"(src_ptr),            // %1
-        "+r"(src_stride),         // %2
-        "+r"(dst_width),          // %3
-        "+r"(source_y_fraction),  // %4
-        "+r"(y_fraction)          // %5
-      :
-      : "v0", "v1", "v2", "v3", "v4", "v5", "v6", "v7", "memory", "cc");
-}
 
 void ScaleARGBRowDown2_NEON(const uint8_t* src_ptr,
                             ptrdiff_t src_stride,
@@ -1566,6 +1471,45 @@ void ScaleRowUp2_16_NEON(const uint16_t* src_ptr,
       : "v0", "v1", "v2", "v3", "v4", "v5", "v6", "v7", "v16", "v17", "v18",
         "v19"  // Clobber List
   );
+}
+
+void ScaleUVRowDown2_NEON(const uint8_t* src_ptr,
+                          ptrdiff_t src_stride,
+                          uint8_t* dst,
+                          int dst_width) {
+  (void)src_stride;
+  asm volatile(
+      "1:                                        \n"
+      "ld2         {v0.8h,v1.8h}, [%0], #32      \n"  // load 16 UV
+      "subs        %w2, %w2, #8                  \n"  // 8 processed per loop.
+      "prfm        pldl1keep, [%0, 448]          \n"  // prefetch 7 lines ahead
+      "st1         {v1.8h}, [%1], #16            \n"  // store 8 UV
+      "b.gt        1b                            \n"
+      : "+r"(src_ptr),   // %0
+        "+r"(dst),       // %1
+        "+r"(dst_width)  // %2
+      :
+      : "memory", "cc", "v0", "v1");
+}
+
+void ScaleUVRowDown2Linear_NEON(const uint8_t* src_ptr,
+                                ptrdiff_t src_stride,
+                                uint8_t* dst,
+                                int dst_width) {
+  (void)src_stride;
+  asm volatile(
+      "1:                                        \n"
+      "ld2         {v0.8h,v1.8h}, [%0], #32      \n"  // load 16 UV
+      "subs        %w2, %w2, #8                  \n"  // 8 processed per loop.
+      "urhadd      v0.16b, v0.16b, v1.16b        \n"  // rounding half add
+      "prfm        pldl1keep, [%0, 448]          \n"  // prefetch 7 lines ahead
+      "st1         {v0.8h}, [%1], #16            \n"  // store 8 UV
+      "b.gt        1b                            \n"
+      : "+r"(src_ptr),   // %0
+        "+r"(dst),       // %1
+        "+r"(dst_width)  // %2
+      :
+      : "memory", "cc", "v0", "v1");
 }
 
 void ScaleUVRowDown2Box_NEON(const uint8_t* src_ptr,

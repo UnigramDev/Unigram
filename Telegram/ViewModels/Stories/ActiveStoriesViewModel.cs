@@ -1,4 +1,10 @@
-﻿using System;
+﻿//
+// Copyright Fela Ameghino 2015-2024
+//
+// Distributed under the GNU General Public License v3.0. (See accompanying
+// file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
+//
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
@@ -170,14 +176,14 @@ namespace Telegram.ViewModels.Stories
             //throw new NotImplementedException();
         }
 
-        protected override MessageReplyTo GetReply(bool clear, bool notify = true)
+        protected override InputMessageReplyTo GetReply(bool clear, bool notify = true)
         {
-            return new MessageReplyToStory(ChatId, SelectedItem.StoryId);
+            return new InputMessageReplyToStory(ChatId, SelectedItem.StoryId);
         }
 
         public override FormattedText GetFormattedText(bool clear)
         {
-            return new FormattedText(string.Empty, new TextEntity[0]);
+            return new FormattedText(string.Empty, Array.Empty<TextEntity>());
         }
 
         protected override void SetFormattedText(FormattedText text)
@@ -187,7 +193,7 @@ namespace Telegram.ViewModels.Stories
 
         public override Task<MessageSendOptions> PickMessageSendOptionsAsync(bool? schedule = null, bool? silent = null, bool reorder = false)
         {
-            return Task.FromResult(new MessageSendOptions(silent ?? false, false, false, Settings.Stickers.DynamicPackOrder && reorder, null, 0));
+            return Task.FromResult(new MessageSendOptions(silent ?? false, false, false, Settings.Stickers.DynamicPackOrder && reorder, null, 0, false));
         }
 
         public void Handle(UpdateStory update)

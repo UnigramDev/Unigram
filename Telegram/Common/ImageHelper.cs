@@ -1,5 +1,5 @@
 //
-// Copyright Fela Ameghino 2015-2023
+// Copyright Fela Ameghino 2015-2024
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
@@ -44,60 +44,71 @@ namespace Telegram.Common
 
         public static async Task<SizeInt32> GetScaleAsync(StorageFile file, bool allowMultipleFrames = false, int requestedMinSide = 1280, BitmapEditState editState = null)
         {
-            using (var source = await file.OpenReadAsync())
+            try
             {
-                var decoder = await BitmapDecoder.CreateAsync(source);
-                if (decoder.FrameCount > 1 && !allowMultipleFrames)
+                using (var source = await file.OpenReadAsync())
                 {
-                    return new SizeInt32 { Width = 0, Height = 0 };
-                }
+                    var decoder = await BitmapDecoder.CreateAsync(source);
+                    if (decoder.FrameCount > 1 && !allowMultipleFrames)
+                    {
+                        return new SizeInt32 { Width = 0, Height = 0 };
+                    }
 
-                var width = decoder.PixelWidth;
-                var height = decoder.PixelHeight;
+                    var width = decoder.PixelWidth;
+                    var height = decoder.PixelHeight;
 
-                if (editState?.Rectangle is Rect crop)
-                {
-                    width = (uint)(crop.Width * decoder.PixelWidth);
-                    height = (uint)(crop.Height * decoder.PixelHeight);
-                }
+                    if (editState?.Rectangle is Rect crop)
+                    {
+                        width = (uint)(crop.Width * decoder.PixelWidth);
+                        height = (uint)(crop.Height * decoder.PixelHeight);
+                    }
 
-                if (width > requestedMinSide || height > requestedMinSide)
-                {
-                    double ratioX = (double)requestedMinSide / width;
-                    double ratioY = (double)requestedMinSide / height;
-                    double ratio = Math.Min(ratioX, ratioY);
+                    if (width > requestedMinSide || height > requestedMinSide)
+                    {
+                        double ratioX = (double)requestedMinSide / width;
+                        double ratioY = (double)requestedMinSide / height;
+                        double ratio = Math.Min(ratioX, ratioY);
+
+                        if (editState != null && editState.Rotation is BitmapRotation.Clockwise90Degrees or BitmapRotation.Clockwise270Degrees)
+                        {
+                            return new SizeInt32
+                            {
+                                Width = (int)(height * ratio),
+                                Height = (int)(width * ratio)
+                            };
+                        }
+
+                        return new SizeInt32
+                        {
+                            Width = (int)(width * ratio),
+                            Height = (int)(height * ratio)
+                        };
+                    }
 
                     if (editState != null && editState.Rotation is BitmapRotation.Clockwise90Degrees or BitmapRotation.Clockwise270Degrees)
                     {
                         return new SizeInt32
                         {
-                            Width = (int)(height * ratio),
-                            Height = (int)(width * ratio)
+                            Width = (int)(height),
+                            Height = (int)(width)
                         };
                     }
 
                     return new SizeInt32
                     {
-                        Width = (int)(width * ratio),
-                        Height = (int)(height * ratio)
+                        Width = (int)(width),
+                        Height = (int)(height)
                     };
-                }
-
-                if (editState != null && editState.Rotation is BitmapRotation.Clockwise90Degrees or BitmapRotation.Clockwise270Degrees)
-                {
-                    return new SizeInt32
-                    {
-                        Width = (int)(height),
-                        Height = (int)(width)
-                    };
-                }
-
+                };
+            }
+            catch
+            {
                 return new SizeInt32
                 {
-                    Width = (int)(width),
-                    Height = (int)(height)
+                    Width = 0,
+                    Height = 0
                 };
-            };
+            }
         }
 
 
@@ -110,7 +121,7 @@ namespace Telegram.Common
         /// <param name="requestedMinSide">Max width/height of the output image</param>
         /// <param name="quality">JPEG compression quality (0.77 for pictures, 0.87 for thumbnails)</param>
         /// <returns></returns>
-        public static async Task<StorageFile> ScaleJpegAsync(StorageFile sourceFile, StorageFile resizedImageFile, int requestedMinSide = 1280, double quality = 0.77)
+        public static async Task<StorageFile> ScaleAsync(Guid encoderId, StorageFile sourceFile, StorageFile resizedImageFile, int requestedMinSide = 1280, bool bestQuality = false)
         {
             using (var source = await sourceFile.OpenReadAsync())
             {
@@ -127,7 +138,7 @@ namespace Telegram.Common
                 {
                     BitmapTransform transform;
 
-                    if (decoder.PixelWidth > requestedMinSide || decoder.PixelHeight > requestedMinSide)
+                    if (requestedMinSide > 0 && (decoder.PixelWidth > requestedMinSide || decoder.PixelHeight > requestedMinSide))
                     {
                         double ratioX = (double)requestedMinSide / originalPixelWidth;
                         double ratioY = (double)requestedMinSide / originalPixelHeight;
@@ -140,7 +151,9 @@ namespace Telegram.Common
                         {
                             ScaledWidth = width,
                             ScaledHeight = height,
-                            InterpolationMode = quality == 1 ? BitmapInterpolationMode.Fant : BitmapInterpolationMode.Linear
+                            InterpolationMode = bestQuality
+                                ? BitmapInterpolationMode.Fant
+                                : BitmapInterpolationMode.Linear
                         };
                     }
                     else
@@ -155,7 +168,7 @@ namespace Telegram.Common
                     //var qualityValue = new BitmapTypedValue(quality, Windows.Foundation.PropertyType.Single);
                     //propertySet.Add("ImageQuality", qualityValue);
 
-                    var encoder = await BitmapEncoder.CreateAsync(BitmapEncoder.JpegEncoderId, resizedStream/*, propertySet*/);
+                    var encoder = await BitmapEncoder.CreateAsync(encoderId, resizedStream/*, propertySet*/);
                     encoder.SetSoftwareBitmap(pixelData);
                     await encoder.FlushAsync();
                 }
@@ -219,10 +232,13 @@ namespace Telegram.Common
                         return frame;
                     });
 
-                    var bitmap = new WriteableBitmap(width, height);
-                    BufferSurface.Copy(buffer, bitmap.PixelBuffer);
+                    if (width > 0 && height > 0)
+                    {
+                        var bitmap = new WriteableBitmap(width, height);
+                        BufferSurface.Copy(buffer, bitmap.PixelBuffer);
 
-                    return bitmap;
+                        return bitmap;
+                    }
                 }
                 else
                 {
@@ -230,10 +246,9 @@ namespace Telegram.Common
                     return await GetPreviewBitmapAsync(imageStream, requestedMinSide);
                 }
             }
-            catch
-            {
-                return null;
-            }
+            catch { }
+
+            return null;
         }
 
         public static async Task<ImageSource> GetPreviewBitmapAsync(IRandomAccessStream source, int requestedMinSide = 1280)

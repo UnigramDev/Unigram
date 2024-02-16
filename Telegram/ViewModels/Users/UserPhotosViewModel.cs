@@ -1,5 +1,5 @@
 //
-// Copyright Fela Ameghino 2015-2023
+// Copyright Fela Ameghino 2015-2024
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
@@ -7,10 +7,10 @@
 using System;
 using Telegram.Collections;
 using Telegram.Common;
+using Telegram.Controls;
 using Telegram.Services;
 using Telegram.Td.Api;
 using Telegram.ViewModels.Gallery;
-using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 
 namespace Telegram.ViewModels.Users
@@ -43,10 +43,10 @@ namespace Telegram.ViewModels.Users
                 Items.Add(new GalleryChatPhoto(clientService, user, userFull.Photo));
             }
 
-            if (userFull.PublicPhoto != null && userFull.Photo == null && user.Id != clientService.Options.MyId)
+            if (userFull.PublicPhoto != null && (userFull.Photo == null || user.Id != clientService.Options.MyId))
             {
                 _additionalPhotos++;
-                Items.Add(new GalleryChatPhoto(clientService, user, userFull.PublicPhoto, 0, false, true));
+                Items.Add(new GalleryChatPhoto(clientService, user, userFull.PublicPhoto, 0, false, user.Id == clientService.Options.MyId));
             }
 
             SelectedItem = Items[0];
@@ -130,7 +130,7 @@ namespace Telegram.ViewModels.Users
             }
 
             ClientService.Send(new SetProfilePhoto(new InputChatPhotoPrevious(item.Id), false));
-            Window.Current.ShowTeachingTip(item.IsVideo ? Strings.MainProfileVideoSetHint : Strings.MainProfilePhotoSetHint);
+            ToastPopup.Show(item.IsVideo ? Strings.MainProfileVideoSetHint : Strings.MainProfilePhotoSetHint);
         }
     }
 }

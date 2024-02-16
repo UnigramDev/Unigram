@@ -8,15 +8,20 @@
 #include <D2d1_3.h>
 #include <map>
 
+#include <SurfaceImage.h>
+
 #include <winrt/Windows.Foundation.h>
 #include <winrt/Windows.UI.h>
 #include <winrt/Windows.Storage.Streams.h>
+
+#include <winrt/Telegram.Td.Api.h>
 
 using namespace concurrency;
 using namespace winrt::Windows::UI;
 using namespace winrt::Windows::Foundation::Collections;
 using namespace winrt::Windows::Foundation::Numerics;
 using namespace winrt::Windows::Storage::Streams;
+using namespace winrt::Telegram::Td::Api;
 
 namespace winrt::Telegram::Native::implementation
 {
@@ -37,7 +42,7 @@ namespace winrt::Telegram::Native::implementation
 
         static winrt::Telegram::Native::PlaceholderImageHelper Current()
         {
-            slim_lock_guard const guard(s_criticalSection);
+            std::lock_guard const guard(s_criticalSection);
 
             if (s_current == nullptr)
             {
@@ -48,40 +53,41 @@ namespace winrt::Telegram::Native::implementation
             return s_current.as<winrt::Telegram::Native::PlaceholderImageHelper>();
         }
 
-        static void WriteBytes(IVector<byte> hash, IRandomAccessStream randomAccessStream) noexcept;
-        static IBuffer DrawWebP(hstring fileName, int32_t maxWidth, Windows::Foundation::Size& size) noexcept;
+        static HRESULT WriteBytes(IVector<byte> hash, IRandomAccessStream randomAccessStream) noexcept;
+        static IBuffer DrawWebP(hstring fileName, int32_t maxWidth, int32_t& pixelWidth, int32_t& pixelHeight) noexcept;
 
         HRESULT Encode(IBuffer source, IRandomAccessStream destination, int32_t width, int32_t height);
 
-        winrt::Windows::Foundation::IAsyncAction DrawSvgAsync(hstring path, _In_ Color foreground, IRandomAccessStream randomAccessStream, double dpi);
-        void DrawSvg(hstring path, _In_ Color foreground, IRandomAccessStream randomAccessStream, double dpi, Windows::Foundation::Size& size);
+        winrt::Windows::Foundation::IAsyncAction DrawSvgAsync(hstring path, Color foreground, IRandomAccessStream randomAccessStream, double dpi);
+        HRESULT DrawSvg(hstring path, Color foreground, IRandomAccessStream randomAccessStream, double dpi, Windows::Foundation::Size& size);
 
-        void DrawThumbnailPlaceholder(hstring fileName, float blurAmount, _In_ IRandomAccessStream randomAccessStream);
-        void DrawThumbnailPlaceholder(IVector<uint8_t> bytes, float blurAmount, _In_ IRandomAccessStream randomAccessStream);
+        HRESULT DrawThumbnailPlaceholder(hstring fileName, float blurAmount, IRandomAccessStream randomAccessStream);
+        HRESULT DrawThumbnailPlaceholder(IVector<uint8_t> bytes, float blurAmount, IRandomAccessStream randomAccessStream);
+        HRESULT DrawThumbnailPlaceholder(IVector<uint8_t> bytes, float blurAmount, IBuffer randomAccessStream);
 
-        float2 ContentEnd(hstring text, IVector<PlaceholderEntity> entities, double fontSize, double width);
-        IVector<Windows::Foundation::Rect> LineMetrics(hstring text, double fontSize, double width, bool rtl);
+        winrt::Telegram::Native::SurfaceImage Create(int32_t pixelWidth, int32_t pixelHeight);
+        HRESULT Invalidate(winrt::Telegram::Native::SurfaceImage imageSource, IBuffer buffer);
+
+        float2 ContentEnd(hstring text, IVector<TextEntity> entities, double fontSize, double width);
+        IVector<Windows::Foundation::Rect> LineMetrics(hstring text, IVector<TextEntity> entities, double fontSize, double width, bool rtl);
+        IVector<Windows::Foundation::Rect> RangeMetrics(hstring text, int32_t offset, int32_t length, IVector<TextEntity> entities, double fontSize, double width, bool rtl);
         //IVector<Windows::Foundation::Rect> EntityMetrics(hstring text, IVector<TextEntity> entities, double fontSize, double width, bool rtl);
 
-    //internal:
-    //	PlaceholderImageHelper();
-
     private:
-        //PlaceholderImageHelper();
-
-        HRESULT InternalDrawSvg(hstring data, _In_ Color foreground, _In_ IRandomAccessStream randomAccessStream, double dpi, _Out_ Windows::Foundation::Size& size);
-        HRESULT InternalDrawThumbnailPlaceholder(hstring fileName, float blurAmount, _In_ IRandomAccessStream randomAccessStream);
-        HRESULT InternalDrawThumbnailPlaceholder(IVector<uint8_t> bytes, float blurAmount, _In_ IRandomAccessStream randomAccessStream);
-        HRESULT InternalDrawThumbnailPlaceholder(_In_ IWICBitmapSource* wicBitmapSource, float blurAmount, _In_ IRandomAccessStream randomAccessStream, bool minithumbnail);
-        HRESULT SaveImageToStream(_In_ ID2D1Image* image, _In_ REFGUID wicFormat, _In_ IRandomAccessStream randomAccessStream);
-        HRESULT MeasureText(_In_ const wchar_t* text, _In_ IDWriteTextFormat* format, _Out_ DWRITE_TEXT_METRICS* textMetrics);
         HRESULT CreateDeviceIndependentResources();
         HRESULT CreateDeviceResources();
+        HRESULT CreateTextFormat(double fontSize);
+
+        HRESULT InternalDrawThumbnailPlaceholder(IWICBitmapSource* wicBitmapSource, float blurAmount, IRandomAccessStream randomAccessStream, bool minithumbnail);
+        HRESULT InternalDrawThumbnailPlaceholder(IWICBitmapSource* wicBitmapSource, float blurAmount, IBuffer randomAccessStream, bool minithumbnail);
+        HRESULT SaveImageToStream(ID2D1Image* image, REFGUID wicFormat, IRandomAccessStream randomAccessStream);
+
+        HRESULT ContentEndImpl(hstring text, IVector<TextEntity> entities, double fontSize, double width, float2& offset);
+        HRESULT RangeMetricsImpl(hstring text, int32_t offset, int32_t length, IVector<TextEntity> entities, double fontSize, double width, bool rtl, IVector<Windows::Foundation::Rect>& rects);
+
 
     private:
-        //static std::map<int, WeakReference> s_windowContext;
-
-        static winrt::slim_mutex s_criticalSection;
+        static std::mutex s_criticalSection;
         static winrt::com_ptr<PlaceholderImageHelper> s_current;
 
         winrt::com_ptr<ID2D1Factory1> m_d2dFactory;
@@ -95,9 +101,10 @@ namespace winrt::Telegram::Native::implementation
         winrt::com_ptr<IDWriteFontCollectionLoader> m_customLoader;
         winrt::com_ptr<IDWriteFontCollection> m_fontCollection;
         winrt::com_ptr<IDWriteFontCollection> m_systemCollection;
+        winrt::com_ptr<IDWriteInlineObject> m_customEmoji;
         winrt::com_ptr<IDWriteTextFormat> m_appleFormat;
         winrt::com_ptr<ID2D1Effect> m_gaussianBlurEffect;
-        winrt::slim_mutex m_criticalSection;
+        std::mutex m_criticalSection;
     };
 } // namespace winrt::Telegram::Native::implementation
 

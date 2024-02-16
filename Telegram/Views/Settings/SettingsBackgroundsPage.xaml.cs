@@ -1,10 +1,11 @@
 //
-// Copyright Fela Ameghino 2015-2023
+// Copyright Fela Ameghino 2015-2024
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
 using Telegram.Common;
+using Telegram.Controls;
 using Telegram.Controls.Chats;
 using Telegram.Controls.Media;
 using Telegram.Td.Api;
@@ -40,20 +41,16 @@ namespace Telegram.Views.Settings
 
         private void OnContextRequested(UIElement sender, ContextRequestedEventArgs args)
         {
-            var element = sender as FrameworkElement;
             var background = ScrollingHost.ItemFromContainer(sender) as Background;
-
             if (background == null || background.Id == Constants.WallpaperLocalId)
             {
                 return;
             }
 
             var flyout = new MenuFlyout();
-
             flyout.CreateFlyoutItem(ViewModel.Share, background, Strings.ShareFile, Icons.Share);
             flyout.CreateFlyoutItem(ViewModel.Delete, background, Strings.Delete, Icons.Delete, destructive: true);
-
-            args.ShowAt(flyout, element);
+            flyout.ShowAt(sender, args);
         }
 
         private void OnContainerContentChanging(ListViewBase sender, ContainerContentChangingEventArgs args)
@@ -62,15 +59,19 @@ namespace Telegram.Views.Settings
             {
                 return;
             }
+            else if (args.ItemContainer.ContentTemplateRoot is AspectView content && args.Item is Background background)
+            {
+                var preview = content.Children[0] as ChatBackgroundPresenter;
+                var check = content.Children[1];
 
-            var background = args.Item as Background;
-            var root = args.ItemContainer.ContentTemplateRoot as Grid;
+                preview.UpdateSource(ViewModel.ClientService, background, true);
+                content.Constraint = background;
+                check.Visibility = background == ViewModel.SelectedItem
+                    ? Visibility.Visible
+                    : Visibility.Collapsed;
 
-            var preview = root.Children[0] as ChatBackgroundPresenter;
-            var check = root.Children[1];
-
-            preview.UpdateSource(ViewModel.ClientService, background, true);
-            check.Visibility = background == ViewModel.SelectedItem ? Visibility.Visible : Visibility.Collapsed;
+                args.Handled = true;
+            }
         }
 
         private void List_ItemClick(object sender, ItemClickEventArgs e)

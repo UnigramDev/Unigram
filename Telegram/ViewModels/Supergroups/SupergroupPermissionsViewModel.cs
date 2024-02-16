@@ -1,5 +1,5 @@
 //
-// Copyright Fela Ameghino 2015-2023
+// Copyright Fela Ameghino 2015-2024
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
@@ -312,7 +312,7 @@ namespace Telegram.ViewModels.Supergroups
             {
                 if (_slowModeDelay != 0)
                 {
-                    chat = await ClientService.SendAsync(new UpgradeBasicGroupChatToSupergroupChat(chat.Id)) as Chat;
+                    chat = await UpgradeAsync(chat);
                 }
                 else
                 {
@@ -354,7 +354,7 @@ namespace Telegram.ViewModels.Supergroups
                 return;
             }
 
-            NavigationService.Navigate(typeof(SupergroupAddRestrictedPage), chat.Id);
+            NavigationService.ShowPopupAsync(typeof(SupergroupChooseMemberPopup), new SupergroupChooseMemberArgs(chat.Id, SupergroupChooseMemberMode.Restrict));
         }
 
         public void Banned()
@@ -397,7 +397,11 @@ namespace Telegram.ViewModels.Supergroups
 
             Members.Remove(member);
 
-            var response = await ClientService.SendAsync(new SetChatMemberStatus(chat.Id, member.MemberId, new ChatMemberStatusMember()));
+            ChatMemberStatus status = member.Status is ChatMemberStatusRestricted { IsMember: true }
+                ? new ChatMemberStatusMember()
+                : new ChatMemberStatusLeft();
+
+            var response = await ClientService.SendAsync(new SetChatMemberStatus(chat.Id, member.MemberId, status));
             if (response is Error)
             {
                 Members.Insert(index, member);

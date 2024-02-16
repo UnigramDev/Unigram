@@ -1,5 +1,5 @@
 //
-// Copyright Fela Ameghino 2015-2023
+// Copyright Fela Ameghino 2015-2024
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
@@ -7,6 +7,7 @@
 using System;
 using System.Threading.Tasks;
 using Telegram.Services;
+using Telegram.ViewModels.Settings;
 using Windows.ApplicationModel;
 using Windows.Foundation.Metadata;
 using Windows.UI.Xaml;
@@ -16,22 +17,34 @@ namespace Telegram.Controls
 {
     public sealed partial class StartupSwitch : UserControl
     {
+        public SettingsAdvancedViewModel ViewModel => DataContext as SettingsAdvancedViewModel;
+
         public StartupSwitch()
         {
             InitializeComponent();
 
+            var integrated = false;
+
+            if (ApiInformation.IsTypePresent("Windows.ApplicationModel.FullTrustProcessLauncher"))
+            {
+                integrated = true;
+                FindName(nameof(TraySwitch));
+            }
+
             if (ApiInformation.IsApiContractPresent("Windows.ApplicationModel.StartupTaskContract", 2))
             {
+                integrated = true;
+
 #if DESKTOP_BRIDGE
                 FindName(nameof(ToggleMinimized));
 #endif
 
                 OnLoaded();
             }
-            else
-            {
-                Visibility = Visibility.Collapsed;
-            }
+
+            Visibility = integrated
+                ? Visibility.Visible
+                : Visibility.Collapsed;
         }
 
         private async void OnLoaded()

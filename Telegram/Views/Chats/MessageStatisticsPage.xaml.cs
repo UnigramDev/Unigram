@@ -1,5 +1,5 @@
 //
-// Copyright Fela Ameghino 2015-2023
+// Copyright Fela Ameghino 2015-2024
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
@@ -31,6 +31,16 @@ namespace Telegram.Views.Chats
             if (message?.InteractionInfo != null)
             {
                 return message.InteractionInfo.ViewCount.ToString("N0");
+            }
+
+            return string.Empty;
+        }
+
+        private string ConvertReactions(Message message)
+        {
+            if (message?.InteractionInfo != null)
+            {
+                return message.InteractionInfo.TotalReactions().ToString("N0");
             }
 
             return string.Empty;
@@ -75,7 +85,7 @@ namespace Telegram.Views.Chats
             var root = sender as ChartCell;
             var data = args.NewValue as ChartViewData;
 
-            if (root == null || data == null)
+            if (root == null)
             {
                 return;
             }
@@ -84,7 +94,7 @@ namespace Telegram.Views.Chats
             var border = root.Items[1] as AspectView;
             var checks = root.Items[2] as WrapPanel;
 
-            root.Header = data.title;
+            root.Header = data?.title ?? string.Empty;
             border.Children.Clear();
             border.Constraint = data;
 

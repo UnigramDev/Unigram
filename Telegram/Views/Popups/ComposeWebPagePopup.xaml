@@ -1,0 +1,62 @@
+﻿<controls:ContentPopup x:Class="Telegram.Views.Popups.ComposeWebPagePopup"
+                       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                       xmlns:local="using:Telegram.Views.Popups"
+                       xmlns:controls="using:Telegram.Controls"
+                       xmlns:chats="using:Telegram.Controls.Chats"
+                       xmlns:messages="using:Telegram.Controls.Messages"
+                       xmlns:common="using:Telegram.Common"
+                       xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                       mc:Ignorable="d"
+                       ContentMaxWidth="394"
+                       HorizontalContentAlignment="Stretch"
+                       Title="TITLE"
+                       DefaultButton="None"
+                       PrimaryButtonText="Button1"
+                       SecondaryButtonText="Button2"
+                       PrimaryButtonClick="ContentDialog_PrimaryButtonClick"
+                       SecondaryButtonClick="ContentDialog_SecondaryButtonClick"
+                       Padding="0,24">
+
+    <StackPanel>
+        <Grid x:Name="Preview">
+            <chats:ChatBackgroundControl x:Name="BackgroundControl" />
+            <ScrollViewer x:Name="ScrollingHost"
+                          VerticalScrollBarVisibility="Auto"
+                          VerticalScrollMode="Enabled"
+                          VerticalAnchorRatio="1"
+                          Height="320">
+                <StackPanel Padding="12,6,0,10">
+                    <messages:MessageBubble x:Name="Message1"
+                                            HorizontalAlignment="Left"
+                                            Visibility="Collapsed" />
+                    <messages:MessageBubble x:Name="Message2"
+                                            HorizontalAlignment="Right"
+                                            Visibility="Collapsed">
+                        <FrameworkElement.Resources>
+                            <common:ThemeOutgoing />
+                        </FrameworkElement.Resources>
+                    </messages:MessageBubble>
+                </StackPanel>
+            </ScrollViewer>
+        </Grid>
+
+        <controls:BadgeButton x:Name="Move"
+                              Click="Move_Click"
+                              Content="{CustomResource LinkAbove}"
+                              Style="{StaticResource GlyphBadgeButtonStyle}"
+                              Glyph="&#xEA44;" />
+        <controls:BadgeButton x:Name="Resize"
+                              Click="Resize_Click"
+                              Content="{CustomResource LinkMediaLarger}"
+                              Style="{StaticResource GlyphBadgeButtonStyle}"
+                              Glyph="&#xEA46;" />
+        <controls:BadgeButton Content="{CustomResource DoNotLinkPreview}"
+                              Style="{StaticResource GlyphBadgeButtonStyle}"
+                              Foreground="{ThemeResource DangerButtonBackground}"
+                              BorderThickness="0,0,0,1"
+                              Glyph="&#xE74D;" />
+
+    </StackPanel>
+</controls:ContentPopup>

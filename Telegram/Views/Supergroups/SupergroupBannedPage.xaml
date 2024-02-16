@@ -24,6 +24,7 @@
                                 ChoosingItemContainer="OnChoosingItemContainer"
                                 ContainerContentChanging="OnContainerContentChanging"
                                 SelectionMode="None"
+                                VerticalContentAlignment="Top"
                                 Grid.Row="1">
             <ListView.ItemTemplate>
                 <DataTemplate>
@@ -33,16 +34,29 @@
             </ListView.ItemTemplate>
             <ListView.Header>
                 <controls:SettingsPanel IsHeader="True">
-                    <TextBox x:Name="SearchField"
-                             Text="{x:Bind ViewModel.Members.Query, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                             PlaceholderText="{CustomResource Search}"
-                             PreventKeyboardDisplayOnProgrammaticFocus="True"
-                             HorizontalAlignment="Left"
-                             Width="280"
-                             Margin="24,16,24,0" />
+                    <Grid HorizontalAlignment="Left"
+                          Margin="24,16,24,0"
+                          Width="280">
+                        <TextBox x:Name="SearchField"
+                                 Text="{x:Bind ViewModel.Members.Query, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                 PlaceholderText="{CustomResource Search}"
+                                 PreventKeyboardDisplayOnProgrammaticFocus="True"
+                                 Padding="34,5,6,6"
+                                 InputScope="Search" />
+
+                        <controls:GlyphButton Glyph="&#xE721;"
+                                              FontSize="16"
+                                              Width="36"
+                                              Height="32"
+                                              IsTabStop="False"
+                                              AutomationProperties.AccessibilityView="Raw"
+                                              HorizontalAlignment="Left"
+                                              VerticalAlignment="Center" />
+                    </Grid>
 
                     <controls:HeaderedControl x:Name="AddNewPanel"
-                                              Visibility="Collapsed">
+                                              Visibility="Collapsed"
+                                              Margin="0,0,0,2">
                         <controls:BadgeButton Content="{CustomResource ChannelBlockUser}"
                                               Click="{x:Bind ViewModel.Add}"
                                               Style="{StaticResource GlyphBadgeButtonStyle}"
@@ -54,7 +68,7 @@
                 <TextBlock x:Name="Footer"
                            Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"
                            Style="{StaticResource CaptionTextBlockStyle}"
-                           Margin="24,8,24,32" />
+                           Margin="24,6,24,32" />
             </ListView.Footer>
         </controls:TableListView>
     </Grid>

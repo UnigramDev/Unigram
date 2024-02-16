@@ -1,5 +1,5 @@
 //
-// Copyright Fela Ameghino 2015-2023
+// Copyright Fela Ameghino 2015-2024
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
@@ -24,7 +24,7 @@ namespace Telegram.Views.Popups
         public DownloadsPopup(int sessionId, INavigationService navigationService)
         {
             InitializeComponent();
-            DataContext = TLContainer.Current.Resolve<DownloadsViewModel>(sessionId);
+            DataContext = TypeResolver.Current.Resolve<DownloadsViewModel>(sessionId);
 
             PrimaryButtonText = Strings.Close;
 
@@ -100,21 +100,17 @@ namespace Telegram.Views.Popups
             {
                 return;
             }
-
-            var content = args.ItemContainer.ContentTemplateRoot as FileDownloadCell;
-            var file = args.Item as FileDownloadViewModel;
-
-            content.UpdateFileDownload(ViewModel, file);
-            args.ItemContainer.Tag = file;
+            else if (args.ItemContainer.ContentTemplateRoot is FileDownloadCell content && args.Item is FileDownloadViewModel file)
+            {
+                content.UpdateFileDownload(ViewModel, file);
+            }
         }
 
         private void OnContextRequested(UIElement sender, ContextRequestedEventArgs args)
         {
-            var element = sender as FrameworkElement;
-            var fileDownload = element.Tag as FileDownloadViewModel;
-
             var flyout = new MenuFlyout();
 
+            var fileDownload = ScrollingHost.ItemFromContainer(sender) as FileDownloadViewModel;
             if (fileDownload.CompleteDate == 0)
             {
                 flyout.CreateFlyoutItem(ViewModel.RemoveFileDownload, fileDownload, Strings.AccActionCancelDownload, Icons.Dismiss);
@@ -131,7 +127,7 @@ namespace Telegram.Views.Popups
                 //flyout.CreateFlyoutItem(_ => { }, fileDownload, Strings.lng_context_select_msg, Icons.CheckmarkCircle);
             }
 
-            args.ShowAt(flyout, sender as FrameworkElement);
+            flyout.ShowAt(sender, args);
         }
     }
 }

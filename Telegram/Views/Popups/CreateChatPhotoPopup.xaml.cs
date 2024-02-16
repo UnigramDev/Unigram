@@ -1,5 +1,5 @@
 //
-// Copyright Fela Ameghino 2015-2023
+// Copyright Fela Ameghino 2015-2024
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
@@ -47,11 +47,11 @@ namespace Telegram.Views.Popups
             {
                 return;
             }
-
-            var wallpaper = args.Item as Background;
-            var content = args.ItemContainer.ContentTemplateRoot as ChatBackgroundPresenter;
-
-            content.UpdateSource(ViewModel.ClientService, wallpaper, true);
+            else if (args.ItemContainer.ContentTemplateRoot is ChatBackgroundPresenter content && args.Item is Background background)
+            {
+                content.UpdateSource(ViewModel.ClientService, background, true);
+                args.Handled = true;
+            }
         }
 
         private void Emojis_ItemClick(object sender, ItemClickEventArgs e)
@@ -105,7 +105,7 @@ namespace Telegram.Views.Popups
                 if (StickersRoot == null)
                 {
                     FindName(nameof(StickersPanel));
-                    StickersRoot.DataContext = StickerDrawerViewModel.GetForCurrentView(ViewModel.SessionId);
+                    StickersRoot.DataContext = StickerDrawerViewModel.Create(ViewModel.SessionId);
                     StickersRoot.ItemClick = Stickers_ItemClick;
                 }
 
@@ -122,7 +122,7 @@ namespace Telegram.Views.Popups
                 if (EmojisRoot == null)
                 {
                     FindName(nameof(EmojisPanel));
-                    EmojisRoot.DataContext = EmojiDrawerViewModel.GetForCurrentView(ViewModel.SessionId, EmojiDrawerMode.ChatPhoto);
+                    EmojisRoot.DataContext = EmojiDrawerViewModel.Create(ViewModel.SessionId, EmojiDrawerMode.ChatPhoto);
                 }
 
                 EmojisRoot.Activate(null);
@@ -178,7 +178,7 @@ namespace Telegram.Views.Popups
                 using (Icon.BeginBatchUpdate())
                 {
                     Icon.FrameSize = new Size(width, height);
-                    Icon.Source = new DelayedFileSource(ViewModel.ClientService, foreground.StickerValue);
+                    Icon.Source = new DelayedFileSource(ViewModel.ClientService, foreground);
                 }
             }
 

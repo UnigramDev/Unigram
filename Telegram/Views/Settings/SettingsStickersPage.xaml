@@ -102,7 +102,7 @@
                         </controls:HeaderedControl>
 
                         <controls:SettingsFooter Text="{CustomResource MasksInfo}"
-                                                 Margin="24,16,24,8" />
+                                                 Margin="24,16,24,6" />
                     </controls:SettingsPanel>
 
                     <controls:SettingsPanel x:Name="EmojiPanel"
@@ -134,17 +134,17 @@
                     <controls:SettingsFooter x:Name="TrendingPanel"
                                              x:Load="{x:Bind IsType(ViewModel.Type, settings:StickersType.Trending)}"
                                              Text="{CustomResource FeaturedStickersInfo}"
-                                             Margin="24,80,24,8" />
+                                             Margin="24,80,24,6" />
 
                     <controls:SettingsFooter x:Name="ArchivedPanel"
                                              x:Load="{x:Bind IsType(ViewModel.Type, settings:StickersType.Archived)}"
                                              Text="{CustomResource ArchivedMasksInfo}"
-                                             Margin="24,80,24,8" />
+                                             Margin="24,80,24,6" />
 
                     <controls:SettingsFooter x:Name="MasksArchivedPanel"
                                              x:Load="{x:Bind IsType(ViewModel.Type, settings:StickersType.MasksArchived)}"
                                              Text="{CustomResource ArchivedStickersInfo}"
-                                             Margin="24,80,24,8" />
+                                             Margin="24,80,24,6" />
                 </Grid>
             </ListView.Header>
             <ListView.ItemTemplate>

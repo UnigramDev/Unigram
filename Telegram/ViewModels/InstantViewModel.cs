@@ -1,5 +1,5 @@
 //
-// Copyright Fela Ameghino 2015-2023
+// Copyright Fela Ameghino 2015-2024
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
@@ -13,6 +13,7 @@ using Telegram.Services;
 using Telegram.Services.Factories;
 using Telegram.Td.Api;
 using Telegram.ViewModels.Delegates;
+using Telegram.Views;
 using Telegram.Views.Popups;
 using Windows.System;
 using Windows.UI.Xaml.Navigation;
@@ -42,10 +43,13 @@ namespace Telegram.ViewModels
 
         protected override async Task OnNavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
         {
-            var response = await ClientService.SendAsync(new GetWebPagePreview(new FormattedText((string)parameter, new TextEntity[0])));
-            if (response is WebPage webPage)
+            if (parameter is InstantPageArgs args)
             {
-                Title = webPage.SiteName;
+                var response = await ClientService.SendAsync(new GetWebPagePreview(new FormattedText(args.Url, Array.Empty<TextEntity>()), null));
+                if (response is WebPage webPage)
+                {
+                    Title = webPage.SiteName;
+                }
             }
         }
 
@@ -54,7 +58,7 @@ namespace Telegram.ViewModels
 
         public MessageViewModel CreateMessage(Message message)
         {
-            return _messageFactory.Create(_messageDelegate, null, message);
+            return _messageFactory.Create(_messageDelegate, null, message, false);
         }
 
         private InstantGalleryViewModel _gallery;

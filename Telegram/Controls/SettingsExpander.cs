@@ -1,4 +1,10 @@
-﻿using Windows.UI.Xaml;
+﻿//
+// Copyright Fela Ameghino 2015-2024
+//
+// Distributed under the GNU General Public License v3.0. (See accompanying
+// file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
+//
+using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
 using Windows.UI.Xaml.Hosting;
@@ -34,8 +40,6 @@ namespace Telegram.Controls
 
         private void OnSizeChanged(object sender, SizeChangedEventArgs e)
         {
-            Logger.Debug();
-
             PopupRoot.Margin = new Thickness(0, 0, 0, IsExpanded ? 0 : -e.NewSize.Height);
         }
 
@@ -73,7 +77,7 @@ namespace Telegram.Controls
             PopupRoot.Margin = new Thickness(0, 0, 0, newValue ? 0 : -PopupRoot.ActualHeight);
             PopupRoot.Visibility = Visibility.Visible;
 
-            var visual = ElementCompositionPreview.GetElementVisual(PopupRoot);
+            var visual = ElementComposition.GetElementVisual(PopupRoot);
             visual.Clip = visual.Compositor.CreateInsetClip();
 
             var clip = visual.Compositor.CreateScalarKeyFrameAnimation();

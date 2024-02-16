@@ -1,5 +1,5 @@
 //
-// Copyright Fela Ameghino 2015-2023
+// Copyright Fela Ameghino 2015-2024
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
@@ -26,11 +26,14 @@ using Telegram.Views.Folders;
 using Telegram.Views.Folders.Popups;
 using Telegram.Views.Host;
 using Telegram.Views.Popups;
+using Telegram.Views.Premium.Popups;
 using Telegram.Views.Settings;
 using Windows.ApplicationModel;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.ApplicationModel.Resources.Core;
 using Windows.Foundation;
+using Windows.Storage;
+using Windows.Storage.Streams;
 using Windows.System;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -73,7 +76,7 @@ namespace Telegram.Common
             dataPackage.SetText(link);
             ClipboardEx.TrySetContent(dataPackage);
 
-            Window.Current.ShowTeachingTip(publiz ? Strings.LinkCopied : Strings.LinkCopiedPrivate, new LocalFileSource("ms-appx:///Assets/Toasts/LinkCopied.tgs"));
+            ToastPopup.Show(publiz ? Strings.LinkCopied : Strings.LinkCopiedPrivate, new LocalFileSource("ms-appx:///Assets/Toasts/LinkCopied.tgs"));
         }
 
         public static void CopyText(string text)
@@ -82,7 +85,209 @@ namespace Telegram.Common
             dataPackage.SetText(text);
             ClipboardEx.TrySetContent(dataPackage);
 
-            Window.Current.ShowTeachingTip(Strings.TextCopied, new LocalFileSource("ms-appx:///Assets/Toasts/Copied.tgs"));
+            ToastPopup.Show(Strings.TextCopied, new LocalFileSource("ms-appx:///Assets/Toasts/Copied.tgs"));
+        }
+
+        public static async void CopyText(FormattedText text, bool showToast = true)
+        {
+            var dataPackage = new DataPackage();
+            dataPackage.SetText(text.Text);
+
+            var entities = text.Entities.Where(x => x.IsEditable()).ToList();
+            if (entities.Count > 0)
+            {
+                using (var stream = new InMemoryRandomAccessStream())
+                {
+                    using (var writer = new DataWriter(stream.GetOutputStreamAt(0)))
+                    {
+                        writer.WriteInt32(entities.Count);
+
+                        foreach (var entity in entities)
+                        {
+                            writer.WriteInt32(entity.Offset);
+                            writer.WriteInt32(entity.Length);
+
+                            switch (entity.Type)
+                            {
+                                case TextEntityTypeBold:
+                                    writer.WriteByte(1);
+                                    break;
+                                case TextEntityTypeItalic:
+                                    writer.WriteByte(2);
+                                    break;
+                                case TextEntityTypeStrikethrough:
+                                    writer.WriteByte(3);
+                                    break;
+                                case TextEntityTypeUnderline:
+                                    writer.WriteByte(4);
+                                    break;
+                                case TextEntityTypeSpoiler:
+                                    writer.WriteByte(5);
+                                    break;
+                                case TextEntityTypeBlockQuote:
+                                    writer.WriteByte(6);
+                                    break;
+                                case TextEntityTypeCustomEmoji customEmoji:
+                                    writer.WriteByte(7);
+                                    writer.WriteInt64(customEmoji.CustomEmojiId);
+                                    break;
+                                case TextEntityTypeCode:
+                                    writer.WriteByte(8);
+                                    break;
+                                case TextEntityTypePre:
+                                    writer.WriteByte(9);
+                                    break;
+                                case TextEntityTypePreCode preCode:
+                                    writer.WriteByte(10);
+                                    writer.WriteUInt32(writer.MeasureString(preCode.Language));
+                                    writer.WriteString(preCode.Language);
+                                    break;
+                                case TextEntityTypeTextUrl textUrl:
+                                    writer.WriteByte(11);
+                                    writer.WriteUInt32(writer.MeasureString(textUrl.Url));
+                                    writer.WriteString(textUrl.Url);
+                                    break;
+                                case TextEntityTypeMentionName mentionName:
+                                    writer.WriteByte(12);
+                                    writer.WriteInt64(mentionName.UserId);
+                                    break;
+                            }
+                        }
+
+                        await writer.FlushAsync();
+                        await writer.StoreAsync();
+                    }
+
+                    stream.Seek(0);
+                    dataPackage.SetData("application/x-tl-field-tags", stream.CloneStream());
+                }
+            }
+
+            ClipboardEx.TrySetContent(dataPackage);
+
+            if (showToast)
+            {
+                ToastPopup.Show(Strings.TextCopied, new LocalFileSource("ms-appx:///Assets/Toasts/Copied.tgs"));
+            }
+        }
+
+        public static async void DragStarting(MessageViewModel message, DragStartingEventArgs args)
+        {
+            var file = message?.GetFile();
+            if (file != null && file.Local.IsDownloadingCompleted)
+            {
+                var deferral = args.GetDeferral();
+
+                try
+                {
+                    var item = await StorageFile.GetFileFromPathAsync(file.Local.Path);
+
+                    args.Data.RequestedOperation = DataPackageOperation.Copy;
+                    args.Data.SetStorageItems(new[] { item });
+
+                    using (var stream = new InMemoryRandomAccessStream())
+                    {
+                        using (var writer = new DataWriter(stream.GetOutputStreamAt(0)))
+                        {
+                            writer.WriteInt64(message.ChatId);
+                            writer.WriteInt64(message.Id);
+
+                            await writer.FlushAsync();
+                            await writer.StoreAsync();
+                        }
+
+                        stream.Seek(0);
+                        args.Data.SetData("application/x-tl-message", stream.CloneStream());
+                    }
+
+                    args.DragUI.SetContentFromDataPackage();
+                }
+                catch
+                {
+                    // All the remote procedure calls must be wrapped in a try-catch block
+                }
+                finally
+                {
+                    deferral.Complete();
+                }
+            }
+        }
+
+        public static async Task<FormattedText> PasteTextAsync(DataPackageView package)
+        {
+            if (package.AvailableFormats.Contains(StandardDataFormats.Text))
+            {
+                string text = await package.GetTextAsync();
+                IList<TextEntity> entities = null;
+
+                if (package.AvailableFormats.Contains("application/x-tl-field-tags"))
+                {
+                    var data = await package.GetDataAsync("application/x-tl-field-tags") as IRandomAccessStream;
+                    var reader = new DataReader(data.GetInputStreamAt(0));
+
+                    await reader.LoadAsync((uint)data.Size);
+
+                    var count = reader.ReadInt32();
+                    entities = new List<TextEntity>(count);
+
+                    for (int i = 0; i < count; i++)
+                    {
+                        var entity = new TextEntity
+                        {
+                            Offset = reader.ReadInt32(),
+                            Length = reader.ReadInt32()
+                        };
+
+                        var type = reader.ReadByte();
+
+                        switch (type)
+                        {
+                            case 1:
+                                entity.Type = new TextEntityTypeBold();
+                                break;
+                            case 2:
+                                entity.Type = new TextEntityTypeItalic();
+                                break;
+                            case 3:
+                                entity.Type = new TextEntityTypeStrikethrough();
+                                break;
+                            case 4:
+                                entity.Type = new TextEntityTypeUnderline();
+                                break;
+                            case 5:
+                                entity.Type = new TextEntityTypeSpoiler();
+                                break;
+                            case 6:
+                                entity.Type = new TextEntityTypeBlockQuote();
+                                break;
+                            case 7:
+                                entity.Type = new TextEntityTypeCustomEmoji(reader.ReadInt64());
+                                break;
+                            case 8:
+                                entity.Type = new TextEntityTypeCode();
+                                break;
+                            case 9:
+                                entity.Type = new TextEntityTypePre();
+                                break;
+                            case 10:
+                                entity.Type = new TextEntityTypePreCode(reader.ReadString(reader.ReadUInt32()));
+                                break;
+                            case 11:
+                                entity.Type = new TextEntityTypeTextUrl(reader.ReadString(reader.ReadUInt32()));
+                                break;
+                            case 12:
+                                entity.Type = new TextEntityTypeMentionName(reader.ReadInt64());
+                                break;
+                        }
+
+                        entities.Add(entity);
+                    }
+                }
+
+                return new FormattedText(text, entities ?? Array.Empty<TextEntity>());
+            }
+
+            return null;
         }
 
         public static bool TryCreateUri(string url, out Uri uri)
@@ -90,7 +295,8 @@ namespace Telegram.Common
             if (!url.StartsWith("http://")
                 && !url.StartsWith("https://")
                 && !url.StartsWith("tg:")
-                && !url.StartsWith("ftp:"))
+                && !url.StartsWith("ftp:")
+                && !url.StartsWith("mailto:"))
             {
                 url = "http://" + url;
             }
@@ -204,6 +410,10 @@ namespace Telegram.Common
             {
                 navigation.Navigate(typeof(SettingsProfilePage));
             }
+            else if (internalLink is InternalLinkTypeLanguageSettings)
+            {
+                navigation.Navigate(typeof(SettingsLanguagePage));
+            }
             else if (internalLink is InternalLinkTypeChatBoost chatBoost)
             {
                 NavigateToChatBoost(clientService, navigation, chatBoost.Url);
@@ -226,7 +436,7 @@ namespace Telegram.Common
             }
             else if (internalLink is InternalLinkTypeInstantView instantView)
             {
-                navigation.NavigateToInstant(instantView.Url);
+                navigation.NavigateToInstant(instantView.Url, instantView.FallbackUrl);
             }
             else if (internalLink is InternalLinkTypeInvoice invoice)
             {
@@ -252,6 +462,10 @@ namespace Telegram.Common
             {
                 navigation.ShowPromo(new PremiumSourceLink(premiumFeatures.Referrer));
             }
+            else if (internalLink is InternalLinkTypePremiumGiftCode premiumGiftCode)
+            {
+                NavigateToPremiumGiftCode(clientService, navigation, premiumGiftCode.Code);
+            }
             else if (internalLink is InternalLinkTypePrivacyAndSecuritySettings)
             {
                 navigation.Navigate(typeof(SettingsPrivacyAndSecurityPage));
@@ -263,6 +477,10 @@ namespace Telegram.Common
             else if (internalLink is InternalLinkTypeProxy proxy)
             {
                 NavigateToProxy(clientService, proxy.Server, proxy.Port, proxy.Type);
+            }
+            else if (internalLink is InternalLinkTypeUnsupportedProxy)
+            {
+                ToastPopup.Show(Strings.ProxyLinkUnsupported, new LocalFileSource("ms-appx:///Assets/Toasts/Error.tgs"));
             }
             else if (internalLink is InternalLinkTypePublicChat publicChat)
             {
@@ -311,6 +529,19 @@ namespace Telegram.Common
             else if (internalLink is InternalLinkTypeWebApp webApp)
             {
                 NavigateToWebApp(clientService, navigation, webApp.BotUsername, webApp.StartParameter, webApp.WebAppShortName, source);
+            }
+        }
+
+        private static async void NavigateToPremiumGiftCode(IClientService clientService, INavigationService navigation, string code)
+        {
+            var response = await clientService.SendAsync(new CheckPremiumGiftCode(code));
+            if (response is PremiumGiftCodeInfo info)
+            {
+                await new GiftCodePopup(clientService, navigation, info, code).ShowQueuedAsync();
+            }
+            else
+            {
+                // TODO: error
             }
         }
 
@@ -391,13 +622,14 @@ namespace Telegram.Common
             {
                 if (linkInfo.ChatId == 0 || !clientService.TryGetChat(linkInfo.ChatId, out Chat chat))
                 {
-                    Window.Current.ShowTeachingTip(Strings.NoUsernameFound, new LocalFileSource("ms-appx:///Assets/Toasts/Info.tgs"));
+                    ToastPopup.Show(Strings.NoUsernameFound, new LocalFileSource("ms-appx:///Assets/Toasts/Info.tgs"));
                     return;
                 }
 
-                var response2 = await clientService.SendAsync(new CanBoostChat(linkInfo.ChatId));
+                var response2 = await clientService.SendAsync(new GetAvailableChatBoostSlots());
                 var response3 = await clientService.SendAsync(new GetChatBoostStatus(linkInfo.ChatId));
-                if (response2 is CanBoostChatResult result && response3 is ChatBoostStatus status)
+
+                if (response2 is ChatBoostSlots result && response3 is ChatBoostStatus status)
                 {
                     await new ChatBoostPopup(clientService, navigation, chat, status, result).ShowQueuedAsync();
                 }
@@ -412,8 +644,8 @@ namespace Telegram.Common
                 var response2 = await clientService.SendAsync(new GetStory(chat.Id, storyId, false));
                 if (response2 is Story item)
                 {
-                    var settings = TLContainer.Current.Resolve<ISettingsService>(clientService.SessionId);
-                    var aggregator = TLContainer.Current.Resolve<IEventAggregator>(clientService.SessionId);
+                    var settings = TypeResolver.Current.Resolve<ISettingsService>(clientService.SessionId);
+                    var aggregator = TypeResolver.Current.Resolve<IEventAggregator>(clientService.SessionId);
 
                     var story = new StoryViewModel(clientService, item);
 
@@ -422,17 +654,17 @@ namespace Telegram.Common
                     viewModel.NavigationService = navigation;
 
                     var window = new StoriesWindow();
-                    window.Update(viewModel, activeStories, StoryOrigin.Card, Rect.Empty, null);
+                    window.Update(viewModel, activeStories, StoryOpenOrigin.Card, Rect.Empty, null);
                     _ = window.ShowAsync();
                 }
                 else
                 {
-                    Window.Current.ShowTeachingTip(Strings.StoryNotFound, new LocalFileSource("ms-appx:///Assets/Toasts/ExpiredStory.tgs"));
+                    ToastPopup.Show(Strings.StoryNotFound, new LocalFileSource("ms-appx:///Assets/Toasts/ExpiredStory.tgs"));
                 }
             }
             else
             {
-                Window.Current.ShowTeachingTip(Strings.NoUsernameFound, new LocalFileSource("ms-appx:///Assets/Toasts/Info.tgs"));
+                ToastPopup.Show(Strings.NoUsernameFound, new LocalFileSource("ms-appx:///Assets/Toasts/Info.tgs"));
             }
         }
 
@@ -483,16 +715,16 @@ namespace Telegram.Common
                         return;
                     }
 
-                    var sourceChat = source switch
+                    var chatId = source switch
                     {
-                        OpenUrlSourceChat sourceMessage => clientService.GetChat(sourceMessage.ChatId),
-                        _ => null
+                        OpenUrlSourceChat sourceMessage => sourceMessage.ChatId,
+                        _ => 0
                     };
 
-                    var responsa = await clientService.SendAsync(new GetWebAppLinkUrl(sourceChat.Id, user.Id, webAppShortName, startParameter, Theme.Current.Parameters, Strings.AppName, foundWebApp.RequestWriteAccess && popup.IsChecked is true));
+                    var responsa = await clientService.SendAsync(new GetWebAppLinkUrl(chatId, user.Id, webAppShortName, startParameter, Theme.Current.Parameters, Strings.AppName, foundWebApp.RequestWriteAccess && popup.IsChecked is true));
                     if (responsa is HttpUrl url)
                     {
-                        await new WebBotPopup(clientService, navigation, user, url.Url, null, sourceChat).ShowQueuedAsync();
+                        await new WebBotPopup(clientService, navigation, user, url.Url).ShowQueuedAsync();
                     }
                 }
                 else
@@ -502,7 +734,7 @@ namespace Telegram.Common
             }
             else
             {
-                Window.Current.ShowTeachingTip(Strings.NoUsernameFound, new LocalFileSource("ms-appx:///Assets/Toasts/Info.tgs"));
+                ToastPopup.Show(Strings.NoUsernameFound, new LocalFileSource("ms-appx:///Assets/Toasts/Info.tgs"));
             }
         }
 
@@ -537,11 +769,12 @@ namespace Telegram.Common
                 {
                     if (info.MessageThreadId != 0)
                     {
-                        navigation.NavigateToThread(info.ChatId, info.Message.Id, message: info.Message.Id);
+                        // TODO: should thread be info.MessageThreadId?
+                        navigation.NavigateToChat(info.ChatId, info.Message.Id, thread: info.Message.Id);
                     }
                     else
                     {
-                        navigation.NavigateToChat(info.ChatId, message: info.Message.Id);
+                        navigation.NavigateToChat(info.ChatId, info.Message.Id);
                     }
                 }
                 else
@@ -726,7 +959,7 @@ namespace Telegram.Common
             var confirm = await MessagePopup.ShowAsync($"{Strings.EnableProxyAlert}\n\n{Strings.UseProxyAddress}: {server}\n{Strings.UseProxyPort}: {port}\n{userText}{passText}{secretText}\n{Strings.EnableProxyAlert2}{secretInfo}", Strings.Proxy, Strings.ConnectingConnectProxy, Strings.Cancel);
             if (confirm == ContentDialogResult.Primary)
             {
-                clientService.Send(new AddProxy(server ?? string.Empty, port, true, type));
+                clientService.Send(new AddProxy(server ?? string.Empty, port, Constants.RELEASE, type));
             }
         }
 
@@ -789,12 +1022,12 @@ namespace Telegram.Common
                 }
                 else
                 {
-                    Window.Current.ShowTeachingTip(Strings.NoUsernameFound, new LocalFileSource("ms-appx:///Assets/Toasts/Info.tgs"));
+                    ToastPopup.Show(Strings.NoUsernameFound, new LocalFileSource("ms-appx:///Assets/Toasts/Info.tgs"));
                 }
             }
             else
             {
-                Window.Current.ShowTeachingTip(Strings.NoUsernameFound, new LocalFileSource("ms-appx:///Assets/Toasts/Info.tgs"));
+                ToastPopup.Show(Strings.NoUsernameFound, new LocalFileSource("ms-appx:///Assets/Toasts/Info.tgs"));
             }
         }
 
@@ -819,11 +1052,11 @@ namespace Telegram.Common
             }
             else
             {
-                Window.Current.ShowTeachingTip(Strings.NoUsernameFound, new LocalFileSource("ms-appx:///Assets/Toasts/Info.tgs"));
+                ToastPopup.Show(Strings.NoUsernameFound, new LocalFileSource("ms-appx:///Assets/Toasts/Info.tgs"));
             }
         }
 
-        public static async void NavigateToUsername(IClientService clientService, INavigationService navigation, string username, string videoChat, string game)
+        public static async void NavigateToUsername(IClientService clientService, INavigationService navigation, string username, string videoChat = null, string game = null)
         {
             var response = await clientService.SendAsync(new SearchPublicChat(username));
             if (response is Chat chat)
@@ -854,7 +1087,7 @@ namespace Telegram.Common
             }
             else
             {
-                Window.Current.ShowTeachingTip(Strings.NoUsernameFound, new LocalFileSource("ms-appx:///Assets/Toasts/Info.tgs"));
+                ToastPopup.Show(Strings.NoUsernameFound, new LocalFileSource("ms-appx:///Assets/Toasts/Info.tgs"));
             }
         }
 
@@ -894,7 +1127,7 @@ namespace Telegram.Common
 
                             var text = new FormattedText(message, new[] { entity });
 
-                            Window.Current.ShowTeachingTip(text, new LocalFileSource("ms-appx:///Assets/Toasts/JoinRequested.tgs"));
+                            ToastPopup.Show(text, new LocalFileSource("ms-appx:///Assets/Toasts/JoinRequested.tgs"));
                         }
                         else if (error.MessageEquals(ErrorType.FLOOD_WAIT))
                         {
@@ -1011,7 +1244,8 @@ namespace Telegram.Common
         {
             if (TryCreateUri(url, out Uri uri))
             {
-                if (clientService != null && navigationService != null && IsTelegramUrl(uri))
+                var telegramUrl = IsTelegramUrl(uri);
+                if (telegramUrl && clientService != null && navigationService != null)
                 {
                     OpenTelegramUrl(clientService, navigationService, uri, source);
                 }
@@ -1028,7 +1262,12 @@ namespace Telegram.Common
 
                     try
                     {
-                        await Launcher.LaunchUriAsync(uri);
+                        var options = new LauncherOptions
+                        {
+                            IgnoreAppUriHandlers = telegramUrl
+                        };
+
+                        await Launcher.LaunchUriAsync(uri, options);
                     }
                     catch { }
                 }
@@ -1102,7 +1341,7 @@ namespace Telegram.Common
             {
                 flyout.CreateFlyoutItem(LinkCopy_Click, text, Strings.Copy, Icons.DocumentCopy);
 
-                if (service != null && service.CanTranslate(text))
+                if (service != null && service.CanTranslateText(text))
                 {
                     flyout.CreateFlyoutItem(LinkTranslate_Click, Tuple.Create(service, text), Strings.TranslateMessage, Icons.Translate);
                 }
@@ -1202,7 +1441,7 @@ namespace Telegram.Common
             var service = tuple.Item1;
 
             var language = LanguageIdentification.IdentifyLanguage(entity);
-            var popup = new TranslatePopup(service, entity, language, LocaleService.Current.CurrentCulture.TwoLetterISOLanguageName, true);
+            var popup = new TranslatePopup(service, entity, language, SettingsService.Current.Translate.To, true);
             await popup.ShowQueuedAsync();
         }
 

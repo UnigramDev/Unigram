@@ -1,11 +1,10 @@
 //
-// Copyright Fela Ameghino 2015-2023
+// Copyright Fela Ameghino 2015-2024
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
 using Telegram.Common;
-using Telegram.Controls.Media;
 using Telegram.ViewModels.Settings;
 using Windows.UI.Xaml.Navigation;
 
@@ -31,9 +30,14 @@ namespace Telegram.Views.Settings
 
         #region Binding
 
-        private string ConvertVoiceMessagesChevron(bool premium)
+        private string ConvertNewChat(bool? value)
         {
-            return premium ? Icons.ChevronRight : Icons.LockClosed;
+            return value switch
+            {
+                true => Strings.LastSeenEverybody,
+                false => Strings.PrivacyMessagesContactsAndPremium,
+                _ => null
+            };
         }
 
         private string ConvertOnOff(bool value)

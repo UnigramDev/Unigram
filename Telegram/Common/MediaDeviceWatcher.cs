@@ -1,5 +1,5 @@
 //
-// Copyright Fela Ameghino 2015-2023
+// Copyright Fela Ameghino 2015-2024
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
@@ -188,6 +188,20 @@ namespace Telegram.Common
         }
 
         #region Device Access
+
+        public static async Task<bool> CheckIfUnsupportedAsync()
+        {
+            if (ApiInfo.IsMediaSupported)
+            {
+                return false;
+            }
+
+            // VoIP isn't supported on Windows N because:
+            // - MediaCapture is used for capturing video (no alternatives on WinRT)
+            // - MediaFoundation is used for encoding/decoding video frames (can fallback for WebRTC's software)
+            await MessagePopup.ShowAsync(Strings.VoipPlatformUnsupportedText, Strings.VoipPlatformUnsupportedTitle, Strings.OK);
+            return true;
+        }
 
         public static async Task<bool> CheckAccessAsync(bool video, bool required = true, ElementTheme requestedTheme = ElementTheme.Default)
         {

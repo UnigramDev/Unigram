@@ -1,5 +1,5 @@
 //
-// Copyright Fela Ameghino 2015-2023
+// Copyright Fela Ameghino 2015-2024
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
@@ -27,7 +27,7 @@ namespace Telegram.Views
         public SettingsPage()
         {
             InitializeComponent();
-            DataContext = TLContainer.Current.Resolve<SettingsViewModel, ISettingsDelegate>(this);
+            DataContext = TypeResolver.Current.Resolve<SettingsViewModel, ISettingsDelegate>(this);
 
             NavigationCacheMode = NavigationCacheMode.Required;
 
@@ -98,76 +98,72 @@ namespace Telegram.Views
             Navigation.SelectedItem = FindRoot();
         }
 
+        private void Navigate(Type type)
+        {
+            if (MasterDetail.NavigationService.Navigate(type))
+            {
+                UpdateSelection();
+            }
+        }
+
         private void Profile_Click(object sender, RoutedEventArgs e)
         {
-            MasterDetail.NavigationService.Navigate(typeof(SettingsProfilePage));
-            UpdateSelection();
+            Navigate(typeof(SettingsProfilePage));
         }
 
         private void Privacy_Click(object sender, RoutedEventArgs e)
         {
-            MasterDetail.NavigationService.Navigate(typeof(SettingsPrivacyAndSecurityPage));
-            UpdateSelection();
+            Navigate(typeof(SettingsPrivacyAndSecurityPage));
         }
 
         private void PowerSaving_Click(object sender, RoutedEventArgs e)
         {
-            MasterDetail.NavigationService.Navigate(typeof(SettingsPowerSavingPage));
-            UpdateSelection();
+            Navigate(typeof(SettingsPowerSavingPage));
         }
 
         private void Data_Click(object sender, RoutedEventArgs e)
         {
-            MasterDetail.NavigationService.Navigate(typeof(SettingsDataAndStoragePage));
-            UpdateSelection();
+            Navigate(typeof(SettingsDataAndStoragePage));
         }
 
         private void Folders_Click(object sender, RoutedEventArgs e)
         {
-            MasterDetail.NavigationService.Navigate(typeof(FoldersPage));
-            UpdateSelection();
+            Navigate(typeof(FoldersPage));
         }
 
         private void Notifications_Click(object sender, RoutedEventArgs e)
         {
-            MasterDetail.NavigationService.Navigate(typeof(SettingsNotificationsPage));
-            UpdateSelection();
+            Navigate(typeof(SettingsNotificationsPage));
         }
 
         private void Appearance_Click(object sender, RoutedEventArgs e)
         {
-            MasterDetail.NavigationService.Navigate(typeof(SettingsAppearancePage));
-            UpdateSelection();
+            Navigate(typeof(SettingsAppearancePage));
         }
 
         private void Sessions_Click(object sender, RoutedEventArgs e)
         {
-            MasterDetail.NavigationService.Navigate(typeof(SettingsSessionsPage));
-            UpdateSelection();
+            Navigate(typeof(SettingsSessionsPage));
         }
 
         private void Language_Click(object sender, RoutedEventArgs e)
         {
-            MasterDetail.NavigationService.Navigate(typeof(SettingsLanguagePage));
-            UpdateSelection();
+            Navigate(typeof(SettingsLanguagePage));
         }
 
         private void Advanced_Click(object sender, RoutedEventArgs e)
         {
-            MasterDetail.NavigationService.Navigate(typeof(SettingsAdvancedPage));
-            UpdateSelection();
+            Navigate(typeof(SettingsAdvancedPage));
         }
 
         private void Questions_Click(object sender, RoutedEventArgs e)
         {
             MasterDetail.NavigationService.NavigateToInstant(Strings.TelegramFaqUrl);
-            UpdateSelection();
         }
 
         private void PrivacyPolicy_Click(object sender, RoutedEventArgs e)
         {
             MasterDetail.NavigationService.NavigateToInstant(Strings.PrivacyPolicyUrl);
-            UpdateSelection();
         }
 
         private void Premium_Click(object sender, RoutedEventArgs e)

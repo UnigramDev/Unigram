@@ -1,5 +1,5 @@
 //
-// Copyright Fela Ameghino 2015-2023
+// Copyright Fela Ameghino 2015-2024
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
@@ -70,7 +70,7 @@ namespace Telegram.Services.Keyboard
                 }
                 finally
                 {
-                    e.Handled = e.Handled;
+                    e.Handled = args.Handled;
                 }
             }
         }
@@ -98,8 +98,8 @@ namespace Telegram.Services.Keyboard
         {
             return new InputKeyDownEventArgs
             {
-                EventArgs = e,
                 VirtualKey = e.VirtualKey,
+                RepeatCount = e.KeyStatus.RepeatCount,
                 AltKey = WindowContext.IsKeyDown(VirtualKey.Menu),
                 ControlKey = WindowContext.IsKeyDown(VirtualKey.Control),
                 ShiftKey = WindowContext.IsKeyDown(VirtualKey.Shift),
@@ -126,7 +126,7 @@ namespace Telegram.Services.Keyboard
                 return;
             }
 
-            // If back or foward are pressed (but not both) navigate appropriately
+            // If back or forward are pressed (but not both) navigate appropriately
             bool backPressed = properties.IsXButton1Pressed;
             bool forwardPressed = properties.IsXButton2Pressed;
             if (backPressed ^ forwardPressed)
@@ -155,7 +155,7 @@ namespace Telegram.Services.Keyboard
                 return false;
             }
 
-            // If back or foward are pressed (but not both) navigate appropriately
+            // If back or forward are pressed (but not both) navigate appropriately
             bool backPressed = properties.IsXButton1Pressed;
             return backPressed;
         }

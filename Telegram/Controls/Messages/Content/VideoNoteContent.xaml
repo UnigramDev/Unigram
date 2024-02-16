@@ -32,6 +32,26 @@
 
                         <controls:FileButton x:Name="Button"
                                              Style="{StaticResource ImmersiveFileButtonStyle}" />
+                        <Border Width="48"
+                                Height="48">
+                            <Border x:Name="ViewOnce"
+                                    Width="24"
+                                    Height="24"
+                                    CornerRadius="12"
+                                    Margin="0,0,-6,-4"
+                                    BorderThickness="2"
+                                    BorderBrush="#00000000"
+                                    Background="#54000000"
+                                    HorizontalAlignment="Right"
+                                    VerticalAlignment="Bottom"
+                                    UseLayoutRounding="False"
+                                    IsHitTestVisible="False">
+                                <TextBlock Text="&#xE918;"
+                                           Foreground="#FFFFFF"
+                                           FontSize="20"
+                                           FontFamily="{StaticResource SymbolThemeFontFamily}" />
+                            </Border>
+                        </Border>
 
                         <Border x:Name="Element"
                                 CornerRadius="100">

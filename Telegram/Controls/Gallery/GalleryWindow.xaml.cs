@@ -1,5 +1,5 @@
 //
-// Copyright Fela Ameghino 2015-2023
+// Copyright Fela Ameghino 2015-2024
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
@@ -26,9 +26,7 @@ using Telegram.ViewModels.Users;
 using Telegram.Views;
 using Windows.Devices.Input;
 using Windows.Foundation;
-using Windows.Media.Playback;
 using Windows.UI.Composition;
-using Windows.UI.Core;
 using Windows.UI.Input;
 using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
@@ -79,11 +77,11 @@ namespace Telegram.Controls.Gallery
         {
             InitializeComponent();
 
-            _layout = ElementCompositionPreview.GetElementVisual(LayoutRoot);
+            _layout = ElementComposition.GetElementVisual(LayoutRoot);
 
-            _layer = ElementCompositionPreview.GetElementVisual(Layer);
-            _layerFullScreen = ElementCompositionPreview.GetElementVisual(LayerFullScreen);
-            _bottom = ElementCompositionPreview.GetElementVisual(BottomPanel);
+            _layer = ElementComposition.GetElementVisual(Layer);
+            _layerFullScreen = ElementComposition.GetElementVisual(LayerFullScreen);
+            _bottom = ElementComposition.GetElementVisual(BottomPanel);
 
             _layer.Opacity = 0;
             _layerFullScreen.Opacity = 0;
@@ -108,16 +106,27 @@ namespace Telegram.Controls.Gallery
             _inactivityTimer.Stop();
             ShowHideTransport(true);
 
-            var point = e.GetCurrentPoint(Controls);
-            if (point.Position.X < 0
-                || point.Position.Y < 0
-                || point.Position.X > Controls.ActualWidth
-                || point.Position.Y > Controls.ActualHeight)
+            base.OnPointerMoved(e);
+
+            if (e.OriginalSource is FrameworkElement element)
             {
-                _inactivityTimer.Start();
+                var button = element.GetParentOrSelf<ButtonBase>();
+                if (button != null)
+                {
+                    return;
+                }
             }
 
-            base.OnPointerMoved(e);
+            _inactivityTimer.Start();
+
+            //var point = e.GetCurrentPoint(Controls);
+            //if (point.Position.X < 0
+            //    || point.Position.Y < 0
+            //    || point.Position.X > Controls.ActualWidth
+            //    || point.Position.Y > Controls.ActualHeight)
+            //{
+            //    _inactivityTimer.Start();
+            //}
         }
 
         private void OnPointerReleased(object sender, PointerRoutedEventArgs e)
@@ -150,35 +159,30 @@ namespace Telegram.Controls.Gallery
         }
 
         private bool _transportCollapsed = false;
+        private bool _transportFocused = false;
 
         private void ShowHideTransport(bool show)
         {
-            if (show != _transportCollapsed)
+            if (show != _transportCollapsed || (_transportFocused && !show))
             {
                 return;
             }
 
             _transportCollapsed = !show;
+            BottomPanel.IsHitTestVisible = false;
             BottomPanel.Visibility = Visibility.Visible;
 
-            var parent = ElementCompositionPreview.GetElementVisual(BottomPanel);
-            var next = ElementCompositionPreview.GetElementVisual(NextButton);
-            var prev = ElementCompositionPreview.GetElementVisual(PrevButton);
-            var back = ElementCompositionPreview.GetElementVisual(BackButton);
+            var parent = ElementComposition.GetElementVisual(BottomPanel);
+            var next = ElementComposition.GetElementVisual(NextButton);
+            var prev = ElementComposition.GetElementVisual(PrevButton);
+            var back = ElementComposition.GetElementVisual(BackButton);
 
             parent.Opacity = next.Opacity = prev.Opacity = back.Opacity = 1;
 
             var batch = parent.Compositor.CreateScopedBatch(CompositionBatchTypes.Animation);
             batch.Completed += (s, args) =>
             {
-                if (show)
-                {
-                    _transportCollapsed = false;
-                }
-                else
-                {
-                    BottomPanel.Visibility = Visibility.Collapsed;
-                }
+                BottomPanel.IsHitTestVisible = !_transportCollapsed;
             };
 
             var opacity = parent.Compositor.CreateScalarKeyFrameAnimation();
@@ -190,6 +194,21 @@ namespace Telegram.Controls.Gallery
             back.StartAnimation("Opacity", opacity);
 
             batch.End();
+        }
+
+        private void Transport_GotFocus(object sender, RoutedEventArgs e)
+        {
+            if (e.OriginalSource is Control control && control.FocusState is FocusState.Keyboard or FocusState.Programmatic)
+            {
+                _transportFocused = true;
+                ShowHideTransport(true);
+            }
+        }
+
+        private void Transport_LostFocus(object sender, RoutedEventArgs e)
+        {
+            _transportFocused = false;
+            _inactivityTimer.Start();
         }
 
         public void Handle(UpdateDeleteMessages update)
@@ -214,7 +233,7 @@ namespace Telegram.Controls.Gallery
             this.BeginOnUIThread(() =>
             {
                 var viewModel = ViewModel;
-                if (viewModel != null && viewModel.SelectedItem is GalleryMessage message && message.Id == update.MessageId && message.ChatId == update.ChatId && update.NewContent is MessageExpiredPhoto or MessageExpiredVideo)
+                if (viewModel != null && viewModel.SelectedItem is GalleryMessage message && message.ChatId == update.ChatId && message.Id == update.MessageId && message.SelfDestructType is MessageSelfDestructTypeTimer)
                 {
                     OnBackRequestedOverride(this, new BackRequestedRoutedEventArgs());
                 }
@@ -229,32 +248,6 @@ namespace Telegram.Controls.Gallery
         public void OpenItem(GalleryMedia item)
         {
             OnBackRequested(new BackRequestedRoutedEventArgs());
-        }
-
-        private async void OnSourceChanged()
-        {
-            //var source = _mediaPlayer == null || _mediaPlayer.Source == null;
-            //await Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
-            //{
-            //    Element0.IsHitTestVisible = source;
-            //    Element1.IsHitTestVisible = source;
-            //    Element2.IsHitTestVisible = source;
-            //});
-        }
-
-        private async void OnVolumeChanged(MediaPlayer sender, object args)
-        {
-            SettingsService.Current.VolumeLevel = sender.Volume;
-
-            await Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
-            {
-                //Transport.Volume = sender.Volume;
-            });
-        }
-
-        private void OnMediaOpened(MediaPlayer sender, object args)
-        {
-            sender.Volume = SettingsService.Current.VolumeLevel;
         }
 
         public static Task<ContentDialogResult> ShowAsync(ViewModelBase viewModelBase, IStorageService storageService, Chat chat, Func<FrameworkElement> closing = null)
@@ -345,7 +338,7 @@ namespace Telegram.Controls.Gallery
 
                 var applicationView = ApplicationView.GetForCurrentView();
 
-                _wasFullScreen = applicationView.IsFullScreenMode;
+                _wasFullScreen = applicationView.IsFullScreenMode || ApiInfo.IsXbox;
 
                 if (CanUnconstrainFromRootBounds && !_wasFullScreen)
                 {
@@ -395,30 +388,32 @@ namespace Telegram.Controls.Gallery
 
         private void OnVisibleBoundsChanged(ApplicationView sender, object args)
         {
-            if (_lastFullScreen != sender.IsFullScreenMode)
+            var fullScreen = sender.IsFullScreenMode || ApiInfo.IsXbox;
+
+            if (_lastFullScreen != fullScreen)
             {
+                _lastFullScreen = fullScreen;
+
                 //Window.Current.Content.Visibility = sender.IsFullScreenMode
                 //    ? Visibility.Collapsed
                 //    : Visibility.Visible;
 
-                Controls.IsFullScreen = sender.IsFullScreenMode;
-                Padding = new Thickness(0, sender.IsFullScreenMode ? 0 : 40, 0, 0);
+                Controls.IsFullScreen = fullScreen;
+                Padding = new Thickness(0, fullScreen ? 0 : 40, 0, 0);
 
                 if (LayoutRoot.CurrentElement is GalleryContent container)
                 {
-                    container.Stretch = sender.IsFullScreenMode
+                    container.Stretch = fullScreen
                         ? Stretch.UniformToFill
                         : Stretch.Uniform;
                 }
 
                 var anim = Window.Current.Compositor.CreateScalarKeyFrameAnimation();
-                anim.InsertKeyFrame(0, sender.IsFullScreenMode ? 0 : 1);
-                anim.InsertKeyFrame(1, sender.IsFullScreenMode ? 1 : 0);
+                anim.InsertKeyFrame(0, fullScreen ? 0 : 1);
+                anim.InsertKeyFrame(1, fullScreen ? 1 : 0);
 
                 _layerFullScreen.StartAnimation("Opacity", anim);
             }
-
-            _lastFullScreen = sender.IsFullScreenMode;
         }
 
         private void OnCollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
@@ -613,6 +608,17 @@ namespace Telegram.Controls.Gallery
             return string.Format(Strings.Of, index, count);
         }
 
+        private Visibility ConvertCaption(FormattedText text)
+        {
+            if (string.IsNullOrEmpty(text?.Text))
+            {
+                return Visibility.Collapsed;
+            }
+
+            Caption.SetText(ViewModel.ClientService, text);
+            return Visibility.Visible;
+        }
+
         #endregion
 
         private GalleryContent _current;
@@ -715,6 +721,11 @@ namespace Telegram.Controls.Gallery
                 ChangeView(CarouselDirection.Next, false);
                 args.Handled = true;
             }
+            else if (args.VirtualKey is VirtualKey.R && args.OnlyControl)
+            {
+                Rotate_Click(null, null);
+                args.Handled = true;
+            }
             else if (args.VirtualKey is VirtualKey.C && args.OnlyControl)
             {
                 ViewModel?.Copy();
@@ -768,23 +779,23 @@ namespace Telegram.Controls.Gallery
 
         protected override Size ArrangeOverride(Size finalSize)
         {
-            Logger.Debug();
-
             LayoutRoot.Width = finalSize.Width;
-            LayoutRoot.Height = finalSize.Height - Padding.Top;
+            LayoutRoot.Height = Math.Max(0, finalSize.Height - Padding.Top);
 
-            static void Apply(AspectView element, Size size)
-            {
-                if (element.Constraint is not Size)
-                {
-                    element.MaxWidth = size.Width;
-                    element.MaxHeight = size.Height;
-                }
-            }
+            // TODO: setting a max width/height to the element causes a weird clipping effect if
+            // the final calculated size is actually larger than that to accomodate for rotation
+            //static void Apply(AspectView element, Size size)
+            //{
+            //    if (element.Constraint is not Size)
+            //    {
+            //        element.MaxWidth = size.Width;
+            //        element.MaxHeight = size.Height;
+            //    }
+            //}
 
-            Apply(Element2, finalSize);
-            Apply(Element0, finalSize);
-            Apply(Element1, finalSize);
+            //Apply(Element2, finalSize);
+            //Apply(Element0, finalSize);
+            //Apply(Element1, finalSize);
 
             if (_layout != null)
             {
@@ -940,7 +951,7 @@ namespace Telegram.Controls.Gallery
 
             if (args != null)
             {
-                args.ShowAt(flyout, element);
+                flyout.ShowAt(element, args);
             }
             else
             {
@@ -1021,8 +1032,8 @@ namespace Telegram.Controls.Gallery
                 height *= ratio;
             }
 
-            var aggregator = TLContainer.Current.Resolve<IEventAggregator>();
-            var viewService = TLContainer.Current.Resolve<IViewService>();
+            var aggregator = TypeResolver.Current.Resolve<IEventAggregator>(viewModel.SessionId);
+            var viewService = TypeResolver.Current.Resolve<IViewService>(viewModel.SessionId);
 
             //var mediaPlayer = _mediaPlayer;
             //var fileStream = _fileStream;
@@ -1075,6 +1086,25 @@ namespace Telegram.Controls.Gallery
         private void ZoomOut_Click(object sender, RoutedEventArgs e)
         {
             ScrollingHost.Zoom(false);
+        }
+
+        private void Rotate_Click(object sender, RoutedEventArgs e)
+        {
+            if (LayoutRoot.CurrentElement is AspectView view)
+            {
+                view.RotationAngle = view.RotationAngle switch
+                {
+                    RotationAngle.Angle0 => RotationAngle.Angle270,
+                    RotationAngle.Angle270 => RotationAngle.Angle180,
+                    RotationAngle.Angle180 => RotationAngle.Angle90,
+                    _ => RotationAngle.Angle0
+                };
+
+                if (ViewModel?.SelectedItem != null)
+                {
+                    ViewModel.SelectedItem.RotationAngle = view.RotationAngle;
+                }
+            }
         }
 
         private bool _areInteractionsEnabled = true;

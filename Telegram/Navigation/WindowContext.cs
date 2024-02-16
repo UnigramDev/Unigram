@@ -1,5 +1,5 @@
 //
-// Copyright Fela Ameghino 2015-2023
+// Copyright Fela Ameghino 2015-2024
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
@@ -7,14 +7,16 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Telegram.Common;
 using Telegram.Controls;
+using Telegram.Controls.Chats;
 using Telegram.Navigation.Services;
 using Telegram.Services;
 using Telegram.Services.Keyboard;
+using Telegram.Services.ViewService;
 using Telegram.Td.Api;
-using Telegram.ViewModels.Drawers;
 using Telegram.Views;
 using Telegram.Views.Authorization;
 using Telegram.Views.Popups;
@@ -27,7 +29,6 @@ using Windows.Foundation;
 using Windows.Storage;
 using Windows.UI;
 using Windows.UI.Core;
-using Windows.UI.Core.Preview;
 using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -66,7 +67,7 @@ namespace Telegram.Navigation
                 All.Add(this);
             }
 
-            _lifetime = TLContainer.Current.Lifetime;
+            _lifetime = TypeResolver.Current.Lifetime;
             _inputListener = new InputListener(window);
 
             window.Activated += OnActivated;
@@ -74,7 +75,7 @@ namespace Telegram.Navigation
             window.CoreWindow.ResizeStarted += OnResizeStarted;
             window.CoreWindow.ResizeCompleted += OnResizeCompleted;
 
-            Size = new Size(window.Bounds.Width, window.Bounds.Height);
+            window.CoreWindow.DispatcherQueue.ShutdownCompleted += OnShutdownCompleted;
 
             #region Legacy code
 
@@ -85,22 +86,38 @@ namespace Telegram.Navigation
 
             #endregion
 
-            if (TLContainer.Current.Passcode.IsLockscreenRequired)
+            if (TypeResolver.Current.Passcode.IsLockscreenRequired)
             {
                 Lock(true);
             }
 
-            if (IsInMainView)
-            {
-                SystemNavigationManagerPreview.GetForCurrentView().CloseRequested += OnCloseRequested;
-            }
-
+            ApplicationView.GetForCurrentView().VisibleBoundsChanged += OnVisibleBoundsChanged;
             ApplicationView.GetForCurrentView().Consolidated += OnConsolidated;
         }
 
-        private void OnCloseRequested(object sender, SystemNavigationCloseRequestedPreviewEventArgs e)
+        private void OnVisibleBoundsChanged(ApplicationView sender, object args)
         {
-            SystemTray.CloseRequested(e);
+            Logger.Debug(sender.VisibleBounds);
+        }
+
+        private void OnShutdownCompleted(Windows.System.DispatcherQueue sender, object args)
+        {
+            sender.ShutdownCompleted -= OnShutdownCompleted;
+            Current = null;
+
+            Theme.Current = null;
+
+            ThemeIncoming.Release();
+            ThemeOutgoing.Release();
+
+            AnimatedImageLoader.Release();
+            ChatRecordButton.Recorder.Release();
+
+            // TODO: needed? From some tests, this prevented the whole Window root from being garbage collected
+            if (SynchronizationContext.Current is SecondaryViewSynchronizationContextDecorator decorator)
+            {
+                SynchronizationContext.SetSynchronizationContext(decorator.Context);
+            }
         }
 
         public async Task ConsolidateAsync()
@@ -126,7 +143,7 @@ namespace Telegram.Navigation
 
             // TODO: since we can't call Close directly,
             // Closed event will be never fired.
-            OnClosed(null, null);
+            //OnClosed(null, null);
             ClearTitleBar(sender);
         }
 
@@ -140,10 +157,6 @@ namespace Telegram.Navigation
             NavigationServices.ForEach(x => x.Suspend());
             NavigationServices.Clear();
 
-            AnimationDrawerViewModel.Remove(Id);
-            EmojiDrawerViewModel.Remove(Id);
-            StickerDrawerViewModel.Remove(Id);
-
             _window.Activated -= OnActivated;
             _window.Closed -= OnClosed;
             _window.CoreWindow.ResizeStarted -= OnResizeStarted;
@@ -155,14 +168,38 @@ namespace Telegram.Navigation
         public UIElement Content
         {
             get => _window.Content;
-            set => _window.Content = value;
+            set
+            {
+                _window.Content = value;
+
+                if (value != null)
+                {
+                    if (_locked != null)
+                    {
+                        value.Visibility = Visibility.Collapsed;
+                    }
+
+                    if (value is FrameworkElement element)
+                    {
+                        element.Loaded += OnLoaded;
+                    }
+                }
+            }
         }
 
-        public Size Size { get; set; }
+        private void OnLoaded(object sender, RoutedEventArgs e)
+        {
+            if (sender is FrameworkElement element)
+            {
+                element.Loaded -= OnLoaded;
+            }
+
+            ViewService.OnWindowLoaded();
+        }
 
         public ElementTheme ActualTheme => _window.Content is FrameworkElement element
             ? element.ActualTheme
-            : ElementTheme.Default;
+            : SettingsService.Current.Appearance.GetCalculatedElementTheme();
 
         public ElementTheme RequestedTheme
         {
@@ -203,7 +240,7 @@ namespace Telegram.Navigation
 
         private void OnResizeStarted(CoreWindow sender, object args)
         {
-            Logger.Debug();
+            Logger.Debug(sender.Bounds);
 
             if (_window.Content is FrameworkElement element)
             {
@@ -216,9 +253,7 @@ namespace Telegram.Navigation
 
         private void OnResizeCompleted(CoreWindow sender, object args)
         {
-            Logger.Debug();
-
-            Size = new Size(sender.Bounds.Width, sender.Bounds.Height);
+            Logger.Debug(sender.Bounds);
 
             if (_window.Content is FrameworkElement element)
             {
@@ -272,24 +307,20 @@ namespace Telegram.Navigation
                 return;
             }
 
-            // This is a rare case, but it can happen.
-            var content = Window.Current.Content;
-            if (content != null)
+            if (_window.Content != null)
             {
-                content.Visibility = Visibility.Collapsed;
+                _window.Content.Visibility = Visibility.Collapsed;
             }
 
-            _locked = new PasscodePage(biometrics);
+            _locked = new PasscodePage(biometrics && IsInMainView);
 
-            static void handler(ContentDialog s, ContentDialogClosingEventArgs args)
+            void handler(ContentDialog s, ContentDialogClosingEventArgs args)
             {
                 s.Closing -= handler;
 
-                // This is a rare case, but it can happen.
-                var content = Window.Current.Content;
-                if (content != null)
+                if (_window.Content != null)
                 {
-                    content.Visibility = Visibility.Visible;
+                    _window.Content.Visibility = Visibility.Visible;
                 }
             }
 
@@ -302,7 +333,6 @@ namespace Telegram.Navigation
         public void Unlock()
         {
             _locked?.Update();
-            _locked = null;
         }
 
         #endregion
@@ -336,16 +366,16 @@ namespace Telegram.Navigation
                         service.Navigate(typeof(AuthorizationPage));
                         break;
                     case AuthorizationStateWaitCode:
-                        service.Navigate(typeof(AuthorizationCodePage));
+                        service.Navigate(typeof(AuthorizationCodePage), navigationStackEnabled: false);
                         break;
                     case AuthorizationStateWaitEmailAddress:
-                        service.Navigate(typeof(AuthorizationEmailAddressPage));
+                        service.Navigate(typeof(AuthorizationEmailAddressPage), navigationStackEnabled: false);
                         break;
                     case AuthorizationStateWaitEmailCode:
-                        service.Navigate(typeof(AuthorizationEmailCodePage));
+                        service.Navigate(typeof(AuthorizationEmailCodePage), navigationStackEnabled: false);
                         break;
                     case AuthorizationStateWaitRegistration:
-                        service.Navigate(typeof(AuthorizationRegistrationPage));
+                        service.Navigate(typeof(AuthorizationRegistrationPage), navigationStackEnabled: false);
                         break;
                     case AuthorizationStateWaitPassword waitPassword:
                         if (!string.IsNullOrEmpty(waitPassword.RecoveryEmailAddressPattern))
@@ -353,7 +383,7 @@ namespace Telegram.Navigation
                             await MessagePopup.ShowAsync(string.Format(Strings.RestoreEmailSent, waitPassword.RecoveryEmailAddressPattern), Strings.AppName, Strings.OK);
                         }
 
-                        service.Navigate(typeof(AuthorizationPasswordPage));
+                        service.Navigate(typeof(AuthorizationPasswordPage), navigationStackEnabled: false);
                         break;
                 }
             }
@@ -371,6 +401,7 @@ namespace Telegram.Navigation
 
             if (args is ShareTargetActivatedEventArgs share)
             {
+                WatchDog.TrackEvent("ShareTarget");
                 var package = new DataPackage();
 
                 try

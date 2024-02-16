@@ -1,5 +1,5 @@
 //
-// Copyright Fela Ameghino 2015-2023
+// Copyright Fela Ameghino 2015-2024
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
@@ -22,6 +22,7 @@ namespace Telegram.Common
     public class ZoomableListHandler
     {
         private readonly ListViewBase _listView;
+        private readonly FrameworkElementState _manager;
         private readonly DispatcherTimer _throttler;
 
         private Control _element;
@@ -34,8 +35,10 @@ namespace Telegram.Common
         public ZoomableListHandler(ListViewBase listView)
         {
             _listView = listView;
-            _listView.Loaded += OnLoaded;
-            _listView.Unloaded += OnUnloaded;
+
+            _manager = new FrameworkElementState(listView);
+            _manager.Loaded += OnLoaded;
+            _manager.Unloaded += OnUnloaded;
 
             _popupHost = new Popup();
             _popupHost.IsHitTestVisible = false;
@@ -177,35 +180,35 @@ namespace Telegram.Common
                 if (container != null)
                 {
                     var content = ItemFromContainer(container);
-                    if (content is StickerViewModel stickerViewModel)
+                    if (content == _popupContent)
                     {
-                        content = (Sticker)stickerViewModel;
-                    }
-
-                    if (content is Sticker sticker && _popupContent != content)
-                    {
-                        _popupPanel.SetSticker(sticker);
-                    }
-                    else if (content is Animation animation && _popupContent != content)
-                    {
-                        _popupPanel.SetAnimation(animation);
+                        return;
                     }
 
                     _popupContent = content;
+
+                    if (content is StickerViewModel stickerViewModel)
+                    {
+                        _popupPanel.SetSticker(stickerViewModel);
+                    }
+                    else if (content is Sticker sticker)
+                    {
+                        _popupPanel.SetSticker(sticker);
+                    }
+                    else if (content is Animation animation)
+                    {
+                        _popupPanel.SetAnimation(animation);
+                    }
                 }
             }
         }
 
         private object ItemFromContainer(FrameworkElement container)
         {
-            return GetContent(_listView.ItemFromContainer(container));
-        }
-
-        private object GetContent(object content)
-        {
+            var content = _listView.ItemFromContainer(container);
             if (content is StickerViewModel stickerViewModel)
             {
-                return (Sticker)stickerViewModel;
+                return stickerViewModel;
             }
             else if (content is InlineQueryResultAnimation resultAnimation)
             {

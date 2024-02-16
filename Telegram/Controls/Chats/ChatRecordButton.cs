@@ -1,5 +1,5 @@
 //
-// Copyright Fela Ameghino 2015-2023
+// Copyright Fela Ameghino 2015-2024
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
@@ -10,6 +10,7 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using Telegram.Common;
+using Telegram.Services;
 using Telegram.Td;
 using Telegram.Td.Api;
 using Telegram.ViewModels;
@@ -26,7 +27,6 @@ using Windows.System.Display;
 using Windows.System.Profile;
 using Windows.UI.Composition;
 using Windows.UI.Xaml;
-using Windows.UI.Xaml.Automation;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Hosting;
 using Windows.UI.Xaml.Input;
@@ -84,9 +84,7 @@ namespace Telegram.Controls.Chats
             set
             {
                 IsChecked = value == ChatRecordMode.Video;
-
-                AutomationProperties.SetName(this, value == ChatRecordMode.Video ? Strings.AccDescrVideoMessage : Strings.AccDescrVoiceMessage);
-                ToolTipService.SetToolTip(this, value == ChatRecordMode.Video ? Strings.AccDescrVideoMessage : Strings.AccDescrVoiceMessage);
+                Automation.SetToolTip(this, value == ChatRecordMode.Video ? Strings.AccDescrVideoMessage : Strings.AccDescrVoiceMessage);
             }
         }
 
@@ -120,8 +118,9 @@ namespace Telegram.Controls.Chats
             Icon = GetTemplateChild(nameof(Icon)) as AnimatedIcon;
             Icon.PointerReleased += OnPointerReleased;
             Icon.PointerCanceled += OnPointerCanceled;
+            Icon.PointerCaptureLost += OnPointerCaptureLost;
 
-            _icon = ElementCompositionPreview.GetElementVisual(Icon);
+            _icon = ElementComposition.GetElementVisual(Icon);
             _icon.Opacity = IsRestricted ? 0.2f : 1;
 
             base.OnApplyTemplate();
@@ -147,7 +146,6 @@ namespace Telegram.Controls.Chats
 
         protected override void OnPointerPressed(PointerRoutedEventArgs e)
         {
-            Icon.PointerCaptureLost += OnPointerCaptureLost;
             Icon.CapturePointer(e.Pointer);
             base.OnPointerPressed(e);
         }
@@ -156,9 +154,7 @@ namespace Telegram.Controls.Chats
         {
             Logger.Debug("OnPointerReleased");
 
-            Icon.PointerCaptureLost -= OnPointerCaptureLost;
             Icon.ReleasePointerCapture(e.Pointer);
-
             OnRelease();
         }
 
@@ -166,9 +162,7 @@ namespace Telegram.Controls.Chats
         {
             Logger.Debug("OnPointerCanceled");
 
-            Icon.PointerCaptureLost -= OnPointerCaptureLost;
             Icon.ReleasePointerCapture(e.Pointer);
-
             OnRelease();
         }
 
@@ -280,6 +274,8 @@ namespace Telegram.Controls.Chats
                     ClickMode = ClickMode.Release;
                     RecordingStarted?.Invoke(this, EventArgs.Empty);
 
+                    Automation.SetToolTip(this, null);
+
                     try
                     {
                         if (_request == null)
@@ -309,6 +305,8 @@ namespace Telegram.Controls.Chats
                     ClickMode = ClickMode.Press;
                     RecordingStopped?.Invoke(this, EventArgs.Empty);
 
+                    Automation.SetToolTip(this, Mode == ChatRecordMode.Video ? Strings.AccDescrVideoMessage : Strings.AccDescrVoiceMessage);
+
                     if (_request != null)
                     {
                         try
@@ -336,7 +334,7 @@ namespace Telegram.Controls.Chats
 
                     var formatted = string.Format(message, ViewModel.Chat.Title);
                     var markdown = ClientEx.ParseMarkdown(formatted);
-                    Window.Current.ShowTeachingTip(this, markdown, TeachingTipPlacementMode.TopLeft, autoDismiss: true);
+                    ToastPopup.Show(this, markdown, TeachingTipPlacementMode.TopLeft, dismissAfter: TimeSpan.FromSeconds(3));
                     return;
                 }
 
@@ -419,7 +417,7 @@ namespace Telegram.Controls.Chats
                     ? Strings.HoldToVideo
                     : Strings.HoldToAudio;
 
-                Window.Current.ShowTeachingTip(this, message, TeachingTipPlacementMode.TopLeft, autoDismiss: true);
+                ToastPopup.Show(this, message, TeachingTipPlacementMode.TopLeft, dismissAfter: TimeSpan.FromSeconds(3));
             }
             else if (!_hasRecordVideo || _calledRecordRunnable)
             {
@@ -604,6 +602,11 @@ namespace Telegram.Controls.Chats
                 _dispatcherQueue = DispatcherQueue.GetForCurrentThread();
             }
 
+            public static void Release()
+            {
+                _current = null;
+            }
+
             public async void Start(ChatRecordMode mode, Chat chat)
             {
                 Logger.Debug("Start invoked, mode: " + mode);
@@ -667,7 +670,11 @@ namespace Telegram.Controls.Chats
 
                         Logger.Debug("Devices initialized, starting");
 
-                        await InitializeQuantumAsync();
+                        if (PowerSavingPolicy.AreMaterialsEnabled && ApiInfo.CanAnimatePaths)
+                        {
+                            await InitializeQuantumAsync();
+                        }
+
                         await _recorder.StartAsync();
 
                         Logger.Debug("Recording started at " + DateTime.Now);
@@ -737,7 +744,7 @@ namespace Telegram.Controls.Chats
             private float _micLevelPeak = 0;
             private int _micLevelPeakCount = 0;
 
-            private int _lastUpdateTime;
+            private ulong _lastUpdateTime;
 
             [ComImport]
             [Guid("5B0D3235-4DBA-4D44-865E-8F1D0E4FD04D")]
@@ -755,12 +762,12 @@ namespace Telegram.Controls.Chats
                     return;
                 }
 
-                if (Environment.TickCount - _lastUpdateTime < 64)
+                if (Logger.TickCount - _lastUpdateTime < 64)
                 {
                     return;
                 }
 
-                _lastUpdateTime = Environment.TickCount;
+                _lastUpdateTime = Logger.TickCount;
 
                 using var frame = reference.AudioMediaFrame.GetAudioFrame();
 
@@ -1040,7 +1047,7 @@ namespace Telegram.Controls.Chats
                 {
                     settings = new MediaCaptureInitializationSettings();
                     settings.MediaCategory = MediaCategory.Media;
-                    settings.AudioProcessing = AudioProcessing.Default;
+                    settings.AudioProcessing = m_isVideo ? AudioProcessing.Default : SettingsService.Current.Diagnostics.ForceRawAudio ? AudioProcessing.Raw : AudioProcessing.Default;
                     settings.MemoryPreference = MediaCaptureMemoryPreference.Auto;
                     settings.SharingMode = MediaCaptureSharingMode.SharedReadOnly;
                     settings.StreamingCaptureMode = m_isVideo ? StreamingCaptureMode.AudioAndVideo : StreamingCaptureMode.Audio;
@@ -1060,23 +1067,21 @@ namespace Telegram.Controls.Chats
 
                 public async Task StartAsync()
                 {
+                    MediaEncodingProfile profile;
                     if (m_isVideo)
                     {
-                        var profile = MediaEncodingProfile.CreateMp4(VideoEncodingQuality.Auto);
-                        //m_lowLag = await m_mediaCapture.PrepareLowLagRecordToStorageFileAsync(profile, m_file);
-
-                        //await m_lowLag.StartAsync();
-                        await m_mediaCapture.StartRecordToStorageFileAsync(profile, m_file);
+                        profile = MediaEncodingProfile.CreateMp4(VideoEncodingQuality.Auto);
                     }
                     else
                     {
-                        var wavEncodingProfile = MediaEncodingProfile.CreateWav(AudioEncodingQuality.High);
-                        wavEncodingProfile.Audio.BitsPerSample = 16;
-                        wavEncodingProfile.Audio.SampleRate = 48000;
-                        wavEncodingProfile.Audio.ChannelCount = 1;
-
-                        await m_mediaCapture.StartRecordToStorageFileAsync(wavEncodingProfile, m_file);
+                        profile = MediaEncodingProfile.CreateWav(AudioEncodingQuality.High);
+                        profile.Audio.BitsPerSample = 16;
+                        profile.Audio.SampleRate = 48000;
+                        profile.Audio.ChannelCount = 1;
                     }
+
+                    m_lowLag = await m_mediaCapture.PrepareLowLagRecordToStorageFileAsync(profile, m_file);
+                    await m_lowLag.StartAsync();
                 }
 
                 public async Task StopAsync()

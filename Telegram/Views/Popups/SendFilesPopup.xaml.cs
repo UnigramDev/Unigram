@@ -1,5 +1,5 @@
 //
-// Copyright Fela Ameghino 2015-2023
+// Copyright Fela Ameghino 2015-2024
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
@@ -33,6 +33,8 @@ using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
 using Windows.UI.Xaml.Documents;
 using Windows.UI.Xaml.Input;
+using Windows.UI.Xaml.Media;
+using Windows.UI.Xaml.Shapes;
 
 namespace Telegram.Views.Popups
 {
@@ -153,6 +155,26 @@ namespace Telegram.Views.Popups
         {
             InitializeComponent();
 
+            var builder = new StringBuilder();
+
+            foreach (var item in items)
+            {
+                switch (item)
+                {
+                    case StoragePhoto photo:
+                        builder.Prepend(string.Format("photo {0}x{1}", photo.Width, photo.Height), ", ");
+                        break;
+                    case StorageVideo video:
+                        builder.Prepend(string.Format("video {0}x{1}", video.Width, video.Height), ", ");
+                        break;
+                    default:
+                        builder.Prepend("file", ", ");
+                        break;
+                }
+            }
+
+            Logger.Info(builder);
+
             PrimaryButtonText = Strings.Send;
             SecondaryButtonText = Strings.Cancel;
 
@@ -171,7 +193,7 @@ namespace Telegram.Views.Popups
             IsMediaSelected = media && mediaAllowed && Items.All(x => x is StoragePhoto or StorageVideo);
             IsFilesSelected = !IsMediaSelected;
 
-            EmojiPanel.DataContext = EmojiDrawerViewModel.GetForCurrentView(viewModel.SessionId);
+            EmojiPanel.DataContext = EmojiDrawerViewModel.Create(viewModel.SessionId);
             CaptionInput.CustomEmoji = CustomEmoji;
             CaptionInput.ViewModel = viewModel;
 
@@ -204,7 +226,7 @@ namespace Telegram.Views.Popups
             SetResult(ContentDialogResult.Secondary);
         }
 
-        private async void Autocomplete_ItemClick(object sender, ItemClickEventArgs e)
+        private void Autocomplete_ItemClick(object sender, ItemClickEventArgs e)
         {
             var chat = ViewModel.Chat;
             if (chat == null)
@@ -260,10 +282,9 @@ namespace Telegram.Views.Popups
                 {
                     var start = CaptionInput.Document.Selection.StartPosition - 1 - result.Length + 1;
                     var range = CaptionInput.Document.GetRange(CaptionInput.Document.Selection.StartPosition - 1 - result.Length, CaptionInput.Document.Selection.StartPosition);
-                    range.SetText(TextSetOptions.None, string.Empty);
 
-                    await CaptionInput.InsertEmojiAsync(range, sticker.Emoji, customEmoji.CustomEmojiId);
-                    CaptionInput.Document.Selection.StartPosition = start;
+                    CaptionInput.InsertEmoji(range, sticker.Emoji, customEmoji.CustomEmojiId);
+                    CaptionInput.Document.Selection.StartPosition = range.EndPosition + 1;
                 }
             }
 
@@ -300,6 +321,8 @@ namespace Telegram.Views.Popups
 
                 photo.SetUser(ViewModel.ClientService, user, 32);
             }
+
+            args.Handled = true;
         }
 
         private void OnContainerContentChanging(ListViewBase sender, ContainerContentChangingEventArgs args)
@@ -345,20 +368,24 @@ namespace Telegram.Views.Popups
             subtitle.Text = FileSizeConverter.Convert((long)storage.Size);
         }
 
+        private void Grid_Loaded(object sender, RoutedEventArgs e)
+        {
+            if (sender is Border border && border.Parent is Grid root && root.DataContext is StorageMedia storage)
+            {
+                UpdateTemplate(root, storage);
+            }
+        }
+
         private void Grid_DataContextChanged(FrameworkElement sender, DataContextChangedEventArgs args)
         {
-            var storage = args.NewValue as StorageMedia;
-            if (storage == null)
+            if (sender.Parent is Grid root && args.NewValue is StorageMedia storage)
             {
-                return;
+                UpdateTemplate(root, storage);
             }
+        }
 
-            var root = sender.Parent as Grid;
-            if (root == null)
-            {
-                return;
-            }
-
+        private void UpdateTemplate(Grid root, StorageMedia storage)
+        {
             var overlay = root.FindName("Overlay") as Border;
 
             var mute = root.FindName("Mute") as ToggleButton;
@@ -447,7 +474,7 @@ namespace Telegram.Views.Popups
                             destination.GetOutputStreamAt(0));
                     }
 
-                    var photo = await StoragePhoto.CreateAsync(cache);
+                    var photo = await StorageMedia.CreateAsync(cache);
                     if (photo != null)
                     {
                         Items.Add(photo);
@@ -481,7 +508,7 @@ namespace Telegram.Views.Popups
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(IsMediaOnly)));
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(IsAlbumAvailable)));
 
-            if (IsMediaSelected && !IsMediaOnly)
+            if (IsMediaSelected && !IsMediaOnly && !_mediaAllowed)
             {
                 IsMediaSelected = false;
                 IsFilesSelected = true;
@@ -585,7 +612,7 @@ namespace Telegram.Views.Popups
             void Update(MessageSelfDestructType ttl)
             {
                 media.Ttl = ttl;
-                Window.Current.ShowTeachingTip(sender as FrameworkElement,
+                ToastPopup.Show(sender as FrameworkElement,
                     media is StorageVideo
                         ? ttl is MessageSelfDestructTypeTimer timer1
                         ? Locale.Declension(Strings.R.TimerPeriodVideoSetSeconds, timer1.SelfDestructTime)
@@ -724,6 +751,16 @@ namespace Telegram.Views.Popups
             var focused = FocusManager.GetFocusedElement();
             if (focused is null or (not TextBox and not RichEditBox and not Button and not MenuFlyoutItem))
             {
+                var popups = VisualTreeHelper.GetOpenPopups(Window.Current);
+
+                foreach (var popup in popups)
+                {
+                    if (popup.Child is not SendFilesPopup and not Rectangle)
+                    {
+                        return;
+                    }
+                }
+
                 if (character == "\u0016" && CaptionInput.CanPasteClipboardContent)
                 {
                     CaptionInput.Focus(FocusState.Keyboard);
@@ -782,8 +819,6 @@ namespace Telegram.Views.Popups
 
         protected override Size MeasureOverride(Size availableSize)
         {
-            Logger.Debug();
-
             var sizes = Sizes;
             if (sizes == null || sizes.Count == 1)
             {
@@ -794,7 +829,7 @@ namespace Telegram.Views.Popups
 
             for (int i = 0; i < Math.Min(positions.Item1.Length, Children.Count); i++)
             {
-                Children[i].Measure(new Size(positions.Item1[i].Width, positions.Item1[i].Height));
+                Children[i].Measure(positions.Item1[i].ToSize());
             }
 
             _positions = positions;
@@ -803,8 +838,6 @@ namespace Telegram.Views.Popups
 
         protected override Size ArrangeOverride(Size finalSize)
         {
-            Logger.Debug();
-
             var positions = _positions;
             if (positions.Item1 == null || positions.Item1.Length == 1)
             {
@@ -823,7 +856,6 @@ namespace Telegram.Views.Popups
         {
             _positionsBase = null;
 
-            Logger.Debug();
             InvalidateMeasure();
             InvalidateArrange();
         }

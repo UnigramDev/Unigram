@@ -3,6 +3,18 @@
                     xmlns:controls="using:Telegram.Controls"
                     xmlns:messages="using:Telegram.Controls.Messages">
 
+    <Style x:Name="MessageCustomEmojiStyle"
+           TargetType="controls:CustomEmojiIcon">
+        <Setter Property="ReplacementColor"
+                Value="{ThemeResource SystemControlForegroundBaseHighBrush}" />
+    </Style>
+
+    <Style x:Name="InfoCustomEmojiStyle"
+           TargetType="controls:CustomEmojiIcon">
+        <Setter Property="ReplacementColor"
+                Value="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" />
+    </Style>
+
     <Style x:Key="DefaultChatTextBoxStyle"
            TargetType="controls:FormattedTextBox">
         <Setter Property="MinWidth"
@@ -745,6 +757,8 @@
                 Value="OuterBorderEdge" />
         <Setter Property="BorderBrush"
                 Value="{ThemeResource HyperlinkButtonBorderBrush}" />
+        <Setter Property="BorderThickness"
+                Value="0" />
         <Setter Property="CornerRadius"
                 Value="{ThemeResource ControlCornerRadius}" />
         <Setter Property="Template">
@@ -842,6 +856,8 @@
                 Value="OuterBorderEdge" />
         <Setter Property="BorderBrush"
                 Value="{ThemeResource HyperlinkButtonBorderBrush}" />
+        <Setter Property="BorderThickness"
+                Value="0" />
         <Setter Property="CornerRadius"
                 Value="{ThemeResource ControlCornerRadius}" />
         <Setter Property="Template">
@@ -1338,7 +1354,7 @@
         <Setter Property="BorderThickness"
                 Value="0" />
         <Setter Property="Padding"
-                Value="0" />
+                Value="2,-2,12,2" />
         <Setter Property="HorizontalAlignment"
                 Value="Left" />
         <Setter Property="HorizontalContentAlignment"
@@ -1349,8 +1365,6 @@
                 Value="Center" />
         <Setter Property="FontFamily"
                 Value="{StaticResource SymbolThemeFontFamily}" />
-        <Setter Property="Glyph"
-                Value="&#xE700;" />
         <Setter Property="Height"
                 Value="48" />
         <Setter Property="Width"
@@ -1435,7 +1449,6 @@
                         </Grid.ColumnDefinitions>
 
                         <TextBlock x:Name="ContentPresenter"
-                                   Margin="{TemplateBinding Padding}"
                                    HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
                                    VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
                                    AutomationProperties.AccessibilityView="Raw"
@@ -1447,7 +1460,7 @@
                                           FontFamily="{ThemeResource ContentControlThemeFontFamily}"
                                           HorizontalContentAlignment="Left"
                                           VerticalContentAlignment="Center"
-                                          Margin="2,-2,12,2"
+                                          Margin="{TemplateBinding Padding}"
                                           Grid.Column="1" />
                     </Grid>
                 </ControlTemplate>
@@ -1481,8 +1494,6 @@
                 Value="{StaticResource GlyphMediumFontSize}" />
         <Setter Property="FontWeight"
                 Value="Normal" />
-        <Setter Property="Glyph"
-                Value="&#xE700;" />
         <Setter Property="Height"
                 Value="48" />
         <Setter Property="Width"
@@ -2986,8 +2997,6 @@
                 Value="Center" />
         <Setter Property="FontFamily"
                 Value="{StaticResource SymbolThemeFontFamily}" />
-        <Setter Property="Glyph"
-                Value="&#xE700;" />
         <Setter Property="Height"
                 Value="48" />
         <Setter Property="Width"
@@ -3074,14 +3083,14 @@
                 Value="Transparent" />
         <Setter Property="Foreground"
                 Value="{ThemeResource MessageHeaderForegroundBrush}" />
-        <Setter Property="BorderBrush"
+        <Setter Property="Background"
                 Value="{ThemeResource MessageHeaderBorderBrush}" />
-        <Setter Property="BorderThickness"
-                Value="{ThemeResource ButtonBorderThemeThickness}" />
         <Setter Property="Margin"
                 Value="0,8,0,0" />
         <Setter Property="Padding"
-                Value="8,4,8,4" />
+                Value="10,5,10,6" />
+        <Setter Property="Height"
+                Value="32" />
         <Setter Property="HorizontalContentAlignment"
                 Value="Center" />
         <Setter Property="HorizontalAlignment"
@@ -3104,73 +3113,36 @@
                 <ControlTemplate TargetType="Button">
                     <Grid x:Name="RootGrid"
                           CornerRadius="4"
-                          Background="{TemplateBinding Background}">
+                          Background="Transparent">
                         <VisualStateManager.VisualStateGroups>
                             <VisualStateGroup x:Name="CommonStates">
                                 <VisualState x:Name="Normal" />
                                 <VisualState x:Name="PointerOver">
                                     <Storyboard>
-                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="RootGrid"
-                                                                       Storyboard.TargetProperty="Background">
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="SelectionIndicatorBorder"
+                                                                       Storyboard.TargetProperty="Opacity">
                                             <DiscreteObjectKeyFrame KeyTime="0"
-                                                                    Value="{ThemeResource ButtonBackgroundPointerOver}" />
-                                        </ObjectAnimationUsingKeyFrames>
-                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ContentPresenter"
-                                                                       Storyboard.TargetProperty="BorderBrush">
-                                            <DiscreteObjectKeyFrame KeyTime="0"
-                                                                    Value="{ThemeResource ButtonBorderBrushPointerOver}" />
-                                        </ObjectAnimationUsingKeyFrames>
-                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ContentPresenter"
-                                                                       Storyboard.TargetProperty="Foreground">
-                                            <DiscreteObjectKeyFrame KeyTime="0"
-                                                                    Value="{ThemeResource ButtonForegroundPointerOver}" />
+                                                                    Value="0.2" />
                                         </ObjectAnimationUsingKeyFrames>
                                     </Storyboard>
                                 </VisualState>
                                 <VisualState x:Name="Pressed">
                                     <Storyboard>
-                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="RootGrid"
-                                                                       Storyboard.TargetProperty="Background">
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="SelectionIndicatorBorder"
+                                                                       Storyboard.TargetProperty="Opacity">
                                             <DiscreteObjectKeyFrame KeyTime="0"
-                                                                    Value="{ThemeResource MessageHeaderForegroundBrush}" />
-                                        </ObjectAnimationUsingKeyFrames>
-                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ContentPresenter"
-                                                                       Storyboard.TargetProperty="BorderBrush">
-                                            <DiscreteObjectKeyFrame KeyTime="0"
-                                                                    Value="{ThemeResource MessageHeaderForegroundBrush}" />
-                                        </ObjectAnimationUsingKeyFrames>
-                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ContentPresenter"
-                                                                       Storyboard.TargetProperty="Foreground">
-                                            <DiscreteObjectKeyFrame KeyTime="0"
-                                                                    Value="#FFFFFF" />
+                                                                    Value="0.1" />
                                         </ObjectAnimationUsingKeyFrames>
                                     </Storyboard>
                                 </VisualState>
-                                <VisualState x:Name="Disabled">
-                                    <Storyboard>
-                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="RootGrid"
-                                                                       Storyboard.TargetProperty="Background">
-                                            <DiscreteObjectKeyFrame KeyTime="0"
-                                                                    Value="{ThemeResource ButtonBackgroundDisabled}" />
-                                        </ObjectAnimationUsingKeyFrames>
-                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ContentPresenter"
-                                                                       Storyboard.TargetProperty="BorderBrush">
-                                            <DiscreteObjectKeyFrame KeyTime="0"
-                                                                    Value="{ThemeResource ButtonBorderBrushDisabled}" />
-                                        </ObjectAnimationUsingKeyFrames>
-                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ContentPresenter"
-                                                                       Storyboard.TargetProperty="Foreground">
-                                            <DiscreteObjectKeyFrame KeyTime="0"
-                                                                    Value="{ThemeResource ButtonForegroundDisabled}" />
-                                        </ObjectAnimationUsingKeyFrames>
-                                    </Storyboard>
-                                </VisualState>
+                                <VisualState x:Name="Disabled" />
                             </VisualStateGroup>
                         </VisualStateManager.VisualStateGroups>
+                        <Border x:Name="SelectionIndicatorBorder"
+                                Background="{TemplateBinding Background}"
+                                Opacity="0.1" />
                         <ContentPresenter x:Name="ContentPresenter"
                                           CornerRadius="4"
-                                          BorderBrush="{TemplateBinding BorderBrush}"
-                                          BorderThickness="{TemplateBinding BorderThickness}"
                                           Content="{TemplateBinding Content}"
                                           ContentTransitions="{TemplateBinding ContentTransitions}"
                                           ContentTemplate="{TemplateBinding ContentTemplate}"
@@ -3979,8 +3951,6 @@
                 Value="True" />
         <Setter Property="FocusVisualMargin"
                 Value="-3" />
-        <Setter Property="Glyph"
-                Value="" />
         <Setter Property="Width"
                 Value="Auto" />
         <Setter Property="Height"
@@ -4081,8 +4051,6 @@
                 Value="True" />
         <Setter Property="FocusVisualMargin"
                 Value="-3" />
-        <Setter Property="Glyph"
-                Value="" />
         <Setter Property="Width"
                 Value="Auto" />
         <Setter Property="Height"

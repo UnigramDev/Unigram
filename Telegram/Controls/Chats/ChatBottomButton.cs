@@ -1,5 +1,5 @@
 //
-// Copyright Fela Ameghino 2015-2023
+// Copyright Fela Ameghino 2015-2024
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
@@ -38,8 +38,8 @@ namespace Telegram.Controls.Chats
 
             if (_label1 != null && _label2 != null)
             {
-                _visual1 = _visual = ElementCompositionPreview.GetElementVisual(_label1);
-                _visual2 = ElementCompositionPreview.GetElementVisual(_label2);
+                _visual1 = _visual = ElementComposition.GetElementVisual(_label1);
+                _visual2 = ElementComposition.GetElementVisual(_label2);
 
                 _label2.Content = new object();
 

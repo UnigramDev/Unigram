@@ -26,25 +26,54 @@
                       VerticalScrollBarVisibility="Auto"
                       VerticalScrollMode="Auto">
             <controls:SettingsPanel>
-                <controls:HeaderedControl Header="{CustomResource PrivacyVoiceMessagesTitle}"
+                <controls:HeaderedControl x:Name="Group"
+                                          Header="{CustomResource PrivacyVoiceMessagesTitle}"
                                           Footer="{CustomResource PrivacyVoiceMessagesInfo}">
                     <controls:PrivacyRadioButton Content="{CustomResource LastSeenEverybody}"
                                                  Value="{x:Bind ViewModel.SelectedItem, Mode=TwoWay}"
                                                  Type="AllowAll"
                                                  Style="{StaticResource SettingsRadioButtonStyle}" />
 
-                    <controls:PrivacyRadioButton Content="{CustomResource LastSeenContacts}"
-                                                 Value="{x:Bind ViewModel.SelectedItem, Mode=TwoWay}"
-                                                 Type="AllowContacts"
-                                                 Style="{StaticResource SettingsRadioButtonStyle}" />
+                    <Grid BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}">
+                        <controls:PrivacyRadioButton Content="{CustomResource LastSeenContacts}"
+                                                     Click="{x:Bind ViewModel.Enable}"
+                                                     Value="{x:Bind ViewModel.SelectedItem, Mode=TwoWay}"
+                                                     IsFaux="{x:Bind ViewModel.IsPremium, Mode=OneWay, Converter={StaticResource BooleanNegationConverter}}"
+                                                     IsChevronVisible="{x:Bind ViewModel.IsPremium, Mode=OneWay}"
+                                                     Type="AllowContacts"
+                                                     Style="{StaticResource SettingsRadioButtonStyle}" />
+                        <TextBlock x:Name="AllowContactsLock"
+                                   x:Load="{x:Bind ViewModel.IsPremium, Mode=OneWay, Converter={StaticResource BooleanNegationConverter}}"
+                                   Text="&#xEA25;"
+                                   Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"
+                                   FontFamily="{StaticResource SymbolThemeFontFamily}"
+                                   FontSize="20"
+                                   Padding="20,12,0,0"
+                                   IsHitTestVisible="False" />
+                    </Grid>
 
-                    <controls:PrivacyRadioButton Content="{CustomResource LastSeenNobody}"
-                                                 Value="{x:Bind ViewModel.SelectedItem, Mode=TwoWay}"
-                                                 Type="DisallowAll"
-                                                 Style="{StaticResource SettingsRadioButtonStyle}" />
+                    <Grid BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}">
+                        <controls:PrivacyRadioButton Content="{CustomResource LastSeenNobody}"
+                                                     Click="{x:Bind ViewModel.Enable}"
+                                                     Value="{x:Bind ViewModel.SelectedItem, Mode=TwoWay}"
+                                                     IsFaux="{x:Bind ViewModel.IsPremium, Mode=OneWay, Converter={StaticResource BooleanNegationConverter}}"
+                                                     IsChevronVisible="{x:Bind ViewModel.IsPremium, Mode=OneWay}"
+                                                     Type="DisallowAll"
+                                                     Style="{StaticResource SettingsRadioButtonStyle}" />
+                        <TextBlock x:Name="DisallowAllLock"
+                                   x:Load="{x:Bind ViewModel.IsPremium, Mode=OneWay, Converter={StaticResource BooleanNegationConverter}}"
+                                   Text="&#xEA25;"
+                                   Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"
+                                   FontFamily="{StaticResource SymbolThemeFontFamily}"
+                                   FontSize="20"
+                                   Padding="20,12,0,0"
+                                   IsHitTestVisible="False" />
+                    </Grid>
                 </controls:HeaderedControl>
 
-                <controls:HeaderedControl Header="{CustomResource AddExceptions}"
+                <controls:HeaderedControl x:Name="AddExceptions"
+                                          x:Load="{x:Bind ViewModel.IsPremium, Mode=OneWay}"
+                                          Header="{CustomResource AddExceptions}"
                                           Footer="{CustomResource PrivacyVoiceMessagesInfo2}">
                     <controls:BadgeButton Content="{CustomResource AlwaysAllow}"
                                           Click="{x:Bind ViewModel.Always}"

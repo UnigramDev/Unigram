@@ -1,5 +1,5 @@
 //
-// Copyright Fela Ameghino 2015-2023
+// Copyright Fela Ameghino 2015-2024
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
@@ -23,7 +23,7 @@ using Windows.UI.Xaml.Shapes;
 
 namespace Telegram.Controls.Chats
 {
-    public class ChatBackgroundControl : Grid
+    public class ChatBackgroundControl : GridEx
     {
         private IClientService _clientService;
         private IEventAggregator _aggregator;
@@ -40,17 +40,17 @@ namespace Telegram.Controls.Chats
             _presenter = new ChatBackgroundPresenter();
             _compositor = Window.Current.Compositor;
 
-            ElementCompositionPreview.GetElementVisual(this).Clip = _compositor.CreateInsetClip();
+            ElementComposition.GetElementVisual(this).Clip = _compositor.CreateInsetClip();
 
             Children.Add(_presenter);
 
-            Loaded += OnLoaded;
-            Unloaded += OnUnloaded;
+            Connected += OnLoaded;
+            Disconnected += OnUnloaded;
         }
 
         private void OnLoaded(object sender, RoutedEventArgs e)
         {
-            _aggregator?.Subscribe<UpdateSelectedBackground>(this, Handle);
+            _aggregator?.Subscribe<UpdateDefaultBackground>(this, Handle);
         }
 
         private void OnUnloaded(object sender, RoutedEventArgs e)
@@ -60,7 +60,7 @@ namespace Telegram.Controls.Chats
 
         private bool IsDarkTheme => WindowContext.Current.ActualTheme == ElementTheme.Dark;
 
-        public void Handle(UpdateSelectedBackground update)
+        public void Handle(UpdateDefaultBackground update)
         {
             this.BeginOnUIThread(() =>
             {
@@ -78,9 +78,12 @@ namespace Telegram.Controls.Chats
         {
             _clientService = clientService;
             _aggregator = aggregator;
-            _aggregator?.Subscribe<UpdateSelectedBackground>(this, Handle);
+            _aggregator?.Subscribe<UpdateDefaultBackground>(this, Handle);
 
-            UpdateBackground(clientService.SelectedBackground, IsDarkTheme, 100);
+            var background = clientService.GetDefaultBackground(IsDarkTheme);
+
+            SyncBackgroundWithChatTheme(ref background, IsDarkTheme, out int dimming);
+            UpdateBackground(background, IsDarkTheme, dimming);
         }
 
         public void Update(Background background, bool forDarkTheme)
@@ -92,26 +95,44 @@ namespace Telegram.Controls.Chats
             }
         }
 
+        private ChatBackground _chatBackground;
+        private ChatTheme _chatTheme;
+        private bool _localFields;
+
+        public void UpdateChat(IClientService clientService, ChatBackground background, ChatTheme theme)
+        {
+            _clientService = clientService;
+
+            _chatBackground = background;
+            _chatTheme = theme;
+            _localFields = background != null || theme != null;
+
+            Update(_oldBackground, IsDarkTheme);
+        }
+
         private void SyncBackgroundWithChatTheme(ref Background background, bool forDarkTheme, out int dimming)
         {
+            var chatBackground = _localFields ? _chatBackground : Theme.Current.ChatBackground;
+            var chatTheme = _localFields ? _chatTheme : Theme.Current.ChatTheme;
+
             // I'm not a big fan of this, but this is the easiest way to keep background in sync
-            if (Theme.Current.ChatBackground != null)
+            if (chatBackground != null)
             {
-                background = Theme.Current.ChatBackground.Background;
+                background = chatBackground.Background;
                 dimming = forDarkTheme
-                    ? Theme.Current.ChatBackground.DarkThemeDimming
-                    : 100;
+                    ? chatBackground.DarkThemeDimming
+                    : 0;
             }
-            else if (Theme.Current.ChatTheme != null)
+            else if (chatTheme != null)
             {
-                dimming = 100;
+                dimming = 0;
                 background = forDarkTheme
-                    ? Theme.Current.ChatTheme?.DarkSettings.Background
-                    : Theme.Current.ChatTheme?.LightSettings.Background;
+                    ? chatTheme?.DarkSettings?.Background
+                    : chatTheme?.LightSettings?.Background;
             }
             else
             {
-                dimming = 100;
+                dimming = 0;
             }
         }
 
@@ -147,9 +168,9 @@ namespace Telegram.Controls.Chats
 
             _presenter.UpdateSource(_clientService, background, false);
 
-            if (dark && dimming != 100)
+            if (dark && dimming != 0)
             {
-                _presenter.Opacity = dimming / 100d;
+                _presenter.Opacity = 1 - (dimming / 100d);
                 Background = new SolidColorBrush(Colors.Black);
             }
             else
@@ -161,9 +182,9 @@ namespace Telegram.Controls.Chats
 
         public static bool BackgroundEquals(Background prev, Background next, bool fast = false)
         {
-            if (prev == null)
+            if (prev == null || next == null)
             {
-                return next == null;
+                return prev == next;
             }
 
             if (fast && prev.Id != next.Id)
@@ -186,6 +207,10 @@ namespace Telegram.Controls.Chats
             {
                 return prevWallpaper.IsBlurred == nextWallpaper.IsBlurred
                     && prev.Document?.DocumentValue.Id == next.Document?.DocumentValue.Id;
+            }
+            else if (prev.Type is BackgroundTypeChatTheme prevChatTheme && next.Type is BackgroundTypeChatTheme nextChatTheme)
+            {
+                return string.Equals(prevChatTheme.ThemeName, nextChatTheme.ThemeName);
             }
 
             return Equals(prev, next);
@@ -223,8 +248,6 @@ namespace Telegram.Controls.Chats
 
         private void OnSizeChanged(object sender, SizeChangedEventArgs e)
         {
-            Logger.Debug();
-
             if (_fill is BackgroundFillFreeformGradient freeform)
             {
                 _background.UpdateLayout(Background as ImageBrush, e.NewSize.Width, e.NewSize.Height, freeform);
@@ -401,7 +424,7 @@ namespace Telegram.Controls.Chats
             return context;
         }
 
-        private static unsafe WriteableBitmap GenerateGradient(WriteableBitmap context, Color[] colors, Vector2[] positions)
+        private static unsafe void GenerateGradient(WriteableBitmap context, Color[] colors, Vector2[] positions)
         {
             var width = context.PixelWidth;
             var height = context.PixelHeight;
@@ -460,71 +483,6 @@ namespace Telegram.Controls.Chats
                     pixelBytes[3] = 0xff;
                 }
             }
-
-            return context;
-        }
-
-        public static unsafe byte[] GenerateGradientData(int width, int height, Color[] colors, Vector2[] positions)
-        {
-            var imageData = new byte[width * height * 4];
-
-            fixed (byte* imageBytes = imageData)
-            {
-                for (int y = 0; y < height; y++)
-                {
-                    var directPixelY = y / (float)height;
-                    var centerDistanceY = directPixelY - 0.5f;
-                    var centerDistanceY2 = centerDistanceY * centerDistanceY;
-
-                    var lineBytes = imageBytes + width * 4 * y;
-                    for (int x = 0; x < width; x++)
-                    {
-                        var directPixelX = x / (float)width;
-
-                        var centerDistanceX = directPixelX - 0.5f;
-                        var centerDistance = MathF.Sqrt(centerDistanceX * centerDistanceX + centerDistanceY2);
-
-                        var swirlFactor = 0.35f * centerDistance;
-                        var theta = swirlFactor * swirlFactor * 0.8f * 8.0f;
-                        var sinTheta = MathF.Sin(theta);
-                        var cosTheta = MathF.Cos(theta);
-
-                        var pixelX = MathF.Max(0.0f, MathF.Min(1.0f, 0.5f + centerDistanceX * cosTheta - centerDistanceY * sinTheta));
-                        var pixelY = MathF.Max(0.0f, MathF.Min(1.0f, 0.5f + centerDistanceX * sinTheta + centerDistanceY * cosTheta));
-
-                        var distanceSum = 0.0f;
-
-                        var r = 0.0f;
-                        var g = 0.0f;
-                        var b = 0.0f;
-
-                        for (int i = 0; i < colors.Length; i++)
-                        {
-                            var colorX = positions[i].X;
-                            var colorY = positions[i].Y;
-
-                            var distanceX = pixelX - colorX;
-                            var distanceY = pixelY - colorY;
-
-                            var distance = MathF.Max(0.0f, 0.9f - MathF.Sqrt(distanceX * distanceX + distanceY * distanceY));
-                            distance = distance * distance * distance * distance;
-                            distanceSum += distance;
-
-                            r += distance * colors[i].R / 255f;
-                            g += distance * colors[i].G / 255f;
-                            b += distance * colors[i].B / 255f;
-                        }
-
-                        var pixelBytes = lineBytes + x * 4;
-                        pixelBytes[0] = (byte)(b / distanceSum * 255.0f);
-                        pixelBytes[1] = (byte)(g / distanceSum * 255.0f);
-                        pixelBytes[2] = (byte)(r / distanceSum * 255.0f);
-                        pixelBytes[3] = 0xff;
-                    }
-                }
-            }
-
-            return imageData;
         }
     }
 }

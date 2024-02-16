@@ -1,5 +1,5 @@
 //
-// Copyright Fela Ameghino 2015-2023
+// Copyright Fela Ameghino 2015-2024
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
@@ -7,6 +7,7 @@
 using Microsoft.Graphics.Canvas.Geometry;
 using System;
 using System.Numerics;
+using Telegram.Common;
 using Telegram.Controls.Media;
 using Telegram.Navigation;
 using Telegram.Services;
@@ -23,7 +24,7 @@ using Windows.UI.Xaml.Media;
 
 namespace Telegram.Controls.Cells
 {
-    public sealed partial class ChatShareCell : Grid, IMultipleElement
+    public sealed partial class ChatShareCell : GridEx, IMultipleElement
     {
         private bool _selected;
 
@@ -31,11 +32,11 @@ namespace Telegram.Controls.Cells
         {
             InitializeComponent();
 
-            Loaded += OnLoaded;
-            Unloaded += OnUnloaded;
+            Connected += OnLoaded;
+            Disconnected += OnUnloaded;
 
-            _selectionPhoto = ElementCompositionPreview.GetElementVisual(Photo);
-            _selectionOutline = ElementCompositionPreview.GetElementVisual(SelectionOutline);
+            _selectionPhoto = ElementComposition.GetElementVisual(Photo);
+            _selectionOutline = ElementComposition.GetElementVisual(SelectionOutline);
             _selectionPhoto.CenterPoint = new Vector3(18);
             _selectionOutline.CenterPoint = new Vector3(18);
             _selectionOutline.Opacity = 0;
@@ -43,30 +44,23 @@ namespace Telegram.Controls.Cells
 
         private void OnLoaded(object sender, RoutedEventArgs e)
         {
-            if (Stroke is SolidColorBrush stroke && _strokeToken == 0 && _visual != null)
+            if (_strokeToken == 0 && _ellipse != null)
             {
-                _strokeToken = stroke.RegisterPropertyChangedCallback(SolidColorBrush.ColorProperty, OnStrokeChanged);
+                Stroke?.RegisterColorChangedCallback(OnStrokeChanged, ref _strokeToken);
+                OnStrokeChanged(Stroke, SolidColorBrush.ColorProperty);
             }
 
-            if (SelectionStroke is SolidColorBrush selectionStroke && _selectionStrokeToken == 0 && _visual != null)
+            if (_selectionStrokeToken == 0 && _stroke != null)
             {
-                _selectionStrokeToken = selectionStroke.RegisterPropertyChangedCallback(SolidColorBrush.ColorProperty, OnSelectionStrokeChanged);
+                SelectionStroke?.RegisterColorChangedCallback(OnSelectionStrokeChanged, ref _selectionStrokeToken);
+                OnSelectionStrokeChanged(SelectionStroke, SolidColorBrush.ColorProperty);
             }
         }
 
         private void OnUnloaded(object sender, RoutedEventArgs e)
         {
-            if (Stroke is SolidColorBrush stroke && _strokeToken != 0)
-            {
-                stroke.UnregisterPropertyChangedCallback(SolidColorBrush.ColorProperty, _strokeToken);
-                _strokeToken = 0;
-            }
-
-            if (SelectionStroke is SolidColorBrush selectionStroke && _selectionStrokeToken != 0)
-            {
-                selectionStroke.UnregisterPropertyChangedCallback(SolidColorBrush.ColorProperty, _selectionStrokeToken);
-                _selectionStrokeToken = 0;
-            }
+            Stroke?.UnregisterColorChangedCallback(ref _strokeToken);
+            SelectionStroke?.UnregisterColorChangedCallback(ref _selectionStrokeToken);
         }
 
         public void UpdateChat(IClientService clientService, ContainerContentChangingEventArgs args, TypedEventHandler<ListViewBase, ContainerContentChangingEventArgs> callback)
@@ -288,11 +282,7 @@ namespace Telegram.Controls.Cells
 
         private void OnStrokeChanged(SolidColorBrush newValue, SolidColorBrush oldValue)
         {
-            if (oldValue != null && _strokeToken != 0)
-            {
-                oldValue.UnregisterPropertyChangedCallback(SolidColorBrush.ColorProperty, _strokeToken);
-                _strokeToken = 0;
-            }
+            oldValue?.UnregisterColorChangedCallback(ref _strokeToken);
 
             if (newValue == null || _ellipse == null)
             {
@@ -300,7 +290,11 @@ namespace Telegram.Controls.Cells
             }
 
             _ellipse.FillBrush = Window.Current.Compositor.CreateColorBrush(newValue.Color);
-            _strokeToken = newValue.RegisterPropertyChangedCallback(SolidColorBrush.ColorProperty, OnStrokeChanged);
+
+            if (IsConnected)
+            {
+                newValue.RegisterColorChangedCallback(OnStrokeChanged, ref _strokeToken);
+            }
         }
 
         private void OnStrokeChanged(DependencyObject sender, DependencyProperty dp)
@@ -336,11 +330,7 @@ namespace Telegram.Controls.Cells
 
         private void OnSelectionStrokeChanged(SolidColorBrush newValue, SolidColorBrush oldValue)
         {
-            if (oldValue != null && _selectionStrokeToken != 0)
-            {
-                oldValue.UnregisterPropertyChangedCallback(SolidColorBrush.ColorProperty, _selectionStrokeToken);
-                _selectionStrokeToken = 0;
-            }
+            oldValue?.UnregisterColorChangedCallback(ref _selectionStrokeToken);
 
             if (newValue == null || _stroke == null)
             {
@@ -348,7 +338,11 @@ namespace Telegram.Controls.Cells
             }
 
             _stroke.FillBrush = Window.Current.Compositor.CreateColorBrush(newValue.Color);
-            _selectionStrokeToken = newValue.RegisterPropertyChangedCallback(SolidColorBrush.ColorProperty, OnSelectionStrokeChanged);
+
+            if (IsConnected)
+            {
+                newValue.RegisterColorChangedCallback(OnSelectionStrokeChanged, ref _selectionStrokeToken);
+            }
         }
 
         private void OnSelectionStrokeChanged(DependencyObject sender, DependencyProperty dp)
@@ -379,9 +373,9 @@ namespace Telegram.Controls.Cells
             var value = GetValue(dp);
             if (value is SolidColorBrush solid)
             {
-                if (token == 0)
+                if (IsConnected)
                 {
-                    token = solid.RegisterPropertyChangedCallback(SolidColorBrush.ColorProperty, callback);
+                    solid.RegisterColorChangedCallback(callback, ref token);
                 }
 
                 return Window.Current.Compositor.CreateColorBrush(solid.Color);

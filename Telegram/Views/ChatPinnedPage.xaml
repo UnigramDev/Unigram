@@ -14,4 +14,6 @@
             </NavigationThemeTransition>
         </TransitionCollection>
     </Page.Transitions>
+
+    <local:ChatView x:Name="View" />
 </local:HostedPage>

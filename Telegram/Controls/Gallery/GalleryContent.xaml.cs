@@ -1,5 +1,5 @@
 //
-// Copyright Fela Ameghino 2015-2023
+// Copyright Fela Ameghino 2015-2024
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
@@ -9,7 +9,6 @@ using System;
 using System.Diagnostics;
 using System.Numerics;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 using Telegram.Common;
 using Telegram.Services;
 using Telegram.Streams;
@@ -18,11 +17,11 @@ using Telegram.ViewModels.Delegates;
 using Telegram.ViewModels.Gallery;
 using Windows.Foundation;
 using Windows.Storage;
-using Windows.System;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Hosting;
 using Windows.UI.Xaml.Media;
+using Windows.UI.Xaml.Media.Imaging;
 
 namespace Telegram.Controls.Gallery
 {
@@ -31,12 +30,19 @@ namespace Telegram.Controls.Gallery
         private IGalleryDelegate _delegate;
         private GalleryMedia _item;
 
+        private int _itemId;
+
         public GalleryMedia Item => _item;
 
         private long _fileToken;
         private long _thumbnailToken;
 
-        private Stretch _lastStretch;
+        private int _appliedId;
+
+        private Stretch _appliedStretch;
+        private int _appliedRotation;
+
+        private bool _fromSizeChanged;
 
         public bool IsEnabled
         {
@@ -44,45 +50,85 @@ namespace Telegram.Controls.Gallery
             set => Button.IsEnabled = value;
         }
 
-        private readonly DispatcherQueue _dispatcherQueue;
-        private readonly LifoActionWorker _playbackQueue;
-
         public GalleryContent()
         {
             InitializeComponent();
 
-            _dispatcherQueue = DispatcherQueue.GetForCurrentThread();
-            _playbackQueue = new LifoActionWorker();
+            RotationAngleChanged += OnRotationAngleChanged;
+            SizeChanged += OnSizeChanged;
         }
 
-        private void OnSizeChanged(object sender, SizeChangedEventArgs e)
+        private void OnRotationAngleChanged(object sender, RoutedEventArgs e)
         {
-            Logger.Debug();
-
-            if (_lastStretch == Stretch)
+            if (_fromSizeChanged)
             {
                 return;
             }
 
-            _lastStretch = Stretch;
+            OnSizeChanged(sender, null);
+        }
 
-            var prev = e.PreviousSize.ToVector2();
-            var next = e.NewSize.ToVector2();
+        private void OnSizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            if (_item == null || _itemId != _appliedId)
+            {
+                _appliedId = _itemId;
+                return;
+            }
 
-            var anim = Window.Current.Compositor.CreateVector3KeyFrameAnimation();
-            anim.InsertKeyFrame(0, new Vector3(prev / next, 1));
-            anim.InsertKeyFrame(1, Vector3.One);
+            _appliedId = _itemId;
 
-            var panel = ElementCompositionPreview.GetElementVisual(this);
-            panel.CenterPoint = new Vector3(next.X / 2, next.Y / 2, 0);
-            panel.StartAnimation("Scale", anim);
+            var angle = RotationAngle switch
+            {
+                RotationAngle.Angle90 => 90,
+                RotationAngle.Angle180 => 180,
+                RotationAngle.Angle270 => 270,
+                _ => 0
+            };
 
-            var factor = Window.Current.Compositor.CreateExpressionAnimation("Vector3(1 / content.Scale.X, 1 / content.Scale.Y, 1)");
-            factor.SetReferenceParameter("content", panel);
+            var visual = ElementComposition.GetElementVisual(this);
+            visual.CenterPoint = new Vector3(ActualSize / 2, 0);
+            visual.Clip ??= visual.Compositor.CreateInsetClip();
 
-            var button = ElementCompositionPreview.GetElementVisual(Button);
-            button.CenterPoint = new Vector3(Button.ActualSize.X / 2, Button.ActualSize.Y / 2, 0);
-            button.StartAnimation("Scale", factor);
+            if (_appliedStretch == Stretch && _appliedRotation == angle)
+            {
+                visual.RotationAngleInDegrees = angle;
+                return;
+            }
+
+            _appliedStretch = Stretch;
+            _fromSizeChanged = e != null;
+
+            if (e != null)
+            {
+                var prev = e.PreviousSize.ToVector2();
+                var next = e.NewSize.ToVector2();
+
+                var anim = Window.Current.Compositor.CreateVector3KeyFrameAnimation();
+                anim.InsertKeyFrame(0, new Vector3(prev / next, 1));
+                anim.InsertKeyFrame(1, Vector3.One);
+
+                var panel = ElementComposition.GetElementVisual(Children[0]);
+                panel.CenterPoint = new Vector3(next.X / 2, next.Y / 2, 0);
+                panel.StartAnimation("Scale", anim);
+
+                var factor = Window.Current.Compositor.CreateExpressionAnimation("Vector3(1 / content.Scale.X, 1 / content.Scale.Y, 1)");
+                factor.SetReferenceParameter("content", panel);
+
+                var button = ElementComposition.GetElementVisual(Button);
+                button.CenterPoint = new Vector3(Button.ActualSize.X / 2, Button.ActualSize.Y / 2, 0);
+                button.StartAnimation("Scale", factor);
+            }
+
+            if (_appliedRotation != angle)
+            {
+                var animation = visual.Compositor.CreateScalarKeyFrameAnimation();
+                animation.InsertKeyFrame(0, angle > _appliedRotation ? 360 : _appliedRotation);
+                animation.InsertKeyFrame(1, angle);
+
+                _appliedRotation = angle;
+                visual.StartAnimation("RotationAngleInDegrees", animation);
+            }
         }
 
         public void UpdateItem(IGalleryDelegate delegato, GalleryMedia item)
@@ -90,8 +136,16 @@ namespace Telegram.Controls.Gallery
             _delegate = delegato;
             _item = item;
 
-            Tag = item;
+            _appliedRotation = item?.RotationAngle switch
+            {
+                RotationAngle.Angle90 => 90,
+                RotationAngle.Angle180 => 180,
+                RotationAngle.Angle270 => 270,
+                _ => 0
+            };
 
+            Tag = item;
+            RotationAngle = item?.RotationAngle ?? RotationAngle.Angle0;
             Background = null;
             Texture.Source = null;
 
@@ -102,6 +156,8 @@ namespace Telegram.Controls.Gallery
             {
                 return;
             }
+
+            _itemId = file.Id;
 
             if (item.IsVideoNote)
             {
@@ -197,8 +253,15 @@ namespace Telegram.Controls.Gallery
         {
             if (file.Local.IsDownloadingCompleted)
             {
+                var source = new BitmapImage();
+                PlaceholderHelper.GetBlurred(source, file.Local.Path);
+
                 //Texture.Source = new BitmapImage(UriEx.GetLocal(file.Local.Path));
-                Background = new ImageBrush { ImageSource = PlaceholderHelper.GetBlurred(file.Local.Path), Stretch = Stretch.UniformToFill };
+                Background = new ImageBrush
+                {
+                    ImageSource = source,
+                    Stretch = Stretch.UniformToFill
+                };
             }
             else if (download)
             {
@@ -246,8 +309,7 @@ namespace Telegram.Controls.Gallery
             }
         }
 
-        private LibVLC _library;
-        private MediaPlayer _mediaPlayer;
+        private AsyncMediaPlayer _player;
 
         private RemoteFileStream _fileStream;
         private GalleryTransportControls _controls;
@@ -278,7 +340,7 @@ namespace Telegram.Controls.Gallery
 
                 controls.Attach(item, file);
 
-                if (_mediaPlayer == null)
+                if (_player == null)
                 {
                     _controls = controls;
                     _fileStream = new RemoteFileStream(item.ClientService, file);
@@ -287,15 +349,12 @@ namespace Telegram.Controls.Gallery
                 }
                 else
                 {
-                    controls.Attach(_mediaPlayer);
+                    controls.Attach(_player);
 
                     _fileStream = null;
                     _controls = null;
-                    _playbackQueue.Enqueue(() =>
-                    {
-                        _mediaPlayer.Play(new LibVLCSharp.Shared.Media(_library, new RemoteFileStream(item.ClientService, file)));
-                        _mediaPlayer.Time = position;
-                    });
+                    _player.Play(new RemoteFileStream(item.ClientService, file));
+                    _player.Time = position;
                 }
             }
             catch { }
@@ -303,29 +362,15 @@ namespace Telegram.Controls.Gallery
 
         private void OnInitialized(object sender, LibVLCSharp.Platforms.Windows.InitializedEventArgs e)
         {
-            _library = new LibVLC(e.SwapChainOptions);
-            //_library.Log += _library_Log;
-
-            _mediaPlayer = new MediaPlayer(_library);
-            //_mediaPlayer.EndReached += OnEndReached;
-            _mediaPlayer.Stopped += OnStopped;
-            //_mediaPlayer.VolumeChanged += OnVolumeChanged;
-            //_mediaPlayer.SourceChanged += OnSourceChanged;
-            //_mediaPlayer.MediaOpened += OnMediaOpened;
-            //_mediaPlayer.PlaybackSession.PlaybackStateChanged += OnPlaybackStateChanged;
+            _player = new AsyncMediaPlayer(e.SwapChainOptions);
+            _player.Stopped += OnStopped;
 
             var stream = _fileStream;
             var position = _initialPosition;
 
-            _controls.Attach(_mediaPlayer);
-            _playbackQueue.Enqueue(() =>
-            {
-                if (_mediaPlayer != null && !_unloaded)
-                {
-                    _mediaPlayer.Play(new LibVLCSharp.Shared.Media(_library, stream));
-                    _mediaPlayer.Time = position;
-                }
-            });
+            _controls.Attach(_player);
+            _player.Play(stream);
+            _player.Time = position;
 
             _controls = null;
             _fileStream = null;
@@ -358,33 +403,19 @@ namespace Telegram.Controls.Gallery
 
             _unloaded = true;
 
-            Task.Run(() =>
+            if (Video != null)
             {
-                _mediaPlayer?.Stop();
-                _mediaPlayer?.Dispose();
-                _mediaPlayer = null;
-
-                _library?.Dispose();
-                _library = null;
-
-                _fileStream?.Close();
-                _fileStream = null;
-            });
-        }
-
-        private void OnEndReached(object sender, EventArgs e)
-        {
-            _playbackQueue.Enqueue(Stop);
-        }
-
-        private void Stop()
-        {
-            if (_unloaded)
-            {
-                return;
+                Video.Initialized -= OnInitialized;
             }
 
-            _mediaPlayer?.Stop();
+            if (_player != null)
+            {
+                _player.Stopped -= OnStopped;
+                _player.Close();
+            }
+
+            UpdateManager.Unsubscribe(this, ref _fileToken);
+            UpdateManager.Unsubscribe(this, ref _thumbnailToken, true);
         }
 
         private void OnStopped(object sender, EventArgs e)
@@ -392,19 +423,19 @@ namespace Telegram.Controls.Gallery
             if (_stopped)
             {
                 _stopped = false;
-                _dispatcherQueue.TryEnqueue(Video.Clear);
+                Video.Clear();
             }
         }
 
         public void Stop(out int fileId, out long position)
         {
-            if (_mediaPlayer != null && !_unloaded)
+            if (_player != null && !_unloaded)
             {
                 fileId = _fileId;
-                position = _mediaPlayer.Time;
+                position = _player.Time;
 
                 _stopped = true;
-                _playbackQueue.Enqueue(Stop);
+                _player.Stop();
             }
             else
             {

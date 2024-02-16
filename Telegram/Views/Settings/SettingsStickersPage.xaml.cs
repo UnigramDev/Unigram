@@ -1,5 +1,5 @@
 //
-// Copyright Fela Ameghino 2015-2023
+// Copyright Fela Ameghino 2015-2024
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
@@ -11,10 +11,8 @@ using Telegram.Controls.Media;
 using Telegram.Streams;
 using Telegram.Td.Api;
 using Telegram.ViewModels.Settings;
-using Windows.UI.Composition;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Hosting;
 using Windows.UI.Xaml.Input;
 
 namespace Telegram.Views.Settings
@@ -84,19 +82,8 @@ namespace Telegram.Views.Settings
                 return;
             }
 
-            var file = cover.StickerValue;
-
             var animated = content.Children[0] as AnimatedImage;
-            animated.Source = new DelayedFileSource(ViewModel.ClientService, file);
-
-            if (file.Local.IsDownloadingCompleted)
-            {
-            }
-            else
-            {
-                CompositionPathParser.ParseThumbnail(cover, out ShapeVisual visual, false);
-                ElementCompositionPreview.SetElementChildVisual(content.Children[0], visual);
-            }
+            animated.Source = new DelayedFileSource(ViewModel.ClientService, cover);
 
             args.Handled = true;
         }
@@ -121,15 +108,13 @@ namespace Telegram.Views.Settings
                 return;
             }
 
-            var flyout = new MenuFlyout();
-
-            var element = sender as FrameworkElement;
-            var stickerSet = ScrollingHost.ItemFromContainer(element) as StickerSetInfo;
-
+            var stickerSet = ScrollingHost.ItemFromContainer(sender) as StickerSetInfo;
             if (stickerSet == null || stickerSet.Id == 0)
             {
                 return;
             }
+
+            var flyout = new MenuFlyout();
 
             if (stickerSet.IsOfficial)
             {
@@ -143,7 +128,7 @@ namespace Telegram.Views.Settings
                 //CreateFlyoutItem(ref flyout, ViewModel.StickerSetCopyCommand, stickerSet, Strings.StickersCopy);
             }
 
-            args.ShowAt(flyout, element);
+            flyout.ShowAt(sender, args);
         }
 
         #endregion

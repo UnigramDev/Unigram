@@ -166,9 +166,8 @@
                 Value="False" />
         <Setter Property="VerticalAlignment"
                 Value="Stretch" />
-        <!--<Setter Property="Width" Value="209"/>-->
         <Setter Property="MinWidth"
-                Value="142" />
+                Value="0" />
         <Setter Property="Height"
                 Value="20" />
         <Setter Property="Margin"
@@ -222,6 +221,23 @@
                             <controls:FileButton x:Name="Button"
                                                  Style="{StaticResource InlineFileButtonStyle}" />
                         </Border>
+                        <Border x:Name="ViewOnce"
+                                Width="24"
+                                Height="24"
+                                CornerRadius="12"
+                                Margin="0,0,-6,-4"
+                                BorderThickness="2"
+                                BorderBrush="{ThemeResource MessageBackgroundBrush}"
+                                Background="{ThemeResource MessageMediaBackgroundBrush}"
+                                HorizontalAlignment="Right"
+                                VerticalAlignment="Bottom"
+                                UseLayoutRounding="False"
+                                IsHitTestVisible="False">
+                            <TextBlock Text="&#xE918;"
+                                       Foreground="#FFFFFF"
+                                       FontSize="20"
+                                       FontFamily="{StaticResource SymbolThemeFontFamily}" />
+                        </Border>
                         <StackPanel Margin="8,0,0,2"
                                     VerticalAlignment="Center"
                                     Grid.Column="1">
@@ -236,7 +252,7 @@
                         </StackPanel>
 
                         <controls:AnimatedIconToggleButton x:Name="Recognize"
-                                                           x:Load="False"
+                                                           AutomationProperties.Name="{CustomResource AccActionOpenTranscription}"
                                                            Style="{StaticResource RecognizeButtonStyle}"
                                                            Foreground="{ThemeResource MessageMediaBackgroundBrush}"
                                                            CheckedGlyph="&#xE90B;"
@@ -245,7 +261,7 @@
                                                            Margin="8,0,0,0"
                                                            Width="28"
                                                            Height="28"
-                                                           IsOneWay="False"
+                                                           IsOneWay="True"
                                                            Grid.Column="2">
                             <controls:AnimatedIconToggleButton.Source>
                                 <icons:VoiceRecognition />

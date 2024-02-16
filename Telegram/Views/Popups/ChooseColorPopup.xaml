@@ -10,9 +10,10 @@
                     PrimaryButtonText="Button1"
                     SecondaryButtonText="Button2"
                     PrimaryButtonClick="ContentDialog_PrimaryButtonClick"
-                    SecondaryButtonClick="ContentDialog_SecondaryButtonClick">
+                    SecondaryButtonClick="ContentDialog_SecondaryButtonClick"
+                    Padding="24,24,24,12">
 
-    <Grid Margin="0,0,0,-12">
+    <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition />

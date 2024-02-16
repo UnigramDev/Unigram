@@ -1,4 +1,10 @@
-﻿using System.Collections;
+﻿//
+// Copyright Fela Ameghino 2015-2024
+//
+// Distributed under the GNU General Public License v3.0. (See accompanying
+// file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
+//
+using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using Telegram.Collections;
@@ -103,12 +109,15 @@ namespace Telegram.Common
         #endregion
 
         private ListViewBase _listView;
+        private FrameworkElementState _manager;
 
         private void Attach(ListViewBase view)
         {
             _listView = view;
-            _listView.Loaded += OnLoaded;
-            _listView.Unloaded += OnUnloaded;
+
+            _manager = new FrameworkElementState(view);
+            _manager.Loaded += OnLoaded;
+            _manager.Unloaded += OnUnloaded;
         }
 
         private void OnLoaded(object sender, RoutedEventArgs e)

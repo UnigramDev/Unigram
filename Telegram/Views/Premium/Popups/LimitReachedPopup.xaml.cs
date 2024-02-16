@@ -1,5 +1,5 @@
 //
-// Copyright Fela Ameghino 2015-2023
+// Copyright Fela Ameghino 2015-2024
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
@@ -16,6 +16,7 @@ using Telegram.Navigation.Services;
 using Telegram.Services;
 using Telegram.Streams;
 using Telegram.Td.Api;
+using Telegram.Views.Host;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
@@ -82,6 +83,7 @@ namespace Telegram.Views.Premium.Popups
                         lockedValue = Strings.LimitReachedFolderLinksLocked;
                         premiumValue = Strings.LimitReachedFolderLinksPremium;
                         break;
+                    case PremiumLimitTypePinnedSavedMessagesTopicCount:
                     case PremiumLimitTypePinnedArchivedChatCount:
                     case PremiumLimitTypePinnedChatCount:
                         iconValue = Icons.PinFilled;
@@ -218,6 +220,8 @@ namespace Telegram.Views.Premium.Popups
                     return CreateLimit(type, clientService.Options.ChatFolderCountMax);
                 case PremiumLimitTypeCreatedPublicChatCount:
                     return CreateLimit(type, 500);
+                case PremiumLimitTypePinnedSavedMessagesTopicCount:
+                    return CreateLimit(type, clientService.Options.PinnedSavedMessagesTopicCountMax);
                 case PremiumLimitTypePinnedArchivedChatCount:
                     return CreateLimit(type, clientService.Options.PinnedArchivedChatCountMax);
                 case PremiumLimitTypePinnedChatCount:
@@ -336,13 +340,16 @@ namespace Telegram.Views.Premium.Popups
                 }
             };
 
-            if (Window.Current.Content is FrameworkElement element)
+            if (Window.Current.Content is IToastHost host)
             {
-                element.Resources["TeachingTip"] = popup;
-            }
-            else
-            {
-                container.Resources["TeachingTip"] = popup;
+                void handler(object sender, object e)
+                {
+                    host.Disconnect(popup);
+                    popup.Closed -= handler;
+                }
+
+                host.Connect(popup);
+                popup.Closed += handler;
             }
 
             popup.IsOpen = true;

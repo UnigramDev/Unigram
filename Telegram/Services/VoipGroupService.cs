@@ -1,5 +1,5 @@
 //
-// Copyright Fela Ameghino 2015-2023
+// Copyright Fela Ameghino 2015-2024
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
@@ -14,7 +14,6 @@ using Telegram.Common;
 using Telegram.Controls;
 using Telegram.Converters;
 using Telegram.Native.Calls;
-using Telegram.Navigation;
 using Telegram.Services.Updates;
 using Telegram.Services.ViewService;
 using Telegram.Td.Api;
@@ -46,6 +45,7 @@ namespace Telegram.Services
 #if ENABLE_CALLS
         bool IsMuted { get; set; }
         event EventHandler MutedChanged;
+        event EventHandler<IList<VoipGroupParticipant>> AudioLevelsUpdated;
 
         bool IsNoiseSuppressionEnabled { get; set; }
 
@@ -92,7 +92,7 @@ namespace Telegram.Services
         Task ConsolidateAsync();
     }
 
-    public class VoipGroupService : ViewModelBase, IVoipGroupService
+    public class VoipGroupService : ServiceBase, IVoipGroupService
     {
         private readonly IViewService _viewService;
 
@@ -152,7 +152,7 @@ namespace Telegram.Services
             Subscribe();
         }
 
-        public override void Subscribe()
+        private void Subscribe()
         {
             Aggregator.Subscribe<UpdateGroupCall>(this, Handle)
                 .Subscribe<UpdateGroupCallParticipant>(Handle);
@@ -208,37 +208,15 @@ namespace Telegram.Services
             return null;
         }
 
-
         public async Task JoinAsync(long chatId)
         {
-            var chat = ClientService.GetChat(chatId);
-            if (chat == null || chat.VideoChat.GroupCallId == 0)
+            if (await MediaDeviceWatcher.CheckIfUnsupportedAsync())
             {
                 return;
             }
 
-            //var call = Call;
-            //if (call != null)
-            //{
-            //    var callUser = ClientService.GetUser(call.UserId);
-            //    if (callUser != null && callUser.Id != user.Id)
-            //    {
-            //        var confirm = await MessagePopup.ShowAsync(string.Format(Strings.VoipOngoingAlert, callUser.GetFullName(), user.GetFullName()), Strings.VoipOngoingAlertTitle, Strings.OK, Strings.Cancel);
-            //        if (confirm == ContentDialogResult.Primary)
-            //        {
-
-            //        }
-            //    }
-            //    else
-            //    {
-            //        Show();
-            //    }
-
-            //    return;
-            //}
-
-            var permissions = await MediaDeviceWatcher.CheckAccessAsync(true, false);
-            if (permissions == false)
+            var chat = ClientService.GetChat(chatId);
+            if (chat == null || chat.VideoChat.GroupCallId == 0)
             {
                 return;
             }
@@ -253,6 +231,11 @@ namespace Telegram.Services
 
         public async Task CreateAsync(long chatId)
         {
+            if (await MediaDeviceWatcher.CheckIfUnsupportedAsync())
+            {
+                return;
+            }
+
             var chat = ClientService.GetChat(chatId);
             if (chat == null || chat.VideoChat.GroupCallId != 0)
             {
@@ -342,6 +325,15 @@ namespace Telegram.Services
             var response = await ClientService.SendAsync(new GetGroupCall(groupCallId));
             if (response is GroupCall groupCall)
             {
+                if (!groupCall.IsRtmpStream)
+                {
+                    var permissions = await MediaDeviceWatcher.CheckAccessAsync(true, false);
+                    if (permissions == false)
+                    {
+                        return;
+                    }
+                }
+
                 var unix = await ClientService.SendAsync(new GetOption("unix_time")) as OptionValueInteger;
                 if (unix == null)
                 {
@@ -783,10 +775,10 @@ namespace Telegram.Services
 
         private readonly struct SpeakingParticipant
         {
-            public readonly int Timestamp;
+            public readonly ulong Timestamp;
             public readonly float Level;
 
-            public SpeakingParticipant(int timestamp, float level)
+            public SpeakingParticipant(ulong timestamp, float level)
             {
                 Timestamp = timestamp;
                 Level = level;
@@ -805,7 +797,7 @@ namespace Telegram.Services
             const int cutoffTimeout = 3000;
             const int silentTimeout = 2000;
 
-            var timestamp = Environment.TickCount;
+            var timestamp = Logger.TickCount;
 
             Dictionary<int, SpeakingParticipant> validSpeakers = null;
             HashSet<int> silentParticipants = new();
@@ -860,6 +852,8 @@ namespace Telegram.Services
             {
                 _speakingParticipants.Clear();
             }
+
+            AudioLevelsUpdated?.Invoke(this, levels);
         }
 
 #endif
@@ -989,6 +983,7 @@ namespace Telegram.Services
         }
 
         public event EventHandler MutedChanged;
+        public event EventHandler<IList<VoipGroupParticipant>> AudioLevelsUpdated;
 
         public bool IsNoiseSuppressionEnabled
         {
@@ -1176,13 +1171,24 @@ namespace Telegram.Services
                     };
 
                     _lifetime = await _viewService.OpenAsync(parameters);
-                    _lifetime.Released += ApplicationView_Released;
+
+                    if (_lifetime != null)
+                    {
+                        _lifetime.Released += ApplicationView_Released;
+                    }
 
                     //Aggregator.Publish(new UpdateCallDialog(call, true));
                 }
                 else
                 {
-                    await ApplicationViewSwitcher.SwitchAsync(_lifetime.Id);
+                    try
+                    {
+                        await ApplicationViewSwitcher.SwitchAsync(_lifetime.Id);
+                    }
+                    catch
+                    {
+                        // All the remote procedure calls must be wrapped in a try-catch block
+                    }
                 }
             }
 #endif
@@ -1198,7 +1204,7 @@ namespace Telegram.Services
                 if (lifetime != null)
                 {
                     _lifetime = null;
-                    await lifetime.Dispatcher.DispatchAsync(() => WindowContext.Current.ConsolidateAsync());
+                    await lifetime.ConsolidateAsync();
                 }
             }
         }

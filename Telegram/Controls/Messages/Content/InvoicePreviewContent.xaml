@@ -27,8 +27,6 @@
                 Value="Top" />
         <Setter Property="FontFamily"
                 Value="{StaticResource TelegramThemeFontFamily}" />
-        <Setter Property="Glyph"
-                Value="&#xE700;" />
         <Setter Property="Height"
                 Value="Auto" />
         <Setter Property="Width"

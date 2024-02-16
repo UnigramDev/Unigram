@@ -1,5 +1,5 @@
 //
-// Copyright Fela Ameghino 2015-2023
+// Copyright Fela Ameghino 2015-2024
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
@@ -8,7 +8,6 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Telegram.Collections;
 using Telegram.Common;
-using Telegram.Navigation;
 using Telegram.Navigation.Services;
 using Telegram.Services;
 using Telegram.Td.Api;
@@ -18,7 +17,7 @@ using Windows.UI.Xaml.Navigation;
 
 namespace Telegram.ViewModels.Supergroups
 {
-    public class SupergroupEditLinkedChatViewModel : ViewModelBase, IDelegable<ISupergroupDelegate>, IHandle
+    public class SupergroupEditLinkedChatViewModel : SupergroupViewModelBase, IDelegable<ISupergroupDelegate>, IHandle
     {
         public ISupergroupDelegate Delegate { get; set; }
 
@@ -26,8 +25,6 @@ namespace Telegram.ViewModels.Supergroups
             : base(clientService, settingsService, aggregator)
         {
             Items = new MvxObservableCollection<Chat>();
-
-            LinkCommand = new RelayCommand<Chat>(LinkExecute);
         }
 
         protected Chat _chat;
@@ -174,11 +171,10 @@ namespace Telegram.ViewModels.Supergroups
             }
         }
 
-        public RelayCommand<Chat> LinkCommand { get; }
-        private async void LinkExecute(Chat linkedChat)
+        public async void Link(Chat linkedChat)
         {
             var chat = _chat;
-            if (chat == null)
+            if (chat == null || linkedChat == null)
             {
                 return;
             }
@@ -208,7 +204,7 @@ namespace Telegram.ViewModels.Supergroups
                     var linkedFullInfo = ClientService.GetSupergroupFull(linkedChat);
                     linkedFullInfo ??= await ClientService.SendAsync(new GetSupergroupFullInfo(linkedSupergroup.Id)) as SupergroupFullInfo;
 
-                    if (linkedSupergroup == null)
+                    if (linkedSupergroup == null || linkedFullInfo == null)
                     {
                         return;
                     }
@@ -249,7 +245,7 @@ namespace Telegram.ViewModels.Supergroups
 
                 if (linkedChat.Type is ChatTypeBasicGroup)
                 {
-                    linkedChat = await ClientService.SendAsync(new UpgradeBasicGroupChatToSupergroupChat(linkedChat.Id)) as Chat;
+                    linkedChat = await UpgradeAsync(linkedChat);
                 }
 
                 if (linkedChat == null)

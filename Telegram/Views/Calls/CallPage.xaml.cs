@@ -1,5 +1,5 @@
 //
-// Copyright Fela Ameghino 2015-2023
+// Copyright Fela Ameghino 2015-2024
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
@@ -9,6 +9,7 @@ using System;
 using System.Numerics;
 using System.Threading.Tasks;
 using Telegram.Common;
+using Telegram.Composition;
 using Telegram.Controls;
 using Telegram.Controls.Media;
 using Telegram.Native.Calls;
@@ -38,6 +39,8 @@ namespace Telegram.Views.Calls
         private readonly SpriteVisual _blurVisual;
         private readonly CompositionEffectBrush _blurBrush;
         private readonly Compositor _compositor;
+
+        private readonly CompositionBlobVisual _visual;
 
         private bool _collapsed = true;
 
@@ -75,6 +78,15 @@ namespace Telegram.Views.Calls
 
             _service = voipService;
             _service.MutedChanged += OnMutedChanged;
+            _service.AudioLevelUpdated += OnAudioLevelUpdated;
+
+            _visual = new CompositionBlobVisual(Blob, 280, 280, 1.5f, ElementComposition.GetElementVisual(Image));
+            _visual.FillColor = Colors.White;
+
+            if (PowerSavingPolicy.AreMaterialsEnabled && ApiInfo.CanAnimatePaths)
+            {
+                _visual.StartAnimating();
+            }
 
             _dispatcherQueue = DispatcherQueue.GetForCurrentThread();
 
@@ -88,8 +100,8 @@ namespace Telegram.Views.Calls
 
             #region Composition
 
-            _descriptionVisual = ElementCompositionPreview.GetElementVisual(DescriptionLabel);
-            _largeVisual = ElementCompositionPreview.GetElementVisual(LargePanel);
+            _descriptionVisual = ElementComposition.GetElementVisual(DescriptionLabel);
+            _largeVisual = ElementComposition.GetElementVisual(LargePanel);
             _compositor = _largeVisual.Compositor;
 
             var graphicsEffect = new GaussianBlurEffect
@@ -124,7 +136,7 @@ namespace Telegram.Views.Calls
 
             //Window.Current.SetTitleBar(BlurPanel);
 
-            _viewfinder = ElementCompositionPreview.GetElementVisual(ViewfinderPanel);
+            _viewfinder = ElementComposition.GetElementVisual(ViewfinderPanel);
 
             ViewfinderPanel.PointerPressed += Viewfinder_PointerPressed;
             ViewfinderPanel.PointerMoved += Viewfinder_PointerMoved;
@@ -297,6 +309,7 @@ namespace Telegram.Views.Calls
             _durationTimer.Stop();
 
             _service.MutedChanged -= OnMutedChanged;
+            _service.AudioLevelUpdated -= OnAudioLevelUpdated;
 
             if (_manager != null)
             {
@@ -315,6 +328,14 @@ namespace Telegram.Views.Calls
         private void OnMutedChanged(object sender, EventArgs e)
         {
             _dispatcherQueue.TryEnqueue(() => Audio.IsChecked = !_service.IsMuted);
+        }
+
+        private void OnAudioLevelUpdated(object sender, float average)
+        {
+            if (PowerSavingPolicy.AreMaterialsEnabled && ApiInfo.CanAnimatePaths)
+            {
+                _visual.UpdateLevel(average);
+            }
         }
 
         public void Connect(VoipManager controller)
@@ -400,6 +421,23 @@ namespace Telegram.Views.Calls
                 BackgroundPanel.Visibility = args.Video == VoipVideoState.Inactive
                     ? Visibility.Collapsed
                     : Visibility.Visible;
+
+                if (args.Video == VoipVideoState.Inactive)
+                {
+                    if (PowerSavingPolicy.AreMaterialsEnabled && ApiInfo.CanAnimatePaths)
+                    {
+                        _visual.StartAnimating();
+                    }
+                    else
+                    {
+                        _visual.StopAnimating();
+                        _visual.Clear();
+                    }
+                }
+                else
+                {
+                    _visual.StopAnimating();
+                }
             });
         }
 
@@ -413,8 +451,6 @@ namespace Telegram.Views.Calls
 
         private void OnSizeChanged(object sender, SizeChangedEventArgs e)
         {
-            Logger.Debug();
-
             _blurVisual.Size = e.NewSize.ToVector2();
 
             if (_collapsed)
@@ -441,29 +477,7 @@ namespace Telegram.Views.Calls
             var user = _clientService.GetUser(call.UserId);
             if (user != null)
             {
-                Image.SetUser(_clientService, user, 140);
-
-                //if (user.ProfilePhoto != null)
-                //{
-                //    var file = user.ProfilePhoto.Big;
-                //    if (file.Local.IsDownloadingCompleted)
-                //    {
-                //        Image.Source = new BitmapImage(UriEx.GetLocal(file.Local.Path));
-                //        BackgroundPanel.Background = new SolidColorBrush(Colors.Transparent);
-                //    }
-                //    else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive)
-                //    {
-                //        Image.Source = null;
-                //        BackgroundPanel.Background = PlaceholderHelper.GetBrush(user.Id);
-
-                //        _clientService?.DownloadFile(file.Id, 1, 0);
-                //    }
-                //}
-                //else
-                //{
-                //    Image.Source = null;
-                //    BackgroundPanel.Background = PlaceholderHelper.GetBrush(user.Id);
-                //}
+                Image.SetUser(_clientService, user, 280);
 
                 FromLabel.Text = user.FullName();
                 DescriptionLabel.Text = string.Format(Strings.CallEmojiKeyTooltip, user.FirstName);
@@ -477,7 +491,7 @@ namespace Telegram.Views.Calls
                 for (int i = 0; i < ready.Emojis.Count; i++)
                 {
                     var textLarge = FindName($"LargeEmoji{i}") as TextBlock;
-                    textLarge.Text = ready.Emojis[i];
+                    textLarge.Text = ready.Emojis[i] + "\uFE0F";
                 }
             }
 
@@ -828,7 +842,7 @@ namespace Telegram.Views.Calls
             var outputId = _service.CurrentAudioOutput;
 
             var video = new MenuFlyoutSubItem();
-            video.Text = "Webcam";
+            video.Text = Strings.VoipDeviceCamera;
             video.Icon = MenuFlyoutHelper.CreateIcon(Icons.Camera);
 
             _dispatcherQueue.TryEnqueue(DispatcherQueuePriority.Normal, async () =>
@@ -857,7 +871,7 @@ namespace Telegram.Views.Calls
             };
 
             var input = new MenuFlyoutSubItem();
-            input.Text = "Microphone";
+            input.Text = Strings.VoipDeviceInput;
             input.Icon = MenuFlyoutHelper.CreateIcon(Icons.MicOn);
             input.Items.Add(defaultInput);
 
@@ -887,7 +901,7 @@ namespace Telegram.Views.Calls
             };
 
             var output = new MenuFlyoutSubItem();
-            output.Text = "Speaker";
+            output.Text = Strings.VoipDeviceOutput;
             output.Icon = MenuFlyoutHelper.CreateIcon(Icons.Speaker3);
             output.Items.Add(defaultOutput);
 

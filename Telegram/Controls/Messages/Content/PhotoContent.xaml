@@ -22,10 +22,13 @@
                 <ControlTemplate TargetType="local:PhotoContent">
                     <controls:AspectView x:Name="LayoutRoot"
                                          Background="Black">
-                        <Image x:Name="Texture"
-                               Stretch="Uniform"
-                               HorizontalAlignment="Stretch"
-                               VerticalAlignment="Stretch" />
+                        <Border>
+                            <Border.Background>
+                                <ImageBrush x:Name="Texture"
+                                            AlignmentX="Center"
+                                            AlignmentY="Center" />
+                            </Border.Background>
+                        </Border>
 
                         <Border x:Name="Overlay"
                                 Background="{ThemeResource MessageOverlayBackgroundBrush}"

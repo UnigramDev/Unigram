@@ -1,5 +1,5 @@
 //
-// Copyright Fela Ameghino 2015-2023
+// Copyright Fela Ameghino 2015-2024
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
@@ -247,26 +247,37 @@ namespace Telegram.Controls.Messages.Content
             }
 
             var formatted = ClientEx.ParseMarkdown(text);
-            Window.Current.ShowTeachingTip(this, formatted, _message.IsOutgoing && !_message.IsChannelPost ? TeachingTipPlacementMode.TopLeft : TeachingTipPlacementMode.TopRight);
+            ToastPopup.Show(this, formatted, _message.IsOutgoing && !_message.IsChannelPost ? TeachingTipPlacementMode.TopLeft : TeachingTipPlacementMode.TopRight);
         }
 
         #region IPlaybackView
 
         public int LoopCount => Player?.LoopCount ?? 1;
 
-        public bool Play()
+        private bool _withinViewport;
+
+        public void ViewportChanged(bool within)
         {
-            return Player?.Play() ?? false;
+            if (within && !_withinViewport)
+            {
+                _withinViewport = true;
+                Play();
+            }
+            else if (_withinViewport && !within)
+            {
+                _withinViewport = false;
+                Pause();
+            }
+        }
+
+        public void Play()
+        {
+            Player?.Play();
         }
 
         public void Pause()
         {
             Player?.Pause();
-        }
-
-        public void Unload()
-        {
-            Player?.Unload();
         }
 
         #endregion

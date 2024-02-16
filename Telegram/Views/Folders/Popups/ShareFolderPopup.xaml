@@ -9,9 +9,10 @@
                        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
                        mc:Ignorable="d"
                        PrimaryButtonClick="ContentDialog_PrimaryButtonClick"
-                       SecondaryButtonClick="ContentDialog_SecondaryButtonClick">
+                       SecondaryButtonClick="ContentDialog_SecondaryButtonClick"
+                       Padding="0,24,0,0">
 
-    <Grid Margin="-24,0,-24,-24">
+    <Grid>
         <ListView x:Name="ScrollingHost"
                   ItemsSource="{x:Bind ViewModel.Items}"
                   SelectionMode="Multiple"

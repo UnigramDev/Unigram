@@ -11,14 +11,15 @@
                        PrimaryButtonText="Button1"
                        SecondaryButtonText="Button2"
                        PrimaryButtonClick="ContentDialog_PrimaryButtonClick"
-                       SecondaryButtonClick="ContentDialog_SecondaryButtonClick">
+                       SecondaryButtonClick="ContentDialog_SecondaryButtonClick"
+                       Padding="0,24,0,0">
 
     <Grid>
         <ListView x:Name="ScrollingHost"
                   SelectionMode="Multiple"
                   ChoosingItemContainer="OnChoosingItemContainer"
-                  Margin="-24,0"
-                  Padding="12,0">
+                  ItemContainerStyle="{StaticResource DefaultListViewItemStyle}"
+                  Padding="12,0,12,24">
             <ListView.ItemTemplate>
                 <DataTemplate x:DataType="td:LanguagePackInfo">
                     <Grid Padding="12,6"
@@ -27,13 +28,13 @@
                             <RowDefinition Height="Auto" />
                             <RowDefinition Height="Auto" />
                         </Grid.RowDefinitions>
-                        <TextBlock Text="{x:Bind Name}"
+                        <TextBlock Text="{x:Bind NativeName}"
                                    VerticalAlignment="Bottom"
                                    Style="{StaticResource BaseTextBlockStyle}"
                                    TextWrapping="NoWrap"
                                    TextTrimming="CharacterEllipsis" />
-                        <TextBlock Text="{x:Bind NativeName}"
-                                   Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"
+                        <TextBlock Text="{x:Bind Name}"
+                                   Style="{StaticResource InfoBodyTextBlockStyle}"
                                    VerticalAlignment="Top"
                                    TextWrapping="NoWrap"
                                    TextTrimming="CharacterEllipsis"

@@ -1,4 +1,10 @@
-﻿using System;
+﻿//
+// Copyright Fela Ameghino 2015-2024
+//
+// Distributed under the GNU General Public License v3.0. (See accompanying
+// file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
+//
+using System;
 using System.Threading.Tasks;
 using Telegram.Common;
 using Telegram.Controls;
@@ -41,8 +47,8 @@ namespace Telegram.Views.Popups
             {
                 _timer.Stop();
 
-                var visual1 = ElementCompositionPreview.GetElementVisual(DonePanel);
-                var visual2 = ElementCompositionPreview.GetElementVisual(Cooldown);
+                var visual1 = ElementComposition.GetElementVisual(DonePanel);
+                var visual2 = ElementComposition.GetElementVisual(Cooldown);
 
                 var translation = visual1.Compositor.CreateScalarKeyFrameAnimation();
                 translation.InsertKeyFrame(0, 0);

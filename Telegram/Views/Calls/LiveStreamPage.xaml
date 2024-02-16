@@ -47,8 +47,6 @@
                     Value="{StaticResource GlyphLargeFontSize}" />
             <Setter Property="FontWeight"
                     Value="Normal" />
-            <Setter Property="Glyph"
-                    Value="&#xE700;" />
             <Setter Property="Height"
                     Value="48" />
             <Setter Property="Width"
@@ -183,6 +181,8 @@
                 Background="Transparent" />
 
         <StackPanel x:Name="TopButtons"
+                    GotFocus="Transport_GotFocus"
+                    LostFocus="Transport_LostFocus"
                     VerticalAlignment="Top"
                     Orientation="Horizontal"
                     Margin="0,0,0,-8"
@@ -265,6 +265,8 @@
         </StackPanel>
 
         <StackPanel x:Name="BottomPanel"
+                    GotFocus="Transport_GotFocus"
+                    LostFocus="Transport_LostFocus"
                     Grid.Row="3">
             <Grid x:Name="BottomRoot"
                   HorizontalAlignment="Center">

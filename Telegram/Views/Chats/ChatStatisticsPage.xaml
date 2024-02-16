@@ -113,6 +113,7 @@
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
                 </Grid.RowDefinitions>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition />
@@ -126,13 +127,17 @@
                                                  Grid.Column="1" />
 
                 <controls:ChatStatisticsOverview Title="{CustomResource ViewsPerPost}"
-                                                 Value="{x:Bind MeanViewCount}"
+                                                 Value="{x:Bind MeanMessageViewCount}"
                                                  Grid.Row="1" />
 
                 <controls:ChatStatisticsOverview Title="{CustomResource SharesPerPost}"
-                                                 Value="{x:Bind MeanShareCount}"
+                                                 Value="{x:Bind MeanMessageShareCount}"
                                                  Grid.Column="1"
                                                  Grid.Row="1" />
+
+                <controls:ChatStatisticsOverview Title="{CustomResource ReactionsPerPost}"
+                                                 Value="{x:Bind MeanMessageReactionCount}"
+                                                 Grid.Row="2" />
             </Grid>
         </DataTemplate>
 

@@ -1,11 +1,10 @@
 //
-// Copyright Fela Ameghino 2015-2023
+// Copyright Fela Ameghino 2015-2024
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
 using System;
-using System.Linq;
 using Telegram.Common;
 using Telegram.Controls;
 using Telegram.Controls.Media;
@@ -13,9 +12,7 @@ using Telegram.Td.Api;
 using Telegram.ViewModels.Settings;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Controls.Primitives;
 using Windows.UI.Xaml.Input;
-using Windows.UI.Xaml.Media;
 
 namespace Telegram.Views.Settings
 {
@@ -38,19 +35,15 @@ namespace Telegram.Views.Settings
 
         private void Language_ContextRequested(UIElement sender, ContextRequestedEventArgs args)
         {
-            var flyout = new MenuFlyout();
-
-            var element = sender as FrameworkElement;
-            var info = ScrollingHost.ItemFromContainer(element) as LanguagePackInfo;
-
-            if (!info.IsInstalled)
+            var info = ScrollingHost.ItemFromContainer(sender) as LanguagePackInfo;
+            if (info.IsInstalled is false)
             {
                 return;
             }
 
+            var flyout = new MenuFlyout();
             flyout.CreateFlyoutItem(ViewModel.Delete, info, Strings.Delete, Icons.Delete, destructive: true);
-
-            args.ShowAt(flyout, element);
+            flyout.ShowAt(sender, args);
         }
 
         #endregion
@@ -77,28 +70,7 @@ namespace Telegram.Views.Settings
                 return;
             }
 
-            // Table layout
-            var first = false;
-            var last = false;
-
-            if (args.Item is LanguagePackInfo info)
-            {
-                var list = info.IsInstalled ? ViewModel.Items.FirstOrDefault() : ViewModel.Items.LastOrDefault();
-                if (list == null)
-                {
-                    return;
-                }
-
-                var index = list.IndexOf(info);
-                first = index == 0;
-                last = index == list.Count - 1;
-            }
-
-            var presenter = VisualTreeHelper.GetChild(args.ItemContainer, 0) as ListViewItemPresenter;
-            if (presenter != null)
-            {
-                presenter.CornerRadius = new CornerRadius(first ? 8 : 0, first ? 8 : 0, last ? 8 : 0, last ? 8 : 0);
-            }
+            // TODO: no x:Bind
         }
 
         #endregion
@@ -108,6 +80,13 @@ namespace Telegram.Views.Settings
         private string ConvertTranslateInfo(bool enabled)
         {
             return enabled ? Strings.TranslateMessagesInfo1 : Strings.TranslateMessagesInfo1 + Environment.NewLine + Environment.NewLine + Strings.TranslateMessagesInfo2;
+        }
+
+        private Visibility ConvertDoNotTranslate(bool messages, bool chats)
+        {
+            return messages || chats
+                ? Visibility.Visible
+                : Visibility.Collapsed;
         }
 
         #endregion

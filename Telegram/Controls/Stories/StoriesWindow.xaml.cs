@@ -1,13 +1,12 @@
-﻿using LinqToVisualTree;
-using Microsoft.UI.Xaml.Controls;
+﻿using Microsoft.UI.Xaml.Controls;
 using System;
-using System.Linq;
 using System.Numerics;
 using System.Threading.Tasks;
 using Telegram.Common;
 using Telegram.Controls.Media;
 using Telegram.Controls.Messages;
 using Telegram.Navigation;
+using Telegram.Services;
 using Telegram.Services.Keyboard;
 using Telegram.Streams;
 using Telegram.Td.Api;
@@ -25,7 +24,7 @@ using VirtualKey = Windows.System.VirtualKey;
 
 namespace Telegram.Controls.Stories
 {
-    public enum StoryOrigin
+    public enum StoryOpenOrigin
     {
         ProfilePhoto,
         Mention,
@@ -40,9 +39,6 @@ namespace Telegram.Controls.Stories
         public StoriesWindow()
         {
             InitializeComponent();
-
-            Loaded += StoriesWindow_Loaded;
-
             InitializeStickers();
 
             _stealthTimer = new DispatcherTimer();
@@ -81,6 +77,8 @@ namespace Telegram.Controls.Stories
 
         protected override void OnPointerWheelChanged(PointerRoutedEventArgs e)
         {
+            // TODO: optimize for touch screen, change direction and decrease speed.
+
             var point = e.GetCurrentPoint(this);
             var direction = point.Properties.MouseWheelDelta > 0
                 ? Direction.Backward
@@ -94,10 +92,10 @@ namespace Telegram.Controls.Stories
 
         private void StoriesWindow_Loaded(object sender, RoutedEventArgs e)
         {
-            var layer = ElementCompositionPreview.GetElementVisual(Layer);
-            var backButton = ElementCompositionPreview.GetElementVisual(BackButton);
-            var viewport = ElementCompositionPreview.GetElementVisual(Viewport);
-            var composer = ElementCompositionPreview.GetElementVisual(Composer);
+            var layer = ElementComposition.GetElementVisual(Layer);
+            var backButton = ElementComposition.GetElementVisual(BackButton);
+            var viewport = ElementComposition.GetElementVisual(Viewport);
+            var composer = ElementComposition.GetElementVisual(Composer);
             ElementCompositionPreview.SetIsTranslationEnabled(Composer, true);
 
             var opacity = composer.Compositor.CreateScalarKeyFrameAnimation();
@@ -117,7 +115,7 @@ namespace Telegram.Controls.Stories
                 }
                 else
                 {
-                    var visual = ElementCompositionPreview.GetElementVisual(child);
+                    var visual = ElementComposition.GetElementVisual(child);
                     visual.StartAnimation("Opacity", opacity);
                 }
             }
@@ -146,12 +144,13 @@ namespace Telegram.Controls.Stories
             _done = true;
             e.Handled = true;
 
+            IsHitTestVisible = false;
             ActiveCard?.Suspend(StoryPauseSource.Window);
 
-            var layer = ElementCompositionPreview.GetElementVisual(Layer);
-            var backButton = ElementCompositionPreview.GetElementVisual(BackButton);
-            var viewport = ElementCompositionPreview.GetElementVisual(Viewport);
-            var composer = ElementCompositionPreview.GetElementVisual(Composer);
+            var layer = ElementComposition.GetElementVisual(Layer);
+            var backButton = ElementComposition.GetElementVisual(BackButton);
+            var viewport = ElementComposition.GetElementVisual(Viewport);
+            var composer = ElementComposition.GetElementVisual(Composer);
             ElementCompositionPreview.SetIsTranslationEnabled(Composer, true);
 
             var batch = layer.Compositor.CreateScopedBatch(Windows.UI.Composition.CompositionBatchTypes.Animation);
@@ -178,7 +177,7 @@ namespace Telegram.Controls.Stories
                     var origin = _closing(viewModel);
                     if (origin.IsEmpty)
                     {
-                        var visual = ElementCompositionPreview.GetElementVisual(child);
+                        var visual = ElementComposition.GetElementVisual(child);
                         visual.StartAnimation("Opacity", opacity);
                     }
                     else
@@ -188,7 +187,7 @@ namespace Telegram.Controls.Stories
                 }
                 else
                 {
-                    var visual = ElementCompositionPreview.GetElementVisual(child);
+                    var visual = ElementComposition.GetElementVisual(child);
                     visual.StartAnimation("Opacity", opacity);
                 }
             }
@@ -277,10 +276,10 @@ namespace Telegram.Controls.Stories
         public StoryListViewModel ViewModel => _viewModel ??= DataContext as StoryListViewModel;
 
         private Windows.Foundation.Rect _origin;
-        private StoryOrigin _ciccio;
+        private StoryOpenOrigin _ciccio;
         private Func<ActiveStoriesViewModel, Rect> _closing;
 
-        public void Update(StoryListViewModel viewModel, ActiveStoriesViewModel activeStories, StoryOrigin origin, Rect point, Func<ActiveStoriesViewModel, Rect> closing)
+        public void Update(StoryListViewModel viewModel, ActiveStoriesViewModel activeStories, StoryOpenOrigin origin, Rect point, Func<ActiveStoriesViewModel, Rect> closing)
         {
             _ciccio = origin;
             _origin = point;
@@ -308,6 +307,8 @@ namespace Telegram.Controls.Stories
 
         private void Update(StoryListViewModel viewModel, ActiveStoriesViewModel activeStories)
         {
+            Logger.Info();
+
             if (_viewModel != viewModel)
             {
                 _viewModel = viewModel;
@@ -419,7 +420,7 @@ namespace Telegram.Controls.Stories
                 var index = _indexes[i];
                 var real = _index + index - 3;
 
-                var visual = ElementCompositionPreview.GetElementVisual(LayoutRoot.Children[i]);
+                var visual = ElementComposition.GetElementVisual(LayoutRoot.Children[i]);
                 visual.CenterPoint = new Vector3(x / 2, y / 2, 0);
                 visual.Scale = new Vector3(index == 3 ? 1 : 0.4f);
 
@@ -494,6 +495,8 @@ namespace Telegram.Controls.Stories
 
         private bool Move(Direction direction, int increment = 1, bool force = false)
         {
+            Logger.Info();
+
             if (!force)
             {
                 var user = _viewModel.Items[_index];
@@ -568,7 +571,7 @@ namespace Telegram.Controls.Stories
 
                 ElementCompositionPreview.SetIsTranslationEnabled(LayoutRoot.Children[i], true);
 
-                var visual = ElementCompositionPreview.GetElementVisual(LayoutRoot.Children[i]);
+                var visual = ElementComposition.GetElementVisual(LayoutRoot.Children[i]);
 
                 //var from = ItemOffset(previous);
                 //var to = ItemOffset(index);
@@ -708,31 +711,40 @@ namespace Telegram.Controls.Stories
         private void Interactions_DeleteClick(object sender, RoutedEventArgs e)
         {
             var user = ViewModel.Items[_index];
-            var story = user.SelectedItem;
 
-            DeleteStory(story);
+            var story = user.SelectedItem;
+            if (story != null)
+            {
+                DeleteStory(story);
+            }
         }
 
         private async void Interactions_ViewersClick(object sender, RoutedEventArgs e)
         {
             var user = ViewModel.Items[_index];
+
             var story = user.SelectedItem;
-
-            ActiveCard.Suspend(StoryPauseSource.Popup);
-
-            var confirm = await ViewModel.ShowPopupAsync(typeof(StoryInteractionsPopup), story, requestedTheme: ElementTheme.Dark);
-            if (await ContinuePopupAsync(confirm == ContentDialogResult.Primary, new PremiumStoryFeaturePermanentViewsHistory()))
+            if (story != null)
             {
-                ActiveCard.Resume(StoryPauseSource.Popup);
+                ActiveCard.Suspend(StoryPauseSource.Popup);
+
+                var confirm = await ViewModel.ShowPopupAsync(typeof(StoryInteractionsPopup), story, requestedTheme: ElementTheme.Dark);
+                if (await ContinuePopupAsync(confirm == ContentDialogResult.Primary, new PremiumStoryFeaturePermanentViewsHistory()))
+                {
+                    ActiveCard.Resume(StoryPauseSource.Popup);
+                }
             }
         }
 
         private void Interactions_ShareClick(object sender, RoutedEventArgs e)
         {
             var user = ViewModel.Items[_index];
-            var story = user.SelectedItem;
 
-            ShareStory(story);
+            var story = user.SelectedItem;
+            if (story != null)
+            {
+                ShareStory(story);
+            }
         }
 
         private async Task<bool> ContinuePopupAsync(bool shouldPurchase, PremiumStoryFeature feature)
@@ -756,7 +768,7 @@ namespace Telegram.Controls.Stories
         {
             if (sender is UIElement element)
             {
-                sender = element.Ancestors<StoryContent>().FirstOrDefault();
+                sender = element.GetParent<StoryContent>();
             }
 
             if (sender is StoryContent story)
@@ -774,6 +786,8 @@ namespace Telegram.Controls.Stories
         {
             WindowContext.Current.Activated += OnActivated;
             WindowContext.Current.InputListener.KeyDown += OnAcceleratorKeyActivated;
+
+            StoriesWindow_Loaded(sender, e);
         }
 
         private void OnUnloaded(object sender, RoutedEventArgs e)
@@ -857,7 +871,7 @@ namespace Telegram.Controls.Stories
 
             PopulateMenuFlyout(flyout, activeStories);
 
-            if (args.ShowAt(flyout, sender as FrameworkElement))
+            if (flyout.ShowAt(sender as FrameworkElement, args))
             {
                 ActiveCard.Suspend(StoryPauseSource.Flyout);
             }
@@ -913,7 +927,7 @@ namespace Telegram.Controls.Stories
 
                 if (story.Chat.Type is ChatTypePrivate && (story.ClientService.IsPremium || story.ClientService.IsPremiumAvailable))
                 {
-                    flyout.CreateFlyoutItem(StealthStory, story, Strings.StealthMode, story.ClientService.IsPremium ? Icons.Stealth : Icons.StealthLocked);
+                    flyout.CreateFlyoutItem(StealthStory, story, Strings.StealthModeButton, story.ClientService.IsPremium ? Icons.Stealth : Icons.StealthLocked);
                 }
 
                 return;
@@ -934,14 +948,19 @@ namespace Telegram.Controls.Stories
 
             flyout.CreateFlyoutItem(ViewModel.ShowProfile, activeStories, archived ? Strings.UnarchiveStories : Strings.ArchivePeerStories, archived ? Icons.Unarchive : Icons.Archive);
 
-            if (story.CanBeForwarded && story.Content is StoryContentPhoto or StoryContentVideo && (story.ClientService.IsPremium || story.ClientService.IsPremiumAvailable))
+            //if (activeStories.IsMyStory || story.ClientService.IsPremium || story.ClientService.IsPremiumAvailable)
+            //{
+            //    flyout.CreateFlyoutItem(QualityStory, story, "Quality thing");
+            //}
+
+            if (story.CanBeForwarded && story.Content is StoryContentPhoto or StoryContentVideo && (activeStories.IsMyStory || story.ClientService.IsPremium || story.ClientService.IsPremiumAvailable))
             {
-                flyout.CreateFlyoutItem(SaveStory, story, story.Content is StoryContentPhoto ? Strings.SavePhoto : Strings.SaveVideo, story.ClientService.IsPremium ? Icons.SaveAs : Icons.SaveAsLocked);
+                flyout.CreateFlyoutItem(SaveStory, story, story.Content is StoryContentPhoto ? Strings.SavePhoto : Strings.SaveVideo, activeStories.IsMyStory || story.ClientService.IsPremium ? Icons.SaveAs : Icons.SaveAsLocked);
             }
 
-            if (story.Chat.Type is ChatTypePrivate && (story.ClientService.IsPremium || story.ClientService.IsPremiumAvailable))
+            if (story.Chat.Type is ChatTypePrivate && !activeStories.IsMyStory && (story.ClientService.IsPremium || story.ClientService.IsPremiumAvailable))
             {
-                flyout.CreateFlyoutItem(StealthStory, story, Strings.StealthMode, story.ClientService.IsPremium ? Icons.Stealth : Icons.StealthLocked);
+                flyout.CreateFlyoutItem(StealthStory, story, Strings.StealthModeButton, story.ClientService.IsPremium ? Icons.Stealth : Icons.StealthLocked);
             }
 
             if (story.ClientService.TryGetUser(story.Chat, out User user) && user.HasActiveUsername(out _))
@@ -954,7 +973,7 @@ namespace Telegram.Controls.Stories
                 flyout.CreateFlyoutItem(ShareStory, story, Strings.StickersShare, Icons.Share);
             }
 
-            if (ViewModel.TranslateService.CanTranslate(story.Caption))
+            if (ViewModel.TranslateService.CanTranslateText(story.Caption))
             {
                 flyout.CreateFlyoutItem(TranslateStory, story, Strings.TranslateMessage, Icons.Translate);
             }
@@ -1015,7 +1034,7 @@ namespace Telegram.Controls.Stories
                 var text = Strings.StealthModeOn + Environment.NewLine + Strings.StealthModeOnHint;
                 var entity = new TextEntity(0, Strings.StealthModeOn.Length, new TextEntityTypeBold());
 
-                Window.Current.ShowTeachingTip(new FormattedText(text, new[] { entity }));
+                ToastPopup.Show(new FormattedText(text, new[] { entity }));
             }
             else if (story.ClientService.IsPremium)
             {
@@ -1035,6 +1054,12 @@ namespace Telegram.Controls.Stories
                     ActiveCard.Resume(StoryPauseSource.Popup);
                 }
             }
+        }
+
+        private void QualityStory(StoryViewModel story)
+        {
+            SettingsService.Current.Playback.HighQuality = !SettingsService.Current.Playback.HighQuality;
+            ActiveCard.UpdateQuality();
         }
 
         private async void SaveStory(StoryViewModel story)
@@ -1060,16 +1085,17 @@ namespace Telegram.Controls.Stories
             ActiveCard.Resume(StoryPauseSource.Flyout);
         }
 
-        public void ShowTeachingTip(FrameworkElement target, string text, TeachingTipPlacementMode placement = TeachingTipPlacementMode.TopRight)
+        public TeachingTip ShowTeachingTip(FrameworkElement target, string text, TeachingTipPlacementMode placement = TeachingTipPlacementMode.TopRight)
         {
-            ShowTeachingTip(target, text, null, placement);
+            return ShowTeachingTip(target, text, null, placement);
         }
 
-        public void ShowTeachingTip(FrameworkElement target, string text, AnimatedImageSource icon, TeachingTipPlacementMode placement = TeachingTipPlacementMode.TopRight)
+        public TeachingTip ShowTeachingTip(FrameworkElement target, string text, AnimatedImageSource icon, TeachingTipPlacementMode placement = TeachingTipPlacementMode.TopRight)
         {
-            var tip = Window.Current.ShowTeachingTip(target, text, icon, placement, ElementTheme.Dark);
+            var tip = ToastPopup.Show(target, text, icon, placement, ElementTheme.Dark);
             tip.Closing += TeachingTip_Closing;
             ActiveCard.Suspend(StoryPauseSource.TeachingTip);
+            return tip;
         }
 
         private void TeachingTip_Closing(TeachingTip sender, TeachingTipClosingEventArgs args)

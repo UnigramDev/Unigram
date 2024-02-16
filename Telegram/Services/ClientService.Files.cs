@@ -1,5 +1,5 @@
 //
-// Copyright Fela Ameghino 2015-2023
+// Copyright Fela Ameghino 2015-2024
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
@@ -110,7 +110,7 @@ namespace Telegram.Services
             {
                 return null;
             }
-            else if (ApiInfo.HasCacheOnly)
+            else if (ApiInfo.HasCacheOnly || !SettingsService.Current.IsDownloadFolderEnabled)
             {
                 return await GetFileAsync(file, true);
             }
@@ -162,7 +162,7 @@ namespace Telegram.Services
         {
             Send(new AddFileToDownloads(file.Id, chatId, messageId, priority));
 
-            if (ApiInfo.HasCacheOnly || Future.Contains(file.Remote.UniqueId, true) || await Future.ContainsAsync(file.Remote.UniqueId))
+            if (ApiInfo.HasCacheOnly || !SettingsService.Current.IsDownloadFolderEnabled || Future.Contains(file.Remote.UniqueId, true) || await Future.ContainsAsync(file.Remote.UniqueId))
             {
                 return;
             }
@@ -181,6 +181,7 @@ namespace Telegram.Services
         private async void TrackDownloadedFile(File file)
         {
             if (ApiInfo.HasDownloadFolder
+                && SettingsService.Current.IsDownloadFolderEnabled
                 && file.Local.IsDownloadingCompleted
                 && file.Remote.IsUploadingCompleted
                 && Future.Contains(file.Remote.UniqueId, true))
@@ -389,6 +390,13 @@ namespace Telegram.Services
                     ProcessFiles(botInfo.Photo);
                 }
             }
+            else if (target is BotWriteAccessAllowReasonLaunchedWebApp botWriteAccessAllowReasonLaunchedWebApp)
+            {
+                if (botWriteAccessAllowReasonLaunchedWebApp.WebApp != null)
+                {
+                    ProcessFiles(botWriteAccessAllowReasonLaunchedWebApp.WebApp);
+                }
+            }
             else if (target is Chat chat)
             {
                 if (chat.Background != null)
@@ -416,6 +424,17 @@ namespace Telegram.Services
                 if (chatEvent.Action != null)
                 {
                     ProcessFiles(chatEvent.Action);
+                }
+            }
+            else if (target is ChatEventBackgroundChanged chatEventBackgroundChanged)
+            {
+                if (chatEventBackgroundChanged.NewBackground != null)
+                {
+                    ProcessFiles(chatEventBackgroundChanged.NewBackground);
+                }
+                if (chatEventBackgroundChanged.OldBackground != null)
+                {
+                    ProcessFiles(chatEventBackgroundChanged.OldBackground);
                 }
             }
             else if (target is ChatEventMessageDeleted chatEventMessageDeleted)
@@ -818,6 +837,10 @@ namespace Telegram.Services
                 {
                     ProcessFiles(message.Content);
                 }
+                if (message.ReplyTo != null)
+                {
+                    ProcessFiles(message.ReplyTo);
+                }
             }
             else if (target is MessageAnimatedEmoji messageAnimatedEmoji)
             {
@@ -842,9 +865,9 @@ namespace Telegram.Services
             }
             else if (target is MessageBotWriteAccessAllowed messageBotWriteAccessAllowed)
             {
-                if (messageBotWriteAccessAllowed.WebApp != null)
+                if (messageBotWriteAccessAllowed.Reason != null)
                 {
-                    ProcessFiles(messageBotWriteAccessAllowed.WebApp);
+                    ProcessFiles(messageBotWriteAccessAllowed.Reason);
                 }
             }
             else if (target is MessageCalendar messageCalendar)
@@ -951,6 +974,27 @@ namespace Telegram.Services
                 if (messagePhoto.Photo != null)
                 {
                     ProcessFiles(messagePhoto.Photo);
+                }
+            }
+            else if (target is MessagePremiumGiftCode messagePremiumGiftCode)
+            {
+                if (messagePremiumGiftCode.Sticker != null)
+                {
+                    ProcessFiles(messagePremiumGiftCode.Sticker);
+                }
+            }
+            else if (target is MessagePremiumGiveaway messagePremiumGiveaway)
+            {
+                if (messagePremiumGiveaway.Sticker != null)
+                {
+                    ProcessFiles(messagePremiumGiveaway.Sticker);
+                }
+            }
+            else if (target is MessageReplyToMessage messageReplyToMessage)
+            {
+                if (messageReplyToMessage.Content != null)
+                {
+                    ProcessFiles(messageReplyToMessage.Content);
                 }
             }
             else if (target is Messages messages)
@@ -1476,6 +1520,27 @@ namespace Telegram.Services
                     profilePhoto.Small = ProcessFile(profilePhoto.Small);
                 }
             }
+            else if (target is PublicForwardMessage publicForwardMessage)
+            {
+                if (publicForwardMessage.Message != null)
+                {
+                    ProcessFiles(publicForwardMessage.Message);
+                }
+            }
+            else if (target is PublicForwards publicForwards)
+            {
+                foreach (var item in publicForwards.Forwards)
+                {
+                    ProcessFiles(item);
+                }
+            }
+            else if (target is PublicForwardStory publicForwardStory)
+            {
+                if (publicForwardStory.Story != null)
+                {
+                    ProcessFiles(publicForwardStory.Story);
+                }
+            }
             else if (target is PushMessageContentAnimation pushMessageContentAnimation)
             {
                 if (pushMessageContentAnimation.Animation != null)
@@ -1637,6 +1702,13 @@ namespace Telegram.Services
                     ProcessFiles(richTextUrl.Text);
                 }
             }
+            else if (target is SavedMessagesTopic savedMessagesTopic)
+            {
+                if (savedMessagesTopic.LastMessage != null)
+                {
+                    ProcessFiles(savedMessagesTopic.LastMessage);
+                }
+            }
             else if (target is SponsoredMessage sponsoredMessage)
             {
                 if (sponsoredMessage.Content != null)
@@ -1743,6 +1815,34 @@ namespace Telegram.Services
                 if (storyContentVideo.Video != null)
                 {
                     ProcessFiles(storyContentVideo.Video);
+                }
+            }
+            else if (target is StoryInteraction storyInteraction)
+            {
+                if (storyInteraction.Type != null)
+                {
+                    ProcessFiles(storyInteraction.Type);
+                }
+            }
+            else if (target is StoryInteractions storyInteractions)
+            {
+                foreach (var item in storyInteractions.Interactions)
+                {
+                    ProcessFiles(item);
+                }
+            }
+            else if (target is StoryInteractionTypeForward storyInteractionTypeForward)
+            {
+                if (storyInteractionTypeForward.Message != null)
+                {
+                    ProcessFiles(storyInteractionTypeForward.Message);
+                }
+            }
+            else if (target is StoryInteractionTypeRepost storyInteractionTypeRepost)
+            {
+                if (storyInteractionTypeRepost.Story != null)
+                {
+                    ProcessFiles(storyInteractionTypeRepost.Story);
                 }
             }
             else if (target is StoryVideo storyVideo)
@@ -1861,6 +1961,13 @@ namespace Telegram.Services
                     ProcessFiles(item);
                 }
             }
+            else if (target is UpdateDefaultBackground updateDefaultBackground)
+            {
+                if (updateDefaultBackground.Background != null)
+                {
+                    ProcessFiles(updateDefaultBackground.Background);
+                }
+            }
             else if (target is UpdateFile updateFile)
             {
                 if (updateFile.File != null)
@@ -1924,11 +2031,11 @@ namespace Telegram.Services
                     ProcessFiles(item);
                 }
             }
-            else if (target is UpdateSelectedBackground updateSelectedBackground)
+            else if (target is UpdateSavedMessagesTopic updateSavedMessagesTopic)
             {
-                if (updateSelectedBackground.Background != null)
+                if (updateSavedMessagesTopic.Topic != null)
                 {
-                    ProcessFiles(updateSelectedBackground.Background);
+                    ProcessFiles(updateSavedMessagesTopic.Topic);
                 }
             }
             else if (target is UpdateServiceNotification updateServiceNotification)

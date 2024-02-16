@@ -1,5 +1,5 @@
 //
-// Copyright Fela Ameghino 2015-2023
+// Copyright Fela Ameghino 2015-2024
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
@@ -7,10 +7,10 @@
 using System.Linq;
 using Telegram.Collections;
 using Telegram.Common;
+using Telegram.Controls;
 using Telegram.Services;
 using Telegram.Td.Api;
 using Telegram.ViewModels.Gallery;
-using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 
 namespace Telegram.ViewModels.Chats
@@ -38,7 +38,7 @@ namespace Telegram.ViewModels.Chats
                 var limit = 20;
                 var offset = -limit / 2;
 
-                var response = await ClientService.SendAsync(new SearchChatMessages(_chat.Id, string.Empty, null, 0, offset, limit, new SearchMessagesFilterChatPhoto(), 0));
+                var response = await ClientService.SendAsync(new SearchChatMessages(_chat.Id, string.Empty, null, 0, offset, limit, new SearchMessagesFilterChatPhoto(), 0, 0));
                 if (response is FoundChatMessages messages)
                 {
                     TotalItems = messages.TotalCount;
@@ -221,7 +221,7 @@ namespace Telegram.ViewModels.Chats
             }
 
             ClientService.Send(new SetChatPhoto(_chat.Id, new InputChatPhotoPrevious(item.Id)));
-            Window.Current.ShowTeachingTip(_chat.Type is ChatTypeSupergroup supergroup && supergroup.IsChannel
+            ToastPopup.Show(_chat.Type is ChatTypeSupergroup supergroup && supergroup.IsChannel
                 ? item.IsVideo ? Strings.MainChannelProfileVideoSetHint : Strings.MainChannelProfilePhotoSetHint
                 : item.IsVideo ? Strings.MainGroupProfileVideoSetHint : Strings.MainGroupProfilePhotoSetHint);
         }

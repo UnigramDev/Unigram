@@ -5,6 +5,7 @@
              xmlns:controls="using:Telegram.Controls"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:messages="using:Telegram.Controls.Messages"
              mc:Ignorable="d"
              d:DesignHeight="100"
              d:DesignWidth="400">
@@ -245,7 +246,7 @@
                                        Grid.Row="1"
                                        Grid.Column="3"
                                        Grid.ColumnSpan="2"
-                                       Foreground="{TemplateBinding PlaceholderForeground}"
+                                       Foreground="{Binding PlaceholderForeground, RelativeSource={RelativeSource TemplatedParent}, TargetNullValue={ThemeResource TextControlPlaceholderForeground}}"
                                        Margin="{TemplateBinding BorderThickness}"
                                        Padding="{TemplateBinding Padding}"
                                        Text="{TemplateBinding PlaceholderText}"
@@ -263,13 +264,15 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
             <RowDefinition />
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
-        <Border Grid.Row="1">
+        <Border Canvas.ZIndex="1"
+                Grid.Row="1">
             <Grid x:Name="TopPanel"
                   Height="{StaticResource TelegramToolBarHeight}"
-                  Background="{ThemeResource PageSubHeaderBackgroundBrush}">
+                  Background="Transparent">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto"
                                       MinWidth="12" />
@@ -279,7 +282,6 @@
                     <ColumnDefinition Width="Auto" />
                 </Grid.ColumnDefinitions>
                 <Grid x:Name="SearchPanel"
-                      Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
                       Margin="0,0,0,8"
                       VerticalAlignment="Bottom"
                       Grid.Column="2">
@@ -345,7 +347,7 @@
                         CornerRadius="4,0,0,4"
                         Padding="4"
                         Height="32"
-                        Margin="8,0,0,0"/>
+                        Margin="8,0,0,0" />
                 <Button x:Name="SearchNext"
                         Command="{x:Bind ViewModel.NextCommand}"
                         AllowFocusOnInteraction="False"
@@ -400,6 +402,27 @@
             </Grid>
         </Border>
 
+        <Grid x:Name="SecondaryRoot"
+              Grid.Row="2">
+            <Border x:Name="ClipperBackground"
+                    Background="{ThemeResource PageSubHeaderBackgroundBrush2}"
+                    Margin="0,-48,0,0" />
+
+            <Grid x:Name="TagsRoot">
+                <Border BorderBrush="{ThemeResource NavigationViewContentGridBorderBrush}"
+                        BorderThickness="0,0,0,1" />
+
+                <ScrollViewer HorizontalScrollMode="Auto"
+                              HorizontalScrollBarVisibility="Auto"
+                              VerticalScrollMode="Disabled"
+                              VerticalScrollBarVisibility="Disabled">
+                    <messages:SavedMessagesTagsPanel x:Name="Tags"
+                                                     Tag="{x:Bind ConvertTag(ViewModel.Dialog.SavedMessagesTags), Mode=OneWay}"
+                                                     Margin="12" />
+                </ScrollViewer>
+            </Grid>
+        </Grid>
+
         <controls:TextListView x:Name="ListAutocomplete"
                                ItemsSource="{x:Bind ViewModel.Autocomplete, Mode=OneWay}"
                                Visibility="{x:Bind ViewModel.Autocomplete, Mode=OneWay, Converter={StaticResource NullToVisibilityConverter}}"
@@ -412,7 +435,7 @@
                                ContainerContentChanging="OnContainerContentChanging"
                                VerticalAlignment="Top"
                                MaxHeight="320"
-                               Grid.Row="2">
+                               Grid.Row="3">
             <ListView.ItemContainerTransitions>
                 <TransitionCollection />
             </ListView.ItemContainerTransitions>

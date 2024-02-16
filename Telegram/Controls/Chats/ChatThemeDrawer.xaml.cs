@@ -1,5 +1,5 @@
 //
-// Copyright Fela Ameghino 2015-2023
+// Copyright Fela Ameghino 2015-2024
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
@@ -55,8 +55,8 @@ namespace Telegram.Controls.Chats
             _viewModel = viewModel;
 
             var chat = _viewModel.Chat;
-            var defaultTheme = new ChatThemeViewModel(viewModel.ClientService, "\U0001F3E0", null, null);
-            var themes = viewModel.ClientService.GetChatThemes().Select(x => new ChatThemeViewModel(viewModel.ClientService, x));
+            var defaultTheme = new ChatThemeViewModel(viewModel.ClientService, "\u274C", null, null, false);
+            var themes = viewModel.ClientService.GetChatThemes().Select(x => new ChatThemeViewModel(viewModel.ClientService, x, false));
 
             var items = new[] { defaultTheme }.Union(themes).ToList();
 
@@ -94,6 +94,7 @@ namespace Telegram.Controls.Chats
             else if (args.ItemContainer.ContentTemplateRoot is ChatThemeCell content && args.Item is ChatThemeViewModel theme)
             {
                 content.Update(theme);
+                args.Handled = true;
             }
         }
 
@@ -170,7 +171,7 @@ namespace Telegram.Controls.Chats
 
         private void Remove_Click(object sender, RoutedEventArgs e)
         {
-            _viewModel.ClientService.Send(new SetChatBackground(_viewModel.Chat.Id, null, null, 0));
+            _viewModel.ClientService.Send(new DeleteChatBackground(_viewModel.Chat.Id, false));
             ThemeSelected?.Invoke(this, new ChatThemeSelectedEventArgs(true));
         }
     }

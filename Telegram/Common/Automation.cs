@@ -1,5 +1,5 @@
 //
-// Copyright Fela Ameghino 2015-2023
+// Copyright Fela Ameghino 2015-2024
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
@@ -23,8 +23,27 @@ namespace Telegram.Common
         {
             try
             {
-                AutomationProperties.SetName(element, text);
-                ToolTipService.SetToolTip(element, text);
+                AutomationProperties.SetName(element, text ?? string.Empty);
+
+                if (text == null)
+                {
+                    ToolTipService.SetToolTip(element, null);
+                }
+                else
+                {
+                    var tooltip = ToolTipService.GetToolTip(element) as ToolTip;
+                    if (tooltip == null)
+                    {
+                        ToolTipService.SetToolTip(element, new ToolTip
+                        {
+                            Content = text
+                        });
+                    }
+                    else
+                    {
+                        tooltip.Content = text;
+                    }
+                }
             }
             catch
             {
@@ -146,12 +165,38 @@ namespace Telegram.Common
             return builder.ToString();
         }
 
-        public static string GetSummary(MessageWithOwner message, bool details = false)
+        public static string GetSummaryWithName(MessageWithOwner message, bool details = false, bool addCaption = true)
         {
-            return GetSummary(message.ClientService, message.Get(), details);
+            var summary = GetSummary(message, details, addCaption);
+
+            if (message.ClientService.TryGetUser(message.SenderId, out User user))
+            {
+                if (user.Id == message.ClientService.Options.MyId)
+                {
+                    return $"{Strings.FromYou}: {summary}";
+                }
+
+                return $"{user.FullName()}: {summary}";
+            }
+            //else if (message.IsChannelPost)
+            //{
+            //    return summary;
+            //}
+            else if (message.ClientService.TryGetChat(message.SenderId, out Chat chat))
+            {
+                return $"{chat.Title}: {summary}";
+            }
+
+            return summary;
         }
 
-        public static string GetSummary(IClientService clientService, Message message, bool details = false)
+        public static string GetSummary(MessageWithOwner message, bool details = false, bool addCaption = true)
+        {
+            var altText = message.TranslatedText is MessageTranslateResultText text ? text.Text.Text : null;
+            return GetSummary(message.ClientService, message.Get(), details, addCaption, altText);
+        }
+
+        public static string GetSummary(IClientService clientService, Message message, bool details = false, bool addCaption = true, string altText = null)
         {
             if (message.IsService() && clientService.TryGetChat(message.ChatId, out Chat chat))
             {
@@ -162,15 +207,31 @@ namespace Telegram.Common
             {
                 if (album.IsMedia)
                 {
+                    var caption = string.Empty;
+                    if (!string.IsNullOrEmpty(album.Caption.Text))
+                    {
+                        caption = album.Caption.Text + ", ";
+                    }
+
                     var photos = album.Messages.Count(x => x.Content is MessagePhoto);
                     var videos = album.Messages.Count - photos;
 
                     if (album.Messages.Count > 0 && album.Messages[0].Content is MessageVideo)
                     {
-                        return Locale.Declension(Strings.R.Videos, videos) + ", " + Locale.Declension(Strings.R.Photos, photos) + ", ";
+                        if (photos > 0)
+                        {
+                            return Locale.Declension(Strings.R.Videos, videos) + ", " + Locale.Declension(Strings.R.Photos, photos) + ", " + caption;
+                        }
+
+                        return Locale.Declension(Strings.R.Videos, videos) + ", " + caption;
                     }
 
-                    return Locale.Declension(Strings.R.Photos, photos) + ", " + Locale.Declension(Strings.R.Videos, videos) + ", ";
+                    if (videos > 0)
+                    {
+                        return Locale.Declension(Strings.R.Photos, photos) + ", " + Locale.Declension(Strings.R.Videos, videos) + ", " + caption;
+                    }
+
+                    return Locale.Declension(Strings.R.Photos, photos) + ", " + caption;
                 }
                 else if (album.Messages.Count > 0 && album.Messages[0].Content is MessageAudio)
                 {
@@ -183,6 +244,11 @@ namespace Telegram.Common
             }
             else if (message.Content is MessageText text)
             {
+                if (altText != null)
+                {
+                    return altText + ", ";
+                }
+
                 return text.Text.Text + ", ";
             }
             else if (message.Content is MessageDice dice)
@@ -228,7 +294,7 @@ namespace Telegram.Common
 
             string GetCaption(string caption)
             {
-                return string.IsNullOrEmpty(caption) ? string.Empty : ", " + caption;
+                return !addCaption || string.IsNullOrEmpty(altText ?? caption) ? string.Empty : ", " + (altText ?? caption);
             }
 
             if (message.Content is MessageVoiceNote voiceNote)
@@ -238,6 +304,15 @@ namespace Telegram.Common
                 if (details)
                 {
                     result += voiceNote.VoiceNote.GetDuration() + ", ";
+
+                    if (voiceNote.VoiceNote.SpeechRecognitionResult is SpeechRecognitionResultText recognitionResultText)
+                    {
+                        result += recognitionResultText.Text + ", ";
+                    }
+                    else if (voiceNote.VoiceNote.SpeechRecognitionResult is SpeechRecognitionResultError)
+                    {
+                        result += Strings.NoWordsRecognized + ", ";
+                    }
                 }
 
                 return result;
@@ -395,7 +470,7 @@ namespace Telegram.Common
             }
             else if (!light && /*message.IsFirst &&*/ message.IsSaved(clientService.Options.MyId))
             {
-                title = clientService.GetTitle(message.ForwardInfo);
+                title = clientService.GetTitle(message.ForwardInfo?.Origin, message.ImportInfo);
             }
 
             var builder = new StringBuilder();
@@ -415,7 +490,7 @@ namespace Telegram.Common
 
             builder.Append(GetSummary(clientService, message));
 
-            var date = string.Format(Strings.TodayAtFormatted, Formatter.ShortTime.Format(Formatter.ToLocalTime(message.Date)));
+            var date = string.Format(Strings.TodayAtFormatted, Formatter.Time(message.Date));
             if (message.IsOutgoing)
             {
                 builder.Append(string.Format(Strings.AccDescrSentDate, date));

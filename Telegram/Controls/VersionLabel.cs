@@ -1,6 +1,4 @@
-﻿using LinqToVisualTree;
-using System.Linq;
-using Telegram.Common;
+﻿using Telegram.Common;
 using Telegram.Controls.Media;
 using Telegram.Views;
 using Windows.ApplicationModel;
@@ -40,7 +38,7 @@ namespace Telegram.Controls
                 }
                 else
                 {
-                    var frame = this.Ancestors<Frame>().FirstOrDefault();
+                    var frame = this.GetParent<Frame>();
                     frame?.Navigate(typeof(DiagnosticsPage));
                 }
             }
@@ -53,7 +51,7 @@ namespace Telegram.Controls
 
             flyout.CreateFlyoutItem(CopyVersion, Strings.Copy, Icons.DocumentCopy);
 
-            args.ShowAt(flyout, element);
+            flyout.ShowAt(element, args);
         }
 
         private void CopyVersion()
@@ -74,12 +72,16 @@ namespace Telegram.Controls
                 _ => " Direct"
             };
 
+            var revision = version.Revision > 0
+                ? string.Format(" ({0})", version.Revision)
+                : string.Empty;
+
             if (version.Build > 0)
             {
-                return string.Format("{0}.{1}.{2} ({3}) {4}{5}", version.Major, version.Minor, version.Build, Constants.BuildNumber, packageId.Architecture, type);
+                return string.Format("{0}.{1}.{2}{3} {4}{5}", version.Major, version.Minor, version.Build, revision, packageId.Architecture, type);
             }
 
-            return string.Format("{0}.{1} ({2}) {3}{4}", version.Major, version.Minor, Constants.BuildNumber, packageId.Architecture, type);
+            return string.Format("{0}.{1}{2} {3}{4}", version.Major, version.Minor, revision, packageId.Architecture, type);
         }
     }
 }

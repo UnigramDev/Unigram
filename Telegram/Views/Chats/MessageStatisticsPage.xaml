@@ -44,9 +44,12 @@
                 <controls:SettingsPanel IsHeader="True">
                     <controls:HeaderedControl Header="{CustomResource StatisticOverview}"
                                               Style="{StaticResource FooteredControlStyle}">
-                        <Grid>
+                        <Grid Background="{ThemeResource SettingsItemBackground}">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                            </Grid.RowDefinitions>
                             <Grid.ColumnDefinitions>
-                                <ColumnDefinition />
                                 <ColumnDefinition />
                                 <ColumnDefinition />
                             </Grid.ColumnDefinitions>
@@ -69,7 +72,17 @@
                             </StackPanel>
 
                             <StackPanel Padding="12,8"
-                                        Grid.Column="2">
+                                        Grid.Row="1">
+                                <TextBlock Text="{x:Bind ConvertReactions(ViewModel.Message), Mode=OneWay}"
+                                           Style="{StaticResource BodyTextBlockStyle}" />
+
+                                <TextBlock Text="{CustomResource Reactions}"
+                                           Style="{StaticResource InfoCaptionTextBlockStyle}" />
+                            </StackPanel>
+
+                            <StackPanel Padding="12,8"
+                                        Grid.Row="1"
+                                        Grid.Column="1">
                                 <TextBlock Text="{x:Bind ConvertPrivateShares(ViewModel.Message, ViewModel.Items.TotalCount), Mode=OneWay}"
                                            Style="{StaticResource BodyTextBlockStyle}" />
 
@@ -79,7 +92,16 @@
                         </Grid>
                     </controls:HeaderedControl>
 
-                    <ContentControl Content="{x:Bind ViewModel.Interactions}"
+                    <ContentControl Content="{x:Bind ViewModel.Interactions, Mode=OneWay}"
+                                    HorizontalContentAlignment="Center">
+                        <ContentControl.ContentTemplate>
+                            <DataTemplate>
+                                <cells:ChartCell DataContextChanged="OnElementPrepared" />
+                            </DataTemplate>
+                        </ContentControl.ContentTemplate>
+                    </ContentControl>
+
+                    <ContentControl Content="{x:Bind ViewModel.Reactions, Mode=OneWay}"
                                     HorizontalContentAlignment="Center">
                         <ContentControl.ContentTemplate>
                             <DataTemplate>

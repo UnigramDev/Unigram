@@ -1,11 +1,9 @@
 //
-// Copyright Fela Ameghino 2015-2023
+// Copyright Fela Ameghino 2015-2024
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
-using System;
-using System.Globalization;
 using System.Threading.Tasks;
 using Telegram.Controls;
 using Telegram.Services;
@@ -17,10 +15,6 @@ namespace Telegram.Views.Popups
 {
     public sealed partial class TranslatePopup : ContentPopup
     {
-        private const string LANG_UND = "und";
-        private const string LANG_AUTO = "auto";
-        private const string LANG_LATN = "latn";
-
         private readonly ITranslateService _translateService;
         private readonly string _toLanguage;
 
@@ -49,8 +43,8 @@ namespace Telegram.Views.Popups
             PrimaryButtonText = Strings.Close;
             //SecondaryButtonText = Strings.Language;
 
-            var fromName = LanguageName(fromLanguage, out bool rtl);
-            var toName = LanguageName(toLanguage, out _);
+            var fromName = TranslateService.LanguageName(fromLanguage, out bool rtl);
+            var toName = TranslateService.LanguageName(toLanguage);
 
             if (string.IsNullOrEmpty(fromName))
             {
@@ -90,7 +84,7 @@ namespace Telegram.Views.Popups
 
             _loadingMore = true;
 
-            var ticks = Environment.TickCount;
+            var ticks = Logger.TickCount;
 
             Task<object> task;
             if (_chatId != 0 && _messageId != 0)
@@ -105,7 +99,7 @@ namespace Telegram.Views.Popups
             var response = await task;
             if (response is FormattedText translation)
             {
-                var diff = Environment.TickCount - ticks;
+                var diff = (int)(Logger.TickCount - ticks);
                 if (diff < 1000)
                 {
                     await Task.Delay(1000 - diff);
@@ -126,22 +120,6 @@ namespace Telegram.Views.Popups
             }
 
             _loadingMore = false;
-        }
-
-        private string LanguageName(string locale, out bool rtl)
-        {
-            if (locale == null || locale.Equals(LANG_UND) || locale.Equals(LANG_AUTO))
-            {
-                rtl = false;
-                return null;
-            }
-
-            var split = locale.Split('-');
-            var latin = split.Length > 1 && string.Equals(split[1], LANG_LATN, StringComparison.OrdinalIgnoreCase);
-
-            var culture = new CultureInfo(split[0]);
-            rtl = culture.TextInfo.IsRightToLeft && !latin;
-            return culture.DisplayName;
         }
 
         private void ContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)

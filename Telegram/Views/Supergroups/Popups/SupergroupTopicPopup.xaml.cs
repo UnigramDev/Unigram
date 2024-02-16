@@ -1,5 +1,5 @@
 //
-// Copyright Fela Ameghino 2015-2023
+// Copyright Fela Ameghino 2015-2024
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
@@ -29,10 +29,7 @@ namespace Telegram.Views.Supergroups.Popups
             NameLabel.Text = topic?.Name ?? string.Empty;
             Identity.SetStatus(clientService, topic.Icon);
 
-            var viewModel = EmojiDrawerViewModel.GetForCurrentView(clientService.SessionId, EmojiDrawerMode.CustomEmojis);
-            viewModel.UpdateTopics();
-
-            Emoji.DataContext = viewModel;
+            Emoji.DataContext = EmojiDrawerViewModel.Create(clientService.SessionId, EmojiDrawerMode.Topics);
             Emoji.ItemClick += OnItemClick;
 
             SelectedEmojiId = topic?.Icon.CustomEmojiId ?? 0;

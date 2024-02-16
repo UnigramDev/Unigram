@@ -1,5 +1,5 @@
 //
-// Copyright Fela Ameghino 2015-2023
+// Copyright Fela Ameghino 2015-2024
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
@@ -26,6 +26,25 @@ using Point = Windows.Foundation.Point;
 
 namespace Telegram.Controls.Messages
 {
+    public class EmojiSelectedEventArgs : EventArgs
+    {
+        public long CustomEmojiId { get; }
+
+        public EmojiSelectedEventArgs(long customEmojiId)
+        {
+            CustomEmojiId = customEmojiId;
+        }
+    }
+
+    public enum EmojiFlyoutAlignment
+    {
+        TopLeft,
+        TopRight,
+        BottomLeft,
+        BottomRight,
+        Center
+    }
+
     public sealed partial class EmojiMenuFlyout : UserControl
     {
         private readonly IClientService _clientService;
@@ -39,12 +58,16 @@ namespace Telegram.Controls.Messages
 
         private readonly Popup _popup;
 
-        public static EmojiMenuFlyout ShowAt(FrameworkElement element, MessageViewModel message, MessageBubble bubble, AvailableReactions reactions)
+        public event EventHandler<EmojiSelectedEventArgs> EmojiSelected;
+
+        public event EventHandler Opened;
+
+        public static EmojiMenuFlyout ShowAt(FrameworkElement element, MessageViewModel message, MessageBubble bubble, AvailableReactions reactions, EmojiDrawerViewModel viewModel)
         {
-            return new EmojiMenuFlyout(element, message, bubble, reactions);
+            return new EmojiMenuFlyout(element, message, bubble, reactions, viewModel);
         }
 
-        private EmojiMenuFlyout(FrameworkElement element, MessageViewModel message, MessageBubble bubble, AvailableReactions reactions)
+        private EmojiMenuFlyout(FrameworkElement element, MessageViewModel message, MessageBubble bubble, AvailableReactions reactions, EmojiDrawerViewModel viewModel)
         {
             InitializeComponent();
 
@@ -55,33 +78,32 @@ namespace Telegram.Controls.Messages
 
             _popup = new Popup();
 
-            Initialize(message.ClientService, element, HorizontalAlignment.Center);
+            Initialize(message.ClientService, element, EmojiFlyoutAlignment.Center, viewModel);
         }
 
-        public static EmojiMenuFlyout ShowAt(IClientService clientService, EmojiDrawerMode mode, FrameworkElement element, HorizontalAlignment alignment, MessageViewModel message = null, AvailableReactions reactions = null)
+        public static EmojiMenuFlyout ShowAt(IClientService clientService, EmojiDrawerMode mode, FrameworkElement element, EmojiFlyoutAlignment alignment)
         {
-            return new EmojiMenuFlyout(clientService, mode, element, alignment, message, reactions);
+            return new EmojiMenuFlyout(clientService, mode, element, alignment);
         }
 
-        private EmojiMenuFlyout(IClientService clientService, EmojiDrawerMode mode, FrameworkElement element, HorizontalAlignment alignment, MessageViewModel message = null, AvailableReactions reactions = null)
+        private EmojiMenuFlyout(IClientService clientService, EmojiDrawerMode mode, FrameworkElement element, EmojiFlyoutAlignment alignment)
         {
             InitializeComponent();
 
             _clientService = clientService;
             _mode = mode;
-            _message = message;
 
             _popup = new Popup();
 
             Initialize(clientService, element, alignment);
         }
 
-        public static EmojiMenuFlyout ShowAt(FrameworkElement element, StoryViewModel story, FrameworkElement reserved, AvailableReactions reactions)
+        public static EmojiMenuFlyout ShowAt(FrameworkElement element, StoryViewModel story, FrameworkElement reserved, AvailableReactions reactions, EmojiDrawerViewModel viewModel)
         {
-            return new EmojiMenuFlyout(element, story, reserved, reactions);
+            return new EmojiMenuFlyout(element, story, reserved, reactions, viewModel);
         }
 
-        private EmojiMenuFlyout(FrameworkElement element, StoryViewModel story, FrameworkElement reserved, AvailableReactions reactions)
+        private EmojiMenuFlyout(FrameworkElement element, StoryViewModel story, FrameworkElement reserved, AvailableReactions reactions, EmojiDrawerViewModel viewModel)
         {
             InitializeComponent();
 
@@ -92,12 +114,12 @@ namespace Telegram.Controls.Messages
 
             _popup = new Popup();
 
-            Initialize(story.ClientService, element, HorizontalAlignment.Center);
+            Initialize(story.ClientService, element, EmojiFlyoutAlignment.Center, viewModel);
         }
 
-        private void Initialize(IClientService clientService, FrameworkElement element, HorizontalAlignment alignment)
+        private void Initialize(IClientService clientService, FrameworkElement element, EmojiFlyoutAlignment alignment, EmojiDrawerViewModel viewModel = null)
         {
-            var transform = element.TransformToVisual(Window.Current.Content);
+            var transform = element.TransformToVisual(null);
             var position = transform.TransformPoint(new Point());
 
             var count = 8;
@@ -118,7 +140,30 @@ namespace Telegram.Controls.Messages
 
             var padding = actualWidth - width;
 
-            var viewModel = EmojiDrawerViewModel.GetForCurrentView(clientService.SessionId, _mode);
+            // We try to constraint the popup within the window bounds
+            if (alignment is EmojiFlyoutAlignment.TopLeft or EmojiFlyoutAlignment.TopRight)
+            {
+                var diff = (position.Y + height) - element.XamlRoot.Size.Height;
+                if (diff >= 24 && position.Y - height > 0)
+                {
+                    if (alignment == EmojiFlyoutAlignment.TopLeft)
+                    {
+                        //alignment = EmojiFlyoutAlignment.BottomLeft;
+                    }
+                    else if (alignment == EmojiFlyoutAlignment.TopRight)
+                    {
+                        alignment = EmojiFlyoutAlignment.BottomRight;
+                    }
+                }
+            }
+
+            var yy = 20f;
+            var byy = alignment == EmojiFlyoutAlignment.BottomRight ? 20 : 0;
+
+            var radius = 8;
+
+            viewModel ??= EmojiDrawerViewModel.Create(clientService.SessionId, _mode);
+
             var view = new EmojiDrawer(_mode);
             view.DataContext = viewModel;
             view.VerticalAlignment = VerticalAlignment.Top;
@@ -126,21 +171,20 @@ namespace Telegram.Controls.Messages
             view.Height = height;
             view.ItemClick += OnStatusClick;
 
-            if (_mode == EmojiDrawerMode.CustomEmojis)
+            if (_mode == EmojiDrawerMode.EmojiStatus)
             {
                 view.ItemContextRequested += OnStatusContextRequested;
             }
 
             Presenter.Children.Add(view);
 
-            if (_mode == EmojiDrawerMode.CustomEmojis)
+            if (_mode is EmojiDrawerMode.EmojiStatus or EmojiDrawerMode.ChatEmojiStatus)
             {
                 view.Activate(null, EmojiSearchType.EmojiStatus);
-                viewModel.UpdateStatuses();
             }
-            else if (_mode == EmojiDrawerMode.Reactions)
+            else
             {
-                //_ = viewModel.UpdateReactions(reactions, null);
+                viewModel.Update();
             }
 
             Shadow.Width = width;
@@ -148,22 +192,19 @@ namespace Telegram.Controls.Messages
             Presenter.Width = width;
 
             Shadow.Height = height;
-            Pill.Height = height + 20;
-            Presenter.Padding = new Thickness(0, 20, 0, 0);
-            Presenter.Height = height + 20;
-
-            var yy = 20f;
-            var radius = 8;
+            Pill.Height = height + yy + byy;
+            Presenter.Padding = new Thickness(0, yy, 0, 0);
+            Presenter.Height = height + yy;
 
             var figure = new PathFigure();
             figure.StartPoint = new Point(radius, yy);
 
-            if (alignment == HorizontalAlignment.Left)
+            if (alignment == EmojiFlyoutAlignment.TopLeft)
             {
                 figure.Segments.Add(new LineSegment { Point = new Point(18 + 20, yy + 0) });
                 figure.Segments.Add(new ArcSegment { Point = new Point(18 + 20 + 14, yy + 0), Size = new Size(7, 7), RotationAngle = 180, SweepDirection = SweepDirection.Clockwise });
             }
-            else if (alignment == HorizontalAlignment.Right)
+            else if (alignment == EmojiFlyoutAlignment.TopRight)
             {
                 figure.Segments.Add(new LineSegment { Point = new Point(width - 18 - 20 - 14, yy + 0) });
                 figure.Segments.Add(new ArcSegment { Point = new Point(width - 18 - 20, yy + 0), Size = new Size(7, 7), RotationAngle = 180, SweepDirection = SweepDirection.Clockwise });
@@ -174,6 +215,11 @@ namespace Telegram.Controls.Messages
             figure.Segments.Add(new LineSegment { Point = new Point(width, yy + height - radius) });
             figure.Segments.Add(new ArcSegment { Point = new Point(width - radius, yy + height), Size = new Size(radius, radius), RotationAngle = 90, SweepDirection = SweepDirection.Clockwise });
 
+            if (alignment == EmojiFlyoutAlignment.BottomRight)
+            {
+                figure.Segments.Add(new LineSegment { Point = new Point(width - 18 - 20, yy + height) });
+                figure.Segments.Add(new ArcSegment { Point = new Point(width - 18 - 20 - 14, yy + height), Size = new Size(7, 7), RotationAngle = 180, SweepDirection = SweepDirection.Clockwise });
+            }
 
             figure.Segments.Add(new LineSegment { Point = new Point(radius, yy + height) });
             figure.Segments.Add(new ArcSegment { Point = new Point(0, yy + height - radius), Size = new Size(radius, radius), RotationAngle = 90, SweepDirection = SweepDirection.Clockwise });
@@ -187,23 +233,27 @@ namespace Telegram.Controls.Messages
             data.FillRule = FillRule.Nonzero;
             data.Children.Add(path);
 
-            if (alignment == HorizontalAlignment.Left)
+            if (alignment == EmojiFlyoutAlignment.TopLeft)
             {
                 data.Children.Add(new EllipseGeometry { Center = new Point(20 + 18, 7), RadiusX = 3.5, RadiusY = 3.5 });
             }
-            else if (alignment == HorizontalAlignment.Right)
+            else if (alignment == EmojiFlyoutAlignment.TopRight)
             {
                 data.Children.Add(new EllipseGeometry { Center = new Point(width - 20 - 18, 7), RadiusX = 3.5, RadiusY = 3.5 });
+            }
+            else if (alignment == EmojiFlyoutAlignment.BottomRight)
+            {
+                data.Children.Add(new EllipseGeometry { Center = new Point(width - 20 - 18, yy + height + 14), RadiusX = 3.5, RadiusY = 3.5 });
             }
 
             Pill.Data = data;
             Pill.Margin = new Thickness(0, -yy, 0, 0);
             Shadow.Margin = new Thickness(0, -yy, 0, 0);
-            Presenter.Margin = new Thickness(0, -yy, 0, 0);
+            Presenter.Margin = new Thickness(0, -yy - byy, 0, 0);
 
             LayoutRoot.Padding = new Thickness(16, 36, 16, 16);
 
-            var rootVisual = ElementCompositionPreview.GetElementVisual(LayoutRoot);
+            var rootVisual = ElementComposition.GetElementVisual(LayoutRoot);
             var compositor = rootVisual.Compositor;
 
             var pillShadow = compositor.CreateDropShadow();
@@ -219,17 +269,22 @@ namespace Telegram.Controls.Messages
 
             ElementCompositionPreview.SetElementChildVisual(Shadow, pillReceiver);
 
-            var x = position.X /*- 18 + padding*/;
-            var y = position.Y + element.ActualHeight - 4;
+            var x = position.X - 6;
+            var y = position.Y + element.ActualHeight + 8;
 
-            if (alignment == HorizontalAlignment.Right)
+            if (alignment == EmojiFlyoutAlignment.TopRight)
             {
                 x = position.X - width + element.ActualWidth + 6;
             }
-            else if (alignment == HorizontalAlignment.Center)
+            else if (alignment == EmojiFlyoutAlignment.Center)
             {
                 y = position.Y - 44;
                 x = position.X - 8;
+            }
+            else if (alignment == EmojiFlyoutAlignment.BottomRight)
+            {
+                y = position.Y - height - 8;
+                x = position.X - width + element.ActualWidth + 6;
             }
 
             _popup.Child = this;
@@ -244,10 +299,10 @@ namespace Telegram.Controls.Messages
 
             //return;
 
-            var visualPill = ElementCompositionPreview.GetElementVisual(Pill);
-            visualPill.CenterPoint = new Vector3(alignment == HorizontalAlignment.Left ? 36 / 2 : width - 36 / 2, yy + 36 / 2, 0);
+            var visualPill = ElementComposition.GetElementVisual(Pill);
+            visualPill.CenterPoint = new Vector3(alignment == EmojiFlyoutAlignment.TopLeft ? 36 / 2 : width - 36 / 2, yy + 36 / 2, 0);
 
-            var visualExpand = ElementCompositionPreview.GetElementVisual(Expand);
+            var visualExpand = ElementComposition.GetElementVisual(Expand);
             visualExpand.CenterPoint = new Vector3(32 / 2f, 24 / 2f, 0);
 
             var clip = compositor.CreateRoundedRectangleGeometry();
@@ -255,10 +310,11 @@ namespace Telegram.Controls.Messages
             clip.Offset = new Vector2(36, yy);
 
             var batch = compositor.CreateScopedBatch(CompositionBatchTypes.Animation);
+            batch.Completed += Batch_Completed;
 
             var opacity = compositor.CreateScalarKeyFrameAnimation();
 
-            var drawer = ElementCompositionPreview.GetElementVisual(Presenter);
+            var drawer = ElementComposition.GetElementVisual(Presenter);
 
             opacity.InsertKeyFrame(0, 0);
             opacity.InsertKeyFrame(1, 0.24f);
@@ -268,7 +324,7 @@ namespace Telegram.Controls.Messages
 
             pillShadow.StartAnimation("Opacity", opacity);
 
-            var test = ElementCompositionPreview.GetElementVisual(LayoutRoot);
+            var test = ElementComposition.GetElementVisual(LayoutRoot);
             test.CenterPoint = new Vector3(220, 138, 0); // 148
             drawer.Clip = compositor.CreateGeometricClip(clip);
             visualPill.Clip = compositor.CreateGeometricClip(clip);
@@ -290,7 +346,7 @@ namespace Telegram.Controls.Messages
 
 
             var resize = compositor.CreateVector2KeyFrameAnimation();
-            if (alignment == HorizontalAlignment.Center)
+            if (alignment == EmojiFlyoutAlignment.Center)
             {
                 resize.InsertKeyFrame(0, new Vector2(228, 40 * ratio));
                 resize.InsertKeyFrame(1, new Vector2(width, height));
@@ -298,26 +354,31 @@ namespace Telegram.Controls.Messages
             else
             {
                 resize.InsertKeyFrame(0, new Vector2());
-                resize.InsertKeyFrame(1, new Vector2(width, height + yy));
+                resize.InsertKeyFrame(1, new Vector2(width, height + yy + byy));
             }
             resize.Duration = Constants.SoftAnimation + TimeSpan.FromSeconds(0);
 
             clip.StartAnimation("Size", resize);
 
             var move = compositor.CreateVector2KeyFrameAnimation();
-            if (alignment == HorizontalAlignment.Center)
+            if (alignment == EmojiFlyoutAlignment.Center)
             {
                 move.InsertKeyFrame(0, new Vector2(0, yy + 82));
                 move.InsertKeyFrame(1, new Vector2(0, yy));
             }
-            else if (alignment == HorizontalAlignment.Right)
+            else if (alignment == EmojiFlyoutAlignment.TopRight)
             {
                 move.InsertKeyFrame(0, new Vector2(width - 36, yy));
                 move.InsertKeyFrame(1, new Vector2());
             }
-            else if (alignment == HorizontalAlignment.Left)
+            else if (alignment == EmojiFlyoutAlignment.TopLeft)
             {
                 move.InsertKeyFrame(0, new Vector2(36, yy));
+                move.InsertKeyFrame(1, new Vector2());
+            }
+            else if (alignment == EmojiFlyoutAlignment.BottomRight)
+            {
+                move.InsertKeyFrame(0, new Vector2(width - 36, height + yy));
                 move.InsertKeyFrame(1, new Vector2());
             }
             move.Duration = Constants.SoftAnimation + TimeSpan.FromSeconds(0);
@@ -361,7 +422,7 @@ namespace Telegram.Controls.Messages
                 var surface1 = compositor.CreateVisualSurface();
                 var surfaceBrush1 = compositor.CreateSurfaceBrush();
 
-                surface1.SourceVisual = ElementCompositionPreview.GetElementVisual(view);
+                surface1.SourceVisual = ElementComposition.GetElementVisual(view);
                 surface1.SourceSize = new Vector2(width, 8);
                 surface1.SourceOffset = new Vector2(0, height - (20 - (i * 8)));
 
@@ -414,6 +475,11 @@ namespace Telegram.Controls.Messages
             Perspective.Depth = apothem * 20;
         }
 
+        private void Batch_Completed(object sender, CompositionBatchCompletedEventArgs args)
+        {
+            Opened?.Invoke(this, EventArgs.Empty);
+        }
+
         public static float ToRadians(float angleIn10thofaDegree)
         {
             // Angle in 10th of a degree
@@ -451,6 +517,11 @@ namespace Telegram.Controls.Messages
             {
                 _popup.IsOpen = false;
 
+                if (sticker.FullType is StickerFullTypeCustomEmoji customEmoji2)
+                {
+                    EmojiSelected?.Invoke(this, new EmojiSelectedEventArgs(customEmoji2.CustomEmojiId));
+                }
+
                 if (_story != null)
                 {
                     StoryToggleReaction(sticker.ToReactionType());
@@ -459,7 +530,7 @@ namespace Telegram.Controls.Messages
                 {
                     MessageToggleReaction(sticker.ToReactionType());
                 }
-                else if (_mode == EmojiDrawerMode.CustomEmojis && sticker.FullType is StickerFullTypeCustomEmoji customEmoji)
+                else if (_mode == EmojiDrawerMode.EmojiStatus && sticker.FullType is StickerFullTypeCustomEmoji customEmoji)
                 {
                     _clientService.Send(new SetEmojiStatus(new EmojiStatus(customEmoji.CustomEmojiId, 0)));
                 }
@@ -472,7 +543,7 @@ namespace Telegram.Controls.Messages
 
         private void SetStatus((Sticker Sticker, int Duration) item)
         {
-            if (_mode == EmojiDrawerMode.CustomEmojis && item.Sticker.FullType is StickerFullTypeCustomEmoji customEmoji)
+            if (_mode == EmojiDrawerMode.EmojiStatus && item.Sticker.FullType is StickerFullTypeCustomEmoji customEmoji)
             {
                 _clientService.Send(new SetEmojiStatus(new EmojiStatus(customEmoji.CustomEmojiId, item.Duration)));
             }
@@ -483,7 +554,7 @@ namespace Telegram.Controls.Messages
             var popup = new ChooseStatusDurationPopup();
 
             var confirm = await popup.ShowQueuedAsync();
-            if (confirm == ContentDialogResult.Primary && _mode == EmojiDrawerMode.CustomEmojis && sticker.FullType is StickerFullTypeCustomEmoji customEmoji)
+            if (confirm == ContentDialogResult.Primary && _mode == EmojiDrawerMode.EmojiStatus && sticker.FullType is StickerFullTypeCustomEmoji customEmoji)
             {
                 _clientService.Send(new SetEmojiStatus(new EmojiStatus(customEmoji.CustomEmojiId, popup.Value)));
             }

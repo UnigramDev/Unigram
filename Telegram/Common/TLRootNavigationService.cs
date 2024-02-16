@@ -1,5 +1,5 @@
 //
-// Copyright Fela Ameghino 2015-2023
+// Copyright Fela Ameghino 2015-2024
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
@@ -24,7 +24,7 @@ namespace Telegram.Common
         public TLRootNavigationService(ISessionService sessionService, Frame frame, int session, string id)
             : base(frame, session, id)
         {
-            _lifetimeService = TLContainer.Current.Lifetime;
+            _lifetimeService = TypeResolver.Current.Lifetime;
         }
 
         public async void Handle(UpdateAuthorizationState update)
@@ -52,16 +52,16 @@ namespace Telegram.Common
                     }
                     break;
                 case AuthorizationStateWaitCode:
-                    Navigate(typeof(AuthorizationCodePage));
+                    Navigate(typeof(AuthorizationCodePage), navigationStackEnabled: false);
                     break;
                 case AuthorizationStateWaitEmailAddress:
-                    Navigate(typeof(AuthorizationEmailAddressPage));
+                    Navigate(typeof(AuthorizationEmailAddressPage), navigationStackEnabled: false);
                     break;
                 case AuthorizationStateWaitEmailCode:
-                    Navigate(typeof(AuthorizationEmailCodePage));
+                    Navigate(typeof(AuthorizationEmailCodePage), navigationStackEnabled: false);
                     break;
                 case AuthorizationStateWaitRegistration:
-                    Navigate(typeof(AuthorizationRegistrationPage));
+                    Navigate(typeof(AuthorizationRegistrationPage), navigationStackEnabled: false);
                     break;
                 case AuthorizationStateWaitPassword waitPassword:
                     if (!string.IsNullOrEmpty(waitPassword.RecoveryEmailAddressPattern))
@@ -69,7 +69,9 @@ namespace Telegram.Common
                         await MessagePopup.ShowAsync(string.Format(Strings.RestoreEmailSent, waitPassword.RecoveryEmailAddressPattern), Strings.AppName, Strings.OK);
                     }
 
-                    Navigate(string.IsNullOrEmpty(waitPassword.RecoveryEmailAddressPattern) ? typeof(AuthorizationPasswordPage) : typeof(AuthorizationRecoveryPage));
+                    Navigate(string.IsNullOrEmpty(waitPassword.RecoveryEmailAddressPattern)
+                        ? typeof(AuthorizationPasswordPage)
+                        : typeof(AuthorizationRecoveryPage), navigationStackEnabled: false);
                     break;
             }
         }

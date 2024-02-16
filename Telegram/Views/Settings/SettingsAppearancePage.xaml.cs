@@ -1,5 +1,5 @@
 //
-// Copyright Fela Ameghino 2015-2023
+// Copyright Fela Ameghino 2015-2024
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
@@ -9,6 +9,7 @@ using Telegram.Common;
 using Telegram.Controls.Cells;
 using Telegram.Controls.Media;
 using Telegram.Services.Settings;
+using Telegram.Td.Api;
 using Telegram.ViewModels.Settings;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -27,11 +28,8 @@ namespace Telegram.Views.Settings
             InitializeComponent();
             Title = Strings.Appearance;
 
-            var preview = ElementCompositionPreview.GetElementVisual(Preview);
+            var preview = ElementComposition.GetElementVisual(Preview);
             preview.Clip = preview.Compositor.CreateInsetClip();
-
-            Message1.Mockup(Strings.FontSizePreviewLine1, Strings.FontSizePreviewName, Strings.FontSizePreviewReply, false, DateTime.Now.AddSeconds(-25));
-            Message2.Mockup(Strings.FontSizePreviewLine2, true, DateTime.Now);
         }
 
         protected override void OnNavigatedTo(NavigationEventArgs e)
@@ -39,6 +37,21 @@ namespace Telegram.Views.Settings
             BackgroundControl.Update(ViewModel.ClientService, ViewModel.Aggregator);
 
             ViewModel.PropertyChanged += OnPropertyChanged;
+
+            if (ViewModel.ClientService.TryGetUser(ViewModel.ClientService.Options.MyId, out User user))
+            {
+                if (ViewModel.IsPremiumAvailable)
+                {
+                    ProfileColor.SetUser(ViewModel.ClientService, user);
+                }
+                else
+                {
+                    NameColor.Visibility = Visibility.Collapsed;
+                }
+
+                Message1.Mockup(ViewModel.ClientService, Strings.FontSizePreviewLine1, user, Strings.FontSizePreviewReply, false, DateTime.Now.AddSeconds(-25));
+                Message2.Mockup(Strings.FontSizePreviewLine2, true, DateTime.Now);
+            }
         }
 
         protected override void OnNavigatedFrom(NavigationEventArgs e)
@@ -79,8 +92,7 @@ namespace Telegram.Views.Settings
 
         private void Theme_ContextRequested(UIElement sender, ContextRequestedEventArgs args)
         {
-            var element = sender as FrameworkElement;
-            var theme = List.ItemFromContainer(element) as ChatThemeViewModel;
+            var theme = List.ItemFromContainer(sender) as ChatThemeViewModel;
 
             var flyout = new MenuFlyout();
             flyout.CreateFlyoutItem(ViewModel.CreateTheme, theme, Strings.CreateNewThemeMenu, Icons.Color);
@@ -93,7 +105,7 @@ namespace Telegram.Views.Settings
             //    flyout.CreateFlyoutItem(ViewModel.ThemeDeleteCommand, theme, Strings.Delete, Icons.Delete);
             //}
 
-            args.ShowAt(flyout, element);
+            flyout.ShowAt(sender, args);
         }
 
         #endregion
@@ -122,6 +134,7 @@ namespace Telegram.Views.Settings
             else if (args.ItemContainer.ContentTemplateRoot is ChatThemeCell content && args.Item is ChatThemeViewModel theme)
             {
                 content.Update(theme);
+                args.Handled = true;
             }
         }
 

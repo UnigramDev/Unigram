@@ -1,14 +1,15 @@
 ﻿//
-// Copyright Fela Ameghino 2015-2023
+// Copyright Fela Ameghino 2015-2024
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
 using RLottie;
+using System;
 using System.Collections.Generic;
 using Telegram.Native;
+using Telegram.Td.Api;
 using Windows.Foundation.Metadata;
-using Windows.UI;
 
 namespace Telegram.Streams
 {
@@ -17,7 +18,22 @@ namespace Telegram.Streams
     {
         #region Properties
 
-        public Color ReplacementColor { get; set; }
+        public bool NeedsRepainting { get; set; }
+
+        public IList<ClosedVectorPath> Outline { get; set; }
+
+        // Needed for Outline
+        public int Width { get; set; }
+
+        // Needed for Outline
+        public int Height { get; set; }
+
+        public event EventHandler OutlineChanged;
+
+        protected void OnOutlineChanged()
+        {
+            OutlineChanged?.Invoke(this, EventArgs.Empty);
+        }
 
         #endregion
 

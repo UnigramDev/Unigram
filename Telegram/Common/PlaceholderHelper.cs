@@ -1,5 +1,5 @@
 //
-// Copyright Fela Ameghino 2015-2023
+// Copyright Fela Ameghino 2015-2024
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
@@ -11,7 +11,6 @@ using System.IO.Compression;
 using System.Threading.Tasks;
 using System.Xml.Linq;
 using Telegram.Native;
-using Telegram.Navigation;
 using Telegram.Services;
 using Telegram.Td.Api;
 using Windows.Foundation;
@@ -197,25 +196,8 @@ namespace Telegram.Common
             return text;
         }
 
-        public static ImageSource GetBlurred(string path, float amount = 3)
+        public static async void GetBlurred(BitmapImage bitmap, string path, float amount = 3)
         {
-            var bitmap = new BitmapImage();
-            using (var stream = new InMemoryRandomAccessStream())
-            {
-                try
-                {
-                    PlaceholderImageHelper.Current.DrawThumbnailPlaceholder(path, amount, stream);
-                    bitmap.SetSource(stream);
-                }
-                catch { }
-            }
-
-            return bitmap;
-        }
-
-        public static async Task<ImageSource> GetBlurredAsync(string path, float amount = 3)
-        {
-            var bitmap = new BitmapImage();
             using (var stream = new InMemoryRandomAccessStream())
             {
                 try
@@ -225,29 +207,10 @@ namespace Telegram.Common
                 }
                 catch { }
             }
-
-            return bitmap;
         }
 
-        public static ImageSource GetBlurred(IList<byte> bytes, float amount = 3)
+        public static async void GetBlurred(BitmapImage bitmap, IList<byte> bytes, float amount = 3)
         {
-            var bitmap = new BitmapImage();
-            using (var stream = new InMemoryRandomAccessStream())
-            {
-                try
-                {
-                    PlaceholderImageHelper.Current.DrawThumbnailPlaceholder(bytes, amount, stream);
-                    bitmap.SetSource(stream);
-                }
-                catch { }
-            }
-
-            return bitmap;
-        }
-
-        public static async Task<ImageSource> GetBlurredAsync(IList<byte> bytes, float amount = 3)
-        {
-            var bitmap = new BitmapImage();
             using (var stream = new InMemoryRandomAccessStream())
             {
                 try
@@ -257,52 +220,23 @@ namespace Telegram.Common
                 }
                 catch { }
             }
-
-            return bitmap;
         }
 
         public static ImageSource GetWebPFrame(string path, double maxWidth = 512)
         {
             try
             {
-                var buffer = PlaceholderImageHelper.DrawWebP(path, (int)maxWidth, out Size size);
-                if (size.Width > 0 && size.Height > 0)
+                var buffer = PlaceholderImageHelper.DrawWebP(path, (int)maxWidth, out int pixelWidth, out int pixelHeight);
+                if (pixelWidth > 0 && pixelHeight > 0)
                 {
-                    var bitmap = new WriteableBitmap((int)size.Width, (int)size.Height);
+                    var bitmap = new WriteableBitmap(pixelWidth, pixelHeight);
                     BufferSurface.Copy(buffer, bitmap.PixelBuffer);
 
                     return bitmap;
                 }
                 else
                 {
-                    return new BitmapImage(UriEx.ToLocal(path));
-                }
-            }
-            catch { }
-
-            return null;
-        }
-
-        public static async Task<ImageSource> GetWebPFrameAsync(string path, double maxWidth = 512)
-        {
-            try
-            {
-                maxWidth = maxWidth < 512 ? maxWidth * WindowContext.Current.RasterizationScale : maxWidth;
-                maxWidth = Math.Min(maxWidth, 512);
-
-                Size size;
-
-                var buffer = await Task.Run(() => PlaceholderImageHelper.DrawWebP(path, (int)maxWidth, out size));
-                if (size.Width > 0 && size.Height > 0)
-                {
-                    var bitmap = new WriteableBitmap((int)size.Width, (int)size.Height);
-                    BufferSurface.Copy(buffer, bitmap.PixelBuffer);
-
-                    return bitmap;
-                }
-                else
-                {
-                    return new BitmapImage(UriEx.ToLocal(path));
+                    return UriEx.ToBitmap(path);
                 }
             }
             catch { }

@@ -68,6 +68,11 @@
                                                 Value="Right" />
                                         <Setter Target="Panel.(Grid.Column)"
                                                 Value="2" />
+
+                                        <Setter Target="MediaReactions.(Grid.Column)"
+                                                Value="0" />
+                                        <Setter Target="MediaReactions.(Grid.ColumnSpan)"
+                                                Value="2" />
                                     </VisualState.Setters>
                                 </VisualState>
                                 <VisualState x:Name="LightState">
@@ -87,7 +92,7 @@
                                         <Setter Target="Header.VerticalAlignment"
                                                 Value="Top" />
                                         <Setter Target="Header.CornerRadius"
-                                                Value="8" />
+                                                Value="4" />
                                         <Setter Target="Header.Padding"
                                                 Value="8,2,8,4" />
                                         <Setter Target="Header.(Grid.Row)"
@@ -109,6 +114,11 @@
                                                 Value="Left" />
                                         <Setter Target="Panel.(Grid.Column)"
                                                 Value="0" />
+
+                                        <Setter Target="MediaReactions.(Grid.Column)"
+                                                Value="1" />
+                                        <Setter Target="MediaReactions.(Grid.ColumnSpan)"
+                                                Value="2" />
                                     </VisualState.Setters>
                                 </VisualState>
                                 <VisualState x:Name="MediaState">
@@ -173,7 +183,6 @@
                                                       Grid.Row="1">
                                 <controls:FormattedTextBlock x:Name="Message"
                                                              Foreground="{ThemeResource MessageForegroundBrush}"
-                                                             CodeBlockBackground="{ThemeResource MessageCodeBlockBackgroundBrush}"
                                                              AdjustLineEnding="True"
                                                              Margin="10,0,10,6"
                                                              Grid.Column="1"
@@ -184,7 +193,6 @@
                                         Grid.Row="3" />
 
                                 <local:ReactionsPanel x:Name="Reactions"
-                                                      x:Load="False"
                                                       HorizontalAlignment="Stretch"
                                                       VerticalAlignment="Bottom"
                                                       Padding="4,0,4,4" />
@@ -225,7 +233,11 @@
                                                FontFamily="{ThemeResource EmojiThemeFontFamily}"
                                                TextTrimming="CharacterEllipsis"
                                                TextWrapping="NoWrap"
-                                               FontWeight="SemiBold" />
+                                               FontWeight="SemiBold">
+                                        <Hyperlink UnderlineStyle="None">
+                                            <Run />
+                                        </Hyperlink>
+                                    </TextBlock>
                                     <controls:IdentityIcon x:Name="Identity"
                                                            VerticalAlignment="Bottom"
                                                            Margin="4,0,0,0"
@@ -249,9 +261,13 @@
                                            FontFamily="{ThemeResource EmojiThemeFontFamilyWithSymbols}"
                                            TextTrimming="CharacterEllipsis"
                                            TextWrapping="NoWrap"
-                                           FontWeight="SemiBold"
                                            Visibility="Collapsed"
-                                           Grid.Row="1" />
+                                           Grid.Row="1">
+                                    <Run />
+                                    <Hyperlink UnderlineStyle="None">
+                                        <Run FontWeight="SemiBold" />
+                                    </Hyperlink>
+                                </TextBlock>
 
                                 <controls:GlyphButton x:Name="PsaInfo"
                                                       x:Load="False"
@@ -260,10 +276,10 @@
                                                       Grid.Column="1"
                                                       Grid.RowSpan="2" />
 
-                                <local:MessageReference x:Name="Reply"
-                                                        x:Load="False"
-                                                        Grid.ColumnSpan="2"
-                                                        Grid.Row="3" />
+                                <local:MessageReply x:Name="Reply"
+                                                    x:Load="False"
+                                                    Grid.ColumnSpan="2"
+                                                    Grid.Row="3" />
                             </Grid>
 
                             <HyperlinkButton x:Name="Thread"
@@ -307,11 +323,14 @@
 
                         <controls:ReplyMarkupPanel x:Name="Markup"
                                                    x:Load="False"
+                                                   MaxWidth="{StaticResource MessageMaxWidth}"
                                                    Grid.Column="1"
                                                    Grid.Row="1" />
 
+                        
+                        <!-- TODO: find a way to get rid of this -->
                         <local:ReactionsPanel x:Name="MediaReactions"
-                                              x:Load="False"
+                                              MaxWidth="{StaticResource MessageMaxWidth}"
                                               HorizontalAlignment="Stretch"
                                               Padding="0,2,0,0"
                                               Grid.Column="1"

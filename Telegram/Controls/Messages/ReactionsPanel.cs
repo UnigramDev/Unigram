@@ -1,5 +1,5 @@
 //
-// Copyright Fela Ameghino 2015-2023
+// Copyright Fela Ameghino 2015-2024
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
@@ -12,27 +12,37 @@ using Telegram.Td.Api;
 using Telegram.ViewModels;
 using Windows.Foundation;
 using Windows.UI.Xaml;
+using Windows.UI.Xaml.Automation.Peers;
 using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media.Animation;
 
 namespace Telegram.Controls.Messages
 {
     public partial class ReactionsPanel : Panel, IDiffEqualityComparer<MessageReaction>
     {
-        private readonly Dictionary<string, WeakReference> _reactions = new();
-        private readonly Dictionary<long, WeakReference> _customReactions = new();
+        private readonly Dictionary<string, ReactionButton> _reactions = new();
+        private readonly Dictionary<long, ReactionButton> _customReactions = new();
 
         private long _chatId;
         private long _messageId;
 
         private MessageReaction[] _prevValue;
+        private bool _prevAsTags;
 
         public ReactionsPanel()
         {
+            TabFocusNavigation = KeyboardNavigationMode.Once;
+
             ChildrenTransitions = new TransitionCollection
             {
                 new RepositionThemeTransition()
             };
+        }
+
+        protected override AutomationPeer OnCreateAutomationPeer()
+        {
+            return new ReactionsPanelAutomationPeer(this);
         }
 
         public bool HasReactions => _reactions.Count > 0 || _customReactions.Count > 0;
@@ -40,7 +50,7 @@ namespace Telegram.Controls.Messages
         public async void UpdateMessageReactions(MessageViewModel message, bool animate = false)
         {
             var reactions = message?.InteractionInfo?.Reactions;
-            if (reactions == null || reactions.Count == 0 || message?.ChatId != _chatId || message?.Id != _messageId)
+            if (reactions == null || reactions.AreTags != _prevAsTags || message?.ChatId != _chatId || message?.Id != _messageId)
             {
                 _prevValue = null;
 
@@ -50,8 +60,13 @@ namespace Telegram.Controls.Messages
                 Children.Clear();
             }
 
-            if (reactions?.Count > 0)
+            if (reactions?.Reactions.Count > 0)
             {
+                if (Padding.Bottom > 0)
+                {
+                    Padding = new Thickness(reactions.AreTags ? 8 : 4, 0, 4, 4);
+                }
+
                 List<long> missingCustomEmoji = null;
                 List<string> missingEmoji = null;
 
@@ -90,7 +105,7 @@ namespace Telegram.Controls.Messages
 
                     if (oldItem.Type is ReactionTypeEmoji emoji)
                     {
-                        var required = UpdateButton<string, EmojiReaction>(_reactions, emoji.Emoji, message, oldItem, message.ClientService.TryGetCachedReaction, changed, index);
+                        var required = UpdateButton<string, EmojiReaction>(_reactions, emoji.Emoji, message, oldItem, reactions.AreTags, message.ClientService.TryGetCachedReaction, changed, index);
                         if (required)
                         {
                             missingEmoji ??= new List<string>();
@@ -99,7 +114,7 @@ namespace Telegram.Controls.Messages
                     }
                     else if (oldItem.Type is ReactionTypeCustomEmoji customEmoji)
                     {
-                        var required = UpdateButton<long, Sticker>(_customReactions, customEmoji.CustomEmojiId, message, oldItem, EmojiCache.TryGet, changed, index);
+                        var required = UpdateButton<long, Sticker>(_customReactions, customEmoji.CustomEmojiId, message, oldItem, reactions.AreTags, EmojiCache.TryGet, changed, index);
                         if (required)
                         {
                             missingCustomEmoji ??= new List<long>();
@@ -108,47 +123,59 @@ namespace Telegram.Controls.Messages
                     }
                 }
 
-                var prev = _prevValue ?? Array.Empty<MessageReaction>();
-                var diff = DiffUtil.CalculateDiff(prev, reactions, this, Constants.DiffOptions);
-
-                foreach (var step in diff.Steps)
+                if (_prevValue == null)
                 {
-                    if (step.Status == DiffStatus.Add)
+                    for (int i = 0; i < reactions.Reactions.Count; i++)
                     {
-                        UpdateItem(step.Items[0].NewValue, null, step.NewStartIndex);
-                    }
-                    else if (step.Status == DiffStatus.Move && step.OldStartIndex < Children.Count && step.NewStartIndex < Children.Count)
-                    {
-                        UpdateItem(step.Items[0].OldValue, step.Items[0].NewValue);
-                        Children.Move((uint)step.OldStartIndex, (uint)step.NewStartIndex);
-                    }
-                    else if (step.Status == DiffStatus.Remove && step.OldStartIndex < Children.Count)
-                    {
-                        if (step.Items[0].OldValue is MessageReaction oldReaction)
-                        {
-                            if (oldReaction.Type is ReactionTypeEmoji oldEmoji)
-                            {
-                                _reactions.Remove(oldEmoji.Emoji);
-                            }
-                            else if (oldReaction.Type is ReactionTypeCustomEmoji oldCustomEmoji)
-                            {
-                                _customReactions.Remove(oldCustomEmoji.CustomEmojiId);
-                            }
-                        }
-
-                        Children.RemoveAt(step.OldStartIndex);
+                        UpdateItem(reactions.Reactions[i], null, i);
                     }
                 }
-
-                foreach (var item in diff.NotMovedItems)
+                else
                 {
-                    UpdateItem(item.OldValue, item.NewValue);
+                    // PERF: run diff asynchronously?
+                    var prev = _prevValue ?? Array.Empty<MessageReaction>();
+                    var diff = DiffUtil.CalculateDiff(prev, reactions.Reactions, this, Constants.DiffOptions);
+
+                    foreach (var step in diff.Steps)
+                    {
+                        if (step.Status == DiffStatus.Add)
+                        {
+                            UpdateItem(step.Items[0].NewValue, null, step.NewStartIndex);
+                        }
+                        else if (step.Status == DiffStatus.Move && step.OldStartIndex < Children.Count && step.NewStartIndex < Children.Count)
+                        {
+                            UpdateItem(step.Items[0].OldValue, step.Items[0].NewValue);
+                            Children.Move((uint)step.OldStartIndex, (uint)step.NewStartIndex);
+                        }
+                        else if (step.Status == DiffStatus.Remove && step.OldStartIndex < Children.Count)
+                        {
+                            if (step.Items[0].OldValue is MessageReaction oldReaction)
+                            {
+                                if (oldReaction.Type is ReactionTypeEmoji oldEmoji)
+                                {
+                                    _reactions.Remove(oldEmoji.Emoji);
+                                }
+                                else if (oldReaction.Type is ReactionTypeCustomEmoji oldCustomEmoji)
+                                {
+                                    _customReactions.Remove(oldCustomEmoji.CustomEmojiId);
+                                }
+                            }
+
+                            Children.RemoveAt(step.OldStartIndex);
+                        }
+                    }
+
+                    foreach (var item in diff.NotMovedItems)
+                    {
+                        UpdateItem(item.OldValue, item.NewValue);
+                    }
                 }
 
                 _chatId = message?.ChatId ?? 0;
                 _messageId = message?.Id ?? 0;
 
-                _prevValue = reactions?.ToArray();
+                _prevValue = reactions?.Reactions.ToArray();
+                _prevAsTags = reactions?.AreTags ?? false;
 
                 if (missingCustomEmoji != null)
                 {
@@ -163,7 +190,7 @@ namespace Telegram.Controls.Messages
                             }
 
                             EmojiCache.AddOrUpdate(sticker);
-                            UpdateButton<long, Sticker>(_customReactions, customEmoji.CustomEmojiId, message, sticker, Animate);
+                            UpdateButton<long, Sticker>(_customReactions, customEmoji.CustomEmojiId, message, sticker, reactions.AreTags, Animate);
                         }
                     }
                 }
@@ -175,7 +202,7 @@ namespace Telegram.Controls.Messages
                         var response = await message.ClientService.SendAsync(new GetEmojiReaction(emoji));
                         if (response is EmojiReaction reaction)
                         {
-                            UpdateButton<string, EmojiReaction>(_reactions, emoji, message, reaction, Animate);
+                            UpdateButton<string, EmojiReaction>(_reactions, emoji, message, reaction, reactions.AreTags, Animate);
                         }
                     }
                 }
@@ -184,10 +211,9 @@ namespace Telegram.Controls.Messages
 
         delegate bool TryGetValue<TKey, T>(TKey key, out T value);
 
-        private void UpdateButton<T, TValue>(IDictionary<T, WeakReference> cache, T key, MessageViewModel message, object value, Func<ReactionType, bool> animate)
+        private void UpdateButton<T, TValue>(IDictionary<T, ReactionButton> cache, T key, MessageViewModel message, object value, bool isTag, Func<ReactionType, bool> animate)
         {
-            if (cache.TryGetValue(key, out WeakReference reference)
-                && reference.Target is ReactionButton button)
+            if (cache.TryGetValue(key, out ReactionButton button))
             {
                 if (value is EmojiReaction reaction)
                 {
@@ -205,11 +231,11 @@ namespace Telegram.Controls.Messages
             }
         }
 
-        private bool UpdateButton<T, TValue>(IDictionary<T, WeakReference> cache, T key, MessageViewModel message, MessageReaction item, TryGetValue<T, TValue> tryGet, bool animate, int index)
+        private bool UpdateButton<T, TValue>(IDictionary<T, ReactionButton> cache, T key, MessageViewModel message, MessageReaction item, bool isTag, TryGetValue<T, TValue> tryGet, bool animate, int index)
         {
             var required = false;
 
-            var button = GetOrCreateButton(cache, key, message, index);
+            var button = GetOrCreateButton(cache, key, isTag, index);
             if (button.EmojiReaction != null)
             {
                 button.SetReaction(message, item, button.EmojiReaction);
@@ -245,16 +271,18 @@ namespace Telegram.Controls.Messages
             return required;
         }
 
-        private ReactionButton GetOrCreateButton<T>(IDictionary<T, WeakReference> cache, T key, MessageViewModel message, int index)
+        private ReactionButton GetOrCreateButton<T>(IDictionary<T, ReactionButton> cache, T key, bool isTag, int index)
         {
-            if (cache.TryGetValue(key, out WeakReference reference)
-                && reference.Target is ReactionButton button)
+            if (cache.TryGetValue(key, out ReactionButton button))
             {
                 return button;
             }
 
-            button = new ReactionButton();
-            cache[key] = new WeakReference(button);
+            button = isTag
+                ? new ReactionAsTagButton()
+                : new ReactionButton();
+
+            cache[key] = button;
             Children.Insert(Math.Min(index, Children.Count), button);
 
             return button;
@@ -278,18 +306,17 @@ namespace Telegram.Controls.Messages
 
         protected override Size MeasureOverride(Size availableSize)
         {
-            Logger.Debug();
-
             var totalMeasure = new Size();
             var parentMeasure = new Size(availableSize.Width, availableSize.Height);
             var lineMeasure = new Size(Padding.Left, 0);
+            var count = 0;
 
-            void Measure(Size currentMeasure)
+            void Measure(double currentWidth, double currentHeight)
             {
-                if (parentMeasure.Width > currentMeasure.Width + lineMeasure.Width)
+                if (parentMeasure.Width > currentWidth + lineMeasure.Width)
                 {
-                    lineMeasure.Width += currentMeasure.Width + Spacing;
-                    lineMeasure.Height = Math.Max(lineMeasure.Height, currentMeasure.Height);
+                    lineMeasure.Width += currentWidth + Spacing;
+                    lineMeasure.Height = Math.Max(lineMeasure.Height, currentHeight);
                 }
                 else
                 {
@@ -299,18 +326,19 @@ namespace Telegram.Controls.Messages
                     totalMeasure.Height += lineMeasure.Height + Spacing;
 
                     // if the next new row still can handle more controls
-                    if (parentMeasure.Width > currentMeasure.Width)
+                    if (parentMeasure.Width > currentWidth)
                     {
                         // set lineMeasure initial values to the currentMeasure to be calculated later on the new loop
-                        lineMeasure = currentMeasure;
+                        lineMeasure.Width = currentWidth;
+                        lineMeasure.Height = currentHeight;
                     }
 
                     // the control will take one row alone
                     else
                     {
                         // validate the new control measures
-                        totalMeasure.Width = Math.Max(currentMeasure.Width, totalMeasure.Width);
-                        totalMeasure.Height += currentMeasure.Height + Spacing;
+                        totalMeasure.Width = Math.Max(currentWidth, totalMeasure.Width);
+                        totalMeasure.Height += currentHeight + Spacing;
 
                         // add new empty line
                         lineMeasure = new Size(Padding.Left, 0);
@@ -321,12 +349,17 @@ namespace Telegram.Controls.Messages
             foreach (var child in Children)
             {
                 child.Measure(availableSize);
-                Measure(new Size(child.DesiredSize.Width, child.DesiredSize.Height));
+                Measure(child.DesiredSize.Width, child.DesiredSize.Height);
+
+                count++;
             }
 
-            if (Children.Count > 0)
+            if (count > 0)
             {
-                Measure(Footer);
+                var footerWidth = Math.Max(Footer.Width - 8, 0);
+                var footerHeight = Footer.Height;
+
+                Measure(footerWidth, footerHeight);
 
                 // update value with the last line
                 // if the the last loop is(parentMeasure.U > currentMeasure.U + lineMeasure.U) the total isn't calculated then calculate it
@@ -337,17 +370,20 @@ namespace Telegram.Controls.Messages
                 totalMeasure.Height += lineMeasure.Height + Padding.Bottom + Padding.Top;
             }
 
-            return new Size(totalMeasure.Width, totalMeasure.Height);
+            if (count > 0)
+            {
+                return new Size(totalMeasure.Width, totalMeasure.Height);
+            }
+
+            return new Size(0, 0);
         }
 
         /// <inheritdoc />
         protected override Size ArrangeOverride(Size finalSize)
         {
-            Logger.Debug();
-
             var parentMeasure = new Size(finalSize.Width, finalSize.Height);
             var position = new Size(Padding.Left, Padding.Top);
-            var count = 1;
+            var count = 0;
 
             double currentV = 0;
             foreach (var child in Children)
@@ -371,6 +407,19 @@ namespace Telegram.Controls.Messages
             }
 
             return finalSize;
+        }
+    }
+
+    public class ReactionsPanelAutomationPeer : FrameworkElementAutomationPeer
+    {
+        public ReactionsPanelAutomationPeer(ReactionsPanel owner)
+            : base(owner)
+        {
+        }
+
+        protected override AutomationControlType GetAutomationControlTypeCore()
+        {
+            return AutomationControlType.List;
         }
     }
 }

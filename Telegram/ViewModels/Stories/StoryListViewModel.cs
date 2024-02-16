@@ -1,4 +1,10 @@
-﻿using System;
+﻿//
+// Copyright Fela Ameghino 2015-2024
+//
+// Distributed under the GNU General Public License v3.0. (See accompanying
+// file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
+//
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
@@ -6,6 +12,7 @@ using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
 using System.Threading.Tasks;
 using Telegram.Common;
+using Telegram.Controls;
 using Telegram.Controls.Stories;
 using Telegram.Native;
 using Telegram.Navigation;
@@ -29,8 +36,8 @@ namespace Telegram.ViewModels.Stories
         public StoryListViewModel(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator, StoryList storyList)
             : base(clientService, settingsService, aggregator)
         {
-            _storageService = TLContainer.Current.Resolve<IStorageService>(clientService.SessionId);
-            _translateService = TLContainer.Current.Resolve<ITranslateService>(clientService.SessionId);
+            _storageService = TypeResolver.Current.Resolve<IStorageService>(clientService.SessionId);
+            _translateService = TypeResolver.Current.Resolve<ITranslateService>(clientService.SessionId);
 
             Items = new ItemsCollection(clientService, aggregator, this, storyList);
         }
@@ -38,8 +45,8 @@ namespace Telegram.ViewModels.Stories
         public StoryListViewModel(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator, params ActiveStoriesViewModel[] items)
             : base(clientService, settingsService, aggregator)
         {
-            _storageService = TLContainer.Current.Resolve<IStorageService>(clientService.SessionId);
-            _translateService = TLContainer.Current.Resolve<ITranslateService>(clientService.SessionId);
+            _storageService = TypeResolver.Current.Resolve<IStorageService>(clientService.SessionId);
+            _translateService = TypeResolver.Current.Resolve<ITranslateService>(clientService.SessionId);
 
             Items = new ObservableCollection<ActiveStoriesViewModel>(items);
         }
@@ -103,11 +110,11 @@ namespace Telegram.ViewModels.Stories
 
             if (ClientService.TryGetUser(activeStories.Chat, out User user))
             {
-                Window.Current.ShowTeachingTip(string.Format(settings.MuteStories ? Strings.NotificationsStoryMutedHint : Strings.NotificationsStoryUnmutedHint, user.FirstName));
+                ToastPopup.Show(string.Format(settings.MuteStories ? Strings.NotificationsStoryMutedHint : Strings.NotificationsStoryUnmutedHint, user.FirstName));
             }
             else
             {
-                Window.Current.ShowTeachingTip(string.Format(settings.MuteStories ? Strings.NotificationsStoryMutedHint : Strings.NotificationsStoryUnmutedHint, activeStories.Chat.Title));
+                ToastPopup.Show(string.Format(settings.MuteStories ? Strings.NotificationsStoryMutedHint : Strings.NotificationsStoryUnmutedHint, activeStories.Chat.Title));
             }
         }
 
@@ -117,11 +124,11 @@ namespace Telegram.ViewModels.Stories
 
             if (ClientService.TryGetUser(activeStories.Chat, out User user))
             {
-                Window.Current.ShowTeachingTip(string.Format(Strings.StoriesMovedToContacts, user.FirstName));
+                ToastPopup.Show(string.Format(Strings.StoriesMovedToContacts, user.FirstName));
             }
             else
             {
-                Window.Current.ShowTeachingTip(string.Format(Strings.StoriesMovedToContacts, activeStories.Chat.Title));
+                ToastPopup.Show(string.Format(Strings.StoriesMovedToContacts, activeStories.Chat.Title));
             }
         }
 
@@ -131,11 +138,11 @@ namespace Telegram.ViewModels.Stories
 
             if (ClientService.TryGetUser(activeStories.Chat, out User user))
             {
-                Window.Current.ShowTeachingTip(string.Format(Strings.StoriesMovedToDialogs, user.FirstName));
+                ToastPopup.Show(string.Format(Strings.StoriesMovedToDialogs, user.FirstName));
             }
             else
             {
-                Window.Current.ShowTeachingTip(string.Format(Strings.StoriesMovedToDialogs, activeStories.Chat.Title));
+                ToastPopup.Show(string.Format(Strings.StoriesMovedToDialogs, activeStories.Chat.Title));
             }
         }
 
@@ -147,7 +154,7 @@ namespace Telegram.ViewModels.Stories
         public Task TranslateStoryAsync(StoryViewModel story)
         {
             var language = LanguageIdentification.IdentifyLanguage(story.Caption.Text);
-            var popup = new TranslatePopup(_translateService, story.Caption.Text, language, LocaleService.Current.CurrentCulture.TwoLetterISOLanguageName, !story.CanBeForwarded)
+            var popup = new TranslatePopup(_translateService, story.Caption.Text, language, Settings.Translate.To, !story.CanBeForwarded)
             {
                 RequestedTheme = ElementTheme.Dark
             };
@@ -171,7 +178,7 @@ namespace Telegram.ViewModels.Stories
         {
             ClientService.Send(new ToggleStoryIsPinned(story.ChatId, story.StoryId, !story.IsPinned));
 
-            Window.Current.ShowTeachingTip(story.IsPinned ? Strings.StoryRemovedFromProfile : Strings.StorySavedToProfile);
+            ToastPopup.Show(story.IsPinned ? Strings.StoryRemovedFromProfile : Strings.StorySavedToProfile);
         }
 
         public async Task ReportStoryAsync(StoryViewModel story)
@@ -208,7 +215,7 @@ namespace Telegram.ViewModels.Stories
             viewModel.NavigationService = NavigationService;
 
             var window = new StoriesWindow();
-            window.Update(viewModel, activeStories, StoryOrigin.ProfilePhoto, origin, closing);
+            window.Update(viewModel, activeStories, StoryOpenOrigin.ProfilePhoto, origin, closing);
             _ = window.ShowAsync();
         }
 

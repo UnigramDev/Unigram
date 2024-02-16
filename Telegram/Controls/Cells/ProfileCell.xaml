@@ -41,6 +41,30 @@
                                  Height="36" />
     </controls:ActiveStoriesSegments>
 
+    <Border x:Name="RestrictsNewChats"
+            x:Load="False"
+            Width="36"
+            Height="36"
+            Margin="0,0,8,0"
+            Grid.RowSpan="2">
+        <Border HorizontalAlignment="Right"
+                VerticalAlignment="Bottom"
+                Background="{ThemeResource PremiumObliqueGradientBrush}"
+                BorderBrush="{ThemeResource SolidBackgroundFillColorBaseBrush}"
+                BorderThickness="2"
+                CornerRadius="10"
+                Width="20"
+                Height="20"
+                Margin="0,0,-2,-2">
+            <TextBlock Text="&#xE9DD;"
+                       Foreground="#FFFFFF"
+                       FontFamily="{StaticResource SymbolThemeFontFamily}"
+                       FontSize="12"
+                       HorizontalAlignment="Center"
+                       VerticalAlignment="Center" />
+        </Border>
+    </Border>
+
     <Grid x:Name="TitlePanel"
           Grid.Column="1"
           HorizontalAlignment="Left"

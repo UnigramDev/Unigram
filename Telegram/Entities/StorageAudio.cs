@@ -1,5 +1,5 @@
 //
-// Copyright Fela Ameghino 2015-2023
+// Copyright Fela Ameghino 2015-2024
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
@@ -27,7 +27,7 @@ namespace Telegram.Entities
 
         public int Duration { get; private set; }
 
-        public static new async Task<StorageAudio> CreateAsync(StorageFile file)
+        public static async Task<StorageAudio> CreateAsync(StorageFile file, BasicProperties basic)
         {
             try
             {
@@ -36,7 +36,6 @@ namespace Telegram.Entities
                     return null;
                 }
 
-                var basic = await file.GetBasicPropertiesAsync();
                 var audio = await file.Properties.GetMusicPropertiesAsync();
 
                 return new StorageAudio(file, basic, audio);

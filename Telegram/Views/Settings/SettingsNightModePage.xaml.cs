@@ -1,5 +1,5 @@
 //
-// Copyright Fela Ameghino 2015-2023
+// Copyright Fela Ameghino 2015-2024
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
@@ -89,8 +89,7 @@ namespace Telegram.Views.Settings
 
         private void Theme_ContextRequested(UIElement sender, ContextRequestedEventArgs args)
         {
-            var element = sender as FrameworkElement;
-            var theme = ScrollingHost.ItemFromContainer(element) as ThemeInfoBase;
+            var theme = ScrollingHost.ItemFromContainer(sender) as ThemeInfoBase;
 
             var flyout = new MenuFlyout();
             flyout.CreateFlyoutItem(ViewModel.CreateTheme, theme, Strings.CreateNewThemeMenu, Icons.Color);
@@ -103,7 +102,7 @@ namespace Telegram.Views.Settings
                 flyout.CreateFlyoutItem(ViewModel.DeleteTheme, custom, Strings.Delete, Icons.Delete, destructive: true);
             }
 
-            args.ShowAt(flyout, element);
+            flyout.ShowAt(sender, args);
         }
 
         #endregion

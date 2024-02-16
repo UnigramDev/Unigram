@@ -1,5 +1,5 @@
 //
-// Copyright Fela Ameghino 2015-2023
+// Copyright Fela Ameghino 2015-2024
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
@@ -47,7 +47,7 @@ namespace Telegram.Controls.Cells
                 ScreenSharing.Text = Icons.SmallScreencastFilled;
             }
 
-            var header = ElementCompositionPreview.GetElementVisual(Header);
+            var header = ElementComposition.GetElementVisual(Header);
             header.Opacity = 0;
         }
 
@@ -149,7 +149,7 @@ namespace Telegram.Controls.Cells
             //anim.InsertKeyFrame(0, show ? 0 : 1);
             anim.InsertKeyFrame(1, show ? 1 : 0);
 
-            var info = ElementCompositionPreview.GetElementVisual(Info);
+            var info = ElementComposition.GetElementVisual(Info);
             info.StartAnimation("Opacity", anim);
 
             if (IsSelected || !show)
@@ -184,7 +184,7 @@ namespace Telegram.Controls.Cells
             var anim = Window.Current.Compositor.CreateScalarKeyFrameAnimation();
             anim.InsertKeyFrame(1, show ? 1 : 0);
 
-            var header = ElementCompositionPreview.GetElementVisual(Header);
+            var header = ElementComposition.GetElementVisual(Header);
             header.StartAnimation("Opacity", anim);
         }
 
@@ -201,7 +201,7 @@ namespace Telegram.Controls.Cells
 
             if (show)
             {
-                var paused = ElementCompositionPreview.GetElementVisual(PausedRoot);
+                var paused = ElementComposition.GetElementVisual(PausedRoot);
 
                 var graphicsEffect = new GaussianBlurEffect
                 {
@@ -252,8 +252,6 @@ namespace Telegram.Controls.Cells
 
         protected override Size ArrangeOverride(Size finalSize)
         {
-            Logger.Debug();
-
             if (_pausedVisual != null)
             {
                 _pausedVisual.Size = finalSize.ToVector2();

@@ -1,5 +1,5 @@
 //
-// Copyright Fela Ameghino 2015-2023
+// Copyright Fela Ameghino 2015-2024
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
@@ -67,7 +67,7 @@ namespace Telegram.Controls.Drawers
             _zoomer.DownloadFile = fileId => ViewModel.ClientService.DownloadFile(fileId, 32);
             _zoomer.SessionId = () => ViewModel.ClientService.SessionId;
 
-            ElementCompositionPreview.GetElementVisual(this).Clip = Window.Current.Compositor.CreateInsetClip();
+            ElementComposition.GetElementVisual(this).Clip = Window.Current.Compositor.CreateInsetClip();
 
             var header = DropShadowEx.Attach(Separator);
             header.Clip = header.Compositor.CreateInsetClip(0, 40, 0, -40);
@@ -75,7 +75,7 @@ namespace Telegram.Controls.Drawers
             var debouncer = new EventDebouncer<TextChangedEventArgs>(Constants.TypingTimeout, handler => SearchField.TextChanged += new TextChangedEventHandler(handler));
             debouncer.Invoked += (s, args) =>
             {
-                ViewModel.Search(SearchField.Text);
+                ViewModel?.Search(SearchField.Text);
             };
         }
 
@@ -114,7 +114,7 @@ namespace Telegram.Controls.Drawers
         {
             if (_isActive)
             {
-                _handler.LoadVisibleItems(false);
+                _handler.LoadVisibleItems();
             }
         }
 
@@ -164,6 +164,8 @@ namespace Telegram.Controls.Drawers
 
             var animated = content.Child as AnimatedImage;
             animated.Source = new DelayedFileSource(ViewModel.ClientService, file);
+
+            args.Handled = true;
         }
 
         private void OnContextRequested(UIElement sender, ContextRequestedEventArgs args)

@@ -1,5 +1,5 @@
 //
-// Copyright Fela Ameghino 2015-2023
+// Copyright Fela Ameghino 2015-2024
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
@@ -15,6 +15,7 @@ using Windows.Devices.Input;
 using Windows.Foundation;
 using Windows.UI;
 using Windows.UI.Core;
+using Windows.UI.Core.Preview;
 using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -124,12 +125,10 @@ namespace Telegram.Controls
             Current = this;
             Margin = new Thickness();
 
-#if DEBUG
-            if (DataContext is INavigable navigable && navigable.NavigationService == null)
+            if (Constants.DEBUG && DataContext is INavigable navigable && navigable.NavigationService == null)
             {
                 throw new InvalidOperationException();
             }
-#endif
 
             var previous = _callback;
 
@@ -167,12 +166,24 @@ namespace Telegram.Controls
             _applicationView = ApplicationView.GetForCurrentView();
             OnVisibleBoundsChanged(_applicationView, null);
 
+            SystemNavigationManagerPreview.GetForCurrentView().CloseRequested += OnCloseRequested;
+
             Padding = new Thickness(0, 40, 0, 0);
+
+            Logger.Info();
 
             _closing = false;
             _popupHost.IsOpen = true;
 
             return await _callback.Task;
+        }
+
+        private void OnCloseRequested(object sender, SystemNavigationCloseRequestedPreviewEventArgs e)
+        {
+            var args = new BackRequestedRoutedEventArgs();
+            OnBackRequested(args);
+
+            e.Handled = args.Handled;
         }
 
         private void DisplayRegion_Changed(Rect sender, object args)
@@ -232,6 +243,8 @@ namespace Telegram.Controls
             {
                 _applicationView.VisibleBoundsChanged -= OnVisibleBoundsChanged;
             }
+
+            SystemNavigationManagerPreview.GetForCurrentView().CloseRequested -= OnCloseRequested;
         }
 
         public void OnBackRequested(BackRequestedRoutedEventArgs e)
@@ -289,6 +302,8 @@ namespace Telegram.Controls
                 return;
             }
 
+            Logger.Info();
+
             _result = result;
             _popupHost.IsOpen = false;
 
@@ -334,8 +349,6 @@ namespace Telegram.Controls
 
         private void OnSizeChanged(object sender, WindowSizeChangedEventArgs e)
         {
-            Logger.Debug();
-
             //UpdateViewBase();
         }
 

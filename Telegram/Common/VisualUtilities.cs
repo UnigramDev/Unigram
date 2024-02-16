@@ -1,11 +1,14 @@
 //
-// Copyright Fela Ameghino 2015-2023
+// Copyright Fela Ameghino 2015-2024
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
 using System;
+using System.Collections.Generic;
 using System.Numerics;
+using System.Runtime.CompilerServices;
+using System.Threading.Tasks;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Hosting;
 using Windows.UI.Xaml.Media;
@@ -24,7 +27,7 @@ namespace Telegram.Common
                 return;
             }
 
-            var visual = ElementCompositionPreview.GetElementVisual(inner);
+            var visual = ElementComposition.GetElementVisual(inner);
 
             var animation = visual.Compositor.CreateScalarKeyFrameAnimation();
             animation.Duration = TimeSpan.FromMilliseconds(50 * 6);
@@ -68,7 +71,7 @@ namespace Telegram.Common
             }
 
             var scale = GetIsScaleEnabled(d);
-            var visual = ElementCompositionPreview.GetElementVisual(sender);
+            var visual = ElementComposition.GetElementVisual(sender);
 
             sender.Visibility = Visibility.Visible;
 
@@ -115,5 +118,104 @@ namespace Telegram.Common
             DependencyProperty.RegisterAttached("IsScaleEnabled", typeof(bool), typeof(UIElement), new PropertyMetadata(true));
 
         #endregion
+
+
+        static class DelegateKeeper
+        {
+            private static ConditionalWeakTable<object, List<Delegate>> cwt = new();
+            public static void KeepAlive(Delegate d) => cwt.GetOrCreateValue(d?.Target ?? throw new ArgumentNullException(nameof(d))).Add(d);
+        }
+
+        public static void QueueCallbackForCompositionRendering(Action callback)
+        {
+            DelegateKeeper.KeepAlive(callback);
+
+            var weak = new WeakReference(callback);
+            void handler(object sender, object e)
+            {
+                CompositionTarget.Rendering -= handler;
+
+                if (weak.Target is Action callback)
+                {
+                    callback();
+                }
+            }
+
+            try
+            {
+                CompositionTarget.Rendering += handler;
+            }
+            catch
+            {
+                // Bla bla
+            }
+        }
+
+        public static Task WaitForCompositionRenderingAsync()
+        {
+            var tsc = new TaskCompletionSource<bool>();
+            void handler(object sender, object e)
+            {
+                CompositionTarget.Rendering -= handler;
+                tsc.SetResult(true);
+            }
+
+            try
+            {
+                CompositionTarget.Rendering += handler;
+            }
+            catch
+            {
+                // Bla bla
+            }
+
+            return tsc.Task;
+        }
+
+        public static void QueueCallbackForCompositionRendered(Action callback)
+        {
+            DelegateKeeper.KeepAlive(callback);
+
+            var weak = new WeakReference(callback);
+            void handler(object sender, object e)
+            {
+                CompositionTarget.Rendered -= handler;
+
+                if (weak.Target is Action callback)
+                {
+                    callback();
+                }
+            }
+
+            try
+            {
+                CompositionTarget.Rendered += handler;
+            }
+            catch
+            {
+                // Bla bla
+            }
+        }
+
+        public static Task WaitForCompositionRenderedAsync()
+        {
+            var tsc = new TaskCompletionSource<bool>();
+            void handler(object sender, object e)
+            {
+                CompositionTarget.Rendered -= handler;
+                tsc.SetResult(true);
+            }
+
+            try
+            {
+                CompositionTarget.Rendered += handler;
+            }
+            catch
+            {
+                // Bla bla
+            }
+
+            return tsc.Task;
+        }
     }
 }

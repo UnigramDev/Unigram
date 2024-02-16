@@ -3,7 +3,9 @@ namespace Telegram.Native
     [default_interface]
     runtimeclass BufferSurface : Windows.Storage.Streams.IBuffer
     {
+        [default_overload]
         static Windows.Storage.Streams.IBuffer Create(UInt32 size);
+        static Windows.Storage.Streams.IBuffer Create(byte[] data);
 
         static void Copy(Windows.Storage.Streams.IBuffer source, Windows.Storage.Streams.IBuffer destination);
     }

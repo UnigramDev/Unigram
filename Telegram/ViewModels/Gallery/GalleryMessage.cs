@@ -1,5 +1,5 @@
 //
-// Copyright Fela Ameghino 2015-2023
+// Copyright Fela Ameghino 2015-2024
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
@@ -24,6 +24,11 @@ namespace Telegram.ViewModels.Gallery
             {
                 _hasProtectedContent = chat.Type is ChatTypeSecret || chat.HasProtectedContent;
             }
+        }
+
+        public GalleryMessage(IClientService clientService, MessageWithOwner message)
+            : this(clientService, message.Get())
+        {
         }
 
         public Message Message => _message;
@@ -80,7 +85,7 @@ namespace Telegram.ViewModels.Gallery
             }
         }
 
-        public override string Caption => _message.GetCaption()?.Text;
+        public override FormattedText Caption => _message.GetCaption();
         public override int Date => _message.Date;
 
         public override bool IsVideo
@@ -180,6 +185,8 @@ namespace Telegram.ViewModels.Gallery
             MessageVideoNote videoNote => videoNote.IsSecret,
             _ => false
         };
+
+        public MessageSelfDestructType SelfDestructType => _message.SelfDestructType;
 
         public override int Duration
         {

@@ -1,5 +1,5 @@
 //
-// Copyright Fela Ameghino 2015-2023
+// Copyright Fela Ameghino 2015-2024
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
@@ -243,12 +243,12 @@ namespace Telegram.Common
             var result = new List<object>();
             var inputLanguage = NativeUtils.GetKeyboardCulture();
 
-            var response = await clientService.SendAsync(new SearchEmojis(query, false, new[] { inputLanguage }));
-            if (response is Emojis suggestions)
+            var response = await clientService.SendAsync(new SearchEmojis(query, new[] { inputLanguage }));
+            if (response is EmojiKeywords suggestions)
             {
                 if (clientService.IsPremium)
                 {
-                    var stickers = await SearchAsync(clientService, suggestions.EmojisValue);
+                    var stickers = await SearchAsync(clientService, suggestions.EmojiKeywordsValue.DistinctBy(x => x.Emoji).Select(x => x.Emoji));
 
                     foreach (var item in stickers)
                     {
@@ -258,16 +258,16 @@ namespace Telegram.Common
 
                 if (mode == EmojiDrawerMode.Chat)
                 {
-                    foreach (var item in suggestions.EmojisValue)
+                    foreach (var item in suggestions.EmojiKeywordsValue.DistinctBy(x => x.Emoji))
                     {
-                        var emoji = item;
+                        var emoji = item.Emoji;
                         if (EmojiGroupInternal._skinEmojis.Contains(emoji) || EmojiGroupInternal._skinEmojis.Contains(emoji.TrimEnd('\uFE0F')))
                         {
                             result.Add(new EmojiSkinData(emoji, skin));
                         }
                         else
                         {
-                            result.Add(new EmojiData(item));
+                            result.Add(new EmojiData(item.Emoji));
                         }
                     }
                 }
@@ -276,7 +276,7 @@ namespace Telegram.Common
             return result;
         }
 
-        public static async Task<IList<StickerViewModel>> SearchAsync(IClientService clientService, IList<string> emojis)
+        public static async Task<IList<StickerViewModel>> SearchAsync(IClientService clientService, IEnumerable<string> emojis)
         {
             var result = new List<StickerViewModel>();
             var query = string.Join(" ", emojis);
@@ -430,6 +430,10 @@ namespace Telegram.Common
                     }
 
                     if (i + 2 < text.Length && IsSkinModifierCharacter(text, i + 1))
+                    {
+                        last += text[i];
+                    }
+                    else if (i + 1 < text.Length && text[i + 1] == 0x200D)
                     {
                         last += text[i];
                     }

@@ -1,5 +1,5 @@
 //
-// Copyright Fela Ameghino 2015-2023
+// Copyright Fela Ameghino 2015-2024
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
@@ -22,7 +22,7 @@ using Windows.UI.Xaml.Media.Imaging;
 
 namespace Telegram.Controls.Chats
 {
-    public class ChatBackgroundPresenter : Control
+    public class ChatBackgroundPresenter : ControlEx
     {
         private readonly ChatBackgroundFreeform _freeform = new();
         private readonly DispatcherTimer _freeformTimer;
@@ -44,15 +44,22 @@ namespace Telegram.Controls.Chats
 
         private double _rasterizationScale;
 
+        private Border Canvas;
+
         public ChatBackgroundPresenter()
         {
             DefaultStyleKey = typeof(ChatBackgroundPresenter);
-            Loaded += OnLoaded;
-            Unloaded += OnUnloaded;
+            Connected += OnLoaded;
+            Disconnected += OnUnloaded;
 
             _freeformTimer = new DispatcherTimer();
             _freeformTimer.Interval = TimeSpan.FromMilliseconds(500 / 30d);
             _freeformTimer.Tick += OnTick;
+        }
+
+        protected override void OnApplyTemplate()
+        {
+            Canvas = GetTemplateChild(nameof(Canvas)) as Border;
         }
 
         private void OnLoaded(object sender, RoutedEventArgs e)
@@ -63,14 +70,16 @@ namespace Telegram.Controls.Chats
         private void OnUnloaded(object sender, RoutedEventArgs e)
         {
             XamlRoot.Changed -= OnRasterizationScaleChanged;
+
+            UpdateManager.Unsubscribe(this, ref _fileToken, true);
         }
 
         private void OnRasterizationScaleChanged(XamlRoot sender, XamlRootChangedEventArgs args)
         {
             var value = sender.RasterizationScale;
-            if (value != _rasterizationScale && _background?.Type is BackgroundTypePattern && _background?.Document?.DocumentValue != null)
+            if (value != _rasterizationScale && _background?.Type is BackgroundTypePattern pattern && _background?.Document?.DocumentValue != null)
             {
-                UpdatePattern(_background.Document.DocumentValue, value);
+                UpdatePattern(pattern, _background.Document.DocumentValue, value);
             }
         }
 
@@ -110,6 +119,8 @@ namespace Telegram.Controls.Chats
         {
             UpdateManager.Unsubscribe(this, ref _fileToken, true);
 
+            var clear = _background == null;
+
             _background = background;
 
             if (background.Type is BackgroundTypeFill typeFill)
@@ -140,9 +151,14 @@ namespace Telegram.Controls.Chats
 
                 _wallpaperPath = null;
 
-                Background = typePattern.ToBrush(_freeform.Phase);
-                Foreground = null;
-                BorderBrush = null;
+                if (clear)
+                {
+                    Background = typePattern.ToBrush(_freeform.Phase);
+                    Foreground = null;
+                    BorderBrush = _negative
+                        ? new SolidColorBrush(Colors.Black)
+                        : null;
+                }
 
                 UpdateBlurred(false);
 
@@ -162,7 +178,7 @@ namespace Telegram.Controls.Chats
 
                 if (file.Local.IsDownloadingCompleted)
                 {
-                    UpdatePattern(file, WindowContext.Current.RasterizationScale);
+                    UpdatePattern(typePattern, file, WindowContext.Current.RasterizationScale);
                 }
                 else if (clientService != null)
                 {
@@ -182,9 +198,6 @@ namespace Telegram.Controls.Chats
 
                 _pattern = null;
                 _patternPath = null;
-
-                Foreground = null;
-                BorderBrush = null;
 
                 UpdateBlurred(typeWallpaper.IsBlurred);
 
@@ -216,6 +229,19 @@ namespace Telegram.Controls.Chats
                     UpdateManager.Subscribe(this, clientService, file, ref _fileToken, UpdateFile, true);
                 }
             }
+            else if (background.Type is BackgroundTypeChatTheme typeChatTheme)
+            {
+                var chatTheme = clientService.GetChatTheme(typeChatTheme.ThemeName);
+                if (chatTheme != null)
+                {
+                    // TODO: support light/dark changed
+                    background = ActualTheme == ElementTheme.Light
+                        ? chatTheme.LightSettings?.Background
+                        : chatTheme.DarkSettings?.Background;
+
+                    UpdateSource(clientService, background, thumbnail);
+                }
+            }
         }
 
         private void UpdateWallpaper(File file)
@@ -244,7 +270,7 @@ namespace Telegram.Controls.Chats
             }
         }
 
-        private async void UpdatePattern(File file, double scale)
+        private async void UpdatePattern(BackgroundTypePattern pattern, File file, double scale)
         {
             if (_pattern == null || _patternPath != file.Local.Path || _rasterizationScale != scale)
             {
@@ -269,10 +295,14 @@ namespace Telegram.Controls.Chats
                 {
                     s.LoadCompleted -= handler;
 
-                    if (_backgroundId == file.Id)
+                    if (_backgroundId == file.Id && !IsDisconnected)
                     {
                         BorderBrush = null;
-                        UpdatePattern();
+                        UpdatePattern(pattern);
+                    }
+                    else
+                    {
+                        s.Dispose();
                     }
                 }
 
@@ -287,12 +317,14 @@ namespace Telegram.Controls.Chats
             }
             else
             {
-                UpdatePattern();
+                UpdatePattern(pattern);
             }
         }
 
-        private void UpdatePattern()
+        private void UpdatePattern(BackgroundTypePattern pattern)
         {
+            Background = pattern.ToBrush(_freeform.Phase);
+
             if (Foreground is TiledBrush tiledBrush)
             {
                 tiledBrush.ImageSource = _pattern;
@@ -310,6 +342,14 @@ namespace Telegram.Controls.Chats
                     IsNegative = _negative,
                 };
             }
+
+            //var visual = ElementComposition.GetElementVisual(Canvas);
+            //var animation = visual.Compositor.CreateScalarKeyFrameAnimation();
+            //animation.InsertKeyFrame(0, 0);
+            //animation.InsertKeyFrame(1, 1);
+            //animation.Duration = Constants.FastAnimation;
+
+            //visual.StartAnimation("Opacity", animation);
         }
 
         private SpriteVisual _blurVisual;

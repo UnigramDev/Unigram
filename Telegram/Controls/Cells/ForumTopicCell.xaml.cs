@@ -1,11 +1,10 @@
 //
-// Copyright Fela Ameghino 2015-2023
+// Copyright Fela Ameghino 2015-2024
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
 using Microsoft.Graphics.Canvas.Geometry;
-using Microsoft.UI.Xaml.Controls;
 using System;
 using System.Collections.Generic;
 using System.Numerics;
@@ -34,7 +33,7 @@ using Windows.UI.Xaml.Shapes;
 
 namespace Telegram.Controls.Cells
 {
-    public sealed class ForumTopicCell : Control, IMultipleElement
+    public sealed class ForumTopicCell : ControlEx, IMultipleElement
     {
         private bool _selected;
 
@@ -59,36 +58,29 @@ namespace Telegram.Controls.Cells
         {
             DefaultStyleKey = typeof(ForumTopicCell);
 
-            Loaded += OnLoaded;
-            Unloaded += OnUnloaded;
+            Connected += OnLoaded;
+            Disconnected += OnUnloaded;
         }
 
         private void OnLoaded(object sender, RoutedEventArgs e)
         {
-            if (Stroke is SolidColorBrush stroke && _strokeToken == 0 && (_container != null || _visual != null))
+            if (_strokeToken == 0 && (_shapes != null || _ellipse != null))
             {
-                _strokeToken = stroke.RegisterPropertyChangedCallback(SolidColorBrush.ColorProperty, OnStrokeChanged);
+                Stroke?.RegisterColorChangedCallback(OnStrokeChanged, ref _strokeToken);
+                OnStrokeChanged(Stroke, SolidColorBrush.ColorProperty);
             }
 
-            if (SelectionStroke is SolidColorBrush selectionStroke && _selectionStrokeToken == 0 && _visual != null)
+            if (_selectionStrokeToken == 0 && _stroke != null)
             {
-                _selectionStrokeToken = selectionStroke.RegisterPropertyChangedCallback(SolidColorBrush.ColorProperty, OnSelectionStrokeChanged);
+                SelectionStroke?.RegisterColorChangedCallback(OnSelectionStrokeChanged, ref _selectionStrokeToken);
+                OnSelectionStrokeChanged(SelectionStroke, SolidColorBrush.ColorProperty);
             }
         }
 
         private void OnUnloaded(object sender, RoutedEventArgs e)
         {
-            if (Stroke is SolidColorBrush stroke && _strokeToken != 0)
-            {
-                stroke.UnregisterPropertyChangedCallback(SolidColorBrush.ColorProperty, _strokeToken);
-                _strokeToken = 0;
-            }
-
-            if (SelectionStroke is SolidColorBrush selectionStroke && _selectionStrokeToken != 0)
-            {
-                selectionStroke.UnregisterPropertyChangedCallback(SolidColorBrush.ColorProperty, _selectionStrokeToken);
-                _selectionStrokeToken = 0;
-            }
+            Stroke?.UnregisterColorChangedCallback(ref _strokeToken);
+            SelectionStroke?.UnregisterColorChangedCallback(ref _selectionStrokeToken);
         }
 
         #region InitializeComponent
@@ -105,7 +97,7 @@ namespace Telegram.Controls.Cells
         private TextBlock TypingLabel;
         private Border PinnedIcon;
         private Border UnreadMentionsBadge;
-        private InfoBadge UnreadBadge;
+        private BadgeControl UnreadBadge;
         private Rectangle DropVisual;
         private TextBlock FailedLabel;
         private TextBlock UnreadMentionsLabel;
@@ -132,7 +124,7 @@ namespace Telegram.Controls.Cells
             TypingLabel = GetTemplateChild(nameof(TypingLabel)) as TextBlock;
             PinnedIcon = GetTemplateChild(nameof(PinnedIcon)) as Border;
             UnreadMentionsBadge = GetTemplateChild(nameof(UnreadMentionsBadge)) as Border;
-            UnreadBadge = GetTemplateChild(nameof(UnreadBadge)) as InfoBadge;
+            UnreadBadge = GetTemplateChild(nameof(UnreadBadge)) as BadgeControl;
             DropVisual = GetTemplateChild(nameof(DropVisual)) as Rectangle;
             FailedLabel = GetTemplateChild(nameof(FailedLabel)) as TextBlock;
             UnreadMentionsLabel = GetTemplateChild(nameof(UnreadMentionsLabel)) as TextBlock;
@@ -148,8 +140,8 @@ namespace Telegram.Controls.Cells
 
             ToolTipService.SetToolTip(BriefInfo, tooltip);
 
-            _selectionPhoto = ElementCompositionPreview.GetElementVisual(Photo);
-            _selectionOutline = ElementCompositionPreview.GetElementVisual(SelectionOutline);
+            _selectionPhoto = ElementComposition.GetElementVisual(Photo);
+            _selectionOutline = ElementComposition.GetElementVisual(SelectionOutline);
             _selectionPhoto.CenterPoint = new Vector3(24);
             _selectionOutline.CenterPoint = new Vector3(24);
             _selectionOutline.Opacity = 0;
@@ -191,16 +183,6 @@ namespace Telegram.Controls.Cells
             var builder = new StringBuilder();
 
             {
-                //if (topic.Type is ForumTopicTypeSupergroup super && super.IsChannel)
-                //{
-                //    builder.Append(Strings.AccDescrChannel);
-                //}
-                //else
-                //{
-                //    builder.Append(Strings.AccDescrGroup);
-                //}
-
-                builder.Append(", ");
                 builder.Append(topic.Info.Name);
                 builder.Append(", ");
             }
@@ -228,7 +210,7 @@ namespace Telegram.Controls.Cells
             {
                 if (message.IsOutgoing)
                 {
-                    //if (!(topic.Type is ForumTopicTypePrivate priv && priv.UserId == fromUser?.Id) && !message.IsChannelPost)
+                    //if (!(chat.Type is ChatTypePrivate priv && priv.UserId == fromUser?.Id) && !message.IsChannelPost)
                     {
                         builder.Append(Strings.FromYou);
                         builder.Append(": ");
@@ -289,7 +271,7 @@ namespace Telegram.Controls.Cells
 
             PinnedIcon.Visibility = topic.UnreadCount == 0 && topic.IsPinned ? Visibility.Visible : Visibility.Collapsed;
             UnreadBadge.Visibility = topic.UnreadCount > 0 ? topic.UnreadMentionCount == 1 && topic.UnreadCount == 1 ? Visibility.Collapsed : Visibility.Visible : Visibility.Collapsed;
-            UnreadBadge.Value = topic.UnreadCount;
+            UnreadBadge.Text = topic.UnreadCount.ToString();
 
             //UpdateAutomation(_clientService, topic, topic.LastMessage);
         }
@@ -516,7 +498,7 @@ namespace Telegram.Controls.Cells
                 return UpdateBriefLabel(topic, topMessage, true, true);
             }
 
-            return new FormattedText(string.Empty, new TextEntity[0]);
+            return new FormattedText(string.Empty, Array.Empty<TextEntity>());
         }
 
         private FormattedText UpdateBriefLabel(ForumTopic topic, Message value, bool showContent, bool draft)
@@ -547,7 +529,7 @@ namespace Telegram.Controls.Cells
 
             if (!showContent)
             {
-                return new FormattedText(Strings.Message, new TextEntity[0]);
+                return new FormattedText(Strings.Message, Array.Empty<TextEntity>());
             }
 
             return value.Content switch
@@ -559,17 +541,17 @@ namespace Telegram.Controls.Cells
                 MessageVideo video => video.Caption,
                 MessageVoiceNote voiceNote => voiceNote.Caption,
                 MessageText text => text.Text,
-                MessageAnimatedEmoji animatedEmoji => new FormattedText(animatedEmoji.Emoji, new TextEntity[0]),
-                MessageDice dice => new FormattedText(dice.Emoji, new TextEntity[0]),
+                MessageAnimatedEmoji animatedEmoji => new FormattedText(animatedEmoji.Emoji, Array.Empty<TextEntity>()),
+                MessageDice dice => new FormattedText(dice.Emoji, Array.Empty<TextEntity>()),
                 MessageInvoice invoice => invoice.ExtendedMedia switch
                 {
                     MessageExtendedMediaPreview preview => preview.Caption,
                     MessageExtendedMediaPhoto photo => photo.Caption,
                     MessageExtendedMediaVideo video => video.Caption,
                     MessageExtendedMediaUnsupported unsupported => unsupported.Caption,
-                    _ => new FormattedText(string.Empty, new TextEntity[0])
+                    _ => new FormattedText(string.Empty, Array.Empty<TextEntity>())
                 },
-                _ => new FormattedText(string.Empty, new TextEntity[0]),
+                _ => new FormattedText(string.Empty, Array.Empty<TextEntity>()),
             };
         }
 
@@ -621,9 +603,9 @@ namespace Telegram.Controls.Cells
             {
                 if (message.IsSaved(_clientService.Options.MyId))
                 {
-                    result = string.Format(format, _clientService.GetTitle(message.ForwardInfo));
+                    result = string.Format(format, _clientService.GetTitle(message.ForwardInfo?.Origin, message.ImportInfo));
                 }
-                else if (message.IsOutgoing)
+                else if (message.SenderId.IsUser(_clientService.Options.MyId))
                 {
                     result = string.Format(format, Strings.FromYou);
                 }
@@ -646,10 +628,10 @@ namespace Telegram.Controls.Cells
                         result = string.Format(format, fromUser.Id);
                     }
                 }
-                //else if (fromChat != null && fromChat.Id != topic.Id)
-                //{
-                //    result = string.Format(format, fromChat.Title);
-                //}
+                else if (fromChat != null && fromChat.Id != chat.Id)
+                {
+                    result = string.Format(format, fromChat.Title);
+                }
             }
 
             if (message.Content is MessageGame gameMedia)
@@ -957,11 +939,7 @@ namespace Telegram.Controls.Cells
 
         private void OnSelectionStrokeChanged(SolidColorBrush newValue, SolidColorBrush oldValue)
         {
-            if (oldValue != null && _selectionStrokeToken != 0)
-            {
-                oldValue.UnregisterPropertyChangedCallback(SolidColorBrush.ColorProperty, _selectionStrokeToken);
-                _selectionStrokeToken = 0;
-            }
+            oldValue?.UnregisterColorChangedCallback(ref _selectionStrokeToken);
 
             if (newValue == null || _stroke == null)
             {
@@ -969,7 +947,11 @@ namespace Telegram.Controls.Cells
             }
 
             _stroke.FillBrush = Window.Current.Compositor.CreateColorBrush(newValue.Color);
-            _selectionStrokeToken = newValue.RegisterPropertyChangedCallback(SolidColorBrush.ColorProperty, OnSelectionStrokeChanged);
+
+            if (IsConnected)
+            {
+                newValue.RegisterColorChangedCallback(OnSelectionStrokeChanged, ref _selectionStrokeToken);
+            }
         }
 
         private void OnSelectionStrokeChanged(DependencyObject sender, DependencyProperty dp)
@@ -1154,44 +1136,56 @@ namespace Telegram.Controls.Cells
 
         private void OnStrokeChanged(SolidColorBrush newValue, SolidColorBrush oldValue)
         {
-            if (oldValue != null && _strokeToken != 0)
-            {
-                oldValue.UnregisterPropertyChangedCallback(SolidColorBrush.ColorProperty, _strokeToken);
-                _strokeToken = 0;
-            }
+            oldValue?.UnregisterColorChangedCallback(ref _strokeToken);
 
-            if (newValue == null || _container == null || _ellipse == null)
+            if (newValue == null || (_shapes == null && _ellipse == null))
             {
                 return;
             }
 
             var brush = Window.Current.Compositor.CreateColorBrush(newValue.Color);
 
-            foreach (var shape in _shapes)
+            if (_shapes != null)
             {
-                shape.StrokeBrush = brush;
+                foreach (var shape in _shapes)
+                {
+                    shape.StrokeBrush = brush;
+                }
             }
 
-            _ellipse.FillBrush = brush;
-            _strokeToken = newValue.RegisterPropertyChangedCallback(SolidColorBrush.ColorProperty, OnStrokeChanged);
+            if (_ellipse != null)
+            {
+                _ellipse.FillBrush = brush;
+            }
+
+            if (IsConnected)
+            {
+                newValue.RegisterColorChangedCallback(OnStrokeChanged, ref _strokeToken);
+            }
         }
 
         private void OnStrokeChanged(DependencyObject sender, DependencyProperty dp)
         {
             var solid = sender as SolidColorBrush;
-            if (solid == null || _container == null || _ellipse == null)
+            if (solid == null || (_shapes == null && _ellipse == null))
             {
                 return;
             }
 
             var brush = Window.Current.Compositor.CreateColorBrush(solid.Color);
 
-            foreach (var shape in _shapes)
+            if (_shapes != null)
             {
-                shape.StrokeBrush = brush;
+                foreach (var shape in _shapes)
+                {
+                    shape.StrokeBrush = brush;
+                }
             }
 
-            _ellipse.FillBrush = brush;
+            if (_ellipse != null)
+            {
+                _ellipse.FillBrush = brush;
+            }
         }
 
         #endregion
@@ -1201,9 +1195,9 @@ namespace Telegram.Controls.Cells
             var value = GetValue(dp);
             if (value is SolidColorBrush solid)
             {
-                if (token == 0)
+                if (IsConnected)
                 {
-                    token = solid.RegisterPropertyChangedCallback(SolidColorBrush.ColorProperty, callback);
+                    solid.RegisterColorChangedCallback(callback, ref token);
                 }
 
                 return Window.Current.Compositor.CreateColorBrush(solid.Color);
@@ -1398,8 +1392,6 @@ namespace Telegram.Controls.Cells
     {
         protected override Size MeasureOverride(Size availableSize)
         {
-            Logger.Debug();
-
             var PhotoPanel = Children[0];
 
             var TypeIcon = Children[1];
@@ -1471,8 +1463,6 @@ namespace Telegram.Controls.Cells
 
         protected override Size ArrangeOverride(Size finalSize)
         {
-            Logger.Debug();
-
             var PhotoPanel = Children[0];
 
             var TypeIcon = Children[1];

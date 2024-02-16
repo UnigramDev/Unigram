@@ -1,10 +1,9 @@
 //
-// Copyright Fela Ameghino 2015-2023
+// Copyright Fela Ameghino 2015-2024
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
-using Microsoft.UI.Xaml.Controls;
 using System;
 using System.Text;
 using Telegram.Common;
@@ -62,7 +61,7 @@ namespace Telegram.Controls.Cells
 
             if (phoneNumber)
             {
-                if (clientService.Options.TestMode || SettingsService.Current.Diagnostics.HidePhoneNumber)
+                if (SettingsService.Current.Diagnostics.HidePhoneNumber)
                 {
                     SubtitleLabel.Text = "+42 --- --- ----";
                 }
@@ -249,6 +248,8 @@ namespace Telegram.Controls.Cells
             args.Handled = true;
         }
 
+        private SearchResult _searchResult;
+
         public void UpdateSearchResult(IClientService clientService, ContainerContentChangingEventArgs args, TypedEventHandler<ListViewBase, ContainerContentChangingEventArgs> callback)
         {
             var result = args.Item as SearchResult;
@@ -257,15 +258,9 @@ namespace Telegram.Controls.Cells
 
             if (args.Phase == 0)
             {
-                TitleLabel.Style = BootStrapper.Current.Resources[result?.Chat?.Type is ChatTypeSecret ? "SecretBodyTextBlockStyle" : "BodyTextBlockStyle"] as Style;
+                RecycleSearchResult();
 
-                if (result.Chat != null)
-                {
-                    TitleLabel.Text = clientService.GetTitle(result.Chat);
-                }
-                else if (result.User != null)
-                {
-                }
+                TitleLabel.Style = BootStrapper.Current.Resources[result?.Chat?.Type is ChatTypeSecret ? "SecretBodyTextBlockStyle" : "BodyTextBlockStyle"] as Style;
 
                 if (result.Chat != null)
                 {
@@ -275,6 +270,40 @@ namespace Telegram.Controls.Cells
                 {
                     TitleLabel.Text = result.User.FullName();
                     Identity.SetStatus(clientService, result.User);
+                }
+
+                long? userId;
+                if (result.Chat?.Type is ChatTypePrivate privata)
+                {
+                    userId = privata.UserId;
+                }
+                else if (result.Chat?.Type is ChatTypeSecret secret)
+                {
+                    userId = secret.UserId;
+                }
+                else
+                {
+                    userId = result.User?.Id;
+                }
+
+                if (userId == null || result.RestrictsNewChats is false or null)
+                {
+                    if (RestrictsNewChats != null)
+                    {
+                        RestrictsNewChats.Visibility = Visibility.Collapsed;
+                    }
+
+                    if (userId != null)
+                    {
+                        _searchResult = result;
+                        _searchResult.PropertyChanged += SearchResult_PropertyChanged;
+                        _searchResult.CanSendMessageToUser();
+                    }
+                }
+                else if (userId != null)
+                {
+                    RestrictsNewChats ??= FindName(nameof(RestrictsNewChats)) as Border;
+                    RestrictsNewChats.Visibility = Visibility.Visible;
                 }
             }
             else if (args.Phase == 1)
@@ -371,6 +400,50 @@ namespace Telegram.Controls.Cells
             args.Handled = true;
         }
 
+        public void RecycleSearchResult()
+        {
+            if (_searchResult != null)
+            {
+                _searchResult.PropertyChanged -= SearchResult_PropertyChanged;
+                _searchResult = null;
+            }
+        }
+
+        private void SearchResult_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        {
+            if (sender is SearchResult result && result == _searchResult)
+            {
+                long? userId;
+                if (result.Chat?.Type is ChatTypePrivate privata)
+                {
+                    userId = privata.UserId;
+                }
+                else if (result.Chat?.Type is ChatTypeSecret secret)
+                {
+                    userId = secret.UserId;
+                }
+                else
+                {
+                    userId = result.User?.Id;
+                }
+
+                if (userId == null || result.RestrictsNewChats is false or null)
+                {
+                    if (RestrictsNewChats != null)
+                    {
+                        RestrictsNewChats.Visibility = Visibility.Collapsed;
+                    }
+                }
+                else if (userId != null)
+                {
+                    RestrictsNewChats ??= FindName(nameof(RestrictsNewChats)) as Border;
+                    RestrictsNewChats.Visibility = Visibility.Visible;
+                }
+
+                RecycleSearchResult();
+            }
+        }
+
         public void UpdateChatSharedMembers(IClientService clientService, ContainerContentChangingEventArgs args, TypedEventHandler<ListViewBase, ContainerContentChangingEventArgs> callback)
         {
             var member = args.Item as ChatMember;
@@ -415,42 +488,6 @@ namespace Telegram.Controls.Cells
                 {
                     InfoLabel.Text = string.Empty;
                 }
-            }
-            else if (args.Phase == 2)
-            {
-                Photo.SetUser(clientService, user, 36);
-                Identity.SetStatus(clientService, user);
-            }
-
-            if (args.Phase < 2)
-            {
-                args.RegisterUpdateCallback(callback);
-            }
-
-            args.Handled = true;
-        }
-
-        public void UpdateChatBoost(IClientService clientService, ContainerContentChangingEventArgs args, TypedEventHandler<ListViewBase, ContainerContentChangingEventArgs> callback)
-        {
-            var boost = args.Item as ChatBoost;
-            if (boost == null)
-            {
-                return;
-            }
-
-            var user = clientService.GetUser(boost.UserId) as User;
-            if (user == null)
-            {
-                return;
-            }
-
-            if (args.Phase == 0)
-            {
-                TitleLabel.Text = user.FullName();
-            }
-            else if (args.Phase == 1)
-            {
-                SubtitleLabel.Text = string.Format(Strings.BoostExpireOn, Formatter.ShortDate.Format(Formatter.ToLocalTime(boost.ExpirationDate)));
             }
             else if (args.Phase == 2)
             {
@@ -609,27 +646,37 @@ namespace Telegram.Controls.Cells
 
         public void UpdateStoryViewer(IClientService clientService, ContainerContentChangingEventArgs args, TypedEventHandler<ListViewBase, ContainerContentChangingEventArgs> callback)
         {
-            var viewer = args.Item as StoryViewer;
-
-            var user = clientService.GetUser(viewer.UserId);
-            if (user == null)
-            {
-                return;
-            }
+            var interaction = args.Item as StoryInteraction;
 
             if (args.Phase == 0)
             {
-                TitleLabel.Text = user.FullName();
+                if (clientService.TryGetUser(interaction.ActorId, out User user))
+                {
+                    TitleLabel.Text = user.FullName();
+                }
+                else if (clientService.TryGetChat(interaction.ActorId, out Chat chat))
+                {
+                    TitleLabel.Text = chat.Title;
+                }
             }
             else if (args.Phase == 1)
             {
-                SubtitleLabel.Text = Locale.FormatDateAudio(viewer.ViewDate);
+                SubtitleLabel.Text = Locale.FormatDateAudio(interaction.InteractionDate);
             }
             else if (args.Phase == 2)
             {
-                Segments.SetUser(clientService, user, 36);
-                Photo.SetUser(clientService, user, 36);
-                Identity.SetStatus(clientService, user);
+                if (clientService.TryGetUser(interaction.ActorId, out User user))
+                {
+                    Segments.SetUser(clientService, user, 36);
+                    Photo.SetUser(clientService, user, 36);
+                    Identity.SetStatus(clientService, user);
+                }
+                else if (clientService.TryGetChat(interaction.ActorId, out Chat chat))
+                {
+                    Segments.SetChat(clientService, chat, 36);
+                    Photo.SetChat(clientService, chat, 36);
+                    Identity.SetStatus(clientService, chat);
+                }
             }
 
             if (args.Phase < 2)
@@ -781,6 +828,35 @@ namespace Telegram.Controls.Cells
             args.Handled = true;
         }
 
+        public void UpdateSimilarChannel(IClientService clientService, ContainerContentChangingEventArgs args, TypedEventHandler<ListViewBase, ContainerContentChangingEventArgs> callback)
+        {
+            var chat = args.Item as Chat;
+
+            if (args.Phase == 0)
+            {
+                TitleLabel.Text = chat.Title;
+            }
+            else if (args.Phase == 1)
+            {
+                if (clientService.TryGetSupergroup(chat, out Supergroup supergroup))
+                {
+                    SubtitleLabel.Text = Locale.Declension(Strings.R.Subscribers, supergroup.MemberCount);
+                }
+            }
+            else if (args.Phase == 2)
+            {
+                Photo.SetChat(clientService, chat, 36);
+                Identity.SetStatus(clientService, chat);
+            }
+
+            if (args.Phase < 2)
+            {
+                args.RegisterUpdateCallback(callback);
+            }
+
+            args.Handled = true;
+        }
+
         public void UpdateStatisticsByChat(IClientService clientService, ContainerContentChangingEventArgs args, TypedEventHandler<ListViewBase, ContainerContentChangingEventArgs> callback)
         {
             if (args.InRecycleQueue)
@@ -826,6 +902,8 @@ namespace Telegram.Controls.Cells
             {
                 args.RegisterUpdateCallback(callback);
             }
+
+            args.Handled = true;
         }
 
         public void UpdateChatFolder(IClientService clientService, ChatFolderElement element)
@@ -873,6 +951,41 @@ namespace Telegram.Controls.Cells
             }
         }
 
+        public void UpdateLinkedChat(IClientService clientService, ContainerContentChangingEventArgs args, TypedEventHandler<ListViewBase, ContainerContentChangingEventArgs> callback)
+        {
+            var chat = args.Item as Chat;
+
+            if (args.Phase == 0)
+            {
+                TitleLabel.Text = chat.Title;
+            }
+            else if (args.Phase == 1)
+            {
+                if (clientService.TryGetSupergroup(chat, out Supergroup supergroup))
+                {
+                    if (supergroup.HasActiveUsername(out string username))
+                    {
+                        SubtitleLabel.Text = $"@{username}";
+                    }
+                    else
+                    {
+                        SubtitleLabel.Text = Locale.Declension(supergroup.IsChannel ? Strings.R.Subscribers : Strings.R.Members, supergroup.MemberCount);
+                    }
+                }
+            }
+            else if (args.Phase == 2)
+            {
+                Photo.SetChat(clientService, chat, 36);
+                Identity.SetStatus(clientService, chat);
+            }
+
+            if (args.Phase < 2)
+            {
+                args.RegisterUpdateCallback(callback);
+            }
+
+            args.Handled = true;
+        }
 
         private void UpdateStyleNoSubtitle()
         {
@@ -882,35 +995,5 @@ namespace Telegram.Controls.Cells
 
             SetRowSpan(TitlePanel, 2);
         }
-
-
-
-
-        #region Repeater :(
-
-        public void UpdateLinkedChat(IClientService clientService, ItemsRepeater sender, ItemsRepeaterElementPreparedEventArgs args)
-        {
-            var button = args.Element as Button;
-            var chat = button.DataContext as Chat;
-
-            TitleLabel.Text = clientService.GetTitle(chat);
-
-            if (clientService.TryGetSupergroup(chat, out Supergroup supergroup))
-            {
-                if (supergroup.HasActiveUsername(out string username))
-                {
-                    SubtitleLabel.Text = $"@{username}";
-                }
-                else
-                {
-                    SubtitleLabel.Text = Locale.Declension(supergroup.IsChannel ? Strings.R.Subscribers : Strings.R.Members, supergroup.MemberCount);
-                }
-            }
-
-            Photo.SetChat(clientService, chat, 36);
-            Identity.SetStatus(clientService, chat);
-        }
-
-        #endregion
     }
 }

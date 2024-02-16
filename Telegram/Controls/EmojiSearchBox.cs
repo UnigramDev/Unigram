@@ -1,4 +1,10 @@
-﻿using System;
+﻿//
+// Copyright Fela Ameghino 2015-2024
+//
+// Distributed under the GNU General Public License v3.0. (See accompanying
+// file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
+//
+using System;
 using Telegram.Common;
 using Telegram.Navigation;
 using Telegram.Services;
@@ -128,13 +134,13 @@ namespace Telegram.Controls
                 return;
             }
 
-            var placeholder = TextField.GetChild<TextBlock>("PlaceholderTextContentPresenter");
+            var placeholder = TextField.GetChild<TextBlock>(x => x.Name.Equals("PlaceholderTextContentPresenter"));
             if (placeholder == null)
             {
                 return;
             }
 
-            var element = TextField.GetChild<ScrollViewer>("ContentElement");
+            var element = TextField.GetChild<ScrollViewer>(x => x.Name.Equals("ContentElement"));
             if (element == null)
             {
                 return;
@@ -142,8 +148,8 @@ namespace Telegram.Controls
 
             _placeholderCollapsed = !show;
 
-            var visual1 = ElementCompositionPreview.GetElementVisual(placeholder);
-            var visual2 = ElementCompositionPreview.GetElementVisual(element);
+            var visual1 = ElementComposition.GetElementVisual(placeholder);
+            var visual2 = ElementComposition.GetElementVisual(element);
             var anim = visual1.Compositor.CreateScalarKeyFrameAnimation();
             anim.InsertKeyFrame(show ? 0 : 1, 0);
             anim.InsertKeyFrame(show ? 1 : 0, 1);
@@ -183,9 +189,10 @@ namespace Telegram.Controls
                     view.DecodeFrameType = DecodePixelType.Logical;
                     view.Width = 20;
                     view.Height = 20;
+                    view.ReplacementColor = foreground;
                     view.Source = new DelayedFileSource(clientService, item.Icon.StickerValue)
                     {
-                        ReplacementColor = foreground.Color
+                        NeedsRepainting = true
                     };
 
                     var button = new RadioButton

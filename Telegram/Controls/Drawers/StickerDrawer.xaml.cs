@@ -1,19 +1,16 @@
 //
-// Copyright Fela Ameghino 2015-2023
+// Copyright Fela Ameghino 2015-2024
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
-using LinqToVisualTree;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using Telegram.Common;
 using Telegram.Streams;
 using Telegram.Td.Api;
 using Telegram.ViewModels.Drawers;
 using Windows.Foundation;
-using Windows.UI.Composition;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Hosting;
@@ -44,18 +41,16 @@ namespace Telegram.Controls.Drawers
         {
             InitializeComponent();
 
-            ElementCompositionPreview.GetElementVisual(this).Clip = Window.Current.Compositor.CreateInsetClip();
+            ElementComposition.GetElementVisual(this).Clip = Window.Current.Compositor.CreateInsetClip();
 
             _handler = new AnimatedListHandler(List, AnimatedListType.Stickers);
             _toolbarHandler = new AnimatedListHandler(Toolbar, AnimatedListType.Stickers);
 
             _zoomer = new ZoomableListHandler(List);
-            _zoomer.Opening = _handler.UnloadVisibleItems;
-            _zoomer.Closing = _handler.ThrottleVisibleItems;
+            _zoomer.Opening = UnloadVisibleItems;
+            _zoomer.Closing = ThrottleVisibleItems;
             _zoomer.DownloadFile = fileId => ViewModel.ClientService.DownloadFile(fileId, 32);
             _zoomer.SessionId = () => ViewModel.ClientService.SessionId;
-
-            //_toolbarHandler = new AnimatedStickerHandler<StickerSetViewModel>(Toolbar);
 
             var header = DropShadowEx.Attach(Separator);
             header.Clip = header.Compositor.CreateInsetClip(0, 40, 0, -40);
@@ -110,8 +105,17 @@ namespace Telegram.Controls.Drawers
         {
             if (_isActive)
             {
-                _handler.LoadVisibleItems(false);
-                _toolbarHandler.LoadVisibleItems(false);
+                _handler.LoadVisibleItems();
+                _toolbarHandler.LoadVisibleItems();
+            }
+        }
+
+        public void ThrottleVisibleItems()
+        {
+            if (_isActive)
+            {
+                _handler.ThrottleVisibleItems();
+                _toolbarHandler.ThrottleVisibleItems();
             }
         }
 
@@ -144,7 +148,7 @@ namespace Telegram.Controls.Drawers
 
         private void Stickers_Loaded(object sender, RoutedEventArgs e)
         {
-            var scrollingHost = List.Descendants<ScrollViewer>().FirstOrDefault();
+            var scrollingHost = List.GetChild<ScrollViewer>();
             if (scrollingHost != null)
             {
                 scrollingHost.VerticalSnapPointsType = SnapPointsType.None;
@@ -226,9 +230,10 @@ namespace Telegram.Controls.Drawers
 
                     foreach (var sticker in group.Stickers)
                     {
-                        if (_itemIdToContent.TryGetValue(sticker, out Grid content))
+                        if (sticker.StickerValue != null && _itemIdToContent.TryGetValue(sticker, out Grid content))
                         {
-                            UpdateContainerContent(sticker, content);
+                            var animation = content.Children[0] as AnimatedImage;
+                            animation.Source = new DelayedFileSource(ViewModel.ClientService, sticker);
                         }
                     }
                 }
@@ -267,29 +272,19 @@ namespace Telegram.Controls.Drawers
             }
 
             _itemIdToContent[sticker] = content;
-            UpdateContainerContent(sticker, content);
-            args.Handled = true;
-        }
 
-        private void UpdateContainerContent(Sticker sticker, Grid content)
-        {
-            var file = sticker?.StickerValue;
-            if (file == null)
+            if (sticker?.StickerValue != null)
             {
-                return;
-            }
-
-            var animation = content.Children[0] as AnimatedImage;
-            animation.Source = new DelayedFileSource(ViewModel.ClientService, file);
-
-            if (file.Local.IsDownloadingCompleted)
-            {
+                var animation = content.Children[0] as AnimatedImage;
+                animation.Source = new DelayedFileSource(ViewModel.ClientService, sticker);
             }
             else
             {
-                CompositionPathParser.ParseThumbnail(sticker, out ShapeVisual visual, false);
-                ElementCompositionPreview.SetElementChildVisual(content.Children[0], visual);
+                var animation = content.Children[0] as AnimatedImage;
+                animation.Source = null;
             }
+
+            args.Handled = true;
         }
 
         private void Toolbar_ContainerContentChanging(ListViewBase sender, ContainerContentChangingEventArgs args)
@@ -298,8 +293,7 @@ namespace Telegram.Controls.Drawers
             {
                 return;
             }
-
-            if (args.Item is SupergroupStickerSetViewModel supergroup)
+            else if (args.Item is SupergroupStickerSetViewModel supergroup)
             {
                 Automation.SetToolTip(args.ItemContainer, supergroup.Title);
 
@@ -316,6 +310,7 @@ namespace Telegram.Controls.Drawers
                 }
 
                 photo.SetChat(ViewModel.ClientService, chat, 24);
+                args.Handled = true;
             }
             else if (args.Item is StickerSetViewModel sticker)
             {
@@ -329,12 +324,18 @@ namespace Telegram.Controls.Drawers
                 }
 
                 var cover = sticker.GetThumbnail();
-                if (cover == null)
+                if (cover != null)
                 {
-                    return;
+                    var animation = content.Children[0] as AnimatedImage;
+                    animation.Source = new DelayedFileSource(ViewModel.ClientService, cover);
+                }
+                else
+                {
+                    var animation = content.Children[0] as AnimatedImage;
+                    animation.Source = null;
                 }
 
-                UpdateContainerContent(cover, content);
+                args.Handled = true;
             }
         }
 
@@ -371,6 +372,21 @@ namespace Telegram.Controls.Drawers
 
         private void Toolbar_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
+            if (_updatingSelectedItem)
+            {
+                return;
+            }
+
+            _updatingSelectedItem = true;
+            VisualUtilities.QueueCallbackForCompositionRendering(UpdateSelectedItem);
+        }
+
+        private bool _updatingSelectedItem;
+
+        private void UpdateSelectedItem()
+        {
+            _updatingSelectedItem = false;
+
             if (Toolbar.SelectedItem != null)
             {
                 _ = Toolbar.ScrollToItem2(Toolbar.SelectedItem, VerticalAlignment.Center);

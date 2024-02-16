@@ -1,4 +1,10 @@
-﻿using System.Linq;
+﻿//
+// Copyright Fela Ameghino 2015-2024
+//
+// Distributed under the GNU General Public License v3.0. (See accompanying
+// file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
+//
+using System.Linq;
 using System.Threading.Tasks;
 using Telegram.Common;
 using Telegram.Controls;
@@ -59,6 +65,8 @@ namespace Telegram.Views.Folders.Popups
 
                 content.UpdateState(args.ItemContainer.IsSelected, false, true);
                 content.UpdateSharedChat(ViewModel.ClientService, args, OnContainerContentChanging);
+
+                args.Handled = true;
             }
         }
 

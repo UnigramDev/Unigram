@@ -1,5 +1,5 @@
 //
-// Copyright Fela Ameghino 2015-2023
+// Copyright Fela Ameghino 2015-2024
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
@@ -8,7 +8,6 @@ using Telegram.Common;
 using Telegram.Td.Api;
 using Telegram.ViewModels;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Media.Imaging;
 
 namespace Telegram.Controls.Messages.Content
 {
@@ -103,7 +102,7 @@ namespace Telegram.Controls.Messages.Content
         {
             if (file.Local.IsDownloadingCompleted)
             {
-                Texture.Source = new BitmapImage(UriEx.ToLocal(file.Local.Path));
+                Texture.Source = UriEx.ToBitmap(file.Local.Path);
             }
             else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive)
             {

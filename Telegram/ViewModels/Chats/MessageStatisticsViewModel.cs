@@ -1,5 +1,5 @@
 //
-// Copyright Fela Ameghino 2015-2023
+// Copyright Fela Ameghino 2015-2024
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
@@ -47,6 +47,13 @@ namespace Telegram.ViewModels.Chats
             set => Set(ref _interactions, value);
         }
 
+        private ChartViewData _reactions;
+        public ChartViewData Reactions
+        {
+            get => _reactions;
+            set => Set(ref _reactions, value);
+        }
+
         private ItemsCollection _items;
         public ItemsCollection Items
         {
@@ -69,38 +76,28 @@ namespace Telegram.ViewModels.Chats
 
         protected override async Task OnNavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
         {
-            var data = (string)parameter;
-
-            var split = data.Split(';');
-            if (split.Length != 2)
-            {
-                return;
-            }
-
-            var failed1 = !long.TryParse(split[0], out long chatId);
-            var failed2 = !long.TryParse(split[1], out long messageId);
-
-            if (failed1 || failed2)
+            if (parameter is not ChatMessageIdNavigationArgs args)
             {
                 return;
             }
 
             IsLoading = true;
 
-            Chat = ClientService.GetChat(chatId);
+            Chat = ClientService.GetChat(args.ChatId);
 
-            Items = new ItemsCollection(ClientService, chatId, messageId);
+            Items = new ItemsCollection(ClientService, args.ChatId, args.MessageId);
 
-            var message = await ClientService.SendAsync(new GetMessage(chatId, messageId));
+            var message = await ClientService.SendAsync(new GetMessage(args.ChatId, args.MessageId));
             if (message is Message result)
             {
                 Message = result;
             }
 
-            var response = await ClientService.SendAsync(new GetMessageStatistics(chatId, messageId, false));
+            var response = await ClientService.SendAsync(new GetMessageStatistics(args.ChatId, args.MessageId, false));
             if (response is MessageStatistics statistics)
             {
                 Interactions = ChartViewData.Create(statistics.MessageInteractionGraph, Strings.InteractionsChartTitle, /*1*/6);
+                Reactions = ChartViewData.Create(statistics.MessageReactionGraph, Strings.ReactionsByEmotionChartTitle, /*1*/2);
             }
 
             IsLoading = false;

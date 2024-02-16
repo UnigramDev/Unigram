@@ -1,0 +1,28 @@
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:local="using:Telegram.Controls.Messages.Content"
+                    xmlns:controls="using:Telegram.Controls"
+                    xmlns:common="using:Telegram.Common"
+                    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                    mc:Ignorable="d"
+                    d:DesignHeight="200"
+                    d:DesignWidth="320">
+
+    <Style TargetType="local:UnsupportedContent">
+        <Setter Property="IsTabStop"
+                Value="False" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="local:UnsupportedContent">
+                    <Grid>
+                        <controls:BadgeButton x:Name="Button"
+                                              Style="{StaticResource InstantViewButtonStyle}"
+                                              Margin="0,12,0,4" />
+                    </Grid>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+</ResourceDictionary>

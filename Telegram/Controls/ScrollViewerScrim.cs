@@ -1,11 +1,9 @@
 //
-// Copyright Fela Ameghino 2015-2023
+// Copyright Fela Ameghino 2015-2024
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
-using LinqToVisualTree;
-using System.Linq;
 using System.Numerics;
 using Telegram.Common;
 using Windows.UI.Composition;
@@ -96,7 +94,7 @@ namespace Telegram.Controls
             {
                 if (value.IsLoaded)
                 {
-                    scrollViewer = ScrollingHost.Descendants<ScrollViewer>().FirstOrDefault();
+                    scrollViewer = ScrollingHost.GetChild<ScrollViewer>();
                 }
                 else
                 {
@@ -105,21 +103,26 @@ namespace Telegram.Controls
                 }
             }
 
+            if (scrollViewer == null)
+            {
+                return;
+            }
+
             _scrollViewer = scrollViewer;
             _propertySet = Window.Current.Compositor.CreatePropertySet();
             _propertySet.InsertScalar("ScrollableHeight", (float)scrollViewer.ScrollableHeight);
             _propertySet.InsertScalar("TopInset", _topInset);
             _propertySet.InsertScalar("BottomInset", _bottomInset);
 
-            var top = ElementCompositionPreview.GetElementVisual(_topScrim);
-            var bottom = ElementCompositionPreview.GetElementVisual(_bottomScrim);
+            var top = ElementComposition.GetElementVisual(_topScrim);
+            var bottom = ElementComposition.GetElementVisual(_bottomScrim);
             var props = ElementCompositionPreview.GetScrollViewerManipulationPropertySet(scrollViewer);
 
-            var topAnimation = Window.Current.Compositor.CreateExpressionAnimation("Max(Min(-(Scroll.Translation.Y / Props.TopInset), 1), 0)");
+            var topAnimation = Window.Current.Compositor.CreateExpressionAnimation("Clamp(-(Scroll.Translation.Y / Props.TopInset), 0, 1)");
             topAnimation.SetReferenceParameter("Scroll", props);
             topAnimation.SetReferenceParameter("Props", _propertySet);
 
-            var bottomAnimation = Window.Current.Compositor.CreateExpressionAnimation("Max(Min((Props.ScrollableHeight + Scroll.Translation.Y) / Props.BottomInset, 1), 0)");
+            var bottomAnimation = Window.Current.Compositor.CreateExpressionAnimation("Clamp((Props.ScrollableHeight + Scroll.Translation.Y) / Props.BottomInset, 0, 1)");
             bottomAnimation.SetReferenceParameter("Scroll", props);
             bottomAnimation.SetReferenceParameter("Props", _propertySet);
 
@@ -135,8 +138,6 @@ namespace Telegram.Controls
 
         private void OnSizeChanged(object sender, SizeChangedEventArgs e)
         {
-            Logger.Debug();
-
             if (_scrollViewer != null)
             {
                 _propertySet.InsertScalar("ScrollableHeight", (float)_scrollViewer.ScrollableHeight);
@@ -172,7 +173,7 @@ namespace Telegram.Controls
                 {
                     _bottomScrim.Height = _bottomInset;
 
-                    var bottom = ElementCompositionPreview.GetElementVisual(_bottomScrim);
+                    var bottom = ElementComposition.GetElementVisual(_bottomScrim);
                     bottom.CenterPoint = new Vector3(0, _bottomInset, 0);
                 }
             }

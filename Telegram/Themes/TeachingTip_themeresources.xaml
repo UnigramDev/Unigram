@@ -494,8 +494,7 @@
                                     </Grid.RowDefinitions>
                                     <Border x:Name="HeroContentBorder"
                                             Grid.Row="0"
-                                            Child="{TemplateBinding HeroContent}"
-                                            Background="{TemplateBinding Background}" />
+                                            Child="{TemplateBinding HeroContent}" />
                                     <Grid x:Name="NonHeroContentRootGrid"
                                           Grid.Row="1">
                                         <ScrollViewer VerticalScrollBarVisibility="Auto">
@@ -536,7 +535,6 @@
                                                 <ContentPresenter x:Name="MainContentPresenter"
                                                                   Grid.Row="1"
                                                                   Content="{TemplateBinding Content}"
-                                                                  Background="{TemplateBinding Background}"
                                                                   Foreground="{TemplateBinding Foreground}"
                                                                   FontSize="{TemplateBinding FontSize}"
                                                                   FontWeight="{TemplateBinding FontWeight}"

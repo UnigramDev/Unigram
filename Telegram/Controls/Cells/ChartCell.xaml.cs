@@ -1,5 +1,5 @@
 //
-// Copyright Fela Ameghino 2015-2023
+// Copyright Fela Ameghino 2015-2024
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
@@ -40,6 +40,8 @@ namespace Telegram.Controls.Cells
                 Visibility = Visibility.Collapsed;
                 return;
             }
+
+            Visibility = Visibility.Visible;
 
             //if (args.ItemIndex != _loadIndex)
             //{
@@ -128,6 +130,7 @@ namespace Telegram.Controls.Cells
                         var check = new FauxCheckBox();
                         check.Style = BootStrapper.Current.Resources["LineCheckBoxStyle"] as Style;
                         check.Content = line.line.name;
+                        check.IsFaux = true;
                         check.IsChecked = line.enabled;
                         check.Background = new SolidColorBrush(line.lineColor);
                         check.Margin = new Thickness(12, 0, 0, 12);

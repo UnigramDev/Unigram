@@ -1,5 +1,5 @@
 //
-// Copyright Fela Ameghino 2015-2023
+// Copyright Fela Ameghino 2015-2024
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
@@ -11,7 +11,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Telegram.Services.Updates;
 using Telegram.Td;
 using Telegram.Td.Api;
 using Telegram.ViewModels;
@@ -47,6 +46,8 @@ namespace Telegram.Services
         Task<Chats> GetChatListAsync(ChatList chatList, int offset, int limit);
         Task<Chats> GetStoryListAsync(StoryList storyList, int offset, int limit);
 
+        Task<IList<SavedMessagesTopic>> GetSavedMessagesChatsAsync(int offset, int limit);
+
         int SessionId { get; }
     }
 
@@ -60,6 +61,13 @@ namespace Telegram.Services
         IOptionsService Options { get; }
         JsonValueObject Config { get; }
 
+        IList<NameColor> GetAvailableAccentColors();
+        IList<ProfileColor> GetAvailableProfileColors();
+
+        NameColor GetAccentColor(int id);
+        ProfileColor GetProfileColor(int id);
+        bool TryGetProfileColor(int id, out ProfileColor color);
+
         ReactionType DefaultReaction { get; }
 
         IList<ChatFolderInfo> ChatFolders { get; }
@@ -70,21 +78,28 @@ namespace Telegram.Services
         IList<AttachmentMenuBot> GetBotsForChat(long chatId);
         IList<AttachmentMenuBot> GetBotsForMenu(out long hash);
 
+        IList<string> ActiveReactions { get; }
+
         IList<string> AnimationSearchEmojis { get; }
         string AnimationSearchProvider { get; }
 
-        Background GetSelectedBackground(bool darkTheme);
-        Background SelectedBackground { get; }
+        UpdateSpeechRecognitionTrial SpeechRecognitionTrial { get; }
+
+        Background GetDefaultBackground(bool darkTheme);
+        Background DefaultBackground { get; }
 
         Task<AuthorizationState> GetAuthorizationStateAsync();
         AuthorizationState AuthorizationState { get; }
         ConnectionState ConnectionState { get; }
 
         string GetTitle(Chat chat, bool tiny = false);
-        string GetTitle(MessageForwardInfo info);
+        string GetTitle(long chatId, bool tiny = false);
+        string GetTitle(SavedMessagesTopic topic);
+        string GetTitle(MessageOrigin origin, MessageImportInfo import);
 
         bool TryGetCachedReaction(string emoji, out EmojiReaction value);
         Task<IDictionary<string, EmojiReaction>> GetAllReactionsAsync();
+        Task<IDictionary<string, EmojiReaction>> GetReactionsAsync(IEnumerable<string> reactions);
 
         Chat GetChat(long id);
         IEnumerable<Chat> GetChats(IEnumerable<long> ids);
@@ -109,6 +124,8 @@ namespace Telegram.Services
         bool CanInviteUsers(Chat chat);
 
         BaseObject GetMessageSender(MessageSender sender);
+
+        bool TryGetSavedMessagesTopic(long savedMessagesTopicId, out SavedMessagesTopic topic);
 
         bool TryGetChat(long chatId, out Chat chat);
         bool TryGetChat(MessageSender sender, out Chat value);
@@ -159,6 +176,9 @@ namespace Telegram.Services
         ForumTopicInfo GetTopicInfo(long chatId, long messageThreadId);
         bool TryGetTopicInfo(long chatId, long messageThreadId, out ForumTopicInfo value);
 
+        MessageTag GetSavedMessagesTag(ReactionType reaction);
+        bool TryGetSavedMessagesTag(ReactionType reaction, out MessageTag value);
+
         bool IsAnimationSaved(int id);
         bool IsStickerRecent(int id);
         bool IsStickerFavorite(int id);
@@ -208,22 +228,24 @@ namespace Telegram.Services
         private readonly ConcurrentDictionary<long, ConcurrentDictionary<MessageSender, ChatAction>> _chatActions = new();
         private readonly ConcurrentDictionary<ChatMessageId, ConcurrentDictionary<MessageSender, ChatAction>> _topicActions = new();
 
+        private readonly ConcurrentDictionary<long, SavedMessagesTopic> _savedMessagesTopics = new();
+
         private readonly Dictionary<int, SecretChat> _secretChats = new();
 
         private readonly Dictionary<long, long> _usersToChats = new();
 
         private readonly Dictionary<long, User> _users = new();
-        private readonly Dictionary<long, UserFullInfo> _usersFull = new();
+        private readonly ConcurrentDictionary<long, UserFullInfo> _usersFull = new();
 
         private readonly Dictionary<long, BasicGroup> _basicGroups = new();
-        private readonly Dictionary<long, BasicGroupFullInfo> _basicGroupsFull = new();
+        private readonly ConcurrentDictionary<long, BasicGroupFullInfo> _basicGroupsFull = new();
 
         private readonly Dictionary<long, Supergroup> _supergroups = new();
-        private readonly Dictionary<long, SupergroupFullInfo> _supergroupsFull = new();
+        private readonly ConcurrentDictionary<long, SupergroupFullInfo> _supergroupsFull = new();
 
         private readonly Dictionary<ChatMessageId, ForumTopicInfo> _topics = new();
 
-        private readonly Dictionary<int, ChatListUnreadCount> _unreadCounts = new();
+        private readonly ConcurrentDictionary<int, ChatListUnreadCount> _unreadCounts = new();
 
         private readonly Dictionary<int, File> _files = new();
 
@@ -240,18 +262,45 @@ namespace Telegram.Services
 
         private ReactionType _defaultReaction;
 
-        private IList<ChatFolderInfo> _chatFolders = new ChatFolderInfo[0];
+        private IList<ChatFolderInfo> _chatFolders = Array.Empty<ChatFolderInfo>();
         private int _mainChatListPosition = 0;
 
-        private IList<string> _reactions = Array.Empty<string>();
+        private IList<string> _activeReactions = Array.Empty<string>();
+        private Dictionary<string, EmojiReaction> _cachedReactions = new();
 
         private IList<AttachmentMenuBot> _attachmentMenuBots = Array.Empty<AttachmentMenuBot>();
+
+        private UpdateSpeechRecognitionTrial _speechRecognitionTrial;
 
         private UpdateAnimationSearchParameters _animationSearchParameters;
 
         private UpdateChatThemes _chatThemes;
 
         private UpdateStoryStealthMode _storyStealthMode = new();
+
+        private readonly Dictionary<ReactionType, MessageTag> _savedMessagesTags = new(new ReactionTypeEqualityComparer());
+
+        private class ReactionTypeEqualityComparer : IEqualityComparer<ReactionType>
+        {
+            public bool Equals(ReactionType x, ReactionType y)
+            {
+                return x.AreTheSame(y);
+            }
+
+            public int GetHashCode(ReactionType obj)
+            {
+                if (obj is ReactionTypeEmoji emoji)
+                {
+                    return emoji.Emoji.GetHashCode();
+                }
+                else if (obj is ReactionTypeCustomEmoji customEmoji)
+                {
+                    return customEmoji.CustomEmojiId.GetHashCode();
+                }
+
+                return obj.GetHashCode();
+            }
+        }
 
         private TaskCompletionSource<bool> _authorizationStateTask = new();
         private AuthorizationState _authorizationState;
@@ -335,7 +384,7 @@ namespace Telegram.Services
             _users[10] = new User(10, "Alex",     "Hunter",     null, string.Empty, null,                               ProfilePhoto("Avatar13.png"), null, false, false, false, false, false, string.Empty, false, false, false, new UserTypeRegular(), string.Empty, false);
             _users[11] = new User(11, "X",        string.Empty, null, string.Empty, null,                               ProfilePhoto("Avatar14.png"), null, false, false, false, false, false, string.Empty, false, false, false, new UserTypeRegular(), string.Empty, false);
 
-            _secretChats[1] = new SecretChat(1, 3, new SecretChatStateReady(), false, new byte[0], 75);
+            _secretChats[1] = new SecretChat(1, 3, new SecretChatStateReady(), false, Array.Empty<byte>(), 75);
 
             _supergroups[0 ] = new Supergroup(0,  null, 0, new ChatMemberStatusMember(), 2503, false, false, false, false, false, false, false, false, false, false, string.Empty, false, false);
             _supergroups[1 ] = new Supergroup(1,  null, 0, new ChatMemberStatusMember(), 0,    false, false, false, false, false, false, true,  false, false, false, string.Empty, false, false);
@@ -374,19 +423,19 @@ namespace Telegram.Services
                 return (int)(last.ToUniversalTime() - dtDateTime).TotalSeconds;
             }
 
-            var lastMessage0  = new Message(long.MaxValue, new MessageSenderUser(0),  0,  null, null, true, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, TodayDate(21, 41),  0, null, null, null, 0, 0, 0, 0, 0, 0, 0, string.Empty, 0, string.Empty, new MessageText(new FormattedText("Bob says hi.", new TextEntity[0]), null), null);
-            var lastMessage1  = new Message(long.MaxValue, new MessageSenderUser(1),  1,  null, null, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, TodayDate(21, 41),  0, null, null, null, 0, 0, 0, 0, 0, 0, 0, string.Empty, 0, string.Empty, new MessageText(new FormattedText("Say hello to Alice.", new TextEntity[0]), null), null);
-            var lastMessage2  = new Message(long.MaxValue, new MessageSenderUser(9),  2,  null, null, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, TodayDate(21, 41),  0, null, null, null, 0, 0, 0, 0, 0, 0, 0, string.Empty, 0, string.Empty, new MessageText(new FormattedText("Sometimes possession is an abstract concept. They took my purse, but the...", new TextEntity[0]), null), null);
-            var lastMessage3  = new Message(long.MaxValue, new MessageSenderUser(3),  3,  null, null, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, TodayDate(21, 22),  0, null, null, null, 0, 0, 0, 0, 0, 0, 0, string.Empty, 0, string.Empty, new MessageVideo(new Sticker(0, 0, 0, "😍", null, null, null, null, null), new FormattedText("Moar ct videos in this channel?", new TextEntity[0]), false, false), null);
-            var lastMessage4  = new Message(long.MaxValue, new MessageSenderUser(4),  4,  null, null, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, TodayDate(21, 12),  0, null, null, null, 0, 0, 0, 0, 0, 0, 0, string.Empty, 0, string.Empty, new MessageText(new FormattedText("Don't tell mom yet, but I got the job! I'm going to ROME!", new TextEntity[0]), null), null);
-            var lastMessage5  = new Message(long.MaxValue, new MessageSenderUser(5),  5,  null, null, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, TodayDate(20, 28),  0, null, null, null, 0, 0, 0, 0, 0, 0, 0, string.Empty, 0, string.Empty, new MessageDocument(new FormattedText("I looove new Surfaces! If fact, they invited me to a focus group.", new TextEntity[0]), null), null);
+            var lastMessage0  = new Message(long.MaxValue, new MessageSenderUser(0),  0,  null, null, true, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, TodayDate(21, 41),  0, null, null, null, 0, 0, 0, 0, 0, 0, 0, string.Empty, 0, string.Empty, new MessageText(new FormattedText("Bob says hi.", Array.Empty<TextEntity>()), null), null);
+            var lastMessage1  = new Message(long.MaxValue, new MessageSenderUser(1),  1,  null, null, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, TodayDate(21, 41),  0, null, null, null, 0, 0, 0, 0, 0, 0, 0, string.Empty, 0, string.Empty, new MessageText(new FormattedText("Say hello to Alice.", Array.Empty<TextEntity>()), null), null);
+            var lastMessage2  = new Message(long.MaxValue, new MessageSenderUser(9),  2,  null, null, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, TodayDate(21, 41),  0, null, null, null, 0, 0, 0, 0, 0, 0, 0, string.Empty, 0, string.Empty, new MessageText(new FormattedText("Sometimes possession is an abstract concept. They took my purse, but the...", Array.Empty<TextEntity>()), null), null);
+            var lastMessage3  = new Message(long.MaxValue, new MessageSenderUser(3),  3,  null, null, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, TodayDate(21, 22),  0, null, null, null, 0, 0, 0, 0, 0, 0, 0, string.Empty, 0, string.Empty, new MessageVideo(new Sticker(0, 0, 0, "😍", null, null, null, null, null), new FormattedText("Moar ct videos in this channel?", Array.Empty<TextEntity>()), false, false), null);
+            var lastMessage4  = new Message(long.MaxValue, new MessageSenderUser(4),  4,  null, null, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, TodayDate(21, 12),  0, null, null, null, 0, 0, 0, 0, 0, 0, 0, string.Empty, 0, string.Empty, new MessageText(new FormattedText("Don't tell mom yet, but I got the job! I'm going to ROME!", Array.Empty<TextEntity>()), null), null);
+            var lastMessage5  = new Message(long.MaxValue, new MessageSenderUser(5),  5,  null, null, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, TodayDate(20, 28),  0, null, null, null, 0, 0, 0, 0, 0, 0, 0, string.Empty, 0, string.Empty, new MessageDocument(new FormattedText("I looove new Surfaces! If fact, they invited me to a focus group.", Array.Empty<TextEntity>()), null), null);
             var lastMessage6  = new Message(long.MaxValue, new MessageSenderUser(6),  6,  null, null, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, TodayDate(19, 36),  0, null, null, null, 0, 0, 0, 0, 0, 0, 0, string.Empty, 0, string.Empty, new MessageVideoNote(null, false, false), null);
-            var lastMessage7  = new Message(long.MaxValue, new MessageSenderUser(7),  7,  null, null, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, TuesdayDate(),      0, null, null, null, 0, 0, 0, 0, 0, 0, 0, string.Empty, 0, string.Empty, new MessagePhoto(new Document("LaserBlastSafetyGuide.pdf", string.Empty, null, null, null), new FormattedText(string.Empty, new TextEntity[0])), null);
-            var lastMessage8  = new Message(long.MaxValue, new MessageSenderUser(8),  8,  null, null, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, TuesdayDate(),      0, null, null, null, 0, 0, 0, 0, 0, 0, 0, string.Empty, 0, string.Empty, new MessageText(new FormattedText("It's impossible.", new TextEntity[0]), null), null);
-            var lastMessage9  = new Message(long.MaxValue, new MessageSenderUser(9),  9,  null, null, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, TuesdayDate(),      0, null, null, null, 0, 0, 0, 0, 0, 0, 0, string.Empty, 0, string.Empty, new MessageText(new FormattedText("Hola!", new TextEntity[0]), null), null);
-            var lastMessage10 = new Message(long.MaxValue, new MessageSenderUser(17), 12, null, null, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, TuesdayDate(),      0, null, null, null, 0, 0, 0, 0, 0, 0, 0, string.Empty, 0, string.Empty, new MessageText(new FormattedText("Let's design more robust memes", new TextEntity[0]), null), null);
-            var lastMessage11 = new Message(long.MaxValue, new MessageSenderUser(18), 13, null, null, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, TuesdayDate(),      0, null, null, null, 0, 0, 0, 0, 0, 0, 0, string.Empty, 0, string.Empty, new MessageText(new FormattedText("What?! 😱", new TextEntity[0]), null), null);
-            var lastMessage12 = new Message(long.MaxValue, new MessageSenderUser(8),  9,  null, null, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, TodayDate(15, 30),  0, null, null, null, 0, 0, 0, 0, 0, 0, 0, string.Empty, 0, string.Empty, new MessageText(new FormattedText("Wait, we could have made so much money on this!", new TextEntity[0]), null), null);
+            var lastMessage7  = new Message(long.MaxValue, new MessageSenderUser(7),  7,  null, null, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, TuesdayDate(),      0, null, null, null, 0, 0, 0, 0, 0, 0, 0, string.Empty, 0, string.Empty, new MessagePhoto(new Document("LaserBlastSafetyGuide.pdf", string.Empty, null, null, null), new FormattedText(string.Empty, Array.Empty<TextEntity>())), null);
+            var lastMessage8  = new Message(long.MaxValue, new MessageSenderUser(8),  8,  null, null, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, TuesdayDate(),      0, null, null, null, 0, 0, 0, 0, 0, 0, 0, string.Empty, 0, string.Empty, new MessageText(new FormattedText("It's impossible.", Array.Empty<TextEntity>()), null), null);
+            var lastMessage9  = new Message(long.MaxValue, new MessageSenderUser(9),  9,  null, null, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, TuesdayDate(),      0, null, null, null, 0, 0, 0, 0, 0, 0, 0, string.Empty, 0, string.Empty, new MessageText(new FormattedText("Hola!", Array.Empty<TextEntity>()), null), null);
+            var lastMessage10 = new Message(long.MaxValue, new MessageSenderUser(17), 12, null, null, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, TuesdayDate(),      0, null, null, null, 0, 0, 0, 0, 0, 0, 0, string.Empty, 0, string.Empty, new MessageText(new FormattedText("Let's design more robust memes", Array.Empty<TextEntity>()), null), null);
+            var lastMessage11 = new Message(long.MaxValue, new MessageSenderUser(18), 13, null, null, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, TuesdayDate(),      0, null, null, null, 0, 0, 0, 0, 0, 0, 0, string.Empty, 0, string.Empty, new MessageText(new FormattedText("What?! 😱", Array.Empty<TextEntity>()), null), null);
+            var lastMessage12 = new Message(long.MaxValue, new MessageSenderUser(8),  9,  null, null, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, TodayDate(15, 30),  0, null, null, null, 0, 0, 0, 0, 0, 0, 0, string.Empty, 0, string.Empty, new MessageText(new FormattedText("Wait, we could have made so much money on this!", Array.Empty<TextEntity>()), null), null);
 
             var permissions = new ChatPermissions(true, true, true, true, true, true, true, true);
 
@@ -461,8 +510,7 @@ namespace Telegram.Services
                     SystemVersion = _deviceInfoService.SystemVersion,
                     SystemLanguageCode = _deviceInfoService.SystemLanguageCode,
                     DeviceModel = deviceModel,
-                    UseTestDc = _settings.UseTestDC,
-                    EnableStorageOptimizer = SettingsService.Current.Diagnostics.UseStorageOptimizer
+                    UseTestDc = _settings.UseTestDC
                 });
                 _client.Send(new GetApplicationConfig(), UpdateConfig);
             });
@@ -499,9 +547,6 @@ namespace Telegram.Services
         private void InitializeReady()
         {
             Send(new LoadChats(new ChatListMain(), 20));
-
-            UpdateVersion();
-
             //InitializeStickers();
         }
 
@@ -510,21 +555,40 @@ namespace Telegram.Services
             // Flush animated stickers cache files that have not been accessed in three days
             Task.Factory.StartNew(() =>
             {
+                static IEnumerable<string> GetFiles(string path)
+                {
+                    try
+                    {
+                        if (System.IO.Directory.Exists(path))
+                        {
+                            return System.IO.Directory.GetFiles(path, "*.cache");
+                        }
+                    }
+                    catch
+                    {
+
+                    }
+
+                    return Enumerable.Empty<string>();
+                }
+
                 var now = DateTime.Now;
                 var path = System.IO.Path.Combine(ApplicationData.Current.LocalFolder.Path, $"{_session}", "stickers");
 
-                if (System.IO.Directory.Exists(path))
+                foreach (var file in GetFiles(path))
                 {
-                    var files = System.IO.Directory.GetFiles(path, "*.cache");
+                    var date = System.IO.File.GetLastAccessTime(file);
 
-                    foreach (var file in files)
+                    var diff = now - date;
+                    if (diff.TotalDays >= 3)
                     {
-                        var date = System.IO.File.GetLastAccessTime(file);
-
-                        var diff = now - date;
-                        if (diff.TotalDays >= 3)
+                        try
                         {
                             System.IO.File.Delete(file);
+                        }
+                        catch
+                        {
+                            // File might be in use
                         }
                     }
                 }
@@ -539,12 +603,85 @@ namespace Telegram.Services
             }
         }
 
-        private void UpdateVersion()
+        public IList<string> ActiveReactions => _activeReactions;
+
+        public IDictionary<int, NameColor> AccentColors { get; private set; }
+        public IList<int> AvailableAccentColors { get; private set; }
+
+        public IDictionary<int, ProfileColor> ProfileColors { get; private set; }
+        public IList<int> AvailableProfileColors { get; private set; }
+
+        public IList<NameColor> GetAvailableAccentColors()
         {
-            if (_settings.UpdateVersion(out string previousVersion))
+            if (AccentColors == null || AvailableAccentColors == null)
             {
-                Send(new AddApplicationChangelog(previousVersion));
+                return Array.Empty<NameColor>();
             }
+
+            IList<NameColor> colors = null;
+
+            foreach (var id in AvailableAccentColors)
+            {
+                if (AccentColors.TryGetValue(id, out NameColor value))
+                {
+                    colors ??= new List<NameColor>();
+                    colors.Add(value);
+                }
+            }
+
+            return colors ?? Array.Empty<NameColor>();
+        }
+
+        public IList<ProfileColor> GetAvailableProfileColors()
+        {
+            if (ProfileColors == null || AvailableProfileColors == null)
+            {
+                return Array.Empty<ProfileColor>();
+            }
+
+            IList<ProfileColor> colors = null;
+
+            foreach (var id in AvailableProfileColors)
+            {
+                if (ProfileColors.TryGetValue(id, out ProfileColor value))
+                {
+                    colors ??= new List<ProfileColor>();
+                    colors.Add(value);
+                }
+            }
+
+            return colors ?? Array.Empty<ProfileColor>();
+        }
+
+        public NameColor GetAccentColor(int id)
+        {
+            if (AccentColors != null && AccentColors.TryGetValue(id, out var accentColor))
+            {
+                return accentColor;
+            }
+
+            return new NameColor(id);
+        }
+
+        public ProfileColor GetProfileColor(int id)
+        {
+            if (ProfileColors != null && ProfileColors.TryGetValue(id, out var accentColor))
+            {
+                return accentColor;
+            }
+
+            return null;
+        }
+
+        public bool TryGetProfileColor(int id, out ProfileColor color)
+        {
+            if (ProfileColors != null && ProfileColors.TryGetValue(id, out color))
+            {
+                return true;
+            }
+
+            color = null;
+            return false;
         }
 
         public void CleanUp()
@@ -553,7 +690,7 @@ namespace Telegram.Services
 
             _files.Clear();
 
-            _reactions = Array.Empty<string>();
+            _activeReactions = Array.Empty<string>();
 
             _chats.Clear();
             _chatActions.Clear();
@@ -583,7 +720,7 @@ namespace Telegram.Services
             _installedMaskSets = null;
             _installedEmojiSets = null;
 
-            _chatFolders = new ChatFolderInfo[0];
+            _chatFolders = Array.Empty<ChatFolderInfo>();
 
             _animationSearchParameters = null;
 
@@ -859,13 +996,15 @@ namespace Telegram.Services
             return (IList<AttachmentMenuBot>)bots ?? Array.Empty<AttachmentMenuBot>();
         }
 
-        public IList<string> AnimationSearchEmojis => _animationSearchParameters?.Emojis ?? new string[0];
+        public UpdateSpeechRecognitionTrial SpeechRecognitionTrial => _speechRecognitionTrial ??= new();
+
+        public IList<string> AnimationSearchEmojis => _animationSearchParameters?.Emojis ?? Array.Empty<string>();
 
         public string AnimationSearchProvider => _animationSearchParameters?.Provider;
 
-        public Background SelectedBackground => GetSelectedBackground(_settings.Appearance.IsDarkTheme());
+        public Background DefaultBackground => GetDefaultBackground(_settings.Appearance.IsDarkTheme());
 
-        public Background GetSelectedBackground(bool darkTheme)
+        public Background GetDefaultBackground(bool darkTheme)
         {
             if (darkTheme)
             {
@@ -873,6 +1012,16 @@ namespace Telegram.Services
             }
 
             return _selectedBackground;
+        }
+
+        public string GetTitle(long chatId, bool tiny = false)
+        {
+            if (_chats.TryGetValue(chatId, out var chat))
+            {
+                return GetTitle(chat, tiny);
+            }
+
+            return string.Empty;
         }
 
         public string GetTitle(Chat chat, bool tiny = false)
@@ -906,27 +1055,45 @@ namespace Telegram.Services
             return chat.Title;
         }
 
-        public string GetTitle(MessageForwardInfo info)
+        public string GetTitle(SavedMessagesTopic topic)
         {
-            if (info?.Origin is MessageForwardOriginUser fromUser)
+            if (topic?.Type is SavedMessagesTopicTypeMyNotes)
+            {
+                return Strings.MyNotes;
+            }
+            else if (topic?.Type is SavedMessagesTopicTypeAuthorHidden)
+            {
+                return Strings.AnonymousForward;
+            }
+            else if (topic?.Type is SavedMessagesTopicTypeSavedFromChat savedFromChat && TryGetChat(savedFromChat.ChatId, out Chat chat))
+            {
+                return GetTitle(chat);
+            }
+
+            return Strings.AnonymousForward;
+        }
+
+        public string GetTitle(MessageOrigin origin, MessageImportInfo import)
+        {
+            if (origin is MessageOriginUser fromUser)
             {
                 return GetUser(fromUser.SenderUserId)?.FullName();
             }
-            else if (info?.Origin is MessageForwardOriginChat fromChat)
+            else if (origin is MessageOriginChat fromChat)
             {
-                return GetTitle(GetChat(fromChat.SenderChatId));
+                return GetTitle(fromChat.SenderChatId);
             }
-            else if (info?.Origin is MessageForwardOriginChannel fromChannel)
+            else if (origin is MessageOriginChannel fromChannel)
             {
-                return GetTitle(GetChat(fromChannel.ChatId));
+                return GetTitle(fromChannel.ChatId);
             }
-            else if (info?.Origin is MessageForwardOriginMessageImport fromImport)
-            {
-                return fromImport.SenderName;
-            }
-            else if (info?.Origin is MessageForwardOriginHiddenUser fromHiddenUser)
+            else if (origin is MessageOriginHiddenUser fromHiddenUser)
             {
                 return fromHiddenUser.SenderName;
+            }
+            else if (import != null)
+            {
+                return import.SenderName;
             }
 
             return null;
@@ -934,20 +1101,51 @@ namespace Telegram.Services
 
         public bool TryGetCachedReaction(string emoji, out EmojiReaction value)
         {
-            value = null;
-            return false;
+            return _cachedReactions.TryGetValue(emoji, out value);
         }
 
         public async Task<IDictionary<string, EmojiReaction>> GetAllReactionsAsync()
         {
             var result = new Dictionary<string, EmojiReaction>();
 
-            foreach (var emoji in _reactions)
+            foreach (var emoji in _activeReactions)
             {
-                var response = await SendAsync(new GetEmojiReaction(emoji));
-                if (response is EmojiReaction reaction)
+                if (_cachedReactions.TryGetValue(emoji, out EmojiReaction cached))
                 {
-                    result[emoji] = reaction;
+                    result[emoji] = cached;
+                }
+                else
+                {
+                    var response = await SendAsync(new GetEmojiReaction(emoji));
+                    if (response is EmojiReaction reaction)
+                    {
+                        _cachedReactions[emoji] = reaction;
+                        result[emoji] = reaction;
+                    }
+                }
+            }
+
+            return result;
+        }
+
+        public async Task<IDictionary<string, EmojiReaction>> GetReactionsAsync(IEnumerable<string> reactions)
+        {
+            var result = new Dictionary<string, EmojiReaction>();
+
+            foreach (var emoji in reactions)
+            {
+                if (_cachedReactions.TryGetValue(emoji, out EmojiReaction cached))
+                {
+                    result[emoji] = cached;
+                }
+                else
+                {
+                    var response = await SendAsync(new GetEmojiReaction(emoji));
+                    if (response is EmojiReaction reaction)
+                    {
+                        _cachedReactions[emoji] = reaction;
+                        result[emoji] = reaction;
+                    }
                 }
             }
 
@@ -1095,10 +1293,14 @@ namespace Telegram.Services
             return null;
         }
 
+        public bool TryGetSavedMessagesTopic(long savedMessagesTopicId, out SavedMessagesTopic topic)
+        {
+            return _savedMessagesTopics.TryGetValue(savedMessagesTopicId, out topic);
+        }
+
         public bool TryGetChat(long chatId, out Chat chat)
         {
-            chat = GetChat(chatId);
-            return chat != null;
+            return _chats.TryGetValue(chatId, out chat);
         }
 
         public bool TryGetChat(MessageSender sender, out Chat value)
@@ -1499,6 +1701,29 @@ namespace Telegram.Services
 
 
 
+        public MessageTag GetSavedMessagesTag(ReactionType reaction)
+        {
+            lock (_savedMessagesTags)
+            {
+                if (_savedMessagesTags.TryGetValue(reaction, out MessageTag value))
+                {
+                    return value;
+                }
+            }
+
+            return null;
+        }
+
+        public bool TryGetSavedMessagesTag(ReactionType reaction, out MessageTag value)
+        {
+            lock (_savedMessagesTags)
+            {
+                return _savedMessagesTags.TryGetValue(reaction, out value);
+            }
+        }
+
+
+
         public bool IsStickerRecent(int id)
         {
             if (_recentStickers != null)
@@ -1557,7 +1782,7 @@ namespace Telegram.Services
 
         public IList<ChatTheme> GetChatThemes()
         {
-            return _chatThemes?.ChatThemes ?? new ChatTheme[0];
+            return _chatThemes?.ChatThemes ?? Array.Empty<ChatTheme>();
         }
 
         public bool IsDiceEmoji(string text, out string dice)
@@ -1604,7 +1829,7 @@ namespace Telegram.Services
                     int i;
                     for (i = 0; i < value.Positions.Count; i++)
                     {
-                        if (value.Positions[i].List.ToId() == updateChatPosition.Position.List.ToId())
+                        if (ChatListEqualityComparer.Instance.Equals(value.Positions[i].List, updateChatPosition.Position.List))
                         {
                             break;
                         }
@@ -1666,6 +1891,30 @@ namespace Telegram.Services
                 if (updateNewChat.Chat.Type is ChatTypePrivate privata)
                 {
                     _usersToChats[privata.UserId] = updateNewChat.Chat.Id;
+                }
+            }
+            else if (update is UpdateSavedMessagesTopic updateSavedMessagesTopic)
+            {
+                if (_savedMessagesTopics.TryGetValue(updateSavedMessagesTopic.Topic.Id, out SavedMessagesTopic topic))
+                {
+                    Monitor.Enter(topic);
+                    SetSavedMessagesTopicOrder(topic, updateSavedMessagesTopic.Topic.Order);
+                    Monitor.Exit(topic);
+
+                    topic.DraftMessage = updateSavedMessagesTopic.Topic.DraftMessage;
+                    topic.LastMessage = updateSavedMessagesTopic.Topic.LastMessage;
+                    topic.IsPinned = updateSavedMessagesTopic.Topic.IsPinned;
+                    topic.Order = updateSavedMessagesTopic.Topic.Order;
+
+                    updateSavedMessagesTopic.Topic = topic;
+                }
+                else
+                {
+                    Monitor.Enter(updateSavedMessagesTopic.Topic);
+                    SetSavedMessagesTopicOrder(updateSavedMessagesTopic.Topic, updateSavedMessagesTopic.Topic.Order);
+                    Monitor.Exit(updateSavedMessagesTopic.Topic);
+
+                    _savedMessagesTopics[updateSavedMessagesTopic.Topic.Id] = updateSavedMessagesTopic.Topic;
                 }
             }
             else if (update is UpdateAuthorizationState updateAuthorizationState)
@@ -1770,6 +2019,13 @@ namespace Telegram.Services
                     value.DefaultDisableNotification = updateChatDefaultDisableNotification.DefaultDisableNotification;
                 }
             }
+            else if (update is UpdateChatEmojiStatus updateChatEmojiStatus)
+            {
+                if (_chats.TryGetValue(updateChatEmojiStatus.ChatId, out Chat value))
+                {
+                    value.EmojiStatus = updateChatEmojiStatus.EmojiStatus;
+                }
+            }
             else if (update is UpdateChatMessageSender updateChatMessageSender)
             {
                 if (_chats.TryGetValue(updateChatMessageSender.ChatId, out Chat value))
@@ -1801,6 +2057,16 @@ namespace Telegram.Services
                     value.HasScheduledMessages = updateChatHasScheduledMessages.HasScheduledMessages;
                 }
             }
+            else if (update is UpdateChatAccentColors updateChatAccentColors)
+            {
+                if (_chats.TryGetValue(updateChatAccentColors.ChatId, out Chat value))
+                {
+                    value.AccentColorId = updateChatAccentColors.AccentColorId;
+                    value.BackgroundCustomEmojiId = updateChatAccentColors.BackgroundCustomEmojiId;
+                    value.ProfileAccentColorId = updateChatAccentColors.ProfileAccentColorId;
+                    value.ProfileBackgroundCustomEmojiId = updateChatAccentColors.ProfileBackgroundCustomEmojiId;
+                }
+            }
             else if (update is UpdateChatBlockList updateChatBlockList)
             {
                 if (_chats.TryGetValue(updateChatBlockList.ChatId, out Chat value))
@@ -1813,6 +2079,13 @@ namespace Telegram.Services
                 if (_chats.TryGetValue(updateChatIsMarkedAsUnread.ChatId, out Chat value))
                 {
                     value.IsMarkedAsUnread = updateChatIsMarkedAsUnread.IsMarkedAsUnread;
+                }
+            }
+            else if (update is UpdateChatIsTranslatable updateChatIsTranslatable)
+            {
+                if (_chats.TryGetValue(updateChatIsTranslatable.ChatId, out Chat value))
+                {
+                    value.IsTranslatable = updateChatIsTranslatable.IsTranslatable;
                 }
             }
             else if (update is UpdateChatNotificationSettings updateNotificationSettings)
@@ -1911,6 +2184,13 @@ namespace Telegram.Services
                     value.VideoChat = updateChatVideoChat.VideoChat;
                 }
             }
+            else if (update is UpdateChatViewAsTopics updateChatViewAsTopics)
+            {
+                if (_chats.TryGetValue(updateChatViewAsTopics.ChatId, out Chat value))
+                {
+                    value.ViewAsTopics = updateChatViewAsTopics.ViewAsTopics;
+                }
+            }
             else if (update is UpdateConnectionState updateConnectionState)
             {
                 _connectionState = updateConnectionState.State;
@@ -1983,7 +2263,7 @@ namespace Telegram.Services
             }
             else if (update is UpdateActiveEmojiReactions updateReactions)
             {
-                _reactions = updateReactions.Emojis;
+                _activeReactions = updateReactions.Emojis;
             }
             else if (update is UpdateRecentStickers updateRecentStickers)
             {
@@ -2008,16 +2288,20 @@ namespace Telegram.Services
             {
                 _secretChats[updateSecretChat.SecretChat.Id] = updateSecretChat.SecretChat;
             }
-            else if (update is UpdateSelectedBackground updateSelectedBackground)
+            else if (update is UpdateDefaultBackground updateDefaultBackground)
             {
-                if (updateSelectedBackground.ForDarkTheme)
+                if (updateDefaultBackground.ForDarkTheme)
                 {
-                    _selectedBackgroundDark = updateSelectedBackground.Background;
+                    _selectedBackgroundDark = updateDefaultBackground.Background;
                 }
                 else
                 {
-                    _selectedBackground = updateSelectedBackground.Background;
+                    _selectedBackground = updateDefaultBackground.Background;
                 }
+            }
+            else if (update is UpdateSpeechRecognitionTrial updateSpeechRecognitionTrial)
+            {
+                _speechRecognitionTrial = updateSpeechRecognitionTrial;
             }
             else if (update is UpdateStoryStealthMode updateStoryStealthMode)
             {
@@ -2053,6 +2337,66 @@ namespace Telegram.Services
             else if (update is UpdateAttachmentMenuBots updateAttachmentMenuBots)
             {
                 _attachmentMenuBots = updateAttachmentMenuBots.Bots;
+            }
+            else if (update is UpdateAccentColors updateAccentColors)
+            {
+                var colors = new Dictionary<int, NameColor>();
+
+                for (int i = 0; i < 7; i++)
+                {
+                    colors[i] = new NameColor(i);
+                }
+
+                foreach (var color in updateAccentColors.Colors)
+                {
+                    colors[color.Id] = new NameColor(color);
+                }
+
+                AvailableAccentColors = updateAccentColors.AvailableAccentColorIds.ToList();
+                AccentColors = colors;
+            }
+            else if (update is UpdateProfileAccentColors updateProfileAccentColors)
+            {
+                var colors = new Dictionary<int, ProfileColor>();
+
+                foreach (var color in updateProfileAccentColors.Colors)
+                {
+                    colors[color.Id] = new ProfileColor(color);
+                }
+
+                AvailableProfileColors = updateProfileAccentColors.AvailableAccentColorIds.ToList();
+                ProfileColors = colors;
+            }
+            else if (update is UpdateSavedMessagesTags updateSavedMessagesTags)
+            {
+                lock (_savedMessagesTags)
+                {
+                    if (updateSavedMessagesTags.SavedMessagesTopicId == 0)
+                    {
+                        var temp = new List<MessageTag>(updateSavedMessagesTags.Tags.Tags.Count);
+
+                        foreach (var tag in updateSavedMessagesTags.Tags.Tags)
+                        {
+                            if (_savedMessagesTags.TryGetValue(tag.Tag, out MessageTag cache))
+                            {
+                                cache.Count = tag.Count;
+                                cache.Label = tag.Label;
+                                temp.Add(cache);
+                            }
+                            else
+                            {
+                                temp.Add(new MessageTag(tag));
+                            }
+                        }
+
+                        _savedMessagesTags.Clear();
+
+                        foreach (var tag in temp)
+                        {
+                            _savedMessagesTags[tag.Tag] = tag;
+                        }
+                    }
+                }
             }
 
             _aggregator.Publish(update);

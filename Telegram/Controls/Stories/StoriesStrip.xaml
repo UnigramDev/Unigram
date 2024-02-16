@@ -1,13 +1,14 @@
-﻿<UserControl x:Class="Telegram.Controls.Stories.StoriesStrip"
-             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             xmlns:cells="using:Telegram.Controls.Cells"
-             xmlns:viewModels="using:Telegram.ViewModels.Stories"
-             mc:Ignorable="d"
-             d:DesignHeight="300"
-             d:DesignWidth="400">
+﻿<controls:UserControlEx x:Class="Telegram.Controls.Stories.StoriesStrip"
+                        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                        xmlns:cells="using:Telegram.Controls.Cells"
+                        xmlns:controls="using:Telegram.Controls"
+                        xmlns:viewModels="using:Telegram.ViewModels.Stories"
+                        mc:Ignorable="d"
+                        d:DesignHeight="300"
+                        d:DesignWidth="400">
 
     <Grid>
         <ListView x:Name="ScrollingHost"
@@ -20,7 +21,9 @@
                   ScrollViewer.HorizontalScrollMode="Auto"
                   SizeChanged="OnSizeChanged"
                   SelectionMode="None"
-                  Padding="4,0">
+                  IsItemClickEnabled="True"
+                  ItemClick="ScrollingHost_ItemClick"
+                  Padding="4,0,0,4">
             <ListView.ItemsPanel>
                 <ItemsPanelTemplate>
                     <ItemsStackPanel Orientation="Horizontal" />
@@ -28,8 +31,7 @@
             </ListView.ItemsPanel>
             <ListView.ItemTemplate>
                 <DataTemplate x:DataType="viewModels:ActiveStoriesViewModel">
-                    <cells:ActiveStoriesCell Trigger="{x:Bind Item, Mode=OneWay}"
-                                             Click="StoryCell_Click" />
+                    <cells:ActiveStoriesCell Trigger="{x:Bind Item, Mode=OneWay}" />
                 </DataTemplate>
             </ListView.ItemTemplate>
             <ListView.ItemContainerStyle>
@@ -45,5 +47,14 @@
                 </TransitionCollection>
             </ListView.ItemContainerTransitions>
         </ListView>
+
+        <HyperlinkButton x:Name="Show"
+                         Click="Show_Click"
+                         IsTabStop="False"
+                         Height="32"
+                         Margin="10,18,0,0"
+                         CornerRadius="16"
+                         VerticalAlignment="Top"
+                         HorizontalAlignment="Left" />
     </Grid>
-</UserControl>
+</controls:UserControlEx>

@@ -1,5 +1,5 @@
 //
-// Copyright Fela Ameghino 2015-2023
+// Copyright Fela Ameghino 2015-2024
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
@@ -36,15 +36,12 @@ namespace Telegram.Views.Supergroups
 
         private void Member_ContextRequested(UIElement sender, ContextRequestedEventArgs args)
         {
-            var flyout = new MenuFlyout();
-
-            var element = sender as FrameworkElement;
             var member = ScrollingHost.ItemFromContainer(sender) as ChatMember;
 
+            var flyout = new MenuFlyout();
             flyout.CreateFlyoutItem(ViewModel.EditMember, member, Strings.EditAdminRights, Icons.ShieldStar);
             flyout.CreateFlyoutItem(ViewModel.DismissMember, member, Strings.ChannelRemoveUserAdmin, Icons.SubtractCircle, destructive: true);
-
-            args.ShowAt(flyout, element);
+            flyout.ShowAt(sender, args);
         }
 
         #endregion

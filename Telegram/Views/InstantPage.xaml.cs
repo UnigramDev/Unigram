@@ -1,5 +1,5 @@
 //
-// Copyright Fela Ameghino 2015-2023
+// Copyright Fela Ameghino 2015-2024
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
@@ -20,7 +20,6 @@ using Telegram.Services;
 using Telegram.Td.Api;
 using Telegram.ViewModels;
 using Telegram.ViewModels.Gallery;
-using Windows.ApplicationModel;
 using Windows.Foundation;
 using Windows.System;
 using Windows.UI;
@@ -36,6 +35,24 @@ using Windows.UI.Xaml.Shapes;
 
 namespace Telegram.Views
 {
+    public class InstantPageArgs
+    {
+        public InstantPageArgs(WebPageInstantView instantView, string url)
+        {
+            InstantView = instantView;
+            Url = url;
+        }
+
+        public WebPageInstantView InstantView { get; }
+
+        public string Url { get; set; }
+
+        public override string ToString()
+        {
+            return Url;
+        }
+    }
+
     public sealed partial class InstantPage : HostedPage
     {
         public InstantViewModel ViewModel => DataContext as InstantViewModel;
@@ -44,17 +61,11 @@ namespace Telegram.Views
 
         public IEventAggregator Aggregator => ViewModel.Aggregator;
 
-        private readonly string _injectedJs;
-        private readonly ScrollViewer _scrollingHost;
-
         private readonly List<IPlayerView> _animations = new List<IPlayerView>();
 
         public InstantPage()
         {
             InitializeComponent();
-
-            var jsPath = System.IO.Path.Combine(Package.Current.InstalledLocation.Path, "Assets", "Webviews", "injected.js");
-            _injectedJs = System.IO.File.ReadAllText(jsPath);
         }
 
         private void OnLoaded(object sender, RoutedEventArgs e)
@@ -72,7 +83,7 @@ namespace Telegram.Views
             {
                 try
                 {
-                    animation?.Pause();
+                    animation?.ViewportChanged(false);
                 }
                 catch { }
             }
@@ -90,33 +101,16 @@ namespace Telegram.Views
             ViewModel.Gallery.SelectedItem = null;
             _anchors.Clear();
 
-            var url = e.Parameter as string;
-            if (url == null)
+            var args = e.Parameter as InstantPageArgs;
+            if (args?.InstantView == null || !Uri.TryCreate(args.Url, UriKind.Absolute, out Uri uri))
             {
                 return;
             }
 
-            ViewModel.IsLoading = true;
+            ViewModel.ShareLink = uri;
+            ViewModel.ShareTitle = args.Url;
 
-            var response = await ViewModel.ClientService.SendAsync(new GetWebPageInstantView(url, true));
-            if (response is WebPageInstantView instantView)
-            {
-                if (Uri.TryCreate(url, UriKind.Absolute, out Uri uri))
-                {
-                    ViewModel.ShareLink = uri;
-                    ViewModel.ShareTitle = url;
-
-                    //if (uri.Fragment.Length > 0 && _anchors.TryGetValue(uri.Fragment.Substring(1), out Border anchor))
-                    //{
-                    //    await ScrollingHost.ScrollToItem(anchor, SnapPointsAlignment.Near, false);
-                    //}
-                }
-
-                UpdateView(instantView);
-                ViewModel.IsLoading = false;
-            }
-
-            base.OnNavigatedTo(e);
+            UpdateView(args.InstantView);
         }
 
         private WebPageInstantView _instantView;
@@ -834,7 +828,7 @@ namespace Telegram.Views
 
         private FrameworkElement ProcessPhoto(PageBlockPhoto block)
         {
-            var galleryItem = new GalleryPhoto(ViewModel.ClientService, block.Photo, block.Caption.ToPlainText());
+            var galleryItem = new GalleryPhoto(ViewModel.ClientService, block.Photo, block.Caption.ToFormattedText());
             ViewModel.Gallery.Items.Add(galleryItem);
 
             var message = CreateMessage(new MessagePhoto(block.Photo, null, false, false));
@@ -860,7 +854,7 @@ namespace Telegram.Views
 
         private FrameworkElement ProcessVideo(PageBlockVideo block)
         {
-            var galleryItem = new GalleryVideo(ViewModel.ClientService, block.Video, block.Caption.ToPlainText());
+            var galleryItem = new GalleryVideo(ViewModel.ClientService, block.Video, block.Caption.ToFormattedText());
             ViewModel.Gallery.Items.Add(galleryItem);
 
             var message = CreateMessage(new MessageVideo(block.Video, null, false, false));
@@ -886,7 +880,7 @@ namespace Telegram.Views
 
         private FrameworkElement ProcessAnimation(PageBlockAnimation block)
         {
-            var galleryItem = new GalleryAnimation(ViewModel.ClientService, block.Animation, block.Caption.ToPlainText());
+            var galleryItem = new GalleryAnimation(ViewModel.ClientService, block.Animation, block.Caption.ToFormattedText());
             ViewModel.Gallery.Items.Add(galleryItem);
 
             var message = CreateMessage(new MessageAnimation(block.Animation, null, false, false));
@@ -991,7 +985,7 @@ namespace Telegram.Views
             {
                 if (item is PageBlockPhoto photoBlock)
                 {
-                    var galleryItem = new GalleryPhoto(ViewModel.ClientService, photoBlock.Photo, block.Caption.ToPlainText());
+                    var galleryItem = new GalleryPhoto(ViewModel.ClientService, photoBlock.Photo, block.Caption.ToFormattedText());
                     ViewModel.Gallery.Items.Add(galleryItem);
 
                     var message = CreateMessage(new MessagePhoto(photoBlock.Photo, null, false, false));
@@ -1006,7 +1000,7 @@ namespace Telegram.Views
                 }
                 else if (item is PageBlockVideo videoBlock)
                 {
-                    var galleryItem = new GalleryVideo(ViewModel.ClientService, videoBlock.Video, block.Caption.ToPlainText());
+                    var galleryItem = new GalleryVideo(ViewModel.ClientService, videoBlock.Video, block.Caption.ToFormattedText());
                     ViewModel.Gallery.Items.Add(galleryItem);
 
                     var message = CreateMessage(new MessageVideo(videoBlock.Video, null, false, false));
@@ -1242,7 +1236,7 @@ namespace Telegram.Views
                         var hyperlink = new Hyperlink { UnderlineStyle = UnderlineStyle.None };
                         span.Inlines.Add(hyperlink);
                         hyperlink.Click += (s, args) => Hyperlink_Click(anchorLinkText);
-                        ToolTipService.SetToolTip(hyperlink, anchorLinkText.Url);
+                        Extensions.SetToolTip(hyperlink, anchorLinkText.Url);
                         MessageHelper.SetEntityData(hyperlink, anchorLinkText.Url);
                         MessageHelper.SetEntityAction(hyperlink, () => Hyperlink_Click(anchorLinkText));
                         ProcessRichText(anchorLinkText.Text, hyperlink, textBlock, effects, ref offset);
@@ -1259,7 +1253,7 @@ namespace Telegram.Views
                         var hyperlink = new Hyperlink { UnderlineStyle = UnderlineStyle.None };
                         span.Inlines.Add(hyperlink);
                         hyperlink.Click += (s, args) => Hyperlink_Click(urlText);
-                        ToolTipService.SetToolTip(hyperlink, urlText.Url);
+                        Extensions.SetToolTip(hyperlink, urlText.Url);
                         MessageHelper.SetEntityData(hyperlink, urlText.Url);
                         MessageHelper.SetEntityAction(hyperlink, () => Hyperlink_Click(urlText));
                         ProcessRichText(urlText.Text, hyperlink, textBlock, effects, ref offset);

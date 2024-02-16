@@ -1,9 +1,10 @@
 //
-// Copyright Fela Ameghino 2015-2023
+// Copyright Fela Ameghino 2015-2024
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+using System;
 using Telegram.Services;
 using Telegram.Td.Api;
 
@@ -12,7 +13,7 @@ namespace Telegram.ViewModels.Gallery
     public class GalleryAnimation : GalleryMedia
     {
         private readonly Animation _animation;
-        private readonly string _caption;
+        private readonly FormattedText _caption;
 
         public GalleryAnimation(IClientService clientService, Animation animation)
             : base(clientService)
@@ -20,7 +21,7 @@ namespace Telegram.ViewModels.Gallery
             _animation = animation;
         }
 
-        public GalleryAnimation(IClientService clientService, Animation animation, string caption)
+        public GalleryAnimation(IClientService clientService, Animation animation, FormattedText caption)
             : base(clientService)
         {
             _animation = animation;
@@ -46,7 +47,7 @@ namespace Telegram.ViewModels.Gallery
 
         public override object Constraint => _animation;
 
-        public override string Caption => _caption;
+        public override FormattedText Caption => _caption;
 
         public override bool IsVideo => true;
         public override bool IsLoop => true;
@@ -60,7 +61,7 @@ namespace Telegram.ViewModels.Gallery
 
         public override InputMessageContent ToInput()
         {
-            return new InputMessageAnimation(new InputFileId(_animation.AnimationValue.Id), _animation.Thumbnail?.ToInput(), new int[0], _animation.Duration, _animation.Width, _animation.Height, null, false);
+            return new InputMessageAnimation(new InputFileId(_animation.AnimationValue.Id), _animation.Thumbnail?.ToInput(), Array.Empty<int>(), _animation.Duration, _animation.Width, _animation.Height, null, false);
         }
     }
 }

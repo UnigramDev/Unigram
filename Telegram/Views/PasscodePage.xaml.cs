@@ -1,5 +1,5 @@
 //
-// Copyright Fela Ameghino 2015-2023
+// Copyright Fela Ameghino 2015-2024
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
@@ -12,7 +12,6 @@ using Windows.ApplicationModel;
 using Windows.Security.Credentials;
 using Windows.Security.Cryptography;
 using Windows.UI.Core;
-using Windows.UI.ViewManagement.Core;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Input;
@@ -32,7 +31,7 @@ namespace Telegram.Views
         {
             InitializeComponent();
 
-            _passcodeService = TLContainer.Current.Passcode;
+            _passcodeService = TypeResolver.Current.Passcode;
             _biometrics = biometrics;
 
             _retryTimer = new DispatcherTimer();
@@ -72,18 +71,16 @@ namespace Telegram.Views
             }
         }
 
+        private void Field_LosingFocus(UIElement sender, LosingFocusEventArgs args)
+        {
+            args.TryCancel();
+        }
+
         private void Field_TextChanged(object sender, RoutedEventArgs e)
         {
             if (_passcodeService.IsSimple && Field.Password.Length == 4)
             {
-                if (_passcodeService.TryUnlock(Field.Password))
-                {
-                    Unlock();
-                }
-                else
-                {
-                    Lock();
-                }
+                TryUnlock();
             }
         }
 
@@ -91,23 +88,16 @@ namespace Telegram.Views
         {
             if (e.Key == Windows.System.VirtualKey.Enter)
             {
-                if (_passcodeService.TryUnlock(Field.Password))
-                {
-                    Unlock();
-                }
-                else
-                {
-                    Lock();
-                }
+                TryUnlock();
             }
         }
 
-        private void Field_LosingFocus(UIElement sender, LosingFocusEventArgs args)
+        private void Enter_Click(object sender, RoutedEventArgs e)
         {
-            args.TryCancel();
+            TryUnlock();
         }
 
-        private void Enter_Click(object sender, RoutedEventArgs e)
+        private void TryUnlock()
         {
             if (_passcodeService.TryUnlock(Field.Password))
             {
@@ -116,20 +106,15 @@ namespace Telegram.Views
             else
             {
                 Lock();
-
-                CoreInputView.GetForCurrentView().TryShow();
             }
         }
 
-        private void OnClosing(ContentDialog sender, ContentDialogClosingEventArgs args)
-        {
-            args.Cancel = _passcodeService.IsLocked || !_accepted;
-        }
-
-        private async void OnLoaded(object sender, RoutedEventArgs e)
+        private async void OnOpened(ContentDialog sender, ContentDialogOpenedEventArgs args)
         {
             Window.Current.Activated += Window_Activated;
             Window.Current.SizeChanged += Window_SizeChanged;
+
+            Field.LosingFocus += Field_LosingFocus;
 
             UpdateView();
 
@@ -145,16 +130,25 @@ namespace Telegram.Views
             else
             {
                 Field.Focus(FocusState.Keyboard);
-                CoreInputView.GetForCurrentView().TryShow();
             }
         }
 
-        private void OnUnloaded(object sender, RoutedEventArgs e)
-        {
-            Window.Current.Activated -= Window_Activated;
-            Window.Current.SizeChanged -= Window_SizeChanged;
 
-            _retryTimer.Stop();
+        private void OnClosing(ContentDialog sender, ContentDialogClosingEventArgs args)
+        {
+            if (_passcodeService.IsLocked || !_accepted)
+            {
+                args.Cancel = true;
+            }
+            else
+            {
+                Window.Current.Activated -= Window_Activated;
+                Window.Current.SizeChanged -= Window_SizeChanged;
+
+                Field.LosingFocus -= Field_LosingFocus;
+
+                _retryTimer.Stop();
+            }
         }
 
         #region Bounds
@@ -169,8 +163,6 @@ namespace Telegram.Views
 
         private void Window_SizeChanged(object sender, WindowSizeChangedEventArgs e)
         {
-            Logger.Debug();
-
             UpdateView();
         }
 

@@ -1,5 +1,5 @@
 //
-// Copyright Fela Ameghino 2015-2023
+// Copyright Fela Ameghino 2015-2024
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
@@ -13,6 +13,17 @@ namespace Telegram.Controls.Media
 {
     public class Icons
     {
+        public const string RTL = "\u200F";
+        public const string LTR = "\u200E";
+        public const string ZWJ = "\u200D";
+        public const string ZWNJ = "\u200C";
+        public const string Spacing = "\u2004\u200A";
+
+        public static string TagFilter = "\uEA63";
+        public static string TagEdit = "\uEA64";
+        public static string TagSearch = "\uEA65";
+        public static string TagOff = "\uEA66";
+
         public const string PictureInPictureEnter = "\uE92C";
         public const string PictureInPictureExit = "\uE92D";
 
@@ -27,13 +38,31 @@ namespace Telegram.Controls.Media
         public const string ArrowMinimize = "\uE965";
         public const string ArrowMaximize = "\uE966";
 
+        public const string PersonFilled16 = "\uEA48";
+        public const string MegaphoneFilled16 = "\uEA47";
+
+        public const string CodeFilled16 = "\uEA5A";
+        public const string CodeBlockFilled16 = "\uEA3D";
+        public const string QuoteBlockFilled16 = "\uEA01";
+        public const string QuoteBlock = "\uEA3E";
+
         public const string Globe = "\uE774";
         public const string Loading = "\uE1CD";
 
+        public const string ArrowReply24 = "\uEA4A";
+        public const string Link24 = "\uEA49";
+        public const string Edit24 = "\uEA4B";
+
         public const string Attach = "\uE917";
         public const string Attach24 = "\uE9D8";
-        public const string AttachArrowRight = "\uE918";
-        public const string AttachArrowRight24 = "\uE9DD";
+
+        public const string Replace = "\uEA3F";
+        public const string Replace24 = "\uEA60";
+
+        public const string MoveUp = "\uEA44";
+        public const string MoveDown = "\uEA43";
+        public const string Enlarge = "\uEA45";
+        public const string Shrink = "\uEA46";
 
         // TODO: wrong name
         public const string Location = "\uE1C4";
@@ -43,9 +72,11 @@ namespace Telegram.Controls.Media
         public const string AddCircle = "\uF164";
         public const string SubtractCircle = "\uF166";
 
+        public const string ArrowDownloadFilled24 = "\uEA5C";
         public const string ArrowDownload = "\uE118";
         public const string DownloadSmall = "\uE92A";
         public const string Dismiss = "\uE711";
+        public const string DismissCircle = "\uEA4E";
         public const string DismissFilled24 = "\uEA1F";
         public const string Cancel = "\uE978";
         public const string CancelSmall = "\uE93F";
@@ -111,6 +142,7 @@ namespace Telegram.Controls.Media
         public const string ArrowReply = "\uE248";
         public const string Thread = "\uE93D";
         public const string Edit = "\uE104";
+        public const string EditFilled = "\uEA55";
         public const string Compose = "\uE932";
         public const string Compose16 = "\uE996";
         public const string Signature = "\uEE56";
@@ -126,8 +158,10 @@ namespace Telegram.Controls.Media
         public const string Options = "\uE9E9";
 
         public const string AlertOff = "\uE7ED";
+        public const string AlertOffFilled = "\uEA53";
         public const string AlertOn = "\uE9A4";
         public const string Alert = "\uEA8F";
+        public const string AlertFilled = "\uEA54";
         public const string AlertSnooze = "\uE99C";
 
         public const string StealthLocked = "\uEA29";
@@ -169,9 +203,14 @@ namespace Telegram.Controls.Media
         public const string StarOff = "\uE8D9";
 
         public const string ChatEmpty = "\uE8BD";
+        public const string ChatEmptyFilled = "\uE9B0";
+        public const string ChatEmptyFilled16 = "\uEA4C";
 
         public const string Archive = "\uE7B8";
         public const string ArchiveFilled = "\uEA0E";
+
+        public const string MyNotesFilled = "\uEA61";
+        public const string AuthorHiddenFilled = "\uEA62";
 
         public const string StoriesOff = "\uEA2D";
         public const string StoriesPinned = "\uE9AC";
@@ -186,6 +225,8 @@ namespace Telegram.Controls.Media
         public const string Key = "\uE192";
         public const string Record = "\uE903";
 
+        public const string AppsListDetails = "\uEA67";
+
         public const string Delete = "\uE74D";
         public const string Share = "\uE72D";
         public const string ShareFilled = "\uE914";
@@ -198,7 +239,9 @@ namespace Telegram.Controls.Media
         public const string PersonCircle = "\uE9A9";
 
         public const string ArrowExit = "\uE999";
+        public const string ArrowExitFilled = "\uEA56";
         public const string ArrowEnter = "\uE99B";
+        public const string ArrowEnterFilled = "\uEA57";
 
         public const string ShareScreenStart = "\uE92F";
         public const string ShareScreenStop = "\uE92E";
@@ -218,9 +261,11 @@ namespace Telegram.Controls.Media
 
         public const string Block = "\uF166";
         public const string Search = "\uE721";
+        public const string SearchFilled = "\uEA58";
         public const string Settings = "\uE713";
-        public const string Phone = "\uE717";
-        public const string PhoneFilled24 = "\uE91B";
+        public const string Call = "\uE717";
+        public const string CallFilled = "\uEA52";
+        public const string CallFilled24 = "\uE91B";
         public const string Video = "\uE714";
         public const string SmallVideoFilled = "\uE915";
         public const string VideoFilled = "\uE964";
@@ -270,6 +315,7 @@ namespace Telegram.Controls.Media
         public const string Bookmark = "\uE907";
         public const string BookmarkFilled = "\uEA0F";
         public const string ArrowRight = "\uE72A";
+        public const string ArrowRightFilled16 = "\uEA4D";
         public const string ArrowLeft = "\uE72B";
         public const string Channel = "\uEC42";
         public const string Speaker3 = "\uEA12";
@@ -282,9 +328,13 @@ namespace Telegram.Controls.Media
         public const string SpeakerOff = "\uE74F";
         public const string SendFilled = "\uE919";
 
+        public const string MoreHorizontal = "\uE712";
+        public const string MoreHorizontalFilled = "\uEA59";
+
         public const string GhostFilled = "\uE91A";
 
         public const string VideoChat = "\uE900";
+        public const string VideoChatFilled = "\uEA4F";
 
         public const string EmojiHand = "\uE901";
 
@@ -299,6 +349,8 @@ namespace Telegram.Controls.Media
         public const string TopSpeed = "\uE90D";
 
         public const string PaintBrush = "\uE90E";
+        public const string PaintBrushFilled = "\uEA51";
+        public const string WallpaperFilled = "\uEA50";
 
         public const string Seen = "\uE96B";
 
@@ -308,6 +360,8 @@ namespace Telegram.Controls.Media
         public const string Multiplier2xFilled = "\uE9BA";
         public const string PlayCircleFilled = "\uE9AE";
         public const string ChatFilled = "\uE9B0";
+        public const string TagFilled = "\uEA68";
+        public const string HandOpenHeartFilled = "\uEA69";
         public const string StickerFilled = "\uE9AD";
         public const string HeartFilled = "\uE9B6";
         public const string MegaphoneOffFilled = "\uE9AF";
@@ -323,6 +377,8 @@ namespace Telegram.Controls.Media
         public const string Fake16 = "\uE9F5";
 
         public const string PersonFilled = "\uE9B8";
+        public const string PersonQuestionMarkFilled = "\uEA41";
+        public const string PersonDeleteFilled = "\uEA40";
         public const string PeopleFilled = "\uE9B9";
         public const string PinFilled = "\uE9BB";
         public const string LinkFilled = "\uE9BC";

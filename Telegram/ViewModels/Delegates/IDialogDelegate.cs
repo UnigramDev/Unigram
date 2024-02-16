@@ -1,5 +1,5 @@
 //
-// Copyright Fela Ameghino 2015-2023
+// Copyright Fela Ameghino 2015-2024
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
@@ -20,6 +20,7 @@ namespace Telegram.ViewModels.Delegates
         void UpdateChatActions(Chat chat, IDictionary<MessageSender, ChatAction> actions);
 
         void UpdateChatTheme(Chat chat);
+        void UpdateChatBackground(Chat chat);
         void UpdateChatPermissions(Chat chat);
         void UpdateChatActionBar(Chat chat);
         void UpdateChatHasScheduledMessages(Chat chat);
@@ -29,6 +30,10 @@ namespace Telegram.ViewModels.Delegates
         void UpdateChatDefaultDisableNotification(Chat chat, bool defaultDisableNotification);
         void UpdateChatMessageSender(Chat chat, MessageSender defaultMessageSenderId);
         void UpdateChatPendingJoinRequests(Chat chat);
+        void UpdateChatIsTranslatable(Chat chat, string language);
+        void UpdateChatVideoChat(Chat chat, VideoChat videoChat);
+
+        void UpdateUserRestrictsNewChats(Chat chat, User user, CanSendMessageToUserResult result);
 
         void UpdatePinnedMessage(Chat chat, bool known);
         void UpdateCallbackQueryAnswer(Chat chat, MessageViewModel answer);
@@ -39,6 +44,8 @@ namespace Telegram.ViewModels.Delegates
         void UpdateAutocomplete(Chat chat, IAutocompleteCollection collection);
 
         void UpdateGroupCall(Chat chat, GroupCall groupCall);
+
+        void UpdateDeleteMessages(Chat chat, IList<MessageViewModel> messages);
 
 
 
@@ -63,6 +70,7 @@ namespace Telegram.ViewModels.Delegates
         void ForEach(Action<MessageBubble, MessageViewModel> action);
         void ForEach(Action<MessageBubble> action);
 
+        bool HasContainerForItem(long id);
         SelectorItem ContainerFromItem(long id);
     }
 }

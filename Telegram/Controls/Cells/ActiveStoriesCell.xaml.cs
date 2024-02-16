@@ -1,13 +1,17 @@
-﻿using Microsoft.Graphics.Canvas;
+﻿//
+// Copyright Fela Ameghino 2015-2024
+//
+// Distributed under the GNU General Public License v3.0. (See accompanying
+// file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
+//
+using Microsoft.Graphics.Canvas;
 using Microsoft.Graphics.Canvas.Geometry;
 using System;
 using System.Globalization;
 using System.Numerics;
-using Telegram.Controls.Stories;
 using Telegram.Td.Api;
 using Telegram.ViewModels.Stories;
 using Windows.UI.Composition;
-using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
 using Windows.UI.Xaml.Hosting;
@@ -24,6 +28,12 @@ namespace Telegram.Controls.Cells
         private ActiveStoriesViewModel _viewModel;
         public ActiveStoriesViewModel ViewModel => _viewModel;
 
+        private string _automationName;
+        public string GetAutomationName()
+        {
+            return _automationName;
+        }
+
         public void Update(ActiveStoriesViewModel activeStories)
         {
             _viewModel = activeStories;
@@ -33,18 +43,23 @@ namespace Telegram.Controls.Cells
             {
                 if (activeStories.IsMyStory)
                 {
+                    _automationName = Strings.MyStory;
                     Title.Text = Strings.MyStory;
                 }
                 else
                 {
+                    _automationName = string.Format(Strings.AccDescrStoryBy, user.FirstName);
                     Title.Text = user.FirstName;
                 }
 
                 Photo.SetUser(activeStories.ClientService, user, 40);
+
             }
             else
             {
+                _automationName = string.Format(Strings.AccDescrStoryBy, chat.Title);
                 Title.Text = chat.Title;
+
                 Photo.SetChat(activeStories.ClientService, chat, 40);
             }
 
@@ -68,13 +83,13 @@ namespace Telegram.Controls.Cells
                 return;
             }
 
-            var visual = ElementCompositionPreview.GetElementVisual(container);
-            var ciccio = ElementCompositionPreview.GetElementVisual(PhotoCiccio);
-            var photo = ElementCompositionPreview.GetElementVisual(PhotoRoot);
-            var title = ElementCompositionPreview.GetElementVisual(Title);
-            var gradient = ElementCompositionPreview.GetElementVisual(SegmentsRoot);
-            var cross1 = ElementCompositionPreview.GetElementVisual(Segments);
-            var cross2 = ElementCompositionPreview.GetElementVisual(SegmentsSmall);
+            var visual = ElementComposition.GetElementVisual(container);
+            var ciccio = ElementComposition.GetElementVisual(PhotoCiccio);
+            var photo = ElementComposition.GetElementVisual(PhotoRoot);
+            var title = ElementComposition.GetElementVisual(Title);
+            var gradient = ElementComposition.GetElementVisual(SegmentsRoot);
+            var cross1 = ElementComposition.GetElementVisual(Segments);
+            var cross2 = ElementComposition.GetElementVisual(SegmentsSmall);
 
             var included = index >= f && index <= l;
             var clamp = Math.Clamp(index, f, l);
@@ -234,13 +249,13 @@ namespace Telegram.Controls.Cells
 
         public void Disconnect(SelectorItem container)
         {
-            var visual = ElementCompositionPreview.GetElementVisual(container);
-            var ciccio = ElementCompositionPreview.GetElementVisual(PhotoCiccio);
-            var photo = ElementCompositionPreview.GetElementVisual(PhotoRoot);
-            var title = ElementCompositionPreview.GetElementVisual(Title);
-            var gradient = ElementCompositionPreview.GetElementVisual(SegmentsRoot);
-            var cross1 = ElementCompositionPreview.GetElementVisual(Segments);
-            var cross2 = ElementCompositionPreview.GetElementVisual(SegmentsSmall);
+            var visual = ElementComposition.GetElementVisual(container);
+            var ciccio = ElementComposition.GetElementVisual(PhotoCiccio);
+            var photo = ElementComposition.GetElementVisual(PhotoRoot);
+            var title = ElementComposition.GetElementVisual(Title);
+            var gradient = ElementComposition.GetElementVisual(SegmentsRoot);
+            var cross1 = ElementComposition.GetElementVisual(Segments);
+            var cross2 = ElementComposition.GetElementVisual(SegmentsSmall);
 
             ElementCompositionPreview.SetIsTranslationEnabled(container, true);
             ElementCompositionPreview.SetIsTranslationEnabled(Title, true);
@@ -266,13 +281,6 @@ namespace Telegram.Controls.Cells
             cross1.Opacity = 1;
             cross2.Opacity = 0;
             ciccio.Opacity = 1;
-        }
-
-        public event EventHandler<StoryEventArgs> Click;
-
-        private void Segments_Click(object sender, RoutedEventArgs e)
-        {
-            Click?.Invoke(this, new StoryEventArgs(_viewModel));
         }
     }
 }

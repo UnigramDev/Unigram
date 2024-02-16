@@ -1,5 +1,5 @@
 //
-// Copyright Fela Ameghino 2015-2023
+// Copyright Fela Ameghino 2015-2024
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
@@ -28,7 +28,9 @@ namespace Telegram.Views.Settings
 
             var chat = clientService.GetChat(statistics.ChatId);
 
-            Title = chat == null ? "Other Chats" : clientService.GetTitle(chat);
+            Title = chat == null
+                ? Strings.ClearMediaCache
+                : clientService.GetTitle(chat);
 
             StorageChartItem photo = null;
             StorageChartItem video = null;
@@ -106,30 +108,27 @@ namespace Telegram.Views.Settings
             {
                 return;
             }
-
-            var check = args.ItemContainer.ContentTemplateRoot as CheckBox;
-            var item = args.Item as StorageChartItem;
-
-            if (item == null)
+            else if (args.ItemContainer.ContentTemplateRoot is CheckBox check && args.Item is StorageChartItem item)
             {
-                return;
+                var content = check.Content as StackPanel;
+
+                var title = content.Children[0] as TextBlock;
+                var subtitle = content.Children[1] as TextBlock;
+
+                check.Click -= CheckBox_Click;
+                check.Click += CheckBox_Click;
+
+                check.Background = new SolidColorBrush(item.Stroke);
+                check.IsChecked = item.IsVisible;
+
+                // Justified because used in CheckBox_Click
+                check.Tag = item;
+
+                title.Text = item.Name;
+                subtitle.Text = FileSizeConverter.Convert(item.Size, true);
+
+                args.Handled = true;
             }
-
-            var content = check.Content as StackPanel;
-
-            var title = content.Children[0] as TextBlock;
-            var subtitle = content.Children[1] as TextBlock;
-
-            check.Click -= CheckBox_Click;
-            check.Click += CheckBox_Click;
-
-            check.Background = new SolidColorBrush(item.Stroke);
-            check.IsChecked = item.IsVisible;
-
-            check.Tag = item;
-
-            title.Text = item.Name;
-            subtitle.Text = FileSizeConverter.Convert(item.Size, true);
         }
 
         private void ContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)

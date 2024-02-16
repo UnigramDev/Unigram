@@ -1,0 +1,58 @@
+<local:HostedPage x:Class="Telegram.Views.Settings.Privacy.SettingsPrivacyNewChatPage"
+                  xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                  xmlns:local="using:Telegram.Views"
+                  xmlns:controls="using:Telegram.Controls"
+                  xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                  xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                  mc:Ignorable="d">
+
+    <Page.Transitions>
+        <TransitionCollection>
+            <NavigationThemeTransition>
+                <SlideNavigationTransitionInfo Effect="FromRight" />
+            </NavigationThemeTransition>
+        </TransitionCollection>
+    </Page.Transitions>
+
+    <local:HostedPage.Action>
+        <Button Content="{CustomResource Save}"
+                Click="{x:Bind ViewModel.Save}"
+                Style="{StaticResource AccentButtonStyle}" />
+    </local:HostedPage.Action>
+
+    <Grid Background="{ThemeResource SettingsPageBackground}">
+        <ScrollViewer x:Name="ScrollingHost"
+                      VerticalScrollBarVisibility="Auto"
+                      VerticalScrollMode="Auto">
+            <controls:SettingsPanel>
+                <controls:HeaderedControl x:Name="Group"
+                                          Header="{CustomResource PrivacyMessagesTitle}">
+                    <controls:PrivacyRadioButton Content="{CustomResource LastSeenEverybody}"
+                                                 Value="{x:Bind ViewModel.SelectedItem, Mode=TwoWay}"
+                                                 Type="AllowAll"
+                                                 Style="{StaticResource SettingsRadioButtonStyle}" />
+
+
+                    <Grid BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}">
+                        <controls:PrivacyRadioButton Content="{CustomResource PrivacyMessagesContactsAndPremium}"
+                                                     Click="{x:Bind ViewModel.Enable}"
+                                                     Value="{x:Bind ViewModel.SelectedItem, Mode=TwoWay}"
+                                                     IsFaux="{x:Bind ViewModel.IsPremium, Mode=OneWay, Converter={StaticResource BooleanNegationConverter}}"
+                                                     IsChevronVisible="{x:Bind ViewModel.IsPremium, Mode=OneWay}"
+                                                     Type="AllowContacts"
+                                                     Style="{StaticResource SettingsRadioButtonStyle}" />
+                        <TextBlock x:Name="AllowContactsLock"
+                                   x:Load="{x:Bind ViewModel.IsPremium, Mode=OneWay, Converter={StaticResource BooleanNegationConverter}}"
+                                   Text="&#xEA25;"
+                                   Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"
+                                   FontFamily="{StaticResource SymbolThemeFontFamily}"
+                                   FontSize="20"
+                                   Padding="20,12,0,0"
+                                   IsHitTestVisible="False" />
+                    </Grid>
+                </controls:HeaderedControl>
+            </controls:SettingsPanel>
+        </ScrollViewer>
+    </Grid>
+</local:HostedPage>

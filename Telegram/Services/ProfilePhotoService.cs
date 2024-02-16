@@ -1,5 +1,5 @@
 //
-// Copyright Fela Ameghino 2015-2023
+// Copyright Fela Ameghino 2015-2024
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
@@ -46,7 +46,7 @@ namespace Telegram.Services
                 picker.FileTypeFilter.AddRange(Constants.MediaTypes);
 
                 var media = await picker.PickSingleMediaAsync();
-                if (media != null)
+                if (media is StoragePhoto or StorageVideo)
                 {
                     var dialog = new EditMediaPopup(media, ImageCropperMask.Ellipse);
 
@@ -55,6 +55,10 @@ namespace Telegram.Services
                     {
                         return await EditPhotoAsync(chatId, isPublic, isPersonal, media);
                     }
+                }
+                else
+                {
+                    await MessagePopup.ShowAsync(Strings.OpenImageUnsupported, Strings.AppName, Strings.OK);
                 }
             }
             catch { }

@@ -1,5 +1,5 @@
 //
-// Copyright Fela Ameghino 2015-2023
+// Copyright Fela Ameghino 2015-2024
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
@@ -37,12 +37,23 @@ namespace Telegram.Entities
             }
 
             LoadPreview();
+
+            if (profile.Video.Width > 0 && profile.Video.Height > 0)
+            {
+                Width = profile.Video.Width;
+                Height = profile.Video.Height;
+            }
+            else
+            {
+                Width = props.GetWidth();
+                Height = props.GetHeight();
+            }
         }
 
-        public override uint Width => Properties.GetWidth();
-        public override uint Height => Properties.GetHeight();
+        public override uint Width { get; }
+        public override uint Height { get; }
 
-        public static new async Task<StorageVideo> CreateAsync(StorageFile file)
+        public static async Task<StorageVideo> CreateAsync(StorageFile file, BasicProperties basic)
         {
             try
             {
@@ -57,9 +68,7 @@ namespace Telegram.Entities
                     return null;
                 }
 
-                var basic = await file.GetBasicPropertiesAsync();
                 var video = await file.Properties.GetVideoPropertiesAsync();
-
                 if ((video.Width > 0 && video.Height > 0) || (profile.Video.Width > 0 && profile.Video.Height > 0))
                 {
                     return new StorageVideo(file, basic, video, profile);

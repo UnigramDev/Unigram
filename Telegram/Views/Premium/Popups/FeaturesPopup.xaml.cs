@@ -1,5 +1,5 @@
 //
-// Copyright Fela Ameghino 2015-2023
+// Copyright Fela Ameghino 2015-2024
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
@@ -13,8 +13,6 @@ using Telegram.Controls.Cells.Premium;
 using Telegram.Services;
 using Telegram.Td.Api;
 using Windows.UI.Xaml;
-using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Controls.Primitives;
 
 namespace Telegram.Views.Premium.Popups
 {
@@ -32,7 +30,7 @@ namespace Telegram.Views.Premium.Popups
             _animations = animations;
             _stickers = stickers;
 
-            var items = features.Where(x => x is not PremiumFeatureIncreasedLimits).ToArray();
+            var items = features.Where(x => x is not PremiumFeatureIncreasedLimits and not PremiumFeatureUpgradedStories).ToArray();
 
             Pager.NumberOfPages = items.Length;
 
@@ -48,27 +46,6 @@ namespace Telegram.Views.Premium.Popups
         {
             ShouldPurchase = true;
             Hide();
-        }
-
-        private void OnSelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            if (e.AddedItems?.Count > 0)
-            {
-                var container = ScrollingHost.ContainerFromItem(e.AddedItems[0]) as SelectorItem;
-
-                var content = container?.ContentTemplateRoot as PremiumFeatureCell;
-                content?.PlayAnimation();
-
-                _clientService.Send(new ViewPremiumFeature(e.AddedItems[0] as PremiumFeature));
-            }
-
-            if (e.RemovedItems?.Count > 0)
-            {
-                var container = ScrollingHost.ContainerFromItem(e.RemovedItems[0]) as SelectorItem;
-
-                var content = container?.ContentTemplateRoot as PremiumFeatureCell;
-                content?.StopAnimation();
-            }
         }
 
         private void OnDataContextChanged(FrameworkElement sender, DataContextChangedEventArgs args)

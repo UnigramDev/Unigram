@@ -1,32 +1,35 @@
 //
-// Copyright Fela Ameghino 2015-2023
+// Copyright Fela Ameghino 2015-2024
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
 using LinqToVisualTree;
-using Microsoft.UI.Xaml.Controls;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
+using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Xml.Linq;
 using Telegram.Controls;
+using Telegram.Controls.Media;
 using Telegram.Entities;
 using Telegram.Native;
 using Telegram.Navigation;
 using Telegram.Services;
-using Telegram.Streams;
 using Telegram.Td;
 using Telegram.Td.Api;
-using Telegram.ViewModels;
 using Windows.ApplicationModel;
+using Windows.ApplicationModel.AppService;
 using Windows.ApplicationModel.Calls;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.Foundation;
+using Windows.Foundation.Collections;
 using Windows.Storage;
 using Windows.Storage.FileProperties;
 using Windows.Storage.Pickers;
@@ -48,6 +51,28 @@ namespace Telegram.Common
 {
     public static class Extensions
     {
+        public static void SetToolTip(DependencyObject element, object value, [CallerMemberName] string member = "", [CallerFilePath] string filePath = "", [CallerLineNumber] int line = 0)
+        {
+            if (ApiInfo.IsStoreRelease || value == null)
+            {
+                ToolTipService.SetToolTip(element, value);
+            }
+            else
+            {
+                var tooltip = new ToolTip
+                {
+                    Content = value
+                };
+
+                tooltip.Opened += (s, args) =>
+                {
+                    Logger.Info("ToolTip opened", member, filePath, line);
+                };
+
+                ToolTipService.SetToolTip(element, tooltip);
+            }
+        }
+
         // TODO: this is a duplicat of INavigationService.ShowPopupAsync, and it's needed by GamePage, GroupCallPage and LiveStreamPage.
         // Must be removed at some point.
         public static Task<ContentDialogResult> ShowPopupAsync(this Page frame, int sessionId, Type sourcePopupType, object parameter = null, TaskCompletionSource<object> tsc = null)
@@ -68,6 +93,7 @@ namespace Telegram.Common
                     void OnClosed(ContentDialog sender, ContentDialogClosedEventArgs args)
                     {
                         viewModel.NavigatedFrom(null, false);
+                        popup.OnNavigatedFrom();
                         popup.Closed -= OnClosed;
                     }
 
@@ -82,6 +108,24 @@ namespace Telegram.Common
             }
 
             return Task.FromResult(ContentDialogResult.None);
+        }
+
+        public static void AddCubicBezier(this PathFigure figure, Point controlPoint1, Point controlPoint2, Point endPoint)
+        {
+            figure.Segments.Add(new BezierSegment
+            {
+                Point1 = controlPoint1,
+                Point2 = controlPoint2,
+                Point3 = endPoint
+            });
+        }
+
+        public static void AddLine(this PathFigure figure, double x, double y)
+        {
+            figure.Segments.Add(new LineSegment
+            {
+                Point = new Point(x, y),
+            });
         }
 
         public static void ForEach<T>(this ListViewBase listView, Action<SelectorItem, T> handler) where T : class
@@ -167,7 +211,151 @@ namespace Telegram.Common
 
         public static Version ToVersion(this PackageVersion version)
         {
-            return new Version(version.Major, version.Minor, version.Build, Constants.BuildNumber);
+            return new Version(version.Major, version.Minor, version.Build, version.Revision);
+        }
+
+        public static void RegisterColorChangedCallback(this Brush brush, DependencyPropertyChangedCallback callback, ref long token)
+        {
+            if (brush is SolidColorBrush solidColorBrush && token == 0)
+            {
+                token = solidColorBrush.RegisterPropertyChangedCallback(SolidColorBrush.ColorProperty, callback);
+            }
+        }
+
+        public static void UnregisterColorChangedCallback(this Brush brush, ref long token)
+        {
+            if (brush is SolidColorBrush solidColorBrush && token != 0)
+            {
+                solidColorBrush.UnregisterPropertyChangedCallback(SolidColorBrush.ColorProperty, token);
+                token = 0;
+            }
+        }
+
+        public static void RegisterPropertyChangedCallback(this DependencyObject obj, DependencyProperty property, DependencyPropertyChangedCallback callback, ref long token)
+        {
+            if (obj is not null && token == 0)
+            {
+                token = obj.RegisterPropertyChangedCallback(property, callback);
+            }
+        }
+
+        public static void UnregisterPropertyChangedCallback(this DependencyObject obj, DependencyProperty property, ref long token)
+        {
+            if (obj is not null && token != 0)
+            {
+                obj.UnregisterPropertyChangedCallback(property, token);
+                token = 0;
+            }
+        }
+
+        public static int OffsetToIndex(this TextPointer pointer, StyledText text)
+        {
+            if (pointer.VisualParent is not RichTextBlock textBlock || text == null || textBlock.Blocks.Count != text.Paragraphs.Count)
+            {
+                return -1;
+            }
+
+            var index = 0;
+
+            for (int i = 0; i < textBlock.Blocks.Count; i++)
+            {
+                var block = textBlock.Blocks[i] as Paragraph;
+                var paragraph = text.Paragraphs[i];
+
+                if (pointer.Offset == block.ElementStart.Offset)
+                {
+                    break;
+                }
+
+                // Element start
+                index++;
+
+                if (OffsetToIndex(textBlock, block.Inlines, pointer, ref index))
+                {
+                    break;
+                }
+
+                if (pointer.Offset < block.ElementEnd.Offset)
+                {
+                    if (pointer.Offset == block.ContentEnd.Offset)
+                    {
+                        if (i == textBlock.Blocks.Count - 1)
+                        {
+                            // Always close when ending on the last paragraph
+                            index++;
+                        }
+                        else
+                        {
+                            index += paragraph.Padding;
+                        }
+                    }
+
+                    break;
+                }
+
+                // Element end
+                index += paragraph.Padding;
+            }
+
+            // Adjust the offset if the selection ends on the text block itself
+            if (pointer.Offset == textBlock.ContentEnd.Offset && pointer.Parent is RichTextBlock)
+            {
+                index += 2;
+            }
+
+            return pointer.Offset - index;
+        }
+
+        private static bool OffsetToIndex(RichTextBlock textBlock, InlineCollection inlines, TextPointer pointer, ref int index)
+        {
+            foreach (var element in inlines)
+            {
+                if (pointer.Offset == element.ElementStart.Offset)
+                {
+                    return true;
+                }
+
+                // Element start
+                index++;
+
+                if (element is Span span && OffsetToIndex(textBlock, span.Inlines, pointer, ref index))
+                {
+                    return true;
+                }
+                if (element is Run { Text: Icons.ZWNJ or Icons.RTL or Icons.LTR })
+                {
+                    index++;
+                }
+                else if (element is InlineUIContainer container && container.Child is CustomEmojiIcon icon)
+                {
+                    index -= icon.Emoji.Length;
+                }
+
+                if (pointer.Offset < element.ElementEnd.Offset)
+                {
+                    return true;
+                }
+
+                // Element end
+                index++;
+            }
+
+            return false;
+        }
+
+        public static StringBuilder Prepend(this StringBuilder builder, string text, string prefix)
+        {
+            if (builder.Length > 0)
+            {
+                builder.Append(prefix);
+            }
+
+            return builder.Append(text);
+        }
+
+        public static IAsyncOperation<AppServiceResponse> SendMessageAsync(this AppServiceConnection connection, string message, object parameter = null)
+        {
+            return connection.SendMessageAsync(new ValueSet { { message, parameter ?? true } });
         }
 
         public static void TryNotifyMutedChanged(this VoipCallCoordinator coordinator, bool muted)
@@ -221,113 +409,16 @@ namespace Telegram.Common
             }
         }
 
-        public static TeachingTip ShowTeachingTip(this Window app, string text, ElementTheme requestedTheme = ElementTheme.Dark, bool? autoDismiss = null)
+        public static FormattedText ReplacePremiumLink(string text, PremiumFeature feature)
         {
-            return ShowTeachingTip(app, null, text, null, TeachingTipPlacementMode.Center, requestedTheme, autoDismiss);
-        }
-
-        public static TeachingTip ShowTeachingTip(this Window app, string text, AnimatedImageSource icon, ElementTheme requestedTheme = ElementTheme.Dark, bool? autoDismiss = null)
-        {
-            return ShowTeachingTip(app, null, ComposeViewModel.GetFormattedText(text), icon, TeachingTipPlacementMode.Center, requestedTheme, autoDismiss);
-        }
-
-        public static TeachingTip ShowTeachingTip(this Window app, FormattedText text, ElementTheme requestedTheme = ElementTheme.Dark, bool? autoDismiss = null)
-        {
-            return ShowTeachingTip(app, null, text, null, TeachingTipPlacementMode.Center, requestedTheme, autoDismiss);
-        }
-
-        public static TeachingTip ShowTeachingTip(this Window app, FormattedText text, AnimatedImageSource icon, ElementTheme requestedTheme = ElementTheme.Dark, bool? autoDismiss = null)
-        {
-            return ShowTeachingTip(app, null, text, icon, TeachingTipPlacementMode.Center, requestedTheme, autoDismiss);
-        }
-
-        public static TeachingTip ShowTeachingTip(this Window app, FrameworkElement target, string text, TeachingTipPlacementMode placement = TeachingTipPlacementMode.TopRight, ElementTheme requestedTheme = ElementTheme.Dark, bool? autoDismiss = null)
-        {
-            return ShowTeachingTip(app, target, text, null, placement, requestedTheme, autoDismiss);
-        }
-
-        public static TeachingTip ShowTeachingTip(this Window app, FrameworkElement target, string text, AnimatedImageSource icon, TeachingTipPlacementMode placement = TeachingTipPlacementMode.TopRight, ElementTheme requestedTheme = ElementTheme.Dark, bool? autoDismiss = null)
-        {
-            return ShowTeachingTip(app, target, ComposeViewModel.GetFormattedText(text), icon, placement, requestedTheme, autoDismiss);
-        }
-
-        public static TeachingTip ShowTeachingTip(this Window app, FrameworkElement target, FormattedText text, TeachingTipPlacementMode placement = TeachingTipPlacementMode.TopRight, ElementTheme requestedTheme = ElementTheme.Dark, bool? autoDismiss = null)
-        {
-            return ShowTeachingTip(app, target, text, null, placement, requestedTheme, autoDismiss);
-        }
-
-        public static TeachingTip ShowTeachingTip(this Window app, FrameworkElement target, FormattedText text, AnimatedImageSource icon, TeachingTipPlacementMode placement = TeachingTipPlacementMode.TopRight, ElementTheme requestedTheme = ElementTheme.Dark, bool? autoDismiss = null)
-        {
-            var label = new TextBlock
+            var markdown = ClientEx.ParseMarkdown(text);
+            if (markdown.Entities.Count == 1)
             {
-                TextWrapping = TextWrapping.Wrap
-            };
-
-            TextBlockHelper.SetFormattedText(label, text);
-            Grid.SetColumn(label, 1);
-
-            var content = new Grid();
-            content.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Auto) });
-            content.ColumnDefinitions.Add(new ColumnDefinition());
-            content.Children.Add(label);
-
-            AnimatedImage animated = null;
-            if (icon != null)
-            {
-                animated = new AnimatedImage
-                {
-                    Source = icon,
-                    Width = 32,
-                    Height = 32,
-                    AutoPlay = true,
-                    LoopCount = 1,
-                    IsCachingEnabled = false,
-                    FrameSize = new Size(32, 32),
-                    DecodeFrameType = DecodePixelType.Logical,
-                    Margin = new Thickness(-4, -12, 8, -12)
-                };
-
-                content.Children.Add(animated);
+                // TODO: premium source
+                markdown.Entities[0].Type = new TextEntityTypeTextUrl("tg://premium_offer");
             }
 
-            var tip = new TeachingTip
-            {
-                Target = target,
-                PreferredPlacement = placement,
-                IsLightDismissEnabled = target != null && autoDismiss is not true,
-                Content = content,
-                HorizontalContentAlignment = HorizontalAlignment.Stretch,
-                VerticalContentAlignment = VerticalAlignment.Stretch,
-                MinWidth = 0,
-            };
-
-            if (requestedTheme != ElementTheme.Default)
-            {
-                tip.RequestedTheme = requestedTheme;
-            }
-
-            if (app.Content is FrameworkElement element)
-            {
-                element.Resources["TeachingTip"] = tip;
-            }
-
-            if (target == null || autoDismiss == true)
-            {
-                var timer = new DispatcherTimer();
-                timer.Interval = TimeSpan.FromSeconds(3);
-
-                void handler(object sender, object e)
-                {
-                    timer.Tick -= handler;
-                    tip.IsOpen = false;
-                }
-
-                timer.Tick += handler;
-                timer.Start();
-            }
-
-            tip.IsOpen = true;
-            return tip;
+            return markdown;
         }
 
         public static Color ToColor(this int color, bool alpha = false)
@@ -407,6 +498,20 @@ namespace Telegram.Common
             return (number - other).AlmostEqualsToZero(epsilon);
         }
 
+        public static bool VisualContains(this FrameworkElement destination, FrameworkElement source)
+        {
+            var transform = source.TransformToVisual(destination);
+            var point = transform.TransformPoint(new Point());
+
+            var y1 = Math.Ceiling(point.Y);
+            var y2 = Math.Truncate(point.Y + source.ActualHeight);
+
+            var p1 = 0;
+            var p2 = Math.Truncate(destination.ActualHeight);
+
+            return y1 >= p1 && y2 <= p2;
+        }
+
         public static int ToTimestamp(this DateTime dateTime)
         {
             var dtDateTime = new DateTime(1970, 1, 1, 0, 0, 0, 0);
@@ -428,32 +533,40 @@ namespace Telegram.Common
             return new Size(rectangle.Width, rectangle.Height);
         }
 
+        public static bool IntersectsWith(this Rect a, Rect b)
+        {
+            return (b.X <= a.X + a.Width) &&
+                (a.X <= b.X + b.Width) &&
+                (b.Y <= a.Y + a.Height) &&
+                (a.Y <= b.Y + b.Height);
+        }
+
         public static bool TryGet<T>(this IDictionary<object, object> dict, object key, out T value)
         {
-            bool success;
-            if (success = dict.TryGetValue(key, out object tryGetValue))
+            if (dict.TryGetValue(key, out object tryGetValue) && tryGetValue is T tryGet)
             {
-                value = (T)tryGetValue;
+                value = tryGet;
+                return true;
             }
             else
             {
                 value = default;
+                return false;
             }
-            return success;
         }
 
         public static bool TryGet<T>(this IDictionary<string, object> dict, string key, out T value)
         {
-            bool success;
-            if (success = dict.TryGetValue(key, out object tryGetValue))
+            if (dict.TryGetValue(key, out object tryGetValue) && tryGetValue is T tryGet)
             {
-                value = (T)tryGetValue;
+                value = tryGet;
+                return true;
             }
             else
             {
                 value = default;
+                return false;
             }
-            return success;
         }
 
         public static void Put<T>(this IList<T> source, bool begin, T item)
@@ -466,6 +579,14 @@ namespace Telegram.Common
             {
                 source.Add(item);
             }
+        }
+
+        public static void Add(this InlineCollection inline, string text)
+        {
+            inline.Add(new Run
+            {
+                Text = text
+            });
         }
 
 
@@ -660,6 +781,18 @@ namespace Telegram.Common
             return new InputThumbnail(await file.ToGeneratedAsync(conversion, arguments), width, height);
         }
 
+        public static IEnumerable<TSource> DistinctBy<TSource, TKey>(this IEnumerable<TSource> source, Func<TSource, TKey> keySelector)
+        {
+            HashSet<TKey> seenKeys = new();
+            foreach (TSource element in source)
+            {
+                if (seenKeys.Add(keySelector(element)))
+                {
+                    yield return element;
+                }
+            }
+        }
+
         public static T RemoveLast<T>(this List<T> list)
         {
             if (list.Count > 0)
@@ -720,10 +853,20 @@ namespace Telegram.Common
                 }
                 else
                 {
-                    _ = element.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, new DispatchedHandler(action));
+                    _ = element.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
+                    {
+                        try
+                        {
+                            action();
+                        }
+                        catch (InvalidComObjectException)
+                        {
+
+                        }
+                    });
                 }
             }
-            catch
+            catch (InvalidComObjectException)
             {
                 // Most likely Excep_InvalidComObject_NoRCW_Wrapper, so we can just ignore it
             }
@@ -848,6 +991,42 @@ namespace Telegram.Common
             }
         }
 
+        public static int BinarySearch<TItem, TSearch>(this IList<TItem> list, TSearch value, Func<TSearch, TItem, int> comparer)
+        {
+            int lower = 0;
+            int upper = list.Count - 1;
+
+            while (lower <= upper)
+            {
+                int middle = lower + (upper - lower) / 2;
+                int comparisonResult = comparer(value, list[middle]);
+                if (comparisonResult < 0)
+                {
+                    upper = middle - 1;
+                }
+                else if (comparisonResult > 0)
+                {
+                    lower = middle + 1;
+                }
+                else
+                {
+                    return middle;
+                }
+            }
+
+            return ~lower;
+        }
+
+        public static int BinarySearch<TItem>(this IList<TItem> list, TItem value)
+        {
+            return BinarySearch(list, value, Comparer<TItem>.Default);
+        }
+
+        public static int BinarySearch<TItem>(this IList<TItem> list, TItem value, IComparer<TItem> comparer)
+        {
+            return list.BinarySearch(value, comparer.Compare);
+        }
+
         public static Hyperlink GetHyperlinkFromPoint(this RichTextBlock text, Point point)
         {
             var position = text.GetPositionFromPoint(point);
@@ -884,9 +1063,64 @@ namespace Telegram.Common
             }
         }
 
-        public static T GetChild<T>(this DependencyObject parentContainer, string controlName) where T : FrameworkElement
+        public static T GetChild<T>(this DependencyObject parentContainer)
         {
-            return parentContainer.Descendants<T>().FirstOrDefault(x => x.Name.Equals(controlName));
+            return parentContainer.Descendants<T>().FirstOrDefault();
+        }
+
+        public static T GetChild<T>(this DependencyObject parentContainer, Func<T, bool> predicate)
+        {
+            return parentContainer.Descendants<T>().FirstOrDefault(predicate);
+        }
+
+        public static T GetChildOrSelf<T>(this DependencyObject parentContainer)
+        {
+            if (parentContainer is T child)
+            {
+                return child;
+            }
+
+            return parentContainer.Descendants<T>().FirstOrDefault();
+        }
+
+        public static T GetChildOrSelf<T>(this DependencyObject parentContainer, Func<T, bool> predicate)
+        {
+            if (parentContainer is T child)
+            {
+                return child;
+            }
+
+            return parentContainer.Descendants<T>().FirstOrDefault(predicate);
+        }
+
+        public static T GetParent<T>(this DependencyObject childContainer)
+        {
+            return childContainer.Ancestors<T>().FirstOrDefault();
+        }
+
+        public static T GetParent<T>(this DependencyObject childContainer, Func<T, bool> predicate)
+        {
+            return childContainer.Ancestors<T>().FirstOrDefault(predicate);
+        }
+
+        public static T GetParentOrSelf<T>(this DependencyObject childContainer)
+        {
+            if (childContainer is T parent)
+            {
+                return parent;
+            }
+
+            return childContainer.Ancestors<T>().FirstOrDefault();
+        }
+
+        public static T GetParentOrSelf<T>(this DependencyObject childContainer, Func<T, bool> predicate)
+        {
+            if (childContainer is T parent)
+            {
+                return parent;
+            }
+
+            return childContainer.Ancestors<T>().FirstOrDefault(predicate);
         }
 
         public static async Task UpdateLayoutAsync(this FrameworkElement element, bool update = false)
@@ -933,17 +1167,41 @@ namespace Telegram.Common
 
     public static class UriEx
     {
-        public static BitmapImage ToBitmap(string path, int width, int height)
+        public static BitmapImage ToBitmap(string path, int width = 0, int height = 0)
         {
-            return new BitmapImage(ToLocal(path)) { DecodePixelWidth = width, DecodePixelHeight = height, DecodePixelType = DecodePixelType.Logical };
+            if (string.IsNullOrEmpty(path))
+            {
+                return null;
+            }
+
+            return new BitmapImage(ToLocal(path))
+            {
+                DecodePixelWidth = width,
+                DecodePixelHeight = height,
+                DecodePixelType = width > 0 || height > 0
+                    ? DecodePixelType.Logical
+                    : DecodePixelType.Logical
+            };
         }
 
         public static Uri ToLocal(string path)
         {
-            //return new Uri("file:///" + Uri.EscapeUriString(path.Replace('\\', '/')));
+            return new Uri(path);
 
-            var directory = Path.GetDirectoryName(path);
-            var file = Path.GetFileName(path);
+            string directory;
+            string file;
+
+            var index = path.LastIndexOf('\\');
+            if (index >= 0)
+            {
+                directory = path.Substring(0, index);
+                file = path.Substring(index + 1);
+            }
+            else
+            {
+                directory = Path.GetDirectoryName(path);
+                file = Path.GetFileName(path);
+            }
 
             return new Uri("file:///" + directory + "\\" + Uri.EscapeUriString(file));
         }

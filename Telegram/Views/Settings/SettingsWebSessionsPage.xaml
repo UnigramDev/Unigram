@@ -35,7 +35,7 @@
 
                     <TextBlock Text="{CustomResource OtherWebSessions}"
                                Style="{StaticResource BaseTextBlockStyle}"
-                               Margin="24,16,24,8" />
+                               Margin="24,16,24,6" />
                 </controls:SettingsPanel>
             </ListView.Header>
             <ListView.ItemTemplate>
@@ -45,7 +45,7 @@
             </ListView.ItemTemplate>
             <ListView.Footer>
                 <controls:SettingsFooter Text="{CustomResource TerminateWebSessionInfo}"
-                                         Margin="24,8,24,32" />
+                                         Margin="24,6,24,32" />
             </ListView.Footer>
         </controls:TableListView>
     </Grid>

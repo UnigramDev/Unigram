@@ -1,5 +1,5 @@
 //
-// Copyright Fela Ameghino 2015-2023
+// Copyright Fela Ameghino 2015-2024
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
@@ -16,10 +16,8 @@ using Telegram.Streams;
 using Telegram.Td.Api;
 using Telegram.ViewModels;
 using Windows.Foundation;
-using Windows.UI.Composition;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Hosting;
 using Windows.UI.Xaml.Navigation;
 
 namespace Telegram.Views.Popups
@@ -34,7 +32,7 @@ namespace Telegram.Views.Popups
         private StickersPopup()
         {
             InitializeComponent();
-            DataContext = TLContainer.Current.Resolve<StickersViewModel>();
+            DataContext = TypeResolver.Current.Resolve<StickersViewModel>();
 
             // TODO: this might need to change depending on context
             _handler = new AnimatedListHandler(ScrollingHost, AnimatedListType.Stickers);
@@ -46,14 +44,6 @@ namespace Telegram.Views.Popups
             _zoomer.SessionId = () => ViewModel.ClientService.SessionId;
 
             SecondaryButtonText = Strings.Close;
-        }
-
-        private void OnLoaded(object sender, RoutedEventArgs e)
-        {
-        }
-
-        private void OnUnloaded(object sender, RoutedEventArgs e)
-        {
         }
 
         private void OnClosing(ContentDialog sender, ContentDialogClosingEventArgs args)
@@ -177,16 +167,7 @@ namespace Telegram.Views.Popups
                     animated.FrameSize = new Size(64, 64);
                 }
 
-                animated.Source = new DelayedFileSource(ViewModel.ClientService, file);
-            }
-
-            if (file.Local.IsDownloadingCompleted)
-            {
-            }
-            else
-            {
-                CompositionPathParser.ParseThumbnail(sticker, out ShapeVisual visual, false);
-                ElementCompositionPreview.SetElementChildVisual(content.Children[0], visual);
+                animated.Source = new DelayedFileSource(ViewModel.ClientService, sticker);
             }
 
             args.Handled = true;
@@ -256,7 +237,7 @@ namespace Telegram.Views.Popups
             Hide();
 
             var text = builder.ToString();
-            var formatted = new FormattedText(text, new TextEntity[0]);
+            var formatted = new FormattedText(text, Array.Empty<TextEntity>());
 
             // TODO: currently not used
             //await new ChooseChatsPopup().ShowAsync(formatted);

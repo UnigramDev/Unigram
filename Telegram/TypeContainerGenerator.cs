@@ -1,5 +1,5 @@
 //
-// Copyright Fela Ameghino 2015-2023
+// Copyright Fela Ameghino 2015-2024
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
@@ -22,7 +22,6 @@ using Telegram.ViewModels.Payments;
 using Telegram.ViewModels.Premium;
 using Telegram.ViewModels.Profile;
 using Telegram.ViewModels.Settings;
-using Telegram.ViewModels.Settings.Password;
 using Telegram.ViewModels.Settings.Privacy;
 using Telegram.ViewModels.Supergroups;
 using Telegram.ViewModels.Users;
@@ -90,6 +89,7 @@ namespace Telegram
                 typeof(SendLocationViewModel),
                 typeof(DialogViewModel),
                 typeof(DialogThreadViewModel),
+                typeof(DialogSavedViewModel),
                 typeof(DialogPinnedViewModel),
                 typeof(DialogScheduledViewModel),
                 typeof(DialogEventLogViewModel),
@@ -101,6 +101,8 @@ namespace Telegram
                 typeof(ProfileStoriesTabViewModel),
                 typeof(ProfileMembersTabViewModel),
                 typeof(ProfileGroupsTabViewModel),
+                typeof(ProfileChannelsTabViewModel),
+                typeof(ProfileSavedChatsTabViewModel),
                 typeof(UserCreateViewModel),
                 typeof(UserEditViewModel),
                 typeof(SupergroupEditViewModel),
@@ -109,15 +111,13 @@ namespace Telegram
                 typeof(SupergroupEditAdministratorViewModel),
                 typeof(SupergroupEditRestrictedViewModel),
                 typeof(SupergroupEditLinkedChatViewModel),
-                typeof(SupergroupAddAdministratorViewModel),
-                typeof(SupergroupAddRestrictedViewModel),
+                typeof(SupergroupChooseMemberViewModel),
                 typeof(ChatInviteLinkViewModel),
                 typeof(SupergroupAdministratorsViewModel),
                 typeof(SupergroupBannedViewModel),
                 typeof(SupergroupPermissionsViewModel),
                 typeof(SupergroupMembersViewModel),
                 typeof(SupergroupReactionsViewModel),
-                typeof(ProfileTabsViewModel),
                 typeof(ChatStatisticsViewModel),
                 typeof(ChatBoostsViewModel),
                 typeof(MessageStatisticsViewModel),
@@ -154,15 +154,10 @@ namespace Telegram
                 typeof(SettingsPrivacyShowPhotoViewModel),
                 typeof(SettingsPrivacyShowStatusViewModel),
                 typeof(SettingsPrivacyShowBioViewModel),
+                typeof(SettingsPrivacyNewChatViewModel),
                 typeof(SettingsAutoDeleteViewModel),
                 typeof(SettingsProfileViewModel),
                 typeof(SettingsPasswordViewModel),
-                typeof(SettingsPasswordIntroViewModel),
-                typeof(SettingsPasswordCreateViewModel),
-                typeof(SettingsPasswordHintViewModel),
-                typeof(SettingsPasswordEmailViewModel),
-                typeof(SettingsPasswordConfirmViewModel),
-                typeof(SettingsPasswordDoneViewModel),
                 typeof(SettingsPasscodeViewModel),
                 typeof(SettingsStickersViewModel),
                 typeof(SettingsLanguageViewModel),

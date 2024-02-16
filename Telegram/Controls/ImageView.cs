@@ -1,11 +1,10 @@
 //
-// Copyright Fela Ameghino 2015-2023
+// Copyright Fela Ameghino 2015-2024
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
 using System;
-using System.Linq;
 using Telegram.Common;
 using Telegram.Services;
 using Telegram.Td.Api;
@@ -106,7 +105,6 @@ namespace Telegram.Controls
 
         private static void OnConstraintChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            Logger.Debug();
             ((ImageView)d).InvalidateMeasure();
         }
 
@@ -114,8 +112,6 @@ namespace Telegram.Controls
 
         protected override Size MeasureOverride(Size availableSize)
         {
-            Logger.Debug();
-
             if (Constraint == null)
             {
                 return base.MeasureOverride(availableSize);
@@ -259,12 +255,22 @@ namespace Telegram.Controls
                 }
                 else
                 {
-                    constraint = photo.Sizes.OrderByDescending(x => x.Width).FirstOrDefault();
+                    var size = photo.Sizes.Count > 0 ? photo.Sizes[^1] : null;
+                    if (size != null)
+                    {
+                        width = size.Width;
+                        height = size.Height;
+                    }
                 }
             }
             else if (constraint is ChatPhoto chatPhoto)
             {
-                constraint = chatPhoto.Sizes.OrderByDescending(x => x.Width).FirstOrDefault();
+                var size = chatPhoto.Sizes.Count > 0 ? chatPhoto.Sizes[^1] : null;
+                if (size != null)
+                {
+                    width = size.Width;
+                    height = size.Height;
+                }
             }
             else if (constraint is Sticker sticker)
             {

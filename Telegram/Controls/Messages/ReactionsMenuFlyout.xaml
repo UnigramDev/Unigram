@@ -24,7 +24,7 @@
             <Setter Property="BorderBrush"
                     Value="{ThemeResource ToggleButtonBorderBrushChecked}" />
             <Setter Property="Padding"
-                    Value="8,0,0,0" />
+                    Value="0,0,0,0" />
             <Setter Property="HorizontalAlignment"
                     Value="Left" />
             <Setter Property="VerticalAlignment"
@@ -110,20 +110,24 @@
               Height="40"
               StrokeThickness="1" />
 
+        <Grid x:Name="Preloader" />
+
         <Grid x:Name="Presenter"
               Width="272"
               Height="40"
-              CornerRadius="20" />
-
-        <Button x:Name="Expand"
-                Click="Expand_Click"
-                Visibility="Collapsed"
-                HorizontalAlignment="Right"
-                VerticalAlignment="Top"
-                Foreground="{ThemeResource SystemColorControlAccentBrush}"
-                Style="{StaticResource ReactionsMenuButtonStyle}"
-                Width="32"
-                Height="24"
-                Margin="6,8" />
+              CornerRadius="20">
+            <Button x:Name="Expand"
+                    AutomationProperties.Name="{CustomResource AccDescrMoreReactions}"
+                    Click="Expand_Click"
+                    Visibility="Collapsed"
+                    HorizontalAlignment="Right"
+                    VerticalAlignment="Top"
+                    Foreground="{ThemeResource SystemColorControlAccentBrush}"
+                    Style="{StaticResource ReactionsMenuButtonStyle}"
+                    Width="24"
+                    Height="24"
+                    Margin="4,8,0,8"
+                    Grid.Column="10" />
+        </Grid>
     </Grid>
 </UserControl>

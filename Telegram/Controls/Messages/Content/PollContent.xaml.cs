@@ -1,5 +1,5 @@
 //
-// Copyright Fela Ameghino 2015-2023
+// Copyright Fela Ameghino 2015-2024
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
@@ -16,7 +16,7 @@ using Windows.UI.Xaml.Controls;
 
 namespace Telegram.Controls.Messages.Content
 {
-    public sealed class PollContent : Control, IContent
+    public sealed class PollContent : ControlEx, IContent
     {
         private MessageViewModel _message;
         public MessageViewModel Message => _message;
@@ -30,7 +30,7 @@ namespace Telegram.Controls.Messages.Content
 
             DefaultStyleKey = typeof(PollContent);
 
-            Unloaded += OnUnloaded;
+            Disconnected += OnUnloaded;
         }
 
         private void OnUnloaded(object sender, RoutedEventArgs e)
@@ -385,7 +385,7 @@ namespace Telegram.Controls.Messages.Content
                 return;
             }
 
-            Window.Current.ShowTeachingTip(Explanation, quiz.Explanation, TeachingTipPlacementMode.TopLeft);
+            ToastPopup.Show(Explanation, quiz.Explanation, TeachingTipPlacementMode.TopLeft);
         }
     }
 }

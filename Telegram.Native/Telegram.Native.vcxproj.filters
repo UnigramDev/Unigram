@@ -70,9 +70,6 @@
     <Filter Include="Highlight">
       <UniqueIdentifier>{3795340d-96c8-44cd-9b1f-85bbe0b2927a}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Highlight\third-party">
-      <UniqueIdentifier>{f12fe99a-19fa-46f9-a769-12ab5e616ea8}</UniqueIdentifier>
-    </Filter>
     <Filter Include="libwebp">
       <UniqueIdentifier>{ece67f00-1732-4ef2-acfd-51f2a52475fc}</UniqueIdentifier>
     </Filter>
@@ -404,25 +401,13 @@
     <ClCompile Include="..\Libraries\libutf\utfutf.c">
       <Filter>libtextclassifier\libutf</Filter>
     </ClCompile>
-    <ClCompile Include="libyuv\source\compare_mmi.cc">
-      <Filter>libyuv\source</Filter>
-    </ClCompile>
     <ClCompile Include="libyuv\source\compare_msa.cc">
-      <Filter>libyuv\source</Filter>
-    </ClCompile>
-    <ClCompile Include="libyuv\source\rotate_mmi.cc">
       <Filter>libyuv\source</Filter>
     </ClCompile>
     <ClCompile Include="libyuv\source\rotate_msa.cc">
       <Filter>libyuv\source</Filter>
     </ClCompile>
-    <ClCompile Include="libyuv\source\row_mmi.cc">
-      <Filter>libyuv\source</Filter>
-    </ClCompile>
     <ClCompile Include="libyuv\source\row_msa.cc">
-      <Filter>libyuv\source</Filter>
-    </ClCompile>
-    <ClCompile Include="libyuv\source\scale_mmi.cc">
       <Filter>libyuv\source</Filter>
     </ClCompile>
     <ClCompile Include="libyuv\source\scale_msa.cc">
@@ -435,26 +420,11 @@
     <ClCompile Include="PixelBuffer.cpp" />
     <ClCompile Include="TelegramWebviewProxy.cpp" />
     <ClCompile Include="dllmain.cpp" />
-    <ClCompile Include="Highlight\Highlight.cpp">
-      <Filter>Highlight</Filter>
-    </ClCompile>
-    <ClCompile Include="Highlight\LanguageTree.cpp">
-      <Filter>Highlight</Filter>
-    </ClCompile>
-    <ClCompile Include="Highlight\SyntaxHighlighter.cpp">
-      <Filter>Highlight</Filter>
-    </ClCompile>
     <ClCompile Include="Highlight\SyntaxToken.cpp">
       <Filter>Highlight</Filter>
     </ClCompile>
     <ClCompile Include="Highlight\TextToken.cpp">
       <Filter>Highlight</Filter>
-    </ClCompile>
-    <ClCompile Include="Highlight\TokenList.cpp">
-      <Filter>Highlight</Filter>
-    </ClCompile>
-    <ClCompile Include="Highlight\third-party\json11.cpp">
-      <Filter>Highlight\third-party</Filter>
     </ClCompile>
     <ClCompile Include="..\Libraries\libwebp\src\dec\alpha_dec.c">
       <Filter>libwebp\dec</Filter>
@@ -741,6 +711,39 @@
     <ClCompile Include="..\Libraries\libwebp\src\demux\demux.c">
       <Filter>libwebp\demux</Filter>
     </ClCompile>
+    <ClCompile Include="..\Libraries\libprisma\libprisma\Highlight.cpp">
+      <Filter>Highlight</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Libraries\libprisma\libprisma\LanguageTree.cpp">
+      <Filter>Highlight</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Libraries\libprisma\libprisma\SyntaxHighlighter.cpp">
+      <Filter>Highlight</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Libraries\libprisma\libprisma\TokenList.cpp">
+      <Filter>Highlight</Filter>
+    </ClCompile>
+    <ClCompile Include="libyuv\source\rotate_lsx.cc">
+      <Filter>libyuv\source</Filter>
+    </ClCompile>
+    <ClCompile Include="libyuv\source\row_lasx.cc">
+      <Filter>libyuv\source</Filter>
+    </ClCompile>
+    <ClCompile Include="libyuv\source\row_lsx.cc">
+      <Filter>libyuv\source</Filter>
+    </ClCompile>
+    <ClCompile Include="libyuv\source\row_rvv.cc">
+      <Filter>libyuv\source</Filter>
+    </ClCompile>
+    <ClCompile Include="libyuv\source\scale_lsx.cc">
+      <Filter>libyuv\source</Filter>
+    </ClCompile>
+    <ClCompile Include="libyuv\source\scale_rgb.cc">
+      <Filter>libyuv\source</Filter>
+    </ClCompile>
+    <ClCompile Include="libyuv\source\scale_rvv.cc">
+      <Filter>libyuv\source</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />
@@ -1019,26 +1022,11 @@
     <ClInclude Include="PixelBuffer.h" />
     <ClInclude Include="TelegramWebviewProxy.h" />
     <ClInclude Include="DebugUtils.h" />
-    <ClInclude Include="Highlight\Highlight.h">
-      <Filter>Highlight</Filter>
-    </ClInclude>
-    <ClInclude Include="Highlight\LanguageTree.h">
-      <Filter>Highlight</Filter>
-    </ClInclude>
-    <ClInclude Include="Highlight\SyntaxHighlighter.h">
-      <Filter>Highlight</Filter>
-    </ClInclude>
     <ClInclude Include="Highlight\SyntaxToken.h">
       <Filter>Highlight</Filter>
     </ClInclude>
     <ClInclude Include="Highlight\TextToken.h">
       <Filter>Highlight</Filter>
-    </ClInclude>
-    <ClInclude Include="Highlight\TokenList.h">
-      <Filter>Highlight</Filter>
-    </ClInclude>
-    <ClInclude Include="Highlight\third-party\json11.hpp">
-      <Filter>Highlight\third-party</Filter>
     </ClInclude>
     <ClInclude Include="..\Libraries\libwebp\src\dec\alphai_dec.h">
       <Filter>libwebp\dec</Filter>
@@ -1169,6 +1157,24 @@
     <ClInclude Include="..\Libraries\libwebp\sharpyuv\sharpyuv_gamma.h">
       <Filter>libwebp\sharpyuv</Filter>
     </ClInclude>
+    <ClInclude Include="..\Libraries\libprisma\libprisma\Highlight.h">
+      <Filter>Highlight</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Libraries\libprisma\libprisma\LanguageTree.h">
+      <Filter>Highlight</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Libraries\libprisma\libprisma\SyntaxHighlighter.h">
+      <Filter>Highlight</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Libraries\libprisma\libprisma\TokenList.h">
+      <Filter>Highlight</Filter>
+    </ClInclude>
+    <ClInclude Include="libyuv\include\libyuv\loongson_intrinsics.h">
+      <Filter>libyuv\include\libyuv</Filter>
+    </ClInclude>
+    <ClInclude Include="libyuv\include\libyuv\scale_rgb.h">
+      <Filter>libyuv\include\libyuv</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="Telegram.Native.def" />
@@ -1204,5 +1210,7 @@
       <Filter>Highlight</Filter>
     </Midl>
     <Midl Include="FileStreamFromApp.idl" />
+    <Midl Include="LokiRng.idl" />
+    <Midl Include="SurfaceImage.idl" />
   </ItemGroup>
 </Project>

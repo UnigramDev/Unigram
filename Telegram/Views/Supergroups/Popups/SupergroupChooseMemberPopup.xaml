@@ -1,0 +1,176 @@
+<controls:ContentPopup x:Class="Telegram.Views.Supergroups.Popups.SupergroupChooseMemberPopup"
+                       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                       xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                       xmlns:controls="using:Telegram.Controls"
+                       xmlns:cells="using:Telegram.Controls.Cells"
+                       mc:Ignorable="d"
+                       VerticalContentAlignment="Stretch">
+
+    <ContentDialog.Resources>
+        <CollectionViewSource x:Name="SearchResults"
+                              Source="{x:Bind ViewModel.Search, Mode=OneWay}"
+                              IsSourceGrouped="True" />
+    </ContentDialog.Resources>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+        <!--<controls:SuggestTextBox x:Name="SearchField"
+                                 PlaceholderText="{CustomResource Search}"
+                                 Style="{StaticResource NoDeleteTextBoxStyle}"
+                                 GettingFocus="Search_GettingFocus"
+                                 VerticalAlignment="Center"
+                                 GotFocus="Search_Click"
+                                 TextChanged="Search_TextChanged"
+                                 StartingIndex="1" />
+        <controls:GlyphButton x:Name="SearchClear"
+                              Click="SearchClear_Click"
+                              AllowFocusOnInteraction="False"
+                              Glyph="&#xE711;"
+                              FontSize="16"
+                              HorizontalAlignment="Right"
+                              VerticalAlignment="Center"
+                              Visibility="Collapsed"
+                              Margin="-36,0,0,0"
+                              Width="36"
+                              Height="32" />-->
+        <TextBox x:Name="SearchField"
+                 PlaceholderText="{CustomResource Search}"
+                 PreventKeyboardDisplayOnProgrammaticFocus="True"
+                 LostFocus="Search_LostFocus"
+                 TextChanged="Search_TextChanged"
+                 Canvas.ZIndex="1" />
+
+        <controls:TextListView x:Name="SearchHost"
+                               ItemsSource="{x:Bind SearchResults.View, Mode=OneWay}"
+                               ItemClick="ListView_ItemClick"
+                               IsItemClickEnabled="True"
+                               ContainerContentChanging="Search_ContainerContentChanging"
+                               SelectionMode="None"
+                               Margin="-24,0,-24,-24"
+                               Padding="12,0"
+                               Grid.Row="1">
+            <ListView.ItemContainerStyle>
+                <Style TargetType="ListViewItem"
+                       BasedOn="{StaticResource DefaultListViewItemStyle}">
+                    <Setter Property="HorizontalContentAlignment"
+                            Value="Stretch" />
+                </Style>
+            </ListView.ItemContainerStyle>
+            <ListView.ItemTemplate>
+                <DataTemplate>
+                    <cells:ProfileCell />
+                </DataTemplate>
+            </ListView.ItemTemplate>
+            <ListView.GroupStyle>
+                <GroupStyle>
+                    <GroupStyle.HeaderTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{Binding Key}"
+                                       Style="{StaticResource BodyStrongTextBlockStyle}"
+                                       Margin="0,16,0,4" />
+                        </DataTemplate>
+                    </GroupStyle.HeaderTemplate>
+                    <GroupStyle.HeaderContainerStyle>
+                        <Style TargetType="ListViewHeaderItem">
+                            <Setter Property="Background"
+                                    Value="{ThemeResource ContentDialogBackground}" />
+                            <Setter Property="FontFamily"
+                                    Value="{ThemeResource ContentControlThemeFontFamily}" />
+                            <Setter Property="FontSize"
+                                    Value="{ThemeResource ListViewHeaderItemThemeFontSize}" />
+                            <Setter Property="Margin"
+                                    Value="0,0,0,0" />
+                            <Setter Property="Padding"
+                                    Value="12,0,12,0" />
+                            <Setter Property="HorizontalContentAlignment"
+                                    Value="Stretch" />
+                            <Setter Property="VerticalContentAlignment"
+                                    Value="Top" />
+                            <Setter Property="MinHeight"
+                                    Value="0" />
+                            <Setter Property="UseSystemFocusVisuals"
+                                    Value="True" />
+                            <Setter Property="Template">
+                                <Setter.Value>
+                                    <ControlTemplate TargetType="ListViewHeaderItem">
+                                        <Border Visibility="{Binding Content.Count, RelativeSource={RelativeSource Mode=TemplatedParent}, Converter={StaticResource BooleanToVisibilityConverter}}">
+                                            <Border Background="{TemplateBinding Background}"
+                                                    BorderBrush="{TemplateBinding BorderBrush}"
+                                                    BorderThickness="{TemplateBinding BorderThickness}"
+                                                    Visibility="{Binding Content.Key, RelativeSource={RelativeSource Mode=TemplatedParent}, Converter={StaticResource NullToVisibilityConverter}}">
+                                                <ContentPresenter x:Name="ContentPresenter"
+                                                                  Margin="{TemplateBinding Padding}"
+                                                                  Content="{TemplateBinding Content}"
+                                                                  ContentTemplate="{TemplateBinding ContentTemplate}"
+                                                                  ContentTransitions="{TemplateBinding ContentTransitions}"
+                                                                  HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                                                  VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}" />
+                                            </Border>
+                                        </Border>
+                                    </ControlTemplate>
+                                </Setter.Value>
+                            </Setter>
+                        </Style>
+                    </GroupStyle.HeaderContainerStyle>
+                </GroupStyle>
+            </ListView.GroupStyle>
+            <ListView.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <ItemsStackPanel AreStickyGroupHeadersEnabled="False" />
+                </ItemsPanelTemplate>
+            </ListView.ItemsPanel>
+            <ListView.Header>
+                <Border Height="4" />
+            </ListView.Header>
+            <ListView.Footer>
+                <Border Height="12" />
+            </ListView.Footer>
+        </controls:TextListView>
+
+        <controls:ScrollViewerScrim Background="{ThemeResource ContentDialogBackground}"
+                                    ScrollingHost="{x:Bind SearchHost}"
+                                    Margin="-24,2,-24,-24"
+                                    Grid.Row="1" />
+
+        <Grid x:Name="ContentPanel"
+              Margin="-24,0,-24,-24"
+              Grid.Row="1">
+            <controls:TextListView x:Name="ScrollingHost"
+                                   ItemsSource="{x:Bind ViewModel.Members}"
+                                   ItemClick="ListView_ItemClick"
+                                   IsItemClickEnabled="True"
+                                   ContainerContentChanging="OnContainerContentChanging"
+                                   SelectionMode="None"
+                                   Padding="12,0">
+                <ListView.ItemContainerStyle>
+                    <Style TargetType="ListViewItem"
+                           BasedOn="{StaticResource DefaultListViewItemStyle}">
+                        <Setter Property="HorizontalContentAlignment"
+                                Value="Stretch" />
+                    </Style>
+                </ListView.ItemContainerStyle>
+                <ListView.ItemTemplate>
+                    <DataTemplate>
+                        <cells:ProfileCell />
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+                <ListView.Header>
+                    <Border Height="4" />
+                </ListView.Header>
+                <ListView.Footer>
+                    <Border Height="12" />
+                </ListView.Footer>
+            </controls:TextListView>
+
+            <controls:ScrollViewerScrim Background="{ThemeResource ContentDialogBackground}"
+                                        ScrollingHost="{x:Bind ScrollingHost}"
+                                        Margin="0,2,0,0" />
+        </Grid>
+    </Grid>
+</controls:ContentPopup>

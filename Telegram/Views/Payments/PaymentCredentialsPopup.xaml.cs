@@ -1,5 +1,5 @@
 //
-// Copyright Fela Ameghino 2015-2023
+// Copyright Fela Ameghino 2015-2024
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
@@ -21,7 +21,7 @@ namespace Telegram.Views.Payments
         public PaymentCredentialsPopup(PaymentForm paymentForm)
         {
             InitializeComponent();
-            DataContext = TLContainer.Current.Resolve<PaymentCredentialsViewModel>();
+            DataContext = TypeResolver.Current.Resolve<PaymentCredentialsViewModel>();
 
             Title = Strings.PaymentCardInfo;
 
@@ -41,7 +41,7 @@ namespace Telegram.Views.Payments
         public PaymentCredentialsPopup(PaymentForm paymentForm, PaymentOption paymentOption)
         {
             InitializeComponent();
-            DataContext = TLContainer.Current.Resolve<PaymentCredentialsViewModel>();
+            DataContext = TypeResolver.Current.Resolve<PaymentCredentialsViewModel>();
 
             Title = Strings.PaymentCardInfo;
 

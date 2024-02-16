@@ -107,18 +107,28 @@
                                           x:Load="{x:Bind ViewModel.IsPremiumAvailable, Mode=OneWay}"
                                           Content="{CustomResource PrivacyVoiceMessages}"
                                           Badge="{x:Bind ViewModel.AllowPrivateVoiceAndVideoNoteMessages.Badge, Mode=OneWay}"
-                                          ChevronGlyph="{x:Bind ConvertVoiceMessagesChevron(ViewModel.IsPremium), Mode=OneWay}"
+                                          IsPremiumVisible="{x:Bind ViewModel.IsPremium, Mode=OneWay}"
                                           Style="{StaticResource GlyphBadgeButtonStyle}"
                                           Click="{x:Bind ViewModel.OpenVoiceMessages}"
                                           IsChevronVisible="True"
                                           Glyph="&#xE720;" />
+
+                    <controls:BadgeButton x:Name="PrivacyMessages"
+                                          x:Load="{x:Bind ViewModel.IsPremiumAvailable, Mode=OneWay}"
+                                          Content="{CustomResource PrivacyMessages}"
+                                          Badge="{x:Bind ConvertNewChat(ViewModel.AllowNewChatsFromUnknownUsers), Mode=OneWay}"
+                                          IsPremiumVisible="{x:Bind ViewModel.IsPremium, Mode=OneWay}"
+                                          Style="{StaticResource GlyphBadgeButtonStyle}"
+                                          Click="{x:Bind ViewModel.OpenMessages}"
+                                          IsChevronVisible="True"
+                                          Glyph="&#xE8BD;" />
                 </controls:HeaderedControl>
 
-                <controls:HeaderedControl Header="{CustomResource NewChatsFromNonContacts}"
-                                          Footer="{CustomResource ArchiveAndMuteInfo}">
-                    <CheckBox IsChecked="{x:Bind ViewModel.IsArchiveAndMuteEnabled, Mode=TwoWay}"
-                              Content="{CustomResource ArchiveAndMute}"
-                              Style="{StaticResource SettingsCheckBoxStyle}" />
+                <controls:HeaderedControl>
+                    <controls:BadgeButton Content="{CustomResource ArchiveSettings}"
+                                          Click="{x:Bind ViewModel.ArchiveSettings}"
+                                          Style="{StaticResource GlyphBadgeButtonStyle}"
+                                          Glyph="&#xE7B8;" />
                 </controls:HeaderedControl>
 
                 <controls:HeaderedControl Header="{CustomResource PrivacyAdvanced}"

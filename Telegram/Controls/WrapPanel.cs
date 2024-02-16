@@ -1,5 +1,5 @@
 //
-// Copyright Fela Ameghino 2015-2023
+// Copyright Fela Ameghino 2015-2024
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
@@ -16,12 +16,12 @@ using Windows.UI.Xaml.Controls;
 namespace Telegram.Controls
 {
     /// <summary>
-    /// WrapPanel is a panel that position child control vertically or horizontally based on the orientation and when max width/ max height is recieved a new row(in case of horizontal) or column (in case of vertical) is created to fit new controls.
+    /// WrapPanel is a panel that position child control vertically or horizontally based on the orientation and when max width/ max height is received a new row(in case of horizontal) or column (in case of vertical) is created to fit new controls.
     /// </summary>
     public partial class WrapPanel : Panel
     {
         /// <summary>
-        /// Gets or sets the orientation of the WrapPanel, Horizontal or vertical means that child controls will be added horizontally until the width of the panel can't fit more control then a new row is added to fit new horizontal added child controls, vertical means that child will be added vertically until the height of the panel is recieved then a new column is added
+        /// Gets or sets the orientation of the WrapPanel, Horizontal or vertical means that child controls will be added horizontally until the width of the panel can't fit more control then a new row is added to fit new horizontal added child controls, vertical means that child will be added vertically until the height of the panel is received then a new column is added
         /// </summary>
         public Orientation Orientation
         {
@@ -42,7 +42,6 @@ namespace Telegram.Controls
         private static void OrientationPropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             var wrapPanel = d as WrapPanel;
-            Logger.Debug();
             wrapPanel?.InvalidateMeasure();
             wrapPanel?.InvalidateArrange();
         }
@@ -50,8 +49,6 @@ namespace Telegram.Controls
         /// <inheritdoc />
         protected override Size MeasureOverride(Size availableSize)
         {
-            Logger.Debug();
-
             var totalMeasure = new UvMeasure();
             var parentMeasure = new UvMeasure(Orientation, availableSize.Width, availableSize.Height);
             var lineMeasure = new UvMeasure();
@@ -107,8 +104,6 @@ namespace Telegram.Controls
         /// <inheritdoc />
         protected override Size ArrangeOverride(Size finalSize)
         {
-            Logger.Debug();
-
             var parentMeasure = new UvMeasure(Orientation, finalSize.Width, finalSize.Height);
             var position = new UvMeasure();
 
@@ -144,7 +139,7 @@ namespace Telegram.Controls
     }
 
     /// <summary>
-    /// WrapPanel is a panel that position child control vertically or horizontally based on the orientation and when max width/ max height is recieved a new row(in case of horizontal) or column (in case of vertical) is created to fit new controls.
+    /// WrapPanel is a panel that position child control vertically or horizontally based on the orientation and when max width/ max height is received a new row(in case of horizontal) or column (in case of vertical) is created to fit new controls.
     /// </summary>
     public partial class WrapPanel
     {

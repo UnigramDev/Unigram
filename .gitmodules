@@ -10,3 +10,6 @@
 [submodule "Libraries/libwebp"]
 	path = Libraries/libwebp
 	url = https://github.com/webmproject/libwebp.git
+[submodule "Libraries/libprisma"]
+	path = Libraries/libprisma
+	url = https://github.com/FrayxRulez/libprisma.git

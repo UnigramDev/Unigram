@@ -1,42 +1,56 @@
 //
-// Copyright Fela Ameghino 2015-2023
+// Copyright Fela Ameghino 2015-2024
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
-using LinqToVisualTree;
 using System;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
+using Telegram.Collections;
 using Telegram.Common;
 using Telegram.Controls.Messages;
+using Telegram.Navigation;
 using Telegram.ViewModels;
 using Telegram.ViewModels.Delegates;
 using Windows.Devices.Input;
 using Windows.UI.Input;
 using Windows.UI.Xaml;
+using Windows.UI.Xaml.Automation.Peers;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Point = Windows.Foundation.Point;
+using VirtualKey = Windows.System.VirtualKey;
 
 namespace Telegram.Controls.Chats
 {
-    public class ChatHistoryView : ListView
+    public class ChatHistoryView : ListViewEx
     {
-        public DialogViewModel ViewModel => DataContext as DialogViewModel;
+        public DialogViewModel ViewModel { get; set; }
         public IDialogDelegate Delegate { get; set; }
 
         public ScrollViewer ScrollingHost { get; private set; }
-        public ItemsStackPanel ItemsStack { get; private set; }
 
-        public bool IsBottomReached => ScrollingHost?.VerticalOffset == ScrollingHost?.ScrollableHeight;
+        public bool IsBottomReached
+        {
+            get
+            {
+                if (ScrollingHost != null)
+                {
+                    return ScrollingHost.VerticalOffset.AlmostEquals(ScrollingHost.ScrollableHeight);
+                }
+
+                return true;
+            }
+        }
 
         private readonly DisposableMutex _loadMoreLock = new();
-        private int _loadMoreCount = 0;
+        private readonly SemaphoreSlim _loadMoreSemaphore = new(2, 2);
 
-        private readonly TaskCompletionSource<ItemsStackPanel> _waitItemsPanelRoot = new();
+        private TaskCompletionSource<bool> _waitItemsPanelRoot = new();
 
         public PanelScrollingDirection ScrollingDirection { get; private set; }
 
@@ -46,10 +60,9 @@ namespace Telegram.Controls.Chats
 
             _recognizer = new GestureRecognizer();
             _recognizer.GestureSettings = GestureSettings.DoubleTap;
-            _recognizer.Tapped += Recognizer_Tapped;
 
-            Loaded += OnLoaded;
-            Unloaded += OnUnloaded;
+            Connected += OnLoaded;
+            Disconnected += OnUnloaded;
         }
 
         private bool _raiseViewChanged;
@@ -59,6 +72,8 @@ namespace Telegram.Controls.Chats
         {
             ScrollingHost?.ChangeView(null, ScrollingHost.ScrollableHeight, null);
         }
+
+        public bool IsSuspended => !_raiseViewChanged;
 
         public void Suspend()
         {
@@ -72,14 +87,13 @@ namespace Telegram.Controls.Chats
 
         private void OnLoaded(object sender, RoutedEventArgs e)
         {
-            var panel = ItemsPanelRoot as ItemsStackPanel;
-            if (panel != null)
-            {
-                ItemsStack = panel;
-                ItemsStack.SizeChanged -= OnSizeChanged;
-                ItemsStack.SizeChanged += OnSizeChanged;
+            _recognizer.Tapped += Recognizer_Tapped;
 
-                _waitItemsPanelRoot.TrySetResult(panel);
+            if (ItemsPanelRoot != null)
+            {
+                ItemsPanelRoot.SizeChanged += OnSizeChanged;
+
+                _waitItemsPanelRoot.TrySetResult(true);
                 SetScrollingMode();
             }
 
@@ -88,8 +102,18 @@ namespace Telegram.Controls.Chats
 
         private void OnUnloaded(object sender, RoutedEventArgs e)
         {
-            Logger.Info($"ItemsPanelRoot.Children.Count: {ItemsStack?.Children.Count}");
+            Logger.Info($"ItemsPanelRoot.Children.Count: {ItemsPanelRoot?.Children.Count}");
             Logger.Info($"Items.Count: {Items.Count}");
+
+            _recognizer.Tapped -= Recognizer_Tapped;
+
+            if (ItemsPanelRoot != null)
+            {
+                ItemsPanelRoot.SizeChanged -= OnSizeChanged;
+            }
+
+            _waitItemsPanelRoot = new();
+            _raiseViewChanged = false;
 
             // Note, this is done because of the following:
             // In some conditions (always?) ListView starts to store
@@ -99,7 +123,11 @@ namespace Telegram.Controls.Chats
             // right before all of them get unloaded again.
             // Setting ItemsSource to null seems to prevent this from happening.
             // IMPORTANT: this must only happen on Unload (so when closing the chat page).
-            ItemsSource = null;
+            if (ItemsSource is ISynchronizedList source)
+            {
+                ItemsSource = null;
+                source.Disconnect();
+            }
         }
 
         protected override void OnApplyTemplate()
@@ -113,7 +141,6 @@ namespace Telegram.Controls.Chats
 
         private void OnSizeChanged(object sender, SizeChangedEventArgs e)
         {
-            Logger.Debug();
             ViewChanging();
         }
 
@@ -145,53 +172,50 @@ namespace Telegram.Controls.Chats
         {
             ScrollingDirection = direction;
 
-            if (ScrollingHost == null || ItemsStack == null || ViewModel == null)
+            if (ScrollingHost == null || ItemsPanelRoot is not ItemsStackPanel panel || ViewModel == null || !_loadMoreSemaphore.Wait(0))
             {
                 return;
             }
 
-            _loadMoreCount++;
-
             using (await _loadMoreLock.WaitAsync())
             {
+                if (IsDisconnected)
+                {
+                    _loadMoreSemaphore.Release();
+                    return;
+                }
+
                 var lastSlice = ViewModel.IsLastSliceLoaded != true;
                 var firstSlice = ViewModel.IsFirstSliceLoaded != true;
 
                 if (direction == PanelScrollingDirection.Backward
-                    && ItemsStack.FirstCacheIndex == 0
+                    && panel.FirstCacheIndex == 0
                     && lastSlice)
                 {
                     Logger.Debug($"Going {direction}, loading history in the past");
-                    await ViewModel.LoadNextSliceAsync(direction != PanelScrollingDirection.None);
+                    await ViewModel.LoadNextSliceAsync();
                 }
                 else if (direction == PanelScrollingDirection.Forward
-                    && ItemsStack.LastCacheIndex == ViewModel.Items.Count - 1)
+                    && panel.LastCacheIndex == ViewModel.Items.Count - 1)
                 {
                     await LoadPreviousSliceAsync(direction, firstSlice);
                 }
                 else if (direction == PanelScrollingDirection.None)
                 {
-                    if (lastSlice && ItemsStack.FirstVisibleIndex == 0)
+                    if (lastSlice && panel.FirstVisibleIndex == 0)
                     {
                         Logger.Debug($"Going {direction}, loading history in the past");
-                        await ViewModel.LoadNextSliceAsync(direction != PanelScrollingDirection.None);
+                        await ViewModel.LoadNextSliceAsync();
                     }
 
-                    if (ItemsStack.LastCacheIndex == ViewModel.Items.Count - 1)
+                    if (panel.LastCacheIndex == ViewModel.Items.Count - 1)
                     {
                         await LoadPreviousSliceAsync(direction, firstSlice);
                     }
                 }
-
-                _loadMoreCount--;
-
-                // This is just not to get too many calls stuck queued
-                if (_loadMoreCount < 3)
-                {
-                    // Not sure if this is extremely effective, but we try
-                    await Task.WhenAny(this.UpdateLayoutAsync(), Task.Delay(100));
-                }
             }
+
+            _loadMoreSemaphore.Release();
         }
 
         private Task LoadPreviousSliceAsync(PanelScrollingDirection direction, bool firstSlice)
@@ -199,7 +223,7 @@ namespace Telegram.Controls.Chats
             if (firstSlice)
             {
                 Logger.Debug($"Going {direction}, loading history in the future");
-                return ViewModel.LoadPreviousSliceAsync(direction != PanelScrollingDirection.None);
+                return ViewModel.LoadPreviousSliceAsync();
             }
 
             SetScrollingMode(ItemsUpdatingScrollMode.KeepLastItemInView, true);
@@ -209,8 +233,6 @@ namespace Telegram.Controls.Chats
         private ItemsUpdatingScrollMode _currentMode;
         private ItemsUpdatingScrollMode? _pendingMode;
         private bool? _pendingForce;
-
-        public ItemsUpdatingScrollMode ScrollingMode => ItemsStack?.ItemsUpdatingScrollMode ?? _currentMode;
 
         public void SetScrollingMode()
         {
@@ -261,24 +283,38 @@ namespace Telegram.Controls.Chats
             }
         }
 
-        public async Task ScrollToItem(MessageViewModel item, VerticalAlignment alignment, bool highlight, double? pixel = null, ScrollIntoViewAlignment direction = ScrollIntoViewAlignment.Leading, bool? disableAnimation = null)
+        public async void ScrollToItem(MessageViewModel item, VerticalAlignment alignment, MessageBubbleHighlightOptions options, double? pixel = null, ScrollIntoViewAlignment direction = ScrollIntoViewAlignment.Leading, bool? disableAnimation = null, TaskCompletionSource<bool> tsc = null)
         {
-            _raiseViewChanged = false;
+            Suspend();
 
             var scrollViewer = ScrollingHost;
-            if (scrollViewer == null)
+            var handler = Delegate;
+
+            if (scrollViewer == null || handler == null)
             {
                 Logger.Debug("ScrollingHost == null");
                 goto Exit;
             }
 
-            await ScrollIntoViewAsync(item, direction);
+            await ScrollIntoViewAsync(item, direction, true);
 
-            var selectorItem = Delegate?.ContainerFromItem(item.Id);
+            var selectorItem = handler.ContainerFromItem(item.Id);
             if (selectorItem == null)
             {
-                Logger.Debug("selectorItem == null, abort");
-                goto Exit;
+                // TODO: experimental
+                if (ViewModel.Items.ContainsKey(item.Id))
+                {
+                    Logger.Debug("selectorItem == null, but item is known, retry");
+
+                    await ScrollIntoViewAsync(item, direction, false);
+                    selectorItem = handler.ContainerFromItem(item.Id);
+                }
+
+                if (selectorItem == null)
+                {
+                    Logger.Debug("selectorItem == null, abort");
+                    goto Exit;
+                }
             }
 
             // calculate the position object in order to know how much to scroll to
@@ -313,21 +349,27 @@ namespace Telegram.Controls.Chats
                 }
             }
 
-            if (highlight)
+            if (options != null && options.Highlight)
             {
-                var bubble = selectorItem.Descendants<MessageBubble>().FirstOrDefault();
-                bubble?.Highlight();
+                if (selectorItem.ContentTemplateRoot is MessageSelector selector && selector.Content is MessageBubble bubble)
+                {
+                    bubble.Highlight(options);
+                }
             }
 
             if (scrollViewer.VerticalOffset < scrollViewer.ScrollableHeight || position.Y < scrollViewer.ScrollableHeight)
             {
                 if (scrollViewer.VerticalOffset.AlmostEquals(position.Y))
                 {
+                    TryFocus(selectorItem, options);
+
                     goto Exit;
                 }
 
                 await scrollViewer.ChangeViewAsync(null, position.Y, disableAnimation ?? alignment != VerticalAlignment.Center, false);
             }
+
+            TryFocus(selectorItem, options);
 
         Exit:
             Resume();
@@ -337,15 +379,70 @@ namespace Telegram.Controls.Chats
                 ViewChanging();
                 ViewChanged?.Invoke(scrollViewer, null);
             }
+
+            tsc?.TrySetResult(true);
         }
 
-        private async Task ScrollIntoViewAsync(MessageViewModel item, ScrollIntoViewAlignment alignment)
+        private void TryFocus(SelectorItem selectorItem, MessageBubbleHighlightOptions options)
         {
-            var index = Items.IndexOf(item);
-            var stack = await _waitItemsPanelRoot.Task;
-
-            if (stack == null || index >= ItemsStack.FirstCacheIndex && index <= ItemsStack.LastCacheIndex)
+            try
             {
+                if ((options == null || options.MoveFocus) && AutomationPeer.ListenerExists(AutomationEvents.LiveRegionChanged))
+                {
+                    selectorItem.Focus(FocusState.Keyboard);
+                }
+            }
+            catch
+            {
+                // Focus cannot be moved while getting or losing focus.
+            }
+        }
+
+        private async Task ScrollIntoViewAsync(MessageViewModel item, ScrollIntoViewAlignment alignment, bool fastPath)
+        {
+            if (ItemsPanelRoot == null)
+            {
+                Logger.Info("ItemsPanelRoot == null");
+
+                // Some actions cause IsItemsHostInvalid to become true.
+                // If this is the case, ItemsPanelRoot will return null, and scrolling may not work.
+                // The current code should not invalidate the ItemsHost, but if this happens, we try to be prepared.
+                if (_waitItemsPanelRoot.Task.Status == TaskStatus.RanToCompletion)
+                {
+                    ScrollingHost.UpdateLayout();
+                }
+                else
+                {
+                    await _waitItemsPanelRoot.Task;
+                }
+            }
+
+            var index = Items.IndexOf(item);
+            var panel = ItemsPanelRoot as ItemsStackPanel;
+
+            if (panel == null || index >= panel.FirstCacheIndex && index <= panel.LastCacheIndex)
+            {
+                Logger.Info("Skipping because " + (panel == null ? "null" : "cached"));
+                return;
+            }
+
+            // Judging from WinUI 3 source code, calling UpdateLayout on the panel should be
+            // enough to guarantee that the container we are scrolling to gets realized 
+            // 1.4-stable/dxaml/xcp/dxaml/lib/ModernCollectionBasePanel_WindowManagement_Partial.cpp#L2138
+            if (fastPath)
+            {
+                ScrollIntoView(item, alignment);
+                panel.UpdateLayout();
+
+                //if (index < panel.FirstCacheIndex || index > panel.LastCacheIndex)
+                //{
+                //    panel.UpdateLayout();
+                //}
+                //else
+                //{
+                //    Logger.Info("Item is in the cached range");
+                //}
+
                 return;
             }
 
@@ -358,11 +455,11 @@ namespace Telegram.Controls.Chats
 
             void viewChanged(object s1, ScrollViewerViewChangedEventArgs e1)
             {
-                LayoutUpdated -= layoutUpdated;
+                panel.LayoutUpdated -= layoutUpdated;
 
                 if (e1.IsIntermediate is false)
                 {
-                    LayoutUpdated += layoutUpdated;
+                    panel.LayoutUpdated += layoutUpdated;
                     ScrollingHost.ViewChanged -= viewChanged;
                 }
             }
@@ -370,14 +467,14 @@ namespace Telegram.Controls.Chats
             try
             {
                 ScrollIntoView(item, alignment);
-                LayoutUpdated += layoutUpdated;
+                panel.LayoutUpdated += layoutUpdated;
                 ScrollingHost.ViewChanged += viewChanged;
 
                 await tcs.Task;
             }
             finally
             {
-                LayoutUpdated -= layoutUpdated;
+                panel.LayoutUpdated -= layoutUpdated;
                 ScrollingHost.ViewChanged -= viewChanged;
             }
         }
@@ -390,7 +487,6 @@ namespace Telegram.Controls.Chats
             set { SetValue(IsSelectionEnabledProperty, value); }
         }
 
-        // Using a DependencyProperty as the backing store for IsSelectionEnabled.  This enables animation, styling, binding, etc...
         public static readonly DependencyProperty IsSelectionEnabledProperty =
             DependencyProperty.Register("IsSelectionEnabled", typeof(bool), typeof(ChatHistoryView), new PropertyMetadata(false, OnSelectionEnabledChanged));
 
@@ -425,6 +521,7 @@ namespace Telegram.Controls.Chats
         private bool _operation;
         private SelectionDirection _direction;
 
+        private bool _raised;
         private bool _pressed;
         private Point _position;
 
@@ -434,6 +531,7 @@ namespace Telegram.Controls.Chats
         {
             if (args.TapCount == 2 && args.PointerDeviceType == PointerDeviceType.Mouse)
             {
+                _raised = true;
                 sender.CompleteGesture();
 
                 var children = VisualTreeHelper.FindElementsInHostCoordinates(args.Position, this);
@@ -450,7 +548,7 @@ namespace Telegram.Controls.Chats
             var message = ItemFromContainer(selector) as MessageViewModel;
             if (message != null)
             {
-                ViewModel.DoubleTapped(message);
+                ViewModel.DoubleTapped(message, WindowContext.IsKeyDown(VirtualKey.Control));
             }
         }
 
@@ -470,13 +568,18 @@ namespace Telegram.Controls.Chats
                         _recognizer.CompleteGesture();
                     }
                 }
+                else if (_recognizer.IsActive)
+                {
+                    _recognizer.CompleteGesture();
+                }
             }
-            else
+            else if (_recognizer.IsActive)
             {
                 _recognizer.CompleteGesture();
             }
 
-            _pressed = true;
+            _pressed = !_raised;
+            _raised = false;
         }
 
         internal void OnPointerEntered(MessageSelector item, PointerRoutedEventArgs e)
@@ -641,7 +744,7 @@ namespace Telegram.Controls.Chats
                     _recognizer.CompleteGesture();
                 }
             }
-            else
+            else if (_recognizer.IsActive)
             {
                 _recognizer.CompleteGesture();
             }

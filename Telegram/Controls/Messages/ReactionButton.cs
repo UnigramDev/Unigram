@@ -1,57 +1,68 @@
 //
-// Copyright Fela Ameghino 2015-2023
+// Copyright Fela Ameghino 2015-2024
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
-using RLottie;
 using System;
-using System.Threading.Tasks;
 using Telegram.Common;
 using Telegram.Converters;
-using Telegram.Native;
-using Telegram.Navigation;
 using Telegram.Streams;
 using Telegram.Td.Api;
 using Telegram.ViewModels;
 using Windows.Foundation;
 using Windows.System;
 using Windows.UI.Xaml;
-using Windows.UI.Xaml.Automation;
+using Windows.UI.Xaml.Automation.Peers;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
-using Windows.UI.Xaml.Media;
+using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media.Imaging;
 
 namespace Telegram.Controls.Messages
 {
-    public class ReactionButton : ToggleButton
+    public class ReactionButton : ToggleButtonEx
     {
         private Image Presenter;
         private CustomEmojiIcon Icon;
         private Popup Overlay;
-        private AnimatedTextBlock Count;
+        protected AnimatedTextBlock Count;
         private RecentUserHeads RecentChoosers;
 
         public ReactionButton()
         {
             DefaultStyleKey = typeof(ReactionButton);
+
             Click += OnClick;
-            Unloaded += OnUnloaded;
         }
 
-        private void OnUnloaded(object sender, RoutedEventArgs e)
+        protected override AutomationPeer OnCreateAutomationPeer()
         {
-            UpdateManager.Unsubscribe(this, ref _fileToken, true);
+            return new ReactionButtonAutomationPeer(this);
         }
 
-        private MessageViewModel _message;
-        private MessageReaction _interaction;
+        public string GetAutomationName()
+        {
+            if (_interaction is MessageReaction interaction)
+            {
+                if (interaction.Type is ReactionTypeEmoji emoji)
+                {
+                    return Locale.Declension(Strings.R.AccDescrNumberOfPeopleReactions, interaction.TotalCount, emoji.Emoji);
+                }
+                else if (_sticker is Sticker sticker)
+                {
+                    return Locale.Declension(Strings.R.AccDescrNumberOfPeopleReactions, interaction.TotalCount, string.Format(Strings.AccDescrCustomEmoji, sticker.Emoji));
+                }
+            }
+
+            return null;
+        }
+
+        protected MessageViewModel _message;
+        protected MessageReaction _interaction;
         private EmojiReaction _reaction;
         private Sticker _sticker;
         private UnreadReaction _unread;
-
-        private long _fileToken;
 
         public MessageReaction Reaction => _interaction;
         public EmojiReaction EmojiReaction => _reaction;
@@ -108,21 +119,12 @@ namespace Telegram.Controls.Messages
             }
 
             _presenterId = center.Id;
+            Presenter.Source = null;
 
-            if (center.Local.IsDownloadingCompleted)
+            var bitmap = await EmojiCache.GetLottieFrameAsync(_message.ClientService, center, 32, 32);
+            if (center.Id == _presenterId)
             {
-                Presenter.Source = await GetLottieFrame(center.Local.Path, 0, 32, 32);
-            }
-            else
-            {
-                Presenter.Source = null;
-
-                UpdateManager.Subscribe(this, _message, center, ref _fileToken, UpdateFile, true);
-
-                if (center.Local.CanBeDownloaded && !center.Local.IsDownloadingActive)
-                {
-                    _message.ClientService.DownloadFile(center.Id, 32);
-                }
+                Presenter.Source = bitmap;
             }
         }
 
@@ -154,30 +156,29 @@ namespace Telegram.Controls.Messages
             _presenterId = value.StickerValue.Id;
 
             Icon ??= GetTemplateChild(nameof(Icon)) as CustomEmojiIcon;
-            Icon.Source = new DelayedFileSource(message.ClientService, value.StickerValue);
+            Icon.Source = new DelayedFileSource(message.ClientService, value);
         }
 
-        private void UpdateInteraction(MessageViewModel message, MessageReaction interaction, bool recycled)
+        protected virtual void UpdateInteraction(MessageViewModel message, MessageReaction interaction, bool recycled)
         {
             IsChecked = interaction.IsChosen;
-            AutomationProperties.SetName(this, Locale.Declension(Strings.R.AccDescrNumberOfPeopleReactions, interaction.TotalCount, interaction.Type));
 
             if (interaction.TotalCount > interaction.RecentSenderIds.Count)
             {
                 Count ??= GetTemplateChild(nameof(Count)) as AnimatedTextBlock;
-                Count.Visibility = Windows.UI.Xaml.Visibility.Visible;
+                Count.Visibility = Visibility.Visible;
 
                 Count.Text = Formatter.ShortNumber(interaction.TotalCount);
 
                 if (RecentChoosers != null)
                 {
-                    RecentChoosers.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
+                    RecentChoosers.Visibility = Visibility.Collapsed;
                 }
             }
             else
             {
                 RecentChoosers ??= GetRecentChoosers();
-                RecentChoosers.Visibility = Windows.UI.Xaml.Visibility.Visible;
+                RecentChoosers.Visibility = Visibility.Visible;
 
                 var destination = RecentChoosers.Items;
                 var origin = interaction.RecentSenderIds;
@@ -194,14 +195,9 @@ namespace Telegram.Controls.Messages
 
                 if (Count != null)
                 {
-                    Count.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
+                    Count.Visibility = Visibility.Collapsed;
                 }
             }
-        }
-
-        private async void UpdateFile(object target, File file)
-        {
-            Presenter.Source = await GetLottieFrame(file.Local.Path, 0, 32, 32);
         }
 
         private RecentUserHeads GetRecentChoosers()
@@ -214,7 +210,7 @@ namespace Telegram.Controls.Messages
 
         private void RecentChoosers_RecentUserHeadChanged(ProfilePicture photo, MessageSender sender)
         {
-            if (_message.ClientService.TryGetUser(sender, out Telegram.Td.Api.User user))
+            if (_message.ClientService.TryGetUser(sender, out Td.Api.User user))
             {
                 photo.SetUser(_message.ClientService, user, 20);
             }
@@ -226,29 +222,6 @@ namespace Telegram.Controls.Messages
             {
                 photo.Clear();
             }
-        }
-
-        private static async Task<ImageSource> GetLottieFrame(string path, int frame, int width, int height)
-        {
-            var dpi = WindowContext.Current.RasterizationScale;
-
-            width = (int)(width * dpi);
-            height = (int)(height * dpi);
-
-            var bitmap = new WriteableBitmap(width, height);
-            var buffer = new PixelBuffer(bitmap);
-
-            await Task.Run(() =>
-            {
-                var animation = LottieAnimation.LoadFromFile(path, width, height, false, null);
-                if (animation != null)
-                {
-                    animation.RenderSync(buffer, frame);
-                    animation.Dispose();
-                }
-            });
-
-            return bitmap;
         }
 
         protected override void OnApplyTemplate()
@@ -275,21 +248,32 @@ namespace Telegram.Controls.Messages
             //base.OnToggle();
         }
 
-        private void OnClick(object sender, Windows.UI.Xaml.RoutedEventArgs e)
+        private void OnClick(object sender, RoutedEventArgs e)
         {
             var chosen = _interaction;
-            if (chosen == null || Presenter == null)
+            if (chosen != null && Presenter != null)
             {
-                return;
+                OnClick(_message, chosen);
             }
 
+
+            //if (_isTag)
+            //{
+            //    ContextMenuRequested();
+            //    return;
+            //}
+
+        }
+
+        protected virtual void OnClick(MessageViewModel message, MessageReaction chosen)
+        {
             if (chosen.IsChosen)
             {
-                _message.ClientService.Send(new RemoveMessageReaction(_message.ChatId, _message.Id, chosen.Type));
+                message.ClientService.Send(new RemoveMessageReaction(message.ChatId, message.Id, chosen.Type));
             }
             else
             {
-                _message.ClientService.Send(new AddMessageReaction(_message.ChatId, _message.Id, chosen.Type, false, false));
+                message.ClientService.Send(new AddMessageReaction(message.ChatId, message.Id, chosen.Type, false, false));
             }
 
             if (chosen.IsChosen is false)
@@ -320,6 +304,9 @@ namespace Telegram.Controls.Messages
                             Icon.Source = new CustomEmojiFileSource(_message.ClientService, customEmoji.CustomEmojiId);
                             Icon.Play();
                         }
+
+                        _centerCompleted = true;
+                        _aroundCompleted = false;
 
                         var presenter = Presenter;
                         var popup = Overlay;
@@ -369,6 +356,9 @@ namespace Telegram.Controls.Messages
 
             if (center.Local.IsDownloadingCompleted && around.Local.IsDownloadingCompleted)
             {
+                _centerCompleted = false;
+                _aroundCompleted = false;
+
                 var presenter = Presenter;
                 var popup = Overlay;
 
@@ -427,8 +417,13 @@ namespace Telegram.Controls.Messages
             }
         }
 
+        private bool _centerCompleted;
+        private bool _aroundCompleted;
+
         private void Start()
         {
+            Logger.Info();
+
             var presenter = Presenter;
             if (presenter == null)
             {
@@ -440,25 +435,138 @@ namespace Telegram.Controls.Messages
 
         private void Continue1()
         {
+            Logger.Info();
+
+            _centerCompleted = true;
+
+            if (_aroundCompleted)
+            {
+                Continue();
+            }
+        }
+
+        private void Continue2()
+        {
+            Logger.Info();
+
+            _aroundCompleted = true;
+
+            if (_centerCompleted)
+            {
+                Continue();
+            }
+        }
+
+        private void Continue()
+        {
             var presenter = Presenter;
-            if (presenter == null)
+            var popup = Overlay;
+
+            if (presenter == null || popup == null)
             {
                 return;
             }
 
             presenter.Opacity = 1;
-        }
-
-        private void Continue2()
-        {
-            var popup = Overlay;
-            if (popup == null)
-            {
-                return;
-            }
 
             popup.IsOpen = false;
             popup.Child = null;
+        }
+
+        protected override void OnKeyDown(KeyRoutedEventArgs e)
+        {
+            if (e.Key is VirtualKey.Left or VirtualKey.Right && Parent is Panel panel)
+            {
+                e.Handled = true;
+
+                var index = panel.Children.IndexOf(this);
+
+                Control control = null;
+                if (e.Key == VirtualKey.Left && index > 0)
+                {
+                    control = panel.Children[index - 1] as Control;
+                }
+                else if (e.Key == VirtualKey.Right && index < panel.Children.Count - 1)
+                {
+                    control = panel.Children[index + 1] as Control;
+                }
+
+                control?.Focus(Windows.UI.Xaml.FocusState.Keyboard);
+            }
+            if (e.Key is >= VirtualKey.Left and <= VirtualKey.Down && false)
+            {
+                e.Handled = true;
+
+                var direction = e.Key switch
+                {
+                    VirtualKey.Left => FocusNavigationDirection.Left,
+                    VirtualKey.Up => FocusNavigationDirection.Up,
+                    VirtualKey.Right => FocusNavigationDirection.Right,
+                    VirtualKey.Down => FocusNavigationDirection.Down,
+                    _ => FocusNavigationDirection.Next
+                };
+
+                FocusManager.TryMoveFocus(direction, new FindNextElementOptions { SearchRoot = Parent });
+            }
+
+            base.OnKeyDown(e);
+        }
+
+        //private CompositionPath GetClipGeometry(float width)
+        //{
+        //    CanvasGeometry result;
+        //    using (var builder = new CanvasPathBuilder(null))
+        //    {
+        //        var far = 28f;
+
+        //        var blp = width - (far - 14.4508f);
+        //        var brp = width - (far - 20.1773f);
+        //        var trp = width - (far - 14.4108f);
+
+        //        var brp1trp2 = width - (far - 16.6541f);
+        //        var brp2trp1 = width - (far - 18.7758f);
+
+        //        var tipep = width - (far - 27.1917f);
+        //        var tipp12 = width - (far - 28.2705f);
+
+        //        builder.BeginFigure(5.53846f, 0);
+        //        builder.AddCubicBezier(new Vector2(2.47964f, 0), new Vector2(0, 2.47964f), new Vector2(0, 5.53846f));
+        //        builder.AddLine(0, 18.4638f);
+        //        builder.AddCubicBezier(new Vector2(0, 21.5225f), new Vector2(2.47964f, 24.0022f), new Vector2(5.53846f, 24.0022f));
+        //        builder.AddLine(blp, 24.0022f);
+        //        builder.AddCubicBezier(new Vector2(brp1trp2, 24.0022f), new Vector2(brp2trp1, 22.9825f), new Vector2(brp, 21.2308f));
+        //        builder.AddLine(tipep, 14.3088f);
+        //        builder.AddCubicBezier(new Vector2(tipp12, 12.9603f), new Vector2(tipp12, 11.0442f), new Vector2(tipep, 9.69554f));
+        //        builder.AddLine(brp, 2.77148f);
+        //        builder.AddCubicBezier(new Vector2(brp2trp1, 1.01976f), new Vector2(brp1trp2, 0), new Vector2(trp, 0));
+        //        builder.AddLine(5.53846f, 0);
+        //        builder.EndFigure(CanvasFigureLoop.Closed);
+        //        builder.AddGeometry(CanvasGeometry.CreateEllipse(null, width - (far - 17), 9 + 3, 3, 3));
+
+        //        result = CanvasGeometry.CreatePath(builder);
+        //    }
+        //    return new CompositionPath(result);
+        //}
+    }
+
+    public class ReactionButtonAutomationPeer : ToggleButtonAutomationPeer
+    {
+        private readonly ReactionButton _owner;
+
+        public ReactionButtonAutomationPeer(ReactionButton owner)
+            : base(owner)
+        {
+            _owner = owner;
+        }
+
+        protected override string GetNameCore()
+        {
+            return _owner.GetAutomationName() ?? base.GetNameCore();
+        }
+
+        protected override AutomationControlType GetAutomationControlTypeCore()
+        {
+            return AutomationControlType.ListItem;
         }
     }
 }

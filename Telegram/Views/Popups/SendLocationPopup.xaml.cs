@@ -1,5 +1,5 @@
 //
-// Copyright Fela Ameghino 2015-2023
+// Copyright Fela Ameghino 2015-2024
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
@@ -38,7 +38,7 @@ namespace Telegram.Views.Popups
         public SendLocationPopup()
         {
             InitializeComponent();
-            DataContext = TLContainer.Current.Resolve<SendLocationViewModel>();
+            DataContext = TypeResolver.Current.Resolve<SendLocationViewModel>();
 
             Title = Strings.AttachLocation;
 
@@ -52,8 +52,8 @@ namespace Telegram.Views.Popups
 
             Loaded += OnLoaded;
 
-            _accuracy = ElementCompositionPreview.GetElementVisual(Accuracy);
-            _position = ElementCompositionPreview.GetElementVisual(Position);
+            _accuracy = ElementComposition.GetElementVisual(Accuracy);
+            _position = ElementComposition.GetElementVisual(Position);
 
             _position.CenterPoint = new Vector3(20, 48, 0);
             _position.Scale = Vector3.Zero;
@@ -211,13 +211,14 @@ namespace Telegram.Views.Popups
             {
                 return;
             }
+            else if (args.ItemContainer.ContentTemplateRoot is VenueCell content && args.Item is Venue venue)
+            {
+                content.UpdateVenue(venue);
+                content.UpdateState(sender.SelectionMode == ListViewSelectionMode.Multiple
+                    && args.ItemContainer.IsSelected, false, true);
 
-            var content = args.ItemContainer.ContentTemplateRoot as VenueCell;
-            var venue = args.Item as Venue;
-
-            content.UpdateVenue(venue);
-            content.UpdateState(sender.SelectionMode == ListViewSelectionMode.Multiple
-                && args.ItemContainer.IsSelected, false, true);
+                args.Handled = true;
+            }
         }
 
         #endregion

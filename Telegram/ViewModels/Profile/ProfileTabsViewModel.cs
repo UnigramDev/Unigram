@@ -1,5 +1,5 @@
 //
-// Copyright Fela Ameghino 2015-2023
+// Copyright Fela Ameghino 2015-2024
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
@@ -7,7 +7,6 @@
 using Rg.DiffUtils;
 using System;
 using System.Collections.Generic;
-using System.Collections.Immutable;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
@@ -18,6 +17,7 @@ using Telegram.Navigation.Services;
 using Telegram.Services;
 using Telegram.Td.Api;
 using Telegram.ViewModels.Delegates;
+using Telegram.Views;
 using Telegram.Views.Popups;
 using Telegram.Views.Profile;
 using Windows.UI.Xaml.Controls;
@@ -45,6 +45,12 @@ namespace Telegram.ViewModels.Profile
 
         private readonly IMessageDelegate _messageDelegate;
 
+        protected readonly ProfileSavedChatsTabViewModel _savedChatsViewModel;
+        protected readonly ProfileStoriesTabViewModel _storiesTabViewModel;
+        protected readonly ProfileGroupsTabViewModel _groupsTabViewModel;
+        protected readonly ProfileChannelsTabViewModel _channelsTabViewModel;
+        protected readonly ProfileMembersTabViewModel _membersTabVieModel;
+
         public ProfileTabsViewModel(IClientService clientService, ISettingsService settingsService, IStorageService storageService, IEventAggregator aggregator, IPlaybackService playbackService)
             : base(clientService, settingsService, aggregator)
         {
@@ -52,6 +58,19 @@ namespace Telegram.ViewModels.Profile
             _storageService = storageService;
 
             _messageDelegate = new MessageDelegate(this);
+
+            _savedChatsViewModel = TypeResolver.Current.Resolve<ProfileSavedChatsTabViewModel>(clientService.SessionId);
+            _storiesTabViewModel = TypeResolver.Current.Resolve<ProfileStoriesTabViewModel>(clientService.SessionId);
+            _groupsTabViewModel = TypeResolver.Current.Resolve<ProfileGroupsTabViewModel>(clientService.SessionId);
+            _channelsTabViewModel = TypeResolver.Current.Resolve<ProfileChannelsTabViewModel>(clientService.SessionId);
+            _membersTabVieModel = TypeResolver.Current.Resolve<ProfileMembersTabViewModel>(clientService.SessionId);
+            _membersTabVieModel.IsEmbedded = true;
+
+            Children.Add(_savedChatsViewModel);
+            Children.Add(_storiesTabViewModel);
+            Children.Add(_groupsTabViewModel);
+            Children.Add(_channelsTabViewModel);
+            Children.Add(_membersTabVieModel);
 
             Items = new ObservableCollection<ProfileTabItem>();
 
@@ -94,25 +113,24 @@ namespace Telegram.ViewModels.Profile
             set => Set(ref _topic, value);
         }
 
+        public long SavedMessagesTopicId => SavedMessagesTopic?.Id ?? 0;
+
+        protected SavedMessagesTopic _savedMessagesTopic;
+        public SavedMessagesTopic SavedMessagesTopic
+        {
+            get => _savedMessagesTopic;
+            set => Set(ref _savedMessagesTopic, value);
+        }
+
         protected override async Task OnNavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
         {
-            if (parameter is string pair)
+            if (parameter is ChatSavedMessagesTopicIdNavigationArgs savedMessagesTopicIdArgs)
             {
-                var split = pair.Split(';');
-                if (split.Length != 2)
-                {
-                    return;
-                }
-
-                var failed1 = !long.TryParse(split[0], out long result1);
-                var failed2 = !long.TryParse(split[1], out long result2);
-
-                if (failed1 || failed2)
-                {
-                    return;
-                }
-
-                parameter = result1;
+                parameter = savedMessagesTopicIdArgs.ChatId;
+            }
+            else if (parameter is ChatMessageIdNavigationArgs args)
+            {
+                parameter = args.ChatId;
             }
 
             var chatId = (long)parameter;
@@ -133,17 +151,7 @@ namespace Telegram.ViewModels.Profile
 
             Aggregator.Subscribe<UpdateDeleteMessages>(this, Handle);
 
-            Items.Clear();
-
-            if (Chat.Type is ChatTypeBasicGroup || Chat.Type is ChatTypeSupergroup supergroup && !supergroup.IsChannel)
-            {
-                Items.Add(new ProfileTabItem(Strings.ChannelMembers, typeof(ProfileMembersTabPage)));
-                HasSharedMembers = Topic == null;
-                SelectedItem = Items.FirstOrDefault();
-            }
-
-            await base.OnNavigatedToAsync(parameter, mode, state);
-            await UpdateSharedCountAsync(Chat);
+            await UpdateTabsAsync(Chat);
         }
 
         private int[] _sharedCount = new int[] { 0, 0, 0, 0, 0, 0 };
@@ -160,55 +168,13 @@ namespace Telegram.ViewModels.Profile
             set => Set(ref _selectedItem, value);
         }
 
-        public bool HasPinnedStories { get; private set; }
-        public bool HasSharedGroups { get; private set; }
-        public bool HasSharedMembers { get; private set; }
-
-        private async Task UpdateSharedCountAsync(Chat chat)
+        private async Task UpdateTabsAsync(Chat chat)
         {
-            var filters = new SearchMessagesFilter[]
+            if (_savedMessagesTopic != null)
             {
-                new SearchMessagesFilterPhotoAndVideo(),
-                new SearchMessagesFilterDocument(),
-                new SearchMessagesFilterUrl(),
-                new SearchMessagesFilterAudio(),
-                new SearchMessagesFilterVoiceNote(),
-                new SearchMessagesFilterAnimation(),
-            };
-
-            for (int i = 0; i < filters.Length; i++)
-            {
-                var response = await ClientService.SendAsync(new GetChatMessageCount(chat.Id, filters[i], false));
-                if (response is Count count)
-                {
-                    SharedCount[i] = count.CountValue;
-                }
+                await UpdateSharedCountAsync(chat);
             }
-
-            SharedCount[^1] = 0;
-
-            if (SharedCount[0] > 0)
-            {
-                Items.Add(new ProfileTabItem(Strings.SharedMediaTab2, typeof(ProfileMediaTabPage)));
-            }
-            if (SharedCount[1] > 0)
-            {
-                Items.Add(new ProfileTabItem(Strings.SharedFilesTab2, typeof(ProfileFilesTabPage)));
-            }
-            if (SharedCount[2] > 0)
-            {
-                Items.Add(new ProfileTabItem(Strings.SharedLinksTab2, typeof(ProfileLinksTabPage)));
-            }
-            if (SharedCount[3] > 0)
-            {
-                Items.Add(new ProfileTabItem(Strings.SharedMusicTab2, typeof(ProfileMusicTabPage)));
-            }
-            if (SharedCount[4] > 0)
-            {
-                Items.Add(new ProfileTabItem(Strings.SharedVoiceTab2, typeof(ProfileVoiceTabPage)));
-            }
-
-            if (chat.Type is ChatTypePrivate or ChatTypeSecret)
+            else if (chat.Type is ChatTypePrivate or ChatTypeSecret)
             {
                 var user = ClientService.GetUser(chat);
                 var cached = ClientService.GetUserFull(chat);
@@ -216,15 +182,20 @@ namespace Telegram.ViewModels.Profile
                 // This should really rarely happen
                 cached ??= await ClientService.SendAsync(new GetUserFullInfo(user.Id)) as UserFullInfo;
 
-                if (cached != null && cached.HasPinnedStories)
+                if (user.Id == ClientService.Options.MyId)
                 {
-                    Items.Insert(0, new ProfileTabItem(Strings.ProfileStories, typeof(ProfileStoriesTabPage)));
-                    HasPinnedStories = true;
+                    AddTab(new ProfileTabItem(Strings.SavedDialogsTab, typeof(ProfileSavedChatsTabPage)));
                 }
+                else if (cached != null && cached.HasPinnedStories)
+                {
+                    AddTab(new ProfileTabItem(Strings.ProfileStories, typeof(ProfileStoriesTabPage)));
+                }
+
+                await UpdateSharedCountAsync(chat);
+
                 if (cached != null && cached.GroupInCommonCount > 0)
                 {
-                    Items.Add(new ProfileTabItem(Strings.SharedGroupsTab2, typeof(ProfileGroupsTabPage)));
-                    HasSharedGroups = true;
+                    AddTab(new ProfileTabItem(Strings.SharedGroupsTab2, typeof(ProfileGroupsTabPage)));
                 }
             }
             else if (chat.Type is ChatTypeSupergroup typeSupergroup && typeSupergroup.IsChannel)
@@ -237,20 +208,78 @@ namespace Telegram.ViewModels.Profile
 
                 if (cached != null && cached.HasPinnedStories)
                 {
-                    Items.Insert(0, new ProfileTabItem(Strings.ProfileStories, typeof(ProfileStoriesTabPage)));
-                    HasPinnedStories = true;
+                    AddTab(new ProfileTabItem(Strings.ProfileStories, typeof(ProfileStoriesTabPage)));
+                }
+
+                await UpdateSharedCountAsync(chat);
+                await _channelsTabViewModel.LoadMoreItemsAsync(0);
+
+                if (_channelsTabViewModel.Items.Count > 0)
+                {
+                    AddTab(new ProfileTabItem(Strings.SimilarChannelsTab, typeof(ProfileChannelsTabPage)));
                 }
             }
+            else if (chat.Type is ChatTypeBasicGroup || Chat.Type is ChatTypeSupergroup supergroup && !supergroup.IsChannel)
+            {
+                AddTab(new ProfileTabItem(Strings.ChannelMembers, typeof(ProfileMembersTabPage)));
 
-            SelectedItem ??= Items.FirstOrDefault();
-            RaisePropertyChanged(nameof(SharedCount));
+                await UpdateSharedCountAsync(chat);
+            }
+        }
+
+        private async Task UpdateSharedCountAsync(Chat chat)
+        {
+            var filters = new SearchMessagesFilter[]
+            {
+                new SearchMessagesFilterPhotoAndVideo(),
+                new SearchMessagesFilterDocument(),
+                new SearchMessagesFilterUrl(),
+                new SearchMessagesFilterAudio(),
+                new SearchMessagesFilterVoiceNote(),
+                //new SearchMessagesFilterAnimation(),
+            };
+
+            for (int i = 0; i < filters.Length; i++)
+            {
+                var response = await ClientService.SendAsync(new GetChatMessageCount(chat.Id, filters[i], SavedMessagesTopicId, false));
+                if (response is Count count)
+                {
+                    SharedCount[i] = count.CountValue;
+
+                    if (count.CountValue > 0)
+                    {
+                        var item = filters[i] switch
+                        {
+                            SearchMessagesFilterPhotoAndVideo => new ProfileTabItem(Strings.SharedMediaTab2, typeof(ProfileMediaTabPage)),
+                            SearchMessagesFilterDocument => new ProfileTabItem(Strings.SharedFilesTab2, typeof(ProfileFilesTabPage)),
+                            SearchMessagesFilterUrl => new ProfileTabItem(Strings.SharedLinksTab2, typeof(ProfileLinksTabPage)),
+                            SearchMessagesFilterAudio => new ProfileTabItem(Strings.SharedMusicTab2, typeof(ProfileMusicTabPage)),
+                            SearchMessagesFilterVoiceNote => new ProfileTabItem(Strings.SharedVoiceTab2, typeof(ProfileVoiceTabPage)),
+                            _ => null
+                        };
+
+                        AddTab(item);
+                    }
+                }
+            }
+        }
+
+        private void AddTab(ProfileTabItem item)
+        {
+            Items.Add(item);
+
+            if (Items.Count == 1)
+            {
+                SelectedItem ??= Items.FirstOrDefault();
+                RaisePropertyChanged(nameof(SharedCount));
+            }
         }
 
         public void Handle(UpdateDeleteMessages update)
         {
             if (update.ChatId == _chat?.Id && !update.FromCache)
             {
-                var table = update.MessageIds.ToImmutableHashSet();
+                var table = update.MessageIds.ToHashSet();
 
                 BeginOnUIThread(() =>
                 {
@@ -264,7 +293,7 @@ namespace Telegram.ViewModels.Profile
             }
         }
 
-        private void UpdateDeleteMessages(IList<MessageWithOwner> target, ImmutableHashSet<long> table)
+        private void UpdateDeleteMessages(IList<MessageWithOwner> target, HashSet<long> table)
         {
             for (int i = 0; i < target.Count; i++)
             {
@@ -302,7 +331,7 @@ namespace Telegram.ViewModels.Profile
         {
             if (sender is SearchMessagesFilter filter)
             {
-                return new MediaCollection(ClientService, Chat.Id, ThreadId, filter, query);
+                return new MediaCollection(ClientService, Chat.Id, ThreadId, SavedMessagesTopicId, filter, query);
             }
 
             return null;
@@ -332,7 +361,7 @@ namespace Telegram.ViewModels.Profile
                 return;
             }
 
-            NavigationService.NavigateToChat(chat, message: message.Id);
+            NavigationService.NavigateToChat(chat, message.Id, ThreadId, SavedMessagesTopicId);
         }
 
         #endregion
@@ -436,7 +465,7 @@ namespace Telegram.ViewModels.Profile
             }
 
             var sameUser = messages.All(x => x.SenderId.AreTheSame(first.SenderId));
-            var dialog = new DeleteMessagesPopup(ClientService, items.Where(x => x != null).ToArray());
+            var dialog = new DeleteMessagesPopup(ClientService, SavedMessagesTopicId, items.Where(x => x != null).ToArray());
 
             var confirm = await ShowPopupAsync(dialog);
             if (confirm != ContentDialogResult.Primary)
@@ -473,7 +502,7 @@ namespace Telegram.ViewModels.Profile
         public async void ForwardMessage(MessageWithOwner message)
         {
             UnselectMessages();
-            await ShowPopupAsync(typeof(ChooseChatsPopup), new ChooseChatsConfigurationShareMessage(message.Get()));
+            await ShowPopupAsync(typeof(ChooseChatsPopup), new ChooseChatsConfigurationShareMessage(message.ChatId, message.Id));
         }
 
         #endregion
@@ -507,11 +536,11 @@ namespace Telegram.ViewModels.Profile
 
         public async void ForwardSelectedMessages()
         {
-            var messages = SelectedItems.Where(x => x.CanBeForwarded).OrderBy(x => x.Id).Select(x => x.Get()).ToList();
+            var messages = SelectedItems.Where(x => x.CanBeForwarded).OrderBy(x => x.Id).ToList();
             if (messages.Count > 0)
             {
                 UnselectMessages();
-                await ShowPopupAsync(typeof(ChooseChatsPopup), new ChooseChatsConfigurationShareMessages(messages));
+                await ShowPopupAsync(typeof(ChooseChatsPopup), new ChooseChatsConfigurationShareMessages(messages[0].ChatId, messages.Select(x => x.Id)));
             }
         }
 

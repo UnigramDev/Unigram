@@ -1,16 +1,13 @@
 //
-// Copyright Fela Ameghino 2015-2023
+// Copyright Fela Ameghino 2015-2024
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
 using System;
-using System.Collections.Generic;
-using System.Numerics;
 using Telegram.Common;
 using Telegram.Native;
 using Telegram.Navigation;
-using Telegram.Td.Api;
 using Windows.Foundation;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -20,10 +17,10 @@ namespace Telegram.Controls.Messages
     public class MessageBubblePanel : Panel
     {
         // Needed for Text CanvasTextLayout
-        public MessageContent Content { get; set; }
+        public bool ForceNewLine { get; set; }
 
         // Needed for Measure
-        public MessageReference Reply { get; set; }
+        public MessageReply Reply { get; set; }
 
         private bool _placeholder = true;
         public bool Placeholder
@@ -45,8 +42,6 @@ namespace Telegram.Controls.Messages
 
         protected override Size MeasureOverride(Size availableSize)
         {
-            Logger.Debug();
-
             var text = Children[0] as FormattedTextBlock;
             var media = Children[1] as FrameworkElement;
             var third = Children[2];
@@ -74,6 +69,11 @@ namespace Telegram.Controls.Messages
 
             if (reactions != null)
             {
+                if (reactions.Footer != footer.DesiredSize && reactions.Children.Count > 0)
+                {
+                    reactions.InvalidateMeasure();
+                }
+
                 reactions.Footer = footer.DesiredSize;
                 reactions.Measure(availableSize);
             }
@@ -103,19 +103,19 @@ namespace Telegram.Controls.Messages
             var reactionsWidth = reactions?.DesiredSize.Width ?? 0;
             var reactionsHeight = reactions?.DesiredSize.Height ?? 0;
 
+            var finalWidth = Math.Max(Math.Max(reactionsWidth, footer.DesiredSize.Width), width);
+            var finalHeight = text.DesiredSize.Height + media.DesiredSize.Height + reactionsHeight + margin.Height;
+
             if (Reply != null)
             {
-                Reply.ContentWidth = Math.Max(Math.Max(reactionsWidth, footer.DesiredSize.Width), width);
+                Reply.ContentWidth = finalWidth;
             }
 
-            return new Size(Math.Max(Math.Max(reactionsWidth, footer.DesiredSize.Width), width),
-                text.DesiredSize.Height + media.DesiredSize.Height + reactionsHeight + margin.Height);
+            return new Size(finalWidth, finalHeight);
         }
 
         protected override Size ArrangeOverride(Size finalSize)
         {
-            Logger.Debug();
-
             var text = Children[0] as FormattedTextBlock;
             var media = Children[1] as FrameworkElement;
             var third = Children[2];
@@ -171,24 +171,30 @@ namespace Telegram.Controls.Messages
                 var maxWidth = availableWidth;
                 var footerWidth = footer.DesiredSize.Width + footer.Margin.Left + footer.Margin.Right;
 
-                if (Content is MessageBigEmoji)
+                var fontSize = Theme.Current.MessageFontSize;
+
+                if (text.HasLineEnding)
+                {
+                    return new Size(0, fontSize * 1.33);
+                }
+                else if (ForceNewLine)
                 {
                     return new Size(Math.Max(0, footerWidth - 16), 0);
                 }
 
                 var width = text.DesiredSize.Width;
-                var rect = ContentEnd(availableWidth);
+                var bounds = ContentEnd(text.Text, availableWidth, fontSize * BootStrapper.Current.TextScaleFactor);
 
-                var diff = width - rect.X;
+                var diff = width - bounds;
                 if (diff < footerWidth /*|| _placeholderVertical*/)
                 {
-                    if (rect.X + footerWidth < maxWidth /*&& !_placeholderVertical*/)
+                    if (bounds + footerWidth < maxWidth /*&& !_placeholderVertical*/)
                     {
                         marginLeft = footerWidth - diff;
                     }
                     else
                     {
-                        marginBottom = 18;
+                        marginBottom = fontSize * 1.33; //18.62;
                     }
                 }
             }
@@ -196,78 +202,39 @@ namespace Telegram.Controls.Messages
             return new Size(marginLeft, marginBottom);
         }
 
-        private Vector2 ContentEnd(double availableWidth)
+        private float ContentEnd(StyledText caption, double availableWidth, double fontSize)
         {
-            var caption = Content?.GetCaption();
-            if (string.IsNullOrEmpty(caption?.Text))
+            if (caption?.Paragraphs.Count == 0 || string.IsNullOrEmpty(caption?.Text))
             {
-                return Vector2.Zero;
+                return 0;
             }
 
-            var formatted = FormatText(caption);
+            var paragraph = caption.Paragraphs[^1];
 
-            var text = Children[0] as FormattedTextBlock;
-            var fontSize = Theme.Current.MessageFontSize * BootStrapper.Current.UISettings.TextScaleFactor;
-            var width = availableWidth - text.Margin.Left - text.Margin.Right;
+            var text = caption.Text.Substring(paragraph.Offset, paragraph.Length);
+            var entities = paragraph.Entities;
+
+            var block = Children[0] as FormattedTextBlock;
+            var width = availableWidth - block.Margin.Left - block.Margin.Right;
+
+            if (width <= 0)
+            {
+                return 0;
+            }
 
             try
             {
-                var bounds = PlaceholderImageHelper.Current.ContentEnd(formatted.Text, formatted.Entities, fontSize, width);
-                if (bounds.Y < text.DesiredSize.Height)
+                // TODO: this condition will be true whenever the message has more than a paragraph.
+
+                var bounds = PlaceholderImageHelper.Current.ContentEnd(text, entities, fontSize, width);
+                if (bounds.Y < block.DesiredSize.Height)
                 {
-                    return bounds;
+                    return bounds.X;
                 }
             }
             catch { }
 
-            return new Vector2(int.MaxValue, 0);
-        }
-
-        private FormattedText _prevText;
-        private IList<PlaceholderEntity> _prevTextEntities;
-
-        // Not the most elegant solution
-        private (string Text, IList<PlaceholderEntity> Entities) FormatText(FormattedText text)
-        {
-            if (text == _prevText)
-            {
-                return (_prevText.Text, _prevTextEntities);
-            }
-
-            IList<PlaceholderEntity> entities = null;
-
-            foreach (var entity in text.Entities)
-            {
-                if (entity.Type is TextEntityTypeCustomEmoji
-                    or TextEntityTypeSpoiler
-                    or TextEntityTypeMentionName
-                    or TextEntityTypeTextUrl)
-                {
-                    continue;
-                }
-
-                entities ??= new List<PlaceholderEntity>();
-                entities.Add(new PlaceholderEntity
-                {
-                    Offset = entity.Offset,
-                    Length = entity.Length,
-                    Type = entity.Type switch
-                    {
-                        TextEntityTypeBold => PlaceholderEntityType.Bold,
-                        TextEntityTypeCode => PlaceholderEntityType.Code,
-                        TextEntityTypeItalic => PlaceholderEntityType.Italic,
-                        TextEntityTypePre => PlaceholderEntityType.Code,
-                        TextEntityTypePreCode => PlaceholderEntityType.Code,
-                        TextEntityTypeStrikethrough => PlaceholderEntityType.Strikethrough,
-                        _ => PlaceholderEntityType.Underline
-                    }
-                });
-            }
-
-            _prevText = text;
-            _prevTextEntities = entities ?? Array.Empty<PlaceholderEntity>();
-
-            return (text.Text, _prevTextEntities);
+            return int.MaxValue;
         }
     }
 }

@@ -1,5 +1,5 @@
 //
-// Copyright Fela Ameghino 2015-2023
+// Copyright Fela Ameghino 2015-2024
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
@@ -7,10 +7,13 @@
 using Microsoft.UI.Xaml.Controls;
 using System;
 using System.Collections.Generic;
+using System.Text;
+using Telegram.Converters;
 using Telegram.Navigation;
 using Telegram.Services;
 using Telegram.Services.Settings;
 using Telegram.Td.Api;
+using Windows.Globalization.Fonts;
 using Windows.Storage;
 using Windows.UI;
 using Windows.UI.Xaml;
@@ -38,29 +41,12 @@ namespace Telegram.Common
                 _isolatedStore = ApplicationData.Current.LocalSettings.CreateContainer("Theme", ApplicationDataCreateDisposition.Always);
                 Current ??= this;
 
-                var vazir = "ms-appx:///Assets/Fonts/Vazirmatn-UI-NL-Regular.ttf#Vazirmatn UI NL";
-                var symbols = "ms-appx:///Assets/Fonts/Telegram.ttf#Telegram";
-
-                var auto = FontFamily.XamlAutoFontFamily.Source;
-                if (auto == "Segoe UI Variable")
-                {
-                    auto = "Segoe UI";
-                }
-
-                var emoji = SettingsService.Current.Appearance.EmojiSet switch
-                {
-                    "microsoft" => FontFamily.XamlAutoFontFamily.Source,
-                    _ => $"ms-appx:///Assets/Emoji/apple.ttf#Segoe UI Emoji, {auto}"
-                };
-
-                this.Add("EmojiThemeFontFamily", new FontFamily(/*$"{vazir}, {emoji}"*/ emoji));
-                this.Add("EmojiThemeFontFamilyWithSymbols", new FontFamily(/*$"{vazir}, {emoji}, {symbols}"*/ $"{emoji}, {symbols}"));
-
                 this.Add("MessageFontSize", GetValueOrDefault("MessageFontSize", 14d));
 
                 this.Add("ThreadStackLayout", new StackLayout());
 
-                UpdateScrolls();
+                UpdateEmojiSet();
+                //UpdateScrolls();
             }
             catch { }
 
@@ -69,6 +55,58 @@ namespace Telegram.Common
                 Update(ApplicationTheme.Light);
                 Update(ApplicationTheme.Dark);
             }
+        }
+
+        public void UpdateEmojiSet()
+        {
+            var xamlAutoFontFamilyValue = FontFamily.XamlAutoFontFamily.Source;
+            if (xamlAutoFontFamilyValue == "Segoe UI Variable")
+            {
+                xamlAutoFontFamilyValue = "Segoe UI";
+            }
+
+            var xamlAutoFontFamily = new StringBuilder(xamlAutoFontFamilyValue);
+            var comma = ", ";
+
+            if (false)
+            {
+                foreach (var language in Formatter.Languages)
+                {
+                    // We copy XAML behavior, only resolve for Japanese and Korean
+                    if (language == "ja" || language == "ko" || language == "ja-JP" || language == "ko-KR")
+                    {
+                        try
+                        {
+                            var recommendedFonts = new LanguageFontGroup(language);
+                            var family = recommendedFonts.UITextFont.FontFamily;
+
+                            xamlAutoFontFamily.Prepend(family, comma);
+                        }
+                        catch
+                        {
+                            // All the remote procedure calls must be wrapped in a try-catch block
+                        }
+                    }
+                }
+
+                xamlAutoFontFamily.Prepend("Segoe UI", comma);
+            }
+
+            switch (SettingsService.Current.Appearance.EmojiSet)
+            {
+                case "microsoft":
+                    xamlAutoFontFamily.Prepend("ms-appx:///Assets/Emoji/microsoft.ttf#Segoe UI Emoji", comma);
+                    break;
+                default:
+                    xamlAutoFontFamily.Prepend("ms-appx:///Assets/Emoji/apple.ttf#Segoe UI Emoji", comma);
+                    break;
+            }
+
+            this["EmojiThemeFontFamily"] = new FontFamily(xamlAutoFontFamily.ToString());
+
+            xamlAutoFontFamily.Prepend("ms-appx:///Assets/Fonts/Telegram.ttf#Telegram", comma);
+
+            this["EmojiThemeFontFamilyWithSymbols"] = new FontFamily(xamlAutoFontFamily.ToString());
         }
 
         private bool _legacyScrollBars;
@@ -84,6 +122,11 @@ namespace Telegram.Common
                     {
                         TargetType = typeof(ScrollBar)
                     };
+
+                    // Microsoft recommends turning off layout rounding for VerticalPanningRoot and/or HorizontalPanningRoot.
+                    // We do it for the whole thing because it's just easier.
+                    // https://github.com/microsoft/microsoft-ui-xaml/issues/3779#issuecomment-1896403485
+                    style.Setters.Add(new Setter(UIElement.UseLayoutRoundingProperty, false));
 
                     this.Add(typeof(ScrollBar), style);
                 }
@@ -298,7 +341,8 @@ namespace Telegram.Common
                     { "AccentButtonBackground", 0 },
                     { "AccentButtonForeground", 0 },
                     { "SystemControlDisabledChromeDisabledLowBrush", 0 },
-                    { "HyperlinkForeground", 0 }
+                    { "HyperlinkForeground", 0 },
+                    { "DangerButtonBackground", 0xD13438 }
                 };
 
                 Color GetShade(AccentShade shade)
@@ -393,7 +437,13 @@ namespace Telegram.Common
                     ButtonColor = themeParameters["AccentButtonBackground"],
                     ButtonTextColor = themeParameters["AccentButtonForeground"],
                     HintColor = themeParameters["SystemControlDisabledChromeDisabledLowBrush"],
-                    LinkColor = themeParameters["HyperlinkForeground"]
+                    LinkColor = themeParameters["HyperlinkForeground"],
+                    AccentTextColor = themeParameters["AccentButtonBackground"],
+                    DestructiveTextColor = themeParameters["DangerButtonBackground"],
+                    HeaderBackgroundColor = themeParameters["ContentDialogBackground"],
+                    SectionBackgroundColor = themeParameters["ContentDialogBackground"],
+                    SectionHeaderTextColor = themeParameters["ContentDialogForeground"],
+                    SubtitleTextColor = themeParameters["SystemControlDisabledChromeDisabledLowBrush"],
                 };
             }
             catch (UnauthorizedAccessException)
@@ -545,7 +595,6 @@ namespace Telegram.Common
             { "MessageReactionForegroundBrush", (Color.FromArgb(0xFF, 0x45, 0xA3, 0x2D), new SolidColorBrush(Color.FromArgb(0xFF, 0x45, 0xA3, 0x2D))) },
             { "MessageReactionChosenBackgroundBrush", (Color.FromArgb(0xFF, 0x5F, 0xBE, 0x67), new SolidColorBrush(Color.FromArgb(0xFF, 0x5F, 0xBE, 0x67))) },
             { "MessageReactionChosenForegroundBrush", (Color.FromArgb(0xFF, 0xFF, 0xFF, 0xFF), new SolidColorBrush(Color.FromArgb(0xFF, 0xFF, 0xFF, 0xFF))) },
-            { "MessageCodeBlockBackgroundBrush", (Color.FromArgb(0xff, 0xbc, 0xd0, 0xa1), new SolidColorBrush(Color.FromArgb(0xff, 0xbc, 0xd0, 0xa1))) },
         };
 
         [ThreadStatic]
@@ -553,7 +602,7 @@ namespace Telegram.Common
         public static Dictionary<string, (Color Color, SolidColorBrush Brush)> Dark => _dark ??= new()
         {
             { "MessageForegroundBrush", (Color.FromArgb(0xFF, 0xE4, 0xEC, 0xF2), new SolidColorBrush(Color.FromArgb(0xFF, 0xE4, 0xEC, 0xF2))) },
-            { "MessageForegroundLinkBrush", (Color.FromArgb(0xFF, 0xFF, 0xFF, 0xFF), new SolidColorBrush(Color.FromArgb(0xFF, 0xFF, 0xFF, 0xFF))) },
+            { "MessageForegroundLinkBrush", (Color.FromArgb(0xFF, 0x71, 0xBB, 0xE7), new SolidColorBrush(Color.FromArgb(0xFF, 0x71, 0xBB, 0xE7))) },
             { "MessageBackgroundBrush", (Color.FromArgb(0xFF, 0x2B, 0x52, 0x78), new SolidColorBrush(Color.FromArgb(0xFF, 0x2B, 0x52, 0x78))) },
             { "MessageElevationBrush", (Color.FromArgb(0x1D, 0x3A, 0xC3, 0x46), new SolidColorBrush(Color.FromArgb(0x1D, 0x3A, 0xC3, 0x46))) },
             { "MessageSubtleLabelBrush", (Color.FromArgb(0xFF, 0x7D, 0xA8, 0xD3), new SolidColorBrush(Color.FromArgb(0xFF, 0x7D, 0xA8, 0xD3))) },
@@ -570,8 +619,13 @@ namespace Telegram.Common
             { "MessageReactionForegroundBrush", (Color.FromArgb(0xFF, 0x7A, 0xC3, 0xF4), new SolidColorBrush(Color.FromArgb(0xFF, 0x7A, 0xC3, 0xF4))) },
             { "MessageReactionChosenBackgroundBrush", (Color.FromArgb(0xFF, 0x31, 0x8E, 0xE4), new SolidColorBrush(Color.FromArgb(0xFF, 0x31, 0x8E, 0xE4))) },
             { "MessageReactionChosenForegroundBrush", (Color.FromArgb(0xFF, 0x33, 0x39, 0x3F), new SolidColorBrush(Color.FromArgb(0xFF, 0x33, 0x39, 0x3F))) },
-            { "MessageCodeBlockBackgroundBrush", (Color.FromArgb(0xFF, 0xF0, 0xFD, 0xDF), new SolidColorBrush(Color.FromArgb(0xFF, 0xF0, 0xFD, 0xDF))) },
         };
+
+        public static void Release()
+        {
+            _light = null;
+            _dark = null;
+        }
 
         public ThemeOutgoing()
         {
@@ -604,7 +658,7 @@ namespace Telegram.Common
 
             foreach (var value in target)
             {
-                var key = value.Key.Substring(0, value.Key.Length - "Brush".Length);
+                var key = value.Key[..^5];
                 if (values.TryGetValue($"{key}Outgoing", out Color color))
                 {
                     value.Value.Brush.Color = color;
@@ -659,7 +713,6 @@ namespace Telegram.Common
             { "MessageReactionForegroundBrush", (Color.FromArgb(0xFF, 0x16, 0x8D, 0xCD), new SolidColorBrush(Color.FromArgb(0xFF, 0x16, 0x8D, 0xCD))) },
             { "MessageReactionChosenBackgroundBrush", (Color.FromArgb(0xFF, 0x40, 0xA7, 0xE3), new SolidColorBrush(Color.FromArgb(0xFF, 0x40, 0xA7, 0xE3))) },
             { "MessageReactionChosenForegroundBrush", (Color.FromArgb(0xFF, 0xFF, 0xFF, 0xFF), new SolidColorBrush(Color.FromArgb(0xFF, 0xFF, 0xFF, 0xFF))) },
-            { "MessageCodeBlockBackgroundBrush", (Color.FromArgb(0xFF, 0xDB, 0xDB, 0xDB), new SolidColorBrush(Color.FromArgb(0xFF, 0xDB, 0xDB, 0xDB))) },
         };
 
         [ThreadStatic]
@@ -667,7 +720,7 @@ namespace Telegram.Common
         public static Dictionary<string, (Color Color, SolidColorBrush Brush)> Dark => _dark ??= new()
         {
             { "MessageForegroundBrush", (Color.FromArgb(0xFF, 0xF5, 0xF5, 0xF5), new SolidColorBrush(Color.FromArgb(0xFF, 0xF5, 0xF5, 0xF5))) },
-            { "MessageForegroundLinkBrush", (Color.FromArgb(0xFF, 0xFF, 0xFF, 0xFF), new SolidColorBrush(Color.FromArgb(0xFF, 0xFF, 0xFF, 0xFF))) },
+            { "MessageForegroundLinkBrush", (Color.FromArgb(0xFF, 0x71, 0xBB, 0xE7), new SolidColorBrush(Color.FromArgb(0xFF, 0x71, 0xBB, 0xE7))) },
             { "MessageBackgroundBrush", (Color.FromArgb(0xFF, 0x18, 0x25, 0x33), new SolidColorBrush(Color.FromArgb(0xFF, 0x18, 0x25, 0x33))) },
             { "MessageElevationBrush", (Color.FromArgb(0x29, 0x74, 0x8E, 0xA2), new SolidColorBrush(Color.FromArgb(0x29, 0x74, 0x8E, 0xA2))) },
             { "MessageSubtleLabelBrush", (Color.FromArgb(0xFF, 0x6D, 0x7F, 0x8F), new SolidColorBrush(Color.FromArgb(0xFF, 0x6D, 0x7F, 0x8F))) },
@@ -684,8 +737,13 @@ namespace Telegram.Common
             { "MessageReactionForegroundBrush", (Color.FromArgb(0xFF, 0x67, 0xBB, 0xF3), new SolidColorBrush(Color.FromArgb(0xFF, 0x67, 0xBB, 0xF3))) },
             { "MessageReactionChosenBackgroundBrush", (Color.FromArgb(0xFF, 0x6E, 0xB2, 0xEE), new SolidColorBrush(Color.FromArgb(0xFF, 0x6E, 0xB2, 0xEE))) },
             { "MessageReactionChosenForegroundBrush", (Color.FromArgb(0xFF, 0x33, 0x39, 0x3F), new SolidColorBrush(Color.FromArgb(0xFF, 0x33, 0x39, 0x3F))) },
-            { "MessageCodeBlockBackgroundBrush", (Color.FromArgb(0xFF, 0xF0, 0xFD, 0xDF), new SolidColorBrush(Color.FromArgb(0xFF, 0xF0, 0xFD, 0xDF))) },
         };
+
+        public static void Release()
+        {
+            _light = null;
+            _dark = null;
+        }
 
         public ThemeIncoming()
         {
@@ -718,7 +776,7 @@ namespace Telegram.Common
 
             foreach (var value in target)
             {
-                var key = value.Key.Substring(0, value.Key.Length - "Brush".Length);
+                var key = value.Key[..^5];
                 if (values.TryGetValue($"{key}Incoming", out Color color))
                 {
                     value.Value.Brush.Color = color;

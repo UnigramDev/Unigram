@@ -1,5 +1,5 @@
 //
-// Copyright Fela Ameghino 2015-2023
+// Copyright Fela Ameghino 2015-2024
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
@@ -7,6 +7,7 @@
 using Telegram.Common;
 using Telegram.Controls;
 using Telegram.Controls.Cells;
+using Telegram.Entities;
 using Telegram.ViewModels.BasicGroups;
 using Telegram.Views.Popups;
 using Windows.Storage.Pickers;
@@ -41,7 +42,7 @@ namespace Telegram.Views.BasicGroups
                 picker.FileTypeFilter.AddRange(Constants.PhotoTypes);
 
                 var media = await picker.PickSingleMediaAsync();
-                if (media != null)
+                if (media is StoragePhoto or StorageVideo)
                 {
                     var dialog = new EditMediaPopup(media, ImageCropperMask.Ellipse);
 
@@ -50,6 +51,10 @@ namespace Telegram.Views.BasicGroups
                     {
                         ViewModel.EditPhotoCommand.Execute(media);
                     }
+                }
+                else
+                {
+                    await MessagePopup.ShowAsync(Strings.OpenImageUnsupported, Strings.AppName, Strings.OK);
                 }
             }
             catch { }

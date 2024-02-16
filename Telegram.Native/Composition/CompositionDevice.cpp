@@ -9,7 +9,7 @@
 
 namespace winrt::Telegram::Native::Composition::implementation
 {
-	winrt::slim_mutex CompositionDevice::s_lock;
+	std::mutex CompositionDevice::s_lock;
 	winrt::com_ptr<CompositionDevice> CompositionDevice::s_current{ nullptr };
 
 	CompositionDevice::CompositionDevice() {

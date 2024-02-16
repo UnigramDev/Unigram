@@ -1,5 +1,5 @@
 //
-// Copyright Fela Ameghino 2015-2023
+// Copyright Fela Ameghino 2015-2024
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
@@ -20,7 +20,6 @@ using Telegram.Td.Api;
 using Telegram.ViewModels.Delegates;
 using Telegram.ViewModels.Gallery;
 using Telegram.Views;
-using Telegram.Views.Popups;
 using Windows.UI.Xaml;
 
 namespace Telegram.ViewModels
@@ -29,7 +28,7 @@ namespace Telegram.ViewModels
     {
         private readonly ViewModelBase _viewModel;
 
-        protected static readonly ConcurrentDictionary<long, IList<ChatAdministrator>> _admins = new();
+        protected static readonly ConcurrentDictionary<long, IDictionary<long, ChatAdministrator>> _admins = new();
 
         public MessageDelegate(ViewModelBase viewModel)
             : base(viewModel.ClientService, viewModel.Settings, viewModel.Aggregator)
@@ -58,6 +57,8 @@ namespace Telegram.ViewModels
             get => _viewModel.Dispatcher;
             set => _viewModel.Dispatcher = value;
         }
+
+        public virtual ReactionType SavedMessagesTag { get; set; }
 
 
 
@@ -141,65 +142,23 @@ namespace Telegram.ViewModels
 
         public async void OpenFile(File file)
         {
-            // TODO: Replace with IStorageService.OpenFileAsync
-
-            var permanent = await ClientService.GetPermanentFileAsync(file);
-            if (permanent != null)
+            // TODO: I don't like retrieving services this way
+            var service = TypeResolver.Current.Resolve<IStorageService>(ClientService.SessionId);
+            if (service != null)
             {
-                if (file.Local.Path.EndsWith(".unigram-theme"))
-                {
-                    await ShowPopupAsync(new ThemePreviewPopup(permanent));
-                }
-                else
-                {
-                    await Windows.System.Launcher.LaunchFileAsync(permanent);
-                }
+                await service.OpenFileAsync(file);
+                return;
             }
         }
 
-        public async void OpenUsername(string username)
+        public void OpenUsername(string username)
         {
-            var response = await ClientService.SendAsync(new SearchPublicChat(username));
-            if (response is Chat chat)
-            {
-                if (chat.Type is ChatTypePrivate privata)
-                {
-                    var user = ClientService.GetUser(privata.UserId);
-                    if (user?.Type is UserTypeBot)
-                    {
-                        NavigationService.NavigateToChat(chat);
-                    }
-                    else
-                    {
-                        NavigationService.Navigate(typeof(ProfilePage), chat.Id);
-                    }
-                }
-                else
-                {
-                    NavigationService.NavigateToChat(chat);
-                }
-            }
-            else
-            {
-                await ShowPopupAsync(Strings.NoUsernameFound, Strings.AppName, Strings.OK);
-            }
+            MessageHelper.NavigateToUsername(ClientService, NavigationService, username);
         }
 
-        public async void OpenUser(long userId)
+        public void OpenUser(long userId)
         {
-            var response = await ClientService.SendAsync(new CreatePrivateChat(userId, false));
-            if (response is Chat chat)
-            {
-                var user = ClientService.GetUser(userId);
-                if (user?.Type is UserTypeBot)
-                {
-                    NavigationService.NavigateToChat(chat);
-                }
-                else
-                {
-                    NavigationService.Navigate(typeof(ProfilePage), chat.Id);
-                }
-            }
+            NavigationService.NavigateToUser(userId);
         }
 
         public void OpenUrl(string url, bool untrust)
@@ -229,10 +188,9 @@ namespace Telegram.ViewModels
                 return string.Empty;
             }
 
-            if (_admins.TryGetValue(chat.Id, out IList<ChatAdministrator> value))
+            if (_admins.TryGetValue(chat.Id, out IDictionary<long, ChatAdministrator> value))
             {
-                var admin = value.FirstOrDefault(x => x.UserId == userId);
-                if (admin != null)
+                if (value.TryGetValue(userId, out ChatAdministrator admin))
                 {
                     if (string.IsNullOrEmpty(admin.CustomTitle))
                     {
@@ -257,7 +215,7 @@ namespace Telegram.ViewModels
             {
                 if (result is ChatAdministrators users)
                 {
-                    _admins[chatId] = users.Administrators;
+                    _admins[chatId] = users.Administrators.ToDictionary(x => x.UserId);
                 }
             });
         }
@@ -313,6 +271,11 @@ namespace Telegram.ViewModels
         /// <summary>
         /// Only available when created through DialogViewModel
         /// </summary>
+        public virtual void OpenGame(MessageViewModel message) { }
+
+        /// <summary>
+        /// Only available when created through DialogViewModel
+        /// </summary>
         public virtual void OpenInlineButton(MessageViewModel message, InlineKeyboardButton button) { }
 
         /// <summary>
@@ -364,7 +327,10 @@ namespace Telegram.ViewModels
         /// </summary>
         public virtual void PlayMessage(MessageViewModel message) { }
 
-
+        /// <summary>
+        /// Only available when created through DialogViewModel
+        /// </summary>
+        public virtual bool RecognizeSpeech(MessageViewModel message) { return false; }
 
         /// <summary>
         /// Only available when created through DialogViewModel
@@ -376,12 +342,17 @@ namespace Telegram.ViewModels
         /// <summary>
         /// Only available when created through DialogViewModel
         /// </summary>
-        public virtual IDictionary<long, MessageViewModel> SelectedItems { get; }
+        public virtual bool IsTranslating { get; }
 
         /// <summary>
         /// Only available when created through DialogViewModel
         /// </summary>
         public virtual bool IsSelectionEnabled { get; }
+
+        /// <summary>
+        /// Only available when created through DialogViewModel
+        /// </summary>
+        public virtual IDictionary<long, MessageViewModel> SelectedItems { get; }
 
         /// <summary>
         /// Only available when created through DialogViewModel
@@ -429,6 +400,20 @@ namespace Telegram.ViewModels
 
         #region Facades
 
+        public override ReactionType SavedMessagesTag
+        {
+            get => _viewModel.Search?.SavedMessagesTag;
+            set
+            {
+                if (_viewModel.Search == null)
+                {
+                    _viewModel.SearchExecute(string.Empty);
+                }
+
+                _viewModel.Search.SavedMessagesTag = value;
+            }
+        }
+
         public override void ForwardMessage(MessageViewModel message) => _viewModel.ForwardMessage(message);
 
         public override void ViewVisibleMessages() => _viewModel.ViewVisibleMessages();
@@ -440,6 +425,8 @@ namespace Telegram.ViewModels
         public override void OpenWebPage(WebPage webPage) => _viewModel.OpenWebPage(webPage);
 
         public override void OpenSticker(Sticker sticker) => _viewModel.OpenSticker(sticker);
+
+        public override void OpenGame(MessageViewModel message) => _viewModel.OpenGame(message);
 
         public override void OpenInlineButton(MessageViewModel message, InlineKeyboardButton button) => _viewModel.OpenInlineButton(message, button);
 
@@ -468,15 +455,18 @@ namespace Telegram.ViewModels
 
         public override void PlayMessage(MessageViewModel message) => _viewModel.PlayMessage(message);
 
+        public override bool RecognizeSpeech(MessageViewModel message) => _viewModel.RecognizeSpeech(message);
+
 
 
         public override void SendBotCommand(string command) => _viewModel.SendBotCommand(command);
 
 
-
-        public override IDictionary<long, MessageViewModel> SelectedItems => _viewModel.SelectedItems;
+        public override bool IsTranslating => _viewModel.IsTranslating;
 
         public override bool IsSelectionEnabled => _viewModel.IsSelectionEnabled;
+
+        public override IDictionary<long, MessageViewModel> SelectedItems => _viewModel.SelectedItems;
 
         public override void Select(MessageViewModel message) => _viewModel.Select(message);
 

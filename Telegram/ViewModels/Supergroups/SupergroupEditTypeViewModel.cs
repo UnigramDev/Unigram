@@ -1,5 +1,5 @@
 //
-// Copyright Fela Ameghino 2015-2023
+// Copyright Fela Ameghino 2015-2024
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
@@ -79,12 +79,7 @@ namespace Telegram.ViewModels.Supergroups
             // then we need to upgrade it to a supergroup first.
             if (chat.Type is ChatTypeBasicGroup && !string.IsNullOrEmpty(username))
             {
-                var response = await ClientService.SendAsync(new UpgradeBasicGroupChatToSupergroupChat(chat.Id));
-                if (response is Chat result && result.Type is ChatTypeSupergroup supergroup)
-                {
-                    chat = result;
-                    await ClientService.SendAsync(new GetSupergroupFullInfo(supergroup.SupergroupId));
-                }
+                chat = await UpgradeAsync(chat);
             }
 
             if (chat.Type is ChatTypeSupergroup)

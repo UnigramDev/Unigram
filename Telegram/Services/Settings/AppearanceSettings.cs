@@ -1,5 +1,5 @@
 //
-// Copyright Fela Ameghino 2015-2023
+// Copyright Fela Ameghino 2015-2024
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
@@ -222,11 +222,11 @@ namespace Telegram.Services.Settings
 
             if (updateBackground)
             {
-                var aggregator = TLContainer.Current.Resolve<IEventAggregator>();
-                var clientService = TLContainer.Current.Resolve<IClientService>();
+                var aggregator = TypeResolver.Current.Resolve<IEventAggregator>();
+                var clientService = TypeResolver.Current.Resolve<IClientService>();
 
                 var dark = theme == ElementTheme.Dark;
-                aggregator.Publish(new UpdateSelectedBackground(dark, clientService.GetSelectedBackground(dark)));
+                aggregator.Publish(new UpdateDefaultBackground(dark, clientService.GetDefaultBackground(dark)));
             }
         }
 

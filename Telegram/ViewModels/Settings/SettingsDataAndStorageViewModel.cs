@@ -1,5 +1,5 @@
 //
-// Copyright Fela Ameghino 2015-2023
+// Copyright Fela Ameghino 2015-2024
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
@@ -91,11 +91,21 @@ namespace Telegram.ViewModels.Settings
 
         public bool HasDownloadFolder => ApiInfo.HasDownloadFolder;
 
-        private DownloadFolder _DownloadFolder;
+        public bool IsDownloadFolderEnabled
+        {
+            get => SettingsService.Current.IsDownloadFolderEnabled;
+            set
+            {
+                SettingsService.Current.IsDownloadFolderEnabled = value;
+                RaisePropertyChanged();
+            }
+        }
+
+        private DownloadFolder _downloadFolder;
         public DownloadFolder DownloadFolder
         {
-            get => _DownloadFolder;
-            set => Set(ref _DownloadFolder, value);
+            get => _downloadFolder;
+            set => Set(ref _downloadFolder, value);
         }
 
         public async void ChooseDownloadFolder()
@@ -109,6 +119,7 @@ namespace Telegram.ViewModels.Settings
                 var folder = await picker.PickSingleFolderAsync();
                 if (folder != null)
                 {
+                    IsDownloadFolderEnabled = true;
                     DownloadFolder = await _storageService.SetDownloadFolderAsync(folder);
                 }
             }

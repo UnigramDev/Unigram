@@ -1,5 +1,5 @@
 //
-// Copyright Fela Ameghino 2015-2023
+// Copyright Fela Ameghino 2015-2024
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
@@ -8,6 +8,7 @@ using Telegram.Native;
 using Windows.ApplicationModel;
 using Windows.Foundation.Metadata;
 using Windows.System.Profile;
+using Windows.UI.Xaml.Navigation;
 
 namespace Telegram.Common
 {
@@ -21,6 +22,9 @@ namespace Telegram.Common
         private static bool? _isDesktop;
         public static bool IsDesktop => _isDesktop ??= string.Equals(AnalyticsInfo.VersionInfo.DeviceFamily, "Windows.Desktop");
 
+        private static bool? _isXbox;
+        public static bool IsXbox => _isXbox ??= string.Equals(AnalyticsInfo.VersionInfo.DeviceFamily, "Windows.Xbox");
+
         private static bool? _isMediaSupported;
         public static bool IsMediaSupported => _isMediaSupported ??= NativeUtils.IsMediaSupported();
 
@@ -29,11 +33,16 @@ namespace Telegram.Common
 
         public static bool HasCacheOnly => !HasDownloadFolder;
 
+        public static bool HasMultipleViews => !IsXbox;
+
         private static bool? _hasKnownFolders;
         public static bool HasKnownFolders => _hasKnownFolders ??= ApiInformation.IsEnumNamedValuePresent("Windows.Storage.KnownFolderId", "DownloadsFolder");
 
         private static bool? _isVoipSupported;
         public static bool IsVoipSupported => _isVoipSupported ??= ApiInformation.IsApiContractPresent("Windows.ApplicationModel.Calls.CallsVoipContract", 1);
+
+        private static bool? _canAnimatePaths;
+        public static bool CanAnimatePaths => _canAnimatePaths ??= IsBuildOrGreater(19043);
 
         private static bool? _isWindows11;
         public static bool IsWindows11 => _isWindows11 ??= IsBuildOrGreater(22000);
@@ -52,5 +61,11 @@ namespace Telegram.Common
 
             return _build >= compare;
         }
+
+        public static NavigationCacheMode NavigationCacheMode => IsXbox
+                ? NavigationCacheMode.Disabled
+                : Constants.DEBUG
+                ? NavigationCacheMode.Required
+                : NavigationCacheMode.Required;
     }
 }

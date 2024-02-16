@@ -15,12 +15,16 @@
             <ColumnDefinition />
             <ColumnDefinition Width="48" />
         </Grid.ColumnDefinitions>
+        <Border BorderBrush="{ThemeResource NavigationViewContentGridBorderBrush}"
+                BorderThickness="0,0,0,1"
+                Grid.ColumnSpan="2" />
 
-        <Grid x:Name="LayoutRoot">
+        <Grid x:Name="LayoutRoot"
+              Grid.ColumnSpan="2">
 
         </Grid>
 
-        <controls:GlyphButton Click="{x:Bind ViewModel.RemoveActionBar}"
+        <controls:GlyphButton Click="Remove_Click"
                               Glyph="&#xE711;"
                               Height="32"
                               Grid.Column="1" />

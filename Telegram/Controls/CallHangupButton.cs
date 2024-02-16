@@ -1,5 +1,5 @@
 //
-// Copyright Fela Ameghino 2015-2023
+// Copyright Fela Ameghino 2015-2024
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
@@ -37,7 +37,7 @@ namespace Telegram.Controls
             {
                 var hangup = IsChecked == true;
 
-                _visual = ElementCompositionPreview.GetElementVisual(presenter);
+                _visual = ElementComposition.GetElementVisual(presenter);
                 _visual.CenterPoint = new Vector3(12, 12, 0);
                 _visual.RotationAngleInDegrees = hangup ? 120 : 0;
                 //_visual.Scale = hangup ? new Vector3(1.1f, 1.1f, 1) : Vector3.One;

@@ -1,11 +1,12 @@
 //
-// Copyright Fela Ameghino 2015-2023
+// Copyright Fela Ameghino 2015-2024
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
 using System;
 using System.Threading.Tasks;
+using Telegram.Controls;
 using Windows.UI.Xaml.Controls;
 
 namespace Telegram.Common
@@ -35,28 +36,11 @@ namespace Telegram.Common
                 await _currentDialogShowRequest.Task;
             }
 
-            var request = _currentDialogShowRequest = new TaskCompletionSource<ContentDialog>();
-            var result = await dialog.ShowAsync();
-            _currentDialogShowRequest = null;
-            request.SetResult(dialog);
+            Logger.Info(dialog.GetType().Name);
 
-            return result;
-        }
-
-        /// <summary>
-        /// Begins an asynchronous operation showing a dialog.
-        /// If another dialog is already shown using
-        /// ShowQueuedAsync or ShowIfPossibleAsync method - it will wait
-        /// return immediately and the new dialog won't be displayed.
-        /// </summary>
-        /// <param name="dialog">The dialog.</param>
-        /// <returns></returns>
-        /// <exception cref="InvalidOperationException">This method can only be invoked from UI thread.</exception>
-        public static async Task<ContentDialogResult> ShowIfPossibleAsync(this ContentDialog dialog)
-        {
-            while (_currentDialogShowRequest != null)
+            if (dialog is ContentPopup popup)
             {
-                return ContentDialogResult.None;
+                popup.OnCreate();
             }
 
             var request = _currentDialogShowRequest = new TaskCompletionSource<ContentDialog>();
@@ -64,6 +48,7 @@ namespace Telegram.Common
             _currentDialogShowRequest = null;
             request.SetResult(dialog);
 
+            Logger.Info(dialog.GetType().Name + ", closed");
             return result;
         }
     }

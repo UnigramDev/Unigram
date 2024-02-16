@@ -1,5 +1,5 @@
 //
-// Copyright Fela Ameghino 2015-2023
+// Copyright Fela Ameghino 2015-2024
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
@@ -11,7 +11,6 @@ using System.Threading.Tasks;
 using Telegram.Common;
 using Telegram.Controls;
 using Telegram.Native.Calls;
-using Telegram.Navigation;
 using Telegram.Services.Updates;
 using Telegram.Services.ViewService;
 using Telegram.Td.Api;
@@ -35,6 +34,8 @@ namespace Telegram.Services
 
     public interface IVoipService
     {
+        IClientService ClientService { get; }
+
         string CurrentAudioInput { get; set; }
         string CurrentAudioOutput { get; set; }
         string CurrentVideoInput { get; set; }
@@ -44,6 +45,7 @@ namespace Telegram.Services
 #if ENABLE_CALLS
         bool IsMuted { get; set; }
         event EventHandler MutedChanged;
+        event EventHandler<float> AudioLevelUpdated;
 
         VoipManager Manager { get; }
         VoipCaptureBase Capturer { get; set; }
@@ -57,6 +59,7 @@ namespace Telegram.Services
         void Show();
 
         void Start(long chatId, bool video);
+        void StartWithUser(long userId, bool video);
 
         Task DiscardAsync();
 
@@ -66,7 +69,7 @@ namespace Telegram.Services
 #endif
     }
 
-    public class VoipService : ViewModelBase
+    public class VoipService : ServiceBase
         , IVoipService
     //, IHandle<UpdateCall>
     //, IHandle<UpdateNewCallSignalingData>
@@ -93,7 +96,7 @@ namespace Telegram.Services
         private VoipPhoneCall _systemCall;
 #endif
 
-        private ViewLifetimeControl _callLifetime;
+        private ViewLifetimeControl _lifetime;
 
         public VoipService(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator, IViewService viewService)
             : base(clientService, settingsService, aggregator)
@@ -109,7 +112,7 @@ namespace Telegram.Services
             Subscribe();
         }
 
-        public override void Subscribe()
+        private void Subscribe()
         {
             Aggregator.Subscribe<UpdateCall>(this, Handle)
                 .Subscribe<UpdateNewCallSignalingData>(Handle);
@@ -119,7 +122,7 @@ namespace Telegram.Services
 
         public bool IsMuted
         {
-            get => _manager.IsMuted;
+            get => _manager?.IsMuted ?? true;
             set
             {
                 if (_manager != null && _manager.IsMuted != value)
@@ -137,6 +140,7 @@ namespace Telegram.Services
         }
 
         public event EventHandler MutedChanged;
+        public event EventHandler<float> AudioLevelUpdated;
 
         private void SetVideoInputDevice(string id)
         {
@@ -245,7 +249,7 @@ namespace Telegram.Services
 
 #endif
 
-        public async void Start(long chatId, bool video)
+        public void Start(long chatId, bool video)
         {
             var chat = ClientService.GetChat(chatId);
             if (chat == null)
@@ -253,7 +257,20 @@ namespace Telegram.Services
                 return;
             }
 
-            var user = ClientService.GetUser(chat);
+            if (ClientService.TryGetUser(chat, out User user))
+            {
+                StartWithUser(user.Id, video);
+            }
+        }
+
+        public async void StartWithUser(long userId, bool video)
+        {
+            if (await MediaDeviceWatcher.CheckIfUnsupportedAsync())
+            {
+                return;
+            }
+
+            var user = ClientService.GetUser(userId);
             if (user == null)
             {
                 return;
@@ -356,6 +373,7 @@ namespace Telegram.Services
                     if (outgoing)
                     {
                         // I'm not sure if RequestNewOutgoingCall is the right method to call, but it seem to work.
+                        // TODO: this moves the focus from the call window to the main window :(
                         _systemCall = _coordinator.RequestNewOutgoingCall(
                             $"{user.Id}",
                             user.FullName(),
@@ -375,6 +393,7 @@ namespace Telegram.Services
                             return null;
                         }
 
+                        // TODO: this moves the focus from the call window to the main window :(
                         _systemCall = _coordinator.RequestNewIncomingCall(
                             $"{user.Id}",
                             user.FullName(),
@@ -492,18 +511,15 @@ namespace Telegram.Services
                 {
                     if (pending.IsCreated && pending.IsReceived)
                     {
+                        if (ClientService.TryGetUser(update.Call.UserId, out User user))
+                        {
+                            await InitializeSystemCallAsync(user, update.Call.IsOutgoing);
+                        }
+
                         if (_systemCall == null || update.Call.IsOutgoing)
                         {
                             SoundEffects.Play(update.Call.IsOutgoing ? SoundEffect.VoipRingback : SoundEffect.VoipIncoming);
                         }
-
-                        var user = ClientService.GetUser(update.Call.UserId);
-                        if (user == null)
-                        {
-                            return;
-                        }
-
-                        await InitializeSystemCallAsync(user, update.Call.IsOutgoing);
                     }
                 }
                 else if (update.Call.State is CallStateExchangingKeys exchangingKeys)
@@ -556,6 +572,7 @@ namespace Telegram.Services
                     _manager = new VoipManager(version, descriptor);
                     _manager.StateUpdated += OnStateUpdated;
                     _manager.SignalingDataEmitted += OnSignalingDataEmitted;
+                    _manager.AudioLevelUpdated += OnAudioLevelUpdated;
 
                     _manager.Start();
                     _coordinator?.TryNotifyMutedChanged(_manager.IsMuted);
@@ -623,6 +640,11 @@ namespace Telegram.Services
             Aggregator.Publish(new UpdateCallDialog(_call));
         }
 
+        private void OnAudioLevelUpdated(VoipManager sender, float args)
+        {
+            AudioLevelUpdated?.Invoke(this, args);
+        }
+
         private void OnStateUpdated(VoipManager sender, VoipState args)
         {
             if (args is VoipState.WaitInit or VoipState.WaitInitAck)
@@ -663,6 +685,7 @@ namespace Telegram.Services
             {
                 _manager.StateUpdated -= OnStateUpdated;
                 _manager.SignalingDataEmitted -= OnSignalingDataEmitted;
+                _manager.AudioLevelUpdated -= OnAudioLevelUpdated;
 
                 _manager.SetIncomingVideoOutput(null);
                 _manager.SetVideoCapture(null);
@@ -747,6 +770,11 @@ namespace Telegram.Services
                 return;
             }
 
+            if (_systemCall == null && ApiInfo.IsVoipSupported && call.IsValidState() && ClientService.TryGetUser(call.UserId, out User user))
+            {
+                await InitializeSystemCallAsync(user, call.IsOutgoing);
+            }
+
             if (_callPage == null)
             {
                 var parameters = new ViewServiceParams
@@ -757,8 +785,12 @@ namespace Telegram.Services
                     Content = control => _callPage = new CallPage(ClientService, Aggregator, this)
                 };
 
-                _callLifetime = await _viewService.OpenAsync(parameters);
-                _callLifetime.Released += ApplicationView_Released;
+                _lifetime = await _viewService.OpenAsync(parameters);
+
+                if (_lifetime != null)
+                {
+                    _lifetime.Released += ApplicationView_Released;
+                }
             }
 
             var callPage = _callPage;
@@ -783,27 +815,18 @@ namespace Telegram.Services
         {
             _callPage = null;
 
-            var lifetime = _callLifetime;
+            var lifetime = _lifetime;
             if (lifetime != null)
             {
-                _callLifetime = null;
-
-                await lifetime.Dispatcher.DispatchAsync(async () =>
-                {
-                    if (lifetime.Window.Content is CallPage callPage)
-                    {
-                        callPage.Dispose();
-                    }
-
-                    await WindowContext.Current.ConsolidateAsync();
-                });
+                _lifetime = null;
+                await lifetime.ConsolidateAsync();
             }
         }
 
         private void ApplicationView_Released(object sender, EventArgs e)
         {
             _callPage = null;
-            _callLifetime = null;
+            _lifetime = null;
 #endif
         }
     }

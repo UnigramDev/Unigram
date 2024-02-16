@@ -1,5 +1,5 @@
 ﻿//
-// Copyright Fela Ameghino 2015-2023
+// Copyright Fela Ameghino 2015-2024
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
@@ -38,29 +38,42 @@ namespace Telegram.Views
 
         private void OnViewSizeChanged(object sender, SizeChangedEventArgs e)
         {
-            Logger.Debug();
-
             if (Messages.ScrollingHost.ScrollableHeight > 0)
             {
                 return;
             }
 
-            Arrows.IsVisible = false;
+            UpdateArrowVisibility();
             ViewVisibleMessages(false);
         }
 
         private void OnViewChanged(object sender, ScrollViewerViewChangedEventArgs e)
         {
-            if (Messages.ScrollingHost.ScrollableHeight - Messages.ScrollingHost.VerticalOffset < 40 && ViewModel.IsFirstSliceLoaded != false)
+            UpdateArrowVisibility();
+            ViewVisibleMessages(false);
+        }
+
+        private void UpdateArrowVisibility()
+        {
+            if (ViewModel.Type is not DialogType.History and not DialogType.Thread and not DialogType.SavedMessagesTopic)
             {
                 Arrows.IsVisible = false;
-            }
-            else if (ViewModel.Type is DialogType.History or DialogType.Thread)
-            {
-                Arrows.IsVisible = true;
+                return;
             }
 
-            ViewVisibleMessages(false);
+            if (Messages.ScrollingHost == null || Messages.ScrollingHost.ScrollableHeight == 0)
+            {
+                Arrows.IsVisible = false;
+                return;
+            }
+
+            if (Messages.ScrollingHost == null || Messages.ScrollingHost.ScrollableHeight - Messages.ScrollingHost.VerticalOffset < 40)
+            {
+                Arrows.IsVisible = ViewModel.IsFirstSliceLoaded == false;
+                return;
+            }
+
+            Arrows.IsVisible = true;
         }
 
         private void UnloadVisibleMessages()
@@ -77,7 +90,7 @@ namespace Telegram.Views
         public void ViewVisibleMessages(bool intermediate)
         {
             var chat = ViewModel.Chat;
-            if (chat == null)
+            if (chat == null || IsDisconnected)
             {
                 return;
             }
@@ -359,19 +372,19 @@ namespace Telegram.Views
             {
                 if (date != 0)
                 {
-                    DateHeader.CommandParameter = null;
-                    DateHeaderLabel.Text = string.Format(Strings.MessageScheduledOn, Formatter.DayGrouping(Formatter.ToLocalTime(date)));
+                    DateHeader.Tag = null;
+                    DateHeaderLabel.Text = string.Format(Strings.MessageScheduledOn, Formatter.DayGrouping(date));
                 }
                 else
                 {
-                    DateHeader.CommandParameter = null;
+                    DateHeader.Tag = null;
                     DateHeaderLabel.Text = Strings.MessageScheduledUntilOnline;
                 }
             }
             else
             {
-                DateHeader.CommandParameter = date;
-                DateHeaderLabel.Text = Formatter.DayGrouping(Formatter.ToLocalTime(date));
+                DateHeader.Tag = date;
+                DateHeaderLabel.Text = Formatter.DayGrouping(date);
             }
         }
 
@@ -388,11 +401,11 @@ namespace Telegram.Views
                     GalleryViewModelBase viewModel;
                     if (message.Content is MessageAnimation)
                     {
-                        viewModel = new ChatGalleryViewModel(ViewModel.ClientService, ViewModel.StorageService, ViewModel.Aggregator, message.ChatId, ViewModel.ThreadId, message.Get());
+                        viewModel = new ChatGalleryViewModel(ViewModel.ClientService, ViewModel.StorageService, ViewModel.Aggregator, message.ChatId, ViewModel.ThreadId, ViewModel.SavedMessagesTopicId, message);
                     }
                     else
                     {
-                        viewModel = new SingleGalleryViewModel(ViewModel.ClientService, ViewModel.StorageService, ViewModel.Aggregator, new GalleryMessage(ViewModel.ClientService, message.Get()));
+                        viewModel = new SingleGalleryViewModel(ViewModel.ClientService, ViewModel.StorageService, ViewModel.Aggregator, new GalleryMessage(ViewModel.ClientService, message));
                     }
 
                     viewModel.NavigationService = ViewModel.NavigationService;
@@ -411,13 +424,10 @@ namespace Telegram.Views
                 }
                 else
                 {
-                    var container = Messages.ContainerFromItem(message) as ListViewItem;
-                    if (container == null)
+                    if (_messageIdToSelector.TryGetValue(message.Id, out SelectorItem container))
                     {
-                        return;
+                        Play(new (SelectorItem, MessageViewModel)[] { (container, message) });
                     }
-
-                    Play(new (SelectorItem, MessageViewModel)[] { (container, message) });
                 }
             }
         }
@@ -477,7 +487,7 @@ namespace Telegram.Views
                     var presenter = _prev[item].Target as IPlayerView;
                     if (presenter != null && presenter.LoopCount == 0)
                     {
-                        presenter.Pause();
+                        presenter.ViewportChanged(false);
                     }
 
                     _prev.Remove(item);
@@ -489,7 +499,7 @@ namespace Telegram.Views
                 foreach (var item in next)
                 {
                     _prev[item.Key] = new WeakReference(item.Value);
-                    item.Value.Play();
+                    item.Value.ViewportChanged(true);
                 }
             }
         }
@@ -508,13 +518,30 @@ namespace Telegram.Views
         private readonly Dictionary<long, SelectorItem> _messageIdToSelector = new();
         private readonly MultiValueDictionary<long, long> _messageIdToMessageIds = new();
 
-        private readonly Dictionary<string, DataTemplate> _typeToTemplateMapping = new Dictionary<string, DataTemplate>();
-        private readonly Dictionary<string, HashSet<SelectorItem>> _typeToItemHashSetMapping = new Dictionary<string, HashSet<SelectorItem>>();
+        private readonly Dictionary<ChatHistoryViewItemType, ChoosingItemStrategy> _typeToStrategy = new();
+
+        class ChoosingItemStrategy
+        {
+            public ChoosingItemStrategy(DataTemplate itemTemplate, int minimum = 0)
+            {
+                Queue = new();
+                ItemTemplate = itemTemplate;
+                Minimum = minimum;
+            }
+
+            public DataTemplate ItemTemplate { get; }
+
+            public HashSet<SelectorItem> Queue { get; }
+
+            public int TotalCount { get; set; }
+
+            public int Minimum { get; set; }
+        }
 
         private void OnChoosingItemContainer(ListViewBase sender, ChoosingItemContainerEventArgs args)
         {
             var typeName = SelectTemplateCore(args.Item);
-            var relevantHashSet = _typeToItemHashSetMapping[typeName];
+            var relevantHashSet = _typeToStrategy[typeName];
 
             // args.ItemContainer is used to indicate whether the ListView is proposing an
             // ItemContainer (ListViewItem) to use. If args.Itemcontainer != null, then there was a
@@ -524,14 +551,51 @@ namespace Telegram.Views
                 if (selector.TypeName.Equals(typeName))
                 {
                     // Suggestion matches what we want, so remove it from the recycle queue
-                    relevantHashSet.Remove(args.ItemContainer);
+                    relevantHashSet.Queue.Remove(args.ItemContainer);
                 }
                 else
                 {
-                    // The ItemContainer's datatemplate does not match the needed
-                    // datatemplate.
-                    // Don't remove it from the recycle queue, since XAML will resuggest it later
-                    args.ItemContainer = null;
+                    // TODO: threshold could be made dynamic...
+                    // By example if we are in a channel and typeName is UserMessageTemplate, we can just override
+                    // Same thing should probably apply to all service messages.
+                    bool ShouldCreateNewContainer()
+                    {
+                        if (relevantHashSet.Queue.Count > 0)
+                        {
+                            return true;
+                        }
+
+                        if (relevantHashSet.Minimum > 0 && relevantHashSet.TotalCount < relevantHashSet.Minimum)
+                        {
+                            return true;
+                        }
+
+                        return false;
+                    }
+
+                    // Code inside this branch is the one recommended by Microsoft, that bugs in some scenarios.
+                    if (ShouldCreateNewContainer())
+                    {
+                        // The ItemContainer's datatemplate does not match the needed
+                        // datatemplate.
+                        // Don't remove it from the recycle queue, since XAML will resuggest it later
+                        args.ItemContainer = null;
+                    }
+                    else
+                    {
+                        var recycledHashSet = _typeToStrategy[selector.TypeName];
+
+                        // Suggested container doesn't match what we want, but ICG2 is stuck in a loop.
+                        relevantHashSet.TotalCount++;
+
+                        selector.TypeName = typeName;
+                        selector.ContentTemplate = relevantHashSet.ItemTemplate;
+                        selector.Style = sender.ItemContainerStyle;
+
+                        // Remove the container from the old queue and update the counter.
+                        recycledHashSet.Queue.Remove(args.ItemContainer);
+                        recycledHashSet.TotalCount--;
+                    }
                 }
             }
 
@@ -540,21 +604,26 @@ namespace Telegram.Views
             if (args.ItemContainer == null)
             {
                 // See if we can fetch from the correct list.
-                if (relevantHashSet.Count > 0)
+                if (relevantHashSet.Queue.Count > 0)
                 {
                     // Unfortunately have to resort to LINQ here. There's no efficient way of getting an arbitrary
                     // item from a hashset without knowing the item. Queue isn't usable for this scenario
                     // because you can't remove a specific element (which is needed in the block above).
-                    args.ItemContainer = relevantHashSet.First();
-                    relevantHashSet.Remove(args.ItemContainer);
+                    args.ItemContainer = relevantHashSet.Queue.First();
+                    relevantHashSet.Queue.Remove(args.ItemContainer);
                 }
                 else
                 {
+                    relevantHashSet.TotalCount++;
+
                     // There aren't any (recycled) ItemContainers available. So a new one
                     // needs to be created.
-                    var item = CreateSelectorItem(typeName);
-                    item.Style = Messages.ItemContainerStyleSelector.SelectStyle(args.Item, item);
-                    args.ItemContainer = item;
+                    selector = new ChatHistoryViewItem(Messages, typeName);
+                    selector.ContentTemplate = relevantHashSet.ItemTemplate;
+                    selector.Style = sender.ItemContainerStyle;
+                    selector.AddHandler(ContextRequestedEvent, _contextRequestedHandler ??= new TypedEventHandler<UIElement, ContextRequestedEventArgs>(Message_ContextRequested), true);
+
+                    args.ItemContainer = selector;
                 }
             }
 
@@ -574,7 +643,7 @@ namespace Telegram.Views
             if (args.InRecycleQueue)
             {
                 // XAML has indicated that the item is no longer being shown, so add it to the recycle queue
-                _typeToItemHashSetMapping[container.TypeName].Add(args.ItemContainer);
+                _typeToStrategy[container.TypeName].Queue.Add(args.ItemContainer);
 
                 if (args.ItemContainer.ContentTemplateRoot is MessageSelector selector)
                 {
@@ -598,13 +667,13 @@ namespace Telegram.Views
 
                 _updateThemeTask?.TrySetResult(true);
 
-                // TODO: are there chances that at this point TextArea is not up to date yet?
-                container.PrepareForItemOverride(message,
-                    _viewModel.Type is DialogType.History or DialogType.Thread or DialogType.ScheduledMessages
-                    && TextArea.Visibility == Visibility.Visible);
-
                 if (content is MessageSelector checkbox)
                 {
+                    // TODO: are there chances that at this point TextArea is not up to date yet?
+                    checkbox.PrepareForItemOverride(message,
+                        _viewModel.Type is DialogType.History or DialogType.Thread or DialogType.ScheduledMessages
+                        && TextArea.Visibility == Visibility.Visible);
+
                     checkbox.UpdateMessage(message, Messages);
                     checkbox.UpdateSelectionEnabled(ViewModel.IsSelectionEnabled, false);
 
@@ -630,6 +699,7 @@ namespace Telegram.Views
         private void RegisterEvents(ListViewBase sender, ContainerContentChangingEventArgs args)
         {
             args.ItemContainer.SizeChanged += _sizeChangedHandler ??= new SizeChangedEventHandler(Item_SizeChanged);
+            args.Handled = true;
 
             if (args.ItemContainer.ContentTemplateRoot is MessageSelector selector && selector.Content is MessageBubble bubble)
             {
@@ -640,25 +710,19 @@ namespace Telegram.Views
         private TypedEventHandler<UIElement, ContextRequestedEventArgs> _contextRequestedHandler;
         private SizeChangedEventHandler _sizeChangedHandler;
 
-        private SelectorItem CreateSelectorItem(string typeName)
+        private void OnPreparingContainerForItem(object sender, ChatHistoryViewItem selector)
         {
-            SelectorItem item = new ChatHistoryViewItem(Messages, typeName);
-            item.ContentTemplate = _typeToTemplateMapping[typeName];
-            item.AddHandler(ContextRequestedEvent, _contextRequestedHandler ??= new TypedEventHandler<UIElement, ContextRequestedEventArgs>(Message_ContextRequested), true);
-
-            return item;
+            selector.AddHandler(ContextRequestedEvent, _contextRequestedHandler ??= new TypedEventHandler<UIElement, ContextRequestedEventArgs>(Message_ContextRequested), true);
         }
 
         private void Item_SizeChanged(object sender, SizeChangedEventArgs e)
         {
-            Logger.Debug();
-
             var next = e.NewSize.ToVector2();
             var prev = e.PreviousSize.ToVector2();
 
             var diff = next.Y - prev.Y;
 
-            var panel = Messages.ItemsStack;
+            var panel = Messages.ItemsPanelRoot as ItemsStackPanel;
             if (panel == null || prev.Y == next.Y || Math.Abs(diff) <= 2)
             {
                 return;
@@ -683,18 +747,24 @@ namespace Telegram.Views
                 }
             }
 
-            if (index >= panel.FirstVisibleIndex && index <= panel.LastVisibleIndex)
+            if (index >= panel.FirstVisibleIndex && index <= panel.LastVisibleIndex && sender is SelectorItem selector)
             {
-                var direction = Messages.ScrollingMode == ItemsUpdatingScrollMode.KeepItemsInView ? -1 : 1;
-                var batch = Window.Current.Compositor.CreateScopedBatch(CompositionBatchTypes.Animation);
+                var direction = panel.ItemsUpdatingScrollMode == ItemsUpdatingScrollMode.KeepItemsInView ? -1 : 1;
+                var edge = (index == panel.LastVisibleIndex && direction == 1) || index == panel.FirstVisibleIndex && direction == -1;
 
+                if (edge && !Messages.VisualContains(selector))
+                {
+                    direction *= -1;
+                }
+
+                var first = direction == 1 ? panel.FirstCacheIndex : index + 1;
+                var last = direction == 1 ? index : panel.LastCacheIndex;
+
+                var batch = Window.Current.Compositor.CreateScopedBatch(CompositionBatchTypes.Animation);
                 var anim = Window.Current.Compositor.CreateScalarKeyFrameAnimation();
                 anim.InsertKeyFrame(0, diff * direction);
                 anim.InsertKeyFrame(1, 0);
                 //anim.Duration = TimeSpan.FromSeconds(5);
-
-                var first = direction == 1 ? panel.FirstCacheIndex : index + 1;
-                var last = direction == 1 ? index : panel.LastCacheIndex;
 
                 for (int i = first; i <= last; i++)
                 {
@@ -707,7 +777,7 @@ namespace Telegram.Views
                     var child = VisualTreeHelper.GetChild(container, 0) as UIElement;
                     if (child != null)
                     {
-                        var visual = ElementCompositionPreview.GetElementVisual(child);
+                        var visual = ElementComposition.GetElementVisual(child);
                         visual.StartAnimation("Offset.Y", anim);
                     }
                 }
@@ -716,42 +786,52 @@ namespace Telegram.Views
             }
         }
 
-        private string SelectTemplateCore(object item)
+        private ChatHistoryViewItemType SelectTemplateCore(object item)
         {
             var message = item as MessageViewModel;
             if (message == null)
             {
-                return "EmptyMessageTemplate";
+                return ChatHistoryViewItemType.Incoming;
             }
 
             if (message.IsService)
             {
-                if (message.Content is MessageChatChangePhoto or MessageSuggestProfilePhoto or MessageAsyncStory)
+                if (message.Content is MessagePremiumGiftCode)
                 {
-                    return "ServiceMessagePhotoTemplate";
+                    return ChatHistoryViewItemType.ServiceGift;
                 }
-                else if (message.Content is MessageChatSetBackground setBackground && setBackground.OldBackgroundMessageId == 0)
+                else if (message.Content is MessageChatChangePhoto or MessageSuggestProfilePhoto or MessageAsyncStory)
                 {
-                    return "ServiceMessageBackgroundTemplate";
+                    return ChatHistoryViewItemType.ServicePhoto;
+                }
+                else if (message.Content is MessageChatSetBackground { OldBackgroundMessageId: 0 }
+                    || message.Content is MessageChatEvent { Action: ChatEventBackgroundChanged { NewBackground: not null } })
+                {
+                    return ChatHistoryViewItemType.ServiceBackground;
                 }
                 else if (message.Content is MessageHeaderUnread)
                 {
-                    return "ServiceMessageUnreadTemplate";
+                    return ChatHistoryViewItemType.ServiceUnread;
                 }
 
-                return "ServiceMessageTemplate";
+                return ChatHistoryViewItemType.Service;
             }
 
-            if (message.IsChannelPost || message.IsSaved)
+            if (message.IsChannelPost || (message.IsSaved && message.ForwardInfo?.Source is { IsOutgoing: false }))
             {
-                return "FriendMessageTemplate";
+                return ChatHistoryViewItemType.Incoming;
             }
-            else if (message.IsOutgoing)
+            else if (message.IsOutgoing || message.ForwardInfo?.Source is { IsOutgoing: true })
             {
-                return "UserMessageTemplate";
+                return ChatHistoryViewItemType.Outgoing;
             }
 
-            return "FriendMessageTemplate";
+            return ChatHistoryViewItemType.Incoming;
+        }
+
+        public bool HasContainerForItem(long id)
+        {
+            return _messageIdToSelector.ContainsKey(id);
         }
 
         public SelectorItem ContainerFromItem(long id)

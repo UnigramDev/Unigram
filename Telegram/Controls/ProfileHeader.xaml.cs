@@ -1,32 +1,224 @@
 //
-// Copyright Fela Ameghino 2015-2023
+// Copyright Fela Ameghino 2015-2024
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+using Microsoft.Graphics.Canvas.Effects;
+using Microsoft.UI.Xaml.Media;
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Numerics;
 using Telegram.Common;
 using Telegram.Controls.Gallery;
 using Telegram.Controls.Media;
 using Telegram.Converters;
+using Telegram.Native;
 using Telegram.Navigation;
+using Telegram.Services;
 using Telegram.Streams;
 using Telegram.Td;
 using Telegram.Td.Api;
 using Telegram.ViewModels;
 using Windows.Foundation;
+using Windows.UI;
+using Windows.UI.Composition;
 using Windows.UI.Text;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
 using Windows.UI.Xaml.Documents;
+using Windows.UI.Xaml.Hosting;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Point = Windows.Foundation.Point;
 
 namespace Telegram.Controls
 {
+    public class ProfileHeaderPattern : Control
+    {
+        public ProfileHeaderPattern()
+        {
+            DefaultStyleKey = typeof(ProfileHeaderPattern);
+        }
+
+        protected override void OnApplyTemplate()
+        {
+            var animated = GetTemplateChild("Animated") as AnimatedImage;
+            var layoutRoot = GetTemplateChild("LayoutRoot") as Border;
+
+            animated.Ready += OnReady;
+
+            var visual = ElementComposition.GetElementVisual(animated);
+            var compositor = visual.Compositor;
+
+            // Create a VisualSurface positioned at the same location as this control and feed that
+            // through the color effect.
+            var surfaceBrush = compositor.CreateSurfaceBrush();
+            var surface = compositor.CreateVisualSurface();
+
+            // Select the source visual and the offset/size of this control in that element's space.
+            surface.SourceVisual = visual;
+            surface.SourceOffset = new Vector2(0, 0);
+            surface.SourceSize = new Vector2(37, 37);
+            surfaceBrush.HorizontalAlignmentRatio = 0.5f;
+            surfaceBrush.VerticalAlignmentRatio = 0.5f;
+            surfaceBrush.Surface = surface;
+            surfaceBrush.Stretch = CompositionStretch.Fill;
+            surfaceBrush.BitmapInterpolationMode = CompositionBitmapInterpolationMode.NearestNeighbor;
+            surfaceBrush.SnapToPixels = true;
+
+            var container = compositor.CreateContainerVisual();
+            container.Size = new Vector2(1000, 320);
+
+            var clones = Generate(0);
+
+            for (int i = 1; i < clones.Count; i++)
+            {
+                Vector4 clone = clones[i];
+
+                var redirect = compositor.CreateSpriteVisual();
+                redirect.Size = new Vector2(clone.Z);
+                redirect.Offset = new Vector3(clone.X, clone.Y, 0);
+                redirect.CenterPoint = new Vector3(clone.Z / 2);
+                redirect.Opacity = clone.W;
+                redirect.Brush = surfaceBrush;
+
+                container.Children.InsertAtTop(redirect);
+            }
+
+            ElementCompositionPreview.SetElementChildVisual(layoutRoot, container);
+        }
+
+        private void OnReady(object sender, EventArgs e)
+        {
+            var layoutRoot = GetTemplateChild("LayoutRoot") as Border;
+            var container = ElementCompositionPreview.GetElementChildVisual(layoutRoot) as ContainerVisual;
+
+            var scale = container.Compositor.CreateVector3KeyFrameAnimation();
+            scale.InsertKeyFrame(0, Vector3.Zero);
+            scale.InsertKeyFrame(1, Vector3.One);
+
+            var batch = container.Compositor.CreateScopedBatch(CompositionBatchTypes.Animation);
+
+            foreach (var redirect in container.Children)
+            {
+                redirect.StartAnimation("Scale", scale);
+            }
+
+            batch.End();
+        }
+
+        public void Update(float avatarTransitionFraction)
+        {
+            var layoutRoot = GetTemplateChild("LayoutRoot") as Border;
+            var container = ElementCompositionPreview.GetElementChildVisual(layoutRoot) as ContainerVisual;
+
+            var clones = Generate(avatarTransitionFraction);
+            var i = 0;
+
+            foreach (var redirect in container.Children)
+            {
+                Vector4 clone = clones[i++];
+
+                redirect.Size = new Vector2(clone.Z);
+                redirect.Offset = new Vector3(clone.X, clone.Y, 0);
+                redirect.Opacity = clone.W;
+            }
+        }
+
+        private float windowFunction(float t)
+        {
+            return BezierPoint.Calculate(0.6f, 0.0f, 0.4f, 1.0f, t);
+        }
+
+        private float patternScaleValueAt(float fraction, float t, bool reverse)
+        {
+            float windowSize = 0.8f;
+
+            float effectiveT;
+            float windowStartOffset;
+            float windowEndOffset;
+            if (reverse)
+            {
+                effectiveT = 1.0f - t;
+                windowStartOffset = 1.0f;
+                windowEndOffset = -windowSize;
+            }
+            else
+            {
+                effectiveT = t;
+                windowStartOffset = -0.3f;
+                windowEndOffset = 1.0f;
+            }
+
+            float windowPosition = (1.0f - fraction) * windowStartOffset + fraction * windowEndOffset;
+            float windowT = MathF.Max(0.0f, MathF.Min(windowSize, effectiveT - windowPosition)) / windowSize;
+            float localT = 1.0f - windowFunction(t: windowT);
+
+            return localT;
+        }
+
+        private IList<Vector4> Generate(float avatarTransitionFraction)
+        {
+            var results = new List<Vector4>();
+
+            var avatarPatternFrame = new Vector2(1000 - 36, 86 + 36 * 2);
+            //var avatarPatternFrame = new Vector2(500, 500);
+
+            var lokiRng = new LokiRng(seed0: 123, seed1: 0, seed2: 0);
+            var numRows = 5;
+
+            for (int row = 0; row < numRows; row++)
+            {
+                int avatarPatternCount = 7;
+                float avatarPatternAngleSpan = MathF.PI * 2.0f / (avatarPatternCount - 1f);
+
+                for (int i = 0; i < avatarPatternCount - 1; i++)
+                {
+                    //float baseItemDistance = 72.0f + row * 28.0f;
+                    float baseItemDistance = 100.0f + row * 40.0f;
+
+                    //float itemDistanceFraction = MathF.Max(0.0f, MathF.Min(1.0f, baseItemDistance / 140.0f));
+                    float itemDistanceFraction = MathF.Max(0.0f, MathF.Min(1.0f, baseItemDistance / 196.0f));
+                    float itemScaleFraction = patternScaleValueAt(fraction: avatarTransitionFraction, t: itemDistanceFraction, reverse: false);
+                    //float itemDistance = baseItemDistance * (1.0f - itemScaleFraction) + 20.0f * itemScaleFraction;
+                    float itemDistance = baseItemDistance * (1.0f - itemScaleFraction) + 28.0f * itemScaleFraction;
+
+                    float itemAngle = -MathF.PI * 0.5f + i * avatarPatternAngleSpan;
+
+                    if (row % 2 != 0)
+                    {
+                        itemAngle += avatarPatternAngleSpan * 0.5f;
+                    }
+
+                    Vector2 itemPosition = new Vector2(avatarPatternFrame.X * 0.5f + MathF.Cos(itemAngle) * itemDistance, avatarPatternFrame.Y * 0.5f + MathF.Sin(itemAngle) * itemDistance);
+
+                    float itemScale = 0.7f + lokiRng.Next() * (1.0f - 0.7f);
+                    float itemSize = MathF.Floor(36.0f * itemScale);
+
+                    results.Add(new Vector4(itemPosition.X, itemPosition.Y, itemSize, 1.0f - itemScaleFraction));
+                }
+            }
+
+            return results;
+        }
+
+        #region Source
+
+        public AnimatedImageSource Source
+        {
+            get { return (AnimatedImageSource)GetValue(SourceProperty); }
+            set { SetValue(SourceProperty, value); }
+        }
+
+        public static readonly DependencyProperty SourceProperty =
+            DependencyProperty.Register("Source", typeof(AnimatedImageSource), typeof(ProfileHeaderPattern), new PropertyMetadata(null));
+
+        #endregion
+    }
+
     public sealed partial class ProfileHeader : UserControl
     {
         public ProfileViewModel ViewModel => DataContext as ProfileViewModel;
@@ -36,86 +228,21 @@ namespace Telegram.Controls
             InitializeComponent();
             DescriptionLabel.AddHandler(ContextRequestedEvent, new TypedEventHandler<UIElement, ContextRequestedEventArgs>(About_ContextRequested), true);
 
-            DataContextChanged += OnDataContextChanged;
+            ActualThemeChanged += OnActualThemeChanged;
         }
 
-        private void OnDataContextChanged(FrameworkElement sender, DataContextChangedEventArgs args)
-        {
-            if (ViewModel != null && Chat != null)
-            {
-                SetChat(Chat);
-            }
-        }
+        public ElementTheme HeaderTheme => HeaderRoot.RequestedTheme;
 
-        private Chat _chat;
-        public Chat Chat
-        {
-            get => _chat;
-            set => SetChat(value);
-        }
+        private CompositionPropertySet _properties;
 
-        private void SetChat(Chat chat)
+        private void OnActualThemeChanged(FrameworkElement sender, object args)
         {
-            _chat = chat;
-
-            // Perdoname madre por mi duplicated code
-            if (chat == null || ViewModel == null)
+            if (_actualTheme == sender.ActualTheme)
             {
                 return;
             }
 
-            UpdateChat(chat);
-
-            if (chat.Type is ChatTypePrivate privata)
-            {
-                var item = ViewModel.ClientService.GetUser(privata.UserId);
-                var cache = ViewModel.ClientService.GetUserFull(privata.UserId);
-
-                UpdateUser(chat, item, false);
-
-                if (cache != null)
-                {
-                    UpdateUserFullInfo(chat, item, cache, false, false);
-                }
-            }
-            else if (chat.Type is ChatTypeSecret secretType)
-            {
-                var secret = ViewModel.ClientService.GetSecretChat(secretType.SecretChatId);
-                var item = ViewModel.ClientService.GetUser(secretType.UserId);
-                var cache = ViewModel.ClientService.GetUserFull(secretType.UserId);
-
-                UpdateSecretChat(chat, secret);
-                UpdateUser(chat, item, true);
-
-                if (cache != null)
-                {
-                    UpdateUserFullInfo(chat, item, cache, true, false);
-                }
-            }
-            else if (chat.Type is ChatTypeBasicGroup basic)
-            {
-                var item = ViewModel.ClientService.GetBasicGroup(basic.BasicGroupId);
-                var cache = ViewModel.ClientService.GetBasicGroupFull(basic.BasicGroupId);
-
-                UpdateBasicGroup(chat, item);
-
-                if (cache != null)
-                {
-                    UpdateBasicGroupFullInfo(chat, item, cache);
-                }
-            }
-            else if (chat.Type is ChatTypeSupergroup super)
-            {
-                var item = ViewModel.ClientService.GetSupergroup(super.SupergroupId);
-                var cache = ViewModel.ClientService.GetSupergroupFull(super.SupergroupId);
-
-                UpdateSupergroup(chat, item);
-
-                if (cache != null)
-                {
-                    UpdateSupergroupFullInfo(chat, item, cache);
-                }
-            }
+            UpdateChatAccentColors(ViewModel.Chat);
         }
 
         private async void Photo_Click(object sender, RoutedEventArgs e)
@@ -141,7 +268,7 @@ namespace Telegram.Controls
             {
                 segments.Open(ViewModel.NavigationService, ViewModel.ClientService, chat, 140, story =>
                 {
-                    var transform = Segments.TransformToVisual(Window.Current.Content);
+                    var transform = Segments.TransformToVisual(null);
                     var point = transform.TransformPoint(new Point());
 
                     return new Rect(point.X + 4, point.Y + 4, 132, 132);
@@ -153,7 +280,285 @@ namespace Telegram.Controls
             }
         }
 
+        public void ViewChanged(double verticalOffset)
+        {
+            Pattern.Update((float)(verticalOffset / HeaderRoot.ActualHeight));
+
+            var visual = ElementComposition.GetElementVisual(Segments);
+            visual.CenterPoint = new Vector3(70, 70, 0);
+            visual.Scale = new Vector3(1 - (float)(verticalOffset / HeaderRoot.ActualHeight));
+
+            var title = ElementComposition.GetElementVisual(TitleRoot);
+            var subtitle = ElementComposition.GetElementVisual(SubtitleRoot);
+
+            title.CenterPoint = new Vector3(TitleRoot.ActualSize.X / 2, TitleRoot.ActualSize.Y, 0);
+            subtitle.CenterPoint = new Vector3(SubtitleRoot.ActualSize.X / 2, 0, 0);
+        }
+
+        public void InitializeScrolling(CompositionPropertySet properties)
+        {
+            _properties = properties.Compositor.CreatePropertySet();
+            _properties.InsertScalar("targetY", HeaderRoot.ActualSize.Y);
+
+            var target = ElementComposition.GetElementVisual(this);
+            var controls = ElementComposition.GetElementVisual(ControlsRoot);
+            var title = ElementComposition.GetElementVisual(TitleRoot);
+            var subtitle = ElementComposition.GetElementVisual(SubtitleRoot);
+            var buttons = ElementComposition.GetElementVisual(Buttons);
+            var root = ElementComposition.GetElementVisual(HeaderRoot);
+
+            ElementCompositionPreview.SetIsTranslationEnabled(Buttons, true);
+            ElementCompositionPreview.SetIsTranslationEnabled(HeaderRoot, true);
+            ElementCompositionPreview.SetIsTranslationEnabled(TitleRoot, true);
+            ElementCompositionPreview.SetIsTranslationEnabled(SubtitleRoot, true);
+
+            //var rootExp = "clamp(-scrollViewer.Translation.Y - (this.Target.Size.Y - 48 + 0), 0, target.Size.Y - this.Target.Size.Y)";
+            var rootExp = "clamp(-scrollViewer.Translation.Y - (this.Target.Size.Y - 48 + 16), 0, target.Size.Y - this.Target.Size.Y)";
+            var rootTranslation = root.Compositor.CreateExpressionAnimation(rootExp);
+            rootTranslation.SetReferenceParameter("scrollViewer", properties);
+            rootTranslation.SetReferenceParameter("target", target);
+
+            //var rootExp = "clamp(-scrollViewer.Translation.Y - (this.Target.Size.Y - 48 + 0), 0, target.Size.Y - this.Target.Size.Y)";
+            var controlsExp = "clamp(-scrollViewer.Translation.Y - (target.Size.Y - 40), 0, target.Size.Y)";
+            var controlsClip = root.Compositor.CreateExpressionAnimation(controlsExp);
+            controlsClip.SetReferenceParameter("scrollViewer", properties);
+            controlsClip.SetReferenceParameter("target", root);
+
+            //var buttonsExp = "clamp(-scrollViewer.Translation.Y - (target.Size.Y - this.Target.Size.Y - 56), 0, 72)";
+            var buttonsExp = "clamp(-scrollViewer.Translation.Y - (target.Size.Y - this.Target.Size.Y - 48), 0, 72)";
+            var buttonsTranslation = root.Compositor.CreateExpressionAnimation(buttonsExp);
+            buttonsTranslation.SetReferenceParameter("scrollViewer", properties);
+            buttonsTranslation.SetReferenceParameter("target", root);
+
+            var buttonsOpacity = root.Compositor.CreateExpressionAnimation($"clamp(1 - {buttonsExp} / this.Target.Size.Y, 0, 1)");
+            buttonsOpacity.SetReferenceParameter("scrollViewer", properties);
+            buttonsOpacity.SetReferenceParameter("target", root);
+
+            //var titleExp = "clamp(-scrollViewer.Translation.Y - 168 - 8, 0, 86)";
+            var titleExp = "clamp(-scrollViewer.Translation.Y - 184 - 8, 0, 86)";
+            var titleTranslation = root.Compositor.CreateExpressionAnimation(titleExp);
+            titleTranslation.SetReferenceParameter("scrollViewer", properties);
+
+            //var titleScaleExp = "max(diff, 1 - clamp((-scrollViewer.Translation.Y - 184) / 32, 0, 1) * diff)";
+            var titleScaleExp = "clamp(1 - ((-scrollViewer.Translation.Y - 140) / 68) * 0.3, 0.7, 1)";
+            var titleScale = root.Compositor.CreateExpressionAnimation($"vector3({titleScaleExp}, {titleScaleExp}, 1)");
+            titleScale.SetReferenceParameter("scrollViewer", properties);
+
+            //var subtitleScaleExp = "max(diff, 1 - clamp((-scrollViewer.Translation.Y - 184) / 32, 0, 1) * diff)";
+            var subtitleScaleExp = "clamp(1 - ((-scrollViewer.Translation.Y - 140) / 68) * 0.143, 0.857, 1)";
+            var subtitleScale = root.Compositor.CreateExpressionAnimation($"vector3({subtitleScaleExp}, {subtitleScaleExp}, 1)");
+            subtitleScale.SetReferenceParameter("scrollViewer", properties);
+
+            controls.Clip = properties.Compositor.CreateInsetClip();
+            controls.Clip.StartAnimation("TopInset", controlsClip);
+            root.StartAnimation("Translation.Y", rootTranslation);
+            buttons.StartAnimation("Translation.Y", buttonsTranslation);
+            buttons.StartAnimation("Opacity", buttonsOpacity);
+            title.StartAnimation("Translation.Y", titleTranslation);
+            title.StartAnimation("Scale", titleScale);
+            subtitle.StartAnimation("Translation.Y", titleTranslation);
+            subtitle.StartAnimation("Scale", subtitleScale);
+        }
+
         #region Delegate
+
+        public void UpdateChatAccentColors(Chat chat)
+        {
+            _actualTheme = WindowContext.Current.ActualTheme;
+
+            if (ViewModel.ClientService.TryGetProfileColor(chat.ProfileAccentColorId, out ProfileColor color))
+            {
+                var colors = color.ForTheme(_actualTheme);
+
+                Identity.Foreground = new SolidColorBrush(Colors.White);
+
+                //HeaderRoot.BorderThickness = new Thickness(0, 0, 0, 1);
+                //HeaderRoot.CornerRadius = new CornerRadius(8, 0, 0, 0);
+                //HeaderRoot.Margin = new Thickness(0, 0, 0, -8);
+                //HeaderRoot.Padding = new Thickness(24, 16, 24, 8);
+                HeaderRoot.BorderThickness = new Thickness(1);
+                HeaderRoot.CornerRadius = new CornerRadius(4);
+                HeaderRoot.Margin = new Thickness(24, 16, 24, -8);
+                HeaderRoot.Padding = new Thickness(8, 16, 8, 8);
+                HeaderRoot.RequestedTheme = ElementTheme.Dark;
+
+                if (colors.BackgroundColors.Count > 1)
+                {
+                    var gradient = new LinearGradientBrush();
+                    gradient.StartPoint = new Point(0, 0);
+                    gradient.EndPoint = new Point(0, 1);
+                    gradient.GradientStops.Add(new GradientStop
+                    {
+                        Color = colors.BackgroundColors[1],
+                        Offset = 0
+                    });
+
+                    gradient.GradientStops.Add(new GradientStop
+                    {
+                        Color = colors.BackgroundColors[0],
+                        Offset = 1
+                    });
+
+                    HeaderRoot.Background = gradient;
+                }
+                else
+                {
+                    HeaderRoot.Background = new SolidColorBrush(colors.BackgroundColors[0]);
+                }
+
+                UpdateProfileBackgroundCustomEmoji(colors);
+                UpdateIcons(chat, true);
+            }
+            else
+            {
+                Identity.ClearValue(ForegroundProperty);
+
+                //HeaderRoot.Background = null;
+                //HeaderRoot.BorderThickness = new Thickness(0);
+                //HeaderRoot.CornerRadius = new CornerRadius(0);
+                //HeaderRoot.Margin = new Thickness(24, 0, 24, -8);
+                //HeaderRoot.Padding = new Thickness(0, 32, 0, 0);
+                //HeaderRoot.RequestedTheme = ElementTheme.Default;
+                HeaderRoot.ClearValue(Panel.BackgroundProperty);
+                HeaderRoot.BorderThickness = new Thickness(1);
+                HeaderRoot.CornerRadius = new CornerRadius(4);
+                HeaderRoot.Margin = new Thickness(24, 16, 24, -8);
+                HeaderRoot.Padding = new Thickness(8, 16, 8, 8);
+                HeaderRoot.RequestedTheme = ElementTheme.Default;
+
+                UpdateProfileBackgroundCustomEmoji(null);
+                UpdateIcons(chat, false);
+            }
+
+            if (chat.ProfileBackgroundCustomEmojiId != 0)
+            {
+                Pattern.Source = new CustomEmojiFileSource(ViewModel.ClientService, chat.ProfileBackgroundCustomEmojiId);
+            }
+            else
+            {
+                Pattern.Source = null;
+            }
+        }
+
+        private void UpdateProfileBackgroundCustomEmoji(ProfileColors color)
+        {
+            var compositor = Window.Current.Compositor;
+
+            // Create a VisualSurface positioned at the same location as this control and feed that
+            // through the color effect.
+            var surfaceBrush = compositor.CreateSurfaceBrush();
+            surfaceBrush.Stretch = CompositionStretch.None;
+            var surface = compositor.CreateVisualSurface();
+
+            // Select the source visual and the offset/size of this control in that element's space.
+            surface.SourceVisual = ElementComposition.GetElementVisual(Pattern);
+            surface.SourceOffset = new Vector2(0, 0);
+            surface.SourceSize = new Vector2(1000, 320);
+            surfaceBrush.Surface = surface;
+            surfaceBrush.Stretch = CompositionStretch.None;
+
+            CompositionBrush brush;
+            if (color == null)
+            {
+                brush = compositor.CreateColorBrush(_actualTheme == ElementTheme.Light
+                    ? Color.FromArgb(0x80, 0xFF, 0xFF, 0xFF)
+                    : Color.FromArgb(0x09, 0xFF, 0xFF, 0xFF));
+            }
+            else if (color.BackgroundColors.Count > 1)
+            {
+                var linear = compositor.CreateLinearGradientBrush();
+                linear.StartPoint = new Vector2();
+                linear.EndPoint = new Vector2(0, 1);
+                linear.ColorStops.Add(compositor.CreateColorGradientStop(0, color.BackgroundColors[1]));
+                linear.ColorStops.Add(compositor.CreateColorGradientStop(1, color.BackgroundColors[0]));
+
+                brush = linear;
+            }
+            else
+            {
+                brush = compositor.CreateColorBrush(color.BackgroundColors[0]);
+            }
+
+            var radial = compositor.CreateRadialGradientBrush();
+            //radial.CenterPoint = new Vector2(0.5f, 0.0f);
+            radial.EllipseCenter = new Vector2(0.5f, 0.3f);
+            radial.EllipseRadius = new Vector2(0.4f, 0.6f);
+            radial.ColorStops.Add(compositor.CreateColorGradientStop(0, Color.FromArgb(200, 0, 0, 0)));
+            radial.ColorStops.Add(compositor.CreateColorGradientStop(1, Color.FromArgb(0, 0, 0, 0)));
+
+            var blend = new BlendEffect
+            {
+                Background = new CompositionEffectSourceParameter("Background"),
+                Foreground = new CompositionEffectSourceParameter("Foreground"),
+                Mode = BlendEffectMode.SoftLight
+            };
+
+            var borderEffectFactory = Window.Current.Compositor.CreateEffectFactory(blend);
+            var borderEffectBrush = borderEffectFactory.CreateBrush();
+            borderEffectBrush.SetSourceParameter("Foreground", brush);
+            borderEffectBrush.SetSourceParameter("Background", radial); // compositor.CreateColorBrush(Color.FromArgb(80, 0x00, 0x00, 0x00)));
+
+            CompositionMaskBrush maskBrush = compositor.CreateMaskBrush();
+            maskBrush.Source = borderEffectBrush; // Set source to content that is to be masked 
+            maskBrush.Mask = surfaceBrush; // Set mask to content that is the opacity mask 
+
+            var visual = compositor.CreateSpriteVisual();
+            visual.Size = new Vector2(1000, 320);
+            visual.Offset = new Vector3(0, 0, 0);
+            visual.Brush = maskBrush;
+
+            ElementCompositionPreview.SetElementChildVisual(HeaderGlow, visual);
+
+            var radial2 = new RadialGradientBrush();
+            //radial.CenterPoint = new Vector2(0.5f, 0.0f);
+            radial2.Center = new Point(0.5f, 0.3f);
+            radial2.RadiusX = 0.4;
+            radial2.RadiusY = 0.6;
+            radial2.GradientStops.Add(new GradientStop { Color = Color.FromArgb(50, 255, 255, 255) });
+            radial2.GradientStops.Add(new GradientStop { Color = Color.FromArgb(0, 255, 255, 255), Offset = 1 });
+
+            HeaderGlow.Background = radial2;
+        }
+
+        private ElementTheme _actualTheme;
+        private bool _filledIcons = true;
+
+        private void UpdateIcons(Chat chat, bool filled)
+        {
+            if (_filledIcons == filled)
+            {
+                return;
+            }
+
+            _filledIcons = filled;
+
+            if (filled)
+            {
+                OpenChat.Glyph = Icons.ChatEmptyFilled;
+                Call.Glyph = Icons.CallFilled;
+                VideoChat.Glyph = Icons.VideoChatFilled;
+                VideoCall.Glyph = Icons.VideoFilled;
+                Search.Glyph = Icons.SearchFilled;
+                Edit.Glyph = Icons.EditFilled;
+                Join.Glyph = Icons.ArrowEnterFilled;
+                Leave.Glyph = Icons.ArrowExitFilled;
+                Menu.Glyph = Icons.MoreHorizontalFilled;
+            }
+            else
+            {
+                OpenChat.Glyph = Icons.ChatEmpty;
+                Call.Glyph = Icons.Call;
+                VideoChat.Glyph = Icons.VideoChat;
+                VideoCall.Glyph = Icons.Video;
+                Search.Glyph = Icons.Search;
+                Edit.Glyph = Icons.Edit;
+                Join.Glyph = Icons.ArrowEnter;
+                Leave.Glyph = Icons.ArrowExit;
+                Menu.Glyph = Icons.MoreHorizontal;
+            }
+
+            UpdateChatNotificationSettings(chat);
+        }
 
         public void UpdateChat(Chat chat)
         {
@@ -165,10 +570,30 @@ namespace Telegram.Controls
 
             UpdateChatTitle(chat);
             UpdateChatPhoto(chat);
+            UpdateChatEmojiStatus(chat);
+            UpdateChatAccentColors(chat);
 
             UpdateChatActiveStories(chat);
 
             UpdateChatNotificationSettings(chat);
+
+            if (SettingsService.Current.Diagnostics.ShowIds)
+            {
+                ChatId.Visibility = Visibility.Visible;
+
+                if (chat.Type is ChatTypePrivate privata)
+                {
+                    ChatId.Content = privata.UserId;
+                }
+                else
+                {
+                    ChatId.Content = chat.Id;
+                }
+            }
+            else
+            {
+                ChatId.Visibility = Visibility.Collapsed;
+            }
         }
 
         public void UpdateChatTitle(Chat chat)
@@ -198,6 +623,11 @@ namespace Telegram.Controls
             }
         }
 
+        public void UpdateChatEmojiStatus(Chat chat)
+        {
+            Identity.SetStatus(ViewModel.ClientService, chat);
+        }
+
         public void UpdateChatActiveStories(Chat chat)
         {
             Segments.SetChat(ViewModel.ClientService, chat, 140);
@@ -207,14 +637,14 @@ namespace Telegram.Controls
         {
             var unmuted = ViewModel.ClientService.Notifications.GetMutedFor(chat) == 0;
             Notifications.Content = unmuted ? Strings.ChatsMute : Strings.ChatsUnmute;
-            Notifications.Glyph = unmuted ? Icons.Alert : Icons.AlertOff;
+            Notifications.Glyph = unmuted
+                ? (_filledIcons ? Icons.AlertFilled : Icons.Alert)
+                : (_filledIcons ? Icons.AlertOffFilled : Icons.AlertOff);
         }
 
         public void UpdateUser(Chat chat, User user, bool secret)
         {
-            Subtitle.Text = LastSeenConverter.GetLabel(user, true);
-
-            Identity.SetStatus(ViewModel.ClientService, user);
+            UpdateUserStatus(chat, user);
 
             UserPhone.Badge = PhoneNumber.Format(user.PhoneNumber);
             UserPhone.Visibility = string.IsNullOrEmpty(user.PhoneNumber) ? Visibility.Collapsed : Visibility.Visible;
@@ -271,6 +701,7 @@ namespace Telegram.Controls
             // Unused:
             Location.Visibility = Visibility.Collapsed;
 
+            VideoChat.Visibility = Visibility.Collapsed;
             Join.Visibility = Visibility.Collapsed;
             Leave.Visibility = Visibility.Collapsed;
 
@@ -302,7 +733,6 @@ namespace Telegram.Controls
             {
                 Call.Visibility = Visibility.Visible;
                 Call.Content = Strings.Call;
-                Call.Glyph = Icons.Phone;
                 VideoCall.Visibility = fullInfo.CanBeCalled && fullInfo.SupportsVideoCalls ? Visibility.Visible : Visibility.Collapsed;
                 Search.Visibility = fullInfo.CanBeCalled && fullInfo.SupportsVideoCalls ? Visibility.Collapsed : Visibility.Visible;
                 Grid.SetColumn(Search, 2);
@@ -312,6 +742,18 @@ namespace Telegram.Controls
         public void UpdateUserStatus(Chat chat, User user)
         {
             Subtitle.Text = LastSeenConverter.GetLabel(user, true);
+
+            var when = user.Status switch
+            {
+                UserStatusLastMonth lastMonth => lastMonth.ByMyPrivacySettings,
+                UserStatusLastWeek lastWeek => lastWeek.ByMyPrivacySettings,
+                UserStatusRecently recently => recently.ByMyPrivacySettings,
+                _ => false
+            };
+
+            SubtitleWhen.Visibility = when
+                ? Visibility.Visible
+                : Visibility.Collapsed;
         }
 
 
@@ -340,10 +782,9 @@ namespace Telegram.Controls
         public void UpdateBasicGroup(Chat chat, BasicGroup group)
         {
             Subtitle.Text = Locale.Declension(Strings.R.Members, group.MemberCount);
+            SubtitleWhen.Visibility = Visibility.Collapsed;
 
             Description.Content = Strings.DescriptionPlaceholder;
-
-            Identity.ClearStatus();
 
             UserPhone.Visibility = Visibility.Collapsed;
             Location.Visibility = Visibility.Collapsed;
@@ -379,23 +820,21 @@ namespace Telegram.Controls
 
             OpenChat.Content = Strings.VoipGroupOpenGroup;
 
-            // Unused:
             if (chat.VideoChat.GroupCallId != 0 || group.CanManageVideoChats())
             {
-                Call.Visibility = Visibility.Visible;
-                Call.Content = Strings.VoipGroupVoiceChat;
-                Call.Glyph = Icons.VideoChat;
-
+                VideoChat.Visibility = Visibility.Visible;
                 Search.Visibility = Visibility.Collapsed;
             }
             else
             {
-                Call.Visibility = Visibility.Collapsed;
-
+                VideoChat.Visibility = Visibility.Collapsed;
                 Search.Visibility = Visibility.Visible;
+
                 Grid.SetColumn(Search, 1);
             }
 
+            // Unused:
+            Call.Visibility = Visibility.Collapsed;
             VideoCall.Visibility = Visibility.Collapsed;
 
             AnonymousNumber.Visibility = Visibility.Collapsed;
@@ -405,7 +844,14 @@ namespace Telegram.Controls
         public void UpdateBasicGroupFullInfo(Chat chat, BasicGroup group, BasicGroupFullInfo fullInfo)
         {
             GetEntities(fullInfo.Description);
-            Description.Visibility = string.IsNullOrEmpty(fullInfo.Description) ? Visibility.Collapsed : Visibility.Visible;
+
+            Description.Visibility = string.IsNullOrEmpty(fullInfo.Description)
+                ? Visibility.Collapsed
+                : Visibility.Visible;
+
+            InfoPanel.Visibility = Description.Visibility == Visibility.Visible || ChatId.Visibility == Visibility.Visible
+                ? Visibility.Visible
+                : Visibility.Collapsed;
         }
 
 
@@ -415,15 +861,15 @@ namespace Telegram.Controls
             if (ViewModel.Topic != null)
             {
                 Subtitle.Text = string.Format(Strings.TopicProfileStatus, chat.Title);
+                SubtitleWhen.Visibility = Visibility.Collapsed;
             }
             else
             {
                 Subtitle.Text = Locale.Declension(group.IsChannel ? Strings.R.Subscribers : Strings.R.Members, group.MemberCount);
+                SubtitleWhen.Visibility = Visibility.Collapsed;
             }
 
             Description.Content = Strings.DescriptionPlaceholder;
-
-            Identity.SetStatus(group);
 
             if (group.HasActiveUsername(out string username))
             {
@@ -448,20 +894,18 @@ namespace Telegram.Controls
 
             if (chat.VideoChat.GroupCallId != 0 || group.CanManageVideoChats())
             {
-                Call.Visibility = Visibility.Visible;
-                Call.Content = Strings.VoipGroupVoiceChat;
-                Call.Glyph = Icons.VideoChat;
-
+                VideoChat.Visibility = Visibility.Visible;
                 Search.Visibility = Visibility.Collapsed;
             }
             else
             {
-                Call.Visibility = Visibility.Collapsed;
-
+                VideoChat.Visibility = Visibility.Collapsed;
                 Search.Visibility = Visibility.Visible;
+
                 Grid.SetColumn(Search, 1);
             }
 
+            Call.Visibility = Visibility.Collapsed;
             VideoCall.Visibility = Visibility.Collapsed;
 
             if (group.Status is ChatMemberStatusCreator or ChatMemberStatusAdministrator)
@@ -506,10 +950,12 @@ namespace Telegram.Controls
             if (ViewModel.Topic != null)
             {
                 Subtitle.Text = string.Format(Strings.TopicProfileStatus, chat.Title);
+                SubtitleWhen.Visibility = Visibility.Collapsed;
             }
             else
             {
                 Subtitle.Text = Locale.Declension(group.IsChannel ? Strings.R.Subscribers : Strings.R.Members, fullInfo.MemberCount);
+                SubtitleWhen.Visibility = Visibility.Collapsed;
             }
 
             GetEntities(fullInfo.Description);
@@ -740,23 +1186,19 @@ namespace Telegram.Controls
                 if (fullInfo != null && fullInfo.CanGetStatistics)
                 {
                     flyout.CreateFlyoutItem(ViewModel.OpenStatistics, Strings.Statistics, Icons.DataUsage);
-                }
 
-                if (super.IsChannel && (supergroup.Status is ChatMemberStatusCreator || supergroup.Status is ChatMemberStatusAdministrator))
-                {
-                    flyout.CreateFlyoutItem(ViewModel.OpenBoosts, Strings.Boosts, Icons.Boosts);
-
-                    if (supergroup.CanEditStories())
+                    if (super.IsChannel)
                     {
-                        flyout.CreateFlyoutItem(ViewModel.OpenArchivedStories, Strings.ArchivedStories, Icons.Archive);
+                        flyout.CreateFlyoutItem(ViewModel.OpenBoosts, Strings.Boosts, Icons.Boosts);
                     }
                 }
 
-                if (!super.IsChannel)
+                if (super.IsChannel && supergroup.CanEditStories())
                 {
-                    flyout.CreateFlyoutItem(ViewModel.OpenMembers, Strings.SearchMembers, Icons.Search);
+                    flyout.CreateFlyoutItem(ViewModel.OpenArchivedStories, Strings.ArchivedStories, Icons.Archive);
                 }
-                else if (supergroup.HasLinkedChat)
+
+                if (super.IsChannel && supergroup.HasLinkedChat)
                 {
                     flyout.CreateFlyoutItem(ViewModel.Discuss, Strings.ViewDiscussion, Icons.ChatEmpty);
                 }
@@ -773,9 +1215,11 @@ namespace Telegram.Controls
 
             //flyout.CreateFlyoutItem(null, Strings.AddShortcut, Icons.Pin);
 
+            MenuTarget.RequestedTheme = ActualTheme;
+
             if (flyout.Items.Count > 0)
             {
-                flyout.ShowAt(sender as Button, FlyoutPlacementMode.BottomEdgeAlignedRight);
+                flyout.ShowAt(MenuTarget, FlyoutPlacementMode.BottomEdgeAlignedRight);
             }
         }
 
@@ -864,7 +1308,7 @@ namespace Telegram.Controls
                     {
                         data = textUrl.Url;
                         MessageHelper.SetEntityData(hyperlink, textUrl.Url);
-                        ToolTipService.SetToolTip(hyperlink, textUrl.Url);
+                        Extensions.SetToolTip(hyperlink, textUrl.Url);
                     }
                     else if (entity.Type is TextEntityTypeMentionName mentionName)
                     {
@@ -963,7 +1407,9 @@ namespace Telegram.Controls
                     toggle.Foreground = BootStrapper.Current.Resources["DangerButtonBackground"] as Brush;
                 }
 
-                flyout.ShowAt(sender as DependencyObject, FlyoutPlacementMode.Bottom);
+                NotificationsTarget.RequestedTheme = ActualTheme;
+
+                flyout.ShowAt(NotificationsTarget, FlyoutPlacementMode.Bottom);
             }
         }
     }

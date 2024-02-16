@@ -21,6 +21,7 @@
         <GridView x:Name="List"
                   ItemsSource="{x:Bind ConvertItems(ViewModel.Items), Mode=OneWay}"
                   common:FluidGridView.OrientationOnly="False"
+                  common:FluidGridView.Padding="0,0,2,0"
                   ChoosingItemContainer="OnChoosingItemContainer"
                   ContainerContentChanging="OnContainerContentChanging"
                   IsItemClickEnabled="True"
@@ -29,8 +30,7 @@
                   Padding="2,0,0,0"
                   Grid.Row="1">
             <common:FluidGridView.Triggers>
-                <common:FluidGridViewTrigger RowsOrColumns="3"
-                                             Margin="2" />
+                <common:FluidGridViewTrigger RowsOrColumns="3" />
             </common:FluidGridView.Triggers>
             <GridView.Header>
                 <controls:EmojiSearchBox x:Name="SearchField"

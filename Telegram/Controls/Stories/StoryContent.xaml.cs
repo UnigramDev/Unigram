@@ -1,5 +1,10 @@
-﻿using LibVLCSharp.Shared;
-using LinqToVisualTree;
+﻿//
+// Copyright Fela Ameghino 2015-2024
+//
+// Distributed under the GNU General Public License v3.0. (See accompanying
+// file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
+//
+using LibVLCSharp.Shared;
 using Microsoft.Graphics.Canvas;
 using Microsoft.Graphics.Canvas.Geometry;
 using Microsoft.UI.Xaml.Controls;
@@ -7,15 +12,12 @@ using System;
 using System.Diagnostics;
 using System.Linq;
 using System.Numerics;
-using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 using Telegram.Common;
 using Telegram.Controls.Media;
 using Telegram.Controls.Messages;
 using Telegram.Streams;
 using Telegram.Td.Api;
 using Telegram.ViewModels.Stories;
-using Windows.Storage;
 using Windows.UI;
 using Windows.UI.Composition;
 using Windows.UI.Xaml;
@@ -23,6 +25,7 @@ using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Hosting;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
+using Windows.UI.Xaml.Media.Imaging;
 using Windows.UI.Xaml.Shapes;
 using Point = Windows.Foundation.Point;
 
@@ -46,17 +49,11 @@ namespace Telegram.Controls.Stories
 
     public sealed partial class StoryContent : UserControl
     {
-        private readonly Windows.System.DispatcherQueue _dispatcherQueue;
-        private readonly LifoActionWorker _playbackQueue;
-
         private volatile bool _unloaded;
 
         public StoryContent()
         {
             InitializeComponent();
-
-            _dispatcherQueue = Windows.System.DispatcherQueue.GetForCurrentThread();
-            _playbackQueue = new LifoActionWorker();
 
             _texture = Texture1;
 
@@ -81,26 +78,14 @@ namespace Telegram.Controls.Stories
             _unloaded = true;
             Logger.Info();
 
-            Task.Run(() =>
+            if (_player != null)
             {
-                if (_player != null)
-                {
-                    _player.Stop();
-                    _player.Vout -= OnVout;
-                    _player.Buffering -= OnBuffering;
-                    _player.EndReached -= OnEndReached;
-                    //_player.Stopped -= OnStopped;
-
-                    _player.Dispose();
-                    _player = null;
-                }
-
-                _library?.Dispose();
-                _library = null;
-
-                _mediaStream?.Dispose();
-                _mediaStream = null;
-            });
+                _player.ESSelected -= OnESSelected;
+                _player.Vout -= OnVout;
+                _player.Buffering -= OnBuffering;
+                _player.EndReached -= OnEndReached;
+                _player.Close();
+            }
         }
 
         private void CollapseCaption()
@@ -117,7 +102,7 @@ namespace Telegram.Controls.Stories
 
         private void OnSizeChanged(object sender, SizeChangedEventArgs e)
         {
-            var root = ElementCompositionPreview.GetElementVisual(Content);
+            var root = ElementComposition.GetElementVisual(Content);
             var compositor = root.Compositor;
 
             var rect1 = CanvasGeometry.CreateRoundedRectangle(null, 0, 0, ActualSize.X, ActualSize.Y, _open ? 8 : 8 * 2.5f, _open ? 8 : 8 * 2.5f);
@@ -154,6 +139,8 @@ namespace Telegram.Controls.Stories
 
         public void Update(ActiveStoriesViewModel activeStories, bool open, int index)
         {
+            Logger.Info();
+
             _viewModel = activeStories;
             _index = index;
 
@@ -236,13 +223,13 @@ namespace Telegram.Controls.Stories
 
             Canvas.SetZIndex(ActiveRoot, open ? 1 : 0);
 
-            var root = ElementCompositionPreview.GetElementVisual(Content);
-            var mini = ElementCompositionPreview.GetElementVisual(MiniInside);
+            var root = ElementComposition.GetElementVisual(Content);
+            var mini = ElementComposition.GetElementVisual(MiniInside);
 
-            var inactive = ElementCompositionPreview.GetElementVisual(InactiveRoot);
-            var active = ElementCompositionPreview.GetElementVisual(ActiveRoot);
+            var inactive = ElementComposition.GetElementVisual(InactiveRoot);
+            var active = ElementComposition.GetElementVisual(ActiveRoot);
 
-            var visual = ElementCompositionPreview.GetElementVisual(MiniInside);
+            var visual = ElementComposition.GetElementVisual(MiniInside);
             visual.CenterPoint = new Vector3(MiniInside.ActualSize / 2, 0);
 
             mini.Opacity = 1;
@@ -261,7 +248,7 @@ namespace Telegram.Controls.Stories
             var clip1 = compositor.CreateGeometricClip(geometry1);
             root.Clip = clip1;
 
-            if (story == null)
+            if (story == null || _unloaded)
             {
                 return;
             }
@@ -284,6 +271,15 @@ namespace Telegram.Controls.Stories
 
             _open = open;
             _storyId = story.StoryId;
+        }
+
+        public void UpdateQuality()
+        {
+            var story = ViewModel?.SelectedItem;
+            if (story != null)
+            {
+                Activate(story);
+            }
         }
 
         private void Update(StoryViewModel story)
@@ -311,40 +307,42 @@ namespace Telegram.Controls.Stories
                     ? Visibility.Collapsed
                     : Visibility.Visible;
 
-            if (story.Content is StoryContentPhoto photo)
+            if (story.Content is StoryContentPhoto photoContent)
             {
-                var file = photo.Photo.GetBig();
+                var file = photoContent.Photo.GetBig();
                 if (file != null)
                 {
                     UpdatePhoto(story, file.Photo, true);
                 }
 
-                var thumbnail = photo.Photo.GetSmall();
+                var thumbnail = photoContent.Photo.GetSmall();
                 if (thumbnail != null /*&& (file == null || !file.Photo.Local.IsDownloadingCompleted)*/)
                 {
-                    UpdateThumbnail(story, thumbnail.Photo, photo.Photo.Minithumbnail, true);
+                    UpdateThumbnail(story, thumbnail.Photo, photoContent.Photo.Minithumbnail, true);
                 }
 
                 Mute.Visibility = Visibility.Collapsed;
                 MutePlaceholder.Visibility = Visibility.Collapsed;
             }
-            else if (story.Content is StoryContentVideo video)
+            else if (story.Content is StoryContentVideo videoContent)
             {
-                var thumbnail = video.Video.Thumbnail;
+                var video = SelectVideoFile(videoContent);
+
+                var thumbnail = video.Thumbnail;
                 if (thumbnail != null /*&& (file == null || !file.Photo.Local.IsDownloadingCompleted)*/)
                 {
-                    UpdateThumbnail(story, thumbnail.File, video.Video.Minithumbnail, true);
+                    UpdateThumbnail(story, thumbnail.File, video.Minithumbnail, true);
                 }
 
-                UpdateVideo(story, /*video.AlternativeVideo?.Video ??*/ video.Video.Video, true);
+                UpdateVideo(story, /*video.AlternativeVideo?.Video ??*/ video.Video, true);
 
                 Mute.Visibility = Visibility.Visible;
-                MutePlaceholder.Visibility = video.Video.IsAnimation
+                MutePlaceholder.Visibility = video.IsAnimation
                     ? Visibility.Visible
                     : Visibility.Collapsed;
 
-                Mute.IsEnabled = !video.Video.IsAnimation;
-                Mute.IsChecked = !video.Video.IsAnimation && !_viewModel.Settings.VolumeMuted;
+                Mute.IsEnabled = !video.IsAnimation;
+                Mute.IsChecked = !video.IsAnimation && !_viewModel.Settings.VolumeMuted;
             }
 
             if (string.IsNullOrEmpty(story.Caption?.Text))
@@ -551,10 +549,17 @@ namespace Telegram.Controls.Stories
         {
             if (sender is HyperlinkButton element && element.Tag is StoryArea area)
             {
+                TeachingTip toast = null;
+
                 if (area.Type is StoryAreaTypeLocation or StoryAreaTypeVenue)
                 {
-                    var window = element.Ancestors<StoriesWindow>().FirstOrDefault();
-                    window?.ShowTeachingTip(element.Content as Border, Strings.StoryViewLocation, TeachingTipPlacementMode.Top);
+                    var window = element.GetParent<StoriesWindow>();
+                    toast = window?.ShowTeachingTip(element.Content as Border, Strings.StoryViewLocation, TeachingTipPlacementMode.Top);
+                }
+                else if (area.Type is StoryAreaTypeMessage)
+                {
+                    var window = element.GetParent<StoriesWindow>();
+                    toast = window?.ShowTeachingTip(element.Content as Border, Strings.StoryViewMessage, TeachingTipPlacementMode.Top);
                 }
             }
         }
@@ -568,13 +573,13 @@ namespace Telegram.Controls.Stories
 
             Canvas.SetZIndex(ActiveRoot, to == 3 ? 1 : 0);
 
-            var root = ElementCompositionPreview.GetElementVisual(Content);
-            var mini = ElementCompositionPreview.GetElementVisual(MiniInside);
+            var root = ElementComposition.GetElementVisual(Content);
+            var mini = ElementComposition.GetElementVisual(MiniInside);
 
-            var inactive = ElementCompositionPreview.GetElementVisual(InactiveRoot);
-            var active = ElementCompositionPreview.GetElementVisual(ActiveRoot);
+            var inactive = ElementComposition.GetElementVisual(InactiveRoot);
+            var active = ElementComposition.GetElementVisual(ActiveRoot);
 
-            var visual = ElementCompositionPreview.GetElementVisual(MiniInside);
+            var visual = ElementComposition.GetElementVisual(MiniInside);
             visual.CenterPoint = new Vector3(MiniInside.ActualSize / 2, 0);
 
             mini.Opacity = 1;
@@ -627,7 +632,7 @@ namespace Telegram.Controls.Stories
         {
             if (_player != null && !_unloaded && stream != null)
             {
-                _player.Play(new LibVLCSharp.Shared.Media(_library, stream));
+                _player.Play(stream);
             }
         }
 
@@ -635,21 +640,21 @@ namespace Telegram.Controls.Stories
         {
             CollapseCaption();
 
-            if (story.Content is StoryContentVideo video)
+            if (story.Content is StoryContentVideo videoContent && !_unloaded)
             {
-                Progress.Update(_viewModel.Items.IndexOf(_viewModel.SelectedItem), _viewModel.Items.Count, video.Video.Duration);
+                var video = SelectVideoFile(videoContent);
+                var stream = new RemoteFileStream(story.ClientService, video.Video);
 
-                var file = video.Video.Video;
-                var stream = new RemoteFileStream(story.ClientService, file);
+                Progress.Update(_viewModel.Items.IndexOf(_viewModel.SelectedItem), _viewModel.Items.Count, video.Duration);
 
                 if (_player != null)
                 {
                     _mediaStream = stream;
-                    _playbackQueue.Enqueue(() => Play(_mediaStream));
+                    Play(_mediaStream);
                 }
                 else if (Video != null)
                 {
-                    if (Video.IsLoaded)
+                    if (Video.IsConnected)
                     {
                         _mediaStream = stream;
                         Video_Initialized(Video, new LibVLCSharp.Platforms.Windows.InitializedEventArgs(Video.SwapChainOptions));
@@ -665,7 +670,7 @@ namespace Telegram.Controls.Stories
                     FindName(nameof(Video));
                 }
             }
-            else if (!_loading)
+            else if (!_loading && !_unloaded)
             {
                 _timer.Stop();
                 _timer.Start();
@@ -675,10 +680,7 @@ namespace Telegram.Controls.Stories
 
         private void Deactivate(StoryViewModel story)
         {
-            if (_player != null)
-            {
-                _playbackQueue.Enqueue(_player.Stop);
-            }
+            _player?.Stop();
 
             //UnloadVideo();
             CollapseCaption();
@@ -718,7 +720,17 @@ namespace Telegram.Controls.Stories
             UpdateVideo(_viewModel.SelectedItem, file, false);
         }
 
-        private async void UpdateThumbnail(StoryViewModel story, File file, Minithumbnail minithumbnail, bool download)
+        private StoryVideo SelectVideoFile(StoryContentVideo video)
+        {
+            //if (video.AlternativeVideo == null || (SettingsService.Current.Playback.HighQuality && _viewModel.IsPremium))
+            {
+                return video.Video;
+            }
+
+            return video.AlternativeVideo;
+        }
+
+        private void UpdateThumbnail(StoryViewModel story, File file, Minithumbnail minithumbnail, bool download)
         {
             if (file.Id == _thumbnailId && download)
             {
@@ -727,7 +739,7 @@ namespace Telegram.Controls.Stories
 
             _thumbnailId = file.Id;
 
-            ImageSource source = null;
+            BitmapImage source = null;
             ImageBrush brush;
 
             if (LayoutRoot.Background is ImageBrush existing)
@@ -750,7 +762,8 @@ namespace Telegram.Controls.Stories
             {
                 if (file.Local.IsDownloadingCompleted)
                 {
-                    source = await PlaceholderHelper.GetBlurredAsync(file.Local.Path, 3);
+                    source = new BitmapImage();
+                    PlaceholderHelper.GetBlurred(source, file.Local.Path, 3);
                 }
                 else
                 {
@@ -766,13 +779,15 @@ namespace Telegram.Controls.Stories
 
                     if (minithumbnail != null)
                     {
-                        source = await PlaceholderHelper.GetBlurredAsync(minithumbnail.Data, 3);
+                        source = new BitmapImage();
+                        PlaceholderHelper.GetBlurred(source, minithumbnail.Data, 3);
                     }
                 }
             }
             else if (minithumbnail != null)
             {
-                source = await PlaceholderHelper.GetBlurredAsync(minithumbnail.Data, 3);
+                source = new BitmapImage();
+                PlaceholderHelper.GetBlurred(source, minithumbnail.Data, 3);
             }
 
             brush.ImageSource = source;
@@ -790,10 +805,7 @@ namespace Telegram.Controls.Stories
             _fileId = file.Id;
             Logger.Info();
 
-            if (_player != null)
-            {
-                _playbackQueue.Enqueue(_player.Stop);
-            }
+            _player?.Stop();
 
             if (_type == StoryType.Photo)
             {
@@ -860,7 +872,8 @@ namespace Telegram.Controls.Stories
             //    _mediaStream = null;
             //}
 
-            var video = story.Content as StoryContentVideo;
+            var videoContent = story.Content as StoryContentVideo;
+            var video = SelectVideoFile(videoContent);
 
             //_loading = true;
             //ShowSkeleton();
@@ -873,7 +886,7 @@ namespace Telegram.Controls.Stories
             Canvas.SetZIndex(prev, -1);
 
             // Preloaded?
-            if (file.Local.DownloadedPrefixSize >= video.Video.PreloadPrefixSize)
+            if (file.Local.DownloadedPrefixSize >= video.PreloadPrefixSize)
             {
                 if (_type == StoryType.Photo && Video != null)
                 {
@@ -885,14 +898,14 @@ namespace Telegram.Controls.Stories
                 Video?.Clear();
             }
 
-            story.ClientService.DownloadFile(file.Id, 32, 0, video.Video.PreloadPrefixSize);
+            story.ClientService.DownloadFile(file.Id, 32, 0, video.PreloadPrefixSize);
 
             _type = StoryType.Video;
         }
 
         private void OnPointerPressed(object sender, PointerRoutedEventArgs e)
         {
-            var active = ElementCompositionPreview.GetElementVisual(ActiveRoot);
+            var active = ElementComposition.GetElementVisual(ActiveRoot);
             var opacity = active.Compositor.CreateScalarKeyFrameAnimation();
             opacity.InsertKeyFrame(0, 1);
             opacity.InsertKeyFrame(1, 0);
@@ -904,7 +917,7 @@ namespace Telegram.Controls.Stories
 
         private void OnPointerReleased(object sender, PointerRoutedEventArgs e)
         {
-            var active = ElementCompositionPreview.GetElementVisual(ActiveRoot);
+            var active = ElementComposition.GetElementVisual(ActiveRoot);
             var opacity = active.Compositor.CreateScalarKeyFrameAnimation();
             opacity.InsertKeyFrame(0, 0);
             opacity.InsertKeyFrame(1, 1);
@@ -991,9 +1004,9 @@ namespace Telegram.Controls.Stories
             }
         }
 
-        internal void TryStart(StoryOrigin ciccio, Windows.Foundation.Rect origin, bool show = true)
+        internal void TryStart(StoryOpenOrigin ciccio, Windows.Foundation.Rect origin, bool show = true)
         {
-            var transform = TransformToVisual(Window.Current.Content);
+            var transform = TransformToVisual(null);
             var point = transform.TransformPoint(new Windows.Foundation.Point()).ToVector2();
 
             if (origin.IsEmpty && Window.Current.Content is FrameworkElement root)
@@ -1006,14 +1019,14 @@ namespace Telegram.Controls.Stories
             var relativeX = reoffset.X - (point.X + 8);
             var relativeY = reoffset.Y - (point.Y + 18);
 
-            var photo = ElementCompositionPreview.GetElementVisual(Photo);
-            var layout = ElementCompositionPreview.GetElementVisual(LayoutRoot);
-            var caption = ElementCompositionPreview.GetElementVisual(Caption.Parent as UIElement);
-            var visual = ElementCompositionPreview.GetElementVisual(Content);
-            ElementCompositionPreview.SetIsTranslationEnabled(Caption.Parent as UIElement, true);
+            var photo = ElementComposition.GetElementVisual(Photo);
+            var layout = ElementComposition.GetElementVisual(LayoutRoot);
+            var caption = ElementComposition.GetElementVisual(CaptionPanel);
+            var visual = ElementComposition.GetElementVisual(Content);
+            ElementCompositionPreview.SetIsTranslationEnabled(CaptionPanel, true);
             ElementCompositionPreview.SetIsTranslationEnabled(Content, true);
 
-            if (ciccio == StoryOrigin.ProfilePhoto)
+            if (ciccio == StoryOpenOrigin.ProfilePhoto)
             {
                 visual.Properties.InsertVector3("Translation", new Vector3(relativeX, relativeY, 0));
                 //layout.CenterPoint = new Vector3(8 + 16, 18 + 16, 0);
@@ -1086,7 +1099,7 @@ namespace Telegram.Controls.Stories
                 var rect = compositor.CreateRoundedRectangleGeometry();
                 rect.Size = new Vector2(resize.X, resize.Y);
                 rect.Offset = (ActualSize - rect.Size) / 2;
-                rect.CornerRadius = ciccio == StoryOrigin.Mention ? resize / 2 : new Vector2(4, 4);
+                rect.CornerRadius = ciccio == StoryOpenOrigin.Mention ? resize / 2 : new Vector2(4, 4);
 
                 visual.Clip = compositor.CreateGeometricClip(rect);
 
@@ -1101,7 +1114,7 @@ namespace Telegram.Controls.Stories
                 //offset.Duration = TimeSpan.FromSeconds(5);
 
                 var cornerRadius = compositor.CreateVector2KeyFrameAnimation();
-                cornerRadius.InsertKeyFrame(show ? 0 : 1, ciccio == StoryOrigin.Mention ? resize / 2 : new Vector2(4, 4));
+                cornerRadius.InsertKeyFrame(show ? 0 : 1, ciccio == StoryOpenOrigin.Mention ? resize / 2 : new Vector2(4, 4));
                 cornerRadius.InsertKeyFrame(show ? 1 : 0, new Vector2(8, 8));
                 //cornerRadius.Duration = TimeSpan.FromSeconds(5);
 
@@ -1133,82 +1146,73 @@ namespace Telegram.Controls.Stories
 
         private void Video_Initialized(object sender, LibVLCSharp.Platforms.Windows.InitializedEventArgs e)
         {
-            // Generating plugins cache requires a breakpoint in bank.c#662
-            _library = new LibVLC(e.SwapChainOptions); //"--quiet", "--reset-plugins-cache");
-            //_library.Log += _library_Log;
+            if (_unloaded)
+            {
+                return;
+            }
 
-            _player = new MediaPlayer(_library);
-            _player.EnableHardwareDecoding = true;
+            Logger.Info();
+
+            _player = new AsyncMediaPlayer(e.SwapChainOptions);
             _player.ESSelected += OnESSelected;
             _player.Vout += OnVout;
             _player.Buffering += OnBuffering;
             _player.EndReached += OnEndReached;
-            //_player.Stopped += OnStopped;
-
-            //_player.FileCaching = 1;
 
             if (_mediaStream != null)
             {
-                _playbackQueue.Enqueue(() => Play(_mediaStream));
+                Play(_mediaStream);
             }
         }
 
-        private void OnStopped(object sender, EventArgs e)
+        private void OnVout(AsyncMediaPlayer sender, MediaPlayerVoutEventArgs e)
         {
-            _dispatcherQueue.TryEnqueue(Video.Clear);
+            _loading = false;
+            ElementCompositionPreview.SetElementChildVisual(ActiveRoot, Window.Current.Compositor.CreateSpriteVisual());
+
+            Texture1.Source = null;
+            Texture2.Source = null;
         }
 
-        private void OnVout(object sender, MediaPlayerVoutEventArgs e)
-        {
-            _dispatcherQueue.TryEnqueue(() =>
-            {
-                _loading = false;
-                ElementCompositionPreview.SetElementChildVisual(ActiveRoot, Window.Current.Compositor.CreateSpriteVisual());
-
-                Texture1.Source = null;
-                Texture2.Source = null;
-            });
-        }
-
-        private void OnESSelected(object sender, MediaPlayerESSelectedEventArgs e)
+        private void OnESSelected(AsyncMediaPlayer sender, MediaPlayerESSelectedEventArgs e)
         {
             if (e.Type == TrackType.Video && e.Id != -1)
             {
-                //_dispatcherQueue.TryEnqueue(UpdateStretch);
+                //UpdateStretch();
             }
             else if (e.Type == TrackType.Audio && e.Id != -1)
             {
-                _dispatcherQueue.TryEnqueue(() => _player.Mute = _viewModel.Settings.VolumeMuted);
+                _player.Mute = _viewModel.Settings.VolumeMuted;
             }
         }
 
         private void UpdateStretch()
         {
-            var videoTrack = GetVideoTrack(_player);
-            if (videoTrack is not VideoTrack track)
-            {
-                return;
-            }
+            //var videoTrack = GetVideoTrack(_player);
+            //if (videoTrack is not VideoTrack track)
+            //{
+            //    return;
+            //}
 
-            var trackWidth = track.Width;
-            var trackHeight = track.Height;
+            //var trackWidth = track.Width;
+            //var trackHeight = track.Height;
 
-            if (trackWidth == 0 || trackHeight == 0)
-            {
-                _player.Scale = 0;
-            }
-            else
-            {
-                if (track.SarNum != track.SarDen)
-                {
-                    trackWidth = trackWidth * track.SarNum / track.SarDen;
-                }
+            //if (trackWidth == 0 || trackHeight == 0)
+            //{
+            //    _player.Scale(0);
+            //}
+            //else
+            //{
+            //    if (track.SarNum != track.SarDen)
+            //    {
+            //        trackWidth = trackWidth * track.SarNum / track.SarDen;
+            //    }
 
-                var width = (Video.ActualSize.X * XamlRoot.RasterizationScale) / trackWidth;
-                var height = (Video.ActualSize.Y * XamlRoot.RasterizationScale) / trackHeight;
+            //    var width = (Video.ActualSize.X * XamlRoot.RasterizationScale) / trackWidth;
+            //    var height = (Video.ActualSize.Y * XamlRoot.RasterizationScale) / trackHeight;
 
-                _player.Scale = (float)Math.Max(width, height);
-            }
+            //    _player.Scale((float)Math.Max(width, height));
+            //}
         }
 
         private VideoTrack? GetVideoTrack(MediaPlayer mediaPlayer)
@@ -1240,59 +1244,37 @@ namespace Telegram.Controls.Stories
             }
         }
 
-
-        private static readonly Regex _videoLooking = new("using (.*?) module \"(.*?)\" from (.*?)$", RegexOptions.Compiled);
-        private static readonly object _syncObject = new();
-
-        private void _library_Log(object sender, LogEventArgs e)
+        private void OnEndReached(AsyncMediaPlayer sender, EventArgs e)
         {
-            Debug.WriteLine(e.FormattedLog);
-
-            lock (_syncObject)
-            {
-                var match = _videoLooking.Match(e.FormattedLog);
-                if (match.Success)
-                {
-                    System.IO.File.AppendAllText(ApplicationData.Current.LocalFolder.Path + "\\vlc.txt", string.Format("{2}\n", match.Groups[1].Value, match.Groups[2].Value, match.Groups[3].Value));
-                }
-            }
+            Completed?.Invoke(this, EventArgs.Empty);
         }
 
-        private void OnEndReached(object sender, EventArgs e)
-        {
-            _dispatcherQueue.TryEnqueue(() => Completed?.Invoke(this, EventArgs.Empty));
-        }
-
-        private void OnBuffering(object sender, MediaPlayerBufferingEventArgs e)
+        private void OnBuffering(AsyncMediaPlayer sender, MediaPlayerBufferingEventArgs e)
         {
             //Logger.Debug(e.Cache);
 
-            _dispatcherQueue.TryEnqueue(() =>
+            if (e.Cache == 100 && _loading)
             {
-                if (e.Cache == 100 && _loading)
-                {
-                    _loading = false;
-                    ElementCompositionPreview.SetElementChildVisual(ActiveRoot, Window.Current.Compositor.CreateSpriteVisual());
+                _loading = false;
+                ElementCompositionPreview.SetElementChildVisual(ActiveRoot, Window.Current.Compositor.CreateSpriteVisual());
 
-                    if (_viewModel?.SelectedItem != null && _viewModel.SelectedItem.ChatId != _openedChatId && _viewModel.SelectedItem.StoryId != _openedStoryId)
-                    {
-                        _openedChatId = _viewModel.SelectedItem.ChatId;
-                        _openedStoryId = _viewModel.SelectedItem.StoryId;
-                        _viewModel.ClientService.Send(new OpenStory(_openedChatId, _openedStoryId));
-                    }
-                }
-                else if (e.Cache < 100 && !_loading)
+                if (_viewModel?.SelectedItem != null && _viewModel.SelectedItem.ChatId != _openedChatId && _viewModel.SelectedItem.StoryId != _openedStoryId)
                 {
-                    _loading = true;
-                    ShowSkeleton();
+                    _openedChatId = _viewModel.SelectedItem.ChatId;
+                    _openedStoryId = _viewModel.SelectedItem.StoryId;
+                    _viewModel.ClientService.Send(new OpenStory(_openedChatId, _openedStoryId));
                 }
-            });
+            }
+            else if (e.Cache < 100 && !_loading)
+            {
+                _loading = true;
+                ShowSkeleton();
+            }
         }
 
         private Image _texture;
 
-        private LibVLC _library;
-        private MediaPlayer _player;
+        private AsyncMediaPlayer _player;
 
         private StoryContentPhotoTimer _timer;
         private bool _paused;
@@ -1303,7 +1285,7 @@ namespace Telegram.Controls.Stories
         {
             if (sender is FrameworkElement element)
             {
-                var window = element.Ancestors<StoriesWindow>().FirstOrDefault();
+                var window = element.GetParent<StoriesWindow>();
                 window?.ShowTeachingTip(element, Strings.StoryNoSound, TeachingTipPlacementMode.BottomLeft);
             }
         }
@@ -1340,7 +1322,7 @@ namespace Telegram.Controls.Stories
                     return;
                 }
 
-                var window = element.Ancestors<StoriesWindow>().FirstOrDefault();
+                var window = element.GetParent<StoriesWindow>();
                 window?.ShowTeachingTip(element, message, TeachingTipPlacementMode.BottomLeft);
             }
         }
@@ -1355,7 +1337,7 @@ namespace Telegram.Controls.Stories
             {
                 if (_type == StoryType.Video)
                 {
-                    _playbackQueue.Enqueue(() => _player?.SetPause(true));
+                    _player?.Pause(true);
                 }
                 else
                 {
@@ -1374,7 +1356,7 @@ namespace Telegram.Controls.Stories
             {
                 if (_type == StoryType.Video)
                 {
-                    _playbackQueue.Enqueue(() => _player?.SetPause(false));
+                    _player?.Pause(false);
                 }
                 else
                 {
@@ -1403,7 +1385,7 @@ namespace Telegram.Controls.Stories
 
             if (_player != null)
             {
-                _playbackQueue.Enqueue(() => _player.Mute = _viewModel.Settings.VolumeMuted);
+                _player.Mute = _viewModel.Settings.VolumeMuted;
             }
         }
 
@@ -1436,7 +1418,7 @@ namespace Telegram.Controls.Stories
             //CaptionPanel.ColumnDefinitions[0].MaxWidth = ActualWidth - ShowMore.ActualWidth;
             //CaptionPanel.ColumnDefinitions[1].MinWidth = ShowMore.ActualWidth;
 
-            var visual = ElementCompositionPreview.GetElementVisual(ShowMore);
+            var visual = ElementComposition.GetElementVisual(ShowMore);
             ElementCompositionPreview.SetIsTranslationEnabled(ShowMore, true);
 
             var width = CaptionPanel.ActualSize.X - 24;
@@ -1451,7 +1433,7 @@ namespace Telegram.Controls.Stories
         {
             Overflow.LayoutUpdated -= Overflow_LayoutUpdated;
 
-            var visual = ElementCompositionPreview.GetElementVisual(ShowMore);
+            var visual = ElementComposition.GetElementVisual(ShowMore);
             ElementCompositionPreview.SetIsTranslationEnabled(ShowMore, true);
 
             var width = CaptionPanel.ActualSize.X - 24;
@@ -1474,8 +1456,8 @@ namespace Telegram.Controls.Stories
             var prev = e.PreviousSize.ToVector2();
             var next = e.NewSize.ToVector2();
 
-            var overlay = ElementCompositionPreview.GetElementVisual(CaptionOverlay);
-            var visual = ElementCompositionPreview.GetElementVisual(CaptionPanel);
+            var overlay = ElementComposition.GetElementVisual(CaptionOverlay);
+            var visual = ElementComposition.GetElementVisual(CaptionPanel);
 
             var opacity = visual.Compositor.CreateScalarKeyFrameAnimation();
             opacity.InsertKeyFrame(0, Overflow.MaxLines == 0 ? 0 : 1);
@@ -1491,7 +1473,7 @@ namespace Telegram.Controls.Stories
 
         private void InactivePanel_SizeChanged(object sender, SizeChangedEventArgs e)
         {
-            var visual = ElementCompositionPreview.GetElementVisual(MiniInside);
+            var visual = ElementComposition.GetElementVisual(MiniInside);
             visual.CenterPoint = new Vector3(MiniInside.ActualSize / 2, 0);
         }
 
@@ -1688,8 +1670,6 @@ namespace Telegram.Controls.Stories
 
                 Children.Add(rectangle);
             }
-
-
         }
     }
 }

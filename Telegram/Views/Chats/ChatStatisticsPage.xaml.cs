@@ -1,5 +1,5 @@
 //
-// Copyright Fela Ameghino 2015-2023
+// Copyright Fela Ameghino 2015-2024
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
@@ -65,6 +65,8 @@ namespace Telegram.Views.Chats
             root.Header = data.title;
             border.Children.Clear();
             border.Constraint = data;
+
+            args.Handled = true;
 
             if (args.Phase < 2)
             {
@@ -218,7 +220,7 @@ namespace Telegram.Views.Chats
                     photo.Source = null;
                 }
 
-                button.CommandParameter = counters.Message;
+                button.CommandParameter = counters;
                 button.Command = ViewModel.OpenPostCommand;
             }
             else

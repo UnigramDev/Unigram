@@ -11,12 +11,12 @@
 
 namespace winrt::Telegram::Native::implementation
 {
-    critical_section LanguageIdentification::s_criticalSection;
+    std::mutex LanguageIdentification::s_criticalSection;
     std::unique_ptr<libtextclassifier3::mobile::lang_id::LangId> LanguageIdentification::s_langid{ nullptr };
 
     LangId* LanguageIdentification::Current()
     {
-        auto lock = critical_section::scoped_lock(s_criticalSection);
+        std::lock_guard const guard(s_criticalSection);
 
         if (s_langid == nullptr)
         {

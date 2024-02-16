@@ -9,6 +9,7 @@ using Telegram.Common;
 using Telegram.Controls;
 using Telegram.Converters;
 using Telegram.Native;
+using Telegram.Navigation;
 using Telegram.Services;
 using Telegram.Td;
 using Windows.ApplicationModel;
@@ -16,6 +17,10 @@ using Windows.ApplicationModel.Activation;
 using Windows.Storage;
 using Windows.System;
 using Windows.System.Profile;
+using Windows.UI.Xaml;
+using Windows.UI.Xaml.Automation.Peers;
+using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Media;
 using File = System.IO.File;
 
 namespace Telegram
@@ -56,11 +61,7 @@ namespace Telegram
 
     public class WatchDog
     {
-#if DEBUG
-        private static readonly bool _disabled = true;
-#else
-        private static readonly bool _disabled = false;
-#endif
+        private static readonly bool _disabled = Constants.DEBUG;
 
         private static readonly string _crashLog;
         private static readonly string _reports;
@@ -72,8 +73,6 @@ namespace Telegram
         {
             _crashLog = Path.Combine(ApplicationData.Current.LocalFolder.Path, "crash.log");
             _reports = Path.Combine(ApplicationData.Current.LocalFolder.Path, "Reports");
-
-            Directory.CreateDirectory(_reports);
         }
 
         public static bool HasCrashedInLastSession { get; private set; }
@@ -81,12 +80,33 @@ namespace Telegram
         public static void Initialize()
         {
             NativeUtils.SetFatalErrorCallback(FatalErrorCallback);
-
-#if DEBUG
-            Client.SetLogMessageCallback(5, FatalErrorCallback);
-#else
             Client.SetLogMessageCallback(0, FatalErrorCallback);
-#endif
+
+            BootStrapper.Current.UnhandledException += (s, args) =>
+            {
+                if (args.Exception is LayoutCycleException)
+                {
+                    Logger.Info("LayoutCycleException");
+                    Analytics.TrackEvent("LayoutCycleException");
+                    SettingsService.Current.Diagnostics.LastCrashWasLayoutCycle = true;
+                }
+                else if (args.Exception is NotSupportedException)
+                {
+                    var popups = VisualTreeHelper.GetOpenPopups(Window.Current);
+
+                    foreach (var popup in popups)
+                    {
+                        if (popup.Child is ToolTip tooltip)
+                        {
+                            tooltip.IsOpen = false;
+                            tooltip.IsOpen = true;
+                            tooltip.IsOpen = false;
+                        }
+                    }
+                }
+
+                args.Handled = args.Exception is not LayoutCycleException;
+            };
 
             if (_disabled)
             {
@@ -103,7 +123,7 @@ namespace Telegram
 
             Crashes.CreatingErrorReport += (s, args) =>
             {
-                Track(args.ReportId, args.Exception is not UnmanagedException);
+                Track(args.ReportId, args.Exception);
             };
 
             Crashes.SentErrorReport += (s, args) =>
@@ -169,23 +189,20 @@ namespace Telegram
 
         public static void FatalErrorCallback(string message)
         {
-            Crashes.TrackCrash(new UnmanagedException(message));
+            if (message.Contains("libvlc.dll") || message.Contains("libvlccore.dll"))
+            {
+                Crashes.TrackCrash(new LibVLCSharp.Shared.VLCException(message));
+            }
+            else
+            {
+                Crashes.TrackCrash(new UnmanagedException(message));
+            }
         }
 
         private static void FatalErrorCallback(int verbosityLevel, string message)
         {
             if (verbosityLevel != 0)
             {
-#if DEBUG
-                if (verbosityLevel == 1 && message.Contains("File remote location was changed from"))
-                {
-                    var source = Path.Combine(ApplicationData.Current.LocalFolder.Path, "tdlib_log.txt");
-                    var destination = Path.ChangeExtension(source, ".backup");
-
-                    File.Copy(source, destination, true);
-                }
-#endif
-
                 return;
             }
 
@@ -207,9 +224,18 @@ namespace Telegram
                 && previousExecutionState == ApplicationExecutionState.NotRunning;
         }
 
-        private static void Track(string reportId, bool managed)
+        private static void Track(string reportId, Exception exception)
+        {
+            var report = BuildReport(exception);
+
+            File.WriteAllText(_crashLog, reportId);
+            File.WriteAllText(GetErrorReportPath(reportId), report);
+        }
+
+        public static string BuildReport(Exception exception)
         {
             var version = VersionLabel.GetVersion();
+            var language = LocaleService.Current.Id;
 
             var next = DateTime.Now.ToTimestamp();
             var prev = SettingsService.Current.Diagnostics.LastUpdateTime;
@@ -221,21 +247,41 @@ namespace Telegram
 
             var info =
                 $"Current version: {version}\n" +
+                $"Current language: {language}\n" +
                 $"Memory usage: {memoryUsage}\n" +
                 $"Memory usage level: {MemoryManager.AppMemoryUsageLevel}\n" +
                 $"Memory usage limit: {memoryUsageLimit}\n" +
                 $"Time since last update: {next - prev}s\n" +
-                $"Update count: {count}\n\n";
+                $"Update count: {count}\n" +
+                $"Tabs on the left: {SettingsService.Current.IsLeftTabsEnabled}\n";
+
+            if (WindowContext.Current != null)
+            {
+                var reader = AutomationPeer.ListenerExists(AutomationEvents.LiveRegionChanged);
+                var scaling = (WindowContext.Current.RasterizationScale * 100).ToString("N0");
+                var text = (BootStrapper.Current.TextScaleFactor * 100).ToString("N0");
+                var size = Window.Current.Bounds;
+
+                var ratio = SettingsService.Current.DialogsWidthRatio;
+                var width = MasterDetailPanel.CountDialogsWidthFromRatio(size.Width, ratio);
+
+                info += $"Screen reader: {reader}\n" +
+                    $"Screen scaling: {scaling}%\n" +
+                    $"Text scaling: {text}%\n" +
+                    $"Window size: {size.Width}x{size.Height}\n" +
+                    $"Column width: {ratio} ({width})\n";
+            }
+
+            info += $"HRESULT: 0x{exception.HResult:X4}\n" + "\n";
+            info += Environment.StackTrace + "\n\n";
 
             var dump = Logger.Dump();
-            var payload = info + dump;
-
-            File.WriteAllText(_crashLog, reportId);
-            File.WriteAllText(GetErrorReportPath(reportId), payload);
+            return info + dump;
         }
 
         private static string GetErrorReportPath(string reportId)
         {
+            Directory.CreateDirectory(_reports);
             return Path.Combine(ApplicationData.Current.LocalFolder.Path, _reports, reportId + ".appcenter");
         }
 

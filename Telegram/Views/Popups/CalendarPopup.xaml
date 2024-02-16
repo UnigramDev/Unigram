@@ -9,11 +9,11 @@
                        PrimaryButtonText="OK"
                        SecondaryButtonText="Cancel"
                        PrimaryButtonClick="ContentDialog_PrimaryButtonClick"
-                       SecondaryButtonClick="ContentDialog_SecondaryButtonClick">
+                       SecondaryButtonClick="ContentDialog_SecondaryButtonClick"
+                       Padding="0,6,0,24">
 
     <CalendarView x:Name="View"
                   HorizontalAlignment="Stretch"
                   VerticalAlignment="Top"
-                  BorderThickness="0,0,0,1"
-                  Margin="-24,-18,-24,0" />
+                  BorderThickness="0,0,0,1" />
 </controls:ContentPopup>

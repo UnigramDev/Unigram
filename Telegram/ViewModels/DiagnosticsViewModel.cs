@@ -1,5 +1,5 @@
 //
-// Copyright Fela Ameghino 2015-2023
+// Copyright Fela Ameghino 2015-2024
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
@@ -149,46 +149,6 @@ namespace Telegram.ViewModels
             }
         }
 
-        public bool AllowRightToLeft
-        {
-            get => SettingsService.Current.Diagnostics.AllowRightToLeft;
-            set
-            {
-                SettingsService.Current.Diagnostics.AllowRightToLeft = value;
-                RaisePropertyChanged();
-            }
-        }
-
-        public bool IsPointerOverEnabled
-        {
-            get => SettingsService.Current.Stickers.IsPointerOverEnabled;
-            set
-            {
-                SettingsService.Current.Stickers.IsPointerOverEnabled = value;
-                RaisePropertyChanged();
-            }
-        }
-
-        public bool HidePhoneNumber
-        {
-            get => SettingsService.Current.Diagnostics.HidePhoneNumber;
-            set
-            {
-                SettingsService.Current.Diagnostics.HidePhoneNumber = value;
-                RaisePropertyChanged();
-            }
-        }
-
-        public bool ShowMemoryUsage
-        {
-            get => SettingsService.Current.Diagnostics.ShowMemoryUsage;
-            set
-            {
-                SettingsService.Current.Diagnostics.ShowMemoryUsage = value;
-                RaisePropertyChanged();
-            }
-        }
-
         public bool PreferIpv6
         {
             get => ClientService.Options.PreferIpv6;
@@ -202,16 +162,6 @@ namespace Telegram.ViewModels
         public bool CanUseTestDC => ClientService.AuthorizationState is not AuthorizationStateReady;
 
         public bool IsDatabaseDisabled => Settings.Diagnostics.DisableDatabase;
-
-        public bool LoggerSink
-        {
-            get => SettingsService.Current.Diagnostics.LoggerSink;
-            set
-            {
-                SettingsService.Current.Diagnostics.LoggerSink = value;
-                RaisePropertyChanged();
-            }
-        }
 
         public bool UseTestDC
         {
@@ -254,12 +204,12 @@ namespace Telegram.ViewModels
 
         public int Verbosity
         {
-            get => Array.IndexOf(_verbosityIndexer, Settings.VerbosityLevel);
+            get => Array.IndexOf(_verbosityIndexer, SettingsService.Current.VerbosityLevel);
             set
             {
-                if (value >= 0 && value < _verbosityIndexer.Length && Settings.VerbosityLevel != _verbosityIndexer[value])
+                if (value >= 0 && value < _verbosityIndexer.Length && SettingsService.Current.VerbosityLevel != _verbosityIndexer[value])
                 {
-                    Client.Execute(new SetLogVerbosityLevel(Settings.VerbosityLevel = _verbosityIndexer[value]));
+                    Client.Execute(new SetLogVerbosityLevel(SettingsService.Current.VerbosityLevel = _verbosityIndexer[value]));
                     RaisePropertyChanged();
                 }
             }
@@ -284,6 +234,8 @@ namespace Telegram.ViewModels
             new SettingsOptionItem<int>(4, nameof(VerbosityLevel.Debug)),
             new SettingsOptionItem<int>(5, nameof(VerbosityLevel.Verbose)),
         };
+
+
 
         #region Send logs
 

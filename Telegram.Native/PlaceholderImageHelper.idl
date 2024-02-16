@@ -1,28 +1,14 @@
+import "SurfaceImage.idl";
+
 namespace Telegram.Native
 {
-	enum PlaceholderEntityType
-	{
-		Bold,
-		Italic,
-		Strikethrough,
-		Underline,
-		Code
-	};
-
-	struct PlaceholderEntity
-	{
-		Int32 Offset;
-		Int32 Length;
-		PlaceholderEntityType Type;
-	};
-
 	[default_interface]
 	runtimeclass PlaceholderImageHelper
 	{
 		static PlaceholderImageHelper Current{ get; };
 
 		static void WriteBytes(Windows.Foundation.Collections.IVector<byte> hash, Windows.Storage.Streams.IRandomAccessStream randomAccessStream);
-		static Windows.Storage.Streams.IBuffer DrawWebP(String fileName, Int32 maxWidth, out Windows.Foundation.Size size);
+		static Windows.Storage.Streams.IBuffer DrawWebP(String fileName, Int32 maxWidth, out Int32 pixelWidth, out Int32 pixelHeight);
 
 		void Encode(Windows.Storage.Streams.IBuffer source, Windows.Storage.Streams.IRandomAccessStream destination, Int32 width, Int32 height);
 
@@ -32,9 +18,14 @@ namespace Telegram.Native
 		[default_overload]
 		void DrawThumbnailPlaceholder(String fileName, Single blurAmount, Windows.Storage.Streams.IRandomAccessStream randomAccessStream);
 		void DrawThumbnailPlaceholder(Windows.Foundation.Collections.IVector<byte> bytes, Single blurAmount, Windows.Storage.Streams.IRandomAccessStream randomAccessStream);
+		void DrawThumbnailPlaceholder(Windows.Foundation.Collections.IVector<byte> bytes, Single blurAmount, Windows.Storage.Streams.IBuffer randomAccessStream);
 
-		Windows.Foundation.Numerics.Vector2 ContentEnd(String text, Windows.Foundation.Collections.IVector<PlaceholderEntity> entities, Double fontSize, Double width);
-		Windows.Foundation.Collections.IVector<Windows.Foundation.Rect> LineMetrics(String text, Double fontSize, Double width, Boolean rtl);
+		SurfaceImage Create(Int32 pixelWidth, Int32 pixelHeight);
+		void Invalidate(SurfaceImage imageSource, Windows.Storage.Streams.IBuffer buffer);
+
+		Windows.Foundation.Numerics.Vector2 ContentEnd(String text, Windows.Foundation.Collections.IVector<Telegram.Td.Api.TextEntity> entities, Double fontSize, Double width);
+		Windows.Foundation.Collections.IVector<Windows.Foundation.Rect> LineMetrics(String text, Windows.Foundation.Collections.IVector<Telegram.Td.Api.TextEntity> entities, Double fontSize, Double width, Boolean rtl);
+		Windows.Foundation.Collections.IVector<Windows.Foundation.Rect> RangeMetrics(String text, Int32 offset, Int32 length, Windows.Foundation.Collections.IVector<Telegram.Td.Api.TextEntity> entities, Double fontSize, Double width, Boolean rtl);
 		//Windows.Foundation.Collections.IVector<Windows.Foundation.Rect> EntityMetrics(String text, Windows.Foundation.Collections.IVector<Telegram.Td.Api.TextEntity> entities, Double fontSize, Double width, Boolean rtl);
 	}
 } // namespace Telegram.Native

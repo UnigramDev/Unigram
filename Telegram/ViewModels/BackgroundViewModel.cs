@@ -1,5 +1,5 @@
 //
-// Copyright Fela Ameghino 2015-2023
+// Copyright Fela Ameghino 2015-2024
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
@@ -196,7 +196,7 @@ namespace Telegram.ViewModels
 
             if (_item.Type is BackgroundTypePattern or BackgroundTypeFill)
             {
-                var response = await ClientService.SendAsync(new GetBackgrounds());
+                var response = await ClientService.SendAsync(new GetInstalledBackgrounds());
                 if (response is Backgrounds backgrounds)
                 {
                     var patterns = backgrounds.BackgroundsValue.Where(x => x.Type is BackgroundTypePattern)
@@ -217,9 +217,7 @@ namespace Telegram.ViewModels
             }
         }
 
-        public string PrimaryButtonText => _chatId.HasValue
-            ? Strings.ApplyBackgroundForThisChat
-            : Strings.ApplyBackgroundForAllChats;
+        public long ChatId => _chatId ?? 0;
 
         public MvxObservableCollection<PatternInfo> Patterns { get; private set; }
 
@@ -475,7 +473,7 @@ namespace Telegram.ViewModels
             }
         }
 
-        public async void Done()
+        public async void Done(bool onlySelf)
         {
             var background = await GetBackgroundAsync();
             if (background != null)
@@ -484,16 +482,16 @@ namespace Telegram.ViewModels
                 {
                     if (_messageId is long messageId && background.Type.GetType() == _background?.Type.GetType())
                     {
-                        ClientService.Send(new SetChatBackground(chatId, new InputBackgroundPrevious(messageId), background.Type, 0));
+                        ClientService.Send(new SetChatBackground(chatId, new InputBackgroundPrevious(messageId), background.Type, 30, onlySelf));
                     }
                     else
                     {
-                        ClientService.Send(new SetChatBackground(chatId, background.Background, background.Type, 0));
+                        ClientService.Send(new SetChatBackground(chatId, background.Background, background.Type, 30, onlySelf));
                     }
                 }
                 else
                 {
-                    ClientService.Send(new SetBackground(background.Background, background.Type, background.ForDarkTheme));
+                    ClientService.Send(new SetDefaultBackground(background.Background, background.Type, background.ForDarkTheme));
                 }
             }
         }

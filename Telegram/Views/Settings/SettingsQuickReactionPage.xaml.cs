@@ -1,5 +1,5 @@
 //
-// Copyright Fela Ameghino 2015-2023
+// Copyright Fela Ameghino 2015-2024
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
@@ -56,7 +56,7 @@ namespace Telegram.Views.Settings
                     using (Icon.BeginBatchUpdate())
                     {
                         Icon.FrameSize = new Size(32, 32);
-                        Icon.Source = new DelayedFileSource(ViewModel.ClientService, emojiReaction.CenterAnimation.StickerValue);
+                        Icon.Source = new DelayedFileSource(ViewModel.ClientService, emojiReaction.CenterAnimation);
                     }
                 }
             }
@@ -75,7 +75,7 @@ namespace Telegram.Views.Settings
 
         private void Reaction_Click(object sender, RoutedEventArgs e)
         {
-            EmojiMenuFlyout.ShowAt(ViewModel.ClientService, EmojiDrawerMode.Reactions, IconPanel, HorizontalAlignment.Right);
+            EmojiMenuFlyout.ShowAt(ViewModel.ClientService, EmojiDrawerMode.Reactions, IconPanel, EmojiFlyoutAlignment.TopRight);
         }
     }
 }

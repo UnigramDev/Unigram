@@ -1,5 +1,5 @@
 //
-// Copyright Fela Ameghino 2015-2023
+// Copyright Fela Ameghino 2015-2024
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
@@ -21,7 +21,6 @@ using Telegram.Views.Settings;
 using Windows.Foundation;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Data;
-using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 
 namespace Telegram.ViewModels.Settings
@@ -170,7 +169,7 @@ namespace Telegram.ViewModels.Settings
                     var union = await ClientService.SendAsync(new GetRecentStickers(_type == StickersType.Masks));
                     if (union is Stickers recents && recents.StickersValue.Count > 0)
                     {
-                        BeginOnUIThread(() => Items.ReplaceDiff(new[] { new StickerSetInfo(0, Strings.RecentStickers, "tg/recentlyUsed", null, new ClosedVectorPath[0], false, false, false, null, StickerType, false, recents.StickersValue.Count, recents.StickersValue) }.Union(stickerSets.Sets)));
+                        BeginOnUIThread(() => Items.ReplaceDiff(new[] { new StickerSetInfo(0, Strings.RecentStickers, "tg/recentlyUsed", null, Array.Empty<ClosedVectorPath>(), false, false, false, null, StickerType, false, false, false, recents.StickersValue.Count, recents.StickersValue) }.Union(stickerSets.Sets)));
                     }
                     else
                     {
@@ -214,7 +213,7 @@ namespace Telegram.ViewModels.Settings
                     {
                         if (resultRecent is Stickers recents && recents.StickersValue.Count > 0)
                         {
-                            BeginOnUIThread(() => Items.ReplaceDiff(new[] { new StickerSetInfo(0, Strings.RecentStickers, "tg/recentlyUsed", null, new ClosedVectorPath[0], false, false, false, null, StickerType, false, recents.StickersValue.Count, recents.StickersValue) }.Union(stickerSets.Sets)));
+                            BeginOnUIThread(() => Items.ReplaceDiff(new[] { new StickerSetInfo(0, Strings.RecentStickers, "tg/recentlyUsed", null, Array.Empty<ClosedVectorPath>(), false, false, false, null, StickerType, false, false, false, recents.StickersValue.Count, recents.StickersValue) }.Union(stickerSets.Sets)));
                         }
                         else
                         {
@@ -289,18 +288,8 @@ namespace Telegram.ViewModels.Settings
             {
                 if (value >= 0 && value < _emojiStyleIndexer.Length && Settings.Appearance.EmojiSet != _emojiStyleIndexer[value])
                 {
-                    switch (_emojiStyleIndexer[value])
-                    {
-                        case "microsoft":
-                            Theme.Current["EmojiThemeFontFamily"] = new FontFamily($"XamlAutoFontFamily");
-                            break;
-                        case "apple":
-                        default:
-                            Theme.Current["EmojiThemeFontFamily"] = new FontFamily($"ms-appx:///Assets/Emoji/apple.ttf#Segoe UI Emoji");
-                            break;
-                    }
-
                     SettingsService.Current.Appearance.EmojiSet = _emojiStyleIndexer[value];
+                    Theme.Current.UpdateEmojiSet();
                     SettingsService.Current.Appearance.UpdateNightMode(true);
 
                     RaisePropertyChanged();
@@ -450,7 +439,7 @@ namespace Telegram.ViewModels.Settings
                         var recentResponse = await _clientService.SendAsync(new GetRecentStickers(_type is StickerTypeMask));
                         if (recentResponse is Stickers stickers && stickers.StickersValue.Count > 0)
                         {
-                            Add(new StickerSetInfo(0, Strings.RecentStickers, "tg/recentlyUsed", null, new ClosedVectorPath[0], false, false, false, null, _type, false, stickers.StickersValue.Count, stickers.StickersValue));
+                            Add(new StickerSetInfo(0, Strings.RecentStickers, "tg/recentlyUsed", null, Array.Empty<ClosedVectorPath>(), false, false, false, null, _type, false, false, false, stickers.StickersValue.Count, stickers.StickersValue));
                         }
                     }
 

@@ -1,4 +1,10 @@
-﻿using Windows.System;
+﻿//
+// Copyright Fela Ameghino 2015-2024
+//
+// Distributed under the GNU General Public License v3.0. (See accompanying
+// file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
+//
+using Windows.System;
 using Windows.UI.Composition;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -201,7 +207,6 @@ namespace Telegram.Controls
 
         private void OnSizeChanged(object sender, SizeChangedEventArgs e)
         {
-            Logger.Debug();
             UpdateDecreaseRect(Value);
         }
 
@@ -215,7 +220,7 @@ namespace Telegram.Controls
         {
             if (HorizontalDecreaseRect != null && !double.IsNaN(HorizontalDecreaseRect.ActualWidth))
             {
-                var visual = ElementCompositionPreview.GetElementVisual(HorizontalDecreaseRect);
+                var visual = ElementComposition.GetElementVisual(HorizontalDecreaseRect);
                 visual.Clip ??= visual.Compositor.CreateInsetClip();
 
                 if (visual.Clip is InsetClip inset)

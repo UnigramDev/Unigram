@@ -229,13 +229,23 @@
                            Margin="12,2"
                            Height="1" />
 
-                <controls:BadgeButton x:Name="Premiumd"
+                <controls:BadgeButton x:Name="Premium"
                                       x:Load="{x:Bind ViewModel.IsPremiumAvailable, Mode=OneWay}"
                                       Click="Premium_Click"
                                       Content="{CustomResource TelegramPremium}"
                                       Style="{StaticResource IconBadgeButtonStyle}">
                     <controls:BadgeButton.IconSource>
                         <icons:Premium />
+                    </controls:BadgeButton.IconSource>
+                </controls:BadgeButton>
+
+                <controls:BadgeButton x:Name="PremiumGifting"
+                                      x:Load="False"
+                                      Click="{x:Bind ViewModel.PremiumGifting}"
+                                      Content="{CustomResource TelegramPremium}"
+                                      Style="{StaticResource IconBadgeButtonStyle}">
+                    <controls:BadgeButton.IconSource>
+                        <icons:PremiumGifting />
                     </controls:BadgeButton.IconSource>
                 </controls:BadgeButton>
 

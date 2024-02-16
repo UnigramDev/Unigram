@@ -1,18 +1,17 @@
 ﻿using System;
 using System.Numerics;
 using Telegram.Common;
+using Telegram.Composition;
 using Telegram.Controls.Media;
 using Telegram.Td.Api;
-using Telegram.Views;
 using Windows.UI.Composition;
 using Windows.UI.Xaml;
-using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Hosting;
 using Windows.UI.Xaml.Input;
 
 namespace Telegram.Controls.Chats
 {
-    public sealed partial class ChatRecordBar : Grid
+    public sealed partial class ChatRecordBar : GridEx
     {
         private readonly DispatcherTimer _elapsedTimer;
         private readonly Visual _ellipseVisual;
@@ -21,7 +20,7 @@ namespace Telegram.Controls.Chats
         private readonly Visual _recordVisual;
         private readonly Visual _rootVisual;
 
-        private AvatarWavesDrawable _drawable;
+        private readonly CompositionBlobVisual _blobVisual;
 
         public ChatRecordBar()
         {
@@ -29,13 +28,13 @@ namespace Telegram.Controls.Chats
 
             ElementCompositionPreview.SetIsTranslationEnabled(Ellipse, true);
 
-            _ellipseVisual = ElementCompositionPreview.GetElementVisual(Ellipse);
-            _elapsedVisual = ElementCompositionPreview.GetElementVisual(ElapsedPanel);
-            _slideVisual = ElementCompositionPreview.GetElementVisual(SlidePanel);
-            _recordVisual = ElementCompositionPreview.GetElementVisual(this);
-            _rootVisual = ElementCompositionPreview.GetElementVisual(this);
+            _ellipseVisual = ElementComposition.GetElementVisual(Ellipse);
+            _elapsedVisual = ElementComposition.GetElementVisual(ElapsedPanel);
+            _slideVisual = ElementComposition.GetElementVisual(SlidePanel);
+            _recordVisual = ElementComposition.GetElementVisual(this);
+            _rootVisual = ElementComposition.GetElementVisual(this);
 
-            _ellipseVisual.CenterPoint = new Vector3(60);
+            _ellipseVisual.CenterPoint = new Vector3(80);
             _ellipseVisual.Scale = new Vector3(0);
 
             _elapsedTimer = new DispatcherTimer();
@@ -45,14 +44,18 @@ namespace Telegram.Controls.Chats
                 ElapsedLabel.Text = ControlledButton.Elapsed.ToString("m\\:ss\\.ff");
             };
 
-            _drawable = new AvatarWavesDrawable(true, true);
-            _drawable.Update(Theme.Accent, true);
+            _blobVisual = new CompositionBlobVisual(Blob, 160, 160, 4);
+
+            Disconnected += OnUnloaded;
+        }
+
+        private void OnUnloaded(object sender, RoutedEventArgs e)
+        {
+            _blobVisual.StopAnimating();
         }
 
         private void ElapsedPanel_SizeChanged(object sender, SizeChangedEventArgs e)
         {
-            Logger.Debug();
-
             var point = _elapsedVisual.Offset;
             point.X = (float)-e.NewSize.Width;
 
@@ -62,8 +65,6 @@ namespace Telegram.Controls.Chats
 
         private void SlidePanel_SizeChanged(object sender, SizeChangedEventArgs e)
         {
-            Logger.Debug();
-
             var point = _slideVisual.Offset;
             point.X = (float)e.NewSize.Width + 36;
 
@@ -79,13 +80,7 @@ namespace Telegram.Controls.Chats
 
         private void VoiceButton_QuantumProcessed(object sender, float amplitude)
         {
-            _drawable ??= new AvatarWavesDrawable(true, true);
-            _drawable.SetAmplitude(amplitude * 100, ChatRecordCanvas);
-        }
-
-        private void ChatRecordCanvas_Draw(Microsoft.Graphics.Canvas.UI.Xaml.CanvasControl sender, Microsoft.Graphics.Canvas.UI.Xaml.CanvasDrawEventArgs args)
-        {
-            _drawable.Draw(args.DrawingSession, 60, 60, sender);
+            _blobVisual.UpdateLevel(amplitude * 40);
         }
 
         private void ChatRecordLocked_Click(object sender, RoutedEventArgs e)
@@ -120,6 +115,17 @@ namespace Telegram.Controls.Chats
         {
             // TODO: video message
             Visibility = Visibility.Visible;
+
+            _blobVisual.FillColor = Theme.Accent;
+
+            if (PowerSavingPolicy.AreMaterialsEnabled && ApiInfo.CanAnimatePaths)
+            {
+                _blobVisual.StartAnimating();
+            }
+            else
+            {
+                _blobVisual.Clear();
+            }
 
             ChatRecordPopup.IsOpen = true;
             ChatRecordGlyph.Text = ControlledButton.Mode == ChatRecordMode.Video
@@ -178,6 +184,8 @@ namespace Telegram.Controls.Chats
             //    Poggers.UpdateWaveform(btnVoiceMessage.GetWaveform());
             //    return;
             //}
+
+            _blobVisual.StopAnimating();
 
             AttachExpression();
 
@@ -321,7 +329,7 @@ namespace Telegram.Controls.Chats
             _ellipseVisual.StopAnimation("Scale");
         }
 
-        private void UserControl_SizeChanged(object sender, SizeChangedEventArgs e)
+        private void OnSizeChanged(object sender, SizeChangedEventArgs e)
         {
             _rootVisual.Size = e.NewSize.ToVector2();
         }

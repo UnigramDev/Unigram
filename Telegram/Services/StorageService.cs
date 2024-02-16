@@ -1,5 +1,5 @@
 //
-// Copyright Fela Ameghino 2015-2023
+// Copyright Fela Ameghino 2015-2024
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
@@ -124,7 +124,7 @@ namespace Telegram.Services
 
         public Task OpenFileAsync(File file)
         {
-            return OpenFileAsync(file);
+            return OpenFileAsync(file, null);
         }
 
         public Task OpenFileWithAsync(File file)
@@ -146,7 +146,10 @@ namespace Telegram.Services
 
             try
             {
-                var opened = await Launcher.LaunchFileAsync(permanent, options);
+                var opened = options != null
+                    ? await Launcher.LaunchFileAsync(permanent, options)
+                    : await Launcher.LaunchFileAsync(permanent);
+
                 if (opened)
                 {
                     return;
@@ -400,13 +403,13 @@ namespace Telegram.Services
                 return new DownloadFolder(false, Strings.DownloadFolderDefault);
             }
 
-            public static IAsyncOperation<StorageFolder> GetDefaultFolderAsync()
+            public static async Task<StorageFolder> GetDefaultFolderAsync()
             {
                 if (ApiInfo.HasKnownFolders)
                 {
                     try
                     {
-                        return KnownFolders.GetFolderAsync(KnownFolderId.DownloadsFolder);
+                        return await KnownFolders.GetFolderAsync(KnownFolderId.DownloadsFolder);
                     }
                     catch
                     {
@@ -477,6 +480,7 @@ namespace Telegram.Services
             {
                 try
                 {
+                    // Access to entries should probably be locked around the app...
                     if (SAP.FutureAccessList.Entries.Count >= SAP.FutureAccessList.MaximumItemsAllowed - 10)
                     {
                         for (int i = SAP.FutureAccessList.Entries.Count - 1; i >= 0; i--)

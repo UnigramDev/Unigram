@@ -1,5 +1,5 @@
 //
-// Copyright Fela Ameghino 2015-2023
+// Copyright Fela Ameghino 2015-2024
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
@@ -26,13 +26,13 @@ namespace Telegram.Views.Settings.Popups
 
             var icon = SessionCell.IconForSession(session);
 
-            IconBackground.Background = new SolidColorBrush(icon.Backgroud);
+            IconBackground.Background = new SolidColorBrush(icon.Background);
 
             if (icon.Animation != null)
             {
                 Icon.Source = new LocalFileSource($"ms-appx:///Assets/Animations/Device{icon.Animation}.json")
                 {
-                    ColorReplacements = new Dictionary<int, int> { { 0x000000, icon.Backgroud.ToValue() } }
+                    ColorReplacements = new Dictionary<int, int> { { 0x000000, icon.Background.ToValue() } }
                 };
             }
             else
@@ -44,8 +44,21 @@ namespace Telegram.Views.Settings.Popups
             Subtitle.Text = Formatter.DateExtended(session.LastActiveDate);
 
             Application.Badge = string.Format("{0} {1}", session.ApplicationName, session.ApplicationVersion);
-            Location.Badge = session.Location;
-            Address.Badge = session.IpAddress;
+
+            static void Update(BadgeButton button, string value)
+            {
+                if (string.IsNullOrEmpty(value))
+                {
+                    button.Visibility = Visibility.Collapsed;
+                }
+                else
+                {
+                    button.Badge = value;
+                }
+            }
+
+            Update(Location, session.Location);
+            Update(Address, session.IpAddress);
 
             AcceptCalls.IsChecked = session.CanAcceptCalls;
 

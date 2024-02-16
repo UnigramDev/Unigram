@@ -1,10 +1,9 @@
 //
-// Copyright Fela Ameghino 2015-2023
+// Copyright Fela Ameghino 2015-2024
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
-using System;
 using Telegram.Common;
 using Telegram.Controls;
 using Telegram.Controls.Cells;
@@ -27,22 +26,11 @@ namespace Telegram.Views.Settings
             Title = Strings.BlockedUsers;
         }
 
-        private async void ListView_ItemClick(object sender, ItemClickEventArgs e)
+        private void ListView_ItemClick(object sender, ItemClickEventArgs e)
         {
             if (e.ClickedItem is MessageSender messageSender)
             {
-                if (ViewModel.ClientService.TryGetUser(messageSender, out User user))
-                {
-                    var response = await ViewModel.ClientService.SendAsync(new CreatePrivateChat(user.Id, false));
-                    if (response is Chat chat)
-                    {
-                        ViewModel.NavigationService.Navigate(typeof(ProfilePage), chat.Id);
-                    }
-                }
-                else if (ViewModel.ClientService.TryGetChat(messageSender, out Chat chat))
-                {
-                    ViewModel.NavigationService.Navigate(typeof(ProfilePage), chat.Id);
-                }
+                ViewModel.NavigationService.NavigateToSender(messageSender);
             }
         }
 
@@ -77,13 +65,11 @@ namespace Telegram.Views.Settings
 
         private void User_ContextRequested(UIElement sender, ContextRequestedEventArgs args)
         {
-            var element = sender as FrameworkElement;
-            var messageSender = ScrollingHost.ItemFromContainer(element) as MessageSender;
+            var messageSender = ScrollingHost.ItemFromContainer(sender) as MessageSender;
 
             var flyout = new MenuFlyout();
             flyout.CreateFlyoutItem(ViewModel.Unblock, messageSender, Strings.Unblock, Icons.SubtractCircle);
-
-            args.ShowAt(flyout, element);
+            flyout.ShowAt(sender, args);
         }
     }
 }

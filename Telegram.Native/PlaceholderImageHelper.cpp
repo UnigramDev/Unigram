@@ -15,16 +15,66 @@
 
 #include <winrt/Windows.ApplicationModel.h>
 #include <winrt/Windows.Foundation.Collections.h>
+#include <winrt/Windows.UI.Xaml.Media.Imaging.h>
+#include <windows.ui.xaml.media.dxinterop.h>
 
 #include <BufferSurface.h>
 
+#define IFACEMETHODIMP2        __override COM_DECLSPEC_NOTHROW HRESULT STDMETHODCALLTYPE
+
 using namespace D2D1;
 using namespace winrt::Windows::ApplicationModel;
+using namespace winrt::Windows::UI::Xaml::Media::Imaging;
 
 namespace winrt::Telegram::Native::implementation
 {
-    winrt::slim_mutex PlaceholderImageHelper::s_criticalSection;
+    std::mutex PlaceholderImageHelper::s_criticalSection;
     winrt::com_ptr<PlaceholderImageHelper> PlaceholderImageHelper::s_current{ nullptr };
+
+    class CustomEmojiInlineObject
+        : public winrt::implements<CustomEmojiInlineObject, IDWriteInlineObject>
+    {
+        IFACEMETHODIMP2 Draw(
+            _In_opt_ void* clientDrawingContext,
+            _In_ IDWriteTextRenderer* renderer,
+            FLOAT originX,
+            FLOAT originY,
+            BOOL isSideways,
+            BOOL isRightToLeft,
+            _In_opt_ IUnknown* clientDrawingEffect
+        ) override
+        {
+            return S_OK;
+        }
+
+        IFACEMETHODIMP2 GetMetrics(_Out_ DWRITE_INLINE_OBJECT_METRICS* metrics) override
+        {
+            DWRITE_INLINE_OBJECT_METRICS inlineMetrics = {};
+            inlineMetrics.width = 20;
+            inlineMetrics.height = 20;
+            inlineMetrics.baseline = 20;
+            *metrics = inlineMetrics;
+            return S_OK;
+        }
+
+        IFACEMETHODIMP2 GetOverhangMetrics(_Out_ DWRITE_OVERHANG_METRICS* overhangs) override
+        {
+            DWRITE_OVERHANG_METRICS inlineOverhangs = {};
+            inlineOverhangs.left = 0;
+            inlineOverhangs.top = -2;
+            inlineOverhangs.right = 0;
+            inlineOverhangs.bottom = -6;
+            *overhangs = inlineOverhangs;
+            return S_OK;
+        }
+
+        IFACEMETHODIMP2 GetBreakConditions(_Out_ DWRITE_BREAK_CONDITION* breakConditionBefore, _Out_ DWRITE_BREAK_CONDITION* breakConditionAfter) override
+        {
+            *breakConditionBefore = DWRITE_BREAK_CONDITION_CAN_BREAK;
+            *breakConditionAfter = DWRITE_BREAK_CONDITION_MAY_NOT_BREAK;
+            return S_OK;
+        }
+    };
 
     class CustomFontFileEnumerator
         : public winrt::implements<CustomFontFileEnumerator, IDWriteFontFileEnumerator>
@@ -45,7 +95,7 @@ namespace winrt::Telegram::Native::implementation
             m_factory.copy_from(factory);
         }
 
-        IFACEMETHODIMP MoveNext(BOOL* hasCurrentFile) override
+        IFACEMETHODIMP2 MoveNext(BOOL* hasCurrentFile) override
         {
             if (m_index == m_filenames.size())
             {
@@ -63,7 +113,7 @@ namespace winrt::Telegram::Native::implementation
             return S_OK;
         }
 
-        IFACEMETHODIMP GetCurrentFontFile(IDWriteFontFile** fontFile) override
+        IFACEMETHODIMP2 GetCurrentFontFile(IDWriteFontFile** fontFile) override
         {
             m_theFile.copy_to(fontFile);
             return S_OK;
@@ -76,7 +126,7 @@ namespace winrt::Telegram::Native::implementation
         : public winrt::implements<CustomFontLoader, IDWriteFontCollectionLoader>
     {
     public:
-        IFACEMETHODIMP CreateEnumeratorFromKey(
+        IFACEMETHODIMP2 CreateEnumeratorFromKey(
             IDWriteFactory* factory,
             void const* collectionKey,
             uint32_t collectionKeySize,
@@ -91,9 +141,10 @@ namespace winrt::Telegram::Native::implementation
         }
     };
 
-    IBuffer PlaceholderImageHelper::DrawWebP(hstring fileName, int32_t maxWidth, Windows::Foundation::Size& size) noexcept
+    IBuffer PlaceholderImageHelper::DrawWebP(hstring fileName, int32_t maxWidth, int32_t& pixelWidth, int32_t& pixelHeight) noexcept
     {
-        size = Windows::Foundation::Size{ 0,0 };
+        pixelWidth = 0;
+        pixelHeight = 0;
 
         FILE* file = _wfopen(fileName.data(), L"rb");
         if (file == NULL)
@@ -158,8 +209,8 @@ namespace winrt::Telegram::Native::implementation
                 height = (int)(iter.height * ratio);
             }
 
-            size.Width = width;
-            size.Height = height;
+            pixelWidth = width;
+            pixelHeight = height;
 
             surface = Telegram::Native::BufferSurface::Create(width * 4 * height);
             auto pixels = surface.data();
@@ -204,31 +255,60 @@ namespace winrt::Telegram::Native::implementation
         co_await winrt::resume_background();
 
         Windows::Foundation::Size size;
-        winrt::check_hresult(InternalDrawSvg(path, foreground, randomAccessStream, dpi, size));
+        DrawSvg(path, foreground, randomAccessStream, dpi, size);
         randomAccessStream.Seek(0);
 
         co_await ui_thread;
     }
 
-    void PlaceholderImageHelper::DrawSvg(hstring path, Color foreground, IRandomAccessStream randomAccessStream, double dpi, Windows::Foundation::Size& size)
+    winrt::Telegram::Native::SurfaceImage PlaceholderImageHelper::Create(int32_t pixelWidth, int32_t pixelHeight)
     {
-        winrt::check_hresult(InternalDrawSvg(path, foreground, randomAccessStream, dpi, size));
+        std::lock_guard const guard(m_criticalSection);
+
+        auto surface = winrt::make_self<SurfaceImage>(m_d2dDevice.get(), pixelWidth, pixelHeight);
+        return surface.as<winrt::Telegram::Native::SurfaceImage>();
     }
 
-    void PlaceholderImageHelper::DrawThumbnailPlaceholder(hstring fileName, float blurAmount, IRandomAccessStream randomAccessStream)
+    HRESULT PlaceholderImageHelper::Invalidate(winrt::Telegram::Native::SurfaceImage imageSource, IBuffer buffer)
     {
-        winrt::check_hresult(InternalDrawThumbnailPlaceholder(fileName, blurAmount, randomAccessStream));
+        std::lock_guard const guard(m_criticalSection);
+        HRESULT result;
+
+        com_ptr<SurfaceImage> source = imageSource.as<SurfaceImage>();
+        int32_t pixelWidth = source->m_pixelWidth;
+        int32_t pixelHeight = source->m_pixelHeight;
+        winrt::com_ptr<ISurfaceImageSourceNativeWithD2D> native = source->m_native;
+
+        D2D1_SIZE_U size{ pixelWidth, pixelHeight };
+        D2D1_RECT_U rect{ 0, 0, pixelWidth, pixelHeight };
+        RECT updateRect{ 0, 0, pixelWidth, pixelHeight };
+        POINT offset{ 0, 0 };
+
+        com_ptr<ID2D1DeviceContext> d2d1DeviceContext;
+        result = native->BeginDraw(updateRect, __uuidof(ID2D1DeviceContext), d2d1DeviceContext.put_void(), &offset);
+
+        if (result == DXGI_ERROR_DEVICE_REMOVED || result == DXGI_ERROR_DEVICE_RESET)
+        {
+            ReturnIfFailed(result, CreateDeviceResources());
+            ReturnIfFailed(result, source->CreateDeviceResources(m_d2dDevice.get()));
+            return Invalidate(imageSource, buffer);
+        }
+
+        com_ptr<ID2D1Bitmap1> bitmap;
+        D2D1_BITMAP_PROPERTIES1 properties = { { DXGI_FORMAT_B8G8R8A8_UNORM, D2D1_ALPHA_MODE_PREMULTIPLIED }, 96, 96, D2D1_BITMAP_OPTIONS_NONE, 0 };
+        CleanupIfFailed(result, d2d1DeviceContext->CreateBitmap(size, buffer.data(), pixelWidth * 4, &properties, bitmap.put()));
+
+        d2d1DeviceContext->SetTransform(D2D1::Matrix3x2F::Translation(offset.x, offset.y));
+        d2d1DeviceContext->Clear(D2D1::ColorF(0, 0, 0, 0));
+        d2d1DeviceContext->DrawBitmap(bitmap.get());
+
+    Cleanup:
+        return native->EndDraw();
     }
 
-    void PlaceholderImageHelper::DrawThumbnailPlaceholder(IVector<uint8_t> bytes, float blurAmount, IRandomAccessStream randomAccessStream)
+    HRESULT PlaceholderImageHelper::DrawSvg(hstring path, Color foreground, IRandomAccessStream randomAccessStream, double dpi, Windows::Foundation::Size& size)
     {
-        winrt::check_hresult(InternalDrawThumbnailPlaceholder(bytes, blurAmount, randomAccessStream));
-    }
-
-    HRESULT PlaceholderImageHelper::InternalDrawSvg(hstring path, Color foreground, IRandomAccessStream randomAccessStream, double dpi, Windows::Foundation::Size& size)
-    {
-        slim_lock_guard const guard(m_criticalSection);
-
+        std::lock_guard const guard(m_criticalSection);
         HRESULT result;
 
         auto data = winrt::to_string(path);
@@ -350,15 +430,16 @@ namespace winrt::Telegram::Native::implementation
         if ((result = m_d2dContext->EndDraw()) == D2DERR_RECREATE_TARGET)
         {
             ReturnIfFailed(result, CreateDeviceResources());
-            return InternalDrawSvg(path, foreground, randomAccessStream, dpi, size);
+            return DrawSvg(path, foreground, randomAccessStream, dpi, size);
         }
 
         return SaveImageToStream(targetBitmap.get(), GUID_ContainerFormatPng, randomAccessStream);
     }
 
-    HRESULT PlaceholderImageHelper::InternalDrawThumbnailPlaceholder(hstring fileName, float blurAmount, IRandomAccessStream randomAccessStream)
+    HRESULT PlaceholderImageHelper::DrawThumbnailPlaceholder(hstring fileName, float blurAmount, IRandomAccessStream randomAccessStream)
     {
-        slim_lock_guard const guard(m_criticalSection);
+        std::lock_guard const guard(m_criticalSection);
+        HRESULT result;
 
         HANDLE file = CreateFile2FromAppW(fileName.data(), GENERIC_READ, FILE_SHARE_READ, OPEN_EXISTING, nullptr);
 
@@ -367,7 +448,6 @@ namespace winrt::Telegram::Native::implementation
             return ERROR_FILE_NOT_FOUND;
         }
 
-        HRESULT result;
         winrt::com_ptr<IWICBitmapDecoder> wicBitmapDecoder;
         //ReturnIfFailed(result, m_wicFactory->CreateDecoderFromFilename(fileName->Data(), nullptr, GENERIC_READ, WICDecodeMetadataCacheOnLoad, &wicBitmapDecoder));
         ReturnIfFailed(result, m_wicFactory->CreateDecoderFromFileHandle(reinterpret_cast<ULONG_PTR>(file), nullptr, WICDecodeMetadataCacheOnLoad, wicBitmapDecoder.put()));
@@ -386,11 +466,38 @@ namespace winrt::Telegram::Native::implementation
         return result;
     }
 
-    HRESULT PlaceholderImageHelper::InternalDrawThumbnailPlaceholder(IVector<uint8_t> bytes, float blurAmount, IRandomAccessStream randomAccessStream)
+    HRESULT PlaceholderImageHelper::DrawThumbnailPlaceholder(IVector<uint8_t> bytes, float blurAmount, IRandomAccessStream randomAccessStream)
     {
-        slim_lock_guard const guard(m_criticalSection);
-
+        std::lock_guard const guard(m_criticalSection);
         HRESULT result;
+
+        winrt::com_ptr<IStream> stream;
+        ReturnIfFailed(result, CreateStreamOverRandomAccessStream(winrt::get_unknown(randomAccessStream), IID_PPV_ARGS(&stream)));
+
+        auto yolo = std::vector<byte>(bytes.begin(), bytes.end());
+
+        ReturnIfFailed(result, stream->Write(yolo.data(), bytes.Size(), nullptr));
+        ReturnIfFailed(result, stream->Seek({ 0 }, STREAM_SEEK_SET, nullptr));
+
+        winrt::com_ptr<IWICBitmapDecoder> wicBitmapDecoder;
+        ReturnIfFailed(result, m_wicFactory->CreateDecoderFromStream(stream.get(), nullptr, WICDecodeMetadataCacheOnLoad, wicBitmapDecoder.put()));
+
+        winrt::com_ptr<IWICBitmapFrameDecode> wicFrameDecode;
+        ReturnIfFailed(result, wicBitmapDecoder->GetFrame(0, wicFrameDecode.put()));
+
+        winrt::com_ptr<IWICFormatConverter> wicFormatConverter;
+        ReturnIfFailed(result, m_wicFactory->CreateFormatConverter(wicFormatConverter.put()));
+        ReturnIfFailed(result, wicFormatConverter->Initialize(wicFrameDecode.get(), GUID_WICPixelFormat32bppPBGRA, WICBitmapDitherTypeNone, nullptr, 0.f, WICBitmapPaletteTypeCustom));
+
+        ReturnIfFailed(result, InternalDrawThumbnailPlaceholder(wicFormatConverter.get(), blurAmount, randomAccessStream, true));
+
+        return result;
+    }
+    HRESULT PlaceholderImageHelper::DrawThumbnailPlaceholder(IVector<uint8_t> bytes, float blurAmount, IBuffer randomAccessStream)
+    {
+        std::lock_guard const guard(m_criticalSection);
+        HRESULT result;
+
         winrt::com_ptr<IStream> stream;
         ReturnIfFailed(result, CreateStreamOverRandomAccessStream(winrt::get_unknown(randomAccessStream), IID_PPV_ARGS(&stream)));
 
@@ -414,6 +521,7 @@ namespace winrt::Telegram::Native::implementation
         return result;
     }
 
+
     HRESULT PlaceholderImageHelper::InternalDrawThumbnailPlaceholder(IWICBitmapSource* wicBitmapSource, float blurAmount, IRandomAccessStream randomAccessStream, bool minithumbnail)
     {
         HRESULT result;
@@ -429,7 +537,7 @@ namespace winrt::Telegram::Native::implementation
         //}
 
         winrt::com_ptr<ID2D1Bitmap1> targetBitmap;
-        D2D1_BITMAP_PROPERTIES1 properties = { { DXGI_FORMAT_R8G8B8A8_UNORM, D2D1_ALPHA_MODE_PREMULTIPLIED }, 96, 96, D2D1_BITMAP_OPTIONS_TARGET, 0 };
+        D2D1_BITMAP_PROPERTIES1 properties = { { DXGI_FORMAT_R8G8B8A8_UNORM, D2D1_ALPHA_MODE_IGNORE }, 96, 96, D2D1_BITMAP_OPTIONS_TARGET, 0 };
         ReturnIfFailed(result, m_d2dContext->CreateBitmap(size, nullptr, 0, &properties, targetBitmap.put()));
 
         //winrt::com_ptr<ID2D1Effect> scaleEffect;
@@ -462,6 +570,67 @@ namespace winrt::Telegram::Native::implementation
         return SaveImageToStream(targetBitmap.get(), GUID_ContainerFormatPng, randomAccessStream);
     }
 
+    HRESULT PlaceholderImageHelper::InternalDrawThumbnailPlaceholder(IWICBitmapSource* wicBitmapSource, float blurAmount, IBuffer randomAccessStream, bool minithumbnail)
+    {
+        HRESULT result;
+        winrt::com_ptr<ID2D1ImageSourceFromWic> imageSource;
+        ReturnIfFailed(result, m_d2dContext->CreateImageSourceFromWic(wicBitmapSource, imageSource.put()));
+
+        D2D1_SIZE_U size;
+        ReturnIfFailed(result, wicBitmapSource->GetSize(&size.width, &size.height));
+
+        //if (minithumbnail) {
+        //	size.width *= 2;
+        //	size.height *= 2;
+        //}
+
+        winrt::com_ptr<ID2D1Bitmap1> targetBitmap;
+        D2D1_BITMAP_PROPERTIES1 properties = { { DXGI_FORMAT_R8G8B8A8_UNORM, D2D1_ALPHA_MODE_IGNORE }, 96, 96, D2D1_BITMAP_OPTIONS_TARGET, 0 };
+        ReturnIfFailed(result, m_d2dContext->CreateBitmap(size, nullptr, 0, &properties, targetBitmap.put()));
+
+        //winrt::com_ptr<ID2D1Effect> scaleEffect;
+        //ReturnIfFailed(result, m_d2dContext->CreateEffect(CLSID_D2D1Scale, scaleEffect.put()));
+        //ReturnIfFailed(result, scaleEffect->SetValue(D2D1_SCALE_PROP_SCALE, D2D1_VECTOR_2F({ 2, 2 })));
+        //ReturnIfFailed(result, scaleEffect->SetValue(D2D1_SCALE_PROP_INTERPOLATION_MODE, D2D1_SCALE_INTERPOLATION_MODE_NEAREST_NEIGHBOR));
+        //scaleEffect->SetInput(0, imageSource.get());
+
+        //winrt::com_ptr<ID2D1Image> test;
+        //scaleEffect->SetInput(0, imageSource.get());
+        //scaleEffect->GetOutput(test.put());
+
+        ReturnIfFailed(result, m_gaussianBlurEffect->SetValue(D2D1_GAUSSIANBLUR_PROP_STANDARD_DEVIATION, blurAmount));
+
+        //m_gaussianBlurEffect->SetInput(0, test.get());
+        m_gaussianBlurEffect->SetInput(0, imageSource.get());
+
+        m_d2dContext->SetTarget(targetBitmap.get());
+        m_d2dContext->BeginDraw();
+        //m_d2dContext->SetTransform(D2D1::Matrix3x2F::Identity());
+        m_d2dContext->Clear(D2D1::ColorF(ColorF::Black, 0.0f));
+        m_d2dContext->DrawImage(m_gaussianBlurEffect.get());
+
+        if ((result = m_d2dContext->EndDraw()) == D2DERR_RECREATE_TARGET)
+        {
+            ReturnIfFailed(result, CreateDeviceResources());
+            return InternalDrawThumbnailPlaceholder(wicBitmapSource, blurAmount, randomAccessStream, minithumbnail);
+        }
+
+        winrt::com_ptr<ID2D1Bitmap1> readBitmap;
+        D2D1_BITMAP_PROPERTIES1 properties2 = { { DXGI_FORMAT_R8G8B8A8_UNORM, D2D1_ALPHA_MODE_IGNORE }, 96, 96, D2D1_BITMAP_OPTIONS_CPU_READ | D2D1_BITMAP_OPTIONS_CANNOT_DRAW, 0 };
+        ReturnIfFailed(result, m_d2dContext->CreateBitmap(size, nullptr, 0, &properties2, readBitmap.put()));
+
+        D2D1_POINT_2U origin{ 0, 0 };
+        D2D1_RECT_U source{ 0, 0, size.width, size.height };
+        D2D1_MAPPED_RECT map;
+        ReturnIfFailed(result, readBitmap->CopyFromBitmap(&origin, targetBitmap.get(), &source));
+        ReturnIfFailed(result, readBitmap->Map(D2D1_MAP_OPTIONS_READ, &map));
+
+        memcpy(randomAccessStream.data(), map.bits, randomAccessStream.Length());
+
+        return readBitmap->Unmap();
+        //return SaveImageToStream(targetBitmap.get(), GUID_ContainerFormatPng, randomAccessStream);
+    }
+
     PlaceholderImageHelper::PlaceholderImageHelper()
     {
         winrt::check_hresult(CreateDeviceIndependentResources());
@@ -472,11 +641,11 @@ namespace winrt::Telegram::Native::implementation
     {
         HRESULT result;
         D2D1_FACTORY_OPTIONS options = {};
-        ReturnIfFailed(result, D2D1CreateFactory(D2D1_FACTORY_TYPE_SINGLE_THREADED, __uuidof(ID2D1Factory1), &options, m_d2dFactory.put_void()));
+        ReturnIfFailed(result, D2D1CreateFactory(D2D1_FACTORY_TYPE_MULTI_THREADED, __uuidof(ID2D1Factory1), &options, m_d2dFactory.put_void()));
         ReturnIfFailed(result, CoCreateInstance(CLSID_WICImagingFactory, nullptr, CLSCTX_INPROC_SERVER, IID_PPV_ARGS(&m_wicFactory)));
         ReturnIfFailed(result, DWriteCreateFactory(DWRITE_FACTORY_TYPE_SHARED, __uuidof(IDWriteFactory), (IUnknown**)m_dwriteFactory.put()));
 
-
+        m_customEmoji = winrt::make_self<CustomEmojiInlineObject>();
 
         hstring path1 = Package::Current().InstalledLocation().Path() + L"\\Assets\\Fonts\\Telegram.ttf";
         hstring path2 = Package::Current().InstalledLocation().Path() + L"\\Assets\\Emoji\\apple.ttf";
@@ -489,7 +658,6 @@ namespace winrt::Telegram::Native::implementation
         };
 
         m_customLoader = winrt::make_self<CustomFontLoader>();
-
         ReturnIfFailed(result, m_dwriteFactory->RegisterFontCollectionLoader(m_customLoader.get()));
         ReturnIfFailed(result, m_dwriteFactory->CreateCustomFontCollection(m_customLoader.get(), keys, keySize, m_fontCollection.put()));
         ReturnIfFailed(result, m_dwriteFactory->GetSystemFontCollection(m_systemCollection.put()));
@@ -540,25 +708,15 @@ namespace winrt::Telegram::Native::implementation
         return m_wicFactory->CreateImageEncoder(m_d2dDevice.get(), m_imageEncoder.put());
     }
 
-    HRESULT PlaceholderImageHelper::MeasureText(const wchar_t* text, IDWriteTextFormat* format, DWRITE_TEXT_METRICS* textMetrics)
+    HRESULT PlaceholderImageHelper::CreateTextFormat(double fontSize)
     {
+        if (m_appleFormat != nullptr && fontSize == m_appleFormat->GetFontSize())
+        {
+            return S_OK;
+        }
+
         HRESULT result;
-        winrt::com_ptr<IDWriteTextLayout> textLayout;
-        ReturnIfFailed(result, m_dwriteFactory->CreateTextLayout(
-            text,							// The string to be laid out and formatted.
-            wcslen(text),					// The length of the string.
-            format,							// The text format to apply to the string (contains font information, etc).
-            192.0f,							// The width of the layout box.
-            192.0f,							// The height of the layout box.
-            textLayout.put()				// The IDWriteTextLayout interface pointer.
-        ));
-
-        return textLayout->GetMetrics(textMetrics);
-    }
-
-    float2 PlaceholderImageHelper::ContentEnd(hstring text, IVector<PlaceholderEntity> entities, double fontSize, double width)
-    {
-        winrt::check_hresult(m_dwriteFactory->CreateTextFormat(
+        ReturnIfFailed(result, m_dwriteFactory->CreateTextFormat(
             L"Segoe UI Emoji",						// font family name
             m_fontCollection.get(),			        // system font collection
             DWRITE_FONT_WEIGHT_NORMAL,				// font weight 
@@ -568,90 +726,190 @@ namespace winrt::Telegram::Native::implementation
             L"",									// locale name
             m_appleFormat.put()
         ));
-        winrt::check_hresult(m_appleFormat->SetTextAlignment(DWRITE_TEXT_ALIGNMENT_LEADING));
-        winrt::check_hresult(m_appleFormat->SetParagraphAlignment(DWRITE_PARAGRAPH_ALIGNMENT_NEAR));
+        ReturnIfFailed(result, m_appleFormat->SetTextAlignment(DWRITE_TEXT_ALIGNMENT_LEADING));
+        ReturnIfFailed(result, m_appleFormat->SetParagraphAlignment(DWRITE_PARAGRAPH_ALIGNMENT_NEAR));
+        return result;
+    }
+
+    float2 PlaceholderImageHelper::ContentEnd(hstring text, IVector<TextEntity> entities, double fontSize, double width)
+    {
+        float2 offset;
+        ContentEndImpl(text, entities, fontSize, width, offset);
+        return offset;
+    }
+
+    HRESULT PlaceholderImageHelper::ContentEndImpl(hstring text, IVector<TextEntity> entities, double fontSize, double width, float2& offset)
+    {
+        std::lock_guard const guard(m_criticalSection);
+        HRESULT result;
+
+        //ReturnIfFailed(result, CreateTextFormat(fontSize));
+
+        winrt::com_ptr<IDWriteTextFormat> textFormat;
+        ReturnIfFailed(result, m_dwriteFactory->CreateTextFormat(
+            L"Segoe UI Emoji",						// font family name
+            m_fontCollection.get(),			        // system font collection
+            DWRITE_FONT_WEIGHT_NORMAL,				// font weight 
+            DWRITE_FONT_STYLE_NORMAL,				// font style
+            DWRITE_FONT_STRETCH_NORMAL,				// default font stretch
+            fontSize,								// font size
+            L"",									// locale name
+            textFormat.put()
+        ));
+        ReturnIfFailed(result, textFormat->SetTextAlignment(DWRITE_TEXT_ALIGNMENT_LEADING));
+        ReturnIfFailed(result, textFormat->SetParagraphAlignment(DWRITE_PARAGRAPH_ALIGNMENT_NEAR));
 
         winrt::com_ptr<IDWriteTextLayout> textLayout;
-        winrt::check_hresult(m_dwriteFactory->CreateTextLayout(
+        ReturnIfFailed(result, m_dwriteFactory->CreateTextLayout(
             text.data(),					// The string to be laid out and formatted.
-            wcslen(text.data()),			// The length of the string.
-            m_appleFormat.get(),			// The text format to apply to the string (contains font information, etc).
+            text.size(),        			// The length of the string.
+            textFormat.get(),			    // The text format to apply to the string (contains font information, etc).
             width,							// The width of the layout box.
             INFINITY,						// The height of the layout box.
             textLayout.put()				// The IDWriteTextLayout interface pointer.
         ));
 
-        for (const PlaceholderEntity& entity : entities)
+        for (const TextEntity& entity : entities)
         {
-            UINT32 startPosition = entity.Offset;
-            UINT32 length = entity.Length;
+            UINT32 startPosition = entity.Offset();
+            UINT32 length = entity.Length();
+            auto name = winrt::get_class_name(entity.Type());
 
-            switch (entity.Type)
+            if (name == winrt::name_of<TextEntityTypeBold>())
             {
-            case PlaceholderEntityType::Bold:
-                textLayout->SetFontWeight(DWRITE_FONT_WEIGHT_SEMI_BOLD, { startPosition, length });
-                break;
-            case PlaceholderEntityType::Italic:
-                textLayout->SetFontStyle(DWRITE_FONT_STYLE_ITALIC, { startPosition, length });
-                break;
-            case PlaceholderEntityType::Strikethrough:
-                textLayout->SetStrikethrough(TRUE, { startPosition, length });
-                break;
-            case PlaceholderEntityType::Underline:
-                textLayout->SetUnderline(TRUE, { startPosition, length });
-                break;
-            case PlaceholderEntityType::Code:
-                textLayout->SetFontCollection(m_systemCollection.get(), { startPosition, length });
-                textLayout->SetFontFamilyName(L"Consolas", { startPosition, length });
-                break;
-            default:
-                break;
+                ReturnIfFailed(result, textLayout->SetFontWeight(DWRITE_FONT_WEIGHT_SEMI_BOLD, { startPosition, length }));
+            }
+            else if (name == winrt::name_of<TextEntityTypeItalic>())
+            {
+                ReturnIfFailed(result, textLayout->SetFontStyle(DWRITE_FONT_STYLE_ITALIC, { startPosition, length }));
+            }
+            else if (name == winrt::name_of<TextEntityTypeStrikethrough>())
+            {
+                ReturnIfFailed(result, textLayout->SetStrikethrough(TRUE, { startPosition, length }));
+            }
+            else if (name == winrt::name_of<TextEntityTypeUnderline>())
+            {
+                ReturnIfFailed(result, textLayout->SetUnderline(TRUE, { startPosition, length }));
+            }
+            //else if (name == winrt::name_of<TextEntityTypeCustomEmoji>())
+            //{
+            //    textLayout->SetInlineObject(m_customEmoji.get(), { startPosition, length });
+            //}
+            else if (name == winrt::name_of<TextEntityTypeCode>() || name == winrt::name_of<TextEntityTypePre>() || name == winrt::name_of<TextEntityTypePreCode>())
+            {
+                ReturnIfFailed(result, textLayout->SetFontCollection(m_systemCollection.get(), { startPosition, length }));
+                ReturnIfFailed(result, textLayout->SetFontFamilyName(L"Consolas", { startPosition, length }));
             }
         }
 
         FLOAT x;
         FLOAT y;
         DWRITE_HIT_TEST_METRICS metrics;
-        textLayout->HitTestTextPosition(text.size() - 1, false, &x, &y, &metrics);
+        ReturnIfFailed(result, textLayout->HitTestTextPosition(text.size() - 1, false, &x, &y, &metrics));
 
-        return float2(metrics.left + metrics.width, metrics.top + metrics.height);
+        offset = float2(metrics.left + metrics.width, metrics.top + metrics.height);
+        return result;
     }
 
-    IVector<Windows::Foundation::Rect> PlaceholderImageHelper::LineMetrics(hstring text, double fontSize, double width, bool rtl)
+    IVector<Windows::Foundation::Rect> PlaceholderImageHelper::LineMetrics(hstring text, IVector<TextEntity> entities, double fontSize, double width, bool rtl)
     {
-        winrt::check_hresult(m_dwriteFactory->CreateTextFormat(
+        IVector<Windows::Foundation::Rect> rects;
+        RangeMetricsImpl(text, 0, text.size(), entities, fontSize, width, rtl, rects);
+        return rects;
+    }
+
+    IVector<Windows::Foundation::Rect> PlaceholderImageHelper::RangeMetrics(hstring text, int32_t offset, int32_t length, IVector<TextEntity> entities, double fontSize, double width, bool rtl)
+    {
+        IVector<Windows::Foundation::Rect> rects;
+        RangeMetricsImpl(text, offset, length, entities, fontSize, width, rtl, rects);
+        return rects;
+    }
+
+    HRESULT PlaceholderImageHelper::RangeMetricsImpl(hstring text, int32_t offset, int32_t length, IVector<TextEntity> entities, double fontSize, double width, bool rtl, IVector<Windows::Foundation::Rect>& rects)
+    {
+        std::lock_guard const guard(m_criticalSection);
+        HRESULT result;
+
+        //ReturnIfFailed(result, CreateTextFormat(fontSize));
+        //ReturnIfFailed(result, m_appleFormat->SetReadingDirection(rtl ? DWRITE_READING_DIRECTION_RIGHT_TO_LEFT : DWRITE_READING_DIRECTION_LEFT_TO_RIGHT));
+
+        winrt::com_ptr<IDWriteTextFormat> textFormat;
+        ReturnIfFailed(result, m_dwriteFactory->CreateTextFormat(
             L"Segoe UI Emoji",						// font family name
-            m_fontCollection.get(),		            // system font collection
+            m_fontCollection.get(),			        // system font collection
             DWRITE_FONT_WEIGHT_NORMAL,				// font weight 
             DWRITE_FONT_STYLE_NORMAL,				// font style
             DWRITE_FONT_STRETCH_NORMAL,				// default font stretch
             fontSize,								// font size
             L"",									// locale name
-            m_appleFormat.put()
+            textFormat.put()
         ));
-        winrt::check_hresult(m_appleFormat->SetTextAlignment(DWRITE_TEXT_ALIGNMENT_LEADING));
-        winrt::check_hresult(m_appleFormat->SetParagraphAlignment(DWRITE_PARAGRAPH_ALIGNMENT_NEAR));
-        winrt::check_hresult(m_appleFormat->SetReadingDirection(rtl ? DWRITE_READING_DIRECTION_RIGHT_TO_LEFT : DWRITE_READING_DIRECTION_LEFT_TO_RIGHT));
+        ReturnIfFailed(result, textFormat->SetTextAlignment(DWRITE_TEXT_ALIGNMENT_LEADING));
+        ReturnIfFailed(result, textFormat->SetParagraphAlignment(DWRITE_PARAGRAPH_ALIGNMENT_NEAR));
+        ReturnIfFailed(result, textFormat->SetReadingDirection(rtl ? DWRITE_READING_DIRECTION_RIGHT_TO_LEFT : DWRITE_READING_DIRECTION_LEFT_TO_RIGHT));
 
         winrt::com_ptr<IDWriteTextLayout> textLayout;
-        winrt::check_hresult(m_dwriteFactory->CreateTextLayout(
+        ReturnIfFailed(result, m_dwriteFactory->CreateTextLayout(
             text.data(),					// The string to be laid out and formatted.
-            wcslen(text.data()),			// The length of the string.
-            m_appleFormat.get(),			// The text format to apply to the string (contains font information, etc).
+            text.size(),        			// The length of the string.
+            textFormat.get(),			    // The text format to apply to the string (contains font information, etc).
             width,							// The width of the layout box.
             INFINITY,						// The height of the layout box.
             textLayout.put()				// The IDWriteTextLayout interface pointer.
         ));
 
+        for (const TextEntity& entity : entities)
+        {
+            UINT32 startPosition = entity.Offset();
+            UINT32 length = entity.Length();
+            auto name = winrt::get_class_name(entity.Type());
+
+            if (name == winrt::name_of<TextEntityTypeBold>())
+            {
+                ReturnIfFailed(result, textLayout->SetFontWeight(DWRITE_FONT_WEIGHT_SEMI_BOLD, { startPosition, length }));
+            }
+            else if (name == winrt::name_of<TextEntityTypeItalic>())
+            {
+                ReturnIfFailed(result, textLayout->SetFontStyle(DWRITE_FONT_STYLE_ITALIC, { startPosition, length }));
+            }
+            else if (name == winrt::name_of<TextEntityTypeStrikethrough>())
+            {
+                ReturnIfFailed(result, textLayout->SetStrikethrough(TRUE, { startPosition, length }));
+            }
+            else if (name == winrt::name_of<TextEntityTypeUnderline>())
+            {
+                ReturnIfFailed(result, textLayout->SetUnderline(TRUE, { startPosition, length }));
+            }
+            //else if (name == winrt::name_of<TextEntityTypeCustomEmoji>())
+            //{
+            //    textLayout->SetInlineObject(m_customEmoji.get(), { startPosition, length });
+            //}
+            else if (name == winrt::name_of<TextEntityTypeCode>() ||  name == winrt::name_of<TextEntityTypePre>() || name == winrt::name_of<TextEntityTypePreCode>())
+            {
+                ReturnIfFailed(result, textLayout->SetFontCollection(m_systemCollection.get(), { startPosition, length }));
+                ReturnIfFailed(result, textLayout->SetFontFamilyName(L"Consolas", { startPosition, length }));
+            }
+        }
+
         DWRITE_TEXT_METRICS metrics;
-        winrt::check_hresult(textLayout->GetMetrics(&metrics));
+        ReturnIfFailed(result, textLayout->GetMetrics(&metrics));
 
         UINT32 maxHitTestMetricsCount = metrics.lineCount * metrics.maxBidiReorderingDepth;
         UINT32 actualTestsCount;
         DWRITE_HIT_TEST_METRICS* ranges = new DWRITE_HIT_TEST_METRICS[maxHitTestMetricsCount];
-        winrt::check_hresult(textLayout->HitTestTextRange(0, text.size(), 0, 0, ranges, maxHitTestMetricsCount, &actualTestsCount));
+        result = textLayout->HitTestTextRange(offset, length, 0, 0, ranges, maxHitTestMetricsCount, &actualTestsCount);
 
-        std::vector<Windows::Foundation::Rect> rects;
+        if (result == E_NOT_SUFFICIENT_BUFFER)
+        {
+            delete[] ranges;
+
+            ranges = new DWRITE_HIT_TEST_METRICS[actualTestsCount];
+            result = textLayout->HitTestTextRange(offset, length, 0, 0, ranges, actualTestsCount, &actualTestsCount);
+        }
+
+        ReturnIfFailed(result, result);
+
+        std::vector<Windows::Foundation::Rect> vector;
 
         for (int i = 0; i < actualTestsCount; i++)
         {
@@ -660,10 +918,11 @@ namespace winrt::Telegram::Native::implementation
             float right = ranges[i].left + ranges[i].width;
             float bottom = ranges[i].top + ranges[i].height;
 
-            rects.push_back({ left, top, right - left, bottom - top });
+            vector.push_back({ left, top, right - left, bottom - top });
         }
 
-        return winrt::single_threaded_vector<Windows::Foundation::Rect>(std::move(rects));
+        delete[] ranges;
+        rects = winrt::single_threaded_vector<Windows::Foundation::Rect>(std::move(vector));
     }
 
     //IVector<Windows::Foundation::Rect> PlaceholderImageHelper::EntityMetrics(hstring text, IVector<TextEntity> entities, double fontSize, double width, bool rtl)
@@ -720,15 +979,16 @@ namespace winrt::Telegram::Native::implementation
     //	return winrt::single_threaded_vector<Windows::Foundation::Rect>(std::move(rects));
     //}
 
-    void PlaceholderImageHelper::WriteBytes(IVector<byte> hash, IRandomAccessStream randomAccessStream) noexcept
+    HRESULT PlaceholderImageHelper::WriteBytes(IVector<byte> hash, IRandomAccessStream randomAccessStream) noexcept
     {
+        HRESULT result;
         winrt::com_ptr<IStream> stream;
-        winrt::check_hresult(CreateStreamOverRandomAccessStream(winrt::get_unknown(randomAccessStream), IID_PPV_ARGS(&stream)));
+        ReturnIfFailed(result, CreateStreamOverRandomAccessStream(winrt::get_unknown(randomAccessStream), IID_PPV_ARGS(&stream)));
 
         auto yolo = std::vector<byte>(hash.begin(), hash.end());
 
-        winrt::check_hresult(stream->Write(yolo.data(), hash.Size(), nullptr));
-        winrt::check_hresult(stream->Seek({ 0 }, STREAM_SEEK_SET, nullptr));
+        ReturnIfFailed(result, stream->Write(yolo.data(), hash.Size(), nullptr));
+        ReturnIfFailed(result, stream->Seek({ 0 }, STREAM_SEEK_SET, nullptr));
     }
 
     HRESULT PlaceholderImageHelper::Encode(IBuffer source, IRandomAccessStream destination, int32_t width, int32_t height)

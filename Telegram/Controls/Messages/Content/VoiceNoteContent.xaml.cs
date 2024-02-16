@@ -1,5 +1,5 @@
 //
-// Copyright Fela Ameghino 2015-2023
+// Copyright Fela Ameghino 2015-2024
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
@@ -15,6 +15,7 @@ using Telegram.ViewModels;
 using Windows.UI;
 using Windows.UI.Composition;
 using Windows.UI.Xaml;
+using Windows.UI.Xaml.Automation;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
 using Windows.UI.Xaml.Documents;
@@ -22,7 +23,8 @@ using Windows.UI.Xaml.Hosting;
 
 namespace Telegram.Controls.Messages.Content
 {
-    public sealed class VoiceNoteContent : Control, IContentWithFile
+    // TODO: turn the whole control into a Button
+    public sealed class VoiceNoteContent : ControlEx, IContentWithFile
     {
         private MessageViewModel _message;
         public MessageViewModel Message => _message;
@@ -35,7 +37,7 @@ namespace Telegram.Controls.Messages.Content
 
             DefaultStyleKey = typeof(VoiceNoteContent);
 
-            Unloaded += OnUnloaded;
+            Disconnected += OnUnloaded;
         }
 
         public VoiceNoteContent()
@@ -55,7 +57,10 @@ namespace Telegram.Controls.Messages.Content
 
         #region InitializeComponent
 
+        private AutomaticDragHelper ButtonDrag;
+
         private FileButton Button;
+        private Border ViewOnce;
         private ProgressVoice Progress;
         private TextBlock Subtitle;
         private ToggleButton Recognize;
@@ -67,10 +72,20 @@ namespace Telegram.Controls.Messages.Content
         protected override void OnApplyTemplate()
         {
             Button = GetTemplateChild(nameof(Button)) as FileButton;
+            ViewOnce = GetTemplateChild(nameof(ViewOnce)) as Border;
             Progress = GetTemplateChild(nameof(Progress)) as ProgressVoice;
             Subtitle = GetTemplateChild(nameof(Subtitle)) as TextBlock;
+            Recognize = GetTemplateChild(nameof(Recognize)) as ToggleButton;
+
+            ButtonDrag = new AutomaticDragHelper(Button, true);
+            ButtonDrag.StartDetectingDrag();
 
             Button.Click += Button_Click;
+            Button.DragStarting += Button_DragStarting;
+
+            Recognize.Click += Recognize_Click;
+            Recognize.Checked += Recognize_Checked;
+            Recognize.Unchecked += Recognize_Checked;
 
             _templateApplied = true;
 
@@ -97,18 +112,24 @@ namespace Telegram.Controls.Messages.Content
             message.PlaybackService.SourceChanged += OnPlaybackStateChanged;
 
             Progress.UpdateWaveform(voiceNote);
+            ViewOnce.Visibility = message.SelfDestructType is MessageSelfDestructTypeImmediately
+                ? Visibility.Visible
+                : Visibility.Collapsed;
 
-            if (message.ClientService.IsPremium && message.SchedulingState == null)
+            if (message.ClientService.IsPremium && message.SchedulingState == null && message.SelfDestructType == null)
             {
-                if (Recognize == null)
-                {
-                    Recognize = GetTemplateChild(nameof(Recognize)) as ToggleButton;
-                    Recognize.Click += Recognize_Click;
-                }
-
                 Recognize.Visibility = Visibility.Visible;
             }
-            else if (Recognize != null)
+            else if (message.ClientService.IsPremiumAvailable && message.SchedulingState == null && message.SelfDestructType == null)
+            {
+                var duration = voiceNote.Duration <= message.ClientService.SpeechRecognitionTrial.MaxMediaDuration;
+                var received = message.IsSaved || !message.IsOutgoing;
+
+                Recognize.Visibility = duration && received
+                    ? Visibility.Visible
+                    : Visibility.Collapsed;
+            }
+            else
             {
                 Recognize.Visibility = Visibility.Collapsed;
             }
@@ -121,7 +142,7 @@ namespace Telegram.Controls.Messages.Content
 
         private void UpdateRecognitionResult(SpeechRecognitionResult result)
         {
-            if (result != null)
+            if (result != null && Recognize.IsChecked is true)
             {
                 RecognizedText ??= GetTemplateChild(nameof(RecognizedText)) as RichTextBlock;
                 RecognizedSpan ??= GetTemplateChild(nameof(RecognizedSpan)) as Run;
@@ -335,9 +356,18 @@ namespace Telegram.Controls.Messages.Content
                 return;
             }
 
+            var canBeDownloaded = file.Local.CanBeDownloaded
+                && !file.Local.IsDownloadingCompleted
+                && !file.Local.IsDownloadingActive;
+
             var size = Math.Max(file.Size, file.ExpectedSize);
-            if (file.Local.IsDownloadingActive)
+            if (file.Local.IsDownloadingActive || (canBeDownloaded && message.Delegate.CanBeDownloaded(voiceNote, file)))
             {
+                if (canBeDownloaded)
+                {
+                    _message.ClientService.DownloadFile(file.Id, 32);
+                }
+
                 Button.SetGlyph(file.Id, MessageContentState.Downloading);
                 Button.Progress = (double)file.Local.DownloadedSize / size;
             }
@@ -346,19 +376,12 @@ namespace Telegram.Controls.Messages.Content
                 Button.SetGlyph(file.Id, MessageContentState.Uploading);
                 Button.Progress = (double)file.Remote.UploadedSize / size;
             }
-            else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingCompleted)
+            else if (canBeDownloaded)
             {
                 Button.SetGlyph(file.Id, MessageContentState.Download);
                 Button.Progress = 0;
 
-                if (message.Delegate.CanBeDownloaded(voiceNote, file))
-                {
-                    _message.ClientService.DownloadFile(file.Id, 32);
-                }
-                else
-                {
-                    UpdateDuration();
-                }
+                UpdateDuration();
             }
             else
             {
@@ -489,9 +512,14 @@ namespace Telegram.Controls.Messages.Content
             }
         }
 
+        private void Button_DragStarting(UIElement sender, DragStartingEventArgs args)
+        {
+            MessageHelper.DragStarting(_message, args);
+        }
+
         private void Recognize_Click(object sender, RoutedEventArgs e)
         {
-            if (Recognize.IsChecked == true)
+            if (Recognize.IsChecked is false)
             {
                 var voiceNote = GetContent(_message);
                 if (voiceNote == null)
@@ -501,17 +529,26 @@ namespace Telegram.Controls.Messages.Content
 
                 if (voiceNote.SpeechRecognitionResult == null)
                 {
-                    _message.ClientService.Send(new RecognizeSpeech(_message.ChatId, _message.Id));
+                    Recognize.IsChecked = _message.Delegate.RecognizeSpeech(_message);
                 }
                 else
                 {
+                    Recognize.IsChecked = true;
                     UpdateRecognitionResult(voiceNote.SpeechRecognitionResult);
                 }
             }
             else if (RecognizedText != null)
             {
-                RecognizedText.Visibility = Visibility.Collapsed;
+                Recognize.IsChecked = false;
+                UpdateRecognitionResult(null);
             }
+        }
+
+        private void Recognize_Checked(object sender, RoutedEventArgs e)
+        {
+            AutomationProperties.SetName(Recognize, Recognize.IsChecked is true
+                ? Strings.AccActionCloseTranscription
+                : Strings.AccActionOpenTranscription);
         }
     }
 }

@@ -1,4 +1,10 @@
-﻿using System.Numerics;
+﻿//
+// Copyright Fela Ameghino 2015-2024
+//
+// Distributed under the GNU General Public License v3.0. (See accompanying
+// file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
+//
+using System.Numerics;
 using Telegram.Common;
 using Windows.UI.Composition;
 using Windows.UI.Xaml;
@@ -23,9 +29,9 @@ namespace Telegram.Controls.Chats
             visual = DropShadowEx.Attach(ArrowReactionsShadow, 2);
             visual.Offset = new Vector3(0, 1, 0);
 
-            var reactions = ElementCompositionPreview.GetElementVisual(ReactionsPanel);
-            var mentions = ElementCompositionPreview.GetElementVisual(MentionsPanel);
-            var messages = ElementCompositionPreview.GetElementVisual(MessagesPanel);
+            var reactions = ElementComposition.GetElementVisual(ReactionsPanel);
+            var mentions = ElementComposition.GetElementVisual(MentionsPanel);
+            var messages = ElementComposition.GetElementVisual(MessagesPanel);
 
             reactions.CenterPoint = new Vector3(18, 36, 0);
             mentions.CenterPoint = new Vector3(18, 36, 0);
@@ -136,9 +142,9 @@ namespace Telegram.Controls.Chats
             _messagesCollapsed = !show;
             MessagesPanel.Visibility = Visibility.Visible;
 
-            var reactions = ElementCompositionPreview.GetElementVisual(ReactionsPanel);
-            var mentions = ElementCompositionPreview.GetElementVisual(MentionsPanel);
-            var messages = ElementCompositionPreview.GetElementVisual(MessagesPanel);
+            var reactions = ElementComposition.GetElementVisual(ReactionsPanel);
+            var mentions = ElementComposition.GetElementVisual(MentionsPanel);
+            var messages = ElementComposition.GetElementVisual(MessagesPanel);
 
             var compositor = messages.Compositor;
 
@@ -189,8 +195,8 @@ namespace Telegram.Controls.Chats
             _mentionsCollapsed = !show;
             MentionsPanel.Visibility = Visibility.Visible;
 
-            var reactions = ElementCompositionPreview.GetElementVisual(ReactionsPanel);
-            var mentions = ElementCompositionPreview.GetElementVisual(MentionsPanel);
+            var reactions = ElementComposition.GetElementVisual(ReactionsPanel);
+            var mentions = ElementComposition.GetElementVisual(MentionsPanel);
 
             var compositor = mentions.Compositor;
 
@@ -239,7 +245,7 @@ namespace Telegram.Controls.Chats
             _reactionsCollapsed = !show;
             ReactionsPanel.Visibility = Visibility.Visible;
 
-            var reactions = ElementCompositionPreview.GetElementVisual(ReactionsPanel);
+            var reactions = ElementComposition.GetElementVisual(ReactionsPanel);
 
             var compositor = reactions.Compositor;
 

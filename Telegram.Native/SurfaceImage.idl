@@ -1,0 +1,11 @@
+namespace Telegram.Native
+{
+    [default_interface]
+    runtimeclass SurfaceImage
+    {
+        Int32 PixelWidth { get; };
+        Int32 PixelHeight { get; };
+
+        Windows.UI.Xaml.Media.Imaging.SurfaceImageSource Source { get; };
+    }
+}

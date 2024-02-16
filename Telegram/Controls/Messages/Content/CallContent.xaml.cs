@@ -1,5 +1,5 @@
 //
-// Copyright Fela Ameghino 2015-2023
+// Copyright Fela Ameghino 2015-2024
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
@@ -71,13 +71,13 @@ namespace Telegram.Controls.Messages.Content
             var outgoing = message.IsOutgoing;
             var missed = call.DiscardReason is CallDiscardReasonMissed or CallDiscardReasonDeclined;
 
-            Button.Glyph = call.IsVideo ? Icons.VideoFilled24 : Icons.PhoneFilled24;
+            Button.Glyph = call.IsVideo ? Icons.VideoFilled24 : Icons.CallFilled24;
             //Button.FontSize = call.IsVideo ? 24 : 20;
 
             TitleLabel.Text = call.ToOutcomeText(message.IsOutgoing);
             IconLabel.Text = outgoing ? Icons.ArrowUpRight16 : Icons.ArrowDownLeft16;
 
-            var date = Formatter.Date(message.Date);
+            var date = Formatter.Time(message.Date);
 
             if (call.Duration > 0 && !missed)
             {

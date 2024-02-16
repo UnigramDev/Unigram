@@ -1,5 +1,5 @@
 //
-// Copyright Fela Ameghino 2015-2023
+// Copyright Fela Ameghino 2015-2024
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
@@ -123,7 +123,7 @@ namespace Telegram.Controls.Messages.Content
                     var reference = RandomAccessStreamReference.CreateFromStream(stream);
                     var system = await Windows.ApplicationModel.Contacts.ContactManager.ConvertVCardToContactAsync(reference);
 
-                    var transform = TransformToVisual(Window.Current.Content);
+                    var transform = TransformToVisual(null);
                     var point = transform.TransformPoint(new Point());
 
                     Windows.ApplicationModel.Contacts.ContactManager.ShowContactCard(system, new Rect(point.X, point.Y, ActualWidth, ActualHeight));

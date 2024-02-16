@@ -279,7 +279,7 @@
                 Background="Transparent"
                 Style="{StaticResource EmptyButtonStyle}"
                 AutomationProperties.Name="{CustomResource AccDescrOpenChat}"
-                Grid.ColumnSpan="7">
+                Grid.ColumnSpan="10">
             <FlyoutBase.AttachedFlyout>
                 <Flyout Placement="BottomEdgeAlignedLeft"
                         Opened="Flyout_Opened">

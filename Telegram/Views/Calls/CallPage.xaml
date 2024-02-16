@@ -46,8 +46,6 @@
                     Value="{StaticResource GlyphLargeFontSize}" />
             <Setter Property="FontWeight"
                     Value="Normal" />
-            <Setter Property="Glyph"
-                    Value="&#xE700;" />
             <Setter Property="Height"
                     Value="48" />
             <Setter Property="Width"
@@ -131,11 +129,19 @@
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
             </Grid.RowDefinitions>
-            <controls:ProfilePicture x:Name="Image"
-                                     Width="140"
-                                     Height="140"
-                                     HorizontalAlignment="Center"
-                                     VerticalAlignment="Center" />
+            <Grid Width="140"
+                  Height="140"
+                  HorizontalAlignment="Center"
+                  VerticalAlignment="Center">
+                <Grid Width="280"
+                      Height="280"
+                      Margin="-70">
+                    <Border x:Name="Blob" />
+                    <controls:ProfilePicture x:Name="Image"
+                                             Width="280"
+                                             Height="280" />
+                </Grid>
+            </Grid>
 
             <!--<TextBlock x:Name="FromLabel" Tapped="DebugString_Tapped" Text="Fela Ameghino" TextAlignment="Center" Style="{StaticResource SubheaderTextBlockStyle}" VerticalAlignment="Bottom"/>-->
             <TextBlock x:Name="FromLabel"
@@ -372,7 +378,7 @@
                 <controls:CallToggleButton x:Name="Screen"
                                            Click="Screen_Click"
                                            IsOneWay="False"
-                                           Glyph="&#xE956;"
+                                           Glyph="&#xEA5E;"
                                            Content="{CustomResource VoipChatShare}"
                                            CheckedContent="{CustomResource VoipChatShare}"
                                            HorizontalAlignment="Right"
@@ -380,7 +386,7 @@
                 <controls:CallToggleButton x:Name="Video"
                                            Click="Video_Click"
                                            IsOneWay="False"
-                                           Glyph="&#xE714;"
+                                           Glyph="&#xE91E;"
                                            Content="{CustomResource VoipStartVideo}"
                                            CheckedContent="{CustomResource VoipStopVideo}"
                                            HorizontalAlignment="Right"
@@ -390,7 +396,7 @@
                                            Click="Audio_Click"
                                            IsChecked="True"
                                            IsOneWay="False"
-                                           Glyph="&#xE720;"
+                                           Glyph="&#xE9D7;"
                                            Content="{CustomResource VoipUnmute}"
                                            CheckedContent="{CustomResource VoipMute}"
                                            HorizontalAlignment="Right"
@@ -404,7 +410,7 @@
                         CornerRadius="24"
                         Grid.Column="2">
                     <controls:GlyphButton Click="Close_Click"
-                                          Glyph="&#xE711;"
+                                          Glyph="&#xEA5D;"
                                           Foreground="#777777"
                                           RequestedTheme="Light"
                                           CornerRadius="24"

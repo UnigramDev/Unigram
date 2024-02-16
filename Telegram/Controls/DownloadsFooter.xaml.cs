@@ -1,5 +1,5 @@
 //
-// Copyright Fela Ameghino 2015-2023
+// Copyright Fela Ameghino 2015-2024
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
@@ -60,8 +60,8 @@ namespace Telegram.Controls
             _collapsed = !show;
             Visibility = Visibility.Visible;
 
-            var parent = ElementCompositionPreview.GetElementVisual(this);
-            var visual = ElementCompositionPreview.GetElementVisual(this);
+            var parent = ElementComposition.GetElementVisual(this);
+            var visual = ElementComposition.GetElementVisual(this);
             visual.Clip = visual.Compositor.CreateInsetClip();
 
             var batch = visual.Compositor.CreateScopedBatch(CompositionBatchTypes.Animation);
@@ -70,11 +70,7 @@ namespace Telegram.Controls
                 visual.Clip = null;
                 parent.Properties.InsertVector3("Translation", Vector3.Zero);
 
-                if (show)
-                {
-                    _collapsed = false;
-                }
-                else
+                if (_collapsed)
                 {
                     Visibility = Visibility.Collapsed;
                 }

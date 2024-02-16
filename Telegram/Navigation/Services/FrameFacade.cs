@@ -1,5 +1,5 @@
 //
-// Copyright Fela Ameghino 2015-2023
+// Copyright Fela Ameghino 2015-2024
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
@@ -52,14 +52,17 @@ namespace Telegram.Navigation.Services
                     Content = Frame.Content as Page
                 };
 
-                foreach (var handler in _navigatedEventHandlers)
+                if (Navigated is MulticastDelegate multicast)
                 {
-                    if (handler.Target is INavigationService)
+                    foreach (var handler in multicast.GetInvocationList())
                     {
-                        continue;
-                    }
+                        if (handler.Target is INavigationService)
+                        {
+                            continue;
+                        }
 
-                    handler(Frame, args);
+                        handler.DynamicInvoke(Frame, args);
+                    }
                 }
             }
         }
@@ -138,9 +141,7 @@ namespace Telegram.Navigation.Services
 
         internal NavigationService NavigationService { get; set; }
 
-        public static string LastNavigatedPageType { get; private set; }
-
-        public bool Navigate(Type page, object parameter, NavigationTransitionInfo infoOverride)
+        public bool Navigate(Type page, object parameter, NavigationTransitionInfo infoOverride, bool navigationStackEnabled = true)
         {
             Logger.Info();
 
@@ -149,16 +150,17 @@ namespace Telegram.Navigation.Services
                 infoOverride = new SuppressNavigationTransitionInfo();
             }
 
-            LastNavigatedPageType = page.Name;
+            // THIS CRASHES EVERYTHING!!!
+            //if (navigationStackEnabled is false)
+            //{
+            //    return Frame.NavigateToType(page, parameter, new FrameNavigationOptions
+            //    {
+            //        TransitionInfoOverride = infoOverride,
+            //        IsNavigationStackEnabled = navigationStackEnabled
+            //    });
+            //}
 
-            if (Frame.Navigate(page, parameter, infoOverride))
-            {
-                return page.Equals(Frame.Content?.GetType());
-            }
-            else
-            {
-                return false;
-            }
+            return Frame.Navigate(page, parameter, infoOverride);
         }
 
         public int BackStackDepth => Frame.BackStackDepth;
@@ -278,24 +280,7 @@ namespace Telegram.Navigation.Services
 
         #endregion
 
-        readonly List<EventHandler<NavigatedEventArgs>> _navigatedEventHandlers = new();
-        public event EventHandler<NavigatedEventArgs> Navigated
-        {
-            add
-            {
-                if (!_navigatedEventHandlers.Contains(value))
-                {
-                    _navigatedEventHandlers.Add(value);
-                }
-            }
-            remove
-            {
-                if (_navigatedEventHandlers.Contains(value))
-                {
-                    _navigatedEventHandlers.Remove(value);
-                }
-            }
-        }
+        public event EventHandler<NavigatedEventArgs> Navigated;
 
         private static readonly HashSet<Type> _authorizationTypes = new()
         {
@@ -330,11 +315,7 @@ namespace Telegram.Navigation.Services
             }
 
             NavigationModeHint = NavigationMode.New;
-
-            foreach (var handler in _navigatedEventHandlers)
-            {
-                handler(Frame, args);
-            }
+            Navigated?.Invoke(Frame, args);
 
             if (Frame.BackStack.Count > 0 && _authorizationTypes.Contains(Frame.BackStack[Frame.BackStack.Count - 1].SourcePageType))
             {
@@ -342,24 +323,7 @@ namespace Telegram.Navigation.Services
             }
         }
 
-        readonly List<EventHandler<NavigatingEventArgs>> _navigatingEventHandlers = new();
-        public event EventHandler<NavigatingEventArgs> Navigating
-        {
-            add
-            {
-                if (!_navigatingEventHandlers.Contains(value))
-                {
-                    _navigatingEventHandlers.Add(value);
-                }
-            }
-            remove
-            {
-                if (_navigatingEventHandlers.Contains(value))
-                {
-                    _navigatingEventHandlers.Remove(value);
-                }
-            }
-        }
+        public event EventHandler<NavigatingEventArgs> Navigating;
 
         private void FacadeNavigatingCancelEventHandler(object sender, NavigatingCancelEventArgs e)
         {
@@ -379,11 +343,7 @@ namespace Telegram.Navigation.Services
             }
 
             NavigationModeHint = NavigationMode.New;
-
-            foreach (var handler in _navigatingEventHandlers)
-            {
-                handler(Frame, args);
-            }
+            Navigating?.Invoke(Frame, args);
 
             e.Cancel = args.Cancel;
         }

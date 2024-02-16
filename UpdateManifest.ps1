@@ -37,7 +37,14 @@ if ([double]::TryParse($out, [ref]$rtn) -ne $true) {
 #$out = "7447"
 #$rtn = 7447
 
-[xml]$document = Get-Content $path_manifest
+$documentRaw = Get-Content $path_manifest -Raw
+$documentRaw = $documentRaw -replace "packageManagement`" />`r`n    <rescap:Capability Name=`"oneProcessVoIP", "oneProcessVoIP"
+
+if ($config -ne "RELEASE") {
+    $documentRaw = $documentRaw -replace "oneProcessVoIP", "packageManagement`" />`r`n    <rescap:Capability Name=`"oneProcessVoIP"
+}
+
+[xml]$document = $documentRaw
 
 $h = @{}
 $h["DEBUG"] = @{

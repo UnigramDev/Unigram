@@ -180,26 +180,41 @@ namespace winrt::Telegram::Native::implementation
 
     winrt::Telegram::Native::TextDirectionality NativeUtils::GetDirectionality(hstring value)
     {
-        unsigned int length = value.size();
-        WORD* type;
-        type = new WORD[length];
-        GetStringTypeEx(LOCALE_USER_DEFAULT, CT_CTYPE2, value.data(), length, type);
+        return GetDirectionality(value, 0, value.size());
+    }
 
+    winrt::Telegram::Native::TextDirectionality NativeUtils::GetDirectionality(hstring value, int32_t offset)
+    {
+        return GetDirectionality(value, offset, value.size() - offset);
+    }
+
+    winrt::Telegram::Native::TextDirectionality NativeUtils::GetDirectionality(hstring value, int32_t offset, int32_t length)
+    {
+        DWORD prev = C2_OTHERNEUTRAL;
         for (int i = 0; i < length; i++)
         {
-            if (IS_HIGH_SURROGATE(value[i]) || IS_LOW_SURROGATE(value[i]))
+            if (IS_HIGH_SURROGATE(value[offset + i]) || IS_LOW_SURROGATE(value[offset + i]))
             {
                 continue;
             }
 
-            if (type[i] == C2_LEFTTORIGHT)
+            WORD type;
+            GetStringTypeEx(LOCALE_USER_DEFAULT, CT_CTYPE2, value.data() + offset + i, 1, &type);
+
+            // We use the first strong character after a neutral character.
+            if (prev >= C2_BLOCKSEPARATOR && prev <= C2_OTHERNEUTRAL)
             {
-                return winrt::Telegram::Native::TextDirectionality::LeftToRight;
+                if (type == C2_LEFTTORIGHT)
+                {
+                    return winrt::Telegram::Native::TextDirectionality::LeftToRight;
+                }
+                else if (type == C2_RIGHTTOLEFT)
+                {
+                    return winrt::Telegram::Native::TextDirectionality::RightToLeft;
+                }
             }
-            else if (type[i] == C2_RIGHTTOLEFT)
-            {
-                return winrt::Telegram::Native::TextDirectionality::RightToLeft;
-            }
+
+            prev = type;
         }
 
         return winrt::Telegram::Native::TextDirectionality::Neutral;
@@ -257,6 +272,94 @@ namespace winrt::Telegram::Native::implementation
 
         // TODO: probably better this than an empty string.
         return L"en-US";
+    }
+
+    hstring NativeUtils::FormatTime(int value)
+    {
+        FILETIME fileTime;
+        ULARGE_INTEGER uli;
+        uli.QuadPart = (static_cast<ULONGLONG>(value) + 11644473600LL) * 10000000LL;
+        fileTime.dwLowDateTime = uli.LowPart;
+        fileTime.dwHighDateTime = uli.HighPart;
+
+        FILETIME localFileTime;
+        if (FileTimeToLocalFileTime(&fileTime, &localFileTime))
+        {
+            SYSTEMTIME systemTime;
+            if (FileTimeToSystemTime(&localFileTime, &systemTime))
+            {
+                TCHAR timeString[128];
+                if (GetTimeFormatEx(LOCALE_NAME_USER_DEFAULT, TIME_NOSECONDS, &systemTime, nullptr, timeString, 128))
+                {
+                    return hstring(timeString);
+                }
+
+                switch (GetLastError())
+                {
+                case ERROR_INSUFFICIENT_BUFFER:
+                    return L"E_INSUFFICIENT_BUFFER";
+                case ERROR_INVALID_FLAGS:
+                    return L"E_INVALID_FLAGS";
+                case ERROR_INVALID_PARAMETER:
+                    return L"E_INVALID_PARAMETER";
+                case ERROR_OUTOFMEMORY:
+                    return L"E_OUTOFMEMORY";
+                default:
+                    return L"E_UNKNOWN";
+                }
+            }
+        }
+
+        return hstring();
+    }
+
+    hstring NativeUtils::FormatDate(int value)
+    {
+        // TODO: DATE_MONTHDAY doesn't seem to work, so we're not using this method.
+
+        FILETIME fileTime;
+        ULARGE_INTEGER uli;
+        uli.QuadPart = (static_cast<ULONGLONG>(value) + 11644473600LL) * 10000000LL;
+        fileTime.dwLowDateTime = uli.LowPart;
+        fileTime.dwHighDateTime = uli.HighPart;
+
+        FILETIME localFileTime;
+        if (FileTimeToLocalFileTime(&fileTime, &localFileTime))
+        {
+            SYSTEMTIME systemTime;
+            if (FileTimeToSystemTime(&localFileTime, &systemTime))
+            {
+                SYSTEMTIME todayTime;
+                GetSystemTime(&todayTime);
+
+                int difference = abs(systemTime.wMonth - todayTime.wMonth + 12 * (systemTime.wYear - todayTime.wYear));
+                DWORD flags = difference >= 11
+                    ? DATE_LONGDATE
+                    : DATE_MONTHDAY;
+
+                TCHAR dateString[256];
+                if (GetDateFormatEx(LOCALE_NAME_USER_DEFAULT, flags, &systemTime, nullptr, dateString, 256, nullptr))
+                {
+                    return hstring(dateString);
+                }
+
+                switch (GetLastError())
+                {
+                case ERROR_INSUFFICIENT_BUFFER:
+                    return L"E_INSUFFICIENT_BUFFER";
+                case ERROR_INVALID_FLAGS:
+                    return L"E_INVALID_FLAGS";
+                case ERROR_INVALID_PARAMETER:
+                    return L"E_INVALID_PARAMETER";
+                case ERROR_OUTOFMEMORY:
+                    return L"E_OUTOFMEMORY";
+                default:
+                    return L"E_UNKNOWN";
+                }
+            }
+        }
+
+        return hstring();
     }
 
     bool NativeUtils::IsFileReadable(hstring path)

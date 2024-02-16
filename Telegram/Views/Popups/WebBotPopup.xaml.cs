@@ -1,5 +1,5 @@
 //
-// Copyright Fela Ameghino 2015-2023
+// Copyright Fela Ameghino 2015-2024
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
@@ -15,6 +15,7 @@ using Telegram.Navigation;
 using Telegram.Navigation.Services;
 using Telegram.Services;
 using Telegram.Td.Api;
+using Telegram.Views.Host;
 using Windows.Data.Json;
 using Windows.UI;
 using Windows.UI.Composition;
@@ -37,6 +38,8 @@ namespace Telegram.Views.Popups
 
         private bool _blockingAction;
         private bool _closeNeedConfirmation;
+
+        private bool _settingsVisible;
 
         // TODO: constructor should take a function and URL should be loaded asynchronously
         public WebBotPopup(IClientService clientService, INavigationService navigationService, User user, WebAppInfo info, AttachmentMenuBot menuBot = null, Chat sourceChat = null)
@@ -82,8 +85,6 @@ namespace Telegram.Views.Popups
 
         private void View_SizeChanged(object sender, SizeChangedEventArgs e)
         {
-            Logger.Debug();
-
             SendViewport();
         }
 
@@ -121,6 +122,10 @@ namespace Telegram.Views.Popups
             else if (eventName == "web_app_setup_back_button")
             {
                 ProcessBackButtonMessage(eventData);
+            }
+            else if (eventName == "web_app_setup_settings_button")
+            {
+                ProcessSettingsButtonMessage(eventData);
             }
             else if (eventName == "web_app_request_theme")
             {
@@ -211,31 +216,44 @@ namespace Telegram.Views.Popups
                 var colorValue = eventData.GetNamedString("color");
                 var color = ParseColor(colorValue);
 
-                if (color is Color c)
-                {
-                    var luminance = 0.2126 * (c.R / 255d) + 0.7152 * (c.G / 255d) + 0.0722 * (c.B / 255d);
-                    var foreground = luminance > 0.5 ? Colors.Black : Colors.White;
-
-                    var brush = new SolidColorBrush(foreground);
-
-                    TitlePanel.Background = new SolidColorBrush(c);
-                    Title.Foreground = brush;
-                    BackButton.Foreground = brush;
-                    MoreButton.Foreground = brush;
-                    HideButton.Foreground = brush;
-                }
-                else
-                {
-                    TitlePanel.ClearValue(Panel.BackgroundProperty);
-                    Title.ClearValue(TextBlock.ForegroundProperty);
-                    BackButton.ClearValue(ForegroundProperty);
-                    MoreButton.ClearValue(ForegroundProperty);
-                    HideButton.ClearValue(ForegroundProperty);
-                }
+                ProcessHeaderColor(color);
             }
             else if (eventData.ContainsKey("color_key"))
             {
                 var colorKey = eventData.GetNamedString("color_key");
+                var color = colorKey switch
+                {
+                    "secondary_bg_color" => Theme.Current.Parameters.SecondaryBackgroundColor.ToColor(),
+                    _ => new Color?(),
+                };
+
+                ProcessHeaderColor(color);
+            }
+        }
+
+        private void ProcessHeaderColor(Color? color)
+        {
+            if (color is Color c)
+            {
+                var luminance = 0.2126 * (c.R / 255d) + 0.7152 * (c.G / 255d) + 0.0722 * (c.B / 255d);
+                var foreground = luminance > 0.5 ? Colors.Black : Colors.White;
+
+                var brush = new SolidColorBrush(foreground);
+                var theme = luminance > 0.5 ? ElementTheme.Light : ElementTheme.Dark;
+
+                TitlePanel.Background = new SolidColorBrush(c);
+                Title.Foreground = brush;
+                BackButton.RequestedTheme = theme;
+                MoreButton.RequestedTheme = theme;
+                HideButton.RequestedTheme = theme;
+            }
+            else
+            {
+                TitlePanel.ClearValue(Panel.BackgroundProperty);
+                Title.ClearValue(TextBlock.ForegroundProperty);
+                BackButton.RequestedTheme = ElementTheme.Default;
+                MoreButton.RequestedTheme = ElementTheme.Default;
+                HideButton.RequestedTheme = ElementTheme.Default;
             }
         }
 
@@ -343,12 +361,12 @@ namespace Telegram.Views.Popups
                 ShouldConstrainToRootBounds = true,
             };
 
-            void handler(object sender, RoutedEventArgs e)
+            void click(object sender, RoutedEventArgs e)
             {
                 if (sender is Button button && button.CommandParameter is string id)
                 {
                     PostEvent("popup_closed", "{ button_id: \"" + id + "\" }");
-                    button.Click -= handler;
+                    button.Click -= click;
                 }
 
                 popup.IsOpen = false;
@@ -369,7 +387,7 @@ namespace Telegram.Views.Popups
                     HorizontalAlignment = HorizontalAlignment.Stretch
                 };
 
-                action.Click += handler;
+                action.Click += click;
 
                 switch (type)
                 {
@@ -404,9 +422,16 @@ namespace Telegram.Views.Popups
                 panel.Children.Add(action);
             }
 
-            if (Window.Current.Content is FrameworkElement element)
+            if (Window.Current.Content is IToastHost host)
             {
-                element.Resources["TeachingTip"] = popup;
+                void handler(object sender, object e)
+                {
+                    host.Disconnect(popup);
+                    popup.Closed -= handler;
+                }
+
+                host.Connect(popup);
+                popup.Closed += handler;
             }
 
             popup.IsOpen = true;
@@ -451,6 +476,11 @@ namespace Telegram.Views.Popups
             ShowHideBackButton(eventData.GetNamedBoolean("is_visible", false));
         }
 
+        private void ProcessSettingsButtonMessage(JsonObject eventData)
+        {
+            _settingsVisible = eventData.GetNamedBoolean("is_visible", false);
+        }
+
         private bool _backButtonCollapsed = true;
 
         private void ShowHideBackButton(bool show)
@@ -463,8 +493,8 @@ namespace Telegram.Views.Popups
             _backButtonCollapsed = !show;
             BackButton.Visibility = Visibility.Visible;
 
-            var visual1 = ElementCompositionPreview.GetElementVisual(BackButton);
-            var visual2 = ElementCompositionPreview.GetElementVisual(Title);
+            var visual1 = ElementComposition.GetElementVisual(BackButton);
+            var visual2 = ElementComposition.GetElementVisual(Title);
 
             var batch = visual1.Compositor.CreateScopedBatch(CompositionBatchTypes.Animation);
             batch.Completed += (s, args) =>
@@ -563,7 +593,7 @@ namespace Telegram.Views.Popups
             Grid.SetRowSpan(View, 2);
             MainButton.Visibility = Visibility.Visible;
 
-            var visual = ElementCompositionPreview.GetElementVisual(MainButton);
+            var visual = ElementComposition.GetElementVisual(MainButton);
             var batch = visual.Compositor.CreateScopedBatch(CompositionBatchTypes.Animation);
             batch.Completed += (s, args) =>
             {
@@ -619,7 +649,7 @@ namespace Telegram.Views.Popups
             }
             else if (_sourceChat != null)
             {
-                var aggregator = TLContainer.Current.Resolve<IEventAggregator>(_clientService.SessionId);
+                var aggregator = TypeResolver.Current.Resolve<IEventAggregator>(_clientService.SessionId);
                 aggregator.Publish(new UpdateChatSwitchInlineQuery(_sourceChat.Id, _botUser.Id, query));
             }
         }
@@ -660,10 +690,11 @@ namespace Telegram.Views.Popups
                     _closeNeedConfirmation = false;
                     Hide();
                 }
-
-                return;
             }
+        }
 
+        private void OnClosed(ContentDialog sender, ContentDialogClosedEventArgs args)
+        {
             View.Close();
         }
 
@@ -671,7 +702,7 @@ namespace Telegram.Views.Popups
         {
             var flyout = new MenuFlyout();
 
-            if (_menuBot != null && _menuBot.SupportsSettings)
+            if (_settingsVisible)
             {
                 flyout.CreateFlyoutItem(MenuItemSettings, Strings.BotWebViewSettings, Icons.Settings);
             }
@@ -691,15 +722,13 @@ namespace Telegram.Views.Popups
 
         private void MenuItemSettings()
         {
-            PostEvent("popup_closed", "{ status: \"cancelled\" }");
-
-
             PostEvent("settings_button_pressed");
         }
 
         private void MenuItemOpenBot()
         {
-
+            _navigationService.NavigateToUser(_botUser.Id);
+            Hide();
         }
 
         private void MenuItemReloadPage()

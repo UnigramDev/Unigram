@@ -1,0 +1,10 @@
+import "Highlight/SyntaxToken.idl";
+
+namespace Telegram.Native.Highlight
+{
+    [default_interface]
+    runtimeclass TextToken : Token, Windows.Foundation.IStringable
+    {
+        String Value{ get; };
+    }
+}

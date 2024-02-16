@@ -1,5 +1,5 @@
 //
-// Copyright Fela Ameghino 2015-2023
+// Copyright Fela Ameghino 2015-2024
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
@@ -17,7 +17,7 @@ using Windows.UI.Xaml.Media.Imaging;
 
 namespace Telegram.Views.Popups
 {
-    public sealed partial class ZoomableMediaPopup : Grid
+    public sealed partial class ZoomableMediaPopup : GridEx
     {
         private ApplicationView _applicationView;
 
@@ -30,8 +30,8 @@ namespace Telegram.Views.Popups
         {
             InitializeComponent();
 
-            Loaded += OnLoaded;
-            Unloaded += OnUnloaded;
+            Connected += OnLoaded;
+            Disconnected += OnUnloaded;
         }
 
         private void OnLoaded(object sender, RoutedEventArgs e)
@@ -135,38 +135,16 @@ namespace Telegram.Views.Popups
             {
                 UpdateManager.Unsubscribe(this, ref _fileToken, true);
 
-                if (sticker.Format is StickerFormatTgs)
+                Thumbnail.Opacity = 0;
+                Texture.Source = null;
+                Container.Child = new AnimatedImage
                 {
-                    Thumbnail.Opacity = 0;
-                    Texture.Source = null;
-                    Container.Child = new AnimatedImage
-                    {
-                        AutoPlay = true,
-                        FrameSize = new Size(180, 180),
-                        DecodeFrameType = DecodePixelType.Logical,
-                        IsCachingEnabled = true,
-                        Source = new LocalFileSource(file)
-                    };
-                }
-                else if (sticker.Format is StickerFormatWebm)
-                {
-                    Thumbnail.Opacity = 0;
-                    Texture.Source = null;
-                    Container.Child = new AnimatedImage
-                    {
-                        AutoPlay = true,
-                        FrameSize = new Size(0, 0),
-                        DecodeFrameType = DecodePixelType.Physical,
-                        IsCachingEnabled = false,
-                        Source = new LocalFileSource(file)
-                    };
-                }
-                else
-                {
-                    Thumbnail.Opacity = 0;
-                    Texture.Source = PlaceholderHelper.GetWebPFrame(file.Local.Path);
-                    Container.Child = new Border();
-                }
+                    AutoPlay = true,
+                    FrameSize = new Size(180, 180),
+                    DecodeFrameType = DecodePixelType.Logical,
+                    IsCachingEnabled = true,
+                    Source = new LocalFileSource(sticker)
+                };
             }
             else
             {

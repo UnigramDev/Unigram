@@ -1,4 +1,10 @@
-﻿using RLottie;
+﻿//
+// Copyright Fela Ameghino 2015-2024
+//
+// Distributed under the GNU General Public License v3.0. (See accompanying
+// file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
+//
+using RLottie;
 using System;
 using System.Threading.Tasks;
 using Telegram.Common;
@@ -297,7 +303,7 @@ namespace Telegram.Controls.Stories
             _presenterId = value.StickerValue.Id;
 
             Icon ??= GetTemplateChild(nameof(Icon)) as CustomEmojiIcon;
-            Icon.Source = new DelayedFileSource(story.ClientService, value.StickerValue);
+            Icon.Source = new DelayedFileSource(story.ClientService, value);
         }
 
         private void UpdateInteraction(StoryViewModel story, ReactionType interaction, bool recycled)
@@ -342,20 +348,25 @@ namespace Telegram.Controls.Stories
             width = (int)(width * dpi);
             height = (int)(height * dpi);
 
-            var bitmap = new WriteableBitmap(width, height);
-            var buffer = new PixelBuffer(bitmap);
-
-            await Task.Run(() =>
+            if (width > 0 && height > 0)
             {
-                var animation = LottieAnimation.LoadFromFile(path, width, height, false, null);
-                if (animation != null)
-                {
-                    animation.RenderSync(buffer, frame);
-                    animation.Dispose();
-                }
-            });
+                var bitmap = new WriteableBitmap(width, height);
+                var buffer = new PixelBuffer(bitmap);
 
-            return bitmap;
+                await Task.Run(() =>
+                {
+                    var animation = LottieAnimation.LoadFromFile(path, width, height, false, null);
+                    if (animation != null)
+                    {
+                        animation.RenderSync(buffer, frame);
+                        animation.Dispose();
+                    }
+                });
+
+                return bitmap;
+            }
+
+            return null;
         }
 
         protected override void OnApplyTemplate()

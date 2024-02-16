@@ -1,5 +1,5 @@
 //
-// Copyright Fela Ameghino 2015-2023
+// Copyright Fela Ameghino 2015-2024
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
@@ -15,6 +15,7 @@ namespace Telegram.ViewModels.Delegates
     public interface IMessageDelegate : IViewModelDelegate
     {
         bool IsDialog { get; }
+        bool IsTranslating { get; }
 
         INavigationService NavigationService { get; }
 
@@ -25,6 +26,8 @@ namespace Telegram.ViewModels.Delegates
         IDictionary<long, MessageViewModel> SelectedItems { get; }
 
         bool IsSelectionEnabled { get; }
+
+        ReactionType SavedMessagesTag { get; set; }
 
         void Select(MessageViewModel message);
         void Unselect(MessageViewModel message);
@@ -41,9 +44,11 @@ namespace Telegram.ViewModels.Delegates
         void OpenWebPage(WebPage webPage);
         void OpenSticker(Sticker sticker);
         void OpenLocation(Location location, string title);
+        void OpenGame(MessageViewModel message);
         void OpenInlineButton(MessageViewModel message, InlineKeyboardButton button);
         void OpenMedia(MessageViewModel message, FrameworkElement target, int timestamp = 0);
         void PlayMessage(MessageViewModel message);
+        bool RecognizeSpeech(MessageViewModel message);
 
         void Call(MessageViewModel message, bool video);
 

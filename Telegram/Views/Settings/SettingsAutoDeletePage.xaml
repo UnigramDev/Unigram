@@ -42,6 +42,7 @@
                             <ItemsControl.ItemTemplate>
                                 <DataTemplate x:DataType="settings:SettingsAutoDeleteItem">
                                     <controls:FauxRadioButton Content="{x:Bind Text}"
+                                                              IsFaux="True"
                                                               IsChecked="{x:Bind IsChecked, Mode=OneWay}"
                                                               Click="OnChecked"
                                                               Style="{StaticResource SettingsRadioButtonStyle}" />

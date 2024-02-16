@@ -1,5 +1,5 @@
 //
-// Copyright Fela Ameghino 2015-2023
+// Copyright Fela Ameghino 2015-2024
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
@@ -7,6 +7,7 @@
 using System;
 using System.Numerics;
 using Telegram.Common;
+using Telegram.Composition;
 using Telegram.Navigation;
 using Windows.Devices.Input;
 using Windows.Foundation;
@@ -50,10 +51,10 @@ namespace Telegram.Controls
     public delegate void CarouselViewChangedEventHandler(object sender, CarouselViewChangedEventArgs e);
     public delegate void CarouselViewChangingEventHandler(object sender, CarouselViewChangingEventArgs e);
 
-    public class CarouselViewer : Grid, IInteractionTrackerOwner
+    public class CarouselViewer : Grid
     {
         private bool _requiresArrange;
-        private long _scrolling;
+        private ulong _scrolling;
 
         public CarouselViewer()
         {
@@ -68,6 +69,8 @@ namespace Telegram.Controls
         {
             if (!_hasInitialLoadedEventFired)
             {
+                _hasInitialLoadedEventFired = true;
+
                 _hitTest = Window.Current.Compositor.CreateSpriteVisual();
                 _hitTest.Brush = Window.Current.Compositor.CreateColorBrush(Windows.UI.Colors.Transparent);
 
@@ -86,21 +89,22 @@ namespace Telegram.Controls
                 ConfigureInteractionTracker();
             }
 
-            _hasInitialLoadedEventFired = true;
+            if (_trackerOwner != null)
+            {
+                _trackerOwner.InertiaStateEntered += OnInertiaStateEntered;
+                _trackerOwner.InteractingStateEntered += OnInteractingStateEntered;
+                _trackerOwner.IdleStateEntered += OnIdleStateEntered;
+            }
         }
 
         private void OnUnloaded(object sender, RoutedEventArgs e)
         {
-            if (_hasInitialLoadedEventFired)
+            if (_trackerOwner != null)
             {
-                _tracker.Dispose();
-                _tracker = null;
-
-                _interactionSource.Dispose();
-                _interactionSource = null;
+                _trackerOwner.InertiaStateEntered -= OnInertiaStateEntered;
+                _trackerOwner.InteractingStateEntered -= OnInteractingStateEntered;
+                _trackerOwner.IdleStateEntered -= OnIdleStateEntered;
             }
-
-            _hasInitialLoadedEventFired = false;
         }
 
         private void OnPointerWheelChanged(object sender, PointerRoutedEventArgs e)
@@ -154,8 +158,6 @@ namespace Telegram.Controls
 
         protected override Size ArrangeOverride(Size finalSize)
         {
-            Logger.Debug();
-
             ConfigureElements();
             ConfigureAnimations(_restingValue);
 
@@ -180,7 +182,7 @@ namespace Telegram.Controls
                 element.SizeChanged += OnSizeChanged;
 
                 _elements[i] = element;
-                _visuals[i] = ElementCompositionPreview.GetElementVisual(_elements[i]);
+                _visuals[i] = ElementComposition.GetElementVisual(_elements[i]);
                 ElementCompositionPreview.SetIsTranslationEnabled(_elements[i], true);
             }
 
@@ -189,8 +191,6 @@ namespace Telegram.Controls
 
         private void OnSizeChanged(object sender, SizeChangedEventArgs e)
         {
-            Logger.Debug();
-
             if (e.NewSize.Width != e.PreviousSize.Width)
             {
                 ConfigureAnimations(_restingValue);
@@ -235,7 +235,7 @@ namespace Telegram.Controls
             }
         }
 
-        public bool IsScrolling => Environment.TickCount - _scrolling < 100;
+        public bool IsScrolling => Logger.TickCount - _scrolling < 100;
 
         public FrameworkElement CurrentElement => _elements[1];
 
@@ -267,7 +267,7 @@ namespace Telegram.Controls
 
         public void ChangeView(CarouselDirection direction)
         {
-            _scrolling = Environment.TickCount;
+            _scrolling = Logger.TickCount;
 
             var position = direction == CarouselDirection.Previous
                 ? _tracker.MinPosition
@@ -296,8 +296,11 @@ namespace Telegram.Controls
         private bool _hasInitialLoadedEventFired;
         private bool _hasConfiguredElements;
 
+        private WeakInteractionTrackerOwner _trackerOwner;
         private InteractionTracker _tracker;
         private VisualInteractionSource _interactionSource;
+
+        private CompositionPropertySet _progress;
 
         private float _restingValue;
 
@@ -316,13 +319,18 @@ namespace Telegram.Controls
             _interactionSource.PositionXChainingMode = InteractionChainingMode.Never;
             _interactionSource.IsPositionXRailsEnabled = true;
 
+            _trackerOwner = new WeakInteractionTrackerOwner();
+
             //Create tracker and associate interaction source
-            _tracker = InteractionTracker.CreateWithOwner(Window.Current.Compositor, this);
+            _tracker = InteractionTracker.CreateWithOwner(Window.Current.Compositor, _trackerOwner);
             _tracker.InteractionSources.Add(_interactionSource);
 
             _tracker.Properties.InsertScalar("RestingValue", _restingValue);
             _tracker.Properties.InsertBoolean("CanGoNext", _canGoNext);
             _tracker.Properties.InsertBoolean("CanGoPrev", _canGoPrev);
+
+            _progress = _tracker.Compositor.CreatePropertySet();
+            _progress.InsertScalar("Progress", 0);
 
             ConfigureAnimations();
             ConfigureRestingPoints();
@@ -360,14 +368,24 @@ namespace Telegram.Controls
 
             _restingValue = restingValue;
 
-            (Visual Visual, Vector2 Size)
-                visual2 = (_visuals[0], _elements[0].ActualSize);
+            static Vector2 GetSize(FrameworkElement element)
+            {
+                if (element is AspectView { RotationAngle: RotationAngle.Angle90 or RotationAngle.Angle270 })
+                {
+                    return new Vector2(element.ActualSize.Y, element.ActualSize.X);
+                }
+
+                return element.ActualSize;
+            }
 
             (Visual Visual, Vector2 Size)
-                visual0 = (_visuals[1], _elements[1].ActualSize);
+                visual2 = (_visuals[0], GetSize(_elements[0]));
 
             (Visual Visual, Vector2 Size)
-                visual1 = (_visuals[2], _elements[2].ActualSize);
+                visual0 = (_visuals[1], GetSize(_elements[1]));
+
+            (Visual Visual, Vector2 Size)
+                visual1 = (_visuals[2], GetSize(_elements[2]));
 
             var current2 = GetElementPosition(visual2.Size, 0);
             var future20 = GetElementPosition(visual2.Size, 1);
@@ -393,24 +411,23 @@ namespace Telegram.Controls
             progress.SetReferenceParameter("tracker", _tracker);
             progress.SetScalarParameter("restingValue", restingValue);
 
-            var properties = _tracker.Compositor.CreatePropertySet();
-            properties.InsertScalar("Progress", 0);
-            properties.StartAnimation("Progress", progress);
+            _progress.InsertScalar("Progress", 0);
+            _progress.StartAnimation("Progress", progress);
 
             var offset2 = _tracker.Compositor.CreateExpressionAnimation("Floor(value + (_.Progress < 0 ? _.Progress * (maxValue - value) * -1 : 0)) - 2");
-            offset2.SetReferenceParameter("_", properties);
+            offset2.SetReferenceParameter("_", _progress);
             offset2.SetScalarParameter("value", current2);
             offset2.SetScalarParameter("maxValue", future20);
 
             var offset0 = _tracker.Compositor.CreateExpressionAnimation("_.Progress > 0 " +
                 "? _.Progress * maxValue * -1" +
                 ": _.Progress * minValue");
-            offset0.SetReferenceParameter("_", properties);
+            offset0.SetReferenceParameter("_", _progress);
             offset0.SetScalarParameter("minValue", future02);
             offset0.SetScalarParameter("maxValue", future01);
 
             var offset1 = _tracker.Compositor.CreateExpressionAnimation("Ceil(value + (_.Progress > 0 ? _.Progress * (value - maxValue) * -1 : 0)) + 2");
-            offset1.SetReferenceParameter("_", properties);
+            offset1.SetReferenceParameter("_", _progress);
             offset1.SetScalarParameter("value", current1);
             offset1.SetScalarParameter("maxValue", future10);
 
@@ -419,12 +436,7 @@ namespace Telegram.Controls
             visual1.Visual.StartAnimation("Translation.X", offset1);
         }
 
-        public void ValuesChanged(InteractionTracker sender, InteractionTrackerValuesChangedArgs args)
-        {
-
-        }
-
-        public void InertiaStateEntered(InteractionTracker sender, InteractionTrackerInertiaStateEnteredArgs args)
+        private void OnInertiaStateEntered(InteractionTracker sender, InteractionTrackerInertiaStateEnteredArgs args)
         {
             if (args.ModifiedRestingPosition?.X is float position)
             {
@@ -445,7 +457,7 @@ namespace Telegram.Controls
             _viewChanged = CarouselDirection.None;
         }
 
-        public void IdleStateEntered(InteractionTracker sender, InteractionTrackerIdleStateEnteredArgs args)
+        private void OnIdleStateEntered(InteractionTracker sender, InteractionTrackerIdleStateEnteredArgs args)
         {
             //_tracker.TryUpdatePosition(Vector3.Zero);
             //ConfigureAnimations(0);
@@ -457,19 +469,9 @@ namespace Telegram.Controls
             }
         }
 
-        public void InteractingStateEntered(InteractionTracker sender, InteractionTrackerInteractingStateEnteredArgs args)
+        private void OnInteractingStateEntered(InteractionTracker sender, InteractionTrackerInteractingStateEnteredArgs args)
         {
             ConfigureAnimations(_restingValue);
-        }
-
-        public void RequestIgnored(InteractionTracker sender, InteractionTrackerRequestIgnoredArgs args)
-        {
-
-        }
-
-        public void CustomAnimationStateEntered(InteractionTracker sender, InteractionTrackerCustomAnimationStateEnteredArgs args)
-        {
-
         }
 
         #endregion

@@ -1,9 +1,11 @@
 //
-// Copyright Fela Ameghino 2015-2023
+// Copyright Fela Ameghino 2015-2024
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+
+using System;
 
 namespace Telegram.Services.Settings
 {
@@ -12,20 +14,6 @@ namespace Telegram.Services.Settings
         public DiagnosticsSettings()
             : base("Diagnostics")
         {
-        }
-
-        private bool? _disableRendering;
-        public bool DisableRendering
-        {
-            get => _disableRendering ??= GetValueOrDefault("DisableRendering", false);
-            set => AddOrUpdateValue(ref _disableRendering, "DisableRendering", value);
-        }
-
-        private bool? _disableClipping;
-        public bool DisableClipping
-        {
-            get => _disableClipping ??= GetValueOrDefault("DisableClipping", true);
-            set => AddOrUpdateValue(ref _disableClipping, "DisableClipping", value);
         }
 
         private bool? _legacyScrollBars;
@@ -84,11 +72,18 @@ namespace Telegram.Services.Settings
             set => AddOrUpdateValue(ref _lastUpdateTime, "LastUpdateTime", value);
         }
 
-        private bool? _loggerSink;
-        public bool LoggerSink
+        private bool? _enableWebViewDevTools;
+        public bool EnableWebViewDevTools
         {
-            get => _loggerSink ??= GetValueOrDefault("LoggerSink", false);
-            set => AddOrUpdateValue(ref _loggerSink, "LoggerSink", value);
+            get => _enableWebViewDevTools ??= GetValueOrDefault("EnableWebViewDevTools", Constants.DEBUG);
+            set => AddOrUpdateValue(ref _enableWebViewDevTools, "EnableWebViewDevTools", value);
+        }
+
+        private bool? _bridgeDebug;
+        public bool BridgeDebug
+        {
+            get => _bridgeDebug ??= GetValueOrDefault("BridgeDebug", false);
+            set => AddOrUpdateValue(ref _bridgeDebug, "BridgeDebug", value);
         }
 
         private long? _storageMaxTimeFromLastAccess;
@@ -105,10 +100,28 @@ namespace Telegram.Services.Settings
             set => AddOrUpdateValue(ref _useStorageOptimizer, "UseStorageOptimizer", value);
         }
 
+        private bool? _lastCrashWasLayoutCycle;
+        public bool LastCrashWasLayoutCycle
+        {
+            get => _lastCrashWasLayoutCycle ??= GetValueOrDefault("LastCrashWasLayoutCycle", false);
+            set => AddOrUpdateValue(ref _lastCrashWasLayoutCycle, "LastCrashWasLayoutCycle", value);
+        }
+
+        private DateTime? _lasCrashReported;
+        public DateTime LastCrashReported
+        {
+            get => _lasCrashReported ??= DateTime.FromFileTimeUtc(GetValueOrDefault("LastCrashReported", 2650467743999999999 /* DateTime.MaxValue */));
+            set
+            {
+                _lasCrashReported = value;
+                AddOrUpdateValue("LastCrashReported", value.ToFileTimeUtc());
+            }
+        }
+
         private bool? _hidePhoneNumber;
         public bool HidePhoneNumber
         {
-            get => _hidePhoneNumber ??= GetValueOrDefault("HidePhoneNumber", false);
+            get => _hidePhoneNumber ??= GetValueOrDefault("HidePhoneNumber", Constants.DEBUG);
             set => AddOrUpdateValue(ref _hidePhoneNumber, "HidePhoneNumber", value);
         }
 
@@ -117,6 +130,34 @@ namespace Telegram.Services.Settings
         {
             get => _showMemoryUsage ??= GetValueOrDefault("ShowMemoryUsage", false);
             set => AddOrUpdateValue(ref _showMemoryUsage, "ShowMemoryUsage", value);
+        }
+
+        private bool? _showIds;
+        public bool ShowIds
+        {
+            get => _showIds ??= GetValueOrDefault("ShowIds", false);
+            set => AddOrUpdateValue(ref _showIds, "ShowIds", value);
+        }
+
+        private bool? _forceRawAudio;
+        public bool ForceRawAudio
+        {
+            get => _forceRawAudio ??= GetValueOrDefault("ForceRawAudio", false);
+            set => AddOrUpdateValue(ref _forceRawAudio, "ForceRawAudio", value);
+        }
+
+        private bool? _forceEdgeHtml;
+        public bool ForceEdgeHtml
+        {
+            get => _forceEdgeHtml ??= GetValueOrDefault("ForceEdgeHtml", false);
+            set => AddOrUpdateValue(ref _forceEdgeHtml, "ForceEdgeHtml", value);
+        }
+
+        private bool? _disablePackageManager;
+        public bool DisablePackageManager
+        {
+            get => _disablePackageManager ??= GetValueOrDefault("DisablePackageManager", false);
+            set => AddOrUpdateValue(ref _disablePackageManager, "DisablePackageManager", value);
         }
 
         public bool IsLastErrorDiskFull { get; set; }

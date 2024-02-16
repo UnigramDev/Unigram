@@ -1,14 +1,15 @@
 //
-// Copyright Fela Ameghino 2015-2023
+// Copyright Fela Ameghino 2015-2024
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
-using Microsoft.AppCenter.Crashes;
 using System;
+using Telegram.Common;
 using Telegram.Converters;
 using Telegram.ViewModels;
 using Windows.UI.Xaml;
+using Windows.UI.Xaml.Hosting;
 
 namespace Telegram.Views
 {
@@ -38,7 +39,23 @@ namespace Telegram.Views
 
         private void Crash_Click(object sender, RoutedEventArgs e)
         {
-            throw new TestCrashException();
+            ElementCompositionPreview.GetElementVisual(null);
+            return;
+
+            if (sender is FrameworkElement element)
+            {
+                element.SizeChanged += (s, args) =>
+                {
+                    element.Height++;
+                };
+
+                element.Height = element.ActualHeight + 1;
+            }
+        }
+
+        private void Bridge_Click(object sender, RoutedEventArgs e)
+        {
+            NotifyIcon.Debug("Message received");
         }
     }
 }

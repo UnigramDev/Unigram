@@ -1,5 +1,5 @@
 //
-// Copyright Fela Ameghino 2015-2023
+// Copyright Fela Ameghino 2015-2024
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
@@ -19,8 +19,10 @@ namespace Telegram.Collections
 
         private readonly long _chatId;
         private readonly long _threadId;
+        private readonly long _savedMessagesTopicId;
         private readonly string _query;
         private readonly MessageSender _sender;
+        private readonly ReactionType _savedMessagesTag;
         private readonly bool _secretChat;
 
         private long _fromMessageId;
@@ -30,16 +32,18 @@ namespace Telegram.Collections
 
         private readonly SearchMessagesFilter _filter;
 
-        public SearchChatMessagesCollection(IClientService clientService, long chatId, long threadId, string query, MessageSender sender, long fromMessageId, SearchMessagesFilter filter)
+        public SearchChatMessagesCollection(IClientService clientService, long chatId, long threadId, long savedMessagesTopicId, string query, MessageSender sender, long fromMessageId, SearchMessagesFilter filter, ReactionType savedMessagesTag)
         {
             _clientService = clientService;
 
             _chatId = chatId;
             _threadId = threadId;
+            _savedMessagesTopicId = savedMessagesTopicId;
             _query = query;
             _sender = sender;
             _fromMessageId = fromMessageId;
             _filter = filter;
+            _savedMessagesTag = savedMessagesTag;
 
             if (clientService.TryGetChat(chatId, out Chat chat))
             {
@@ -72,7 +76,14 @@ namespace Telegram.Collections
                         offset = 0;
                     }
 
-                    function = new SearchChatMessages(_chatId, _query, _sender, fromMessageId, offset, (int)count, _filter, _threadId);
+                    if (_savedMessagesTag != null)
+                    {
+                        function = new SearchSavedMessages(_savedMessagesTopicId, _savedMessagesTag, _query, fromMessageId, offset, (int)count);
+                    }
+                    else
+                    {
+                        function = new SearchChatMessages(_chatId, _query, _sender, fromMessageId, offset, (int)count, _filter, _threadId, _savedMessagesTopicId);
+                    }
                 }
 
                 var response = await _clientService.SendAsync(function);

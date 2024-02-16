@@ -1,5 +1,5 @@
 //
-// Copyright Fela Ameghino 2015-2023
+// Copyright Fela Ameghino 2015-2024
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
@@ -14,7 +14,9 @@ using Telegram.Converters;
 using Telegram.Navigation;
 using Telegram.Services.Updates;
 using Telegram.Td.Api;
+using Telegram.Views.Popups;
 using Windows.ApplicationModel;
+using Windows.Management.Deployment;
 using Windows.Storage;
 using Windows.System;
 
@@ -33,13 +35,14 @@ namespace Telegram.Services
         private readonly IEventAggregator _aggregator;
 
         private static readonly SemaphoreSlim _updateLock = new(1, 1);
+        private static readonly bool _disabled = Constants.DEBUG || ApiInfo.IsStoreRelease;
 
         private long _fileToken;
 
         private long? _chatId;
         private CloudUpdate _nextUpdate;
 
-        private long _lastCheck;
+        private ulong _lastCheck;
 
         public CloudUpdateService(IClientService clientService, INetworkService networkService, IEventAggregator aggregator)
         {
@@ -55,14 +58,11 @@ namespace Telegram.Services
             await UpdateAsync(false);
         }
 
-        public static async Task<bool> LaunchAsync(IDispatcherContext context)
+        public static async Task<bool> LaunchAsync(IDispatcherContext context, bool checkAvailability)
         {
-#if DEBUG
-            return false;
-#endif
-
-            if (ApiInfo.IsStoreRelease || !_updateLock.Wait(0))
+            if (_disabled || !_updateLock.Wait(0))
             {
+                Logger.Info("Can't aquire semaphore");
                 return false;
             }
 
@@ -74,6 +74,8 @@ namespace Telegram.Services
                 var current = Package.Current.Id.Version.ToVersion();
                 var versions = new List<(Version Version, StorageFile File)>();
 
+                Logger.Info($"Found {files.Count} files");
+
                 foreach (var file in files)
                 {
                     var split = System.IO.Path.GetFileNameWithoutExtension(file.Name);
@@ -83,6 +85,8 @@ namespace Telegram.Services
                     }
                 }
 
+                Logger.Info($"Found {versions.Count} versions");
+
                 var latest = versions.Max(x => x.Version);
 
                 foreach (var update in versions)
@@ -90,24 +94,40 @@ namespace Telegram.Services
                     // If this isn't the most recent version and it isn't in use, just delete it
                     if (update.Version <= current || update.Version < latest)
                     {
+                        Logger.Info($"{update.Version} is outdated, deleting");
+
                         await update.File.DeleteAsync();
                         continue;
                     }
 
-                    // As soon as we find a valid update, we launch it
+                    Logger.Info($"Dispatching for version {update.Version}");
+
+                    // Terminate notify icon to make the update process smoother
+                    _ = NotifyIcon.ExitAsync();
+
+                    // If package manager fails, we fall back on App Installer
                     await context.DispatchAsync(async () =>
                     {
-                        // But only if App Installer is available
-                        var result = await Launcher.QueryFileSupportAsync(update.File);
-                        if (result == LaunchQuerySupportStatus.Available)
+                        // Try to install the update first using the package manager
+                        var installed = await InstallUpdateAsync(context, update.File);
+                        if (installed is false)
                         {
-                            await SystemTray.ExitAsync();
-                            await Launcher.LaunchFileAsync(update.File);
-                            await BootStrapper.ConsolidateAsync();
+                            // But only if App Installer is available
+                            var result = checkAvailability
+                                    ? await Launcher.QueryFileSupportAsync(update.File)
+                                    : LaunchQuerySupportStatus.Available;
+
+                            Logger.Info($"QueryFileSupportAsync: {result}");
+
+                            if (result == LaunchQuerySupportStatus.Available)
+                            {
+                                await Launcher.LaunchFileAsync(update.File);
+                                await BootStrapper.ConsolidateAsync();
+                            }
                         }
                     });
 
-                    // This line will never be reached
+                    _updateLock.Release();
                     return true;
                 }
             }
@@ -120,18 +140,63 @@ namespace Telegram.Services
             return false;
         }
 
+        private static async Task<bool> InstallUpdateAsync(IDispatcherContext context, StorageFile file)
+        {
+            if (SettingsService.Current.Diagnostics.DisablePackageManager)
+            {
+                return false;
+            }
+
+            PackageManager pm = new();
+            DeploymentResult result = null;
+            CloudUpdatePopup popup = new();
+
+            try
+            {
+                _ = popup.ShowQueuedAsync();
+
+                await Task.Run(async () =>
+                {
+                    var bundlePath = new Uri(file.Path);
+                    var deployment = pm.AddPackageAsync(
+                        bundlePath,
+                        null,
+                        DeploymentOptions.ForceApplicationShutdown);
+
+                    deployment.Progress = (result, delta) =>
+                    {
+                        Logger.Info(string.Format("{0}, {1}%", delta.state, delta.percentage));
+                        context.Dispatch(() => popup.UpdateProgress(delta));
+                    };
+
+                    result = await deployment;
+                });
+            }
+            catch (Exception ex)
+            {
+                if (result?.ExtendedErrorCode is not null)
+                    Logger.Info(result.ErrorText);
+
+                Logger.Error(ex);
+                return false;
+            }
+            finally
+            {
+                popup.Destroy();
+            }
+
+            return result is { IsRegistered: true };
+        }
+
         public async Task UpdateAsync(bool force)
         {
-#if DEBUG
-            return;
-#endif
-
-            if (ApiInfo.IsStoreRelease || !_updateLock.Wait(0))
+            if (_disabled || !_updateLock.Wait(0))
             {
+                Logger.Info("Can't acquire lock");
                 return;
             }
 
-            var diff = Environment.TickCount - _lastCheck;
+            var diff = Logger.TickCount - _lastCheck;
             var skip = diff < 5 * 60 * 1000;
 
             if (skip && !force)
@@ -167,8 +232,6 @@ namespace Telegram.Services
                 }
             }
 
-            // This call is needed to delete old updates from disk
-            await GetHistoryAsync();
             _updateLock.Release();
         }
 
@@ -198,7 +261,7 @@ namespace Telegram.Services
 
         public async Task<CloudUpdate> GetNextUpdateAsync()
         {
-            if (ApiInfo.IsStoreRelease)
+            if (_disabled)
             {
                 return null;
             }
@@ -222,7 +285,7 @@ namespace Telegram.Services
 
             await _clientService.SendAsync(new OpenChat(chatId));
 
-            var messages = await _clientService.SendAsync(new SearchChatMessages(chatId, string.Empty, null, 0, 0, 10, new SearchMessagesFilterDocument(), 0)) as FoundChatMessages;
+            var messages = await _clientService.SendAsync(new SearchChatMessages(chatId, string.Empty, null, 0, 0, 10, new SearchMessagesFilterDocument(), 0, 0)) as FoundChatMessages;
             if (messages == null)
             {
                 _clientService.Send(new CloseChat(chatId));
@@ -295,109 +358,6 @@ namespace Telegram.Services
             }
 
             return null;
-        }
-
-        public async Task<IList<CloudUpdate>> GetHistoryAsync()
-        {
-            if (ApiInfo.IsStoreRelease)
-            {
-                return null;
-            }
-
-            if (_chatId == null)
-            {
-                var chat = await _clientService.SendAsync(new SearchPublicChat(Constants.AppChannel)) as Chat;
-                if (chat != null)
-                {
-                    _chatId = chat.Id;
-                }
-            }
-
-            if (_chatId == null)
-            {
-                return null;
-            }
-
-            var updateChannel = SettingsService.Current.InstallBetaUpdates ? "#beta" : "#update";
-            var chatId = _chatId.Value;
-
-            await _clientService.SendAsync(new OpenChat(chatId));
-
-            var response = await _clientService.SendAsync(new SearchChatMessages(chatId, updateChannel, null, 0, 0, 10, new SearchMessagesFilterDocument(), 0)) as FoundChatMessages;
-            if (response == null)
-            {
-                _clientService.Send(new CloseChat(chatId));
-                return null;
-            }
-
-            _clientService.Send(new CloseChat(chatId));
-
-            var folder = await ApplicationData.Current.LocalFolder.CreateFolderAsync("updates", CreationCollisionOption.OpenIfExists);
-
-            var dict = new List<CloudUpdate>();
-            var thumbnails = new Dictionary<string, File>();
-
-            var results = new List<CloudUpdate>();
-
-            foreach (var message in response.Messages)
-            {
-                var document = message.Content as MessageDocument;
-                if (document == null)
-                {
-                    continue;
-                }
-
-                var hashtags = new List<string>();
-                var changelog = string.Empty;
-
-                foreach (var entity in document.Caption.Entities)
-                {
-                    if (entity.Type is TextEntityTypeHashtag)
-                    {
-                        hashtags.Add(document.Caption.Text.Substring(entity.Offset, entity.Length));
-                    }
-                    else if (entity.Type is TextEntityTypeCode)
-                    {
-                        changelog = document.Caption.Text.Substring(entity.Offset, entity.Length);
-                    }
-                }
-
-                if (!hashtags.Contains(updateChannel) || !document.Document.FileName.Contains("x64") || !document.Document.FileName.EndsWith(".msixbundle"))
-                {
-                    continue;
-                }
-
-                var split = document.Document.FileName.Split('_');
-                if (split.Length >= 3 && Version.TryParse(split[1], out Version version))
-                {
-                    var set = new CloudUpdate
-                    {
-                        MessageId = message.Id,
-                        Changelog = changelog,
-                        Version = version,
-                        Document = document.Document.DocumentValue,
-                        Date = message.Date
-                    };
-
-                    dict.Add(set);
-                }
-            }
-
-            var current = Package.Current.Id.Version.ToVersion();
-            var latest = dict.Count > 0 ? dict.Max(x => x.Version) : null;
-
-            foreach (var set in dict)
-            {
-                if (set.Version < current && set.Document.Local.IsDownloadingCompleted)
-                {
-                    // Delete the file from chat cache as it isn't needed anymore
-                    _clientService.Send(new DeleteFileW(set.Document.Id));
-                }
-
-                results.Add(set);
-            }
-
-            return results.OrderByDescending(x => x.Version).ToList();
         }
 
         private static async Task<StorageFile> TryCopyPartLocally(StorageFolder folder, string path, Version version)

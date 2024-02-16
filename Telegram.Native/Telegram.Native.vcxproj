@@ -138,7 +138,7 @@
       <PrecompiledHeaderOutputFile>$(IntDir)pch.pch</PrecompiledHeaderOutputFile>
       <AdditionalOptions>/bigobj %(AdditionalOptions)</AdditionalOptions>
       <DisableSpecificWarnings>28204</DisableSpecificWarnings>
-      <AdditionalIncludeDirectories>libyuv\include;..\Libraries\libutf;..\Libraries\flatbuffers\include;..\Libraries\libtextclassifier;..\Libraries\libwebp;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>libyuv\include;..\Libraries\libutf;..\Libraries\flatbuffers\include;..\Libraries\libtextclassifier;..\Libraries\libwebp;..\Libraries\libprisma\libprisma;..\Libraries\libprisma;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <LanguageStandard_C>stdc17</LanguageStandard_C>
     </ClCompile>
@@ -158,7 +158,7 @@
       <PrecompiledHeaderOutputFile>$(IntDir)pch.pch</PrecompiledHeaderOutputFile>
       <AdditionalOptions>/bigobj %(AdditionalOptions)</AdditionalOptions>
       <DisableSpecificWarnings>28204</DisableSpecificWarnings>
-      <AdditionalIncludeDirectories>libyuv\include;..\Libraries\libutf;..\Libraries\flatbuffers\include;..\Libraries\libtextclassifier;..\Libraries\libwebp;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>libyuv\include;..\Libraries\libutf;..\Libraries\flatbuffers\include;..\Libraries\libtextclassifier;..\Libraries\libwebp;..\Libraries\libprisma\libprisma;..\Libraries\libprisma;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <LanguageStandard_C>stdc17</LanguageStandard_C>
     </ClCompile>
@@ -178,7 +178,7 @@
       <PrecompiledHeaderOutputFile>$(IntDir)pch.pch</PrecompiledHeaderOutputFile>
       <AdditionalOptions>/bigobj %(AdditionalOptions)</AdditionalOptions>
       <DisableSpecificWarnings>28204</DisableSpecificWarnings>
-      <AdditionalIncludeDirectories>libyuv\include;..\Libraries\libutf;..\Libraries\flatbuffers\include;..\Libraries\libtextclassifier;..\Libraries\libwebp;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>libyuv\include;..\Libraries\libutf;..\Libraries\flatbuffers\include;..\Libraries\libtextclassifier;..\Libraries\libwebp;..\Libraries\libprisma\libprisma;..\Libraries\libprisma;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <LanguageStandard_C>stdc17</LanguageStandard_C>
     </ClCompile>
@@ -198,7 +198,7 @@
       <PrecompiledHeaderOutputFile>$(IntDir)pch.pch</PrecompiledHeaderOutputFile>
       <AdditionalOptions>/bigobj %(AdditionalOptions)</AdditionalOptions>
       <DisableSpecificWarnings>28204</DisableSpecificWarnings>
-      <AdditionalIncludeDirectories>libyuv\include;..\Libraries\libutf;..\Libraries\flatbuffers\include;..\Libraries\libtextclassifier;..\Libraries\libwebp;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>libyuv\include;..\Libraries\libutf;..\Libraries\flatbuffers\include;..\Libraries\libtextclassifier;..\Libraries\libwebp;..\Libraries\libprisma\libprisma;..\Libraries\libprisma;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <LanguageStandard_C>stdc17</LanguageStandard_C>
     </ClCompile>
@@ -218,7 +218,7 @@
       <PrecompiledHeaderOutputFile>$(IntDir)pch.pch</PrecompiledHeaderOutputFile>
       <AdditionalOptions>/bigobj %(AdditionalOptions)</AdditionalOptions>
       <DisableSpecificWarnings>28204</DisableSpecificWarnings>
-      <AdditionalIncludeDirectories>libyuv\include;..\Libraries\libutf;..\Libraries\flatbuffers\include;..\Libraries\libtextclassifier;..\Libraries\libwebp;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>libyuv\include;..\Libraries\libutf;..\Libraries\flatbuffers\include;..\Libraries\libtextclassifier;..\Libraries\libwebp;..\Libraries\libprisma\libprisma;..\Libraries\libprisma;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <LanguageStandard_C>stdc17</LanguageStandard_C>
     </ClCompile>
@@ -238,7 +238,7 @@
       <PrecompiledHeaderOutputFile>$(IntDir)pch.pch</PrecompiledHeaderOutputFile>
       <AdditionalOptions>/bigobj %(AdditionalOptions)</AdditionalOptions>
       <DisableSpecificWarnings>28204</DisableSpecificWarnings>
-      <AdditionalIncludeDirectories>libyuv\include;..\Libraries\libutf;..\Libraries\flatbuffers\include;..\Libraries\libtextclassifier;..\Libraries\libwebp;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>libyuv\include;..\Libraries\libutf;..\Libraries\flatbuffers\include;..\Libraries\libtextclassifier;..\Libraries\libwebp;..\Libraries\libprisma\libprisma;..\Libraries\libprisma;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <LanguageStandard_C>stdc17</LanguageStandard_C>
     </ClCompile>
@@ -251,6 +251,10 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="..\Libraries\libprisma\libprisma\Highlight.h" />
+    <ClInclude Include="..\Libraries\libprisma\libprisma\LanguageTree.h" />
+    <ClInclude Include="..\Libraries\libprisma\libprisma\SyntaxHighlighter.h" />
+    <ClInclude Include="..\Libraries\libprisma\libprisma\TokenList.h" />
     <ClInclude Include="..\Libraries\libwebp\sharpyuv\sharpyuv.h" />
     <ClInclude Include="..\Libraries\libwebp\sharpyuv\sharpyuv_cpu.h" />
     <ClInclude Include="..\Libraries\libwebp\sharpyuv\sharpyuv_csp.h" />
@@ -321,13 +325,8 @@
     <ClInclude Include="Helpers\DebugHelper.h" />
     <ClInclude Include="Helpers\LibraryHelper.h" />
     <ClInclude Include="Helpers\StringHelper.h" />
-    <ClInclude Include="Highlight\Highlight.h" />
-    <ClInclude Include="Highlight\LanguageTree.h" />
-    <ClInclude Include="Highlight\SyntaxHighlighter.h" />
     <ClInclude Include="Highlight\SyntaxToken.h" />
     <ClInclude Include="Highlight\TextToken.h" />
-    <ClInclude Include="Highlight\third-party\json11.hpp" />
-    <ClInclude Include="Highlight\TokenList.h" />
     <ClInclude Include="HttpProxyWatcher.h">
       <DependentUpon>HttpProxyWatcher.idl</DependentUpon>
       <SubType>Code</SubType>
@@ -345,6 +344,7 @@
     <ClInclude Include="libyuv\include\libyuv\convert_from.h" />
     <ClInclude Include="libyuv\include\libyuv\convert_from_argb.h" />
     <ClInclude Include="libyuv\include\libyuv\cpu_id.h" />
+    <ClInclude Include="libyuv\include\libyuv\loongson_intrinsics.h" />
     <ClInclude Include="libyuv\include\libyuv\macros_msa.h" />
     <ClInclude Include="libyuv\include\libyuv\mjpeg_decoder.h" />
     <ClInclude Include="libyuv\include\libyuv\planar_functions.h" />
@@ -354,10 +354,15 @@
     <ClInclude Include="libyuv\include\libyuv\row.h" />
     <ClInclude Include="libyuv\include\libyuv\scale.h" />
     <ClInclude Include="libyuv\include\libyuv\scale_argb.h" />
+    <ClInclude Include="libyuv\include\libyuv\scale_rgb.h" />
     <ClInclude Include="libyuv\include\libyuv\scale_row.h" />
     <ClInclude Include="libyuv\include\libyuv\scale_uv.h" />
     <ClInclude Include="libyuv\include\libyuv\version.h" />
     <ClInclude Include="libyuv\include\libyuv\video_common.h" />
+    <ClInclude Include="LokiRng.h">
+      <DependentUpon>LokiRng.idl</DependentUpon>
+      <SubType>Code</SubType>
+    </ClInclude>
     <ClInclude Include="NativeUtils.h">
       <DependentUpon>NativeUtils.idl</DependentUpon>
     </ClInclude>
@@ -383,6 +388,10 @@
       <SubType>Code</SubType>
     </ClInclude>
     <ClInclude Include="StringUtils.h" />
+    <ClInclude Include="SurfaceImage.h">
+      <DependentUpon>SurfaceImage.idl</DependentUpon>
+      <SubType>Code</SubType>
+    </ClInclude>
     <ClInclude Include="SVG\nanosvg.h" />
     <ClInclude Include="Helpers\MathHelper.h" />
     <ClInclude Include="pch.h" />
@@ -453,6 +462,18 @@
     <ClInclude Include="..\Libraries\libutf\utfdef.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\Libraries\libprisma\libprisma\Highlight.cpp">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\Libraries\libprisma\libprisma\LanguageTree.cpp">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\Libraries\libprisma\libprisma\SyntaxHighlighter.cpp">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\Libraries\libprisma\libprisma\TokenList.cpp">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
     <ClCompile Include="..\Libraries\libtextclassifier\lang_id\common\embedding-feature-extractor.cc">
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
     </ClCompile>
@@ -901,15 +922,37 @@
       <DependentUpon>FileStreamFromApp.idl</DependentUpon>
       <SubType>Code</SubType>
     </ClCompile>
-    <ClCompile Include="Highlight\Highlight.cpp" />
-    <ClCompile Include="Highlight\LanguageTree.cpp" />
-    <ClCompile Include="Highlight\SyntaxHighlighter.cpp" />
     <ClCompile Include="Highlight\SyntaxToken.cpp" />
     <ClCompile Include="Highlight\TextToken.cpp" />
-    <ClCompile Include="Highlight\third-party\json11.cpp">
+    <ClCompile Include="libyuv\source\rotate_lsx.cc">
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="Highlight\TokenList.cpp" />
+    <ClCompile Include="libyuv\source\row_lasx.cc">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="libyuv\source\row_lsx.cc">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="libyuv\source\row_rvv.cc">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="libyuv\source\scale_lsx.cc">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="libyuv\source\scale_rgb.cc">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="libyuv\source\scale_rvv.cc">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="LokiRng.cpp">
+      <DependentUpon>LokiRng.idl</DependentUpon>
+      <SubType>Code</SubType>
+    </ClCompile>
+    <ClCompile Include="SurfaceImage.cpp">
+      <DependentUpon>SurfaceImage.idl</DependentUpon>
+      <SubType>Code</SubType>
+    </ClCompile>
     <ClCompile Include="VideoAnimationStreamSource.cpp">
       <DependentUpon>VideoAnimationStreamSource.idl</DependentUpon>
       <SubType>Code</SubType>
@@ -952,9 +995,6 @@
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="libyuv\source\compare_gcc.cc">
-      <PrecompiledHeader>NotUsing</PrecompiledHeader>
-    </ClCompile>
-    <ClCompile Include="libyuv\source\compare_mmi.cc">
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="libyuv\source\compare_msa.cc">
@@ -1017,9 +1057,6 @@
     <ClCompile Include="libyuv\source\rotate_gcc.cc">
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="libyuv\source\rotate_mmi.cc">
-      <PrecompiledHeader>NotUsing</PrecompiledHeader>
-    </ClCompile>
     <ClCompile Include="libyuv\source\rotate_msa.cc">
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
     </ClCompile>
@@ -1039,9 +1076,6 @@
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="libyuv\source\row_gcc.cc">
-      <PrecompiledHeader>NotUsing</PrecompiledHeader>
-    </ClCompile>
-    <ClCompile Include="libyuv\source\row_mmi.cc">
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="libyuv\source\row_msa.cc">
@@ -1069,9 +1103,6 @@
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="libyuv\source\scale_gcc.cc">
-      <PrecompiledHeader>NotUsing</PrecompiledHeader>
-    </ClCompile>
-    <ClCompile Include="libyuv\source\scale_mmi.cc">
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="libyuv\source\scale_msa.cc">
@@ -1156,6 +1187,9 @@
     <Midl Include="LanguageIdentification.idl">
       <SubType>Designer</SubType>
     </Midl>
+    <Midl Include="LokiRng.idl">
+      <SubType>Designer</SubType>
+    </Midl>
     <Midl Include="NativeUtils.idl" />
     <Midl Include="Opus\OpusOutput.idl">
       <SubType>Designer</SubType>
@@ -1168,6 +1202,9 @@
     <Midl Include="ScreenshotManager.idl">
       <SubType>Designer</SubType>
     </Midl>
+    <Midl Include="SurfaceImage.idl">
+      <SubType>Designer</SubType>
+    </Midl>
     <Midl Include="TelegramWebviewProxy.idl" />
     <Midl Include="VideoAnimation.idl" />
     <Midl Include="VideoAnimationStreamSource.idl">
@@ -1177,6 +1214,7 @@
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
     <Import Project="..\packages\Microsoft.Windows.CppWinRT.2.0.230706.1\build\native\Microsoft.Windows.CppWinRT.targets" Condition="Exists('..\packages\Microsoft.Windows.CppWinRT.2.0.230706.1\build\native\Microsoft.Windows.CppWinRT.targets')" />
+    <Import Project="..\packages\Telegram.Td.UWP.1.8.25\build\native\Telegram.Td.UWP.targets" Condition="Exists('..\packages\Telegram.Td.UWP.1.8.25\build\native\Telegram.Td.UWP.targets')" />
   </ImportGroup>
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>
@@ -1184,5 +1222,6 @@
     </PropertyGroup>
     <Error Condition="!Exists('..\packages\Microsoft.Windows.CppWinRT.2.0.230706.1\build\native\Microsoft.Windows.CppWinRT.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.Windows.CppWinRT.2.0.230706.1\build\native\Microsoft.Windows.CppWinRT.props'))" />
     <Error Condition="!Exists('..\packages\Microsoft.Windows.CppWinRT.2.0.230706.1\build\native\Microsoft.Windows.CppWinRT.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.Windows.CppWinRT.2.0.230706.1\build\native\Microsoft.Windows.CppWinRT.targets'))" />
+    <Error Condition="!Exists('..\packages\Telegram.Td.UWP.1.8.25\build\native\Telegram.Td.UWP.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Telegram.Td.UWP.1.8.25\build\native\Telegram.Td.UWP.targets'))" />
   </Target>
 </Project>

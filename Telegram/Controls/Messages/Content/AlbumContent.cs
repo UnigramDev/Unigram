@@ -1,5 +1,5 @@
 //
-// Copyright Fela Ameghino 2015-2023
+// Copyright Fela Ameghino 2015-2024
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
@@ -41,8 +41,6 @@ namespace Telegram.Controls.Messages.Content
 
         protected override Size MeasureOverride(Size availableSize)
         {
-            Logger.Debug();
-
             var album = _message?.Content as MessageAlbum;
             if (album == null || album.Messages.Count <= 1)
             {
@@ -55,9 +53,10 @@ namespace Telegram.Controls.Messages.Content
 
                 for (int i = 0; i < Children.Count; i++)
                 {
-                    Children[i].Measure(availableSize);
-                    width = Math.Max(Children[i].DesiredSize.Width, width);
-                    height += Children[i].DesiredSize.Height;
+                    var child = Children[i];
+                    child.Measure(availableSize);
+                    width = Math.Max(child.DesiredSize.Width, width);
+                    height += child.DesiredSize.Height;
                 }
 
                 return new Size(width, height);
@@ -76,8 +75,6 @@ namespace Telegram.Controls.Messages.Content
 
         protected override Size ArrangeOverride(Size finalSize)
         {
-            Logger.Debug();
-
             var album = _message?.Content as MessageAlbum;
             if (album == null || album.Messages.Count <= 1)
             {
@@ -90,9 +87,10 @@ namespace Telegram.Controls.Messages.Content
 
                 for (int i = 0; i < Children.Count; i++)
                 {
-                    Children[i].Arrange(new Rect(0, height, Children[i].DesiredSize.Width, Children[i].DesiredSize.Height));
-                    width = Math.Max(Children[i].DesiredSize.Width, width);
-                    height += Children[i].DesiredSize.Height;
+                    var child = Children[i];
+                    child.Arrange(new Rect(0, height, child.DesiredSize.Width, child.DesiredSize.Height));
+                    width = Math.Max(child.DesiredSize.Width, width);
+                    height += child.DesiredSize.Height;
                 }
 
                 return finalSize;
@@ -282,7 +280,7 @@ namespace Telegram.Controls.Messages.Content
                                 MessageHelper.SetEntityData(hyperlink, textUrl.Url);
                                 MessageHelper.SetEntityType(hyperlink, entity.Type);
 
-                                ToolTipService.SetToolTip(hyperlink, textUrl.Url);
+                                Extensions.SetToolTip(hyperlink, textUrl.Url);
                             }
                             else if (entity.Type is TextEntityTypeMentionName mentionName)
                             {

@@ -1,5 +1,5 @@
 //
-// Copyright Fela Ameghino 2015-2023
+// Copyright Fela Ameghino 2015-2024
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
@@ -9,7 +9,6 @@ using Telegram.Common;
 using Telegram.Converters;
 using Telegram.Td.Api;
 using Telegram.ViewModels;
-using Windows.Storage;
 using Windows.UI;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -18,6 +17,7 @@ using Windows.UI.Xaml.Media.Imaging;
 
 namespace Telegram.Controls.Messages.Content
 {
+    // TODO: turn the whole control into a Button
     public sealed class DocumentContent : Control, IContent
     {
         private MessageViewModel _message;
@@ -35,6 +35,8 @@ namespace Telegram.Controls.Messages.Content
 
         #region InitializeComponent
 
+        private AutomaticDragHelper ButtonDrag;
+
         private Border Texture;
         private FileButton Button;
         private TextBlock Title;
@@ -48,7 +50,11 @@ namespace Telegram.Controls.Messages.Content
             Title = GetTemplateChild(nameof(Title)) as TextBlock;
             Subtitle = GetTemplateChild(nameof(Subtitle)) as TextBlock;
 
+            ButtonDrag = new AutomaticDragHelper(Button, true);
+            ButtonDrag.StartDetectingDrag();
+
             Button.Click += Button_Click;
+            Button.DragStarting += Button_DragStarting;
 
             _templateApplied = true;
 
@@ -104,9 +110,18 @@ namespace Telegram.Controls.Messages.Content
                 return;
             }
 
+            var canBeDownloaded = file.Local.CanBeDownloaded
+                && !file.Local.IsDownloadingCompleted
+                && !file.Local.IsDownloadingActive;
+
             var size = Math.Max(file.Size, file.ExpectedSize);
-            if (file.Local.IsDownloadingActive)
+            if (file.Local.IsDownloadingActive || (canBeDownloaded && message.Delegate.CanBeDownloaded(document, file)))
             {
+                if (canBeDownloaded)
+                {
+                    _message.ClientService.DownloadFile(file.Id, 32);
+                }
+
                 Button.SetGlyph(file.Id, MessageContentState.Downloading);
                 Button.Progress = (double)file.Local.DownloadedSize / size;
 
@@ -119,17 +134,12 @@ namespace Telegram.Controls.Messages.Content
 
                 Subtitle.Text = string.Format("{0} / {1}", FileSizeConverter.Convert(file.Remote.UploadedSize, size), FileSizeConverter.Convert(size));
             }
-            else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingCompleted)
+            else if (canBeDownloaded)
             {
                 Button.SetGlyph(file.Id, MessageContentState.Download);
                 Button.Progress = 0;
 
                 Subtitle.Text = FileSizeConverter.Convert(size);
-
-                if (message.Delegate.CanBeDownloaded(document, file))
-                {
-                    _message.ClientService.DownloadFile(file.Id, 32);
-                }
             }
             else
             {
@@ -295,23 +305,9 @@ namespace Telegram.Controls.Messages.Content
             }
         }
 
-        private async void Button_DragStarting(UIElement sender, DragStartingEventArgs args)
+        private void Button_DragStarting(UIElement sender, DragStartingEventArgs args)
         {
-            var document = GetContent(_message);
-            if (document == null)
-            {
-                return;
-            }
-
-            var file = document.DocumentValue;
-            if (file.Local.IsDownloadingCompleted)
-            {
-                var item = await StorageFile.GetFileFromPathAsync(file.Local.Path);
-
-                args.AllowedOperations = Windows.ApplicationModel.DataTransfer.DataPackageOperation.Copy;
-                args.Data.SetStorageItems(new[] { item });
-                args.DragUI.SetContentFromDataPackage();
-            }
+            MessageHelper.DragStarting(_message, args);
         }
     }
 }

@@ -1,5 +1,5 @@
 //
-// Copyright Fela Ameghino 2015-2023
+// Copyright Fela Ameghino 2015-2024
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
@@ -122,7 +122,7 @@ namespace Telegram.Controls
                 {
                     FindName(nameof(EmojisRoot));
                     EmojisRoot.LayoutUpdated += EmojisRoot_LayoutUpdated;
-                    EmojisRoot.DataContext = EmojiDrawerViewModel.GetForCurrentView(SessionId);
+                    EmojisRoot.DataContext = EmojiDrawerViewModel.Create(SessionId);
                 }
                 else
                 {
@@ -155,7 +155,7 @@ namespace Telegram.Controls
                 {
                     FindName(nameof(AnimationsRoot));
                     AnimationsRoot.LayoutUpdated += AnimationsRoot_LayoutUpdated;
-                    AnimationsRoot.DataContext = AnimationDrawerViewModel.GetForCurrentView(SessionId);
+                    AnimationsRoot.DataContext = AnimationDrawerViewModel.Create(SessionId);
                     AnimationsRoot.ItemClick = Animations_ItemClick;
                     AnimationsRoot.ItemContextRequested += AnimationContextRequested;
                 }
@@ -190,7 +190,7 @@ namespace Telegram.Controls
                 {
                     FindName(nameof(StickersRoot));
                     StickersRoot.LayoutUpdated += StickersRoot_LayoutUpdated;
-                    StickersRoot.DataContext = StickerDrawerViewModel.GetForCurrentView(SessionId);
+                    StickersRoot.DataContext = StickerDrawerViewModel.Create(SessionId);
                     StickersRoot.ItemClick = Stickers_ItemClick;
                     StickersRoot.ItemContextRequested += StickerContextRequested;
                     StickersRoot.ChoosingItem += ChoosingSticker;
@@ -219,7 +219,7 @@ namespace Telegram.Controls
                 return;
             }
 
-            var visualIn = ElementCompositionPreview.GetElementVisual(element);
+            var visualIn = ElementComposition.GetElementVisual(element);
             var offsetIn = visualIn.Compositor.CreateVector3KeyFrameAnimation();
             offsetIn.InsertKeyFrame(0, new System.Numerics.Vector3(leftToRight ? -48 : 48, 0, 0));
             offsetIn.InsertKeyFrame(1, new System.Numerics.Vector3());
@@ -276,23 +276,39 @@ namespace Telegram.Controls
             }
         }
 
+        private bool _emojisRights;
+        private bool _stickersRights;
+        private bool _animationsRights;
+
         public void UpdateChatPermissions(IClientService clientService, Chat chat)
         {
             var emojisRights = DialogViewModel.VerifyRights(clientService, chat, x => x.CanSendBasicMessages, Strings.GlobalSendMessageRestricted, Strings.SendMessageRestrictedForever, Strings.SendMessageRestricted, out string emojisLabel);
             var stickersRights = DialogViewModel.VerifyRights(clientService, chat, x => x.CanSendOtherMessages, Strings.GlobalAttachStickersRestricted, Strings.AttachStickersRestrictedForever, Strings.AttachStickersRestricted, out string stickersLabel);
             var animationsRights = DialogViewModel.VerifyRights(clientService, chat, x => x.CanSendOtherMessages, Strings.GlobalAttachGifRestricted, Strings.AttachGifRestrictedForever, Strings.AttachGifRestricted, out string animationsLabel);
 
-            EmojisPanel.Visibility = emojisRights ? Visibility.Collapsed : Visibility.Visible;
-            EmojisPermission.Visibility = emojisRights ? Visibility.Visible : Visibility.Collapsed;
-            EmojisPermission.Text = emojisLabel ?? string.Empty;
+            if (_emojisRights != emojisRights || emojisRights)
+            {
+                _emojisRights = emojisRights;
+                EmojisPanel.Visibility = emojisRights ? Visibility.Collapsed : Visibility.Visible;
+                EmojisPermission.Visibility = emojisRights ? Visibility.Visible : Visibility.Collapsed;
+                EmojisPermission.Text = emojisLabel ?? string.Empty;
+            }
 
-            StickersPanel.Visibility = stickersRights ? Visibility.Collapsed : Visibility.Visible;
-            StickersPermission.Visibility = stickersRights ? Visibility.Visible : Visibility.Collapsed;
-            StickersPermission.Text = stickersLabel ?? string.Empty;
+            if (_stickersRights != stickersRights || stickersRights)
+            {
+                _stickersRights = stickersRights;
+                StickersPanel.Visibility = stickersRights ? Visibility.Collapsed : Visibility.Visible;
+                StickersPermission.Visibility = stickersRights ? Visibility.Visible : Visibility.Collapsed;
+                StickersPermission.Text = stickersLabel ?? string.Empty;
+            }
 
-            AnimationsPanel.Visibility = animationsRights ? Visibility.Collapsed : Visibility.Visible;
-            AnimationsPermission.Visibility = animationsRights ? Visibility.Visible : Visibility.Collapsed;
-            AnimationsPermission.Text = animationsLabel ?? string.Empty;
+            if (_animationsRights != animationsRights || animationsRights)
+            {
+                _animationsRights = animationsRights;
+                AnimationsPanel.Visibility = animationsRights ? Visibility.Collapsed : Visibility.Visible;
+                AnimationsPermission.Visibility = animationsRights ? Visibility.Visible : Visibility.Collapsed;
+                AnimationsPermission.Text = animationsLabel ?? string.Empty;
+            }
         }
 
         public void Activate()
@@ -339,20 +355,29 @@ namespace Telegram.Controls
 
         private void EmojisRoot_LayoutUpdated(object sender, object e)
         {
-            EmojisRoot.LayoutUpdated -= EmojisRoot_LayoutUpdated;
-            Show(Tab0, _prevIndex > 0, 0);
+            if (sender is FrameworkElement element)
+            {
+                element.LayoutUpdated -= EmojisRoot_LayoutUpdated;
+                Show(Tab0, _prevIndex > 0, 0);
+            }
         }
 
         private void AnimationsRoot_LayoutUpdated(object sender, object e)
         {
-            AnimationsRoot.LayoutUpdated -= AnimationsRoot_LayoutUpdated;
-            Show(Tab1, _prevIndex > 1, 1);
+            if (sender is FrameworkElement element)
+            {
+                element.LayoutUpdated -= AnimationsRoot_LayoutUpdated;
+                Show(Tab1, _prevIndex > 1, 1);
+            }
         }
 
         private void StickersRoot_LayoutUpdated(object sender, object e)
         {
-            StickersRoot.LayoutUpdated -= StickersRoot_LayoutUpdated;
-            Show(Tab2, _prevIndex > 2, 2);
+            if (sender is FrameworkElement element)
+            {
+                element.LayoutUpdated -= StickersRoot_LayoutUpdated;
+                Show(Tab2, _prevIndex > 2, 2);
+            }
         }
     }
 

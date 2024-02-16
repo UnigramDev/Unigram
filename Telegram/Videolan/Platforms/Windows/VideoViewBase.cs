@@ -5,6 +5,7 @@ using SharpDX;
 using SharpDX.Direct3D11;
 using SharpDX.DXGI;
 using SharpDX.Mathematics.Interop;
+using Telegram.Controls;
 
 #if WINUI
 using Microsoft.UI.Xaml;
@@ -21,7 +22,7 @@ namespace LibVLCSharp.Platforms.Windows
     /// VideoView base class for the UWP platform
     /// </summary>
     [TemplatePart(Name = PartSwapChainPanelName, Type = typeof(SwapChainPanel))]
-    public abstract class VideoViewBase : Control, IVideoView
+    public abstract class VideoViewBase : ControlEx, IVideoView
     {
         private const string PartSwapChainPanelName = "SwapChainPanel";
 
@@ -40,13 +41,25 @@ namespace LibVLCSharp.Platforms.Windows
         {
             DefaultStyleKey = typeof(VideoViewBase);
 
-            Unloaded += (s, e) => DestroySwapChain();
-#if !WINUI
-            if (!DesignMode.DesignModeEnabled)
-            {
-                Application.Current.Suspending += (s, e) => { Trim(); };
-            }
-#endif
+            Connected += OnConnected;
+            Disconnected += OnDisconnected;
+        }
+
+        private void OnConnected(object sender, RoutedEventArgs e)
+        {
+            Application.Current.Suspending += OnSuspending;
+        }
+
+        private void OnDisconnected(object sender, RoutedEventArgs e)
+        {
+            Application.Current.Suspending -= OnSuspending;
+            DestroySwapChain();
+        }
+
+        private void OnSuspending(object sender, SuspendingEventArgs e)
+        {
+            // When the app is suspended, UWP apps should call Trim so that the DirectX data is cleaned.
+            _device3?.Trim();
         }
 
         /// <summary>
@@ -65,26 +78,32 @@ namespace LibVLCSharp.Platforms.Windows
 #endif
             DestroySwapChain();
 
-            _panel.SizeChanged += (s, eventArgs) =>
-            {
-                if (_loaded)
-                {
-                    UpdateSize();
-                }
-                else
-                {
-                    CreateSwapChain();
-                }
-            };
+            _panel.SizeChanged += OnSizeChanged;
+            _panel.CompositionScaleChanged += OnCompositionScaleChanged;
+        }
 
-            _panel.CompositionScaleChanged += (s, eventArgs) =>
+        private void OnSizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            if (IsDisconnected)
             {
-                if (_loaded)
-                {
-                    UpdateScale();
-                }
-            };
+                DestroySwapChain();
+            }
+            else if (_loaded)
+            {
+                UpdateSize();
+            }
+            else
+            {
+                CreateSwapChain();
+            }
+        }
 
+        private void OnCompositionScaleChanged(SwapChainPanel sender, object args)
+        {
+            if (_loaded)
+            {
+                UpdateScale();
+            }
         }
 
         public void Clear()
@@ -144,28 +163,40 @@ namespace LibVLCSharp.Platforms.Windows
         {
             // Do not create the swapchain when the VideoView is collapsed.
             if (_panel == null || _panel.ActualHeight == 0)
+            {
                 return;
+            }
+
+            if (IsDisconnected)
+            {
+                DestroySwapChain();
+                return;
+            }
 
             SharpDX.DXGI.Factory2 dxgiFactory = null;
             try
             {
                 var creationFlags =
-                    DeviceCreationFlags.BgraSupport | DeviceCreationFlags.VideoSupport;
+                    DeviceCreationFlags.BgraSupport /*| DeviceCreationFlags.VideoSupport*/;
 
-#if DEBUG
-                creationFlags |= DeviceCreationFlags.Debug;
-
-                try
+                if (Telegram.Constants.DEBUG)
                 {
-                    dxgiFactory = new SharpDX.DXGI.Factory2(true);
+                    creationFlags |= DeviceCreationFlags.Debug;
+
+                    try
+                    {
+                        dxgiFactory = new SharpDX.DXGI.Factory2(true);
+                    }
+                    catch (SharpDXException)
+                    {
+                        dxgiFactory = new SharpDX.DXGI.Factory2(false);
+                    }
                 }
-                catch (SharpDXException)
+                else
                 {
                     dxgiFactory = new SharpDX.DXGI.Factory2(false);
                 }
-#else
-                dxgiFactory = new SharpDX.DXGI.Factory2(false);
-#endif
+
                 _d3D11Device = null;
                 int i_adapter = 0;
                 int adapterCount = dxgiFactory.GetAdapterCount();
@@ -351,14 +382,6 @@ namespace LibVLCSharp.Platforms.Windows
                 M11 = 1.0f / (float)XamlRoot.RasterizationScale, //_panel.CompositionScaleX,
                 M22 = 1.0f / (float)XamlRoot.RasterizationScale //_panel.CompositionScaleY
             };
-        }
-
-        /// <summary>
-        /// When the app is suspended, UWP apps should call Trim so that the DirectX data is cleaned.
-        /// </summary>
-        void Trim()
-        {
-            _device3?.Trim();
         }
 
         /// <summary>

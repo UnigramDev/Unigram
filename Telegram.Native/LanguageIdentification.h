@@ -16,7 +16,7 @@ namespace winrt::Telegram::Native::implementation
         static hstring IdentifyLanguage(hstring text);
 
     private:
-        static critical_section s_criticalSection;
+        static std::mutex s_criticalSection;
         static std::unique_ptr<libtextclassifier3::mobile::lang_id::LangId> s_langid;
 
         static LangId* Current();

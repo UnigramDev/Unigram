@@ -1,10 +1,11 @@
 //
-// Copyright Fela Ameghino 2015-2023
+// Copyright Fela Ameghino 2015-2024
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
 using System;
+using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using Telegram.Common;
@@ -32,6 +33,8 @@ namespace Telegram.Converters
         public static DateTimeFormatter DayMonthAbbreviatedYear { get; private set; }
         public static DateTimeFormatter DayOfWeekAbbreviated { get; private set; }
 
+        public static IList<string> Languages { get; }
+
         static Formatter()
         {
             var culture = NativeUtils.GetCurrentCulture();
@@ -44,6 +47,8 @@ namespace Telegram.Converters
             {
                 languages.Insert(0, culture);
             }
+
+            Languages = languages;
 
             ShortDate = new DateTimeFormatter("shortdate", languages, region, calendar, clock);
             ShortTime = new DateTimeFormatter("shorttime", languages, region, calendar, clock);
@@ -59,8 +64,9 @@ namespace Telegram.Converters
             DayOfWeekAbbreviated = new DateTimeFormatter("dayofweek.abbreviated", languages, region, calendar, clock);
         }
 
-        public static string MonthGrouping(DateTime date)
+        public static string MonthGrouping(int value)
         {
+            var date = ToLocalTime(value);
             var now = DateTime.Now;
 
             var difference = Math.Abs(date.Month - now.Month + 12 * (date.Year - now.Year));
@@ -72,8 +78,14 @@ namespace Telegram.Converters
             return MonthFull.Format(date);
         }
 
-        public static string DayGrouping(DateTime date)
+        public static string DayGrouping(int value)
         {
+            //if (SettingsService.Current.Diagnostics.NativeTimeFormatter)
+            //{
+            //    return NativeUtils.FormatDate(value);
+            //}
+
+            var date = ToLocalTime(value);
             var now = DateTime.Now;
 
             var difference = Math.Abs(date.Month - now.Month + 12 * (date.Year - now.Year));
@@ -269,6 +281,22 @@ namespace Telegram.Converters
             return $"{option.Title} - {FormatAmount(amount, currency)}";
         }
 
+        public static string ReadDate(int value)
+        {
+            var dateTime = ToLocalTime(value);
+
+            if (dateTime.Date == DateTime.Now.Date)
+            {
+                return string.Format(Strings.PmReadTodayAt, ShortTime.Format(dateTime));
+            }
+            else if (dateTime.Date == DateTime.Now.Date.AddDays(-1))
+            {
+                return string.Format(Strings.PmReadYesterdayAt, ShortTime.Format(dateTime));
+            }
+
+            return string.Format(Strings.PmReadDateTimeAt, ShortDate.Format(dateTime), ShortTime.Format(dateTime));
+        }
+
         public static string DateExtended(int value)
         {
             var dateTime = ToLocalTime(value);
@@ -297,9 +325,14 @@ namespace Telegram.Converters
             return ShortDate.Format(dateTime);
         }
 
+        public static string Time(int value)
+        {
+            return NativeUtils.FormatTime(value);
+        }
+
         public static string Date(int value)
         {
-            return ShortTime.Format(ToLocalTime(value));
+            return ShortDate.Format(ToLocalTime(value));
         }
 
         public static DateTime ToLocalTime(long value)

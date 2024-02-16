@@ -29,6 +29,7 @@
                                     AutoPlay="False"
                                     FrameSize="0,0"
                                     IsCachingEnabled="False"
+                                    IsViewportAware="True"
                                     Width="196"
                                     Height="292"
                                     Canvas.Left="62"

@@ -1,5 +1,5 @@
 //
-// Copyright Fela Ameghino 2015-2023
+// Copyright Fela Ameghino 2015-2024
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
@@ -35,8 +35,8 @@ namespace Telegram.Controls
             var presenter1 = GetTemplateChild("CrossBackground") as Path;
             var presenter2 = GetTemplateChild("CrossForeground") as Path;
 
-            var visual1 = ElementCompositionPreview.GetElementVisual(presenter1);
-            var visual2 = ElementCompositionPreview.GetElementVisual(presenter2);
+            var visual1 = ElementComposition.GetElementVisual(presenter1);
+            var visual2 = ElementComposition.GetElementVisual(presenter2);
 
             var hangup = IsChecked == true;
 

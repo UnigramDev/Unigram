@@ -1,26 +1,27 @@
 //
-// Copyright Fela Ameghino 2015-2023
+// Copyright Fela Ameghino 2015-2024
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
-using LinqToVisualTree;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using Telegram.Controls;
 using Telegram.Navigation;
 using Telegram.Navigation.Services;
 using Telegram.Services;
 using Telegram.Services.ViewService;
+using Telegram.Streams;
 using Telegram.Td.Api;
 using Telegram.ViewModels;
+using Telegram.ViewModels.Payments;
 using Telegram.ViewModels.Settings;
 using Telegram.Views;
 using Telegram.Views.Payments;
 using Telegram.Views.Premium.Popups;
 using Telegram.Views.Settings;
+using Telegram.Views.Settings.Password;
 using Telegram.Views.Settings.Popups;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.UI.WindowManagement;
@@ -42,43 +43,25 @@ namespace Telegram.Common
             : base(frame, session, id)
         {
             _clientService = clientService;
-            _passcodeService = TLContainer.Current.Passcode;
+            _passcodeService = TypeResolver.Current.Passcode;
             _viewService = viewService;
         }
 
         public IClientService ClientService => _clientService;
 
-        public async void NavigateToInstant(string url)
+        public async void NavigateToInstant(string url, string fallbackUrl = null)
         {
-            //if (ApiInformation.IsTypePresent("Windows.UI.WindowManagement.AppWindow"))
-            //{
-            //    _instantWindows.TryGetValue(url, out AppWindow window);
-            //    if (window == null)
-            //    {
-            //        var nav = BootStrapper.Current.NavigationServiceFactory(BootStrapper.BackButton.Ignore, BootStrapper.ExistingContent.Exclude, 0, "0", false);
-            //        var frame = BootStrapper.Current.CreateRootElement(nav);
-            //        nav.Navigate(typeof(InstantPage), url);
-
-            //        window = await AppWindow.TryCreateAsync();
-            //        window.PersistedStateId = "InstantView";
-            //        window.TitleBar.ExtendsContentIntoTitleBar = true;
-            //        window.Closed += (s, args) =>
-            //        {
-            //            _instantWindows.Remove(url);
-            //            frame = null;
-            //            window = null;
-            //        };
-
-            //        _instantWindows[url] = window;
-            //        ElementCompositionPreview.SetAppWindowContent(window, frame);
-            //    }
-
-            //    await window.TryShowAsync();
-            //    window.RequestMoveAdjacentToCurrentView();
-            //}
-            //else
+            var response = await ClientService.SendAsync(new GetWebPageInstantView(url, true));
+            if (response is WebPageInstantView instantView)
             {
-                Navigate(typeof(InstantPage), url);
+                Navigate(typeof(InstantPage), new InstantPageArgs(instantView, url));
+            }
+            else
+            {
+                if (Uri.TryCreate(fallbackUrl ?? url, UriKind.Absolute, out Uri uri))
+                {
+                    await Windows.System.Launcher.LaunchUriAsync(uri);
+                }
             }
         }
 
@@ -101,17 +84,16 @@ namespace Telegram.Common
         {
             var parameters = new ViewServiceParams
             {
-                Title = message.Content is MessageInvoice invoice && invoice.ReceiptMessageId == 0 ? Strings.PaymentCheckout : Strings.PaymentReceipt,
+                Title = message.Content is MessageInvoice { ReceiptMessageId: 0 } ? Strings.PaymentCheckout : Strings.PaymentReceipt,
                 Width = 380,
                 Height = 580,
                 PersistentId = "Payments",
                 Content = control =>
                 {
-                    var nav = BootStrapper.Current.NavigationServiceFactory(BootStrapper.BackButton.Ignore, BootStrapper.ExistingContent.Exclude, SessionId, "Payments" + Guid.NewGuid(), false);
+                    var nav = BootStrapper.Current.NavigationServiceFactory(BootStrapper.BackButton.Ignore, SessionId, "Payments" + Guid.NewGuid(), false);
                     nav.Navigate(typeof(PaymentFormPage), new InputInvoiceMessage(message.ChatId, message.Id));
 
                     return BootStrapper.Current.CreateRootElement(nav);
-
                 }
             };
 
@@ -120,6 +102,13 @@ namespace Telegram.Common
 
         public async void NavigateToInvoice(InputInvoice inputInvoice)
         {
+            var response = await ClientService.SendAsync(new GetPaymentForm(inputInvoice, Theme.Current.Parameters));
+            if (response is not PaymentForm paymentForm)
+            {
+                ToastPopup.Show(Strings.PaymentInvoiceLinkInvalid, new LocalFileSource("ms-appx:///Assets/Toasts/Info.tgs"));
+                return;
+            }
+
             var parameters = new ViewServiceParams
             {
                 Title = Strings.PaymentCheckout,
@@ -128,8 +117,8 @@ namespace Telegram.Common
                 PersistentId = "Payments",
                 Content = control =>
                 {
-                    var nav = BootStrapper.Current.NavigationServiceFactory(BootStrapper.BackButton.Ignore, BootStrapper.ExistingContent.Exclude, SessionId, "Payments" + Guid.NewGuid(), false);
-                    nav.Navigate(typeof(PaymentFormPage), inputInvoice);
+                    var nav = BootStrapper.Current.NavigationServiceFactory(BootStrapper.BackButton.Ignore, SessionId, "Payments" + Guid.NewGuid(), false);
+                    nav.Navigate(typeof(PaymentFormPage), new PaymentFormArgs(inputInvoice, paymentForm));
 
                     return BootStrapper.Current.CreateRootElement(nav);
 
@@ -139,15 +128,11 @@ namespace Telegram.Common
             await _viewService.OpenAsync(parameters);
         }
 
-        public async void NavigateToSender(MessageSender sender)
+        public void NavigateToSender(MessageSender sender)
         {
             if (sender is MessageSenderUser user)
             {
-                var response = await ClientService.SendAsync(new CreatePrivateChat(user.UserId, false));
-                if (response is Chat chat)
-                {
-                    Navigate(typeof(ProfilePage), chat.Id);
-                }
+                NavigateToUser(user.UserId, false);
             }
             else if (sender is MessageSenderChat chat)
             {
@@ -155,8 +140,17 @@ namespace Telegram.Common
             }
         }
 
-        public async void NavigateToChat(Chat chat, long? message = null, long? thread = null, string accessToken = null, NavigationState state = null, bool scheduled = false, bool force = true, bool createNewWindow = false)
+        public async void NavigateToChat(Chat chat, long? message = null, long thread = 0, long savedMessagesTopicId = 0, string accessToken = null, NavigationState state = null, bool scheduled = false, bool force = true, bool createNewWindow = false, bool clearBackStack = false)
         {
+            if (Dispatcher.HasThreadAccess is false)
+            {
+                // This should not happen but it currently does when scheduling a file
+                Logger.Error(Environment.StackTrace);
+
+                Dispatcher.Dispatch(() => NavigateToChat(chat, message, thread, savedMessagesTopicId, accessToken, state, scheduled, force, createNewWindow, clearBackStack));
+                return;
+            }
+
             if (chat == null)
             {
                 return;
@@ -167,6 +161,12 @@ namespace Telegram.Common
                 var user = _clientService.GetUser(privata.UserId);
                 if (user == null)
                 {
+                    return;
+                }
+
+                if (user.Id == _clientService.Options.MyId && chat.ViewAsTopics && savedMessagesTopicId == 0)
+                {
+                    Navigate(typeof(ProfilePage), chat.Id, infoOverride: new SuppressNavigationTransitionInfo());
                     return;
                 }
 
@@ -211,7 +211,8 @@ namespace Telegram.Common
                 }
             }
 
-            if (Frame.Content is ChatPage page && page.ViewModel != null && chat.Id.Equals((long)CurrentPageParam) && thread == null && !scheduled && !createNewWindow)
+            // TODO: do current page matching for ChatSavedPage and ChatThreadPage as well.
+            if (Frame.Content is ChatPage page && page.ViewModel != null && chat.Id.Equals((long)CurrentPageParam) && thread == 0 && savedMessagesTopicId == 0 && !scheduled && !createNewWindow)
             {
                 var viewModel = page.ViewModel;
                 if (message != null)
@@ -236,9 +237,13 @@ namespace Telegram.Common
 
                 page.ViewModel.TextField?.Focus(FocusState.Programmatic);
 
-                if (App.DataPackages.TryRemove(chat.Id, out DataPackageView package))
+                if (App.DataPackages.TryRemove(chat.Id, out DataPackageView package1))
                 {
-                    await page.ViewModel.HandlePackageAsync(package);
+                    await page.ViewModel.HandlePackageAsync(package1);
+                }
+                else if (state != null && state.TryGet("package", out DataPackageView package2))
+                {
+                    await page.ViewModel.HandlePackageAsync(package2);
                 }
 
                 OverlayWindow.Current?.TryHide(ContentDialogResult.None);
@@ -278,10 +283,15 @@ namespace Telegram.Common
                     Type target;
                     object parameter;
 
-                    if (thread != null)
+                    if (thread != 0)
                     {
                         target = typeof(ChatThreadPage);
-                        parameter = $"{chat.Id};{thread}";
+                        parameter = new ChatMessageIdNavigationArgs(chat.Id, thread);
+                    }
+                    else if (savedMessagesTopicId != 0)
+                    {
+                        target = typeof(ChatSavedPage);
+                        parameter = new ChatSavedMessagesTopicIdNavigationArgs(chat.Id, savedMessagesTopicId);
                     }
                     else if (scheduled)
                     {
@@ -295,7 +305,7 @@ namespace Telegram.Common
                     }
 
                     // This is horrible here but I don't want to bloat this method with dozens of parameters.
-                    var masterDetailPanel = Window.Current.Content.Descendants<MasterDetailPanel>().FirstOrDefault();
+                    var masterDetailPanel = Window.Current.Content.GetChild<MasterDetailPanel>();
                     if (masterDetailPanel != null)
                     {
                         await OpenAsync(target, parameter, size: new Windows.Foundation.Size(masterDetailPanel.ActualDetailWidth, masterDetailPanel.ActualHeight));
@@ -307,7 +317,8 @@ namespace Telegram.Common
                 }
                 else
                 {
-                    if (Frame.Content is ChatPage chatPage && thread == null && !scheduled && !force)
+                    // TODO: do current page matching for ChatSavedPage and ChatThreadPage as well.
+                    if (Frame.Content is ChatPage chatPage && thread == 0 && savedMessagesTopicId == 0 && !scheduled && !force)
                     {
                         chatPage.ViewModel.NavigatedFrom(null, false);
 
@@ -318,6 +329,12 @@ namespace Telegram.Common
                         await chatPage.ViewModel.NavigatedToAsync(chat.Id, Windows.UI.Xaml.Navigation.NavigationMode.New, state);
 
                         FrameFacade.RaiseNavigated(chat.Id);
+                        Frame.ForwardStack.Clear();
+
+                        if (clearBackStack)
+                        {
+                            GoBackAt(0, false);
+                        }
 
                         OverlayWindow.Current?.TryHide(ContentDialogResult.None);
                     }
@@ -327,10 +344,24 @@ namespace Telegram.Common
                         NavigationTransitionInfo info = null;
                         object parameter;
 
-                        if (thread != null)
+                        if (thread != 0)
                         {
                             target = typeof(ChatThreadPage);
-                            parameter = $"{chat.Id};{thread}";
+                            parameter = new ChatMessageIdNavigationArgs(chat.Id, thread);
+
+                            if (CurrentPageType == typeof(ChatPage) && chat.Id.Equals((long)CurrentPageParam))
+                            {
+                                info = new SlideNavigationTransitionInfo { Effect = SlideNavigationTransitionEffect.FromRight };
+                            }
+                            else
+                            {
+                                info = new SuppressNavigationTransitionInfo();
+                            }
+                        }
+                        else if (savedMessagesTopicId != 0)
+                        {
+                            target = typeof(ChatSavedPage);
+                            parameter = new ChatSavedMessagesTopicIdNavigationArgs(chat.Id, savedMessagesTopicId);
 
                             if (CurrentPageType == typeof(ChatPage) && chat.Id.Equals((long)CurrentPageParam))
                             {
@@ -350,15 +381,37 @@ namespace Telegram.Common
                         {
                             target = typeof(ChatPage);
                             parameter = chat.Id;
+
+                            if (CurrentPageType == typeof(ProfilePage) && CurrentPageParam is long profileId && profileId == chat.Id)
+                            {
+                                var cacheKey = Guid.NewGuid().ToString();
+                                var chatId = (long)parameter;
+
+                                parameter = cacheKey;
+                                CacheKeyToChatId[cacheKey] = chatId;
+
+                                GoBackAt(0, false);
+
+                                Frame.BackStack.Add(new Windows.UI.Xaml.Navigation.PageStackEntry(target, parameter, null));
+                                GoBack(state, new SlideNavigationTransitionInfo { Effect = SlideNavigationTransitionEffect.FromRight });
+                                Frame.ForwardStack.Clear();
+                                return;
+                            }
                         }
 
-                        Navigate(target, parameter, state, info);
+                        if (Navigate(target, parameter, state, info))
+                        {
+                            if (clearBackStack)
+                            {
+                                GoBackAt(0, false);
+                            }
+                        }
                     }
                 }
             }
         }
 
-        public async void NavigateToChat(long chatId, long? message = null, long? thread = null, string accessToken = null, NavigationState state = null, bool scheduled = false, bool force = true, bool createNewWindow = false)
+        public async void NavigateToChat(long chatId, long? message = null, long thread = 0, long savedMessagesTopicId = 0, string accessToken = null, NavigationState state = null, bool scheduled = false, bool force = true, bool createNewWindow = false)
         {
             var chat = _clientService.GetChat(chatId);
 
@@ -370,7 +423,39 @@ namespace Telegram.Common
                 return;
             }
 
-            NavigateToChat(chat, message, thread, accessToken, state, scheduled, force, createNewWindow);
+            NavigateToChat(chat, message, thread, savedMessagesTopicId, accessToken, state, scheduled, force, createNewWindow);
+        }
+
+        public async void NavigateToUser(long userId, bool toChat = false)
+        {
+            if (_clientService.TryGetChatFromUser(userId, out Chat chat))
+            {
+                var user = ClientService.GetUser(userId);
+                if (user?.Type is UserTypeBot || toChat)
+                {
+                    NavigateToChat(chat);
+                }
+                else
+                {
+                    Navigate(typeof(ProfilePage), chat.Id);
+                }
+            }
+            else
+            {
+                var response = await _clientService.SendAsync(new CreatePrivateChat(userId, false));
+                if (response is Chat created)
+                {
+                    var user = ClientService.GetUser(userId);
+                    if (user?.Type is UserTypeBot || toChat)
+                    {
+                        NavigateToChat(created);
+                    }
+                    else
+                    {
+                        Navigate(typeof(ProfilePage), created.Id);
+                    }
+                }
+            }
         }
 
         public async void NavigateToPasscode()
@@ -392,13 +477,65 @@ namespace Telegram.Common
                 var confirm = await popup.ShowQueuedAsync();
                 if (confirm == ContentDialogResult.Primary)
                 {
-                    var viewModel = TLContainer.Current.Resolve<SettingsPasscodeViewModel>(SessionId);
+                    var viewModel = TypeResolver.Current.Resolve<SettingsPasscodeViewModel>(SessionId);
                     if (viewModel != null && await viewModel.ToggleAsync())
                     {
                         Navigate(typeof(SettingsPasscodePage));
                     }
                 }
             }
+        }
+
+        public async Task<PasswordState> NavigateToPasswordAsync()
+        {
+            var intro = new SettingsPasswordIntroPopup();
+
+            if (ContentDialogResult.Primary != await intro.ShowQueuedAsync())
+            {
+                return null;
+            }
+
+            var password = new SettingsPasswordCreatePopup();
+
+            if (ContentDialogResult.Primary != await password.ShowQueuedAsync())
+            {
+                return null;
+            }
+
+            var hint = new SettingsPasswordHintPopup(null, null, password.Password);
+
+            if (ContentDialogResult.Primary != await hint.ShowQueuedAsync())
+            {
+                return null;
+            }
+
+            var emailAddress = new SettingsPasswordEmailAddressPopup(ClientService, new SetPassword(string.Empty, password.Password, hint.Hint, true, string.Empty));
+
+            if (ContentDialogResult.Primary != await emailAddress.ShowQueuedAsync())
+            {
+                return null;
+            }
+
+            PasswordState passwordState;
+
+            if (emailAddress.PasswordState?.RecoveryEmailAddressCodeInfo != null)
+            {
+                var emailCode = new SettingsPasswordEmailCodePopup(ClientService, emailAddress.PasswordState?.RecoveryEmailAddressCodeInfo, SettingsPasswordEmailCodeType.New);
+
+                if (ContentDialogResult.Primary != await emailCode.ShowQueuedAsync())
+                {
+                    return null;
+                }
+
+                passwordState = emailCode.PasswordState;
+            }
+            else
+            {
+                passwordState = emailAddress.PasswordState;
+            }
+
+            await new SettingsPasswordDonePopup().ShowQueuedAsync();
+            return passwordState;
         }
     }
 }

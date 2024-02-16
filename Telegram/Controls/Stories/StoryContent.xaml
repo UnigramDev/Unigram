@@ -59,9 +59,8 @@
         </Style>
     </UserControl.Resources>
 
-    <Grid>
-        <Grid x:Name="LayoutRoot"
-              Background="Black">
+    <Grid Background="Black">
+        <Grid x:Name="LayoutRoot">
 
             <Image x:Name="Texture1"
                    Stretch="UniformToFill"
@@ -73,6 +72,7 @@
             <Border x:Name="VideoPanel">
                 <vlc:VideoView x:Name="Video"
                                x:Load="False"
+                               IsTabStop="False"
                                Initialized="Video_Initialized" />
             </Border>
         </Grid>

@@ -1,0 +1,88 @@
+<local:HostedPage x:Class="Telegram.Views.Supergroups.SupergroupMembersPage"
+                  xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                  xmlns:local="using:Telegram.Views"
+                  xmlns:controls="using:Telegram.Controls"
+                  xmlns:selectors="using:Telegram.Selectors"
+                  xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                  xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                  xmlns:cells="using:Telegram.Controls.Cells"
+                  mc:Ignorable="d">
+
+    <Page.Transitions>
+        <TransitionCollection>
+            <NavigationThemeTransition>
+                <SlideNavigationTransitionInfo Effect="FromRight" />
+            </NavigationThemeTransition>
+        </TransitionCollection>
+    </Page.Transitions>
+
+    <Grid Background="{ThemeResource SettingsPageBackground}">
+        <controls:TableListView x:Name="ScrollingHost"
+                                ItemsSource="{x:Bind ViewModel.Members, Mode=OneWay}"
+                                ItemClick="ListView_ItemClick"
+                                IsItemClickEnabled="True"
+                                ChoosingItemContainer="OnChoosingItemContainer"
+                                ContainerContentChanging="OnContainerContentChanging"
+                                SelectionMode="None"
+                                Grid.Row="1">
+            <ListView.ItemTemplate>
+                <DataTemplate>
+                    <cells:ProfileCell Background="{ThemeResource SettingsItemBackground}"
+                                       BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}" />
+                </DataTemplate>
+            </ListView.ItemTemplate>
+            <ListView.Header>
+                <controls:SettingsPanel x:Name="ListHeader"
+                                        IsHeader="True">
+                    <Grid HorizontalAlignment="Left"
+                          Margin="24,16,24,0"
+                          Width="280">
+                        <TextBox x:Name="SearchField"
+                                 Text="{x:Bind ViewModel.Members.Query, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                 PlaceholderText="{CustomResource Search}"
+                                 PreventKeyboardDisplayOnProgrammaticFocus="True"
+                                 Padding="34,5,6,6"
+                                 InputScope="Search" />
+
+                        <controls:GlyphButton Glyph="&#xE721;"
+                                              FontSize="16"
+                                              Width="36"
+                                              Height="32"
+                                              IsTabStop="False"
+                                              AutomationProperties.AccessibilityView="Raw"
+                                              HorizontalAlignment="Left"
+                                              VerticalAlignment="Center" />
+                    </Grid>
+
+                    <controls:HeaderedControl x:Name="HideMembers"
+                                              Footer="{CustomResource ChannelHideMembersInfo}"
+                                              Visibility="Collapsed">
+                        <CheckBox Content="{CustomResource ChannelHideMembers}"
+                                  IsChecked="{x:Bind ViewModel.HasHiddenMembers, Mode=TwoWay}"
+                                  Style="{StaticResource SettingsCheckBoxStyle}" />
+                    </controls:HeaderedControl>
+
+                    <controls:HeaderedControl x:Name="AddNewPanel"
+                                              Visibility="Collapsed"
+                                              Margin="0,0,0,2">
+                        <controls:BadgeButton x:Name="AddNew"
+                                              Content="{CustomResource AddSubscriber}"
+                                              Click="{x:Bind ViewModel.Add}"
+                                              Style="{StaticResource GlyphBadgeButtonStyle}"
+                                              Glyph="&#xE8FA;" />
+                    </controls:HeaderedControl>
+                </controls:SettingsPanel>
+            </ListView.Header>
+            <ListView.Footer>
+                <Border MaxWidth="640">
+                    <TextBlock x:Name="Footer"
+                               Text="{CustomResource ChannelMembersInfo}"
+                               Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"
+                               Style="{StaticResource CaptionTextBlockStyle}"
+                               Margin="12,6,12,32" />
+                </Border>
+            </ListView.Footer>
+        </controls:TableListView>
+    </Grid>
+</local:HostedPage>

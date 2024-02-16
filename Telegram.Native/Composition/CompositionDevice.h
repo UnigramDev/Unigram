@@ -17,7 +17,7 @@ namespace winrt::Telegram::Native::Composition::implementation
 
         static winrt::com_ptr<CompositionDevice> Current()
         {
-            winrt::slim_lock_guard const guard(s_lock);
+            std::lock_guard const guard(s_lock);
 
             if (s_current == nullptr) {
                 s_current = winrt::make_self<CompositionDevice>();
@@ -36,7 +36,7 @@ namespace winrt::Telegram::Native::Composition::implementation
         winrt::com_ptr<IUIAnimationManager2> _manager;
         winrt::com_ptr<IUIAnimationTransitionLibrary2> _transitionLibrary;
 
-        static winrt::slim_mutex s_lock;
+        static std::mutex s_lock;
         static winrt::com_ptr<CompositionDevice> s_current;
     };
 }

@@ -1,15 +1,30 @@
-﻿using Telegram.Collections;
+﻿using System;
+using Telegram.Collections;
 using Telegram.Common;
 using Telegram.Controls.Cells;
 using Telegram.Controls.Media;
 using Telegram.Td.Api;
 using Telegram.ViewModels;
+using Windows.Foundation;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Input;
 
 namespace Telegram.Controls.Views
 {
+    public class ItemContextRequestedEventArgs : EventArgs
+    {
+        public ItemContextRequestedEventArgs(object item, ContextRequestedEventArgs eventArgs)
+        {
+            Item = item;
+            EventArgs = eventArgs;
+        }
+
+        public object Item { get; }
+
+        public ContextRequestedEventArgs EventArgs { get; }
+    }
+
     public sealed partial class SearchChatsView : UserControl
     {
         private SearchChatsViewModel _viewModel;
@@ -21,6 +36,8 @@ namespace Telegram.Controls.Views
         }
 
         public event ItemClickEventHandler ItemClick;
+
+        public event TypedEventHandler<UIElement, ItemContextRequestedEventArgs> ItemContextRequested;
 
         public ListView Root => ScrollingHost;
 
@@ -43,6 +60,11 @@ namespace Telegram.Controls.Views
         {
             if (args.InRecycleQueue)
             {
+                if (args.ItemContainer.ContentTemplateRoot is ProfileCell content)
+                {
+                    content.RecycleSearchResult();
+                }
+
                 return;
             }
             else if (args.Item is IKeyedCollection header)
@@ -61,7 +83,7 @@ namespace Telegram.Controls.Views
                     ? Visibility.Visible
                     : Visibility.Collapsed;
             }
-            if (args.Item is SearchResult result)
+            else if (args.Item is SearchResult result)
             {
                 var content = args.ItemContainer.ContentTemplateRoot as ProfileCell;
                 if (content == null)
@@ -143,25 +165,23 @@ namespace Telegram.Controls.Views
                 {
                     var flyout = new MenuFlyout();
                     flyout.CreateFlyoutItem(ViewModel.RemoveRecentChat, result, Strings.DeleteFromRecent, Icons.Delete);
-                    args.ShowAt(flyout, sender as FrameworkElement);
+                    flyout.ShowAt(sender, args);
                 }
                 else
                 {
                     // TODO: forward ContextRequested event to parent
+                    ItemContextRequested?.Invoke(sender, new ItemContextRequestedEventArgs(result, args));
                 }
             }
         }
 
         private void TopChat_ContextRequested(UIElement sender, ContextRequestedEventArgs args)
         {
-            var flyout = new MenuFlyout();
-
-            var element = sender as FrameworkElement;
             var chat = TopChats.ItemFromContainer(sender) as Chat;
 
+            var flyout = new MenuFlyout();
             flyout.CreateFlyoutItem(ViewModel.RemoveTopChat, chat, Strings.Delete, Icons.Delete);
-
-            args.ShowAt(flyout, element);
+            flyout.ShowAt(sender, args);
         }
 
         #endregion

@@ -1,5 +1,5 @@
 //
-// Copyright Fela Ameghino 2015-2023
+// Copyright Fela Ameghino 2015-2024
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
@@ -10,10 +10,12 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
 using Telegram.Common;
+using Telegram.Controls;
 using Telegram.Navigation;
 using Telegram.Navigation.Services;
 using Telegram.Services;
 using Telegram.Services.Settings;
+using Telegram.Streams;
 using Telegram.Td.Api;
 using Telegram.Views.Popups;
 using Telegram.Views.Settings;
@@ -64,8 +66,8 @@ namespace Telegram.ViewModels.Settings
                 Background = GetDefaultBackground(true)
             };
 
-            var defaultTheme = new ChatThemeViewModel(ClientService, "\U0001F3E0", defaultLight, defaultDark);
-            var themes = ClientService.GetChatThemes().Select(x => new ChatThemeViewModel(ClientService, x));
+            var defaultTheme = new ChatThemeViewModel(ClientService, "\U0001F3E0", defaultLight, defaultDark, false);
+            var themes = ClientService.GetChatThemes().Select(x => new ChatThemeViewModel(ClientService, x, false));
 
             ChatThemes.AddRange(new[] { defaultTheme }.Union(themes));
 
@@ -93,19 +95,19 @@ namespace Telegram.ViewModels.Settings
             {
                 if (background != null && chatTheme.Name != "\U0001F3E0")
                 {
-                    ClientService.Send(new SetBackground(new InputBackgroundRemote(background.Id), background.Type, forDarkTheme));
+                    ClientService.Send(new SetDefaultBackground(new InputBackgroundRemote(background.Id), background.Type, forDarkTheme));
                 }
                 else
                 {
-                    ClientService.Send(new SetBackground(null, null, forDarkTheme));
+                    ClientService.Send(new DeleteDefaultBackground(forDarkTheme));
                 }
             }
 
-            SetBackground(chatTheme.LightSettings.Background, false);
-            SetBackground(chatTheme.DarkSettings.Background, true);
+            SetBackground(chatTheme.LightSettings?.Background, false);
+            SetBackground(chatTheme.DarkSettings?.Background, true);
 
             Settings.Appearance.ChatTheme = chatTheme;
-            Settings.Appearance.UpdateNightMode();
+            Settings.Appearance.UpdateNightMode(updateBackground: false);
 
             _selectedChatTheme = chatTheme;
             RaisePropertyChanged(nameof(SelectedChatTheme));
@@ -166,13 +168,22 @@ namespace Telegram.ViewModels.Settings
             get => Settings.Appearance.ForceNightMode || Settings.Appearance.IsDarkTheme();
             set
             {
+                // TODO: this should be probably unified with the code in RootPage and might need some changes.
+                if (Settings.Appearance.NightMode != NightMode.Disabled)
+                {
+                    Settings.Appearance.NightMode = NightMode.Disabled;
+                    ToastPopup.Show(Strings.AutoNightModeOff, new LocalFileSource("ms-appx:///Assets/Toasts/AutoNightOff.tgs"));
+                }
+
                 Settings.Appearance.ForceNightMode = value;
                 Settings.Appearance.RequestedTheme = value
                     ? TelegramTheme.Dark
                     : TelegramTheme.Light;
 
                 Settings.Appearance.UpdateNightMode();
+
                 RaisePropertyChanged();
+                RaisePropertyChanged(nameof(NightMode));
             }
         }
 
@@ -220,16 +231,6 @@ namespace Telegram.ViewModels.Settings
             }
         }
 
-        public bool IsSendByEnterEnabled
-        {
-            get => Settings.IsSendByEnterEnabled;
-            set
-            {
-                Settings.IsSendByEnterEnabled = value;
-                RaisePropertyChanged();
-            }
-        }
-
         public bool IsReplaceEmojiEnabled
         {
             get => Settings.IsReplaceEmojiEnabled;
@@ -249,6 +250,31 @@ namespace Telegram.ViewModels.Settings
                 RaisePropertyChanged();
             }
         }
+
+        public int SendBy
+        {
+            get => Array.IndexOf(_sendByIndexer, Settings.IsSendByEnterEnabled);
+            set
+            {
+                if (value >= 0 && value < _sendByIndexer.Length && Settings.IsSendByEnterEnabled != _sendByIndexer[value])
+                {
+                    Settings.IsSendByEnterEnabled = _sendByIndexer[value];
+                    RaisePropertyChanged();
+                }
+            }
+        }
+
+        private readonly bool[] _sendByIndexer = new[]
+        {
+            true,
+            false
+        };
+
+        public List<SettingsOptionItem<bool>> SendByOptions { get; } = new()
+        {
+            new SettingsOptionItem<bool>(true, Strings.SendByEnterKey),
+            new SettingsOptionItem<bool>(false, Strings.SendByEnterCtrl),
+        };
 
         public int DistanceUnit
         {
@@ -303,6 +329,11 @@ namespace Telegram.ViewModels.Settings
             NavigationService.Navigate(typeof(SettingsBackgroundsPage));
         }
 
+        public void ChangeProfileColor()
+        {
+            NavigationService.Navigate(typeof(SettingsProfileColorPage));
+        }
+
         public void OpenNightMode()
         {
             NavigationService.Navigate(typeof(SettingsNightModePage));
@@ -329,20 +360,24 @@ namespace Telegram.ViewModels.Settings
 
         public string Name { get; }
 
-        public ChatThemeViewModel(IClientService clientService, ChatTheme chatTheme)
+        public bool IsChannel { get; }
+
+        public ChatThemeViewModel(IClientService clientService, ChatTheme chatTheme, bool isChannel)
         {
             ClientService = clientService;
             DarkSettings = chatTheme.DarkSettings;
             LightSettings = chatTheme.LightSettings;
             Name = chatTheme.Name;
+            IsChannel = IsChannel;
         }
 
-        public ChatThemeViewModel(IClientService clientService, string name, ThemeSettings lightSettings, ThemeSettings darkSettings)
+        public ChatThemeViewModel(IClientService clientService, string name, ThemeSettings lightSettings, ThemeSettings darkSettings, bool isChannel)
         {
             ClientService = clientService;
             DarkSettings = darkSettings;
             LightSettings = lightSettings;
             Name = name;
+            IsChannel = isChannel;
         }
 
         public static implicit operator ChatTheme(ChatThemeViewModel chatTheme)

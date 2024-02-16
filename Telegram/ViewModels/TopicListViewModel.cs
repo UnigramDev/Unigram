@@ -1,5 +1,5 @@
 //
-// Copyright Fela Ameghino 2015-2023
+// Copyright Fela Ameghino 2015-2024
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
@@ -424,10 +424,13 @@ namespace Telegram.ViewModels
 
         public async void SetFilter(Chat chat)
         {
-            await Items.ReloadAsync(chat);
-            //Aggregator.Unsubscribe(Items);
-            //Items = new ItemsCollection(ClientService, Aggregator, this, chatList);
-            //RaisePropertyChanged(nameof(Items));
+            if (chat?.Id != Items.Chat?.Id)
+            {
+                await Items.ReloadAsync(chat);
+                //Aggregator.Unsubscribe(Items);
+                //Items = new ItemsCollection(ClientService, Aggregator, this, chatList);
+                //RaisePropertyChanged(nameof(Items));
+            }
         }
 
         public class ItemsCollection : ObservableCollection<ForumTopic>

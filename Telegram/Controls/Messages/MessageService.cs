@@ -1,5 +1,5 @@
 //
-// Copyright Fela Ameghino 2015-2023
+// Copyright Fela Ameghino 2015-2024
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
@@ -13,6 +13,7 @@ using Telegram.Controls.Chats;
 using Telegram.Controls.Media;
 using Telegram.Converters;
 using Telegram.Services;
+using Telegram.Streams;
 using Telegram.Td;
 using Telegram.Td.Api;
 using Telegram.ViewModels;
@@ -96,7 +97,17 @@ namespace Telegram.Controls.Messages
 
         private void UpdateContent(MessageViewModel message)
         {
-            if (message.Content is MessageChatChangePhoto chatChangePhoto)
+            if (message.Content is MessagePremiumGiftCode premiumGiftCode)
+            {
+                var title = FindName("Title") as TextBlock;
+                title.Text = premiumGiftCode.IsUnclaimed
+                    ? Strings.BoostingUnclaimedPrize
+                    : Strings.BoostingCongratulations;
+
+                var animation = FindName("Animation") as AnimatedImage;
+                animation.Source = new DelayedFileSource(message.ClientService, premiumGiftCode.Sticker);
+            }
+            else if (message.Content is MessageChatChangePhoto chatChangePhoto)
             {
                 var segments = FindName("Segments") as ActiveStoriesSegments;
                 var photo = segments.Content as ProfilePicture;
@@ -187,16 +198,46 @@ namespace Telegram.Controls.Messages
                 var photo = FindName("Photo") as ChatBackgroundPresenter;
                 var view = FindName("View") as Border;
 
-                photo?.UpdateSource(message.ClientService, chatSetBackground.Background.Background, true);
-
-                if (view != null)
+                if (photo == null)
                 {
-                    view.Visibility = message.IsOutgoing
-                        ? Visibility.Collapsed
-                        : Visibility.Visible;
+                    return;
+                }
+
+                photo.UpdateSource(message.ClientService, chatSetBackground.Background.Background, true);
+                view.Visibility = message.IsOutgoing
+                    ? Visibility.Collapsed
+                    : Visibility.Visible;
+
+                if (message.IsOutgoing || view.Child is not TextBlock label)
+                {
+                    return;
+                }
+
+                var userFull = message.ClientService.GetUserFull(message.Chat);
+                var sameBackground = chatSetBackground.Background.Background.Id == message.Chat.Background?.Background.Id;
+
+                if (sameBackground && (userFull == null || userFull.SetChatBackground))
+                {
+                    label.Text = Strings.RemoveWallpaperAction;
+                }
+                else
+                {
+                    label.Text = Strings.ViewWallpaperAction;
                 }
             }
+            else if (message.Content is MessageChatEvent { Action: ChatEventBackgroundChanged backgroundChanged })
+            {
+                var photo = FindName("Photo") as ChatBackgroundPresenter;
+                var view = FindName("View") as Border;
 
+                if (photo == null || backgroundChanged.NewBackground == null)
+                {
+                    return;
+                }
+
+                photo.UpdateSource(message.ClientService, backgroundChanged.NewBackground.Background, true);
+                view.Visibility = Visibility.Collapsed;
+            }
         }
 
         public static string GetText(MessageViewModel message)
@@ -232,20 +273,24 @@ namespace Telegram.Controls.Messages
                 MessageGiftedPremium giftedPremium => UpdateGiftedPremium(message, giftedPremium, active),
                 MessageInviteVideoChatParticipants inviteVideoChatParticipants => UpdateInviteVideoChatParticipants(message, inviteVideoChatParticipants, active),
                 MessageProximityAlertTriggered proximityAlertTriggered => UpdateProximityAlertTriggered(message, proximityAlertTriggered, active),
+                MessagePremiumGiveawayCreated premiumGiveawayCreated => UpdatePremiumGiveawayCreated(message, premiumGiveawayCreated, active),
+                MessagePremiumGiveawayCompleted premiumGiveawayCompleted => UpdatePremiumGiveawayCompleted(message, premiumGiveawayCompleted, active),
+                MessagePremiumGiftCode premiumGiftCode => UpdatePremiumGiftCode(message, premiumGiftCode, active),
                 MessagePassportDataSent passportDataSent => UpdatePassportDataSent(message, passportDataSent, active),
                 MessagePaymentSuccessful paymentSuccessful => UpdatePaymentSuccessful(message, paymentSuccessful, active),
                 MessagePinMessage pinMessage => UpdatePinMessage(message, pinMessage, active),
                 MessageScreenshotTaken screenshotTaken => UpdateScreenshotTaken(message, screenshotTaken, active),
                 MessageSuggestProfilePhoto suggestProfilePhoto => UpdateSuggestProfilePhoto(message, suggestProfilePhoto, active),
                 MessageSupergroupChatCreate supergroupChatCreate => UpdateSupergroupChatCreate(message, supergroupChatCreate, active),
-                MessageUserShared userShared => UpdateUserShared(message, userShared, active),
+                MessageUsersShared usersShared => UpdateUsersShared(message, usersShared, active),
                 MessageVideoChatEnded videoChatEnded => UpdateVideoChatEnded(message, videoChatEnded, active),
                 MessageVideoChatScheduled videoChatScheduled => UpdateVideoChatScheduled(message, videoChatScheduled, active),
                 MessageVideoChatStarted videoChatStarted => UpdateVideoChatStarted(message, videoChatStarted, active),
-                MessageWebsiteConnected websiteConnected => UpdateWebsiteConnected(message, websiteConnected, active),
                 MessageWebAppDataSent webAppDataSent => UpdateWebAppDataSent(message, webAppDataSent, active),
                 MessageExpiredPhoto expiredPhoto => UpdateExpiredPhoto(message, expiredPhoto, active),
                 MessageExpiredVideo expiredVideo => UpdateExpiredVideo(message, expiredVideo, active),
+                MessageExpiredVideoNote expiredVideoNote => UpdateExpiredVideoNote(message, expiredVideoNote, active),
+                MessageExpiredVoiceNote expiredVoiceNote => UpdateExpiredVoiceNote(message, expiredVoiceNote, active),
                 MessageAsyncStory story => UpdateStory(message, story, active),
                 MessageStory story => UpdateStory(message, story, active),
                 // Local types:
@@ -283,6 +328,10 @@ namespace Telegram.Controls.Messages
                     ChatEventForumTopicEdited forumTopicEdited => UpdateChatEventForumTopicEdited(message, forumTopicEdited, active),
                     ChatEventForumTopicPinned forumTopicPinned => UpdateChatEventForumTopicPinned(message, forumTopicPinned, active),
                     ChatEventForumTopicToggleIsClosed forumTopicToggleIsClosed => UpdateChatEventForumTopicToggleIsClosed(message, forumTopicToggleIsClosed, active),
+                    ChatEventAccentColorChanged accentColorChanged => UpdateChatEventAccentColorChanged(message, accentColorChanged, active),
+                    ChatEventProfileAccentColorChanged profileAccentColorChanged => UpdateChatEventProfileAccentColorChanged(message, profileAccentColorChanged, active),
+                    ChatEventEmojiStatusChanged emojiStatusChanged => UpdateChatEventEmojiStatusChanged(message, emojiStatusChanged, active),
+                    ChatEventBackgroundChanged backgroundChanged => UpdateChatEventBackgroundChanged(message, backgroundChanged, active),
                     //ChatEventActiveUsernamesChanged activeUsernamesChanged => UpdateChatEventActiveUsernames(message, activeUsernamesChanged, active),
                     _ => (string.Empty, null)
                 },
@@ -297,19 +346,186 @@ namespace Telegram.Controls.Messages
         {
             if (message.SchedulingState is MessageSchedulingStateSendAtDate sendAtDate)
             {
-                return (string.Format(Strings.MessageScheduledOn, Formatter.DayGrouping(Formatter.ToLocalTime(sendAtDate.SendDate))), null);
+                return (string.Format(Strings.MessageScheduledOn, Formatter.DayGrouping(sendAtDate.SendDate)), null);
             }
             else if (message.SchedulingState is MessageSchedulingStateSendWhenOnline)
             {
                 return (Strings.MessageScheduledUntilOnline, null);
             }
 
-            return (Formatter.DayGrouping(Formatter.ToLocalTime(message.Date)), null);
+            return (Formatter.DayGrouping(message.Date), null);
         }
 
         #endregion
 
         #region Event log
+
+        private static (string Text, IList<TextEntity> Entities) UpdateChatEventAccentColorChanged(MessageViewModel message, ChatEventAccentColorChanged accentColorChanged, bool active)
+        {
+            var content = string.Empty;
+            var entities = active ? new List<TextEntity>() : null;
+
+            var fromUser = message.GetSender();
+
+            content = ReplaceWithLink(Strings.EventLogChangedPeerColorIcon, "un1", fromUser, entities);
+
+            var index1 = content.IndexOf("{0}");
+            if (index1 != -1)
+            {
+                if (accentColorChanged.OldBackgroundCustomEmojiId != 0)
+                {
+                    entities.Add(new TextEntity(index1, 3, new TextEntityTypeCustomEmoji(accentColorChanged.OldBackgroundCustomEmojiId)));
+                }
+                else
+                {
+                    content = content.Remove(index1, 3);
+                    content = content.Insert(index1, Strings.EventLogEmojiNone);
+                }
+            }
+
+            var index2 = content.IndexOf("{1}");
+            if (index2 != -1)
+            {
+                if (accentColorChanged.NewBackgroundCustomEmojiId != 0)
+                {
+                    entities.Add(new TextEntity(index2, 3, new TextEntityTypeCustomEmoji(accentColorChanged.NewBackgroundCustomEmojiId)));
+                }
+                else
+                {
+                    content = content.Remove(index2, 3);
+                    content = content.Insert(index2, Strings.EventLogEmojiNone);
+                }
+            }
+
+            return (content, entities);
+        }
+
+        private static (string Text, IList<TextEntity> Entities) UpdateChatEventProfileAccentColorChanged(MessageViewModel message, ChatEventProfileAccentColorChanged profileAccentColorChanged, bool active)
+        {
+            var content = string.Empty;
+            var entities = active ? new List<TextEntity>() : null;
+
+            var fromUser = message.GetSender();
+
+            content = ReplaceWithLink(Strings.EventLogChangedProfileColorIcon, "un1", fromUser, entities);
+
+            var index1 = content.IndexOf("{0}");
+            if (index1 != -1)
+            {
+                if (profileAccentColorChanged.OldProfileBackgroundCustomEmojiId != 0)
+                {
+                    entities.Add(new TextEntity(index1, 3, new TextEntityTypeCustomEmoji(profileAccentColorChanged.OldProfileBackgroundCustomEmojiId)));
+                }
+                else
+                {
+                    content = content.Remove(index1, 3);
+                    content = content.Insert(index1, Strings.EventLogEmojiNone);
+                }
+            }
+
+            var index2 = content.IndexOf("{1}");
+            if (index2 != -1)
+            {
+                if (profileAccentColorChanged.NewProfileBackgroundCustomEmojiId != 0)
+                {
+                    entities.Add(new TextEntity(index2, 3, new TextEntityTypeCustomEmoji(profileAccentColorChanged.NewProfileBackgroundCustomEmojiId)));
+                }
+                else
+                {
+                    content = content.Remove(index2, 3);
+                    content = content.Insert(index2, Strings.EventLogEmojiNone);
+                }
+            }
+
+            return (content, entities);
+        }
+
+        private static (string Text, IList<TextEntity> Entities) UpdateChatEventEmojiStatusChanged(MessageViewModel message, ChatEventEmojiStatusChanged emojiStatusChanged, bool active)
+        {
+            var content = string.Empty;
+            var entities = active ? new List<TextEntity>() : null;
+
+            var fromUser = message.GetSender();
+
+            if (emojiStatusChanged.NewEmojiStatus != null)
+            {
+                // TODO: FormatTtl may not return the right value
+                if (emojiStatusChanged.NewEmojiStatus.ExpirationDate != 0)
+                {
+                    if (emojiStatusChanged.OldEmojiStatus != null)
+                    {
+                        content = ReplaceWithLink(Strings.EventLogChangedEmojiStatusFromFor, "un1", fromUser, entities);
+                        content = string.Format(content, "{0}", "{1}", Locale.FormatTtl(emojiStatusChanged.NewEmojiStatus.ExpirationDate - message.Date));
+                    }
+                    else
+                    {
+                        content = ReplaceWithLink(Strings.EventLogChangedEmojiStatusFor, "un1", fromUser, entities);
+                        content = string.Format(content, "{0}", "{1}", Locale.FormatTtl(emojiStatusChanged.NewEmojiStatus.ExpirationDate - message.Date));
+                    }
+                }
+                else if (emojiStatusChanged.OldEmojiStatus != null)
+                {
+                    content = ReplaceWithLink(Strings.EventLogChangedEmojiStatusFrom, "un1", fromUser, entities);
+                }
+                else
+                {
+                    content = ReplaceWithLink(Strings.EventLogChangedEmojiStatus, "un1", fromUser, entities);
+                }
+            }
+            else
+            {
+                content = ReplaceWithLink(Strings.EventLogChangedEmojiStatusFrom, "un1", fromUser, entities);
+            }
+
+            var index1 = content.IndexOf("{0}");
+            if (index1 != -1)
+            {
+                if (emojiStatusChanged.OldEmojiStatus != null)
+                {
+                    entities.Add(new TextEntity(index1, 3, new TextEntityTypeCustomEmoji(emojiStatusChanged.OldEmojiStatus.CustomEmojiId)));
+                }
+                else
+                {
+                    content = content.Remove(index1, 3);
+                    content = content.Insert(index1, Strings.EventLogEmojiNone);
+                }
+            }
+
+            var index2 = content.IndexOf("{1}");
+            if (index2 != -1)
+            {
+                if (emojiStatusChanged.NewEmojiStatus != null)
+                {
+                    entities.Add(new TextEntity(index2, 3, new TextEntityTypeCustomEmoji(emojiStatusChanged.NewEmojiStatus.CustomEmojiId)));
+                }
+                else
+                {
+                    content = content.Remove(index2, 3);
+                    content = content.Insert(index2, Strings.EventLogEmojiNone);
+                }
+            }
+
+            return (content, entities);
+        }
+
+        private static (string Text, IList<TextEntity> Entities) UpdateChatEventBackgroundChanged(MessageViewModel message, ChatEventBackgroundChanged backgroundChanged, bool active)
+        {
+            var content = string.Empty;
+            var entities = active ? new List<TextEntity>() : null;
+
+            var fromUser = message.GetSender();
+
+            if (backgroundChanged.NewBackground != null)
+            {
+                content = ReplaceWithLink(Strings.EventLogChangedWallpaper, "un1", fromUser, entities);
+            }
+            else
+            {
+                content = ReplaceWithLink(Strings.EventLogRemovedWallpaper, "un1", fromUser, entities);
+            }
+
+            return (content, entities);
+        }
 
         private static (string Text, IList<TextEntity> Entities) UpdateSlowModeDelayChanged(MessageViewModel message, ChatEventSlowModeDelayChanged slowModeDelayChanged, bool active)
         {
@@ -938,6 +1154,22 @@ namespace Telegram.Controls.Messages
 
         private static (string, IList<TextEntity>) UpdateBotWriteAccessAllowed(MessageViewModel message, MessageBotWriteAccessAllowed botWriteAccessAllowed, bool active)
         {
+            if (botWriteAccessAllowed.Reason is BotWriteAccessAllowReasonConnectedWebsite websiteConnected)
+            {
+                var content = Strings.ActionBotAllowed;
+                var entities = active ? new List<TextEntity>() : null;
+
+                var start = content.IndexOf("{0}");
+                content = string.Format(content, websiteConnected.DomainName);
+
+                if (start >= 0 && active)
+                {
+                    entities.Add(new TextEntity(start, websiteConnected.DomainName.Length, new TextEntityTypeUrl()));
+                }
+
+                return (content, entities);
+            }
+
             return (Strings.ActionBotAllowedWebapp, null);
         }
 
@@ -1244,7 +1476,11 @@ namespace Telegram.Controls.Messages
             var content = string.Empty;
             var entities = active ? new List<TextEntity>() : null;
 
-            if (chatSetBackground.OldBackgroundMessageId != 0)
+            if (message.IsChannelPost)
+            {
+                content = Strings.ActionSetWallpaperForThisChannel;
+            }
+            else if (chatSetBackground.OldBackgroundMessageId != 0)
             {
                 if (message.IsOutgoing)
                 {
@@ -1257,11 +1493,20 @@ namespace Telegram.Controls.Messages
             }
             else if (message.IsOutgoing)
             {
-                content = Strings.ActionSetWallpaperForThisChatSelf;
+                if (chatSetBackground.OnlyForSelf)
+                {
+                    content = Strings.ActionSetWallpaperForThisChatSelf;
+                }
+                else if (message.ClientService.TryGetUser(message.Chat, out User user))
+                {
+                    content = string.Format(Strings.ActionSetWallpaperForThisChatSelfBoth, user.FirstName);
+                }
             }
             else if (message.ClientService.TryGetUser(message.SenderId, out User user))
             {
-                content = string.Format(Strings.ActionSetWallpaperForThisChat, user.FirstName);
+                content = chatSetBackground.OnlyForSelf
+                    ? string.Format(Strings.ActionSetWallpaperForThisChat, user.FirstName)
+                    : string.Format(Strings.ActionSetWallpaperForThisChatBoth, user.FirstName);
             }
 
             return (content, entities);
@@ -1653,9 +1898,65 @@ namespace Telegram.Controls.Messages
             return (content, entities);
         }
 
-        private static (string Text, IList<TextEntity> Entities) UpdatePassportDataSent(MessageViewModel message, MessagePassportDataSent passportDataSent, bool active)
+        private static (string, IList<TextEntity>) UpdatePremiumGiveawayCreated(MessageViewModel message, MessagePremiumGiveawayCreated premiumGiveawayCreated, bool active)
         {
             var content = string.Empty;
+            var entities = active ? new List<TextEntity>() : null;
+
+            content = string.Format(Strings.BoostingGiveawayJustStarted, message.Chat.Title);
+
+            return (content, entities);
+        }
+
+        private static (string, IList<TextEntity>) UpdatePremiumGiveawayCompleted(MessageViewModel message, MessagePremiumGiveawayCompleted premiumGiveawayCompleted, bool active)
+        {
+            var content = string.Empty;
+            var entities = active ? new List<TextEntity>() : null;
+
+            content = Locale.Declension(Strings.R.BoostingGiveawayServiceWinnersSelected, premiumGiveawayCompleted.WinnerCount);
+
+            if (premiumGiveawayCompleted.UnclaimedPrizeCount > 0)
+            {
+                content = string.Format("{0} {1}", content, Locale.Declension(Strings.R.BoostingGiveawayServiceUndistributed, premiumGiveawayCompleted.UnclaimedPrizeCount));
+            }
+
+            return (content, entities);
+        }
+
+        private static (string, IList<TextEntity>) UpdatePremiumGiftCode(MessageViewModel message, MessagePremiumGiftCode premiumGiftCode, bool active)
+        {
+            string content;
+            IList<TextEntity> entities = active ? new List<TextEntity>() : null;
+
+            if (active && message.ClientService.TryGetChat(premiumGiftCode.CreatorId, out Chat chat))
+            {
+                var text = premiumGiftCode.IsUnclaimed
+                    ? Strings.BoostingYouHaveUnclaimedPrize
+                    : premiumGiftCode.IsFromGiveaway
+                    ? Strings.BoostingReceivedPrizeFrom
+                    : Strings.BoostingReceivedGiftFrom;
+
+                var months = Locale.Declension(Strings.R.BoldMonths, premiumGiftCode.MonthCount);
+                var duration = string.Format(premiumGiftCode.IsUnclaimed
+                    ? Strings.BoostingUnclaimedPrizeDuration
+                    : Strings.BoostingReceivedPrizeDuration, months);
+
+                var markdown = ClientEx.ParseMarkdown(string.Format($"{text}\n\n{duration}", chat.Title));
+
+                content = markdown.Text;
+                entities = active ? markdown.Entities : null;
+            }
+            else
+            {
+                content = Strings.BoostingReceivedGiftNoName;
+            }
+
+            return (content, entities);
+        }
+
+        private static (string Text, IList<TextEntity> Entities) UpdatePassportDataSent(MessageViewModel message, MessagePassportDataSent passportDataSent, bool active)
+        {
+            string content;
 
             StringBuilder str = new StringBuilder();
             for (int a = 0, size = passportDataSent.Types.Count; a < size; a++)
@@ -1926,36 +2227,20 @@ namespace Telegram.Controls.Messages
             return (content, entities);
         }
 
-        private static (string, IList<TextEntity>) UpdateUserShared(MessageViewModel message, MessageUserShared userShared, bool active)
+        private static (string, IList<TextEntity>) UpdateUsersShared(MessageViewModel message, MessageUsersShared usersShared, bool active)
         {
             var content = string.Empty;
             var entities = active ? new List<TextEntity>() : null;
 
             var chat = message.Chat;
-            if (chat != null && message.ClientService.TryGetUser(userShared.UserId, out User sharedUser))
+            if (chat != null)
             {
-                content = ReplaceWithLink(Strings.ActionRequestedPeer, "un1", sharedUser, entities);
+                content = ReplaceWithLink(Strings.ActionRequestedPeer, "un1", usersShared.UserIds, message.ClientService, entities);
                 content = ReplaceWithLink(content, "un2", chat, entities);
             }
             else if (chat != null)
             {
                 content = ReplaceWithLink(Strings.ActionRequestedPeerUser, "un2", chat, entities);
-            }
-
-            return (content, entities);
-        }
-
-        private static (string Text, IList<TextEntity> Entities) UpdateWebsiteConnected(MessageViewModel message, MessageWebsiteConnected websiteConnected, bool active)
-        {
-            var content = Strings.ActionBotAllowed;
-            var entities = active ? new List<TextEntity>() : null;
-
-            var start = content.IndexOf("{0}");
-            content = string.Format(content, websiteConnected.DomainName);
-
-            if (start >= 0 && active)
-            {
-                entities.Add(new TextEntity(start, websiteConnected.DomainName.Length, new TextEntityTypeUrl()));
             }
 
             return (content, entities);
@@ -1979,6 +2264,16 @@ namespace Telegram.Controls.Messages
             return (Strings.AttachVideoExpired, null);
         }
 
+        private static (string, IList<TextEntity>) UpdateExpiredVideoNote(MessageViewModel message, MessageExpiredVideoNote expiredVideoNote, bool active)
+        {
+            return (Strings.AttachRoundExpired, null);
+        }
+
+        private static (string, IList<TextEntity>) UpdateExpiredVoiceNote(MessageViewModel message, MessageExpiredVoiceNote expiredVoiceNote, bool active)
+        {
+            return (Strings.AttachVoiceExpired, null);
+        }
+
         private static (string, IList<TextEntity>) UpdateStory(MessageViewModel message, MessageAsyncStory story, bool active)
         {
             if (active)
@@ -1997,7 +2292,7 @@ namespace Telegram.Controls.Messages
                     }
                 }
 
-                var formatted = DialogViewModel.GetFormattedText(content);
+                var formatted = ClientEx.ParseMarkdown(content);
                 return (formatted.Text, formatted.Entities);
             }
 

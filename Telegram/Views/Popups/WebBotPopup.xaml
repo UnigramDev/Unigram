@@ -8,11 +8,13 @@
                        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
                        mc:Ignorable="d"
                        ContentMaxWidth="394"
+                       Padding="0"
                        HorizontalContentAlignment="Stretch"
                        VerticalContentAlignment="Stretch"
-                       Closing="OnClosing">
+                       Closing="OnClosing"
+                       Closed="OnClosed">
 
-    <Grid Margin="-24,-24,-24,-24">
+    <Grid CornerRadius="8">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition />

@@ -48,12 +48,12 @@
                                            Visibility="{Binding Key.Footer, Converter={StaticResource NullToVisibilityConverter}}"
                                            Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"
                                            Style="{StaticResource CaptionTextBlockStyle}"
-                                           Margin="0,8,0,8" />
+                                           Margin="0,6,0,8" />
 
                                 <TextBlock Text="{Binding Key.Title}"
                                            Style="{StaticResource BaseTextBlockStyle}"
                                            FontWeight="SemiBold"
-                                           Margin="0,16,0,8" />
+                                           Margin="0,16,0,6" />
                             </StackPanel>
                         </DataTemplate>
                     </GroupStyle.HeaderTemplate>

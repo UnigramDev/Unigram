@@ -1,12 +1,18 @@
-﻿using System;
+﻿//
+// Copyright Fela Ameghino 2015-2024
+//
+// Distributed under the GNU General Public License v3.0. (See accompanying
+// file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
+//
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Telegram.Collections;
+using Telegram.Common;
 using Telegram.Navigation;
 using Telegram.Navigation.Services;
 using Telegram.Services;
 using Telegram.Td.Api;
-using Telegram.Views;
 using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Navigation;
 
@@ -104,30 +110,15 @@ namespace Telegram.ViewModels
 
         public bool HasMoreItems { get; private set; } = true;
 
-        public async void OpenChat(object clickedItem)
+        public void OpenChat(object clickedItem)
         {
             if (clickedItem is AddedReaction addedReaction)
             {
-                if (addedReaction.SenderId is MessageSenderChat senderChat)
-                {
-                    NavigationService.Navigate(typeof(ProfilePage), senderChat.ChatId);
-                }
-                else if (addedReaction.SenderId is MessageSenderUser senderUser)
-                {
-                    var response = await ClientService.SendAsync(new CreatePrivateChat(senderUser.UserId, true));
-                    if (response is Chat chat)
-                    {
-                        NavigationService.Navigate(typeof(ProfilePage), chat.Id);
-                    }
-                }
+                NavigationService.NavigateToSender(addedReaction.SenderId);
             }
             else if (clickedItem is MessageViewer messageViewer)
             {
-                var response = await ClientService.SendAsync(new CreatePrivateChat(messageViewer.UserId, true));
-                if (response is Chat chat)
-                {
-                    NavigationService.Navigate(typeof(ProfilePage), chat.Id);
-                }
+                NavigationService.NavigateToUser(messageViewer.UserId);
             }
         }
     }

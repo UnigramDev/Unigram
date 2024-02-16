@@ -23,11 +23,15 @@ namespace Telegram.Native
 
         //[DefaultOverload]
         static TextDirectionality GetDirectionality(String value);
+        static TextDirectionality GetDirectionality(String value, Int32 offset);
+        static TextDirectionality GetDirectionality(String value, Int32 offset, Int32 length);
         //static Int32 GetDirectionality(char16 value);
 
         static String GetCurrentCulture();
-
         static String GetKeyboardCulture();
+
+        static String FormatTime(Int32 value);
+        static String FormatDate(Int32 value);
 
         [default_overload]
         static Boolean IsFileReadable(String path);

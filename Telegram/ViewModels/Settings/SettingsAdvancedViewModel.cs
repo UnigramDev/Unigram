@@ -1,12 +1,12 @@
 //
-// Copyright Fela Ameghino 2015-2023
+// Copyright Fela Ameghino 2015-2024
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
-using System;
 using System.Threading.Tasks;
 using Telegram.Common;
+using Telegram.Controls;
 using Telegram.Controls.Media;
 using Telegram.Converters;
 using Telegram.Navigation;
@@ -29,12 +29,13 @@ namespace Telegram.ViewModels.Settings
             : base(clientService, settingsService, aggregator)
         {
             _cloudUpdateService = cloudUpdateService;
+            UpdateFooter = string.Format(Strings.VersionNumber, VersionLabel.GetVersion());
         }
 
         protected override Task OnNavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
         {
             _update = _cloudUpdateService.NextUpdate;
-            Update();
+            UpdateImpl(false);
 
             return base.OnNavigatedToAsync(parameter, mode, state);
         }
@@ -58,7 +59,7 @@ namespace Telegram.ViewModels.Settings
             {
                 Settings.InstallBetaUpdates = value;
                 RaisePropertyChanged();
-                Update();
+                UpdateImpl(false);
             }
         }
 
@@ -139,7 +140,12 @@ namespace Telegram.ViewModels.Settings
             }
         }
 
-        public async void Update()
+        public void Update()
+        {
+            UpdateImpl(true);
+        }
+
+        private async void UpdateImpl(bool launch)
         {
             var update = _update;
             if (update == null)
@@ -149,22 +155,20 @@ namespace Telegram.ViewModels.Settings
                 UpdateGlyph = Icons.ArrowSync;
                 UpdateText = Strings.RetrievingInformation;
 
-                var ticks = Environment.TickCount;
+                var ticks = Logger.TickCount;
 
                 await _cloudUpdateService.UpdateAsync(true);
                 update = _update = _cloudUpdateService.NextUpdate;
 
-                var diff = Environment.TickCount - ticks;
+                var diff = (int)(Logger.TickCount - ticks);
                 if (diff < 2000)
                 {
                     await Task.Delay(2000 - diff);
                 }
             }
-            else if (update.File != null)
+            else if (update.File != null && launch && Constants.RELEASE)
             {
-#if !DEBUG
-                await CloudUpdateService.LaunchAsync(Dispatcher);
-#endif
+                await CloudUpdateService.LaunchAsync(Dispatcher, false);
             }
 
             UpdateFile(update, update?.Document, true);
@@ -190,11 +194,11 @@ namespace Telegram.ViewModels.Settings
 
             if (value)
             {
-                await SystemTray.LaunchAsync();
+                await NotifyIcon.LaunchAsync();
             }
             else
             {
-                await SystemTray.ExitAsync();
+                await NotifyIcon.ExitAsync();
             }
         }
     }

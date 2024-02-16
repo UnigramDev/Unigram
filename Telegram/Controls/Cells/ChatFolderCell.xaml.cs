@@ -1,5 +1,5 @@
 //
-// Copyright Fela Ameghino 2015-2023
+// Copyright Fela Ameghino 2015-2024
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
@@ -24,8 +24,8 @@ namespace Telegram.Controls.Cells
             ElementCompositionPreview.SetIsTranslationEnabled(UnselectedIcon, true);
             ElementCompositionPreview.SetIsTranslationEnabled(SelectedIcon, true);
 
-            var iconUnselected = ElementCompositionPreview.GetElementVisual(UnselectedIcon);
-            var iconSelected = ElementCompositionPreview.GetElementVisual(SelectedIcon);
+            var iconUnselected = ElementComposition.GetElementVisual(UnselectedIcon);
+            var iconSelected = ElementComposition.GetElementVisual(SelectedIcon);
 
             iconUnselected.Opacity = 1;
             iconSelected.Opacity = 0;
@@ -43,10 +43,10 @@ namespace Telegram.Controls.Cells
 
             var compositor = Window.Current.Compositor;
 
-            var iconUnselected = ElementCompositionPreview.GetElementVisual(UnselectedIcon);
-            var iconSelected = ElementCompositionPreview.GetElementVisual(SelectedIcon);
+            var iconUnselected = ElementComposition.GetElementVisual(UnselectedIcon);
+            var iconSelected = ElementComposition.GetElementVisual(SelectedIcon);
 
-            var title = ElementCompositionPreview.GetElementVisual(Title);
+            var title = ElementComposition.GetElementVisual(Title);
 
             if (next == "PointerOver")
             {
@@ -55,6 +55,10 @@ namespace Telegram.Controls.Cells
 
                 iconUnselected.StopAnimation("Opacity");
                 iconUnselected.Opacity = 1;
+
+                iconSelected.StopAnimation("Translation");
+                iconSelected.StopAnimation("Opacity");
+                iconSelected.Opacity = 0;
             }
             else if (next == "Pressed")
             {

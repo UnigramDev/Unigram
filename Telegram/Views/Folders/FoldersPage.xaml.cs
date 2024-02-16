@@ -1,5 +1,5 @@
 //
-// Copyright Fela Ameghino 2015-2023
+// Copyright Fela Ameghino 2015-2024
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
@@ -10,6 +10,7 @@ using Telegram.Controls.Media;
 using Telegram.Td.Api;
 using Telegram.ViewModels.Folders;
 using Windows.UI.Xaml;
+using Windows.UI.Xaml.Automation;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Input;
 
@@ -25,28 +26,9 @@ namespace Telegram.Views.Folders
             Title = Strings.Filters;
         }
 
-        private void Items_ElementPrepared(Microsoft.UI.Xaml.Controls.ItemsRepeater sender, Microsoft.UI.Xaml.Controls.ItemsRepeaterElementPreparedEventArgs args)
+        private void OnItemClick(object sender, ItemClickEventArgs e)
         {
-            var button = args.Element as BadgeButton;
-            var folder = button.DataContext as ChatFolderInfo;
-
-            var icon = Icons.ParseFolder(folder.Icon);
-
-            button.Glyph = Icons.FolderToGlyph(icon).Item1;
-            button.Content = folder.Title;
-            button.CommandParameter = folder;
-            button.BorderThickness = new Thickness(0, args.Index == 0 ? 0 : 1, 0, 0);
-
-            var chevron = button.Badge as TextBlock;
-            chevron.Text = args.Index > ViewModel.ClientService.Options.ChatFolderCountMax ? Icons.LockClosed : folder.HasMyInviteLinks ? Icons.Link : string.Empty;
-        }
-
-        private void Edit_Click(object sender, RoutedEventArgs e)
-        {
-            if (sender is Button button && button.CommandParameter is ChatFolderInfo folder)
-            {
-                ViewModel.Edit(folder);
-            }
+            ViewModel.Edit(e.ClickedItem as ChatFolderInfo);
         }
 
         private void Recommended_ElementPrepared(Microsoft.UI.Xaml.Controls.ItemsRepeater sender, Microsoft.UI.Xaml.Controls.ItemsRepeaterElementPreparedEventArgs args)
@@ -76,15 +58,55 @@ namespace Telegram.Views.Folders
 
         private void Item_ContextRequested(UIElement sender, ContextRequestedEventArgs args)
         {
+            var chat = ScrollingHost.ItemFromContainer(sender) as ChatFolderInfo;
+
             var flyout = new MenuFlyout();
-
-            var element = sender as FrameworkElement;
-            var chat = element.DataContext as ChatFolderInfo;
-
             flyout.CreateFlyoutItem(ViewModel.Delete, chat, Strings.FilterDeleteItem, Icons.Delete);
-
-            args.ShowAt(flyout, element);
+            flyout.ShowAt(sender, args);
         }
+
+        #region Recycle
+
+        private void OnChoosingItemContainer(ListViewBase sender, ChoosingItemContainerEventArgs args)
+        {
+            if (args.ItemContainer == null)
+            {
+                args.ItemContainer = new ListViewItem();
+                args.ItemContainer.Style = sender.ItemContainerStyle;
+                args.ItemContainer.ContentTemplate = sender.ItemTemplate;
+                args.ItemContainer.ContextRequested += Item_ContextRequested;
+            }
+
+            args.IsContainerPrepared = true;
+        }
+
+        private void OnContainerContentChanging(ListViewBase sender, ContainerContentChangingEventArgs args)
+        {
+            if (args.InRecycleQueue)
+            {
+                return;
+            }
+            else if (args.ItemContainer.ContentTemplateRoot is Grid content && args.Item is ChatFolderInfo folder)
+            {
+                AutomationProperties.SetName(args.ItemContainer, folder.Title);
+
+                var glyph = content.Children[0] as TextBlock;
+                var presenter = content.Children[1] as ContentPresenter;
+                var badge = content.Children[2] as ContentControl;
+
+                var icon = Icons.ParseFolder(folder.Icon);
+
+                glyph.Text = Icons.FolderToGlyph(icon).Item1;
+                presenter.Content = folder.Title;
+                badge.Content = args.ItemIndex >= ViewModel.ClientService.Options.ChatFolderCountMax
+                    ? Icons.LockClosed 
+                    : folder.HasMyInviteLinks ? Icons.Link : string.Empty;
+
+                args.Handled = true;
+            }
+        }
+
+        #endregion
 
         #region Binding
 
@@ -94,6 +116,5 @@ namespace Telegram.Views.Folders
         }
 
         #endregion
-
     }
 }

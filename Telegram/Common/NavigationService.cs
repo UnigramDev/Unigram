@@ -1,5 +1,5 @@
 //
-// Copyright Fela Ameghino 2015-2023
+// Copyright Fela Ameghino 2015-2024
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
@@ -104,11 +104,11 @@ namespace Telegram.Common
             }
         }
 
-        public static void NavigateToInstant(this INavigationService service, string url)
+        public static void NavigateToInstant(this INavigationService service, string url, string fallbackUrl = null)
         {
             if (service is TLNavigationService serviceEx)
             {
-                serviceEx.NavigateToInstant(url);
+                serviceEx.NavigateToInstant(url, fallbackUrl);
             }
         }
 
@@ -136,35 +136,27 @@ namespace Telegram.Common
             }
         }
 
-        public static void NavigateToThread(this INavigationService service, Chat chat, long thread, long? message = null, NavigationState state = null)
+        public static void NavigateToUser(this INavigationService service, long userId, bool toChat = false)
         {
             if (service is TLNavigationService serviceEx)
             {
-                serviceEx.NavigateToChat(chat, message, thread, state: state);
+                serviceEx.NavigateToUser(userId, toChat);
             }
         }
 
-        public static void NavigateToThread(this INavigationService service, long chatId, long thread, long? message = null, NavigationState state = null)
+        public static void NavigateToChat(this INavigationService service, Chat chat, long? message = null, long thread = 0, long savedMessagesTopicId = 0, string accessToken = null, NavigationState state = null, bool scheduled = false, bool force = true, bool createNewWindow = false, bool clearBackStack = false)
         {
             if (service is TLNavigationService serviceEx)
             {
-                serviceEx.NavigateToChat(chatId, message, thread, state: state);
+                serviceEx.NavigateToChat(chat, message, thread, savedMessagesTopicId, accessToken, state, scheduled, force, createNewWindow, clearBackStack);
             }
         }
 
-        public static void NavigateToChat(this INavigationService service, Chat chat, long? message = null, long? thread = null, string accessToken = null, NavigationState state = null, bool scheduled = false, bool force = true, bool createNewWindow = false)
+        public static void NavigateToChat(this INavigationService service, long chatId, long? message = null, long thread = 0, long savedMessagesTopicId = 0, string accessToken = null, NavigationState state = null, bool scheduled = false, bool force = true, bool createNewWindow = false)
         {
             if (service is TLNavigationService serviceEx)
             {
-                serviceEx.NavigateToChat(chat, message, thread, accessToken, state, scheduled, force, createNewWindow);
-            }
-        }
-
-        public static void NavigateToChat(this INavigationService service, long chatId, long? message = null, long? thread = null, string accessToken = null, NavigationState state = null, bool scheduled = false, bool force = true, bool createNewWindow = false)
-        {
-            if (service is TLNavigationService serviceEx)
-            {
-                serviceEx.NavigateToChat(chatId, message, thread, accessToken, state, scheduled, force, createNewWindow);
+                serviceEx.NavigateToChat(chatId, message, thread, savedMessagesTopicId, accessToken, state, scheduled, force, createNewWindow);
             }
         }
 
@@ -189,6 +181,24 @@ namespace Telegram.Common
             if (service is TLNavigationService serviceEx)
             {
                 serviceEx.NavigateToPasscode();
+            }
+        }
+
+        public static Task<PasswordState> NavigateToPasswordAsync(this INavigationService service)
+        {
+            if (service is TLNavigationService serviceEx)
+            {
+                return serviceEx.NavigateToPasswordAsync();
+            }
+
+            return Task.FromResult<PasswordState>(null);
+        }
+
+        public static void NavigateToPassword(this INavigationService service)
+        {
+            if (service is TLNavigationService serviceEx)
+            {
+                _ = serviceEx.NavigateToPasswordAsync();
             }
         }
 
@@ -218,7 +228,7 @@ namespace Telegram.Common
             return Task.CompletedTask;
         }
 
-        public static void RemovePeerFromStack(this INavigationService service, long target)
+        public static void RemoveChatFromStack(this INavigationService service, long target)
         {
             long peer;
             bool found = false;
@@ -226,7 +236,7 @@ namespace Telegram.Common
             for (int i = 0; i < service.Frame.BackStackDepth; i++)
             {
                 var entry = service.Frame.BackStack[i];
-                if (TryGetPeerFromParameter(service, entry.Parameter, out peer))
+                if (TryGetChatFromParameter(service, entry.Parameter, out peer))
                 {
                     found = peer.Equals(target);
                 }
@@ -238,7 +248,7 @@ namespace Telegram.Common
                 }
             }
 
-            if (TryGetPeerFromParameter(service, service.CurrentPageParam, out peer))
+            if (TryGetChatFromParameter(service, service.CurrentPageParam, out peer))
             {
                 if (peer.Equals(target))
                 {
@@ -248,54 +258,71 @@ namespace Telegram.Common
             }
         }
 
-        public static long GetPeerFromBackStack(this INavigationService service)
+        public static bool IsChatOpen(this INavigationService service, long chatId, bool currentPageOnly = false)
+        {
+            return chatId == GetChatFromBackStack(service, currentPageOnly);
+        }
+
+        public static long GetChatFromBackStack(this INavigationService service, bool currentPageOnly = false)
         {
             if (service.CurrentPageType == typeof(ChatPage))
             {
-                if (TryGetPeerFromParameter(service, service.CurrentPageParam, out long chatId))
+                if (TryGetChatFromParameter(service, service.CurrentPageParam, out long chatId))
                 {
                     return chatId;
                 }
             }
-            else if (service.CurrentPageType == typeof(ChatThreadPage))
+            
+            if (currentPageOnly)
             {
-                if (service.CurrentPageParam is string pair)
+                return 0;
+            }
+
+            if (service.CurrentPageType == typeof(ChatThreadPage))
+            {
+                if (service.CurrentPageParam is ChatMessageIdNavigationArgs args)
                 {
-                    var split = pair.Split(';');
-                    if (long.TryParse(split[0], out long chatId))
-                    {
-                        return chatId;
-                    }
+                    return args.ChatId;
                 }
             }
+            //else if (service.CurrentPageType == typeof(ChatSavedPage))
+            //{
+            //    if (service.CurrentPageParam is SavedMessagesTopicSavedFromChat savedFromChat)
+            //    {
+            //        return savedFromChat.ChatId;
+            //    }
+            //}
 
             for (int i = service.Frame.BackStackDepth - 1; i >= 0; i--)
             {
                 var entry = service.Frame.BackStack[i];
                 if (entry.SourcePageType == typeof(ChatPage))
                 {
-                    if (TryGetPeerFromParameter(service, entry.Parameter, out long chatId))
+                    if (TryGetChatFromParameter(service, entry.Parameter, out long chatId))
                     {
                         return chatId;
                     }
                 }
                 else if (entry.SourcePageType == typeof(ChatThreadPage))
                 {
-                    if (entry.Parameter is string pair)
+                    if (entry.Parameter is ChatMessageIdNavigationArgs args)
                     {
-                        var split = pair.Split(';');
-                        if (long.TryParse(split[0], out long chatId))
-                        {
-                            return chatId;
-                        }
+                        return args.ChatId;
                     }
                 }
+                //else if (entry.SourcePageType == typeof(ChatSavedPage))
+                //{
+                //    if (entry.Parameter is SavedMessagesTopicSavedFromChat savedFromChat)
+                //    {
+                //        return savedFromChat.ChatId;
+                //    }
+                //}
             }
 
             return 0;
         }
 
-        public static bool TryGetPeerFromParameter(this INavigationService service, object parameter, out long chatId)
+        public static bool TryGetChatFromParameter(this INavigationService service, object parameter, out long chatId)
         {
             if (parameter is long)
             {
@@ -312,7 +339,28 @@ namespace Telegram.Common
             return false;
         }
 
+        public static void ReplaceChatInBackStack(this INavigationService service, long oldChatId, long newChatId)
+        {
+            for (int i = service.Frame.BackStackDepth - 1; i >= 0; i--)
+            {
+                var item = service.Frame.BackStack[i];
 
+                if (service.TryGetChatFromParameter(item.Parameter, out long chatId))
+                {
+                    if (chatId == oldChatId)
+                    {
+                        if (item.Parameter is string cacheKey && service.CacheKeyToChatId.ContainsKey(cacheKey))
+                        {
+                            service.CacheKeyToChatId[cacheKey] = newChatId;
+                        }
+                        else
+                        {
+                            service.Frame.BackStack[i] = new PageStackEntry(item.SourcePageType, newChatId, item.NavigationTransitionInfo);
+                        }
+                    }
+                }
+            }
+        }
 
         public static Task<T> NavigateWithResult<T>(this INavigationService service, Type type, object parameter = null)
         {

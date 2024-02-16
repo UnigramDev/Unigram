@@ -1,9 +1,10 @@
 //
-// Copyright Fela Ameghino 2015-2023
+// Copyright Fela Ameghino 2015-2024
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Telegram.Common;
@@ -29,7 +30,7 @@ namespace Telegram.ViewModels.Settings
 
         protected override Task OnNavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
         {
-            UpdatePrivacyAsync();
+            UpdatePrivacy();
             return Task.CompletedTask;
         }
 
@@ -42,22 +43,22 @@ namespace Telegram.ViewModels.Settings
         {
             if (update.Setting.TypeEquals(_inputKey))
             {
-                UpdatePrivacy(update.Rules);
+                UpdatePrivacyImpl(update.Rules);
             }
         }
 
-        private void UpdatePrivacyAsync()
+        private void UpdatePrivacy()
         {
             ClientService.Send(new GetUserPrivacySettingRules(_inputKey), result =>
             {
                 if (result is UserPrivacySettingRules rules)
                 {
-                    UpdatePrivacy(rules);
+                    UpdatePrivacyImpl(rules);
                 }
             });
         }
 
-        private void UpdatePrivacy(UserPrivacySettingRules rules)
+        private void UpdatePrivacyImpl(UserPrivacySettingRules rules)
         {
             PrivacyValue? primary = null;
             var badge = string.Empty;
@@ -162,11 +163,11 @@ namespace Telegram.ViewModels.Settings
                 badge = string.Format("{0} ({1})", badge, string.Join(", ", list));
             }
 
-            _restrictedUsers = restrictedUsers ?? new UserPrivacySettingRuleRestrictUsers(new long[0]);
-            _restrictedChatMembers = restrictedChatMembers ?? new UserPrivacySettingRuleRestrictChatMembers(new long[0]);
+            _restrictedUsers = restrictedUsers ?? new UserPrivacySettingRuleRestrictUsers(Array.Empty<long>());
+            _restrictedChatMembers = restrictedChatMembers ?? new UserPrivacySettingRuleRestrictChatMembers(Array.Empty<long>());
 
-            _allowedUsers = allowedUsers ?? new UserPrivacySettingRuleAllowUsers(new long[0]);
-            _allowedChatMembers = allowedChatMembers ?? new UserPrivacySettingRuleAllowChatMembers(new long[0]);
+            _allowedUsers = allowedUsers ?? new UserPrivacySettingRuleAllowUsers(Array.Empty<long>());
+            _allowedChatMembers = allowedChatMembers ?? new UserPrivacySettingRuleAllowChatMembers(Array.Empty<long>());
 
             BeginOnUIThread(() =>
             {
@@ -358,7 +359,7 @@ namespace Telegram.ViewModels.Settings
             RestrictedBadge = GetBadge(_restrictedUsers.UserIds, _restrictedChatMembers.ChatIds);
         }
 
-        public async void Save()
+        public virtual async void Save()
         {
             var response = await SendAsync();
             if (response is Ok)

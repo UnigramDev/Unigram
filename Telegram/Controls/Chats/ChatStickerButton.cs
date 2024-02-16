@@ -1,5 +1,5 @@
 //
-// Copyright Fela Ameghino 2015-2023
+// Copyright Fela Ameghino 2015-2024
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
@@ -12,6 +12,7 @@ using Telegram.Controls.Media;
 using Telegram.Services;
 using Telegram.Services.Settings;
 using Telegram.Views;
+using Telegram.Views.Popups;
 using Windows.Devices.Input;
 using Windows.UI.Composition;
 using Windows.UI.Xaml;
@@ -72,7 +73,7 @@ namespace Telegram.Controls.Chats
 
             _controlledPanel = value;
 
-            _stickersPanel = ElementCompositionPreview.GetElementVisual(ControlledPanel.Presenter);
+            _stickersPanel = ElementComposition.GetElementVisual(ControlledPanel.Presenter);
             _stickersShadow = ElementCompositionPreview.GetElementChildVisual(ControlledPanel.Shadow);
 
             _stickersTimer = new DispatcherTimer();
@@ -82,9 +83,13 @@ namespace Telegram.Controls.Chats
                 _stickersTimer.Stop();
 
                 var popups = VisualTreeHelper.GetOpenPopups(Window.Current);
-                if (popups.Count > 0)
+
+                foreach (var popup in popups)
                 {
-                    return;
+                    if (popup.Child is MenuFlyoutPresenter or ZoomableMediaPopup)
+                    {
+                        return;
+                    }
                 }
 
                 Collapse_Click(null, null);

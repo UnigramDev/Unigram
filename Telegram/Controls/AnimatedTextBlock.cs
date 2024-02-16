@@ -1,4 +1,10 @@
-﻿using System;
+﻿//
+// Copyright Fela Ameghino 2015-2024
+//
+// Distributed under the GNU General Public License v3.0. (See accompanying
+// file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
+//
+using System;
 using System.Numerics;
 using Windows.Foundation;
 using Windows.UI.Xaml;
@@ -53,7 +59,7 @@ namespace Telegram.Controls
 
         private void Part_SizeChanged(object sender, SizeChangedEventArgs e)
         {
-            var visual = ElementCompositionPreview.GetElementVisual(sender as UIElement);
+            var visual = ElementComposition.GetElementVisual(sender as UIElement);
             var point = e.NewSize.ToVector2();
 
             if (sender == PrevPart)
@@ -207,8 +213,8 @@ namespace Telegram.Controls
                 ChangePartText(ref PrevPart, nameof(PrevPart), prevValue, true, true);
                 ChangePartText(ref NextPart, nameof(NextPart), nextValue, true);
 
-                var prevVisual = ElementCompositionPreview.GetElementVisual(PrevPart);
-                var nextVisual = ElementCompositionPreview.GetElementVisual(NextPart);
+                var prevVisual = ElementComposition.GetElementVisual(PrevPart);
+                var nextVisual = ElementComposition.GetElementVisual(NextPart);
 
                 var easing = prevVisual.Compositor.CreateCubicBezierEasingFunction(new Vector2(0.25f, 0.1f), new Vector2(0.25f, 1));
 
@@ -246,14 +252,11 @@ namespace Telegram.Controls
                 ChangePartText(ref NextPart, nameof(NextPart), newValue, true);
             }
 
-            Logger.Debug();
             InvalidateMeasure();
         }
 
         private void OnSizeChanged(object sender, SizeChangedEventArgs e)
         {
-            Logger.Debug();
-
             SizeChanged -= OnSizeChanged;
 
             var newSize = e.NewSize.ToVector2();
@@ -261,7 +264,7 @@ namespace Telegram.Controls
 
             if (TextAlignment == TextAlignment.Left && SuffixPart != null)
             {
-                var suffixVisual = ElementCompositionPreview.GetElementVisual(SuffixPart);
+                var suffixVisual = ElementComposition.GetElementVisual(SuffixPart);
 
                 var slide = suffixVisual.Compositor.CreateScalarKeyFrameAnimation();
                 slide.InsertKeyFrame(0, oldSize.X - newSize.X);
@@ -271,7 +274,7 @@ namespace Telegram.Controls
             }
             else if (TextAlignment == TextAlignment.Right && PrefixPart != null)
             {
-                var prefixVisual = ElementCompositionPreview.GetElementVisual(PrefixPart);
+                var prefixVisual = ElementComposition.GetElementVisual(PrefixPart);
 
                 var slide = prefixVisual.Compositor.CreateScalarKeyFrameAnimation();
                 slide.InsertKeyFrame(0, newSize.X - oldSize.X);
@@ -286,8 +289,6 @@ namespace Telegram.Controls
 
         public Size DoMeasure(Size availableSize)
         {
-            Logger.Debug();
-
             PrefixPart?.Measure(availableSize);
             SuffixPart?.Measure(availableSize);
             PrevPart?.Measure(availableSize);
@@ -318,8 +319,6 @@ namespace Telegram.Controls
 
         public Size DoArrange(Size finalSize)
         {
-            Logger.Debug();
-
             PrefixPart?.Arrange(new Rect(0, 0, PrefixPart.DesiredSize.Width, PrefixPart.DesiredSize.Height));
             var width = PrefixPart?.DesiredSize.Width ?? 0;
 
@@ -358,6 +357,8 @@ namespace Telegram.Controls
 
         protected override Size MeasureOverride(Size availableSize)
         {
+            Logger.Info(availableSize);
+
             if (Owner != null)
             {
                 return Owner.DoMeasure(availableSize);
@@ -368,6 +369,8 @@ namespace Telegram.Controls
 
         protected override Size ArrangeOverride(Size finalSize)
         {
+            Logger.Info(finalSize);
+
             if (Owner != null)
             {
                 return Owner.DoArrange(finalSize);

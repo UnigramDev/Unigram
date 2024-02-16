@@ -1,13 +1,13 @@
 //
-// Copyright Fela Ameghino 2015-2023
+// Copyright Fela Ameghino 2015-2024
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
 using System;
-using System.Collections.Concurrent;
 using System.Threading;
 using System.Threading.Tasks;
+using Telegram.Common;
 using Telegram.Navigation;
 using Telegram.Views.Host;
 using Windows.ApplicationModel.Core;
@@ -19,8 +19,6 @@ namespace Telegram.Services.ViewService
 {
     public interface IViewService
     {
-        public bool IsSupported { get; }
-
         ///<summary>
         /// Creates and opens new secondary view        
         /// </summary>
@@ -55,8 +53,6 @@ namespace Telegram.Services.ViewService
 
         internal static void OnWindowCreated()
         {
-            _mainWindowCreated.TrySetResult(true);
-
             var view = CoreApplication.GetCurrentView();
             if (!view.IsMain && !view.IsHosted)
             {
@@ -69,11 +65,14 @@ namespace Telegram.Services.ViewService
             }
         }
 
-        public bool IsSupported => true;
+        internal static void OnWindowLoaded()
+        {
+            _mainWindowCreated.TrySetResult(true);
+        }
 
         public Task<ViewLifetimeControl> OpenAsync(ViewServiceParams parameters)
         {
-            if (IsSupported)
+            if (ApiInfo.HasMultipleViews)
             {
                 try
                 {
@@ -90,36 +89,55 @@ namespace Telegram.Services.ViewService
             }
             else
             {
-                _ = CoreApplication.MainView.Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, async () =>
-                {
-                    if (Window.Current.Content is RootPage root)
-                    {
-                        root.PresentContent(parameters.Content(null));
-                        await ApplicationViewSwitcher.TryShowAsStandaloneAsync(ApplicationView.GetForCurrentView().Id);
-                    }
-                });
-                return null;
+                return FacadeAsync(parameters);
             }
+        }
+
+        private async Task<ViewLifetimeControl> FacadeAsync(ViewServiceParams parameters)
+        {
+            var tsc = new TaskCompletionSource<ViewLifetimeControl>();
+
+            await CoreApplication.MainView.Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, async () =>
+            {
+                if (Window.Current.Content is RootPage root)
+                {
+                    root.PresentContent(parameters.Content(null));
+                    await ApplicationViewSwitcher.TryShowAsStandaloneAsync(ApplicationView.GetForCurrentView().Id);
+                }
+
+                tsc.SetResult(ViewLifetimeControl.Facade());
+            });
+
+            return await tsc.Task;
         }
 
         private async Task<ViewLifetimeControl> OpenAsyncInternal(ViewServiceParams parameters)
         {
             await _mainWindowCreated.Task;
 
-            var newView = CoreApplication.CreateNewView();
-            var dispatcher = new DispatcherContext(newView.DispatcherQueue);
-
-            var newControl = await dispatcher.DispatchAsync(async () =>
+            try
             {
-                var newWindow = Window.Current;
-                var newAppView = ApplicationView.GetForCurrentView();
+                // Throws when called while suspending or resuming:
+                // https://devblogs.microsoft.com/oldnewthing/20210920-00/?p=105711
+                var newView = CoreApplication.CreateNewView();
+                var tsc = new TaskCompletionSource<ViewLifetimeControl>();
 
-                newAppView.Title = parameters.Title ?? string.Empty;
-                newAppView.PersistedStateId = parameters.PersistentId ?? string.Empty;
+                newView.DispatcherQueue.TryEnqueue(() =>
+                {
+                    var newWindow = Window.Current;
+                    var newAppView = ApplicationView.GetForCurrentView();
 
-                var control = ViewLifetimeControl.GetForCurrentView();
-                newWindow.Content = parameters.Content(control);
-                newWindow.Activate();
+                    newAppView.Title = parameters.Title ?? string.Empty;
+                    newAppView.PersistedStateId = parameters.PersistentId ?? string.Empty;
+
+                    var control = ViewLifetimeControl.GetForCurrentView();
+                    newWindow.Content = parameters.Content(control);
+                    newWindow.Activate();
+
+                    tsc.SetResult(control);
+                });
+
+                var control = await tsc.Task;
 
                 var preferences = ViewModePreferences.CreateDefault(parameters.ViewMode);
                 if (parameters.Width != 0 && parameters.Height != 0)
@@ -127,13 +145,13 @@ namespace Telegram.Services.ViewService
                     preferences.CustomSize = new Size(parameters.Width, parameters.Height);
                 }
 
-                await ApplicationViewSwitcher.TryShowAsViewModeAsync(newAppView.Id, parameters.ViewMode, preferences);
-                newAppView.TryResizeView(preferences.CustomSize);
-
+                await ApplicationViewSwitcher.TryShowAsViewModeAsync(control.Id, parameters.ViewMode, preferences);
                 return control;
-            }).ConfigureAwait(false);
-
-            return newControl;
+            }
+            catch
+            {
+                return null;
+            }
         }
 
         public async Task<ViewLifetimeControl> OpenAsync(Type page, object parameter = null, string title = null,
@@ -144,84 +162,68 @@ namespace Telegram.Services.ViewService
             var currentView = ApplicationView.GetForCurrentView();
             title ??= currentView.Title;
 
-
-
-
-
-
-
-
-
-            if (parameter != null && _windows.TryGetValue(parameter, out IDispatcherContext value))
+            ViewLifetimeControl oldControl = null;
+            await WindowContext.ForEachAsync(window =>
             {
-                var newControl = await value.DispatchAsync(async () =>
+                if (window.IsInMainView)
                 {
-                    var control = ViewLifetimeControl.GetForCurrentView();
-                    var newAppView = ApplicationView.GetForCurrentView();
-
-                    await ApplicationViewSwitcher
-                        .SwitchAsync(newAppView.Id, currentView.Id, ApplicationViewSwitchingOptions.Default);
-
-                    return control;
-                }).ConfigureAwait(false);
-                return newControl;
-            }
-            else
-            {
-                //if (ApiInformation.IsPropertyPresent("Windows.UI.ViewManagement.ApplicationView", "PersistedStateId"))
-                //{
-                //    try
-                //    {
-                //        ApplicationView.ClearPersistedState("Calls");
-                //    }
-                //    catch { }
-                //}
-                await _mainWindowCreated.Task;
-
-                var newView = CoreApplication.CreateNewView();
-                var dispatcher = new DispatcherContext(newView.DispatcherQueue);
-
-                if (parameter != null)
-                {
-                    _windows[parameter] = dispatcher;
+                    return Task.CompletedTask;
                 }
 
-                var bounds = Window.Current.Bounds;
+                foreach (var service in window.NavigationServices)
+                {
+                    if (parameter is long chatId && service.IsChatOpen(chatId, true))
+                    {
+                        oldControl = ViewLifetimeControl.GetForCurrentView();
+                        return Task.CompletedTask;
+                    }
+                }
 
-                var newControl = await dispatcher.DispatchAsync(async () =>
+                return Task.CompletedTask;
+            });
+
+            if (oldControl != null)
+            {
+                await ApplicationViewSwitcher.SwitchAsync(oldControl.Id);
+                return oldControl;
+            }
+
+            await _mainWindowCreated.Task;
+
+            try
+            {
+                // Throws when called while suspending or resuming:
+                // https://devblogs.microsoft.com/oldnewthing/20210920-00/?p=105711
+                var newView = CoreApplication.CreateNewView();
+                var tsc = new TaskCompletionSource<ViewLifetimeControl>();
+
+                newView.DispatcherQueue.TryEnqueue(() =>
                 {
                     var newWindow = Window.Current;
                     var newAppView = ApplicationView.GetForCurrentView();
+
                     newAppView.Title = title;
                     newAppView.PersistedStateId = "Floating";
 
-                    var control = ViewLifetimeControl.GetForCurrentView();
-                    control.Released += (s, args) =>
-                    {
-                        if (parameter != null)
-                        {
-                            _windows.TryRemove(parameter, out IDispatcherContext _);
-                        }
-
-                        //newWindow.Close();
-                    };
-
-                    var nav = BootStrapper.Current.NavigationServiceFactory(BootStrapper.BackButton.Ignore, BootStrapper.ExistingContent.Exclude, session, id, false);
+                    var nav = BootStrapper.Current.NavigationServiceFactory(BootStrapper.BackButton.Ignore, session, id, false);
                     nav.Navigate(page, parameter);
+
+                    var control = ViewLifetimeControl.GetForCurrentView();
                     newWindow.Content = BootStrapper.Current.CreateRootElement(nav);
                     newWindow.Activate();
 
-                    await ApplicationViewSwitcher
-                        .TryShowAsStandaloneAsync(newAppView.Id, ViewSizePreference.Default, currentView.Id, ViewSizePreference.UseHalf);
-                    //newAppView.TryResizeView(new Windows.Foundation.Size(360, bounds.Height));
-                    newAppView.TryResizeView(size);
+                    tsc.SetResult(control);
+                });
 
-                    return control;
-                }).ConfigureAwait(false);
-                return newControl;
+                var control = await tsc.Task;
+
+                await ApplicationViewSwitcher.TryShowAsStandaloneAsync(control.Id);
+                return control;
+            }
+            catch
+            {
+                return null;
             }
         }
-
-        private readonly ConcurrentDictionary<object, IDispatcherContext> _windows = new();
     }
 }

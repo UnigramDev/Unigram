@@ -1,4 +1,10 @@
-﻿using Microsoft.Graphics.Canvas.Geometry;
+﻿//
+// Copyright Fela Ameghino 2015-2024
+//
+// Distributed under the GNU General Public License v3.0. (See accompanying
+// file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
+//
+using Microsoft.Graphics.Canvas.Geometry;
 using System;
 using System.Numerics;
 using Telegram.Common;
@@ -28,6 +34,8 @@ namespace Telegram.Controls
 
         private static readonly Color _storyDefaultColor = Color.FromArgb(0xFF, 0xD8, 0xD8, 0xE1);
 
+        private bool _enabled;
+
         private bool _hasActiveStories;
 
         public bool HasActiveStories => _hasActiveStories;
@@ -44,7 +52,7 @@ namespace Telegram.Controls
                 return;
             }
 
-            var transform = TransformToVisual(Window.Current.Content);
+            var transform = TransformToVisual(null);
             var point = transform.TransformPoint(new Point());
 
             var pointz = new Rect(point.X + 4, point.Y + 4, side - 8, side - 8);
@@ -63,18 +71,21 @@ namespace Telegram.Controls
 
             if (clientService.TryGetActiveStories(chat.Id, out ChatActiveStories chatActiveStories))
             {
-                var settings = TLContainer.Current.Resolve<ISettingsService>(clientService.SessionId);
-                var aggregator = TLContainer.Current.Resolve<IEventAggregator>(clientService.SessionId);
+                var settings = TypeResolver.Current.Resolve<ISettingsService>(clientService.SessionId);
+                var aggregator = TypeResolver.Current.Resolve<IEventAggregator>(clientService.SessionId);
 
                 var activeStories = new ActiveStoriesViewModel(clientService, settings, aggregator, chatActiveStories);
                 await activeStories.Wait;
 
-                var viewModel = new StoryListViewModel(clientService, settings, aggregator, activeStories);
-                viewModel.NavigationService = navigationService;
+                if (activeStories.Items.Count > 0 && activeStories.SelectedItem != null)
+                {
+                    var viewModel = new StoryListViewModel(clientService, settings, aggregator, activeStories);
+                    viewModel.NavigationService = navigationService;
 
-                var window = new StoriesWindow();
-                window.Update(viewModel, activeStories, StoryOrigin.ProfilePhoto, pointz, origin);
-                _ = window.ShowAsync();
+                    var window = new StoriesWindow();
+                    window.Update(viewModel, activeStories, StoryOpenOrigin.ProfilePhoto, pointz, origin);
+                    _ = window.ShowAsync();
+                }
             }
 
             SetChat(clientService, chat, side);
@@ -114,7 +125,7 @@ namespace Telegram.Controls
             {
                 if (Content is UIElement element && !_hasActiveStories)
                 {
-                    var visual = ElementCompositionPreview.GetElementVisual(element);
+                    var visual = ElementComposition.GetElementVisual(element);
                     visual.CenterPoint = new Vector3(side / 2);
                     visual.Scale = new Vector3((side - 8f) / side);
                 }
@@ -138,7 +149,7 @@ namespace Telegram.Controls
             }
             else if (_hasActiveStories && Content is UIElement element)
             {
-                var visual = ElementCompositionPreview.GetElementVisual(element);
+                var visual = ElementComposition.GetElementVisual(element);
                 visual.Scale = Vector3.One;
 
                 ElementCompositionPreview.SetElementChildVisual(this, visual.Compositor.CreateSpriteVisual());
@@ -149,29 +160,42 @@ namespace Telegram.Controls
         {
             if (chatId == 0 || !hasActiveStories)
             {
-                if (_hasActiveStories && Content is UIElement element)
+                if (_hasActiveStories)
                 {
-                    var visual = ElementCompositionPreview.GetElementVisual(element);
-                    visual.Scale = Vector3.One;
+                    if (Content is UIElement element)
+                    {
+                        var visual = ElementComposition.GetElementVisual(element);
+                        visual.Scale = Vector3.One;
 
-                    ElementCompositionPreview.SetElementChildVisual(this, visual.Compositor.CreateSpriteVisual());
+                        ElementCompositionPreview.SetElementChildVisual(this, visual.Compositor.CreateSpriteVisual());
+                    }
+
+                    IsEnabled = IsClickEnabled;
+                }
+
+                if (_enabled != IsClickEnabled)
+                {
+                    _enabled = IsClickEnabled;
+                    IsEnabled = _enabled;
                 }
 
                 _hasActiveStories = false;
-                IsEnabled = IsClickEnabled;
-
                 return;
             }
 
-            if (Content is UIElement elementa && !_hasActiveStories)
+            if (!_hasActiveStories)
             {
-                var visual = ElementCompositionPreview.GetElementVisual(elementa);
-                visual.CenterPoint = new Vector3(side / 2);
-                visual.Scale = new Vector3((side - 8f) / side);
-            }
+                if (Content is UIElement element)
+                {
+                    var visual = ElementComposition.GetElementVisual(element);
+                    visual.CenterPoint = new Vector3(side / 2);
+                    visual.Scale = new Vector3((side - 8f) / side);
+                }
 
-            _hasActiveStories = true;
-            IsEnabled = true;
+                _hasActiveStories = true;
+                _enabled = true;
+                IsEnabled = true;
+            }
 
             if (clientService.TryGetActiveStories(chatId, out ChatActiveStories activeStories))
             {
@@ -192,7 +216,7 @@ namespace Telegram.Controls
         {
             if (Content is UIElement elementa && !_hasActiveStories)
             {
-                var visual = ElementCompositionPreview.GetElementVisual(elementa);
+                var visual = ElementComposition.GetElementVisual(elementa);
                 visual.CenterPoint = new Vector3(side / 2);
                 visual.Scale = new Vector3((side - 8f) / side);
             }
@@ -208,7 +232,7 @@ namespace Telegram.Controls
             {
                 if (Content is UIElement elementa && !_hasActiveStories)
                 {
-                    var visual = ElementCompositionPreview.GetElementVisual(elementa);
+                    var visual = ElementComposition.GetElementVisual(elementa);
                     visual.CenterPoint = new Vector3(side / 2);
                     visual.Scale = new Vector3((side - unreadThickness * 4) / side);
                 }
@@ -218,7 +242,7 @@ namespace Telegram.Controls
             }
             else if (_hasActiveStories && Content is UIElement element)
             {
-                var visual = ElementCompositionPreview.GetElementVisual(element);
+                var visual = ElementComposition.GetElementVisual(element);
                 visual.Scale = Vector3.One;
 
                 _hasActiveStories = false;

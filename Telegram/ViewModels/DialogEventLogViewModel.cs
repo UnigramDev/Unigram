@@ -1,5 +1,5 @@
 //
-// Copyright Fela Ameghino 2015-2023
+// Copyright Fela Ameghino 2015-2024
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
@@ -38,7 +38,7 @@ namespace Telegram.ViewModels
             set => Set(ref _filters, value);
         }
 
-        private IList<long> _userIds = new long[0];
+        private IList<long> _userIds = Array.Empty<long>();
         public IList<long> UserIds
         {
             get => _userIds;
@@ -122,13 +122,12 @@ namespace Telegram.ViewModels
                     return;
                 }
 
-                if (_isLoadingNextSlice || _isLoadingPreviousSlice)
+                if (_loadingSlice)
                 {
                     return;
                 }
 
-                _isLoadingNextSlice = true;
-                _isLoadingPreviousSlice = true;
+                _loadingSlice = true;
                 IsLastSliceLoaded = null;
                 IsFirstSliceLoaded = null;
                 IsLoading = true;
@@ -155,23 +154,18 @@ namespace Telegram.ViewModels
                     IsFirstSliceLoaded = true;
                 }
 
-                _isLoadingNextSlice = false;
-                _isLoadingPreviousSlice = false;
+                _loadingSlice = false;
                 IsLoading = false;
             }
 
             var already = Items.LastOrDefault();
             if (already != null)
             {
-                var field = HistoryField;
-                if (field != null)
-                {
-                    await field.ScrollToItem(already, VerticalAlignment.Bottom, false, int.MaxValue, ScrollIntoViewAlignment.Leading, true);
-                }
+                HistoryField?.ScrollToItem(already, VerticalAlignment.Bottom, null, int.MaxValue, ScrollIntoViewAlignment.Leading, true);
             }
         }
 
-        public override async Task LoadNextSliceAsync(bool force = false)
+        public override async Task LoadNextSliceAsync()
         {
             using (await _loadMoreLock.WaitAsync())
             {
@@ -181,12 +175,12 @@ namespace Telegram.ViewModels
                     return;
                 }
 
-                if (_isLoadingNextSlice || _isLoadingPreviousSlice || Items.Count < 1 || IsLastSliceLoaded == true)
+                if (_loadingSlice || Items.Count < 1 || IsLastSliceLoaded == true)
                 {
                     return;
                 }
 
-                _isLoadingNextSlice = true;
+                _loadingSlice = true;
                 IsLoading = true;
 
                 System.Diagnostics.Debug.WriteLine("DialogViewModel: LoadNextSliceAsync");
@@ -197,7 +191,7 @@ namespace Telegram.ViewModels
                 {
                     if (events.Events.Count > 0)
                     {
-                        SetScrollMode(ItemsUpdatingScrollMode.KeepLastItemInView, force);
+                        SetScrollMode(ItemsUpdatingScrollMode.KeepLastItemInView, true);
                         Logger.Debug("Setting scroll mode to KeepLastItemInView");
                     }
 
@@ -209,11 +203,11 @@ namespace Telegram.ViewModels
 
                     if (empty)
                     {
-                        await AddHeaderAsync();
+                        //await AddHeaderAsync();
                     }
                 }
 
-                _isLoadingNextSlice = false;
+                _loadingSlice = false;
                 IsLoading = false;
             }
         }
@@ -242,7 +236,7 @@ namespace Telegram.ViewModels
                 }
             }
 
-            return new Message(chatEvent.Id, sender, chatId, null, null, false, false, false, false, true, false, false, false, false, false, false, false, false, false, isChannel, false, false, chatEvent.Date, 0, null, null, null, null, 0, null, 0, 0, 0, string.Empty, 0, string.Empty, null, null);
+            return new Message(chatEvent.Id, sender, chatId, null, null, false, false, false, false, false, true, false, false, false, false, false, false, false, false, false, false, isChannel, false, false, chatEvent.Date, 0, null, null, null, null, null, 0, 0, null, 0, 0, 0, string.Empty, 0, string.Empty, null, null);
         }
 
         private MessageViewModel GetMessage(long chatId, bool isChannel, ChatEvent chatEvent, bool child = false)
@@ -257,7 +251,7 @@ namespace Telegram.ViewModels
 
         private IList<MessageViewModel> ProcessEvents(ChatEvents events)
         {
-            var result = new MessageCollection(Items.Ids, Array.Empty<MessageViewModel>());
+            var result = new MessageCollection();
             var channel = _chat.Type is ChatTypeSupergroup super && super.IsChannel;
 
             foreach (var item in events.Events)
@@ -279,6 +273,7 @@ namespace Telegram.ViewModels
                         //message.Content = new MessageChatEvent(item, true);
                         message.Content = GetMessageContent(item, channel);
                         break;
+                    case ChatEventBackgroundChanged:
                     case ChatEventAvailableReactionsChanged:
                     case ChatEventHasProtectedContentToggled:
                     case ChatEventSignMessagesToggled:
@@ -286,7 +281,6 @@ namespace Telegram.ViewModels
                     case ChatEventInvitesToggled:
                     case ChatEventIsAllHistoryAvailableToggled:
                     case ChatEventMemberJoinedByInviteLink:
-                    case ChatEventMessageUnpinned:
                     case ChatEventMessageAutoDeleteTimeChanged:
                     case ChatEventLinkedChatChanged:
                     case ChatEventLocationChanged:
@@ -303,6 +297,9 @@ namespace Telegram.ViewModels
                     case ChatEventForumTopicEdited:
                     case ChatEventForumTopicPinned:
                     case ChatEventForumTopicToggleIsClosed:
+                    case ChatEventAccentColorChanged:
+                    case ChatEventProfileAccentColorChanged:
+                    case ChatEventEmojiStatusChanged:
                         message = GetMessage(_chat.Id, channel, item);
                         message.Content = new MessageChatEvent(item);
                         break;
@@ -318,6 +315,7 @@ namespace Telegram.ViewModels
                     case ChatEventMessageDeleted:
                     case ChatEventMessageEdited:
                     case ChatEventMessagePinned:
+                    case ChatEventMessageUnpinned:
                     case ChatEventPollStopped:
                         message = GetMessage(_chat.Id, channel, item, true);
                         //message.Content = new MessageChatEvent(item, true);
@@ -368,10 +366,10 @@ namespace Telegram.ViewModels
         {
             if (item.Action is ChatEventDescriptionChanged descriptionChanged)
             {
-                var text = new FormattedText(descriptionChanged.NewDescription, new TextEntity[0]);
+                var text = new FormattedText(descriptionChanged.NewDescription, Array.Empty<TextEntity>());
                 var webPage = string.IsNullOrEmpty(descriptionChanged.OldDescription) ? null : new WebPage { SiteName = Strings.EventLogPreviousGroupDescription, Description = new FormattedText { Text = descriptionChanged.OldDescription } };
 
-                return new MessageText(text, webPage);
+                return new MessageText(text, webPage, null);
             }
             else if (item.Action is ChatEventUsernameChanged usernameChanged)
             {
@@ -380,7 +378,7 @@ namespace Telegram.ViewModels
                 var text = new FormattedText(link, new[] { new TextEntity(0, link.Length, new TextEntityTypeUrl()) });
                 var webPage = string.IsNullOrEmpty(usernameChanged.OldUsername) ? null : new WebPage { SiteName = Strings.EventLogPreviousLink, Description = new FormattedText { Text = MeUrlPrefixConverter.Convert(ClientService, usernameChanged.OldUsername) } };
 
-                return new MessageText(text, webPage);
+                return new MessageText(text, webPage, null);
             }
             else if (item.Action is ChatEventPermissionsChanged permissionChanged)
             {
@@ -470,7 +468,7 @@ namespace Telegram.ViewModels
 
                 string text = rights.ToString();
 
-                return new MessageText(new FormattedText(text, entities), null);
+                return new MessageText(new FormattedText(text, entities), null, null);
             }
             else if (item.Action is ChatEventMemberRestricted memberRestricted)
             {
@@ -675,7 +673,7 @@ namespace Telegram.ViewModels
                     }
                 }
 
-                return new MessageText(new FormattedText(text, entities), null);
+                return new MessageText(new FormattedText(text, entities), null, null);
             }
             else if (item.Action is ChatEventMemberPromoted memberPromoted)
             {
@@ -691,7 +689,7 @@ namespace Telegram.ViewModels
 
                 if (memberPromoted.NewStatus is ChatMemberStatusCreator)
                 {
-                    return new MessageText(new FormattedText(builder.ToString(), entities), null);
+                    return new MessageText(new FormattedText(builder.ToString(), entities), null, null);
                 }
 
                 ChatAdministratorRights o = null;
@@ -811,7 +809,7 @@ namespace Telegram.ViewModels
                     }
                 }
 
-                return new MessageText(new FormattedText(builder.ToString(), entities), null);
+                return new MessageText(new FormattedText(builder.ToString(), entities), null, null);
             }
             else if (item.Action is ChatEventMessageDeleted messageDeleted)
             {
@@ -833,6 +831,10 @@ namespace Telegram.ViewModels
             else if (item.Action is ChatEventMessagePinned messagePinned)
             {
                 return messagePinned.Message.Content;
+            }
+            else if (item.Action is ChatEventMessageUnpinned messageUnpinned)
+            {
+                return messageUnpinned.Message.Content;
             }
             else if (item.Action is ChatEventPollStopped pollStopped)
             {

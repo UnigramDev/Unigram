@@ -1,11 +1,11 @@
 //
-// Copyright Fela Ameghino 2015-2023
+// Copyright Fela Ameghino 2015-2024
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
-using Microsoft.Graphics.Canvas.UI.Xaml;
 using System;
+using System.Threading.Tasks;
 using Telegram.Common;
 using Telegram.Controls;
 using Telegram.Controls.Media;
@@ -14,15 +14,19 @@ using Telegram.Native.Calls;
 using Telegram.Navigation;
 using Telegram.Services;
 using Telegram.Td.Api;
+using Telegram.Views.Host;
 using Telegram.Views.Popups;
 using Windows.Devices.Enumeration;
+using Windows.Devices.Input;
 using Windows.System.Display;
 using Windows.UI;
+using Windows.UI.Composition;
 using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
 using Windows.UI.Xaml.Hosting;
+using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 
 namespace Telegram.Views.Calls
@@ -37,8 +41,7 @@ namespace Telegram.Views.Calls
         private VoipGroupManager _manager;
         private bool _disposed;
 
-        private readonly ButtonWavesDrawable _drawable = new();
-
+        private readonly DispatcherTimer _inactivityTimer;
         private readonly DispatcherTimer _scheduledTimer;
         private readonly DispatcherTimer _debouncerTimer;
 
@@ -50,6 +53,15 @@ namespace Telegram.Views.Calls
 
             _clientService = clientService;
             _aggregator = aggregator;
+
+            _inactivityTimer = new DispatcherTimer();
+            _inactivityTimer.Interval = TimeSpan.FromSeconds(2);
+            _inactivityTimer.Tick += (s, args) =>
+            {
+                _inactivityTimer.Stop();
+                ShowHideTransport(false);
+            };
+            _inactivityTimer.Start();
 
             _scheduledTimer = new DispatcherTimer();
             _scheduledTimer.Interval = TimeSpan.FromSeconds(1);
@@ -95,6 +107,94 @@ namespace Telegram.Views.Calls
             OnAvailableStreamsChanged();
         }
 
+        protected override void OnPointerMoved(PointerRoutedEventArgs e)
+        {
+            _inactivityTimer.Stop();
+            ShowHideTransport(true);
+
+            base.OnPointerMoved(e);
+
+            if (e.OriginalSource is FrameworkElement element)
+            {
+                var button = element.GetParentOrSelf<ButtonBase>();
+                if (button != null)
+                {
+                    return;
+                }
+            }
+
+            _inactivityTimer.Start();
+        }
+
+        protected override void OnPointerReleased(PointerRoutedEventArgs e)
+        {
+            if (e.Pointer.PointerDeviceType != PointerDeviceType.Mouse)
+            {
+                _inactivityTimer.Stop();
+                ShowHideTransport(true);
+            }
+
+            base.OnPointerReleased(e);
+        }
+
+        private bool _transportCollapsed = false;
+        private bool _transportFocused = false;
+        private bool _transportUnavailable = false;
+
+        private void ShowHideTransport(bool show)
+        {
+            if (show != _transportCollapsed || ((_transportFocused || _transportUnavailable) && !show))
+            {
+                return;
+            }
+
+            _transportCollapsed = !show;
+            TopButtons.IsHitTestVisible = false;
+            BottomPanel.IsHitTestVisible = false;
+
+            var top = ElementComposition.GetElementVisual(TopButtons);
+            var top1 = ElementComposition.GetElementVisual(TitlePanel);
+            var top2 = ElementComposition.GetElementVisual(TopShadow);
+            var top3 = ElementComposition.GetElementVisual(SubtitleInfo);
+            var bottom = ElementComposition.GetElementVisual(BottomPanel);
+            var bottom1 = ElementComposition.GetElementVisual(BottomShadow);
+
+            var batch = top.Compositor.CreateScopedBatch(CompositionBatchTypes.Animation);
+            batch.Completed += (s, args) =>
+            {
+                TopButtons.IsHitTestVisible = !_transportCollapsed;
+                BottomPanel.IsHitTestVisible = !_transportCollapsed;
+            };
+
+            var opacity = top.Compositor.CreateScalarKeyFrameAnimation();
+            opacity.InsertKeyFrame(0, show ? 0 : 1);
+            opacity.InsertKeyFrame(1, show ? 1 : 0);
+
+            top.StartAnimation("Opacity", opacity);
+            top1.StartAnimation("Opacity", opacity);
+            top2.StartAnimation("Opacity", opacity);
+            top3.StartAnimation("Opacity", opacity);
+            bottom.StartAnimation("Opacity", opacity);
+            bottom1.StartAnimation("Opacity", opacity);
+
+            batch.End();
+        }
+
+        private void Transport_GotFocus(object sender, RoutedEventArgs e)
+        {
+            if (e.OriginalSource is Control control && control.FocusState is FocusState.Keyboard or FocusState.Programmatic)
+            {
+                _transportFocused = true;
+                ShowHideTransport(true);
+            }
+        }
+
+        private void Transport_LostFocus(object sender, RoutedEventArgs e)
+        {
+            _transportFocused = false;
+            _inactivityTimer.Start();
+        }
+
         private void OnAvailableStreamsChanged(object sender, EventArgs e)
         {
             this.BeginOnUIThread(OnAvailableStreamsChanged);
@@ -104,11 +204,17 @@ namespace Telegram.Views.Calls
         {
             if (_service.AvailableStreamsCount > 0)
             {
+                _transportUnavailable = false;
+                _inactivityTimer.Start();
+
                 NoStream.Visibility = Visibility.Collapsed;
                 Viewport.Visibility = Visibility.Visible;
             }
             else
             {
+                _transportUnavailable = true;
+                ShowHideTransport(true);
+
                 if (_clientService.TryGetSupergroup(_service.Chat, out Supergroup supergroup))
                 {
                     TextBlockHelper.SetMarkdown(NoStream, supergroup.Status is ChatMemberStatusCreator ? Strings.NoRtmpStreamFromAppOwner : string.Format(Strings.NoRtmpStreamFromAppViewer, _service.Chat.Title));
@@ -215,8 +321,6 @@ namespace Telegram.Views.Calls
 
         private void OnSizeChanged(object sender, SizeChangedEventArgs e)
         {
-            Logger.Debug();
-
         }
 
         private void Resize_Click(object sender, RoutedEventArgs e)
@@ -329,7 +433,24 @@ namespace Telegram.Views.Calls
 
         private void OnNetworkStateUpdated(VoipGroupManager sender, GroupNetworkStateChangedEventArgs args)
         {
-            this.BeginOnUIThread(() => UpdateNetworkState(_service.Call, _service.CurrentUser, args.IsConnected));
+            this.BeginOnUIThread(() =>
+            {
+                if (_service != null)
+                {
+                    UpdateNetworkState(_service.Call, _service.CurrentUser, args.IsConnected);
+                }
+            });
+        }
+
+        private Task ConsolidateAsync()
+        {
+            if (Window.Current.Content is RootPage root)
+            {
+                root.PresentContent(null);
+                return Task.CompletedTask;
+            }
+
+            return WindowContext.Current.ConsolidateAsync();
         }
 
         private async void Leave_Click(object sender, RoutedEventArgs e)
@@ -339,7 +460,7 @@ namespace Telegram.Views.Calls
 
             if (chat == null || call == null)
             {
-                await WindowContext.Current.ConsolidateAsync();
+                await ConsolidateAsync();
                 return;
             }
 
@@ -359,13 +480,13 @@ namespace Telegram.Views.Calls
                 if (confirm == ContentDialogResult.Primary)
                 {
                     Dispose(popup.IsChecked == true);
-                    await WindowContext.Current.ConsolidateAsync();
+                    await ConsolidateAsync();
                 }
             }
             else
             {
                 Dispose(false);
-                await WindowContext.Current.ConsolidateAsync();
+                await ConsolidateAsync();
             }
         }
 
@@ -376,7 +497,7 @@ namespace Telegram.Views.Calls
 
             if (chat == null || call == null)
             {
-                await WindowContext.Current.ConsolidateAsync();
+                await ConsolidateAsync();
                 return;
             }
 
@@ -391,7 +512,7 @@ namespace Telegram.Views.Calls
             if (confirm == ContentDialogResult.Primary)
             {
                 Dispose(true);
-                await WindowContext.Current.ConsolidateAsync();
+                await ConsolidateAsync();
             }
         }
 
@@ -444,7 +565,7 @@ namespace Telegram.Views.Calls
                 };
 
                 var output = new MenuFlyoutSubItem();
-                output.Text = "Speaker";
+                output.Text = Strings.VoipDeviceOutput;
                 output.Icon = MenuFlyoutHelper.CreateIcon(Icons.Speaker3);
                 output.Items.Add(defaultOutput);
 
@@ -472,7 +593,7 @@ namespace Telegram.Views.Calls
                 if (supergroup.Status is ChatMemberStatusCreator)
                 {
                     flyout.CreateFlyoutSeparator();
-                    flyout.CreateFlyoutItem(StreamWith, "Stream with...", Icons.Live);
+                    flyout.CreateFlyoutItem(StreamWith, Strings.VoipStreamWith, Icons.Live);
                 }
             }
             else if (chat.Type is ChatTypeBasicGroup && _clientService.TryGetBasicGroup(chat, out BasicGroup basicGroup))
@@ -480,7 +601,7 @@ namespace Telegram.Views.Calls
                 if (basicGroup.Status is ChatMemberStatusCreator)
                 {
                     flyout.CreateFlyoutSeparator();
-                    flyout.CreateFlyoutItem(StreamWith, "Stream with...", Icons.Live);
+                    flyout.CreateFlyoutItem(StreamWith, Strings.VoipStreamWith, Icons.Live);
                 }
             }
 
@@ -586,11 +707,6 @@ namespace Telegram.Views.Calls
             await this.ShowPopupAsync(_clientService.SessionId, typeof(ChooseChatsPopup), new ChooseChatsConfigurationGroupCall(call));
         }
 
-        private void AudioCanvas_Draw(CanvasControl sender, CanvasDrawEventArgs args)
-        {
-            _drawable.Draw(sender, args.DrawingSession);
-        }
-
         private readonly ScrollViewer _scrollingHost;
 
         private bool _bottomRootCollapsed;
@@ -608,7 +724,7 @@ namespace Telegram.Views.Calls
             anim.InsertKeyFrame(0, show ? 0 : 1);
             anim.InsertKeyFrame(1, show ? 1 : 0);
 
-            var root = ElementCompositionPreview.GetElementVisual(BottomPanel);
+            var root = ElementComposition.GetElementVisual(BottomPanel);
 
             root.StartAnimation("Opacity", anim);
         }

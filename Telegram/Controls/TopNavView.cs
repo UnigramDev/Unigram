@@ -1,5 +1,5 @@
 //
-// Copyright Fela Ameghino 2015-2023
+// Copyright Fela Ameghino 2015-2024
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
@@ -17,7 +17,7 @@ using Windows.UI.Xaml.Input;
 
 namespace Telegram.Controls
 {
-    public class TopNavView : ListView
+    public class TopNavView : ListViewEx
     {
         private readonly Vector2 c_frame1point1 = new(0.9f, 0.1f);
         private readonly Vector2 c_frame1point2 = new(1.0f, 0.2f);
@@ -28,6 +28,8 @@ namespace Telegram.Controls
         private UIElement _nextIndicator;
 
         private UIElement _activeIndicator;
+
+        private bool _needsSelectionUpdate;
 
         public TopNavView()
         {
@@ -45,6 +47,19 @@ namespace Telegram.Controls
 
         private void OnSelectionChanged(object sender, SelectionChangedEventArgs e)
         {
+            if (_needsSelectionUpdate)
+            {
+                return;
+            }
+
+            _needsSelectionUpdate = true;
+            VisualUtilities.QueueCallbackForCompositionRendering(UpdateSelection);
+        }
+
+        private void UpdateSelection()
+        {
+            _needsSelectionUpdate = false;
+
             if (SelectionMode == ListViewSelectionMode.Single)
             {
                 AnimateSelectionChanged(SelectedItem);
@@ -216,7 +231,7 @@ namespace Telegram.Controls
 
         private void PlayIndicatorAnimations(UIElement indicator, float from, float to, Vector2 beginSize, Vector2 endSize, bool isOutgoing)
         {
-            Visual visual = ElementCompositionPreview.GetElementVisual(indicator);
+            Visual visual = ElementComposition.GetElementVisual(indicator);
             Compositor comp = visual.Compositor;
 
             Vector2 size = indicator.RenderSize.ToVector2();
@@ -293,7 +308,7 @@ namespace Telegram.Controls
             if (element != null)
             {
                 element.Opacity = desiredOpacity;
-                Visual visual = ElementCompositionPreview.GetElementVisual(element);
+                Visual visual = ElementComposition.GetElementVisual(element);
                 if (visual != null)
                 {
                     visual.Offset = new Vector3(0.0f, 0.0f, 0.0f);
@@ -312,6 +327,11 @@ namespace Telegram.Controls
                 var indicator = topElement.GetSelectionIndicator(true);
                 if (indicator != null)
                 {
+                    if (topElement.IsSelected)
+                    {
+                        _activeIndicator = indicator;
+                    }
+
                     ResetElementAnimationProperties(indicator, topElement.IsSelected ? 1 : 0);
                 }
             }

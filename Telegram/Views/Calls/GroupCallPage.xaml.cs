@@ -1,19 +1,18 @@
 //
-// Copyright Fela Ameghino 2015-2023
+// Copyright Fela Ameghino 2015-2024
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
-using Microsoft.Graphics.Canvas;
-using Microsoft.Graphics.Canvas.Brushes;
 using Microsoft.Graphics.Canvas.UI.Xaml;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Collections.Immutable;
 using System.Linq;
 using System.Numerics;
+using System.Threading.Tasks;
 using Telegram.Common;
+using Telegram.Composition;
 using Telegram.Controls;
 using Telegram.Controls.Cells;
 using Telegram.Controls.Media;
@@ -24,6 +23,7 @@ using Telegram.Services;
 using Telegram.Streams;
 using Telegram.Td.Api;
 using Telegram.ViewModels.Delegates;
+using Telegram.Views.Host;
 using Telegram.Views.Popups;
 using Windows.Devices.Enumeration;
 using Windows.Foundation;
@@ -59,7 +59,7 @@ namespace Telegram.Views.Calls
         private readonly Dictionary<string, GroupCallParticipantGridCell> _prevList = new();
         private readonly Dictionary<string, GroupCallParticipantGridCell> _listCells = new();
 
-        private readonly ButtonWavesDrawable _drawable = new();
+        private readonly CompositionVoiceBlobVisual _visual;
 
         private readonly DispatcherTimer _scheduledTimer;
         private readonly DispatcherTimer _debouncerTimer;
@@ -78,6 +78,8 @@ namespace Telegram.Views.Calls
             _clientService = clientService;
             _aggregator = aggregator;
 
+            _visual = new CompositionVoiceBlobVisual(AudioBlob, 300, 300, 1.5f);
+
             _dispatcherQueue = DispatcherQueue.GetForCurrentThread();
 
             _scheduledTimer = new DispatcherTimer();
@@ -94,6 +96,7 @@ namespace Telegram.Views.Calls
 
             _service = voipService;
             _service.MutedChanged += OnMutedChanged;
+            _service.AudioLevelsUpdated += OnAudioLevelsUpdated;
             _service.PropertyChanged += OnParticipantsChanged;
 
             if (_service.Participants != null)
@@ -279,13 +282,13 @@ namespace Telegram.Views.Calls
             if (_manager != null)
             {
                 _manager.NetworkStateUpdated -= OnNetworkStateUpdated;
-                _manager.AudioLevelsUpdated -= OnAudioLevelsUpdated;
                 _manager = null;
             }
 
             if (_service != null)
             {
                 _service.MutedChanged -= OnMutedChanged;
+                _service.AudioLevelsUpdated -= OnAudioLevelsUpdated;
                 _service.PropertyChanged -= OnParticipantsChanged;
                 _service = null;
             }
@@ -305,7 +308,7 @@ namespace Telegram.Views.Calls
             RemoveChildren(false);
             RemoveChildren(true);
 
-            AudioCanvas.RemoveFromVisualTree();
+            _visual.StopAnimating();
         }
 
         private void RemoveChildren(bool list)
@@ -332,19 +335,15 @@ namespace Telegram.Views.Calls
             {
                 // Let's avoid duplicated events
                 _manager.NetworkStateUpdated -= OnNetworkStateUpdated;
-                _manager.AudioLevelsUpdated -= OnAudioLevelsUpdated;
             }
 
             controller.NetworkStateUpdated += OnNetworkStateUpdated;
-            controller.AudioLevelsUpdated += OnAudioLevelsUpdated;
 
             _manager = controller;
         }
 
         private void OnSizeChanged(object sender, SizeChangedEventArgs e)
         {
-            Logger.Debug();
-
             var prevSize = e.PreviousSize.ToVector2();
             var nextSize = e.NewSize.ToVector2();
 
@@ -419,8 +418,8 @@ namespace Telegram.Views.Calls
                     column.Width = new GridLength(48 + 12 + 12, GridUnitType.Pixel);
                 }
 
-                _drawable.SetSize(true);
-                AudioCanvas.Margin = new Thickness(-126, -126, -126, -126);
+                _visual.Scale = new Vector3(0.5f);
+                AudioBlob.Margin = new Thickness(-126, -126, -126, -126);
 
                 Audio.Width = Lottie.Width = 48;
                 Audio.Height = Lottie.Height = 48;
@@ -435,9 +434,9 @@ namespace Telegram.Views.Calls
                 Grid.SetColumn(Video, 1);
                 Grid.SetColumn(VideoInfo, 1);
 
-                Grid.SetColumn(AudioCanvas, 2);
-                Grid.SetRow(AudioCanvas, 1);
-                Grid.SetRowSpan(AudioCanvas, 1);
+                Grid.SetColumn(AudioBlob, 2);
+                Grid.SetRow(AudioBlob, 1);
+                Grid.SetRowSpan(AudioBlob, 1);
 
                 Grid.SetColumn(Audio, 2);
                 Grid.SetRow(Audio, 1);
@@ -490,8 +489,8 @@ namespace Telegram.Views.Calls
                     column.Width = new GridLength(1, GridUnitType.Auto);
                 }
 
-                _drawable.SetSize(false);
-                AudioCanvas.Margin = new Thickness(-102, -102, -102, -102);
+                _visual.Scale = new Vector3(1);
+                AudioBlob.Margin = new Thickness(-102, -102, -102, -102);
 
                 Audio.Width = Lottie.Width = 96;
                 Audio.Height = Lottie.Height = 96;
@@ -506,9 +505,9 @@ namespace Telegram.Views.Calls
                 Grid.SetColumn(Video, 0);
                 Grid.SetColumn(VideoInfo, 0);
 
-                Grid.SetColumn(AudioCanvas, 1);
-                Grid.SetRow(AudioCanvas, 0);
-                Grid.SetRowSpan(AudioCanvas, 3);
+                Grid.SetColumn(AudioBlob, 1);
+                Grid.SetRow(AudioBlob, 0);
+                Grid.SetRowSpan(AudioBlob, 3);
 
                 Grid.SetColumn(Audio, 1);
                 Grid.SetRow(Audio, 0);
@@ -628,8 +627,8 @@ namespace Telegram.Views.Calls
 
         private void TransformDocked()
         {
-            var root = ElementCompositionPreview.GetElementVisual(BottomRoot);
-            var list = ElementCompositionPreview.GetElementVisual(ScrollingHost);
+            var root = ElementComposition.GetElementVisual(BottomRoot);
+            var list = ElementComposition.GetElementVisual(ScrollingHost);
 
             ElementCompositionPreview.SetIsTranslationEnabled(BottomRoot, true);
             ElementCompositionPreview.SetIsTranslationEnabled(ScrollingHost, true);
@@ -670,7 +669,7 @@ namespace Telegram.Views.Calls
         }
 
         private string _selectedEndpointId;
-        private int _selectedTimestamp;
+        private ulong _selectedTimestamp;
 
         private void Resize_Click(object sender, RoutedEventArgs e)
         {
@@ -701,19 +700,19 @@ namespace Telegram.Views.Calls
                 return;
             }
 
-            var root = ElementCompositionPreview.GetElementVisual(BottomRoot);
-            var list = ElementCompositionPreview.GetElementVisual(ScrollingHost);
-            var audio1 = ElementCompositionPreview.GetElementVisual(AudioCanvas);
-            var audio2 = ElementCompositionPreview.GetElementVisual(Lottie);
-            var audioInfo = ElementCompositionPreview.GetElementVisual(AudioInfo);
-            var video = ElementCompositionPreview.GetElementVisual(Video);
-            var videoInfo = ElementCompositionPreview.GetElementVisual(VideoInfo);
-            var screen = ElementCompositionPreview.GetElementVisual(Screen);
-            var screenInfo = ElementCompositionPreview.GetElementVisual(ScreenInfo);
-            var settings = ElementCompositionPreview.GetElementVisual(Settings);
-            var settingsInfo = ElementCompositionPreview.GetElementVisual(SettingsInfo);
-            var leave = ElementCompositionPreview.GetElementVisual(Leave);
-            var leaveInfo = ElementCompositionPreview.GetElementVisual(LeaveInfo);
+            var root = ElementComposition.GetElementVisual(BottomRoot);
+            var list = ElementComposition.GetElementVisual(ScrollingHost);
+            var audio1 = ElementComposition.GetElementVisual(AudioBlob);
+            var audio2 = ElementComposition.GetElementVisual(Lottie);
+            var audioInfo = ElementComposition.GetElementVisual(AudioInfo);
+            var video = ElementComposition.GetElementVisual(Video);
+            var videoInfo = ElementComposition.GetElementVisual(VideoInfo);
+            var screen = ElementComposition.GetElementVisual(Screen);
+            var screenInfo = ElementComposition.GetElementVisual(ScreenInfo);
+            var settings = ElementComposition.GetElementVisual(Settings);
+            var settingsInfo = ElementComposition.GetElementVisual(SettingsInfo);
+            var leave = ElementComposition.GetElementVisual(Leave);
+            var leaveInfo = ElementComposition.GetElementVisual(LeaveInfo);
 
             var expanded = next is ParticipantsGridMode.Expanded or ParticipantsGridMode.Docked;
 
@@ -728,7 +727,7 @@ namespace Telegram.Views.Calls
 
             ElementCompositionPreview.SetIsTranslationEnabled(BottomRoot, true);
             ElementCompositionPreview.SetIsTranslationEnabled(ScrollingHost, true);
-            ElementCompositionPreview.SetIsTranslationEnabled(AudioCanvas, true);
+            ElementCompositionPreview.SetIsTranslationEnabled(AudioBlob, true);
             ElementCompositionPreview.SetIsTranslationEnabled(Lottie, true);
             ElementCompositionPreview.SetIsTranslationEnabled(AudioInfo, true);
             ElementCompositionPreview.SetIsTranslationEnabled(Video, true);
@@ -906,7 +905,6 @@ namespace Telegram.Views.Calls
 
                     FindName(nameof(ScheduledPanel));
                     SubtitleInfo.Text = _service.IsChannel ? Strings.VoipChannelScheduledVoiceChat : Strings.VoipGroupScheduledVoiceChat;
-                    ParticipantsPanel.Visibility = Visibility.Collapsed;
                     ScheduledInfo.Text = duration < TimeSpan.Zero ? Strings.VoipChatLateBy : Strings.VoipChatStartsIn;
                     StartsAt.Text = call.GetStartsAt();
                     StartsIn.Text = call.GetStartsIn();
@@ -975,7 +973,6 @@ namespace Telegram.Views.Calls
                     SubtitleInfo.Margin = new Thickness(padding > 0 ? padding + 4 : 12, -8, 0, 12);
 
                     SubtitleInfo.Text = Locale.Declension(Strings.R.Participants, call.ParticipantCount);
-                    ParticipantsPanel.Visibility = Visibility.Visible;
 
                     UpdateVideo();
                     UpdateScreen();
@@ -988,10 +985,16 @@ namespace Telegram.Views.Calls
 
         private void OnNetworkStateUpdated(VoipGroupManager sender, GroupNetworkStateChangedEventArgs args)
         {
-            this.BeginOnUIThread(() => UpdateNetworkState(_service.Call, _service.CurrentUser, args.IsConnected));
+            this.BeginOnUIThread(() =>
+            {
+                if (_service != null)
+                {
+                    UpdateNetworkState(_service.Call, _service.CurrentUser, args.IsConnected);
+                }
+            });
         }
 
-        private void OnAudioLevelsUpdated(VoipGroupManager sender, IList<VoipGroupParticipant> levels)
+        private void OnAudioLevelsUpdated(object sender, IList<VoipGroupParticipant> levels)
         {
             var participants = _service?.Participants;
             if (participants == null)
@@ -1004,14 +1007,17 @@ namespace Telegram.Views.Calls
             foreach (var level in levels)
             {
                 var value = level.Level;
-                if (level.AudioSource == 0 && sender.IsMuted)
+                if (level.AudioSource == 0 && _service.IsMuted)
                 {
                     value = 0;
                 }
 
                 if (level.AudioSource == 0)
                 {
-                    _drawable.SetAmplitude(Math.Min(8500, value * 4000) / 8500);
+                    if (PowerSavingPolicy.AreMaterialsEnabled && ApiInfo.CanAnimatePaths)
+                    {
+                        _visual.UpdateLevel(value);
+                    }
                 }
 
                 if (participants.TryGetFromAudioSourceId(level.AudioSource, out var participant))
@@ -1027,7 +1033,7 @@ namespace Telegram.Views.Calls
 
                         if (value > speakingLevelThreshold && level.IsSpeaking)
                         {
-                            _selectedTimestamp = Environment.TickCount;
+                            _selectedTimestamp = Logger.TickCount;
                         }
                     }
                 }
@@ -1055,8 +1061,8 @@ namespace Telegram.Views.Calls
 
         private void UpdateGroupCallParticipantLevel(Border waveElement, ProfilePicture photoElement, float value)
         {
-            var wave = ElementCompositionPreview.GetElementVisual(waveElement);
-            var photo = ElementCompositionPreview.GetElementVisual(photoElement);
+            var wave = ElementComposition.GetElementVisual(waveElement);
+            var photo = ElementComposition.GetElementVisual(photoElement);
 
             var amplitude = Math.Min(value, 1);
 
@@ -1073,6 +1079,17 @@ namespace Telegram.Views.Calls
             photo.StartAnimation("Scale", inner);
         }
 
+        private Task ConsolidateAsync()
+        {
+            if (Window.Current.Content is RootPage root)
+            {
+                root.PresentContent(null);
+                return Task.CompletedTask;
+            }
+
+            return WindowContext.Current.ConsolidateAsync();
+        }
+
         private async void Leave_Click(object sender, RoutedEventArgs e)
         {
             var chat = _service?.Chat;
@@ -1080,7 +1097,7 @@ namespace Telegram.Views.Calls
 
             if (chat == null || call == null)
             {
-                await WindowContext.Current.ConsolidateAsync();
+                await ConsolidateAsync();
                 return;
             }
 
@@ -1100,13 +1117,13 @@ namespace Telegram.Views.Calls
                 if (confirm == ContentDialogResult.Primary)
                 {
                     Dispose(popup.IsChecked == true);
-                    await WindowContext.Current.ConsolidateAsync();
+                    await ConsolidateAsync();
                 }
             }
             else
             {
                 Dispose(false);
-                await WindowContext.Current.ConsolidateAsync();
+                await ConsolidateAsync();
             }
         }
 
@@ -1117,7 +1134,7 @@ namespace Telegram.Views.Calls
 
             if (chat == null || call == null)
             {
-                await WindowContext.Current.ConsolidateAsync();
+                await ConsolidateAsync();
                 return;
             }
 
@@ -1132,7 +1149,7 @@ namespace Telegram.Views.Calls
             if (confirm == ContentDialogResult.Primary)
             {
                 Dispose(true);
-                await WindowContext.Current.ConsolidateAsync();
+                await ConsolidateAsync();
             }
         }
 
@@ -1140,7 +1157,7 @@ namespace Telegram.Views.Calls
         {
             if (_service == null)
             {
-                await WindowContext.Current.ConsolidateAsync();
+                await ConsolidateAsync();
                 return;
             }
 
@@ -1229,7 +1246,7 @@ namespace Telegram.Views.Calls
                 }
             }
             //else if (currentUser != null && currentUser.CanBeUnmutedForAllUsers)
-            else if (currentUser != null && currentUser.CanUnmuteSelf && _service.IsMuted)
+            else if (currentUser != null && (_service.IsMuted || (currentUser.IsMutedForAllUsers && currentUser.CanUnmuteSelf)))
             {
                 SetButtonState(ButtonState.Mute);
             }
@@ -1356,18 +1373,18 @@ namespace Telegram.Views.Calls
             switch (colors)
             {
                 case ButtonColors.Disabled:
-                    _drawable.SetColors(0xff57A4FE, 0xffF05459, 0xff766EE9);
-                    AudioCanvas.Invalidate();
+                    _visual.SetColorStops(0xff57A4FE, 0xffF05459, 0xff766EE9);
+                    StartAnimating();
                     Settings.Background = new SolidColorBrush { Color = Color.FromArgb(0x66, 0x76, 0x6E, 0xE9) };
                     break;
                 case ButtonColors.Unmute:
-                    _drawable.SetColors(0xFF0078ff, 0xFF33c659);
-                    AudioCanvas.Invalidate();
+                    _visual.SetColorStops(0xFF0078ff, 0xFF33c659);
+                    StartAnimating();
                     Settings.Background = new SolidColorBrush { Color = Color.FromArgb(0x66, 0x33, 0xc6, 0x59) };
                     break;
                 case ButtonColors.Mute:
-                    _drawable.SetColors(0xFF59c7f8, 0xFF0078ff);
-                    AudioCanvas.Invalidate();
+                    _visual.SetColorStops(0xFF59c7f8, 0xFF0078ff);
+                    StartAnimating();
                     Settings.Background = new SolidColorBrush { Color = Color.FromArgb(0x66, 0x00, 0x78, 0xff) };
                     break;
             }
@@ -1378,6 +1395,19 @@ namespace Telegram.Views.Calls
             UpdateScreen();
         }
 
+        private void StartAnimating()
+        {
+            if (PowerSavingPolicy.AreMaterialsEnabled && ApiInfo.CanAnimatePaths)
+            {
+                _visual.StartAnimating();
+            }
+            else
+            {
+                _visual.StopAnimating();
+                _visual.Clear();
+            }
+        }
+
         private void UpdateVideo()
         {
             var service = _service;
@@ -1386,7 +1416,7 @@ namespace Telegram.Views.Calls
                 return;
             }
 
-            if (service.CanEnableVideo)
+            if (service.CanEnableVideo && service.Call?.ScheduledStartDate == 0)
             {
                 switch (_prevColors)
                 {
@@ -1526,7 +1556,7 @@ namespace Telegram.Views.Calls
                 var outputId = _service.CurrentAudioOutput;
 
                 var video = new MenuFlyoutSubItem();
-                video.Text = "Webcam";
+                video.Text = Strings.VoipDeviceCamera;
                 video.Icon = MenuFlyoutHelper.CreateIcon(Icons.Camera);
 
                 _dispatcherQueue.TryEnqueue(DispatcherQueuePriority.Normal, async () =>
@@ -1555,7 +1585,7 @@ namespace Telegram.Views.Calls
                 };
 
                 var input = new MenuFlyoutSubItem();
-                input.Text = "Microphone";
+                input.Text = Strings.VoipDeviceInput;
                 input.Icon = MenuFlyoutHelper.CreateIcon(Icons.MicOn);
                 input.Items.Add(defaultInput);
 
@@ -1585,7 +1615,7 @@ namespace Telegram.Views.Calls
                 };
 
                 var output = new MenuFlyoutSubItem();
-                output.Text = "Speaker";
+                output.Text = Strings.VoipDeviceOutput;
                 output.Icon = MenuFlyoutHelper.CreateIcon(Icons.Speaker3);
                 output.Items.Add(defaultOutput);
 
@@ -1716,11 +1746,6 @@ namespace Telegram.Views.Calls
             await this.ShowPopupAsync(_clientService.SessionId, typeof(ChooseChatsPopup), new ChooseChatsConfigurationGroupCall(call));
         }
 
-        private void AudioCanvas_Draw(CanvasControl sender, CanvasDrawEventArgs args)
-        {
-            _drawable.Draw(sender, args.DrawingSession);
-        }
-
         private void OnChoosingItemContainer(ListViewBase sender, ChoosingItemContainerEventArgs args)
         {
             if (args.ItemContainer == null)
@@ -1782,7 +1807,7 @@ namespace Telegram.Views.Calls
 
             if (containerContentChanging)
             {
-                var element = ElementCompositionPreview.GetElementVisual(wave);
+                var element = ElementComposition.GetElementVisual(wave);
                 element.Scale = new Vector3(0.9f);
             }
 
@@ -2055,7 +2080,6 @@ namespace Telegram.Views.Calls
             }
 
             _selectedEndpointId = cell.IsSelected ? cell.EndpointId : null;
-            Logger.Debug();
             Viewport.InvalidateMeasure();
 
             TransformList(ActualSize, ActualSize, _mode, _mode);
@@ -2179,7 +2203,7 @@ namespace Telegram.Views.Calls
                 //}
             }
 
-            args.ShowAt(flyout, element);
+            flyout.ShowAt(element, args);
         }
 
         private ScrollViewer _scrollingHost;
@@ -2207,8 +2231,6 @@ namespace Telegram.Views.Calls
 
         private void OnParticipantsSizeChanged(object sender, SizeChangedEventArgs e)
         {
-            Logger.Debug();
-
             UpdateVisibleParticipants(false);
         }
 
@@ -2306,7 +2328,7 @@ namespace Telegram.Views.Calls
                 }
             }
 
-            foreach (var item in prev.Keys.ToImmutableArray())
+            foreach (var item in prev.Keys.ToArray())
             {
                 if (next.ContainsKey(item))
                 {
@@ -2382,19 +2404,26 @@ namespace Telegram.Views.Calls
 
             _bottomRootCollapsed = !show;
 
+            if (show)
+            {
+                StartAnimating();
+            }
+            else
+            {
+                _visual.StopAnimating();
+            }
+
             var anim = Window.Current.Compositor.CreateScalarKeyFrameAnimation();
             anim.InsertKeyFrame(0, show ? 0 : 1);
             anim.InsertKeyFrame(1, show ? 1 : 0);
 
-            var root = ElementCompositionPreview.GetElementVisual(BottomPanel);
+            var root = ElementComposition.GetElementVisual(BottomPanel);
 
             root.StartAnimation("Opacity", anim);
         }
 
         private void OnViewportSizeChanged(object sender, SizeChangedEventArgs e)
         {
-            Logger.Debug();
-
             if (ParticipantsPanel.Children.Contains(ViewportAspect) || e.NewSize.Height == e.PreviousSize.Height)
             {
                 return;
@@ -2412,7 +2441,7 @@ namespace Telegram.Views.Calls
                 return;
             }
 
-            var visual = ElementCompositionPreview.GetElementVisual(panel);
+            var visual = ElementComposition.GetElementVisual(panel);
             ElementCompositionPreview.SetIsTranslationEnabled(panel, true);
 
             var prev = e.PreviousSize.ToVector2();
@@ -2425,209 +2454,6 @@ namespace Telegram.Views.Calls
             visual.StartAnimation("Translation", animation);
 
             UpdateVisibleParticipants(false);
-        }
-    }
-
-    public class ButtonWavesDrawable
-    {
-        private readonly BlobDrawable _buttonWaveDrawable = new BlobDrawable(3);
-        private readonly BlobDrawable _tinyWaveDrawable = new BlobDrawable(6);
-        private readonly BlobDrawable _bigWaveDrawable = new BlobDrawable(9);
-
-        private float _amplitude;
-        private float _animateAmplitudeDiff;
-        private float _animateToAmplitude;
-
-        private bool _small;
-
-        private uint[] _stops;
-
-        public ButtonWavesDrawable()
-        {
-            //this.buttonWaveDrawable.minRadius = 57.0f;
-            //this.buttonWaveDrawable.maxRadius = 63.0f;
-            //this.buttonWaveDrawable.generateBlob();
-            //this.tinyWaveDrawable.minRadius = 62.0f;
-            //this.tinyWaveDrawable.maxRadius = 72.0f;
-            //this.tinyWaveDrawable.generateBlob();
-            //this.bigWaveDrawable.minRadius = 65.0f;
-            //this.bigWaveDrawable.maxRadius = 75.0f;
-            //this.bigWaveDrawable.generateBlob();
-            _buttonWaveDrawable.minRadius = 48.0f;
-            _buttonWaveDrawable.maxRadius = 48.0f;
-            _buttonWaveDrawable.GenerateBlob();
-            _tinyWaveDrawable.minRadius = 50.0f;
-            _tinyWaveDrawable.maxRadius = 50.0f;
-            _tinyWaveDrawable.GenerateBlob();
-            _bigWaveDrawable.minRadius = 52.0f;
-            _bigWaveDrawable.maxRadius = 52.0f;
-            _bigWaveDrawable.GenerateBlob();
-            _tinyWaveDrawable.paint.A = 38;
-            _bigWaveDrawable.paint.A = 76;
-        }
-
-        public void SetSize(bool small)
-        {
-            _small = small;
-            _buttonWaveDrawable.minRadius = small ? 24 : 48.0f;
-            _buttonWaveDrawable.maxRadius = small ? 24 : 48.0f;
-            _buttonWaveDrawable.GenerateBlob();
-            _tinyWaveDrawable.minRadius = small ? 25 : 50.0f;
-            _tinyWaveDrawable.maxRadius = small ? 25 : 50.0f;
-            _tinyWaveDrawable.GenerateBlob();
-            _bigWaveDrawable.minRadius = small ? 26 : 52.0f;
-            _bigWaveDrawable.maxRadius = small ? 26 : 52.0f;
-            _bigWaveDrawable.GenerateBlob();
-        }
-
-        public void SetAmplitude(float amplitude)
-        {
-            _animateToAmplitude = amplitude;
-            _animateAmplitudeDiff = (amplitude - _amplitude) / ((BlobDrawable.AMPLITUDE_SPEED * 500.0f) + 100.0f);
-        }
-
-        public void SetColors(params uint[] stops)
-        {
-            if (_stops != null && stops.SequenceEqual(_stops))
-            {
-                return;
-            }
-
-            _stops = stops;
-            _layerGradient = null;
-        }
-
-        private int _lastUpdateTime;
-
-        private CanvasRenderTarget _target;
-        private CanvasImageBrush _layer;
-        private CanvasRadialGradientBrush _layerGradient;
-        private CanvasRadialGradientBrush _maskGradient;
-
-        public void Draw(CanvasControl view, CanvasDrawingSession canvas)
-        {
-            int elapsedRealtime = Environment.TickCount;
-            int access = elapsedRealtime - _lastUpdateTime;
-            int unused = _lastUpdateTime = elapsedRealtime;
-            if (access > 20)
-            {
-                access = 17;
-            }
-            long j = access;
-
-            //this.tinyWaveDrawable.minRadius = 62.0f;
-            //this.tinyWaveDrawable.maxRadius = 62.0f + (20.0f * BlobDrawable.FORM_SMALL_MAX);
-            //this.bigWaveDrawable.minRadius = 65.0f;
-            //this.bigWaveDrawable.maxRadius = 65.0f + (20.0f * BlobDrawable.FORM_BIG_MAX);
-            //this.buttonWaveDrawable.minRadius = 57.0f;
-            //this.buttonWaveDrawable.maxRadius = 57.0f + (12.0f * BlobDrawable.FORM_BUTTON_MAX);
-            _tinyWaveDrawable.minRadius = 50.0f;
-            _tinyWaveDrawable.maxRadius = 50.0f + (20.0f * BlobDrawable.FORM_SMALL_MAX);
-            _bigWaveDrawable.minRadius = 52.0f;
-            _bigWaveDrawable.maxRadius = 52.0f + (20.0f * BlobDrawable.FORM_BIG_MAX);
-            _buttonWaveDrawable.minRadius = 48.0f;
-            _buttonWaveDrawable.maxRadius = 48.0f + (12.0f * BlobDrawable.FORM_BUTTON_MAX);
-
-            if (_small)
-            {
-                _tinyWaveDrawable.minRadius /= 2;
-                _tinyWaveDrawable.maxRadius /= 2;
-                _bigWaveDrawable.minRadius /= 2;
-                _bigWaveDrawable.maxRadius /= 2;
-                _buttonWaveDrawable.minRadius /= 2;
-                _buttonWaveDrawable.maxRadius /= 2;
-            }
-
-            if (_animateToAmplitude != _amplitude)
-            {
-                _amplitude += (_animateAmplitudeDiff * j);
-
-                if (_animateAmplitudeDiff > 0.0f)
-                {
-                    if (_amplitude > _animateToAmplitude)
-                    {
-                        _amplitude = _animateToAmplitude;
-                    }
-                }
-                else if (_amplitude < _animateToAmplitude)
-                {
-                    _amplitude = _animateToAmplitude;
-                }
-                view.Invalidate();
-            }
-
-            _bigWaveDrawable.Update(_amplitude, 1.0f);
-            _tinyWaveDrawable.Update(_amplitude, 1.0f);
-            _buttonWaveDrawable.Update(_amplitude, 0.4f);
-
-            _target ??= new CanvasRenderTarget(canvas, 300, 300);
-
-            using (var session = _target.CreateDrawingSession())
-            {
-                _maskGradient ??= new CanvasRadialGradientBrush(session, Color.FromArgb(0x77, 0xFF, 0xFF, 0xFF), Color.FromArgb(0x00, 0xFF, 0xFF, 0xFF))
-                {
-                    Center = new Vector2(150, 150)
-                };
-
-                float bigScale = BlobDrawable.SCALE_BIG_MIN + (BlobDrawable.SCALE_BIG * _amplitude);
-                float tinyScale = BlobDrawable.SCALE_SMALL_MIN + (BlobDrawable.SCALE_SMALL * _amplitude);
-                float glowScale = bigScale * BlobDrawable.LIGHT_GRADIENT_SIZE + 0.7f;
-
-                _maskGradient.RadiusX = 84 * glowScale;
-                _maskGradient.RadiusY = 84 * glowScale;
-
-                if (_small)
-                {
-                    _maskGradient.RadiusX /= 2;
-                    _maskGradient.RadiusY /= 2;
-                }
-
-                session.Clear(Colors.Transparent);
-                session.FillEllipse(new Vector2(150, 150), _maskGradient.RadiusX, _maskGradient.RadiusY, _maskGradient);
-                session.Transform = Matrix3x2.CreateScale(bigScale, new Vector2(150, 150));
-                _bigWaveDrawable.Draw(session, 150, 150);
-                session.Transform = Matrix3x2.CreateScale(tinyScale, new Vector2(150, 150));
-                _tinyWaveDrawable.Draw(session, 150, 150);
-                session.Transform = Matrix3x2.Identity;
-                _buttonWaveDrawable.Draw(session, 150, 150);
-            }
-
-            _layer ??= new CanvasImageBrush(canvas, _target);
-
-            using (var layer = canvas.CreateLayer(_layer))
-            {
-                if (_layerGradient == null && _stops != null)
-                {
-                    var stops = new CanvasGradientStop[_stops.Length];
-
-                    for (int i = 0; i < _stops.Length; i++)
-                    {
-                        stops[i] = new CanvasGradientStop
-                        {
-                            Color = ColorEx.FromHex(_stops[i]),
-                            Position = i / (_stops.Length - 1f)
-                        };
-                    }
-
-                    _layerGradient = new CanvasRadialGradientBrush(canvas, stops);
-                    _layerGradient.RadiusX = MathF.Sqrt(200 * 200 + 200 * 200);
-                    _layerGradient.RadiusY = MathF.Sqrt(200 * 200 + 200 * 200);
-                    _layerGradient.Center = new Vector2(300, 0);
-                    //_layerGradient.RadiusX = 120;
-                    //_layerGradient.RadiusY = 120;
-                    //_layerGradient.Center = new Vector2(150 + 70, 150 - 70);
-                }
-
-                if (_layerGradient != null)
-                {
-                    canvas.FillRectangle(0, 0, 300, 300, _layerGradient);
-                }
-            }
-
-            if (PowerSavingPolicy.AreCallsAnimated)
-            {
-                view.Invalidate();
-            }
         }
     }
 
@@ -2649,7 +2475,6 @@ namespace Telegram.Views.Calls
                 if (_mode != value)
                 {
                     _mode = value;
-                    Logger.Debug();
                     InvalidateMeasure();
                 }
             }
@@ -2664,8 +2489,6 @@ namespace Telegram.Views.Calls
 
         protected override Size MeasureOverride(Size availableSize)
         {
-            Logger.Debug();
-
             var index = 0;
             var count = Children.Count;
 
@@ -2741,8 +2564,6 @@ namespace Telegram.Views.Calls
 
         protected override Size ArrangeOverride(Size finalSize)
         {
-            Logger.Debug();
-
             var index = 0;
             var count = Children.Count;
 
@@ -2833,7 +2654,7 @@ namespace Telegram.Views.Calls
                         {
                             ElementCompositionPreview.SetIsTranslationEnabled(Children[index], true);
 
-                            var visual = ElementCompositionPreview.GetElementVisual(Children[index]);
+                            var visual = ElementComposition.GetElementVisual(Children[index]);
                             var offset = Window.Current.Compositor.CreateVector3KeyFrameAnimation();
                             offset.InsertKeyFrame(0, new Vector3((float)(prev.X - point.X), (float)(prev.Y - point.Y), 0));
                             offset.InsertKeyFrame(1, Vector3.Zero);
@@ -2843,7 +2664,7 @@ namespace Telegram.Views.Calls
 
                         if (prev.Width != size.Width || prev.Height != size.Height)
                         {
-                            var visual = ElementCompositionPreview.GetElementVisual(Children[index]);
+                            var visual = ElementComposition.GetElementVisual(Children[index]);
                             var scale = Window.Current.Compositor.CreateVector3KeyFrameAnimation();
                             scale.InsertKeyFrame(0, new Vector3((float)(prev.Width / size.Width), (float)(prev.Height / size.Height), 0));
                             scale.InsertKeyFrame(1, Vector3.One);

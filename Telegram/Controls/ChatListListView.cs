@@ -1,20 +1,40 @@
 //
-// Copyright Fela Ameghino 2015-2023
+// Copyright Fela Ameghino 2015-2024
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+using System;
 using System.Collections.Generic;
+using System.Numerics;
+using Telegram.Common;
+using Telegram.Composition;
 using Telegram.Controls.Cells;
 using Telegram.Td.Api;
 using Telegram.ViewModels;
+using Windows.UI;
+using Windows.UI.Composition;
+using Windows.UI.Composition.Interactions;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Automation.Peers;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
+using Windows.UI.Xaml.Hosting;
+using Windows.UI.Xaml.Input;
+using Windows.UI.Xaml.Media;
 
 namespace Telegram.Controls
 {
+    public class ChatListSwipedEventArgs : EventArgs
+    {
+        public CarouselDirection Direction { get; }
+
+        public ChatListSwipedEventArgs(CarouselDirection direction)
+        {
+            Direction = direction;
+        }
+    }
+
     public class ChatListListView : TopNavView
     {
         public ChatListViewModel ViewModel => DataContext as ChatListViewModel;
@@ -23,12 +43,27 @@ namespace Telegram.Controls
 
         private readonly Dictionary<long, SelectorItem> _itemToSelector = new();
 
+        private ScrollViewer ScrollViewer;
+        private Border Ghost;
+
         public ChatListListView()
         {
-            DefaultStyleKey = typeof(ListView);
+            DefaultStyleKey = typeof(ChatListListView);
 
+            Connected += OnLoaded;
+            Disconnected += OnUnloaded;
             ContainerContentChanging += OnContainerContentChanging;
+
+            AddHandler(PointerPressedEvent, new PointerEventHandler(OnPointerPressed), true);
             RegisterPropertyChangedCallback(SelectionModeProperty, OnSelectionModeChanged);
+        }
+
+        protected override void OnApplyTemplate()
+        {
+            ScrollViewer = GetTemplateChild(nameof(ScrollViewer)) as ScrollViewer;
+            Ghost = GetTemplateChild(nameof(Ghost)) as Border;
+
+            base.OnApplyTemplate();
         }
 
         public bool TryGetChatAndCell(long chatId, out Chat chat, out ChatCell cell)
@@ -43,6 +78,11 @@ namespace Telegram.Controls
             chat = null;
             cell = null;
             return false;
+        }
+
+        public bool TryGetContainer(long chatId, out SelectorItem container)
+        {
+            return _itemToSelector.TryGetValue(chatId, out container);
         }
 
         public bool TryGetCell(Chat chat, out ChatCell cell)
@@ -70,30 +110,27 @@ namespace Telegram.Controls
                 return;
             }
 
-            _itemToSelector[chat.Id] = args.ItemContainer;
-            args.ItemContainer.Tag = args.Item;
-
             if (args.Phase == 0)
             {
+                _itemToSelector[chat.Id] = args.ItemContainer;
+
+                args.RegisterUpdateCallback(2, OnContainerContentChanging);
+                args.ItemContainer.Tag = args.Item;
+                args.ItemContainer.ContentTemplateRoot.Opacity = 0;
+
                 VisualStateManager.GoToState(args.ItemContainer, "DataPlaceholder", false);
             }
 
-            if (args.Phase < 2)
-            {
-                args.RegisterUpdateCallback(OnContainerContentChanging);
-                args.ItemContainer.ContentTemplateRoot.Opacity = 0;
-                return;
-            }
-
-            if (args.ItemContainer.ContentTemplateRoot is ChatCell content)
+            else if (args.ItemContainer.ContentTemplateRoot is ChatCell content)
             {
                 content.UpdateViewState(chat, _viewState == MasterDetailState.Compact, false);
                 content.UpdateChat(ViewModel.ClientService, chat, ViewModel.Items.ChatList);
                 content.Opacity = 1;
-                args.Handled = true;
+
+                VisualStateManager.GoToState(args.ItemContainer, "DataAvailable", false);
             }
 
-            VisualStateManager.GoToState(args.ItemContainer, "DataAvailable", false);
+            args.Handled = true;
         }
 
         private void OnSelectionModeChanged(DependencyObject sender, DependencyProperty dp)
@@ -123,6 +160,286 @@ namespace Telegram.Controls
         {
             return new ChatListListViewItem(this);
         }
+
+        private bool _changingView;
+        private bool _fromAnimation;
+
+        public async void ChangeView(CarouselDirection direction, Action continuation)
+        {
+            void Continue(bool restore)
+            {
+                if (restore)
+                {
+                    _tracker?.TryUpdatePosition(Vector3.Zero);
+                }
+
+                if (continuation != null)
+                {
+                    continuation();
+                }
+                else
+                {
+                    Swiped?.Invoke(this, new ChatListSwipedEventArgs(direction));
+                }
+            }
+
+            if (_changingView || direction == CarouselDirection.None || !IsConnected || !PowerSavingPolicy.AreSmoothTransitionsEnabled)
+            {
+                Continue(true);
+                return;
+            }
+
+            _changingView = true;
+
+            var child = VisualTreeHelper.GetChild(ScrollViewer, 0) as UIElement;
+            var visual = Window.Current.Compositor.CreateRedirectBrush(child, Vector2.Zero, child.ActualSize, true);
+
+            await VisualUtilities.WaitForCompositionRenderedAsync();
+
+            Continue(false);
+            ConfigureAnimations(false);
+
+            var position = ActualSize.X * (ActualSize.X / (ActualSize.X - 72));
+
+            var w = continuation != null ? position : ActualSize.X;
+            var x = direction == CarouselDirection.Previous ? w : -w;
+
+            var translate = _tracker.Compositor.CreateVector3KeyFrameAnimation();
+            translate.InsertKeyFrame(0, new Vector3(x, 0, 0));
+            translate.InsertKeyFrame(1, new Vector3(0));
+
+            _tracker.Properties.InsertBoolean("FromAnimation", _fromAnimation = true);
+            _tracker.TryUpdatePositionWithAnimation(translate);
+
+            _changingView = false;
+            _redirect.Brush = visual;
+        }
+
+        #region Swipe
+
+        public bool CanGoNext { get; set; }
+        public bool CanGoPrev { get; set; }
+
+        public event EventHandler<ChatListSwipedEventArgs> Swiped;
+
+        private SpriteVisual _hitTest;
+        private ContainerVisual _container;
+        private Visual _visual;
+        private SpriteVisual _redirect;
+        private ContainerVisual _indicator;
+
+        private bool _hasInitialLoadedEventFired;
+        private WeakInteractionTrackerOwner _trackerOwner;
+        private InteractionTracker _tracker;
+        private VisualInteractionSource _interactionSource;
+
+        private void OnLoaded(object sender, RoutedEventArgs e)
+        {
+            if (!_hasInitialLoadedEventFired)
+            {
+                _hasInitialLoadedEventFired = true;
+
+                _visual = ElementComposition.GetElementVisual(ScrollViewer);
+
+                _redirect = _visual.Compositor.CreateSpriteVisual();
+                _redirect.RelativeSizeAdjustment = Vector2.One;
+
+                _hitTest = _visual.Compositor.CreateSpriteVisual();
+                _hitTest.Brush = _visual.Compositor.CreateColorBrush(Colors.Transparent);
+                _hitTest.RelativeSizeAdjustment = Vector2.One;
+
+                _container = _visual.Compositor.CreateContainerVisual();
+                _container.Children.InsertAtBottom(_hitTest);
+                _container.RelativeSizeAdjustment = Vector2.One;
+
+                ElementCompositionPreview.SetElementChildVisual(Ghost, _redirect);
+                ElementCompositionPreview.SetElementChildVisual(this, _container);
+                ConfigureInteractionTracker();
+            }
+
+            if (_trackerOwner != null)
+            {
+                _trackerOwner.ValuesChanged += OnValuesChanged;
+                _trackerOwner.InertiaStateEntered += OnInertiaStateEntered;
+                _trackerOwner.InteractingStateEntered += OnInteractingStateEntered;
+                _trackerOwner.IdleStateEntered += OnIdleStateEntered;
+                _trackerOwner.CustomAnimationStateEntered += OnCustomAnimationStateEntered;
+            }
+        }
+
+        private void OnUnloaded(object sender, RoutedEventArgs e)
+        {
+            _itemToSelector.Clear();
+
+            if (_trackerOwner != null)
+            {
+                _trackerOwner.ValuesChanged -= OnValuesChanged;
+                _trackerOwner.InertiaStateEntered -= OnInertiaStateEntered;
+                _trackerOwner.InteractingStateEntered -= OnInteractingStateEntered;
+                _trackerOwner.IdleStateEntered -= OnIdleStateEntered;
+                _trackerOwner.CustomAnimationStateEntered -= OnCustomAnimationStateEntered;
+            }
+        }
+
+        private void ConfigureInteractionTracker()
+        {
+            _interactionSource = VisualInteractionSource.Create(_hitTest);
+
+            //Configure for x-direction panning
+            _interactionSource.ManipulationRedirectionMode = VisualInteractionSourceRedirectionMode.CapableTouchpadOnly;
+            _interactionSource.PositionXSourceMode = InteractionSourceMode.EnabledWithInertia;
+            _interactionSource.PositionXChainingMode = InteractionChainingMode.Never;
+            _interactionSource.IsPositionXRailsEnabled = true;
+
+            _trackerOwner = new WeakInteractionTrackerOwner();
+
+            //Create tracker and associate interaction source
+            _tracker = InteractionTracker.CreateWithOwner(_visual.Compositor, _trackerOwner);
+            _tracker.InteractionSources.Add(_interactionSource);
+
+            _tracker.MaxPosition = new Vector3(72);
+            _tracker.MinPosition = new Vector3(-72);
+
+            _tracker.Properties.InsertBoolean("FromAnimation", false);
+            _tracker.Properties.InsertBoolean("CanGoNext", CanGoNext);
+            _tracker.Properties.InsertBoolean("CanGoPrev", CanGoPrev);
+
+            //ConfigureAnimations(_visual, null);
+            ConfigureRestingPoints();
+        }
+
+        private void ConfigureRestingPoints()
+        {
+            var neutralX = InteractionTrackerInertiaRestingValue.Create(_visual.Compositor);
+            neutralX.Condition = _visual.Compositor.CreateExpressionAnimation("true");
+            neutralX.RestingValue = _visual.Compositor.CreateExpressionAnimation("0");
+
+            _tracker.ConfigurePositionXInertiaModifiers(new InteractionTrackerInertiaModifier[] { neutralX });
+        }
+
+        private void ConfigureAnimations(bool interacting)
+        {
+            if (interacting)
+            {
+                _tracker.Properties.InsertBoolean("FromAnimation", _fromAnimation = false);
+            }
+
+            _redirect.Brush = _tracker.Compositor.CreateColorBrush(Colors.Transparent);
+
+            _tracker.Properties.InsertBoolean("CanGoNext", CanGoNext);
+            _tracker.Properties.InsertBoolean("CanGoPrev", CanGoPrev);
+            _tracker.MaxPosition = new Vector3(CanGoNext ? 72 : 0);
+            _tracker.MinPosition = new Vector3(CanGoPrev ? -72 : 0);
+
+            // This should be enough: tracker.FromAnimation ? -tracker.Position.X : Clamp(-tracker.Position.X, -72, 72)
+            var offsetExp = _visual.Compositor.CreateExpressionAnimation("tracker.FromAnimation || Abs(tracker.Position.X) >= this.Target.Size.X ? -tracker.Position.X : Clamp(-tracker.Position.X, -72, 72)");
+            offsetExp.SetReferenceParameter("tracker", _tracker);
+
+            var offsetExp2 = _visual.Compositor.CreateExpressionAnimation("tracker.Position.X < 0 ? Min(-tracker.Position.X / (source.Size.X) * (source.Size.X - 72), source.Size.X) - source.Size.X : tracker.Position.X >= 0 ? Min(-tracker.Position.X / (source.Size.X) * (source.Size.X - 72), source.Size.X) + source.Size.X : 0");
+            offsetExp2.SetReferenceParameter("tracker", _tracker);
+            offsetExp2.SetReferenceParameter("source", _visual);
+
+            _visual.StartAnimation("Offset.X", offsetExp);
+            _redirect.StartAnimation("Offset.X", offsetExp2);
+        }
+
+        private void OnPointerPressed(object sender, PointerRoutedEventArgs e)
+        {
+            if (e.Pointer.PointerDeviceType != Windows.Devices.Input.PointerDeviceType.Mouse)
+            {
+                try
+                {
+                    _interactionSource.TryRedirectForManipulation(e.GetCurrentPoint(this));
+                }
+                catch { }
+            }
+        }
+
+        private void OnValuesChanged(InteractionTracker sender, InteractionTrackerValuesChangedArgs args)
+        {
+            if (_indicator == null && (_tracker.Position.X > 0.0001f || _tracker.Position.X < -0.0001f) /*&& Math.Abs(e.Cumulative.Translation.X) >= 45*/)
+            {
+                var sprite = _visual.Compositor.CreateSpriteVisual();
+                sprite.Size = new Vector2(30, 30);
+                sprite.CenterPoint = new Vector3(15);
+
+                var surface = LoadedImageSurface.StartLoadFromUri(new Uri("ms-appx:///Assets/Images/ArrowLeft.png"));
+                void handler(LoadedImageSurface s, LoadedImageSourceLoadCompletedEventArgs args)
+                {
+                    s.LoadCompleted -= handler;
+                    sprite.Brush = _visual.Compositor.CreateSurfaceBrush(s);
+                }
+
+                surface.LoadCompleted += handler;
+
+                var ellipse = _visual.Compositor.CreateEllipseGeometry();
+                ellipse.Radius = new Vector2(15);
+
+                var ellipseShape = _visual.Compositor.CreateSpriteShape(ellipse);
+                ellipseShape.FillBrush = _visual.Compositor.CreateColorBrush((Windows.UI.Color)Navigation.BootStrapper.Current.Resources["MessageServiceBackgroundColor"]);
+                ellipseShape.Offset = new Vector2(15);
+
+                var shape = _visual.Compositor.CreateShapeVisual();
+                shape.Shapes.Add(ellipseShape);
+                shape.Size = new Vector2(30, 30);
+
+                _indicator = _visual.Compositor.CreateContainerVisual();
+                _indicator.Children.InsertAtBottom(shape);
+                _indicator.Children.InsertAtTop(sprite);
+                _indicator.Size = new Vector2(30, 30);
+                _indicator.CenterPoint = new Vector3(15);
+                _indicator.Scale = new Vector3();
+
+                _container.Children.InsertAtTop(_indicator);
+            }
+
+            var offset = (_tracker.Position.X > 0 && !CanGoNext) || (_tracker.Position.X <= 0 && !CanGoPrev) ? 0 : Math.Clamp(Math.Abs(_tracker.Position.X), 0, 72);
+
+            var abs = Math.Abs(offset);
+            var percent = _fromAnimation ? 0 : abs / 72f;
+
+            var width = ActualSize.X;
+            var height = ActualSize.Y;
+
+            if (_indicator != null)
+            {
+                _indicator.Offset = new Vector3(_tracker.Position.X > 0 ? width - percent * 60 : -30 + percent * 55, (height - 30) / 2, 0);
+                _indicator.Scale = new Vector3(_tracker.Position.X > 0 ? 0.8f + percent * 0.2f : -(0.8f + percent * 0.2f), 0.8f + percent * 0.2f, 1);
+                _indicator.Opacity = percent;
+            }
+        }
+
+        private void OnInertiaStateEntered(InteractionTracker sender, InteractionTrackerInertiaStateEnteredArgs args)
+        {
+            var position = _tracker.Position;
+            if (position.X >= 72 && CanGoNext || position.X <= -72 && CanGoPrev)
+            {
+                sender.TryUpdatePosition(sender.Position);
+
+                var direction = position.X <= -72 && CanGoPrev
+                    ? CarouselDirection.Previous
+                    : CarouselDirection.Next;
+
+                ChangeView(direction, null);
+            }
+        }
+
+        private void OnIdleStateEntered(InteractionTracker sender, InteractionTrackerIdleStateEnteredArgs args)
+        {
+            ConfigureAnimations(false);
+        }
+
+        private void OnInteractingStateEntered(InteractionTracker sender, InteractionTrackerInteractingStateEnteredArgs args)
+        {
+            ConfigureAnimations(true);
+        }
+
+        private void OnCustomAnimationStateEntered(InteractionTracker sender, InteractionTrackerCustomAnimationStateEnteredArgs args)
+        {
+            _tracker.Properties.InsertBoolean("FromAnimation", _fromAnimation = true);
+        }
+
+        #endregion
     }
 
     public class ChatListListViewItem : TopNavViewItem
@@ -154,6 +471,13 @@ namespace Telegram.Controls
             }
         }
 
+        protected override void OnLostFocus(RoutedEventArgs e)
+        {
+            // Reactivate focus visuals that may have been deactivated by ChatListListView.OnGettingFocus.
+            UseSystemFocusVisuals = true;
+
+            base.OnLostFocus(e);
+        }
 
         protected override AutomationPeer OnCreateAutomationPeer()
         {
@@ -166,7 +490,7 @@ namespace Telegram.Controls
 
             _multi = true;
             _list = list;
-            RegisterPropertyChangedCallback(IsSelectedProperty, OnSelectedChanged);
+            //RegisterPropertyChangedCallback(IsSelectedProperty, OnSelectedChanged);
         }
 
         private void OnSelectedChanged(DependencyObject sender, DependencyProperty dp)
@@ -221,12 +545,14 @@ namespace Telegram.Controls
 
         protected override string GetNameCore()
         {
-            if (_owner.ContentTemplateRoot is ChatCell cell)
+            var name = _owner.ContentTemplateRoot switch
             {
-                return cell.GetAutomationName() ?? base.GetNameCore();
-            }
+                ChatCell chat => chat.GetAutomationName(),
+                ForumTopicCell topic => topic.GetAutomationName(),
+                _ => null
+            };
 
-            return base.GetNameCore();
+            return name ?? base.GetNameCore();
         }
     }
 }

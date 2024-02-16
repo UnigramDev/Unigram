@@ -1,5 +1,5 @@
 //
-// Copyright Fela Ameghino 2015-2023
+// Copyright Fela Ameghino 2015-2024
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 using Telegram.Common;
 using Telegram.Navigation;
 using Telegram.Td.Api;
+using Telegram.Views.Host;
 
 namespace Telegram.Services
 {
@@ -196,6 +197,14 @@ namespace Telegram.Services
             if (update.AuthorizationState is AuthorizationStateLoggingOut && !_continueOnLogOut)
             {
                 _loggingOut = true;
+
+                WindowContext.ForEach(window =>
+                {
+                    if (window.Content is StandalonePage page && page.NavigationService?.SessionId == SessionId)
+                    {
+                        _ = window.ConsolidateAsync();
+                    }
+                });
             }
             else if (update.AuthorizationState is AuthorizationStateClosed)
             {

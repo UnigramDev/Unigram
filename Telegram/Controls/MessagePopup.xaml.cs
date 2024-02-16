@@ -1,5 +1,5 @@
 //
-// Copyright Fela Ameghino 2015-2023
+// Copyright Fela Ameghino 2015-2024
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using Telegram.Common;
 using Telegram.Navigation;
 using Telegram.Td.Api;
+using Telegram.Views.Host;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 
@@ -91,9 +92,13 @@ namespace Telegram.Controls
                 Title = title ?? Strings.AppName,
                 Message = message,
                 PrimaryButtonText = primary ?? Strings.OK,
-                SecondaryButtonText = secondary ?? string.Empty,
-                RequestedTheme = requestedTheme
+                SecondaryButtonText = secondary ?? string.Empty
             };
+
+            if (requestedTheme != ElementTheme.Default)
+            {
+                popup.RequestedTheme = requestedTheme;
+            }
 
             if (destructive)
             {
@@ -111,9 +116,13 @@ namespace Telegram.Controls
                 Title = title ?? Strings.AppName,
                 FormattedMessage = message,
                 PrimaryButtonText = primary ?? Strings.OK,
-                SecondaryButtonText = secondary ?? string.Empty,
-                RequestedTheme = requestedTheme
+                SecondaryButtonText = secondary ?? string.Empty
             };
+
+            if (requestedTheme != ElementTheme.Default)
+            {
+                popup.RequestedTheme = requestedTheme;
+            }
 
             if (destructive)
             {
@@ -126,6 +135,11 @@ namespace Telegram.Controls
 
         public static Task<ContentDialogResult> ShowAsync(FrameworkElement target, string message, string title = null, string primary = null, string secondary = null, bool destructive = false, ElementTheme requestedTheme = ElementTheme.Default)
         {
+            if (Window.Current.Content is not IToastHost host)
+            {
+                return Task.FromResult(ContentDialogResult.None);
+            }
+
             var tsc = new TaskCompletionSource<ContentDialogResult>();
             var popup = new TeachingTip
             {
@@ -153,20 +167,22 @@ namespace Telegram.Controls
 
             popup.Closed += (s, args) =>
             {
+                host.Disconnect(s);
                 tsc.TrySetResult(ContentDialogResult.Secondary);
             };
 
-            if (Window.Current.Content is FrameworkElement element)
-            {
-                element.Resources["TeachingTip"] = popup;
-            }
-
+            host.Connect(popup);
             popup.IsOpen = true;
             return tsc.Task;
         }
 
         public static Task<ContentDialogResult> ShowAsync(FrameworkElement target, FrameworkElement content, string primary = null, string secondary = null, bool destructive = false, ElementTheme requestedTheme = ElementTheme.Default)
         {
+            if (Window.Current.Content is not IToastHost host)
+            {
+                return Task.FromResult(ContentDialogResult.None);
+            }
+
             var tsc = new TaskCompletionSource<ContentDialogResult>();
             var popup = new TeachingTip
             {
@@ -193,14 +209,11 @@ namespace Telegram.Controls
 
             popup.Closed += (s, args) =>
             {
+                host.Disconnect(s);
                 tsc.TrySetResult(ContentDialogResult.Secondary);
             };
 
-            if (Window.Current.Content is FrameworkElement element)
-            {
-                element.Resources["TeachingTip"] = popup;
-            }
-
+            host.Connect(popup);
             popup.IsOpen = true;
             return tsc.Task;
         }

@@ -1,5 +1,5 @@
 //
-// Copyright Fela Ameghino 2015-2023
+// Copyright Fela Ameghino 2015-2024
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
@@ -10,6 +10,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Telegram.Collections;
 using Telegram.Common;
+using Telegram.Controls;
 using Telegram.Navigation;
 using Telegram.Navigation.Services;
 using Telegram.Services;
@@ -78,49 +79,69 @@ namespace Telegram.ViewModels.Settings
         {
             get
             {
-                var exclude = Settings.DoNotTranslate;
-                exclude ??= new[] { Settings.LanguagePackId };
-
-                if (exclude.Length == 1)
+                var exclude = Settings.Translate.DoNot;
+                if (exclude.Count == 1)
                 {
-                    var item = _officialLanguages.FirstOrDefault(x => x.Id == exclude[0]);
+                    var first = exclude.First();
+
+                    var item = _officialLanguages.FirstOrDefault(x => x.Id == first);
                     if (item != null)
                     {
                         return item.Name;
                     }
+
+                    return first;
+                }
+                else if (exclude.Count > 0)
+                {
+                    return Locale.Declension(Strings.R.Languages, exclude.Count);
                 }
 
-                return Locale.Declension(Strings.R.Languages, exclude.Length);
+                return string.Empty;
             }
         }
 
-        public bool IsTranslateEnabled
+        public bool TranslateMessages
         {
-            get => Settings.IsTranslateEnabled;
+            get => Settings.Translate.Messages;
             set
             {
-                Settings.IsTranslateEnabled = value;
-                RaisePropertyChanged(nameof(IsTranslateEnabled));
+                Settings.Translate.Messages = value;
+                RaisePropertyChanged(nameof(TranslateMessages));
+            }
+        }
+
+        public bool TranslateChats
+        {
+            get => Settings.Translate.Chats && ClientService.IsPremium;
+            set
+            {
+                Settings.Translate.Chats = value;
+                RaisePropertyChanged(nameof(TranslateChats));
+            }
+        }
+
+        public void ChangeTranslateChat()
+        {
+            if (ClientService.IsPremium)
+            {
+                TranslateChats = !TranslateChats;
+            }
+            else
+            {
+                ToastPopup.ShowFeature(NavigationService, new PremiumFeatureRealTimeChatTranslation());
             }
         }
 
         public async void ChangeDoNotTranslate()
         {
-            var exclude = Settings.DoNotTranslate;
-            exclude ??= new[] { Settings.LanguagePackId };
-
+            var exclude = Settings.Translate.DoNot;
             var popup = new DoNotTranslatePopup(_officialLanguages, exclude);
 
             var confirm = await ShowPopupAsync(popup);
             if (confirm == ContentDialogResult.Primary && popup.SelectedItems != null)
             {
-                var updated = popup.SelectedItems;
-                if (updated.Count == 1 && updated[0] == Settings.LanguagePackId)
-                {
-                    updated = null;
-                }
-
-                Settings.DoNotTranslate = updated?.ToArray();
+                Settings.Translate.DoNot = popup.SelectedItems;
                 RaisePropertyChanged(nameof(DoNotTranslate));
             }
         }

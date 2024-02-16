@@ -1,5 +1,5 @@
 //
-// Copyright Fela Ameghino 2015-2023
+// Copyright Fela Ameghino 2015-2024
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
@@ -67,7 +67,7 @@ namespace Telegram.Controls
             var service = WindowContext.Current.NavigationServices.GetByFrameId(key + viewModel.SessionId) as NavigationService;
             if (service == null)
             {
-                service = BootStrapper.Current.NavigationServiceFactory(BootStrapper.BackButton.Ignore, BootStrapper.ExistingContent.Exclude, viewModel.SessionId, key + viewModel.SessionId, false) as NavigationService;
+                service = BootStrapper.Current.NavigationServiceFactory(BootStrapper.BackButton.Ignore, viewModel.SessionId, key + viewModel.SessionId, false) as NavigationService;
                 service.Frame.DataContext = new object();
                 service.FrameFacade.BackRequested += OnBackRequested;
                 service.BackStackChanged += OnBackStackChanged;
@@ -113,6 +113,11 @@ namespace Telegram.Controls
                 DetailHeaderPresenter.ItemsSource = null;
                 DetailHeaderPresenter.ItemClicked -= DetailHeaderPresenter_ItemClicked;
             }
+
+            NavigationService = null;
+            ViewModel = null;
+            DetailFrame = null;
+            ParentFrame = null;
         }
 
         private void OnBackRequested(object sender, BackRequestedRoutedEventArgs args)
@@ -204,11 +209,11 @@ namespace Telegram.Controls
 
             _backgroundType = show;
 
-            var visual = ElementCompositionPreview.GetElementVisual(BackgroundPart);
-            var border = ElementCompositionPreview.GetElementVisual(BorderPart);
-            var material = ElementCompositionPreview.GetElementVisual(MaterialPart);
-            var bread = ElementCompositionPreview.GetElementVisual(DetailHeaderPresenter);
-            var button = ElementCompositionPreview.GetElementVisual(BackButton);
+            var visual = ElementComposition.GetElementVisual(BackgroundPart);
+            var border = ElementComposition.GetElementVisual(BorderPart);
+            var material = ElementComposition.GetElementVisual(MaterialPart);
+            var bread = ElementComposition.GetElementVisual(DetailHeaderPresenter);
+            var button = ElementComposition.GetElementVisual(BackButton);
 
             ShowHideDetailHeader(show == BackgroundKind.Material);
 
@@ -227,7 +232,7 @@ namespace Telegram.Controls
                     BorderPart.Visibility = show != BackgroundKind.None ? Visibility.Visible : Visibility.Collapsed;
                     MaterialPart.Visibility = show == BackgroundKind.Material ? Visibility.Visible : Visibility.Collapsed;
                     DetailHeaderPresenter.Visibility = show == BackgroundKind.Material ? Visibility.Visible : Visibility.Collapsed;
-                    BackButton.Visibility = show == BackgroundKind.Material ? Visibility.Visible : Visibility.Collapsed;
+                    BackButton.Visibility = show == BackgroundKind.Material && _showDetailHeader ? Visibility.Visible : Visibility.Collapsed;
                 };
 
                 var fadeOut = visual.Compositor.CreateScalarKeyFrameAnimation();
@@ -325,20 +330,20 @@ namespace Telegram.Controls
             BorderPart.Visibility = _backgroundType != BackgroundKind.None ? Visibility.Visible : Visibility.Collapsed;
             MaterialPart.Visibility = _backgroundType == BackgroundKind.Material ? Visibility.Visible : Visibility.Collapsed;
             DetailHeaderPresenter.Visibility = _backgroundType == BackgroundKind.Material ? Visibility.Visible : Visibility.Collapsed;
-            BackButton.Visibility = _backgroundType == BackgroundKind.Material ? Visibility.Visible : Visibility.Collapsed;
+            BackButton.Visibility = _backgroundType == BackgroundKind.Material && _showDetailHeader ? Visibility.Visible : Visibility.Collapsed;
 
             ElementCompositionPreview.SetIsTranslationEnabled(DetailAction, true);
             ElementCompositionPreview.SetIsTranslationEnabled(BackButton, true);
 
-            var detailVisual = ElementCompositionPreview.GetElementVisual(DetailPresenter);
+            var detailVisual = ElementComposition.GetElementVisual(DetailPresenter);
             detailVisual.Clip = Window.Current.Compositor.CreateInsetClip();
 
-            var detailVisual2 = ElementCompositionPreview.GetElementVisual(DetailHeaderPresenter2);
+            var detailVisual2 = ElementComposition.GetElementVisual(DetailHeaderPresenter2);
             detailVisual2.Clip = Window.Current.Compositor.CreateInsetClip();
 
-            var visual1 = ElementCompositionPreview.GetElementVisual(DetailHeaderBackground);
-            var visual2 = ElementCompositionPreview.GetElementVisual(DetailHeaderPresenter);
-            var visual4 = ElementCompositionPreview.GetElementVisual(BackButton);
+            var visual1 = ElementComposition.GetElementVisual(DetailHeaderBackground);
+            var visual2 = ElementComposition.GetElementVisual(DetailHeaderPresenter);
+            var visual4 = ElementComposition.GetElementVisual(BackButton);
 
             visual4.CenterPoint = new Vector3(24, 16, 0);
             visual2.CenterPoint = new Vector3(0, -20, 0);
@@ -357,6 +362,11 @@ namespace Telegram.Controls
                 {
                     DetailFrame.Navigated += OnNavigated;
                     DetailPresenter.Children.Add(DetailFrame);
+
+                    if (DetailFrame.Content is Page)
+                    {
+                        OnNavigated(DetailFrame, null);
+                    }
 
                     if (HasMaster)
                     {
@@ -409,7 +419,7 @@ namespace Telegram.Controls
 
         private void OnNavigated(object sender, NavigationEventArgs e)
         {
-            if (e.Content is HostedPage hosted)
+            if (DetailFrame.Content is HostedPage hosted)
             {
                 DetailFooter = hosted.Action;
 
@@ -424,9 +434,7 @@ namespace Telegram.Controls
                     else
                     {
                         _currentPage.Title = hosted.Title;
-
                         _backStack.ReplaceWith(BuildBackStack(hosted.NavigationMode == HostedNavigationMode.Root || (hosted.NavigationMode == HostedNavigationMode.RootWhenParameterless && e.Parameter == null)));
-                        _backStack.Add(_currentPage);
                     }
 
                     var scrollingHost = hosted.FindName("ScrollingHost");
@@ -440,6 +448,11 @@ namespace Telegram.Controls
                     }
 
                     ShowHideDetailHeader(true);
+
+                    //if (AutomationPeer.ListenerExists(AutomationEvents.LiveRegionChanged))
+                    //{
+                    //    VisualUtilities.QueueCallbackForCompositionRendering(() => DetailHeaderPresenter.Focus(FocusState.Keyboard));
+                    //}
                 }
                 else
                 {
@@ -464,15 +477,23 @@ namespace Telegram.Controls
             OnViewStateChanged();
         }
 
+        private bool _showDetailHeader = true;
+
         private void ShowHideDetailHeader(bool show)
         {
-            var detailVisual = ElementCompositionPreview.GetElementVisual(DetailPresenter);
+            var detailVisual = ElementComposition.GetElementVisual(DetailPresenter);
             detailVisual.Clip = Window.Current.Compositor.CreateInsetClip();
 
             if (detailVisual.Clip is InsetClip clip)
             {
                 clip.TopInset = show ? 2 : 0;
             }
+
+            _showDetailHeader = show;
+
+            BackButton.Visibility = show
+                ? Visibility.Visible
+                : Visibility.Collapsed;
 
             DetailHeaderBackground.Visibility = show
                 ? Visibility.Visible
@@ -498,10 +519,10 @@ namespace Telegram.Controls
                 return;
             }
 
-            var visual1 = ElementCompositionPreview.GetElementVisual(DetailHeaderBackground);
-            var visual2 = ElementCompositionPreview.GetElementVisual(DetailHeaderPresenter);
-            var visual3 = ElementCompositionPreview.GetElementVisual(DetailAction);
-            var visual4 = ElementCompositionPreview.GetElementVisual(BackButton);
+            var visual1 = ElementComposition.GetElementVisual(DetailHeaderBackground);
+            var visual2 = ElementComposition.GetElementVisual(DetailHeaderPresenter);
+            var visual3 = ElementComposition.GetElementVisual(DetailAction);
+            var visual4 = ElementComposition.GetElementVisual(BackButton);
 
             // min out: 0.583
             // max out: 1
@@ -554,9 +575,7 @@ namespace Telegram.Controls
                 else
                 {
                     _currentPage.Title = hosted.Title;
-
                     _backStack.ReplaceWith(BuildBackStack(hosted.NavigationMode == HostedNavigationMode.Root || (hosted.NavigationMode == HostedNavigationMode.RootWhenParameterless && NavigationService.CurrentPageParam == null)));
-                    _backStack.Add(_currentPage);
                 }
             }
         }
@@ -566,7 +585,6 @@ namespace Telegram.Controls
             if (DetailFrame.Content is HostedPage hosted)
             {
                 _backStack.ReplaceWith(BuildBackStack(hosted.NavigationMode == HostedNavigationMode.Root || (hosted.NavigationMode == HostedNavigationMode.RootWhenParameterless && NavigationService.CurrentPageParam == null)));
-                _backStack.Add(_currentPage);
             }
             else if (_backStack.Count > 0)
             {
@@ -578,6 +596,7 @@ namespace Telegram.Controls
         {
             if (root)
             {
+                yield return _currentPage;
                 yield break;
             }
 
@@ -592,6 +611,8 @@ namespace Telegram.Controls
                     yield return item;
                 }
             }
+
+            yield return _currentPage;
         }
 
         private void OnViewStateChanged(object sender, EventArgs e)
@@ -625,22 +646,7 @@ namespace Telegram.Controls
 
         private bool _isMinimal = false;
         private bool IsMinimal =>
-            AdaptivePanel?.CurrentState == MasterDetailState.Minimal
-            && IsOnlyChild;
-
-        private bool _isOnlyChild = true;
-        public bool IsOnlyChild
-        {
-            get => _isOnlyChild;
-            set
-            {
-                if (_isOnlyChild != value)
-                {
-                    _isOnlyChild = value;
-                    OnViewStateChanged();
-                }
-            }
-        }
+            AdaptivePanel?.CurrentState == MasterDetailState.Minimal;
 
         #region Public methods
 

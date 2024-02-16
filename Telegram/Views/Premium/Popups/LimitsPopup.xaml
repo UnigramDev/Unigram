@@ -5,14 +5,14 @@
                        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
                        xmlns:controls="using:Telegram.Controls"
                        mc:Ignorable="d"
-                       Title="TITLE">
+                       Title="TITLE"
+                       Padding="0,24,0,0">
 
-    <Grid Margin="0,0,0,-24">
+    <Grid>
         <ListView x:Name="ScrollingHost"
                   ContainerContentChanging="OnContainerContentChanging"
                   SelectionMode="None"
                   IsItemClickEnabled="False"
-                  Margin="-24,0"
                   Padding="0,0,0,72">
             <ListView.ItemTemplate>
                 <DataTemplate>
@@ -74,7 +74,7 @@
         <Grid x:Name="PurchasePanel"
               VerticalAlignment="Bottom"
               HorizontalAlignment="Stretch"
-              Margin="0,12,0,24"
+              Margin="24,12,24,24"
               Grid.Row="1">
             <Rectangle x:Name="PurchaseShadow"
                        Loaded="PurchaseShadow_Loaded"
@@ -87,7 +87,7 @@
             </Rectangle>
             <Border Background="{StaticResource PremiumLinearGradientBrush}"
                     CornerRadius="4"
-                    Height="36" />
+                    Height="32" />
             <controls:BadgeButton x:Name="PurchaseCommand"
                                   Click="Purchase_Click"
                                   Style="{StaticResource StartButtonStyle}"
@@ -97,14 +97,14 @@
                                   Padding="16,3,16,5"
                                   CornerRadius="4"
                                   Margin="0"
-                                  Height="36" />
+                                  Height="32" />
         </Grid>
 
         <controls:GlyphButton Click="{x:Bind Close}"
                               HorizontalAlignment="Right"
                               VerticalAlignment="Top"
                               Glyph="&#xE711;"
-                              Margin="0,-64,-24,0"
+                              Margin="0,-64,0,0"
                               CornerRadius="20" />
     </Grid>
 </controls:ContentPopup>

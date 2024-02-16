@@ -1,12 +1,11 @@
 //
-// Copyright Fela Ameghino 2015-2023
+// Copyright Fela Ameghino 2015-2024
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
 using System;
 using System.Collections.Generic;
-using System.Collections.Immutable;
 using System.Linq;
 using Telegram.Collections;
 using Telegram.Common;
@@ -36,6 +35,7 @@ namespace Telegram.ViewModels
                 .Subscribe<UpdateChatDefaultDisableNotification>(Handle)
                 .Subscribe<UpdateChatMessageSender>(Handle)
                 .Subscribe<UpdateChatActionBar>(Handle)
+                .Subscribe<UpdateChatIsTranslatable>(Handle)
                 .Subscribe<UpdateChatHasScheduledMessages>(Handle)
                 .Subscribe<UpdateChatVideoChat>(Handle)
                 .Subscribe<UpdateChatPendingJoinRequests>(Handle)
@@ -52,6 +52,7 @@ namespace Telegram.ViewModels
                 .Subscribe<UpdateMessageIsPinned>(Handle)
                 .Subscribe<UpdateMessageSendFailed>(Handle)
                 .Subscribe<UpdateMessageSendSucceeded>(Handle)
+                .Subscribe<UpdateMessageTranslatedText>(Handle)
                 .Subscribe<UpdateAnimatedEmojiMessageClicked>(Handle)
                 .Subscribe<UpdateUser>(Handle)
                 .Subscribe<UpdateUserFullInfo>(Handle)
@@ -63,11 +64,45 @@ namespace Telegram.ViewModels
                 .Subscribe<UpdateUserStatus>(Handle)
                 .Subscribe<UpdateChatTitle>(Handle)
                 .Subscribe<UpdateChatPhoto>(Handle)
+                .Subscribe<UpdateChatEmojiStatus>(Handle)
                 .Subscribe<UpdateChatTheme>(Handle)
                 .Subscribe<UpdateChatBackground>(Handle)
                 .Subscribe<UpdateChatNotificationSettings>(Handle)
                 .Subscribe<UpdateChatOnlineMemberCount>(Handle)
-                .Subscribe<UpdateGroupCall>(Handle);
+                .Subscribe<UpdateChatVideoChat>(Handle)
+                .Subscribe<UpdateGroupCall>(Handle)
+                .Subscribe<UpdateSpeechRecognitionTrial>(Handle)
+                .Subscribe<UpdateSavedMessagesTags>(Handle);
+        }
+
+        public void Handle(UpdateSpeechRecognitionTrial update)
+        {
+            if (_needsUpdateSpeechRecognitionTrial)
+            {
+                _needsUpdateSpeechRecognitionTrial = false;
+                BeginOnUIThread(() => ShowSpeechRecognitionTrial(update.LeftCount > 0 ? 1 : 2));
+            }
+        }
+
+        public void Handle(UpdateSavedMessagesTags update)
+        {
+            if (_chat?.Id == ClientService.Options.MyId)
+            {
+                //if (update.SavedMessagesTopic.AreTheSame(_savedMessagesTopic))
+                //{
+                //    BeginOnUIThread(() => SavedMessagesTags = update.Tags);
+                //}
+                //else
+                {
+                    ClientService.Send(new GetSavedMessagesTags(SavedMessagesTopicId), result =>
+                    {
+                        if (result is SavedMessagesTags tags)
+                        {
+                            BeginOnUIThread(() => SavedMessagesTags = tags);
+                        }
+                    });
+                }
+            }
         }
 
         public void Handle(UpdateChatAction update)
@@ -188,7 +223,6 @@ namespace Telegram.ViewModels
             {
                 BeginOnUIThread(() =>
                 {
-                    _stickers?.UpdateSupergroupFullInfo(chat, ClientService.GetSupergroup(update.SupergroupId), update.SupergroupFullInfo);
                     Delegate?.UpdateSupergroupFullInfo(chat, ClientService.GetSupergroup(update.SupergroupId), update.SupergroupFullInfo);
                 });
             }
@@ -198,7 +232,7 @@ namespace Telegram.ViewModels
         {
             if (_chat?.Id == update.ChatId)
             {
-                //BeginOnUIThread(() => Delegate?.UpdateGroupCall(_chat, update.GroupCall));
+                BeginOnUIThread(() => Delegate?.UpdateChatVideoChat(_chat, update.VideoChat));
             }
         }
 
@@ -242,6 +276,14 @@ namespace Telegram.ViewModels
             }
         }
 
+        public void Handle(UpdateChatEmojiStatus update)
+        {
+            if (update.ChatId == _chat?.Id)
+            {
+                BeginOnUIThread(() => Delegate?.UpdateChatEmojiStatus(_chat));
+            }
+        }
+
         public void Handle(UpdateChatTheme update)
         {
             if (update.ChatId == _chat?.Id)
@@ -254,7 +296,7 @@ namespace Telegram.ViewModels
         {
             if (update.ChatId == _chat?.Id)
             {
-                BeginOnUIThread(() => Delegate?.UpdateChatTheme(_chat));
+                BeginOnUIThread(() => Delegate?.UpdateChatBackground(_chat));
             }
         }
 
@@ -335,9 +377,17 @@ namespace Telegram.ViewModels
 
         public void Handle(UpdateChatActionBar update)
         {
-            if (update.ChatId == _chat?.Id)
+            if (update.ChatId == _chat?.Id && _type == DialogType.History)
             {
                 BeginOnUIThread(() => Delegate?.UpdateChatActionBar(_chat));
+            }
+        }
+
+        public void Handle(UpdateChatIsTranslatable update)
+        {
+            if (update.ChatId == _chat?.Id)
+            {
+                BeginOnUIThread(() => Delegate?.UpdateChatIsTranslatable(_chat, _languageDetected));
             }
         }
 
@@ -471,6 +521,14 @@ namespace Telegram.ViewModels
 
                 return message.SchedulingState == null && message.MessageThreadId == ThreadId;
             }
+            else if (_type == DialogType.SavedMessagesTopic)
+            {
+                return message.SchedulingState == null && message.SavedMessagesTopicId == SavedMessagesTopicId;
+            }
+            else if (_type == DialogType.Pinned)
+            {
+                return message.SchedulingState == null && message.IsPinned;
+            }
 
             return message.SchedulingState == null && _type == DialogType.History;
         }
@@ -479,9 +537,13 @@ namespace Telegram.ViewModels
         {
             if (update.Message.ChatId == _chat?.Id && CheckSchedulingState(update.Message))
             {
+                var message = CreateMessage(update.Message);
+                message.GeneratedContentUnread = true;
+                message.IsInitial = false;
+
                 BeginOnUIThread(() =>
                 {
-                    InsertMessage(update.Message);
+                    InsertMessage(message);
 
                     if (!update.Message.IsOutgoing && Settings.Notifications.InAppSounds)
                     {
@@ -498,12 +560,14 @@ namespace Telegram.ViewModels
         {
             if (update.ChatId == _chat?.Id && !update.FromCache)
             {
-                var table = update.MessageIds.ToImmutableHashSet();
+                var table = update.MessageIds.ToHashSet();
 
                 BeginOnUIThread(async () =>
                 {
                     using (await _loadMoreLock.WaitAsync())
                     {
+                        List<MessageViewModel> toBeDeleted = null;
+
                         for (int i = 0; i < Items.Count; i++)
                         {
                             var message = Items[i];
@@ -529,8 +593,9 @@ namespace Telegram.ViewModels
                                             invalidated = false;
 
                                             _groupedMessages.TryRemove(message.MediaAlbumId, out _);
-                                            Items.RemoveAt(i);
-                                            i--;
+
+                                            toBeDeleted ??= new();
+                                            toBeDeleted.Add(message);
                                         }
 
                                         found = true;
@@ -551,8 +616,8 @@ namespace Telegram.ViewModels
 
                             if (table.Contains(message.Id))
                             {
-                                Items.RemoveAt(i);
-                                i--;
+                                toBeDeleted ??= new();
+                                toBeDeleted.Add(message);
                             }
                             else if (message.ReplyTo is MessageReplyToMessage replyToMessage && table.Contains(replyToMessage.MessageId))
                             {
@@ -564,9 +629,24 @@ namespace Telegram.ViewModels
 
                             if (i >= 0 && i == Items.Count - 1 && Items[i].Content is MessageHeaderUnread)
                             {
-                                Items.RemoveAt(i);
-                                i--;
+                                toBeDeleted ??= new();
+                                toBeDeleted.Add(message);
                             }
+                        }
+
+                        if (toBeDeleted != null)
+                        {
+                            //Delegate?.UpdateDeleteMessages(_chat, toBeDeleted);
+
+                            foreach (var item in toBeDeleted)
+                            {
+                                Items.Remove(item);
+                            }
+                        }
+
+                        if (Items.Count > 0 && Items[^1].Content is MessageHeaderUnread)
+                        {
+                            Items.RemoveAt(Items.Count - 1);
                         }
                     }
 
@@ -594,6 +674,11 @@ namespace Telegram.ViewModels
                     {
                         message.Reset();
                         message.Content = update.NewContent;
+
+                        if (IsTranslating)
+                        {
+                            _translateService.Translate(message, Settings.Translate.To);
+                        }
 
                         ProcessEmoji(message);
 
@@ -732,17 +817,23 @@ namespace Telegram.ViewModels
                 {
                     if (update.IsPinned)
                     {
-                        // TODO
+                        ClientService.Send(new GetMessage(update.ChatId, update.MessageId), response =>
+                        {
+                            if (response is Message message)
+                            {
+                                Handle(new UpdateNewMessage(message));
+                            }
+                        });
                     }
                     else
                     {
-                        Handle(new UpdateDeleteMessages(update.ChatId, new[] { update.MessageId }, true, true));
+                        Handle(new UpdateDeleteMessages(update.ChatId, new[] { update.MessageId }, true, false));
                     }
                 }
                 else
                 {
                     _hasLoadedLastPinnedMessage = false;
-                    BeginOnUIThread(() => LoadPinnedMessagesSliceAsync(update.MessageId, VerticalAlignment.Center));
+                    BeginOnUIThread(() => LoadPinnedMessagesSliceAsync(update.MessageId));
 
                     Handle(update.MessageId, message =>
                     {
@@ -781,12 +872,25 @@ namespace Telegram.ViewModels
                 {
                     bubble.UpdateMessage(message);
                     Delegate?.ViewVisibleMessages();
-                });
+                }, update.Message.Id);
 
                 if (Settings.Notifications.InAppSounds)
                 {
                     _notificationsService.PlaySound();
                 }
+            }
+        }
+
+        public void Handle(UpdateMessageTranslatedText update)
+        {
+            if (update.ChatId == _chat?.Id)
+            {
+                Handle(update.MessageId, message =>
+                {
+                    message.TranslatedText = update.TranslatedText;
+                    return true;
+                },
+                (bubble, message) => bubble.UpdateMessageText(message));
             }
         }
 
@@ -796,7 +900,7 @@ namespace Telegram.ViewModels
             {
                 Handle(update.MessageId, null, (bubble, message) =>
                 {
-                    if (bubble.MediaTemplateRoot is AnimatedStickerContent content && message.Content is MessageText text)
+                    if (bubble.MediaTemplateRoot is StickerContent content && message.Content is MessageText text)
                     {
                         ChatActionManager.SetTyping(new ChatActionWatchingAnimations(text.Text.Text));
                         content.PlayInteraction(message, update.Sticker);
@@ -805,7 +909,7 @@ namespace Telegram.ViewModels
             }
         }
 
-        private void Handle(long messageId, Func<MessageViewModel, bool> update, Action<MessageBubble, MessageViewModel> action = null)
+        private void Handle(long messageId, Func<MessageViewModel, bool> update, Action<MessageBubble, MessageViewModel> action = null, long? newMessageId = null)
         {
             BeginOnUIThread(() =>
             {
@@ -833,12 +937,23 @@ namespace Telegram.ViewModels
                             }
                         }
                     }
-                    else if (update == null || update(message))
+                    else
                     {
-                        // UpdateMessageSendSucceeded changes the message id
-                        if (action != null)
+                        // if this is coming from UpdateMessageSendSucceded,
+                        // but we already have a message with the new ID there was a race condition:
+                        // in this case we just delete the temporary message and that's it.
+                        if (newMessageId.HasValue && newMessageId != messageId && Items.TryGetValue(newMessageId.Value, out MessageViewModel duplicate))
                         {
-                            Delegate?.UpdateBubbleWithMessageId(messageId, bubble => action(bubble, message));
+                            Items.Remove(duplicate);
+                        }
+
+                        if (update == null || update(message))
+                        {
+                            // UpdateMessageSendSucceeded changes the message id
+                            if (action != null)
+                            {
+                                Delegate?.UpdateBubbleWithMessageId(messageId, bubble => action(bubble, message));
+                            }
                         }
                     }
 
@@ -899,30 +1014,22 @@ namespace Telegram.ViewModels
             });
         }
 
-        private async void InsertMessage(Message message, long? oldMessageId = null)
+        private async void InsertMessage(MessageViewModel message)
         {
             using (await _loadMoreLock.WaitAsync())
             {
                 if (IsFirstSliceLoaded == true || Type == DialogType.ScheduledMessages)
                 {
-                    var messageCommon = CreateMessage(message);
-                    messageCommon.GeneratedContentUnread = true;
-                    messageCommon.IsInitial = false;
+                    if (IsTranslating)
+                    {
+                        _translateService.Translate(message, Settings.Translate.To);
+                    }
 
-                    var result = new List<MessageViewModel> { messageCommon };
+                    var result = new List<MessageViewModel> { message };
                     ProcessMessages(_chat, result);
 
                     if (result.Count > 0)
                     {
-                        if (oldMessageId != null)
-                        {
-                            var oldMessage = Items.FirstOrDefault(x => x.Id == oldMessageId);
-                            if (oldMessage != null)
-                            {
-                                Items.Remove(oldMessage);
-                            }
-                        }
-
                         InsertMessageInOrder(Items, result[0]);
                     }
                 }

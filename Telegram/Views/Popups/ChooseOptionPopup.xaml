@@ -11,7 +11,8 @@
                        PrimaryButtonText="Button1"
                        SecondaryButtonText="Button2"
                        PrimaryButtonClick="ContentDialog_PrimaryButtonClick"
-                       SecondaryButtonClick="ContentDialog_SecondaryButtonClick">
+                       SecondaryButtonClick="ContentDialog_SecondaryButtonClick"
+                       Padding="0,12,0,24">
 
     <ContentDialog.Resources>
         <Style x:Key="RectangleStyle"
@@ -23,7 +24,7 @@
         </Style>
     </ContentDialog.Resources>
 
-    <Grid Margin="-24,-12,-24,0">
+    <Grid>
         <controls:HeaderedControl x:Name="LayoutRoot" />
     </Grid>
 </controls:ContentPopup>

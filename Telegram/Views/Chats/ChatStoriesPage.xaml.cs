@@ -70,9 +70,7 @@ namespace Telegram.Views.Chats
 
         private void OnContextRequested(UIElement sender, ContextRequestedEventArgs args)
         {
-            var element = sender as FrameworkElement;
             var story = ScrollingHost.ItemFromContainer(sender) as StoryViewModel;
-
             if (story == null)
             {
                 return;
@@ -97,7 +95,7 @@ namespace Telegram.Views.Chats
                 flyout.CreateFlyoutItem(ViewModel.SelectStory, story, Strings.Select, Icons.CheckmarkCircle);
             }
 
-            args.ShowAt(flyout, element);
+            flyout.ShowAt(sender, args);
         }
 
         private void OnContainerContentChanging(ListViewBase sender, ContainerContentChangingEventArgs args)
@@ -106,17 +104,17 @@ namespace Telegram.Views.Chats
             {
                 return;
             }
-
-            var story = args.Item as StoryViewModel;
-            var content = args.ItemContainer.ContentTemplateRoot as StoryCell;
-
-            content.Update(story);
+            else if (args.ItemContainer.ContentTemplateRoot is StoryCell content && args.Item is StoryViewModel story)
+            {
+                content.Update(story);
+                args.Handled = true;
+            }
         }
 
         private void List_ItemClick(object sender, ItemClickEventArgs e)
         {
             var container = ScrollingHost.ContainerFromItem(e.ClickedItem) as SelectorItem;
-            var transform = container.TransformToVisual(Window.Current.Content);
+            var transform = container.TransformToVisual(null);
 
             var point = transform.TransformPoint(new Point());
             var origin = new Rect(point.X, point.Y, container.ActualWidth, container.ActualHeight);
@@ -129,7 +127,7 @@ namespace Telegram.Views.Chats
             var container = ScrollingHost.ContainerFromItem(activeStories.SelectedItem) as SelectorItem;
             if (container != null)
             {
-                var transform = container.TransformToVisual(Window.Current.Content);
+                var transform = container.TransformToVisual(null);
                 var point = transform.TransformPoint(new Point());
 
                 return new Rect(point.X, point.Y, container.ActualWidth, container.ActualHeight);
@@ -155,7 +153,7 @@ namespace Telegram.Views.Chats
             _manageCollapsed = !show;
             ManagePanel.Visibility = Visibility.Visible;
 
-            var manage = ElementCompositionPreview.GetElementVisual(ManagePanel);
+            var manage = ElementComposition.GetElementVisual(ManagePanel);
             manage.Opacity = show ? 0 : 1;
 
             var batch = manage.Compositor.CreateScopedBatch(CompositionBatchTypes.Animation);

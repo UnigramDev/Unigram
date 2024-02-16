@@ -82,6 +82,8 @@
         <controls:GlyphButton x:Name="BackButton"
                               Glyph="&#xE72B;"
                               Click="BackButton_Click"
+                              GotFocus="Transport_GotFocus"
+                              LostFocus="Transport_LostFocus"
                               AutomationProperties.Name="{CustomResource AccDescrGoBack}"
                               ToolTipService.ToolTip="{CustomResource AccDescrGoBack}"
                               HorizontalAlignment="Left"
@@ -90,7 +92,9 @@
                               Width="48"
                               Height="40" />
 
-        <local:GalleryBottomPanel x:Name="BottomPanel">
+        <local:GalleryBottomPanel x:Name="BottomPanel"
+                                  GotFocus="Transport_GotFocus"
+                                  LostFocus="Transport_LostFocus">
             <Border x:Name="Details"
                     Height="{ThemeResource TelegramToolBarHeight}"
                     Grid.Row="2">
@@ -119,47 +123,54 @@
             <StackPanel Orientation="Horizontal">
                 <controls:GlyphButton Click="{x:Bind ViewModel.OpenStickers}"
                                       Visibility="{x:Bind (Visibility)ViewModel.SelectedItem.HasStickers, Mode=OneWay}"
-                                      Height="{ThemeResource AppBarThemeCompactHeight}"
                                       Glyph="&#xF4AA;"
-                                      FontSize="{StaticResource GlyphMediumFontSize}" />
+                                      FontSize="{StaticResource GlyphMediumFontSize}"
+                                      TabIndex="1" />
 
                 <controls:GlyphButton x:Name="ZoomOut"
                                       Click="ZoomOut_Click"
-                                      Height="{ThemeResource AppBarThemeCompactHeight}"
                                       AutomationProperties.Name="{CustomResource MediaZoomOut}"
                                       ToolTipService.ToolTip="{CustomResource MediaZoomOut}"
-                                      Glyph="&#xE96A;" />
+                                      Glyph="&#xE96A;"
+                                      TabIndex="2" />
 
                 <controls:GlyphButton x:Name="ZoomIn"
                                       Click="ZoomIn_Click"
-                                      Height="{ThemeResource AppBarThemeCompactHeight}"
                                       AutomationProperties.Name="{CustomResource MediaZoomIn}"
                                       ToolTipService.ToolTip="{CustomResource MediaZoomIn}"
-                                      Glyph="&#xE969;" />
+                                      Glyph="&#xE969;"
+                                      TabIndex="3" />
+
+                <controls:GlyphButton x:Name="Rotate"
+                                      Click="Rotate_Click"
+                                      AutomationProperties.Name="{CustomResource AccDescrRotate}"
+                                      ToolTipService.ToolTip="{CustomResource AccDescrRotate}"
+                                      Glyph="&#xEA5B;"
+                                      TabIndex="4" />
 
                 <controls:MoreButton Click="Menu_ContextRequested"
-                                     HorizontalAlignment="Right" />
+                                     HorizontalAlignment="Right"
+                                     TabIndex="5" />
             </StackPanel>
 
             <StackPanel Padding="12"
                         MinWidth="320">
                 <local:GalleryTransportControls x:Name="Controls"
+                                                TabIndex="0"
                                                 FullScreenClick="FullScreen_Click"
                                                 CompactClick="Compact_Click"
                                                 MaxWidth="396"
                                                 Visibility="Collapsed" />
                 <Border Background="{ThemeResource SystemControlPageBackgroundAltMediumBrush}"
-                        Visibility="{x:Bind ViewModel.SelectedItem.Caption, Mode=OneWay, Converter={StaticResource NullToVisibilityConverter}}"
+                        Visibility="{x:Bind ConvertCaption(ViewModel.SelectedItem.Caption), Mode=OneWay}"
                         HorizontalAlignment="Center"
                         CornerRadius="4"
                         Padding="8"
                         Margin="0,8,0,0">
-                    <TextBlock x:Name="Caption"
-                               Text="{x:Bind ViewModel.SelectedItem.Caption, Mode=OneWay}"
-                               FontFamily="{ThemeResource EmojiThemeFontFamily}"
-                               Style="{StaticResource BodyTextBlockStyle}"
-                               TextTrimming="CharacterEllipsis"
-                               MaxLines="5" />
+                    <controls:FormattedTextBlock x:Name="Caption"
+                                                 FontFamily="{ThemeResource EmojiThemeFontFamily}"
+                                                 TextTrimming="CharacterEllipsis"
+                                                 MaxLines="5" />
                 </Border>
             </StackPanel>
         </local:GalleryBottomPanel>

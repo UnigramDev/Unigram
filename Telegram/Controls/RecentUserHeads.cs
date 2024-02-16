@@ -1,5 +1,5 @@
 //
-// Copyright Fela Ameghino 2015-2023
+// Copyright Fela Ameghino 2015-2024
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
@@ -135,7 +135,7 @@ namespace Telegram.Controls
             for (int i = 0; i < _items.Count; i++)
             {
                 var container = CreateContainer(_items[i]);
-                var visual = ElementCompositionPreview.GetElementVisual(container);
+                var visual = ElementComposition.GetElementVisual(container);
 
                 visual.Offset = new Vector3(i * (_itemSize + 4 - _itemOverlap), 0, 0);
 
@@ -178,7 +178,6 @@ namespace Telegram.Controls
             Canvas.SetZIndex(container, -index);
             _layoutRoot.Children.Insert(index, container);
 
-            Logger.Debug();
             InvalidateMeasure();
             AnimateAlignment();
 
@@ -226,7 +225,6 @@ namespace Telegram.Controls
                 _layoutRoot.Children.Insert(count, container);
             }
 
-            Logger.Debug();
             InvalidateMeasure();
             AnimateAlignment();
 
@@ -305,17 +303,12 @@ namespace Telegram.Controls
             var batch = Window.Current.Compositor.CreateScopedBatch(CompositionBatchTypes.Animation);
             batch.Completed += (s, args) =>
             {
-                lock (_toBeRemoved)
+                foreach (var element in _toBeRemoved)
                 {
-                    foreach (var element in _toBeRemoved)
-                    {
-                        _layoutRoot.Children.Remove(element);
-                    }
-
-                    _toBeRemoved.Clear();
+                    _layoutRoot.Children.Remove(element);
                 }
 
-                Logger.Debug();
+                _toBeRemoved.Clear();
                 InvalidateMeasure();
             };
 
@@ -326,7 +319,7 @@ namespace Telegram.Controls
         {
             Canvas.SetZIndex(container, -index);
 
-            var visual = ElementCompositionPreview.GetElementVisual(container);
+            var visual = ElementComposition.GetElementVisual(container);
             visual.Offset = new Vector3(index * (_itemSize + 4 - _itemOverlap), 0, 0);
             visual.CenterPoint = new Vector3((_itemSize + 4) / 2);
 
@@ -349,7 +342,7 @@ namespace Telegram.Controls
         {
             Canvas.SetZIndex(container, -index);
 
-            var child = ElementCompositionPreview.GetElementVisual(container);
+            var child = ElementComposition.GetElementVisual(container);
             child.CenterPoint = new Vector3((_itemSize + 4) / 2);
 
             var removingScale = Window.Current.Compositor.CreateVector3KeyFrameAnimation();
@@ -370,7 +363,7 @@ namespace Telegram.Controls
         {
             Canvas.SetZIndex(container, -newIndex);
 
-            var child = ElementCompositionPreview.GetElementVisual(container);
+            var child = ElementComposition.GetElementVisual(container);
             var offset = Window.Current.Compositor.CreateVector3KeyFrameAnimation();
 
             if (oldIndex >= 0)
@@ -400,7 +393,7 @@ namespace Telegram.Controls
                 offset.InsertKeyFrame(1, new Vector3(diff / 2, 0, 0));
                 //offset.Duration = TimeSpan.FromSeconds(1);
 
-                var visual = ElementCompositionPreview.GetElementVisual(_layoutRoot);
+                var visual = ElementComposition.GetElementVisual(_layoutRoot);
                 visual.StartAnimation("Translation", offset);
             }
             else if (HorizontalAlignment == HorizontalAlignment.Right)
@@ -418,7 +411,7 @@ namespace Telegram.Controls
                 offset.InsertKeyFrame(1, new Vector3());
                 //offset.Duration = TimeSpan.FromSeconds(10);
 
-                var visual = ElementCompositionPreview.GetElementVisual(_layoutRoot);
+                var visual = ElementComposition.GetElementVisual(_layoutRoot);
                 //visual.StartAnimation("Translation", offset);
             }
         }
@@ -427,8 +420,6 @@ namespace Telegram.Controls
 
         protected override Size MeasureOverride(Size availableSize)
         {
-            Logger.Debug();
-
             var count = Math.Min(_maxCount, _items.Count);
             var width = count * (float)(_itemSize + 4) - ((count - 1) * _itemOverlap);
 
@@ -438,8 +429,6 @@ namespace Telegram.Controls
 
         protected override Size ArrangeOverride(Size finalSize)
         {
-            Logger.Debug();
-
             return base.ArrangeOverride(finalSize);
         }
     }

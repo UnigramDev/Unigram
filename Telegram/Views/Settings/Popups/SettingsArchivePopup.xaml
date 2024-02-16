@@ -58,6 +58,7 @@
                            Padding="2,8,2,6" />
                 <controls:FauxCheckBox x:Name="NewChats"
                                        Click="NewChats_Click"
+                                       IsFaux="True"
                                        Content="{CustomResource NewChatsFromNonContactsCheck}"
                                        Style="{StaticResource DefaultCheckBoxStyle}" />
             </Grid>

@@ -1,5 +1,5 @@
 //
-// Copyright Fela Ameghino 2015-2023
+// Copyright Fela Ameghino 2015-2024
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
@@ -37,7 +37,7 @@ namespace Telegram.Common
             return false;
         }
 
-        public static bool ShowAt(this ContextRequestedEventArgs args, MenuFlyout flyout, FrameworkElement element)
+        public static bool ShowAt(this MenuFlyout flyout, UIElement element, ContextRequestedEventArgs args, FlyoutShowMode mode = FlyoutShowMode.Auto)
         {
             args.Handled = true;
 
@@ -50,7 +50,11 @@ namespace Telegram.Common
 
                 try
                 {
-                    flyout.ShowAt(element, point);
+                    flyout.ShowAt(element, new FlyoutShowOptions
+                    {
+                        Position = point,
+                        ShowMode = mode
+                    });
                     return true;
                 }
                 catch { }
@@ -59,7 +63,7 @@ namespace Telegram.Common
             {
                 try
                 {
-                    flyout.ShowAt(element);
+                    flyout.ShowAt(element as FrameworkElement);
                     return true;
                 }
                 catch { }

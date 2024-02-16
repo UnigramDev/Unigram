@@ -1,11 +1,12 @@
 //
-// Copyright Fela Ameghino 2015-2023
+// Copyright Fela Ameghino 2015-2024
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
 using Telegram.Common;
 using Telegram.Controls;
+using Telegram.Controls.Cells;
 using Telegram.Td.Api;
 using Windows.UI.Xaml.Controls;
 
@@ -17,8 +18,6 @@ namespace Telegram.Views.Profile
         {
             InitializeComponent();
         }
-
-        public override float TopPadding => 0;
 
         private void ListView_ItemClick(object sender, ItemClickEventArgs e)
         {
@@ -34,9 +33,8 @@ namespace Telegram.Views.Profile
             {
                 args.ItemContainer = new TableListViewItem();
                 args.ItemContainer.Style = ScrollingHost.ItemContainerStyle;
+                args.ItemContainer.ContentTemplate = ScrollingHost.ItemTemplate;
             }
-
-            args.ItemContainer.ContentTemplate = ScrollingHost.ItemTemplate;
 
             args.IsContainerPrepared = true;
         }
@@ -47,31 +45,10 @@ namespace Telegram.Views.Profile
             {
                 return;
             }
-
-            var content = args.ItemContainer.ContentTemplateRoot as Grid;
-            var chat = args.Item as Chat;
-
-            if (args.Phase == 0)
+            else if (args.ItemContainer.ContentTemplateRoot is ProfileCell content)
             {
-                var title = content.Children[1] as TextBlock;
-                title.Text = ViewModel.ClientService.GetTitle(chat);
+                content.UpdateChat(ViewModel.ClientService, args, OnContainerContentChanging);
             }
-            else if (args.Phase == 1)
-            {
-
-            }
-            else if (args.Phase == 2)
-            {
-                var photo = content.Children[0] as ProfilePicture;
-                photo.SetChat(ViewModel.ClientService, chat, 36);
-            }
-
-            if (args.Phase < 2)
-            {
-                args.RegisterUpdateCallback(OnContainerContentChanging);
-            }
-
-            args.Handled = true;
         }
     }
 }

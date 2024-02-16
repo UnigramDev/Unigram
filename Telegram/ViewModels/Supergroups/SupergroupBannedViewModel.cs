@@ -1,15 +1,15 @@
 //
-// Copyright Fela Ameghino 2015-2023
+// Copyright Fela Ameghino 2015-2024
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
 using System;
 using System.Threading.Tasks;
+using Telegram.Common;
 using Telegram.Services;
 using Telegram.Td.Api;
-using Telegram.Views;
-using Telegram.Views.Supergroups;
+using Telegram.Views.Supergroups.Popups;
 
 namespace Telegram.ViewModels.Supergroups
 {
@@ -28,21 +28,14 @@ namespace Telegram.ViewModels.Supergroups
                 return;
             }
 
-            NavigationService.Navigate(typeof(SupergroupAddRestrictedPage), chat.Id);
+            NavigationService.ShowPopupAsync(typeof(SupergroupChooseMemberPopup), new SupergroupChooseMemberArgs(chat.Id, SupergroupChooseMemberMode.Block));
         }
 
         #region Context menu
 
         public void OpenMember(ChatMember member)
         {
-            if (member?.MemberId is MessageSenderChat senderChat)
-            {
-                NavigationService.Navigate(typeof(ProfilePage), senderChat.ChatId);
-            }
-            else if (member?.MemberId is MessageSenderUser senderUser)
-            {
-                NavigationService.Navigate(typeof(ProfilePage), senderUser.UserId);
-            }
+            NavigationService.NavigateToSender(member.MemberId);
         }
 
         public async void AddMember(ChatMember member)
@@ -72,7 +65,7 @@ namespace Telegram.ViewModels.Supergroups
             Members.Remove(member);
 
             var response = await ClientService.SendAsync(new SetChatMemberStatus(chat.Id, member.MemberId, status));
-            if (response is Error)
+            if (response is Error && index < Members.Count)
             {
                 Members.Insert(index, member);
             }

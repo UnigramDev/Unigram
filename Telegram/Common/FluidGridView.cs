@@ -1,5 +1,5 @@
 //
-// Copyright Fela Ameghino 2015-2023
+// Copyright Fela Ameghino 2015-2024
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
@@ -16,8 +16,6 @@ namespace Telegram.Common
     {
         private static void OnSizeChanged(object sender, SizeChangedEventArgs e)
         {
-            Logger.Debug();
-
             var triggers = GetTriggers(sender as ItemsControl);
 
             var reference = GetReference(triggers?.Owner);
@@ -69,9 +67,11 @@ namespace Telegram.Common
             //    ? owner.Padding.Right
             //    : owner.Padding.Bottom;
 
+            var padding = GetPadding(owner);
+
             var parentLength = reference.Orientation == Orientation.Horizontal
-                ? owner.ItemsPanelRoot.ActualWidth
-                : owner.ItemsPanelRoot.ActualHeight;
+                ? owner.ItemsPanelRoot.ActualWidth - padding.Left - padding.Right
+                : owner.ItemsPanelRoot.ActualHeight - padding.Top - padding.Bottom;
 
             FluidGridViewTriggerBase trigger = null;
 
@@ -182,6 +182,22 @@ namespace Telegram.Common
 
         #endregion
 
+        #region Padding
+
+        public static Thickness GetPadding(DependencyObject obj)
+        {
+            return (Thickness)obj.GetValue(PaddingProperty);
+        }
+
+        public static void SetPadding(DependencyObject obj, Thickness value)
+        {
+            obj.SetValue(PaddingProperty, value);
+        }
+
+        public static readonly DependencyProperty PaddingProperty =
+            DependencyProperty.RegisterAttached("Padding", typeof(Thickness), typeof(FluidGridView), new PropertyMetadata(default(Thickness)));
+
+        #endregion
 
 
         #region Reference

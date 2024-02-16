@@ -1,5 +1,5 @@
 //
-// Copyright Fela Ameghino 2015-2023
+// Copyright Fela Ameghino 2015-2024
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
@@ -17,7 +17,6 @@ namespace Telegram.Views.Profile
         public ProfileVoiceTabPage()
         {
             InitializeComponent();
-            ScrollingHost.RegisterPropertyChangedCallback(ListViewBase.SelectionModeProperty, OnSelectionModeChanged);
         }
 
         private void OnContainerContentChanging(ListViewBase sender, ContainerContentChangingEventArgs args)
@@ -26,22 +25,12 @@ namespace Telegram.Views.Profile
             {
                 return;
             }
-
-            args.ItemContainer.Tag = args.Item;
-
-            var message = args.Item as MessageWithOwner;
-            if (message == null)
+            else if (args.ItemContainer.ContentTemplateRoot is SharedVoiceCell voiceCell && args.Item is MessageWithOwner message)
             {
-                return;
-            }
+                AutomationProperties.SetName(args.ItemContainer, Automation.GetSummaryWithName(message, true));
 
-            AutomationProperties.SetName(args.ItemContainer,
-                Automation.GetSummary(message, true));
-
-            if (args.ItemContainer.ContentTemplateRoot is SharedVoiceCell voiceCell)
-            {
                 voiceCell.UpdateMessage(ViewModel.PlaybackService, message);
-                voiceCell.Tag = message;
+                args.Handled = true;
             }
         }
     }

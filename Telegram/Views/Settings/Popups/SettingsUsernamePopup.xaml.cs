@@ -1,5 +1,5 @@
 //
-// Copyright Fela Ameghino 2015-2023
+// Copyright Fela Ameghino 2015-2024
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
@@ -10,6 +10,7 @@ using Telegram.Controls;
 using Telegram.Converters;
 using Telegram.Navigation;
 using Telegram.ViewModels.Settings;
+using Telegram.Views.Host;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -123,9 +124,16 @@ namespace Telegram.Views.Settings.Popups
                 ViewModel.ToggleUsername(username);
             };
 
-            if (Window.Current.Content is FrameworkElement element)
+            if (Window.Current.Content is IToastHost host)
             {
-                element.Resources["TeachingTip"] = popup;
+                void handler(object sender, object e)
+                {
+                    host.Disconnect(popup);
+                    popup.Closed -= handler;
+                }
+
+                host.Connect(popup);
+                popup.Closed += handler;
             }
 
             popup.IsOpen = true;

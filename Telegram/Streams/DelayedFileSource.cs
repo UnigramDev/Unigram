@@ -1,5 +1,5 @@
 ﻿//
-// Copyright Fela Ameghino 2015-2023
+// Copyright Fela Ameghino 2015-2024
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
@@ -7,6 +7,7 @@
 using Telegram.Common;
 using Telegram.Services;
 using Telegram.Td.Api;
+using Telegram.ViewModels.Drawers;
 
 namespace Telegram.Streams
 {
@@ -22,6 +23,29 @@ namespace Telegram.Streams
         {
             _clientService = clientService;
             _file = file;
+
+            if (file != null)
+            {
+                DownloadFile(null, null);
+            }
+        }
+
+        public DelayedFileSource(IClientService clientService, Sticker sticker)
+            : this(clientService, sticker.StickerValue)
+        {
+            Width = sticker.Width;
+            Height = sticker.Height;
+            Outline = sticker.Outline;
+            NeedsRepainting = sticker.FullType is StickerFullTypeCustomEmoji { NeedsRepainting: true };
+        }
+
+        public DelayedFileSource(IClientService clientService, StickerViewModel sticker)
+            : this(clientService, sticker.StickerValue)
+        {
+            Width = sticker.Width;
+            Height = sticker.Height;
+            Outline = sticker.Outline;
+            NeedsRepainting = sticker.FullType is StickerFullTypeCustomEmoji { NeedsRepainting: true };
         }
 
         public override string FilePath => _file?.Local.Path;
@@ -34,13 +58,16 @@ namespace Telegram.Streams
         {
             if (_file.Local.IsDownloadingCompleted)
             {
-                handler(sender, _file);
+                handler?.Invoke(sender, _file);
             }
             else
             {
-                UpdateManager.Subscribe(sender, _clientService, _file, ref _fileToken, handler, true);
+                if (handler != null)
+                {
+                    UpdateManager.Subscribe(sender, _clientService, _file, ref _fileToken, handler, true);
+                }
 
-                if (_file.Local.CanBeDownloaded && !_file.Local.IsDownloadingActive)
+                if (_file.Local.CanBeDownloaded /*&& !_file.Local.IsDownloadingActive*/)
                 {
                     _clientService.DownloadFile(_file.Id, 16);
                 }
