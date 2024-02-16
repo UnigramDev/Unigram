@@ -4,6 +4,8 @@
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+using System;
+using System.Threading.Tasks;
 using Telegram.Controls.Cells;
 using Telegram.Controls.Media;
 using Telegram.Controls.Messages;
@@ -12,6 +14,7 @@ using Telegram.Td.Api;
 using Telegram.ViewModels.Drawers;
 using Telegram.ViewModels.Settings;
 using Telegram.ViewModels.Supergroups;
+using Telegram.Views.Supergroups.Popups;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
@@ -30,13 +33,41 @@ namespace Telegram.Views.Supergroups
 
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
-            NameView.Initialize(ViewModel.ClientService, new MessageSenderChat(ViewModel.Chat.Id));
             ProfileView.Initialize(ViewModel.ClientService, new MessageSenderChat(ViewModel.Chat.Id));
+
+            if (ViewModel.Chat.Type is ChatTypeSupergroup { IsChannel: true })
+            {
+                FindName(nameof(NameView));
+                NameView.Initialize(ViewModel.ClientService, new MessageSenderChat(ViewModel.Chat.Id));
+
+                WallpaperRoot.Footer = Strings.ChannelWallpaper2Info;
+                WallpaperLabel.Text = Strings.ChannelWallpaper;
+                EmojiStatusRoot.Footer = Strings.ChannelEmojiStatusInfo;
+                EmojiStatusLabel.Text = Strings.ChannelEmojiStatus;
+            }
+            else
+            {
+                FindName(nameof(WallpaperPreview));
+                FindName(nameof(EmojiPackRoot));
+
+                if (ViewModel.ClientService.TryGetUser(ViewModel.ClientService.Options.MyId, out User user))
+                {
+                    Message1.Mockup(ViewModel.ClientService, Strings.FontSizePreviewLine1, user, Strings.FontSizePreviewReply, false, DateTime.Now.AddSeconds(-25));
+                    Message2.Mockup(Strings.FontSizePreviewLine2, true, DateTime.Now);
+
+                    BackgroundControl.Update(ViewModel.ClientService, null);
+                }
+
+                WallpaperRoot.Footer = Strings.GroupWallpaper2Info;
+                WallpaperLabel.Text = Strings.GroupWallpaper;
+                EmojiStatusRoot.Footer = Strings.GroupEmojiStatusInfo;
+                EmojiStatusLabel.Text = Strings.GroupEmojiStatus;
+            }
         }
 
         private void EmojiStatus_Click(object sender, RoutedEventArgs e)
         {
-            var flyout = EmojiMenuFlyout.ShowAt(ViewModel.ClientService, EmojiDrawerMode.ChatEmojiStatus, Animated, EmojiFlyoutAlignment.TopRight);
+            var flyout = EmojiMenuFlyout.ShowAt(ViewModel.ClientService, EmojiDrawerMode.ChatEmojiStatus, AnimatedStatus, EmojiFlyoutAlignment.TopRight);
             flyout.EmojiSelected += Flyout_EmojiSelected;
         }
 
@@ -46,13 +77,45 @@ namespace Telegram.Views.Supergroups
 
             if (e.CustomEmojiId != 0)
             {
-                Animated.Source = new CustomEmojiFileSource(ViewModel.ClientService, e.CustomEmojiId);
+                AnimatedStatus.Source = new CustomEmojiFileSource(ViewModel.ClientService, e.CustomEmojiId);
                 EmojiStatus.Badge = string.Empty;
             }
             else
             {
-                Animated.Source = null;
+                AnimatedStatus.Source = null;
                 EmojiStatus.Badge = Strings.UserReplyIconOff;
+            }
+        }
+
+        private void OnSelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (List.SelectedItem is ChatThemeViewModel chatTheme)
+            {
+                BackgroundControl?.UpdateChat(ViewModel.ClientService, null, chatTheme);
+            }
+        }
+
+        private async void EmojiPack_Click(object sender, RoutedEventArgs e)
+        {
+            var tsc = new TaskCompletionSource<object>();
+            var args = new SupergroupEditStickerSetArgs(ViewModel.Chat.Id, new StickerTypeCustomEmoji());
+
+            var confirm = await ViewModel.NavigationService.ShowPopupAsync(typeof(SupergroupEditStickerSetPopup), args, tsc);
+            var set = await tsc.Task as StickerSetInfo;
+
+            if (confirm == ContentDialogResult.Primary)
+            {
+                ViewModel.SelectedCustomEmojiStickerSet = set?.Id ?? 0;
+
+                var thumbnail = set?.GetThumbnail();
+                if (thumbnail != null)
+                {
+                    AnimatedPack.Source = new DelayedFileSource(ViewModel.ClientService, thumbnail);
+                }
+                else
+                {
+                    AnimatedPack.Source = null;
+                }
             }
         }
 
@@ -92,7 +155,7 @@ namespace Telegram.Views.Supergroups
             if (value > 0)
             {
                 element.Visibility = Visibility.Visible;
-                return Icons.LockClosedFilled14 + Icons.Spacing + string.Format(Strings.BoostLevel, value);
+                return Icons.LockCLosedFilled12 + Icons.Spacing + string.Format(Strings.BoostLevel, value);
             }
             else
             {
@@ -102,6 +165,5 @@ namespace Telegram.Views.Supergroups
         }
 
         #endregion
-
     }
 }

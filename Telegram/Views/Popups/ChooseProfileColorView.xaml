@@ -253,7 +253,9 @@
                                            Visibility="Collapsed"
                                            Background="{ThemeResource PremiumLinearGradientBrush}"
                                            FontFamily="{StaticResource EmojiThemeFontFamilyWithSymbols}"
+                                           FontWeight="SemiBold"
                                            VerticalAlignment="Bottom"
+                                           CornerRadius="4"
                                            Margin="4,0,0,0"
                                            Grid.Column="1" />
                 </Grid>

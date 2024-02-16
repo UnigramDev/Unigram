@@ -69,9 +69,9 @@ namespace Telegram.Views.Popups
                 Identity.SetStatus(clientService, user);
 
                 BadgeText.Text = Strings.UserProfileIcon;
-                ProfileColor.Footer = Strings.UserProfileHint;
                 Reset.Content = Strings.UserProfileColorReset;
                 PrimaryButtonText = Strings.UserColorApplyIcon;
+                ProfileColor.Footer = Strings.UserProfileHint;
             }
             else if (clientService.TryGetChat(sender, out Chat chat))
             {
@@ -83,8 +83,10 @@ namespace Telegram.Views.Popups
 
                 Title.Text = chat.Title;
 
+                var channel = false;
                 if (clientService.TryGetSupergroup(chat, out Supergroup supergroup))
                 {
+                    channel = supergroup.IsChannel;
                     if (clientService.TryGetSupergroupFull(chat, out SupergroupFullInfo supergroupFull))
                     {
                         Subtitle.Text = Locale.Declension(supergroup.IsChannel ? Strings.R.Subscribers : Strings.R.Members, supergroupFull.MemberCount);
@@ -98,9 +100,11 @@ namespace Telegram.Views.Popups
                 Identity.SetStatus(clientService, chat);
 
                 BadgeText.Text = Strings.ChannelProfileLogo;
-                ProfileColor.Footer = Strings.ChannelProfileInfo;
                 Reset.Content = Strings.UserProfileColorReset;
                 PrimaryButtonText = Strings.UserColorApplyIcon;
+                ProfileColor.Footer = channel
+                    ? Strings.ChannelProfileInfo
+                    : Strings.GroupProfileInfo;
             }
 
             var accent = colors.FirstOrDefault(x => x.Id == accentColorId);
@@ -410,7 +414,7 @@ namespace Telegram.Views.Popups
             {
                 if (value > 0)
                 {
-                    BadgeInfo.Text = Icons.LockClosedFilled14 + Icons.Spacing + string.Format(Strings.BoostLevel, value);
+                    BadgeInfo.Text = Icons.LockCLosedFilled12 + Icons.Spacing + string.Format(Strings.BoostLevel, value);
                     BadgeInfo.Visibility = Visibility.Visible;
                 }
                 else

@@ -32,13 +32,107 @@
                       VerticalScrollBarVisibility="Auto"
                       VerticalScrollMode="Auto">
             <controls:SettingsPanel>
+                <popups:ChooseProfileColorView x:Name="ProfileView"
+                                               SelectedAccentColor="{x:Bind ViewModel.SelectedProfileAccentColor, Mode=TwoWay}"
+                                               SelectedCustomEmojiId="{x:Bind ViewModel.SelectedProfileCustomEmojiId, Mode=TwoWay}"
+                                               RequiredLevel="{x:Bind ViewModel.MinProfileBackgroundCustomEmojiBoostLevel, Mode=OneWay}" />
+
+
+                <controls:HeaderedControl x:Name="EmojiStatusRoot"
+                                          Footer="{CustomResource ChannelEmojiStatusInfo}">
+                    <Grid>
+                        <controls:BadgeButton x:Name="EmojiStatus"
+                                              Click="EmojiStatus_Click">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition />
+                                    <ColumnDefinition />
+                                </Grid.ColumnDefinitions>
+                                <TextBlock x:Name="EmojiStatusLabel"
+                                           Text="{CustomResource ChannelEmojiStatus}" />
+                                <controls:BadgeControl x:Name="EmojiStatusInfo"
+                                                       Text="{x:Bind ConvertRequiredLevel(ViewModel.MinEmojiStatusBoostLevel, EmojiStatusInfo), Mode=OneWay}"
+                                                       Background="{ThemeResource PremiumLinearGradientBrush}"
+                                                       FontFamily="{StaticResource EmojiThemeFontFamilyWithSymbols}"
+                                                       FontWeight="SemiBold"
+                                                       VerticalAlignment="Bottom"
+                                                       CornerRadius="4"
+                                                       Margin="4,0,0,0"
+                                                       Grid.Column="1" />
+                            </Grid>
+                        </controls:BadgeButton>
+                        <controls:AnimatedImage x:Name="AnimatedStatus"
+                                                FrameSize="20,20"
+                                                DecodeFrameType="Logical"
+                                                Width="20"
+                                                Height="20"
+                                                HorizontalAlignment="Right"
+                                                Margin="0,0,16,0"
+                                                IsHitTestVisible="False" />
+                    </Grid>
+                </controls:HeaderedControl>
+
+                <controls:HeaderedControl x:Name="EmojiPackRoot"
+                                          x:Load="False"
+                                          Footer="{CustomResource GroupEmojiPackInfo}">
+                    <Grid>
+                        <controls:BadgeButton x:Name="EmojiPack"
+                                              Click="EmojiPack_Click">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition />
+                                    <ColumnDefinition />
+                                </Grid.ColumnDefinitions>
+                                <TextBlock x:Name="EmojiPackLabel"
+                                           Text="{CustomResource GroupEmojiPack}" />
+                                <controls:BadgeControl x:Name="EmojiPackInfo"
+                                                       Text="{x:Bind ConvertRequiredLevel(ViewModel.MinCustomEmojiStickerSetBoostLevel, EmojiPackInfo), Mode=OneWay}"
+                                                       Background="{ThemeResource PremiumLinearGradientBrush}"
+                                                       FontFamily="{StaticResource EmojiThemeFontFamilyWithSymbols}"
+                                                       FontWeight="SemiBold"
+                                                       VerticalAlignment="Bottom"
+                                                       CornerRadius="4"
+                                                       Margin="4,0,0,0"
+                                                       Grid.Column="1" />
+                            </Grid>
+                        </controls:BadgeButton>
+                        <controls:AnimatedImage x:Name="AnimatedPack"
+                                                FrameSize="20,20"
+                                                DecodeFrameType="Logical"
+                                                Width="20"
+                                                Height="20"
+                                                HorizontalAlignment="Right"
+                                                Margin="0,0,16,0"
+                                                IsHitTestVisible="False" />
+                    </Grid>
+                </controls:HeaderedControl>
+
                 <popups:ChooseNameColorView x:Name="NameView"
+                                            x:Load="False"
                                             ChatTheme="{x:Bind ViewModel.SelectedChatTheme, Mode=OneWay}"
                                             SelectedAccentColor="{x:Bind ViewModel.SelectedAccentColor, Mode=TwoWay}"
                                             SelectedCustomEmojiId="{x:Bind ViewModel.SelectedCustomEmojiId, Mode=TwoWay}"
                                             RequiredLevel="{x:Bind ViewModel.MinBackgroundCustomEmojiBoostLevel, Mode=OneWay}" />
 
-                <controls:HeaderedControl>
+                <controls:HeaderedControl x:Name="WallpaperRoot"
+                                          Footer="{CustomResource ChannelWallpaper2Info}">
+                    <Grid x:Name="WallpaperPreview"
+                          x:Load="False"
+                          CornerRadius="4,4,0,0">
+                        <chats:ChatBackgroundControl x:Name="BackgroundControl"
+                                                     CornerRadius="4,4,0,0" />
+                        <StackPanel Padding="0,10">
+                            <messages:MessageBubble x:Name="Message1"
+                                                    HorizontalAlignment="Left" />
+                            <messages:MessageBubble x:Name="Message2"
+                                                    HorizontalAlignment="Right">
+                                <FrameworkElement.Resources>
+                                    <common:ThemeOutgoing />
+                                </FrameworkElement.Resources>
+                            </messages:MessageBubble>
+                        </StackPanel>
+                    </Grid>
+
                     <GridView x:Name="List"
                               Background="{ThemeResource SettingsItemBackground}"
                               BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
@@ -46,6 +140,7 @@
                               SelectedItem="{x:Bind ViewModel.SelectedChatTheme, Mode=TwoWay}"
                               SelectionMode="Single"
                               SingleSelectionFollowsFocus="False"
+                              SelectionChanged="OnSelectionChanged"
                               ChoosingItemContainer="OnChoosingItemContainer"
                               ContainerContentChanging="OnContainerContentChanging"
                               ScrollViewer.HorizontalScrollBarVisibility="Auto"
@@ -84,51 +179,19 @@
                                 <ColumnDefinition />
                                 <ColumnDefinition />
                             </Grid.ColumnDefinitions>
-                            <TextBlock Text="{CustomResource ChatWallpaper}" />
+                            <TextBlock x:Name="WallpaperLabel"
+                                       Text="{CustomResource ChannelWallpaper}" />
                             <controls:BadgeControl x:Name="CustomBackgroundInfo"
                                                    Text="{x:Bind ConvertRequiredLevel(ViewModel.MinCustomBackgroundBoostLevel, CustomBackgroundInfo), Mode=OneWay}"
                                                    Background="{ThemeResource PremiumLinearGradientBrush}"
                                                    FontFamily="{StaticResource EmojiThemeFontFamilyWithSymbols}"
+                                                   FontWeight="SemiBold"
                                                    VerticalAlignment="Bottom"
+                                                   CornerRadius="4"
                                                    Margin="4,0,0,0"
                                                    Grid.Column="1" />
                         </Grid>
                     </controls:BadgeButton>
-                </controls:HeaderedControl>
-
-                <popups:ChooseProfileColorView x:Name="ProfileView"
-                                               SelectedAccentColor="{x:Bind ViewModel.SelectedProfileAccentColor, Mode=TwoWay}"
-                                               SelectedCustomEmojiId="{x:Bind ViewModel.SelectedProfileCustomEmojiId, Mode=TwoWay}"
-                                               RequiredLevel="{x:Bind ViewModel.MinProfileBackgroundCustomEmojiBoostLevel, Mode=OneWay}" />
-
-                <controls:HeaderedControl Footer="{CustomResource ChannelEmojiStatusInfo}">
-                    <Grid>
-                        <controls:BadgeButton x:Name="EmojiStatus"
-                                              Click="EmojiStatus_Click">
-                            <Grid>
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition />
-                                    <ColumnDefinition />
-                                </Grid.ColumnDefinitions>
-                                <TextBlock Text="{CustomResource ChannelEmojiStatus}" />
-                                <controls:BadgeControl x:Name="EmojiStatusInfo"
-                                                       Text="{x:Bind ConvertRequiredLevel(ViewModel.MinEmojiStatusBoostLevel, EmojiStatusInfo), Mode=OneWay}"
-                                                       Background="{ThemeResource PremiumLinearGradientBrush}"
-                                                       FontFamily="{StaticResource EmojiThemeFontFamilyWithSymbols}"
-                                                       VerticalAlignment="Bottom"
-                                                       Margin="4,0,0,0"
-                                                       Grid.Column="1" />
-                            </Grid>
-                        </controls:BadgeButton>
-                        <controls:AnimatedImage x:Name="Animated"
-                                                FrameSize="20,20"
-                                                DecodeFrameType="Logical"
-                                                Width="20"
-                                                Height="20"
-                                                HorizontalAlignment="Right"
-                                                Margin="0,0,16,0"
-                                                IsHitTestVisible="False" />
-                    </Grid>
                 </controls:HeaderedControl>
             </controls:SettingsPanel>
         </ScrollViewer>

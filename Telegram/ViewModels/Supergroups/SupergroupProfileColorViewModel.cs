@@ -29,6 +29,7 @@ namespace Telegram.ViewModels.Supergroups
         ProfileAccentColor,
         ProfileBackgroundCustomEmoji,
         EmojiStatus,
+        CustomEmojiStickerSet,
         ChatTheme,
         CustomBackground,
     }
@@ -90,6 +91,7 @@ namespace Telegram.ViewModels.Supergroups
                 MinBackgroundCustomEmojiBoostLevel = MinLevelOrZero(features.MinBackgroundCustomEmojiBoostLevel);
                 MinProfileBackgroundCustomEmojiBoostLevel = MinLevelOrZero(features.MinProfileBackgroundCustomEmojiBoostLevel);
                 MinEmojiStatusBoostLevel = MinLevelOrZero(features.MinEmojiStatusBoostLevel);
+                MinCustomEmojiStickerSetBoostLevel = MinLevelOrZero(features.MinCustomEmojiStickerSetBoostLevel);
             }
         }
 
@@ -181,6 +183,13 @@ namespace Telegram.ViewModels.Supergroups
             set => Set(ref _minEmojiStatusBoostLevel, value);
         }
 
+        private int _minCustomEmojiStickerSetBoostLevel;
+        public int MinCustomEmojiStickerSetBoostLevel
+        {
+            get => _minCustomEmojiStickerSetBoostLevel;
+            set => Set(ref _minCustomEmojiStickerSetBoostLevel, value);
+        }
+
         protected Chat _chat;
         public Chat Chat
         {
@@ -268,6 +277,19 @@ namespace Telegram.ViewModels.Supergroups
             }
         }
 
+        private long _selectedCustomEmojiStickerSet;
+        public long SelectedCustomEmojiStickerSet
+        {
+            get => _selectedCustomEmojiStickerSet;
+            set
+            {
+                if (Set(ref _selectedCustomEmojiStickerSet, value))
+                {
+                    RaisePropertyChanged(nameof(RequiredLevel));
+                }
+            }
+        }
+
         public int RequiredLevel => UpdateRequiredLevel(out _);
 
         private int UpdateRequiredLevel(out ChatBoostFeature feature)
@@ -304,6 +326,12 @@ namespace Telegram.ViewModels.Supergroups
             {
                 feature = ChatBoostFeature.EmojiStatus;
                 level = MinEmojiStatusBoostLevel;
+            }
+
+            if (SelectedCustomEmojiStickerSet != 0 && MinCustomEmojiStickerSetBoostLevel > level)
+            {
+                feature = ChatBoostFeature.CustomEmojiStickerSet;
+                level = MinCustomEmojiStickerSetBoostLevel;
             }
 
             if (SelectedChatTheme?.DarkSettings != null && MinChatThemeBackgroundBoostLevel > level)
@@ -346,7 +374,7 @@ namespace Telegram.ViewModels.Supergroups
             var required = UpdateRequiredLevel(out var feature);
             if (required > status.Level)
             {
-                await ShowPopupAsync(new ChatBoostFeaturesPopup(chat.Type is ChatTypeSupergroup { IsChannel: true }, status, _features, feature, required));
+                await ShowPopupAsync(new ChatBoostFeaturesPopup(ClientService, NavigationService, chat, status, null, _features, feature, required));
                 return;
             }
 
@@ -371,6 +399,15 @@ namespace Telegram.ViewModels.Supergroups
             {
                 changed = true;
                 ClientService.Send(new SetChatEmojiStatus(chat.Id, SelectedEmojiStatus));
+            }
+
+            if (ClientService.TryGetSupergroupFull(chat, out SupergroupFullInfo fullInfo))
+            {
+                if (SelectedCustomEmojiStickerSet != fullInfo.CustomEmojiStickerSetId)
+                {
+                    changed = true;
+                    ClientService.Send(new SetSupergroupCustomEmojiStickerSet(chat.Id, SelectedCustomEmojiStickerSet));
+                }
             }
 
             var prevChatTheme = chat.Background?.Background.Type is BackgroundTypeChatTheme typeChatTheme

@@ -5,6 +5,7 @@
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
 using System.Linq;
+using System.Threading.Tasks;
 using Telegram.Common;
 using Telegram.Controls;
 using Telegram.Streams;
@@ -13,26 +14,23 @@ using Telegram.ViewModels.Supergroups;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 
-namespace Telegram.Views.Supergroups
+namespace Telegram.Views.Supergroups.Popups
 {
-    public sealed partial class SupergroupEditStickerSetPage : HostedPage
+    public sealed partial class SupergroupEditStickerSetPopup : ContentPopup
     {
         public SupergroupEditStickerSetViewModel ViewModel => DataContext as SupergroupEditStickerSetViewModel;
 
-        private readonly AnimatedListHandler _handler;
+        private readonly TaskCompletionSource<object> _tsc;
 
-        public SupergroupEditStickerSetPage()
+        public SupergroupEditStickerSetPopup(TaskCompletionSource<object> tsc)
         {
             InitializeComponent();
             Title = Strings.GroupStickers;
 
-            _handler = new AnimatedListHandler(ScrollingHost, AnimatedListType.Stickers);
+            _tsc = tsc;
 
-            var debouncer = new EventDebouncer<TextChangedEventArgs>(Constants.TypingTimeout, handler => ShortName.TextChanged += new TextChangedEventHandler(handler));
-            debouncer.Invoked += (s, args) =>
-            {
-                ViewModel.CheckAvailability(ShortName.Value);
-            };
+            PrimaryButtonText = Strings.OK;
+            SecondaryButtonText = Strings.Cancel;
         }
 
         #region Recycle
@@ -47,20 +45,30 @@ namespace Telegram.Views.Supergroups
             var content = args.ItemContainer.ContentTemplateRoot as Grid;
             var stickerSet = args.Item as StickerSetInfo;
 
-            var title = content.Children[1] as TextBlock;
+            var title = content.Children[2] as TextBlock;
             title.Text = stickerSet.Title;
 
-            var subtitle = content.Children[2] as TextBlock;
+            var subtitle = content.Children[3] as TextBlock;
             subtitle.Text = Locale.Declension(Strings.R.Stickers, stickerSet.Size);
+
+            var animated = content.Children[1] as AnimatedImage;
+            var cross = content.Children[0];
 
             var cover = stickerSet.GetThumbnail();
             if (cover == null)
             {
-                return;
+                animated.Source = null;
+                cross.Visibility = Visibility.Visible;
+                title.Margin = new Thickness(0, 8, 0, -8);
+                subtitle.Text = string.Empty;
             }
-
-            var animated = content.Children[0] as AnimatedImage;
-            animated.Source = new DelayedFileSource(ViewModel.ClientService, cover);
+            else
+            {
+                animated.Source = new DelayedFileSource(ViewModel.ClientService, cover);
+                cross.Visibility = Visibility.Collapsed;
+                title.Margin = new Thickness();
+                subtitle.Text = Locale.Declension(Strings.R.Stickers, stickerSet.Size);
+            }
 
             args.Handled = true;
         }
@@ -112,5 +120,14 @@ namespace Telegram.Views.Supergroups
 
         #endregion
 
+        private void OnSelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            IsPrimaryButtonEnabled = ScrollingHost.SelectedItem != null;
+        }
+
+        private void OnClosing(ContentDialog sender, ContentDialogClosingEventArgs args)
+        {
+            _tsc.TrySetResult(ScrollingHost.SelectedItem);
+        }
     }
 }

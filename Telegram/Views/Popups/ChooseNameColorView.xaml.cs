@@ -210,11 +210,12 @@ namespace Telegram.Views.Popups
 
         public int RequiredLevel
         {
+            get => 0;
             set
             {
                 if (value > 0)
                 {
-                    BadgeInfo.Text = Icons.LockClosedFilled14 + Icons.Spacing + string.Format(Strings.BoostLevel, value);
+                    BadgeInfo.Text = Icons.LockCLosedFilled12 + Icons.Spacing + string.Format(Strings.BoostLevel, value);
                     BadgeInfo.Visibility = Visibility.Visible;
                 }
                 else

@@ -330,11 +330,20 @@ namespace Telegram.ViewModels.Supergroups
             }
         }
 
-        public void EditStickerSet()
+        public async void EditStickerSet()
         {
-            if (_chat is Chat chat)
+            if (_chat is Chat chat && ClientService.TryGetSupergroup(chat, out Supergroup supergroup))
             {
-                NavigationService.Navigate(typeof(SupergroupEditStickerSetPage), chat.Id);
+                var tsc = new TaskCompletionSource<object>();
+                var args = new SupergroupEditStickerSetArgs(chat.Id, new StickerTypeCustomEmoji());
+
+                var confirm = await ShowPopupAsync(typeof(SupergroupEditStickerSetPopup), args, tsc);
+                var set = await tsc.Task as StickerSetInfo;
+
+                if (confirm == ContentDialogResult.Primary && set != null)
+                {
+                    ClientService.Send(new SetSupergroupStickerSet(supergroup.Id, set.Id));
+                }
             }
         }
 
