@@ -1181,7 +1181,9 @@
             <chats:ChatBottomButton x:Name="ButtonAction"
                                     LosingFocus="ButtonAction_LosingFocus"
                                     Click="{x:Bind ViewModel.Action}"
-                                    Height="{StaticResource TelegramToolBarHeight}" />
+                                    Height="{StaticResource TelegramToolBarHeight}">
+                <TextBlock />
+            </chats:ChatBottomButton>
         </Grid>
 
         <Grid x:Name="ManagePanel"

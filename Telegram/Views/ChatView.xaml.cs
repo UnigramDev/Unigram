@@ -4754,6 +4754,11 @@ namespace Telegram.Views
 
         public void UpdateUser(Chat chat, User user, bool secret)
         {
+
+        }
+
+        public void UpdateUserFullInfo(Chat chat, User user, UserFullInfo fullInfo, bool secret, bool accessToken)
+        {
             btnSendMessage.SlowModeDelay = 0;
             btnSendMessage.SlowModeDelayExpiresIn = 0;
 
@@ -4771,10 +4776,12 @@ namespace Telegram.Views
             }
 
             UpdateUserStatus(chat, user);
-        }
 
-        public void UpdateUserFullInfo(Chat chat, User user, UserFullInfo fullInfo, bool secret, bool accessToken)
-        {
+            if (fullInfo == null)
+            {
+                return;
+            }
+
             if (ViewModel.Search?.SavedMessagesTag != null)
             {
                 ShowAction(ViewModel.Search.FilterByTag ? Strings.SavedTagShowOtherMessages : Strings.SavedTagHideOtherMessages, true);
@@ -4937,6 +4944,11 @@ namespace Telegram.Views
 
         public void UpdateBasicGroup(Chat chat, BasicGroup group)
         {
+
+        }
+
+        public void UpdateBasicGroupFullInfo(Chat chat, BasicGroup group, BasicGroupFullInfo fullInfo)
+        {
             if (group.UpgradedToSupergroupId != 0)
             {
                 ShowAction(Strings.OpenSupergroup, true);
@@ -4979,10 +4991,12 @@ namespace Telegram.Views
 
                 ViewModel.LastSeen = Locale.Declension(Strings.R.Members, group.MemberCount);
             }
-        }
 
-        public void UpdateBasicGroupFullInfo(Chat chat, BasicGroup group, BasicGroupFullInfo fullInfo)
-        {
+            if (fullInfo == null)
+            {
+                return;
+            }
+
             ViewModel.LastSeen = Locale.Declension(Strings.R.Members, fullInfo.Members.Count);
 
             btnVoiceMessage.IsRestricted = false;
@@ -5006,6 +5020,11 @@ namespace Telegram.Views
 
         public void UpdateSupergroup(Chat chat, Supergroup group)
         {
+
+        }
+
+        public void UpdateSupergroupFullInfo(Chat chat, Supergroup group, SupergroupFullInfo fullInfo)
+        {
             if (ViewModel.Type == DialogType.EventLog)
             {
                 ShowAction(Strings.Settings, true);
@@ -5025,7 +5044,7 @@ namespace Telegram.Views
             }
             else if (group.IsChannel || group.IsBroadcastGroup)
             {
-                if ((group.Status is ChatMemberStatusLeft && (group.HasActiveUsername() || ViewModel.ClientService.IsChatAccessible(chat))) || (group.Status is ChatMemberStatusCreator creator && !creator.IsMember))
+                if ((group.Status is ChatMemberStatusLeft && (group.HasActiveUsername() || ViewModel.ClientService.IsChatAccessible(chat))) || group.Status is ChatMemberStatusCreator { IsMember: false })
                 {
                     ShowAction(Strings.ChannelJoin, true);
                 }
@@ -5044,7 +5063,7 @@ namespace Telegram.Views
             }
             else
             {
-                if ((group.Status is ChatMemberStatusLeft && (group.IsPublic() || ViewModel.ClientService.IsChatAccessible(chat))) || (group.Status is ChatMemberStatusCreator creator && !creator.IsMember))
+                if ((group.Status is ChatMemberStatusLeft && (group.IsPublic() || ViewModel.ClientService.IsChatAccessible(chat))) || group.Status is ChatMemberStatusCreator { IsMember: false })
                 {
                     if (group.JoinByRequest)
                     {
@@ -5111,9 +5130,9 @@ namespace Telegram.Views
                 {
                     ShowAction(Strings.DeleteChat, true);
                 }
-                else if (!chat.Permissions.CanSendBasicMessages)
+                else if (!chat.Permissions.CanSendBasicMessages && (fullInfo == null || fullInfo.MyBoostCount < fullInfo.UnrestrictBoostCount))
                 {
-                    ShowAction(Strings.GlobalSendMessageRestricted, false);
+                    ShowAction(Strings.GlobalSendMessageRestricted, fullInfo != null && fullInfo.UnrestrictBoostCount > 0);
                 }
                 else if (ViewModel.Type != DialogType.Thread && group.IsForum)
                 {
@@ -5153,10 +5172,12 @@ namespace Telegram.Views
 
             UpdateComposerHeader(chat, ViewModel.ComposerHeader);
             UpdateChatPermissions(chat);
-        }
 
-        public void UpdateSupergroupFullInfo(Chat chat, Supergroup group, SupergroupFullInfo fullInfo)
-        {
+            if (fullInfo == null)
+            {
+                return;
+            }
+
             if (ViewModel.Type == DialogType.History)
             {
                 ViewModel.LastSeen = Locale.Declension(group.IsChannel ? Strings.R.Subscribers : Strings.R.Members, fullInfo.MemberCount);

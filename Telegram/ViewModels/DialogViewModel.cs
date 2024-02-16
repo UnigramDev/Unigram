@@ -2130,12 +2130,7 @@ namespace Telegram.ViewModels
                 var item = ClientService.GetUser(privata.UserId);
                 var cache = ClientService.GetUserFull(privata.UserId);
 
-                Delegate?.UpdateUser(chat, item, false);
-
-                if (cache != null)
-                {
-                    Delegate?.UpdateUserFullInfo(chat, item, cache, false, _accessToken != null);
-                }
+                Delegate?.UpdateUserFullInfo(chat, item, cache, false, _accessToken != null);
 
                 ClientService.Send(new GetUserFullInfo(privata.UserId));
 
@@ -2173,13 +2168,8 @@ namespace Telegram.ViewModels
                 var cache = ClientService.GetUserFull(secretType.UserId);
 
                 Delegate?.UpdateSecretChat(chat, secret);
-                Delegate?.UpdateUser(chat, item, true);
+                Delegate?.UpdateUserFullInfo(chat, item, cache, true, false);
                 Delegate?.UpdateUserRestrictsNewChats(chat, null, null);
-
-                if (cache != null)
-                {
-                    Delegate?.UpdateUserFullInfo(chat, item, cache, true, false);
-                }
 
                 ClientService.Send(new GetUserFullInfo(secret.UserId));
             }
@@ -2188,13 +2178,8 @@ namespace Telegram.ViewModels
                 var item = ClientService.GetBasicGroup(basic.BasicGroupId);
                 var cache = ClientService.GetBasicGroupFull(basic.BasicGroupId);
 
-                Delegate?.UpdateBasicGroup(chat, item);
+                Delegate?.UpdateBasicGroupFullInfo(chat, item, cache);
                 Delegate?.UpdateUserRestrictsNewChats(chat, null, null);
-
-                if (cache != null)
-                {
-                    Delegate?.UpdateBasicGroupFullInfo(chat, item, cache);
-                }
 
                 ClientService.Send(new GetBasicGroupFullInfo(basic.BasicGroupId));
                 _messageDelegate.UpdateAdministrators(chat.Id);
@@ -2204,13 +2189,8 @@ namespace Telegram.ViewModels
                 var item = ClientService.GetSupergroup(super.SupergroupId);
                 var cache = ClientService.GetSupergroupFull(super.SupergroupId);
 
-                Delegate?.UpdateSupergroup(chat, item);
+                Delegate?.UpdateSupergroupFullInfo(chat, item, cache);
                 Delegate?.UpdateUserRestrictsNewChats(chat, null, null);
-
-                if (cache != null)
-                {
-                    Delegate?.UpdateSupergroupFullInfo(chat, item, cache);
-                }
 
                 ClientService.Send(new GetSupergroupFullInfo(super.SupergroupId));
                 _messageDelegate.UpdateAdministrators(chat.Id);
@@ -2279,7 +2259,7 @@ namespace Telegram.ViewModels
             }
             else if (_thread is MessageThreadInfo thread)
             {
-                lastReadMessageId = thread.ReplyInfo.LastReadInboxMessageId;
+                lastReadMessageId = thread.ReplyInfo?.LastReadInboxMessageId ?? long.MaxValue;
                 secondaryId = ThreadId; //; thread.MessageThreadId;
             }
             else
@@ -4438,6 +4418,11 @@ namespace Telegram.ViewModels
 
             if (message1.SenderId is MessageSenderChat chat1 && message2.SenderId is MessageSenderChat chat2)
             {
+                if (message1.IsOutgoing || message2.IsOutgoing)
+                {
+                    return false;
+                }
+
                 return chat1.ChatId == chat2.ChatId
                     && message1.AuthorSignature == message2.AuthorSignature;
             }
