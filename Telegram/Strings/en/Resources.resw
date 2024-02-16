@@ -1906,6 +1906,12 @@ from **{0}**.</value>
   <data name="BoostsLevel2" xml:space="preserve">
     <value>Level</value>
   </data>
+  <data name="BoostsMaxLevelReached" xml:space="preserve">
+    <value>Maximum Level Reached</value>
+  </data>
+  <data name="BoostsMaxLevelReachedDescription" xml:space="preserve">
+    <value>**{0}** reached **{1}**.</value>
+  </data>
   <data name="BoostsToLevel" xml:space="preserve">
     <value>Boosts to level up</value>
   </data>

@@ -4,7 +4,6 @@
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
-using System.Collections.Generic;
 using System.Linq;
 using Telegram.Common;
 using Telegram.Controls;
@@ -58,55 +57,59 @@ namespace Telegram.Views.Chats.Popups
                 ? Strings.BoostingEnableStoriesForChannel
                 : Strings.HelpUpgradeChannel;
 
-            Title = feature switch
+            if (status.Level == _clientService.Options.ChatBoostLevelMax)
             {
-                ChatBoostFeature.AccentColor => Strings.BoostingEnableColor,
-                ChatBoostFeature.ProfileAccentColor => Strings.BoostingEnableProfileColor,
-                ChatBoostFeature.EmojiStatus => Strings.BoostingEnableEmojiStatus,
-                ChatBoostFeature.ChatTheme => Strings.BoostingEnableWallpaper,
-                ChatBoostFeature.CustomBackground => Strings.BoostingEnableWallpaper,
-                ChatBoostFeature.BackgroundCustomEmoji => Strings.BoostingEnableLinkIcon,
-                ChatBoostFeature.ProfileBackgroundCustomEmoji => Strings.BoostingEnableProfileIcon,
-                _ => _channel ? Strings.HelpUpgradeChannel : Strings.HelpUpgradeGroup
-            };
-
-            var description = feature switch
-            {
-                ChatBoostFeature.AccentColor => _channel ? Strings.ChannelNeedBoostsForColorDescription : Strings.GroupNeedBoostsForColorDescription,
-                ChatBoostFeature.ProfileAccentColor => _channel ? Strings.ChannelNeedBoostsForProfileColorDescription : Strings.GroupNeedBoostsForProfileColorDescription,
-                ChatBoostFeature.EmojiStatus => _channel ? Strings.ChannelNeedBoostsForEmojiStatusDescription : Strings.GroupNeedBoostsForEmojiStatusDescription,
-                ChatBoostFeature.ChatTheme => _channel ? Strings.ChannelNeedBoostsForWallpaperDescription : Strings.GroupNeedBoostsForWallpaperDescription,
-                ChatBoostFeature.CustomBackground => _channel ? Strings.ChannelNeedBoostsForCustomWallpaperDescription : Strings.GroupNeedBoostsForCustomWallpaperDescription,
-                ChatBoostFeature.BackgroundCustomEmoji => _channel ? Strings.ChannelNeedBoostsForReplyIconDescription : Strings.GroupNeedBoostsForReplyIconDescription,
-                ChatBoostFeature.ProfileBackgroundCustomEmoji => _channel ? Strings.ChannelNeedBoostsForProfileIconDescription : Strings.GroupNeedBoostsForProfileIconDescription,
-                _ => _channel ? Strings.ChannelNeedBoostsDescriptionForNewFeatures : Strings.GroupNeedBoostsDescriptionForNewFeatures
-            };
-
-            if (feature == ChatBoostFeature.None)
-            {
-                description = string.Format(description, chat.Title, status.NextLevelBoostCount - status.BoostCount);
-
-                if (supergroup.Status is ChatMemberStatusCreator or ChatMemberStatusAdministrator && requiredLevel != 0)
-                {
-                    description = string.Format("{0} {1}", description, Strings.BoostingPremiumUserCanBoostGroupWithLink);
-                }
+                Title = Strings.BoostsMaxLevelReached;
+                TextBlockHelper.SetMarkdown(Description, string.Format(Strings.BoostsMaxLevelReachedDescription, chat.Title, string.Format(Strings.BoostsLevel, status.Level)));
             }
             else
             {
-                description = string.Format(description, requiredLevel);
-            }
+                Title = feature switch
+                {
+                    ChatBoostFeature.AccentColor => Strings.BoostingEnableColor,
+                    ChatBoostFeature.ProfileAccentColor => Strings.BoostingEnableProfileColor,
+                    ChatBoostFeature.EmojiStatus => Strings.BoostingEnableEmojiStatus,
+                    ChatBoostFeature.ChatTheme => Strings.BoostingEnableWallpaper,
+                    ChatBoostFeature.CustomBackground => Strings.BoostingEnableWallpaper,
+                    ChatBoostFeature.BackgroundCustomEmoji => Strings.BoostingEnableLinkIcon,
+                    ChatBoostFeature.ProfileBackgroundCustomEmoji => Strings.BoostingEnableProfileIcon,
+                    _ => _channel ? Strings.HelpUpgradeChannel : Strings.HelpUpgradeGroup
+                };
 
-            TextBlockHelper.SetMarkdown(Description, description);
+                var description = feature switch
+                {
+                    ChatBoostFeature.AccentColor => _channel ? Strings.ChannelNeedBoostsForColorDescription : Strings.GroupNeedBoostsForColorDescription,
+                    ChatBoostFeature.ProfileAccentColor => _channel ? Strings.ChannelNeedBoostsForProfileColorDescription : Strings.GroupNeedBoostsForProfileColorDescription,
+                    ChatBoostFeature.EmojiStatus => _channel ? Strings.ChannelNeedBoostsForEmojiStatusDescription : Strings.GroupNeedBoostsForEmojiStatusDescription,
+                    ChatBoostFeature.ChatTheme => _channel ? Strings.ChannelNeedBoostsForWallpaperDescription : Strings.GroupNeedBoostsForWallpaperDescription,
+                    ChatBoostFeature.CustomBackground => _channel ? Strings.ChannelNeedBoostsForCustomWallpaperDescription : Strings.GroupNeedBoostsForCustomWallpaperDescription,
+                    ChatBoostFeature.BackgroundCustomEmoji => _channel ? Strings.ChannelNeedBoostsForReplyIconDescription : Strings.GroupNeedBoostsForReplyIconDescription,
+                    ChatBoostFeature.ProfileBackgroundCustomEmoji => _channel ? Strings.ChannelNeedBoostsForProfileIconDescription : Strings.GroupNeedBoostsForProfileIconDescription,
+                    _ => _channel ? Strings.ChannelNeedBoostsDescriptionForNewFeatures : Strings.GroupNeedBoostsDescriptionForNewFeatures
+                };
+
+                if (feature == ChatBoostFeature.None)
+                {
+                    description = string.Format(description, chat.Title, status.NextLevelBoostCount - status.BoostCount);
+
+                    if (supergroup.Status is ChatMemberStatusCreator or ChatMemberStatusAdministrator && requiredLevel != 0)
+                    {
+                        description = string.Format("{0} {1}", description, Strings.BoostingPremiumUserCanBoostGroupWithLink);
+                    }
+                }
+                else
+                {
+                    description = string.Format(description, requiredLevel);
+                }
+
+                TextBlockHelper.SetMarkdown(Description, description);
+            }
 
             var justReached = status.AppliedSlotIds.Count > 0
                 ? status.CurrentLevelBoostCount - status.BoostCount == 0
                 : status.NextLevelBoostCount - status.BoostCount == 1;
 
-            Progress.Minimum = status.CurrentLevelBoostCount;
-            Progress.Maximum = status.NextLevelBoostCount;
-            Progress.Value = status.BoostCount;
-
-            if (justReached && status.AppliedSlotIds.Count > 0)
+            if (status.Level == _clientService.Options.ChatBoostLevelMax || (justReached && status.AppliedSlotIds.Count > 0))
             {
                 Progress.Minimum = 0;
                 Progress.Maximum = status.BoostCount;
@@ -128,7 +131,7 @@ namespace Telegram.Views.Chats.Popups
             if (supergroup.Status is not ChatMemberStatusCreator and not ChatMemberStatusAdministrator || requiredLevel == 0)
             {
                 CopyRoot.Visibility = Visibility.Collapsed;
-                Description.Margin = new Thickness(0, 24, 0, 24);
+                Description.Padding = new Thickness(0, 24, 0, 24);
 
                 ScrollingHost.Padding = new Thickness(24, 0, 24, 24 + 32);
 
