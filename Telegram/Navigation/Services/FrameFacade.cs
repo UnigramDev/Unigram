@@ -160,7 +160,12 @@ namespace Telegram.Navigation.Services
             //    });
             //}
 
-            return Frame.Navigate(page, parameter, infoOverride);
+            if (Frame.Navigate(page, parameter, infoOverride))
+            {
+                return page.Equals(Frame.Content?.GetType());
+            }
+
+            return false;
         }
 
         public int BackStackDepth => Frame.BackStackDepth;
