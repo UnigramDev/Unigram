@@ -300,6 +300,27 @@ namespace Telegram.Controls.Messages
                 }
             }
 
+            var maxId = 0L;
+            if (chat != null)
+            {
+                maxId = chat.LastReadOutboxMessageId;
+            }
+
+            if (message.SendingState is MessageSendingStateFailed)
+            {
+            }
+            else if (message.SendingState is MessageSendingStatePending)
+            {
+            }
+            else if (message.Id <= maxId && message.IsOutgoing && !message.IsChannelPost)
+            {
+            }
+            else if (message.IsOutgoing && !message.IsChannelPost)
+            {
+                builder.Append(Strings.AccDescrMsgUnread);
+                builder.Append(". ");
+            }
+
             if (message.ReplyToItem is MessageViewModel replyToMessage)
             {
                 if (message.ClientService.TryGetUser(replyToMessage.SenderId, out User replyUser))
@@ -365,14 +386,6 @@ namespace Telegram.Controls.Messages
                 builder.Append(string.Format(Strings.AccDescrReceivedDate, date));
             }
 
-            builder.Append(". ");
-
-            var maxId = 0L;
-            if (chat != null)
-            {
-                maxId = chat.LastReadOutboxMessageId;
-            }
-
             if (message.SendingState is MessageSendingStateFailed)
             {
             }
@@ -381,11 +394,8 @@ namespace Telegram.Controls.Messages
             }
             else if (message.Id <= maxId && message.IsOutgoing && !message.IsChannelPost)
             {
+                builder.Append(". ");
                 builder.Append(Strings.AccDescrMsgRead);
-            }
-            else if (message.IsOutgoing && !message.IsChannelPost)
-            {
-                builder.Append(Strings.AccDescrMsgUnread);
             }
 
             if (message.InteractionInfo?.ViewCount > 0)
