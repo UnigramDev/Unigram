@@ -5,6 +5,7 @@
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
 using System;
+using Telegram.Common;
 using Telegram.Td.Api;
 using Telegram.ViewModels.Drawers;
 using Windows.ApplicationModel;
@@ -26,12 +27,15 @@ namespace Telegram.Streams
             FilePath = file.Local.Path;
             FileSize = file.Size;
 
+            Format = PathToFormat(file.Local.Path);
+
             Id = file.Id;
         }
 
         public LocalFileSource(Sticker sticker)
             : this(sticker.StickerValue)
         {
+            Format = sticker.Format;
             Width = sticker.Width;
             Height = sticker.Height;
             Outline = sticker.Outline;
@@ -41,6 +45,7 @@ namespace Telegram.Streams
         public LocalFileSource(StickerViewModel sticker)
             : this(sticker.StickerValue)
         {
+            Format = sticker.Format;
             Width = sticker.Width;
             Height = sticker.Height;
             Outline = sticker.Outline;
@@ -50,6 +55,7 @@ namespace Telegram.Streams
         public LocalFileSource(string path)
         {
             FilePath = UriToPath(path);
+            Format = PathToFormat(path);
         }
 
         private static string UriToPath(string uri)
@@ -64,6 +70,20 @@ namespace Telegram.Streams
                 default:
                     return uri;
             }
+        }
+
+        private static StickerFormat PathToFormat(string path)
+        {
+            if (path.HasExtension(".tgs", ".json"))
+            {
+                return new StickerFormatTgs();
+            }
+            else if (path.HasExtension(".webp"))
+            {
+                return new StickerFormatWebp();
+            }
+
+            return new StickerFormatWebm();
         }
 
         public override string FilePath { get; }

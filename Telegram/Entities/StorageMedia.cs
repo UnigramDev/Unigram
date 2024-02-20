@@ -193,11 +193,7 @@ namespace Telegram.Entities
                 return new StorageDocument(file, basicProperties.Size);
             }
 
-            if (file.FileType.Equals(".jpeg", StringComparison.OrdinalIgnoreCase) ||
-                file.FileType.Equals(".jpg", StringComparison.OrdinalIgnoreCase) ||
-                file.FileType.Equals(".png", StringComparison.OrdinalIgnoreCase) ||
-                file.FileType.Equals(".bmp", StringComparison.OrdinalIgnoreCase) ||
-                file.FileType.Equals(".gif", StringComparison.OrdinalIgnoreCase))
+            if (file.HasExtension(".jpeg", ".jpg", ".png", ".bmp", ".gif"))
             {
                 var photo = await StoragePhoto.CreateAsync(file, basicProperties.Size);
                 if (photo != null)
@@ -205,7 +201,7 @@ namespace Telegram.Entities
                     return photo;
                 }
             }
-            else if (file.FileType.Equals(".mp4", StringComparison.OrdinalIgnoreCase))
+            else if (file.HasExtension(".mp4", ".mov"))
             {
                 var video = await StorageVideo.CreateAsync(file, basicProperties.Size);
                 if (video != null)
@@ -213,8 +209,7 @@ namespace Telegram.Entities
                     return video;
                 }
             }
-            else if (file.FileType.Equals(".mp3", StringComparison.OrdinalIgnoreCase)
-                || file.FileType.Equals(".flac", StringComparison.OrdinalIgnoreCase))
+            else if (file.HasExtension(".mp3", ".wav", ".m4a", ".ogg", ".oga", ".opus", ".flac"))
             {
                 var audio = await StorageAudio.CreateAsync(file, basicProperties.Size);
                 if (audio != null)

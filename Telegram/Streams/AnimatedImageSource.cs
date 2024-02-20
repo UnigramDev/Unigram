@@ -47,6 +47,8 @@ namespace Telegram.Streams
 
         #endregion
 
+        public StickerFormat Format { get; protected set; }
+
         public abstract void SeekCallback(long offset);
         public abstract void ReadCallback(long count);
 

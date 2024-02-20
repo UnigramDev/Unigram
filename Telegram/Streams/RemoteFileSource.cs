@@ -35,6 +35,8 @@ namespace Telegram.Streams
             _clientService = clientService;
             _file = file;
 
+            Format = new StickerFormatWebm();
+
             //if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingCompleted)
             {
                 UpdateManager.Subscribe(this, clientService, file, ref _fileToken, UpdateFile);

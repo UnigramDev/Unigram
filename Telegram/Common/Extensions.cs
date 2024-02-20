@@ -343,6 +343,32 @@ namespace Telegram.Common
             return false;
         }
 
+        public static bool HasExtension(this IStorageFile file, params string[] extensions)
+        {
+            foreach (var ext in extensions)
+            {
+                if (file.FileType.Equals(ext, StringComparison.OrdinalIgnoreCase))
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        public static bool HasExtension(this string path, params string[] extensions)
+        {
+            foreach (var ext in extensions)
+            {
+                if (path.EndsWith(ext, StringComparison.OrdinalIgnoreCase))
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
         public static StringBuilder Prepend(this StringBuilder builder, string text, string prefix)
         {
             if (builder.Length > 0)

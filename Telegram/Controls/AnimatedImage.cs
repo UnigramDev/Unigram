@@ -19,6 +19,7 @@ using Telegram.Common;
 using Telegram.Native;
 using Telegram.Navigation;
 using Telegram.Streams;
+using Telegram.Td.Api;
 using Windows.Foundation;
 using Windows.Graphics.Imaging;
 using Windows.Storage;
@@ -1693,18 +1694,32 @@ namespace Telegram.Controls
                 {
                     if (work.Presentation.Source is LocalFileSource local)
                     {
-                        var extension = System.IO.Path.GetExtension(local.FilePath);
-                        if (string.Equals(extension, ".tgs", StringComparison.OrdinalIgnoreCase) || string.Equals(extension, ".json", StringComparison.OrdinalIgnoreCase))
+                        if (local.Format is StickerFormatTgs)
                         {
                             LoadLottie(work, local);
                         }
-                        else if (string.Equals(extension, ".webp", StringComparison.OrdinalIgnoreCase))
+                        else if (local.Format is StickerFormatWebp)
                         {
                             LoadWebP(work, local);
                         }
-                        else
+                        else if (local.Format is StickerFormatWebm)
                         {
                             LoadCachedVideo(work);
+                        }
+                        else
+                        {
+                            if (local.FilePath.HasExtension(".tgs", ".json"))
+                            {
+                                LoadLottie(work, local);
+                            }
+                            else if (local.FilePath.HasExtension(".webp"))
+                            {
+                                LoadWebP(work, local);
+                            }
+                            else
+                            {
+                                LoadCachedVideo(work);
+                            }
                         }
                     }
                     else

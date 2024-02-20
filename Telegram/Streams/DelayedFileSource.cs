@@ -33,6 +33,7 @@ namespace Telegram.Streams
         public DelayedFileSource(IClientService clientService, Sticker sticker)
             : this(clientService, sticker.StickerValue)
         {
+            Format = sticker.Format;
             Width = sticker.Width;
             Height = sticker.Height;
             Outline = sticker.Outline;
@@ -42,6 +43,7 @@ namespace Telegram.Streams
         public DelayedFileSource(IClientService clientService, StickerViewModel sticker)
             : this(clientService, sticker.StickerValue)
         {
+            Format = sticker.Format;
             Width = sticker.Width;
             Height = sticker.Height;
             Outline = sticker.Outline;

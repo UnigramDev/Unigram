@@ -519,24 +519,11 @@ namespace Telegram.Services
                 var file = await StorageApplicationPermissions.FutureAccessList.GetFileAsync(args[0]);
                 var temp = await StorageFile.GetFileFromPathAsync(update.DestinationPath);
 
-                var mode = ThumbnailMode.DocumentsView;
-                if (file.ContentType.StartsWith("audio/"))
-                {
-                    mode = ThumbnailMode.MusicView;
-                }
+                var mode = file.HasExtension(".mp3", ".wav", ".m4a", ".ogg", ".oga", ".opus", ".flac")
+                    ? ThumbnailMode.MusicView
+                    : ThumbnailMode.DocumentsView;
 
-                var request = file.GetThumbnailAsync(mode, 90).AsTask();
-
-                var response = await Task.WhenAny(request, Task.Delay(2000));
-                if (response != request)
-                {
-                    // In case of timeout, the thumbnail will leak.
-
-                    _clientService.Send(new FinishFileGeneration(update.GenerationId, new Error(500, "FILE_GENERATE_LOCATION_INVALID Timeout")));
-                    return;
-                }
-
-                using (var thumbnail = await request)
+                using (var thumbnail = await file.GetThumbnailAsync(mode, 90))
                 {
                     if (thumbnail != null && thumbnail.Type == ThumbnailType.Image)
                     {

@@ -42,6 +42,7 @@ namespace Telegram.Streams
                         var sticker = stickers.StickersValue[0];
 
                         _file = sticker.StickerValue;
+                        Format = sticker.Format;
                         Width = sticker.Width;
                         Height = sticker.Height;
                         Outline = sticker.Outline;
