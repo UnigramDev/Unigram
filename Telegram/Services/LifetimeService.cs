@@ -9,10 +9,13 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Telegram.Collections;
+using Telegram.Controls;
 using Telegram.Navigation;
 using Telegram.Views;
 using Telegram.Views.Host;
 using Windows.Storage;
+using Windows.UI.Xaml;
+using Windows.UI.Xaml.Media;
 
 namespace Telegram.Services
 {
@@ -171,6 +174,17 @@ namespace Telegram.Services
                 {
                     window.NavigationServices.RemoveByFrameId($"{item.Id}");
                     window.NavigationServices.RemoveByFrameId($"Main{item.Id}");
+
+                    var popups = VisualTreeHelper.GetOpenPopups(Window.Current);
+
+                    foreach (var popup in popups)
+                    {
+                        if (popup.Child is ContentPopup toast)
+                        {
+                            toast.Tag = null;
+                            toast.Hide();
+                        }
+                    }
                 }
                 else
                 {

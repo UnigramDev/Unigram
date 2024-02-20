@@ -9,7 +9,6 @@ using Telegram.Td.Api;
 using Telegram.ViewModels.Delegates;
 using Telegram.ViewModels.Settings;
 using Windows.UI.Xaml;
-using Windows.UI.Xaml.Controls;
 
 namespace Telegram.Views.Settings
 {
@@ -23,9 +22,9 @@ namespace Telegram.Views.Settings
             Title = Strings.EditInformation;
         }
 
-        private void LogOut_Click(object sender, RoutedEventArgs e)
+        private async void LogOut_Click(object sender, RoutedEventArgs e)
         {
-            Frame.Navigate(typeof(LogOutPage));
+            await ViewModel.ShowPopupAsync(typeof(LogOutPopup));
         }
 
         #region Delegate

@@ -1,0 +1,63 @@
+﻿<controls:ContentPopup x:Class="Telegram.Views.LogOutPopup"
+                       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                       xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                       xmlns:controls="using:Telegram.Controls"
+                       xmlns:local="using:Telegram.Views"
+                       mc:Ignorable="d"
+                       DefaultButton="None"
+                       PrimaryButtonStyle="{StaticResource DangerButtonStyle}"
+                       PrimaryButtonClick="ContentPopup_PrimaryButtonClick"
+                       Padding="0,24,0,12">
+
+    <Grid>
+        <ScrollViewer x:Name="ScrollingHost"
+                      VerticalScrollBarVisibility="Auto"
+                      VerticalScrollMode="Auto">
+            <StackPanel>
+                <TextBlock Text="{CustomResource AlternativeOptions}"
+                           Style="{StaticResource BaseTextBlockStyle}"
+                           Margin="24,0,24,4" />
+                <StackPanel Padding="12,0">
+                    <controls:BadgeButton x:Name="AddAccount"
+                                          x:Load="False"
+                                          Badge="{CustomResource AddAnotherAccountInfo}"
+                                          Content="{CustomResource AddAnotherAccount}"
+                                          Style="{StaticResource GlyphSubbadgeBadgeButtonPopupStyle}"
+                                          Glyph="&#xE8FA;"
+                                          Click="AddAnotherAccount_Click" />
+
+                    <controls:BadgeButton Badge="{CustomResource SetPasscodeInfo}"
+                                          Content="{CustomResource SetPasscode}"
+                                          Style="{StaticResource GlyphSubbadgeBadgeButtonPopupStyle}"
+                                          Visibility="{x:Bind ViewModel.IsPasscodeEnabled, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}, ConverterParameter=invert}"
+                                          Glyph="&#xE192;"
+                                          Click="Passcode_Click" />
+
+                    <controls:BadgeButton Badge="{CustomResource ClearCacheInfo}"
+                                          Content="{CustomResource ClearCache}"
+                                          Style="{StaticResource GlyphSubbadgeBadgeButtonPopupStyle}"
+                                          Glyph="&#xE74D;"
+                                          Click="Storage_Click" />
+
+                    <controls:BadgeButton Badge="{CustomResource ChangePhoneNumberInfo}"
+                                          Content="{CustomResource ChangePhoneNumber}"
+                                          Style="{StaticResource GlyphSubbadgeBadgeButtonPopupStyle}"
+                                          Glyph="&#xF61B;"
+                                          Click="PhoneNumber_Click" />
+
+                    <controls:BadgeButton Badge="{CustomResource ContactSupportInfo}"
+                                          Content="{CustomResource ContactSupport}"
+                                          Style="{StaticResource GlyphSubbadgeBadgeButtonPopupStyle}"
+                                          Glyph="&#xED15;"
+                                          Click="Question_Click" />
+                </StackPanel>
+
+                <TextBlock Text="{CustomResource LogOutInfo}"
+                           Style="{StaticResource InfoCaptionTextBlockStyle}"
+                           Margin="24,12,24,0" />
+            </StackPanel>
+        </ScrollViewer>
+    </Grid>
+</controls:ContentPopup>

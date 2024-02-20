@@ -5,6 +5,7 @@
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
 using Telegram.Common;
+using Telegram.Controls;
 using Telegram.Navigation;
 using Telegram.Services;
 using Telegram.Td.Api;
@@ -58,6 +59,8 @@ namespace Telegram.ViewModels
             {
                 return;
             }
+
+            ContentPopup.Block();
 
             Settings.Clear();
             Settings.PasscodeLock.Clear();

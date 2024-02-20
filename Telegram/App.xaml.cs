@@ -348,7 +348,7 @@ namespace Telegram
             {
                 ChatsNearbyPage => TypeResolver.Current.Resolve<ChatsNearbyViewModel>(sessionId),
                 DiagnosticsPage => TypeResolver.Current.Resolve<DiagnosticsViewModel>(sessionId),
-                LogOutPage => TypeResolver.Current.Resolve<LogOutViewModel>(sessionId),
+                LogOutPopup => TypeResolver.Current.Resolve<LogOutViewModel>(sessionId),
                 ProfilePage profile => TypeResolver.Current.Resolve<ProfileViewModel, IProfileDelegate>(profile, sessionId),
                 InstantPage => TypeResolver.Current.Resolve<InstantViewModel>(sessionId),
                 //

@@ -376,7 +376,75 @@ namespace Telegram.Controls
 
         #endregion
 
+        #region ContentMinWidth
+
+        public double ContentMinWidth
+        {
+            get { return (double)GetValue(ContentMinWidthProperty); }
+            set { SetValue(ContentMinWidthProperty, value); }
+        }
+
+        public static readonly DependencyProperty ContentMinWidthProperty =
+            DependencyProperty.Register("ContentMinWidth", typeof(double), typeof(ContentPopup), new PropertyMetadata(320d));
+
+        #endregion
+
+        #region ContentMinHeight
+
+        public double ContentMinHeight
+        {
+            get { return (double)GetValue(ContentMinHeightProperty); }
+            set { SetValue(ContentMinHeightProperty, value); }
+        }
+
+        public static readonly DependencyProperty ContentMinHeightProperty =
+            DependencyProperty.Register("ContentMinHeight", typeof(double), typeof(ContentPopup), new PropertyMetadata(184d));
+
+        #endregion
+
         // TODO: terrible naming, this is used to prevent NavigatedFrom logic on temporary hide
         public bool IsFinalized { get; set; } = true;
+
+
+
+
+
+
+
+        public static ContentPopup Block()
+        {
+            var content = new Grid();
+            content.Children.Add(new Microsoft.UI.Xaml.Controls.ProgressRing
+            {
+                Width = 48,
+                Height = 48,
+                Margin = new Thickness(12)
+            });
+
+            var toast = new ContentPopup
+            {
+                Content = content,
+                IsLightDismissEnabled = true,
+                HorizontalContentAlignment = HorizontalAlignment.Center,
+                VerticalContentAlignment = VerticalAlignment.Center,
+                ContentMinWidth = 0,
+                ContentMinHeight = 0,
+                Padding = new Thickness(0),
+                RequestedTheme = ElementTheme.Dark,
+                IsEnabled = false,
+                IsHitTestVisible = false,
+                Tag = new object()
+            };
+
+            toast.Closing += OnBlockedClosing;
+
+            _ = toast.ShowAsync();
+            return toast;
+        }
+
+        private static void OnBlockedClosing(ContentDialog sender, ContentDialogClosingEventArgs args)
+        {
+            args.Cancel = sender.Tag != null;
+        }
     }
 }
