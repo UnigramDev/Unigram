@@ -1065,6 +1065,14 @@ namespace Telegram.Views
                 btnVoiceMessage.StopRecording(true);
                 args.Handled = true;
             }
+            else if (args.VirtualKey == VirtualKey.Space && args.RepeatCount == 1 && args.OnlyKey)
+            {
+                if (btnVoiceMessage.IsLocked)
+                {
+                    ChatRecord.Pause();
+                    args.Handled = true;
+                }
+            }
             else if (args.VirtualKey == VirtualKey.O && args.RepeatCount == 1 && args.OnlyControl)
             {
                 ViewModel.SendDocument();

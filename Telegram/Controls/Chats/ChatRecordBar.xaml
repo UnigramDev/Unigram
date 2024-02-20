@@ -23,12 +23,18 @@
                     <ColumnDefinition Width="48" />
                     <ColumnDefinition />
                 </Grid.ColumnDefinitions>
-                <Ellipse Fill="Red"
+                <controls:GlyphButton x:Name="DeleteButton"
+                                      Click="ButtonCancelRecording_Click"
+                                      Glyph="&#xE74D;"
+                                      Visibility="Collapsed" />
+                <Ellipse x:Name="RecordGlyph"
+                         Fill="Red"
                          Width="12"
                          Height="12"
                          HorizontalAlignment="Center" />
                 <TextBlock x:Name="ElapsedLabel"
                            Text="0:00,00"
+                           Typography.NumeralAlignment="Tabular"
                            Margin="0,0,0,1"
                            Width="64"
                            VerticalAlignment="Center"
@@ -65,55 +71,73 @@
                 Grid.ColumnSpan="4"
                 Grid.Row="1" />
 
-        <controls:ProgressVoice x:Name="Poggers"
-                                x:Load="False"
-                                Visibility="Collapsed">
-            <controls:ProgressVoice.Style>
-                <Style TargetType="controls:ProgressVoice">
-                    <Setter Property="Foreground"
-                            Value="{ThemeResource MessageHeaderBorderBrush}" />
-                    <Setter Property="Background"
-                            Value="{ThemeResource SystemControlBackgroundBaseLowBrush}" />
-                    <Setter Property="BorderThickness"
-                            Value="{ThemeResource ProgressBarBorderThemeThickness}" />
-                    <Setter Property="BorderBrush"
-                            Value="{ThemeResource SystemControlHighlightTransparentBrush}" />
-                    <Setter Property="Maximum"
-                            Value="100" />
-                    <Setter Property="MinHeight"
-                            Value="{ThemeResource ProgressBarThemeMinHeight}" />
-                    <Setter Property="IsTabStop"
-                            Value="False" />
-                    <Setter Property="VerticalAlignment"
-                            Value="Stretch" />
-                    <!--<Setter Property="Width" Value="209"/>-->
-                    <Setter Property="MinWidth"
-                            Value="142" />
-                    <Setter Property="Margin"
-                            Value="0,0,0,2" />
-                    <Setter Property="Template">
-                        <Setter.Value>
-                            <ControlTemplate TargetType="controls:ProgressVoice">
-                                <Grid>
-                                    <Path x:Name="HorizontalTrackRect"
-                                          Margin="{TemplateBinding Padding}"
-                                          Fill="{TemplateBinding Background}"
-                                          StrokeStartLineCap="Round"
-                                          StrokeEndLineCap="Round"
-                                          HorizontalAlignment="Stretch" />
-                                    <Path x:Name="ProgressBarIndicator"
-                                          Margin="{TemplateBinding Padding}"
-                                          Fill="{TemplateBinding Foreground}"
-                                          StrokeStartLineCap="Round"
-                                          StrokeEndLineCap="Round"
-                                          HorizontalAlignment="Left" />
-                                </Grid>
-                            </ControlTemplate>
-                        </Setter.Value>
-                    </Setter>
-                </Style>
-            </controls:ProgressVoice.Style>
-        </controls:ProgressVoice>
+        <Grid Margin="48,6,0,6">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+            <Border x:Name="WaveformBackground"
+                    Grid.ColumnSpan="2" />
+            <controls:ProgressVoice x:Name="Waveform"
+                                    Visibility="Collapsed"
+                                    Background="#FFFFFF"
+                                    Margin="16,0,12,0">
+                <controls:ProgressVoice.Style>
+                    <Style TargetType="controls:ProgressVoice">
+                        <Setter Property="Foreground"
+                                Value="{ThemeResource MessageHeaderBorderBrush}" />
+                        <Setter Property="Background"
+                                Value="{ThemeResource SystemControlBackgroundBaseLowBrush}" />
+                        <Setter Property="BorderThickness"
+                                Value="{ThemeResource ProgressBarBorderThemeThickness}" />
+                        <Setter Property="BorderBrush"
+                                Value="{ThemeResource SystemControlHighlightTransparentBrush}" />
+                        <Setter Property="Maximum"
+                                Value="100" />
+                        <Setter Property="MinHeight"
+                                Value="{ThemeResource ProgressBarThemeMinHeight}" />
+                        <Setter Property="IsTabStop"
+                                Value="False" />
+                        <Setter Property="VerticalAlignment"
+                                Value="Stretch" />
+                        <!--<Setter Property="Width" Value="209"/>-->
+                        <Setter Property="MinWidth"
+                                Value="142" />
+                        <Setter Property="Margin"
+                                Value="0,0,0,2" />
+                        <Setter Property="Template">
+                            <Setter.Value>
+                                <ControlTemplate TargetType="controls:ProgressVoice">
+                                    <Grid>
+                                        <Path x:Name="HorizontalTrackRect"
+                                              Margin="{TemplateBinding Padding}"
+                                              Fill="{TemplateBinding Background}"
+                                              StrokeStartLineCap="Round"
+                                              StrokeEndLineCap="Round"
+                                              HorizontalAlignment="Stretch" />
+                                        <Path x:Name="ProgressBarIndicator"
+                                              Margin="{TemplateBinding Padding}"
+                                              Fill="{TemplateBinding Foreground}"
+                                              StrokeStartLineCap="Round"
+                                              StrokeEndLineCap="Round"
+                                              HorizontalAlignment="Left" />
+                                    </Grid>
+                                </ControlTemplate>
+                            </Setter.Value>
+                        </Setter>
+                    </Style>
+                </controls:ProgressVoice.Style>
+            </controls:ProgressVoice>
+
+            <TextBlock x:Name="WaveformLabel"
+                       TextAlignment="Right"
+                       Typography.NumeralAlignment="Tabular"
+                       Foreground="#FFFFFF"
+                       Margin="0,0,64,1"
+                       HorizontalAlignment="Right"
+                       VerticalAlignment="Center"
+                       Grid.Column="1" />
+        </Grid>
     </Grid>
     <Border Width="120"
             Height="240"
@@ -129,6 +153,31 @@
                       HorizontalAlignment="Left"
                       VerticalAlignment="Bottom"
                       Margin="-20,0,0,-20">
+                    <Grid x:Name="PauseRoot"
+                          Visibility="Collapsed"
+                          HorizontalAlignment="Center"
+                          VerticalAlignment="Top"
+                          Margin="0,-8,0,0">
+                        <Ellipse x:Name="ArrowShadow"
+                                 Fill="{ThemeResource ApplicationPageBackgroundThemeBrush}"
+                                 Width="36"
+                                 Height="36" />
+                        <Border Background="{ThemeResource PageSubHeaderBackgroundBrush}"
+                                CornerRadius="18"
+                                Height="36"
+                                Width="36">
+                            <controls:AnimatedGlyphToggleButton x:Name="PauseButton"
+                                                                Click="Pause_Click"
+                                                                Width="44"
+                                                                Height="44"
+                                                                Glyph="&#xE769;"
+                                                                CheckedGlyph="&#xE720;"
+                                                                CornerRadius="22"
+                                                                IsOneWay="False"
+                                                                Margin="-4"/>
+                        </Border>
+                    </Grid>
+
                     <Border x:Name="Blob" />
                     <Grid CornerRadius="40"
                           Width="80"
@@ -138,7 +187,7 @@
                                    FontSize="{StaticResource GlyphLargeFontSize}"
                                    HorizontalAlignment="Center"
                                    VerticalAlignment="Center"
-                                   Foreground="White" />
+                                   Foreground="#FFFFFF" />
                         <Button Click="ChatRecordLocked_Click"
                                 Style="{StaticResource EmptyButtonStyle}"
                                 Opacity="0" />

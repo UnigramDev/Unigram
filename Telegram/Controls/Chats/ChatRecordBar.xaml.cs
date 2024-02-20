@@ -4,10 +4,12 @@ using Telegram.Common;
 using Telegram.Composition;
 using Telegram.Controls.Media;
 using Telegram.Td.Api;
+using Windows.UI;
 using Windows.UI.Composition;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Hosting;
 using Windows.UI.Xaml.Input;
+using Windows.UI.Xaml.Media;
 
 namespace Telegram.Controls.Chats
 {
@@ -25,6 +27,9 @@ namespace Telegram.Controls.Chats
         public ChatRecordBar()
         {
             InitializeComponent();
+
+            var visual = DropShadowEx.Attach(ArrowShadow, 2);
+            visual.Offset = new Vector3(0, 1, 0);
 
             ElementCompositionPreview.SetIsTranslationEnabled(Ellipse, true);
 
@@ -203,7 +208,15 @@ namespace Telegram.Controls.Chats
 
                 Visibility = Visibility.Collapsed;
                 ButtonCancelRecording.Visibility = Visibility.Collapsed;
+                PauseRoot.Visibility = Visibility.Collapsed;
+                PauseButton.IsChecked = false;
                 ElapsedLabel.Text = "0:00,0";
+
+                WaveformLabel.Text = string.Empty;
+                Waveform.Visibility = Visibility.Collapsed;
+
+                ElementCompositionPreview.SetElementChildVisual(WaveformBackground, null);
+                ChatRecordGlyph.Foreground = new SolidColorBrush(Colors.White);
 
                 var point = _slideVisual.Offset;
                 point.X = _slideVisual.Size.X + 36;
@@ -234,7 +247,21 @@ namespace Telegram.Controls.Chats
             _slideVisual.StartAnimation("Offset.X", slideAnimation);
             _recordVisual.StartAnimation("Opacity", visibleAnimation);
 
+            if (PauseRoot.Visibility == Visibility.Visible)
+            {
+                var pause = ElementComposition.GetElementVisual(PauseRoot);
+                pause.CenterPoint = new Vector3(18);
+
+                var scale = Window.Current.Compositor.CreateVector3KeyFrameAnimation();
+                scale.InsertKeyFrame(0, Vector3.One);
+                scale.InsertKeyFrame(1, Vector3.Zero);
+
+                pause.StartAnimation("Scale", scale);
+            }
+
             batch.End();
+
+            ShowHideDelete(false);
 
             CancelTyping?.Invoke(this, EventArgs.Empty);
         }
@@ -259,6 +286,17 @@ namespace Telegram.Controls.Chats
 
             _slideVisual.Opacity = 0;
             _slideVisual.Offset = point;
+
+            PauseRoot.Visibility = Visibility.Visible;
+
+            var pause = ElementComposition.GetElementVisual(PauseRoot);
+            pause.CenterPoint = new Vector3(18);
+
+            var scale = Window.Current.Compositor.CreateVector3KeyFrameAnimation();
+            scale.InsertKeyFrame(0, Vector3.Zero);
+            scale.InsertKeyFrame(1, Vector3.One);
+
+            pause.StartAnimation("Scale", scale);
         }
 
         private void VoiceButton_ManipulationDelta(object sender, ManipulationDeltaRoutedEventArgs e)
@@ -332,6 +370,148 @@ namespace Telegram.Controls.Chats
         private void OnSizeChanged(object sender, SizeChangedEventArgs e)
         {
             _rootVisual.Size = e.NewSize.ToVector2();
+        }
+
+        public void Pause()
+        {
+            Pause_Click(null, null);
+        }
+
+        private async void Pause_Click(object sender, RoutedEventArgs e)
+        {
+            _elapsedTimer.Stop();
+
+            var result = await ControlledButton.PauseRecording();
+            if (result != null)
+            {
+                _blobVisual.StopAnimating();
+
+                WaveformLabel.Text = result.Duration.ToString("m\\:ss");
+                Waveform.Visibility = Visibility.Visible;
+                Waveform.UpdateWaveform(new VoiceNote(0, result.Waveform, string.Empty, null, null));
+
+                var compositor = Window.Current.Compositor;
+                var ellipse = compositor.CreateRoundedRectangleGeometry();
+                ellipse.CornerRadius = new Vector2(WaveformBackground.ActualSize.Y / 2);
+                ellipse.Size = new Vector2(WaveformBackground.ActualSize.Y, WaveformBackground.ActualSize.Y);
+
+                var shape = compositor.CreateSpriteShape(ellipse);
+                shape.FillBrush = compositor.CreateColorBrush(Theme.Accent);
+
+                var visual = compositor.CreateShapeVisual();
+                visual.Size = WaveformBackground.ActualSize;
+                visual.Shapes.Add(shape);
+
+                var width = compositor.CreateScalarKeyFrameAnimation();
+                width.InsertKeyFrame(0, WaveformBackground.ActualSize.Y);
+                width.InsertKeyFrame(1, WaveformBackground.ActualSize.X - 48);
+
+                var offset = compositor.CreateScalarKeyFrameAnimation();
+                offset.InsertKeyFrame(0, WaveformBackground.ActualSize.X - 44);
+                offset.InsertKeyFrame(1, 0);
+
+                ellipse.StartAnimation("Size.X", width);
+                ellipse.StartAnimation("Offset.X", offset);
+
+                var root = ElementComposition.GetElementVisual(PauseRoot);
+                ElementCompositionPreview.SetIsTranslationEnabled(PauseRoot, true);
+
+                var translate = compositor.CreateScalarKeyFrameAnimation();
+                translate.InsertKeyFrame(0, 0);
+                translate.InsertKeyFrame(1, 20);
+
+                root.StartAnimation("Translation.Y", translate);
+
+                ElementCompositionPreview.SetElementChildVisual(WaveformBackground, visual);
+                ChatRecordGlyph.Foreground = new SolidColorBrush(Theme.Accent);
+
+                ShowHideDelete(true);
+            }
+            else
+            {
+                _blobVisual.StartAnimating();
+                _elapsedTimer.Start();
+
+                WaveformLabel.Text = string.Empty;
+                Waveform.Visibility = Visibility.Collapsed;
+
+                var compositor = Window.Current.Compositor;
+                var ellipse = compositor.CreateRoundedRectangleGeometry();
+                ellipse.CornerRadius = new Vector2(WaveformBackground.ActualSize.Y / 2);
+                ellipse.Size = new Vector2(WaveformBackground.ActualSize.Y, WaveformBackground.ActualSize.Y);
+
+                var shape = compositor.CreateSpriteShape(ellipse);
+                shape.FillBrush = compositor.CreateColorBrush(Theme.Accent);
+
+                var visual = compositor.CreateShapeVisual();
+                visual.Size = WaveformBackground.ActualSize;
+                visual.Shapes.Add(shape);
+
+                var width = compositor.CreateScalarKeyFrameAnimation();
+                width.InsertKeyFrame(1, WaveformBackground.ActualSize.Y);
+                width.InsertKeyFrame(0, WaveformBackground.ActualSize.X - 48);
+
+                var offset = compositor.CreateScalarKeyFrameAnimation();
+                offset.InsertKeyFrame(1, WaveformBackground.ActualSize.X - 44);
+                offset.InsertKeyFrame(0, 0);
+
+                ellipse.StartAnimation("Size.X", width);
+                ellipse.StartAnimation("Offset.X", offset);
+
+                var root = ElementComposition.GetElementVisual(PauseRoot);
+                ElementCompositionPreview.SetIsTranslationEnabled(PauseRoot, true);
+
+                var translate = compositor.CreateScalarKeyFrameAnimation();
+                translate.InsertKeyFrame(1, 0);
+                translate.InsertKeyFrame(0, 20);
+
+                root.StartAnimation("Translation.Y", translate);
+
+                ElementCompositionPreview.SetElementChildVisual(WaveformBackground, visual);
+                ChatRecordGlyph.Foreground = new SolidColorBrush(Colors.White);
+
+                ShowHideDelete(false);
+            }
+        }
+
+        private bool _deleteCollapsed = true;
+
+        private void ShowHideDelete(bool show)
+        {
+            if (_deleteCollapsed != show)
+            {
+                return;
+            }
+
+            _deleteCollapsed = !show;
+            DeleteButton.Visibility = Visibility.Visible;
+
+            var visual1 = ElementComposition.GetElementVisual(DeleteButton);
+            var visual2 = ElementComposition.GetElementVisual(RecordGlyph);
+
+            visual1.CenterPoint = new Vector3(24);
+            visual2.CenterPoint = new Vector3(6);
+
+            var batch = visual1.Compositor.CreateScopedBatch(CompositionBatchTypes.Animation);
+            batch.Completed += (s, args) =>
+            {
+                DeleteButton.Visibility = _deleteCollapsed
+                    ? Visibility.Collapsed
+                    : Visibility.Visible;
+            };
+
+            var scale1 = visual1.Compositor.CreateVector3KeyFrameAnimation();
+            scale1.InsertKeyFrame(show ? 0 : 1, Vector3.Zero);
+            scale1.InsertKeyFrame(show ? 1 : 0, Vector3.One);
+
+            var scale2 = visual1.Compositor.CreateVector3KeyFrameAnimation();
+            scale2.InsertKeyFrame(show ? 0 : 1, Vector3.One);
+            scale2.InsertKeyFrame(show ? 1 : 0, Vector3.Zero);
+
+            visual1.StartAnimation("Scale", scale1);
+            visual2.StartAnimation("Scale", scale2);
+
+            batch.End();
         }
     }
 }

@@ -157,16 +157,18 @@ namespace Telegram.Composition
 
             _animating = true;
 
-            //if (!immediately)
-            //{
-            //    _mediumBlob.layer.animateScale(from: 0.75, to: 1, duration: 0.35, removeOnCompletion: false);
-            //    _largeBlob.layer.animateScale(from: 0.75, to: 1, duration: 0.35, removeOnCompletion: false);
-            //}
-            //else
-            //{
-            //    _mediumBlob.layer.removeAllAnimations();
-            //    _largeBlob.layer.removeAllAnimations();
-            //}
+            if (!immediately)
+            {
+                var animation = Window.Current.Compositor.CreateVector3KeyFrameAnimation();
+                animation.InsertKeyFrame(0, new Vector3(0));
+                animation.InsertKeyFrame(1, new Vector3(1));
+
+                _visual.StartAnimation("Scale", animation);
+            }
+            else
+            {
+                _visual.Scale = Vector3.One;
+            }
 
             UpdateBlobsState();
             _vsync.Rendering += OnRendering;
@@ -186,8 +188,11 @@ namespace Telegram.Composition
 
             _animating = false;
 
-            //_mediumBlob.layer.animateScale(from: 1.0, to: 0.75, duration: duration, removeOnCompletion: false);
-            //_largeBlob.layer.animateScale(from: 1.0, to: 0.75, duration: duration, removeOnCompletion: false);
+            var animation = Window.Current.Compositor.CreateVector3KeyFrameAnimation();
+            animation.InsertKeyFrame(0, new Vector3(1));
+            animation.InsertKeyFrame(1, new Vector3(0));
+
+            _visual.StartAnimation("Scale", animation);
 
             UpdateBlobsState();
             _vsync.Rendering -= OnRendering;

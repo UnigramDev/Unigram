@@ -6,6 +6,7 @@
 //
 using Microsoft.UI.Xaml.Controls;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Threading.Tasks;
@@ -19,6 +20,7 @@ using Windows.Foundation;
 using Windows.Media;
 using Windows.Media.Capture;
 using Windows.Media.Capture.Frames;
+using Windows.Media.Devices;
 using Windows.Media.Effects;
 using Windows.Media.MediaProperties;
 using Windows.Storage;
@@ -39,6 +41,29 @@ namespace Telegram.Controls.Chats
         Video
     }
 
+    public class ChatRecordResult
+    {
+        public ChatRecordResult(TimeSpan duration, IList<byte> waveform)
+        {
+            Duration = duration;
+            Waveform = waveform;
+        }
+
+        public TimeSpan Duration { get; }
+
+        public IList<byte> Waveform { get; }
+    }
+
+    public class ChatRecordStartedEventArgs : EventArgs
+    {
+        public ChatRecordStartedEventArgs(DateTime startedAt)
+        {
+            StartedAt = startedAt;
+        }
+
+        public DateTime StartedAt { get; }
+    }
+
     public class ChatRecordButton : AnimatedIconToggleButton
     {
         public ComposeViewModel ViewModel => DataContext as ComposeViewModel;
@@ -50,8 +75,9 @@ namespace Telegram.Controls.Chats
         private readonly Recorder _recorder;
 
         private DateTime _start;
+        private TimeSpan _duration;
 
-        public TimeSpan Elapsed => DateTime.Now - _start;
+        public TimeSpan Elapsed => DateTime.Now - _start + _duration;
 
         public bool IsRecording => _recordingAudioVideo;
         public bool IsLocked => _recordingLocked;
@@ -266,6 +292,7 @@ namespace Telegram.Controls.Chats
                 _recordingLocked = false;
 
                 _start = DateTime.Now;
+                _duration = TimeSpan.Zero;
 
                 this.BeginOnUIThread(() =>
                 {
@@ -520,6 +547,7 @@ namespace Telegram.Controls.Chats
 
         private bool _recordingAudioVideo;
 
+        private bool _recordingPaused;
         private bool _recordingStopped;
 
         private bool _recordingLocked;
@@ -540,6 +568,33 @@ namespace Telegram.Controls.Chats
             _enqueuedLocking = false;
             _recordingLocked = true;
             UpdateRecordingInterface();
+        }
+
+        public async Task<ChatRecordResult> PauseRecording()
+        {
+            Logger.Debug("Pause recording");
+
+            if (_recordingPaused)
+            {
+                _start = DateTime.Now;
+                _recordingPaused = false;
+            }
+            else
+            {
+                _duration = Elapsed;
+                _recordingPaused = true;
+            }
+
+            UpdateRecordingInterface();
+
+            var result = await _recorder.PauseAsync();
+            if (result != null)
+            {
+                _start = DateTime.Now;
+                _duration = result.Duration;
+            }
+
+            return result;
         }
 
         public async void ToggleRecording()
@@ -593,6 +648,7 @@ namespace Telegram.Controls.Chats
             private ChatRecordMode _mode;
             private Chat _chat;
             private DateTime _start;
+            private TimeSpan _duration;
 
             private MediaFrameReader _reader;
 
@@ -680,6 +736,7 @@ namespace Telegram.Controls.Chats
                         Logger.Debug("Recording started at " + DateTime.Now);
 
                         _start = DateTime.Now;
+                        _duration = TimeSpan.Zero;
                     }
                     catch (Exception ex)
                     {
@@ -889,6 +946,47 @@ namespace Telegram.Controls.Chats
                 return result;
             }
 
+            public async Task<ChatRecordResult> PauseAsync()
+            {
+                Logger.Debug("Pause invoked");
+
+                var tsc = new TaskCompletionSource<ChatRecordResult>();
+                
+                _ = _recordQueue.Enqueue(async () =>
+                {
+                    Logger.Debug("Enqueued pause invoked");
+
+                    var recorder = _recorder;
+                    if (recorder == null)
+                    {
+                        Logger.Debug("recorder or file == null, abort");
+                        return;
+                    }
+
+                    var paused = await recorder.PauseAsync();
+                    if (paused != null)
+                    {
+                        _duration = paused.RecordDuration;
+
+                        if (_reader != null)
+                        {
+                            await _reader.StopAsync();
+                        }
+
+                        tsc.SetResult(new ChatRecordResult(paused.RecordDuration, GetWaveform()));
+                    }
+                    else if (_reader != null)
+                    {
+                        _start = DateTime.Now;
+
+                        await _reader.StartAsync();
+                        tsc.SetResult(null);
+                    }
+                });
+
+                return await tsc.Task;
+            }
+
             public async void Stop(ComposeViewModel viewModel, bool? cancel)
             {
                 Logger.Debug("Stop invoked, cancel: " + cancel);
@@ -912,26 +1010,24 @@ namespace Telegram.Controls.Chats
 
                     RecordingStopped?.Invoke(this, EventArgs.Empty);
 
-                    var now = DateTime.Now;
-                    var elapsed = now - _start;
-
                     Logger.Debug("stopping reader");
 
                     if (reader != null)
                     {
+                        await reader.StopAsync();
+
                         reader.FrameArrived -= OnAudioFrameArrived;
                         reader.Dispose();
 
                         QuantumProcessed?.Invoke(0);
                     }
 
-                    Logger.Debug("stopping recorder, elapsed " + elapsed);
+                    var result = await recorder.StopAsync();
+                    var duration = result?.RecordDuration ?? TimeSpan.Zero;
 
-                    await recorder.StopAsync();
+                    Logger.Debug("recorder stopped, duration: " + result.RecordDuration);
 
-                    Logger.Debug("recorder stopped");
-
-                    if (cancel == true || elapsed.TotalMilliseconds < 700)
+                    if (cancel == true || duration.TotalMilliseconds < 700)
                     {
                         try
                         {
@@ -941,7 +1037,7 @@ namespace Telegram.Controls.Chats
 
                         Logger.Debug("recording canceled or too short, abort");
 
-                        if (elapsed.TotalMilliseconds < 700)
+                        if (duration.TotalMilliseconds < 700)
                         {
                             RecordingTooShort?.Invoke(this, EventArgs.Empty);
                         }
@@ -952,7 +1048,7 @@ namespace Telegram.Controls.Chats
 
                         if (cancel == false)
                         {
-                            Send(viewModel, mode, chat, file, recorder._mirroringPreview, (int)elapsed.TotalSeconds);
+                            Send(viewModel, mode, chat, file, recorder._mirroringPreview, (int)duration.TotalSeconds);
                         }
                     }
 
@@ -1021,6 +1117,8 @@ namespace Telegram.Controls.Chats
 
                 private readonly StorageFile m_file;
                 private LowLagMediaRecording m_lowLag;
+                private bool m_paused;
+
                 public MediaCapture m_mediaCapture;
                 public MediaCaptureInitializationSettings settings;
 
@@ -1084,24 +1182,48 @@ namespace Telegram.Controls.Chats
                     await m_lowLag.StartAsync();
                 }
 
-                public async Task StopAsync()
+                public async Task<MediaCapturePauseResult> PauseAsync()
                 {
+                    try
+                    {
+                        if (m_paused)
+                        {
+                            m_paused = false;
+                            await m_lowLag.ResumeAsync();
+                            return null;
+                        }
+                        else
+                        {
+                            m_paused = true;
+                            return await m_lowLag.PauseWithResultAsync(MediaCapturePauseBehavior.RetainHardwareResources);
+                        }
+                    }
+                    catch
+                    {
+                        return null;
+                    }
+                }
+
+                public async Task<MediaCaptureStopResult> StopAsync()
+                {
+                    MediaCaptureStopResult result = null;
                     try
                     {
                         if (m_lowLag != null)
                         {
-                            await m_lowLag.StopAsync();
+                            result = await m_lowLag.StopWithResultAsync();
                             await m_lowLag.FinishAsync();
                         }
                         else
                         {
-                            await m_mediaCapture.StopRecordAsync();
+                            result = await m_mediaCapture.StopRecordWithResultAsync();
                         }
 
                         m_mediaCapture.Dispose();
                         m_mediaCapture = null;
                     }
                     catch { }
+                    return result;
                 }
 
                 public void Dispose()
