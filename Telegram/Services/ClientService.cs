@@ -73,6 +73,7 @@ namespace Telegram.Services
 
         IList<ChatFolderInfo> ChatFolders { get; }
         int MainChatListPosition { get; }
+        bool AreTagsEnabled { get; }
 
         IList<AttachmentMenuBot> AttachmentMenuBots { get; }
 
@@ -97,6 +98,8 @@ namespace Telegram.Services
         string GetTitle(long chatId, bool tiny = false);
         string GetTitle(SavedMessagesTopic topic);
         string GetTitle(MessageOrigin origin, MessageImportInfo import);
+
+        IList<ChatFolderInfo> GetChatFolders(Chat chat);
 
         bool TryGetCachedReaction(string emoji, out EmojiReaction value);
         Task<IDictionary<string, EmojiReaction>> GetAllReactionsAsync();
@@ -264,7 +267,9 @@ namespace Telegram.Services
         private ReactionType _defaultReaction;
 
         private IList<ChatFolderInfo> _chatFolders = Array.Empty<ChatFolderInfo>();
+        private Dictionary<int, ChatFolderInfo> _chatFolders2 = new();
         private int _mainChatListPosition = 0;
+        private bool _areTagsEnabled;
 
         private IList<string> _activeReactions = Array.Empty<string>();
         private Dictionary<string, EmojiReaction> _cachedReactions = new();
@@ -660,6 +665,10 @@ namespace Telegram.Services
             {
                 return accentColor;
             }
+            else if (id == -1)
+            {
+                return null;
+            }
 
             return new NameColor(id);
         }
@@ -722,6 +731,7 @@ namespace Telegram.Services
             _installedEmojiSets = null;
 
             _chatFolders = Array.Empty<ChatFolderInfo>();
+            _chatFolders2.Clear();
 
             _animationSearchParameters = null;
 
@@ -919,6 +929,8 @@ namespace Telegram.Services
 
         public int MainChatListPosition => _mainChatListPosition;
 
+        public bool AreTagsEnabled => _areTagsEnabled;
+
         public IList<AttachmentMenuBot> AttachmentMenuBots => _attachmentMenuBots;
 
         public IList<AttachmentMenuBot> GetBotsForChat(long chatId)
@@ -1098,6 +1110,37 @@ namespace Telegram.Services
             }
 
             return null;
+        }
+
+        public IList<ChatFolderInfo> GetChatFolders(Chat chat)
+        {
+            // TODO: can this be improved?
+            List<ChatFolderInfo> result = null;
+
+            lock (chat)
+            {
+                foreach (var chatList in chat.ChatLists)
+                {
+                    if (chatList is not ChatListFolder folder)
+                    {
+                        continue;
+                    }
+
+                    if (_chatFolders2.TryGetValue(folder.ChatFolderId, out ChatFolderInfo info) && info.ColorId >= 0 && info.ColorId <= 6)
+                    {
+                        result ??= new List<ChatFolderInfo>();
+                        result.Add(info);
+                    }
+                }
+            }
+
+            if (result != null)
+            {
+                result.Sort((x, y) => _chatFolders.IndexOf(x) - _chatFolders.IndexOf(y));
+                return result;
+            }
+
+            return Array.Empty<ChatFolderInfo>();
         }
 
         public bool TryGetCachedReaction(string emoji, out EmojiReaction value)
@@ -1918,6 +1961,27 @@ namespace Telegram.Services
                     _savedMessagesTopics[updateSavedMessagesTopic.Topic.Id] = updateSavedMessagesTopic.Topic;
                 }
             }
+            else if (update is UpdateChatAddedToList updateChatAddedToList)
+            {
+                if (_chats.TryGetValue(updateChatAddedToList.ChatId, out Chat value))
+                {
+                    value.ChatLists.Add(updateChatAddedToList.ChatList);
+                }
+            }
+            else if (update is UpdateChatRemovedFromList updateChatRemovedFromList)
+            {
+                if (_chats.TryGetValue(updateChatRemovedFromList.ChatId, out Chat value))
+                {
+                    foreach (var chatList in value.ChatLists)
+                    {
+                        if (chatList.AreTheSame(updateChatRemovedFromList.ChatList))
+                        {
+                            value.ChatLists.Remove(chatList);
+                            break;
+                        }
+                    }
+                }
+            }
             else if (update is UpdateAuthorizationState updateAuthorizationState)
             {
                 switch (updateAuthorizationState.AuthorizationState)
@@ -2049,7 +2113,9 @@ namespace Telegram.Services
             else if (update is UpdateChatFolders updateChatFolders)
             {
                 _chatFolders = updateChatFolders.ChatFolders.ToList();
+                _chatFolders2 = updateChatFolders.ChatFolders.ToDictionary(x => x.Id);
                 _mainChatListPosition = updateChatFolders.MainChatListPosition;
+                _areTagsEnabled = updateChatFolders.AreTagsEnabled;
             }
             else if (update is UpdateChatHasScheduledMessages updateChatHasScheduledMessages)
             {

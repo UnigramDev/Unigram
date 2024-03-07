@@ -41,8 +41,7 @@
             </common:FluidGridView.Triggers>
             <GridView.ItemTemplate>
                 <DataTemplate>
-                    <Grid SizeChanged="NameColor_SizeChanged"
-                          Background="Blue"
+                    <Grid Background="Blue"
                           CornerRadius="20">
                         <Polygon Points="40,0 40,40 0,40" />
 

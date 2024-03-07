@@ -6,6 +6,7 @@
 //
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
 using Telegram.Collections;
@@ -29,6 +30,10 @@ namespace Telegram.ViewModels.Folders
         {
             Include = new MvxObservableCollection<ChatFolderElement>();
             Exclude = new MvxObservableCollection<ChatFolderElement>();
+
+            AvailableColors = new ObservableCollection<NameColor>(ClientService.GetAvailableAccentColors()
+                .Where(x => x.Id == x.BuiltInAccentColorId)
+                .Append(new NameColor(-1)));
 
             Links = new MvxObservableCollection<ChatFolderInviteLink>();
 
@@ -84,9 +89,13 @@ namespace Telegram.ViewModels.Folders
             _pinnedChatIds = folder.PinnedChatIds;
 
             _iconPicked = !string.IsNullOrEmpty(folder.Icon?.Name);
+            _originalColorId = folder.ColorId;
 
             Title = folder.Title;
             Icon = Icons.ParseFolder(folder);
+            SelectedColor = IsPremium && folder.ColorId != -1
+                ? ClientService.GetAccentColor(folder.ColorId)
+                : AvailableColors[^1];
 
             Links.Clear();
 
@@ -150,6 +159,7 @@ namespace Telegram.ViewModels.Folders
         }
 
         private bool _iconPicked;
+        private int _originalColorId = -1;
 
         private ChatFolderIcon2 _icon;
         public ChatFolderIcon2 Icon
@@ -172,6 +182,15 @@ namespace Telegram.ViewModels.Folders
             }
 
             Icon = Icons.ParseFolder(GetFolder());
+        }
+
+        public ObservableCollection<NameColor> AvailableColors { get; }
+
+        private NameColor _selectedColor;
+        public NameColor SelectedColor
+        {
+            get => _selectedColor;
+            set => Set(ref _selectedColor, value);
         }
 
         private async void UpdateLinks()
@@ -300,6 +319,7 @@ namespace Telegram.ViewModels.Folders
             var folder = new ChatFolder();
             folder.Title = Title ?? string.Empty;
             folder.Icon = new ChatFolderIcon(_iconPicked ? Enum.GetName(typeof(ChatFolderIcon2), Icon) : string.Empty);
+            folder.ColorId = IsPremium ? SelectedColor?.Id ?? -1 : _originalColorId;
             folder.PinnedChatIds = new List<long>();
             folder.IncludedChatIds = new List<long>();
             folder.ExcludedChatIds = new List<long>();

@@ -156,6 +156,7 @@ namespace Telegram.Views.Popups
                 args.ItemContainer = new GridViewItem();
                 args.ItemContainer.Style = sender.ItemContainerStyle;
                 args.ItemContainer.ContentTemplate = sender.ItemTemplate;
+                args.ItemContainer.SizeChanged += NameColor_SizeChanged;
             }
 
             args.IsContainerPrepared = true;
@@ -243,9 +244,11 @@ namespace Telegram.Views.Popups
 
         private void NameColor_SizeChanged(object sender, SizeChangedEventArgs e)
         {
-            if (sender is Grid content && content.Children[0] is Polygon polygon)
+            if (sender is GridViewItem selector)
             {
                 var width = e.NewSize.Width;
+                var content = selector.ContentTemplateRoot as Grid;
+                var polygon = content.Children[0] as Polygon;
 
                 //content.Width = width;
                 content.Height = width;
@@ -414,7 +417,7 @@ namespace Telegram.Views.Popups
             {
                 if (value > 0)
                 {
-                    BadgeInfo.Text = Icons.LockCLosedFilled12 + Icons.Spacing + string.Format(Strings.BoostLevel, value);
+                    BadgeInfo.Text = Icons.LockClosedFilled12 + Icons.Spacing + string.Format(Strings.BoostLevel, value);
                     BadgeInfo.Visibility = Visibility.Visible;
                 }
                 else

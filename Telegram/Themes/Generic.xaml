@@ -6597,8 +6597,6 @@
         <Setter Property="MinWidth"
                 Value="{ThemeResource ListViewItemMinWidth}" />
         <Setter Property="MinHeight"
-                Value="0" />
-        <Setter Property="Height"
                 Value="64" />
         <Setter Property="AllowDrop"
                 Value="False" />
@@ -7154,7 +7152,7 @@
         <Setter Property="Padding"
                 Value="0" />
         <Setter Property="MinHeight"
-                Value="0" />
+                Value="64" />
         <Setter Property="MinWidth"
                 Value="0" />
         <Setter Property="Margin"

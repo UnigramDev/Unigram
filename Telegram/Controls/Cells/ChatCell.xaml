@@ -5,9 +5,7 @@
                     xmlns:controls="using:Telegram.Controls"
                     xmlns:local="using:Telegram.Controls.Cells"
                     xmlns:chats="using:Telegram.Controls.Chats"
-                    mc:Ignorable="d"
-                    d:DesignHeight="300"
-                    d:DesignWidth="400">
+                    mc:Ignorable="d">
 
     <Style x:Key="FromTextBlockStyle"
            TargetType="TextBlock"
@@ -25,7 +23,7 @@
             <Setter.Value>
                 <ControlTemplate TargetType="local:ChatCell">
                     <Grid Background="Transparent"
-                          Height="64">
+                          MinHeight="64">
                         <VisualStateManager.VisualStateGroups>
                             <VisualStateGroup>
                                 <VisualState x:Name="Normal" />
@@ -54,14 +52,16 @@
                             <ColumnDefinition Width="Auto" />
                         </Grid.ColumnDefinitions>
                         <Grid.RowDefinitions>
-                            <RowDefinition />
-                            <RowDefinition />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
                         </Grid.RowDefinitions>
 
                         <Grid x:Name="PhotoPanel"
                               Width="48"
                               Height="48"
-                              Margin="8,8,12,8"
+                              Margin="8,8,12,0"
+                              VerticalAlignment="Top"
                               Grid.RowSpan="2"
                               Canvas.ZIndex="1">
                             <Rectangle x:Name="SelectionOutline"
@@ -108,7 +108,8 @@
                             </Border>
                         </Grid>
 
-                        <Grid Grid.Column="1">
+                        <Grid Margin="0,10,0,0"
+                              Grid.Column="1">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition />
                                 <ColumnDefinition Width="Auto" />
@@ -247,6 +248,12 @@
                                                    Grid.Column="2" />
                         </Grid>
 
+                        <StackPanel x:Name="Folders"
+                                    Orientation="Horizontal"
+                                    Margin="0,-4,0,0"
+                                    Grid.Column="1"
+                                    Grid.Row="2" />
+
                         <Rectangle x:Name="DropVisual"
                                    x:Load="False"
                                    Stroke="{ThemeResource SystemControlForegroundBaseHighBrush}"
@@ -255,7 +262,7 @@
                                    RadiusY="4"
                                    Visibility="Collapsed"
                                    Grid.ColumnSpan="3"
-                                   Grid.RowSpan="2" />
+                                   Grid.RowSpan="3" />
                     </Grid>
                 </ControlTemplate>
             </Setter.Value>

@@ -4,8 +4,10 @@
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+using Rg.DiffUtils;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Telegram.Collections;
 using Telegram.Common;
@@ -37,11 +39,28 @@ namespace Telegram.ViewModels.Folders
                 ? FoldersPlacement.Left
                 : FoldersPlacement.Top;
 
-            Items = new MvxObservableCollection<ChatFolderInfo>();
+            Items = new DiffObservableCollection<ChatFolderInfo>(new ChatFolderInfoDiffHandler(), Constants.DiffOptions);
             Recommended = new MvxObservableCollection<RecommendedChatFolder>();
         }
 
-        public MvxObservableCollection<ChatFolderInfo> Items { get; private set; }
+        class ChatFolderInfoDiffHandler : IDiffHandler<ChatFolderInfo>
+        {
+            public bool CompareItems(ChatFolderInfo oldItem, ChatFolderInfo newItem)
+            {
+                return oldItem.Id == newItem.Id;
+            }
+
+            public void UpdateItem(ChatFolderInfo oldItem, ChatFolderInfo newItem)
+            {
+                oldItem.Title = newItem.Title;
+                oldItem.ColorId = newItem.ColorId;
+                oldItem.Icon = newItem.Icon;
+                oldItem.IsShareable = newItem.IsShareable;
+                oldItem.HasMyInviteLinks = newItem.HasMyInviteLinks;
+            }
+        }
+
+        public DiffObservableCollection<ChatFolderInfo> Items { get; private set; }
         public MvxObservableCollection<RecommendedChatFolder> Recommended { get; private set; }
 
         private bool _canCreateNew;
@@ -53,7 +72,10 @@ namespace Telegram.ViewModels.Folders
 
         protected override async Task OnNavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
         {
-            Items.ReplaceWith(ClientService.ChatFolders);
+            var folders = ClientService.ChatFolders.ToList();
+            folders.Insert(ClientService.MainChatListPosition, new ChatFolderInfo(0, Strings.FilterAllChats, new ChatFolderIcon("All"), -1, false, false));
+
+            Items.ReplaceDiff(folders);
 
             if (ClientService.IsPremiumAvailable)
             {
@@ -68,9 +90,9 @@ namespace Telegram.ViewModels.Folders
             if (ClientService.Options.ChatFolderCountMax > Items.Count)
             {
                 var response = await ClientService.SendAsync(new GetRecommendedChatFolders());
-                if (response is RecommendedChatFolders folders)
+                if (response is RecommendedChatFolders recommended)
                 {
-                    Recommended.ReplaceWith(folders.ChatFolders);
+                    Recommended.ReplaceWith(recommended.ChatFolders);
                 }
             }
             else
@@ -82,6 +104,32 @@ namespace Telegram.ViewModels.Folders
         public override void Subscribe()
         {
             Aggregator.Subscribe<UpdateChatFolders>(this, Handle);
+        }
+
+        public void ChangeShowTags()
+        {
+            ShowTags = !ShowTags;
+        }
+
+        public bool ShowTags
+        {
+            get => ClientService.AreTagsEnabled;
+            set => SetShowTags(value);
+        }
+
+        private void SetShowTags(bool value)
+        {
+            if (IsPremium)
+            {
+                if (ClientService.AreTagsEnabled != value)
+                {
+                    ClientService.Send(new ToggleChatFolderTags(value));
+                }
+            }
+            else if (IsPremiumAvailable)
+            {
+                NavigationService.ShowPromo();
+            }
         }
 
         private FoldersPlacement _placement;
@@ -134,9 +182,13 @@ namespace Telegram.ViewModels.Folders
         {
             BeginOnUIThread(async () =>
             {
-                Items.ReplaceWith(update.ChatFolders);
+                var folders = update.ChatFolders.ToList();
+                folders.Insert(ClientService.MainChatListPosition, new ChatFolderInfo(0, Strings.FilterAllChats, new ChatFolderIcon("All"), -1, false, false));
 
-                if (Items.Count < 10)
+                Items.ReplaceDiff(folders);
+                RaisePropertyChanged(nameof(ShowTags));
+
+                if (Items.Count < ClientService.Options.ChatFolderCountMax + 1)
                 {
                     var response = await ClientService.SendAsync(new GetRecommendedChatFolders());
                     if (response is RecommendedChatFolders recommended)
@@ -159,7 +211,17 @@ namespace Telegram.ViewModels.Folders
 
         public void Edit(ChatFolderInfo folder)
         {
+            if (folder.Id == 0)
+            {
+                return;
+            }
+
             var index = Items.IndexOf(folder);
+            if (index > ClientService.MainChatListPosition)
+            {
+                index--;
+            }
+
             if (index < ClientService.Options.ChatFolderCountMax)
             {
                 NavigationService.Navigate(typeof(FolderPage), folder.Id);

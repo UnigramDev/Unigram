@@ -8,6 +8,7 @@ using Microsoft.UI.Xaml.Controls;
 using Telegram.Common;
 using Telegram.Controls.Cells;
 using Telegram.Controls.Media;
+using Telegram.Td;
 using Telegram.Td.Api;
 using Telegram.ViewModels;
 using Telegram.ViewModels.Folders;
@@ -15,6 +16,7 @@ using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
 using Windows.UI.Xaml.Input;
+using Windows.UI.Xaml.Media;
 
 namespace Telegram.Views.Folders
 {
@@ -152,6 +154,81 @@ namespace Telegram.Views.Folders
             {
                 ViewModel.OpenLink(link);
             }
+        }
+
+        private void NameColor_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            if (sender is GridViewItem selector)
+            {
+                var width = e.NewSize.Width;
+                var content = selector.ContentTemplateRoot as Grid;
+
+                //content.Width = width;
+                content.Height = width;
+
+                content.CornerRadius = new CornerRadius(width / 2);
+                selector.CornerRadius = new CornerRadius(width / 2);
+                selector.FocusVisualMargin = new Thickness(2);
+            }
+        }
+
+        private void Tag_ChoosingItemContainer(ListViewBase sender, ChoosingItemContainerEventArgs args)
+        {
+            if (args.ItemContainer == null)
+            {
+                args.ItemContainer = new GridViewItem();
+                args.ItemContainer.Style = sender.ItemContainerStyle;
+                args.ItemContainer.ContentTemplate = sender.ItemTemplate;
+                args.ItemContainer.SizeChanged += NameColor_SizeChanged;
+            }
+
+            args.IsContainerPrepared = true;
+        }
+
+        private void Tag_ContainerContentChanging(ListViewBase sender, ContainerContentChangingEventArgs args)
+        {
+            if (args.InRecycleQueue)
+            {
+                return;
+            }
+            else if (args.ItemContainer.ContentTemplateRoot is Grid content
+                && content.Children[0] is TextBlock textBlock
+                && args.Item is NameColor colors)
+            {
+                content.Background = new SolidColorBrush(colors.LightThemeColors[0]);
+                textBlock.Text = colors.Id == -1
+                    ? ViewModel.IsPremium ? Icons.Dismiss : Icons.LockClosed
+                    : string.Empty;
+
+                args.Handled = true;
+            }
+        }
+
+        private void Tag_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (Tags.SelectedItem is NameColor colors)
+            {
+                var foreground = ViewModel.ClientService.GetAccentBrush(colors.Id);
+
+                TagPreview.Foreground = foreground;
+                TagPreview.Background = foreground.WithOpacity(0.2);
+                TagPreview.Visibility = colors.Id != -1
+                    ? Visibility.Visible
+                    : Visibility.Collapsed;
+
+                TagDisabled.Text = ViewModel.IsPremium
+                    ? Strings.FolderTagNoColor
+                    : Strings.FolderTagNoColorPremium;
+
+                TagDisabled.Visibility = colors.Id != -1
+                    ? Visibility.Collapsed
+                    : Visibility.Visible;
+            }
+        }
+
+        private void Purchase_Click(object sender, RoutedEventArgs e)
+        {
+            ViewModel.NavigationService.ShowPromo(new PremiumSourceFeature(new PremiumFeatureAdvancedChatManagement()));
         }
     }
 }

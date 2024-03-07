@@ -16,9 +16,14 @@
                                 ItemClick="OnItemClick"
                                 IsItemClickEnabled="True"
                                 SelectionMode="None"
+                                DragItemsStarting="OnDragItemsStarting"
+                                DragItemsCompleted="OnDragItemsCompleted"
                                 ChoosingItemContainer="OnChoosingItemContainer"
                                 ContainerContentChanging="OnContainerContentChanging"
-                                VerticalContentAlignment="Top">
+                                VerticalContentAlignment="Top"
+                                CanReorderItems="True"
+                                CanDragItems="True"
+                                AllowDrop="True">
             <ListView.Header>
                 <controls:SettingsPanel IsHeader="True">
                     <controls:SettingsHeadline Source="ms-appx:///Assets/Animations/ChatListFolders.tgs"
@@ -35,6 +40,7 @@
                           BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="56" />
+                            <ColumnDefinition Width="Auto" />
                             <ColumnDefinition />
                             <ColumnDefinition Width="Auto" />
                             <ColumnDefinition Width="Auto" />
@@ -61,7 +67,8 @@
                                         HorizontalContentAlignment="Right"
                                         VerticalContentAlignment="Center"
                                         IsTabStop="False"
-                                        Grid.Column="1">
+                                        Grid.Column="1"
+                                        Grid.ColumnSpan="2">
                             <ContentControl.ContentTransitions>
                                 <TransitionCollection>
                                     <EntranceThemeTransition />
@@ -72,14 +79,19 @@
                             </ContentControl.Clip>
                         </ContentControl>
 
-                        <TextBlock x:Name="Chevron"
-                                   Text="&#xE0E3;"
-                                   FontSize="20"
+                        <Ellipse Fill="Red"
+                                 Width="12"
+                                 Height="12"
+                                 Margin="0,0,8,0"
+                                 Grid.Column="4" />
+
+                        <TextBlock Text="&#xE9F6;"
                                    HorizontalAlignment="Right"
                                    VerticalAlignment="Center"
-                                   FontFamily="{StaticResource SymbolThemeFontFamily}"
                                    Margin="-6,0,6,0"
-                                   Grid.Column="3" />
+                                   FontFamily="{StaticResource SymbolThemeFontFamily}"
+                                   FontSize="16"
+                                   Grid.Column="4" />
                     </Grid>
                 </DataTemplate>
             </ListView.ItemTemplate>
@@ -92,6 +104,25 @@
                                               Style="{StaticResource GlyphBadgeButtonStyle}"
                                               IsChevronVisible="True"
                                               Glyph="&#xE98A;" />
+                    </controls:HeaderedControl>
+
+                    <controls:HeaderedControl Footer="{x:Bind ConvertShowTagsFooter(ViewModel.IsPremium), Mode=OneWay}">
+                        <Grid BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}">
+                            <controls:FauxCheckBox Click="{x:Bind ViewModel.ChangeShowTags}"
+                                                   IsFaux="True"
+                                                   IsChevronVisible="{x:Bind ViewModel.IsPremium, Mode=OneWay}"
+                                                   IsChecked="{x:Bind ViewModel.ShowTags, Mode=OneWay}"
+                                                   Content="{CustomResource FolderShowTags}"
+                                                   Style="{StaticResource SettingsCheckBoxStyle}" />
+                            <TextBlock x:Name="ShowTagsLock"
+                                       x:Load="{x:Bind ViewModel.IsPremium, Mode=OneWay, Converter={StaticResource BooleanNegationConverter}}"
+                                       Text="&#xEA25;"
+                                       Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"
+                                       FontFamily="{StaticResource SymbolThemeFontFamily}"
+                                       FontSize="20"
+                                       Padding="20,12,0,0"
+                                       IsHitTestVisible="False" />
+                        </Grid>
                     </controls:HeaderedControl>
 
                     <controls:HeaderedControl Header="{CustomResource FilterRecommended}"

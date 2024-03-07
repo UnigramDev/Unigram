@@ -300,6 +300,16 @@ namespace Telegram.Views
             Handle(update.ChatId, (chatView, chat) => chatView.UpdateChatUnreadMentionCount(chat));
         }
 
+        public void Handle(UpdateChatAddedToList update)
+        {
+            Handle(update.ChatId, (chatView, chat) => chatView.UpdateChatChatLists(chat));
+        }
+
+        public void Handle(UpdateChatRemovedFromList update)
+        {
+            Handle(update.ChatId, (chatView, chat) => chatView.UpdateChatChatLists(chat));
+        }
+
         public void Handle(UpdateChatTitle update)
         {
             Handle(update.ChatId, (chatView, chat) => chatView.UpdateChatTitle(chat));
@@ -912,6 +922,8 @@ namespace Telegram.Views
                 .Subscribe<UpdateChatReadOutbox>(Handle)
                 .Subscribe<UpdateChatUnreadMentionCount>(Handle)
                 .Subscribe<UpdateChatUnreadReactionCount>(Handle)
+                .Subscribe<UpdateChatAddedToList>(Handle)
+                .Subscribe<UpdateChatRemovedFromList>(Handle)
                 .Subscribe<UpdateChatTitle>(Handle)
                 .Subscribe<UpdateChatPhoto>(Handle)
                 .Subscribe<UpdateChatEmojiStatus>(Handle)
@@ -2244,6 +2256,7 @@ namespace Telegram.Views
 
         public void UpdateChatFolders()
         {
+            ChatsList.UpdateVisibleChats();
             ConvertFolder(ViewModel.SelectedFolder);
         }
 
@@ -2813,7 +2826,7 @@ namespace Telegram.Views
 
                 if (compare.ChatList is ChatListMain && !_clientService.IsPremium)
                 {
-                    ViewModel.Handle(new UpdateChatFolders(ViewModel.ClientService.ChatFolders, 0));
+                    ViewModel.Handle(new UpdateChatFolders(ViewModel.ClientService.ChatFolders, 0, false));
                 }
                 else
                 {

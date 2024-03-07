@@ -4384,11 +4384,32 @@ Duration: {1}</value>
   <data name="FolderLinkTitleRemove" xml:space="preserve">
     <value>Remove Folder</value>
   </data>
+  <data name="FolderShowTags" xml:space="preserve">
+    <value>Show Folder Tags</value>
+  </data>
+  <data name="FolderShowTagsInfo" xml:space="preserve">
+    <value>Display folder names for each chat in the chat list.</value>
+  </data>
+  <data name="FolderShowTagsInfoPremium" xml:space="preserve">
+    <value>Subscribe to **Telegram Premium** to display folder names for each chat in the chat list.</value>
+  </data>
   <data name="FoldersLimitSubtitle" xml:space="preserve">
     <value>Organize your chats into {0} folders</value>
   </data>
   <data name="FoldersLimitTitle" xml:space="preserve">
     <value>Folders</value>
+  </data>
+  <data name="FolderTagColor" xml:space="preserve">
+    <value>Folder color in chat list</value>
+  </data>
+  <data name="FolderTagColorInfo" xml:space="preserve">
+    <value>Choose a color for the tag of this folder.</value>
+  </data>
+  <data name="FolderTagNoColor" xml:space="preserve">
+    <value>No Tag</value>
+  </data>
+  <data name="FolderTagNoColorPremium" xml:space="preserve">
+    <value>Premium expired</value>
   </data>
   <data name="FollowersChartTitle" xml:space="preserve">
     <value>Followers</value>
@@ -5131,6 +5152,9 @@ Upgrade to **Telegram Premium** to create up to **{1}**.</value>
   </data>
   <data name="LimitReachedPublicLinksPremium" xml:space="preserve">
     <value>You have reserved too many public links. Try revoking the link from an older group or channel.</value>
+  </data>
+  <data name="LimitReachedReorderFolder" xml:space="preserve">
+    <value>Subscribe to **Telegram Premium** to move the &quot;{0}&quot; folder.</value>
   </data>
   <data name="LimitReachedSharedFolders" xml:space="preserve">
     <value>You can only have {0} shareable folders.

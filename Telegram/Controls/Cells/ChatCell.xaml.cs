@@ -20,9 +20,11 @@ using Telegram.Navigation;
 using Telegram.Navigation.Services;
 using Telegram.Services;
 using Telegram.Streams;
+using Telegram.Td;
 using Telegram.Td.Api;
 using Telegram.ViewModels;
 using Telegram.Views;
+using Windows.Foundation;
 using Windows.Storage.Streams;
 using Windows.UI;
 using Windows.UI.Composition;
@@ -137,6 +139,7 @@ namespace Telegram.Controls.Cells
         private ProfilePicture Photo;
         private Border OnlineBadge;
         private Border OnlineHeart;
+        private StackPanel Folders;
 
         private Border CompactBadgeRoot;
         private BadgeControl CompactBadge;
@@ -167,6 +170,7 @@ namespace Telegram.Controls.Cells
             SelectionOutline = GetTemplateChild(nameof(SelectionOutline)) as Rectangle;
             Segments = GetTemplateChild(nameof(Segments)) as ActiveStoriesSegments;
             Photo = GetTemplateChild(nameof(Photo)) as ProfilePicture;
+            Folders = GetTemplateChild(nameof(Folders)) as StackPanel;
 
             var tooltip = new ToolTip();
             tooltip.Opened += ToolTip_Opened;
@@ -627,6 +631,8 @@ namespace Telegram.Controls.Cells
 
             UpdateBriefLabel(UpdateBriefLabel(chat, position, out MinithumbnailId thumbnail));
             UpdateMinithumbnail(thumbnail);
+
+            UpdateChatChatLists(chat);
         }
 
         public void UpdateChatReadInbox(Chat chat, ChatPosition position = null)
@@ -1042,10 +1048,60 @@ namespace Telegram.Controls.Cells
             }
         }
 
+        public void UpdateChatChatLists(Chat chat)
+        {
+            if (!_templateApplied || _clientService == null)
+            {
+                return;
+            }
+
+            if (!_clientService.IsPremium || !_clientService.AreTagsEnabled)
+            {
+                Folders.Children.Clear();
+                return;
+            }
+
+            var folders = _clientService.GetChatFolders(chat);
+
+            for (int i = 0; i < Math.Max(folders.Count, Folders.Children.Count); i++)
+            {
+                if (i < folders.Count)
+                {
+                    var folder = folders[i];
+                    var foreground = _clientService.GetAccentBrush(folder.ColorId);
+
+                    BadgeControl badge;
+                    if (i < Folders.Children.Count)
+                    {
+                        badge = Folders.Children[i] as BadgeControl;
+                    }
+                    else
+                    {
+                        badge = new BadgeControl
+                        {
+                            CornerRadius = new CornerRadius(4),
+                            Margin = new Thickness(0, 0, 2, 0)
+                        };
+
+                        Folders.Children.Add(badge);
+                    }
+
+                    badge.Text = folder.Title;
+                    badge.Foreground = foreground;
+                    badge.Background = foreground.WithOpacity(0.2);
+                }
+                else
+                {
+                    Folders.Children.RemoveAt(i);
+                }
+            }
+        }
+
         #endregion
 
         public void UpdateViewState(Chat chat, bool compact, bool animate)
         {
+            UpdateChatChatLists(chat);
             VisualStateManager.GoToState(this, chat.Type is ChatTypeSecret ? "Secret" : "Normal", false);
 
             if (_compact == compact || !_templateApplied)
