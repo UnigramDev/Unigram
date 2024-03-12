@@ -1,0 +1,78 @@
+﻿<Grid x:Class="Telegram.Controls.Cells.Business.BusinessRepliesCell"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:local="using:Telegram.Controls.Cells.Business"
+      xmlns:controls="using:Telegram.Controls"
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+      mc:Ignorable="d"
+      d:DesignHeight="300"
+      d:DesignWidth="400"
+      Background="{ThemeResource SettingsItemBackground}"
+      BorderBrush="{ThemeResource SettingsItemBorderBrush}">
+
+    <Grid.ColumnDefinitions>
+        <ColumnDefinition Width="Auto" />
+        <ColumnDefinition />
+        <ColumnDefinition Width="Auto" />
+    </Grid.ColumnDefinitions>
+    <controls:ProfilePicture x:Name="Photo"
+                             Width="36"
+                             Height="36"
+                             Margin="12,6,8,6"
+                             IsEnabled="False"
+                             Grid.RowSpan="2" />
+
+    <local:BusinessRepliesPanel VerticalAlignment="Center"
+                                Margin="0,0,12,0"
+                                Grid.Column="1">
+        <RichTextBlock x:Name="BriefText"
+                       Style="{StaticResource InfoBodyRichTextBlockStyle}"
+                       FontFamily="{ThemeResource EmojiThemeFontFamily}"
+                       OverflowContentTarget="{x:Bind Overflow}"
+                       IsTextSelectionEnabled="False"
+                       TextTrimming="CharacterEllipsis"
+                       TextWrapping="Wrap"
+                       VerticalAlignment="Bottom"
+                       MaxLines="1">
+            <Paragraph>
+                <Run x:Name="FromLabel"
+                     Foreground="{ThemeResource TextFillColorPrimaryBrush}"
+                     FontWeight="SemiBold" /><InlineUIContainer>
+                    <Border x:Name="MinithumbnailPanel"
+                            Margin="0,-2,6,-4"
+                            HorizontalAlignment="Left"
+                            VerticalAlignment="Top"
+                            CornerRadius="2"
+                            Width="18"
+                            Height="18"
+                            Grid.Column="1">
+                        <Border.Background>
+                            <ImageBrush x:Name="Minithumbnail"
+                                        Stretch="UniformToFill"
+                                        AlignmentX="Center"
+                                        AlignmentY="Center" />
+                        </Border.Background>
+                    </Border>
+                </InlineUIContainer><Span x:Name="BriefLabel" />
+            </Paragraph>
+        </RichTextBlock>
+        <controls:BadgeControl x:Name="More"
+                               Background="{ThemeResource ControlAltFillColorTertiaryBrush}"
+                               Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                               CornerRadius="4"
+                               Margin="8,2,0,0"
+                               VerticalAlignment="Bottom" />
+
+        <RichTextBlockOverflow x:Name="Overflow"
+                               MaxLines="1" />
+    </local:BusinessRepliesPanel>
+
+    <TextBlock x:Name="Chevron"
+               Text="&#xE9F6;"
+               VerticalAlignment="Center"
+               FontFamily="{StaticResource SymbolThemeFontFamily}"
+               FontSize="16"
+               Margin="0,0,12,0"
+               Grid.Column="2" />
+</Grid>

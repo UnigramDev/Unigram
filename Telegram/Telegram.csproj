@@ -195,6 +195,9 @@
     <Compile Include="Common\BezierPoint.cs" />
     <Compile Include="Common\SliderHelper.cs" />
     <Compile Include="Composition\WeakInteractionTrackerOwner.cs" />
+    <Compile Include="Controls\Cells\Business\BusinessRepliesCell.xaml.cs">
+      <DependentUpon>BusinessRepliesCell.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Controls\Messages\ReactionAsTagButton.cs" />
     <Compile Include="Common\AsyncMediaPlayer.cs" />
     <Compile Include="Services\ClientService.SavedMessages.cs" />
@@ -378,13 +381,16 @@
     <Compile Include="Videolan\Shared\VLCException.cs" />
     <Compile Include="ViewModels\Business\BusinessFeatureViewModelBase.cs" />
     <Compile Include="ViewModels\Business\BusinessLocationViewModel.cs" />
+    <Compile Include="ViewModels\Business\BusinessRepliesViewModel.cs" />
     <Compile Include="ViewModels\ChatNotificationsViewModel.cs" />
     <Compile Include="ViewModels\Chats\ChatBoostsViewModel.cs" />
     <Compile Include="ViewModels\Chats\ChatStoriesViewModel.cs" />
     <Compile Include="ViewModels\ChooseChatsViewModel.cs" />
     <Compile Include="ViewModels\ComposeViewModel.cs" />
+    <Compile Include="ViewModels\Delegates\IBusinessRepliesDelegate.cs" />
     <Compile Include="ViewModels\Delegates\ISavedMessagesChatsDelegate.cs" />
     <Compile Include="ViewModels\DialogSavedViewModel.cs" />
+    <Compile Include="ViewModels\DialogBusinessRepliesViewModel.cs" />
     <Compile Include="ViewModels\DialogViewModel.Translate.cs" />
     <Compile Include="Td\Api\MessageTranslateResult.cs" />
     <Compile Include="ViewModels\Profile\ProfileChannelsTabViewModel.cs" />
@@ -858,6 +864,9 @@
     <Compile Include="Views\Authorization\AuthorizationRegistrationPage.xaml.cs">
       <DependentUpon>AuthorizationRegistrationPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\Business\BusinessRepliesPage.xaml.cs">
+      <DependentUpon>BusinessRepliesPage.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\Business\BusinessLocationPage.xaml.cs">
       <DependentUpon>BusinessLocationPage.xaml</DependentUpon>
     </Compile>
@@ -893,6 +902,9 @@
     </Compile>
     <Compile Include="Views\Chats\Popups\ChatBoostReassignPopup.xaml.cs">
       <DependentUpon>ChatBoostReassignPopup.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\ChatBusinessRepliesPage.xaml.cs">
+      <DependentUpon>ChatBusinessRepliesPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\ChatThreadPage.xaml.cs">
       <DependentUpon>ChatThreadPage.xaml</DependentUpon>
@@ -1724,6 +1736,7 @@
     <Content Include="Assets\Animations\RestrictsNewChats.tgs" />
     <Content Include="Assets\Animations\CloudUpdate.tgs" />
     <Content Include="Assets\Animations\BusinessLocation.tgs" />
+    <Content Include="Assets\Animations\BusinessReplies.tgs" />
     <None Include="Assets\i420.hlsl" />
     <Content Include="Assets\Images\Reply.scale-100.png" />
     <Content Include="Assets\Images\Reply.scale-125.png" />
@@ -1941,6 +1954,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Charts\DataView\LegendSignatureView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\Cells\Business\BusinessRepliesCell.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -2368,6 +2385,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="Views\Business\BusinessRepliesPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Views\Business\BusinessLocationPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -2413,6 +2434,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Views\Chats\Popups\ChatBoostReassignPopup.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\ChatBusinessRepliesPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

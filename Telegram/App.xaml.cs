@@ -431,6 +431,7 @@ namespace Telegram
                 SettingsPrivacyNewChatPage => TypeResolver.Current.Resolve<SettingsPrivacyNewChatViewModel>(sessionId),
 
                 BusinessLocationPage => TypeResolver.Current.Resolve<BusinessLocationViewModel>(sessionId),
+                BusinessRepliesPage businessRepliesPage => TypeResolver.Current.Resolve<BusinessRepliesViewModel, IBusinessRepliesDelegate>(businessRepliesPage, sessionId),
 
                 PaymentFormPage => TypeResolver.Current.Resolve<PaymentFormViewModel>(sessionId),
                 MessageStatisticsPage => TypeResolver.Current.Resolve<MessageStatisticsViewModel>(sessionId),

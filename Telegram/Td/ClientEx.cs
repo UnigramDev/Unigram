@@ -139,6 +139,14 @@ namespace Telegram.Td
 
 
 
+        public static bool CheckQuickReplyShortcutName(string name)
+        {
+            var result = Client.Execute(new CheckQuickReplyShortcutName(name));
+            return result is Ok;
+        }
+
+
+
         public static SolidColorBrush GetAccentBrush(this IClientService clientService, int id)
         {
             var accent = clientService.GetAccentColor(id);

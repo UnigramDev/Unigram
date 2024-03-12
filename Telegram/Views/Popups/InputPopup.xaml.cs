@@ -5,6 +5,8 @@
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
 using Microsoft.UI.Xaml.Controls;
+using System;
+using System.ComponentModel;
 using System.Threading.Tasks;
 using Telegram.Common;
 using Telegram.Controls;
@@ -37,6 +39,21 @@ namespace Telegram.Views.Popups
             Text = text;
             Value = value;
         }
+    }
+
+    public class InputPopupValidatingEventArgs : CancelEventArgs
+    {
+        public InputPopupValidatingEventArgs(string text, double value)
+        {
+            Text = text;
+            Value = value;
+        }
+
+        public string Text { get; }
+
+        public double Value { get; }
+
+        public string Result { get; set; }
     }
 
     public sealed partial class InputPopup : ContentPopup
@@ -72,6 +89,8 @@ namespace Telegram.Views.Popups
                     break;
             }
         }
+
+        public event EventHandler<InputPopupValidatingEventArgs> Validating;
 
         public override void OnCreate()
         {
@@ -123,6 +142,7 @@ namespace Telegram.Views.Popups
 
         private void ContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
         {
+            FrameworkElement target = null;
             if (Label != null)
             {
                 if (Label.Text.Length < MinLength)
@@ -132,6 +152,7 @@ namespace Telegram.Views.Popups
                     return;
                 }
 
+                target = Label;
                 Text = Label.Text;
             }
             else if (Password != null)
@@ -143,6 +164,7 @@ namespace Telegram.Views.Popups
                     return;
                 }
 
+                target = Password;
                 Text = Password.Password;
             }
             else if (Number != null)
@@ -154,7 +176,21 @@ namespace Telegram.Views.Popups
                     return;
                 }
 
+                target = Number;
                 Value = Number.Value;
+            }
+
+            if (Validating != null && target != null)
+            {
+                var temp = new InputPopupValidatingEventArgs(Text, Value);
+
+                Validating(this, temp);
+
+                if (temp.Cancel)
+                {
+                    VisualUtilities.ShakeView(target);
+                    args.Cancel = true;
+                }
             }
         }
 

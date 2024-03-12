@@ -213,6 +213,29 @@ namespace Telegram.Views
                         _messageFactory ??= new Telegram.Services.Factories.MessageFactory(
                             _clientService,
                             _playbackService));
+                case nameof(Telegram.ViewModels.DialogBusinessRepliesViewModel):
+                    return (T)(object)new Telegram.ViewModels.DialogBusinessRepliesViewModel(
+                        _clientService,
+                        _settingsService,
+                        _eventAggregator,
+                        _locationService ??= new Telegram.Services.LocationService(_clientService),
+                        _notificationsService,
+                        _playbackService,
+                        _voipService,
+                        _voipGroupService ??= new Telegram.Services.VoipGroupService(
+                            _clientService,
+                            _settingsService,
+                            _eventAggregator,
+                            _viewService),
+                        _networkService,
+                        _storageService ??= new Telegram.Services.StorageService(_clientService),
+                        _translateService ??= new Telegram.Services.TranslateService(
+                            _clientService,
+                            _settingsService,
+                            _eventAggregator),
+                        _messageFactory ??= new Telegram.Services.Factories.MessageFactory(
+                            _clientService,
+                            _playbackService));
                 case nameof(Telegram.ViewModels.DialogSavedViewModel):
                     return (T)(object)new Telegram.ViewModels.DialogSavedViewModel(
                         _clientService,

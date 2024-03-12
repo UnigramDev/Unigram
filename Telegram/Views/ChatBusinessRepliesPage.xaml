@@ -1,0 +1,19 @@
+﻿<local:HostedPage x:Class="Telegram.Views.ChatBusinessRepliesPage"
+                  xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                  xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                  xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                  xmlns:local="using:Telegram.Views"
+                  mc:Ignorable="d"
+                  ShowHeader="False"
+                  NavigationMode="Root">
+    <Page.Transitions>
+        <TransitionCollection>
+            <NavigationThemeTransition>
+                <SlideNavigationTransitionInfo Effect="FromRight" />
+            </NavigationThemeTransition>
+        </TransitionCollection>
+    </Page.Transitions>
+
+    <local:ChatView x:Name="View" />
+</local:HostedPage>

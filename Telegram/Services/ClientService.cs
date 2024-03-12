@@ -113,6 +113,12 @@ namespace Telegram.Services
 
         IDictionary<MessageSender, ChatAction> GetChatActions(long id, long threadId = 0);
 
+        QuickReplyShortcut GetQuickReplyShortcut(int id);
+        QuickReplyShortcut GetQuickReplyShortcut(string name);
+        IList<QuickReplyMessage> GetQuickReplyMessages(int id);
+        IList<QuickReplyShortcut> GetQuickReplyShortcuts();
+        bool CheckQuickReplyShortcutName(string name);
+
         bool IsSavedMessages(MessageSender sender);
         bool IsSavedMessages(User user);
         bool IsSavedMessages(Chat chat);
@@ -1221,6 +1227,59 @@ namespace Telegram.Services
             }
 
             return null;
+        }
+
+        public QuickReplyShortcut GetQuickReplyShortcut(int id)
+        {
+            _quickReplyShortcuts.TryGetValue(id, out var value);
+            return value?.Shortcut;
+        }
+
+        public QuickReplyShortcut GetQuickReplyShortcut(string name)
+        {
+            return _quickReplyShortcuts.Values
+                .Select(x => x.Shortcut)
+                .FirstOrDefault(x => x.Name == name);
+        }
+
+        public IList<QuickReplyMessage> GetQuickReplyMessages(int id)
+        {
+            if (_quickReplyShortcuts.TryGetValue(id, out var value))
+            {
+                return value.Messages;
+            }
+
+            return Array.Empty<QuickReplyMessage>();
+        }
+
+        public IList<QuickReplyShortcut> GetQuickReplyShortcuts()
+        {
+            if (_quickReplyShortcutIds != null)
+            {
+                var result = new List<QuickReplyShortcut>();
+
+                foreach (var id in _quickReplyShortcutIds)
+                {
+                    if (_quickReplyShortcuts.TryGetValue(id, out var value))
+                    {
+                        result.Add(value.Shortcut);
+                    }
+                }
+
+                return result;
+            }
+
+            return Array.Empty<QuickReplyShortcut>();
+        }
+
+        public bool CheckQuickReplyShortcutName(string name)
+        {
+            if (_quickReplyShortcuts.Values.Any(x => string.Equals(x.Shortcut.Name, name, StringComparison.OrdinalIgnoreCase)))
+            {
+                return false;
+            }
+
+            return ClientEx.CheckQuickReplyShortcutName(name);
         }
 
         public bool IsSavedMessages(MessageSender sender)
@@ -2465,9 +2524,55 @@ namespace Telegram.Services
                     }
                 }
             }
+            else if (update is UpdateQuickReplyShortcut updateQuickReplyShortcut)
+            {
+                if (_quickReplyShortcuts.TryGetValue(updateQuickReplyShortcut.Shortcut.Id, out var value))
+                {
+                    value.Shortcut = updateQuickReplyShortcut.Shortcut;
+                }
+                else
+                {
+                    _quickReplyShortcuts[updateQuickReplyShortcut.Shortcut.Id] = new QuickReplyShortcutInfo
+                    {
+                        Shortcut = updateQuickReplyShortcut.Shortcut
+                    };
+                }
+            }
+            else if (update is UpdateQuickReplyShortcutDeleted updateQuickReplyShortcutDeleted)
+            {
+                _quickReplyShortcuts.Remove(updateQuickReplyShortcutDeleted.ShortcutId);
+            }
+            else if (update is UpdateQuickReplyShortcutMessages updateQuickReplyShortcutMessages)
+            {
+                if (_quickReplyShortcuts.TryGetValue(updateQuickReplyShortcutMessages.ShortcutId, out var value))
+                {
+                    value.Messages = updateQuickReplyShortcutMessages.Messages;
+                }
+                else
+                {
+                    _quickReplyShortcuts[updateQuickReplyShortcutMessages.ShortcutId] = new QuickReplyShortcutInfo
+                    {
+                        Messages = updateQuickReplyShortcutMessages.Messages
+                    };
+                }
+            }
+            else if (update is UpdateQuickReplyShortcuts updateQuickReplyShortcuts)
+            {
+                _quickReplyShortcutIds = updateQuickReplyShortcuts.ShortcutIds.ToList();
+            }
 
             _aggregator.Publish(update);
         }
+
+        private readonly Dictionary<int, QuickReplyShortcutInfo> _quickReplyShortcuts = new();
+        private IList<int> _quickReplyShortcutIds;
+    }
+
+    public class QuickReplyShortcutInfo
+    {
+        public QuickReplyShortcut Shortcut { get; set; }
+
+        public IList<QuickReplyMessage> Messages { get; set; }
     }
 
     public class ChatListUnreadCount

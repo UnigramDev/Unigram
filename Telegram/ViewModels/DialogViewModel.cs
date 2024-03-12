@@ -67,6 +67,19 @@ namespace Telegram.ViewModels
         public long SavedMessagesTopicId { get; }
     }
 
+    public class ChatBusinessRepliesIdNavigationArgs
+    {
+        public ChatBusinessRepliesIdNavigationArgs(long chatId, int quickReplyShortcutId)
+        {
+            ChatId = chatId;
+            QuickReplyShortcutId = quickReplyShortcutId;
+        }
+
+        public long ChatId { get; }
+
+        public int QuickReplyShortcutId { get; }
+    }
+
     public partial class DialogViewModel : ComposeViewModel, IDelegable<IDialogDelegate>
     {
         private readonly ConcurrentDictionary<long, MessageViewModel> _selectedItems = new();
@@ -190,6 +203,13 @@ namespace Telegram.ViewModels
         {
             get => _savedMessagesTopic;
             set => Set(ref _savedMessagesTopic, value);
+        }
+
+        protected QuickReplyShortcut _quickReplyShortcut;
+        public QuickReplyShortcut QuickReplyShortcut
+        {
+            get => _quickReplyShortcut;
+            set => Set(ref _quickReplyShortcut, value);
         }
 
         public long SavedMessagesTopicId => SavedMessagesTopic?.Id ?? 0;
@@ -1607,6 +1627,11 @@ namespace Telegram.ViewModels
             return Task.CompletedTask;
         }
 
+        public virtual Task LoadQuickReplyShortcutSliceAsync()
+        {
+            return Task.CompletedTask;
+        }
+
         public async Task LoadDateSliceAsync(int dateOffset)
         {
             var chat = _chat;
@@ -1957,6 +1982,11 @@ namespace Telegram.ViewModels
                     return;
                 }
             }
+            else if (parameter is ChatBusinessRepliesIdNavigationArgs businessRepliesIdArgs)
+            {
+                QuickReplyShortcut = ClientService.GetQuickReplyShortcut(businessRepliesIdArgs.QuickReplyShortcutId);
+                parameter = businessRepliesIdArgs.ChatId;
+            }
 
             var chat = ClientService.GetChat((long)parameter);
             chat ??= await ClientService.SendAsync(new GetChat((long)parameter)) as Chat;
@@ -1990,17 +2020,24 @@ namespace Telegram.ViewModels
 #pragma warning disable CS4014
             if (_type == DialogType.ScheduledMessages)
             {
-                Logger.Debug(string.Format("{0} - Loadings scheduled messages", chat.Id));
+                Logger.Debug(string.Format("{0} - Loading scheduled messages", chat.Id));
 
                 NotifyMessageSliceLoaded();
                 LoadScheduledSliceAsync();
             }
             else if (_type == DialogType.EventLog)
             {
-                Logger.Debug(string.Format("{0} - Loadings event log", chat.Id));
+                Logger.Debug(string.Format("{0} - Loading event log", chat.Id));
 
                 NotifyMessageSliceLoaded();
                 LoadEventLogSliceAsync();
+            }
+            else if (_type == DialogType.BusinessReplies)
+            {
+                Logger.Debug(string.Format("{0} - Loading business replies", chat.Id));
+
+                NotifyMessageSliceLoaded();
+                LoadQuickReplyShortcutSliceAsync();
             }
             else if (state.TryGet("message_id", out long navigation))
             {
@@ -4604,6 +4641,7 @@ namespace Telegram.ViewModels
         Pinned,
         ScheduledMessages,
         SavedMessagesTopic,
+        BusinessReplies,
         EventLog
     }
 }

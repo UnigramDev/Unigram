@@ -2079,6 +2079,81 @@ It will be able to access your **IP address** and basic device info.</value>
   <data name="BusinessLocationUnsavedChanges" xml:space="preserve">
     <value>You have changed the business location. Apply changes?</value>
   </data>
+  <data name="BusinessReplies" xml:space="preserve">
+    <value>Quick Replies</value>
+  </data>
+  <data name="BusinessRepliesAdd" xml:space="preserve">
+    <value>Add Quick Reply</value>
+  </data>
+  <data name="BusinessRepliesAddInfo" xml:space="preserve">
+    <value>Tap and hold on a reply to select or reorder.</value>
+  </data>
+  <data name="BusinessRepliesDeleteMessage_one" xml:space="preserve">
+    <value>Are you sure you want to remove this quick reply?</value>
+  </data>
+  <data name="BusinessRepliesDeleteMessage_other" xml:space="preserve">
+    <value>Are you sure you want to remove {0} quick replies?</value>
+  </data>
+  <data name="BusinessRepliesDeleteTitle_one" xml:space="preserve">
+    <value>Remove quick reply</value>
+  </data>
+  <data name="BusinessRepliesDeleteTitle_other" xml:space="preserve">
+    <value>Remove quick replies</value>
+  </data>
+  <data name="BusinessRepliesEditMessage" xml:space="preserve">
+    <value>Edit a name for a shortcut.</value>
+  </data>
+  <data name="BusinessRepliesEditTitle" xml:space="preserve">
+    <value>Edit Shortcut</value>
+  </data>
+  <data name="BusinessRepliesEnter" xml:space="preserve">
+    <value>Add Quick Reply</value>
+  </data>
+  <data name="BusinessRepliesHint" xml:space="preserve">
+    <value>To use this quick reply in a chat, type / and select the shortcut from the list.</value>
+  </data>
+  <data name="BusinessRepliesInfo" xml:space="preserve">
+    <value>Set up shortcuts with rich text and media to respond to messages faster.</value>
+  </data>
+  <data name="BusinessRepliesIntro1" xml:space="preserve">
+    <value>Enter a message below that will be sent in chat when you type &quot;/**{0}**&quot;.</value>
+  </data>
+  <data name="BusinessRepliesIntro2" xml:space="preserve">
+    <value>You can access Quick Replies in any chat by typing / or using Attachment menu.</value>
+  </data>
+  <data name="BusinessRepliesIntroTitle" xml:space="preserve">
+    <value>New Quick Reply</value>
+  </data>
+  <data name="BusinessRepliesLimit_other" xml:space="preserve">
+    <value>Limit of **{0}** messages reached.</value>
+  </data>
+  <data name="BusinessRepliesMore_one" xml:space="preserve">
+    <value>+{0} more</value>
+  </data>
+  <data name="BusinessRepliesMore_other" xml:space="preserve">
+    <value>+{0} more</value>
+  </data>
+  <data name="BusinessRepliesNameBusy" xml:space="preserve">
+    <value>This shortcut already exists.</value>
+  </data>
+  <data name="BusinessRepliesNamePlaceholder" xml:space="preserve">
+    <value>Shortcut</value>
+  </data>
+  <data name="BusinessRepliesNameReserved" xml:space="preserve">
+    <value>This shortcut name is reserved.</value>
+  </data>
+  <data name="BusinessRepliesNewMessage" xml:space="preserve">
+    <value>Add a shortcut for your reply.</value>
+  </data>
+  <data name="BusinessRepliesNewTitle" xml:space="preserve">
+    <value>New Quick Reply</value>
+  </data>
+  <data name="BusinessRepliesRemoveMessage" xml:space="preserve">
+    <value>You didn&apos;t create a quick reply message. Do you want to exit this page and remote the shortcut?</value>
+  </data>
+  <data name="BusinessRepliesRemoveTitle" xml:space="preserve">
+    <value>Remove shortcut</value>
+  </data>
   <data name="BytesReceived" xml:space="preserve">
     <value>Data received</value>
   </data>

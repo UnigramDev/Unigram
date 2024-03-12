@@ -1443,6 +1443,7 @@ namespace Telegram.Views
                 e.SourcePageType == typeof(ChatScheduledPage) ||
                 e.SourcePageType == typeof(ChatEventLogPage) ||
                 e.SourcePageType == typeof(ChatSavedPage) ||
+                e.SourcePageType == typeof(ChatBusinessRepliesPage) ||
                 e.SourcePageType == typeof(BlankPage);
 
             var type = allowed ? BackgroundKind.Background : BackgroundKind.Material;
@@ -1511,6 +1512,7 @@ namespace Telegram.Views
                 frame.CurrentSourcePageType == typeof(ChatScheduledPage) ||
                 frame.CurrentSourcePageType == typeof(ChatEventLogPage) ||
                 frame.CurrentSourcePageType == typeof(ChatSavedPage) ||
+                frame.CurrentSourcePageType == typeof(ChatBusinessRepliesPage) ||
                 frame.CurrentSourcePageType == typeof(BlankPage);
 
             var type = allowed ? BackgroundKind.Background : BackgroundKind.Material;

@@ -281,7 +281,7 @@ namespace Telegram.Controls.Cells
 
                 TimeLabel.Text = _stateLabel + "\u00A0" + _dateLabel;
 
-                UpdateBriefLabel(UpdateBriefLabel(null, message, false, false, out MinithumbnailId thumbnail));
+                UpdateBriefLabel(UpdateBriefLabel(null, message.Content, message.IsOutgoing, false, false, out MinithumbnailId thumbnail));
                 UpdateMinithumbnail(thumbnail);
             }
         }
@@ -317,7 +317,7 @@ namespace Telegram.Controls.Cells
 
             TimeLabel.Text = _stateLabel + "\u00A0" + _dateLabel;
 
-            UpdateBriefLabel(UpdateBriefLabel(chat, message, false, false, out MinithumbnailId thumbnail));
+            UpdateBriefLabel(UpdateBriefLabel(chat, message.Content, message.IsOutgoing, false, false, out MinithumbnailId thumbnail));
             UpdateMinithumbnail(thumbnail);
         }
 
@@ -1289,7 +1289,7 @@ namespace Telegram.Controls.Cells
             var topMessage = chat.LastMessage;
             if (topMessage != null)
             {
-                return UpdateBriefLabel(chat, topMessage, true, false, out thumbnail);
+                return UpdateBriefLabel(chat, topMessage.Content, topMessage.IsOutgoing, true, false, out thumbnail);
             }
             else if (chat.Type is ChatTypeSecret secretType)
             {
@@ -1314,7 +1314,7 @@ namespace Telegram.Controls.Cells
             return new FormattedText(string.Empty, Array.Empty<TextEntity>());
         }
 
-        public static FormattedText UpdateBriefLabel(Chat chat, Message message, bool draft, bool forceEmoji, out MinithumbnailId thumbnail)
+        public static FormattedText UpdateBriefLabel(Chat chat, MessageContent content, bool outgoing, bool draft, bool forceEmoji, out MinithumbnailId thumbnail)
         {
             thumbnail = null;
 
@@ -1346,13 +1346,13 @@ namespace Telegram.Controls.Cells
                 return Text(text + fallback);
             }
 
-            if (message.Content is MessageGame gameMedia)
+            if (content is MessageGame gameMedia)
             {
                 return Text("\U0001F3AE " + gameMedia.Game.Title);
             }
-            else if (message.Content is MessageVideoNote videoNote)
+            else if (content is MessageVideoNote videoNote)
             {
-                if (videoNote.VideoNote.Minithumbnail == null || videoNote.IsSecret || forceEmoji || message.SelfDestructType is not null)
+                if (videoNote.VideoNote.Minithumbnail == null || videoNote.IsSecret || forceEmoji /*|| message.SelfDestructType is not null*/)
                 {
                     return Text("\U0001F4F9 " + Strings.AttachRound);
                 }
@@ -1360,7 +1360,7 @@ namespace Telegram.Controls.Cells
                 thumbnail = new MinithumbnailId(videoNote.VideoNote.Video.Id, videoNote.VideoNote.Minithumbnail, true);
                 return Text(Strings.AttachRound);
             }
-            else if (message.Content is MessageSticker sticker)
+            else if (content is MessageSticker sticker)
             {
                 if (string.IsNullOrEmpty(sticker.Sticker.Emoji))
                 {
@@ -1369,11 +1369,11 @@ namespace Telegram.Controls.Cells
 
                 return Text($"{sticker.Sticker.Emoji} {Strings.AttachSticker}");
             }
-            else if (message.Content is MessageVoiceNote voiceNote)
+            else if (content is MessageVoiceNote voiceNote)
             {
                 return Text1("\U0001F3A4 ", voiceNote.Caption, Strings.AttachAudio);
             }
-            else if (message.Content is MessageVideo video)
+            else if (content is MessageVideo video)
             {
                 if (video.Video.Minithumbnail == null || video.IsSecret || forceEmoji)
                 {
@@ -1383,7 +1383,7 @@ namespace Telegram.Controls.Cells
                 thumbnail = new MinithumbnailId(video.Video.VideoValue.Id, video.Video.Minithumbnail, false);
                 return Text1(string.Empty, video.Caption, Strings.AttachVideo);
             }
-            else if (message.Content is MessageAnimation animation)
+            else if (content is MessageAnimation animation)
             {
                 if (animation.Animation.Minithumbnail == null || animation.IsSecret || forceEmoji)
                 {
@@ -1393,7 +1393,7 @@ namespace Telegram.Controls.Cells
                 thumbnail = new MinithumbnailId(animation.Animation.AnimationValue.Id, animation.Animation.Minithumbnail, false);
                 return Text1(string.Empty, animation.Caption, Strings.AttachGif);
             }
-            else if (message.Content is MessageAudio audio)
+            else if (content is MessageAudio audio)
             {
                 var performer = string.IsNullOrEmpty(audio.Audio.Performer) ? null : audio.Audio.Performer;
                 var title = string.IsNullOrEmpty(audio.Audio.Title) ? null : audio.Audio.Title;
@@ -1407,7 +1407,7 @@ namespace Telegram.Controls.Cells
                     return Text1("\U0001F3B5 ", audio.Caption, $"{performer} - {title}");
                 }
             }
-            else if (message.Content is MessageDocument document)
+            else if (content is MessageDocument document)
             {
                 if (string.IsNullOrEmpty(document.Document.FileName))
                 {
@@ -1416,7 +1416,7 @@ namespace Telegram.Controls.Cells
 
                 return Text1("\U0001F4CE ", document.Caption, document.Document.FileName);
             }
-            else if (message.Content is MessageInvoice invoice)
+            else if (content is MessageInvoice invoice)
             {
                 var caption = invoice.ExtendedMedia switch
                 {
@@ -1429,19 +1429,19 @@ namespace Telegram.Controls.Cells
 
                 return Text1("\U0001F4CB ", caption, invoice.Title);
             }
-            else if (message.Content is MessageContact)
+            else if (content is MessageContact)
             {
                 return Text("\U0001F464 " + Strings.AttachContact);
             }
-            else if (message.Content is MessageLocation location)
+            else if (content is MessageLocation location)
             {
                 return Text("\U0001F4CD " + (location.LivePeriod > 0 ? Strings.AttachLiveLocation : Strings.AttachLocation));
             }
-            else if (message.Content is MessageVenue)
+            else if (content is MessageVenue)
             {
                 return Text("\U0001F4CD " + Strings.AttachLocation);
             }
-            else if (message.Content is MessagePhoto photo)
+            else if (content is MessagePhoto photo)
             {
                 if (photo.Photo.Minithumbnail == null || photo.IsSecret || forceEmoji)
                 {
@@ -1451,23 +1451,23 @@ namespace Telegram.Controls.Cells
                 thumbnail = new MinithumbnailId(photo.Photo.Sizes[^1].Photo.Id, photo.Photo.Minithumbnail, false);
                 return Text1(string.Empty, photo.Caption, Strings.AttachPhoto);
             }
-            else if (message.Content is MessagePoll poll)
+            else if (content is MessagePoll poll)
             {
                 return Text("\U0001F4CA " + poll.Poll.Question);
             }
-            else if (message.Content is MessageCall call)
+            else if (content is MessageCall call)
             {
-                return Text("\u260E " + call.ToOutcomeText(message.IsOutgoing));
+                return Text("\u260E " + call.ToOutcomeText(outgoing));
             }
-            else if (message.Content is MessageStory story && !story.ViaMention)
+            else if (content is MessageStory story && !story.ViaMention)
             {
                 return Text(Strings.Story);
             }
-            else if (message.Content is MessageUnsupported)
+            else if (content is MessageUnsupported)
             {
                 return Text(Strings.UnsupportedAttachment);
             }
-            else if (message.Content is MessageAnimatedEmoji animatedEmoji)
+            else if (content is MessageAnimatedEmoji animatedEmoji)
             {
                 if (animatedEmoji.AnimatedEmoji?.Sticker?.FullType is StickerFullTypeCustomEmoji customEmoji)
                 {
@@ -1479,12 +1479,12 @@ namespace Telegram.Controls.Cells
 
                 return new FormattedText(animatedEmoji.Emoji, Array.Empty<TextEntity>());
             }
-            else if (message.Content is MessagePremiumGiveaway)
+            else if (content is MessagePremiumGiveaway)
             {
                 return Text(Strings.BoostingGiveaway);
             }
 
-            return message.Content switch
+            return content switch
             {
                 MessageText text => text.Text,
                 MessageDice dice => new FormattedText(dice.Emoji, Array.Empty<TextEntity>()),
@@ -2430,5 +2430,55 @@ namespace Telegram.Controls.Cells
 
         #endregion
 
+    }
+
+    public class ChatFoldersPanel : Panel
+    {
+        protected override Size MeasureOverride(Size availableSize)
+        {
+            var width = 0d;
+            var height = 0d;
+
+            for (int i = 0; i < Children.Count; i++)
+            {
+                var child = Children[i];
+                child.Measure(availableSize);
+
+                if (width + child.DesiredSize.Width > availableSize.Width)
+                {
+                    break;
+                }
+                else
+                {
+                    width += child.DesiredSize.Width;
+                    height = Math.Max(height, child.DesiredSize.Height);
+                }
+            }
+
+            return new Size(width, height);
+        }
+
+        protected override Size ArrangeOverride(Size finalSize)
+        {
+            var width = 0d;
+
+            for (int i = 0; i < Children.Count; i++)
+            {
+                var child = Children[i];
+
+                if (width + child.DesiredSize.Width > finalSize.Width)
+                {
+                    child.Arrange(new Rect(0, 0, 0, 0));
+                    break;
+                }
+                else
+                {
+                    child.Arrange(new Rect(width, 0, child.DesiredSize.Width, child.DesiredSize.Height));
+                    width += child.DesiredSize.Width;
+                }
+            }
+
+            return finalSize;
+        }
     }
 }
