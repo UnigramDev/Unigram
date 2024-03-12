@@ -2055,6 +2055,234 @@ It will be able to access your **IP address** and basic device info.</value>
   <data name="BuiltInThemes" xml:space="preserve">
     <value>Built-in themes</value>
   </data>
+  <data name="BusinessAway" xml:space="preserve">
+    <value>Away Message</value>
+  </data>
+  <data name="BusinessAwayCreate" xml:space="preserve">
+    <value>Create an Away Message</value>
+  </data>
+  <data name="BusinessAwayEnter" xml:space="preserve">
+    <value>Add Away Message</value>
+  </data>
+  <data name="BusinessAwayInfo" xml:space="preserve">
+    <value>Automatically reply with a message when you are away.</value>
+  </data>
+  <data name="BusinessAwayIntro" xml:space="preserve">
+    <value>Add messages that will be automatically sent when you are off.</value>
+  </data>
+  <data name="BusinessAwayIntroTitle" xml:space="preserve">
+    <value>New Away Message</value>
+  </data>
+  <data name="BusinessAwayOnlyOffline" xml:space="preserve">
+    <value>Only if Offline</value>
+  </data>
+  <data name="BusinessAwayOnlyOfflineInfo" xml:space="preserve">
+    <value>Don’t send the away message if you’ve recently been online.</value>
+  </data>
+  <data name="BusinessAwaySchedule" xml:space="preserve">
+    <value>Schedule</value>
+  </data>
+  <data name="BusinessAwayScheduleAlways" xml:space="preserve">
+    <value>Send Always</value>
+  </data>
+  <data name="BusinessAwayScheduleCustom" xml:space="preserve">
+    <value>Custom Schedule</value>
+  </data>
+  <data name="BusinessAwayScheduleCustomEnd" xml:space="preserve">
+    <value>End Time</value>
+  </data>
+  <data name="BusinessAwayScheduleCustomEndTitle" xml:space="preserve">
+    <value>Choose end time</value>
+  </data>
+  <data name="BusinessAwayScheduleCustomSetButton" xml:space="preserve">
+    <value>Select</value>
+  </data>
+  <data name="BusinessAwayScheduleCustomStart" xml:space="preserve">
+    <value>Start Time</value>
+  </data>
+  <data name="BusinessAwayScheduleCustomStartTitle" xml:space="preserve">
+    <value>Choose start time</value>
+  </data>
+  <data name="BusinessAwayScheduleOutsideHours" xml:space="preserve">
+    <value>Outside of Business Hours</value>
+  </data>
+  <data name="BusinessAwaySend" xml:space="preserve">
+    <value>Send Away Message</value>
+  </data>
+  <data name="BusinessAwayUnsavedChanges" xml:space="preserve">
+    <value>You have changed the business away message settings. Apply changes?</value>
+  </data>
+  <data name="BusinessBotChats" xml:space="preserve">
+    <value>Chats accessible for the bot</value>
+  </data>
+  <data name="BusinessBotChatsInfo" xml:space="preserve">
+    <value>Select chats or entire chat categories which the bot will have access to.</value>
+  </data>
+  <data name="BusinessBotLink" xml:space="preserve">
+    <value>Bot Username or URL</value>
+  </data>
+  <data name="BusinessBotLinkInfo" xml:space="preserve">
+    <value>Enter the link to the Telegram bot that you want to automatically process your chats.</value>
+  </data>
+  <data name="BusinessBotNotFound" xml:space="preserve">
+    <value>Chatbot not found</value>
+  </data>
+  <data name="BusinessBotPermissions" xml:space="preserve">
+    <value>Bot permissions</value>
+  </data>
+  <data name="BusinessBotPermissionsInfo" xml:space="preserve">
+    <value>The bot will be able to view all new incoming messages, but not the messages that had been sent before you added the bot.</value>
+  </data>
+  <data name="BusinessBotPermissionsReply" xml:space="preserve">
+    <value>Reply to Messages</value>
+  </data>
+  <data name="BusinessBotRemove" xml:space="preserve">
+    <value>Remove Bot</value>
+  </data>
+  <data name="BusinessBots" xml:space="preserve">
+    <value>Chatbots</value>
+  </data>
+  <data name="BusinessBotsInfo" xml:space="preserve">
+    <value>Add a bot to your account to help you automatically process and respond to the messages you receive. **Learn more &gt;**</value>
+  </data>
+  <data name="BusinessChatsAllPrivateExcept" xml:space="preserve">
+    <value>All 1-to-1 Chats Except...</value>
+  </data>
+  <data name="BusinessChatsExcluded" xml:space="preserve">
+    <value>Excluded chats</value>
+  </data>
+  <data name="BusinessChatsExcludedAdd" xml:space="preserve">
+    <value>Exclude chats</value>
+  </data>
+  <data name="BusinessChatsIncluded" xml:space="preserve">
+    <value>Included chats</value>
+  </data>
+  <data name="BusinessChatsIncludedAdd" xml:space="preserve">
+    <value>Select chats</value>
+  </data>
+  <data name="BusinessChatsOnlySelected" xml:space="preserve">
+    <value>Only Selected Chats</value>
+  </data>
+  <data name="BusinessGreet" xml:space="preserve">
+    <value>Greeting Message</value>
+  </data>
+  <data name="BusinessGreetCreate" xml:space="preserve">
+    <value>Create a Greeting Message</value>
+  </data>
+  <data name="BusinessGreetInfo" xml:space="preserve">
+    <value>Greet customers when they message you the first time or after a period of no activity.</value>
+  </data>
+  <data name="BusinessGreetingEnter" xml:space="preserve">
+    <value>Add a Greeting</value>
+  </data>
+  <data name="BusinessGreetingIntro" xml:space="preserve">
+    <value>Create greetings that will be automatically sent to new customers.</value>
+  </data>
+  <data name="BusinessGreetingIntroTitle" xml:space="preserve">
+    <value>New Greeting Message</value>
+  </data>
+  <data name="BusinessGreetPeriod" xml:space="preserve">
+    <value>Period of no activity</value>
+  </data>
+  <data name="BusinessGreetPeriodInfo" xml:space="preserve">
+    <value>Choose how many days should pass after your last interaction with a recipient to send them a greeting in response to their message.</value>
+  </data>
+  <data name="BusinessGreetRecipientsInfo" xml:space="preserve">
+    <value>Select chats or entire chat categories for sending a greeting message.</value>
+  </data>
+  <data name="BusinessGreetSend" xml:space="preserve">
+    <value>Send Greeting Message</value>
+  </data>
+  <data name="BusinessGreetUnsavedChanges" xml:space="preserve">
+    <value>You have changed the business greeting message settings. Apply changes?</value>
+  </data>
+  <data name="BusinessHours" xml:space="preserve">
+    <value>Business Hours</value>
+  </data>
+  <data name="BusinessHoursDayAdd" xml:space="preserve">
+    <value>Add a Set of Hours</value>
+  </data>
+  <data name="BusinessHoursDayClosed" xml:space="preserve">
+    <value>Closed</value>
+  </data>
+  <data name="BusinessHoursDayCloseHour" xml:space="preserve">
+    <value>Closing Time</value>
+  </data>
+  <data name="BusinessHoursDayCloseHourPicker" xml:space="preserve">
+    <value>Choose closing time</value>
+  </data>
+  <data name="BusinessHoursDayFullOpened" xml:space="preserve">
+    <value>Open 24 hours</value>
+  </data>
+  <data name="BusinessHoursDayInfo" xml:space="preserve">
+    <value>Specify your working hours during the day.</value>
+  </data>
+  <data name="BusinessHoursDayOpen" xml:space="preserve">
+    <value>Open On This Day</value>
+  </data>
+  <data name="BusinessHoursDayOpenHour" xml:space="preserve">
+    <value>Opening Time</value>
+  </data>
+  <data name="BusinessHoursDayOpenHourPicker" xml:space="preserve">
+    <value>Choose opening time</value>
+  </data>
+  <data name="BusinessHoursInfo" xml:space="preserve">
+    <value>Turn this on to show your opening hours schedule to your customers.</value>
+  </data>
+  <data name="BusinessHoursNextDay" xml:space="preserve">
+    <value>Next day, {0}</value>
+  </data>
+  <data name="BusinessHoursProfile" xml:space="preserve">
+    <value>Business hours</value>
+  </data>
+  <data name="BusinessHoursProfileClose" xml:space="preserve">
+    <value>closed</value>
+  </data>
+  <data name="BusinessHoursProfileInYourTime" xml:space="preserve">
+    <value>{0} in your time</value>
+  </data>
+  <data name="BusinessHoursProfileNowClosed" xml:space="preserve">
+    <value>Closed</value>
+  </data>
+  <data name="BusinessHoursProfileNowOpen" xml:space="preserve">
+    <value>Open</value>
+  </data>
+  <data name="BusinessHoursProfileOpen" xml:space="preserve">
+    <value>open 24 hours</value>
+  </data>
+  <data name="BusinessHoursProfileOpensInDays_one" xml:space="preserve">
+    <value>opens tomorrow</value>
+  </data>
+  <data name="BusinessHoursProfileOpensInDays_other" xml:space="preserve">
+    <value>opens in {0} days</value>
+  </data>
+  <data name="BusinessHoursProfileOpensInHours_one" xml:space="preserve">
+    <value>opens in {0} hour</value>
+  </data>
+  <data name="BusinessHoursProfileOpensInHours_other" xml:space="preserve">
+    <value>opens in {0} hours</value>
+  </data>
+  <data name="BusinessHoursProfileOpensInMinutes_one" xml:space="preserve">
+    <value>opens in {0} minute</value>
+  </data>
+  <data name="BusinessHoursProfileOpensInMinutes_other" xml:space="preserve">
+    <value>opens in {0} minutes</value>
+  </data>
+  <data name="BusinessHoursProfileTheirTime" xml:space="preserve">
+    <value>it&apos;s now {0} there</value>
+  </data>
+  <data name="BusinessHoursShow" xml:space="preserve">
+    <value>Show Business Hours</value>
+  </data>
+  <data name="BusinessHoursTimezone" xml:space="preserve">
+    <value>Time Zone</value>
+  </data>
+  <data name="BusinessHoursTimezonePicker" xml:space="preserve">
+    <value>Choose time zone</value>
+  </data>
+  <data name="BusinessHoursUnsavedChanges" xml:space="preserve">
+    <value>You have changed the business working hours. Apply changes?</value>
+  </data>
   <data name="BusinessLocation" xml:space="preserve">
     <value>Location</value>
   </data>
@@ -2078,6 +2306,21 @@ It will be able to access your **IP address** and basic device info.</value>
   </data>
   <data name="BusinessLocationUnsavedChanges" xml:space="preserve">
     <value>You have changed the business location. Apply changes?</value>
+  </data>
+  <data name="BusinessRecipients" xml:space="preserve">
+    <value>Recipients</value>
+  </data>
+  <data name="BusinessRecipientsRemoveExcludeMessage" xml:space="preserve">
+    <value>Are you sure you want to remove &quot;{0}&quot; from excluding list?</value>
+  </data>
+  <data name="BusinessRecipientsRemoveExcludeTitle" xml:space="preserve">
+    <value>Remove recipient</value>
+  </data>
+  <data name="BusinessRecipientsRemoveIncludeMessage" xml:space="preserve">
+    <value>Are you sure you want to remove &quot;{0}&quot; from including list?</value>
+  </data>
+  <data name="BusinessRecipientsRemoveIncludeTitle" xml:space="preserve">
+    <value>Remove recipient</value>
   </data>
   <data name="BusinessReplies" xml:space="preserve">
     <value>Quick Replies</value>
@@ -4309,6 +4552,9 @@ Duration: {1}</value>
   <data name="FilterExcludeInfo" xml:space="preserve">
     <value>Choose chats or types of chats that will not appear in this folder.</value>
   </data>
+  <data name="FilterExistingChats" xml:space="preserve">
+    <value>Existing chats</value>
+  </data>
   <data name="FilterFinishCreating" xml:space="preserve">
     <value>Please finish creating this folder to share it.</value>
   </data>
@@ -4368,6 +4614,9 @@ Duration: {1}</value>
   </data>
   <data name="FilterNew" xml:space="preserve">
     <value>New Folder</value>
+  </data>
+  <data name="FilterNewChats" xml:space="preserve">
+    <value>New chats</value>
   </data>
   <data name="FilterNoChatsToDisplay" xml:space="preserve">
     <value>Folder is empty</value>
@@ -6587,6 +6836,42 @@ Payments will go directly to the developer of {0}. Telegram cannot provide any g
   <data name="PowerUsage" xml:space="preserve">
     <value>Power Saving</value>
   </data>
+  <data name="PremiumBusinessAwayMessages" xml:space="preserve">
+    <value>Away Messages</value>
+  </data>
+  <data name="PremiumBusinessAwayMessagesDescription" xml:space="preserve">
+    <value>Define messages that are automatically sent when you are off.</value>
+  </data>
+  <data name="PremiumBusinessChatbots" xml:space="preserve">
+    <value>Chatbots</value>
+  </data>
+  <data name="PremiumBusinessChatbotsDescription" xml:space="preserve">
+    <value>Add any third party chatbots that will process customer interactions.</value>
+  </data>
+  <data name="PremiumBusinessGreetingMessages" xml:space="preserve">
+    <value>Greeting Messages</value>
+  </data>
+  <data name="PremiumBusinessGreetingMessagesDescription" xml:space="preserve">
+    <value>Create greetings that will be automatically sent to new customers.</value>
+  </data>
+  <data name="PremiumBusinessLocation" xml:space="preserve">
+    <value>Location</value>
+  </data>
+  <data name="PremiumBusinessLocationDescription" xml:space="preserve">
+    <value>Display the location of your business on your account.</value>
+  </data>
+  <data name="PremiumBusinessOpeningHours" xml:space="preserve">
+    <value>Opening Hours</value>
+  </data>
+  <data name="PremiumBusinessOpeningHoursDescription" xml:space="preserve">
+    <value>Show to your customers when you are open for business.</value>
+  </data>
+  <data name="PremiumBusinessQuickReplies" xml:space="preserve">
+    <value>Quick Replies</value>
+  </data>
+  <data name="PremiumBusinessQuickRepliesDescription" xml:space="preserve">
+    <value>Set up shortcuts with rich text and media to respond to messages faster.</value>
+  </data>
   <data name="PremiumLastSeenButton1" xml:space="preserve">
     <value>Show My Last Seen</value>
   </data>
@@ -8430,6 +8715,22 @@ list of viewers.</value>
   </data>
   <data name="TabsViewOnTop" xml:space="preserve">
     <value>Tabs at the top</value>
+  </data>
+  <data name="TelegramBusiness" xml:space="preserve">
+    <value>Telegram Business</value>
+  </data>
+  <data name="TelegramBusinessSubscribedSubtitle" xml:space="preserve">
+    <value>You have now unlocked these additional business features.</value>
+  </data>
+  <data name="TelegramBusinessSubscribedSubtitleTemp" xml:space="preserve">
+    <value>You have now unlocked Telegram Business features. These features are **temporarily included** with your Premium Subscription.</value>
+  </data>
+  <data name="TelegramBusinessSubtitle" xml:space="preserve">
+    <value>Subscribe to **Telegram Premium** to unlock these additional business features.</value>
+  </data>
+  <data name="TelegramBusinessSubtitleTemp" xml:space="preserve">
+    <value>Turn your account into a **business page** with these additional features.
+The benefits of Telegram Business are **temporarily included** with Telegram Premium.</value>
   </data>
   <data name="TelegramFAQ" xml:space="preserve">
     <value>Telegram FAQ</value>

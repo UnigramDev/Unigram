@@ -135,6 +135,7 @@ namespace Telegram.Controls.Media
 
         public const string Hamburger = "\uE700";
 
+        public const string LockClosedFilled12 = "\uE9DD";
         public const string LockClosedFilled14 = "\uEA0C";
 
         public const string PersonQuestionMark = "\uE897";
@@ -180,6 +181,10 @@ namespace Telegram.Controls.Media
 
         public const string MarkAsRead = "\uE91D";
         public const string MarkAsUnread = "\uE91C";
+
+        public const string ChatUnreadFilled = "\uEA79";
+        public const string MegaphoneFilled = "\uEA78";
+        public const string BotFilled = "\uEA77";
 
         public const string Image = "\uEB9F";
         public const string ImageFilled24 = "\uEA1D";
@@ -357,6 +362,11 @@ namespace Telegram.Controls.Media
         public const string PaintBrush = "\uE90E";
         public const string PaintBrushFilled = "\uEA51";
         public const string WallpaperFilled = "\uEA50";
+
+        public const string HandWaveFilled = "\uEA7B";
+        public const string ChatSnoozeFilled = "\uEA7D";
+        public const string ArrowReplyFilled = "\uEA7C";
+        public const string LocationFilled = "\uEA7A";
 
         public const string Seen = "\uE96B";
 

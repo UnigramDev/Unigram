@@ -2747,35 +2747,43 @@ namespace Telegram.Views
         {
             if (folder == ChatListFolderFlags.ExcludeMuted)
             {
-                return Icons.Alert;
+                return Icons.AlertFilled;
             }
             else if (folder == ChatListFolderFlags.ExcludeRead)
             {
-                return Icons.MarkAsUnread; //FontFamily = App.Current.Resources["TelegramThemeFontFamily"] as FontFamily };
+                return Icons.ChatUnreadFilled; //FontFamily = App.Current.Resources["TelegramThemeFontFamily"] as FontFamily };
             }
             else if (folder == ChatListFolderFlags.ExcludeArchived)
             {
-                return Icons.Archive;
+                return Icons.ArchiveFilled;
             }
             else if (folder == ChatListFolderFlags.IncludeContacts)
             {
-                return Icons.Person;
+                return Icons.PersonFilled;
             }
             else if (folder == ChatListFolderFlags.IncludeNonContacts)
             {
-                return Icons.PersonQuestionMark;
+                return Icons.PersonQuestionMarkFilled;
             }
             else if (folder == ChatListFolderFlags.IncludeGroups)
             {
-                return Icons.People;
+                return Icons.PeopleFilled;
             }
             else if (folder == ChatListFolderFlags.IncludeChannels)
             {
-                return Icons.Megaphone;
+                return Icons.MegaphoneFilled;
             }
             else if (folder == ChatListFolderFlags.IncludeBots)
             {
-                return Icons.Bot;
+                return Icons.BotFilled;
+            }
+            else if (folder == ChatListFolderFlags.ExistingChats)
+            {
+                return Icons.ChatMultipleFilled;
+            }
+            else if (folder == ChatListFolderFlags.NewChats)
+            {
+                return Icons.ChatUnreadFilled;
             }
 
             return null;
@@ -2789,17 +2797,15 @@ namespace Telegram.Views
                 return;
             }
 
-            if (e.Items.Count > 1 || (e.Items[0] is ChatFolderViewModel folder && folder.ChatList is ChatListMain && !_clientService.IsPremium))
+            if (e.Items.Count > 1)
             {
                 list.CanReorderItems = false;
                 e.Cancel = true;
             }
             else
             {
-                var minimum = _clientService.IsPremium ? 2 : 3;
-
                 var items = ViewModel?.Folders;
-                if (items == null || items.Count < minimum)
+                if (items == null || items.Count < 2)
                 {
                     list.CanReorderItems = false;
                     e.Cancel = true;
@@ -2826,9 +2832,11 @@ namespace Telegram.Views
                     compare = items[index + 1];
                 }
 
-                if (compare.ChatList is ChatListMain && !_clientService.IsPremium)
+                if ((compare.ChatList is ChatListMain || folder.ChatList is ChatListMain) && !_clientService.IsPremium)
                 {
                     ViewModel.Handle(new UpdateChatFolders(ViewModel.ClientService.ChatFolders, 0, false));
+
+                    ToastPopup.ShowPromo(ViewModel.NavigationService, string.Format(Strings.LimitReachedReorderFolder, Strings.FilterAllChats), Strings.PremiumMore, new PremiumSourceLimitExceeded(new PremiumLimitTypeChatFolderCount()));
                 }
                 else
                 {

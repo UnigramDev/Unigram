@@ -62,6 +62,13 @@ namespace Telegram
             public const string BoostingGiveawayUsedLinksPlural = "BoostingGiveawayUsedLinksPlural";
             public const string BoostingReassignBoostTextPluralWithLink = "BoostingReassignBoostTextPluralWithLink";
             public const string BoostStories = "BoostStories";
+            public const string BusinessHoursProfileOpensInDays = "BusinessHoursProfileOpensInDays";
+            public const string BusinessHoursProfileOpensInHours = "BusinessHoursProfileOpensInHours";
+            public const string BusinessHoursProfileOpensInMinutes = "BusinessHoursProfileOpensInMinutes";
+            public const string BusinessRepliesDeleteMessage = "BusinessRepliesDeleteMessage";
+            public const string BusinessRepliesDeleteTitle = "BusinessRepliesDeleteTitle";
+            public const string BusinessRepliesLimit = "BusinessRepliesLimit";
+            public const string BusinessRepliesMore = "BusinessRepliesMore";
             public const string CanJoin = "CanJoin";
             public const string Channels = "Channels";
             public const string Characters = "Characters";
@@ -3059,6 +3066,354 @@ namespace Telegram
         public static string BuiltInThemes => Resource.GetString("BuiltInThemes");
         
         /// <summary>
+        /// Localized resource similar to "Away Message"
+        /// </summary>
+        public static string BusinessAway => Resource.GetString("BusinessAway");
+        
+        /// <summary>
+        /// Localized resource similar to "Create an Away Message"
+        /// </summary>
+        public static string BusinessAwayCreate => Resource.GetString("BusinessAwayCreate");
+        
+        /// <summary>
+        /// Localized resource similar to "Add Away Message"
+        /// </summary>
+        public static string BusinessAwayEnter => Resource.GetString("BusinessAwayEnter");
+        
+        /// <summary>
+        /// Localized resource similar to "Automatically reply with a message when you are away."
+        /// </summary>
+        public static string BusinessAwayInfo => Resource.GetString("BusinessAwayInfo");
+        
+        /// <summary>
+        /// Localized resource similar to "Add messages that will be automatically sent when you are off."
+        /// </summary>
+        public static string BusinessAwayIntro => Resource.GetString("BusinessAwayIntro");
+        
+        /// <summary>
+        /// Localized resource similar to "New Away Message"
+        /// </summary>
+        public static string BusinessAwayIntroTitle => Resource.GetString("BusinessAwayIntroTitle");
+        
+        /// <summary>
+        /// Localized resource similar to "Only if Offline"
+        /// </summary>
+        public static string BusinessAwayOnlyOffline => Resource.GetString("BusinessAwayOnlyOffline");
+        
+        /// <summary>
+        /// Localized resource similar to "Don’t send the away message if you’ve recently been online."
+        /// </summary>
+        public static string BusinessAwayOnlyOfflineInfo => Resource.GetString("BusinessAwayOnlyOfflineInfo");
+        
+        /// <summary>
+        /// Localized resource similar to "Schedule"
+        /// </summary>
+        public static string BusinessAwaySchedule => Resource.GetString("BusinessAwaySchedule");
+        
+        /// <summary>
+        /// Localized resource similar to "Send Always"
+        /// </summary>
+        public static string BusinessAwayScheduleAlways => Resource.GetString("BusinessAwayScheduleAlways");
+        
+        /// <summary>
+        /// Localized resource similar to "Custom Schedule"
+        /// </summary>
+        public static string BusinessAwayScheduleCustom => Resource.GetString("BusinessAwayScheduleCustom");
+        
+        /// <summary>
+        /// Localized resource similar to "End Time"
+        /// </summary>
+        public static string BusinessAwayScheduleCustomEnd => Resource.GetString("BusinessAwayScheduleCustomEnd");
+        
+        /// <summary>
+        /// Localized resource similar to "Choose end time"
+        /// </summary>
+        public static string BusinessAwayScheduleCustomEndTitle => Resource.GetString("BusinessAwayScheduleCustomEndTitle");
+        
+        /// <summary>
+        /// Localized resource similar to "Select"
+        /// </summary>
+        public static string BusinessAwayScheduleCustomSetButton => Resource.GetString("BusinessAwayScheduleCustomSetButton");
+        
+        /// <summary>
+        /// Localized resource similar to "Start Time"
+        /// </summary>
+        public static string BusinessAwayScheduleCustomStart => Resource.GetString("BusinessAwayScheduleCustomStart");
+        
+        /// <summary>
+        /// Localized resource similar to "Choose start time"
+        /// </summary>
+        public static string BusinessAwayScheduleCustomStartTitle => Resource.GetString("BusinessAwayScheduleCustomStartTitle");
+        
+        /// <summary>
+        /// Localized resource similar to "Outside of Business Hours"
+        /// </summary>
+        public static string BusinessAwayScheduleOutsideHours => Resource.GetString("BusinessAwayScheduleOutsideHours");
+        
+        /// <summary>
+        /// Localized resource similar to "Send Away Message"
+        /// </summary>
+        public static string BusinessAwaySend => Resource.GetString("BusinessAwaySend");
+        
+        /// <summary>
+        /// Localized resource similar to "You have changed the business away message settings. Apply changes?"
+        /// </summary>
+        public static string BusinessAwayUnsavedChanges => Resource.GetString("BusinessAwayUnsavedChanges");
+        
+        /// <summary>
+        /// Localized resource similar to "Chats accessible for the bot"
+        /// </summary>
+        public static string BusinessBotChats => Resource.GetString("BusinessBotChats");
+        
+        /// <summary>
+        /// Localized resource similar to "Select chats or entire chat categories which the bot will have access to."
+        /// </summary>
+        public static string BusinessBotChatsInfo => Resource.GetString("BusinessBotChatsInfo");
+        
+        /// <summary>
+        /// Localized resource similar to "Bot Username or URL"
+        /// </summary>
+        public static string BusinessBotLink => Resource.GetString("BusinessBotLink");
+        
+        /// <summary>
+        /// Localized resource similar to "Enter the link to the Telegram bot that you want to automatically process your chats."
+        /// </summary>
+        public static string BusinessBotLinkInfo => Resource.GetString("BusinessBotLinkInfo");
+        
+        /// <summary>
+        /// Localized resource similar to "Chatbot not found"
+        /// </summary>
+        public static string BusinessBotNotFound => Resource.GetString("BusinessBotNotFound");
+        
+        /// <summary>
+        /// Localized resource similar to "Bot permissions"
+        /// </summary>
+        public static string BusinessBotPermissions => Resource.GetString("BusinessBotPermissions");
+        
+        /// <summary>
+        /// Localized resource similar to "The bot will be able to view all new incoming messages, but not the messages that had been sent before you added the bot."
+        /// </summary>
+        public static string BusinessBotPermissionsInfo => Resource.GetString("BusinessBotPermissionsInfo");
+        
+        /// <summary>
+        /// Localized resource similar to "Reply to Messages"
+        /// </summary>
+        public static string BusinessBotPermissionsReply => Resource.GetString("BusinessBotPermissionsReply");
+        
+        /// <summary>
+        /// Localized resource similar to "Remove Bot"
+        /// </summary>
+        public static string BusinessBotRemove => Resource.GetString("BusinessBotRemove");
+        
+        /// <summary>
+        /// Localized resource similar to "Chatbots"
+        /// </summary>
+        public static string BusinessBots => Resource.GetString("BusinessBots");
+        
+        /// <summary>
+        /// Localized resource similar to "Add a bot to your account to help you automatically process and respond to the messages you receive. **Learn more >**"
+        /// </summary>
+        public static string BusinessBotsInfo => Resource.GetString("BusinessBotsInfo");
+        
+        /// <summary>
+        /// Localized resource similar to "All 1-to-1 Chats Except..."
+        /// </summary>
+        public static string BusinessChatsAllPrivateExcept => Resource.GetString("BusinessChatsAllPrivateExcept");
+        
+        /// <summary>
+        /// Localized resource similar to "Excluded chats"
+        /// </summary>
+        public static string BusinessChatsExcluded => Resource.GetString("BusinessChatsExcluded");
+        
+        /// <summary>
+        /// Localized resource similar to "Exclude chats"
+        /// </summary>
+        public static string BusinessChatsExcludedAdd => Resource.GetString("BusinessChatsExcludedAdd");
+        
+        /// <summary>
+        /// Localized resource similar to "Included chats"
+        /// </summary>
+        public static string BusinessChatsIncluded => Resource.GetString("BusinessChatsIncluded");
+        
+        /// <summary>
+        /// Localized resource similar to "Select chats"
+        /// </summary>
+        public static string BusinessChatsIncludedAdd => Resource.GetString("BusinessChatsIncludedAdd");
+        
+        /// <summary>
+        /// Localized resource similar to "Only Selected Chats"
+        /// </summary>
+        public static string BusinessChatsOnlySelected => Resource.GetString("BusinessChatsOnlySelected");
+        
+        /// <summary>
+        /// Localized resource similar to "Greeting Message"
+        /// </summary>
+        public static string BusinessGreet => Resource.GetString("BusinessGreet");
+        
+        /// <summary>
+        /// Localized resource similar to "Create a Greeting Message"
+        /// </summary>
+        public static string BusinessGreetCreate => Resource.GetString("BusinessGreetCreate");
+        
+        /// <summary>
+        /// Localized resource similar to "Greet customers when they message you the first time or after a period of no activity."
+        /// </summary>
+        public static string BusinessGreetInfo => Resource.GetString("BusinessGreetInfo");
+        
+        /// <summary>
+        /// Localized resource similar to "Add a Greeting"
+        /// </summary>
+        public static string BusinessGreetingEnter => Resource.GetString("BusinessGreetingEnter");
+        
+        /// <summary>
+        /// Localized resource similar to "Create greetings that will be automatically sent to new customers."
+        /// </summary>
+        public static string BusinessGreetingIntro => Resource.GetString("BusinessGreetingIntro");
+        
+        /// <summary>
+        /// Localized resource similar to "New Greeting Message"
+        /// </summary>
+        public static string BusinessGreetingIntroTitle => Resource.GetString("BusinessGreetingIntroTitle");
+        
+        /// <summary>
+        /// Localized resource similar to "Period of no activity"
+        /// </summary>
+        public static string BusinessGreetPeriod => Resource.GetString("BusinessGreetPeriod");
+        
+        /// <summary>
+        /// Localized resource similar to "Choose how many days should pass after your last interaction with a recipient to send them a greeting in response to their message."
+        /// </summary>
+        public static string BusinessGreetPeriodInfo => Resource.GetString("BusinessGreetPeriodInfo");
+        
+        /// <summary>
+        /// Localized resource similar to "Select chats or entire chat categories for sending a greeting message."
+        /// </summary>
+        public static string BusinessGreetRecipientsInfo => Resource.GetString("BusinessGreetRecipientsInfo");
+        
+        /// <summary>
+        /// Localized resource similar to "Send Greeting Message"
+        /// </summary>
+        public static string BusinessGreetSend => Resource.GetString("BusinessGreetSend");
+        
+        /// <summary>
+        /// Localized resource similar to "You have changed the business greeting message settings. Apply changes?"
+        /// </summary>
+        public static string BusinessGreetUnsavedChanges => Resource.GetString("BusinessGreetUnsavedChanges");
+        
+        /// <summary>
+        /// Localized resource similar to "Business Hours"
+        /// </summary>
+        public static string BusinessHours => Resource.GetString("BusinessHours");
+        
+        /// <summary>
+        /// Localized resource similar to "Add a Set of Hours"
+        /// </summary>
+        public static string BusinessHoursDayAdd => Resource.GetString("BusinessHoursDayAdd");
+        
+        /// <summary>
+        /// Localized resource similar to "Closed"
+        /// </summary>
+        public static string BusinessHoursDayClosed => Resource.GetString("BusinessHoursDayClosed");
+        
+        /// <summary>
+        /// Localized resource similar to "Closing Time"
+        /// </summary>
+        public static string BusinessHoursDayCloseHour => Resource.GetString("BusinessHoursDayCloseHour");
+        
+        /// <summary>
+        /// Localized resource similar to "Choose closing time"
+        /// </summary>
+        public static string BusinessHoursDayCloseHourPicker => Resource.GetString("BusinessHoursDayCloseHourPicker");
+        
+        /// <summary>
+        /// Localized resource similar to "Open 24 hours"
+        /// </summary>
+        public static string BusinessHoursDayFullOpened => Resource.GetString("BusinessHoursDayFullOpened");
+        
+        /// <summary>
+        /// Localized resource similar to "Specify your working hours during the day."
+        /// </summary>
+        public static string BusinessHoursDayInfo => Resource.GetString("BusinessHoursDayInfo");
+        
+        /// <summary>
+        /// Localized resource similar to "Open On This Day"
+        /// </summary>
+        public static string BusinessHoursDayOpen => Resource.GetString("BusinessHoursDayOpen");
+        
+        /// <summary>
+        /// Localized resource similar to "Opening Time"
+        /// </summary>
+        public static string BusinessHoursDayOpenHour => Resource.GetString("BusinessHoursDayOpenHour");
+        
+        /// <summary>
+        /// Localized resource similar to "Choose opening time"
+        /// </summary>
+        public static string BusinessHoursDayOpenHourPicker => Resource.GetString("BusinessHoursDayOpenHourPicker");
+        
+        /// <summary>
+        /// Localized resource similar to "Turn this on to show your opening hours schedule to your customers."
+        /// </summary>
+        public static string BusinessHoursInfo => Resource.GetString("BusinessHoursInfo");
+        
+        /// <summary>
+        /// Localized resource similar to "Next day, {0}"
+        /// </summary>
+        public static string BusinessHoursNextDay => Resource.GetString("BusinessHoursNextDay");
+        
+        /// <summary>
+        /// Localized resource similar to "Business hours"
+        /// </summary>
+        public static string BusinessHoursProfile => Resource.GetString("BusinessHoursProfile");
+        
+        /// <summary>
+        /// Localized resource similar to "closed"
+        /// </summary>
+        public static string BusinessHoursProfileClose => Resource.GetString("BusinessHoursProfileClose");
+        
+        /// <summary>
+        /// Localized resource similar to "{0} in your time"
+        /// </summary>
+        public static string BusinessHoursProfileInYourTime => Resource.GetString("BusinessHoursProfileInYourTime");
+        
+        /// <summary>
+        /// Localized resource similar to "Closed"
+        /// </summary>
+        public static string BusinessHoursProfileNowClosed => Resource.GetString("BusinessHoursProfileNowClosed");
+        
+        /// <summary>
+        /// Localized resource similar to "Open"
+        /// </summary>
+        public static string BusinessHoursProfileNowOpen => Resource.GetString("BusinessHoursProfileNowOpen");
+        
+        /// <summary>
+        /// Localized resource similar to "open 24 hours"
+        /// </summary>
+        public static string BusinessHoursProfileOpen => Resource.GetString("BusinessHoursProfileOpen");
+        
+        /// <summary>
+        /// Localized resource similar to "it's now {0} there"
+        /// </summary>
+        public static string BusinessHoursProfileTheirTime => Resource.GetString("BusinessHoursProfileTheirTime");
+        
+        /// <summary>
+        /// Localized resource similar to "Show Business Hours"
+        /// </summary>
+        public static string BusinessHoursShow => Resource.GetString("BusinessHoursShow");
+        
+        /// <summary>
+        /// Localized resource similar to "Time Zone"
+        /// </summary>
+        public static string BusinessHoursTimezone => Resource.GetString("BusinessHoursTimezone");
+        
+        /// <summary>
+        /// Localized resource similar to "Choose time zone"
+        /// </summary>
+        public static string BusinessHoursTimezonePicker => Resource.GetString("BusinessHoursTimezonePicker");
+        
+        /// <summary>
+        /// Localized resource similar to "You have changed the business working hours. Apply changes?"
+        /// </summary>
+        public static string BusinessHoursUnsavedChanges => Resource.GetString("BusinessHoursUnsavedChanges");
         
         /// <summary>
         /// Localized resource similar to "Location"
@@ -3099,6 +3454,123 @@ namespace Telegram
         /// Localized resource similar to "You have changed the business location. Apply changes?"
         /// </summary>
         public static string BusinessLocationUnsavedChanges => Resource.GetString("BusinessLocationUnsavedChanges");
+        
+        /// <summary>
+        /// Localized resource similar to "Recipients"
+        /// </summary>
+        public static string BusinessRecipients => Resource.GetString("BusinessRecipients");
+        
+        /// <summary>
+        /// Localized resource similar to "Are you sure you want to remove "{0}" from excluding list?"
+        /// </summary>
+        public static string BusinessRecipientsRemoveExcludeMessage => Resource.GetString("BusinessRecipientsRemoveExcludeMessage");
+        
+        /// <summary>
+        /// Localized resource similar to "Remove recipient"
+        /// </summary>
+        public static string BusinessRecipientsRemoveExcludeTitle => Resource.GetString("BusinessRecipientsRemoveExcludeTitle");
+        
+        /// <summary>
+        /// Localized resource similar to "Are you sure you want to remove "{0}" from including list?"
+        /// </summary>
+        public static string BusinessRecipientsRemoveIncludeMessage => Resource.GetString("BusinessRecipientsRemoveIncludeMessage");
+        
+        /// <summary>
+        /// Localized resource similar to "Remove recipient"
+        /// </summary>
+        public static string BusinessRecipientsRemoveIncludeTitle => Resource.GetString("BusinessRecipientsRemoveIncludeTitle");
+        
+        /// <summary>
+        /// Localized resource similar to "Quick Replies"
+        /// </summary>
+        public static string BusinessReplies => Resource.GetString("BusinessReplies");
+        
+        /// <summary>
+        /// Localized resource similar to "Add Quick Reply"
+        /// </summary>
+        public static string BusinessRepliesAdd => Resource.GetString("BusinessRepliesAdd");
+        
+        /// <summary>
+        /// Localized resource similar to "Tap and hold on a reply to select or reorder."
+        /// </summary>
+        public static string BusinessRepliesAddInfo => Resource.GetString("BusinessRepliesAddInfo");
+        
+        /// <summary>
+        /// Localized resource similar to "Edit a name for a shortcut."
+        /// </summary>
+        public static string BusinessRepliesEditMessage => Resource.GetString("BusinessRepliesEditMessage");
+        
+        /// <summary>
+        /// Localized resource similar to "Edit Shortcut"
+        /// </summary>
+        public static string BusinessRepliesEditTitle => Resource.GetString("BusinessRepliesEditTitle");
+        
+        /// <summary>
+        /// Localized resource similar to "Add Quick Reply"
+        /// </summary>
+        public static string BusinessRepliesEnter => Resource.GetString("BusinessRepliesEnter");
+        
+        /// <summary>
+        /// Localized resource similar to "To use this quick reply in a chat, type / and select the shortcut from the list."
+        /// </summary>
+        public static string BusinessRepliesHint => Resource.GetString("BusinessRepliesHint");
+        
+        /// <summary>
+        /// Localized resource similar to "Set up shortcuts with rich text and media to respond to messages faster."
+        /// </summary>
+        public static string BusinessRepliesInfo => Resource.GetString("BusinessRepliesInfo");
+        
+        /// <summary>
+        /// Localized resource similar to "Enter a message below that will be sent in chat when you type "/**{0}**"."
+        /// </summary>
+        public static string BusinessRepliesIntro1 => Resource.GetString("BusinessRepliesIntro1");
+        
+        /// <summary>
+        /// Localized resource similar to "You can access Quick Replies in any chat by typing / or using Attachment menu."
+        /// </summary>
+        public static string BusinessRepliesIntro2 => Resource.GetString("BusinessRepliesIntro2");
+        
+        /// <summary>
+        /// Localized resource similar to "New Quick Reply"
+        /// </summary>
+        public static string BusinessRepliesIntroTitle => Resource.GetString("BusinessRepliesIntroTitle");
+        
+        /// <summary>
+        /// Localized resource similar to "This shortcut already exists."
+        /// </summary>
+        public static string BusinessRepliesNameBusy => Resource.GetString("BusinessRepliesNameBusy");
+        
+        /// <summary>
+        /// Localized resource similar to "Shortcut"
+        /// </summary>
+        public static string BusinessRepliesNamePlaceholder => Resource.GetString("BusinessRepliesNamePlaceholder");
+        
+        /// <summary>
+        /// Localized resource similar to "This shortcut name is reserved."
+        /// </summary>
+        public static string BusinessRepliesNameReserved => Resource.GetString("BusinessRepliesNameReserved");
+        
+        /// <summary>
+        /// Localized resource similar to "Add a shortcut for your reply."
+        /// </summary>
+        public static string BusinessRepliesNewMessage => Resource.GetString("BusinessRepliesNewMessage");
+        
+        /// <summary>
+        /// Localized resource similar to "New Quick Reply"
+        /// </summary>
+        public static string BusinessRepliesNewTitle => Resource.GetString("BusinessRepliesNewTitle");
+        
+        /// <summary>
+        /// Localized resource similar to "You didn't create a quick reply message. Do you want to exit this page and remote the shortcut?"
+        /// </summary>
+        public static string BusinessRepliesRemoveMessage => Resource.GetString("BusinessRepliesRemoveMessage");
+        
+        /// <summary>
+        /// Localized resource similar to "Remove shortcut"
+        /// </summary>
+        public static string BusinessRepliesRemoveTitle => Resource.GetString("BusinessRepliesRemoveTitle");
+        
+        /// <summary>
         /// Localized resource similar to "Data received"
         /// </summary>
         public static string BytesReceived => Resource.GetString("BytesReceived");
@@ -6530,6 +7002,11 @@ namespace Telegram
         public static string FilterExcludeInfo => Resource.GetString("FilterExcludeInfo");
         
         /// <summary>
+        /// Localized resource similar to "Existing chats"
+        /// </summary>
+        public static string FilterExistingChats => Resource.GetString("FilterExistingChats");
+        
+        /// <summary>
         /// Localized resource similar to "Please finish creating this folder to share it."
         /// </summary>
         public static string FilterFinishCreating => Resource.GetString("FilterFinishCreating");
@@ -6598,6 +7075,11 @@ namespace Telegram
         /// Localized resource similar to "New Folder"
         /// </summary>
         public static string FilterNew => Resource.GetString("FilterNew");
+        
+        /// <summary>
+        /// Localized resource similar to "New chats"
+        /// </summary>
+        public static string FilterNewChats => Resource.GetString("FilterNewChats");
         
         /// <summary>
         /// Localized resource similar to "Folder is empty"
@@ -9905,6 +10387,66 @@ namespace Telegram
         public static string PowerUsage => Resource.GetString("PowerUsage");
         
         /// <summary>
+        /// Localized resource similar to "Away Messages"
+        /// </summary>
+        public static string PremiumBusinessAwayMessages => Resource.GetString("PremiumBusinessAwayMessages");
+        
+        /// <summary>
+        /// Localized resource similar to "Define messages that are automatically sent when you are off."
+        /// </summary>
+        public static string PremiumBusinessAwayMessagesDescription => Resource.GetString("PremiumBusinessAwayMessagesDescription");
+        
+        /// <summary>
+        /// Localized resource similar to "Chatbots"
+        /// </summary>
+        public static string PremiumBusinessChatbots => Resource.GetString("PremiumBusinessChatbots");
+        
+        /// <summary>
+        /// Localized resource similar to "Add any third party chatbots that will process customer interactions."
+        /// </summary>
+        public static string PremiumBusinessChatbotsDescription => Resource.GetString("PremiumBusinessChatbotsDescription");
+        
+        /// <summary>
+        /// Localized resource similar to "Greeting Messages"
+        /// </summary>
+        public static string PremiumBusinessGreetingMessages => Resource.GetString("PremiumBusinessGreetingMessages");
+        
+        /// <summary>
+        /// Localized resource similar to "Create greetings that will be automatically sent to new customers."
+        /// </summary>
+        public static string PremiumBusinessGreetingMessagesDescription => Resource.GetString("PremiumBusinessGreetingMessagesDescription");
+        
+        /// <summary>
+        /// Localized resource similar to "Location"
+        /// </summary>
+        public static string PremiumBusinessLocation => Resource.GetString("PremiumBusinessLocation");
+        
+        /// <summary>
+        /// Localized resource similar to "Display the location of your business on your account."
+        /// </summary>
+        public static string PremiumBusinessLocationDescription => Resource.GetString("PremiumBusinessLocationDescription");
+        
+        /// <summary>
+        /// Localized resource similar to "Opening Hours"
+        /// </summary>
+        public static string PremiumBusinessOpeningHours => Resource.GetString("PremiumBusinessOpeningHours");
+        
+        /// <summary>
+        /// Localized resource similar to "Show to your customers when you are open for business."
+        /// </summary>
+        public static string PremiumBusinessOpeningHoursDescription => Resource.GetString("PremiumBusinessOpeningHoursDescription");
+        
+        /// <summary>
+        /// Localized resource similar to "Quick Replies"
+        /// </summary>
+        public static string PremiumBusinessQuickReplies => Resource.GetString("PremiumBusinessQuickReplies");
+        
+        /// <summary>
+        /// Localized resource similar to "Set up shortcuts with rich text and media to respond to messages faster."
+        /// </summary>
+        public static string PremiumBusinessQuickRepliesDescription => Resource.GetString("PremiumBusinessQuickRepliesDescription");
+        
+        /// <summary>
         /// Localized resource similar to "Show My Last Seen"
         /// </summary>
         public static string PremiumLastSeenButton1 => Resource.GetString("PremiumLastSeenButton1");
@@ -12787,6 +13329,32 @@ namespace Telegram
         /// Localized resource similar to "Tabs at the top"
         /// </summary>
         public static string TabsViewOnTop => Resource.GetString("TabsViewOnTop");
+        
+        /// <summary>
+        /// Localized resource similar to "Telegram Business"
+        /// </summary>
+        public static string TelegramBusiness => Resource.GetString("TelegramBusiness");
+        
+        /// <summary>
+        /// Localized resource similar to "You have now unlocked these additional business features."
+        /// </summary>
+        public static string TelegramBusinessSubscribedSubtitle => Resource.GetString("TelegramBusinessSubscribedSubtitle");
+        
+        /// <summary>
+        /// Localized resource similar to "You have now unlocked Telegram Business features. These features are **temporarily included** with your Premium Subscription."
+        /// </summary>
+        public static string TelegramBusinessSubscribedSubtitleTemp => Resource.GetString("TelegramBusinessSubscribedSubtitleTemp");
+        
+        /// <summary>
+        /// Localized resource similar to "Subscribe to **Telegram Premium** to unlock these additional business features."
+        /// </summary>
+        public static string TelegramBusinessSubtitle => Resource.GetString("TelegramBusinessSubtitle");
+        
+        /// <summary>
+        /// Localized resource similar to "Turn your account into a **business page** with these additional features.
+        ///The benefits of Telegram Business are **temporarily included** with Telegram Premium."
+        /// </summary>
+        public static string TelegramBusinessSubtitleTemp => Resource.GetString("TelegramBusinessSubtitleTemp");
         
         /// <summary>
         /// Localized resource similar to "Telegram FAQ"

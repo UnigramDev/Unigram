@@ -1664,6 +1664,65 @@ namespace Telegram.Td.Api
             return false;
         }
 
+        public static bool AreTheSame(this BusinessGreetingMessageSettings x, BusinessGreetingMessageSettings y)
+        {
+            if (x == null || y == null)
+            {
+                return x == y;
+            }
+
+            return x.ShortcutId == y.ShortcutId
+                && x.InactivityDays == y.InactivityDays
+                && x.Recipients.AreTheSame(y.Recipients);
+        }
+
+        public static bool AreTheSame(this BusinessAwayMessageSettings x, BusinessAwayMessageSettings y)
+        {
+            if (x == null || y == null)
+            {
+                return x == y;
+            }
+
+            return x.ShortcutId == y.ShortcutId
+                && x.OfflineOnly == y.OfflineOnly
+                && x.Schedule.AreTheSame(y.Schedule)
+                && x.Recipients.AreTheSame(y.Recipients);
+        }
+
+        public static bool AreTheSame(this BusinessAwayMessageSchedule x, BusinessAwayMessageSchedule y)
+        {
+            if (x is BusinessAwayMessageScheduleAlways)
+            {
+                return y is BusinessAwayMessageScheduleAlways;
+            }
+            else if (x is BusinessAwayMessageScheduleOutsideOfOpeningHours)
+            {
+                return y is BusinessAwayMessageScheduleOutsideOfOpeningHours;
+            }
+            else if (x is BusinessAwayMessageScheduleCustom xcustom && y is BusinessAwayMessageScheduleCustom ycustom)
+            {
+                return xcustom.StartDate == ycustom.StartDate
+                    && xcustom.EndDate == ycustom.EndDate;
+            }
+
+            return false;
+        }
+
+        public static bool AreTheSame(this BusinessRecipients x, BusinessRecipients y)
+        {
+            if (x == null || y == null)
+            {
+                return x == y;
+            }
+
+            if (x.ExcludeSelected == y.ExcludeSelected && x.SelectContacts == y.SelectContacts && x.SelectNonContacts == y.SelectNonContacts && x.SelectNewChats == y.SelectNewChats && x.SelectExistingChats == y.SelectExistingChats && x.ChatIds.Count == y.ChatIds.Count)
+            {
+                return x.ChatIds.All(k => y.ChatIds.Contains(k));
+            }
+
+            return false;
+        }
+
         public static bool AreTheSame(this MessageSender sender, MessageSender compare)
         {
             if (sender is MessageSenderUser user1 && compare is MessageSenderUser user2)

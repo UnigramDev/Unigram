@@ -468,14 +468,30 @@ namespace Telegram.Views.Popups
 
         #region PickFiltersAsync
 
-        public static async Task<IList<ChatFolderElement>> AddExecute(bool include, bool allowFilters, IList<ChatFolderElement> target)
+        public static async Task<IList<ChatFolderElement>> AddExecute(bool include, bool allowFilters, bool business, IList<ChatFolderElement> target)
         {
             if (allowFilters)
             {
                 //var target = new List<ChatFolderElement>();
 
                 var flags = new List<FolderFlag>();
-                if (include)
+
+                if (business)
+                {
+                    if (include)
+                    {
+                        flags.Add(new FolderFlag { Flag = ChatListFolderFlags.NewChats });
+                        flags.Add(new FolderFlag { Flag = ChatListFolderFlags.IncludeContacts });
+                        flags.Add(new FolderFlag { Flag = ChatListFolderFlags.IncludeNonContacts });
+                    }
+                    else
+                    {
+                        flags.Add(new FolderFlag { Flag = ChatListFolderFlags.ExistingChats });
+                        flags.Add(new FolderFlag { Flag = ChatListFolderFlags.IncludeContacts });
+                        flags.Add(new FolderFlag { Flag = ChatListFolderFlags.IncludeNonContacts });
+                    }
+                }
+                else if (include)
                 {
                     flags.Add(new FolderFlag { Flag = ChatListFolderFlags.IncludeContacts });
                     flags.Add(new FolderFlag { Flag = ChatListFolderFlags.IncludeNonContacts });
