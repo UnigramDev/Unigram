@@ -239,6 +239,27 @@
                     </controls:BadgeButton.IconSource>
                 </controls:BadgeButton>
 
+                <controls:BadgeButton x:Name="Business"
+                                      x:Load="{x:Bind ViewModel.IsPremiumAvailable, Mode=OneWay}"
+                                      Click="Business_Click"
+                                      Style="{StaticResource IconBadgeButtonStyle}">
+                    <controls:BadgeButton.IconSource>
+                        <icons:Business />
+                    </controls:BadgeButton.IconSource>
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition />
+                            <ColumnDefinition />
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Text="{CustomResource TelegramBusiness}" />
+                        <controls:BadgeControl Text="NEW"
+                                               VerticalAlignment="Bottom"
+                                               CornerRadius="4"
+                                               Margin="4,0,0,0"
+                                               Grid.Column="1" />
+                    </Grid>
+                </controls:BadgeButton>
+
                 <controls:BadgeButton x:Name="PremiumGifting"
                                       x:Load="False"
                                       Click="{x:Bind ViewModel.PremiumGifting}"

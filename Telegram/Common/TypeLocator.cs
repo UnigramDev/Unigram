@@ -878,6 +878,16 @@ namespace Telegram.Views
                         _clientService,
                         _settingsService,
                         _eventAggregator);
+                case nameof(Telegram.ViewModels.Business.BusinessLocationViewModel):
+                    return (T)(object)new Telegram.ViewModels.Business.BusinessLocationViewModel(
+                        _clientService,
+                        _settingsService,
+                        _eventAggregator);
+                case nameof(Telegram.ViewModels.Business.BusinessViewModel):
+                    return (T)(object)new Telegram.ViewModels.Business.BusinessViewModel(
+                        _clientService,
+                        _settingsService,
+                        _eventAggregator);
                 case nameof(Telegram.ViewModels.Business.BusinessHoursViewModel):
                     return (T)(object)new Telegram.ViewModels.Business.BusinessHoursViewModel(
                         _clientService,

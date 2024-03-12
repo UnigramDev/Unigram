@@ -1,0 +1,87 @@
+﻿<local:HostedPage x:Class="Telegram.Views.Business.BusinessPage"
+                  xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                  xmlns:local="using:Telegram.Views"
+                  xmlns:controls="using:Telegram.Controls"
+                  xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                  xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                  mc:Ignorable="d"
+                  NavigationMode="Root">
+
+    <Page.Transitions>
+        <TransitionCollection>
+            <NavigationThemeTransition>
+                <SlideNavigationTransitionInfo Effect="FromRight" />
+            </NavigationThemeTransition>
+        </TransitionCollection>
+    </Page.Transitions>
+
+    <Grid Background="{ThemeResource SettingsPageBackground}">
+        <controls:TableListView x:Name="ScrollingHost"
+                                ItemsSource="{x:Bind ViewModel.Items}"
+                                ItemClick="OnItemClick"
+                                IsItemClickEnabled="True"
+                                SelectionMode="None"
+                                ChoosingItemContainer="OnChoosingItemContainer"
+                                ContainerContentChanging="OnContainerContentChanging">
+            <ListView.ItemTemplate>
+                <DataTemplate>
+                    <Grid Background="{ThemeResource SettingsItemBackground}"
+                          BorderBrush="{ThemeResource SettingsItemBorderBrush}">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="56" />
+                            <ColumnDefinition />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                        </Grid.RowDefinitions>
+                        <Border x:Name="IconPanel"
+                                HorizontalAlignment="Left"
+                                VerticalAlignment="Center"
+                                Margin="18,4,0,0"
+                                Padding="2"
+                                CornerRadius="4">
+                            <TextBlock x:Name="Icon"
+                                       FontSize="20"
+                                       AutomationProperties.AccessibilityView="Raw"
+                                       FontFamily="{StaticResource SymbolThemeFontFamily}"
+                                       Foreground="#FFFFFF" />
+                        </Border>
+
+                        <TextBlock x:Name="Title"
+                                   FontSize="{ThemeResource ControlContentThemeFontSize}"
+                                   FontFamily="{ThemeResource ContentControlThemeFontFamily}"
+                                   AutomationProperties.AccessibilityView="Raw"
+                                   Margin="0,11,12,12"
+                                   Grid.Column="1" />
+                        <TextBlock x:Name="Subtitle"
+                                   FontSize="{ThemeResource ControlContentThemeFontSize}"
+                                   FontFamily="{ThemeResource ContentControlThemeFontFamily}"
+                                   Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"
+                                   Margin="0,-10,12,12"
+                                   Grid.Column="1"
+                                   Grid.Row="1" />
+
+                        <TextBlock x:Name="Chevron"
+                                   Text="&#xE0E3;"
+                                   FontSize="20"
+                                   HorizontalAlignment="Right"
+                                   VerticalAlignment="Center"
+                                   FontFamily="{StaticResource SymbolThemeFontFamily}"
+                                   Margin="-6,0,6,0"
+                                   Grid.Column="2"
+                                   Grid.RowSpan="2" />
+                    </Grid>
+                </DataTemplate>
+            </ListView.ItemTemplate>
+            <ListView.Header>
+                <controls:SettingsPanel>
+                    <controls:SettingsHeadline x:Name="Headline"
+                                               Source="ms-appx:///Assets/Animations/Business.tgs" />
+                </controls:SettingsPanel>
+            </ListView.Header>
+        </controls:TableListView>
+    </Grid>
+</local:HostedPage>

@@ -12,6 +12,7 @@ using Telegram.Controls.Gallery;
 using Telegram.Td.Api;
 using Telegram.ViewModels;
 using Telegram.ViewModels.Delegates;
+using Telegram.Views.Business;
 using Telegram.Views.Folders;
 using Telegram.Views.Settings;
 using Windows.UI.Xaml;
@@ -204,6 +205,11 @@ namespace Telegram.Views
         private void VersionLabel_Navigate(object sender, RoutedEventArgs e)
         {
             MasterDetail.NavigationService.Navigate(typeof(DiagnosticsPage));
+        }
+
+        private void Business_Click(object sender, RoutedEventArgs e)
+        {
+            MasterDetail.NavigationService.Navigate(typeof(BusinessPage));
         }
     }
 }

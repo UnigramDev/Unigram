@@ -125,6 +125,7 @@
     <Compile Include="Assets\Icons\Advanced.cs" />
     <Compile Include="Assets\Icons\Appearance.cs" />
     <Compile Include="Assets\Icons\AskQ.cs" />
+    <Compile Include="Assets\Icons\Business.cs" />
     <Compile Include="Assets\Icons\Data.cs" />
     <Compile Include="Assets\Icons\Devices.cs" />
     <Compile Include="Assets\Icons\Dots.cs" />
@@ -383,6 +384,7 @@
     <Compile Include="Videolan\Shared\Structures\VideoViewpoint.cs" />
     <Compile Include="Videolan\Shared\VLCException.cs" />
     <Compile Include="ViewModels\Business\BusinessFeatureViewModelBase.cs" />
+    <Compile Include="ViewModels\Business\BusinessViewModel.cs" />
     <Compile Include="ViewModels\Business\BusinessGreetViewModel.cs" />
     <Compile Include="ViewModels\Business\BusinessBotsViewModel.cs" />
     <Compile Include="ViewModels\Business\BusinessHoursViewModel.cs" />
@@ -889,6 +891,9 @@
     </Compile>
     <Compile Include="Views\Business\BusinessLocationPage.xaml.cs">
       <DependentUpon>BusinessLocationPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Business\BusinessPage.xaml.cs">
+      <DependentUpon>BusinessPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Business\Popups\ChooseHoursPopup.xaml.cs">
       <DependentUpon>ChooseHoursPopup.xaml</DependentUpon>
@@ -1770,6 +1775,7 @@
     <Content Include="Assets\Animations\BusinessGreet.tgs" />
     <Content Include="Assets\Animations\BusinessHours.tgs" />
     <Content Include="Assets\Animations\BusinessReplies.tgs" />
+    <Content Include="Assets\Animations\Business.tgs" />
     <None Include="Assets\i420.hlsl" />
     <Content Include="Assets\Images\Reply.scale-100.png" />
     <Content Include="Assets\Images\Reply.scale-125.png" />
@@ -2443,6 +2449,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Views\Business\BusinessLocationPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Business\BusinessPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
