@@ -195,6 +195,9 @@
     <Compile Include="Common\BezierPoint.cs" />
     <Compile Include="Common\SliderHelper.cs" />
     <Compile Include="Composition\WeakInteractionTrackerOwner.cs" />
+    <Compile Include="Controls\Cells\Business\BusinessHoursCell.xaml.cs">
+      <DependentUpon>BusinessHoursCell.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Controls\Cells\Business\BusinessRepliesCell.xaml.cs">
       <DependentUpon>BusinessRepliesCell.xaml</DependentUpon>
     </Compile>
@@ -382,6 +385,7 @@
     <Compile Include="ViewModels\Business\BusinessFeatureViewModelBase.cs" />
     <Compile Include="ViewModels\Business\BusinessGreetViewModel.cs" />
     <Compile Include="ViewModels\Business\BusinessBotsViewModel.cs" />
+    <Compile Include="ViewModels\Business\BusinessHoursViewModel.cs" />
     <Compile Include="ViewModels\Business\BusinessRecipientsViewModelBase.cs" />
     <Compile Include="ViewModels\Business\BusinessAwayViewModel.cs" />
     <Compile Include="ViewModels\Business\BusinessLocationViewModel.cs" />
@@ -880,8 +884,14 @@
     <Compile Include="Views\Business\BusinessRepliesPage.xaml.cs">
       <DependentUpon>BusinessRepliesPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\Business\BusinessHoursPage.xaml.cs">
+      <DependentUpon>BusinessHoursPage.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\Business\BusinessLocationPage.xaml.cs">
       <DependentUpon>BusinessLocationPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Business\Popups\ChooseHoursPopup.xaml.cs">
+      <DependentUpon>ChooseHoursPopup.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Business\Popups\ChooseAwayPopup.xaml.cs">
       <DependentUpon>ChooseAwayPopup.xaml</DependentUpon>
@@ -972,6 +982,9 @@
     </Compile>
     <Compile Include="Views\Popups\ChooseProfileColorView.xaml.cs">
       <DependentUpon>ChooseProfileColorView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Popups\ChooseTimeZonePopup.xaml.cs">
+      <DependentUpon>ChooseTimeZonePopup.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Premium\Popups\ChangePrivacyPopup.xaml.cs">
       <DependentUpon>ChangePrivacyPopup.xaml</DependentUpon>
@@ -1755,6 +1768,7 @@
     <Content Include="Assets\Animations\BusinessAway.tgs" />
     <Content Include="Assets\Animations\BusinessBots.tgs" />
     <Content Include="Assets\Animations\BusinessGreet.tgs" />
+    <Content Include="Assets\Animations\BusinessHours.tgs" />
     <Content Include="Assets\Animations\BusinessReplies.tgs" />
     <None Include="Assets\i420.hlsl" />
     <Content Include="Assets\Images\Reply.scale-100.png" />
@@ -1973,6 +1987,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Charts\DataView\LegendSignatureView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\Cells\Business\BusinessHoursCell.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -2420,7 +2438,15 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="Views\Business\BusinessHoursPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Views\Business\BusinessLocationPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Business\Popups\ChooseHoursPopup.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -2537,6 +2563,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Views\Popups\ChooseProfileColorView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\Popups\ChooseTimeZonePopup.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

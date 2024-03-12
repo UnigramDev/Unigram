@@ -64,6 +64,22 @@ namespace Telegram.Converters
             DayOfWeekAbbreviated = new DateTimeFormatter("dayofweek.abbreviated", languages, region, calendar, clock);
         }
 
+        public static string UtcTimeOffset(int value)
+        {
+            if (value == 0)
+            {
+                return "UTC";
+            }
+
+            var span = TimeSpan.FromSeconds(value);
+            if (span > TimeSpan.Zero)
+            {
+                return string.Format("UTC+{0:hh\\:mm}", span);
+            }
+
+            return string.Format("UTC-{0:hh\\:mm}", span);
+        }
+
         public static string MonthGrouping(int value)
         {
             var date = ToLocalTime(value);
@@ -328,6 +344,11 @@ namespace Telegram.Converters
         public static string Time(int value)
         {
             return NativeUtils.FormatTime(value);
+        }
+
+        public static string Time(DateTime value)
+        {
+            return ShortTime.Format(value);
         }
 
         public static string Date(int value)

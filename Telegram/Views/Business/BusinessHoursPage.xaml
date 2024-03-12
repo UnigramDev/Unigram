@@ -1,0 +1,60 @@
+﻿<local:HostedPage x:Class="Telegram.Views.Business.BusinessHoursPage"
+                  xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                  xmlns:local="using:Telegram.Views"
+                  xmlns:controls="using:Telegram.Controls"
+                  xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                  xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                  xmlns:cells="using:Telegram.Controls.Cells.Business"
+                  mc:Ignorable="d">
+
+    <Page.Transitions>
+        <TransitionCollection>
+            <NavigationThemeTransition>
+                <SlideNavigationTransitionInfo Effect="FromRight" />
+            </NavigationThemeTransition>
+        </TransitionCollection>
+    </Page.Transitions>
+
+    <local:HostedPage.Action>
+        <Button Content="{CustomResource Done}"
+                Click="{x:Bind ViewModel.Continue}"
+                Style="{StaticResource AccentButtonStyle}" />
+    </local:HostedPage.Action>
+
+    <Grid Background="{ThemeResource SettingsPageBackground}">
+        <ScrollViewer x:Name="ScrollingHost"
+                      VerticalScrollBarVisibility="Auto"
+                      VerticalScrollMode="Auto">
+            <controls:SettingsPanel>
+                <controls:SettingsHeadline Text="{CustomResource BusinessHoursInfo}"
+                                           Source="ms-appx:///Assets/Animations/BusinessHours.tgs" />
+
+                <controls:HeaderedControl>
+                    <controls:FauxCheckBox IsChecked="{x:Bind ViewModel.IsEnabled, Mode=TwoWay}"
+                                           Content="{CustomResource BusinessHoursShow}"
+                                           Style="{StaticResource SettingsCheckBoxStyle}" />
+                </controls:HeaderedControl>
+
+                <controls:SettingsPanel IsFooter="True"
+                                        Visibility="{x:Bind ViewModel.IsEnabled, Mode=OneWay}">
+                    <controls:HeaderedControl Header="{CustomResource BusinessHours}">
+                        <cells:BusinessHoursCell Day="{x:Bind ViewModel.Monday, Mode=OneWay}" />
+                        <cells:BusinessHoursCell Day="{x:Bind ViewModel.Tuesday, Mode=OneWay}" />
+                        <cells:BusinessHoursCell Day="{x:Bind ViewModel.Wednesday, Mode=OneWay}" />
+                        <cells:BusinessHoursCell Day="{x:Bind ViewModel.Thursday, Mode=OneWay}" />
+                        <cells:BusinessHoursCell Day="{x:Bind ViewModel.Friday, Mode=OneWay}" />
+                        <cells:BusinessHoursCell Day="{x:Bind ViewModel.Saturday, Mode=OneWay}" />
+                        <cells:BusinessHoursCell Day="{x:Bind ViewModel.Sunday, Mode=OneWay}" />
+                    </controls:HeaderedControl>
+
+                    <controls:HeaderedControl>
+                        <controls:BadgeButton Click="{x:Bind ViewModel.ChangeTimeZone}"
+                                              Content="{CustomResource BusinessHoursTimezone}"
+                                              Badge="{x:Bind ViewModel.TimeZone.Name, Mode=OneWay}" />
+                    </controls:HeaderedControl>
+                </controls:SettingsPanel>
+            </controls:SettingsPanel>
+        </ScrollViewer>
+    </Grid>
+</local:HostedPage>

@@ -1,0 +1,33 @@
+﻿<Grid x:Class="Telegram.Controls.Cells.Business.BusinessHoursCell"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:local="using:Telegram.Controls.Cells.Business"
+      xmlns:controls="using:Telegram.Controls"
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+      mc:Ignorable="d"
+      d:DesignHeight="300"
+      d:DesignWidth="400"
+      Background="{ThemeResource SettingsItemBackground}"
+      BorderBrush="{ThemeResource SettingsItemBorderBrush}">
+
+    <Grid.ColumnDefinitions>
+        <ColumnDefinition />
+        <ColumnDefinition Width="Auto" />
+    </Grid.ColumnDefinitions>
+    <controls:BadgeButton x:Name="Button"
+                          Click="Button_Click"
+                          Style="{StaticResource GlyphSubbadgeBadgeButtonStyle}"
+                          Margin="-44,0,0,0" />
+
+
+    <ToggleSwitch x:Name="Switch"
+                  Toggled="Switch_Toggled"
+                  OffContent="{x:Null}"
+                  OnContent="{x:Null}"
+                  MinWidth="0"
+                  Grid.Column="1" />
+    <Border BorderBrush="{ThemeResource SettingsItemBorderBrush}"
+            BorderThickness="0,0,1,0"
+            Margin="12,8" />
+</Grid>

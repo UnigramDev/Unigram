@@ -1,0 +1,66 @@
+﻿<controls:ContentPopup x:Class="Telegram.Views.Business.Popups.ChooseHoursPopup"
+                       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                       xmlns:local="using:Telegram.Views.Business.Popups"
+                       xmlns:controls="using:Telegram.Controls"
+                       xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                       xmlns:business="using:Telegram.ViewModels.Business"
+                       mc:Ignorable="d"
+                       Title="TITLE"
+                       PrimaryButtonText="Button1"
+                       SecondaryButtonText="Button2"
+                       PrimaryButtonClick="ContentDialog_PrimaryButtonClick"
+                       SecondaryButtonClick="ContentDialog_SecondaryButtonClick"
+                       Padding="0,24,0,0">
+
+    <Grid>
+        <ListView x:Name="ScrollingHost"
+                  SelectionMode="None"
+                  Padding="12,0">
+            <ListView.Header>
+                <CheckBox x:Name="Open"
+                          Click="Open_Click"
+                          Content="{CustomResource BusinessHoursDayOpen}"
+                          Margin="12,0,12,16" />
+            </ListView.Header>
+            <ListView.ItemTemplate>
+                <DataTemplate x:DataType="business:BusinessHoursRange">
+                    <StackPanel Background="{ThemeResource SettingsItemBackground}"
+                                BorderBrush="{ThemeResource SettingsItemBorderBrush}"
+                                BorderThickness="1"
+                                CornerRadius="4"
+                                Padding="12,8,12,0"
+                                Margin="0,0,0,12">
+                        <TimePicker Header="{CustomResource BusinessHoursDayOpenHour}"
+                                    Time="{x:Bind Start, Mode=TwoWay}"
+                                    HorizontalAlignment="Stretch"
+                                    Margin="0,0,0,8" />
+                        <TimePicker Header="{CustomResource BusinessHoursDayCloseHour}"
+                                    Time="{x:Bind End, Mode=TwoWay}"
+                                    HorizontalAlignment="Stretch" />
+
+                        <Button Content="{CustomResource Remove}"
+                                Style="{StaticResource DangerTextButtonStyle}"
+                                HorizontalAlignment="Center"
+                                Margin="0,8,0,4"/>
+                    </StackPanel>
+                </DataTemplate>
+            </ListView.ItemTemplate>
+            <ListView.Footer>
+                <StackPanel x:Name="Footer"
+                            Margin="12,0"
+                            Visibility="Collapsed">
+                    <Button Click="Add_Click"
+                            Content="{CustomResource BusinessHoursDayAdd}" />
+                    <TextBlock Text="{CustomResource BusinessHoursDayInfo}"
+                               Style="{StaticResource InfoCaptionTextBlockStyle}"
+                               Margin="0,4,0,24" />
+                </StackPanel>
+            </ListView.Footer>
+        </ListView>
+
+        <controls:ScrollViewerScrim Background="{ThemeResource ContentDialogBackground}"
+                                    ScrollingHost="{x:Bind ScrollingHost}" />
+    </Grid>
+</controls:ContentPopup>
