@@ -376,6 +376,8 @@
     <Compile Include="Videolan\Shared\Structures\TrackDescription.cs" />
     <Compile Include="Videolan\Shared\Structures\VideoViewpoint.cs" />
     <Compile Include="Videolan\Shared\VLCException.cs" />
+    <Compile Include="ViewModels\Business\BusinessFeatureViewModelBase.cs" />
+    <Compile Include="ViewModels\Business\BusinessLocationViewModel.cs" />
     <Compile Include="ViewModels\ChatNotificationsViewModel.cs" />
     <Compile Include="ViewModels\Chats\ChatBoostsViewModel.cs" />
     <Compile Include="ViewModels\Chats\ChatStoriesViewModel.cs" />
@@ -855,6 +857,9 @@
     </Compile>
     <Compile Include="Views\Authorization\AuthorizationRegistrationPage.xaml.cs">
       <DependentUpon>AuthorizationRegistrationPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Business\BusinessLocationPage.xaml.cs">
+      <DependentUpon>BusinessLocationPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Calls\CallPage.xaml.cs">
       <DependentUpon>CallPage.xaml</DependentUpon>
@@ -1718,6 +1723,7 @@
     <Content Include="Assets\Animations\ChangePrivacyReadDate.tgs" />
     <Content Include="Assets\Animations\RestrictsNewChats.tgs" />
     <Content Include="Assets\Animations\CloudUpdate.tgs" />
+    <Content Include="Assets\Animations\BusinessLocation.tgs" />
     <None Include="Assets\i420.hlsl" />
     <Content Include="Assets\Images\Reply.scale-100.png" />
     <Content Include="Assets\Images\Reply.scale-125.png" />
@@ -2361,6 +2367,10 @@
     <Page Include="Views\Authorization\AuthorizationRegistrationPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\Business\BusinessLocationPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\Calls\CallPage.xaml">
       <Generator>MSBuild:Compile</Generator>

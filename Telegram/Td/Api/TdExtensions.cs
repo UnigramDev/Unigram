@@ -1647,6 +1647,23 @@ namespace Telegram.Td.Api
             return 0;
         }
 
+        public static bool AreTheSame(this BusinessLocation x, BusinessLocation y)
+        {
+            if (x == null || y == null)
+            {
+                return x == y;
+            }
+
+            if (string.Equals(x.Address, y.Address))
+            {
+                return x.Location?.Latitude == y.Location?.Latitude
+                    && x.Location?.Longitude == y.Location?.Longitude
+                    && x.Location?.HorizontalAccuracy == y.Location?.HorizontalAccuracy;
+            }
+
+            return false;
+        }
+
         public static bool AreTheSame(this MessageSender sender, MessageSender compare)
         {
             if (sender is MessageSenderUser user1 && compare is MessageSenderUser user2)

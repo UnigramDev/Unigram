@@ -1,0 +1,105 @@
+﻿<local:HostedPage x:Class="Telegram.Views.Business.BusinessLocationPage"
+                  xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                  xmlns:local="using:Telegram.Views"
+                  xmlns:controls="using:Telegram.Controls"
+                  xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                  xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                  mc:Ignorable="d">
+
+    <Page.Transitions>
+        <TransitionCollection>
+            <NavigationThemeTransition>
+                <SlideNavigationTransitionInfo Effect="FromRight" />
+            </NavigationThemeTransition>
+        </TransitionCollection>
+    </Page.Transitions>
+
+    <local:HostedPage.Action>
+        <Button Content="{CustomResource Done}"
+                Click="{x:Bind ViewModel.Continue}"
+                Style="{StaticResource AccentButtonStyle}"
+                Visibility="{x:Bind ViewModel.HasChanged, Mode=OneWay}" />
+    </local:HostedPage.Action>
+
+    <Grid Background="{ThemeResource SettingsPageBackground}">
+        <ScrollViewer x:Name="ScrollingHost"
+                      VerticalScrollBarVisibility="Auto"
+                      VerticalScrollMode="Auto">
+            <controls:SettingsPanel>
+                <controls:SettingsHeadline Text="{CustomResource BusinessLocationInfo}"
+                                           Source="ms-appx:///Assets/Animations/BusinessLocation.tgs" />
+
+                <controls:HeaderedControl>
+                    <TextBox x:Name="Address"
+                             Loaded="OnLoaded"
+                             Text="{x:Bind ViewModel.Address, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                             FontFamily="{ThemeResource EmojiThemeFontFamily}"
+                             MaxLength="96"
+                             PlaceholderText="{CustomResource BusinessLocationAddress}"
+                             TextWrapping="Wrap"
+                             AcceptsReturn="True"
+                             Padding="12,11,6,12" />
+                </controls:HeaderedControl>
+
+                <controls:HeaderedControl>
+                    <controls:FauxCheckBox Click="{x:Bind ViewModel.ToggleMap}"
+                                           IsFaux="True"
+                                           IsChecked="{x:Bind ViewModel.IsLocationValid, Mode=OneWay}"
+                                           Content="{CustomResource BusinessLocationMap}"
+                                           Style="{StaticResource SettingsCheckBoxStyle}" />
+
+                    <HyperlinkButton Click="{x:Bind ViewModel.ChangeMap}"
+                                     Visibility="{x:Bind ViewModel.IsLocationValid, Mode=OneWay}"
+                                     Style="{StaticResource EmptyHyperlinkButtonStyle}">
+                        <Grid Background="{ThemeResource ListViewItemPlaceholderBackgroundThemeBrush}"
+                              CornerRadius="0,0,4,4">
+                            <Border Height="200">
+                                <Border.Background>
+                                    <ImageBrush ImageSource="{x:Bind ConvertLocation(ViewModel.IsLocationValid, ViewModel.Location), Mode=OneWay}"
+                                                Stretch="UniformToFill"
+                                                AlignmentX="Center"
+                                                AlignmentY="Center" />
+                                </Border.Background>
+                            </Border>
+                            <Canvas Width="40"
+                                    Height="47.691"
+                                    Margin="0,-36,0,0"
+                                    VerticalAlignment="Center"
+                                    IsHitTestVisible="False">
+                                <Path Width="40"
+                                      Height="47.691"
+                                      Data="F1M20,47.691C20,47.691 0,33.847 0,20 0,8.955 8.955,0 20,0 31.044,0 40,8.955 40,20 40,33.847 20,47.691 20,47.691"
+                                      Fill="{ThemeResource MessageHeaderForegroundBrush}"
+                                      StrokeThickness="0" />
+                                <Border Height="40"
+                                        Width="40">
+                                    <controls:ProfilePicture x:Name="PinPhoto"
+                                                             Width="32"
+                                                             Height="32"
+                                                             IsHitTestVisible="False"
+                                                             Margin="4,3,4,4"
+                                                             VerticalAlignment="Top" />
+                                </Border>
+                                <Path x:Name="PinDot"
+                                      Canvas.Left="13"
+                                      Canvas.Top="13"
+                                      Width="14"
+                                      Height="14"
+                                      Data="F1M7,0C3.135,0 0,3.136 0,7 0,10.865 3.135,14 7,14 10.865,14 14,10.865 14,7 14,3.136 10.865,0 7,0"
+                                      Fill="White"
+                                      StrokeThickness="0" />
+                            </Canvas>
+                        </Grid>
+                    </HyperlinkButton>
+                </controls:HeaderedControl>
+
+                <controls:HeaderedControl Visibility="{x:Bind ConvertClear(ViewModel.Address, ViewModel.IsLocationValid), Mode=OneWay}">
+                    <controls:BadgeButton Click="{x:Bind ViewModel.Clear}"
+                                          Content="{CustomResource BusinessLocationClear}"
+                                          Foreground="{ThemeResource DangerButtonBackground}" />
+                </controls:HeaderedControl>
+            </controls:SettingsPanel>
+        </ScrollViewer>
+    </Grid>
+</local:HostedPage>

@@ -17,6 +17,7 @@ using Telegram.Services.ViewService;
 using Telegram.ViewModels;
 using Telegram.ViewModels.Authorization;
 using Telegram.ViewModels.BasicGroups;
+using Telegram.ViewModels.Business;
 using Telegram.ViewModels.Channels;
 using Telegram.ViewModels.Chats;
 using Telegram.ViewModels.Delegates;
@@ -30,6 +31,7 @@ using Telegram.ViewModels.Users;
 using Telegram.Views;
 using Telegram.Views.Authorization;
 using Telegram.Views.BasicGroups;
+using Telegram.Views.Business;
 using Telegram.Views.Channels;
 using Telegram.Views.Chats;
 using Telegram.Views.Folders;
@@ -427,6 +429,8 @@ namespace Telegram
                 SettingsPrivacyShowStatusPage => TypeResolver.Current.Resolve<SettingsPrivacyShowStatusViewModel>(sessionId),
                 SettingsPrivacyShowBioPage => TypeResolver.Current.Resolve<SettingsPrivacyShowBioViewModel>(sessionId),
                 SettingsPrivacyNewChatPage => TypeResolver.Current.Resolve<SettingsPrivacyNewChatViewModel>(sessionId),
+
+                BusinessLocationPage => TypeResolver.Current.Resolve<BusinessLocationViewModel>(sessionId),
 
                 PaymentFormPage => TypeResolver.Current.Resolve<PaymentFormViewModel>(sessionId),
                 MessageStatisticsPage => TypeResolver.Current.Resolve<MessageStatisticsViewModel>(sessionId),

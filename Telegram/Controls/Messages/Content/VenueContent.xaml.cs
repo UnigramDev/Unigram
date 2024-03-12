@@ -6,6 +6,7 @@
 //
 using System;
 using System.Globalization;
+using Telegram.Navigation;
 using Telegram.Td.Api;
 using Telegram.ViewModels;
 using Windows.UI.Xaml;
@@ -62,11 +63,15 @@ namespace Telegram.Controls.Messages.Content
                 return;
             }
 
+            var width = 320 * WindowContext.Current.RasterizationScale;
+            var height = 200 * WindowContext.Current.RasterizationScale;
+
             var latitude = venue.Venue.Location.Latitude.ToString(CultureInfo.InvariantCulture);
             var longitude = venue.Venue.Location.Longitude.ToString(CultureInfo.InvariantCulture);
 
-            Texture.Source = new BitmapImage(new Uri(string.Format("https://dev.virtualearth.net/REST/v1/Imagery/Map/Road/{0},{1}/{2}?mapSize={3}&key=FgqXCsfOQmAn9NRf4YJ2~61a_LaBcS6soQpuLCjgo3g~Ah_T2wZTc8WqNe9a_yzjeoa5X00x4VJeeKH48wAO1zWJMtWg6qN-u4Zn9cmrOPcL", latitude, longitude, 15, "320,200")));
             Texture.Constraint = message;
+            Texture.Source = new BitmapImage(new Uri(string.Format("https://dev.virtualearth.net/REST/v1/Imagery/Map/Road/{0},{1}/{2}?mapSize={3:F0},{4:F0}&key={5}",
+                latitude, longitude, 15, width, height, Constants.BingMapsApiKey)));
 
             if (string.IsNullOrEmpty(venue.Venue.Type))
             {

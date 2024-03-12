@@ -2055,6 +2055,30 @@ It will be able to access your **IP address** and basic device info.</value>
   <data name="BuiltInThemes" xml:space="preserve">
     <value>Built-in themes</value>
   </data>
+  <data name="BusinessLocation" xml:space="preserve">
+    <value>Location</value>
+  </data>
+  <data name="BusinessLocationAddress" xml:space="preserve">
+    <value>Enter Address</value>
+  </data>
+  <data name="BusinessLocationClear" xml:space="preserve">
+    <value>Remove Location</value>
+  </data>
+  <data name="BusinessLocationClearMessage" xml:space="preserve">
+    <value>Are you sure you want to remove business location?</value>
+  </data>
+  <data name="BusinessLocationClearTitle" xml:space="preserve">
+    <value>Remove Location</value>
+  </data>
+  <data name="BusinessLocationInfo" xml:space="preserve">
+    <value>Display the location of your business on your account.</value>
+  </data>
+  <data name="BusinessLocationMap" xml:space="preserve">
+    <value>Set Location on Map</value>
+  </data>
+  <data name="BusinessLocationUnsavedChanges" xml:space="preserve">
+    <value>You have changed the business location. Apply changes?</value>
+  </data>
   <data name="BytesReceived" xml:space="preserve">
     <value>Data received</value>
   </data>

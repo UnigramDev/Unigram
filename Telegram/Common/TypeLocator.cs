@@ -855,6 +855,21 @@ namespace Telegram.Views
                         _clientService,
                         _settingsService,
                         _eventAggregator);
+                case nameof(Telegram.ViewModels.Business.BusinessLocationViewModel):
+                    return (T)(object)new Telegram.ViewModels.Business.BusinessLocationViewModel(
+                        _clientService,
+                        _settingsService,
+                        _eventAggregator);
+                case nameof(Telegram.ViewModels.Business.BusinessHoursViewModel):
+                    return (T)(object)new Telegram.ViewModels.Business.BusinessHoursViewModel(
+                        _clientService,
+                        _settingsService,
+                        _eventAggregator);
+                case nameof(Telegram.ViewModels.Business.BusinessRepliesViewModel):
+                    return (T)(object)new Telegram.ViewModels.Business.BusinessRepliesViewModel(
+                        _clientService,
+                        _settingsService,
+                        _eventAggregator);
                 case nameof(Telegram.Services.IDeviceInfoService):
                     return (T)_deviceInfoService;
                 case nameof(Telegram.Services.ISettingsService):
