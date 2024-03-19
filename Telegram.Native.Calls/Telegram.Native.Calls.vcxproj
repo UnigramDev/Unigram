@@ -178,8 +178,6 @@
     <ClInclude Include="..\Libraries\tgcalls\tgcalls\v2\SignalingConnection.h" />
     <ClInclude Include="..\Libraries\tgcalls\tgcalls\v2\SignalingEncryption.h" />
     <ClInclude Include="..\Libraries\tgcalls\tgcalls\v2\SignalingSctpConnection.h" />
-    <ClInclude Include="..\Libraries\tgcalls\tgcalls\v2_4_0_0\InstanceV2_4_0_0Impl.h" />
-    <ClInclude Include="..\Libraries\tgcalls\tgcalls\v2_4_0_0\Signaling_4_0_0.h" />
     <ClInclude Include="BroadcastTimeRequestedEventArgs.h">
       <DependentUpon>BroadcastTimeRequestedEventArgs.idl</DependentUpon>
       <SubType>Code</SubType>
@@ -192,7 +190,6 @@
     <ClInclude Include="..\Libraries\tgcalls\tgcalls\platform\uwp\UwpContext.h" />
     <ClInclude Include="..\Libraries\tgcalls\tgcalls\platform\uwp\UwpScreenCapturer.h" />
     <ClInclude Include="..\Libraries\tgcalls\tgcalls\AudioFrame.h" />
-    <ClInclude Include="..\Libraries\tgcalls\tgcalls\FakeVideoTrackSource.h" />
     <ClInclude Include="..\Libraries\tgcalls\tgcalls\group\GroupJoinPayload.h" />
     <ClInclude Include="..\Libraries\tgcalls\tgcalls\group\GroupJoinPayloadInternal.h" />
     <ClInclude Include="..\Libraries\tgcalls\tgcalls\third-party\json11.hpp" />
@@ -336,12 +333,6 @@
     <ClCompile Include="..\Libraries\tgcalls\tgcalls\v2\SignalingSctpConnection.cpp">
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="..\Libraries\tgcalls\tgcalls\v2_4_0_0\InstanceV2_4_0_0Impl.cpp">
-      <PrecompiledHeader>NotUsing</PrecompiledHeader>
-    </ClCompile>
-    <ClCompile Include="..\Libraries\tgcalls\tgcalls\v2_4_0_0\Signaling_4_0_0.cpp">
-      <PrecompiledHeader>NotUsing</PrecompiledHeader>
-    </ClCompile>
     <ClCompile Include="BroadcastTimeRequestedEventArgs.cpp">
       <DependentUpon>BroadcastTimeRequestedEventArgs.idl</DependentUpon>
       <SubType>Code</SubType>
@@ -362,9 +353,6 @@
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="..\Libraries\tgcalls\tgcalls\platform\uwp\UwpScreenCapturer.cpp">
-      <PrecompiledHeader>NotUsing</PrecompiledHeader>
-    </ClCompile>
-    <ClCompile Include="..\Libraries\tgcalls\tgcalls\FakeVideoTrackSource.cpp">
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="..\Libraries\tgcalls\tgcalls\group\GroupJoinPayloadInternal.cpp">

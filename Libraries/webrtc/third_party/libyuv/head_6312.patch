@@ -1,8 +1,8 @@
 diff --git a/include/libyuv/convert.h b/include/libyuv/convert.h
-index e1eb36b6..cb4e4cd8 100644
+index 88619a4f..4ce1d7b1 100644
 --- a/include/libyuv/convert.h
 +++ b/include/libyuv/convert.h
-@@ -910,6 +910,9 @@ int MJPGSize(const uint8_t* sample,
+@@ -1022,6 +1022,9 @@ int MJPGSize(const uint8_t* sample,
  LIBYUV_API
  int ConvertToI420(const uint8_t* sample,
                    size_t sample_size,

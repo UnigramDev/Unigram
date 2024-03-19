@@ -47,28 +47,28 @@ call fetch --nohooks webrtc
 if errorlevel 1 goto :error
 
 echo.
-echo Changing to the branch-heads/5615 branch...
+echo Changing to the branch-heads/6312 branch...
 cd src
 if errorlevel 1 goto :error
 
-call git checkout branch-heads/5615
+call git checkout branch-heads/6312
 if errorlevel 1 goto :error
 
 echo.
 echo Instructing the tools to bring the bits from all the sub repositories to your dev box...
-call gclient sync -D -r branch-heads/5615
+call gclient sync -D -r branch-heads/6312
 if errorlevel 1 goto :error
 
 echo.
 echo Adding forked Telegram+UWP upstream
 call git remote add upstream https://github.com/FrayxRulez/webrtc-uwp.git
-call git checkout m112
+call git checkout m123
 pushd third_party
-call git apply "%PATCH_DIR%/third_party/m112.patch"
+call git apply "%PATCH_DIR%/third_party/head_6312.patch"
 pushd libyuv
-call git apply "%PATCH_DIR%/third_party/libyuv/m112.patch"
+call git apply "%PATCH_DIR%/third_party/libyuv/head_6312.patch"
 pushd ..\libvpx\source\libvpx
-call git apply "%PATCH_DIR%/third_party/libvpx/source/libvpx/m112.patch"
+call git apply "%PATCH_DIR%/third_party/libvpx/source/libvpx/head_6312.patch"
 goto :exit
 
 :error
