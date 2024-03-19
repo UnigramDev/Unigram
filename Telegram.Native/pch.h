@@ -4,6 +4,7 @@
 #include <winrt/base.h>
 
 #include <algorithm>
+#include <mutex>
 
 #include <robuffer.h>
 
