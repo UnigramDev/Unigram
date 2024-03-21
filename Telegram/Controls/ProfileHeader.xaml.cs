@@ -737,6 +737,12 @@ namespace Telegram.Controls
                 Search.Visibility = fullInfo.CanBeCalled && fullInfo.SupportsVideoCalls ? Visibility.Collapsed : Visibility.Visible;
                 Grid.SetColumn(Search, 2);
             }
+
+            if (fullInfo.BusinessInfo?.Location != null)
+            {
+                Location.Visibility = Visibility.Visible;
+                Location.Badge = fullInfo.BusinessInfo.Location.Address;
+            }
         }
 
         public void UpdateUserStatus(Chat chat, User user)
