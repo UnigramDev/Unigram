@@ -713,6 +713,42 @@ namespace Telegram.ViewModels
             _notificationsService.SetMuteFor(chat, ClientService.Notifications.GetMutedFor(chat) > 0 ? 0 : 632053052);
         }
 
+        public async void OpenUsernameInfo(string username)
+        {
+            // TODO: Replace with API call
+            var response = new CollectibleItemInfo
+            {
+                PurchaseDate = DateTime.Now.ToTimestamp(),
+                Currency = "USD",
+                Amount = 15000,
+                Cryptocurrency = "TON",
+                CryptocurrencyAmount = 15000 / 4
+            };
+
+            if (response is CollectibleItemInfo info)
+            {
+                await ShowPopupAsync(new CollectiblePopup(ClientService, Chat, info, username, CollectibleItemType.Username));
+            }
+        }
+
+        public async void OpenPhoneInfo()
+        {
+            // TODO: Replace with API call
+            var response = new CollectibleItemInfo
+            {
+                PurchaseDate = DateTime.Now.ToTimestamp(),
+                Currency = "USD",
+                Amount = 15000,
+                Cryptocurrency = "TON",
+                CryptocurrencyAmount = 15000 / 4
+            };
+
+            if (response is CollectibleItemInfo info && ClientService.TryGetUser(Chat, out User user))
+            {
+                await ShowPopupAsync(new CollectiblePopup(ClientService, Chat, info, user.PhoneNumber, CollectibleItemType.PhoneNumber));
+            }
+        }
+
         #region Show last seen
 
         public async void ShowLastSeen()

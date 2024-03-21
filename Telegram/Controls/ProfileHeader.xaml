@@ -266,6 +266,7 @@
                 </controls:BadgeButton>
 
                 <controls:BadgeButton x:Name="UserPhone"
+                                      Click="{x:Bind ViewModel.OpenPhoneInfo}"
                                       Visibility="Collapsed"
                                       Content="{CustomResource Phone}"
                                       Style="{StaticResource GlyphSubtitleBadgeButtonStyle}"

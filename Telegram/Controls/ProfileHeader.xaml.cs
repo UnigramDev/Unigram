@@ -997,8 +997,12 @@ namespace Telegram.Controls
                         ActiveUsernames.Inlines.Add(new Run { Text = ", " });
                     }
 
+                    var username = usernames.ActiveUsernames[i];
+
                     var hyperlink = new Hyperlink();
-                    hyperlink.Inlines.Add(new Run { Text = $"@{usernames.ActiveUsernames[i]}" });
+                    hyperlink.Inlines.Add(new Run { Text = $"@{username}" });
+                    hyperlink.UnderlineStyle = UnderlineStyle.None;
+                    hyperlink.Click += (s, args) => Username_Click(username);
 
                     ActiveUsernames.Inlines.Add(hyperlink);
                 }
@@ -1294,7 +1298,8 @@ namespace Telegram.Controls
 
                     hyperlink.Click += (s, args) => Entity_Click(entity.Type, data);
                     hyperlink.Inlines.Add(new Run { Text = data });
-                    //hyperlink.Foreground = foreground;
+                    hyperlink.UnderlineStyle = UnderlineStyle.None;
+
                     span.Inlines.Add(hyperlink);
 
                     if (entity.Type is TextEntityTypeUrl)
@@ -1319,7 +1324,7 @@ namespace Telegram.Controls
 
                     hyperlink.Click += (s, args) => Entity_Click(entity.Type, null);
                     hyperlink.Inlines.Add(new Run { Text = text.Substring(entity.Offset, entity.Length) });
-                    //hyperlink.Foreground = foreground;
+                    hyperlink.UnderlineStyle = UnderlineStyle.None;
                     span.Inlines.Add(hyperlink);
                 }
 
@@ -1369,6 +1374,11 @@ namespace Telegram.Controls
         }
 
         #endregion
+
+        private void Username_Click(string username)
+        {
+            ViewModel.OpenUsernameInfo(username);
+        }
 
         private void Notifications_Click(object sender, RoutedEventArgs e)
         {

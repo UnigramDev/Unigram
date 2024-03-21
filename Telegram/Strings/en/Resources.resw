@@ -4831,6 +4831,27 @@ Duration: {1}</value>
   <data name="ForwardsRestrictedInfoGroup" xml:space="preserve">
     <value>Сopying and forwarding is not allowed from this group.</value>
   </data>
+  <data name="FragmentPhoneCopy" xml:space="preserve">
+    <value>Copy Phone Number</value>
+  </data>
+  <data name="FragmentPhoneMessage" xml:space="preserve">
+    <value>This phone number was bought on **Fragment** on {0} for **{1}** {2}</value>
+  </data>
+  <data name="FragmentPhoneTitle" xml:space="preserve">
+    <value>**{0}** is a collectible phone number that belongs to</value>
+  </data>
+  <data name="FragmentUsernameCopy" xml:space="preserve">
+    <value>Copy Link</value>
+  </data>
+  <data name="FragmentUsernameMessage" xml:space="preserve">
+    <value>This username was bought on **Fragment** on {0} for **{1}** {2}</value>
+  </data>
+  <data name="FragmentUsernameOpen" xml:space="preserve">
+    <value>Learn More</value>
+  </data>
+  <data name="FragmentUsernameTitle" xml:space="preserve">
+    <value>**{0}** is a collectible username that belongs to</value>
+  </data>
   <data name="From" xml:space="preserve">
     <value>From</value>
   </data>

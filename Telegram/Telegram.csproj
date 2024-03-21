@@ -966,6 +966,9 @@
     <Compile Include="Views\Popups\BackgroundPopup.xaml.cs">
       <DependentUpon>BackgroundPopup.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\Popups\CollectiblePopup.xaml.cs">
+      <DependentUpon>CollectiblePopup.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\Popups\CloudUpdatePopup.xaml.cs">
       <DependentUpon>CloudUpdatePopup.xaml</DependentUpon>
     </Compile>
@@ -1776,6 +1779,7 @@
     <Content Include="Assets\Animations\BusinessHours.tgs" />
     <Content Include="Assets\Animations\BusinessReplies.tgs" />
     <Content Include="Assets\Animations\Business.tgs" />
+    <Content Include="Assets\Animations\CollectibleUsername.tgs" />
     <None Include="Assets\i420.hlsl" />
     <Content Include="Assets\Images\Reply.scale-100.png" />
     <Content Include="Assets\Images\Reply.scale-125.png" />
@@ -2545,6 +2549,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Views\Popups\BackgroundPopup.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\Popups\CollectiblePopup.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
