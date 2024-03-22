@@ -4,6 +4,7 @@
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+using Telegram.Common;
 using Telegram.Controls.Cells;
 using Telegram.Td.Api;
 using Telegram.ViewModels.Chats;
@@ -59,11 +60,21 @@ namespace Telegram.Views.Chats
             return string.Format(Strings.BoostsLevel, next ? level + 1 : level);
         }
 
+        private string ConvertRemaining(int count)
+        {
+            return Locale.Declension(Strings.R.BoostingShowMoreBoosts, count);
+        }
+
         #endregion
 
         private void OnItemClick(object sender, ItemClickEventArgs e)
         {
             ViewModel.OpenProfile(e.ClickedItem as ChatBoost);
+        }
+
+        private async void LoadMore_Click(object sender, Windows.UI.Xaml.RoutedEventArgs e)
+        {
+            await ViewModel.LoadMoreItemsAsync(50);
         }
     }
 }

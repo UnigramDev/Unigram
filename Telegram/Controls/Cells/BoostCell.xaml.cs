@@ -55,27 +55,32 @@ namespace Telegram.Controls.Cells
                     case ChatBoostSourcePremium:
                     case ChatBoostSourceGiftCode:
                         Photo.SetUser(clientService, user, 36);
-                        Identity.SetStatus(clientService, user);
                         break;
                     case ChatBoostSourceGiveaway giveaway:
                         if (giveaway.IsUnclaimed)
                         {
                             Photo.Source = PlaceholderImage.GetGlyph(Icons.PersonDeleteFilled);
-                            Identity.ClearStatus();
                         }
                         else if (giveaway.UserId == 0)
                         {
                             Photo.Source = PlaceholderImage.GetGlyph(Icons.PersonQuestionMarkFilled);
-                            Identity.ClearStatus();
                         }
                         else
                         {
                             Photo.SetUser(clientService, user, 36);
-                            Identity.SetStatus(clientService, user);
                         }
                         break;
                 }
 
+                if (boost.Count > 1)
+                {
+                    BoostCount.Text = Icons.Boosters12 + boost.Count;
+                    BoostCount.Visibility = Windows.UI.Xaml.Visibility.Visible;
+                }
+                else
+                {
+                    BoostCount.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
+                }
             }
 
             if (args.Phase < 2)

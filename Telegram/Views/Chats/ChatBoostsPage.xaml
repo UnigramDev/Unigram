@@ -132,6 +132,15 @@
             </ListView.ItemTemplate>
             <ListView.Footer>
                 <controls:SettingsPanel IsFooter="True">
+                    <controls:HeaderedControl x:Name="LoadMore"
+                                              x:Load="{x:Bind ViewModel.HasRemainingItems, Mode=OneWay}"
+                                              Margin="0,-14,0,0">
+                        <controls:BadgeButton Click="LoadMore_Click"
+                                              Content="{x:Bind ConvertRemaining(ViewModel.RemainingItems), Mode=OneWay}"
+                                              Style="{StaticResource GlyphBadgeButtonStyle}"
+                                              Glyph="&#xE0E5;" />
+                    </controls:HeaderedControl>
+
                     <controls:SettingsFooter x:Name="BoostersFooter"
                                              x:Load="{x:Bind ViewModel.IsEmpty, Mode=OneWay, Converter={StaticResource BooleanNegationConverter}}"
                                              Text="{CustomResource BoostersInfoDescription}"

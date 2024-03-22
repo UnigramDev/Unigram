@@ -53,9 +53,10 @@
                    FontFamily="{ThemeResource EmojiThemeFontFamily}"
                    TextWrapping="NoWrap"
                    TextTrimming="CharacterEllipsis" />
-        <controls:IdentityIcon x:Name="Identity"
+        <controls:BadgeControl x:Name="BoostCount"
+                               FontFamily="{ThemeResource EmojiThemeFontFamilyWithSymbols}"
                                VerticalAlignment="Bottom"
-                               Margin="4,0,0,2"
+                               Margin="4,0,0,0"
                                Grid.Column="1" />
     </Grid>
     <TextBlock x:Name="SubtitleLabel"

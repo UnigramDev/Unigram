@@ -111,7 +111,7 @@ namespace Telegram.ViewModels.Chats
         {
             var total = 0u;
 
-            var response = await ClientService.SendAsync(new GetChatBoosts(_chatId, false, _nextOffset, 50));
+            var response = await ClientService.SendAsync(new GetChatBoosts(_chatId, false, _nextOffset, Items.Count > 5 ? 50 : Items.Count > 0 ? 45 : 5));
             if (response is FoundChatBoosts boosts)
             {
                 foreach (var item in boosts.Boosts)
@@ -122,6 +122,9 @@ namespace Telegram.ViewModels.Chats
 
                 _nextOffset = boosts.NextOffset;
                 HasMoreItems = false;
+
+                RemainingItems = boosts.NextOffset.Length > 0 ? boosts.TotalCount - Items.Count : 0;
+                RaisePropertyChanged(nameof(HasRemainingItems));
             }
 
             IsEmpty = Items.Count == 0;
@@ -133,6 +136,15 @@ namespace Telegram.ViewModels.Chats
         }
 
         public bool HasMoreItems { get; private set; } = true;
+
+        private int _remainingItems;
+        public int RemainingItems
+        {
+            get => _remainingItems;
+            set => Set(ref _remainingItems, value);
+        }
+
+        public bool HasRemainingItems => RemainingItems > 0;
 
         public void CopyLink()
         {
