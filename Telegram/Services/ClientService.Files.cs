@@ -397,6 +397,38 @@ namespace Telegram.Services
                     ProcessFiles(botWriteAccessAllowReasonLaunchedWebApp.WebApp);
                 }
             }
+            else if (target is BusinessInfo businessInfo)
+            {
+                if (businessInfo.Intro != null)
+                {
+                    ProcessFiles(businessInfo.Intro);
+                }
+            }
+            else if (target is BusinessIntro businessIntro)
+            {
+                if (businessIntro.Sticker != null)
+                {
+                    ProcessFiles(businessIntro.Sticker);
+                }
+            }
+            else if (target is BusinessMessage businessMessage)
+            {
+                if (businessMessage.Message != null)
+                {
+                    ProcessFiles(businessMessage.Message);
+                }
+                if (businessMessage.ReplyToMessage != null)
+                {
+                    ProcessFiles(businessMessage.ReplyToMessage);
+                }
+            }
+            else if (target is BusinessMessages businessMessages)
+            {
+                foreach (var item in businessMessages.Messages)
+                {
+                    ProcessFiles(item);
+                }
+            }
             else if (target is Chat chat)
             {
                 if (chat.Background != null)
@@ -898,6 +930,13 @@ namespace Telegram.Services
                     ProcessFiles(messageChatSetBackground.Background);
                 }
             }
+            else if (target is MessageChatShared messageChatShared)
+            {
+                if (messageChatShared.Chat != null)
+                {
+                    ProcessFiles(messageChatShared.Chat);
+                }
+            }
             else if (target is MessageDice messageDice)
             {
                 if (messageDice.FinalState != null)
@@ -1035,6 +1074,13 @@ namespace Telegram.Services
             else if (target is MessageThreadInfo messageThreadInfo)
             {
                 foreach (var item in messageThreadInfo.Messages)
+                {
+                    ProcessFiles(item);
+                }
+            }
+            else if (target is MessageUsersShared messageUsersShared)
+            {
+                foreach (var item in messageUsersShared.Users)
                 {
                     ProcessFiles(item);
                 }
@@ -1597,6 +1643,20 @@ namespace Telegram.Services
                     ProcessFiles(pushMessageContentVoiceNote.VoiceNote);
                 }
             }
+            else if (target is QuickReplyMessage quickReplyMessage)
+            {
+                if (quickReplyMessage.Content != null)
+                {
+                    ProcessFiles(quickReplyMessage.Content);
+                }
+            }
+            else if (target is QuickReplyShortcut quickReplyShortcut)
+            {
+                if (quickReplyShortcut.FirstMessage != null)
+                {
+                    ProcessFiles(quickReplyShortcut.FirstMessage);
+                }
+            }
             else if (target is RichTextAnchorLink richTextAnchorLink)
             {
                 if (richTextAnchorLink.Text != null)
@@ -1707,6 +1767,20 @@ namespace Telegram.Services
                 if (savedMessagesTopic.LastMessage != null)
                 {
                     ProcessFiles(savedMessagesTopic.LastMessage);
+                }
+            }
+            else if (target is SharedChat sharedChat)
+            {
+                if (sharedChat.Photo != null)
+                {
+                    ProcessFiles(sharedChat.Photo);
+                }
+            }
+            else if (target is SharedUser sharedUser)
+            {
+                if (sharedUser.Photo != null)
+                {
+                    ProcessFiles(sharedUser.Photo);
                 }
             }
             else if (target is SponsoredMessage sponsoredMessage)
@@ -1933,6 +2007,13 @@ namespace Telegram.Services
                     ProcessFiles(updateBasicGroupFullInfo.BasicGroupFullInfo);
                 }
             }
+            else if (target is UpdateBusinessMessageEdited updateBusinessMessageEdited)
+            {
+                if (updateBusinessMessageEdited.Message != null)
+                {
+                    ProcessFiles(updateBusinessMessageEdited.Message);
+                }
+            }
             else if (target is UpdateChatBackground updateChatBackground)
             {
                 if (updateChatBackground.Background != null)
@@ -2003,6 +2084,13 @@ namespace Telegram.Services
                     ProcessFiles(updateMessageSendSucceeded.Message);
                 }
             }
+            else if (target is UpdateNewBusinessMessage updateNewBusinessMessage)
+            {
+                if (updateNewBusinessMessage.Message != null)
+                {
+                    ProcessFiles(updateNewBusinessMessage.Message);
+                }
+            }
             else if (target is UpdateNewChat updateNewChat)
             {
                 if (updateNewChat.Chat != null)
@@ -2027,6 +2115,20 @@ namespace Telegram.Services
             else if (target is UpdateNotificationGroup updateNotificationGroup)
             {
                 foreach (var item in updateNotificationGroup.AddedNotifications)
+                {
+                    ProcessFiles(item);
+                }
+            }
+            else if (target is UpdateQuickReplyShortcut updateQuickReplyShortcut)
+            {
+                if (updateQuickReplyShortcut.Shortcut != null)
+                {
+                    ProcessFiles(updateQuickReplyShortcut.Shortcut);
+                }
+            }
+            else if (target is UpdateQuickReplyShortcutMessages updateQuickReplyShortcutMessages)
+            {
+                foreach (var item in updateQuickReplyShortcutMessages.Messages)
                 {
                     ProcessFiles(item);
                 }
@@ -2113,6 +2215,10 @@ namespace Telegram.Services
                 if (userFullInfo.BotInfo != null)
                 {
                     ProcessFiles(userFullInfo.BotInfo);
+                }
+                if (userFullInfo.BusinessInfo != null)
+                {
+                    ProcessFiles(userFullInfo.BusinessInfo);
                 }
                 if (userFullInfo.PersonalPhoto != null)
                 {
