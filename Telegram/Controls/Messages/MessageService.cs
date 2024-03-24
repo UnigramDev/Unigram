@@ -2237,7 +2237,7 @@ namespace Telegram.Controls.Messages
             var entities = active ? new List<TextEntity>() : null;
 
             var chat = message.Chat;
-            if (chat != null && message.ClientService.TryGetChat(chatShared.ChatId, out Chat sharedChat))
+            if (chat != null && message.ClientService.TryGetChat(chatShared.Chat.ChatId, out Chat sharedChat))
             {
                 if (message.ClientService.TryGetSupergroup(sharedChat, out Supergroup supergroup) && supergroup.IsChannel)
                 {
@@ -2260,7 +2260,7 @@ namespace Telegram.Controls.Messages
             var chat = message.Chat;
             if (chat != null)
             {
-                content = ReplaceWithLink(Strings.ActionRequestedPeer, "un1", usersShared.UserIds, message.ClientService, entities);
+                content = ReplaceWithLink(Strings.ActionRequestedPeer, "un1", usersShared.Users.Select(x => x.UserId), message.ClientService, entities);
                 content = ReplaceWithLink(content, "un2", chat, entities);
             }
             else if (chat != null)
@@ -2432,31 +2432,26 @@ namespace Telegram.Controls.Messages
             return source;
         }
 
-        private static string ReplaceWithLink(string source, string param, IList<long> uids, IClientService clientService, IList<TextEntity> entities)
+        private static string ReplaceWithLink(string source, string param, IEnumerable<long> uids, IClientService clientService, IList<TextEntity> entities)
         {
-            var index = 0;
+            int index;
             int start = index = source.IndexOf(param);
             if (start >= 0)
             {
                 var names = new StringBuilder();
-                for (int a = 0; a < uids.Count; a++)
+
+                foreach (var user in clientService.GetUsers(uids))
                 {
-                    User user = null;
-                    user ??= clientService.GetUser(uids[a]);
-
-                    if (user != null)
+                    var name = user.FullName();
+                    if (names.Length != 0)
                     {
-                        var name = user.FullName();
-                        if (names.Length != 0)
-                        {
-                            names.Append(", ");
-                        }
-
-                        start = index + names.Length;
-                        names.Append(name);
-
-                        entities?.Add(new TextEntity(start, name.Length, new TextEntityTypeMentionName(user.Id)));
+                        names.Append(", ");
                     }
+
+                    start = index + names.Length;
+                    names.Append(name);
+
+                    entities?.Add(new TextEntity(start, name.Length, new TextEntityTypeMentionName(user.Id)));
                 }
 
                 source = source.Replace(param, names.ToString());

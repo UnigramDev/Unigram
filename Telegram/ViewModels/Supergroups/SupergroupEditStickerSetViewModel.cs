@@ -82,7 +82,7 @@ namespace Telegram.ViewModels.Supergroups
                     BeginOnUIThread(() =>
                     {
                         _items.Clear();
-                        _items.Add(new StickerSetInfo(0, args.StickerType is StickerTypeCustomEmoji ? Strings.NoEmojiPack : Strings.NoStickerSet, "disabled", null, null, false, false, false, null, null, false, false, false, 0, null));
+                        _items.Add(new StickerSetInfo(0, args.StickerType is StickerTypeCustomEmoji ? Strings.NoEmojiPack : Strings.NoStickerSet, "disabled", null, null, false, false, false, false, null, false, false, false, 0, null));
                         _items.AddRange(sets.Sets);
 
                         Items.ReplaceWith(_items);

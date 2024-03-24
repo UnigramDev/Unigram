@@ -1927,7 +1927,7 @@ namespace Telegram.Td.Api
 
         public static StickerSetInfo ToInfo(this StickerSet set)
         {
-            return new StickerSetInfo(set.Id, set.Title, set.Name, set.Thumbnail, set.ThumbnailOutline, set.IsInstalled, set.IsArchived, set.IsOfficial, set.StickerFormat, set.StickerType, set.NeedsRepainting, set.IsAllowedAsChatEmojiStatus, set.IsViewed, set.Stickers.Count, set.Stickers);
+            return new StickerSetInfo(set.Id, set.Title, set.Name, set.Thumbnail, set.ThumbnailOutline, set.IsOwned, set.IsInstalled, set.IsArchived, set.IsOfficial, set.StickerType, set.NeedsRepainting, set.IsAllowedAsChatEmojiStatus, set.IsViewed, set.Stickers.Count, set.Stickers);
         }
 
         public static string GetStartsAt(this MessageVideoChatScheduled messageVideoChatScheduled)

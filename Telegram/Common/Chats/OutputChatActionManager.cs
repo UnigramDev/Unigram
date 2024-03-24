@@ -52,7 +52,7 @@ namespace Telegram.Common.Chats
             }
 
             _lastTypingTime = DateTime.Now;
-            _clientService.Send(new SendChatAction(chat.Id, _threadId, action));
+            _clientService.Send(new SendChatAction(chat.Id, _threadId, string.Empty, action));
         }
 
         public void CancelTyping()
@@ -69,7 +69,7 @@ namespace Telegram.Common.Chats
             }
 
             _lastTypingTime = null;
-            _clientService.Send(new SendChatAction(chat.Id, _threadId, new ChatActionCancel()));
+            _clientService.Send(new SendChatAction(chat.Id, _threadId, string.Empty, new ChatActionCancel()));
         }
     }
 }

@@ -20,6 +20,7 @@ using Telegram.Td.Api;
 using Telegram.ViewModels.Delegates;
 using Telegram.ViewModels.Profile;
 using Telegram.ViewModels.Supergroups;
+using Telegram.Views;
 using Telegram.Views.Chats;
 using Telegram.Views.Popups;
 using Telegram.Views.Premium.Popups;
@@ -715,37 +716,26 @@ namespace Telegram.ViewModels
 
         public async void OpenUsernameInfo(string username)
         {
-            // TODO: Replace with API call
-            var response = new CollectibleItemInfo
-            {
-                PurchaseDate = DateTime.Now.ToTimestamp(),
-                Currency = "USD",
-                Amount = 15000,
-                Cryptocurrency = "TON",
-                CryptocurrencyAmount = 15000 / 4
-            };
+            var type = new CollectibleItemTypeUsername(username);
+            var response = await ClientService.SendAsync(new GetCollectibleItemInfo(type));
 
             if (response is CollectibleItemInfo info)
             {
-                await ShowPopupAsync(new CollectiblePopup(ClientService, Chat, info, username, CollectibleItemType.Username));
+                await ShowPopupAsync(new CollectiblePopup(ClientService, Chat, info, type));
             }
         }
 
         public async void OpenPhoneInfo()
         {
-            // TODO: Replace with API call
-            var response = new CollectibleItemInfo
+            if (ClientService.TryGetUser(_chat, out User user))
             {
-                PurchaseDate = DateTime.Now.ToTimestamp(),
-                Currency = "USD",
-                Amount = 15000,
-                Cryptocurrency = "TON",
-                CryptocurrencyAmount = 15000 / 4
-            };
+                var type = new CollectibleItemTypePhoneNumber(user.PhoneNumber);
+                var response = await ClientService.SendAsync(new GetCollectibleItemInfo(type));
 
-            if (response is CollectibleItemInfo info && ClientService.TryGetUser(Chat, out User user))
-            {
-                await ShowPopupAsync(new CollectiblePopup(ClientService, Chat, info, user.PhoneNumber, CollectibleItemType.PhoneNumber));
+                if (response is CollectibleItemInfo info)
+                {
+                    await ShowPopupAsync(new CollectiblePopup(ClientService, Chat, info, type));
+                }
             }
         }
 

@@ -17,33 +17,12 @@ using Windows.UI.Xaml.Documents;
 
 namespace Telegram.Views.Popups
 {
-    public class CollectibleItemInfo
-    {
-        public int PurchaseDate { get; set; }
-
-        public string Currency { get; set; }
-
-        public long Amount { get; set; }
-
-        public string Cryptocurrency { get; set; }
-
-        public long CryptocurrencyAmount { get; set; }
-
-        public string Url { get; set; }
-    }
-
-    public enum CollectibleItemType
-    {
-        Username,
-        PhoneNumber
-    }
-
     public sealed partial class CollectiblePopup : ContentPopup
     {
         private readonly string _value;
         private readonly string _url;
 
-        public CollectiblePopup(IClientService clientService, Chat chat, CollectibleItemInfo info, string value, CollectibleItemType type)
+        public CollectiblePopup(IClientService clientService, Chat chat, CollectibleItemInfo info, CollectibleItemType type)
         {
             InitializeComponent();
 
@@ -52,23 +31,27 @@ namespace Telegram.Views.Popups
             string description;
             string secondary;
 
-            if (type == CollectibleItemType.Username)
+            if (type is CollectibleItemTypeUsername username)
             {
                 Icon.Source = new LocalFileSource($"ms-appx:///Assets/Animations/CollectibleUsername.tgs");
 
-                formattedValue = string.Format("@{0}", value);
+                formattedValue = string.Format("@{0}", username.Username);
                 title = Strings.FragmentUsernameTitle;
                 description = Strings.FragmentUsernameMessage;
                 secondary = Strings.FragmentUsernameCopy;
             }
-            else
+            else if (type is CollectibleItemTypePhoneNumber phoneNumber)
             {
                 Icon.Source = new LocalFileSource($"ms-appx:///Assets/Animations/CollectibleUsername.tgs");
 
-                formattedValue = PhoneNumber.Format(value);
+                formattedValue = PhoneNumber.Format(phoneNumber.PhoneNumber);
                 title = Strings.FragmentPhoneTitle;
                 description = Strings.FragmentPhoneMessage;
                 secondary = Strings.FragmentPhoneCopy;
+            }
+            else
+            {
+                return;
             }
 
             _value = formattedValue;
