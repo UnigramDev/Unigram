@@ -10,7 +10,6 @@ using Telegram.Services.Settings;
 using Telegram.Streams;
 using Telegram.Td.Api;
 using Telegram.ViewModels.Drawers;
-using Windows.Foundation;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Hosting;
@@ -47,8 +46,8 @@ namespace Telegram.Controls.Drawers
     {
         public AnimationDrawerViewModel ViewModel => DataContext as AnimationDrawerViewModel;
 
-        public Action<Animation> ItemClick { get; set; }
-        public event TypedEventHandler<UIElement, ItemContextRequestedEventArgs<Animation>> ItemContextRequested;
+        public event EventHandler<ItemClickEventArgs> ItemClick;
+        public event EventHandler<ItemContextRequestedEventArgs<Animation>> ItemContextRequested;
 
         private readonly AnimatedListHandler _handler;
         private readonly ZoomableListHandler _zoomer;
@@ -127,7 +126,7 @@ namespace Telegram.Controls.Drawers
         {
             if (e.ClickedItem is Animation animation)
             {
-                ItemClick?.Invoke(animation);
+                ItemClick?.Invoke(sender, e);
             }
         }
 

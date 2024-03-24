@@ -1647,6 +1647,33 @@ namespace Telegram.Td.Api
             return 0;
         }
 
+        public static InputBusinessIntro ToInput(this BusinessIntro x)
+        {
+            if (x == null)
+            {
+                return null;
+            }
+
+            return new InputBusinessIntro(x.Title, x.Message, x.Sticker == null ? null : new InputFileId(x.Sticker.StickerValue.Id));
+        }
+
+        public static bool AreTheSame(this InputBusinessIntro x, InputBusinessIntro y)
+        {
+            if (x == null || y == null)
+            {
+                return x == y;
+            }
+
+            if (x.Sticker is InputFileId xId && y.Sticker is InputFileId yId)
+            {
+                return string.Equals(x.Title, y.Title)
+                    && string.Equals(x.Message, y.Message)
+                    && xId.Id == yId.Id;
+            }
+
+            return false;
+        }
+
         public static bool AreTheSame(this BusinessLocation x, BusinessLocation y)
         {
             if (x == null || y == null)

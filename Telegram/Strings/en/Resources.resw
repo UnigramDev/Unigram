@@ -2283,6 +2283,33 @@ It will be able to access your **IP address** and basic device info.</value>
   <data name="BusinessHoursUnsavedChanges" xml:space="preserve">
     <value>You have changed the business working hours. Apply changes?</value>
   </data>
+  <data name="BusinessIntro" xml:space="preserve">
+    <value>Intro</value>
+  </data>
+  <data name="BusinessIntroHeader" xml:space="preserve">
+    <value>Customize your intro</value>
+  </data>
+  <data name="BusinessIntroInfo" xml:space="preserve">
+    <value>You can customize the message people see before they start a chat with you.</value>
+  </data>
+  <data name="BusinessIntroMessageHint" xml:space="preserve">
+    <value>Enter Message</value>
+  </data>
+  <data name="BusinessIntroReset" xml:space="preserve">
+    <value>Reset to Default</value>
+  </data>
+  <data name="BusinessIntroSticker" xml:space="preserve">
+    <value>Choose Sticker</value>
+  </data>
+  <data name="BusinessIntroStickerRandom" xml:space="preserve">
+    <value>Random</value>
+  </data>
+  <data name="BusinessIntroTitleHint" xml:space="preserve">
+    <value>Enter Title</value>
+  </data>
+  <data name="BusinessIntroUnsavedChanges" xml:space="preserve">
+    <value>You have changed your intro message. Apply changes?</value>
+  </data>
   <data name="BusinessLocation" xml:space="preserve">
     <value>Location</value>
   </data>
@@ -6145,6 +6172,9 @@ to unlock up to {0} similar channels.</value>
   <data name="NoMessages" xml:space="preserve">
     <value>No messages here yet...</value>
   </data>
+  <data name="NoMessagesGreetingsDescription" xml:space="preserve">
+    <value>Send a message or tap the greeting below.</value>
+  </data>
   <data name="NoPublicStoriesTitle" xml:space="preserve">
     <value>No public stories</value>
   </data>
@@ -6874,6 +6904,12 @@ Payments will go directly to the developer of {0}. Telegram cannot provide any g
   </data>
   <data name="PremiumBusinessGreetingMessagesDescription" xml:space="preserve">
     <value>Create greetings that will be automatically sent to new customers.</value>
+  </data>
+  <data name="PremiumBusinessIntro" xml:space="preserve">
+    <value>Custom Intro</value>
+  </data>
+  <data name="PremiumBusinessIntroDescription" xml:space="preserve">
+    <value>Customize the message people see before they start a chat with you.</value>
   </data>
   <data name="PremiumBusinessLocation" xml:space="preserve">
     <value>Location</value>

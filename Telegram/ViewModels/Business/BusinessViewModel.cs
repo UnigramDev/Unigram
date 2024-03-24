@@ -42,6 +42,11 @@ namespace Telegram.Td.Api
     {
 
     }
+
+    public class BusinessFeatureIntro : BusinessFeature
+    {
+
+    }
 }
 
 namespace Telegram.ViewModels.Business
@@ -84,6 +89,12 @@ namespace Telegram.ViewModels.Business
                         Items.Add(new BusinessFeatureAwayMessage());
                         break;
                 }
+            }
+
+            if (Constants.DEBUG)
+            {
+                Items.Add(new BusinessFeatureConnectedBots());
+                Items.Add(new BusinessFeatureIntro());
             }
         }
 

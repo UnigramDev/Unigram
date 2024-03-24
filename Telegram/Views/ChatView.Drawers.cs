@@ -15,7 +15,7 @@ namespace Telegram.Views
 {
     public partial class ChatView
     {
-        private void Sticker_ContextRequested(UIElement sender, ItemContextRequestedEventArgs<Sticker> args)
+        private void Sticker_ContextRequested(object sender, ItemContextRequestedEventArgs<Sticker> args)
         {
             var element = sender as FrameworkElement;
             var sticker = args.Item;
@@ -60,7 +60,7 @@ namespace Telegram.Views
             args.ShowAt(flyout, element);
         }
 
-        private void Animation_ContextRequested(UIElement sender, ItemContextRequestedEventArgs<Animation> args)
+        private void Animation_ContextRequested(object sender, ItemContextRequestedEventArgs<Animation> args)
         {
             var element = sender as FrameworkElement;
             var animation = args.Item;

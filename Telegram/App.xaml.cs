@@ -437,6 +437,7 @@ namespace Telegram
                 BusinessGreetPage => TypeResolver.Current.Resolve<BusinessGreetViewModel>(sessionId),
                 BusinessAwayPage => TypeResolver.Current.Resolve<BusinessAwayViewModel>(sessionId),
                 BusinessBotsPage => TypeResolver.Current.Resolve<BusinessBotsViewModel>(sessionId),
+                BusinessIntroPage => TypeResolver.Current.Resolve<BusinessIntroViewModel>(sessionId),
 
                 PaymentFormPage => TypeResolver.Current.Resolve<PaymentFormViewModel>(sessionId),
                 MessageStatisticsPage => TypeResolver.Current.Resolve<MessageStatisticsViewModel>(sessionId),

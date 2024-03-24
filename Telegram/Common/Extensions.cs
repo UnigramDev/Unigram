@@ -369,6 +369,16 @@ namespace Telegram.Common
             return false;
         }
 
+        public static T Random<T>(this IList<T> source)
+        {
+            if (source.Count > 0)
+            {
+                return source[new Random().Next(source.Count)];
+            }
+
+            return default;
+        }
+
         public static StringBuilder Prepend(this StringBuilder builder, string text, string prefix)
         {
             if (builder.Length > 0)

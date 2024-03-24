@@ -23,7 +23,8 @@
                                 IsItemClickEnabled="True"
                                 SelectionMode="None"
                                 ChoosingItemContainer="OnChoosingItemContainer"
-                                ContainerContentChanging="OnContainerContentChanging">
+                                ContainerContentChanging="OnContainerContentChanging"
+                                Padding="0,0,0,64">
             <ListView.ItemTemplate>
                 <DataTemplate>
                     <Grid Background="{ThemeResource SettingsItemBackground}"

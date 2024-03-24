@@ -21,6 +21,7 @@ using Telegram.Common.Chats;
 using Telegram.Controls;
 using Telegram.Controls.Cells;
 using Telegram.Controls.Chats;
+using Telegram.Controls.Drawers;
 using Telegram.Controls.Gallery;
 using Telegram.Controls.Media;
 using Telegram.Controls.Messages;
@@ -255,12 +256,12 @@ namespace Telegram.Views
         {
             StickersPanel.EmojiClick = Emojis_ItemClick;
 
-            StickersPanel.StickerClick = Stickers_ItemClick;
+            StickersPanel.StickerClick += Stickers_ItemClick;
             StickersPanel.StickerContextRequested += Sticker_ContextRequested;
             StickersPanel.ChoosingSticker += Stickers_ChoosingItem;
             StickersPanel.SettingsClick += StickersPanel_SettingsClick;
 
-            StickersPanel.AnimationClick = Animations_ItemClick;
+            StickersPanel.AnimationClick += Animations_ItemClick;
             StickersPanel.AnimationContextRequested += Animation_ContextRequested;
         }
 
@@ -3305,12 +3306,12 @@ namespace Telegram.Views
 
         public void Stickers_ItemClick(Sticker sticker)
         {
-            Stickers_ItemClick(sticker, false);
+            Stickers_ItemClick(null, new StickerDrawerItemClickEventArgs(sticker, false));
         }
 
-        public void Stickers_ItemClick(Sticker sticker, bool fromStickerSet)
+        public void Stickers_ItemClick(object sender, StickerDrawerItemClickEventArgs e)
         {
-            ViewModel.SendSticker(sticker, null, null, null, fromStickerSet);
+            ViewModel.SendSticker(e.Sticker, null, null, null, e.FromStickerSet);
             ButtonStickers.Collapse();
 
             _focusState.Set(FocusState.Programmatic);
@@ -3321,9 +3322,9 @@ namespace Telegram.Views
             ViewModel.ChatActionManager.SetTyping(new ChatActionChoosingSticker());
         }
 
-        public void Animations_ItemClick(Animation animation)
+        public void Animations_ItemClick(object sender, ItemClickEventArgs e)
         {
-            ViewModel.SendAnimation(animation);
+            ViewModel.SendAnimation(e.ClickedItem as Animation);
             ButtonStickers.Collapse();
 
             _focusState.Set(FocusState.Programmatic);

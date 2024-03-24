@@ -91,15 +91,18 @@ namespace Telegram.ViewModels.Business
 
         public override async void Continue()
         {
-            if (string.IsNullOrEmpty(Address))
+            var settings = GetSettings();
+            if (settings != null)
             {
-                RaisePropertyChanged("ADDRESS_INVALID");
-                return;
+                if (string.IsNullOrEmpty(Address))
+                {
+                    RaisePropertyChanged("ADDRESS_INVALID");
+                    return;
+                }
             }
 
             _completed = true;
 
-            var settings = GetSettings();
             if (settings.AreTheSame(_cached))
             {
                 NavigationService.GoBack();

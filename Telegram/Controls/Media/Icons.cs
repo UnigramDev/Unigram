@@ -376,6 +376,7 @@ namespace Telegram.Controls.Media
         public const string Multiplier2xFilled = "\uE9BA";
         public const string PlayCircleFilled = "\uE9AE";
         public const string ChatFilled = "\uE9B0";
+        public const string ChatInfoFilled = "\uEA82";
         public const string ChatSettingsFilled = "\uEA6E";
         public const string TagFilled = "\uEA68";
         public const string HandOpenHeartFilled = "\uEA69";

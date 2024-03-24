@@ -11,6 +11,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Telegram.Common;
 using Telegram.Native;
 using Telegram.Td;
 using Telegram.Td.Api;
@@ -48,6 +49,8 @@ namespace Telegram.Services
         Task<Chats> GetStoryListAsync(StoryList storyList, int offset, int limit);
 
         Task<IList<SavedMessagesTopic>> GetSavedMessagesChatsAsync(int offset, int limit);
+
+        Sticker NextGreetingSticker();
 
         int SessionId { get; }
     }
@@ -560,6 +563,8 @@ namespace Telegram.Services
         {
             Send(new LoadChats(new ChatListMain(), 20));
             Send(new SearchEmojis("cucumber", new[] { NativeUtils.GetKeyboardCulture() }));
+
+            UpdateGreetingStickers();
         }
 
         private void InitializeFlush()
@@ -614,6 +619,61 @@ namespace Telegram.Services
                 _config = obj;
             }
         }
+
+        private void UpdateGreetingStickers()
+        {
+            _waitGreetingSticker = true;
+
+            Send(new SearchStickers(new StickerTypeRegular(), "\U0001F44B\u2B50", 200), result =>
+            {
+                if (result is Stickers stickers && stickers.StickersValue.Count > 0)
+                {
+                    _greetingStickers = stickers.StickersValue;
+                    LoadNextGreetingSticker();
+                }
+                else
+                {
+                    _waitGreetingSticker = false;
+                }
+            });
+        }
+
+        private Sticker LoadNextGreetingSticker()
+        {
+            if (_greetingStickers == null)
+            {
+                return null;
+            }
+
+            var next = _greetingStickers.Random();
+            var prev = _nextGreetingSticker ?? next;
+
+            _nextGreetingSticker = next;
+
+            if (_waitGreetingSticker)
+            {
+                _aggregator.Publish(new UpdateGreetingSticker(prev));
+                _waitGreetingSticker = false;
+            }
+
+            DownloadFile(next.StickerValue.Id, 16);
+
+            return prev;
+        }
+
+        public Sticker NextGreetingSticker()
+        {
+            if (_waitGreetingSticker)
+            {
+                return null;
+            }
+
+            return LoadNextGreetingSticker();
+        }
+
+        private IList<Sticker> _greetingStickers;
+        private Sticker _nextGreetingSticker;
+        private bool _waitGreetingSticker;
 
         public IList<string> ActiveReactions => _activeReactions;
 

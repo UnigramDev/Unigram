@@ -45,6 +45,7 @@ namespace Telegram.ViewModels.Business
                     BusinessGreetViewModel => Strings.BusinessGreetUnsavedChanges,
                     BusinessHoursViewModel => Strings.BusinessHoursUnsavedChanges,
                     BusinessLocationViewModel => Strings.BusinessLocationUnsavedChanges,
+                    BusinessIntroViewModel => Strings.BusinessIntroUnsavedChanges,
                     _ => null
                 };
 

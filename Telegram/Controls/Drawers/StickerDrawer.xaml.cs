@@ -10,7 +10,6 @@ using Telegram.Common;
 using Telegram.Streams;
 using Telegram.Td.Api;
 using Telegram.ViewModels.Drawers;
-using Windows.Foundation;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Hosting;
@@ -18,12 +17,25 @@ using Windows.UI.Xaml.Input;
 
 namespace Telegram.Controls.Drawers
 {
+    public class StickerDrawerItemClickEventArgs : EventArgs
+    {
+        public StickerDrawerItemClickEventArgs(Sticker sticker, bool fromStickerSet)
+        {
+            Sticker = sticker;
+            FromStickerSet = fromStickerSet;
+        }
+
+        public Sticker Sticker { get; }
+
+        public bool FromStickerSet { get; }
+    }
+
     public sealed partial class StickerDrawer : UserControl, IDrawer
     {
         public StickerDrawerViewModel ViewModel => DataContext as StickerDrawerViewModel;
 
-        public Action<Sticker, bool> ItemClick { get; set; }
-        public event TypedEventHandler<UIElement, ItemContextRequestedEventArgs<Sticker>> ItemContextRequested;
+        public event EventHandler<StickerDrawerItemClickEventArgs> ItemClick;
+        public event EventHandler<ItemContextRequestedEventArgs<Sticker>> ItemContextRequested;
         public event EventHandler ChoosingItem;
         public event EventHandler SettingsClick;
 
@@ -134,14 +146,14 @@ namespace Telegram.Controls.Drawers
                 var groupContainer = List.GroupHeaderContainerFromItemContainer(container) as GridViewHeaderItem;
                 if (groupContainer == null)
                 {
-                    ItemClick?.Invoke(sticker, false);
+                    ItemClick?.Invoke(this, new StickerDrawerItemClickEventArgs(sticker, false));
                     return;
                 }
 
                 var stickerSet = groupContainer.Content as StickerSetViewModel;
                 if (stickerSet != null)
                 {
-                    ItemClick?.Invoke(sticker, stickerSet.Id != 0);
+                    ItemClick?.Invoke(this, new StickerDrawerItemClickEventArgs(sticker, stickerSet.Id != 0));
                 }
             }
         }

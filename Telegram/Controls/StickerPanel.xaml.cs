@@ -14,7 +14,6 @@ using Telegram.Services.Settings;
 using Telegram.Td.Api;
 using Telegram.ViewModels;
 using Telegram.ViewModels.Drawers;
-using Windows.Foundation;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Hosting;
@@ -30,12 +29,12 @@ namespace Telegram.Controls
 
         public Action<object> EmojiClick { get; set; }
 
-        public Action<Sticker, bool> StickerClick { get; set; }
-        public event TypedEventHandler<UIElement, ItemContextRequestedEventArgs<Sticker>> StickerContextRequested;
+        public event EventHandler<StickerDrawerItemClickEventArgs> StickerClick;
+        public event EventHandler<ItemContextRequestedEventArgs<Sticker>> StickerContextRequested;
         public event EventHandler ChoosingSticker;
 
-        public Action<Animation> AnimationClick { get; set; }
-        public event TypedEventHandler<UIElement, ItemContextRequestedEventArgs<Animation>> AnimationContextRequested;
+        public event EventHandler<ItemClickEventArgs> AnimationClick;
+        public event EventHandler<ItemContextRequestedEventArgs<Animation>> AnimationContextRequested;
 
         public DialogViewModel ViewModel => DataContext as DialogViewModel;
 
@@ -74,16 +73,6 @@ namespace Telegram.Controls
             {
                 EmojiClick?.Invoke((Sticker)sticker);
             }
-        }
-
-        private void Stickers_ItemClick(Sticker obj, bool fromStickerSet)
-        {
-            StickerClick?.Invoke(obj, fromStickerSet);
-        }
-
-        private void Animations_ItemClick(Animation obj)
-        {
-            AnimationClick?.Invoke(obj);
         }
 
         private IEnumerable<IDrawer> GetDrawers()
@@ -156,7 +145,7 @@ namespace Telegram.Controls
                     FindName(nameof(AnimationsRoot));
                     AnimationsRoot.LayoutUpdated += AnimationsRoot_LayoutUpdated;
                     AnimationsRoot.DataContext = AnimationDrawerViewModel.Create(SessionId);
-                    AnimationsRoot.ItemClick = Animations_ItemClick;
+                    AnimationsRoot.ItemClick += AnimationClick;
                     AnimationsRoot.ItemContextRequested += AnimationContextRequested;
                 }
                 else
@@ -191,7 +180,7 @@ namespace Telegram.Controls
                     FindName(nameof(StickersRoot));
                     StickersRoot.LayoutUpdated += StickersRoot_LayoutUpdated;
                     StickersRoot.DataContext = StickerDrawerViewModel.Create(SessionId);
-                    StickersRoot.ItemClick = Stickers_ItemClick;
+                    StickersRoot.ItemClick += StickerClick;
                     StickersRoot.ItemContextRequested += StickerContextRequested;
                     StickersRoot.ChoosingItem += ChoosingSticker;
                     StickersRoot.SettingsClick += SettingsClick;
@@ -250,7 +239,7 @@ namespace Telegram.Controls
 
                 AnimationsRoot.Deactivate();
                 AnimationsRoot.DataContext = null;
-                AnimationsRoot.ItemClick = null;
+                AnimationsRoot.ItemClick -= AnimationClick;
                 AnimationsRoot.ItemContextRequested -= AnimationContextRequested;
                 UnloadObject(AnimationsRoot);
 
@@ -264,7 +253,7 @@ namespace Telegram.Controls
 
                 StickersRoot.Deactivate();
                 StickersRoot.DataContext = null;
-                StickersRoot.ItemClick = null;
+                StickersRoot.ItemClick -= StickerClick;
                 StickersRoot.ItemContextRequested -= StickerContextRequested;
                 StickersRoot.ChoosingItem -= ChoosingSticker;
                 StickersRoot.SettingsClick -= SettingsClick;
