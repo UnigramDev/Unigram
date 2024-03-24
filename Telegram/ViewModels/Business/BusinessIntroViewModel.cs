@@ -41,12 +41,16 @@ namespace Telegram.ViewModels.Business
             set => Invalidate(ref _title, value);
         }
 
+        public int TitleMaxLength => (int)ClientService.Options.BusinessIntroTitleLengthMax;
+
         private string _message;
         public string Message
         {
             get => _message;
             set => Invalidate(ref _message, value);
         }
+
+        public int MessageMaxLength => (int)ClientService.Options.BusinessIntroMessageLengthMax;
 
         private Sticker _sticker;
         public Sticker Sticker
