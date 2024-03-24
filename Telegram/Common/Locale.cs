@@ -199,6 +199,10 @@ namespace Telegram.Common
                     customFormat = " {0:N1}";
                     doubleAmount = amount / 10.0d;
                     break;
+                case "TON":
+                    customFormat = " {0:N0}";
+                    doubleAmount = amount / 1000000000.0d;
+                    break;
                 default:
                     customFormat = " {0:N2}";
                     doubleAmount = amount / 100.0d;

@@ -281,6 +281,8 @@ namespace Telegram.Converters
                     return 1.0d;
                 case "MRO":
                     return 10.0d;
+                case "TON":
+                    return 1000000000.0d;
                 default:
                     return 100.0d;
             }

@@ -6,7 +6,6 @@
 //
 using Telegram.Common;
 using Telegram.Controls;
-using Telegram.Controls.Media;
 using Telegram.Converters;
 using Telegram.Services;
 using Telegram.Streams;
@@ -58,10 +57,11 @@ namespace Telegram.Views.Popups
             _url = info.Url;
 
             var date = Formatter.Date(info.PurchaseDate);
+            var crypto = Formatter.Amount(info.CryptocurrencyAmount, info.Cryptocurrency);
             var amount = Formatter.FormatAmount(info.Amount, info.Currency);
 
             title = string.Format(title, formattedValue);
-            description = string.Format(description, date, "\uEA7E" + Icons.Spacing + info.CryptocurrencyAmount, $"({amount})");
+            description = string.Format(description, date, "\uEA7E" + crypto, $"({amount})");
 
             Pill.SetChat(clientService, chat);
 
