@@ -185,6 +185,10 @@ namespace Telegram.Controls.Messages
             {
                 _authorLabel = $"{fromChannel.AuthorSignature}, ";
             }
+            else if (message.SenderBusinessBotUserId != 0 && message.ClientService.TryGetUser(message.SenderBusinessBotUserId, out User senderBusinessBotUser))
+            {
+                _authorLabel = $"{senderBusinessBotUser.FirstName}, ";
+            }
             else
             {
                 _authorLabel = string.Empty;

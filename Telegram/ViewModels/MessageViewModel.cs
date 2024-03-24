@@ -280,6 +280,7 @@ namespace Telegram.ViewModels
             _message.EditDate = message.EditDate;
             _message.ForwardInfo = message.ForwardInfo;
             _message.Id = message.Id;
+            _message.IsFromOffline = message.IsFromOffline;
             _message.IsChannelPost = message.IsChannelPost;
             _message.IsOutgoing = message.IsOutgoing;
             _message.IsPinned = message.IsPinned;
@@ -305,6 +306,7 @@ namespace Telegram.ViewModels
             _message.CanGetAddedReactions = message.CanGetAddedReactions;
             _message.SchedulingState = message.SchedulingState;
             _message.SenderBoostCount = message.SenderBoostCount;
+            _message.SenderBusinessBotUserId = message.SenderBusinessBotUserId;
 
             _isSaved = null;
 
@@ -381,6 +383,7 @@ namespace Telegram.ViewModels
         public int EditDate { get => _message.EditDate; set => _message.EditDate = value; }
         public int Date => _message.Date;
         public bool ContainsUnreadMention { get => _message.ContainsUnreadMention; set => _message.ContainsUnreadMention = value; }
+        public bool IsFromOffline => _message.IsFromOffline;
         public bool IsChannelPost => _message.IsChannelPost;
         public bool IsTopicMessage => _message.IsTopicMessage;
         public bool CanBeDeletedForAllUsers => _message.CanBeDeletedForAllUsers;
@@ -402,6 +405,7 @@ namespace Telegram.ViewModels
         public long MessageThreadId => _message.MessageThreadId;
         public MessageSender SenderId => _message.SenderId;
         public int SenderBoostCount => _message.SenderBoostCount;
+        public long SenderBusinessBotUserId => _message.SenderBusinessBotUserId;
         public long Id => _message.Id;
 
         private void SetContent(MessageContent content)
