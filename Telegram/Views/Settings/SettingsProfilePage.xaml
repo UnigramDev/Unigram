@@ -81,6 +81,14 @@
                     </controls:BadgeButton>
                 </controls:HeaderedControl>
 
+                <controls:HeaderedControl Header="{CustomResource EditProfileChannel}">
+                    <controls:BadgeButton x:Name="PersonalChannel"
+                                          Content="{CustomResource EditProfileChannelTitle}"
+                                          Style="{StaticResource GlyphBadgeButtonStyle}"
+                                          Click="{x:Bind ViewModel.ChangePersonalChannel}"
+                                          Glyph="&#xE789;" />
+                </controls:HeaderedControl>
+
                 <controls:HeaderedControl IsFooterLink="True"
                                           Header="{CustomResource EditProfileBio}"
                                           Footer="{CustomResource EditProfileBioInfo}"

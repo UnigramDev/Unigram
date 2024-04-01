@@ -1073,6 +1073,9 @@
     <Compile Include="Views\Settings\Password\SettingsPasswordConfirmPopup.xaml.cs">
       <DependentUpon>SettingsPasswordConfirmPopup.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\Settings\Popups\SettingsPersonalChatPopup.xaml.cs">
+      <DependentUpon>SettingsPersonalChatPopup.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\Settings\Popups\SettingsBirthdatePopup.xaml.cs">
       <DependentUpon>SettingsBirthdatePopup.xaml</DependentUpon>
     </Compile>
@@ -2737,6 +2740,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Views\Settings\Password\SettingsPasswordConfirmPopup.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\Settings\Popups\SettingsPersonalChatPopup.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

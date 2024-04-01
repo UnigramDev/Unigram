@@ -6,13 +6,16 @@
 //
 using System.Threading.Tasks;
 using Telegram.Common;
+using Telegram.Controls;
 using Telegram.Navigation;
 using Telegram.Navigation.Services;
 using Telegram.Services;
+using Telegram.Streams;
 using Telegram.Td.Api;
 using Telegram.ViewModels.Delegates;
 using Telegram.Views.Settings;
 using Telegram.Views.Settings.Popups;
+using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
 
 namespace Telegram.ViewModels.Settings
@@ -233,6 +236,22 @@ namespace Telegram.ViewModels.Settings
         public void ChangeProfileColor()
         {
             NavigationService.Navigate(typeof(SettingsProfileColorPage));
+        }
+
+        public async void ChangePersonalChannel()
+        {
+            var popup = new SettingsPersonalChatPopup(ClientService);
+
+            var confirm = await ShowPopupAsync(popup);
+            if (confirm == ContentDialogResult.Primary)
+            {
+                ClientService.Send(new SetPersonalChat(popup.SelectedChatId));
+
+                if (popup.SelectedChatId != 0)
+                {
+                    ToastPopup.Show(Strings.EditProfileChannelSet, new LocalFileSource("ms-appx:///Assets/Toasts/Success.tgs"));
+                }
+            }
         }
     }
 }

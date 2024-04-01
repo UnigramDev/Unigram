@@ -192,6 +192,9 @@ namespace Telegram.Services
         MessageTag GetSavedMessagesTag(ReactionType reaction);
         bool TryGetSavedMessagesTag(ReactionType reaction, out MessageTag value);
 
+        int GetMembersCount(long chatId);
+        int GetMembersCount(Chat chat);
+
         bool IsAnimationSaved(int id);
         bool IsStickerRecent(int id);
         bool IsStickerFavorite(int id);
@@ -1887,6 +1890,38 @@ namespace Telegram.Services
             {
                 return _savedMessagesTags.TryGetValue(reaction, out value);
             }
+        }
+
+        public int GetMembersCount(long chatId)
+        {
+            if (TryGetChat(chatId, out Chat chat))
+            {
+                return GetMembersCount(chat);
+            }
+
+            return 0;
+        }
+
+        public int GetMembersCount(Chat chat)
+        {
+            if (TryGetSupergroupFull(chat, out SupergroupFullInfo supergroupFullInfo))
+            {
+                return supergroupFullInfo.MemberCount;
+            }
+            else if (TryGetBasicGroupFull(chat, out BasicGroupFullInfo basicGroupFullInfo))
+            {
+                return basicGroupFullInfo.Members.Count;
+            }
+            else if (TryGetSupergroup(chat, out Supergroup supergroup))
+            {
+                return supergroup.MemberCount;
+            }
+            else if (TryGetBasicGroup(chat, out BasicGroup basicGroup))
+            {
+                return basicGroup.MemberCount;
+            }
+
+            return 0;
         }
 
 

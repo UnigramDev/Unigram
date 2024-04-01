@@ -116,24 +116,7 @@ namespace Telegram.ViewModels.Supergroups
 
         public void UpdateMembers()
         {
-            var memberCount = 0;
-
-            if (ClientService.TryGetSupergroupFull(_chat, out SupergroupFullInfo supergroupFullInfo))
-            {
-                memberCount = supergroupFullInfo.MemberCount;
-            }
-            else if (ClientService.TryGetBasicGroupFull(_chat, out BasicGroupFullInfo basicGroupFullInfo))
-            {
-                memberCount = basicGroupFullInfo.Members.Count;
-            }
-            else if (ClientService.TryGetSupergroup(_chat, out Supergroup supergroup))
-            {
-                memberCount = supergroup.MemberCount;
-            }
-            else if (ClientService.TryGetBasicGroup(_chat, out BasicGroup basicGroup))
-            {
-                memberCount = basicGroup.MemberCount;
-            }
+            var memberCount = ClientService.GetMembersCount(_chat);
 
             if (_memberCount != memberCount && memberCount > 0 && memberCount <= 200)
             {

@@ -770,6 +770,18 @@ namespace Telegram.Controls
             {
                 UserBirthday.Visibility = Visibility.Collapsed;
             }
+
+            if (ViewModel.ClientService.TryGetChat(fullInfo.PersonalChatId, out Chat personalChat))
+            {
+                PersonalChannelRoot.Visibility = Visibility.Visible;
+                PersonalChannelHeader.Text = Strings.DiscussChannel;
+                PersonalChannelFooter.Text = Locale.Declension(Strings.R.Subscribers, ViewModel.ClientService.GetMembersCount(personalChat));
+                PersonalChannel.UpdateMessage(ViewModel.ClientService, personalChat.LastMessage);
+            }
+            else
+            {
+                PersonalChannelRoot.Visibility = Visibility.Collapsed;
+            }
         }
 
         public void UpdateUserStatus(Chat chat, User user)
@@ -873,6 +885,7 @@ namespace Telegram.Controls
             AnonymousNumber.Visibility = Visibility.Collapsed;
             AnonymousNumberSeparator.Visibility = Visibility.Collapsed;
 
+            PersonalChannelRoot.Visibility = Visibility.Collapsed;
             UserBirthday.Visibility = Visibility.Collapsed;
         }
 
@@ -1012,6 +1025,18 @@ namespace Telegram.Controls
 
             Members.Badge = fullInfo.MemberCount;
             //Members.Visibility = fullInfo.CanGetMembers && group.IsChannel ? Visibility.Visible : Visibility.Collapsed;
+
+            if (group.IsChannel is false && ViewModel.ClientService.TryGetChat(fullInfo.LinkedChatId, out Chat linkedChat) && linkedChat.LastMessage != null)
+            {
+                PersonalChannelRoot.Visibility = Visibility.Visible;
+                PersonalChannelHeader.Text = Strings.DiscussChannel;
+                PersonalChannelFooter.Text = Locale.Declension(Strings.R.Subscribers, ViewModel.ClientService.GetMembersCount(linkedChat));
+                PersonalChannel.UpdateMessage(ViewModel.ClientService, linkedChat.LastMessage);
+            }
+            else
+            {
+                PersonalChannelRoot.Visibility = Visibility.Collapsed;
+            }
         }
 
         private void UpdateUsernames(Usernames usernames)

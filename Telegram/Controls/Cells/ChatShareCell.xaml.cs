@@ -42,6 +42,22 @@ namespace Telegram.Controls.Cells
             _selectionOutline.Opacity = 0;
         }
 
+        public string Glyph
+        {
+            set
+            {
+                Photo.Source = PlaceholderImage.GetGlyph(value, long.MinValue);
+                SelectionOutline.RadiusX = 18;
+                SelectionOutline.RadiusY = 18;
+            }
+        }
+
+        public string Title
+        {
+            get => TitleLabel.Text;
+            set => TitleLabel.Text = value;
+        }
+
         private void OnLoaded(object sender, RoutedEventArgs e)
         {
             if (_strokeToken == 0 && _ellipse != null)
@@ -228,6 +244,7 @@ namespace Telegram.Controls.Cells
         public void UpdateChatFolder(FolderFlag folder)
         {
             Photo.Source = PlaceholderImage.GetGlyph(MainPage.GetFolderIcon(folder.Flag), (int)folder.Flag);
+            Identity.ClearStatus();
 
             SelectionOutline.RadiusX = 18;
             SelectionOutline.RadiusY = 18;
@@ -258,6 +275,13 @@ namespace Telegram.Controls.Cells
                     break;
                 case ChatListFolderFlags.ExcludeArchived:
                     TitleLabel.Text = Strings.FilterArchived;
+                    break;
+
+                case ChatListFolderFlags.ExistingChats:
+                    TitleLabel.Text = Strings.FilterExistingChats;
+                    break;
+                case ChatListFolderFlags.NewChats:
+                    TitleLabel.Text = Strings.FilterNewChats;
                     break;
             }
         }

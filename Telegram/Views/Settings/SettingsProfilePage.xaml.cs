@@ -77,6 +77,14 @@ namespace Telegram.Views.Settings
                 BirthdateRemove.Visibility = Visibility.Collapsed;
             }
 
+            if (ViewModel.ClientService.TryGetChat(fullInfo.PersonalChatId, out Chat personalChat))
+            {
+                PersonalChannel.Badge = personalChat.Title;
+            }
+            else
+            {
+                PersonalChannel.Badge = Strings.EditProfileChannelAdd;
+            }
         }
 
         public void UpdateUserStatus(Chat chat, User user) { }
