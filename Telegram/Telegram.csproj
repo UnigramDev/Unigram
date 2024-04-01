@@ -199,6 +199,9 @@
     <Compile Include="Controls\Cells\Business\BusinessHoursCell.xaml.cs">
       <DependentUpon>BusinessHoursCell.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\Cells\Business\BusinessChatLinkCell.xaml.cs">
+      <DependentUpon>BusinessChatLinkCell.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Controls\Cells\Business\BusinessRepliesCell.xaml.cs">
       <DependentUpon>BusinessRepliesCell.xaml</DependentUpon>
     </Compile>
@@ -392,6 +395,7 @@
     <Compile Include="Videolan\Shared\VLCException.cs" />
     <Compile Include="ViewModels\Business\BusinessFeatureViewModelBase.cs" />
     <Compile Include="ViewModels\Business\BusinessLocationViewModel.cs" />
+    <Compile Include="ViewModels\Business\BusinessChatLinksViewModel.cs" />
     <Compile Include="ViewModels\Business\BusinessViewModel.cs" />
     <Compile Include="ViewModels\Business\BusinessGreetViewModel.cs" />
     <Compile Include="ViewModels\Business\BusinessBotsViewModel.cs" />
@@ -895,6 +899,9 @@
     <Compile Include="Views\Business\BusinessIntroPage.xaml.cs">
       <DependentUpon>BusinessIntroPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\Business\BusinessChatLinksPage.xaml.cs">
+      <DependentUpon>BusinessChatLinksPage.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\Business\BusinessRepliesPage.xaml.cs">
       <DependentUpon>BusinessRepliesPage.xaml</DependentUpon>
     </Compile>
@@ -906,6 +913,9 @@
     </Compile>
     <Compile Include="Views\Business\BusinessPage.xaml.cs">
       <DependentUpon>BusinessPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Business\Popups\BusinessChatLinkPopup.xaml.cs">
+      <DependentUpon>BusinessChatLinkPopup.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Business\Popups\ChooseHoursPopup.xaml.cs">
       <DependentUpon>ChooseHoursPopup.xaml</DependentUpon>
@@ -1798,6 +1808,7 @@
     <Content Include="Assets\Animations\BusinessReplies.tgs" />
     <Content Include="Assets\Animations\Business.tgs" />
     <Content Include="Assets\Animations\CollectibleUsername.tgs" />
+    <Content Include="Assets\Animations\BusinessChatLinks.tgs" />
     <None Include="Assets\i420.hlsl" />
     <Content Include="Assets\Images\Reply.scale-100.png" />
     <Content Include="Assets\Images\Reply.scale-125.png" />
@@ -2021,6 +2032,10 @@
     <Page Include="Controls\Cells\Business\BusinessHoursCell.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\Cells\Business\BusinessChatLinkCell.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="Controls\Cells\Business\BusinessRepliesCell.xaml">
       <SubType>Designer</SubType>
@@ -2474,6 +2489,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="Views\Business\BusinessChatLinksPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Views\Business\BusinessRepliesPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -2487,6 +2506,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\Business\BusinessPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Business\Popups\BusinessChatLinkPopup.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

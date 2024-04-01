@@ -915,6 +915,11 @@ namespace Telegram.Views
                         _clientService,
                         _settingsService,
                         _eventAggregator);
+                case nameof(Telegram.ViewModels.Business.BusinessChatLinksViewModel):
+                    return (T)(object)new Telegram.ViewModels.Business.BusinessChatLinksViewModel(
+                        _clientService,
+                        _settingsService,
+                        _eventAggregator);
                 case nameof(Telegram.Services.IDeviceInfoService):
                     return (T)_deviceInfoService;
                 case nameof(Telegram.Services.ISettingsService):
