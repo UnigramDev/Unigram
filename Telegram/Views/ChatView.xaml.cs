@@ -3441,7 +3441,7 @@ namespace Telegram.Views
                     var precedingRange = TextField.Document.GetRange(index, index);
                     var offset = index;
 
-                    // Let's see if the current emoji is preceded by the same emoji and replace all the occurences
+                    // Let's see if the current emoji is preceded by the same emoji and replace all the occurrences
                     while (AutocompleteEntityFinder.TrySearch(precedingRange, out AutocompleteEntity precedingEntity, out string precedingResult, out int precedingIndex))
                     {
                         if (precedingEntity != entity || precedingResult != result)
