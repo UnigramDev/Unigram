@@ -1,6 +1,8 @@
-﻿using System;
+﻿using System.Linq;
+using Telegram.Common;
 using Telegram.Controls;
 using Telegram.Controls.Media;
+using Telegram.Converters;
 using Telegram.Td.Api;
 using Telegram.ViewModels.Business;
 using Windows.UI;
@@ -28,36 +30,6 @@ namespace Telegram.Views.Business
             Headline.Text = ViewModel.IsPremium
                 ? Strings.TelegramBusinessSubscribedSubtitleTemp
                 : Strings.TelegramBusinessSubtitleTemp;
-        }
-
-        private void Location_Click(object sender, RoutedEventArgs e)
-        {
-            Frame.Navigate(typeof(BusinessLocationPage));
-        }
-
-        private void Hours_Click(object sender, RoutedEventArgs e)
-        {
-            Frame.Navigate(typeof(BusinessHoursPage));
-        }
-
-        private void Replies_Click(object sender, RoutedEventArgs e)
-        {
-            Frame.Navigate(typeof(BusinessRepliesPage));
-        }
-
-        private void Greet_Click(object sender, RoutedEventArgs e)
-        {
-            Frame.Navigate(typeof(BusinessGreetPage));
-        }
-
-        private void Away_Click(object sender, RoutedEventArgs e)
-        {
-            Frame.Navigate(typeof(BusinessAwayPage));
-        }
-
-        private void Bots_Click(object sender, RoutedEventArgs e)
-        {
-            Frame.Navigate(typeof(BusinessBotsPage));
         }
 
         private void OnChoosingItemContainer(ListViewBase sender, ChoosingItemContainerEventArgs args)
@@ -139,9 +111,9 @@ namespace Telegram.Views.Business
                     titleValue = Strings.PremiumBusinessLocation;
                     subtitleValue = Strings.PremiumBusinessLocationDescription;
                     break;
-                case BusinessFeatureConnectedBots:
+                case BusinessFeatureBots:
                     iconValue = Icons.BotFilled;
-                    titleValue = Strings.PremiumBusinessChatbots;
+                    titleValue = Strings.PremiumBusinessChatbots2;
                     subtitleValue = Strings.PremiumBusinessChatbotsDescription;
                     break;
                 case BusinessFeatureIntro:
@@ -149,8 +121,22 @@ namespace Telegram.Views.Business
                     titleValue = Strings.PremiumBusinessIntro;
                     subtitleValue = Strings.PremiumBusinessIntroDescription;
                     break;
-                case BusinessFeatureChatLinks:
+                case BusinessFeatureAccountLinks:
                     iconValue = Icons.ChatLinkFilled;
+                    titleValue = Strings.PremiumBusinessChatLinks;
+                    subtitleValue = Strings.PremiumBusinessChatLinksDescription;
+                    break;
+                case BusinessFeatureChatFolderTags:
+                    titleValue = Strings.PremiumPreviewFolderTags;
+                    subtitleValue = Strings.PremiumPreviewFolderTagsDescription;
+                    break;
+                case BusinessFeatureEmojiStatus:
+                    titleValue = Strings.PremiumPreviewBusinessEmojiStatus;
+                    subtitleValue = Strings.PremiumPreviewBusinessEmojiStatusDescription;
+                    break;
+                case BusinessFeatureUpgradedStories:
+                    titleValue = Strings.PremiumPreviewBusinessStories;
+                    subtitleValue = Strings.PremiumPreviewBusinessStoriesDescription;
                     break;
             }
 
@@ -161,16 +147,15 @@ namespace Telegram.Views.Business
             var badgeControl = content.FindName("Badge") as BadgeControl;
 
             var item = (double)args.ItemIndex;
-            var total = ViewModel.Items.Count - 1;
+            var total = sender.Items.Count - 1;
             var length = _gradient.Length - 1;
 
-            var index1 = (int)(item / total * length);
-            var index2 = (int)((item + 1) / total * (length + 1));
+            var index = (int)(item / total * length);
 
             title.Text = titleValue;
             subtitle.Text = subtitleValue;
             icon.Text = iconValue;
-            iconPanel.Background = new SolidColorBrush(_gradient[index1]);
+            iconPanel.Background = new SolidColorBrush(_gradient[index]);
 
             //if (badge)
             //{
@@ -187,30 +172,86 @@ namespace Telegram.Views.Business
 
         private void OnItemClick(object sender, ItemClickEventArgs e)
         {
-            switch (e.ClickedItem as BusinessFeature)
+            ViewModel.OpenFeature(e.ClickedItem as BusinessFeature);
+        }
+
+        private void OnDataContextChanged(FrameworkElement sender, DataContextChangedEventArgs args)
+        {
+            if (args.NewValue is not PremiumStatePaymentOption paymentOption)
             {
-                case BusinessFeatureGreetingMessage:
-                    Frame.Navigate(typeof(BusinessGreetPage));
-                    break;
-                case BusinessFeatureAwayMessage:
-                    Frame.Navigate(typeof(BusinessAwayPage));
-                    break;
-                case BusinessFeatureQuickReplies:
-                    Frame.Navigate(typeof(BusinessRepliesPage));
-                    break;
-                case BusinessFeatureOpeningHours:
-                    Frame.Navigate(typeof(BusinessHoursPage));
-                    break;
-                case BusinessFeatureLocation:
-                    Frame.Navigate(typeof(BusinessLocationPage));
-                    break;
-                case BusinessFeatureConnectedBots:
-                    Frame.Navigate(typeof(BusinessBotsPage));
-                    break;
-                case BusinessFeatureIntro:
-                    Frame.Navigate(typeof(BusinessIntroPage));
-                    break;
+                return;
             }
+
+            var option = paymentOption.PaymentOption;
+
+            var title = sender.FindName("Title") as TextBlock;
+            var badge = sender.FindName("Badge") as BadgeControl;
+
+            var total = sender.FindName("Total") as TextBlock;
+            var price = sender.FindName("Price") as TextBlock;
+
+            if (option.DiscountPercentage > 0)
+            {
+                var reference = ViewModel.MonthlyOption;
+                if (reference == null)
+                {
+                    return;
+                }
+
+                badge.Visibility = Visibility.Visible;
+                total.Visibility = Visibility.Visible;
+
+                badge.Text = string.Format(Strings.GiftPremiumOptionDiscount, option.DiscountPercentage);
+
+                total.Inlines.Clear();
+                total.Inlines.Add(string.Format(Strings.PricePerYear, Formatter.FormatAmount(reference.PaymentOption.Amount * 12, reference.PaymentOption.Currency)), Windows.UI.Text.TextDecorations.Strikethrough);
+                total.Inlines.Add(Icons.Spacing);
+                total.Inlines.Add(string.Format(Strings.PricePerYear, Formatter.FormatAmount(option.Amount, option.Currency)));
+            }
+            else
+            {
+                badge.Visibility = Visibility.Collapsed;
+                total.Visibility = Visibility.Collapsed;
+            }
+
+            title.Text = option.MonthCount switch
+            {
+                1 => Strings.PremiumTierMonthly,
+                6 => Strings.PremiumTierSemiannual,
+                12 => Strings.PremiumTierAnnual,
+                _ => option.MonthCount.ToString()
+            };
+
+            price.Text = string.Format(Strings.PricePerMonthMe, Formatter.FormatAmount(option.Amount / option.MonthCount, option.Currency));
+        }
+
+        public string ConvertPurchase(bool premium, PremiumStatePaymentOption option)
+        {
+            return GetPaymentString(premium, option?.PaymentOption);
+        }
+
+        public static string GetPaymentString(bool premium, PremiumPaymentOption option)
+        {
+            // TODO
+            if (option == null)
+            {
+                return Strings.OK;
+            }
+
+            return string.Format(premium
+                ? Strings.UpgradePremiumPerMonth
+                : Strings.SubscribeToPremium, Locale.FormatCurrency(option.Amount / option.MonthCount, option.Currency));
+        }
+
+        private void PurchaseShadow_Loaded(object sender, Windows.UI.Xaml.RoutedEventArgs e)
+        {
+            DropShadowEx.Attach(PurchaseShadow);
+        }
+
+        private void Purchase_Click(object sender, Windows.UI.Xaml.RoutedEventArgs e)
+        {
+            //Hide();
+            //ViewModel.Purchase();
         }
     }
 }

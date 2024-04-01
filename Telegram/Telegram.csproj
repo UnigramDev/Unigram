@@ -932,6 +932,9 @@
     <Compile Include="Views\Business\Popups\ChooseAwayPopup.xaml.cs">
       <DependentUpon>ChooseAwayPopup.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\Business\Popups\BusinessFeaturesPopup.xaml.cs">
+      <DependentUpon>BusinessFeaturesPopup.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\Calls\CallPage.xaml.cs">
       <DependentUpon>CallPage.xaml</DependentUpon>
     </Compile>
@@ -2550,6 +2553,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\Business\Popups\ChooseAwayPopup.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\Business\Popups\BusinessFeaturesPopup.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

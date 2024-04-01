@@ -96,24 +96,9 @@ namespace Telegram.ViewModels.Business
 
         public override async void Continue()
         {
-            var settings = GetSettings();
-            if (settings != null)
-            {
-                if (string.IsNullOrEmpty(Title))
-                {
-                    RaisePropertyChanged("TITLE_INVALID");
-                    return;
-                }
-
-                if (string.IsNullOrEmpty(Message))
-                {
-                    RaisePropertyChanged("MESSAGE_INVALID");
-                    return;
-                }
-            }
-
             _completed = true;
 
+            var settings = GetSettings();
             if (settings.AreTheSame(_cached))
             {
                 NavigationService.GoBack();

@@ -16,6 +16,47 @@
         </TransitionCollection>
     </Page.Transitions>
 
+    <Page.Resources>
+        <DataTemplate x:Key="PaymentOptionTemplate">
+            <Grid DataContextChanged="OnDataContextChanged">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+                <StackPanel>
+                    <Grid HorizontalAlignment="Left">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition />
+                            <ColumnDefinition />
+                        </Grid.ColumnDefinitions>
+                        <TextBlock x:Name="Title"
+                                   Style="{StaticResource BaseTextBlockStyle}" />
+                        <controls:BadgeControl x:Name="Badge"
+                                               Text="NEW"
+                                               HorizontalAlignment="Left"
+                                               VerticalAlignment="Bottom"
+                                               Margin="4,0,0,0"
+                                               CornerRadius="4"
+                                               Grid.Column="1" />
+
+                    </Grid>
+                    <TextBlock x:Name="Total"
+                               FontSize="{ThemeResource ControlContentThemeFontSize}"
+                               FontFamily="{ThemeResource ContentControlThemeFontFamily}"
+                               Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"
+                               Margin="0,0,0,12" />
+                </StackPanel>
+                <TextBlock x:Name="Price"
+                           FontSize="{ThemeResource ControlContentThemeFontSize}"
+                           FontFamily="{ThemeResource ContentControlThemeFontFamily}"
+                           Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"
+                           VerticalAlignment="Center"
+                           Margin="0,0,0,6"
+                           Grid.Column="1" />
+            </Grid>
+        </DataTemplate>
+    </Page.Resources>
+
     <Grid Background="{ThemeResource SettingsPageBackground}">
         <controls:TableListView x:Name="ScrollingHost"
                                 ItemsSource="{x:Bind ViewModel.Items}"
@@ -24,7 +65,26 @@
                                 SelectionMode="None"
                                 ChoosingItemContainer="OnChoosingItemContainer"
                                 ContainerContentChanging="OnContainerContentChanging"
-                                Padding="0,0,0,64">
+                                Padding="0,0,0,72">
+            <ListView.Header>
+                <controls:SettingsPanel>
+                    <controls:SettingsHeadline x:Name="Headline" />
+
+                    <controls:HeaderedControl>
+                        <RadioButton IsChecked="{x:Bind ViewModel.IsAnnualOptionSelected, Mode=TwoWay}"
+                                     ContentTemplate="{StaticResource PaymentOptionTemplate}"
+                                     Content="{x:Bind ViewModel.AnnualOption, Mode=OneWay}"
+                                     Style="{StaticResource SettingsRadioButtonStyle}"
+                                     HorizontalContentAlignment="Stretch" />
+
+                        <RadioButton IsChecked="{x:Bind ViewModel.IsMonthlyOptionSelected, Mode=TwoWay}"
+                                     ContentTemplate="{StaticResource PaymentOptionTemplate}"
+                                     Content="{x:Bind ViewModel.MonthlyOption, Mode=OneWay}"
+                                     Style="{StaticResource SettingsRadioButtonStyle}"
+                                     HorizontalContentAlignment="Stretch" />
+                    </controls:HeaderedControl>
+                </controls:SettingsPanel>
+            </ListView.Header>
             <ListView.ItemTemplate>
                 <DataTemplate>
                     <Grid Background="{ThemeResource SettingsItemBackground}"
@@ -77,12 +137,39 @@
                     </Grid>
                 </DataTemplate>
             </ListView.ItemTemplate>
-            <ListView.Header>
-                <controls:SettingsPanel>
-                    <controls:SettingsHeadline x:Name="Headline"
-                                               Source="ms-appx:///Assets/Animations/Business.tgs" />
-                </controls:SettingsPanel>
-            </ListView.Header>
         </controls:TableListView>
+
+        <Grid x:Name="PurchasePanel"
+              x:Load="{x:Bind ViewModel.CanPurchase, Mode=OneWay}"
+              VerticalAlignment="Bottom"
+              HorizontalAlignment="Stretch"
+              Margin="24,12,24,24"
+              MaxWidth="1000"
+              Grid.Row="1">
+            <Rectangle x:Name="PurchaseShadow"
+                       Loaded="PurchaseShadow_Loaded"
+                       HorizontalAlignment="Stretch"
+                       VerticalAlignment="Stretch"
+                       Fill="White"
+                       Margin="0"
+                       RadiusX="4"
+                       RadiusY="4">
+            </Rectangle>
+            <Border Background="{StaticResource PremiumLinearGradientBrush}"
+                    CornerRadius="4"
+                    Height="36" />
+            <controls:BadgeButton x:Name="PurchaseCommand"
+                                  Click="Purchase_Click"
+                                  Content="{x:Bind ConvertPurchase(ViewModel.IsPremium, ViewModel.SelectedOption), Mode=OneWay, FallbackValue=Empty}"
+                                  Style="{StaticResource StartButtonStyle}"
+                                  HorizontalAlignment="Stretch"
+                                  HorizontalContentAlignment="Center"
+                                  FontWeight="SemiBold"
+                                  Padding="16,3,16,5"
+                                  CornerRadius="4"
+                                  Margin="0"
+                                  Height="36" />
+        </Grid>
+
     </Grid>
 </local:HostedPage>

@@ -93,7 +93,7 @@
                                           Badge="{CustomResource BusinessIntroStickerRandom}">
                         <FlyoutBase.AttachedFlyout>
                             <Flyout x:Name="StickerFlyout"
-                                    Placement="Top"
+                                    Placement="BottomEdgeAlignedRight"
                                     ShowMode="Transient">
                                 <Flyout.FlyoutPresenterStyle>
                                     <Style TargetType="FlyoutPresenter">
