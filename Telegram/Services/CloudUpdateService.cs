@@ -62,7 +62,7 @@ namespace Telegram.Services
         {
             if (_disabled || !_updateLock.Wait(0))
             {
-                Logger.Info("Can't aquire semaphore");
+                Logger.Info("Can't acquire semaphore");
                 return false;
             }
 
