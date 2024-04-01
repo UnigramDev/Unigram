@@ -643,10 +643,23 @@ namespace Telegram.ViewModels
 #endif
         }
 
-        public async Task<BaseObject> SendContactAsync(Contact contact, MessageSendOptions options)
+        public Task<BaseObject> SendContactAsync(Contact contact, MessageSendOptions options)
         {
             var reply = GetReply(true);
             var input = new InputMessageContact(contact);
+
+            return SendMessageAsync(reply, input, options);
+        }
+
+        public async Task<BaseObject> SendContentAsync(InputMessageContent input)
+        {
+            var reply = GetReply(true);
+
+            var options = await PickMessageSendOptionsAsync();
+            if (options == null)
+            {
+                return null;
+            }
 
             return await SendMessageAsync(reply, input, options);
         }
@@ -713,6 +726,7 @@ namespace Telegram.ViewModels
         public async void SendLocation()
         {
             var popup = new SendLocationPopup();
+
             var confirm = await ShowPopupAsync(popup);
             if (confirm == ContentDialogResult.Primary)
             {

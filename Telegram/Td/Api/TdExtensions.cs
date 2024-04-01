@@ -1553,6 +1553,38 @@ namespace Telegram.Td.Api
             return null;
         }
 
+        public static Sticker GetThumbnail(this StickerSet stickerSet)
+        {
+            if (stickerSet.Thumbnail != null)
+            {
+                StickerFormat format = stickerSet.Thumbnail.Format switch
+                {
+                    ThumbnailFormatWebp => new StickerFormatWebp(),
+                    ThumbnailFormatWebm => new StickerFormatWebm(),
+                    ThumbnailFormatTgs => new StickerFormatTgs(),
+                    _ => default
+                };
+
+                StickerFullType fullType = stickerSet.NeedsRepainting
+                    ? new StickerFullTypeCustomEmoji(0, true)
+                    : new StickerFullTypeRegular();
+
+                if (stickerSet.Thumbnail.Format is ThumbnailFormatTgs)
+                {
+                    return new Sticker(stickerSet.Id, stickerSet.Id, 512, 512, "\U0001F4A9", format, fullType, stickerSet.ThumbnailOutline, stickerSet.Thumbnail, stickerSet.Thumbnail.File);
+                }
+
+                return new Sticker(stickerSet.Id, stickerSet.Id, stickerSet.Thumbnail.Width, stickerSet.Thumbnail.Height, "\U0001F4A9", format, fullType, stickerSet.ThumbnailOutline, stickerSet.Thumbnail, stickerSet.Thumbnail.File);
+            }
+
+            if (stickerSet.Stickers?.Count > 0)
+            {
+                return stickerSet.Stickers[0];
+            }
+
+            return null;
+        }
+
         public static bool IsUnread(this Chat chat)
         {
             if (chat.IsMarkedAsUnread)

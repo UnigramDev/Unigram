@@ -803,8 +803,7 @@ namespace Telegram.ViewModels
 
             if (fullInfo != null && fullInfo.BotInfo?.Description.Length > 0)
             {
-                var result = Client.Execute(new GetTextEntities(fullInfo.BotInfo.Description)) as TextEntities;
-                var entities = result?.Entities ?? new List<TextEntity>();
+                var entities = ClientEx.GetTextEntities(fullInfo.BotInfo.Description);
 
                 foreach (var entity in entities)
                 {
@@ -3946,8 +3945,8 @@ namespace Telegram.ViewModels
 
         public async void ShowJoinRequests()
         {
-            var popup = new ChatJoinRequestsPopup(ClientService, Settings, Aggregator, _chat, string.Empty);
-            var confirm = await ShowPopupAsync(popup);
+            var popup = new ChatJoinRequestsPopup(ClientService, NavigationService, Settings, Aggregator, _chat, string.Empty);
+            await ShowPopupAsync(popup);
         }
 
         #endregion

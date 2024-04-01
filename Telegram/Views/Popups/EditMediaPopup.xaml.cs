@@ -156,7 +156,7 @@ namespace Telegram.Views.Popups
             Media.MediaPlayer.PlaybackSession.PositionChanged += MediaPlayer_PositionChanged;
 
             using var stream = await file.OpenReadAsync();
-            using var animation = await Task.Run(() => VideoAnimation.LoadFromFile(new VideoAnimationStreamSource(stream), false, false));
+            using var animation = await Task.Run(() => VideoAnimation.LoadFromFile(new VideoAnimationStreamSource(stream), false, false, false));
 
             double ratioX = (double)40 / animation.PixelWidth;
             double ratioY = (double)40 / animation.PixelHeight;

@@ -21,6 +21,13 @@
                  VerticalAlignment="Center"
                  Margin="24,0" />
 
+        <TextBlock x:Name="NoResult"
+                   Text="{CustomResource NoResult}"
+                   Style="{StaticResource InfoBodyTextBlockStyle}"
+                   Visibility="Collapsed"
+                   Margin="24,12,24,24"
+                   Grid.Row="1" />
+
         <controls:TextListView x:Name="ScrollingHost"
                                SelectionMode="None"
                                IsItemClickEnabled="True"
@@ -51,13 +58,6 @@
                 </DataTemplate>
             </ListView.ItemTemplate>
         </controls:TextListView>
-
-        <TextBlock x:Name="NoResult"
-                   Text="{CustomResource NoResult}"
-                   Style="{StaticResource InfoBodyTextBlockStyle}"
-                   Visibility="Collapsed"
-                   Margin="24,12,24,24"
-                   Grid.Row="1" />
 
         <controls:ScrollViewerScrim Background="{ThemeResource ContentDialogBackground}"
                                     ScrollingHost="{x:Bind ScrollingHost}"

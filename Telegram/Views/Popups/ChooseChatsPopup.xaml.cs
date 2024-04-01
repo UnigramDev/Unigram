@@ -350,6 +350,10 @@ namespace Telegram.Views.Popups
             {
                 PrimaryButtonText = string.Empty;
             }
+            else
+            {
+                PrimaryButtonText = ViewModel.PrimaryButtonText;
+            }
         }
 
         protected override void OnApplyTemplate()

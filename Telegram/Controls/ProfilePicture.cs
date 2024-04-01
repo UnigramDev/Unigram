@@ -718,6 +718,11 @@ namespace Telegram.Controls
 
         public static Color GetColor(long i)
         {
+            if (i == -1)
+            {
+                return _disabled;
+            }
+
             return _colors[Math.Abs(i % _colors.Length)];
         }
 

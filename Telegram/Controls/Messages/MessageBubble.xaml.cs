@@ -1914,16 +1914,7 @@ namespace Telegram.Controls.Messages
             else
             {
                 //Message.Visibility = Visibility.Visible;
-
-                var response = Client.Execute(new GetTextEntities(text));
-                if (response is TextEntities entities)
-                {
-                    return ReplaceEntities(message, text, entities.Entities);
-                }
-                else
-                {
-                    return ReplaceEntities(message, text, Array.Empty<TextEntity>());
-                }
+                return ReplaceEntities(message, text, ClientEx.GetTextEntities(text));
             }
         }
 
@@ -2692,8 +2683,8 @@ namespace Telegram.Controls.Messages
                 type = Strings.PsaMessageInfoDefault;
             }
 
-            var entities = Client.Execute(new GetTextEntities(type)) as TextEntities;
-            ToastPopup.Show(PsaInfo, new FormattedText(type, entities.Entities), TeachingTipPlacementMode.TopLeft);
+            var entities = ClientEx.GetTextEntities(type);
+            ToastPopup.Show(PsaInfo, new FormattedText(type, entities), TeachingTipPlacementMode.TopLeft);
         }
 
         private void Thread_Click(object sender, RoutedEventArgs e)

@@ -40,11 +40,11 @@ namespace Telegram.Controls.Chats
         {
             if (_clientService.TryGetUser(messageSender, out User user))
             {
-                sender.SetUser(_clientService, user, 32);
+                sender.SetUser(_clientService, user, 28);
             }
             else if (_clientService.TryGetChat(messageSender, out Chat chat))
             {
-                sender.SetChat(_clientService, chat, 32);
+                sender.SetChat(_clientService, chat, 28);
             }
         }
 

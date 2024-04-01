@@ -215,7 +215,7 @@ namespace Telegram.Controls
             var bread = ElementComposition.GetElementVisual(DetailHeaderPresenter);
             var button = ElementComposition.GetElementVisual(BackButton);
 
-            ShowHideDetailHeader(show == BackgroundKind.Material);
+            ShowHideDetailHeader(show == BackgroundKind.Material, true);
 
             if (animate)
             {
@@ -447,7 +447,7 @@ namespace Telegram.Controls
                         SetScrollingHost(scroll);
                     }
 
-                    ShowHideDetailHeader(true);
+                    ShowHideDetailHeader(true, hosted.ShowHeaderBackground);
 
                     //if (AutomationPeer.ListenerExists(AutomationEvents.LiveRegionChanged))
                     //{
@@ -457,7 +457,7 @@ namespace Telegram.Controls
                 else
                 {
                     _backStack.Clear();
-                    ShowHideDetailHeader(false);
+                    ShowHideDetailHeader(false, false);
                 }
             }
             else
@@ -466,7 +466,7 @@ namespace Telegram.Controls
                 DetailFooter = null;
 
                 _backStack.Clear();
-                ShowHideDetailHeader(false);
+                ShowHideDetailHeader(false, false);
             }
 
             if (AdaptivePanel == null)
@@ -479,7 +479,7 @@ namespace Telegram.Controls
 
         private bool _showDetailHeader = true;
 
-        private void ShowHideDetailHeader(bool show)
+        private void ShowHideDetailHeader(bool show, bool showBackground)
         {
             var detailVisual = ElementComposition.GetElementVisual(DetailPresenter);
             detailVisual.Clip = Window.Current.Compositor.CreateInsetClip();
@@ -495,7 +495,7 @@ namespace Telegram.Controls
                 ? Visibility.Visible
                 : Visibility.Collapsed;
 
-            DetailHeaderBackground.Visibility = show
+            DetailHeaderBackground.Visibility = show && showBackground
                 ? Visibility.Visible
                 : Visibility.Collapsed;
         }

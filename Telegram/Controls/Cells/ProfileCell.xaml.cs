@@ -354,6 +354,9 @@ namespace Telegram.Controls.Cells
                     RestrictsNewChats ??= FindName(nameof(RestrictsNewChats)) as Border;
                     RestrictsNewChats.Visibility = Visibility.Visible;
                 }
+
+                Photo.Clear();
+                Identity.ClearStatus();
             }
             else if (args.Phase == 1)
             {
@@ -994,9 +997,17 @@ namespace Telegram.Controls.Cells
                     case ChatListFolderFlags.ExcludeArchived:
                         TitleLabel.Text = Strings.FilterArchived;
                         break;
+
+                    case ChatListFolderFlags.ExistingChats:
+                        TitleLabel.Text = Strings.FilterExistingChats;
+                        break;
+                    case ChatListFolderFlags.NewChats:
+                        TitleLabel.Text = Strings.FilterNewChats;
+                        break;
                 }
 
                 Photo.Source = PlaceholderImage.GetGlyph(MainPage.GetFolderIcon(flag.Flag), (int)flag.Flag);
+                Identity.ClearStatus();
             }
         }
 

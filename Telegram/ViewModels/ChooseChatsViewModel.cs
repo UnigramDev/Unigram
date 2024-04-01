@@ -344,6 +344,13 @@ namespace Telegram.ViewModels
             set => Set(ref _title, value);
         }
 
+        private string _primaryButtonText = Strings.Send;
+        public string PrimaryButtonText
+        {
+            get => _primaryButtonText;
+            set => Set(ref _primaryButtonText, value);
+        }
+
         private FormattedText _caption;
         public FormattedText Caption
         {

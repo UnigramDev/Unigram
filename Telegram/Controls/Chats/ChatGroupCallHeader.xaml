@@ -22,6 +22,38 @@
         <ControlTemplate TargetType="HyperlinkButton">
             <Grid x:Name="RootGrid"
                   Padding="{TemplateBinding Padding}">
+                <VisualStateManager.VisualStateGroups>
+                    <VisualStateGroup x:Name="CommonStates">
+                        <VisualState x:Name="Normal" />
+                        <VisualState x:Name="PointerOver">
+                            <Storyboard>
+                                <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ContentPresenter"
+                                                               Storyboard.TargetProperty="Background">
+                                    <DiscreteObjectKeyFrame KeyTime="0"
+                                                            Value="{ThemeResource HyperlinkButtonBackgroundPointerOver}" />
+                                </ObjectAnimationUsingKeyFrames>
+                            </Storyboard>
+                        </VisualState>
+                        <VisualState x:Name="Pressed">
+                            <Storyboard>
+                                <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ContentPresenter"
+                                                               Storyboard.TargetProperty="Background">
+                                    <DiscreteObjectKeyFrame KeyTime="0"
+                                                            Value="{ThemeResource HyperlinkButtonBackgroundPressed}" />
+                                </ObjectAnimationUsingKeyFrames>
+                            </Storyboard>
+                        </VisualState>
+                        <VisualState x:Name="Disabled">
+                            <Storyboard>
+                                <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ContentPresenter"
+                                                               Storyboard.TargetProperty="Background">
+                                    <DiscreteObjectKeyFrame KeyTime="0"
+                                                            Value="{ThemeResource HyperlinkButtonBackgroundDisabled}" />
+                                </ObjectAnimationUsingKeyFrames>
+                            </Storyboard>
+                        </VisualState>
+                    </VisualStateGroup>
+                </VisualStateManager.VisualStateGroups>
                 <ContentPresenter x:Name="ContentPresenter"
                                   Background="{TemplateBinding Background}"
                                   BorderBrush="{TemplateBinding BorderBrush}"
@@ -61,6 +93,7 @@
         </TextBlock>
 
         <controls:RecentUserHeads x:Name="RecentUsers"
+                                  ItemSize="28"
                                   RecentUserHeadChanged="RecentUsers_RecentUserHeadChanged"
                                   BorderBrush="{ThemeResource PageSubHeaderBackgroundBrush}"
                                   VerticalAlignment="Center"

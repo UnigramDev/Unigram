@@ -4,8 +4,10 @@
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+using Telegram.Common;
 using Telegram.Controls;
 using Telegram.Converters;
+using Telegram.Navigation.Services;
 using Telegram.Services;
 using Telegram.Td.Api;
 using Telegram.ViewModels;
@@ -18,10 +20,12 @@ namespace Telegram.Views.Popups
     {
         public ChatJoinRequestsViewModel ViewModel => DataContext as ChatJoinRequestsViewModel;
 
-        public ChatJoinRequestsPopup(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator, Chat chat, string inviteLink)
+        public ChatJoinRequestsPopup(IClientService clientService, INavigationService navigationService, ISettingsService settingsService, IEventAggregator aggregator, Chat chat, string inviteLink)
         {
             InitializeComponent();
             DataContext = new ChatJoinRequestsViewModel(chat, inviteLink, clientService, settingsService, aggregator);
+
+            ViewModel.NavigationService = navigationService;
 
             Title = Strings.MemberRequests;
             PrimaryButtonText = Strings.Close;
@@ -99,6 +103,15 @@ namespace Telegram.Views.Popups
             }
 
             args.Handled = true;
+        }
+
+        private void OnItemClick(object sender, ItemClickEventArgs e)
+        {
+            if (e.ClickedItem is ChatJoinRequest request)
+            {
+                Hide();
+                ViewModel.NavigationService.NavigateToUser(request.UserId);
+            }
         }
     }
 }

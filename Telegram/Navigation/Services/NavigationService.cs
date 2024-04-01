@@ -47,6 +47,7 @@ namespace Telegram.Navigation.Services
 
         Task<ViewLifetimeControl> OpenAsync(Type page, object parameter = null, string title = null, Size size = default);
         Task<ContentDialogResult> ShowPopupAsync(Type sourcePopupType, object parameter = null, TaskCompletionSource<object> tsc = null, ElementTheme requestedTheme = ElementTheme.Default);
+        Task<ContentDialogResult> ShowPopupAsync(ContentPopup popup, object parameter = null, ElementTheme requestedTheme = ElementTheme.Default);
 
         object CurrentPageParam { get; }
         Type CurrentPageType { get; }
@@ -391,43 +392,48 @@ namespace Telegram.Navigation.Services
             var popup = (tsc != null ? Activator.CreateInstance(sourcePopupType, tsc) : Activator.CreateInstance(sourcePopupType)) as ContentPopup;
             if (popup != null)
             {
-                if (requestedTheme != ElementTheme.Default)
-                {
-                    popup.RequestedTheme = requestedTheme;
-                }
-
-                var viewModel = BootStrapper.Current.ViewModelForPage(popup, SessionId);
-                if (viewModel != null)
-                {
-                    viewModel.NavigationService = this;
-                    viewModel.Dispatcher = Dispatcher;
-
-                    void OnOpened(ContentDialog sender, ContentDialogOpenedEventArgs args)
-                    {
-                        popup.Opened -= OnOpened;
-                    }
-
-                    void OnClosed(ContentDialog sender, ContentDialogClosedEventArgs args)
-                    {
-                        if (popup.IsFinalized)
-                        {
-                            viewModel.NavigatedFrom(null, false);
-                            popup.OnNavigatedFrom();
-                            popup.Closed -= OnClosed;
-                        }
-                    }
-
-                    popup.DataContext = viewModel;
-
-                    _ = viewModel.NavigatedToAsync(parameter, NavigationMode.New, null);
-                    popup.OnNavigatedTo();
-                    popup.Closed += OnClosed;
-                }
-
-                return popup.ShowQueuedAsync();
+                return ShowPopupAsync(popup, parameter, requestedTheme);
             }
 
             return Task.FromResult(ContentDialogResult.None);
+        }
+
+        public Task<ContentDialogResult> ShowPopupAsync(ContentPopup popup, object parameter = null, ElementTheme requestedTheme = ElementTheme.Default)
+        {
+            if (requestedTheme != ElementTheme.Default)
+            {
+                popup.RequestedTheme = requestedTheme;
+            }
+
+            var viewModel = BootStrapper.Current.ViewModelForPage(popup, SessionId);
+            if (viewModel != null)
+            {
+                viewModel.NavigationService = this;
+                viewModel.Dispatcher = Dispatcher;
+
+                void OnOpened(ContentDialog sender, ContentDialogOpenedEventArgs args)
+                {
+                    popup.Opened -= OnOpened;
+                }
+
+                void OnClosed(ContentDialog sender, ContentDialogClosedEventArgs args)
+                {
+                    if (popup.IsFinalized)
+                    {
+                        viewModel.NavigatedFrom(null, false);
+                        popup.OnNavigatedFrom();
+                        popup.Closed -= OnClosed;
+                    }
+                }
+
+                popup.DataContext = viewModel;
+
+                _ = viewModel.NavigatedToAsync(parameter, NavigationMode.New, null);
+                popup.OnNavigatedTo();
+                popup.Closed += OnClosed;
+            }
+
+            return popup.ShowQueuedAsync();
         }
 
         public event EventHandler<NavigatingEventArgs> Navigating;

@@ -4272,11 +4272,11 @@
         <Setter Property="TextWrapping"
                 Value="Wrap" />
         <Setter Property="Padding"
-                Value="{ThemeResource TextControlThemePadding}" />
+                Value="48,0,0,0" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="local:FormattedTextBox">
-                    <Grid>
+                    <Grid Padding="{TemplateBinding Padding}">
                         <VisualStateManager.VisualStateGroups>
                             <VisualStateGroup x:Name="CommonStates">
                                 <VisualState x:Name="Disabled">
@@ -4357,7 +4357,7 @@
                                 Background="{TemplateBinding Background}"
                                 BorderBrush="{TemplateBinding BorderBrush}"
                                 BorderThickness="{TemplateBinding BorderThickness}" />
-                        <Canvas Margin="48,13,0,15">
+                        <Canvas Margin="0,13,0,15">
                             <Grid x:Name="Blocks"
                                   HorizontalAlignment="Stretch" />
                         </Canvas>
@@ -4370,18 +4370,18 @@
                                       IsVerticalRailEnabled="{TemplateBinding ScrollViewer.IsVerticalRailEnabled}"
                                       IsDeferredScrollingEnabled="{TemplateBinding ScrollViewer.IsDeferredScrollingEnabled}"
                                       Margin="{TemplateBinding BorderThickness}"
-                                      Padding="48,13,0,15"
+                                      Padding="0,13,0,15"
                                       IsTabStop="False"
                                       ZoomMode="Disabled"
                                       AutomationProperties.AccessibilityView="Raw"
                                       VerticalAlignment="Stretch" />
                         <messages:CustomEmojiCanvas x:Name="CustomEmoji"
                                                     IsHitTestVisible="False"
-                                                    Margin="46,11,-2,-2" />
+                                                    Margin="-2,11,-2,-2" />
                         <ContentControl x:Name="PlaceholderTextContentPresenter"
                                         Foreground="{ThemeResource TextControlPlaceholderForeground}"
                                         Margin="{TemplateBinding BorderThickness}"
-                                        Padding="48,4,0,6"
+                                        Padding="0,4,0,6"
                                         IsTabStop="False"
                                         Grid.ColumnSpan="2"
                                         Content="{TemplateBinding PlaceholderText}"
@@ -4390,7 +4390,7 @@
                         <TextBlock x:Name="InlinePlaceholderTextContentPresenter"
                                    Foreground="{ThemeResource TextControlPlaceholderForeground}"
                                    Margin="{TemplateBinding BorderThickness}"
-                                   Padding="48,4,0,6"
+                                   Padding="0,4,0,6"
                                    Grid.ColumnSpan="2"
                                    IsHitTestVisible="False"
                                    VerticalAlignment="Center" />

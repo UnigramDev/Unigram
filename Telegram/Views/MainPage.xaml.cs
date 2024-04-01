@@ -3779,6 +3779,19 @@ namespace Telegram.Views
 
         #endregion
 
+        #region ShowHeaderBackground
+
+        public bool ShowHeaderBackground
+        {
+            get { return (bool)GetValue(ShowHeaderBackgroundProperty); }
+            set { SetValue(ShowHeaderBackgroundProperty, value); }
+        }
+
+        public static readonly DependencyProperty ShowHeaderBackgroundProperty =
+            DependencyProperty.Register("ShowHeaderBackground", typeof(bool), typeof(HostedPage), new PropertyMetadata(true));
+
+        #endregion
+
         #region Action
 
         public UIElement Action

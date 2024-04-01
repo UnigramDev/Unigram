@@ -9,13 +9,16 @@
                        Title="TITLE"
                        PrimaryButtonText="Button1"
                        PrimaryButtonClick="ContentDialog_PrimaryButtonClick"
-                       Padding="12,24">
+                       Padding="0,24,0,0">
 
     <Grid>
         <ListView x:Name="ScrollingHost"
                   ItemsSource="{x:Bind ViewModel.Items}"
+                  ItemClick="OnItemClick"
+                  IsItemClickEnabled="True"
                   SelectionMode="None"
-                  ContainerContentChanging="OnContainerContentChanging">
+                  ContainerContentChanging="OnContainerContentChanging"
+                  Padding="12,0,12,24">
             <ListView.ItemTemplate>
                 <DataTemplate>
                     <Grid Margin="12,6,12,18">
@@ -67,5 +70,8 @@
                 </DataTemplate>
             </ListView.ItemTemplate>
         </ListView>
+
+        <controls:ScrollViewerScrim ScrollingHost="{x:Bind ScrollingHost}"
+                                    Background="{ThemeResource ContentDialogBackground}" />
     </Grid>
 </controls:ContentPopup>

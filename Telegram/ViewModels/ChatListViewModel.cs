@@ -1030,6 +1030,10 @@ namespace Telegram.Td.Api
         IncludeBots,
         ExcludeMuted,
         ExcludeRead,
-        ExcludeArchived
+        ExcludeArchived,
+
+        // Used by business recipients
+        NewChats,
+        ExistingChats,
     }
 }

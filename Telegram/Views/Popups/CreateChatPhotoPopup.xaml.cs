@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using Telegram.Common;
 using Telegram.Controls;
 using Telegram.Controls.Chats;
+using Telegram.Controls.Drawers;
 using Telegram.Services;
 using Telegram.Services.Settings;
 using Telegram.Streams;
@@ -62,13 +63,13 @@ namespace Telegram.Views.Popups
             }
             else if (e.ClickedItem is StickerViewModel sticker)
             {
-                Stickers_ItemClick(sticker, false);
+                ViewModel.SelectedForeground = sticker;
             }
         }
 
-        private void Stickers_ItemClick(Sticker obj, bool fromStickerSet)
+        private void Stickers_ItemClick(object sender, StickerDrawerItemClickEventArgs e)
         {
-            ViewModel.SelectedForeground = obj;
+            ViewModel.SelectedForeground = e.Sticker;
         }
 
         private void ContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
@@ -106,7 +107,7 @@ namespace Telegram.Views.Popups
                 {
                     FindName(nameof(StickersPanel));
                     StickersRoot.DataContext = StickerDrawerViewModel.Create(ViewModel.SessionId);
-                    StickersRoot.ItemClick = Stickers_ItemClick;
+                    StickersRoot.ItemClick += Stickers_ItemClick;
                 }
 
                 StickersRoot.Activate(null, EmojiSearchType.ChatPhoto);

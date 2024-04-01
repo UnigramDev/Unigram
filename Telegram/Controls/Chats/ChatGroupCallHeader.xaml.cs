@@ -62,11 +62,11 @@ namespace Telegram.Controls.Chats
         {
             if (_clientService.TryGetUser(sender, out User user))
             {
-                photo.SetUser(_clientService, user, 32);
+                photo.SetUser(_clientService, user, 28);
             }
             else if (_clientService.TryGetChat(sender, out Chat chat))
             {
-                photo.SetChat(_clientService, chat, 32);
+                photo.SetChat(_clientService, chat, 28);
             }
             else
             {

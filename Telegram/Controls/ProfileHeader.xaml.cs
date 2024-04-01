@@ -1,4 +1,4 @@
-//
+﻿//
 // Copyright Fela Ameghino 2015-2024
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
@@ -1293,15 +1293,7 @@ namespace Telegram.Controls
             DescriptionSpan.Inlines.Clear();
             Description.BadgeLabel = text;
 
-            var response = Client.Execute(new GetTextEntities(text));
-            if (response is TextEntities entities)
-            {
-                ReplaceEntities(DescriptionSpan, text, entities.Entities);
-            }
-            else
-            {
-                DescriptionSpan.Inlines.Add(new Run { Text = text });
-            }
+            ReplaceEntities(DescriptionSpan, text, ClientEx.GetTextEntities(text));
         }
 
         private void ReplaceEntities(FormattedText text)

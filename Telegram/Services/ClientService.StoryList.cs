@@ -49,7 +49,7 @@ namespace Telegram.Services
 #if MOCKUP
             _haveFullStoryList[index] = true;
 #else
-            if (!_haveFullStoryList[storyList] && count > sorted.Count)
+            if (!_haveFullStoryList[storyList] && count > sorted.Count && !reentrancy)
             {
                 Monitor.Exit(_storyList);
 
