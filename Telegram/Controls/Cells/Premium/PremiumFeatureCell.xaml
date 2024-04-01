@@ -27,9 +27,10 @@
 
             <controls:AnimatedImage x:Name="Player"
                                     AutoPlay="False"
-                                    FrameSize="0,0"
+                                    DecodeFrameType="Logical"
+                                    FrameSize="196,292"
                                     IsCachingEnabled="False"
-                                    IsViewportAware="True"
+                                    IsViewportAware="False"
                                     Width="196"
                                     Height="292"
                                     Canvas.Left="62"

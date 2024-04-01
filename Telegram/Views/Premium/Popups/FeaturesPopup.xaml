@@ -30,6 +30,7 @@
         </Grid>
 
         <FlipView x:Name="ScrollingHost"
+                  SelectionChanged="OnSelectionChanged"
                   Background="Transparent">
             <FlipView.ItemTemplateSelector>
                 <selectors:PremiumFeatureTemplateSelector>
@@ -43,6 +44,21 @@
                             <cells:PremiumFeatureUniqueStickersCell DataContextChanged="OnDataContextChanged" />
                         </DataTemplate>
                     </selectors:PremiumFeatureTemplateSelector.StickersTemplate>
+                    <selectors:PremiumFeatureTemplateSelector.LimitsTemplate>
+                        <DataTemplate>
+                            <cells:PremiumFeatureIncreasedLimitsCell DataContextChanged="OnDataContextChanged" />
+                        </DataTemplate>
+                    </selectors:PremiumFeatureTemplateSelector.LimitsTemplate>
+                    <selectors:PremiumFeatureTemplateSelector.StoriesTemplate>
+                        <DataTemplate>
+                            <cells:PremiumFeatureUpgradedStoriesCell DataContextChanged="OnDataContextChanged" />
+                        </DataTemplate>
+                    </selectors:PremiumFeatureTemplateSelector.StoriesTemplate>
+                    <selectors:PremiumFeatureTemplateSelector.BusinessTemplate>
+                        <DataTemplate>
+                            <cells:PremiumFeatureBusinessCell DataContextChanged="OnDataContextChanged" />
+                        </DataTemplate>
+                    </selectors:PremiumFeatureTemplateSelector.BusinessTemplate>
                 </selectors:PremiumFeatureTemplateSelector>
             </FlipView.ItemTemplateSelector>
         </FlipView>

@@ -4,19 +4,18 @@
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
-using System;
 using System.Collections.Generic;
 using Telegram.Common;
-using Telegram.Controls;
 using Telegram.Services;
 using Telegram.Td.Api;
 using Windows.UI;
 using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 
-namespace Telegram.Views.Premium.Popups
+namespace Telegram.Controls.Cells.Premium
 {
-    public sealed partial class LimitsPopup : ContentPopup
+    public sealed partial class PremiumFeatureIncreasedLimitsCell : UserControl, IPremiumFeatureCell
     {
         private readonly Color[] _gradient = new Color[]
         {
@@ -32,24 +31,26 @@ namespace Telegram.Views.Premium.Popups
             Color.FromArgb(0xFF, 0xF2, 0x82, 0x2A)
         };
 
-        public LimitsPopup(IClientService clientService, PremiumPaymentOption option, IList<PremiumLimit> limits)
+        //public PremiumFeatureIncreasedLimitsCell(IClientService clientService, PremiumPaymentOption option, IList<PremiumLimit> limits)
+        //{
+        //    InitializeComponent();
+
+        //    Title = Strings.DoubledLimits;
+
+        //    ScrollingHost.ItemsSource = limits;
+        //    PurchaseCommand.Content = PromoPopup.GetPaymentString(clientService.IsPremium, option);
+
+        //    clientService.Send(new ViewPremiumFeature(new PremiumFeatureIncreasedLimits()));
+        //}
+
+        public PremiumFeatureIncreasedLimitsCell()
         {
             InitializeComponent();
-
-            Title = Strings.DoubledLimits;
-
-            ScrollingHost.ItemsSource = limits;
-            PurchaseCommand.Content = PromoPopup.GetPaymentString(clientService.IsPremium, option);
-
-            clientService.Send(new ViewPremiumFeature(new PremiumFeatureIncreasedLimits()));
         }
 
-        public bool ShouldPurchase { get; private set; }
-
-        private void Purchase_Click(object sender, Windows.UI.Xaml.RoutedEventArgs e)
+        public void UpdateFeature(IClientService clientService, IList<PremiumLimit> limits)
         {
-            ShouldPurchase = true;
-            Hide();
+            ScrollingHost.ItemsSource = limits;
         }
 
         private void OnContainerContentChanging(ListViewBase sender, ContainerContentChangingEventArgs args)
@@ -119,18 +120,48 @@ namespace Telegram.Views.Premium.Popups
             var nextLimit = content.FindName("NextLimit") as TextBlock;
             var nextPanel = content.FindName("NextPanel") as Grid;
 
+            var item = (double)args.ItemIndex;
+            var total = sender.Items.Count - 1;
+            var length = _gradient.Length - 1;
+
+            var index = (int)(item / total * length);
+
             title.Text = titleValue;
             subtitle.Text = string.Format(subtitleValue, limit.PremiumValue);
             prevLimit.Text = limit.DefaultValue.ToString();
             nextLimit.Text = limit.PremiumValue.ToString();
-            nextPanel.Background = new SolidColorBrush(_gradient[Math.Min(args.ItemIndex, _gradient.Length - 1)]);
+            nextPanel.Background = new SolidColorBrush(_gradient[index]);
 
             args.Handled = true;
         }
 
-        private void PurchaseShadow_Loaded(object sender, Windows.UI.Xaml.RoutedEventArgs e)
+        public void PlayAnimation()
         {
-            DropShadowEx.Attach(PurchaseShadow);
+            var scrollingHost = ScrollingHost.GetScrollViewer();
+            scrollingHost?.AddHandler(PointerWheelChangedEvent, new PointerEventHandler(OnPointerWheelChangedEvent), true);
+        }
+
+        public void StopAnimation()
+        {
+            var scrollingHost = ScrollingHost.GetScrollViewer();
+            scrollingHost?.RemoveHandler(PointerWheelChangedEvent, new PointerEventHandler(OnPointerWheelChangedEvent));
+        }
+
+        private void OnPointerWheelChangedEvent(object sender, PointerRoutedEventArgs e)
+        {
+            if (e.Pointer.PointerDeviceType == Windows.Devices.Input.PointerDeviceType.Mouse && sender is ScrollViewer scrollingHost)
+            {
+                var currentPoint = e.GetCurrentPoint(this);
+                if (currentPoint.Properties.MouseWheelDelta > 0 && scrollingHost.VerticalOffset == 0)
+                {
+                    var parent = this.GetParent<FlipView>();
+                    if (parent?.SelectedIndex > 0 && parent.SelectedItem is PremiumFeatureIncreasedLimits)
+                    {
+                        parent.SelectedIndex--;
+                        StopAnimation();
+                    }
+                }
+            }
         }
     }
 }

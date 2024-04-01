@@ -4,38 +4,26 @@
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
-using System;
-using System.Linq;
 using Telegram.Common;
-using Telegram.Controls;
 using Telegram.Controls.Media;
-using Telegram.Navigation.Services;
 using Telegram.Services;
 using Telegram.Td.Api;
 using Windows.UI;
 using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 
-namespace Telegram.Views.Premium.Popups
+namespace Telegram.Controls.Cells.Premium
 {
-    public sealed partial class StoriesPopup : ContentPopup
+    public sealed partial class PremiumFeatureUpgradedStoriesCell : UserControl, IPremiumFeatureCell
     {
-        private readonly IClientService _clientService;
-        private readonly INavigationService _navigationService;
-
-        private PremiumPaymentOption _option;
-
-        public StoriesPopup(IClientService clientService, INavigationService navigationService, PremiumPaymentOption option = null)
+        public PremiumFeatureUpgradedStoriesCell()
         {
             InitializeComponent();
+        }
 
-            _clientService = clientService;
-            _navigationService = navigationService;
-
-            RequestedTheme = option == null
-                ? Windows.UI.Xaml.ElementTheme.Dark
-                : Windows.UI.Xaml.ElementTheme.Default;
-
+        public void UpdateFeature(IClientService clientService)
+        {
             ScrollingHost.ItemsSource = new object[]
             {
                 new PremiumStoryFeaturePriorityOrder(),
@@ -48,17 +36,6 @@ namespace Telegram.Views.Premium.Popups
                 new PremiumStoryFeatureLinksAndFormatting()
             };
 
-            if (option != null)
-            {
-                _option = option;
-                PurchaseCommand.Content = PromoPopup.GetPaymentString(clientService.IsPremium, option);
-            }
-            else
-            {
-                //InitializePaymentOptions(clientService);
-                PurchaseCommand.Content = Strings.UpgradeStories;
-            }
-
             if (clientService.TryGetChat(clientService.Options.MyId, out Chat chat) &&
                 clientService.TryGetUser(chat, out User user))
             {
@@ -66,23 +43,8 @@ namespace Telegram.Views.Premium.Popups
                 Photo.SetUser(clientService, user, 96);
             }
 
-            clientService.Send(new ViewPremiumFeature(new PremiumFeatureUpgradedStories()));
+            //clientService.Send(new ViewPremiumFeature(new PremiumFeatureUpgradedStories()));
         }
-
-        private async void InitializePaymentOptions(IClientService clientService)
-        {
-            var state = await clientService.SendAsync(new GetPremiumState()) as PremiumState;
-            var payment = state?.PaymentOptions.LastOrDefault();
-
-            var option = payment?.PaymentOption;
-            if (option != null)
-            {
-                _option = option;
-                PurchaseCommand.Content = PromoPopup.GetPaymentString(clientService.IsPremium, option);
-            }
-        }
-
-        public bool ShouldPurchase { get; private set; }
 
         private readonly Color[] _gradient = new Color[]
         {
@@ -157,7 +119,11 @@ namespace Telegram.Views.Premium.Popups
             var subtitle = content.FindName("Subtitle") as TextBlock;
             var icon = content.FindName("Icon") as TextBlock;
 
-            var index = Math.Min(args.ItemIndex, _gradient.Length - 1);
+            var item = (double)args.ItemIndex;
+            var total = sender.Items.Count - 1;
+            var length = _gradient.Length - 1;
+
+            var index = (int)(item / total * length);
 
             title.Text = titleValue;
             subtitle.Text = subtitleValue;
@@ -167,24 +133,32 @@ namespace Telegram.Views.Premium.Popups
             args.Handled = true;
         }
 
-        private void PurchaseShadow_Loaded(object sender, Windows.UI.Xaml.RoutedEventArgs e)
+        public void PlayAnimation()
         {
-            DropShadowEx.Attach(PurchaseShadow);
+            var scrollingHost = ScrollingHost.GetScrollViewer();
+            scrollingHost?.AddHandler(PointerWheelChangedEvent, new PointerEventHandler(OnPointerWheelChangedEvent), true);
         }
 
-        private void Purchase_Click(object sender, Windows.UI.Xaml.RoutedEventArgs e)
+        public void StopAnimation()
         {
-            ShouldPurchase = true;
-            Hide();
-            Purchase();
+            var scrollingHost = ScrollingHost.GetScrollViewer();
+            scrollingHost?.RemoveHandler(PointerWheelChangedEvent, new PointerEventHandler(OnPointerWheelChangedEvent));
         }
 
-        private void Purchase()
+        private void OnPointerWheelChangedEvent(object sender, PointerRoutedEventArgs e)
         {
-            if (_option != null && !_clientService.IsPremium)
+            if (e.Pointer.PointerDeviceType == Windows.Devices.Input.PointerDeviceType.Mouse && sender is ScrollViewer scrollingHost)
             {
-                _clientService.Send(new ClickPremiumSubscriptionButton());
-                MessageHelper.OpenTelegramUrl(_clientService, _navigationService, _option.PaymentLink);
+                var currentPoint = e.GetCurrentPoint(this);
+                if (currentPoint.Properties.MouseWheelDelta > 0 && scrollingHost.VerticalOffset == 0)
+                {
+                    var parent = this.GetParent<FlipView>();
+                    if (parent?.SelectedIndex > 0 && parent.SelectedItem is PremiumFeatureUpgradedStories or BusinessFeatureUpgradedStories)
+                    {
+                        parent.SelectedIndex--;
+                        StopAnimation();
+                    }
+                }
             }
         }
     }

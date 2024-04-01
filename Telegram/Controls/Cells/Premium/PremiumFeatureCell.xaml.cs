@@ -13,14 +13,20 @@ using Windows.UI.Xaml.Controls;
 
 namespace Telegram.Controls.Cells.Premium
 {
-    public sealed partial class PremiumFeatureCell : UserControl
+    public interface IPremiumFeatureCell
+    {
+        void PlayAnimation();
+        void StopAnimation();
+    }
+
+    public sealed partial class PremiumFeatureCell : UserControl, IPremiumFeatureCell
     {
         public PremiumFeatureCell()
         {
             InitializeComponent();
         }
 
-        internal void UpdateFeature(IClientService clientService, PremiumFeature feature, Animation value)
+        public void UpdateFeature(IClientService clientService, PremiumFeature feature, Animation value)
         {
             var bottom = feature switch
             {
@@ -131,6 +137,99 @@ namespace Telegram.Controls.Cells.Premium
                 case PremiumFeatureMessagePrivacy:
                     titleValue = Strings.PremiumPreviewMessagePrivacy;
                     subtitleValue = Strings.PremiumPreviewMessagePrivacyDescription;
+                    break;
+            }
+
+            Title.Text = titleValue;
+            Subtitle.Text = subtitleValue;
+
+            if (value != null)
+            {
+                Player.Source = new RemoteFileSource(clientService, value.AnimationValue)
+                {
+                    Width = 196,
+                    Height = 292,
+                    Outline = Array.Empty<ClosedVectorPath>()
+                };
+            }
+            else
+            {
+                Player.Source = null;
+            }
+        }
+
+        public void UpdateFeature(IClientService clientService, BusinessFeature feature, Animation value)
+        {
+            var bottom = feature switch
+            {
+                _ => false
+            };
+
+            if (bottom)
+            {
+                FrameOutside.Margin = new Thickness(0, -157, 0, 0);
+                FrameInside.Margin = new Thickness(0, -157, 0, 0);
+
+                Canvas.SetTop(FrameScreen, 0);
+                Canvas.SetTop(Player, 0);
+
+                FrameHole.Visibility = Visibility.Collapsed;
+            }
+            else
+            {
+                FrameOutside.Margin = new Thickness(0, 0, 0, 0);
+                FrameInside.Margin = new Thickness(0, 0, 0, 0);
+
+                Canvas.SetTop(FrameScreen, 28);
+                Canvas.SetTop(Player, 28);
+
+                FrameHole.Visibility = Visibility.Visible;
+            }
+
+            var titleValue = string.Empty;
+            var subtitleValue = string.Empty;
+
+            switch (feature)
+            {
+                case BusinessFeatureGreetingMessage:
+                    titleValue = Strings.PremiumBusinessGreetingMessages;
+                    subtitleValue = Strings.PremiumBusinessGreetingMessagesDescription;
+                    break;
+                case BusinessFeatureAwayMessage:
+                    titleValue = Strings.PremiumBusinessAwayMessages;
+                    subtitleValue = Strings.PremiumBusinessAwayMessagesDescription;
+                    break;
+                case BusinessFeatureQuickReplies:
+                    titleValue = Strings.PremiumBusinessQuickReplies;
+                    subtitleValue = Strings.PremiumBusinessQuickRepliesDescription;
+                    break;
+                case BusinessFeatureOpeningHours:
+                    titleValue = Strings.PremiumBusinessOpeningHours;
+                    subtitleValue = Strings.PremiumBusinessOpeningHoursDescription;
+                    break;
+                case BusinessFeatureLocation:
+                    titleValue = Strings.PremiumBusinessLocation;
+                    subtitleValue = Strings.PremiumBusinessLocationDescription;
+                    break;
+                case BusinessFeatureBots:
+                    titleValue = Strings.PremiumBusinessChatbots2;
+                    subtitleValue = Strings.PremiumBusinessChatbotsDescription;
+                    break;
+                case BusinessFeatureIntro:
+                    titleValue = Strings.PremiumBusinessIntro;
+                    subtitleValue = Strings.PremiumBusinessIntroDescription;
+                    break;
+                case BusinessFeatureAccountLinks:
+                    titleValue = Strings.PremiumBusinessChatLinks;
+                    subtitleValue = Strings.PremiumBusinessChatLinksDescription;
+                    break;
+                case BusinessFeatureChatFolderTags:
+                    titleValue = Strings.PremiumPreviewFolderTags;
+                    subtitleValue = Strings.PremiumPreviewFolderTagsDescription;
+                    break;
+                case BusinessFeatureEmojiStatus:
+                    titleValue = Strings.PremiumPreviewBusinessEmojiStatus;
+                    subtitleValue = Strings.PremiumPreviewBusinessEmojiStatusDescription;
                     break;
             }
 

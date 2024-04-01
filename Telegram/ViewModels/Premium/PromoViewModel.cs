@@ -26,11 +26,14 @@ namespace Telegram.ViewModels.Premium
         {
             Limits = new MvxObservableCollection<PremiumLimit>();
             Features = new MvxObservableCollection<PremiumFeature>();
+            BusinessFeatures = new MvxObservableCollection<BusinessFeature>();
         }
 
         public MvxObservableCollection<PremiumLimit> Limits { get; private set; }
 
         public MvxObservableCollection<PremiumFeature> Features { get; private set; }
+
+        public MvxObservableCollection<BusinessFeature> BusinessFeatures { get; private set; }
 
         private Dictionary<Type, Animation> _animations;
 
@@ -62,9 +65,7 @@ namespace Telegram.ViewModels.Premium
             PremiumSource premiumSource = parameter is PremiumSource source ? source : new PremiumSourceSettings();
 
             var features = await ClientService.SendAsync(new GetPremiumFeatures(premiumSource)) as PremiumFeatures;
-            var state = await ClientService.SendAsync(new GetPremiumState()) as PremiumState;
-
-            if (features == null || state == null)
+            if (features == null)
             {
                 return;
             }
@@ -86,15 +87,31 @@ namespace Telegram.ViewModels.Premium
             Limits.ReplaceWith(features.Limits);
             Features.ReplaceWith(features.Features);
 
+            var state = await ClientService.SendAsync(new GetPremiumState()) as PremiumState;
+            if (state == null)
+            {
+                return;
+            }
+
             State = state;
             Option = state.PaymentOptions.LastOrDefault();
 
             CanPurchase = Option != null
                 && ClientService.IsPremiumAvailable;
 
-            _animations = state.Animations.ToDictionary(x => x.Feature.GetType(), y => y.Animation);
+            _animations = state.Animations
+                .DistinctBy(x => x.Feature.GetType())
+                .ToDictionary(x => x.Feature.GetType(), y => y.Animation);
 
             _stickers = await ClientService.SendAsync(new GetPremiumStickerExamples()) as Stickers;
+
+            var businessFeatures = await ClientService.SendAsync(new GetBusinessFeatures()) as BusinessFeatures;
+            if (businessFeatures == null)
+            {
+                return;
+            }
+
+            BusinessFeatures.ReplaceWith(businessFeatures.Features);
         }
 
         public string PremiumPreviewLimitsDescription
@@ -113,44 +130,16 @@ namespace Telegram.ViewModels.Premium
 
         public async Task<bool> OpenAsync(PremiumFeature feature)
         {
-            if (feature is PremiumFeatureIncreasedLimits)
+            var popup = new FeaturesPopup(ClientService, Option.PaymentOption, Features, BusinessFeatures, Limits, _animations, _stickers, feature);
+            await ShowPopupAsync(popup);
+
+            if (popup.ShouldPurchase && !ClientService.IsPremium)
             {
-                var popup = new LimitsPopup(ClientService, Option.PaymentOption, Limits);
-                await ShowPopupAsync(popup);
-
-                if (popup.ShouldPurchase && !ClientService.IsPremium)
-                {
-                    Purchase();
-                    return false;
-                }
-
-                return true;
+                Purchase();
+                return false;
             }
-            else if (feature is PremiumFeatureUpgradedStories)
-            {
-                var popup = new StoriesPopup(ClientService, NavigationService, Option.PaymentOption);
-                await ShowPopupAsync(popup);
 
-                if (popup.ShouldPurchase && !ClientService.IsPremium)
-                {
-                    return false;
-                }
-
-                return true;
-            }
-            else
-            {
-                var popup = new FeaturesPopup(ClientService, Option.PaymentOption, Features, _animations, _stickers, feature);
-                await ShowPopupAsync(popup);
-
-                if (popup.ShouldPurchase && !ClientService.IsPremium)
-                {
-                    Purchase();
-                    return false;
-                }
-
-                return true;
-            }
+            return true;
         }
 
         public void Purchase()

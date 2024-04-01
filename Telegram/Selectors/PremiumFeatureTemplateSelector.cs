@@ -16,14 +16,23 @@ namespace Telegram.Selectors
 
         public DataTemplate StickersTemplate { get; set; }
 
+        public DataTemplate StoriesTemplate { get; set; }
+
+        public DataTemplate LimitsTemplate { get; set; }
+
+        public DataTemplate BusinessTemplate { get; set; }
+
         protected override DataTemplate SelectTemplateCore(object item, DependencyObject container)
         {
-            if (item is PremiumFeatureUniqueStickers)
+            return item switch
             {
-                return StickersTemplate;
-            }
-
-            return ItemTemplate;
+                PremiumFeatureUniqueStickers => StickersTemplate,
+                PremiumFeatureUpgradedStories => StoriesTemplate,
+                PremiumFeatureIncreasedLimits => LimitsTemplate,
+                PremiumFeatureBusiness => BusinessTemplate,
+                BusinessFeatureUpgradedStories => StoriesTemplate,
+                _ => ItemTemplate
+            };
         }
     }
 }

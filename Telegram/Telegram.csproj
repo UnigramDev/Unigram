@@ -202,6 +202,9 @@
     <Compile Include="Controls\Cells\Business\BusinessRepliesCell.xaml.cs">
       <DependentUpon>BusinessRepliesCell.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\Cells\Premium\PremiumFeatureBusinessCell.xaml.cs">
+      <DependentUpon>PremiumFeatureBusinessCell.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Controls\Messages\ReactionAsTagButton.cs" />
     <Compile Include="Common\AsyncMediaPlayer.cs" />
     <Compile Include="Controls\SuggestedActionSetBirthdateCard.xaml.cs">
@@ -1413,8 +1416,8 @@
     <Compile Include="Views\Premium\Popups\LimitReachedPopup.xaml.cs">
       <DependentUpon>LimitReachedPopup.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\Premium\Popups\LimitsPopup.xaml.cs">
-      <DependentUpon>LimitsPopup.xaml</DependentUpon>
+    <Compile Include="Controls\Cells\Premium\PremiumFeatureIncreasedLimitsCell.xaml.cs">
+      <DependentUpon>PremiumFeatureIncreasedLimitsCell.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Profile\ProfileFilesTabPage.xaml.cs">
       <DependentUpon>ProfileFilesTabPage.xaml</DependentUpon>
@@ -1459,8 +1462,8 @@
     <Compile Include="Views\Stories\Popups\StealthPopup.xaml.cs">
       <DependentUpon>StealthPopup.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\Premium\Popups\StoriesPopup.xaml.cs">
-      <DependentUpon>StoriesPopup.xaml</DependentUpon>
+    <Compile Include="Controls\Cells\Premium\PremiumFeatureUpgradedStoriesCell.xaml.cs">
+      <DependentUpon>PremiumFeatureUpgradedStoriesCell.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Premium\Popups\PromoPopup.xaml.cs">
       <DependentUpon>PromoPopup.xaml</DependentUpon>
@@ -2048,6 +2051,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Controls\Cells\BoostCell.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Controls\Cells\Premium\PremiumFeatureBusinessCell.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -2951,7 +2958,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Views\Premium\Popups\LimitsPopup.xaml">
+    <Page Include="Controls\Cells\Premium\PremiumFeatureIncreasedLimitsCell.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -3011,7 +3018,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Views\Premium\Popups\StoriesPopup.xaml">
+    <Page Include="Controls\Cells\Premium\PremiumFeatureUpgradedStoriesCell.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

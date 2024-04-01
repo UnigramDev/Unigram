@@ -148,7 +148,6 @@ namespace Telegram.Views.Premium.Popups
                     iconValue = Icons.TagFilled;
                     titleValue = Strings.PremiumPreviewTags2;
                     subtitleValue = Strings.PremiumPreviewTagsDescription2;
-                    badge = true;
                     break;
                 case PremiumFeatureUniqueReactions:
                     iconValue = Icons.HeartFilled;
@@ -174,12 +173,16 @@ namespace Telegram.Views.Premium.Popups
                     iconValue = Icons.LastSeenFilled;
                     titleValue = Strings.PremiumPreviewLastSeen;
                     subtitleValue = Strings.PremiumPreviewLastSeenDescription;
-                    badge = true;
                     break;
                 case PremiumFeatureMessagePrivacy:
                     iconValue = Icons.ChatLockedFilled;
                     titleValue = Strings.PremiumPreviewMessagePrivacy;
                     subtitleValue = Strings.PremiumPreviewMessagePrivacyDescription;
+                    break;
+                case PremiumFeatureBusiness:
+                    iconValue = Icons.BuildingShopFilled;
+                    titleValue = Strings.TelegramBusiness;
+                    subtitleValue = Strings.PremiumPreviewBusinessDescription;
                     badge = true;
                     break;
             }
