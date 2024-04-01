@@ -39,6 +39,13 @@ namespace Telegram.ViewModels.Chats
             OpenPostCommand = new RelayCommand<ChatItemInteractionCounters>(OpenPostExecute);
         }
 
+        private double _headerHeight;
+        public double HeaderHeight
+        {
+            get => _headerHeight;
+            set => Set(ref _headerHeight, value);
+        }
+
         private Chat _chat;
         public Chat Chat
         {

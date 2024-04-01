@@ -1,0 +1,151 @@
+﻿<local:HostedPage x:Class="Telegram.Views.Chats.ChatMonetizationPage"
+                  xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                  xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                  xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                  xmlns:controls="using:Telegram.Controls"
+                  xmlns:cells="using:Telegram.Controls.Cells"
+                  xmlns:monetization="using:Telegram.Controls.Cells.Monetization"
+                  xmlns:local="using:Telegram.Views"
+                  mc:Ignorable="d">
+
+    <Grid Background="{ThemeResource SettingsPageBackground}">
+        <controls:TableListView x:Name="ScrollingHost"
+                                ItemsSource="{x:Bind ViewModel.Items}"
+                                ItemClick="OnItemClick"
+                                IsItemClickEnabled="True"
+                                SelectionMode="None"
+                                ContainerContentChanging="OnContainerContentChanging"
+                                VerticalContentAlignment="Top">
+            <ListView.Header>
+                <controls:SettingsPanel IsHeader="True">
+                    <Border Margin="0,64,0,0" />
+
+                    <controls:SettingsFooter x:Name="FooterInfo"
+                                             IsLink="True"
+                                             Text="{CustomResource MonetizationInfo}" />
+
+                    <ContentControl Content="{x:Bind ViewModel.Impressions, Mode=OneWay}">
+                        <ContentControl.ContentTemplate>
+                            <DataTemplate>
+                                <cells:ChartCell DataContextChanged="OnElementPrepared"
+                                                 Background="{ThemeResource SettingsItemBackground}" />
+                            </DataTemplate>
+                        </ContentControl.ContentTemplate>
+                    </ContentControl>
+
+                    <ContentControl Content="{x:Bind ViewModel.Revenue, Mode=OneWay}">
+                        <ContentControl.ContentTemplate>
+                            <DataTemplate>
+                                <cells:ChartCell DataContextChanged="OnElementPrepared"
+                                                 Background="{ThemeResource SettingsItemBackground}" />
+                            </DataTemplate>
+                        </ContentControl.ContentTemplate>
+                    </ContentControl>
+
+                    <controls:HeaderedControl Header="{CustomResource MonetizationOverview}"
+                                              Background="{ThemeResource SettingsItemBackground}">
+                        <cells:CryptoAmountCell x:Name="AvailableAmount"
+                                                Text="{CustomResource MonetizationOverviewAvailable}"
+                                                Margin="12,8" />
+                        <cells:CryptoAmountCell x:Name="PreviousAmount"
+                                                Text="{CustomResource MonetizationOverviewLastWithdrawal}"
+                                                Margin="12,0" />
+                        <cells:CryptoAmountCell x:Name="TotalAmount"
+                                                Text="{CustomResource MonetizationOverviewTotal}"
+                                                Margin="12,8" />
+                    </controls:HeaderedControl>
+
+                    <controls:HeaderedControl IsFooterLink="True"
+                                              Header="{CustomResource MonetizationBalance}"
+                                              Footer="{CustomResource MonetizationBalanceInfo}">
+                        <StackPanel Background="{ThemeResource SettingsItemBackground}">
+                            <RichTextBlock IsTextSelectionEnabled="False"
+                                           TextAlignment="Center"
+                                           Margin="0,8,0,0">
+                                <Paragraph>
+                                    <InlineUIContainer>
+                                        <controls:CustomEmojiIcon x:Name="Icon"
+                                                                  Width="32"
+                                                                  Height="32"
+                                                                  FrameSize="32,32"
+                                                                  Margin="0,3,0,-4" />
+                                    </InlineUIContainer>
+                                    <Run x:Name="CryptocurrencyAmountLabel"
+                                         FontWeight="SemiBold"
+                                         FontSize="28" /><Run x:Name="CryptocurrencyDecimalLabel"
+                                         FontWeight="SemiBold"
+                                         FontSize="20" />
+                                    <LineBreak />
+                                    <Run x:Name="AmountLabel"
+                                         Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" />
+                                </Paragraph>
+                            </RichTextBlock>
+
+                            <Button x:Name="TransferButton"
+                                    Click="{x:Bind ViewModel.Transfer}"
+                                    Content="{CustomResource MonetizationTransactionWithdraw}"
+                                    Style="{StaticResource AccentButtonStyle}"
+                                    HorizontalAlignment="Center"
+                                    Height="36"
+                                    Margin="12,8" />
+                        </StackPanel>
+                    </controls:HeaderedControl>
+
+                    <TextBlock x:Name="TransactionsHeader"
+                               x:Load="{x:Bind ViewModel.IsEmpty, Mode=OneWay, Converter={StaticResource BooleanNegationConverter}}"
+                               Text="{CustomResource MonetizationTransactions}"
+                               Style="{StaticResource BaseTextBlockStyle}"
+                               Margin="24,16,24,8" />
+                </controls:SettingsPanel>
+            </ListView.Header>
+            <!--<ListView.Footer>
+                <muxc:ProgressBar Background="Transparent"
+                                       IsIndeterminate="{x:Bind ViewModel.Voice.IsLoading, Mode=OneWay}" />
+            </ListView.Footer>-->
+            <ListView.ItemTemplate>
+                <DataTemplate>
+                    <monetization:TransactionCell Background="{ThemeResource SettingsItemBackground}"
+                                                  BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}" />
+                </DataTemplate>
+            </ListView.ItemTemplate>
+            <ListView.Footer>
+                <controls:SettingsPanel IsFooter="True">
+                    <controls:HeaderedControl Footer="{CustomResource MonetizationSwitchOffInfo}">
+                        <Grid BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}">
+                            <controls:FauxCheckBox Click="{x:Bind ViewModel.LearnMore}"
+                                                   IsFaux="True"
+                                                   IsChevronVisible="{x:Bind ViewModel.IsPremium, Mode=OneWay}"
+                                                   Style="{StaticResource SettingsCheckBoxStyle}">
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition />
+                                        <ColumnDefinition />
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock Text="{CustomResource MonetizationSwitchOff}" />
+                                    <controls:BadgeControl x:Name="DisableInfo"
+                                                           Text="&#xe9dd; Level 50"
+                                                           Background="{ThemeResource PremiumLinearGradientBrush}"
+                                                           FontFamily="{StaticResource EmojiThemeFontFamilyWithSymbols}"
+                                                           FontWeight="SemiBold"
+                                                           VerticalAlignment="Bottom"
+                                                           CornerRadius="4"
+                                                           Margin="4,0,0,0"
+                                                           Grid.Column="1" />
+                                </Grid>
+                            </controls:FauxCheckBox>
+                            <TextBlock x:Name="DisableLock"
+                                       x:Load="{x:Bind ViewModel.IsPremium, Mode=OneWay, Converter={StaticResource BooleanNegationConverter}}"
+                                       Text="&#xEA25;"
+                                       Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"
+                                       FontFamily="{StaticResource SymbolThemeFontFamily}"
+                                       FontSize="20"
+                                       Padding="20,12,0,0"
+                                       IsHitTestVisible="False" />
+                        </Grid>
+                    </controls:HeaderedControl>
+                </controls:SettingsPanel>
+            </ListView.Footer>
+        </controls:TableListView>
+    </Grid>
+</local:HostedPage>

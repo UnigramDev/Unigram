@@ -81,7 +81,7 @@ namespace Telegram.Controls
         }
 
         public static readonly DependencyProperty LoopCountProperty =
-            DependencyProperty.Register("LoopCount", typeof(bool), typeof(SettingsHeadline), new PropertyMetadata(1));
+            DependencyProperty.Register("LoopCount", typeof(int), typeof(SettingsHeadline), new PropertyMetadata(1));
 
         #endregion
     }

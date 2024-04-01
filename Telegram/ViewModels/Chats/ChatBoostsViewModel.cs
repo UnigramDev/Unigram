@@ -29,6 +29,13 @@ namespace Telegram.ViewModels.Chats
             Items = new IncrementalCollection<ChatBoost>(this);
         }
 
+        private double _headerHeight;
+        public double HeaderHeight
+        {
+            get => _headerHeight;
+            set => Set(ref _headerHeight, value);
+        }
+
         public IncrementalCollection<ChatBoost> Items { get; }
 
         private int _level;

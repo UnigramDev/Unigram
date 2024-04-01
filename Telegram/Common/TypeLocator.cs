@@ -478,6 +478,11 @@ namespace Telegram.Views
                         _clientService,
                         _settingsService,
                         _eventAggregator);
+                case nameof(Telegram.ViewModels.Chats.ChatMonetizationViewModel):
+                    return (T)(object)new Telegram.ViewModels.Chats.ChatMonetizationViewModel(
+                        _clientService,
+                        _settingsService,
+                        _eventAggregator);
                 case nameof(Telegram.ViewModels.Chats.MessageStatisticsViewModel):
                     return (T)(object)new Telegram.ViewModels.Chats.MessageStatisticsViewModel(
                         _clientService,
@@ -917,6 +922,11 @@ namespace Telegram.Views
                         _eventAggregator);
                 case nameof(Telegram.ViewModels.Business.BusinessChatLinksViewModel):
                     return (T)(object)new Telegram.ViewModels.Business.BusinessChatLinksViewModel(
+                        _clientService,
+                        _settingsService,
+                        _eventAggregator);
+                case nameof(Telegram.ViewModels.MonetizationViewModel):
+                    return (T)(object)new Telegram.ViewModels.MonetizationViewModel(
                         _clientService,
                         _settingsService,
                         _eventAggregator);

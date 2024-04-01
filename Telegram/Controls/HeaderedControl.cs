@@ -4,10 +4,10 @@
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+using System;
 using Windows.Foundation;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Media.Animation;
 
 namespace Telegram.Controls
 {
@@ -17,10 +17,17 @@ namespace Telegram.Controls
         {
             DefaultStyleKey = typeof(HeaderedControl);
 
-            ItemContainerTransitions = new TransitionCollection
-            {
-                new RepositionThemeTransition()
-            };
+            //ItemContainerTransitions = new TransitionCollection
+            //{
+            //    new RepositionThemeTransition()
+            //};
+        }
+
+        protected override void OnApplyTemplate()
+        {
+            VisualStateManager.GoToState(this, IsFooterAtBottom ? "FooterBottomLeft" : "FooterTopRight", false);
+
+            base.OnApplyTemplate();
         }
 
         #region Header
@@ -49,6 +56,42 @@ namespace Telegram.Controls
 
         #endregion
 
+        #region IsFooterAtBottom
+
+        public bool IsFooterAtBottom
+        {
+            get { return (bool)GetValue(IsFooterAtBottomProperty); }
+            set { SetValue(IsFooterAtBottomProperty, value); }
+        }
+
+        public static readonly DependencyProperty IsFooterAtBottomProperty =
+            DependencyProperty.Register("IsFooterAtBottom", typeof(bool), typeof(HeaderedControl), new PropertyMetadata(true, OnIsFooterAtBottomChanged));
+
+        private static void OnIsFooterAtBottomChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            ((HeaderedControl)d).OnIsFooterAtBottomChanged((bool)e.NewValue, (bool)e.OldValue);
+        }
+
+        private void OnIsFooterAtBottomChanged(bool newValue, bool oldValue)
+        {
+            VisualStateManager.GoToState(this, newValue ? "FooterBottomLeft" : "FooterTopRight", false);
+        }
+
+        #endregion
+
+        #region IsFooterLink
+
+        public bool IsFooterLink
+        {
+            get { return (bool)GetValue(IsFooterLinkProperty); }
+            set { SetValue(IsFooterLinkProperty, value); }
+        }
+
+        public static readonly DependencyProperty IsFooterLinkProperty =
+            DependencyProperty.Register("IsFooterLink", typeof(bool), typeof(HeaderedControl), new PropertyMetadata(false));
+
+        #endregion
+
         #region ItemPresenterStyle
 
         public Style ItemPresenterStyle
@@ -71,6 +114,24 @@ namespace Telegram.Controls
 
             base.PrepareContainerForItemOverride(element, item);
         }
+
+        public event EventHandler<TextUrlClickEventArgs> Click;
+
+        // Used by TextBlockHelper
+        public void OnClick(string url)
+        {
+            Click?.Invoke(this, new TextUrlClickEventArgs(url));
+        }
+    }
+
+    public class TextUrlClickEventArgs
+    {
+        public TextUrlClickEventArgs(string url)
+        {
+            Url = url;
+        }
+
+        public string Url { get; }
     }
 
     public class HeaderedControlPanel : StackPanel

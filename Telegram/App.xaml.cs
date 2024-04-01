@@ -441,10 +441,13 @@ namespace Telegram
                 BusinessIntroPage => TypeResolver.Current.Resolve<BusinessIntroViewModel>(sessionId),
                 BusinessChatLinksPage => TypeResolver.Current.Resolve<BusinessChatLinksViewModel>(sessionId),
 
+                MonetizationPage => TypeResolver.Current.Resolve<MonetizationViewModel>(sessionId),
+
                 PaymentFormPage => TypeResolver.Current.Resolve<PaymentFormViewModel>(sessionId),
                 MessageStatisticsPage => TypeResolver.Current.Resolve<MessageStatisticsViewModel>(sessionId),
                 ChatInviteLinkPage => TypeResolver.Current.Resolve<ChatInviteLinkViewModel>(sessionId),
                 ChatStatisticsPage => TypeResolver.Current.Resolve<ChatStatisticsViewModel>(sessionId),
+                ChatMonetizationPage => TypeResolver.Current.Resolve<ChatMonetizationViewModel>(sessionId),
                 ChatStoriesPage => TypeResolver.Current.Resolve<ChatStoriesViewModel>(sessionId),
 
                 // Popups

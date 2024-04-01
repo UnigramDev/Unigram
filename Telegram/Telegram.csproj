@@ -205,6 +205,12 @@
     <Compile Include="Controls\Cells\Business\BusinessRepliesCell.xaml.cs">
       <DependentUpon>BusinessRepliesCell.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\Cells\CryptoAmountCell.xaml.cs">
+      <DependentUpon>CryptoAmountCell.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\Cells\Monetization\TransactionCell.xaml.cs">
+      <DependentUpon>TransactionCell.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Controls\Cells\Premium\PremiumFeatureBusinessCell.xaml.cs">
       <DependentUpon>PremiumFeatureBusinessCell.xaml</DependentUpon>
     </Compile>
@@ -271,6 +277,7 @@
     </Compile>
     <Compile Include="Controls\ToastPopup.cs" />
     <Compile Include="Services\Settings\TranslateSettings.cs" />
+    <Compile Include="Streams\AnimatedEmojiFileSource.cs" />
     <Compile Include="Td\Api\MessageTag.cs" />
     <Compile Include="Td\Api\MinithumbnailId.cs" />
     <Compile Include="Controls\Cells\StoryCell.xaml.cs">
@@ -406,6 +413,7 @@
     <Compile Include="ViewModels\Business\BusinessRepliesViewModel.cs" />
     <Compile Include="ViewModels\ChatNotificationsViewModel.cs" />
     <Compile Include="ViewModels\Chats\ChatBoostsViewModel.cs" />
+    <Compile Include="ViewModels\Chats\ChatMonetizationViewModel.cs" />
     <Compile Include="ViewModels\Chats\ChatStoriesViewModel.cs" />
     <Compile Include="ViewModels\ChooseChatsViewModel.cs" />
     <Compile Include="ViewModels\ComposeViewModel.cs" />
@@ -415,6 +423,7 @@
     <Compile Include="ViewModels\DialogBusinessRepliesViewModel.cs" />
     <Compile Include="ViewModels\DialogViewModel.Translate.cs" />
     <Compile Include="Td\Api\MessageTranslateResult.cs" />
+    <Compile Include="ViewModels\MonetizationViewModel.cs" />
     <Compile Include="ViewModels\Profile\ProfileChannelsTabViewModel.cs" />
     <Compile Include="ViewModels\Profile\ProfileGroupsTabViewModel.cs" />
     <Compile Include="ViewModels\Profile\ProfileMembersTabViewModel.cs" />
@@ -941,6 +950,9 @@
     <Compile Include="Views\Chats\ChatBoostsPage.xaml.cs">
       <DependentUpon>ChatBoostsPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\Chats\ChatMonetizationPage.xaml.cs">
+      <DependentUpon>ChatMonetizationPage.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\Chats\ChatStoriesPage.xaml.cs">
       <DependentUpon>ChatStoriesPage.xaml</DependentUpon>
     </Compile>
@@ -976,6 +988,15 @@
       <DependentUpon>ShareFolderPopup.xaml</DependentUpon>
     </Compile>
     <Compile Include="Common\MultiValueDictionary.cs" />
+    <Compile Include="Views\Monetization\Popups\LearnMorePopup.xaml.cs">
+      <DependentUpon>LearnMorePopup.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Monetization\Popups\TransactionPopup.xaml.cs">
+      <DependentUpon>TransactionPopup.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Monetization\Popups\TransferPopup.xaml.cs">
+      <DependentUpon>TransferPopup.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\Payments\PaymentAddressPopup.xaml.cs">
       <DependentUpon>PaymentAddressPopup.xaml</DependentUpon>
     </Compile>
@@ -1018,6 +1039,9 @@
     </Compile>
     <Compile Include="Views\Premium\Popups\ChangePrivacyPopup.xaml.cs">
       <DependentUpon>ChangePrivacyPopup.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\MonetizationPage.xaml.cs">
+      <DependentUpon>MonetizationPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Profile\ProfileAnimationsTabPage.xaml.cs">
       <DependentUpon>ProfileAnimationsTabPage.xaml</DependentUpon>
@@ -2057,6 +2081,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="Controls\Cells\CryptoAmountCell.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Controls\Cells\ForumTopicCell.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -2068,6 +2096,10 @@
     <Page Include="Controls\Cells\BoostCell.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Controls\Cells\Monetization\TransactionCell.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Controls\Cells\Premium\PremiumFeatureBusinessCell.xaml">
       <Generator>MSBuild:Compile</Generator>
@@ -2545,6 +2577,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Views\Chats\ChatMonetizationPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Views\Chats\ChatStoriesPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -2586,6 +2622,18 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Views\Folders\Popups\ShareFolderPopup.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\Monetization\Popups\LearnMorePopup.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\Monetization\Popups\TransactionPopup.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\Monetization\Popups\TransferPopup.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -2642,6 +2690,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Views\Premium\Popups\ChangePrivacyPopup.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\MonetizationPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

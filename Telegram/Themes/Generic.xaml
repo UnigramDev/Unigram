@@ -277,7 +277,8 @@
                                                     TabIndex="1">
                                     <muxc:BreadcrumbBar.ItemTemplate>
                                         <DataTemplate>
-                                            <TextBlock Text="{Binding Title, Mode=OneTime}" />
+                                            <TextBlock Text="{Binding Title, Mode=OneTime}"
+                                                       FontFamily="{StaticResource EmojiThemeFontFamily}" />
                                         </DataTemplate>
                                     </muxc:BreadcrumbBar.ItemTemplate>
                                 </muxc:BreadcrumbBar>
@@ -1497,9 +1498,10 @@
                         <TextBlock x:Name="Headline"
                                    x:Load="False"
                                    common:TextBlockHelper.Markdown="{TemplateBinding Text}"
-                                   Style="{StaticResource InfoCaptionTextBlockStyle}"
+                                   Style="{StaticResource InfoBodyTextBlockStyle}"
                                    TextAlignment="Center"
                                    Margin="12,0,12,0"
+                                   MaxWidth="480"
                                    Grid.Row="1" />
                     </Grid>
                 </ControlTemplate>
@@ -2088,6 +2090,21 @@
                           Padding="{TemplateBinding Padding}"
                           MaxWidth="1000"
                           Margin="24,0">
+                        <VisualStateManager.VisualStateGroups>
+                            <VisualStateGroup x:Name="FooterStates">
+                                <VisualState x:Name="FooterBottomLeft" />
+                                <VisualState x:Name="FooterTopRight">
+                                    <VisualState.Setters>
+                                        <Setter Target="FooterRoot.TextAlignment"
+                                                Value="Right" />
+                                        <Setter Target="FooterRoot.Margin"
+                                                Value="0,0,0,8" />
+                                        <Setter Target="FooterRoot.(Grid.Row)"
+                                                Value="0" />
+                                    </VisualState.Setters>
+                                </VisualState>
+                            </VisualStateGroup>
+                        </VisualStateManager.VisualStateGroups>
                         <Grid.RowDefinitions>
                             <RowDefinition Height="Auto" />
                             <RowDefinition Height="Auto" />
@@ -2115,8 +2132,11 @@
                             <ItemsPresenter x:Name="Presenter" />
                         </Border>
 
-                        <local:SettingsFooter Text="{TemplateBinding Footer}"
+                        <local:SettingsFooter x:Name="FooterRoot"
+                                              IsLink="{TemplateBinding IsFooterLink}"
+                                              Text="{TemplateBinding Footer}"
                                               Visibility="{Binding Footer, RelativeSource={RelativeSource Mode=TemplatedParent}, Converter={StaticResource NullToVisibilityConverter}}"
+                                              VerticalAlignment="Bottom"
                                               Margin="0,8,0,0"
                                               Grid.Row="2" />
                     </Grid>
@@ -2137,7 +2157,9 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="local:SettingsFooter">
-                    <TextBlock common:TextBlockHelper.Markdown="{TemplateBinding Text}"
+                    <TextBlock common:TextBlockHelper.IsLink="{TemplateBinding IsLink}"
+                               common:TextBlockHelper.Markdown="{TemplateBinding Text}"
+                               TextAlignment="{TemplateBinding TextAlignment}"
                                Style="{StaticResource InfoCaptionTextBlockStyle}"
                                AutomationProperties.AccessibilityView="Raw" />
                 </ControlTemplate>

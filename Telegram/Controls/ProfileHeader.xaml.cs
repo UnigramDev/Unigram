@@ -1227,7 +1227,6 @@ namespace Telegram.Controls
                 if (fullInfo != null && fullInfo.CanGetStatistics)
                 {
                     flyout.CreateFlyoutItem(ViewModel.OpenStatistics, Strings.Statistics, Icons.DataUsage);
-                    flyout.CreateFlyoutItem(ViewModel.OpenBoosts, Strings.Boosts, Icons.Boosts);
                 }
 
                 if (super.IsChannel && supergroup.CanEditStories())

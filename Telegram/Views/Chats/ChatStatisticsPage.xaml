@@ -178,6 +178,8 @@
                    SelectionMode="None">
             <ListView.Header>
                 <controls:SettingsPanel IsHeader="True">
+                    <Border Margin="0,64,0,0" />
+
                     <controls:HeaderedControl Header="{CustomResource StatisticOverview}"
                                               Footer="{x:Bind ConvertPeriod(ViewModel.Period.StartDate, ViewModel.Period.EndDate), Mode=OneWay}"
                                               Style="{StaticResource FooteredControlStyle}"

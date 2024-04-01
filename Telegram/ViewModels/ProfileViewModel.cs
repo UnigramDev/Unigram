@@ -400,7 +400,7 @@ namespace Telegram.ViewModels
                 return;
             }
 
-            NavigationService.Navigate(typeof(ChatStatisticsPage), chat.Id);
+            NavigationService.Navigate(typeof(MonetizationPage), chat.Id);
         }
 
         public void OpenBoosts()

@@ -18,6 +18,8 @@
                                 VerticalContentAlignment="Top">
             <ListView.Header>
                 <controls:SettingsPanel IsHeader="True">
+                    <Border Margin="0,64,0,0" />
+
                     <controls:PremiumProgressBar x:Name="Progress"
                                                  Minimum="{x:Bind ViewModel.CurrentLevelBoostCount, Mode=OneWay}"
                                                  Maximum="{x:Bind ViewModel.NextLevelBoostCount, Mode=OneWay}"

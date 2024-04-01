@@ -625,6 +625,32 @@ namespace Telegram.Common
             });
         }
 
+        public static void Add(this InlineCollection inline, string text, FontWeight fontWeight)
+        {
+            inline.Add(new Run
+            {
+                Text = text,
+                FontWeight = fontWeight
+            });
+        }
+
+        public static void Add(this InlineCollection inline, string text, FontStyle fontStyle)
+        {
+            inline.Add(new Run
+            {
+                Text = text,
+                FontStyle = fontStyle
+            });
+        }
+
+        public static void Add(this InlineCollection inline, string text, TextDecorations textDecorations)
+        {
+            inline.Add(new Run
+            {
+                Text = text,
+                TextDecorations = textDecorations
+            });
+        }
 
 
         public static uint GetHeight(this VideoProperties props)
@@ -992,13 +1018,8 @@ namespace Telegram.Common
 
         public static bool IsValidEntity<T>(this string text)
         {
-            var response = Client.Execute(new GetTextEntities(text));
-            if (response is TextEntities entities)
-            {
-                return entities.Entities.Count == 1 && entities.Entities[0].Offset == 0 && entities.Entities[0].Length == text.Length && entities.Entities[0].Type is T;
-            }
-
-            return false;
+            var entities = ClientEx.GetTextEntities(text);
+            return entities.Count == 1 && entities[0].Offset == 0 && entities[0].Length == text.Length && entities[0].Type is T;
         }
 
         public static string Format(this string input)

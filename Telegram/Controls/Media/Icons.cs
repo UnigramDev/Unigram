@@ -294,6 +294,7 @@ namespace Telegram.Controls.Media
 
         public const string LastSeenFilled = "\uEA6D";
         public const string ChatLockedFilled = "\uEA6C";
+        public const string BuildingShopFilled = "\uEA86";
 
         public const string EmojiRecents = "\uE911";
         public const string Emoji1 = "\uE920";
@@ -377,6 +378,7 @@ namespace Telegram.Controls.Media
         public const string PlayCircleFilled = "\uE9AE";
         public const string ChatFilled = "\uE9B0";
         public const string ChatInfoFilled = "\uEA82";
+        public const string ChatLinkFilled = "\uEA83";
         public const string ChatSettingsFilled = "\uEA6E";
         public const string TagFilled = "\uEA68";
         public const string HandOpenHeartFilled = "\uEA69";
