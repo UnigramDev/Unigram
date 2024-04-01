@@ -1508,6 +1508,12 @@ namespace Telegram.Controls.Cells
             var message = chat.LastMessage;
             if (message == null)
             {
+                if (chat.LastReadOutboxMessageId != 0)
+                {
+                    draft = false;
+                    return Strings.HistoryCleared;
+                }
+
                 draft = false;
                 return string.Empty;
             }
