@@ -519,6 +519,21 @@ namespace Telegram.Views
             });
         }
 
+        public void Handle(UpdateSuggestedActions update)
+        {
+            this.BeginOnUIThread(() =>
+            {
+                if (_clientService.HasSuggestedAction(new SuggestedActionSetBirthdate()))
+                {
+                    FindName(nameof(SetBirthdateCard));
+                }
+                else
+                {
+                    UnloadObject(SetBirthdateCard);
+                }
+            });
+        }
+
         public void Handle(UpdateOption update)
         {
             if (update.Name.Equals("expect_blocking") || update.Name.Equals("enabled_proxy_id"))
@@ -890,6 +905,11 @@ namespace Telegram.Views
             Handle(new UpdateUnconfirmedSession(ViewModel.ClientService.UnconfirmedSession));
             UpdateChatFolders();
 
+            if (_clientService.HasSuggestedAction(new SuggestedActionSetBirthdate()))
+            {
+                FindName(nameof(SetBirthdateCard));
+            }
+
             if (_unloaded)
             {
                 _unloaded = false;
@@ -942,6 +962,7 @@ namespace Telegram.Views
                 .Subscribe<UpdateUnconfirmedSession>(Handle)
                 .Subscribe<UpdateConnectionState>(Handle)
                 .Subscribe<UpdateOption>(Handle)
+                .Subscribe<UpdateSuggestedActions>(Handle)
                 .Subscribe<UpdateCallDialog>(Handle)
                 .Subscribe<UpdateChatFoldersLayout>(Handle)
                 .Subscribe<UpdateConfetti>(Handle);

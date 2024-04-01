@@ -619,15 +619,7 @@ namespace Telegram.Views
                             _clientService,
                             _settingsService,
                             _eventAggregator),
-                        _passcodeService,
-                        Resolve<Telegram.ViewModels.Settings.Privacy.SettingsPrivacyShowForwardedViewModel>(),
-                        Resolve<Telegram.ViewModels.Settings.Privacy.SettingsPrivacyShowPhoneViewModel>(),
-                        Resolve<Telegram.ViewModels.Settings.Privacy.SettingsPrivacyShowPhotoViewModel>(),
-                        Resolve<Telegram.ViewModels.Settings.Privacy.SettingsPrivacyShowStatusViewModel>(),
-                        Resolve<Telegram.ViewModels.Settings.Privacy.SettingsPrivacyShowBioViewModel>(),
-                        Resolve<Telegram.ViewModels.Settings.Privacy.SettingsPrivacyAllowCallsViewModel>(),
-                        Resolve<Telegram.ViewModels.Settings.Privacy.SettingsPrivacyAllowChatInvitesViewModel>(),
-                        Resolve<Telegram.ViewModels.Settings.Privacy.SettingsPrivacyAllowPrivateVoiceAndVideoNoteMessagesViewModel>());
+                        _passcodeService);
                 case nameof(Telegram.ViewModels.Settings.Privacy.SettingsPrivacyAllowCallsViewModel):
                     return (T)(object)new Telegram.ViewModels.Settings.Privacy.SettingsPrivacyAllowCallsViewModel(
                         _clientService,
@@ -684,6 +676,11 @@ namespace Telegram.Views
                         _eventAggregator);
                 case nameof(Telegram.ViewModels.Settings.Privacy.SettingsPrivacyShowBioViewModel):
                     return (T)(object)new Telegram.ViewModels.Settings.Privacy.SettingsPrivacyShowBioViewModel(
+                        _clientService,
+                        _settingsService,
+                        _eventAggregator);
+                case nameof(Telegram.ViewModels.Settings.Privacy.SettingsPrivacyShowBirthdateViewModel):
+                    return (T)(object)new Telegram.ViewModels.Settings.Privacy.SettingsPrivacyShowBirthdateViewModel(
                         _clientService,
                         _settingsService,
                         _eventAggregator);

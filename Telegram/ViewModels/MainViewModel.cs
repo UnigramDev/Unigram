@@ -26,6 +26,7 @@ using Telegram.Views;
 using Telegram.Views.Folders;
 using Telegram.Views.Popups;
 using Telegram.Views.Settings.Popups;
+using Telegram.Views.Settings.Privacy;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
 
@@ -518,6 +519,42 @@ namespace Telegram.ViewModels
             //Aggregator.Publish(new UpdateUnconfirmedSession(null));
 
             await ShowPopupAsync(new UnconfirmedSessionPopup(session));
+        }
+
+        public async void SetBirthdate()
+        {
+            async Task<UserPrivacySettingRule> GetPrimaryRuleAsync()
+            {
+                var response = await ClientService.SendAsync(new GetUserPrivacySettingRules(new UserPrivacySettingShowBirthdate()));
+                if (response is UserPrivacySettingRules rules)
+                {
+                    foreach (var rule in rules.Rules)
+                    {
+                        return rule;
+                    }
+                }
+
+                return null;
+            }
+
+            var rule = await GetPrimaryRuleAsync();
+            var popup = new SettingsBirthdatePopup(null, rule);
+
+            var confirm = await ShowPopupAsync(popup);
+            if (confirm == ContentDialogResult.Primary)
+            {
+                ClientService.Send(new SetBirthdate(popup.Value));
+                ToastPopup.Show(Strings.PrivacyBirthdaySetDone, new LocalFileSource("ms-appx:///Assets/Toasts/Success.tgs"));
+            }
+            else if (popup.ShowPrivacySettings)
+            {
+                NavigationService.Navigate(typeof(SettingsPrivacyShowBirthdatePage));
+            }
+        }
+
+        public void HideBirthdate()
+        {
+            ClientService.Send(new HideSuggestedAction(new SuggestedActionSetBirthdate()));
         }
 
         public async void UpdateApp()

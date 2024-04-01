@@ -70,9 +70,16 @@ namespace Telegram.ViewModels.Settings
             }
         }
 
-        public int BioLengthMax => (int)ClientService.Options.BioLengthMax;
+        public int BioMaxLength => (int)ClientService.Options.BioLengthMax;
 
-        protected override Task OnNavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
+        private bool _isBirthdateContactsOnly;
+        public bool IsBirthdateContactsOnly
+        {
+            get => _isBirthdateContactsOnly;
+            set => Set(ref _isBirthdateContactsOnly, value);
+        }
+
+        protected override async Task OnNavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
         {
             if (ClientService.TryGetUser(ClientService.Options.MyId, out User user))
             {
@@ -93,7 +100,15 @@ namespace Telegram.ViewModels.Settings
                 }
             }
 
-            return base.OnNavigatedToAsync(parameter, mode, state);
+            var response = await ClientService.SendAsync(new GetUserPrivacySettingRules(new UserPrivacySettingShowBirthdate()));
+            if (response is UserPrivacySettingRules rules)
+            {
+                foreach (var rule in rules.Rules)
+                {
+                    IsBirthdateContactsOnly = rule is UserPrivacySettingRuleAllowContacts;
+                    break;
+                }
+            }
         }
 
         public override void Subscribe()
@@ -184,6 +199,25 @@ namespace Telegram.ViewModels.Settings
         public async void CreatePhoto()
         {
             await _profilePhotoService.CreatePhotoAsync(NavigationService, null);
+        }
+
+        public async void ChangeBirthdate()
+        {
+            if (ClientService.TryGetUserFull(ClientService.Options.MyId, out UserFullInfo fullInfo))
+            {
+                var popup = new SettingsBirthdatePopup(fullInfo.Birthdate);
+
+                var confirm = await ShowPopupAsync(popup);
+                if (confirm == ContentDialogResult.Primary)
+                {
+                    ClientService.Send(new SetBirthdate(popup.Value));
+                }
+            }
+        }
+
+        public void RemoveBirthdate()
+        {
+            ClientService.Send(new SetBirthdate(null));
         }
 
         public async void ChangePhoneNumber()

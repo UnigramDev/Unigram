@@ -291,6 +291,13 @@
                     </Button.ContextFlyout>
                 </controls:BadgeButton>
 
+                <controls:BadgeButton x:Name="UserBirthday"
+                                      Click="Birthday_Click"
+                                      Content="[Birthday Today]"
+                                      Badge="21 Mar 2024 (99 years old)"
+                                      Style="{StaticResource GlyphSubtitleBadgeButtonStyle}"
+                                      Glyph="&#xEA84;" />
+
                 <controls:BadgeButton x:Name="Username"
                                       Visibility="Collapsed"
                                       ContentTemplate="{x:Null}"

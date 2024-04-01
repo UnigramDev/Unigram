@@ -75,13 +75,6 @@
                                           IsChevronVisible="True"
                                           Glyph="&#xE9A9;" />
 
-                    <controls:BadgeButton Content="{CustomResource PrivacyBio}"
-                                          Badge="{x:Bind ViewModel.ShowBioRules.Badge, Mode=OneWay}"
-                                          Style="{StaticResource GlyphBadgeButtonStyle}"
-                                          Click="{x:Bind ViewModel.OpenBio}"
-                                          IsChevronVisible="True"
-                                          Glyph="&#xEA0A;" />
-
                     <controls:BadgeButton Content="{CustomResource PrivacyForwards}"
                                           Badge="{x:Bind ViewModel.ShowForwardedRules.Badge, Mode=OneWay}"
                                           Style="{StaticResource GlyphBadgeButtonStyle}"
@@ -122,6 +115,20 @@
                                           Click="{x:Bind ViewModel.OpenMessages}"
                                           IsChevronVisible="True"
                                           Glyph="&#xE8BD;" />
+
+                    <controls:BadgeButton Content="{CustomResource PrivacyBirthday}"
+                                          Badge="{x:Bind ViewModel.ShowBirthdateRules.Badge, Mode=OneWay}"
+                                          Style="{StaticResource GlyphBadgeButtonStyle}"
+                                          Click="{x:Bind ViewModel.OpenBirthdate}"
+                                          IsChevronVisible="True"
+                                          Glyph="&#xEA84;" />
+
+                    <controls:BadgeButton Content="{CustomResource PrivacyBio}"
+                                          Badge="{x:Bind ViewModel.ShowBioRules.Badge, Mode=OneWay}"
+                                          Style="{StaticResource GlyphBadgeButtonStyle}"
+                                          Click="{x:Bind ViewModel.OpenBio}"
+                                          IsChevronVisible="True"
+                                          Glyph="&#xEA0A;" />
                 </controls:HeaderedControl>
 
                 <controls:HeaderedControl>

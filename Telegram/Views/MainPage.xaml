@@ -663,10 +663,16 @@
                                                                Grid.RowSpan="2">
                                         <ListView.Header>
                                             <StackPanel>
-                                                <controls:UnconfirmedSessionCard x:Name="UnconfirmedCard"
-                                                                                 x:Load="False"
-                                                                                 ConfirmClick="{x:Bind ViewModel.ConfirmSession}"
-                                                                                 DenyClick="{x:Bind ViewModel.DenySession}" />
+                                                <Grid>
+                                                    <controls:SuggestedActionSetBirthdateCard x:Name="SetBirthdateCard"
+                                                                                              x:Load="False"
+                                                                                              Click="{x:Bind ViewModel.SetBirthdate}"
+                                                                                              HideClick="{x:Bind ViewModel.HideBirthdate}" />
+                                                    <controls:UnconfirmedSessionCard x:Name="UnconfirmedCard"
+                                                                                     x:Load="False"
+                                                                                     ConfirmClick="{x:Bind ViewModel.ConfirmSession}"
+                                                                                     DenyClick="{x:Bind ViewModel.DenySession}" />
+                                                </Grid>
 
                                                 <Grid x:Name="ArchivedChatsPresenter">
                                                     <Border x:Name="ArchivedChatsPanel">

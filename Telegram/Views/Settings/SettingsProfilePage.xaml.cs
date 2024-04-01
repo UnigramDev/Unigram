@@ -4,10 +4,13 @@
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+using Telegram.Controls;
+using Telegram.Converters;
 using Telegram.Services;
 using Telegram.Td.Api;
 using Telegram.ViewModels.Delegates;
 using Telegram.ViewModels.Settings;
+using Telegram.Views.Settings.Privacy;
 using Windows.UI.Xaml;
 
 namespace Telegram.Views.Settings
@@ -63,11 +66,42 @@ namespace Telegram.Views.Settings
 
         public void UpdateUserFullInfo(Chat chat, User user, UserFullInfo fullInfo, bool secret, bool accessToken)
         {
+            if (fullInfo.Birthdate != null)
+            {
+                Birthdate.Badge = Formatter.Birthdate(fullInfo.Birthdate);
+                BirthdateRemove.Visibility = Visibility.Visible;
+            }
+            else
+            {
+                Birthdate.Badge = Strings.EditProfileBirthdayAdd;
+                BirthdateRemove.Visibility = Visibility.Collapsed;
+            }
 
         }
 
         public void UpdateUserStatus(Chat chat, User user) { }
 
         #endregion
+
+        #region Binding
+
+        private string ConvertBirthdateFooter(bool contactsOnly)
+        {
+            return contactsOnly
+                ? Strings.EditProfileBirthdayInfoContacts
+                : Strings.EditProfileBirthdayInfo;
+        }
+
+        #endregion
+
+        private void BioPrivacy_Click(object sender, TextUrlClickEventArgs e)
+        {
+            ViewModel.NavigationService.Navigate(typeof(SettingsPrivacyShowBioPage));
+        }
+
+        private void BirthdatePrivacy_Click(object sender, TextUrlClickEventArgs e)
+        {
+            ViewModel.NavigationService.Navigate(typeof(SettingsPrivacyShowBirthdatePage));
+        }
     }
 }

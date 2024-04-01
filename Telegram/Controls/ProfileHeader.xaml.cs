@@ -10,6 +10,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
+using System.Threading.Tasks;
 using Telegram.Common;
 using Telegram.Controls.Gallery;
 using Telegram.Controls.Media;
@@ -17,6 +18,7 @@ using Telegram.Converters;
 using Telegram.Native;
 using Telegram.Navigation;
 using Telegram.Services;
+using Telegram.Services.Updates;
 using Telegram.Streams;
 using Telegram.Td;
 using Telegram.Td.Api;
@@ -743,6 +745,31 @@ namespace Telegram.Controls
                 Location.Visibility = Visibility.Visible;
                 Location.Badge = fullInfo.BusinessInfo.Location.Address;
             }
+
+            if (fullInfo.Birthdate != null)
+            {
+                var years = fullInfo.Birthdate.ToYears();
+                var today = fullInfo.Birthdate.Day == DateTime.Today.Day && fullInfo.Birthdate.Month == DateTime.Today.Month;
+
+                if (today)
+                {
+                    UserBirthday.Content = Strings.ProfileBirthdayToday;
+                    UserBirthday.Badge = years != 0
+                        ? Locale.Declension(Strings.R.ProfileBirthdayTodayValueYear, years, Formatter.Birthdate(fullInfo.Birthdate))
+                        : string.Format(Strings.ProfileBirthdayTodayValue, Formatter.Birthdate(fullInfo.Birthdate));
+                }
+                else
+                {
+                    UserBirthday.Content = Strings.ProfileBirthday;
+                    UserBirthday.Badge = years != 0
+                        ? Locale.Declension(Strings.R.ProfileBirthdayValueYear, years, Formatter.Birthdate(fullInfo.Birthdate))
+                        : string.Format(Strings.ProfileBirthdayValue, Formatter.Birthdate(fullInfo.Birthdate));
+                }
+            }
+            else
+            {
+                UserBirthday.Visibility = Visibility.Collapsed;
+            }
         }
 
         public void UpdateUserStatus(Chat chat, User user)
@@ -845,6 +872,8 @@ namespace Telegram.Controls
 
             AnonymousNumber.Visibility = Visibility.Collapsed;
             AnonymousNumberSeparator.Visibility = Visibility.Collapsed;
+
+            UserBirthday.Visibility = Visibility.Collapsed;
         }
 
         public void UpdateBasicGroupFullInfo(Chat chat, BasicGroup group, BasicGroupFullInfo fullInfo)
@@ -949,6 +978,8 @@ namespace Telegram.Controls
 
             AnonymousNumber.Visibility = Visibility.Collapsed;
             AnonymousNumberSeparator.Visibility = Visibility.Collapsed;
+
+            UserBirthday.Visibility = Visibility.Collapsed;
         }
 
         public void UpdateSupergroupFullInfo(Chat chat, Supergroup group, SupergroupFullInfo fullInfo)
@@ -1423,6 +1454,191 @@ namespace Telegram.Controls
 
                 flyout.ShowAt(NotificationsTarget, FlyoutPlacementMode.Bottom);
             }
+        }
+
+        private async void Birthday_Click(object sender, RoutedEventArgs e)
+        {
+            var fullInfo = ViewModel.ClientService.GetUserFull(ViewModel.Chat);
+            if (fullInfo?.Birthdate == null)
+            {
+                return;
+            }
+
+            var effect = await GetEffectAsync();
+            var digits = await GetDigitsAsync(fullInfo.Birthdate.ToYears());
+
+            if (effect == null || digits == null)
+            {
+                return;
+            }
+
+            foreach (var popup2 in VisualTreeHelper.GetOpenPopups(Window.Current))
+            {
+                popup2.IsOpen = false;
+            }
+
+            var player = new AnimatedImage();
+            player.Width = 320;
+            player.Height = 320;
+            player.LoopCount = 1;
+            player.IsCachingEnabled = true;
+            player.IsHitTestVisible = false;
+            player.FrameSize = new Size(320, 320);
+            player.DecodeFrameType = Windows.UI.Xaml.Media.Imaging.DecodePixelType.Logical;
+            player.AutoPlay = true;
+            player.Source = new DelayedFileSource(ViewModel.ClientService, effect.StickerValue);
+            player.RenderTransformOrigin = new Point(0.5, 0.5);
+            player.RenderTransform = new ScaleTransform
+            {
+                ScaleX = -1
+            };
+
+            var center = new Border
+            {
+                Width = 20,
+                Height = 20,
+                Margin = new Thickness(16 + 20 + 10 - 10),
+                HorizontalAlignment = HorizontalAlignment.Left,
+                VerticalAlignment = VerticalAlignment.Center,
+                Background = new SolidColorBrush(Colors.Black)
+            };
+
+            var popup = new Popup();
+            var content = new Grid();
+
+            var transform = UserBirthday.TransformToVisual(null);
+            var point = transform.TransformPoint(new Point());
+
+            var panel = new StackPanel();
+            panel.Orientation = Orientation.Horizontal;
+            panel.VerticalAlignment = VerticalAlignment.Center;
+
+            var root = ElementCompositionPreview.GetElementVisual(panel);
+            ElementCompositionPreview.SetIsTranslationEnabled(panel, true);
+
+            var easingX = root.Compositor.CreateCubicBezierEasingFunction(new Vector2(0.32f, 0), new Vector2(0.67f, 1));
+            //var easingY = root.Compositor.CreateCubicBezierEasingFunction(new Vector2(0.35f, -0.15f), new Vector2(1, 0.45f));
+            var easingY = root.Compositor.CreateCubicBezierEasingFunction(new Vector2(0.2f, -0.15f), new Vector2(0.99f, 0.08f));
+
+            content.IsHitTestVisible = false;
+            //content.Background = new SolidColorBrush(Color.FromArgb(0, 0xff, 0, 0));
+            content.Width = 320;
+            content.Height = 320;
+            //content.Children.Add(center);
+            content.Children.Add(player);
+            content.Children.Add(panel);
+
+            var size = Math.Min(120f, 270f / digits.Count);
+            var offset = 0f;
+
+            for (int i = 0; i < digits.Count; i++)
+            {
+                Sticker digit = digits[i];
+                var pippo = new AnimatedImage();
+                pippo.Width = size;
+                pippo.Height = size;
+                pippo.LoopCount = 1;
+                pippo.IsCachingEnabled = true;
+                pippo.IsHitTestVisible = false;
+                pippo.FrameSize = new Size(size, size);
+                pippo.DecodeFrameType = Windows.UI.Xaml.Media.Imaging.DecodePixelType.Logical;
+                pippo.AutoPlay = true;
+                pippo.Source = new DelayedFileSource(ViewModel.ClientService, digit.StickerValue);
+
+                if (i > 0)
+                {
+                    pippo.Margin = new Thickness(-(size * (digit.Emoji == "\u0031\uFE0F\u20E3" ? 0.35 : 0.25)), 0, 0, 0);
+                }
+
+                var visual = ElementComposition.GetElementVisual(pippo);
+                visual.CenterPoint = new Vector3(-offset + 16 + 20 + 10, size * 0.25f, 0);
+
+                var scale = visual.Compositor.CreateVector3KeyFrameAnimation();
+                scale.InsertKeyFrame(0, Vector3.Zero);
+                scale.InsertKeyFrame(1, Vector3.One);
+                scale.Duration = TimeSpan.FromSeconds(1.33);
+                scale.DelayTime = TimeSpan.FromSeconds(i * 0.25);
+                scale.DelayBehavior = AnimationDelayBehavior.SetInitialValueBeforeDelay;
+
+                visual.StartAnimation("Scale", scale);
+
+                panel.Children.Add(pippo);
+                offset += size * (digit.Emoji == "\u0031\uFE0F\u20E3" ? 0.35f : 0.25f);
+            }
+
+            var translateX = root.Compositor.CreateScalarKeyFrameAnimation();
+            translateX.InsertKeyFrame(0, 0, easingX);
+            translateX.InsertKeyFrame(1, 120, easingX);
+            translateX.Duration = TimeSpan.FromSeconds(3);
+            translateX.DelayTime = TimeSpan.FromSeconds(0);
+
+            var translateY = root.Compositor.CreateScalarKeyFrameAnimation();
+            translateY.InsertKeyFrame(0, 0, easingY);
+            translateY.InsertKeyFrame(1, (float)-point.Y - size, easingY);
+            translateY.Duration = TimeSpan.FromSeconds(2);
+
+            root.StartAnimation("Translation.X", translateX);
+            root.StartAnimation("Translation.Y", translateY);
+
+            popup.Width = 320;
+            popup.Height = 320;
+            popup.HorizontalOffset = point.X - 16;
+            popup.VerticalOffset = point.Y - 8 - (320 - UserBirthday.ActualHeight) / 2;
+            popup.Child = content;
+            popup.IsHitTestVisible = false;
+            popup.IsOpen = true;
+
+            var dispatcher = Windows.System.DispatcherQueue.GetForCurrentThread();
+
+            player.LoopCompleted += (s, args) =>
+            {
+                dispatcher.TryEnqueue(() => popup.IsOpen = false);
+            };
+
+            ViewModel.Aggregator.Publish(new UpdateConfetti());
+        }
+
+        private int _effect;
+
+        private async Task<Sticker> GetEffectAsync()
+        {
+            var response = await ViewModel.ClientService.SendAsync(new SearchStickerSet("EmojiAnimations"));
+            if (response is StickerSet stickerSet)
+            {
+                var stickers = stickerSet.Stickers
+                    .Where(x => x.Emoji is /*"\U0001F389" or "\U0001F386" or*/ "\U0001F388" or "\U0001F973")
+                    .ToList();
+
+                return stickers[_effect++ % stickers.Count];
+            }
+
+            return null;
+        }
+
+        private async Task<IList<Sticker>> GetDigitsAsync(int years)
+        {
+            var response = await ViewModel.ClientService.SendAsync(new SearchStickerSet("FestiveFontEmoji"));
+            if (response is StickerSet stickerSet)
+            {
+                var text = years.ToString();
+                var map = stickerSet.Stickers
+                    .DistinctBy(x => x.Emoji)
+                    .ToDictionary(x => x.Emoji);
+
+                var result = new List<Sticker>();
+
+                foreach (var c in text)
+                {
+                    if (map.TryGetValue(c + "\uFE0F\u20E3", out Sticker sticker))
+                    {
+                        result.Add(sticker);
+                    }
+                }
+
+                return result.Count > 0 ? result : null;
+            }
+
+            return null;
         }
     }
 }

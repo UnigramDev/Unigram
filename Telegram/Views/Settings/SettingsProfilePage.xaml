@@ -81,15 +81,33 @@
                     </controls:BadgeButton>
                 </controls:HeaderedControl>
 
-                <controls:HeaderedControl Footer="{CustomResource UserBioInfo}">
+                <controls:HeaderedControl IsFooterLink="True"
+                                          Header="{CustomResource EditProfileBio}"
+                                          Footer="{CustomResource EditProfileBioInfo}"
+                                          Click="BioPrivacy_Click">
                     <TextBox x:Name="About"
                              Text="{x:Bind ViewModel.Bio, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                              FontFamily="{ThemeResource EmojiThemeFontFamily}"
-                             MaxLength="{x:Bind ViewModel.BioLengthMax}"
-                             PlaceholderText="{CustomResource UserBio}"
+                             MaxLength="{x:Bind ViewModel.BioMaxLength}"
+                             PlaceholderText="{CustomResource EditProfileBioHint}"
                              TextWrapping="Wrap"
                              AcceptsReturn="True"
                              Padding="12,11,6,12" />
+                </controls:HeaderedControl>
+
+                <controls:HeaderedControl IsFooterLink="True"
+                                          Header="{CustomResource EditProfileBirthday}"
+                                          Footer="{x:Bind ConvertBirthdateFooter(ViewModel.IsBirthdateContactsOnly), Mode=OneWay}"
+                                          Click="BirthdatePrivacy_Click">
+                    <controls:BadgeButton x:Name="Birthdate"
+                                          Content="{CustomResource EditProfileBirthdayText}"
+                                          Style="{StaticResource GlyphBadgeButtonStyle}"
+                                          Click="{x:Bind ViewModel.ChangeBirthdate}"
+                                          Glyph="&#xEA84;" />
+                    <controls:BadgeButton x:Name="BirthdateRemove"
+                                          Content="{CustomResource EditProfileBirthdayRemove}"
+                                          Click="{x:Bind ViewModel.RemoveBirthdate}"
+                                          Foreground="{ThemeResource DangerButtonBackground}" />
                 </controls:HeaderedControl>
 
                 <controls:HeaderedControl>

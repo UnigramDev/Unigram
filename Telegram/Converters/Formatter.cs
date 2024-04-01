@@ -30,6 +30,7 @@ namespace Telegram.Converters
         public static DateTimeFormatter DayMonthFull { get; private set; }
         public static DateTimeFormatter DayMonthFullYear { get; private set; }
         public static DateTimeFormatter MonthAbbreviatedYear { get; private set; }
+        public static DateTimeFormatter DayMonthAbbreviated { get; private set; }
         public static DateTimeFormatter DayMonthAbbreviatedYear { get; private set; }
         public static DateTimeFormatter DayOfWeekAbbreviated { get; private set; }
 
@@ -60,6 +61,7 @@ namespace Telegram.Converters
             DayMonthFull = new DateTimeFormatter("day month.full", languages, region, calendar, clock);
             DayMonthFullYear = new DateTimeFormatter("day month.full year", languages, region, calendar, clock);
             MonthAbbreviatedYear = new DateTimeFormatter("month.abbreviated year", languages, region, calendar, clock);
+            DayMonthAbbreviated = new DateTimeFormatter("day month.abbreviated", languages, region, calendar, clock);
             DayMonthAbbreviatedYear = new DateTimeFormatter("day month.abbreviated year", languages, region, calendar, clock);
             DayOfWeekAbbreviated = new DateTimeFormatter("dayofweek.abbreviated", languages, region, calendar, clock);
         }
@@ -407,6 +409,21 @@ namespace Telegram.Converters
             {
                 return string.Format("{0}{1}", number, K);
             }
+        }
+
+        public static string Birthdate(Birthdate birthdate)
+        {
+            if (birthdate == null)
+            {
+                return string.Empty;
+            }
+
+            if (birthdate.Year == 0)
+            {
+                return DayMonthFull.Format(new DateTime(2020, birthdate.Month, birthdate.Day));
+            }
+
+            return DayMonthAbbreviatedYear.Format(new DateTime(birthdate.Year, birthdate.Month, birthdate.Day));
         }
     }
 }

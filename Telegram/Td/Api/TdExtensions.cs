@@ -1647,6 +1647,29 @@ namespace Telegram.Td.Api
             return 0;
         }
 
+        public static int ToYears(this Birthdate birthdate)
+        {
+            if (birthdate.Year == 0)
+            {
+                return 0;
+            }
+
+            var startDate = new DateTime(birthdate.Year, birthdate.Month, birthdate.Day);
+            var endDate = DateTime.Today;
+
+            //Excel documentation says "COMPLETE calendar years in between dates"
+            int years = endDate.Year - startDate.Year;
+
+            if (startDate.Month == endDate.Month &&// if the start month and the end month are the same
+                endDate.Day < startDate.Day// AND the end day is less than the start day
+                || endDate.Month < startDate.Month)// OR if the end month is less than the start month
+            {
+                years--;
+            }
+
+            return years;
+        }
+
         public static InputBusinessIntro ToInput(this BusinessIntro x)
         {
             if (x == null)

@@ -204,6 +204,9 @@
     </Compile>
     <Compile Include="Controls\Messages\ReactionAsTagButton.cs" />
     <Compile Include="Common\AsyncMediaPlayer.cs" />
+    <Compile Include="Controls\SuggestedActionSetBirthdateCard.xaml.cs">
+      <DependentUpon>SuggestedActionSetBirthdateCard.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Services\ClientService.SavedMessages.cs" />
     <Compile Include="Composition\CompositionVoiceBlobVisual.cs" />
     <Compile Include="Composition\CompositionBlobVisual.cs" />
@@ -819,6 +822,7 @@
     <Compile Include="ViewModels\Folders\ShareFolderViewModel.cs" />
     <Compile Include="Td\Api\MessageId.cs" />
     <Compile Include="Collections\Handlers\SearchResultDiffHandler.cs" />
+    <Compile Include="ViewModels\Settings\Privacy\SettingsPrivacyShowBirthdateViewModel.cs" />
     <Compile Include="ViewModels\Settings\Privacy\SettingsPrivacyShowBioViewModel.cs" />
     <Compile Include="ViewModels\Settings\Privacy\SettingsPrivacyNewChatViewModel.cs" />
     <Compile Include="ViewModels\Settings\SettingsPowerSavingViewModel.cs" />
@@ -1029,8 +1033,14 @@
     <Compile Include="Views\Settings\Password\SettingsPasswordConfirmPopup.xaml.cs">
       <DependentUpon>SettingsPasswordConfirmPopup.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\Settings\Popups\SettingsBirthdatePopup.xaml.cs">
+      <DependentUpon>SettingsBirthdatePopup.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\Settings\Privacy\SettingsPrivacyNewChatPage.xaml.cs">
       <DependentUpon>SettingsPrivacyNewChatPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Settings\Privacy\SettingsPrivacyShowBirthdatePage.xaml.cs">
+      <DependentUpon>SettingsPrivacyShowBirthdatePage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Settings\SettingsPasswordPage.xaml.cs">
       <DependentUpon>SettingsPasswordPage.xaml</DependentUpon>
@@ -2357,6 +2367,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Controls\SuggestedActionSetBirthdateCard.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Controls\UnconfirmedSessionCard.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -2637,7 +2651,15 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="Views\Settings\Popups\SettingsBirthdatePopup.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Views\Settings\Privacy\SettingsPrivacyNewChatPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\Settings\Privacy\SettingsPrivacyShowBirthdatePage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

@@ -206,6 +206,8 @@ namespace Telegram.Services
 
         bool IsDiceEmoji(string text, out string dice);
 
+        bool HasSuggestedAction(SuggestedAction action);
+
         Settings.NotificationsSettings Notifications { get; }
     }
 
@@ -789,6 +791,8 @@ namespace Telegram.Services
             _unreadCounts.Clear();
 
             _diceEmojis = null;
+
+            _suggestedActions.Clear();
 
             _savedAnimations = null;
             _favoriteStickers = null;
@@ -1962,6 +1966,57 @@ namespace Telegram.Services
             return _diceEmojis.Contains(text);
         }
 
+        private readonly HashSet<SuggestedAction> _suggestedActions = new(new SuggestedActionComparer());
+
+        private class SuggestedActionComparer : IEqualityComparer<SuggestedAction>
+        {
+            public bool Equals(SuggestedAction x, SuggestedAction y)
+            {
+                return x switch
+                {
+                    SuggestedActionCheckPassword => y is SuggestedActionCheckPassword,
+                    SuggestedActionCheckPhoneNumber => y is SuggestedActionCheckPhoneNumber,
+                    SuggestedActionEnableArchiveAndMuteNewChats => y is SuggestedActionEnableArchiveAndMuteNewChats,
+                    SuggestedActionGiftPremiumForChristmas => y is SuggestedActionGiftPremiumForChristmas,
+                    SuggestedActionRestorePremium => y is SuggestedActionRestorePremium,
+                    SuggestedActionSetBirthdate => y is SuggestedActionSetBirthdate,
+                    SuggestedActionSubscribeToAnnualPremium => y is SuggestedActionSubscribeToAnnualPremium,
+                    SuggestedActionUpgradePremium => y is SuggestedActionUpgradePremium,
+                    SuggestedActionViewChecksHint => y is SuggestedActionViewChecksHint,
+                    SuggestedActionConvertToBroadcastGroup convertToBroadcastGroup => y is SuggestedActionConvertToBroadcastGroup yc && yc.SupergroupId == convertToBroadcastGroup.SupergroupId,
+                    SuggestedActionSetPassword setPassword => y is SuggestedActionSetPassword ys && ys.AuthorizationDelay == setPassword.AuthorizationDelay,
+                    _ => false
+                };
+            }
+
+            public int GetHashCode(SuggestedAction obj)
+            {
+                return obj switch
+                {
+                    SuggestedActionCheckPassword => 0,
+                    SuggestedActionCheckPhoneNumber => 1,
+                    SuggestedActionEnableArchiveAndMuteNewChats => 2,
+                    SuggestedActionGiftPremiumForChristmas => 3,
+                    SuggestedActionRestorePremium => 4,
+                    SuggestedActionSetBirthdate => 5,
+                    SuggestedActionSubscribeToAnnualPremium => 6,
+                    SuggestedActionUpgradePremium => 7,
+                    SuggestedActionViewChecksHint => 8,
+                    SuggestedActionConvertToBroadcastGroup convertToBroadcastGroup => HashCode.Combine(9, convertToBroadcastGroup.SupergroupId),
+                    SuggestedActionSetPassword setPassword => HashCode.Combine(10, setPassword.AuthorizationDelay),
+                    _ => -1
+                };
+            }
+        }
+
+        public bool HasSuggestedAction(SuggestedAction action)
+        {
+            lock (_suggestedActions)
+            {
+                return _suggestedActions.Contains(action);
+            }
+        }
+
         #endregion
 
 
@@ -2581,6 +2636,21 @@ namespace Telegram.Services
                         {
                             _savedMessagesTags[tag.Tag] = tag;
                         }
+                    }
+                }
+            }
+            else if (update is UpdateSuggestedActions updateSuggestedActions)
+            {
+                lock (_suggestedActions)
+                {
+                    foreach (var action in updateSuggestedActions.RemovedActions)
+                    {
+                        _suggestedActions.Remove(action);
+                    }
+
+                    foreach (var action in updateSuggestedActions.AddedActions)
+                    {
+                        _suggestedActions.Add(action);
                     }
                 }
             }
