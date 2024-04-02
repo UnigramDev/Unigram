@@ -14,21 +14,18 @@
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
-        <RichTextBlock IsTextSelectionEnabled="False">
-            <Paragraph>
-                <InlineUIContainer>
-                    <controls:CustomEmojiIcon x:Name="Icon"
-                                              Margin="0,-2,0,-4" />
-                </InlineUIContainer>
-                <Run x:Name="CryptocurrencyAmountLabel"
-                     FontWeight="SemiBold" /><Run x:Name="CryptocurrencyDecimalLabel"
-                     FontWeight="SemiBold"
-                     FontSize="12" />
-                <Run x:Name="AmountLabel"
-                     Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"
-                     FontSize="12" />
-            </Paragraph>
-        </RichTextBlock>
+        <TextBlock>
+            <Run Text="&#xEA7E;"
+                 Foreground="{ThemeResource SystemColorControlAccentBrush}"
+                 FontFamily="{StaticResource SymbolThemeFontFamily}" />
+            <Run x:Name="CryptocurrencyAmountLabel"
+                 FontWeight="SemiBold" /><Run x:Name="CryptocurrencyDecimalLabel"
+                                              FontWeight="SemiBold"
+                                              FontSize="12" />
+            <Run x:Name="AmountLabel"
+                 Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"
+                 FontSize="12" />
+        </TextBlock>
         <TextBlock x:Name="TextLabel"
                    Style="{StaticResource InfoCaptionTextBlockStyle}"
                    Grid.Row="1" />

@@ -4,7 +4,6 @@ using Telegram.Controls;
 using Telegram.Controls.Cells;
 using Telegram.Controls.Cells.Monetization;
 using Telegram.Converters;
-using Telegram.Streams;
 using Telegram.ViewModels.Chats;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -26,9 +25,6 @@ namespace Telegram.Views.Chats
             ViewModel.PropertyChanged += OnPropertyChanged;
 
             UpdateAmount(ViewModel.AvailableAmount);
-            AvailableAmount.UpdateAmount(ViewModel.ClientService, ViewModel.AvailableAmount);
-            PreviousAmount.UpdateAmount(ViewModel.ClientService, ViewModel.PreviousAmount);
-            TotalAmount.UpdateAmount(ViewModel.ClientService, ViewModel.TotalAmount);
 
             FooterInfo.Text = string.Format(Strings.MonetizationInfo, 50);
         }
@@ -43,15 +39,6 @@ namespace Telegram.Views.Chats
             if (e.PropertyName == nameof(AvailableAmount))
             {
                 UpdateAmount(ViewModel.AvailableAmount);
-                AvailableAmount.UpdateAmount(ViewModel.ClientService, ViewModel.AvailableAmount);
-            }
-            else if (e.PropertyName == nameof(PreviousAmount))
-            {
-                PreviousAmount.UpdateAmount(ViewModel.ClientService, ViewModel.PreviousAmount);
-            }
-            else if (e.PropertyName == nameof(TotalAmount))
-            {
-                TotalAmount.UpdateAmount(ViewModel.ClientService, ViewModel.TotalAmount);
             }
         }
 
@@ -68,8 +55,6 @@ namespace Telegram.Views.Chats
 
             CryptocurrencyAmountLabel.Text = integerAmount.ToString("N0");
             CryptocurrencyDecimalLabel.Text = string.Format(".{0:N0}", decimalAmount);
-
-            Icon.Source = new AnimatedEmojiFileSource(ViewModel.ClientService, "\U0001F48E");
 
             AmountLabel.Text = string.Format("~{0}", Formatter.FormatAmount(value.Amount, value.Currency));
         }

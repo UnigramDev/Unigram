@@ -46,12 +46,15 @@
                     <controls:HeaderedControl Header="{CustomResource MonetizationOverview}"
                                               Background="{ThemeResource SettingsItemBackground}">
                         <cells:CryptoAmountCell x:Name="AvailableAmount"
+                                                Amount="{x:Bind ViewModel.AvailableAmount, Mode=OneWay}"
                                                 Text="{CustomResource MonetizationOverviewAvailable}"
                                                 Margin="12,8" />
                         <cells:CryptoAmountCell x:Name="PreviousAmount"
+                                                Amount="{x:Bind ViewModel.PreviousAmount, Mode=OneWay}"
                                                 Text="{CustomResource MonetizationOverviewLastWithdrawal}"
                                                 Margin="12,0" />
                         <cells:CryptoAmountCell x:Name="TotalAmount"
+                                                Amount="{x:Bind ViewModel.TotalAmount, Mode=OneWay}"
                                                 Text="{CustomResource MonetizationOverviewTotal}"
                                                 Margin="12,8" />
                     </controls:HeaderedControl>
@@ -60,27 +63,21 @@
                                               Header="{CustomResource MonetizationBalance}"
                                               Footer="{CustomResource MonetizationBalanceInfo}">
                         <StackPanel Background="{ThemeResource SettingsItemBackground}">
-                            <RichTextBlock IsTextSelectionEnabled="False"
-                                           TextAlignment="Center"
-                                           Margin="0,8,0,0">
-                                <Paragraph>
-                                    <InlineUIContainer>
-                                        <controls:CustomEmojiIcon x:Name="Icon"
-                                                                  Width="32"
-                                                                  Height="32"
-                                                                  FrameSize="32,32"
-                                                                  Margin="0,3,0,-4" />
-                                    </InlineUIContainer>
-                                    <Run x:Name="CryptocurrencyAmountLabel"
-                                         FontWeight="SemiBold"
-                                         FontSize="28" /><Run x:Name="CryptocurrencyDecimalLabel"
-                                         FontWeight="SemiBold"
-                                         FontSize="20" />
-                                    <LineBreak />
-                                    <Run x:Name="AmountLabel"
-                                         Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" />
-                                </Paragraph>
-                            </RichTextBlock>
+                            <TextBlock TextAlignment="Center"
+                                       Margin="0,8,0,0">
+                                <Run Text="&#xEA7E;"
+                                     Foreground="{ThemeResource SystemColorControlAccentBrush}"
+                                     FontFamily="{StaticResource SymbolThemeFontFamily}"
+                                     FontSize="28" />
+                                <Run x:Name="CryptocurrencyAmountLabel"
+                                     FontWeight="SemiBold"
+                                     FontSize="28" /><Run x:Name="CryptocurrencyDecimalLabel"
+                                                          FontWeight="SemiBold"
+                                                          FontSize="20" />
+                                <LineBreak />
+                                <Run x:Name="AmountLabel"
+                                     Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" />
+                            </TextBlock>
 
                             <Button x:Name="TransferButton"
                                     Click="{x:Bind ViewModel.Transfer}"

@@ -1,7 +1,5 @@
 ﻿using System;
 using Telegram.Converters;
-using Telegram.Services;
-using Telegram.Streams;
 using Windows.UI.Xaml.Controls;
 
 namespace Telegram.Controls.Cells
@@ -30,7 +28,12 @@ namespace Telegram.Controls.Cells
             set => TextLabel.Text = value;
         }
 
-        public void UpdateAmount(IClientService clientService, CryptoAmount value)
+        public CryptoAmount Amount
+        {
+            set => UpdateAmount(value);
+        }
+
+        public void UpdateAmount(CryptoAmount value)
         {
             if (value == null)
             {
@@ -43,8 +46,6 @@ namespace Telegram.Controls.Cells
 
             CryptocurrencyAmountLabel.Text = integerAmount.ToString("N0");
             CryptocurrencyDecimalLabel.Text = string.Format(".{0:N0}", decimalAmount);
-
-            Icon.Source = new AnimatedEmojiFileSource(clientService, "\U0001F48E");
 
             AmountLabel.Text = string.Format("~{0}", Formatter.FormatAmount(value.Amount, value.Currency));
         }
