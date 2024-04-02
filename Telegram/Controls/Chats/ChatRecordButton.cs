@@ -178,22 +178,33 @@ namespace Telegram.Controls.Chats
 
         private void OnPointerReleased(object sender, PointerRoutedEventArgs e)
         {
+            _pointerReleased = true;
             Logger.Debug("OnPointerReleased");
 
             Icon.ReleasePointerCapture(e.Pointer);
             OnRelease();
+
+            _pointerReleased = false;
         }
 
         private void OnPointerCanceled(object sender, PointerRoutedEventArgs e)
         {
+            _pointerReleased = true;
             Logger.Debug("OnPointerCanceled");
 
             Icon.ReleasePointerCapture(e.Pointer);
             OnRelease();
+
+            _pointerReleased = false;
         }
 
         private void OnPointerCaptureLost(object sender, PointerRoutedEventArgs e)
         {
+            if (_pointerReleased)
+            {
+                return;
+            }
+
             Logger.Debug("OnPointerCaptureLost");
             OnRelease();
         }
@@ -542,6 +553,8 @@ namespace Telegram.Controls.Chats
 
         private readonly bool _hasRecordVideo = true;
 
+        private bool _pointerReleased;
+
         private bool _calledRecordRunnable;
         private bool _recordAudioVideoRunnableStarted;
 
@@ -647,8 +660,6 @@ namespace Telegram.Controls.Chats
             private StorageFile _file;
             private ChatRecordMode _mode;
             private Chat _chat;
-            private DateTime _start;
-            private TimeSpan _duration;
 
             private MediaFrameReader _reader;
 
@@ -734,9 +745,6 @@ namespace Telegram.Controls.Chats
                         await _recorder.StartAsync();
 
                         Logger.Debug("Recording started at " + DateTime.Now);
-
-                        _start = DateTime.Now;
-                        _duration = TimeSpan.Zero;
                     }
                     catch (Exception ex)
                     {
@@ -762,33 +770,40 @@ namespace Telegram.Controls.Chats
 
             public async Task InitializeQuantumAsync()
             {
-                var frameSource = _recorder.m_mediaCapture.FrameSources.FirstOrDefault(x => x.Value.Info.MediaStreamType == MediaStreamType.Audio);
-                if (frameSource.Value == null)
+                try
                 {
-                    Logger.Info("No audio frame source was found.");
-                    return;
-                }
+                    var frameSource = _recorder.m_mediaCapture.FrameSources.FirstOrDefault(x => x.Value.Info.MediaStreamType == MediaStreamType.Audio);
+                    if (frameSource.Value == null)
+                    {
+                        Logger.Info("No audio frame source was found.");
+                        return;
+                    }
 
-                var format = frameSource.Value.CurrentFormat;
-                if (format.Subtype != MediaEncodingSubtypes.Float)
+                    var format = frameSource.Value.CurrentFormat;
+                    if (format.Subtype != MediaEncodingSubtypes.Float)
+                    {
+                        Logger.Info("No audio frame source was found.");
+                        return;
+                    }
+
+                    var mediaFrameReader = await _recorder.m_mediaCapture.CreateFrameReaderAsync(frameSource.Value);
+
+                    // Optionally set acquisition mode. Buffered is the default mode for audio.
+                    mediaFrameReader.AcquisitionMode = MediaFrameReaderAcquisitionMode.Realtime;
+                    mediaFrameReader.FrameArrived += OnAudioFrameArrived;
+
+                    var status = await mediaFrameReader.StartAsync();
+                    if (status != MediaFrameReaderStartStatus.Success)
+                    {
+                        Logger.Info("The MediaFrameReader couldn't start.");
+                    }
+
+                    _reader = mediaFrameReader;
+                }
+                catch
                 {
-                    Logger.Info("No audio frame source was found.");
-                    return;
+                    // A task was canceled.
                 }
-
-                var mediaFrameReader = await _recorder.m_mediaCapture.CreateFrameReaderAsync(frameSource.Value);
-
-                // Optionally set acquisition mode. Buffered is the default mode for audio.
-                mediaFrameReader.AcquisitionMode = MediaFrameReaderAcquisitionMode.Realtime;
-                mediaFrameReader.FrameArrived += OnAudioFrameArrived;
-
-                var status = await mediaFrameReader.StartAsync();
-                if (status != MediaFrameReaderStartStatus.Success)
-                {
-                    Logger.Info("The MediaFrameReader couldn't start.");
-                }
-
-                _reader = mediaFrameReader;
             }
 
             private readonly float[] _compressedWaveformSamples = new float[200];
@@ -966,21 +981,35 @@ namespace Telegram.Controls.Chats
                     var paused = await recorder.PauseAsync();
                     if (paused != null)
                     {
-                        _duration = paused.RecordDuration;
+                        tsc.SetResult(new ChatRecordResult(paused.RecordDuration, GetWaveform()));
 
                         if (_reader != null)
                         {
-                            await _reader.StopAsync();
+                            try
+                            {
+                                await _reader.StopAsync();
+                            }
+                            catch
+                            {
+                                // A task was canceled.
+                            }
                         }
-
-                        tsc.SetResult(new ChatRecordResult(paused.RecordDuration, GetWaveform()));
                     }
-                    else if (_reader != null)
+                    else
                     {
-                        _start = DateTime.Now;
-
-                        await _reader.StartAsync();
                         tsc.SetResult(null);
+
+                        if (_reader != null)
+                        {
+                            try
+                            {
+                                await _reader.StartAsync();
+                            }
+                            catch
+                            {
+                                // A task was canceled.
+                            }
+                        }
                     }
                 });
 
@@ -1014,7 +1043,14 @@ namespace Telegram.Controls.Chats
 
                     if (reader != null)
                     {
-                        await reader.StopAsync();
+                        try
+                        {
+                            await reader.StopAsync();
+                        }
+                        catch
+                        {
+                            // A task was canceled.
+                        }
 
                         reader.FrameArrived -= OnAudioFrameArrived;
                         reader.Dispose();
@@ -1025,7 +1061,7 @@ namespace Telegram.Controls.Chats
                     var result = await recorder.StopAsync();
                     var duration = result?.RecordDuration ?? TimeSpan.Zero;
 
-                    Logger.Debug("recorder stopped, duration: " + result.RecordDuration);
+                    Logger.Debug("recorder stopped, duration: " + result?.RecordDuration);
 
                     if (cancel == true || duration.TotalMilliseconds < 700)
                     {
@@ -1218,11 +1254,13 @@ namespace Telegram.Controls.Chats
                         {
                             result = await m_mediaCapture.StopRecordWithResultAsync();
                         }
-
-                        m_mediaCapture.Dispose();
-                        m_mediaCapture = null;
                     }
                     catch { }
+                    finally
+                    {
+                        m_mediaCapture?.Dispose();
+                        m_mediaCapture = null;
+                    }
                     return result;
                 }
 
