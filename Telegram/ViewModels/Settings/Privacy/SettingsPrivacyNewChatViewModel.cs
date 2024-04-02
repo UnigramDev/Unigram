@@ -27,6 +27,8 @@ namespace Telegram.ViewModels.Settings.Privacy
             return Task.CompletedTask;
         }
 
+        public bool CanSetNewChatPrivacySettings => ClientService.Options.CanSetNewChatPrivacySettings;
+
         private void UpdatePrivacy()
         {
             ClientService.Send(new GetNewChatPrivacySettings(), result =>
