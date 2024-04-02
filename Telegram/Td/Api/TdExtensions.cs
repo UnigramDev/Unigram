@@ -195,7 +195,11 @@ namespace Telegram.Td.Api
 
         public static bool AreTheSame(this ReactionType x, ReactionType y)
         {
-            if (x is ReactionTypeEmoji oldEmoji
+            if (x == null || y == null)
+            {
+                return x == y;
+            }
+            else if (x is ReactionTypeEmoji oldEmoji
                 && y is ReactionTypeEmoji newEmoji)
             {
                 return oldEmoji.Emoji == newEmoji.Emoji;
