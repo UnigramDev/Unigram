@@ -52,6 +52,26 @@ namespace Telegram.Controls.Cells
             }
         }
 
+        public object PhotoSource
+        {
+            set
+            {
+                Photo.Source = value;
+                SelectionOutline.RadiusX = 18;
+                SelectionOutline.RadiusY = 18;
+            }
+        }
+
+        public ProfilePictureShape PhotoShape
+        {
+            set
+            {
+                Photo.Shape = value;
+                SelectionOutline.RadiusX = value == ProfilePictureShape.Ellipse ? 18 : 9;
+                SelectionOutline.RadiusY = value == ProfilePictureShape.Ellipse ? 18 : 9;
+            }
+        }
+
         public string Title
         {
             get => TitleLabel.Text;

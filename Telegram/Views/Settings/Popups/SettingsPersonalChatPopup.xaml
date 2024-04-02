@@ -23,7 +23,7 @@
                   SelectionChanged="OnSelectionChanged"
                   ChoosingItemContainer="OnChoosingItemContainer"
                   ContainerContentChanging="OnContainerContentChanging"
-                  Padding="12,0"
+                  Padding="12,0,12,18"
                   Grid.Row="1">
             <ListView.Header>
                 <StackPanel>

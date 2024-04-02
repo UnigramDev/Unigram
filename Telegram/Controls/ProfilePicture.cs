@@ -689,6 +689,15 @@ namespace Telegram.Controls
             }
         }
 
+        public PlaceholderImage(string initials, bool isGlyph, Color topColor, Color bottomColor)
+        {
+            Initials = initials;
+            IsGlyph = isGlyph;
+
+            TopColor = topColor;
+            BottomColor = bottomColor;
+        }
+
         #region Static stuff
 
         private static readonly Color[] _colorsTop = new Color[7]

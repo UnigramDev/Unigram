@@ -75,6 +75,20 @@
                                           IsChevronVisible="True"
                                           Glyph="&#xE9A9;" />
 
+                    <controls:BadgeButton Content="{CustomResource PrivacyBio}"
+                                          Badge="{x:Bind ViewModel.ShowBioRules.Badge, Mode=OneWay}"
+                                          Style="{StaticResource GlyphBadgeButtonStyle}"
+                                          Click="{x:Bind ViewModel.OpenBio}"
+                                          IsChevronVisible="True"
+                                          Glyph="&#xEA0A;" />
+
+                    <controls:BadgeButton Content="{CustomResource PrivacyBirthday}"
+                                          Badge="{x:Bind ViewModel.ShowBirthdateRules.Badge, Mode=OneWay}"
+                                          Style="{StaticResource GlyphBadgeButtonStyle}"
+                                          Click="{x:Bind ViewModel.OpenBirthdate}"
+                                          IsChevronVisible="True"
+                                          Glyph="&#xEA84;" />
+
                     <controls:BadgeButton Content="{CustomResource PrivacyForwards}"
                                           Badge="{x:Bind ViewModel.ShowForwardedRules.Badge, Mode=OneWay}"
                                           Style="{StaticResource GlyphBadgeButtonStyle}"
@@ -88,13 +102,6 @@
                                           Click="{x:Bind ViewModel.OpenPhoneCall}"
                                           IsChevronVisible="True"
                                           Glyph="&#xE717;" />
-
-                    <controls:BadgeButton Content="{CustomResource GroupsAndChannels}"
-                                          Badge="{x:Bind ViewModel.AllowChatInvitesRules.Badge, Mode=OneWay}"
-                                          Style="{StaticResource GlyphBadgeButtonStyle}"
-                                          Click="{x:Bind ViewModel.OpenChatInvite}"
-                                          IsChevronVisible="True"
-                                          Glyph="&#xE716;" />
 
                     <controls:BadgeButton x:Name="PrivacyVoiceMessages"
                                           x:Load="{x:Bind ViewModel.IsPremiumAvailable, Mode=OneWay}"
@@ -116,19 +123,12 @@
                                           IsChevronVisible="True"
                                           Glyph="&#xE8BD;" />
 
-                    <controls:BadgeButton Content="{CustomResource PrivacyBirthday}"
-                                          Badge="{x:Bind ViewModel.ShowBirthdateRules.Badge, Mode=OneWay}"
+                    <controls:BadgeButton Content="{CustomResource PrivacyInvites}"
+                                          Badge="{x:Bind ViewModel.AllowChatInvitesRules.Badge, Mode=OneWay}"
                                           Style="{StaticResource GlyphBadgeButtonStyle}"
-                                          Click="{x:Bind ViewModel.OpenBirthdate}"
+                                          Click="{x:Bind ViewModel.OpenChatInvite}"
                                           IsChevronVisible="True"
-                                          Glyph="&#xEA84;" />
-
-                    <controls:BadgeButton Content="{CustomResource PrivacyBio}"
-                                          Badge="{x:Bind ViewModel.ShowBioRules.Badge, Mode=OneWay}"
-                                          Style="{StaticResource GlyphBadgeButtonStyle}"
-                                          Click="{x:Bind ViewModel.OpenBio}"
-                                          IsChevronVisible="True"
-                                          Glyph="&#xEA0A;" />
+                                          Glyph="&#xE716;" />
                 </controls:HeaderedControl>
 
                 <controls:HeaderedControl>
