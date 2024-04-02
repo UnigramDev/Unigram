@@ -33,7 +33,7 @@ namespace Telegram.ViewModels.Delegates
         void UpdateChatIsTranslatable(Chat chat, string language);
         void UpdateChatVideoChat(Chat chat, VideoChat videoChat);
 
-        void UpdateUserRestrictsNewChats(Chat chat, User user, CanSendMessageToUserResult result);
+        void UpdateUserRestrictsNewChats(Chat chat, User user, UserFullInfo fullInfo, CanSendMessageToUserResult result);
 
         void UpdatePinnedMessage(Chat chat, bool known);
         void UpdateCallbackQueryAnswer(Chat chat, MessageViewModel answer);

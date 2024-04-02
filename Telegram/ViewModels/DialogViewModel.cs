@@ -579,6 +579,15 @@ namespace Telegram.ViewModels
             return lastMessage.Id == last.Id;
         }
 
+        private bool _isChatEmpty;
+
+        private Sticker _greetingSticker;
+        public Sticker GreetingSticker
+        {
+            get => _greetingSticker;
+            set => Set(ref _greetingSticker, value);
+        }
+
         private bool? _isFirstSliceLoaded;
         public bool? IsFirstSliceLoaded
         {
@@ -2170,20 +2179,9 @@ namespace Telegram.ViewModels
 
                 ClientService.Send(new GetUserFullInfo(privata.UserId));
 
-                if (item.RestrictsNewChats)
+                if (cache != null)
                 {
-                    ClientService.Send(new CanSendMessageToUser(privata.UserId, false), result =>
-                    {
-                        Dispatcher.Dispatch(() =>
-                        {
-                            RestrictsNewChats = result is CanSendMessageToUserResultUserRestrictsNewChats;
-                            Delegate?.UpdateUserRestrictsNewChats(chat, item, result as CanSendMessageToUserResult);
-                        });
-                    });
-                }
-                else
-                {
-                    Delegate?.UpdateUserRestrictsNewChats(chat, item, null);
+                    UpdateEmptyState(item, cache, false);
                 }
 
                 if (privata.UserId == ClientService.Options.MyId)
@@ -2205,7 +2203,7 @@ namespace Telegram.ViewModels
 
                 Delegate?.UpdateSecretChat(chat, secret);
                 Delegate?.UpdateUserFullInfo(chat, item, cache, true, false);
-                Delegate?.UpdateUserRestrictsNewChats(chat, null, null);
+                Delegate?.UpdateUserRestrictsNewChats(chat, null, null, null);
 
                 ClientService.Send(new GetUserFullInfo(secret.UserId));
             }
@@ -2215,7 +2213,7 @@ namespace Telegram.ViewModels
                 var cache = ClientService.GetBasicGroupFull(basic.BasicGroupId);
 
                 Delegate?.UpdateBasicGroupFullInfo(chat, item, cache);
-                Delegate?.UpdateUserRestrictsNewChats(chat, null, null);
+                Delegate?.UpdateUserRestrictsNewChats(chat, null, null, null);
 
                 ClientService.Send(new GetBasicGroupFullInfo(basic.BasicGroupId));
                 _messageDelegate.UpdateAdministrators(chat.Id);
@@ -2226,7 +2224,7 @@ namespace Telegram.ViewModels
                 var cache = ClientService.GetSupergroupFull(super.SupergroupId);
 
                 Delegate?.UpdateSupergroupFullInfo(chat, item, cache);
-                Delegate?.UpdateUserRestrictsNewChats(chat, null, null);
+                Delegate?.UpdateUserRestrictsNewChats(chat, null, null, null);
 
                 ClientService.Send(new GetSupergroupFullInfo(super.SupergroupId));
                 _messageDelegate.UpdateAdministrators(chat.Id);

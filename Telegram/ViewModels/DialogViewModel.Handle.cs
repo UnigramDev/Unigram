@@ -72,7 +72,16 @@ namespace Telegram.ViewModels
                 .Subscribe<UpdateChatVideoChat>(Handle)
                 .Subscribe<UpdateGroupCall>(Handle)
                 .Subscribe<UpdateSpeechRecognitionTrial>(Handle)
-                .Subscribe<UpdateSavedMessagesTags>(Handle);
+                .Subscribe<UpdateSavedMessagesTags>(Handle)
+                .Subscribe<UpdateGreetingSticker>(Handle);
+        }
+
+        public void Handle(UpdateGreetingSticker update)
+        {
+            if (_greetingSticker == null)
+            {
+                BeginOnUIThread(() => GreetingSticker = update.Sticker);
+            }
         }
 
         public void Handle(UpdateSpeechRecognitionTrial update)
@@ -141,9 +150,10 @@ namespace Telegram.ViewModels
                 return;
             }
 
-            if (chat.Type is ChatTypePrivate privata && privata.UserId == update.UserId)
+            if (chat.Type is ChatTypePrivate privata && privata.UserId == update.UserId && ClientService.TryGetUser(update.UserId, out User user))
             {
-                BeginOnUIThread(() => Delegate?.UpdateUserFullInfo(chat, ClientService.GetUser(update.UserId), update.UserFullInfo, false, _accessToken != null));
+                UpdateEmptyState(user, update.UserFullInfo, true);
+                BeginOnUIThread(() => Delegate?.UpdateUserFullInfo(chat, user, update.UserFullInfo, false, _accessToken != null));
             }
             else if (chat.Type is ChatTypeSecret secret && secret.UserId == update.UserId)
             {
@@ -495,14 +505,70 @@ namespace Telegram.ViewModels
             if (update.ChatId == _chat?.Id && _chat.Type is ChatTypePrivate privata)
             {
                 var user = ClientService.GetUser(privata.UserId);
-                if (user != null && user.Type is UserTypeBot)
+                if (user == null)
                 {
-                    var fullInfo = ClientService.GetUserFull(user.Id);
-                    if (fullInfo != null)
-                    {
-                        BeginOnUIThread(() => Delegate?.UpdateUserFullInfo(_chat, user, fullInfo, false, _accessToken != null));
-                    }
+                    return;
                 }
+
+                if (user.Type is UserTypeBot && ClientService.TryGetUserFull(user.Id, out UserFullInfo fullInfo))
+                {
+                    BeginOnUIThread(() => Delegate?.UpdateUserFullInfo(_chat, user, fullInfo, false, _accessToken != null));
+                }
+                else
+                {
+                    UpdateEmptyState(user, null, true);
+                }
+            }
+        }
+
+        private void UpdateEmptyState(User user, UserFullInfo fullInfo, bool onlyLocal)
+        {
+            if (_chat is not Chat chat)
+            {
+                return;
+            }
+
+            var empty = chat.LastMessage == null;
+            if (empty && _isChatEmpty)
+            {
+                return;
+            }
+            else if (empty == _isChatEmpty && fullInfo == null)
+            {
+                return;
+            }
+
+            _isChatEmpty = empty;
+
+            fullInfo ??= ClientService.GetUserFull(user.Id);
+
+            if (fullInfo == null)
+            {
+                return;
+            }
+
+            if (user.RestrictsNewChats)
+            {
+                ClientService.Send(new CanSendMessageToUser(user.Id, onlyLocal), result =>
+                {
+                    BeginOnUIThread(() =>
+                    {
+                        RestrictsNewChats = result is CanSendMessageToUserResultUserRestrictsNewChats;
+
+                        GreetingSticker ??= ClientService.NextGreetingSticker();
+                        Delegate?.UpdateUserRestrictsNewChats(_chat, user, fullInfo, result as CanSendMessageToUserResult);
+                    });
+                });
+            }
+            else
+            {
+                BeginOnUIThread(() =>
+                {
+                    RestrictsNewChats = false;
+
+                    GreetingSticker ??= ClientService.NextGreetingSticker();
+                    Delegate?.UpdateUserRestrictsNewChats(_chat, user, fullInfo, null);
+                });
             }
         }
 

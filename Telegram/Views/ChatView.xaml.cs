@@ -37,6 +37,7 @@ using Telegram.ViewModels;
 using Telegram.ViewModels.Chats;
 using Telegram.ViewModels.Delegates;
 using Telegram.ViewModels.Stories;
+using Telegram.Views.Business;
 using Telegram.Views.Popups;
 using Telegram.Views.Settings;
 using Windows.ApplicationModel;
@@ -691,6 +692,22 @@ namespace Telegram.Views
             else if (e.PropertyName.Equals(nameof(ViewModel.IsFirstSliceLoaded)))
             {
                 UpdateArrowVisibility();
+            }
+            else if (e.PropertyName.Equals(nameof(ViewModel.GreetingSticker)))
+            {
+                if (EmptyChatAnimated == null)
+                {
+                    return;
+                }
+
+                if (ViewModel.GreetingSticker != null)
+                {
+                    EmptyChatAnimated.Source = new DelayedFileSource(ViewModel.ClientService, ViewModel.GreetingSticker);
+                }
+                else
+                {
+                    EmptyChatAnimated.Source = null;
+                }
             }
         }
 
@@ -4894,7 +4911,7 @@ namespace Telegram.Views
             }
         }
 
-        public void UpdateUserRestrictsNewChats(Chat chat, User user, CanSendMessageToUserResult result)
+        public void UpdateUserRestrictsNewChats(Chat chat, User user, UserFullInfo fullInfo, CanSendMessageToUserResult result)
         {
             if (result is CanSendMessageToUserResultOk)
             {
@@ -4928,13 +4945,23 @@ namespace Telegram.Views
                 TextArea.Visibility = Visibility.Collapsed;
             }
 
-            if (result is CanSendMessageToUserResultUserRestrictsNewChats)
+            if (chat.LastMessage == null && user?.Id != ViewModel.ClientService.Options.MyId && fullInfo != null)
             {
-                ShowHideRestrictsNewChats(true, user);
+                if (result is CanSendMessageToUserResultUserRestrictsNewChats)
+                {
+                    ShowHideRestrictsNewChats(true, user);
+                    ShowHideEmptyChat(false, null, null);
+                }
+                else
+                {
+                    ShowHideRestrictsNewChats(false, null);
+                    ShowHideEmptyChat(true, user, fullInfo);
+                }
             }
             else
             {
                 ShowHideRestrictsNewChats(false, null);
+                ShowHideEmptyChat(false, null, null);
             }
         }
 
@@ -5478,9 +5505,79 @@ namespace Telegram.Views
             }
         }
 
+        private bool _emptyChatCollapsed = true;
+
+        private void ShowHideEmptyChat(bool show, User user, UserFullInfo fullInfo)
+        {
+            //if (_emptyChatCollapsed != show)
+            //{
+            //    return;
+            //}
+
+            _emptyChatCollapsed = !show;
+
+            if (show)
+            {
+                FindName(nameof(EmptyChatRoot));
+
+                var title = fullInfo?.BusinessInfo?.Intro?.Title;
+                var message = fullInfo?.BusinessInfo?.Intro?.Message;
+
+                EmptyChatTitle.Text = string.IsNullOrEmpty(title)
+                    ? Strings.NoMessages
+                    : title;
+                EmptyChatMessage.Text = string.IsNullOrEmpty(message)
+                    ? Strings.NoMessagesGreetingsDescription
+                    : message;
+
+                var sticker = fullInfo?.BusinessInfo?.Intro?.Sticker ?? ViewModel.GreetingSticker;
+                if (sticker != null)
+                {
+                    EmptyChatAnimated.Source = new DelayedFileSource(ViewModel.ClientService, sticker);
+                }
+                else
+                {
+                    EmptyChatAnimated.Source = null;
+                }
+
+                TextBlockHelper.SetMarkdown(EmptyChatHow, string.Format(Strings.GreetingHow, user.FirstName));
+
+                EmptyChatRoot.Visibility = Visibility.Visible;
+                EmptyChatHowRoot.Visibility = fullInfo?.BusinessInfo?.Intro != null
+                    ? Visibility.Visible
+                    : Visibility.Collapsed;
+            }
+            else if (EmptyChatRoot != null)
+            {
+                EmptyChatRoot.Visibility = Visibility.Collapsed;
+            }
+        }
+
         private void Options_SizeChanged(object sender, SizeChangedEventArgs e)
         {
             Profile.Padding = new Thickness(HeaderLeft.ActualWidth, 0, e.NewSize.Width, 0);
+        }
+
+        private void EmptyChat_Click(object sender, RoutedEventArgs e)
+        {
+            if (ViewModel.ClientService.TryGetUserFull(ViewModel.Chat, out UserFullInfo fullInfo))
+            {
+                if (fullInfo.BusinessInfo?.Intro?.Sticker != null)
+                {
+                    ViewModel.SendSticker(fullInfo.BusinessInfo.Intro.Sticker, false, false);
+                    return;
+                }
+            }
+
+            if (ViewModel.GreetingSticker != null)
+            {
+                ViewModel.SendSticker(ViewModel.GreetingSticker, false, false);
+            }
+        }
+
+        private void EmptyChatHow_Click(object sender, RoutedEventArgs e)
+        {
+            ViewModel.NavigationService.Navigate(typeof(BusinessPage));
         }
     }
 

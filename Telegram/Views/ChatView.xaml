@@ -331,7 +331,8 @@
         <DataTemplate x:Name="ServiceMessageTemplate">
             <messages:MessageService Click="ServiceMessage_Click"
                                      Margin="0,4,0,0"
-                                     Padding="12,2,12,0">
+                                     Padding="12,2,12,0"
+                                     MaxWidth="480">
                 <controls:FormattedTextBlock x:Name="Text"
                                              Foreground="#FFFFFF"
                                              TextAlignment="Center"
@@ -789,6 +790,49 @@
                     </Grid>
                 </ListView.Header>
             </chats:ChatHistoryView>
+
+            <StackPanel x:Name="EmptyChatRoot"
+                        x:Load="False"
+                        VerticalAlignment="Center">
+                <messages:MessageService Click="EmptyChat_Click"
+                                         HorizontalAlignment="Center"
+                                         VerticalAlignment="Center"
+                                         Padding="12,8,12,12"
+                                         Width="216">
+                    <StackPanel>
+                        <TextBlock x:Name="EmptyChatTitle"
+                                   TextAlignment="Center"
+                                   TextWrapping="Wrap"
+                                   Foreground="#FFFFFF"
+                                   Style="{StaticResource BaseTextBlockStyle}" />
+                        <TextBlock x:Name="EmptyChatMessage"
+                                   TextAlignment="Center"
+                                   TextWrapping="Wrap"
+                                   Foreground="#FFFFFF"
+                                   Style="{StaticResource BodyTextBlockStyle}"
+                                   Margin="0,0,0,12" />
+                        <controls:AnimatedImage x:Name="EmptyChatAnimated"
+                                                Width="140"
+                                                Height="140"
+                                                FrameSize="140,140"
+                                                DecodeFrameType="Logical"
+                                                IsViewportAware="True"
+                                                LoopCount="0" />
+                    </StackPanel>
+                </messages:MessageService>
+
+                <messages:MessageService x:Name="EmptyChatHowRoot"
+                                         Click="EmptyChatHow_Click"
+                                         Margin="0,8,0,0"
+                                         Padding="12,2,12,0">
+                    <TextBlock x:Name="EmptyChatHow"
+                               Foreground="#FFFFFF"
+                               TextAlignment="Center"
+                               Style="{StaticResource CaptionTextBlockStyle}"
+                               FontFamily="{StaticResource EmojiThemeFontFamilyWithSymbols}"
+                               Padding="0,0,0,4" />
+                </messages:MessageService>
+            </StackPanel>
 
             <messages:MessageService x:Name="RestrictsNewChats"
                                      x:Load="False"
