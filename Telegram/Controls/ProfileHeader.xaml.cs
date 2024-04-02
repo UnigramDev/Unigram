@@ -600,7 +600,11 @@ namespace Telegram.Controls
 
         public void UpdateChatTitle(Chat chat)
         {
-            if (ViewModel.Topic != null)
+            if (chat.Id == ViewModel.LinkedChatId)
+            {
+                PersonalChannel.UpdateChatTitle(chat);
+            }
+            else if (ViewModel.Topic != null)
             {
                 Title.Text = ViewModel.Topic.Name;
             }
@@ -612,7 +616,11 @@ namespace Telegram.Controls
 
         public void UpdateChatPhoto(Chat chat)
         {
-            if (ViewModel.Topic != null)
+            if (chat.Id == ViewModel.LinkedChatId)
+            {
+                PersonalChannel.UpdateChatPhoto(chat);
+            }
+            else if (ViewModel.Topic != null)
             {
                 FindName(nameof(Icon));
                 Icon.Source = new CustomEmojiFileSource(ViewModel.ClientService, ViewModel.Topic.Icon.CustomEmojiId);
@@ -622,6 +630,14 @@ namespace Telegram.Controls
             {
                 UnloadObject(Icon);
                 Photo.SetChat(ViewModel.ClientService, chat, 140);
+            }
+        }
+
+        public void UpdateChatLastMessage(Chat chat)
+        {
+            if (chat.Id == ViewModel.LinkedChatId)
+            {
+                PersonalChannel.UpdateChatLastMessage(chat);
             }
         }
 
@@ -774,9 +790,8 @@ namespace Telegram.Controls
             if (ViewModel.ClientService.TryGetChat(fullInfo.PersonalChatId, out Chat personalChat))
             {
                 PersonalChannelRoot.Visibility = Visibility.Visible;
-                PersonalChannelHeader.Text = Strings.DiscussChannel;
                 PersonalChannelFooter.Text = Locale.Declension(Strings.R.Subscribers, ViewModel.ClientService.GetMembersCount(personalChat));
-                PersonalChannel.UpdateMessage(ViewModel.ClientService, personalChat.LastMessage);
+                PersonalChannel.UpdateChat(ViewModel.ClientService, personalChat, new ChatListFolder(int.MaxValue));
             }
             else
             {
@@ -1029,9 +1044,8 @@ namespace Telegram.Controls
             if (group.IsChannel is false && ViewModel.ClientService.TryGetChat(fullInfo.LinkedChatId, out Chat linkedChat) && linkedChat.LastMessage != null)
             {
                 PersonalChannelRoot.Visibility = Visibility.Visible;
-                PersonalChannelHeader.Text = Strings.DiscussChannel;
                 PersonalChannelFooter.Text = Locale.Declension(Strings.R.Subscribers, ViewModel.ClientService.GetMembersCount(linkedChat));
-                PersonalChannel.UpdateMessage(ViewModel.ClientService, linkedChat.LastMessage);
+                PersonalChannel.UpdateChat(ViewModel.ClientService, linkedChat, new ChatListFolder(int.MaxValue));
             }
             else
             {

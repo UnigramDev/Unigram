@@ -192,7 +192,7 @@ namespace Telegram.Views
         {
             ProfileHeader.UpdateChat(chat);
 
-            Menu.Visibility = chat.Id == ViewModel.ClientService.Options.MyId && ViewModel.SavedMessagesTopic == null
+            Menu.Visibility = chat.Id == ViewModel.ClientService.Options.MyId && ViewModel.SavedMessagesTopic == null && !ViewModel.MyProfile
                 ? Visibility.Visible
                 : Visibility.Collapsed;
 
@@ -209,6 +209,11 @@ namespace Telegram.Views
         public void UpdateChatPhoto(Chat chat)
         {
             ProfileHeader.UpdateChatPhoto(chat);
+        }
+
+        public void UpdateChatLastMessage(Chat chat)
+        {
+            ProfileHeader.UpdateChatLastMessage(chat);
         }
 
         public void UpdateChatEmojiStatus(Chat chat)

@@ -76,6 +76,8 @@ namespace Telegram.ViewModels
             set => Set(ref _headerHeight, value);
         }
 
+        public long LinkedChatId { get; private set; }
+
         protected override Task OnNavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
         {
             if (parameter is ChatSavedMessagesTopicIdNavigationArgs savedMessagesTopicIdArgs)
@@ -191,6 +193,7 @@ namespace Telegram.ViewModels
                 .Subscribe<UpdateUserStatus>(Handle)
                 .Subscribe<UpdateChatTitle>(Handle)
                 .Subscribe<UpdateChatPhoto>(Handle)
+                .Subscribe<UpdateChatLastMessage>(Handle)
                 .Subscribe<UpdateChatEmojiStatus>(Handle)
                 .Subscribe<UpdateChatAccentColors>(Handle)
                 .Subscribe<UpdateChatActiveStories>(Handle)
@@ -227,6 +230,7 @@ namespace Telegram.ViewModels
 
             if (chat.Type is ChatTypePrivate privata && privata.UserId == update.UserId)
             {
+                LinkedChatId = update.UserFullInfo.PersonalChatId;
                 BeginOnUIThread(() => Delegate?.UpdateUserFullInfo(chat, ClientService.GetUser(update.UserId), update.UserFullInfo, false, false));
             }
             else if (chat.Type is ChatTypeSecret secret && secret.UserId == update.UserId)
@@ -303,6 +307,7 @@ namespace Telegram.ViewModels
 
             if (chat.Type is ChatTypeSupergroup super && super.SupergroupId == update.SupergroupId)
             {
+                LinkedChatId = update.SupergroupFullInfo.LinkedChatId;
                 BeginOnUIThread(() =>
                 {
                     MembersTab.UpdateMembers();
@@ -319,6 +324,10 @@ namespace Telegram.ViewModels
             {
                 BeginOnUIThread(() => Delegate?.UpdateChatTitle(_chat));
             }
+            else if (update.ChatId == LinkedChatId && ClientService.TryGetChat(LinkedChatId, out Chat linkedChat))
+            {
+                BeginOnUIThread(() => Delegate?.UpdateChatTitle(linkedChat));
+            }
         }
 
         public void Handle(UpdateChatPhoto update)
@@ -326,6 +335,18 @@ namespace Telegram.ViewModels
             if (update.ChatId == _chat?.Id)
             {
                 BeginOnUIThread(() => Delegate?.UpdateChatPhoto(_chat));
+            }
+            else if (update.ChatId == LinkedChatId && ClientService.TryGetChat(LinkedChatId, out Chat linkedChat))
+            {
+                BeginOnUIThread(() => Delegate?.UpdateChatPhoto(linkedChat));
+            }
+        }
+
+        public void Handle(UpdateChatLastMessage update)
+        {
+            if (update.ChatId == LinkedChatId && ClientService.TryGetChat(LinkedChatId, out Chat linkedChat))
+            {
+                BeginOnUIThread(() => Delegate?.UpdateChatLastMessage(linkedChat));
             }
         }
 
@@ -389,6 +410,24 @@ namespace Telegram.ViewModels
             else
             {
                 NavigationService.NavigateToChat(chat);
+            }
+        }
+
+        public void OpenLinkedChannel()
+        {
+            var chat = _chat;
+            if (chat == null)
+            {
+                return;
+            }
+
+            if (ClientService.TryGetUserFull(chat, out UserFullInfo userFullInfo))
+            {
+                NavigationService.NavigateToChat(userFullInfo.PersonalChatId);
+            }
+            else if (ClientService.TryGetSupergroupFull(chat, out SupergroupFullInfo supergroupFullInfo))
+            {
+                NavigationService.NavigateToChat(supergroupFullInfo.LinkedChatId);
             }
         }
 

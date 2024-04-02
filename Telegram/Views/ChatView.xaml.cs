@@ -4075,6 +4075,11 @@ namespace Telegram.Views
             }
         }
 
+        public void UpdateChatLastMessage(Chat chat)
+        {
+            // Used in ProfilePage
+        }
+
         public void UpdateChatEmojiStatus(Chat chat)
         {
             if (ViewModel.Type == DialogType.SavedMessagesTopic)

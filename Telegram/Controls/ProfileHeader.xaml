@@ -252,7 +252,7 @@
                         <ColumnDefinition />
                     </Grid.ColumnDefinitions>
                     <TextBlock x:Name="PersonalChannelHeader"
-                               Text="{CustomResource DiscussChannel}"
+                               Text="{CustomResource ProfilePersonalChannel}"
                                Style="{StaticResource BaseTextBlockStyle}"
                                VerticalAlignment="Bottom" />
 

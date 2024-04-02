@@ -14,6 +14,8 @@ namespace Telegram.ViewModels.Delegates
 
         void UpdateChatNotificationSettings(Chat chat);
 
+        void UpdateChatLastMessage(Chat chat);
+
         void UpdateChatEmojiStatus(Chat chat);
         void UpdateChatAccentColors(Chat chat);
         void UpdateChatActiveStories(Chat chat);
