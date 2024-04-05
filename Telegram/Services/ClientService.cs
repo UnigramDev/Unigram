@@ -17,6 +17,7 @@ using Telegram.Td;
 using Telegram.Td.Api;
 using Telegram.ViewModels;
 using Windows.Storage;
+using TimeZone = Telegram.Td.Api.TimeZone;
 
 namespace Telegram.Services
 {
@@ -148,6 +149,8 @@ namespace Telegram.Services
         bool TryGetActiveStoriesFromUser(long userId, out ChatActiveStories activeStories);
 
         bool TryGetActiveStories(long chatId, out ChatActiveStories activeStories);
+
+        bool TryGetTimeZone(string timeZoneId, out TimeZone timeZone);
 
         SecretChat GetSecretChat(int id);
         SecretChat GetSecretChat(Chat chat);
@@ -570,6 +573,7 @@ namespace Telegram.Services
             Send(new SearchEmojis("cucumber", new[] { NativeUtils.GetKeyboardCulture() }));
 
             UpdateGreetingStickers();
+            UpdateTimeZones();
         }
 
         private void InitializeFlush()
@@ -623,6 +627,30 @@ namespace Telegram.Services
             {
                 _config = obj;
             }
+        }
+
+        private void UpdateTimeZones()
+        {
+            Send(new GetTimeZones(), result =>
+            {
+                if (result is TimeZones timeZones)
+                {
+                    lock (_timezones)
+                    {
+                        _timezones.Clear();
+
+                        foreach (var zone in timeZones.TimeZonesValue)
+                        {
+                            _timezones[zone.Id] = zone;
+                        }
+                    }
+                }
+            });
+        }
+
+        public bool TryGetTimeZone(string timeZoneId, out TimeZone timeZone)
+        {
+            return _timezones.TryGetValue(timeZoneId, out timeZone);
         }
 
         private void UpdateGreetingStickers()
@@ -679,6 +707,8 @@ namespace Telegram.Services
         private IList<Sticker> _greetingStickers;
         private Sticker _nextGreetingSticker;
         private bool _waitGreetingSticker;
+
+        private readonly Dictionary<string, TimeZone> _timezones = new();
 
         public IList<string> ActiveReactions => _activeReactions;
 
@@ -805,6 +835,8 @@ namespace Telegram.Services
 
             _chatFolders = Array.Empty<ChatFolderInfo>();
             _chatFolders2.Clear();
+
+            _timezones.Clear();
 
             _animationSearchParameters = null;
 

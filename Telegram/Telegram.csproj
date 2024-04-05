@@ -215,6 +215,9 @@
     <Compile Include="Controls\Cells\Premium\PremiumFeatureBusinessCell.xaml.cs">
       <DependentUpon>PremiumFeatureBusinessCell.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\Cells\ProfileHoursCell.xaml.cs">
+      <DependentUpon>ProfileHoursCell.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Controls\Messages\ReactionAsTagButton.cs" />
     <Compile Include="Common\AsyncMediaPlayer.cs" />
     <Compile Include="Controls\SuggestedActionSetBirthdateCard.xaml.cs">
@@ -2115,6 +2118,10 @@
     <Page Include="Controls\Cells\ProfileCell.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Controls\Cells\ProfileHoursCell.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Controls\Cells\ProxyCell.xaml">
       <Generator>MSBuild:Compile</Generator>

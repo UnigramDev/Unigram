@@ -126,6 +126,7 @@
             <Grid x:Name="SubtitleRoot"
                   HorizontalAlignment="Center"
                   VerticalAlignment="Top"
+                  Margin="0,0,0,8"
                   Grid.Row="2">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition />
@@ -160,7 +161,7 @@
 
             <Grid x:Name="Buttons"
                   ColumnSpacing="8"
-                  Margin="0,24,0,0"
+                  Margin="0,16,0,0"
                   Grid.Row="3">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition />
@@ -246,13 +247,14 @@
 
         <StackPanel x:Name="ControlsRoot">
             <StackPanel x:Name="PersonalChannelRoot">
-                <Grid Margin="24,32,24,-8">
+                <Grid Margin="24,32,24,-8"
+                      MaxWidth="1000">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="Auto" />
                         <ColumnDefinition />
                     </Grid.ColumnDefinitions>
                     <TextBlock x:Name="PersonalChannelHeader"
-                               Text="{CustomResource ProfilePersonalChannel}"
+                               Text="{CustomResource ProfileChannel}"
                                Style="{StaticResource BaseTextBlockStyle}"
                                VerticalAlignment="Bottom" />
 
@@ -320,13 +322,6 @@
                     </Button.ContextFlyout>
                 </controls:BadgeButton>
 
-                <controls:BadgeButton x:Name="UserBirthday"
-                                      Click="Birthday_Click"
-                                      Content="[Birthday Today]"
-                                      Badge="21 Mar 2024 (99 years old)"
-                                      Style="{StaticResource GlyphSubtitleBadgeButtonStyle}"
-                                      Glyph="&#xEA84;" />
-
                 <controls:BadgeButton x:Name="Username"
                                       Visibility="Collapsed"
                                       ContentTemplate="{x:Null}"
@@ -356,6 +351,33 @@
                                VerticalAlignment="Top" />
                 </controls:BadgeButton>
 
+                <controls:BadgeButton x:Name="UserBirthday"
+                                      Click="Birthday_Click"
+                                      Content="[Birthday Today]"
+                                      Badge="21 Mar 2024 (99 years old)"
+                                      Style="{StaticResource GlyphSubtitleBadgeButtonStyle}"
+                                      Glyph="&#xEA84;" />
+
+                <controls:BadgeButton x:Name="Location"
+                                      Visibility="Collapsed"
+                                      Content="{CustomResource AttachLocation}"
+                                      Style="{StaticResource GlyphSubtitleBadgeButtonStyle}"
+                                      Glyph="&#xE1C4;">
+                    <Button.ContextFlyout>
+                        <MenuFlyout>
+                            <MenuFlyoutItem Text="{CustomResource Copy}"
+                                            Click="{x:Bind ViewModel.CopyUsername}">
+                                <MenuFlyoutItem.Icon>
+                                    <FontIcon Glyph="&#xE8C8;"
+                                              Style="{StaticResource DefaultFontIconStyle}" />
+                                </MenuFlyoutItem.Icon>
+                            </MenuFlyoutItem>
+                        </MenuFlyout>
+                    </Button.ContextFlyout>
+                </controls:BadgeButton>
+
+                <cells:ProfileHoursCell x:Name="BusinessHours" />
+
                 <controls:BadgeButton x:Name="ChatId"
                                       Click="{x:Bind ViewModel.CopyId}"
                                       Visibility="Collapsed"
@@ -381,24 +403,6 @@
                             </TextBlock>
                         </DataTemplate>
                     </controls:BadgeButton.ContentTemplate>
-                </controls:BadgeButton>
-
-                <controls:BadgeButton x:Name="Location"
-                                      Visibility="Collapsed"
-                                      Content="{CustomResource AttachLocation}"
-                                      Style="{StaticResource GlyphSubtitleBadgeButtonStyle}"
-                                      Glyph="&#xE1C4;">
-                    <Button.ContextFlyout>
-                        <MenuFlyout>
-                            <MenuFlyoutItem Text="{CustomResource Copy}"
-                                            Click="{x:Bind ViewModel.CopyUsername}">
-                                <MenuFlyoutItem.Icon>
-                                    <FontIcon Glyph="&#xE8C8;"
-                                              Style="{StaticResource DefaultFontIconStyle}" />
-                                </MenuFlyoutItem.Icon>
-                            </MenuFlyoutItem>
-                        </MenuFlyout>
-                    </Button.ContextFlyout>
                 </controls:BadgeButton>
             </controls:HeaderedControl>
 

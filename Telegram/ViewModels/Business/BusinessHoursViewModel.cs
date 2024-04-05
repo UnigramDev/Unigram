@@ -43,6 +43,11 @@ namespace Telegram.ViewModels.Business
             var start = Formatter.Time(DateTime.Today.Add(Start));
             var end = Formatter.Time(DateTime.Today.Add(End));
 
+            if (End.TotalHours > 24)
+            {
+                end = string.Format(Strings.BusinessHoursNextDay, end);
+            }
+
             return string.Format("{0} - {1}", start, end);
         }
     }
@@ -98,7 +103,95 @@ namespace Telegram.ViewModels.Business
             }
         }
 
+        public string Description2
+        {
+            get
+            {
+                if (Ranges.Count == 0)
+                {
+                    return Strings.BusinessHoursProfileClose;
+                }
+                else if (Ranges.Count == 1 && Ranges[0].Start == TimeSpan.Zero && Ranges[0].End == TimeSpan.FromHours(24))
+                {
+                    return Strings.BusinessHoursProfileOpen;
+                }
+
+                return string.Join("\n", Ranges);
+            }
+        }
+
+        public string DescriptionAt(TimeSpan offset)
+        {
+            if (Ranges.Count == 0)
+            {
+                return Strings.BusinessHoursProfileClose;
+            }
+            else if (Ranges.Count == 1 && Ranges[0].Start == TimeSpan.Zero && Ranges[0].End == TimeSpan.FromHours(24))
+            {
+                return Strings.BusinessHoursProfileOpen;
+            }
+
+            return string.Join("\n", Ranges.Where(x => x.Start > offset || (x.Start < offset && x.End > offset)));
+        }
+
         public bool IsOpen => Ranges.Count > 0;
+
+        public bool IsOpen24 => Ranges.Count == 1 && Ranges[0].Start == TimeSpan.Zero && Ranges[0].End == TimeSpan.FromHours(24);
+
+        public bool IsOpenAt(TimeSpan time)
+        {
+            return Ranges.Any(x => time.IsBetween(x.Start, x.End));
+        }
+
+        public static bool GetRelativeRange2(int start, int end, int rangeStart, int rangeEnd, int tolerance, out int newStart, out int newEnd, out bool consumed)
+        {
+            // Included, Included
+            if (start > rangeStart && end <= rangeEnd)
+            {
+                newStart = start;
+                newEnd = end;
+                consumed = true;
+            }
+            // Before, Included
+            else if (start <= rangeStart && end > rangeStart && end < rangeEnd)
+            {
+                newStart = rangeStart;
+                newEnd = end;
+                consumed = false;
+            }
+            // Included, After
+            else if (start > rangeStart && start < rangeEnd && end > rangeEnd)
+            {
+                if (end <= rangeEnd + tolerance)
+                {
+                    newStart = start;
+                    newEnd = end;
+                    consumed = true;
+                }
+                else
+                {
+                    newStart = start;
+                    newEnd = rangeEnd;
+                    consumed = false;
+                }
+            }
+            // Before, After
+            else if (start <= rangeStart && end >= rangeEnd)
+            {
+                newStart = rangeStart;
+                newEnd = rangeEnd;
+                consumed = false;
+            }
+            else
+            {
+                newStart = -1;
+                newEnd = end;
+                consumed = false;
+                return false;
+            }
+
+            return true;
+        }
     }
 
     public class BusinessHoursViewModel : BusinessFeatureViewModelBase

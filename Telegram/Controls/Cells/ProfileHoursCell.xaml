@@ -1,0 +1,176 @@
+﻿<controls:SettingsExpander x:Class="Telegram.Controls.Cells.ProfileHoursCell"
+                           xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                           xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                           xmlns:local="using:Telegram.Controls.Cells"
+                           xmlns:controls="using:Telegram.Controls"
+                           xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                           xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                           mc:Ignorable="d"
+                           MinHeight="58">
+
+    <controls:SettingsExpander.Template>
+        <ControlTemplate TargetType="controls:SettingsExpander">
+            <Grid Background="{TemplateBinding Background}"
+                  CornerRadius="{TemplateBinding CornerRadius}">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+                <Border x:Name="PopupHost"
+                        Background="Transparent"
+                        BorderBrush="{TemplateBinding BorderBrush}"
+                        BorderThickness="{TemplateBinding BorderThickness}"
+                        Padding="16,0,0,0"
+                        Grid.Row="1">
+                    <ContentPresenter x:Name="PopupRoot" />
+                </Border>
+
+                <ToggleButton x:Name="ActionButton"
+                              Content="{TemplateBinding Header}"
+                              Style="{StaticResource ExpanderHeaderDownStyle}"
+                              BorderBrush="{TemplateBinding BorderBrush}"
+                              BorderThickness="{TemplateBinding BorderThickness}"
+                              CornerRadius="{TemplateBinding CornerRadius}"
+                              HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
+                              VerticalContentAlignment="Stretch"
+                              Padding="0"
+                              MinHeight="{TemplateBinding MinHeight}"
+                              Background="Transparent"
+                              HorizontalAlignment="Stretch" />
+            </Grid>
+        </ControlTemplate>
+    </controls:SettingsExpander.Template>
+
+    <controls:SettingsExpander.Header>
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="56" />
+                <ColumnDefinition />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+            <TextBlock HorizontalAlignment="Left"
+                       VerticalAlignment="Top"
+                       Margin="20,11,0,0"
+                       AutomationProperties.AccessibilityView="Raw"
+                       Text="&#xEA34;"
+                       FontFamily="{StaticResource SymbolThemeFontFamily}"
+                       FontSize="20" />
+
+            <Grid Grid.Column="1">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+                <TextBlock x:Name="DateToday"
+                           Text="asdsadsad"
+                           FontSize="{ThemeResource ControlContentThemeFontSize}"
+                           FontFamily="{ThemeResource ContentControlThemeFontFamily}"
+                           AutomationProperties.AccessibilityView="Raw"
+                           Margin="0,11,12,0"
+                           Grid.Column="1" />
+
+                <TextBlock Text="{CustomResource BusinessHoursProfile}"
+                           FontSize="12"
+                           FontFamily="{ThemeResource ContentControlThemeFontFamily}"
+                           Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"
+                           Margin="0,0,12,0"
+                           Grid.Column="1"
+                           Grid.Row="1" />
+            </Grid>
+
+            <Grid Grid.Column="2">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+                <TextBlock x:Name="TimeToday"
+                           Style="{StaticResource InfoBodyTextBlockStyle}"
+                           Typography.NumeralAlignment="Tabular"
+                           TextAlignment="Right"
+                           HorizontalAlignment="Right"
+                           Margin="0,11,-12,0"
+                           Grid.Column="2" />
+
+                <TextBlock x:Name="SwitchButton"
+                           Style="{StaticResource CaptionTextBlockStyle}"
+                           TextAlignment="Right"
+                           HorizontalAlignment="Right"
+                           VerticalAlignment="Bottom"
+                           Margin="0,0,-12,12"
+                           Grid.Column="2"
+                           Grid.Row="1">
+                    <Hyperlink Click="Switch_Click"
+                               UnderlineStyle="None">
+                        <Run x:Name="Switch"
+                             Text="{CustomResource BusinessHoursProfileSwitchLocal}" />
+                    </Hyperlink>
+                </TextBlock>
+            </Grid>
+        </Grid>
+
+    </controls:SettingsExpander.Header>
+
+    <Grid RowSpacing="8"
+          Padding="56,0,48,12"
+          Margin="-16,-4,0,0">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+        <TextBlock x:Name="Date1" />
+        <TextBlock x:Name="Time1"
+                   Style="{StaticResource InfoBodyTextBlockStyle}"
+                   HorizontalAlignment="Right"
+                   TextAlignment="Right"
+                   Typography.NumeralAlignment="Tabular" />
+
+        <TextBlock x:Name="Date2"
+                   Grid.Row="1" />
+        <TextBlock x:Name="Time2"
+                   Style="{StaticResource InfoBodyTextBlockStyle}"
+                   HorizontalAlignment="Right"
+                   TextAlignment="Right"
+                   Typography.NumeralAlignment="Tabular"
+                   Grid.Row="1" />
+
+        <TextBlock x:Name="Date3"
+                   Grid.Row="2" />
+        <TextBlock x:Name="Time3"
+                   Style="{StaticResource InfoBodyTextBlockStyle}"
+                   HorizontalAlignment="Right"
+                   TextAlignment="Right"
+                   Typography.NumeralAlignment="Tabular"
+                   Grid.Row="2" />
+
+        <TextBlock x:Name="Date4"
+                   Grid.Row="3" />
+        <TextBlock x:Name="Time4"
+                   Style="{StaticResource InfoBodyTextBlockStyle}"
+                   HorizontalAlignment="Right"
+                   TextAlignment="Right"
+                   Typography.NumeralAlignment="Tabular"
+                   Grid.Row="3" />
+
+        <TextBlock x:Name="Date5"
+                   Grid.Row="4" />
+        <TextBlock x:Name="Time5"
+                   Style="{StaticResource InfoBodyTextBlockStyle}"
+                   HorizontalAlignment="Right"
+                   TextAlignment="Right"
+                   Typography.NumeralAlignment="Tabular"
+                   Grid.Row="4" />
+
+        <TextBlock x:Name="Date6"
+                   Grid.Row="5" />
+        <TextBlock x:Name="Time6"
+                   Style="{StaticResource InfoBodyTextBlockStyle}"
+                   HorizontalAlignment="Right"
+                   TextAlignment="Right"
+                   Typography.NumeralAlignment="Tabular"
+                   Grid.Row="5" />
+    </Grid>
+</controls:SettingsExpander>

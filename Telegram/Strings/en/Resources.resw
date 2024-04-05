@@ -2247,11 +2247,17 @@ It will be able to access your **IP address** and basic device info.</value>
   <data name="BusinessHoursNextDay" xml:space="preserve">
     <value>{0} (Next day)</value>
   </data>
+  <data name="BusinessHoursNextDayPicker" xml:space="preserve">
+    <value>Next day, {0}</value>
+  </data>
   <data name="BusinessHoursProfile" xml:space="preserve">
     <value>Business hours</value>
   </data>
   <data name="BusinessHoursProfileClose" xml:space="preserve">
     <value>closed</value>
+  </data>
+  <data name="BusinessHoursProfileFullOpen" xml:space="preserve">
+    <value>open 24/7</value>
   </data>
   <data name="BusinessHoursProfileInYourTime" xml:space="preserve">
     <value>{0} in your time</value>
@@ -2282,6 +2288,12 @@ It will be able to access your **IP address** and basic device info.</value>
   </data>
   <data name="BusinessHoursProfileOpensInMinutes_other" xml:space="preserve">
     <value>opens in {0} minutes</value>
+  </data>
+  <data name="BusinessHoursProfileSwitchLocal" xml:space="preserve">
+    <value>local time</value>
+  </data>
+  <data name="BusinessHoursProfileSwitchMy" xml:space="preserve">
+    <value>my time</value>
   </data>
   <data name="BusinessHoursProfileTheirTime" xml:space="preserve">
     <value>it&apos;s now {0} there</value>
@@ -5556,6 +5568,9 @@ You can change your language back at any time in Settings.</value>
   <data name="LastSeenContacts" xml:space="preserve">
     <value>My Contacts</value>
   </data>
+  <data name="LastSeenContactsPremium" xml:space="preserve">
+    <value>Contacts &amp; Premium</value>
+  </data>
   <data name="LastSeenDateFormatted" xml:space="preserve">
     <value>last seen {0}</value>
   </data>
@@ -5567,6 +5582,9 @@ You can change your language back at any time in Settings.</value>
   </data>
   <data name="LastSeenNobody" xml:space="preserve">
     <value>Nobody</value>
+  </data>
+  <data name="LastSeenNobodyPremium" xml:space="preserve">
+    <value>Premium users</value>
   </data>
   <data name="LastSeenTitle" xml:space="preserve">
     <value>Who can see my last seen time?</value>
@@ -6299,6 +6317,9 @@ to unlock up to {0} similar channels.</value>
   </data>
   <data name="MyNotes" xml:space="preserve">
     <value>My Notes</value>
+  </data>
+  <data name="MyProfile" xml:space="preserve">
+    <value>My Profile</value>
   </data>
   <data name="MyStory" xml:space="preserve">
     <value>My Story</value>
@@ -7535,6 +7556,9 @@ Payments will go directly to the developer of {0}. Telegram cannot provide any g
   <data name="PrivacyForwardsTitle" xml:space="preserve">
     <value>Who can add a link to my account when forwarding my messages?</value>
   </data>
+  <data name="PrivacyInvites" xml:space="preserve">
+    <value>Invites</value>
+  </data>
   <data name="PrivacyLastSeen" xml:space="preserve">
     <value>Last Seen &amp; Online</value>
   </data>
@@ -7609,6 +7633,15 @@ Payments will go directly to the developer of {0}. Telegram cannot provide any g
   <data name="PrivacyPolicyUrl" xml:space="preserve">
     <value>https://telegram.org/privacy</value>
   </data>
+  <data name="PrivacyPremium" xml:space="preserve">
+    <value>Premium Users</value>
+  </data>
+  <data name="PrivacyPremiumAnd" xml:space="preserve">
+    <value>Premium &amp; {0}</value>
+  </data>
+  <data name="PrivacyPremiumText" xml:space="preserve">
+    <value>all Telegram Premium subscribers</value>
+  </data>
   <data name="PrivacyProfilePhoto" xml:space="preserve">
     <value>Profile Photos</value>
   </data>
@@ -7673,6 +7706,9 @@ Payments will go directly to the developer of {0}. Telegram cannot provide any g
   </data>
   <data name="ProfileBirthdayValueYear_other" xml:space="preserve">
     <value>{1} ({0} years old)</value>
+  </data>
+  <data name="ProfileChannel" xml:space="preserve">
+    <value>Channel</value>
   </data>
   <data name="ProfileMyStories" xml:space="preserve">
     <value>My Stories</value>

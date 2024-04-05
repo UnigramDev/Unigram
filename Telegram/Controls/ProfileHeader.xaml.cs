@@ -797,6 +797,16 @@ namespace Telegram.Controls
             {
                 PersonalChannelRoot.Visibility = Visibility.Collapsed;
             }
+
+            if (fullInfo.BusinessInfo?.OpeningHours != null)
+            {
+                BusinessHours.Visibility = Visibility.Visible;
+                BusinessHours.UpdateHours(ViewModel.ClientService, fullInfo.BusinessInfo.OpeningHours);
+            }
+            else
+            {
+                BusinessHours.Visibility = Visibility.Collapsed;
+            }
         }
 
         public void UpdateUserStatus(Chat chat, User user)
@@ -902,6 +912,8 @@ namespace Telegram.Controls
 
             PersonalChannelRoot.Visibility = Visibility.Collapsed;
             UserBirthday.Visibility = Visibility.Collapsed;
+
+            BusinessHours.Visibility = Visibility.Collapsed;
         }
 
         public void UpdateBasicGroupFullInfo(Chat chat, BasicGroup group, BasicGroupFullInfo fullInfo)
@@ -1008,6 +1020,8 @@ namespace Telegram.Controls
             AnonymousNumberSeparator.Visibility = Visibility.Collapsed;
 
             UserBirthday.Visibility = Visibility.Collapsed;
+
+            BusinessHours.Visibility = Visibility.Collapsed;
         }
 
         public void UpdateSupergroupFullInfo(Chat chat, Supergroup group, SupergroupFullInfo fullInfo)

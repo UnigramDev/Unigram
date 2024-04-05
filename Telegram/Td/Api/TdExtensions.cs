@@ -25,6 +25,28 @@ namespace Telegram.Td.Api
 {
     public static class TdExtensions
     {
+        public static bool Is24x7(this BusinessOpeningHours hours)
+        {
+            if (hours == null || hours.OpeningHours.Empty())
+            {
+                return false;
+            }
+
+            int last = 0;
+
+            foreach (var period in hours.OpeningHours)
+            {
+                if (period.StartMinute > last + 1)
+                {
+                    return false;
+                }
+
+                last = period.EndMinute;
+            }
+
+            return last >= 24 * 60 * 7 - 1;
+        }
+
         public static int CountUnread(this ChatActiveStories activeStories, out bool closeFriends)
         {
             var count = 0;
