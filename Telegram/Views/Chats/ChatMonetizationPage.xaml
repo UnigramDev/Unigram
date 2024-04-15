@@ -80,6 +80,7 @@
                             </TextBlock>
 
                             <Button x:Name="TransferButton"
+                                    x:Load="{x:Bind ViewModel.IsOwner}"
                                     Click="{x:Bind ViewModel.Transfer}"
                                     Content="{CustomResource MonetizationTransactionWithdraw}"
                                     Style="{StaticResource AccentButtonStyle}"
@@ -108,7 +109,9 @@
             </ListView.ItemTemplate>
             <ListView.Footer>
                 <controls:SettingsPanel IsFooter="True">
-                    <controls:HeaderedControl Footer="{CustomResource MonetizationSwitchOffInfo}">
+                    <controls:HeaderedControl x:Name="SwitchOffRoot"
+                                              x:Load="{x:Bind ViewModel.IsOwner}"
+                                              Footer="{CustomResource MonetizationSwitchOffInfo}">
                         <Grid BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}">
                             <controls:FauxCheckBox Click="{x:Bind ViewModel.LearnMore}"
                                                    IsFaux="True"

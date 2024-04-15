@@ -5,9 +5,9 @@
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
 using System;
+using System.Globalization;
 using Telegram.Common;
 using Telegram.Controls;
-using Telegram.Controls.Cells.Monetization;
 using Telegram.Converters;
 using Telegram.Navigation;
 using Telegram.Services;
@@ -20,55 +20,63 @@ namespace Telegram.Views.Monetization.Popups
 {
     public sealed partial class TransactionPopup : ContentPopup
     {
-        private readonly TransactionInfo _info;
+        private readonly ChatRevenueTransaction _info;
 
-        public TransactionPopup(IClientService clientService, Chat chat, TransactionInfo info)
+        public TransactionPopup(IClientService clientService, Chat chat, ChatRevenueTransaction info)
         {
             InitializeComponent();
 
             _info = info;
 
-            if (string.IsNullOrEmpty(info.DestinationAddress))
+            if (info.Type is ChatRevenueTransactionTypeEarnings earnings)
             {
                 Pill.SetChat(clientService, chat);
                 Pill.Visibility = Visibility.Visible;
 
-                Address.Visibility = Visibility.Collapsed;
-
+                Date.Text = Formatter.DateAt(earnings.StartDate) + " - " + Formatter.DateAt(earnings.EndDate);
                 Message.Text = Strings.MonetizationTransactionDetailProceed;
-
                 LearnCommand.Content = Strings.OK;
             }
-            else
+            else if (info.Type is ChatRevenueTransactionTypeWithdrawal withdrawal)
             {
-                Address.Visibility = Visibility.Visible;
-                Address.Content = info.DestinationAddress.Substring(0, info.DestinationAddress.Length / 2) + Environment.NewLine + info.DestinationAddress.Substring(info.DestinationAddress.Length / 2);
-
                 Pill.Visibility = Visibility.Collapsed;
 
-                Message.Text = Strings.MonetizationTransactionDetailWithdraw;
-
-                LearnCommand.Content = Strings.MonetizationTransactionDetailWithdrawButton;
+                if (withdrawal.State is ChatRevenueWithdrawalStateCompleted completed)
+                {
+                    Date.Text = Formatter.DateAt(completed.Date);
+                    Message.Text = Strings.MonetizationTransactionDetailWithdraw;
+                    LearnCommand.Content = Strings.MonetizationTransactionDetailWithdrawButton;
+                }
+                else if (withdrawal.State is ChatRevenueWithdrawalStatePending)
+                {
+                    Date.Text = Formatter.DateAt(withdrawal.WithdrawalDate);
+                    Message.Text = Strings.MonetizationTransactionPending;
+                    LearnCommand.Content = Strings.OK;
+                }
+                else if (withdrawal.State is ChatRevenueWithdrawalStateFailed)
+                {
+                    Date.Text = Formatter.DateAt(withdrawal.WithdrawalDate);
+                    Message.Text = Strings.MonetizationTransactionNotCompleted;
+                    LearnCommand.Content = Strings.OK;
+                }
             }
-
-            if (info.EndDate == 0)
+            else if (info.Type is ChatRevenueTransactionTypeRefund refund)
             {
-                Date.Text = Formatter.DateAt(info.Date);
+                Pill.Visibility = Visibility.Collapsed;
+
+                Date.Text = Formatter.DateAt(refund.RefundDate);
+                Message.Text = Strings.MonetizationTransactionDetailRefund;
+                LearnCommand.Content = Strings.OK;
             }
-            else
-            {
-                Date.Text = Formatter.DateAt(info.Date) + " - " + Formatter.DateAt(info.EndDate);
-            }
 
-            var doubleAmount = Math.Abs(info.CryptocurrencyAmount / 100.0);
-            var integerAmount = Math.Truncate(doubleAmount);
-            var decimalAmount = (int)((decimal)doubleAmount % 1 * 100);
+            var doubleAmount = Formatter.Amount(Math.Abs(info.CryptocurrencyAmount), info.Cryptocurrency);
+            var stringAmount = doubleAmount.ToString(CultureInfo.InvariantCulture).Split('.');
+            var integerAmount = long.Parse(stringAmount[0]);
+            var decimalAmount = stringAmount.Length > 0 ? stringAmount[1] : "0";
 
-            Amount.Text = (info.CryptocurrencyAmount < 0 ? "-" : "+") + integerAmount.ToString("N0");
-            Decimal.Text = string.Format(".{0:N0} {1}", decimalAmount, info.Cryptocurrency);
-
-            Amount.FontSize = 28;
-            Decimal.FontSize = 20;
+            Symbol.Text = info.CryptocurrencyAmount < 0 ? "-" : "+";
+            Amount.Text = integerAmount.ToString("N0");
+            Decimal.Text = string.Format(".{0} {1}", decimalAmount, info.Cryptocurrency);
 
             Title.Foreground = BootStrapper.Current.Resources[info.CryptocurrencyAmount < 0 ? "SystemFillColorCriticalBrush" : "SystemFillColorSuccessBrush"] as Brush;
         }
@@ -81,14 +89,14 @@ namespace Telegram.Views.Monetization.Popups
         {
         }
 
-        private void Address_Click(object sender, RoutedEventArgs e)
-        {
-            MessageHelper.CopyText(_info.DestinationAddress);
-        }
-
         private void Learn_Click(object sender, RoutedEventArgs e)
         {
             Hide(ContentDialogResult.Primary);
+
+            if (_info?.Type is ChatRevenueTransactionTypeWithdrawal withdrawal && withdrawal.State is ChatRevenueWithdrawalStateCompleted completed)
+            {
+                MessageHelper.OpenUrl(null, null, completed.Url);
+            }
         }
     }
 }

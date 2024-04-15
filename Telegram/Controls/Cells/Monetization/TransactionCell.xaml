@@ -12,7 +12,6 @@
     <Grid.RowDefinitions>
         <RowDefinition Height="Auto" />
         <RowDefinition Height="Auto" />
-        <RowDefinition Height="Auto" />
     </Grid.RowDefinitions>
     <Grid.ColumnDefinitions>
         <ColumnDefinition />
@@ -20,19 +19,19 @@
     </Grid.ColumnDefinitions>
     <TextBlock x:Name="Reason"
                Style="{StaticResource BaseTextBlockStyle}" />
-    <TextBlock x:Name="Address"
-               FontFamily="Consolas"
-               Margin="0,2"
-               Grid.Row="1" />
     <TextBlock x:Name="Date"
                Style="{StaticResource InfoCaptionTextBlockStyle}"
-               Grid.Row="2" />
+               Grid.Row="1" />
 
     <TextBlock x:Name="Value"
+               TextAlignment="Right"
+               Typography.NumeralAlignment="Tabular"
                VerticalAlignment="Center"
                FontWeight="SemiBold"
-               Grid.RowSpan="3"
+               Grid.RowSpan="2"
                Grid.Column="1">
+        <Run x:Name="Symbol" /><Run Text="&#xEA7E;"
+                                    FontFamily="{StaticResource SymbolThemeFontFamily}" />
         <Run x:Name="Amount" /><Run x:Name="Decimal"
                                     FontSize="12" />
     </TextBlock>

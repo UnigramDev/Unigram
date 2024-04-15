@@ -42,11 +42,6 @@ namespace Telegram.ViewModels
                 new ProfileTabItem(Strings.Statistics, typeof(ChatStatisticsPage)),
                 new ProfileTabItem(Strings.Boosts, typeof(ChatBoostsPage)),
             };
-
-            if (Constants.DEBUG)
-            {
-                Items.Add(new ProfileTabItem(Strings.Monetization, typeof(ChatMonetizationPage)));
-            }
         }
 
         public ObservableCollection<ProfileTabItem> Items { get; }
@@ -55,7 +50,7 @@ namespace Telegram.ViewModels
         public ChatBoostsViewModel Boosts => _boostsViewModel;
         public ChatMonetizationViewModel Monetization => _monetizationViewModel;
 
-        protected override async Task OnNavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
+        public override Task NavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
         {
             var chatId = (long)parameter;
 
@@ -66,8 +61,18 @@ namespace Telegram.ViewModels
 
             Chat = ClientService.GetChat(chatId);
 
+            if (ClientService.TryGetSupergroupFull(Chat, out SupergroupFullInfo fullInfo))
+            {
+                if (fullInfo.CanGetRevenueStatistics)
+                {
+                    Items.Add(new ProfileTabItem(Strings.Monetization, typeof(ChatMonetizationPage)));
+                }
+            }
+
             SelectedItem ??= Items.FirstOrDefault();
             RaisePropertyChanged(nameof(SharedCount));
+
+            return base.NavigatedToAsync(parameter, mode, state);
         }
 
         private int[] _sharedCount = new int[] { 0, 0, 0, 0, 0, 0 };

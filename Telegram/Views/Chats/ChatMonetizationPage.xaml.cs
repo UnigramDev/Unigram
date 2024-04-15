@@ -1,9 +1,10 @@
-﻿using System;
+﻿using System.Globalization;
 using Telegram.Charts;
 using Telegram.Controls;
 using Telegram.Controls.Cells;
 using Telegram.Controls.Cells.Monetization;
 using Telegram.Converters;
+using Telegram.Td.Api;
 using Telegram.ViewModels.Chats;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -49,14 +50,15 @@ namespace Telegram.Views.Chats
                 return;
             }
 
-            var doubleAmount = value.CryptocurrencyAmount / 100.0;
-            var integerAmount = Math.Truncate(doubleAmount);
-            var decimalAmount = (int)((decimal)doubleAmount % 1 * 100);
+            var doubleAmount = Formatter.Amount(value.CryptocurrencyAmount, value.Cryptocurrency);
+            var stringAmount = doubleAmount.ToString(CultureInfo.InvariantCulture).Split('.');
+            var integerAmount = long.Parse(stringAmount[0]);
+            var decimalAmount = stringAmount.Length > 0 ? stringAmount[1] : "0";
 
             CryptocurrencyAmountLabel.Text = integerAmount.ToString("N0");
-            CryptocurrencyDecimalLabel.Text = string.Format(".{0:N0}", decimalAmount);
+            CryptocurrencyDecimalLabel.Text = string.Format(".{0}", decimalAmount);
 
-            AmountLabel.Text = string.Format("~{0}", Formatter.FormatAmount(value.Amount, value.Currency));
+            AmountLabel.Text = string.Format("~{0}", Formatter.FormatAmount((long)(value.CryptocurrencyAmount * value.UsdRate), "USD"));
         }
 
         private void OnElementPrepared(FrameworkElement sender, DataContextChangedEventArgs args)
@@ -82,7 +84,7 @@ namespace Telegram.Views.Chats
 
         private void OnItemClick(object sender, ItemClickEventArgs e)
         {
-            ViewModel.ShowTransaction(e.ClickedItem as TransactionInfo);
+            ViewModel.ShowTransaction(e.ClickedItem as ChatRevenueTransaction);
         }
 
         private void OnContainerContentChanging(ListViewBase sender, ContainerContentChangingEventArgs args)
@@ -91,7 +93,7 @@ namespace Telegram.Views.Chats
             {
                 return;
             }
-            else if (args.ItemContainer.ContentTemplateRoot is TransactionCell cell && args.Item is TransactionInfo info)
+            else if (args.ItemContainer.ContentTemplateRoot is TransactionCell cell && args.Item is ChatRevenueTransaction info)
             {
                 cell.UpdateInfo(info);
             }

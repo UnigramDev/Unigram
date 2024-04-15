@@ -1,4 +1,4 @@
-﻿using System;
+﻿using System.Globalization;
 using Telegram.Converters;
 using Windows.UI.Xaml.Controls;
 
@@ -6,13 +6,11 @@ namespace Telegram.Controls.Cells
 {
     public class CryptoAmount
     {
-        public string Currency { get; set; }
-
-        public long Amount { get; set; }
-
         public string Cryptocurrency { get; set; }
 
         public long CryptocurrencyAmount { get; set; }
+
+        public double UsdRate { get; set; }
     }
 
     public sealed partial class CryptoAmountCell : UserControl
@@ -40,14 +38,15 @@ namespace Telegram.Controls.Cells
                 return;
             }
 
-            var doubleAmount = value.CryptocurrencyAmount / 100.0;
-            var integerAmount = Math.Truncate(doubleAmount);
-            var decimalAmount = (int)((decimal)doubleAmount % 1 * 100);
+            var doubleAmount = Formatter.Amount(value.CryptocurrencyAmount, value.Cryptocurrency);
+            var stringAmount = doubleAmount.ToString(CultureInfo.InvariantCulture).Split('.');
+            var integerAmount = long.Parse(stringAmount[0]);
+            var decimalAmount = stringAmount.Length > 0 ? stringAmount[1] : "0";
 
             CryptocurrencyAmountLabel.Text = integerAmount.ToString("N0");
-            CryptocurrencyDecimalLabel.Text = string.Format(".{0:N0}", decimalAmount);
+            CryptocurrencyDecimalLabel.Text = string.Format(".{0}", decimalAmount);
 
-            AmountLabel.Text = string.Format("~{0}", Formatter.FormatAmount(value.Amount, value.Currency));
+            AmountLabel.Text = string.Format("~{0}", Formatter.FormatAmount((long)(value.CryptocurrencyAmount * value.UsdRate), "USD"));
         }
     }
 }

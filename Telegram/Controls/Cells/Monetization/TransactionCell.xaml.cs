@@ -1,25 +1,13 @@
 ﻿using System;
+using System.Globalization;
 using Telegram.Converters;
 using Telegram.Navigation;
-using Windows.UI.Xaml;
+using Telegram.Td.Api;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media;
 
 namespace Telegram.Controls.Cells.Monetization
 {
-    public class TransactionInfo
-    {
-        public int Date { get; set; }
-
-        public int EndDate { get; set; }
-
-        public string DestinationAddress { get; set; }
-
-        public long CryptocurrencyAmount { get; set; }
-
-        public string Cryptocurrency { get; set; }
-    }
-
     public sealed partial class TransactionCell : Grid
     {
         public TransactionCell()
@@ -27,35 +15,53 @@ namespace Telegram.Controls.Cells.Monetization
             InitializeComponent();
         }
 
-        public void UpdateInfo(TransactionInfo info)
+        public void UpdateInfo(ChatRevenueTransaction info)
         {
-            if (true || string.IsNullOrEmpty(info.DestinationAddress))
+            if (info.Type is ChatRevenueTransactionTypeEarnings earnings)
             {
                 Reason.Text = Strings.MonetizationTransactionProceed;
-                Address.Visibility = Visibility.Collapsed;
+                Date.Text = string.Format("{0} - {1}", Formatter.DateAt(earnings.StartDate), Formatter.DateAt(earnings.EndDate));
+                Date.Foreground = BootStrapper.Current.Resources["SystemControlDisabledChromeDisabledLowBrush"] as Brush;
             }
-            else
+            else if (info.Type is ChatRevenueTransactionTypeWithdrawal withdrawal)
             {
                 Reason.Text = Strings.MonetizationTransactionWithdraw;
-                Address.Visibility = Visibility.Visible;
-                Address.Text = info.DestinationAddress.Substring(0, info.DestinationAddress.Length / 2) + Environment.NewLine + info.DestinationAddress.Substring(info.DestinationAddress.Length / 2);
-            }
 
-            if (info.EndDate == 0)
+                if (withdrawal.State is ChatRevenueWithdrawalStateCompleted completed)
+                {
+                    Date.Text = Formatter.DateAt(completed.Date);
+                    Date.Foreground = BootStrapper.Current.Resources["SystemControlDisabledChromeDisabledLowBrush"] as Brush;
+                }
+                else if (withdrawal.State is ChatRevenueWithdrawalStatePending)
+                {
+                    Date.Text = Strings.MonetizationTransactionPending;
+                    Date.Foreground = BootStrapper.Current.Resources["SystemControlDisabledChromeDisabledLowBrush"] as Brush;
+                }
+                else if (withdrawal.State is ChatRevenueWithdrawalStateFailed)
+                {
+                    Date.Text = string.Format("{0} - {1}", Formatter.DateAt(withdrawal.WithdrawalDate), Strings.MonetizationTransactionNotCompleted);
+                    Date.Foreground = BootStrapper.Current.Resources["SystemFillColorCriticalBrush"] as Brush;
+                }
+            }
+            else if (info.Type is ChatRevenueTransactionTypeRefund refund)
             {
-                Date.Text = Formatter.DateAt(info.Date);
+                Reason.Text = Strings.MonetizationTransactionRefund;
+                Date.Text = Formatter.DateAt(refund.RefundDate);
+                Date.Foreground = BootStrapper.Current.Resources["SystemControlDisabledChromeDisabledLowBrush"] as Brush;
             }
             else
             {
-                Date.Text = Formatter.DateAt(info.Date) + " - " + Formatter.DateAt(info.EndDate);
+                Date.Text = "???";
             }
 
-            var doubleAmount = Math.Abs(info.CryptocurrencyAmount / 100.0);
-            var integerAmount = Math.Truncate(doubleAmount);
-            var decimalAmount = (int)((decimal)doubleAmount % 1 * 100);
+            var doubleAmount = Formatter.Amount(Math.Abs(info.CryptocurrencyAmount), info.Cryptocurrency);
+            var stringAmount = doubleAmount.ToString(CultureInfo.InvariantCulture).Split('.');
+            var integerAmount = long.Parse(stringAmount[0]);
+            var decimalAmount = stringAmount.Length > 0 ? stringAmount[1] : "0";
 
-            Amount.Text = (info.CryptocurrencyAmount < 0 ? "-" : "+") + integerAmount.ToString("N0");
-            Decimal.Text = string.Format(".{0:N0} {1}", decimalAmount, info.Cryptocurrency);
+            Symbol.Text = info.CryptocurrencyAmount < 0 ? "-" : "+";
+            Amount.Text = integerAmount.ToString("N0");
+            Decimal.Text = string.Format(".{0} {1}", decimalAmount, info.Cryptocurrency);
 
             Value.Foreground = BootStrapper.Current.Resources[info.CryptocurrencyAmount < 0 ? "SystemFillColorCriticalBrush" : "SystemFillColorSuccessBrush"] as Brush;
         }
