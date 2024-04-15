@@ -209,8 +209,8 @@
     <Compile Include="Controls\Cells\CryptoAmountCell.xaml.cs">
       <DependentUpon>CryptoAmountCell.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Controls\Cells\Monetization\TransactionCell.xaml.cs">
-      <DependentUpon>TransactionCell.xaml</DependentUpon>
+    <Compile Include="Controls\Cells\Revenue\ChatRevenueTransactionCell.xaml.cs">
+      <DependentUpon>ChatRevenueTransactionCell.xaml</DependentUpon>
     </Compile>
     <Compile Include="Controls\Cells\Premium\PremiumFeatureBusinessCell.xaml.cs">
       <DependentUpon>PremiumFeatureBusinessCell.xaml</DependentUpon>
@@ -417,7 +417,7 @@
     <Compile Include="ViewModels\Business\BusinessRepliesViewModel.cs" />
     <Compile Include="ViewModels\ChatNotificationsViewModel.cs" />
     <Compile Include="ViewModels\Chats\ChatBoostsViewModel.cs" />
-    <Compile Include="ViewModels\Chats\ChatMonetizationViewModel.cs" />
+    <Compile Include="ViewModels\Chats\ChatRevenueViewModel.cs" />
     <Compile Include="ViewModels\Chats\ChatStoriesViewModel.cs" />
     <Compile Include="ViewModels\ChooseChatsViewModel.cs" />
     <Compile Include="ViewModels\ComposeViewModel.cs" />
@@ -427,7 +427,7 @@
     <Compile Include="ViewModels\DialogBusinessRepliesViewModel.cs" />
     <Compile Include="ViewModels\DialogViewModel.Translate.cs" />
     <Compile Include="Td\Api\MessageTranslateResult.cs" />
-    <Compile Include="ViewModels\MonetizationViewModel.cs" />
+    <Compile Include="ViewModels\RevenueViewModel.cs" />
     <Compile Include="ViewModels\Profile\ProfileChannelsTabViewModel.cs" />
     <Compile Include="ViewModels\Profile\ProfileGroupsTabViewModel.cs" />
     <Compile Include="ViewModels\Profile\ProfileMembersTabViewModel.cs" />
@@ -957,8 +957,8 @@
     <Compile Include="Views\Chats\ChatBoostsPage.xaml.cs">
       <DependentUpon>ChatBoostsPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\Chats\ChatMonetizationPage.xaml.cs">
-      <DependentUpon>ChatMonetizationPage.xaml</DependentUpon>
+    <Compile Include="Views\Chats\ChatRevenuePage.xaml.cs">
+      <DependentUpon>ChatRevenuePage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Chats\ChatStoriesPage.xaml.cs">
       <DependentUpon>ChatStoriesPage.xaml</DependentUpon>
@@ -1050,8 +1050,8 @@
     <Compile Include="Views\Premium\Popups\ChangePrivacyPopup.xaml.cs">
       <DependentUpon>ChangePrivacyPopup.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\MonetizationPage.xaml.cs">
-      <DependentUpon>MonetizationPage.xaml</DependentUpon>
+    <Compile Include="Views\RevenuePage.xaml.cs">
+      <DependentUpon>RevenuePage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Profile\ProfileAnimationsTabPage.xaml.cs">
       <DependentUpon>ProfileAnimationsTabPage.xaml</DependentUpon>
@@ -2107,7 +2107,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Controls\Cells\Monetization\TransactionCell.xaml">
+    <Page Include="Controls\Cells\Revenue\ChatRevenueTransactionCell.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -2595,7 +2595,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\Chats\ChatMonetizationPage.xaml">
+    <Page Include="Views\Chats\ChatRevenuePage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -2715,7 +2715,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Views\MonetizationPage.xaml">
+    <Page Include="Views\RevenuePage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

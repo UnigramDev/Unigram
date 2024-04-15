@@ -17,9 +17,9 @@ using Windows.UI.Xaml.Navigation;
 
 namespace Telegram.ViewModels.Chats
 {
-    public class ChatMonetizationViewModel : ViewModelBase, IIncrementalCollectionOwner
+    public class ChatRevenueViewModel : ViewModelBase, IIncrementalCollectionOwner
     {
-        public ChatMonetizationViewModel(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator)
+        public ChatRevenueViewModel(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator)
             : base(clientService, settingsService, aggregator)
         {
             Items = new IncrementalCollection<ChatRevenueTransaction>(this);

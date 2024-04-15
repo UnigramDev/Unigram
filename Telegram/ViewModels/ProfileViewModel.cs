@@ -439,7 +439,7 @@ namespace Telegram.ViewModels
                 return;
             }
 
-            NavigationService.Navigate(typeof(MonetizationPage), chat.Id);
+            NavigationService.Navigate(typeof(RevenuePage), chat.Id);
         }
 
         public void OpenBoosts()

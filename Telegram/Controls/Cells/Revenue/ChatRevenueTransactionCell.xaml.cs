@@ -6,11 +6,11 @@ using Telegram.Td.Api;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media;
 
-namespace Telegram.Controls.Cells.Monetization
+namespace Telegram.Controls.Cells.Revenue
 {
-    public sealed partial class TransactionCell : Grid
+    public sealed partial class ChatRevenueTransactionCell : Grid
     {
-        public TransactionCell()
+        public ChatRevenueTransactionCell()
         {
             InitializeComponent();
         }

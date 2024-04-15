@@ -23,13 +23,13 @@ using Windows.UI.Xaml.Navigation;
 
 namespace Telegram.Views
 {
-    public sealed partial class MonetizationPage : HostedPage, INavigablePage
+    public sealed partial class RevenuePage : HostedPage, INavigablePage
     {
-        public MonetizationViewModel ViewModel => DataContext as MonetizationViewModel;
+        public RevenueViewModel ViewModel => DataContext as RevenueViewModel;
 
         private CompositionPropertySet _properties;
 
-        public MonetizationPage()
+        public RevenuePage()
         {
             InitializeComponent();
             InitializeScrolling();
@@ -130,9 +130,9 @@ namespace Telegram.Views
             {
                 boosts.DataContext = ViewModel.Boosts;
             }
-            else if (e.Content is ChatMonetizationPage monetization)
+            else if (e.Content is ChatRevenuePage revenue)
             {
-                monetization.DataContext = ViewModel.Monetization;
+                revenue.DataContext = ViewModel.Revenue;
             }
 
             if (e.Content is not ProfileTabPage tabPage)

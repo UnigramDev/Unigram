@@ -2,7 +2,7 @@
 using Telegram.Charts;
 using Telegram.Controls;
 using Telegram.Controls.Cells;
-using Telegram.Controls.Cells.Monetization;
+using Telegram.Controls.Cells.Revenue;
 using Telegram.Converters;
 using Telegram.Td.Api;
 using Telegram.ViewModels.Chats;
@@ -12,11 +12,11 @@ using Windows.UI.Xaml.Navigation;
 
 namespace Telegram.Views.Chats
 {
-    public sealed partial class ChatMonetizationPage : HostedPage
+    public sealed partial class ChatRevenuePage : HostedPage
     {
-        public ChatMonetizationViewModel ViewModel => DataContext as ChatMonetizationViewModel;
+        public ChatRevenueViewModel ViewModel => DataContext as ChatRevenueViewModel;
 
-        public ChatMonetizationPage()
+        public ChatRevenuePage()
         {
             InitializeComponent();
         }
@@ -93,7 +93,7 @@ namespace Telegram.Views.Chats
             {
                 return;
             }
-            else if (args.ItemContainer.ContentTemplateRoot is TransactionCell cell && args.Item is ChatRevenueTransaction info)
+            else if (args.ItemContainer.ContentTemplateRoot is ChatRevenueTransactionCell cell && args.Item is ChatRevenueTransaction info)
             {
                 cell.UpdateInfo(info);
             }

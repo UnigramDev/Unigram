@@ -478,8 +478,8 @@ namespace Telegram.Views
                         _clientService,
                         _settingsService,
                         _eventAggregator);
-                case nameof(Telegram.ViewModels.Chats.ChatMonetizationViewModel):
-                    return (T)(object)new Telegram.ViewModels.Chats.ChatMonetizationViewModel(
+                case nameof(Telegram.ViewModels.Chats.ChatRevenueViewModel):
+                    return (T)(object)new Telegram.ViewModels.Chats.ChatRevenueViewModel(
                         _clientService,
                         _settingsService,
                         _eventAggregator);
@@ -590,6 +590,11 @@ namespace Telegram.Views
                         _eventAggregator);
                 case nameof(Telegram.ViewModels.Settings.SettingsNotificationsExceptionsViewModel):
                     return (T)(object)new Telegram.ViewModels.Settings.SettingsNotificationsExceptionsViewModel(
+                        _clientService,
+                        _settingsService,
+                        _eventAggregator);
+                case nameof(Telegram.ViewModels.Settings.SettingsNotificationsReactionsViewModel):
+                    return (T)(object)new Telegram.ViewModels.Settings.SettingsNotificationsReactionsViewModel(
                         _clientService,
                         _settingsService,
                         _eventAggregator);
@@ -925,8 +930,8 @@ namespace Telegram.Views
                         _clientService,
                         _settingsService,
                         _eventAggregator);
-                case nameof(Telegram.ViewModels.MonetizationViewModel):
-                    return (T)(object)new Telegram.ViewModels.MonetizationViewModel(
+                case nameof(Telegram.ViewModels.RevenueViewModel):
+                    return (T)(object)new Telegram.ViewModels.RevenueViewModel(
                         _clientService,
                         _settingsService,
                         _eventAggregator);

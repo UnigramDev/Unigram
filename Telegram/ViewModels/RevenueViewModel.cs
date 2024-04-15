@@ -20,22 +20,22 @@ using Windows.UI.Xaml.Navigation;
 
 namespace Telegram.ViewModels
 {
-    public class MonetizationViewModel : MultiViewModelBase, IHandle
+    public class RevenueViewModel : MultiViewModelBase, IHandle
     {
         protected readonly ChatStatisticsViewModel _statisticsViewModel;
         protected readonly ChatBoostsViewModel _boostsViewModel;
-        protected readonly ChatMonetizationViewModel _monetizationViewModel;
+        protected readonly ChatRevenueViewModel _revenueViewModel;
 
-        public MonetizationViewModel(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator)
+        public RevenueViewModel(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator)
             : base(clientService, settingsService, aggregator)
         {
             _statisticsViewModel = TypeResolver.Current.Resolve<ChatStatisticsViewModel>(clientService.SessionId);
             _boostsViewModel = TypeResolver.Current.Resolve<ChatBoostsViewModel>(clientService.SessionId);
-            _monetizationViewModel = TypeResolver.Current.Resolve<ChatMonetizationViewModel>(clientService.SessionId);
+            _revenueViewModel = TypeResolver.Current.Resolve<ChatRevenueViewModel>(clientService.SessionId);
 
             Children.Add(_statisticsViewModel);
             Children.Add(_boostsViewModel);
-            Children.Add(_monetizationViewModel);
+            Children.Add(_revenueViewModel);
 
             Items = new ObservableCollection<ProfileTabItem>
             {
@@ -48,7 +48,7 @@ namespace Telegram.ViewModels
 
         public ChatStatisticsViewModel Statistics => _statisticsViewModel;
         public ChatBoostsViewModel Boosts => _boostsViewModel;
-        public ChatMonetizationViewModel Monetization => _monetizationViewModel;
+        public ChatRevenueViewModel Revenue => _revenueViewModel;
 
         public override Task NavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
         {
@@ -65,7 +65,7 @@ namespace Telegram.ViewModels
             {
                 if (fullInfo.CanGetRevenueStatistics)
                 {
-                    Items.Add(new ProfileTabItem(Strings.Monetization, typeof(ChatMonetizationPage)));
+                    Items.Add(new ProfileTabItem(Strings.Monetization, typeof(ChatRevenuePage)));
                 }
             }
 

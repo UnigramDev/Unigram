@@ -1,11 +1,11 @@
-﻿<local:HostedPage x:Class="Telegram.Views.Chats.ChatMonetizationPage"
+﻿<local:HostedPage x:Class="Telegram.Views.Chats.ChatRevenuePage"
                   xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                   xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
                   xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                   xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
                   xmlns:controls="using:Telegram.Controls"
                   xmlns:cells="using:Telegram.Controls.Cells"
-                  xmlns:monetization="using:Telegram.Controls.Cells.Monetization"
+                  xmlns:revenue="using:Telegram.Controls.Cells.Revenue"
                   xmlns:local="using:Telegram.Views"
                   mc:Ignorable="d">
 
@@ -103,8 +103,8 @@
             </ListView.Footer>-->
             <ListView.ItemTemplate>
                 <DataTemplate>
-                    <monetization:TransactionCell Background="{ThemeResource SettingsItemBackground}"
-                                                  BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}" />
+                    <revenue:ChatRevenueTransactionCell Background="{ThemeResource SettingsItemBackground}"
+                                                        BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}" />
                 </DataTemplate>
             </ListView.ItemTemplate>
             <ListView.Footer>
