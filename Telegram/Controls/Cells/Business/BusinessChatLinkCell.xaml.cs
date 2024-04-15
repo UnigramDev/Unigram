@@ -20,21 +20,23 @@ namespace Telegram.Controls.Cells.Business
 
         public void UpdateContent(IClientService clientService, BusinessChatLink chatLink)
         {
-            FromLabel.Text = string.IsNullOrEmpty(chatLink.Name)
-                ? chatLink.Url
-                : chatLink.Name;
+            FromLabel.Text = string.IsNullOrEmpty(chatLink.Title)
+                ? chatLink.Link
+                : chatLink.Title;
 
-            if (string.IsNullOrEmpty(chatLink.Message.Text))
+            if (string.IsNullOrEmpty(chatLink.Text.Text))
             {
                 BriefLabel.Inlines.Clear();
-                BriefLabel.Inlines.Add("[No text]");
+                BriefLabel.Inlines.Add(Strings.NoText);
             }
             else
             {
-                UpdateBriefLabel(clientService, chatLink.Message);
+                UpdateBriefLabel(clientService, chatLink.Text);
             }
 
-            ViewCountLabel.Text = Locale.Declension(Strings.R.Clicks, chatLink.ViewCount);
+            ViewCountLabel.Text = chatLink.ViewCount > 0
+                ? Locale.Declension(Strings.R.Clicks, chatLink.ViewCount)
+                : Strings.NoClicks;
         }
 
         private void UpdateBriefLabel(IClientService clientService, FormattedText message)

@@ -1,89 +1,61 @@
 ﻿using System;
-using System.Collections.ObjectModel;
 using System.Threading.Tasks;
+using Telegram.Collections;
 using Telegram.Common;
 using Telegram.Navigation;
 using Telegram.Navigation.Services;
 using Telegram.Services;
-using Telegram.Td;
 using Telegram.Td.Api;
+using Telegram.ViewModels.Delegates;
 using Telegram.Views.Business.Popups;
 using Telegram.Views.Popups;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
 
-namespace Telegram.Td.Api
-{
-    public class BusinessChatLink
-    {
-        public string Name { get; set; }
-
-        public string Url { get; set; }
-
-        public FormattedText Message { get; set; }
-
-        public int ViewCount { get; set; }
-    }
-}
-
 namespace Telegram.ViewModels.Business
 {
-    public class BusinessChatLinksViewModel : ViewModelBase
+    public class BusinessChatLinksViewModel : ViewModelBase, IDelegable<IBusinessChatLinksDelegate>
     {
+        public IBusinessChatLinksDelegate Delegate { get; set; }
+
         public BusinessChatLinksViewModel(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator)
             : base(clientService, settingsService, aggregator)
         {
-            Items = new ObservableCollection<BusinessChatLink>();
+            Items = new MvxObservableCollection<BusinessChatLink>();
+            Items.CollectionChanged += OnCollectionChanged;
         }
 
-        public ObservableCollection<BusinessChatLink> Items { get; }
-
-        protected override Task OnNavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
+        private void OnCollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
         {
-            Items.Add(new BusinessChatLink
-            {
-                Name = "Due fritture",
-                Url = "https://t.me/OMo8UwyFsjo3YTA8",
-                Message = ClientEx.ParseMarkdown("Si possono avere **due** fritture?"),
-                ViewCount = new Random().Next(1000)
-            });
+            RaisePropertyChanged(nameof(CanCreateMore));
+        }
 
-            Items.Add(new BusinessChatLink
-            {
-                Name = string.Empty,
-                Url = "https://t.me/OMo8UwyFsjo3YTA8",
-                Message = ClientEx.ParseMarkdown("Si __possono__ avere ||due|| fritture?"),
-                ViewCount = new Random().Next(1000)
-            });
+        public MvxObservableCollection<BusinessChatLink> Items { get; }
 
-            Items.Add(new BusinessChatLink
-            {
-                Name = string.Empty,
-                Url = "https://t.me/OMo8UwyFsjo3YTA8",
-                Message = ClientEx.ParseMarkdown(string.Empty),
-                ViewCount = new Random().Next(1000)
-            });
+        public bool CanCreateMore => Items.Count < ClientService.Options.BusinessChatLinkCountMax;
 
-            return Task.CompletedTask;
+        protected override async Task OnNavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
+        {
+            var response = await ClientService.SendAsync(new GetBusinessChatLinks());
+            if (response is BusinessChatLinks links)
+            {
+                Items.AddRange(links.Links);
+            }
         }
 
         public async void Create()
         {
-            var chatLink = new BusinessChatLink
+            var response = await ClientService.SendAsync(new CreateBusinessChatLink(new InputBusinessChatLink(new FormattedText(string.Empty, Array.Empty<TextEntity>()), string.Empty)));
+            if (response is BusinessChatLink chatLink)
             {
-                Name = string.Empty,
-                Url = "https://t.me/OMo8UwyFsjo3YTA8",
-                Message = ClientEx.ParseMarkdown(string.Empty),
-                ViewCount = new Random().Next(1000)
-            };
-
-            Items.Add(chatLink);
-            Open(chatLink);
+                Items.Add(chatLink);
+                Open(chatLink);
+            }
         }
 
         public void Copy(BusinessChatLink chatLink)
         {
-            MessageHelper.CopyLink(chatLink.Url);
+            MessageHelper.CopyLink(chatLink.Link);
         }
 
         public void Share(BusinessChatLink chatLink)
@@ -100,7 +72,7 @@ namespace Telegram.ViewModels.Business
                 PrimaryButtonText = Strings.Done,
                 SecondaryButtonText = Strings.Cancel,
                 PlaceholderText = Strings.BusinessLinksNamePlaceholder,
-                Text = chatLink.Name,
+                Text = chatLink.Title,
                 MaxLength = 32,
                 MinLength = 1,
             };
@@ -108,7 +80,18 @@ namespace Telegram.ViewModels.Business
             var confirm = await ShowPopupAsync(popup);
             if (confirm == ContentDialogResult.Primary)
             {
+                chatLink.Title = popup.Text;
 
+                Delegate?.UpdateBusinessChatLink(chatLink);
+
+                var response = await ClientService.SendAsync(new EditBusinessChatLink(chatLink.Link, new InputBusinessChatLink(chatLink.Text, popup.Text)));
+                if (response is BusinessChatLink updated)
+                {
+                    chatLink.Title = updated.Title;
+                    chatLink.Text = updated.Text;
+
+                    Delegate?.UpdateBusinessChatLink(chatLink);
+                }
             }
         }
 
@@ -117,6 +100,7 @@ namespace Telegram.ViewModels.Business
             var confirm = await ShowPopupAsync(Strings.BusinessLinksDeleteMessage, Strings.BusinessLinksDeleteTitle, Strings.Remove, Strings.Cancel, destructive: true);
             if (confirm == ContentDialogResult.Primary)
             {
+                ClientService.Send(new DeleteBusinessChatLink(chatLink.Link));
                 Items.Remove(chatLink);
             }
         }

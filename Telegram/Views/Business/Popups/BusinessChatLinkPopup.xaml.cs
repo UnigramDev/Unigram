@@ -1,6 +1,7 @@
 ﻿using Telegram.Common;
 using Telegram.Controls;
 using Telegram.Controls.Media;
+using Telegram.Streams;
 using Telegram.Td.Api;
 using Telegram.ViewModels.Business;
 using Telegram.ViewModels.Drawers;
@@ -22,18 +23,18 @@ namespace Telegram.Views.Business.Popups
             _viewModel = viewModel;
             _chatLink = chatLink;
 
-            Title = string.IsNullOrEmpty(chatLink.Name)
+            Title = string.IsNullOrEmpty(chatLink.Title)
                 ? Strings.BusinessLink
-                : chatLink.Name;
-            Subtitle.Text = chatLink.Url.Replace("https://", string.Empty);
+                : chatLink.Title;
+            Subtitle.Text = chatLink.Link.Replace("https://", string.Empty);
 
             BackgroundControl.Update(viewModel.ClientService, viewModel.Aggregator);
 
-            LinkButton.Text = chatLink.Url.Replace("https://", string.Empty);
+            LinkButton.Text = chatLink.Link.Replace("https://", string.Empty);
 
             EmojiPanel.DataContext = EmojiDrawerViewModel.Create(viewModel.SessionId);
             CaptionInput.DataContext = viewModel;
-            CaptionInput.SetText(chatLink.Message);
+            CaptionInput.SetText(chatLink.Text);
         }
 
         private void ContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
@@ -71,7 +72,7 @@ namespace Telegram.Views.Business.Popups
 
         private void Link_Click(object sender, RoutedEventArgs e)
         {
-            MessageHelper.CopyLink(_chatLink.Url);
+            MessageHelper.CopyLink(_chatLink.Link);
         }
 
         private void More_Click(object sender, RoutedEventArgs e)
@@ -84,6 +85,26 @@ namespace Telegram.Views.Business.Popups
             flyout.CreateFlyoutItem(_viewModel.Delete, _chatLink, Strings.Delete, Icons.Delete, destructive: true);
 
             flyout.ShowAt(sender as UIElement, FlyoutPlacementMode.BottomEdgeAlignedRight);
+        }
+
+        private async void Edit_Click(object sender, RoutedEventArgs e)
+        {
+            ToastPopup.Show(Strings.BusinessLinkSaved, new LocalFileSource("ms-appx:///Assets/Toasts/Success.tgs"));
+
+            var text = CaptionInput.GetFormattedText();
+
+            _chatLink.Text = text;
+
+            _viewModel.Delegate?.UpdateBusinessChatLink(_chatLink);
+
+            var response = await _viewModel.ClientService.SendAsync(new EditBusinessChatLink(_chatLink.Link, new InputBusinessChatLink(text, _chatLink.Title)));
+            if (response is BusinessChatLink chatLink)
+            {
+                _chatLink.Title = chatLink.Title;
+                _chatLink.Text = chatLink.Text;
+
+                _viewModel.Delegate?.UpdateBusinessChatLink(_chatLink);
+            }
         }
     }
 }

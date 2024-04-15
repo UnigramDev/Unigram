@@ -103,7 +103,8 @@
                                       FontSize="24"
                                       Grid.Column="1" />
 
-                <controls:GlyphButton Foreground="{ThemeResource TelegramBackgroundAccentBrush}"
+                <controls:GlyphButton Click="Edit_Click"
+                                      Foreground="{ThemeResource TelegramBackgroundAccentBrush}"
                                       VerticalAlignment="Bottom"
                                       FontSize="24"
                                       Glyph="&#xEC61;"

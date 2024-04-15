@@ -6464,6 +6464,9 @@ Please make sure you entered the right Server URL and Stream Key in your app.</v
   <data name="NoStoriesSubtitle" xml:space="preserve">
     <value>Open the &apos;Archive&apos; tab to select stories you want to be displayed on your profile.</value>
   </data>
+  <data name="NoText" xml:space="preserve">
+    <value>No text</value>
+  </data>
   <data name="NotificationActionPinnedContactChannel" xml:space="preserve">
     <value>{0} pinned a contact</value>
   </data>

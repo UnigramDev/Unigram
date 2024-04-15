@@ -6,8 +6,10 @@ using Telegram.Controls.Cells.Business;
 using Telegram.Controls.Media;
 using Telegram.Td.Api;
 using Telegram.ViewModels.Business;
+using Telegram.ViewModels.Delegates;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Controls.Primitives;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Media.Imaging;
@@ -15,7 +17,7 @@ using Windows.UI.Xaml.Navigation;
 
 namespace Telegram.Views.Business
 {
-    public sealed partial class BusinessChatLinksPage : HostedPage
+    public sealed partial class BusinessChatLinksPage : HostedPage, IBusinessChatLinksDelegate
     {
         public BusinessChatLinksViewModel ViewModel => DataContext as BusinessChatLinksViewModel;
 
@@ -25,18 +27,31 @@ namespace Telegram.Views.Business
             Title = Strings.BusinessLinks;
         }
 
-        protected override void OnNavigatedTo(NavigationEventArgs e)
+        protected override async void OnNavigatedTo(NavigationEventArgs e)
         {
             if (ViewModel.ClientService.TryGetUser(ViewModel.ClientService.Options.MyId, out User user))
             {
+                var restrictPhoneNumber = await ViewModel.ClientService.HasPrivacySettingsRuleAsync<UserPrivacySettingRuleRestrictAll>(new UserPrivacySettingShowPhoneNumber());
+                var hasPhoneNumber = !restrictPhoneNumber;
+                var hasUsername = user.HasActiveUsername(out string username);
+
                 string text;
-                if (user.HasActiveUsername(out string username))
+                if (hasPhoneNumber && hasUsername)
                 {
                     text = string.Format(Strings.BusinessLinksFooterWithUsername, "t.me/" + username, "t.me/+" + user.PhoneNumber);
                 }
-                else
+                else if (hasPhoneNumber)
                 {
                     text = string.Format(Strings.BusinessLinksFooterNoUsername, "t.me/+" + user.PhoneNumber);
+                }
+                else if (hasUsername)
+                {
+                    text = string.Format(Strings.BusinessLinksFooterNoUsername, "t.me/" + username);
+                }
+                else
+                {
+                    CreateFooter.Visibility = Visibility.Collapsed;
+                    return;
                 }
 
                 // TODO: links
@@ -121,6 +136,14 @@ namespace Telegram.Views.Business
         private void CreateFooter_Click(object sender, TextUrlClickEventArgs e)
         {
             MessageHelper.CopyLink("https://" + e.Url);
+        }
+
+        public void UpdateBusinessChatLink(BusinessChatLink chatLink)
+        {
+            var container = ScrollingHost.ContainerFromItem(chatLink) as SelectorItem;
+            var content = container?.ContentTemplateRoot as BusinessChatLinkCell;
+
+            content?.UpdateContent(ViewModel.ClientService, chatLink);
         }
     }
 }

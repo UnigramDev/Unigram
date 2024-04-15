@@ -421,6 +421,7 @@
     <Compile Include="ViewModels\Chats\ChatStoriesViewModel.cs" />
     <Compile Include="ViewModels\ChooseChatsViewModel.cs" />
     <Compile Include="ViewModels\ComposeViewModel.cs" />
+    <Compile Include="ViewModels\Delegates\IBusinessChatLinksDelegate.cs" />
     <Compile Include="ViewModels\Delegates\IBusinessRepliesDelegate.cs" />
     <Compile Include="ViewModels\Delegates\ISavedMessagesChatsDelegate.cs" />
     <Compile Include="ViewModels\DialogSavedViewModel.cs" />

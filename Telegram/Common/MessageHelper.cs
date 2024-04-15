@@ -407,6 +407,10 @@ namespace Telegram.Common
                 // Not yet supported: AdministratorRights
                 NavigateToBotStart(clientService, navigation, botStartInGroup.BotUsername, botStartInGroup.StartParameter, false, true);
             }
+            else if (internalLink is InternalLinkTypeBusinessChat businessChat)
+            {
+                NavigateToBusinessChat(clientService, navigation, businessChat.LinkName);
+            }
             else if (internalLink is InternalLinkTypeChangePhoneNumber)
             {
                 navigation.Navigate(typeof(SettingsProfilePage));
@@ -485,7 +489,7 @@ namespace Telegram.Common
             }
             else if (internalLink is InternalLinkTypePublicChat publicChat)
             {
-                NavigateToUsername(clientService, navigation, publicChat.ChatUsername, null, null);
+                NavigateToUsername(clientService, navigation, publicChat.ChatUsername, null, null, publicChat.DraftText);
             }
             else if (internalLink is InternalLinkTypeQrCodeAuthentication)
             {
@@ -517,7 +521,7 @@ namespace Telegram.Common
             }
             else if (internalLink is InternalLinkTypeUserPhoneNumber phoneNumber)
             {
-                NavigateToPhoneNumber(clientService, navigation, phoneNumber.PhoneNumber);
+                NavigateToPhoneNumber(clientService, navigation, phoneNumber.PhoneNumber, phoneNumber.DraftText);
             }
             else if (internalLink is InternalLinkTypeUserToken userToken)
             {
@@ -1002,9 +1006,9 @@ namespace Telegram.Common
             await StickersPopup.ShowAsync(text);
         }
 
-        public static async void NavigateToPhoneNumber(IClientService clientService, INavigationService navigation, string phoneNumber)
+        public static async void NavigateToPhoneNumber(IClientService clientService, INavigationService navigation, string phoneNumber, string draftText = null)
         {
-            await NavigateToUserByResponse(clientService, navigation, new SearchUserByPhoneNumber(phoneNumber));
+            await NavigateToUserByResponse(clientService, navigation, new SearchUserByPhoneNumber(phoneNumber), draftText);
         }
 
         public static async void NavigateToUserToken(IClientService clientService, INavigationService navigation, string userToken)
@@ -1012,7 +1016,7 @@ namespace Telegram.Common
             await NavigateToUserByResponse(clientService, navigation, new SearchUserByToken(userToken));
         }
 
-        private static async Task NavigateToUserByResponse(IClientService clientService, INavigationService navigation, Function request)
+        private static async Task NavigateToUserByResponse(IClientService clientService, INavigationService navigation, Function request, string draftText = null)
         {
             var response = await clientService.SendAsync(request);
             if (response is User user)
@@ -1020,7 +1024,14 @@ namespace Telegram.Common
                 var chat = await clientService.SendAsync(new CreatePrivateChat(user.Id, false)) as Chat;
                 if (chat != null)
                 {
-                    navigation.Navigate(typeof(ProfilePage), chat.Id);
+                    if (draftText != null)
+                    {
+                        navigation.NavigateToChat(chat, state: new NavigationState { { "draft", new FormattedText(draftText, Array.Empty<TextEntity>()) } });
+                    }
+                    else
+                    {
+                        navigation.Navigate(typeof(ProfilePage), chat.Id);
+                    }
                 }
                 else
                 {
@@ -1058,7 +1069,16 @@ namespace Telegram.Common
             }
         }
 
-        public static async void NavigateToUsername(IClientService clientService, INavigationService navigation, string username, string videoChat = null, string game = null)
+        public static async void NavigateToBusinessChat(IClientService clientService, INavigationService navigation, string linkName)
+        {
+            var response = await clientService.SendAsync(new GetBusinessChatLinkInfo(linkName));
+            if (response is BusinessChatLinkInfo info)
+            {
+                navigation.NavigateToChat(info.ChatId, state: new NavigationState { { "draft", info.Text } });
+            }
+        }
+
+        public static async void NavigateToUsername(IClientService clientService, INavigationService navigation, string username, string videoChat = null, string game = null, string draftText = null)
         {
             var response = await clientService.SendAsync(new SearchPublicChat(username));
             if (response is Chat chat)
@@ -1069,7 +1089,11 @@ namespace Telegram.Common
                 }
                 else if (clientService.TryGetUser(chat, out User user))
                 {
-                    if (user.Type is UserTypeBot)
+                    if (draftText != null)
+                    {
+                        navigation.NavigateToChat(chat, state: new NavigationState { { "draft", new FormattedText(draftText, Array.Empty<TextEntity>()) } });
+                    }
+                    else if (user.Type is UserTypeBot)
                     {
                         navigation.NavigateToChat(chat);
                     }

@@ -2374,6 +2374,12 @@ namespace Telegram.ViewModels
                 SetText(string.Format("@{0} {1}", username, query), focus: true);
                 ResolveInlineBot(username, query);
             }
+            else if (_type == DialogType.History && state.TryGet("draft", out FormattedText draft))
+            {
+                state.Remove("draft");
+
+                SetText(draft, focus: true);
+            }
         }
 
         private void ShowReplyTo(IDictionary<string, object> state)

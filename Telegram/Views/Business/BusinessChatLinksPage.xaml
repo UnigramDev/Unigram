@@ -30,7 +30,9 @@
                     <controls:SettingsHeadline Text="{CustomResource BusinessLinksInfo}"
                                                Source="ms-appx:///Assets/Animations/BusinessChatLinks.tgs" />
 
-                    <controls:HeaderedControl Margin="0,0,0,2">
+                    <controls:HeaderedControl x:Name="CreateRoot"
+                                              x:Load="{x:Bind ViewModel.CanCreateMore, Mode=OneWay}"
+                                              Margin="0,0,0,2">
                         <controls:BadgeButton Click="{x:Bind ViewModel.Create}"
                                               Content="{CustomResource BusinessLinksAdd}"
                                               Style="{StaticResource GlyphBadgeButtonStyle}"
