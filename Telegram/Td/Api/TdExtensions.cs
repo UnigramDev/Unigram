@@ -1728,17 +1728,17 @@ namespace Telegram.Td.Api
             return years;
         }
 
-        public static InputBusinessIntro ToInput(this BusinessIntro x)
+        public static InputBusinessStartPage ToInput(this BusinessStartPage x)
         {
             if (x == null)
             {
                 return null;
             }
 
-            return new InputBusinessIntro(x.Title, x.Message, x.Sticker == null ? null : new InputFileId(x.Sticker.StickerValue.Id));
+            return new InputBusinessStartPage(x.Title, x.Message, x.Sticker == null ? null : new InputFileId(x.Sticker.StickerValue.Id));
         }
 
-        public static bool AreTheSame(this InputBusinessIntro x, InputBusinessIntro y)
+        public static bool AreTheSame(this InputBusinessStartPage x, InputBusinessStartPage y)
         {
             if (x == null || y == null)
             {

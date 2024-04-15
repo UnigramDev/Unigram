@@ -3414,7 +3414,12 @@ namespace Telegram.ViewModels
                 }
 
                 var response = await ClientService.SendAsync(new AddChatMembers(chat.Id, selected.Select(x => x.Id).ToArray()));
-                if (response is Error error)
+                if (response is FailedToAddMembers failed && failed.FailedToAddMembersValue.Count > 0)
+                {
+                    var popup = new ChatInviteFallbackPopup(ClientService, chat.Id, failed.FailedToAddMembersValue);
+                    await ShowPopupAsync(popup);
+                }
+                else if (response is Error error)
                 {
 
                 }

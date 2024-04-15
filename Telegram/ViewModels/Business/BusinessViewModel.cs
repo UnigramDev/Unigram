@@ -156,7 +156,7 @@ namespace Telegram.ViewModels.Business
                 case BusinessFeatureBots:
                     NavigationService.Navigate(typeof(BusinessBotsPage));
                     break;
-                case BusinessFeatureIntro:
+                case BusinessFeatureStartPage:
                     NavigationService.Navigate(typeof(BusinessIntroPage));
                     break;
                 case BusinessFeatureAccountLinks:

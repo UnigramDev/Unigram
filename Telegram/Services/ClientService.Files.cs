@@ -397,18 +397,18 @@ namespace Telegram.Services
                     ProcessFiles(botWriteAccessAllowReasonLaunchedWebApp.WebApp);
                 }
             }
-            else if (target is BusinessInfo businessInfo)
+            else if (target is BusinessFeaturePromotionAnimation businessFeaturePromotionAnimation)
             {
-                if (businessInfo.Intro != null)
+                if (businessFeaturePromotionAnimation.Animation != null)
                 {
-                    ProcessFiles(businessInfo.Intro);
+                    ProcessFiles(businessFeaturePromotionAnimation.Animation);
                 }
             }
-            else if (target is BusinessIntro businessIntro)
+            else if (target is BusinessInfo businessInfo)
             {
-                if (businessIntro.Sticker != null)
+                if (businessInfo.StartPage != null)
                 {
-                    ProcessFiles(businessIntro.Sticker);
+                    ProcessFiles(businessInfo.StartPage);
                 }
             }
             else if (target is BusinessMessage businessMessage)
@@ -427,6 +427,13 @@ namespace Telegram.Services
                 foreach (var item in businessMessages.Messages)
                 {
                     ProcessFiles(item);
+                }
+            }
+            else if (target is BusinessStartPage businessStartPage)
+            {
+                if (businessStartPage.Sticker != null)
+                {
+                    ProcessFiles(businessStartPage.Sticker);
                 }
             }
             else if (target is Chat chat)
@@ -1551,6 +1558,10 @@ namespace Telegram.Services
             else if (target is PremiumState premiumState)
             {
                 foreach (var item in premiumState.Animations)
+                {
+                    ProcessFiles(item);
+                }
+                foreach (var item in premiumState.BusinessAnimations)
                 {
                     ProcessFiles(item);
                 }

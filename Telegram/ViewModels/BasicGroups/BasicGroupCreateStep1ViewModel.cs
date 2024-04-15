@@ -70,12 +70,18 @@ namespace Telegram.ViewModels.BasicGroups
             {
                 // Classic chat
                 var response = await ClientService.SendAsync(new CreateNewBasicGroupChat(peers, _title, 0));
-                if (response is Chat chat)
+                if (response is CreatedBasicGroupChat chat)
                 {
                     // TODO: photo
 
-                    NavigationService.NavigateToChat(chat);
+                    NavigationService.NavigateToChat(chat.ChatId);
                     NavigationService.GoBackAt(0, false);
+
+                    if (chat.FailedToAddMembers?.FailedToAddMembersValue.Count > 0)
+                    {
+                        var popup = new ChatInviteFallbackPopup(ClientService, chat.ChatId, chat.FailedToAddMembers.FailedToAddMembersValue);
+                        await ShowPopupAsync(popup);
+                    }
                 }
                 else if (response is Error error)
                 {

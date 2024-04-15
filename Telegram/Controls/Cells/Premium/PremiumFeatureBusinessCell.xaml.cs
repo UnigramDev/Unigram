@@ -101,7 +101,7 @@ namespace Telegram.Controls.Cells.Premium
                     titleValue = Strings.PremiumBusinessChatbots2;
                     subtitleValue = Strings.PremiumBusinessChatbotsDescription;
                     break;
-                case BusinessFeatureIntro:
+                case BusinessFeatureStartPage:
                     iconValue = Icons.ChatInfoFilled;
                     titleValue = Strings.PremiumBusinessIntro;
                     subtitleValue = Strings.PremiumBusinessIntroDescription;

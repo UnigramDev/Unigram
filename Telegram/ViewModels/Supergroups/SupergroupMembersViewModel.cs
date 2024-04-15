@@ -99,7 +99,12 @@ namespace Telegram.ViewModels.Supergroups
                 if (chat.Type is ChatTypeBasicGroup)
                 {
                     var response = await ClientService.SendAsync(new AddChatMember(chat.Id, selected[0].Id, 100));
-                    if (response is Error error)
+                    if (response is FailedToAddMembers failed && failed.FailedToAddMembersValue.Count > 0)
+                    {
+                        var popup = new ChatInviteFallbackPopup(ClientService, chat.Id, failed.FailedToAddMembersValue);
+                        await ShowPopupAsync(popup);
+                    }
+                    else if (response is Error error)
                     {
                         ShowPopup(error.Message, Strings.AppName);
                     }
@@ -107,7 +112,12 @@ namespace Telegram.ViewModels.Supergroups
                 else
                 {
                     var response = await ClientService.SendAsync(new AddChatMembers(chat.Id, selected.Select(x => x.Id).ToArray()));
-                    if (response is Error error)
+                    if (response is FailedToAddMembers failed && failed.FailedToAddMembersValue.Count > 0)
+                    {
+                        var popup = new ChatInviteFallbackPopup(ClientService, chat.Id, failed.FailedToAddMembersValue);
+                        await ShowPopupAsync(popup);
+                    }
+                    else if (response is Error error)
                     {
                         ShowPopup(error.Message, Strings.AppName);
                     }

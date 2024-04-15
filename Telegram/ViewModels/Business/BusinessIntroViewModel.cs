@@ -15,11 +15,11 @@ namespace Telegram.ViewModels.Business
 
         protected override Task OnNavigatedToAsync(UserFullInfo cached, NavigationMode mode, NavigationState state)
         {
-            _cached = cached?.BusinessInfo?.Intro.ToInput();
+            _cached = cached?.BusinessInfo?.StartPage.ToInput();
 
-            Title = cached?.BusinessInfo?.Intro?.Title ?? string.Empty;
-            Message = cached?.BusinessInfo?.Intro?.Message ?? string.Empty;
-            Sticker = cached?.BusinessInfo?.Intro?.Sticker;
+            Title = cached?.BusinessInfo?.StartPage?.Title ?? string.Empty;
+            Message = cached?.BusinessInfo?.StartPage?.Message ?? string.Empty;
+            Sticker = cached?.BusinessInfo?.StartPage?.Sticker;
 
             return Task.CompletedTask;
         }
@@ -41,7 +41,7 @@ namespace Telegram.ViewModels.Business
             set => Invalidate(ref _title, value);
         }
 
-        public int TitleMaxLength => (int)ClientService.Options.BusinessIntroTitleLengthMax;
+        public int TitleMaxLength => (int)ClientService.Options.BusinessStartPageTitleLengthMax;
 
         private string _message;
         public string Message
@@ -50,7 +50,7 @@ namespace Telegram.ViewModels.Business
             set => Invalidate(ref _message, value);
         }
 
-        public int MessageMaxLength => (int)ClientService.Options.BusinessIntroMessageLengthMax;
+        public int MessageMaxLength => (int)ClientService.Options.BusinessStartPageMessageLengthMax;
 
         private Sticker _sticker;
         public Sticker Sticker
@@ -105,7 +105,7 @@ namespace Telegram.ViewModels.Business
                 return;
             }
 
-            var response = await ClientService.SendAsync(new SetBusinessIntro(settings));
+            var response = await ClientService.SendAsync(new SetBusinessStartPage(settings));
             if (response is Ok)
             {
                 NavigationService.GoBack();
@@ -116,8 +116,8 @@ namespace Telegram.ViewModels.Business
             }
         }
 
-        private InputBusinessIntro _cached;
-        private InputBusinessIntro GetSettings()
+        private InputBusinessStartPage _cached;
+        private InputBusinessStartPage GetSettings()
         {
             if (string.IsNullOrEmpty(Title)
                 && string.IsNullOrEmpty(Message)
@@ -126,7 +126,7 @@ namespace Telegram.ViewModels.Business
                 return null;
             }
 
-            return new InputBusinessIntro
+            return new InputBusinessStartPage
             {
                 Title = Title ?? string.Empty,
                 Message = Message ?? string.Empty,

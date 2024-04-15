@@ -639,7 +639,7 @@ namespace Telegram.ViewModels
                     return;
                 }
 
-                MessageHelper.CopyLink(ClientService, new InternalLinkTypePublicChat(username));
+                MessageHelper.CopyLink(ClientService, new InternalLinkTypePublicChat(username, string.Empty));
             }
             else
             {
@@ -649,7 +649,7 @@ namespace Telegram.ViewModels
                     return;
                 }
 
-                MessageHelper.CopyLink(ClientService, new InternalLinkTypePublicChat(username));
+                MessageHelper.CopyLink(ClientService, new InternalLinkTypePublicChat(username, string.Empty));
             }
         }
 

@@ -5520,8 +5520,8 @@ namespace Telegram.Views
             {
                 FindName(nameof(EmptyChatRoot));
 
-                var title = fullInfo?.BusinessInfo?.Intro?.Title;
-                var message = fullInfo?.BusinessInfo?.Intro?.Message;
+                var title = fullInfo?.BusinessInfo?.StartPage?.Title;
+                var message = fullInfo?.BusinessInfo?.StartPage?.Message;
 
                 EmptyChatTitle.Text = string.IsNullOrEmpty(title)
                     ? Strings.NoMessages
@@ -5530,7 +5530,7 @@ namespace Telegram.Views
                     ? Strings.NoMessagesGreetingsDescription
                     : message;
 
-                var sticker = fullInfo?.BusinessInfo?.Intro?.Sticker ?? ViewModel.GreetingSticker;
+                var sticker = fullInfo?.BusinessInfo?.StartPage?.Sticker ?? ViewModel.GreetingSticker;
                 if (sticker != null)
                 {
                     EmptyChatAnimated.Source = new DelayedFileSource(ViewModel.ClientService, sticker);
@@ -5543,7 +5543,7 @@ namespace Telegram.Views
                 TextBlockHelper.SetMarkdown(EmptyChatHow, string.Format(Strings.GreetingHow, user.FirstName));
 
                 EmptyChatRoot.Visibility = Visibility.Visible;
-                EmptyChatHowRoot.Visibility = fullInfo?.BusinessInfo?.Intro != null
+                EmptyChatHowRoot.Visibility = fullInfo?.BusinessInfo?.StartPage != null
                     ? Visibility.Visible
                     : Visibility.Collapsed;
             }
@@ -5562,9 +5562,9 @@ namespace Telegram.Views
         {
             if (ViewModel.ClientService.TryGetUserFull(ViewModel.Chat, out UserFullInfo fullInfo))
             {
-                if (fullInfo.BusinessInfo?.Intro?.Sticker != null)
+                if (fullInfo.BusinessInfo?.StartPage?.Sticker != null)
                 {
-                    ViewModel.SendSticker(fullInfo.BusinessInfo.Intro.Sticker, false, false);
+                    ViewModel.SendSticker(fullInfo.BusinessInfo.StartPage.Sticker, false, false);
                     return;
                 }
             }
