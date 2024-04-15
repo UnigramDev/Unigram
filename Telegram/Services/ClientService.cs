@@ -657,7 +657,7 @@ namespace Telegram.Services
         {
             _waitGreetingSticker = true;
 
-            Send(new SearchStickers(new StickerTypeRegular(), "\U0001F44B\u2B50", 200), result =>
+            Send(new GetGreetingStickers(), result =>
             {
                 if (result is Stickers stickers && stickers.StickersValue.Count > 0)
                 {
