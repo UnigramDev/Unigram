@@ -18,9 +18,8 @@
                        TextWrapping="Wrap"
                        TextAlignment="Center">
                 <Run x:Name="Symbol" /><Run Text="&#xEA7E;"
-                                            FontFamily="{StaticResource SymbolThemeFontFamily}" />
-                <Run x:Name="Amount" /><Run x:Name="Decimal"
-                                            FontSize="20" />
+                                            FontFamily="{StaticResource SymbolThemeFontFamily}" /><Run x:Name="Amount" /><Run x:Name="Decimal"
+                                                                                                                              FontSize="20" />
             </TextBlock>
 
             <TextBlock x:Name="Date"

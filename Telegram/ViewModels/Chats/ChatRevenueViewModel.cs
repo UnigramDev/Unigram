@@ -11,6 +11,8 @@ using Telegram.Navigation;
 using Telegram.Navigation.Services;
 using Telegram.Services;
 using Telegram.Td.Api;
+using Telegram.ViewModels.Supergroups;
+using Telegram.Views.Chats.Popups;
 using Telegram.Views.Monetization.Popups;
 using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Navigation;
@@ -19,11 +21,13 @@ namespace Telegram.ViewModels.Chats
 {
     public class ChatRevenueViewModel : ViewModelBase, IIncrementalCollectionOwner
     {
+        private ChatBoostStatus _status;
+        private ChatBoostFeatures _features;
+
         public ChatRevenueViewModel(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator)
             : base(clientService, settingsService, aggregator)
         {
             Items = new IncrementalCollection<ChatRevenueTransaction>(this);
-            HasMoreItems = ClientService.Options.CanWithdrawChatRevenue;
         }
 
         private double _headerHeight;
@@ -75,7 +79,7 @@ namespace Telegram.ViewModels.Chats
             set => Set(ref _totalAmount, value);
         }
 
-        private bool _isEmpty;
+        private bool _isEmpty = true;
         public bool IsEmpty
         {
             get => _isEmpty;
@@ -88,6 +92,22 @@ namespace Telegram.ViewModels.Chats
             get => _isOwner;
             set => Set(ref _isOwner, value);
         }
+
+        private bool _disableSponsoredMessages;
+        public bool DisableSponsoredMessages
+        {
+            get => _disableSponsoredMessages;
+            set => Set(ref _disableSponsoredMessages, value);
+        }
+
+        private int _minSponsoredMessageDisableBoostLevel;
+        public int MinSponsoredMessageDisableBoostLevel
+        {
+            get => _minSponsoredMessageDisableBoostLevel;
+            set => Set(ref _minSponsoredMessageDisableBoostLevel, value);
+        }
+
+        public bool CanWithdrawChatRevenue => AvailableAmount?.CryptocurrencyAmount > 0 && ClientService.Options.CanWithdrawChatRevenue;
 
         public IncrementalCollection<ChatRevenueTransaction> Items { get; }
 
@@ -104,11 +124,16 @@ namespace Telegram.ViewModels.Chats
                 IsOwner = supergroup.Status is ChatMemberStatusCreator;
             }
 
+            if (ClientService.TryGetSupergroupFull(Chat, out SupergroupFullInfo fullInfo))
+            {
+                DisableSponsoredMessages = !fullInfo.CanHaveSponsoredMessages;
+            }
+
             var response = await ClientService.SendAsync(new GetChatRevenueStatistics(chatId, false));
             if (response is ChatRevenueStatistics statistics)
             {
                 Impressions = ChartViewData.Create(statistics.RevenueByHourGraph, Strings.MonetizationGraphImpressions, 5);
-                Revenue = ChartViewData.Create(statistics.RevenueGraph, Strings.MonetizationGraphRevenue, 2);
+                Revenue = ChartViewData.Create(statistics.RevenueGraph, Strings.MonetizationGraphRevenue, 7);
 
                 AvailableAmount = new CryptoAmount
                 {
@@ -130,6 +155,24 @@ namespace Telegram.ViewModels.Chats
                     CryptocurrencyAmount = statistics.CryptocurrencyTotalAmount,
                     UsdRate = statistics.UsdRate,
                 };
+
+                RaisePropertyChanged(nameof(CanWithdrawChatRevenue));
+            }
+
+            var response1 = await ClientService.SendAsync(new GetChatBoostFeatures(Chat.Type is ChatTypeSupergroup { IsChannel: true }));
+            var response2 = await ClientService.SendAsync(new GetChatBoostStatus(Chat.Id));
+
+            if (response1 is ChatBoostFeatures features && response2 is ChatBoostStatus status)
+            {
+                _features = features;
+                _status = status;
+
+                int MinLevelOrZero(int level)
+                {
+                    return level < status.Level ? 0 : level;
+                }
+
+                MinSponsoredMessageDisableBoostLevel = MinLevelOrZero(features.MinSponsoredMessageDisableBoostLevel);
             }
 
             IsLoading = false;
@@ -160,6 +203,29 @@ namespace Telegram.ViewModels.Chats
             await ShowPopupAsync(new LearnMorePopup());
         }
 
+        public async void ToggleSponsoredMessages()
+        {
+            if (Chat is not Chat chat)
+            {
+                return;
+            }
+
+            var response = await ClientService.SendAsync(new GetChatBoostStatus(chat.Id));
+            if (response is not ChatBoostStatus status || _features == null || !ClientService.TryGetSupergroup(Chat, out Supergroup supergroup))
+            {
+                return;
+            }
+
+            if (_features.MinSponsoredMessageDisableBoostLevel > status.Level)
+            {
+                await ShowPopupAsync(new ChatBoostFeaturesPopup(ClientService, NavigationService, chat, status, null, _features, ChatBoostFeature.DisableSponsoredMessages, _features.MinSponsoredMessageDisableBoostLevel));
+                return;
+            }
+
+            ClientService.Send(new ToggleSupergroupCanHaveSponsoredMessages(supergroup.Id, DisableSponsoredMessages));
+            DisableSponsoredMessages = !DisableSponsoredMessages;
+        }
+
         public async Task<LoadMoreItemsResult> LoadMoreItemsAsync(uint count)
         {
             var totalCount = 0u;
@@ -175,6 +241,7 @@ namespace Telegram.ViewModels.Chats
             }
 
             HasMoreItems = totalCount > 0;
+            IsEmpty = Items.Count == 0;
             
             return new LoadMoreItemsResult
             {

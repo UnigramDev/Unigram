@@ -85,6 +85,12 @@ namespace Telegram.Controls.Cells
                     //zoomedChartView = new DoubleLinearChartView();
                     //zoomedChartView.legendSignatureView.useHour = true;
                     break;
+                case 7:
+                    chartView = new StackBarChartView();
+                    chartView.useCrypto = true;
+                    //zoomedChartView = new StackBarChartView();
+                    //zoomedChartView.legendSignatureView.useHour = true;
+                    break;
                 default:
                     chartView = new LinearChartView();
                     //zoomedChartView = new LinearChartView();

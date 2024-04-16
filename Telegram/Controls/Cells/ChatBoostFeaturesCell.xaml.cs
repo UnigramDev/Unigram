@@ -21,33 +21,35 @@ namespace Telegram.Controls.Cells
         public void UpdateCell(bool channel, ChatBoostLevelFeatures features, int index)
         {
             Level.Text = string.Format(index == 0 ? Strings.BoostLevelUnlocks : Strings.BoostLevel, features.Level);
+            var i = 0;
 
             if (channel)
             {
-                UpdateFeature(0, features.StoryPerDayCount, StoriesIcon, StoriesText, Strings.R.BoostFeatureStoriesPerDay);
-                UpdateFeature(1, features.CustomEmojiReactionCount, ReactionsIcon, ReactionsText, Strings.R.BoostFeatureCustomReaction);
-                UpdateFeature(2, features.TitleColorCount, NameColorsIcon, NameColorsText, Strings.R.BoostFeatureNameColor);
-                UpdateFeature(3, features.AccentColorCount, StylesIcon, StylesText, Strings.R.BoostFeatureReplyColor);
-                UpdateFeature(4, features.CanSetBackgroundCustomEmoji, NameIconsIcon, NameIconsText, Strings.BoostFeatureReplyIcon);
-                UpdateFeature(5, features.CanSetEmojiStatus, EmojiStatusIcon, EmojiStatusText, string.Format(Strings.BoostFeatureEmojiStatuses, "**1000+**"));
-                UpdateFeature(6, features.ProfileAccentColorCount, ProfileColorsIcon, ProfileColorsText, Strings.R.BoostFeatureProfileColor);
-                UpdateFeature(7, features.CanSetProfileBackgroundCustomEmoji, ProfileIconsIcon, ProfileIconsText, Strings.BoostFeatureProfileIcon);
-                UpdateFeature(8, features.ChatThemeBackgroundCount, BackgroundsIcon, BackgroundsText, Strings.R.BoostFeatureBackground);
-                UpdateFeature(9, features.CanSetCustomBackground, CustomBackgroundIcon, CustomBackgroundText, Strings.BoostFeatureCustomBackground);
+                UpdateFeature(i++, features.CanDisableSponsoredMessages, DisableSponsoredIcon, DisableSponsoredText, Strings.BoostFeatureSwitchOffAds);
+                UpdateFeature(i++, features.StoryPerDayCount, StoriesIcon, StoriesText, Strings.R.BoostFeatureStoriesPerDay);
+                UpdateFeature(i++, features.CustomEmojiReactionCount, ReactionsIcon, ReactionsText, Strings.R.BoostFeatureCustomReaction);
+                UpdateFeature(i++, features.TitleColorCount, NameColorsIcon, NameColorsText, Strings.R.BoostFeatureNameColor);
+                UpdateFeature(i++, features.AccentColorCount, StylesIcon, StylesText, Strings.R.BoostFeatureReplyColor);
+                UpdateFeature(i++, features.CanSetBackgroundCustomEmoji, NameIconsIcon, NameIconsText, Strings.BoostFeatureReplyIcon);
+                UpdateFeature(i++, features.CanSetEmojiStatus, EmojiStatusIcon, EmojiStatusText, string.Format(Strings.BoostFeatureEmojiStatuses, "**1000+**"));
+                UpdateFeature(i++, features.ProfileAccentColorCount, ProfileColorsIcon, ProfileColorsText, Strings.R.BoostFeatureProfileColor);
+                UpdateFeature(i++, features.CanSetProfileBackgroundCustomEmoji, ProfileIconsIcon, ProfileIconsText, Strings.BoostFeatureProfileIcon);
+                UpdateFeature(i++, features.ChatThemeBackgroundCount, BackgroundsIcon, BackgroundsText, Strings.R.BoostFeatureBackground);
+                UpdateFeature(i++, features.CanSetCustomBackground, CustomBackgroundIcon, CustomBackgroundText, Strings.BoostFeatureCustomBackground);
 
                 Collapse(VoiceToTextIcon, VoiceToTextText);
                 Collapse(CustomEmojiPackIcon, CustomEmojiPackText);
             }
             else
             {
-                UpdateFeature(0, features.CanSetCustomBackground, CustomBackgroundIcon, CustomBackgroundText, Strings.BoostFeatureCustomBackgroundGroup);
-                UpdateFeature(1, features.ChatThemeBackgroundCount, BackgroundsIcon, BackgroundsText, Strings.R.BoostFeatureBackgroundGroup);
-                UpdateFeature(2, features.CanSetEmojiStatus, EmojiStatusIcon, EmojiStatusText, string.Format(Strings.BoostFeatureEmojiStatuses, "**1000+**"));
-                UpdateFeature(3, features.CanRecognizeSpeech, VoiceToTextIcon, VoiceToTextText, Strings.BoostFeatureVoiceToTextConversion);
-                UpdateFeature(4, features.CanSetProfileBackgroundCustomEmoji, ProfileIconsIcon, ProfileIconsText, Strings.BoostFeatureProfileIconGroup);
-                UpdateFeature(5, features.CanSetCustomEmojiStickerSet, CustomEmojiPackIcon, CustomEmojiPackText, Strings.BoostFeatureCustomEmojiPack);
-                UpdateFeature(6, features.ProfileAccentColorCount, ProfileColorsIcon, ProfileColorsText, Strings.R.BoostFeatureProfileColorGroup);
-                UpdateFeature(7, features.StoryPerDayCount, StoriesIcon, StoriesText, Strings.R.BoostFeatureStoriesPerDay);
+                UpdateFeature(i++, features.CanSetCustomBackground, CustomBackgroundIcon, CustomBackgroundText, Strings.BoostFeatureCustomBackgroundGroup);
+                UpdateFeature(i++, features.ChatThemeBackgroundCount, BackgroundsIcon, BackgroundsText, Strings.R.BoostFeatureBackgroundGroup);
+                UpdateFeature(i++, features.CanSetEmojiStatus, EmojiStatusIcon, EmojiStatusText, string.Format(Strings.BoostFeatureEmojiStatuses, "**1000+**"));
+                UpdateFeature(i++, features.CanRecognizeSpeech, VoiceToTextIcon, VoiceToTextText, Strings.BoostFeatureVoiceToTextConversion);
+                UpdateFeature(i++, features.CanSetProfileBackgroundCustomEmoji, ProfileIconsIcon, ProfileIconsText, Strings.BoostFeatureProfileIconGroup);
+                UpdateFeature(i++, features.CanSetCustomEmojiStickerSet, CustomEmojiPackIcon, CustomEmojiPackText, Strings.BoostFeatureCustomEmojiPack);
+                UpdateFeature(i++, features.ProfileAccentColorCount, ProfileColorsIcon, ProfileColorsText, Strings.R.BoostFeatureProfileColorGroup);
+                UpdateFeature(i++, features.StoryPerDayCount, StoriesIcon, StoriesText, Strings.R.BoostFeatureStoriesPerDay);
 
                 Collapse(ReactionsIcon, ReactionsText);
                 Collapse(NameColorsIcon, NameColorsText);

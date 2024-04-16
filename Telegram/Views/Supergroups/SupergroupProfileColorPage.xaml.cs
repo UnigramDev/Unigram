@@ -59,7 +59,8 @@ namespace Telegram.Views.Supergroups
             else
             {
                 FindName(nameof(WallpaperPreview));
-                FindName(nameof(EmojiPackRoot));
+                //FindName(nameof(EmojiPackRoot));
+                EmojiPackRoot.Visibility = Visibility.Visible;
 
                 if (ViewModel.ClientService.TryGetUser(ViewModel.ClientService.Options.MyId, out User user))
                 {
@@ -186,7 +187,7 @@ namespace Telegram.Views.Supergroups
             if (value > 0)
             {
                 element.Visibility = Visibility.Visible;
-                return Icons.LockCLosedFilled12 + Icons.Spacing + string.Format(Strings.BoostLevel, value);
+                return Icons.LockClosedFilled12 + Icons.Spacing + string.Format(Strings.BoostLevel, value);
             }
             else
             {

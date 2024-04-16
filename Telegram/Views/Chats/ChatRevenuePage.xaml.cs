@@ -3,6 +3,7 @@ using Telegram.Charts;
 using Telegram.Controls;
 using Telegram.Controls.Cells;
 using Telegram.Controls.Cells.Revenue;
+using Telegram.Controls.Media;
 using Telegram.Converters;
 using Telegram.Td.Api;
 using Telegram.ViewModels.Chats;
@@ -53,10 +54,10 @@ namespace Telegram.Views.Chats
             var doubleAmount = Formatter.Amount(value.CryptocurrencyAmount, value.Cryptocurrency);
             var stringAmount = doubleAmount.ToString(CultureInfo.InvariantCulture).Split('.');
             var integerAmount = long.Parse(stringAmount[0]);
-            var decimalAmount = stringAmount.Length > 0 ? stringAmount[1] : "0";
+            var decimalAmount = stringAmount.Length > 1 ? stringAmount[1] : "0";
 
             CryptocurrencyAmountLabel.Text = integerAmount.ToString("N0");
-            CryptocurrencyDecimalLabel.Text = string.Format(".{0}", decimalAmount);
+            CryptocurrencyDecimalLabel.Text = string.Format(".{0}", decimalAmount.PadRight(2, '0'));
 
             AmountLabel.Text = string.Format("~{0}", Formatter.FormatAmount((long)(value.CryptocurrencyAmount * value.UsdRate), "USD"));
         }
@@ -98,5 +99,35 @@ namespace Telegram.Views.Chats
                 cell.UpdateInfo(info);
             }
         }
+
+        #region Binding
+
+        private string ConvertRequiredLevel(int value, UIElement element)
+        {
+            if (value > 0)
+            {
+                element.Visibility = Visibility.Visible;
+                return Icons.LockClosedFilled12 + Icons.Spacing + string.Format(Strings.BoostLevel, value);
+            }
+            else
+            {
+                element.Visibility = Visibility.Collapsed;
+                return string.Empty;
+            }
+        }
+
+        private string ConvertTransferInfo(bool canWithdraw, bool owner)
+        {
+            if (owner)
+            {
+                return canWithdraw
+                    ? Strings.MonetizationBalanceInfo
+                    : Strings.MonetizationBalanceInfoNotAvailable;
+            }
+
+            return string.Empty;
+        }
+
+        #endregion
     }
 }

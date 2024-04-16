@@ -21,6 +21,7 @@
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="Auto" />
@@ -194,6 +195,18 @@
                    FontSize="20"
                    Grid.Row="10" />
         <TextBlock x:Name="CustomEmojiPackText"
+                   Style="{StaticResource BodyTextBlockStyle}"
+                   Grid.Column="1"
+                   Grid.Row="10" />
+
+        <TextBlock x:Name="DisableSponsoredIcon"
+                   Text="&#xEA88;"
+                   Foreground="{ThemeResource InkToolbarAccentColorThemeBrush}"
+                   FontFamily="{StaticResource SymbolThemeFontFamily}"
+                   Margin="0,0,8,8"
+                   FontSize="20"
+                   Grid.Row="10" />
+        <TextBlock x:Name="DisableSponsoredText"
                    Style="{StaticResource BodyTextBlockStyle}"
                    Grid.Column="1"
                    Grid.Row="10" />

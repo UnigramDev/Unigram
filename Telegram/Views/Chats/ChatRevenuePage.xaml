@@ -23,6 +23,7 @@
 
                     <controls:SettingsFooter x:Name="FooterInfo"
                                              IsLink="True"
+                                             Click="{x:Bind ViewModel.LearnMore}"
                                              Text="{CustomResource MonetizationInfo}" />
 
                     <ContentControl Content="{x:Bind ViewModel.Impressions, Mode=OneWay}">
@@ -61,7 +62,7 @@
 
                     <controls:HeaderedControl IsFooterLink="True"
                                               Header="{CustomResource MonetizationBalance}"
-                                              Footer="{CustomResource MonetizationBalanceInfo}">
+                                              Footer="{x:Bind ConvertTransferInfo(ViewModel.CanWithdrawChatRevenue, ViewModel.IsOwner), Mode=OneWay}">
                         <StackPanel Background="{ThemeResource SettingsItemBackground}">
                             <TextBlock TextAlignment="Center"
                                        Margin="0,8,0,0">
@@ -82,6 +83,7 @@
                             <Button x:Name="TransferButton"
                                     x:Load="{x:Bind ViewModel.IsOwner}"
                                     Click="{x:Bind ViewModel.Transfer}"
+                                    IsEnabled="{x:Bind ViewModel.CanWithdrawChatRevenue, Mode=OneWay}"
                                     Content="{CustomResource MonetizationTransactionWithdraw}"
                                     Style="{StaticResource AccentButtonStyle}"
                                     HorizontalAlignment="Center"
@@ -112,37 +114,27 @@
                     <controls:HeaderedControl x:Name="SwitchOffRoot"
                                               x:Load="{x:Bind ViewModel.IsOwner}"
                                               Footer="{CustomResource MonetizationSwitchOffInfo}">
-                        <Grid BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}">
-                            <controls:FauxCheckBox Click="{x:Bind ViewModel.LearnMore}"
-                                                   IsFaux="True"
-                                                   IsChevronVisible="{x:Bind ViewModel.IsPremium, Mode=OneWay}"
-                                                   Style="{StaticResource SettingsCheckBoxStyle}">
-                                <Grid>
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition />
-                                        <ColumnDefinition />
-                                    </Grid.ColumnDefinitions>
-                                    <TextBlock Text="{CustomResource MonetizationSwitchOff}" />
-                                    <controls:BadgeControl x:Name="DisableInfo"
-                                                           Text="&#xe9dd; Level 50"
-                                                           Background="{ThemeResource PremiumLinearGradientBrush}"
-                                                           FontFamily="{StaticResource EmojiThemeFontFamilyWithSymbols}"
-                                                           FontWeight="SemiBold"
-                                                           VerticalAlignment="Bottom"
-                                                           CornerRadius="4"
-                                                           Margin="4,0,0,0"
-                                                           Grid.Column="1" />
-                                </Grid>
-                            </controls:FauxCheckBox>
-                            <TextBlock x:Name="DisableLock"
-                                       x:Load="{x:Bind ViewModel.IsPremium, Mode=OneWay, Converter={StaticResource BooleanNegationConverter}}"
-                                       Text="&#xEA25;"
-                                       Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"
-                                       FontFamily="{StaticResource SymbolThemeFontFamily}"
-                                       FontSize="20"
-                                       Padding="20,12,0,0"
-                                       IsHitTestVisible="False" />
-                        </Grid>
+                        <controls:FauxCheckBox Click="{x:Bind ViewModel.ToggleSponsoredMessages}"
+                                               IsChecked="{x:Bind ViewModel.DisableSponsoredMessages, Mode=OneWay}"
+                                               IsFaux="True"
+                                               Style="{StaticResource SettingsCheckBoxStyle}">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition />
+                                    <ColumnDefinition />
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Text="{CustomResource MonetizationSwitchOff}" />
+                                <controls:BadgeControl x:Name="DisableInfo"
+                                                       Text="{x:Bind ConvertRequiredLevel(ViewModel.MinSponsoredMessageDisableBoostLevel, DisableInfo), Mode=OneWay}"
+                                                       Background="{ThemeResource PremiumLinearGradientBrush}"
+                                                       FontFamily="{StaticResource EmojiThemeFontFamilyWithSymbols}"
+                                                       FontWeight="SemiBold"
+                                                       VerticalAlignment="Bottom"
+                                                       CornerRadius="4"
+                                                       Margin="4,0,0,0"
+                                                       Grid.Column="1" />
+                            </Grid>
+                        </controls:FauxCheckBox>
                     </controls:HeaderedControl>
                 </controls:SettingsPanel>
             </ListView.Footer>

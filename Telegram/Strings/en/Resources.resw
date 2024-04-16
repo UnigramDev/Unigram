@@ -1444,6 +1444,28 @@ Please enable Unigram in the Startup Apps Settings.</value>
   <data name="BirthdaySetupTitle" xml:space="preserve">
     <value>Add your birthday! 🎂</value>
   </data>
+  <data name="BizBotManage" xml:space="preserve">
+    <value>Manage bot</value>
+  </data>
+  <data name="BizBotRemove" xml:space="preserve">
+    <value>Remove bot
+from this chat</value>
+  </data>
+  <data name="BizBotStart" xml:space="preserve">
+    <value>Start</value>
+  </data>
+  <data name="BizBotStatusAccess" xml:space="preserve">
+    <value>bot has access to this chat</value>
+  </data>
+  <data name="BizBotStatusManages" xml:space="preserve">
+    <value>bot manages this chat</value>
+  </data>
+  <data name="BizBotStatusStopped" xml:space="preserve">
+    <value>bot paused</value>
+  </data>
+  <data name="BizBotStop" xml:space="preserve">
+    <value>Stop</value>
+  </data>
   <data name="Black" xml:space="preserve">
     <value>Black</value>
   </data>
@@ -1551,6 +1573,9 @@ Please enable Unigram in the Startup Apps Settings.</value>
   </data>
   <data name="BoostFeatureStoriesPerDay_other" xml:space="preserve">
     <value>{0} Stories Per Day</value>
+  </data>
+  <data name="BoostFeatureSwitchOffAds" xml:space="preserve">
+    <value>Switch Off Ads</value>
   </data>
   <data name="BoostFeatureVoiceToTextConversion" xml:space="preserve">
     <value>Voice-to-Text Conversion</value>
@@ -1841,7 +1866,7 @@ a **Telegram Premium** subscription.</value>
 from **{0}**.</value>
   </data>
   <data name="BoostingReceivedGiftNoName" xml:space="preserve">
-    <value>You&apos;ve received a gift.</value>
+    <value>You received a gift.</value>
   </data>
   <data name="BoostingReceivedGiftOpenBtn" xml:space="preserve">
     <value>Open Gift Link</value>
@@ -2203,7 +2228,7 @@ It will be able to access your **IP address** and basic device info.</value>
     <value>Choose how many days should pass after your last interaction with a recipient to send them a greeting in response to their message.</value>
   </data>
   <data name="BusinessGreetRecipientsInfo" xml:space="preserve">
-    <value>Select chats or entire chat categories for sending a greeting message.</value>
+    <value>Select chats or entire chat categories for sending greeting messages.</value>
   </data>
   <data name="BusinessGreetSend" xml:space="preserve">
     <value>Send Greeting Message</value>
@@ -2335,7 +2360,7 @@ It will be able to access your **IP address** and basic device info.</value>
     <value>Enter Title</value>
   </data>
   <data name="BusinessIntroUnsavedChanges" xml:space="preserve">
-    <value>You have changed your intro message. Apply changes?</value>
+    <value>You have changed your start page. Apply changes?</value>
   </data>
   <data name="BusinessLink" xml:space="preserve">
     <value>Link to Chat</value>
@@ -2449,7 +2474,7 @@ It will be able to access your **IP address** and basic device info.</value>
     <value>Remove quick replies</value>
   </data>
   <data name="BusinessRepliesEditMessage" xml:space="preserve">
-    <value>Edit a name for a shortcut.</value>
+    <value>Change the name of your shortcut.</value>
   </data>
   <data name="BusinessRepliesEditTitle" xml:space="preserve">
     <value>Edit Shortcut</value>
@@ -2467,7 +2492,7 @@ It will be able to access your **IP address** and basic device info.</value>
     <value>Enter a message below that will be sent in chat when you type &quot;/**{0}**&quot;.</value>
   </data>
   <data name="BusinessRepliesIntro2" xml:space="preserve">
-    <value>You can access Quick Replies in any chat by typing &quot;/&quot; or using Attachment menu.</value>
+    <value>You can access Quick Replies in any chat by typing &quot;/&quot; or using the attachment menu.</value>
   </data>
   <data name="BusinessRepliesIntroTitle" xml:space="preserve">
     <value>New Quick Reply</value>
@@ -2901,6 +2926,11 @@ Ask your Premium subscribers to boost your channel with this link:</value>
   </data>
   <data name="ChannelNeedBoostsForReplyIconDescription" xml:space="preserve">
     <value>Your channel needs to reach **Level {0}** to change channel link style icon. **Premium** users can boost your channel with this link:</value>
+  </data>
+  <data name="ChannelNeedBoostsForSwitchOffAdsDescription" xml:space="preserve">
+    <value>Your channel needs to reach **Level {0}** to switch off ads.
+
+Ask your **Premium** subscribers to boost your channel with this link:</value>
   </data>
   <data name="ChannelNeedBoostsForWallpaperDescription" xml:space="preserve">
     <value>Your channel needs to reach **Level {0}** to change channel wallpaper. **Premium** users can boost your channel with this link:</value>
@@ -3872,6 +3902,12 @@ Anyone from the channel will be able to see messages in this group.</value>
   <data name="DownloadSelected" xml:space="preserve">
     <value>Download Selected</value>
   </data>
+  <data name="DownloadSpeedLimited" xml:space="preserve">
+    <value>Download speed limited</value>
+  </data>
+  <data name="DownloadSpeedLimitedMessage" xml:space="preserve">
+    <value>Subscribe to **Telegram Premium** to increase download speeds {0} times.</value>
+  </data>
   <data name="DownloadsTabs" xml:space="preserve">
     <value>Downloads</value>
   </data>
@@ -3882,7 +3918,7 @@ Anyone from the channel will be able to see messages in this group.</value>
     <value>Dynamic Pack Order</value>
   </data>
   <data name="DynamicPackOrderInfo" xml:space="preserve">
-    <value>Automatically place recently used sticker packs above others.</value>
+    <value>Automatically place recently used sticker sets above others.</value>
   </data>
   <data name="Edit" xml:space="preserve">
     <value>Edit</value>
@@ -4018,7 +4054,7 @@ Anyone from the channel will be able to see messages in this group.</value>
 If the number above is correct, please wait for the verification code.</value>
   </data>
   <data name="EditProfile" xml:space="preserve">
-    <value>Edit profile</value>
+    <value>Edit Profile</value>
   </data>
   <data name="EditProfileBio" xml:space="preserve">
     <value>Your bio</value>
@@ -4063,7 +4099,7 @@ If the number above is correct, please wait for the verification code.</value>
     <value>Add</value>
   </data>
   <data name="EditProfileChannelHide" xml:space="preserve">
-    <value>Hide Personal Channel</value>
+    <value>Hide Channel</value>
   </data>
   <data name="EditProfileChannelSelect" xml:space="preserve">
     <value>Select your channel</value>
@@ -5257,7 +5293,7 @@ They can still join via an invite link as long as they are not on the Removed Us
     <value>Group Wallpaper</value>
   </data>
   <data name="GroupWallpaper2Info" xml:space="preserve">
-    <value>Set a wallpaper that will be visible for everyone reading your group.</value>
+    <value>Set a wallpaper that will be visible for everyone viewing your group.</value>
   </data>
   <data name="GrowthChartTitle" xml:space="preserve">
     <value>Growth</value>
@@ -6139,6 +6175,9 @@ Minimum length is 5 characters.</value>
   </data>
   <data name="MonetizationBalanceInfo" xml:space="preserve">
     <value>You can collect your reward using Fragment, a third-party platform used by advertisers to pay for ads. **Learn more &gt;**</value>
+  </data>
+  <data name="MonetizationBalanceInfoNotAvailable" xml:space="preserve">
+    <value>In the coming weeks you will be able to collect your reward using Fragment, a third-party platform used by advertisers to pay ads. **Learn more &gt;**</value>
   </data>
   <data name="MonetizationDoneWithdraw" xml:space="preserve">
     <value>Withdrawal Complete</value>
@@ -8811,7 +8850,7 @@ The channel &quot;**{1}**&quot; will become private.</value>
     <value>Spoiler</value>
   </data>
   <data name="SponsoredMessage" xml:space="preserve">
-    <value>sponsored</value>
+    <value>ad</value>
   </data>
   <data name="Start" xml:space="preserve">
     <value>Start</value>
@@ -8896,7 +8935,7 @@ and enter your phone number.</value>
     <value>Stickers and Emoji</value>
   </data>
   <data name="StickersNameInfo" xml:space="preserve">
-    <value>Manage your sticker packs, emoji and reactions.</value>
+    <value>Manage your sticker sets, emoji and reactions.</value>
   </data>
   <data name="StickersRemove" xml:space="preserve">
     <value>Remove</value>
@@ -9689,6 +9728,12 @@ If you are not comfortable with Telegram&apos;s modest needs, it won&apos;t be p
   <data name="UploadSound" xml:space="preserve">
     <value>Upload sound</value>
   </data>
+  <data name="UploadSpeedLimited" xml:space="preserve">
+    <value>Upload speed limited</value>
+  </data>
+  <data name="UploadSpeedLimitedMessage" xml:space="preserve">
+    <value>Subscribe to **Telegram Premium** to increase upload speeds {0} times.</value>
+  </data>
   <data name="URL" xml:space="preserve">
     <value>URL</value>
   </data>
@@ -10012,7 +10057,7 @@ However, it is currently available for purchase. **Learn more…**</value>
     <value>Message Statistics</value>
   </data>
   <data name="ViewPackPreview" xml:space="preserve">
-    <value>View Pack</value>
+    <value>View Sticker Set</value>
   </data>
   <data name="ViewPhotoAction" xml:space="preserve">
     <value>View Photo</value>

@@ -41,10 +41,10 @@ namespace Telegram.Controls.Cells
             var doubleAmount = Formatter.Amount(value.CryptocurrencyAmount, value.Cryptocurrency);
             var stringAmount = doubleAmount.ToString(CultureInfo.InvariantCulture).Split('.');
             var integerAmount = long.Parse(stringAmount[0]);
-            var decimalAmount = stringAmount.Length > 0 ? stringAmount[1] : "0";
+            var decimalAmount = stringAmount.Length > 1 ? stringAmount[1] : "0";
 
             CryptocurrencyAmountLabel.Text = integerAmount.ToString("N0");
-            CryptocurrencyDecimalLabel.Text = string.Format(".{0}", decimalAmount);
+            CryptocurrencyDecimalLabel.Text = string.Format(".{0}", decimalAmount.PadRight(2, '0'));
 
             AmountLabel.Text = string.Format("~{0}", Formatter.FormatAmount((long)(value.CryptocurrencyAmount * value.UsdRate), "USD"));
         }

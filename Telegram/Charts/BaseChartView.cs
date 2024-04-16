@@ -65,6 +65,8 @@ namespace Telegram.Charts
 
         }
 
+        public bool useCrypto = false;
+
         public bool animateLegentTo = false;
 
         public bool legendShowing = false;
@@ -341,6 +343,7 @@ namespace Telegram.Charts
             canvas.PointerReleased += OnPointerReleased;
             //canvas.PointerCanceled += OnPointerReleased;
             //canvas.PointerCaptureLost += OnPointerReleased;
+            canvas.PointerExited += OnPointerExited;
 
             Children.Add(canvas);
 
@@ -369,6 +372,11 @@ namespace Telegram.Charts
             whiteLinePaint.StrokeCap = CanvasCapStyle.Round;
 
             UpdateColors();
+        }
+
+        private void OnPointerExited(object sender, PointerRoutedEventArgs e)
+        {
+            ClearSelection();
         }
 
         protected virtual LegendSignatureView CreateLegendView()
@@ -1295,7 +1303,7 @@ namespace Telegram.Charts
 
         protected virtual ChartHorizontalLinesData CreateHorizontalLinesData(int newMaxHeight, int newMinHeight)
         {
-            return new ChartHorizontalLinesData(newMaxHeight, newMinHeight, useMinHeight);
+            return new ChartHorizontalLinesData(newMaxHeight, newMinHeight, useMinHeight, useCrypto);
         }
 
         protected ValueAnimator CreateAnimator(float f1, float f2, AnimatorUpdateListener l)

@@ -72,11 +72,11 @@ namespace Telegram.Views.Monetization.Popups
             var doubleAmount = Formatter.Amount(Math.Abs(info.CryptocurrencyAmount), info.Cryptocurrency);
             var stringAmount = doubleAmount.ToString(CultureInfo.InvariantCulture).Split('.');
             var integerAmount = long.Parse(stringAmount[0]);
-            var decimalAmount = stringAmount.Length > 0 ? stringAmount[1] : "0";
+            var decimalAmount = stringAmount.Length > 1 ? stringAmount[1] : "0";
 
             Symbol.Text = info.CryptocurrencyAmount < 0 ? "-" : "+";
             Amount.Text = integerAmount.ToString("N0");
-            Decimal.Text = string.Format(".{0} {1}", decimalAmount, info.Cryptocurrency);
+            Decimal.Text = string.Format(".{0}", decimalAmount.PadRight(2, '0'));
 
             Title.Foreground = BootStrapper.Current.Resources[info.CryptocurrencyAmount < 0 ? "SystemFillColorCriticalBrush" : "SystemFillColorSuccessBrush"] as Brush;
         }

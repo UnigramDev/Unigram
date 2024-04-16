@@ -73,7 +73,7 @@
                 </controls:HeaderedControl>
 
                 <controls:HeaderedControl x:Name="EmojiPackRoot"
-                                          x:Load="False"
+                                          Visibility="Collapsed"
                                           Footer="{CustomResource GroupEmojiPackInfo}">
                     <Grid>
                         <controls:BadgeButton x:Name="EmojiPack"
