@@ -240,7 +240,7 @@
                 </controls:BadgeButton>
 
                 <controls:BadgeButton x:Name="Business"
-                                      x:Load="{x:Bind ViewModel.IsPremiumAvailable, Mode=OneWay}"
+                                      x:Load="{x:Bind ViewModel.IsBusinessAvailable, Mode=OneWay}"
                                       Click="Business_Click"
                                       Style="{StaticResource IconBadgeButtonStyle}">
                     <controls:BadgeButton.IconSource>

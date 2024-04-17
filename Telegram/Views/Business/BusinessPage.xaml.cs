@@ -1,5 +1,4 @@
-﻿using System.Linq;
-using Telegram.Common;
+﻿using Telegram.Common;
 using Telegram.Controls;
 using Telegram.Controls.Media;
 using Telegram.Converters;

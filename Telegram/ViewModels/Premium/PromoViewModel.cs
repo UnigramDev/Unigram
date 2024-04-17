@@ -130,7 +130,7 @@ namespace Telegram.ViewModels.Premium
 
         public async Task<bool> OpenAsync(PremiumFeature feature)
         {
-            var popup = new FeaturesPopup(ClientService, Option.PaymentOption, Features, BusinessFeatures, Limits, _animations, _stickers, feature);
+            var popup = new FeaturesPopup(ClientService, Option?.PaymentOption, Features, BusinessFeatures, Limits, _animations, _stickers, feature);
             await ShowPopupAsync(popup);
 
             if (popup.ShouldPurchase && !ClientService.IsPremium)

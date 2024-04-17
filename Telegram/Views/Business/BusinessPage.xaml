@@ -70,7 +70,8 @@
                 <controls:SettingsPanel>
                     <controls:SettingsHeadline x:Name="Headline" />
 
-                    <controls:HeaderedControl>
+                    <controls:HeaderedControl x:Name="PaymentOptions"
+                                              x:Load="{x:Bind ViewModel.CanPurchase, Mode=OneWay}">
                         <RadioButton IsChecked="{x:Bind ViewModel.IsAnnualOptionSelected, Mode=TwoWay}"
                                      ContentTemplate="{StaticResource PaymentOptionTemplate}"
                                      Content="{x:Bind ViewModel.AnnualOption, Mode=OneWay}"
@@ -159,7 +160,7 @@
                     CornerRadius="4"
                     Height="36" />
             <controls:BadgeButton x:Name="PurchaseCommand"
-                                  Click="Purchase_Click"
+                                  Click="{x:Bind ViewModel.Purchase}"
                                   Content="{x:Bind ConvertPurchase(ViewModel.IsPremium, ViewModel.SelectedOption), Mode=OneWay, FallbackValue=Empty}"
                                   Style="{StaticResource StartButtonStyle}"
                                   HorizontalAlignment="Stretch"

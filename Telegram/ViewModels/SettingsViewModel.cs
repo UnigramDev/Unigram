@@ -42,6 +42,8 @@ namespace Telegram.ViewModels
 
         public IStorageService StorageService => _storageService;
 
+        public bool IsBusinessAvailable => IsPremiumAvailable;
+
         private Chat _chat;
         public Chat Chat
         {
