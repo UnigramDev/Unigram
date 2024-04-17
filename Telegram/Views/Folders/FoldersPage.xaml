@@ -97,10 +97,10 @@
             </ListView.ItemTemplate>
             <ListView.Footer>
                 <controls:SettingsPanel IsFooter="True">
-                    <controls:HeaderedControl Margin="0,-14,0,0">
+                    <controls:HeaderedControl Visibility="{x:Bind ViewModel.CanCreateNew, Mode=OneWay}"
+                                              Margin="0,-14,0,0">
                         <controls:BadgeButton Content="{CustomResource CreateNewFilter}"
                                               Click="{x:Bind ViewModel.Create}"
-                                              Visibility="{x:Bind ViewModel.CanCreateNew, Mode=OneWay}"
                                               Style="{StaticResource GlyphBadgeButtonStyle}"
                                               IsChevronVisible="True"
                                               Glyph="&#xE98A;" />

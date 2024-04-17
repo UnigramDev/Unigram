@@ -194,15 +194,9 @@ namespace Telegram.Views.Folders
 
         private void OnDragItemsStarting(object sender, DragItemsStartingEventArgs e)
         {
-            var list = sender as ListView;
-            if (list == null)
-            {
-                return;
-            }
-
             if (e.Items.Count > 1)
             {
-                list.CanReorderItems = false;
+                ScrollingHost.CanReorderItems = false;
                 e.Cancel = true;
             }
             else
@@ -210,12 +204,12 @@ namespace Telegram.Views.Folders
                 var items = ViewModel?.Items;
                 if (items == null || items.Count < 2)
                 {
-                    list.CanReorderItems = false;
+                    ScrollingHost.CanReorderItems = false;
                     e.Cancel = true;
                 }
                 else
                 {
-                    list.CanReorderItems = true;
+                    ScrollingHost.CanReorderItems = true;
                 }
             }
         }
@@ -230,7 +224,7 @@ namespace Telegram.Views.Folders
                 var index = items.IndexOf(folder);
 
                 var compare = items[index > 0 ? index - 1 : index + 1];
-                if (compare.Id == 0 && index > 0 && !ViewModel.IsPremium)
+                if (compare.Id == 0 && index > 0 && index < items.Count - 1 && !ViewModel.IsPremium)
                 {
                     compare = items[index + 1];
                 }

@@ -2859,7 +2859,7 @@ namespace Telegram.Views
                 var index = items.IndexOf(folder);
 
                 var compare = items[index > 0 ? index - 1 : index + 1];
-                if (compare.ChatList is ChatListMain && index > 0 && !_clientService.IsPremium)
+                if (compare.ChatList is ChatListMain && index > 0 && index < items.Count - 1 && !_clientService.IsPremium)
                 {
                     compare = items[index + 1];
                 }
