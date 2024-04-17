@@ -15,6 +15,7 @@ using Telegram.Controls;
 using Telegram.Controls.Cells;
 using Telegram.Converters;
 using Telegram.Navigation;
+using Telegram.Streams;
 using Telegram.Td;
 using Telegram.Td.Api;
 using Telegram.Views;
@@ -89,6 +90,7 @@ namespace Telegram.Services
                 .Subscribe<UpdateServiceNotification>(Handle)
                 .Subscribe<UpdateTermsOfService>(Handle)
                 .Subscribe<UpdateUser>(Handle)
+                .Subscribe<UpdateSpeedLimitNotification>(Handle)
                 .Subscribe<UpdateNotification>(Handle)
                 .Subscribe<UpdateNotificationGroup>(Handle)
                 .Subscribe<UpdateHavePendingNotifications>(Handle)
@@ -113,6 +115,45 @@ namespace Telegram.Services
                 updater.Update(new BadgeNotification(document));
             }
             catch { }
+        }
+
+        private void Handle(UpdateSpeedLimitNotification update)
+        {
+            var window = WindowContext.Active ?? WindowContext.Main;
+            var dispatcher = window?.Dispatcher;
+
+            if (dispatcher == null)
+            {
+                return;
+            }
+
+            var navigationService = window.NavigationServices?.GetByFrameId($"Main{_clientService.SessionId}");
+            if (navigationService == null)
+            {
+                return;
+            }
+
+            var text = update.IsUpload
+                ? string.Format("**{0}**\n{1}", Strings.UploadSpeedLimited, string.Format(Strings.UploadSpeedLimitedMessage, _clientService.Options.PremiumUploadSpeedup))
+                : string.Format("**{0}**\n{1}", Strings.DownloadSpeedLimited, string.Format(Strings.DownloadSpeedLimitedMessage, _clientService.Options.PremiumDownloadSpeedup));
+
+            var markdown = ClientEx.ParseMarkdown(text);
+            if (markdown.Entities.Count == 2)
+            {
+                markdown.Entities[1].Type = new TextEntityTypeTextUrl();
+            }
+
+            dispatcher.Dispatch(() =>
+            {
+                var toast = ToastPopup.Show(markdown, new LocalFileSource("ms-appx:///Assets/Toasts/SpeedLimit.tgs"));
+                void handler(object sender, TextUrlClickEventArgs e)
+                {
+                    toast.Click -= handler;
+                    navigationService.ShowPromo(new PremiumSourceFeature(new PremiumFeatureImprovedDownloadSpeed()));
+                }
+
+                toast.Click += handler;
+            });
         }
 
         public async void Handle(UpdateTermsOfService update)

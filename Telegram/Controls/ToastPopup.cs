@@ -24,8 +24,13 @@ using Windows.UI.Xaml.Media.Imaging;
 
 namespace Telegram.Controls
 {
-    public class ToastPopup
+    public class ToastPopup : TeachingTip
     {
+        public ToastPopup()
+        {
+            DefaultStyleKey = typeof(ToastPopup);
+        }
+
         public static void ShowOption(INavigationService navigationService)
         {
             ShowPromo(navigationService, Strings.OptionPremiumRequiredMessage, Strings.OptionPremiumRequiredButton, null);
@@ -54,42 +59,42 @@ namespace Telegram.Controls
             }
         }
 
-        public static TeachingTip Show(string text, ElementTheme requestedTheme = ElementTheme.Dark, TimeSpan? dismissAfter = null)
+        public static ToastPopup Show(string text, ElementTheme requestedTheme = ElementTheme.Dark, TimeSpan? dismissAfter = null)
         {
             return Show(null, text, null, TeachingTipPlacementMode.Center, requestedTheme, dismissAfter);
         }
 
-        public static TeachingTip Show(string text, AnimatedImageSource icon, ElementTheme requestedTheme = ElementTheme.Dark, TimeSpan? dismissAfter = null)
+        public static ToastPopup Show(string text, AnimatedImageSource icon, ElementTheme requestedTheme = ElementTheme.Dark, TimeSpan? dismissAfter = null)
         {
             return Show(null, ClientEx.ParseMarkdown(text), icon, TeachingTipPlacementMode.Center, requestedTheme, dismissAfter);
         }
 
-        public static TeachingTip Show(FormattedText text, ElementTheme requestedTheme = ElementTheme.Dark, TimeSpan? dismissAfter = null)
+        public static ToastPopup Show(FormattedText text, ElementTheme requestedTheme = ElementTheme.Dark, TimeSpan? dismissAfter = null)
         {
             return Show(null, text, null, TeachingTipPlacementMode.Center, requestedTheme, dismissAfter);
         }
 
-        public static TeachingTip Show(FormattedText text, AnimatedImageSource icon, ElementTheme requestedTheme = ElementTheme.Dark, TimeSpan? dismissAfter = null)
+        public static ToastPopup Show(FormattedText text, AnimatedImageSource icon, ElementTheme requestedTheme = ElementTheme.Dark, TimeSpan? dismissAfter = null)
         {
             return Show(null, text, icon, TeachingTipPlacementMode.Center, requestedTheme, dismissAfter);
         }
 
-        public static TeachingTip Show(FrameworkElement target, string text, TeachingTipPlacementMode placement, ElementTheme requestedTheme = ElementTheme.Dark, TimeSpan? dismissAfter = null)
+        public static ToastPopup Show(FrameworkElement target, string text, TeachingTipPlacementMode placement, ElementTheme requestedTheme = ElementTheme.Dark, TimeSpan? dismissAfter = null)
         {
             return Show(target, text, null, placement, requestedTheme, dismissAfter);
         }
 
-        public static TeachingTip Show(FrameworkElement target, string text, AnimatedImageSource icon, TeachingTipPlacementMode placement, ElementTheme requestedTheme = ElementTheme.Dark, TimeSpan? dismissAfter = null)
+        public static ToastPopup Show(FrameworkElement target, string text, AnimatedImageSource icon, TeachingTipPlacementMode placement, ElementTheme requestedTheme = ElementTheme.Dark, TimeSpan? dismissAfter = null)
         {
             return Show(target, ClientEx.ParseMarkdown(text), icon, placement, requestedTheme, dismissAfter);
         }
 
-        public static TeachingTip Show(FrameworkElement target, FormattedText text, TeachingTipPlacementMode placement, ElementTheme requestedTheme = ElementTheme.Dark, TimeSpan? dismissAfter = null)
+        public static ToastPopup Show(FrameworkElement target, FormattedText text, TeachingTipPlacementMode placement, ElementTheme requestedTheme = ElementTheme.Dark, TimeSpan? dismissAfter = null)
         {
             return Show(target, text, null, placement, requestedTheme, dismissAfter);
         }
 
-        public static TeachingTip Show(FrameworkElement target, FormattedText text, AnimatedImageSource icon, TeachingTipPlacementMode placement, ElementTheme requestedTheme = ElementTheme.Dark, TimeSpan? dismissAfter = null)
+        public static ToastPopup Show(FrameworkElement target, FormattedText text, AnimatedImageSource icon, TeachingTipPlacementMode placement, ElementTheme requestedTheme = ElementTheme.Dark, TimeSpan? dismissAfter = null)
         {
             AnimatedImage animated = null;
             if (icon != null)
@@ -111,7 +116,7 @@ namespace Telegram.Controls
             return ShowToastImpl(Window.Current, target, text, animated, placement, requestedTheme, dismissAfter);
         }
 
-        public static TeachingTip ShowToastImpl(Window app, FrameworkElement target, FormattedText text, FrameworkElement icon, TeachingTipPlacementMode placement, ElementTheme requestedTheme = ElementTheme.Dark, TimeSpan? dismissAfter = null)
+        public static ToastPopup ShowToastImpl(Window app, FrameworkElement target, FormattedText text, FrameworkElement icon, TeachingTipPlacementMode placement, ElementTheme requestedTheme = ElementTheme.Dark, TimeSpan? dismissAfter = null)
         {
             Logger.Info();
 
@@ -134,7 +139,7 @@ namespace Telegram.Controls
                 content.Children.Add(icon);
             }
 
-            var toast = new TeachingTip
+            var toast = new ToastPopup
             {
                 Target = target,
                 PreferredPlacement = placement,
@@ -337,6 +342,14 @@ namespace Telegram.Controls
             animated.Children.Add(value);
 
             return ShowActionAsync(target, text, action, animated, placement, requestedTheme, dismissAfter);
+        }
+
+        public event EventHandler<TextUrlClickEventArgs> Click;
+
+        // Used by TextBlockHelper
+        public void OnClick(string url)
+        {
+            Click?.Invoke(this, new TextUrlClickEventArgs(url));
         }
     }
 }

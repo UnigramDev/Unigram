@@ -3,9 +3,13 @@
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:local="using:Microsoft.UI.Xaml.Controls"
                     xmlns:common="using:Telegram.Common"
+                    xmlns:controls="using:Telegram.Controls"
                     xmlns:primitives="using:Microsoft.UI.Xaml.Controls.Primitives">
 
     <Style TargetType="local:TeachingTip"
+           BasedOn="{StaticResource DefaultTeachingTipStyle}" />
+
+    <Style TargetType="controls:ToastPopup"
            BasedOn="{StaticResource DefaultTeachingTipStyle}" />
 
     <Style x:Key="DefaultTeachingTipStyle"
