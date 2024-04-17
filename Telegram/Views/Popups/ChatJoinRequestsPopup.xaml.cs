@@ -69,9 +69,9 @@ namespace Telegram.Views.Popups
                 primary.Content = ViewModel.IsChannel
                     ? Strings.AddToChannel
                     : Strings.AddToGroup;
-            }
-            else if (args.Phase == 1)
-            {
+            //}
+            //else if (args.Phase == 1)
+            //{
                 var time = content.Children[2] as TextBlock;
                 time.Text = Formatter.DateExtended(request.Date);
 
@@ -112,6 +112,20 @@ namespace Telegram.Views.Popups
                 Hide();
                 ViewModel.NavigationService.NavigateToUser(request.UserId);
             }
+        }
+
+        private void Animate_Click(object sender, RoutedEventArgs e)
+        {
+            //void handler(object sender, object e)
+            //{
+            //    ScrollingHost.LayoutUpdated -= handler;
+            //    ScrollingHost.ItemContainerTransitions.Clear();
+            //}
+
+            //ScrollingHost.ItemContainerTransitions.Clear();
+            //ScrollingHost.ItemContainerTransitions.Add(new AddDeleteThemeTransition());
+
+            //ScrollingHost.LayoutUpdated += handler;
         }
     }
 }

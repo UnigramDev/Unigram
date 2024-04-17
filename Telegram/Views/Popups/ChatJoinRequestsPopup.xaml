@@ -9,7 +9,8 @@
                        Title="TITLE"
                        PrimaryButtonText="Button1"
                        PrimaryButtonClick="ContentDialog_PrimaryButtonClick"
-                       Padding="0,24,0,0">
+                       Padding="0,24,0,0"
+                       VerticalContentAlignment="Stretch">
 
     <Grid>
         <ListView x:Name="ScrollingHost"
@@ -63,12 +64,17 @@
                                     Margin="0,8,0,0"
                                     Grid.Column="1"
                                     Grid.Row="2">
-                            <Button Style="{StaticResource AccentButtonStyle}" />
-                            <HyperlinkButton Content="{CustomResource Dismiss}" />
+                            <Button Click="Animate_Click"
+                                    Style="{StaticResource AccentButtonStyle}" />
+                            <HyperlinkButton Click="Animate_Click"
+                                             Content="{CustomResource Dismiss}" />
                         </StackPanel>
                     </Grid>
                 </DataTemplate>
             </ListView.ItemTemplate>
+            <!--<ListView.ItemContainerTransitions>
+                <TransitionCollection />
+            </ListView.ItemContainerTransitions>-->
         </ListView>
 
         <controls:ScrollViewerScrim ScrollingHost="{x:Bind ScrollingHost}"
