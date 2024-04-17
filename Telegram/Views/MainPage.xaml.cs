@@ -50,6 +50,7 @@ using Windows.UI.Xaml.Controls.Primitives;
 using Windows.UI.Xaml.Hosting;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
+using Windows.UI.Xaml.Media.Animation;
 using Windows.UI.Xaml.Navigation;
 using Point = Windows.Foundation.Point;
 
@@ -2279,7 +2280,18 @@ namespace Telegram.Views
 
         public void UpdateChatFolders()
         {
+            void handler(object sender, object e)
+            {
+                ChatsList.LayoutUpdated -= handler;
+                ChatsList.ItemContainerTransitions.Clear();
+            }
+
+            ChatsList.ItemContainerTransitions.Clear();
+            ChatsList.ItemContainerTransitions.Add(new RepositionThemeTransition());
+
+            ChatsList.LayoutUpdated += handler;
             ChatsList.UpdateVisibleChats();
+
             ConvertFolder(ViewModel.SelectedFolder);
         }
 
