@@ -5,6 +5,7 @@
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
 using Microsoft.Graphics.Canvas.Geometry;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Numerics;
@@ -120,7 +121,7 @@ namespace Telegram.Controls.Messages
 
             if (message != null || known)
             {
-                ShowHide(true);
+                ShowHide(chat.BusinessBotManageBar == null);
             }
 
             var title = Strings.PinnedMessage + (value >= 0 && maximum > 1 && value + 1 < maximum ? $" #{value + 1}" : "");

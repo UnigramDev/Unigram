@@ -218,6 +218,9 @@
     <Compile Include="Controls\Cells\ProfileHoursCell.xaml.cs">
       <DependentUpon>ProfileHoursCell.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\Chats\ChatConnectedBotHeader.xaml.cs">
+      <DependentUpon>ChatConnectedBotHeader.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Controls\Messages\ReactionAsTagButton.cs" />
     <Compile Include="Common\AsyncMediaPlayer.cs" />
     <Compile Include="Controls\SuggestedActionSetBirthdateCard.xaml.cs">
@@ -2193,6 +2196,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Controls\ChatStatisticsOverview.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\Chats\ChatConnectedBotHeader.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

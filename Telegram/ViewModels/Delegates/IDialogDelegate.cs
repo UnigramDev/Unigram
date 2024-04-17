@@ -32,6 +32,7 @@ namespace Telegram.ViewModels.Delegates
         void UpdateChatPendingJoinRequests(Chat chat);
         void UpdateChatIsTranslatable(Chat chat, string language);
         void UpdateChatVideoChat(Chat chat, VideoChat videoChat);
+        void UpdateChatBusinessBotManageBar(Chat chat, BusinessBotManageBar businessBotManageBar);
 
         void UpdateUserRestrictsNewChats(Chat chat, User user, UserFullInfo fullInfo, CanSendMessageToUserResult result);
 

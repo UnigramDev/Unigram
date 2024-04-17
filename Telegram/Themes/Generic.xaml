@@ -1497,6 +1497,7 @@
                                              Margin="{TemplateBinding Padding}" />
                         <TextBlock x:Name="Headline"
                                    x:Load="False"
+                                   common:TextBlockHelper.IsLink="{TemplateBinding IsLink}"
                                    common:TextBlockHelper.Markdown="{TemplateBinding Text}"
                                    Style="{StaticResource InfoBodyTextBlockStyle}"
                                    TextAlignment="Center"

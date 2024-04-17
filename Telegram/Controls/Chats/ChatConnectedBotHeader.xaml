@@ -1,0 +1,55 @@
+﻿<UserControl x:Class="Telegram.Controls.Chats.ChatConnectedBotHeader"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:local="using:Telegram.Controls.Chats"
+             xmlns:controls="using:Telegram.Controls"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d"
+             d:DesignHeight="300"
+             d:DesignWidth="400">
+
+    <Grid x:Name="ActionBar"
+          Background="Transparent"
+          Height="48"
+          Grid.Row="1">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition />
+            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="48" />
+        </Grid.ColumnDefinitions>
+        <Border BorderBrush="{ThemeResource NavigationViewContentGridBorderBrush}"
+                BorderThickness="0,0,0,1"
+                Grid.ColumnSpan="4" />
+
+        <controls:ProfilePicture x:Name="Photo"
+                                 Width="36"
+                                 Height="36"
+                                 Margin="12,0" />
+
+        <StackPanel VerticalAlignment="Center"
+                    Grid.Column="1">
+            <TextBlock x:Name="Title"
+                       Style="{StaticResource BaseTextBlockStyle}" />
+            <TextBlock x:Name="Subtitle"
+                       Style="{StaticResource InfoCaptionTextBlockStyle}" />
+        </StackPanel>
+
+        <controls:BadgeButton x:Name="ToggleButton"
+                              Click="Toggle_Click"
+                              Background="{StaticResource AccentButtonBackground}"
+                              Content="{CustomResource VoipChatJoin}"
+                              Style="{StaticResource PillButtonStyle}"
+                              Typography.NumeralAlignment="Tabular"
+                              FontWeight="SemiBold"
+                              HorizontalAlignment="Right"
+                              VerticalAlignment="Center"
+                              Margin="0,0,0,0"
+                              Grid.Column="2" />
+
+        <controls:GlyphButton Glyph="&#xE9E9;"
+                              Click="Menu_ContextRequested"
+                              Grid.Column="3" />
+    </Grid>
+</UserControl>

@@ -1797,6 +1797,18 @@ namespace Telegram.Td.Api
                 && x.Recipients.AreTheSame(y.Recipients);
         }
 
+        public static bool AreTheSame(this BusinessConnectedBot x, BusinessConnectedBot y)
+        {
+            if (x == null || y == null)
+            {
+                return x == y;
+            }
+
+            return x.BotUserId == y.BotUserId
+                && x.CanReply == y.CanReply
+                && x.Recipients.AreTheSame(y.Recipients);
+        }
+
         public static bool AreTheSame(this BusinessAwayMessageSchedule x, BusinessAwayMessageSchedule y)
         {
             if (x is BusinessAwayMessageScheduleAlways)
@@ -1823,9 +1835,16 @@ namespace Telegram.Td.Api
                 return x == y;
             }
 
-            if (x.ExcludeSelected == y.ExcludeSelected && x.SelectContacts == y.SelectContacts && x.SelectNonContacts == y.SelectNonContacts && x.SelectNewChats == y.SelectNewChats && x.SelectExistingChats == y.SelectExistingChats && x.ChatIds.Count == y.ChatIds.Count)
+            if (x.ExcludeSelected == y.ExcludeSelected
+                && x.SelectContacts == y.SelectContacts
+                && x.SelectNonContacts == y.SelectNonContacts
+                && x.SelectNewChats == y.SelectNewChats
+                && x.SelectExistingChats == y.SelectExistingChats
+                && x.ChatIds.Count == y.ChatIds.Count
+                && x.ExcludedChatIds.Count == y.ExcludedChatIds.Count)
             {
-                return x.ChatIds.All(k => y.ChatIds.Contains(k));
+                return x.ChatIds.All(k => y.ChatIds.Contains(k))
+                    && x.ExcludedChatIds.All(k => y.ExcludedChatIds.Contains(k));
             }
 
             return false;

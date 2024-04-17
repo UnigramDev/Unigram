@@ -121,11 +121,7 @@ namespace Telegram.Controls.Chats
             flyout.CreateFlyoutItem(ViewModel.StopTranslate, string.Format(Strings.DoNotTranslateLanguage, languageName), Icons.HandRight);
             flyout.CreateFlyoutItem(ViewModel.HideTranslate, Strings.Hide, Icons.DismissCircle);
 
-
-            if (flyout.Items.Count > 0)
-            {
-                flyout.ShowAt(sender as Button, FlyoutPlacementMode.BottomEdgeAlignedRight);
-            }
+            flyout.ShowAt(sender as Button, FlyoutPlacementMode.BottomEdgeAlignedRight);
         }
 
         private void Translate_Click(object sender, RoutedEventArgs e)

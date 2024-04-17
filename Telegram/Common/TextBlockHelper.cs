@@ -242,6 +242,7 @@ namespace Telegram.Common
                     {
                         var hyperlink = new Hyperlink();
                         hyperlink.Click += (s, args) => Hyperlink_Click(s, entity.Type, textUrl.Url);
+                        hyperlink.UnderlineStyle = UnderlineStyle.None;
                         span.Inlines.Add(hyperlink);
                         local = hyperlink;
                     }
@@ -357,6 +358,7 @@ namespace Telegram.Common
                     {
                         var hyperlink = new Hyperlink();
                         hyperlink.Click += (s, args) => Hyperlink_Click(s, entity.Type, textUrl.Url);
+                        hyperlink.UnderlineStyle = UnderlineStyle.None;
                         span.Inlines.Add(hyperlink);
                         local = hyperlink;
                     }
@@ -365,6 +367,7 @@ namespace Telegram.Common
                         var data = text.Substring(entity.Offset, entity.Length);
                         var hyperlink = new Hyperlink();
                         hyperlink.Click += (s, args) => Hyperlink_Click(s, entity.Type, data);
+                        hyperlink.UnderlineStyle = UnderlineStyle.None;
                         span.Inlines.Add(hyperlink);
                         local = hyperlink;
                     }
@@ -373,6 +376,7 @@ namespace Telegram.Common
                         var data = text.Substring(entity.Offset + 1, entity.Length - 1);
                         var hyperlink = new Hyperlink();
                         hyperlink.Click += (s, args) => Hyperlink_Click(s, entity.Type, data);
+                        hyperlink.UnderlineStyle = UnderlineStyle.None;
                         span.Inlines.Add(hyperlink);
                         local = hyperlink;
                     }
@@ -465,6 +469,9 @@ namespace Telegram.Common
 
                         var footer = sender.GetParent<SettingsFooter>();
                         footer?.OnClick(string.Empty);
+
+                        var headline = sender.GetParent<SettingsHeadline>();
+                        headline?.OnClick(string.Empty);
                     }
                     else
                     {
@@ -486,6 +493,9 @@ namespace Telegram.Common
 
                     var footer = sender.GetParent<SettingsFooter>();
                     footer?.OnClick(data);
+
+                    var headline = sender.GetParent<SettingsHeadline>();
+                    headline?.OnClick(string.Empty);
                 }
             }
         }

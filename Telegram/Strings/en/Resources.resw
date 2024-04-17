@@ -2167,6 +2167,12 @@ It will be able to access your **IP address** and basic device info.</value>
   <data name="BusinessBotNotFound" xml:space="preserve">
     <value>Chatbot not found</value>
   </data>
+  <data name="BusinessBotNotSupportedMessage" xml:space="preserve">
+    <value>This bot doesn’t support **Telegram Business** yet.</value>
+  </data>
+  <data name="BusinessBotNotSupportedTitle" xml:space="preserve">
+    <value>Oops</value>
+  </data>
   <data name="BusinessBotPermissions" xml:space="preserve">
     <value>Bot permissions</value>
   </data>
@@ -2184,6 +2190,9 @@ It will be able to access your **IP address** and basic device info.</value>
   </data>
   <data name="BusinessBotsInfo" xml:space="preserve">
     <value>Add a bot to your account to help you automatically process and respond to the messages you receive. **Learn more &gt;**</value>
+  </data>
+  <data name="BusinessBotUnsavedChanges" xml:space="preserve">
+    <value>You have changed the business bot settings. Apply changes?</value>
   </data>
   <data name="BusinessChatsAllPrivateExcept" xml:space="preserve">
     <value>All 1-to-1 Chats Except...</value>

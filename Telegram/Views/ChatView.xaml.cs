@@ -212,10 +212,11 @@ namespace Telegram.Views
         private void OnNavigatedTo()
         {
             SearchMask.InitializeParent(Header, ClipperOuter, DateHeaderRelative);
-            GroupCall.InitializeParent(ClipperOuter, ViewModel.ClientService);
-            JoinRequests.InitializeParent(ClipperJoinRequests, ViewModel.ClientService);
+            GroupCall.InitializeParent(ClipperOuter);
+            JoinRequests.InitializeParent(ClipperJoinRequests);
             TranslateHeader.InitializeParent(ClipperTranslate);
             ActionBar.InitializeParent(ClipperActionBar);
+            ConnectedBot.InitializeParent(ClipperConnected);
             PinnedMessage.InitializeParent(Clipper);
         }
 
@@ -3888,6 +3889,7 @@ namespace Telegram.Views
             UpdateChatIsTranslatable(chat, ViewModel.DetectedLanguage);
             UpdateChatPermissions(chat);
             UpdateChatTheme(chat);
+            UpdateChatBusinessBotManageBar(chat, chat.BusinessBotManageBar);
         }
 
         public void UpdateChatMessageSender(Chat chat, MessageSender defaultMessageSenderId)
@@ -5269,6 +5271,12 @@ namespace Telegram.Views
                     Call.Visibility = Visibility.Collapsed;
                 }
             }
+        }
+
+        public void UpdateChatBusinessBotManageBar(Chat chat, BusinessBotManageBar businessBotManageBar)
+        {
+            ConnectedBot.UpdateChatBusinessBotManageBar(chat, businessBotManageBar);
+            ViewVisibleMessages(false);
         }
 
         public void UpdateGroupCall(Chat chat, GroupCall groupCall)

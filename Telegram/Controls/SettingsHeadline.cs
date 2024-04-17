@@ -4,6 +4,7 @@
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+using System;
 using Telegram.Streams;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Automation.Peers;
@@ -84,6 +85,27 @@ namespace Telegram.Controls
             DependencyProperty.Register("LoopCount", typeof(int), typeof(SettingsHeadline), new PropertyMetadata(1));
 
         #endregion
+
+        #region IsLink
+
+        public bool IsLink
+        {
+            get { return (bool)GetValue(IsLinkProperty); }
+            set { SetValue(IsLinkProperty, value); }
+        }
+
+        public static readonly DependencyProperty IsLinkProperty =
+            DependencyProperty.Register("IsLink", typeof(bool), typeof(SettingsHeadline), new PropertyMetadata(false));
+
+        #endregion
+
+        public event EventHandler<TextUrlClickEventArgs> Click;
+
+        // Used by TextBlockHelper
+        public void OnClick(string url)
+        {
+            Click?.Invoke(this, new TextUrlClickEventArgs(url));
+        }
     }
 
     public class SettingsHeadlineAutomationPeer : FrameworkElementAutomationPeer

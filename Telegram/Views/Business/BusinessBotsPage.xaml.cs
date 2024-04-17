@@ -12,6 +12,7 @@ using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Media.Imaging;
+using Windows.UI.Xaml.Navigation;
 
 namespace Telegram.Views.Business
 {
@@ -23,6 +24,35 @@ namespace Telegram.Views.Business
         {
             InitializeComponent();
             Title = Strings.BusinessBots;
+        }
+
+        protected override void OnNavigatedTo(NavigationEventArgs e)
+        {
+            ViewModel.PropertyChanged += OnPropertyChanged;
+            OnPropertyChanged(null, new System.ComponentModel.PropertyChangedEventArgs(nameof(ViewModel.BotUserId)));
+        }
+
+        protected override void OnNavigatedFrom(NavigationEventArgs e)
+        {
+            ViewModel.PropertyChanged -= OnPropertyChanged;
+        }
+
+        private void OnPropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName == nameof(ViewModel.BotUserId))
+            {
+                if (ViewModel.ClientService.TryGetUser(ViewModel.BotUserId, out User user))
+                {
+                    UsernameField.Visibility = Visibility.Collapsed;
+                    UserBotField.Visibility = Visibility.Visible;
+                    UserBotCell.UpdateUser(ViewModel.ClientService, user, 36);
+                }
+                else
+                {
+                    UsernameField.Visibility = Visibility.Visible;
+                    UserBotField.Visibility = Visibility.Collapsed;
+                }
+            }
         }
 
         #region Binding
@@ -48,6 +78,22 @@ namespace Telegram.Views.Business
         }
 
         #endregion
+
+        private void OnContainerContentChanging(ListViewBase sender, ContainerContentChangingEventArgs args)
+        {
+            if (args.InRecycleQueue)
+            {
+                return;
+            }
+            else if (args.ItemContainer.ContentTemplateRoot is Grid content && args.Item is User user)
+            {
+                var cell = content.Children[0] as ProfileCell;
+                var button = content.Children[1] as Button;
+
+                cell.UpdateUser(ViewModel.ClientService, user, 36);
+                button.Tag = user;
+            }
+        }
 
         private void OnElementPrepared(ItemsRepeater sender, ItemsRepeaterElementPreparedEventArgs args)
         {
@@ -87,6 +133,22 @@ namespace Telegram.Views.Business
             var flyout = new MenuFlyout();
             flyout.CreateFlyoutItem(viewModel.RemoveExcluded, chat, Strings.StickersRemove, Icons.Delete);
             flyout.ShowAt(sender, args);
+        }
+
+        private void Add_Click(object sender, RoutedEventArgs e)
+        {
+            if (sender is Button button && button.Tag is User user)
+            {
+                if (user.Type is UserTypeBot { CanConnectToBusiness: true })
+                {
+                    ViewModel.BotUserId = user.Id;
+                    ViewModel.Results.UpdateQuery(string.Empty);
+                }
+                else
+                {
+                    ViewModel.ShowPopup(Strings.BusinessBotNotSupportedMessage, Strings.BusinessBotNotSupportedTitle, Strings.OK);
+                }
+            }
         }
     }
 }

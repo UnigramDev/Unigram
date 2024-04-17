@@ -11,8 +11,8 @@ using System.Numerics;
 using Telegram.Common;
 using Telegram.Converters;
 using Telegram.Navigation;
-using Telegram.Services;
 using Telegram.Td.Api;
+using Telegram.ViewModels;
 using Windows.UI.Composition;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -23,9 +23,9 @@ namespace Telegram.Controls.Chats
 {
     public sealed partial class ChatGroupCallHeader : HyperlinkButton
     {
-        private readonly DispatcherTimer _scheduledTimer;
+        public DialogViewModel ViewModel => DataContext as DialogViewModel;
 
-        private IClientService _clientService;
+        private readonly DispatcherTimer _scheduledTimer;
 
         private UIElement _parent;
         private GroupCall _call;
@@ -51,22 +51,20 @@ namespace Telegram.Controls.Chats
             }
         }
 
-        public void InitializeParent(UIElement parent, IClientService clientService)
+        public void InitializeParent(UIElement parent)
         {
-            _clientService = clientService;
-            _parent = parent;
-            ElementCompositionPreview.SetIsTranslationEnabled(parent, true);
+            ElementCompositionPreview.SetIsTranslationEnabled(_parent = parent, true);
         }
 
         private void RecentUsers_RecentUserHeadChanged(ProfilePicture photo, MessageSender sender)
         {
-            if (_clientService.TryGetUser(sender, out User user))
+            if (ViewModel.ClientService.TryGetUser(sender, out User user))
             {
-                photo.SetUser(_clientService, user, 28);
+                photo.SetUser(ViewModel.ClientService, user, 28);
             }
-            else if (_clientService.TryGetChat(sender, out Chat chat))
+            else if (ViewModel.ClientService.TryGetChat(sender, out Chat chat))
             {
-                photo.SetChat(_clientService, chat, 28);
+                photo.SetChat(ViewModel.ClientService, chat, 28);
             }
             else
             {

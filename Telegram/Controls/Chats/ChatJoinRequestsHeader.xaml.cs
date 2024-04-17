@@ -7,8 +7,8 @@
 using System.Linq;
 using System.Numerics;
 using Telegram.Common;
-using Telegram.Services;
 using Telegram.Td.Api;
+using Telegram.ViewModels;
 using Windows.UI.Composition;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -18,7 +18,7 @@ namespace Telegram.Controls.Chats
 {
     public sealed partial class ChatJoinRequestsHeader : HyperlinkButton
     {
-        private IClientService _clientService;
+        public DialogViewModel ViewModel => DataContext as DialogViewModel;
 
         private UIElement _parent;
         private Chat _chat;
@@ -28,23 +28,20 @@ namespace Telegram.Controls.Chats
             InitializeComponent();
         }
 
-        public void InitializeParent(UIElement parent, IClientService clientService)
+        public void InitializeParent(UIElement parent)
         {
-            _clientService = clientService;
-
-            _parent = parent;
-            ElementCompositionPreview.SetIsTranslationEnabled(parent, true);
+            ElementCompositionPreview.SetIsTranslationEnabled(_parent = parent, true);
         }
 
         private void RecentUsers_RecentUserHeadChanged(ProfilePicture sender, MessageSender messageSender)
         {
-            if (_clientService.TryGetUser(messageSender, out User user))
+            if (ViewModel.ClientService.TryGetUser(messageSender, out User user))
             {
-                sender.SetUser(_clientService, user, 28);
+                sender.SetUser(ViewModel.ClientService, user, 28);
             }
-            else if (_clientService.TryGetChat(messageSender, out Chat chat))
+            else if (ViewModel.ClientService.TryGetChat(messageSender, out Chat chat))
             {
-                sender.SetChat(_clientService, chat, 28);
+                sender.SetChat(ViewModel.ClientService, chat, 28);
             }
         }
 
@@ -60,7 +57,7 @@ namespace Telegram.Controls.Chats
                 if (chat.PendingJoinRequests.UserIds.Count < 3
                     && chat.PendingJoinRequests.UserIds.Count < chat.PendingJoinRequests.TotalCount)
                 {
-                    _clientService.Send(new GetChatJoinRequests(chat.Id, string.Empty, string.Empty, null, 3));
+                    ViewModel.ClientService.Send(new GetChatJoinRequests(chat.Id, string.Empty, string.Empty, null, 3));
                 }
 
                 Label.Text = Locale.Declension(Strings.R.JoinRequests, chat.PendingJoinRequests.TotalCount);

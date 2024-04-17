@@ -41,6 +41,7 @@ namespace Telegram.ViewModels
                 .Subscribe<UpdateChatPendingJoinRequests>(Handle)
                 .Subscribe<UpdateChatAction>(Handle)
                 .Subscribe<UpdateChatLastMessage>(Handle)
+                .Subscribe<UpdateChatBusinessBotManageBar>(Handle)
                 .Subscribe<UpdateNewMessage>(Handle)
                 .Subscribe<UpdateDeleteMessages>(Handle)
                 .Subscribe<UpdateMessageContent>(Handle)
@@ -119,6 +120,14 @@ namespace Telegram.ViewModels
             if (update.ChatId == _chat?.Id && update.MessageThreadId == ThreadId && (_type == DialogType.History || _type == DialogType.Thread))
             {
                 BeginOnUIThread(() => Delegate?.UpdateChatActions(_chat, ClientService.GetChatActions(update.ChatId)));
+            }
+        }
+
+        public void Handle(UpdateChatBusinessBotManageBar update)
+        {
+            if (update.ChatId == _chat?.Id && _type == DialogType.History)
+            {
+                BeginOnUIThread(() => Delegate?.UpdateChatBusinessBotManageBar(_chat, update.BusinessBotManageBar));
             }
         }
 

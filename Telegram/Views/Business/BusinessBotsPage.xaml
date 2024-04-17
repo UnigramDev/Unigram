@@ -17,93 +17,144 @@
         </TransitionCollection>
     </Page.Transitions>
 
+    <local:HostedPage.Action>
+        <Button Content="{CustomResource Done}"
+                Click="{x:Bind ViewModel.Continue}"
+                Style="{StaticResource AccentButtonStyle}"
+                Visibility="{x:Bind ViewModel.HasChanged, Mode=OneWay}" />
+    </local:HostedPage.Action>
+
     <Grid Background="{ThemeResource SettingsPageBackground}">
-        <ScrollViewer x:Name="ScrollingHost"
-                      VerticalScrollBarVisibility="Auto"
-                      VerticalScrollMode="Auto">
-            <controls:SettingsPanel>
-                <controls:SettingsHeadline Text="{CustomResource BusinessBotsInfo}"
-                                           Source="ms-appx:///Assets/Animations/BusinessBots.tgs" />
+        <controls:TableListView x:Name="ScrollingHost"
+                                ItemsSource="{x:Bind ViewModel.Results}"
+                                ContainerContentChanging="OnContainerContentChanging"
+                                SelectionMode="None">
+            <ListView.Header>
+                <controls:SettingsPanel IsHeader="True">
+                    <controls:SettingsHeadline IsLink="True"
+                                               Text="{CustomResource BusinessBotsInfo}"
+                                               Source="ms-appx:///Assets/Animations/BusinessBots.tgs" />
 
-                <controls:HeaderedControl Footer="{CustomResource BusinessBotLinkInfo}">
-                    <TextBox Text="{x:Bind ViewModel.Address, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                             FontFamily="{ThemeResource EmojiThemeFontFamily}"
-                             MaxLength="{StaticResource ChannelAboutMaxLength}"
-                             PlaceholderText="{CustomResource BusinessBotLink}"
-                             TextWrapping="Wrap"
-                             AcceptsReturn="True"
-                             Padding="12,11,6,12" />
-                </controls:HeaderedControl>
+                    <controls:HeaderedControl>
+                        <TextBox x:Name="UsernameField"
+                                 Text="{x:Bind ViewModel.Results.Query, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                 FontFamily="{ThemeResource EmojiThemeFontFamily}"
+                                 MaxLength="{StaticResource ChannelAboutMaxLength}"
+                                 PlaceholderText="{CustomResource BusinessBotLink}"
+                                 TextWrapping="Wrap"
+                                 AcceptsReturn="True"
+                                 Padding="12,11,6,12" />
+                        <Grid x:Name="UserBotField"
+                              Background="{ThemeResource SettingsItemBackground}">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+                            <cells:ProfileCell x:Name="UserBotCell" />
+                            <controls:GlyphButton Click="{x:Bind ViewModel.Clear}"
+                                                  Glyph="&#xE711;"
+                                                  Grid.Column="1" />
+                        </Grid>
+                    </controls:HeaderedControl>
+                </controls:SettingsPanel>
+            </ListView.Header>
+            <ListView.ItemTemplate>
+                <DataTemplate>
+                    <Grid Background="{ThemeResource SettingsItemBackground}"
+                          BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                        <cells:ProfileCell />
 
-                <controls:HeaderedControl Header="{CustomResource BusinessBotChats}">
-                    <controls:FauxRadioButton IsChecked="{x:Bind ViewModel.IsExclude, Mode=TwoWay}"
-                                              Content="{CustomResource BusinessChatsAllPrivateExcept}"
-                                              Style="{StaticResource SettingsRadioButtonStyle}"
-                                              GroupName="BusinessRecipients" />
-                    <controls:FauxRadioButton IsChecked="{x:Bind ViewModel.IsInclude, Mode=TwoWay}"
-                                              Content="{CustomResource BusinessChatsOnlySelected}"
-                                              Style="{StaticResource SettingsRadioButtonStyle}"
-                                              GroupName="BusinessRecipients" />
-                </controls:HeaderedControl>
+                        <controls:BadgeButton Click="Add_Click"
+                                              Background="{StaticResource AccentButtonBackground}"
+                                              Content="{CustomResource Add}"
+                                              Style="{StaticResource PillButtonStyle}"
+                                              FontWeight="SemiBold"
+                                              HorizontalAlignment="Right"
+                                              VerticalAlignment="Center"
+                                              Margin="0,0,12,0"
+                                              Grid.Column="1" />
+                    </Grid>
+                </DataTemplate>
+            </ListView.ItemTemplate>
+            <ListView.Footer>
+                <controls:SettingsPanel IsFooter="True">
+                    <controls:SettingsFooter Text="{CustomResource BusinessBotLinkInfo}" />
 
-                <StackPanel Visibility="{x:Bind ViewModel.IsExclude, Mode=OneWay}">
-                    <controls:HeaderedControl Header="{CustomResource BusinessChatsExcluded}">
-                        <controls:BadgeButton Click="{x:Bind ViewModel.AddExcluded}"
-                                              Content="{CustomResource BusinessChatsExcludedAdd}"
-                                              Style="{StaticResource GlyphBadgeButtonStyle}"
-                                              Glyph="&#xEA08;" />
+                    <controls:HeaderedControl Header="{CustomResource BusinessBotChats}">
+                        <controls:FauxRadioButton IsChecked="{x:Bind ViewModel.IsExclude, Mode=TwoWay}"
+                                                  Content="{CustomResource BusinessChatsAllPrivateExcept}"
+                                                  Style="{StaticResource SettingsRadioButtonStyle}"
+                                                  GroupName="BusinessRecipients" />
+                        <controls:FauxRadioButton IsChecked="{x:Bind ViewModel.IsInclude, Mode=TwoWay}"
+                                                  Content="{CustomResource BusinessChatsOnlySelected}"
+                                                  Style="{StaticResource SettingsRadioButtonStyle}"
+                                                  GroupName="BusinessRecipients" />
                     </controls:HeaderedControl>
 
-                    <muxc:ItemsRepeater Layout="{StaticResource ThreadStackLayout}"
-                                        ItemsSource="{x:Bind ViewModel.ExcludedChats}"
-                                        ElementPrepared="OnElementPrepared">
-                        <muxc:ItemsRepeater.ItemTemplate>
-                            <DataTemplate>
-                                <cells:ProfileCell Background="{ThemeResource SettingsItemBackground}"
-                                                   BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
-                                                   BorderThickness="1"
-                                                   ContextRequested="Exclude_ContextRequested"
-                                                   Margin="24,4,24,0"
-                                                   CornerRadius="4"
-                                                   MaxWidth="1000" />
-                            </DataTemplate>
-                        </muxc:ItemsRepeater.ItemTemplate>
-                    </muxc:ItemsRepeater>
-                </StackPanel>
+                    <StackPanel Visibility="{x:Bind ViewModel.IsInclude, Mode=OneWay}">
+                        <controls:HeaderedControl Header="{CustomResource BusinessChatsIncluded}">
+                            <controls:BadgeButton Click="{x:Bind ViewModel.AddIncluded}"
+                                                  Content="{CustomResource BusinessChatsIncludedAdd}"
+                                                  Style="{StaticResource GlyphBadgeButtonStyle}"
+                                                  Glyph="&#xEA08;" />
+                        </controls:HeaderedControl>
 
-                <StackPanel Visibility="{x:Bind ViewModel.IsInclude, Mode=OneWay}">
-                    <controls:HeaderedControl Header="{CustomResource BusinessChatsIncluded}">
-                        <controls:BadgeButton Click="{x:Bind ViewModel.AddIncluded}"
-                                              Content="{CustomResource BusinessChatsIncludedAdd}"
-                                              Style="{StaticResource GlyphBadgeButtonStyle}"
-                                              Glyph="&#xEA08;" />
+                        <muxc:ItemsRepeater Layout="{StaticResource ThreadStackLayout}"
+                                            ItemsSource="{x:Bind ViewModel.IncludedChats}"
+                                            ElementPrepared="OnElementPrepared">
+                            <muxc:ItemsRepeater.ItemTemplate>
+                                <DataTemplate>
+                                    <cells:ProfileCell Background="{ThemeResource SettingsItemBackground}"
+                                                       BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                                                       BorderThickness="1"
+                                                       ContextRequested="Include_ContextRequested"
+                                                       Margin="24,4,24,0"
+                                                       CornerRadius="4"
+                                                       MaxWidth="1000" />
+                                </DataTemplate>
+                            </muxc:ItemsRepeater.ItemTemplate>
+                        </muxc:ItemsRepeater>
+                    </StackPanel>
+
+                    <StackPanel>
+                        <controls:HeaderedControl Header="{CustomResource BusinessChatsExcluded}">
+                            <controls:BadgeButton Click="{x:Bind ViewModel.AddExcluded}"
+                                                  Content="{CustomResource BusinessChatsExcludedAdd}"
+                                                  Style="{StaticResource GlyphBadgeButtonStyle}"
+                                                  Glyph="&#xEA08;" />
+                        </controls:HeaderedControl>
+
+                        <muxc:ItemsRepeater Layout="{StaticResource ThreadStackLayout}"
+                                            ItemsSource="{x:Bind ViewModel.ExcludedChats}"
+                                            ElementPrepared="OnElementPrepared">
+                            <muxc:ItemsRepeater.ItemTemplate>
+                                <DataTemplate>
+                                    <cells:ProfileCell Background="{ThemeResource SettingsItemBackground}"
+                                                       BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                                                       BorderThickness="1"
+                                                       ContextRequested="Exclude_ContextRequested"
+                                                       Margin="24,4,24,0"
+                                                       CornerRadius="4"
+                                                       MaxWidth="1000" />
+                                </DataTemplate>
+                            </muxc:ItemsRepeater.ItemTemplate>
+                        </muxc:ItemsRepeater>
+                    </StackPanel>
+
+                    <controls:SettingsFooter Text="{CustomResource BusinessBotChatsInfo}" />
+
+                    <controls:HeaderedControl Header="{CustomResource BusinessBotPermissions}"
+                                              Footer="{CustomResource BusinessBotPermissionsInfo}">
+                        <controls:FauxCheckBox IsChecked="{x:Bind ViewModel.CanReply, Mode=TwoWay}"
+                                               Content="{CustomResource BusinessBotPermissionsReply}"
+                                               Style="{StaticResource SettingsCheckBoxStyle}" />
                     </controls:HeaderedControl>
-
-                    <muxc:ItemsRepeater Layout="{StaticResource ThreadStackLayout}"
-                                        ItemsSource="{x:Bind ViewModel.IncludedChats}"
-                                        ElementPrepared="OnElementPrepared">
-                        <muxc:ItemsRepeater.ItemTemplate>
-                            <DataTemplate>
-                                <cells:ProfileCell Background="{ThemeResource SettingsItemBackground}"
-                                                   BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
-                                                   BorderThickness="1"
-                                                   ContextRequested="Include_ContextRequested"
-                                                   Margin="24,4,24,0"
-                                                   CornerRadius="4"
-                                                   MaxWidth="1000" />
-                            </DataTemplate>
-                        </muxc:ItemsRepeater.ItemTemplate>
-                    </muxc:ItemsRepeater>
-                </StackPanel>
-
-                <controls:SettingsFooter Text="{CustomResource BusinessBotChatsInfo}" />
-
-                <controls:HeaderedControl Header="{CustomResource BusinessBotPermissions}"
-                                          Footer="{CustomResource BusinessBotPermissionsInfo}">
-                    <controls:FauxCheckBox Content="{CustomResource BusinessBotPermissionsReply}"
-                                           Style="{StaticResource SettingsCheckBoxStyle}" />
-                </controls:HeaderedControl>
-            </controls:SettingsPanel>
-        </ScrollViewer>
+                </controls:SettingsPanel>
+            </ListView.Footer>
+        </controls:TableListView>
     </Grid>
 </local:HostedPage>

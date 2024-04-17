@@ -54,7 +54,7 @@ namespace Telegram.ViewModels.Business
 
             MonthlyOption = state.PaymentOptions.FirstOrDefault(x => x.PaymentOption.MonthCount == 1);
             AnnualOption = state.PaymentOptions.FirstOrDefault(x => x.PaymentOption.MonthCount == 12);
-            CanPurchase = state.PaymentOptions.Count > 0;
+            CanPurchase = state.PaymentOptions.Count > 0 && !IsPremium;
 
             RaisePropertyChanged(nameof(SelectedOption));
 
@@ -119,6 +119,15 @@ namespace Telegram.ViewModels.Business
         {
             get => _canPurchase;
             set => Set(ref _canPurchase, value);
+        }
+
+        public void Purchase()
+        {
+            if (SelectedOption != null && CanPurchase)
+            {
+                ClientService.Send(new ClickPremiumSubscriptionButton());
+                MessageHelper.OpenTelegramUrl(ClientService, NavigationService, SelectedOption.PaymentOption.PaymentLink);
+            }
         }
 
         public async void OpenFeature(BusinessFeature feature)
