@@ -122,6 +122,18 @@ namespace Telegram.ViewModels.Profile
             set => Set(ref _savedMessagesTopic, value);
         }
 
+        public bool MyProfile { get; private set; }
+
+        public override Task NavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
+        {
+            if (state.ContainsKey("my_profile"))
+            {
+                MyProfile = true;
+            }
+
+            return base.NavigatedToAsync(parameter, mode, state);
+        }
+
         protected override async Task OnNavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
         {
             if (parameter is ChatSavedMessagesTopicIdNavigationArgs savedMessagesTopicIdArgs)
@@ -182,20 +194,28 @@ namespace Telegram.ViewModels.Profile
                 // This should really rarely happen
                 cached ??= await ClientService.SendAsync(new GetUserFullInfo(user.Id)) as UserFullInfo;
 
-                if (user.Id == ClientService.Options.MyId)
-                {
-                    AddTab(new ProfileTabItem(Strings.SavedDialogsTab, typeof(ProfileSavedChatsTabPage)));
-                }
-                else if (cached != null && cached.HasPinnedStories)
+                if (MyProfile && user.Id == ClientService.Options.MyId)
                 {
                     AddTab(new ProfileTabItem(Strings.ProfileStories, typeof(ProfileStoriesTabPage)));
+                    AddTab(new ProfileTabItem(Strings.ArchivedStories, typeof(ProfileStoriesTabPage)));
                 }
-
-                await UpdateSharedCountAsync(chat);
-
-                if (cached != null && cached.GroupInCommonCount > 0)
+                else
                 {
-                    AddTab(new ProfileTabItem(Strings.SharedGroupsTab2, typeof(ProfileGroupsTabPage)));
+                    if (user.Id == ClientService.Options.MyId)
+                    {
+                        AddTab(new ProfileTabItem(Strings.SavedDialogsTab, typeof(ProfileSavedChatsTabPage)));
+                    }
+                    else if (cached != null && cached.HasPinnedStories)
+                    {
+                        AddTab(new ProfileTabItem(Strings.ProfileStories, typeof(ProfileStoriesTabPage)));
+                    }
+
+                    await UpdateSharedCountAsync(chat);
+
+                    if (cached != null && cached.GroupInCommonCount > 0)
+                    {
+                        AddTab(new ProfileTabItem(Strings.SharedGroupsTab2, typeof(ProfileGroupsTabPage)));
+                    }
                 }
             }
             else if (chat.Type is ChatTypeSupergroup typeSupergroup)

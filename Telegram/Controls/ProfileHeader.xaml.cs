@@ -566,8 +566,15 @@ namespace Telegram.Controls
         {
             if (ViewModel.ClientService.IsSavedMessages(chat))
             {
-                Visibility = Visibility.Collapsed;
-                return;
+                if (ViewModel.MyProfile)
+                {
+                    Buttons.Visibility = Visibility.Collapsed;
+                }
+                else
+                {
+                    Visibility = Visibility.Collapsed;
+                    return;
+                }
             }
 
             UpdateChatTitle(chat);
@@ -608,6 +615,10 @@ namespace Telegram.Controls
             {
                 Title.Text = ViewModel.Topic.Name;
             }
+            else if (chat.Id == ViewModel.ClientService.Options.MyId)
+            {
+                Title.Text = chat.Title;
+            }
             else
             {
                 Title.Text = ViewModel.ClientService.GetTitle(chat);
@@ -629,7 +640,15 @@ namespace Telegram.Controls
             else
             {
                 UnloadObject(Icon);
-                Photo.SetChat(ViewModel.ClientService, chat, 140);
+
+                if (chat.Id == ViewModel.ClientService.Options.MyId && ViewModel.ClientService.TryGetUser(chat, out User user))
+                {
+                    Photo.SetUser(ViewModel.ClientService, user, 140);
+                }
+                else
+                {
+                    Photo.SetChat(ViewModel.ClientService, chat, 140);
+                }
             }
         }
 
@@ -1282,7 +1301,7 @@ namespace Telegram.Controls
                     flyout.CreateFlyoutItem(ViewModel.OpenStatistics, Strings.Statistics, Icons.DataUsage);
                 }
 
-                if (super.IsChannel && supergroup.CanEditStories())
+                if (supergroup.CanEditStories())
                 {
                     flyout.CreateFlyoutItem(ViewModel.OpenArchivedStories, Strings.ArchivedStories, Icons.Archive);
                 }

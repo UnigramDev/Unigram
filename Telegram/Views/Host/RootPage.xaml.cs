@@ -69,7 +69,7 @@ namespace Telegram.Views.Host
             {
                 RootDestination.ShowAccounts,
                 RootDestination.Status,
-                RootDestination.MyStories,
+                RootDestination.MyProfile,
                 // ------------
                 RootDestination.Separator,
                 // ------------
@@ -653,9 +653,9 @@ namespace Telegram.Views.Host
                             content.Glyph = user.EmojiStatus == null ? Icons.EmojiAdd : Icons.EmojiEdit;
                         }
                         break;
-                    case RootDestination.MyStories:
-                        content.Text = Strings.ProfileMyStories;
-                        content.Glyph = Icons.Stories;
+                    case RootDestination.MyProfile:
+                        content.Text = Strings.MyProfile;
+                        content.Glyph = Icons.PersonCircle;
                         break;
 
                     case RootDestination.Tips:
@@ -1262,7 +1262,7 @@ namespace Telegram.Views.Host
 
         Status,
 
-        MyStories,
+        MyProfile,
         ArchivedChats,
         SavedMessages,
 
