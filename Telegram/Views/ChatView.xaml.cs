@@ -4947,7 +4947,7 @@ namespace Telegram.Views
                 TextArea.Visibility = Visibility.Collapsed;
             }
 
-            if (chat.LastMessage == null && user?.Id != ViewModel.ClientService.Options.MyId && fullInfo != null)
+            if (chat.LastMessage == null && user.Type is UserTypeRegular && user?.Id != ViewModel.ClientService.Options.MyId && fullInfo != null)
             {
                 if (result is CanSendMessageToUserResultUserRestrictsNewChats)
                 {
