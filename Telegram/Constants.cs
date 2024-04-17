@@ -7,6 +7,7 @@
 using Rg.DiffUtils;
 using System;
 using Telegram.Td.Api;
+using Windows.Foundation;
 
 namespace Telegram
 {
@@ -21,6 +22,8 @@ namespace Telegram
         public static readonly string BingMapsApiKey;
 
         public static readonly ushort BuildNumber;
+
+        public static readonly Size SecretSize = new(320, 200);
 
         public const int TypingTimeout = 300;
         public const int HoldingThrottle = 500;

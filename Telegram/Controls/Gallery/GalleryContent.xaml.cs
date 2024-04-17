@@ -6,9 +6,7 @@
 //
 using LibVLCSharp.Shared;
 using System;
-using System.Diagnostics;
 using System.Numerics;
-using System.Text.RegularExpressions;
 using Telegram.Common;
 using Telegram.Services;
 using Telegram.Streams;
@@ -16,7 +14,6 @@ using Telegram.Td.Api;
 using Telegram.ViewModels.Delegates;
 using Telegram.ViewModels.Gallery;
 using Windows.Foundation;
-using Windows.Storage;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Hosting;
@@ -56,6 +53,23 @@ namespace Telegram.Controls.Gallery
 
             RotationAngleChanged += OnRotationAngleChanged;
             SizeChanged += OnSizeChanged;
+
+            Texture.ImageOpened += OnImageOpened;
+        }
+
+        private void OnImageOpened(object sender, RoutedEventArgs e)
+        {
+            MediaOpened();
+        }
+
+        private void MediaOpened()
+        {
+            if (_item is GalleryMessage message && message.IsProtected)
+            {
+                UpdateManager.Unsubscribe(this, ref _fileToken);
+
+                _delegate.ClientService.Send(new OpenMessageContent(message.ChatId, message.Id));
+            }
         }
 
         private void OnRotationAngleChanged(object sender, RoutedEventArgs e)
@@ -176,14 +190,14 @@ namespace Telegram.Controls.Gallery
                 Constraint = item.Constraint;
             }
 
-            UpdateManager.Subscribe(this, delegato.ClientService, file, ref _fileToken, UpdateFile);
-            UpdateFile(item, file);
-
             var thumbnail = item.GetThumbnail();
             if (thumbnail != null && (item.IsVideo || (item.IsPhoto && !file.Local.IsDownloadingCompleted)))
             {
-                UpdateThumbnail(item, thumbnail, true);
+                UpdateThumbnail(item, thumbnail, null, true);
             }
+
+            UpdateManager.Subscribe(this, delegato.ClientService, file, ref _fileToken, UpdateFile);
+            UpdateFile(item, file);
         }
 
         private void UpdateFile(object target, File file)
@@ -246,32 +260,63 @@ namespace Telegram.Controls.Gallery
 
         private void UpdateThumbnail(object target, File file)
         {
-            UpdateThumbnail(_item, file, false);
+            UpdateThumbnail(_item, file, null, false);
         }
 
-        private void UpdateThumbnail(GalleryMedia item, File file, bool download)
+        private void UpdateThumbnail(GalleryMedia item, File file, Minithumbnail minithumbnail, bool download)
         {
-            if (file.Local.IsDownloadingCompleted)
-            {
-                var source = new BitmapImage();
-                PlaceholderHelper.GetBlurred(source, file.Local.Path);
+            BitmapImage source = null;
+            ImageBrush brush;
 
-                //Texture.Source = new BitmapImage(UriEx.GetLocal(file.Local.Path));
-                Background = new ImageBrush
+            if (Background is ImageBrush existing)
+            {
+                brush = existing;
+            }
+            else
+            {
+                brush = new ImageBrush
                 {
-                    ImageSource = source,
-                    Stretch = Stretch.UniformToFill
+                    Stretch = Stretch.UniformToFill,
+                    AlignmentX = AlignmentX.Center,
+                    AlignmentY = AlignmentY.Center
                 };
-            }
-            else if (download)
-            {
-                if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive)
-                {
-                    item.ClientService.DownloadFile(file.Id, 1);
-                }
 
-                UpdateManager.Subscribe(this, _delegate.ClientService, file, ref _thumbnailToken, UpdateThumbnail, true);
+                Background = brush;
             }
+
+            if (file != null)
+            {
+                if (file.Local.IsDownloadingCompleted)
+                {
+                    source = new BitmapImage();
+                    PlaceholderHelper.GetBlurred(source, file.Local.Path, 3);
+                }
+                else
+                {
+                    if (download)
+                    {
+                        if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive)
+                        {
+                            _delegate.ClientService.DownloadFile(file.Id, 1);
+                        }
+
+                        UpdateManager.Subscribe(this, _delegate.ClientService, file, ref _thumbnailToken, UpdateThumbnail, true);
+                    }
+
+                    if (minithumbnail != null)
+                    {
+                        source = new BitmapImage();
+                        PlaceholderHelper.GetBlurred(source, minithumbnail.Data, 3);
+                    }
+                }
+            }
+            else if (minithumbnail != null)
+            {
+                source = new BitmapImage();
+                PlaceholderHelper.GetBlurred(source, minithumbnail.Data, 3);
+            }
+
+            brush.ImageSource = source;
         }
 
         private void Button_Click(object sender, RoutedEventArgs e)
@@ -363,6 +408,7 @@ namespace Telegram.Controls.Gallery
         private void OnInitialized(object sender, LibVLCSharp.Platforms.Windows.InitializedEventArgs e)
         {
             _player = new AsyncMediaPlayer(e.SwapChainOptions);
+            _player.Buffering += OnBuffering;
             _player.Stopped += OnStopped;
 
             var stream = _fileStream;
@@ -375,23 +421,6 @@ namespace Telegram.Controls.Gallery
             _controls = null;
             _fileStream = null;
             _initialPosition = 0;
-        }
-
-        private static readonly Regex _videoLooking = new("using (.*?) module \"(.*?)\" from (.*?)$", RegexOptions.Compiled);
-        private static readonly object _syncObject = new();
-
-        private void _library_Log(object sender, LogEventArgs e)
-        {
-            Debug.WriteLine(e.FormattedLog);
-
-            lock (_syncObject)
-            {
-                var match = _videoLooking.Match(e.FormattedLog);
-                if (match.Success)
-                {
-                    System.IO.File.AppendAllText(ApplicationData.Current.LocalFolder.Path + "\\vlc.txt", string.Format("{2}\n", match.Groups[1].Value, match.Groups[2].Value, match.Groups[3].Value));
-                }
-            }
         }
 
         public void Unload()
@@ -410,12 +439,21 @@ namespace Telegram.Controls.Gallery
 
             if (_player != null)
             {
+                _player.Buffering -= OnBuffering;
                 _player.Stopped -= OnStopped;
                 _player.Close();
             }
 
             UpdateManager.Unsubscribe(this, ref _fileToken);
             UpdateManager.Unsubscribe(this, ref _thumbnailToken, true);
+        }
+
+        private void OnBuffering(AsyncMediaPlayer sender, MediaPlayerBufferingEventArgs args)
+        {
+            if (args.Cache == 100)
+            {
+                MediaOpened();
+            }
         }
 
         private void OnStopped(object sender, EventArgs e)

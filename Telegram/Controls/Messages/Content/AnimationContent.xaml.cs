@@ -79,7 +79,7 @@ namespace Telegram.Controls.Messages.Content
                 return;
             }
 
-            LayoutRoot.Constraint = message;
+            LayoutRoot.Constraint = isSecret ? Constants.SecretSize : message;
             Texture.Source = null;
 
             UpdateThumbnail(message, animation, animation.Thumbnail?.File, true, isSecret);

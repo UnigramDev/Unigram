@@ -897,7 +897,11 @@ namespace Telegram.Controls.Gallery
             if (set)
             {
                 Dispose();
-                viewModel.OpenMessage(viewModel.Items[index]);
+
+                if (viewModel.Items[index].IsProtected is false)
+                {
+                    viewModel.OpenMessage(viewModel.Items[index]);
+                }
             }
             else if (dispose)
             {

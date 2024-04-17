@@ -120,7 +120,6 @@ namespace Telegram.Controls
             var availableWidth = Math.Min(availableSize.Width, Math.Min(double.IsNaN(Width) ? double.PositiveInfinity : Width, MaxWidth));
             var availableHeight = Math.Min(availableSize.Height, Math.Min(double.IsNaN(Height) ? double.PositiveInfinity : Height, MaxHeight));
 
-            var ttl = false;
             var width = 0.0;
             var height = 0.0;
 
@@ -138,7 +137,6 @@ namespace Telegram.Controls
 
             if (constraint is MessageAnimation animationMessage)
             {
-                ttl = animationMessage.IsSecret;
                 constraint = animationMessage.Animation;
             }
             else if (constraint is MessageInvoice invoiceMessage)
@@ -178,7 +176,6 @@ namespace Telegram.Controls
             }
             else if (constraint is MessagePhoto photoMessage)
             {
-                ttl = photoMessage.IsSecret;
                 constraint = photoMessage.Photo;
             }
             else if (constraint is MessageSticker stickerMessage)
@@ -218,12 +215,10 @@ namespace Telegram.Controls
             }
             else if (constraint is MessageVideo videoMessage)
             {
-                ttl = videoMessage.IsSecret;
                 constraint = videoMessage.Video;
             }
             else if (constraint is MessageVideoNote videoNoteMessage)
             {
-                ttl = videoNoteMessage.IsSecret;
                 constraint = videoNoteMessage.VideoNote;
             }
             else if (constraint is MessageChatChangePhoto chatChangePhoto)
@@ -248,19 +243,11 @@ namespace Telegram.Controls
             }
             else if (constraint is Photo photo)
             {
-                if (ttl)
+                var size = photo.Sizes.Count > 0 ? photo.Sizes[^1] : null;
+                if (size != null)
                 {
-                    width = 240;
-                    height = 240;
-                }
-                else
-                {
-                    var size = photo.Sizes.Count > 0 ? photo.Sizes[^1] : null;
-                    if (size != null)
-                    {
-                        width = size.Width;
-                        height = size.Height;
-                    }
+                    width = size.Width;
+                    height = size.Height;
                 }
             }
             else if (constraint is ChatPhoto chatPhoto)
@@ -284,16 +271,8 @@ namespace Telegram.Controls
             }
             else if (constraint is Video video)
             {
-                if (ttl)
-                {
-                    width = 240;
-                    height = 240;
-                }
-                else
-                {
-                    width = video.Width;
-                    height = video.Height;
-                }
+                width = video.Width;
+                height = video.Height;
             }
             else if (constraint is VideoNote videoNote)
             {
