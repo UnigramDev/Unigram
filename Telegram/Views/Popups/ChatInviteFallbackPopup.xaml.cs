@@ -21,12 +21,12 @@ namespace Telegram.Views.Popups
         private readonly IClientService _clientService;
         private readonly ChatInviteLink _inviteLink;
 
-        public ChatInviteFallbackPopup(IClientService clientService, long chatId, IList<long> userIds)
+        public ChatInviteFallbackPopup(IClientService clientService, long chatId, IList<FailedToAddMember> members)
         {
             InitializeComponent();
 
             var chat = clientService.GetChat(chatId);
-            var users = clientService.GetUsers(userIds);
+            var users = clientService.GetUsers(members.Select(x => x.UserId));
 
             _clientService = clientService;
             _inviteLink = GetInviteLink(chat);
