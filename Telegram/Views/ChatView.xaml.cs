@@ -3896,12 +3896,12 @@ namespace Telegram.Views
         {
             if (defaultMessageSenderId == null)
             {
-                //PhotoMore.Source = null;
                 ShowHideBotCommands(false);
             }
             else
             {
                 PhotoMore.SetMessageSender(ViewModel.ClientService, defaultMessageSenderId, 32);
+                Automation.SetToolTip(ButtonMore, Strings.SendMessageAsTitle);
                 ShowHideBotCommands(true);
             }
         }
@@ -4874,6 +4874,8 @@ namespace Telegram.Views
             {
                 ViewModel.BotCommands = fullInfo.BotInfo.Commands.Select(x => new UserCommand(user.Id, x)).ToList();
                 ViewModel.HasBotCommands = false;
+                PhotoMore.Source = null;
+                Automation.SetToolTip(ButtonMore, Strings.AccDescrBotCommands);
                 ShowHideBotCommands(true);
             }
             else
