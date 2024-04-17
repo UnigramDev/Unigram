@@ -32,6 +32,7 @@ namespace Telegram.ViewModels.Supergroups
         CustomEmojiStickerSet,
         ChatTheme,
         CustomBackground,
+        DisableSponsoredMessages
     }
 
     public class SupergroupProfileColorViewModel : ViewModelBase
@@ -298,43 +299,62 @@ namespace Telegram.ViewModels.Supergroups
 
             var level = 0;
 
-            if (SelectedAccentColor != null && SelectedAccentColor.MinChannelChatBoostLevel > level)
+            if (Chat is not Chat chat)
+            {
+                return level;
+            }
+
+            var accentColorId = SelectedAccentColor?.Id ?? -1;
+            var profileAccentColorId = SelectedProfileAccentColor?.Id ?? -1;
+
+            if (accentColorId != -1 && accentColorId != chat.AccentColorId && SelectedAccentColor.MinChannelChatBoostLevel > level)
             {
                 feature = ChatBoostFeature.AccentColor;
                 level = SelectedAccentColor.MinChannelChatBoostLevel;
             }
 
-            if (SelectedCustomEmojiId != 0 && MinBackgroundCustomEmojiBoostLevel > level)
+            if (SelectedCustomEmojiId != 0 && SelectedCustomEmojiId != chat.BackgroundCustomEmojiId && MinBackgroundCustomEmojiBoostLevel > level)
             {
                 feature = ChatBoostFeature.BackgroundCustomEmoji;
                 level = MinBackgroundCustomEmojiBoostLevel;
             }
 
-            if (SelectedProfileAccentColor != null && SelectedProfileAccentColor.MinChannelChatBoostLevel > level)
+            if (profileAccentColorId != -1 && profileAccentColorId != chat.ProfileAccentColorId && SelectedProfileAccentColor.MinChannelChatBoostLevel > level)
             {
                 feature = ChatBoostFeature.ProfileAccentColor;
                 level = SelectedProfileAccentColor.MinChannelChatBoostLevel;
             }
 
-            if (SelectedProfileCustomEmojiId != 0 && MinProfileBackgroundCustomEmojiBoostLevel > level)
+            if (SelectedProfileCustomEmojiId != 0 && SelectedProfileCustomEmojiId != chat.ProfileBackgroundCustomEmojiId && MinProfileBackgroundCustomEmojiBoostLevel > level)
             {
                 feature = ChatBoostFeature.ProfileBackgroundCustomEmoji;
                 level = MinProfileBackgroundCustomEmojiBoostLevel;
             }
 
-            if (SelectedEmojiStatus != null && MinEmojiStatusBoostLevel > level)
+            if (SelectedEmojiStatus != null && SelectedEmojiStatus?.CustomEmojiId != chat.EmojiStatus?.CustomEmojiId && MinEmojiStatusBoostLevel > level)
             {
                 feature = ChatBoostFeature.EmojiStatus;
                 level = MinEmojiStatusBoostLevel;
             }
 
-            if (SelectedCustomEmojiStickerSet != 0 && MinCustomEmojiStickerSetBoostLevel > level)
+            if (ClientService.TryGetSupergroupFull(chat, out SupergroupFullInfo fullInfo))
             {
-                feature = ChatBoostFeature.CustomEmojiStickerSet;
-                level = MinCustomEmojiStickerSetBoostLevel;
+                if (SelectedCustomEmojiStickerSet != 0 && SelectedCustomEmojiStickerSet != fullInfo.CustomEmojiStickerSetId && MinCustomEmojiStickerSetBoostLevel > level)
+                {
+                    feature = ChatBoostFeature.CustomEmojiStickerSet;
+                    level = MinCustomEmojiStickerSetBoostLevel;
+                }
             }
 
-            if (SelectedChatTheme?.DarkSettings != null && MinChatThemeBackgroundBoostLevel > level)
+            var prevChatTheme = chat.Background?.Background.Type is BackgroundTypeChatTheme typeChatTheme
+                ? typeChatTheme.ThemeName
+                : chat.ThemeName;
+
+            var nextChatTheme = SelectedChatTheme?.LightSettings != null
+                ? SelectedChatTheme.Name
+                : string.Empty;
+
+            if (nextChatTheme.Length > 0 && prevChatTheme != nextChatTheme && MinChatThemeBackgroundBoostLevel > level)
             {
                 feature = ChatBoostFeature.ChatTheme;
                 level = MinChatThemeBackgroundBoostLevel;
