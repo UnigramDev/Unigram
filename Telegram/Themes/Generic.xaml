@@ -38,6 +38,7 @@
         <ResourceDictionary Source="ms-appx:///Controls/Messages/Content/WebPageContent.xaml" />
         <ResourceDictionary Source="ms-appx:///Controls/Messages/Content/UnsupportedContent.xaml" />
         <ResourceDictionary Source="ms-appx:///Controls/Messages/MessageBubble.xaml" />
+        <ResourceDictionary Source="ms-appx:///Controls/Messages/MessageForwardHeader.xaml" />
         <ResourceDictionary Source="ms-appx:///Controls/Messages/MessageFooter.xaml" />
         <ResourceDictionary Source="ms-appx:///Controls/Messages/MessageReply.xaml" />
         <ResourceDictionary Source="ms-appx:///Controls/Messages/MessageSelector.xaml" />

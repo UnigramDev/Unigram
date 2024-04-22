@@ -5014,6 +5014,9 @@ Duration: {1}</value>
   <data name="Forward" xml:space="preserve">
     <value>Forward</value>
   </data>
+  <data name="ForwardedFrom" xml:space="preserve">
+    <value>Forwarded from</value>
+  </data>
   <data name="ForwardedMessage" xml:space="preserve">
     <value>Forwarded message</value>
   </data>

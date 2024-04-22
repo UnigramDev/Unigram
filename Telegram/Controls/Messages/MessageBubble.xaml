@@ -254,21 +254,10 @@
                                            Margin="4,0,0,2"
                                            Grid.Column="1" />
 
-                                <TextBlock x:Name="ForwardLabel"
-                                           x:Load="False"
-                                           Margin="0,0,0,2"
-                                           Foreground="{ThemeResource MessageHeaderForegroundBrush}"
-                                           Style="{StaticResource CaptionTextBlockStyle}"
-                                           FontFamily="{ThemeResource EmojiThemeFontFamilyWithSymbols}"
-                                           TextTrimming="CharacterEllipsis"
-                                           TextWrapping="NoWrap"
-                                           Visibility="Collapsed"
-                                           Grid.Row="1">
-                                    <Run />
-                                    <Hyperlink UnderlineStyle="None">
-                                        <Run FontWeight="SemiBold" />
-                                    </Hyperlink>
-                                </TextBlock>
+                                <local:MessageForwardHeader x:Name="ForwardHeader"
+                                                            x:Load="False"
+                                                            Margin="0,0,0,2"
+                                                            Grid.Row="1" />
 
                                 <controls:GlyphButton x:Name="PsaInfo"
                                                       x:Load="False"
@@ -328,7 +317,7 @@
                                                    Grid.Column="1"
                                                    Grid.Row="1" />
 
-                        
+
                         <!-- TODO: find a way to get rid of this -->
                         <local:ReactionsPanel x:Name="MediaReactions"
                                               MaxWidth="{StaticResource MessageMaxWidth}"

@@ -221,6 +221,9 @@
     <Compile Include="Controls\Chats\ChatConnectedBotHeader.xaml.cs">
       <DependentUpon>ChatConnectedBotHeader.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\Messages\MessageForwardHeader.xaml.cs">
+      <DependentUpon>MessageForwardHeader.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Controls\Messages\ReactionAsTagButton.cs" />
     <Compile Include="Common\AsyncMediaPlayer.cs" />
     <Compile Include="Controls\SuggestedActionSetBirthdateCard.xaml.cs">
@@ -2327,6 +2330,10 @@
     <Page Include="Controls\Messages\Content\VoiceNoteContent.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Controls\Messages\MessageForwardHeader.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Controls\Messages\ReactionsMenuFlyout.xaml">
       <Generator>MSBuild:Compile</Generator>

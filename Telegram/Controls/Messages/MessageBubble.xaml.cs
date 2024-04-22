@@ -130,10 +130,7 @@ namespace Telegram.Controls.Messages
         private Hyperlink HeaderLink;
         private Run HeaderLinkRun;
         private TextBlock AdminLabel;
-        private TextBlock ForwardLabel;
-        private Run ForwardRun;
-        private Hyperlink ForwardLink;
-        private Run ForwardLinkRun;
+        private MessageForwardHeader ForwardHeader;
         private IdentityIcon Identity;
         private GlyphButton PsaInfo;
 
@@ -971,45 +968,17 @@ namespace Telegram.Controls.Messages
                 LoadForwardLabel();
                 forward = true;
 
-                if (story.State == MessageStoryState.Expired)
-                {
-                    ForwardRun.Text = string.Format("{0}\u00A0{1}\n{2}", Icons.ExpiredStory, Strings.ExpiredStory, Strings.From);
-                }
-                else
-                {
-                    ForwardRun.Text = string.Format("{0}\n{1}", Strings.ForwardedStory, Strings.From);
-                }
-
-                if (message.ClientService.TryGetChat(story.StorySenderChatId, out Chat storyChat))
-                {
-                    var brush = light ? new SolidColorBrush(Colors.White) : GetBrush("MessageHeaderForegroundBrush");
-
-                    ForwardLabel.Foreground = brush;
-                    ForwardLink.Foreground = brush;
-                    ForwardLinkRun.Text = storyChat.Title;
-                    ForwardLinkRun.FontWeight = FontWeights.SemiBold;
-                    ForwardLabel.Visibility = Visibility.Visible;
-                }
+                ForwardHeader.UpdateMessage(message, light);
             }
             else if (message.ForwardInfo != null && (!message.IsSaved || !message.ForwardInfo.HasSameOrigin()))
             {
                 LoadForwardLabel();
                 forward = true;
 
+                ForwardHeader.UpdateMessage(message, light);
+
                 if (message.ForwardInfo.PublicServiceAnnouncementType.Length > 0)
                 {
-                    var type = LocaleService.Current.GetString("PsaMessage_" + message.ForwardInfo.PublicServiceAnnouncementType);
-                    if (type.Length > 0)
-                    {
-                        ForwardRun.Text = string.Format("{0}\n{1}", type, Strings.From);
-                    }
-                    else
-                    {
-                        ForwardRun.Text = string.Format("{0}\n{1}", Strings.PsaMessageDefault, Strings.From);
-                    }
-
-                    ForwardLinkRun.Text = string.Empty;
-
                     if (PsaInfo == null)
                     {
                         PsaInfo = GetTemplateChild(nameof(PsaInfo)) as GlyphButton;
@@ -1018,59 +987,18 @@ namespace Telegram.Controls.Messages
 
                     PsaInfo.Visibility = Visibility.Visible;
                 }
-                else
-                {
-                    ForwardRun.Text = string.Format("{0}\n{1}", Strings.ForwardedMessage, Strings.From);
-
-                    if (PsaInfo != null)
-                    {
-                        PsaInfo.Visibility = Visibility.Collapsed;
-                    }
-                }
-
-                var title = string.Empty;
-                var bold = true;
-
-                if (message.ForwardInfo?.Origin is MessageOriginUser fromUser && message.ClientService.TryGetUser(fromUser.SenderUserId, out User fromUserUser))
-                {
-                    title = fromUserUser.FullName();
-                }
-                else if (message.ForwardInfo?.Origin is MessageOriginChat fromChat && message.ClientService.TryGetChat(fromChat.SenderChatId, out Chat fromChatChat))
-                {
-                    title = fromChatChat.Title;
-                }
-                else if (message.ForwardInfo?.Origin is MessageOriginChannel fromChannel && message.ClientService.TryGetChat(fromChannel.ChatId, out Chat fromChannelChat))
-                {
-                    title = fromChannelChat.Title;
-                }
-                else if (message.ForwardInfo?.Origin is MessageOriginHiddenUser fromHiddenUser)
-                {
-                    title = fromHiddenUser.SenderName;
-                    bold = false;
-                }
-                else if (message.ImportInfo != null)
-                {
-                    title = message.ImportInfo.SenderName;
-                }
-
-                var brush = light ? new SolidColorBrush(Colors.White) : GetBrush("MessageHeaderForegroundBrush");
-
-                ForwardLabel.Foreground = brush;
-                ForwardLink.Foreground = brush;
-                ForwardLinkRun.Text = title;
-                ForwardLinkRun.FontWeight = bold ? FontWeights.SemiBold : FontWeights.Normal;
-                ForwardLabel.Visibility = Visibility.Visible;
-            }
-            else
-            {
-                if (PsaInfo != null)
+                else if (PsaInfo != null)
                 {
                     PsaInfo.Visibility = Visibility.Collapsed;
                 }
+            }
+            else
+            {
+                ForwardHeader?.UpdateMessage(message, light);
 
-                if (ForwardLabel != null)
+                if (PsaInfo != null)
                 {
-                    ForwardLabel.Visibility = Visibility.Collapsed;
+                    PsaInfo.Visibility = Visibility.Collapsed;
                 }
             }
 
@@ -1144,9 +1072,9 @@ namespace Telegram.Controls.Messages
                 HeaderPanel.Visibility = Visibility.Visible;
                 Header.Visibility = Visibility.Visible;
 
-                if (ForwardLabel != null)
+                if (ForwardHeader != null)
                 {
-                    ForwardLabel.Margin = new Thickness(0, -2, 0, 2);
+                    ForwardHeader.Margin = new Thickness(0, -2, 0, 2);
                 }
             }
             else
@@ -1169,9 +1097,9 @@ namespace Telegram.Controls.Messages
 
                 Header.Visibility = (message.ReplyTo != null && message.ReplyToState != MessageReplyToState.Hidden) || forward ? Visibility.Visible : Visibility.Collapsed;
 
-                if (ForwardLabel != null)
+                if (ForwardHeader != null)
                 {
-                    ForwardLabel.Margin = new Thickness(0, 0, 0, 2);
+                    ForwardHeader.Margin = new Thickness(0, 0, 0, 2);
                 }
             }
         }
@@ -1195,15 +1123,10 @@ namespace Telegram.Controls.Messages
 
         private void LoadForwardLabel()
         {
-            if (ForwardLabel == null)
+            if (ForwardHeader == null)
             {
-                ForwardLabel = GetTemplateChild(nameof(ForwardLabel)) as TextBlock;
-
-                ForwardRun = ForwardLabel.Inlines[0] as Run;
-                ForwardLink = ForwardLabel.Inlines[2] as Hyperlink;
-                ForwardLinkRun = ForwardLink.Inlines[0] as Run;
-
-                ForwardLink.Click += FwdFrom_Click;
+                ForwardHeader = GetTemplateChild(nameof(ForwardHeader)) as MessageForwardHeader;
+                ForwardHeader.Click += FwdFrom_Click;
             }
         }
 
@@ -1217,7 +1140,7 @@ namespace Telegram.Controls.Messages
             message.Delegate.OpenViaBot(message.ViaBotUserId);
         }
 
-        private void FwdFrom_Click(Hyperlink sender, HyperlinkClickEventArgs args)
+        private void FwdFrom_Click(object sender, RoutedEventArgs args)
         {
             if (_message is not MessageViewModel message)
             {

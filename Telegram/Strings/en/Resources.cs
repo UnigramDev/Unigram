@@ -7694,6 +7694,11 @@ namespace Telegram
         public static string Forward => Resource.GetString("Forward");
         
         /// <summary>
+        /// Localized resource similar to "Forwarded from"
+        /// </summary>
+        public static string ForwardedFrom => Resource.GetString("ForwardedFrom");
+        
+        /// <summary>
         /// Localized resource similar to "Forwarded message"
         /// </summary>
         public static string ForwardedMessage => Resource.GetString("ForwardedMessage");

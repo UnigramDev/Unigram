@@ -1,0 +1,70 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:local="using:Telegram.Controls.Messages"
+                    xmlns:controls="using:Telegram.Controls"
+                    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                    mc:Ignorable="d">
+
+    <Style TargetType="local:MessageForwardHeader">
+        <Setter Property="Foreground"
+                Value="{ThemeResource MessageHeaderForegroundBrush}" />
+        <Setter Property="HorizontalAlignment"
+                Value="Stretch" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="local:MessageForwardHeader">
+                    <Grid>
+                        <VisualStateManager.VisualStateGroups>
+                            <VisualStateGroup x:Name="CommonStates">
+                                <VisualState x:Name="Normal" />
+                                <VisualState x:Name="PointerOver">
+                                    <VisualState.Setters>
+                                        <Setter Target="BackgroundOverlay.Opacity"
+                                                Value="0.1" />
+                                    </VisualState.Setters>
+                                </VisualState>
+                                <VisualState x:Name="Pressed">
+                                    <VisualState.Setters>
+                                        <Setter Target="BackgroundOverlay.Opacity"
+                                                Value="0.15" />
+                                    </VisualState.Setters>
+                                </VisualState>
+                            </VisualStateGroup>
+                        </VisualStateManager.VisualStateGroups>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition />
+                        </Grid.ColumnDefinitions>
+                        <Rectangle x:Name="BackgroundOverlay"
+                                   Fill="{TemplateBinding Foreground}"
+                                   Opacity="0"
+                                   Margin="-6,-2"
+                                   RadiusX="8"
+                                   RadiusY="8" />
+
+                        <controls:ProfilePicture x:Name="ForwardPhoto"
+                                                 HorizontalAlignment="Left"
+                                                 VerticalAlignment="Bottom"
+                                                 Width="16"
+                                                 Height="16" />
+
+                        <TextBlock x:Name="ForwardLabel"
+                                   Foreground="{TemplateBinding Foreground}"
+                                   Style="{StaticResource CaptionTextBlockStyle}"
+                                   FontFamily="{ThemeResource EmojiThemeFontFamilyWithSymbols}"
+                                   TextTrimming="CharacterEllipsis"
+                                   TextWrapping="NoWrap">
+                            <Run />
+                            <LineBreak />
+                            <Run FontWeight="SemiBold" />
+                        </TextBlock>
+                    </Grid>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+</ResourceDictionary>
+    

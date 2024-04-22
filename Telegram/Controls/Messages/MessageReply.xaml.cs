@@ -300,7 +300,7 @@ namespace Telegram.Controls.Messages
                     AccentDash.Stripe1 = null;
                     AccentDash.Stripe2 = null;
 
-                    Margin = new Thickness(-8, -6, -8, -6);
+                    Margin = new Thickness(-8, -2, -8, -4);
                 }
                 else if ((_accent != accent || _light) && !white)
                 {
