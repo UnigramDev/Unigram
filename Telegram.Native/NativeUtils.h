@@ -38,6 +38,9 @@ namespace winrt::Telegram::Native::implementation
 
         static bool IsMediaSupported();
 
+        static void OverrideScaleForCurrentView(int32_t value);
+        static int32_t GetScaleForCurrentView();
+
         static void SetFatalErrorCallback(FatalErrorCallback action);
         static winrt::Telegram::Native::FatalError GetFatalError(bool onlyNative);
         static winrt::Telegram::Native::FatalError GetBackTrace(DWORD code);

@@ -45,6 +45,9 @@ namespace Telegram
 
         public const string DefaultDeviceId = "";
 
+        public const int FontSize = 14;
+        public const int CaptionFontSize = 12;
+
         public static readonly string[] TelegramHosts = new string[]
         {
             "telegram.org",

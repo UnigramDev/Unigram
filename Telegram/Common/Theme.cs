@@ -14,7 +14,6 @@ using Telegram.Services;
 using Telegram.Services.Settings;
 using Telegram.Td.Api;
 using Windows.Globalization.Fonts;
-using Windows.Storage;
 using Windows.UI;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -29,7 +28,6 @@ namespace Telegram.Common
         [ThreadStatic]
         public static Theme Current;
 
-        private readonly ApplicationDataContainer _isolatedStore;
         private readonly bool _isPrimary;
 
         public Theme()
@@ -38,10 +36,7 @@ namespace Telegram.Common
 
             try
             {
-                _isolatedStore = ApplicationData.Current.LocalSettings.CreateContainer("Theme", ApplicationDataCreateDisposition.Always);
                 Current ??= this;
-
-                this.Add("MessageFontSize", GetValueOrDefault("MessageFontSize", 14d));
 
                 this.Add("ThreadStackLayout", new StackLayout());
 
@@ -502,70 +497,6 @@ namespace Telegram.Common
             }
 
             return target;
-        }
-
-        #endregion
-
-        #region Settings
-
-        private int? _messageFontSize;
-        public int MessageFontSize
-        {
-            get => _messageFontSize ??= (int)GetValueOrDefault("MessageFontSize", 14d);
-            set => AddOrUpdateValue("MessageFontSize", (double)(_messageFontSize = value));
-        }
-
-        public bool AddOrUpdateValue(string key, object value)
-        {
-            bool valueChanged = false;
-
-            if (_isolatedStore.Values.ContainsKey(key))
-            {
-                if (_isolatedStore.Values[key] != value)
-                {
-                    _isolatedStore.Values[key] = value;
-                    valueChanged = true;
-                }
-            }
-            else
-            {
-                _isolatedStore.Values.Add(key, value);
-                valueChanged = true;
-            }
-
-            if (valueChanged)
-            {
-                try
-                {
-                    if (this.ContainsKey(key))
-                    {
-                        this[key] = value;
-                    }
-                    else
-                    {
-                        this.Add(key, value);
-                    }
-                }
-                catch { }
-            }
-
-            return valueChanged;
-        }
-
-        public valueType GetValueOrDefault<valueType>(string key, valueType defaultValue)
-        {
-            valueType value;
-
-            if (_isolatedStore.Values.ContainsKey(key))
-            {
-                value = (valueType)_isolatedStore.Values[key];
-            }
-            else
-            {
-                value = defaultValue;
-            }
-
-            return value;
         }
 
         #endregion

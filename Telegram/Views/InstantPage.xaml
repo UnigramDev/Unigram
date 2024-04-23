@@ -120,8 +120,6 @@
         <Style x:Key="BlockBodyTextBlockStyle"
                TargetType="RichTextBlock"
                BasedOn="{StaticResource BodyRichTextBlockStyle}">
-            <Setter Property="FontSize"
-                    Value="{ThemeResource MessageFontSize}" />
             <!--<Setter Property="Foreground" Value="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"/>-->
         </Style>
 

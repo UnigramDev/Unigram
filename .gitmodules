@@ -13,3 +13,6 @@
 [submodule "Libraries/libprisma"]
 	path = Libraries/libprisma
 	url = https://github.com/FrayxRulez/libprisma.git
+[submodule "Libraries/CoreWindowCustomDPI"]
+	path = Libraries/CoreWindowCustomDPI
+	url = https://github.com/ahmed605/CoreWindowCustomDPI.git

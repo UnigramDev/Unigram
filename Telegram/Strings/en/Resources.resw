@@ -3601,6 +3601,9 @@ You can always switch back to the default Telegram theme here.</value>
   <data name="Default" xml:space="preserve">
     <value>Default</value>
   </data>
+  <data name="DefaultInterfaceScale" xml:space="preserve">
+    <value>Default interface scale</value>
+  </data>
   <data name="Delete" xml:space="preserve">
     <value>Delete</value>
   </data>
@@ -5425,6 +5428,9 @@ This setting does not affect group chats.</value>
   </data>
   <data name="InteractionsChartTitle" xml:space="preserve">
     <value>Interactions</value>
+  </data>
+  <data name="InterfaceScale" xml:space="preserve">
+    <value>Interface scale</value>
   </data>
   <data name="InvalidCode" xml:space="preserve">
     <value>Invalid code, please try again.</value>

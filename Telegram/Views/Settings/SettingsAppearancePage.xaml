@@ -111,26 +111,20 @@
                                           IsChevronVisible="True" />
                 </controls:HeaderedControl>
 
-                <controls:HeaderedControl Background="{ThemeResource SettingsItemBackground}">
-                    <Grid BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}">
+                <controls:HeaderedControl>
+                    <Grid BorderBrush="{ThemeResource SettingsItemBorderBrush}">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="56" />
                             <ColumnDefinition Width="1*" />
                             <ColumnDefinition Width="2*" />
                         </Grid.ColumnDefinitions>
-                        <TextBlock FontSize="{StaticResource GlyphMediumFontSize}"
-                                   HorizontalAlignment="Left"
-                                   VerticalAlignment="Center"
-                                   Margin="20,0,0,0"
-                                   AutomationProperties.AccessibilityView="Raw"
-                                   Text="&#xE9EB;"
-                                   FontFamily="{StaticResource SymbolThemeFontFamily}" />
+                        <CheckBox IsChecked="{x:Bind ViewModel.UseDefaultScaling, Mode=TwoWay}"
+                                  Content="{CustomResource DefaultInterfaceScale}"
+                                  Style="{StaticResource SettingsCheckBoxStyle}"
+                                  Grid.ColumnSpan="3" />
 
-                        <TextBlock Text="{CustomResource TextSizeHeader}"
-                                   VerticalAlignment="Center"
-                                   Grid.Column="1" />
-                        <Slider Value="{x:Bind ViewModel.FontSize, Mode=TwoWay}"
-                                AutomationProperties.Name="{CustomResource TextSizeHeader}"
+                        <Slider x:Name="ScalingSlider"
+                                AutomationProperties.Name="{CustomResource InterfaceScale}"
                                 Minimum="0"
                                 Maximum="6"
                                 SmallChange="1"
@@ -141,7 +135,8 @@
                                 Margin="12,6,12,6"
                                 Grid.Column="2" />
                     </Grid>
-                    <Grid BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}">
+                    <Grid Background="{ThemeResource SettingsItemBackground}"
+                          BorderBrush="{ThemeResource SettingsItemBorderBrush}">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="56" />
                             <ColumnDefinition Width="1*" />

@@ -13,6 +13,7 @@ using Telegram.Td.Api;
 using Telegram.ViewModels.Settings;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Controls.Primitives;
 using Windows.UI.Xaml.Hosting;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Navigation;
@@ -30,6 +31,16 @@ namespace Telegram.Views.Settings
 
             var preview = ElementComposition.GetElementVisual(Preview);
             preview.Clip = preview.Compositor.CreateInsetClip();
+
+            _valueChanged = new EventDebouncer<RangeBaseValueChangedEventArgs>(Constants.TypingTimeout,
+                handler => ScalingSlider.ValueChanged += new RangeBaseValueChangedEventHandler(handler),
+                handler => ScalingSlider.ValueChanged -= new RangeBaseValueChangedEventHandler(handler));
+            _valueChanged.Invoked += Slider_ValueChanged;
+
+            ScalingSlider.AddHandler(PointerPressedEvent, new PointerEventHandler(Slider_PointerPressed), true);
+            ScalingSlider.AddHandler(PointerReleasedEvent, new PointerEventHandler(Slider_PointerReleased), true);
+            ScalingSlider.AddHandler(PointerCanceledEvent, new PointerEventHandler(Slider_PointerCanceled), true);
+            ScalingSlider.AddHandler(PointerCaptureLostEvent, new PointerEventHandler(Slider_PointerCaptureLost), true);
         }
 
         protected override void OnNavigatedTo(NavigationEventArgs e)
@@ -59,6 +70,8 @@ namespace Telegram.Views.Settings
                 Message1.Mockup(ViewModel.ClientService, Strings.FontSizePreviewLine1, user, Strings.FontSizePreviewReply, false, DateTime.Now.AddSeconds(-25));
                 Message2.Mockup(Strings.FontSizePreviewLine2, true, DateTime.Now);
             }
+
+            ScalingSlider.Value = ViewModel.Scaling;
         }
 
         protected override void OnNavigatedFrom(NavigationEventArgs e)
@@ -83,15 +96,17 @@ namespace Telegram.Views.Settings
 
         private void OnPropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
-            if (e.PropertyName.Equals("FontSize"))
+            if (e.PropertyName == nameof(ViewModel.BubbleRadius))
             {
                 Message1.UpdateMockup();
                 Message2.UpdateMockup();
             }
-            else if (e.PropertyName.Equals("BubbleRadius"))
+            else if (e.PropertyName == nameof(ViewModel.UseDefaultScaling))
             {
-                Message1.UpdateMockup();
-                Message2.UpdateMockup();
+                if (ViewModel.UseDefaultScaling)
+                {
+                    ScalingSlider.Value = ViewModel.Scaling;
+                }
             }
         }
 
@@ -146,5 +161,39 @@ namespace Telegram.Views.Settings
         }
 
         #endregion
+
+        private readonly EventDebouncer<RangeBaseValueChangedEventArgs> _valueChanged;
+        private bool _scrubbing;
+
+        private void Slider_PointerPressed(object sender, PointerRoutedEventArgs e)
+        {
+            _scrubbing = true;
+        }
+
+        private void Slider_PointerReleased(object sender, PointerRoutedEventArgs e)
+        {
+            _scrubbing = false;
+            ViewModel.Scaling = (int)ScalingSlider.Value;
+        }
+
+        private void Slider_PointerCanceled(object sender, PointerRoutedEventArgs e)
+        {
+            _scrubbing = false;
+        }
+
+        private void Slider_PointerCaptureLost(object sender, PointerRoutedEventArgs e)
+        {
+            _scrubbing = false;
+        }
+
+        private void Slider_ValueChanged(object sender, RangeBaseValueChangedEventArgs e)
+        {
+            if (_scrubbing)
+            {
+                return;
+            }
+
+            ViewModel.Scaling = (int)e.NewValue;
+        }
     }
 }

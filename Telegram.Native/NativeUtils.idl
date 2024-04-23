@@ -41,6 +41,9 @@ namespace Telegram.Native
 
         static Boolean IsMediaSupported();
 
+        static void OverrideScaleForCurrentView(Int32 value);
+        static Int32 GetScaleForCurrentView();
+
         static void SetFatalErrorCallback(FatalErrorCallback action);
         static FatalError GetFatalError(Boolean onlyNative);
         static FatalError GetBackTrace(UInt64 code);

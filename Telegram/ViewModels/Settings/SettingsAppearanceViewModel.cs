@@ -11,6 +11,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Telegram.Common;
 using Telegram.Controls;
+using Telegram.Native;
 using Telegram.Navigation;
 using Telegram.Navigation.Services;
 using Telegram.Services;
@@ -27,15 +28,22 @@ namespace Telegram.ViewModels.Settings
     {
         private readonly IThemeService _themeService;
 
-        private readonly Dictionary<int, int> _indexToSize = new Dictionary<int, int> { { 0, 12 }, { 1, 13 }, { 2, 14 }, { 3, 15 }, { 4, 16 }, { 5, 17 }, { 6, 18 } };
-        private readonly Dictionary<int, int> _sizeToIndex = new Dictionary<int, int> { { 12, 0 }, { 13, 1 }, { 14, 2 }, { 15, 3 }, { 16, 4 }, { 17, 5 }, { 18, 6 } };
-
         public SettingsAppearanceViewModel(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator, IThemeService themeService)
             : base(clientService, settingsService, aggregator)
         {
             _themeService = themeService;
 
             ChatThemes = new ObservableCollection<ChatThemeViewModel>();
+
+            var current = NativeUtils.GetScaleForCurrentView();
+            var stored = settingsService.Appearance.Scaling;
+
+            if (stored == 0 || settingsService.Appearance.UseDefaultScaling)
+            {
+                stored = current;
+            }
+
+            _scaling = stored;
         }
 
         public ObservableCollection<ChatThemeViewModel> ChatThemes { get; }
@@ -129,29 +137,51 @@ namespace Telegram.ViewModels.Settings
             set => Set(ref _emojiSetId, value);
         }
 
-        public double FontSize
+        public bool UseDefaultScaling
         {
-            get
-            {
-                var size = Theme.Current.MessageFontSize;
-                if (_sizeToIndex.TryGetValue(size, out int index))
-                {
-                    return index;
-                }
-
-                return 2d;
-            }
+            get => Settings.Appearance.UseDefaultScaling;
             set
             {
-                var index = (int)Math.Round(value);
-                if (_indexToSize.TryGetValue(index, out int size))
+                if (Settings.Appearance.UseDefaultScaling != value)
                 {
-                    Theme.Current.MessageFontSize = size;
-                }
+                    Settings.Appearance.UseDefaultScaling = value;
 
-                RaisePropertyChanged();
+                    if (value || Settings.Appearance.Scaling == 0)
+                    {
+                        NativeUtils.OverrideScaleForCurrentView(Settings.Appearance.Scaling = _scaling = NativeUtils.GetScaleForCurrentView());
+                        RaisePropertyChanged(nameof(Scaling));
+                    }
+
+                    RaisePropertyChanged();
+                }
             }
         }
+
+        private int _scaling;
+        public int Scaling
+        {
+            get => Array.IndexOf(_scalingIndexer, _scaling);
+            set
+            {
+                if (value >= 0 && value < _scalingIndexer.Length && _scaling != _scalingIndexer[value])
+                {
+                    NativeUtils.OverrideScaleForCurrentView(Settings.Appearance.Scaling = _scaling = _scalingIndexer[value]);
+                    UseDefaultScaling = false;
+                    RaisePropertyChanged();
+                }
+            }
+        }
+
+        private readonly int[] _scalingIndexer = new[]
+        {
+            100,
+            125,
+            150,
+            175,
+            200,
+            225,
+            250
+        };
 
         public int BubbleRadius
         {

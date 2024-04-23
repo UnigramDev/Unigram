@@ -85,7 +85,9 @@
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings">
   </ImportGroup>
-  <ImportGroup Label="Shared" />
+  <ImportGroup Label="Shared">
+    <Import Project="..\Libraries\CoreWindowCustomDPI\InternalsRT.Detours\InternalsRT.Detours.vcxitems" Label="Shared" />
+  </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
@@ -335,6 +337,7 @@
       <DependentUpon>HttpProxyWatcher.idl</DependentUpon>
       <SubType>Code</SubType>
     </ClInclude>
+    <ClInclude Include="InternalsRT\CoreWindowHelpers.h" />
     <ClInclude Include="LanguageIdentification.h">
       <DependentUpon>LanguageIdentification.idl</DependentUpon>
       <SubType>Code</SubType>
@@ -932,6 +935,7 @@
     </ClCompile>
     <ClCompile Include="Highlight\SyntaxToken.cpp" />
     <ClCompile Include="Highlight\TextToken.cpp" />
+    <ClCompile Include="InternalsRT\CoreWindowHelpers.cpp" />
     <ClCompile Include="libyuv\source\rotate_lsx.cc">
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
     </ClCompile>

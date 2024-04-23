@@ -94,6 +94,9 @@
     <Filter Include="libwebp\demux">
       <UniqueIdentifier>{d0ccdb7a-8a40-43aa-91c1-c022df2e3775}</UniqueIdentifier>
     </Filter>
+    <Filter Include="InternalsRT">
+      <UniqueIdentifier>{2a54e86b-aff6-450a-81af-2d98899ae281}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp" />
@@ -744,6 +747,9 @@
     <ClCompile Include="libyuv\source\scale_rvv.cc">
       <Filter>libyuv\source</Filter>
     </ClCompile>
+    <ClCompile Include="InternalsRT\CoreWindowHelpers.cpp">
+      <Filter>InternalsRT</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />
@@ -1174,6 +1180,9 @@
     </ClInclude>
     <ClInclude Include="libyuv\include\libyuv\scale_rgb.h">
       <Filter>libyuv\include\libyuv</Filter>
+    </ClInclude>
+    <ClInclude Include="InternalsRT\CoreWindowHelpers.h">
+      <Filter>InternalsRT</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

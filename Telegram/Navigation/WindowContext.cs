@@ -12,6 +12,7 @@ using System.Threading.Tasks;
 using Telegram.Common;
 using Telegram.Controls;
 using Telegram.Controls.Chats;
+using Telegram.Native;
 using Telegram.Navigation.Services;
 using Telegram.Services;
 using Telegram.Services.Keyboard;
@@ -55,6 +56,12 @@ namespace Telegram.Navigation
             Current = this;
             Dispatcher = new DispatcherContext(window.CoreWindow.DispatcherQueue);
             Id = ApplicationView.GetApplicationViewIdForWindow(window.CoreWindow);
+
+            var scaling = SettingsService.Current.Appearance.Scaling;
+            if (scaling is >= 100 and <= 250 && !SettingsService.Current.Appearance.UseDefaultScaling)
+            {
+                NativeUtils.OverrideScaleForCurrentView(scaling);
+            }
 
             if (CoreApplication.MainView == CoreApplication.GetCurrentView())
             {

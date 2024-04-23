@@ -13,6 +13,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Telegram.Stub", "Telegram.S
 EndProject
 Project("{C7167F0D-BC9F-4E6E-AFE1-012C56B48DB5}") = "Telegram.Msix", "Telegram.Msix\Telegram.Msix.wapproj", "{C7232C9F-B812-4073-8185-D524B6425B71}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "InternalsRT.Detours", "Libraries\CoreWindowCustomDPI\InternalsRT.Detours\InternalsRT.Detours.vcxitems", "{2E36487B-ADB6-4FBB-B1D3-258DF5DF7AA0}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|ARM64 = Debug|ARM64
@@ -101,5 +103,9 @@ Global
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {8D9C79FF-7079-448D-8DA7-7E83CDBCA9AC}
+	EndGlobalSection
+	GlobalSection(SharedMSBuildProjectFiles) = preSolution
+		Libraries\CoreWindowCustomDPI\InternalsRT.Detours\InternalsRT.Detours.vcxitems*{1b521e77-46bd-4d60-89f6-d68e9bb9abff}*SharedItemsImports = 4
+		Libraries\CoreWindowCustomDPI\InternalsRT.Detours\InternalsRT.Detours.vcxitems*{2e36487b-adb6-4fbb-b1d3-258df5df7aa0}*SharedItemsImports = 9
 	EndGlobalSection
 EndGlobal

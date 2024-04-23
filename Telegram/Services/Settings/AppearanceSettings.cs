@@ -478,7 +478,19 @@ namespace Telegram.Services.Settings
                 : ApplicationTheme.Light;
         }
 
+        private static bool? _useDefaultScaling;
+        public bool UseDefaultScaling
+        {
+            get => _useDefaultScaling ??= GetValueOrDefault("UseDefaultScaling", true);
+            set => AddOrUpdateValue(ref _useDefaultScaling, "UseDefaultScaling", value);
+        }
 
+        private static int? _scaling;
+        public int Scaling
+        {
+            get => _scaling ??= GetValueOrDefault("Scaling", 0);
+            set => AddOrUpdateValue(ref _scaling, "Scaling", _scaling);
+        }
 
         private static int? _bubbleRadius;
         public int BubbleRadius

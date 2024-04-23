@@ -6,6 +6,7 @@
 
 #include "Helpers/COMHelper.h"
 #include "Helpers/LibraryHelper.h"
+#include "InternalsRT/CoreWindowHelpers.h"
 #include "DebugUtils.h"
 
 #include "FatalError.h"
@@ -582,6 +583,16 @@ namespace winrt::Telegram::Native::implementation
         }
 
         return result != E_NOTIMPL;
+    }
+
+    void NativeUtils::OverrideScaleForCurrentView(int32_t value)
+    {
+        InternalsRT::Core::Windowing::CoreWindowHelpers::OverrideDpiForCurrentThread(value * 96.0f / 100.0f);
+    }
+
+    int32_t NativeUtils::GetScaleForCurrentView()
+    {
+        return InternalsRT::Core::Windowing::CoreWindowHelpers::GetDpiForCurrentThread() / 96.0f * 100.0f;
     }
 
     void NativeUtils::Crash()
