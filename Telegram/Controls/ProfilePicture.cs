@@ -94,6 +94,7 @@ namespace Telegram.Controls
 
             var fontSize = Width switch
             {
+                < 20 => 10,
                 < 30 => 12,
                 < 36 => 14,
                 < 48 => 16,
@@ -625,12 +626,12 @@ namespace Telegram.Controls
                 }
                 else if (message.ForwardInfo?.Origin is MessageOriginHiddenUser fromHiddenUser)
                 {
-                    Source = PlaceholderImage.GetNameForUser(fromHiddenUser.SenderName);
+                    Source = PlaceholderImage.GetNameForUser(fromHiddenUser.SenderName, long.MinValue);
                     Shape = ProfilePictureShape.Ellipse;
                 }
                 else if (message.ImportInfo != null)
                 {
-                    Source = PlaceholderImage.GetNameForUser(message.ImportInfo.SenderName);
+                    Source = PlaceholderImage.GetNameForUser(message.ImportInfo.SenderName, long.MinValue);
                     Shape = ProfilePictureShape.Ellipse;
                 }
             }

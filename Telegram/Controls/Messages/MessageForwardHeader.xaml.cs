@@ -12,7 +12,6 @@ using Telegram.ViewModels;
 using Windows.Foundation;
 using Windows.UI;
 using Windows.UI.Composition;
-using Windows.UI.Text;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Documents;
@@ -24,6 +23,7 @@ namespace Telegram.Controls.Messages
 {
     public class MessageForwardHeader : HyperlinkButton
     {
+        private Visual _visual;
         private CompositionGeometricClip _clip;
         private double _width;
 
@@ -42,7 +42,7 @@ namespace Telegram.Controls.Messages
 
         protected override void OnPointerEntered(PointerRoutedEventArgs e)
         {
-            if (_width != ActualWidth)
+            if (_width != ActualWidth || _visual?.Clip == null)
             {
                 _width = ActualWidth;
 
@@ -191,10 +191,10 @@ namespace Telegram.Controls.Messages
                     result = CanvasGeometry.CreatePath(builder);
                 }
 
-                if (_clip == null)
+                if (_visual?.Clip == null)
                 {
-                    var visual = ElementCompositionPreview.GetElementVisual(this);
-                    visual.Clip = _clip = visual.Compositor.CreateGeometricClip();
+                    _visual ??= ElementCompositionPreview.GetElementVisual(this);
+                    _visual.Clip = _clip = _visual.Compositor.CreateGeometricClip();
                 }
 
                 _clip.Geometry = Window.Current.Compositor.CreatePathGeometry(new CompositionPath(result));
@@ -235,6 +235,7 @@ namespace Telegram.Controls.Messages
         public void UpdateMessage(MessageViewModel message, bool light)
         {
             _message = message;
+            _width = 0;
 
             if (_light != light)
             {
@@ -250,98 +251,89 @@ namespace Telegram.Controls.Messages
                 }
             }
 
+            if (_visual != null)
+            {
+                _visual.Clip = null;
+            }
+
             if (!_templateApplied || message == null)
             {
                 return;
             }
 
-            if (message.Content is MessageAsyncStory story)
+            if (message.Content is MessageAsyncStory story && message.ClientService.TryGetChat(story.StorySenderChatId, out Chat storyChat))
             {
-                if (message.ClientService.TryGetChat(story.StorySenderChatId, out Chat storyChat))
+                if (story.State == MessageStoryState.Expired)
                 {
-                    if (story.State == MessageStoryState.Expired)
+                    if (message.ClientService.TryGetSupergroup(storyChat, out Supergroup supergroup) && supergroup.Status is ChatMemberStatusLeft && !supergroup.IsPublic())
                     {
-                        if (message.ClientService.TryGetSupergroup(storyChat, out Supergroup supergroup) && supergroup.Status is ChatMemberStatusLeft && !supergroup.IsPublic())
-                        {
-                            ForwardText.Text = Strings.PrivateStory;
-                        }
-                        else
-                        {
-                            ForwardText.Text = string.Format("{0}\u00A0{1}", Icons.ExpiredStory, Strings.ExpiredStory);
-                        }
+                        ForwardText.Text = Strings.PrivateStory;
                     }
                     else
                     {
-                        ForwardText.Text = Strings.ForwardedStory;
+                        ForwardText.Text = string.Format("{0}\u00A0{1}", Icons.ExpiredStory, Strings.ExpiredStory);
                     }
-
-                    ForwardLink.Text = "\uEA4F\u00A0" + storyChat.Title;
-                    ForwardLink.FontWeight = FontWeights.SemiBold;
-                    ForwardPhoto.SetChat(message.ClientService, storyChat, 16);
-                    ForwardPhoto.Visibility = Visibility.Visible;
-
-                    Visibility = Visibility.Visible;
                 }
+                else
+                {
+                    ForwardText.Text = Strings.ForwardedStory;
+                }
+
+                ForwardLink.Text = "\uEA4F\u00A0" + storyChat.Title;
+                ForwardPhoto.SetChat(message.ClientService, storyChat, 16);
+
+                Visibility = Visibility.Visible;
             }
             else if (message.ForwardInfo != null && (!message.IsSaved || !message.ForwardInfo.HasSameOrigin()))
             {
+                string line1;
+                string line2 = null;
+
                 if (message.ForwardInfo.PublicServiceAnnouncementType.Length > 0)
                 {
                     var type = LocaleService.Current.GetString("PsaMessage_" + message.ForwardInfo.PublicServiceAnnouncementType);
                     if (type.Length > 0)
                     {
-                        ForwardText.Text = type;
+                        line1 = type;
                     }
                     else
                     {
-                        ForwardText.Text = Strings.PsaMessageDefault;
+                        line1 = Strings.PsaMessageDefault;
                     }
-
-                    ForwardLink.Text = string.Empty;
                 }
                 else
                 {
-                    ForwardText.Text = Strings.ForwardedFrom;
+                    line1 = Strings.ForwardedFrom;
                 }
-
-                var title = string.Empty;
-                var photo = true;
 
                 if (message.ForwardInfo?.Origin is MessageOriginUser fromUser && message.ClientService.TryGetUser(fromUser.SenderUserId, out User fromUserUser))
                 {
-                    title = fromUserUser.FullName();
+                    line2 = fromUserUser.FullName();
                     ForwardPhoto.SetUser(message.ClientService, fromUserUser, 16);
                 }
                 else if (message.ForwardInfo?.Origin is MessageOriginChat fromChat && message.ClientService.TryGetChat(fromChat.SenderChatId, out Chat fromChatChat))
                 {
-                    title = fromChatChat.Title;
+                    line2 = fromChatChat.Title;
                     ForwardPhoto.SetChat(message.ClientService, fromChatChat, 16);
                 }
                 else if (message.ForwardInfo?.Origin is MessageOriginChannel fromChannel && message.ClientService.TryGetChat(fromChannel.ChatId, out Chat fromChannelChat))
                 {
-                    title = fromChannelChat.Title;
+                    line2 = fromChannelChat.Title;
                     ForwardPhoto.SetChat(message.ClientService, fromChannelChat, 16);
                 }
                 else if (message.ForwardInfo?.Origin is MessageOriginHiddenUser fromHiddenUser)
                 {
-                    title = fromHiddenUser.SenderName;
-                    photo = false;
+                    line2 = fromHiddenUser.SenderName;
+                    ForwardPhoto.Source = PlaceholderImage.GetNameForUser(fromHiddenUser.SenderName, long.MinValue);
                 }
                 else if (message.ImportInfo != null)
                 {
-                    title = message.ImportInfo.SenderName;
-                    photo = false;
+                    line2 = message.ImportInfo.SenderName;
+                    ForwardPhoto.Source = PlaceholderImage.GetNameForUser(message.ImportInfo.SenderName, long.MinValue);
                 }
 
-                if (photo)
-                {
-                    title = "\uEA4F\u00A0" + title;
-                }
-
-                ForwardLink.Text = title;
-                ForwardPhoto.Visibility = photo
-                    ? Visibility.Visible
-                    : Visibility.Collapsed;
+                ForwardText.Text = line1;
+                ForwardLink.Text = "\uEA4F\u00A0" + (line2 ?? string.Empty);
 
                 Visibility = Visibility.Visible;
             }

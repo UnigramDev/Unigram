@@ -40,9 +40,7 @@
                         <Rectangle x:Name="BackgroundOverlay"
                                    Fill="{TemplateBinding Foreground}"
                                    Opacity="0"
-                                   Margin="-6,-2"
-                                   RadiusX="8"
-                                   RadiusY="8" />
+                                   Margin="-2,0" />
 
                         <controls:ProfilePicture x:Name="ForwardPhoto"
                                                  HorizontalAlignment="Left"

@@ -31,14 +31,14 @@
                 <controls:HeaderedControl>
                     <Grid>
                         <chats:ChatBackgroundControl x:Name="BackgroundControl" />
-                        <Grid Padding="0,10">
+                        <Grid Padding="12,10">
                             <messages:MessageBubble x:Name="MessagePreview"
                                                     HorizontalAlignment="Left" />
                             <ToolTip x:Name="ToolTip"
                                      Content="{x:Bind ConvertToolTip(ViewModel.SelectedItem), Mode=OneWay}"
                                      HorizontalAlignment="Left"
                                      VerticalAlignment="Bottom"
-                                     Margin="22,0,0,-6" />
+                                     Margin="10,0,0,-6" />
                         </Grid>
                     </Grid>
                 </controls:HeaderedControl>

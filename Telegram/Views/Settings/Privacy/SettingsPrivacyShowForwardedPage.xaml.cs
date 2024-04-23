@@ -6,7 +6,10 @@
 //
 using System;
 using System.Numerics;
+using Telegram.Common;
+using Telegram.Services;
 using Telegram.Td.Api;
+using Telegram.ViewModels;
 using Telegram.ViewModels.Settings;
 using Telegram.ViewModels.Settings.Privacy;
 using Windows.Foundation.Metadata;
@@ -39,13 +42,47 @@ namespace Telegram.Views.Settings.Privacy
 
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
-            var user = ViewModel.ClientService.GetUser(ViewModel.ClientService.Options.MyId);
-            if (user != null)
-            {
-                MessagePreview.Mockup(Strings.PrivacyForwardsMessageLine, user.FullName(), true, false, DateTime.Now);
-            }
-
+            UpdateMessage();
             BackgroundControl.Update(ViewModel.ClientService, ViewModel.Aggregator);
+
+            ViewModel.PropertyChanged += OnPropertyChanged;
+        }
+
+        protected override void OnNavigatedFrom(NavigationEventArgs e)
+        {
+            ViewModel.PropertyChanged -= OnPropertyChanged;
+        }
+
+        private void OnPropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName == nameof(ViewModel.SelectedItem))
+            {
+                UpdateMessage();
+            }
+        }
+
+        private void UpdateMessage()
+        {
+            var user = ViewModel.ClientService.GetUser(ViewModel.ClientService.Options.MyId);
+            if (user != null && ViewModel.ClientService.TryGetChat(user.Id, out Chat chat))
+            {
+                MessageOrigin origin = ViewModel.SelectedItem == PrivacyValue.DisallowAll
+                    ? new MessageOriginHiddenUser(user.FullName())
+                    : new MessageOriginUser(user.Id);
+
+                var forwardInfo = new MessageForwardInfo(origin, 0, null, string.Empty);
+                var content = new MessageText(new FormattedText(Strings.PrivacyForwardsMessageLine, Array.Empty<TextEntity>()), null, null);
+
+                var message = new Message(0, new MessageSenderUser(user.Id), 0, null, null, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, DateTime.Now.ToTimestamp(), 0, forwardInfo, null, null, Array.Empty<UnreadReaction>(), null, 0, 0, null, 0, 0, 0, 0, 0, string.Empty, 0, string.Empty, content, null);
+
+                var playback = TypeResolver.Current.Playback;
+                var settings = TypeResolver.Current.Resolve<ISettingsService>(ViewModel.ClientService.SessionId);
+
+                var delegato = new ChatMessageDelegate(ViewModel.ClientService, settings, chat);
+                var viewModel = new MessageViewModel(ViewModel.ClientService, playback, delegato, chat, message, true);
+
+                MessagePreview.UpdateMessage(viewModel);
+            }
         }
 
         #region Binding

@@ -1142,7 +1142,7 @@ namespace Telegram.Controls.Messages
 
         private void FwdFrom_Click(object sender, RoutedEventArgs args)
         {
-            if (_message is not MessageViewModel message)
+            if (_message is not MessageViewModel message || !message.Delegate.IsDialog)
             {
                 return;
             }
@@ -2710,57 +2710,6 @@ namespace Telegram.Controls.Messages
             Panel.Placeholder = true;
 
             Message.SetText(null, message, Array.Empty<TextEntity>());
-
-            UpdateMockup();
-        }
-
-        public void Mockup(string message, string forwarded, bool link, bool outgoing, DateTime date, bool first = true, bool last = true)
-        {
-            if (!_templateApplied)
-            {
-                void loaded(object o, RoutedEventArgs e)
-                {
-                    Loaded -= loaded;
-                    Mockup(message, forwarded, link, outgoing, date, first, last);
-                }
-
-                Loaded += loaded;
-                return;
-            }
-
-            UpdateMockup(outgoing, first, last);
-
-            Header.Visibility = Visibility.Collapsed;
-
-            Footer.Mockup(outgoing, date);
-            Panel.ForceNewLine = false;
-
-            Media.Margin = new Thickness(0);
-            FooterToNormal();
-            Grid.SetRow(Footer, 2);
-            Grid.SetRow(Message, 2);
-            Panel.Placeholder = true;
-
-            Message.SetText(null, message, Array.Empty<TextEntity>());
-
-            LoadObject(ref HeaderPanel, nameof(HeaderPanel));
-            LoadObject(ref HeaderLabel, nameof(HeaderLabel));
-
-            HeaderLabel.Inlines.Add(new Run { Text = Strings.ForwardedMessage, FontWeight = FontWeights.Normal });
-            HeaderLabel.Inlines.Add(new LineBreak());
-            HeaderLabel.Inlines.Add(new Run { Text = Strings.From + " ", FontWeight = FontWeights.Normal });
-
-            var hyperlink = new Hyperlink();
-            hyperlink.Inlines.Add(new Run { Text = forwarded });
-            hyperlink.UnderlineStyle = UnderlineStyle.None;
-            hyperlink.Foreground = GetBrush("MessageHeaderForegroundBrush");
-            //hyperlink.Click += (s, args) => FwdFrom_Click(message);
-
-            HeaderLabel.Inlines.Add(hyperlink);
-
-            Header.Visibility = Visibility.Visible;
-            HeaderPanel.Visibility = Visibility.Visible;
-            HeaderLabel.Visibility = Visibility.Visible;
 
             UpdateMockup();
         }
