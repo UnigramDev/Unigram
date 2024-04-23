@@ -45,7 +45,7 @@ namespace Telegram.ViewModels.Supergroups
             : base(clientService, settingsService, aggregator)
         {
             var defaultTheme = new ChatThemeViewModel(ClientService, "\u274C", null, null, true);
-            var themes = ClientService.GetChatThemes().Select(x => new ChatThemeViewModel(ClientService, x, true));
+            var themes = ClientService.ChatThemes.Select(x => new ChatThemeViewModel(ClientService, x, true));
 
             ChatThemes = new ObservableCollection<ChatThemeViewModel>(new[] { defaultTheme }.Union(themes));
         }

@@ -75,14 +75,14 @@ namespace Telegram.ViewModels.Settings
             };
 
             var defaultTheme = new ChatThemeViewModel(ClientService, "\U0001F3E0", defaultLight, defaultDark, false);
-            var themes = ClientService.GetChatThemes().Select(x => new ChatThemeViewModel(ClientService, x, false));
+            var themes = ClientService.ChatThemes.Select(x => new ChatThemeViewModel(ClientService, x, false));
 
             ChatThemes.AddRange(new[] { defaultTheme }.Union(themes));
 
             _selectedChatTheme = ChatThemes.FirstOrDefault(x => x.Name == Settings.Appearance.ChatTheme?.Name) ?? defaultTheme;
             RaisePropertyChanged(nameof(SelectedChatTheme));
 
-            return base.OnNavigatedToAsync(parameter, mode, state);
+            return Task.CompletedTask;
         }
 
         private ChatThemeViewModel _selectedChatTheme;

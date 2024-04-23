@@ -208,7 +208,7 @@ namespace Telegram.Services
         UpdateStoryStealthMode StealthMode { get; }
 
         ChatTheme GetChatTheme(string themeName);
-        IList<ChatTheme> GetChatThemes();
+        IList<ChatTheme> ChatThemes { get; }
 
         bool IsDiceEmoji(string text, out string dice);
 
@@ -2005,19 +2005,10 @@ namespace Telegram.Services
                 return null;
             }
 
-            var themes = GetChatThemes();
-            if (themes != null)
-            {
-                return themes.FirstOrDefault(x => string.Equals(x.Name, themeName));
-            }
-
-            return null;
+            return ChatThemes.FirstOrDefault(x => string.Equals(x.Name, themeName));
         }
 
-        public IList<ChatTheme> GetChatThemes()
-        {
-            return _chatThemes?.ChatThemes ?? Array.Empty<ChatTheme>();
-        }
+        public IList<ChatTheme> ChatThemes => _chatThemes?.ChatThemes ?? Array.Empty<ChatTheme>();
 
         public bool IsDiceEmoji(string text, out string dice)
         {
