@@ -96,7 +96,24 @@
                                                        Grid.Column="1" />
                             </Grid>
                         </controls:BadgeButton>
-                        <controls:AnimatedImage x:Name="AnimatedPack"
+                        <controls:AnimatedImage x:Name="EmojiPackAnimated"
+                                                FrameSize="20,20"
+                                                DecodeFrameType="Logical"
+                                                Width="20"
+                                                Height="20"
+                                                HorizontalAlignment="Right"
+                                                Margin="0,0,16,0"
+                                                IsHitTestVisible="False" />
+                    </Grid>
+                </controls:HeaderedControl>
+
+                <controls:HeaderedControl x:Name="StickerPackRoot"
+                                          Footer="{CustomResource GroupStickersInfo}">
+                    <Grid>
+                        <controls:BadgeButton x:Name="StickerPack"
+                                              Content="{CustomResource GroupStickers}"
+                                              Click="StickerPack_Click" />
+                        <controls:AnimatedImage x:Name="StickerPackAnimated"
                                                 FrameSize="20,20"
                                                 DecodeFrameType="Logical"
                                                 Width="20"

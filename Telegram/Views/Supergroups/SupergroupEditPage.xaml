@@ -179,16 +179,6 @@
                                           Glyph="&#xE984;" />
                 </controls:HeaderedControl>
 
-                <controls:HeaderedControl x:Name="GroupStickersPanel"
-                                          Footer="{CustomResource GroupStickersInfo}">
-                    <controls:BadgeButton x:Name="GroupStickers"
-                                          Content="{CustomResource GroupStickers}"
-                                          Click="{x:Bind ViewModel.EditStickerSet}"
-                                          Style="{StaticResource GlyphBadgeButtonStyle}"
-                                          IsChevronVisible="True"
-                                          Glyph="&#xF4AA;" />
-                </controls:HeaderedControl>
-
                 <controls:HeaderedControl x:Name="DeletePanel">
                     <controls:BadgeButton x:Name="Delete"
                                           Click="{x:Bind ViewModel.Delete}"

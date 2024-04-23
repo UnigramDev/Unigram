@@ -291,6 +291,13 @@ namespace Telegram.ViewModels.Supergroups
             }
         }
 
+        private long _selectedStickerSet;
+        public long SelectedStickerSet
+        {
+            get => _selectedStickerSet;
+            set => Set(ref _selectedStickerSet, value);
+        }
+
         public int RequiredLevel => UpdateRequiredLevel(out _);
 
         private int UpdateRequiredLevel(out ChatBoostFeature feature)
@@ -386,9 +393,17 @@ namespace Telegram.ViewModels.Supergroups
             }
 
             var response = await ClientService.SendAsync(new GetChatBoostStatus(chat.Id));
-            if (response is not ChatBoostStatus status)
+            if (response is not ChatBoostStatus status || !ClientService.TryGetSupergroupFull(chat, out SupergroupFullInfo fullInfo))
             {
                 return;
+            }
+
+            var changed = false;
+
+            if (SelectedStickerSet != fullInfo.StickerSetId && fullInfo.CanSetStickerSet)
+            {
+                changed = true;
+                ClientService.Send(new SetSupergroupStickerSet(chat.Id, SelectedStickerSet));
             }
 
             var required = UpdateRequiredLevel(out var feature);
@@ -397,8 +412,6 @@ namespace Telegram.ViewModels.Supergroups
                 await ShowPopupAsync(new ChatBoostFeaturesPopup(ClientService, NavigationService, chat, status, null, _features, feature, required));
                 return;
             }
-
-            var changed = false;
 
             var accentColorId = SelectedAccentColor?.Id ?? -1;
             var profileAccentColorId = SelectedProfileAccentColor?.Id ?? -1;
@@ -421,13 +434,10 @@ namespace Telegram.ViewModels.Supergroups
                 ClientService.Send(new SetChatEmojiStatus(chat.Id, SelectedEmojiStatus));
             }
 
-            if (ClientService.TryGetSupergroupFull(chat, out SupergroupFullInfo fullInfo))
+            if (SelectedCustomEmojiStickerSet != fullInfo.CustomEmojiStickerSetId)
             {
-                if (SelectedCustomEmojiStickerSet != fullInfo.CustomEmojiStickerSetId)
-                {
-                    changed = true;
-                    ClientService.Send(new SetSupergroupCustomEmojiStickerSet(chat.Id, SelectedCustomEmojiStickerSet));
-                }
+                changed = true;
+                ClientService.Send(new SetSupergroupCustomEmojiStickerSet(chat.Id, SelectedCustomEmojiStickerSet));
             }
 
             var prevChatTheme = chat.Background?.Background.Type is BackgroundTypeChatTheme typeChatTheme

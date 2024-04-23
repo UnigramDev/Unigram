@@ -111,7 +111,6 @@ namespace Telegram.Views.Supergroups
             ChatHistory.Visibility = group.CanChangeInfo() && !group.HasActiveUsername() && !group.IsChannel ? Visibility.Visible : Visibility.Collapsed;
 
             InviteLinkPanel.Visibility = group.CanInviteUsers() ? Visibility.Visible : Visibility.Collapsed;
-            GroupStickersPanel.Visibility = Visibility.Collapsed;
 
             ChannelSignMessages.Visibility = group.CanChangeInfo() && group.IsChannel ? Visibility.Visible : Visibility.Collapsed;
 
@@ -152,9 +151,6 @@ namespace Telegram.Views.Supergroups
 
         public void UpdateSupergroupFullInfo(Chat chat, Supergroup group, SupergroupFullInfo fullInfo)
         {
-            GroupStickersPanel.Visibility = fullInfo.CanSetStickerSet ? Visibility.Visible : Visibility.Collapsed;
-
-
             ViewModel.About = fullInfo.Description;
             ViewModel.IsAllHistoryAvailable = fullInfo.IsAllHistoryAvailable ? 0 : 1;
 
@@ -214,17 +210,6 @@ namespace Telegram.Views.Supergroups
             {
                 return;
             }
-
-            ViewModel.ClientService.Send(new GetStickerSet(fullInfo.StickerSetId), result =>
-            {
-                this.BeginOnUIThread(() =>
-                {
-                    if (result is StickerSet set && ViewModel.Chat?.Id == chat.Id)
-                    {
-                        GroupStickers.Badge = set.Title;
-                    }
-                });
-            });
         }
 
 
@@ -260,7 +245,6 @@ namespace Telegram.Views.Supergroups
             ChatLinked.Visibility = Visibility.Collapsed;
             ChannelColor.Visibility = Visibility.Collapsed;
             ChannelSignMessages.Visibility = Visibility.Collapsed;
-            GroupStickersPanel.Visibility = Visibility.Collapsed;
 
             Permissions.Badge = string.Format("{0}/{1}", chat.Permissions.Count(), chat.Permissions.Total());
             Permissions.Visibility = group.Status is ChatMemberStatusCreator ? Visibility.Visible : Visibility.Collapsed;
@@ -277,8 +261,6 @@ namespace Telegram.Views.Supergroups
 
         public void UpdateBasicGroupFullInfo(Chat chat, BasicGroup group, BasicGroupFullInfo fullInfo)
         {
-            GroupStickersPanel.Visibility = Visibility.Collapsed;
-
             Admins.Badge = fullInfo.Members.Count(x => x.Status is ChatMemberStatusCreator or ChatMemberStatusAdministrator);
             Members.Badge = fullInfo.Members.Count;
             Blacklist.Badge = 0;

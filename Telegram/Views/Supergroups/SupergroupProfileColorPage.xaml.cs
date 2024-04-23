@@ -6,6 +6,7 @@
 //
 using System;
 using System.Threading.Tasks;
+using Telegram.Controls;
 using Telegram.Controls.Cells;
 using Telegram.Controls.Media;
 using Telegram.Controls.Messages;
@@ -31,7 +32,7 @@ namespace Telegram.Views.Supergroups
             Title = Strings.ChannelColorTitle2;
         }
 
-        protected override async void OnNavigatedTo(NavigationEventArgs e)
+        protected override void OnNavigatedTo(NavigationEventArgs e)
         {
             ProfileView.Initialize(ViewModel.ClientService, new MessageSenderChat(ViewModel.Chat.Id));
 
@@ -77,24 +78,33 @@ namespace Telegram.Views.Supergroups
 
                 if (ViewModel.ClientService.TryGetSupergroupFull(ViewModel.Chat, out SupergroupFullInfo fullInfo))
                 {
-                    if (fullInfo.CustomEmojiStickerSetId != 0)
+                    LoadStickerSet(fullInfo.CustomEmojiStickerSetId, EmojiPackAnimated);
+                    LoadStickerSet(fullInfo.StickerSetId, StickerPackAnimated);
+
+                    StickerPackRoot.Visibility = fullInfo.CanSetStickerSet
+                        ? Visibility.Visible
+                        : Visibility.Collapsed;
+                }
+            }
+        }
+
+        private async void LoadStickerSet(long stickerSetId, AnimatedImage target)
+        {
+            if (stickerSetId != 0)
+            {
+                var response = await ViewModel.ClientService.SendAsync(new GetStickerSet(stickerSetId));
+                if (response is StickerSet set)
+                {
+                    var thumbnail = set.GetThumbnail();
+                    if (thumbnail != null)
                     {
-                        var response = await ViewModel.ClientService.SendAsync(new GetStickerSet(fullInfo.CustomEmojiStickerSetId));
-                        if (response is StickerSet set)
-                        {
-                            var thumbnail = set.GetThumbnail();
-                            if (thumbnail != null)
-                            {
-                                AnimatedPack.Source = new DelayedFileSource(ViewModel.ClientService, thumbnail);
-                            }
-                            else
-                            {
-                                AnimatedPack.Source = null;
-                            }
-                        }
+                        target.Source = new DelayedFileSource(ViewModel.ClientService, thumbnail);
+                        return;
                     }
                 }
             }
+
+            target.Source = null;
         }
 
         private void EmojiStatus_Click(object sender, RoutedEventArgs e)
@@ -142,11 +152,35 @@ namespace Telegram.Views.Supergroups
                 var thumbnail = set?.GetThumbnail();
                 if (thumbnail != null)
                 {
-                    AnimatedPack.Source = new DelayedFileSource(ViewModel.ClientService, thumbnail);
+                    EmojiPackAnimated.Source = new DelayedFileSource(ViewModel.ClientService, thumbnail);
                 }
                 else
                 {
-                    AnimatedPack.Source = null;
+                    EmojiPackAnimated.Source = null;
+                }
+            }
+        }
+
+        private async void StickerPack_Click(object sender, RoutedEventArgs e)
+        {
+            var tsc = new TaskCompletionSource<object>();
+            var args = new SupergroupEditStickerSetArgs(ViewModel.Chat.Id, new StickerTypeRegular());
+
+            var confirm = await ViewModel.NavigationService.ShowPopupAsync(typeof(SupergroupEditStickerSetPopup), args, tsc);
+            var set = await tsc.Task as StickerSetInfo;
+
+            if (confirm == ContentDialogResult.Primary)
+            {
+                ViewModel.SelectedStickerSet = set?.Id ?? 0;
+
+                var thumbnail = set?.GetThumbnail();
+                if (thumbnail != null)
+                {
+                    StickerPackAnimated.Source = new DelayedFileSource(ViewModel.ClientService, thumbnail);
+                }
+                else
+                {
+                    StickerPackAnimated.Source = null;
                 }
             }
         }
