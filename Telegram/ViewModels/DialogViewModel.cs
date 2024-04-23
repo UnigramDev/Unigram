@@ -2739,6 +2739,21 @@ namespace Telegram.ViewModels
             return null;
         }
 
+        protected override Function CreateSendMessage(long chatId, long messageThreadId, InputMessageReplyTo replyTo, MessageSendOptions messageSendOptions, InputMessageContent inputMessageContent)
+        {
+            if (QuickReplyShortcut != null)
+            {
+                if (replyTo is InputMessageReplyToMessage replyToMessage)
+                {
+                    return new AddQuickReplyShortcutMessage(QuickReplyShortcut.Name, replyToMessage.MessageId, inputMessageContent);
+                }
+
+                return new AddQuickReplyShortcutMessage(QuickReplyShortcut.Name, 0, inputMessageContent);
+            }
+
+            return base.CreateSendMessage(chatId, messageThreadId, replyTo, messageSendOptions, inputMessageContent);
+        }
+
         protected override async Task<bool> BeforeSendMessageAsync(FormattedText formattedText)
         {
             if (Chat is not Chat chat)
@@ -2761,11 +2776,11 @@ namespace Telegram.ViewModels
             {
                 var input = factory.Delegate(factory.InputFile, formattedText);
 
-                var response = await ClientService.SendAsync(new SendMessageAlbum(editing.ChatId, editing.MessageThreadId, null, Constants.PreviewOnly, new[] { input }));
-                if (response is Messages messages && messages.MessagesValue.Count == 1)
+                var response = await ClientService.SendAsync(new SendMessage(editing.ChatId, editing.MessageThreadId, null, Constants.PreviewOnly, null, input));
+                if (response is Message preview)
                 {
-                    _contentOverrides[editing.CombinedId] = messages.MessagesValue[0].Content;
-                    Aggregator.Publish(new UpdateMessageContent(editing.ChatId, editing.Id, messages.MessagesValue[0].Content));
+                    _contentOverrides[editing.CombinedId] = preview.Content;
+                    Aggregator.Publish(new UpdateMessageContent(editing.ChatId, editing.Id, preview.Content));
 
                     ComposerHeader = null;
                     ClientService.Send(new EditMessageMedia(editing.ChatId, editing.Id, null, input));
@@ -2782,7 +2797,19 @@ namespace Telegram.ViewModels
                 else
                 {
                     Function function;
-                    if (textContent)
+                    if (QuickReplyShortcut != null)
+                    {
+                        if (textContent)
+                        {
+                            function = new EditQuickReplyMessage(QuickReplyShortcut.Id, editing.Id, new InputMessageText(formattedText, disablePreview, true));
+                        }
+                        else
+                        {
+                            // TODO
+                            function = new EditQuickReplyMessage(QuickReplyShortcut.Id, editing.Id, new InputMessageText(formattedText, disablePreview, true));
+                        }
+                    }
+                    else if (textContent)
                     {
                         function = new EditMessageText(chat.Id, editing.Id, null, new InputMessageText(formattedText, disablePreview, true));
                     }
@@ -2796,6 +2823,10 @@ namespace Telegram.ViewModels
                     {
                         ShowDraftMessage(chat);
                         Aggregator.Publish(new UpdateMessageSendSucceeded(message, editing.Id));
+                    }
+                    else if (response is Ok)
+                    {
+                        // TODO: quick reply
                     }
                     else if (response is Error error)
                     {

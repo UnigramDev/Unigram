@@ -199,7 +199,25 @@ namespace Telegram.ViewModels
             InlineBotResults = null;
 
             var reply = GetReply(true);
-            var response = await ClientService.SendAsync(new SendInlineQueryResultMessage(chat.Id, ThreadId, reply, options, queryId, queryResult.GetId(), false));
+            Function function;
+
+            if (QuickReplyShortcut != null)
+            {
+                if (reply is InputMessageReplyToMessage replyToMessage)
+                {
+                    function = new AddQuickReplyShortcutInlineQueryResultMessage(QuickReplyShortcut.Name, replyToMessage.MessageId, queryId, queryResult.GetId(), false);
+                }
+                else
+                {
+                    function = new AddQuickReplyShortcutInlineQueryResultMessage(QuickReplyShortcut.Name, 0, queryId, queryResult.GetId(), false);
+                }
+            }
+            else
+            {
+                function = new SendInlineQueryResultMessage(chat.Id, ThreadId, reply, options, queryId, queryResult.GetId(), false);
+            }
+
+            var response = await ClientService.SendAsync(function);
         }
     }
 

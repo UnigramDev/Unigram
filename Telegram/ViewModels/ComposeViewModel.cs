@@ -694,7 +694,7 @@ namespace Telegram.ViewModels
             options ??= new MessageSendOptions();
             options.SendingId = Math.Max(options.SendingId, 1);
 
-            var response = await ClientService.SendAsync(new SendMessage(chat.Id, ThreadId, replyTo, options, null, inputMessageContent));
+            var response = await ClientService.SendAsync(CreateSendMessage(chat.Id, ThreadId, replyTo, options, inputMessageContent));
             if (response is Error error)
             {
                 if (error.MessageEquals(ErrorType.PEER_FLOOD))
@@ -716,6 +716,11 @@ namespace Telegram.ViewModels
             }
 
             return response;
+        }
+
+        protected virtual Function CreateSendMessage(long chatId, long messageThreadId, InputMessageReplyTo replyTo, MessageSendOptions messageSendOptions, InputMessageContent inputMessageContent)
+        {
+            return new SendMessage(chatId, messageThreadId, replyTo, messageSendOptions, null, inputMessageContent);
         }
 
         protected virtual void ContinueSendMessage(MessageSendOptions options)
