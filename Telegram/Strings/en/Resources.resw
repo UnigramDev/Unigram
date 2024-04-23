@@ -6207,10 +6207,10 @@ Minimum length is 5 characters.</value>
     <value>Ad impressions</value>
   </data>
   <data name="MonetizationGraphRevenue" xml:space="preserve">
-    <value>Ad revenue</value>
+    <value>Ad rewards</value>
   </data>
   <data name="MonetizationInfo" xml:space="preserve">
-    <value>Telegram shares {0}% of the revenue from ads displayed in your channel. **Learn more &gt;**</value>
+    <value>Telegram shares {0}% of the revenue from ads displayed in your channel as rewards. **Learn more &gt;**</value>
   </data>
   <data name="MonetizationInfoFeature1Name" xml:space="preserve">
     <value>Telegram Ads</value>
@@ -6222,7 +6222,7 @@ Minimum length is 5 characters.</value>
     <value>50:50 revenue split</value>
   </data>
   <data name="MonetizationInfoFeature2Text" xml:space="preserve">
-    <value>You can receive 50% of the ad revenue in TON.</value>
+    <value>You can receive 50% of the ad revenue as rewards in TON.</value>
   </data>
   <data name="MonetizationInfoFeature3Name" xml:space="preserve">
     <value>Flexible withdrawals</value>
@@ -6249,16 +6249,16 @@ Minimum length is 5 characters.</value>
     <value>No ads in the channel</value>
   </data>
   <data name="MonetizationOverview" xml:space="preserve">
-    <value>Proceeds overview</value>
+    <value>Rewards overview</value>
   </data>
   <data name="MonetizationOverviewAvailable" xml:space="preserve">
     <value>Balance available to withdraw</value>
   </data>
   <data name="MonetizationOverviewLastWithdrawal" xml:space="preserve">
-    <value>Proceeds since last withdrawal</value>
+    <value>Rewards since last withdrawal</value>
   </data>
   <data name="MonetizationOverviewTotal" xml:space="preserve">
-    <value>Total lifetime proceeds</value>
+    <value>Total lifetime rewards</value>
   </data>
   <data name="MonetizationSwitchOff" xml:space="preserve">
     <value>Switch Off Ads</value>
@@ -6267,7 +6267,7 @@ Minimum length is 5 characters.</value>
     <value>You will not be eligible for any rewards if you switch off ads.</value>
   </data>
   <data name="MonetizationTransactionDetailProceed" xml:space="preserve">
-    <value>Proceeds from ads displayed in</value>
+    <value>Rewards from ads displayed in</value>
   </data>
   <data name="MonetizationTransactionDetailRefund" xml:space="preserve">
     <value>Refunded back</value>
@@ -6285,7 +6285,7 @@ Minimum length is 5 characters.</value>
     <value>Pending</value>
   </data>
   <data name="MonetizationTransactionProceed" xml:space="preserve">
-    <value>Proceeds from ads</value>
+    <value>Rewards from ads</value>
   </data>
   <data name="MonetizationTransactionRefund" xml:space="preserve">
     <value>Refund</value>
