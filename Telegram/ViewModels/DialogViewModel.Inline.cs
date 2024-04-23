@@ -130,14 +130,14 @@ namespace Telegram.ViewModels
 
             // TODO: cache
 
-            if (false)
+            if (string.IsNullOrEmpty(query))
             {
-
+                InlineBotResults = null;
             }
             else
             {
-                var collection = new BotResultsCollection(ClientService, _currentInlineBot.Id, chat.Id, null, query);
-                var result = await collection.LoadMoreItemsAsync(0);
+                var collection = new BotResultsCollection(ClientService, _currentInlineBot.Id, chat.Id, null, query, token);
+                await collection.LoadMoreItemsAsync(0);
 
                 if (collection.Results != null && !token.IsCancellationRequested)
                 {
@@ -232,10 +232,12 @@ namespace Telegram.ViewModels
         private readonly Location _location;
         private readonly string _query;
 
+        private readonly CancellationToken _cancellationToken;
+
         private InlineQueryResults _results;
         private string _nextOffset;
 
-        public BotResultsCollection(IClientService clientService, long botUserId, long chatId, Location location, string query)
+        public BotResultsCollection(IClientService clientService, long botUserId, long chatId, Location location, string query, CancellationToken cancellationToken)
         {
             _clientService = clientService;
 
@@ -245,6 +247,7 @@ namespace Telegram.ViewModels
             _chatId = chatId;
             _location = location;
             _query = query;
+            _cancellationToken = cancellationToken;
 
             _nextOffset = string.Empty;
         }
@@ -277,6 +280,16 @@ namespace Telegram.ViewModels
 
                 if (_nextOffset != null)
                 {
+                    if (string.IsNullOrEmpty(_nextOffset))
+                    {
+                        await Task.Delay(Constants.TypingTimeout);
+                    }
+
+                    if (_cancellationToken.IsCancellationRequested)
+                    {
+                        goto Cleanup;
+                    }
+
                     var response = await _clientService.SendAsync(new GetInlineQueryResults(_botUserId, _chatId, _location, _query, _nextOffset));
                     if (response is InlineQueryResults results)
                     {
@@ -291,7 +304,11 @@ namespace Telegram.ViewModels
                     }
                 }
 
-                return new LoadMoreItemsResult { Count = totalCount };
+            Cleanup:
+                return new LoadMoreItemsResult
+                {
+                    Count = totalCount
+                };
             });
         }
 

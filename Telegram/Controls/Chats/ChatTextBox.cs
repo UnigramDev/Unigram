@@ -359,6 +359,7 @@ namespace Telegram.Controls.Chats
 
             if (string.IsNullOrEmpty(text) || Document.Selection.Length != 0)
             {
+                ClearInlineBotResults();
                 SetAutocomplete(null);
                 return;
             }
