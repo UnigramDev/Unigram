@@ -33,6 +33,10 @@ namespace winrt::Telegram::Native::Calls::implementation
         winrt::Windows::Foundation::Collections::IVector<uint8_t> EncryptionKey();
         void EncryptionKey(winrt::Windows::Foundation::Collections::IVector<uint8_t> value);
 
+        hstring m_customParameters;
+        hstring CustomParameters();
+        void CustomParameters(hstring value);
+
         bool m_isOutgoing;
         bool IsOutgoing();
         void IsOutgoing(bool value);

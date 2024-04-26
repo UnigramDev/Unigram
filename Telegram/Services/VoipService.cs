@@ -564,6 +564,7 @@ namespace Telegram.Services
                         ReceiveTimeout = call_connect_timeout_ms / 1000.0,
                         Servers = ready.Servers,
                         EncryptionKey = ready.EncryptionKey,
+                        CustomParameters = ready.CustomParameters,
                         IsOutgoing = update.Call.IsOutgoing,
                         EnableP2p = ready.Protocol.UdpP2p && ready.AllowP2p,
                         VideoCapture = _capturer,

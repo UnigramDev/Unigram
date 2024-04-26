@@ -68,6 +68,16 @@ namespace winrt::Telegram::Native::Calls::implementation
         m_encryptionKey = value;
     }
 
+    hstring VoipDescriptor::CustomParameters()
+    {
+        return m_customParameters;
+    }
+
+    void VoipDescriptor::CustomParameters(hstring value)
+    {
+        m_customParameters = value;
+    }
+
     bool VoipDescriptor::IsOutgoing()
     {
         return m_isOutgoing;
