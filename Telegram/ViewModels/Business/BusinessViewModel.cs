@@ -30,6 +30,11 @@ namespace Telegram.ViewModels.Business
         {
             ClientService.Send(new GetUserFullInfo(ClientService.Options.MyId));
 
+            if (ClientService.TryGetUserFull(ClientService.Options.MyId, out UserFullInfo fullInfo))
+            {
+                Set(ref _hasSponsoredMessagesEnabled, fullInfo.HasSponsoredMessagesEnabled, nameof(HasSponsoredMessagesEnabled));
+            }
+
             var response = await ClientService.SendAsync(new GetBusinessFeatures());
             if (response is BusinessFeatures features)
             {
@@ -171,6 +176,21 @@ namespace Telegram.ViewModels.Business
                 case BusinessFeatureAccountLinks:
                     NavigationService.Navigate(typeof(BusinessChatLinksPage));
                     break;
+            }
+        }
+
+        private bool _hasSponsoredMessagesEnabled;
+        public bool HasSponsoredMessagesEnabled
+        {
+            get => _hasSponsoredMessagesEnabled;
+            set => SetHasSponsoredMessagesEnabled(value);
+        }
+
+        private void SetHasSponsoredMessagesEnabled(bool value)
+        {
+            if (Set(ref _hasSponsoredMessagesEnabled, value, nameof(HasSponsoredMessagesEnabled)))
+            {
+                ClientService.Send(new ToggleHasSponsoredMessagesEnabled(value));
             }
         }
     }

@@ -8723,6 +8723,15 @@ The channel &quot;**{1}**&quot; will become private.</value>
   <data name="Show" xml:space="preserve">
     <value>Show</value>
   </data>
+  <data name="ShowAds" xml:space="preserve">
+    <value>Do Not Hide Ads</value>
+  </data>
+  <data name="ShowAdsInfo" xml:space="preserve">
+    <value>As a Premium subscriber, you don’t see any ads on Telegram, but you can turn them on, for example, to view your own ads that you launched on the **Telegram Ad Platform &gt;**</value>
+  </data>
+  <data name="ShowAdsTitle" xml:space="preserve">
+    <value>Ads in Channels</value>
+  </data>
   <data name="ShowAllThemes" xml:space="preserve">
     <value>Show all Themes</value>
   </data>

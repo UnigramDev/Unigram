@@ -138,6 +138,18 @@
                     </Grid>
                 </DataTemplate>
             </ListView.ItemTemplate>
+            <ListView.Footer>
+                <controls:SettingsPanel IsFooter="True">
+                    <controls:HeaderedControl IsFooterLink="True"
+                                              Header="{CustomResource ShowAdsTitle}"
+                                              Footer="{CustomResource ShowAdsInfo}"
+                                              Margin="0,16,0,0">
+                        <controls:FauxCheckBox IsChecked="{x:Bind ViewModel.HasSponsoredMessagesEnabled, Mode=TwoWay}"
+                                               Content="{CustomResource ShowAds}"
+                                               Style="{StaticResource SettingsCheckBoxStyle}" />
+                    </controls:HeaderedControl>
+                </controls:SettingsPanel>
+            </ListView.Footer>
         </controls:TableListView>
 
         <Grid x:Name="PurchasePanel"
