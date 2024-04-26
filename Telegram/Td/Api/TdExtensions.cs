@@ -253,13 +253,13 @@ namespace Telegram.Td.Api
 
         public static bool AreTheSame(this ChatAvailableReactions x, ChatAvailableReactions y)
         {
-            if (x is ChatAvailableReactionsAll && y is ChatAvailableReactionsAll)
+            if (x is ChatAvailableReactionsAll xAll && y is ChatAvailableReactionsAll yAll)
             {
-                return true;
+                return xAll.MaxReactionCount == yAll.MaxReactionCount;
             }
             else if (x is ChatAvailableReactionsSome xSome && y is ChatAvailableReactionsSome ySome)
             {
-                if (xSome.Reactions?.Count != ySome.Reactions?.Count)
+                if (xSome.Reactions?.Count != ySome.Reactions?.Count || xSome.MaxReactionCount != ySome.MaxReactionCount)
                 {
                     return false;
                 }

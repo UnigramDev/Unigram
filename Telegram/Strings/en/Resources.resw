@@ -5990,6 +5990,18 @@ Upgrade to **Telegram Premium** to increase this limit to **{1}**.</value>
   <data name="MasksInfo" xml:space="preserve">
     <value>You can add masks in the media editor when sending photos.</value>
   </data>
+  <data name="MaximumReactionsHeader" xml:space="preserve">
+    <value>Maximum number of reactions</value>
+  </data>
+  <data name="MaximumReactionsInfo" xml:space="preserve">
+    <value>Limit the number of different reactions that can be added to a post, including already published ones.</value>
+  </data>
+  <data name="MaximumReactionsValue_one" xml:space="preserve">
+    <value>{0} reaction per post</value>
+  </data>
+  <data name="MaximumReactionsValue_other" xml:space="preserve">
+    <value>{0} reactions per post</value>
+  </data>
   <data name="Media_one" xml:space="preserve">
     <value>{0} media</value>
   </data>

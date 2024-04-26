@@ -106,6 +106,7 @@ namespace Telegram
             public const string Languages = "Languages";
             public const string Likes = "Likes";
             public const string Links = "Links";
+            public const string MaximumReactionsValue = "MaximumReactionsValue";
             public const string Media = "Media";
             public const string Members = "Members";
             public const string MessageContainsEmojiPacks = "MessageContainsEmojiPacks";
@@ -9162,6 +9163,16 @@ namespace Telegram
         /// Localized resource similar to "You can add masks in the media editor when sending photos."
         /// </summary>
         public static string MasksInfo => Resource.GetString("MasksInfo");
+        
+        /// <summary>
+        /// Localized resource similar to "Maximum number of reactions"
+        /// </summary>
+        public static string MaximumReactionsHeader => Resource.GetString("MaximumReactionsHeader");
+        
+        /// <summary>
+        /// Localized resource similar to "Limit the number of different reactions that can be added to a post, including already published ones."
+        /// </summary>
+        public static string MaximumReactionsInfo => Resource.GetString("MaximumReactionsInfo");
         
         /// <summary>
         /// Localized resource similar to "Zoom In"

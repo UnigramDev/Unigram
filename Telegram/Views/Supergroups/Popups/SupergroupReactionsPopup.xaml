@@ -9,7 +9,6 @@
                        xmlns:viewModels="using:Telegram.ViewModels.Supergroups"
                        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
                        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-                       ContentMaxHeight="500"
                        mc:Ignorable="d"
                        Padding="0,24"
                        PrimaryButtonClick="OnPrimaryButtonClick">
@@ -46,7 +45,7 @@
 
             <StackPanel x:Name="CaptionPanel"
                         Visibility="{x:Bind ViewModel.IsSomeSelected, Mode=OneWay}">
-                
+
                 <TextBlock Text="{x:Bind ConvertHeader(ViewModel.Chat.Type)}"
                            Style="{StaticResource BaseTextBlockStyle}"
                            Margin="0,16,0,8" />
@@ -95,6 +94,39 @@
                            x:Load="False"
                            Style="{StaticResource InfoCaptionTextBlockStyle}"
                            Margin="0,4,0,0" />
+            </StackPanel>
+
+            <StackPanel x:Name="MaximumRoot"
+                        Visibility="{x:Bind ViewModel.IsSomeSelectedInChannel, Mode=OneWay}">
+                <TextBlock Text="{CustomResource MaximumReactionsHeader}"
+                           Style="{StaticResource BaseTextBlockStyle}"
+                           Margin="0,32,0,8" />
+
+                <Grid>
+                    <TextBlock Text="1"
+                               Margin="6,0,0,0" />
+
+                    <controls:AnimatedTextBlock x:Name="MaximumCount"
+                                                Text="{x:Bind ConvertMaximumCount(ViewModel.MaxReactionCount), Mode=OneWay}"
+                                                TextAlignment="Center"
+                                                HorizontalAlignment="Center" />
+
+                    <TextBlock Text="{x:Bind ViewModel.MaximumMaxReactionCount}"
+                               HorizontalAlignment="Right"
+                               Margin="0,0,4,0" />
+                </Grid>
+
+                <Slider Maximum="{x:Bind ViewModel.MaximumMaxReactionCount}"
+                        Minimum="1"
+                        Value="{x:Bind ViewModel.MaxReactionCount, Mode=TwoWay}"
+                        SmallChange="1"
+                        LargeChange="1"
+                        TickFrequency="11"
+                        TickPlacement="Outside"
+                        IsThumbToolTipEnabled="False" />
+
+                <TextBlock Text="{CustomResource MaximumReactionsInfo}"
+                           Style="{StaticResource InfoCaptionTextBlockStyle}" />
             </StackPanel>
         </StackPanel>
     </Grid>

@@ -177,6 +177,11 @@ namespace Telegram.Views.Supergroups.Popups
             };
         }
 
+        private string ConvertMaximumCount(int count)
+        {
+            return Locale.Declension(Strings.R.MaximumReactionsValue, count);
+        }
+
         #endregion
 
         private void OnPrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
@@ -226,6 +231,7 @@ namespace Telegram.Views.Supergroups.Popups
                     }
 
                     CaptionInput.InsertEmoji(sticker);
+                    CaptionInput_TextChanged(null, null);
                 }
                 else
                 {

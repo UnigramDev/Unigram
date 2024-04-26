@@ -5,7 +5,6 @@
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
 using System.Linq;
-using Telegram.Common;
 using Telegram.Controls.Media;
 using Telegram.Converters;
 using Telegram.Td.Api;
