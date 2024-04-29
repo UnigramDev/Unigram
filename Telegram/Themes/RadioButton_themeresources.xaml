@@ -34,7 +34,7 @@
         <Setter Property="UseSystemFocusVisuals"
                 Value="{StaticResource UseSystemFocusVisuals}" />
         <Setter Property="FocusVisualMargin"
-                Value="-7,-3,-7,-3" />
+                Value="0" />
         <Setter Property="CornerRadius"
                 Value="{StaticResource ControlCornerRadius}" />
         <Setter Property="Template">

@@ -428,7 +428,7 @@
                                Visibility="{x:Bind ViewModel.Autocomplete, Mode=OneWay, Converter={StaticResource NullToVisibilityConverter}}"
                                ItemTemplateSelector="{StaticResource AutocompleteTemplate}"
                                ItemContainerStyle="{StaticResource DefaultListViewItemStyle}"
-                               Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
+                               Background="{ThemeResource PageSubHeaderBackgroundBrush2}"
                                AllowFocusOnInteraction="False"
                                IsItemClickEnabled="True"
                                ItemClick="Autocomplete_ItemClick"

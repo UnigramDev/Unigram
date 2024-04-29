@@ -25,7 +25,8 @@
                               Content="{CustomResource UserRestrictionsSend}" />
 
                     <controls:SettingsExpander Background="Transparent"
-                                               MinHeight="32">
+                                               MinHeight="32"
+                                               Margin="0,0,-16,0">
                         <controls:SettingsExpander.Header>
                             <CheckBox x:Name="CanSendMediaMessages"
                                       IsChecked="{x:Bind ViewModel.CanSendMediaMessages, Mode=TwoWay}">
@@ -37,7 +38,7 @@
                             </CheckBox>
 
                         </controls:SettingsExpander.Header>
-                        <StackPanel>
+                        <StackPanel Margin="8,0,0,0">
                             <CheckBox x:Name="CanSendPhotos"
                                       IsChecked="{x:Bind ViewModel.CanSendPhotos, Mode=TwoWay}"
                                       Content="{CustomResource UserRestrictionsSendPhotos}" />

@@ -4110,7 +4110,7 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="local:SettingsExpander">
-                    <Grid>
+                    <Grid CornerRadius="{TemplateBinding CornerRadius}">
                         <Grid.RowDefinitions>
                             <RowDefinition Height="Auto" />
                             <RowDefinition Height="Auto" />

@@ -154,15 +154,14 @@
             </TextBlock>
         </Grid>
 
-        <Border BackgroundSizing="OuterBorderEdge"
-                Background="{ThemeResource LayerOnMicaBaseAltFillColorDefaultBrush}"
-                BorderBrush="{ThemeResource NavigationViewContentGridBorderBrush}"
-                BorderThickness="0,0,1,0"
-                Grid.RowSpan="2" />
-
         <Grid x:Load="False"
               x:Name="ChatTabsLeft"
               Grid.Row="1">
+            <Border BackgroundSizing="OuterBorderEdge"
+                    Background="{ThemeResource LayerOnMicaBaseAltFillColorDefaultBrush}"
+                    BorderBrush="{ThemeResource NavigationViewContentGridBorderBrush}"
+                    BorderThickness="0,0,1,0" />
+
             <controls:TopNavView x:Name="ChatFoldersSide"
                                  AutomationProperties.Name="{CustomResource Filters}"
                                  ItemsSource="{x:Bind NavigationResults.View}"
@@ -680,7 +679,7 @@
                                                                 Click="ArchivedChats_Click"
                                                                 ContextRequested="ArchivedChats_ContextRequested"
                                                                 AutomationProperties.Name="{CustomResource ArchivedChats}"
-                                                                Style="{StaticResource EmptyButtonStyle}"
+                                                                Style="{StaticResource ListEmptyButtonStyle}"
                                                                 Background="Transparent"
                                                                 Padding="4,2"
                                                                 CornerRadius="4">

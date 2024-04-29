@@ -42,7 +42,7 @@
         <Setter Property="UseSystemFocusVisuals"
                 Value="{StaticResource UseSystemFocusVisuals}" />
         <Setter Property="FocusVisualMargin"
-                Value="{StaticResource CheckBoxFocusVisualMargin}" />
+                Value="0" />
         <Setter Property="CornerRadius"
                 Value="{ThemeResource ControlCornerRadius}" />
         <Setter Property="Template">
