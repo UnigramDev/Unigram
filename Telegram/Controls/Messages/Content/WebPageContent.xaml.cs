@@ -32,8 +32,6 @@ namespace Telegram.Controls.Messages.Content
         private MessageViewModel _message;
         public MessageViewModel Message => _message;
 
-        private long _fileToken;
-
         public WebPageContent(MessageViewModel message)
         {
             _message = message;
@@ -87,8 +85,6 @@ namespace Telegram.Controls.Messages.Content
         private Run TitleLabel;
         private Run SubtitleLabel;
         private Run ContentLabel;
-        private Border SmallPanel;
-        private Image Texture;
         private Grid MediaPanel;
         private Border Media;
         private Border Overlay;
@@ -106,8 +102,6 @@ namespace Telegram.Controls.Messages.Content
             TitleLabel = GetTemplateChild(nameof(TitleLabel)) as Run;
             SubtitleLabel = GetTemplateChild(nameof(SubtitleLabel)) as Run;
             ContentLabel = GetTemplateChild(nameof(ContentLabel)) as Run;
-            SmallPanel = GetTemplateChild(nameof(SmallPanel)) as Border;
-            Texture = GetTemplateChild(nameof(Texture)) as Image;
             MediaPanel = GetTemplateChild(nameof(MediaPanel)) as Grid;
             Media = GetTemplateChild(nameof(Media)) as Border;
             Overlay = GetTemplateChild(nameof(Overlay)) as Border;
@@ -147,43 +141,43 @@ namespace Telegram.Controls.Messages.Content
                 return;
             }
 
-            Texture.Source = null;
-            UpdateManager.Unsubscribe(this, ref _fileToken, true);
-
             UpdateWebPage(webPage);
             UpdateInstantView(webPage);
 
             if (webPage.HasMedia())
             {
-                var small = webPage.GetThumbnail();
-                if (small == null || webPage.ShowLargeMedia || !webPage.CanBeSmall())
+                if (webPage.ShowLargeMedia || !webPage.CanBeSmall() || !webPage.HasThumbnail())
                 {
-                    SmallPanel.Visibility = Visibility.Collapsed;
-                    Media.Visibility = Visibility.Visible;
+                    MediaPanel.Width = double.NaN;
+                    MediaPanel.Height = double.NaN;
+                    MediaPanel.Margin = new Thickness(0, 0, 0, 8);
+
+                    Grid.SetRow(MediaPanel, 2);
+                    Grid.SetColumn(MediaPanel, 0);
+
                     OverflowArea.Margin = new Thickness(0, 0, 0, 8);
                     ButtonLine.Margin = new Thickness(0, 0, 0, 0);
 
-                    UpdateContent(message, webPage);
+                    UpdateContent(message, webPage, false);
                     UpdateInstantView(webPage, _instantViewToken.Token);
                 }
                 else
                 {
-                    SmallPanel.Visibility = Visibility.Visible;
-                    Media.Visibility = Visibility.Collapsed;
+                    MediaPanel.Width = 44;
+                    MediaPanel.Height = 44;
+                    MediaPanel.Margin = new Thickness(8, 8, 0, 0);
+
+                    Grid.SetRow(MediaPanel, 0);
+                    Grid.SetColumn(MediaPanel, 1);
+
                     OverflowArea.Margin = new Thickness(0, 0, 0, 4);
                     ButtonLine.Margin = new Thickness(0, 4, 0, 0);
 
-                    MediaPanel.Visibility = Visibility.Collapsed;
-                    Media.Child = null;
-
-                    UpdateManager.Subscribe(this, message, small.File, ref _fileToken, UpdateFile, true);
-                    UpdateFile(message, small.File);
+                    UpdateContent(message, webPage, true);
                 }
             }
             else
             {
-                SmallPanel.Visibility = Visibility.Collapsed;
-                Media.Visibility = Visibility.Collapsed;
                 OverflowArea.Margin = new Thickness(0, 0, 0, 4);
                 ButtonLine.Margin = new Thickness(0, 4, 0, 0);
 
@@ -239,54 +233,7 @@ namespace Telegram.Controls.Messages.Content
             }
         }
 
-        private void UpdateFile(object target, File file)
-        {
-            UpdateFile(_message, file);
-        }
-
-        private void UpdateFile(MessageViewModel message, File file)
-        {
-            var text = GetContent(message);
-            if (text == null || !_templateApplied)
-            {
-                return;
-            }
-
-            var webPage = text.WebPage;
-            if (webPage == null)
-            {
-                return;
-            }
-
-            var small = webPage.GetThumbnail();
-            if (small == null)
-            {
-                return;
-            }
-
-            if (small.File.Id != file.Id)
-            {
-                return;
-            }
-
-            if (file.Local.IsDownloadingCompleted)
-            {
-                double ratioX = (double)48 / small.Width;
-                double ratioY = (double)48 / small.Height;
-                double ratio = Math.Max(ratioX, ratioY);
-
-                var width = (int)(small.Width * ratio);
-                var height = (int)(small.Height * ratio);
-
-                Texture.Source = UriEx.ToBitmap(file.Local.Path, width, height);
-            }
-            else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive)
-            {
-                message.ClientService.DownloadFile(file.Id, 1);
-            }
-        }
-
-        private void UpdateContent(MessageViewModel message, WebPage webPage)
+        private void UpdateContent(MessageViewModel message, WebPage webPage, bool small)
         {
             MediaPanel.Visibility = Visibility.Visible;
 
@@ -303,10 +250,29 @@ namespace Telegram.Controls.Messages.Content
                 }
             }
 
-            var maxWidth = (double)BootStrapper.Current.Resources["MessageMaxWidth"];
-            maxWidth -= 10 + 8 + 2 + 10;
+            double maxWidth;
+            if (small)
+            {
+                maxWidth = 44;
+            }
+            else
+            {
+                maxWidth = (double)BootStrapper.Current.Resources["MessageMaxWidth"];
+                maxWidth -= 10 + 8 + 2 + 10;
+            }
 
-            if (string.Equals(webPage.Type, "telegram_background", StringComparison.OrdinalIgnoreCase))
+            if (small)
+            {
+                if (webPage.Stickers?.Count > 0)
+                {
+                    Media.Child = new StickerSetContent(message);
+                }
+                else
+                {
+                    Media.Child = new ThumbnailContent(message);
+                }
+            }
+            else if (string.Equals(webPage.Type, "telegram_background", StringComparison.OrdinalIgnoreCase))
             {
                 Media.Child = new WallpaperContent(message);
             }
@@ -366,8 +332,6 @@ namespace Telegram.Controls.Messages.Content
             {
                 content.Recycle();
             }
-
-            UpdateManager.Unsubscribe(this, ref _fileToken, true);
         }
 
         public bool IsValid(MessageContent content, bool primary)
@@ -421,8 +385,7 @@ namespace Telegram.Controls.Messages.Content
         {
             UpdateWebPage(webPage);
 
-            SmallPanel.Visibility = Visibility.Collapsed;
-            Media.Visibility = Visibility.Collapsed;
+            MediaPanel.Visibility = Visibility.Collapsed;
             OverflowArea.Margin = new Thickness(0, 0, 0, 0);
 
             ButtonLine.Visibility = Visibility.Collapsed;
@@ -576,6 +539,17 @@ namespace Telegram.Controls.Messages.Content
             else if (string.Equals(webPage.Type, "telegram_channel_boost", StringComparison.OrdinalIgnoreCase))
             {
                 ShowButton(Strings.BoostLinkButton);
+            }
+            else if (string.Equals(webPage.Type, "telegram_stickerset", StringComparison.OrdinalIgnoreCase))
+            {
+                if (webPage.Stickers?.Count > 0 && webPage.Stickers[0].FullType is StickerFullTypeCustomEmoji)
+                {
+                    ShowButton(Strings.OpenEmojiSet);
+                }
+                else
+                {
+                    ShowButton(Strings.OpenStickerSet);
+                }
             }
             else
             {

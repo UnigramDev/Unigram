@@ -10259,6 +10259,11 @@ namespace Telegram
         public static string OpenChannel2 => Resource.GetString("OpenChannel2");
         
         /// <summary>
+        /// Localized resource similar to "VIEW EMOJI"
+        /// </summary>
+        public static string OpenEmojiSet => Resource.GetString("OpenEmojiSet");
+        
+        /// <summary>
         /// Localized resource similar to "OPEN FILE"
         /// </summary>
         public static string OpenFile => Resource.GetString("OpenFile");
@@ -10297,6 +10302,11 @@ namespace Telegram
         /// Localized resource similar to "Open Profile"
         /// </summary>
         public static string OpenProfile => Resource.GetString("OpenProfile");
+        
+        /// <summary>
+        /// Localized resource similar to "VIEW STICKERS"
+        /// </summary>
+        public static string OpenStickerSet => Resource.GetString("OpenStickerSet");
         
         /// <summary>
         /// Localized resource similar to "Open Supergroup"

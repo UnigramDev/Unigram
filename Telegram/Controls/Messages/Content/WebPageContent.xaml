@@ -116,20 +116,6 @@
                                 </Paragraph>
                             </RichTextBlock>
 
-                            <Border x:Name="SmallPanel"
-                                    Width="44"
-                                    Height="44"
-                                    CornerRadius="4"
-                                    Background="{ThemeResource ListViewItemPlaceholderBackgroundThemeBrush}"
-                                    Margin="8,8,0,0"
-                                    VerticalAlignment="Top"
-                                    Grid.Column="1">
-                                <Image x:Name="Texture"
-                                       Stretch="UniformToFill"
-                                       HorizontalAlignment="Center"
-                                       VerticalAlignment="Center" />
-                            </Border>
-
                             <RichTextBlockOverflow x:Name="OverflowArea"
                                                    MaxLines="6"
                                                    Grid.ColumnSpan="2"

@@ -221,6 +221,12 @@
     <Compile Include="Controls\Chats\ChatConnectedBotHeader.xaml.cs">
       <DependentUpon>ChatConnectedBotHeader.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\Messages\Content\ThumbnailContent.xaml.cs">
+      <DependentUpon>ThumbnailContent.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\Messages\Content\StickerSetContent.xaml.cs">
+      <DependentUpon>StickerSetContent.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Controls\Messages\MessageForwardHeader.xaml.cs">
       <DependentUpon>MessageForwardHeader.xaml</DependentUpon>
     </Compile>
@@ -2296,6 +2302,14 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Controls\Messages\Content\InvoicePreviewContent.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Controls\Messages\Content\ThumbnailContent.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Controls\Messages\Content\StickerSetContent.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

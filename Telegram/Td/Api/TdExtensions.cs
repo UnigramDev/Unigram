@@ -971,6 +971,18 @@ namespace Telegram.Td.Api
             return null;
         }
 
+        public static bool HasThumbnail(this WebPage webPage)
+        {
+            return webPage.Animation?.Thumbnail != null
+                || webPage.Audio?.AlbumCoverThumbnail != null
+                || webPage.Document?.Thumbnail != null
+                || webPage.Sticker?.Thumbnail != null
+                || webPage.Stickers?.Count > 0
+                || webPage.Video?.Thumbnail != null
+                || webPage.VideoNote?.Thumbnail != null
+                || webPage.Photo != null;
+        }
+
         public static File GetFile(this MessageWithOwner message)
         {
             if (message is MessageViewModel viewModel)
@@ -1416,8 +1428,8 @@ namespace Telegram.Td.Api
                 return true;
             }
 
-            return webPage.Animation != null || webPage.Audio != null || webPage.Document != null || webPage.Sticker != null || webPage.Video != null || webPage.VideoNote != null || webPage.VoiceNote != null || webPage.Photo != null;
-            return webPage.Animation != null || webPage.Audio != null || webPage.Document != null || webPage.Sticker != null || webPage.Video != null || webPage.VideoNote != null || webPage.VoiceNote != null || webPage.HasPhoto();
+            return webPage.Animation != null || webPage.Audio != null || webPage.Document != null || webPage.Sticker != null || webPage.Stickers?.Count > 0 || webPage.Video != null || webPage.VideoNote != null || webPage.VoiceNote != null || webPage.Photo != null;
+            return webPage.Animation != null || webPage.Audio != null || webPage.Document != null || webPage.Sticker != null || webPage.Stickers?.Count > 0 || webPage.Video != null || webPage.VideoNote != null || webPage.VoiceNote != null || webPage.HasPhoto();
         }
 
         public static bool HasPhoto(this WebPage webPage)

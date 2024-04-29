@@ -1,0 +1,39 @@
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:local="using:Telegram.Controls.Messages.Content"
+                    xmlns:controls="using:Telegram.Controls"
+                    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                    mc:Ignorable="d">
+
+    <Style TargetType="local:ThumbnailContent">
+        <Setter Property="MinWidth"
+                Value="44" />
+        <Setter Property="MinHeight"
+                Value="44" />
+        <Setter Property="MaxWidth"
+                Value="44" />
+        <Setter Property="MaxHeight"
+                Value="44" />
+        <Setter Property="IsTabStop"
+                Value="False" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="local:ThumbnailContent">
+                    <controls:AspectView x:Name="LayoutRoot"
+                                         Background="Black">
+                        <Border>
+                            <Border.Background>
+                                <ImageBrush x:Name="Texture"
+                                            AlignmentX="Center"
+                                            AlignmentY="Center"
+                                            Stretch="UniformToFill" />
+                            </Border.Background>
+                        </Border>
+                    </controls:AspectView>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+</ResourceDictionary>

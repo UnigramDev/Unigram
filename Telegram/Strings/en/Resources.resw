@@ -6735,6 +6735,9 @@ Stories</value>
   <data name="OpenChannel2" xml:space="preserve">
     <value>Open Channel</value>
   </data>
+  <data name="OpenEmojiSet" xml:space="preserve">
+    <value>VIEW EMOJI</value>
+  </data>
   <data name="OpenFile" xml:space="preserve">
     <value>OPEN FILE</value>
   </data>
@@ -6758,6 +6761,9 @@ Stories</value>
   </data>
   <data name="OpenProfile" xml:space="preserve">
     <value>Open Profile</value>
+  </data>
+  <data name="OpenStickerSet" xml:space="preserve">
+    <value>VIEW STICKERS</value>
   </data>
   <data name="OpenSupergroup" xml:space="preserve">
     <value>Open Supergroup</value>
