@@ -5,6 +5,7 @@
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
 using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
@@ -15,6 +16,7 @@ using Telegram.Controls.Stories;
 using Telegram.Navigation;
 using Telegram.Navigation.Services;
 using Telegram.Services;
+using Telegram.Streams;
 using Telegram.Td.Api;
 using Telegram.ViewModels.Stories;
 using Telegram.Views.Chats;
@@ -27,7 +29,7 @@ namespace Telegram.ViewModels.Chats
 {
     public class ChatStoriesViewModel : ViewModelBase, IIncrementalCollectionOwner
     {
-        private ChatStoriesType _type;
+        private ChatStoriesType _type = ChatStoriesType.Pinned;
         private long _chatId;
         private int _fromStoryId;
 
@@ -51,12 +53,12 @@ namespace Telegram.ViewModels.Chats
             ChatStoriesType.Pinned or _ => Strings.ProfileMyStories
         };
 
-        public bool IsPinned => _type == ChatStoriesType.Pinned;
+        public bool IsPostedToChatPage => _type == ChatStoriesType.Pinned;
 
         public ObservableCollection<StoryViewModel> Items { get; }
         public ObservableCollection<StoryViewModel> SelectedItems { get; }
 
-        public bool CanSelectedToggleIsPinned => SelectedItems.All(x => x.CanToggleIsPinned);
+        public bool CanSelectedToggleIsPinned => SelectedItems.All(x => x.CanToggleIsPostedToChatPage);
         public bool CanSelectedBeDeleted => SelectedItems.All(x => x.CanBeDeleted);
 
         protected override Task OnNavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
@@ -69,15 +71,20 @@ namespace Telegram.ViewModels.Chats
             else if (parameter is long chatId)
             {
                 _chatId = chatId;
-                _type = ChatStoriesType.Pinned;
+                //_type = ChatStoriesType.Pinned;
             }
             else
             {
                 _chatId = ClientService.Options.MyId;
-                _type = ChatStoriesType.Pinned;
+                //_type = ChatStoriesType.Pinned;
             }
 
             return Task.CompletedTask;
+        }
+
+        public void SetType(ChatStoriesType type)
+        {
+            _type = type;
         }
 
         public void OpenArchive()
@@ -85,34 +92,67 @@ namespace Telegram.ViewModels.Chats
             NavigationService.Navigate(typeof(ChatStoriesPage), new ChatStoriesArgs(_chatId, ChatStoriesType.Archive));
         }
 
-        public void ToggleStory(StoryViewModel story)
+        public void ArchiveStory(StoryViewModel story)
         {
-            ClientService.Send(new ToggleStoryIsPinned(story.ChatId, story.StoryId, !IsPinned));
+            ClientService.Send(new ToggleStoryIsPostedToChatPage(story.ChatId, story.StoryId, !IsPostedToChatPage));
 
-            if (IsPinned)
+            if (IsPostedToChatPage)
             {
                 Items.Remove(story);
             }
 
-            ToastPopup.Show(IsPinned ? Strings.StoryRemovedFromProfile : Strings.StorySavedToProfile);
+            ToastPopup.Show(IsPostedToChatPage ? Strings.StoryRemovedFromProfile : Strings.StorySavedToProfile);
         }
 
-        public void ToggleSelectedStories()
+
+        public void ArchiveSelectedStories()
         {
             var selection = SelectedItems.ToArray();
 
             foreach (var story in selection)
             {
-                ClientService.Send(new ToggleStoryIsPinned(story.ChatId, story.StoryId, !IsPinned));
+                ClientService.Send(new ToggleStoryIsPostedToChatPage(story.ChatId, story.StoryId, !IsPostedToChatPage));
 
-                if (IsPinned)
+                if (IsPostedToChatPage)
                 {
                     Items.Remove(story);
                 }
             }
 
-            ToastPopup.Show(Locale.Declension(IsPinned ? Strings.R.StoriesRemovedFromProfile : Strings.R.StoriesSavedToProfile, selection.Length));
+            ToastPopup.Show(Locale.Declension(IsPostedToChatPage ? Strings.R.StoriesRemovedFromProfile : Strings.R.StoriesSavedToProfile, selection.Length));
             UnselectStories();
+        }
+
+        public void PinStory(StoryViewModel story)
+        {
+            if (_pinnedStoryIds.Contains(story.StoryId))
+            {
+                _pinnedStoryIds.Remove(story.StoryId);
+                ToastPopup.Show(Locale.Declension(Strings.R.StoriesUnpinned, 1), new LocalFileSource("ms-appx:///Assets/Toasts/Unpin.tgs"));
+
+                Items.Remove(story);
+
+                var index = Items.BinarySearch(story.Date, (date, item) => _pinnedStoryIds.Contains(item.StoryId) ? 1 : item.Date.CompareTo(date));
+                if (index < 0 && (~index < Items.Count || !HasMoreItems))
+                {
+                    Items.Insert(~index, story);
+                }
+            }
+            else if (_pinnedStoryIds.Count < ClientService.Options.PinnedStoryCountMax)
+            {
+                _pinnedStoryIds.Insert(0, story.StoryId);
+                ToastPopup.Show(Locale.Declension(Strings.R.StoriesPinned, 1), new LocalFileSource("ms-appx:///Assets/Toasts/Pin.tgs"));
+
+                Items.Remove(story);
+                Items.Insert(0, story);
+            }
+            else
+            {
+                ToastPopup.Show(Locale.Declension(Strings.R.StoriesPinLimit, ClientService.Options.PinnedStoryCountMax), new LocalFileSource("ms-appx:///Assets/Toasts/Info.tgs"));
+                return;
+            }
+
+            ClientService.Send(new SetChatPinnedStories(_chatId, _pinnedStoryIds));
         }
 
         public async void DeleteStory(StoryViewModel story)
@@ -176,12 +216,13 @@ namespace Telegram.ViewModels.Chats
             Function function = _type switch
             {
                 ChatStoriesType.Archive => new GetChatArchivedStories(_chatId, _fromStoryId, 50),
-                ChatStoriesType.Pinned or _ => new GetChatPinnedStories(_chatId, _fromStoryId, 50),
+                ChatStoriesType.Pinned or _ => new GetChatPostedToChatPageStories(_chatId, _fromStoryId, 50),
             };
 
             var response = await ClientService.SendAsync(function);
             if (response is Td.Api.Stories stories)
             {
+                _pinnedStoryIds = stories.PinnedStoryIds.ToList();
                 HasMoreItems = stories.StoriesValue.Count > 0;
 
                 foreach (var story in stories.StoriesValue)
@@ -214,5 +255,12 @@ namespace Telegram.ViewModels.Chats
         }
 
         public bool ShowHint => !IsEmpty && _type == ChatStoriesType.Archive && _chatId != ClientService.Options.MyId;
+
+        private IList<int> _pinnedStoryIds = Array.Empty<int>();
+
+        public bool IsPinned(StoryViewModel story)
+        {
+            return _pinnedStoryIds != null && _pinnedStoryIds.Contains(story.StoryId);
+        }
     }
 }

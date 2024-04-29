@@ -19,6 +19,20 @@
             </Border.Background>
         </Border>
 
+        <Border x:Name="Shadow"
+                Width="24"
+                Height="24"
+                HorizontalAlignment="Right"
+                VerticalAlignment="Top" />
+
+        <TextBlock x:Name="Glyph"
+                   FontFamily="{StaticResource SymbolThemeFontFamily}"
+                   FontSize="16"
+                   HorizontalAlignment="Right"
+                   VerticalAlignment="Top"
+                   Foreground="#FFFFFF"
+                   Margin="4" />
+
         <Border x:Name="Overlay"
                 Background="{ThemeResource MessageOverlayBackgroundBrush}"
                 CornerRadius="{ThemeResource MessageOverlayCornerRadius}"

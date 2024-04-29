@@ -78,9 +78,9 @@ namespace Telegram.Views.Chats
 
             var flyout = new MenuFlyout();
 
-            if (story.CanToggleIsPinned)
+            if (story.CanToggleIsPostedToChatPage)
             {
-                flyout.CreateFlyoutItem(ViewModel.ToggleStory, story, story.IsPinned ? Strings.ArchiveStory : Strings.SaveToProfile, story.IsPinned ? Icons.StoriesPinnedOff : Icons.StoriesPinned);
+                flyout.CreateFlyoutItem(ViewModel.ArchiveStory, story, story.IsPostedToChatPage ? Strings.ArchiveStory : Strings.SaveToProfile, story.IsPostedToChatPage ? Icons.StoriesPinnedOff : Icons.StoriesPinned);
             }
 
             if (story.CanBeDeleted)

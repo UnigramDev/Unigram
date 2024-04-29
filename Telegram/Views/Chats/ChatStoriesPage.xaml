@@ -54,7 +54,7 @@
             <GridView.Header>
                 <controls:SettingsPanel>
                     <controls:HeaderedControl x:Name="Header"
-                                              x:Load="{x:Bind ViewModel.IsPinned}"
+                                              x:Load="{x:Bind ViewModel.IsPostedToChatPage}"
                                               Footer="{CustomResource ProfileStoriesArchiveHint}"
                                               Margin="-24,0,-20,0">
                         <controls:BadgeButton Content="{CustomResource ProfileStoriesArchive}"
@@ -125,10 +125,10 @@
                                         Grid.Column="1" />
 
 
-            <controls:GlyphButton Glyph="{x:Bind ConvertToggleIcon(ViewModel.IsPinned)}"
-                                  Content="{x:Bind ConvertToggleText(ViewModel.IsPinned, ViewModel.SelectedItems.Count), Mode=OneWay}"
+            <controls:GlyphButton Glyph="{x:Bind ConvertToggleIcon(ViewModel.IsPostedToChatPage)}"
+                                  Content="{x:Bind ConvertToggleText(ViewModel.IsPostedToChatPage, ViewModel.SelectedItems.Count), Mode=OneWay}"
                                   IsEnabled="{x:Bind ViewModel.CanSelectedToggleIsPinned, Mode=OneWay}"
-                                  Click="{x:Bind ViewModel.ToggleSelectedStories}"
+                                  Click="{x:Bind ViewModel.ArchiveSelectedStories}"
                                   Style="{StaticResource GlyphButtonWithLabelStyle}"
                                   Grid.Column="3" />
 
@@ -160,12 +160,12 @@
                                     Width="140"
                                     Height="140"
                                     Margin="0,16,0,16" />
-            <TextBlock common:TextBlockHelper.Markdown="{x:Bind ConvertEmptyTitle(ViewModel.IsPinned)}"
+            <TextBlock common:TextBlockHelper.Markdown="{x:Bind ConvertEmptyTitle(ViewModel.IsPostedToChatPage)}"
                        Style="{StaticResource BodyStrongTextBlockStyle}"
                        TextAlignment="Center"
                        Margin="12,0,12,0"
                        Grid.Row="1" />
-            <TextBlock common:TextBlockHelper.Markdown="{x:Bind ConvertEmptySubtitle(ViewModel.IsPinned)}"
+            <TextBlock common:TextBlockHelper.Markdown="{x:Bind ConvertEmptySubtitle(ViewModel.IsPostedToChatPage)}"
                        Style="{StaticResource InfoCaptionTextBlockStyle}"
                        TextAlignment="Center"
                        Margin="12,0,12,0"

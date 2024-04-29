@@ -401,6 +401,7 @@ namespace Telegram.Controls.Media
         public const string PersonDeleteFilled = "\uEA40";
         public const string PeopleFilled = "\uE9B9";
         public const string PinFilled = "\uE9BB";
+        public const string PinFilled16 = "\uEA8A";
         public const string LinkFilled = "\uE9BC";
         public const string FolderFilled = "\uE9BD";
 

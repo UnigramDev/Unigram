@@ -9012,6 +9012,21 @@ and enter your phone number.</value>
   <data name="StoriesMovedToDialogs" xml:space="preserve">
     <value>Stories of **{0}** were moved to **Chats**.</value>
   </data>
+  <data name="StoriesPinLimit_other" xml:space="preserve">
+    <value>You can’t pin more than {0} posts.</value>
+  </data>
+  <data name="StoriesPinned_one" xml:space="preserve">
+    <value>Story pinned</value>
+  </data>
+  <data name="StoriesPinned_other" xml:space="preserve">
+    <value>{0} stories pinned</value>
+  </data>
+  <data name="StoriesPinnedText_one" xml:space="preserve">
+    <value>Now it will be always shown on the top.</value>
+  </data>
+  <data name="StoriesPinnedText_other" xml:space="preserve">
+    <value>Now they will be always shown on the top.</value>
+  </data>
   <data name="StoriesRemovedFromProfile_one" xml:space="preserve">
     <value>{0} story removed from your profile.</value>
   </data>
@@ -9029,6 +9044,12 @@ and enter your phone number.</value>
   </data>
   <data name="StoriesSelected_other" xml:space="preserve">
     <value>{0} Selected</value>
+  </data>
+  <data name="StoriesUnpinned_one" xml:space="preserve">
+    <value>Story unpinned.</value>
+  </data>
+  <data name="StoriesUnpinned_other" xml:space="preserve">
+    <value>{0} stories unpinned.</value>
   </data>
   <data name="Story" xml:space="preserve">
     <value>Story</value>

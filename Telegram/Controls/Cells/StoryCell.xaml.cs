@@ -5,6 +5,7 @@
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
 using Telegram.Common;
+using Telegram.Controls.Media;
 using Telegram.Td.Api;
 using Telegram.ViewModels.Stories;
 using Windows.Foundation;
@@ -26,9 +27,30 @@ namespace Telegram.Controls.Cells
             LayoutRoot.Constraint = new Size(256, 320);
         }
 
-        public void Update(StoryViewModel story)
+        public void Update(StoryViewModel story, bool pinned = false)
         {
             _viewModel = story;
+
+            var glyph = pinned
+                ? Icons.PinFilled16
+                : story.PrivacySettings switch
+                {
+                    StoryPrivacySettingsCloseFriends => Icons.StarFilled16,
+                    StoryPrivacySettingsSelectedUsers => Icons.PeopleFilled16,
+                    StoryPrivacySettingsContacts => Icons.PersonCircleFilled16,
+                    _ => null
+                };
+
+            if (glyph != null)
+            {
+                Glyph.Text = glyph;
+                DropShadowEx.Attach(Glyph, target: Shadow);
+            }
+            else
+            {
+                Glyph.Text = string.Empty;
+            }
+
 
             if (story.Content is StoryContentPhoto photo)
             {

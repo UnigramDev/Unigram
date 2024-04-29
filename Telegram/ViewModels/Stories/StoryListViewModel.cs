@@ -174,11 +174,11 @@ namespace Telegram.ViewModels.Stories
             }
         }
 
-        public void ToggleStory(StoryViewModel story)
+        public void ArchiveStory(StoryViewModel story)
         {
-            ClientService.Send(new ToggleStoryIsPinned(story.ChatId, story.StoryId, !story.IsPinned));
+            ClientService.Send(new ToggleStoryIsPostedToChatPage(story.ChatId, story.StoryId, !story.IsPostedToChatPage));
 
-            ToastPopup.Show(story.IsPinned ? Strings.StoryRemovedFromProfile : Strings.StorySavedToProfile);
+            ToastPopup.Show(story.IsPostedToChatPage ? Strings.StoryRemovedFromProfile : Strings.StorySavedToProfile);
         }
 
         public async Task ReportStoryAsync(StoryViewModel story)

@@ -57,7 +57,8 @@ namespace Telegram.ViewModels
         public ITranslateService TranslateService => _translateService;
 
         public ProfileSavedChatsTabViewModel SavedChatsTab => _savedChatsViewModel;
-        public ProfileStoriesTabViewModel StoriesTab => _storiesTabViewModel;
+        public ProfileStoriesTabViewModel PinnedStoriesTab => _pinnedStoriesTabViewModel;
+        public ProfileStoriesTabViewModel ArchivedStoriesTab => _archivedStoriesTabViewModel;
         public ProfileGroupsTabViewModel GroupsTab => _groupsTabViewModel;
         public ProfileChannelsTabViewModel ChannelsTab => _channelsTabViewModel;
         public SupergroupMembersViewModel MembersTab => _membersTabVieModel;
@@ -73,7 +74,14 @@ namespace Telegram.ViewModels
         public double HeaderHeight
         {
             get => _headerHeight;
-            set => Set(ref _headerHeight, value);
+            set
+            {
+                if (Set(ref _headerHeight, value))
+                {
+                    PinnedStoriesTab.HeaderHeight = value;
+                    ArchivedStoriesTab.HeaderHeight = value;
+                }
+            }
         }
 
         public long LinkedChatId { get; private set; }

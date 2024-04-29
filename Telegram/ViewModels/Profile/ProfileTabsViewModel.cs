@@ -18,6 +18,7 @@ using Telegram.Services;
 using Telegram.Td.Api;
 using Telegram.ViewModels.Delegates;
 using Telegram.Views;
+using Telegram.Views.Chats;
 using Telegram.Views.Popups;
 using Telegram.Views.Profile;
 using Windows.UI.Xaml.Controls;
@@ -31,10 +32,13 @@ namespace Telegram.ViewModels.Profile
 
         public Type Type { get; set; }
 
-        public ProfileTabItem(string text, Type type)
+        public object Parameter { get; set; }
+
+        public ProfileTabItem(string text, Type type, object parameter = null)
         {
             Text = text;
             Type = type;
+            Parameter = parameter;
         }
     }
 
@@ -46,7 +50,8 @@ namespace Telegram.ViewModels.Profile
         private readonly IMessageDelegate _messageDelegate;
 
         protected readonly ProfileSavedChatsTabViewModel _savedChatsViewModel;
-        protected readonly ProfileStoriesTabViewModel _storiesTabViewModel;
+        protected readonly ProfileStoriesTabViewModel _pinnedStoriesTabViewModel;
+        protected readonly ProfileStoriesTabViewModel _archivedStoriesTabViewModel;
         protected readonly ProfileGroupsTabViewModel _groupsTabViewModel;
         protected readonly ProfileChannelsTabViewModel _channelsTabViewModel;
         protected readonly ProfileMembersTabViewModel _membersTabVieModel;
@@ -60,14 +65,19 @@ namespace Telegram.ViewModels.Profile
             _messageDelegate = new MessageDelegate(this);
 
             _savedChatsViewModel = TypeResolver.Current.Resolve<ProfileSavedChatsTabViewModel>(clientService.SessionId);
-            _storiesTabViewModel = TypeResolver.Current.Resolve<ProfileStoriesTabViewModel>(clientService.SessionId);
+            _pinnedStoriesTabViewModel = TypeResolver.Current.Resolve<ProfileStoriesTabViewModel>(clientService.SessionId);
+            _archivedStoriesTabViewModel = TypeResolver.Current.Resolve<ProfileStoriesTabViewModel>(clientService.SessionId);
             _groupsTabViewModel = TypeResolver.Current.Resolve<ProfileGroupsTabViewModel>(clientService.SessionId);
             _channelsTabViewModel = TypeResolver.Current.Resolve<ProfileChannelsTabViewModel>(clientService.SessionId);
             _membersTabVieModel = TypeResolver.Current.Resolve<ProfileMembersTabViewModel>(clientService.SessionId);
             _membersTabVieModel.IsEmbedded = true;
 
+            _pinnedStoriesTabViewModel.SetType(ChatStoriesType.Pinned);
+            _archivedStoriesTabViewModel.SetType(ChatStoriesType.Archive);
+
             Children.Add(_savedChatsViewModel);
-            Children.Add(_storiesTabViewModel);
+            Children.Add(_pinnedStoriesTabViewModel);
+            Children.Add(_archivedStoriesTabViewModel);
             Children.Add(_groupsTabViewModel);
             Children.Add(_channelsTabViewModel);
             Children.Add(_membersTabVieModel);
@@ -196,8 +206,8 @@ namespace Telegram.ViewModels.Profile
 
                 if (MyProfile && user.Id == ClientService.Options.MyId)
                 {
-                    AddTab(new ProfileTabItem(Strings.ProfileStories, typeof(ProfileStoriesTabPage)));
-                    AddTab(new ProfileTabItem(Strings.ArchivedStories, typeof(ProfileStoriesTabPage)));
+                    AddTab(new ProfileTabItem(Strings.ProfileStories, typeof(ProfileStoriesTabPage), ChatStoriesType.Pinned));
+                    AddTab(new ProfileTabItem(Strings.ArchivedStories, typeof(ProfileStoriesTabPage), ChatStoriesType.Archive));
                 }
                 else
                 {
@@ -205,7 +215,7 @@ namespace Telegram.ViewModels.Profile
                     {
                         AddTab(new ProfileTabItem(Strings.SavedDialogsTab, typeof(ProfileSavedChatsTabPage)));
                     }
-                    else if (cached != null && cached.HasPinnedStories)
+                    else if (cached != null && cached.HasPostedToProfileStories)
                     {
                         AddTab(new ProfileTabItem(Strings.ProfileStories, typeof(ProfileStoriesTabPage)));
                     }

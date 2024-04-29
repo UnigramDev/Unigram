@@ -79,11 +79,11 @@ namespace Telegram.ViewModels.Stories
             CanGetInteractions = story.CanGetInteractions;
             CanBeReplied = story.CanBeReplied;
             CanBeForwarded = story.CanBeForwarded;
-            CanToggleIsPinned = story.CanToggleIsPinned;
+            CanToggleIsPostedToChatPage = story.CanToggleIsPostedToChatPage;
             CanBeEdited = story.CanBeEdited;
             CanBeDeleted = story.CanBeDeleted;
             IsVisibleOnlyForSelf = story.IsVisibleOnlyForSelf;
-            IsPinned = story.IsPinned;
+            IsPostedToChatPage = story.IsPostedToChatPage;
             HasExpiredViewers = story.HasExpiredViewers;
             Areas = story.Areas;
             ChosenReactionType = story.ChosenReactionType;
@@ -123,9 +123,9 @@ namespace Telegram.ViewModels.Stories
         public bool CanBeForwarded { get; private set; }
 
         /// <summary>
-        /// True, if the story's IsPinned value can be changed.
+        /// True, if the story's IsPostedToChatPage value can be changed.
         /// </summary>
-        public bool CanToggleIsPinned { get; private set; }
+        public bool CanToggleIsPostedToChatPage { get; private set; }
 
         /// <summary>
         /// True, if the story can be edited.
@@ -146,7 +146,7 @@ namespace Telegram.ViewModels.Stories
         /// True, if the story is saved in the sender's profile and will be available there
         /// after expiration.
         /// </summary>
-        public bool IsPinned { get; private set; }
+        public bool IsPostedToChatPage { get; private set; }
 
         /// <summary>
         /// True, if users viewed the story can't be received, because the story has expired

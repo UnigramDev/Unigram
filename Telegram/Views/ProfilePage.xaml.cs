@@ -17,6 +17,7 @@ using Telegram.ViewModels;
 using Telegram.ViewModels.Delegates;
 using Telegram.ViewModels.Profile;
 using Telegram.ViewModels.Stories;
+using Telegram.Views.Chats;
 using Telegram.Views.Profile;
 using Windows.UI.Composition;
 using Windows.UI.Xaml;
@@ -102,7 +103,7 @@ namespace Telegram.Views
 
             if (ViewModel.SelectedItem is ProfileTabItem tab)
             {
-                MediaFrame.Navigate(tab.Type, null, new SuppressNavigationTransitionInfo());
+                MediaFrame.Navigate(tab.Type, tab.Parameter, new SuppressNavigationTransitionInfo());
             }
 
             var visual4 = ElementComposition.GetElementVisual(BackButton);
@@ -314,6 +315,13 @@ namespace Telegram.Views
                 return;
             }
 
+            if (e.Content is ProfileStoriesTabPage && e.Parameter is ChatStoriesType type)
+            {
+                tabPage.DataContext = type == ChatStoriesType.Pinned
+                    ? ViewModel.PinnedStoriesTab
+                    : ViewModel.ArchivedStoriesTab;
+            }
+
             if (tabPage.ScrollingHost.ItemsSource != null)
             {
                 LoadMore(tabPage.ScrollingHost);
@@ -442,9 +450,9 @@ namespace Telegram.Views
 
         private void Header_ItemClick(object sender, ItemClickEventArgs e)
         {
-            if (e.ClickedItem is ProfileTabItem page && page.Type != MediaFrame.Content?.GetType())
+            if (e.ClickedItem is ProfileTabItem page && (page.Parameter != null || page.Type != MediaFrame.Content?.GetType()))
             {
-                MediaFrame.Navigate(page.Type, null, new SuppressNavigationTransitionInfo());
+                MediaFrame.Navigate(page.Type, page.Parameter, new SuppressNavigationTransitionInfo());
             }
         }
 

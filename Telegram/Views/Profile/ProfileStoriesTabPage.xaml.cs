@@ -3,6 +3,7 @@ using Telegram.Common;
 using Telegram.Controls.Cells;
 using Telegram.Controls.Media;
 using Telegram.Td.Api;
+using Telegram.ViewModels.Profile;
 using Telegram.ViewModels.Stories;
 using Windows.Foundation;
 using Windows.UI.Composition;
@@ -18,6 +19,8 @@ namespace Telegram.Views.Profile
 {
     public sealed partial class ProfileStoriesTabPage : ProfileTabPage
     {
+        public new ProfileStoriesTabViewModel ViewModel => DataContext as ProfileStoriesTabViewModel;
+
         public ProfileStoriesTabPage()
         {
             InitializeComponent();
@@ -49,21 +52,30 @@ namespace Telegram.Views.Profile
 
             var flyout = new MenuFlyout();
 
-            if (story.CanToggleIsPinned)
+            if (story.CanToggleIsPostedToChatPage)
             {
-                flyout.CreateFlyoutItem(ViewModel.StoriesTab.ToggleStory, story, story.IsPinned ? Strings.ArchiveStory : Strings.SaveToProfile, story.IsPinned ? Icons.StoriesPinnedOff : Icons.StoriesPinned);
+                flyout.CreateFlyoutItem(ViewModel.ArchiveStory, story, story.IsPostedToChatPage ? Strings.Archive : Strings.Unarchive, story.IsPostedToChatPage ? Icons.Archive : Icons.Unarchive);
+
+                if (ViewModel.IsPinned(story))
+                {
+                    flyout.CreateFlyoutItem(ViewModel.PinStory, story, Strings.UnpinMessage, Icons.PinOff);
+                }
+                else
+                {
+                    flyout.CreateFlyoutItem(ViewModel.PinStory, story, Strings.PinMessage, Icons.Pin);
+                }
             }
 
             if (story.CanBeDeleted)
             {
-                flyout.CreateFlyoutItem(ViewModel.StoriesTab.DeleteStory, story, Strings.Delete, Icons.Delete, destructive: true);
+                flyout.CreateFlyoutItem(ViewModel.DeleteStory, story, Strings.Delete, Icons.Delete, destructive: true);
             }
 
             flyout.CreateFlyoutSeparator();
 
             if (flyout.Items.Count > 0)
             {
-                flyout.CreateFlyoutItem(ViewModel.StoriesTab.SelectStory, story, Strings.Select, Icons.CheckmarkCircle);
+                flyout.CreateFlyoutItem(ViewModel.SelectStory, story, Strings.Select, Icons.CheckmarkCircle);
             }
 
             flyout.ShowAt(sender, args);
@@ -79,7 +91,7 @@ namespace Telegram.Views.Profile
             {
                 AutomationProperties.SetName(args.ItemContainer, story.Content is StoryContentPhoto ? Strings.AttachPhoto : story.Content is StoryContentVideo ? Strings.AttachVideo : Strings.Story);
 
-                content.Update(story);
+                content.Update(story, ViewModel.IsPinned(story));
                 args.Handled = true;
             }
         }
@@ -92,7 +104,7 @@ namespace Telegram.Views.Profile
             var point = transform.TransformPoint(new Point());
             var origin = new Rect(point.X, point.Y, container.ActualWidth, container.ActualHeight);
 
-            ViewModel.StoriesTab.OpenStory(e.ClickedItem as StoryViewModel, origin, GetOrigin);
+            ViewModel.OpenStory(e.ClickedItem as StoryViewModel, origin, GetOrigin);
         }
 
         private Rect GetOrigin(ActiveStoriesViewModel activeStories)

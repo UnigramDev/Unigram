@@ -23,7 +23,7 @@
 
     <Grid Background="{ThemeResource SettingsPageBackground}">
         <GridView x:Name="ScrollingHost"
-                  ItemsSource="{x:Bind ViewModel.StoriesTab.Items}"
+                  ItemsSource="{x:Bind ViewModel.Items}"
                   ItemClick="List_ItemClick"
                   IsItemClickEnabled="True"
                   SelectionMode="None"
@@ -33,7 +33,7 @@
                   Padding="24,0,20,0">
             <common:SelectedItemsBinder.Attached>
                 <common:SelectedItemsBinder SelectionMode="Auto"
-                                            SelectedItems="{x:Bind ViewModel.StoriesTab.SelectedItems}"
+                                            SelectedItems="{x:Bind ViewModel.SelectedItems}"
                                             IsItemClickEnabled="True" />
             </common:SelectedItemsBinder.Attached>
             <common:FluidGridView.Triggers>
@@ -112,29 +112,29 @@
                     CornerRadius="15"
                     Grid.ColumnSpan="8" />
 
-            <controls:GlyphButton Click="{x:Bind ViewModel.StoriesTab.UnselectStories}"
+            <controls:GlyphButton Click="{x:Bind ViewModel.UnselectStories}"
                                   CornerRadius="13,4,4,13"
                                   Glyph="&#xE711;" />
 
-            <controls:AnimatedTextBlock Text="{x:Bind ConvertSelected(ViewModel.StoriesTab.SelectedItems.Count), Mode=OneWay}"
+            <controls:AnimatedTextBlock Text="{x:Bind ConvertSelected(ViewModel.SelectedItems.Count), Mode=OneWay}"
                                         TextStyle="{StaticResource BaseTextBlockStyle}"
                                         VerticalAlignment="Center"
                                         Margin="0,-2,0,0"
                                         Grid.Column="1" />
 
 
-            <controls:GlyphButton Glyph="{x:Bind ConvertToggleIcon(ViewModel.StoriesTab.IsPinned)}"
-                                  Content="{x:Bind ConvertToggleText(ViewModel.StoriesTab.IsPinned, ViewModel.StoriesTab.SelectedItems.Count), Mode=OneWay}"
-                                  IsEnabled="{x:Bind ViewModel.StoriesTab.CanSelectedToggleIsPinned, Mode=OneWay}"
-                                  Click="{x:Bind ViewModel.StoriesTab.ToggleSelectedStories}"
+            <controls:GlyphButton Glyph="{x:Bind ConvertToggleIcon(ViewModel.IsPostedToChatPage)}"
+                                  Content="{x:Bind ConvertToggleText(ViewModel.IsPostedToChatPage, ViewModel.SelectedItems.Count), Mode=OneWay}"
+                                  IsEnabled="{x:Bind ViewModel.CanSelectedToggleIsPinned, Mode=OneWay}"
+                                  Click="{x:Bind ViewModel.ArchiveSelectedStories}"
                                   Style="{StaticResource GlyphButtonWithLabelStyle}"
                                   Grid.Column="3" />
 
             <controls:GlyphButton Glyph="&#xE74D;"
                                   Content="{CustomResource Delete}"
-                                  IsEnabled="{x:Bind ViewModel.StoriesTab.CanSelectedBeDeleted, Mode=OneWay}"
+                                  IsEnabled="{x:Bind ViewModel.CanSelectedBeDeleted, Mode=OneWay}"
                                   Foreground="#df3f40"
-                                  Click="{x:Bind ViewModel.StoriesTab.DeleteSelectedStories}"
+                                  Click="{x:Bind ViewModel.DeleteSelectedStories}"
                                   Style="{StaticResource GlyphButtonWithLabelStyle}"
                                   CornerRadius="4,13,13,4"
                                   Grid.Column="4" />
