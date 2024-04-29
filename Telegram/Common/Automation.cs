@@ -134,7 +134,7 @@ namespace Telegram.Common
             else if (message.Content is MessagePoll poll)
             {
                 builder.Append($"{Strings.Poll}. ");
-                builder.Append($"{poll.Poll.Question}");
+                builder.Append($"{poll.Poll.Question.Text}");
             }
             else if (message.Content is MessageCall call)
             {
@@ -425,11 +425,11 @@ namespace Telegram.Common
 
                     if (type != null)
                     {
-                        return type + ", " + poll.Poll.Question + ", ";
+                        return type + ", " + poll.Poll.Question.Text + ", ";
                     }
                 }
 
-                return Strings.Poll + ", " + poll.Poll.Question + ", ";
+                return Strings.Poll + ", " + poll.Poll.Question.Text + ", ";
             }
             else if (message.Content is MessageCall call)
             {

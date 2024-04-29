@@ -3035,7 +3035,7 @@ namespace Telegram.Views
             }
             else if (message.Content is MessagePoll poll)
             {
-                return ViewModel.TranslateService.CanTranslateText(poll.Poll.Question);
+                return ViewModel.TranslateService.CanTranslateText(poll.Poll.Question.Text);
             }
 
             return false;

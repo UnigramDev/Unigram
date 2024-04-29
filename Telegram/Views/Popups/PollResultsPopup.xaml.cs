@@ -76,7 +76,7 @@ namespace Telegram.Views.Popups
             else if (item is PollResultViewModel option)
             {
                 var headered = args.Element as HeaderedControl;
-                headered.Header = $"{option.Text} — {option.VotePercentage}%";
+                headered.Header = $"{option.Text.Text} — {option.VotePercentage}%";
                 headered.Footer = Locale.Declension(option.Type is PollTypeQuiz ? Strings.R.Answer : Strings.R.Vote, option.VoterCount);
                 headered.Visibility = option.VoterCount > 0 ? Visibility.Visible : Visibility.Collapsed;
             }
@@ -124,7 +124,7 @@ namespace Telegram.Views.Popups
             LoadMoreExecute();
         }
 
-        public string Text => _option.Text;
+        public FormattedText Text => _option.Text;
         public int VotePercentage => _option.VotePercentage;
         public int VoterCount => _option.VoterCount;
 

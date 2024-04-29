@@ -1,16 +1,12 @@
 ﻿using System;
 using Telegram.Common;
-using Telegram.Controls.Media;
 using Telegram.Native;
-using Telegram.Navigation;
 using Telegram.Services;
-using Telegram.Streams;
 using Telegram.Td.Api;
 using Windows.Foundation;
 using Windows.Storage.Streams;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Documents;
 using Windows.UI.Xaml.Media.Imaging;
 
 namespace Telegram.Controls.Cells.Business
@@ -49,7 +45,7 @@ namespace Telegram.Controls.Cells.Business
             var message = replies.FirstMessage;
             if (message != null)
             {
-                UpdateBriefLabel(clientService, ChatCell.UpdateBriefLabel(null, message.Content, true, false, false, out MinithumbnailId thumbnail));
+                CustomEmojiIcon.Add(BriefText, BriefLabel.Inlines, clientService, ChatCell.UpdateBriefLabel(null, message.Content, true, false, false, out MinithumbnailId thumbnail), "InfoCustomEmojiStyle");
                 UpdateMinithumbnail(thumbnail);
             }
 
@@ -61,57 +57,6 @@ namespace Telegram.Controls.Cells.Business
             else
             {
                 More.Visibility = Visibility.Collapsed;
-            }
-        }
-
-        private void UpdateBriefLabel(IClientService clientService, FormattedText message)
-        {
-            BriefLabel.Inlines.Clear();
-
-            if (message != null)
-            {
-                var clean = message.ReplaceSpoilers();
-                var previous = 0;
-
-                if (message.Entities != null)
-                {
-                    foreach (var entity in clean.Entities)
-                    {
-                        if (entity.Type is not TextEntityTypeCustomEmoji customEmoji)
-                        {
-                            continue;
-                        }
-
-                        if (entity.Offset > previous)
-                        {
-                            BriefLabel.Inlines.Add(new Run { Text = clean.Text.Substring(previous, entity.Offset - previous) });
-                        }
-
-                        var player = new CustomEmojiIcon();
-                        player.LoopCount = 0;
-                        player.Source = new CustomEmojiFileSource(clientService, customEmoji.CustomEmojiId);
-                        player.Style = BootStrapper.Current.Resources["InfoCustomEmojiStyle"] as Style;
-
-                        var inline = new InlineUIContainer();
-                        inline.Child = new CustomEmojiContainer(BriefText, player);
-
-                        // If the Span starts with a InlineUIContainer the RichTextBlock bugs and shows ellipsis
-                        if (BriefLabel.Inlines.Empty())
-                        {
-                            BriefLabel.Inlines.Add(Icons.ZWNJ);
-                        }
-
-                        BriefLabel.Inlines.Add(inline);
-                        BriefLabel.Inlines.Add(Icons.ZWNJ);
-
-                        previous = entity.Offset + entity.Length;
-                    }
-                }
-
-                if (clean.Text.Length > previous)
-                {
-                    BriefLabel.Inlines.Add(new Run { Text = clean.Text.Substring(previous) });
-                }
             }
         }
 

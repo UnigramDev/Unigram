@@ -36,11 +36,13 @@
                                 <ColumnDefinition Width="Auto" />
                             </Grid.ColumnDefinitions>
                             <StackPanel VerticalAlignment="Top">
-                                <TextBlock x:Name="Question"
-                                           TextWrapping="Wrap"
-                                           Style="{StaticResource BaseTextBlockStyle}"
-                                           FontFamily="{ThemeResource EmojiThemeFontFamily}"
-                                           IsTextSelectionEnabled="True" />
+                                <RichTextBlock x:Name="QuestionText"
+                                               TextWrapping="Wrap"
+                                               Style="{StaticResource BaseRichTextBlockStyle}"
+                                               FontFamily="{ThemeResource EmojiThemeFontFamily}"
+                                               IsTextSelectionEnabled="False">
+                                    <Paragraph x:Name="Question" />
+                                </RichTextBlock>
                                 <StackPanel Orientation="Horizontal">
                                     <TextBlock x:Name="Type"
                                                Foreground="{ThemeResource MessageSubtleForegroundBrush}"

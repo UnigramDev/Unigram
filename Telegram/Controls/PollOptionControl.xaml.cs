@@ -7,6 +7,7 @@
 using System;
 using System.Linq;
 using Telegram.Common;
+using Telegram.Services;
 using Telegram.Td.Api;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Automation;
@@ -23,7 +24,7 @@ namespace Telegram.Controls
             InitializeComponent();
         }
 
-        public void UpdatePollOption(Poll poll, PollOption option)
+        public void UpdatePollOption(IClientService clientService, Poll poll, PollOption option)
         {
             var results = poll.IsClosed || poll.Options.Any(x => x.IsChosen);
             var correct = poll.Type is PollTypeQuiz quiz && quiz.CorrectOptionId == poll.Options.IndexOf(option);
@@ -43,7 +44,7 @@ namespace Telegram.Controls
 
             Extensions.SetToolTip(Percentage, results ? votes : null);
 
-            Text.Text = option.Text;
+            CustomEmojiIcon.Add(TextText, Text.Inlines, clientService, option.Text);
 
             Zero.Visibility = results ? Visibility.Visible : Visibility.Collapsed;
 
@@ -65,11 +66,11 @@ namespace Telegram.Controls
 
             if (results)
             {
-                AutomationProperties.SetName(this, $"{option.Text}, {votes}, {option.VotePercentage}%");
+                AutomationProperties.SetName(this, $"{option.Text.Text}, {votes}, {option.VotePercentage}%");
             }
             else
             {
-                AutomationProperties.SetName(this, option.Text);
+                AutomationProperties.SetName(this, option.Text.Text);
             }
         }
 

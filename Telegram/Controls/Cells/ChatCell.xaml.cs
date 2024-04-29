@@ -1453,7 +1453,7 @@ namespace Telegram.Controls.Cells
             }
             else if (content is MessagePoll poll)
             {
-                return Text("\U0001F4CA " + poll.Poll.Question);
+                return Text1("\U0001F4CA ", poll.Poll.Question, Strings.Poll);
             }
             else if (content is MessageCall call)
             {

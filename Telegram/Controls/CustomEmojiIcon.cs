@@ -5,9 +5,16 @@
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
 
-using Windows.Foundation;
+using Telegram.Common;
+using Telegram.Controls.Media;
+using Telegram.Navigation;
+using Telegram.Services;
+using Telegram.Streams;
+using Telegram.Td.Api;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Documents;
+using Point = Windows.Foundation.Point;
 
 namespace Telegram.Controls
 {
@@ -19,6 +26,64 @@ namespace Telegram.Controls
         }
 
         public string Emoji { get; set; }
+
+
+
+        public static void Add(RichTextBlock parent, InlineCollection inlines, IClientService clientService, FormattedText message, string style = null)
+        {
+            inlines.Clear();
+
+            if (message != null)
+            {
+                var clean = message.ReplaceSpoilers();
+                var previous = 0;
+
+                if (message.Entities != null)
+                {
+                    foreach (var entity in clean.Entities)
+                    {
+                        if (entity.Type is not TextEntityTypeCustomEmoji customEmoji)
+                        {
+                            continue;
+                        }
+
+                        if (entity.Offset > previous)
+                        {
+                            inlines.Add(clean.Text.Substring(previous, entity.Offset - previous));
+                        }
+
+                        var player = new CustomEmojiIcon();
+                        player.LoopCount = 0;
+                        player.Source = new CustomEmojiFileSource(clientService, customEmoji.CustomEmojiId);
+
+                        if (style != null)
+                        {
+                            // "InfoCustomEmojiStyle"
+                            player.Style = BootStrapper.Current.Resources[style] as Style;
+                        }
+
+                        var inline = new InlineUIContainer();
+                        inline.Child = new CustomEmojiContainer(parent, player);
+
+                        // If the Span starts with a InlineUIContainer the RichTextBlock bugs and shows ellipsis
+                        if (inlines.Empty())
+                        {
+                            inlines.Add(Icons.ZWNJ);
+                        }
+
+                        inlines.Add(inline);
+                        inlines.Add(Icons.ZWNJ);
+
+                        previous = entity.Offset + entity.Length;
+                    }
+                }
+
+                if (clean.Text.Length > previous)
+                {
+                    inlines.Add(clean.Text.Substring(previous));
+                }
+            }
+        }
     }
 
     public class CustomEmojiContainer : Grid

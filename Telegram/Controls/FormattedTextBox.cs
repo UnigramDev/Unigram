@@ -1412,8 +1412,9 @@ namespace Telegram.Controls
         {
             if (sticker.FullType is StickerFullTypeCustomEmoji customEmoji)
             {
-                InsertEmoji(Document.Selection, sticker.Emoji, customEmoji.CustomEmojiId);
-                Document.Selection.StartPosition = Document.Selection.EndPosition + 1;
+                var range = Document.GetRange(Document.Selection.StartPosition, Document.Selection.EndPosition);
+                InsertEmoji(range, sticker.Emoji, customEmoji.CustomEmojiId);
+                Document.Selection.StartPosition = range.EndPosition + 1;
             }
         }
 
@@ -1635,7 +1636,7 @@ namespace Telegram.Controls
                 if (range.StartPosition == 0)
                 {
                     //ContentElement.Padding = new Thickness(48, range.ParagraphFormat.SpaceAfter == 0 ? 13 : 7, 0, 15);
-                    ContentElement.Padding = new Thickness(48, 13, 0, 15);
+                    ContentElement.Padding = new Thickness(0, 13, 0, 15);
                     ContentElement.Margin = new Thickness(0, range.ParagraphFormat.SpaceAfter == 0 ? 0 : -6, 0, 0);
                     Blocks.Margin = new Thickness(0, range.ParagraphFormat.SpaceAfter == 0 ? 0 : -6, 0, 0);
                 }

@@ -550,7 +550,7 @@ namespace Telegram.ViewModels
                     }
                     else if (message.Content is MessagePoll poll)
                     {
-                        builder.AppendLine($"[{Strings.Poll}: {poll.Poll.Question}");
+                        builder.AppendLine($"[{Strings.Poll}: {poll.Poll.Question.Text}");
 
                         foreach (var option in poll.Poll.Options)
                         {
@@ -992,12 +992,12 @@ namespace Telegram.ViewModels
 
             if (message.Content is MessagePoll poll)
             {
-                var builder = new StringBuilder(poll.Poll.Question);
+                var builder = new StringBuilder(poll.Poll.Question.Text);
 
                 foreach (var option in poll.Poll.Options)
                 {
                     builder.AppendLine();
-                    builder.AppendFormat("\U0001F518 {0}", option.Text);
+                    builder.AppendFormat("\U0001F518 {0}", option.Text.Text);
                 }
 
                 text = builder.ToString();

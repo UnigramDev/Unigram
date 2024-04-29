@@ -656,8 +656,8 @@ namespace Telegram.Controls.Messages
                 outgoing,
                 sender,
                 title,
-                $"\uD83D\uDCCA {poll.Poll.Question.Replace('\n', ' ')}",
-                null,
+                $"\uD83D\uDCCA",
+                poll.Poll.Question,
                 false,
                 white);
         }

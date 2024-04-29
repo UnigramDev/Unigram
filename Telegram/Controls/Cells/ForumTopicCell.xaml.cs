@@ -727,7 +727,7 @@ namespace Telegram.Controls.Cells
             }
             else if (message.Content is MessagePoll poll)
             {
-                return result + "\uD83D\uDCCA " + poll.Poll.Question;
+                return result + "\uD83D\uDCCA " + poll.Poll.Question.Text;
             }
             else if (message.Content is MessageCall call)
             {
