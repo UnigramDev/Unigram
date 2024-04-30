@@ -2357,8 +2357,8 @@ namespace Telegram.Controls.Messages
                 {
                     var rich = Message.GetChild<RichTextBlock>();
 
-                    var fontSize = Constants.FontSize * BootStrapper.Current.TextScaleFactor;
-                    var quoteSize = Constants.CaptionFontSize * BootStrapper.Current.TextScaleFactor;
+                    var fontSize = Theme.Current.MessageFontSize * BootStrapper.Current.TextScaleFactor;
+                    var quoteSize = Theme.Current.CaptionFontSize * BootStrapper.Current.TextScaleFactor;
 
                     var width = Math.Ceiling(rich.ActualWidth + 1); //Panel.MeasuredWidth; //Message.ActualWidth;
                     var inset = 0;
@@ -3070,6 +3070,7 @@ namespace Telegram.Controls.Messages
 
         public void UpdateMockup()
         {
+            Message.SetFontSize(Theme.Current.MessageFontSize);
             ContentPanel.CornerRadius = new CornerRadius(SettingsService.Current.Appearance.BubbleRadius);
         }
 

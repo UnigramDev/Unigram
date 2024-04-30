@@ -489,7 +489,7 @@ namespace Telegram.Services.Settings
         public int Scaling
         {
             get => _scaling ??= GetValueOrDefault("Scaling", 0);
-            set => AddOrUpdateValue(ref _scaling, "Scaling", _scaling);
+            set => AddOrUpdateValue(ref _scaling, "Scaling", value);
         }
 
         private static int? _bubbleRadius;

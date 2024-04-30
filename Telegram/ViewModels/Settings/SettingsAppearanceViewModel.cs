@@ -183,6 +183,33 @@ namespace Telegram.ViewModels.Settings
             250
         };
 
+        private readonly Dictionary<int, int> _indexToSize = new() { { 0, 12 }, { 1, 13 }, { 2, 14 }, { 3, 15 }, { 4, 16 }, { 5, 17 }, { 6, 18 } };
+        private readonly Dictionary<int, int> _sizeToIndex = new() { { 12, 0 }, { 13, 1 }, { 14, 2 }, { 15, 3 }, { 16, 4 }, { 17, 5 }, { 18, 6 } };
+
+        public double FontSize
+        {
+            get
+            {
+                var size = Theme.Current.MessageFontSize;
+                if (_sizeToIndex.TryGetValue(size, out int index))
+                {
+                    return index;
+                }
+
+                return 2d;
+            }
+            set
+            {
+                var index = (int)Math.Round(value);
+                if (_indexToSize.TryGetValue(index, out int size))
+                {
+                    Theme.Current.MessageFontSize = size;
+                }
+
+                RaisePropertyChanged();
+            }
+        }
+
         public int BubbleRadius
         {
             get => Settings.Appearance.BubbleRadius;

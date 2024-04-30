@@ -96,7 +96,7 @@ namespace Telegram.Views.Settings
 
         private void OnPropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
-            if (e.PropertyName == nameof(ViewModel.BubbleRadius))
+            if (e.PropertyName == nameof(ViewModel.FontSize) || e.PropertyName == nameof(ViewModel.BubbleRadius))
             {
                 Message1.UpdateMockup();
                 Message2.UpdateMockup();

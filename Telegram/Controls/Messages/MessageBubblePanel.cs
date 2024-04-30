@@ -171,9 +171,11 @@ namespace Telegram.Controls.Messages
                 var maxWidth = availableWidth;
                 var footerWidth = footer.DesiredSize.Width + footer.Margin.Left + footer.Margin.Right;
 
+                var fontSize = Theme.Current.MessageFontSize;
+
                 if (text.HasLineEnding)
                 {
-                    return new Size(0, Constants.FontSize * 1.33);
+                    return new Size(0, fontSize * 1.33);
                 }
                 else if (ForceNewLine)
                 {
@@ -181,7 +183,7 @@ namespace Telegram.Controls.Messages
                 }
 
                 var width = text.DesiredSize.Width;
-                var bounds = ContentEnd(text.Text, availableWidth, Constants.FontSize * BootStrapper.Current.TextScaleFactor);
+                var bounds = ContentEnd(text.Text, availableWidth, fontSize * BootStrapper.Current.TextScaleFactor);
 
                 var diff = width - bounds;
                 if (diff < footerWidth /*|| _placeholderVertical*/)
@@ -192,7 +194,7 @@ namespace Telegram.Controls.Messages
                     }
                     else
                     {
-                        marginBottom = Constants.FontSize * 1.33; //18.62;
+                        marginBottom = fontSize * 1.33; //18.62;
                     }
                 }
             }

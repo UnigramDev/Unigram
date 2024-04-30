@@ -136,6 +136,36 @@
                                 Grid.Column="2" />
                     </Grid>
                     <Grid Background="{ThemeResource SettingsItemBackground}"
+                          BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="56" />
+                            <ColumnDefinition Width="1*" />
+                            <ColumnDefinition Width="2*" />
+                        </Grid.ColumnDefinitions>
+                        <TextBlock FontSize="{StaticResource GlyphMediumFontSize}"
+                                   HorizontalAlignment="Left"
+                                   VerticalAlignment="Center"
+                                   Margin="20,0,0,0"
+                                   AutomationProperties.AccessibilityView="Raw"
+                                   Text="&#xE9EB;"
+                                   FontFamily="{StaticResource SymbolThemeFontFamily}" />
+
+                        <TextBlock Text="{CustomResource TextSizeHeader}"
+                                   VerticalAlignment="Center"
+                                   Grid.Column="1" />
+                        <Slider Value="{x:Bind ViewModel.FontSize, Mode=TwoWay}"
+                                AutomationProperties.Name="{CustomResource TextSizeHeader}"
+                                Minimum="0"
+                                Maximum="6"
+                                SmallChange="1"
+                                LargeChange="1"
+                                TickFrequency="1"
+                                TickPlacement="Outside"
+                                IsThumbToolTipEnabled="False"
+                                Margin="12,6,12,6"
+                                Grid.Column="2" />
+                    </Grid>
+                    <Grid Background="{ThemeResource SettingsItemBackground}"
                           BorderBrush="{ThemeResource SettingsItemBorderBrush}">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="56" />

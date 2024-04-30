@@ -499,7 +499,7 @@ namespace Telegram.Controls
                     var last = part == styled.Paragraphs[^1];
                     var temp = direct.GetObject(paragraph) as Paragraph;
                     temp.Margin = new Thickness(11, 6, 24, last ? 0 : 8);
-                    temp.FontSize = Theme.Current.MessageFontSize - 2;
+                    temp.FontSize = Theme.Current.CaptionFontSize;
 
                     _codeBlocks.Add(new FormattedParagraph(temp, part.Type));
                 }
