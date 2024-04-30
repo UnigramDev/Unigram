@@ -1217,8 +1217,10 @@ namespace Telegram.ViewModels
                             _repliesStack.Push(previousId.Value);
                         }
                     }
-                    else if (maxId == 0)
+                    else
                     {
+                        //if (maxId == 0)
+                        //{
                         if (_thread != null)
                         {
                             ScrollToTop();
@@ -1227,6 +1229,9 @@ namespace Telegram.ViewModels
                         {
                             ScrollToBottom();
                         }
+                        //}
+
+                        HistoryField?.Resume();
                     }
 
                     // If the response contains a single item, immediately load more in the past
@@ -1236,6 +1241,15 @@ namespace Telegram.ViewModels
                     }
 
                     UpdateDetectedLanguage();
+                }
+                else
+                {
+                    NotifyMessageSliceLoaded();
+
+                    IsLastSliceLoaded = true;
+                    IsFirstSliceLoaded = true;
+
+                    HistoryField?.Resume();
                 }
 
                 _loadingSlice = false;
