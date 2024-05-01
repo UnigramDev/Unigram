@@ -476,36 +476,26 @@ namespace Telegram.ViewModels.Profile
                 return;
             }
 
-            var items = messages.Select(x => x.Get()).ToList();
+            var items = messages.Select(x => x.Get()).ToArray();
 
             var response = await ClientService.SendAsync(new GetMessages(chat.Id, items.Select(x => x.Id).ToArray()));
-            if (response is Messages updated)
+            if (response is Messages result)
             {
-                for (int i = 0; i < updated.MessagesValue.Count; i++)
+                for (int i = 0; i < result.MessagesValue.Count; i++)
                 {
-                    if (updated.MessagesValue[i] != null)
-                    {
-                        items[i] = updated.MessagesValue[i];
-                    }
-                    else
-                    {
-                        items.RemoveAt(i);
-                        updated.MessagesValue.RemoveAt(i);
-
-                        i--;
-                    }
+                    items[i] = result.MessagesValue[i];
                 }
             }
 
-            if (items.Count == 0)
+            var updated = items.Where(x => x != null).ToArray();
+            if (updated.Empty())
             {
                 return;
             }
 
-            var sameUser = messages.All(x => x.SenderId.AreTheSame(first.SenderId));
-            var dialog = new DeleteMessagesPopup(ClientService, SavedMessagesTopicId, items.Where(x => x != null).ToArray());
+            var popup = new DeleteMessagesPopup(ClientService, SavedMessagesTopicId, chat, updated);
 
-            var confirm = await ShowPopupAsync(dialog);
+            var confirm = await ShowPopupAsync(popup);
             if (confirm != ContentDialogResult.Primary)
             {
                 return;
@@ -513,23 +503,29 @@ namespace Telegram.ViewModels.Profile
 
             UnselectMessages();
 
-            if (dialog.DeleteAll && sameUser)
+            ClientService.Send(new DeleteMessages(chat.Id, messages.Select(x => x.Id).ToList(), popup.Revoke));
+
+            foreach (var sender in popup.DeleteAll)
             {
-                ClientService.Send(new DeleteChatMessagesBySender(chat.Id, first.SenderId));
-            }
-            else
-            {
-                ClientService.Send(new DeleteMessages(chat.Id, messages.Select(x => x.Id).ToList(), dialog.Revoke));
+                ClientService.Send(new DeleteChatMessagesBySender(chat.Id, sender));
             }
 
-            if (dialog.BanUser && sameUser)
+            foreach (var sender in popup.BanUser)
             {
-                ClientService.Send(new SetChatMemberStatus(chat.Id, first.SenderId, new ChatMemberStatusBanned()));
+                ClientService.Send(new SetChatMemberStatus(chat.Id, sender, popup.SelectedStatus));
             }
 
-            if (dialog.ReportSpam && sameUser && chat.Type is ChatTypeSupergroup supertype)
+            if (chat.Type is ChatTypeSupergroup supertype)
             {
-                ClientService.Send(new ReportSupergroupSpam(supertype.SupergroupId, messages.Select(x => x.Id).ToList()));
+                foreach (var sender in popup.ReportSpam)
+                {
+                    var messageIds = messages
+                        .Where(x => x.SenderId.AreTheSame(sender))
+                        .Select(x => x.Id)
+                        .ToList();
+
+                    ClientService.Send(new ReportSupergroupSpam(supertype.SupergroupId, messageIds));
+                }
             }
         }
 

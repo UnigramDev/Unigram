@@ -12,8 +12,7 @@
     <Grid>
         <ScrollViewer x:Name="ScrollingHost"
                       VerticalScrollBarVisibility="Auto"
-                      VerticalScrollMode="Auto"
-                      Grid.Row="1">
+                      VerticalScrollMode="Auto">
             <StackPanel Margin="24,0">
                 <cells:ProfileCell x:Name="Cell"
                                    Click="{x:Bind ViewModel.OpenProfile}"
@@ -21,7 +20,8 @@
 
                 <StackPanel x:Name="PermissionsPanel"
                             Visibility="Collapsed">
-                    <CheckBox IsChecked="{x:Bind ViewModel.CanSendBasicMessages, Mode=TwoWay}"
+                    <CheckBox x:Name="CanSendBasicMessages"
+                              IsChecked="{x:Bind ViewModel.CanSendBasicMessages, Mode=TwoWay}"
                               Content="{CustomResource UserRestrictionsSend}" />
 
                     <controls:SettingsExpander Background="Transparent"

@@ -78,6 +78,7 @@ namespace Telegram.Views.Supergroups.Popups
 
             PermissionsPanel.Visibility = Visibility.Visible;
 
+            CanSendBasicMessages.IsEnabled = chat.Permissions.CanSendBasicMessages;
             CanSendPhotos.IsEnabled = chat.Permissions.CanSendPhotos;
             CanSendVideos.IsEnabled = chat.Permissions.CanSendVideos;
             CanSendOtherMessages.IsEnabled = chat.Permissions.CanSendOtherMessages;

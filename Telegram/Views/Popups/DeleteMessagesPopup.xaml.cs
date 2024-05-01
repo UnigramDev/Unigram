@@ -4,6 +4,7 @@
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Telegram.Common;
@@ -11,15 +12,28 @@ using Telegram.Controls;
 using Telegram.Converters;
 using Telegram.Services;
 using Telegram.Td.Api;
+using Telegram.ViewModels.Supergroups;
 using Windows.UI.Xaml;
+using Windows.UI.Xaml.Controls;
 
 namespace Telegram.Views.Popups
 {
     public sealed partial class DeleteMessagesPopup : ContentPopup
     {
-        public DeleteMessagesPopup(IClientService clientService, long savedMessagesTopicId, IList<Message> messages)
+        public SupergroupEditRestrictedViewModel ViewModel => DataContext as SupergroupEditRestrictedViewModel;
+
+        private readonly IClientService _clientService;
+        private readonly List<MessageSender> _senders;
+
+        private IList<MessageSender> _reportSpam;
+        private IList<MessageSender> _deleteAll;
+        private IList<MessageSender> _banUser;
+
+        public DeleteMessagesPopup(IClientService clientService, long savedMessagesTopicId, Chat chat, IList<Message> messages)
         {
             InitializeComponent();
+
+            DataContext = TypeResolver.Current.Resolve<SupergroupEditRestrictedViewModel>(clientService.SessionId);
 
             Title = messages.Count == 1
                 ? savedMessagesTopicId == 0 ? Strings.DeleteSingleMessagesTitle : Strings.UnsaveSingleMessagesTitle
@@ -27,71 +41,59 @@ namespace Telegram.Views.Popups
             PrimaryButtonText = savedMessagesTopicId == 0 ? Strings.Delete : Strings.Remove;
             SecondaryButtonText = Strings.Cancel;
 
-            var first = messages.FirstOrDefault();
-            if (first == null)
+            var supergroup = clientService.GetSupergroup(chat);
+            var senders = messages
+                .Select(x => x.SenderId)
+                .Distinct(new MessageSenderEqualityComparer())
+                .Where(x => !x.IsUser(clientService.Options.MyId))
+                .ToList();
+
+            if (senders.Count > 1 && supergroup?.IsChannel is false)
             {
-                return;
-            }
+                ReportSpamCheck.Content = Strings.DeleteReportSpam;
+                DeleteAllCheck.Content = Strings.DeleteAllFromUsers;
+                BanUserCheck.Content = Strings.DeleteBanUsers;
 
-            var chat = clientService.GetChat(first.ChatId);
-            if (chat == null)
-            {
-                return;
-            }
+                ReportSpamCount.Text =
+                    DeleteAllCount.Text =
+                    BanUserCount.Text = senders.Count.ToString();
 
-            var user = clientService.GetUser(chat);
+                PermissionsToggle.Content = Strings.DeleteToggleRestrictUsers;
 
-            var sameUser = messages.All(x => x.SenderId.AreTheSame(first.SenderId));
-            if (sameUser && savedMessagesTopicId == 0 && !first.IsOutgoing && clientService.TryGetSupergroup(chat, out Supergroup supergroup) && !supergroup.IsChannel)
-            {
-                RevokeCheck.Visibility = Visibility.Collapsed;
-                ReportSpamCheck.Visibility = Visibility.Visible;
-                DeleteAllCheck.Visibility = Visibility.Visible;
-
-                BanUserCheck.Visibility = supergroup.CanRestrictMembers()
+                BanUserRoot.Visibility = supergroup.CanRestrictMembers()
                     ? Visibility.Visible
                     : Visibility.Collapsed;
+            }
+            else if (senders.Count > 0 && supergroup?.IsChannel is false)
+            {
+                ReportSpamCheck.Content = Strings.DeleteReportSpam;
+                DeleteAllCheck.Content = string.Format(Strings.DeleteAllFrom, clientService.GetTitle(senders[0]));
+                BanUserCheck.Content = string.Format(Strings.DeleteBan, clientService.GetTitle(senders[0]));
 
-                var sender = clientService.GetMessageSender(first.SenderId);
-                var deleteAllText = string.Empty;
+                ReportSpamCount.Visibility =
+                    DeleteAllCount.Visibility =
+                    BanUserCount.Visibility = Visibility.Collapsed;
 
-                if (sender is User senderUser)
-                {
-                    deleteAllText = string.Format(Strings.DeleteAllFrom, senderUser.FullName());
-                }
-                else if (sender is Chat senderChat)
-                {
-                    deleteAllText = string.Format(Strings.DeleteAllFrom, senderChat.Title);
-                }
+                ReportSpamIcon.Visibility =
+                    DeleteAllIcon.Visibility =
+                    BanUserIcon.Visibility = Visibility.Collapsed;
 
-                DeleteAllCheck.Content = deleteAllText;
-                TextBlockHelper.SetMarkdown(Message, messages.Count == 1
-                    ? Strings.AreYouSureDeleteSingleMessage
-                    : Strings.AreYouSureDeleteFewMessages);
+                ReportSpamExpander.Margin =
+                    DeleteAllExpander.Margin =
+                    BanUserExpander.Margin = new Thickness(0, 0, -72, 0);
 
-                // TODO: I don't like the UI moving around when the text appears
-                // also, the CheckBox looks misaligned on two lines, one more reason not to have this.
-                //var queue = Windows.System.DispatcherQueue.GetForCurrentThread();
-                //clientService.Send(new SearchChatMessages(chat.Id, string.Empty, first.SenderId, 0, 0, 1, null, 0), result =>
-                //{
-                //    if (result is Messages messages)
-                //    {
-                //        queue.TryEnqueue(() =>
-                //        {
-                //            if (DeleteAllCheck.IsLoaded)
-                //            {
-                //                DeleteAllCheck.Content = deleteAllText + string.Format(" ({0})", Locale.Declension("messages", messages.TotalCount));
-                //            }
-                //        });
-                //    }
-                //});
+                PermissionsToggle.Content = Strings.DeleteToggleRestrictUser;
+
+                BanUserRoot.Visibility = supergroup.CanRestrictMembers()
+                    ? Visibility.Visible
+                    : Visibility.Collapsed;
             }
             else
             {
+                AdditionalRoot.Visibility = Visibility.Collapsed;
+                BasicRoot.Visibility = Visibility.Visible;
+
                 RevokeCheck.Visibility = Visibility.Collapsed;
-                BanUserCheck.Visibility = Visibility.Collapsed;
-                ReportSpamCheck.Visibility = Visibility.Collapsed;
-                DeleteAllCheck.Visibility = Visibility.Collapsed;
 
                 var canBeDeletedForAllUsers = messages.All(x => x.CanBeDeletedForAllUsers);
                 var canBeDeletedOnlyForSelf = messages.All(x => x.CanBeDeletedOnlyForSelf);
@@ -107,7 +109,7 @@ namespace Telegram.Views.Popups
                 {
                     if (anyCanBeDeletedForAllUsers && !canBeDeletedForAllUsers)
                     {
-                        TextBlockHelper.SetMarkdown(Message, chat.Type is ChatTypePrivate && user != null
+                        TextBlockHelper.SetMarkdown(Message, chat.Type is ChatTypePrivate && clientService.TryGetUser(chat, out User user)
                             ? string.Format(Strings.DeleteMessagesText, Locale.Declension(Strings.R.messages, messages.Count), user.FirstName)
                             : string.Format(Strings.DeleteMessagesTextGroup, Locale.Declension(Strings.R.messages, messages.Count)));
 
@@ -125,7 +127,7 @@ namespace Telegram.Views.Popups
                         {
                             RevokeCheck.IsChecked = true;
                             RevokeCheck.Visibility = Visibility.Visible;
-                            RevokeCheck.Content = chat.Type is ChatTypePrivate && user != null
+                            RevokeCheck.Content = chat.Type is ChatTypePrivate && clientService.TryGetUser(chat, out User user)
                                 ? string.Format(Strings.DeleteMessagesOptionAlso, user.FirstName)
                                 : Strings.DeleteForAll;
                         }
@@ -152,7 +154,53 @@ namespace Telegram.Views.Popups
                     }
                 }
             }
+
+            _clientService = clientService;
+            _senders = senders;
+
+            _reportSpam = Array.Empty<MessageSender>();
+            _deleteAll = Array.Empty<MessageSender>();
+            _banUser = Array.Empty<MessageSender>();
+
+            ViewModel.CanSendBasicMessages = chat.Permissions.CanSendBasicMessages;
+            ViewModel.CanSendPhotos = chat.Permissions.CanSendPhotos;
+            ViewModel.CanSendVideos = chat.Permissions.CanSendVideos;
+            ViewModel.CanSendOtherMessages = chat.Permissions.CanSendOtherMessages;
+            ViewModel.CanSendAudios = chat.Permissions.CanSendAudios;
+            ViewModel.CanSendDocuments = chat.Permissions.CanSendDocuments;
+            ViewModel.CanSendVoiceNotes = chat.Permissions.CanSendVoiceNotes;
+            ViewModel.CanSendVideoNotes = chat.Permissions.CanSendVideoNotes;
+            ViewModel.CanSendPolls = chat.Permissions.CanSendPolls;
+            ViewModel.CanAddWebPagePreviews = chat.Permissions.CanAddWebPagePreviews;
+            ViewModel.CanInviteUsers = chat.Permissions.CanInviteUsers;
+            ViewModel.CanPinMessages = chat.Permissions.CanPinMessages;
+            ViewModel.CanChangeInfo = chat.Permissions.CanChangeInfo;
+
+            CanSendBasicMessages.IsEnabled = chat.Permissions.CanSendBasicMessages;
+            CanSendPhotos.IsEnabled = chat.Permissions.CanSendPhotos;
+            CanSendVideos.IsEnabled = chat.Permissions.CanSendVideos;
+            CanSendOtherMessages.IsEnabled = chat.Permissions.CanSendOtherMessages;
+            CanSendAudios.IsEnabled = chat.Permissions.CanSendAudios;
+            CanSendDocuments.IsEnabled = chat.Permissions.CanSendDocuments;
+            CanSendVoiceNotes.IsEnabled = chat.Permissions.CanSendVoiceNotes;
+            CanSendVideoNotes.IsEnabled = chat.Permissions.CanSendVideoNotes;
+            CanSendPolls.IsEnabled = chat.Permissions.CanSendPolls;
+            CanAddWebPagePreviews.IsEnabled = chat.Permissions.CanAddWebPagePreviews;
+            CanInviteUsers.IsEnabled = chat.Permissions.CanInviteUsers;
+            CanPinMessages.IsEnabled = chat.Permissions.CanPinMessages;
+            CanChangeInfo.IsEnabled = chat.Permissions.CanChangeInfo;
+
+            UpdatePermissions();
         }
+
+        #region Binding
+
+        private string ConvertCanSendCount(int count)
+        {
+            return $"{count}/9";
+        }
+
+        #endregion
 
         public bool Revoke
         {
@@ -160,22 +208,194 @@ namespace Telegram.Views.Popups
             set => RevokeCheck.IsChecked = value;
         }
 
-        public bool BanUser
+        public IList<MessageSender> BanUser => _banUser;
+
+        public IList<MessageSender> ReportSpam => _reportSpam;
+
+        public IList<MessageSender> DeleteAll => _deleteAll;
+
+        public ChatMemberStatus SelectedStatus => PermissionsPanel.Visibility == Visibility.Collapsed
+                    ? new ChatMemberStatusBanned()
+                    : ViewModel.SelectedStatus;
+
+        private void ReportSpam_Expanded(object sender, EventArgs e)
         {
-            get => BanUserCheck.IsChecked ?? false;
-            set => BanUserCheck.IsChecked = value;
+            Populate(ReportSpamRoot, ReportSpam_Checked);
         }
 
-        public bool ReportSpam
+        private void DeleteAll_Expanded(object sender, EventArgs e)
         {
-            get => ReportSpamCheck.IsChecked ?? false;
-            set => ReportSpamCheck.IsChecked = value;
+            Populate(DeleteAllRoot, DeleteAll_Checked);
         }
 
-        public bool DeleteAll
+        private void BanUser_Expanded(object sender, EventArgs e)
         {
-            get => DeleteAllCheck.IsChecked ?? false;
-            set => DeleteAllCheck.IsChecked = value;
+            Populate(BanUserRoot, BanUser_Checked);
+        }
+
+        private void Populate(StackPanel root, RoutedEventHandler handler)
+        {
+            if (root.Children.Count > 0)
+            {
+                return;
+            }
+
+            foreach (var sender in _senders)
+            {
+                var photo = new ProfilePicture
+                {
+                    Width = 28,
+                    Height = 28,
+                    Margin = new Thickness(0, -4, 8, 0),
+                    IsEnabled = false
+                };
+
+                photo.SetMessageSender(_clientService, sender, 28);
+
+                var title = new TextBlock
+                {
+                    Text = _clientService.GetTitle(sender)
+                };
+
+                Grid.SetColumn(title, 1);
+
+                var content = new Grid();
+                content.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Auto) });
+                content.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
+                content.Children.Add(photo);
+                content.Children.Add(title);
+
+                var selector = new CheckBox
+                {
+                    Tag = sender,
+                    Content = content,
+                    IsChecked = false
+                };
+
+                selector.Checked += handler;
+                selector.Unchecked += handler;
+
+                root.Children.Add(selector);
+            }
+        }
+
+        private void ReportSpam_Checked(object sender, RoutedEventArgs e)
+        {
+            if (sender == ReportSpamCheck)
+            {
+                _reportSpam = Toggle(ReportSpamCheck.IsChecked == true, ReportSpamRoot, ReportSpamCount, ReportSpam_Checked);
+            }
+            else
+            {
+                _reportSpam = UpdateSelection(ReportSpamRoot, ReportSpamCount, ReportSpamCheck, ReportSpam_Checked);
+            }
+        }
+
+        private void DeleteAll_Checked(object sender, RoutedEventArgs e)
+        {
+            if (sender == DeleteAllCheck)
+            {
+                _deleteAll = Toggle(DeleteAllCheck.IsChecked == true, DeleteAllRoot, DeleteAllCount, DeleteAll_Checked);
+            }
+            else
+            {
+                _deleteAll = UpdateSelection(DeleteAllRoot, DeleteAllCount, DeleteAllCheck, DeleteAll_Checked);
+            }
+        }
+
+        private void BanUser_Checked(object sender, RoutedEventArgs e)
+        {
+            if (sender == BanUserCheck)
+            {
+                _banUser = Toggle(BanUserCheck.IsChecked == true, BanUserRoot, BanUserCount, BanUser_Checked);
+            }
+            else
+            {
+                _banUser = UpdateSelection(BanUserRoot, BanUserCount, BanUserCheck, BanUser_Checked);
+            }
+
+            UpdatePermissions();
+        }
+
+        private IList<MessageSender> Toggle(bool check, StackPanel root, AnimatedTextBlock count, RoutedEventHandler handler)
+        {
+            foreach (var child in root.Children)
+            {
+                if (child is CheckBox selector)
+                {
+                    selector.Checked -= handler;
+                    selector.Unchecked -= handler;
+
+                    selector.IsChecked = check;
+
+                    selector.Checked += handler;
+                    selector.Unchecked += handler;
+                }
+            }
+
+            count.Text = _senders.Count.ToString();
+
+            return check ? _senders.ToList() : Array.Empty<MessageSender>();
+        }
+
+        private IList<MessageSender> UpdateSelection(StackPanel root, AnimatedTextBlock count, CheckBox checkBox, RoutedEventHandler handler)
+        {
+            var totalCount = 0;
+            var senders = new List<MessageSender>();
+
+            foreach (var child in root.Children)
+            {
+                if (child is CheckBox selector && selector.Tag is MessageSender sender)
+                {
+                    if (selector.IsChecked == true)
+                    {
+                        totalCount++;
+                        senders.Add(sender);
+                    }
+                }
+            }
+
+            count.Text = totalCount == 0
+                ? _senders.Count.ToString()
+                : totalCount.ToString();
+
+            checkBox.Checked -= handler;
+            checkBox.Unchecked -= handler;
+
+            checkBox.IsChecked = totalCount == _senders.Count
+                ? true
+                : totalCount == 0
+                ? false
+                : null;
+
+            checkBox.Checked += handler;
+            checkBox.Unchecked += handler;
+
+            return senders;
+        }
+
+        private void PermissionsToggle_Click(object sender, RoutedEventArgs e)
+        {
+            PermissionsPanel.Visibility = PermissionsPanel.Visibility == Visibility.Visible
+                ? Visibility.Collapsed
+                : Visibility.Visible;
+
+            UpdatePermissions();
+        }
+
+        private void UpdatePermissions()
+        {
+            PermissionsHeader.Text = _senders.Count == 1
+                ? Strings.UserRestrictionsCanDo
+                : Locale.Declension(Strings.R.UserRestrictionsCanDoUsers, _banUser.Count);
+
+            PermissionsToggle.Content = PermissionsPanel.Visibility == Visibility.Visible
+                ? _senders.Count == 1 ? Strings.DeleteToggleBanUser : Strings.DeleteToggleBanUsers
+                : _senders.Count == 1 ? Strings.DeleteToggleRestrictUser : Strings.DeleteToggleRestrictUsers;
+
+            BanUserCheck.Content = PermissionsPanel.Visibility == Visibility.Visible
+                ? _senders.Count == 1 ? string.Format(Strings.DeleteRestrict, _clientService.GetTitle(_senders[0])) : Strings.DeleteRestrictUsers
+                : _senders.Count == 1 ? string.Format(Strings.DeleteBan, _clientService.GetTitle(_senders[0])) : Strings.DeleteBanUsers;
         }
     }
 }

@@ -3613,11 +3613,17 @@ You can always switch back to the default Telegram theme here.</value>
   <data name="DeleteAccountIfAwayFor2" xml:space="preserve">
     <value>Delete my account if away for</value>
   </data>
+  <data name="DeleteAdditionalActions" xml:space="preserve">
+    <value>Additional actions</value>
+  </data>
   <data name="DeleteAll" xml:space="preserve">
     <value>Delete All</value>
   </data>
   <data name="DeleteAllFrom" xml:space="preserve">
     <value>Delete all from {0}</value>
+  </data>
+  <data name="DeleteAllFromUsers" xml:space="preserve">
+    <value>Delete all from users</value>
   </data>
   <data name="DeleteAndExit" xml:space="preserve">
     <value>Delete and Leave Group</value>
@@ -3628,8 +3634,14 @@ You can always switch back to the default Telegram theme here.</value>
   <data name="DeleteBackground_other" xml:space="preserve">
     <value>Delete {0} wallpapers</value>
   </data>
+  <data name="DeleteBan" xml:space="preserve">
+    <value>Ban {0}</value>
+  </data>
   <data name="DeleteBanUser" xml:space="preserve">
     <value>Ban user</value>
+  </data>
+  <data name="DeleteBanUsers" xml:space="preserve">
+    <value>Ban users</value>
   </data>
   <data name="DeleteCalls" xml:space="preserve">
     <value>Delete calls</value>
@@ -3706,6 +3718,12 @@ You can always switch back to the default Telegram theme here.</value>
   <data name="DeleteReportSpam" xml:space="preserve">
     <value>Report spam</value>
   </data>
+  <data name="DeleteRestrict" xml:space="preserve">
+    <value>Restrict {0}</value>
+  </data>
+  <data name="DeleteRestrictUsers" xml:space="preserve">
+    <value>Restrict users</value>
+  </data>
   <data name="DeleteSelected" xml:space="preserve">
     <value>Delete Selected</value>
   </data>
@@ -3738,6 +3756,18 @@ You can always switch back to the default Telegram theme here.</value>
   </data>
   <data name="DeleteThisGroup" xml:space="preserve">
     <value>Delete group</value>
+  </data>
+  <data name="DeleteToggleBanUser" xml:space="preserve">
+    <value>Fully ban this user</value>
+  </data>
+  <data name="DeleteToggleBanUsers" xml:space="preserve">
+    <value>Fully ban users</value>
+  </data>
+  <data name="DeleteToggleRestrictUser" xml:space="preserve">
+    <value>Partially restrict this user</value>
+  </data>
+  <data name="DeleteToggleRestrictUsers" xml:space="preserve">
+    <value>Partially restrict users</value>
   </data>
   <data name="Deletions_one" xml:space="preserve">
     <value>{0} deletion</value>
@@ -8423,6 +8453,12 @@ The channel &quot;**{1}**&quot; will become private.</value>
   <data name="SearchMessages" xml:space="preserve">
     <value>Messages</value>
   </data>
+  <data name="SearchMyChannels" xml:space="preserve">
+    <value>Channels you joined</value>
+  </data>
+  <data name="SearchRecommendedChannels" xml:space="preserve">
+    <value>Similar Channels</value>
+  </data>
   <data name="SearchTipToday" xml:space="preserve">
     <value>Today</value>
   </data>
@@ -10010,6 +10046,15 @@ However, it is currently available for purchase. **Learn more…**</value>
   </data>
   <data name="UserRestrictionsBy" xml:space="preserve">
     <value>Restricted by {0}</value>
+  </data>
+  <data name="UserRestrictionsCanDo" xml:space="preserve">
+    <value>What can this user do?</value>
+  </data>
+  <data name="UserRestrictionsCanDoUsers_one" xml:space="preserve">
+    <value>What can {0} selected user do?</value>
+  </data>
+  <data name="UserRestrictionsCanDoUsers_other" xml:space="preserve">
+    <value>What can {0} selected users do?</value>
   </data>
   <data name="UserRestrictionsChangeInfo" xml:space="preserve">
     <value>Change Chat Info</value>
