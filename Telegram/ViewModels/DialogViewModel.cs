@@ -2768,6 +2768,21 @@ namespace Telegram.ViewModels
             return base.CreateSendMessage(chatId, messageThreadId, replyTo, messageSendOptions, inputMessageContent);
         }
 
+        protected override Function CreateSendMessageAlbum(long chatId, long messageThreadId, InputMessageReplyTo replyTo, MessageSendOptions messageSendOptions, IList<InputMessageContent> inputMessageContent)
+        {
+            if (QuickReplyShortcut != null)
+            {
+                if (replyTo is InputMessageReplyToMessage replyToMessage)
+                {
+                    return new AddQuickReplyShortcutMessageAlbum(QuickReplyShortcut.Name, replyToMessage.MessageId, inputMessageContent);
+                }
+
+                return new AddQuickReplyShortcutMessageAlbum(QuickReplyShortcut.Name, 0, inputMessageContent);
+            }
+
+            return base.CreateSendMessageAlbum(chatId, messageThreadId, replyTo, messageSendOptions, inputMessageContent);
+        }
+
         protected override async Task<bool> BeforeSendMessageAsync(FormattedText formattedText)
         {
             if (Chat is not Chat chat)

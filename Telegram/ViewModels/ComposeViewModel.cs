@@ -835,7 +835,12 @@ namespace Telegram.ViewModels
                 }
             }
 
-            return await ClientService.SendAsync(new SendMessageAlbum(chat.Id, ThreadId, reply, options, operations));
+            return await ClientService.SendAsync(CreateSendMessageAlbum(chat.Id, ThreadId, reply, options, operations));
+        }
+
+        protected virtual Function CreateSendMessageAlbum(long chatId, long messageThreadId, InputMessageReplyTo replyTo, MessageSendOptions messageSendOptions, IList<InputMessageContent> inputMessageContent)
+        {
+            return new SendMessageAlbum(chatId, messageThreadId, replyTo, messageSendOptions, inputMessageContent);
         }
 
         public static FormattedText GetFormattedText(string text)
