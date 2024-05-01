@@ -148,14 +148,17 @@ namespace Telegram.Controls.Drawers
             _handler.ThrottleVisibleItems();
             _toolbarHandler.ThrottleVisibleItems();
 
-            SearchField.SetType(ViewModel.ClientService, _mode switch
+            if (ViewModel.IsPremium)
             {
-                EmojiDrawerMode.ChatPhoto => EmojiSearchType.ChatPhoto,
-                EmojiDrawerMode.UserPhoto => EmojiSearchType.ChatPhoto,
-                EmojiDrawerMode.EmojiStatus => EmojiSearchType.EmojiStatus,
-                EmojiDrawerMode.ChatEmojiStatus => EmojiSearchType.EmojiStatus,
-                _ => EmojiSearchType.Default
-            });
+                SearchField.SetType(ViewModel.ClientService, _mode switch
+                {
+                    EmojiDrawerMode.ChatPhoto => EmojiSearchType.ChatPhoto,
+                    EmojiDrawerMode.UserPhoto => EmojiSearchType.ChatPhoto,
+                    EmojiDrawerMode.EmojiStatus => EmojiSearchType.EmojiStatus,
+                    EmojiDrawerMode.ChatEmojiStatus => EmojiSearchType.EmojiStatus,
+                    _ => EmojiSearchType.Default
+                });
+            }
 
             ViewModel.OpenChat(chat);
             ViewModel.Update();
@@ -347,7 +350,10 @@ namespace Telegram.Controls.Drawers
 
         private async void SearchField_CategorySelected(object sender, EmojiCategorySelectedEventArgs e)
         {
-            List.ItemsSource = await Emoji.SearchAsync(ViewModel.ClientService, e.Category.Emojis);
+            if (e.Category.Source is EmojiCategorySourceSearch search)
+            {
+                List.ItemsSource = await Emoji.SearchAsync(ViewModel.ClientService, search.Emojis);
+            }
         }
 
         private void SkinTone_Click(object sender, RoutedEventArgs e)

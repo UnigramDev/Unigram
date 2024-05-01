@@ -25,7 +25,8 @@ namespace Telegram.Controls
     {
         Default,
         ChatPhoto,
-        EmojiStatus
+        EmojiStatus,
+        Combined
     }
 
     public class EmojiCategorySelectedEventArgs : EventArgs
@@ -172,6 +173,7 @@ namespace Telegram.Controls
             {
                 EmojiSearchType.ChatPhoto => new EmojiCategoryTypeChatPhoto(),
                 EmojiSearchType.EmojiStatus => new EmojiCategoryTypeEmojiStatus(),
+                EmojiSearchType.Combined => new EmojiCategoryTypeCombined(),
                 _ => new EmojiCategoryTypeDefault()
             };
 

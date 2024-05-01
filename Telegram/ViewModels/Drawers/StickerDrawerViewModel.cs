@@ -196,8 +196,8 @@ namespace Telegram.ViewModels.Drawers
 
         public MvxObservableCollection<StickerSetViewModel> SavedStickers { get; private set; }
 
-        private SearchStickerSetsCollection _searchStickers;
-        public SearchStickerSetsCollection SearchStickers
+        private MvxObservableCollection<StickerSetViewModel> _searchStickers;
+        public MvxObservableCollection<StickerSetViewModel> SearchStickers
         {
             get => _searchStickers;
             set
@@ -207,7 +207,7 @@ namespace Telegram.ViewModels.Drawers
             }
         }
 
-        public MvxObservableCollection<StickerSetViewModel> Stickers => SearchStickers ?? (MvxObservableCollection<StickerSetViewModel>)SavedStickers;
+        public MvxObservableCollection<StickerSetViewModel> Stickers => SearchStickers ?? SavedStickers;
 
         public async void Search(string query, bool emojiOnly)
         {
@@ -217,8 +217,30 @@ namespace Telegram.ViewModels.Drawers
             }
             else
             {
-                var items = SearchStickers = new SearchStickerSetsCollection(ClientService, new StickerTypeRegular(), query, 0, emojiOnly);
+                var items = new SearchStickerSetsCollection(ClientService, new StickerTypeRegular(), query, 0, emojiOnly);
+                SearchStickers = items;
                 await items.LoadMoreItemsAsync(0);
+            }
+        }
+
+        public async void Search(EmojiCategorySource source)
+        {
+            if (source is EmojiCategorySourceSearch search)
+            {
+                Search(string.Join(" ", search.Emojis), true);
+            }
+            else
+            {
+                var items = new MvxObservableCollection<StickerSetViewModel>();
+                SearchStickers = items;
+
+                var response = await ClientService.SendAsync(new GetPremiumStickers(100));
+                if (response is Stickers stickers)
+                {
+                    items.Add(new StickerSetViewModel(ClientService,
+                        new StickerSetInfo(0, string.Empty, "emoji", null, Array.Empty<ClosedVectorPath>(), false, false, false, false, new StickerTypeRegular(), false, false, false, stickers.StickersValue.Count, stickers.StickersValue),
+                        new StickerSet(0, string.Empty, "emoji", null, Array.Empty<ClosedVectorPath>(), false, false, false, false, new StickerTypeRegular(), false, false, false, stickers.StickersValue, Array.Empty<Emojis>())));
+                }
             }
         }
 

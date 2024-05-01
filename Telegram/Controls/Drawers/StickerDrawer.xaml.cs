@@ -89,7 +89,7 @@ namespace Telegram.Controls.Drawers
 
         public ListViewBase ScrollingHost => List;
 
-        public void Activate(Chat chat, EmojiSearchType type = EmojiSearchType.Default)
+        public void Activate(Chat chat, EmojiSearchType type = EmojiSearchType.Combined)
         {
             _isActive = true;
             _handler.ThrottleVisibleItems();
@@ -358,7 +358,7 @@ namespace Telegram.Controls.Drawers
 
         private void SearchField_CategorySelected(object sender, EmojiCategorySelectedEventArgs e)
         {
-            ViewModel.Search(string.Join(" ", e.Category.Emojis), true);
+            ViewModel.Search(e.Category.Source);
         }
 
         private void OnContextRequested(UIElement sender, ContextRequestedEventArgs args)

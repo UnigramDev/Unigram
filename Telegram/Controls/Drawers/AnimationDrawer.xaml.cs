@@ -185,7 +185,10 @@ namespace Telegram.Controls.Drawers
 
         private void SearchField_CategorySelected(object sender, EmojiCategorySelectedEventArgs e)
         {
-            ViewModel.Search(string.Join(" ", e.Category.Emojis));
+            if (e.Category.Source is EmojiCategorySourceSearch search)
+            {
+                ViewModel.Search(string.Join(" ", search.Emojis));
+            }
         }
 
         private object ConvertItems(object items)
