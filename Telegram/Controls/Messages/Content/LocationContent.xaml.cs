@@ -39,6 +39,9 @@ namespace Telegram.Controls.Messages.Content
         private Grid LivePanel;
         private Run Title;
         private Run Subtitle;
+        private TextBlock LivePeriod;
+        private SelfDestructTimer LiveRing;
+
         private bool _templateApplied;
 
         protected override void OnApplyTemplate()
@@ -49,6 +52,8 @@ namespace Telegram.Controls.Messages.Content
             LivePanel = GetTemplateChild(nameof(LivePanel)) as Grid;
             Title = GetTemplateChild(nameof(Title)) as Run;
             Subtitle = GetTemplateChild(nameof(Subtitle)) as Run;
+            LivePeriod = GetTemplateChild(nameof(LivePeriod)) as TextBlock;
+            LiveRing = GetTemplateChild(nameof(LiveRing)) as SelfDestructTimer;
 
             Texture.Click += Button_Click;
 
@@ -61,6 +66,8 @@ namespace Telegram.Controls.Messages.Content
         }
 
         #endregion
+
+        private string _prevUrl;
 
         public void UpdateMessage(MessageViewModel message)
         {
@@ -78,36 +85,52 @@ namespace Telegram.Controls.Messages.Content
             var latitude = location.Location.Latitude.ToString(CultureInfo.InvariantCulture);
             var longitude = location.Location.Longitude.ToString(CultureInfo.InvariantCulture);
 
-            Texture.Constraint = message;
-            Texture.Source = new BitmapImage(new Uri(string.Format("https://dev.virtualearth.net/REST/v1/Imagery/Map/Road/{0},{1}/{2}?mapSize={3:F0},{4:F0}&key={5}",
-                latitude, longitude, 15, width, height, Constants.BingMapsApiKey)));
+            var nextUrl = string.Format("https://dev.virtualearth.net/REST/v1/Imagery/Map/Road/{0},{1}/{2}?mapSize={3:F0},{4:F0}&key={5}",
+                latitude, longitude, 15, width, height, Constants.BingMapsApiKey);
 
-            //VenueDot.Visibility = Visibility.Visible;
-            //VenueGlyph.UriSource = null;
+            if (nextUrl != _prevUrl)
+            {
+                Texture.Constraint = message;
+                Texture.Source = new BitmapImage(new Uri(_prevUrl = nextUrl));
+            }
 
             if (location.LivePeriod > 0)
             {
-                var expired = Formatter.ToLocalTime(message.Date + location.LivePeriod) < DateTime.Now;
-                if (expired)
+                PinPhoto.SetMessageSender(message.ClientService, message.SenderId, 32);
+
+                if (location.IsExpired(message.Date))
                 {
                     LivePanel.Visibility = Visibility.Collapsed;
-                    PinDot.Visibility = Visibility.Visible;
-                    PinPhoto.Clear();
+                    LiveRing.Value = null;
+
+                    PinDot.Visibility = Visibility.Collapsed;
                 }
                 else
                 {
                     LivePanel.Visibility = Visibility.Visible;
                     PinDot.Visibility = Visibility.Collapsed;
 
-                    PinPhoto.SetMessageSender(message.ClientService, message.SenderId, 32);
-
                     Title.Text = Strings.AttachLiveLocation;
                     Subtitle.Text = Locale.FormatLocationUpdateDate(message.EditDate > 0 ? message.EditDate : message.Date);
+
+                    LivePeriod.Text = Locale.FormatLivePeriod(location.LivePeriod, message.Date);
+                    LiveRing.Maximum = location.LivePeriod;
+
+                    if (location.LivePeriod == int.MaxValue)
+                    {
+                        LiveRing.Fill();
+                    }
+                    else
+                    {
+                        LiveRing.Value = Formatter.ToLocalTime(message.Date + location.LivePeriod);
+                    }
                 }
             }
             else
             {
                 LivePanel.Visibility = Visibility.Collapsed;
+                LiveRing.Value = null;
+
                 PinDot.Visibility = Visibility.Visible;
                 PinPhoto.Clear();
             }

@@ -77,6 +77,14 @@ namespace Telegram.Controls
             }
         }
 
+        public void Fill()
+        {
+            _ellipse.StopAnimation("TrimStart");
+            _ellipse.TrimStart = 0;
+
+            Visibility = Visibility.Visible;
+        }
+
         #region Value
 
         public DateTime? Value

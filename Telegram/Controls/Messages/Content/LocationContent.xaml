@@ -70,7 +70,20 @@
                                 <Ellipse Stroke="{ThemeResource MessageHeaderBorderBrush}"
                                          Opacity="0.2"
                                          StrokeThickness="2" />
+                                <TextBlock x:Name="LivePeriod"
+                                           Foreground="{ThemeResource MessageHeaderForegroundBrush}"
+                                           FontWeight="SemiBold"
+                                           TextAlignment="Center"
+                                           VerticalAlignment="Center"
+                                           Margin="0,1,0,3" />
                                 <!--<controls:PeriodTimer x:Name="Period" Background="Transparent" Value="{Binding}" Period="{Binding Media.Period}" IsHitTestVisible="False"/>-->
+                                <controls:SelfDestructTimer x:Name="LiveRing"
+                                                            Foreground="{ThemeResource MessageHeaderBorderBrush}"
+                                                            Background="Transparent"
+                                                            Width="36"
+                                                            Height="36"
+                                                            Radius="17"
+                                                            Center="18" />
                             </Grid>
                         </Grid>
                     </StackPanel>

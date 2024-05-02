@@ -2122,6 +2122,25 @@ namespace Telegram.Td.Api
                 .Any(x => x.AreTheSame(type));
         }
 
+        public static bool IsExpired(this MessageLocation location, long date)
+        {
+            if (location.LivePeriod > 0)
+            {
+                if (location.ExpiresIn == 0)
+                {
+                    return true;
+                }
+                else if (location.LivePeriod == int.MaxValue)
+                {
+                    return false;
+                }
+
+                return date + location.LivePeriod < DateTime.Now.ToTimestamp();
+            }
+
+            return false;
+        }
+
         public static string GetStartsIn(this GroupCall groupCall)
         {
             var date = Converters.Formatter.ToLocalTime(groupCall.ScheduledStartDate);

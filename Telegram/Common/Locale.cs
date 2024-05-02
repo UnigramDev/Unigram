@@ -263,6 +263,22 @@ namespace Telegram.Common
             return diff / 60 / 60 / 24 / 7 + "w";
         }
 
+        public static string FormatLivePeriod(int livePeriod, int date)
+        {
+            if (livePeriod == int.MaxValue)
+            {
+                return "∞";
+            }
+
+            var diff = date + livePeriod - DateTime.Now.ToTimestamp();
+            if (diff < 60 * 60)
+            {
+                return Math.Round(diff / 60d) + "" /*+ "m"*/;
+            }
+
+            return Math.Round(diff / 60d / 60d) + "h";
+        }
+
         public static string FormatTtl(int ttl, bool shorter = false)
         {
             if (shorter)
