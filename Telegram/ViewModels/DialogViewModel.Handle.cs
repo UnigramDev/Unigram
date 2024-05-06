@@ -74,7 +74,16 @@ namespace Telegram.ViewModels
                 .Subscribe<UpdateGroupCall>(Handle)
                 .Subscribe<UpdateSpeechRecognitionTrial>(Handle)
                 .Subscribe<UpdateSavedMessagesTags>(Handle)
-                .Subscribe<UpdateGreetingSticker>(Handle);
+                .Subscribe<UpdateGreetingSticker>(Handle)
+                .Subscribe<UpdateQuickReplyShortcut>(Handle);
+        }
+
+        public void Handle(UpdateQuickReplyShortcut update)
+        {
+            if (QuickReplyShortcut?.Name == update.Shortcut.Name)
+            {
+                BeginOnUIThread(() => QuickReplyShortcut = update.Shortcut);
+            }
         }
 
         public void Handle(UpdateGreetingSticker update)

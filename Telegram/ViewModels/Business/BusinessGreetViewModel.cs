@@ -66,7 +66,7 @@ namespace Telegram.ViewModels.Business
 
         private void Handle(UpdateQuickReplyShortcut update)
         {
-            if (update.Shortcut.Id == Replies?.Id)
+            if (update.Shortcut.Name == "hello")
             {
                 BeginOnUIThread(() => Replies = update.Shortcut);
             }
@@ -74,7 +74,7 @@ namespace Telegram.ViewModels.Business
 
         public void Create()
         {
-            NavigationService.Navigate(typeof(ChatBusinessRepliesPage), new ChatBusinessRepliesIdNavigationArgs(ClientService.Options.MyId, Replies.Id));
+            NavigationService.Navigate(typeof(ChatBusinessRepliesPage), new ChatBusinessRepliesIdNavigationArgs(ClientService.Options.MyId, "hello"));
         }
 
         public override bool HasChanged => !_cached.AreTheSame(GetSettings());

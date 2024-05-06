@@ -86,7 +86,7 @@ namespace Telegram.ViewModels.Business
 
         private void Handle(UpdateQuickReplyShortcut update)
         {
-            if (update.Shortcut.Id == Replies?.Id)
+            if (update.Shortcut.Name == "away")
             {
                 BeginOnUIThread(() => Replies = update.Shortcut);
             }
@@ -94,7 +94,7 @@ namespace Telegram.ViewModels.Business
 
         public void Create()
         {
-            NavigationService.Navigate(typeof(ChatBusinessRepliesPage), new ChatBusinessRepliesIdNavigationArgs(ClientService.Options.MyId, Replies.Id));
+            NavigationService.Navigate(typeof(ChatBusinessRepliesPage), new ChatBusinessRepliesIdNavigationArgs(ClientService.Options.MyId, "away"));
         }
 
         public bool IsAlwaysSend

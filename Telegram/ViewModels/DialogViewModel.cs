@@ -69,15 +69,15 @@ namespace Telegram.ViewModels
 
     public class ChatBusinessRepliesIdNavigationArgs
     {
-        public ChatBusinessRepliesIdNavigationArgs(long chatId, int quickReplyShortcutId)
+        public ChatBusinessRepliesIdNavigationArgs(long chatId, string quickReplyShortcut)
         {
             ChatId = chatId;
-            QuickReplyShortcutId = quickReplyShortcutId;
+            QuickReplyShortcut = quickReplyShortcut;
         }
 
         public long ChatId { get; }
 
-        public int QuickReplyShortcutId { get; }
+        public string QuickReplyShortcut { get; }
     }
 
     public partial class DialogViewModel : ComposeViewModel, IDelegable<IDialogDelegate>
@@ -2006,7 +2006,8 @@ namespace Telegram.ViewModels
             }
             else if (parameter is ChatBusinessRepliesIdNavigationArgs businessRepliesIdArgs)
             {
-                QuickReplyShortcut = ClientService.GetQuickReplyShortcut(businessRepliesIdArgs.QuickReplyShortcutId);
+                QuickReplyShortcut = ClientService.GetQuickReplyShortcut(businessRepliesIdArgs.QuickReplyShortcut);
+                QuickReplyShortcut ??= new QuickReplyShortcut(-1, businessRepliesIdArgs.QuickReplyShortcut, null, 0);
                 parameter = businessRepliesIdArgs.ChatId;
             }
 

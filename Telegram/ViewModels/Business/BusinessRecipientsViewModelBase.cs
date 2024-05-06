@@ -129,7 +129,8 @@ namespace Telegram.ViewModels.Business
             var recipients = new BusinessRecipients
             {
                 ExcludeSelected = RecipientsType == BusinessRecipientsType.Exclude,
-                ChatIds = new List<long>()
+                ChatIds = new List<long>(),
+                ExcludedChatIds = new List<long>()
             };
 
             var target = recipients.ExcludeSelected
