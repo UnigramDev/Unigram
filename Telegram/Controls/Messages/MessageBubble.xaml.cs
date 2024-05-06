@@ -1477,7 +1477,7 @@ namespace Telegram.Controls.Messages
                     FooterToNormal();
                     bottom = 4;
                 }
-                else if (content is MessageCall || (content is MessageLocation location && location.LivePeriod > 0 && Formatter.ToLocalTime(message.Date + location.LivePeriod) > DateTime.Now))
+                else if (content is MessageCall || (content is MessageLocation location && location.LivePeriod > 0 && !location.IsExpired(message.Date)))
                 {
                     FooterToHidden();
                 }
