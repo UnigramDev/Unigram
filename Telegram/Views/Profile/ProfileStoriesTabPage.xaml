@@ -92,6 +92,36 @@
             </GridView.Footer>
         </GridView>
 
+        <Grid x:Name="EmptyState"
+              x:Load="{x:Bind ViewModel.IsEmpty, Mode=OneWay}"
+              VerticalAlignment="Center"
+              MaxWidth="1000"
+              Margin="24,0">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+            <!--<controls:AnimatedImage Source="ms-appx:///Assets/Animations/MyStories.tgs"
+                                    AutoPlay="True"
+                                    IsCachingEnabled="False"
+                                    DecodeFrameType="Logical"
+                                    FrameSize="140,140"
+                                    Width="140"
+                                    Height="140"
+                                    Margin="0,16,0,16" />-->
+            <TextBlock common:TextBlockHelper.Markdown="{x:Bind ConvertEmptyTitle(ViewModel.IsPostedToChatPage)}"
+                       Style="{StaticResource BodyStrongTextBlockStyle}"
+                       TextAlignment="Center"
+                       Margin="12,0,12,0"
+                       Grid.Row="1" />
+            <TextBlock common:TextBlockHelper.Markdown="{x:Bind ConvertEmptySubtitle(ViewModel.IsPostedToChatPage)}"
+                       Style="{StaticResource InfoCaptionTextBlockStyle}"
+                       TextAlignment="Center"
+                       Margin="12,0,12,0"
+                       Grid.Row="2" />
+        </Grid>
+
         <Grid x:Name="ManagePanel"
               Background="{ThemeResource PageSubHeaderBackgroundBrush2}"
               VerticalAlignment="Bottom"

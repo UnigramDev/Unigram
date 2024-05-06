@@ -11,6 +11,7 @@ using Telegram.Controls.Media;
 using Telegram.Navigation;
 using Telegram.Td.Api;
 using Telegram.ViewModels;
+using Telegram.ViewModels.Profile;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Input;
@@ -27,9 +28,14 @@ namespace Telegram.Views.Profile
 
         public void OnBackRequested(BackRequestedRoutedEventArgs args)
         {
-            if (ViewModel.SelectedItems.Count > 0)
+            if (ViewModel?.SelectedItems.Count > 0)
             {
                 ViewModel.UnselectMessages();
+                args.Handled = true;
+            }
+            else if (DataContext is ProfileStoriesTabViewModel stories && stories.SelectedItems.Count > 0)
+            {
+                stories.UnselectStories();
                 args.Handled = true;
             }
         }

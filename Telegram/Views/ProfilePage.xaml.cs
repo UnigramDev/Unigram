@@ -331,7 +331,10 @@ namespace Telegram.Views
                 tabPage.ScrollingHost.RegisterPropertyChangedCallback(ItemsControl.ItemsSourceProperty, OnItemsSourceChanged, ref _itemsSourceToken);
             }
 
-            tabPage.ScrollingHost.RegisterPropertyChangedCallback(ListViewBase.SelectionModeProperty, OnSelectionModeChanged, ref _selectionModeToken);
+            if (e.Content is not ProfileStoriesTabPage)
+            {
+                tabPage.ScrollingHost.RegisterPropertyChangedCallback(ListViewBase.SelectionModeProperty, OnSelectionModeChanged, ref _selectionModeToken);
+            }
         }
 
         private void OnItemsSourceChanged(DependencyObject sender, DependencyProperty dp)
@@ -448,11 +451,23 @@ namespace Telegram.Views
             }
         }
 
-        private void Header_ItemClick(object sender, ItemClickEventArgs e)
+        private int _prevSelectedIndex = -1;
+
+        private void Navigation_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            if (e.ClickedItem is ProfileTabItem page && (page.Parameter != null || page.Type != MediaFrame.Content?.GetType()))
+            if (Navigation.SelectedItem is ProfileTabItem page && (page.Parameter != null || page.Type != MediaFrame.Content?.GetType()))
             {
-                MediaFrame.Navigate(page.Type, page.Parameter, new SuppressNavigationTransitionInfo());
+                NavigationTransitionInfo transition = _prevSelectedIndex == -1
+                    ? new SuppressNavigationTransitionInfo()
+                    : new SlideNavigationTransitionInfo
+                    {
+                        Effect = _prevSelectedIndex < Navigation.SelectedIndex
+                            ? SlideNavigationTransitionEffect.FromRight
+                            : SlideNavigationTransitionEffect.FromLeft
+                    };
+
+                _prevSelectedIndex = Navigation.SelectedIndex;
+                MediaFrame.Navigate(page.Type, page.Parameter, transition);
             }
         }
 
