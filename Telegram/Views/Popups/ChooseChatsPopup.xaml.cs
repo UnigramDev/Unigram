@@ -554,7 +554,6 @@ namespace Telegram.Views.Popups
                 popup.ViewModel.AllowEmptySelection = true;
                 popup.ViewModel.Folders.Clear();
                 popup.Header = panel;
-                popup.PrimaryButtonText = Strings.OK;
                 popup.IsPrimaryButtonEnabled = true;
 
                 var confirm = await popup.PickAsync(target.OfType<FolderChat>().Select(x => x.Chat.Id).ToArray(), ChooseChatsOptions.All);
@@ -589,7 +588,6 @@ namespace Telegram.Views.Popups
                 popup.ViewModel.Title = include ? Strings.FilterAlwaysShow : Strings.FilterNeverShow;
                 popup.ViewModel.AllowEmptySelection = true;
                 popup.ViewModel.Folders.Clear();
-                popup.PrimaryButtonText = Strings.OK;
                 popup.IsPrimaryButtonEnabled = true;
 
                 var confirm = await popup.PickAsync(target.OfType<FolderChat>().Select(x => x.Chat.Id).ToArray(), ChooseChatsOptions.All);

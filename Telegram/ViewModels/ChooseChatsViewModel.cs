@@ -104,6 +104,7 @@ namespace Telegram.ViewModels
             {
                 SelectionMode = ListViewSelectionMode.Multiple;
                 Options = ChooseChatsOptions.PostMessages;
+                PrimaryButtonText = Strings.Send;
                 IsCommentEnabled = true;
                 IsChatSelection = false;
             }
@@ -111,6 +112,7 @@ namespace Telegram.ViewModels
             {
                 SelectionMode = ListViewSelectionMode.Single;
                 Options = ChooseChatsOptions.PostMessages;
+                PrimaryButtonText = Strings.Send;
                 IsCommentEnabled = false;
                 IsChatSelection = false;
             }
@@ -133,6 +135,7 @@ namespace Telegram.ViewModels
             {
                 SelectionMode = ListViewSelectionMode.Single;
                 Options = ChooseChatsOptions.PostMessages;
+                PrimaryButtonText = Strings.Send;
                 IsCommentEnabled = true;
                 IsChatSelection = false;
 
@@ -150,6 +153,7 @@ namespace Telegram.ViewModels
             {
                 SelectionMode = ListViewSelectionMode.Multiple;
                 Options = ChooseChatsOptions.PostMessages;
+                PrimaryButtonText = Strings.Send;
                 IsCommentEnabled = true;
                 IsSendAsCopyEnabled = true;
                 IsChatSelection = false;
@@ -196,6 +200,7 @@ namespace Telegram.ViewModels
             {
                 SelectionMode = ListViewSelectionMode.Multiple;
                 Options = ChooseChatsOptions.PostMessages;
+                PrimaryButtonText = Strings.Send;
                 IsCommentEnabled = true;
                 IsSendAsCopyEnabled = true;
                 IsChatSelection = false;
@@ -204,6 +209,7 @@ namespace Telegram.ViewModels
             {
                 SelectionMode = ListViewSelectionMode.Multiple;
                 Options = ChooseChatsOptions.PostMessages;
+                PrimaryButtonText = Strings.Send;
                 IsCommentEnabled = true;
                 IsSendAsCopyEnabled = true;
                 IsChatSelection = false;
@@ -212,6 +218,7 @@ namespace Telegram.ViewModels
             {
                 SelectionMode = ListViewSelectionMode.Multiple;
                 Options = ChooseChatsOptions.PostMessages;
+                PrimaryButtonText = Strings.Send;
                 IsCommentEnabled = true;
                 IsChatSelection = false;
 
@@ -221,6 +228,7 @@ namespace Telegram.ViewModels
             {
                 SelectionMode = ListViewSelectionMode.Multiple;
                 Options = ChooseChatsOptions.PostMessages;
+                PrimaryButtonText = Strings.Send;
                 IsCommentEnabled = true;
                 IsChatSelection = false;
             }
@@ -344,7 +352,7 @@ namespace Telegram.ViewModels
             set => Set(ref _title, value);
         }
 
-        private string _primaryButtonText = Strings.Send;
+        private string _primaryButtonText = Strings.Done;
         public string PrimaryButtonText
         {
             get => _primaryButtonText;
