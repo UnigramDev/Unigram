@@ -171,7 +171,7 @@ namespace Telegram.Views.Chats
                     }
                     else if (message.Content is MessagePoll poll)
                     {
-                        title.Text = "\uD83D\uDCCA " + poll.Poll.Question;
+                        title.Text = "\uD83D\uDCCA " + poll.Poll.Question.Text;
                     }
                     else if (message.Content is MessageCall call)
                     {

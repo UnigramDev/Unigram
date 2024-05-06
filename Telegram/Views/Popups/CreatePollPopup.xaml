@@ -3,6 +3,8 @@
                        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                        xmlns:local="using:Telegram.Views.Popups"
                        xmlns:controls="using:Telegram.Controls"
+                       xmlns:messages="using:Telegram.Controls.Messages"
+                       xmlns:drawers="using:Telegram.Controls.Drawers"
                        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
                        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
                        mc:Ignorable="d"
@@ -15,6 +17,24 @@
                        DefaultButton="None"
                        Padding="0,16,0,0">
 
+    <FlyoutBase.AttachedFlyout>
+        <Flyout x:Name="EmojiFlyout"
+                Closed="EmojiFlyout_Closed"
+                Placement="Top"
+                ShowMode="Transient">
+            <Flyout.FlyoutPresenterStyle>
+                <Style TargetType="FlyoutPresenter">
+                    <Setter Property="Padding"
+                            Value="0" />
+                </Style>
+            </Flyout.FlyoutPresenterStyle>
+            <drawers:EmojiDrawer x:Name="EmojiPanel"
+                                 ItemClick="Emoji_ItemClick"
+                                 Width="300"
+                                 Height="360" />
+        </Flyout>
+    </FlyoutBase.AttachedFlyout>
+
     <Grid>
         <ScrollViewer x:Name="ScrollingHost"
                       VerticalScrollBarVisibility="Auto"
@@ -23,13 +43,28 @@
                 <TextBlock Text="{CustomResource Question}"
                            Style="{StaticResource BaseTextBlockStyle}"
                            Margin="24,16,24,8" />
-                <TextBox x:Name="QuestionText"
-                         TextChanged="Question_TextChanged"
-                         PlaceholderText="{CustomResource QuestionHint}"
-                         AcceptsReturn="True"
-                         TextWrapping="Wrap"
-                         MaxLength="255"
-                         Margin="24,0,24,8" />
+                <Grid Margin="24,0,24,8">
+                    <controls:FormattedTextBox x:Name="QuestionText"
+                                               TextChanged="Question_TextChanged"
+                                               CustomEmoji="{x:Bind CustomEmoji}"
+                                               PlaceholderText="{CustomResource QuestionHint}"
+                                               FontFamily="{ThemeResource EmojiThemeFontFamily}"
+                                               AcceptsReturn="True"
+                                               TextWrapping="Wrap"
+                                               MaxLength="255" />
+
+                    <messages:CustomEmojiCanvas x:Name="CustomEmoji"
+                                                IsHitTestVisible="False"
+                                                Margin="10,4,-2,-2" />
+
+                    <controls:GlyphButton Click="Emoji_Click"
+                                          Glyph="&#xE76E;"
+                                          AllowFocusOnInteraction="False"
+                                          HorizontalAlignment="Right"
+                                          VerticalAlignment="Bottom"
+                                          Width="36"
+                                          Height="32" />
+                </Grid>
 
                 <TextBlock Text="{CustomResource PollOptions}"
                            Style="{StaticResource BaseTextBlockStyle}"
@@ -51,27 +86,49 @@
                                           Unchecked="Option_Unchecked"
                                           MinWidth="0" />
 
-                                <TextBox Text="{x:Bind Text, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                                         PlaceholderText="{CustomResource OptionHint}"
-                                         Style="{StaticResource NoDeleteTextBoxStyle}"
-                                         MaxLength="100"
-                                         Loaded="Option_Loaded"
-                                         PreviewKeyDown="Option_PreviewKeyDown"
-                                         KeyDown="Option_KeyDown"
-                                         TextChanged="Question_TextChanged"
-                                         GotFocus="Question_GotFocus"
-                                         Grid.Column="1" />
+                                <Grid Grid.Column="1">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition />
+                                        <ColumnDefinition Width="Auto" />
+                                        <ColumnDefinition Width="Auto" />
+                                    </Grid.ColumnDefinitions>
+                                    <controls:FormattedTextBox PlaceholderText="{CustomResource OptionHint}"
+                                                               FontFamily="{ThemeResource EmojiThemeFontFamily}"
+                                                               MaxLength="100"
+                                                               Loaded="Option_Loaded"
+                                                               PreviewKeyDown="Option_PreviewKeyDown"
+                                                               TextChanged="Option_TextChanged"
+                                                               GotFocus="Question_GotFocus"
+                                                               LostFocus="Question_LostFocus"
+                                                               Grid.ColumnSpan="3" />
 
-                                <controls:GlyphButton Click="{x:Bind Remove}"
-                                                      Glyph="&#xE711;"
-                                                      IsTabStop="False"
-                                                      AutomationProperties.AccessibilityView="Raw"
-                                                      FontSize="16"
-                                                      VerticalAlignment="Center"
-                                                      HorizontalAlignment="Right"
-                                                      Width="36"
-                                                      Height="32"
-                                                      Grid.Column="1" />
+                                    <messages:CustomEmojiCanvas x:Name="CustomEmoji"
+                                                                IsHitTestVisible="False"
+                                                                Margin="10,4,-2,-2"
+                                                                Grid.ColumnSpan="3" />
+
+                                    <controls:GlyphButton Click="Emoji_Click"
+                                                          Glyph="&#xE76E;"
+                                                          AllowFocusOnInteraction="False"
+                                                          HorizontalAlignment="Right"
+                                                          VerticalAlignment="Bottom"
+                                                          Visibility="Collapsed"
+                                                          Margin="0,0,-8,0"
+                                                          Width="36"
+                                                          Height="32"
+                                                          Grid.Column="1" />
+
+                                    <controls:GlyphButton Click="{x:Bind Remove}"
+                                                          Glyph="&#xE711;"
+                                                          IsTabStop="False"
+                                                          AutomationProperties.AccessibilityView="Raw"
+                                                          FontSize="16"
+                                                          VerticalAlignment="Center"
+                                                          HorizontalAlignment="Right"
+                                                          Width="36"
+                                                          Height="32"
+                                                          Grid.Column="2" />
+                                </Grid>
                             </Grid>
                         </DataTemplate>
                     </ItemsControl.ItemTemplate>

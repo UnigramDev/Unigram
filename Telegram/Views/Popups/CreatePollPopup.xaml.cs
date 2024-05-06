@@ -8,23 +8,45 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Numerics;
 using Telegram.Common;
 using Telegram.Controls;
+using Telegram.Controls.Messages;
 using Telegram.Navigation;
+using Telegram.Services;
 using Telegram.Td.Api;
+using Telegram.ViewModels.Drawers;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Controls.Primitives;
+using Windows.UI.Xaml.Hosting;
 using Windows.UI.Xaml.Input;
 
 namespace Telegram.Views.Popups
 {
+    public class CreatePollViewModel : ViewModelBase
+    {
+        public CreatePollViewModel(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator) : base(clientService, settingsService, aggregator)
+        {
+        }
+    }
+
     public sealed partial class CreatePollPopup : ContentPopup
     {
         private const int MAXIMUM_OPTIONS = 10;
 
-        public CreatePollPopup(bool forceQuiz, bool forceRegular, bool forceAnonymous)
+        private readonly CreatePollViewModel _viewModel;
+
+        public CreatePollPopup(IClientService clientService, bool forceQuiz, bool forceRegular, bool forceAnonymous)
         {
             InitializeComponent();
+
+            _viewModel = new CreatePollViewModel(clientService,
+                TypeResolver.Current.Resolve<ISettingsService>(clientService.SessionId),
+                TypeResolver.Current.Resolve<IEventAggregator>(clientService.SessionId));
+
+            QuestionText.DataContext = _viewModel;
+            EmojiPanel.DataContext = EmojiDrawerViewModel.Create(clientService.SessionId);
 
             Title = Strings.NewPoll;
             PrimaryButtonText = Strings.OK;
@@ -60,19 +82,19 @@ namespace Telegram.Views.Popups
             }
         }
 
-        public string Question
+        public FormattedText Question
         {
             get
             {
-                return QuestionText.Text.Format();
+                return QuestionText.GetFormattedText();
             }
         }
 
-        public IList<string> Options
+        public IList<FormattedText> Options
         {
             get
             {
-                return Items.Where(x => !string.IsNullOrWhiteSpace(x.Text)).Select(x => x.Text.Format()).ToList();
+                return Items.Where(x => !string.IsNullOrWhiteSpace(x.Text.Text)).Select(x => x.Text).ToList();
             }
         }
 
@@ -116,8 +138,8 @@ namespace Telegram.Views.Popups
 
         private void UpdatePrimaryButton()
         {
-            var condition = !string.IsNullOrEmpty(Question);
-            condition = condition && Items.Count(x => !string.IsNullOrEmpty(x.Text)) >= 2;
+            var condition = !QuestionText.IsEmpty;
+            condition = condition && Items.Count(x => !string.IsNullOrEmpty(x.Text.Text)) >= 2;
 
             if (Quiz.IsChecked == true)
             {
@@ -155,8 +177,18 @@ namespace Telegram.Views.Popups
             Focus(Items.Count - 1);
         }
 
-        private void Question_TextChanged(object sender, TextChangedEventArgs e)
+        private void Question_TextChanged(object sender, RoutedEventArgs e)
         {
+            UpdatePrimaryButton();
+        }
+
+        private void Option_TextChanged(object sender, RoutedEventArgs e)
+        {
+            if (sender is FormattedTextBox textBox && textBox.Tag is PollOptionViewModel option)
+            {
+                option.Text = textBox.GetFormattedText();
+            }
+
             UpdatePrimaryButton();
         }
 
@@ -180,18 +212,32 @@ namespace Telegram.Views.Popups
 
         private void Option_Loaded(object sender, RoutedEventArgs e)
         {
-            if (sender is TextBox text && text.DataContext is PollOptionViewModel option && option.FocusOnLoaded)
+            if (sender is FormattedTextBox text && text.DataContext is PollOptionViewModel option)
             {
-                option.FocusOnLoaded = false;
+                text.Tag = option;
+                text.DataContext = _viewModel;
+                text.CustomEmoji = text.Parent.GetChild<CustomEmojiCanvas>();
 
-                text.SelectionStart = text.Text.Length;
-                text.Focus(FocusState.Keyboard);
+                text.SetText(option.Text);
+
+                if (option.FocusOnLoaded)
+                {
+                    text.Document.Selection.SetRange(int.MaxValue, int.MaxValue);
+                    text.Focus(FocusState.Keyboard);
+                }
+
+                option.FocusOnLoaded = false;
             }
         }
 
         private void Option_PreviewKeyDown(object sender, KeyRoutedEventArgs e)
         {
-            if (e.Key == Windows.System.VirtualKey.Back && sender is TextBox text && text.DataContext is PollOptionViewModel option && string.IsNullOrEmpty(text.Text))
+            if (sender is not FormattedTextBox text || text.Tag is not PollOptionViewModel option)
+            {
+                return;
+            }
+
+            if (e.Key == Windows.System.VirtualKey.Back && text.IsEmpty)
             {
                 e.Handled = true;
 
@@ -211,11 +257,7 @@ namespace Telegram.Views.Popups
 
                 Items.Remove(option);
             }
-        }
-
-        private void Option_KeyDown(object sender, KeyRoutedEventArgs e)
-        {
-            if (e.Key == Windows.System.VirtualKey.Enter && sender is TextBox text && text.DataContext is PollOptionViewModel option)
+            else if (e.Key == Windows.System.VirtualKey.Enter)
             {
                 e.Handled = true;
 
@@ -234,6 +276,57 @@ namespace Telegram.Views.Popups
         private void Question_GotFocus(object sender, RoutedEventArgs e)
         {
             AddAnOption.IsReadOnly = false;
+
+            if (sender is FormattedTextBox textBox)
+            {
+                OnVisibleChanged(textBox.Parent.GetChild<GlyphButton>(), true);
+            }
+        }
+
+        private void Question_LostFocus(object sender, RoutedEventArgs e)
+        {
+            if (sender is FormattedTextBox textBox)
+            {
+                OnVisibleChanged(textBox.Parent.GetChild<GlyphButton>(), false);
+            }
+        }
+
+        private static void OnVisibleChanged(DependencyObject d, bool value)
+        {
+            var sender = d as UIElement;
+            var newValue = value;
+            var oldValue = !value;
+
+            if (newValue == oldValue || (sender.Visibility == Visibility.Collapsed && !newValue))
+            {
+                return;
+            }
+
+            var visual = ElementComposition.GetElementVisual(sender);
+
+            visual.CenterPoint = new Vector3(16, 12, 0);
+            sender.Visibility = Visibility.Visible;
+
+            var batch = Window.Current.Compositor.CreateScopedBatch(Windows.UI.Composition.CompositionBatchTypes.Animation);
+            batch.Completed += (s, args) =>
+            {
+                visual.Opacity = newValue ? 1 : 0;
+                visual.Scale = new Vector3(true ? newValue ? 1 : 0 : 1);
+
+                sender.Visibility = newValue ? Visibility.Visible : Visibility.Collapsed;
+            };
+
+            var anim1 = Window.Current.Compositor.CreateScalarKeyFrameAnimation();
+            anim1.InsertKeyFrame(0, newValue ? 0 : 1);
+            anim1.InsertKeyFrame(1, newValue ? 1 : 0);
+            visual.StartAnimation("Opacity", anim1);
+
+            var anim2 = Window.Current.Compositor.CreateVector3KeyFrameAnimation();
+            anim2.InsertKeyFrame(0, new Vector3(newValue ? 0 : 1));
+            anim2.InsertKeyFrame(1, new Vector3(newValue ? 1 : 0));
+            visual.StartAnimation("Scale", anim2);
+
+            batch.End();
         }
 
         private void Focus(int option)
@@ -244,7 +337,7 @@ namespace Telegram.Views.Popups
                 return;
             }
 
-            var inner = container.GetChild<TextBox>();
+            var inner = container.GetChild<FormattedTextBox>();
             if (inner == null)
             {
                 return;
@@ -280,6 +373,42 @@ namespace Telegram.Views.Popups
 
             UpdatePrimaryButton();
         }
+
+        private FormattedTextBox _target;
+
+        private void Emoji_Click(object sender, RoutedEventArgs e)
+        {
+            var element = FocusManager.GetFocusedElement();
+            if (element is not FormattedTextBox textBox)
+            {
+                return;
+            }
+
+            _target = textBox;
+
+            // We don't want to unfocus the text are when the context menu gets opened
+            EmojiPanel.ViewModel.Update();
+            EmojiFlyout.ShowAt(textBox, new FlyoutShowOptions { ShowMode = FlyoutShowMode.Transient });
+        }
+
+        private void Emoji_ItemClick(object sender, ItemClickEventArgs e)
+        {
+            if (e.ClickedItem is EmojiData emoji)
+            {
+                _target?.InsertText(emoji.Value);
+            }
+            else if (e.ClickedItem is StickerViewModel sticker)
+            {
+                _target?.InsertEmoji(sticker);
+            }
+
+            _target?.Focus(FocusState.Programmatic);
+        }
+
+        private void EmojiFlyout_Closed(object sender, object e)
+        {
+            _target = null;
+        }
     }
 
     public class PollOptionViewModel : BindableBase
@@ -288,14 +417,14 @@ namespace Telegram.Views.Popups
 
         public PollOptionViewModel(string text, bool quiz, bool focus, Action<PollOptionViewModel> remove)
         {
-            _text = text;
+            _text = new FormattedText(text, Array.Empty<TextEntity>());
             _isQuiz = quiz;
             _focusOnLoaded = focus;
             _remove = remove;
         }
 
-        private string _text;
-        public string Text
+        private FormattedText _text;
+        public FormattedText Text
         {
             get => _text;
             set => Set(ref _text, value);
