@@ -148,7 +148,7 @@
                         CornerRadius="8"
                         Height="16"
                         Grid.Column="1">
-                    <TextBlock Text="when?"
+                    <TextBlock Text="{CustomResource StatusHiddenShow}"
                                TextLineBounds="Tight"
                                TextAlignment="Center"
                                OpticalMarginAlignment="TrimSideBearings"
