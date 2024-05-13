@@ -19,7 +19,7 @@ using Windows.UI.Xaml.Navigation;
 
 namespace Telegram.ViewModels.Chats
 {
-    public class ChatRevenueViewModel : ViewModelBase, IIncrementalCollectionOwner
+    public class ChatRevenueViewModel : ViewModelBase, IIncrementalCollectionOwner, IHandle
     {
         private ChatBoostStatus _status;
         private ChatBoostFeatures _features;
@@ -107,6 +107,8 @@ namespace Telegram.ViewModels.Chats
             set => Set(ref _minSponsoredMessageDisableBoostLevel, value);
         }
 
+        public double UsdRate { get; private set; }
+
         public bool CanWithdrawChatRevenue => AvailableAmount?.CryptocurrencyAmount > 0 && ClientService.Options.CanWithdrawChatRevenue;
 
         public IncrementalCollection<ChatRevenueTransaction> Items { get; }
@@ -129,34 +131,26 @@ namespace Telegram.ViewModels.Chats
                 DisableSponsoredMessages = !fullInfo.CanHaveSponsoredMessages;
             }
 
-            var response = await ClientService.SendAsync(new GetChatRevenueStatistics(chatId, false));
+            await LoadAsync();
+
+            IsLoading = false;
+        }
+
+        private async Task LoadAsync()
+        {
+            if (Chat == null)
+            {
+                return;
+            }
+
+            var response = await ClientService.SendAsync(new GetChatRevenueStatistics(Chat.Id, false));
             if (response is ChatRevenueStatistics statistics)
             {
                 Impressions = ChartViewData.Create(statistics.RevenueByHourGraph, Strings.MonetizationGraphImpressions, 5);
                 Revenue = ChartViewData.Create(statistics.RevenueGraph, Strings.MonetizationGraphRevenue, 7);
+                UsdRate = statistics.UsdRate;
 
-                AvailableAmount = new CryptoAmount
-                {
-                    Cryptocurrency = statistics.Cryptocurrency,
-                    CryptocurrencyAmount = statistics.CryptocurrencyAvailableAmount,
-                    UsdRate = statistics.UsdRate,
-                };
-
-                PreviousAmount = new CryptoAmount
-                {
-                    Cryptocurrency = statistics.Cryptocurrency,
-                    CryptocurrencyAmount = statistics.CryptocurrencyBalanceAmount,
-                    UsdRate = statistics.UsdRate,
-                };
-
-                TotalAmount = new CryptoAmount
-                {
-                    Cryptocurrency = statistics.Cryptocurrency,
-                    CryptocurrencyAmount = statistics.CryptocurrencyTotalAmount,
-                    UsdRate = statistics.UsdRate,
-                };
-
-                RaisePropertyChanged(nameof(CanWithdrawChatRevenue));
+                UpdateAmount(statistics.RevenueAmount);
             }
 
             var response1 = await ClientService.SendAsync(new GetChatBoostFeatures(Chat.Type is ChatTypeSupergroup { IsChannel: true }));
@@ -174,8 +168,48 @@ namespace Telegram.ViewModels.Chats
 
                 MinSponsoredMessageDisableBoostLevel = MinLevelOrZero(features.MinSponsoredMessageDisableBoostLevel);
             }
+        }
 
-            IsLoading = false;
+        public override void Subscribe()
+        {
+            Aggregator.Subscribe<UpdateChatRevenueAmount>(this, Handle);
+        }
+
+        private void Handle(UpdateChatRevenueAmount update)
+        {
+            BeginOnUIThread(() =>
+            {
+                HasMoreItems = true;
+                Items.Clear();
+
+                UpdateAmount(update.RevenueAmount);
+            });
+        }
+
+        private void UpdateAmount(ChatRevenueAmount amount)
+        {
+            AvailableAmount = new CryptoAmount
+            {
+                Cryptocurrency = amount.Cryptocurrency,
+                CryptocurrencyAmount = amount.AvailableAmount,
+                UsdRate = UsdRate,
+            };
+
+            PreviousAmount = new CryptoAmount
+            {
+                Cryptocurrency = amount.Cryptocurrency,
+                CryptocurrencyAmount = amount.BalanceAmount,
+                UsdRate = UsdRate,
+            };
+
+            TotalAmount = new CryptoAmount
+            {
+                Cryptocurrency = amount.Cryptocurrency,
+                CryptocurrencyAmount = amount.TotalAmount,
+                UsdRate = UsdRate,
+            };
+
+            RaisePropertyChanged(nameof(CanWithdrawChatRevenue));
         }
 
         public async void Transfer()
@@ -242,7 +276,7 @@ namespace Telegram.ViewModels.Chats
 
             HasMoreItems = totalCount > 0;
             IsEmpty = Items.Count == 0;
-            
+
             return new LoadMoreItemsResult
             {
                 Count = totalCount
