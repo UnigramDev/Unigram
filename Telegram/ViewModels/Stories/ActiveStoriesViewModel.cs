@@ -156,6 +156,7 @@ namespace Telegram.ViewModels.Stories
 
             if (SelectedItem != null)
             {
+                Logger.Info("LoadAsync");
                 await SelectedItem.LoadAsync();
             }
 
@@ -193,7 +194,7 @@ namespace Telegram.ViewModels.Stories
 
         public override Task<MessageSendOptions> PickMessageSendOptionsAsync(bool? schedule = null, bool? silent = null, bool reorder = false)
         {
-            return Task.FromResult(new MessageSendOptions(silent ?? false, false, false, Settings.Stickers.DynamicPackOrder && reorder, null, 0, false));
+            return Task.FromResult(new MessageSendOptions(silent ?? false, false, false, Settings.Stickers.DynamicPackOrder && reorder, null, 0, 0, false));
         }
 
         public void Handle(UpdateStory update)
