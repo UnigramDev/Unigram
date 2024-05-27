@@ -154,6 +154,7 @@ namespace Telegram.Controls.Media
         public const string ShieldError = "\uE730";
         public const string Broom = "\uEA99";
         public const string CalendarClock = "\uE81C";
+        public const string CheckmarkStarburst = "\uEA8B";
 
         public const string ClockAlarmHour = "\uE9A3";
 
@@ -390,6 +391,7 @@ namespace Telegram.Controls.Media
         public const string EmojiFilled = "\uE9B1";
         public const string TranslateFilled = "\uE9B2";
 
+        public const string Premium = "\uEA87";
         public const string Premium16 = "\uE9B5";
         public const string LockClosed16 = "\uE9BE";
         public const string Verified16 = "\uE97A";

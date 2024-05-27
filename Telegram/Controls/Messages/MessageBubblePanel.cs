@@ -42,15 +42,32 @@ namespace Telegram.Controls.Messages
 
         protected override Size MeasureOverride(Size availableSize)
         {
-            var text = Children[0] as FormattedTextBlock;
-            var media = Children[1] as FrameworkElement;
-            var third = Children[2];
+            FormattedTextBlock text;
+            FrameworkElement media;
+            UIElement factCheck;
+            UIElement third;
+
+            var first = Children[0];
+            if (first is MessageFactCheck)
+            {
+                text = Children[1] as FormattedTextBlock;
+                media = Children[2] as FrameworkElement;
+                third = Children[3];
+                factCheck = first as MessageFactCheck;
+            }
+            else
+            {
+                text = Children[0] as FormattedTextBlock;
+                media = Children[1] as FrameworkElement;
+                third = Children[2];
+                factCheck = null;
+            }
 
             MessageFooter footer;
             ReactionsPanel reactions;
             if (third is ReactionsPanel)
             {
-                footer = Children[3] as MessageFooter;
+                footer = Children[^1] as MessageFooter;
                 reactions = third as ReactionsPanel;
             }
             else
@@ -65,6 +82,7 @@ namespace Telegram.Controls.Messages
 
             text.Measure(availableSize);
             media.Measure(availableSize);
+            factCheck?.Measure(availableSize);
             footer.Measure(availableSize);
 
             if (reactions != null)
@@ -103,6 +121,12 @@ namespace Telegram.Controls.Messages
             var reactionsWidth = reactions?.DesiredSize.Width ?? 0;
             var reactionsHeight = reactions?.DesiredSize.Height ?? 0;
 
+            if (factCheck != null)
+            {
+                reactionsWidth = Math.Max(reactionsWidth, factCheck.DesiredSize.Width);
+                reactionsHeight += factCheck.DesiredSize.Height;
+            }
+
             var finalWidth = Math.Max(Math.Max(reactionsWidth, footer.DesiredSize.Width), width);
             var finalHeight = text.DesiredSize.Height + media.DesiredSize.Height + reactionsHeight + margin.Height;
 
@@ -116,15 +140,32 @@ namespace Telegram.Controls.Messages
 
         protected override Size ArrangeOverride(Size finalSize)
         {
-            var text = Children[0] as FormattedTextBlock;
-            var media = Children[1] as FrameworkElement;
-            var third = Children[2];
+            FormattedTextBlock text;
+            FrameworkElement media;
+            UIElement factCheck;
+            UIElement third;
+
+            var first = Children[0];
+            if (first is MessageFactCheck)
+            {
+                text = Children[1] as FormattedTextBlock;
+                media = Children[2] as FrameworkElement;
+                third = Children[3];
+                factCheck = first as MessageFactCheck;
+            }
+            else
+            {
+                text = Children[0] as FormattedTextBlock;
+                media = Children[1] as FrameworkElement;
+                third = Children[2];
+                factCheck = null;
+            }
 
             MessageFooter footer;
             ReactionsPanel reactions;
             if (third is ReactionsPanel)
             {
-                footer = Children[3] as MessageFooter;
+                footer = Children[^1] as MessageFooter;
                 reactions = third as ReactionsPanel;
             }
             else
@@ -139,16 +180,36 @@ namespace Telegram.Controls.Messages
             if (textRow < mediaRow)
             {
                 text.Arrange(new Rect(0, 0, finalSize.Width, text.DesiredSize.Height));
-                media.Arrange(new Rect(0, text.DesiredSize.Height, finalSize.Width, media.DesiredSize.Height));
+
+                if (factCheck != null)
+                {
+                    factCheck.Arrange(new Rect(0, text.DesiredSize.Height, finalSize.Width, factCheck.DesiredSize.Height));
+                    media.Arrange(new Rect(0, text.DesiredSize.Height + factCheck.DesiredSize.Height, finalSize.Width, media.DesiredSize.Height));
+                }
+                else
+                {
+                    media.Arrange(new Rect(0, text.DesiredSize.Height, finalSize.Width, media.DesiredSize.Height));
+                }
             }
             else
             {
                 media.Arrange(new Rect(0, 0, finalSize.Width, media.DesiredSize.Height));
                 text.Arrange(new Rect(0, media.DesiredSize.Height, finalSize.Width, text.DesiredSize.Height));
+
+                factCheck?.Arrange(new Rect(0, media.DesiredSize.Height + text.DesiredSize.Height, finalSize.Width, factCheck.DesiredSize.Height));
             }
 
-            reactions?.Arrange(new Rect(0, text.DesiredSize.Height + media.DesiredSize.Height, finalSize.Width, reactions.DesiredSize.Height));
             var reactionsHeight = reactions?.DesiredSize.Height ?? 0;
+
+            if (factCheck != null)
+            {
+                reactions?.Arrange(new Rect(0, text.DesiredSize.Height + media.DesiredSize.Height + factCheck.DesiredSize.Height, finalSize.Width, reactions.DesiredSize.Height));
+                reactionsHeight += factCheck.DesiredSize.Height;
+            }
+            else
+            {
+                reactions?.Arrange(new Rect(0, text.DesiredSize.Height + media.DesiredSize.Height, finalSize.Width, reactions.DesiredSize.Height));
+            }
 
             var margin = _margin;
             var footerWidth = footer.DesiredSize.Width /*- footer.Margin.Right + footer.Margin.Left*/;
@@ -214,7 +275,7 @@ namespace Telegram.Controls.Messages
             var text = caption.Text.Substring(paragraph.Offset, paragraph.Length);
             var entities = paragraph.Entities;
 
-            var block = Children[0] as FormattedTextBlock;
+            var block = Children[0] is FormattedTextBlock formatted ? formatted : Children[1] as FormattedTextBlock;
             var width = availableWidth - block.Margin.Left - block.Margin.Right;
 
             if (width <= 0)

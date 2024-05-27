@@ -230,6 +230,9 @@
     <Compile Include="Controls\Messages\MessageForwardHeader.xaml.cs">
       <DependentUpon>MessageForwardHeader.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\Messages\MessageFactCheck.xaml.cs">
+      <DependentUpon>MessageFactCheck.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Controls\Messages\ReactionAsTagButton.cs" />
     <Compile Include="Common\AsyncMediaPlayer.cs" />
     <Compile Include="Controls\SuggestedActionSetBirthdateCard.xaml.cs">
@@ -1053,6 +1056,9 @@
     </Compile>
     <Compile Include="Views\Popups\ChooseProfileColorView.xaml.cs">
       <DependentUpon>ChooseProfileColorView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Popups\FactCheckPopup.xaml.cs">
+      <DependentUpon>FactCheckPopup.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Popups\LogOutPopup.xaml.cs">
       <DependentUpon>LogOutPopup.xaml</DependentUpon>
@@ -2349,6 +2355,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Controls\Messages\MessageFactCheck.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Controls\Messages\ReactionsMenuFlyout.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -2730,6 +2740,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Views\Popups\ChooseProfileColorView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\Popups\FactCheckPopup.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

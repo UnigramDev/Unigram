@@ -938,6 +938,22 @@ namespace Telegram.ViewModels
 
         #endregion
 
+        #region Fact check
+
+        public async void FactCheckMessage(MessageViewModel message)
+        {
+            var popup = new FactCheckPopup(message.FactCheck?.Text, ClientService.Options.FactCheckLengthMax);
+
+            var confirm = await ShowPopupAsync(popup);
+            if (confirm == ContentDialogResult.Primary)
+            {
+                ClientService.Send(new SetMessageFactCheck(message.ChatId, message.Id, popup.Text));
+                ToastPopup.Show(string.IsNullOrEmpty(popup.Text?.Text) ? Strings.FactCheckDeleted : Strings.FactCheckEdited, new LocalFileSource("ms-appx:///Assets/Toasts/Info.tgs"));
+            }
+        }
+
+        #endregion
+
         #region Report false positive
 
         public async void ReportFalsePositive(MessageViewModel message)

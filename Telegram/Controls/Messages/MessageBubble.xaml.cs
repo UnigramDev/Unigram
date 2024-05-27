@@ -181,7 +181,11 @@ namespace Telegram.Controls.Messages
 
         #endregion
 
-        public UIElement MediaTemplateRoot => Media.Child;
+        public UIElement MediaTemplateRoot
+        {
+            get => Media.Child;
+            set => Media.Child = value;
+        }
 
         public void Recycle()
         {
@@ -1416,6 +1420,12 @@ namespace Telegram.Controls.Messages
             }
         }
 
+        public void UpdateMessageFactCheck(MessageViewModel message)
+        {
+            // TODO: this isn't very optimized
+            UpdateMessageContent(message);
+        }
+
         public void UpdateMessageContent(MessageViewModel message)
         {
             var chat = message?.Chat;
@@ -1429,10 +1439,13 @@ namespace Telegram.Controls.Messages
             // TODO: this probably needs to go in MessageViewModel
             var outgoing = (message.IsOutgoing && !message.IsChannelPost && message.SenderId is MessageSenderUser) || (message.IsSaved && message.ForwardInfo?.Source is { IsOutgoing: true });
 
+            var aboveMedia = message.ShowCaptionAboveMedia();
+            var factCheck = message.FactCheck == null ? 0 : 1;
+
             var content = message.GeneratedContent ?? message.Content;
             if (content is MessageText text)
             {
-                if (text.WebPage == null)
+                if (text.WebPage == null && message.FactCheck == null)
                 {
                     ContentPanel.Padding = new Thickness(0, 4, 0, 0);
                     Media.Margin = new Thickness(0);
@@ -1443,7 +1456,7 @@ namespace Telegram.Controls.Messages
                 }
                 else
                 {
-                    var caption = text.WebPage.ShowAboveText;
+                    var caption = text.WebPage?.ShowAboveText ?? false;
 
                     ContentPanel.Padding = new Thickness(0, 4, 0, 0);
                     Media.Margin = new Thickness(10, caption ? -4 : -6, 10, -2);
@@ -1470,9 +1483,13 @@ namespace Telegram.Controls.Messages
                 {
                     top = 4;
                 }
+                if (content.HasCaption() && aboveMedia)
+                {
+                    top = 4;
+                }
 
-                var caption = content is MessageVenue || content.HasCaption();
-                if (caption)
+                var caption = content is MessageVenue || (content.HasCaption() && !aboveMedia);
+                if (caption || factCheck > 0)
                 {
                     FooterToNormal();
                     bottom = 4;
@@ -1487,9 +1504,9 @@ namespace Telegram.Controls.Messages
                 }
 
                 ContentPanel.Padding = new Thickness(0, top, 0, 0);
-                Media.Margin = new Thickness(0, top, 0, bottom);
-                Grid.SetRow(Footer, caption ? 4 : 3);
-                Grid.SetRow(Message, caption ? 4 : 2);
+                Media.Margin = new Thickness(0, aboveMedia ? 0 : top, 0, bottom);
+                Grid.SetRow(Footer, factCheck + (caption ? 4 : 3));
+                Grid.SetRow(Message, caption ? 4 : aboveMedia ? 2 : 5);
                 Panel.Placeholder = caption;
             }
             else if (content is MessageSticker or MessageDice or MessageVideoNote or MessageBigEmoji)
@@ -1564,8 +1581,8 @@ namespace Telegram.Controls.Messages
 
                 ContentPanel.Padding = new Thickness(0, 4, 0, 0);
                 Media.Margin = new Thickness(10, 4, 10, 8);
-                Grid.SetRow(Footer, caption ? 4 : 3);
-                Grid.SetRow(Message, caption ? 4 : 2);
+                Grid.SetRow(Footer, factCheck + (caption ? 4 : 3));
+                Grid.SetRow(Message, caption ? 4 : 5);
                 Panel.Placeholder = caption;
             }
 
@@ -1706,6 +1723,22 @@ namespace Telegram.Controls.Messages
             else
             {
                 Media.Child = null;
+            }
+
+            if (Panel.Children.Count > 0 && Panel.Children[0] is MessageFactCheck factChecko)
+            {
+                if (message.FactCheck != null)
+                {
+                    factChecko.UpdateMessage(message);
+                }
+                else
+                {
+                    Panel.Children.Remove(factChecko);
+                }
+            }
+            else if (message.FactCheck != null)
+            {
+                Panel.Children.Insert(0, new MessageFactCheck(message));
             }
         }
 

@@ -747,6 +747,9 @@ to: {1}</value>
   <data name="AddExceptions" xml:space="preserve">
     <value>Add exceptions</value>
   </data>
+  <data name="AddFactCheck" xml:space="preserve">
+    <value>Add Fact Check</value>
+  </data>
   <data name="AddManyMembersAlertNamesText_one" xml:space="preserve">
     <value>Are you sure you want to add member to **{1}**?</value>
   </data>
@@ -4070,6 +4073,9 @@ Anyone from the channel will be able to see messages in this group.</value>
   <data name="EditedMessage" xml:space="preserve">
     <value>edited</value>
   </data>
+  <data name="EditFactCheck" xml:space="preserve">
+    <value>Edit Fact Check</value>
+  </data>
   <data name="EditInformation" xml:space="preserve">
     <value>Edit Information</value>
   </data>
@@ -4686,6 +4692,30 @@ Duration: {1}</value>
   </data>
   <data name="ExpiredViewsStubPremiumDescription" xml:space="preserve">
     <value>To unlock viewer lists for expired and posted stories, subscribe to **Telegram Premium**.</value>
+  </data>
+  <data name="FactCheck" xml:space="preserve">
+    <value>Fact Check</value>
+  </data>
+  <data name="FactCheckAdded" xml:space="preserve">
+    <value>Fact check added</value>
+  </data>
+  <data name="FactCheckDeleted" xml:space="preserve">
+    <value>Fact check removed</value>
+  </data>
+  <data name="FactCheckDialog" xml:space="preserve">
+    <value>Fact Check</value>
+  </data>
+  <data name="FactCheckEdited" xml:space="preserve">
+    <value>Fact check edited</value>
+  </data>
+  <data name="FactCheckPlaceholder" xml:space="preserve">
+    <value>Add Fact or Context</value>
+  </data>
+  <data name="FactCheckToast" xml:space="preserve">
+    <value>This clarification was provided by a fact checking agency assigned by the department of the government of your country ({0}) responsible for combating misinformation.</value>
+  </data>
+  <data name="FactCheckWhat" xml:space="preserve">
+    <value>what’s this?</value>
   </data>
   <data name="Fade" xml:space="preserve">
     <value>Fade</value>
