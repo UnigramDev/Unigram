@@ -136,6 +136,20 @@ namespace Telegram.Views.Popups
             }
         }
 
+        private bool _showCaptionAboveMedia;
+        public bool ShowCaptionAboveMedia
+        {
+            get => _showCaptionAboveMedia;
+            set
+            {
+                if (_showCaptionAboveMedia != value)
+                {
+                    _showCaptionAboveMedia = value;
+                    PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(ShowCaptionAboveMedia)));
+                }
+            }
+        }
+
         public FormattedText Caption
         {
             get => CaptionInput.GetFormattedText(false);
@@ -803,6 +817,11 @@ namespace Telegram.Views.Popups
                 CaptionInput.InsertEmoji(sticker);
                 CaptionInput.Focus(FocusState.Programmatic);
             }
+        }
+
+        private int ConvertCaptionRow(bool above)
+        {
+            return above ? 0 : 2;
         }
     }
 

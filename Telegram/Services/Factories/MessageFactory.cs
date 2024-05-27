@@ -76,7 +76,7 @@ namespace Telegram.Services.Factories
             return new InputMessageFactory
             {
                 InputFile = generated,
-                Delegate = (inputFile, caption) => new InputMessagePhoto(generated, thumbnail, Array.Empty<int>(), size.Width, size.Height, caption, ttl, spoiler)
+                Delegate = (inputFile, caption) => new InputMessagePhoto(generated, thumbnail, Array.Empty<int>(), size.Width, size.Height, caption, photo.ShowCaptionAboveMedia, ttl, spoiler)
             };
         }
 
@@ -119,14 +119,14 @@ namespace Telegram.Services.Factories
                 return new InputMessageFactory
                 {
                     InputFile = generated,
-                    Delegate = (inputFile, caption) => new InputMessageAnimation(inputFile, thumbnail, Array.Empty<int>(), duration, videoWidth, videoHeight, caption, spoiler)
+                    Delegate = (inputFile, caption) => new InputMessageAnimation(inputFile, thumbnail, Array.Empty<int>(), duration, videoWidth, videoHeight, caption, video.ShowCaptionAboveMedia, spoiler)
                 };
             }
 
             return new InputMessageFactory
             {
                 InputFile = generated,
-                Delegate = (inputFile, caption) => new InputMessageVideo(inputFile, thumbnail, Array.Empty<int>(), duration, videoWidth, videoHeight, true, caption, ttl, spoiler)
+                Delegate = (inputFile, caption) => new InputMessageVideo(inputFile, thumbnail, Array.Empty<int>(), duration, videoWidth, videoHeight, true, caption, video.ShowCaptionAboveMedia, ttl, spoiler)
             };
         }
 

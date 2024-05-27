@@ -25,6 +25,17 @@ namespace Telegram.Td.Api
 {
     public static class TdExtensions
     {
+        public static bool ShowCaptionAboveMedia(this MessageViewModel message)
+        {
+            return message.Content switch
+            {
+                MessageAnimation animation => animation.ShowCaptionAboveMedia,
+                MessagePhoto photo => photo.ShowCaptionAboveMedia,
+                MessageVideo video => video.ShowCaptionAboveMedia,
+                _ => false
+            };
+        }
+
         public static bool Is24x7(this BusinessOpeningHours hours)
         {
             if (hours == null || hours.OpeningHours.Empty())
@@ -809,6 +820,7 @@ namespace Telegram.Td.Api
                 case TextEntityTypeUnderline:
                 case TextEntityTypeSpoiler:
                 case TextEntityTypeBlockQuote:
+                case TextEntityTypeExpandableBlockQuote:
                 case TextEntityTypeCustomEmoji:
                 case TextEntityTypeCode:
                 case TextEntityTypePre:
@@ -828,7 +840,7 @@ namespace Telegram.Td.Api
                 case MessageGame game:
                     return game.Game.Photo;
                 case MessageInvoice invoice:
-                    return invoice.Photo;
+                    return invoice.ProductInfo.Photo;
                 case MessagePhoto photo:
                     return photo.Photo;
                 case MessageText text:
@@ -1067,7 +1079,7 @@ namespace Telegram.Td.Api
                     {
                         MessageExtendedMediaPhoto photo => photo.Photo.GetBig()?.Photo,
                         MessageExtendedMediaVideo video => video.Video.VideoValue,
-                        _ => invoice.Photo?.GetBig()?.Photo
+                        _ => invoice.ProductInfo.Photo?.GetBig()?.Photo
                     };
             }
 
@@ -2152,7 +2164,7 @@ namespace Telegram.Td.Api
             }
             if (Math.Abs(duration.TotalDays) >= 1)
             {
-                return Locale.Declension(Strings.R.Days, (int)duration.TotalDays);
+                return Locale.Declension(Strings.R.Days, (int)Math.Round(duration.TotalSeconds / (24 * 60 * 60.0f)));
             }
             else if (Math.Abs(duration.TotalHours) >= 1)
             {

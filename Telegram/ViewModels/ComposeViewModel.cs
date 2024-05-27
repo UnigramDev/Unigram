@@ -119,7 +119,7 @@ namespace Telegram.ViewModels
             }
 
             var reply = GetReply(true);
-            var input = new InputMessageAnimation(new InputFileId(animation.AnimationValue.Id), animation.Thumbnail?.ToInput(), Array.Empty<int>(), animation.Duration, animation.Width, animation.Height, null, false);
+            var input = new InputMessageAnimation(new InputFileId(animation.AnimationValue.Id), animation.Thumbnail?.ToInput(), Array.Empty<int>(), animation.Duration, animation.Width, animation.Height, null, false, false);
 
             await SendMessageAsync(reply, input, options);
         }
@@ -453,6 +453,7 @@ namespace Telegram.ViewModels
 
             if (popup.Items.Count == 1)
             {
+                popup.Items[0].ShowCaptionAboveMedia = popup.ShowCaptionAboveMedia;
                 popup.Items[0].HasSpoiler = popup.Spoiler && !popup.IsFilesSelected;
                 await Task.Run(() => SendStorageMediaAsync(popup.Items[0], reply, captionz, popup.IsFilesSelected, options));
             }
@@ -462,6 +463,7 @@ namespace Telegram.ViewModels
 
                 foreach (var item in popup.Items)
                 {
+                    item.ShowCaptionAboveMedia = popup.ShowCaptionAboveMedia;
                     item.HasSpoiler = popup.Spoiler && !popup.IsFilesSelected;
                     group.Add(item);
 
@@ -490,6 +492,7 @@ namespace Telegram.ViewModels
                 {
                     foreach (var file in popup.Items)
                     {
+                        file.ShowCaptionAboveMedia = popup.ShowCaptionAboveMedia;
                         file.HasSpoiler = popup.Spoiler && !popup.IsFilesSelected;
                         await SendStorageMediaAsync(file, reply, null, popup.IsFilesSelected, options);
                         reply = null;
@@ -759,7 +762,7 @@ namespace Telegram.ViewModels
 
         protected async Task SendPollAsync(bool forceQuiz, bool forceRegular, bool forceAnonymous)
         {
-            var dialog = new CreatePollPopup(forceQuiz, forceRegular, forceAnonymous);
+            var dialog = new CreatePollPopup(ClientService, forceQuiz, forceRegular, forceAnonymous);
 
             var confirm = await ShowPopupAsync(dialog);
             if (confirm != ContentDialogResult.Primary)

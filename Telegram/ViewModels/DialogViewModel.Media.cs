@@ -344,6 +344,7 @@ namespace Telegram.ViewModels
 
             var items = new[] { storage };
             var popup = new SendFilesPopup(this, items, mediaAllowed, mediaAllowed, true, false, false, false);
+            popup.ShowCaptionAboveMedia = header.EditingMessage.ShowCaptionAboveMedia();
             popup.Caption = formattedText
                 .Substring(0, ClientService.Options.MessageCaptionLengthMax);
 
@@ -353,10 +354,9 @@ namespace Telegram.ViewModels
 
             if (confirm != ContentDialogResult.Primary)
             {
+                TextField?.SetText(formattedText);
                 return;
             }
-
-            TextField?.SetText(popup.Caption);
 
             Task<InputMessageFactory> request = null;
             if (popup.IsFilesSelected)
@@ -365,10 +365,12 @@ namespace Telegram.ViewModels
             }
             else if (storage is StoragePhoto photo)
             {
+                photo.ShowCaptionAboveMedia = popup.ShowCaptionAboveMedia;
                 request = MessageFactory.CreatePhotoAsync(photo, storage.HasSpoiler, storage.Ttl, storage.IsEdited ? storage.EditState : null);
             }
             else if (storage is StorageVideo video)
             {
+                video.ShowCaptionAboveMedia = popup.ShowCaptionAboveMedia;
                 request = MessageFactory.CreateVideoAsync(video, video.IsMuted, storage.HasSpoiler, storage.Ttl, video.GetTransform());
             }
 
@@ -381,6 +383,7 @@ namespace Telegram.ViewModels
             if (factory != null)
             {
                 header.EditingMessageMedia = factory;
+                await BeforeSendMessageAsync(popup.Caption);
             }
         }
     }
