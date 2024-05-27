@@ -2060,7 +2060,7 @@ namespace Telegram.Controls.Messages
 
             if (invoice != null)
             {
-                content = string.Format(Strings.PaymentSuccessfullyPaid, Locale.FormatCurrency(paymentSuccessful.TotalAmount, paymentSuccessful.Currency), message.ClientService.GetTitle(chat), invoice.Title);
+                content = string.Format(Strings.PaymentSuccessfullyPaid, Locale.FormatCurrency(paymentSuccessful.TotalAmount, paymentSuccessful.Currency), message.ClientService.GetTitle(chat), invoice.ProductInfo.Title);
             }
             else
             {

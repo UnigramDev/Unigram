@@ -62,15 +62,15 @@ namespace Telegram.Controls.Messages.Content
                 return;
             }
 
-            Title.Text = invoice.Title;
-            TextBlockHelper.SetFormattedText(Description, invoice.Description);
+            Title.Text = invoice.ProductInfo.Title;
+            TextBlockHelper.SetFormattedText(Description, invoice.ProductInfo.Description);
 
-            Photo.Constraint = invoice.Photo;
+            Photo.Constraint = invoice.ProductInfo.Photo;
             Texture.Source = null;
 
             Footer.UpdateMessage(message);
 
-            var small = invoice.Photo.GetSmall();
+            var small = invoice.ProductInfo.Photo.GetSmall();
             if (small != null)
             {
                 UpdateManager.Subscribe(this, message, small.Photo, ref _thumbnailToken, UpdateFile, true);
@@ -91,7 +91,7 @@ namespace Telegram.Controls.Messages.Content
                 return;
             }
 
-            var small = invoice.Photo.GetSmall();
+            var small = invoice.ProductInfo.Photo.GetSmall();
             if (small != null && small.Photo.Id == file.Id)
             {
                 UpdateThumbnail(message, file);
@@ -119,7 +119,7 @@ namespace Telegram.Controls.Messages.Content
 
         public bool IsValid(MessageContent content, bool primary)
         {
-            return content is MessageInvoice invoice && invoice.Photo != null;
+            return content is MessageInvoice invoice && invoice.ProductInfo.Photo != null;
         }
     }
 }

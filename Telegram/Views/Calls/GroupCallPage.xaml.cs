@@ -2531,6 +2531,8 @@ namespace Telegram.Views.Calls
                 }
             }
 
+            finalWidth = Math.Max(0, finalWidth);
+
             for (int row = 0; row < rows; row++)
             {
                 var rowColumns = columns;

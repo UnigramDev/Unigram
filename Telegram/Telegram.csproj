@@ -148,6 +148,7 @@
     <Compile Include="Assets\Icons\PersonAdd.cs" />
     <Compile Include="Assets\Icons\Phone.cs" />
     <Compile Include="Assets\Icons\PowerSaving.cs" />
+    <Compile Include="Assets\Icons\PremiumStars.cs" />
     <Compile Include="Assets\Icons\Premium.cs" />
     <Compile Include="Assets\Icons\PremiumGifting.cs" />
     <Compile Include="Assets\Icons\Privacy.cs" />
@@ -870,6 +871,9 @@
     <Compile Include="ViewModels\Settings\Privacy\SettingsPrivacyShowBioViewModel.cs" />
     <Compile Include="ViewModels\Settings\Privacy\SettingsPrivacyNewChatViewModel.cs" />
     <Compile Include="ViewModels\Settings\SettingsPowerSavingViewModel.cs" />
+    <Compile Include="ViewModels\Stars\PayViewModel.cs" />
+    <Compile Include="ViewModels\Stars\StarsViewModel.cs" />
+    <Compile Include="ViewModels\Stars\BuyViewModel.cs" />
     <Compile Include="ViewModels\Supergroups\SupergroupProfileColorViewModel.cs" />
     <Compile Include="ViewModels\Settings\SettingsProfileColorViewModel.cs" />
     <Compile Include="ViewModels\Settings\SettingsProxyViewModel.cs" />
@@ -1526,6 +1530,15 @@
     </Compile>
     <Compile Include="Views\Settings\SettingsProxyPopup.xaml.cs">
       <DependentUpon>SettingsProxyPopup.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Stars\Popups\PayPopup.xaml.cs">
+      <DependentUpon>PayPopup.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Stars\Popups\StarsPopup.xaml.cs">
+      <DependentUpon>StarsPopup.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Stars\Popups\BuyPopup.xaml.cs">
+      <DependentUpon>BuyPopup.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Stories\Popups\StoryInteractionsPopup.xaml.cs">
       <DependentUpon>StoryInteractionsPopup.xaml</DependentUpon>
@@ -3164,6 +3177,18 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Views\Settings\SettingsProxyPopup.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\Stars\Popups\PayPopup.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\Stars\Popups\StarsPopup.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\Stars\Popups\BuyPopup.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

@@ -15,6 +15,7 @@ using Telegram.ViewModels.Delegates;
 using Telegram.Views.Business;
 using Telegram.Views.Folders;
 using Telegram.Views.Settings;
+using Telegram.Views.Stars.Popups;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
@@ -172,6 +173,16 @@ namespace Telegram.Views
             MasterDetail.NavigationService.ShowPromo(new PremiumSourceSettings());
         }
 
+        private async void Stars_Click(object sender, RoutedEventArgs e)
+        {
+            await MasterDetail.NavigationService.ShowPopupAsync(typeof(StarsPopup));
+        }
+
+        private void Business_Click(object sender, RoutedEventArgs e)
+        {
+            MasterDetail.NavigationService.Navigate(typeof(BusinessPage));
+        }
+
         private async void Photo_Click(object sender, RoutedEventArgs e)
         {
             var chat = ViewModel.Chat;
@@ -205,11 +216,6 @@ namespace Telegram.Views
         private void VersionLabel_Navigate(object sender, RoutedEventArgs e)
         {
             MasterDetail.NavigationService.Navigate(typeof(DiagnosticsPage));
-        }
-
-        private void Business_Click(object sender, RoutedEventArgs e)
-        {
-            MasterDetail.NavigationService.Navigate(typeof(BusinessPage));
         }
     }
 }

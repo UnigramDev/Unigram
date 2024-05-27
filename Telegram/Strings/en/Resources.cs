@@ -137,6 +137,12 @@ namespace Telegram
             public const string Shared = "Shared";
             public const string Shares = "Shares";
             public const string ShowVotes = "ShowVotes";
+            public const string StarsAcquiredInfo = "StarsAcquiredInfo";
+            public const string StarsConfirmPurchaseButton = "StarsConfirmPurchaseButton";
+            public const string StarsConfirmPurchaseText = "StarsConfirmPurchaseText";
+            public const string StarsCount = "StarsCount";
+            public const string StarsNeededTitle = "StarsNeededTitle";
+            public const string StarsPurchaseCompletedInfo = "StarsPurchaseCompletedInfo";
             public const string Stickers = "Stickers";
             public const string StickerSets = "StickerSets";
             public const string Stories = "Stories";
@@ -9378,6 +9384,11 @@ namespace Telegram
         public static string Mention => Resource.GetString("Mention");
         
         /// <summary>
+        /// Localized resource similar to "Your Stars"
+        /// </summary>
+        public static string MenuTelegramStars => Resource.GetString("MenuTelegramStars");
+        
+        /// <summary>
         /// Localized resource similar to "Message"
         /// </summary>
         public static string Message => Resource.GetString("Message");
@@ -10281,6 +10292,11 @@ namespace Telegram
         /// Localized resource similar to "Open Unigram"
         /// </summary>
         public static string NotifyIconOpen => Resource.GetString("NotifyIconOpen");
+        
+        /// <summary>
+        /// Localized resource similar to "More Options"
+        /// </summary>
+        public static string NotifyMoreOptions => Resource.GetString("NotifyMoreOptions");
         
         /// <summary>
         /// Localized resource similar to "Username not found."
@@ -12355,6 +12371,11 @@ namespace Telegram
         public static string Remove => Resource.GetString("Remove");
         
         /// <summary>
+        /// Localized resource similar to "Remove Effect"
+        /// </summary>
+        public static string RemoveEffect => Resource.GetString("RemoveEffect");
+        
+        /// <summary>
         /// Localized resource similar to "Are you sure you want to delete your public photo?"
         /// </summary>
         public static string RemovePhotoForRestDescription => Resource.GetString("RemovePhotoForRestDescription");
@@ -13808,6 +13829,86 @@ namespace Telegram
         public static string SponsoredMessage => Resource.GetString("SponsoredMessage");
         
         /// <summary>
+        /// Localized resource similar to "Stars Acquired!"
+        /// </summary>
+        public static string StarsAcquired => Resource.GetString("StarsAcquired");
+        
+        /// <summary>
+        /// Localized resource similar to "Balance"
+        /// </summary>
+        public static string StarsBalance => Resource.GetString("StarsBalance");
+        
+        /// <summary>
+        /// Localized resource similar to "Buy More Stars"
+        /// </summary>
+        public static string StarsBuyMore => Resource.GetString("StarsBuyMore");
+        
+        /// <summary>
+        /// Localized resource similar to "Confirm Your Purchase"
+        /// </summary>
+        public static string StarsConfirmPurchaseTitle => Resource.GetString("StarsConfirmPurchaseTitle");
+        
+        /// <summary>
+        /// Localized resource similar to "Buy **Stars** and use them on **{0}** and other miniapps."
+        /// </summary>
+        public static string StarsNeededText => Resource.GetString("StarsNeededText");
+        
+        /// <summary>
+        /// Localized resource similar to "Purchase Completed!"
+        /// </summary>
+        public static string StarsPurchaseCompleted => Resource.GetString("StarsPurchaseCompleted");
+        
+        /// <summary>
+        /// Localized resource similar to "By proceeding and purchasing Stars, you agree with the **Terms and Conditions**."
+        /// </summary>
+        public static string StarsTOS => Resource.GetString("StarsTOS");
+        
+        /// <summary>
+        /// Localized resource similar to "https://telegram.org/tos"
+        /// </summary>
+        public static string StarsTOSLink => Resource.GetString("StarsTOSLink");
+        
+        /// <summary>
+        /// Localized resource similar to "Stars Top-Up Bot"
+        /// </summary>
+        public static string StarsTransactionBot => Resource.GetString("StarsTransactionBot");
+        
+        /// <summary>
+        /// Localized resource similar to "Purchase from Fragment"
+        /// </summary>
+        public static string StarsTransactionFragment => Resource.GetString("StarsTransactionFragment");
+        
+        /// <summary>
+        /// Localized resource similar to "In-App Purchase"
+        /// </summary>
+        public static string StarsTransactionInApp => Resource.GetString("StarsTransactionInApp");
+        
+        /// <summary>
+        /// Localized resource similar to "All Transactions"
+        /// </summary>
+        public static string StarsTransactionsAll => Resource.GetString("StarsTransactionsAll");
+        
+        /// <summary>
+        /// Localized resource similar to "Incoming"
+        /// </summary>
+        public static string StarsTransactionsIncoming => Resource.GetString("StarsTransactionsIncoming");
+        
+        /// <summary>
+        /// Localized resource similar to "Outgoing"
+        /// </summary>
+        public static string StarsTransactionsOutgoing => Resource.GetString("StarsTransactionsOutgoing");
+        
+        /// <summary>
+        /// Localized resource similar to "In-App Purchase"
+        /// </summary>
+        public static string StarsTransactionUnsupported => Resource.GetString("StarsTransactionUnsupported");
+        
+        /// <summary>
+        /// Localized resource similar to "your balance"
+        /// </summary>
+        public static string StarsYourBalance => Resource.GetString("StarsYourBalance");
+        
+        /// <summary>
         /// Localized resource similar to "Start"
         /// </summary>
         public static string Start => Resource.GetString("Start");
@@ -14340,6 +14441,21 @@ namespace Telegram
         /// Localized resource similar to "Go **beyond the limits** and **unlock dozens of exclusive** features by subscribing to **Telegram Premium**."
         /// </summary>
         public static string TelegramPremiumSubtitle => Resource.GetString("TelegramPremiumSubtitle");
+        
+        /// <summary>
+        /// Localized resource similar to "Telegram Stars"
+        /// </summary>
+        public static string TelegramStars => Resource.GetString("TelegramStars");
+        
+        /// <summary>
+        /// Localized resource similar to "Choose package"
+        /// </summary>
+        public static string TelegramStarsChoose => Resource.GetString("TelegramStarsChoose");
+        
+        /// <summary>
+        /// Localized resource similar to "Buy Stars to unlock content and services in miniapps on Telegram."
+        /// </summary>
+        public static string TelegramStarsInfo => Resource.GetString("TelegramStarsInfo");
         
         /// <summary>
         /// Localized resource similar to "Telegram tones"
@@ -14940,6 +15056,11 @@ namespace Telegram
         /// Localized resource similar to "Pin"
         /// </summary>
         public static string UnhideFromTop => Resource.GetString("UnhideFromTop");
+        
+        /// <summary>
+        /// Localized resource similar to "Unknown error: {0}"
+        /// </summary>
+        public static string UnknownErrorCode => Resource.GetString("UnknownErrorCode");
         
         /// <summary>
         /// Localized resource similar to "Unlock"

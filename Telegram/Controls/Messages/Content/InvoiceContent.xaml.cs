@@ -56,8 +56,8 @@ namespace Telegram.Controls.Messages.Content
                 return;
             }
 
-            Title.Text = invoice.Title;
-            TextBlockHelper.SetFormattedText(Description, invoice.Description);
+            Title.Text = invoice.ProductInfo.Title;
+            TextBlockHelper.SetFormattedText(Description, invoice.ProductInfo.Description);
 
             Footer.UpdateMessage(message);
         }
@@ -69,7 +69,7 @@ namespace Telegram.Controls.Messages.Content
 
         public bool IsValid(MessageContent content, bool primary)
         {
-            return content is MessageInvoice invoice && invoice.Photo == null;
+            return content is MessageInvoice invoice && invoice.ProductInfo.Photo == null;
         }
     }
 }

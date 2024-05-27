@@ -1427,7 +1427,7 @@ namespace Telegram.Controls.Cells
                     _ => null
                 };
 
-                return Text1("\U0001F4CB ", caption, invoice.Title);
+                return Text1("\U0001F4CB ", caption, invoice.ProductInfo.Title);
             }
             else if (content is MessageContact)
             {

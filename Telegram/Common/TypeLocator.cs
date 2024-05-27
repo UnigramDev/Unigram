@@ -86,9 +86,9 @@ namespace Telegram.Views
 
         public T Resolve<T>()
         {
-            switch (typeof(T).Name)
+            switch (typeof(T).FullName)
             {
-                case nameof(Telegram.ViewModels.Authorization.AuthorizationViewModel):
+                case "Telegram.ViewModels.Authorization.AuthorizationViewModel":
                     return (T)(object)new Telegram.ViewModels.Authorization.AuthorizationViewModel(
                         _clientService,
                         _settingsService,
@@ -96,37 +96,37 @@ namespace Telegram.Views
                         _sessionService,
                         _lifetimeService,
                         _notificationsService);
-                case nameof(Telegram.ViewModels.Authorization.AuthorizationRegistrationViewModel):
+                case "Telegram.ViewModels.Authorization.AuthorizationRegistrationViewModel":
                     return (T)(object)new Telegram.ViewModels.Authorization.AuthorizationRegistrationViewModel(
                         _clientService,
                         _settingsService,
                         _eventAggregator);
-                case nameof(Telegram.ViewModels.Authorization.AuthorizationCodeViewModel):
+                case "Telegram.ViewModels.Authorization.AuthorizationCodeViewModel":
                     return (T)(object)new Telegram.ViewModels.Authorization.AuthorizationCodeViewModel(
                         _clientService,
                         _settingsService,
                         _eventAggregator);
-                case nameof(Telegram.ViewModels.Authorization.AuthorizationPasswordViewModel):
+                case "Telegram.ViewModels.Authorization.AuthorizationPasswordViewModel":
                     return (T)(object)new Telegram.ViewModels.Authorization.AuthorizationPasswordViewModel(
                         _clientService,
                         _settingsService,
                         _eventAggregator);
-                case nameof(Telegram.ViewModels.Authorization.AuthorizationRecoveryViewModel):
+                case "Telegram.ViewModels.Authorization.AuthorizationRecoveryViewModel":
                     return (T)(object)new Telegram.ViewModels.Authorization.AuthorizationRecoveryViewModel(
                         _clientService,
                         _settingsService,
                         _eventAggregator);
-                case nameof(Telegram.ViewModels.Authorization.AuthorizationEmailAddressViewModel):
+                case "Telegram.ViewModels.Authorization.AuthorizationEmailAddressViewModel":
                     return (T)(object)new Telegram.ViewModels.Authorization.AuthorizationEmailAddressViewModel(
                         _clientService,
                         _settingsService,
                         _eventAggregator);
-                case nameof(Telegram.ViewModels.Authorization.AuthorizationEmailCodeViewModel):
+                case "Telegram.ViewModels.Authorization.AuthorizationEmailCodeViewModel":
                     return (T)(object)new Telegram.ViewModels.Authorization.AuthorizationEmailCodeViewModel(
                         _clientService,
                         _settingsService,
                         _eventAggregator);
-                case nameof(Telegram.ViewModels.MainViewModel):
+                case "Telegram.ViewModels.MainViewModel":
                     return (T)(object)new Telegram.ViewModels.MainViewModel(
                         _clientService,
                         _settingsService,
@@ -156,18 +156,18 @@ namespace Telegram.Views
                             _clientService,
                             _settingsService,
                             _eventAggregator));
-                case nameof(Telegram.ViewModels.ChooseChatsViewModel):
+                case "Telegram.ViewModels.ChooseChatsViewModel":
                     return (T)(object)new Telegram.ViewModels.ChooseChatsViewModel(
                         _clientService,
                         _settingsService,
                         _eventAggregator);
-                case nameof(Telegram.ViewModels.SendLocationViewModel):
+                case "Telegram.ViewModels.SendLocationViewModel":
                     return (T)(object)new Telegram.ViewModels.SendLocationViewModel(
                         _clientService,
                         _settingsService,
                         _eventAggregator,
                         _locationService ??= new Telegram.Services.LocationService(_clientService));
-                case nameof(Telegram.ViewModels.DialogViewModel):
+                case "Telegram.ViewModels.DialogViewModel":
                     return (T)(object)new Telegram.ViewModels.DialogViewModel(
                         _clientService,
                         _settingsService,
@@ -190,7 +190,7 @@ namespace Telegram.Views
                         _messageFactory ??= new Telegram.Services.Factories.MessageFactory(
                             _clientService,
                             _playbackService));
-                case nameof(Telegram.ViewModels.DialogThreadViewModel):
+                case "Telegram.ViewModels.DialogThreadViewModel":
                     return (T)(object)new Telegram.ViewModels.DialogThreadViewModel(
                         _clientService,
                         _settingsService,
@@ -213,7 +213,7 @@ namespace Telegram.Views
                         _messageFactory ??= new Telegram.Services.Factories.MessageFactory(
                             _clientService,
                             _playbackService));
-                case nameof(Telegram.ViewModels.DialogBusinessRepliesViewModel):
+                case "Telegram.ViewModels.DialogBusinessRepliesViewModel":
                     return (T)(object)new Telegram.ViewModels.DialogBusinessRepliesViewModel(
                         _clientService,
                         _settingsService,
@@ -236,7 +236,7 @@ namespace Telegram.Views
                         _messageFactory ??= new Telegram.Services.Factories.MessageFactory(
                             _clientService,
                             _playbackService));
-                case nameof(Telegram.ViewModels.DialogSavedViewModel):
+                case "Telegram.ViewModels.DialogSavedViewModel":
                     return (T)(object)new Telegram.ViewModels.DialogSavedViewModel(
                         _clientService,
                         _settingsService,
@@ -259,7 +259,7 @@ namespace Telegram.Views
                         _messageFactory ??= new Telegram.Services.Factories.MessageFactory(
                             _clientService,
                             _playbackService));
-                case nameof(Telegram.ViewModels.DialogPinnedViewModel):
+                case "Telegram.ViewModels.DialogPinnedViewModel":
                     return (T)(object)new Telegram.ViewModels.DialogPinnedViewModel(
                         _clientService,
                         _settingsService,
@@ -282,7 +282,7 @@ namespace Telegram.Views
                         _messageFactory ??= new Telegram.Services.Factories.MessageFactory(
                             _clientService,
                             _playbackService));
-                case nameof(Telegram.ViewModels.DialogScheduledViewModel):
+                case "Telegram.ViewModels.DialogScheduledViewModel":
                     return (T)(object)new Telegram.ViewModels.DialogScheduledViewModel(
                         _clientService,
                         _settingsService,
@@ -305,7 +305,7 @@ namespace Telegram.Views
                         _messageFactory ??= new Telegram.Services.Factories.MessageFactory(
                             _clientService,
                             _playbackService));
-                case nameof(Telegram.ViewModels.DialogEventLogViewModel):
+                case "Telegram.ViewModels.DialogEventLogViewModel":
                     return (T)(object)new Telegram.ViewModels.DialogEventLogViewModel(
                         _clientService,
                         _settingsService,
@@ -328,27 +328,27 @@ namespace Telegram.Views
                         _messageFactory ??= new Telegram.Services.Factories.MessageFactory(
                             _clientService,
                             _playbackService));
-                case nameof(Telegram.ViewModels.Drawers.AnimationDrawerViewModel):
+                case "Telegram.ViewModels.Drawers.AnimationDrawerViewModel":
                     return (T)(object)new Telegram.ViewModels.Drawers.AnimationDrawerViewModel(
                         _clientService,
                         _settingsService,
                         _eventAggregator);
-                case nameof(Telegram.ViewModels.Drawers.StickerDrawerViewModel):
+                case "Telegram.ViewModels.Drawers.StickerDrawerViewModel":
                     return (T)(object)new Telegram.ViewModels.Drawers.StickerDrawerViewModel(
                         _clientService,
                         _settingsService,
                         _eventAggregator);
-                case nameof(Telegram.ViewModels.Drawers.EmojiDrawerViewModel):
+                case "Telegram.ViewModels.Drawers.EmojiDrawerViewModel":
                     return (T)(object)new Telegram.ViewModels.Drawers.EmojiDrawerViewModel(
                         _clientService,
                         _settingsService,
                         _eventAggregator);
-                case nameof(Telegram.ViewModels.CreateChatPhotoViewModel):
+                case "Telegram.ViewModels.CreateChatPhotoViewModel":
                     return (T)(object)new Telegram.ViewModels.CreateChatPhotoViewModel(
                         _clientService,
                         _settingsService,
                         _eventAggregator);
-                case nameof(Telegram.ViewModels.ProfileViewModel):
+                case "Telegram.ViewModels.ProfileViewModel":
                     return (T)(object)new Telegram.ViewModels.ProfileViewModel(
                         _clientService,
                         _settingsService,
@@ -366,144 +366,144 @@ namespace Telegram.Views
                             _clientService,
                             _settingsService,
                             _eventAggregator));
-                case nameof(Telegram.ViewModels.Profile.ProfileStoriesTabViewModel):
+                case "Telegram.ViewModels.Profile.ProfileStoriesTabViewModel":
                     return (T)(object)new Telegram.ViewModels.Profile.ProfileStoriesTabViewModel(
                         _clientService,
                         _settingsService,
                         _eventAggregator);
-                case nameof(Telegram.ViewModels.Profile.ProfileMembersTabViewModel):
+                case "Telegram.ViewModels.Profile.ProfileMembersTabViewModel":
                     return (T)(object)new Telegram.ViewModels.Profile.ProfileMembersTabViewModel(
                         _clientService,
                         _settingsService,
                         _eventAggregator);
-                case nameof(Telegram.ViewModels.Profile.ProfileGroupsTabViewModel):
+                case "Telegram.ViewModels.Profile.ProfileGroupsTabViewModel":
                     return (T)(object)new Telegram.ViewModels.Profile.ProfileGroupsTabViewModel(
                         _clientService,
                         _settingsService,
                         _eventAggregator);
-                case nameof(Telegram.ViewModels.Profile.ProfileChannelsTabViewModel):
+                case "Telegram.ViewModels.Profile.ProfileChannelsTabViewModel":
                     return (T)(object)new Telegram.ViewModels.Profile.ProfileChannelsTabViewModel(
                         _clientService,
                         _settingsService,
                         _eventAggregator);
-                case nameof(Telegram.ViewModels.Profile.ProfileSavedChatsTabViewModel):
+                case "Telegram.ViewModels.Profile.ProfileSavedChatsTabViewModel":
                     return (T)(object)new Telegram.ViewModels.Profile.ProfileSavedChatsTabViewModel(
                         _clientService,
                         _settingsService,
                         _eventAggregator);
-                case nameof(Telegram.ViewModels.Users.UserCreateViewModel):
+                case "Telegram.ViewModels.Users.UserCreateViewModel":
                     return (T)(object)new Telegram.ViewModels.Users.UserCreateViewModel(
                         _clientService,
                         _settingsService,
                         _eventAggregator);
-                case nameof(Telegram.ViewModels.Users.UserEditViewModel):
+                case "Telegram.ViewModels.Users.UserEditViewModel":
                     return (T)(object)new Telegram.ViewModels.Users.UserEditViewModel(
                         _clientService,
                         _settingsService,
                         _eventAggregator,
                         _profilePhotoService ??= new Telegram.Services.ProfilePhotoService(_clientService));
-                case nameof(Telegram.ViewModels.Supergroups.SupergroupEditViewModel):
+                case "Telegram.ViewModels.Supergroups.SupergroupEditViewModel":
                     return (T)(object)new Telegram.ViewModels.Supergroups.SupergroupEditViewModel(
                         _clientService,
                         _settingsService,
                         _eventAggregator,
                         _profilePhotoService ??= new Telegram.Services.ProfilePhotoService(_clientService));
-                case nameof(Telegram.ViewModels.Supergroups.SupergroupEditTypeViewModel):
+                case "Telegram.ViewModels.Supergroups.SupergroupEditTypeViewModel":
                     return (T)(object)new Telegram.ViewModels.Supergroups.SupergroupEditTypeViewModel(
                         _clientService,
                         _settingsService,
                         _eventAggregator);
-                case nameof(Telegram.ViewModels.Supergroups.SupergroupEditStickerSetViewModel):
+                case "Telegram.ViewModels.Supergroups.SupergroupEditStickerSetViewModel":
                     return (T)(object)new Telegram.ViewModels.Supergroups.SupergroupEditStickerSetViewModel(
                         _clientService,
                         _settingsService,
                         _eventAggregator);
-                case nameof(Telegram.ViewModels.Supergroups.SupergroupEditAdministratorViewModel):
+                case "Telegram.ViewModels.Supergroups.SupergroupEditAdministratorViewModel":
                     return (T)(object)new Telegram.ViewModels.Supergroups.SupergroupEditAdministratorViewModel(
                         _clientService,
                         _settingsService,
                         _eventAggregator);
-                case nameof(Telegram.ViewModels.Supergroups.SupergroupEditRestrictedViewModel):
+                case "Telegram.ViewModels.Supergroups.SupergroupEditRestrictedViewModel":
                     return (T)(object)new Telegram.ViewModels.Supergroups.SupergroupEditRestrictedViewModel(
                         _clientService,
                         _settingsService,
                         _eventAggregator);
-                case nameof(Telegram.ViewModels.Supergroups.SupergroupEditLinkedChatViewModel):
+                case "Telegram.ViewModels.Supergroups.SupergroupEditLinkedChatViewModel":
                     return (T)(object)new Telegram.ViewModels.Supergroups.SupergroupEditLinkedChatViewModel(
                         _clientService,
                         _settingsService,
                         _eventAggregator);
-                case nameof(Telegram.ViewModels.Supergroups.SupergroupChooseMemberViewModel):
+                case "Telegram.ViewModels.Supergroups.SupergroupChooseMemberViewModel":
                     return (T)(object)new Telegram.ViewModels.Supergroups.SupergroupChooseMemberViewModel(
                         _clientService,
                         _settingsService,
                         _eventAggregator);
-                case nameof(Telegram.ViewModels.Chats.ChatInviteLinkViewModel):
+                case "Telegram.ViewModels.Chats.ChatInviteLinkViewModel":
                     return (T)(object)new Telegram.ViewModels.Chats.ChatInviteLinkViewModel(
                         _clientService,
                         _settingsService,
                         _eventAggregator);
-                case nameof(Telegram.ViewModels.Supergroups.SupergroupAdministratorsViewModel):
+                case "Telegram.ViewModels.Supergroups.SupergroupAdministratorsViewModel":
                     return (T)(object)new Telegram.ViewModels.Supergroups.SupergroupAdministratorsViewModel(
                         _clientService,
                         _settingsService,
                         _eventAggregator);
-                case nameof(Telegram.ViewModels.Supergroups.SupergroupBannedViewModel):
+                case "Telegram.ViewModels.Supergroups.SupergroupBannedViewModel":
                     return (T)(object)new Telegram.ViewModels.Supergroups.SupergroupBannedViewModel(
                         _clientService,
                         _settingsService,
                         _eventAggregator);
-                case nameof(Telegram.ViewModels.Supergroups.SupergroupPermissionsViewModel):
+                case "Telegram.ViewModels.Supergroups.SupergroupPermissionsViewModel":
                     return (T)(object)new Telegram.ViewModels.Supergroups.SupergroupPermissionsViewModel(
                         _clientService,
                         _settingsService,
                         _eventAggregator);
-                case nameof(Telegram.ViewModels.Supergroups.SupergroupMembersViewModel):
+                case "Telegram.ViewModels.Supergroups.SupergroupMembersViewModel":
                     return (T)(object)new Telegram.ViewModels.Supergroups.SupergroupMembersViewModel(
                         _clientService,
                         _settingsService,
                         _eventAggregator);
-                case nameof(Telegram.ViewModels.Supergroups.SupergroupReactionsViewModel):
+                case "Telegram.ViewModels.Supergroups.SupergroupReactionsViewModel":
                     return (T)(object)new Telegram.ViewModels.Supergroups.SupergroupReactionsViewModel(
                         _clientService,
                         _settingsService,
                         _eventAggregator);
-                case nameof(Telegram.ViewModels.Chats.ChatStatisticsViewModel):
+                case "Telegram.ViewModels.Chats.ChatStatisticsViewModel":
                     return (T)(object)new Telegram.ViewModels.Chats.ChatStatisticsViewModel(
                         _clientService,
                         _settingsService,
                         _eventAggregator);
-                case nameof(Telegram.ViewModels.Chats.ChatBoostsViewModel):
+                case "Telegram.ViewModels.Chats.ChatBoostsViewModel":
                     return (T)(object)new Telegram.ViewModels.Chats.ChatBoostsViewModel(
                         _clientService,
                         _settingsService,
                         _eventAggregator);
-                case nameof(Telegram.ViewModels.Chats.ChatRevenueViewModel):
+                case "Telegram.ViewModels.Chats.ChatRevenueViewModel":
                     return (T)(object)new Telegram.ViewModels.Chats.ChatRevenueViewModel(
                         _clientService,
                         _settingsService,
                         _eventAggregator);
-                case nameof(Telegram.ViewModels.Chats.MessageStatisticsViewModel):
+                case "Telegram.ViewModels.Chats.MessageStatisticsViewModel":
                     return (T)(object)new Telegram.ViewModels.Chats.MessageStatisticsViewModel(
                         _clientService,
                         _settingsService,
                         _eventAggregator);
-                case nameof(Telegram.ViewModels.Channels.ChannelCreateStep1ViewModel):
+                case "Telegram.ViewModels.Channels.ChannelCreateStep1ViewModel":
                     return (T)(object)new Telegram.ViewModels.Channels.ChannelCreateStep1ViewModel(
                         _clientService,
                         _settingsService,
                         _eventAggregator);
-                case nameof(Telegram.ViewModels.Channels.ChannelCreateStep2ViewModel):
+                case "Telegram.ViewModels.Channels.ChannelCreateStep2ViewModel":
                     return (T)(object)new Telegram.ViewModels.Channels.ChannelCreateStep2ViewModel(
                         _clientService,
                         _settingsService,
                         _eventAggregator);
-                case nameof(Telegram.ViewModels.BasicGroups.BasicGroupCreateStep1ViewModel):
+                case "Telegram.ViewModels.BasicGroups.BasicGroupCreateStep1ViewModel":
                     return (T)(object)new Telegram.ViewModels.BasicGroups.BasicGroupCreateStep1ViewModel(
                         _clientService,
                         _settingsService,
                         _eventAggregator);
-                case nameof(Telegram.ViewModels.InstantViewModel):
+                case "Telegram.ViewModels.InstantViewModel":
                     return (T)(object)new Telegram.ViewModels.InstantViewModel(
                         _clientService,
                         _settingsService,
@@ -516,7 +516,7 @@ namespace Telegram.Views
                             _clientService,
                             _playbackService),
                         _eventAggregator);
-                case nameof(Telegram.ViewModels.LogOutViewModel):
+                case "Telegram.ViewModels.LogOutViewModel":
                     return (T)(object)new Telegram.ViewModels.LogOutViewModel(
                         _clientService,
                         _settingsService,
@@ -527,24 +527,24 @@ namespace Telegram.Views
                             _settingsService,
                             _eventAggregator),
                         _passcodeService);
-                case nameof(Telegram.ViewModels.DiagnosticsViewModel):
+                case "Telegram.ViewModels.DiagnosticsViewModel":
                     return (T)(object)new Telegram.ViewModels.DiagnosticsViewModel(
                         _clientService,
                         _settingsService,
                         _eventAggregator);
-                case nameof(Telegram.ViewModels.Chats.ChatStoriesViewModel):
+                case "Telegram.ViewModels.Chats.ChatStoriesViewModel":
                     return (T)(object)new Telegram.ViewModels.Chats.ChatStoriesViewModel(
                         _clientService,
                         _settingsService,
                         _eventAggregator);
-                case nameof(Telegram.ViewModels.SettingsViewModel):
+                case "Telegram.ViewModels.SettingsViewModel":
                     return (T)(object)new Telegram.ViewModels.SettingsViewModel(
                         _clientService,
                         _settingsService,
                         _storageService ??= new Telegram.Services.StorageService(_clientService),
                         _eventAggregator,
                         _settingsSearchService ??= new Telegram.Services.SettingsSearchService(_clientService));
-                case nameof(Telegram.ViewModels.Settings.SettingsAdvancedViewModel):
+                case "Telegram.ViewModels.Settings.SettingsAdvancedViewModel":
                     return (T)(object)new Telegram.ViewModels.Settings.SettingsAdvancedViewModel(
                         _clientService,
                         _settingsService,
@@ -553,74 +553,74 @@ namespace Telegram.Views
                             _clientService,
                             _networkService,
                             _eventAggregator));
-                case nameof(Telegram.ViewModels.Settings.SettingsStorageViewModel):
+                case "Telegram.ViewModels.Settings.SettingsStorageViewModel":
                     return (T)(object)new Telegram.ViewModels.Settings.SettingsStorageViewModel(
                         _clientService,
                         _settingsService,
                         _eventAggregator);
-                case nameof(Telegram.ViewModels.Settings.SettingsNetworkViewModel):
+                case "Telegram.ViewModels.Settings.SettingsNetworkViewModel":
                     return (T)(object)new Telegram.ViewModels.Settings.SettingsNetworkViewModel(
                         _clientService,
                         _settingsService,
                         _eventAggregator);
-                case nameof(Telegram.ViewModels.Settings.SettingsUsernameViewModel):
+                case "Telegram.ViewModels.Settings.SettingsUsernameViewModel":
                     return (T)(object)new Telegram.ViewModels.Settings.SettingsUsernameViewModel(
                         _clientService,
                         _settingsService,
                         _eventAggregator);
-                case nameof(Telegram.ViewModels.Settings.SettingsSessionsViewModel):
+                case "Telegram.ViewModels.Settings.SettingsSessionsViewModel":
                     return (T)(object)new Telegram.ViewModels.Settings.SettingsSessionsViewModel(
                         _clientService,
                         _settingsService,
                         _eventAggregator);
-                case nameof(Telegram.ViewModels.Settings.SettingsWebSessionsViewModel):
+                case "Telegram.ViewModels.Settings.SettingsWebSessionsViewModel":
                     return (T)(object)new Telegram.ViewModels.Settings.SettingsWebSessionsViewModel(
                         _clientService,
                         _settingsService,
                         _eventAggregator);
-                case nameof(Telegram.ViewModels.Settings.SettingsBlockedChatsViewModel):
+                case "Telegram.ViewModels.Settings.SettingsBlockedChatsViewModel":
                     return (T)(object)new Telegram.ViewModels.Settings.SettingsBlockedChatsViewModel(
                         _clientService,
                         _settingsService,
                         _eventAggregator);
-                case nameof(Telegram.ViewModels.Settings.SettingsNotificationsViewModel):
+                case "Telegram.ViewModels.Settings.SettingsNotificationsViewModel":
                     return (T)(object)new Telegram.ViewModels.Settings.SettingsNotificationsViewModel(
                         _clientService,
                         _settingsService,
                         _eventAggregator);
-                case nameof(Telegram.ViewModels.Settings.SettingsNotificationsExceptionsViewModel):
+                case "Telegram.ViewModels.Settings.SettingsNotificationsExceptionsViewModel":
                     return (T)(object)new Telegram.ViewModels.Settings.SettingsNotificationsExceptionsViewModel(
                         _clientService,
                         _settingsService,
                         _eventAggregator);
-                case nameof(Telegram.ViewModels.Settings.SettingsNotificationsReactionsViewModel):
+                case "Telegram.ViewModels.Settings.SettingsNotificationsReactionsViewModel":
                     return (T)(object)new Telegram.ViewModels.Settings.SettingsNotificationsReactionsViewModel(
                         _clientService,
                         _settingsService,
                         _eventAggregator);
-                case nameof(Telegram.ViewModels.Settings.SettingsDataAndStorageViewModel):
+                case "Telegram.ViewModels.Settings.SettingsDataAndStorageViewModel":
                     return (T)(object)new Telegram.ViewModels.Settings.SettingsDataAndStorageViewModel(
                         _clientService,
                         _settingsService,
                         _storageService ??= new Telegram.Services.StorageService(_clientService),
                         _eventAggregator);
-                case nameof(Telegram.ViewModels.Settings.SettingsDataAutoViewModel):
+                case "Telegram.ViewModels.Settings.SettingsDataAutoViewModel":
                     return (T)(object)new Telegram.ViewModels.Settings.SettingsDataAutoViewModel(
                         _clientService,
                         _settingsService,
                         _eventAggregator);
-                case nameof(Telegram.ViewModels.Settings.SettingsProxyViewModel):
+                case "Telegram.ViewModels.Settings.SettingsProxyViewModel":
                     return (T)(object)new Telegram.ViewModels.Settings.SettingsProxyViewModel(
                         _clientService,
                         _settingsService,
                         _eventAggregator,
                         _networkService);
-                case nameof(Telegram.ViewModels.Settings.SettingsQuickReactionViewModel):
+                case "Telegram.ViewModels.Settings.SettingsQuickReactionViewModel":
                     return (T)(object)new Telegram.ViewModels.Settings.SettingsQuickReactionViewModel(
                         _clientService,
                         _settingsService,
                         _eventAggregator);
-                case nameof(Telegram.ViewModels.Settings.SettingsPrivacyAndSecurityViewModel):
+                case "Telegram.ViewModels.Settings.SettingsPrivacyAndSecurityViewModel":
                     return (T)(object)new Telegram.ViewModels.Settings.SettingsPrivacyAndSecurityViewModel(
                         _clientService,
                         _settingsService,
@@ -630,119 +630,119 @@ namespace Telegram.Views
                             _settingsService,
                             _eventAggregator),
                         _passcodeService);
-                case nameof(Telegram.ViewModels.Settings.Privacy.SettingsPrivacyAllowCallsViewModel):
+                case "Telegram.ViewModels.Settings.Privacy.SettingsPrivacyAllowCallsViewModel":
                     return (T)(object)new Telegram.ViewModels.Settings.Privacy.SettingsPrivacyAllowCallsViewModel(
                         _clientService,
                         _settingsService,
                         _eventAggregator,
                         Resolve<Telegram.ViewModels.Settings.Privacy.SettingsPrivacyAllowP2PCallsViewModel>());
-                case nameof(Telegram.ViewModels.Settings.Privacy.SettingsPrivacyAllowP2PCallsViewModel):
+                case "Telegram.ViewModels.Settings.Privacy.SettingsPrivacyAllowP2PCallsViewModel":
                     return (T)(object)new Telegram.ViewModels.Settings.Privacy.SettingsPrivacyAllowP2PCallsViewModel(
                         _clientService,
                         _settingsService,
                         _eventAggregator);
-                case nameof(Telegram.ViewModels.Settings.Privacy.SettingsPrivacyAllowChatInvitesViewModel):
+                case "Telegram.ViewModels.Settings.Privacy.SettingsPrivacyAllowChatInvitesViewModel":
                     return (T)(object)new Telegram.ViewModels.Settings.Privacy.SettingsPrivacyAllowChatInvitesViewModel(
                         _clientService,
                         _settingsService,
                         _eventAggregator);
-                case nameof(Telegram.ViewModels.Settings.Privacy.SettingsPrivacyShowForwardedViewModel):
+                case "Telegram.ViewModels.Settings.Privacy.SettingsPrivacyShowForwardedViewModel":
                     return (T)(object)new Telegram.ViewModels.Settings.Privacy.SettingsPrivacyShowForwardedViewModel(
                         _clientService,
                         _settingsService,
                         _eventAggregator);
-                case nameof(Telegram.ViewModels.Settings.Privacy.SettingsPrivacyPhoneViewModel):
+                case "Telegram.ViewModels.Settings.Privacy.SettingsPrivacyPhoneViewModel":
                     return (T)(object)new Telegram.ViewModels.Settings.Privacy.SettingsPrivacyPhoneViewModel(
                         _clientService,
                         _settingsService,
                         _eventAggregator,
                         Resolve<Telegram.ViewModels.Settings.Privacy.SettingsPrivacyShowPhoneViewModel>(),
                         Resolve<Telegram.ViewModels.Settings.Privacy.SettingsPrivacyAllowFindingByPhoneNumberViewModel>());
-                case nameof(Telegram.ViewModels.Settings.Privacy.SettingsPrivacyShowPhoneViewModel):
+                case "Telegram.ViewModels.Settings.Privacy.SettingsPrivacyShowPhoneViewModel":
                     return (T)(object)new Telegram.ViewModels.Settings.Privacy.SettingsPrivacyShowPhoneViewModel(
                         _clientService,
                         _settingsService,
                         _eventAggregator);
-                case nameof(Telegram.ViewModels.Settings.Privacy.SettingsPrivacyAllowFindingByPhoneNumberViewModel):
+                case "Telegram.ViewModels.Settings.Privacy.SettingsPrivacyAllowFindingByPhoneNumberViewModel":
                     return (T)(object)new Telegram.ViewModels.Settings.Privacy.SettingsPrivacyAllowFindingByPhoneNumberViewModel(
                         _clientService,
                         _settingsService,
                         _eventAggregator);
-                case nameof(Telegram.ViewModels.Settings.Privacy.SettingsPrivacyAllowPrivateVoiceAndVideoNoteMessagesViewModel):
+                case "Telegram.ViewModels.Settings.Privacy.SettingsPrivacyAllowPrivateVoiceAndVideoNoteMessagesViewModel":
                     return (T)(object)new Telegram.ViewModels.Settings.Privacy.SettingsPrivacyAllowPrivateVoiceAndVideoNoteMessagesViewModel(
                         _clientService,
                         _settingsService,
                         _eventAggregator);
-                case nameof(Telegram.ViewModels.Settings.Privacy.SettingsPrivacyShowPhotoViewModel):
+                case "Telegram.ViewModels.Settings.Privacy.SettingsPrivacyShowPhotoViewModel":
                     return (T)(object)new Telegram.ViewModels.Settings.Privacy.SettingsPrivacyShowPhotoViewModel(
                         _clientService,
                         _settingsService,
                         _eventAggregator,
                         _profilePhotoService ??= new Telegram.Services.ProfilePhotoService(_clientService));
-                case nameof(Telegram.ViewModels.Settings.Privacy.SettingsPrivacyShowStatusViewModel):
+                case "Telegram.ViewModels.Settings.Privacy.SettingsPrivacyShowStatusViewModel":
                     return (T)(object)new Telegram.ViewModels.Settings.Privacy.SettingsPrivacyShowStatusViewModel(
                         _clientService,
                         _settingsService,
                         _eventAggregator);
-                case nameof(Telegram.ViewModels.Settings.Privacy.SettingsPrivacyShowBioViewModel):
+                case "Telegram.ViewModels.Settings.Privacy.SettingsPrivacyShowBioViewModel":
                     return (T)(object)new Telegram.ViewModels.Settings.Privacy.SettingsPrivacyShowBioViewModel(
                         _clientService,
                         _settingsService,
                         _eventAggregator);
-                case nameof(Telegram.ViewModels.Settings.Privacy.SettingsPrivacyShowBirthdateViewModel):
+                case "Telegram.ViewModels.Settings.Privacy.SettingsPrivacyShowBirthdateViewModel":
                     return (T)(object)new Telegram.ViewModels.Settings.Privacy.SettingsPrivacyShowBirthdateViewModel(
                         _clientService,
                         _settingsService,
                         _eventAggregator);
-                case nameof(Telegram.ViewModels.Settings.Privacy.SettingsPrivacyNewChatViewModel):
+                case "Telegram.ViewModels.Settings.Privacy.SettingsPrivacyNewChatViewModel":
                     return (T)(object)new Telegram.ViewModels.Settings.Privacy.SettingsPrivacyNewChatViewModel(
                         _clientService,
                         _settingsService,
                         _eventAggregator);
-                case nameof(Telegram.ViewModels.Settings.SettingsAutoDeleteViewModel):
+                case "Telegram.ViewModels.Settings.SettingsAutoDeleteViewModel":
                     return (T)(object)new Telegram.ViewModels.Settings.SettingsAutoDeleteViewModel(
                         _clientService,
                         _settingsService,
                         _eventAggregator);
-                case nameof(Telegram.ViewModels.Settings.SettingsProfileViewModel):
+                case "Telegram.ViewModels.Settings.SettingsProfileViewModel":
                     return (T)(object)new Telegram.ViewModels.Settings.SettingsProfileViewModel(
                         _clientService,
                         _settingsService,
                         _eventAggregator,
                         _profilePhotoService ??= new Telegram.Services.ProfilePhotoService(_clientService));
-                case nameof(Telegram.ViewModels.Settings.SettingsProfileColorViewModel):
+                case "Telegram.ViewModels.Settings.SettingsProfileColorViewModel":
                     return (T)(object)new Telegram.ViewModels.Settings.SettingsProfileColorViewModel(
                         _clientService,
                         _settingsService,
                         _eventAggregator);
-                case nameof(Telegram.ViewModels.Supergroups.SupergroupProfileColorViewModel):
+                case "Telegram.ViewModels.Supergroups.SupergroupProfileColorViewModel":
                     return (T)(object)new Telegram.ViewModels.Supergroups.SupergroupProfileColorViewModel(
                         _clientService,
                         _settingsService,
                         _eventAggregator);
-                case nameof(Telegram.ViewModels.Settings.SettingsPasswordViewModel):
+                case "Telegram.ViewModels.Settings.SettingsPasswordViewModel":
                     return (T)(object)new Telegram.ViewModels.Settings.SettingsPasswordViewModel(
                         _clientService,
                         _settingsService,
                         _eventAggregator);
-                case nameof(Telegram.ViewModels.Settings.SettingsPasscodeViewModel):
+                case "Telegram.ViewModels.Settings.SettingsPasscodeViewModel":
                     return (T)(object)new Telegram.ViewModels.Settings.SettingsPasscodeViewModel(
                         _clientService,
                         _settingsService,
                         _eventAggregator,
                         _passcodeService);
-                case nameof(Telegram.ViewModels.Settings.SettingsStickersViewModel):
+                case "Telegram.ViewModels.Settings.SettingsStickersViewModel":
                     return (T)(object)new Telegram.ViewModels.Settings.SettingsStickersViewModel(
                         _clientService,
                         _settingsService,
                         _eventAggregator);
-                case nameof(Telegram.ViewModels.Settings.SettingsLanguageViewModel):
+                case "Telegram.ViewModels.Settings.SettingsLanguageViewModel":
                     return (T)(object)new Telegram.ViewModels.Settings.SettingsLanguageViewModel(
                         _clientService,
                         _settingsService,
                         _eventAggregator,
                         _localeService);
-                case nameof(Telegram.ViewModels.Settings.SettingsAppearanceViewModel):
+                case "Telegram.ViewModels.Settings.SettingsAppearanceViewModel":
                     return (T)(object)new Telegram.ViewModels.Settings.SettingsAppearanceViewModel(
                         _clientService,
                         _settingsService,
@@ -751,7 +751,7 @@ namespace Telegram.Views
                             _clientService,
                             _settingsService,
                             _eventAggregator));
-                case nameof(Telegram.ViewModels.Settings.SettingsThemesViewModel):
+                case "Telegram.ViewModels.Settings.SettingsThemesViewModel":
                     return (T)(object)new Telegram.ViewModels.Settings.SettingsThemesViewModel(
                         _clientService,
                         _settingsService,
@@ -760,7 +760,7 @@ namespace Telegram.Views
                             _clientService,
                             _settingsService,
                             _eventAggregator));
-                case nameof(Telegram.ViewModels.Settings.SettingsThemeViewModel):
+                case "Telegram.ViewModels.Settings.SettingsThemeViewModel":
                     return (T)(object)new Telegram.ViewModels.Settings.SettingsThemeViewModel(
                         _clientService,
                         _settingsService,
@@ -769,7 +769,7 @@ namespace Telegram.Views
                             _clientService,
                             _settingsService,
                             _eventAggregator));
-                case nameof(Telegram.ViewModels.Settings.SettingsNightModeViewModel):
+                case "Telegram.ViewModels.Settings.SettingsNightModeViewModel":
                     return (T)(object)new Telegram.ViewModels.Settings.SettingsNightModeViewModel(
                         _clientService,
                         _settingsService,
@@ -779,12 +779,12 @@ namespace Telegram.Views
                             _settingsService,
                             _eventAggregator),
                         _locationService ??= new Telegram.Services.LocationService(_clientService));
-                case nameof(Telegram.ViewModels.Settings.SettingsBackgroundsViewModel):
+                case "Telegram.ViewModels.Settings.SettingsBackgroundsViewModel":
                     return (T)(object)new Telegram.ViewModels.Settings.SettingsBackgroundsViewModel(
                         _clientService,
                         _settingsService,
                         _eventAggregator);
-                case nameof(Telegram.ViewModels.Settings.SettingsShortcutsViewModel):
+                case "Telegram.ViewModels.Settings.SettingsShortcutsViewModel":
                     return (T)(object)new Telegram.ViewModels.Settings.SettingsShortcutsViewModel(
                         _clientService,
                         _settingsService,
@@ -793,210 +793,225 @@ namespace Telegram.Views
                             _clientService,
                             _settingsService,
                             _eventAggregator));
-                case nameof(Telegram.ViewModels.Settings.SettingsPowerSavingViewModel):
+                case "Telegram.ViewModels.Settings.SettingsPowerSavingViewModel":
                     return (T)(object)new Telegram.ViewModels.Settings.SettingsPowerSavingViewModel(
                         _clientService,
                         _settingsService,
                         _eventAggregator);
-                case nameof(Telegram.ViewModels.BackgroundViewModel):
+                case "Telegram.ViewModels.BackgroundViewModel":
                     return (T)(object)new Telegram.ViewModels.BackgroundViewModel(
                         _clientService,
                         _settingsService,
                         _eventAggregator);
-                case nameof(Telegram.ViewModels.StickersViewModel):
+                case "Telegram.ViewModels.StickersViewModel":
                     return (T)(object)new Telegram.ViewModels.StickersViewModel(
                         _clientService,
                         _settingsService,
                         _eventAggregator);
-                case nameof(Telegram.ViewModels.Payments.PaymentAddressViewModel):
+                case "Telegram.ViewModels.Payments.PaymentAddressViewModel":
                     return (T)(object)new Telegram.ViewModels.Payments.PaymentAddressViewModel(
                         _clientService,
                         _settingsService,
                         _eventAggregator);
-                case nameof(Telegram.ViewModels.Payments.PaymentCredentialsViewModel):
+                case "Telegram.ViewModels.Payments.PaymentCredentialsViewModel":
                     return (T)(object)new Telegram.ViewModels.Payments.PaymentCredentialsViewModel(
                         _clientService,
                         _settingsService,
                         _eventAggregator);
-                case nameof(Telegram.ViewModels.Payments.PaymentFormViewModel):
+                case "Telegram.ViewModels.Payments.PaymentFormViewModel":
                     return (T)(object)new Telegram.ViewModels.Payments.PaymentFormViewModel(
                         _clientService,
                         _settingsService,
                         _eventAggregator);
-                case nameof(Telegram.ViewModels.InteractionsViewModel):
+                case "Telegram.ViewModels.InteractionsViewModel":
                     return (T)(object)new Telegram.ViewModels.InteractionsViewModel(
                         _clientService,
                         _settingsService,
                         _eventAggregator);
-                case nameof(Telegram.ViewModels.StoryInteractionsViewModel):
+                case "Telegram.ViewModels.StoryInteractionsViewModel":
                     return (T)(object)new Telegram.ViewModels.StoryInteractionsViewModel(
                         _clientService,
                         _settingsService,
                         _eventAggregator);
-                case nameof(Telegram.ViewModels.ChatsNearbyViewModel):
+                case "Telegram.ViewModels.ChatsNearbyViewModel":
                     return (T)(object)new Telegram.ViewModels.ChatsNearbyViewModel(
                         _clientService,
                         _settingsService,
                         _eventAggregator,
                         _locationService ??= new Telegram.Services.LocationService(_clientService));
-                case nameof(Telegram.ViewModels.Folders.FoldersViewModel):
+                case "Telegram.ViewModels.Folders.FoldersViewModel":
                     return (T)(object)new Telegram.ViewModels.Folders.FoldersViewModel(
                         _clientService,
                         _settingsService,
                         _eventAggregator);
-                case nameof(Telegram.ViewModels.Folders.FolderViewModel):
+                case "Telegram.ViewModels.Folders.FolderViewModel":
                     return (T)(object)new Telegram.ViewModels.Folders.FolderViewModel(
                         _clientService,
                         _settingsService,
                         _eventAggregator);
-                case nameof(Telegram.ViewModels.Folders.ShareFolderViewModel):
+                case "Telegram.ViewModels.Folders.ShareFolderViewModel":
                     return (T)(object)new Telegram.ViewModels.Folders.ShareFolderViewModel(
                         _clientService,
                         _settingsService,
                         _eventAggregator);
-                case nameof(Telegram.ViewModels.Folders.AddFolderViewModel):
+                case "Telegram.ViewModels.Folders.AddFolderViewModel":
                     return (T)(object)new Telegram.ViewModels.Folders.AddFolderViewModel(
                         _clientService,
                         _settingsService,
                         _eventAggregator);
-                case nameof(Telegram.ViewModels.Folders.RemoveFolderViewModel):
+                case "Telegram.ViewModels.Folders.RemoveFolderViewModel":
                     return (T)(object)new Telegram.ViewModels.Folders.RemoveFolderViewModel(
                         _clientService,
                         _settingsService,
                         _eventAggregator);
-                case nameof(Telegram.ViewModels.DownloadsViewModel):
+                case "Telegram.ViewModels.DownloadsViewModel":
                     return (T)(object)new Telegram.ViewModels.DownloadsViewModel(
                         _clientService,
                         _settingsService,
                         _storageService ??= new Telegram.Services.StorageService(_clientService),
                         _eventAggregator);
-                case nameof(Telegram.ViewModels.ChooseSoundViewModel):
+                case "Telegram.ViewModels.ChooseSoundViewModel":
                     return (T)(object)new Telegram.ViewModels.ChooseSoundViewModel(
                         _clientService,
                         _settingsService,
                         _eventAggregator);
-                case nameof(Telegram.ViewModels.ChatNotificationsViewModel):
+                case "Telegram.ViewModels.ChatNotificationsViewModel":
                     return (T)(object)new Telegram.ViewModels.ChatNotificationsViewModel(
                         _clientService,
                         _settingsService,
                         _eventAggregator);
-                case nameof(Telegram.ViewModels.Premium.PromoViewModel):
+                case "Telegram.ViewModels.Premium.PromoViewModel":
                     return (T)(object)new Telegram.ViewModels.Premium.PromoViewModel(
                         _clientService,
                         _settingsService,
                         _eventAggregator);
-                case nameof(Telegram.ViewModels.Business.BusinessLocationViewModel):
-                    return (T)(object)new Telegram.ViewModels.Business.BusinessLocationViewModel(
+                case "Telegram.ViewModels.Stars.StarsViewModel":
+                    return (T)(object)new Telegram.ViewModels.Stars.StarsViewModel(
                         _clientService,
                         _settingsService,
                         _eventAggregator);
-                case nameof(Telegram.ViewModels.Business.BusinessViewModel):
+                case "Telegram.ViewModels.Stars.BuyViewModel":
+                    return (T)(object)new Telegram.ViewModels.Stars.BuyViewModel(
+                        _clientService,
+                        _settingsService,
+                        _eventAggregator);
+                case "Telegram.ViewModels.Stars.PayViewModel":
+                    return (T)(object)new Telegram.ViewModels.Stars.PayViewModel(
+                        _clientService,
+                        _settingsService,
+                        _eventAggregator);
+                case "Telegram.ViewModels.Business.BusinessViewModel":
                     return (T)(object)new Telegram.ViewModels.Business.BusinessViewModel(
                         _clientService,
                         _settingsService,
                         _eventAggregator);
-                case nameof(Telegram.ViewModels.Business.BusinessHoursViewModel):
+                case "Telegram.ViewModels.Business.BusinessLocationViewModel":
+                    return (T)(object)new Telegram.ViewModels.Business.BusinessLocationViewModel(
+                        _clientService,
+                        _settingsService,
+                        _eventAggregator);
+                case "Telegram.ViewModels.Business.BusinessHoursViewModel":
                     return (T)(object)new Telegram.ViewModels.Business.BusinessHoursViewModel(
                         _clientService,
                         _settingsService,
                         _eventAggregator);
-                case nameof(Telegram.ViewModels.Business.BusinessRepliesViewModel):
+                case "Telegram.ViewModels.Business.BusinessRepliesViewModel":
                     return (T)(object)new Telegram.ViewModels.Business.BusinessRepliesViewModel(
                         _clientService,
                         _settingsService,
                         _eventAggregator);
-                case nameof(Telegram.ViewModels.Business.BusinessGreetViewModel):
+                case "Telegram.ViewModels.Business.BusinessGreetViewModel":
                     return (T)(object)new Telegram.ViewModels.Business.BusinessGreetViewModel(
                         _clientService,
                         _settingsService,
                         _eventAggregator);
-                case nameof(Telegram.ViewModels.Business.BusinessAwayViewModel):
+                case "Telegram.ViewModels.Business.BusinessAwayViewModel":
                     return (T)(object)new Telegram.ViewModels.Business.BusinessAwayViewModel(
                         _clientService,
                         _settingsService,
                         _eventAggregator);
-                case nameof(Telegram.ViewModels.Business.BusinessBotsViewModel):
+                case "Telegram.ViewModels.Business.BusinessBotsViewModel":
                     return (T)(object)new Telegram.ViewModels.Business.BusinessBotsViewModel(
                         _clientService,
                         _settingsService,
                         _eventAggregator);
-                case nameof(Telegram.ViewModels.Business.BusinessIntroViewModel):
+                case "Telegram.ViewModels.Business.BusinessIntroViewModel":
                     return (T)(object)new Telegram.ViewModels.Business.BusinessIntroViewModel(
                         _clientService,
                         _settingsService,
                         _eventAggregator);
-                case nameof(Telegram.ViewModels.Business.BusinessChatLinksViewModel):
+                case "Telegram.ViewModels.Business.BusinessChatLinksViewModel":
                     return (T)(object)new Telegram.ViewModels.Business.BusinessChatLinksViewModel(
                         _clientService,
                         _settingsService,
                         _eventAggregator);
-                case nameof(Telegram.ViewModels.RevenueViewModel):
+                case "Telegram.ViewModels.RevenueViewModel":
                     return (T)(object)new Telegram.ViewModels.RevenueViewModel(
                         _clientService,
                         _settingsService,
                         _eventAggregator);
-                case nameof(Telegram.Services.IDeviceInfoService):
+                case "Telegram.Services.IDeviceInfoService":
                     return (T)_deviceInfoService;
-                case nameof(Telegram.Services.ISettingsService):
+                case "Telegram.Services.ISettingsService":
                     return (T)_settingsService;
-                case nameof(Telegram.Services.IEventAggregator):
+                case "Telegram.Services.IEventAggregator":
                     return (T)_eventAggregator;
-                case nameof(Telegram.Services.IClientService):
+                case "Telegram.Services.IClientService":
                     return (T)_clientService;
-                case nameof(Telegram.Services.INetworkService):
+                case "Telegram.Services.INetworkService":
                     return (T)_networkService;
-                case nameof(Telegram.Services.IGenerationService):
+                case "Telegram.Services.IGenerationService":
                     return (T)_generationService;
-                case nameof(Telegram.Services.ISessionService):
+                case "Telegram.Services.ISessionService":
                     return (T)_sessionService;
-                case nameof(Telegram.Services.INotificationsService):
+                case "Telegram.Services.INotificationsService":
                     return (T)_notificationsService;
-                case nameof(Telegram.Services.ViewService.IViewService):
+                case "Telegram.Services.ViewService.IViewService":
                     return (T)_viewService;
-                case nameof(Telegram.Services.IVoipService):
+                case "Telegram.Services.IVoipService":
                     return (T)_voipService;
-                case nameof(Telegram.Services.ISettingsSearchService):
+                case "Telegram.Services.ISettingsSearchService":
                     return (T)(_settingsSearchService ??= new Telegram.Services.SettingsSearchService(_clientService));
-                case nameof(Telegram.Services.ICloudUpdateService):
+                case "Telegram.Services.ICloudUpdateService":
                     return (T)(_cloudUpdateService ??= new Telegram.Services.CloudUpdateService(
                         _clientService,
                         _networkService,
                         _eventAggregator));
-                case nameof(Telegram.Services.IShortcutsService):
+                case "Telegram.Services.IShortcutsService":
                     return (T)(_shortcutsService ??= new Telegram.Services.ShortcutsService(
                         _clientService,
                         _settingsService,
                         _eventAggregator));
-                case nameof(Telegram.Services.IVoipGroupService):
+                case "Telegram.Services.IVoipGroupService":
                     return (T)(_voipGroupService ??= new Telegram.Services.VoipGroupService(
                         _clientService,
                         _settingsService,
                         _eventAggregator,
                         _viewService));
-                case nameof(Telegram.Services.IContactsService):
+                case "Telegram.Services.IContactsService":
                     return (T)(_contactsService ??= new Telegram.Services.ContactsService(
                         _clientService,
                         _settingsService,
                         _eventAggregator));
-                case nameof(Telegram.Services.ILocationService):
+                case "Telegram.Services.ILocationService":
                     return (T)(_locationService ??= new Telegram.Services.LocationService(_clientService));
-                case nameof(Telegram.Services.IThemeService):
+                case "Telegram.Services.IThemeService":
                     return (T)(_themeService ??= new Telegram.Services.ThemeService(
                         _clientService,
                         _settingsService,
                         _eventAggregator));
-                case nameof(Telegram.Services.Factories.IMessageFactory):
+                case "Telegram.Services.Factories.IMessageFactory":
                     return (T)(_messageFactory ??= new Telegram.Services.Factories.MessageFactory(
                         _clientService,
                         _playbackService));
-                case nameof(Telegram.Services.IStorageService):
+                case "Telegram.Services.IStorageService":
                     return (T)(_storageService ??= new Telegram.Services.StorageService(_clientService));
-                case nameof(Telegram.Services.ITranslateService):
+                case "Telegram.Services.ITranslateService":
                     return (T)(_translateService ??= new Telegram.Services.TranslateService(
                         _clientService,
                         _settingsService,
                         _eventAggregator));
-                case nameof(Telegram.Services.IProfilePhotoService):
+                case "Telegram.Services.IProfilePhotoService":
                     return (T)(_profilePhotoService ??= new Telegram.Services.ProfilePhotoService(_clientService));
                 default:
                     return default;

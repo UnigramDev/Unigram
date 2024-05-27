@@ -707,7 +707,7 @@ namespace Telegram.Controls.Cells
                     return result;
                 }
 
-                return result + invoice.Title;
+                return result + invoice.ProductInfo.Title;
             }
             else if (message.Content is MessageContact)
             {

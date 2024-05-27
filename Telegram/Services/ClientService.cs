@@ -61,6 +61,8 @@ namespace Telegram.Services
         bool IsPremium { get; }
         bool IsPremiumAvailable { get; }
 
+        long OwnedStarCount { get; }
+
         UnconfirmedSession UnconfirmedSession { get; }
 
         IOptionsService Options { get; }
@@ -1090,6 +1092,8 @@ namespace Telegram.Services
         public bool IsPremium => _options.IsPremium;
 
         public bool IsPremiumAvailable => _options.IsPremium || _options.IsPremiumAvailable;
+
+        public long OwnedStarCount { get; private set; }
 
         public IOptionsService Options => _options;
 
@@ -2818,6 +2822,10 @@ namespace Telegram.Services
             else if (update is UpdateAvailableMessageEffects updateAvailableMessageEffects)
             {
                 _availableMessageEffects = updateAvailableMessageEffects;
+            }
+            else if (update is UpdateOwnedStarCount updateOwnedStarCount)
+            {
+                OwnedStarCount = updateOwnedStarCount.StarCount;
             }
 
             _aggregator.Publish(update);

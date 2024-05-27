@@ -1559,7 +1559,7 @@ namespace Telegram.Controls.Messages
             }
             else if (content is MessageInvoice invoice)
             {
-                var caption = invoice.Photo == null;
+                var caption = invoice.ProductInfo.Photo == null;
 
                 ContentPanel.Padding = new Thickness(0, 4, 0, 0);
                 Media.Margin = new Thickness(10, 0, 10, 6);
@@ -1666,7 +1666,7 @@ namespace Telegram.Controls.Messages
                 {
                     Media.Child = new InvoicePreviewContent(message);
                 }
-                else if (invoice.Photo != null)
+                else if (invoice.ProductInfo.Photo != null)
                 {
                     Media.Child = new InvoicePhotoContent(message);
                 }
@@ -3247,7 +3247,7 @@ namespace Telegram.Controls.Messages
                 }
                 else
                 {
-                    constraint = invoiceMessage.Photo;
+                    constraint = invoiceMessage.ProductInfo.Photo;
                 }
             }
             else if (constraint is MessageLocation locationMessage)

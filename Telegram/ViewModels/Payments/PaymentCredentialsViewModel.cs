@@ -15,14 +15,14 @@ namespace Telegram.ViewModels.Payments
 {
     public class PaymentCredentialsViewModel : ViewModelBase
     {
-        private PaymentForm _paymentForm;
+        private PaymentFormTypeRegular _paymentForm;
 
         public PaymentCredentialsViewModel(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator)
             : base(clientService, settingsService, aggregator)
         {
         }
 
-        public string Initialize(PaymentForm paymentForm)
+        public string Initialize(PaymentFormTypeRegular paymentForm)
         {
             _paymentForm = paymentForm;
             CanSaveCredentials = _paymentForm.CanSaveCredentials;
@@ -54,7 +54,7 @@ namespace Telegram.ViewModels.Payments
             return null;
         }
 
-        public string Initialize(PaymentForm paymentForm, PaymentOption paymentOption)
+        public string Initialize(PaymentFormTypeRegular paymentForm, PaymentOption paymentOption)
         {
             _paymentForm = paymentForm;
             CanSaveCredentials = _paymentForm.CanSaveCredentials;

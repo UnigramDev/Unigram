@@ -92,24 +92,28 @@ namespace Telegram.ViewModels.Payments
             InputInvoice = invoice;
             PaymentForm = paymentForm;
 
-            Photo = paymentForm.ProductPhoto;
-            Title = paymentForm.ProductTitle;
-            Description = paymentForm.ProductDescription;
+            Photo = paymentForm.ProductInfo.Photo;
+            Title = paymentForm.ProductInfo.Title;
+            Description = paymentForm.ProductInfo.Description;
 
-            Invoice = paymentForm.Invoice;
             Bot = ClientService.GetUser(paymentForm.SellerBotUserId);
 
-            Credentials = paymentForm.SavedCredentials.FirstOrDefault();
-            Info = paymentForm.SavedOrderInfo;
-
-            RaisePropertyChanged(nameof(HasSuggestedTipAmounts));
-
-            if (paymentForm.SavedOrderInfo != null)
+            if (paymentForm.Type is PaymentFormTypeRegular regular)
             {
-                var response = await ClientService.SendAsync(new ValidateOrderInfo(invoice, paymentForm.SavedOrderInfo, false));
-                if (response is ValidatedOrderInfo validated)
+                Invoice = regular.Invoice;
+
+                Credentials = regular.SavedCredentials.FirstOrDefault();
+                Info = regular.SavedOrderInfo;
+
+                RaisePropertyChanged(nameof(HasSuggestedTipAmounts));
+
+                if (regular.SavedOrderInfo != null)
                 {
-                    ValidatedInfo = validated;
+                    var response = await ClientService.SendAsync(new ValidateOrderInfo(invoice, regular.SavedOrderInfo, false));
+                    if (response is ValidatedOrderInfo validated)
+                    {
+                        ValidatedInfo = validated;
+                    }
                 }
             }
         }
@@ -124,18 +128,21 @@ namespace Telegram.ViewModels.Payments
                 return;
             }
 
-            Photo = paymentReceipt.Photo;
-            Title = paymentReceipt.Title;
-            Description = paymentReceipt.Description;
+            Photo = paymentReceipt.ProductInfo.Photo;
+            Title = paymentReceipt.ProductInfo.Title;
+            Description = paymentReceipt.ProductInfo.Description;
 
-            Invoice = paymentReceipt.Invoice;
-            Bot = ClientService.GetUser(paymentReceipt.SellerBotUserId);
+            if (paymentReceipt.Type is PaymentReceiptTypeRegular regular)
+            {
+                Invoice = regular.Invoice;
+                Bot = ClientService.GetUser(paymentReceipt.SellerBotUserId);
 
-            Credentials = new SavedCredentials(string.Empty, paymentReceipt.CredentialsTitle);
-            Info = paymentReceipt.OrderInfo;
+                Credentials = new SavedCredentials(string.Empty, regular.CredentialsTitle);
+                Info = regular.OrderInfo;
 
-            Shipping = paymentReceipt.ShippingOption;
-            TipAmount = paymentReceipt.TipAmount;
+                Shipping = regular.ShippingOption;
+                TipAmount = regular.TipAmount;
+            }
         }
 
         private User _bot;
@@ -230,8 +237,12 @@ namespace Telegram.ViewModels.Payments
         {
             get
             {
-                var invoice = _paymentForm?.Invoice;
-                if (invoice != null && invoice.SuggestedTipAmounts.Contains(_tipAmount))
+                if (_paymentForm?.Type is not PaymentFormTypeRegular regular)
+                {
+                    return null;
+                }
+
+                if (regular.Invoice != null && regular.Invoice.SuggestedTipAmounts.Contains(_tipAmount))
                 {
                     return _tipAmount;
                 }
@@ -247,7 +258,7 @@ namespace Telegram.ViewModels.Payments
             }
         }
 
-        public bool HasSuggestedTipAmounts => _paymentForm?.Invoice.SuggestedTipAmounts.Count > 0;
+        public bool HasSuggestedTipAmounts => _paymentForm?.Type is PaymentFormTypeRegular regular && regular.Invoice.SuggestedTipAmounts.Count > 0;
 
         public long TotalAmount
         {
@@ -294,16 +305,16 @@ namespace Telegram.ViewModels.Payments
 
         public async void ChooseCredentials()
         {
-            if (_paymentForm is not PaymentForm form)
+            if (_paymentForm?.Type is not PaymentFormTypeRegular regular)
             {
                 return;
             }
 
-            if (form.SavedCredentials.Count > 0
-                || form.AdditionalPaymentOptions.Count > 0)
+            if (regular.SavedCredentials.Count > 0
+                || regular.AdditionalPaymentOptions.Count > 0)
             {
-                var credentials = form.SavedCredentials.Select(x => new ChooseOptionItem(x, x.Title, false));
-                var additional = form.AdditionalPaymentOptions.Select(x => new ChooseOptionItem(x, x.Title, false));
+                var credentials = regular.SavedCredentials.Select(x => new ChooseOptionItem(x, x.Title, false));
+                var additional = regular.AdditionalPaymentOptions.Select(x => new ChooseOptionItem(x, x.Title, false));
 
                 var items = new[] { new ChooseOptionItem(null, Strings.PaymentCheckoutMethodNewCard, false) };
 
@@ -323,7 +334,7 @@ namespace Telegram.ViewModels.Payments
                     }
                     else if (choose.SelectedIndex is PaymentOption paymentOption)
                     {
-                        var option = new PaymentCredentialsPopup(form, paymentOption);
+                        var option = new PaymentCredentialsPopup(regular, paymentOption);
 
                         var confirm2 = await ShowPopupAsync(option);
                         if (confirm2 == ContentDialogResult.Primary && option.Credentials != null)
@@ -337,7 +348,7 @@ namespace Telegram.ViewModels.Payments
                 }
             }
 
-            var popup = new PaymentCredentialsPopup(_paymentForm);
+            var popup = new PaymentCredentialsPopup(regular);
 
             var confirm = await ShowPopupAsync(popup);
             if (confirm == ContentDialogResult.Primary && popup.Credentials != null)
@@ -349,12 +360,12 @@ namespace Telegram.ViewModels.Payments
 
         public async void ChooseAddress()
         {
-            if (_paymentForm == null)
+            if (_paymentForm?.Type is not PaymentFormTypeRegular regular)
             {
                 return;
             }
 
-            var popup = new PaymentAddressPopup(_inputInvoice, _paymentForm.Invoice, _info);
+            var popup = new PaymentAddressPopup(_inputInvoice, regular.Invoice, _info);
 
             var confirm = await ShowPopupAsync(popup);
             if (confirm == ContentDialogResult.Primary && popup.ValidatedInfo != null)
@@ -365,7 +376,7 @@ namespace Telegram.ViewModels.Payments
 
         public async void ChooseShipping()
         {
-            if (_paymentForm == null)
+            if (_paymentForm?.Type is not PaymentFormTypeRegular regular)
             {
                 return;
             }
@@ -378,7 +389,7 @@ namespace Telegram.ViewModels.Payments
             }
 
             var items = validatedInfo.ShippingOptions.Select(
-                x => new ChooseOptionItem(x, Formatter.ShippingOption(x, _paymentForm.Invoice.Currency), _shipping?.Id == x.Id));
+                x => new ChooseOptionItem(x, Formatter.ShippingOption(x, regular.Invoice.Currency), _shipping?.Id == x.Id));
 
             var popup = new ChooseOptionPopup(items);
             popup.Title = Strings.PaymentCheckoutShippingMethod;
@@ -394,10 +405,15 @@ namespace Telegram.ViewModels.Payments
 
         public async void ChooseTipAmount()
         {
+            if (_paymentForm.Type is not PaymentFormTypeRegular regular)
+            {
+                return;
+            }
+
             var popup = new InputPopup(InputPopupType.Value);
-            popup.Value = Formatter.Amount(_tipAmount, _paymentForm.Invoice.Currency);
-            popup.Maximum = Formatter.Amount(_paymentForm.Invoice.MaxTipAmount, _paymentForm.Invoice.Currency);
-            popup.Formatter = Locale.GetCurrencyFormatter(_paymentForm.Invoice.Currency);
+            popup.Value = Formatter.Amount(_tipAmount, regular.Invoice.Currency);
+            popup.Maximum = Formatter.Amount(regular.Invoice.MaxTipAmount, regular.Invoice.Currency);
+            popup.Formatter = Locale.GetCurrencyFormatter(regular.Invoice.Currency);
 
             popup.Title = Strings.SearchTipToday;
             popup.PrimaryButtonText = Strings.OK;
@@ -406,7 +422,7 @@ namespace Telegram.ViewModels.Payments
             var confirm = await ShowPopupAsync(popup);
             if (confirm == ContentDialogResult.Primary)
             {
-                TipAmount = Formatter.AmountBack(popup.Value, _paymentForm.Invoice.Currency);
+                TipAmount = Formatter.AmountBack(popup.Value, regular.Invoice.Currency);
             }
         }
 
@@ -419,13 +435,13 @@ namespace Telegram.ViewModels.Payments
                 return;
             }
 
-            if (_credentials == null)
+            if (_credentials == null || _paymentForm.Type is not PaymentFormTypeRegular regular)
             {
                 ChooseCredentials();
                 return;
             }
 
-            if (_info == null && _paymentForm.Invoice.NeedInfo())
+            if (_info == null && regular.Invoice.NeedInfo())
             {
                 ChooseAddress();
                 return;
@@ -438,11 +454,11 @@ namespace Telegram.ViewModels.Payments
             }
 
             var bot = ClientService.GetUser(_paymentForm.SellerBotUserId);
-            var provider = ClientService.GetUser(_paymentForm.PaymentProviderUserId);
+            var provider = ClientService.GetUser(regular.PaymentProviderUserId);
 
             var disclaimer = await ShowPopupAsync(string.Format(Strings.PaymentWarningText, bot.FirstName, provider.FirstName), Strings.PaymentWarning, Strings.OK);
 
-            var confirm = await ShowPopupAsync(string.Format(Strings.PaymentTransactionMessage, Locale.FormatCurrency(TotalAmount, _paymentForm.Invoice.Currency), bot.FirstName, _title), Strings.PaymentTransactionReview, Strings.OK, Strings.Cancel);
+            var confirm = await ShowPopupAsync(string.Format(Strings.PaymentTransactionMessage, Locale.FormatCurrency(TotalAmount, regular.Invoice.Currency), bot.FirstName, _title), Strings.PaymentTransactionReview, Strings.OK, Strings.Cancel);
             if (confirm != ContentDialogResult.Primary)
             {
                 return;
@@ -457,12 +473,12 @@ namespace Telegram.ViewModels.Payments
             var credentials = _inputCredentials;
             if (credentials == null)
             {
-                if (_paymentForm.SavedCredentials.Count > 0)
+                if (regular.SavedCredentials.Count > 0)
                 {
                     var password = await GetTemporaryPasswordStateAsync();
                     if (password.HasPassword && password.ValidFor > 0)
                     {
-                        credentials = new InputCredentialsSaved(_paymentForm.SavedCredentials[0].Id);
+                        credentials = new InputCredentialsSaved(regular.SavedCredentials[0].Id);
                     }
                 }
             }
@@ -505,8 +521,13 @@ namespace Telegram.ViewModels.Payments
 
         private async Task<TemporaryPasswordState> CreateTemporaryPasswordAsync()
         {
+            if (_paymentForm.Type is not PaymentFormTypeRegular regular)
+            {
+                return new TemporaryPasswordState(false, 0);
+            }
+
             var popup = new InputPopup(InputPopupType.Password);
-            popup.Header = string.Format(Strings.PaymentConfirmationMessage, _paymentForm.SavedCredentials[0].Title);
+            popup.Header = string.Format(Strings.PaymentConfirmationMessage, regular.SavedCredentials[0].Title);
             popup.PrimaryButtonText = Strings.Continue;
             popup.SecondaryButtonText = Strings.Cancel;
 

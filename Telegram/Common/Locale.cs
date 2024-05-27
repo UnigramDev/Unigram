@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Telegram.Controls.Media;
 using Telegram.Converters;
 using Telegram.Native;
 using Telegram.Services;
@@ -203,10 +204,19 @@ namespace Telegram.Common
                     customFormat = " {0:N0}";
                     doubleAmount = amount / 1000000000.0d;
                     break;
+                case "XTR":
+                    customFormat = Icons.Premium + "\u200A{0:N0}";
+                    doubleAmount = amount;
+                    break;
                 default:
                     customFormat = " {0:N2}";
                     doubleAmount = amount / 100.0d;
                     break;
+            }
+
+            if (currency == "XTR")
+            {
+                return (discount ? "-" : string.Empty) + string.Format(customFormat, doubleAmount);
             }
 
             var formatter = GetCurrencyFormatter(currency);

@@ -239,6 +239,16 @@
                     </controls:BadgeButton.IconSource>
                 </controls:BadgeButton>
 
+                <controls:BadgeButton x:Name="Stars"
+                                      x:Load="{x:Bind ViewModel.IsPremiumAvailable, Mode=OneWay}"
+                                      Click="Stars_Click"
+                                      Content="{CustomResource MenuTelegramStars}"
+                                      Style="{StaticResource IconBadgeButtonStyle}">
+                    <controls:BadgeButton.IconSource>
+                        <icons:PremiumStars />
+                    </controls:BadgeButton.IconSource>
+                </controls:BadgeButton>
+
                 <controls:BadgeButton x:Name="Business"
                                       x:Load="{x:Bind ViewModel.IsBusinessAvailable, Mode=OneWay}"
                                       Click="Business_Click"

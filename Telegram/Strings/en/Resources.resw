@@ -6134,6 +6134,9 @@ Minimum length is 5 characters.</value>
   <data name="Mention" xml:space="preserve">
     <value>Mention</value>
   </data>
+  <data name="MenuTelegramStars" xml:space="preserve">
+    <value>Your Stars</value>
+  </data>
   <data name="Message" xml:space="preserve">
     <value>Message</value>
   </data>
@@ -6741,6 +6744,9 @@ Stories</value>
   </data>
   <data name="NotifyIconOpen" xml:space="preserve">
     <value>Open Unigram</value>
+  </data>
+  <data name="NotifyMoreOptions" xml:space="preserve">
+    <value>More Options</value>
   </data>
   <data name="NoUsernameFound" xml:space="preserve">
     <value>Username not found.</value>
@@ -8052,6 +8058,9 @@ Payments will go directly to the developer of {0}. Telegram cannot provide any g
   <data name="Remove" xml:space="preserve">
     <value>Remove</value>
   </data>
+  <data name="RemoveEffect" xml:space="preserve">
+    <value>Remove Effect</value>
+  </data>
   <data name="RemovePhotoForRestDescription" xml:space="preserve">
     <value>Are you sure you want to delete your public photo?</value>
   </data>
@@ -8963,6 +8972,84 @@ The channel &quot;**{1}**&quot; will become private.</value>
   <data name="SponsoredMessage" xml:space="preserve">
     <value>ad</value>
   </data>
+  <data name="StarsAcquired" xml:space="preserve">
+    <value>Stars Acquired!</value>
+  </data>
+  <data name="StarsAcquiredInfo_other" xml:space="preserve">
+    <value>**{0} Stars** added to your balance.</value>
+  </data>
+  <data name="StarsBalance" xml:space="preserve">
+    <value>Balance</value>
+  </data>
+  <data name="StarsBuyMore" xml:space="preserve">
+    <value>Buy More Stars</value>
+  </data>
+  <data name="StarsConfirmPurchaseButton_one" xml:space="preserve">
+    <value>Confirm and Pay ⭐️ {0} Star</value>
+  </data>
+  <data name="StarsConfirmPurchaseButton_other" xml:space="preserve">
+    <value>Confirm and Pay ⭐️ {0} Stars</value>
+  </data>
+  <data name="StarsConfirmPurchaseText_one" xml:space="preserve">
+    <value>Do you want to buy **{1}** in **{2}** for **{0} star**?</value>
+  </data>
+  <data name="StarsConfirmPurchaseText_other" xml:space="preserve">
+    <value>Do you want to buy **{1}** in **{2}** for **{0} stars**?</value>
+  </data>
+  <data name="StarsConfirmPurchaseTitle" xml:space="preserve">
+    <value>Confirm Your Purchase</value>
+  </data>
+  <data name="StarsCount_one" xml:space="preserve">
+    <value>{0} Star</value>
+  </data>
+  <data name="StarsCount_other" xml:space="preserve">
+    <value>{0} Stars</value>
+  </data>
+  <data name="StarsNeededText" xml:space="preserve">
+    <value>Buy **Stars** and use them on **{0}** and other miniapps.</value>
+  </data>
+  <data name="StarsNeededTitle_one" xml:space="preserve">
+    <value>{0} Star Needed</value>
+  </data>
+  <data name="StarsNeededTitle_other" xml:space="preserve">
+    <value>{0} Stars Needed</value>
+  </data>
+  <data name="StarsPurchaseCompleted" xml:space="preserve">
+    <value>Purchase Completed!</value>
+  </data>
+  <data name="StarsPurchaseCompletedInfo_other" xml:space="preserve">
+    <value>You acquired **{1}** in **{2}** for **{0} Stars**.</value>
+  </data>
+  <data name="StarsTOS" xml:space="preserve">
+    <value>By proceeding and purchasing Stars, you agree with the **Terms and Conditions**.</value>
+  </data>
+  <data name="StarsTOSLink" xml:space="preserve">
+    <value>https://telegram.org/tos</value>
+  </data>
+  <data name="StarsTransactionBot" xml:space="preserve">
+    <value>Stars Top-Up Bot</value>
+  </data>
+  <data name="StarsTransactionFragment" xml:space="preserve">
+    <value>Purchase from Fragment</value>
+  </data>
+  <data name="StarsTransactionInApp" xml:space="preserve">
+    <value>In-App Purchase</value>
+  </data>
+  <data name="StarsTransactionsAll" xml:space="preserve">
+    <value>All Transactions</value>
+  </data>
+  <data name="StarsTransactionsIncoming" xml:space="preserve">
+    <value>Incoming</value>
+  </data>
+  <data name="StarsTransactionsOutgoing" xml:space="preserve">
+    <value>Outgoing</value>
+  </data>
+  <data name="StarsTransactionUnsupported" xml:space="preserve">
+    <value>In-App Purchase</value>
+  </data>
+  <data name="StarsYourBalance" xml:space="preserve">
+    <value>your balance</value>
+  </data>
   <data name="Start" xml:space="preserve">
     <value>Start</value>
   </data>
@@ -9353,6 +9440,15 @@ Here’s what is now unlocked.</value>
   </data>
   <data name="TelegramPremiumSubtitle" xml:space="preserve">
     <value>Go **beyond the limits** and **unlock dozens of exclusive** features by subscribing to **Telegram Premium**.</value>
+  </data>
+  <data name="TelegramStars" xml:space="preserve">
+    <value>Telegram Stars</value>
+  </data>
+  <data name="TelegramStarsChoose" xml:space="preserve">
+    <value>Choose package</value>
+  </data>
+  <data name="TelegramStarsInfo" xml:space="preserve">
+    <value>Buy Stars to unlock content and services in miniapps on Telegram.</value>
   </data>
   <data name="TelegramTones" xml:space="preserve">
     <value>Telegram tones</value>
@@ -9757,6 +9853,9 @@ If you are not comfortable with Telegram&apos;s modest needs, it won&apos;t be p
   </data>
   <data name="UnhideFromTop" xml:space="preserve">
     <value>Pin</value>
+  </data>
+  <data name="UnknownErrorCode" xml:space="preserve">
+    <value>Unknown error: {0}</value>
   </data>
   <data name="Unlock" xml:space="preserve">
     <value>Unlock</value>

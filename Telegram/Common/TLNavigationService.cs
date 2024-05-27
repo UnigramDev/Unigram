@@ -23,6 +23,7 @@ using Telegram.Views.Premium.Popups;
 using Telegram.Views.Settings;
 using Telegram.Views.Settings.Password;
 using Telegram.Views.Settings.Popups;
+using Telegram.Views.Stars.Popups;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.UI.WindowManagement;
 using Windows.UI.Xaml;
@@ -82,6 +83,19 @@ namespace Telegram.Common
 
         public async void NavigateToInvoice(MessageViewModel message)
         {
+            if (message.Content is MessageInvoice { Currency: "XTR" })
+            {
+                var response = await ClientService.SendAsync(new GetPaymentForm(new InputInvoiceMessage(message.ChatId, message.Id), Theme.Current.Parameters));
+                if (response is not PaymentForm paymentForm)
+                {
+                    ToastPopup.Show(Strings.PaymentInvoiceLinkInvalid, new LocalFileSource("ms-appx:///Assets/Toasts/Info.tgs"));
+                    return;
+                }
+
+                await ShowPopupAsync(typeof(PayPopup), new PaymentFormArgs(new InputInvoiceMessage(message.ChatId, message.Id), paymentForm));
+                return;
+            }
+
             var parameters = new ViewServiceParams
             {
                 Title = message.Content is MessageInvoice { ReceiptMessageId: 0 } ? Strings.PaymentCheckout : Strings.PaymentReceipt,
@@ -106,6 +120,12 @@ namespace Telegram.Common
             if (response is not PaymentForm paymentForm)
             {
                 ToastPopup.Show(Strings.PaymentInvoiceLinkInvalid, new LocalFileSource("ms-appx:///Assets/Toasts/Info.tgs"));
+                return;
+            }
+
+            if (paymentForm.Type is PaymentFormTypeRegular { Invoice.Currency: "XTR" })
+            {
+                await ShowPopupAsync(typeof(PayPopup), paymentForm);
                 return;
             }
 

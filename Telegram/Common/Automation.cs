@@ -391,7 +391,7 @@ namespace Telegram.Common
             }
             else if (message.Content is MessageInvoice invoice)
             {
-                return Strings.PaymentInvoice + ", " + invoice.Title + ", ";
+                return Strings.PaymentInvoice + ", " + invoice.ProductInfo.Title + ", ";
             }
             else if (message.Content is MessageContact)
             {

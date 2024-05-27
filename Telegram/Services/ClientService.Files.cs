@@ -2326,6 +2326,11 @@ namespace Telegram.Services
                     ProcessFiles(item);
                 }
             }
+            else if (target is StarTransactions starTransactions)
+            {
+                OwnedStarCount = starTransactions.StarCount;
+                _aggregator.Publish(new UpdateOwnedStarCount(starTransactions.StarCount));
+            }
         }
     }
 }

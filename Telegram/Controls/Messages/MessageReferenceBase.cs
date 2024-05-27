@@ -544,7 +544,7 @@ namespace Telegram.Controls.Messages
                     outgoing,
                     sender,
                     title,
-                    invoice.Title,
+                    invoice.ProductInfo.Title,
                     null,
                     false,
                     white);

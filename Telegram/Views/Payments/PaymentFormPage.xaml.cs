@@ -100,9 +100,9 @@ namespace Telegram.Views.Payments
             {
                 return;
             }
-            else if (args.ItemContainer.ContentTemplateRoot is TextBlock content && args.Item is long value)
+            else if (args.ItemContainer.ContentTemplateRoot is TextBlock content && args.Item is long value && ViewModel.PaymentForm.Type is PaymentFormTypeRegular regular)
             {
-                content.Text = Formatter.FormatAmount(value, ViewModel.PaymentForm.Invoice.Currency);
+                content.Text = Formatter.FormatAmount(value, regular.Invoice.Currency);
                 args.Handled = true;
             }
         }
