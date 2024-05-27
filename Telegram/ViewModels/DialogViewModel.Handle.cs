@@ -55,6 +55,7 @@ namespace Telegram.ViewModels
                 .Subscribe<UpdateMessageSendSucceeded>(Handle)
                 .Subscribe<UpdateMessageTranslatedText>(Handle)
                 .Subscribe<UpdateMessageFactCheck>(Handle)
+                .Subscribe<UpdateMessageEffect>(Handle)
                 .Subscribe<UpdateAnimatedEmojiMessageClicked>(Handle)
                 .Subscribe<UpdateUser>(Handle)
                 .Subscribe<UpdateUserFullInfo>(Handle)
@@ -976,6 +977,26 @@ namespace Telegram.ViewModels
                     return true;
                 },
                 (bubble, message) => bubble.UpdateMessageText(message));
+            }
+        }
+
+        public void Handle(UpdateMessageEffect update)
+        {
+            if (_messageEffects.TryGetValue(update.Effect.Id, out var hashSet))
+            {
+                foreach (var messageId in hashSet)
+                {
+                    Handle(messageId, message =>
+                    {
+                        message.Effect = update.Effect;
+                        return true;
+                    }, (bubble, message) =>
+                    {
+                        bubble.UpdateMessageEffect(message);
+                    });
+                }
+
+                hashSet.Clear();
             }
         }
 

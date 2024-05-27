@@ -318,9 +318,10 @@ namespace Telegram.Controls.Messages.Content
             {
                 var dispatcher = DispatcherQueue.GetForCurrentThread();
 
+                var height = 180 * message.ClientService.Config.GetNamedNumber("emojies_animated_zoom", 0.625f);
                 var player = new AnimatedImage();
-                player.Width = Player.Height * 3;
-                player.Height = Player.Height * 3;
+                player.Width = height * 3;
+                player.Height = height * 3;
                 //player.IsFlipped = !message.IsOutgoing;
                 player.LoopCount = 1;
                 player.IsHitTestVisible = false;
@@ -343,14 +344,14 @@ namespace Telegram.Controls.Messages.Content
                 };
 
                 var random = new Random();
-                var x = Player.Height * (0.08 - (0.16 * random.NextDouble()));
-                var y = Player.Height * (0.08 - (0.16 * random.NextDouble()));
-                var shift = Player.Width * 0.075;
+                var x = height * (0.08 - (0.16 * random.NextDouble()));
+                var y = height * (0.08 - (0.16 * random.NextDouble()));
+                var shift = height * 0.075;
 
-                var left = (Player.Width * 2) - shift + x;
+                var left = (height * 2) - shift + x;
                 var right = 0 + shift - x;
-                var top = Player.Height + y;
-                var bottom = Player.Height - y;
+                var top = height + y;
+                var bottom = height - y;
 
                 if (message.IsOutgoing)
                 {

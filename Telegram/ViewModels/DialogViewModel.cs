@@ -88,6 +88,7 @@ namespace Telegram.ViewModels
         public int SelectedCount => SelectedItems.Count;
 
         protected readonly ConcurrentDictionary<long, MessageViewModel> _groupedMessages = new();
+        protected readonly ConcurrentDictionary<long, HashSet<long>> _messageEffects = new();
 
         protected static readonly Dictionary<MessageId, MessageContent> _contentOverrides = new();
 
@@ -1775,6 +1776,31 @@ namespace Telegram.ViewModels
                 {
                     message.SenderId = new MessageSenderUser(contact.Contact.UserId);
                     message.Content = new MessageChatAddMembers(new[] { contact.Contact.UserId });
+                }
+
+                if (message.EffectId != 0)
+                {
+                    if (message.Id > chat.LastReadInboxMessageId)
+                    {
+                        message.GeneratedContentUnread = true;
+                    }
+
+                    message.Effect = ClientService.LoadMessageEffect(message.EffectId, message.GeneratedContentUnread);
+
+                    if (message.Effect == null)
+                    {
+                        if (_messageEffects.TryGetValue(message.EffectId, out var hashSet))
+                        {
+                            hashSet.Add(message.Id);
+                        }
+                        else
+                        {
+                            _messageEffects[message.EffectId] = new HashSet<long>
+                            {
+                                message.Id
+                            };
+                        }
+                    }
                 }
 
                 ProcessEmoji(message);

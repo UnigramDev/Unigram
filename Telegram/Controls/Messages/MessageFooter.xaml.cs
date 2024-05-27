@@ -18,6 +18,10 @@ using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Hosting;
 using Windows.UI.Xaml.Media;
+using Telegram.Streams;
+using Windows.UI.Xaml.Controls.Primitives;
+using Windows.Foundation;
+using Windows.UI.Xaml.Input;
 
 namespace Telegram.Controls.Messages
 {
@@ -26,6 +30,7 @@ namespace Telegram.Controls.Messages
         private MessageTicksState _ticksState;
         private long _ticksHash;
 
+        private string _effectGlyph;
         private string _pinnedGlyph;
         private string _repliesLabel;
         private string _viewsLabel;
@@ -60,12 +65,16 @@ namespace Telegram.Controls.Messages
 
         #region InitializeComponent
 
+        private AnimatedImage Effect;
+        private Popup InteractionsPopup;
+        private Grid Interactions;
         private TextBlock Label;
         private ToolTip ToolTip;
         private bool _templateApplied;
 
         protected override void OnApplyTemplate()
         {
+            Effect = GetTemplateChild(nameof(Effect)) as AnimatedImage;
             Label = GetTemplateChild(nameof(Label)) as TextBlock;
             ToolTip = GetTemplateChild(nameof(ToolTip)) as ToolTip;
 
@@ -85,7 +94,7 @@ namespace Telegram.Controls.Messages
         {
             if (Label != null)
             {
-                Label.Text = _pinnedGlyph + _repliesLabel + _viewsLabel + _editedLabel + _authorLabel + _dateLabel + _stateLabel;
+                Label.Text = _effectGlyph + _pinnedGlyph + _repliesLabel + _viewsLabel + _editedLabel + _authorLabel + _dateLabel + _stateLabel;
             }
         }
 
@@ -107,6 +116,7 @@ namespace Telegram.Controls.Messages
             UpdateMessageDateImpl(message);
             UpdateMessageEditedImpl(message);
             UpdateMessageIsPinnedImpl(message);
+            UpdateMessageEffectImpl(message, fromApplyTemplate);
 
             // UpdateMessageInteractionInfo is always invoked by MessageBubble.UpdateMessage
 
@@ -114,6 +124,134 @@ namespace Telegram.Controls.Messages
             {
                 UpdateMessageInteractionInfoImpl(message);
                 UpdateLabel();
+            }
+        }
+
+        public void UpdateMessageEffect(MessageViewModel message)
+        {
+            UpdateMessageEffectImpl(message, false);
+        }
+
+        public void UpdateMessageEffectImpl(MessageViewModel message, bool fromApplyTemplate)
+        {
+            if (!_templateApplied)
+            {
+                return;
+            }
+
+            if (message.Effect != null)
+            {
+                if (message.Effect.StaticIcon != null)
+                {
+                    _effectGlyph = string.Empty;
+                    Effect.Visibility = Visibility.Visible;
+
+                    Effect.Source = new DelayedFileSource(message.ClientService, message.Effect.StaticIcon);
+                }
+                else
+                {
+                    _effectGlyph = message.Effect.Emoji + " ";
+                    Effect.Visibility = Visibility.Collapsed;
+
+                    Effect.Source = null;
+                }
+            }
+            else
+            {
+                _effectGlyph = string.Empty;
+                Effect.Visibility = Visibility.Collapsed;
+
+                Effect.Source = null;
+            }
+
+            if (!fromApplyTemplate)
+            {
+                UpdateLabel();
+            }
+        }
+
+        protected override void OnTapped(TappedRoutedEventArgs e)
+        {
+            if (_message?.Effect?.Type is MessageEffectTypeEmojiReaction emojiReaction)
+            {
+                PlayInteraction(_message, emojiReaction.EffectAnimation.StickerValue);
+            }
+            else if (_message?.Effect?.Type is MessageEffectTypePremiumSticker premiumSticker && premiumSticker.Sticker.FullType is StickerFullTypeRegular regular)
+            {
+                PlayInteraction(_message, regular.PremiumAnimation);
+            }
+
+            base.OnTapped(e);
+        }
+
+        public void PlayInteraction(MessageViewModel message, File interaction)
+        {
+            if (Interactions == null)
+            {
+                InteractionsPopup = GetTemplateChild(nameof(InteractionsPopup)) as Popup;
+                Interactions = GetTemplateChild(nameof(Interactions)) as Grid;
+            }
+
+            //message.Interaction = null;
+
+            var file = interaction;
+            if (file.Local.IsDownloadingCompleted && Interactions.Children.Count < 4)
+            {
+                var dispatcher = Windows.System.DispatcherQueue.GetForCurrentThread();
+
+                var height = 180 * message.ClientService.Config.GetNamedNumber("emojies_animated_zoom", 0.625f);
+                var player = new AnimatedImage();
+                player.Width = height * 3;
+                player.Height = height * 3;
+                //player.IsFlipped = !message.IsOutgoing;
+                player.LoopCount = 1;
+                player.IsHitTestVisible = false;
+                player.FrameSize = new Size(512, 512);
+                player.AutoPlay = true;
+                player.Source = new LocalFileSource(file);
+                player.LoopCompleted += (s, args) =>
+                {
+                    dispatcher.TryEnqueue(() =>
+                    {
+                        Interactions.Children.Remove(player);
+
+                        if (Interactions.Children.Count > 0)
+                        {
+                            return;
+                        }
+
+                        InteractionsPopup.IsOpen = false;
+                    });
+                };
+
+                var random = new Random();
+                var x = height * (0.08 - (0.16 * random.NextDouble()));
+                var y = height * (0.08 - (0.16 * random.NextDouble()));
+                var shift = height * 0.075;
+
+                var left = height * 3 * 0.75;
+                var right = 0;
+                var top = height * 3 / 2 - 6;
+                var bottom = height * 3 / 2 - 6;
+
+                if (message.IsOutgoing)
+                {
+                    player.Margin = new Thickness(-left, -top, -right, -bottom);
+                }
+                else
+                {
+                    player.Margin = new Thickness(-right, -top, -left, -bottom);
+                }
+
+                Interactions.Children.Add(player);
+                InteractionsPopup.IsOpen = true;
+            }
+            else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive)
+            {
+                //message.Interaction = interaction;
+                message.Delegate.DownloadFile(message, file);
+
+                //UpdateManager.Subscribe(this, message, file, ref _interactionToken, UpdateFile, true);
             }
         }
 

@@ -84,6 +84,8 @@ namespace Telegram.Services
         IList<AttachmentMenuBot> GetBotsForChat(long chatId);
         IList<AttachmentMenuBot> GetBotsForMenu(out long hash);
 
+        UpdateAvailableMessageEffects AvailableMessageEffects { get; }
+
         IList<string> ActiveReactions { get; }
 
         IList<string> AnimationSearchEmojis { get; }
@@ -122,6 +124,9 @@ namespace Telegram.Services
         IList<QuickReplyMessage> GetQuickReplyMessages(int id);
         IList<QuickReplyShortcut> GetQuickReplyShortcuts();
         bool CheckQuickReplyShortcutName(string name);
+
+        Task<IList<MessageEffect>> GetMessageEffectsAsync(IEnumerable<long> effectIds);
+        MessageEffect LoadMessageEffect(long effectId, bool preload);
 
         bool IsSavedMessages(MessageSender sender);
         bool IsSavedMessages(User user);
@@ -241,6 +246,8 @@ namespace Telegram.Services
         private readonly ILocaleService _locale;
         private readonly IEventAggregator _aggregator;
 
+        private readonly ConcurrentDictionary<long, MessageEffect> _effects = new();
+
         private readonly Action<BaseObject> _processFilesDelegate;
 
         private readonly Dictionary<long, ChatActiveStories> _activeStories = new();
@@ -287,6 +294,8 @@ namespace Telegram.Services
         private Dictionary<int, ChatFolderInfo> _chatFolders2 = new();
         private int _mainChatListPosition = 0;
         private bool _areTagsEnabled;
+
+        private UpdateAvailableMessageEffects _availableMessageEffects;
 
         private IList<string> _activeReactions = Array.Empty<string>();
         private Dictionary<string, EmojiReaction> _cachedReactions = new();
@@ -710,6 +719,8 @@ namespace Telegram.Services
 
         private readonly Dictionary<string, TimeZone> _timezones = new();
 
+        public UpdateAvailableMessageEffects AvailableMessageEffects => _availableMessageEffects;
+
         public IList<string> ActiveReactions => _activeReactions;
 
         public IDictionary<int, NameColor> AccentColors { get; private set; }
@@ -942,6 +953,62 @@ namespace Telegram.Services
             return file;
         }
 
+        public async Task<IList<MessageEffect>> GetMessageEffectsAsync(IEnumerable<long> effectIds)
+        {
+            IList<MessageEffect> result = null;
+
+            foreach (var id in effectIds)
+            {
+                if (_effects.TryGetValue(id, out MessageEffect effect))
+                {
+                    result ??= new List<MessageEffect>();
+                    result.Add(effect);
+                }
+                else
+                {
+                    var response = await SendAsync(new GetMessageEffect(id));
+                    if (response is MessageEffect item)
+                    {
+                        _effects[id] = item;
+
+                        result ??= new List<MessageEffect>();
+                        result.Add(item);
+                    }
+                }
+            }
+
+            return result ?? Array.Empty<MessageEffect>();
+        }
+
+        public MessageEffect LoadMessageEffect(long effectId, bool preload)
+        {
+            if (_effects.TryGetValue(effectId, out var effect))
+            {
+                return effect;
+            }
+
+            Send(new GetMessageEffect(effectId), result =>
+            {
+                if (result is MessageEffect effect)
+                {
+                    if (preload)
+                    {
+                        if (effect.Type is MessageEffectTypeEmojiReaction emojiReaction)
+                        {
+                            DownloadFile(emojiReaction.EffectAnimation.StickerValue.Id, 16);
+                        }
+                        else if (effect.Type is MessageEffectTypePremiumSticker premiumSticker && premiumSticker.Sticker.FullType is StickerFullTypeRegular regular)
+                        {
+                            DownloadFile(regular.PremiumAnimation.Id, 16);
+                        }
+                    }
+
+                    _effects[effectId] = effect;
+                    _aggregator.Publish(new UpdateMessageEffect(effect));
+                }
+            });
+            return null;
+        }
 
 
         public int SessionId => _session;
@@ -2747,6 +2814,10 @@ namespace Telegram.Services
             else if (update is UpdateQuickReplyShortcuts updateQuickReplyShortcuts)
             {
                 _quickReplyShortcutIds = updateQuickReplyShortcuts.ShortcutIds.ToList();
+            }
+            else if (update is UpdateAvailableMessageEffects updateAvailableMessageEffects)
+            {
+                _availableMessageEffects = updateAvailableMessageEffects;
             }
 
             _aggregator.Publish(update);

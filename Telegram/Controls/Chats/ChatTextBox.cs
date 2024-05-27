@@ -43,6 +43,8 @@ namespace Telegram.Controls.Chats
 
         public DialogViewModel ViewModel => DataContext as DialogViewModel;
 
+        public MessageEffect Effect { get; set; }
+
         public ChatTextBox()
         {
             DefaultStyleKey = typeof(ChatTextBox);
@@ -734,7 +736,9 @@ namespace Telegram.Controls.Chats
 
             Sending?.Invoke(this, EventArgs.Empty);
 
-            var options = new MessageSendOptions(disableNotification, false, false, false, null, 0, 0, false);
+            var options = new MessageSendOptions(disableNotification, false, false, false, null, Effect?.Id ?? 0, 0, false);
+
+            Effect = null;
 
             var text = GetFormattedText(true);
             await ViewModel.SendMessageAsync(text, options);

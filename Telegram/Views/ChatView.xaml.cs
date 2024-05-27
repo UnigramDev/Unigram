@@ -1263,11 +1263,11 @@ namespace Telegram.Views
                     if (_oldEditing)
                     {
                         elementHide = btnEdit;
-                        btnSendMessage.Visibility = Visibility.Collapsed;
+                        SendMessageButton.Visibility = Visibility.Collapsed;
                     }
                     else
                     {
-                        elementHide = btnSendMessage;
+                        elementHide = SendMessageButton;
                         btnEdit.Visibility = Visibility.Collapsed;
                     }
 
@@ -1286,7 +1286,7 @@ namespace Telegram.Views
                         btnEdit.Visibility = Visibility.Collapsed;
                     }
 
-                    elementShow = btnSendMessage;
+                    elementShow = SendMessageButton;
                 }
             }
             else if (editing != _oldEditing)
@@ -1296,11 +1296,11 @@ namespace Telegram.Views
                     if (_oldEmpty)
                     {
                         elementHide = ButtonRecord;
-                        btnSendMessage.Visibility = Visibility.Collapsed;
+                        SendMessageButton.Visibility = Visibility.Collapsed;
                     }
                     else
                     {
-                        elementHide = btnSendMessage;
+                        elementHide = SendMessageButton;
                         ButtonRecord.Visibility = Visibility.Collapsed;
                     }
 
@@ -1311,11 +1311,11 @@ namespace Telegram.Views
                     if (empty)
                     {
                         elementShow = ButtonRecord;
-                        btnSendMessage.Visibility = Visibility.Collapsed;
+                        SendMessageButton.Visibility = Visibility.Collapsed;
                     }
                     else
                     {
-                        elementShow = btnSendMessage;
+                        elementShow = SendMessageButton;
                         ButtonRecord.Visibility = Visibility.Collapsed;
                     }
 
@@ -1324,7 +1324,7 @@ namespace Telegram.Views
             }
             //else
             //{
-            //    btnSendMessage.Visibility = empty || editing ? Visibility.Collapsed : Visibility.Visible;
+            //    SendMessageButton.Visibility = empty || editing ? Visibility.Collapsed : Visibility.Visible;
             //    btnEdit.Visibility = editing ? Visibility.Visible : Visibility.Collapsed;
             //    ButtonRecord.Visibility = empty && !editing ? Visibility.Visible : Visibility.Collapsed;
             //}
@@ -2176,6 +2176,13 @@ namespace Telegram.Views
             var self = ViewModel.ClientService.IsSavedMessages(chat);
 
             var flyout = new MenuFlyout();
+            
+            if (TextField.Effect != null)
+            {
+                flyout.CreateFlyoutItem(RemoveMessageEffect, Strings.RemoveEffect, Icons.Delete, destructive: true);
+                flyout.CreateFlyoutSeparator();
+            }
+
             flyout.CreateFlyoutItem(async () => await TextField.SendAsync(true), Strings.SendWithoutSound, Icons.AlertOff);
 
             if (ViewModel.ClientService.TryGetUser(chat, out Td.Api.User user) && user.Type is UserTypeRegular && user.Status is not UserStatusRecently && !self)
@@ -2185,10 +2192,126 @@ namespace Telegram.Views
 
             flyout.CreateFlyoutItem(async () => await TextField.ScheduleAsync(false), self ? Strings.SetReminder : Strings.ScheduleMessage, Icons.CalendarClock);
 
+            if (chat.Type is ChatTypePrivate)
+            {
+                flyout.Opened += (s, args) =>
+                {
+                    var picker = ReactionsMenuFlyout.ShowAt(ViewModel.ClientService, ViewModel.ClientService.AvailableMessageEffects?.ReactionEffectIds, null, flyout);
+                    picker.Selected += MessageEffectFlyout_Selected;
+                };
+            }
+
             flyout.ShowAt(sender, FlyoutPlacementMode.TopEdgeAlignedRight);
 
             // Supposedly cancels click by touch
             sender.ReleasePointerCaptures();
+        }
+
+        private void RemoveMessageEffect()
+        {
+            MessageEffectFlyout_Selected(null, null);
+        }
+
+        private void MessageEffectFlyout_Selected(object sender, MessageEffect e)
+        {
+            TextField.Effect = e;
+
+            if (e == null)
+            {
+                SendEffectText.Text = string.Empty;
+                SendEffect.Visibility = Visibility.Collapsed;
+
+                SendEffect.Source = null;
+            }
+            else
+            {
+                if (e.StaticIcon != null)
+                {
+                    SendEffectText.Text = string.Empty;
+                    SendEffect.Visibility = Visibility.Visible;
+
+                    SendEffect.Source = new DelayedFileSource(ViewModel.ClientService, e.StaticIcon);
+                }
+                else
+                {
+                    SendEffectText.Text = e.Emoji;
+                    SendEffect.Visibility = Visibility.Collapsed;
+
+                    SendEffect.Source = null;
+                }
+
+                if (e.Type is MessageEffectTypeEmojiReaction emojiReaction)
+                {
+                    PlayInteraction(emojiReaction.EffectAnimation.StickerValue);
+                }
+                else if (e.Type is MessageEffectTypePremiumSticker premiumSticker && premiumSticker.Sticker.FullType is StickerFullTypeRegular regular)
+                {
+                    PlayInteraction(regular.PremiumAnimation);
+                }
+            }
+        }
+
+        public void PlayInteraction(File interaction)
+        {
+            var file = interaction;
+            if (file.Local.IsDownloadingCompleted && SendEffectInteractions.Children.Count < 4)
+            {
+                var dispatcher = Windows.System.DispatcherQueue.GetForCurrentThread();
+
+                var height = 180 * ViewModel.ClientService.Config.GetNamedNumber("emojies_animated_zoom", 0.625f);
+                var player = new AnimatedImage();
+                player.Width = height * 3;
+                player.Height = height * 3;
+                //player.IsFlipped = !message.IsOutgoing;
+                player.LoopCount = 1;
+                player.IsHitTestVisible = false;
+                player.FrameSize = new Size(512, 512);
+                player.AutoPlay = true;
+                player.Source = new LocalFileSource(file);
+                player.LoopCompleted += (s, args) =>
+                {
+                    dispatcher.TryEnqueue(() =>
+                    {
+                        SendEffectInteractions.Children.Remove(player);
+
+                        if (SendEffectInteractions.Children.Count > 0)
+                        {
+                            return;
+                        }
+
+                        SendEffectInteractionsPopup.IsOpen = false;
+                    });
+                };
+
+                var random = new Random();
+                var x = height * (0.08 - (0.16 * random.NextDouble()));
+                var y = height * (0.08 - (0.16 * random.NextDouble()));
+                var shift = height * 0.075;
+
+                var left = height * 3 * 0.75;
+                var right = 0;
+                var top = height * 3 / 2 - 6;
+                var bottom = height * 3 / 2 - 6;
+
+                //if (message.IsOutgoing)
+                //{
+                    player.Margin = new Thickness(-left, -top, -right, -bottom);
+                //}
+                //else
+                //{
+                //    player.Margin = new Thickness(-right, -top, -left, -bottom);
+                //}
+
+                SendEffectInteractions.Children.Add(player);
+                SendEffectInteractionsPopup.IsOpen = true;
+            }
+            else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive)
+            {
+                //message.Interaction = interaction;
+                ViewModel.ClientService.DownloadFile(file.Id, 16);
+
+                //UpdateManager.Subscribe(this, message, file, ref _interactionToken, UpdateFile, true);
+            }
         }
 
         private void Reply_ContextRequested(UIElement sender, ContextRequestedEventArgs args)
@@ -3901,6 +4024,11 @@ namespace Telegram.Views
             UpdateChatPermissions(chat);
             UpdateChatTheme(chat);
             UpdateChatBusinessBotManageBar(chat, chat.BusinessBotManageBar);
+
+            if (TextField.Effect != null)
+            {
+                RemoveMessageEffect();
+            }
         }
 
         public void UpdateChatMessageSender(Chat chat, MessageSender defaultMessageSenderId)

@@ -1186,17 +1186,44 @@
                             </chats:ChatRecordButton>
                         </Grid>
 
-                        <chats:ChatSendButton x:Name="btnSendMessage"
-                                              ContextRequested="Send_ContextRequested"
-                                              VerticalAlignment="Bottom"
-                                              Click="btnSendMessage_Click"
-                                              Glyph="&#xE919;"
-                                              AllowFocusOnInteraction="False"
-                                              Grid.Column="2"
-                                              Canvas.ZIndex="1001"
-                                              AutomationProperties.Name="{CustomResource Send}"
-                                              ToolTipService.ToolTip="{CustomResource Send}"
-                                              Visibility="Collapsed" />
+                        <Grid x:Name="SendMessageButton"
+                              Grid.Column="2"
+                              Canvas.ZIndex="1001"
+                              Visibility="Collapsed">
+                            <chats:ChatSendButton x:Name="btnSendMessage"
+                                                  ContextRequested="Send_ContextRequested"
+                                                  VerticalAlignment="Bottom"
+                                                  Click="btnSendMessage_Click"
+                                                  Glyph="&#xE919;"
+                                                  AllowFocusOnInteraction="False"
+                                                  AutomationProperties.Name="{CustomResource Send}"
+                                                  ToolTipService.ToolTip="{CustomResource Send}" />
+
+                            <Grid x:Name="SendEffectRoot"
+                                  IsHitTestVisible="False"
+                                  HorizontalAlignment="Right"
+                                  VerticalAlignment="Bottom"
+                                  Margin="8,4">
+                                <Border Background="{ThemeResource SystemColorControlAccentBrush}"
+                                        Opacity="0"/>
+                                <TextBlock x:Name="SendEffectText"
+                                           FontFamily="{StaticResource EmojiThemeFontFamilyWithSymbols}"
+                                           FontSize="16"
+                                           HorizontalAlignment="Center"
+                                           VerticalAlignment="Center" />
+                                <controls:AnimatedImage x:Name="SendEffect"
+                                                        AutoPlay="True"
+                                                        Width="16"
+                                                        Height="16"
+                                                        FrameSize="16,16"
+                                                        DecodeFrameType="Logical"
+                                                        HorizontalAlignment="Center"
+                                                        VerticalAlignment="Center" />
+                                <Popup x:Name="SendEffectInteractionsPopup">
+                                    <Grid x:Name="SendEffectInteractions" />
+                                </Popup>
+                            </Grid>
+                        </Grid>
 
                         <controls:GlyphButton x:Name="btnEdit"
                                               VerticalAlignment="Bottom"

@@ -221,11 +221,17 @@
     <Compile Include="Controls\Chats\ChatConnectedBotHeader.xaml.cs">
       <DependentUpon>ChatConnectedBotHeader.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\Drawers\EffectDrawer.xaml.cs">
+      <DependentUpon>EffectDrawer.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Controls\Messages\Content\ThumbnailContent.xaml.cs">
       <DependentUpon>ThumbnailContent.xaml</DependentUpon>
     </Compile>
     <Compile Include="Controls\Messages\Content\StickerSetContent.xaml.cs">
       <DependentUpon>StickerSetContent.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\Messages\MessageEffectMenuFlyout.xaml.cs">
+      <DependentUpon>MessageEffectMenuFlyout.xaml</DependentUpon>
     </Compile>
     <Compile Include="Controls\Messages\MessageForwardHeader.xaml.cs">
       <DependentUpon>MessageForwardHeader.xaml</DependentUpon>
@@ -372,6 +378,7 @@
     <Compile Include="Td\Api\ProfileColor.cs" />
     <Compile Include="Td\Api\UpdateChatSwitchInlineQuery.cs" />
     <Compile Include="Td\Api\UpdateGreetingSticker.cs" />
+    <Compile Include="Td\Api\UpdateMessageEffect.cs" />
     <Compile Include="Td\Api\UpdateMessageTranslatedText.cs" />
     <Compile Include="Videolan\Platforms\Windows\InitializedEventArgs.cs" />
     <Compile Include="Videolan\Platforms\Windows\VideoView.cs" />
@@ -443,6 +450,7 @@
     <Compile Include="ViewModels\DialogBusinessRepliesViewModel.cs" />
     <Compile Include="ViewModels\DialogViewModel.Translate.cs" />
     <Compile Include="Td\Api\MessageTranslateResult.cs" />
+    <Compile Include="ViewModels\Drawers\EffectDrawerViewModel.cs" />
     <Compile Include="ViewModels\RevenueViewModel.cs" />
     <Compile Include="ViewModels\Profile\ProfileChannelsTabViewModel.cs" />
     <Compile Include="ViewModels\Profile\ProfileGroupsTabViewModel.cs" />
@@ -2271,6 +2279,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="Controls\Drawers\EffectDrawer.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Controls\Drawers\StickerDrawer.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -2348,6 +2360,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Controls\Messages\Content\VoiceNoteContent.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Controls\Messages\MessageEffectMenuFlyout.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
