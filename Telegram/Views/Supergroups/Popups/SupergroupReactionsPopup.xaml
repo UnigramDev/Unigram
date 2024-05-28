@@ -53,7 +53,7 @@
                 <Grid>
                     <controls:FormattedTextBox x:Name="CaptionInput"
                                                InputScope="Chat"
-                                               IsFormattingEnabled="False"
+                                               AllowedEntities="None"
                                                FontFamily="{ThemeResource EmojiThemeFontFamily}"
                                                PlaceholderText="{CustomResource AddCaption}"
                                                TextChangedForRealNoCap="CaptionInput_TextChanged"

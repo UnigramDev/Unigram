@@ -19,6 +19,7 @@
                    Visibility="Collapsed" />
 
         <controls:FormattedTextBox x:Name="Label"
+                                   AllowedEntities="Bold,Italic,TextUrl"
                                    Margin="0,12,0,0"
                                    VerticalAlignment="Top"
                                    TextChanged="Label_TextChanged"
