@@ -42,6 +42,11 @@ namespace Telegram.ViewModels.Profile
         }
     }
 
+    public class ProfileMyArgs
+    {
+
+    }
+
     public class ProfileTabsViewModel : MultiViewModelBase, IHandle
     {
         private readonly IPlaybackService _playbackService;
@@ -136,8 +141,9 @@ namespace Telegram.ViewModels.Profile
 
         public override Task NavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
         {
-            if (state.ContainsKey("my_profile"))
+            if (parameter is ProfileMyArgs)
             {
+                parameter = ClientService.Options.MyId;
                 MyProfile = true;
             }
 

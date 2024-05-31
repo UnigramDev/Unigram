@@ -30,6 +30,7 @@ using Telegram.Td.Api;
 using Telegram.ViewModels;
 using Telegram.ViewModels.Delegates;
 using Telegram.ViewModels.Drawers;
+using Telegram.ViewModels.Profile;
 using Telegram.ViewModels.Stories;
 using Telegram.Views.BasicGroups;
 using Telegram.Views.Channels;
@@ -1261,8 +1262,7 @@ namespace Telegram.Views
             {
                 args.Handled = true;
 
-                var response = await ViewModel.ClientService.SendAsync(new CreatePrivateChat(ViewModel.ClientService.Options.MyId, false));
-                if (response is Chat chat)
+                if (ViewModel.ClientService.TryGetChat(ViewModel.ClientService.Options.MyId, out Chat chat))
                 {
                     MasterDetail.NavigationService.NavigateToChat(chat, force: false);
                     MasterDetail.NavigationService.GoBackAt(0, false);
@@ -2213,7 +2213,7 @@ namespace Telegram.Views
             }
         }
 
-        public async void NavigationView_ItemClick(RootDestination destination)
+        public void NavigationView_ItemClick(RootDestination destination)
         {
             if (destination == RootDestination.Chats)
             {
@@ -2241,12 +2241,11 @@ namespace Telegram.Views
             }
             else if (destination == RootDestination.MyProfile)
             {
-                MasterDetail.NavigationService.Navigate(typeof(ProfilePage), ViewModel.ClientService.Options.MyId, new NavigationState { { "my_profile", true } });
+                MasterDetail.NavigationService.Navigate(typeof(ProfilePage), new ProfileMyArgs());
             }
             else if (destination == RootDestination.SavedMessages)
             {
-                var response = await ViewModel.ClientService.SendAsync(new CreatePrivateChat(ViewModel.ClientService.Options.MyId, false));
-                if (response is Chat chat)
+                if (ViewModel.ClientService.TryGetChat(ViewModel.ClientService.Options.MyId, out Chat chat))
                 {
                     MasterDetail.NavigationService.NavigateToChat(chat, force: false);
                 }
