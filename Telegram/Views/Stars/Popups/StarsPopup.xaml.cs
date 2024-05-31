@@ -26,12 +26,13 @@ namespace Telegram.Views.Stars.Popups
             InitializeComponent();
         }
 
-        private void OnItemClick(object sender, ItemClickEventArgs e)
+        private async void OnItemClick(object sender, ItemClickEventArgs e)
         {
-            if (e.ClickedItem is StarPaymentOption option)
+            if (e.ClickedItem is StarTransaction transaction)
             {
                 Hide();
-                ViewModel.NavigationService.NavigateToInvoice(new InputInvoiceTelegram(new TelegramPaymentPurposeStars(option.Currency, option.Amount, option.StarCount)));
+                await ViewModel.ShowPopupAsync(new ReceiptPopup(ViewModel.ClientService, ViewModel.NavigationService, transaction));
+                await this.ShowQueuedAsync();
             }
         }
 
@@ -48,35 +49,50 @@ namespace Telegram.Views.Stars.Popups
             var photo = content.FindName("Photo") as ProfilePicture;
             var title = content.FindName("Title") as TextBlock;
             var subtitle = content.FindName("Subtitle") as TextBlock;
+            var date = content.FindName("Date") as TextBlock;
             var starCount = content.FindName("StarCount") as TextBlock;
 
             if (transaction.Source is StarTransactionSourceTelegram)
             {
                 photo.Source = new PlaceholderImage(Icons.Premium, true, Color.FromArgb(0xFF, 0xFD, 0xD2, 0x1A), Color.FromArgb(0xFF, 0xE4, 0x7B, 0x03));
                 title.Text = Strings.StarsTransactionBot;
+                subtitle.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
             }
             else if (transaction.Source is StarTransactionSourceFragment)
             {
                 photo.Source = new PlaceholderImage(Icons.Premium, true, Color.FromArgb(0xFF, 0xFD, 0xD2, 0x1A), Color.FromArgb(0xFF, 0xE4, 0x7B, 0x03));
                 title.Text = Strings.StarsTransactionFragment;
+                subtitle.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
             }
             else if (transaction.Source is StarTransactionSourceAppStore or StarTransactionSourceGooglePlay)
             {
                 photo.Source = new PlaceholderImage(Icons.Premium, true, Color.FromArgb(0xFF, 0xFD, 0xD2, 0x1A), Color.FromArgb(0xFF, 0xE4, 0x7B, 0x03));
                 title.Text = Strings.StarsTransactionInApp;
+                subtitle.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
             }
             else if (transaction.Source is StarTransactionSourceUser sourceUser && ViewModel.ClientService.TryGetUser(sourceUser.UserId, out User user))
             {
+                if (sourceUser.ProductInfo != null)
+                {
+                    title.Text = sourceUser.ProductInfo.Title;
+                    subtitle.Text = user.FullName();
+                }
+                else
+                {
+                    title.Text = user.FullName();
+                    subtitle.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
+                }
+
                 photo.SetUser(ViewModel.ClientService, user, 36);
-                title.Text = user.FullName();
             }
             else
             {
                 photo.Source = PlaceholderImage.GetGlyph(Icons.QuestionCircle, long.MinValue);
                 title.Text = Strings.StarsTransactionUnsupported;
+                subtitle.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
             }
 
-            subtitle.Text = Formatter.DateAt(transaction.Date);
+            date.Text = Formatter.DateAt(transaction.Date);
 
             starCount.Text = (transaction.StarCount < 0 ? string.Empty : "+") + transaction.StarCount.ToString("N0");
             starCount.Foreground = BootStrapper.Current.Resources[transaction.StarCount < 0 ? "SystemFillColorCriticalBrush" : "SystemFillColorSuccessBrush"] as Brush;

@@ -26,6 +26,8 @@ namespace Telegram.Views.Stars.Popups
             InitializeComponent();
         }
 
+        private long _thumbnailToken;
+
         public override void OnNavigatedTo()
         {
             if (ViewModel.PaymentForm?.Type is not PaymentFormTypeStars stars || !ViewModel.ClientService.TryGetUser(ViewModel.PaymentForm.SellerBotUserId, out User user))
@@ -33,10 +35,20 @@ namespace Telegram.Views.Stars.Popups
                 return;
             }
 
-            Photo.SetUser(ViewModel.ClientService, user, 120);
             TextBlockHelper.SetMarkdown(Subtitle, Locale.Declension(Strings.R.StarsConfirmPurchaseText, stars.StarCount, ViewModel.PaymentForm.ProductInfo.Title, user.FullName()));
 
             PurchaseText.Text = Locale.Declension(Strings.R.StarsConfirmPurchaseButton, stars.StarCount).Replace("\u2B50", Icons.Premium);
+
+            var small = ViewModel.PaymentForm.ProductInfo.Photo.GetSmall();
+            if (small != null)
+            {
+                UpdateManager.Subscribe(this, ViewModel.ClientService, small.Photo, ref _thumbnailToken, UpdateFile, true);
+                UpdateThumbnail(ViewModel.PaymentForm, small.Photo);
+            }
+            else
+            {
+                Photo.SetUser(ViewModel.ClientService, user, 120);
+            }
         }
 
         private void OnItemClick(object sender, ItemClickEventArgs e)
@@ -121,7 +133,9 @@ namespace Telegram.Views.Stars.Popups
             var result = await ViewModel.SubmitAsync();
             if (result != PayResult.Failed)
             {
-                Hide();
+                Hide(result == PayResult.Succeeded
+                    ? ContentDialogResult.Primary
+                    : ContentDialogResult.Secondary);
 
                 if (result == PayResult.StarsNeeded && ViewModel.PaymentForm?.Type is PaymentFormTypeStars stars)
                 {
@@ -144,6 +158,32 @@ namespace Telegram.Views.Stars.Popups
 
             //Hide();
             //ViewModel.Submit();
+        }
+
+        private void UpdateFile(object target, File file)
+        {
+            UpdateFile(ViewModel.PaymentForm, file);
+        }
+
+        private void UpdateFile(PaymentForm paymentForm, File file)
+        {
+            var small = paymentForm.ProductInfo.Photo.GetSmall();
+            if (small != null && (file == null || small.Photo.Id == file.Id))
+            {
+                UpdateThumbnail(paymentForm, small.Photo);
+            }
+        }
+
+        private void UpdateThumbnail(PaymentForm paymentForm, File file)
+        {
+            if (file.Local.IsDownloadingCompleted)
+            {
+                Photo.Source = UriEx.ToBitmap(file.Local.Path);
+            }
+            else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive)
+            {
+                ViewModel.ClientService.DownloadFile(file.Id, 1);
+            }
         }
     }
 }

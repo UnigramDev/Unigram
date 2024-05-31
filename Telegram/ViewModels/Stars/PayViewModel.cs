@@ -46,7 +46,7 @@ namespace Telegram.ViewModels.Stars
 
         public PaymentForm PaymentForm { get; private set; }
 
-        protected override async Task OnNavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
+        protected override Task OnNavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
         {
             if (parameter is PaymentFormArgs args)
             {
@@ -55,6 +55,7 @@ namespace Telegram.ViewModels.Stars
             }
 
             ClientService.Send(new GetStarTransactions(string.Empty, null));
+            return Task.CompletedTask;
         }
 
         public override void Subscribe()
@@ -86,19 +87,22 @@ namespace Telegram.ViewModels.Stars
             var response = await ClientService.SendAsync(new SendPaymentForm(_inputInvoice, PaymentForm.Id, string.Empty, string.Empty, null, 0));
             if (response is PaymentResult result)
             {
-                var user = ClientService.GetUser(PaymentForm.SellerBotUserId);
-                var extended = Locale.Declension(Strings.R.StarsPurchaseCompletedInfo, stars.StarCount, PaymentForm.ProductInfo.Title, user.FullName());
+                if (result.Success)
+                {
+                    var user = ClientService.GetUser(PaymentForm.SellerBotUserId);
+                    var extended = Locale.Declension(Strings.R.StarsPurchaseCompletedInfo, stars.StarCount, PaymentForm.ProductInfo.Title, user.FullName());
 
-                var message = Strings.StarsPurchaseCompleted + Environment.NewLine + extended;
-                var entity = new TextEntity(0, Strings.StarsPurchaseCompleted.Length, new TextEntityTypeBold());
+                    var message = Strings.StarsPurchaseCompleted + Environment.NewLine + extended;
+                    var entity = new TextEntity(0, Strings.StarsPurchaseCompleted.Length, new TextEntityTypeBold());
 
-                var text = new FormattedText(message, new[] { entity });
-                var formatted = ClientEx.ParseMarkdown(text);
+                    var text = new FormattedText(message, new[] { entity });
+                    var formatted = ClientEx.ParseMarkdown(text);
 
-                Aggregator.Publish(new UpdateConfetti());
-                ToastPopup.Show(formatted, new LocalFileSource("ms-appx:///Assets/Toasts/Success.tgs"));
+                    Aggregator.Publish(new UpdateConfetti());
+                    ToastPopup.Show(formatted, new LocalFileSource("ms-appx:///Assets/Toasts/Success.tgs"));
 
-                return PayResult.Succeeded;
+                    return PayResult.Succeeded;
+                }
             }
             else if (response is Error error)
             {

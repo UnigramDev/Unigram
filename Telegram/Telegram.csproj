@@ -1531,6 +1531,9 @@
     <Compile Include="Views\Settings\SettingsProxyPopup.xaml.cs">
       <DependentUpon>SettingsProxyPopup.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\Stars\Popups\ReceiptPopup.xaml.cs">
+      <DependentUpon>ReceiptPopup.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\Stars\Popups\PayPopup.xaml.cs">
       <DependentUpon>PayPopup.xaml</DependentUpon>
     </Compile>
@@ -1884,6 +1887,7 @@
     <Content Include="Assets\Animations\CollectibleUsername.tgs" />
     <Content Include="Assets\Animations\BusinessChatLinks.tgs" />
     <Content Include="Assets\Toasts\SpeedLimit.tgs" />
+    <Content Include="Assets\Animations\YourStars.tgs" />
     <None Include="Assets\i420.hlsl" />
     <Content Include="Assets\Images\Reply.scale-100.png" />
     <Content Include="Assets\Images\Reply.scale-125.png" />
@@ -3177,6 +3181,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Views\Settings\SettingsProxyPopup.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\Stars\Popups\ReceiptPopup.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

@@ -68,7 +68,9 @@
                                 Padding="0,0,0,72">
             <ListView.Header>
                 <controls:SettingsPanel>
-                    <controls:SettingsHeadline x:Name="Headline" />
+                    <controls:SettingsHeadline x:Name="Headline"
+                                               Source="ms-appx:///Assets/Animations/Business.tgs"
+                                               LoopCount="1" />
 
                     <controls:HeaderedControl x:Name="PaymentOptions"
                                               x:Load="{x:Bind ViewModel.CanPurchase, Mode=OneWay}">

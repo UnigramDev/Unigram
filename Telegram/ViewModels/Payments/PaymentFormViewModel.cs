@@ -13,6 +13,7 @@ using Telegram.Converters;
 using Telegram.Navigation;
 using Telegram.Navigation.Services;
 using Telegram.Services;
+using Telegram.Services.Updates;
 using Telegram.Td.Api;
 using Telegram.Views.Payments;
 using Telegram.Views.Popups;
@@ -497,6 +498,8 @@ namespace Telegram.ViewModels.Payments
                 }
 
                 await WindowContext.Current.ConsolidateAsync();
+
+                Aggregator.Publish(new UpdateConfetti());
             }
         }
 
@@ -527,6 +530,7 @@ namespace Telegram.ViewModels.Payments
             }
 
             var popup = new InputPopup(InputPopupType.Password);
+            popup.Title = Strings.LoginPassword;
             popup.Header = string.Format(Strings.PaymentConfirmationMessage, regular.SavedCredentials[0].Title);
             popup.PrimaryButtonText = Strings.Continue;
             popup.SecondaryButtonText = Strings.Cancel;

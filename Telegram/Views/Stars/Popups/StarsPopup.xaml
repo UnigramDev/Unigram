@@ -26,11 +26,12 @@
                         <RowDefinition Height="Auto" />
                         <RowDefinition Height="Auto" />
                     </Grid.RowDefinitions>
-                    <controls:AnimatedImage Source="ms-appx:///Assets/Animations/Premium.tgs"
+                    <controls:AnimatedImage Source="ms-appx:///Assets/Animations/YourStars.tgs"
                                             IsCachingEnabled="False"
                                             AutoPlay="True"
                                             FrameSize="120,120"
                                             DecodeFrameType="Logical"
+                                            LoopCount="1"
                                             Width="120"
                                             Height="120"
                                             Margin="0,24,0,8" />
@@ -132,6 +133,7 @@
                         <Grid.RowDefinitions>
                             <RowDefinition />
                             <RowDefinition />
+                            <RowDefinition Height="Auto" />
                         </Grid.RowDefinitions>
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="Auto" />
@@ -141,16 +143,17 @@
                             <ColumnDefinition Width="Auto" />
                         </Grid.ColumnDefinitions>
                         <controls:ProfilePicture x:Name="Photo"
+                                                 VerticalAlignment="Top"
                                                  IsEnabled="False"
                                                  Width="36"
                                                  Height="36"
                                                  Margin="0,0,8,0"
-                                                 Grid.RowSpan="2" />
+                                                 Grid.RowSpan="3" />
 
                         <Viewbox Width="24"
                                  Height="24"
                                  Grid.Column="4"
-                                 Grid.RowSpan="2">
+                                 Grid.RowSpan="3">
                             <Viewbox.Resources>
                                 <LinearGradientBrush x:Key="paint0_linear_2067_2459"
                                                      StartPoint="6.5,22"
@@ -196,12 +199,15 @@
                         </StackPanel>
 
                         <TextBlock x:Name="Title"
+                                   TextWrapping="NoWrap"
+                                   TextTrimming="CharacterEllipsis"
                                    Style="{StaticResource BaseTextBlockStyle}"
-                                   VerticalAlignment="Bottom"
+                                   VerticalAlignment="Top"
                                    Grid.Column="1" />
 
                         <TextBlock x:Name="Subtitle"
-                                   Style="{StaticResource InfoBodyTextBlockStyle}"
+                                   TextWrapping="NoWrap"
+                                   TextTrimming="CharacterEllipsis"
                                    VerticalAlignment="Top"
                                    Grid.Column="1"
                                    Grid.Row="1" />
@@ -210,7 +216,12 @@
                                    Style="{StaticResource BaseTextBlockStyle}"
                                    VerticalAlignment="Center"
                                    Grid.Column="3"
-                                   Grid.RowSpan="2" />
+                                   Grid.RowSpan="3" />
+
+                        <TextBlock x:Name="Date"
+                                   Style="{StaticResource InfoCaptionTextBlockStyle}"
+                                   Grid.Column="1"
+                                   Grid.Row="2" />
                     </Grid>
                 </DataTemplate>
             </ListView.ItemTemplate>

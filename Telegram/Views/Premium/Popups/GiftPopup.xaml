@@ -24,6 +24,7 @@
                                             AutoPlay="True"
                                             FrameSize="120,120"
                                             DecodeFrameType="Logical"
+                                            LoopCount="1"
                                             Width="120"
                                             Height="120"
                                             Margin="0,24,0,8" />
