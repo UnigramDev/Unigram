@@ -366,7 +366,7 @@ namespace Telegram
                 SupergroupEditAdministratorPopup supergroupEditAdministrator => TypeResolver.Current.Resolve<SupergroupEditAdministratorViewModel, IMemberPopupDelegate>(supergroupEditAdministrator, sessionId),
                 SupergroupEditLinkedChatPage supergroupEditLinkedChat => TypeResolver.Current.Resolve<SupergroupEditLinkedChatViewModel, ISupergroupDelegate>(supergroupEditLinkedChat, sessionId),
                 SupergroupEditRestrictedPopup supergroupEditRestricted => TypeResolver.Current.Resolve<SupergroupEditRestrictedViewModel, IMemberPopupDelegate>(supergroupEditRestricted, sessionId),
-                SupergroupEditStickerSetPage => TypeResolver.Current.Resolve<SupergroupEditStickerSetViewModel>(sessionId),
+                SupergroupEditStickerSetPopup => TypeResolver.Current.Resolve<SupergroupEditStickerSetViewModel>(sessionId),
                 SupergroupEditTypePage supergroupEditType => TypeResolver.Current.Resolve<SupergroupEditTypeViewModel, ISupergroupEditDelegate>(supergroupEditType, sessionId),
                 SupergroupEditPage supergroupEdit => TypeResolver.Current.Resolve<SupergroupEditViewModel, ISupergroupEditDelegate>(supergroupEdit, sessionId),
                 SupergroupMembersPage supergroupMembers => TypeResolver.Current.Resolve<SupergroupMembersViewModel, ISupergroupDelegate>(supergroupMembers, sessionId),

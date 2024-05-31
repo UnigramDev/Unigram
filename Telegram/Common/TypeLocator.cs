@@ -343,6 +343,11 @@ namespace Telegram.Views
                         _clientService,
                         _settingsService,
                         _eventAggregator);
+                case "Telegram.ViewModels.Drawers.EffectDrawerViewModel":
+                    return (T)(object)new Telegram.ViewModels.Drawers.EffectDrawerViewModel(
+                        _clientService,
+                        _settingsService,
+                        _eventAggregator);
                 case "Telegram.ViewModels.CreateChatPhotoViewModel":
                     return (T)(object)new Telegram.ViewModels.CreateChatPhotoViewModel(
                         _clientService,
@@ -590,11 +595,6 @@ namespace Telegram.Views
                         _eventAggregator);
                 case "Telegram.ViewModels.Settings.SettingsNotificationsExceptionsViewModel":
                     return (T)(object)new Telegram.ViewModels.Settings.SettingsNotificationsExceptionsViewModel(
-                        _clientService,
-                        _settingsService,
-                        _eventAggregator);
-                case "Telegram.ViewModels.Settings.SettingsNotificationsReactionsViewModel":
-                    return (T)(object)new Telegram.ViewModels.Settings.SettingsNotificationsReactionsViewModel(
                         _clientService,
                         _settingsService,
                         _eventAggregator);

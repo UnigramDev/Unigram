@@ -962,6 +962,35 @@ namespace Telegram.Services
                     ProcessFiles(messageDocument.Document);
                 }
             }
+            else if (target is MessageEffect messageEffect)
+            {
+                if (messageEffect.StaticIcon != null)
+                {
+                    ProcessFiles(messageEffect.StaticIcon);
+                }
+                if (messageEffect.Type != null)
+                {
+                    ProcessFiles(messageEffect.Type);
+                }
+            }
+            else if (target is MessageEffectTypeEmojiReaction messageEffectTypeEmojiReaction)
+            {
+                if (messageEffectTypeEmojiReaction.EffectAnimation != null)
+                {
+                    ProcessFiles(messageEffectTypeEmojiReaction.EffectAnimation);
+                }
+                if (messageEffectTypeEmojiReaction.SelectAnimation != null)
+                {
+                    ProcessFiles(messageEffectTypeEmojiReaction.SelectAnimation);
+                }
+            }
+            else if (target is MessageEffectTypePremiumSticker messageEffectTypePremiumSticker)
+            {
+                if (messageEffectTypePremiumSticker.Sticker != null)
+                {
+                    ProcessFiles(messageEffectTypePremiumSticker.Sticker);
+                }
+            }
             else if (target is MessageExtendedMediaPhoto messageExtendedMediaPhoto)
             {
                 if (messageExtendedMediaPhoto.Photo != null)
@@ -996,9 +1025,9 @@ namespace Telegram.Services
                 {
                     ProcessFiles(messageInvoice.ExtendedMedia);
                 }
-                if (messageInvoice.Photo != null)
+                if (messageInvoice.ProductInfo.Photo != null)
                 {
-                    ProcessFiles(messageInvoice.Photo);
+                    ProcessFiles(messageInvoice.ProductInfo.Photo);
                 }
             }
             else if (target is MessageLinkInfo messageLinkInfo)
@@ -1511,16 +1540,16 @@ namespace Telegram.Services
             }
             else if (target is PaymentForm paymentForm)
             {
-                if (paymentForm.ProductPhoto != null)
+                if (paymentForm.ProductInfo.Photo != null)
                 {
-                    ProcessFiles(paymentForm.ProductPhoto);
+                    ProcessFiles(paymentForm.ProductInfo.Photo);
                 }
             }
             else if (target is PaymentReceipt paymentReceipt)
             {
-                if (paymentReceipt.Photo != null)
+                if (paymentReceipt.ProductInfo.Photo != null)
                 {
-                    ProcessFiles(paymentReceipt.Photo);
+                    ProcessFiles(paymentReceipt.ProductInfo.Photo);
                 }
             }
             else if (target is PersonalDocument personalDocument)
@@ -1659,6 +1688,13 @@ namespace Telegram.Services
                 if (quickReplyMessage.Content != null)
                 {
                     ProcessFiles(quickReplyMessage.Content);
+                }
+            }
+            else if (target is QuickReplyMessages quickReplyMessages)
+            {
+                foreach (var item in quickReplyMessages.Messages)
+                {
+                    ProcessFiles(item);
                 }
             }
             else if (target is QuickReplyShortcut quickReplyShortcut)
@@ -2305,6 +2341,10 @@ namespace Telegram.Services
                 if (webPage.Sticker != null)
                 {
                     ProcessFiles(webPage.Sticker);
+                }
+                foreach (var item in webPage.Stickers)
+                {
+                    ProcessFiles(item);
                 }
                 if (webPage.Video != null)
                 {
