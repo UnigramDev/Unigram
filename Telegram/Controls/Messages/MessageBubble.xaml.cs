@@ -1608,6 +1608,22 @@ namespace Telegram.Controls.Messages
 
             UpdateMessageText(message);
 
+            if (Panel.Children.Count > 0 && Panel.Children[0] is MessageFactCheck factChecko)
+            {
+                if (message.FactCheck != null)
+                {
+                    factChecko.UpdateMessage(message);
+                }
+                else
+                {
+                    Panel.Children.Remove(factChecko);
+                }
+            }
+            else if (message.FactCheck != null)
+            {
+                Panel.Children.Insert(0, new MessageFactCheck(message));
+            }
+
             if (Media.Child is IContent media && media.IsValid(content, true))
             {
                 if (media.IsValid(content, true))
@@ -1743,22 +1759,6 @@ namespace Telegram.Controls.Messages
             else
             {
                 Media.Child = null;
-            }
-
-            if (Panel.Children.Count > 0 && Panel.Children[0] is MessageFactCheck factChecko)
-            {
-                if (message.FactCheck != null)
-                {
-                    factChecko.UpdateMessage(message);
-                }
-                else
-                {
-                    Panel.Children.Remove(factChecko);
-                }
-            }
-            else if (message.FactCheck != null)
-            {
-                Panel.Children.Insert(0, new MessageFactCheck(message));
             }
         }
 

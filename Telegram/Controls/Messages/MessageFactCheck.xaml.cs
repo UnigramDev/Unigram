@@ -57,6 +57,7 @@ namespace Telegram.Controls.Messages
         private Rectangle BackgroundOverlay;
         private Button Button;
         private TextBlock Label;
+        private Border ExpandBackground;
         private CheckBox Expand;
 
         private bool _templateApplied;
@@ -67,10 +68,11 @@ namespace Telegram.Controls.Messages
             BackgroundOverlay = GetTemplateChild(nameof(BackgroundOverlay)) as Rectangle;
             Button = GetTemplateChild(nameof(Button)) as Button;
             Label = GetTemplateChild(nameof(Label)) as TextBlock;
+            ExpandBackground = GetTemplateChild(nameof(ExpandBackground)) as Border;
             Expand = GetTemplateChild(nameof(Expand)) as CheckBox;
 
             BackgroundOverlay.Margin = new Thickness(0, 0, -Padding.Right, 0);
-            Expand.Visibility = Label.IsTextTrimmed
+            ExpandBackground.Visibility = Expand.Visibility = Label.IsTextTrimmed
                 ? Visibility.Visible 
                 : Visibility.Collapsed;
 
@@ -111,7 +113,7 @@ namespace Telegram.Controls.Messages
         {
             if (Expand.IsChecked is false)
             {
-                Expand.Visibility = sender.IsTextTrimmed
+                ExpandBackground.Visibility = Expand.Visibility = sender.IsTextTrimmed
                     ? Visibility.Visible
                     : Visibility.Collapsed;
             }

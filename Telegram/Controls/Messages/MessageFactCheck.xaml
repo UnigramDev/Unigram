@@ -40,7 +40,6 @@
                 <ControlTemplate TargetType="local:MessageFactCheck">
                     <Grid x:Name="LayoutRoot"
                           Background="Transparent"
-                          MinHeight="44"
                           CornerRadius="{TemplateBinding CornerRadius}"
                           Padding="{TemplateBinding Padding}">
                         <VisualStateManager.VisualStateGroups>
@@ -103,11 +102,13 @@
                                     Padding="0"
                                     Margin="4,0,0,0"
                                     CornerRadius="8"
+                                    BorderThickness="0"
                                     Height="16"
                                     Grid.Column="1">
                                 <TextBlock Text="{CustomResource FactCheckWhat}"
                                            TextLineBounds="Tight"
                                            TextAlignment="Center"
+                                           Foreground="{ThemeResource SystemFillColorCriticalBrush}"
                                            OpticalMarginAlignment="TrimSideBearings"
                                            FontSize="11"
                                            Padding="4,0,4,0"
@@ -127,11 +128,13 @@
                                    Grid.Column="2"
                                    Grid.Row="1" />
 
-                        <Border Background="{ThemeResource SystemGradientColorCriticalBrush}"
+                        <Border x:Name="ExpandBackground"
+                                Background="{ThemeResource SystemGradientColorCriticalBrush}"
                                 HorizontalAlignment="Right"
                                 VerticalAlignment="Bottom"
                                 Width="56"
                                 Height="28"
+                                Visibility="Collapsed"
                                 Grid.Column="2"
                                 Grid.Row="1" />
 
@@ -140,6 +143,7 @@
                                   HorizontalAlignment="Right"
                                   VerticalAlignment="Bottom"
                                   MinWidth="0"
+                                  Visibility="Collapsed"
                                   Grid.Column="2"
                                   Grid.Row="1">
                             <CheckBox.Template>
