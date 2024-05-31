@@ -164,6 +164,16 @@ namespace Telegram.Controls
                 return;
             }
 
+            if (newValue is PlaceholderImage or null)
+            {
+                UpdateManager.Unsubscribe(this, ref _fileToken, true);
+
+                _fileId = null;
+                _referenceId = null;
+
+                _parameters = null;
+            }
+
             if (newValue is PlaceholderImage placeholder)
             {
                 Gradient.GradientStops[0].Color = placeholder.TopColor;
