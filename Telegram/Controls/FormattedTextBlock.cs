@@ -528,12 +528,12 @@ namespace Telegram.Controls
                             hyperlink.Foreground = TextBlock.Foreground;
                             hyperlink.UnderlineStyle = UnderlineStyle.None;
 
-                            hyperlink.Inlines.Add(CreateRun(data, direction, fontFamily: new FontFamily("Consolas"), fontSize: fontSize));
+                            hyperlink.Inlines.Add(CreateRun(data, direction, fontFamily: new FontFamily("Consolas, " + Theme.Current.XamlAutoFontFamily), fontSize: fontSize));
                             direct.AddToCollection(inlines, direct.GetXamlDirectObject(hyperlink));
                         }
                         else
                         {
-                            direct.SetObjectProperty(paragraph, XamlPropertyIndex.TextElement_FontFamily, new FontFamily("Consolas"));
+                            direct.SetObjectProperty(paragraph, XamlPropertyIndex.TextElement_FontFamily, new FontFamily("Consolas, " + Theme.Current.XamlAutoFontFamily));
                             direct.AddToCollection(inlines, CreateDirectRun(direct, data, direction));
 
                             preformatted = true;
@@ -887,11 +887,18 @@ namespace Telegram.Controls
 
         private async void ProcessCodeBlock(InlineCollection inlines, string text, string language)
         {
-            var tokens = await SyntaxToken.TokenizeAsync(language.ToLowerInvariant(), text);
+            try
+            {
+                var tokens = await SyntaxToken.TokenizeAsync(language.ToLowerInvariant(), text);
 
-            inlines.Clear();
-            ProcessCodeBlock(inlines, tokens.Children);
-            inlines.Add(Icons.ZWJ);
+                inlines.Clear();
+                ProcessCodeBlock(inlines, tokens.Children);
+                inlines.Add(Icons.ZWJ);
+            }
+            catch
+            {
+                // Tokenization may fail
+            }
         }
 
         private void ProcessCodeBlock(InlineCollection inlines, IList<Token> tokens)

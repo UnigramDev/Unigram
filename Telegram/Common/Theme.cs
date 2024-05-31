@@ -101,12 +101,17 @@ namespace Telegram.Common
                     break;
             }
 
+            XamlAutoFontFamily = xamlAutoFontFamily.ToString();
+
             this["EmojiThemeFontFamily"] = new FontFamily(xamlAutoFontFamily.ToString());
+            this["ContentControlThemeFontFamily"] = new FontFamily(xamlAutoFontFamily.ToString());
 
             xamlAutoFontFamily.Prepend("ms-appx:///Assets/Fonts/Telegram.ttf#Telegram", comma);
 
             this["EmojiThemeFontFamilyWithSymbols"] = new FontFamily(xamlAutoFontFamily.ToString());
         }
+
+        public string XamlAutoFontFamily { get; private set; }
 
         private bool _legacyScrollBars;
         private bool _legacyScrollViewer;

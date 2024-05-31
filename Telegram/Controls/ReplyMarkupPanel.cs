@@ -164,11 +164,13 @@ namespace Telegram.Controls
                             button.Glyph = "\uEE35";
                             break;
                         case InlineKeyboardButtonTypeBuy:
-                            button.Glyph = Icons.Payment16;
-
                             if (receipt)
                             {
                                 button.Content = Strings.PaymentReceipt;
+                            }
+                            else
+                            {
+                                button.Content = item.Text.Replace("\u2B50", Icons.Premium + "\u200A");
                             }
                             break;
                         case InlineKeyboardButtonTypeWebApp:
