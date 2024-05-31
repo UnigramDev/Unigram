@@ -51,6 +51,7 @@ namespace Telegram.Controls.Cells
                 UpdateFeature(i++, features.ProfileAccentColorCount, ProfileColorsIcon, ProfileColorsText, Strings.R.BoostFeatureProfileColorGroup);
                 UpdateFeature(i++, features.StoryPerDayCount, StoriesIcon, StoriesText, Strings.R.BoostFeatureStoriesPerDay);
 
+                Collapse(DisableSponsoredIcon, DisableSponsoredText);
                 Collapse(ReactionsIcon, ReactionsText);
                 Collapse(NameColorsIcon, NameColorsText);
                 Collapse(StylesIcon, StylesText);
