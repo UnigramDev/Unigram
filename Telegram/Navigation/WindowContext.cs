@@ -274,6 +274,20 @@ namespace Telegram.Navigation
         public DispatcherContext Dispatcher { get; }
         public NavigationServiceList NavigationServices { get; } = new NavigationServiceList();
 
+        public INavigationService GetNavigationService()
+        {
+            if (Window.Current.Content is RootPage rootPage && rootPage.NavigationService != null)
+            {
+                return rootPage.NavigationService;
+            }
+            else if (Window.Current.Content is StandalonePage standalonePage && standalonePage.NavigationService != null)
+            {
+                return standalonePage.NavigationService;
+            }
+
+            return null;
+        }
+
         #region Screen capture
 
         private readonly HashSet<int> _screenCaptureDisabled = new();

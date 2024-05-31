@@ -7,6 +7,7 @@
 using System;
 using System.Collections.Generic;
 using Telegram.Common;
+using Telegram.Navigation;
 using Telegram.Streams;
 using Telegram.Td.Api;
 using Telegram.ViewModels.Drawers;
@@ -113,7 +114,16 @@ namespace Telegram.Controls.Drawers
         {
             if (e.ClickedItem is MessageEffect effect)
             {
-                ItemClick?.Invoke(this, effect);
+                if (effect.IsPremium && !ViewModel.IsPremium)
+                {
+                    var navigationService = WindowContext.Current.GetNavigationService();
+
+                    ToastPopup.ShowPromo(navigationService, Strings.AnimatedEffectPremium, Strings.OptionPremiumRequiredButton, null);
+                }
+                else
+                {
+                    ItemClick?.Invoke(this, effect);
+                }
             }
         }
 
@@ -184,14 +194,22 @@ namespace Telegram.Controls.Drawers
                 var animation = content.Children[0] as AnimatedImage;
                 animation.Source = new DelayedFileSource(ViewModel.ClientService, premiumSticker.Sticker);
 
-                var emoji = content.Children[1] as TextBlock;
+                var emoji = content.Children[2] as TextBlock;
                 emoji.Text = effect.Emoji;
+                emoji.Visibility = effect.IsPremium && !ViewModel.IsPremium
+                    ? Visibility.Collapsed
+                    : Visibility.Visible;
             }
             else
             {
                 var animation = content.Children[0] as AnimatedImage;
                 animation.Source = null;
             }
+
+            var locked = content.Children[1] as Border;
+            locked.Visibility = effect.IsPremium && !ViewModel.IsPremium
+                ? Visibility.Visible
+                : Visibility.Collapsed;
 
             args.Handled = true;
         }

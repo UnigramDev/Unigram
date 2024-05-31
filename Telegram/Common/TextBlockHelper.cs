@@ -6,12 +6,11 @@
 //
 using System.Text.RegularExpressions;
 using Telegram.Controls;
-using Telegram.Navigation.Services;
+using Telegram.Navigation;
 using Telegram.Services;
 using Telegram.Td;
 using Telegram.Td.Api;
 using Telegram.Views;
-using Telegram.Views.Host;
 using Windows.UI.Text;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -439,64 +438,54 @@ namespace Telegram.Common
 
         private static void Hyperlink_Click(Hyperlink sender, TextEntityType type, string data)
         {
-            IClientService clientService = null;
-            INavigationService navigationService = null;
-
-            // TODO: move the code to resolve the current session from Window to TypeResolver
-            if (Window.Current.Content is RootPage rootPage && rootPage.NavigationService != null)
+            var navigationService = WindowContext.Current.GetNavigationService();
+            if (navigationService == null)
             {
-                navigationService = rootPage.NavigationService;
-                clientService = TypeResolver.Current.Resolve<IClientService>(navigationService.SessionId);
-            }
-            else if (Window.Current.Content is StandalonePage standalonePage && standalonePage.NavigationService != null)
-            {
-                navigationService = standalonePage.NavigationService;
-                clientService = TypeResolver.Current.Resolve<IClientService>(navigationService.SessionId);
+                return;
             }
 
-            if (clientService != null && navigationService != null)
+            var clientService = TypeResolver.Current.Resolve<IClientService>(navigationService.SessionId);
+
+            if (type is TextEntityTypeTextUrl textUrl)
             {
-                if (type is TextEntityTypeTextUrl textUrl)
-                {
-                    if (string.IsNullOrEmpty(textUrl.Url))
-                    {
-                        var header = sender.GetParent<HeaderedControl>();
-                        if (header != null)
-                        {
-                            header?.OnClick(string.Empty);
-                            return;
-                        }
-
-                        var footer = sender.GetParent<SettingsFooter>();
-                        footer?.OnClick(string.Empty);
-
-                        var headline = sender.GetParent<SettingsHeadline>();
-                        headline?.OnClick(string.Empty);
-                    }
-                    else
-                    {
-                        MessageHelper.OpenUrl(clientService, navigationService, data);
-                    }
-                }
-                else if (type is TextEntityTypeMention)
-                {
-                    MessageHelper.NavigateToUsername(clientService, navigationService, data.TrimStart('@'));
-                }
-                else if (type is TextEntityTypeUrl)
+                if (string.IsNullOrEmpty(textUrl.Url))
                 {
                     var header = sender.GetParent<HeaderedControl>();
                     if (header != null)
                     {
-                        header?.OnClick(data);
+                        header?.OnClick(string.Empty);
                         return;
                     }
 
                     var footer = sender.GetParent<SettingsFooter>();
-                    footer?.OnClick(data);
+                    footer?.OnClick(string.Empty);
 
                     var headline = sender.GetParent<SettingsHeadline>();
                     headline?.OnClick(string.Empty);
                 }
+                else
+                {
+                    MessageHelper.OpenUrl(clientService, navigationService, data);
+                }
+            }
+            else if (type is TextEntityTypeMention)
+            {
+                MessageHelper.NavigateToUsername(clientService, navigationService, data.TrimStart('@'));
+            }
+            else if (type is TextEntityTypeUrl)
+            {
+                var header = sender.GetParent<HeaderedControl>();
+                if (header != null)
+                {
+                    header?.OnClick(data);
+                    return;
+                }
+
+                var footer = sender.GetParent<SettingsFooter>();
+                footer?.OnClick(data);
+
+                var headline = sender.GetParent<SettingsHeadline>();
+                headline?.OnClick(string.Empty);
             }
         }
     }
