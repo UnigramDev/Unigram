@@ -473,6 +473,17 @@ namespace Telegram.Views
                         next[message.AnimationHash()] = player;
                     }
                 }
+
+                if (message.Effect != null && message.GeneratedContentUnread && message.SendingState == null)
+                {
+                    var root = container.ContentTemplateRoot as FrameworkElement;
+                    if (root is not MessageSelector selector || selector.Content is not MessageBubble bubble)
+                    {
+                        continue;
+                    }
+
+                    message.GeneratedContentUnread = !bubble.PlayMessageEffect(message);
+                }
             }
 
             var skip = next != null && prev != null

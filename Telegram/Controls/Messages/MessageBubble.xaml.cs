@@ -1265,6 +1265,16 @@ namespace Telegram.Controls.Messages
             Footer.UpdateMessageEffect(message);
         }
 
+        public bool PlayMessageEffect(MessageViewModel message)
+        {
+            if (!_templateApplied)
+            {
+                return false;
+            }
+
+            return Footer.PlayMessageEffect(message);
+        }
+
         public void UpdateMessageInteractionInfo(MessageViewModel message)
         {
             var chat = message?.Chat;

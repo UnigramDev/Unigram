@@ -172,19 +172,25 @@ namespace Telegram.Controls.Messages
 
         protected override void OnTapped(TappedRoutedEventArgs e)
         {
-            if (_message?.Effect?.Type is MessageEffectTypeEmojiReaction emojiReaction)
-            {
-                PlayInteraction(_message, emojiReaction.EffectAnimation.StickerValue);
-            }
-            else if (_message?.Effect?.Type is MessageEffectTypePremiumSticker premiumSticker && premiumSticker.Sticker.FullType is StickerFullTypeRegular regular)
-            {
-                PlayInteraction(_message, regular.PremiumAnimation);
-            }
-
+            PlayMessageEffect(_message);
             base.OnTapped(e);
         }
 
-        public void PlayInteraction(MessageViewModel message, File interaction)
+        public bool PlayMessageEffect(MessageViewModel message)
+        {
+            if (message?.Effect?.Type is MessageEffectTypeEmojiReaction emojiReaction)
+            {
+                return PlayInteraction(message, emojiReaction.EffectAnimation.StickerValue);
+            }
+            else if (message?.Effect?.Type is MessageEffectTypePremiumSticker premiumSticker && premiumSticker.Sticker.FullType is StickerFullTypeRegular regular)
+            {
+                return PlayInteraction(message, regular.PremiumAnimation);
+            }
+
+            return true;
+        }
+
+        public bool PlayInteraction(MessageViewModel message, File interaction)
         {
             if (Interactions == null)
             {
@@ -214,6 +220,7 @@ namespace Telegram.Controls.Messages
                     dispatcher.TryEnqueue(() =>
                     {
                         Interactions.Children.Remove(player);
+                        Interactions.Children.Clear();
 
                         if (Interactions.Children.Count > 0)
                         {
@@ -224,27 +231,35 @@ namespace Telegram.Controls.Messages
                     });
                 };
 
-                var random = new Random();
-                var x = height * (0.08 - (0.16 * random.NextDouble()));
-                var y = height * (0.08 - (0.16 * random.NextDouble()));
-                var shift = height * 0.075;
+                if (message.IsChannelPost || !message.IsOutgoing)
+                {
+                    player.RenderTransformOrigin = new Windows.Foundation.Point(0.5, 0.5);
+                    player.RenderTransform = new ScaleTransform
+                    {
+                        ScaleX = -1
+                    };
+                }
 
-                var left = height * 3 * 0.75;
-                var right = 0;
-                var top = height * 3 / 2 - 6;
-                var bottom = height * 3 / 2 - 6;
+                var left = height * 3 * 0.18;
+                var right = height * 3 * 0.82;
+                var top = height * 3 / 2 + 8;
+                var bottom = height * 3 / 2 - 8;
 
                 if (message.IsOutgoing)
                 {
-                    player.Margin = new Thickness(-left, -top, -right, -bottom);
+                    player.Margin = new Thickness(-right, -top, -left, -bottom);
                 }
                 else
                 {
-                    player.Margin = new Thickness(-right, -top, -left, -bottom);
+                    player.Margin = new Thickness(-left, -top, -right, -bottom);
                 }
 
                 Interactions.Children.Add(player);
+                Interactions.Width = 4;
+                Interactions.Height = 4;
                 InteractionsPopup.IsOpen = true;
+
+                return true;
             }
             else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive)
             {
@@ -253,6 +268,8 @@ namespace Telegram.Controls.Messages
 
                 //UpdateManager.Subscribe(this, message, file, ref _interactionToken, UpdateFile, true);
             }
+
+            return false;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]

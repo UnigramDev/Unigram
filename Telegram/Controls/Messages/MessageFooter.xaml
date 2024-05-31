@@ -3,6 +3,7 @@
                     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
                     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
                     xmlns:local="using:Telegram.Controls.Messages"
+                    xmlns:controls="using:Telegram.Controls"
                     mc:Ignorable="d">
 
     <Style TargetType="local:MessageFooter">
@@ -23,19 +24,36 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="local:MessageFooter">
-                    <Border Background="{TemplateBinding Background}"
-                            CornerRadius="{TemplateBinding CornerRadius}"
-                            Padding="{TemplateBinding Padding}">
+                    <Grid Background="{TemplateBinding Background}"
+                          CornerRadius="{TemplateBinding CornerRadius}"
+                          Padding="{TemplateBinding Padding}">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                        <controls:AnimatedImage x:Name="Effect"
+                                                AutoPlay="True"
+                                                Width="12"
+                                                Height="12"
+                                                FrameSize="12,12"
+                                                DecodeFrameType="Logical"
+                                                Margin="0,0,6,0" />
+                        <Popup x:Name="InteractionsPopup"
+                               x:Load="False">
+                            <Grid x:Name="Interactions" />
+                        </Popup>
+
                         <TextBlock x:Name="Label"
-                                   FontFamily="Segoe UI, ms-appx:///Assets/Fonts/Telegram.ttf#Telegram"
+                                   FontFamily="{StaticResource EmojiThemeFontFamilyWithSymbols}"
                                    TextWrapping="NoWrap"
                                    TextTrimming="CharacterEllipsis"
-                                   Style="{StaticResource CaptionTextBlockStyle}">
+                                   Style="{StaticResource CaptionTextBlockStyle}"
+                                   Grid.Column="1">
                             <ToolTipService.ToolTip>
                                 <ToolTip x:Name="ToolTip" />
                             </ToolTipService.ToolTip>
                         </TextBlock>
-                    </Border>
+                    </Grid>
                 </ControlTemplate>
             </Setter.Value>
         </Setter>

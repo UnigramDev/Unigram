@@ -1277,6 +1277,11 @@ namespace Telegram
         public static string AddedToDoNotTranslate => Resource.GetString("AddedToDoNotTranslate");
         
         /// <summary>
+        /// Localized resource similar to "Add an animated effect"
+        /// </summary>
+        public static string AddEffectMessageHint => Resource.GetString("AddEffectMessageHint");
+        
+        /// <summary>
         /// Localized resource similar to "You will receive Telegram login codes via email and not SMS. Please enter an email address to which you have access."
         /// </summary>
         public static string AddEmailSubtitle => Resource.GetString("AddEmailSubtitle");
@@ -1440,6 +1445,11 @@ namespace Telegram
         /// Localized resource similar to "Always Share"
         /// </summary>
         public static string AlwaysShareWithTitle => Resource.GetString("AlwaysShareWithTitle");
+        
+        /// <summary>
+        /// Localized resource similar to "Subscribe to **Telegram Premium** to add this animated effect."
+        /// </summary>
+        public static string AnimatedEffectPremium => Resource.GetString("AnimatedEffectPremium");
         
         /// <summary>
         /// Localized resource similar to "Author Hidden"

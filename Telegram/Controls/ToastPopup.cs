@@ -8,6 +8,7 @@ using Microsoft.UI.Xaml.Controls;
 using System;
 using System.Threading.Tasks;
 using Telegram.Common;
+using Telegram.Controls.Messages;
 using Telegram.Navigation;
 using Telegram.Navigation.Services;
 using Telegram.Streams;
@@ -29,6 +30,11 @@ namespace Telegram.Controls
         public ToastPopup()
         {
             DefaultStyleKey = typeof(ToastPopup);
+        }
+
+        public static void ShowError(Error error)
+        {
+            Show(string.Format(Strings.UnknownErrorCode, error.Message), new LocalFileSource("ms-appx:///Assets/Toasts/Error.tgs"));
         }
 
         public static void ShowOption(INavigationService navigationService)
@@ -55,6 +61,15 @@ namespace Telegram.Controls
             var confirm = await ShowActionAsync(markdown, action, new LocalFileSource("ms-appx:///Assets/Toasts/Premium.tgs"));
             if (confirm == ContentDialogResult.Primary)
             {
+                var popups = VisualTreeHelper.GetOpenPopups(Window.Current);
+                foreach (var popup in popups)
+                {
+                    if (popup.Child is MessageEffectMenuFlyout)
+                    {
+                        popup.IsOpen = false;
+                    }
+                }
+
                 navigationService.ShowPromo(source);
             }
         }

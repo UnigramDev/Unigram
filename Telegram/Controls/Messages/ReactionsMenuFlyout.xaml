@@ -112,10 +112,18 @@
 
         <Grid x:Name="Preloader" />
 
+        <TextBlock x:Name="Header"
+                   Style="{StaticResource InfoCaptionTextBlockStyle}"
+                   HorizontalAlignment="Stretch"
+                   TextAlignment="Center"
+                   Margin="0,4,0,0"
+                   Visibility="Collapsed" />
+
         <Grid x:Name="Presenter"
               Width="272"
               Height="40"
-              CornerRadius="20">
+              CornerRadius="20"
+              VerticalAlignment="Bottom">
             <Button x:Name="Expand"
                     AutomationProperties.Name="{CustomResource AccDescrMoreReactions}"
                     Click="Expand_Click"

@@ -738,6 +738,9 @@ to: {1}</value>
   <data name="AddedToDoNotTranslate" xml:space="preserve">
     <value>**{0}** added to your Do Not Translate list.</value>
   </data>
+  <data name="AddEffectMessageHint" xml:space="preserve">
+    <value>Add an animated effect</value>
+  </data>
   <data name="AddEmailSubtitle" xml:space="preserve">
     <value>You will receive Telegram login codes via email and not SMS. Please enter an email address to which you have access.</value>
   </data>
@@ -854,6 +857,9 @@ to: {1}</value>
   </data>
   <data name="AndMoreTyping_other" xml:space="preserve">
     <value>and {0} more are typing</value>
+  </data>
+  <data name="AnimatedEffectPremium" xml:space="preserve">
+    <value>Subscribe to **Telegram Premium** to add this animated effect.</value>
   </data>
   <data name="AnonymousForward" xml:space="preserve">
     <value>Author Hidden</value>

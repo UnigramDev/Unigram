@@ -411,12 +411,15 @@ namespace Telegram.Controls.Messages
             Pill.Width = width;
             Presenter.Width = width;
 
-            var height = 40;
+            var height = 60;
             var haheight = 20;
 
             Pill.VerticalAlignment = VerticalAlignment.Top;
             Pill.Height = Shadow.Height = height + 20;
             Pill.Margin = Shadow.Margin = new Thickness(0, 0, 0, -20);
+
+            Header.Text = Strings.AddEffectMessageHint;
+            Header.Visibility = Visibility.Visible;
 
             if (select)
             {
@@ -433,12 +436,23 @@ namespace Telegram.Controls.Messages
             {
                 figure.StartPoint = new Point(haheight, 0);
                 figure.Segments.Add(new LineSegment { Point = new Point(width - haheight, 0) });
-                figure.Segments.Add(new ArcSegment { Point = new Point(width - haheight, height), Size = new Size(haheight, haheight), RotationAngle = 180, SweepDirection = SweepDirection.Clockwise });
+                figure.Segments.Add(new ArcSegment { Point = new Point(width, haheight), Size = new Size(haheight, haheight), RotationAngle = 90, SweepDirection = SweepDirection.Clockwise });
+                figure.Segments.Add(new LineSegment { Point = new Point(width, height - haheight) });
+                figure.Segments.Add(new ArcSegment { Point = new Point(width - haheight, height), Size = new Size(haheight, haheight), RotationAngle = 90, SweepDirection = SweepDirection.Clockwise });
 
                 figure.Segments.Add(new ArcSegment { Point = new Point(width - haheight - 14, height), Size = new Size(7, 7), RotationAngle = 180, SweepDirection = SweepDirection.Clockwise });
 
                 figure.Segments.Add(new LineSegment { Point = new Point(haheight, height) });
-                figure.Segments.Add(new ArcSegment { Point = new Point(haheight, 0), Size = new Size(haheight, haheight), RotationAngle = 180, SweepDirection = SweepDirection.Clockwise });
+                figure.Segments.Add(new ArcSegment { Point = new Point(0, height - haheight), Size = new Size(haheight, haheight), RotationAngle = 90, SweepDirection = SweepDirection.Clockwise });
+                figure.Segments.Add(new LineSegment { Point = new Point(0, haheight) });
+                figure.Segments.Add(new ArcSegment { Point = new Point(haheight, 0), Size = new Size(haheight, haheight), RotationAngle = 90, SweepDirection = SweepDirection.Clockwise });
+
+                //figure.Segments.Add(new ArcSegment { Point = new Point(width - haheight, height), Size = new Size(haheight, haheight), RotationAngle = 180, SweepDirection = SweepDirection.Clockwise });
+
+                //figure.Segments.Add(new ArcSegment { Point = new Point(width - haheight - 14, height), Size = new Size(7, 7), RotationAngle = 180, SweepDirection = SweepDirection.Clockwise });
+
+                //figure.Segments.Add(new LineSegment { Point = new Point(haheight, height) });
+                //figure.Segments.Add(new ArcSegment { Point = new Point(haheight, 0), Size = new Size(haheight, haheight), RotationAngle = 180, SweepDirection = SweepDirection.Clockwise });
             }
             else
             {
@@ -473,6 +487,9 @@ namespace Telegram.Controls.Messages
             var compositor = rootVisual.Compositor;
             rootVisual.Clip = rootVisual.Compositor.CreateGeometricClip(rootVisual.Compositor.CreatePathGeometry(new CompositionPath(group1)));
 
+            var headerVisual = ElementComposition.GetElementVisual(Header);
+            headerVisual.CenterPoint = new Vector3((float)width / 2, 10, 0);
+
             var pillShadow = compositor.CreateDropShadow();
             pillShadow.BlurRadius = 16f;
             pillShadow.Opacity = 0.14f;
@@ -503,9 +520,6 @@ namespace Telegram.Controls.Messages
             var visualExpand = ElementComposition.GetElementVisual(Expand);
             visualExpand.CenterPoint = new Vector3(32 / 2f, 24 / 2f, 0);
 
-            var clip = compositor.CreateRoundedRectangleGeometry();
-            clip.CornerRadius = new Vector2(height / 2);
-
             var batch = compositor.CreateScopedBatch(CompositionBatchTypes.Animation);
 
             var scalePill = compositor.CreateSpringVector3Animation();
@@ -524,6 +538,7 @@ namespace Telegram.Controls.Messages
 
             visualPill.StartAnimation("Scale", scalePill);
             visualExpand.StartAnimation("Scale", scalePill);
+            headerVisual.StartAnimation("Scale", scalePill);
 
             translation.DelayBehavior = AnimationDelayBehavior.SetInitialValueBeforeDelay;
             translation.DelayTime = TimeSpan.FromMilliseconds(150 + 100);
