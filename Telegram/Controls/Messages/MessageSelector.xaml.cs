@@ -748,6 +748,10 @@ namespace Telegram.Controls.Messages
                 {
                     return child.GetAutomationName() ?? base.GetNameCore();
                 }
+                else if (_owner.Message != null)
+                {
+                    return Automation.GetSummary(_owner.Message, true);
+                }
 
                 return base.GetNameCore();
             }
@@ -773,12 +777,22 @@ namespace Telegram.Controls.Messages
 
             protected override int GetPositionInSetCore()
             {
-                return 1 + _owner._owner.Items.IndexOf(_owner.Message);
+                if (_owner._owner != null)
+                {
+                    return 1 + _owner._owner.Items.IndexOf(_owner.Message);
+                }
+
+                return base.GetPositionInSetCore();
             }
 
             protected override int GetSizeOfSetCore()
             {
-                return _owner._owner.Items.Count;
+                if (_owner._owner != null)
+                {
+                    return _owner._owner.Items.Count;
+                }
+
+                return base.GetSizeOfSetCore();
             }
 
             public void AddToSelection()
