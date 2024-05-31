@@ -351,11 +351,11 @@ namespace Telegram.Common
                 string result;
                 if (performer == null && title == null)
                 {
-                    result = Strings.AttachMusic + GetCaption(audio.Caption.Text) + ", ";
+                    result = Strings.AttachMusic + ", " + audio.Audio.FileName + GetCaption(audio.Caption.Text) + ", ";
                 }
                 else
                 {
-                    result = $"{performer ?? Strings.AudioUnknownArtist} - {title ?? Strings.AudioUnknownTitle}" + GetCaption(audio.Caption.Text) + ", ";
+                    result = Strings.AttachMusic + ", " + $"{performer ?? Strings.AudioUnknownArtist} - {title ?? Strings.AudioUnknownTitle}" + GetCaption(audio.Caption.Text) + ", ";
                 }
 
                 if (details)
