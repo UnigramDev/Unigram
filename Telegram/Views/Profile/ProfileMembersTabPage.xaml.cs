@@ -65,7 +65,7 @@ namespace Telegram.Views.Profile
                 flyout.CreateFlyoutItem(MemberRestrict_Loaded, ViewModel.MembersTab.RestrictMember, chat, status, member, member.Status is ChatMemberStatusRestricted ? Strings.ChangePermissions : Strings.KickFromSupergroup, Icons.LockClosed);
             }
 
-            flyout.CreateFlyoutItem(MemberRemove_Loaded, ViewModel.MembersTab.RemoveMember, chat, status, member, Strings.KickFromGroup, Icons.Block);
+            flyout.CreateFlyoutItem(MemberRemove_Loaded, ViewModel.MembersTab.RemoveMember, chat, status, member, chat.Type is ChatTypeSupergroup { IsChannel: true } ? Strings.ChannelRemoveUser : Strings.KickFromGroup, Icons.Block);
 
             flyout.ShowAt(sender, args);
         }

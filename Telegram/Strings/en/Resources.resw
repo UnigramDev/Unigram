@@ -1430,10 +1430,10 @@ Please enable Unigram in the Startup Apps Settings.</value>
     <value>This phone number is banned.</value>
   </data>
   <data name="Bans_one" xml:space="preserve">
-    <value>{0} ban</value>
+    <value>{0} restriction</value>
   </data>
   <data name="Bans_other" xml:space="preserve">
-    <value>{0} bans</value>
+    <value>{0} restrictions</value>
   </data>
   <data name="BanUser" xml:space="preserve">
     <value>Ban user</value>
@@ -1856,7 +1856,7 @@ a **Telegram Premium** subscription.</value>
     <value>Reason</value>
   </data>
   <data name="BoostingReassignBoost" xml:space="preserve">
-    <value>Reassign Boost</value>
+    <value>Reassign Boosts</value>
   </data>
   <data name="BoostingReassignBoosts" xml:space="preserve">
     <value>Reassign Boosts</value>
@@ -2985,6 +2985,9 @@ Ask your **Premium** subscribers to boost your channel with this link:</value>
   </data>
   <data name="ChannelPublicInfo" xml:space="preserve">
     <value>Public channels can be found in search, anyone can join them.</value>
+  </data>
+  <data name="ChannelRemoveUser" xml:space="preserve">
+    <value>Remove from channel</value>
   </data>
   <data name="ChannelRemoveUserAdmin" xml:space="preserve">
     <value>Dismiss admin</value>
@@ -4706,13 +4709,13 @@ Duration: {1}</value>
     <value>Fact check added</value>
   </data>
   <data name="FactCheckDeleted" xml:space="preserve">
-    <value>Fact check removed</value>
+    <value>Fact check removed.</value>
   </data>
   <data name="FactCheckDialog" xml:space="preserve">
     <value>Fact Check</value>
   </data>
   <data name="FactCheckEdited" xml:space="preserve">
-    <value>Fact check edited</value>
+    <value>Fact check updated.</value>
   </data>
   <data name="FactCheckPlaceholder" xml:space="preserve">
     <value>Add Fact or Context</value>
@@ -6270,7 +6273,7 @@ Minimum length is 5 characters.</value>
     <value>Monetization</value>
   </data>
   <data name="MonetizationBalance" xml:space="preserve">
-    <value>Available balance</value>
+    <value>Available reward</value>
   </data>
   <data name="MonetizationBalanceInfo" xml:space="preserve">
     <value>You can collect your reward using Fragment, a third-party platform used by advertisers to pay for ads. **Learn more &gt;**</value>
@@ -6279,7 +6282,7 @@ Minimum length is 5 characters.</value>
     <value>In the coming weeks you will be able to collect your reward using Fragment, a third-party platform used by advertisers to pay ads. **Learn more &gt;**</value>
   </data>
   <data name="MonetizationDoneWithdraw" xml:space="preserve">
-    <value>Withdrawal Complete</value>
+    <value>Reward Collected</value>
   </data>
   <data name="MonetizationDoneWithdrawText" xml:space="preserve">
     <value>**{0}** sent to your wallet.</value>
@@ -6309,7 +6312,7 @@ Minimum length is 5 characters.</value>
     <value>Flexible withdrawals</value>
   </data>
   <data name="MonetizationInfoFeature3Text" xml:space="preserve">
-    <value>You can withdraw your TON any time.</value>
+    <value>You can collect your TON any time.</value>
   </data>
   <data name="MonetizationInfoTitle" xml:space="preserve">
     <value>Earn From Your Channel</value>
@@ -6333,10 +6336,10 @@ Minimum length is 5 characters.</value>
     <value>Rewards overview</value>
   </data>
   <data name="MonetizationOverviewAvailable" xml:space="preserve">
-    <value>Balance available to withdraw</value>
+    <value>Rewards available for collection</value>
   </data>
   <data name="MonetizationOverviewLastWithdrawal" xml:space="preserve">
-    <value>Rewards since last withdrawal</value>
+    <value>Rewards since last collection</value>
   </data>
   <data name="MonetizationOverviewTotal" xml:space="preserve">
     <value>Total lifetime rewards</value>
@@ -6354,7 +6357,7 @@ Minimum length is 5 characters.</value>
     <value>Refunded back</value>
   </data>
   <data name="MonetizationTransactionDetailWithdraw" xml:space="preserve">
-    <value>Balance withdrawal</value>
+    <value>Collecting rewards</value>
   </data>
   <data name="MonetizationTransactionDetailWithdrawButton" xml:space="preserve">
     <value>View in Blockchain Explorer</value>
@@ -6375,7 +6378,7 @@ Minimum length is 5 characters.</value>
     <value>Transaction history</value>
   </data>
   <data name="MonetizationTransactionWithdraw" xml:space="preserve">
-    <value>Withdrawal via Fragment</value>
+    <value>Collection via Fragment</value>
   </data>
   <data name="MonetizationTransferButton" xml:space="preserve">
     <value>Transfer {0}</value>
@@ -8324,10 +8327,10 @@ Payments will go directly to the developer of {0}. Telegram cannot provide any g
     <value>You can reset your password in {0}.</value>
   </data>
   <data name="Restrictions_one" xml:space="preserve">
-    <value>{0} restriction</value>
+    <value>{0} ban</value>
   </data>
   <data name="Restrictions_other" xml:space="preserve">
-    <value>{0} restrictions</value>
+    <value>{0} bans</value>
   </data>
   <data name="RestrictSavingContent" xml:space="preserve">
     <value>Restrict saving content</value>
@@ -8997,10 +9000,10 @@ The channel &quot;**{1}**&quot; will become private.</value>
     <value>Confirm and Pay ⭐️ {0} Stars</value>
   </data>
   <data name="StarsConfirmPurchaseText_one" xml:space="preserve">
-    <value>Do you want to buy **{1}** in **{2}** for **{0} star**?</value>
+    <value>Do you want to buy &quot;**{1}**&quot; in **{2}** for **{0} star**?</value>
   </data>
   <data name="StarsConfirmPurchaseText_other" xml:space="preserve">
-    <value>Do you want to buy **{1}** in **{2}** for **{0} stars**?</value>
+    <value>Do you want to buy &quot;**{1}**&quot; in **{2}** for **{0} stars**?</value>
   </data>
   <data name="StarsConfirmPurchaseTitle" xml:space="preserve">
     <value>Confirm Your Purchase</value>
@@ -9024,10 +9027,7 @@ The channel &quot;**{1}**&quot; will become private.</value>
     <value>Purchase Completed!</value>
   </data>
   <data name="StarsPurchaseCompletedInfo_other" xml:space="preserve">
-    <value>You acquired **{1}** in **{2}** for **{0} Stars**.</value>
-  </data>
-  <data name="StarsRefunded" xml:space="preserve">
-    <value>Refund</value>
+    <value>You acquired &quot;**{1}**&quot; in **{2}** for **{0} Stars**.</value>
   </data>
   <data name="StarsTOS" xml:space="preserve">
     <value>By proceeding and purchasing Stars, you agree with the **Terms and Conditions**.</value>
@@ -9038,23 +9038,11 @@ The channel &quot;**{1}**&quot; will become private.</value>
   <data name="StarsTransactionBot" xml:space="preserve">
     <value>Stars Top-Up Bot</value>
   </data>
-  <data name="StarsTransactionDate" xml:space="preserve">
-    <value>Date</value>
-  </data>
   <data name="StarsTransactionFragment" xml:space="preserve">
     <value>Purchase from Fragment</value>
   </data>
-  <data name="StarsTransactionID" xml:space="preserve">
-    <value>Transaction ID</value>
-  </data>
-  <data name="StarsTransactionIDCopied" xml:space="preserve">
-    <value>Transaction ID copied to clipboard</value>
-  </data>
   <data name="StarsTransactionInApp" xml:space="preserve">
     <value>In-App Purchase</value>
-  </data>
-  <data name="StarsTransactionRecipient" xml:space="preserve">
-    <value>From</value>
   </data>
   <data name="StarsTransactionsAll" xml:space="preserve">
     <value>All Transactions</value>
@@ -9062,14 +9050,8 @@ The channel &quot;**{1}**&quot; will become private.</value>
   <data name="StarsTransactionsIncoming" xml:space="preserve">
     <value>Incoming</value>
   </data>
-  <data name="StarsTransactionSource" xml:space="preserve">
-    <value>Via</value>
-  </data>
   <data name="StarsTransactionsOutgoing" xml:space="preserve">
     <value>Outgoing</value>
-  </data>
-  <data name="StarsTransactionTOS" xml:space="preserve">
-    <value>Review the **Terms of Service** for Stars.</value>
   </data>
   <data name="StarsTransactionUnsupported" xml:space="preserve">
     <value>In-App Purchase</value>
@@ -9475,7 +9457,8 @@ Here’s what is now unlocked.</value>
     <value>Choose package</value>
   </data>
   <data name="TelegramStarsInfo" xml:space="preserve">
-    <value>Buy Stars to unlock content and services in miniapps on Telegram.</value>
+    <value>Buy Stars to unlock content and service
+in miniapps on Telegram.</value>
   </data>
   <data name="TelegramTones" xml:space="preserve">
     <value>Telegram tones</value>
