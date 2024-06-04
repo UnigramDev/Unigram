@@ -9038,11 +9038,23 @@ The channel &quot;**{1}**&quot; will become private.</value>
   <data name="StarsTransactionBot" xml:space="preserve">
     <value>Stars Top-Up Bot</value>
   </data>
+  <data name="StarsTransactionDate" xml:space="preserve">
+    <value>Date</value>
+  </data>
   <data name="StarsTransactionFragment" xml:space="preserve">
     <value>Purchase from Fragment</value>
   </data>
+  <data name="StarsTransactionID" xml:space="preserve">
+    <value>Transaction ID</value>
+  </data>
+  <data name="StarsTransactionIDCopied" xml:space="preserve">
+    <value>Transaction ID copied to clipboard</value>
+  </data>
   <data name="StarsTransactionInApp" xml:space="preserve">
     <value>In-App Purchase</value>
+  </data>
+  <data name="StarsTransactionRecipient" xml:space="preserve">
+    <value>From</value>
   </data>
   <data name="StarsTransactionsAll" xml:space="preserve">
     <value>All Transactions</value>
@@ -9050,8 +9062,14 @@ The channel &quot;**{1}**&quot; will become private.</value>
   <data name="StarsTransactionsIncoming" xml:space="preserve">
     <value>Incoming</value>
   </data>
+  <data name="StarsTransactionSource" xml:space="preserve">
+    <value>Via</value>
+  </data>
   <data name="StarsTransactionsOutgoing" xml:space="preserve">
     <value>Outgoing</value>
+  </data>
+  <data name="StarsTransactionTOS" xml:space="preserve">
+    <value>Review the **Terms of Service** for Stars.</value>
   </data>
   <data name="StarsTransactionUnsupported" xml:space="preserve">
     <value>In-App Purchase</value>
