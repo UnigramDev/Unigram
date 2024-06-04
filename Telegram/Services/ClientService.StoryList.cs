@@ -21,7 +21,7 @@ namespace Telegram.Services
         {
             Monitor.Enter(_storyList);
 
-            if (prev != null)
+            if (prev?.List != null)
             {
                 _storyList[prev.List].Remove(new OrderedActiveStories(prev.ChatId, prev.Order));
             }
