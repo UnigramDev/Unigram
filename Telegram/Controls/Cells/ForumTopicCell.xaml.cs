@@ -646,6 +646,14 @@ namespace Telegram.Controls.Cells
             {
                 return result + Strings.AttachPhotoExpired;
             }
+            else if (message.Content is MessageExpiredVideoNote)
+            {
+                return result + Strings.AttachRoundExpired;
+            }
+            else if (message.Content is MessageExpiredVoiceNote)
+            {
+                return result + Strings.AttachVoiceExpired;
+            }
             else if (message.Content is MessageVideoNote)
             {
                 return result + Strings.AttachRound;

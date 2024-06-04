@@ -271,6 +271,14 @@ namespace Telegram.Common
             {
                 return Strings.AttachPhotoExpired + ", ";
             }
+            else if (message.Content is MessageExpiredVideoNote)
+            {
+                return Strings.AttachRoundExpired + ", ";
+            }
+            else if (message.Content is MessageExpiredVoiceNote)
+            {
+                return Strings.AttachVoiceExpired + ", ";
+            }
             else if (message.Content is MessageVideoNote videoNote)
             {
                 var result = Strings.AttachRound + ", " + (videoNote.IsViewed ? "" : Strings.AccDescrMsgNotPlayed + ", ");

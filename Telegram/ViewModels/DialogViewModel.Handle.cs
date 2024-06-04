@@ -768,7 +768,7 @@ namespace Telegram.ViewModels
 
                         ProcessEmoji(message);
 
-                        if (update.NewContent is MessageExpiredPhoto or MessageExpiredVideo)
+                        if (update.NewContent is MessageExpiredPhoto or MessageExpiredVideo or MessageExpiredVideoNote or MessageExpiredVoiceNote)
                         {
                             // Probably not the best way
                             Items.Remove(message);
