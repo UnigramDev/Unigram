@@ -5,16 +5,14 @@
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
 using System;
-using System.Globalization;
 using System.Linq;
 using Telegram.Common;
-using Telegram.Converters;
+using Telegram.Controls.Cells;
 using Telegram.Streams;
 using Telegram.Td.Api;
 using Telegram.ViewModels;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Media.Imaging;
 
 namespace Telegram.Controls
 {
@@ -75,32 +73,6 @@ namespace Telegram.Controls
             LayoutRoot.Visibility = rights ? Visibility.Collapsed : Visibility.Visible;
             PermissionsPanel.Visibility = rights ? Visibility.Visible : Visibility.Collapsed;
             PermissionsLabel.Text = label ?? string.Empty;
-        }
-
-        private void UpdateFile(object target, File file)
-        {
-            if (target is Grid content)
-            {
-                if (content.Children[0] is Image image)
-                {
-                    image.Source = UriEx.ToBitmap(file.Local.Path);
-                }
-            }
-        }
-
-        private void UpdateThumbnail(object target, File file)
-        {
-            if (target is ProfilePicture image)
-            {
-                if (image.Tag is InlineQueryResultSticker)
-                {
-                    image.Source = PlaceholderHelper.GetWebPFrame(file.Local.Path);
-                }
-                else
-                {
-                    image.Source = UriEx.ToBitmap(file.Local.Path);
-                }
-            }
         }
 
         private void OnItemClick(object sender, ItemClickEventArgs e)
@@ -183,49 +155,18 @@ namespace Telegram.Controls
             var content = args.ItemContainer.ContentTemplateRoot as Grid;
             var result = args.Item as InlineQueryResult;
 
-            if (content.Children[0] is Image image)
+            if (args.ItemContainer.ContentTemplateRoot is InlineResultMediaCell mediaCell)
             {
-                image.Tag = args.Item;
-
-                if (result is InlineQueryResultPhoto or InlineQueryResultVideo)
-                {
-                    File file = null;
-                    if (result is InlineQueryResultPhoto photo)
-                    {
-                        file = photo.Photo.GetSmall().Photo;
-                    }
-                    else if (result is InlineQueryResultVideo video)
-                    {
-                        file = video.Video.Thumbnail?.File;
-                    }
-
-                    if (file == null)
-                    {
-                        return;
-                    }
-
-                    if (file.Local.IsDownloadingCompleted)
-                    {
-                        image.Source = UriEx.ToBitmap(file.Local.Path);
-                    }
-                    else
-                    {
-                        image.Source = null;
-                        UpdateManager.Subscribe(content, ViewModel.ClientService, file, UpdateThumbnail, true);
-
-                        if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive)
-                        {
-                            ViewModel.ClientService.DownloadFile(file.Id, 1);
-                        }
-                    }
-                }
+                mediaCell.UpdateResult(ViewModel.ClientService, result);
             }
-            else if (result is InlineQueryResultSticker sticker)
+            else if (args.ItemContainer.ContentTemplateRoot is InlineResultArticleCell articleCell)
             {
-                if (content.Children[0] is AnimatedImage animated)
+                articleCell.UpdateResult(ViewModel.ClientService, result);
+            }
+            else if (content.Children[0] is AnimatedImage animated)
+            {
+                if (result is InlineQueryResultSticker sticker)
                 {
-                    animated.Tag = args.Item;
-
                     var file = sticker.Sticker.StickerValue;
                     if (file == null)
                     {
@@ -234,137 +175,15 @@ namespace Telegram.Controls
 
                     animated.Source = new DelayedFileSource(ViewModel.ClientService, file);
                 }
-            }
-            else if (content.Children[0] is AnimatedImage animated && result is InlineQueryResultAnimation animation)
-            {
-                animated.Tag = args.Item;
-
-                var file = animation.Animation.AnimationValue;
-                if (file == null)
+                else if (result is InlineQueryResultAnimation animation)
                 {
-                    return;
-                }
-
-                animated.Source = new DelayedFileSource(ViewModel.ClientService, file);
-            }
-            else if (content.Children[0] is Grid presenter)
-            {
-                //var presenter = content.Children[0] as Grid;
-                var thumb = presenter.Children[0] as ProfilePicture;
-
-                var title = content.Children[1] as TextBlock;
-                var description = content.Children[2] as TextBlock;
-
-                File file = null;
-                Uri uri = null;
-
-                if (result is InlineQueryResultAnimation animation2)
-                {
-                    file = animation2.Animation.Thumbnail?.File;
-                    title.Text = animation2.Title;
-                    description.Text = string.Empty;
-                }
-                else if (result is InlineQueryResultArticle article)
-                {
-                    file = article.Thumbnail?.File;
-                    title.Text = article.Title;
-                    description.Text = article.Description;
-                }
-                else if (result is InlineQueryResultAudio audio)
-                {
-                    file = audio.Audio.AlbumCoverThumbnail?.File;
-                    title.Text = audio.Audio.GetTitle();
-                    description.Text = audio.Audio.GetDuration();
-                }
-                else if (result is InlineQueryResultContact contact)
-                {
-                    file = contact.Thumbnail?.File;
-                    title.Text = contact.Contact.GetFullName();
-                    description.Text = PhoneNumber.Format(contact.Contact.PhoneNumber);
-                }
-                else if (result is InlineQueryResultDocument document)
-                {
-                    file = document.Document.Thumbnail?.File;
-                    title.Text = document.Title;
-
-                    if (string.IsNullOrEmpty(document.Description))
+                    var file = animation.Animation.AnimationValue;
+                    if (file == null)
                     {
-                        description.Text = FileSizeConverter.Convert(document.Document.DocumentValue.Size);
+                        return;
                     }
-                    else
-                    {
-                        description.Text = document.Description;
-                    }
-                }
-                else if (result is InlineQueryResultGame game)
-                {
-                    file = game.Game.Animation?.Thumbnail?.File ?? game.Game.Photo.GetSmall().Photo;
-                    title.Text = game.Game.Title;
-                    description.Text = game.Game.Description;
-                }
-                else if (result is InlineQueryResultLocation location)
-                {
-                    var latitude = location.Location.Latitude.ToString(CultureInfo.InvariantCulture);
-                    var longitude = location.Location.Longitude.ToString(CultureInfo.InvariantCulture);
 
-                    uri = new Uri(string.Format("https://dev.virtualearth.net/REST/v1/Imagery/Map/Road/{0},{1}/{2}?mapSize={3}&key=FgqXCsfOQmAn9NRf4YJ2~61a_LaBcS6soQpuLCjgo3g~Ah_T2wZTc8WqNe9a_yzjeoa5X00x4VJeeKH48wAO1zWJMtWg6qN-u4Zn9cmrOPcL", latitude, longitude, 15, "96,96"));
-                    file = location.Thumbnail?.File;
-                    title.Text = location.Title;
-                    description.Text = $"{location.Location.Latitude};{location.Location.Longitude}";
-                }
-                else if (result is InlineQueryResultPhoto photo)
-                {
-                    file = photo.Photo.GetSmall().Photo;
-                    title.Text = photo.Title;
-                    description.Text = photo.Description;
-                }
-                else if (result is InlineQueryResultVenue venue)
-                {
-                    var latitude = venue.Venue.Location.Latitude.ToString(CultureInfo.InvariantCulture);
-                    var longitude = venue.Venue.Location.Longitude.ToString(CultureInfo.InvariantCulture);
-
-                    uri = new Uri(string.Format("https://dev.virtualearth.net/REST/v1/Imagery/Map/Road/{0},{1}/{2}?mapSize={3}&key=FgqXCsfOQmAn9NRf4YJ2~61a_LaBcS6soQpuLCjgo3g~Ah_T2wZTc8WqNe9a_yzjeoa5X00x4VJeeKH48wAO1zWJMtWg6qN-u4Zn9cmrOPcL", latitude, longitude, 15, "96,96"));
-                    file = venue.Thumbnail?.File;
-
-                    title.Text = venue.Venue.Title;
-                    description.Text = venue.Venue.Address;
-                }
-                else if (result is InlineQueryResultVideo video)
-                {
-                    file = video.Video.Thumbnail?.File;
-                    title.Text = video.Title;
-                    description.Text = video.Description;
-                }
-                else if (result is InlineQueryResultVoiceNote voiceNote)
-                {
-                    title.Text = voiceNote.Title;
-                    description.Text = voiceNote.VoiceNote.GetDuration();
-                }
-
-                if (file != null)
-                {
-                    if (file.Local.IsDownloadingCompleted)
-                    {
-                        thumb.Source = UriEx.ToBitmap(file.Local.Path);
-                    }
-                    else
-                    {
-                        thumb.Source = null;
-                        UpdateManager.Subscribe(thumb, ViewModel.ClientService, file, UpdateThumbnail, true);
-
-                        if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive)
-                        {
-                            ViewModel.ClientService.DownloadFile(file.Id, 1);
-                        }
-                    }
-                }
-                else if (uri != null)
-                {
-                    thumb.Source = new BitmapImage(uri);
-                }
-                else
-                {
-                    thumb.Source = PlaceholderImage.GetNameForChat(title.Text, title.Text.GetHashCode());
+                    animated.Source = new DelayedFileSource(ViewModel.ClientService, file);
                 }
             }
 

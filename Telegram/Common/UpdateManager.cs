@@ -4,7 +4,6 @@
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
-using System;
 using Telegram.Services;
 using Telegram.Td.Api;
 using Telegram.ViewModels;
@@ -47,22 +46,6 @@ namespace Telegram.Common
 
         #endregion
 
-        #region Subscribe
-
-        [Obsolete("Always use token subscription")]
-        public static void Subscribe(object sender, IClientService clientService, File file, UpdateHandler<File> handler, bool completionOnly = false)
-        {
-            var value = (clientService.SessionId << 16) | file.Id;
-            if (completionOnly)
-            {
-                value |= 0x01000000;
-            }
-
-            EventAggregator.Current.Subscribe(sender, value, handler, true);
-        }
-
-        #endregion
-
         public static void Unsubscribe(object sender, ref long token, bool completionOnly = false)
         {
             if (token != 0)
@@ -70,12 +53,6 @@ namespace Telegram.Common
                 EventAggregator.Current.Unsubscribe(sender, token, false);
                 token = 0;
             }
-        }
-
-        [Obsolete("Always use token subscription")]
-        public static void Unsubscribe(object sender)
-        {
-            EventAggregator.Current.Unsubscribe(sender);
         }
     }
 }
