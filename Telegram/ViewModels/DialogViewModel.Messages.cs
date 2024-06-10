@@ -1337,7 +1337,11 @@ namespace Telegram.ViewModels
             }
             else if (keyboardButton.Type is KeyboardButtonTypeRequestUsers requestUsers)
             {
-
+                await NavigationService.ShowPopupAsync(typeof(ChooseChatsPopup), new ChooseChatsConfigurationRequestUsers(requestUsers));
+            }
+            else if (keyboardButton.Type is KeyboardButtonTypeRequestChat requestChat)
+            {
+                await NavigationService.ShowPopupAsync(typeof(ChooseChatsPopup), new ChooseChatsConfigurationRequestChat(requestChat));
             }
         }
 

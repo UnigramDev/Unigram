@@ -99,7 +99,7 @@
                              MaxLength="{x:Bind ViewModel.BioMaxLength}"
                              PlaceholderText="{CustomResource EditProfileBioHint}"
                              TextWrapping="Wrap"
-                             AcceptsReturn="True"
+                             AcceptsReturn="False"
                              Padding="12,11,6,12" />
                 </controls:HeaderedControl>
 

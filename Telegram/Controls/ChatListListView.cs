@@ -192,7 +192,9 @@ namespace Telegram.Controls
             _changingView = true;
 
             var child = VisualTreeHelper.GetChild(ScrollViewer, 0) as UIElement;
-            var visual = Window.Current.Compositor.CreateRedirectBrush(child, Vector2.Zero, child.ActualSize, true);
+            var childSize = child.ActualSize.X > 0 && child.ActualSize.Y > 0 ? child.ActualSize : new Vector2(1, 1);
+
+            var visual = Window.Current.Compositor.CreateRedirectBrush(child, Vector2.Zero, childSize, true);
 
             await VisualUtilities.WaitForCompositionRenderedAsync();
 

@@ -173,7 +173,7 @@ namespace Telegram.Controls
             {
                 EmojiSearchType.ChatPhoto => new EmojiCategoryTypeChatPhoto(),
                 EmojiSearchType.EmojiStatus => new EmojiCategoryTypeEmojiStatus(),
-                EmojiSearchType.Combined => new EmojiCategoryTypeCombined(),
+                EmojiSearchType.Combined => new EmojiCategoryTypeRegularStickers(),
                 _ => new EmojiCategoryTypeDefault()
             };
 

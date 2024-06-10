@@ -1,0 +1,14 @@
+diff --git a/config/compiler/BUILD.gn b/config/compiler/BUILD.gn
+index 973d8bcbd..3416bc8b5 100644
+--- a/config/compiler/BUILD.gn
++++ b/config/compiler/BUILD.gn
+@@ -685,7 +685,8 @@ config("compiler") {
+   } else if (is_win) {
+     cflags_c += [ "/std:c11" ]
+     if (defined(use_cxx17) && use_cxx17) {
+-      cflags_cc += [ "/std:c++17" ]
++      cflags_cc += [ "/std:c++20" ]
++      cflags_cc += [ "/Zc:__cplusplus" ]
+     } else {
+       cflags_cc += [ "/std:c++20" ]
+     }

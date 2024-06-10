@@ -120,7 +120,7 @@ namespace Telegram.Common
                 {
                     newRun.Flags = TextStyle.Italic;
                 }
-                else if (entity.Type is TextEntityTypeBlockQuote)
+                else if (entity.Type is TextEntityTypeBlockQuote or TextEntityTypeExpandableBlockQuote)
                 {
                     newRun.Flags = TextStyle.Quote;
                 }
@@ -402,7 +402,7 @@ namespace Telegram.Common
             for (int i = 0; i < entities.Count; i++)
             {
                 var entity = entities[i];
-                if (entity.Type is TextEntityTypePre or TextEntityTypePreCode or TextEntityTypeBlockQuote)
+                if (entity.Type is TextEntityTypePre or TextEntityTypePreCode or TextEntityTypeBlockQuote or TextEntityTypeExpandableBlockQuote)
                 {
                     if (entity.Offset > 0 && text[entity.Offset - 1] != '\n')
                     {
@@ -588,6 +588,7 @@ namespace Telegram.Common
                     TextEntityTypePreCode preCode => new TextParagraphTypeMonospace(preCode.Language),
                     TextEntityTypePre => new TextParagraphTypeMonospace(),
                     TextEntityTypeBlockQuote => new TextParagraphTypeQuote(),
+                    TextEntityTypeExpandableBlockQuote => new TextParagraphTypeQuote(),
                     _ => null
                 };
             }

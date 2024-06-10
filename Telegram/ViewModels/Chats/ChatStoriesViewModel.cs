@@ -223,16 +223,19 @@ namespace Telegram.ViewModels.Chats
             if (response is Td.Api.Stories stories)
             {
                 _pinnedStoryIds = stories.PinnedStoryIds.ToList();
-                HasMoreItems = stories.StoriesValue.Count > 0;
 
                 foreach (var story in stories.StoriesValue)
                 {
                     _fromStoryId = story.Id;
+
                     Items.Add(new StoryViewModel(ClientService, story));
+                    totalCount++;
                 }
             }
 
             IsEmpty = Items.Count == 0;
+            HasMoreItems = totalCount > 0;
+
             return new LoadMoreItemsResult
             {
                 Count = totalCount

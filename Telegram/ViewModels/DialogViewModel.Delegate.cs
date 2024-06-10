@@ -263,7 +263,7 @@ namespace Telegram.ViewModels
             var user = ClientService.GetUser(viaBotUserId);
             if (user != null && user.HasActiveUsername(out string username))
             {
-                SetText($"@{username} ");
+                SetText($"@{username} ", focus: true);
                 ResolveInlineBot(username);
             }
         }

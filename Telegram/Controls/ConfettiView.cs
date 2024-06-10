@@ -101,7 +101,7 @@ namespace Telegram.Controls
                 int i = (int)args.Timing.ElapsedTime.TotalMilliseconds;
                 if (i > 18)
                 {
-                    i = 16;
+                    //i = 16;
                 }
 
                 for (int j = 0; j < _particles.Count; j++)

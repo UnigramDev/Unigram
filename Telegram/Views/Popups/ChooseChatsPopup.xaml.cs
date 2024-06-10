@@ -56,6 +56,8 @@ namespace Telegram.Views.Popups
         public bool ShowChats { get; set; } = true;
         public bool ShowContacts { get; set; } = false;
 
+        public bool ShowMessages { get; set; } = false;
+
         #region Predefined
 
         public static readonly ChooseChatsOptions All = new()
@@ -70,7 +72,8 @@ namespace Telegram.Views.Popups
             CanInviteUsers = false,
             CanShareContact = false,
             ShowChats = true,
-            ShowContacts = false
+            ShowContacts = false,
+            ShowMessages = true
         };
 
         public static readonly ChooseChatsOptions Contacts = new()
@@ -85,7 +88,8 @@ namespace Telegram.Views.Popups
             CanInviteUsers = false,
             CanShareContact = false,
             ShowChats = false,
-            ShowContacts = true
+            ShowContacts = true,
+            ShowMessages = false
         };
 
         public static readonly ChooseChatsOptions ContactsOnly = new()
@@ -100,7 +104,8 @@ namespace Telegram.Views.Popups
             CanInviteUsers = false,
             CanShareContact = true,
             ShowChats = false,
-            ShowContacts = true
+            ShowContacts = true,
+            ShowMessages = false
         };
 
         public static readonly ChooseChatsOptions Users = new()
@@ -115,7 +120,8 @@ namespace Telegram.Views.Popups
             CanInviteUsers = false,
             CanShareContact = false,
             ShowChats = true,
-            ShowContacts = false
+            ShowContacts = false,
+            ShowMessages = false
         };
 
         public static readonly ChooseChatsOptions PostMessages = new()
@@ -130,7 +136,8 @@ namespace Telegram.Views.Popups
             CanInviteUsers = false,
             CanShareContact = false,
             ShowChats = true,
-            ShowContacts = false
+            ShowContacts = false,
+            ShowMessages = false
         };
 
         public static readonly ChooseChatsOptions InviteUsers = new()
@@ -145,7 +152,8 @@ namespace Telegram.Views.Popups
             CanInviteUsers = true,
             CanShareContact = false,
             ShowChats = true,
-            ShowContacts = false
+            ShowContacts = false,
+            ShowMessages = false
         };
 
         public static readonly ChooseChatsOptions Privacy = new()
@@ -160,7 +168,8 @@ namespace Telegram.Views.Popups
             CanInviteUsers = false,
             CanShareContact = false,
             ShowChats = false,
-            ShowContacts = true
+            ShowContacts = true,
+            ShowMessages = false
         };
 
         #endregion
@@ -302,6 +311,123 @@ namespace Telegram.Views.Popups
         public User Bot { get; }
 
         public string Token { get; }
+    }
+
+    public class ChooseChatsConfigurationRequestUsers : ChooseChatsConfiguration
+    {
+        public ChooseChatsConfigurationRequestUsers(KeyboardButtonTypeRequestUsers requestUsers)
+        {
+            MaxQuantity = requestUsers.MaxQuantity;
+            UserIsPremium = requestUsers.UserIsPremium;
+            RestrictUserIsPremium = requestUsers.RestrictUserIsPremium;
+            UserIsBot = requestUsers.UserIsBot;
+            RestrictUserIsBot = requestUsers.RestrictUserIsBot;
+            Id = requestUsers.Id;
+        }
+
+        /// <summary>
+        /// The maximum number of users to share.
+        /// </summary>
+        public int MaxQuantity { get; }
+
+        /// <summary>
+        /// True, if the shared users must be Telegram Premium users; otherwise, the shared
+        /// users must not be Telegram Premium users. Ignored if RestrictUserIsPremium is
+        /// false.
+        /// </summary>
+        public bool UserIsPremium { get; }
+
+        /// <summary>
+        /// True, if the shared users must or must not be Telegram Premium users.
+        /// </summary>
+        public bool RestrictUserIsPremium { get; }
+
+        /// <summary>
+        /// True, if the shared users must be bots; otherwise, the shared users must not
+        /// be bots. Ignored if RestrictUserIsBot is false.
+        /// </summary>
+        public bool UserIsBot { get; }
+
+        /// <summary>
+        /// True, if the shared users must or must not be bots.
+        /// </summary>
+        public bool RestrictUserIsBot { get; }
+
+        /// <summary>
+        /// Unique button identifier.
+        /// </summary>
+        public int Id { get; }
+    }
+
+    public class ChooseChatsConfigurationRequestChat : ChooseChatsConfiguration
+    {
+        public ChooseChatsConfigurationRequestChat(KeyboardButtonTypeRequestChat requestChat)
+        {
+            BotIsMember = requestChat.BotIsMember;
+            BotAdministratorRights = requestChat.BotAdministratorRights;
+            UserAdministratorRights = requestChat.UserAdministratorRights;
+            ChatIsCreated = requestChat.ChatIsCreated;
+            ChatHasUsername = requestChat.ChatHasUsername;
+            RestrictChatHasUsername = requestChat.RestrictChatHasUsername;
+            ChatIsForum = requestChat.ChatIsForum;
+            RestrictChatIsForum = requestChat.RestrictChatIsForum;
+            ChatIsChannel = requestChat.ChatIsChannel;
+            Id = requestChat.Id;
+        }
+
+        /// <summary>
+        /// True, if the bot must be a member of the chat; for basic group and supergroup
+        /// chats only.
+        /// </summary>
+        public bool BotIsMember { get; }
+
+        /// <summary>
+        /// Expected bot administrator rights in the chat; may be null if they aren't restricted.
+        /// </summary>
+        public ChatAdministratorRights BotAdministratorRights { get; }
+
+        /// <summary>
+        /// Expected user administrator rights in the chat; may be null if they aren't restricted.
+        /// </summary>
+        public ChatAdministratorRights UserAdministratorRights { get; }
+
+        /// <summary>
+        /// True, if the chat must be created by the current user.
+        /// </summary>
+        public bool ChatIsCreated { get; }
+
+        /// <summary>
+        /// True, if the chat must have a username; otherwise, the chat must not have a username.
+        /// Ignored if RestrictChatHasUsername is false.
+        /// </summary>
+        public bool ChatHasUsername { get; }
+
+        /// <summary>
+        /// True, if the chat must or must not have a username.
+        /// </summary>
+        public bool RestrictChatHasUsername { get; }
+
+        /// <summary>
+        /// True, if the chat must be a forum supergroup; otherwise, the chat must not be
+        /// a forum supergroup. Ignored if RestrictChatIsForum is false.
+        /// </summary>
+        public bool ChatIsForum { get; }
+
+        /// <summary>
+        /// True, if the chat must or must not be a forum supergroup.
+        /// </summary>
+        public bool RestrictChatIsForum { get; }
+
+        /// <summary>
+        /// True, if the chat must be a channel; otherwise, a basic group or a supergroup
+        /// chat is shared.
+        /// </summary>
+        public bool ChatIsChannel { get; }
+
+        /// <summary>
+        /// Unique button identifier.
+        /// </summary>
+        public int Id { get; }
     }
 
     public abstract class ChooseChatsConfiguration

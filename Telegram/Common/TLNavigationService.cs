@@ -81,37 +81,9 @@ namespace Telegram.Common
             return ShowPopupAsync(typeof(PromoPopup), source, requestedTheme: requestedTheme);
         }
 
-        public async void NavigateToInvoice(MessageViewModel message)
+        public void NavigateToInvoice(MessageViewModel message)
         {
-            if (message.Content is MessageInvoice { Currency: "XTR" })
-            {
-                var response = await ClientService.SendAsync(new GetPaymentForm(new InputInvoiceMessage(message.ChatId, message.Id), Theme.Current.Parameters));
-                if (response is not PaymentForm paymentForm)
-                {
-                    ToastPopup.Show(Strings.PaymentInvoiceLinkInvalid, new LocalFileSource("ms-appx:///Assets/Toasts/Info.tgs"));
-                    return;
-                }
-
-                await ShowPopupAsync(typeof(PayPopup), new PaymentFormArgs(new InputInvoiceMessage(message.ChatId, message.Id), paymentForm));
-                return;
-            }
-
-            var parameters = new ViewServiceParams
-            {
-                Title = message.Content is MessageInvoice { ReceiptMessageId: 0 } ? Strings.PaymentCheckout : Strings.PaymentReceipt,
-                Width = 380,
-                Height = 580,
-                PersistentId = "Payments",
-                Content = control =>
-                {
-                    var nav = BootStrapper.Current.NavigationServiceFactory(BootStrapper.BackButton.Ignore, SessionId, "Payments" + Guid.NewGuid(), false);
-                    nav.Navigate(typeof(PaymentFormPage), new InputInvoiceMessage(message.ChatId, message.Id));
-
-                    return BootStrapper.Current.CreateRootElement(nav);
-                }
-            };
-
-            await _viewService.OpenAsync(parameters);
+            NavigateToInvoice(new InputInvoiceMessage(message.ChatId, message.Id));
         }
 
         public async void NavigateToInvoice(InputInvoice inputInvoice)
@@ -123,9 +95,10 @@ namespace Telegram.Common
                 return;
             }
 
-            if (paymentForm.Type is PaymentFormTypeRegular { Invoice.Currency: "XTR" })
+            // TODO: how can we do this while coming from a mini app?
+            if (paymentForm.Type is PaymentFormTypeStars)
             {
-                await ShowPopupAsync(typeof(PayPopup), paymentForm);
+                await ShowPopupAsync(typeof(PayPopup), new PaymentFormArgs(inputInvoice, paymentForm));
                 return;
             }
 

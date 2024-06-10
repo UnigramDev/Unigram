@@ -68,7 +68,7 @@ namespace Telegram.Controls.Gallery
             {
                 UpdateManager.Unsubscribe(this, ref _fileToken);
 
-                _delegate.ClientService.Send(new OpenMessageContent(message.ChatId, message.Id));
+                _delegate.ClientService?.Send(new OpenMessageContent(message.ChatId, message.Id));
             }
         }
 

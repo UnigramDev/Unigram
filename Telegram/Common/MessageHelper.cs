@@ -126,6 +126,7 @@ namespace Telegram.Common
                                     writer.WriteByte(5);
                                     break;
                                 case TextEntityTypeBlockQuote:
+                                case TextEntityTypeExpandableBlockQuote:
                                     writer.WriteByte(6);
                                     break;
                                 case TextEntityTypeCustomEmoji customEmoji:
@@ -1008,7 +1009,7 @@ namespace Telegram.Common
 
         public static async void NavigateToPhoneNumber(IClientService clientService, INavigationService navigation, string phoneNumber, string draftText = null)
         {
-            await NavigateToUserByResponse(clientService, navigation, new SearchUserByPhoneNumber(phoneNumber), draftText);
+            await NavigateToUserByResponse(clientService, navigation, new SearchUserByPhoneNumber(phoneNumber, false), draftText);
         }
 
         public static async void NavigateToUserToken(IClientService clientService, INavigationService navigation, string userToken)

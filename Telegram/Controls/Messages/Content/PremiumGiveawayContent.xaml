@@ -5,9 +5,7 @@
                     xmlns:common="using:Telegram.Common"
                     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
                     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-                    mc:Ignorable="d"
-                    d:DesignHeight="200"
-                    d:DesignWidth="320">
+                    mc:Ignorable="d">
 
     <Style TargetType="local:PremiumGiveawayContent">
         <Setter Property="IsTabStop"
@@ -45,9 +43,9 @@
                                    TextAlignment="Center"
                                    Style="{StaticResource BodyTextBlockStyle}" />
 
-                        <controls:WrapPanel x:Name="ParticipantsPanel"
-                                            HorizontalAlignment="Center"
-                                            Margin="0,0,-2,0" />
+                        <StackPanel x:Name="ParticipantsPanel"
+                                    Orientation="Vertical"
+                                    Margin="0,0,0,8" />
 
                         <TextBlock x:Name="FromLabel"
                                    TextAlignment="Center"

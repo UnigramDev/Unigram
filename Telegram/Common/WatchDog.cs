@@ -5,6 +5,9 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Runtime.ExceptionServices;
+using System.Runtime.InteropServices;
+using System.Security;
 using System.Threading.Tasks;
 using Telegram.Common;
 using Telegram.Controls;
@@ -83,31 +86,7 @@ namespace Telegram
             NativeUtils.SetFatalErrorCallback(FatalErrorCallback);
             Client.SetLogMessageCallback(0, FatalErrorCallback);
 
-            BootStrapper.Current.UnhandledException += (s, args) =>
-            {
-                if (args.Exception is LayoutCycleException)
-                {
-                    Logger.Info("LayoutCycleException");
-                    Analytics.TrackEvent("LayoutCycleException");
-                    SettingsService.Current.Diagnostics.LastCrashWasLayoutCycle = true;
-                }
-                else if (args.Exception is NotSupportedException)
-                {
-                    var popups = VisualTreeHelper.GetOpenPopups(Window.Current);
-
-                    foreach (var popup in popups)
-                    {
-                        if (popup.Child is ToolTip tooltip)
-                        {
-                            tooltip.IsOpen = false;
-                            tooltip.IsOpen = true;
-                            tooltip.IsOpen = false;
-                        }
-                    }
-                }
-
-                args.Handled = args.Exception is not LayoutCycleException;
-            };
+            BootStrapper.Current.UnhandledException += OnUnhandledException;
 
             if (_disabled)
             {
@@ -126,7 +105,13 @@ namespace Telegram
             {
                 try
                 {
-                    return ToException(NativeUtils.GetFatalError(false));
+                    var error = ToException(NativeUtils.GetFatalError(false));
+                    if (error != null)
+                    {
+                        Crashes.TrackCrash(error);
+                    }
+
+                    return null;
                 }
                 catch
                 {
@@ -169,9 +154,58 @@ namespace Telegram
                 new Dictionary<string, string>
                 {
                     { "DeviceFamily", AnalyticsInfo.VersionInfo.DeviceFamily },
-                    { "Architecture", Package.Current.Id.Architecture.ToString() }
+                    { "Architecture", Package.Current.Id.Architecture.ToString() },
+                    { "Processor", OSArchitecture().ToString() }
                 });
         }
+
+        [HandleProcessCorruptedStateExceptions, SecurityCritical]
+        private static void OnUnhandledException(object sender, Windows.UI.Xaml.UnhandledExceptionEventArgs args)
+        {
+            args.Handled = args.Exception is not LayoutCycleException;
+
+            if (args.Exception is LayoutCycleException)
+            {
+                Logger.Info("LayoutCycleException");
+                Analytics.TrackEvent("LayoutCycleException");
+                SettingsService.Current.Diagnostics.LastCrashWasLayoutCycle = true;
+            }
+            else if (args.Exception is NotSupportedException)
+            {
+                var popups = VisualTreeHelper.GetOpenPopups(Window.Current);
+
+                foreach (var popup in popups)
+                {
+                    if (popup.Child is ToolTip tooltip)
+                    {
+                        tooltip.IsOpen = false;
+                        tooltip.IsOpen = true;
+                        tooltip.IsOpen = false;
+                    }
+                }
+
+                return;
+            }
+
+        }
+
+        public static Architecture OSArchitecture()
+        {
+            var handle = new IntPtr(-1);
+            var wow64 = IsWow64Process2(handle, out var _, out var nativeMachine);
+
+            if (wow64)
+            {
+                return nativeMachine == 0xaa64
+                    ? Architecture.Arm64
+                    : Architecture.X64;
+            }
+
+            return Architecture.X86;
+        }
+
+        [DllImport("kernel32.dll", SetLastError = true)]
+        private static extern bool IsWow64Process2(IntPtr process, out ushort processMachine, out ushort nativeMachine);
 
         public static void TrackEvent(string name)
         {
@@ -234,10 +268,20 @@ namespace Telegram
 
             if (error.StackTrace.Contains("libvlc.dll") || error.StackTrace.Contains("libvlccore.dll"))
             {
-                return new VLCException(error.Message, error.StackTrace, error.Frames.Select(x => new StackFrame(x)));
+                return new VLCException(error.Message + Environment.NewLine + error.StackTrace, error.StackTrace, error.Frames.Select(x => new StackFrame(x)));
             }
 
-            return new NativeException(error.Message, error.StackTrace, error.Frames.Select(x => new StackFrame(x)));
+            return new NativeException(error.Message + Environment.NewLine + error.StackTrace, error.StackTrace, error.Frames.Select(x => new StackFrame(x)));
+        }
+
+        private static Exception ToException2(FatalError error)
+        {
+            if (error == null)
+            {
+                return null;
+            }
+
+            return new Exception(error.Message + Environment.NewLine + error.StackTrace);
         }
 
         private static void FatalErrorCallback(int verbosityLevel, string message)
@@ -312,6 +356,8 @@ namespace Telegram
                     $"Window size: {size.Width}x{size.Height}\n" +
                     $"Column width: {ratio} ({width})\n";
             }
+
+            info += $"Active call(s): {WindowContext.All.Count(x => x.IsCallInProgress)}\n";
 
             info += $"HRESULT: 0x{exception.HResult:X4}\n" + "\n";
             info += Environment.StackTrace + "\n\n";

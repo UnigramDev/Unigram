@@ -52,6 +52,8 @@ namespace Telegram.ViewModels.Stories
 
         public async Task LoadAsync()
         {
+            Logger.Info();
+
             if (_task != null)
             {
                 await _task.Task;
@@ -171,6 +173,7 @@ namespace Telegram.ViewModels.Stories
                 return;
             }
 
+            Logger.Info();
             _ = LoadAsync();
         }
 

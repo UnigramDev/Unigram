@@ -1539,36 +1539,29 @@ namespace Telegram.Views
 
             if (chat.Type is ChatTypeSecret)
             {
-                var response = Client.Execute(new GetTextEntities(text));
-                if (response is TextEntities entities)
+                var entities = ClientEx.GetTextEntities(text);
+                var urls = string.Empty;
+
+                foreach (var entity in entities)
                 {
-                    var urls = string.Empty;
-
-                    foreach (var entity in entities.Entities)
+                    if (entity.Type is TextEntityTypeUrl)
                     {
-                        if (entity.Type is TextEntityTypeUrl)
+                        if (urls.Length > 0)
                         {
-                            if (urls.Length > 0)
-                            {
-                                urls += " ";
-                            }
-
-                            urls += text.Substring(entity.Offset, entity.Length);
+                            urls += " ";
                         }
-                    }
 
-                    if (string.IsNullOrEmpty(urls))
-                    {
-                        result(null);
-                        return;
+                        urls += text.Substring(entity.Offset, entity.Length);
                     }
-
-                    clientService.Send(new GetWebPagePreview(new FormattedText(urls, Array.Empty<TextEntity>()), null), result);
                 }
-                else
+
+                if (string.IsNullOrEmpty(urls))
                 {
                     result(null);
+                    return;
                 }
+
+                clientService.Send(new GetWebPagePreview(new FormattedText(urls, Array.Empty<TextEntity>()), null), result);
             }
             else
             {
@@ -3188,7 +3181,7 @@ namespace Telegram.Views
             }
             else if (message.Content is MessageInvoice invoice)
             {
-                return invoice.Photo != null;
+                return invoice.ProductInfo.Photo != null;
             }
             else if (message.Content is MessageText text)
             {
@@ -5088,7 +5081,7 @@ namespace Telegram.Views
                 TextArea.Visibility = Visibility.Collapsed;
             }
 
-            if (chat.LastMessage == null && user.Type is UserTypeRegular && user?.Id != ViewModel.ClientService.Options.MyId && fullInfo != null)
+            if (chat.LastMessage == null && user?.Type is UserTypeRegular && user?.Id != ViewModel.ClientService.Options.MyId && fullInfo != null)
             {
                 if (result is CanSendMessageToUserResultUserRestrictsNewChats)
                 {
@@ -5511,6 +5504,7 @@ namespace Telegram.Views
         private void TextField_Sending(object sender, EventArgs e)
         {
             ButtonStickers.Collapse();
+            RemoveMessageEffect();
         }
 
         private async void ButtonMore_Checked(object sender, RoutedEventArgs e)

@@ -56,6 +56,7 @@ namespace Telegram.ViewModels.Supergroups
             {
                 RaisePropertyChanged(nameof(IsAllSelected));
                 RaisePropertyChanged(nameof(IsSomeSelected));
+                RaisePropertyChanged(nameof(IsSomeSelectedInChannel));
                 RaisePropertyChanged(nameof(IsNoneSelected));
             }
         }
@@ -84,6 +85,8 @@ namespace Telegram.ViewModels.Supergroups
             }
         }
 
+        public bool IsSomeSelectedInChannel => IsSomeSelected && Chat?.Type is ChatTypeSupergroup { IsChannel: true };
+
         public bool IsNoneSelected
         {
             get => _available == SupergroupAvailableReactions.None;
@@ -94,6 +97,16 @@ namespace Telegram.ViewModels.Supergroups
                     SetAvailable(SupergroupAvailableReactions.None);
                 }
             }
+        }
+
+        // TODO: ???
+        public int MaximumMaxReactionCount => 11;
+
+        private int _maxReactionCount;
+        public int MaxReactionCount
+        {
+            get => _maxReactionCount;
+            set => Set(ref _maxReactionCount, value);
         }
 
         public MvxObservableCollection<ReactionType> Items { get; private set; }
@@ -111,6 +124,13 @@ namespace Telegram.ViewModels.Supergroups
             }
 
             AllowCustomEmoji = chat.Type is ChatTypeSupergroup supergroup && supergroup.IsChannel;
+
+            MaxReactionCount = chat.AvailableReactions switch
+            {
+                ChatAvailableReactionsSome some => some.MaxReactionCount,
+                ChatAvailableReactionsAll all => all.MaxReactionCount,
+                _ => 11
+            };
 
             IList<ReactionType> items = chat.AvailableReactions switch
             {
@@ -152,11 +172,15 @@ namespace Telegram.ViewModels.Supergroups
                 return;
             }
 
+            var maxReactionCount = supergroup.IsChannel
+                ? MaxReactionCount
+                : MaximumMaxReactionCount;
+
             ChatAvailableReactions value = _available switch
             {
                 SupergroupAvailableReactions.All => new ChatAvailableReactionsAll(),
-                SupergroupAvailableReactions.None => new ChatAvailableReactionsSome(Array.Empty<ReactionType>()),
-                SupergroupAvailableReactions.Some => new ChatAvailableReactionsSome(Items),
+                SupergroupAvailableReactions.None => new ChatAvailableReactionsSome(Array.Empty<ReactionType>(), maxReactionCount),
+                SupergroupAvailableReactions.Some => new ChatAvailableReactionsSome(Items, maxReactionCount),
                 _ => null
             };
 

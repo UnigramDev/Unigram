@@ -41,6 +41,27 @@ namespace Telegram.Controls.Views
 
         public ListView Root => ScrollingHost;
 
+        #region Binding
+
+        private int ConvertSelectedIndex(bool selected)
+        {
+            return selected ? 0 : 1;
+        }
+
+        private void ConvertSelectedIndexBack(int index)
+        {
+            if (index == 0)
+            {
+                ViewModel.IsChatsSelected = true;
+            }
+            else if (index == 1)
+            {
+                ViewModel.IsChatsSelected = false;
+            }
+        }
+
+        #endregion
+
         #region Recycle
 
         private void OnChoosingItemContainer(ListViewBase sender, ChoosingItemContainerEventArgs args)

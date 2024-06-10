@@ -713,7 +713,10 @@ namespace Telegram.Controls.Chats
                         }
                     }
 
-                    return new LoadMoreItemsResult { Count = count };
+                    return new LoadMoreItemsResult
+                    {
+                        Count = count
+                    };
                 });
             }
 
@@ -734,10 +737,9 @@ namespace Telegram.Controls.Chats
                 return;
             }
 
-            Sending?.Invoke(this, EventArgs.Empty);
-
             var options = new MessageSendOptions(disableNotification, false, false, false, null, Effect?.Id ?? 0, 0, false);
 
+            Sending?.Invoke(this, EventArgs.Empty);
             Effect = null;
 
             var text = GetFormattedText(true);

@@ -20,7 +20,7 @@
         <ScrollViewer x:Name="ScrollingHost"
                       VerticalScrollBarVisibility="Auto"
                       VerticalScrollMode="Auto">
-            <controls:SettingsPanel>
+            <controls:SettingsPanel SizeChanged="OnSizeChanged">
                 <controls:HeaderedControl>
                     <Grid x:Name="Preview"
                           CornerRadius="4,4,0,0">
@@ -112,15 +112,21 @@
                 </controls:HeaderedControl>
 
                 <controls:HeaderedControl>
-                    <Grid BorderBrush="{ThemeResource SettingsItemBorderBrush}">
+                    <Grid Background="{ThemeResource SettingsItemBackground}"
+                          BorderBrush="{ThemeResource SettingsItemBorderBrush}">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="56" />
                             <ColumnDefinition Width="1*" />
                             <ColumnDefinition Width="2*" />
                         </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="44" />
+                            <RowDefinition Height="Auto" />
+                        </Grid.RowDefinitions>
                         <CheckBox IsChecked="{x:Bind ViewModel.UseDefaultScaling, Mode=TwoWay}"
                                   Content="{CustomResource DefaultInterfaceScale}"
                                   Style="{StaticResource SettingsCheckBoxStyle}"
+                                  Background="Transparent"
                                   Grid.ColumnSpan="3" />
 
                         <Slider x:Name="ScalingSlider"
@@ -133,15 +139,20 @@
                                 TickPlacement="Outside"
                                 IsThumbToolTipEnabled="False"
                                 Margin="12,6,12,6"
-                                Grid.Column="2" />
+                                Grid.Column="2"
+                                Grid.ColumnSpan="3" />
                     </Grid>
                     <Grid Background="{ThemeResource SettingsItemBackground}"
-                          BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}">
+                          BorderBrush="{ThemeResource SettingsItemBorderBrush}">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="56" />
                             <ColumnDefinition Width="1*" />
                             <ColumnDefinition Width="2*" />
                         </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="44" />
+                            <RowDefinition Height="Auto" />
+                        </Grid.RowDefinitions>
                         <TextBlock FontSize="{StaticResource GlyphMediumFontSize}"
                                    HorizontalAlignment="Left"
                                    VerticalAlignment="Center"
@@ -153,7 +164,8 @@
                         <TextBlock Text="{CustomResource TextSizeHeader}"
                                    VerticalAlignment="Center"
                                    Grid.Column="1" />
-                        <Slider Value="{x:Bind ViewModel.FontSize, Mode=TwoWay}"
+                        <Slider x:Name="FontSizeSlider"
+                                Value="{x:Bind ViewModel.FontSize, Mode=TwoWay}"
                                 AutomationProperties.Name="{CustomResource TextSizeHeader}"
                                 Minimum="0"
                                 Maximum="6"
@@ -163,7 +175,8 @@
                                 TickPlacement="Outside"
                                 IsThumbToolTipEnabled="False"
                                 Margin="12,6,12,6"
-                                Grid.Column="2" />
+                                Grid.Column="2"
+                                Grid.ColumnSpan="3" />
                     </Grid>
                     <Grid Background="{ThemeResource SettingsItemBackground}"
                           BorderBrush="{ThemeResource SettingsItemBorderBrush}">
@@ -172,6 +185,10 @@
                             <ColumnDefinition Width="1*" />
                             <ColumnDefinition Width="2*" />
                         </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="44" />
+                            <RowDefinition Height="Auto" />
+                        </Grid.RowDefinitions>
                         <TextBlock FontSize="{StaticResource GlyphMediumFontSize}"
                                    HorizontalAlignment="Left"
                                    VerticalAlignment="Center"
@@ -183,7 +200,8 @@
                         <TextBlock Text="{CustomResource BubbleRadius}"
                                    VerticalAlignment="Center"
                                    Grid.Column="1" />
-                        <Slider Value="{x:Bind ViewModel.BubbleRadius, Mode=TwoWay}"
+                        <Slider x:Name="BubbleRadiusSlider"
+                                Value="{x:Bind ViewModel.BubbleRadius, Mode=TwoWay}"
                                 AutomationProperties.Name="{CustomResource BubbleRadius}"
                                 Minimum="0"
                                 Maximum="15"
@@ -193,7 +211,8 @@
                                 TickPlacement="Outside"
                                 IsThumbToolTipEnabled="False"
                                 Margin="12,6,12,6"
-                                Grid.Column="2" />
+                                Grid.Column="2"
+                                Grid.ColumnSpan="3" />
                     </Grid>
                 </controls:HeaderedControl>
 

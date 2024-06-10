@@ -17,10 +17,10 @@ namespace Telegram.Controls
         {
             MaxWidth = 1048;
 
-            ChildrenTransitions = new TransitionCollection
-            {
-                new RepositionThemeTransition()
-            };
+            //ChildrenTransitions = new TransitionCollection
+            //{
+            //    new RepositionThemeTransition()
+            //};
         }
 
         public bool IsHeader { get; set; }

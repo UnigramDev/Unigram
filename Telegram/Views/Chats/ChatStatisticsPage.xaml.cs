@@ -147,7 +147,7 @@ namespace Telegram.Views.Chats
                     }
                     else if (message.Content is MessageInvoice invoice)
                     {
-                        title.Text = invoice.Title;
+                        title.Text = invoice.ProductInfo.Title;
                     }
                     else if (message.Content is MessageContact)
                     {

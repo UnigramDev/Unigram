@@ -266,7 +266,7 @@ namespace Telegram.Views
                 ViewModel.ClientService.Send(new ViewMessages(chat.Id, messages, source, false));
             }
 
-            if (animations.Count > 0 && !intermediate)
+            if (animations.Count > 0 && !intermediate && WindowContext.Current.ActivationMode == CoreWindowActivationMode.ActivatedInForeground)
             {
                 Play(animations);
             }

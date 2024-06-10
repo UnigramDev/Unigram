@@ -30,6 +30,19 @@
             <RowDefinition Height="Auto" />
             <RowDefinition />
         </Grid.RowDefinitions>
+        <!-- TODO: Hide in forward popup -->
+        <controls:TopNavView x:Name="ChatFolders"
+                             SelectedIndex="{x:Bind ConvertSelectedIndex(ViewModel.IsChatsSelected), Mode=TwoWay, BindBack=ConvertSelectedIndexBack}"
+                             ScrollViewer.IsHorizontalScrollChainingEnabled="False"
+                             FocusFollowsSingleSelection="True"
+                             SingleSelectionFollowsFocus="False"
+                             Height="40"
+                             BorderBrush="{ThemeResource SettingsItemBorderBrush}"
+                             BorderThickness="0,0,0,0">
+            <controls:TopNavViewItem Content="{CustomResource FilterChats}" />
+            <controls:TopNavViewItem Content="{CustomResource FilterChannels}" />
+        </controls:TopNavView>
+
         <!--<ListView x:Load="False"
                                           x:Name="PippoFranco"
                                           SelectionMode="None"
@@ -70,7 +83,7 @@
                                 </ListView>-->
 
         <ListView x:Name="ScrollingHost"
-                  ItemsSource="{x:Bind ViewModel.Items, Mode=OneWay}"
+                  ItemsSource="{x:Bind ViewModel.ItemsView, Mode=OneWay}"
                   IsItemClickEnabled="True"
                   SelectionMode="Single"
                   ItemClick="OnItemClick"

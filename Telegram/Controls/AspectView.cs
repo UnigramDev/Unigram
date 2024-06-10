@@ -23,6 +23,19 @@ namespace Telegram.Controls
         Angle270
     }
 
+    public struct FixedSize
+    {
+        public FixedSize(double  width, double height)
+        {
+            Width = width;
+            Height = height;
+        }
+
+        public double Width { get; set; }
+
+        public double Height { get; set; }
+    }
+
     public class AspectView : Grid
     {
         #region Constraint
@@ -84,6 +97,11 @@ namespace Telegram.Controls
             if (Constraint == null)
             {
                 return base.MeasureOverride(availableSize);
+            }
+            else if (Constraint is FixedSize fixedSize)
+            {
+                base.MeasureOverride(new Size(fixedSize.Width, fixedSize.Height));
+                return new Size(fixedSize.Width, fixedSize.Height);
             }
 
             var availableWidth = Math.Min(availableSize.Width, Math.Min(double.IsNaN(Width) ? double.PositiveInfinity : Width, MaxWidth));
@@ -147,7 +165,7 @@ namespace Telegram.Controls
                 }
                 else
                 {
-                    constraint = invoiceMessage.Photo;
+                    constraint = invoiceMessage.ProductInfo.Photo;
                 }
             }
             else if (constraint is MessageGame gameMessage)

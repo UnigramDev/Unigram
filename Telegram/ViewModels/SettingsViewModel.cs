@@ -42,6 +42,8 @@ namespace Telegram.ViewModels
 
         public IStorageService StorageService => _storageService;
 
+        public bool IsStarsAvailable => IsPremiumAvailable;
+
         public bool IsBusinessAvailable => IsPremiumAvailable;
 
         private Chat _chat;
@@ -53,27 +55,20 @@ namespace Telegram.ViewModels
 
         public MvxObservableCollection<SettingsSearchEntry> Results { get; private set; }
 
-        protected override async Task OnNavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
+        protected override Task OnNavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
         {
-            var response = await ClientService.SendAsync(new CreatePrivateChat(ClientService.Options.MyId, false));
-            if (response is Chat chat)
+            if (ClientService.TryGetChat(ClientService.Options.MyId, out Chat chat))
             {
                 Chat = chat;
 
-                if (chat.Type is ChatTypePrivate privata)
+                if (ClientService.TryGetUser(chat, out User item))
                 {
-                    var item = ClientService.GetUser(privata.UserId);
-                    if (item == null)
-                    {
-                        return;
-                    }
-
                     Delegate?.UpdateUser(chat, item, false);
 
-                    var cache = ClientService.GetUserFull(privata.UserId);
+                    var cache = ClientService.GetUserFull(item.Id);
                     if (cache == null)
                     {
-                        ClientService.Send(new GetUserFullInfo(privata.UserId));
+                        ClientService.Send(new GetUserFullInfo(item.Id));
                     }
                     else
                     {
@@ -81,12 +76,16 @@ namespace Telegram.ViewModels
                     }
                 }
             }
+
+            ClientService.Send(new GetStarTransactions(string.Empty, null));
+            return Task.CompletedTask;
         }
 
         public override void Subscribe()
         {
             Aggregator.Subscribe<UpdateUser>(this, Handle)
                 .Subscribe<UpdateUserFullInfo>(Handle)
+                .Subscribe<UpdateOwnedStarCount>(Handle)
                 .Subscribe<UpdateOption>(Handle);
         }
 
@@ -127,6 +126,11 @@ namespace Telegram.ViewModels
             {
                 BeginOnUIThread(() => Delegate?.UpdateUserFullInfo(chat, ClientService.GetUser(update.UserId), update.UserFullInfo, false, false));
             }
+        }
+
+        private void Handle(UpdateOwnedStarCount update)
+        {
+            BeginOnUIThread(() => RaisePropertyChanged(nameof(IsStarsAvailable)));
         }
 
         public void Handle(UpdateOption update)

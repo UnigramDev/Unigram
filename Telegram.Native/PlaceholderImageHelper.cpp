@@ -925,59 +925,89 @@ namespace winrt::Telegram::Native::implementation
         rects = winrt::single_threaded_vector<Windows::Foundation::Rect>(std::move(vector));
     }
 
-    //IVector<Windows::Foundation::Rect> PlaceholderImageHelper::EntityMetrics(hstring text, IVector<TextEntity> entities, double fontSize, double width, bool rtl)
-    //{
-    //	winrt::check_hresult(m_dwriteFactory->CreateTextFormat(
-    //		L"Segoe UI Emoji",						// font family name
-    //		m_appleCollection.get(),				// system font collection
-    //		DWRITE_FONT_WEIGHT_NORMAL,				// font weight 
-    //		DWRITE_FONT_STYLE_NORMAL,				// font style
-    //		DWRITE_FONT_STRETCH_NORMAL,				// default font stretch
-    //		fontSize,								// font size
-    //		L"",									// locale name
-    //		m_appleFormat.put()
-    //	));
-    //	winrt::check_hresult(m_appleFormat->SetTextAlignment(DWRITE_TEXT_ALIGNMENT_LEADING));
-    //	winrt::check_hresult(m_appleFormat->SetParagraphAlignment(DWRITE_PARAGRAPH_ALIGNMENT_NEAR));
-    //	winrt::check_hresult(m_appleFormat->SetReadingDirection(rtl ? DWRITE_READING_DIRECTION_RIGHT_TO_LEFT : DWRITE_READING_DIRECTION_LEFT_TO_RIGHT));
+    int32_t PlaceholderImageHelper::TrimMetrics(hstring text, int32_t offset, int32_t length, IVector<TextEntity> entities, double fontSize, double width, double height, bool rtl)
+    {
+        int32_t output;
+        TrimMetricsImpl(text, offset, length, entities, fontSize, width, height, rtl, output);
+        return output;
+    }
 
-    //	winrt::com_ptr<IDWriteTextLayout> textLayout;
-    //	winrt::check_hresult(m_dwriteFactory->CreateTextLayout(
-    //		text.data(),					// The string to be laid out and formatted.
-    //		wcslen(text.data()),			// The length of the string.
-    //		m_appleFormat.get(),			// The text format to apply to the string (contains font information, etc).
-    //		width,							// The width of the layout box.
-    //		INFINITY,						// The height of the layout box.
-    //		textLayout.put()				// The IDWriteTextLayout interface pointer.
-    //	));
+    HRESULT PlaceholderImageHelper::TrimMetricsImpl(hstring text, int32_t offset, int32_t length, IVector<TextEntity> entities, double fontSize, double width, double height, bool rtl, int32_t& output)
+    {
+        std::lock_guard const guard(m_criticalSection);
+        HRESULT result;
 
-    //	DWRITE_TEXT_METRICS metrics;
-    //	winrt::check_hresult(textLayout->GetMetrics(&metrics));
+        //ReturnIfFailed(result, CreateTextFormat(fontSize));
+        //ReturnIfFailed(result, m_appleFormat->SetReadingDirection(rtl ? DWRITE_READING_DIRECTION_RIGHT_TO_LEFT : DWRITE_READING_DIRECTION_LEFT_TO_RIGHT));
 
-    //	UINT32 maxHitTestMetricsCount = metrics.lineCount * metrics.maxBidiReorderingDepth;
-    //	DWRITE_HIT_TEST_METRICS* ranges = new DWRITE_HIT_TEST_METRICS[maxHitTestMetricsCount];
+        winrt::com_ptr<IDWriteTextFormat> textFormat;
+        ReturnIfFailed(result, m_dwriteFactory->CreateTextFormat(
+            L"Segoe UI Emoji",						// font family name
+            m_fontCollection.get(),			        // system font collection
+            DWRITE_FONT_WEIGHT_NORMAL,				// font weight 
+            DWRITE_FONT_STYLE_NORMAL,				// font style
+            DWRITE_FONT_STRETCH_NORMAL,				// default font stretch
+            fontSize,								// font size
+            L"",									// locale name
+            textFormat.put()
+        ));
+        ReturnIfFailed(result, textFormat->SetTextAlignment(DWRITE_TEXT_ALIGNMENT_LEADING));
+        ReturnIfFailed(result, textFormat->SetParagraphAlignment(DWRITE_PARAGRAPH_ALIGNMENT_NEAR));
+        ReturnIfFailed(result, textFormat->SetReadingDirection(rtl ? DWRITE_READING_DIRECTION_RIGHT_TO_LEFT : DWRITE_READING_DIRECTION_LEFT_TO_RIGHT));
 
-    //	std::vector<Windows::Foundation::Rect> rects;
+        winrt::com_ptr<IDWriteTextLayout> textLayout;
+        ReturnIfFailed(result, m_dwriteFactory->CreateTextLayout(
+            text.data(),					// The string to be laid out and formatted.
+            text.size(),        			// The length of the string.
+            textFormat.get(),			    // The text format to apply to the string (contains font information, etc).
+            width,							// The width of the layout box.
+            height, 						// The height of the layout box.
+            textLayout.put()				// The IDWriteTextLayout interface pointer.
+        ));
 
-    //	for (const TextEntity& entity : entities) {
-    //		auto spoiler = entity.Type().try_as<TextEntityTypeSpoiler>();
-    //		if (spoiler != nullptr) {
-    //			UINT32 actualTestsCount;
-    //			winrt::check_hresult(textLayout->HitTestTextRange(entity.Offset(), entity.Length(), 0, 0, ranges, maxHitTestMetricsCount, &actualTestsCount));
+        DWRITE_TRIMMING trimmingOpt = { DWRITE_TRIMMING_GRANULARITY_CHARACTER, 0, 0 };
+        ReturnIfFailed(result, textLayout->SetTrimming(&trimmingOpt, NULL));
 
-    //			for (int i = 0; i < actualTestsCount; i++) {
-    //				float left = ranges[i].left;
-    //				float top = ranges[i].top;
-    //				float right = ranges[i].left + ranges[i].width;
-    //				float bottom = ranges[i].top + ranges[i].height;
+        for (const TextEntity& entity : entities)
+        {
+            UINT32 startPosition = entity.Offset();
+            UINT32 length = entity.Length();
+            auto name = winrt::get_class_name(entity.Type());
 
-    //				rects.push_back({ left, top, right - left, bottom - top });
-    //			}
-    //		}
-    //	}
+            if (name == winrt::name_of<TextEntityTypeBold>())
+            {
+                ReturnIfFailed(result, textLayout->SetFontWeight(DWRITE_FONT_WEIGHT_SEMI_BOLD, { startPosition, length }));
+            }
+            else if (name == winrt::name_of<TextEntityTypeItalic>())
+            {
+                ReturnIfFailed(result, textLayout->SetFontStyle(DWRITE_FONT_STYLE_ITALIC, { startPosition, length }));
+            }
+            else if (name == winrt::name_of<TextEntityTypeStrikethrough>())
+            {
+                ReturnIfFailed(result, textLayout->SetStrikethrough(TRUE, { startPosition, length }));
+            }
+            else if (name == winrt::name_of<TextEntityTypeUnderline>())
+            {
+                ReturnIfFailed(result, textLayout->SetUnderline(TRUE, { startPosition, length }));
+            }
+            //else if (name == winrt::name_of<TextEntityTypeCustomEmoji>())
+            //{
+            //    textLayout->SetInlineObject(m_customEmoji.get(), { startPosition, length });
+            //}
+            else if (name == winrt::name_of<TextEntityTypeCode>() || name == winrt::name_of<TextEntityTypePre>() || name == winrt::name_of<TextEntityTypePreCode>())
+            {
+                ReturnIfFailed(result, textLayout->SetFontCollection(m_systemCollection.get(), { startPosition, length }));
+                ReturnIfFailed(result, textLayout->SetFontFamilyName(L"Consolas", { startPosition, length }));
+            }
+        }
 
-    //	return winrt::single_threaded_vector<Windows::Foundation::Rect>(std::move(rects));
-    //}
+        BOOL isTrailingHit;
+        BOOL isInside;
+        DWRITE_HIT_TEST_METRICS metrics;
+        textLayout->HitTestPoint(width, height, &isTrailingHit, &isInside, &metrics);
+
+        return 0;
+    }
 
     HRESULT PlaceholderImageHelper::WriteBytes(IVector<byte> hash, IRandomAccessStream randomAccessStream) noexcept
     {

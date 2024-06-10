@@ -213,7 +213,7 @@ namespace Telegram.ViewModels.Authorization
 
             await _notificationsService.CloseAsync();
 
-            var function = new SetAuthenticationPhoneNumber(phoneNumber, new PhoneNumberAuthenticationSettings(false, false, false, false, null, Array.Empty<string>()));
+            var function = new SetAuthenticationPhoneNumber(phoneNumber, new PhoneNumberAuthenticationSettings(false, false, false, false, false, null, Array.Empty<string>()));
             Task<BaseObject> request;
             if (ClientService.AuthorizationState is AuthorizationStateWaitOtherDeviceConfirmation)
             {

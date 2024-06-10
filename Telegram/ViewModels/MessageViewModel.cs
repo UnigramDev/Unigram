@@ -288,6 +288,7 @@ namespace Telegram.ViewModels
             _message.MediaAlbumId = message.MediaAlbumId;
             _message.ReplyMarkup = message.ReplyMarkup;
             _message.ReplyTo = message.ReplyTo;
+            _message.FactCheck = message.FactCheck;
             _message.SenderId = message.SenderId;
             _message.SendingState = message.SendingState;
             _message.SelfDestructType = message.SelfDestructType;
@@ -307,6 +308,7 @@ namespace Telegram.ViewModels
             _message.SchedulingState = message.SchedulingState;
             _message.SenderBoostCount = message.SenderBoostCount;
             _message.SenderBusinessBotUserId = message.SenderBusinessBotUserId;
+            _message.EffectId = message.EffectId;
 
             _isSaved = null;
 
@@ -377,6 +379,7 @@ namespace Telegram.ViewModels
         public double SelfDestructIn { get => _message.SelfDestructIn; set => _message.SelfDestructIn = value; }
         public MessageSelfDestructType SelfDestructType => _message.SelfDestructType;
         public MessageReplyTo ReplyTo { get => _message.ReplyTo; set => _message.ReplyTo = value; }
+        public FactCheck FactCheck { get => _message.FactCheck; set => _message.FactCheck = value; }
         public MessageForwardInfo ForwardInfo => _message.ForwardInfo;
         public MessageImportInfo ImportInfo => _message.ImportInfo;
         public IList<UnreadReaction> UnreadReactions { get => _message.UnreadReactions; set => _message.UnreadReactions = value; }
@@ -403,10 +406,13 @@ namespace Telegram.ViewModels
         public MessageSendingState SendingState => _message.SendingState;
         public long ChatId => _message.ChatId;
         public long MessageThreadId => _message.MessageThreadId;
-        public MessageSender SenderId => _message.SenderId;
+        public MessageSender SenderId { get => _message.SenderId; set => _message.SenderId = value; }
         public int SenderBoostCount => _message.SenderBoostCount;
         public long SenderBusinessBotUserId => _message.SenderBusinessBotUserId;
         public long Id => _message.Id;
+        public long EffectId => _message.EffectId;
+
+        public MessageEffect Effect { get; set; }
 
         private void SetContent(MessageContent content)
         {

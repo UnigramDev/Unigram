@@ -195,5 +195,27 @@ namespace Telegram.Views.Settings
 
             ViewModel.Scaling = (int)e.NewValue;
         }
+
+        private bool _compact;
+
+        private void OnSizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            var compact = e.NewSize.Width < 500;
+            if (compact == _compact)
+            {
+                return;
+            }
+
+            _compact = compact;
+
+            Grid.SetRow(ScalingSlider, compact ? 1 : 0);
+            Grid.SetColumn(ScalingSlider, compact ? 0 : 2);
+
+            Grid.SetRow(FontSizeSlider, compact ? 1 : 0);
+            Grid.SetColumn(FontSizeSlider, compact ? 0 : 2);
+
+            Grid.SetRow(BubbleRadiusSlider, compact ? 1 : 0);
+            Grid.SetColumn(BubbleRadiusSlider, compact ? 0 : 2);
+        }
     }
 }

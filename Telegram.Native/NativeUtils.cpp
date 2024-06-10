@@ -44,22 +44,33 @@ namespace winrt::Telegram::Native::implementation
         HRESULT result;
 
         IRestrictedErrorInfo* info;
-        winrt::com_ptr<ILanguageExceptionErrorInfo2> info2;
-        winrt::com_ptr<IUnknown> language;
+        //winrt::com_ptr<ILanguageExceptionErrorInfo2> info2;
+        //winrt::com_ptr<IUnknown> language;
         winrt::com_ptr<IRestrictedErrorInfoContext> context;
         STOWED_EXCEPTION_INFORMATION_V2* stowed;
 
         CleanupIfFailed(result, GetRestrictedErrorInfo(&info));
-        CleanupIfFailed(result, info->QueryInterface(info2.put()));
-        CleanupIfFailed(result, info2->GetLanguageException(language.put()));
+        //CleanupIfFailed(result, info->QueryInterface(info2.put()));
+        //CleanupIfFailed(result, info2->GetLanguageException(language.put()));
 
-        if (language != nullptr && onlyNative)
+        //if (language != nullptr && onlyNative)
+        //{
+        //    // Language exceptions are from CoreCLR
+        //    return nullptr;
+        //}
+
+        if (info == nullptr)
         {
-            // Language exceptions are from CoreCLR
             return nullptr;
         }
 
         CleanupIfFailed(result, info->QueryInterface(context.put()));
+
+        if (context == nullptr)
+        {
+            return nullptr;
+        }
+
         CleanupIfFailed(result, context->GetContext(&stowed));
 
         if (stowed != nullptr && stowed->ExceptionForm == 1 && stowed->Header.Signature == 'SE02')
@@ -116,7 +127,7 @@ namespace winrt::Telegram::Native::implementation
                 BSTR restrictedDescription;
                 BSTR reserved;
                 HRESULT hresult;
-                info->GetErrorDetails(&description, &hresult, &restrictedDescription, &reserved);
+                CleanupIfFailed(result, info->GetErrorDetails(&description, &hresult, &restrictedDescription, &reserved));
 
                 auto error = winrt::make_self<FatalError>(stowed->ResultCode, hstring(description), hstring(trace), frames);
                 return error.as<winrt::Telegram::Native::FatalError>();

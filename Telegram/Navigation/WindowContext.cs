@@ -20,6 +20,8 @@ using Telegram.Services.ViewService;
 using Telegram.Td.Api;
 using Telegram.Views;
 using Telegram.Views.Authorization;
+using Telegram.Views.Calls;
+using Telegram.Views.Host;
 using Telegram.Views.Popups;
 using Windows.ApplicationModel;
 using Windows.ApplicationModel.Activation;
@@ -102,6 +104,11 @@ namespace Telegram.Navigation
             ApplicationView.GetForCurrentView().Consolidated += OnConsolidated;
         }
 
+        public void Activate()
+        {
+            _window.Activate();
+        }
+
         private void OnVisibleBoundsChanged(ApplicationView sender, object args)
         {
             Logger.Debug(sender.VisibleBounds);
@@ -172,6 +179,8 @@ namespace Telegram.Navigation
 
         public bool IsInMainView { get; }
 
+        public bool IsCallInProgress { get; private set; }
+
         public UIElement Content
         {
             get => _window.Content;
@@ -181,6 +190,8 @@ namespace Telegram.Navigation
 
                 if (value != null)
                 {
+                    IsCallInProgress = value is CallPage or GroupCallPage or LiveStreamPage;
+
                     if (_locked != null)
                     {
                         value.Visibility = Visibility.Collapsed;

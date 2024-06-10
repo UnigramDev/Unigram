@@ -488,46 +488,46 @@ namespace Telegram.Services
                 return;
             }
 
-            var caption = GetCaption(chat, silent);
-            var content = GetContent(chat, message);
-            var launch = GetLaunch(chat, message);
-            var picture = GetPhoto(chat);
-            var dateTime = date.ToUniversalTime().ToString("s") + "Z";
-            var canReply = !(chat.Type is ChatTypeSupergroup super && super.IsChannel);
-
-            Td.Api.File soundFile = null;
-            if (soundId != -1 && soundId != 0 && !silent)
-            {
-                var response = await _clientService.SendAsync(new GetSavedNotificationSound(soundId));
-                if (response is NotificationSound notificationSound)
-                {
-                    if (notificationSound.Sound.Local.IsDownloadingCompleted)
-                    {
-                        soundFile = notificationSound.Sound;
-                    }
-                    else
-                    {
-                        // If notification sound is not yet available
-                        // download it and show the notification as is.
-
-                        _clientService.DownloadFile(notificationSound.Sound.Id, 32);
-                    }
-                }
-            }
-
-            var showPreview = _settings.Notifications.GetShowPreview(chat);
-
-            if (chat.Type is ChatTypeSecret || !showPreview || TypeResolver.Current.Passcode.IsLockscreenRequired)
-            {
-                caption = Strings.AppName;
-                content = Strings.YouHaveNewMessage;
-                picture = string.Empty;
-
-                canReply = false;
-            }
-
             if (UpdateAsync(chat))
             {
+                var caption = GetCaption(chat, silent);
+                var content = GetContent(chat, message);
+                var launch = GetLaunch(chat, message);
+                var picture = GetPhoto(chat);
+                var dateTime = date.ToUniversalTime().ToString("s") + "Z";
+                var canReply = !(chat.Type is ChatTypeSupergroup super && super.IsChannel);
+
+                Td.Api.File soundFile = null;
+                if (soundId != -1 && soundId != 0 && !silent)
+                {
+                    var response = await _clientService.SendAsync(new GetSavedNotificationSound(soundId));
+                    if (response is NotificationSound notificationSound)
+                    {
+                        if (notificationSound.Sound.Local.IsDownloadingCompleted)
+                        {
+                            soundFile = notificationSound.Sound;
+                        }
+                        else
+                        {
+                            // If notification sound is not yet available
+                            // download it and show the notification as is.
+
+                            _clientService.DownloadFile(notificationSound.Sound.Id, 32);
+                        }
+                    }
+                }
+
+                var showPreview = _settings.Notifications.GetShowPreview(chat);
+
+                if (chat.Type is ChatTypeSecret || !showPreview || TypeResolver.Current.Passcode.IsLockscreenRequired)
+                {
+                    caption = Strings.AppName;
+                    content = Strings.YouHaveNewMessage;
+                    picture = string.Empty;
+
+                    canReply = false;
+                }
+
                 await UpdateToast(caption, content, $"{_sessionService.Id}", silent, silent || soundId == 0, soundFile, launch, $"{id}", $"{groupId}", picture, dateTime, canReply);
             }
         }
@@ -592,8 +592,9 @@ namespace Telegram.Services
 
             try
             {
-                //auto notifier = ToastNotificationManager::CreateToastNotifier(L"App");
-                ToastNotifier notifier = await ToastNotificationManager.GetDefault().GetToastNotifierForToastCollectionIdAsync(account);
+                ToastNotifier notifier = await ToastNotificationManager
+                    .GetDefault()
+                    .GetToastNotifierForToastCollectionIdAsync(account);
 
                 notifier ??= ToastNotificationManager.CreateToastNotifier("App");
 
@@ -611,12 +612,7 @@ namespace Telegram.Services
                 if (!string.IsNullOrEmpty(group))
                 {
                     notification.Group = group;
-
-                    if (!string.IsNullOrEmpty(group))
-                    {
-                        notification.RemoteId += "_";
-                    }
-
+                    notification.RemoteId += "_";
                     notification.RemoteId += group;
                 }
 

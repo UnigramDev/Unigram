@@ -246,7 +246,8 @@
         </Grid>
 
         <StackPanel x:Name="ControlsRoot">
-            <StackPanel x:Name="PersonalChannelRoot">
+            <StackPanel x:Name="PersonalChannelRoot"
+                        Visibility="Collapsed">
                 <Grid Margin="24,32,24,-8"
                       MaxWidth="1000">
                     <Grid.ColumnDefinitions>

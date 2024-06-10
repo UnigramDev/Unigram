@@ -74,7 +74,10 @@ namespace Telegram.Controls
                 return;
             }
 
-            ExpandedChanged?.Invoke(this, EventArgs.Empty);
+            if (newValue != oldValue)
+            {
+                ExpandedChanged?.Invoke(this, EventArgs.Empty);
+            }
 
             ActionButton.IsChecked = newValue;
 

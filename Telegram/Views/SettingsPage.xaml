@@ -240,7 +240,7 @@
                 </controls:BadgeButton>
 
                 <controls:BadgeButton x:Name="Stars"
-                                      x:Load="{x:Bind ViewModel.IsPremiumAvailable, Mode=OneWay}"
+                                      x:Load="{x:Bind ViewModel.IsStarsAvailable, Mode=OneWay}"
                                       Click="Stars_Click"
                                       Content="{CustomResource MenuTelegramStars}"
                                       Style="{StaticResource IconBadgeButtonStyle}">

@@ -83,19 +83,19 @@ namespace Telegram.ViewModels.Supergroups
 
                 if (member.Status is ChatMemberStatusRestricted restricted)
                 {
-                    CanChangeInfo = restricted.Permissions.CanChangeInfo;
-                    CanPinMessages = restricted.Permissions.CanPinMessages;
-                    CanInviteUsers = restricted.Permissions.CanInviteUsers;
-                    CanSendPhotos = restricted.Permissions.CanSendPhotos;
-                    CanSendVideos = restricted.Permissions.CanSendVideos;
-                    CanSendOtherMessages = restricted.Permissions.CanSendOtherMessages;
-                    CanSendAudios = restricted.Permissions.CanSendAudios;
-                    CanSendDocuments = restricted.Permissions.CanSendDocuments;
-                    CanSendVoiceNotes = restricted.Permissions.CanSendVoiceNotes;
-                    CanSendVideoNotes = restricted.Permissions.CanSendVideoNotes;
-                    CanSendPolls = restricted.Permissions.CanSendPolls;
-                    CanAddWebPagePreviews = restricted.Permissions.CanAddWebPagePreviews;
-                    CanSendBasicMessages = restricted.Permissions.CanSendBasicMessages;
+                    CanChangeInfo = restricted.Permissions.CanChangeInfo && chat.Permissions.CanChangeInfo;
+                    CanPinMessages = restricted.Permissions.CanPinMessages && chat.Permissions.CanPinMessages;
+                    CanInviteUsers = restricted.Permissions.CanInviteUsers && chat.Permissions.CanInviteUsers;
+                    CanSendPhotos = restricted.Permissions.CanSendPhotos && chat.Permissions.CanSendPhotos;
+                    CanSendVideos = restricted.Permissions.CanSendVideos && chat.Permissions.CanSendVideos;
+                    CanSendOtherMessages = restricted.Permissions.CanSendOtherMessages && chat.Permissions.CanSendOtherMessages;
+                    CanSendAudios = restricted.Permissions.CanSendAudios && chat.Permissions.CanSendAudios;
+                    CanSendDocuments = restricted.Permissions.CanSendDocuments && chat.Permissions.CanSendDocuments;
+                    CanSendVoiceNotes = restricted.Permissions.CanSendVoiceNotes && chat.Permissions.CanSendVoiceNotes;
+                    CanSendVideoNotes = restricted.Permissions.CanSendVideoNotes && chat.Permissions.CanSendVideoNotes;
+                    CanSendPolls = restricted.Permissions.CanSendPolls && chat.Permissions.CanSendPolls;
+                    CanAddWebPagePreviews = restricted.Permissions.CanAddWebPagePreviews && chat.Permissions.CanAddWebPagePreviews;
+                    CanSendBasicMessages = restricted.Permissions.CanSendBasicMessages && chat.Permissions.CanSendBasicMessages;
                     UntilDate = restricted.RestrictedUntilDate;
                 }
                 else if (member.Status is ChatMemberStatusBanned banned)
@@ -422,6 +422,28 @@ namespace Telegram.ViewModels.Supergroups
                 // TODO: ...
             }
         }
+
+        public ChatMemberStatus SelectedStatus => new ChatMemberStatusRestricted
+        {
+            IsMember = true,
+            RestrictedUntilDate = _untilDate,
+            Permissions = new ChatPermissions
+            {
+                CanChangeInfo = _canChangeInfo,
+                CanPinMessages = _canPinMessages,
+                CanInviteUsers = _canInviteUsers,
+                CanSendPhotos = _canSendPhotos,
+                CanSendVideos = _canSendVideos,
+                CanSendOtherMessages = _canSendOtherMessages,
+                CanSendAudios = _canSendAudios,
+                CanSendDocuments = _canSendDocuments,
+                CanSendVoiceNotes = _canSendVoiceNotes,
+                CanSendVideoNotes = _canSendVideoNotes,
+                CanSendPolls = _canSendPolls,
+                CanAddWebPagePreviews = _canAddWebPagePreviews,
+                CanSendBasicMessages = _canSendBasicMessages,
+            }
+        };
 
         public async void EditUntil()
         {

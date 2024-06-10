@@ -70,6 +70,11 @@ namespace Telegram.Controls.Cells
                     SubtitleLabel.Text = PhoneNumber.Format(user.PhoneNumber);
                 }
             }
+            else if (user.Type is UserTypeBot)
+            {
+                SubtitleLabel.Text = Strings.Bot;
+                SubtitleLabel.Style = BootStrapper.Current.Resources["InfoCaptionTextBlockStyle"] as Style;
+            }
             else
             {
                 SubtitleLabel.Text = LastSeenConverter.GetLabel(user, false);

@@ -223,7 +223,7 @@ namespace LibVLCSharp.Platforms.Windows
                         _d3D11Device = new SharpDX.Direct3D11.Device(adapter, creationFlags);
                         adapter.Dispose();
                         adapter = null;
-                        break; 
+                        break;
                     }
                     catch (SharpDXException)
                     {
@@ -291,12 +291,15 @@ namespace LibVLCSharp.Platforms.Windows
             catch (Exception ex)
             {
                 DestroySwapChain();
+
                 if (ex is SharpDXException)
                 {
                     throw new VLCException("SharpDX operation failed, see InnerException for details", ex);
                 }
-
-                throw;
+                else
+                {
+                    throw;
+                }
             }
         }
 

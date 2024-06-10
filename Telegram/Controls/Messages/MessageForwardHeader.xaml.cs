@@ -12,6 +12,7 @@ using Telegram.ViewModels;
 using Windows.Foundation;
 using Windows.UI;
 using Windows.UI.Composition;
+using Windows.UI.Text;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Documents;
@@ -80,7 +81,7 @@ namespace Telegram.Controls.Messages
                     var right = line.Max(x => x.Right);
                     var bottom = line.Max(x => x.Bottom);
 
-                    var rect = new Rect(left - 2, line.Key, right - left + 4, bottom - line.Key);
+                    var rect = new Rect(left - 4, line.Key, right - left + 8, bottom - line.Key);
 
                     if (current.Count > 0 && !rect.IntersectsWith(last))
                     {
@@ -309,26 +310,31 @@ namespace Telegram.Controls.Messages
                 if (message.ForwardInfo?.Origin is MessageOriginUser fromUser && message.ClientService.TryGetUser(fromUser.SenderUserId, out User fromUserUser))
                 {
                     line2 = fromUserUser.FullName();
+                    ForwardLink.FontWeight = FontWeights.SemiBold;
                     ForwardPhoto.SetUser(message.ClientService, fromUserUser, 16);
                 }
                 else if (message.ForwardInfo?.Origin is MessageOriginChat fromChat && message.ClientService.TryGetChat(fromChat.SenderChatId, out Chat fromChatChat))
                 {
                     line2 = fromChatChat.Title;
+                    ForwardLink.FontWeight = FontWeights.SemiBold;
                     ForwardPhoto.SetChat(message.ClientService, fromChatChat, 16);
                 }
                 else if (message.ForwardInfo?.Origin is MessageOriginChannel fromChannel && message.ClientService.TryGetChat(fromChannel.ChatId, out Chat fromChannelChat))
                 {
                     line2 = fromChannelChat.Title;
+                    ForwardLink.FontWeight = FontWeights.SemiBold;
                     ForwardPhoto.SetChat(message.ClientService, fromChannelChat, 16);
                 }
                 else if (message.ForwardInfo?.Origin is MessageOriginHiddenUser fromHiddenUser)
                 {
                     line2 = fromHiddenUser.SenderName;
+                    ForwardLink.FontWeight = FontWeights.Normal;
                     ForwardPhoto.Source = PlaceholderImage.GetNameForUser(fromHiddenUser.SenderName, long.MinValue);
                 }
                 else if (message.ImportInfo != null)
                 {
                     line2 = message.ImportInfo.SenderName;
+                    ForwardLink.FontWeight = FontWeights.Normal;
                     ForwardPhoto.Source = PlaceholderImage.GetNameForUser(message.ImportInfo.SenderName, long.MinValue);
                 }
 

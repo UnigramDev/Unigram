@@ -1165,7 +1165,7 @@ namespace Telegram.Controls.Messages
             }
             else if (message.ForwardInfo?.Origin is MessageOriginHiddenUser)
             {
-                ToastPopup.Show(Strings.HidAccount);
+                ToastPopup.Show(Strings.HidAccount, new LocalFileSource("ms-appx:///Assets/Toasts/Info.tgs"));
             }
             else if (message.Content is MessageAsyncStory asyncStory)
             {
@@ -3210,8 +3210,6 @@ namespace Telegram.Controls.Messages
 
         protected override Size MeasureOverride(Size availableSize)
         {
-            //return base.MeasureOverride(availableSize);
-
             var availableWidth = Math.Min(availableSize.Width, Math.Min(double.IsNaN(Width) ? double.PositiveInfinity : Width, 420));
             var availableHeight = Math.Min(availableSize.Height, Math.Min(double.IsNaN(Height) ? double.PositiveInfinity : Height, 420));
 
@@ -3431,6 +3429,11 @@ namespace Telegram.Controls.Messages
                 additional += 38;
             }
 
+            if (availableWidth + additional > availableSize.Width)
+            {
+                additional = 0;
+            }
+
             width = Math.Max(Footer.DesiredSize.Width + /*margin left*/ 8 + /*padding right*/ 6 + /*margin right*/ 6, Math.Max(width, minWidth));
 
             if (width > availableWidth + additional || height > availableHeight)
@@ -3466,7 +3469,7 @@ namespace Telegram.Controls.Messages
                     return album.IsMedia;
                 case MessageInvoice invoice:
                     return invoice.ExtendedMedia is not MessageExtendedMediaUnsupported and not null
-                        || (width && invoice.Photo != null);
+                        || (width && invoice.ProductInfo.Photo != null);
                 case MessageAsyncStory story:
                     return story.State != MessageStoryState.Expired;
                 default:

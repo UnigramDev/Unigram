@@ -156,7 +156,7 @@ namespace Telegram.Controls
                 }
                 else
                 {
-                    constraint = invoiceMessage.Photo;
+                    constraint = invoiceMessage.ProductInfo.Photo;
                 }
             }
             else if (constraint is MessageGame gameMessage)

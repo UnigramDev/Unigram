@@ -160,7 +160,8 @@
             <Border BackgroundSizing="OuterBorderEdge"
                     Background="{ThemeResource LayerOnMicaBaseAltFillColorDefaultBrush}"
                     BorderBrush="{ThemeResource NavigationViewContentGridBorderBrush}"
-                    BorderThickness="0,0,1,0" />
+                    BorderThickness="0,0,1,0"
+                    Margin="0,-40,0,0" />
 
             <controls:TopNavView x:Name="ChatFoldersSide"
                                  AutomationProperties.Name="{CustomResource Filters}"
@@ -508,6 +509,7 @@
                         <StackPanel x:Name="ChatsOptions"
                                     Orientation="Horizontal"
                                     VerticalAlignment="Center"
+                                    Margin="-4,0,0,0"
                                     Grid.Column="2">
                             <controls:GlyphButton x:Name="ComposeButton"
                                                   Click="ComposeButton_Click"

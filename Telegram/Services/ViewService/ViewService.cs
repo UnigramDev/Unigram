@@ -124,7 +124,7 @@ namespace Telegram.Services.ViewService
 
                 newView.DispatcherQueue.TryEnqueue(() =>
                 {
-                    var newWindow = Window.Current;
+                    var newWindow = WindowContext.Current;
                     var newAppView = ApplicationView.GetForCurrentView();
 
                     newAppView.Title = parameters.Title ?? string.Empty;

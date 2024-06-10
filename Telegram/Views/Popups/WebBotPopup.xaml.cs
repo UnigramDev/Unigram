@@ -439,7 +439,13 @@ namespace Telegram.Views.Popups
 
         private void OpenInvoice(JsonObject eventData)
         {
+            var value = eventData.GetNamedString("slug", string.Empty);
+            if (string.IsNullOrEmpty(value))
+            {
+                return;
+            }
 
+            _navigationService.NavigateToInvoice(new InputInvoiceName(value));
         }
 
         private void OpenExternalLink(JsonObject eventData)
