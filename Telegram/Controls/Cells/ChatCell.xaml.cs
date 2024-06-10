@@ -1398,13 +1398,13 @@ namespace Telegram.Controls.Cells
                 var performer = string.IsNullOrEmpty(audio.Audio.Performer) ? null : audio.Audio.Performer;
                 var title = string.IsNullOrEmpty(audio.Audio.Title) ? null : audio.Audio.Title;
 
-                if (performer == null || title == null)
+                if (performer == null && title == null)
                 {
-                    return Text1("\U0001F3B5 ", audio.Caption, Strings.AttachMusic);
+                    return Text1("\U0001F3B5 ", audio.Caption, audio.Audio.FileName);
                 }
                 else
                 {
-                    return Text1("\U0001F3B5 ", audio.Caption, $"{performer} - {title}");
+                    return Text1("\U0001F3B5 ", audio.Caption, $"{performer ?? Strings.AudioUnknownArtist} - {title ?? Strings.AudioUnknownTitle}");
                 }
             }
             else if (content is MessageDocument document)
@@ -1508,7 +1508,7 @@ namespace Telegram.Controls.Cells
             var message = chat.LastMessage;
             if (message == null)
             {
-                if (chat.LastReadOutboxMessageId != 0)
+                if (chat.LastReadOutboxMessageId != 0 || chat.LastReadInboxMessageId != 0)
                 {
                     draft = false;
                     return Strings.HistoryCleared;

@@ -165,7 +165,7 @@
                             </Grid.ColumnDefinitions>
                             <RichTextBlock x:Name="BriefText"
                                            Style="{StaticResource InfoBodyRichTextBlockStyle}"
-                                           FontFamily="{ThemeResource EmojiThemeFontFamily}"
+                                           FontFamily="{ThemeResource EmojiThemeFontFamilyWithSymbols}"
                                            IsTextSelectionEnabled="False"
                                            TextTrimming="CharacterEllipsis"
                                            TextWrapping="NoWrap"
