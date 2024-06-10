@@ -34,7 +34,7 @@ namespace Telegram.Controls.Messages.Content
         private BadgeControl Count;
         private TextBlock PrizesLabel;
         private TextBlock ParticipantsLabel;
-        private WrapPanel ParticipantsPanel;
+        private StackPanel ParticipantsPanel;
         private TextBlock FromLabel;
         private TextBlock WinnersLabel;
         private BadgeButton Button;
@@ -46,7 +46,7 @@ namespace Telegram.Controls.Messages.Content
             Count = GetTemplateChild(nameof(Count)) as BadgeControl;
             PrizesLabel = GetTemplateChild(nameof(PrizesLabel)) as TextBlock;
             ParticipantsLabel = GetTemplateChild(nameof(ParticipantsLabel)) as TextBlock;
-            ParticipantsPanel = GetTemplateChild(nameof(ParticipantsPanel)) as WrapPanel;
+            ParticipantsPanel = GetTemplateChild(nameof(ParticipantsPanel)) as StackPanel;
             FromLabel = GetTemplateChild(nameof(FromLabel)) as TextBlock;
             WinnersLabel = GetTemplateChild(nameof(WinnersLabel)) as TextBlock;
             Button = GetTemplateChild(nameof(Button)) as BadgeButton;
@@ -92,7 +92,8 @@ namespace Telegram.Controls.Messages.Content
                 var button = new ChatPill();
                 button.SetChat(message.ClientService, boostedChat);
                 button.Click += Chat_Click;
-                button.Margin = new Thickness(0, 2, 2, 0);
+                button.Margin = new Thickness(0, 4, 0, 0);
+                button.HorizontalAlignment = HorizontalAlignment.Center;
 
                 ParticipantsPanel.Children.Add(button);
             }
@@ -102,7 +103,8 @@ namespace Telegram.Controls.Messages.Content
                 var button = new ChatPill();
                 button.SetChat(message.ClientService, chat);
                 button.Click += Chat_Click;
-                button.Margin = new Thickness(0, 2, 2, 0);
+                button.Margin = new Thickness(0, 4, 0, 0);
+                button.HorizontalAlignment = HorizontalAlignment.Center;
 
                 ParticipantsPanel.Children.Add(button);
             }
