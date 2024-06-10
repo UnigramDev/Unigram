@@ -2342,6 +2342,13 @@ namespace Telegram.Controls.Messages
                 reactions.CenterPoint = new Vector3(0, Reactions.ActualSize.Y, 0);
                 reactions.StartAnimation("Scale", factor);
             }
+
+            if (Panel.Children.Count > 0 && Panel.Children[0] is MessageFactCheck factChecko)
+            {
+                var factCheck = ElementComposition.GetElementVisual(factChecko);
+                factCheck.CenterPoint = new Vector3(0, 0, 0);
+                factCheck.StartAnimation("Scale", factor);
+            }
         }
 
         private ContainerVisual _highlight;
