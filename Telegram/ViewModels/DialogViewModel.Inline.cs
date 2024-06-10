@@ -130,7 +130,7 @@ namespace Telegram.ViewModels
 
             // TODO: cache
 
-            if (string.IsNullOrEmpty(query))
+            if (false && string.IsNullOrEmpty(query))
             {
                 InlineBotResults = null;
             }

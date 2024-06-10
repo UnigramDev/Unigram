@@ -315,7 +315,7 @@ namespace Telegram.Controls.Chats
 
         private void GetInlineBotResults(string inlineQuery)
         {
-            if (string.Equals(inlineQuery, ViewModel.InlineBotResults?.Query, StringComparison.OrdinalIgnoreCase))
+            if (ViewModel.InlineBotResults != null && string.Equals(inlineQuery, ViewModel.InlineBotResults.Query, StringComparison.OrdinalIgnoreCase))
             {
                 return;
             }
