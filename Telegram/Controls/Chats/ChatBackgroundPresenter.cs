@@ -77,9 +77,13 @@ namespace Telegram.Controls.Chats
         private void OnRasterizationScaleChanged(XamlRoot sender, XamlRootChangedEventArgs args)
         {
             var value = sender.RasterizationScale;
-            if (value != _rasterizationScale && _background?.Type is BackgroundTypePattern pattern && _background?.Document?.DocumentValue != null)
+            if (value != _rasterizationScale && _vector && _background?.Type is BackgroundTypePattern pattern && _background?.Document?.DocumentValue != null)
             {
                 UpdatePattern(pattern, _background.Document.DocumentValue, value);
+            }
+            else
+            {
+                _rasterizationScale = value;
             }
         }
 
@@ -272,7 +276,7 @@ namespace Telegram.Controls.Chats
 
         private async void UpdatePattern(BackgroundTypePattern pattern, File file, double scale)
         {
-            if (_pattern == null || _patternPath != file.Local.Path || _rasterizationScale != scale)
+            if (file.Local.IsDownloadingCompleted && (_pattern == null || _patternPath != file.Local.Path || _rasterizationScale != scale))
             {
                 if (_negative)
                 {
