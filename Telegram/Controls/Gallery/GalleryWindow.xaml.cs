@@ -783,7 +783,7 @@ namespace Telegram.Controls.Gallery
             LayoutRoot.Height = Math.Max(0, finalSize.Height - Padding.Top);
 
             // TODO: setting a max width/height to the element causes a weird clipping effect if
-            // the final calculated size is actually larger than that to accomodate for rotation
+            // the final calculated size is actually larger than that to accommodate for rotation
             //static void Apply(AspectView element, Size size)
             //{
             //    if (element.Constraint is not Size)
