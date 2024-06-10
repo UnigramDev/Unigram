@@ -904,6 +904,18 @@ public static class PlaceholderImageHelper_stub
             throw new RuntimeException(ex);
         }
     }
+    public static System.Collections.Generic.IList<Windows.Foundation.Rect> LineMetrics_stub(this Telegram.Native.PlaceholderImageHelper sender, string text, System.Collections.Generic.IList<Telegram.Td.Api.TextEntity> entities, double fontSize, double width, bool rtl)
+    {
+        try
+        {
+            return sender.LineMetrics(text, entities, fontSize, width, rtl);
+        }
+        catch (Exception ex)
+        {
+            Logger.Error(Environment.StackTrace);
+            throw new RuntimeException(ex);
+        }
+    }
     public static Windows.Storage.Streams.IBuffer DrawWebP_stub(string fileName, int maxWidth, out int pixelWidth, out int pixelHeight)
     {
         try
@@ -957,18 +969,6 @@ public static class PlaceholderImageHelper_stub
         try
         {
             sender.DrawThumbnailPlaceholder(bytes, blurAmount, randomAccessStream);
-        }
-        catch (Exception ex)
-        {
-            Logger.Error(Environment.StackTrace);
-            throw new RuntimeException(ex);
-        }
-    }
-    public static System.Collections.Generic.IList<Windows.Foundation.Rect> LineMetrics_stub(this Telegram.Native.PlaceholderImageHelper sender, string text, System.Collections.Generic.IList<Telegram.Td.Api.TextEntity> entities, double fontSize, double width, bool rtl)
-    {
-        try
-        {
-            return sender.LineMetrics(text, entities, fontSize, width, rtl);
         }
         catch (Exception ex)
         {
@@ -1108,6 +1108,18 @@ public static class LanguageIdentification_stub
 }
 public static class NativeUtils_stub
 {
+    public static string GetKeyboardCulture_stub()
+    {
+        try
+        {
+            return Telegram.Native.NativeUtils.GetKeyboardCulture();
+        }
+        catch (Exception ex)
+        {
+            Logger.Error(Environment.StackTrace);
+            throw new RuntimeException(ex);
+        }
+    }
     public static bool IsMediaSupported_stub()
     {
         try
@@ -1192,11 +1204,23 @@ public static class NativeUtils_stub
             throw new RuntimeException(ex);
         }
     }
-    public static string GetKeyboardCulture_stub()
+    public static void OverrideScaleForCurrentView_stub(int value)
     {
         try
         {
-            return Telegram.Native.NativeUtils.GetKeyboardCulture();
+            Telegram.Native.NativeUtils.OverrideScaleForCurrentView(value);
+        }
+        catch (Exception ex)
+        {
+            Logger.Error(Environment.StackTrace);
+            throw new RuntimeException(ex);
+        }
+    }
+    public static int GetScaleForCurrentView_stub()
+    {
+        try
+        {
+            return Telegram.Native.NativeUtils.GetScaleForCurrentView();
         }
         catch (Exception ex)
         {
@@ -5947,23 +5971,11 @@ public static class Compositor_stub
             throw new RuntimeException(ex);
         }
     }
-    public static Windows.UI.Composition.CompositionRectangleGeometry CreateRectangleGeometry_stub(this Windows.UI.Composition.Compositor sender)
+    public static Windows.UI.Composition.CompositionScopedBatch CreateScopedBatch_stub(this Windows.UI.Composition.Compositor sender, Windows.UI.Composition.CompositionBatchTypes batchType)
     {
         try
         {
-            return sender.CreateRectangleGeometry();
-        }
-        catch (Exception ex)
-        {
-            Logger.Error(Environment.StackTrace);
-            throw new RuntimeException(ex);
-        }
-    }
-    public static Windows.UI.Composition.CompositionMaskBrush CreateMaskBrush_stub(this Windows.UI.Composition.Compositor sender)
-    {
-        try
-        {
-            return sender.CreateMaskBrush();
+            return sender.CreateScopedBatch(batchType);
         }
         catch (Exception ex)
         {
@@ -5983,11 +5995,59 @@ public static class Compositor_stub
             throw new RuntimeException(ex);
         }
     }
-    public static Windows.UI.Composition.CompositionScopedBatch CreateScopedBatch_stub(this Windows.UI.Composition.Compositor sender, Windows.UI.Composition.CompositionBatchTypes batchType)
+    public static Windows.UI.Composition.DropShadow CreateDropShadow_stub(this Windows.UI.Composition.Compositor sender)
     {
         try
         {
-            return sender.CreateScopedBatch(batchType);
+            return sender.CreateDropShadow();
+        }
+        catch (Exception ex)
+        {
+            Logger.Error(Environment.StackTrace);
+            throw new RuntimeException(ex);
+        }
+    }
+    public static Windows.UI.Composition.CompositionGeometricClip CreateGeometricClip_stub(this Windows.UI.Composition.Compositor sender, Windows.UI.Composition.CompositionGeometry geometry)
+    {
+        try
+        {
+            return sender.CreateGeometricClip(geometry);
+        }
+        catch (Exception ex)
+        {
+            Logger.Error(Environment.StackTrace);
+            throw new RuntimeException(ex);
+        }
+    }
+    public static Windows.UI.Composition.CompositionGeometricClip CreateGeometricClip_stub(this Windows.UI.Composition.Compositor sender)
+    {
+        try
+        {
+            return sender.CreateGeometricClip();
+        }
+        catch (Exception ex)
+        {
+            Logger.Error(Environment.StackTrace);
+            throw new RuntimeException(ex);
+        }
+    }
+    public static Windows.UI.Composition.CompositionRectangleGeometry CreateRectangleGeometry_stub(this Windows.UI.Composition.Compositor sender)
+    {
+        try
+        {
+            return sender.CreateRectangleGeometry();
+        }
+        catch (Exception ex)
+        {
+            Logger.Error(Environment.StackTrace);
+            throw new RuntimeException(ex);
+        }
+    }
+    public static Windows.UI.Composition.CompositionMaskBrush CreateMaskBrush_stub(this Windows.UI.Composition.Compositor sender)
+    {
+        try
+        {
+            return sender.CreateMaskBrush();
         }
         catch (Exception ex)
         {
@@ -6036,30 +6096,6 @@ public static class Compositor_stub
         try
         {
             return sender.CreateEffectFactory(graphicsEffect, animatableProperties);
-        }
-        catch (Exception ex)
-        {
-            Logger.Error(Environment.StackTrace);
-            throw new RuntimeException(ex);
-        }
-    }
-    public static Windows.UI.Composition.CompositionGeometricClip CreateGeometricClip_stub(this Windows.UI.Composition.Compositor sender, Windows.UI.Composition.CompositionGeometry geometry)
-    {
-        try
-        {
-            return sender.CreateGeometricClip(geometry);
-        }
-        catch (Exception ex)
-        {
-            Logger.Error(Environment.StackTrace);
-            throw new RuntimeException(ex);
-        }
-    }
-    public static Windows.UI.Composition.DropShadow CreateDropShadow_stub(this Windows.UI.Composition.Compositor sender)
-    {
-        try
-        {
-            return sender.CreateDropShadow();
         }
         catch (Exception ex)
         {
@@ -6301,11 +6337,11 @@ public static class CompositionPropertySet_stub
             throw new RuntimeException(ex);
         }
     }
-    public static void InsertColor_stub(this Windows.UI.Composition.CompositionPropertySet sender, string propertyName, Windows.UI.Color value)
+    public static void InsertVector3_stub(this Windows.UI.Composition.CompositionPropertySet sender, string propertyName, System.Numerics.Vector3 value)
     {
         try
         {
-            sender.InsertColor(propertyName, value);
+            sender.InsertVector3(propertyName, value);
         }
         catch (Exception ex)
         {
@@ -6313,11 +6349,11 @@ public static class CompositionPropertySet_stub
             throw new RuntimeException(ex);
         }
     }
-    public static void InsertVector3_stub(this Windows.UI.Composition.CompositionPropertySet sender, string propertyName, System.Numerics.Vector3 value)
+    public static void InsertColor_stub(this Windows.UI.Composition.CompositionPropertySet sender, string propertyName, Windows.UI.Color value)
     {
         try
         {
-            sender.InsertVector3(propertyName, value);
+            sender.InsertColor(propertyName, value);
         }
         catch (Exception ex)
         {
@@ -7841,8 +7877,59 @@ public static class UIElement_stub
         }
     }
 }
+public static class FrameworkElement_stub
+{
+    public static object FindName_stub(this Windows.UI.Xaml.FrameworkElement sender, string name)
+    {
+        try
+        {
+            return sender.FindName(name);
+        }
+        catch (Exception ex)
+        {
+            Logger.Error(Environment.StackTrace);
+            throw new RuntimeException(ex);
+        }
+    }
+    public static Windows.UI.Xaml.Data.BindingExpression GetBindingExpression_stub(this Windows.UI.Xaml.FrameworkElement sender, Windows.UI.Xaml.DependencyProperty dp)
+    {
+        try
+        {
+            return sender.GetBindingExpression(dp);
+        }
+        catch (Exception ex)
+        {
+            Logger.Error(Environment.StackTrace);
+            throw new RuntimeException(ex);
+        }
+    }
+    public static void SetBinding_stub(this Windows.UI.Xaml.FrameworkElement sender, Windows.UI.Xaml.DependencyProperty dp, Windows.UI.Xaml.Data.BindingBase binding)
+    {
+        try
+        {
+            sender.SetBinding(dp, binding);
+        }
+        catch (Exception ex)
+        {
+            Logger.Error(Environment.StackTrace);
+            throw new RuntimeException(ex);
+        }
+    }
+}
 public static class DependencyObject_stub
 {
+    public static void ClearValue_stub(this Windows.UI.Xaml.DependencyObject sender, Windows.UI.Xaml.DependencyProperty dp)
+    {
+        try
+        {
+            sender.ClearValue(dp);
+        }
+        catch (Exception ex)
+        {
+            Logger.Error(Environment.StackTrace);
+            throw new RuntimeException(ex);
+        }
+    }
     public static object GetValue_stub(this Windows.UI.Xaml.DependencyObject sender, Windows.UI.Xaml.DependencyProperty dp)
     {
         try
@@ -7860,18 +7947,6 @@ public static class DependencyObject_stub
         try
         {
             sender.SetValue(dp, value);
-        }
-        catch (Exception ex)
-        {
-            Logger.Error(Environment.StackTrace);
-            throw new RuntimeException(ex);
-        }
-    }
-    public static void ClearValue_stub(this Windows.UI.Xaml.DependencyObject sender, Windows.UI.Xaml.DependencyProperty dp)
-    {
-        try
-        {
-            sender.ClearValue(dp);
         }
         catch (Exception ex)
         {
@@ -7965,45 +8040,6 @@ public static class DispatcherTimer_stub
         try
         {
             sender.Start();
-        }
-        catch (Exception ex)
-        {
-            Logger.Error(Environment.StackTrace);
-            throw new RuntimeException(ex);
-        }
-    }
-}
-public static class FrameworkElement_stub
-{
-    public static object FindName_stub(this Windows.UI.Xaml.FrameworkElement sender, string name)
-    {
-        try
-        {
-            return sender.FindName(name);
-        }
-        catch (Exception ex)
-        {
-            Logger.Error(Environment.StackTrace);
-            throw new RuntimeException(ex);
-        }
-    }
-    public static Windows.UI.Xaml.Data.BindingExpression GetBindingExpression_stub(this Windows.UI.Xaml.FrameworkElement sender, Windows.UI.Xaml.DependencyProperty dp)
-    {
-        try
-        {
-            return sender.GetBindingExpression(dp);
-        }
-        catch (Exception ex)
-        {
-            Logger.Error(Environment.StackTrace);
-            throw new RuntimeException(ex);
-        }
-    }
-    public static void SetBinding_stub(this Windows.UI.Xaml.FrameworkElement sender, Windows.UI.Xaml.DependencyProperty dp, Windows.UI.Xaml.Data.BindingBase binding)
-    {
-        try
-        {
-            sender.SetBinding(dp, binding);
         }
         catch (Exception ex)
         {
@@ -8339,6 +8375,45 @@ public static class Grid_stub
         }
     }
 }
+public static class ListViewBase_stub
+{
+    public static void ScrollIntoView_stub(this Windows.UI.Xaml.Controls.ListViewBase sender, object item, Windows.UI.Xaml.Controls.ScrollIntoViewAlignment alignment)
+    {
+        try
+        {
+            sender.ScrollIntoView(item, alignment);
+        }
+        catch (Exception ex)
+        {
+            Logger.Error(Environment.StackTrace);
+            throw new RuntimeException(ex);
+        }
+    }
+    public static void ScrollIntoView_stub(this Windows.UI.Xaml.Controls.ListViewBase sender, object item)
+    {
+        try
+        {
+            sender.ScrollIntoView(item);
+        }
+        catch (Exception ex)
+        {
+            Logger.Error(Environment.StackTrace);
+            throw new RuntimeException(ex);
+        }
+    }
+    public static void SelectAll_stub(this Windows.UI.Xaml.Controls.ListViewBase sender)
+    {
+        try
+        {
+            sender.SelectAll();
+        }
+        catch (Exception ex)
+        {
+            Logger.Error(Environment.StackTrace);
+            throw new RuntimeException(ex);
+        }
+    }
+}
 public static class ItemsControl_stub
 {
     public static Windows.UI.Xaml.DependencyObject ContainerFromItem_stub(this Windows.UI.Xaml.Controls.ItemsControl sender, object item)
@@ -8394,45 +8469,6 @@ public static class ItemsControl_stub
         try
         {
             return sender.IndexFromContainer(container);
-        }
-        catch (Exception ex)
-        {
-            Logger.Error(Environment.StackTrace);
-            throw new RuntimeException(ex);
-        }
-    }
-}
-public static class ListViewBase_stub
-{
-    public static void ScrollIntoView_stub(this Windows.UI.Xaml.Controls.ListViewBase sender, object item, Windows.UI.Xaml.Controls.ScrollIntoViewAlignment alignment)
-    {
-        try
-        {
-            sender.ScrollIntoView(item, alignment);
-        }
-        catch (Exception ex)
-        {
-            Logger.Error(Environment.StackTrace);
-            throw new RuntimeException(ex);
-        }
-    }
-    public static void ScrollIntoView_stub(this Windows.UI.Xaml.Controls.ListViewBase sender, object item)
-    {
-        try
-        {
-            sender.ScrollIntoView(item);
-        }
-        catch (Exception ex)
-        {
-            Logger.Error(Environment.StackTrace);
-            throw new RuntimeException(ex);
-        }
-    }
-    public static void SelectAll_stub(this Windows.UI.Xaml.Controls.ListViewBase sender)
-    {
-        try
-        {
-            sender.SelectAll();
         }
         catch (Exception ex)
         {
@@ -9262,6 +9298,18 @@ public static class Typography_stub
 }
 public static class ElementCompositionPreview_stub
 {
+    public static void SetIsTranslationEnabled_stub(Windows.UI.Xaml.UIElement element, bool value)
+    {
+        try
+        {
+            Windows.UI.Xaml.Hosting.ElementCompositionPreview.SetIsTranslationEnabled(element, value);
+        }
+        catch (Exception ex)
+        {
+            Logger.Error(Environment.StackTrace);
+            throw new RuntimeException(ex);
+        }
+    }
     public static void SetElementChildVisual_stub(Windows.UI.Xaml.UIElement element, Windows.UI.Composition.Visual visual)
     {
         try
@@ -9279,18 +9327,6 @@ public static class ElementCompositionPreview_stub
         try
         {
             return Windows.UI.Xaml.Hosting.ElementCompositionPreview.GetElementVisual(element);
-        }
-        catch (Exception ex)
-        {
-            Logger.Error(Environment.StackTrace);
-            throw new RuntimeException(ex);
-        }
-    }
-    public static void SetIsTranslationEnabled_stub(Windows.UI.Xaml.UIElement element, bool value)
-    {
-        try
-        {
-            Windows.UI.Xaml.Hosting.ElementCompositionPreview.SetIsTranslationEnabled(element, value);
         }
         catch (Exception ex)
         {
@@ -9517,6 +9553,18 @@ public static class VisualTreeHelper_stub
             throw new RuntimeException(ex);
         }
     }
+    public static System.Collections.Generic.IReadOnlyList<Windows.UI.Xaml.Controls.Primitives.Popup> GetOpenPopups_stub(Windows.UI.Xaml.Window window)
+    {
+        try
+        {
+            return Windows.UI.Xaml.Media.VisualTreeHelper.GetOpenPopups(window);
+        }
+        catch (Exception ex)
+        {
+            Logger.Error(Environment.StackTrace);
+            throw new RuntimeException(ex);
+        }
+    }
     public static System.Collections.Generic.IEnumerable<Windows.UI.Xaml.UIElement> FindElementsInHostCoordinates_stub(Windows.Foundation.Point intersectingPoint, Windows.UI.Xaml.UIElement subtree)
     {
         try
@@ -9534,18 +9582,6 @@ public static class VisualTreeHelper_stub
         try
         {
             return Windows.UI.Xaml.Media.VisualTreeHelper.GetChild(reference, childIndex);
-        }
-        catch (Exception ex)
-        {
-            Logger.Error(Environment.StackTrace);
-            throw new RuntimeException(ex);
-        }
-    }
-    public static System.Collections.Generic.IReadOnlyList<Windows.UI.Xaml.Controls.Primitives.Popup> GetOpenPopups_stub(Windows.UI.Xaml.Window window)
-    {
-        try
-        {
-            return Windows.UI.Xaml.Media.VisualTreeHelper.GetOpenPopups(window);
         }
         catch (Exception ex)
         {
