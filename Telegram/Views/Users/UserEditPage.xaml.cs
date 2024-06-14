@@ -4,6 +4,7 @@
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+using Telegram.Controls;
 using Telegram.Td.Api;
 using Telegram.ViewModels.Delegates;
 using Telegram.ViewModels.Users;
@@ -61,7 +62,25 @@ namespace Telegram.Views.Users
         {
             if (ResetPhoto != null)
             {
-                ResetPhoto.Visibility = fullInfo.PersonalPhoto == null ? Visibility.Collapsed : Visibility.Visible;
+                if (fullInfo.PersonalPhoto != null)
+                {
+                    if (fullInfo.Photo != null)
+                    {
+                        ResetPhotoPhoto.SetChatPhoto(ViewModel.ClientService, fullInfo.Photo, 28);
+                    }
+                    else
+                    {
+                        ResetPhotoPhoto.Source = PlaceholderImage.GetUser(ViewModel.ClientService, user);
+                    }
+
+                    ResetPhotoPhoto.Visibility = Visibility.Visible;
+                    ResetPhoto.Visibility = Visibility.Visible;
+                }
+                else
+                {
+                    ResetPhotoPhoto.Visibility = Visibility.Collapsed;
+                    ResetPhoto.Visibility = Visibility.Collapsed;
+                }
             }
 
             if (fullInfo.NeedPhoneNumberPrivacyException)

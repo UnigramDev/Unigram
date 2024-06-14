@@ -128,7 +128,7 @@
                 </controls:HeaderedControl>
 
                 <controls:HeaderedControl x:Name="PhotoPanel"
-                                          x:Load="False">
+                                          x:Load="True">
                     <controls:BadgeButton x:Name="SuggestPhoto"
                                           Style="{StaticResource GlyphBadgeButtonStyle}"
                                           Glyph="&#xE9FE;">
@@ -173,12 +173,19 @@
                             </MenuFlyout>
                         </Button.Flyout>
                     </controls:BadgeButton>
+
+                    <controls:ProfilePicture x:Name="ResetPhotoPhoto"
+                                             Width="28"
+                                             Height="28"
+                                             HorizontalAlignment="Left"
+                                             Margin="16,0,0,-44"
+                                             Canvas.ZIndex="1" />
+
                     <controls:BadgeButton x:Name="ResetPhoto"
                                           Click="{x:Bind ViewModel.ResetPhoto}"
                                           Content="{CustomResource ResetToOriginalPhoto}"
                                           Foreground="{ThemeResource DangerButtonBackground}"
-                                          Style="{StaticResource GlyphBadgeButtonStyle}"
-                                          Glyph="&#xEA09;" />
+                                          Style="{StaticResource GlyphBadgeButtonStyle}" />
                 </controls:HeaderedControl>
             </controls:SettingsPanel>
         </ScrollViewer>

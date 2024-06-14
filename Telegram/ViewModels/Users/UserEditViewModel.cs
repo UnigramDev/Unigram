@@ -116,10 +116,8 @@ namespace Telegram.ViewModels.Users
 
                     Delegate?.UpdateUserFullInfo(null, user, userFull, false, false);
                 }
-                else
-                {
-                    ClientService.Send(new GetUserFullInfo(user.Id));
-                }
+
+                ClientService.Send(new GetUserFullInfo(user.Id));
             }
         }
 
