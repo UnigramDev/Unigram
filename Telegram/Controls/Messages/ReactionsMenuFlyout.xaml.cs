@@ -654,9 +654,9 @@ namespace Telegram.Controls.Messages
                 e.Handled = true;
 
                 var down = e.Key is VirtualKey.Down;
-                var delta = down ? Index.Start : Index.FromEnd(1);
+                var delta = down ? _flyout.Items[0] : FindLast();
 
-                _flyout.Items[delta].Focus(FocusState.Keyboard);
+                delta.Focus(FocusState.Keyboard);
             }
         }
 
@@ -667,7 +667,7 @@ namespace Telegram.Controls.Messages
                 e.Handled = true;
                 Focus(FocusState.Keyboard);
             }
-            else if ((e.Key is VirtualKey.Up && _flyout.Items[0] == e.OriginalSource) || (e.Key is VirtualKey.Down && _flyout.Items[^1] == e.OriginalSource))
+            else if ((e.Key is VirtualKey.Up && e.OriginalSource == _flyout.Items[0]) || (e.Key is VirtualKey.Down && e.OriginalSource == FindLast()))
             {
                 var control = FocusManager.FindFirstFocusableElement(Presenter) as Control;
                 if (control != null && control.Focus(FocusState.Keyboard))
@@ -675,6 +675,19 @@ namespace Telegram.Controls.Messages
                     e.Handled = true;
                 }
             }
+        }
+
+        private MenuFlyoutItem FindLast()
+        {
+            for (int i = _flyout.Items.Count - 1; i >= 0; i--)
+            {
+                if (_flyout.Items[i] is MenuFlyoutItem item)
+                {
+                    return item;
+                }
+            }
+
+            return null;
         }
 
         private void Flyout_Closed(object sender, object e)
