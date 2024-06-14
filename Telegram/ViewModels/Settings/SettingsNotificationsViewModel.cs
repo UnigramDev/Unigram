@@ -225,7 +225,7 @@ namespace Telegram.ViewModels.Settings
             set => Set(ref _soundTitle, value);
         }
 
-        private string _exceptionsCount;
+        private string _exceptionsCount = string.Empty;
         public string ExceptionsCount
         {
             get => _exceptionsCount;
