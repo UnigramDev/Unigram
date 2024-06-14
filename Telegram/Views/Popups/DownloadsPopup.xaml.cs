@@ -85,7 +85,7 @@ namespace Telegram.Views.Popups
         {
             if (args.ItemContainer == null)
             {
-                args.ItemContainer = new ListViewItem();
+                args.ItemContainer = new TextListViewItem();
                 args.ItemContainer.Style = sender.ItemContainerStyle;
                 args.ItemContainer.ContentTemplate = sender.ItemTemplate;
                 args.ItemContainer.ContextRequested += OnContextRequested;
