@@ -484,11 +484,21 @@ namespace Telegram.Views
                 if (update.Session == null)
                 {
                     UnloadObject(UnconfirmedCard);
+
+                    if (SetBirthdateCard != null)
+                    {
+                        SetBirthdateCard.Visibility = Visibility.Visible;
+                    }
                 }
                 else
                 {
                     FindName(nameof(UnconfirmedCard));
                     UnconfirmedCard.Update(update.Session);
+
+                    if (SetBirthdateCard != null)
+                    {
+                        SetBirthdateCard.Visibility = Visibility.Collapsed;
+                    }
                 }
             });
         }
