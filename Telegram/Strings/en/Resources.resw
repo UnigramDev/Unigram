@@ -3842,7 +3842,7 @@ You can always switch back to the default Telegram theme here.</value>
     <value>Turn Off</value>
   </data>
   <data name="DisablePhotoSpoiler" xml:space="preserve">
-    <value>Remove spoiler</value>
+    <value>Remove Spoiler</value>
   </data>
   <data name="DisableProxy" xml:space="preserve">
     <value>Disable Proxy</value>
@@ -4256,7 +4256,7 @@ You&apos;ll need the password you set up here to log in to your Telegram account
     <value>Enable Full-Screen Gallery</value>
   </data>
   <data name="EnablePhotoSpoiler" xml:space="preserve">
-    <value>Hide with spoiler</value>
+    <value>Hide with Spoiler</value>
   </data>
   <data name="EnableProxyAlert" xml:space="preserve">
     <value>Are you sure you want to enable this proxy?</value>
@@ -9060,7 +9060,7 @@ The channel &quot;**{1}**&quot; will become private.</value>
     <value>By proceeding and purchasing Stars, you agree with the **Terms and Conditions**.</value>
   </data>
   <data name="StarsTOSLink" xml:space="preserve">
-    <value>https://telegram.org/tos</value>
+    <value>https://telegram.org/tos/stars</value>
   </data>
   <data name="StarsTransactionBot" xml:space="preserve">
     <value>Stars Top-Up Bot</value>
