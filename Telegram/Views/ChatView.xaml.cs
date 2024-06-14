@@ -715,7 +715,7 @@ namespace Telegram.Views
         private void Segments_Click(object sender, RoutedEventArgs e)
         {
             var chat = ViewModel.Chat;
-            if (chat == null || sender is not ActiveStoriesSegments segments)
+            if (chat == null || chat.Id == ViewModel.ClientService.Options.MyId || sender is not ActiveStoriesSegments segments)
             {
                 return;
             }
