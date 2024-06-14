@@ -224,6 +224,10 @@ namespace Telegram.ViewModels
             {
                 NavigationService.NavigateToUser(messageViewer.UserId);
             }
+            else if (clickedItem is StoryInteraction interaction)
+            {
+                NavigationService.NavigateToSender(interaction.ActorId);
+            }
         }
     }
 }
