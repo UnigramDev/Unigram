@@ -454,7 +454,7 @@ namespace Telegram.ViewModels
             if (popup.Items.Count == 1)
             {
                 popup.Items[0].ShowCaptionAboveMedia = popup.ShowCaptionAboveMedia;
-                popup.Items[0].HasSpoiler = popup.Spoiler && !popup.IsFilesSelected;
+                popup.Items[0].HasSpoiler = popup.SendWithSpoiler && !popup.IsFilesSelected;
                 await Task.Run(() => SendStorageMediaAsync(popup.Items[0], reply, captionz, popup.IsFilesSelected, options));
             }
             else if (popup.Items.Count > 1 && popup.IsAlbum && popup.IsAlbumAvailable)
@@ -464,7 +464,7 @@ namespace Telegram.ViewModels
                 foreach (var item in popup.Items)
                 {
                     item.ShowCaptionAboveMedia = popup.ShowCaptionAboveMedia;
-                    item.HasSpoiler = popup.Spoiler && !popup.IsFilesSelected;
+                    item.HasSpoiler = popup.SendWithSpoiler && !popup.IsFilesSelected;
                     group.Add(item);
 
                     if (group.Count == 10)
@@ -493,7 +493,7 @@ namespace Telegram.ViewModels
                     foreach (var file in popup.Items)
                     {
                         file.ShowCaptionAboveMedia = popup.ShowCaptionAboveMedia;
-                        file.HasSpoiler = popup.Spoiler && !popup.IsFilesSelected;
+                        file.HasSpoiler = popup.SendWithSpoiler && !popup.IsFilesSelected;
                         await SendStorageMediaAsync(file, reply, null, popup.IsFilesSelected, options);
                         reply = null;
                     }

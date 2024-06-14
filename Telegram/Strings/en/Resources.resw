@@ -810,6 +810,9 @@ to: {1}</value>
   <data name="AddToGroup" xml:space="preserve">
     <value>Add to Group</value>
   </data>
+  <data name="AddToGroupOrChannel" xml:space="preserve">
+    <value>Add to Group or Channel</value>
+  </data>
   <data name="AddToStickers" xml:space="preserve">
     <value>Add to Stickers</value>
   </data>
@@ -2652,6 +2655,12 @@ It will be able to access your **IP address** and basic device info.</value>
   </data>
   <data name="Caption" xml:space="preserve">
     <value>Caption</value>
+  </data>
+  <data name="CaptionAbove" xml:space="preserve">
+    <value>Move Caption Up</value>
+  </data>
+  <data name="CaptionBelow" xml:space="preserve">
+    <value>Move Caption Down</value>
   </data>
   <data name="CaptionsLimitSubtitle" xml:space="preserve">
     <value>Use longer descriptions for your photos and videos</value>
@@ -8559,10 +8568,25 @@ The channel &quot;**{1}**&quot; will become private.</value>
     <value>Send anonymously</value>
   </data>
   <data name="SendAsFile" xml:space="preserve">
-    <value>Send as file</value>
+    <value>Send as File</value>
   </data>
   <data name="SendAsFiles" xml:space="preserve">
-    <value>Send as files</value>
+    <value>Send as Files</value>
+  </data>
+  <data name="SendAsMedia" xml:space="preserve">
+    <value>Send as Media</value>
+  </data>
+  <data name="SendAsPhoto" xml:space="preserve">
+    <value>Send as Photo</value>
+  </data>
+  <data name="SendAsPhotos" xml:space="preserve">
+    <value>Send as Photos</value>
+  </data>
+  <data name="SendAsVideo" xml:space="preserve">
+    <value>Send as Video</value>
+  </data>
+  <data name="SendAsVideos" xml:space="preserve">
+    <value>Send as Videos</value>
   </data>
   <data name="SendByEnter" xml:space="preserve">
     <value>Send with Enter</value>

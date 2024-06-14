@@ -170,24 +170,8 @@
                 <ColumnDefinition Width="Auto" />
                 <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
-            <CheckBox Click="PivotRadioButton_Click"
-                      IsChecked="{x:Bind IsFilesSelected, Mode=TwoWay}"
-                      Visibility="{x:Bind IsMediaOnly, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"
-                      Content="{x:Bind SendWithoutCompression, Mode=OneWay}"
-                      VerticalAlignment="Center" />
-
-            <TextBlock Visibility="{x:Bind IsMediaOnly, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}, ConverterParameter=invert}"
-                       Text="{x:Bind SendWithoutCompression, Mode=OneWay}"
+            <TextBlock Text="{x:Bind SendWithoutCompression, Mode=OneWay}"
                        VerticalAlignment="Center" />
-
-            <controls:AnimatedGlyphToggleButton x:Name="CaptionButton"
-                                                CheckedGlyph="&#xEA43;"
-                                                Glyph="&#xEA44;"
-                                                Visibility="{x:Bind IsMediaSelected, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"
-                                                IsChecked="{x:Bind ShowCaptionAboveMedia, Mode=TwoWay}"
-                                                IsOneWay="False"
-                                                FontSize="20"
-                                                Grid.Column="2" />
 
             <controls:GlyphToggleButton x:Name="AlbumButton"
                                         CheckedGlyph="&#xE90C;"
@@ -195,12 +179,16 @@
                                         CheckedForeground="{ThemeResource TelegramBackgroundAccentBrush}"
                                         Click="Album_Click"
                                         FontFamily="{StaticResource TelegramThemeFontFamily}"
-                                        Visibility="{x:Bind IsAlbumAvailable, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"
+                                        Visibility="{x:Bind IsAlbumAvailable, Mode=OneWay}"
                                         IsChecked="{x:Bind IsAlbum, Mode=OneWay}"
                                         IsOneWay="False"
                                         FontSize="20"
                                         Margin="-8,0,0,0"
                                         Grid.Column="3" />
+
+            <controls:MoreButton Click="Menu_Click"
+                                 Visibility="{x:Bind IsMediaOnly, Mode=OneWay}"
+                                 Grid.Column="3" />
         </Grid>
     </ContentDialog.Title>
 
