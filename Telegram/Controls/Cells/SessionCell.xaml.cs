@@ -67,6 +67,7 @@ namespace Telegram.Controls.Cells
                 SessionTypeUbuntu => ("\uE976", Color.FromArgb(0xFF, 0xFF, 0x95, 0x00), "Ubuntu"),
                 SessionTypeLinux => ("\uE972", Color.FromArgb(0xFF, 0x8E, 0x8E, 0x93), "Linux"),
                 SessionTypeWindows => ("\uE977", Color.FromArgb(0xFF, 0x00, 0x79, 0xFF), "Windows"),
+                SessionTypeEdge => ("\uE96E", Color.FromArgb(0xFF, 0x00, 0x79, 0xFF), "Edge"),
                 _ => ("", Color.FromArgb(0xFF, 0x8E, 0x8E, 0x93), null)
             };
         }

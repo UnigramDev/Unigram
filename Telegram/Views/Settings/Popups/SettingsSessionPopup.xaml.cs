@@ -85,7 +85,7 @@ namespace Telegram.Views.Settings.Popups
 
         private async void OnOpened(ContentDialog sender, ContentDialogOpenedEventArgs args)
         {
-            await Task.Delay(1000);
+            await Task.Delay(500);
             Icon.Play();
         }
 
