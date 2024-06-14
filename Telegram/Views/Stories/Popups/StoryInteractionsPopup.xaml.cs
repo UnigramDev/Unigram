@@ -47,7 +47,7 @@ namespace Telegram.Views.Stories.Popups
                 ViewModel.Items.CollectionChanged += OnCollectionChanged;
 
                 var premium = story.ClientService.IsPremium;
-                var count = story.HasExpiredViewers
+                var count = story.HasExpiredViewers && !premium
                     ? story.InteractionInfo.ReactionCount 
                     : story.InteractionInfo.ViewCount;
 
