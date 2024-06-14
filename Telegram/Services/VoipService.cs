@@ -572,6 +572,8 @@ namespace Telegram.Services
                         AudioOutputId = await _outputWatcher.GetAndUpdateAsync()
                     };
 
+                    _callStarted = null;
+
                     _manager = new VoipManager(version, descriptor);
                     _manager.StateUpdated += OnStateUpdated;
                     _manager.SignalingDataEmitted += OnSignalingDataEmitted;
