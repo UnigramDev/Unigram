@@ -14,6 +14,7 @@ using Windows.UI;
 using Windows.UI.Composition;
 using Windows.UI.Text;
 using Windows.UI.Xaml;
+using Windows.UI.Xaml.Automation.Peers;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Documents;
 using Windows.UI.Xaml.Hosting;
@@ -34,6 +35,21 @@ namespace Telegram.Controls.Messages
         public MessageForwardHeader()
         {
             DefaultStyleKey = typeof(MessageForwardHeader);
+        }
+
+        protected override AutomationPeer OnCreateAutomationPeer()
+        {
+            return new MessageForwardHeaderAutomationPeer(this);
+        }
+
+        public string GetAutomationName()
+        {
+            if (ForwardLabel != null)
+            {
+                return ForwardLabel.Text;
+            }
+
+            return null;
         }
 
         protected override bool GoToElementStateCore(string stateName, bool useTransitions)
@@ -347,6 +363,22 @@ namespace Telegram.Controls.Messages
             {
                 Visibility = Visibility.Collapsed;
             }
+        }
+    }
+
+    public class MessageForwardHeaderAutomationPeer : HyperlinkButtonAutomationPeer
+    {
+        private readonly MessageForwardHeader _owner;
+
+        public MessageForwardHeaderAutomationPeer(MessageForwardHeader owner)
+            : base(owner)
+        {
+            _owner = owner;
+        }
+
+        protected override string GetNameCore()
+        {
+            return _owner.GetAutomationName() ?? base.GetNameCore();
         }
     }
 }
