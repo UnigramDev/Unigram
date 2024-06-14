@@ -253,7 +253,11 @@ namespace Telegram.Common
         public static string FormatRelativeShort(int date)
         {
             var diff = DateTime.Now.ToTimestamp() - date;
-            if (diff < 60)
+            if (diff <= 0)
+            {
+                return Strings.ShortTimeNow;
+            }
+            else if (diff < 60)
             {
                 return diff + "s";
             }

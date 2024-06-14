@@ -8822,6 +8822,9 @@ The channel &quot;**{1}**&quot; will become private.</value>
   <data name="ShortMessageLifetimeForever" xml:space="preserve">
     <value>Off</value>
   </data>
+  <data name="ShortTimeNow" xml:space="preserve">
+    <value>now</value>
+  </data>
   <data name="Show" xml:space="preserve">
     <value>Show</value>
   </data>
