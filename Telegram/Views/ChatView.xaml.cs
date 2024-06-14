@@ -2450,6 +2450,21 @@ namespace Telegram.Views
                     message = ancestor.Message;
                 }
             }
+            else if (args.OriginalSource is RichTextBlock originalBlock && originalBlock.SelectionStart != null && originalBlock.SelectionEnd != null)
+            {
+                selectionStart = originalBlock.SelectionStart.OffsetToIndex(message.Text);
+                selectionEnd = originalBlock.SelectionEnd.OffsetToIndex(message.Text);
+
+                if (selectionEnd - selectionStart <= 0)
+                {
+                    MessageHelper.Hyperlink_ContextRequested(ViewModel.TranslateService, originalBlock, args);
+
+                    if (args.Handled)
+                    {
+                        return;
+                    }
+                }
+            }
 
             var response = await ViewModel.ClientService.SendAsync(new GetMessage(message.ChatId, message.Id));
             if (response is Message)
