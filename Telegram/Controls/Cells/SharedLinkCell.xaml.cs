@@ -10,7 +10,6 @@ using Telegram.Common;
 using Telegram.Navigation.Services;
 using Telegram.Td.Api;
 using Telegram.ViewModels;
-using Windows.System;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Documents;
@@ -24,6 +23,8 @@ namespace Telegram.Controls.Cells
         private MessageWithOwner _message;
         private INavigationService _navigationService;
 
+        private long _thumbnailToken;
+
         public SharedLinkCell()
         {
             InitializeComponent();
@@ -33,6 +34,8 @@ namespace Telegram.Controls.Cells
         {
             _navigationService = navigationService;
             _message = message;
+
+            UpdateManager.Unsubscribe(this, ref _thumbnailToken, true);
 
             var caption = message.GetCaption();
             if (caption == null)
@@ -226,6 +229,12 @@ namespace Telegram.Controls.Cells
 
             Photo.Source = null;
 
+            if (webPageThumbnail != null)
+            {
+                UpdateManager.Subscribe(this, message, webPageThumbnail.File, ref _thumbnailToken, UpdateFile, true);
+                UpdateThumbnail(webPageThumbnail.File);
+            }
+
             for (int i = 0; i < links.Count; i++)
             {
                 var link = links[i];
@@ -266,6 +275,23 @@ namespace Telegram.Controls.Cells
             }
         }
 
+        private void UpdateFile(object target, File file)
+        {
+            UpdateThumbnail(file);
+        }
+
+        private void UpdateThumbnail(File file)
+        {
+            if (file.Local.IsDownloadingCompleted)
+            {
+                Photo.Source = UriEx.ToBitmap(file.Local.Path);
+            }
+            else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive)
+            {
+                _message.ClientService.DownloadFile(file.Id, 1);
+            }
+        }
+
         private void Paragraph_ContextRequested(UIElement sender, ContextRequestedEventArgs args)
         {
             MessageHelper.Hyperlink_ContextRequested(null, sender, args);
@@ -278,52 +304,15 @@ namespace Telegram.Controls.Cells
 
         private async void Hyperlink_Click(Hyperlink sender, Uri uri)
         {
-            if (MessageHelper.IsTelegramUrl(uri))
-            {
-                MessageHelper.OpenTelegramUrl(_message.ClientService, _navigationService, uri);
-            }
-            else
-            {
-                try
-                {
-                    await Launcher.LaunchUriAsync(uri);
-                }
-                catch
-                {
-                    // Invalid URI
-                }
-            }
+            MessageHelper.OpenUrl(_message.ClientService, _navigationService, uri.ToString());
         }
 
-        private async void Thumbnail_Click(object sender, RoutedEventArgs e)
+        private void Thumbnail_Click(object sender, RoutedEventArgs e)
         {
-            //if (DataContext is TLMessage message && message.Media is TLMessageMediaWebPage webpageMedia && webpageMedia.WebPage is TLWebPage webpage)
-            //{
-            //    if (webpage.HasCachedPage)
-            //    {
-            //        Context.NavigationService.Navigate(typeof(InstantPage), message.Media);
-            //    }
-            //    else
-            //    {
-            //        var url = webpage.Url;
-            //        if (url.StartsWith("http") == false)
-            //        {
-            //            url = "http://" + url;
-            //        }
-
-            //        if (Uri.TryCreate(url, UriKind.Absolute, out Uri uri))
-            //        {
-            //            if (MessageHelper.IsTelegramUrl(uri))
-            //            {
-            //                MessageHelper.HandleTelegramUrl(webpage.Url);
-            //            }
-            //            else
-            //            {
-            //                await Launcher.LaunchUriAsync(uri);
-            //            }
-            //        }
-            //    }
-            //}
+            if (_message?.Content is MessageText text && text.WebPage != null)
+            {
+                MessageHelper.OpenUrl(_message.ClientService, _navigationService, text.WebPage.Url);
+            }
         }
     }
 }
