@@ -307,19 +307,22 @@ namespace Telegram.Controls.Messages
                 maxId = chat.LastReadOutboxMessageId;
             }
 
-            if (message.SendingState is MessageSendingStateFailed)
+            if (chat.Id != message.ClientService.Options.MyId)
             {
-            }
-            else if (message.SendingState is MessageSendingStatePending)
-            {
-            }
-            else if (message.Id <= maxId && message.IsOutgoing && !message.IsChannelPost)
-            {
-            }
-            else if (message.IsOutgoing && !message.IsChannelPost)
-            {
-                builder.Append(Strings.AccDescrMsgUnread);
-                builder.Append(". ");
+                if (message.SendingState is MessageSendingStateFailed)
+                {
+                }
+                else if (message.SendingState is MessageSendingStatePending)
+                {
+                }
+                else if (message.Id <= maxId && message.IsOutgoing && !message.IsChannelPost)
+                {
+                }
+                else if (message.IsOutgoing && !message.IsChannelPost)
+                {
+                    builder.Append(Strings.AccDescrMsgUnread);
+                    builder.Append(". ");
+                }
             }
 
             if (message.ReplyToItem is MessageViewModel replyToMessage)
