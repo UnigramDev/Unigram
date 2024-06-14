@@ -166,6 +166,11 @@ namespace Telegram.Services
             { ShortcutCommand.ShowArchive    , "show_archive" },
             { ShortcutCommand.SetStatus      , "set_status" },
             { ShortcutCommand.Downloads      , "downloads" },
+
+            { ShortcutCommand.CallAccept     , "call_accept" },
+            { ShortcutCommand.CallReject     , "call_accept" },
+            { ShortcutCommand.CallToggleCamera     , "call_camera" },
+            { ShortcutCommand.CallToggleMicrophone , "call_microphone" },
         };
 
         #endregion
@@ -421,6 +426,11 @@ namespace Telegram.Services
 
             Set("ctrl+shift+y", ShortcutCommand.SetStatus);
             Set("ctrl+j", ShortcutCommand.Downloads);
+
+            Set("ctrl+home", ShortcutCommand.CallAccept);
+            Set("ctrl+end", ShortcutCommand.CallReject);
+            Set("ctrl+pgdown", ShortcutCommand.CallToggleMicrophone);
+            Set("ctrl+pgup", ShortcutCommand.CallToggleCamera);
         }
 
         private async void InitializeCustom()
@@ -499,20 +509,20 @@ namespace Telegram.Services
         {
             var split = keys.Split('+');
 
-            if (int.TryParse(split[split.Length - 1], out int number))
+            if (int.TryParse(split[^1], out int number))
             {
-                split[split.Length - 1] = $"number{number}";
+                split[^1] = $"number{number}";
             }
-            else if (string.Equals(split[split.Length - 1], "pgdown", StringComparison.OrdinalIgnoreCase))
+            else if (string.Equals(split[^1], "pgdown", StringComparison.OrdinalIgnoreCase))
             {
-                split[split.Length - 1] = "pagedown";
+                split[^1] = "pagedown";
             }
-            else if (string.Equals(split[split.Length - 1], "pgup", StringComparison.OrdinalIgnoreCase))
+            else if (string.Equals(split[^1], "pgup", StringComparison.OrdinalIgnoreCase))
             {
-                split[split.Length - 1] = "pageup";
+                split[^1] = "pageup";
             }
 
-            if (Enum.TryParse(split[split.Length - 1], true, out VirtualKey result))
+            if (Enum.TryParse(split[^1], true, out VirtualKey result))
             {
                 var modifiers = VirtualKeyModifiers.None;
                 var key = result;
@@ -725,7 +735,12 @@ namespace Telegram.Services
         ScheduleMessage,
 
         SetStatus,
-        Downloads
+        Downloads,
+
+        CallAccept,
+        CallReject,
+        CallToggleMicrophone,
+        CallToggleCamera,
 
         //SupportReloadTemplates,
         //SupportToggleMuted,

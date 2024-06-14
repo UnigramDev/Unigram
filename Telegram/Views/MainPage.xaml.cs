@@ -1196,10 +1196,22 @@ namespace Telegram.Views
             else if (command is ShortcutCommand.Lock)
             {
                 Lock_Click(null, null);
+                args.Handled = true;
             }
             else if (command is ShortcutCommand.Downloads)
             {
                 Downloads_Click(null, null);
+                args.Handled = true;
+            }
+            else if (command is ShortcutCommand.CallAccept && ViewModel.VoipService.Call is Call acceptCall)
+            {
+                ViewModel.ClientService.Send(new AcceptCall(acceptCall.Id, ViewModel.VoipService.Protocol));
+                args.Handled = true;
+            }
+            else if (command is ShortcutCommand.CallReject && ViewModel.VoipService.Call is Call rejectCall)
+            {
+                ViewModel.ClientService.Send(new DiscardCall(rejectCall.Id, false, 0, false, 0));
+                args.Handled = true;
             }
         }
 
