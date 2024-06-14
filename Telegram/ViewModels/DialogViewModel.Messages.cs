@@ -1609,7 +1609,7 @@ namespace Telegram.ViewModels
             }
             else if (message.Content is MessagePaymentSuccessful)
             {
-                NavigationService.NavigateToInvoice(message);
+                NavigationService.NavigateToReceipt(message);
             }
             else if (message.Content is MessageChatSetTheme)
             {
