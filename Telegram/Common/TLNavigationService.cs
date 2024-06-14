@@ -121,6 +121,41 @@ namespace Telegram.Common
             await _viewService.OpenAsync(parameters);
         }
 
+        public async void NavigateToReceipt(MessageViewModel message)
+        {
+            var response = await ClientService.SendAsync(new GetPaymentReceipt(message.ChatId, message.Id));
+            if (response is not PaymentReceipt paymentReceipt)
+            {
+                ToastPopup.Show(Strings.PaymentInvoiceLinkInvalid, new LocalFileSource("ms-appx:///Assets/Toasts/Info.tgs"));
+                return;
+            }
+
+            // TODO: how can we do this while coming from a mini app?
+            if (paymentReceipt.Type is PaymentReceiptTypeStars)
+            {
+                await ShowPopupAsync(new ReceiptPopup(message.ClientService, this, paymentReceipt));
+                return;
+            }
+
+            var parameters = new ViewServiceParams
+            {
+                Title = Strings.PaymentCheckout,
+                Width = 380,
+                Height = 580,
+                PersistentId = "Payments",
+                Content = control =>
+                {
+                    var nav = BootStrapper.Current.NavigationServiceFactory(BootStrapper.BackButton.Ignore, SessionId, "Payments" + Guid.NewGuid(), false);
+                    nav.Navigate(typeof(PaymentFormPage), paymentReceipt);
+
+                    return BootStrapper.Current.CreateRootElement(nav);
+
+                }
+            };
+
+            await _viewService.OpenAsync(parameters);
+        }
+
         public void NavigateToSender(MessageSender sender)
         {
             if (sender is MessageSenderUser user)

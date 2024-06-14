@@ -27,7 +27,7 @@ namespace Telegram.Views.Stars.Popups
         private readonly IClientService _clientService;
         private readonly INavigationService _navigationService;
 
-        private readonly StarTransaction _transaction;
+        private readonly string _transactionId;
 
         private long _thumbnailToken;
 
@@ -38,7 +38,7 @@ namespace Telegram.Views.Stars.Popups
             _clientService = clientService;
             _navigationService = navigationService;
 
-            _transaction = transaction;
+            _transactionId = transaction.Id;
 
             if (transaction.Source is StarTransactionSourceTelegram)
             {
@@ -89,7 +89,7 @@ namespace Telegram.Views.Stars.Popups
                     if (small != null)
                     {
                         UpdateManager.Subscribe(this, _clientService, small.Photo, ref _thumbnailToken, UpdateFile, true);
-                        UpdateThumbnail(transaction, small.Photo);
+                        UpdateThumbnail(small.Photo);
                     }
                 }
             }
@@ -116,6 +116,58 @@ namespace Telegram.Views.Stars.Popups
                 : Visibility.Collapsed;
         }
 
+        public ReceiptPopup(IClientService clientService, INavigationService navigationService, PaymentReceipt receipt)
+        {
+            InitializeComponent();
+
+            _clientService = clientService;
+            _navigationService = navigationService;
+
+            if (receipt.Type is not PaymentReceiptTypeStars stars)
+            {
+                return;
+            }
+
+            _transactionId = stars.TransactionId;
+
+            if (clientService.TryGetUser(receipt.SellerBotUserId, out User user))
+            {
+                FromPhoto.SetUser(clientService, user, 24);
+                FromPhoto.Visibility = Visibility.Visible;
+                FromTitle.Text = user.FullName();
+                FromHeader.Text = Strings.StarsTransactionRecipient;
+
+                Title.Text = receipt.ProductInfo.Title;
+                TextBlockHelper.SetFormattedText(Subtitle, receipt.ProductInfo.Description);
+
+                var small = receipt.ProductInfo.Photo.GetSmall();
+                if (small != null)
+                {
+                    UpdateManager.Subscribe(this, _clientService, small.Photo, ref _thumbnailToken, UpdateFile, true);
+                    UpdateThumbnail(small.Photo);
+                }
+            }
+            else
+            {
+                FromPhoto.Source = PlaceholderImage.GetGlyph(Icons.QuestionCircle, long.MinValue);
+                FromPhoto.Visibility = Visibility.Collapsed;
+                FromTitle.Text = Strings.StarsTransactionUnsupported;
+                FromHeader.Text = Strings.StarsTransactionSource;
+
+                Title.Text = Strings.StarsTransactionUnsupported;
+                Subtitle.Visibility = Visibility.Collapsed;
+                Photo.Source = PlaceholderImage.GetGlyph(Icons.QuestionCircle, long.MinValue);
+            }
+
+            Identifier.Text = stars.TransactionId;
+            Date.Text = Formatter.DateAt(receipt.Date);
+
+            StarCount.Text = (stars.StarCount < 0 ? string.Empty : "+") + stars.StarCount.ToString("N0");
+            StarCount.Foreground = BootStrapper.Current.Resources[stars.StarCount < 0 ? "SystemFillColorCriticalBrush" : "SystemFillColorSuccessBrush"] as Brush;
+
+            Refund.Visibility = Visibility.Collapsed;
+        }
+
         private void Purchase_Click(object sender, RoutedEventArgs e)
         {
             Hide();
@@ -134,25 +186,10 @@ namespace Telegram.Views.Stars.Popups
 
         private void UpdateFile(object target, File file)
         {
-            UpdateFile(_transaction, file);
+            UpdateThumbnail(file);
         }
 
-        private void UpdateFile(StarTransaction transaction, File file)
-        {
-            var source = transaction.Source as StarTransactionSourceUser;
-            if (source == null)
-            {
-                return;
-            }
-
-            var small = source.ProductInfo.Photo.GetSmall();
-            if (small != null && (file == null || small.Photo.Id == file.Id))
-            {
-                UpdateThumbnail(transaction, small.Photo);
-            }
-        }
-
-        private void UpdateThumbnail(StarTransaction transaction, File file)
+        private void UpdateThumbnail(File file)
         {
             if (file.Local.IsDownloadingCompleted)
             {
@@ -167,7 +204,7 @@ namespace Telegram.Views.Stars.Popups
         private void CopyLink_Click(object sender, RoutedEventArgs e)
         {
             var dataPackage = new DataPackage();
-            dataPackage.SetText(_transaction.Id);
+            dataPackage.SetText(_transactionId);
             ClipboardEx.TrySetContent(dataPackage);
 
             ToastPopup.Show(Strings.StarsTransactionIDCopied, new LocalFileSource("ms-appx:///Assets/Toasts/Copied.tgs"));

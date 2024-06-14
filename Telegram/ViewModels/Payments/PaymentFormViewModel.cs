@@ -73,6 +73,10 @@ namespace Telegram.ViewModels.Payments
             {
                 await InitializeForm(paymentForm.InputInvoice, paymentForm.PaymentForm);
             }
+            else if (parameter is PaymentReceipt paymentReceipt)
+            {
+                InitializeReceipt(paymentReceipt);
+            }
         }
 
         private async Task InitializeForm(InputInvoice invoice)
@@ -128,6 +132,13 @@ namespace Telegram.ViewModels.Payments
             {
                 return;
             }
+
+            InitializeReceipt(paymentReceipt);
+        }
+
+        private void InitializeReceipt(PaymentReceipt paymentReceipt)
+        {
+            IsReceipt = true;
 
             Photo = paymentReceipt.ProductInfo.Photo;
             Title = paymentReceipt.ProductInfo.Title;

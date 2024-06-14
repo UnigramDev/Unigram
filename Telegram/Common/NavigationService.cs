@@ -120,6 +120,14 @@ namespace Telegram.Common
             }
         }
 
+        public static void NavigateToReceipt(this INavigationService service, MessageViewModel message)
+        {
+            if (service is TLNavigationService serviceEx)
+            {
+                serviceEx.NavigateToReceipt(message);
+            }
+        }
+
         public static void NavigateToInvoice(this INavigationService service, InputInvoice inputInvoice)
         {
             if (service is TLNavigationService serviceEx)
