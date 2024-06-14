@@ -329,6 +329,8 @@ namespace Telegram.ViewModels
             get => _informativeMessage;
             set
             {
+                _informativeTimer.Stop();
+
                 if (value != null)
                 {
                     if (_informativeTimer == null)
@@ -342,7 +344,6 @@ namespace Telegram.ViewModels
                         };
                     }
 
-                    _informativeTimer.Stop();
                     _informativeTimer.Start();
                 }
 

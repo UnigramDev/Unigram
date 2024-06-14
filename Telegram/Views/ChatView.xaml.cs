@@ -4503,6 +4503,11 @@ namespace Telegram.Views
             {
                 CallbackQueryAnswerPanel.Visibility = Visibility.Visible;
                 CallbackQueryAnswer.UpdateMessage(message, false, null);
+
+                if (AutomationPeer.ListenerExists(AutomationEvents.LiveRegionChanged))
+                {
+                    CallbackQueryAnswer.Focus(FocusState.Keyboard);
+                }
             }
         }
 
