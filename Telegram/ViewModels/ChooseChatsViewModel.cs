@@ -235,9 +235,11 @@ namespace Telegram.ViewModels
             else if (parameter is ChooseChatsConfigurationStartBot configurationStartBot)
             {
                 SelectionMode = ListViewSelectionMode.Single;
-                Options = ChooseChatsOptions.InviteUsers;
+                Options = ChooseChatsOptions.GroupsAndChannels;
                 IsCommentEnabled = false;
                 IsChatSelection = false;
+
+                Title = Strings.AddToGroupOrChannel;
             }
 
             #endregion

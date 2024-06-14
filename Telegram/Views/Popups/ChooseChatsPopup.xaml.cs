@@ -76,6 +76,22 @@ namespace Telegram.Views.Popups
             ShowMessages = true
         };
 
+        public static readonly ChooseChatsOptions GroupsAndChannels = new()
+        {
+            AllowChannelChats = true,
+            AllowGroupChats = true,
+            AllowBotChats = false,
+            AllowUserChats = false,
+            AllowSecretChats = false,
+            AllowSelf = false,
+            CanPostMessages = true,
+            CanInviteUsers = false,
+            CanShareContact = false,
+            ShowChats = true,
+            ShowContacts = false,
+            ShowMessages = false
+        };
+
         public static readonly ChooseChatsOptions Contacts = new()
         {
             AllowChannelChats = false,
