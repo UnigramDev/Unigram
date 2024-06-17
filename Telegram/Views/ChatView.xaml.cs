@@ -2169,7 +2169,7 @@ namespace Telegram.Views
             var self = ViewModel.ClientService.IsSavedMessages(chat);
 
             var flyout = new MenuFlyout();
-            
+
             if (TextField.Effect != null)
             {
                 flyout.CreateFlyoutItem(RemoveMessageEffect, Strings.RemoveEffect, Icons.Delete, destructive: true);
@@ -2288,7 +2288,7 @@ namespace Telegram.Views
 
                 //if (message.IsOutgoing)
                 //{
-                    player.Margin = new Thickness(-left, -top, -right, -bottom);
+                player.Margin = new Thickness(-left, -top, -right, -bottom);
                 //}
                 //else
                 //{
@@ -4519,9 +4519,14 @@ namespace Telegram.Views
                 CallbackQueryAnswerPanel.Visibility = Visibility.Visible;
                 CallbackQueryAnswer.UpdateMessage(message, false, null);
 
-                if (AutomationPeer.ListenerExists(AutomationEvents.LiveRegionChanged))
+                if (message.Id == 0 && AutomationPeer.ListenerExists(AutomationEvents.LiveRegionChanged))
                 {
                     CallbackQueryAnswer.Focus(FocusState.Keyboard);
+                }
+                else
+                {
+                    var peer = FrameworkElementAutomationPeer.FromElement(CallbackQueryAnswer);
+                    peer?.RaiseAutomationEvent(AutomationEvents.LiveRegionChanged);
                 }
             }
         }

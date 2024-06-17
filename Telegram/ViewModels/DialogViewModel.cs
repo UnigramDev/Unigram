@@ -329,7 +329,7 @@ namespace Telegram.ViewModels
             get => _informativeMessage;
             set
             {
-                _informativeTimer.Stop();
+                _informativeTimer?.Stop();
 
                 if (value != null)
                 {
