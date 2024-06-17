@@ -10,6 +10,7 @@ using System.Text;
 using Telegram.Common;
 using Telegram.Controls;
 using Telegram.Controls.Gallery;
+using Telegram.Controls.Messages.Content;
 using Telegram.Controls.Stories;
 using Telegram.Converters;
 using Telegram.Services.Updates;
@@ -236,7 +237,15 @@ namespace Telegram.ViewModels
                 }
                 else
                 {
-                    Delegate?.UpdateBubbleWithMessageId(message.Id, bubble => VisualUtilities.ShakeView(bubble));
+                    Delegate?.UpdateBubbleWithMessageId(message.Id, bubble =>
+                    {
+                        if (bubble.MediaTemplateRoot is PollContent pollContent)
+                        {
+                            pollContent.ShowExplanation();
+                        }
+
+                        VisualUtilities.ShakeView(bubble);
+                    });
                 }
             }
         }

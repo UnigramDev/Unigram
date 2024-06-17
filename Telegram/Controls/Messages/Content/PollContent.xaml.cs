@@ -384,12 +384,17 @@ namespace Telegram.Controls.Messages.Content
             }
 
             var quiz = poll.Poll.Type as PollTypeQuiz;
-            if (quiz == null)
+            if (string.IsNullOrEmpty(quiz?.Explanation.Text))
             {
                 return;
             }
 
             ToastPopup.Show(Explanation, quiz.Explanation, TeachingTipPlacementMode.TopLeft);
+        }
+
+        public void ShowExplanation()
+        {
+            Explanation_Click(null, null);
         }
     }
 }
