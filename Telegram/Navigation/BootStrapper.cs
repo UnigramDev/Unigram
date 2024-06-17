@@ -878,7 +878,7 @@ namespace Telegram.Navigation
 
     public interface IActivablePage
     {
-        void Activate(int sessionId);
+        void Activate(INavigationService navigationService);
         void Deactivate(bool navigating);
 
         void PopupOpened();

@@ -661,14 +661,15 @@
         </Setter>
     </Style>
 
-    <Style TargetType="local:ContentMenuFlyoutItem">
+    <Style TargetType="local:MenuFlyoutContent">
         <Setter Property="Padding"
                 Value="{ThemeResource MenuFlyoutItemThemePadding}" />
         <Setter Property="Template">
             <Setter.Value>
-                <ControlTemplate TargetType="local:ContentMenuFlyoutItem">
+                <ControlTemplate TargetType="local:MenuFlyoutContent">
                     <Grid>
                         <ContentControl Content="{TemplateBinding Content}"
+                                        ContentTemplate="{TemplateBinding ContentTemplate}"
                                         Padding="{TemplateBinding Padding}"
                                         HorizontalContentAlignment="Stretch"
                                         VerticalContentAlignment="Stretch" />

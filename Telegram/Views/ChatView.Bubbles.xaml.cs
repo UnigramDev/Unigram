@@ -252,7 +252,7 @@ namespace Telegram.Views
             ShowHideDateHeader(minDateValue > 0 && minDateIndex > 0, minDateValue > 0 && minDateIndex is > 0 and < int.MaxValue);
 
             // Read and play messages logic:
-            if (messages.Count > 0 && WindowContext.Current.ActivationMode == CoreWindowActivationMode.ActivatedInForeground)
+            if (messages.Count > 0 && WindowContext.Current.ActivationMode == CoreWindowActivationMode.ActivatedInForeground && !_fromPreview)
             {
                 MessageSource source = ViewModel.Type switch
                 {
@@ -632,6 +632,7 @@ namespace Telegram.Views
                     selector = new ChatHistoryViewItem(Messages, typeName);
                     selector.ContentTemplate = relevantHashSet.ItemTemplate;
                     selector.Style = sender.ItemContainerStyle;
+                    selector.IsHitTestVisible = !_fromPreview;
                     selector.AddHandler(ContextRequestedEvent, _contextRequestedHandler ??= new TypedEventHandler<UIElement, ContextRequestedEventArgs>(Message_ContextRequested), true);
 
                     args.ItemContainer = selector;

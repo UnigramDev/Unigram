@@ -15,6 +15,7 @@ using Telegram.ViewModels;
 using Windows.UI;
 using Windows.UI.Composition;
 using Windows.UI.Composition.Interactions;
+using Windows.UI.Input;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Automation.Peers;
 using Windows.UI.Xaml.Controls;
@@ -493,6 +494,10 @@ namespace Telegram.Controls
             _multi = true;
             _list = list;
             //RegisterPropertyChangedCallback(IsSelectedProperty, OnSelectedChanged);
+
+            _recognizer = new GestureRecognizer();
+            _recognizer.GestureSettings = GestureSettings.HoldWithMouse;
+            _recognizer.Holding += OnHolding;
         }
 
         private void OnSelectedChanged(DependencyObject sender, DependencyProperty dp)
@@ -501,6 +506,50 @@ namespace Telegram.Controls
             {
                 content?.UpdateViewState(_list.ItemFromContainer(this) as Chat, _list._viewState == MasterDetailState.Compact, false);
             }
+        }
+
+        private GestureRecognizer _recognizer;
+
+        private void OnHolding(GestureRecognizer sender, HoldingEventArgs args)
+        {
+            Logger.Info(args.HoldingState);
+
+            if (args.HoldingState == HoldingState.Started && args.Position.X is >= 8 and <= 56 && args.Position.Y is >= 8 and <= 56 && ContentTemplateRoot is ChatCell cell)
+            {
+                cell.ShowPreview(args);
+            }
+        }
+
+        protected override void OnPointerPressed(PointerRoutedEventArgs e)
+        {
+            try
+            {
+                _recognizer.ProcessDownEvent(e.GetCurrentPoint(this));
+            }
+            catch
+            {
+                _recognizer.CompleteGesture();
+            }
+
+            base.OnPointerPressed(e);
+        }
+
+        protected override void OnPointerMoved(PointerRoutedEventArgs e)
+        {
+            _recognizer.ProcessMoveEvents(e.GetIntermediatePoints(this));
+            base.OnPointerMoved(e);
+        }
+
+        protected override void OnPointerCanceled(PointerRoutedEventArgs e)
+        {
+            _recognizer.CompleteGesture();
+            base.OnPointerCanceled(e);
+        }
+
+        protected override void OnPointerReleased(PointerRoutedEventArgs e)
+        {
+            _recognizer.ProcessUpEvent(e.GetCurrentPoint(this));
+            base.OnPointerReleased(e);
         }
     }
 

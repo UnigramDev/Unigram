@@ -23,15 +23,16 @@ using Telegram.Streams;
 using Telegram.Td;
 using Telegram.Td.Api;
 using Telegram.ViewModels;
-using Telegram.Views;
 using Windows.Foundation;
 using Windows.Storage.Streams;
 using Windows.UI;
 using Windows.UI.Composition;
+using Windows.UI.Input;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Documents;
 using Windows.UI.Xaml.Hosting;
+using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Markup;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Media.Imaging;
@@ -171,12 +172,6 @@ namespace Telegram.Controls.Cells
             Segments = GetTemplateChild(nameof(Segments)) as ActiveStoriesSegments;
             Photo = GetTemplateChild(nameof(Photo)) as ProfilePicture;
             Folders = GetTemplateChild(nameof(Folders)) as StackPanel;
-
-            var tooltip = new ToolTip();
-            tooltip.Opened += ToolTip_Opened;
-            tooltip.Closed += Tooltip_Closed;
-
-            ToolTipService.SetToolTip(PreviewPanel, tooltip);
 
             Segments.Click += Segments_Click;
 
@@ -1697,125 +1692,48 @@ namespace Telegram.Controls.Cells
             return string.Empty;
         }
 
-        private void ToolTip_Opened(object sender, RoutedEventArgs e)
+        public void ShowPreview(HoldingEventArgs args)
         {
-            var tooltip = sender as ToolTip;
-            if (tooltip != null)
+            var tooltip = new MenuFlyoutContent();
+
+            var flyout = new MenuFlyout();
+            flyout.MenuFlyoutPresenterStyle = new Style(typeof(MenuFlyoutPresenter));
+            flyout.MenuFlyoutPresenterStyle.Setters.Add(new Setter(PaddingProperty, new Thickness(0)));
+
+            flyout.Items.Add(tooltip);
+
+            var chat = _chat;
+            var message = chat?.LastMessage;
+
+            if (chat == null && _message != null)
             {
-                var chat = _chat;
-                var message = chat?.LastMessage;
-
-                if (chat == null && _message != null)
-                {
-                    chat = _clientService?.GetChat(_message.ChatId);
-                    message = _message;
-                }
-
-                if (_clientService != null && _clientService.Notifications.InAppPreview && chat != null && message != null)
-                {
-                    var playback = TypeResolver.Current.Playback;
-                    var settings = TypeResolver.Current.Resolve<ISettingsService>(_clientService.SessionId);
-
-                    var hidePreview = !settings.Notifications.GetShowPreview(chat);
-                    hidePreview |= chat.HasProtectedContent;
-                    hidePreview |= chat.Type is ChatTypeSecret;
-
-                    if (hidePreview || message.IsService())
-                    {
-                        tooltip.IsOpen = false;
-                        return;
-                    }
-
-                    var delegato = new ChatMessageDelegate(_clientService, settings, chat);
-                    var viewModel = new MessageViewModel(_clientService, playback, delegato, chat, message, true);
-
-                    var bubble = new MessageBubble();
-                    if (viewModel.IsOutgoing && !viewModel.IsChannelPost)
-                    {
-                        bubble.Resources = new ThemeOutgoing();
-                    }
-
-                    // TODO: this is not correct, as MessageViewModel doesn't
-                    // hold a strong reference to the IMessageDelegate object.
-                    bubble.Tag = delegato;
-                    bubble.UpdateQuery(string.Empty);
-                    bubble.UpdateMessage(viewModel);
-
-                    var grid = new Grid();
-                    grid.Children.Add(bubble);
-
-                    if (bubble.HasFloatingElements)
-                    {
-                        var background = new ChatBackgroundControl();
-                        background.Update(_clientService, null);
-                        background.CornerRadius = new CornerRadius(15);
-
-                        void handler(object sender, SizeChangedEventArgs args)
-                        {
-                            bubble.SizeChanged -= handler;
-                            background.Width = args.NewSize.Width;
-                            background.Height = args.NewSize.Height;
-                        }
-
-                        bubble.SizeChanged += handler;
-
-                        var canvas = new Canvas();
-                        canvas.Children.Add(background);
-                        grid.Children.Insert(0, canvas);
-                    }
-
-                    tooltip.Content = grid;
-                    tooltip.Padding = new Thickness();
-                    tooltip.CornerRadius = new CornerRadius(15);
-                    tooltip.MaxWidth = double.PositiveInfinity;
-
-                    if (viewModel.ReplyTo is not null ||
-                        viewModel.Content is MessagePinMessage ||
-                        viewModel.Content is MessageGameScore ||
-                        viewModel.Content is MessagePaymentSuccessful)
-                    {
-                        viewModel.ReplyToState = MessageReplyToState.Loading;
-
-                        _clientService.GetReplyTo(viewModel, response =>
-                        {
-                            if (response is Message result)
-                            {
-                                viewModel.ReplyToItem = new MessageViewModel(_clientService, playback, delegato, chat, result);
-                                viewModel.ReplyToState = MessageReplyToState.None;
-                            }
-                            else if (response is Story story)
-                            {
-                                viewModel.ReplyToItem = story;
-                                viewModel.ReplyToState = MessageReplyToState.None;
-                            }
-                            else
-                            {
-                                viewModel.ReplyToState = MessageReplyToState.Deleted;
-                            }
-
-                            this.BeginOnUIThread(() =>
-                            {
-                                if (tooltip.IsOpen)
-                                {
-                                    bubble.UpdateMessageReply(viewModel);
-                                }
-                            });
-                        });
-                    }
-                }
-                else
-                {
-                    tooltip.IsOpen = false;
-                }
+                chat = _clientService?.GetChat(_message.ChatId);
+                message = _message;
             }
-        }
 
-        private void Tooltip_Closed(object sender, RoutedEventArgs e)
-        {
-            if (sender is ToolTip tooltip)
+            if (chat == null)
             {
-                tooltip.Content = new object();
+                return;
             }
+
+            var grid = new Grid();
+            var frame = new Frame
+            {
+                Width = 320,
+                Height = 360
+            };
+
+            var service = new TLNavigationService(_clientService, null, frame, _clientService.SessionId, "ciccio"); // BootStrapper.Current.NavigationServiceFactory(BootStrapper.BackButton.Ignore, frame, _clientService.SessionId, "ciccio", false);
+            service.NavigateToChat(_chat);
+
+            grid.Children.Add(frame);
+            grid.CornerRadius = new CornerRadius(8);
+
+            tooltip.Content = grid;
+            tooltip.Padding = new Thickness();
+            tooltip.MaxWidth = double.PositiveInfinity;
+
+            flyout.ShowAt(this, args.Position);
         }
 
         protected override void OnDragEnter(DragEventArgs e)

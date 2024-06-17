@@ -231,6 +231,7 @@
     <Compile Include="Controls\Drawers\EffectDrawer.xaml.cs">
       <DependentUpon>EffectDrawer.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\MenuFlyoutContent.cs" />
     <Compile Include="Controls\Messages\Content\ThumbnailContent.xaml.cs">
       <DependentUpon>ThumbnailContent.xaml</DependentUpon>
     </Compile>
@@ -822,7 +823,6 @@
     <Compile Include="Controls\SelectListView.cs" />
     <Compile Include="Controls\SelfDestructTimer.cs" />
     <Compile Include="Controls\AspectView.cs" />
-    <Compile Include="Controls\ContentMenuFlyoutItem.cs" />
     <Compile Include="Controls\StartupSwitch.xaml.cs">
       <DependentUpon>StartupSwitch.xaml</DependentUpon>
     </Compile>

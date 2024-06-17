@@ -351,7 +351,7 @@ namespace Telegram.Common
                         chatPage.ViewModel.NavigatedFrom(null, false);
 
                         chatPage.Deactivate(true);
-                        chatPage.Activate(SessionId);
+                        chatPage.Activate(this);
                         chatPage.ViewModel.NavigationService = this;
                         chatPage.ViewModel.Dispatcher = Dispatcher;
                         await chatPage.ViewModel.NavigatedToAsync(chat.Id, Windows.UI.Xaml.Navigation.NavigationMode.New, state);

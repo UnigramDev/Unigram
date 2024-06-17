@@ -3169,7 +3169,7 @@ namespace Telegram.ViewModels
             NavigationService.Frame.ForwardStack.Clear();
         }
 
-        public void OpenProfile()
+        public void OpenProfile(INavigationService navigationService)
         {
             var chat = _chat;
             if (chat == null)
@@ -3184,15 +3184,15 @@ namespace Telegram.ViewModels
 
             if (SavedMessagesTopicId != 0)
             {
-                NavigationService.Navigate(typeof(ProfilePage), new ChatSavedMessagesTopicIdNavigationArgs(chat.Id, SavedMessagesTopicId), infoOverride: new SlideNavigationTransitionInfo { Effect = SlideNavigationTransitionEffect.FromRight });
+                navigationService.Navigate(typeof(ProfilePage), new ChatSavedMessagesTopicIdNavigationArgs(chat.Id, SavedMessagesTopicId), infoOverride: new SlideNavigationTransitionInfo { Effect = SlideNavigationTransitionEffect.FromRight });
             }
             else if (Topic != null)
             {
-                NavigationService.Navigate(typeof(ProfilePage), new ChatMessageIdNavigationArgs(chat.Id, ThreadId), infoOverride: new SlideNavigationTransitionInfo { Effect = SlideNavigationTransitionEffect.FromRight });
+                navigationService.Navigate(typeof(ProfilePage), new ChatMessageIdNavigationArgs(chat.Id, ThreadId), infoOverride: new SlideNavigationTransitionInfo { Effect = SlideNavigationTransitionEffect.FromRight });
             }
             else
             {
-                NavigationService.Navigate(typeof(ProfilePage), chat.Id, infoOverride: new SlideNavigationTransitionInfo { Effect = SlideNavigationTransitionEffect.FromRight });
+                navigationService.Navigate(typeof(ProfilePage), chat.Id, infoOverride: new SlideNavigationTransitionInfo { Effect = SlideNavigationTransitionEffect.FromRight });
             }
         }
 

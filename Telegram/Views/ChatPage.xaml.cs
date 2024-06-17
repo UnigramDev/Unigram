@@ -6,6 +6,7 @@
 //
 using Telegram.Common;
 using Telegram.Navigation;
+using Telegram.Navigation.Services;
 using Telegram.ViewModels;
 using Telegram.ViewModels.Delegates;
 
@@ -48,9 +49,10 @@ namespace Telegram.Views
             DataContext = new object();
         }
 
-        public void Activate(int sessionId)
+        public void Activate(INavigationService navigationService)
         {
-            var viewModel = TypeResolver.Current.Resolve<DialogViewModel, IDialogDelegate>(View, sessionId);
+            var viewModel = TypeResolver.Current.Resolve<DialogViewModel, IDialogDelegate>(View, navigationService.SessionId);
+            viewModel.NavigationService = navigationService;
             DataContext = viewModel;
             View.Activate(viewModel);
         }

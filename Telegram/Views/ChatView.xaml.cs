@@ -28,6 +28,7 @@ using Telegram.Controls.Messages;
 using Telegram.Controls.Stories;
 using Telegram.Converters;
 using Telegram.Navigation;
+using Telegram.Navigation.Services;
 using Telegram.Services;
 using Telegram.Services.Keyboard;
 using Telegram.Streams;
@@ -425,7 +426,32 @@ namespace Telegram.Views
                 _needActivation = false;
                 OnNavigatedTo();
             }
+
+            if (viewModel.NavigationService.FrameFacade.FrameId == "ciccio")
+            {
+                _fromPreview = true;
+
+                BackButton.Visibility = Visibility.Collapsed;
+                Options.Visibility = Visibility.Collapsed;
+                ClipperOuter.Visibility = Visibility.Collapsed;
+
+                HeaderLeft.SizeChanged += Options_SizeChanged;
+                HeaderLeft.Padding = new Thickness(12, 0, 0, 0);
+
+                var background = new Border
+                {
+                    Style = Resources["HeaderBackgroundStyle"] as Style
+                };
+
+                Canvas.SetZIndex(background, 2);
+                LayoutRoot.Children.Insert(0, background);
+
+                FindName(nameof(BackgroundControl));
+                BackgroundControl.Update(ViewModel.ClientService, ViewModel.Aggregator);
+            }
         }
+
+        private bool _fromPreview;
 
         public void PopupOpened()
         {
@@ -715,7 +741,7 @@ namespace Telegram.Views
         private void Segments_Click(object sender, RoutedEventArgs e)
         {
             var chat = ViewModel.Chat;
-            if (chat == null || chat.Id == ViewModel.ClientService.Options.MyId || sender is not ActiveStoriesSegments segments)
+            if (chat == null || chat.Id == ViewModel.ClientService.Options.MyId || sender is not ActiveStoriesSegments segments || _fromPreview)
             {
                 return;
             }
@@ -1581,7 +1607,20 @@ namespace Telegram.Views
 
         private void Profile_Click(object sender, RoutedEventArgs e)
         {
-            ViewModel.OpenProfile();
+            INavigationService service = null;
+
+            if (_fromPreview)
+            {
+                service = WindowContext.Current.NavigationServices.GetByFrameId($"Main{ViewModel.ClientService.SessionId}") as NavigationService;
+
+                var presenter = this.GetParent<MenuFlyoutPresenter>();
+                if (presenter?.Parent is Popup popup)
+                {
+                    popup.IsOpen = false;
+                }
+            }
+
+            ViewModel.OpenProfile(service ?? ViewModel.NavigationService);
         }
 
         private void Attach_Click(object sender, RoutedEventArgs e)
@@ -3943,6 +3982,14 @@ namespace Telegram.Views
 
         private void ShowAction(string content, bool enabled, bool replyEnabled = false)
         {
+            if (_fromPreview)
+            {
+                ButtonAction.Visibility = Visibility.Collapsed;
+                ChatFooter.Visibility = Visibility.Collapsed;
+                TextArea.Visibility = Visibility.Collapsed;
+                return;
+            }
+
             if (content != null && (ButtonAction.Content is not TextBlock || (ButtonAction.Content is TextBlock block && !string.Equals(block.Text, content))))
             {
                 ButtonAction.Content = new TextBlock
@@ -3965,6 +4012,14 @@ namespace Telegram.Views
 
         private void ShowArea(bool permanent = true)
         {
+            if (_fromPreview)
+            {
+                ButtonAction.Visibility = Visibility.Collapsed;
+                ChatFooter.Visibility = Visibility.Collapsed;
+                TextArea.Visibility = Visibility.Collapsed;
+                return;
+            }
+
             if (permanent)
             {
                 _replyEnabled = null;

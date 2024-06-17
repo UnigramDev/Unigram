@@ -355,7 +355,7 @@ namespace Telegram.Navigation.Services
             {
                 if (page is IActivablePage cleanup)
                 {
-                    cleanup.Activate(SessionId);
+                    cleanup.Activate(this);
                 }
                 else if (page is BlankPage blank)
                 {
