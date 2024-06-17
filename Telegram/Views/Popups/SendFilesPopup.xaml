@@ -319,36 +319,39 @@
                                         ScrollingHost="{x:Bind Album}" />
         </Grid>
 
-        <ListView x:Name="ListAutocomplete"
-                  VerticalAlignment="Bottom"
-                  MaxHeight="240"
-                  Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
-                  BorderBrush="{ThemeResource TelegramSeparatorMediumBrush}"
-                  BorderThickness="0,1,0,0"
-                  ItemsSource="{x:Bind Autocomplete, Mode=OneWay}"
-                  Visibility="{x:Bind Autocomplete, Mode=OneWay, Converter={StaticResource NullToVisibilityConverter}}"
-                  ItemTemplateSelector="{StaticResource AutocompleteTemplate}"
-                  AllowFocusOnInteraction="False"
-                  IsItemClickEnabled="True"
-                  ItemClick="Autocomplete_ItemClick"
-                  ContainerContentChanging="Autocomplete_ContainerContentChanging"
-                  Padding="0,0,24,0"
-                  Grid.Row="1">
-            <!--<ListView.Header>
-                <Border x:Name="AutocompleteHeader"
-                            Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
-                    <Rectangle Fill="{ThemeResource TelegramSeparatorBrush}" VerticalAlignment="Top" Height="1"/>
-                </Border>
-            </ListView.Header>-->
-            <!--<ListView.ItemsPanel>
-                <ItemsPanelTemplate>
-                    <ItemsStackPanel SizeChanged="Autocomplete_SizeChanged"/>
-                </ItemsPanelTemplate>
-            </ListView.ItemsPanel>-->
-            <ListView.ItemContainerTransitions>
-                <TransitionCollection />
-            </ListView.ItemContainerTransitions>
-        </ListView>
+        <Grid Grid.Row="1">
+            <controls:OrientableListView x:Name="ListAutocomplete"
+                                         VerticalAlignment="Bottom"
+                                         MaxHeight="240"
+                                         Background="{ThemeResource AutoSuggestBoxSuggestionsListBackground}"
+                                         BorderBrush="{ThemeResource AutoSuggestBoxSuggestionsListBorderBrush}"
+                                         BorderThickness="0,1,0,0"
+                                         ItemsSource="{x:Bind Autocomplete, Mode=OneWay}"
+                                         Visibility="{x:Bind Autocomplete, Mode=OneWay, Converter={StaticResource NullToVisibilityConverter}}"
+                                         Orientation="{x:Bind Autocomplete.Orientation, Mode=OneWay}"
+                                         ItemTemplateSelector="{StaticResource AutocompleteTemplate}"
+                                         Style="{StaticResource ZoomableListViewStyle}"
+                                         BackgroundSizing="OuterBorderEdge"
+                                         AllowFocusOnInteraction="False"
+                                         IsItemClickEnabled="True"
+                                         ItemClick="Autocomplete_ItemClick"
+                                         ContainerContentChanging="Autocomplete_ContainerContentChanging"
+                                         SizeChanged="Autocomplete_SizeChanged"
+                                         Padding="0,0,24,0">
+                <GridView.ItemContainerStyle>
+                    <Style TargetType="GridViewItem"
+                           BasedOn="{StaticResource ZoomableListViewItemStyle}">
+                        <Setter Property="MinWidth"
+                                Value="0" />
+                        <Setter Property="Padding"
+                                Value="0" />
+                    </Style>
+                </GridView.ItemContainerStyle>
+                <GridView.ItemContainerTransitions>
+                    <TransitionCollection />
+                </GridView.ItemContainerTransitions>
+            </controls:OrientableListView>
+        </Grid>
     </Grid>
 
 </controls:ContentPopup>

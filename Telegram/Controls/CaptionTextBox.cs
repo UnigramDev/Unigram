@@ -5,7 +5,6 @@
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
 using System;
-using System.Collections;
 using Telegram.Collections;
 using Telegram.Common;
 using Telegram.Controls.Chats;
@@ -33,7 +32,7 @@ namespace Telegram.Controls
             SelectionChanged += OnSelectionChanged;
         }
 
-        public ListView Autocomplete { get; set; }
+        public ListViewBase Autocomplete { get; set; }
 
         protected override void OnKeyDown(KeyRoutedEventArgs e)
         {
@@ -139,7 +138,7 @@ namespace Telegram.Controls
 
     public interface IViewWithAutocomplete
     {
-        ICollection Autocomplete { get; set; }
+        IAutocompleteCollection Autocomplete { get; set; }
         void Accept();
     }
 }

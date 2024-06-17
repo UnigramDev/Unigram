@@ -6,7 +6,6 @@
 //
 using Microsoft.UI.Xaml.Controls;
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
@@ -15,6 +14,7 @@ using System.Threading.Tasks;
 using Telegram.Collections;
 using Telegram.Common;
 using Telegram.Controls;
+using Telegram.Controls.Chats;
 using Telegram.Controls.Media;
 using Telegram.Converters;
 using Telegram.Entities;
@@ -29,6 +29,7 @@ using Windows.Storage.Streams;
 using Windows.UI.Core;
 using Windows.UI.Text;
 using Windows.UI.Xaml;
+using Windows.UI.Xaml.Automation;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
 using Windows.UI.Xaml.Documents;
@@ -43,8 +44,8 @@ namespace Telegram.Views.Popups
         public ComposeViewModel ViewModel { get; private set; }
         public MvxObservableCollection<StorageMedia> Items { get; private set; }
 
-        private ICollection _autocomplete;
-        public ICollection Autocomplete
+        private IAutocompleteCollection _autocomplete;
+        public IAutocompleteCollection Autocomplete
         {
             get => _autocomplete;
             set
@@ -334,10 +335,10 @@ namespace Telegram.Views.Popups
                 return;
             }
 
-            var content = args.ItemContainer.ContentTemplateRoot as Grid;
-
             if (args.Item is User user)
             {
+                var content = args.ItemContainer.ContentTemplateRoot as Grid;
+
                 var photo = content.Children[0] as ProfilePicture;
                 var title = content.Children[1] as TextBlock;
 
@@ -357,8 +358,29 @@ namespace Telegram.Views.Popups
 
                 photo.SetUser(ViewModel.ClientService, user, 32);
             }
+            else if (args.Item is Sticker sticker)
+            {
+                var content = args.ItemContainer.ContentTemplateRoot as Grid;
+
+                var animated = content.Children[0] as AnimatedImage;
+                animated.Source = new DelayedFileSource(ViewModel.ClientService, sticker);
+
+                AutomationProperties.SetName(args.ItemContainer, sticker.Emoji);
+            }
+            else if (args.Item is EmojiData emoji)
+            {
+                AutomationProperties.SetName(args.ItemContainer, emoji.Value);
+            }
 
             args.Handled = true;
+        }
+
+        private void Autocomplete_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            var above = ShowCaptionAboveMedia;
+            var visible = e.NewSize.Height > 0;
+
+            CaptionInput.CornerRadius = new CornerRadius(above ? 2 : visible ? 0 : 2, above ? 2 : visible ? 0 : 2, above ? visible ? 0 : 2 : 2, above ? visible ? 0 : 2 : 2);
         }
 
         private void OnContainerContentChanging(ListViewBase sender, ContainerContentChangingEventArgs args)
@@ -837,6 +859,18 @@ namespace Telegram.Views.Popups
 
         private int ConvertCaptionRow(bool above)
         {
+            ListAutocomplete.VerticalAlignment = above
+                ? VerticalAlignment.Top
+                : VerticalAlignment.Bottom;
+
+            ListAutocomplete.Margin = new Thickness(24, above ? -8 : 0, 24, above ? 0 : -8);
+            ListAutocomplete.BorderThickness = new Thickness(1, above ? 0 : 1, 1, above ? 1 : 0);
+            ListAutocomplete.CornerRadius = new CornerRadius(above ? 0 : 2, above ? 0 : 2, above ? 2 : 0, above ? 2 : 0);
+
+            var visible = ListAutocomplete.ActualHeight > 0;
+
+            CaptionInput.CornerRadius = new CornerRadius(above ? 2 : visible ? 0 : 2, above ? 2 : visible ? 0 : 2, above ? visible ? 0 : 2 : 2, above ? visible ? 0 : 2 : 2);
+
             return above ? 0 : 2;
         }
 

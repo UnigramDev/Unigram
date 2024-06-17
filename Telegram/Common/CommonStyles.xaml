@@ -2656,7 +2656,9 @@
                 <ControlTemplate TargetType="GridView">
                     <Border BorderBrush="{TemplateBinding BorderBrush}"
                             Background="{TemplateBinding Background}"
-                            BorderThickness="{TemplateBinding BorderThickness}">
+                            BorderThickness="{TemplateBinding BorderThickness}"
+                            BackgroundSizing="{TemplateBinding BackgroundSizing}"
+                            CornerRadius="{TemplateBinding CornerRadius}">
                         <ScrollViewer x:Name="ScrollViewer"
                                       TabNavigation="{TemplateBinding TabNavigation}"
                                       HorizontalScrollMode="{TemplateBinding ScrollViewer.HorizontalScrollMode}"
