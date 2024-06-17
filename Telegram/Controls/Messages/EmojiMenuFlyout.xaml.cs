@@ -18,6 +18,7 @@ using Windows.Foundation;
 using Windows.UI;
 using Windows.UI.Composition;
 using Windows.UI.Xaml;
+using Windows.UI.Xaml.Automation.Peers;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
 using Windows.UI.Xaml.Hosting;
@@ -77,8 +78,18 @@ namespace Telegram.Controls.Messages
             _bubble = bubble;
 
             _popup = new Popup();
+            _popup.Closed += OnClosed;
 
             Initialize(message.ClientService, element, EmojiFlyoutAlignment.Center, viewModel);
+        }
+
+        private void OnClosed(object sender, object e)
+        {
+            if (_bubble != null && AutomationPeer.ListenerExists(AutomationEvents.LiveRegionChanged))
+            {
+                var selector = _bubble.GetParent<SelectorItem>();
+                selector?.Focus(FocusState.Keyboard);
+            }
         }
 
         public static EmojiMenuFlyout ShowAt(IClientService clientService, EmojiDrawerMode mode, FrameworkElement element, EmojiFlyoutAlignment alignment)

@@ -693,6 +693,12 @@ namespace Telegram.Controls.Messages
         private void Flyout_Closed(object sender, object e)
         {
             _popup.IsOpen = false;
+
+            if (_bubble != null && AutomationPeer.ListenerExists(AutomationEvents.LiveRegionChanged))
+            {
+                var selector = _bubble.GetParent<SelectorItem>();
+                selector?.Focus(FocusState.Keyboard);
+            }
         }
 
         private void Reaction_Click(object sender, RoutedEventArgs e)
