@@ -438,6 +438,8 @@ namespace Telegram.Views
                 HeaderLeft.SizeChanged += Options_SizeChanged;
                 HeaderLeft.Padding = new Thickness(12, 0, 0, 0);
 
+                Messages.Margin = new Thickness(0);
+
                 var background = new Border
                 {
                     Style = Resources["HeaderBackgroundStyle"] as Style
