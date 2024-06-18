@@ -27,17 +27,17 @@ namespace Telegram.Controls.Cells.Revenue
             {
                 Reason.Text = Strings.MonetizationTransactionWithdraw;
 
-                if (withdrawal.State is ChatRevenueWithdrawalStateCompleted completed)
+                if (withdrawal.State is RevenueWithdrawalStateSucceeded succeeded)
                 {
-                    Date.Text = Formatter.DateAt(completed.Date);
+                    Date.Text = Formatter.DateAt(succeeded.Date);
                     Date.Foreground = BootStrapper.Current.Resources["SystemControlDisabledChromeDisabledLowBrush"] as Brush;
                 }
-                else if (withdrawal.State is ChatRevenueWithdrawalStatePending)
+                else if (withdrawal.State is RevenueWithdrawalStatePending)
                 {
                     Date.Text = Strings.MonetizationTransactionPending;
                     Date.Foreground = BootStrapper.Current.Resources["SystemControlDisabledChromeDisabledLowBrush"] as Brush;
                 }
-                else if (withdrawal.State is ChatRevenueWithdrawalStateFailed)
+                else if (withdrawal.State is RevenueWithdrawalStateFailed)
                 {
                     Date.Text = string.Format("{0} - {1}", Formatter.DateAt(withdrawal.WithdrawalDate), Strings.MonetizationTransactionNotCompleted);
                     Date.Foreground = BootStrapper.Current.Resources["SystemFillColorCriticalBrush"] as Brush;

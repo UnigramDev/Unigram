@@ -67,6 +67,7 @@ namespace Telegram.Services
 
         UnconfirmedSession UnconfirmedSession { get; }
 
+        MessageSender MyId { get; }
         IOptionsService Options { get; }
         JsonValueObject Config { get; }
 
@@ -1121,6 +1122,8 @@ namespace Telegram.Services
         public bool IsPremiumAvailable => _options.IsPremium || _options.IsPremiumAvailable;
 
         public long OwnedStarCount { get; private set; }
+
+        public MessageSender MyId => new MessageSenderUser(_options.MyId);
 
         public IOptionsService Options => _options;
 

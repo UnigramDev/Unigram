@@ -2652,11 +2652,13 @@ namespace Telegram.ViewModels
                     formattedText = formattedText.Substring(0, ClientService.Options.MessageTextLengthMax * 4);
                 }
 
-                var inputReply = replyToMessageId != 0
-                    ? new InputMessageReplyToMessage(replyToChatId, replyToMessageId, quote)
+                InputMessageReplyTo inputReply = replyToMessageId != 0
+                    ? replyToChatId == chat.Id || replyToChatId == 0
+                    ? new InputMessageReplyToMessage(replyToMessageId, quote)
+                    : new InputMessageReplyToExternalMessage(replyToChatId, replyToMessageId, quote)
                     : null;
 
-                draft = new DraftMessage(inputReply, 0, new InputMessageText(formattedText, null, false));
+                draft = new DraftMessage(inputReply, 0, new InputMessageText(formattedText, null, false), 0);
             }
 
             ClientService.Send(new SetChatDraftMessage(_chat.Id, ThreadId, draft));
@@ -2756,12 +2758,12 @@ namespace Telegram.ViewModels
             }
 
             var chatId = embedded.ReplyToMessage.ChatId;
-            if (chatId == _chat?.Id)
+            if (chatId == _chat?.Id || chatId == 0)
             {
-                chatId = 0;
+                return new InputMessageReplyToMessage(embedded.ReplyToMessage.Id, embedded.ReplyToQuote);
             }
 
-            return new InputMessageReplyToMessage(chatId, embedded.ReplyToMessage.Id, embedded.ReplyToQuote);
+            return new InputMessageReplyToExternalMessage(chatId, embedded.ReplyToMessage.Id, embedded.ReplyToQuote);
         }
 
         #endregion

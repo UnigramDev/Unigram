@@ -48,7 +48,7 @@ namespace Telegram.ViewModels.Stars
         {
             var totalCount = 0u;
 
-            var response = await ClientService.SendAsync(new GetStarTransactions(_nextOffset, _direction));
+            var response = await ClientService.SendAsync(new GetStarTransactions(ClientService.MyId, _direction, _nextOffset, 20));
             if (response is StarTransactions transactions)
             {
                 foreach (var item in transactions.Transactions)

@@ -41,19 +41,19 @@ namespace Telegram.Views.Monetization.Popups
             {
                 Pill.Visibility = Visibility.Collapsed;
 
-                if (withdrawal.State is ChatRevenueWithdrawalStateCompleted completed)
+                if (withdrawal.State is RevenueWithdrawalStateSucceeded succeeded)
                 {
-                    Date.Text = Formatter.DateAt(completed.Date);
+                    Date.Text = Formatter.DateAt(succeeded.Date);
                     Message.Text = Strings.MonetizationTransactionDetailWithdraw;
                     LearnCommand.Content = Strings.MonetizationTransactionDetailWithdrawButton;
                 }
-                else if (withdrawal.State is ChatRevenueWithdrawalStatePending)
+                else if (withdrawal.State is RevenueWithdrawalStatePending)
                 {
                     Date.Text = Formatter.DateAt(withdrawal.WithdrawalDate);
                     Message.Text = Strings.MonetizationTransactionPending;
                     LearnCommand.Content = Strings.OK;
                 }
-                else if (withdrawal.State is ChatRevenueWithdrawalStateFailed)
+                else if (withdrawal.State is RevenueWithdrawalStateFailed)
                 {
                     Date.Text = Formatter.DateAt(withdrawal.WithdrawalDate);
                     Message.Text = Strings.MonetizationTransactionNotCompleted;
@@ -93,9 +93,9 @@ namespace Telegram.Views.Monetization.Popups
         {
             Hide(ContentDialogResult.Primary);
 
-            if (_info?.Type is ChatRevenueTransactionTypeWithdrawal withdrawal && withdrawal.State is ChatRevenueWithdrawalStateCompleted completed)
+            if (_info?.Type is ChatRevenueTransactionTypeWithdrawal withdrawal && withdrawal.State is RevenueWithdrawalStateSucceeded succeeded)
             {
-                MessageHelper.OpenUrl(null, null, completed.Url);
+                MessageHelper.OpenUrl(null, null, succeeded.Url);
             }
         }
     }

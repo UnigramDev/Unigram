@@ -40,7 +40,7 @@ namespace Telegram.Views.Stars.Popups
 
             _transactionId = transaction.Id;
 
-            if (transaction.Source is StarTransactionSourceTelegram)
+            if (transaction.Partner is StarTransactionPartnerTelegram)
             {
                 FromPhoto.Source = new PlaceholderImage(Icons.Premium, true, Color.FromArgb(0xFF, 0xFD, 0xD2, 0x1A), Color.FromArgb(0xFF, 0xE4, 0x7B, 0x03));
                 FromPhoto.Visibility = Visibility.Collapsed;
@@ -51,7 +51,7 @@ namespace Telegram.Views.Stars.Popups
                 Subtitle.Visibility = Visibility.Collapsed;
                 Photo.Visibility = Visibility.Collapsed;
             }
-            else if (transaction.Source is StarTransactionSourceFragment)
+            else if (transaction.Partner is StarTransactionPartnerFragment)
             {
                 FromPhoto.Source = new PlaceholderImage(Icons.Premium, true, Color.FromArgb(0xFF, 0xFD, 0xD2, 0x1A), Color.FromArgb(0xFF, 0xE4, 0x7B, 0x03));
                 FromPhoto.Visibility = Visibility.Collapsed;
@@ -62,7 +62,7 @@ namespace Telegram.Views.Stars.Popups
                 Subtitle.Visibility = Visibility.Collapsed;
                 Photo.Visibility = Visibility.Collapsed;
             }
-            else if (transaction.Source is StarTransactionSourceAppStore or StarTransactionSourceGooglePlay)
+            else if (transaction.Partner is StarTransactionPartnerAppStore or StarTransactionPartnerGooglePlay)
             {
                 FromPhoto.Source = new PlaceholderImage(Icons.Premium, true, Color.FromArgb(0xFF, 0xFD, 0xD2, 0x1A), Color.FromArgb(0xFF, 0xE4, 0x7B, 0x03));
                 FromPhoto.Visibility = Visibility.Collapsed;
@@ -73,7 +73,7 @@ namespace Telegram.Views.Stars.Popups
                 Subtitle.Visibility = Visibility.Collapsed;
                 Photo.Visibility = Visibility.Collapsed;
             }
-            else if (transaction.Source is StarTransactionSourceUser sourceUser && clientService.TryGetUser(sourceUser.UserId, out User user))
+            else if (transaction.Partner is StarTransactionPartnerUser sourceUser && clientService.TryGetUser(sourceUser.UserId, out User user))
             {
                 FromPhoto.SetUser(clientService, user, 24);
                 FromPhoto.Visibility = Visibility.Visible;

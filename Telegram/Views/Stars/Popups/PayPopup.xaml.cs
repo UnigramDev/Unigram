@@ -74,13 +74,13 @@ namespace Telegram.Views.Stars.Popups
             var subtitle = content.FindName("Subtitle") as TextBlock;
             var starCount = content.FindName("StarCount") as TextBlock;
 
-            title.Text = transaction.Source switch
+            title.Text = transaction.Partner switch
             {
-                StarTransactionSourceTelegram => Strings.StarsTransactionInApp,
-                StarTransactionSourceFragment => Strings.StarsTransactionFragment,
-                StarTransactionSourceAppStore => "[App Store]",
-                StarTransactionSourceGooglePlay => "[Google Play]",
-                StarTransactionSourceUser user => ViewModel.ClientService.GetUser(user.UserId).FullName(),
+                StarTransactionPartnerTelegram => Strings.StarsTransactionInApp,
+                StarTransactionPartnerFragment => Strings.StarsTransactionFragment,
+                StarTransactionPartnerAppStore => "[App Store]",
+                StarTransactionPartnerGooglePlay => "[Google Play]",
+                StarTransactionPartnerUser user => ViewModel.ClientService.GetUser(user.UserId).FullName(),
                 _ => string.Empty
             };
 

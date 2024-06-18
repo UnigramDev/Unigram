@@ -55,7 +55,7 @@ namespace Telegram.ViewModels.Stars
                 RaisePropertyChanged(nameof(CanExpand));
             }
 
-            ClientService.Send(new GetStarTransactions(string.Empty, null));
+            ClientService.Send(new GetStarTransactions(ClientService.MyId, null, string.Empty, 1));
         }
 
         public override void Subscribe()

@@ -52,25 +52,25 @@ namespace Telegram.Views.Stars.Popups
             var date = content.FindName("Date") as TextBlock;
             var starCount = content.FindName("StarCount") as TextBlock;
 
-            if (transaction.Source is StarTransactionSourceTelegram)
+            if (transaction.Partner is StarTransactionPartnerTelegram)
             {
                 photo.Source = new PlaceholderImage(Icons.Premium, true, Color.FromArgb(0xFF, 0xFD, 0xD2, 0x1A), Color.FromArgb(0xFF, 0xE4, 0x7B, 0x03));
                 title.Text = Strings.StarsTransactionBot;
                 subtitle.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
             }
-            else if (transaction.Source is StarTransactionSourceFragment)
+            else if (transaction.Partner is StarTransactionPartnerFragment)
             {
                 photo.Source = new PlaceholderImage(Icons.Premium, true, Color.FromArgb(0xFF, 0xFD, 0xD2, 0x1A), Color.FromArgb(0xFF, 0xE4, 0x7B, 0x03));
                 title.Text = Strings.StarsTransactionFragment;
                 subtitle.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
             }
-            else if (transaction.Source is StarTransactionSourceAppStore or StarTransactionSourceGooglePlay)
+            else if (transaction.Partner is StarTransactionPartnerAppStore or StarTransactionPartnerGooglePlay)
             {
                 photo.Source = new PlaceholderImage(Icons.Premium, true, Color.FromArgb(0xFF, 0xFD, 0xD2, 0x1A), Color.FromArgb(0xFF, 0xE4, 0x7B, 0x03));
                 title.Text = Strings.StarsTransactionInApp;
                 subtitle.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
             }
-            else if (transaction.Source is StarTransactionSourceUser sourceUser && ViewModel.ClientService.TryGetUser(sourceUser.UserId, out User user))
+            else if (transaction.Partner is StarTransactionPartnerUser sourceUser && ViewModel.ClientService.TryGetUser(sourceUser.UserId, out User user))
             {
                 if (sourceUser.ProductInfo != null)
                 {
