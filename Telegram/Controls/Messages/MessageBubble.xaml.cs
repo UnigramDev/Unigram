@@ -1149,7 +1149,7 @@ namespace Telegram.Controls.Messages
 
         private void FwdFrom_Click(object sender, RoutedEventArgs args)
         {
-            if (_message is not MessageViewModel message || !message.Delegate.IsDialog)
+            if (_message is not MessageViewModel message || message.Delegate?.IsDialog is not true)
             {
                 return;
             }

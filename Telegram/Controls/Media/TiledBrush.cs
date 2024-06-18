@@ -140,23 +140,31 @@ namespace Telegram.Controls.Media
                     return;
                 }
 
-                var surface = ImageSource;
-                var logical = surface.DecodedSize.ToVector2();
-                var physical = surface.DecodedPhysicalSize.ToVector2();
-
-                var surfaceBrush = Window.Current.Compositor.CreateSurfaceBrush(surface);
-                surfaceBrush.Stretch = CompositionStretch.None;
-                surfaceBrush.SnapToPixels = true;
-                surfaceBrush.Scale = logical / physical;
-
-                if (CompositionBrush is CompositionEffectBrush effectBrush)
+                try
                 {
-                    effectBrush.SetSourceParameter("Source", surfaceBrush);
+                    var surface = ImageSource;
+                    var logical = surface.DecodedSize.ToVector2();
+                    var physical = surface.DecodedPhysicalSize.ToVector2();
 
-                    if (_tintEffect != null)
+                    var surfaceBrush = Window.Current.Compositor.CreateSurfaceBrush(surface);
+                    surfaceBrush.Stretch = CompositionStretch.None;
+                    surfaceBrush.SnapToPixels = true;
+                    surfaceBrush.Scale = logical / physical;
+
+                    if (CompositionBrush is CompositionEffectBrush effectBrush)
                     {
-                        effectBrush.Properties.InsertColor("Tint.Color", Color.FromArgb(Intensity, 0, 0, 0));
+                        effectBrush.SetSourceParameter("Source", surfaceBrush);
+
+                        if (_tintEffect != null)
+                        {
+                            effectBrush.Properties.InsertColor("Tint.Color", Color.FromArgb(Intensity, 0, 0, 0));
+                        }
                     }
+                }
+                catch
+                {
+                    _recreate = true;
+                    OnConnected();
                 }
             }
         }

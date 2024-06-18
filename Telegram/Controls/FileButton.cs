@@ -367,14 +367,21 @@ namespace Telegram.Controls
 
         private void OnDownloadingCompleted(object sender, CompositionBatchCompletedEventArgs args)
         {
-            if (_state == MessageContentState.Downloading && this.IsConnected())
+            try
             {
-                OnGlyphChanged(Icons.Cancel, Icons.ArrowDownload, true, Strings.AccActionCancelDownload, false);
-                InternalProgress = _enqueuedProgress;
-            }
+                if (_state == MessageContentState.Downloading && this.IsConnected())
+                {
+                    OnGlyphChanged(Icons.Cancel, Icons.ArrowDownload, true, Strings.AccActionCancelDownload, false);
+                    InternalProgress = _enqueuedProgress;
+                }
 
-            _shouldEnqueueProgress = false;
-            //_container.Children.RemoveAll();
+                _shouldEnqueueProgress = false;
+                //_container.Children.RemoveAll();
+            }
+            catch
+            {
+                // May throw MissingInteropDataException, kind of unexplicable as no reflection is involved.
+            }
         }
 
         private CompositionPath GetArrowShape()
