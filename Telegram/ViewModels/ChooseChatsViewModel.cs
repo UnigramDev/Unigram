@@ -91,6 +91,7 @@ namespace Telegram.ViewModels
         }
 
         private ChooseChatsConfiguration _configuration;
+        public ChooseChatsConfiguration Configuration => _configuration;
 
         protected override Task OnNavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
         {
@@ -240,6 +241,19 @@ namespace Telegram.ViewModels
                 IsChatSelection = false;
 
                 Title = Strings.AddToGroupOrChannel;
+            }
+            else if (parameter is ChooseChatsConfigurationRequestUsers configurationRequestUsers)
+            {
+                SelectionMode = configurationRequestUsers.MaxQuantity != 1
+                    ? ListViewSelectionMode.Multiple
+                    : ListViewSelectionMode.Single;
+                Options = new ChooseChatsOptionsRequestUsers(configurationRequestUsers);
+                IsCommentEnabled = false;
+                IsChatSelection = false;
+
+                Title = configurationRequestUsers.MaxQuantity != 1
+                    ? Strings.ChooseUsers
+                    : Strings.ChooseUsers;
             }
 
             #endregion
@@ -590,6 +604,14 @@ namespace Telegram.ViewModels
                     }
                 }
             }
+            else if (_configuration is ChooseChatsConfigurationRequestUsers requestUsers)
+            {
+                var userIds = chats
+                    .Select(x => x.Type is ChatTypePrivate privata ? privata.UserId : 0)
+                    .Where(x => x != 0)
+                    .ToList();
+                ClientService.Send(new ShareUsersWithBot(requestUsers.ChatId, requestUsers.MessageId, requestUsers.Id, userIds, false));
+            }
 
             //App.InMemoryState.ForwardMessages = new List<TLMessage>(messages);
             //NavigationService.GoBackAt(0);
@@ -711,7 +733,7 @@ namespace Telegram.ViewModels
                 return false;
             }
 
-            if (Options.AllowAll || Allow(chat))
+            if (Options.Allow(_clientService, chat))
             {
                 Track(chat);
                 return true;
@@ -730,64 +752,6 @@ namespace Telegram.ViewModels
             }
         }
 
-        private bool Allow(Chat chat)
-        {
-            switch (chat.Type)
-            {
-                case ChatTypeBasicGroup:
-                    if (Options.AllowGroupChats)
-                    {
-                        if (Options.CanPostMessages)
-                        {
-                            return _clientService.CanPostMessages(chat);
-                        }
-                        else if (Options.CanInviteUsers)
-                        {
-                            return _clientService.CanInviteUsers(chat);
-                        }
-
-                        return true;
-                    }
-                    return false;
-                case ChatTypePrivate privata:
-                    if (privata.UserId == _clientService.Options.MyId)
-                    {
-                        return Options.AllowSelf;
-                    }
-                    else if (_clientService.TryGetUser(privata.UserId, out User user))
-                    {
-                        if (user.Type is UserTypeBot)
-                        {
-                            return Options.AllowBotChats && !Options.CanShareContact;
-                        }
-                        else if (Options.CanShareContact)
-                        {
-                            return user.PhoneNumber.Length > 0;
-                        }
-                    }
-                    return Options.AllowUserChats;
-                case ChatTypeSecret:
-                    return Options.AllowSecretChats;
-                case ChatTypeSupergroup supergroup:
-                    if (supergroup.IsChannel ? Options.AllowChannelChats : Options.AllowGroupChats)
-                    {
-                        if (Options.CanPostMessages)
-                        {
-                            return _clientService.CanPostMessages(chat);
-                        }
-                        else if (Options.CanInviteUsers)
-                        {
-                            return _clientService.CanInviteUsers(chat);
-                        }
-
-                        return true;
-                    }
-                    return false;
-                default:
-                    return false;
-            }
-        }
-
         public bool Filter(User user)
         {
             if (_knownUsers != null && _knownUsers.Contains(user.Id))
@@ -795,7 +759,7 @@ namespace Telegram.ViewModels
                 return false;
             }
 
-            if (Options.AllowAll || Allow(user))
+            if (Options.Allow(_clientService, user))
             {
                 Track(user);
                 return true;
@@ -807,24 +771,6 @@ namespace Telegram.ViewModels
         private void Track(User user)
         {
             _knownUsers?.Add(user.Id);
-        }
-
-        private bool Allow(User user)
-        {
-            if (user.Id == _clientService.Options.MyId)
-            {
-                return Options.AllowSelf;
-            }
-            else if (user.Type is UserTypeBot)
-            {
-                return Options.AllowBotChats && !Options.CanShareContact;
-            }
-            else if (Options.CanShareContact)
-            {
-                return user.PhoneNumber.Length > 0;
-            }
-
-            return Options.AllowUserChats;
         }
     }
 }

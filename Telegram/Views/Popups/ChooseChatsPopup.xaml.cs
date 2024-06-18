@@ -189,6 +189,153 @@ namespace Telegram.Views.Popups
         };
 
         #endregion
+
+        public virtual bool Allow(IClientService clientService, Chat chat)
+        {
+            if (AllowAll)
+            {
+                return true;
+            }
+
+            switch (chat.Type)
+            {
+                case ChatTypeBasicGroup:
+                    if (AllowGroupChats)
+                    {
+                        if (CanPostMessages)
+                        {
+                            return clientService.CanPostMessages(chat);
+                        }
+                        else if (CanInviteUsers)
+                        {
+                            return clientService.CanInviteUsers(chat);
+                        }
+
+                        return true;
+                    }
+                    return false;
+                case ChatTypePrivate privata:
+                    if (privata.UserId == clientService.Options.MyId)
+                    {
+                        return AllowSelf;
+                    }
+                    else if (clientService.TryGetUser(privata.UserId, out User user))
+                    {
+                        if (user.Type is UserTypeBot)
+                        {
+                            return AllowBotChats && !CanShareContact;
+                        }
+                        else if (CanShareContact)
+                        {
+                            return user.PhoneNumber.Length > 0;
+                        }
+                    }
+                    return AllowUserChats;
+                case ChatTypeSecret:
+                    return AllowSecretChats;
+                case ChatTypeSupergroup supergroup:
+                    if (supergroup.IsChannel ? AllowChannelChats : AllowGroupChats)
+                    {
+                        if (CanPostMessages)
+                        {
+                            return clientService.CanPostMessages(chat);
+                        }
+                        else if (CanInviteUsers)
+                        {
+                            return clientService.CanInviteUsers(chat);
+                        }
+
+                        return true;
+                    }
+                    return false;
+                default:
+                    return false;
+            }
+        }
+
+        public virtual bool Allow(IClientService clientService, User user)
+        {
+            if (AllowAll)
+            {
+                return true;
+            }
+
+            if (user.Id == clientService.Options.MyId)
+            {
+                return AllowSelf;
+            }
+            else if (user.Type is UserTypeBot)
+            {
+                return AllowBotChats && !CanShareContact;
+            }
+            else if (CanShareContact)
+            {
+                return user.PhoneNumber.Length > 0;
+            }
+
+            return AllowUserChats;
+        }
+    }
+
+    public record ChooseChatsOptionsRequestUsers : ChooseChatsOptions
+    {
+        public ChooseChatsOptionsRequestUsers(ChooseChatsConfigurationRequestUsers requestUsers)
+        {
+            UserIsPremium = requestUsers.UserIsPremium;
+            RestrictUserIsPremium = requestUsers.RestrictUserIsPremium;
+            UserIsBot = requestUsers.UserIsBot;
+            RestrictUserIsBot = requestUsers.RestrictUserIsBot;
+
+            Mode = ChooseChatsMode.Contacts;
+        }
+
+        /// <summary>
+        /// True, if the shared users must be Telegram Premium users; otherwise, the shared
+        /// users must not be Telegram Premium users. Ignored if RestrictUserIsPremium is
+        /// false.
+        /// </summary>
+        public bool UserIsPremium { get; set; }
+
+        /// <summary>
+        /// True, if the shared users must or must not be Telegram Premium users.
+        /// </summary>
+        public bool RestrictUserIsPremium { get; set; }
+
+        /// <summary>
+        /// True, if the shared users must be bots; otherwise, the shared users must not
+        /// be bots. Ignored if RestrictUserIsBot is false.
+        /// </summary>
+        public bool UserIsBot { get; set; }
+
+        /// <summary>
+        /// True, if the shared users must or must not be bots.
+        /// </summary>
+        public bool RestrictUserIsBot { get; set; }
+
+        public override bool Allow(IClientService clientService, Chat chat)
+        {
+            if (clientService.TryGetUser(chat, out User user))
+            {
+                return Allow(clientService, user);
+            }
+
+            return false;
+        }
+
+        public override bool Allow(IClientService clientService, User user)
+        {
+            if (RestrictUserIsBot)
+            {
+                return UserIsBot == user.Type is UserTypeBot;
+            }
+
+            if (RestrictUserIsPremium)
+            {
+                return UserIsPremium == user.IsPremium;
+            }
+
+            return user.Type is UserTypeBot or UserTypeRegular;
+        }
     }
 
     #endregion
@@ -331,8 +478,11 @@ namespace Telegram.Views.Popups
 
     public class ChooseChatsConfigurationRequestUsers : ChooseChatsConfiguration
     {
-        public ChooseChatsConfigurationRequestUsers(KeyboardButtonTypeRequestUsers requestUsers)
+        public ChooseChatsConfigurationRequestUsers(long chatId, long messageId, KeyboardButtonTypeRequestUsers requestUsers)
         {
+            ChatId = chatId;
+            MessageId = messageId;
+
             MaxQuantity = requestUsers.MaxQuantity;
             UserIsPremium = requestUsers.UserIsPremium;
             RestrictUserIsPremium = requestUsers.RestrictUserIsPremium;
@@ -340,6 +490,10 @@ namespace Telegram.Views.Popups
             RestrictUserIsBot = requestUsers.RestrictUserIsBot;
             Id = requestUsers.Id;
         }
+
+        public long ChatId { get; }
+
+        public long MessageId { get; }
 
         /// <summary>
         /// The maximum number of users to share.
@@ -951,8 +1105,20 @@ namespace Telegram.Views.Popups
 
         private void List_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            ViewModel.SelectedItems = new MvxObservableCollection<Chat>(ChatsPanel.SelectedItems.Cast<Chat>());
+            if (ViewModel.Configuration is ChooseChatsConfigurationRequestUsers requestUsers && e.AddedItems != null)
+            {
+                if (ChatsPanel.SelectedItems.Count > requestUsers.MaxQuantity)
+                {
+                    foreach (var item in e.AddedItems)
+                    {
+                        ChatsPanel.SelectedItems.Remove(item);
+                    }
 
+                    ToastPopup.Show(Locale.Declension(Strings.R.BotMultiContactsSelectorLimit, requestUsers.MaxQuantity), new LocalFileSource("ms-appx:///Assets/Toasts/Info.tgs"));
+                }
+            }
+
+            ViewModel.SelectedItems = new MvxObservableCollection<Chat>(ChatsPanel.SelectedItems.Cast<Chat>());
         }
 
         private void List_ItemClick(object sender, ItemClickEventArgs e)

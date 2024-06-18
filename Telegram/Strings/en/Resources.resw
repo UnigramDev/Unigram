@@ -1997,6 +1997,12 @@ from **{0}**.</value>
   <data name="BotManageInfo" xml:space="preserve">
     <value>Use @BotFather to manage this bot.</value>
   </data>
+  <data name="BotMultiContactsSelectorLimit_one" xml:space="preserve">
+    <value>You can select maximum {0} user.</value>
+  </data>
+  <data name="BotMultiContactsSelectorLimit_other" xml:space="preserve">
+    <value>You can select maximum {0} users.</value>
+  </data>
   <data name="BotName" xml:space="preserve">
     <value>Bot Name</value>
   </data>
@@ -3279,11 +3285,20 @@ Minimum length is 5 characters.</value>
   <data name="ChooseBackgroundFromGallery" xml:space="preserve">
     <value>Choose Wallpaper from Gallery</value>
   </data>
+  <data name="ChooseBot" xml:space="preserve">
+    <value>Choose a Bot</value>
+  </data>
+  <data name="ChooseChannel" xml:space="preserve">
+    <value>Choose a Channel</value>
+  </data>
   <data name="ChooseCountry" xml:space="preserve">
     <value>Choose a country</value>
   </data>
   <data name="ChooseFromYourStickers" xml:space="preserve">
     <value>Choose from your stickers</value>
+  </data>
+  <data name="ChooseGroup" xml:space="preserve">
+    <value>Choose a Group</value>
   </data>
   <data name="ChoosePhotoOrVideo" xml:space="preserve">
     <value>Choose photo or video</value>
@@ -3299,6 +3314,12 @@ Minimum length is 5 characters.</value>
   </data>
   <data name="ChooseStickerSetPlaceholder" xml:space="preserve">
     <value>stickerset</value>
+  </data>
+  <data name="ChooseUser" xml:space="preserve">
+    <value>Choose a User</value>
+  </data>
+  <data name="ChooseUsers" xml:space="preserve">
+    <value>Choose Users</value>
   </data>
   <data name="ChoosingSticker" xml:space="preserve">
     <value>ch**oo**sing a sticker</value>
