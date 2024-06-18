@@ -552,7 +552,7 @@ namespace Telegram.ViewModels
 
         public async void CreateSecretChat()
         {
-            var user = await ChooseChatsPopup.PickUserAsync(ClientService, Strings.NewSecretChat, true);
+            var user = await ChooseChatsPopup.PickUserAsync(ClientService, Strings.NewSecretChat, false);
             if (user == null)
             {
                 return;

@@ -99,7 +99,7 @@ namespace Telegram.Views.Popups
         {
             AllowChannelChats = false,
             AllowGroupChats = false,
-            AllowBotChats = true,
+            AllowBotChats = false,
             AllowUserChats = true,
             AllowSecretChats = false,
             AllowSelf = false,
@@ -713,7 +713,7 @@ namespace Telegram.Views.Popups
 
         public static async Task<User> PickUserAsync(IClientService clientService, string title, bool contact)
         {
-            return clientService.GetUser(await PickChatAsync(title, ChooseChatsOptions.ContactsOnly));
+            return clientService.GetUser(await PickChatAsync(title, contact ? ChooseChatsOptions.Contacts : ChooseChatsOptions.Users));
         }
 
         public static async Task<IList<Chat>> PickChatsAsync(string title, long[] selected, ChooseChatsOptions options, ListViewSelectionMode selectionMode = ListViewSelectionMode.Multiple)

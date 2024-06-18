@@ -53,7 +53,7 @@ namespace Telegram.ViewModels.BasicGroups
 
         public async void AddMembers()
         {
-            var chats = await ChooseChatsPopup.PickChatsAsync(Strings.SelectContacts, Items.Select(x => x.Id).ToArray(), ChooseChatsOptions.Contacts);
+            var chats = await ChooseChatsPopup.PickChatsAsync(Strings.SelectContacts, Items.Select(x => x.Id).ToArray(), ChooseChatsOptions.Users);
             if (chats != null)
             {
                 Items.ReplaceWith(chats);
