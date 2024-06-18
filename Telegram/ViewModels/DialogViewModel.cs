@@ -925,16 +925,26 @@ namespace Telegram.ViewModels
 
             if (TryGetLastVisibleMessageId(out long lastVisibleId, out int lastVisibleIndex))
             {
-                var firstNonVisibleId = lastVisibleIndex < Items.Count - 1
-                    ? Items[lastVisibleIndex + 1].Id
-                    : lastVisibleId;
-                if (firstNonVisibleId < lastReadMessageId)
+                // Find first valid non-visible message
+                var firstNonVisibleId = lastVisibleId;
+
+                for (int i = lastVisibleIndex + 1; i < Items.Count; i++)
+                {
+                    var message = Items[i].Id;
+                    if (message != 0)
+                    {
+                        firstNonVisibleId = message;
+                        break;
+                    }
+                }
+
+                if (firstNonVisibleId != 0 && firstNonVisibleId < lastReadMessageId)
                 {
                     return LoadMessageSliceAsync(null, lastReadMessageId, VerticalAlignment.Top, disableAnimation: false);
                 }
             }
 
-            return LoadMessageSliceAsync(null, lastMessageId, VerticalAlignment.Top, disableAnimation: false);
+            return LoadMessageSliceAsync(null, lastMessageId, VerticalAlignment.Bottom, disableAnimation: false);
         }
 
         private bool TryGetLastVisibleMessageId(out long id, out int index)
