@@ -36,6 +36,7 @@ using Windows.Storage.Pickers;
 using Windows.Storage.Streams;
 using Windows.UI;
 using Windows.UI.Core;
+using Windows.UI.Input;
 using Windows.UI.Text;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -392,6 +393,42 @@ namespace Telegram.Common
         public static IAsyncOperation<AppServiceResponse> SendMessageAsync(this AppServiceConnection connection, string message, object parameter = null)
         {
             return connection.SendMessageAsync(new ValueSet { { message, parameter ?? true } });
+        }
+
+        public static void TryProcessDownEvent(this GestureRecognizer recognizer, PointerPoint value)
+        {
+            try
+            {
+                recognizer.ProcessDownEvent(value);
+            }
+            catch
+            {
+                recognizer.CompleteGesture();
+            }
+        }
+
+        public static void TryProcessMoveEvents(this GestureRecognizer recognizer, IList<PointerPoint> value)
+        {
+            try
+            {
+                recognizer.ProcessMoveEvents(value);
+            }
+            catch
+            {
+                recognizer.CompleteGesture();
+            }
+        }
+
+        public static void TryProcessUpEvent(this GestureRecognizer recognizer, PointerPoint value)
+        {
+            try
+            {
+                recognizer.ProcessUpEvent(value);
+            }
+            catch
+            {
+                recognizer.CompleteGesture();
+            }
         }
 
         public static void TryNotifyMutedChanged(this VoipCallCoordinator coordinator, bool muted)

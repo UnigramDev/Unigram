@@ -559,14 +559,7 @@ namespace Telegram.Controls.Chats
                 var point = e.GetCurrentPoint(Window.Current.Content as FrameworkElement);
                 if (point.Properties.PointerUpdateKind == PointerUpdateKind.LeftButtonPressed && e.Pointer.PointerDeviceType == PointerDeviceType.Mouse)
                 {
-                    try
-                    {
-                        _recognizer.ProcessDownEvent(point);
-                    }
-                    catch
-                    {
-                        _recognizer.CompleteGesture();
-                    }
+                    _recognizer.TryProcessDownEvent(point);
                 }
                 else if (_recognizer.IsActive)
                 {
@@ -735,14 +728,7 @@ namespace Telegram.Controls.Chats
             var point = e.GetCurrentPoint(Window.Current.Content as FrameworkElement);
             if (point.Properties.PointerUpdateKind == PointerUpdateKind.LeftButtonReleased && e.Pointer.PointerDeviceType == PointerDeviceType.Mouse)
             {
-                try
-                {
-                    _recognizer.ProcessUpEvent(point);
-                }
-                catch
-                {
-                    _recognizer.CompleteGesture();
-                }
+                _recognizer.TryProcessUpEvent(point);
             }
             else if (_recognizer.IsActive)
             {

@@ -522,21 +522,13 @@ namespace Telegram.Controls
 
         protected override void OnPointerPressed(PointerRoutedEventArgs e)
         {
-            try
-            {
-                _recognizer.ProcessDownEvent(e.GetCurrentPoint(this));
-            }
-            catch
-            {
-                _recognizer.CompleteGesture();
-            }
-
+            _recognizer.TryProcessDownEvent(e.GetCurrentPoint(this));
             base.OnPointerPressed(e);
         }
 
         protected override void OnPointerMoved(PointerRoutedEventArgs e)
         {
-            _recognizer.ProcessMoveEvents(e.GetIntermediatePoints(this));
+            _recognizer.TryProcessMoveEvents(e.GetIntermediatePoints(this));
             base.OnPointerMoved(e);
         }
 
@@ -548,7 +540,7 @@ namespace Telegram.Controls
 
         protected override void OnPointerReleased(PointerRoutedEventArgs e)
         {
-            _recognizer.ProcessUpEvent(e.GetCurrentPoint(this));
+            _recognizer.TryProcessUpEvent(e.GetCurrentPoint(this));
             base.OnPointerReleased(e);
         }
     }
