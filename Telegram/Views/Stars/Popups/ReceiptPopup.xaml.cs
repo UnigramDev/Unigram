@@ -85,7 +85,7 @@ namespace Telegram.Views.Stars.Popups
                     Title.Text = sourceUser.ProductInfo.Title;
                     TextBlockHelper.SetFormattedText(Subtitle, sourceUser.ProductInfo.Description);
 
-                    var small = sourceUser.ProductInfo.Photo.GetSmall();
+                    var small = sourceUser.ProductInfo.Photo?.GetSmall();
                     if (small != null)
                     {
                         UpdateManager.Subscribe(this, _clientService, small.Photo, ref _thumbnailToken, UpdateFile, true);
@@ -140,11 +140,15 @@ namespace Telegram.Views.Stars.Popups
                 Title.Text = receipt.ProductInfo.Title;
                 TextBlockHelper.SetFormattedText(Subtitle, receipt.ProductInfo.Description);
 
-                var small = receipt.ProductInfo.Photo.GetSmall();
+                var small = receipt.ProductInfo.Photo?.GetSmall();
                 if (small != null)
                 {
                     UpdateManager.Subscribe(this, _clientService, small.Photo, ref _thumbnailToken, UpdateFile, true);
                     UpdateThumbnail(small.Photo);
+                }
+                else
+                {
+                    Photo.SetUser(clientService, user, 120);
                 }
             }
             else

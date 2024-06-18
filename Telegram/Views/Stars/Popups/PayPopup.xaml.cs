@@ -39,7 +39,7 @@ namespace Telegram.Views.Stars.Popups
 
             PurchaseText.Text = Locale.Declension(Strings.R.StarsConfirmPurchaseButton, stars.StarCount).Replace("\u2B50", Icons.Premium);
 
-            var small = ViewModel.PaymentForm.ProductInfo.Photo.GetSmall();
+            var small = ViewModel.PaymentForm.ProductInfo.Photo?.GetSmall();
             if (small != null)
             {
                 UpdateManager.Subscribe(this, ViewModel.ClientService, small.Photo, ref _thumbnailToken, UpdateFile, true);
@@ -167,7 +167,7 @@ namespace Telegram.Views.Stars.Popups
 
         private void UpdateFile(PaymentForm paymentForm, File file)
         {
-            var small = paymentForm.ProductInfo.Photo.GetSmall();
+            var small = paymentForm.ProductInfo.Photo?.GetSmall();
             if (small != null && (file == null || small.Photo.Id == file.Id))
             {
                 UpdateThumbnail(paymentForm, small.Photo);
