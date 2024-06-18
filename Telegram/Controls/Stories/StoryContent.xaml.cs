@@ -15,13 +15,16 @@ using System.Numerics;
 using Telegram.Common;
 using Telegram.Controls.Media;
 using Telegram.Controls.Messages;
+using Telegram.Navigation;
 using Telegram.Streams;
 using Telegram.Td.Api;
 using Telegram.ViewModels.Stories;
 using Windows.UI;
 using Windows.UI.Composition;
+using Windows.UI.Text;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Documents;
 using Windows.UI.Xaml.Hosting;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
@@ -480,6 +483,10 @@ namespace Telegram.Controls.Stories
                 }
                 else
                 {
+                    // TODO: UWP corner radius doesn't support X and Y radius
+                    var radiusX = area.Position.CornerRadiusPercentage / 100 * ActualWidth;
+                    var radiusY = area.Position.CornerRadiusPercentage / 100 * ActualHeight;
+
                     var button = new HyperlinkButton
                     {
                         Content = new Border
@@ -545,21 +552,63 @@ namespace Telegram.Controls.Stories
             }
         }
 
-        private void Area_Click(object sender, RoutedEventArgs e)
+        private async void Area_Click(object sender, RoutedEventArgs e)
         {
             if (sender is HyperlinkButton element && element.Tag is StoryArea area)
             {
-                TeachingTip toast = null;
-
                 if (area.Type is StoryAreaTypeLocation or StoryAreaTypeVenue)
                 {
+                    var text = new TextBlock();
+                    text.Inlines.Add(new Run
+                    {
+                        Text = Strings.StoryViewLocation,
+                        Foreground = new SolidColorBrush(Colors.White)
+                    });
+
                     var window = element.GetParent<StoriesWindow>();
-                    toast = window?.ShowTeachingTip(element.Content as Border, Strings.StoryViewLocation, TeachingTipPlacementMode.Top);
+                    var result = await window?.ShowActionAsync(element.Content as Border, text, TeachingTipPlacementMode.Top);
                 }
-                else if (area.Type is StoryAreaTypeMessage)
+                else if (area.Type is StoryAreaTypeMessage typeMessage)
                 {
+                    var text = new TextBlock();
+                    text.Inlines.Add(new Run
+                    {
+                        Text = Strings.StoryViewMessage,
+                        Foreground = new SolidColorBrush(Colors.White)
+                    });
+
                     var window = element.GetParent<StoriesWindow>();
-                    toast = window?.ShowTeachingTip(element.Content as Border, Strings.StoryViewMessage, TeachingTipPlacementMode.Top);
+                    var result = await window?.ShowActionAsync(element.Content as Border, text, TeachingTipPlacementMode.Top);
+
+                    if (result == ContentDialogResult.Primary)
+                    {
+                        ViewModel.NavigationService.NavigateToChat(typeMessage.ChatId, message: typeMessage.MessageId);
+                    }
+                }
+                else if (area.Type is StoryAreaTypeLink typeLink)
+                {
+                    var text = new TextBlock();
+                    text.Inlines.Add(new Run
+                    {
+                        Text = Strings.StoryOpenLink,
+                        Foreground = new SolidColorBrush(Colors.White)
+                    });
+                    text.Inlines.Add(new LineBreak());
+                    text.Inlines.Add(new Run
+                    {
+                        Text = typeLink.Url,
+                        FontSize = 12,
+                        FontWeight = FontWeights.Normal,
+                        Foreground = BootStrapper.Current.Resources["SystemControlDisabledChromeDisabledLowBrush"] as Brush
+                    });
+
+                    var window = element.GetParent<StoriesWindow>();
+                    var result = await window?.ShowActionAsync(element.Content as Border, text, TeachingTipPlacementMode.Top);
+                    
+                    if (result == ContentDialogResult.Primary)
+                    {
+                        MessageHelper.OpenUrl(ViewModel.ClientService, ViewModel.NavigationService, typeLink.Url);
+                    }
                 }
             }
         }
@@ -1286,7 +1335,7 @@ namespace Telegram.Controls.Stories
             if (sender is FrameworkElement element)
             {
                 var window = element.GetParent<StoriesWindow>();
-                window?.ShowTeachingTip(element, Strings.StoryNoSound, TeachingTipPlacementMode.BottomLeft);
+                window?.ShowToast(element, Strings.StoryNoSound, TeachingTipPlacementMode.BottomLeft);
             }
         }
 
@@ -1323,7 +1372,7 @@ namespace Telegram.Controls.Stories
                 }
 
                 var window = element.GetParent<StoriesWindow>();
-                window?.ShowTeachingTip(element, message, TeachingTipPlacementMode.BottomLeft);
+                window?.ShowToast(element, message, TeachingTipPlacementMode.BottomLeft);
             }
         }
 

@@ -14,12 +14,15 @@ using Telegram.Td.Api;
 using Telegram.ViewModels.Stories;
 using Telegram.Views.Stories.Popups;
 using Windows.Foundation;
+using Windows.UI;
+using Windows.UI.Text;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
 using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Hosting;
 using Windows.UI.Xaml.Input;
+using Windows.UI.Xaml.Media;
 using DispatcherQueue = Windows.System.DispatcherQueue;
 using VirtualKey = Windows.System.VirtualKey;
 
@@ -1081,23 +1084,71 @@ namespace Telegram.Controls.Stories
             ActiveCard.Resume(StoryPauseSource.Flyout);
         }
 
-        public TeachingTip ShowTeachingTip(FrameworkElement target, string text, TeachingTipPlacementMode placement = TeachingTipPlacementMode.TopRight)
+        public TeachingTip ShowToast(FrameworkElement target, string text, TeachingTipPlacementMode placement = TeachingTipPlacementMode.TopRight)
         {
-            return ShowTeachingTip(target, text, null, placement);
+            return ShowToast(target, text, null, placement);
         }
 
-        public TeachingTip ShowTeachingTip(FrameworkElement target, string text, AnimatedImageSource icon, TeachingTipPlacementMode placement = TeachingTipPlacementMode.TopRight)
+        public TeachingTip ShowToast(FrameworkElement target, string text, AnimatedImageSource icon, TeachingTipPlacementMode placement = TeachingTipPlacementMode.TopRight)
         {
-            var tip = ToastPopup.Show(target, text, icon, placement, ElementTheme.Dark);
-            tip.Closing += TeachingTip_Closing;
-            ActiveCard.Suspend(StoryPauseSource.TeachingTip);
-            return tip;
+            var toast = ToastPopup.Show(target, text, icon, placement, ElementTheme.Dark);
+            toast.Closing += Toast_Closing;
+            ActiveCard.Suspend(StoryPauseSource.Toast);
+            return toast;
         }
 
-        private void TeachingTip_Closing(TeachingTip sender, TeachingTipClosingEventArgs args)
+        public Task<ContentDialogResult> ShowActionAsync(FrameworkElement target, object text, TeachingTipPlacementMode placement, ElementTheme requestedTheme = ElementTheme.Dark)
         {
-            sender.Closing -= TeachingTip_Closing;
-            ActiveCard.Resume(StoryPauseSource.TeachingTip);
+            var toast = ToastPopup.ShowToastImpl(Window.Current, target, null, null, placement, requestedTheme);
+            if (toast.Content is Grid content)
+            {
+                var tsc = new TaskCompletionSource<ContentDialogResult>();
+                var undo = new Button()
+                {
+                    Content = text,
+                    FontWeight = FontWeights.SemiBold,
+                    Foreground = new SolidColorBrush(Colors.White),
+                    VerticalAlignment = VerticalAlignment.Center,
+                    Style = BootStrapper.Current.Resources["AccentTextButtonStyle"] as Style,
+                    Margin = new Thickness(-12, -12, -12, -12),
+                    Padding = new Thickness(12, 7, 12, 8),
+                    MinHeight = 40
+                };
+
+                void handler(object sender, RoutedEventArgs e)
+                {
+                    Logger.Info("closed");
+
+                    tsc.TrySetResult(ContentDialogResult.Primary);
+                    undo.Click -= handler;
+
+                    toast.IsOpen = false;
+                }
+
+                void closed(TeachingTip sender, TeachingTipClosedEventArgs e)
+                {
+                    tsc.TrySetResult(ContentDialogResult.None);
+                    sender.Closed -= closed;
+                }
+
+                undo.Click += handler;
+                toast.Closed += closed;
+
+                toast.Content = undo;
+
+                toast.Closing += Toast_Closing;
+                ActiveCard.Suspend(StoryPauseSource.Toast);
+
+                return tsc.Task;
+            }
+
+            return Task.FromResult(ContentDialogResult.None);
+        }
+
+        private void Toast_Closing(TeachingTip sender, TeachingTipClosingEventArgs args)
+        {
+            sender.Closing -= Toast_Closing;
+            ActiveCard.Resume(StoryPauseSource.Toast);
         }
 
         private void ButtonStickers_Opening(object sender, EventArgs e)
@@ -1166,7 +1217,7 @@ namespace Telegram.Controls.Stories
         Stickers = 1 << 10,
         Record = 1 << 1,
         Text = 1 << 2,
-        TeachingTip = 1 << 3,
+        Toast = 1 << 3,
         Flyout = 1 << 4,
         Popup = 1 << 5,
         Interaction = 1 << 6,

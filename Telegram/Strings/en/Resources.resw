@@ -9318,6 +9318,9 @@ and enter your phone number.</value>
   <data name="StoryNotFound" xml:space="preserve">
     <value>This story is no longer available</value>
   </data>
+  <data name="StoryOpenLink" xml:space="preserve">
+    <value>Open Link &gt;</value>
+  </data>
   <data name="StoryReactionsByEmotionChartTitle" xml:space="preserve">
     <value>Story Reactions</value>
   </data>
