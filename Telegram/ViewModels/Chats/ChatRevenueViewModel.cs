@@ -109,7 +109,7 @@ namespace Telegram.ViewModels.Chats
 
         public double UsdRate { get; private set; }
 
-        public bool CanWithdrawChatRevenue => AvailableAmount?.CryptocurrencyAmount > 0 && ClientService.Options.CanWithdrawChatRevenue;
+        public bool WithdrawalEnabled => AvailableAmount?.CryptocurrencyAmount > 0 && ClientService.Options.CanWithdrawChatRevenue;
 
         public IncrementalCollection<ChatRevenueTransaction> Items { get; }
 
@@ -209,7 +209,7 @@ namespace Telegram.ViewModels.Chats
                 UsdRate = UsdRate,
             };
 
-            RaisePropertyChanged(nameof(CanWithdrawChatRevenue));
+            RaisePropertyChanged(nameof(WithdrawalEnabled));
         }
 
         public async void Transfer()

@@ -207,6 +207,9 @@
     <Compile Include="Controls\Cells\Business\BusinessRepliesCell.xaml.cs">
       <DependentUpon>BusinessRepliesCell.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\Cells\Revenue\StarTransactionCell.xaml.cs">
+      <DependentUpon>StarTransactionCell.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Controls\Cells\CryptoAmountCell.xaml.cs">
       <DependentUpon>CryptoAmountCell.xaml</DependentUpon>
     </Compile>
@@ -2143,6 +2146,10 @@
     <Page Include="Controls\Cells\ChatFolderCell.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Controls\Cells\Revenue\StarTransactionCell.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Controls\Cells\CryptoAmountCell.xaml">
       <SubType>Designer</SubType>

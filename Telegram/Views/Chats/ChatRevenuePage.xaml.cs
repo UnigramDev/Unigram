@@ -97,6 +97,7 @@ namespace Telegram.Views.Chats
             else if (args.ItemContainer.ContentTemplateRoot is ChatRevenueTransactionCell cell && args.Item is ChatRevenueTransaction info)
             {
                 cell.UpdateInfo(info);
+                args.Handled = true;
             }
         }
 

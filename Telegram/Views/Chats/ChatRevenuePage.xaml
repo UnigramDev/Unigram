@@ -62,7 +62,7 @@
 
                     <controls:HeaderedControl IsFooterLink="True"
                                               Header="{CustomResource MonetizationBalance}"
-                                              Footer="{x:Bind ConvertTransferInfo(ViewModel.CanWithdrawChatRevenue, ViewModel.IsOwner), Mode=OneWay}">
+                                              Footer="{x:Bind ConvertTransferInfo(ViewModel.WithdrawalEnabled, ViewModel.IsOwner), Mode=OneWay}">
                         <StackPanel Background="{ThemeResource SettingsItemBackground}">
                             <TextBlock TextAlignment="Center"
                                        Margin="0,8,0,0">
@@ -83,7 +83,7 @@
                             <Button x:Name="TransferButton"
                                     x:Load="{x:Bind ViewModel.IsOwner}"
                                     Click="{x:Bind ViewModel.Transfer}"
-                                    IsEnabled="{x:Bind ViewModel.CanWithdrawChatRevenue, Mode=OneWay}"
+                                    IsEnabled="{x:Bind ViewModel.WithdrawalEnabled, Mode=OneWay}"
                                     Content="{CustomResource MonetizationTransactionWithdraw}"
                                     Style="{StaticResource AccentButtonStyle}"
                                     HorizontalAlignment="Center"
@@ -106,7 +106,7 @@
             <ListView.ItemTemplate>
                 <DataTemplate>
                     <revenue:ChatRevenueTransactionCell Background="{ThemeResource SettingsItemBackground}"
-                                                        BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}" />
+                                                        BorderBrush="{ThemeResource SettingsItemBorderBrush}" />
                 </DataTemplate>
             </ListView.ItemTemplate>
             <ListView.Footer>

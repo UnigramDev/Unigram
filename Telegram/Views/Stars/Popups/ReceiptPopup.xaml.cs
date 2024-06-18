@@ -91,7 +91,15 @@ namespace Telegram.Views.Stars.Popups
                         UpdateManager.Subscribe(this, _clientService, small.Photo, ref _thumbnailToken, UpdateFile, true);
                         UpdateThumbnail(small.Photo);
                     }
+                    else
+                    {
+                        Photo.SetUser(clientService, user, 120);
+                    }
                 }
+            }
+            else if (transaction.Partner is StarTransactionPartnerChannel sourceChannel && clientService.TryGetChat(sourceChannel.ChatId, out Chat chat))
+            {
+                // TODO:
             }
             else
             {

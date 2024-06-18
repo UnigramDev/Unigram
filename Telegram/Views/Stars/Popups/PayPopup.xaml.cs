@@ -7,13 +7,10 @@
 using Telegram.Common;
 using Telegram.Controls;
 using Telegram.Controls.Media;
-using Telegram.Converters;
-using Telegram.Navigation;
 using Telegram.Td.Api;
 using Telegram.ViewModels.Stars;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Hosting;
-using Windows.UI.Xaml.Media;
 
 namespace Telegram.Views.Stars.Popups
 {
@@ -49,48 +46,6 @@ namespace Telegram.Views.Stars.Popups
             {
                 Photo.SetUser(ViewModel.ClientService, user, 120);
             }
-        }
-
-        private void OnItemClick(object sender, ItemClickEventArgs e)
-        {
-            if (e.ClickedItem is StarPaymentOption option)
-            {
-                Hide();
-                ViewModel.NavigationService.NavigateToInvoice(new InputInvoiceTelegram(new TelegramPaymentPurposeStars(option.Currency, option.Amount, option.StarCount)));
-            }
-        }
-
-        private void OnContainerContentChanging(ListViewBase sender, ContainerContentChangingEventArgs args)
-        {
-            if (args.InRecycleQueue)
-            {
-                return;
-            }
-
-            var transaction = args.Item as StarTransaction;
-            var content = args.ItemContainer.ContentTemplateRoot as Grid;
-
-            var title = content.FindName("Title") as TextBlock;
-            var subtitle = content.FindName("Subtitle") as TextBlock;
-            var starCount = content.FindName("StarCount") as TextBlock;
-
-            title.Text = transaction.Partner switch
-            {
-                StarTransactionPartnerTelegram => Strings.StarsTransactionInApp,
-                StarTransactionPartnerFragment => Strings.StarsTransactionFragment,
-                StarTransactionPartnerAppStore => "[App Store]",
-                StarTransactionPartnerGooglePlay => "[Google Play]",
-                StarTransactionPartnerUser user => ViewModel.ClientService.GetUser(user.UserId).FullName(),
-                _ => string.Empty
-            };
-
-            subtitle.Text = Formatter.DateAt(transaction.Date);
-
-            starCount.Text = (transaction.StarCount < 0 ? string.Empty : "+") + transaction.StarCount.ToString("N0");
-            starCount.Foreground = BootStrapper.Current.Resources[transaction.StarCount < 0 ? "SystemFillColorCriticalBrush" : "SystemFillColorSuccessBrush"] as Brush;
-
-
-            args.Handled = true;
         }
 
         public string ConvertCount(long count)
