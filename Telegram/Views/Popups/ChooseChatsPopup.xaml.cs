@@ -37,6 +37,12 @@ namespace Telegram.Views.Popups
 {
     #region Options
 
+    public enum ChooseChatsMode
+    {
+        Chats,
+        Contacts
+    }
+
     public record ChooseChatsOptions
     {
         public bool AllowAll => AllowChannelChats && AllowGroupChats && AllowBotChats && AllowUserChats && AllowSecretChats && AllowSelf && !CanPostMessages && !CanInviteUsers && !CanShareContact;
@@ -53,8 +59,7 @@ namespace Telegram.Views.Popups
         public bool CanInviteUsers { get; set; } = false;
         public bool CanShareContact { get; set; } = false;
 
-        public bool ShowChats { get; set; } = true;
-        public bool ShowContacts { get; set; } = false;
+        public ChooseChatsMode Mode { get; set; } = ChooseChatsMode.Chats;
 
         public bool ShowMessages { get; set; } = false;
 
@@ -71,8 +76,7 @@ namespace Telegram.Views.Popups
             CanPostMessages = false,
             CanInviteUsers = false,
             CanShareContact = false,
-            ShowChats = true,
-            ShowContacts = false,
+            Mode = ChooseChatsMode.Chats,
             ShowMessages = true
         };
 
@@ -87,8 +91,7 @@ namespace Telegram.Views.Popups
             CanPostMessages = true,
             CanInviteUsers = false,
             CanShareContact = false,
-            ShowChats = true,
-            ShowContacts = false,
+            Mode = ChooseChatsMode.Chats,
             ShowMessages = false
         };
 
@@ -103,8 +106,7 @@ namespace Telegram.Views.Popups
             CanPostMessages = false,
             CanInviteUsers = false,
             CanShareContact = false,
-            ShowChats = false,
-            ShowContacts = true,
+            Mode = ChooseChatsMode.Contacts,
             ShowMessages = false
         };
 
@@ -119,8 +121,7 @@ namespace Telegram.Views.Popups
             CanPostMessages = false,
             CanInviteUsers = false,
             CanShareContact = true,
-            ShowChats = false,
-            ShowContacts = true,
+            Mode = ChooseChatsMode.Contacts,
             ShowMessages = false
         };
 
@@ -135,8 +136,7 @@ namespace Telegram.Views.Popups
             CanPostMessages = false,
             CanInviteUsers = false,
             CanShareContact = false,
-            ShowChats = true,
-            ShowContacts = false,
+            Mode = ChooseChatsMode.Chats,
             ShowMessages = false
         };
 
@@ -151,8 +151,7 @@ namespace Telegram.Views.Popups
             CanPostMessages = true,
             CanInviteUsers = false,
             CanShareContact = false,
-            ShowChats = true,
-            ShowContacts = false,
+            Mode = ChooseChatsMode.Chats,
             ShowMessages = false
         };
 
@@ -167,8 +166,7 @@ namespace Telegram.Views.Popups
             CanPostMessages = false,
             CanInviteUsers = true,
             CanShareContact = false,
-            ShowChats = true,
-            ShowContacts = false,
+            Mode = ChooseChatsMode.Chats,
             ShowMessages = false
         };
 
@@ -183,8 +181,7 @@ namespace Telegram.Views.Popups
             CanPostMessages = false,
             CanInviteUsers = false,
             CanShareContact = false,
-            ShowChats = false,
-            ShowContacts = true,
+            Mode = ChooseChatsMode.Contacts,
             ShowMessages = false
         };
 
@@ -649,6 +646,11 @@ namespace Telegram.Views.Popups
             else
             {
                 PrimaryButtonText = ViewModel.PrimaryButtonText;
+            }
+
+            if (ViewModel.Options.Mode == ChooseChatsMode.Contacts)
+            {
+                ChatFolders.Visibility = Visibility.Collapsed;
             }
         }
 

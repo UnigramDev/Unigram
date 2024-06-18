@@ -55,8 +55,7 @@ namespace Telegram.ViewModels
                 CanPostMessages = false,
                 CanInviteUsers = false,
                 CanShareContact = false,
-                ShowChats = true,
-                ShowContacts = false
+                Mode = ChooseChatsMode.Chats
             };
 
             _query = new(Constants.TypingTimeout, UpdateQuery, CanUpdateQuery);
