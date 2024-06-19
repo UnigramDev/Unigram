@@ -44,7 +44,7 @@ namespace Telegram.Services.ViewService
 
         public Func<ViewLifetimeControl, UIElement> Content { get; set; }
 
-        public string PersistentId { get; set; }
+        public string PersistedId { get; set; }
     }
 
     public sealed class ViewService : IViewService
@@ -128,7 +128,7 @@ namespace Telegram.Services.ViewService
                     var newAppView = ApplicationView.GetForCurrentView();
 
                     newAppView.Title = parameters.Title ?? string.Empty;
-                    newAppView.PersistedStateId = parameters.PersistentId ?? string.Empty;
+                    newWindow.PersistedId = parameters.PersistedId ?? string.Empty;
 
                     var control = ViewLifetimeControl.GetForCurrentView();
                     newWindow.Content = parameters.Content(control);
@@ -200,11 +200,11 @@ namespace Telegram.Services.ViewService
 
                 newView.DispatcherQueue.TryEnqueue(() =>
                 {
-                    var newWindow = Window.Current;
+                    var newWindow = WindowContext.Current;
                     var newAppView = ApplicationView.GetForCurrentView();
 
                     newAppView.Title = title;
-                    newAppView.PersistedStateId = "Floating";
+                    newWindow.PersistedId = "Floating";
 
                     var nav = BootStrapper.Current.NavigationServiceFactory(BootStrapper.BackButton.Ignore, session, id, false);
                     nav.Navigate(page, parameter);

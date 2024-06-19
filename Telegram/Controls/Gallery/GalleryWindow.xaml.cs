@@ -1065,7 +1065,7 @@ namespace Telegram.Controls.Gallery
                     ViewMode = ApplicationViewMode.CompactOverlay,
                     Width = width,
                     Height = height,
-                    PersistentId = "PIP",
+                    PersistedId = "PIP",
                     Content = control => new GalleryCompactWindow(control, viewModel, fileStream, time)
                 };
 

@@ -11,6 +11,14 @@
                   Loaded="OnLoaded"
                   Unloaded="OnUnloaded">
 
+    <Page.Transitions>
+        <TransitionCollection>
+            <NavigationThemeTransition>
+                <SuppressNavigationTransitionInfo />
+            </NavigationThemeTransition>
+        </TransitionCollection>
+    </Page.Transitions>
+    
     <Page.Resources>
         <Style x:Key="EmptyButtonStyle"
                TargetType="Button">

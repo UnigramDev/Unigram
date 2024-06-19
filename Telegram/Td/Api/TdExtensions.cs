@@ -941,6 +941,44 @@ namespace Telegram.Td.Api
             return (null, null, null);
         }
 
+        public static Minithumbnail GetMinithumbnail(this WebPage webPage)
+        {
+            if (webPage.Animation != null)
+            {
+                return webPage.Animation.Minithumbnail;
+            }
+            else if (webPage.Audio != null)
+            {
+                return webPage.Audio.AlbumCoverMinithumbnail;
+            }
+            else if (webPage.Document != null)
+            {
+                return webPage.Document.Minithumbnail;
+            }
+            else if (webPage.Sticker != null)
+            {
+                //return webPage.Sticker.Thumbnail;
+            }
+            else if (webPage.Video != null)
+            {
+                return webPage.Video.Minithumbnail;
+            }
+            else if (webPage.VideoNote != null)
+            {
+                return webPage.VideoNote.Minithumbnail;
+            }
+            else if (webPage.VoiceNote != null)
+            {
+                return null;
+            }
+            else if (webPage.Photo != null)
+            {
+                return webPage.Photo.Minithumbnail;
+            }
+
+            return null;
+        }
+
         public static Thumbnail GetThumbnail(this WebPage webPage)
         {
             if (webPage.Animation != null)

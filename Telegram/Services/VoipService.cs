@@ -786,7 +786,7 @@ namespace Telegram.Services
                 {
                     Width = 720,
                     Height = 540,
-                    PersistentId = "Call",
+                    PersistedId = "Call",
                     Content = control => _callPage = new CallPage(ClientService, Aggregator, this)
                 };
 

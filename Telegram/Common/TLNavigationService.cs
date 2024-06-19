@@ -4,10 +4,13 @@
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+using Microsoft.UI.Xaml.Controls;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Telegram.Controls;
+using Telegram.Native;
 using Telegram.Navigation;
 using Telegram.Navigation.Services;
 using Telegram.Services;
@@ -25,11 +28,18 @@ using Telegram.Views.Settings;
 using Telegram.Views.Settings.Password;
 using Telegram.Views.Settings.Popups;
 using Telegram.Views.Stars.Popups;
+using Windows.ApplicationModel.Core;
 using Windows.ApplicationModel.DataTransfer;
+using Windows.Storage.Streams;
+using Windows.UI;
+using Windows.UI.ViewManagement;
 using Windows.UI.WindowManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Data;
+using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Media.Animation;
+using Windows.UI.Xaml.Media.Imaging;
 
 namespace Telegram.Common
 {
@@ -57,25 +67,187 @@ namespace Telegram.Common
             {
                 Width = 384,
                 Height = 640,
-                PersistentId = "WebApp",
+                PersistedId = "WebApp",
                 Content = control => new WebBotPopup(ClientService, botUser, url, launchId, menuBot, sourceChat)
             });
         }
 
         public async void NavigateToInstant(string url, string fallbackUrl = null)
         {
-            var response = await ClientService.SendAsync(new GetWebPageInstantView(url, true));
-            if (response is WebPageInstantView instantView)
+            var response1 = await ClientService.SendAsync(new GetWebPageInstantView(url, true));
+            var response2 = await ClientService.SendAsync(new GetWebPagePreview(new FormattedText(url, Array.Empty<TextEntity>()), null));
+
+            if (response1 is WebPageInstantView instantView)
             {
-                Navigate(typeof(InstantPage), new InstantPageArgs(instantView, url));
-            }
-            else
-            {
-                if (Uri.TryCreate(fallbackUrl ?? url, UriKind.Absolute, out Uri uri))
+                TabViewItem CreateTabViewItem()
                 {
-                    await Windows.System.Launcher.LaunchUriAsync(uri);
+                    var frame = new Frame();
+                    var service = new TLNavigationService(ClientService, null, frame, ClientService.SessionId, "InstantView"); // BootStrapper.Current.NavigationServiceFactory(BootStrapper.BackButton.Ignore, frame, _clientService.SessionId, "ciccio", false);
+
+                    service.Navigate(typeof(InstantPage), new InstantPageArgs(instantView, url));
+
+                    var tabViewItem = new TabViewItem
+                    {
+                        Header = "Test",
+                        Content = frame
+                    };
+
+                    if (response2 is WebPage webPage)
+                    {
+                        var thumbnail = webPage.GetMinithumbnail();
+                        if (thumbnail != null)
+                        {
+                            double ratioX = (double)20 / thumbnail.Width;
+                            double ratioY = (double)20 / thumbnail.Height;
+                            double ratio = Math.Max(ratioX, ratioY);
+
+                            var width = (int)(thumbnail.Width * ratio);
+                            var height = (int)(thumbnail.Height * ratio);
+
+                            var bitmap = new BitmapImage
+                            {
+                                DecodePixelWidth = width,
+                                DecodePixelHeight = height,
+                                DecodePixelType = DecodePixelType.Logical
+                            };
+
+                            using (var stream = new InMemoryRandomAccessStream())
+                            {
+                                try
+                                {
+                                    PlaceholderImageHelper.WriteBytes(thumbnail.Data, stream);
+                                    _ = bitmap.SetSourceAsync(stream);
+                                }
+                                catch
+                                {
+                                    // Throws when the data is not a valid encoded image,
+                                    // not so frequent, but if it happens during ContainerContentChanging it crashes the app.
+                                }
+                            }
+
+                            tabViewItem.IconSource = new Microsoft.UI.Xaml.Controls.ImageIconSource
+                            {
+                                ImageSource = bitmap,
+                            };
+                        }
+                    }
+
+                    if (service.Content is Page page)
+                    {
+                        tabViewItem.SetBinding(TabViewItem.HeaderProperty, new Binding
+                        {
+                            Path = new PropertyPath("Title"),
+                            Source = page.DataContext
+                        });
+                    }
+
+                    return tabViewItem;
+                }
+
+                var oldViewId = WindowContext.Current.Id;
+
+                var already = WindowContext.All.FirstOrDefault(x => x.PersistedId == "InstantView");
+                if (already != null)
+                {
+                    await already.Dispatcher.DispatchAsync(async () =>
+                    {
+                        if (WindowContext.Current.Content is TabView tabView)
+                        {
+                            tabView.TabItems.Insert(tabView.SelectedIndex + 1, CreateTabViewItem());
+                            tabView.SelectedIndex++;
+                        }
+
+                        await ApplicationViewSwitcher.SwitchAsync(WindowContext.Current.Id, oldViewId);
+                    });
+                }
+                else
+                {
+                    await OpenAsync(new ViewServiceParams
+                    {
+                        Width = 820,
+                        Height = 640,
+                        PersistedId = "InstantView",
+                        Content = control =>
+                        {
+                            var footer = new Border
+                            {
+                                Background = new SolidColorBrush(Colors.Transparent)
+                            };
+
+                            var header = new Border
+                            {
+                                Background = new SolidColorBrush(Colors.Transparent)
+                            };
+
+                            var tabView = new TabView
+                            {
+                                TabStripHeader = header,
+                                TabStripFooter = footer,
+                                IsAddTabButtonVisible = false
+                            };
+
+                            tabView.TabItems.Add(CreateTabViewItem());
+                            tabView.TabCloseRequested += (s, args) =>
+                            {
+                                if (s.TabItems.Count > 1)
+                                {
+                                    s.TabItems.Remove(args.Tab);
+                                }
+                                else
+                                {
+                                    _ = WindowContext.Current.ConsolidateAsync();
+                                }
+                            };
+
+                            Window.Current.SetTitleBar(footer);
+                            BackdropMaterial.SetApplyToRootOrPageBackground(tabView, true);
+
+                            var coreTitleBar = CoreApplication.GetCurrentView().TitleBar;
+                            coreTitleBar.ExtendViewIntoTitleBar = true;
+
+                            coreTitleBar.LayoutMetricsChanged += (s, args) =>
+                            {
+                                // To ensure that the tabs in the titlebar are not occluded by shell
+                                // content, we must ensure that we account for left and right overlays.
+                                // In LTR layouts, the right inset includes the caption buttons and the
+                                // drag region, which is flipped in RTL. 
+
+                                // The SystemOverlayLeftInset and SystemOverlayRightInset values are
+                                // in terms of physical left and right. Therefore, we need to flip
+                                // then when our flow direction is RTL.
+                                if (tabView.FlowDirection == FlowDirection.LeftToRight)
+                                {
+                                    footer.MinWidth = s.SystemOverlayRightInset;
+                                    header.MinWidth = s.SystemOverlayLeftInset;
+                                }
+                                else
+                                {
+                                    footer.MinWidth = s.SystemOverlayLeftInset;
+                                    header.MinWidth = s.SystemOverlayRightInset;
+                                }
+
+                                // Ensure that the height of the custom regions are the same as the titlebar.
+                                footer.Height = header.Height = s.Height;
+                            };
+
+                            return tabView;
+                        }
+                    });
                 }
             }
+
+            //var response = await ClientService.SendAsync(new GetWebPageInstantView(url, true));
+            //if (response is WebPageInstantView instantView)
+            //{
+            //    Navigate(typeof(InstantPage), new InstantPageArgs(instantView, url));
+            //}
+            //else
+            //{
+            //    if (Uri.TryCreate(fallbackUrl ?? url, UriKind.Absolute, out Uri uri))
+            //    {
+            //        await Windows.System.Launcher.LaunchUriAsync(uri);
+            //    }
+            //}
         }
 
         public async void ShowLimitReached(PremiumLimitType type)
@@ -119,7 +291,7 @@ namespace Telegram.Common
                 Title = Strings.PaymentCheckout,
                 Width = 380,
                 Height = 580,
-                PersistentId = "Payments",
+                PersistedId = "Payments",
                 Content = control =>
                 {
                     var nav = BootStrapper.Current.NavigationServiceFactory(BootStrapper.BackButton.Ignore, SessionId, "Payments" + Guid.NewGuid(), false);
@@ -154,7 +326,7 @@ namespace Telegram.Common
                 Title = Strings.PaymentCheckout,
                 Width = 380,
                 Height = 580,
-                PersistentId = "Payments",
+                PersistedId = "Payments",
                 Content = control =>
                 {
                     var nav = BootStrapper.Current.NavigationServiceFactory(BootStrapper.BackButton.Ignore, SessionId, "Payments" + Guid.NewGuid(), false);

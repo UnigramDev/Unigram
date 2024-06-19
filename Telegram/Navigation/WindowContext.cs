@@ -51,6 +51,13 @@ namespace Telegram.Navigation
 
         public int Id { get; }
 
+        private string _persistedId;
+        public string PersistedId
+        {
+            get => _persistedId;
+            set => ApplicationView.GetForCurrentView().PersistedStateId = _persistedId = value;
+        }
+
         public WindowContext(Window window)
         {
             _window = window;

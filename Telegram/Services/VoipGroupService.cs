@@ -1164,7 +1164,7 @@ namespace Telegram.Services
                         Title = IsChannel ? Strings.VoipChannelVoiceChat : Strings.VoipGroupVoiceChat,
                         Width = call.IsRtmpStream ? 580 : 380,
                         Height = call.IsRtmpStream ? 380 : 580,
-                        PersistentId = call.IsRtmpStream ? "LiveStream" : "VideoChat",
+                        PersistedId = call.IsRtmpStream ? "LiveStream" : "VideoChat",
                         Content = call.IsRtmpStream
                             ? control => new LiveStreamPage(ClientService, Aggregator, this)
                             : control => new GroupCallPage(ClientService, Aggregator, this)
