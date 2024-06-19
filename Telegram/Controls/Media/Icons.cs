@@ -100,6 +100,9 @@ namespace Telegram.Controls.Media
 
         public const string ArrowClockwise = "\uE72C";
 
+        public const string Info = "\uEA8C";
+        public const string Coin = "\uEA8D";
+
         public const string ArrowUndo = "\uE7A7";
         public const string ArrowRedo = "\uE7A6";
         public const string Cut = "\uE8C6";

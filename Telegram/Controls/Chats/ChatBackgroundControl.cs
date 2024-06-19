@@ -7,7 +7,6 @@
 using System;
 using System.Linq;
 using System.Numerics;
-using System.Runtime.InteropServices;
 using Telegram.Common;
 using Telegram.Navigation;
 using Telegram.Services;
@@ -408,13 +407,6 @@ namespace Telegram.Controls.Chats
             }
 
             return result;
-        }
-
-        [ComImport]
-        [Guid("905A0FEF-BC53-11DF-8C49-001E4FC686DA"), InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
-        interface IBufferByteAccess
-        {
-            unsafe void Buffer(out byte* value);
         }
 
         private static unsafe WriteableBitmap GenerateGradient(int width, int height, Color[] colors, Vector2[] positions)

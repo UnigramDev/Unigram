@@ -104,6 +104,14 @@ namespace Telegram.Common
             }
         }
 
+        public static void NavigateToWebApp(this INavigationService service, User botUser, string url, long launchId = 0, AttachmentMenuBot menuBot = null, Chat sourceChat = null)
+        {
+            if (service is TLNavigationService serviceEx)
+            {
+                serviceEx.NavigateToWebApp(botUser, url, launchId, menuBot, sourceChat);
+            }
+        }
+
         public static void NavigateToInstant(this INavigationService service, string url, string fallbackUrl = null)
         {
             if (service is TLNavigationService serviceEx)

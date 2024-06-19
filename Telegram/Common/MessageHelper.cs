@@ -617,7 +617,7 @@ namespace Telegram.Common
             var response = await clientService.SendAsync(new GetWebAppUrl(bot.BotUserId, url, Theme.Current.Parameters, Strings.AppName));
             if (response is HttpUrl httpUrl)
             {
-                await new WebBotPopup(clientService, navigation, user, httpUrl.Url, bot, sourceChat).ShowQueuedAsync();
+                navigation.NavigateToWebApp(user, httpUrl.Url, 0, bot, sourceChat);
             }
         }
 
@@ -678,14 +678,14 @@ namespace Telegram.Common
         private static async void NavigateToWebApp(IClientService clientService, INavigationService navigation, string botUsername, string startParameter, string webAppShortName, OpenUrlSource source)
         {
             var response = await clientService.SendAsync(new SearchPublicChat(botUsername));
-            if (response is Chat chat && clientService.TryGetUser(chat, out User user))
+            if (response is Chat chat && clientService.TryGetUser(chat, out User botUser))
             {
-                if (user.Type is not UserTypeBot)
+                if (botUser.Type is not UserTypeBot)
                 {
                     return;
                 }
 
-                var responss = await clientService.SendAsync(new SearchWebApp(user.Id, webAppShortName));
+                var responss = await clientService.SendAsync(new SearchWebApp(botUser.Id, webAppShortName));
                 if (responss is FoundWebApp foundWebApp)
                 {
                     var popup = new MessagePopup
@@ -703,7 +703,7 @@ namespace Telegram.Common
                             TextWrapping = TextWrapping.Wrap
                         };
 
-                        var markdown = ClientEx.ParseMarkdown(string.Format(Strings.OpenUrlOption2, user.FirstName));
+                        var markdown = ClientEx.ParseMarkdown(string.Format(Strings.OpenUrlOption2, botUser.FirstName));
                         if (markdown != null)
                         {
                             TextBlockHelper.SetFormattedText(textBlock, markdown);
@@ -728,10 +728,10 @@ namespace Telegram.Common
                         _ => 0
                     };
 
-                    var responsa = await clientService.SendAsync(new GetWebAppLinkUrl(chatId, user.Id, webAppShortName, startParameter, Theme.Current.Parameters, Strings.AppName, foundWebApp.RequestWriteAccess && popup.IsChecked is true));
+                    var responsa = await clientService.SendAsync(new GetWebAppLinkUrl(chatId, botUser.Id, webAppShortName, startParameter, Theme.Current.Parameters, Strings.AppName, foundWebApp.RequestWriteAccess && popup.IsChecked is true));
                     if (responsa is HttpUrl url)
                     {
-                        await new WebBotPopup(clientService, navigation, user, url.Url).ShowQueuedAsync();
+                        navigation.NavigateToWebApp(botUser, url.Url);
                     }
                 }
                 else

@@ -4,7 +4,7 @@
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
-using Microsoft.UI.Xaml.Controls;
+using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Numerics;
@@ -14,11 +14,16 @@ using Telegram.Controls.Media;
 using Telegram.Navigation;
 using Telegram.Navigation.Services;
 using Telegram.Services;
+using Telegram.Services.ViewService;
+using Telegram.Td;
 using Telegram.Td.Api;
-using Telegram.Views.Host;
+using Windows.ApplicationModel.DataTransfer;
 using Windows.Data.Json;
 using Windows.UI;
 using Windows.UI.Composition;
+using Windows.UI.Core.Preview;
+using Windows.UI.ViewManagement;
+using Windows.UI.WindowManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
@@ -27,14 +32,16 @@ using Windows.UI.Xaml.Media;
 
 namespace Telegram.Views.Popups
 {
-    public sealed partial class WebBotPopup : ContentPopup
+    public sealed partial class WebBotPopup : UserControlEx
     {
         private readonly IClientService _clientService;
-        private readonly INavigationService _navigationService;
+        private readonly IEventAggregator _aggregator;
 
         private readonly Chat _sourceChat;
         private readonly User _botUser;
         private readonly AttachmentMenuBot _menuBot;
+
+        private readonly long _launchId;
 
         private bool _blockingAction;
         private bool _closeNeedConfirmation;
@@ -42,45 +49,84 @@ namespace Telegram.Views.Popups
         private bool _settingsVisible;
 
         // TODO: constructor should take a function and URL should be loaded asynchronously
-        public WebBotPopup(IClientService clientService, INavigationService navigationService, User user, WebAppInfo info, AttachmentMenuBot menuBot = null, Chat sourceChat = null)
+        public WebBotPopup(IClientService clientService, User botUser, string url, long launchId = 0, AttachmentMenuBot menuBot = null, Chat sourceChat = null)
         {
             InitializeComponent();
 
             _clientService = clientService;
-            _navigationService = navigationService;
+            _aggregator = TypeResolver.Current.Resolve<IEventAggregator>(clientService.SessionId);
 
-            _botUser = user;
+            _aggregator.Subscribe<UpdateWebAppMessageSent>(this, Handle)
+                .Subscribe<UpdatePaymentCompleted>(Handle);
+
+            _botUser = botUser;
+            _launchId = launchId;
             _menuBot = menuBot;
             _sourceChat = sourceChat;
 
-            Title.Text = user.FullName();
+            Title.Text = botUser.FullName();
+            View.Navigate(url);
 
             ElementCompositionPreview.SetIsTranslationEnabled(MainButton, true);
             ElementCompositionPreview.SetIsTranslationEnabled(Title, true);
 
-            View.SizeChanged += View_SizeChanged;
-            View.Navigate(info.Url);
+            Window.Current.SetTitleBar(TitleGrip);
+
+            ViewLifetimeControl.GetForCurrentView().Released += OnReleased;
+            SystemNavigationManagerPreview.GetForCurrentView().CloseRequested += OnCloseRequested;
+
+            var coreWindow = (IInternalCoreWindowPhone)(object)Window.Current.CoreWindow;
+            var navigationClient = (IApplicationWindowTitleBarNavigationClient)coreWindow.NavigationClient;
+
+            navigationClient.TitleBarPreferredVisibilityMode = AppWindowTitleBarVisibility.AlwaysHidden;
         }
 
-        // TODO: constructor should take a function and URL should be loaded asynchronously
-        public WebBotPopup(IClientService clientService, INavigationService navigationService, User user, string url, AttachmentMenuBot menuBot = null, Chat sourceChat = null)
+        private void Handle(UpdateWebAppMessageSent update)
         {
-            InitializeComponent();
+            if (update.WebAppLaunchId == _launchId)
+            {
+                _closeNeedConfirmation = false;
+                Hide();
+            }
+        }
 
-            _clientService = clientService;
-            _navigationService = navigationService;
+        private void Handle(UpdatePaymentCompleted update)
+        {
+            PostEvent("invoice_closed", "{ slug: \"" + update.Slug + "\", status: " + update.Status + "}");
+        }
 
-            _botUser = user;
-            _menuBot = menuBot;
-            _sourceChat = sourceChat;
+        private async void Hide()
+        {
+            await WindowContext.Current.ConsolidateAsync();
+        }
 
-            Title.Text = user.FullName();
+        private void OnReleased(object sender, System.EventArgs e)
+        {
+            if (_launchId != 0)
+            {
+                _clientService.Send(new CloseWebApp(_launchId));
+            }
+        }
 
-            ElementCompositionPreview.SetIsTranslationEnabled(MainButton, true);
-            ElementCompositionPreview.SetIsTranslationEnabled(Title, true);
+        private async void OnCloseRequested(object sender, SystemNavigationCloseRequestedPreviewEventArgs e)
+        {
+            if (_closeNeedConfirmation)
+            {
+                var deferral = e.GetDeferral();
 
-            View.SizeChanged += View_SizeChanged;
-            View.Navigate(url);
+                var confirm = await MessagePopup.ShowAsync(Strings.BotWebViewChangesMayNotBeSaved, _botUser.FirstName, Strings.BotWebViewCloseAnyway, Strings.Cancel, destructive: true);
+                if (confirm == ContentDialogResult.Primary)
+                {
+                    _closeNeedConfirmation = false;
+                    View.Close();
+                }
+                else
+                {
+                    e.Handled = true;
+                }
+
+                deferral.Complete();
+            }
         }
 
         private void View_SizeChanged(object sender, SizeChangedEventArgs e)
@@ -91,6 +137,31 @@ namespace Telegram.Views.Popups
         private void MainButton_Click(object sender, RoutedEventArgs e)
         {
             PostEvent("main_button_pressed");
+        }
+
+        private void View_Navigating(object sender, WebViewerNavigatingEventArgs e)
+        {
+            if (Uri.TryCreate(e.Url, UriKind.Absolute, out Uri uri))
+            {
+                var host = uri.Host;
+
+                var splitHostName = uri.Host.Split('.');
+                if (splitHostName.Length >= 2)
+                {
+                    host = splitHostName[^2] + "." +
+                           splitHostName[^1];
+                }
+
+                if (host.Equals("t.me", StringComparison.OrdinalIgnoreCase))
+                {
+                    ByNavigation(navigation => MessageHelper.OpenTelegramUrl(_clientService, navigation, uri));
+                    e.Cancel = true;
+                }
+                else if (uri.Scheme != "http" && uri.Scheme != "https")
+                {
+                    e.Cancel = true;
+                }
+            }
         }
 
         private void View_EventReceived(object sender, WebViewerEventReceivedEventArgs e)
@@ -129,7 +200,7 @@ namespace Telegram.Views.Popups
             }
             else if (eventName == "web_app_request_theme")
             {
-                //_themeUpdateForced.fire({ });
+                PostThemeChanged();
             }
             else if (eventName == "web_app_request_viewport")
             {
@@ -177,9 +248,24 @@ namespace Telegram.Views.Popups
             }
         }
 
-        private void RequestClipboardText(JsonObject eventData)
+        private async void RequestClipboardText(JsonObject eventData)
         {
+            var requestId = eventData.GetNamedString("req_id", string.Empty);
+            if (string.IsNullOrEmpty(requestId))
+            {
+                return;
+            }
 
+            var clipboard = Clipboard.GetContent();
+            if (clipboard.Contains(StandardDataFormats.Text))
+            {
+                var text = await clipboard.GetTextAsync();
+                PostEvent("clipboard_text_received", "{ req_id: \"" + requestId + "\", data: \"" + text + "\" }");
+            }
+            else
+            {
+                PostEvent("clipboard_text_received", "{ req_id: \"" + requestId + "\" }");
+            }
         }
 
         private void SetupClosingBehaviour(JsonObject eventData)
@@ -223,13 +309,17 @@ namespace Telegram.Views.Popups
                 var colorKey = eventData.GetNamedString("color_key");
                 var color = colorKey switch
                 {
+                    "bg_color" => Theme.Current.Parameters.BackgroundColor.ToColor(),
                     "secondary_bg_color" => Theme.Current.Parameters.SecondaryBackgroundColor.ToColor(),
                     _ => new Color?(),
                 };
 
+                _headerColorKey = colorKey;
                 ProcessHeaderColor(color);
             }
         }
+
+        private string _headerColorKey;
 
         private void ProcessHeaderColor(Color? color)
         {
@@ -267,7 +357,7 @@ namespace Telegram.Views.Popups
 
             _blockingAction = true;
 
-            var confirm = await MessagePopup.ShowAsync(null, string.Format(Strings.AreYouSureShareMyContactInfoWebapp, _botUser.FullName()), Strings.ShareYouPhoneNumberTitle, Strings.OK, Strings.Cancel);
+            var confirm = await MessagePopup.ShowAsync(string.Format(Strings.AreYouSureShareMyContactInfoWebapp, _botUser.FullName()), Strings.ShareYouPhoneNumberTitle, Strings.OK, Strings.Cancel);
             if (confirm == ContentDialogResult.Primary && _clientService.TryGetUser(_clientService.Options.MyId, out User user))
             {
                 var chat = await _clientService.SendAsync(new CreatePrivateChat(_botUser.Id, false)) as Chat;
@@ -315,7 +405,7 @@ namespace Telegram.Views.Popups
                 return;
             }
 
-            var confirm = await MessagePopup.ShowAsync(null, Strings.BotWebViewRequestWriteMessage, Strings.BotWebViewRequestWriteTitle, Strings.BotWebViewRequestAllow, Strings.BotWebViewRequestDontAllow);
+            var confirm = await MessagePopup.ShowAsync(Strings.BotWebViewRequestWriteMessage, Strings.BotWebViewRequestWriteTitle, Strings.BotWebViewRequestAllow, Strings.BotWebViewRequestDontAllow);
             if (confirm == ContentDialogResult.Primary)
             {
                 await _clientService.SendAsync(new AllowBotToSendMessages(_botUser.Id));
@@ -330,7 +420,7 @@ namespace Telegram.Views.Popups
             }
         }
 
-        private void OpenPopup(JsonObject eventData)
+        private async void OpenPopup(JsonObject eventData)
         {
             var title = eventData.GetNamedString("title", string.Empty);
             var message = eventData.GetNamedString("message", string.Empty);
@@ -341,24 +431,30 @@ namespace Telegram.Views.Popups
                 return;
             }
 
+            var label = new TextBlock
+            {
+                Text = message,
+            };
+
+            Grid.SetColumnSpan(label, int.MaxValue);
+
             var panel = new Grid
             {
                 ColumnSpacing = 8,
                 Margin = new Thickness(0, 8, 0, 0)
             };
 
-            var popup = new TeachingTip
+            panel.RowDefinitions.Add(new RowDefinition { Height = new GridLength(1, GridUnitType.Auto) });
+            panel.RowDefinitions.Add(new RowDefinition { Height = new GridLength(1, GridUnitType.Auto) });
+            panel.Children.Add(label);
+
+            var popup = new ContentPopup
             {
                 Title = title,
-                Subtitle = message,
                 Content = panel,
-                PreferredPlacement = TeachingTipPlacementMode.Center,
                 Width = 388,
                 MinWidth = 388,
                 MaxWidth = 388,
-                Target = null,
-                IsLightDismissEnabled = false,
-                ShouldConstrainToRootBounds = true,
             };
 
             void click(object sender, RoutedEventArgs e)
@@ -369,7 +465,7 @@ namespace Telegram.Views.Popups
                     button.Click -= click;
                 }
 
-                popup.IsOpen = false;
+                popup.Hide();
             }
 
             for (int i = 0; i < buttons.Count; i++)
@@ -408,6 +504,8 @@ namespace Telegram.Views.Popups
                         break;
                 }
 
+                Grid.SetRow(action, 1);
+
                 if (buttons.Count == 1)
                 {
                     Grid.SetColumn(action, 1);
@@ -422,19 +520,7 @@ namespace Telegram.Views.Popups
                 panel.Children.Add(action);
             }
 
-            if (Window.Current.Content is IToastHost host)
-            {
-                void handler(object sender, object e)
-                {
-                    host.Disconnect(popup);
-                    popup.Closed -= handler;
-                }
-
-                host.Connect(popup);
-                popup.Closed += handler;
-            }
-
-            popup.IsOpen = true;
+            await popup.ShowQueuedAsync();
         }
 
         private void OpenInvoice(JsonObject eventData)
@@ -445,7 +531,7 @@ namespace Telegram.Views.Popups
                 return;
             }
 
-            _navigationService.NavigateToInvoice(new InputInvoiceName(value));
+            ByNavigation(navigationService => navigationService.NavigateToInvoice(new InputInvoiceName(value)));
         }
 
         private void OpenExternalLink(JsonObject eventData)
@@ -457,7 +543,7 @@ namespace Telegram.Views.Popups
                 return;
             }
 
-            MessageHelper.OpenUrl(_clientService, _navigationService, value);
+            MessageHelper.OpenUrl(null, null, value);
         }
 
         private void OpenInternalLink(JsonObject eventData)
@@ -468,8 +554,8 @@ namespace Telegram.Views.Popups
                 return;
             }
 
-            Hide();
-            MessageHelper.OpenUrl(_clientService, _navigationService, "https://t.me" + value);
+            //Hide();
+            ByNavigation(navigationService => MessageHelper.OpenUrl(_clientService, navigationService, "https://t.me" + value));
         }
 
         private void SendViewport()
@@ -651,7 +737,7 @@ namespace Telegram.Views.Popups
 
             if (target.AllowBotChats || target.AllowUserChats || target.AllowGroupChats || target.AllowChannelChats)
             {
-                _navigationService.ShowPopupAsync(typeof(ChooseChatsPopup), new ChooseChatsConfigurationSwitchInline(query, target, _botUser));
+                ByNavigation(navigation => navigation.ShowPopupAsync(typeof(ChooseChatsPopup), new ChooseChatsConfigurationSwitchInline(query, target, _botUser)));
             }
             else if (_sourceChat != null)
             {
@@ -669,39 +755,19 @@ namespace Telegram.Views.Popups
             }
 
             /*if (!_context
-		|| _context->fromSwitch
-		|| _context->fromBotApp
-		|| _context->fromMainMenu
-		|| _context->action.history->peer != _bot
-		|| _lastShownQueryId) {
-		return;
-	}*/
+        || _context->fromSwitch
+        || _context->fromBotApp
+        || _context->fromMainMenu
+        || _context->action.history->peer != _bot
+        || _lastShownQueryId) {
+        return;
+        }*/
         }
 
         private void PostEvent(string eventName, string eventData = "null")
         {
             Logger.Info(string.Format("{0}: {1}", eventName, eventData));
             View.InvokeScript($"window.Telegram.WebView.receiveEvent('{eventName}', {eventData});");
-        }
-
-        private async void OnClosing(ContentDialog sender, ContentDialogClosingEventArgs args)
-        {
-            if (_closeNeedConfirmation)
-            {
-                args.Cancel = true;
-
-                var confirm = await MessagePopup.ShowAsync(target: null, Strings.BotWebViewChangesMayNotBeSaved, _botUser.FirstName, Strings.BotWebViewCloseAnyway, Strings.Cancel, destructive: true);
-                if (confirm == ContentDialogResult.Primary)
-                {
-                    _closeNeedConfirmation = false;
-                    Hide();
-                }
-            }
-        }
-
-        private void OnClosed(ContentDialog sender, ContentDialogClosedEventArgs args)
-        {
-            View.Close();
         }
 
         private void More_ContextRequested(object sender, RoutedEventArgs e)
@@ -718,12 +784,19 @@ namespace Telegram.Views.Popups
 
             flyout.CreateFlyoutItem(MenuItemReloadPage, Strings.BotWebViewReloadPage, Icons.ArrowClockwise);
 
+            flyout.CreateFlyoutItem(MenuItemTerms, Strings.BotWebViewToS, Icons.Info);
+
             if (_menuBot != null && _menuBot.IsAdded)
             {
                 flyout.CreateFlyoutItem(MenuItemDeleteBot, Strings.BotWebViewDeleteBot, Icons.Delete, destructive: true);
             }
 
             flyout.ShowAt(sender as Button, FlyoutPlacementMode.BottomEdgeAlignedRight);
+        }
+
+        private void MenuItemTerms()
+        {
+            MessageHelper.OpenUrl(null, null, Strings.BotWebViewToSLink);
         }
 
         private void MenuItemSettings()
@@ -733,8 +806,8 @@ namespace Telegram.Views.Popups
 
         private void MenuItemOpenBot()
         {
-            _navigationService.NavigateToUser(_botUser.Id);
-            Hide();
+            ByNavigation(navigationService => navigationService.NavigateToUser(_botUser.Id));
+            //Hide();
         }
 
         private void MenuItemReloadPage()
@@ -742,14 +815,50 @@ namespace Telegram.Views.Popups
             View.Reload();
         }
 
-        private void MenuItemDeleteBot()
+        private async void MenuItemDeleteBot()
         {
-
+            var confirm = await MessagePopup.ShowAsync(string.Format(Strings.BotRemoveFromMenu, _menuBot.Name), Strings.BotRemoveFromMenuTitle, Strings.OK, Strings.Cancel);
+            if (confirm == ContentDialogResult.Primary)
+            {
+                _menuBot.IsAdded = false;
+                _clientService.Send(new ToggleBotIsAddedToAttachmentMenu(_menuBot.BotUserId, false, false));
+            }
         }
 
         private void BackButton_Click(object sender, RoutedEventArgs e)
         {
             PostEvent("back_button_pressed");
+        }
+
+        private async void ByNavigation(Action<INavigationService> action)
+        {
+            var service = WindowContext.Main.NavigationServices.GetByFrameId($"Main{_clientService.SessionId}");
+            if (service != null)
+            {
+                action(service);
+                await ApplicationViewSwitcher.SwitchAsync(WindowContext.Main.Id);
+            }
+        }
+
+        private void OnActualThemeChanged(FrameworkElement sender, object args)
+        {
+            PostThemeChanged();
+
+            if (_headerColorKey != null)
+            {
+                ProcessHeaderColor(_headerColorKey switch
+                {
+                    "bg_color" => Theme.Current.Parameters.BackgroundColor.ToColor(),
+                    "secondary_bg_color" => Theme.Current.Parameters.SecondaryBackgroundColor.ToColor(),
+                    _ => new Color?(),
+                });
+            }
+        }
+
+        private void PostThemeChanged()
+        {
+            var theme = ClientEx.GetThemeParametersJsonString(Theme.Current.Parameters);
+            PostEvent("theme_changed", "{\"theme_params\": " + theme + "}");
         }
     }
 }

@@ -143,6 +143,7 @@ namespace Telegram.Services.ViewService
                 if (parameters.Width != 0 && parameters.Height != 0)
                 {
                     preferences.CustomSize = new Size(parameters.Width, parameters.Height);
+                    preferences.ViewSizePreference = ViewSizePreference.Custom;
                 }
 
                 await ApplicationViewSwitcher.TryShowAsViewModeAsync(control.Id, parameters.ViewMode, preferences);

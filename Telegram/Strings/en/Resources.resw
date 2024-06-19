@@ -2107,6 +2107,12 @@ It will be able to access your **IP address** and basic device info.</value>
   <data name="BotWebViewStartPermission" xml:space="preserve">
     <value>To launch this web app, you will connect to its website.</value>
   </data>
+  <data name="BotWebViewToS" xml:space="preserve">
+    <value>Terms of Use</value>
+  </data>
+  <data name="BotWebViewToSLink" xml:space="preserve">
+    <value>https://telegram.org/tos/mini-apps</value>
+  </data>
   <data name="BubbleRadius" xml:space="preserve">
     <value>Message corners</value>
   </data>

@@ -1,6 +1,7 @@
 ﻿using Microsoft.UI.Xaml.Controls;
 using Microsoft.Web.WebView2.Core;
 using System;
+using System.ComponentModel;
 using System.Threading.Tasks;
 using Telegram.Common;
 using Telegram.Native;
@@ -24,6 +25,16 @@ namespace Telegram.Controls
         }
     }
 
+    public class WebViewerNavigatingEventArgs : CancelEventArgs
+    {
+        public string Url { get; }
+
+        public WebViewerNavigatingEventArgs(string url)
+        {
+            Url = url;
+        }
+    }
+
     public class WebViewer : ContentControl
     {
         private WebPresenter _presenter;
@@ -37,13 +48,14 @@ namespace Telegram.Controls
             if (ChromiumWebPresenter.IsSupported())
             {
                 _presenter = new ChromiumWebPresenter();
-                _presenter.EventReceived += OnEventReceived;
             }
             else
             {
                 _presenter = new EdgeWebPresenter();
-                _presenter.EventReceived += OnEventReceived;
             }
+
+            _presenter.Navigating += OnNavigating;
+            _presenter.EventReceived += OnEventReceived;
 
             Content = _presenter;
         }
@@ -62,9 +74,11 @@ namespace Telegram.Controls
                 goto Cleanup;
             }
 
+            _presenter.Navigating -= OnNavigating;
             _presenter.EventReceived -= OnEventReceived;
 
             _presenter = new EdgeWebPresenter();
+            _presenter.Navigating += OnNavigating;
             _presenter.EventReceived += OnEventReceived;
 
             Content = _presenter;
@@ -80,16 +94,23 @@ namespace Telegram.Controls
             return !_closed && _presenter is ChromiumWebPresenter;
         }
 
+        private void OnNavigating(object sender, WebViewerNavigatingEventArgs e)
+        {
+            Navigating?.Invoke(this, e);
+        }
+
         private void OnEventReceived(object sender, WebViewerEventReceivedEventArgs e)
         {
             EventReceived?.Invoke(this, e);
         }
 
+        public event EventHandler<WebViewerNavigatingEventArgs> Navigating;
+
         public event EventHandler<WebViewerEventReceivedEventArgs> EventReceived;
 
         public async void Navigate(string uri)
         {
-            if (_initialized || await EnsureInitializedAsync())
+            if (await EnsureInitializedAsync())
             {
                 _presenter.Navigate(uri);
             }
@@ -97,7 +118,7 @@ namespace Telegram.Controls
 
         public async void NavigateToString(string htmlContent)
         {
-            if (_initialized || await EnsureInitializedAsync())
+            if (await EnsureInitializedAsync())
             {
                 _presenter.NavigateToString(htmlContent);
             }
@@ -105,7 +126,7 @@ namespace Telegram.Controls
 
         public async void InvokeScript(string javaScript)
         {
-            if (_initialized || await EnsureInitializedAsync())
+            if (await EnsureInitializedAsync())
             {
                 _ = _presenter.InvokeScriptAsync(javaScript);
             }
@@ -113,7 +134,7 @@ namespace Telegram.Controls
 
         public async Task InvokeScriptAsync(string javaScript)
         {
-            if (_initialized || await EnsureInitializedAsync())
+            if (await EnsureInitializedAsync())
             {
                 await _presenter.InvokeScriptAsync(javaScript);
             }
@@ -121,7 +142,7 @@ namespace Telegram.Controls
 
         public async void Reload()
         {
-            if (_initialized || await EnsureInitializedAsync())
+            if (await EnsureInitializedAsync())
             {
                 _presenter.Reload();
             }
@@ -154,6 +175,8 @@ namespace Telegram.Controls
 
         public event EventHandler<WebViewerEventReceivedEventArgs> EventReceived;
 
+        public event EventHandler<WebViewerNavigatingEventArgs> Navigating;
+
         public abstract void Navigate(string uri);
 
         public abstract void NavigateToString(string htmlContent);
@@ -167,6 +190,13 @@ namespace Telegram.Controls
         protected void OnEventReceived(string eventName, JsonObject eventData)
         {
             EventReceived?.Invoke(this, new WebViewerEventReceivedEventArgs(eventName, eventData));
+        }
+
+        protected bool OnNavigating(string url)
+        {
+            var args = new WebViewerNavigatingEventArgs(url);
+            Navigating?.Invoke(this, args);
+            return args.Cancel;
         }
     }
 
@@ -193,6 +223,7 @@ namespace Telegram.Controls
         private void OnNavigationStarting(WebView sender, WebViewNavigationStartingEventArgs args)
         {
             sender.AddWebAllowedObject("TelegramWebviewProxy", new TelegramWebviewProxy(ReceiveEvent));
+            args.Cancel = OnNavigating(args.Uri.ToString());
         }
 
         private void OnUnloaded(object sender, RoutedEventArgs e)
@@ -277,6 +308,7 @@ namespace Telegram.Controls
 
             View = GetTemplateChild(nameof(View)) as WebView2;
             View.CoreWebView2Initialized += OnCoreWebView2Initialized;
+            View.NavigationStarting += OnNavigationStarting;
             View.WebMessageReceived += OnWebMessageReceived;
 
             await View.EnsureCoreWebView2Async();
@@ -303,6 +335,11 @@ postEvent: function(eventType, eventData) {
             {
                 Initialize(false);
             }
+        }
+
+        private void OnNavigationStarting(WebView2 sender, CoreWebView2NavigationStartingEventArgs args)
+        {
+            args.Cancel = OnNavigating(args.Uri);
         }
 
         private void OnCoreWebView2Initialized(WebView2 sender, CoreWebView2InitializedEventArgs args)

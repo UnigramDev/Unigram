@@ -19,6 +19,7 @@ using Telegram.ViewModels.Payments;
 using Telegram.ViewModels.Settings;
 using Telegram.Views;
 using Telegram.Views.Payments;
+using Telegram.Views.Popups;
 using Telegram.Views.Premium.Popups;
 using Telegram.Views.Settings;
 using Telegram.Views.Settings.Password;
@@ -49,6 +50,17 @@ namespace Telegram.Common
         }
 
         public IClientService ClientService => _clientService;
+
+        public async void NavigateToWebApp(User botUser, string url, long launchId = 0, AttachmentMenuBot menuBot = null, Chat sourceChat = null)
+        {
+            await OpenAsync(new ViewServiceParams
+            {
+                Width = 384,
+                Height = 640,
+                PersistentId = "WebApp",
+                Content = control => new WebBotPopup(ClientService, botUser, url, launchId, menuBot, sourceChat)
+            });
+        }
 
         public async void NavigateToInstant(string url, string fallbackUrl = null)
         {

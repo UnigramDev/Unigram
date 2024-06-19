@@ -261,7 +261,7 @@
     <Compile Include="Composition\CompositionCurveVisual.cs" />
     <Compile Include="Composition\CompositionVSync.cs" />
     <Compile Include="Composition\Extensions.cs" />
-    <Compile Include="Composition\Interop.cs" />
+    <Compile Include="Common\Interop.cs" />
     <Compile Include="Controls\Cells\ChatBoostFeaturesCell.xaml.cs">
       <DependentUpon>ChatBoostFeaturesCell.xaml</DependentUpon>
     </Compile>
@@ -391,6 +391,7 @@
     <Compile Include="Td\Api\UpdateGreetingSticker.cs" />
     <Compile Include="Td\Api\UpdateMessageEffect.cs" />
     <Compile Include="Td\Api\UpdateMessageTranslatedText.cs" />
+    <Compile Include="Td\Api\UpdatePaymentCompleted.cs" />
     <Compile Include="TypeContainerGenerator.cs" />
     <Compile Include="TypeCrosserGenerator.cs" />
     <Compile Include="Videolan\Platforms\Windows\InitializedEventArgs.cs" />

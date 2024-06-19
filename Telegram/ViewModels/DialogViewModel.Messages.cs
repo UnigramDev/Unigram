@@ -1258,16 +1258,16 @@ namespace Telegram.ViewModels
             }
             else if (inline.Type is InlineKeyboardButtonTypeWebApp webApp)
             {
-                var bot = message.GetViaBotUser();
-                if (bot == null)
+                var botUser = message.GetViaBotUser();
+                if (botUser == null)
                 {
                     return;
                 }
 
-                var response = await ClientService.SendAsync(new OpenWebApp(chat.Id, bot.Id, webApp.Url, Theme.Current.Parameters, Strings.AppName, ThreadId, null));
+                var response = await ClientService.SendAsync(new OpenWebApp(chat.Id, botUser.Id, webApp.Url, Theme.Current.Parameters, Strings.AppName, ThreadId, null));
                 if (response is WebAppInfo webAppInfo)
                 {
-                    await ShowPopupAsync(new WebBotPopup(ClientService, NavigationService, bot, webAppInfo, null, chat));
+                    NavigationService.NavigateToWebApp(botUser, webAppInfo.Url, webAppInfo.LaunchId, null, chat);
                 }
             }
         }
@@ -1321,18 +1321,15 @@ namespace Telegram.ViewModels
                 var input = new InputMessageText(new FormattedText(keyboardButton.Text, null), null, true);
                 await SendMessageAsync(chat.Type is ChatTypeSupergroup or ChatTypeBasicGroup ? new InputMessageReplyToMessage(message.Id, null) : null, input, null);
             }
-            else if (keyboardButton.Type is KeyboardButtonTypeWebApp webApp && message.SenderId is MessageSenderUser bot)
+            else if (keyboardButton.Type is KeyboardButtonTypeWebApp webApp)
             {
-                var user = ClientService.GetUser(bot.UserId);
-                if (user == null)
+                if (ClientService.TryGetUser(message.SenderId, out Td.Api.User botUser))
                 {
-                    return;
-                }
-
-                var response = await ClientService.SendAsync(new OpenWebApp(chat.Id, bot.UserId, webApp.Url, Theme.Current.Parameters, Strings.AppName, ThreadId, null));
-                if (response is WebAppInfo webAppInfo)
-                {
-                    await ShowPopupAsync(new WebBotPopup(ClientService, NavigationService, user, webAppInfo, null, chat));
+                    var response = await ClientService.SendAsync(new OpenWebApp(chat.Id, botUser.Id, webApp.Url, Theme.Current.Parameters, Strings.AppName, ThreadId, null));
+                    if (response is WebAppInfo webAppInfo)
+                    {
+                        NavigationService.NavigateToWebApp(botUser, webAppInfo.Url, webAppInfo.LaunchId, null, chat);
+                    }
                 }
             }
             else if (keyboardButton.Type is KeyboardButtonTypeRequestUsers requestUsers)
@@ -1345,24 +1342,18 @@ namespace Telegram.ViewModels
             }
         }
 
-        public async void OpenMiniApp(AttachmentMenuBot bot)
+        public async void OpenMiniApp(AttachmentMenuBot menuBot)
         {
             var chat = _chat;
-            if (chat == null)
+            if (chat == null || !ClientService.TryGetUser(menuBot.BotUserId, out Td.Api.User botUser))
             {
                 return;
             }
 
-            var user = ClientService.GetUser(bot.BotUserId);
-            if (user == null)
-            {
-                return;
-            }
-
-            var response = await ClientService.SendAsync(new OpenWebApp(chat.Id, bot.BotUserId, string.Empty, Theme.Current.Parameters, Strings.AppName, ThreadId, null));
+            var response = await ClientService.SendAsync(new OpenWebApp(chat.Id, menuBot.BotUserId, string.Empty, Theme.Current.Parameters, Strings.AppName, ThreadId, null));
             if (response is WebAppInfo webAppInfo)
             {
-                await ShowPopupAsync(new WebBotPopup(ClientService, NavigationService, user, webAppInfo, bot, chat));
+                NavigationService.NavigateToWebApp(botUser, webAppInfo.Url, webAppInfo.LaunchId, menuBot, chat);
             }
         }
 

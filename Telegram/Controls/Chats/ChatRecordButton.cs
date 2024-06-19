@@ -8,7 +8,6 @@ using Microsoft.UI.Xaml.Controls;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using Telegram.Common;
 using Telegram.Services;
@@ -817,14 +816,6 @@ namespace Telegram.Controls.Chats
             private int _micLevelPeakCount = 0;
 
             private ulong _lastUpdateTime;
-
-            [ComImport]
-            [Guid("5B0D3235-4DBA-4D44-865E-8F1D0E4FD04D")]
-            [InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
-            private unsafe interface IMemoryBufferByteAccess
-            {
-                void GetBuffer(out byte* buffer, out uint capacity);
-            }
 
             private unsafe void OnAudioFrameArrived(MediaFrameReader sender, MediaFrameArrivedEventArgs args)
             {

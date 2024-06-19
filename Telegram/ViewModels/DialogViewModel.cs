@@ -3422,12 +3422,12 @@ namespace Telegram.ViewModels
                     NavigationService.NavigateToChat(chat);
                 }
             }
-            else if (InlineBotResults.Button.Type is InlineQueryResultsButtonTypeWebApp webApp)
+            else if (InlineBotResults.Button.Type is InlineQueryResultsButtonTypeWebApp webApp && _currentInlineBot is User botUser)
             {
-                var response = await ClientService.SendAsync(new GetWebAppUrl(_currentInlineBot.Id, webApp.Url, Theme.Current.Parameters, Strings.AppName));
+                var response = await ClientService.SendAsync(new GetWebAppUrl(botUser.Id, webApp.Url, Theme.Current.Parameters, Strings.AppName));
                 if (response is HttpUrl httpUrl)
                 {
-                    await ShowPopupAsync(new WebBotPopup(ClientService, NavigationService, _currentInlineBot, httpUrl.Url, null, Chat));
+                    NavigationService.NavigateToWebApp(botUser, httpUrl.Url, sourceChat: Chat);
                 }
             }
         }
