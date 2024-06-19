@@ -237,6 +237,7 @@
                                         <Hyperlink UnderlineStyle="None">
                                             <Run />
                                         </Hyperlink>
+                                        <Run Text="&#x200C;" />
                                     </TextBlock>
                                     <controls:IdentityIcon x:Name="Identity"
                                                            VerticalAlignment="Bottom"
