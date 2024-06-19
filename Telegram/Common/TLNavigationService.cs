@@ -22,7 +22,6 @@ using Telegram.ViewModels.Payments;
 using Telegram.ViewModels.Settings;
 using Telegram.Views;
 using Telegram.Views.Payments;
-using Telegram.Views.Popups;
 using Telegram.Views.Premium.Popups;
 using Telegram.Views.Settings;
 using Telegram.Views.Settings.Password;
@@ -68,7 +67,7 @@ namespace Telegram.Common
                 Width = 384,
                 Height = 640,
                 PersistedId = "WebApp",
-                Content = control => new WebBotPopup(ClientService, botUser, url, launchId, menuBot, sourceChat)
+                Content = control => new WebAppPage(ClientService, botUser, url, launchId, menuBot, sourceChat)
             });
         }
 

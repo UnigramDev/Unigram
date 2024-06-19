@@ -17,6 +17,7 @@ using Telegram.Services;
 using Telegram.Services.ViewService;
 using Telegram.Td;
 using Telegram.Td.Api;
+using Telegram.Views.Popups;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.Data.Json;
 using Windows.UI;
@@ -30,9 +31,9 @@ using Windows.UI.Xaml.Controls.Primitives;
 using Windows.UI.Xaml.Hosting;
 using Windows.UI.Xaml.Media;
 
-namespace Telegram.Views.Popups
+namespace Telegram.Views
 {
-    public sealed partial class WebBotPopup : UserControlEx
+    public sealed partial class WebAppPage : UserControlEx
     {
         private readonly IClientService _clientService;
         private readonly IEventAggregator _aggregator;
@@ -49,7 +50,7 @@ namespace Telegram.Views.Popups
         private bool _settingsVisible;
 
         // TODO: constructor should take a function and URL should be loaded asynchronously
-        public WebBotPopup(IClientService clientService, User botUser, string url, long launchId = 0, AttachmentMenuBot menuBot = null, Chat sourceChat = null)
+        public WebAppPage(IClientService clientService, User botUser, string url, long launchId = 0, AttachmentMenuBot menuBot = null, Chat sourceChat = null)
         {
             InitializeComponent();
 
