@@ -294,6 +294,7 @@ namespace Telegram.Controls
                     return false;
                 }
 
+                Environment.SetEnvironmentVariable("WEBVIEW2_DEFAULT_BACKGROUND_COLOR", "00FFFFFF");
                 return !string.IsNullOrEmpty(CoreWebView2Environment.GetAvailableBrowserVersionString());
             }
             catch

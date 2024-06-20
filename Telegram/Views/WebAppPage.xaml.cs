@@ -247,6 +247,10 @@ namespace Telegram.Views
             {
                 ProcessHeaderColor(eventData);
             }
+            else if (eventName == "web_app_set_background_color")
+            {
+                ProcessBackgroundColor(eventData);
+            }
         }
 
         private async void RequestClipboardText(JsonObject eventData)
@@ -296,31 +300,13 @@ namespace Telegram.Views
             }
         }
 
+        private string _headerColorKey;
+        private string _backgroundColorKey;
+
         private void ProcessHeaderColor(JsonObject eventData)
         {
-            if (eventData.ContainsKey("color"))
-            {
-                var colorValue = eventData.GetNamedString("color");
-                var color = ParseColor(colorValue);
-
-                ProcessHeaderColor(color);
-            }
-            else if (eventData.ContainsKey("color_key"))
-            {
-                var colorKey = eventData.GetNamedString("color_key");
-                var color = colorKey switch
-                {
-                    "bg_color" => Theme.Current.Parameters.BackgroundColor.ToColor(),
-                    "secondary_bg_color" => Theme.Current.Parameters.SecondaryBackgroundColor.ToColor(),
-                    _ => new Color?(),
-                };
-
-                _headerColorKey = colorKey;
-                ProcessHeaderColor(color);
-            }
+            ProcessHeaderColor(ProcessColor(eventData, out _backgroundColorKey));
         }
-
-        private string _headerColorKey;
 
         private void ProcessHeaderColor(Color? color)
         {
@@ -346,6 +332,51 @@ namespace Telegram.Views
                 MoreButton.RequestedTheme = ElementTheme.Default;
                 HideButton.RequestedTheme = ElementTheme.Default;
             }
+        }
+
+        private void ProcessBackgroundColor(JsonObject eventData)
+        {
+            ProcessBackgroundColor(ProcessColor(eventData, out _backgroundColorKey));
+        }
+
+        private void ProcessBackgroundColor(Color? color)
+        {
+            if (color is Color c)
+            {
+                BackgroundPanel.Background = new SolidColorBrush(c);
+            }
+            else
+            {
+                BackgroundPanel.Background = null;
+            }
+        }
+
+        private Color? ProcessColor(JsonObject eventData, out string key)
+        {
+            if (eventData.ContainsKey("color"))
+            {
+                var colorValue = eventData.GetNamedString("color");
+                var color = ParseColor(colorValue);
+
+                key = null;
+                return color;
+            }
+            else if (eventData.ContainsKey("color_key"))
+            {
+                var colorKey = eventData.GetNamedString("color_key");
+                var color = colorKey switch
+                {
+                    "bg_color" => Theme.Current.Parameters.BackgroundColor.ToColor(),
+                    "secondary_bg_color" => Theme.Current.Parameters.SecondaryBackgroundColor.ToColor(),
+                    _ => new Color?(),
+                };
+
+                key = colorKey;
+                return color;
+            }
+
+            key = null;
+            return null;
         }
 
         private async void RequestPhone()
@@ -848,6 +879,16 @@ namespace Telegram.Views
             if (_headerColorKey != null)
             {
                 ProcessHeaderColor(_headerColorKey switch
+                {
+                    "bg_color" => Theme.Current.Parameters.BackgroundColor.ToColor(),
+                    "secondary_bg_color" => Theme.Current.Parameters.SecondaryBackgroundColor.ToColor(),
+                    _ => new Color?(),
+                });
+            }
+
+            if (_backgroundColorKey != null)
+            {
+                ProcessHeaderColor(_backgroundColorKey switch
                 {
                     "bg_color" => Theme.Current.Parameters.BackgroundColor.ToColor(),
                     "secondary_bg_color" => Theme.Current.Parameters.SecondaryBackgroundColor.ToColor(),
