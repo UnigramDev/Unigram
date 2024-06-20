@@ -345,26 +345,12 @@ namespace Telegram.Services
                 return;
             }
 
-            var coordinator = VoipCallCoordinator.GetDefault();
-            var status = VoipPhoneCallResourceReservationStatus.ResourcesNotAvailable;
-
             try
             {
-                status = await coordinator.ReserveCallResourcesAsync();
-            }
-            catch (Exception ex)
-            {
-                if (ex.HResult == -2147024713)
-                {
-                    // CPU and memory resources have already been reserved for the app.
-                    // Ignore the return value from your call to ReserveCallResourcesAsync,
-                    // and proceed to handle a new VoIP call.
-                    status = VoipPhoneCallResourceReservationStatus.Success;
-                }
-            }
+                // GetDefault may throw already
+                var coordinator = VoipCallCoordinator.GetDefault();
+                var status = await coordinator.TryReserveCallResourcesAsync();
 
-            try
-            {
                 if (status == VoipPhoneCallResourceReservationStatus.Success)
                 {
                     _coordinator = coordinator;
