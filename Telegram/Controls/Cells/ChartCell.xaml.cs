@@ -86,8 +86,9 @@ namespace Telegram.Controls.Cells
                     //zoomedChartView.legendSignatureView.useHour = true;
                     break;
                 case 7:
+                case 8:
                     chartView = new StackBarChartView();
-                    chartView.useCrypto = true;
+                    chartView.currency = data.graphType == 7 ? "TON" : "XTR";
                     //zoomedChartView = new StackBarChartView();
                     //zoomedChartView.legendSignatureView.useHour = true;
                     break;

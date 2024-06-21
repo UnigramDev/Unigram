@@ -488,6 +488,11 @@ namespace Telegram.Views
                         _clientService,
                         _settingsService,
                         _eventAggregator);
+                case "Telegram.ViewModels.Chats.ChatStarsViewModel":
+                    return (T)(object)new Telegram.ViewModels.Chats.ChatStarsViewModel(
+                        _clientService,
+                        _settingsService,
+                        _eventAggregator);
                 case "Telegram.ViewModels.Chats.MessageStatisticsViewModel":
                     return (T)(object)new Telegram.ViewModels.Chats.MessageStatisticsViewModel(
                         _clientService,

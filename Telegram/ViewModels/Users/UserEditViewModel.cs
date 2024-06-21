@@ -11,6 +11,7 @@ using Telegram.Navigation.Services;
 using Telegram.Services;
 using Telegram.Td.Api;
 using Telegram.ViewModels.Delegates;
+using Telegram.Views.Chats;
 using Telegram.Views.Settings.Popups;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
@@ -33,7 +34,7 @@ namespace Telegram.ViewModels.Users
             SendCommand = new RelayCommand(Send, CanSend);
         }
 
-        private string _firstName;
+        private string _firstName = string.Empty;
         public string FirstName
         {
             get => _firstName;
@@ -46,7 +47,7 @@ namespace Telegram.ViewModels.Users
             }
         }
 
-        private string _lastName;
+        private string _lastName = string.Empty;
         public string LastName
         {
             get => _lastName;
@@ -59,7 +60,7 @@ namespace Telegram.ViewModels.Users
             }
         }
 
-        private string _description;
+        private string _description = string.Empty;
         public string Description
         {
             get => _description;
@@ -77,6 +78,13 @@ namespace Telegram.ViewModels.Users
                     SendCommand.RaiseCanExecuteChanged();
                 }
             }
+        }
+
+        private long? _starCount;
+        public long? StarCount
+        {
+            get => _starCount;
+            set => Set(ref _starCount, value);
         }
 
         private long _userId;
@@ -118,6 +126,15 @@ namespace Telegram.ViewModels.Users
                 }
 
                 ClientService.Send(new GetUserFullInfo(user.Id));
+
+                if (user.Type is UserTypeBot)
+                {
+                    var response = await ClientService.SendAsync(new GetStarTransactions(new MessageSenderUser(userId), null, string.Empty, 1));
+                    if (response is StarTransactions transactions)
+                    {
+                        StarCount = transactions.StarCount;
+                    }
+                }
             }
         }
 
@@ -263,6 +280,11 @@ namespace Telegram.ViewModels.Users
         public async void ChangeUsername()
         {
             await ShowPopupAsync(typeof(SettingsUsernamePopup), _userId);
+        }
+
+        public void ShowBalance()
+        {
+            NavigationService.Navigate(typeof(ChatStarsPage), new MessageSenderUser(_userId));
         }
 
         public void EditCommands()

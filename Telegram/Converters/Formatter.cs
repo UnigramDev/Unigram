@@ -280,6 +280,7 @@ namespace Telegram.Converters
                 case "XAF":
                 case "XOF":
                 case "XPF":
+                case "XTR":
                     return 1.0d;
                 case "MRO":
                     return 10.0d;
@@ -343,6 +344,19 @@ namespace Telegram.Converters
             //Long long time ago
             //TimeLabel.Text = dateTime.ToString(string.Format("d.MM.yyyy", shortTimePattern), cultureInfo);
             return ShortDate.Format(dateTime);
+        }
+
+        public static string Duration(int value)
+        {
+            var duration = TimeSpan.FromSeconds(value);
+            if (duration.TotalHours >= 1)
+            {
+                return duration.ToString("h\\:mm\\:ss");
+            }
+            else
+            {
+                return duration.ToString("mm\\:ss");
+            }
         }
 
         public static string Time(int value)

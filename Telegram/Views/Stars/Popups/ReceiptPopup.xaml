@@ -100,7 +100,7 @@
                 <Grid BorderBrush="{ThemeResource ButtonBorderBrush}"
                       BorderThickness="1"
                       CornerRadius="2"
-                      Margin="12,12,12,8">
+                      Margin="0,12,0,8">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="Auto" />
                         <ColumnDefinition Width="Auto" />

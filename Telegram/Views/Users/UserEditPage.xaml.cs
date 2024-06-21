@@ -5,6 +5,7 @@
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
 using Telegram.Controls;
+using Telegram.Converters;
 using Telegram.Td.Api;
 using Telegram.ViewModels.Delegates;
 using Telegram.ViewModels.Users;
@@ -40,7 +41,8 @@ namespace Telegram.Views.Users
 
                 LayoutRoot.Footer = string.Empty;
 
-                Username.Badge = user.ActiveUsername();
+                Username.Content = Strings.BotPublicLink;
+                Username.Badge = MeUrlPrefixConverter.Convert(ViewModel.ClientService, user.ActiveUsername(), true);
 
                 FirstName.PlaceholderText = Strings.BotName;
                 FirstName.VerticalAlignment = VerticalAlignment.Center;

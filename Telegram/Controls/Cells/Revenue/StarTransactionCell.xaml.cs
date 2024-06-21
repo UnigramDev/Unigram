@@ -26,9 +26,17 @@ namespace Telegram.Controls.Cells.Revenue
             }
             else if (transaction.Partner is StarTransactionPartnerFragment)
             {
-                Photo.Source = new PlaceholderImage(Icons.Premium, true, Color.FromArgb(0xFF, 0xFD, 0xD2, 0x1A), Color.FromArgb(0xFF, 0xE4, 0x7B, 0x03));
-                Title.Text = Strings.StarsTransactionFragment;
+                Photo.Source = new PlaceholderImage(Icons.FragmentFilled, true, Colors.Black, Colors.Black);
                 Subtitle.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
+
+                if (transaction.IsFragmentWithdrawal())
+                {
+                    Title.Text = Strings.StarsTransactionWithdrawFragment;
+                }
+                else
+                {
+                    Title.Text = Strings.StarsTransactionFragment;
+                }
             }
             else if (transaction.Partner is StarTransactionPartnerAppStore or StarTransactionPartnerGooglePlay)
             {
@@ -63,6 +71,22 @@ namespace Telegram.Controls.Cells.Revenue
             }
 
             Date.Text = Formatter.DateAt(transaction.Date);
+
+            if (transaction.IsFragmentWithdrawal())
+            {
+                if (transaction.IsRefund)
+                {
+                    Date.Text += string.Format(" — {0}", Strings.StarsRefunded);
+                }
+                else if (transaction.Partner is StarTransactionPartnerFragment { WithdrawalState: RevenueWithdrawalStateFailed })
+                {
+                    Date.Text += string.Format(" — {0}", Strings.StarsFailed);
+                }
+                else if (transaction.Partner is StarTransactionPartnerFragment { WithdrawalState: RevenueWithdrawalStatePending })
+                {
+                    Date.Text += string.Format(" — {0}", Strings.StarsPending);
+                }
+            }
 
             StarCount.Text = (transaction.StarCount < 0 ? string.Empty : "+") + transaction.StarCount.ToString("N0");
             StarCount.Foreground = BootStrapper.Current.Resources[transaction.StarCount < 0 ? "SystemFillColorCriticalBrush" : "SystemFillColorSuccessBrush"] as Brush;

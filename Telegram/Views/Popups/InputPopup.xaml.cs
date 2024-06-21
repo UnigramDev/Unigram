@@ -132,7 +132,11 @@ namespace Telegram.Views.Popups
             }
             else if (Number != null)
             {
-                Number.NumberFormatter = Formatter;
+                if (Formatter != null)
+                {
+                    Number.NumberFormatter = Formatter;
+                }
+
                 Number.Maximum = Maximum;
                 Number.Value = Value;
 

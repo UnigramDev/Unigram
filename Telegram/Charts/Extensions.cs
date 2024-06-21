@@ -16,12 +16,11 @@ namespace Telegram.Charts
 {
     public static class D2D1Extensions
     {
-        public static void DrawText(this CanvasDrawingSession session, string text, float x, float y, Paint paint)
+        public static void DrawText(this CanvasDrawingSession session, string text, float x, float y, Paint paint, CanvasTextFormat textFormat = null)
         {
-            CanvasTextFormat textFormat = null;
             if (paint.TextSize is float textSize)
             {
-                textFormat = new CanvasTextFormat();
+                textFormat ??= new CanvasTextFormat();
                 textFormat.FontSize = textSize;
             }
             if (paint.TextAlignment is CanvasHorizontalAlignment textAlignmnet)

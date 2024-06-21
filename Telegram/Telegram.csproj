@@ -210,6 +210,9 @@
     <Compile Include="Controls\Cells\Revenue\StarTransactionCell.xaml.cs">
       <DependentUpon>StarTransactionCell.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\Cells\StarAmountCell.xaml.cs">
+      <DependentUpon>StarAmountCell.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Controls\Cells\CryptoAmountCell.xaml.cs">
       <DependentUpon>CryptoAmountCell.xaml</DependentUpon>
     </Compile>
@@ -453,6 +456,7 @@
     <Compile Include="ViewModels\Business\BusinessRepliesViewModel.cs" />
     <Compile Include="ViewModels\ChatNotificationsViewModel.cs" />
     <Compile Include="ViewModels\Chats\ChatBoostsViewModel.cs" />
+    <Compile Include="ViewModels\Chats\ChatStarsViewModel.cs" />
     <Compile Include="ViewModels\Chats\ChatRevenueViewModel.cs" />
     <Compile Include="ViewModels\Chats\ChatStoriesViewModel.cs" />
     <Compile Include="ViewModels\ChooseChatsViewModel.cs" />
@@ -997,6 +1001,9 @@
     </Compile>
     <Compile Include="Views\Chats\ChatBoostsPage.xaml.cs">
       <DependentUpon>ChatBoostsPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Chats\ChatStarsPage.xaml.cs">
+      <DependentUpon>ChatStarsPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Chats\ChatRevenuePage.xaml.cs">
       <DependentUpon>ChatRevenuePage.xaml</DependentUpon>
@@ -2152,6 +2159,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Controls\Cells\StarAmountCell.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Controls\Cells\CryptoAmountCell.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -2691,6 +2702,10 @@
     <Page Include="Views\Chats\ChatBoostsPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Chats\ChatStarsPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="Views\Chats\ChatRevenuePage.xaml">
       <SubType>Designer</SubType>

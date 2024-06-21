@@ -487,7 +487,7 @@ namespace Telegram.Charts
                 int rightIndex = chartData.linesK[0] == 1 ? 1 : 0;
                 k = chartData.linesK[rightIndex];
             }
-            return new ChartHorizontalLinesData(newMaxHeight, newMinHeight, useMinHeight, useCrypto, k);
+            return new ChartHorizontalLinesData(newMaxHeight, newMinHeight, useMinHeight, currency, k);
         }
     }
 }

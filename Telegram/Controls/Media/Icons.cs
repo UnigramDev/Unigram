@@ -394,6 +394,7 @@ namespace Telegram.Controls.Media
         public const string EmojiFilled = "\uE9B1";
         public const string TranslateFilled = "\uE9B2";
 
+        public const string FragmentFilled = "\uEA8E";
         public const string Premium = "\uEA87";
         public const string Premium16 = "\uE9B5";
         public const string LockClosed16 = "\uE9BE";

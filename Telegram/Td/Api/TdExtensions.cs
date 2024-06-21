@@ -1033,6 +1033,23 @@ namespace Telegram.Td.Api
                 || webPage.Photo != null;
         }
 
+        public static bool IsFragmentWithdrawal(this StarTransaction transaction)
+        {
+            if (transaction.Partner is StarTransactionPartnerFragment)
+            {
+                if (transaction.StarCount > 0 && transaction.IsRefund)
+                {
+                    return true;
+                }
+                else if (transaction.StarCount < 0 && !transaction.IsRefund)
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
         public static File GetFile(this MessageWithOwner message)
         {
             if (message is MessageViewModel viewModel)

@@ -450,6 +450,7 @@ namespace Telegram
                 ChatInviteLinkPage => TypeResolver.Current.Resolve<ChatInviteLinkViewModel>(sessionId),
                 ChatStatisticsPage => TypeResolver.Current.Resolve<ChatStatisticsViewModel>(sessionId),
                 ChatRevenuePage => TypeResolver.Current.Resolve<ChatRevenueViewModel>(sessionId),
+                ChatStarsPage => TypeResolver.Current.Resolve<ChatStarsViewModel>(sessionId),
                 ChatStoriesPage => TypeResolver.Current.Resolve<ChatStoriesViewModel>(sessionId),
 
                 // Popups

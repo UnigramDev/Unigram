@@ -363,7 +363,7 @@ namespace Telegram.ViewModels.Chats
             {
                 return new DoubleLinearChartData(jsonObject);
             }
-            else if (graphType is 2 or 7)
+            else if (graphType is 2 or 7 or 8)
             {
                 return new StackBarChartData(jsonObject);
             }

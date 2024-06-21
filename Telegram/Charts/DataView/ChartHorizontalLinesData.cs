@@ -22,12 +22,12 @@ namespace Telegram.Charts.DataView
 
         public int fixedAlpha = 255;
 
-        public ChartHorizontalLinesData(int newMaxHeight, int newMinHeight, bool useMinHeight, bool crypto)
-            : this(newMaxHeight, newMinHeight, useMinHeight, crypto, 0)
+        public ChartHorizontalLinesData(int newMaxHeight, int newMinHeight, bool useMinHeight, string currency)
+            : this(newMaxHeight, newMinHeight, useMinHeight, currency, 0)
         {
         }
 
-        public ChartHorizontalLinesData(int newMaxHeight, int newMinHeight, bool useMinHeight, bool crypto, float k)
+        public ChartHorizontalLinesData(int newMaxHeight, int newMinHeight, bool useMinHeight, string currency, float k)
         {
             if (!useMinHeight)
             {
@@ -63,7 +63,7 @@ namespace Telegram.Charts.DataView
                 for (int i = 1; i < n; i++)
                 {
                     values[i] = i * step;
-                    valuesStr[i] = formatWholeNumber(values[i], 0, crypto);
+                    valuesStr[i] = formatWholeNumber(values[i], 0, currency);
                 }
             }
             else
@@ -112,7 +112,7 @@ namespace Telegram.Charts.DataView
                 for (int i = 0; i < n; i++)
                 {
                     values[i] = newMinHeight + (int)(i * step);
-                    valuesStr[i] = formatWholeNumber(values[i], dif, crypto);
+                    valuesStr[i] = formatWholeNumber(values[i], dif, currency);
                     if (k > 0)
                     {
                         float v = values[i] / k;
@@ -120,7 +120,7 @@ namespace Telegram.Charts.DataView
                         {
                             if (v - (int)v < 0.01f)
                             {
-                                valuesStr2[i] = formatWholeNumber((int)v, (int)(dif / k), crypto);
+                                valuesStr2[i] = formatWholeNumber((int)v, (int)(dif / k), currency);
                             }
                             else
                             {
@@ -129,7 +129,7 @@ namespace Telegram.Charts.DataView
                         }
                         else
                         {
-                            valuesStr2[i] = formatWholeNumber((int)v, (int)(dif / k), crypto);
+                            valuesStr2[i] = formatWholeNumber((int)v, (int)(dif / k), currency);
                         }
                     }
                 }
@@ -150,11 +150,11 @@ namespace Telegram.Charts.DataView
 
         public static readonly string[] s = { "", "K", "M", "G", "T", "P" };
 
-        private static string formatWholeNumber(int v, int dif, bool crypto)
+        private static string formatWholeNumber(int v, int dif, string currency)
         {
-            if (crypto)
+            if (currency != null)
             {
-                return Formatter.FormatAmount(v, "TON");
+                return Formatter.FormatAmount(v, currency);
             }
 
             if (v == 0)

@@ -53,9 +53,9 @@ namespace Telegram.Views.Stars.Popups
             }
             else if (transaction.Partner is StarTransactionPartnerFragment)
             {
-                FromPhoto.Source = new PlaceholderImage(Icons.Premium, true, Color.FromArgb(0xFF, 0xFD, 0xD2, 0x1A), Color.FromArgb(0xFF, 0xE4, 0x7B, 0x03));
+                FromPhoto.Source = new PlaceholderImage(Icons.FragmentFilled, true, Colors.Black, Colors.Black);
                 FromPhoto.Visibility = Visibility.Collapsed;
-                FromTitle.Text = Strings.StarsTransactionFragment;
+                FromTitle.Text = Strings.Fragment;
                 FromHeader.Text = Strings.StarsTransactionSource;
 
                 Title.Text = Strings.StarsTransactionFragment;

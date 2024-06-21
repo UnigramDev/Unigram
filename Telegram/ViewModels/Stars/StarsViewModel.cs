@@ -62,6 +62,10 @@ namespace Telegram.ViewModels.Stars
 
                 OwnedStarCount = transactions.StarCount;
             }
+            else
+            {
+                HasMoreItems = false;
+            }
 
             return new LoadMoreItemsResult
             {
