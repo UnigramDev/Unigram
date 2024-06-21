@@ -339,7 +339,7 @@ namespace Telegram.Controls.Messages
                 CreateIcon();
 
                 var presenter = ElementComposition.GetElementVisual(Presenter);
-                var incoming = message.IsChannelPost || !message.IsOutgoing;
+                var outgoing = (message.IsOutgoing && !message.IsChannelPost && message.SenderId is MessageSenderUser) || (message.IsSaved && message.ForwardInfo?.Source is { IsOutgoing: true });
 
                 if (animate)
                 {
@@ -365,7 +365,7 @@ namespace Telegram.Controls.Messages
                         }
                     }
 
-                    if (incoming && !IsAlbumChild)
+                    if (!outgoing && !IsAlbumChild)
                     {
                         offset.InsertKeyFrame(0, value ? 0 : 36);
                         offset.InsertKeyFrame(1, value ? 36 : 0);
@@ -390,7 +390,7 @@ namespace Telegram.Controls.Messages
 
                     if (!IsAlbumChild)
                     {
-                        presenter.Offset = new Vector3(value && incoming ? 36 : 0, 0, 0);
+                        presenter.Offset = new Vector3(value && outgoing ? 0 : 36, 0, 0);
                     }
                 }
             }
