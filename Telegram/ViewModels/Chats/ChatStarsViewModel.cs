@@ -188,6 +188,7 @@ namespace Telegram.ViewModels.Chats
             };
 
             WithdrawalEnabled = status.WithdrawalEnabled;
+            NextWithdrawalDate = DateTime.Now.AddSeconds(status.NextWithdrawalIn).ToTimestamp();
         }
 
         public async void Transfer()

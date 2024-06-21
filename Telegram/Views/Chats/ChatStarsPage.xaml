@@ -108,10 +108,18 @@
                                     Click="{x:Bind ViewModel.Transfer}"
                                     Style="{StaticResource AccentButtonStyle}"
                                     HorizontalAlignment="Center"
-                                    Height="36"
+                                    Height="40"
                                     Margin="12,8">
                                 <StackPanel>
-                                    <TextBlock Text="{CustomResource BotStarsButtonWithdrawUntil}" />
+                                    <TextBlock x:Name="TransferText"
+                                               Text="{CustomResource BotStarsButtonWithdrawUntil}" />
+                                    <TextBlock x:Name="TransferCountdown"
+                                               Style="{StaticResource CaptionTextBlockStyle}"
+                                               FontFamily="{StaticResource EmojiThemeFontFamilyWithSymbols}"
+                                               HorizontalAlignment="Center"
+                                               Margin="0,-2,0,0"
+                                               Visibility="Collapsed"
+                                               Opacity="0.6" />
                                 </StackPanel>
                             </Button>
                         </StackPanel>

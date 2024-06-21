@@ -395,6 +395,18 @@ namespace Telegram.Common
             return connection.SendMessageAsync(new ValueSet { { message, parameter ?? true } });
         }
 
+        public static string GetDuration(this TimeSpan duration)
+        {
+            if (duration.TotalHours >= 1)
+            {
+                return duration.ToString("h\\:mm\\:ss");
+            }
+            else
+            {
+                return duration.ToString("mm\\:ss");
+            }
+        }
+
         public static void TryProcessDownEvent(this GestureRecognizer recognizer, PointerPoint value)
         {
             try
