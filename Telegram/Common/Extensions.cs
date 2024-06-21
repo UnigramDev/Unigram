@@ -443,6 +443,27 @@ namespace Telegram.Common
             }
         }
 
+        public static async Task<VoipPhoneCallResourceReservationStatus> TryReserveCallResourcesAsync(this VoipCallCoordinator coordinator)
+        {
+            var status = VoipPhoneCallResourceReservationStatus.ResourcesNotAvailable;
+            try
+            {
+                status = await coordinator.ReserveCallResourcesAsync();
+            }
+            catch (Exception ex)
+            {
+                if (ex.HResult == -2147024713)
+                {
+                    // CPU and memory resources have already been reserved for the app.
+                    // Ignore the return value from your call to ReserveCallResourcesAsync,
+                    // and proceed to handle a new VoIP call.
+                    status = VoipPhoneCallResourceReservationStatus.Success;
+                }
+            }
+
+            return status;
+        }
+
         public static void TryNotifyMutedChanged(this VoipCallCoordinator coordinator, bool muted)
         {
             try
