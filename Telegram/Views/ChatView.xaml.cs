@@ -1691,7 +1691,7 @@ namespace Telegram.Views
 
                     foreach (var bot in bots)
                     {
-                        var item = flyout.CreateFlyoutItem(ViewModel.OpenMiniApp, bot, bot.Name, Icons.Bot);
+                        var item = flyout.CreateFlyoutItem(ViewModel.OpenMiniApp, bot, bot.Name, bot.BotUserId == 1985737506 ? Icons.Wallet : Icons.Bot);
                         item.ContextRequested += AttachmentMenuBot_ContextRequested;
                     }
                 }
