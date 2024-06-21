@@ -223,7 +223,7 @@ namespace Telegram.Controls
         private void OnNavigationStarting(WebView sender, WebViewNavigationStartingEventArgs args)
         {
             sender.AddWebAllowedObject("TelegramWebviewProxy", new TelegramWebviewProxy(ReceiveEvent));
-            args.Cancel = OnNavigating(args.Uri.ToString());
+            args.Cancel = OnNavigating(args.Uri?.ToString() ?? string.Empty);
         }
 
         private void OnUnloaded(object sender, RoutedEventArgs e)
