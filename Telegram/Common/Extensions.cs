@@ -344,6 +344,63 @@ namespace Telegram.Common
             return false;
         }
 
+        public static int OffsetToIndex(this TextPointer pointer)
+        {
+            if (pointer.VisualParent is not RichTextBlock textBlock)
+            {
+                return -1;
+            }
+
+            var index = 0;
+
+            for (int i = 0; i < textBlock.Blocks.Count; i++)
+            {
+                var block = textBlock.Blocks[i] as Paragraph;
+
+                if (pointer.Offset == block.ElementStart.Offset)
+                {
+                    break;
+                }
+
+                // Element start
+                index++;
+
+                if (OffsetToIndex(textBlock, block.Inlines, pointer, ref index))
+                {
+                    break;
+                }
+
+                if (pointer.Offset < block.ElementEnd.Offset)
+                {
+                    if (pointer.Offset == block.ContentEnd.Offset)
+                    {
+                        if (i == textBlock.Blocks.Count - 1)
+                        {
+                            // Always close when ending on the last paragraph
+                            index++;
+                        }
+                        else
+                        {
+                            index += 1;//paragraph.Padding;
+                        }
+                    }
+
+                    break;
+                }
+
+                // Element end
+                index += 1;//paragraph.Padding;
+            }
+
+            // Adjust the offset if the selection ends on the text block itself
+            if (pointer.Offset == textBlock.ContentEnd.Offset && pointer.Parent is RichTextBlock)
+            {
+                index += 2;
+            }
+
+            return pointer.Offset - index;
+        }
+
         public static bool HasExtension(this IStorageFile file, params string[] extensions)
         {
             foreach (var ext in extensions)
@@ -1308,6 +1365,19 @@ namespace Telegram.Common
                 DecodePixelType = width > 0 || height > 0
                     ? DecodePixelType.Logical
                     : DecodePixelType.Logical
+            };
+        }
+
+        public static SvgImageSource ToSvg(string path, int width = 0, int height = 0)
+        {
+            if (string.IsNullOrEmpty(path))
+            {
+                return null;
+            }
+
+            return new SvgImageSource(ToLocal(path))
+            {
+
             };
         }
 
