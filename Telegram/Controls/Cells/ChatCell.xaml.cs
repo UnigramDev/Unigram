@@ -1412,16 +1412,7 @@ namespace Telegram.Controls.Cells
             }
             else if (content is MessageInvoice invoice)
             {
-                var caption = invoice.ExtendedMedia switch
-                {
-                    MessageExtendedMediaPreview extendedMediaPreview => extendedMediaPreview.Caption,
-                    MessageExtendedMediaPhoto extendedMediaPhoto => extendedMediaPhoto.Caption,
-                    MessageExtendedMediaVideo extendedMediaVideo => extendedMediaVideo.Caption,
-                    MessageExtendedMediaUnsupported extendedMediaUnsupported => extendedMediaUnsupported.Caption,
-                    _ => null
-                };
-
-                return Text1("\U0001F4CB ", caption, invoice.ProductInfo.Title);
+                return Text1("\U0001F4CB ", invoice.ExtendedMediaCaption, invoice.ProductInfo.Title);
             }
             else if (content is MessageContact)
             {

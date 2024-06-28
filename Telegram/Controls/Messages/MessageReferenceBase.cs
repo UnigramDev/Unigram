@@ -518,15 +518,7 @@ namespace Telegram.Controls.Messages
         {
             HideThumbnail();
 
-            var caption = invoice.ExtendedMedia switch
-            {
-                MessageExtendedMediaPreview preview => preview.Caption,
-                MessageExtendedMediaPhoto photo => photo.Caption,
-                MessageExtendedMediaVideo video => video.Caption,
-                MessageExtendedMediaUnsupported unsupported => unsupported.Caption,
-                _ => null,
-            };
-
+            var caption = invoice.ExtendedMediaCaption;
             if (caption != null && !string.IsNullOrEmpty(caption.Text))
             {
                 SetText(clientService,

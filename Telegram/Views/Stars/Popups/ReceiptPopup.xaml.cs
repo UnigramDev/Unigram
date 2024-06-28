@@ -73,19 +73,19 @@ namespace Telegram.Views.Stars.Popups
                 Subtitle.Visibility = Visibility.Collapsed;
                 Photo.Visibility = Visibility.Collapsed;
             }
-            else if (transaction.Partner is StarTransactionPartnerUser sourceUser && clientService.TryGetUser(sourceUser.UserId, out User user))
+            else if (transaction.Partner is StarTransactionPartnerBot sourceBot && clientService.TryGetUser(sourceBot.BotUserId, out User user))
             {
                 FromPhoto.SetUser(clientService, user, 24);
                 FromPhoto.Visibility = Visibility.Visible;
                 FromTitle.Text = user.FullName();
                 FromHeader.Text = Strings.StarsTransactionRecipient;
 
-                if (sourceUser.ProductInfo != null)
+                if (sourceBot.ProductInfo != null)
                 {
-                    Title.Text = sourceUser.ProductInfo.Title;
-                    TextBlockHelper.SetFormattedText(Subtitle, sourceUser.ProductInfo.Description);
+                    Title.Text = sourceBot.ProductInfo.Title;
+                    TextBlockHelper.SetFormattedText(Subtitle, sourceBot.ProductInfo.Description);
 
-                    var small = sourceUser.ProductInfo.Photo?.GetSmall();
+                    var small = sourceBot.ProductInfo.Photo?.GetSmall();
                     if (small != null)
                     {
                         UpdateManager.Subscribe(this, _clientService, small.Photo, ref _thumbnailToken, UpdateFile, true);

@@ -1831,14 +1831,7 @@ namespace Telegram.Controls.Messages
             }
             else if (content is MessageInvoice invoice)
             {
-                result = invoice.ExtendedMedia switch
-                {
-                    MessageExtendedMediaPreview preview => ReplaceEntities(message, preview.Caption),
-                    MessageExtendedMediaPhoto photo => ReplaceEntities(message, photo.Caption),
-                    MessageExtendedMediaVideo video => ReplaceEntities(message, video.Caption),
-                    MessageExtendedMediaUnsupported unsupported => ReplaceEntities(message, unsupported.Caption),
-                    _ => false
-                };
+                result = ReplaceEntities(message, invoice.ExtendedMediaCaption);
             }
             else if (content is MessagePhoto photo)
             {

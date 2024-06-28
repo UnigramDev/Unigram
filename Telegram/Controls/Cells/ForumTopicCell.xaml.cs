@@ -543,14 +543,7 @@ namespace Telegram.Controls.Cells
                 MessageText text => text.Text,
                 MessageAnimatedEmoji animatedEmoji => new FormattedText(animatedEmoji.Emoji, Array.Empty<TextEntity>()),
                 MessageDice dice => new FormattedText(dice.Emoji, Array.Empty<TextEntity>()),
-                MessageInvoice invoice => invoice.ExtendedMedia switch
-                {
-                    MessageExtendedMediaPreview preview => preview.Caption,
-                    MessageExtendedMediaPhoto photo => photo.Caption,
-                    MessageExtendedMediaVideo video => video.Caption,
-                    MessageExtendedMediaUnsupported unsupported => unsupported.Caption,
-                    _ => new FormattedText(string.Empty, Array.Empty<TextEntity>())
-                },
+                MessageInvoice invoice => invoice.ExtendedMediaCaption,
                 _ => new FormattedText(string.Empty, Array.Empty<TextEntity>()),
             };
         }

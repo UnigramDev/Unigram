@@ -44,11 +44,11 @@ namespace Telegram.Controls.Cells.Revenue
                 Title.Text = Strings.StarsTransactionInApp;
                 Subtitle.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
             }
-            else if (transaction.Partner is StarTransactionPartnerUser sourceUser && clientService.TryGetUser(sourceUser.UserId, out User user))
+            else if (transaction.Partner is StarTransactionPartnerBot sourceBot && clientService.TryGetUser(sourceBot.BotUserId, out User user))
             {
-                if (sourceUser.ProductInfo != null)
+                if (sourceBot.ProductInfo != null)
                 {
-                    Title.Text = sourceUser.ProductInfo.Title;
+                    Title.Text = sourceBot.ProductInfo.Title;
                     Subtitle.Text = user.FullName();
                 }
                 else

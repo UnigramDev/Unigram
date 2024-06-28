@@ -1383,14 +1383,7 @@ namespace Telegram.Td.Api
                     }),
                     _ => new FormattedText(animatedEmoji.Emoji, Array.Empty<TextEntity>())
                 },
-                MessageInvoice invoice => invoice.ExtendedMedia switch
-                {
-                    MessageExtendedMediaPreview preview => preview.Caption,
-                    MessageExtendedMediaPhoto photo => photo.Caption,
-                    MessageExtendedMediaVideo video => video.Caption,
-                    MessageExtendedMediaUnsupported unsupported => unsupported.Caption,
-                    _ => null,
-                },
+                MessageInvoice invoice => invoice.ExtendedMediaCaption,
                 _ => null,
             };
         }
