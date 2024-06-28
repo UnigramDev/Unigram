@@ -53,6 +53,8 @@ namespace Telegram.Services
 
         Task<IList<SavedMessagesTopic>> GetSavedMessagesChatsAsync(int offset, int limit);
 
+        Task<BaseObject> GetStarTransactionsAsync(MessageSender ownerId, StarTransactionDirection direction, string offset, int limit);
+
         Sticker NextGreetingSticker();
 
         int SessionId { get; }
@@ -964,6 +966,21 @@ namespace Telegram.Services
             return file;
         }
 
+
+        public async Task<BaseObject> GetStarTransactionsAsync(MessageSender ownerId, StarTransactionDirection direction, string offset, int limit)
+        {
+            var response = await SendAsync(new GetStarTransactions(ownerId, direction, offset, limit));
+            if (response is StarTransactions transactions)
+            {
+                if (ownerId == null || ownerId.IsUser(Options.MyId))
+                {
+                    OwnedStarCount = transactions.StarCount;
+                    _aggregator.Publish(new UpdateOwnedStarCount(transactions.StarCount));
+                }
+            }
+
+            return response;
+        }
 
 
         public async Task<bool> HasPrivacySettingsRuleAsync<T>(UserPrivacySetting setting) where T : UserPrivacySettingRule

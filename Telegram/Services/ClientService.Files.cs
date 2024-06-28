@@ -742,6 +742,13 @@ namespace Telegram.Services
                     ProcessFiles(item);
                 }
             }
+            else if (target is FoundStories foundStories)
+            {
+                foreach (var item in foundStories.Stories)
+                {
+                    ProcessFiles(item);
+                }
+            }
             else if (target is FoundWebApp foundWebApp)
             {
                 if (foundWebApp.WebApp != null)
@@ -1025,9 +1032,9 @@ namespace Telegram.Services
                 {
                     ProcessFiles(messageInvoice.ExtendedMedia);
                 }
-                if (messageInvoice.ProductInfo.Photo != null)
+                if (messageInvoice.ProductInfo != null)
                 {
-                    ProcessFiles(messageInvoice.ProductInfo.Photo);
+                    ProcessFiles(messageInvoice.ProductInfo);
                 }
             }
             else if (target is MessageLinkInfo messageLinkInfo)
@@ -1035,6 +1042,13 @@ namespace Telegram.Services
                 if (messageLinkInfo.Message != null)
                 {
                     ProcessFiles(messageLinkInfo.Message);
+                }
+            }
+            else if (target is MessagePaidMedia messagePaidMedia)
+            {
+                foreach (var item in messagePaidMedia.Media)
+                {
+                    ProcessFiles(item);
                 }
             }
             else if (target is MessagePassportDataReceived messagePassportDataReceived)
@@ -1540,16 +1554,16 @@ namespace Telegram.Services
             }
             else if (target is PaymentForm paymentForm)
             {
-                if (paymentForm.ProductInfo.Photo != null)
+                if (paymentForm.ProductInfo != null)
                 {
-                    ProcessFiles(paymentForm.ProductInfo.Photo);
+                    ProcessFiles(paymentForm.ProductInfo);
                 }
             }
             else if (target is PaymentReceipt paymentReceipt)
             {
-                if (paymentReceipt.ProductInfo.Photo != null)
+                if (paymentReceipt.ProductInfo != null)
                 {
-                    ProcessFiles(paymentReceipt.ProductInfo.Photo);
+                    ProcessFiles(paymentReceipt.ProductInfo);
                 }
             }
             else if (target is PersonalDocument personalDocument)
@@ -1593,6 +1607,13 @@ namespace Telegram.Services
                 foreach (var item in premiumState.BusinessAnimations)
                 {
                     ProcessFiles(item);
+                }
+            }
+            else if (target is ProductInfo productInfo)
+            {
+                if (productInfo.Photo != null)
+                {
+                    ProcessFiles(productInfo.Photo);
                 }
             }
             else if (target is ProfilePhoto profilePhoto)
@@ -1844,6 +1865,34 @@ namespace Telegram.Services
             else if (target is SponsoredMessages sponsoredMessages)
             {
                 foreach (var item in sponsoredMessages.Messages)
+                {
+                    ProcessFiles(item);
+                }
+            }
+            else if (target is StarTransaction starTransaction)
+            {
+                if (starTransaction.Partner != null)
+                {
+                    ProcessFiles(starTransaction.Partner);
+                }
+            }
+            else if (target is StarTransactionPartnerBot starTransactionPartnerBot)
+            {
+                if (starTransactionPartnerBot.ProductInfo != null)
+                {
+                    ProcessFiles(starTransactionPartnerBot.ProductInfo);
+                }
+            }
+            else if (target is StarTransactionPartnerChannel starTransactionPartnerChannel)
+            {
+                foreach (var item in starTransactionPartnerChannel.Media)
+                {
+                    ProcessFiles(item);
+                }
+            }
+            else if (target is StarTransactions starTransactions)
+            {
+                foreach (var item in starTransactions.Transactions)
                 {
                     ProcessFiles(item);
                 }
@@ -2131,6 +2180,13 @@ namespace Telegram.Services
                     ProcessFiles(updateMessageSendSucceeded.Message);
                 }
             }
+            else if (target is UpdateNewBusinessCallbackQuery updateNewBusinessCallbackQuery)
+            {
+                if (updateNewBusinessCallbackQuery.Message != null)
+                {
+                    ProcessFiles(updateNewBusinessCallbackQuery.Message);
+                }
+            }
             else if (target is UpdateNewBusinessMessage updateNewBusinessMessage)
             {
                 if (updateNewBusinessMessage.Message != null)
@@ -2365,11 +2421,6 @@ namespace Telegram.Services
                 {
                     ProcessFiles(item);
                 }
-            }
-            else if (target is StarTransactions starTransactions)
-            {
-                OwnedStarCount = starTransactions.StarCount;
-                _aggregator.Publish(new UpdateOwnedStarCount(starTransactions.StarCount));
             }
         }
     }

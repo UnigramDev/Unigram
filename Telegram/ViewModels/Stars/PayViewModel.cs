@@ -54,7 +54,7 @@ namespace Telegram.ViewModels.Stars
                 PaymentForm = args.PaymentForm;
             }
 
-            ClientService.Send(new GetStarTransactions(ClientService.MyId, null, string.Empty, 1));
+            _ = ClientService.GetStarTransactionsAsync(ClientService.MyId, null, string.Empty, 1);
             return Task.CompletedTask;
         }
 
@@ -77,7 +77,7 @@ namespace Telegram.ViewModels.Stars
 
             if (ClientService.OwnedStarCount < stars.StarCount)
             {
-                var updated = await ClientService.SendAsync(new GetStarTransactions(ClientService.MyId, null, string.Empty, 1)) as StarTransactions;
+                var updated = await ClientService.GetStarTransactionsAsync(ClientService.MyId, null, string.Empty, 1) as StarTransactions;
                 if (updated is null || updated.StarCount < stars.StarCount)
                 {
                     return PayResult.StarsNeeded;

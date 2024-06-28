@@ -129,7 +129,7 @@ namespace Telegram.ViewModels.Users
 
                 if (user.Type is UserTypeBot)
                 {
-                    var response = await ClientService.SendAsync(new GetStarTransactions(new MessageSenderUser(userId), null, string.Empty, 1));
+                    var response = await ClientService.GetStarTransactionsAsync(new MessageSenderUser(userId), null, string.Empty, 1);
                     if (response is StarTransactions transactions)
                     {
                         StarCount = transactions.StarCount;

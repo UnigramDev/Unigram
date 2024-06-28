@@ -77,7 +77,7 @@ namespace Telegram.ViewModels
                 }
             }
 
-            ClientService.Send(new GetStarTransactions(ClientService.MyId, null, string.Empty, 1));
+            _ = ClientService.GetStarTransactionsAsync(ClientService.MyId, null, string.Empty, 1);
             return Task.CompletedTask;
         }
 
