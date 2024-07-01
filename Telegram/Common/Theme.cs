@@ -345,6 +345,7 @@ namespace Telegram.Common
                     { "AccentButtonBackground", 0 },
                     { "AccentButtonForeground", 0 },
                     { "SystemControlDisabledChromeDisabledLowBrush", 0 },
+                    { "SystemControlForegroundBaseLowBrush", 0 },
                     { "HyperlinkForeground", 0 },
                     { "DangerButtonBackground", 0xD13438 }
                 };
@@ -448,6 +449,7 @@ namespace Telegram.Common
                     SectionBackgroundColor = themeParameters["ContentDialogBackground"],
                     SectionHeaderTextColor = themeParameters["ContentDialogForeground"],
                     SubtitleTextColor = themeParameters["SystemControlDisabledChromeDisabledLowBrush"],
+                    SectionSeparatorColor = themeParameters["SystemControlForegroundBaseLowBrush"],
                 };
             }
             catch (UnauthorizedAccessException)
