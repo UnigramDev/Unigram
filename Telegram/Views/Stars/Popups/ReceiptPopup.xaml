@@ -23,6 +23,31 @@
                                              Width="120"
                                              Height="120"
                                              Margin="0,0,0,8" />
+
+                    <HyperlinkButton x:Name="MediaPreview"
+                                     Click="MediaPreview_Click"
+                                     Style="{StaticResource EmptyHyperlinkButtonStyle}"
+                                     Margin="0,0,0,8">
+                        <Grid Width="120"
+                              Height="120">
+                            <Border x:Name="Media2"
+                                    HorizontalAlignment="Right"
+                                    VerticalAlignment="Bottom"
+                                    CornerRadius="12"
+                                    Width="110"
+                                    Height="110" />
+                            <Border x:Name="Media1"
+                                    HorizontalAlignment="Left"
+                                    VerticalAlignment="Top"
+                                    CornerRadius="12"
+                                    Width="120"
+                                    Height="120"
+                                    BorderBrush="{ThemeResource ContentDialogBackground}"
+                                    BorderThickness="2"
+                                    Margin="-8" />
+                        </Grid>
+                    </HyperlinkButton>
+
                     <TextBlock x:Name="Title"
                                Text="{CustomResource GiftTelegramPremiumTitle}"
                                FontSize="20"

@@ -4,8 +4,10 @@
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+using System.Linq;
 using Telegram.Common;
 using Telegram.Controls;
+using Telegram.Controls.Gallery;
 using Telegram.Controls.Media;
 using Telegram.Converters;
 using Telegram.Navigation;
@@ -13,10 +15,13 @@ using Telegram.Navigation.Services;
 using Telegram.Services;
 using Telegram.Streams;
 using Telegram.Td.Api;
+using Telegram.ViewModels;
+using Telegram.ViewModels.Gallery;
 using Telegram.Views.Popups;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.UI;
 using Windows.UI.Xaml;
+using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Documents;
 using Windows.UI.Xaml.Media;
 
@@ -27,9 +32,14 @@ namespace Telegram.Views.Stars.Popups
         private readonly IClientService _clientService;
         private readonly INavigationService _navigationService;
 
+        private readonly StarTransaction _transaction;
+
         private readonly string _transactionId;
 
         private long _thumbnailToken;
+
+        private long _media1Token;
+        private long _media2Token;
 
         public ReceiptPopup(IClientService clientService, INavigationService navigationService, StarTransaction transaction)
         {
@@ -38,6 +48,7 @@ namespace Telegram.Views.Stars.Popups
             _clientService = clientService;
             _navigationService = navigationService;
 
+            _transaction = transaction;
             _transactionId = transaction.Id;
 
             if (transaction.Partner is StarTransactionPartnerTelegram)
@@ -50,6 +61,8 @@ namespace Telegram.Views.Stars.Popups
                 Title.Text = Strings.StarsTransactionBot;
                 Subtitle.Visibility = Visibility.Collapsed;
                 Photo.Visibility = Visibility.Collapsed;
+
+                MediaPreview.Visibility = Visibility.Collapsed;
             }
             else if (transaction.Partner is StarTransactionPartnerFragment)
             {
@@ -61,6 +74,8 @@ namespace Telegram.Views.Stars.Popups
                 Title.Text = Strings.StarsTransactionFragment;
                 Subtitle.Visibility = Visibility.Collapsed;
                 Photo.Visibility = Visibility.Collapsed;
+
+                MediaPreview.Visibility = Visibility.Collapsed;
             }
             else if (transaction.Partner is StarTransactionPartnerAppStore or StarTransactionPartnerGooglePlay)
             {
@@ -72,6 +87,8 @@ namespace Telegram.Views.Stars.Popups
                 Title.Text = Strings.StarsTransactionInApp;
                 Subtitle.Visibility = Visibility.Collapsed;
                 Photo.Visibility = Visibility.Collapsed;
+
+                MediaPreview.Visibility = Visibility.Collapsed;
             }
             else if (transaction.Partner is StarTransactionPartnerBot sourceBot && clientService.TryGetUser(sourceBot.BotUserId, out User user))
             {
@@ -96,10 +113,33 @@ namespace Telegram.Views.Stars.Popups
                         Photo.SetUser(clientService, user, 120);
                     }
                 }
+
+                MediaPreview.Visibility = Visibility.Collapsed;
             }
             else if (transaction.Partner is StarTransactionPartnerChannel sourceChannel && clientService.TryGetChat(sourceChannel.ChatId, out Chat chat))
             {
-                // TODO:
+                FromPhoto.SetChat(clientService, chat, 24);
+                FromPhoto.Visibility = Visibility.Visible;
+                FromTitle.Text = chat.Title;
+                FromHeader.Text = Strings.StarsTransactionRecipient;
+
+                Title.Text = Strings.StarMediaPurchase;
+                Subtitle.Visibility = Visibility.Collapsed;
+
+                MediaPreview.Visibility = Windows.UI.Xaml.Visibility.Visible;
+
+                UpdateMedia(clientService, sourceChannel.Media[0], Media1, ref _media1Token);
+
+                if (sourceChannel.Media.Count > 1)
+                {
+                    UpdateMedia(clientService, sourceChannel.Media[1], Media2, ref _media2Token);
+
+                    Media2.Visibility = Windows.UI.Xaml.Visibility.Visible;
+                }
+                else
+                {
+                    Media2.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
+                }
             }
             else
             {
@@ -111,6 +151,8 @@ namespace Telegram.Views.Stars.Popups
                 Title.Text = Strings.StarsTransactionUnsupported;
                 Subtitle.Visibility = Visibility.Collapsed;
                 Photo.Source = PlaceholderImage.GetGlyph(Icons.QuestionCircle, long.MinValue);
+
+                MediaPreview.Visibility = Visibility.Collapsed;
             }
 
             Identifier.Text = transaction.Id;
@@ -213,6 +255,56 @@ namespace Telegram.Views.Stars.Popups
             }
         }
 
+        private void UpdateMedia(IClientService clientService, PaidMedia media, Border target, ref long token)
+        {
+            File file;
+            if (media is PaidMediaPhoto photo)
+            {
+                file = photo.Photo.GetSmall()?.Photo;
+            }
+            else if (media is PaidMediaVideo video)
+            {
+                file = video.Video.Thumbnail.File;
+            }
+            else
+            {
+                return;
+            }
+
+            if (file.Local.IsDownloadingCompleted)
+            {
+                UpdateMedia(target, file);
+            }
+            else if (file.Local.CanBeDownloaded)
+            {
+                UpdateManager.Subscribe(this, clientService, file, ref token, target == Media1 ? UpdateMedia1 : UpdateMedia2, true);
+                clientService.DownloadFile(file.Id, 16);
+
+                target.Background = null;
+            }
+        }
+
+        private void UpdateMedia1(object target, File file)
+        {
+            UpdateMedia(Media1, file);
+        }
+
+        private void UpdateMedia2(object target, File file)
+        {
+            UpdateMedia(Media2, file);
+        }
+
+        private void UpdateMedia(Border target, File file)
+        {
+            target.Background = new ImageBrush
+            {
+                ImageSource = UriEx.ToBitmap(file.Local.Path),
+                Stretch = Stretch.UniformToFill,
+                AlignmentX = AlignmentX.Center,
+                AlignmentY = AlignmentY.Center,
+            };
+        }
+
         private void CopyLink_Click(object sender, RoutedEventArgs e)
         {
             var dataPackage = new DataPackage();
@@ -220,6 +312,44 @@ namespace Telegram.Views.Stars.Popups
             ClipboardEx.TrySetContent(dataPackage);
 
             ToastPopup.Show(Strings.StarsTransactionIDCopied, new LocalFileSource("ms-appx:///Assets/Toasts/Copied.tgs"));
+        }
+
+        private async void MediaPreview_Click(object sender, RoutedEventArgs e)
+        {
+            GalleryMedia item = null;
+            GalleryMedia Filter(PaidMedia x)
+            {
+                GalleryMedia result = null;
+                if (x is PaidMediaPhoto photo)
+                {
+                    result = new GalleryPhoto(_clientService, photo.Photo, true);
+                }
+                else if (x is PaidMediaVideo video)
+                {
+                    result = new GalleryVideo(_clientService, video.Video, true);
+                }
+
+                item ??= result;
+                return result;
+            }
+
+            if (_transaction.Partner is not StarTransactionPartnerChannel channel)
+            {
+                return;
+            }
+
+            var items = channel.Media
+                .Select(Filter)
+                .Where(x => x is not null)
+                .ToList();
+
+            var storageService = TypeResolver.Current.Resolve<IStorageService>(_clientService.SessionId);
+            var aggregator = TypeResolver.Current.Resolve<IEventAggregator>(_clientService.SessionId);
+
+            var viewModel = new StandaloneGalleryViewModel(_clientService, storageService, aggregator, items, item);
+
+            viewModel.NavigationService = _navigationService;
+            await GalleryWindow.ShowAsync(viewModel, () => Media1);
         }
     }
 }

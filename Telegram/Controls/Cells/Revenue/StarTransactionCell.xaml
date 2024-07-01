@@ -30,6 +30,29 @@
                              Margin="0,0,8,0"
                              Grid.RowSpan="3" />
 
+    <Grid x:Name="MediaPreview"
+          VerticalAlignment="Top"
+          Width="36"
+          Height="36"
+          Margin="0,0,8,0"
+          Grid.RowSpan="3">
+        <Border x:Name="Media2"
+                HorizontalAlignment="Right"
+                VerticalAlignment="Bottom"
+                CornerRadius="8"
+                Width="32"
+                Height="32" />
+        <Border x:Name="Media1"
+                HorizontalAlignment="Left"
+                VerticalAlignment="Top"
+                CornerRadius="8"
+                Width="36"
+                Height="36"
+                BorderBrush="{ThemeResource ContentDialogBackground}"
+                BorderThickness="2"
+                Margin="-2" />
+    </Grid>
+
     <Viewbox Width="24"
              Height="24"
              Grid.Column="4"
