@@ -12,6 +12,7 @@ using Telegram.Navigation.Services;
 using Telegram.Services;
 using Telegram.Td.Api;
 using Telegram.ViewModels.Supergroups;
+using Telegram.Views;
 using Telegram.Views.Chats.Popups;
 using Telegram.Views.Monetization.Popups;
 using Windows.UI.Xaml.Data;
@@ -19,7 +20,7 @@ using Windows.UI.Xaml.Navigation;
 
 namespace Telegram.ViewModels.Chats
 {
-    public class ChatRevenueViewModel : ViewModelBase, IIncrementalCollectionOwner, IHandle
+    public class ChatRevenueViewModel : MultiViewModelBase, IIncrementalCollectionOwner, IHandle
     {
         private ChatBoostStatus _status;
         private ChatBoostFeatures _features;
@@ -27,7 +28,10 @@ namespace Telegram.ViewModels.Chats
         public ChatRevenueViewModel(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator)
             : base(clientService, settingsService, aggregator)
         {
+            Stars = TypeResolver.Current.Resolve<ChatStarsViewModel>(clientService.SessionId);
             Items = new IncrementalCollection<ChatRevenueTransaction>(this);
+
+            Children.Add(Stars);
         }
 
         private double _headerHeight;
@@ -36,6 +40,8 @@ namespace Telegram.ViewModels.Chats
             get => _headerHeight;
             set => Set(ref _headerHeight, value);
         }
+
+        public ChatStarsViewModel Stars { get; }
 
         private Chat _chat;
         public Chat Chat

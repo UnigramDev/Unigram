@@ -113,6 +113,11 @@ namespace Telegram.ViewModels.Chats
 
         protected override async Task OnNavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
         {
+            if (parameter is long chatId)
+            {
+                parameter = new MessageSenderChat(chatId);
+            }
+
             _ownerId = parameter as MessageSender;
             IsLoading = true;
 
@@ -188,7 +193,15 @@ namespace Telegram.ViewModels.Chats
             };
 
             WithdrawalEnabled = status.WithdrawalEnabled;
-            NextWithdrawalDate = DateTime.Now.AddSeconds(status.NextWithdrawalIn).ToTimestamp();
+
+            if (status.NextWithdrawalIn > 0)
+            {
+                NextWithdrawalDate = DateTime.Now.AddSeconds(status.NextWithdrawalIn).ToTimestamp();
+            }
+            else
+            {
+                NextWithdrawalDate = 0;
+            }
         }
 
         public async void Transfer()
@@ -199,7 +212,7 @@ namespace Telegram.ViewModels.Chats
                 return;
             }
 
-            var popup = new InputPopup(InputPopupType.Value);
+            var popup = new InputPopup(InputPopupType.Stars);
             popup.Value = AvailableAmount?.CryptocurrencyAmount ?? 0;
             popup.Maximum = AvailableAmount?.CryptocurrencyAmount ?? 0;
 

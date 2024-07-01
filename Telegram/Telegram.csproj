@@ -231,6 +231,9 @@
     <Compile Include="Controls\Cells\ProfileHoursCell.xaml.cs">
       <DependentUpon>ProfileHoursCell.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\Cells\StarWithdrawCell.xaml.cs">
+      <DependentUpon>StarWithdrawCell.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Controls\Chats\ChatConnectedBotHeader.xaml.cs">
       <DependentUpon>ChatConnectedBotHeader.xaml</DependentUpon>
     </Compile>
@@ -1374,7 +1377,7 @@
     <Compile Include="ViewModels\Settings\SettingsThemesViewModel.cs" />
     <Compile Include="ViewModels\Settings\SettingsWebSessionsViewModel.cs" />
     <Compile Include="ViewModels\Settings\SettingsNotificationsViewModel.cs" />
-    <Compile Include="ViewModels\SingleGalleryViewModel.cs" />
+    <Compile Include="ViewModels\StandaloneGalleryViewModel.cs" />
     <Compile Include="ViewModels\Delegates\IMemberPopupDelegate.cs" />
     <Compile Include="ViewModels\Supergroups\SupergroupChooseMemberViewModel.cs" />
     <Compile Include="ViewModels\Supergroups\SupergroupAdministratorsViewModel.cs" />
@@ -2214,6 +2217,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Controls\Cells\ActiveStoriesCell.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\Cells\StarWithdrawCell.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

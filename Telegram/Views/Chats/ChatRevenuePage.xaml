@@ -44,20 +44,53 @@
                         </ContentControl.ContentTemplate>
                     </ContentControl>
 
+                    <ContentControl Content="{x:Bind ViewModel.Stars.Revenue, Mode=OneWay}">
+                        <ContentControl.ContentTemplate>
+                            <DataTemplate>
+                                <cells:ChartCell DataContextChanged="OnElementPrepared"
+                                                 Background="{ThemeResource SettingsItemBackground}" />
+                            </DataTemplate>
+                        </ContentControl.ContentTemplate>
+                    </ContentControl>
+
                     <controls:HeaderedControl Header="{CustomResource MonetizationOverview}"
                                               Background="{ThemeResource SettingsItemBackground}">
-                        <cells:CryptoAmountCell x:Name="AvailableAmount"
-                                                Amount="{x:Bind ViewModel.AvailableAmount, Mode=OneWay}"
-                                                Text="{CustomResource MonetizationOverviewAvailable}"
-                                                Margin="12,8" />
-                        <cells:CryptoAmountCell x:Name="PreviousAmount"
-                                                Amount="{x:Bind ViewModel.PreviousAmount, Mode=OneWay}"
-                                                Text="{CustomResource MonetizationOverviewLastWithdrawal}"
-                                                Margin="12,0" />
-                        <cells:CryptoAmountCell x:Name="TotalAmount"
-                                                Amount="{x:Bind ViewModel.TotalAmount, Mode=OneWay}"
-                                                Text="{CustomResource MonetizationOverviewTotal}"
-                                                Margin="12,8" />
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition />
+                                <RowDefinition />
+                                <RowDefinition />
+                            </Grid.RowDefinitions>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition />
+                                <ColumnDefinition />
+                            </Grid.ColumnDefinitions>
+                            <cells:CryptoAmountCell Amount="{x:Bind ViewModel.AvailableAmount, Mode=OneWay}"
+                                                    Text="{CustomResource MonetizationOverviewAvailable}"
+                                                    Margin="12,8"
+                                                    Grid.ColumnSpan="2" />
+                            <cells:StarAmountCell Amount="{x:Bind ViewModel.Stars.AvailableAmount, Mode=OneWay}"
+                                                  Margin="12,8"
+                                                  Grid.Column="1" />
+                            <cells:CryptoAmountCell Amount="{x:Bind ViewModel.PreviousAmount, Mode=OneWay}"
+                                                    Text="{CustomResource MonetizationOverviewLastWithdrawal}"
+                                                    Margin="12,0"
+                                                    Grid.ColumnSpan="2"
+                                                    Grid.Row="1" />
+                            <cells:StarAmountCell Amount="{x:Bind ViewModel.Stars.PreviousAmount, Mode=OneWay}"
+                                                  Margin="12,0"
+                                                  Grid.Column="1"
+                                                  Grid.Row="1" />
+                            <cells:CryptoAmountCell Amount="{x:Bind ViewModel.TotalAmount, Mode=OneWay}"
+                                                    Text="{CustomResource MonetizationOverviewTotal}"
+                                                    Margin="12,8"
+                                                    Grid.ColumnSpan="2"
+                                                    Grid.Row="2" />
+                            <cells:StarAmountCell Amount="{x:Bind ViewModel.TotalAmount, Mode=OneWay}"
+                                                  Margin="12,8"
+                                                  Grid.Column="1"
+                                                  Grid.Row="2" />
+                        </Grid>
                     </controls:HeaderedControl>
 
                     <controls:HeaderedControl IsFooterLink="True"
@@ -80,17 +113,35 @@
                                      Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" />
                             </TextBlock>
 
-                            <Button x:Name="TransferButton"
-                                    x:Load="{x:Bind ViewModel.IsOwner}"
-                                    Click="{x:Bind ViewModel.Transfer}"
-                                    IsEnabled="{x:Bind ViewModel.WithdrawalEnabled, Mode=OneWay}"
-                                    Content="{CustomResource MonetizationTransactionWithdraw}"
-                                    Style="{StaticResource AccentButtonStyle}"
-                                    HorizontalAlignment="Center"
-                                    Height="36"
-                                    Margin="12,8" />
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition />
+                                    <ColumnDefinition />
+                                </Grid.ColumnDefinitions>
+                                <Button x:Name="TransferButton"
+                                        x:Load="{x:Bind ViewModel.IsOwner}"
+                                        Click="{x:Bind ViewModel.Transfer}"
+                                        IsEnabled="{x:Bind ViewModel.WithdrawalEnabled, Mode=OneWay}"
+                                        Content="{CustomResource MonetizationTransactionWithdraw}"
+                                        Style="{StaticResource AccentButtonStyle}"
+                                        HorizontalAlignment="Center"
+                                        Height="40"
+                                        Margin="12,8" />
+                                <Button x:Name="AdsButton"
+                                        x:Load="{x:Bind ViewModel.IsOwner}"
+                                        Click="{x:Bind ViewModel.Transfer}"
+                                        IsEnabled="{x:Bind ViewModel.WithdrawalEnabled, Mode=OneWay}"
+                                        Content="{CustomResource MonetizationTransactionWithdraw}"
+                                        Style="{StaticResource AccentButtonStyle}"
+                                        HorizontalAlignment="Center"
+                                        Height="40"
+                                        Margin="12,8"
+                                        Grid.Column="1"/>
+                            </Grid>
                         </StackPanel>
                     </controls:HeaderedControl>
+
+                    <cells:StarWithdrawCell x:Name="Withdraw" />
 
                     <TextBlock x:Name="TransactionsHeader"
                                x:Load="{x:Bind ViewModel.IsEmpty, Mode=OneWay, Converter={StaticResource BooleanNegationConverter}}"

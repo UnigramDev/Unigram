@@ -24,6 +24,8 @@ namespace Telegram.Views.Chats
 
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
+            Withdraw.DataContext = ViewModel.Stars;
+            Withdraw.OnNavigatedTo(e);
             ViewModel.PropertyChanged += OnPropertyChanged;
 
             UpdateAmount(ViewModel.AvailableAmount);
@@ -33,12 +35,13 @@ namespace Telegram.Views.Chats
 
         protected override void OnNavigatedFrom(NavigationEventArgs e)
         {
+            Withdraw.OnNavigatedFrom(e);
             ViewModel.PropertyChanged -= OnPropertyChanged;
         }
 
         private void OnPropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
-            if (e.PropertyName == nameof(AvailableAmount))
+            if (e.PropertyName == nameof(ViewModel.AvailableAmount))
             {
                 UpdateAmount(ViewModel.AvailableAmount);
             }
