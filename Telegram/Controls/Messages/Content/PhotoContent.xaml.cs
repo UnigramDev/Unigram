@@ -24,14 +24,17 @@ namespace Telegram.Controls.Messages.Content
         private MessageViewModel _message;
         public MessageViewModel Message => _message;
 
+        private PaidMediaPhoto _paidMedia;
+
         private long _fileToken;
         private long _thumbnailToken;
 
         private bool _hidden = true;
 
-        public PhotoContent(MessageViewModel message, bool album = false)
+        public PhotoContent(MessageViewModel message, PaidMediaPhoto paidMedia = null, bool album = false)
         {
             _message = message;
+            _paidMedia = paidMedia;
             _album = album;
 
             DefaultStyleKey = typeof(PhotoContent);
@@ -383,7 +386,7 @@ namespace Telegram.Controls.Messages.Content
             {
                 return text.WebPage.HasPhoto();
             }
-            else if (content is MessageInvoice invoice && invoice.ExtendedMedia is MessageExtendedMediaPhoto)
+            else if (content is MessageInvoice invoice && invoice.PaidMedia is PaidMediaPhoto)
             {
                 return true;
             }
@@ -402,6 +405,11 @@ namespace Telegram.Controls.Messages.Content
                 return null;
             }
 
+            if (_paidMedia != null)
+            {
+                return _paidMedia.Photo;
+            }
+
             var content = message.GeneratedContent ?? message.Content;
             if (content is MessagePhoto photo)
             {
@@ -418,9 +426,9 @@ namespace Telegram.Controls.Messages.Content
             {
                 return text.WebPage.Photo;
             }
-            else if (content is MessageInvoice invoice && invoice.ExtendedMedia is MessageExtendedMediaPhoto extendedMediaPhoto)
+            else if (content is MessageInvoice invoice && invoice.PaidMedia is PaidMediaPhoto paidMediaPhoto)
             {
-                return extendedMediaPhoto.Photo;
+                return paidMediaPhoto.Photo;
             }
 
             return null;
@@ -476,6 +484,10 @@ namespace Telegram.Controls.Messages.Content
             else if (_message.Content is MessageText text && text.WebPage.HasText())
             {
                 _message.Delegate.OpenWebPage(text.WebPage);
+            }
+            else if (_paidMedia != null)
+            {
+                _message.Delegate.OpenPaidMedia(_message, _paidMedia, this);
             }
             else
             {

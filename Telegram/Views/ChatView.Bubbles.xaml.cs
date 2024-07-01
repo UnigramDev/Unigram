@@ -405,7 +405,7 @@ namespace Telegram.Views
                     }
                     else
                     {
-                        viewModel = new SingleGalleryViewModel(ViewModel.ClientService, ViewModel.StorageService, ViewModel.Aggregator, new GalleryMessage(ViewModel.ClientService, message));
+                        viewModel = new StandaloneGalleryViewModel(ViewModel.ClientService, ViewModel.StorageService, ViewModel.Aggregator, new GalleryMessage(ViewModel.ClientService, message));
                     }
 
                     viewModel.NavigationService = ViewModel.NavigationService;

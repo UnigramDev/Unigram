@@ -998,18 +998,18 @@ namespace Telegram.Services
                     ProcessFiles(messageEffectTypePremiumSticker.Sticker);
                 }
             }
-            else if (target is MessageExtendedMediaPhoto messageExtendedMediaPhoto)
+            else if (target is PaidMediaPhoto PaidMediaPhoto)
             {
-                if (messageExtendedMediaPhoto.Photo != null)
+                if (PaidMediaPhoto.Photo != null)
                 {
-                    ProcessFiles(messageExtendedMediaPhoto.Photo);
+                    ProcessFiles(PaidMediaPhoto.Photo);
                 }
             }
-            else if (target is MessageExtendedMediaVideo messageExtendedMediaVideo)
+            else if (target is PaidMediaVideo PaidMediaVideo)
             {
-                if (messageExtendedMediaVideo.Video != null)
+                if (PaidMediaVideo.Video != null)
                 {
-                    ProcessFiles(messageExtendedMediaVideo.Video);
+                    ProcessFiles(PaidMediaVideo.Video);
                 }
             }
             else if (target is MessageGame messageGame)
@@ -1028,9 +1028,9 @@ namespace Telegram.Services
             }
             else if (target is MessageInvoice messageInvoice)
             {
-                if (messageInvoice.ExtendedMedia != null)
+                if (messageInvoice.PaidMedia != null)
                 {
-                    ProcessFiles(messageInvoice.ExtendedMedia);
+                    ProcessFiles(messageInvoice.PaidMedia);
                 }
                 if (messageInvoice.ProductInfo != null)
                 {

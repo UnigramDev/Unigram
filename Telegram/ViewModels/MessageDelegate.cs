@@ -325,6 +325,11 @@ namespace Telegram.ViewModels
         /// <summary>
         /// Only available when created through DialogViewModel
         /// </summary>
+        public virtual void OpenPaidMedia(MessageViewModel message, PaidMedia media, FrameworkElement target, int timestamp = 0) { }
+
+        /// <summary>
+        /// Only available when created through DialogViewModel
+        /// </summary>
         public virtual void PlayMessage(MessageViewModel message) { }
 
         /// <summary>
@@ -452,6 +457,11 @@ namespace Telegram.ViewModels
         }
 
         public override void OpenMedia(MessageViewModel message, FrameworkElement target, int timestamp = 0) => _viewModel.OpenMedia(message, target, timestamp);
+
+        public override void OpenPaidMedia(MessageViewModel message, PaidMedia media, FrameworkElement target, int timestamp = 0)
+        {
+            _viewModel.OpenPaidMedia(message, media, target, timestamp);
+        }
 
         public override void PlayMessage(MessageViewModel message) => _viewModel.PlayMessage(message);
 

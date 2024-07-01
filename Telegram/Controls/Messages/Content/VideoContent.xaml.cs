@@ -22,12 +22,15 @@ namespace Telegram.Controls.Messages.Content
         private MessageViewModel _message;
         public MessageViewModel Message => _message;
 
+        private PaidMediaVideo _paidMedia;
+
         private long _fileToken;
         private long _thumbnailToken;
 
-        public VideoContent(MessageViewModel message)
+        public VideoContent(MessageViewModel message, PaidMediaVideo paidMedia = null)
         {
             _message = message;
+            _paidMedia = paidMedia;
 
             DefaultStyleKey = typeof(VideoContent);
         }
@@ -379,7 +382,7 @@ namespace Telegram.Controls.Messages.Content
             {
                 return text.WebPage.Video != null;
             }
-            else if (content is MessageInvoice invoice && invoice.ExtendedMedia is MessageExtendedMediaVideo)
+            else if (content is MessageInvoice invoice && invoice.PaidMedia is PaidMediaVideo)
             {
                 return true;
             }
@@ -397,6 +400,11 @@ namespace Telegram.Controls.Messages.Content
                 return null;
             }
 
+            if (_paidMedia != null)
+            {
+                return _paidMedia.Video;
+            }
+
             var content = message.GeneratedContent ?? message.Content;
             if (content is MessageVideo video)
             {
@@ -408,9 +416,9 @@ namespace Telegram.Controls.Messages.Content
             {
                 return text.WebPage.Video;
             }
-            else if (content is MessageInvoice invoice && invoice.ExtendedMedia is MessageExtendedMediaVideo extendedMedia)
+            else if (content is MessageInvoice invoice && invoice.PaidMedia is PaidMediaVideo paidMedia)
             {
-                return extendedMedia.Video;
+                return paidMedia.Video;
             }
 
             return null;
@@ -517,6 +525,10 @@ namespace Telegram.Controls.Messages.Content
                     {
                         _message.ClientService.Send(new CancelPreliminaryUploadFile(file.Id));
                     }
+                }
+                else if (_paidMedia != null)
+                {
+                    _message.Delegate.OpenPaidMedia(_message, _paidMedia, this);
                 }
                 else
                 {

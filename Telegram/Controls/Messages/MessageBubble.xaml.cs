@@ -495,7 +495,7 @@ namespace Telegram.Controls.Messages
             {
                 SetCorners(0, 0, 0, 0);
             }
-            else if (content is MessageInvoice invoice && invoice.ExtendedMedia is not MessageExtendedMediaUnsupported and not null)
+            else if (content is MessageInvoice invoice && invoice.PaidMedia is not PaidMediaUnsupported and not null)
             {
                 SetCorners(topLeft, topRight, bottomRight, bottomLeft);
             }
@@ -1653,6 +1653,10 @@ namespace Telegram.Controls.Messages
             {
                 Media.Child = new AlbumContent(message);
             }
+            else if (content is MessagePaidAlbum)
+            {
+                Media.Child = new PaidMediaContent(message);
+            }
             else if (content is MessageAnimation)
             {
                 Media.Child = new AnimationContent(message);
@@ -1683,15 +1687,15 @@ namespace Telegram.Controls.Messages
             }
             else if (content is MessageInvoice invoice)
             {
-                if (invoice.ExtendedMedia is MessageExtendedMediaPhoto)
+                if (invoice.PaidMedia is PaidMediaPhoto)
                 {
                     Media.Child = new PhotoContent(message);
                 }
-                else if (invoice.ExtendedMedia is MessageExtendedMediaVideo)
+                else if (invoice.PaidMedia is PaidMediaVideo)
                 {
                     Media.Child = new VideoContent(message);
                 }
-                else if (invoice.ExtendedMedia is MessageExtendedMediaPreview)
+                else if (invoice.PaidMedia is PaidMediaPreview)
                 {
                     Media.Child = new InvoicePreviewContent(message);
                 }
@@ -1817,6 +1821,10 @@ namespace Telegram.Controls.Messages
             {
                 result = ReplaceEntities(message, album.Caption);
             }
+            else if (content is MessagePaidAlbum paidAlbum)
+            {
+                result = ReplaceEntities(message, paidAlbum.Caption);
+            }
             else if (content is MessageAnimation animation)
             {
                 result = ReplaceEntities(message, animation.Caption);
@@ -1831,7 +1839,7 @@ namespace Telegram.Controls.Messages
             }
             else if (content is MessageInvoice invoice)
             {
-                result = ReplaceEntities(message, invoice.ExtendedMediaCaption);
+                result = ReplaceEntities(message, invoice.PaidMediaCaption);
             }
             else if (content is MessagePhoto photo)
             {
@@ -3241,18 +3249,18 @@ namespace Telegram.Controls.Messages
             }
             else if (constraint is MessageInvoice invoiceMessage)
             {
-                if (invoiceMessage.ExtendedMedia is MessageExtendedMediaPhoto extendedMediaPhoto)
+                if (invoiceMessage.PaidMedia is PaidMediaPhoto paidMediaPhoto)
                 {
-                    constraint = extendedMediaPhoto.Photo;
+                    constraint = paidMediaPhoto.Photo;
                 }
-                else if (invoiceMessage.ExtendedMedia is MessageExtendedMediaVideo extendedMediaVideo)
+                else if (invoiceMessage.PaidMedia is PaidMediaVideo paidMediaVideo)
                 {
-                    constraint = extendedMediaVideo.Video;
+                    constraint = paidMediaVideo.Video;
                 }
-                else if (invoiceMessage.ExtendedMedia is MessageExtendedMediaPreview extendedMediaPreview)
+                else if (invoiceMessage.PaidMedia is PaidMediaPreview paidMediaPreview)
                 {
-                    width = extendedMediaPreview.Width;
-                    height = extendedMediaPreview.Height;
+                    width = paidMediaPreview.Width;
+                    height = paidMediaPreview.Height;
 
                     goto Calculate;
                 }
@@ -3327,10 +3335,39 @@ namespace Telegram.Controls.Messages
                     goto Calculate;
                 }
             }
-            else if (constraint is MessageExtendedMediaPreview extendedMediaPreview)
+            else if (constraint is MessagePaidAlbum paidAlbum)
             {
-                width = extendedMediaPreview.Width;
-                height = extendedMediaPreview.Height;
+                if (paidAlbum.Media.Count == 1)
+                {
+                    if (paidAlbum.Media[0] is PaidMediaPhoto photoContent)
+                    {
+                        constraint = photoContent.Photo;
+                    }
+                    else if (paidAlbum.Media[0] is PaidMediaVideo videoContent)
+                    {
+                        constraint = videoContent.Video;
+                    }
+                    else if (paidAlbum.Media[0] is PaidMediaPreview paidMediaPreview)
+                    {
+                        width = paidMediaPreview.Width;
+                        height = paidMediaPreview.Height;
+
+                        goto Calculate;
+                    }
+                }
+                else
+                {
+                    var positions = paidAlbum.GetPositionsForWidth(availableWidth + MessageAlbum.ITEM_MARGIN);
+                    width = positions.Item2.Width - MessageAlbum.ITEM_MARGIN;
+                    height = positions.Item2.Height;
+
+                    goto Calculate;
+                }
+            }
+            else if (constraint is PaidMediaPreview paidMediaPreview)
+            {
+                width = paidMediaPreview.Width;
+                height = paidMediaPreview.Height;
             }
 
             if (constraint is Animation animation)
@@ -3467,11 +3504,12 @@ namespace Telegram.Controls.Messages
                 case MessagePhoto:
                 case MessageVideo:
                 case MessageAnimation:
+                case MessagePaidAlbum:
                     return true;
                 case MessageAlbum album:
                     return album.IsMedia;
                 case MessageInvoice invoice:
-                    return invoice.ExtendedMedia is not MessageExtendedMediaUnsupported and not null
+                    return invoice.PaidMedia is not PaidMediaUnsupported and not null
                         || (width && invoice.ProductInfo.Photo != null);
                 case MessageAsyncStory story:
                     return story.State != MessageStoryState.Expired;

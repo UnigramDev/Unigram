@@ -543,7 +543,7 @@ namespace Telegram.Controls.Cells
                 MessageText text => text.Text,
                 MessageAnimatedEmoji animatedEmoji => new FormattedText(animatedEmoji.Emoji, Array.Empty<TextEntity>()),
                 MessageDice dice => new FormattedText(dice.Emoji, Array.Empty<TextEntity>()),
-                MessageInvoice invoice => invoice.ExtendedMediaCaption,
+                MessageInvoice invoice => invoice.PaidMediaCaption,
                 _ => new FormattedText(string.Empty, Array.Empty<TextEntity>()),
             };
         }
@@ -703,7 +703,7 @@ namespace Telegram.Controls.Cells
             }
             else if (message.Content is MessageInvoice invoice)
             {
-                if (invoice.ExtendedMedia != null && invoice.HasCaption())
+                if (invoice.PaidMedia != null && invoice.HasCaption())
                 {
                     return result;
                 }

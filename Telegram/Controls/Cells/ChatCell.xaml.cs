@@ -7,6 +7,7 @@
 using Microsoft.Graphics.Canvas.Geometry;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Numerics;
 using System.Text;
 using Telegram.Common;
@@ -1412,7 +1413,7 @@ namespace Telegram.Controls.Cells
             }
             else if (content is MessageInvoice invoice)
             {
-                return Text1("\U0001F4CB ", invoice.ExtendedMediaCaption, invoice.ProductInfo.Title);
+                return Text1("\U0001F4CB ", invoice.PaidMediaCaption, invoice.ProductInfo.Title);
             }
             else if (content is MessageContact)
             {
@@ -1467,6 +1468,19 @@ namespace Telegram.Controls.Cells
             else if (content is MessagePremiumGiveaway)
             {
                 return Text(Strings.BoostingGiveaway);
+            }
+            else if (content is MessagePaidMedia paidMedia)
+            {
+                if (paidMedia.Media.All(x => x.IsPhoto()))
+                {
+                    return Text1(Icons.Premium + "\u2004", paidMedia.Caption, paidMedia.Media.Count > 1 ? Locale.Declension(Strings.R.Photos, paidMedia.Media.Count) : Strings.AttachPhoto);
+                }
+                else if (paidMedia.Media.All(x => x.IsVideo()))
+                {
+                    return Text1(Icons.Premium + "\u2004", paidMedia.Caption, paidMedia.Media.Count > 1 ? Locale.Declension(Strings.R.Videos, paidMedia.Media.Count) : Strings.AttachVideo);
+                }
+
+                return Text1(Icons.Premium + "\u2004", paidMedia.Caption, Locale.Declension(Strings.R.Media, paidMedia.Media.Count));
             }
 
             return content switch

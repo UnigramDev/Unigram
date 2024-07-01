@@ -5,6 +5,7 @@
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
 using System;
+using System.Linq;
 using System.Runtime.CompilerServices;
 using Telegram.Common;
 using Telegram.Controls.Media;
@@ -315,6 +316,12 @@ namespace Telegram.Controls.Messages
                 case MessageInvoice invoice:
                     SetInvoiceTemplate(clientService, sender, invoice, title, outgoing, white);
                     break;
+                case MessagePaidAlbum paidAlbum:
+                    SetPaidMediaTemplate(clientService, sender, paidAlbum, title, outgoing, white);
+                    break;
+                case MessagePaidMedia paidMedia:
+                    SetPaidMediaTemplate(clientService, sender, paidMedia, title, outgoing, white);
+                    break;
                 case MessageLocation location:
                     SetLocationTemplate(clientService, sender, location, title, outgoing, white);
                     break;
@@ -391,6 +398,12 @@ namespace Telegram.Controls.Messages
                     break;
                 case MessageInvoice invoice:
                     SetInvoiceTemplate(clientService, sender, invoice, title, outgoing, white);
+                    break;
+                case MessagePaidAlbum paidAlbum:
+                    SetPaidMediaTemplate(clientService, sender, paidAlbum, title, outgoing, white);
+                    break;
+                case MessagePaidMedia paidMedia:
+                    SetPaidMediaTemplate(clientService, sender, paidMedia, title, outgoing, white);
                     break;
                 case MessageLocation location:
                     SetLocationTemplate(clientService, sender, location, title, outgoing, white);
@@ -518,7 +531,7 @@ namespace Telegram.Controls.Messages
         {
             HideThumbnail();
 
-            var caption = invoice.ExtendedMediaCaption;
+            var caption = invoice.PaidMediaCaption;
             if (caption != null && !string.IsNullOrEmpty(caption.Text))
             {
                 SetText(clientService,
@@ -537,6 +550,92 @@ namespace Telegram.Controls.Messages
                     sender,
                     title,
                     invoice.ProductInfo.Title,
+                    null,
+                    false,
+                    white);
+            }
+        }
+
+        private void SetPaidMediaTemplate(IClientService clientService, MessageSender sender, MessagePaidMedia paidMedia, string title, bool outgoing, bool white)
+        {
+            HideThumbnail();
+
+            var caption = paidMedia.Caption;
+            if (caption != null && !string.IsNullOrEmpty(caption.Text))
+            {
+                SetText(clientService,
+                    outgoing,
+                    sender,
+                    title,
+                    Icons.Premium,
+                    caption,
+                    false,
+                    white);
+            }
+            else
+            {
+                string text;
+                if (paidMedia.Media.All(x => x.IsPhoto()))
+                {
+                    text = Icons.Premium + "\u2004" + (paidMedia.Media.Count > 1 ? Locale.Declension(Strings.R.Photos, paidMedia.Media.Count) : Strings.AttachPhoto);
+                }
+                else if (paidMedia.Media.All(x => x.IsVideo()))
+                {
+                    text = Icons.Premium + "\u2004" + (paidMedia.Media.Count > 1 ? Locale.Declension(Strings.R.Videos, paidMedia.Media.Count) : Strings.AttachVideo);
+                }
+                else
+                {
+                    text = Icons.Premium + "\u2004" + Locale.Declension(Strings.R.Media, paidMedia.Media.Count);
+                }
+
+                SetText(clientService,
+                    outgoing,
+                    sender,
+                    title,
+                    text,
+                    null,
+                    false,
+                    white);
+            }
+        }
+
+        private void SetPaidMediaTemplate(IClientService clientService, MessageSender sender, MessagePaidAlbum paidMedia, string title, bool outgoing, bool white)
+        {
+            HideThumbnail();
+
+            var caption = paidMedia.Caption;
+            if (caption != null && !string.IsNullOrEmpty(caption.Text))
+            {
+                SetText(clientService,
+                    outgoing,
+                    sender,
+                    title,
+                    Icons.Premium,
+                    caption,
+                    false,
+                    white);
+            }
+            else
+            {
+                string text;
+                if (paidMedia.Media.All(x => x.IsPhoto()))
+                {
+                    text = Icons.Premium + "\u2004" + (paidMedia.Media.Count > 1 ? Locale.Declension(Strings.R.Photos, paidMedia.Media.Count) : Strings.AttachPhoto);
+                }
+                else if (paidMedia.Media.All(x => x.IsVideo()))
+                {
+                    text = Icons.Premium + "\u2004" + (paidMedia.Media.Count > 1 ? Locale.Declension(Strings.R.Videos, paidMedia.Media.Count) : Strings.AttachVideo);
+                }
+                else
+                {
+                    text = Icons.Premium + "\u2004" + Locale.Declension(Strings.R.Media, paidMedia.Media.Count);
+                }
+
+                SetText(clientService,
+                    outgoing,
+                    sender,
+                    title,
+                    text,
                     null,
                     false,
                     white);

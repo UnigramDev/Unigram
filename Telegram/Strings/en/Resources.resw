@@ -7031,6 +7031,33 @@ messages from multiple devices.</value>
   <data name="Page6Title" xml:space="preserve">
     <value>Cloud-Based</value>
   </data>
+  <data name="PaidContentButton" xml:space="preserve">
+    <value>Make This Media Paid</value>
+  </data>
+  <data name="PaidContentClearButton" xml:space="preserve">
+    <value>Keep this media free</value>
+  </data>
+  <data name="PaidContentInfo" xml:space="preserve">
+    <value>Users will have to transfer this amount of Stars to your channel in order to view this media. **Learn more &gt;**</value>
+  </data>
+  <data name="PaidContentInfoLink" xml:space="preserve">
+    <value>https://telegram.org/tos/stars</value>
+  </data>
+  <data name="PaidContentPriceTitle" xml:space="preserve">
+    <value>Enter unlock cost</value>
+  </data>
+  <data name="PaidContentTitle" xml:space="preserve">
+    <value>Paid Content</value>
+  </data>
+  <data name="PaidContentUpdateButton" xml:space="preserve">
+    <value>Save Price</value>
+  </data>
+  <data name="PaidMediaButton" xml:space="preserve">
+    <value>Make this Content Paid</value>
+  </data>
+  <data name="PaidMediaPriceButton" xml:space="preserve">
+    <value>Edit Price</value>
+  </data>
   <data name="Participants_one" xml:space="preserve">
     <value>{0} participant</value>
   </data>
@@ -9092,6 +9119,9 @@ The channel &quot;**{1}**&quot; will become private.</value>
   <data name="SponsoredMessage" xml:space="preserve">
     <value>ad</value>
   </data>
+  <data name="StarMediaPurchase" xml:space="preserve">
+    <value>Media Purchase</value>
+  </data>
   <data name="StarsAcquired" xml:space="preserve">
     <value>Stars Acquired!</value>
   </data>
@@ -9172,6 +9202,9 @@ The channel &quot;**{1}**&quot; will become private.</value>
   </data>
   <data name="StarsTransactionInApp" xml:space="preserve">
     <value>In-App Purchase</value>
+  </data>
+  <data name="StarsTransactionMedia" xml:space="preserve">
+    <value>Media</value>
   </data>
   <data name="StarsTransactionRecipient" xml:space="preserve">
     <value>From</value>
@@ -10013,6 +10046,12 @@ If you are not comfortable with Telegram&apos;s modest needs, it won&apos;t be p
   </data>
   <data name="Unlock" xml:space="preserve">
     <value>Unlock</value>
+  </data>
+  <data name="UnlockPaidContent_one" xml:space="preserve">
+    <value>Unlock for ⭐️{0}</value>
+  </data>
+  <data name="UnlockPaidContent_other" xml:space="preserve">
+    <value>Unlock for ⭐️{0}</value>
   </data>
   <data name="UnlockPremium" xml:space="preserve">
     <value>Subscribe to **Telegram Premium** to unlock this and many other features.</value>

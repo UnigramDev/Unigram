@@ -242,6 +242,62 @@ namespace Telegram.Common
                     return Locale.Declension(Strings.R.Files, album.Messages.Count) + ", ";
                 }
             }
+            else if (message.Content is MessagePaidAlbum paidAlbum)
+            {
+                var caption = string.Empty;
+                if (!string.IsNullOrEmpty(paidAlbum.Caption.Text))
+                {
+                    caption = paidAlbum.Caption.Text + ", ";
+                }
+
+                var photos = paidAlbum.Media.Count(x => x.IsPhoto());
+                var videos = paidAlbum.Media.Count - photos;
+
+                if (paidAlbum.Media.Count > 0 && paidAlbum.Media[0].IsVideo())
+                {
+                    if (photos > 0)
+                    {
+                        return Locale.Declension(Strings.R.Videos, videos) + ", " + Locale.Declension(Strings.R.Photos, photos) + ", " + caption;
+                    }
+
+                    return Locale.Declension(Strings.R.Videos, videos) + ", " + caption;
+                }
+
+                if (videos > 0)
+                {
+                    return Locale.Declension(Strings.R.Photos, photos) + ", " + Locale.Declension(Strings.R.Videos, videos) + ", " + caption;
+                }
+
+                return Locale.Declension(Strings.R.Photos, photos) + ", " + caption;
+            }
+            else if (message.Content is MessagePaidMedia paidMedia)
+            {
+                var caption = string.Empty;
+                if (!string.IsNullOrEmpty(paidMedia.Caption.Text))
+                {
+                    caption = paidMedia.Caption.Text + ", ";
+                }
+
+                var photos = paidMedia.Media.Count(x => x.IsPhoto());
+                var videos = paidMedia.Media.Count - photos;
+
+                if (paidMedia.Media.Count > 0 && paidMedia.Media[0].IsVideo())
+                {
+                    if (photos > 0)
+                    {
+                        return Locale.Declension(Strings.R.Videos, videos) + ", " + Locale.Declension(Strings.R.Photos, photos) + ", " + caption;
+                    }
+
+                    return Locale.Declension(Strings.R.Videos, videos) + ", " + caption;
+                }
+
+                if (videos > 0)
+                {
+                    return Locale.Declension(Strings.R.Photos, photos) + ", " + Locale.Declension(Strings.R.Videos, videos) + ", " + caption;
+                }
+
+                return Locale.Declension(Strings.R.Photos, photos) + ", " + caption;
+            }
             else if (message.Content is MessageText text)
             {
                 if (altText != null)

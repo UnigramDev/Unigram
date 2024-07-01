@@ -1827,7 +1827,11 @@ namespace Telegram.ViewModels
                 return;
             }
 
-            if (message.Content is MessageText text && text.WebPage == null && text.Text.Entities.Count == 0)
+            if (message.Content is MessagePaidMedia paidMedia)
+            {
+                message.Content = new MessagePaidAlbum(paidMedia);
+            }
+            else if (message.Content is MessageText text && text.WebPage == null && text.Text.Entities.Count == 0)
             {
                 if (Emoji.TryCountEmojis(text.Text.Text, out int count, 3))
                 {

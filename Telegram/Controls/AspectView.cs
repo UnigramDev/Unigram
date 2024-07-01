@@ -150,18 +150,18 @@ namespace Telegram.Controls
             }
             else if (constraint is MessageInvoice invoiceMessage)
             {
-                if (invoiceMessage.ExtendedMedia is MessageExtendedMediaPhoto extendedMediaPhoto)
+                if (invoiceMessage.PaidMedia is PaidMediaPhoto paidMediaPhoto)
                 {
-                    constraint = extendedMediaPhoto.Photo;
+                    constraint = paidMediaPhoto.Photo;
                 }
-                else if (invoiceMessage.ExtendedMedia is MessageExtendedMediaVideo extendedMediaVideo)
+                else if (invoiceMessage.PaidMedia is PaidMediaVideo paidMediaVideo)
                 {
-                    constraint = extendedMediaVideo.Video;
+                    constraint = paidMediaVideo.Video;
                 }
-                else if (invoiceMessage.ExtendedMedia is MessageExtendedMediaPreview extendedMediaPreview)
+                else if (invoiceMessage.PaidMedia is PaidMediaPreview paidMediaPreview)
                 {
-                    width = extendedMediaPreview.Width;
-                    height = extendedMediaPreview.Height;
+                    width = paidMediaPreview.Width;
+                    height = paidMediaPreview.Height;
                 }
                 else
                 {
@@ -239,10 +239,10 @@ namespace Telegram.Controls
             {
                 constraint = chatChangePhoto.Photo;
             }
-            else if (constraint is MessageExtendedMediaPreview extendedMediaPreview)
+            else if (constraint is PaidMediaPreview paidMediaPreview)
             {
-                width = extendedMediaPreview.Width;
-                height = extendedMediaPreview.Height;
+                width = paidMediaPreview.Width;
+                height = paidMediaPreview.Height;
             }
             else if (constraint is MessageAsyncStory asyncStory)
             {

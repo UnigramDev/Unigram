@@ -238,6 +238,12 @@
       <DependentUpon>EffectDrawer.xaml</DependentUpon>
     </Compile>
     <Compile Include="Controls\MenuFlyoutContent.cs" />
+    <Compile Include="Controls\Messages\Content\PaidMediaContent.xaml.cs">
+      <DependentUpon>PaidMediaContent.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\Messages\Content\PreviewContent.xaml.cs">
+      <DependentUpon>PreviewContent.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Controls\Messages\Content\ThumbnailContent.xaml.cs">
       <DependentUpon>ThumbnailContent.xaml</DependentUpon>
     </Compile>
@@ -2368,6 +2374,14 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Controls\MessagePopup.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Controls\Messages\Content\PaidMediaContent.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Controls\Messages\Content\PreviewContent.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

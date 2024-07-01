@@ -166,7 +166,7 @@
                                VerticalAlignment="Stretch" />
 
                         <Border x:Name="Overlay"
-                                Background="{ThemeResource MessageOverlayBackgroundBrush}"
+                                Background="{ThemeResource MessageServiceBackgroundBrush}"
                                 CornerRadius="{ThemeResource MessageOverlayCornerRadius}"
                                 HorizontalAlignment="Left"
                                 VerticalAlignment="Top"

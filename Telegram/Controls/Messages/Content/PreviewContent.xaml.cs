@@ -14,16 +14,19 @@ using Windows.UI.Xaml.Media.Imaging;
 
 namespace Telegram.Controls.Messages.Content
 {
-    public sealed class InvoicePreviewContent : Control, IContent
+    public sealed class PreviewContent : Control, IContent
     {
         private MessageViewModel _message;
         public MessageViewModel Message => _message;
 
-        public InvoicePreviewContent(MessageViewModel message)
+        private PaidMediaPreview _paidMedia;
+
+        public PreviewContent(MessageViewModel message, PaidMediaPreview paidMedia)
         {
             _message = message;
+            _paidMedia = paidMedia;
 
-            DefaultStyleKey = typeof(InvoicePreviewContent);
+            DefaultStyleKey = typeof(PreviewContent);
         }
 
         #region InitializeComponent
@@ -31,7 +34,6 @@ namespace Telegram.Controls.Messages.Content
         private AspectView LayoutRoot;
         private Border Overlay;
         private TextBlock Subtitle;
-        private FileButton Button;
         private bool _templateApplied;
 
         protected override void OnApplyTemplate()
@@ -39,9 +41,6 @@ namespace Telegram.Controls.Messages.Content
             LayoutRoot = GetTemplateChild(nameof(LayoutRoot)) as AspectView;
             Overlay = GetTemplateChild(nameof(Overlay)) as Border;
             Subtitle = GetTemplateChild(nameof(Subtitle)) as TextBlock;
-            Button = GetTemplateChild(nameof(Button)) as FileButton;
-
-            Button.Click += Button_Click;
 
             _templateApplied = true;
 
@@ -75,19 +74,6 @@ namespace Telegram.Controls.Messages.Content
             {
                 Overlay.Visibility = Visibility.Collapsed;
             }
-
-            if (_message.ReplyMarkup is ReplyMarkupInlineKeyboard keyboard
-                && keyboard.Rows.Count == 1
-                && keyboard.Rows[0].Count == 1)
-            {
-                Button.Content = keyboard.Rows[0][0].Text;
-            }
-            else
-            {
-                Button.Content = null;
-            }
-
-            Button.SetGlyph(0, MessageContentState.Unlock);
 
             UpdateThumbnail(message, preview.Minithumbnail);
         }
@@ -144,23 +130,7 @@ namespace Telegram.Controls.Messages.Content
                 return null;
             }
 
-            var content = message.Content;
-            if (content is MessageInvoice invoice && invoice.PaidMedia is PaidMediaPreview paidMedia)
-            {
-                return paidMedia;
-            }
-
-            return null;
-        }
-
-        private void Button_Click(object sender, RoutedEventArgs e)
-        {
-            if (_message.ReplyMarkup is ReplyMarkupInlineKeyboard keyboard
-                && keyboard.Rows.Count == 1
-                && keyboard.Rows[0].Count == 1)
-            {
-                _message.Delegate.OpenInlineButton(_message, keyboard.Rows[0][0]);
-            }
+            return _paidMedia;
         }
     }
 }

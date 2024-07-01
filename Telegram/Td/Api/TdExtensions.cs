@@ -1130,10 +1130,10 @@ namespace Telegram.Td.Api
                 case MessageVoiceNote voiceNote:
                     return voiceNote.VoiceNote.Voice;
                 case MessageInvoice invoice:
-                    return invoice.ExtendedMedia switch
+                    return invoice.PaidMedia switch
                     {
-                        MessageExtendedMediaPhoto photo => photo.Photo.GetBig()?.Photo,
-                        MessageExtendedMediaVideo video => video.Video.VideoValue,
+                        PaidMediaPhoto photo => photo.Photo.GetBig()?.Photo,
+                        PaidMediaVideo video => video.Video.VideoValue,
                         _ => invoice.ProductInfo.Photo?.GetBig()?.Photo
                     };
             }
@@ -1197,7 +1197,7 @@ namespace Telegram.Td.Api
                     // Videos are streamed
                     return true;
                 case MessageInvoice invoice:
-                    return invoice.ExtendedMedia is MessageExtendedMediaVideo;
+                    return invoice.PaidMedia is PaidMediaVideo;
                 default:
                     return false;
             }
@@ -1383,7 +1383,9 @@ namespace Telegram.Td.Api
                     }),
                     _ => new FormattedText(animatedEmoji.Emoji, Array.Empty<TextEntity>())
                 },
-                MessageInvoice invoice => invoice.ExtendedMediaCaption,
+                MessageInvoice invoice => invoice.PaidMediaCaption,
+                MessagePaidAlbum paidAlbum => paidAlbum.Caption,
+                MessagePaidMedia paidMedia => paidMedia.Caption,
                 _ => null,
             };
         }
@@ -1552,6 +1554,8 @@ namespace Telegram.Td.Api
                 case MessageGame:
                 case MessageInvoice:
                 case MessageLocation:
+                case MessagePaidAlbum:
+                case MessagePaidMedia:
                 case MessagePhoto:
                 case MessagePoll:
                 case MessageSticker:
@@ -1570,6 +1574,16 @@ namespace Telegram.Td.Api
                 default:
                     return true;
             }
+        }
+
+        public static bool IsPhoto(this PaidMedia media)
+        {
+            return media is PaidMediaPhoto or PaidMediaPreview { Duration: 0 };
+        }
+
+        public static bool IsVideo(this PaidMedia media)
+        {
+            return media is PaidMediaVideo or PaidMediaPreview { Duration: > 0 };
         }
 
         public static bool IsMedia(this InlineQueryResult result)
@@ -2241,7 +2255,7 @@ namespace Telegram.Td.Api
             }
         }
 
-        public static string GetDuration(this MessageExtendedMediaPreview preview)
+        public static string GetDuration(this PaidMediaPreview preview)
         {
             var duration = TimeSpan.FromSeconds(preview.Duration);
             if (duration.TotalHours >= 1)

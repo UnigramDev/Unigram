@@ -102,7 +102,7 @@ namespace Telegram.ViewModels.Gallery
                 }
                 else if (_message.Content is MessageInvoice invoice)
                 {
-                    return invoice.ExtendedMedia is MessageExtendedMediaVideo;
+                    return invoice.PaidMedia is PaidMediaVideo;
                 }
                 else if (_message.Content is MessageText text)
                 {
@@ -210,7 +210,7 @@ namespace Telegram.ViewModels.Gallery
                 }
                 else if (_message.Content is MessageInvoice invoice)
                 {
-                    if (invoice.ExtendedMedia is MessageExtendedMediaVideo extendedVideo)
+                    if (invoice.PaidMedia is PaidMediaVideo extendedVideo)
                     {
                         return extendedVideo.Video.Duration;
                     }
@@ -257,7 +257,7 @@ namespace Telegram.ViewModels.Gallery
                 }
                 else if (_message.Content is MessageInvoice invoice)
                 {
-                    if (invoice.ExtendedMedia is MessageExtendedMediaVideo extendedVideo)
+                    if (invoice.PaidMedia is PaidMediaVideo extendedVideo)
                     {
                         return extendedVideo.Video.MimeType;
                     }

@@ -105,7 +105,7 @@ namespace Telegram.Controls
             {
                 receipt = invoice.ReceiptMessageId != 0;
 
-                if (invoice.ExtendedMedia is not MessageExtendedMediaUnsupported and not null)
+                if (invoice.PaidMedia is not PaidMediaUnsupported and not null)
                 {
                     rows = null;
                 }
@@ -224,7 +224,7 @@ namespace Telegram.Controls
             {
                 receipt = invoice.ReceiptMessageId != 0;
 
-                if (invoice.ExtendedMedia is not MessageExtendedMediaUnsupported and not null)
+                if (invoice.PaidMedia is not PaidMediaUnsupported and not null)
                 {
                     rows = null;
                 }

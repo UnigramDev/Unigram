@@ -14,18 +14,21 @@ namespace Telegram.ViewModels.Gallery
     {
         private readonly Video _video;
         private readonly FormattedText _caption;
+        private readonly bool _protect;
 
-        public GalleryVideo(IClientService clientService, Video video)
+        public GalleryVideo(IClientService clientService, Video video, bool protect = false)
             : base(clientService)
         {
             _video = video;
+            _protect = protect;
         }
 
-        public GalleryVideo(IClientService clientService, Video video, FormattedText caption)
+        public GalleryVideo(IClientService clientService, Video video, FormattedText caption, bool protect = false)
             : base(clientService)
         {
             _video = video;
             _caption = caption;
+            _protect = protect;
         }
 
         //public long Id => _video.Id;
@@ -53,8 +56,8 @@ namespace Telegram.ViewModels.Gallery
 
         public override bool IsVideo => true;
 
-        public override bool CanSave => true;
-        public override bool CanShare => true;
+        public override bool CanSave => !_protect;
+        public override bool CanShare => !_protect;
 
         public override int Duration => _video.Duration;
 

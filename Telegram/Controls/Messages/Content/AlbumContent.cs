@@ -149,7 +149,7 @@ namespace Telegram.Controls.Messages.Content
                 FrameworkElement element;
                 if (pos.Content is MessagePhoto)
                 {
-                    element = new PhotoContent(pos, true);
+                    element = new PhotoContent(pos, null, true);
                 }
                 else if (pos.Content is MessageVideo)
                 {

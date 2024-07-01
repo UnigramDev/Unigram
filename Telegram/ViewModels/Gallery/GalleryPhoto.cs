@@ -15,17 +15,21 @@ namespace Telegram.ViewModels.Gallery
         private readonly Photo _photo;
         private readonly FormattedText _caption;
 
-        public GalleryPhoto(IClientService clientService, Photo photo)
+        private readonly bool _protect;
+
+        public GalleryPhoto(IClientService clientService, Photo photo, bool protect = false)
             : base(clientService)
         {
             _photo = photo;
+            _protect = protect;
         }
 
-        public GalleryPhoto(IClientService clientService, Photo photo, FormattedText caption)
+        public GalleryPhoto(IClientService clientService, Photo photo, FormattedText caption, bool protect = false)
             : base(clientService)
         {
             _photo = photo;
             _caption = caption;
+            _protect = protect;
         }
 
         public override File GetFile()
@@ -44,9 +48,9 @@ namespace Telegram.ViewModels.Gallery
 
         public override bool HasStickers => _photo.HasStickers;
 
-        public override bool CanCopy => true;
-        public override bool CanSave => true;
-        public override bool CanShare => true;
+        public override bool CanCopy => !_protect;
+        public override bool CanSave => !_protect;
+        public override bool CanShare => !_protect;
 
         public override InputMessageContent ToInput()
         {

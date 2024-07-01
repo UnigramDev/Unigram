@@ -6,6 +6,7 @@
 //
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using Telegram.Common;
 using Telegram.Controls;
@@ -400,7 +401,7 @@ namespace Telegram.ViewModels
 
                         if (IsSingle(message.Content))
                         {
-                            viewModel = new SingleGalleryViewModel(ClientService, _storageService, Aggregator, new GalleryMessage(ClientService, message));
+                            viewModel = new StandaloneGalleryViewModel(ClientService, _storageService, Aggregator, new GalleryMessage(ClientService, message));
                         }
                         else
                         {
@@ -411,6 +412,45 @@ namespace Telegram.ViewModels
                     viewModel.NavigationService = NavigationService;
                     await GalleryWindow.ShowAsync(viewModel, target != null ? () => target : null, timestamp);
                 }
+
+                TextField?.Focus(FocusState.Programmatic);
+            }
+        }
+
+        public async void OpenPaidMedia(MessageViewModel message, PaidMedia media, FrameworkElement target, int timestamp = 0)
+        {
+            if (message.Content is MessagePaidAlbum album)
+            {
+                GalleryMedia item = null;
+                GalleryMedia Filter(PaidMedia x)
+                {
+                    GalleryMedia result = null;
+                    if (x is PaidMediaPhoto photo)
+                    {
+                        result = new GalleryPhoto(ClientService, photo.Photo, true);
+                    }
+                    else if (x is PaidMediaVideo video)
+                    {
+                        result = new GalleryVideo(ClientService, video.Video, true);
+                    }
+
+                    if (x == media)
+                    {
+                        item = result;
+                    }
+
+                    return result;
+                }
+
+                var items = album.Media
+                    .Select(Filter)
+                    .Where(x => x is not null)
+                    .ToList();
+
+                var viewModel = new StandaloneGalleryViewModel(ClientService, StorageService, Aggregator, items, item);
+
+                viewModel.NavigationService = NavigationService;
+                await GalleryWindow.ShowAsync(viewModel, target != null ? () => target : null, timestamp);
 
                 TextField?.Focus(FocusState.Programmatic);
             }
