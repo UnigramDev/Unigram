@@ -18,6 +18,7 @@ using Telegram.Controls.Chats;
 using Telegram.Controls.Media;
 using Telegram.Converters;
 using Telegram.Entities;
+using Telegram.Navigation;
 using Telegram.Streams;
 using Telegram.Td.Api;
 using Telegram.ViewModels;
@@ -75,6 +76,8 @@ namespace Telegram.Views.Popups
             }
         }
         public bool IsTtlAvailable { get; }
+
+        public bool HasPaidMediaAllowed { get; set; }
 
         private bool _isMediaSelected;
         public bool IsMediaSelected
@@ -170,6 +173,20 @@ namespace Telegram.Views.Popups
                 {
                     _sendWithSpoiler = value;
                     PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(SendWithSpoiler)));
+                }
+            }
+        }
+
+        private long _starCount;
+        public long StarCount
+        {
+            get => _starCount;
+            set
+            {
+                if (_starCount != value)
+                {
+                    _starCount = value;
+                    PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(StarCount)));
                 }
             }
         }
@@ -878,21 +895,33 @@ namespace Telegram.Views.Popups
         {
             var flyout = new MenuFlyout();
 
-            var withCompressionText =
-                Items.All(x => x is StoragePhoto)
-                ? Items.Count != 1 ? Strings.SendAsPhotos : Strings.SendAsPhoto
-                : Items.All(x => x is StorageVideo) ? Items.Count != 1 ? Strings.SendAsVideo : Strings.SendAsVideos
-                : Strings.SendAsMedia;
-
-            flyout.CreateFlyoutItem(ToggleIsFilesSelected, false, withCompressionText, IsFilesSelected ? null : Icons.Checkmark, Windows.System.VirtualKey.P, Windows.System.VirtualKeyModifiers.Control);
-            flyout.CreateFlyoutItem(ToggleIsFilesSelected, true, Items.Count != 1 ? Strings.SendAsFiles : Strings.SendAsFile, IsFilesSelected ? Icons.Checkmark : null, Windows.System.VirtualKey.F, Windows.System.VirtualKeyModifiers.Control);
-
-            if (IsMediaSelected)
+            if (StarCount > 0)
             {
-                flyout.CreateFlyoutSeparator();
+                flyout.CreateFlyoutItem(MakeContentPaid, Strings.PaidMediaPriceButton, Icons.Coin);
+            }
+            else
+            {
+                var withCompressionText =
+                    Items.All(x => x is StoragePhoto)
+                    ? Items.Count != 1 ? Strings.SendAsPhotos : Strings.SendAsPhoto
+                    : Items.All(x => x is StorageVideo) ? Items.Count != 1 ? Strings.SendAsVideo : Strings.SendAsVideos
+                    : Strings.SendAsMedia;
 
-                flyout.CreateFlyoutItem(ToggleSendWithSpoiler, SendWithSpoiler ? Strings.DisablePhotoSpoiler : Strings.EnablePhotoSpoiler, Icons.TabInPrivate);
-                flyout.CreateFlyoutItem(ToggleShowCaptionAboveMedia, ShowCaptionAboveMedia ? Strings.CaptionBelow : Strings.CaptionAbove, ShowCaptionAboveMedia ? Icons.MoveDown : Icons.MoveUp);
+                flyout.CreateFlyoutItem(ToggleIsFilesSelected, false, withCompressionText, IsFilesSelected ? null : Icons.Checkmark, Windows.System.VirtualKey.P, Windows.System.VirtualKeyModifiers.Control);
+                flyout.CreateFlyoutItem(ToggleIsFilesSelected, true, Items.Count != 1 ? Strings.SendAsFiles : Strings.SendAsFile, IsFilesSelected ? Icons.Checkmark : null, Windows.System.VirtualKey.F, Windows.System.VirtualKeyModifiers.Control);
+
+                if (IsMediaSelected)
+                {
+                    flyout.CreateFlyoutSeparator();
+
+                    flyout.CreateFlyoutItem(ToggleSendWithSpoiler, SendWithSpoiler ? Strings.DisablePhotoSpoiler : Strings.EnablePhotoSpoiler, Icons.TabInPrivate);
+                    flyout.CreateFlyoutItem(ToggleShowCaptionAboveMedia, ShowCaptionAboveMedia ? Strings.CaptionBelow : Strings.CaptionAbove, ShowCaptionAboveMedia ? Icons.MoveDown : Icons.MoveUp);
+
+                    if (HasPaidMediaAllowed)
+                    {
+                        flyout.CreateFlyoutItem(MakeContentPaid, Strings.PaidMediaButton, Icons.Coin);
+                    }
+                }
             }
 
             flyout.ShowAt(sender as DependencyObject, FlyoutPlacementMode.BottomEdgeAlignedRight);
@@ -918,6 +947,39 @@ namespace Telegram.Views.Popups
         private void ToggleSendWithSpoiler()
         {
             SendWithSpoiler = !SendWithSpoiler;
+        }
+
+        private async void MakeContentPaid()
+        {
+            var popup = new InputTeachingTip(InputPopupType.Stars);
+            popup.Value = 0;
+            popup.Maximum = ViewModel.ClientService.Options.PaidMediaMessageStarCountMax;
+
+            popup.Title = Strings.PaidContentTitle;
+            popup.Header = Strings.PaidContentPriceTitle;
+            popup.ActionButtonContent = Strings.PaidContentUpdateButton;
+            popup.ActionButtonStyle = BootStrapper.Current.Resources["AccentButtonStyle"] as Style;
+            popup.CloseButtonContent = Strings.Cancel;
+            popup.PreferredPlacement = TeachingTipPlacementMode.Center;
+            popup.IsLightDismissEnabled = true;
+            popup.ShouldConstrainToRootBounds = true;
+
+            //popup.Validating += (s, args) =>
+            //{
+            //    if (args.Value < ClientService.Options.StarWithdrawalCountMin)
+            //    {
+            //        ToastPopup.Show(Locale.Declension(Strings.R.BotStarsWithdrawMinLimit, ClientService.Options.StarWithdrawalCountMin), new LocalFileSource("ms-appx:///Assets/Toasts/Info.tgs"));
+            //        args.Cancel = true;
+            //    }
+            //};
+
+            var confirm = await popup.ShowAsync();
+            if (confirm != ContentDialogResult.Primary)
+            {
+                return;
+            }
+
+            StarCount = (long)popup.Value;
         }
     }
 

@@ -952,6 +952,12 @@ namespace Telegram.ViewModels
                 {
                     message.Replace(update.Message);
                     message.GeneratedContentUnread = true;
+
+                    if (message.Content is MessagePaidMedia paidMedia)
+                    {
+                        message.Content = new MessagePaidAlbum(paidMedia);
+                    }
+
                     return true; //MoveMessageInOrder(Items, message);
                 },
                 (bubble, message) =>

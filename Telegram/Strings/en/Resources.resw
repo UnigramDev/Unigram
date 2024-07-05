@@ -9140,6 +9140,30 @@ The channel &quot;**{1}**&quot; will become private.</value>
   <data name="StarsConfirmPurchaseButton_other" xml:space="preserve">
     <value>Confirm and Pay ⭐️ {0} Stars</value>
   </data>
+  <data name="StarsConfirmPurchaseMedia_Photos_one" xml:space="preserve">
+    <value>**{0} photo**</value>
+  </data>
+  <data name="StarsConfirmPurchaseMedia_Photos_other" xml:space="preserve">
+    <value>**{0} photos**</value>
+  </data>
+  <data name="StarsConfirmPurchaseMedia_SinglePhoto" xml:space="preserve">
+    <value>a **photo**</value>
+  </data>
+  <data name="StarsConfirmPurchaseMedia_SingleVideo" xml:space="preserve">
+    <value>a **video**</value>
+  </data>
+  <data name="StarsConfirmPurchaseMedia_Videos_one" xml:space="preserve">
+    <value>**{1} video**</value>
+  </data>
+  <data name="StarsConfirmPurchaseMedia_Videos_other" xml:space="preserve">
+    <value>**{1} videos**</value>
+  </data>
+  <data name="StarsConfirmPurchaseMedia1" xml:space="preserve">
+    <value>Do you want to unlock {0} in **{1}** for **{2}**?</value>
+  </data>
+  <data name="StarsConfirmPurchaseMedia2" xml:space="preserve">
+    <value>Do you want to unlock {0} and {1} in **{2}** for **{3}**?</value>
+  </data>
   <data name="StarsConfirmPurchaseText_one" xml:space="preserve">
     <value>Do you want to buy &quot;**{1}**&quot; in **{2}** for **{0} star**?</value>
   </data>

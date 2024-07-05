@@ -22,7 +22,8 @@ namespace Telegram.Views.Popups
     {
         Text,
         Password,
-        Value
+        Value,
+        Stars
     }
 
     public class InputPopupResult
@@ -72,11 +73,13 @@ namespace Telegram.Views.Popups
         public InputScopeNameValue InputScope { get; set; }
         public INumberFormatter2 Formatter { get; set; }
 
+        private readonly InputPopupType _type;
+
         public InputPopup(InputPopupType type = InputPopupType.Text)
         {
             InitializeComponent();
 
-            switch (type)
+            switch (_type = type)
             {
                 case InputPopupType.Text:
                     FindName(nameof(Label));
@@ -85,6 +88,7 @@ namespace Telegram.Views.Popups
                     FindName(nameof(Password));
                     break;
                 case InputPopupType.Value:
+                case InputPopupType.Stars:
                     FindName(nameof(Number));
                     break;
             }
@@ -141,6 +145,12 @@ namespace Telegram.Views.Popups
                 Number.Value = Value;
 
                 Number.Focus(FocusState.Keyboard);
+
+                if (_type == InputPopupType.Stars)
+                {
+                    Number.Padding = new Thickness(28, Number.Padding.Top, Number.Padding.Right, Number.Padding.Bottom);
+                    FindName(nameof(StarCount));
+                }
             }
         }
 

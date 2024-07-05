@@ -68,7 +68,14 @@ namespace Telegram.Controls.Messages.Content
             Photo.Constraint = invoice.ProductInfo.Photo;
             Texture.Source = null;
 
-            Footer.UpdateMessage(message);
+            if (invoice.Currency == "XTR")
+            {
+                Footer.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
+            }
+            else
+            {
+                Footer.UpdateMessage(message);
+            }
 
             var small = invoice.ProductInfo.Photo.GetSmall();
             if (small != null)

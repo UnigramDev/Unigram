@@ -76,7 +76,8 @@ namespace Telegram.Services.Factories
             return new InputMessageFactory
             {
                 InputFile = generated,
-                Delegate = (inputFile, caption) => new InputMessagePhoto(generated, thumbnail, Array.Empty<int>(), size.Width, size.Height, caption, photo.ShowCaptionAboveMedia, ttl, spoiler)
+                Delegate = (inputFile, caption) => new InputMessagePhoto(generated, thumbnail, Array.Empty<int>(), size.Width, size.Height, caption, photo.ShowCaptionAboveMedia, ttl, spoiler),
+                PaidDelegate = (inputFile) => new InputPaidMedia(new InputPaidMediaTypePhoto(), generated, thumbnail, Array.Empty<int>(), size.Width, size.Height)
             };
         }
 
@@ -126,7 +127,8 @@ namespace Telegram.Services.Factories
             return new InputMessageFactory
             {
                 InputFile = generated,
-                Delegate = (inputFile, caption) => new InputMessageVideo(inputFile, thumbnail, Array.Empty<int>(), duration, videoWidth, videoHeight, true, caption, video.ShowCaptionAboveMedia, ttl, spoiler)
+                Delegate = (inputFile, caption) => new InputMessageVideo(inputFile, thumbnail, Array.Empty<int>(), duration, videoWidth, videoHeight, true, caption, video.ShowCaptionAboveMedia, ttl, spoiler),
+                PaidDelegate = (inputFile) => new InputPaidMedia(new InputPaidMediaTypeVideo(duration, true), inputFile, thumbnail, Array.Empty<int>(), videoWidth, videoHeight)
             };
         }
 
@@ -245,5 +247,6 @@ namespace Telegram.Services.Factories
     {
         public InputFile InputFile { get; set; }
         public Func<InputFile, FormattedText, InputMessageContent> Delegate { get; set; }
+        public Func<InputFile, InputPaidMedia> PaidDelegate { get; set; }
     }
 }

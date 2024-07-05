@@ -12,23 +12,66 @@
                    Margin="0,0,0,4"
                    Style="{StaticResource BodyTextBlockStyle}" />
 
-        <TextBox x:Name="Label"
-                 x:Load="False"
-                 Margin="0,12,0,0"
-                 VerticalAlignment="Top"
-                 TextChanged="Label_TextChanged"
-                 KeyDown="Label_KeyDown" />
-        <PasswordBox x:Name="Password"
+        <Grid Margin="0,12,0,0"
+              VerticalAlignment="Top">
+            <TextBox x:Name="Label"
                      x:Load="False"
-                     Margin="0,12,0,0"
-                     VerticalAlignment="Top"
-                     PasswordChanged="Label_PasswordChanged"
+                     TextChanged="Label_TextChanged"
                      KeyDown="Label_KeyDown" />
-        <muxc:NumberBox x:Name="Number"
-                        x:Load="False"
-                        Margin="0,12,0,0"
-                        VerticalAlignment="Top"
-                        ValueChanged="Number_ValueChanged"
-                        KeyDown="Label_KeyDown" />
+            <PasswordBox x:Name="Password"
+                         x:Load="False"
+                         PasswordChanged="Label_PasswordChanged"
+                         KeyDown="Label_KeyDown" />
+            <muxc:NumberBox x:Name="Number"
+                            x:Load="False"
+                            ValueChanged="Number_ValueChanged"
+                            KeyDown="Label_KeyDown" />
+
+            <Viewbox x:Name="StarCount"
+                     x:Load="False"
+                     Margin="4,0,0,0"
+                     HorizontalAlignment="Left"
+                     VerticalAlignment="Center"
+                     Width="24"
+                     Height="24">
+                <Viewbox.Resources>
+                    <LinearGradientBrush x:Key="paint0_linear_2067_2459"
+                                         StartPoint="6.5,22"
+                                         EndPoint="23,9"
+                                         MappingMode="Absolute">
+                        <LinearGradientBrush.GradientStops>
+                            <GradientStopCollection>
+                                <GradientStop Color="#FDD21A" />
+                                <GradientStop Offset="1"
+                                              Color="#E47B03" />
+                            </GradientStopCollection>
+                        </LinearGradientBrush.GradientStops>
+                    </LinearGradientBrush>
+                    <LinearGradientBrush x:Key="paint1_linear_2067_2459"
+                                         StartPoint="9,14.5"
+                                         EndPoint="25.5874,12.914"
+                                         MappingMode="Absolute">
+                        <LinearGradientBrush.GradientStops>
+                            <GradientStopCollection>
+                                <GradientStop Color="#00F2AB10" />
+                                <GradientStop Offset="0.703442"
+                                              Color="#FDC606" />
+                                <GradientStop Offset="1"
+                                              Color="#EF9504" />
+                            </GradientStopCollection>
+                        </LinearGradientBrush.GradientStops>
+                    </LinearGradientBrush>
+                </Viewbox.Resources>
+                <Canvas Height="30"
+                        Width="30">
+                    <Canvas>
+                        <Path Data="M14.458 21.2855L9.75931 24.164C9.27073 24.4633 8.63202 24.3099 8.33272 23.8213C8.18654 23.5827 8.14295 23.2951 8.21186 23.0239L8.93922 20.161C9.20179 19.1275 9.90899 18.2636 10.8702 17.8021L15.9963 15.341C16.2353 15.2262 16.336 14.9395 16.2213 14.7005C16.1283 14.507 15.9182 14.3987 15.7067 14.4353L10.0007 15.4232C8.8408 15.624 7.65134 15.3037 6.74912 14.5476L4.94655 13.037C4.5074 12.669 4.44974 12.0146 4.81776 11.5755C4.99676 11.3619 5.25415 11.2293 5.53197 11.2075L11.0393 10.7765C11.4284 10.7461 11.7675 10.4999 11.9169 10.1393L14.0415 5.01054C14.2608 4.4812 14.8677 4.22984 15.397 4.44913C15.6512 4.55443 15.8531 4.75637 15.9584 5.01054L18.0831 10.1393C18.2324 10.4999 18.5715 10.7461 18.9606 10.7765L24.4982 11.2099C25.0695 11.2546 25.4963 11.7539 25.4516 12.3251C25.4301 12.5999 25.3001 12.8549 25.0904 13.0337L20.867 16.6342C20.5697 16.8876 20.44 17.2866 20.5315 17.6665L21.8298 23.0602C21.9639 23.6173 21.621 24.1775 21.064 24.3116C20.7963 24.3761 20.514 24.3315 20.2793 24.1877L15.5419 21.2855C15.2093 21.0818 14.7906 21.0818 14.458 21.2855Z"
+                              Fill="{StaticResource paint0_linear_2067_2459}" />
+                        <Path Data="M13.9356 20.4329L9.23693 23.3113C9.2193 23.3221 9.19624 23.3166 9.18543 23.2989C9.18016 23.2903 9.17858 23.2799 9.18107 23.2702L9.90843 20.4072L8.93929 20.161L8.21186 23.0239C8.14295 23.2951 8.18654 23.5827 8.33272 23.8213C8.63202 24.3099 9.27073 24.4633 9.75931 24.164L14.458 21.2856C14.7906 21.0818 15.2093 21.0818 15.5419 21.2856L20.2792 24.1877C20.514 24.3315 20.7963 24.3761 21.064 24.3117C21.621 24.1776 21.9639 23.6173 21.8298 23.0602L20.5314 17.6665C20.44 17.2867 20.5697 16.8877 20.867 16.6342L25.0903 13.0337C25.3001 12.8549 25.43 12.6 25.4515 12.3252C25.4963 11.7539 25.0694 11.2546 24.4982 11.2099L18.9606 10.7766C18.5715 10.7461 18.2324 10.4999 18.083 10.1393L15.9584 5.01054C15.8531 4.75637 15.6512 4.55443 15.397 4.44913C14.8676 4.22985 14.2608 4.4812 14.0415 5.01054L11.9168 10.1393C11.7675 10.4999 11.4284 10.7461 11.0393 10.7766L5.53197 11.2076C5.25415 11.2293 4.99675 11.3619 4.81776 11.5755C4.44974 12.0146 4.5074 12.669 4.94655 13.037L6.74912 14.5476L7.39143 13.7812L5.58886 12.2706C5.57301 12.2573 5.57092 12.2337 5.58421 12.2178C5.59067 12.2101 5.59996 12.2053 5.60999 12.2045L11.1173 11.7735C11.8814 11.7137 12.5474 11.2301 12.8407 10.522L14.9653 5.39326C14.9733 5.37416 14.9952 5.36508 15.0143 5.373C15.0234 5.3768 15.0307 5.38409 15.0345 5.39326L17.1592 10.522C17.4525 11.2301 18.1184 11.7137 18.8825 11.7735L24.4202 12.2069C24.4408 12.2085 24.4562 12.2265 24.4546 12.2471C24.4538 12.2571 24.4491 12.2663 24.4416 12.2727L20.2182 15.8732C19.6343 16.371 19.3796 17.1546 19.5592 17.9005L20.8576 23.2943C20.8624 23.3144 20.85 23.3346 20.8299 23.3394C20.8203 23.3418 20.8101 23.3402 20.8016 23.335L16.0643 20.4329C15.4111 20.0327 14.5888 20.0327 13.9356 20.4329Z"
+                              Fill="{StaticResource paint1_linear_2067_2459}" />
+                    </Canvas>
+                </Canvas>
+            </Viewbox>
+        </Grid>
     </StackPanel>
 </muxc:TeachingTip>

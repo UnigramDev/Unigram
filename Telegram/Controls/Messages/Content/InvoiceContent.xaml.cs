@@ -59,7 +59,14 @@ namespace Telegram.Controls.Messages.Content
             Title.Text = invoice.ProductInfo.Title;
             TextBlockHelper.SetFormattedText(Description, invoice.ProductInfo.Description);
 
-            Footer.UpdateMessage(message);
+            if (invoice.Currency == "XTR")
+            {
+                Footer.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
+            }
+            else
+            {
+                Footer.UpdateMessage(message);
+            }
         }
 
         public void Recycle()

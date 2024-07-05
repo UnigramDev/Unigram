@@ -431,6 +431,11 @@ namespace Telegram.ViewModels
             var popup = new SendFilesPopup(this, items, media, mediaAllowed, permissions.CanSendDocuments || permissions.CanSendAudios, chat.Type is ChatTypePrivate && !self, CanSchedule, self);
             popup.Caption = caption;
 
+            if (ClientService.TryGetSupergroupFull(chat, out SupergroupFullInfo fullInfo))
+            {
+                popup.HasPaidMediaAllowed = fullInfo.HasPaidMediaAllowed;
+            }
+
             var confirm = await popup.OpenAsync();
             if (confirm != ContentDialogResult.Primary)
             {
@@ -455,7 +460,7 @@ namespace Telegram.ViewModels
             {
                 popup.Items[0].ShowCaptionAboveMedia = popup.ShowCaptionAboveMedia;
                 popup.Items[0].HasSpoiler = popup.SendWithSpoiler && !popup.IsFilesSelected;
-                await Task.Run(() => SendStorageMediaAsync(popup.Items[0], reply, captionz, popup.IsFilesSelected, options));
+                await Task.Run(() => SendStorageMediaAsync(popup.Items[0], reply, captionz, popup.IsFilesSelected, options, popup.StarCount));
             }
             else if (popup.Items.Count > 1 && popup.IsAlbum && popup.IsAlbumAvailable)
             {
@@ -469,7 +474,7 @@ namespace Telegram.ViewModels
 
                     if (group.Count == 10)
                     {
-                        await SendGroupedAsync(group, reply, captionz, options, popup.IsFilesSelected);
+                        await SendGroupedAsync(group, reply, captionz, options, popup.IsFilesSelected, popup.StarCount);
                         group = new List<StorageMedia>(Math.Min(popup.Items.Count, 10));
                         reply = null;
                     }
@@ -477,7 +482,7 @@ namespace Telegram.ViewModels
 
                 if (group.Count > 0)
                 {
-                    await SendGroupedAsync(group, reply, captionz, options, popup.IsFilesSelected);
+                    await SendGroupedAsync(group, reply, captionz, options, popup.IsFilesSelected, popup.StarCount);
                 }
             }
             else if (popup.Items.Count > 0)
@@ -494,7 +499,7 @@ namespace Telegram.ViewModels
                     {
                         file.ShowCaptionAboveMedia = popup.ShowCaptionAboveMedia;
                         file.HasSpoiler = popup.SendWithSpoiler && !popup.IsFilesSelected;
-                        await SendStorageMediaAsync(file, reply, null, popup.IsFilesSelected, options);
+                        await SendStorageMediaAsync(file, reply, null, popup.IsFilesSelected, options, popup.StarCount);
                         reply = null;
                     }
                 });
@@ -503,7 +508,7 @@ namespace Telegram.ViewModels
 
         protected abstract bool CanSchedule { get; }
 
-        private async Task SendStorageMediaAsync(StorageMedia storage, InputMessageReplyTo reply, FormattedText caption, bool asFile, MessageSendOptions options)
+        private async Task SendStorageMediaAsync(StorageMedia storage, InputMessageReplyTo reply, FormattedText caption, bool asFile, MessageSendOptions options, long starCount = 0)
         {
             if (storage is StorageDocument or StorageAudio || asFile)
             {
@@ -511,11 +516,11 @@ namespace Telegram.ViewModels
             }
             else if (storage is StoragePhoto photo)
             {
-                await SendPhotoAsync(photo, reply, caption, storage.HasSpoiler, storage.Ttl, storage.IsEdited ? storage.EditState : null, options);
+                await SendPhotoAsync(photo, reply, caption, storage.HasSpoiler, storage.Ttl, storage.IsEdited ? storage.EditState : null, options, starCount);
             }
             else if (storage is StorageVideo video)
             {
-                await SendVideoAsync(video, reply, caption, video.IsMuted, storage.HasSpoiler, storage.Ttl, video.GetTransform(), options);
+                await SendVideoAsync(video, reply, caption, video.IsMuted, storage.HasSpoiler, storage.Ttl, video.GetTransform(), options, starCount);
             }
         }
 
@@ -531,27 +536,49 @@ namespace Telegram.ViewModels
             }
         }
 
-        private async Task SendPhotoAsync(StoragePhoto file, InputMessageReplyTo reply, FormattedText caption, bool spoiler = false, MessageSelfDestructType ttl = null, BitmapEditState editState = null, MessageSendOptions options = null)
+        private async Task SendPhotoAsync(StoragePhoto file, InputMessageReplyTo reply, FormattedText caption, bool spoiler = false, MessageSelfDestructType ttl = null, BitmapEditState editState = null, MessageSendOptions options = null, long starCount = 0)
         {
-            var factory = await MessageFactory.CreatePhotoAsync(file, spoiler, ttl, editState);
+            var factory = await MessageFactory.CreatePhotoAsync(file, spoiler, starCount > 0 ? new MessageSelfDestructTypeImmediately() : ttl, editState);
             if (factory != null)
             {
-                //var reply = GetReply(true);
-                var input = factory.Delegate(factory.InputFile, caption);
+                if (starCount > 0)
+                {
+                    var input = factory.PaidDelegate?.Invoke(factory.InputFile);
+                    if (input != null)
+                    {
+                        await SendMessageAsync(reply, new InputMessagePaidMedia(starCount, new[] { input }, caption, file.ShowCaptionAboveMedia), options);
+                    }
+                }
+                else
+                {
+                    //var reply = GetReply(true);
+                    var input = factory.Delegate(factory.InputFile, caption);
 
-                await SendMessageAsync(reply, input, options);
+                    await SendMessageAsync(reply, input, options);
+                }
             }
         }
 
-        public async Task SendVideoAsync(StorageVideo video, InputMessageReplyTo reply, FormattedText caption, bool animated, bool spoiler = false, MessageSelfDestructType ttl = null, VideoTransformEffectDefinition transform = null, MessageSendOptions options = null)
+        public async Task SendVideoAsync(StorageVideo video, InputMessageReplyTo reply, FormattedText caption, bool animated, bool spoiler = false, MessageSelfDestructType ttl = null, VideoTransformEffectDefinition transform = null, MessageSendOptions options = null, long starCount = 0)
         {
-            var factory = await MessageFactory.CreateVideoAsync(video, animated, spoiler, ttl, transform);
+            var factory = await MessageFactory.CreateVideoAsync(video, animated, spoiler, starCount > 0 ? new MessageSelfDestructTypeImmediately() : ttl, transform);
             if (factory != null)
             {
-                //var reply = GetReply(true);
-                var input = factory.Delegate(factory.InputFile, caption);
+                if (starCount > 0)
+                {
+                    var input = factory.PaidDelegate?.Invoke(factory.InputFile);
+                    if (input != null)
+                    {
+                        await SendMessageAsync(reply, new InputMessagePaidMedia(starCount, new[] { input }, caption, video.ShowCaptionAboveMedia), options);
+                    }
+                }
+                else
+                {
+                    //var reply = GetReply(true);
+                    var input = factory.Delegate(factory.InputFile, caption);
 
-                await SendMessageAsync(reply, input, options);
+                    await SendMessageAsync(reply, input, options);
+                }
             }
         }
 
@@ -782,7 +809,7 @@ namespace Telegram.ViewModels
             await SendMessageAsync(reply, input, options);
         }
 
-        private async Task<BaseObject> SendGroupedAsync(ICollection<StorageMedia> items, InputMessageReplyTo reply, FormattedText caption, MessageSendOptions options, bool asFile)
+        private async Task<BaseObject> SendGroupedAsync(ICollection<StorageMedia> items, InputMessageReplyTo reply, FormattedText caption, MessageSendOptions options, bool asFile, long starCount = 0)
         {
             if (Chat is not Chat chat)
             {
@@ -791,13 +818,17 @@ namespace Telegram.ViewModels
 
             //var reply = GetReply(true);
             var operations = new List<InputMessageContent>();
+            var paidOperations = new List<InputPaidMedia>();
 
             var firstCaption = asFile ? null : caption;
+            var showCaptionAboveMedia = false;
 
             var audio = items.All(x => x is StorageAudio);
 
             foreach (var item in items)
             {
+                showCaptionAboveMedia = item.ShowCaptionAboveMedia;
+
                 if (asFile || audio)
                 {
                     if (item == items.Last())
@@ -819,10 +850,25 @@ namespace Telegram.ViewModels
                     var factory = await MessageFactory.CreatePhotoAsync(photo, photo.HasSpoiler, photo.Ttl, photo.IsEdited ? photo.EditState : null);
                     if (factory != null)
                     {
-                        var input = factory.Delegate(factory.InputFile, firstCaption);
+                        if (starCount > 0)
+                        {
+                            var input = factory.PaidDelegate?.Invoke(factory.InputFile);
+                            if (input != null)
+                            {
+                                paidOperations.Add(input);
+                            }
+                            else
+                            {
+                                // TODO: error
+                            }
+                        }
+                        else
+                        {
+                            var input = factory.Delegate(factory.InputFile, firstCaption);
 
-                        operations.Add(input);
-                        firstCaption = null;
+                            operations.Add(input);
+                            firstCaption = null;
+                        }
                     }
                 }
                 else if (item is StorageVideo video)
@@ -830,12 +876,32 @@ namespace Telegram.ViewModels
                     var factory = await MessageFactory.CreateVideoAsync(video, video.IsMuted, video.HasSpoiler, video.Ttl, video.GetTransform());
                     if (factory != null)
                     {
-                        var input = factory.Delegate(factory.InputFile, firstCaption);
+                        if (starCount > 0)
+                        {
+                            var input = factory.PaidDelegate?.Invoke(factory.InputFile);
+                            if (input != null)
+                            {
+                                paidOperations.Add(input);
+                            }
+                            else
+                            {
+                                // TODO: error
+                            }
+                        }
+                        else
+                        {
+                            var input = factory.Delegate(factory.InputFile, firstCaption);
 
-                        operations.Add(input);
-                        firstCaption = null;
+                            operations.Add(input);
+                            firstCaption = null;
+                        }
                     }
                 }
+            }
+
+            if (starCount > 0)
+            {
+                return await SendMessageAsync(reply, new InputMessagePaidMedia(starCount, paidOperations, caption, showCaptionAboveMedia), options);
             }
 
             return await ClientService.SendAsync(CreateSendMessageAlbum(chat.Id, ThreadId, reply, options, operations));
