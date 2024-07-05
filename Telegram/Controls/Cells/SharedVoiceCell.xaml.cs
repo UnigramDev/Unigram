@@ -208,9 +208,9 @@ namespace Telegram.Controls.Cells
             {
                 return voiceNote.VoiceNote;
             }
-            else if (content is MessageText text && text.WebPage != null)
+            else if (content is MessageText text && text.LinkPreview?.Type is LinkPreviewTypeVoiceNote previewVoiceNote)
             {
-                return text.WebPage.VoiceNote;
+                return previewVoiceNote.VoiceNote;
             }
 
             return null;

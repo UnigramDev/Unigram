@@ -56,8 +56,6 @@ namespace Telegram.ViewModels.Gallery
 
         public override int Duration => 1;
 
-        public override string MimeType => "video/mp4";
-
         public override object From => _from;
 
         public override object Constraint => _photo;

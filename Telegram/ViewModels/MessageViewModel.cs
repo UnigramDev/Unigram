@@ -187,7 +187,7 @@ namespace Telegram.ViewModels
             }
             else if (SenderId is MessageSenderUser senderUser)
             {
-                if (Content is MessageText text && text.WebPage == null)
+                if (Content is MessageText text && text.LinkPreview == null)
                 {
                     return false;
                 }

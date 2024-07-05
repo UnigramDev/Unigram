@@ -877,6 +877,167 @@ namespace Telegram.Services
                     ProcessFiles(inlineQueryResultVoiceNote.VoiceNote);
                 }
             }
+            else if (target is LinkPreview linkPreview)
+            {
+                if (linkPreview.Type != null)
+                {
+                    ProcessFiles(linkPreview.Type);
+                }
+            }
+            else if (target is LinkPreviewAlbumMediaPhoto linkPreviewAlbumMediaPhoto)
+            {
+                if (linkPreviewAlbumMediaPhoto.Photo != null)
+                {
+                    ProcessFiles(linkPreviewAlbumMediaPhoto.Photo);
+                }
+            }
+            else if (target is LinkPreviewAlbumMediaVideo linkPreviewAlbumMediaVideo)
+            {
+                if (linkPreviewAlbumMediaVideo.Video != null)
+                {
+                    ProcessFiles(linkPreviewAlbumMediaVideo.Video);
+                }
+            }
+            else if (target is LinkPreviewTypeAlbum linkPreviewTypeAlbum)
+            {
+                foreach (var item in linkPreviewTypeAlbum.Media)
+                {
+                    ProcessFiles(item);
+                }
+            }
+            else if (target is LinkPreviewTypeAnimation linkPreviewTypeAnimation)
+            {
+                if (linkPreviewTypeAnimation.Animation != null)
+                {
+                    ProcessFiles(linkPreviewTypeAnimation.Animation);
+                }
+            }
+            else if (target is LinkPreviewTypeApp linkPreviewTypeApp)
+            {
+                if (linkPreviewTypeApp.Photo != null)
+                {
+                    ProcessFiles(linkPreviewTypeApp.Photo);
+                }
+            }
+            else if (target is LinkPreviewTypeArticle linkPreviewTypeArticle)
+            {
+                if (linkPreviewTypeArticle.Photo != null)
+                {
+                    ProcessFiles(linkPreviewTypeArticle.Photo);
+                }
+            }
+            else if (target is LinkPreviewTypeAudio linkPreviewTypeAudio)
+            {
+                if (linkPreviewTypeAudio.Audio != null)
+                {
+                    ProcessFiles(linkPreviewTypeAudio.Audio);
+                }
+            }
+            else if (target is LinkPreviewTypeBackground linkPreviewTypeBackground)
+            {
+                if (linkPreviewTypeBackground.Document != null)
+                {
+                    ProcessFiles(linkPreviewTypeBackground.Document);
+                }
+            }
+            else if (target is LinkPreviewTypeChannelBoost linkPreviewTypeChannelBoost)
+            {
+                if (linkPreviewTypeChannelBoost.Photo != null)
+                {
+                    ProcessFiles(linkPreviewTypeChannelBoost.Photo);
+                }
+            }
+            else if (target is LinkPreviewTypeChat linkPreviewTypeChat)
+            {
+                if (linkPreviewTypeChat.Photo != null)
+                {
+                    ProcessFiles(linkPreviewTypeChat.Photo);
+                }
+            }
+            else if (target is LinkPreviewTypeDocument linkPreviewTypeDocument)
+            {
+                if (linkPreviewTypeDocument.Document != null)
+                {
+                    ProcessFiles(linkPreviewTypeDocument.Document);
+                }
+            }
+            else if (target is LinkPreviewTypePhoto linkPreviewTypePhoto)
+            {
+                if (linkPreviewTypePhoto.Photo != null)
+                {
+                    ProcessFiles(linkPreviewTypePhoto.Photo);
+                }
+            }
+            else if (target is LinkPreviewTypeSticker linkPreviewTypeSticker)
+            {
+                if (linkPreviewTypeSticker.Sticker != null)
+                {
+                    ProcessFiles(linkPreviewTypeSticker.Sticker);
+                }
+            }
+            else if (target is LinkPreviewTypeStickerSet linkPreviewTypeStickerSet)
+            {
+                foreach (var item in linkPreviewTypeStickerSet.Stickers)
+                {
+                    ProcessFiles(item);
+                }
+            }
+            else if (target is LinkPreviewTypeSupergroupBoost linkPreviewTypeSupergroupBoost)
+            {
+                if (linkPreviewTypeSupergroupBoost.Photo != null)
+                {
+                    ProcessFiles(linkPreviewTypeSupergroupBoost.Photo);
+                }
+            }
+            else if (target is LinkPreviewTypeTheme linkPreviewTypeTheme)
+            {
+                foreach (var item in linkPreviewTypeTheme.Documents)
+                {
+                    ProcessFiles(item);
+                }
+            }
+            else if (target is LinkPreviewTypeUser linkPreviewTypeUser)
+            {
+                if (linkPreviewTypeUser.Photo != null)
+                {
+                    ProcessFiles(linkPreviewTypeUser.Photo);
+                }
+            }
+            else if (target is LinkPreviewTypeVideo linkPreviewTypeVideo)
+            {
+                if (linkPreviewTypeVideo.Video != null)
+                {
+                    ProcessFiles(linkPreviewTypeVideo.Video);
+                }
+            }
+            else if (target is LinkPreviewTypeVideoChat linkPreviewTypeVideoChat)
+            {
+                if (linkPreviewTypeVideoChat.Photo != null)
+                {
+                    ProcessFiles(linkPreviewTypeVideoChat.Photo);
+                }
+            }
+            else if (target is LinkPreviewTypeVideoNote linkPreviewTypeVideoNote)
+            {
+                if (linkPreviewTypeVideoNote.VideoNote != null)
+                {
+                    ProcessFiles(linkPreviewTypeVideoNote.VideoNote);
+                }
+            }
+            else if (target is LinkPreviewTypeVoiceNote linkPreviewTypeVoiceNote)
+            {
+                if (linkPreviewTypeVoiceNote.VoiceNote != null)
+                {
+                    ProcessFiles(linkPreviewTypeVoiceNote.VoiceNote);
+                }
+            }
+            else if (target is LinkPreviewTypeWebApp linkPreviewTypeWebApp)
+            {
+                if (linkPreviewTypeWebApp.Photo != null)
+                {
+                    ProcessFiles(linkPreviewTypeWebApp.Photo);
+                }
+            }
             else if (target is Message message)
             {
                 if (message.Content != null)
@@ -998,20 +1159,6 @@ namespace Telegram.Services
                     ProcessFiles(messageEffectTypePremiumSticker.Sticker);
                 }
             }
-            else if (target is PaidMediaPhoto PaidMediaPhoto)
-            {
-                if (PaidMediaPhoto.Photo != null)
-                {
-                    ProcessFiles(PaidMediaPhoto.Photo);
-                }
-            }
-            else if (target is PaidMediaVideo PaidMediaVideo)
-            {
-                if (PaidMediaVideo.Video != null)
-                {
-                    ProcessFiles(PaidMediaVideo.Video);
-                }
-            }
             else if (target is MessageGame messageGame)
             {
                 if (messageGame.Game != null)
@@ -1116,9 +1263,9 @@ namespace Telegram.Services
             }
             else if (target is MessageText messageText)
             {
-                if (messageText.WebPage != null)
+                if (messageText.LinkPreview != null)
                 {
-                    ProcessFiles(messageText.WebPage);
+                    ProcessFiles(messageText.LinkPreview);
                 }
             }
             else if (target is MessageThreadInfo messageThreadInfo)
@@ -1473,6 +1620,20 @@ namespace Telegram.Services
                 if (pageBlockVoiceNote.VoiceNote != null)
                 {
                     ProcessFiles(pageBlockVoiceNote.VoiceNote);
+                }
+            }
+            else if (target is PaidMediaPhoto paidMediaPhoto)
+            {
+                if (paidMediaPhoto.Photo != null)
+                {
+                    ProcessFiles(paidMediaPhoto.Photo);
+                }
+            }
+            else if (target is PaidMediaVideo paidMediaVideo)
+            {
+                if (paidMediaVideo.Video != null)
+                {
+                    ProcessFiles(paidMediaVideo.Video);
                 }
             }
             else if (target is PassportElementBankStatement passportElementBankStatement)
@@ -2374,45 +2535,6 @@ namespace Telegram.Services
                 if (webApp.Photo != null)
                 {
                     ProcessFiles(webApp.Photo);
-                }
-            }
-            else if (target is WebPage webPage)
-            {
-                if (webPage.Animation != null)
-                {
-                    ProcessFiles(webPage.Animation);
-                }
-                if (webPage.Audio != null)
-                {
-                    ProcessFiles(webPage.Audio);
-                }
-                if (webPage.Document != null)
-                {
-                    ProcessFiles(webPage.Document);
-                }
-                if (webPage.Photo != null)
-                {
-                    ProcessFiles(webPage.Photo);
-                }
-                if (webPage.Sticker != null)
-                {
-                    ProcessFiles(webPage.Sticker);
-                }
-                foreach (var item in webPage.Stickers)
-                {
-                    ProcessFiles(item);
-                }
-                if (webPage.Video != null)
-                {
-                    ProcessFiles(webPage.Video);
-                }
-                if (webPage.VideoNote != null)
-                {
-                    ProcessFiles(webPage.VideoNote);
-                }
-                if (webPage.VoiceNote != null)
-                {
-                    ProcessFiles(webPage.VoiceNote);
                 }
             }
             else if (target is WebPageInstantView webPageInstantView)

@@ -42,7 +42,7 @@ namespace Telegram.ViewModels.Supergroups
             CanSendVoiceNotes = chat.Permissions.CanSendVoiceNotes;
             CanSendVideoNotes = chat.Permissions.CanSendVideoNotes;
             CanSendPolls = chat.Permissions.CanSendPolls;
-            CanAddWebPagePreviews = chat.Permissions.CanAddWebPagePreviews;
+            CanAddLinkPreviews = chat.Permissions.CanAddLinkPreviews;
             CanSendBasicMessages = chat.Permissions.CanSendBasicMessages;
 
             if (ClientService.TryGetSupergroup(chat, out Supergroup supergroup)
@@ -68,9 +68,9 @@ namespace Telegram.ViewModels.Supergroups
                 RaisePropertyChanged(nameof(CanUnrestrictBoosters));
 
                 // Don't allow send media
-                if (!value && _canAddWebPagePreviews)
+                if (!value && _CanAddLinkPreviews)
                 {
-                    CanAddWebPagePreviews = false;
+                    CanAddLinkPreviews = false;
                 }
             }
         }
@@ -94,7 +94,7 @@ namespace Telegram.ViewModels.Supergroups
                     CanSendVoiceNotes = value.Value;
                     CanSendVideoNotes = value.Value;
                     CanSendPolls = value.Value;
-                    CanAddWebPagePreviews = value.Value;
+                    CanAddLinkPreviews = value.Value;
                 }
             }
         }
@@ -112,7 +112,7 @@ namespace Telegram.ViewModels.Supergroups
         private int Count()
         {
             var count = 0;
-            if (_canAddWebPagePreviews)
+            if (_CanAddLinkPreviews)
             {
                 count++;
             }
@@ -248,13 +248,13 @@ namespace Telegram.ViewModels.Supergroups
             }
         }
 
-        private bool _canAddWebPagePreviews;
-        public bool CanAddWebPagePreviews
+        private bool _CanAddLinkPreviews;
+        public bool CanAddLinkPreviews
         {
-            get => _canAddWebPagePreviews;
+            get => _CanAddLinkPreviews;
             set
             {
-                Set(ref _canAddWebPagePreviews, value);
+                Set(ref _CanAddLinkPreviews, value);
                 UpdateCanSendMediaMessages();
             }
         }
@@ -323,7 +323,7 @@ namespace Telegram.ViewModels.Supergroups
                         || !CanSendVoiceNotes
                         || !CanSendVideoNotes
                         || !CanSendPolls
-                        || !CanAddWebPagePreviews
+                        || !CanAddLinkPreviews
                         || !CanSendBasicMessages
                         || SlowModeDelay > 0;
                 }
@@ -353,7 +353,7 @@ namespace Telegram.ViewModels.Supergroups
                 CanSendVoiceNotes = _canSendVoiceNotes,
                 CanSendVideoNotes = _canSendVideoNotes,
                 CanSendPolls = _canSendPolls,
-                CanAddWebPagePreviews = _canAddWebPagePreviews,
+                CanAddLinkPreviews = _CanAddLinkPreviews,
                 CanSendBasicMessages = _canSendBasicMessages
             };
 

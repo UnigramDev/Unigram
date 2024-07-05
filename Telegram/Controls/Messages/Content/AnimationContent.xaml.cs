@@ -253,9 +253,9 @@ namespace Telegram.Controls.Messages.Content
             {
                 return game.Game.Animation != null;
             }
-            else if (content is MessageText text && text.WebPage != null && !primary)
+            else if (content is MessageText text && text.LinkPreview != null && !primary)
             {
-                return text.WebPage.Animation != null;
+                return text.LinkPreview.Type is LinkPreviewTypeAnimation;
             }
 
             return false;
@@ -282,9 +282,9 @@ namespace Telegram.Controls.Messages.Content
                 isGame = true;
                 return game.Game.Animation;
             }
-            else if (content is MessageText text && text.WebPage != null)
+            else if (content is MessageText text && text.LinkPreview?.Type is LinkPreviewTypeAnimation previewAnimation)
             {
-                return text.WebPage.Animation;
+                return previewAnimation.Animation;
             }
 
             return null;
@@ -323,9 +323,9 @@ namespace Telegram.Controls.Messages.Content
             {
                 _message.ClientService.DownloadFile(file.Id, 30);
             }
-            else if (_message.Content is MessageText text && text.WebPage.HasText())
+            else if (_message.Content is MessageText text && text.LinkPreview.HasText())
             {
-                _message.Delegate.OpenWebPage(text.WebPage);
+                _message.Delegate.OpenWebPage(text.LinkPreview);
             }
             else
             {

@@ -298,9 +298,9 @@ namespace Telegram.Controls.Cells
             {
                 return audio.Audio;
             }
-            else if (content is MessageText text && text.WebPage != null)
+            else if (content is MessageText text && text.LinkPreview?.Type is LinkPreviewTypeAudio previewAudio)
             {
-                return text.WebPage.Audio;
+                return previewAudio.Audio;
             }
 
             return null;

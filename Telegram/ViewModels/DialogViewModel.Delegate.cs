@@ -164,15 +164,15 @@ namespace Telegram.ViewModels
 
 
 
-        public void OpenWebPage(WebPage webPage)
+        public void OpenWebPage(LinkPreview linkPreview)
         {
-            if (webPage.InstantViewVersion != 0)
+            if (linkPreview.InstantViewVersion != 0)
             {
-                NavigationService.NavigateToInstant(webPage.Url);
+                NavigationService.NavigateToInstant(linkPreview.Url);
             }
             else
             {
-                MessageHelper.OpenUrl(ClientService, NavigationService, webPage.Url, !webPage.SkipConfirmation, new OpenUrlSourceChat(_chat.Id));
+                MessageHelper.OpenUrl(ClientService, NavigationService, linkPreview.Url, !linkPreview.SkipConfirmation, new OpenUrlSourceChat(_chat.Id));
             }
         }
 
@@ -374,13 +374,13 @@ namespace Telegram.ViewModels
             {
                 GalleryViewModelBase viewModel = null;
 
-                var webPage = message.Content is MessageText text ? text.WebPage : null;
-                if (webPage != null && webPage.IsInstantGallery())
+                var linkPreview = message.Content is MessageText text ? text.LinkPreview : null;
+                if (linkPreview != null && linkPreview.Type is LinkPreviewTypeAlbum album)
                 {
-                    viewModel = await InstantGalleryViewModel.CreateAsync(ClientService, StorageService, Aggregator, message, webPage);
+                    viewModel = InstantGalleryViewModel.Create(ClientService, StorageService, Aggregator, message, album);
                 }
 
-                if (viewModel == null && (message.Content is MessageAnimation || webPage?.Animation != null))
+                if (viewModel == null && (message.Content is MessageAnimation || linkPreview?.Type is LinkPreviewTypeAnimation))
                 {
                     Delegate?.PlayMessage(message, target);
                 }

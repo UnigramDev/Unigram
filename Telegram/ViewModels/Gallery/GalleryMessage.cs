@@ -106,9 +106,9 @@ namespace Telegram.ViewModels.Gallery
                 }
                 else if (_message.Content is MessageText text)
                 {
-                    return text.WebPage?.Video != null
-                        || text.WebPage?.Animation != null
-                        || text.WebPage?.VideoNote != null;
+                    return text.LinkPreview?.Type is LinkPreviewTypeVideo
+                        || text.LinkPreview?.Type is LinkPreviewTypeAnimation
+                        || text.LinkPreview?.Type is LinkPreviewTypeVideoNote;
                 }
 
                 return false;
@@ -129,8 +129,8 @@ namespace Telegram.ViewModels.Gallery
                 }
                 else if (_message.Content is MessageText text)
                 {
-                    return text.WebPage?.Animation != null
-                        || text.WebPage?.VideoNote != null;
+                    return text.LinkPreview?.Type is LinkPreviewTypeAnimation
+                        || text.LinkPreview?.Type is LinkPreviewTypeVideoNote;
                 }
 
                 return false;
@@ -147,7 +147,7 @@ namespace Telegram.ViewModels.Gallery
                 }
                 else if (_message.Content is MessageText text)
                 {
-                    return text.WebPage?.VideoNote != null;
+                    return text.LinkPreview?.Type is LinkPreviewTypeVideoNote;
                 }
 
                 return false;
@@ -217,64 +217,16 @@ namespace Telegram.ViewModels.Gallery
                 }
                 else if (_message.Content is MessageText text)
                 {
-                    if (text.WebPage?.Video != null)
+                    return text.LinkPreview?.Type switch
                     {
-                        return text.WebPage.Video.Duration;
-                    }
-                    else if (text.WebPage?.Animation != null)
-                    {
-                        return text.WebPage.Video.Duration;
-                    }
-                    else if (text.WebPage?.VideoNote != null)
-                    {
-                        return text.WebPage.VideoNote.Duration;
-                    }
+                        LinkPreviewTypeVideo previewVideo => previewVideo.Video.Duration,
+                        LinkPreviewTypeAnimation previewAnimation => previewAnimation.Animation.Duration,
+                        LinkPreviewTypeVideoNote previewVideoNote => previewVideoNote.VideoNote.Duration,
+                        _ => 0
+                    };
                 }
 
                 return 0;
-            }
-        }
-
-        public override string MimeType
-        {
-            get
-            {
-                if (_message.Content is MessageVideo video)
-                {
-                    return video.Video.MimeType;
-                }
-                else if (_message.Content is MessageAnimation animation)
-                {
-                    return animation.Animation.MimeType;
-                }
-                else if (_message.Content is MessageVideoNote videoNote)
-                {
-                    return "video/mp4"; // videoNote.VideoNote.MimeType;
-                }
-                else if (_message.Content is MessageGame game)
-                {
-                    return game.Game.Animation?.MimeType;
-                }
-                else if (_message.Content is MessageInvoice invoice)
-                {
-                    if (invoice.PaidMedia is PaidMediaVideo extendedVideo)
-                    {
-                        return extendedVideo.Video.MimeType;
-                    }
-                }
-                else if (_message.Content is MessageText text)
-                {
-                    if (text.WebPage?.Video != null)
-                    {
-                        return text.WebPage.Video.MimeType;
-                    }
-                    else if (text.WebPage?.Animation != null)
-                    {
-                        return text.WebPage.Video.MimeType;
-                    }
-                }
-
-                return null;
             }
         }
     }

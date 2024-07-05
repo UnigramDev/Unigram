@@ -160,9 +160,9 @@ namespace Telegram.Controls
             PlaybackButton.Glyph = _playbackService.PlaybackState == PlaybackState.Paused ? Icons.Play : Icons.Pause;
             Automation.SetToolTip(PlaybackButton, _playbackService.PlaybackState == PlaybackState.Paused ? Strings.AccActionPlay : Strings.AccActionPause);
 
-            var webPage = message.Content is MessageText text ? text.WebPage : null;
+            var linkPreview = message.Content is MessageText text ? text.LinkPreview : null;
 
-            if (message.Content is MessageVoiceNote || message.Content is MessageVideoNote || webPage?.VoiceNote != null || webPage?.VideoNote != null)
+            if (message.Content is MessageVoiceNote || message.Content is MessageVideoNote || linkPreview?.Type is LinkPreviewTypeVoiceNote or LinkPreviewTypeVideoNote)
             {
                 var title = string.Empty;
                 var date = Formatter.ToLocalTime(message.Date);
@@ -190,9 +190,9 @@ namespace Telegram.Controls
 
                 ViewButton.Padding = new Thickness(48, 0, 40 * 2 + 48 + 12, 0);
             }
-            else if (message.Content is MessageAudio || webPage?.Audio != null)
+            else if (message.Content is MessageAudio || linkPreview?.Type is LinkPreviewTypeAudio)
             {
-                var audio = message.Content is MessageAudio messageAudio ? messageAudio.Audio : webPage?.Audio;
+                var audio = message.Content is MessageAudio messageAudio ? messageAudio.Audio : (linkPreview?.Type is LinkPreviewTypeAudio previewAudio ? previewAudio.Audio : null);
                 if (audio == null)
                 {
                     return;

@@ -116,7 +116,7 @@
                                           BorderThickness="0,0,0,1"
                                           CornerRadius="0" />
 
-                                <CheckBox IsChecked="{x:Bind ViewModel.CanAddWebPagePreviews, Mode=TwoWay}"
+                                <CheckBox IsChecked="{x:Bind ViewModel.CanAddLinkPreviews, Mode=TwoWay}"
                                           Content="{CustomResource UserRestrictionsEmbedLinks}"
                                           Style="{StaticResource SettingsCheckBoxStyle}"
                                           Background="Transparent"

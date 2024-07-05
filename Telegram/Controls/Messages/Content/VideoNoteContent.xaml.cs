@@ -257,9 +257,9 @@ namespace Telegram.Controls.Messages.Content
             {
                 return true;
             }
-            else if (content is MessageText text && text.WebPage != null && !primary)
+            else if (content is MessageText text && text.LinkPreview != null && !primary)
             {
-                return text.WebPage.VideoNote != null;
+                return text.LinkPreview.Type is LinkPreviewTypeVideoNote;
             }
 
             return false;
@@ -279,10 +279,10 @@ namespace Telegram.Controls.Messages.Content
                 isSecret = videoNote.IsSecret;
                 return videoNote.VideoNote;
             }
-            else if (content is MessageText text && text.WebPage != null)
+            else if (content is MessageText text && text.LinkPreview?.Type is LinkPreviewTypeVideoNote previewVideoNode)
             {
                 isSecret = false;
-                return text.WebPage.VideoNote;
+                return previewVideoNode.VideoNote;
             }
 
             isSecret = false;

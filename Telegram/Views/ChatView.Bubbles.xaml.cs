@@ -394,7 +394,7 @@ namespace Telegram.Views
         {
             var text = message.Content as MessageText;
 
-            if (PowerSavingPolicy.AutoPlayAnimations && (message.Content is MessageAnimation || (text?.WebPage != null && text.WebPage.Animation != null) || (message.Content is MessageGame game && game.Game.Animation != null)))
+            if (PowerSavingPolicy.AutoPlayAnimations && (message.Content is MessageAnimation || (text?.LinkPreview != null && text.LinkPreview.Type is LinkPreviewTypeAnimation) || (message.Content is MessageGame game && game.Game.Animation != null)))
             {
                 if (_prev.TryGetValue(message.AnimationHash(), out WeakReference reference) && reference.Target is IPlayerView item)
                 {

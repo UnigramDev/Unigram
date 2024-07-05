@@ -1497,7 +1497,7 @@ namespace Telegram.Views
                     {
                         viewModel.ComposerHeader = null;
                     }
-                    else if (embedded.WebPagePreview != null)
+                    else if (embedded.LinkPreview != null)
                     {
                         viewModel.ComposerHeader = new MessageComposerHeader(viewModel.ClientService)
                         {
@@ -1520,9 +1520,9 @@ namespace Telegram.Views
                         return;
                     }
 
-                    if (result is WebPage webPage)
+                    if (result is LinkPreview linkPreview)
                     {
-                        if (embedded != null && embedded.WebPageDisabled && string.Equals(embedded.WebPageUrl, webPage.Url, StringComparison.OrdinalIgnoreCase))
+                        if (embedded != null && embedded.LinkPreviewDisabled && string.Equals(embedded.LinkPreviewUrl, linkPreview.Url, StringComparison.OrdinalIgnoreCase))
                         {
                             return;
                         }
@@ -1533,8 +1533,8 @@ namespace Telegram.Views
                             ReplyToMessage = embedded?.ReplyToMessage,
                             ReplyToQuote = embedded?.ReplyToQuote,
                             LinkPreviewOptions = embedded?.LinkPreviewOptions,
-                            WebPagePreview = webPage,
-                            WebPageUrl = webPage.Url
+                            LinkPreview = linkPreview,
+                            LinkPreviewUrl = linkPreview.Url
                         };
                     }
                     else if (embedded != null)
@@ -1543,7 +1543,7 @@ namespace Telegram.Views
                         {
                             viewModel.ComposerHeader = null;
                         }
-                        else if (embedded.WebPagePreview != null)
+                        else if (embedded.LinkPreview != null)
                         {
                             viewModel.ComposerHeader = new MessageComposerHeader(viewModel.ClientService)
                             {
@@ -1589,11 +1589,11 @@ namespace Telegram.Views
                     return;
                 }
 
-                clientService.Send(new GetWebPagePreview(new FormattedText(urls, Array.Empty<TextEntity>()), null), result);
+                clientService.Send(new GetLinkPreview(new FormattedText(urls, Array.Empty<TextEntity>()), null), result);
             }
             else
             {
-                clientService.Send(new GetWebPagePreview(new FormattedText(text.Format(), Array.Empty<TextEntity>()), null), result);
+                clientService.Send(new GetLinkPreview(new FormattedText(text.Format(), Array.Empty<TextEntity>()), null), result);
             }
         }
 
@@ -1640,7 +1640,7 @@ namespace Telegram.Views
             var videoRights = !ViewModel.VerifyRights(chat, x => x.CanSendVideos);
             var documentRights = !ViewModel.VerifyRights(chat, x => x.CanSendDocuments);
 
-            if (header == null || header.EditingMessage == null || (header.IsEmpty && header.WebPageDisabled))
+            if (header == null || header.EditingMessage == null || (header.IsEmpty && header.LinkPreviewDisabled))
             {
                 var messageRights = !ViewModel.VerifyRights(chat, x => x.CanSendBasicMessages);
                 var pollRights = !ViewModel.VerifyRights(chat, x => x.CanSendPolls, Strings.GlobalAttachMediaRestricted, Strings.AttachMediaRestrictedForever, Strings.AttachMediaRestricted, out string pollsLabel);
@@ -2374,7 +2374,7 @@ namespace Telegram.Views
                 flyout.CreateFlyoutSeparator();
                 flyout.CreateFlyoutItem(ViewModel.ClearReply, Strings.DoNotReply, Icons.DismissCircle, destructive: true);
             }
-            else if (header?.WebPagePreview != null)
+            else if (header?.LinkPreview != null)
             {
                 static void ChangeShowAbove(MessageComposerHeader header)
                 {
@@ -2389,7 +2389,7 @@ namespace Telegram.Views
 
                 flyout.CreateFlyoutItem(ChangeShowAbove, header, header.LinkPreviewOptions.ShowAboveText ? Strings.LinkBelow : Strings.LinkAbove, header.LinkPreviewOptions.ShowAboveText ? Icons.MoveDown : Icons.MoveUp);
 
-                if (header.WebPagePreview.HasLargeMedia)
+                if (header.LinkPreview.HasLargeMedia)
                 {
                     flyout.CreateFlyoutItem(ChangeForceMedia, header, header.LinkPreviewOptions.ForceSmallMedia ? Strings.LinkMediaLarger : Strings.LinkMediaSmaller, header.LinkPreviewOptions.ForceSmallMedia ? Icons.Enlarge : Icons.Shrink);
                 }
@@ -3241,7 +3241,7 @@ namespace Telegram.Views
             }
             else if (message.Content is MessageText text)
             {
-                return text.WebPage != null && text.WebPage.HasPhoto();
+                return text.LinkPreview != null && text.LinkPreview.HasPhoto();
             }
 
             return false;
@@ -3281,9 +3281,9 @@ namespace Telegram.Views
             {
                 return !ViewModel.ClientService.IsStickerSetInstalled(sticker.Sticker.SetId);
             }
-            else if (message.Content is MessageText text && text.WebPage?.Sticker != null && text.WebPage.Sticker.SetId != 0)
+            else if (message.Content is MessageText text && text.LinkPreview?.Type is LinkPreviewTypeSticker previewSticker && previewSticker.Sticker.SetId != 0)
             {
-                return !ViewModel.ClientService.IsStickerSetInstalled(text.WebPage.Sticker.SetId);
+                return !ViewModel.ClientService.IsStickerSetInstalled(previewSticker.Sticker.SetId);
             }
 
             return false;
@@ -3411,7 +3411,7 @@ namespace Telegram.Views
 
             if (message.Content is MessageText text)
             {
-                return text.WebPage != null && text.WebPage.Animation != null;
+                return text.LinkPreview != null && text.LinkPreview.Type is LinkPreviewTypeAnimation;
             }
             else if (message.Content is MessageAnimation)
             {
@@ -3431,15 +3431,15 @@ namespace Telegram.Views
             // TODO: max count
             if (message.Content is MessageText text)
             {
-                if (text.WebPage?.Audio != null)
+                if (text.LinkPreview?.Type is LinkPreviewTypeAudio previewAudio)
                 {
-                    return text.WebPage.Audio.Duration <= ViewModel.ClientService.Options.NotificationSoundDurationMax
-                        && text.WebPage.Audio.AudioValue.Size <= ViewModel.ClientService.Options.NotificationSoundSizeMax;
+                    return previewAudio.Audio.Duration <= ViewModel.ClientService.Options.NotificationSoundDurationMax
+                        && previewAudio.Audio.AudioValue.Size <= ViewModel.ClientService.Options.NotificationSoundSizeMax;
                 }
-                else if (text.WebPage?.VoiceNote != null)
+                else if (text.LinkPreview?.Type is LinkPreviewTypeVoiceNote previewVoiceNote)
                 {
-                    return text.WebPage.VoiceNote.Duration <= ViewModel.ClientService.Options.NotificationSoundDurationMax
-                        && text.WebPage.VoiceNote.Voice.Size <= ViewModel.ClientService.Options.NotificationSoundSizeMax;
+                    return previewVoiceNote.VoiceNote.Duration <= ViewModel.ClientService.Options.NotificationSoundDurationMax
+                        && previewVoiceNote.VoiceNote.Voice.Size <= ViewModel.ClientService.Options.NotificationSoundSizeMax;
                 }
             }
             else if (message.Content is MessageAudio audio)
@@ -4592,7 +4592,7 @@ namespace Telegram.Views
         {
             CheckButtonsVisibility();
 
-            if (header == null || (header.IsEmpty && header.WebPageDisabled))
+            if (header == null || (header.IsEmpty && header.LinkPreviewDisabled))
             {
                 // Let's reset
                 //ComposerHeader.Visibility = Visibility.Collapsed;
@@ -4655,7 +4655,7 @@ namespace Telegram.Views
                     ButtonAttach.Glyph = Icons.Attach24;
                     ButtonAttach.IsEnabled = true;
 
-                    if (header.WebPagePreview != null)
+                    if (header.LinkPreview != null)
                     {
                         ComposerHeaderGlyph.Glyph = Icons.Link24;
                     }
@@ -5163,7 +5163,7 @@ namespace Telegram.Views
                 TextArea.Visibility = Visibility.Collapsed;
             }
 
-            if (chat.LastMessage == null && user?.Type is UserTypeRegular && user?.Id != ViewModel.ClientService.Options.MyId && fullInfo != null)
+            if (ViewModel.Type == DialogType.History && chat.LastMessage == null && user?.Type is UserTypeRegular && user?.Id != ViewModel.ClientService.Options.MyId && fullInfo != null)
             {
                 if (result is CanSendMessageToUserResultUserRestrictsNewChats)
                 {

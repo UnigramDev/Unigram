@@ -368,18 +368,18 @@ namespace Telegram.ViewModels
             if (item.Action is ChatEventDescriptionChanged descriptionChanged)
             {
                 var text = new FormattedText(descriptionChanged.NewDescription, Array.Empty<TextEntity>());
-                var webPage = string.IsNullOrEmpty(descriptionChanged.OldDescription) ? null : new WebPage { SiteName = Strings.EventLogPreviousGroupDescription, Description = new FormattedText { Text = descriptionChanged.OldDescription } };
+                var linkPreview = string.IsNullOrEmpty(descriptionChanged.OldDescription) ? null : new LinkPreview { SiteName = Strings.EventLogPreviousGroupDescription, Description = new FormattedText { Text = descriptionChanged.OldDescription } };
 
-                return new MessageText(text, webPage, null);
+                return new MessageText(text, linkPreview, null);
             }
             else if (item.Action is ChatEventUsernameChanged usernameChanged)
             {
                 var link = string.IsNullOrEmpty(usernameChanged.NewUsername) ? string.Empty : MeUrlPrefixConverter.Convert(ClientService, usernameChanged.NewUsername);
 
                 var text = new FormattedText(link, new[] { new TextEntity(0, link.Length, new TextEntityTypeUrl()) });
-                var webPage = string.IsNullOrEmpty(usernameChanged.OldUsername) ? null : new WebPage { SiteName = Strings.EventLogPreviousLink, Description = new FormattedText { Text = MeUrlPrefixConverter.Convert(ClientService, usernameChanged.OldUsername) } };
+                var linkPreview = string.IsNullOrEmpty(usernameChanged.OldUsername) ? null : new LinkPreview { SiteName = Strings.EventLogPreviousLink, Description = new FormattedText { Text = MeUrlPrefixConverter.Convert(ClientService, usernameChanged.OldUsername) } };
 
-                return new MessageText(text, webPage, null);
+                return new MessageText(text, linkPreview, null);
             }
             else if (item.Action is ChatEventPermissionsChanged permissionChanged)
             {
@@ -450,9 +450,9 @@ namespace Telegram.ViewModels
                 {
                     AppendChange(n.CanSendPolls, Strings.EventLogRestrictedSendPolls);
                 }
-                if (o.CanAddWebPagePreviews != n.CanAddWebPagePreviews)
+                if (o.CanAddLinkPreviews != n.CanAddLinkPreviews)
                 {
-                    AppendChange(n.CanAddWebPagePreviews, Strings.EventLogRestrictedSendEmbed);
+                    AppendChange(n.CanAddLinkPreviews, Strings.EventLogRestrictedSendEmbed);
                 }
                 if (o.CanChangeInfo != n.CanChangeInfo)
                 {
@@ -639,9 +639,9 @@ namespace Telegram.ViewModels
                         {
                             AppendChange(n.Permissions.CanSendPolls, Strings.EventLogRestrictedSendPolls);
                         }
-                        if (o.Permissions.CanAddWebPagePreviews != n.Permissions.CanAddWebPagePreviews)
+                        if (o.Permissions.CanAddLinkPreviews != n.Permissions.CanAddLinkPreviews)
                         {
-                            AppendChange(n.Permissions.CanAddWebPagePreviews, Strings.EventLogRestrictedSendEmbed);
+                            AppendChange(n.Permissions.CanAddLinkPreviews, Strings.EventLogRestrictedSendEmbed);
                         }
                         if (o.Permissions.CanChangeInfo != n.Permissions.CanChangeInfo)
                         {
@@ -820,7 +820,7 @@ namespace Telegram.ViewModels
             {
                 if (messageEdited.NewMessage.Content is MessageText editedText && messageEdited.OldMessage.Content is MessageText oldText)
                 {
-                    editedText.WebPage = new WebPage
+                    editedText.LinkPreview = new LinkPreview
                     {
                         SiteName = Strings.EventLogOriginalMessages,
                         Description = oldText.Text

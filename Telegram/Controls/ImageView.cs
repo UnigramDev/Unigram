@@ -184,29 +184,66 @@ namespace Telegram.Controls
             }
             else if (constraint is MessageText textMessage)
             {
-                if (textMessage?.WebPage?.Animation != null)
+                if (textMessage?.LinkPreview?.Type is LinkPreviewTypeBackground)
                 {
-                    constraint = textMessage?.WebPage?.Animation;
+                    width = 900;
+                    height = 1600;
                 }
-                else if (textMessage?.WebPage?.Document != null)
+                else if (textMessage?.LinkPreview?.Type is LinkPreviewTypeAnimation previewAnimation)
                 {
-                    constraint = textMessage?.WebPage?.Document;
+                    constraint = previewAnimation.Animation;
                 }
-                else if (textMessage?.WebPage?.Photo != null)
+                else if (textMessage?.LinkPreview?.Type is LinkPreviewTypeDocument previewDocument)
                 {
-                    constraint = textMessage?.WebPage?.Photo;
+                    constraint = previewDocument.Document;
                 }
-                else if (textMessage?.WebPage?.Sticker != null)
+                else if (textMessage?.LinkPreview?.Type is LinkPreviewTypePhoto previewPhoto)
                 {
-                    constraint = textMessage?.WebPage?.Sticker;
+                    constraint = previewPhoto.Photo;
                 }
-                else if (textMessage?.WebPage?.Video != null)
+                else if (textMessage?.LinkPreview?.Type is LinkPreviewTypeSticker previewSticker)
                 {
-                    constraint = textMessage?.WebPage?.Video;
+                    constraint = previewSticker.Sticker;
                 }
-                else if (textMessage?.WebPage?.VideoNote != null)
+                else if (textMessage?.LinkPreview?.Type is LinkPreviewTypeVideo previewVideo)
                 {
-                    constraint = textMessage?.WebPage?.VideoNote;
+                    constraint = previewVideo.Video;
+                }
+                else if (textMessage?.LinkPreview?.Type is LinkPreviewTypeVideoNote videoNote)
+                {
+                    constraint = videoNote.VideoNote;
+                }
+                else if (textMessage?.LinkPreview?.Type is LinkPreviewTypeApp app)
+                {
+                    constraint = app.Photo;
+                }
+                else if (textMessage?.LinkPreview?.Type is LinkPreviewTypeArticle article)
+                {
+                    constraint = article.Photo;
+                }
+                else if (textMessage?.LinkPreview?.Type is LinkPreviewTypeChannelBoost channelBoost)
+                {
+                    constraint = channelBoost.Photo;
+                }
+                else if (textMessage?.LinkPreview?.Type is LinkPreviewTypeChat chat)
+                {
+                    constraint = chat.Photo;
+                }
+                else if (textMessage?.LinkPreview?.Type is LinkPreviewTypeSupergroupBoost supergroupBoost)
+                {
+                    constraint = supergroupBoost.Photo;
+                }
+                else if (textMessage?.LinkPreview?.Type is LinkPreviewTypeUser user)
+                {
+                    constraint = user.Photo;
+                }
+                else if (textMessage?.LinkPreview?.Type is LinkPreviewTypeVideoChat videoChat)
+                {
+                    constraint = videoChat.Photo;
+                }
+                else if (textMessage?.LinkPreview?.Type is LinkPreviewTypeWebApp webApp)
+                {
+                    constraint = webApp.Photo;
                 }
             }
             else if (constraint is MessageVenue venueMessage)

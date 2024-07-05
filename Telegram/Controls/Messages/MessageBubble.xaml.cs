@@ -1468,7 +1468,7 @@ namespace Telegram.Controls.Messages
             var content = message.GeneratedContent ?? message.Content;
             if (content is MessageText text)
             {
-                if (text.WebPage == null && message.FactCheck == null)
+                if (text.LinkPreview == null && message.FactCheck == null)
                 {
                     ContentPanel.Padding = new Thickness(0, 4, 0, 0);
                     Media.Margin = new Thickness(0);
@@ -1479,7 +1479,7 @@ namespace Telegram.Controls.Messages
                 }
                 else
                 {
-                    var caption = text.WebPage?.ShowAboveText ?? false;
+                    var caption = text.LinkPreview?.ShowAboveText ?? false;
 
                     ContentPanel.Padding = new Thickness(0, 4, 0, 0);
                     Media.Margin = new Thickness(10, caption ? -4 : -6, 10, -2);
@@ -1577,7 +1577,7 @@ namespace Telegram.Controls.Messages
                 ContentPanel.Padding = new Thickness(0, 4, 0, 0);
                 Media.Margin = new Thickness(10, 0, 10, 6);
                 FooterToNormal();
-                Grid.SetRow(Footer, caption ? 3 : 4);
+                Grid.SetRow(Footer, 4);
                 Grid.SetRow(Message, 2);
                 Panel.Placeholder = caption;
             }
@@ -1645,7 +1645,7 @@ namespace Telegram.Controls.Messages
                 UpdateAttach(message);
             }
 
-            if (content is MessageText textMessage && textMessage.WebPage != null)
+            if (content is MessageText textMessage && textMessage.LinkPreview != null)
             {
                 Media.Child = new WebPageContent(message);
             }
@@ -2016,18 +2016,18 @@ namespace Telegram.Controls.Messages
 
                 if (target is MessageViewModel targetMessage)
                 {
-                    if (targetMessage.Content is MessageText text && text.WebPage != null)
+                    if (targetMessage.Content is MessageText text && text.LinkPreview != null)
                     {
                         var regex = new Regex("^.*(?:(?:youtu\\.be\\/|v\\/|vi\\/|u\\/\\w\\/|embed\\/|shorts\\/)|(?:(?:watch)?\\?v(?:i)?=|\\&v(?:i)?=))([^#\\&\\?]*).*");
 
-                        var match = regex.Match(text.WebPage.Url);
+                        var match = regex.Match(text.LinkPreview.Url);
                         if (match.Success && match.Groups.Count == 2)
                         {
                             message.Delegate.OpenUrl($"https://youtu.be/{match.Groups[1].Value}?t={mediaTimestamp.MediaTimestamp}", false);
                         }
                         else
                         {
-                            message.Delegate.OpenUrl(text.WebPage.Url, false);
+                            message.Delegate.OpenUrl(text.LinkPreview.Url, false);
                         }
                     }
                     else
@@ -2905,14 +2905,14 @@ namespace Telegram.Controls.Messages
             UpdateMockup();
         }
 
-        public void Mockup(IClientService clientService, string message, MessageSender sender, string reply, WebPage webPage, bool outgoing, DateTime date, bool first = true, bool last = true)
+        public void Mockup(IClientService clientService, string message, MessageSender sender, string reply, LinkPreview linkPreview, bool outgoing, DateTime date, bool first = true, bool last = true)
         {
             if (!_templateApplied)
             {
                 void loaded(object o, RoutedEventArgs e)
                 {
                     Loaded -= loaded;
-                    Mockup(clientService, message, sender, reply, webPage, outgoing, date, first, last);
+                    Mockup(clientService, message, sender, reply, linkPreview, outgoing, date, first, last);
                 }
 
                 Loaded += loaded;
@@ -2965,7 +2965,7 @@ namespace Telegram.Controls.Messages
                 void layoutUpdated(object o, object e)
                 {
                     presenter.LayoutUpdated -= layoutUpdated;
-                    presenter.Mockup(webPage);
+                    presenter.Mockup(linkPreview);
 
                     if (obj is User user)
                     {

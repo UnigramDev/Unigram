@@ -650,6 +650,17 @@ namespace Telegram.Td.Api
             return new InputThumbnail(new InputFileId(photo.Photo.Id), photo.Width, photo.Height);
         }
 
+        public static Thumbnail GetThumbnail(this Photo photo)
+        {
+            var small = photo.GetSmall();
+            if (small != null)
+            {
+                return small.ToThumbnail();
+            }
+
+            return null;
+        }
+
         public static Thumbnail ToThumbnail(this PhotoSize photo)
         {
             if (photo == null)
@@ -844,7 +855,24 @@ namespace Telegram.Td.Api
                 case MessagePhoto photo:
                     return photo.Photo;
                 case MessageText text:
-                    return text.WebPage?.Photo;
+                    return text.LinkPreview?.Type switch
+                    {
+                        LinkPreviewTypeAlbum album => album.Media[0] switch
+                        {
+                            LinkPreviewAlbumMediaPhoto albumPhoto => albumPhoto.Photo,
+                            _ => null
+                        },
+                        LinkPreviewTypePhoto photo => photo.Photo,
+                        LinkPreviewTypeApp app => app.Photo,
+                        LinkPreviewTypeArticle article => article.Photo,
+                        LinkPreviewTypeChannelBoost channelBoost => channelBoost.Photo.ToPhoto(),
+                        LinkPreviewTypeChat chat => chat.Photo.ToPhoto(),
+                        LinkPreviewTypeSupergroupBoost supergroupBoost => supergroupBoost.Photo.ToPhoto(),
+                        LinkPreviewTypeUser user => user.Photo.ToPhoto(),
+                        LinkPreviewTypeVideoChat videoChat => videoChat.Photo.ToPhoto(),
+                        LinkPreviewTypeWebApp webApp => webApp.Photo,
+                        _ => null
+                    };
                 case MessageChatChangePhoto chatChangePhoto:
                     return chatChangePhoto.Photo.ToPhoto();
                 default:
@@ -893,43 +921,32 @@ namespace Telegram.Td.Api
                 case MessageSticker sticker:
                     return (sticker.Sticker.StickerValue, null, null);
                 case MessageText text:
-                    if (text.WebPage != null && text.WebPage.Animation != null)
+                    return text.LinkPreview?.Type switch
                     {
-                        return (text.WebPage.Animation.AnimationValue, text.WebPage.Animation.Thumbnail, text.WebPage.Animation.FileName);
-                    }
-                    else if (text.WebPage != null && text.WebPage.Audio != null)
-                    {
-                        return (text.WebPage.Audio.AudioValue, text.WebPage.Audio.AlbumCoverThumbnail, text.WebPage.Audio.FileName);
-                    }
-                    else if (text.WebPage != null && text.WebPage.Document != null)
-                    {
-                        return (text.WebPage.Document.DocumentValue, text.WebPage.Document.Thumbnail, text.WebPage.Document.FileName);
-                    }
-                    else if (text.WebPage != null && text.WebPage.Sticker != null)
-                    {
-                        return (text.WebPage.Sticker.StickerValue, null, null);
-                    }
-                    else if (text.WebPage != null && text.WebPage.Video != null)
-                    {
-                        return (text.WebPage.Video.VideoValue, text.WebPage.Video.Thumbnail, text.WebPage.Video.FileName);
-                    }
-                    else if (text.WebPage != null && text.WebPage.VideoNote != null)
-                    {
-                        return (text.WebPage.VideoNote.Video, text.WebPage.VideoNote.Thumbnail, null);
-                    }
-                    else if (text.WebPage != null && text.WebPage.VoiceNote != null)
-                    {
-                        return (text.WebPage.VoiceNote.Voice, null, null);
-                    }
-                    else if (text.WebPage != null && text.WebPage.Photo != null)
-                    {
-                        var big = text.WebPage.Photo.GetBig();
-                        if (big != null)
+                        LinkPreviewTypeAlbum album => album.Media[0] switch
                         {
-                            return (big.Photo, null, null);
-                        }
-                    }
-                    break;
+                            LinkPreviewAlbumMediaPhoto albumPhoto => (albumPhoto.Photo.GetBig()?.Photo, null, null),
+                            LinkPreviewAlbumMediaVideo albumVideo => (albumVideo.Video.VideoValue, albumVideo.Video.Thumbnail, albumVideo.Video.FileName),
+                            _ => (null, null, null)
+                        },
+                        LinkPreviewTypeAnimation animation => (animation.Animation.AnimationValue, animation.Animation.Thumbnail, animation.Animation.FileName),
+                        LinkPreviewTypeAudio audio => (audio.Audio.AudioValue, audio.Audio.AlbumCoverThumbnail, audio.Audio.FileName),
+                        LinkPreviewTypeBackground background => (background.Document.DocumentValue, background.Document.Thumbnail, background.Document.FileName),
+                        LinkPreviewTypeDocument document => (document.Document.DocumentValue, document.Document.Thumbnail, document.Document.FileName),
+                        LinkPreviewTypeSticker sticker => (sticker.Sticker.StickerValue, sticker.Sticker.Thumbnail, null),
+                        LinkPreviewTypeVideo video => (video.Video.VideoValue, video.Video.Thumbnail, video.Video.FileName),
+                        LinkPreviewTypeVideoNote videoNote => (videoNote.VideoNote.Video, videoNote.VideoNote.Thumbnail, null),
+                        LinkPreviewTypePhoto photo => (photo.Photo.GetFile(), null, null),
+                        LinkPreviewTypeApp app => (app.Photo.GetFile(), null, null),
+                        LinkPreviewTypeArticle article => (article.Photo.GetFile(), null, null),
+                        LinkPreviewTypeChannelBoost channelBoost => (channelBoost.Photo.GetFile(), null, null),
+                        LinkPreviewTypeChat chat => (chat.Photo.GetFile(), null, null),
+                        LinkPreviewTypeSupergroupBoost supergroupBoost => (supergroupBoost.Photo.GetFile(), null, null),
+                        LinkPreviewTypeUser user => (user.Photo.GetFile(), null, null),
+                        LinkPreviewTypeVideoChat videoChat => (videoChat.Photo.GetFile(), null, null),
+                        LinkPreviewTypeWebApp webApp => (webApp.Photo.GetFile(), null, null),
+                        _ => (null, null, null)
+                    };
                 case MessageVideo video:
                     return (video.Video.VideoValue, video.Video.Thumbnail, video.Video.FileName);
                 case MessageVideoNote videoNote:
@@ -941,96 +958,94 @@ namespace Telegram.Td.Api
             return (null, null, null);
         }
 
-        public static Minithumbnail GetMinithumbnail(this WebPage webPage)
+        public static Minithumbnail GetMinithumbnail(this LinkPreview linkPreview)
         {
-            if (webPage.Animation != null)
+            return linkPreview.Type switch
             {
-                return webPage.Animation.Minithumbnail;
-            }
-            else if (webPage.Audio != null)
-            {
-                return webPage.Audio.AlbumCoverMinithumbnail;
-            }
-            else if (webPage.Document != null)
-            {
-                return webPage.Document.Minithumbnail;
-            }
-            else if (webPage.Sticker != null)
-            {
-                //return webPage.Sticker.Thumbnail;
-            }
-            else if (webPage.Video != null)
-            {
-                return webPage.Video.Minithumbnail;
-            }
-            else if (webPage.VideoNote != null)
-            {
-                return webPage.VideoNote.Minithumbnail;
-            }
-            else if (webPage.VoiceNote != null)
-            {
-                return null;
-            }
-            else if (webPage.Photo != null)
-            {
-                return webPage.Photo.Minithumbnail;
-            }
-
-            return null;
-        }
-
-        public static Thumbnail GetThumbnail(this WebPage webPage)
-        {
-            if (webPage.Animation != null)
-            {
-                return webPage.Animation.Thumbnail;
-            }
-            else if (webPage.Audio != null)
-            {
-                return webPage.Audio.AlbumCoverThumbnail;
-            }
-            else if (webPage.Document != null)
-            {
-                return webPage.Document.Thumbnail;
-            }
-            else if (webPage.Sticker != null)
-            {
-                return webPage.Sticker.Thumbnail;
-            }
-            else if (webPage.Video != null)
-            {
-                return webPage.Video.Thumbnail;
-            }
-            else if (webPage.VideoNote != null)
-            {
-                return webPage.VideoNote.Thumbnail;
-            }
-            else if (webPage.VoiceNote != null)
-            {
-                return null;
-            }
-            else if (webPage.Photo != null)
-            {
-                var small = webPage.Photo.GetSmall();
-                if (small != null)
+                LinkPreviewTypeAlbum album => album.Media[0] switch
                 {
-                    return small.ToThumbnail();
-                }
-            }
-
-            return null;
+                    LinkPreviewAlbumMediaPhoto albumPhoto => albumPhoto.Photo.Minithumbnail,
+                    LinkPreviewAlbumMediaVideo albumVideo => albumVideo.Video.Minithumbnail,
+                    _ => null
+                },
+                LinkPreviewTypeAnimation animation => animation.Animation.Minithumbnail,
+                LinkPreviewTypeAudio audio => audio.Audio.AlbumCoverMinithumbnail,
+                LinkPreviewTypeBackground background => background.Document.Minithumbnail,
+                LinkPreviewTypeDocument document => document.Document.Minithumbnail,
+                LinkPreviewTypeVideo video => video.Video.Minithumbnail,
+                LinkPreviewTypeVideoNote videoNote => videoNote.VideoNote.Minithumbnail,
+                LinkPreviewTypePhoto photo => photo.Photo.Minithumbnail,
+                LinkPreviewTypeApp app => app.Photo.Minithumbnail,
+                LinkPreviewTypeArticle article => article.Photo.Minithumbnail,
+                LinkPreviewTypeChannelBoost channelBoost => channelBoost.Photo.Minithumbnail,
+                LinkPreviewTypeChat chat => chat.Photo.Minithumbnail,
+                LinkPreviewTypeSupergroupBoost supergroupBoost => supergroupBoost.Photo.Minithumbnail,
+                LinkPreviewTypeUser user => user.Photo.Minithumbnail,
+                LinkPreviewTypeVideoChat videoChat => videoChat.Photo.Minithumbnail,
+                LinkPreviewTypeWebApp webApp => webApp.Photo.Minithumbnail,
+                _ => null
+            };
         }
 
-        public static bool HasThumbnail(this WebPage webPage)
+        public static Thumbnail GetThumbnail(this LinkPreview linkPreview)
         {
-            return webPage.Animation?.Thumbnail != null
-                || webPage.Audio?.AlbumCoverThumbnail != null
-                || webPage.Document?.Thumbnail != null
-                || webPage.Sticker?.Thumbnail != null
-                || webPage.Stickers?.Count > 0
-                || webPage.Video?.Thumbnail != null
-                || webPage.VideoNote?.Thumbnail != null
-                || webPage.Photo != null;
+            return linkPreview.Type switch
+            {
+                LinkPreviewTypeAlbum album => album.Media[0] switch
+                {
+                    LinkPreviewAlbumMediaPhoto albumPhoto => albumPhoto.Photo.GetThumbnail(),
+                    LinkPreviewAlbumMediaVideo albumVideo => albumVideo.Video.Thumbnail,
+                    _ => null
+                },
+                LinkPreviewTypeAnimation animation => animation.Animation.Thumbnail,
+                LinkPreviewTypeAudio audio => audio.Audio.AlbumCoverThumbnail,
+                LinkPreviewTypeBackground background => background.Document.Thumbnail,
+                LinkPreviewTypeDocument document => document.Document.Thumbnail,
+                LinkPreviewTypeSticker sticker => sticker.Sticker.Thumbnail,
+                LinkPreviewTypeVideo video => video.Video.Thumbnail,
+                LinkPreviewTypeVideoNote videoNote => videoNote.VideoNote.Thumbnail,
+                LinkPreviewTypePhoto photo => photo.Photo.GetThumbnail(),
+                LinkPreviewTypeApp app => app.Photo.GetThumbnail(),
+                LinkPreviewTypeArticle article => article.Photo.GetThumbnail(),
+                LinkPreviewTypeChannelBoost channelBoost => channelBoost.Photo.GetThumbnail(),
+                LinkPreviewTypeChat chat => chat.Photo.GetThumbnail(),
+                LinkPreviewTypeSupergroupBoost supergroupBoost => supergroupBoost.Photo.GetThumbnail(),
+                LinkPreviewTypeUser user => user.Photo.GetThumbnail(),
+                LinkPreviewTypeVideoChat videoChat => videoChat.Photo.GetThumbnail(),
+                LinkPreviewTypeWebApp webApp => webApp.Photo.GetThumbnail(),
+                _ => null
+            };
+        }
+
+        public static bool HasThumbnail(this LinkPreview linkPreview)
+        {
+            if (linkPreview.Type is LinkPreviewTypeAlbum album)
+            {
+                return album.Media[0] switch
+                {
+                    LinkPreviewAlbumMediaPhoto albumPhoto => true,
+                    LinkPreviewAlbumMediaVideo albumVideo => albumVideo.Video.Thumbnail != null,
+                    _ => false
+                };
+            }
+
+            return linkPreview.Type is LinkPreviewTypeAnimation { Animation.Thumbnail: not null }
+                || linkPreview.Type is LinkPreviewTypeAudio { Audio.AlbumCoverThumbnail: not null }
+                || linkPreview.Type is LinkPreviewTypeBackground { Document.Thumbnail: not null }
+                || linkPreview.Type is LinkPreviewTypeDocument { Document.Thumbnail: not null }
+                || linkPreview.Type is LinkPreviewTypeSticker { Sticker.Thumbnail: not null }
+                || linkPreview.Type is LinkPreviewTypeStickerSet
+                || linkPreview.Type is LinkPreviewTypeVideo { Video.Thumbnail: not null }
+                || linkPreview.Type is LinkPreviewTypeVideoNote { VideoNote.Thumbnail: not null }
+                || linkPreview.Type is LinkPreviewTypePhoto
+                || linkPreview.Type is LinkPreviewTypeApp { Photo: not null }
+                || linkPreview.Type is LinkPreviewTypeArticle { Photo: not null }
+                || linkPreview.Type is LinkPreviewTypeChannelBoost { Photo: not null }
+                || linkPreview.Type is LinkPreviewTypeChat { Photo: not null }
+                || linkPreview.Type is LinkPreviewTypeSupergroupBoost { Photo: not null }
+                || linkPreview.Type is LinkPreviewTypeUser { Photo: not null }
+                || linkPreview.Type is LinkPreviewTypeVideoChat { Photo: not null }
+                || linkPreview.Type is LinkPreviewTypeWebApp { Photo: not null };
         }
 
         public static bool IsFragmentWithdrawal(this StarTransaction transaction)
@@ -1090,39 +1105,32 @@ namespace Telegram.Td.Api
                 case MessageSticker sticker:
                     return sticker.Sticker.StickerValue;
                 case MessageText text:
-                    if (text.WebPage != null && text.WebPage.Animation != null)
+                    return text.LinkPreview?.Type switch
                     {
-                        return text.WebPage.Animation.AnimationValue;
-                    }
-                    else if (text.WebPage != null && text.WebPage.Audio != null)
-                    {
-                        return text.WebPage.Audio.AudioValue;
-                    }
-                    else if (text.WebPage != null && text.WebPage.Document != null)
-                    {
-                        return text.WebPage.Document.DocumentValue;
-                    }
-                    else if (text.WebPage != null && text.WebPage.Sticker != null)
-                    {
-                        return text.WebPage.Sticker.StickerValue;
-                    }
-                    else if (text.WebPage != null && text.WebPage.Video != null)
-                    {
-                        return text.WebPage.Video.VideoValue;
-                    }
-                    else if (text.WebPage != null && text.WebPage.VideoNote != null)
-                    {
-                        return text.WebPage.VideoNote.Video;
-                    }
-                    else if (text.WebPage != null && text.WebPage.VoiceNote != null)
-                    {
-                        return text.WebPage.VoiceNote.Voice;
-                    }
-                    else if (text.WebPage != null && text.WebPage.Photo != null)
-                    {
-                        return text.WebPage.Photo.GetBig()?.Photo;
-                    }
-                    break;
+                        LinkPreviewTypeAlbum album => album.Media[0] switch
+                        {
+                            LinkPreviewAlbumMediaPhoto albumPhoto => albumPhoto.Photo.GetBig()?.Photo,
+                            LinkPreviewAlbumMediaVideo albumVideo => albumVideo.Video.VideoValue,
+                            _ => null
+                        },
+                        LinkPreviewTypeAnimation animation => animation.Animation.AnimationValue,
+                        LinkPreviewTypeAudio audio => audio.Audio.AudioValue,
+                        LinkPreviewTypeBackground background => background.Document.DocumentValue,
+                        LinkPreviewTypeDocument document => document.Document.DocumentValue,
+                        LinkPreviewTypeSticker sticker => sticker.Sticker.StickerValue,
+                        LinkPreviewTypeVideo video => video.Video.VideoValue,
+                        LinkPreviewTypeVideoNote videoNote => videoNote.VideoNote.Video,
+                        LinkPreviewTypePhoto photo => photo.Photo.GetFile(),
+                        LinkPreviewTypeApp app => app.Photo.GetFile(),
+                        LinkPreviewTypeArticle article => article.Photo.GetFile(),
+                        LinkPreviewTypeChannelBoost channelBoost => channelBoost.Photo.GetFile(),
+                        LinkPreviewTypeChat chat => chat.Photo.GetFile(),
+                        LinkPreviewTypeSupergroupBoost supergroupBoost => supergroupBoost.Photo.GetFile(),
+                        LinkPreviewTypeUser user => user.Photo.GetFile(),
+                        LinkPreviewTypeVideoChat videoChat => videoChat.Photo.GetFile(),
+                        LinkPreviewTypeWebApp webApp => webApp.Photo.GetFile(),
+                        _ => null
+                    };
                 case MessageVideo video:
                     return video.Video.VideoValue;
                 case MessageVideoNote videoNote:
@@ -1132,9 +1140,9 @@ namespace Telegram.Td.Api
                 case MessageInvoice invoice:
                     return invoice.PaidMedia switch
                     {
-                        PaidMediaPhoto photo => photo.Photo.GetBig()?.Photo,
+                        PaidMediaPhoto photo => photo.Photo.GetFile(),
                         PaidMediaVideo video => video.Video.VideoValue,
-                        _ => invoice.ProductInfo.Photo?.GetBig()?.Photo
+                        _ => invoice.ProductInfo.Photo?.GetFile()
                     };
             }
 
@@ -1159,19 +1167,19 @@ namespace Telegram.Td.Api
                     }
                     return false;
                 case MessageText text:
-                    if (text.WebPage?.Animation != null)
+                    if (text.LinkPreview?.Type is LinkPreviewTypeAnimation previewAnimation)
                     {
-                        return text.WebPage.Animation.AnimationValue.Local.IsDownloadingCompleted;
+                        return previewAnimation.Animation.AnimationValue.Local.IsDownloadingCompleted;
                     }
-                    else if (text.WebPage?.Sticker != null)
+                    else if (text.LinkPreview?.Type is LinkPreviewTypeSticker previewSticker)
                     {
-                        return text.WebPage.Sticker.Format is StickerFormatTgs or StickerFormatWebm && text.WebPage.Sticker.StickerValue.Local.IsDownloadingCompleted;
+                        return previewSticker.Sticker.Format is StickerFormatTgs or StickerFormatWebm && previewSticker.Sticker.StickerValue.Local.IsDownloadingCompleted;
                     }
-                    else if (text.WebPage?.VideoNote != null)
+                    else if (text.LinkPreview?.Type is LinkPreviewTypeVideoNote previewVideoNote)
                     {
-                        return text.WebPage.VideoNote.Video.Local.IsDownloadingCompleted;
+                        return previewVideoNote.VideoNote.Video.Local.IsDownloadingCompleted;
                     }
-                    else if (text.WebPage?.Video != null)
+                    else if (text.LinkPreview?.Type is LinkPreviewTypeVideo)
                     {
                         // Videos are streamed
                         return true;
@@ -1269,31 +1277,22 @@ namespace Telegram.Td.Api
                 case MessageSticker sticker:
                     return sticker.Sticker.Thumbnail;
                 case MessageText text:
-                    if (text.WebPage != null && text.WebPage.Animation != null)
+                    return text.LinkPreview?.Type switch
                     {
-                        return text.WebPage.Animation.Thumbnail;
-                    }
-                    else if (text.WebPage != null && text.WebPage.Audio != null)
-                    {
-                        return text.WebPage.Audio.AlbumCoverThumbnail;
-                    }
-                    else if (text.WebPage != null && text.WebPage.Document != null)
-                    {
-                        return text.WebPage.Document.Thumbnail;
-                    }
-                    else if (text.WebPage != null && text.WebPage.Sticker != null)
-                    {
-                        return text.WebPage.Sticker.Thumbnail;
-                    }
-                    else if (text.WebPage != null && text.WebPage.Video != null)
-                    {
-                        return text.WebPage.Video.Thumbnail;
-                    }
-                    else if (text.WebPage != null && text.WebPage.VideoNote != null)
-                    {
-                        return text.WebPage.VideoNote.Thumbnail;
-                    }
-                    break;
+                        LinkPreviewTypeAlbum album => album.Media[0] switch
+                        {
+                            LinkPreviewAlbumMediaVideo albumVideo => albumVideo.Video.Thumbnail,
+                            _ => null
+                        },
+                        LinkPreviewTypeAnimation animation => animation.Animation.Thumbnail,
+                        LinkPreviewTypeAudio audio => audio.Audio.AlbumCoverThumbnail,
+                        LinkPreviewTypeBackground background => background.Document.Thumbnail,
+                        LinkPreviewTypeDocument document => document.Document.Thumbnail,
+                        LinkPreviewTypeSticker sticker => sticker.Sticker.Thumbnail,
+                        LinkPreviewTypeVideo video => video.Video.Thumbnail,
+                        LinkPreviewTypeVideoNote videoNote => videoNote.VideoNote.Thumbnail,
+                        _ => null
+                    };
                 case MessageVideo video:
                     return video.Video.Thumbnail;
                 case MessageVideoNote videoNote:
@@ -1318,31 +1317,22 @@ namespace Telegram.Td.Api
                 case MessageGame game:
                     return game.Game.Animation?.Minithumbnail;
                 case MessageText text:
-                    if (text.WebPage != null && text.WebPage.Animation != null)
+                    return text.LinkPreview?.Type switch
                     {
-                        return text.WebPage.Animation.Minithumbnail;
-                    }
-                    else if (text.WebPage != null && text.WebPage.Audio != null)
-                    {
-                        return text.WebPage.Audio.AlbumCoverMinithumbnail;
-                    }
-                    else if (text.WebPage != null && text.WebPage.Document != null)
-                    {
-                        return text.WebPage.Document.Minithumbnail;
-                    }
-                    else if (text.WebPage != null && text.WebPage.Video != null)
-                    {
-                        return text.WebPage.Video.Minithumbnail;
-                    }
-                    else if (text.WebPage != null && text.WebPage.VideoNote != null)
-                    {
-                        return text.WebPage.VideoNote.Minithumbnail;
-                    }
-                    else if (text.WebPage != null && text.WebPage.Photo != null)
-                    {
-                        return text.WebPage.Photo.Minithumbnail;
-                    }
-                    break;
+                        LinkPreviewTypeAlbum album => album.Media[0] switch
+                        {
+                            LinkPreviewAlbumMediaVideo albumVideo => albumVideo.Video.Minithumbnail,
+                            _ => null
+                        },
+                        LinkPreviewTypeAnimation animation => animation.Animation.Minithumbnail,
+                        LinkPreviewTypeAudio audio => audio.Audio.AlbumCoverMinithumbnail,
+                        LinkPreviewTypeBackground background => background.Document.Minithumbnail,
+                        LinkPreviewTypeDocument document => document.Document.Minithumbnail,
+                        //LinkPreviewTypeSticker sticker => sticker.Sticker.Minithumbnail,
+                        LinkPreviewTypeVideo video => video.Video.Minithumbnail,
+                        LinkPreviewTypeVideoNote videoNote => videoNote.VideoNote.Minithumbnail,
+                        _ => null
+                    };
                 case MessageVideo video:
                     return video.IsSecret && !secret ? null : video.Video.Minithumbnail;
                 case MessageVideoNote videoNote:
@@ -1450,32 +1440,24 @@ namespace Telegram.Td.Api
             return new Photo(false, chatPhoto.Minithumbnail, chatPhoto.Sizes);
         }
 
-        public static bool IsInstantGallery(this WebPage webPage)
+        public static bool HasText(this LinkPreview linkPreview)
         {
-            return webPage.InstantViewVersion != 0 &&
-                (string.Equals(webPage.SiteName, "twitter", StringComparison.OrdinalIgnoreCase) ||
-                 string.Equals(webPage.SiteName, "instagram", StringComparison.OrdinalIgnoreCase) ||
-                 string.Equals(webPage.Type, "telegram_album", StringComparison.OrdinalIgnoreCase));
-        }
-
-        public static bool HasText(this WebPage webPage)
-        {
-            if (!string.IsNullOrWhiteSpace(webPage.SiteName))
+            if (!string.IsNullOrWhiteSpace(linkPreview.SiteName))
             {
                 return true;
 
             }
 
-            if (!string.IsNullOrWhiteSpace(webPage.Title))
+            if (!string.IsNullOrWhiteSpace(linkPreview.Title))
             {
                 return true;
             }
-            else if (!string.IsNullOrWhiteSpace(webPage.Author))
+            else if (linkPreview.HasAuthor())
             {
                 return true;
             }
 
-            if (!string.IsNullOrWhiteSpace(webPage.Description?.Text))
+            if (!string.IsNullOrWhiteSpace(linkPreview.Description?.Text))
             {
                 return true;
             }
@@ -1483,59 +1465,90 @@ namespace Telegram.Td.Api
             return false;
         }
 
-        public static bool HasMedia(this WebPage webPage)
+        public static bool HasAuthor(this LinkPreview linkPreview)
         {
-            if (string.Equals(webPage.Type, "telegram_background", StringComparison.OrdinalIgnoreCase))
+            var author = linkPreview.Type switch
             {
-                return true;
-            }
+                LinkPreviewTypeAnimation animation => animation.Author,
+                LinkPreviewTypeApp app => app.Author,
+                LinkPreviewTypeArticle article => article.Author,
+                LinkPreviewTypeAudio audio => audio.Author,
+                LinkPreviewTypeDocument document => document.Author,
+                LinkPreviewTypeEmbeddedAudioPlayer audioPlayer => audioPlayer.Author,
+                LinkPreviewTypeEmbeddedVideoPlayer videoPlayer => videoPlayer.Author,
+                LinkPreviewTypePhoto photo => photo.Author,
+                LinkPreviewTypeVideo video => video.Author,
+                _ => null
+            };
 
-            return webPage.Animation != null || webPage.Audio != null || webPage.Document != null || webPage.Sticker != null || webPage.Stickers?.Count > 0 || webPage.Video != null || webPage.VideoNote != null || webPage.VoiceNote != null || webPage.Photo != null;
-            return webPage.Animation != null || webPage.Audio != null || webPage.Document != null || webPage.Sticker != null || webPage.Stickers?.Count > 0 || webPage.Video != null || webPage.VideoNote != null || webPage.VoiceNote != null || webPage.HasPhoto();
+            return !string.IsNullOrWhiteSpace(author);
         }
 
-        public static bool HasPhoto(this WebPage webPage)
+        public static bool HasAuthor(this LinkPreview linkPreview, out string author)
         {
-            return webPage.Photo != null && webPage.ShowLargeMedia;
-
-            if (webPage.Photo != null && webPage.Type != null)
+            author = linkPreview.Type switch
             {
-                if (string.Equals(webPage.Type, "photo", StringComparison.OrdinalIgnoreCase) ||
-                    string.Equals(webPage.Type, "video", StringComparison.OrdinalIgnoreCase) ||
-                    string.Equals(webPage.Type, "embed", StringComparison.OrdinalIgnoreCase) ||
-                    string.Equals(webPage.Type, "gif", StringComparison.OrdinalIgnoreCase) ||
-                    string.Equals(webPage.Type, "document", StringComparison.OrdinalIgnoreCase) ||
-                    string.Equals(webPage.Type, "telegram_album", StringComparison.OrdinalIgnoreCase))
-                {
-                    return true;
-                }
-                else if (string.Equals(webPage.Type, "article", StringComparison.OrdinalIgnoreCase))
-                {
-                    var photo = webPage.Photo;
-                    var big = photo.GetBig();
+                LinkPreviewTypeAnimation animation => animation.Author,
+                LinkPreviewTypeApp app => app.Author,
+                LinkPreviewTypeArticle article => article.Author,
+                LinkPreviewTypeAudio audio => audio.Author,
+                LinkPreviewTypeDocument document => document.Author,
+                LinkPreviewTypeEmbeddedAudioPlayer audioPlayer => audioPlayer.Author,
+                LinkPreviewTypeEmbeddedVideoPlayer videoPlayer => videoPlayer.Author,
+                LinkPreviewTypePhoto photo => photo.Author,
+                LinkPreviewTypeVideo video => video.Author,
+                _ => null
+            };
 
-                    return big != null && big.Width > 256 && webPage.InstantViewVersion != 0;
+            return !string.IsNullOrWhiteSpace(author);
+        }
+
+        public static bool HasMedia(this LinkPreview linkPreview)
+        {
+            return linkPreview.Type is
+                LinkPreviewTypeAlbum or
+                LinkPreviewTypeAnimation or
+                LinkPreviewTypeAudio or
+                LinkPreviewTypeBackground or
+                LinkPreviewTypeDocument or
+                LinkPreviewTypeSticker or
+                LinkPreviewTypeStickerSet or
+                LinkPreviewTypeVideo or
+                LinkPreviewTypeVideoNote or
+                LinkPreviewTypeVoiceNote || linkPreview.HasPhoto();
+        }
+
+        public static bool HasPhoto(this LinkPreview linkPreview)
+        {
+            if (linkPreview.ShowLargeMedia)
+            {
+                if (linkPreview.Type is LinkPreviewTypeAlbum album)
+                {
+                    return album.Media[0] is LinkPreviewAlbumMediaPhoto;
                 }
+
+                return linkPreview.Type is LinkPreviewTypePhoto
+                    || linkPreview.Type is LinkPreviewTypeApp { Photo: not null }
+                    || linkPreview.Type is LinkPreviewTypeArticle { Photo: not null }
+                    || linkPreview.Type is LinkPreviewTypeChannelBoost { Photo: not null }
+                    || linkPreview.Type is LinkPreviewTypeChat { Photo: not null }
+                    || linkPreview.Type is LinkPreviewTypeSupergroupBoost { Photo: not null }
+                    || linkPreview.Type is LinkPreviewTypeUser { Photo: not null }
+                    || linkPreview.Type is LinkPreviewTypeVideoChat { Photo: not null }
+                    || linkPreview.Type is LinkPreviewTypeWebApp { Photo: not null };
             }
 
             return false;
         }
 
-        public static bool CanBeSmall(this WebPage webPage)
+        public static bool CanBeSmall(this LinkPreview linkPreview)
         {
-            if (webPage.Audio != null || webPage.Document != null || webPage.VoiceNote != null)
+            if (linkPreview.Type is LinkPreviewTypeAudio or LinkPreviewTypeDocument or LinkPreviewTypeVoiceNote)
             {
                 return false;
             }
 
-            return webPage.SiteName.Length > 0 || webPage.Title.Length > 0 || webPage.Author.Length > 0 || webPage.Description?.Text.Length > 0;
-
-            if (webPage.Photo != null && (webPage.SiteName.Length > 0 || webPage.Title.Length > 0 || webPage.Author.Length > 0 || webPage.Description?.Text.Length > 0))
-            {
-                return !webPage.HasMedia();
-            }
-
-            return false;
+            return linkPreview.SiteName.Length > 0 || linkPreview.Title.Length > 0 || linkPreview.HasAuthor() || linkPreview.Description?.Text.Length > 0;
         }
 
         public static bool IsService(this Message message)
@@ -2085,6 +2098,11 @@ namespace Telegram.Td.Api
             return photo.Sizes.FirstOrDefault(x => x.Photo.Local.IsDownloadingCompleted || x.Photo.Local.CanBeDownloaded);
         }
 
+        public static File GetFile(this Photo photo)
+        {
+            return photo.GetBig()?.Photo;
+        }
+
         public static PhotoSize GetBig(this Photo photo)
         {
             //var local = photo.Sizes.LastOrDefault(x => string.Equals(x.Type, "i"));
@@ -2094,6 +2112,22 @@ namespace Telegram.Td.Api
             //}
 
             return photo.Sizes.LastOrDefault(x => x.Photo.Local.IsDownloadingCompleted || x.Photo.Local.CanBeDownloaded);
+        }
+
+        public static File GetFile(this ChatPhoto photo)
+        {
+            return photo.GetBig()?.Photo;
+        }
+
+        public static Thumbnail GetThumbnail(this ChatPhoto photo)
+        {
+            var small = photo.GetSmall();
+            if (small != null)
+            {
+                return small.ToThumbnail();
+            }
+
+            return null;
         }
 
         public static PhotoSize GetSmall(this ChatPhoto photo)
@@ -2367,7 +2401,7 @@ namespace Telegram.Td.Api
         public static int Count(this ChatPermissions permissions)
         {
             var count = 0;
-            if (permissions.CanAddWebPagePreviews)
+            if (permissions.CanAddLinkPreviews)
             {
                 count++;
             }

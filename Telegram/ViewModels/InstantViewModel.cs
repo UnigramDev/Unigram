@@ -45,10 +45,10 @@ namespace Telegram.ViewModels
         {
             if (parameter is InstantPageArgs args)
             {
-                var response = await ClientService.SendAsync(new GetWebPagePreview(new FormattedText(args.Url, Array.Empty<TextEntity>()), null));
-                if (response is WebPage webPage)
+                var response = await ClientService.SendAsync(new GetLinkPreview(new FormattedText(args.Url, Array.Empty<TextEntity>()), null));
+                if (response is LinkPreview linkPreview)
                 {
-                    Title = webPage.SiteName;
+                    Title = linkPreview.SiteName;
                 }
             }
         }

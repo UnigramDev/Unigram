@@ -1831,7 +1831,7 @@ namespace Telegram.ViewModels
             {
                 message.Content = new MessagePaidAlbum(paidMedia);
             }
-            else if (message.Content is MessageText text && text.WebPage == null && text.Text.Entities.Count == 0)
+            else if (message.Content is MessageText text && text.LinkPreview == null && text.Text.Entities.Count == 0)
             {
                 if (Emoji.TryCountEmojis(text.Text.Text, out int count, 3))
                 {
@@ -2705,16 +2705,16 @@ namespace Telegram.ViewModels
                 return;
             }
 
-            if (container.WebPagePreview != null)
+            if (container.LinkPreview != null)
             {
                 ComposerHeader = new MessageComposerHeader(ClientService)
                 {
                     EditingMessage = container.EditingMessage,
                     ReplyToMessage = container.ReplyToMessage,
                     ReplyToQuote = container.ReplyToQuote,
-                    WebPageUrl = container.WebPageUrl,
-                    WebPagePreview = null,
-                    WebPageDisabled = true
+                    LinkPreviewUrl = container.LinkPreviewUrl,
+                    LinkPreview = null,
+                    LinkPreviewDisabled = true
                 };
             }
             else
@@ -2789,7 +2789,7 @@ namespace Telegram.ViewModels
                     ShowAboveText = header.LinkPreviewOptions.ShowAboveText,
                     IsDisabled = header.LinkPreviewOptions.IsDisabled,
                     Url = header.LinkPreviewOptions.ForceLargeMedia || header.LinkPreviewOptions.ForceSmallMedia
-                        ? header.WebPageUrl ?? string.Empty
+                        ? header.LinkPreviewUrl ?? string.Empty
                         : string.Empty
                 };
             }
@@ -4691,10 +4691,10 @@ namespace Telegram.ViewModels
         public MessageViewModel EditingMessage { get; set; }
         public InputMessageFactory EditingMessageMedia { get; set; }
 
-        public WebPage WebPagePreview { get; set; }
-        public string WebPageUrl { get; set; }
+        public LinkPreview LinkPreview { get; set; }
+        public string LinkPreviewUrl { get; set; }
 
-        public bool WebPageDisabled
+        public bool LinkPreviewDisabled
         {
             get => LinkPreviewOptions?.IsDisabled ?? false;
             set

@@ -60,7 +60,7 @@ namespace Telegram.Controls.Messages
                 return;
             }
 
-            if (embedded.WebPagePreview != null && !embedded.WebPageDisabled)
+            if (embedded.LinkPreview != null && !embedded.LinkPreviewDisabled)
             {
                 MessageId = 0;
                 Visibility = Visibility.Visible;
@@ -68,23 +68,23 @@ namespace Telegram.Controls.Messages
                 HideThumbnail();
 
                 string message;
-                if (!string.IsNullOrEmpty(embedded.WebPagePreview.Title))
+                if (!string.IsNullOrEmpty(embedded.LinkPreview.Title))
                 {
-                    message = embedded.WebPagePreview.Title;
+                    message = embedded.LinkPreview.Title;
                 }
-                else if (!string.IsNullOrEmpty(embedded.WebPagePreview.Author))
+                else if (embedded.LinkPreview.HasAuthor(out string author))
                 {
-                    message = embedded.WebPagePreview.Author;
+                    message = author;
                 }
                 else
                 {
-                    message = embedded.WebPagePreview.Url;
+                    message = embedded.LinkPreview.Url;
                 }
 
                 SetText(null,
                     true,
                     null,
-                    embedded.WebPagePreview.SiteName,
+                    embedded.LinkPreview.SiteName,
                     string.Empty,
                     new FormattedText { Text = message });
             }

@@ -811,10 +811,10 @@ namespace Telegram.ViewModels
 
             if (message.Content is MessageText text)
             {
-                if (text.WebPage != null)
+                if (text.LinkPreview != null)
                 {
-                    container.WebPagePreview = text.WebPage;
-                    container.WebPageUrl = text.WebPage.Url;
+                    container.LinkPreview = text.LinkPreview;
+                    container.LinkPreviewUrl = text.LinkPreview.Url;
                     container.LinkPreviewOptions = text.LinkPreviewOptions;
                 }
                 else
@@ -822,8 +822,8 @@ namespace Telegram.ViewModels
                     var url = text.Text.Entities.FirstOrDefault(x => x.Type is TextEntityTypeUrl);
                     if (url != null)
                     {
-                        container.WebPageUrl = text.Text.Text.Substring(url.Offset, url.Length);
-                        container.WebPageDisabled = true;
+                        container.LinkPreviewUrl = text.Text.Text.Substring(url.Offset, url.Length);
+                        container.LinkPreviewDisabled = true;
                     }
                 }
             }
@@ -1390,9 +1390,9 @@ namespace Telegram.ViewModels
             {
                 OpenSticker(sticker.Sticker);
             }
-            else if (message.Content is MessageText text && text.WebPage?.Sticker != null && text.WebPage.Sticker.SetId != 0)
+            else if (message.Content is MessageText text && text.LinkPreview?.Type is LinkPreviewTypeSticker previewSticker && previewSticker.Sticker.SetId != 0)
             {
-                OpenSticker(text.WebPage.Sticker);
+                OpenSticker(previewSticker.Sticker);
             }
         }
 
@@ -1449,9 +1449,9 @@ namespace Telegram.ViewModels
             {
                 ClientService.Send(new AddSavedAnimation(new InputFileId(animation.Animation.AnimationValue.Id)));
             }
-            else if (message.Content is MessageText text && text.WebPage != null && text.WebPage.Animation != null)
+            else if (message.Content is MessageText text && text.LinkPreview != null && text.LinkPreview.Type is LinkPreviewTypeAnimation previewAnimation)
             {
-                ClientService.Send(new AddSavedAnimation(new InputFileId(text.WebPage.Animation.AnimationValue.Id)));
+                ClientService.Send(new AddSavedAnimation(new InputFileId(previewAnimation.Animation.AnimationValue.Id)));
             }
         }
 
@@ -1469,15 +1469,15 @@ namespace Telegram.ViewModels
             {
                 ClientService.Send(new AddSavedNotificationSound(new InputFileId(voiceNote.VoiceNote.Voice.Id)));
             }
-            else if (message.Content is MessageText text && text.WebPage != null)
+            else if (message.Content is MessageText text && text.LinkPreview != null)
             {
-                if (text.WebPage.Audio != null)
+                if (text.LinkPreview.Type is LinkPreviewTypeAudio previewAudio)
                 {
-                    ClientService.Send(new AddSavedNotificationSound(new InputFileId(text.WebPage.Audio.AudioValue.Id)));
+                    ClientService.Send(new AddSavedNotificationSound(new InputFileId(previewAudio.Audio.AudioValue.Id)));
                 }
-                else if (text.WebPage.VoiceNote != null)
+                else if (text.LinkPreview.Type is LinkPreviewTypeVoiceNote previewVoiceNote)
                 {
-                    ClientService.Send(new AddSavedNotificationSound(new InputFileId(text.WebPage.VoiceNote.Voice.Id)));
+                    ClientService.Send(new AddSavedNotificationSound(new InputFileId(previewVoiceNote.VoiceNote.Voice.Id)));
                 }
             }
 

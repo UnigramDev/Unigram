@@ -52,14 +52,14 @@ namespace Telegram.Views.Popups
                 customEmojiId = user.BackgroundCustomEmojiId;
                 accentColorId = user.AccentColorId;
 
-                var webPage = new WebPage
+                var linkPreview = new LinkPreview
                 {
                     SiteName = Strings.AppName,
                     Title = Strings.UserColorPreviewLinkTitle,
                     Description = new FormattedText(Strings.UserColorPreviewLinkDescription, Array.Empty<TextEntity>())
                 };
 
-                Message1.Mockup(clientService, Strings.UserColorPreview, sender, Strings.UserColorPreviewReply, webPage, false, DateTime.Now);
+                Message1.Mockup(clientService, Strings.UserColorPreview, sender, Strings.UserColorPreviewReply, linkPreview, false, DateTime.Now);
 
                 BadgeText.Text = Strings.UserReplyIcon;
                 NameColor.Footer = Strings.UserColorHint;
@@ -72,14 +72,14 @@ namespace Telegram.Views.Popups
                 customEmojiId = chat.BackgroundCustomEmojiId;
                 accentColorId = chat.AccentColorId;
 
-                var webPage = new WebPage
+                var linkPreview = new LinkPreview
                 {
                     SiteName = Strings.AppName,
                     Title = Strings.ChannelColorPreviewLinkTitle,
                     Description = new FormattedText(Strings.ChannelColorPreviewLinkDescription, Array.Empty<TextEntity>())
                 };
 
-                Message1.Mockup(clientService, Strings.ChannelColorPreview, sender, Strings.ChannelColorPreviewReply, webPage, false, DateTime.Now);
+                Message1.Mockup(clientService, Strings.ChannelColorPreview, sender, Strings.ChannelColorPreviewReply, linkPreview, false, DateTime.Now);
 
                 BadgeText.Text = Strings.ChannelReplyLogo;
                 NameColor.Footer = Strings.ChannelReplyInfo;

@@ -110,8 +110,8 @@ namespace Telegram.Controls.Messages.Content
         public bool IsValid(MessageContent content, bool primary)
         {
             return content is MessageText text
-                && text.WebPage != null
-                && text.WebPage.HasThumbnail();
+                && text.LinkPreview != null
+                && text.LinkPreview.HasThumbnail();
         }
 
         private Thumbnail GetContent(MessageViewModel message)
@@ -119,7 +119,7 @@ namespace Telegram.Controls.Messages.Content
             var content = message?.GeneratedContent ?? message?.Content;
             if (content is MessageText text)
             {
-                return text.WebPage?.GetThumbnail();
+                return text.LinkPreview?.GetThumbnail();
             }
 
             return null;

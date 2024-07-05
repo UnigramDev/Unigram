@@ -71,8 +71,8 @@
                                       IsChecked="{x:Bind ViewModel.CanSendPolls, Mode=TwoWay}"
                                       Content="{CustomResource UserRestrictionsSendPolls}" />
 
-                            <CheckBox x:Name="CanAddWebPagePreviews"
-                                      IsChecked="{x:Bind ViewModel.CanAddWebPagePreviews, Mode=TwoWay}"
+                            <CheckBox x:Name="CanAddLinkPreviews"
+                                      IsChecked="{x:Bind ViewModel.CanAddLinkPreviews, Mode=TwoWay}"
                                       Content="{CustomResource UserRestrictionsEmbedLinks}" />
                         </StackPanel>
                     </controls:SettingsExpander>

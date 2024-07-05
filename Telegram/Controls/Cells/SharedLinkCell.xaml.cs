@@ -54,20 +54,20 @@ namespace Telegram.Controls.Cells
             bool webPageCached = false;
             Thumbnail webPageThumbnail = null;
 
-            var webPage = text?.WebPage;
-            if (webPage != null)
+            var linkPreview = text?.LinkPreview;
+            if (linkPreview != null)
             {
 
-                title = webPage.Title;
+                title = linkPreview.Title;
                 if (string.IsNullOrEmpty(title))
                 {
-                    title = webPage.SiteName;
+                    title = linkPreview.SiteName;
                 }
 
-                description = string.IsNullOrEmpty(webPage.Description?.Text) ? null : webPage.Description?.Text;
-                webPageLink = webPage.Url;
-                webPageCached = webPage.InstantViewVersion != 0;
-                webPageThumbnail = webPage.GetThumbnail();
+                description = string.IsNullOrEmpty(linkPreview.Description?.Text) ? null : linkPreview.Description?.Text;
+                webPageLink = linkPreview.Url;
+                webPageCached = linkPreview.InstantViewVersion != 0;
+                webPageThumbnail = linkPreview.GetThumbnail();
             }
 
             if (caption.Entities.Count > 0)
@@ -309,9 +309,9 @@ namespace Telegram.Controls.Cells
 
         private void Thumbnail_Click(object sender, RoutedEventArgs e)
         {
-            if (_message?.Content is MessageText text && text.WebPage != null)
+            if (_message?.Content is MessageText text && text.LinkPreview != null)
             {
-                MessageHelper.OpenUrl(_message.ClientService, _navigationService, text.WebPage.Url);
+                MessageHelper.OpenUrl(_message.ClientService, _navigationService, text.LinkPreview.Url);
             }
         }
     }

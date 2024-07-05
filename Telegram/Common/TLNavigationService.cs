@@ -74,7 +74,7 @@ namespace Telegram.Common
         public async void NavigateToInstant(string url, string fallbackUrl = null)
         {
             var response1 = await ClientService.SendAsync(new GetWebPageInstantView(url, true));
-            var response2 = await ClientService.SendAsync(new GetWebPagePreview(new FormattedText(url, Array.Empty<TextEntity>()), null));
+            var response2 = await ClientService.SendAsync(new GetLinkPreview(new FormattedText(url, Array.Empty<TextEntity>()), null));
 
             if (response1 is WebPageInstantView instantView)
             {
@@ -91,9 +91,9 @@ namespace Telegram.Common
                         Content = frame
                     };
 
-                    if (response2 is WebPage webPage)
+                    if (response2 is LinkPreview linkPreview)
                     {
-                        var thumbnail = webPage.GetMinithumbnail();
+                        var thumbnail = linkPreview.GetMinithumbnail();
                         if (thumbnail != null)
                         {
                             double ratioX = (double)20 / thumbnail.Width;

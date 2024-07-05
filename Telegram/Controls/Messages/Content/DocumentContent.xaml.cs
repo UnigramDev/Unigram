@@ -236,9 +236,9 @@ namespace Telegram.Controls.Messages.Content
             {
                 return true;
             }
-            else if (content is MessageText text && text.WebPage != null && !primary)
+            else if (content is MessageText text && text.LinkPreview != null && !primary)
             {
-                return text.WebPage.Document != null && !string.Equals(text.WebPage.Type, "telegram_background", StringComparison.OrdinalIgnoreCase);
+                return text.LinkPreview.Type is LinkPreviewTypeDocument;
             }
 
             return false;
@@ -256,9 +256,9 @@ namespace Telegram.Controls.Messages.Content
             {
                 return document.Document;
             }
-            else if (content is MessageText text && text.WebPage != null)
+            else if (content is MessageText text && text.LinkPreview?.Type is LinkPreviewTypeDocument previewDocument)
             {
-                return text.WebPage.Document;
+                return previewDocument.Document;
             }
 
             return null;

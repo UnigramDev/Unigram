@@ -210,9 +210,9 @@ namespace Telegram.Controls.Messages.Content
             {
                 return true;
             }
-            else if (content is MessageText text && text.WebPage != null && !primary)
+            else if (content is MessageText text && text.LinkPreview != null && !primary)
             {
-                return text.WebPage.Sticker != null;
+                return text.LinkPreview.Type is LinkPreviewTypeSticker;
             }
 
             return false;
@@ -233,10 +233,10 @@ namespace Telegram.Controls.Messages.Content
                 premium = sticker.IsPremium;
                 return sticker.Sticker;
             }
-            else if (content is MessageText text && text.WebPage != null)
+            else if (content is MessageText text && text.LinkPreview?.Type is LinkPreviewTypeSticker previewSticker)
             {
                 premium = false;
-                return text.WebPage.Sticker;
+                return previewSticker.Sticker;
             }
 
             premium = false;

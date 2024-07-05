@@ -433,9 +433,9 @@ namespace Telegram.Controls.Messages.Content
             {
                 return true;
             }
-            else if (content is MessageText text && text.WebPage != null && !primary)
+            else if (content is MessageText text && text.LinkPreview != null && !primary)
             {
-                return text.WebPage.VoiceNote != null;
+                return text.LinkPreview.Type is LinkPreviewTypeVoiceNote;
             }
 
             return false;
@@ -453,9 +453,9 @@ namespace Telegram.Controls.Messages.Content
             {
                 return voiceNote.VoiceNote;
             }
-            else if (content is MessageText text && text.WebPage != null)
+            else if (content is MessageText text && text.LinkPreview?.Type is LinkPreviewTypeVoiceNote previewVoiceNote)
             {
-                return text.WebPage.VoiceNote;
+                return previewVoiceNote.VoiceNote;
             }
 
             return null;

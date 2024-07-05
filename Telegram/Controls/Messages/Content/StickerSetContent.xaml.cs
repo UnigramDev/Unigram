@@ -49,8 +49,8 @@ namespace Telegram.Controls.Messages.Content
 
             LayoutRoot.Constraint = message;
 
-            var webPage = GetContent(message);
-            if (webPage == null || !_templateApplied)
+            var linkPreview = GetContent(message);
+            if (linkPreview?.Type is not LinkPreviewTypeStickerSet stickerSet || !_templateApplied)
             {
                 return;
             }
@@ -59,7 +59,7 @@ namespace Telegram.Controls.Messages.Content
             LayoutRoot.ColumnDefinitions.Clear();
             LayoutRoot.RowDefinitions.Clear();
 
-            if (webPage.Stickers.Count > 1)
+            if (stickerSet.Stickers.Count > 1)
             {
                 LayoutRoot.ColumnDefinitions.Add(new ColumnDefinition());
                 LayoutRoot.ColumnDefinitions.Add(new ColumnDefinition());
@@ -68,16 +68,16 @@ namespace Telegram.Controls.Messages.Content
                 LayoutRoot.RowDefinitions.Add(new RowDefinition());
             }
 
-            for (int i = 0; i < webPage.Stickers.Count; i++)
+            for (int i = 0; i < stickerSet.Stickers.Count; i++)
             {
-                var size = webPage.Stickers.Count > 1 ? 20 : 44;
+                var size = stickerSet.Stickers.Count > 1 ? 20 : 44;
                 var animated = new AnimatedImage
                 {
                     Width = size,
                     Height = size,
                     FrameSize = new Size(size, size),
                     DecodeFrameType = Windows.UI.Xaml.Media.Imaging.DecodePixelType.Logical,
-                    Source = new DelayedFileSource(message.ClientService, webPage.Stickers[i]),
+                    Source = new DelayedFileSource(message.ClientService, stickerSet.Stickers[i]),
                     AutoPlay = false,
                     IsViewportAware = true
                 };
@@ -96,20 +96,20 @@ namespace Telegram.Controls.Messages.Content
 
         public bool IsValid(MessageContent content, bool primary)
         {
-            if (content is MessageText text && text.WebPage != null && !primary)
+            if (content is MessageText text && text.LinkPreview != null && !primary)
             {
-                return text.WebPage.Stickers?.Count > 0;
+                return text.LinkPreview.Type is LinkPreviewTypeStickerSet;
             }
 
             return false;
         }
 
-        private WebPage GetContent(MessageViewModel message)
+        private LinkPreview GetContent(MessageViewModel message)
         {
             var content = message?.GeneratedContent ?? message?.Content;
-            if (content is MessageText text && text.WebPage?.Stickers?.Count > 0)
+            if (content is MessageText text && text.LinkPreview?.Type is LinkPreviewTypeStickerSet)
             {
-                return text.WebPage;
+                return text.LinkPreview;
             }
 
             return null;

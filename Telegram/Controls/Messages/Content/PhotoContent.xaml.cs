@@ -256,7 +256,7 @@ namespace Telegram.Controls.Messages.Content
                 {
                     Button.Progress = 1;
 
-                    if (message.Content is MessageText text && text.WebPage?.EmbedUrl?.Length > 0 || (message.SendingState is MessageSendingStatePending && message.MediaAlbumId != 0))
+                    if (message.Content is MessageText text && text.LinkPreview?.Type is LinkPreviewTypeEmbeddedVideoPlayer || (message.SendingState is MessageSendingStatePending && message.MediaAlbumId != 0))
                     {
                         Button.SetGlyph(file.Id, message.SendingState is MessageSendingStatePending && message.MediaAlbumId != 0 ? MessageContentState.Confirm : MessageContentState.Play);
                         Button.Opacity = 1;
@@ -382,9 +382,9 @@ namespace Telegram.Controls.Messages.Content
             {
                 return game.Game.Photo != null;
             }
-            else if (content is MessageText text && text.WebPage != null && !primary)
+            else if (content is MessageText text && text.LinkPreview != null && !primary)
             {
-                return text.WebPage.HasPhoto();
+                return text.LinkPreview.HasPhoto();
             }
             else if (content is MessageInvoice invoice && invoice.PaidMedia is PaidMediaPhoto)
             {
@@ -422,9 +422,29 @@ namespace Telegram.Controls.Messages.Content
                 isGame = true;
                 return game.Game.Photo;
             }
-            else if (content is MessageText text && text.WebPage != null)
+            else if (content is MessageText text)
             {
-                return text.WebPage.Photo;
+                if (text.LinkPreview?.Type is LinkPreviewTypePhoto previewPhoto)
+                {
+                    return previewPhoto.Photo;
+                }
+                else if (text.LinkPreview?.Type is LinkPreviewTypeAlbum previewAlbum && previewAlbum.Media[0] is LinkPreviewAlbumMediaPhoto albumPhoto)
+                {
+                    return albumPhoto.Photo;
+                }
+
+                return text.LinkPreview?.Type switch
+                {
+                    LinkPreviewTypeApp app => app.Photo,
+                    LinkPreviewTypeArticle article => article.Photo,
+                    LinkPreviewTypeChannelBoost channelBoost => channelBoost.Photo.ToPhoto(),
+                    LinkPreviewTypeChat chat => chat.Photo.ToPhoto(),
+                    LinkPreviewTypeSupergroupBoost supergroupBoost => supergroupBoost.Photo.ToPhoto(),
+                    LinkPreviewTypeUser user => user.Photo.ToPhoto(),
+                    LinkPreviewTypeVideoChat videoChat => videoChat.Photo.ToPhoto(),
+                    LinkPreviewTypeWebApp webApp => webApp.Photo,
+                    _ => null
+                };
             }
             else if (content is MessageInvoice invoice && invoice.PaidMedia is PaidMediaPhoto paidMediaPhoto)
             {
@@ -481,9 +501,9 @@ namespace Telegram.Controls.Messages.Content
             {
                 _message.ClientService.DownloadFile(file.Id, 30);
             }
-            else if (_message.Content is MessageText text && text.WebPage.HasText())
+            else if (_message.Content is MessageText text && text.LinkPreview.HasText())
             {
-                _message.Delegate.OpenWebPage(text.WebPage);
+                _message.Delegate.OpenWebPage(text.LinkPreview);
             }
             else if (_paidMedia != null)
             {

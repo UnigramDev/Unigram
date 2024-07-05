@@ -378,9 +378,9 @@ namespace Telegram.Controls.Messages.Content
             {
                 return true;
             }
-            else if (content is MessageText text && text.WebPage != null && !primary)
+            else if (content is MessageText text && text.LinkPreview != null && !primary)
             {
-                return text.WebPage.Video != null;
+                return text.LinkPreview.Type is LinkPreviewTypeVideo || text.LinkPreview.Type is LinkPreviewTypeAlbum album && album.Media[0] is LinkPreviewAlbumMediaVideo;
             }
             else if (content is MessageInvoice invoice && invoice.PaidMedia is PaidMediaVideo)
             {
@@ -412,9 +412,16 @@ namespace Telegram.Controls.Messages.Content
                 isSecret = video.IsSecret;
                 return video.Video;
             }
-            else if (content is MessageText text && text.WebPage != null)
+            else if (content is MessageText text)
             {
-                return text.WebPage.Video;
+                if (text.LinkPreview?.Type is LinkPreviewTypeVideo previewVideo)
+                {
+                    return previewVideo.Video;
+                }
+                else if (text.LinkPreview?.Type is LinkPreviewTypeAlbum previewAlbum && previewAlbum.Media[0] is LinkPreviewAlbumMediaVideo albumVideo)
+                {
+                    return albumVideo.Video;
+                }
             }
             else if (content is MessageInvoice invoice && invoice.PaidMedia is PaidMediaVideo paidMedia)
             {

@@ -102,12 +102,12 @@ namespace Telegram.Services
 
             // FAQ indexing is done asyncronously
             var response = await _clientService.SendAsync(new GetWebPageInstantView(Strings.TelegramFaqUrl, true));
-            if (response is WebPageInstantView webPage)
+            if (response is WebPageInstantView linkPreview)
             {
                 var title = string.Empty;
                 var cicci = new List<SettingsSearchEntry>();
 
-                foreach (var block in webPage.PageBlocks)
+                foreach (var block in linkPreview.PageBlocks)
                 {
                     if (block is PageBlockList list)
                     {

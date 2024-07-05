@@ -171,7 +171,7 @@ namespace Telegram.Views.Popups
             ViewModel.CanSendVoiceNotes = chat.Permissions.CanSendVoiceNotes;
             ViewModel.CanSendVideoNotes = chat.Permissions.CanSendVideoNotes;
             ViewModel.CanSendPolls = chat.Permissions.CanSendPolls;
-            ViewModel.CanAddWebPagePreviews = chat.Permissions.CanAddWebPagePreviews;
+            ViewModel.CanAddLinkPreviews = chat.Permissions.CanAddLinkPreviews;
             ViewModel.CanInviteUsers = chat.Permissions.CanInviteUsers;
             ViewModel.CanPinMessages = chat.Permissions.CanPinMessages;
             ViewModel.CanChangeInfo = chat.Permissions.CanChangeInfo;
@@ -185,7 +185,7 @@ namespace Telegram.Views.Popups
             CanSendVoiceNotes.IsEnabled = chat.Permissions.CanSendVoiceNotes;
             CanSendVideoNotes.IsEnabled = chat.Permissions.CanSendVideoNotes;
             CanSendPolls.IsEnabled = chat.Permissions.CanSendPolls;
-            CanAddWebPagePreviews.IsEnabled = chat.Permissions.CanAddWebPagePreviews;
+            CanAddLinkPreviews.IsEnabled = chat.Permissions.CanAddLinkPreviews;
             CanInviteUsers.IsEnabled = chat.Permissions.CanInviteUsers;
             CanPinMessages.IsEnabled = chat.Permissions.CanPinMessages;
             CanChangeInfo.IsEnabled = chat.Permissions.CanChangeInfo;

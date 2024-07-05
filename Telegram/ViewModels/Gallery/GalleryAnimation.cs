@@ -57,8 +57,6 @@ namespace Telegram.ViewModels.Gallery
 
         public override int Duration => _animation.Duration;
 
-        public override string MimeType => _animation.MimeType;
-
         public override InputMessageContent ToInput()
         {
             return new InputMessageAnimation(new InputFileId(_animation.AnimationValue.Id), _animation.Thumbnail?.ToInput(), Array.Empty<int>(), _animation.Duration, _animation.Width, _animation.Height, null, false, false);

@@ -384,9 +384,9 @@ namespace Telegram.Controls.Messages.Content
             {
                 return true;
             }
-            else if (content is MessageText text && text.WebPage != null && !primary)
+            else if (content is MessageText text && text.LinkPreview != null && !primary)
             {
-                return text.WebPage.Audio != null;
+                return text.LinkPreview.Type is LinkPreviewTypeAudio;
             }
 
             return false;
@@ -404,9 +404,9 @@ namespace Telegram.Controls.Messages.Content
             {
                 return audio.Audio;
             }
-            else if (content is MessageText text && text.WebPage != null)
+            else if (content is MessageText text && text.LinkPreview?.Type is LinkPreviewTypeAudio previewAudio)
             {
-                return text.WebPage.Audio;
+                return previewAudio.Audio;
             }
 
             return null;
