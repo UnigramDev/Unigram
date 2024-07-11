@@ -729,10 +729,14 @@ namespace Telegram.Services
 
         public new void Clear()
         {
+            var useTestDC = UseTestDC;
+
             _container.Values.Clear();
 
             _own?.Values.Clear();
             _local?.Values.Remove($"User{UserId}");
+
+            UseTestDC = useTestDC;
         }
     }
 
