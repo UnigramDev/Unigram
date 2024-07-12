@@ -4,11 +4,13 @@
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+using Microsoft.Graphics.Canvas.Effects;
 using Microsoft.UI.Xaml.Controls;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
+using System.Numerics;
 using System.Text;
 using System.Threading.Tasks;
 using Telegram.Collections;
@@ -27,6 +29,7 @@ using Windows.ApplicationModel.DataTransfer;
 using Windows.Foundation;
 using Windows.Storage;
 using Windows.Storage.Streams;
+using Windows.UI.Composition;
 using Windows.UI.Core;
 using Windows.UI.Text;
 using Windows.UI.Xaml;
@@ -34,8 +37,10 @@ using Windows.UI.Xaml.Automation;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
 using Windows.UI.Xaml.Documents;
+using Windows.UI.Xaml.Hosting;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
+using Windows.UI.Xaml.Media.Imaging;
 using Windows.UI.Xaml.Shapes;
 
 namespace Telegram.Views.Popups
@@ -628,6 +633,48 @@ namespace Telegram.Views.Popups
                 }
             }
 
+            void UpdateSelectorItem(Grid content)
+            {
+                var particles = content.FindName("Particles") as ImageBrush;
+                if (particles != null)
+                {
+                    particles.ImageSource = SendWithSpoiler || StarCount > 0
+                        ? new BitmapImage(new Uri("ms-appx:///Assets/Images/Particles.png"))
+                        : null;
+                }
+
+                var border = content.FindName("BackDrop") as Border;
+                if (border != null)
+                {
+                    if (SendWithSpoiler || StarCount > 0)
+                    {
+                        var graphicsEffect = new GaussianBlurEffect
+                        {
+                            Name = "Blur",
+                            BlurAmount = 3,
+                            BorderMode = EffectBorderMode.Hard,
+                            Source = new CompositionEffectSourceParameter("Backdrop")
+                        };
+
+                        var compositor = Window.Current.Compositor;
+                        var effectFactory = compositor.CreateEffectFactory(graphicsEffect, new[] { "Blur.BlurAmount" });
+                        var effectBrush = effectFactory.CreateBrush();
+                        var backdrop = compositor.CreateBackdropBrush();
+                        effectBrush.SetSourceParameter("Backdrop", backdrop);
+
+                        var blurVisual = compositor.CreateSpriteVisual();
+                        blurVisual.RelativeSizeAdjustment = Vector2.One;
+                        blurVisual.Brush = effectBrush;
+
+                        ElementCompositionPreview.SetElementChildVisual(border, blurVisual);
+                    }
+                    else
+                    {
+                        ElementCompositionPreview.SetElementChildVisual(border, null);
+                    }
+                }
+            }
+
             if (Album?.ItemsPanelRoot is SendFilesAlbumPanel panel && IsAlbum)
             {
                 var layout = new List<Size>();
@@ -637,8 +684,27 @@ namespace Telegram.Views.Popups
                     layout.Add(new Size(item.Width, item.Height));
                 }
 
+                foreach (var item in panel.Children)
+                {
+                    if (item is SelectorItem selector && selector.ContentTemplateRoot is Grid content)
+                    {
+                        UpdateSelectorItem(content);
+                    }
+                }
+
                 panel.Sizes = layout;
                 panel.Invalidate();
+            }
+
+            if (ScrollingHost?.ItemsPanelRoot is ItemsStackPanel panel2)
+            {
+                foreach (var item in panel2.Children)
+                {
+                    if (item is SelectorItem selector && selector.ContentTemplateRoot is Grid content)
+                    {
+                        UpdateSelectorItem(content);
+                    }
+                }
             }
 
             var mediaState = IsMediaSelected ? 1 : 0;
@@ -646,6 +712,21 @@ namespace Telegram.Views.Popups
             {
                 _itemsState = mediaState;
                 ScrollingHost.ItemTemplate = Resources[mediaState == 1 ? "MediaItemTemplate" : "FileItemTemplate"] as DataTemplate;
+            }
+
+            if (StarCount > 0)
+            {
+                var text = Locale.Declension(Strings.R.UnlockPaidContent, StarCount);
+                var index = text.IndexOf("\u2B50\uFE0F");
+
+                TextPart1.Text = text.Substring(0, index);
+                TextPart2.Text = text.Substring(index + 2);
+
+                PaidMediaButton.Visibility = Visibility.Visible;
+            }
+            else
+            {
+                PaidMediaButton.Visibility = Visibility.Collapsed;
             }
         }
 
@@ -947,6 +1028,7 @@ namespace Telegram.Views.Popups
         private void ToggleSendWithSpoiler()
         {
             SendWithSpoiler = !SendWithSpoiler;
+            UpdatePanel();
         }
 
         private async void MakeContentPaid()
@@ -980,6 +1062,11 @@ namespace Telegram.Views.Popups
             }
 
             StarCount = (long)popup.Value;
+            IsFilesSelected = false;
+            IsAlbum = true;
+
+            UpdateView();
+            UpdatePanel();
         }
     }
 

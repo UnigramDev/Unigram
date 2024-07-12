@@ -13,6 +13,7 @@ using Telegram.Td.Api;
 using Telegram.ViewModels;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Media.Imaging;
 
 namespace Telegram.Controls.Messages.Content
@@ -41,6 +42,7 @@ namespace Telegram.Controls.Messages.Content
 
         private AspectView LayoutRoot;
         private Image Texture;
+        private ImageBrush Particles;
         private FileButton Button;
         private AnimatedImage Player;
         private FileButton Overlay;
@@ -51,6 +53,7 @@ namespace Telegram.Controls.Messages.Content
         {
             LayoutRoot = GetTemplateChild(nameof(LayoutRoot)) as AspectView;
             Texture = GetTemplateChild(nameof(Texture)) as Image;
+            Particles = GetTemplateChild(nameof(Particles)) as ImageBrush;
             Button = GetTemplateChild(nameof(Button)) as FileButton;
             Player = GetTemplateChild(nameof(Player)) as AnimatedImage;
             Overlay = GetTemplateChild(nameof(Overlay)) as FileButton;
@@ -85,10 +88,10 @@ namespace Telegram.Controls.Messages.Content
                 return;
             }
 
-            LayoutRoot.Constraint = isSecret ? Constants.SecretSize : message;
+            LayoutRoot.Constraint = isSecret ? Constants.SecretSize : ((object)_paidMedia ?? message);
             Texture.Source = null;
 
-            UpdateThumbnail(message, video, video.Thumbnail?.File, true, isSecret || hasSpoiler);
+            UpdateThumbnail(message, video, video.Thumbnail?.File, true, isSecret, hasSpoiler);
 
             UpdateManager.Subscribe(this, message, video.VideoValue, ref _fileToken, UpdateFile);
             UpdateFile(message, video.VideoValue);
@@ -268,16 +271,16 @@ namespace Telegram.Controls.Messages.Content
 
         private void UpdateThumbnail(object target, File file)
         {
-            var video = GetContent(_message, out _, out bool isSecret);
+            var video = GetContent(_message, out bool hasSpoiler, out bool isSecret);
             if (video == null || !_templateApplied)
             {
                 return;
             }
 
-            UpdateThumbnail(_message, video, file, false, isSecret);
+            UpdateThumbnail(_message, video, file, false, isSecret, hasSpoiler);
         }
 
-        private void UpdateThumbnail(MessageViewModel message, Video video, File file, bool download, bool isSecret)
+        private void UpdateThumbnail(MessageViewModel message, Video video, File file, bool download, bool isSecret, bool hasSpoiler)
         {
             BitmapImage source = null;
             Image brush = Texture;
@@ -322,6 +325,9 @@ namespace Telegram.Controls.Messages.Content
             }
 
             brush.Source = source;
+            Particles.ImageSource = isSecret || hasSpoiler
+                ? new BitmapImage(new Uri("ms-appx:///Assets/Images/Particles.png"))
+                : null;
         }
 
         private void UpdateSource(MessageViewModel message, File file)

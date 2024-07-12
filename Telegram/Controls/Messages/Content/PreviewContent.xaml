@@ -23,7 +23,8 @@
                     <controls:AspectView x:Name="LayoutRoot"
                                          Background="Black">
                         <Image x:Name="Texture"
-                               Stretch="Uniform"
+                               Source="ms-appx:///Assets/Images/Particles.png"
+                               Stretch="None"
                                HorizontalAlignment="Stretch"
                                VerticalAlignment="Stretch" />
                         <Border x:Name="Overlay"

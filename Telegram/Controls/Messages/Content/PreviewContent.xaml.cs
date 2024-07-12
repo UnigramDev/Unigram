@@ -32,6 +32,7 @@ namespace Telegram.Controls.Messages.Content
         #region InitializeComponent
 
         private AspectView LayoutRoot;
+        private Image Texture;
         private Border Overlay;
         private TextBlock Subtitle;
         private bool _templateApplied;
@@ -39,6 +40,7 @@ namespace Telegram.Controls.Messages.Content
         protected override void OnApplyTemplate()
         {
             LayoutRoot = GetTemplateChild(nameof(LayoutRoot)) as AspectView;
+            Texture = GetTemplateChild(nameof(Texture)) as Image;
             Overlay = GetTemplateChild(nameof(Overlay)) as Border;
             Subtitle = GetTemplateChild(nameof(Subtitle)) as TextBlock;
 

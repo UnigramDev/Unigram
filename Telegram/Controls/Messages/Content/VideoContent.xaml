@@ -27,6 +27,13 @@
                         <Image x:Name="Texture"
                                Stretch="UniformToFill" />
 
+                        <Border>
+                            <Border.Background>
+                                <ImageBrush x:Name="Particles"
+                                            Stretch="None" />
+                            </Border.Background>
+                        </Border>
+
                         <controls:FileButton x:Name="Button"
                                              Style="{StaticResource ImmersiveFileButtonStyle}" />
 

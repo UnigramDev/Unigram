@@ -5,6 +5,7 @@
                   xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
                   xmlns:muxc="using:Microsoft.UI.Xaml.Controls"
                   xmlns:controls="using:Telegram.Controls"
+                  Style="{StaticResource DefaultTeachingTipStyle}"
                   mc:Ignorable="d">
 
     <StackPanel>

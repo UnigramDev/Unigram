@@ -271,6 +271,14 @@ namespace Telegram.Controls
             {
                 constraint = chatChangePhoto.Photo;
             }
+            else if (constraint is PaidMediaPhoto paidMediaPhoto)
+            {
+                constraint = paidMediaPhoto.Photo;
+            }
+            else if (constraint is PaidMediaVideo paidMediaVideo)
+            {
+                constraint = paidMediaVideo.Video;
+            }
             else if (constraint is PaidMediaPreview paidMediaPreview)
             {
                 width = paidMediaPreview.Width;

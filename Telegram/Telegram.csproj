@@ -1890,6 +1890,11 @@
     <Content Include="Assets\Images\ArrowLeft.scale-150.png" />
     <Content Include="Assets\Images\ArrowLeft.scale-200.png" />
     <Content Include="Assets\Images\ArrowLeft.scale-400.png" />
+    <Content Include="Assets\Images\Particles.scale-100.png" />
+    <Content Include="Assets\Images\Particles.scale-125.png" />
+    <Content Include="Assets\Images\Particles.scale-150.png" />
+    <Content Include="Assets\Images\Particles.scale-200.png" />
+    <Content Include="Assets\Images\Particles.scale-400.png" />
     <Content Include="Assets\Toasts\ExpiredStory.tgs" />
     <Content Include="Assets\Toasts\Info.tgs" />
     <Content Include="Assets\Toasts\LinkCopied.tgs" />
