@@ -24,15 +24,18 @@ namespace Telegram.ViewModels.Payments
 {
     public class PaymentFormArgs
     {
-        public PaymentFormArgs(InputInvoice inputInvoice, PaymentForm paymentForm)
+        public PaymentFormArgs(InputInvoice inputInvoice, PaymentForm paymentForm, MessageContent content)
         {
             InputInvoice = inputInvoice;
             PaymentForm = paymentForm;
+            Content = content;
         }
 
         public InputInvoice InputInvoice { get; }
 
         public PaymentForm PaymentForm { get; }
+
+        public MessageContent Content { get; }
     }
 
     public class PaymentFormViewModel : ViewModelBase

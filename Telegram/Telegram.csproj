@@ -264,6 +264,7 @@
     </Compile>
     <Compile Include="Controls\Messages\ReactionAsTagButton.cs" />
     <Compile Include="Common\AsyncMediaPlayer.cs" />
+    <Compile Include="Controls\PremiumStarCount.cs" />
     <Compile Include="Controls\SuggestedActionSetBirthdateCard.xaml.cs">
       <DependentUpon>SuggestedActionSetBirthdateCard.xaml</DependentUpon>
     </Compile>

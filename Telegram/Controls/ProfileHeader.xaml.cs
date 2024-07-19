@@ -522,7 +522,7 @@ namespace Telegram.Controls
             HeaderGlow.Background = radial2;
         }
 
-        private ElementTheme _actualTheme;
+        private ElementTheme _actualTheme = ElementTheme.Default;
         private bool _filledIcons = true;
 
         private void UpdateIcons(Chat chat, bool filled)
@@ -729,11 +729,15 @@ namespace Telegram.Controls
                 Search.Visibility = Visibility.Visible;
                 Grid.SetColumn(Search, 2);
                 Grid.SetColumn(Edit, 1);
+
+                BotPanel.Visibility = Visibility.Visible;
             }
             else
             {
                 Edit.Visibility = Visibility.Collapsed;
+                BotPanel.Visibility = Visibility.Collapsed;
             }
+
 
             // Unused:
             Location.Visibility = Visibility.Collapsed;
@@ -926,6 +930,8 @@ namespace Telegram.Controls
             Call.Visibility = Visibility.Collapsed;
             VideoCall.Visibility = Visibility.Collapsed;
 
+            BotPanel.Visibility = Visibility.Collapsed;
+
             AnonymousNumber.Visibility = Visibility.Collapsed;
             AnonymousNumberSeparator.Visibility = Visibility.Collapsed;
 
@@ -1029,6 +1035,7 @@ namespace Telegram.Controls
                 : Strings.VoipGroupOpenGroup;
 
             // Unused:
+            BotPanel.Visibility = Visibility.Collapsed;
             MiscPanel.Visibility = Visibility.Collapsed;
             UserPhone.Visibility = Visibility.Collapsed;
             //UserCommonChats.Visibility = Visibility.Collapsed;

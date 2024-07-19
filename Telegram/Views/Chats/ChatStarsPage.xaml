@@ -36,6 +36,10 @@
                                               Amount="{x:Bind ViewModel.AvailableAmount, Mode=OneWay}"
                                               Text="{CustomResource BotStarsOverviewAvailableBalance}"
                                               Margin="12,8" />
+                        <!--<cells:StarAmountCell x:Name="PreviousAmount"
+                                              Amount="{x:Bind ViewModel.PreviousAmount, Mode=OneWay}"
+                                              Text="{CustomResource BotStarsOverviewAvailableBalance}"
+                                              Margin="12,8" />-->
                         <cells:StarAmountCell x:Name="TotalAmount"
                                               Amount="{x:Bind ViewModel.TotalAmount, Mode=OneWay}"
                                               Text="{CustomResource BotStarsOverviewTotalBalance}"

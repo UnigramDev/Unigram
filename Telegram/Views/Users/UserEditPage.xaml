@@ -103,10 +103,21 @@
                                           Glyph="&#xE9F8;" />
                     <controls:BadgeButton x:Name="Stars"
                                           Click="{x:Bind ViewModel.ShowBalance}"
-                                          Badge="{x:Bind ViewModel.StarCount, Mode=OneWay}"
                                           Content="{CustomResource StarsBalance}"
                                           Style="{StaticResource GlyphBadgeButtonStyle}"
-                                          Glyph="&#xE9B5;" />
+                                          Glyph="&#xEA8D;">
+                        <controls:BadgeButton.Badge>
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition />
+                                    <ColumnDefinition />
+                                </Grid.ColumnDefinitions>
+                                <controls:PremiumStarCount Margin="0,-4,0,-6" />
+                                <TextBlock Text="{x:Bind ViewModel.StarCount, Mode=OneWay}"
+                                           Grid.Column="1" />
+                            </Grid>
+                        </controls:BadgeButton.Badge>
+                    </controls:BadgeButton>
                 </controls:HeaderedControl>
 
                 <controls:HeaderedControl x:Name="BotPanel"

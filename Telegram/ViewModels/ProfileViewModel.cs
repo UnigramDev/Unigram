@@ -135,6 +135,20 @@ namespace Telegram.ViewModels
                 {
                     Delegate?.UpdateUserFullInfo(chat, item, cache, false, false);
                 }
+
+                if (item.Type is UserTypeBot { CanBeEdited: true })
+                {
+                    async void UpdateStarCount()
+                    {
+                        var response = await ClientService.GetStarTransactionsAsync(new MessageSenderUser(item.Id), null, string.Empty, 1);
+                        if (response is StarTransactions transactions)
+                        {
+                            StarCount = transactions.StarCount;
+                        }
+                    }
+
+                    UpdateStarCount();
+                }
             }
             else if (chat.Type is ChatTypeSecret secretType)
             {
@@ -1110,6 +1124,24 @@ namespace Telegram.ViewModels
         public void OpenSavedMessagesTopic(SavedMessagesTopic topic)
         {
             NavigationService.NavigateToChat(_chat.Id, savedMessagesTopicId: topic.Id);
+        }
+
+        private long? _starCount;
+        public long? StarCount
+        {
+            get => _starCount;
+            set => Set(ref _starCount, value);
+        }
+
+        public void OpenBalance()
+        {
+            var chat = _chat;
+            if (chat == null || chat.Type is not ChatTypePrivate privata)
+            {
+                return;
+            }
+
+            NavigationService.Navigate(typeof(ChatStarsPage), new MessageSenderUser(privata.UserId));
         }
 
         public void OpenAdmins()

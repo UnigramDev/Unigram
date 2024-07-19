@@ -738,6 +738,9 @@ to: {1}</value>
   <data name="AddedToDoNotTranslate" xml:space="preserve">
     <value>**{0}** added to your Do Not Translate list.</value>
   </data>
+  <data name="AddedToFavorites" xml:space="preserve">
+    <value>Sticker added to Favorites.</value>
+  </data>
   <data name="AddEffectMessageHint" xml:space="preserve">
     <value>Add an animated effect</value>
   </data>
@@ -5269,6 +5272,9 @@ Duration: {1}</value>
   <data name="GIFs_other" xml:space="preserve">
     <value>{0} GIFs</value>
   </data>
+  <data name="GifSavedHint" xml:space="preserve">
+    <value>Added to Favorite GIFs.</value>
+  </data>
   <data name="GiftPremium" xml:space="preserve">
     <value>Gift Premium</value>
   </data>
@@ -8187,6 +8193,9 @@ Payments will go directly to the developer of {0}. Telegram cannot provide any g
   <data name="Remove" xml:space="preserve">
     <value>Remove</value>
   </data>
+  <data name="RemovedFromFavorites" xml:space="preserve">
+    <value>Sticker was removed from Favorites</value>
+  </data>
   <data name="RemoveEffect" xml:space="preserve">
     <value>Remove Effect</value>
   </data>
@@ -9153,10 +9162,10 @@ The channel &quot;**{1}**&quot; will become private.</value>
     <value>a **video**</value>
   </data>
   <data name="StarsConfirmPurchaseMedia_Videos_one" xml:space="preserve">
-    <value>**{1} video**</value>
+    <value>**{0} video**</value>
   </data>
   <data name="StarsConfirmPurchaseMedia_Videos_other" xml:space="preserve">
-    <value>**{1} videos**</value>
+    <value>**{0} videos**</value>
   </data>
   <data name="StarsConfirmPurchaseMedia1" xml:space="preserve">
     <value>Do you want to unlock {0} in **{1}** for **{2}**?</value>

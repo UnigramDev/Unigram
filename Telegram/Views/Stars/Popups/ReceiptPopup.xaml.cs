@@ -139,6 +139,8 @@ namespace Telegram.Views.Stars.Popups
                 else
                 {
                     Media2.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
+                    Media1.HorizontalAlignment = Windows.UI.Xaml.HorizontalAlignment.Center;
+                    Media1.HorizontalAlignment = Windows.UI.Xaml.HorizontalAlignment.Center;
                 }
             }
             else

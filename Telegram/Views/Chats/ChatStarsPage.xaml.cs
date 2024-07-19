@@ -21,6 +21,7 @@ namespace Telegram.Views.Chats
 
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
+            Withdraw.DataContext = DataContext;
             Withdraw.OnNavigatedTo(e);
         }
 

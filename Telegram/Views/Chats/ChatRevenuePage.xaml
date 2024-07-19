@@ -86,7 +86,7 @@
                                                     Margin="12,8"
                                                     Grid.ColumnSpan="2"
                                                     Grid.Row="2" />
-                            <cells:StarAmountCell Amount="{x:Bind ViewModel.TotalAmount, Mode=OneWay}"
+                            <cells:StarAmountCell Amount="{x:Bind ViewModel.Stars.TotalAmount, Mode=OneWay}"
                                                   Margin="12,8"
                                                   Grid.Column="1"
                                                   Grid.Row="2" />
