@@ -508,7 +508,7 @@ namespace Telegram.Controls
             }
         }
 
-        private GestureRecognizer _recognizer;
+        private readonly GestureRecognizer _recognizer;
 
         private void OnHolding(GestureRecognizer sender, HoldingEventArgs args)
         {
@@ -516,6 +516,7 @@ namespace Telegram.Controls
 
             if (args.HoldingState == HoldingState.Started && args.Position.X is >= 8 and <= 56 && args.Position.Y is >= 8 and <= 56 && ContentTemplateRoot is ChatCell cell)
             {
+                ReleasePointerCaptures();
                 cell.ShowPreview(args);
             }
         }

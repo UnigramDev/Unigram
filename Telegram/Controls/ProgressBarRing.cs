@@ -58,7 +58,7 @@ namespace Telegram.Controls
             var easing = Window.Current.Compositor.CreateLinearEasingFunction();
             var forever = Window.Current.Compositor.CreateScalarKeyFrameAnimation();
             forever.InsertKeyFrame(0, 220, easing);
-            forever.InsertKeyFrame(1, 599, easing);
+            forever.InsertKeyFrame(1, 580, easing);
             forever.IterationBehavior = AnimationIterationBehavior.Forever;
             forever.Duration = TimeSpan.FromSeconds(3);
 

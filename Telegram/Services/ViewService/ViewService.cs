@@ -147,6 +147,12 @@ namespace Telegram.Services.ViewService
                 }
 
                 await ApplicationViewSwitcher.TryShowAsViewModeAsync(control.Id, parameters.ViewMode, preferences);
+
+                if (parameters.Width != 0 && parameters.Height != 0)
+                {
+                    newView.DispatcherQueue.TryEnqueue(() => ApplicationView.GetForCurrentView().TryResizeView(new Size(parameters.Width, parameters.Height)));
+                }
+
                 return control;
             }
             catch

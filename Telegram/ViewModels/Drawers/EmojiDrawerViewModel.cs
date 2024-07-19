@@ -655,6 +655,11 @@ namespace Telegram.ViewModels.Drawers
             Title = Strings.RecentStickers;
             Stickers = new MvxObservableCollection<object>(items);
         }
+
+        public override string ToString()
+        {
+            return Title;
+        }
     }
 
     public class EmojiSetDiffHandler : IDiffHandler<object>

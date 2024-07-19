@@ -1025,14 +1025,14 @@ namespace Telegram.Controls.Messages
 
                 if (HeaderLabel.Inlines.Count > 1)
                 {
-                    HeaderLabel.Inlines.RemoveAt(1);
+                    HeaderLabel.Inlines.RemoveAt(HeaderLabel.Inlines.Count - 1);
                 }
 
                 HeaderLabel.Inlines.Add(hyperlink);
             }
             else if (header && HeaderLabel?.Inlines.Count > 1)
             {
-                HeaderLabel.Inlines.RemoveAt(1);
+                HeaderLabel.Inlines.RemoveAt(HeaderLabel.Inlines.Count - 1);
             }
 
             if (shown)

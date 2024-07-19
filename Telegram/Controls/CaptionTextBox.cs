@@ -17,6 +17,7 @@ using Windows.UI.Xaml;
 using Windows.UI.Xaml.Automation.Peers;
 using Windows.UI.Xaml.Automation.Provider;
 using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Controls.Primitives;
 using Windows.UI.Xaml.Input;
 
 namespace Telegram.Controls
@@ -62,10 +63,10 @@ namespace Telegram.Controls
             }
             else if ((e.Key == VirtualKey.Tab || e.Key == VirtualKey.Enter) && Autocomplete != null && Autocomplete.Items.Count > 0 && View.Autocomplete != null && View.Autocomplete is not SearchStickersCollection)
             {
-                var container = Autocomplete.ContainerFromIndex(Math.Max(0, Autocomplete.SelectedIndex)) as ListViewItem;
+                var container = Autocomplete.ContainerFromIndex(Math.Max(0, Autocomplete.SelectedIndex)) as SelectorItem;
                 if (container != null)
                 {
-                    var peer = new ListViewItemAutomationPeer(container);
+                    var peer = FrameworkElementAutomationPeer.FromElement(container);
                     var provider = peer.GetPattern(PatternInterface.Invoke) as IInvokeProvider;
                     provider.Invoke();
                 }
@@ -122,8 +123,11 @@ namespace Telegram.Controls
                         members = false;
                     }
 
-                    View.Autocomplete = new ChatTextBox.UsernameCollection(viewModel.ClientService, viewModel.Chat.Id, viewModel.ThreadId, result, index == 0, members);
-                    return;
+                    if (members)
+                    {
+                        View.Autocomplete = new ChatTextBox.UsernameCollection(viewModel.ClientService, viewModel.Chat.Id, viewModel.ThreadId, result, false, members);
+                        return;
+                    }
                 }
                 else if (entity == AutocompleteEntity.Emoji)
                 {
