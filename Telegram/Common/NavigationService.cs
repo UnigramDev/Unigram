@@ -136,11 +136,11 @@ namespace Telegram.Common
             }
         }
 
-        public static void NavigateToInvoice(this INavigationService service, InputInvoice inputInvoice)
+        public static void NavigateToInvoice(this INavigationService service, InputInvoice inputInvoice, MessageContent content = null)
         {
             if (service is TLNavigationService serviceEx)
             {
-                serviceEx.NavigateToInvoice(inputInvoice);
+                serviceEx.NavigateToInvoice(inputInvoice, content);
             }
         }
 

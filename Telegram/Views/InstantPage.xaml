@@ -18,7 +18,7 @@
             </NavigationThemeTransition>
         </TransitionCollection>
     </Page.Transitions>
-    
+
     <Page.Resources>
         <Style x:Key="EmptyButtonStyle"
                TargetType="Button">
@@ -253,44 +253,55 @@
         </Style>
     </Page.Resources>
 
-    <local:HostedPage.Action>
-        <Grid>
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="Auto" />
-                <ColumnDefinition Width="Auto" />
-            </Grid.ColumnDefinitions>
-            <controls:GlyphButton Glyph="&#xE72D;"
-                                  Click="{x:Bind ViewModel.Share}"
-                                  Style="{StaticResource HeaderGlyphButtonStyle}"
-                                  AutomationProperties.Name="{CustomResource ShareLink}"
-                                  ToolTipService.ToolTip="{CustomResource ShareLink}" />
-            <controls:MoreButton Grid.Column="1">
-                <Button.Flyout>
-                    <MenuFlyout Placement="BottomEdgeAlignedRight">
-                        <MenuFlyoutItem Click="{x:Bind ViewModel.Browser}"
-                                        Text="{CustomResource OpenInExternalApp}">
-                            <MenuFlyoutItem.Icon>
-                                <FontIcon Glyph="&#xE7AC;"
-                                          Style="{StaticResource DefaultFontIconStyle}" />
-                            </MenuFlyoutItem.Icon>
-                        </MenuFlyoutItem>
-                        <MenuFlyoutItem Click="{x:Bind ViewModel.Copy}"
-                                        Text="{CustomResource CopyLink}">
-                            <MenuFlyoutItem.Icon>
-                                <FontIcon Glyph="&#xE8C8;"
-                                          Style="{StaticResource DefaultFontIconStyle}" />
-                            </MenuFlyoutItem.Icon>
-                        </MenuFlyoutItem>
-                    </MenuFlyout>
-                </Button.Flyout>
-            </controls:MoreButton>
-        </Grid>
-    </local:HostedPage.Action>
-
     <Grid Background="{ThemeResource SettingsPageBackground}">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition />
+        </Grid.RowDefinitions>
+        <controls:TabbedPageHeader x:Name="Header"
+                                   Source="{x:Bind ViewModel.ShareLink, Mode=OneWay}"
+                                   GoBackClick="Header_GoBackClicked"
+                                   GoForwardClick="Header_GoForwardClicked">
+            <controls:TabbedPageHeader.Options>
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition />
+                        <ColumnDefinition />
+                    </Grid.ColumnDefinitions>
+                    <controls:GlyphButton Glyph="&#xE72D;"
+                                          Click="{x:Bind ViewModel.Share}"
+                                          Style="{StaticResource HeaderGlyphButtonStyle}"
+                                          AutomationProperties.Name="{CustomResource ShareLink}"
+                                          ToolTipService.ToolTip="{CustomResource ShareLink}" />
+                    <controls:MoreButton Margin="-8,0,0,0"
+                                         Grid.Column="1">
+                        <Button.Flyout>
+                            <MenuFlyout Placement="BottomEdgeAlignedRight">
+                                <MenuFlyoutItem Click="{x:Bind ViewModel.Browser}"
+                                                Text="{CustomResource OpenInExternalApp}">
+                                    <MenuFlyoutItem.Icon>
+                                        <FontIcon Glyph="&#xE7AC;"
+                                                  Style="{StaticResource DefaultFontIconStyle}" />
+                                    </MenuFlyoutItem.Icon>
+                                </MenuFlyoutItem>
+                                <MenuFlyoutItem Click="{x:Bind ViewModel.Copy}"
+                                                Text="{CustomResource CopyLink}">
+                                    <MenuFlyoutItem.Icon>
+                                        <FontIcon Glyph="&#xE8C8;"
+                                                  Style="{StaticResource DefaultFontIconStyle}" />
+                                    </MenuFlyoutItem.Icon>
+                                </MenuFlyoutItem>
+                            </MenuFlyout>
+                        </Button.Flyout>
+                    </controls:MoreButton>
+                </Grid>
+            </controls:TabbedPageHeader.Options>
+        </controls:TabbedPageHeader>
+
         <ListView x:Name="ScrollingHost"
                   SelectionMode="None"
-                  Padding="0,64,0,0">
+                  Padding="0,0,0,0"
+                  Grid.Row="1">
             <ListView.ItemContainerStyle>
                 <Style TargetType="ListViewItem">
                     <Setter Property="HorizontalContentAlignment"

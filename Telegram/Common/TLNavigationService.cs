@@ -10,7 +10,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Telegram.Controls;
-using Telegram.Native;
 using Telegram.Navigation;
 using Telegram.Navigation.Services;
 using Telegram.Services;
@@ -21,16 +20,15 @@ using Telegram.ViewModels;
 using Telegram.ViewModels.Payments;
 using Telegram.ViewModels.Settings;
 using Telegram.Views;
+using Telegram.Views.Host;
 using Telegram.Views.Payments;
 using Telegram.Views.Premium.Popups;
 using Telegram.Views.Settings;
 using Telegram.Views.Settings.Password;
 using Telegram.Views.Settings.Popups;
 using Telegram.Views.Stars.Popups;
-using Windows.ApplicationModel.Core;
+using Telegram.Views.Tabbed;
 using Windows.ApplicationModel.DataTransfer;
-using Windows.Storage.Streams;
-using Windows.UI;
 using Windows.UI.ViewManagement;
 using Windows.UI.WindowManagement;
 using Windows.UI.Xaml;
@@ -38,7 +36,6 @@ using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Media.Animation;
-using Windows.UI.Xaml.Media.Imaging;
 
 namespace Telegram.Common
 {
@@ -88,48 +85,13 @@ namespace Telegram.Common
                     var tabViewItem = new TabViewItem
                     {
                         Header = "Test",
-                        Content = frame
-                    };
-
-                    if (response2 is LinkPreview linkPreview)
-                    {
-                        var thumbnail = linkPreview.GetMinithumbnail();
-                        if (thumbnail != null)
+                        Content = frame,
+                        IconSource = new Microsoft.UI.Xaml.Controls.FontIconSource
                         {
-                            double ratioX = (double)20 / thumbnail.Width;
-                            double ratioY = (double)20 / thumbnail.Height;
-                            double ratio = Math.Max(ratioX, ratioY);
-
-                            var width = (int)(thumbnail.Width * ratio);
-                            var height = (int)(thumbnail.Height * ratio);
-
-                            var bitmap = new BitmapImage
-                            {
-                                DecodePixelWidth = width,
-                                DecodePixelHeight = height,
-                                DecodePixelType = DecodePixelType.Logical
-                            };
-
-                            using (var stream = new InMemoryRandomAccessStream())
-                            {
-                                try
-                                {
-                                    PlaceholderImageHelper.WriteBytes(thumbnail.Data, stream);
-                                    _ = bitmap.SetSourceAsync(stream);
-                                }
-                                catch
-                                {
-                                    // Throws when the data is not a valid encoded image,
-                                    // not so frequent, but if it happens during ContainerContentChanging it crashes the app.
-                                }
-                            }
-
-                            tabViewItem.IconSource = new Microsoft.UI.Xaml.Controls.ImageIconSource
-                            {
-                                ImageSource = bitmap,
-                            };
+                            Glyph = "\uE60E",
+                            FontFamily = BootStrapper.Current.Resources["SymbolThemeFontFamily"] as FontFamily
                         }
-                    }
+                    };
 
                     if (service.Content is Page page)
                     {
@@ -143,110 +105,49 @@ namespace Telegram.Common
                     return tabViewItem;
                 }
 
-                var oldViewId = WindowContext.Current.Id;
-
-                var already = WindowContext.All.FirstOrDefault(x => x.PersistedId == "InstantView");
-                if (already != null)
+                NavigateToTab(CreateTabViewItem);
+            }
+            else
+            {
+                if (Uri.TryCreate(fallbackUrl ?? url, UriKind.Absolute, out Uri uri))
                 {
-                    await already.Dispatcher.DispatchAsync(async () =>
-                    {
-                        if (WindowContext.Current.Content is TabView tabView)
-                        {
-                            tabView.TabItems.Insert(tabView.SelectedIndex + 1, CreateTabViewItem());
-                            tabView.SelectedIndex++;
-                        }
-
-                        await ApplicationViewSwitcher.SwitchAsync(WindowContext.Current.Id, oldViewId);
-                    });
-                }
-                else
-                {
-                    await OpenAsync(new ViewServiceParams
-                    {
-                        Width = 820,
-                        Height = 640,
-                        PersistedId = "InstantView",
-                        Content = control =>
-                        {
-                            var footer = new Border
-                            {
-                                Background = new SolidColorBrush(Colors.Transparent)
-                            };
-
-                            var header = new Border
-                            {
-                                Background = new SolidColorBrush(Colors.Transparent)
-                            };
-
-                            var tabView = new TabView
-                            {
-                                TabStripHeader = header,
-                                TabStripFooter = footer,
-                                IsAddTabButtonVisible = false
-                            };
-
-                            tabView.TabItems.Add(CreateTabViewItem());
-                            tabView.TabCloseRequested += (s, args) =>
-                            {
-                                if (s.TabItems.Count > 1)
-                                {
-                                    s.TabItems.Remove(args.Tab);
-                                }
-                                else
-                                {
-                                    _ = WindowContext.Current.ConsolidateAsync();
-                                }
-                            };
-
-                            Window.Current.SetTitleBar(footer);
-                            BackdropMaterial.SetApplyToRootOrPageBackground(tabView, true);
-
-                            var coreTitleBar = CoreApplication.GetCurrentView().TitleBar;
-                            coreTitleBar.ExtendViewIntoTitleBar = true;
-
-                            coreTitleBar.LayoutMetricsChanged += (s, args) =>
-                            {
-                                // To ensure that the tabs in the titlebar are not occluded by shell
-                                // content, we must ensure that we account for left and right overlays.
-                                // In LTR layouts, the right inset includes the caption buttons and the
-                                // drag region, which is flipped in RTL. 
-
-                                // The SystemOverlayLeftInset and SystemOverlayRightInset values are
-                                // in terms of physical left and right. Therefore, we need to flip
-                                // then when our flow direction is RTL.
-                                if (tabView.FlowDirection == FlowDirection.LeftToRight)
-                                {
-                                    footer.MinWidth = s.SystemOverlayRightInset;
-                                    header.MinWidth = s.SystemOverlayLeftInset;
-                                }
-                                else
-                                {
-                                    footer.MinWidth = s.SystemOverlayLeftInset;
-                                    header.MinWidth = s.SystemOverlayRightInset;
-                                }
-
-                                // Ensure that the height of the custom regions are the same as the titlebar.
-                                footer.Height = header.Height = s.Height;
-                            };
-
-                            return tabView;
-                        }
-                    });
+                    await Windows.System.Launcher.LaunchUriAsync(uri);
                 }
             }
+        }
 
-            //var response = await ClientService.SendAsync(new GetWebPageInstantView(url, true));
-            //if (response is WebPageInstantView instantView)
-            //{
-            //    Navigate(typeof(InstantPage), new InstantPageArgs(instantView, url));
-            //}
-            //else
-            //{
-            //    if (Uri.TryCreate(fallbackUrl ?? url, UriKind.Absolute, out Uri uri))
-            //    {
-            //        await Windows.System.Launcher.LaunchUriAsync(uri);
-            //    }
-            //}
+        public void NavigateToWeb3(string url)
+        {
+            NavigateToTab(() => Web3Page.Create(url));
+        }
+
+        private async void NavigateToTab(Func<TabViewItem> newTab)
+        {
+            var oldViewId = WindowContext.Current.Id;
+
+            var already = WindowContext.All.FirstOrDefault(x => x.PersistedId == "InstantView");
+            if (already != null)
+            {
+                await already.Dispatcher.DispatchAsync(async () =>
+                {
+                    if (WindowContext.Current.Content is TabbedPage page)
+                    {
+                        page.AddNewTab(newTab());
+                    }
+
+                    await ApplicationViewSwitcher.SwitchAsync(WindowContext.Current.Id, oldViewId);
+                });
+            }
+            else
+            {
+                await OpenAsync(new ViewServiceParams
+                {
+                    Width = 820,
+                    Height = 640,
+                    PersistedId = "InstantView",
+                    Content = control => new TabbedPage(newTab())
+                });
+            }
         }
 
         public async void ShowLimitReached(PremiumLimitType type)
@@ -266,10 +167,10 @@ namespace Telegram.Common
 
         public void NavigateToInvoice(MessageViewModel message)
         {
-            NavigateToInvoice(new InputInvoiceMessage(message.ChatId, message.Id));
+            NavigateToInvoice(new InputInvoiceMessage(message.ChatId, message.Id), message.Content);
         }
 
-        public async void NavigateToInvoice(InputInvoice inputInvoice)
+        public async void NavigateToInvoice(InputInvoice inputInvoice, MessageContent content)
         {
             var response = await ClientService.SendAsync(new GetPaymentForm(inputInvoice, Theme.Current.Parameters));
             if (response is not PaymentForm paymentForm)
@@ -281,7 +182,7 @@ namespace Telegram.Common
             // TODO: how can we do this while coming from a mini app?
             if (paymentForm.Type is PaymentFormTypeStars)
             {
-                await ShowPopupAsync(typeof(PayPopup), new PaymentFormArgs(inputInvoice, paymentForm));
+                await ShowPopupAsync(typeof(PayPopup), new PaymentFormArgs(inputInvoice, paymentForm, content));
                 return;
             }
 
@@ -294,7 +195,7 @@ namespace Telegram.Common
                 Content = control =>
                 {
                     var nav = BootStrapper.Current.NavigationServiceFactory(BootStrapper.BackButton.Ignore, SessionId, "Payments" + Guid.NewGuid(), false);
-                    nav.Navigate(typeof(PaymentFormPage), new PaymentFormArgs(inputInvoice, paymentForm));
+                    nav.Navigate(typeof(PaymentFormPage), new PaymentFormArgs(inputInvoice, paymentForm, content));
 
                     return BootStrapper.Current.CreateRootElement(nav);
 

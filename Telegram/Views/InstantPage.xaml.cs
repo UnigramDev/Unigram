@@ -94,7 +94,7 @@ namespace Telegram.Views
         {
         }
 
-        protected override async void OnNavigatedTo(NavigationEventArgs e)
+        protected override void OnNavigatedTo(NavigationEventArgs e)
         {
             ScrollingHost.Items.Clear();
             ViewModel.Gallery.Items.Clear();
@@ -112,6 +112,9 @@ namespace Telegram.Views
             ViewModel.ShareTitle = args.Url;
 
             UpdateView(args.InstantView);
+
+            Header.CanGoBack = Frame.CanGoBack;
+            Header.CanGoForward = Frame.CanGoForward;
         }
 
         private WebPageInstantView _instantView;
@@ -1715,10 +1718,10 @@ namespace Telegram.Views
             ViewModel.IsLoading = true;
 
             var response = await ViewModel.ClientService.SendAsync(new GetWebPageInstantView(urlText.Url, false));
-            if (response is WebPageInstantView)
+            if (response is WebPageInstantView instantView)
             {
                 ViewModel.IsLoading = false;
-                ViewModel.NavigationService.NavigateToInstant(urlText.Url);
+                ViewModel.NavigationService.Navigate(typeof(InstantPage), new InstantPageArgs(instantView, urlText.Url));
             }
             else if (MessageHelper.TryCreateUri(urlText.Url, out Uri uri))
             {
@@ -1750,6 +1753,16 @@ namespace Telegram.Views
 
             fragment = null;
             return false;
+        }
+
+        private void Header_GoBackClicked(object sender, RoutedEventArgs e)
+        {
+            Frame.GoBack();
+        }
+
+        private void Header_GoForwardClicked(object sender, RoutedEventArgs e)
+        {
+            Frame.GoForward();
         }
     }
 }

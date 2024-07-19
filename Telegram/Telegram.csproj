@@ -267,6 +267,9 @@
     <Compile Include="Controls\SuggestedActionSetBirthdateCard.xaml.cs">
       <DependentUpon>SuggestedActionSetBirthdateCard.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\TabbedPageHeader.xaml.cs">
+      <DependentUpon>TabbedPageHeader.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Services\ClientService.SavedMessages.cs" />
     <Compile Include="Composition\CompositionVoiceBlobVisual.cs" />
     <Compile Include="Composition\CompositionBlobVisual.cs" />
@@ -1049,6 +1052,9 @@
       <DependentUpon>ShareFolderPopup.xaml</DependentUpon>
     </Compile>
     <Compile Include="Common\MultiValueDictionary.cs" />
+    <Compile Include="Views\Host\TabbedPage.xaml.cs">
+      <DependentUpon>TabbedPage.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\Monetization\Popups\LearnMorePopup.xaml.cs">
       <DependentUpon>LearnMorePopup.xaml</DependentUpon>
     </Compile>
@@ -1221,6 +1227,9 @@
     </Compile>
     <Compile Include="Views\Popups\VideoChatStreamsPopup.xaml.cs">
       <DependentUpon>VideoChatStreamsPopup.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Tabbed\Web3Page.xaml.cs">
+      <DependentUpon>Web3Page.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\WebAppPage.xaml.cs">
       <DependentUpon>WebAppPage.xaml</DependentUpon>
@@ -2573,6 +2582,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Controls\TabbedPageHeader.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Controls\UnconfirmedSessionCard.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -2776,6 +2789,10 @@
     <Page Include="Views\Folders\Popups\ShareFolderPopup.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\Host\TabbedPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\Monetization\Popups\LearnMorePopup.xaml">
       <Generator>MSBuild:Compile</Generator>
@@ -3002,6 +3019,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Views\Popups\VideoChatStreamsPopup.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Tabbed\Web3Page.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -3535,6 +3556,9 @@
     </PackageReference>
     <PackageReference Include="Microsoft.UI.Xaml">
       <Version>2.8.2</Version>
+    </PackageReference>
+    <PackageReference Include="Microsoft.Web.WebView2">
+      <Version>1.0.2592.51</Version>
     </PackageReference>
     <PackageReference Include="Newtonsoft.Json">
       <Version>13.0.3</Version>

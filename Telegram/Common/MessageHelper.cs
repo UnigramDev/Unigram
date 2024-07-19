@@ -60,6 +60,50 @@ namespace Telegram.Common
         }
     }
 
+    public class TonSite
+    {
+        public static bool TryCreate(Uri uri, out string magic)
+        {
+            magic = null;
+
+            if (string.Equals(uri.Scheme, "tonsite", StringComparison.OrdinalIgnoreCase) || uri.Host.EndsWith(".ton", StringComparison.OrdinalIgnoreCase))
+            {
+                magic = uri.Host
+                    .Replace("-", "-h")
+                    .Replace(".", "-d");
+                magic = $"https://{magic}.magic.org" + uri.PathAndQuery + uri.Fragment;
+                return true;
+            }
+
+            return false;
+        }
+
+        public static bool TryUnmask(string url, out Uri magic)
+        {
+            if (MessageHelper.TryCreateUri(url, out Uri navigation))
+            {
+                magic = Unmask(navigation);
+                return true;
+            }
+
+            magic = null;
+            return false;
+        }
+
+        public static Uri Unmask(Uri navigation)
+        {
+            var host = navigation.Host;
+            if (host.EndsWith(".magic.org"))
+            {
+                host = host.Replace(".magic.org", string.Empty)
+                    .Replace("-d", ".")
+                    .Replace("-h", "-");
+            }
+
+            return new Uri("tonsite://" + host + navigation.PathAndQuery + navigation.Fragment);
+        }
+    }
+
     public class MessageHelper
     {
         public static async void CopyLink(IClientService clientService, InternalLinkType type)
@@ -297,6 +341,7 @@ namespace Telegram.Common
             if (!url.StartsWith("http://")
                 && !url.StartsWith("https://")
                 && !url.StartsWith("tg:")
+                && !url.StartsWith("tonsite:")
                 && !url.StartsWith("ftp:")
                 && !url.StartsWith("mailto:"))
             {
@@ -319,7 +364,7 @@ namespace Telegram.Common
 
             if (Constants.TelegramHosts.Contains(host))
             {
-                return true;
+                return string.Equals(uri.Scheme, "http", StringComparison.OrdinalIgnoreCase) || string.Equals(uri.Scheme, "https", StringComparison.OrdinalIgnoreCase);
             }
 
             return IsTelegramScheme(uri);
@@ -1275,6 +1320,13 @@ namespace Telegram.Common
                 if (telegramUrl && clientService != null && navigationService != null)
                 {
                     OpenTelegramUrl(clientService, navigationService, uri, source);
+                }
+                else if (navigationService != null && TonSite.TryCreate(uri, out string magic))
+                {
+                    if (navigationService is TLNavigationService tl)
+                    {
+                        tl.NavigateToWeb3(magic);
+                    }
                 }
                 else
                 {
