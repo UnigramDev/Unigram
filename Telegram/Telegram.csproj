@@ -328,6 +328,7 @@
     </Compile>
     <Compile Include="Controls\ToastPopup.cs" />
     <Compile Include="Services\Settings\TranslateSettings.cs" />
+    <Compile Include="Streams\ParticlesImageSource.cs" />
     <Compile Include="Stub.cs" />
     <Compile Include="Td\Api\MessageTag.cs" />
     <Compile Include="Td\Api\MinithumbnailId.cs" />
@@ -1899,11 +1900,6 @@
     <Content Include="Assets\Images\ArrowLeft.scale-150.png" />
     <Content Include="Assets\Images\ArrowLeft.scale-200.png" />
     <Content Include="Assets\Images\ArrowLeft.scale-400.png" />
-    <Content Include="Assets\Images\Particles.scale-100.png" />
-    <Content Include="Assets\Images\Particles.scale-125.png" />
-    <Content Include="Assets\Images\Particles.scale-150.png" />
-    <Content Include="Assets\Images\Particles.scale-200.png" />
-    <Content Include="Assets\Images\Particles.scale-400.png" />
     <Content Include="Assets\Toasts\ExpiredStory.tgs" />
     <Content Include="Assets\Toasts\Info.tgs" />
     <Content Include="Assets\Toasts\LinkCopied.tgs" />

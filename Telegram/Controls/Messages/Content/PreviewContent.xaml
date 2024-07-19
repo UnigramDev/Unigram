@@ -22,11 +22,12 @@
                 <ControlTemplate TargetType="local:PreviewContent">
                     <controls:AspectView x:Name="LayoutRoot"
                                          Background="Black">
-                        <Image x:Name="Texture"
-                               Source="ms-appx:///Assets/Images/Particles.png"
-                               Stretch="None"
-                               HorizontalAlignment="Stretch"
-                               VerticalAlignment="Stretch" />
+                        <controls:AnimatedImage x:Name="Particles"
+                                                IsViewportAware="True"
+                                                FrameSize="0,0"
+                                                FitToSize="True"
+                                                DecodeFrameType="Logical"
+                                                Stretch="UniformToFill" />
                         <Border x:Name="Overlay"
                                 Background="{ThemeResource MessageServiceBackgroundBrush}"
                                 CornerRadius="{ThemeResource MessageOverlayCornerRadius}"

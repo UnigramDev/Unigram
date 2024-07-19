@@ -124,7 +124,7 @@ namespace Telegram.Controls.Messages.Content
             var album = GetContent(_message);
             if (album != null)
             {
-                _message.Delegate.NavigationService.NavigateToInvoice(new InputInvoiceMessage(_message.ChatId, _message.Id));
+                _message.Delegate.NavigationService.NavigateToInvoice(_message);
             }
         }
     }

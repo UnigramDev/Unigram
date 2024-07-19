@@ -27,12 +27,12 @@
                         <Image x:Name="Texture"
                                Stretch="UniformToFill" />
 
-                        <Border>
-                            <Border.Background>
-                                <ImageBrush x:Name="Particles"
-                                            Stretch="None" />
-                            </Border.Background>
-                        </Border>
+                        <controls:AnimatedImage x:Name="Particles"
+                                                IsViewportAware="True"
+                                                FrameSize="0,0"
+                                                FitToSize="True"
+                                                DecodeFrameType="Logical"
+                                                Stretch="UniformToFill" />
 
                         <controls:FileButton x:Name="Button"
                                              Style="{StaticResource ImmersiveFileButtonStyle}" />

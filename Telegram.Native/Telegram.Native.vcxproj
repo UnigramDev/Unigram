@@ -377,6 +377,10 @@
       <DependentUpon>Opus\OpusOutput.idl</DependentUpon>
       <SubType>Code</SubType>
     </ClInclude>
+    <ClInclude Include="ParticlesAnimation.h">
+      <DependentUpon>ParticlesAnimation.idl</DependentUpon>
+      <SubType>Code</SubType>
+    </ClInclude>
     <ClInclude Include="PixelBuffer.h">
       <DependentUpon>PixelBuffer.idl</DependentUpon>
     </ClInclude>
@@ -961,6 +965,10 @@
       <DependentUpon>LokiRng.idl</DependentUpon>
       <SubType>Code</SubType>
     </ClCompile>
+    <ClCompile Include="ParticlesAnimation.cpp">
+      <DependentUpon>ParticlesAnimation.idl</DependentUpon>
+      <SubType>Code</SubType>
+    </ClCompile>
     <ClCompile Include="SurfaceImage.cpp">
       <DependentUpon>SurfaceImage.idl</DependentUpon>
       <SubType>Code</SubType>
@@ -1207,6 +1215,9 @@
     </Midl>
     <Midl Include="NativeUtils.idl" />
     <Midl Include="Opus\OpusOutput.idl">
+      <SubType>Designer</SubType>
+    </Midl>
+    <Midl Include="ParticlesAnimation.idl">
       <SubType>Designer</SubType>
     </Midl>
     <Midl Include="PixelBuffer.idl" />

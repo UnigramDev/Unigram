@@ -5,6 +5,7 @@
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
 using Telegram.Common;
+using Telegram.Streams;
 using Telegram.Td.Api;
 using Telegram.ViewModels;
 using Windows.UI.Xaml;
@@ -32,7 +33,7 @@ namespace Telegram.Controls.Messages.Content
         #region InitializeComponent
 
         private AspectView LayoutRoot;
-        private Image Texture;
+        private AnimatedImage Particles;
         private Border Overlay;
         private TextBlock Subtitle;
         private bool _templateApplied;
@@ -40,7 +41,7 @@ namespace Telegram.Controls.Messages.Content
         protected override void OnApplyTemplate()
         {
             LayoutRoot = GetTemplateChild(nameof(LayoutRoot)) as AspectView;
-            Texture = GetTemplateChild(nameof(Texture)) as Image;
+            Particles = GetTemplateChild(nameof(Particles)) as AnimatedImage;
             Overlay = GetTemplateChild(nameof(Overlay)) as Border;
             Subtitle = GetTemplateChild(nameof(Subtitle)) as TextBlock;
 
@@ -66,6 +67,8 @@ namespace Telegram.Controls.Messages.Content
 
             LayoutRoot.Constraint = message;
             LayoutRoot.Background = null;
+
+            Particles.Source = new ParticlesImageSource();
 
             if (preview.Duration > 0)
             {

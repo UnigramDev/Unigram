@@ -1,0 +1,13 @@
+namespace Telegram.Native
+{
+    [default_interface]
+    runtimeclass ParticlesAnimation 
+    {
+        ParticlesAnimation(Int32 width, Int32 height, Double rasterizationScale);
+
+        void RenderSync(Windows.Storage.Streams.IBuffer bitmap);
+
+        Int32 PixelWidth{ get; };
+        Int32 PixelHeight{ get; };
+    }
+}

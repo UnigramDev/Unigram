@@ -40,7 +40,6 @@ using Windows.UI.Xaml.Documents;
 using Windows.UI.Xaml.Hosting;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
-using Windows.UI.Xaml.Media.Imaging;
 using Windows.UI.Xaml.Shapes;
 
 namespace Telegram.Views.Popups
@@ -635,11 +634,11 @@ namespace Telegram.Views.Popups
 
             void UpdateSelectorItem(Grid content)
             {
-                var particles = content.FindName("Particles") as ImageBrush;
+                var particles = content.FindName("Particles") as AnimatedImage;
                 if (particles != null)
                 {
-                    particles.ImageSource = SendWithSpoiler || StarCount > 0
-                        ? new BitmapImage(new Uri("ms-appx:///Assets/Images/Particles.png"))
+                    particles.Source = SendWithSpoiler || StarCount > 0
+                        ? new ParticlesImageSource()
                         : null;
                 }
 

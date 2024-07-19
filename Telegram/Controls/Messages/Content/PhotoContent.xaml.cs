@@ -7,6 +7,7 @@
 using System;
 using Telegram.Common;
 using Telegram.Controls.Media;
+using Telegram.Streams;
 using Telegram.Td.Api;
 using Telegram.ViewModels;
 using Windows.UI.Xaml;
@@ -51,7 +52,7 @@ namespace Telegram.Controls.Messages.Content
 
         private AspectView LayoutRoot;
         private ImageBrush Texture;
-        private ImageBrush Particles;
+        private AnimatedImage Particles;
         private Border Overlay;
         private TextBlock Subtitle;
         private FileButton Button;
@@ -62,7 +63,7 @@ namespace Telegram.Controls.Messages.Content
         {
             LayoutRoot = GetTemplateChild(nameof(LayoutRoot)) as AspectView;
             Texture = GetTemplateChild(nameof(Texture)) as ImageBrush;
-            Particles = GetTemplateChild(nameof(Particles)) as ImageBrush;
+            Particles = GetTemplateChild(nameof(Particles)) as AnimatedImage;
             Overlay = GetTemplateChild(nameof(Overlay)) as Border;
             Subtitle = GetTemplateChild(nameof(Subtitle)) as TextBlock;
             Button = GetTemplateChild(nameof(Button)) as FileButton;
@@ -364,8 +365,8 @@ namespace Telegram.Controls.Messages.Content
             }
 
             brush.ImageSource = source;
-            Particles.ImageSource = isSecret || (hasSpoiler && _hidden)
-                ? new BitmapImage(new Uri("ms-appx:///Assets/Images/Particles.png"))
+            Particles.Source = isSecret || (hasSpoiler && _hidden)
+                ? new ParticlesImageSource()
                 : null;
         }
 

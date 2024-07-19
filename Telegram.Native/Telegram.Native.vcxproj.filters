@@ -1222,5 +1222,6 @@
     <Midl Include="LokiRng.idl" />
     <Midl Include="SurfaceImage.idl" />
     <Midl Include="FatalError.idl" />
+    <Midl Include="ParticlesAnimation.idl" />
   </ItemGroup>
 </Project>

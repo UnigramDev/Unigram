@@ -75,7 +75,19 @@ namespace Telegram.Controls
 
             Connected += OnLoaded;
             Disconnected += OnUnloaded;
+
+            SizeChanged += OnSizeChanged;
         }
+
+        private void OnSizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            if (FitToSize)
+            {
+                Load();
+            }
+        }
+
+        public bool FitToSize { get; set; }
 
         public event EventHandler Ready;
         public event EventHandler<AnimatedImagePositionChangedEventArgs> PositionChanged;
@@ -367,16 +379,23 @@ namespace Telegram.Controls
         {
             if (Source != null)
             {
-                var width = (int)FrameSize.Width;
-                var height = (int)FrameSize.Height;
+                var width = FitToSize ? (int)ActualWidth : (int)FrameSize.Width;
+                var height = FitToSize ? (int)ActualHeight : (int)FrameSize.Height;
+                var scale = 1d;
 
                 if (DecodeFrameType == DecodePixelType.Logical)
                 {
                     width = (int)(width * _rasterizationScale);
                     height = (int)(height * _rasterizationScale);
+                    scale = _rasterizationScale;
                 }
 
-                return new AnimatedImagePresentation(Source, width, height, LimitFps, LoopCount, AutoPlay, IsCachingEnabled);
+                if (FitToSize && (width <= 0 || height <= 0))
+                {
+                    return null;
+                }
+
+                return new AnimatedImagePresentation(Source, width, height, scale, LimitFps, LoopCount, AutoPlay, IsCachingEnabled);
             }
 
             return null;
@@ -1521,6 +1540,30 @@ namespace Telegram.Controls
         }
     }
 
+    public class ParticlesAnimatedImageTask : AnimatedImageTask
+    {
+        private readonly ParticlesAnimation _animation;
+
+        public ParticlesAnimatedImageTask(ParticlesAnimation animation, AnimatedImagePresentation presentation)
+            : base(presentation)
+        {
+            _animation = animation;
+
+            PixelWidth = animation.PixelWidth;
+            PixelHeight = animation.PixelHeight;
+
+            Interval = TimeSpan.FromMilliseconds(Math.Floor(1000d / 30));
+        }
+
+        public override AnimatedImageTaskState NextFrame(IBuffer frame, out int position)
+        {
+            _animation.RenderSync(frame);
+
+            position = 0;
+            return AnimatedImageTaskState.None;
+        }
+    }
+
     public abstract class AnimatedImageTask
     {
         protected readonly AnimatedImagePresentation _presentation;
@@ -1543,7 +1586,7 @@ namespace Telegram.Controls
         }
     }
 
-    public record AnimatedImagePresentation(AnimatedImageSource Source, int PixelWidth, int PixelHeight, bool LimitFps, int LoopCount, bool AutoPlay, bool IsCachingEnabled);
+    public record AnimatedImagePresentation(AnimatedImageSource Source, int PixelWidth, int PixelHeight, double RasterizationScale, bool LimitFps, int LoopCount, bool AutoPlay, bool IsCachingEnabled);
 
     public class AnimatedImageLoader
     {
@@ -1722,6 +1765,10 @@ namespace Telegram.Controls
                             }
                         }
                     }
+                    else if (work.Presentation.Source is ParticlesImageSource)
+                    {
+                        LoadParticles(work);
+                    }
                     else
                     {
                         LoadCachedVideo(work);
@@ -1732,6 +1779,12 @@ namespace Telegram.Controls
                     // Shit happens...
                 }
             }
+        }
+
+        private void LoadParticles(WorkItem work)
+        {
+            var animation = new ParticlesAnimation(work.Presentation.PixelWidth, work.Presentation.PixelHeight, work.Presentation.RasterizationScale);
+            NotifyDelegate(work.CorrelationId, null, new ParticlesAnimatedImageTask(animation, work.Presentation));
         }
 
         private void LoadLottie(WorkItem work, LocalFileSource local)

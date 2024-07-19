@@ -30,12 +30,12 @@
                             </Border.Background>
                         </Border>
 
-                        <Border>
-                            <Border.Background>
-                                <ImageBrush x:Name="Particles"
-                                            Stretch="None" />
-                            </Border.Background>
-                        </Border>
+                        <controls:AnimatedImage x:Name="Particles"
+                                                IsViewportAware="True"
+                                                FrameSize="0,0"
+                                                FitToSize="True"
+                                                DecodeFrameType="Logical"
+                                                Stretch="UniformToFill" />
 
                         <Border x:Name="Overlay"
                                 Background="{ThemeResource MessageOverlayBackgroundBrush}"
