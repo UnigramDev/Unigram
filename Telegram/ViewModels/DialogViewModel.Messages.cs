@@ -1409,6 +1409,7 @@ namespace Telegram.ViewModels
             }
 
             ClientService.Send(new AddFavoriteSticker(new InputFileId(sticker.Sticker.StickerValue.Id)));
+            ToastPopup.Show(Strings.AddedToFavorites, new LocalFileSource("ms-appx:///Assets/Toasts/Info.tgs"));
         }
 
         #endregion
@@ -1424,6 +1425,7 @@ namespace Telegram.ViewModels
             }
 
             ClientService.Send(new RemoveFavoriteSticker(new InputFileId(sticker.Sticker.StickerValue.Id)));
+            ToastPopup.Show(Strings.RemovedFromFavorites, new LocalFileSource("ms-appx:///Assets/Toasts/Info.tgs"));
         }
 
         #endregion
@@ -1453,6 +1455,8 @@ namespace Telegram.ViewModels
             {
                 ClientService.Send(new AddSavedAnimation(new InputFileId(previewAnimation.Animation.AnimationValue.Id)));
             }
+
+            ToastPopup.Show(Strings.GifSavedHint, new LocalFileSource("ms-appx:///Assets/Toasts/Gif.tgs"));
         }
 
         #endregion
