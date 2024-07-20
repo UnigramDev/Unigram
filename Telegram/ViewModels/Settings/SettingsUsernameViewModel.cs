@@ -413,7 +413,7 @@ namespace Telegram.ViewModels.Settings
 
         public void Copy()
         {
-            MessageHelper.CopyLink(ClientService, new InternalLinkTypePublicChat(_username, string.Empty));
+            MessageHelper.CopyLink(ClientService, new InternalLinkTypePublicChat(_username, string.Empty, false));
         }
     }
 

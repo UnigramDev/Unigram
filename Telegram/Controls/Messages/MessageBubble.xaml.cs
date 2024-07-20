@@ -707,7 +707,7 @@ namespace Telegram.Controls.Messages
                 or MessageAnimatedEmoji;
 
             var info = message.InteractionInfo?.ReplyInfo;
-            if (info != null && light && message.IsChannelPost && message.CanGetMessageThread)
+            if (info != null && light && message.IsChannelPost && message.InteractionInfo.ReplyInfo != null)
             {
                 FindAction(outgoing);
 
@@ -793,7 +793,7 @@ namespace Telegram.Controls.Messages
                 or MessageAnimatedEmoji;
 
             var info = message.InteractionInfo?.ReplyInfo;
-            if (info != null && light && message.IsChannelPost && message.CanGetMessageThread)
+            if (info != null && light && message.IsChannelPost && message.InteractionInfo.ReplyInfo != null)
             {
                 message.Delegate.OpenThread(message);
             }
@@ -1308,7 +1308,7 @@ namespace Telegram.Controls.Messages
             }
 
             var info = message.InteractionInfo?.ReplyInfo;
-            if (info == null || !message.IsChannelPost || !message.CanGetMessageThread)
+            if (info == null || !message.IsChannelPost)
             {
                 if (message.ChatId == message.ClientService.Options.RepliesBotChatId)
                 {

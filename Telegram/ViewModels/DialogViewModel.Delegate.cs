@@ -147,8 +147,8 @@ namespace Telegram.ViewModels
                     messageId = threadId;
                 }
 
-                var original = await ClientService.SendAsync(new GetMessage(chatId, threadId)) as Message;
-                if (original == null || !original.CanGetMessageThread)
+                var properties = await ClientService.SendAsync(new GetMessageProperties(chatId, threadId)) as MessageProperties;
+                if (properties == null || !properties.CanGetMessageThread)
                 {
                     NavigationService.NavigateToChat(chatId, threadId);
                     return;
@@ -543,7 +543,7 @@ namespace Telegram.ViewModels
 
 
 
-        public void Select(MessageViewModel message)
+        public async void Select(MessageViewModel message)
         {
             if (message.IsService)
             {
@@ -575,12 +575,15 @@ namespace Telegram.ViewModels
                 message.SelectionChanged();
             }
 
-            RaisePropertyChanged(nameof(CanForwardSelectedMessages));
-            RaisePropertyChanged(nameof(CanDeleteSelectedMessages));
             RaisePropertyChanged(nameof(CanCopySelectedMessage));
             RaisePropertyChanged(nameof(CanReportSelectedMessages));
 
             RaisePropertyChanged(nameof(SelectedCount));
+
+            var properties = await ClientService.GetMessagePropertiesAsync(SelectedItems[0].ChatId, SelectedItems.Values.Select(x => x.Id));
+
+            CanDeleteSelectedMessages = properties.Count > 0 && properties.Values.All(x => x.CanBeDeletedForAllUsers || x.CanBeDeletedOnlyForSelf);
+            CanForwardSelectedMessages = properties.Count > 0 && properties.Values.All(x => x.CanBeForwarded);
         }
 
         public void Unselect(MessageViewModel message)

@@ -121,7 +121,7 @@ namespace Telegram.ViewModels
                 message = album.Messages.FirstOrDefault();
             }
 
-            if (inAnotherChat || ShouldReplyInAnotherChat(message))
+            if (inAnotherChat || await ShouldReplyInAnotherChatAsync(message))
             {
                 var header = ComposerHeader;
                 var text = GetFormattedText(true);
@@ -171,7 +171,7 @@ namespace Telegram.ViewModels
                 message = album.Messages.FirstOrDefault();
             }
 
-            if (inAnotherChat || ShouldReplyInAnotherChat(message))
+            if (inAnotherChat || await ShouldReplyInAnotherChatAsync(message))
             {
                 var header = ComposerHeader;
                 var text = GetFormattedText(true);
@@ -197,9 +197,10 @@ namespace Telegram.ViewModels
             }
         }
 
-        private bool ShouldReplyInAnotherChat(MessageViewModel message)
+        private async Task<bool> ShouldReplyInAnotherChatAsync(MessageViewModel message)
         {
-            if (message.CanBeRepliedInAnotherChat is false)
+            var properties = await ClientService.SendAsync(new GetMessageProperties(message.ChatId, message.Id)) as MessageProperties;
+            if (properties == null || properties.CanBeRepliedInAnotherChat is false)
             {
                 return false;
             }
@@ -245,6 +246,22 @@ namespace Telegram.ViewModels
             TextField?.Focus(FocusState.Programmatic);
         }
 
+        public async void TryDeleteMessage(MessageViewModel message)
+        {
+            if (message == null)
+            {
+                return;
+            }
+
+            var properties = await ClientService.SendAsync(new GetMessageProperties(message.ChatId, message.Id)) as MessageProperties;
+            if (properties == null || (!properties.CanBeDeletedOnlyForSelf && !properties.CanBeDeletedForAllUsers))
+            {
+                return;
+            }
+
+            DeleteMessage(message);
+        }
+
         private async void DeleteMessages(Chat chat, IList<MessageViewModel> messages)
         {
             var first = messages.FirstOrDefault();
@@ -254,23 +271,15 @@ namespace Telegram.ViewModels
             }
 
             var items = messages.Select(x => x.Get()).ToArray();
+            var properties = await ClientService.GetMessagePropertiesAsync(first.ChatId, items.Select(x => x.Id));
 
-            var response = await ClientService.SendAsync(new GetMessages(chat.Id, items.Select(x => x.Id).ToArray()));
-            if (response is Messages result)
-            {
-                for (int i = 0; i < result.MessagesValue.Count; i++)
-                {
-                    items[i] = result.MessagesValue[i];
-                }
-            }
-
-            var updated = items.Where(x => x != null).ToArray();
+            var updated = items.Where(x => properties.ContainsKey(x.Id)).ToArray();
             if (updated.Empty())
             {
                 return;
             }
 
-            var popup = new DeleteMessagesPopup(ClientService, SavedMessagesTopicId, chat, updated);
+            var popup = new DeleteMessagesPopup(ClientService, SavedMessagesTopicId, chat, updated, properties);
 
             var confirm = await ShowPopupAsync(popup);
             if (confirm != ContentDialogResult.Primary)
@@ -349,7 +358,12 @@ namespace Telegram.ViewModels
             DeleteMessages(chat, messages);
         }
 
-        public bool CanDeleteSelectedMessages => SelectedItems.Count > 0 && SelectedItems.Values.All(x => x.CanBeDeletedForAllUsers || x.CanBeDeletedOnlyForSelf);
+        private bool _canDeleteSelectedMessages;
+        public bool CanDeleteSelectedMessages
+        {
+            get => _canDeleteSelectedMessages;
+            set => Set(ref _canDeleteSelectedMessages, value);
+        }
 
         #endregion
 
@@ -357,17 +371,25 @@ namespace Telegram.ViewModels
 
         public async void ForwardSelectedMessages()
         {
-            var messages = SelectedItems.Values.Where(x => x.CanBeForwarded).OrderBy(x => x.Id).ToList();
+            var selectedItems = SelectedItems.Values.ToList();
+            var properties = await ClientService.GetMessagePropertiesAsync(selectedItems[0].ChatId, SelectedItems.Keys);
+
+            var messages = properties.Where(x => x.Value.CanBeForwarded).OrderBy(x => x.Key).ToList();
             if (messages.Count > 0)
             {
                 IsSelectionEnabled = false;
 
-                await ShowPopupAsync(typeof(ChooseChatsPopup), new ChooseChatsConfigurationShareMessages(messages[0].ChatId, messages.Select(x => x.Id)));
+                await ShowPopupAsync(typeof(ChooseChatsPopup), new ChooseChatsConfigurationShareMessages(selectedItems[0].ChatId, messages.Select(x => x.Key)));
                 TextField?.Focus(FocusState.Programmatic);
             }
         }
 
-        public bool CanForwardSelectedMessages => SelectedItems.Count > 0 && SelectedItems.Values.All(x => x.CanBeForwarded);
+        private bool _canForwardSelectedMessages;
+        public bool CanForwardSelectedMessages
+        {
+            get => _canForwardSelectedMessages;
+            set => Set(ref _canForwardSelectedMessages, value);
+        }
 
         #endregion
 
@@ -763,13 +785,16 @@ namespace Telegram.ViewModels
 
         #region Edit
 
-        public void EditLastMessage()
+        public async void EditLastMessage()
         {
-            var last = Items.LastOrDefault(x => x.CanBeEdited);
-            if (last != null)
+            foreach (var message in Items.Where(x => x.IsOutgoing).Reverse())
             {
-                EditMessage(last);
-                HistoryField?.ScrollToItem(last, VerticalAlignment.Center, new MessageBubbleHighlightOptions(false));
+                var properties = await ClientService.SendAsync(new GetMessageProperties(message.ChatId, message.Id)) as MessageProperties;
+                if (properties != null && properties.CanBeEdited)
+                {
+                    EditMessage(message);
+                    HistoryField?.ScrollToItem(message, VerticalAlignment.Center, new MessageBubbleHighlightOptions(false));
+                }
             }
         }
 
@@ -1149,7 +1174,7 @@ namespace Telegram.ViewModels
                 var bot = message.GetViaBotUser();
                 if (bot != null)
                 {
-                    InformativeMessage = CreateMessage(new Message(-1, new MessageSenderUser(bot.Id), 0, null, null, false, false, false, false, false, false, false, true, false, false, false, false, false, false, false, false, false, false, false, false, 0, 0, null, null, null, null, null, null, 0, 0, null, 0, 0, 0, 0, 0, string.Empty, 0, 0, string.Empty, new MessageText(new FormattedText(Strings.Loading, Array.Empty<TextEntity>()), null, null), null));
+                    InformativeMessage = CreateMessage(new Message(-1, new MessageSenderUser(bot.Id), 0, null, null, false, false, false, false, false, false, false, false, 0, 0, null, null, null, null, null, null, 0, 0, null, 0, 0, 0, 0, 0, string.Empty, 0, 0, string.Empty, new MessageText(new FormattedText(Strings.Loading, Array.Empty<TextEntity>()), null, null), null));
                 }
 
                 var response = await ClientService.SendAsync(new GetCallbackQueryAnswer(chat.Id, message.Id, new CallbackQueryPayloadData(callback.Data)));
@@ -1172,7 +1197,7 @@ namespace Telegram.ViewModels
                                 return;
                             }
 
-                            InformativeMessage = CreateMessage(new Message(0, new MessageSenderUser(bot.Id), 0, null, null, false, false, false, false, false, false, false, true, false, false, false, false, false, false, false, false, false, false, false, false, 0, 0, null, null, null, null, null, null, 0, 0, null, 0, 0, 0, 0, 0, string.Empty, 0, 0, string.Empty, new MessageText(new FormattedText(answer.Text, Array.Empty<TextEntity>()), null, null), null));
+                            InformativeMessage = CreateMessage(new Message(0, new MessageSenderUser(bot.Id), 0, null, null, false, false, false, false, false, false, false, false, 0, 0, null, null, null, null, null, null, 0, 0, null, 0, 0, 0, 0, 0, string.Empty, 0, 0, string.Empty, new MessageText(new FormattedText(answer.Text, Array.Empty<TextEntity>()), null, null), null));
                         }
                     }
                     else if (!string.IsNullOrEmpty(answer.Url))

@@ -29,7 +29,7 @@ namespace Telegram.Views.Popups
         private IList<MessageSender> _deleteAll;
         private IList<MessageSender> _banUser;
 
-        public DeleteMessagesPopup(IClientService clientService, long savedMessagesTopicId, Chat chat, IList<Message> messages)
+        public DeleteMessagesPopup(IClientService clientService, long savedMessagesTopicId, Chat chat, IList<Message> messages, IDictionary<long, MessageProperties> properties)
         {
             InitializeComponent();
 
@@ -95,9 +95,11 @@ namespace Telegram.Views.Popups
 
                 RevokeCheck.Visibility = Visibility.Collapsed;
 
-                var canBeDeletedForAllUsers = messages.All(x => x.CanBeDeletedForAllUsers);
-                var canBeDeletedOnlyForSelf = messages.All(x => x.CanBeDeletedOnlyForSelf);
-                var anyCanBeDeletedForAllUsers = messages.Any(x => x.IsOutgoing && x.CanBeDeletedForAllUsers);
+                var mapped = messages.ToDictionary(x => x.Id);
+
+                var canBeDeletedForAllUsers = properties.Values.All(x => x.CanBeDeletedForAllUsers);
+                var canBeDeletedOnlyForSelf = properties.Values.All(x => x.CanBeDeletedOnlyForSelf);
+                var anyCanBeDeletedForAllUsers = properties.Any(x => mapped[x.Key].IsOutgoing && x.Value.CanBeDeletedForAllUsers);
 
                 if (savedMessagesTopicId != 0)
                 {

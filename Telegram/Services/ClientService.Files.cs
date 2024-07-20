@@ -390,6 +390,13 @@ namespace Telegram.Services
                     ProcessFiles(botInfo.Photo);
                 }
             }
+            else if (target is BotMediaPreviews botMediaPreviews)
+            {
+                foreach (var item in botMediaPreviews.Previews)
+                {
+                    ProcessFiles(item);
+                }
+            }
             else if (target is BotWriteAccessAllowReasonLaunchedWebApp botWriteAccessAllowReasonLaunchedWebApp)
             {
                 if (botWriteAccessAllowReasonLaunchedWebApp.WebApp != null)
@@ -961,6 +968,20 @@ namespace Telegram.Services
                     ProcessFiles(linkPreviewTypeDocument.Document);
                 }
             }
+            else if (target is LinkPreviewTypeEmbeddedAudioPlayer linkPreviewTypeEmbeddedAudioPlayer)
+            {
+                if (linkPreviewTypeEmbeddedAudioPlayer.Thumbnail != null)
+                {
+                    ProcessFiles(linkPreviewTypeEmbeddedAudioPlayer.Thumbnail);
+                }
+            }
+            else if (target is LinkPreviewTypeEmbeddedVideoPlayer linkPreviewTypeEmbeddedVideoPlayer)
+            {
+                if (linkPreviewTypeEmbeddedVideoPlayer.Thumbnail != null)
+                {
+                    ProcessFiles(linkPreviewTypeEmbeddedVideoPlayer.Thumbnail);
+                }
+            }
             else if (target is LinkPreviewTypePhoto linkPreviewTypePhoto)
             {
                 if (linkPreviewTypePhoto.Photo != null)
@@ -994,6 +1015,10 @@ namespace Telegram.Services
                 foreach (var item in linkPreviewTypeTheme.Documents)
                 {
                     ProcessFiles(item);
+                }
+                if (linkPreviewTypeTheme.Settings != null)
+                {
+                    ProcessFiles(linkPreviewTypeTheme.Settings);
                 }
             }
             else if (target is LinkPreviewTypeUser linkPreviewTypeUser)
@@ -1171,6 +1196,13 @@ namespace Telegram.Services
                 if (messageGiftedPremium.Sticker != null)
                 {
                     ProcessFiles(messageGiftedPremium.Sticker);
+                }
+            }
+            else if (target is MessageGiftedStars messageGiftedStars)
+            {
+                if (messageGiftedStars.Sticker != null)
+                {
+                    ProcessFiles(messageGiftedStars.Sticker);
                 }
             }
             else if (target is MessageInvoice messageInvoice)

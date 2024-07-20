@@ -263,16 +263,7 @@ namespace Telegram.ViewModels
         public void UpdateWith(Message message)
         {
             _message.AuthorSignature = message.AuthorSignature;
-            _message.CanBeDeletedForAllUsers = message.CanBeDeletedForAllUsers;
-            _message.CanBeDeletedOnlyForSelf = message.CanBeDeletedOnlyForSelf;
-            _message.CanBeEdited = message.CanBeEdited;
             _message.CanBeSaved = message.CanBeSaved;
-            _message.CanBeForwarded = message.CanBeForwarded;
-            _message.CanGetMessageThread = message.CanGetMessageThread;
-            _message.CanGetStatistics = message.CanGetStatistics;
-            _message.CanBeRepliedInAnotherChat = message.CanBeRepliedInAnotherChat;
-            _message.CanGetViewers = message.CanGetViewers;
-            _message.CanGetReadDate = message.CanGetReadDate;
             _message.ChatId = message.ChatId;
             _message.ContainsUnreadMention = message.ContainsUnreadMention;
             //_message.Content = message.Content;
@@ -302,9 +293,6 @@ namespace Telegram.ViewModels
             _message.ImportInfo = message.ImportInfo;
             _message.IsTopicMessage = message.IsTopicMessage;
             _message.HasTimestampedMedia = message.HasTimestampedMedia;
-            _message.CanReportReactions = message.CanReportReactions;
-            _message.CanGetMediaTimestampLinks = message.CanGetMediaTimestampLinks;
-            _message.CanGetAddedReactions = message.CanGetAddedReactions;
             _message.SchedulingState = message.SchedulingState;
             _message.SenderBoostCount = message.SenderBoostCount;
             _message.SenderBusinessBotUserId = message.SenderBusinessBotUserId;
@@ -389,16 +377,7 @@ namespace Telegram.ViewModels
         public bool IsFromOffline => _message.IsFromOffline;
         public bool IsChannelPost => _message.IsChannelPost;
         public bool IsTopicMessage => _message.IsTopicMessage;
-        public bool CanBeDeletedForAllUsers => _message.CanBeDeletedForAllUsers;
-        public bool CanBeDeletedOnlyForSelf => _message.CanBeDeletedOnlyForSelf;
-        public bool CanBeRepliedInAnotherChat => _message.CanBeRepliedInAnotherChat;
-        public bool CanBeForwarded => _message.CanBeForwarded;
-        public bool CanBeEdited => _message.CanBeEdited;
         public bool CanBeSaved => _message.CanBeSaved;
-        public bool CanGetMessageThread => _message.CanGetMessageThread;
-        public bool CanGetStatistics => _message.CanGetStatistics;
-        public bool CanGetViewers => _message.CanGetViewers;
-        public bool CanGetReadDate => _message.CanGetReadDate;
         public bool IsOutgoing { get => _message.IsOutgoing; set => _message.IsOutgoing = value; }
         public bool IsPinned { get => _message.IsPinned; set => _message.IsPinned = value; }
         public bool HasTimestampedMedia => _message.HasTimestampedMedia;

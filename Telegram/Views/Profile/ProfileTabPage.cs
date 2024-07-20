@@ -42,7 +42,7 @@ namespace Telegram.Views.Profile
 
         #region Context menu
 
-        private void Message_ContextRequested(UIElement sender, ContextRequestedEventArgs args)
+        private async void Message_ContextRequested(UIElement sender, ContextRequestedEventArgs args)
         {
             var message = ScrollingHost.ItemFromContainer(sender) as MessageWithOwner;
 
@@ -72,10 +72,24 @@ namespace Telegram.Views.Profile
             }
             else
             {
+                var properties = await message.ClientService.SendAsync(new GetMessageProperties(message.ChatId, message.Id)) as MessageProperties;
+                if (properties == null)
+                {
+                    return;
+                }
 
                 flyout.CreateFlyoutItem(MessageView_Loaded, ViewModel.ViewMessage, message, Strings.ShowInChat, Icons.ChatEmpty);
-                flyout.CreateFlyoutItem(MessageDelete_Loaded, ViewModel.DeleteMessage, message, Strings.Delete, Icons.Delete, destructive: true);
-                flyout.CreateFlyoutItem(MessageForward_Loaded, ViewModel.ForwardMessage, message, Strings.Forward, Icons.Share);
+
+                if (MessageDelete_Loaded(message, properties))
+                {
+                    flyout.CreateFlyoutItem(ViewModel.DeleteMessage, message, Strings.Delete, Icons.Delete, destructive: true);
+                }
+
+                if (MessageForward_Loaded(message, properties))
+                {
+                    flyout.CreateFlyoutItem(ViewModel.ForwardMessage, message, Strings.Forward, Icons.Share);
+                }
+
                 flyout.CreateFlyoutItem(MessageSelect_Loaded, ViewModel.SelectMessage, message, Strings.Select, Icons.CheckmarkCircle);
                 flyout.CreateFlyoutItem(MessageSaveMedia_Loaded, ViewModel.SaveMessageMedia, message, Strings.SaveAs, Icons.SaveAs);
                 flyout.CreateFlyoutItem(MessageOpenMedia_Loaded, ViewModel.OpenMessageWith, message, Strings.OpenWith, Icons.OpenIn);
@@ -148,14 +162,14 @@ namespace Telegram.Views.Profile
             };
         }
 
-        private bool MessageDelete_Loaded(MessageWithOwner message)
+        private bool MessageDelete_Loaded(MessageWithOwner message, MessageProperties properties)
         {
-            return message.CanBeDeletedOnlyForSelf || message.CanBeDeletedForAllUsers;
+            return properties.CanBeDeletedOnlyForSelf || properties.CanBeDeletedForAllUsers;
         }
 
-        private bool MessageForward_Loaded(MessageWithOwner message)
+        private bool MessageForward_Loaded(MessageWithOwner message, MessageProperties properties)
         {
-            return message.CanBeForwarded;
+            return properties.CanBeForwarded;
         }
 
         private bool MessageSelect_Loaded(MessageWithOwner message)

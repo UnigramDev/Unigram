@@ -121,6 +121,8 @@ namespace Telegram.Services
         Task<IDictionary<string, EmojiReaction>> GetAllReactionsAsync();
         Task<IDictionary<string, EmojiReaction>> GetReactionsAsync(IEnumerable<string> reactions);
 
+        Task<IDictionary<long, MessageProperties>> GetMessagePropertiesAsync(long chatId, IEnumerable<long> messageIds);
+
         Chat GetChat(long id);
         IEnumerable<Chat> GetChats(IEnumerable<long> ids);
 
@@ -1436,6 +1438,22 @@ namespace Telegram.Services
             }
 
             return result;
+        }
+
+        public async Task<IDictionary<long, MessageProperties>> GetMessagePropertiesAsync(long chatId, IEnumerable<long> messageIds)
+        {
+            var map = new Dictionary<long, MessageProperties>();
+
+            foreach (var messageId in messageIds)
+            {
+                var properties = await SendAsync(new GetMessageProperties(chatId, messageId)) as MessageProperties;
+                if (properties != null)
+                {
+                    map[messageId] = properties;
+                }
+            }
+
+            return map;
         }
 
         public Chat GetChat(long id)

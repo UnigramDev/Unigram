@@ -10,9 +10,20 @@ using System.Threading.Tasks;
 using Telegram.Services;
 using Telegram.Services.Factories;
 using Telegram.Td.Api;
+using Telegram.ViewModels.Delegates;
 
 namespace Telegram.ViewModels
 {
+    public class QuickReplyMessageViewModel : MessageViewModel
+    {
+        public QuickReplyMessageViewModel(IClientService clientService, IPlaybackService playbackService, IMessageDelegate delegato, Chat chat, Message message, bool processText = false)
+            : base(clientService, playbackService, delegato, chat, message, processText)
+        {
+        }
+
+        public bool CanBeEdited { get; set; }
+    }
+
     public class DialogBusinessRepliesViewModel : DialogViewModel, IDiffHandler<MessageViewModel>
     {
         public DialogBusinessRepliesViewModel(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator, ILocationService locationService, INotificationsService pushService, IPlaybackService playbackService, IVoipService voipService, IVoipGroupService voipGroupService, INetworkService networkService, IStorageService storageService, ITranslateService translateService, IMessageFactory messageFactory)
@@ -46,7 +57,16 @@ namespace Telegram.ViewModels
                 return;
             }
 
-            var replied = update.Messages.OrderBy(x => x.Id).Select(x => CreateMessage(new Message(x.Id, new MessageSenderUser(ClientService.Options.MyId), ClientService.Options.MyId, x.SendingState, null, true, false, false, x.CanBeEdited, false, false, false, false, true, false, false, false, false, false, false, false, false, false, false, false, 0, 0, null, null, null, null, null, null, 0, 0, null, 0, 0, x.ViaBotUserId, 0, 0, string.Empty, x.MediaAlbumId, 0, string.Empty, x.Content, x.ReplyMarkup))).ToList();
+            var replied = update.Messages.OrderBy(x => x.Id).Select(x =>
+            {
+                var message = new Message(x.Id, new MessageSenderUser(ClientService.Options.MyId), ClientService.Options.MyId, x.SendingState, null, true, false, false, false, false, false, false, false, 0, 0, null, null, null, null, null, null, 0, 0, null, 0, 0, x.ViaBotUserId, 0, 0, string.Empty, x.MediaAlbumId, 0, string.Empty, x.Content, x.ReplyMarkup);
+                var model = new QuickReplyMessageViewModel(ClientService, PlaybackService, _messageDelegate, _chat, message, true)
+                {
+                    CanBeEdited = x.CanBeEdited
+                };
+
+                return model as MessageViewModel;
+            }).ToList();
 
             BeginOnUIThread(() =>
             {

@@ -1048,9 +1048,9 @@ namespace Telegram.Views
                 else
                 {
                     var focused = FocusManager.GetFocusedElement();
-                    if (focused is MessageSelector selector && MessageDelete_Loaded(selector.Message))
+                    if (focused is MessageSelector selector)
                     {
-                        ViewModel.DeleteMessage(selector.Message);
+                        ViewModel.TryDeleteMessage(selector.Message);
                         args.Handled = true;
                     }
                 }
@@ -2507,10 +2507,10 @@ namespace Telegram.Views
                 }
             }
 
-            var response = await ViewModel.ClientService.SendAsync(new GetMessage(message.ChatId, message.Id));
-            if (response is Message)
+            var properties = await message.ClientService.SendAsync(new GetMessageProperties(message.ChatId, message.Id)) as MessageProperties;
+            if (properties == null)
             {
-                message.UpdateWith(response as Message);
+                return;
             }
 
             var selected = ViewModel.SelectedItems;
@@ -2548,7 +2548,11 @@ namespace Telegram.Views
                 }
 
                 flyout.CreateFlyoutItem(MessageCopy_Loaded, ViewModel.CopyMessage, message, Strings.Copy, Icons.DocumentCopy);
-                flyout.CreateFlyoutItem(MessageDelete_Loaded, ViewModel.DeleteMessage, message, Strings.Delete, Icons.Delete, destructive: true);
+
+                if (MessageDelete_Loaded(message, properties))
+                {
+                    flyout.CreateFlyoutItem(ViewModel.DeleteMessage, message, Strings.Delete, Icons.Delete, destructive: true);
+                }
 
                 if (message.SendingState is MessageSendingStateFailed sendingStateFailed)
                 {
@@ -2567,13 +2571,13 @@ namespace Telegram.Views
                 flyout.CreateFlyoutItem(MessageSendNow_Loaded, ViewModel.SendNowMessage, message, Strings.MessageScheduleSend, Icons.Send);
                 flyout.CreateFlyoutItem(MessageReschedule_Loaded, ViewModel.RescheduleMessage, message, Strings.MessageScheduleEditTime, Icons.CalendarClock);
 
-                if (CanGetMessageReadDate(message))
+                if (CanGetMessageReadDate(message, properties))
                 {
-                    LoadMessageReadDate(message, flyout);
+                    LoadMessageReadDate(message, properties, flyout);
                 }
-                else if (CanGetMessageViewers(message))
+                else if (CanGetMessageViewers(message, properties))
                 {
-                    LoadMessageViewers(message, flyout);
+                    LoadMessageViewers(message, properties, flyout);
                 }
 
                 MessageQuote quote = null;
@@ -2592,29 +2596,49 @@ namespace Telegram.Views
                 }
 
                 // Generic
-                if (quote != null)
+                if (quote != null && MessageQuote_Loaded(quote, properties))
                 {
-                    flyout.CreateFlyoutItem(MessageQuote_Loaded, ViewModel.QuoteToMessage, quote, Strings.QuoteSelectedPart, Icons.ArrowReply);
+                    flyout.CreateFlyoutItem(ViewModel.QuoteToMessage, quote, Strings.QuoteSelectedPart, Icons.ArrowReply);
                 }
-                else
+                else if (MessageReply_Loaded(message, properties))
                 {
-                    flyout.CreateFlyoutItem(MessageReply_Loaded, ViewModel.ReplyToMessage, message, Strings.Reply, Icons.ArrowReply);
+                    flyout.CreateFlyoutItem(ViewModel.ReplyToMessage, message, Strings.Reply, Icons.ArrowReply);
                 }
 
-                flyout.CreateFlyoutItem(MessageEdit_Loaded, ViewModel.EditMessage, message, Strings.Edit, Icons.Edit);
-                flyout.CreateFlyoutItem(MessageThread_Loaded, ViewModel.OpenMessageThread, message, message.InteractionInfo?.ReplyInfo?.ReplyCount > 0 ? Locale.Declension(Strings.R.ViewReplies, message.InteractionInfo.ReplyInfo.ReplyCount) : Strings.ViewThread, Icons.ChatMultiple);
+                if (MessageEdit_Loaded(message, properties))
+                {
+                    flyout.CreateFlyoutItem(ViewModel.EditMessage, message, Strings.Edit, Icons.Edit);
+                }
+
+                if (MessageThread_Loaded(message, properties))
+                {
+                    flyout.CreateFlyoutItem(ViewModel.OpenMessageThread, message, message.InteractionInfo?.ReplyInfo?.ReplyCount > 0 ? Locale.Declension(Strings.R.ViewReplies, message.InteractionInfo.ReplyInfo.ReplyCount) : Strings.ViewThread, Icons.ChatMultiple);
+                }
 
                 flyout.CreateFlyoutSeparator();
 
                 // Manage
                 flyout.CreateFlyoutItem(MessagePin_Loaded, ViewModel.PinMessage, message, message.IsPinned ? Strings.UnpinMessage : Strings.PinMessage, message.IsPinned ? Icons.PinOff : Icons.Pin);
-                flyout.CreateFlyoutItem(MessageStatistics_Loaded, ViewModel.OpenMessageStatistics, message, Strings.Statistics, Icons.DataUsage);
 
-                flyout.CreateFlyoutItem(MessageForward_Loaded, ViewModel.ForwardMessage, message, Strings.Forward, Icons.Share);
+                if (MessageStatistics_Loaded(message, properties))
+                {
+                    flyout.CreateFlyoutItem(ViewModel.OpenMessageStatistics, message, Strings.Statistics, Icons.DataUsage);
+                }
+
+                if (MessageForward_Loaded(message, properties))
+                {
+                    flyout.CreateFlyoutItem(ViewModel.ForwardMessage, message, Strings.Forward, Icons.Share);
+                }
+
                 flyout.CreateFlyoutItem(MessageReport_Loaded, ViewModel.ReportMessage, message, Strings.ReportChat, Icons.ErrorCircle);
                 flyout.CreateFlyoutItem(MessageFactCheck_Loaded, ViewModel.FactCheckMessage, message, message.FactCheck == null ? Strings.AddFactCheck : Strings.EditFactCheck, Icons.CheckmarkStarburst);
                 flyout.CreateFlyoutItem(MessageReportFalsePositive_Loaded, ViewModel.ReportFalsePositive, message, Strings.ReportFalsePositive, Icons.ShieldError);
-                flyout.CreateFlyoutItem(MessageDelete_Loaded, ViewModel.DeleteMessage, message, Strings.Delete, Icons.Delete, destructive: true);
+
+                if (MessageDelete_Loaded(message, properties))
+                {
+                    flyout.CreateFlyoutItem(ViewModel.DeleteMessage, message, Strings.Delete, Icons.Delete, destructive: true);
+                }
+
                 flyout.CreateFlyoutItem(MessageSelect_Loaded, ViewModel.SelectMessage, message, Strings.Select, Icons.CheckmarkCircle);
 
                 flyout.CreateFlyoutSeparator();
@@ -2665,7 +2689,11 @@ namespace Telegram.Views
 
                 // Polls
                 flyout.CreateFlyoutItem(MessageUnvotePoll_Loaded, ViewModel.UnvotePoll, message, Strings.Unvote, Icons.ArrowUndo);
-                flyout.CreateFlyoutItem(MessageStopPoll_Loaded, ViewModel.StopPoll, message, Strings.StopPoll, Icons.LockClosed);
+
+                if (MessageStopPoll_Loaded(message, properties))
+                {
+                    flyout.CreateFlyoutItem(ViewModel.StopPoll, message, Strings.StopPoll, Icons.LockClosed);
+                }
 
                 if (Constants.DEBUG)
                 {
@@ -2727,7 +2755,7 @@ namespace Telegram.Views
             flyout.ShowAt(sender, args, selectionEnd - selectionStart > 0 ? FlyoutShowMode.Transient : FlyoutShowMode.Auto);
         }
 
-        private static bool CanGetMessageViewers(MessageViewModel message, bool reactions = true)
+        private static bool CanGetMessageViewers(MessageViewModel message, MessageProperties properties, bool reactions = true)
         {
             if (reactions && message.InteractionInfo?.Reactions?.Reactions.Count > 0)
             {
@@ -2740,7 +2768,7 @@ namespace Telegram.Views
                 return message.Chat.Type is ChatTypeBasicGroup || message.Chat.Type is ChatTypeSupergroup supergroup && !supergroup.IsChannel;
             }
 
-            if (message.Chat.LastReadOutboxMessageId < message.Id || !message.CanGetViewers)
+            if (message.Chat.LastReadOutboxMessageId < message.Id || !properties.CanGetViewers)
             {
                 return false;
             }
@@ -2764,11 +2792,11 @@ namespace Telegram.Views
             return false;
         }
 
-        private async void LoadMessageViewers(MessageViewModel message, MenuFlyout flyout)
+        private async void LoadMessageViewers(MessageViewModel message, MessageProperties properties, MenuFlyout flyout)
         {
-            static async Task<IList<User>> GetMessageViewersAsync(MessageViewModel message)
+            static async Task<IList<User>> GetMessageViewersAsync(MessageViewModel message, MessageProperties properties)
             {
-                if (CanGetMessageViewers(message, false))
+                if (CanGetMessageViewers(message, properties, false))
                 {
                     var response = await message.ClientService.SendAsync(new GetMessageViewers(message.ChatId, message.Id));
                     if (response is MessageViewers viewers && viewers.Viewers.Count > 0)
@@ -2790,7 +2818,7 @@ namespace Telegram.Views
             placeholder.Width = 200;
             placeholder.Style = BootStrapper.Current.Resources["MessageSeenMenuFlyoutItemStyle"] as Style;
 
-            var viewers = await GetMessageViewersAsync(message);
+            var viewers = await GetMessageViewersAsync(message, properties);
             if (viewers.Count > 0 || reacted > 0)
             {
                 string text;
@@ -2859,9 +2887,9 @@ namespace Telegram.Views
             }
         }
 
-        private static bool CanGetMessageReadDate(MessageViewModel message, bool reactions = true)
+        private static bool CanGetMessageReadDate(MessageViewModel message, MessageProperties properties, bool reactions = true)
         {
-            if (message.Chat.LastReadOutboxMessageId < message.Id || !message.CanGetReadDate)
+            if (message.Chat.LastReadOutboxMessageId < message.Id || !properties.CanGetReadDate)
             {
                 return false;
             }
@@ -2881,11 +2909,11 @@ namespace Telegram.Views
             return false;
         }
 
-        private async void LoadMessageReadDate(MessageViewModel message, MenuFlyout flyout)
+        private async void LoadMessageReadDate(MessageViewModel message, MessageProperties properties, MenuFlyout flyout)
         {
-            static async Task<MessageReadDate> GetMessageReadDateAsync(MessageViewModel message)
+            static async Task<MessageReadDate> GetMessageReadDateAsync(MessageViewModel message, MessageProperties properties)
             {
-                if (CanGetMessageReadDate(message, false))
+                if (CanGetMessageReadDate(message, properties, false))
                 {
                     var response = await message.ClientService.SendAsync(new GetMessageReadDate(message.ChatId, message.Id));
                     if (response is MessageReadDate readDate)
@@ -2914,7 +2942,7 @@ namespace Telegram.Views
             placeholder.FontSize = 12;
             placeholder.Width = 200;
 
-            var readDate = await GetMessageReadDateAsync(message);
+            var readDate = await GetMessageReadDateAsync(message, properties);
             if (readDate is MessageReadDateRead readDateRead)
             {
                 placeholder.Text = Formatter.ReadDate(readDateRead.ReadDate);
@@ -2944,19 +2972,19 @@ namespace Telegram.Views
             return message.SchedulingState != null;
         }
 
-        private bool MessageQuote_Loaded(MessageQuote quote)
+        private bool MessageQuote_Loaded(MessageQuote quote, MessageProperties properties)
         {
-            return MessageReply_Loaded(quote.Message);
+            return MessageReply_Loaded(quote.Message, properties);
         }
 
-        private bool MessageReply_Loaded(MessageViewModel message)
+        private bool MessageReply_Loaded(MessageViewModel message, MessageProperties properties)
         {
             if (message.SchedulingState != null || (ViewModel.Type != DialogType.History && ViewModel.Type != DialogType.Thread))
             {
                 return false;
             }
 
-            if (message.CanBeRepliedInAnotherChat)
+            if (properties.CanBeRepliedInAnotherChat)
             {
                 return true;
             }
@@ -3047,17 +3075,21 @@ namespace Telegram.Views
             return false;
         }
 
-        private bool MessageEdit_Loaded(MessageViewModel message)
+        private bool MessageEdit_Loaded(MessageViewModel message, MessageProperties properties)
         {
             if (message.Content is MessagePoll or MessageLocation)
             {
                 return false;
             }
+            else if (message is QuickReplyMessageViewModel quickReply)
+            {
+                return quickReply.CanBeEdited;
+            }
 
-            return message.CanBeEdited;
+            return properties.CanBeEdited;
         }
 
-        private bool MessageThread_Loaded(MessageViewModel message)
+        private bool MessageThread_Loaded(MessageViewModel message, MessageProperties properties)
         {
             if (ViewModel.Type is not DialogType.History and not DialogType.Pinned)
             {
@@ -3066,25 +3098,25 @@ namespace Telegram.Views
 
             if (message.InteractionInfo?.ReplyInfo == null || message.InteractionInfo?.ReplyInfo?.ReplyCount > 0)
             {
-                return message.CanGetMessageThread && !message.IsChannelPost;
+                return properties.CanGetMessageThread && !message.IsChannelPost;
             }
 
             return false;
         }
 
-        private bool MessageDelete_Loaded(MessageViewModel message)
+        private bool MessageDelete_Loaded(MessageViewModel message, MessageProperties properties)
         {
-            if (message == null)
+            if (message == null || properties == null)
             {
                 return false;
             }
 
-            return message.CanBeDeletedOnlyForSelf || message.CanBeDeletedForAllUsers;
+            return properties.CanBeDeletedOnlyForSelf || properties.CanBeDeletedForAllUsers;
         }
 
-        private bool MessageForward_Loaded(MessageViewModel message)
+        private bool MessageForward_Loaded(MessageViewModel message, MessageProperties properties)
         {
-            return message.CanBeForwarded;
+            return properties.CanBeForwarded;
         }
 
         private bool MessageUnvotePoll_Loaded(MessageViewModel message)
@@ -3097,11 +3129,11 @@ namespace Telegram.Views
             return false;
         }
 
-        private bool MessageStopPoll_Loaded(MessageViewModel message)
+        private bool MessageStopPoll_Loaded(MessageViewModel message, MessageProperties properties)
         {
             if (message.Content is MessagePoll)
             {
-                return message.CanBeEdited;
+                return properties.CanBeEdited;
             }
 
             return false;
@@ -3270,9 +3302,9 @@ namespace Telegram.Views
             return true;
         }
 
-        private bool MessageStatistics_Loaded(MessageViewModel message)
+        private bool MessageStatistics_Loaded(MessageViewModel message, MessageProperties properties)
         {
-            return message.CanGetStatistics;
+            return properties.CanGetStatistics;
         }
 
         private bool MessageAddSticker_Loaded(MessageViewModel message)

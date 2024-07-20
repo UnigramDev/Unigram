@@ -100,10 +100,12 @@ namespace Telegram.ViewModels.Profile
             Animations = new SearchCollection<MessageWithOwner, MediaCollection>(SetSearch, new SearchMessagesFilterAnimation(), new MessageDiffHandler());
         }
 
-        private void OnConnectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+        private async void OnConnectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
         {
-            RaisePropertyChanged(nameof(CanForwardSelectedMessages));
-            RaisePropertyChanged(nameof(CanDeleteSelectedMessages));
+            var properties = await ClientService.GetMessagePropertiesAsync(SelectedItems[0].ChatId, SelectedItems.Select(x => x.Id));
+
+            CanDeleteSelectedMessages = properties.Count > 0 && properties.Values.All(x => x.CanBeDeletedForAllUsers || x.CanBeDeletedOnlyForSelf);
+            CanForwardSelectedMessages = properties.Count > 0 && properties.Values.All(x => x.CanBeForwarded);
         }
 
         public ObservableCollection<ProfileTabItem> Items { get; }
@@ -483,23 +485,11 @@ namespace Telegram.ViewModels.Profile
             }
 
             var items = messages.Select(x => x.Get()).ToArray();
+            var properties = await ClientService.GetMessagePropertiesAsync(first.ChatId, items.Select(x => x.Id));
 
-            var response = await ClientService.SendAsync(new GetMessages(chat.Id, items.Select(x => x.Id).ToArray()));
-            if (response is Messages result)
-            {
-                for (int i = 0; i < result.MessagesValue.Count; i++)
-                {
-                    items[i] = result.MessagesValue[i];
-                }
-            }
+            var updated = items.Where(x => properties.ContainsKey(x.Id)).ToArray();
 
-            var updated = items.Where(x => x != null).ToArray();
-            if (updated.Empty())
-            {
-                return;
-            }
-
-            var popup = new DeleteMessagesPopup(ClientService, SavedMessagesTopicId, chat, updated);
+            var popup = new DeleteMessagesPopup(ClientService, SavedMessagesTopicId, chat, updated, properties);
 
             var confirm = await ShowPopupAsync(popup);
             if (confirm != ContentDialogResult.Primary)
@@ -568,7 +558,12 @@ namespace Telegram.ViewModels.Profile
             DeleteMessages(chat, messages);
         }
 
-        public bool CanDeleteSelectedMessages => SelectedItems.Count > 0 && SelectedItems.All(x => x.CanBeDeletedForAllUsers || x.CanBeDeletedOnlyForSelf);
+        private bool _canDeleteSelectedMessages;
+        public bool CanDeleteSelectedMessages
+        {
+            get => _canDeleteSelectedMessages;
+            set => Set(ref _canDeleteSelectedMessages, value);
+        }
 
         #endregion
 
@@ -576,15 +571,23 @@ namespace Telegram.ViewModels.Profile
 
         public async void ForwardSelectedMessages()
         {
-            var messages = SelectedItems.Where(x => x.CanBeForwarded).OrderBy(x => x.Id).ToList();
+            var selectedItems = SelectedItems.ToList();
+            var properties = await ClientService.GetMessagePropertiesAsync(selectedItems[0].ChatId, selectedItems.Select(x => x.Id));
+
+            var messages = properties.Where(x => x.Value.CanBeForwarded).OrderBy(x => x.Key).ToList();
             if (messages.Count > 0)
             {
                 UnselectMessages();
-                await ShowPopupAsync(typeof(ChooseChatsPopup), new ChooseChatsConfigurationShareMessages(messages[0].ChatId, messages.Select(x => x.Id)));
+                await ShowPopupAsync(typeof(ChooseChatsPopup), new ChooseChatsConfigurationShareMessages(selectedItems[0].ChatId, messages.Select(x => x.Key)));
             }
         }
 
-        public bool CanForwardSelectedMessages => SelectedItems.Count > 0 && SelectedItems.All(x => x.CanBeForwarded);
+        private bool _canForwardSelectedMessages;
+        public bool CanForwardSelectedMessages
+        {
+            get => _canForwardSelectedMessages;
+            set => Set(ref _canForwardSelectedMessages, value);
+        }
 
         #endregion
 
