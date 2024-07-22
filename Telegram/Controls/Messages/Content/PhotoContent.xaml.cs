@@ -445,6 +445,8 @@ namespace Telegram.Controls.Messages.Content
                     LinkPreviewTypeArticle article => article.Photo,
                     LinkPreviewTypeChannelBoost channelBoost => channelBoost.Photo.ToPhoto(),
                     LinkPreviewTypeChat chat => chat.Photo.ToPhoto(),
+                    LinkPreviewTypeEmbeddedAudioPlayer embeddedAudioPlayer => embeddedAudioPlayer.Thumbnail,
+                    LinkPreviewTypeEmbeddedVideoPlayer embeddedVideoPlayer => embeddedVideoPlayer.Thumbnail,
                     LinkPreviewTypeSupergroupBoost supergroupBoost => supergroupBoost.Photo.ToPhoto(),
                     LinkPreviewTypeUser user => user.Photo.ToPhoto(),
                     LinkPreviewTypeVideoChat videoChat => videoChat.Photo.ToPhoto(),

@@ -322,6 +322,8 @@ namespace Telegram.Controls.Messages.Content
                 Media.Child = new VoiceNoteContent(message);
             }
             else if (linkPreview.Type is LinkPreviewTypePhoto or
+                                         LinkPreviewTypeEmbeddedAudioPlayer or
+                                         LinkPreviewTypeEmbeddedVideoPlayer or
                                          LinkPreviewTypeApp or
                                          LinkPreviewTypeArticle or
                                          LinkPreviewTypeChannelBoost or
