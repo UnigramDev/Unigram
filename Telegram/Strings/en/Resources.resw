@@ -1982,6 +1982,12 @@ from **{0}**.</value>
   <data name="BotChangeSettings" xml:space="preserve">
     <value>Change Bot Settings</value>
   </data>
+  <data name="BotDAU_one" xml:space="preserve">
+    <value>{0} user</value>
+  </data>
+  <data name="BotDAU_other" xml:space="preserve">
+    <value>{0} users</value>
+  </data>
   <data name="BotEditCommands" xml:space="preserve">
     <value>Edit Commands</value>
   </data>

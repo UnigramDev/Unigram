@@ -81,7 +81,7 @@ namespace Telegram.Converters
             {
                 if (details)
                 {
-                    return Strings.Bot;
+                    return bot.ActiveUserCount > 0 ? Locale.Declension(Strings.R.BotDAU, bot.ActiveUserCount) : Strings.Bot;
                 }
 
                 return bot.CanReadAllGroupMessages ? Strings.BotStatusRead : Strings.BotStatusCantRead;
