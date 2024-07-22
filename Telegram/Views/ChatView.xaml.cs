@@ -2618,7 +2618,10 @@ namespace Telegram.Views
                 flyout.CreateFlyoutSeparator();
 
                 // Manage
-                flyout.CreateFlyoutItem(MessagePin_Loaded, ViewModel.PinMessage, message, message.IsPinned ? Strings.UnpinMessage : Strings.PinMessage, message.IsPinned ? Icons.PinOff : Icons.Pin);
+                if (MessagePin_Loaded(message, properties))
+                {
+                    flyout.CreateFlyoutItem(ViewModel.PinMessage, message, message.IsPinned ? Strings.UnpinMessage : Strings.PinMessage, message.IsPinned ? Icons.PinOff : Icons.Pin);
+                }
 
                 if (MessageStatistics_Loaded(message, properties))
                 {
@@ -3016,7 +3019,7 @@ namespace Telegram.Views
             return true;
         }
 
-        private bool MessagePin_Loaded(MessageViewModel message)
+        private bool MessagePin_Loaded(MessageViewModel message, MessageProperties properties)
         {
             if (ViewModel.Type is not DialogType.History and not DialogType.Pinned)
             {
@@ -3026,53 +3029,7 @@ namespace Telegram.Views
                 }
             }
 
-            if (message.SchedulingState != null || message.IsService)
-            {
-                return false;
-            }
-
-            var chat = message.Chat;
-            if (chat != null && chat.Type is ChatTypeSupergroup supergroupType)
-            {
-                var supergroup = ViewModel.ClientService.GetSupergroup(supergroupType.SupergroupId);
-                if (supergroup == null)
-                {
-                    return false;
-                }
-
-                if (supergroup.Status is ChatMemberStatusCreator || (supergroup.Status is ChatMemberStatusAdministrator admin && (admin.Rights.CanPinMessages || supergroup.IsChannel && admin.Rights.CanEditMessages)))
-                {
-                    return true;
-                }
-                else if (supergroup.Status is ChatMemberStatusRestricted restricted)
-                {
-                    return restricted.Permissions.CanPinMessages;
-                }
-            }
-            else if (chat != null && chat.Type is ChatTypeBasicGroup basicGroupType)
-            {
-                var basicGroup = ViewModel.ClientService.GetBasicGroup(basicGroupType.BasicGroupId);
-                if (basicGroup == null)
-                {
-                    return false;
-                }
-
-                if (basicGroup.Status is ChatMemberStatusCreator || (basicGroup.Status is ChatMemberStatusAdministrator admin && admin.Rights.CanPinMessages))
-                {
-                    return true;
-                }
-            }
-            else if (chat != null && chat.Type is ChatTypePrivate)
-            {
-                return true;
-            }
-
-            if (chat != null)
-            {
-                return chat.Permissions.CanPinMessages;
-            }
-
-            return false;
+            return properties.CanBePinned;
         }
 
         private bool MessageEdit_Loaded(MessageViewModel message, MessageProperties properties)
