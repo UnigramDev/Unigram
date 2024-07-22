@@ -225,7 +225,7 @@ namespace Telegram.ViewModels.Profile
                     }
                     else if (cached != null && cached.HasPostedToProfileStories)
                     {
-                        AddTab(new ProfileTabItem(Strings.ProfileStories, typeof(ProfileStoriesTabPage)));
+                        AddTab(new ProfileTabItem(Strings.ProfileStories, typeof(ProfileStoriesTabPage), ChatStoriesType.Pinned));
                     }
 
                     await UpdateSharedCountAsync(chat);
