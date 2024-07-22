@@ -535,7 +535,7 @@ namespace Telegram.Common
             }
             else if (internalLink is InternalLinkTypePublicChat publicChat)
             {
-                NavigateToUsername(clientService, navigation, publicChat.ChatUsername, null, null, publicChat.DraftText);
+                NavigateToUsername(clientService, navigation, publicChat.ChatUsername, null, null, publicChat.DraftText, publicChat.OpenProfile);
             }
             else if (internalLink is InternalLinkTypeQrCodeAuthentication)
             {
@@ -567,7 +567,7 @@ namespace Telegram.Common
             }
             else if (internalLink is InternalLinkTypeUserPhoneNumber phoneNumber)
             {
-                NavigateToPhoneNumber(clientService, navigation, phoneNumber.PhoneNumber, phoneNumber.DraftText);
+                NavigateToPhoneNumber(clientService, navigation, phoneNumber.PhoneNumber, phoneNumber.DraftText, phoneNumber.OpenProfile);
             }
             else if (internalLink is InternalLinkTypeUserToken userToken)
             {
@@ -1052,9 +1052,9 @@ namespace Telegram.Common
             await StickersPopup.ShowAsync(text);
         }
 
-        public static async void NavigateToPhoneNumber(IClientService clientService, INavigationService navigation, string phoneNumber, string draftText = null)
+        public static async void NavigateToPhoneNumber(IClientService clientService, INavigationService navigation, string phoneNumber, string draftText = null, bool openProfile = false)
         {
-            await NavigateToUserByResponse(clientService, navigation, new SearchUserByPhoneNumber(phoneNumber, false), draftText);
+            await NavigateToUserByResponse(clientService, navigation, new SearchUserByPhoneNumber(phoneNumber, false), draftText, openProfile);
         }
 
         public static async void NavigateToUserToken(IClientService clientService, INavigationService navigation, string userToken)
@@ -1062,7 +1062,7 @@ namespace Telegram.Common
             await NavigateToUserByResponse(clientService, navigation, new SearchUserByToken(userToken));
         }
 
-        private static async Task NavigateToUserByResponse(IClientService clientService, INavigationService navigation, Function request, string draftText = null)
+        private static async Task NavigateToUserByResponse(IClientService clientService, INavigationService navigation, Function request, string draftText = null, bool openProfile = false)
         {
             var response = await clientService.SendAsync(request);
             if (response is User user)
@@ -1074,9 +1074,13 @@ namespace Telegram.Common
                     {
                         navigation.NavigateToChat(chat, state: new NavigationState { { "draft", new FormattedText(draftText, Array.Empty<TextEntity>()) } });
                     }
-                    else
+                    else if (openProfile)
                     {
                         navigation.Navigate(typeof(ProfilePage), chat.Id);
+                    }
+                    else
+                    {
+                        navigation.NavigateToChat(chat);
                     }
                 }
                 else
@@ -1124,7 +1128,7 @@ namespace Telegram.Common
             }
         }
 
-        public static async void NavigateToUsername(IClientService clientService, INavigationService navigation, string username, string videoChat = null, string game = null, string draftText = null)
+        public static async void NavigateToUsername(IClientService clientService, INavigationService navigation, string username, string videoChat = null, string game = null, string draftText = null, bool openProfile = false)
         {
             var response = await clientService.SendAsync(new SearchPublicChat(username));
             if (response is Chat chat)
@@ -1139,13 +1143,13 @@ namespace Telegram.Common
                     {
                         navigation.NavigateToChat(chat, state: new NavigationState { { "draft", new FormattedText(draftText, Array.Empty<TextEntity>()) } });
                     }
-                    else if (user.Type is UserTypeBot)
+                    else if (openProfile)
                     {
-                        navigation.NavigateToChat(chat);
+                        navigation.Navigate(typeof(ProfilePage), chat.Id);
                     }
                     else
                     {
-                        navigation.Navigate(typeof(ProfilePage), chat.Id);
+                        navigation.NavigateToChat(chat);
                     }
                 }
                 else if (videoChat != null)
