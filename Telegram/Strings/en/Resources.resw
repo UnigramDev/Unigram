@@ -7992,6 +7992,15 @@ Payments will go directly to the developer of {0}. Telegram cannot provide any g
   <data name="ProfileBirthdayValueYear_other" xml:space="preserve">
     <value>{1} ({0} years old)</value>
   </data>
+  <data name="ProfileBotOpenApp" xml:space="preserve">
+    <value>Open App</value>
+  </data>
+  <data name="ProfileBotOpenAppInfo" xml:space="preserve">
+    <value>By launching this mini app, you agree to the **Terms of Service for Mini Apps.**</value>
+  </data>
+  <data name="ProfileBotOpenAppInfoLink" xml:space="preserve">
+    <value>https://telegram.org/tos/mini-apps</value>
+  </data>
   <data name="ProfileChannel" xml:space="preserve">
     <value>Channel</value>
   </data>

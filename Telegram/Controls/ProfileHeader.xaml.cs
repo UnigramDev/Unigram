@@ -720,24 +720,43 @@ namespace Telegram.Controls
             OpenChat.Content = Strings.VoipGroupOpenChat;
 
 
-            if (user.Type is UserTypeBot userTypeBot && userTypeBot.CanBeEdited)
+            if (user.Type is UserTypeBot userTypeBot)
             {
-                Call.Visibility = Visibility.Collapsed;
-                VideoCall.Visibility = Visibility.Collapsed;
+                if (userTypeBot.CanBeEdited)
+                {
+                    Call.Visibility = Visibility.Collapsed;
+                    VideoCall.Visibility = Visibility.Collapsed;
 
-                Edit.Visibility = Visibility.Visible;
-                Search.Visibility = Visibility.Visible;
-                Grid.SetColumn(Search, 2);
-                Grid.SetColumn(Edit, 1);
+                    Edit.Visibility = Visibility.Visible;
+                    Search.Visibility = Visibility.Visible;
+                    Grid.SetColumn(Search, 2);
+                    Grid.SetColumn(Edit, 1);
 
-                BotPanel.Visibility = Visibility.Visible;
+                    BotPanel.Visibility = Visibility.Visible;
+                }
+                else
+                {
+                    Edit.Visibility = Visibility.Collapsed;
+                    BotPanel.Visibility = Visibility.Collapsed;
+                }
+
+                if (userTypeBot.HasMainWebApp)
+                {
+                    BotMainApp.Visibility = Visibility.Visible;
+                    InfoPanel.Footer = Strings.ProfileBotOpenAppInfo;
+                }
+                else
+                {
+                    BotMainApp.Visibility = Visibility.Collapsed;
+                    InfoPanel.Footer = string.Empty;
+                }
             }
             else
             {
                 Edit.Visibility = Visibility.Collapsed;
                 BotPanel.Visibility = Visibility.Collapsed;
+                BotMainApp.Visibility = Visibility.Collapsed;
             }
-
 
             // Unused:
             Location.Visibility = Visibility.Collapsed;
@@ -931,6 +950,7 @@ namespace Telegram.Controls
             VideoCall.Visibility = Visibility.Collapsed;
 
             BotPanel.Visibility = Visibility.Collapsed;
+            BotMainApp.Visibility = Visibility.Collapsed;
 
             AnonymousNumber.Visibility = Visibility.Collapsed;
             AnonymousNumberSeparator.Visibility = Visibility.Collapsed;
@@ -1036,6 +1056,7 @@ namespace Telegram.Controls
 
             // Unused:
             BotPanel.Visibility = Visibility.Collapsed;
+            BotMainApp.Visibility = Visibility.Collapsed;
             MiscPanel.Visibility = Visibility.Collapsed;
             UserPhone.Visibility = Visibility.Collapsed;
             //UserCommonChats.Visibility = Visibility.Collapsed;

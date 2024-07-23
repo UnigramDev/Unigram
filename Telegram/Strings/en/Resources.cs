@@ -12273,6 +12273,21 @@ namespace Telegram
         public static string ProfileBirthdayValue => Resource.GetString("ProfileBirthdayValue");
         
         /// <summary>
+        /// Localized resource similar to "Open App"
+        /// </summary>
+        public static string ProfileBotOpenApp => Resource.GetString("ProfileBotOpenApp");
+        
+        /// <summary>
+        /// Localized resource similar to "By launching this mini app, you agree to the **Terms of Service for Mini Apps.**"
+        /// </summary>
+        public static string ProfileBotOpenAppInfo => Resource.GetString("ProfileBotOpenAppInfo");
+        
+        /// <summary>
+        /// Localized resource similar to "https://telegram.org/tos/mini-apps"
+        /// </summary>
+        public static string ProfileBotOpenAppInfoLink => Resource.GetString("ProfileBotOpenAppInfoLink");
+        
+        /// <summary>
         /// Localized resource similar to "Channel"
         /// </summary>
         public static string ProfileChannel => Resource.GetString("ProfileChannel");

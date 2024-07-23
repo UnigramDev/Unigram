@@ -276,7 +276,8 @@
                 </controls:HeaderedControl>
             </StackPanel>
 
-            <controls:HeaderedControl x:Name="InfoPanel">
+            <controls:HeaderedControl x:Name="InfoPanel"
+                                      IsFooterLink="True">
                 <controls:BadgeButton x:Name="Description"
                                       Visibility="Collapsed"
                                       Style="{StaticResource GlyphSubtitleBadgeButtonStyle}"
@@ -405,6 +406,16 @@
                         </DataTemplate>
                     </controls:BadgeButton.ContentTemplate>
                 </controls:BadgeButton>
+
+                <Border x:Name="BotMainApp"
+                        Background="{ThemeResource SettingsItemBackground}">
+                    <Button Click="{x:Bind ViewModel.OpenMainWebApp}"
+                            Content="{CustomResource ProfileBotOpenApp}"
+                            Style="{StaticResource AccentButtonStyle}"
+                            HorizontalAlignment="Stretch"
+                            Margin="12"
+                            Height="36" />
+                </Border>
             </controls:HeaderedControl>
 
             <controls:HeaderedControl x:Name="ChannelMembersPanel"

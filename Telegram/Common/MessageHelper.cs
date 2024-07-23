@@ -581,6 +581,10 @@ namespace Telegram.Common
             {
                 NavigateToWebApp(clientService, navigation, webApp.BotUsername, webApp.StartParameter, webApp.WebAppShortName, source);
             }
+            else if (internalLink is InternalLinkTypeMainWebApp mainWebApp)
+            {
+                NavigateToMainWebApp(clientService, navigation, mainWebApp.BotUsername, mainWebApp.StartParameter, source);
+            }
         }
 
         private static async void NavigateToPremiumGiftCode(IClientService clientService, INavigationService navigation, string code)
@@ -787,6 +791,79 @@ namespace Telegram.Common
             else
             {
                 ToastPopup.Show(Strings.NoUsernameFound, new LocalFileSource("ms-appx:///Assets/Toasts/Info.tgs"));
+            }
+        }
+
+        public static async void NavigateToMainWebApp(IClientService clientService, INavigationService navigation, string botUsername, string startParameter, OpenUrlSource source = null)
+        {
+            var response = await clientService.SendAsync(new SearchPublicChat(botUsername));
+            if (response is Chat chat && clientService.TryGetUser(chat, out User botUser))
+            {
+                NavigateToMainWebApp(clientService, navigation, botUser, startParameter, source);
+            }
+            else
+            {
+                ToastPopup.Show(Strings.NoUsernameFound, new LocalFileSource("ms-appx:///Assets/Toasts/Info.tgs"));
+            }
+        }
+
+        public static async void NavigateToMainWebApp(IClientService clientService, INavigationService navigation, User botUser, string startParameter, OpenUrlSource source = null)
+        {
+            if (botUser.Type is not UserTypeBot { HasMainWebApp: true })
+            {
+                return;
+            }
+
+            AttachmentMenuBot menuBot = null;
+            if (botUser.Type is UserTypeBot { CanBeAddedToAttachmentMenu: true })
+            {
+                menuBot = await clientService.SendAsync(new GetAttachmentMenuBot(botUser.Id)) as AttachmentMenuBot;
+            }
+
+            var popup = new MessagePopup
+            {
+                Title = Strings.AppName,
+                Message = Strings.BotWebViewStartPermission,
+                PrimaryButtonText = Strings.Start,
+                SecondaryButtonText = Strings.Cancel,
+            };
+
+            if (menuBot?.RequestWriteAccess is true)
+            {
+                var textBlock = new TextBlock
+                {
+                    TextWrapping = TextWrapping.Wrap
+                };
+
+                var markdown = ClientEx.ParseMarkdown(string.Format(Strings.OpenUrlOption2, botUser.FirstName));
+                if (markdown != null)
+                {
+                    TextBlockHelper.SetFormattedText(textBlock, markdown);
+                }
+                else
+                {
+                    textBlock.Text = Strings.OpenUrlOption2;
+                }
+
+                popup.CheckBoxLabel = textBlock;
+            }
+
+            var confirm = await popup.ShowQueuedAsync();
+            if (confirm != ContentDialogResult.Primary)
+            {
+                return;
+            }
+
+            var chatId = source switch
+            {
+                OpenUrlSourceChat sourceMessage => sourceMessage.ChatId,
+                _ => 0
+            };
+
+            var responsa = await clientService.SendAsync(new GetMainWebApp(chatId, botUser.Id, startParameter, Theme.Current.Parameters, Strings.AppName));
+            if (responsa is MainWebApp webApp)
+            {
+                navigation.NavigateToWebApp(botUser, webApp.Url, menuBot: menuBot);
             }
         }
 

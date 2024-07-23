@@ -1113,6 +1113,16 @@ namespace Telegram.ViewModels
 
         #endregion
 
+        public void OpenMainWebApp()
+        {
+            if (_chat == null || !ClientService.TryGetUser(_chat, out User user))
+            {
+                return;
+            }
+
+            MessageHelper.NavigateToMainWebApp(ClientService, NavigationService, user, string.Empty);
+        }
+
         #region Supergroup
 
         public void OpenSimilarChat(Chat chat)
