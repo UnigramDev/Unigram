@@ -31,6 +31,7 @@ namespace Telegram.ViewModels
         private readonly KeyedCollection<Message> _messages = new(Strings.SearchMessages, null);
 
         private readonly SearchChannelsViewModel _channels;
+        private readonly SearchWebAppsViewModel _webApps;
 
         private readonly ChooseChatsTracker _tracker;
         private readonly DisposableMutex _diffLock = new();
@@ -44,6 +45,7 @@ namespace Telegram.ViewModels
             : base(clientService, settingsService, aggregator)
         {
             _channels = new SearchChannelsViewModel(clientService, settingsService, aggregator);
+            _webApps = new SearchWebAppsViewModel(clientService, settingsService, aggregator);
 
             _tracker = new ChooseChatsTracker(clientService, true);
             _tracker.Options = ChooseChatsOptions.All;
@@ -70,7 +72,12 @@ namespace Telegram.ViewModels
 
         public FlatteningCollection Items { get; }
 
-        public FlatteningCollection ItemsView => IsChatsSelected ? Items : _channels.Items;
+        public FlatteningCollection ItemsView => SelectedTab switch
+        {
+            1 => _channels.Items,
+            2 => _webApps.Items,
+            _ => Items,
+        };
 
         private readonly DebouncedProperty<string> _query;
         public string Query
@@ -78,7 +85,7 @@ namespace Telegram.ViewModels
             get => _query;
             set
             {
-                if (_isChatsSelected)
+                if (SelectedTab == 0)
                 {
                     _cancellation.Cancel();
                     _cancellation = new();
@@ -103,25 +110,29 @@ namespace Telegram.ViewModels
         private bool _isTopChatsVisible;
         public bool IsTopChatsVisible
         {
-            get => _isTopChatsVisible && IsChatsSelected;
+            get => _isTopChatsVisible && SelectedTab == 0;
             set => Set(ref _isTopChatsVisible, value);
         }
 
-        private bool _isChatsSelected = true;
-        public bool IsChatsSelected
+        private int _selectedTab;
+        public int SelectedTab
         {
-            get => _isChatsSelected;
+            get => _selectedTab;
             set
             {
-                if (Set(ref _isChatsSelected, value))
+                if (Set(ref _selectedTab, value))
                 {
                     RaisePropertyChanged(nameof(ItemsView));
                     RaisePropertyChanged(nameof(IsTopChatsVisible));
 
-                    if (value is false)
+                    if (value == 1)
                     {
                         //_channels.Activate();
                         _channels.Query = Query;
+                    }
+                    else if (value == 2)
+                    {
+                        _webApps.Query = Query;
                     }
                     else
                     {

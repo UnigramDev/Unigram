@@ -912,6 +912,9 @@ to: {1}</value>
   <data name="AppName" xml:space="preserve">
     <value>Telegram</value>
   </data>
+  <data name="AppsTab" xml:space="preserve">
+    <value>Apps</value>
+  </data>
   <data name="Archive" xml:space="preserve">
     <value>Archive</value>
   </data>
@@ -8001,6 +8004,9 @@ Payments will go directly to the developer of {0}. Telegram cannot provide any g
   <data name="ProfileBotOpenAppInfoLink" xml:space="preserve">
     <value>https://telegram.org/tos/mini-apps</value>
   </data>
+  <data name="ProfileBotPreviewTab" xml:space="preserve">
+    <value>Preview</value>
+  </data>
   <data name="ProfileChannel" xml:space="preserve">
     <value>Channel</value>
   </data>
@@ -8632,6 +8638,12 @@ The channel &quot;**{1}**&quot; will become private.</value>
   </data>
   <data name="SearchAllChatsShort" xml:space="preserve">
     <value>Chats</value>
+  </data>
+  <data name="SearchAppsMine" xml:space="preserve">
+    <value>Apps you use</value>
+  </data>
+  <data name="SearchAppsPopular" xml:space="preserve">
+    <value>Popular apps</value>
   </data>
   <data name="SearchFrom" xml:space="preserve">
     <value>from:</value>

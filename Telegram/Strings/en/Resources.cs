@@ -1534,6 +1534,11 @@ namespace Telegram
         public static string AppName => Resource.GetString("AppName");
         
         /// <summary>
+        /// Localized resource similar to "Apps"
+        /// </summary>
+        public static string AppsTab => Resource.GetString("AppsTab");
+        
+        /// <summary>
         /// Localized resource similar to "Archive"
         /// </summary>
         public static string Archive => Resource.GetString("Archive");
@@ -12288,6 +12293,11 @@ namespace Telegram
         public static string ProfileBotOpenAppInfoLink => Resource.GetString("ProfileBotOpenAppInfoLink");
         
         /// <summary>
+        /// Localized resource similar to "Preview"
+        /// </summary>
+        public static string ProfileBotPreviewTab => Resource.GetString("ProfileBotPreviewTab");
+        
+        /// <summary>
         /// Localized resource similar to "Channel"
         /// </summary>
         public static string ProfileChannel => Resource.GetString("ProfileChannel");
@@ -13274,6 +13284,16 @@ namespace Telegram
         /// Localized resource similar to "Chats"
         /// </summary>
         public static string SearchAllChatsShort => Resource.GetString("SearchAllChatsShort");
+        
+        /// <summary>
+        /// Localized resource similar to "Apps you use"
+        /// </summary>
+        public static string SearchAppsMine => Resource.GetString("SearchAppsMine");
+        
+        /// <summary>
+        /// Localized resource similar to "Popular apps"
+        /// </summary>
+        public static string SearchAppsPopular => Resource.GetString("SearchAppsPopular");
         
         /// <summary>
         /// Localized resource similar to "from:"

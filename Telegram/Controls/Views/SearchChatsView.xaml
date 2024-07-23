@@ -32,7 +32,7 @@
         </Grid.RowDefinitions>
         <!-- TODO: Hide in forward popup -->
         <controls:TopNavView x:Name="ChatFolders"
-                             SelectedIndex="{x:Bind ConvertSelectedIndex(ViewModel.IsChatsSelected), Mode=TwoWay, BindBack=ConvertSelectedIndexBack}"
+                             SelectedIndex="{x:Bind ViewModel.SelectedTab, Mode=TwoWay}"
                              ScrollViewer.IsHorizontalScrollChainingEnabled="False"
                              FocusFollowsSingleSelection="True"
                              SingleSelectionFollowsFocus="False"
@@ -41,6 +41,7 @@
                              BorderThickness="0,0,0,0">
             <controls:TopNavViewItem Content="{CustomResource FilterChats}" />
             <controls:TopNavViewItem Content="{CustomResource FilterChannels}" />
+            <controls:TopNavViewItem Content="{CustomResource AppsTab}" />
         </controls:TopNavView>
 
         <!--<ListView x:Load="False"

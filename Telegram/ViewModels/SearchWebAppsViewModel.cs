@@ -22,10 +22,10 @@ using Windows.UI.Xaml.Data;
 
 namespace Telegram.ViewModels
 {
-    public class SearchChannelsViewModel : ViewModelBase, IIncrementalCollectionOwner
+    public class SearchWebAppsViewModel : ViewModelBase, IIncrementalCollectionOwner
     {
-        private readonly KeyedCollection<SearchResult> _recent = new(Strings.SearchMyChannels, new SearchResultDiffHandler());
-        private readonly KeyedCollection<SearchResult> _similar = new(Strings.SearchRecommendedChannels, new SearchResultDiffHandler());
+        private readonly KeyedCollection<SearchResult> _recent = new(Strings.SearchAppsMine, new SearchResultDiffHandler());
+        private readonly KeyedCollection<SearchResult> _similar = new(Strings.SearchAppsPopular, new SearchResultDiffHandler());
         private readonly KeyedCollection<SearchResult> _chatsAndContacts = new(Strings.FilterChannels, new SearchResultDiffHandler());
         private readonly KeyedCollection<SearchResult> _globalSearch = new(Strings.GlobalSearch, new SearchResultDiffHandler());
         private readonly KeyedCollection<Message> _messages = new(Strings.SearchMessages, null);
@@ -40,15 +40,15 @@ namespace Telegram.ViewModels
 
         private bool _activated;
 
-        public SearchChannelsViewModel(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator)
+        public SearchWebAppsViewModel(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator)
             : base(clientService, settingsService, aggregator)
         {
             _tracker = new ChooseChatsTracker(clientService, true);
             _tracker.Options = new ChooseChatsOptions
             {
-                AllowChannelChats = true,
+                AllowChannelChats = false,
                 AllowGroupChats = false,
-                AllowBotChats = false,
+                AllowBotChats = true,
                 AllowUserChats = false,
                 AllowSecretChats = false,
                 AllowSelf = false,
@@ -85,6 +85,8 @@ namespace Telegram.ViewModels
             Options == ChooseChatsOptions.PostMessages
             || Options == ChooseChatsOptions.Contacts
             || Options == ChooseChatsOptions.InviteUsers;
+
+        public DiffObservableCollection<Chat> TopChats { get; }
 
         public FlatteningCollection Items { get; }
 
@@ -165,14 +167,14 @@ namespace Telegram.ViewModels
 
             if (string.IsNullOrEmpty(query))
             {
-                var response = await ClientService.SendAsync(new SearchRecentlyFoundChats(query, 50));
+                var response = await ClientService.SendAsync(new GetTopChats(new TopChatCategoryWebAppBots(), 30));
                 if (response is Td.Api.Chats chats && !cancellationToken.IsCancellationRequested)
                 {
                     foreach (var chat in ClientService.GetChats(chats.ChatIds))
                     {
                         if (_tracker.Filter(chat))
                         {
-                            temp.Add(new SearchResult(CanSendMessageToUser ? ClientService : null, chat, query, SearchResultType.Recent));
+                            temp.Add(new SearchResult(ClientService, chat));
                         }
                     }
                 }
@@ -192,14 +194,14 @@ namespace Telegram.ViewModels
 
             if (string.IsNullOrEmpty(query))
             {
-                var response = await ClientService.SendAsync(new GetRecommendedChats());
-                if (response is Td.Api.Chats chats && !cancellationToken.IsCancellationRequested)
+                var response = await ClientService.SendAsync(new GetPopularWebAppBots(string.Empty, 50));
+                if (response is FoundUsers foundUsers && !cancellationToken.IsCancellationRequested)
                 {
-                    foreach (var chat in ClientService.GetChats(chats.ChatIds))
+                    foreach (var user in ClientService.GetUsers(foundUsers.UserIds))
                     {
-                        if (_tracker.Filter(chat))
+                        if (_tracker.Filter(user))
                         {
-                            temp.Add(new SearchResult(CanSendMessageToUser ? ClientService : null, chat, query, SearchResultType.Recent));
+                            temp.Add(new SearchResult(CanSendMessageToUser ? ClientService : null, user, query, SearchResultType.Recent));
                         }
                     }
                 }
@@ -395,6 +397,23 @@ namespace Telegram.ViewModels
 
             _recent.Remove(result);
             ClientService.Send(new RemoveRecentlyFoundChat(result.Chat.Id));
+        }
+
+        public async void RemoveTopChat(Chat chat)
+        {
+            if (chat == null)
+            {
+                return;
+            }
+
+            var confirm = await ShowPopupAsync(string.Format(Strings.ChatHintsDeleteAlert, ClientService.GetTitle(chat)), Strings.ChatHintsDeleteAlertTitle, Strings.Remove, Strings.Cancel, destructive: true);
+            if (confirm != ContentDialogResult.Primary)
+            {
+                return;
+            }
+
+            TopChats.Remove(chat);
+            ClientService.Send(new RemoveTopChat(new TopChatCategoryUsers(), chat.Id));
         }
 
         #endregion
