@@ -22,7 +22,8 @@ namespace Telegram.Controls.Chats
         ServiceUnread,
         ServicePhoto,
         ServiceBackground,
-        ServiceGift
+        ServiceGift,
+        ServiceGiftCode
     }
 
     public class ChatHistoryViewItem : ListViewItemEx

@@ -451,6 +451,30 @@
   <data name="ActionGiftOutbound" xml:space="preserve">
     <value>You have sent a gift for **un2**</value>
   </data>
+  <data name="ActionGiftPremiumSubtitle" xml:space="preserve">
+    <value>for {0}</value>
+  </data>
+  <data name="ActionGiftPremiumTitle" xml:space="preserve">
+    <value>Telegram Premium</value>
+  </data>
+  <data name="ActionGiftPremiumView" xml:space="preserve">
+    <value>View</value>
+  </data>
+  <data name="ActionGiftStarsSubtitle" xml:space="preserve">
+    <value>With Stars, **{0}** is able to unlock content and services on Telegram.</value>
+  </data>
+  <data name="ActionGiftStarsSubtitleYou" xml:space="preserve">
+    <value>Use Stars to unlock content and services on Telegram.</value>
+  </data>
+  <data name="ActionGiftStarsTitle_one" xml:space="preserve">
+    <value>{0} Star</value>
+  </data>
+  <data name="ActionGiftStarsTitle_other" xml:space="preserve">
+    <value>{0} Stars</value>
+  </data>
+  <data name="ActionGiftStarsView" xml:space="preserve">
+    <value>View</value>
+  </data>
   <data name="ActionGroupCallEnded" xml:space="preserve">
     <value>Video chat ended ({0})</value>
   </data>
@@ -551,6 +575,9 @@
     <value>un1 changed chat reactions
 from: {0} 
 to: {1}</value>
+  </data>
+  <data name="ActionRefunded" xml:space="preserve">
+    <value>un1 refunded back {0}</value>
   </data>
   <data name="ActionRemovedPhoto" xml:space="preserve">
     <value>un1 removed the group photo</value>

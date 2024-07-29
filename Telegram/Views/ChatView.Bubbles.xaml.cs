@@ -810,6 +810,10 @@ namespace Telegram.Views
             {
                 if (message.Content is MessagePremiumGiftCode)
                 {
+                    return ChatHistoryViewItemType.ServiceGiftCode;
+                }
+                else if (message.Content is MessageGiftedPremium or MessageGiftedStars)
+                {
                     return ChatHistoryViewItemType.ServiceGift;
                 }
                 else if (message.Content is MessageChatChangePhoto or MessageSuggestProfilePhoto or MessageAsyncStory)

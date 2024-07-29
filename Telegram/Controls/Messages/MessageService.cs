@@ -107,6 +107,40 @@ namespace Telegram.Controls.Messages
                 var animation = FindName("Animation") as AnimatedImage;
                 animation.Source = new DelayedFileSource(message.ClientService, premiumGiftCode.Sticker);
             }
+            else if (message.Content is MessageGiftedPremium giftedPremium)
+            {
+                var title = FindName("Title") as TextBlock;
+                var subtitle = FindName("Subtitle") as TextBlock;
+                var button = FindName("ViewLabel") as TextBlock;
+
+                title.Text = Strings.ActionGiftPremiumTitle;
+                subtitle.Text = string.Format(Strings.ActionGiftPremiumSubtitle, Locale.Declension(Strings.R.Months, giftedPremium.MonthCount));
+                button.Text = Strings.ActionGiftPremiumView;
+
+                var animation = FindName("Animation") as AnimatedImage;
+                animation.Source = new DelayedFileSource(message.ClientService, giftedPremium.Sticker);
+            }
+            else if (message.Content is MessageGiftedStars giftedStars)
+            {
+                var title = FindName("Title") as TextBlock;
+                var subtitle = FindName("Subtitle") as TextBlock;
+                var button = FindName("ViewLabel") as TextBlock;
+
+                title.Text = Locale.Declension(Strings.R.ActionGiftStarsTitle, giftedStars.StarCount);
+                button.Text = Strings.ActionGiftStarsView;
+
+                if (message.ClientService.Options.MyId == giftedStars.ReceiverUserId)
+                {
+                    subtitle.Text = Strings.ActionGiftStarsSubtitleYou;
+                }
+                else if (message.ClientService.TryGetUser(giftedStars.ReceiverUserId, out User receiver))
+                {
+                    TextBlockHelper.SetMarkdown(subtitle, string.Format(Strings.ActionGiftStarsSubtitle, receiver.FirstName));
+                }
+
+                var animation = FindName("Animation") as AnimatedImage;
+                animation.Source = new DelayedFileSource(message.ClientService, giftedStars.Sticker);
+            }
             else if (message.Content is MessageChatChangePhoto chatChangePhoto)
             {
                 var segments = FindName("Segments") as ActiveStoriesSegments;
@@ -271,6 +305,7 @@ namespace Telegram.Controls.Messages
                 MessageForumTopicIsClosedToggled forumTopicIsClosedToggled => UpdateForumTopicIsClosedToggled(message, forumTopicIsClosedToggled, active),
                 MessageGameScore gameScore => UpdateGameScore(message, gameScore, active),
                 MessageGiftedPremium giftedPremium => UpdateGiftedPremium(message, giftedPremium, active),
+                MessageGiftedStars giftedStars => UpdateGiftedStars(message, giftedStars, active),
                 MessageInviteVideoChatParticipants inviteVideoChatParticipants => UpdateInviteVideoChatParticipants(message, inviteVideoChatParticipants, active),
                 MessageProximityAlertTriggered proximityAlertTriggered => UpdateProximityAlertTriggered(message, proximityAlertTriggered, active),
                 MessagePremiumGiveawayCreated premiumGiveawayCreated => UpdatePremiumGiveawayCreated(message, premiumGiveawayCreated, active),
@@ -278,6 +313,7 @@ namespace Telegram.Controls.Messages
                 MessagePremiumGiftCode premiumGiftCode => UpdatePremiumGiftCode(message, premiumGiftCode, active),
                 MessagePassportDataSent passportDataSent => UpdatePassportDataSent(message, passportDataSent, active),
                 MessagePaymentSuccessful paymentSuccessful => UpdatePaymentSuccessful(message, paymentSuccessful, active),
+                MessagePaymentRefunded paymentRefunded => UpdatePaymentRefunded(message, paymentRefunded, active),
                 MessagePinMessage pinMessage => UpdatePinMessage(message, pinMessage, active),
                 MessageScreenshotTaken screenshotTaken => UpdateScreenshotTaken(message, screenshotTaken, active),
                 MessageSuggestProfilePhoto suggestProfilePhoto => UpdateSuggestProfilePhoto(message, suggestProfilePhoto, active),
@@ -1780,6 +1816,26 @@ namespace Telegram.Controls.Messages
             return (formatted.Text, formatted.Entities);
         }
 
+        private static (string, IList<TextEntity>) UpdateGiftedStars(MessageViewModel message, MessageGiftedStars giftedStars, bool active)
+        {
+            var content = string.Empty;
+            var entities = active ? new List<TextEntity>() : null;
+
+            if (message.SenderId is MessageSenderUser user && user.UserId == message.ClientService.Options.MyId)
+            {
+                content = ReplaceWithLink(Strings.ActionGiftOutbound, "un2", giftedStars, entities);
+            }
+            else if (message.ClientService.TryGetUser(message.SenderId, out User senderUser))
+            {
+                content = ReplaceWithLink(Strings.ActionGiftInbound, "un1", senderUser, entities);
+                content = ReplaceWithLink(content, "un2", giftedStars, entities);
+            }
+
+            var formatted = ClientEx.ParseMarkdown(content, (IList<TextEntity>)entities ?? Array.Empty<TextEntity>());
+
+            return (formatted.Text, formatted.Entities);
+        }
+
         private static (string, IList<TextEntity>) UpdateVideoChatEnded(MessageViewModel message, MessageVideoChatEnded videoChatEnded, bool active)
         {
             var content = string.Empty;
@@ -2068,6 +2124,18 @@ namespace Telegram.Controls.Messages
             }
 
             return (content, null);
+        }
+
+        private static (string, IList<TextEntity>) UpdatePaymentRefunded(MessageViewModel message, MessagePaymentRefunded paymentRefunded, bool active)
+        {
+            var entities = active ? new List<TextEntity>() : null;
+
+            var sender = message.GetSender();
+
+            var content = string.Format(Strings.ActionRefunded, Locale.FormatCurrency(paymentRefunded.TotalAmount, paymentRefunded.Currency));
+            content = ReplaceWithLink(content, "un1", sender, entities);
+
+            return (content, entities);
         }
 
         private static (string, IList<TextEntity>) UpdatePinMessage(MessageViewModel message, MessagePinMessage pinMessage, bool active)
@@ -2395,6 +2463,11 @@ namespace Telegram.Controls.Messages
                 else if (obj is MessageGiftedPremium giftedPremium)
                 {
                     name = Locale.FormatCurrency(giftedPremium.Amount, giftedPremium.Currency);
+                    id = null;
+                }
+                else if (obj is MessageGiftedStars giftedStars)
+                {
+                    name = Locale.FormatCurrency(giftedStars.Amount, giftedStars.Currency);
                     id = null;
                 }
                 else if (obj is ForumTopicInfo forumTopicInfo)

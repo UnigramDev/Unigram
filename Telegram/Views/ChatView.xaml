@@ -334,6 +334,81 @@
             </messages:MessageService>
         </DataTemplate>
 
+        <DataTemplate x:Name="ServiceMessageGiftedTemplate">
+            <messages:MessageService>
+                <Button.Template>
+                    <ControlTemplate TargetType="Button">
+                        <ContentPresenter HorizontalContentAlignment="Stretch"
+                                          VerticalContentAlignment="Stretch" />
+                    </ControlTemplate>
+                </Button.Template>
+                <StackPanel>
+                    <messages:MessageService Click="ServiceMessage_Click"
+                                             Margin="0,4,0,0"
+                                             Padding="12,2,12,0"
+                                             MaxWidth="480">
+                        <controls:FormattedTextBlock x:Name="Text"
+                                                     Foreground="#FFFFFF"
+                                                     TextAlignment="Center"
+                                                     TextStyle="{StaticResource CaptionRichTextBlockStyle}"
+                                                     FontFamily="{StaticResource EmojiThemeFontFamilyWithSymbols}"
+                                                     AutoFontSize="False"
+                                                     IsTextSelectionEnabled="False"
+                                                     HyperlinkStyle="None"
+                                                     HyperlinkForeground="#FFFFFF"
+                                                     HyperlinkFontWeight="SemiBold"
+                                                     Padding="0,0,0,4" />
+                    </messages:MessageService>
+
+                    <messages:MessageService x:Name="Service"
+                                             Click="ServiceMessage_Click"
+                                             Margin="0,4,0,0"
+                                             Padding="12,2,12,0"
+                                             Width="216">
+                        <StackPanel>
+                            <controls:AnimatedImage x:Name="Animation"
+                                                    Width="120"
+                                                    Height="120"
+                                                    FrameSize="120,120"
+                                                    DecodeFrameType="Logical"
+                                                    IsViewportAware="True"
+                                                    LoopCount="1"
+                                                    Margin="0,-20,0,12" />
+
+                            <TextBlock x:Name="Title"
+                                       Foreground="#FFFFFF"
+                                       Text="{CustomResource BoostingCongratulations}"
+                                       TextAlignment="Center"
+                                       Style="{StaticResource SubtitleTextBlockStyle}"
+                                       FontSize="16" />
+
+                            <TextBlock x:Name="Subtitle"
+                                       Foreground="#FFFFFF"
+                                       TextAlignment="Center"
+                                       TextWrapping="Wrap"
+                                       Style="{StaticResource CaptionTextBlockStyle}"
+                                       FontFamily="{StaticResource EmojiThemeFontFamilyWithSymbols}"
+                                       Padding="0,0,0,4"
+                                       Margin="0,0,0,8" />
+
+                            <Border x:Name="View"
+                                    Background="{ThemeResource MessageServiceBackgroundBrush}"
+                                    CornerRadius="12"
+                                    HorizontalAlignment="Center"
+                                    Padding="12,4,12,4"
+                                    Margin="0,0,0,12">
+                                <TextBlock x:Name="ViewLabel"
+                                           Text="{CustomResource BoostingReceivedGiftOpenBtn}"
+                                           Foreground="#FFFFFF"
+                                           TextAlignment="Center"
+                                           Style="{StaticResource CaptionTextBlockStyle}" />
+                            </Border>
+                        </StackPanel>
+                    </messages:MessageService>
+                </StackPanel>
+            </messages:MessageService>
+        </DataTemplate>
+
         <DataTemplate x:Name="ServiceMessageTemplate">
             <messages:MessageService Click="ServiceMessage_Click"
                                      Margin="0,4,0,0"
@@ -1211,7 +1286,7 @@
                                   VerticalAlignment="Bottom"
                                   Margin="8,4">
                                 <Border Background="{ThemeResource SystemColorControlAccentBrush}"
-                                        Opacity="0"/>
+                                        Opacity="0" />
                                 <TextBlock x:Name="SendEffectText"
                                            FontFamily="{StaticResource EmojiThemeFontFamilyWithSymbols}"
                                            FontSize="16"
