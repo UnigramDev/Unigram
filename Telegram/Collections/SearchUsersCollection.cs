@@ -54,7 +54,7 @@ namespace Telegram.Collections
                             if (user != null)
                             {
                                 _users.Add(id);
-                                _local.Add(new SearchResult(null, user, _query, SearchResultType.Contacts));
+                                _local.Add(new SearchResult(_clientService, user, _query, SearchResultType.Contacts, false));
                             }
                         }
                     }
@@ -75,7 +75,7 @@ namespace Telegram.Collections
                                 }
 
                                 _users.Add(privata.UserId);
-                                _local.Add(new SearchResult(null, chat, _query, SearchResultType.ChatsOnServer));
+                                _local.Add(new SearchResult(_clientService, chat, _query, SearchResultType.ChatsOnServer, false));
                             }
                         }
                     }
@@ -95,7 +95,7 @@ namespace Telegram.Collections
                                     continue;
                                 }
 
-                                _remote.Add(new SearchResult(null, chat, _query, SearchResultType.PublicChats));
+                                _remote.Add(new SearchResult(_clientService, chat, _query, SearchResultType.PublicChats, false));
                             }
                         }
                     }

@@ -62,7 +62,7 @@ namespace Telegram.Collections
                             if (_clientService.TryGetUser(member.MemberId, out User user))
                             {
                                 _users.Add(user.Id);
-                                _chat.Add(new SearchResult(null, user, _query, SearchResultType.ChatMembers));
+                                _chat.Add(new SearchResult(_clientService, user, _query, SearchResultType.ChatMembers, false));
                             }
                         }
                     }
@@ -83,7 +83,7 @@ namespace Telegram.Collections
                             if (user != null)
                             {
                                 _users.Add(id);
-                                _local.Add(new SearchResult(_canSendMessageToUser ? _clientService : null, user, _query, SearchResultType.Contacts));
+                                _local.Add(new SearchResult(_clientService, user, _query, SearchResultType.Contacts, _canSendMessageToUser));
                             }
                         }
                     }
@@ -104,7 +104,7 @@ namespace Telegram.Collections
                                 }
 
                                 _users.Add(privata.UserId);
-                                _local.Add(new SearchResult(_canSendMessageToUser ? _clientService : null, chat, _query, SearchResultType.ChatsOnServer));
+                                _local.Add(new SearchResult(_clientService, chat, _query, SearchResultType.ChatsOnServer, _canSendMessageToUser));
                             }
                         }
                     }
@@ -124,7 +124,7 @@ namespace Telegram.Collections
                                     continue;
                                 }
 
-                                _remote.Add(new SearchResult(_canSendMessageToUser ? _clientService : null, chat, _query, SearchResultType.PublicChats));
+                                _remote.Add(new SearchResult(_clientService, chat, _query, SearchResultType.PublicChats, _canSendMessageToUser));
                             }
                         }
                     }

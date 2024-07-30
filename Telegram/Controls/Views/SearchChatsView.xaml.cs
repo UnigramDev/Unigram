@@ -35,6 +35,26 @@ namespace Telegram.Controls.Views
             InitializeComponent();
         }
 
+        public void Update()
+        {
+            TopChats.ForEach<Chat>((selector, chat) =>
+            {
+                var content = selector.ContentTemplateRoot as StackPanel;
+                var grid = content.Children[0] as Grid;
+
+                var badge = grid.Children[1] as BadgeControl;
+                badge.Visibility = chat.UnreadCount > 0 ? Visibility.Visible : Visibility.Collapsed;
+                badge.Text = chat.UnreadCount.ToString();
+
+                var user = ViewModel.ClientService.GetUser(chat);
+                if (user != null)
+                {
+                    var online = grid.Children[2] as Border;
+                    online.Visibility = user.Status is UserStatusOnline ? Visibility.Visible : Visibility.Collapsed;
+                }
+            });
+        }
+
         public event ItemClickEventHandler ItemClick;
 
         public event TypedEventHandler<UIElement, ItemContextRequestedEventArgs> ItemContextRequested;

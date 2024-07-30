@@ -172,7 +172,7 @@ namespace Telegram.ViewModels
                     {
                         if (_tracker.Filter(chat))
                         {
-                            temp.Add(new SearchResult(CanSendMessageToUser ? ClientService : null, chat, query, SearchResultType.Recent));
+                            temp.Add(new SearchResult(ClientService, chat, query, SearchResultType.Recent, CanSendMessageToUser));
                         }
                     }
                 }
@@ -199,7 +199,7 @@ namespace Telegram.ViewModels
                     {
                         if (_tracker.Filter(chat))
                         {
-                            temp.Add(new SearchResult(CanSendMessageToUser ? ClientService : null, chat, query, SearchResultType.Recent));
+                            temp.Add(new SearchResult(ClientService, chat, query, SearchResultType.Recent, CanSendMessageToUser));
                         }
                     }
                 }
@@ -250,7 +250,7 @@ namespace Telegram.ViewModels
             {
                 if (_tracker.Filter(savedMessages))
                 {
-                    temp.Add(new SearchResult(CanSendMessageToUser ? ClientService : null, savedMessages, query, SearchResultType.Chats));
+                    temp.Add(new SearchResult(ClientService, savedMessages, query, SearchResultType.Chats, CanSendMessageToUser));
                 }
             }
 
@@ -261,7 +261,7 @@ namespace Telegram.ViewModels
                 {
                     if (_tracker.Filter(chat))
                     {
-                        temp.Add(new SearchResult(CanSendMessageToUser ? ClientService : null, chat, query, SearchResultType.Chats));
+                        temp.Add(new SearchResult(ClientService, chat, query, SearchResultType.Chats, CanSendMessageToUser));
                     }
                 }
             }
@@ -273,7 +273,7 @@ namespace Telegram.ViewModels
                 {
                     if (_tracker.Filter(user))
                     {
-                        temp.Add(new SearchResult(CanSendMessageToUser ? ClientService : null, user, query, SearchResultType.Contacts));
+                        temp.Add(new SearchResult(ClientService, user, query, SearchResultType.Contacts, CanSendMessageToUser));
                     }
                 }
             }
@@ -297,7 +297,7 @@ namespace Telegram.ViewModels
                     {
                         if (_tracker.Filter(chat))
                         {
-                            _chatsAndContacts.Add(new SearchResult(CanSendMessageToUser ? ClientService : null, chat, query, SearchResultType.ChatsOnServer));
+                            _chatsAndContacts.Add(new SearchResult(ClientService, chat, query, SearchResultType.ChatsOnServer, CanSendMessageToUser));
                         }
                     }
                 }
@@ -316,7 +316,7 @@ namespace Telegram.ViewModels
                     if (_tracker.Filter(chat))
                     {
                         //temp.Add(new SearchResult(CanSendMessageToUser ? ClientService : null, chat, query, SearchResultType.PublicChats));
-                        _globalSearch.Add(new SearchResult(CanSendMessageToUser ? ClientService : null, chat, query, SearchResultType.PublicChats));
+                        _globalSearch.Add(new SearchResult(ClientService, chat, query, SearchResultType.PublicChats, CanSendMessageToUser));
                     }
                 }
 

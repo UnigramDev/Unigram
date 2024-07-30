@@ -490,6 +490,7 @@
     <Compile Include="ViewModels\Profile\ProfileSavedChatsTabViewModel.cs" />
     <Compile Include="ViewModels\Profile\ProfileStoriesTabViewModel.cs" />
     <Compile Include="ViewModels\Profile\ProfileTabsViewModel.cs" />
+    <Compile Include="ViewModels\SearchWebAppsViewModel.cs" />
     <Compile Include="ViewModels\SearchChannelsViewModel.cs" />
     <Compile Include="ViewModels\SearchChatsViewModel.cs" />
     <Compile Include="Collections\GroupCallParticipantsCollection.cs" />

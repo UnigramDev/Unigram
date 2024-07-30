@@ -926,6 +926,7 @@ namespace Telegram.ViewModels
     public class SearchResult : BindableBase
     {
         private readonly IClientService _clientService;
+        private readonly bool _canSendMessageToUser;
 
         public Chat Chat { get; set; }
         public User User { get; set; }
@@ -937,7 +938,7 @@ namespace Telegram.ViewModels
 
         public bool IsPublic => Type == SearchResultType.PublicChats;
 
-        public SearchResult(IClientService clientService, Chat chat, string query, SearchResultType type)
+        public SearchResult(IClientService clientService, Chat chat, string query, SearchResultType type, bool canSendMessageToUser)
         {
             _clientService = clientService;
 
@@ -946,7 +947,7 @@ namespace Telegram.ViewModels
             Type = type;
         }
 
-        public SearchResult(IClientService clientService, Chat chat)
+        public SearchResult(IClientService clientService, Chat chat, bool canSendMessageToUser)
         {
             _clientService = clientService;
 
@@ -955,7 +956,7 @@ namespace Telegram.ViewModels
             Type = SearchResultType.None;
         }
 
-        public SearchResult(IClientService clientService, User user, string query, SearchResultType type)
+        public SearchResult(IClientService clientService, User user, string query, SearchResultType type, bool canSendMessageToUser)
         {
             _clientService = clientService;
 
@@ -994,7 +995,7 @@ namespace Telegram.ViewModels
                 userId = User?.Id;
             }
 
-            if (userId == null || _clientService == null || _restrictsNewChats.HasValue)
+            if (userId == null || !_canSendMessageToUser || _restrictsNewChats.HasValue)
             {
                 return;
             }
