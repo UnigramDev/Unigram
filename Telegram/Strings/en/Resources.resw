@@ -2111,13 +2111,13 @@ It will be able to access your **IP address** and basic device info.</value>
     <value>Available balance</value>
   </data>
   <data name="BotStarsOverviewInfo" xml:space="preserve">
-    <value>Stars from your total balance become available for spending on ads and rewards 21 days after they are earned.</value>
+    <value>Stars from your total balance can be used for ads or withdrawn as rewards 21 days after they are earned.</value>
   </data>
   <data name="BotStarsOverviewTotalBalance" xml:space="preserve">
     <value>Total lifetime proceeds</value>
   </data>
   <data name="BotStarsTransactionsMore" xml:space="preserve">
-    <value>Show More transaction</value>
+    <value>Show more transactions</value>
   </data>
   <data name="BotStarsWithdrawalToast" xml:space="preserve">
     <value>Next withdrawal will be available in **{0}**.</value>
@@ -2129,7 +2129,7 @@ It will be able to access your **IP address** and basic device info.</value>
     <value>https://telegram.org/privacy</value>
   </data>
   <data name="BotStarsWithdrawMinLimit_other" xml:space="preserve">
-    <value>You cannot withdraw less than **{0} stars.**</value>
+    <value>You cannot withdraw less than **{0} stars**.</value>
   </data>
   <data name="BotStarsWithdrawPlaceholder" xml:space="preserve">
     <value>Enter amount to withdraw</value>
