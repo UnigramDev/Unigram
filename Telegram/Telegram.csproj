@@ -265,6 +265,9 @@
     <Compile Include="Controls\Messages\ReactionAsTagButton.cs" />
     <Compile Include="Common\AsyncMediaPlayer.cs" />
     <Compile Include="Controls\PremiumStarCount.cs" />
+    <Compile Include="Controls\Stories\Widgets\StoryWeatherWidget.xaml.cs">
+      <DependentUpon>StoryWeatherWidget.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Controls\SuggestedActionSetBirthdateCard.xaml.cs">
       <DependentUpon>SuggestedActionSetBirthdateCard.xaml</DependentUpon>
     </Compile>
@@ -2573,6 +2576,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Controls\Stories\StoryInteractionBar.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\Stories\Widgets\StoryWeatherWidget.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

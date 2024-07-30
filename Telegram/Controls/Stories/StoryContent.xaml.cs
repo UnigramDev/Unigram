@@ -15,6 +15,7 @@ using System.Numerics;
 using Telegram.Common;
 using Telegram.Controls.Media;
 using Telegram.Controls.Messages;
+using Telegram.Controls.Stories.Widgets;
 using Telegram.Navigation;
 using Telegram.Streams;
 using Telegram.Td.Api;
@@ -378,8 +379,12 @@ namespace Telegram.Controls.Stories
             foreach (var area in story.Areas)
             {
                 FrameworkElement element;
+                bool autoSize = true;
+
                 if (area.Type is StoryAreaTypeSuggestedReaction suggestedReaction)
                 {
+                    autoSize = false;
+
                     var desiredWidth = area.Position.WidthPercentage / 100 * ActualWidth;
                     var desiredHeight = area.Position.HeightPercentage / 100 * ActualHeight;
 
@@ -483,31 +488,32 @@ namespace Telegram.Controls.Stories
 
                     element = test;
                 }
+                else if (area.Type is StoryAreaTypeWeather weather)
+                {
+                    element = new StoryWeatherWidget(weather, new CornerRadius(area.Position.CornerRadiusPercentage / 100 * ActualWidth));
+                }
                 else
                 {
-                    // TODO: UWP corner radius doesn't support X and Y radius
-                    var radiusX = area.Position.CornerRadiusPercentage / 100 * ActualWidth;
-                    var radiusY = area.Position.CornerRadiusPercentage / 100 * ActualHeight;
+                    var button = new HyperlinkButton();
+                    button.Click += Area_Click;
 
-                    var button = new HyperlinkButton
+                    element = button;
+                }
+
+                if (autoSize)
+                {
+                    element.Width = area.Position.WidthPercentage / 100 * ActualWidth;
+                    element.Height = area.Position.HeightPercentage / 100 * ActualHeight;
+                    element.RenderTransformOrigin = new Point(0.5, 0.5);
+                    element.RenderTransform = new RotateTransform
                     {
-                        Content = new Border
-                        {
-                            Width = 24,
-                            Height = 24,
-                            HorizontalAlignment = HorizontalAlignment.Center
-                        },
-                        Width = area.Position.WidthPercentage / 100 * ActualWidth,
-                        Height = area.Position.HeightPercentage / 100 * ActualHeight,
-                        RenderTransformOrigin = new Point(0.5, 0.5),
-                        RenderTransform = new RotateTransform
-                        {
-                            Angle = area.Position.RotationAngle
-                        }
+                        Angle = area.Position.RotationAngle
                     };
 
-                    button.Click += Area_Click;
-                    element = button;
+                    if (element is Control control)
+                    {
+                        control.CornerRadius = new CornerRadius(area.Position.CornerRadiusPercentage / 100 * ActualWidth);
+                    }
                 }
 
                 Canvas.SetLeft(element, area.Position.XPercentage / 100 * ActualWidth - element.Width / 2);
