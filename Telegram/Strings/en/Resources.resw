@@ -5320,6 +5320,15 @@ Duration: {1}</value>
   <data name="GiftPremiumOptionDiscount" xml:space="preserve">
     <value>-{0}%</value>
   </data>
+  <data name="GiftStarsSubtitle" xml:space="preserve">
+    <value>With Stars, **{0}** will be able to unlock content and services on Telegram.</value>
+  </data>
+  <data name="GiftStarsSubtitleLinkName" xml:space="preserve">
+    <value>**See Examples &gt;**</value>
+  </data>
+  <data name="GiftStarsTitle" xml:space="preserve">
+    <value>Gift Stars</value>
+  </data>
   <data name="GiftSubscriptionFor" xml:space="preserve">
     <value>Gift Subscription for {0}</value>
   </data>
@@ -9245,6 +9254,12 @@ The channel &quot;**{1}**&quot; will become private.</value>
   <data name="StarsFailed" xml:space="preserve">
     <value>Failed</value>
   </data>
+  <data name="StarsGiftReceived" xml:space="preserve">
+    <value>Received Gift</value>
+  </data>
+  <data name="StarsGiftSent" xml:space="preserve">
+    <value>Sent Gift</value>
+  </data>
   <data name="StarsNeededText" xml:space="preserve">
     <value>Buy **Stars** and use them on **{0}** and other miniapps.</value>
   </data>
@@ -9719,6 +9734,9 @@ Here’s what is now unlocked.</value>
   </data>
   <data name="TelegramStarsChoose" xml:space="preserve">
     <value>Choose package</value>
+  </data>
+  <data name="TelegramStarsGift" xml:space="preserve">
+    <value>Gift Stars to Friends</value>
   </data>
   <data name="TelegramStarsInfo" xml:space="preserve">
     <value>Buy Stars to unlock content and service

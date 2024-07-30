@@ -105,7 +105,8 @@
                         <RowDefinition Height="Auto" />
                         <RowDefinition Height="Auto" />
                     </Grid.RowDefinitions>
-                    <Grid Margin="8">
+                    <Grid x:Name="BalancePanel"
+                          Margin="8">
                         <Grid.RowDefinitions>
                             <RowDefinition Height="Auto" />
                             <RowDefinition Height="Auto" />
@@ -184,7 +185,7 @@
                         <TextBlock x:Name="Title"
                                    Style="{StaticResource BaseTextBlockStyle}"
                                    VerticalAlignment="Center"
-                                   Margin="0,0,0,4"
+                                   Margin="4,0,0,4"
                                    Grid.Column="2" />
 
                         <TextBlock x:Name="Subtitle"
@@ -198,11 +199,12 @@
                 </DataTemplate>
             </ListView.ItemTemplate>
             <ListView.Footer>
-                <StackPanel Margin="0,0,0,72">
+                <StackPanel Margin="0,0,0,24">
                     <Button Content="{CustomResource NotifyMoreOptions}"
                             Click="{x:Bind ViewModel.Expand}"
                             Visibility="{x:Bind ViewModel.CanExpand, Mode=OneWay}"
-                            Style="{StaticResource AccentTextButtonStyle}" />
+                            HorizontalAlignment="Stretch"
+                            Margin="12,2,12,8" />
 
                     <controls:SettingsFooter IsLink="True"
                                              Text="{CustomResource StarsTOS}"

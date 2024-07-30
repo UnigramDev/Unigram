@@ -54,22 +54,34 @@ namespace Telegram.Controls.Cells.Revenue
                 Title.Text = Strings.StarsTransactionInApp;
                 Subtitle.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
             }
-            else if (transaction.Partner is StarTransactionPartnerBot sourceBot && clientService.TryGetUser(sourceBot.BotUserId, out User user))
+            else if (transaction.Partner is StarTransactionPartnerBot sourceBot && clientService.TryGetUser(sourceBot.UserId, out User botUser))
             {
                 if (sourceBot.ProductInfo != null)
                 {
                     Title.Text = sourceBot.ProductInfo.Title;
-                    Subtitle.Text = user.FullName();
+                    Subtitle.Text = botUser.FullName();
                     Subtitle.Visibility = Windows.UI.Xaml.Visibility.Visible;
                 }
                 else
                 {
-                    Title.Text = user.FullName();
+                    Title.Text = botUser.FullName();
                     Subtitle.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
                 }
 
                 MediaPreview.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
+                Photo.SetUser(clientService, botUser, 36);
+            }
+            else if (transaction.Partner is StarTransactionPartnerUser sourceUser && clientService.TryGetUser(sourceUser.UserId, out User user))
+            {
+                Title.Text = transaction.StarCount < 0
+                    ? Strings.StarsGiftSent
+                    : Strings.StarsGiftReceived;
+                Subtitle.Text = user.FullName();
+                Subtitle.Visibility = Windows.UI.Xaml.Visibility.Visible;
+
                 Photo.SetUser(clientService, user, 36);
+
+                MediaPreview.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
             }
             else if (transaction.Partner is StarTransactionPartnerChannel sourceChannel && clientService.TryGetChat(sourceChannel.ChatId, out Chat chat))
             {

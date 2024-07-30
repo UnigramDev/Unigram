@@ -25,10 +25,17 @@ namespace Telegram.Views.Stars.Popups
 
         public long SellerBotUserId { get; set; }
 
+        public long ReceiverUserId { get; set; }
+
         public BuyStarsArgs(long starCount, long sellerBotUserId)
         {
             StarCount = starCount;
             SellerBotUserId = sellerBotUserId;
+        }
+
+        public BuyStarsArgs(long receiverUserId)
+        {
+            ReceiverUserId = receiverUserId;
         }
     }
 
@@ -43,10 +50,20 @@ namespace Telegram.Views.Stars.Popups
 
         public override void OnNavigatedTo()
         {
-            if (ViewModel.Arguments is BuyStarsArgs args && ViewModel.ClientService.TryGetUser(args.SellerBotUserId, out User user))
+            if (ViewModel.Arguments is BuyStarsArgs args)
             {
-                TitleLabel.Text = Locale.Declension(Strings.R.StarsNeededTitle, args.StarCount);
-                TextBlockHelper.SetMarkdown(SubtitleLabel, string.Format(Strings.StarsNeededText, user.FullName()));
+                if (ViewModel.ClientService.TryGetUser(args.SellerBotUserId, out User sellerUser))
+                {
+                    TitleLabel.Text = Locale.Declension(Strings.R.StarsNeededTitle, args.StarCount);
+                    TextBlockHelper.SetMarkdown(SubtitleLabel, string.Format(Strings.StarsNeededText, sellerUser.FullName()));
+                }
+                else if (ViewModel.ClientService.TryGetUser(args.ReceiverUserId, out User receiverUser))
+                {
+                    TitleLabel.Text = Strings.GiftStarsTitle;
+                    TextBlockHelper.SetMarkdown(SubtitleLabel, string.Format(Strings.GiftStarsSubtitle, receiverUser.FirstName));
+
+                    BalancePanel.Visibility = Visibility.Collapsed;
+                }
             }
         }
 
@@ -55,7 +72,15 @@ namespace Telegram.Views.Stars.Popups
             if (e.ClickedItem is StarPaymentOption option)
             {
                 Hide();
-                ViewModel.NavigationService.NavigateToInvoice(new InputInvoiceTelegram(new TelegramPaymentPurposeStars(option.Currency, option.Amount, option.StarCount)));
+
+                if (ViewModel.Arguments?.ReceiverUserId is long receiverUserId)
+                {
+                    ViewModel.NavigationService.NavigateToInvoice(new InputInvoiceTelegram(new TelegramPaymentPurposeGiftedStars(receiverUserId, option.Currency, option.Amount, option.StarCount)));
+                }
+                else
+                {
+                    ViewModel.NavigationService.NavigateToInvoice(new InputInvoiceTelegram(new TelegramPaymentPurposeStars(option.Currency, option.Amount, option.StarCount)));
+                }
             }
         }
 
@@ -76,7 +101,6 @@ namespace Telegram.Views.Stars.Popups
             title.Text = Locale.Declension(Strings.R.StarsCount, stars.StarCount);
             subtitle.Text = Locale.FormatCurrency(stars.Amount, stars.Currency);
 
-            title.Margin = new Thickness(0, 0, 0, 0);
             subtracted.Children.Clear();
 
             var index = ViewModel.IndexOf(stars);
@@ -86,7 +110,7 @@ namespace Telegram.Views.Stars.Popups
                 subtracted.Children.Add(new SubtractedStar
                 {
                     Template = SubtractedStarTemplate,
-                    Margin = new Thickness(-26, 0, 0, 0)
+                    Margin = new Thickness(i == 0 ? -28 : -26, 0, 0, 0)
                 });
             }
 

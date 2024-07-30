@@ -61,6 +61,7 @@ namespace Telegram.Views.Stars.Popups
                 Title.Text = Strings.StarsTransactionBot;
                 Subtitle.Visibility = Visibility.Collapsed;
                 Photo.Visibility = Visibility.Collapsed;
+                AnimatedPhoto.Visibility = Visibility.Collapsed;
 
                 MediaPreview.Visibility = Visibility.Collapsed;
             }
@@ -74,6 +75,7 @@ namespace Telegram.Views.Stars.Popups
                 Title.Text = Strings.StarsTransactionFragment;
                 Subtitle.Visibility = Visibility.Collapsed;
                 Photo.Visibility = Visibility.Collapsed;
+                AnimatedPhoto.Visibility = Visibility.Collapsed;
 
                 MediaPreview.Visibility = Visibility.Collapsed;
             }
@@ -87,14 +89,15 @@ namespace Telegram.Views.Stars.Popups
                 Title.Text = Strings.StarsTransactionInApp;
                 Subtitle.Visibility = Visibility.Collapsed;
                 Photo.Visibility = Visibility.Collapsed;
+                AnimatedPhoto.Visibility = Visibility.Collapsed;
 
                 MediaPreview.Visibility = Visibility.Collapsed;
             }
-            else if (transaction.Partner is StarTransactionPartnerBot sourceBot && clientService.TryGetUser(sourceBot.BotUserId, out User user))
+            else if (transaction.Partner is StarTransactionPartnerBot sourceBot && clientService.TryGetUser(sourceBot.UserId, out User botUser))
             {
-                FromPhoto.SetUser(clientService, user, 24);
+                FromPhoto.SetUser(clientService, botUser, 24);
                 FromPhoto.Visibility = Visibility.Visible;
-                FromTitle.Text = user.FullName();
+                FromTitle.Text = botUser.FullName();
                 FromHeader.Text = Strings.StarsTransactionRecipient;
 
                 if (sourceBot.ProductInfo != null)
@@ -110,10 +113,33 @@ namespace Telegram.Views.Stars.Popups
                     }
                     else
                     {
-                        Photo.SetUser(clientService, user, 120);
+                        Photo.SetUser(clientService, botUser, 120);
                     }
                 }
 
+                AnimatedPhoto.Visibility = Visibility.Collapsed;
+                MediaPreview.Visibility = Visibility.Collapsed;
+            }
+            else if (transaction.Partner is StarTransactionPartnerUser sourceUser && clientService.TryGetUser(sourceUser.UserId, out User user))
+            {
+                FromPhoto.SetUser(clientService, user, 24);
+                FromPhoto.Visibility = Visibility.Visible;
+                FromTitle.Text = user.FullName();
+                FromHeader.Text = Strings.StarsTransactionRecipient;
+
+                Title.Text = transaction.StarCount < 0
+                    ? Strings.StarsGiftSent
+                    : Strings.StarsGiftReceived;
+                Subtitle.Text = transaction.StarCount < 0
+                    ? string.Format(Strings.ActionGiftStarsSubtitle, user.FirstName)
+                    : Strings.ActionGiftStarsSubtitleYou;
+                Subtitle.Visibility = Windows.UI.Xaml.Visibility.Visible;
+
+                if (sourceUser.Sticker != null)
+                {
+                    AnimatedPhoto.Source = new DelayedFileSource(clientService, sourceUser.Sticker);
+                }
+                
                 MediaPreview.Visibility = Visibility.Collapsed;
             }
             else if (transaction.Partner is StarTransactionPartnerChannel sourceChannel && clientService.TryGetChat(sourceChannel.ChatId, out Chat chat))

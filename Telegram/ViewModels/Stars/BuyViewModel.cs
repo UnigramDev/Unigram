@@ -73,7 +73,7 @@ namespace Telegram.ViewModels.Stars
             return _options.IndexOf(option);
         }
 
-        public bool CanExpand => _options.Count > Options.Count;
+        public bool CanExpand => _options?.Count > Options.Count;
 
         public void Expand()
         {

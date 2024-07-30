@@ -713,7 +713,20 @@ namespace Telegram.Views.Popups
 
         public static async Task<User> PickUserAsync(IClientService clientService, string title, bool contact)
         {
-            return clientService.GetUser(await PickChatAsync(title, contact ? ChooseChatsOptions.Contacts : ChooseChatsOptions.Users));
+            return clientService.GetUser(await PickChatAsync(title, contact ? ChooseChatsOptions.Contacts : new ChooseChatsOptions()
+            {
+                AllowChannelChats = false,
+                AllowGroupChats = false,
+                AllowBotChats = false,
+                AllowUserChats = true,
+                AllowSecretChats = false,
+                AllowSelf = false,
+                CanPostMessages = false,
+                CanInviteUsers = false,
+                CanShareContact = false,
+                Mode = ChooseChatsMode.Chats,
+                ShowMessages = false
+            }));
         }
 
         public static async Task<IList<Chat>> PickChatsAsync(string title, long[] selected, ChooseChatsOptions options, ListViewSelectionMode selectionMode = ListViewSelectionMode.Multiple)

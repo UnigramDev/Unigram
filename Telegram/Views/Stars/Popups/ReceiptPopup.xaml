@@ -23,6 +23,14 @@
                                              Width="120"
                                              Height="120"
                                              Margin="0,0,0,8" />
+                    <controls:AnimatedImage x:Name="AnimatedPhoto"
+                                            Width="120"
+                                            Height="120"
+                                            FrameSize="120,120"
+                                            DecodeFrameType="Logical"
+                                            IsViewportAware="True"
+                                            LoopCount="1"
+                                            Margin="0,-24,0,8" />
 
                     <HyperlinkButton x:Name="MediaPreview"
                                      Click="MediaPreview_Click"
