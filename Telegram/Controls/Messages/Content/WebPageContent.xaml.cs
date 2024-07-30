@@ -323,6 +323,7 @@ namespace Telegram.Controls.Messages.Content
             }
             else if (linkPreview.Type is LinkPreviewTypePhoto or
                                          LinkPreviewTypeEmbeddedAudioPlayer or
+                                         LinkPreviewTypeEmbeddedAnimationPlayer or
                                          LinkPreviewTypeEmbeddedVideoPlayer or
                                          LinkPreviewTypeApp or
                                          LinkPreviewTypeArticle or

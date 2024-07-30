@@ -864,6 +864,7 @@ namespace Telegram.Td.Api
                         },
                         LinkPreviewTypePhoto photo => photo.Photo,
                         LinkPreviewTypeEmbeddedAudioPlayer embeddedAudioPlayer => embeddedAudioPlayer.Thumbnail,
+                        LinkPreviewTypeEmbeddedAnimationPlayer embeddedAnimationPlayer => embeddedAnimationPlayer.Thumbnail,
                         LinkPreviewTypeEmbeddedVideoPlayer embeddedVideoPlayer => embeddedVideoPlayer.Thumbnail,
                         LinkPreviewTypeApp app => app.Photo,
                         LinkPreviewTypeArticle article => article.Photo,
@@ -936,6 +937,7 @@ namespace Telegram.Td.Api
                         LinkPreviewTypeBackground background => (background.Document.DocumentValue, background.Document.Thumbnail, background.Document.FileName),
                         LinkPreviewTypeDocument document => (document.Document.DocumentValue, document.Document.Thumbnail, document.Document.FileName),
                         LinkPreviewTypeEmbeddedAudioPlayer embeddedAudioPlayer => (embeddedAudioPlayer.Thumbnail.GetFile(), null, null),
+                        LinkPreviewTypeEmbeddedAnimationPlayer embeddedAnimationPlayer => (embeddedAnimationPlayer.Thumbnail.GetFile(), null, null),
                         LinkPreviewTypeEmbeddedVideoPlayer embeddedVideoPlayer => (embeddedVideoPlayer.Thumbnail.GetFile(), null, null),
                         LinkPreviewTypeSticker sticker => (sticker.Sticker.StickerValue, sticker.Sticker.Thumbnail, null),
                         LinkPreviewTypeVideo video => (video.Video.VideoValue, video.Video.Thumbnail, video.Video.FileName),
@@ -977,6 +979,7 @@ namespace Telegram.Td.Api
                 LinkPreviewTypeBackground background => background.Document.Minithumbnail,
                 LinkPreviewTypeDocument document => document.Document.Minithumbnail,
                 LinkPreviewTypeEmbeddedAudioPlayer embeddedAudioPlayer => embeddedAudioPlayer.Thumbnail.Minithumbnail,
+                LinkPreviewTypeEmbeddedAnimationPlayer embeddedAnimationPlayer => embeddedAnimationPlayer.Thumbnail.Minithumbnail,
                 LinkPreviewTypeEmbeddedVideoPlayer embeddedVideoPlayer => embeddedVideoPlayer.Thumbnail.Minithumbnail,
                 LinkPreviewTypeVideo video => video.Video.Minithumbnail,
                 LinkPreviewTypeVideoNote videoNote => videoNote.VideoNote.Minithumbnail,
@@ -1008,6 +1011,7 @@ namespace Telegram.Td.Api
                 LinkPreviewTypeBackground background => background.Document.Thumbnail,
                 LinkPreviewTypeDocument document => document.Document.Thumbnail,
                 LinkPreviewTypeEmbeddedAudioPlayer embeddedAudioPlayer => embeddedAudioPlayer.Thumbnail?.GetThumbnail(),
+                LinkPreviewTypeEmbeddedAnimationPlayer embeddedAnimationPlayer => embeddedAnimationPlayer.Thumbnail?.GetThumbnail(),
                 LinkPreviewTypeEmbeddedVideoPlayer embeddedVideoPlayer => embeddedVideoPlayer.Thumbnail?.GetThumbnail(),
                 LinkPreviewTypeSticker sticker => sticker.Sticker.Thumbnail,
                 LinkPreviewTypeVideo video => video.Video.Thumbnail,
@@ -1042,6 +1046,7 @@ namespace Telegram.Td.Api
                 || linkPreview.Type is LinkPreviewTypeBackground { Document.Thumbnail: not null }
                 || linkPreview.Type is LinkPreviewTypeDocument { Document.Thumbnail: not null }
                 || linkPreview.Type is LinkPreviewTypeEmbeddedAudioPlayer { Thumbnail: not null }
+                || linkPreview.Type is LinkPreviewTypeEmbeddedAnimationPlayer { Thumbnail: not null }
                 || linkPreview.Type is LinkPreviewTypeEmbeddedVideoPlayer { Thumbnail: not null }
                 || linkPreview.Type is LinkPreviewTypeSticker { Sticker.Thumbnail: not null }
                 || linkPreview.Type is LinkPreviewTypeStickerSet
@@ -1128,6 +1133,7 @@ namespace Telegram.Td.Api
                         LinkPreviewTypeBackground background => background.Document.DocumentValue,
                         LinkPreviewTypeDocument document => document.Document.DocumentValue,
                         LinkPreviewTypeEmbeddedAudioPlayer embeddedAudioPlayer => embeddedAudioPlayer.Thumbnail.GetFile(),
+                        LinkPreviewTypeEmbeddedAnimationPlayer embeddedAnimationPlayer => embeddedAnimationPlayer.Thumbnail.GetFile(),
                         LinkPreviewTypeEmbeddedVideoPlayer embeddedVideoPlayer => embeddedVideoPlayer.Thumbnail.GetFile(),
                         LinkPreviewTypeSticker sticker => sticker.Sticker.StickerValue,
                         LinkPreviewTypeVideo video => video.Video.VideoValue,
@@ -1487,6 +1493,7 @@ namespace Telegram.Td.Api
                 LinkPreviewTypeAudio audio => audio.Author,
                 LinkPreviewTypeDocument document => document.Author,
                 LinkPreviewTypeEmbeddedAudioPlayer audioPlayer => audioPlayer.Author,
+                LinkPreviewTypeEmbeddedAnimationPlayer animationPlayer => animationPlayer.Author,
                 LinkPreviewTypeEmbeddedVideoPlayer videoPlayer => videoPlayer.Author,
                 LinkPreviewTypePhoto photo => photo.Author,
                 LinkPreviewTypeVideo video => video.Author,
@@ -1506,6 +1513,7 @@ namespace Telegram.Td.Api
                 LinkPreviewTypeAudio audio => audio.Author,
                 LinkPreviewTypeDocument document => document.Author,
                 LinkPreviewTypeEmbeddedAudioPlayer audioPlayer => audioPlayer.Author,
+                LinkPreviewTypeEmbeddedAnimationPlayer animationPlayer => animationPlayer.Author,
                 LinkPreviewTypeEmbeddedVideoPlayer videoPlayer => videoPlayer.Author,
                 LinkPreviewTypePhoto photo => photo.Author,
                 LinkPreviewTypeVideo video => video.Author,
@@ -1532,27 +1540,23 @@ namespace Telegram.Td.Api
 
         public static bool HasPhoto(this LinkPreview linkPreview)
         {
-            if (linkPreview.ShowLargeMedia)
+            if (linkPreview.Type is LinkPreviewTypeAlbum album)
             {
-                if (linkPreview.Type is LinkPreviewTypeAlbum album)
-                {
-                    return album.Media[0] is LinkPreviewAlbumMediaPhoto;
-                }
-
-                return linkPreview.Type is LinkPreviewTypePhoto
-                    || linkPreview.Type is LinkPreviewTypeEmbeddedAudioPlayer { Thumbnail: not null }
-                    || linkPreview.Type is LinkPreviewTypeEmbeddedVideoPlayer { Thumbnail: not null }
-                    || linkPreview.Type is LinkPreviewTypeApp { Photo: not null }
-                    || linkPreview.Type is LinkPreviewTypeArticle { Photo: not null }
-                    || linkPreview.Type is LinkPreviewTypeChannelBoost { Photo: not null }
-                    || linkPreview.Type is LinkPreviewTypeChat { Photo: not null }
-                    || linkPreview.Type is LinkPreviewTypeSupergroupBoost { Photo: not null }
-                    || linkPreview.Type is LinkPreviewTypeUser { Photo: not null }
-                    || linkPreview.Type is LinkPreviewTypeVideoChat { Photo: not null }
-                    || linkPreview.Type is LinkPreviewTypeWebApp { Photo: not null };
+                return album.Media[0] is LinkPreviewAlbumMediaPhoto;
             }
 
-            return false;
+            return linkPreview.Type is LinkPreviewTypePhoto
+                || linkPreview.Type is LinkPreviewTypeEmbeddedAudioPlayer { Thumbnail: not null }
+                || linkPreview.Type is LinkPreviewTypeEmbeddedAnimationPlayer { Thumbnail: not null }
+                || linkPreview.Type is LinkPreviewTypeEmbeddedVideoPlayer { Thumbnail: not null }
+                || linkPreview.Type is LinkPreviewTypeApp { Photo: not null }
+                || linkPreview.Type is LinkPreviewTypeArticle { Photo: not null }
+                || linkPreview.Type is LinkPreviewTypeChannelBoost { Photo: not null }
+                || linkPreview.Type is LinkPreviewTypeChat { Photo: not null }
+                || linkPreview.Type is LinkPreviewTypeSupergroupBoost { Photo: not null }
+                || linkPreview.Type is LinkPreviewTypeUser { Photo: not null }
+                || linkPreview.Type is LinkPreviewTypeVideoChat { Photo: not null }
+                || linkPreview.Type is LinkPreviewTypeWebApp { Photo: not null };
         }
 
         public static bool CanBeSmall(this LinkPreview linkPreview)
