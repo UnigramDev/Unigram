@@ -25,6 +25,9 @@ namespace Telegram.Views.Popups
         private readonly IClientService _clientService;
         private readonly List<MessageSender> _senders;
 
+        private readonly int _messagesCount;
+        private int _deleteAllCount;
+
         private IList<MessageSender> _reportSpam;
         private IList<MessageSender> _deleteAll;
         private IList<MessageSender> _banUser;
@@ -87,6 +90,15 @@ namespace Telegram.Views.Popups
                 BanUserRoot.Visibility = supergroup.CanRestrictMembers()
                     ? Visibility.Visible
                     : Visibility.Collapsed;
+
+                _messagesCount = messages.Count;
+                clientService.Send(new SearchChatMessages(chat.Id, string.Empty, senders[0], 0, 0, 1, null, 0, 0), result =>
+                {
+                    if (result is FoundChatMessages found)
+                    {
+                        _deleteAllCount = found.TotalCount;
+                    }
+                });
             }
             else
             {
@@ -302,6 +314,14 @@ namespace Telegram.Views.Popups
             else
             {
                 _deleteAll = UpdateSelection(DeleteAllRoot, DeleteAllCount, DeleteAllCheck, DeleteAll_Checked);
+            }
+
+            if (_messagesCount > 0)
+            {
+                var count = DeleteAllCheck.IsChecked == true ? _deleteAllCount : _messagesCount;
+                Title = count == 1
+                    ? Strings.DeleteSingleMessagesTitle
+                    : string.Format(Strings.DeleteMessagesTitle, Locale.Declension(Strings.R.messages, count));
             }
         }
 
