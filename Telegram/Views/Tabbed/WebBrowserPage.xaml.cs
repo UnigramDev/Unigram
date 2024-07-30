@@ -7,12 +7,12 @@ using System.Linq;
 using System.Threading.Tasks;
 using Telegram.Common;
 using Telegram.Navigation;
+using Telegram.Services;
+using Telegram.Views.Host;
 using Windows.System;
-using Windows.UI.Input;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
-using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 
 namespace Telegram.Views.Tabbed
@@ -69,11 +69,11 @@ namespace Telegram.Views.Tabbed
         public IReadOnlyList<HistoryEntry> Entries { get; init; }
     }
 
-    public sealed partial class Web3Page : UserControl
+    public sealed partial class WebBrowserPage : UserControl
     {
-        public static TabViewItem Create(string url)
+        public static TabbedPageItem Create(IClientService clientService, string url)
         {
-            var tabViewItem = new TabViewItem
+            var tabViewItem = new TabbedPageItem
             {
                 IconSource = new Microsoft.UI.Xaml.Controls.SymbolIconSource
                 {
@@ -81,22 +81,25 @@ namespace Telegram.Views.Tabbed
                 }
             };
 
-            tabViewItem.Content = new Web3Page(tabViewItem, url);
+            tabViewItem.Content = new WebBrowserPage(tabViewItem, clientService, url);
             return tabViewItem;
         }
+
+        private readonly IClientService _clientService;
 
         private readonly TabViewItem _owner;
         private readonly string _startUrl;
 
-        private Web3Page(TabViewItem owner, string startUrl)
+        private WebBrowserPage(TabViewItem owner, IClientService clientService, string startUrl)
         {
             InitializeComponent();
 
             _owner = owner;
+            _clientService = clientService;
             _startUrl = startUrl;
             _ = Navigation.EnsureCoreWebView2Async();
 
-            if (TonSite.TryUnmask(startUrl, out Uri navigation))
+            if (TonSite.TryUnmask(clientService, startUrl, out Uri navigation))
             {
                 _owner.Header = navigation.Host + navigation.PathAndQuery + navigation.Fragment;
                 Header.Source = navigation;
@@ -220,20 +223,39 @@ namespace Telegram.Views.Tabbed
             };
 
             sender.CoreWebView2.Navigate(_startUrl);
-            sender.CoreWebView2.DOMContentLoaded += CoreWebView2_DOMContentLoaded;
-            sender.CoreWebView2.NavigationStarting += OnNavigationStarting;
-            sender.CoreWebView2.NavigationCompleted += OnNavigationCompleted;
             sender.CoreWebView2.SourceChanged += OnSourceChanged;
             sender.CoreWebView2.HistoryChanged += OnHistoryChanged;
             sender.CoreWebView2.DocumentTitleChanged += OnDocumentTitleChanged;
             sender.CoreWebView2.FaviconChanged += OnFaviconChanged;
 
+            //sender.CoreWebView2.ContextMenuRequested += OnContextMenuRequested;
             sender.CoreWebView2.NewWindowRequested += OnNewWindowRequested;
         }
 
-        private void CoreWebView2_DOMContentLoaded(CoreWebView2 sender, CoreWebView2DOMContentLoadedEventArgs args)
+        private void OnContextMenuRequested(CoreWebView2 sender, CoreWebView2ContextMenuRequestedEventArgs args)
         {
-            Logger.Info();
+            var flyout = new MenuFlyout();
+
+            foreach (var item in args.MenuItems)
+            {
+                if (item.Kind == CoreWebView2ContextMenuItemKind.Command)
+                {
+                    var element = new MenuFlyoutItem();
+                    element.Text = item.Label;
+                    element.KeyboardAcceleratorTextOverride = item.ShortcutKeyDescription;
+                    element.IsEnabled = item.IsEnabled;
+
+                    flyout.Items.Add(element);
+                }
+                else if (item.Kind == CoreWebView2ContextMenuItemKind.Separator)
+                {
+                    flyout.CreateFlyoutSeparator();
+                }
+            }
+
+            flyout.ShowAt(Navigation, args.Location);
+
+            args.Handled = true;
         }
 
         private async void OnNewWindowRequested(CoreWebView2 sender, CoreWebView2NewWindowRequestedEventArgs args)
@@ -245,19 +267,9 @@ namespace Telegram.Views.Tabbed
             }
         }
 
-        private void OnNavigationStarting(CoreWebView2 sender, CoreWebView2NavigationStartingEventArgs args)
-        {
-            Logger.Info();
-        }
-
-        private void OnNavigationCompleted(CoreWebView2 sender, CoreWebView2NavigationCompletedEventArgs args)
-        {
-            Logger.Info();
-        }
-
         private void OnSourceChanged(CoreWebView2 sender, CoreWebView2SourceChangedEventArgs args)
         {
-            if (TonSite.TryUnmask(sender.Source, out Uri navigation))
+            if (TonSite.TryUnmask(_clientService, sender.Source, out Uri navigation))
             {
                 Header.Source = navigation;
             }
@@ -291,7 +303,7 @@ namespace Telegram.Views.Tabbed
 
         private string GetDocumentTitle(string title)
         {
-            if (TonSite.TryUnmask(title, out Uri navigation))
+            if (TonSite.TryUnmask(_clientService, title, out Uri navigation))
             {
                 return navigation.Host + navigation.PathAndQuery + navigation.Fragment;
             }

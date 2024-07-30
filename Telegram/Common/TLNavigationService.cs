@@ -75,14 +75,14 @@ namespace Telegram.Common
 
             if (response1 is WebPageInstantView instantView)
             {
-                TabViewItem CreateTabViewItem()
+                TabbedPageItem CreateTabViewItem()
                 {
                     var frame = new Frame();
                     var service = new TLNavigationService(ClientService, null, frame, ClientService.SessionId, "InstantView"); // BootStrapper.Current.NavigationServiceFactory(BootStrapper.BackButton.Ignore, frame, _clientService.SessionId, "ciccio", false);
 
                     service.Navigate(typeof(InstantPage), new InstantPageArgs(instantView, url));
 
-                    var tabViewItem = new TabViewItem
+                    var tabViewItem = new TabbedPageItem
                     {
                         Header = "Test",
                         Content = frame,
@@ -105,7 +105,12 @@ namespace Telegram.Common
                     return tabViewItem;
                 }
 
-                NavigateToTab(CreateTabViewItem);
+                NavigateToTab(CreateTabViewItem, new ViewServiceParams
+                {
+                    Width = 820,
+                    Height = 640,
+                    PersistedId = "WebBrowser"
+                });
             }
             else
             {
@@ -118,14 +123,19 @@ namespace Telegram.Common
 
         public void NavigateToWeb3(string url)
         {
-            NavigateToTab(() => Web3Page.Create(url));
+            NavigateToTab(() => WebBrowserPage.Create(ClientService, url), new ViewServiceParams
+            {
+                Width = 820,
+                Height = 640,
+                PersistedId = "WebBrowser"
+            });
         }
 
-        private async void NavigateToTab(Func<TabViewItem> newTab)
+        private async void NavigateToTab(Func<TabbedPageItem> newTab, ViewServiceParams parameters)
         {
             var oldViewId = WindowContext.Current.Id;
 
-            var already = WindowContext.All.FirstOrDefault(x => x.PersistedId == "InstantView");
+            var already = WindowContext.All.FirstOrDefault(x => x.PersistedId == parameters.PersistedId);
             if (already != null)
             {
                 await already.Dispatcher.DispatchAsync(async () =>
@@ -142,10 +152,10 @@ namespace Telegram.Common
             {
                 await OpenAsync(new ViewServiceParams
                 {
-                    Width = 820,
-                    Height = 640,
-                    PersistedId = "InstantView",
-                    Content = control => new TabbedPage(newTab())
+                    Width = parameters.Width,
+                    Height = parameters.Height,
+                    PersistedId = parameters.PersistedId,
+                    Content = control => new TabbedPage(newTab(), string.Equals(parameters.PersistedId, "WebApps"))
                 });
             }
         }

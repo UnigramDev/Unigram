@@ -1231,8 +1231,8 @@
     <Compile Include="Views\Popups\VideoChatStreamsPopup.xaml.cs">
       <DependentUpon>VideoChatStreamsPopup.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\Tabbed\Web3Page.xaml.cs">
-      <DependentUpon>Web3Page.xaml</DependentUpon>
+    <Compile Include="Views\Tabbed\WebBrowserPage.xaml.cs">
+      <DependentUpon>WebBrowserPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\WebAppPage.xaml.cs">
       <DependentUpon>WebAppPage.xaml</DependentUpon>
@@ -3020,7 +3020,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\Tabbed\Web3Page.xaml">
+    <Page Include="Views\Tabbed\WebBrowserPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

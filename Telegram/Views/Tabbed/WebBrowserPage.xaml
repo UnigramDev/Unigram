@@ -1,4 +1,4 @@
-﻿<UserControl x:Class="Telegram.Views.Tabbed.Web3Page"
+﻿<UserControl x:Class="Telegram.Views.Tabbed.WebBrowserPage"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:local="using:Telegram.Views.Tabbed"

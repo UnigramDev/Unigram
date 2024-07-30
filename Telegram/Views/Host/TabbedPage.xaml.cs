@@ -1,4 +1,5 @@
 ﻿using Microsoft.UI.Xaml.Controls;
+using System;
 using Telegram.Navigation;
 using Windows.ApplicationModel.Core;
 using Windows.UI.Xaml;
@@ -6,23 +7,148 @@ using Windows.UI.Xaml.Controls;
 
 namespace Telegram.Views.Host
 {
+    public class TabbedPageItem : TabViewItem
+    {
+        private bool _isBackButtonVisible;
+        public bool IsBackButtonVisible
+        {
+            get => _isBackButtonVisible;
+            set
+            {
+                if (_isBackButtonVisible != value)
+                {
+                    _isBackButtonVisible = value;
+                    IsBackButtonVisibleChanged?.Invoke(this, EventArgs.Empty);
+                }
+            }
+        }
+
+        public event EventHandler IsBackButtonVisibleChanged;
+    }
+
     public sealed partial class TabbedPage : UserControl
     {
-        public TabbedPage(TabViewItem newTab)
+        public TabbedPage(TabbedPageItem newTab, bool forWebApps)
         {
-            this.InitializeComponent();
+            InitializeComponent();
 
             Window.Current.SetTitleBar(Footer);
             BackdropMaterial.SetApplyToRootOrPageBackground(this, true);
 
             var coreTitleBar = CoreApplication.GetCurrentView().TitleBar;
             coreTitleBar.ExtendViewIntoTitleBar = true;
-            coreTitleBar.LayoutMetricsChanged += OnLayoutMetricsChanged;
+
+            if (forWebApps)
+            {
+                //Navigation.IsAddTabButtonVisible = true;
+                //Navigation.AddTabButtonClick += Navigation_AddTabButtonClick;
+                Navigation.TabWidthMode = TabViewWidthMode.Compact;
+
+                Navigation.SelectionChanged += Navigation_SelectionChanged;
+
+                Footer.Width = 46;
+                MenuButton.Visibility = Visibility.Visible;
+                CloseButton.Visibility = Visibility.Visible;
+            }
+            else
+            {
+                MenuButton.Visibility = Visibility.Collapsed;
+                CloseButton.Visibility = Visibility.Collapsed;
+
+                coreTitleBar.LayoutMetricsChanged += OnLayoutMetricsChanged;
+            }
 
             if (newTab != null)
             {
                 Navigation.TabItems.Add(newTab);
+
+                //newTab.IsClosable = false;
+                //newTab.IsBackButtonVisibleChanged += OnIsBackButtonVisibleChanged;
             }
+        }
+
+        private void Navigation_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (e.RemovedItems?.Count > 0 && e.RemovedItems[0] is TabbedPageItem removedItem)
+            {
+                removedItem.IsClosable = false;
+                removedItem.IsBackButtonVisibleChanged -= OnIsBackButtonVisibleChanged;
+            }
+
+            if (e.AddedItems?.Count > 0 && e.AddedItems[0] is TabbedPageItem addedItem)
+            {
+                addedItem.IsClosable = false;
+                addedItem.IsBackButtonVisibleChanged += OnIsBackButtonVisibleChanged;
+
+                OnIsBackButtonVisibleChanged(addedItem, null);
+            }
+        }
+
+        private bool _backButtonCollapsed = true;
+
+        private void OnIsBackButtonVisibleChanged(object sender, EventArgs e)
+        {
+            if (sender is not TabbedPageItem item)
+            {
+                return;
+            }
+
+            MenuButton.IsChecked = item.IsBackButtonVisible;
+
+            //var show = item.IsBackButtonVisible;
+            //if (show != _backButtonCollapsed)
+            //{
+            //    return;
+            //}
+
+            //_backButtonCollapsed = !show;
+            //BackButton.Visibility = Visibility.Visible;
+
+            //var tabContainerGrid = Navigation.GetChild<Grid>(x => x.Name == "TabContainerGrid");
+            //if (tabContainerGrid == null)
+            //{
+            //    return;
+            //}
+
+            //ElementCompositionPreview.SetIsTranslationEnabled(tabContainerGrid, true);
+
+            //var visual1 = ElementComposition.GetElementVisual(BackButton);
+            //var visual2 = ElementComposition.GetElementVisual(tabContainerGrid);
+
+            //var batch = visual1.Compositor.CreateScopedBatch(CompositionBatchTypes.Animation);
+            //batch.Completed += (s, args) =>
+            //{
+            //    visual2.Properties.InsertVector3("Translation", Vector3.Zero);
+            //    BackButton.Visibility = show
+            //        ? Visibility.Visible
+            //        : Visibility.Collapsed;
+            //};
+
+            //var offset = visual1.Compositor.CreateScalarKeyFrameAnimation();
+            //offset.InsertKeyFrame(0, show ? -40 : 0);
+            //offset.InsertKeyFrame(1, show ? 0 : -40);
+            //offset.Duration = Constants.FastAnimation;
+
+            //var scale = Window.Current.Compositor.CreateVector3KeyFrameAnimation();
+            //scale.InsertKeyFrame(show ? 0 : 1, Vector3.Zero);
+            //scale.InsertKeyFrame(show ? 1 : 0, Vector3.One);
+            //scale.Duration = Constants.FastAnimation;
+
+            //var opacity = Window.Current.Compositor.CreateScalarKeyFrameAnimation();
+            //opacity.InsertKeyFrame(show ? 0 : 1, 0);
+            //opacity.InsertKeyFrame(show ? 1 : 0, 1);
+
+            //visual1.CenterPoint = new Vector3(24);
+
+            //visual2.StartAnimation("Translation.X", offset);
+            //visual1.StartAnimation("Scale", scale);
+            //visual1.StartAnimation("Opacity", opacity);
+            //batch.End();
+        }
+
+        private void Navigation_AddTabButtonClick(TabView sender, object args)
+        {
+            throw new System.NotImplementedException();
         }
 
         public void AddNewTab(TabViewItem newTab)
