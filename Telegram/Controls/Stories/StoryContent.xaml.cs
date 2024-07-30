@@ -287,7 +287,9 @@ namespace Telegram.Controls.Stories
 
         private void Update(StoryViewModel story)
         {
-            Subtitle.Text = Locale.FormatRelativeShort(story.Date);
+            Subtitle.Text = story.Date != 0
+                ? Locale.FormatRelativeShort(story.Date)
+                : string.Format("{0}/{1}", 1 + ViewModel.Items.IndexOf(story), ViewModel.Items.Count);
 
             switch (story.PrivacySettings)
             {
@@ -306,7 +308,7 @@ namespace Telegram.Controls.Stories
             }
 
             PrivacyButton.Visibility =
-                Privacy.Visibility = story.PrivacySettings is StoryPrivacySettingsEveryone
+                Privacy.Visibility = story.PrivacySettings is StoryPrivacySettingsEveryone or null
                     ? Visibility.Collapsed
                     : Visibility.Visible;
 

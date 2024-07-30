@@ -44,6 +44,15 @@ namespace Telegram.Controls.Stories
         {
             _viewModel = story;
 
+            if (story.ClientService.TryGetUser(story.ChatId, out User user) && user.Type is UserTypeBot)
+            {
+                Visibility = Visibility.Collapsed;
+            }
+            else
+            {
+                Visibility = Visibility.Visible;
+            }
+
             if (story.Chat.Type is ChatTypeSupergroup)
             {
                 ReplyDisabled.Visibility = Visibility.Collapsed;

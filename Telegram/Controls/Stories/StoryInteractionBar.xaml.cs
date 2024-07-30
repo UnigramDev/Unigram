@@ -39,6 +39,15 @@ namespace Telegram.Controls.Stories
         {
             _viewModel = story;
 
+            if (story.ClientService.TryGetUser(story.ChatId, out User user) && user.Type is UserTypeBot)
+            {
+                Visibility = Visibility.Collapsed;
+            }
+            else
+            {
+                Visibility = Visibility.Visible;
+            }
+
             if (story.InteractionInfo != null)
             {
                 Viewers.Items.ReplaceDiff(story.InteractionInfo.RecentViewerUserIds.Select(x => new MessageSenderUser(x)));

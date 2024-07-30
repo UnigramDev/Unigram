@@ -29,7 +29,7 @@ namespace Telegram.ViewModels.Stories
             StoryId = storyInfo.StoryId;
         }
 
-        public StoryViewModel(IClientService clientService, Story story)
+        public StoryViewModel(IClientService clientService, Story story, bool botPreview = false)
         {
             ClientService = clientService;
 
@@ -38,6 +38,8 @@ namespace Telegram.ViewModels.Stories
 
             Date = story.Date;
             StoryId = story.Id;
+
+            IsBotPreview = botPreview;
 
             Update(story);
         }
@@ -49,6 +51,8 @@ namespace Telegram.ViewModels.Stories
         public Chat Chat { get; private set; }
 
         public int StoryId { get; set; }
+
+        public bool IsBotPreview { get; set; }
 
         public async Task LoadAsync()
         {

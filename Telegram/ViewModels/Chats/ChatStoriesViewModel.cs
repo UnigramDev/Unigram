@@ -212,14 +212,42 @@ namespace Telegram.ViewModels.Chats
         public async Task<LoadMoreItemsResult> LoadMoreItemsAsync(uint count)
         {
             var totalCount = 0u;
+            var canBeEdited = false;
+            var botPreview = false;
 
-            Function function = _type switch
+            Function function;
+            if (ClientService.TryGetUser(_chatId, out User user) && user.Type is UserTypeBot userTypeBot)
             {
-                ChatStoriesType.Archive => new GetChatArchivedStories(_chatId, _fromStoryId, 50),
-                ChatStoriesType.Pinned or _ => new GetChatPostedToChatPageStories(_chatId, _fromStoryId, 50),
-            };
+                canBeEdited = userTypeBot.CanBeEdited;
+                botPreview = true;
+
+                function = new GetBotMediaPreviews(user.Id);
+            }
+            else
+            {
+                function = _type switch
+                {
+                    ChatStoriesType.Archive => new GetChatArchivedStories(_chatId, _fromStoryId, 50),
+                    ChatStoriesType.Pinned or _ => new GetChatPostedToChatPageStories(_chatId, _fromStoryId, 50),
+                };
+            }
 
             var response = await ClientService.SendAsync(function);
+            if (response is BotMediaPreviews previews)
+            {
+                var items = previews.Previews
+                    .Select((x, i) => new Story
+                    {
+                        Id = i,
+                        SenderChatId = _chatId,
+                        Date = x.Date,
+                        Content = x.Content,
+                        CanBeDeleted = canBeEdited
+                    })
+                    .ToList();
+                response = new Td.Api.Stories(0, items, Array.Empty<int>());
+            }
+
             if (response is Td.Api.Stories stories)
             {
                 _pinnedStoryIds = stories.PinnedStoryIds.ToList();
@@ -228,13 +256,13 @@ namespace Telegram.ViewModels.Chats
                 {
                     _fromStoryId = story.Id;
 
-                    Items.Add(new StoryViewModel(ClientService, story));
+                    Items.Add(new StoryViewModel(ClientService, story, botPreview));
                     totalCount++;
                 }
             }
 
             IsEmpty = Items.Count == 0;
-            HasMoreItems = totalCount > 0;
+            HasMoreItems = totalCount > 0 && function is not GetBotMediaPreviews;
 
             return new LoadMoreItemsResult
             {

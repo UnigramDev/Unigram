@@ -136,7 +136,6 @@
                             <ColumnDefinition Width="Auto" />
                         </Grid.ColumnDefinitions>
                         <TextBlock x:Name="Title"
-                                   Text="Bla bla bla"
                                    Foreground="{ThemeResource PageHeaderForegroundBrush}"
                                    Style="{StaticResource BaseTextBlockStyle}"
                                    FontFamily="{ThemeResource EmojiThemeFontFamilyWithSymbols}"
@@ -151,7 +150,6 @@
                     </Grid>
 
                     <TextBlock x:Name="Subtitle"
-                               Text="Bla bla bla"
                                Foreground="{ThemeResource PageHeaderDisabledBrush}"
                                Style="{StaticResource CaptionTextBlockStyle}"
                                TextWrapping="NoWrap"
