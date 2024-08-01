@@ -918,6 +918,8 @@ namespace Telegram.ViewModels
         Contacts,
         PublicChats,
 
+        RecentWebApps,
+        WebApps,
         ChatMembers,
         None
     }

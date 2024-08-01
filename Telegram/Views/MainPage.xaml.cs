@@ -1639,6 +1639,13 @@ namespace Telegram.Views
 
         private void ListView_ItemClick(object sender, ItemClickEventArgs e)
         {
+            if (e == null)
+            {
+                SearchField.Text = string.Empty;
+                Search_LostFocus(null, null);
+                return;
+            }
+
             if (ViewModel.Chats.SelectionMode == ListViewSelectionMode.Multiple && e.ClickedItem is Chat chat)
             {
                 if (ViewModel.Chats.SelectedItems.Contains(chat))
@@ -1683,6 +1690,8 @@ namespace Telegram.Views
             return;
 #endif
 
+            var profile = false;
+
             if (item is TLCallGroup callGroup)
             {
                 item = callGroup.Message;
@@ -1719,6 +1728,8 @@ namespace Telegram.Views
                 {
                     item = result.User;
                 }
+
+                profile = result.Type == SearchResultType.WebApps;
             }
 
             //if (item is TLMessageCommonBase message)
@@ -1759,7 +1770,15 @@ namespace Telegram.Views
                 }
                 else
                 {
-                    MasterDetail.NavigationService.NavigateToChat(chat, force: false, clearBackStack: true);
+                    if (profile)
+                    {
+                        MasterDetail.NavigationService.Navigate(typeof(ProfilePage), chat.Id);
+                    }
+                    else
+                    {
+                        MasterDetail.NavigationService.NavigateToChat(chat, force: false, clearBackStack: true);
+                    }
+
                     HideTopicList();
                 }
             }
@@ -1954,6 +1973,7 @@ namespace Telegram.Views
 
             if (show)
             {
+                DialogsSearchPanel.Update();
                 SearchField.ControlledList = DialogsSearchPanel.Root;
                 Stories.Collapse();
             }

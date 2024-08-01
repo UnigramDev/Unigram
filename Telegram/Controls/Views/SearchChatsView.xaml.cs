@@ -208,6 +208,22 @@ namespace Telegram.Controls.Views
 
         private void OnItemClick(object sender, ItemClickEventArgs e)
         {
+            if (e.ClickedItem is SearchResult result && result.Type == SearchResultType.RecentWebApps)
+            {
+                var user = result.User ?? ViewModel.ClientService.GetUser(result.Chat);
+                if (user == null)
+                {
+                    return;
+                }
+
+                if (user.Type is UserTypeBot { HasMainWebApp: true })
+                {
+                    MessageHelper.NavigateToMainWebApp(ViewModel.ClientService, ViewModel.NavigationService, user, string.Empty);
+                    ItemClick?.Invoke(this, null);
+                    return;
+                }
+            }
+
             ItemClick?.Invoke(this, e);
         }
 

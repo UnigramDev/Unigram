@@ -174,7 +174,7 @@ namespace Telegram.ViewModels
                     {
                         if (_tracker.Filter(chat))
                         {
-                            temp.Add(new SearchResult(ClientService, chat, false));
+                            temp.Add(new SearchResult(ClientService, chat, query, SearchResultType.RecentWebApps, false));
                         }
                     }
                 }
@@ -201,7 +201,7 @@ namespace Telegram.ViewModels
                     {
                         if (_tracker.Filter(user))
                         {
-                            temp.Add(new SearchResult(ClientService, user, query, SearchResultType.Recent, CanSendMessageToUser));
+                            temp.Add(new SearchResult(ClientService, user, query, SearchResultType.WebApps, CanSendMessageToUser));
                         }
                     }
                 }
@@ -252,7 +252,7 @@ namespace Telegram.ViewModels
             {
                 if (_tracker.Filter(savedMessages))
                 {
-                    temp.Add(new SearchResult(ClientService, savedMessages, query, SearchResultType.Chats, CanSendMessageToUser));
+                    temp.Add(new SearchResult(ClientService, savedMessages, query, SearchResultType.WebApps, CanSendMessageToUser));
                 }
             }
 
@@ -263,7 +263,7 @@ namespace Telegram.ViewModels
                 {
                     if (_tracker.Filter(chat))
                     {
-                        temp.Add(new SearchResult(ClientService, chat, query, SearchResultType.Chats, CanSendMessageToUser));
+                        temp.Add(new SearchResult(ClientService, chat, query, SearchResultType.WebApps, CanSendMessageToUser));
                     }
                 }
             }
@@ -299,7 +299,7 @@ namespace Telegram.ViewModels
                     {
                         if (_tracker.Filter(chat))
                         {
-                            _chatsAndContacts.Add(new SearchResult(ClientService, chat, query, SearchResultType.ChatsOnServer, CanSendMessageToUser));
+                            _chatsAndContacts.Add(new SearchResult(ClientService, chat, query, SearchResultType.WebApps, CanSendMessageToUser));
                         }
                     }
                 }
@@ -318,7 +318,7 @@ namespace Telegram.ViewModels
                     if (_tracker.Filter(chat))
                     {
                         //temp.Add(new SearchResult(CanSendMessageToUser ? ClientService : null, chat, query, SearchResultType.PublicChats));
-                        _globalSearch.Add(new SearchResult(ClientService, chat, query, SearchResultType.PublicChats, CanSendMessageToUser));
+                        _globalSearch.Add(new SearchResult(ClientService, chat, query, SearchResultType.WebApps, CanSendMessageToUser));
                     }
                 }
 
