@@ -121,7 +121,7 @@ namespace Telegram.Services
         Task<IDictionary<string, EmojiReaction>> GetAllReactionsAsync();
         Task<IDictionary<string, EmojiReaction>> GetReactionsAsync(IEnumerable<string> reactions);
 
-        Task<IDictionary<long, MessageProperties>> GetMessagePropertiesAsync(long chatId, IEnumerable<long> messageIds);
+        Task<IDictionary<MessageId, MessageProperties>> GetMessagePropertiesAsync(IEnumerable<MessageId> messageIds);
 
         Chat GetChat(long id);
         IEnumerable<Chat> GetChats(IEnumerable<long> ids);
@@ -1440,13 +1440,13 @@ namespace Telegram.Services
             return result;
         }
 
-        public async Task<IDictionary<long, MessageProperties>> GetMessagePropertiesAsync(long chatId, IEnumerable<long> messageIds)
+        public async Task<IDictionary<MessageId, MessageProperties>> GetMessagePropertiesAsync(IEnumerable<MessageId> messageIds)
         {
-            var map = new Dictionary<long, MessageProperties>();
+            var map = new Dictionary<MessageId, MessageProperties>();
 
             foreach (var messageId in messageIds)
             {
-                var properties = await SendAsync(new GetMessageProperties(chatId, messageId)) as MessageProperties;
+                var properties = await SendAsync(new GetMessageProperties(messageId.ChatId, messageId.Id)) as MessageProperties;
                 if (properties != null)
                 {
                     map[messageId] = properties;

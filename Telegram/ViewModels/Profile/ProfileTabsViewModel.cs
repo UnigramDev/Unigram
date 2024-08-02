@@ -102,7 +102,7 @@ namespace Telegram.ViewModels.Profile
 
         private async void OnConnectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
         {
-            var properties = await ClientService.GetMessagePropertiesAsync(SelectedItems[0].ChatId, SelectedItems.Select(x => x.Id));
+            var properties = await ClientService.GetMessagePropertiesAsync(SelectedItems.Select(x => new MessageId(x)));
 
             CanDeleteSelectedMessages = properties.Count > 0 && properties.Values.All(x => x.CanBeDeletedForAllUsers || x.CanBeDeletedOnlyForSelf);
             CanForwardSelectedMessages = properties.Count > 0 && properties.Values.All(x => x.CanBeForwarded);
@@ -489,9 +489,9 @@ namespace Telegram.ViewModels.Profile
             }
 
             var items = messages.Select(x => x.Get()).ToArray();
-            var properties = await ClientService.GetMessagePropertiesAsync(first.ChatId, items.Select(x => x.Id));
+            var properties = await ClientService.GetMessagePropertiesAsync(items.Select(x => new MessageId(x)));
 
-            var updated = items.Where(x => properties.ContainsKey(x.Id)).ToArray();
+            var updated = items.Where(x => properties.ContainsKey(new MessageId(x))).ToArray();
 
             var popup = new DeleteMessagesPopup(ClientService, SavedMessagesTopicId, chat, updated, properties);
 
@@ -576,13 +576,13 @@ namespace Telegram.ViewModels.Profile
         public async void ForwardSelectedMessages()
         {
             var selectedItems = SelectedItems.ToList();
-            var properties = await ClientService.GetMessagePropertiesAsync(selectedItems[0].ChatId, selectedItems.Select(x => x.Id));
+            var properties = await ClientService.GetMessagePropertiesAsync(selectedItems.Select(x => new MessageId(x)));
 
             var messages = properties.Where(x => x.Value.CanBeForwarded).OrderBy(x => x.Key).ToList();
             if (messages.Count > 0)
             {
                 UnselectMessages();
-                await ShowPopupAsync(typeof(ChooseChatsPopup), new ChooseChatsConfigurationShareMessages(selectedItems[0].ChatId, messages.Select(x => x.Key)));
+                await ShowPopupAsync(typeof(ChooseChatsPopup), new ChooseChatsConfigurationShareMessages(messages.Select(x => x.Key)));
             }
         }
 

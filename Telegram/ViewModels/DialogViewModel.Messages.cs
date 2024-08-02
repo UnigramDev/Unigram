@@ -271,9 +271,9 @@ namespace Telegram.ViewModels
             }
 
             var items = messages.Select(x => x.Get()).ToArray();
-            var properties = await ClientService.GetMessagePropertiesAsync(first.ChatId, items.Select(x => x.Id));
+            var properties = await ClientService.GetMessagePropertiesAsync(items.Select(x => new MessageId(x)));
 
-            var updated = items.Where(x => properties.ContainsKey(x.Id)).ToArray();
+            var updated = items.Where(x => properties.ContainsKey(new MessageId(x))).ToArray();
             if (updated.Empty())
             {
                 return;
@@ -325,7 +325,7 @@ namespace Telegram.ViewModels
 
             if (message.Content is MessageAlbum album)
             {
-                await ShowPopupAsync(typeof(ChooseChatsPopup), new ChooseChatsConfigurationShareMessages(message.ChatId, album.Messages.Select(x => x.Id)));
+                await ShowPopupAsync(typeof(ChooseChatsPopup), new ChooseChatsConfigurationShareMessages(album.Messages.Select(x => new MessageId(x))));
             }
             else
             {
@@ -372,14 +372,14 @@ namespace Telegram.ViewModels
         public async void ForwardSelectedMessages()
         {
             var selectedItems = SelectedItems.Values.ToList();
-            var properties = await ClientService.GetMessagePropertiesAsync(selectedItems[0].ChatId, SelectedItems.Keys);
+            var properties = await ClientService.GetMessagePropertiesAsync(selectedItems.Select(x => new MessageId(x)));
 
             var messages = properties.Where(x => x.Value.CanBeForwarded).OrderBy(x => x.Key).ToList();
             if (messages.Count > 0)
             {
                 IsSelectionEnabled = false;
 
-                await ShowPopupAsync(typeof(ChooseChatsPopup), new ChooseChatsConfigurationShareMessages(selectedItems[0].ChatId, messages.Select(x => x.Key)));
+                await ShowPopupAsync(typeof(ChooseChatsPopup), new ChooseChatsConfigurationShareMessages(messages.Select(x => x.Key)));
                 TextField?.Focus(FocusState.Programmatic);
             }
         }

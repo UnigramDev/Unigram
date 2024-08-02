@@ -580,7 +580,7 @@ namespace Telegram.ViewModels
 
             RaisePropertyChanged(nameof(SelectedCount));
 
-            var properties = await ClientService.GetMessagePropertiesAsync(SelectedItems[0].ChatId, SelectedItems.Values.Select(x => x.Id));
+            var properties = await ClientService.GetMessagePropertiesAsync(SelectedItems.Values.Select(x => new MessageId(x)));
 
             CanDeleteSelectedMessages = properties.Count > 0 && properties.Values.All(x => x.CanBeDeletedForAllUsers || x.CanBeDeletedOnlyForSelf);
             CanForwardSelectedMessages = properties.Count > 0 && properties.Values.All(x => x.CanBeForwarded);

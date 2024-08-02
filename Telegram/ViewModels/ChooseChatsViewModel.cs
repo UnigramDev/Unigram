@@ -518,9 +518,11 @@ namespace Telegram.ViewModels
 
                 foreach (var chat in chats)
                 {
-                    ClientService.Send(new ForwardMessages(chat.Id, 0, shareMessages.ChatId, shareMessages.MessageIds, null, _sendAsCopy || _removeCaptions, _removeCaptions));
+                    foreach (var messages in shareMessages.MessageIds.GroupBy(x => x.ChatId))
+                    {
+                        ClientService.Send(new ForwardMessages(chat.Id, 0, messages.Key, messages.Select(x => x.Id).ToList(), null, _sendAsCopy || _removeCaptions, _removeCaptions));
+                    }
                 }
-
             }
             else if (_configuration is ChooseChatsConfigurationShareMessage shareMessage)
             {

@@ -429,15 +429,12 @@ namespace Telegram.Views.Popups
 
     public class ChooseChatsConfigurationShareMessages : ChooseChatsConfiguration
     {
-        public ChooseChatsConfigurationShareMessages(long chatId, IEnumerable<long> messageIds)
+        public ChooseChatsConfigurationShareMessages(IEnumerable<MessageId> messageIds)
         {
-            ChatId = chatId;
             MessageIds = messageIds.ToArray();
         }
 
-        public long ChatId { get; }
-
-        public IList<long> MessageIds { get; }
+        public IList<MessageId> MessageIds { get; }
     }
 
     public class ChooseChatsConfigurationPostLink : ChooseChatsConfiguration
@@ -701,6 +698,7 @@ namespace Telegram.Views.Popups
             var popup = new ChooseChatsPopup();
             popup.Legacy();
             popup.ViewModel.Title = title;
+            popup.ChatFolders.Visibility = Visibility.Collapsed;
 
             var confirm = await popup.PickAsync(Array.Empty<long>(), options, ListViewSelectionMode.Single);
             if (confirm != ContentDialogResult.Primary)
