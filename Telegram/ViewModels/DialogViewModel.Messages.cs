@@ -794,6 +794,8 @@ namespace Telegram.ViewModels
                 {
                     EditMessage(message);
                     HistoryField?.ScrollToItem(message, VerticalAlignment.Center, new MessageBubbleHighlightOptions(false));
+
+                    return;
                 }
             }
         }
