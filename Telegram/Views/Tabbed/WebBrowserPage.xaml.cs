@@ -222,6 +222,9 @@ namespace Telegram.Views.Tabbed
                 _ => CoreWebView2PreferredColorScheme.Auto
             };
 
+            sender.CoreWebView2.Settings.IsStatusBarEnabled = false;
+            sender.CoreWebView2.Settings.AreDevToolsEnabled = SettingsService.Current.Diagnostics.EnableWebViewDevTools;
+
             sender.CoreWebView2.Navigate(_startUrl);
             sender.CoreWebView2.SourceChanged += OnSourceChanged;
             sender.CoreWebView2.HistoryChanged += OnHistoryChanged;

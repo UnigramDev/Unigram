@@ -2104,6 +2104,7 @@
     <Content Include="Assets\Toasts\Error.tgs" />
     <Content Include="Assets\Toasts\Archived.tgs" />
     <Content Include="Assets\Toasts\Premium.tgs" />
+    <Content Include="Assets\Toasts\Gif.tgs" />
     <None Include="Assets\Toasts\Pin.tgs" />
     <None Include="Assets\Toasts\Unpin.tgs" />
     <None Include="Telegram_StoreKey.pfx" />
@@ -3560,7 +3561,7 @@
       <Version>6.2.14</Version>
     </PackageReference>
     <PackageReference Include="Microsoft.UI.Xaml">
-      <Version>2.8.2</Version>
+      <Version>2.8.6</Version>
     </PackageReference>
     <PackageReference Include="Microsoft.Web.WebView2">
       <Version>1.0.2592.51</Version>
@@ -3569,7 +3570,7 @@
       <Version>13.0.3</Version>
     </PackageReference>
     <PackageReference Include="PolySharp">
-      <Version>1.13.2</Version>
+      <Version>1.14.1</Version>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
@@ -3592,14 +3593,14 @@
       <Version>3.3.7</Version>
     </PackageReference>
     <PackageReference Include="Win2D.uwp">
-      <Version>1.26.0</Version>
+      <Version>1.27.1</Version>
     </PackageReference>
     <!-- Used by AppCenter -->
     <PackageReference Include="SQLitePCLRaw.bundle_winsqlite3">
-      <Version>2.1.5</Version>
+      <Version>2.1.8</Version>
     </PackageReference>
     <PackageReference Include="System.Reflection.Metadata">
-      <Version>1.7.0</Version>
+      <Version>8.0.0</Version>
     </PackageReference>
   </ItemGroup>
   <ItemGroup>
@@ -3638,6 +3639,7 @@
     <ReferenceCopyLocalPaths Include="$(ProjectDir)\..\Libraries\rlottie\$(Platform)\RLottie.pri" />
     <!--<ReferenceCopyLocalPaths Condition=" '$(Configuration)' == 'Debug' " Include="$(ProjectDir)\..\Libraries\rlottie\$(Platform)\zlib1.dll" />-->
   </ItemGroup>
+  <ItemGroup />
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">
     <VisualStudioVersion>14.0</VisualStudioVersion>
   </PropertyGroup>

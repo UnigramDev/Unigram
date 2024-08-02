@@ -101,23 +101,23 @@ namespace Telegram
                 args.SetObserved();
             };
 
-            Crashes.UnhandledErrorDetected = () =>
-            {
-                try
-                {
-                    var error = ToException(NativeUtils.GetFatalError(false));
-                    if (error != null)
-                    {
-                        Crashes.TrackCrash(error);
-                    }
+            //Crashes.UnhandledErrorDetected = () =>
+            //{
+            //    try
+            //    {
+            //        var error = ToException(NativeUtils.GetFatalError(false));
+            //        if (error != null)
+            //        {
+            //            Crashes.TrackCrash(error);
+            //        }
 
-                    return null;
-                }
-                catch
-                {
-                    return null;
-                }
-            };
+            //        return null;
+            //    }
+            //    catch
+            //    {
+            //        return null;
+            //    }
+            //};
 
             Crashes.CreatingErrorReport += (s, args) =>
             {

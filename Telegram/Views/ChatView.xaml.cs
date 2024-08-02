@@ -3262,7 +3262,7 @@ namespace Telegram.Views
 
         private bool MessageStatistics_Loaded(MessageViewModel message, MessageProperties properties)
         {
-            return properties.CanGetStatistics;
+            return properties.NeedShowStatistics;
         }
 
         private bool MessageAddSticker_Loaded(MessageViewModel message)

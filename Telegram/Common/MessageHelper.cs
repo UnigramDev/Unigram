@@ -62,27 +62,29 @@ namespace Telegram.Common
 
     public class TonSite
     {
-        public static bool TryCreate(Uri uri, out string magic)
+        public static bool TryCreate(IClientService clientService, Uri uri, out string magic)
         {
             magic = null;
 
             if (string.Equals(uri.Scheme, "tonsite", StringComparison.OrdinalIgnoreCase) || uri.Host.EndsWith(".ton", StringComparison.OrdinalIgnoreCase))
             {
+                var domain = clientService.Config.GetNamedString("ton_proxy_address", "magic.org");
+
                 magic = uri.Host
                     .Replace("-", "-h")
                     .Replace(".", "-d");
-                magic = $"https://{magic}.magic.org" + uri.PathAndQuery + uri.Fragment;
+                magic = $"https://{magic}.{domain}" + uri.PathAndQuery + uri.Fragment;
                 return true;
             }
 
             return false;
         }
 
-        public static bool TryUnmask(string url, out Uri magic)
+        public static bool TryUnmask(IClientService clientService, string url, out Uri magic)
         {
             if (MessageHelper.TryCreateUri(url, out Uri navigation))
             {
-                magic = Unmask(navigation);
+                magic = Unmask(clientService, navigation);
                 return true;
             }
 
@@ -90,12 +92,14 @@ namespace Telegram.Common
             return false;
         }
 
-        public static Uri Unmask(Uri navigation)
+        public static Uri Unmask(IClientService clientService, Uri navigation)
         {
+            var domain = clientService.Config.GetNamedString("ton_proxy_address", "magic.org");
+
             var host = navigation.Host;
-            if (host.EndsWith(".magic.org"))
+            if (host.EndsWith("." + domain))
             {
-                host = host.Replace(".magic.org", string.Empty)
+                host = host.Replace("." + domain, string.Empty)
                     .Replace("-d", ".")
                     .Replace("-h", "-");
             }
@@ -820,16 +824,16 @@ namespace Telegram.Common
                 menuBot = await clientService.SendAsync(new GetAttachmentMenuBot(botUser.Id)) as AttachmentMenuBot;
             }
 
-            var popup = new MessagePopup
-            {
-                Title = Strings.AppName,
-                Message = Strings.BotWebViewStartPermission,
-                PrimaryButtonText = Strings.Start,
-                SecondaryButtonText = Strings.Cancel,
-            };
-
             if (menuBot?.RequestWriteAccess is true)
             {
+                var popup = new MessagePopup
+                {
+                    Title = Strings.AppName,
+                    Message = Strings.BotWebViewStartPermission,
+                    PrimaryButtonText = Strings.Start,
+                    SecondaryButtonText = Strings.Cancel,
+                };
+
                 var textBlock = new TextBlock
                 {
                     TextWrapping = TextWrapping.Wrap
@@ -846,12 +850,12 @@ namespace Telegram.Common
                 }
 
                 popup.CheckBoxLabel = textBlock;
-            }
 
-            var confirm = await popup.ShowQueuedAsync();
-            if (confirm != ContentDialogResult.Primary)
-            {
-                return;
+                var confirm = await popup.ShowQueuedAsync();
+                if (confirm != ContentDialogResult.Primary)
+                {
+                    return;
+                }
             }
 
             var chatId = source switch
@@ -1402,7 +1406,7 @@ namespace Telegram.Common
                 {
                     OpenTelegramUrl(clientService, navigationService, uri, source);
                 }
-                else if (navigationService != null && TonSite.TryCreate(uri, out string magic))
+                else if (clientService != null && navigationService != null && TonSite.TryCreate(clientService, uri, out string magic))
                 {
                     if (navigationService is TLNavigationService tl)
                     {
