@@ -954,6 +954,10 @@ to: {1}</value>
   <data name="ArchivedChats" xml:space="preserve">
     <value>Archived Chats</value>
   </data>
+  <data name="ArchivedEmojiInfo" xml:space="preserve">
+    <value>You can add up to 200 emoji packs.
+Unused packs are archived when you add more.</value>
+  </data>
   <data name="ArchivedEmojiPacks" xml:space="preserve">
     <value>Archived Emoji Packs</value>
   </data>

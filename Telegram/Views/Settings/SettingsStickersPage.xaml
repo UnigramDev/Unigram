@@ -138,12 +138,17 @@
 
                     <controls:SettingsFooter x:Name="ArchivedPanel"
                                              x:Load="{x:Bind IsType(ViewModel.Type, settings:StickersType.Archived)}"
-                                             Text="{CustomResource ArchivedMasksInfo}"
+                                             Text="{CustomResource ArchivedStickersInfo}"
                                              Margin="24,80,24,6" />
 
                     <controls:SettingsFooter x:Name="MasksArchivedPanel"
                                              x:Load="{x:Bind IsType(ViewModel.Type, settings:StickersType.MasksArchived)}"
-                                             Text="{CustomResource ArchivedStickersInfo}"
+                                             Text="{CustomResource ArchivedMasksInfo}"
+                                             Margin="24,80,24,6" />
+
+                    <controls:SettingsFooter x:Name="EmojiArchivedPanel"
+                                             x:Load="{x:Bind IsType(ViewModel.Type, settings:StickersType.EmojiArchived)}"
+                                             Text="{CustomResource ArchivedEmojiInfo}"
                                              Margin="24,80,24,6" />
                 </Grid>
             </ListView.Header>
