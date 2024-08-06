@@ -578,7 +578,7 @@ namespace Telegram.ViewModels.Profile
             var selectedItems = SelectedItems.ToList();
             var properties = await ClientService.GetMessagePropertiesAsync(selectedItems.Select(x => new MessageId(x)));
 
-            var messages = properties.Where(x => x.Value.CanBeForwarded).OrderBy(x => x.Key).ToList();
+            var messages = properties.Where(x => x.Value.CanBeForwarded).OrderBy(x => x.Key.Id).ToList();
             if (messages.Count > 0)
             {
                 UnselectMessages();
