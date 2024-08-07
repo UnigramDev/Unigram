@@ -7,28 +7,29 @@ using Windows.UI.Xaml.Controls;
 
 namespace Telegram.Views.Host
 {
-    public class TabbedPageItem : TabViewItem
-    {
-        private bool _isBackButtonVisible;
-        public bool IsBackButtonVisible
-        {
-            get => _isBackButtonVisible;
-            set
-            {
-                if (_isBackButtonVisible != value)
-                {
-                    _isBackButtonVisible = value;
-                    IsBackButtonVisibleChanged?.Invoke(this, EventArgs.Empty);
-                }
-            }
-        }
+    // TODO: Inheriting from TabViewItem causes TabView to throw E_INVALIDARG in release.
+    //public class TabbedPageItem : TabViewItem
+    //{
+    //    private bool _isBackButtonVisible;
+    //    public bool IsBackButtonVisible
+    //    {
+    //        get => _isBackButtonVisible;
+    //        set
+    //        {
+    //            if (_isBackButtonVisible != value)
+    //            {
+    //                _isBackButtonVisible = value;
+    //                IsBackButtonVisibleChanged?.Invoke(this, EventArgs.Empty);
+    //            }
+    //        }
+    //    }
 
-        public event EventHandler IsBackButtonVisibleChanged;
-    }
+    //    public event EventHandler IsBackButtonVisibleChanged;
+    //}
 
     public sealed partial class TabbedPage : UserControl
     {
-        public TabbedPage(TabbedPageItem newTab, bool forWebApps)
+        public TabbedPage(TabViewItem newTab, bool forWebApps)
         {
             InitializeComponent();
 
@@ -69,31 +70,31 @@ namespace Telegram.Views.Host
 
         private void Navigation_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            if (e.RemovedItems?.Count > 0 && e.RemovedItems[0] is TabbedPageItem removedItem)
-            {
-                removedItem.IsClosable = false;
-                removedItem.IsBackButtonVisibleChanged -= OnIsBackButtonVisibleChanged;
-            }
+            //if (e.RemovedItems?.Count > 0 && e.RemovedItems[0] is TabbedPageItem removedItem)
+            //{
+            //    removedItem.IsClosable = false;
+            //    removedItem.IsBackButtonVisibleChanged -= OnIsBackButtonVisibleChanged;
+            //}
 
-            if (e.AddedItems?.Count > 0 && e.AddedItems[0] is TabbedPageItem addedItem)
-            {
-                addedItem.IsClosable = false;
-                addedItem.IsBackButtonVisibleChanged += OnIsBackButtonVisibleChanged;
+            //if (e.AddedItems?.Count > 0 && e.AddedItems[0] is TabbedPageItem addedItem)
+            //{
+            //    addedItem.IsClosable = false;
+            //    addedItem.IsBackButtonVisibleChanged += OnIsBackButtonVisibleChanged;
 
-                OnIsBackButtonVisibleChanged(addedItem, null);
-            }
+            //    OnIsBackButtonVisibleChanged(addedItem, null);
+            //}
         }
 
         private bool _backButtonCollapsed = true;
 
         private void OnIsBackButtonVisibleChanged(object sender, EventArgs e)
         {
-            if (sender is not TabbedPageItem item)
-            {
-                return;
-            }
+            //if (sender is not TabbedPageItem item)
+            //{
+            //    return;
+            //}
 
-            MenuButton.IsChecked = item.IsBackButtonVisible;
+            //MenuButton.IsChecked = item.IsBackButtonVisible;
 
             //var show = item.IsBackButtonVisible;
             //if (show != _backButtonCollapsed)

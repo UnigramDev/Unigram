@@ -70,19 +70,17 @@ namespace Telegram.Common
 
         public async void NavigateToInstant(string url, string fallbackUrl = null)
         {
-            var response1 = await ClientService.SendAsync(new GetWebPageInstantView(url, true));
-            var response2 = await ClientService.SendAsync(new GetLinkPreview(new FormattedText(url, Array.Empty<TextEntity>()), null));
-
-            if (response1 is WebPageInstantView instantView)
+            var response = await ClientService.SendAsync(new GetWebPageInstantView(url, true));
+            if (response is WebPageInstantView instantView)
             {
-                TabbedPageItem CreateTabViewItem()
+                TabViewItem CreateTabViewItem()
                 {
                     var frame = new Frame();
                     var service = new TLNavigationService(ClientService, null, frame, ClientService.SessionId, "InstantView"); // BootStrapper.Current.NavigationServiceFactory(BootStrapper.BackButton.Ignore, frame, _clientService.SessionId, "ciccio", false);
 
                     service.Navigate(typeof(InstantPage), new InstantPageArgs(instantView, url));
 
-                    var tabViewItem = new TabbedPageItem
+                    var tabViewItem = new TabViewItem
                     {
                         Header = "Test",
                         Content = frame,
@@ -131,7 +129,7 @@ namespace Telegram.Common
             });
         }
 
-        private async void NavigateToTab(Func<TabbedPageItem> newTab, ViewServiceParams parameters)
+        private async void NavigateToTab(Func<TabViewItem> newTab, ViewServiceParams parameters)
         {
             var oldViewId = WindowContext.Current.Id;
 

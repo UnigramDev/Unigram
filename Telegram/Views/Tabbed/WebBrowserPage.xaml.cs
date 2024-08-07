@@ -8,7 +8,6 @@ using System.Threading.Tasks;
 using Telegram.Common;
 using Telegram.Navigation;
 using Telegram.Services;
-using Telegram.Views.Host;
 using Windows.System;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -71,9 +70,9 @@ namespace Telegram.Views.Tabbed
 
     public sealed partial class WebBrowserPage : UserControl
     {
-        public static TabbedPageItem Create(IClientService clientService, string url)
+        public static TabViewItem Create(IClientService clientService, string url)
         {
-            var tabViewItem = new TabbedPageItem
+            var tabViewItem = new TabViewItem
             {
                 IconSource = new Microsoft.UI.Xaml.Controls.SymbolIconSource
                 {
