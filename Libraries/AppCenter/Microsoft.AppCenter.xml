@@ -28,6 +28,20 @@
             </summary>
             <param name="countryCode">The two-letter ISO country code. See <see href="https://www.iso.org/obp/ui/#search"/> for more information.</param>
         </member>
+        <member name="M:Microsoft.AppCenter.AppCenter.SetDataResidencyRegion(System.String)">
+            <summary>
+            Sets the data residency region to send to the backend.
+            </summary>
+            <param> name="dataResidencyRegion">The data residency region code.
+            Verify list of supported regions on [link]. Value outside of supported range is treated as ANY.
+            </param>
+        </member>
+        <member name="M:Microsoft.AppCenter.AppCenter.GetDataResidencyRegion">
+            <summary>
+            Return the data residency region.
+            </summary>
+            <returns>Data residency region code if set, otherwise null.</returns>
+        </member>
         <member name="M:Microsoft.AppCenter.AppCenter.SetUserId(System.String)">
             <summary>
                 Set the custom user id.
@@ -124,6 +138,13 @@
             Sets the two-letter ISO country code to send to the backend.
             </summary>
             <param name="countryCode">The two-letter ISO country code. See <see href="https://www.iso.org/obp/ui/#search"/> for more information.</param>
+        </member>
+        <!-- Badly formed XML comment ignored for member "M:Microsoft.AppCenter.AppCenter.PlatformSetDataResidencyRegion(System.String)" -->
+        <member name="M:Microsoft.AppCenter.AppCenter.PlatformGetDataResidencyRegion">
+            <summary>
+            Get the data residency region.
+            </summary>
+            <returns>Data residency region code.</returns>
         </member>
         <member name="M:Microsoft.AppCenter.AppCenter.SetWrapperSdk(Microsoft.AppCenter.WrapperSdk)">
             <summary>
@@ -482,7 +503,7 @@
             Initializes a new instance of the Log class.
             </summary>
         </member>
-        <member name="M:Microsoft.AppCenter.Ingestion.Models.Log.#ctor(Microsoft.AppCenter.Ingestion.Models.Device,System.Nullable{System.DateTime},System.Nullable{System.Guid},System.String)">
+        <member name="M:Microsoft.AppCenter.Ingestion.Models.Log.#ctor(Microsoft.AppCenter.Ingestion.Models.Device,System.Nullable{System.DateTime},System.Nullable{System.Guid},System.String,System.String)">
             <summary>
             Initializes a new instance of the Log class.
             </summary>
@@ -499,6 +520,8 @@
             </param>
             <param name="userId">optional string used for associating logs with
             users.
+            </param>
+            <param name="dataResidencyRegion">optional string used for specify data residency region.
             </param>
         </member>
         <member name="P:Microsoft.AppCenter.Ingestion.Models.Log.Timestamp">
@@ -528,6 +551,12 @@
         <member name="P:Microsoft.AppCenter.Ingestion.Models.Log.Device">
             <summary>
             </summary>
+        </member>
+        <member name="P:Microsoft.AppCenter.Ingestion.Models.Log.DataResidencyRegion">
+             <summary>
+             Gets or sets optional string used for specify data residency region.
+            
+             </summary>
         </member>
         <member name="M:Microsoft.AppCenter.Ingestion.Models.Log.Validate">
             <summary>
@@ -566,7 +595,7 @@
             Initializes a new instance of the LogWithProperties class.
             </summary>
         </member>
-        <member name="M:Microsoft.AppCenter.Ingestion.Models.LogWithProperties.#ctor(Microsoft.AppCenter.Ingestion.Models.Device,System.Nullable{System.DateTime},System.Nullable{System.Guid},System.String,System.Collections.Generic.IDictionary{System.String,System.String})">
+        <member name="M:Microsoft.AppCenter.Ingestion.Models.LogWithProperties.#ctor(Microsoft.AppCenter.Ingestion.Models.Device,System.Nullable{System.DateTime},System.Nullable{System.Guid},System.String,System.String,System.Collections.Generic.IDictionary{System.String,System.String})">
             <summary>
             Initializes a new instance of the LogWithProperties class.
             </summary>
@@ -584,6 +613,7 @@
             <param name="userId">optional string used for associating logs with
             users.
             </param>
+            <param name="dataResidencyRegion">The data residency region code.</param>
             <param name="properties">Additional key/value pair parameters.
             </param>
         </member>
@@ -611,7 +641,7 @@
             Initializes a new instance of the StartServiceLog class.
             </summary>
         </member>
-        <member name="M:Microsoft.AppCenter.Ingestion.Models.StartServiceLog.#ctor(Microsoft.AppCenter.Ingestion.Models.Device,System.Nullable{System.DateTime},System.Nullable{System.Guid},System.Collections.Generic.IList{System.String})">
+        <member name="M:Microsoft.AppCenter.Ingestion.Models.StartServiceLog.#ctor(Microsoft.AppCenter.Ingestion.Models.Device,System.Nullable{System.DateTime},System.Nullable{System.Guid},System.Collections.Generic.IList{System.String},System.String)">
             <summary>
             Initializes a new instance of the StartServiceLog class.
             </summary>
@@ -628,6 +658,7 @@
             </param>
             <param name="services">The list of services of the MobileCenter
             Start API call.</param>
+            <param name="dataResidencyRegion">The data residency region code.</param>
         </member>
         <member name="P:Microsoft.AppCenter.Ingestion.Models.StartServiceLog.Services">
             <summary>

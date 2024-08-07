@@ -77,7 +77,7 @@
             Initializes a new instance of the EventLog class.
             </summary>
         </member>
-        <member name="M:Microsoft.AppCenter.Analytics.Ingestion.Models.EventLog.#ctor(Microsoft.AppCenter.Ingestion.Models.Device,System.Guid,System.String,System.Nullable{System.DateTime},System.Nullable{System.Guid},System.String,System.Collections.Generic.IDictionary{System.String,System.String})">
+        <member name="M:Microsoft.AppCenter.Analytics.Ingestion.Models.EventLog.#ctor(Microsoft.AppCenter.Ingestion.Models.Device,System.Guid,System.String,System.Nullable{System.DateTime},System.Nullable{System.Guid},System.String,System.String,System.Collections.Generic.IDictionary{System.String,System.String})">
             <summary>
             Initializes a new instance of the EventLog class.
             </summary>
@@ -99,6 +99,7 @@
             <param name="userId">optional string used for associating logs with
             users.
             </param>
+            <param name="dataResidencyRegion">The data residency region code.</param>
             <param name="properties">Additional key/value pair parameters.
             </param>
         </member>
@@ -132,7 +133,7 @@
             Initializes a new instance of the PageLog class.
             </summary>
         </member>
-        <member name="M:Microsoft.AppCenter.Analytics.Ingestion.Models.PageLog.#ctor(Microsoft.AppCenter.Ingestion.Models.Device,System.String,System.Nullable{System.DateTime},System.Nullable{System.Guid},System.String,System.Collections.Generic.IDictionary{System.String,System.String})">
+        <member name="M:Microsoft.AppCenter.Analytics.Ingestion.Models.PageLog.#ctor(Microsoft.AppCenter.Ingestion.Models.Device,System.String,System.Nullable{System.DateTime},System.Nullable{System.Guid},System.String,System.String,System.Collections.Generic.IDictionary{System.String,System.String})">
             <summary>
             Initializes a new instance of the PageLog class.
             </summary>
@@ -152,6 +153,7 @@
             <param name="userId">optional string used for associating logs with
             users.
             </param>
+            <param name="dataResidencyRegion">The data residency region code.</param>
             <param name="properties">Additional key/value pair parameters.
             </param>
         </member>
@@ -180,7 +182,7 @@
             Initializes a new instance of the StartSessionLog class.
             </summary>
         </member>
-        <member name="M:Microsoft.AppCenter.Analytics.Ingestion.Models.StartSessionLog.#ctor(Microsoft.AppCenter.Ingestion.Models.Device,System.Nullable{System.DateTime},System.Nullable{System.Guid})">
+        <member name="M:Microsoft.AppCenter.Analytics.Ingestion.Models.StartSessionLog.#ctor(Microsoft.AppCenter.Ingestion.Models.Device,System.Nullable{System.DateTime},System.Nullable{System.Guid},System.String)">
             <summary>
             Initializes a new instance of the StartSessionLog class.
             </summary>
@@ -195,6 +197,7 @@
             Concrete types like StartSessionLog or PageLog are always part of a
             session and always include this identifier.
             </param>
+            <param name="dataResidencyRegion">The data residency region code.</param>
         </member>
         <member name="M:Microsoft.AppCenter.Analytics.Ingestion.Models.StartSessionLog.Validate">
             <summary>

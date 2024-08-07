@@ -685,7 +685,7 @@
             Initializes a new instance of the AbstractErrorLog class.
             </summary>
         </member>
-        <member name="M:Microsoft.AppCenter.Crashes.Ingestion.Models.AbstractErrorLog.#ctor(Microsoft.AppCenter.Ingestion.Models.Device,System.Guid,System.Int32,System.String,System.Boolean,System.Nullable{System.DateTime},System.Nullable{System.Guid},System.String,System.Nullable{System.Int32},System.String,System.Nullable{System.Int64},System.String,System.Nullable{System.DateTime},System.String)">
+        <member name="M:Microsoft.AppCenter.Crashes.Ingestion.Models.AbstractErrorLog.#ctor(Microsoft.AppCenter.Ingestion.Models.Device,System.Guid,System.Int32,System.String,System.Boolean,System.Nullable{System.DateTime},System.Nullable{System.Guid},System.String,System.String,System.Nullable{System.Int32},System.String,System.Nullable{System.Int64},System.String,System.Nullable{System.DateTime},System.String)">
             <summary>
             Initializes a new instance of the AbstractErrorLog class.
             </summary>
@@ -710,6 +710,7 @@
             <param name="userId">optional string used for associating logs with
             users.
             </param>
+            <param name="dataResidencyRegion">The data residency region code.</param>
             <param name="parentProcessId">Parent's process identifier.</param>
             <param name="parentProcessName">Parent's process name.</param>
             <param name="errorThreadId">Error thread identifier.</param>
@@ -921,7 +922,7 @@
             Initializes a new instance of the HandledErrorLog class.
             </summary>
         </member>
-        <member name="M:Microsoft.AppCenter.Crashes.Ingestion.Models.HandledErrorLog.#ctor(Microsoft.AppCenter.Ingestion.Models.Device,Microsoft.AppCenter.Crashes.Ingestion.Models.Exception,System.Nullable{System.DateTime},System.Nullable{System.Guid},System.String,System.Collections.Generic.IDictionary{System.String,System.String},System.Nullable{System.Guid},System.Collections.Generic.IList{Microsoft.AppCenter.Crashes.Ingestion.Models.Binary})">
+        <member name="M:Microsoft.AppCenter.Crashes.Ingestion.Models.HandledErrorLog.#ctor(Microsoft.AppCenter.Ingestion.Models.Device,Microsoft.AppCenter.Crashes.Ingestion.Models.Exception,System.Nullable{System.DateTime},System.Nullable{System.Guid},System.String,System.String,System.Collections.Generic.IDictionary{System.String,System.String},System.Nullable{System.Guid},System.Collections.Generic.IList{Microsoft.AppCenter.Crashes.Ingestion.Models.Binary})">
             <summary>
             Initializes a new instance of the HandledErrorLog class.
             </summary>
@@ -939,6 +940,7 @@
             <param name="userId">optional string used for associating logs with
             users.
             </param>
+            <param name="dataResidencyRegion">The data residency region code.</param>
             <param name="properties">Additional key/value pair parameters.
             </param>
             <param name="id">Unique identifier for this Error.
@@ -976,7 +978,7 @@
             Initializes a new instance of the ManagedErrorLog class.
             </summary>
         </member>
-        <member name="M:Microsoft.AppCenter.Crashes.Ingestion.Models.ManagedErrorLog.#ctor(Microsoft.AppCenter.Ingestion.Models.Device,System.Guid,System.Int32,System.String,System.Boolean,Microsoft.AppCenter.Crashes.Ingestion.Models.Exception,System.Nullable{System.DateTime},System.Nullable{System.Guid},System.String,System.Nullable{System.Int32},System.String,System.Nullable{System.Int64},System.String,System.Nullable{System.DateTime},System.String,System.Collections.Generic.IList{Microsoft.AppCenter.Crashes.Ingestion.Models.Binary},System.String)">
+        <member name="M:Microsoft.AppCenter.Crashes.Ingestion.Models.ManagedErrorLog.#ctor(Microsoft.AppCenter.Ingestion.Models.Device,System.Guid,System.Int32,System.String,System.Boolean,Microsoft.AppCenter.Crashes.Ingestion.Models.Exception,System.Nullable{System.DateTime},System.Nullable{System.Guid},System.String,System.String,System.Nullable{System.Int32},System.String,System.Nullable{System.Int64},System.String,System.Nullable{System.DateTime},System.String,System.Collections.Generic.IList{Microsoft.AppCenter.Crashes.Ingestion.Models.Binary},System.String)">
             <summary>
             Initializes a new instance of the ManagedErrorLog class.
             </summary>
@@ -1001,6 +1003,7 @@
             <param name="userId">optional string used for associating logs with
             users.
             </param>
+            <param name="dataResidencyRegion">The data residency region code.</param>
             <param name="parentProcessId">Parent's process identifier.</param>
             <param name="parentProcessName">Parent's process name.</param>
             <param name="errorThreadId">Error thread identifier.</param>
