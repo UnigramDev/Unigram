@@ -85,12 +85,13 @@ namespace Telegram.Controls.Cells.Revenue
             }
             else if (transaction.Partner is StarTransactionPartnerChannel sourceChannel && clientService.TryGetChat(sourceChannel.ChatId, out Chat chat))
             {
-                Title.Text = Strings.StarMediaPurchase;
                 Subtitle.Text = chat.Title;
                 Subtitle.Visibility = Windows.UI.Xaml.Visibility.Visible;
 
                 if (sourceChannel.Purpose is ChannelTransactionPurposePaidMedia paidMedia)
                 {
+                    Title.Text = Strings.StarMediaPurchase;
+
                     MediaPreview.Visibility = Windows.UI.Xaml.Visibility.Visible;
 
                     UpdateMedia(clientService, paidMedia.Media[0], Media1, ref _media1Token);
@@ -105,6 +106,14 @@ namespace Telegram.Controls.Cells.Revenue
                     {
                         Media2.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
                     }
+                }
+                else if (sourceChannel.Purpose is ChannelTransactionPurposeReaction)
+                {
+                    Title.Text = Strings.StarsReactionsSent;
+
+                    Photo.SetChat(clientService, chat, 36);
+
+                    MediaPreview.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
                 }
             }
             else

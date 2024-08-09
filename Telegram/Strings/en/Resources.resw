@@ -9297,6 +9297,9 @@ The channel &quot;**{1}**&quot; will become private.</value>
   <data name="StarsPurchaseCompletedInfo_other" xml:space="preserve">
     <value>You acquired &quot;**{1}**&quot; in **{2}** for **{0} Stars**.</value>
   </data>
+  <data name="StarsReactionsSent" xml:space="preserve">
+    <value>Star Reaction</value>
+  </data>
   <data name="StarsRefunded" xml:space="preserve">
     <value>Refund</value>
   </data>

@@ -149,11 +149,12 @@ namespace Telegram.Views.Stars.Popups
                 FromTitle.Text = chat.Title;
                 FromHeader.Text = Strings.StarsTransactionRecipient;
 
-                Title.Text = Strings.StarMediaPurchase;
                 Subtitle.Visibility = Visibility.Collapsed;
 
                 if (sourceChannel.Purpose is ChannelTransactionPurposePaidMedia paidMedia)
                 {
+                    Title.Text = Strings.StarMediaPurchase;
+
                     MediaPreview.Visibility = Windows.UI.Xaml.Visibility.Visible;
 
                     UpdateMedia(clientService, paidMedia.Media[0], Media1, ref _media1Token);
@@ -170,6 +171,13 @@ namespace Telegram.Views.Stars.Popups
                         Media1.HorizontalAlignment = Windows.UI.Xaml.HorizontalAlignment.Center;
                         Media1.HorizontalAlignment = Windows.UI.Xaml.HorizontalAlignment.Center;
                     }
+                }
+                else if (sourceChannel.Purpose is ChannelTransactionPurposeReaction)
+                {
+                    Title.Text = chat.Title;
+                    Photo.SetChat(clientService, chat, 120);
+
+                    MediaPreview.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
                 }
             }
             else
