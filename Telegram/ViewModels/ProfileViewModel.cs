@@ -140,7 +140,7 @@ namespace Telegram.ViewModels
                 {
                     async void UpdateStarCount()
                     {
-                        var response = await ClientService.GetStarTransactionsAsync(new MessageSenderUser(item.Id), null, string.Empty, 1);
+                        var response = await ClientService.GetStarTransactionsAsync(new MessageSenderUser(item.Id), string.Empty, null, string.Empty, 1);
                         if (response is StarTransactions transactions)
                         {
                             StarCount = transactions.StarCount;

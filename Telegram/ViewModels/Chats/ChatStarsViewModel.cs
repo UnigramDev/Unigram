@@ -263,7 +263,7 @@ namespace Telegram.ViewModels.Chats
         {
             var totalCount = 0u;
 
-            var response = await ClientService.GetStarTransactionsAsync(_ownerId, null, _nextOffset, 20);
+            var response = await ClientService.GetStarTransactionsAsync(_ownerId, string.Empty, null, _nextOffset, 20);
             if (response is StarTransactions transactions)
             {
                 foreach (var transaction in transactions.Transactions)

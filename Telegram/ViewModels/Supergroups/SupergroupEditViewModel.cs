@@ -252,7 +252,7 @@ namespace Telegram.ViewModels.Supergroups
 
                 if (item.IsChannel && _isSignatures != item.SignMessages)
                 {
-                    var response = await ClientService.SendAsync(new ToggleSupergroupSignMessages(item.Id, _isSignatures));
+                    var response = await ClientService.SendAsync(new ToggleSupergroupSignMessages(item.Id, _isSignatures, false));
                     if (response is Error)
                     {
                         // TODO:

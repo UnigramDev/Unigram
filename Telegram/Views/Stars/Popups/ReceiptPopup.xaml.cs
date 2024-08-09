@@ -152,21 +152,24 @@ namespace Telegram.Views.Stars.Popups
                 Title.Text = Strings.StarMediaPurchase;
                 Subtitle.Visibility = Visibility.Collapsed;
 
-                MediaPreview.Visibility = Windows.UI.Xaml.Visibility.Visible;
-
-                UpdateMedia(clientService, sourceChannel.Media[0], Media1, ref _media1Token);
-
-                if (sourceChannel.Media.Count > 1)
+                if (sourceChannel.Purpose is ChannelTransactionPurposePaidMedia paidMedia)
                 {
-                    UpdateMedia(clientService, sourceChannel.Media[1], Media2, ref _media2Token);
+                    MediaPreview.Visibility = Windows.UI.Xaml.Visibility.Visible;
 
-                    Media2.Visibility = Windows.UI.Xaml.Visibility.Visible;
-                }
-                else
-                {
-                    Media2.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
-                    Media1.HorizontalAlignment = Windows.UI.Xaml.HorizontalAlignment.Center;
-                    Media1.HorizontalAlignment = Windows.UI.Xaml.HorizontalAlignment.Center;
+                    UpdateMedia(clientService, paidMedia.Media[0], Media1, ref _media1Token);
+
+                    if (paidMedia.Media.Count > 1)
+                    {
+                        UpdateMedia(clientService, paidMedia.Media[1], Media2, ref _media2Token);
+
+                        Media2.Visibility = Windows.UI.Xaml.Visibility.Visible;
+                    }
+                    else
+                    {
+                        Media2.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
+                        Media1.HorizontalAlignment = Windows.UI.Xaml.HorizontalAlignment.Center;
+                        Media1.HorizontalAlignment = Windows.UI.Xaml.HorizontalAlignment.Center;
+                    }
                 }
             }
             else
@@ -361,12 +364,12 @@ namespace Telegram.Views.Stars.Popups
                 return result;
             }
 
-            if (_transaction.Partner is not StarTransactionPartnerChannel channel)
+            if (_transaction.Partner is not StarTransactionPartnerChannel { Purpose: ChannelTransactionPurposePaidMedia paidMedia })
             {
                 return;
             }
 
-            var items = channel.Media
+            var items = paidMedia.Media
                 .Select(Filter)
                 .Where(x => x is not null)
                 .ToList();

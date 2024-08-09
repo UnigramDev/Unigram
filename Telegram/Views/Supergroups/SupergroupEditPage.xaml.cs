@@ -191,7 +191,7 @@ namespace Telegram.Views.Supergroups
                 else
                 {
                     InviteLinkPanel.Visibility = Visibility.Collapsed;
-                    ViewModel.ClientService.Send(new CreateChatInviteLink(chat.Id, string.Empty, 0, 0, false));
+                    ViewModel.ClientService.Send(new CreateChatInviteLink(chat.Id, string.Empty, 0, 0, false, null));
                 }
             }
             else
@@ -269,7 +269,7 @@ namespace Telegram.Views.Supergroups
                 if (fullInfo.InviteLink == null)
                 {
                     InviteLinkPanel.Visibility = Visibility.Collapsed;
-                    ViewModel.ClientService.Send(new CreateChatInviteLink(chat.Id, string.Empty, 0, 0, false));
+                    ViewModel.ClientService.Send(new CreateChatInviteLink(chat.Id, string.Empty, 0, 0, false, null));
                 }
                 else
                 {

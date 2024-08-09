@@ -53,7 +53,7 @@ namespace Telegram.Services
 
         Task<IList<SavedMessagesTopic>> GetSavedMessagesChatsAsync(int offset, int limit);
 
-        Task<BaseObject> GetStarTransactionsAsync(MessageSender ownerId, StarTransactionDirection direction, string offset, int limit);
+        Task<BaseObject> GetStarTransactionsAsync(MessageSender ownerId, string subscriptionId, StarTransactionDirection direction, string offset, int limit);
 
         Sticker NextGreetingSticker();
 
@@ -969,9 +969,9 @@ namespace Telegram.Services
         }
 
 
-        public async Task<BaseObject> GetStarTransactionsAsync(MessageSender ownerId, StarTransactionDirection direction, string offset, int limit)
+        public async Task<BaseObject> GetStarTransactionsAsync(MessageSender ownerId, string subscriptionId, StarTransactionDirection direction, string offset, int limit)
         {
-            var response = await SendAsync(new GetStarTransactions(ownerId, direction, offset, limit));
+            var response = await SendAsync(new GetStarTransactions(ownerId, subscriptionId, direction, offset, limit));
             if (response is StarTransactions transactions)
             {
                 if (ownerId == null || ownerId.IsUser(Options.MyId))

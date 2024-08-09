@@ -457,6 +457,13 @@ namespace Telegram.Services
                     ProcessFiles(businessStartPage.Sticker);
                 }
             }
+            else if (target is ChannelTransactionPurposePaidMedia channelTransactionPurposePaidMedia)
+            {
+                foreach (var item in channelTransactionPurposePaidMedia.Media)
+                {
+                    ProcessFiles(item);
+                }
+            }
             else if (target is Chat chat)
             {
                 if (chat.Background != null)
@@ -2099,9 +2106,9 @@ namespace Telegram.Services
             }
             else if (target is StarTransactionPartnerChannel starTransactionPartnerChannel)
             {
-                foreach (var item in starTransactionPartnerChannel.Media)
+                if (starTransactionPartnerChannel.Purpose != null)
                 {
-                    ProcessFiles(item);
+                    ProcessFiles(starTransactionPartnerChannel.Purpose);
                 }
             }
             else if (target is StarTransactionPartnerUser starTransactionPartnerUser)
@@ -2292,6 +2299,13 @@ namespace Telegram.Services
             else if (target is TrendingStickerSets trendingStickerSets)
             {
                 foreach (var item in trendingStickerSets.Sets)
+                {
+                    ProcessFiles(item);
+                }
+            }
+            else if (target is UpdateActiveLiveLocationMessages updateActiveLiveLocationMessages)
+            {
+                foreach (var item in updateActiveLiveLocationMessages.Messages)
                 {
                     ProcessFiles(item);
                 }

@@ -89,19 +89,22 @@ namespace Telegram.Controls.Cells.Revenue
                 Subtitle.Text = chat.Title;
                 Subtitle.Visibility = Windows.UI.Xaml.Visibility.Visible;
 
-                MediaPreview.Visibility = Windows.UI.Xaml.Visibility.Visible;
-
-                UpdateMedia(clientService, sourceChannel.Media[0], Media1, ref _media1Token);
-
-                if (sourceChannel.Media.Count > 1)
+                if (sourceChannel.Purpose is ChannelTransactionPurposePaidMedia paidMedia)
                 {
-                    UpdateMedia(clientService, sourceChannel.Media[1], Media2, ref _media2Token);
+                    MediaPreview.Visibility = Windows.UI.Xaml.Visibility.Visible;
 
-                    Media2.Visibility = Windows.UI.Xaml.Visibility.Visible;
-                }
-                else
-                {
-                    Media2.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
+                    UpdateMedia(clientService, paidMedia.Media[0], Media1, ref _media1Token);
+
+                    if (paidMedia.Media.Count > 1)
+                    {
+                        UpdateMedia(clientService, paidMedia.Media[1], Media2, ref _media2Token);
+
+                        Media2.Visibility = Windows.UI.Xaml.Visibility.Visible;
+                    }
+                    else
+                    {
+                        Media2.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
+                    }
                 }
             }
             else

@@ -153,7 +153,7 @@ namespace Telegram.ViewModels.Chats
         {
             if (inviteLink == null)
             {
-                ClientService.Send(new CreateChatInviteLink(chat.Id, string.Empty, 0, 0, false));
+                ClientService.Send(new CreateChatInviteLink(chat.Id, string.Empty, 0, 0, false, null));
             }
             else
             {
