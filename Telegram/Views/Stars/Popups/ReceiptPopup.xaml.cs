@@ -174,7 +174,14 @@ namespace Telegram.Views.Stars.Popups
                 }
                 else if (sourceChannel.Purpose is ChannelTransactionPurposeReaction)
                 {
-                    Title.Text = chat.Title;
+                    Title.Text = Strings.StarsReactionsSent;
+                    Photo.SetChat(clientService, chat, 120);
+
+                    MediaPreview.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
+                }
+                else if (sourceChannel.Purpose is ChannelTransactionPurposeJoin)
+                {
+                    Title.Text = Strings.StarsTransactionSubscriptionMonthly;
                     Photo.SetChat(clientService, chat, 120);
 
                     MediaPreview.Visibility = Windows.UI.Xaml.Visibility.Collapsed;

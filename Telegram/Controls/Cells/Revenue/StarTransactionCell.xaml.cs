@@ -110,7 +110,13 @@ namespace Telegram.Controls.Cells.Revenue
                 else if (sourceChannel.Purpose is ChannelTransactionPurposeReaction)
                 {
                     Title.Text = Strings.StarsReactionsSent;
+                    Photo.SetChat(clientService, chat, 36);
 
+                    MediaPreview.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
+                }
+                else if (sourceChannel.Purpose is ChannelTransactionPurposeJoin)
+                {
+                    Title.Text = Strings.StarsTransactionSubscriptionMonthly;
                     Photo.SetChat(clientService, chat, 36);
 
                     MediaPreview.Visibility = Windows.UI.Xaml.Visibility.Collapsed;

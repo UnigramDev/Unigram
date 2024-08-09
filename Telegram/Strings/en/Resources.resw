@@ -9345,6 +9345,9 @@ The channel &quot;**{1}**&quot; will become private.</value>
   <data name="StarsTransactionsOutgoing" xml:space="preserve">
     <value>Outgoing</value>
   </data>
+  <data name="StarsTransactionSubscriptionMonthly" xml:space="preserve">
+    <value>Monthly subscription fee</value>
+  </data>
   <data name="StarsTransactionTOS" xml:space="preserve">
     <value>Review the **Terms of Service** for Stars.</value>
   </data>
