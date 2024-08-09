@@ -336,6 +336,7 @@ namespace Telegram.Controls.Messages
                     ChatEventAvailableReactionsChanged availableReactionsChanged => UpdateAvailableReactionsChanged(message, availableReactionsChanged, active),
                     ChatEventHasProtectedContentToggled hasProtectedContentToggled => UpdateHasProtectedContentToggled(message, hasProtectedContentToggled, active),
                     ChatEventSignMessagesToggled signMessagesToggled => UpdateSignMessagesToggled(message, signMessagesToggled, active),
+                    ChatEventShowMessageSenderToggled showMessageSenderToggled => UpdateShowMessageSenderToggled(message, showMessageSenderToggled, active),
                     ChatEventStickerSetChanged stickerSetChanged => UpdateStickerSetChanged(message, stickerSetChanged, active),
                     ChatEventCustomEmojiStickerSetChanged customemojiStickerSetChanged => UpdateCustomEmojiStickerSetChanged(message, customemojiStickerSetChanged, active),
                     ChatEventInvitesToggled invitesToggled => UpdateInvitesToggled(message, invitesToggled, active),
@@ -656,6 +657,25 @@ namespace Telegram.Controls.Messages
             else
             {
                 content = ReplaceWithLink(Strings.EventLogToggledSignaturesOff, "un1", fromUser, entities);
+            }
+
+            return (content, entities);
+        }
+
+        private static (string Text, IList<TextEntity> Entities) UpdateShowMessageSenderToggled(MessageViewModel message, ChatEventShowMessageSenderToggled showMessageSenderToggled, bool active)
+        {
+            var content = string.Empty;
+            var entities = active ? new List<TextEntity>() : null;
+
+            var fromUser = message.GetSender();
+
+            if (showMessageSenderToggled.ShowMessageSender)
+            {
+                content = ReplaceWithLink(Strings.EventLogToggledSignaturesProfilesOn, "un1", fromUser, entities);
+            }
+            else
+            {
+                content = ReplaceWithLink(Strings.EventLogToggledSignaturesProfilesOff, "un1", fromUser, entities);
             }
 
             return (content, entities);

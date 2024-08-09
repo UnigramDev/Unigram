@@ -4784,6 +4784,12 @@ Duration: {1}</value>
   <data name="EventLogToggledSignaturesOn" xml:space="preserve">
     <value>un1 enabled signatures</value>
   </data>
+  <data name="EventLogToggledSignaturesProfilesOff" xml:space="preserve">
+    <value>un1 disabled authors&apos; profiles</value>
+  </data>
+  <data name="EventLogToggledSignaturesProfilesOn" xml:space="preserve">
+    <value>un1 enabled authors&apos; profiles</value>
+  </data>
   <data name="EventLogToggledSlowmodeOff" xml:space="preserve">
     <value>un1 disabled the slow mode</value>
   </data>
