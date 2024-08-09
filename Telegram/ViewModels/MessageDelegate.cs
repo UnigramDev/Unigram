@@ -168,6 +168,11 @@ namespace Telegram.ViewModels
 
         public string GetAdminTitle(MessageViewModel message)
         {
+            if (message.IsChannelPost && message.HasSenderPhoto)
+            {
+                return string.Empty;
+            }
+
             if (message.SenderId is MessageSenderUser senderUser)
             {
                 return GetAdminTitle(senderUser.UserId);

@@ -332,7 +332,7 @@ namespace Telegram.Controls.Messages
                 _repliesLabel = string.Empty;
             }
 
-            if (message.IsChannelPost && !string.IsNullOrEmpty(message.AuthorSignature))
+            if (message.IsChannelPost && !message.HasSenderPhoto && !string.IsNullOrEmpty(message.AuthorSignature))
             {
                 _authorLabel = $"{message.AuthorSignature}, ";
             }

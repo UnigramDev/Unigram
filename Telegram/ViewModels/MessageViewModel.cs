@@ -185,7 +185,7 @@ namespace Telegram.ViewModels
             {
                 return true;
             }
-            else if (SenderId is MessageSenderUser senderUser)
+            else if (SenderId is MessageSenderUser senderUser && !IsChannelPost)
             {
                 if (Content is MessageText text && text.LinkPreview == null)
                 {
@@ -235,6 +235,11 @@ namespace Telegram.ViewModels
 
             if (IsChannelPost)
             {
+                if (ClientService.TryGetSupergroup(Chat, out var supergroup))
+                {
+                    return supergroup.ShowMessageSender;
+                }
+
                 return false;
             }
             else if (IsSaved && ForwardInfo?.Source is { IsOutgoing: false })

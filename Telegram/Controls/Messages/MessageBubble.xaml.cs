@@ -898,7 +898,7 @@ namespace Telegram.Controls.Messages
                 HeaderLinkRun.Text = title;
                 Identity.ClearStatus();
             }
-            else if (!light && message.IsFirst && !outgoing && !message.IsChannelPost && (chat.Type is ChatTypeBasicGroup || chat.Type is ChatTypeSupergroup))
+            else if (!light && message.IsFirst && !outgoing && (message.HasSenderPhoto || !message.IsChannelPost) && (chat.Type is ChatTypeBasicGroup || chat.Type is ChatTypeSupergroup))
             {
                 if (message.ClientService.TryGetUser(message.SenderId, out User senderUser))
                 {
