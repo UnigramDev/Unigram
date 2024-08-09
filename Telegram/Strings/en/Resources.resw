@@ -577,7 +577,7 @@ from: {0}
 to: {1}</value>
   </data>
   <data name="ActionRefunded" xml:space="preserve">
-    <value>un1 refunded back {0}</value>
+    <value>un1 refunded {0}</value>
   </data>
   <data name="ActionRemovedPhoto" xml:space="preserve">
     <value>un1 removed the group photo</value>
@@ -2106,7 +2106,7 @@ It will be able to access your **IP address** and basic device info.</value>
     <value>Withdraw via Fragment</value>
   </data>
   <data name="BotStarsChartRevenue" xml:space="preserve">
-    <value>Revenue</value>
+    <value>Stars received</value>
   </data>
   <data name="BotStarsOverview" xml:space="preserve">
     <value>Proceeds overview</value>
@@ -2118,7 +2118,7 @@ It will be able to access your **IP address** and basic device info.</value>
     <value>Stars from your total balance can be used for ads or withdrawn as rewards 21 days after they are earned.</value>
   </data>
   <data name="BotStarsOverviewTotalBalance" xml:space="preserve">
-    <value>Total lifetime proceeds</value>
+    <value>Lifetime rewards</value>
   </data>
   <data name="BotStarsTransactionsMore" xml:space="preserve">
     <value>Show more transactions</value>
@@ -2127,10 +2127,13 @@ It will be able to access your **IP address** and basic device info.</value>
     <value>Next withdrawal will be available in **{0}**.</value>
   </data>
   <data name="BotStarsWithdrawInfo" xml:space="preserve">
-    <value>You can withdraw Stars using Fragment, or use Stars to advertise your bot. **Learn more &gt;**</value>
+    <value>You can collect rewards for Stars using Fragment, or use Stars to advertise your bot. **Learn more &gt;**</value>
   </data>
   <data name="BotStarsWithdrawInfoLink" xml:space="preserve">
     <value>https://telegram.org/privacy</value>
+  </data>
+  <data name="BotStarsWithdrawMinLimit_one" xml:space="preserve">
+    <value>You cannot withdraw less than **{0} star**.</value>
   </data>
   <data name="BotStarsWithdrawMinLimit_other" xml:space="preserve">
     <value>You cannot withdraw less than **{0} stars**.</value>
@@ -3151,6 +3154,12 @@ Ask your **Premium** subscribers to boost your channel with this link:</value>
   </data>
   <data name="ChannelSignMessagesInfo" xml:space="preserve">
     <value>Add names of admins to the messages they post</value>
+  </data>
+  <data name="ChannelSignMessagesWithProfile" xml:space="preserve">
+    <value>Show Authors&apos; Profiles</value>
+  </data>
+  <data name="ChannelSignProfilesInfo" xml:space="preserve">
+    <value>Add names and photos of admins to the messages they post, linking to their profiles.</value>
   </data>
   <data name="ChannelSilentBroadcast" xml:space="preserve">
     <value>Silent Broadcast</value>
@@ -6289,7 +6298,7 @@ Minimum length is 5 characters.</value>
     <value>Mention</value>
   </data>
   <data name="MenuTelegramStars" xml:space="preserve">
-    <value>Your Stars</value>
+    <value>My Stars</value>
   </data>
   <data name="Message" xml:space="preserve">
     <value>Message</value>
@@ -7416,7 +7425,7 @@ Payments will go directly to the developer of {0}. Telegram cannot provide any g
     <value>Please enter your password to complete the transfer.</value>
   </data>
   <data name="PleaseEnterCurrentPasswordWithdraw" xml:space="preserve">
-    <value>Please enter your password to withdraw.</value>
+    <value>Please enter your password to collect.</value>
   </data>
   <data name="PleaseEnterFirstPassword" xml:space="preserve">
     <value>Enter a password</value>
@@ -8039,7 +8048,7 @@ Payments will go directly to the developer of {0}. Telegram cannot provide any g
     <value>Open App</value>
   </data>
   <data name="ProfileBotOpenAppInfo" xml:space="preserve">
-    <value>By launching this mini app, you agree to the **Terms of Service for Mini Apps.**</value>
+    <value>By launching this mini app, you agree to the **Terms of Service for Mini Apps**.</value>
   </data>
   <data name="ProfileBotOpenAppInfoLink" xml:space="preserve">
     <value>https://telegram.org/tos/mini-apps</value>

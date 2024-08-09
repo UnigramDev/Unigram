@@ -7,7 +7,6 @@
 using Telegram.Services;
 using Telegram.Td.Api;
 using Telegram.Views;
-using Telegram.Views.Supergroups;
 using Telegram.Views.Supergroups.Popups;
 
 namespace Telegram.ViewModels.Supergroups
@@ -44,6 +43,56 @@ namespace Telegram.ViewModels.Supergroups
                 {
                     Set(ref _isAggressiveAntiSpamEnabled, false, nameof(IsAggressiveAntiSpamEnabled));
                 }
+            }
+        }
+
+        private bool _signMessages;
+        public bool SignMessages
+        {
+            get => _signMessages;
+            set => SetSignMessages(value);
+        }
+
+        public void UpdateSignMessages(bool value)
+        {
+            Set(ref _signMessages, value, nameof(SignMessages));
+        }
+
+        private void SetSignMessages(bool signMessages)
+        {
+            if (Set(ref _signMessages, signMessages, nameof(SignMessages)) && ClientService.TryGetSupergroup(Chat, out Supergroup supergroup))
+            {
+                if (signMessages is false)
+                {
+                    Set(ref _showMessageSender, false, nameof(ShowMessageSender));
+                }
+
+                ClientService.Send(new ToggleSupergroupSignMessages(supergroup.Id, signMessages, _showMessageSender));
+            }
+        }
+
+        private bool _showMessageSender;
+        public bool ShowMessageSender
+        {
+            get => _showMessageSender;
+            set => SetShowMessageSender(value);
+        }
+
+        public void UpdateShowMessageSender(bool value)
+        {
+            Set(ref _showMessageSender, value, nameof(ShowMessageSender));
+        }
+
+        private void SetShowMessageSender(bool showMessageSender)
+        {
+            if (Set(ref _showMessageSender, showMessageSender, nameof(ShowMessageSender)) && ClientService.TryGetSupergroup(Chat, out Supergroup supergroup))
+            {
+                if (_showMessageSender)
+                {
+                    Set(ref _signMessages, true, nameof(SignMessages));
+                }
+
+                ClientService.Send(new ToggleSupergroupSignMessages(supergroup.Id, _signMessages, showMessageSender));
             }
         }
 

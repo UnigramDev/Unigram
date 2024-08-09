@@ -56,13 +56,6 @@ namespace Telegram.ViewModels.Supergroups
             set => Set(ref _about, value);
         }
 
-        private bool _isSignatures;
-        public bool IsSignatures
-        {
-            get => _isSignatures;
-            set => Set(ref _isSignatures, value);
-        }
-
         private bool _isAllHistoryAvailable;
         public int IsAllHistoryAvailable
         {
@@ -249,15 +242,6 @@ namespace Telegram.ViewModels.Supergroups
                 oldAbout = cache.Description;
                 supergroup = item;
                 fullInfo = cache;
-
-                if (item.IsChannel && _isSignatures != item.SignMessages)
-                {
-                    var response = await ClientService.SendAsync(new ToggleSupergroupSignMessages(item.Id, _isSignatures, false));
-                    if (response is Error)
-                    {
-                        // TODO:
-                    }
-                }
             }
             else if (chat.Type is ChatTypeBasicGroup basicGroup)
             {

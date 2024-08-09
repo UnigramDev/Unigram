@@ -117,11 +117,6 @@
                             <controls:ProfileColorBadge x:Name="ProfileColor" />
                         </controls:BadgeButton.Badge>
                     </controls:BadgeButton>
-
-                    <CheckBox x:Name="ChannelSignMessages"
-                              IsChecked="{x:Bind ViewModel.IsSignatures, Mode=TwoWay}"
-                              Content="{CustomResource ChannelSignMessages}"
-                              Style="{StaticResource SettingsCheckBoxStyle}" />
                 </controls:HeaderedControl>
 
                 <controls:HeaderedControl x:Name="InviteLinkPanel"

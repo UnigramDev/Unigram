@@ -59,8 +59,20 @@
                 </DataTemplate>
             </ListView.ItemTemplate>
             <ListView.Footer>
-                <controls:SettingsFooter x:Name="Footer"
-                                         Margin="24,6,24,32" />
+                <controls:SettingsPanel IsFooter="True">
+                    <controls:SettingsFooter x:Name="Footer"
+                                             Margin="24,6,24,0" />
+
+                    <controls:HeaderedControl x:Name="ChannelSignMessages"
+                                              Footer="{x:Bind ConvertSignMessagesFooter(ViewModel.ShowMessageSender), Mode=OneWay}">
+                        <CheckBox IsChecked="{x:Bind ViewModel.SignMessages, Mode=TwoWay}"
+                                  Content="{CustomResource ChannelSignMessages}"
+                                  Style="{StaticResource SettingsCheckBoxStyle}" />
+                        <CheckBox IsChecked="{x:Bind ViewModel.ShowMessageSender, Mode=TwoWay}"
+                                  Content="{CustomResource ChannelSignMessagesWithProfile}"
+                                  Style="{StaticResource SettingsCheckBoxStyle}" />
+                    </controls:HeaderedControl>
+                </controls:SettingsPanel>
             </ListView.Footer>
         </controls:TableListView>
     </Grid>
