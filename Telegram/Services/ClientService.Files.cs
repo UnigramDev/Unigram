@@ -411,6 +411,20 @@ namespace Telegram.Services
                     ProcessFiles(item);
                 }
             }
+            else if (target is BotTransactionPurposeInvoicePayment botTransactionPurposeInvoicePayment)
+            {
+                if (botTransactionPurposeInvoicePayment.ProductInfo != null)
+                {
+                    ProcessFiles(botTransactionPurposeInvoicePayment.ProductInfo);
+                }
+            }
+            else if (target is BotTransactionPurposePaidMedia botTransactionPurposePaidMedia)
+            {
+                foreach (var item in botTransactionPurposePaidMedia.Media)
+                {
+                    ProcessFiles(item);
+                }
+            }
             else if (target is BotWriteAccessAllowReasonLaunchedWebApp botWriteAccessAllowReasonLaunchedWebApp)
             {
                 if (botWriteAccessAllowReasonLaunchedWebApp.WebApp != null)
@@ -2099,9 +2113,16 @@ namespace Telegram.Services
             }
             else if (target is StarTransactionPartnerBot starTransactionPartnerBot)
             {
-                if (starTransactionPartnerBot.ProductInfo != null)
+                if (starTransactionPartnerBot.Purpose != null)
                 {
-                    ProcessFiles(starTransactionPartnerBot.ProductInfo);
+                    ProcessFiles(starTransactionPartnerBot.Purpose);
+                }
+            }
+            else if (target is StarTransactionPartnerBusiness starTransactionPartnerBusiness)
+            {
+                foreach (var item in starTransactionPartnerBusiness.Media)
+                {
+                    ProcessFiles(item);
                 }
             }
             else if (target is StarTransactionPartnerChannel starTransactionPartnerChannel)

@@ -100,12 +100,12 @@ namespace Telegram.Views.Stars.Popups
                 FromTitle.Text = botUser.FullName();
                 FromHeader.Text = Strings.StarsTransactionRecipient;
 
-                if (sourceBot.ProductInfo != null)
+                if (sourceBot.Purpose is BotTransactionPurposeInvoicePayment invoicePayment)
                 {
-                    Title.Text = sourceBot.ProductInfo.Title;
-                    TextBlockHelper.SetFormattedText(Subtitle, sourceBot.ProductInfo.Description);
+                    Title.Text = invoicePayment.ProductInfo.Title;
+                    TextBlockHelper.SetFormattedText(Subtitle, invoicePayment.ProductInfo.Description);
 
-                    var small = sourceBot.ProductInfo.Photo?.GetSmall();
+                    var small = invoicePayment.ProductInfo.Photo?.GetSmall();
                     if (small != null)
                     {
                         UpdateManager.Subscribe(this, _clientService, small.Photo, ref _thumbnailToken, UpdateFile, true);
@@ -113,12 +113,34 @@ namespace Telegram.Views.Stars.Popups
                     }
                     else
                     {
-                        Photo.SetUser(clientService, botUser, 120);
+                        Photo.SetUser(clientService, botUser, 96);
+                    }
+
+                    MediaPreview.Visibility = Visibility.Collapsed;
+                }
+                else if (sourceBot.Purpose is BotTransactionPurposePaidMedia paidMedia)
+                {
+                    Title.Text = Strings.StarMediaPurchase;
+
+                    MediaPreview.Visibility = Windows.UI.Xaml.Visibility.Visible;
+
+                    UpdateMedia(clientService, paidMedia.Media[0], Media1, ref _media1Token);
+
+                    if (paidMedia.Media.Count > 1)
+                    {
+                        UpdateMedia(clientService, paidMedia.Media[1], Media2, ref _media2Token);
+
+                        Media2.Visibility = Windows.UI.Xaml.Visibility.Visible;
+                    }
+                    else
+                    {
+                        Media2.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
+                        Media1.HorizontalAlignment = Windows.UI.Xaml.HorizontalAlignment.Center;
+                        Media1.HorizontalAlignment = Windows.UI.Xaml.HorizontalAlignment.Center;
                     }
                 }
 
                 AnimatedPhoto.Visibility = Visibility.Collapsed;
-                MediaPreview.Visibility = Visibility.Collapsed;
             }
             else if (transaction.Partner is StarTransactionPartnerUser sourceUser && clientService.TryGetUser(sourceUser.UserId, out User user))
             {

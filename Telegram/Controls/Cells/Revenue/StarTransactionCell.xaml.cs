@@ -56,11 +56,33 @@ namespace Telegram.Controls.Cells.Revenue
             }
             else if (transaction.Partner is StarTransactionPartnerBot sourceBot && clientService.TryGetUser(sourceBot.UserId, out User botUser))
             {
-                if (sourceBot.ProductInfo != null)
+                Subtitle.Text = botUser.FullName();
+                Subtitle.Visibility = Windows.UI.Xaml.Visibility.Visible;
+
+                if (sourceBot.Purpose is BotTransactionPurposeInvoicePayment invoicePayment)
                 {
-                    Title.Text = sourceBot.ProductInfo.Title;
-                    Subtitle.Text = botUser.FullName();
-                    Subtitle.Visibility = Windows.UI.Xaml.Visibility.Visible;
+                    Title.Text = invoicePayment.ProductInfo.Title;
+
+                    MediaPreview.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
+                }
+                else if (sourceBot.Purpose is BotTransactionPurposePaidMedia paidMedia)
+                {
+                    Title.Text = Strings.StarMediaPurchase;
+
+                    MediaPreview.Visibility = Windows.UI.Xaml.Visibility.Visible;
+
+                    UpdateMedia(clientService, paidMedia.Media[0], Media1, ref _media1Token);
+
+                    if (paidMedia.Media.Count > 1)
+                    {
+                        UpdateMedia(clientService, paidMedia.Media[1], Media2, ref _media2Token);
+
+                        Media2.Visibility = Windows.UI.Xaml.Visibility.Visible;
+                    }
+                    else
+                    {
+                        Media2.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
+                    }
                 }
                 else
                 {
@@ -68,7 +90,6 @@ namespace Telegram.Controls.Cells.Revenue
                     Subtitle.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
                 }
 
-                MediaPreview.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
                 Photo.SetUser(clientService, botUser, 36);
             }
             else if (transaction.Partner is StarTransactionPartnerUser sourceUser && clientService.TryGetUser(sourceUser.UserId, out User user))

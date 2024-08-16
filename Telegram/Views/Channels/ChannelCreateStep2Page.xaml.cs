@@ -114,7 +114,7 @@ namespace Telegram.Views.Channels
 
             if (fullInfo.InviteLink == null && !group.HasEditableUsername())
             {
-                ViewModel.ClientService.Send(new CreateChatInviteLink(chat.Id, string.Empty, 0, 0, false, null));
+                ViewModel.ClientService.Send(new CreateChatInviteLink(chat.Id, string.Empty, 0, 0, false));
             }
         }
 
@@ -142,7 +142,7 @@ namespace Telegram.Views.Channels
 
             if (fullInfo.InviteLink == null)
             {
-                ViewModel.ClientService.Send(new CreateChatInviteLink(chat.Id, string.Empty, 0, 0, false, null));
+                ViewModel.ClientService.Send(new CreateChatInviteLink(chat.Id, string.Empty, 0, 0, false));
             }
         }
 

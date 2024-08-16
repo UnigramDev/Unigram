@@ -153,7 +153,7 @@ namespace Telegram.ViewModels.Chats
         {
             if (inviteLink == null)
             {
-                ClientService.Send(new CreateChatInviteLink(chat.Id, string.Empty, 0, 0, false, null));
+                ClientService.Send(new CreateChatInviteLink(chat.Id, string.Empty, 0, 0, false));
             }
             else
             {
@@ -228,7 +228,7 @@ namespace Telegram.ViewModels.Chats
 
                     if (_stage == ItemsStage.Members)
                     {
-                        var response = await _viewModel.ClientService.SendAsync(new GetChatInviteLinkMembers(_chat.Id, _inviteLink, _offsetMember, 20));
+                        var response = await _viewModel.ClientService.SendAsync(new GetChatInviteLinkMembers(_chat.Id, _inviteLink, false, _offsetMember, 20));
                         if (response is ChatInviteLinkMembers members)
                         {
                             foreach (var item in members.Members)
