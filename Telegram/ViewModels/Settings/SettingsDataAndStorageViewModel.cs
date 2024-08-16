@@ -13,6 +13,7 @@ using Telegram.Navigation;
 using Telegram.Navigation.Services;
 using Telegram.Services;
 using Telegram.Services.Settings;
+using Telegram.Td.Api;
 using Telegram.Views.Popups;
 using Telegram.Views.Settings;
 using Telegram.Views.Settings.Popups;
@@ -174,6 +175,21 @@ namespace Telegram.ViewModels.Settings
                 RaisePropertyChanged(nameof(AutoDownloadEnabled));
                 RaisePropertyChanged(nameof(AutoDownloadDefault));
                 RaisePropertyChanged(nameof(AutoDownload));
+            }
+        }
+
+        public async void ClearDrafts()
+        {
+            var confirm = await ShowPopupAsync(Strings.AreYouSureClearDrafts, Strings.AppName, Strings.OK, Strings.Cancel);
+            if (confirm != ContentDialogResult.Primary)
+            {
+                return;
+            }
+
+            var clear = await ClientService.SendAsync(new ClearAllDraftMessages(true));
+            if (clear is Error)
+            {
+                // TODO
             }
         }
 

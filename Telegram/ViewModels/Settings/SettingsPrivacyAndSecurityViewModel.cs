@@ -400,21 +400,6 @@ namespace Telegram.ViewModels.Settings
             ShowPopupAsync(new SettingsArchivePopup(ClientService));
         }
 
-        public async void ClearDrafts()
-        {
-            var confirm = await ShowPopupAsync(Strings.AreYouSureClearDrafts, Strings.AppName, Strings.OK, Strings.Cancel);
-            if (confirm != ContentDialogResult.Primary)
-            {
-                return;
-            }
-
-            var clear = await ClientService.SendAsync(new ClearAllDraftMessages(true));
-            if (clear is Error)
-            {
-                // TODO
-            }
-        }
-
         public async void ClearContacts()
         {
             var confirm = await ShowPopupAsync(Strings.SyncContactsDeleteInfo, Strings.Contacts, Strings.OK, Strings.Cancel);

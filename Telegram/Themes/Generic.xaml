@@ -1853,7 +1853,7 @@
         <Setter Property="ScrollViewer.BringIntoViewOnFocusChange"
                 Value="True" />
         <Setter Property="VerticalContentAlignment"
-                Value="Stretch" />
+                Value="Top" />
         <Setter Property="UseSystemFocusVisuals"
                 Value="{StaticResource UseSystemFocusVisuals}" />
         <Setter Property="ItemContainerStyle"

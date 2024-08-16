@@ -3767,6 +3767,9 @@ You can always switch back to the default Telegram theme here.</value>
   <data name="DeleteAccountIfAwayFor2" xml:space="preserve">
     <value>Delete my account if away for</value>
   </data>
+  <data name="DeleteAccountIfAwayFor3" xml:space="preserve">
+    <value>If away for</value>
+  </data>
   <data name="DeleteAdditionalActions" xml:space="preserve">
     <value>Additional actions</value>
   </data>
@@ -3856,6 +3859,9 @@ You can always switch back to the default Telegram theme here.</value>
   </data>
   <data name="DeleteMessagesTitle" xml:space="preserve">
     <value>Delete {0}</value>
+  </data>
+  <data name="DeleteMyAccount" xml:space="preserve">
+    <value>Delete my account</value>
   </data>
   <data name="DeleteProxy" xml:space="preserve">
     <value>Delete Proxy?</value>

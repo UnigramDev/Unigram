@@ -112,6 +112,14 @@
                                           Glyph="&#xEA1A;"
                                           IsChevronVisible="True" />
                 </controls:HeaderedControl>
+
+                <controls:HeaderedControl>
+                    <controls:BadgeButton Content="{CustomResource PrivacyDeleteCloudDrafts}"
+                                          Click="{x:Bind ViewModel.ClearDrafts}"
+                                          Style="{StaticResource GlyphBadgeButtonStyle}"
+                                          Foreground="{ThemeResource DangerButtonBackground}"
+                                          Glyph="&#xE74D;" />
+                </controls:HeaderedControl>
             </controls:SettingsPanel>
         </ScrollViewer>
     </Grid>

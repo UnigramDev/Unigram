@@ -138,15 +138,9 @@
                                           Glyph="&#xE7B8;" />
                 </controls:HeaderedControl>
 
-                <controls:HeaderedControl Header="{CustomResource PrivacyAdvanced}"
+                <controls:HeaderedControl Header="{CustomResource DeleteMyAccount}"
                                           Footer="{CustomResource DeleteAccountHelp}">
-                    <controls:BadgeButton Content="{CustomResource PrivacyDeleteCloudDrafts}"
-                                          Click="{x:Bind ViewModel.ClearDrafts}"
-                                          Style="{StaticResource GlyphBadgeButtonStyle}"
-                                          Foreground="{ThemeResource DangerButtonBackground}"
-                                          Glyph="&#xE74D;" />
-
-                    <controls:BadgeButton Content="{CustomResource DeleteAccountIfAwayFor2}">
+                    <controls:BadgeButton Content="{CustomResource DeleteAccountIfAwayFor3}">
                         <controls:BadgeButton.Badge>
                             <controls:SettingsComboBox ItemsSource="{x:Bind ViewModel.AccountTtlOptions}"
                                                        SelectedIndex="{x:Bind ViewModel.AccountTtl, Mode=TwoWay}"
