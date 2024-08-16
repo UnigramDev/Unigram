@@ -2635,7 +2635,12 @@ namespace Telegram.Views
                 }
 
                 flyout.CreateFlyoutItem(MessageReport_Loaded, ViewModel.ReportMessage, message, Strings.ReportChat, Icons.ErrorCircle);
-                flyout.CreateFlyoutItem(MessageFactCheck_Loaded, ViewModel.FactCheckMessage, message, message.FactCheck == null ? Strings.AddFactCheck : Strings.EditFactCheck, Icons.CheckmarkStarburst);
+
+                if (MessageFactCheck_Loaded(message, properties))
+                {
+                    flyout.CreateFlyoutItem(ViewModel.FactCheckMessage, message, message.FactCheck == null ? Strings.AddFactCheck : Strings.EditFactCheck, Icons.CheckmarkStarburst);
+                }
+
                 flyout.CreateFlyoutItem(MessageReportFalsePositive_Loaded, ViewModel.ReportFalsePositive, message, Strings.ReportFalsePositive, Icons.ShieldError);
 
                 if (MessageDelete_Loaded(message, properties))
@@ -3113,7 +3118,7 @@ namespace Telegram.Views
             return true;
         }
 
-        private bool MessageFactCheck_Loaded(MessageViewModel message)
+        private bool MessageFactCheck_Loaded(MessageViewModel message, MessageProperties properties)
         {
             var chat = ViewModel.Chat;
             if (chat == null || chat.Type is not ChatTypeSupergroup { IsChannel: true })
@@ -3121,7 +3126,7 @@ namespace Telegram.Views
                 return false;
             }
 
-            return ViewModel.ClientService.Options.CanEditFactCheck;
+            return properties.CanSetFactCheck;
         }
 
         private bool MessageReportFalsePositive_Loaded(MessageViewModel message)
