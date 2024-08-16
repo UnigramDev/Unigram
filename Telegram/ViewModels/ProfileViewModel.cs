@@ -749,6 +749,28 @@ namespace Telegram.ViewModels
             }
         }
 
+        public void PrivacyPolicy()
+        {
+            var chat = _chat;
+            if (chat == null)
+            {
+                return;
+            }
+
+            if (ClientService.TryGetUserFull(chat, out UserFullInfo fullInfo))
+            {
+                if (fullInfo.BotInfo?.PrivacyPolicyUrl.Length > 0)
+                {
+                    MessageHelper.OpenUrl(null, null, fullInfo.BotInfo.PrivacyPolicyUrl);
+                }
+                else
+                {
+                    ClientService.Send(new SendMessage(chat.Id, 0, null, null, null, new InputMessageText(new FormattedText("/privacy", Array.Empty<TextEntity>()), null, false)));
+                    SendMessage();
+                }
+            }
+        }
+
         public void Mute()
         {
             ToggleMute(false);

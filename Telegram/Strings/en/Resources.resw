@@ -2069,6 +2069,9 @@ It will be able to access your **IP address** and basic device info.</value>
   <data name="BotOwnershipTransferReadyAlertText" xml:space="preserve">
     <value>Please enter your password to confirm this action.</value>
   </data>
+  <data name="BotPrivacyPolicy" xml:space="preserve">
+    <value>Privacy Policy</value>
+  </data>
   <data name="BotPublicLink" xml:space="preserve">
     <value>Public Link</value>
   </data>
