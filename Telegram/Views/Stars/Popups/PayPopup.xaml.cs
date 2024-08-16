@@ -94,7 +94,7 @@ namespace Telegram.Views.Stars.Popups
                 }
                 else
                 {
-                    Photo.SetUser(ViewModel.ClientService, user, 120);
+                    Photo.SetUser(ViewModel.ClientService, user, 96);
                 }
             }
 

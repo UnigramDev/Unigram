@@ -62,6 +62,7 @@ namespace Telegram.Controls.Cells.Revenue
                 if (sourceBot.Purpose is BotTransactionPurposeInvoicePayment invoicePayment)
                 {
                     Title.Text = invoicePayment.ProductInfo.Title;
+                    Photo.SetUser(clientService, botUser, 36);
 
                     MediaPreview.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
                 }
@@ -88,9 +89,31 @@ namespace Telegram.Controls.Cells.Revenue
                 {
                     Title.Text = botUser.FullName();
                     Subtitle.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
-                }
 
-                Photo.SetUser(clientService, botUser, 36);
+                    Photo.SetUser(clientService, botUser, 36);
+                }
+            }
+            else if (transaction.Partner is StarTransactionPartnerBusiness sourceBusiness && clientService.TryGetUser(sourceBusiness.UserId, out User businessUser))
+            {
+                Subtitle.Text = businessUser.FullName();
+                Subtitle.Visibility = Windows.UI.Xaml.Visibility.Visible;
+
+                Title.Text = Strings.StarMediaPurchase;
+
+                MediaPreview.Visibility = Windows.UI.Xaml.Visibility.Visible;
+
+                UpdateMedia(clientService, sourceBusiness.Media[0], Media1, ref _media1Token);
+
+                if (sourceBusiness.Media.Count > 1)
+                {
+                    UpdateMedia(clientService, sourceBusiness.Media[1], Media2, ref _media2Token);
+
+                    Media2.Visibility = Windows.UI.Xaml.Visibility.Visible;
+                }
+                else
+                {
+                    Media2.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
+                }
             }
             else if (transaction.Partner is StarTransactionPartnerUser sourceUser && clientService.TryGetUser(sourceUser.UserId, out User user))
             {
@@ -175,16 +198,17 @@ namespace Telegram.Controls.Cells.Revenue
 
         private void UpdateMedia(IClientService clientService, PaidMedia media, Border target, ref long token)
         {
-            File file;
+            File file = null;
             if (media is PaidMediaPhoto photo)
             {
                 file = photo.Photo.GetSmall()?.Photo;
             }
             else if (media is PaidMediaVideo video)
             {
-                file = video.Video.Thumbnail.File;
+                file = video.Video.Thumbnail?.File;
             }
-            else
+
+            if (file == null)
             {
                 return;
             }

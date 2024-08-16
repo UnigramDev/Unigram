@@ -142,6 +142,34 @@ namespace Telegram.Views.Stars.Popups
 
                 AnimatedPhoto.Visibility = Visibility.Collapsed;
             }
+            else if (transaction.Partner is StarTransactionPartnerBusiness sourceBusiness && clientService.TryGetUser(sourceBusiness.UserId, out User businessUser))
+            {
+                FromPhoto.SetUser(clientService, businessUser, 24);
+                FromPhoto.Visibility = Visibility.Visible;
+                FromTitle.Text = businessUser.FullName();
+                FromHeader.Text = Strings.StarsTransactionRecipient;
+
+                Title.Text = Strings.StarMediaPurchase;
+
+                MediaPreview.Visibility = Windows.UI.Xaml.Visibility.Visible;
+
+                UpdateMedia(clientService, sourceBusiness.Media[0], Media1, ref _media1Token);
+
+                if (sourceBusiness.Media.Count > 1)
+                {
+                    UpdateMedia(clientService, sourceBusiness.Media[1], Media2, ref _media2Token);
+
+                    Media2.Visibility = Windows.UI.Xaml.Visibility.Visible;
+                }
+                else
+                {
+                    Media2.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
+                    Media1.HorizontalAlignment = Windows.UI.Xaml.HorizontalAlignment.Center;
+                    Media1.HorizontalAlignment = Windows.UI.Xaml.HorizontalAlignment.Center;
+                }
+
+                AnimatedPhoto.Visibility = Visibility.Collapsed;
+            }
             else if (transaction.Partner is StarTransactionPartnerUser sourceUser && clientService.TryGetUser(sourceUser.UserId, out User user))
             {
                 FromPhoto.SetUser(clientService, user, 24);
@@ -161,7 +189,7 @@ namespace Telegram.Views.Stars.Popups
                 {
                     AnimatedPhoto.Source = new DelayedFileSource(clientService, sourceUser.Sticker);
                 }
-                
+
                 MediaPreview.Visibility = Visibility.Collapsed;
             }
             else if (transaction.Partner is StarTransactionPartnerChannel sourceChannel && clientService.TryGetChat(sourceChannel.ChatId, out Chat chat))
@@ -197,14 +225,14 @@ namespace Telegram.Views.Stars.Popups
                 else if (sourceChannel.Purpose is ChannelTransactionPurposeReaction)
                 {
                     Title.Text = Strings.StarsReactionsSent;
-                    Photo.SetChat(clientService, chat, 120);
+                    Photo.SetChat(clientService, chat, 96);
 
                     MediaPreview.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
                 }
                 else if (sourceChannel.Purpose is ChannelTransactionPurposeJoin)
                 {
                     Title.Text = Strings.StarsTransactionSubscriptionMonthly;
-                    Photo.SetChat(clientService, chat, 120);
+                    Photo.SetChat(clientService, chat, 96);
 
                     MediaPreview.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
                 }
@@ -266,7 +294,7 @@ namespace Telegram.Views.Stars.Popups
                 }
                 else
                 {
-                    Photo.SetUser(clientService, user, 120);
+                    Photo.SetUser(clientService, user, 96);
                 }
             }
             else
@@ -325,16 +353,17 @@ namespace Telegram.Views.Stars.Popups
 
         private void UpdateMedia(IClientService clientService, PaidMedia media, Border target, ref long token)
         {
-            File file;
+            File file = null;
             if (media is PaidMediaPhoto photo)
             {
                 file = photo.Photo.GetSmall()?.Photo;
             }
             else if (media is PaidMediaVideo video)
             {
-                file = video.Video.Thumbnail.File;
+                file = video.Video.Thumbnail?.File;
             }
-            else
+
+            if (file == null)
             {
                 return;
             }

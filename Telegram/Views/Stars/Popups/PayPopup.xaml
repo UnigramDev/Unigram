@@ -50,8 +50,8 @@
             </Grid>
 
             <controls:ProfilePicture x:Name="Photo"
-                                     Width="120"
-                                     Height="120"
+                                     Width="96"
+                                     Height="96"
                                      Margin="0,24,0,8" />
 
             <Grid x:Name="MediaPreview"
