@@ -31,6 +31,12 @@ namespace Telegram.Views.Stars.Popups
                 await ViewModel.ShowPopupAsync(new ReceiptPopup(ViewModel.ClientService, ViewModel.NavigationService, transaction));
                 await this.ShowQueuedAsync();
             }
+            else if (e.ClickedItem is StarSubscription subscription)
+            {
+                Hide();
+                await ViewModel.ShowPopupAsync(new SubscriptionPopup(ViewModel.ClientService, ViewModel.NavigationService, subscription));
+                await this.ShowQueuedAsync();
+            }
         }
 
         private void OnContainerContentChanging(ListViewBase sender, ContainerContentChangingEventArgs args)
@@ -42,6 +48,11 @@ namespace Telegram.Views.Stars.Popups
             else if (args.ItemContainer.ContentTemplateRoot is StarTransactionCell cell && args.Item is StarTransaction info)
             {
                 cell.UpdateInfo(ViewModel.ClientService, info);
+                args.Handled = true;
+            }
+            else if (args.ItemContainer.ContentTemplateRoot is StarSubscriptionCell subscriptionCell && args.Item is StarSubscription subscription)
+            {
+                subscriptionCell.UpdateInfo(ViewModel.ClientService, subscription);
                 args.Handled = true;
             }
         }

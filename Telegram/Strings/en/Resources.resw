@@ -9222,6 +9222,12 @@ The channel &quot;**{1}**&quot; will become private.</value>
   <data name="StarMediaPurchase" xml:space="preserve">
     <value>Media Purchase</value>
   </data>
+  <data name="StarMySubscriptions" xml:space="preserve">
+    <value>My subscriptions</value>
+  </data>
+  <data name="StarMySubscriptionsExpand" xml:space="preserve">
+    <value>Show More</value>
+  </data>
   <data name="StarsAcquired" xml:space="preserve">
     <value>Stars Acquired!</value>
   </data>
@@ -9297,6 +9303,9 @@ The channel &quot;**{1}**&quot; will become private.</value>
   <data name="StarsNeededTitle_other" xml:space="preserve">
     <value>{0} Stars Needed</value>
   </data>
+  <data name="StarsParticipantSubscriptionPerMonth" xml:space="preserve">
+    <value>per month</value>
+  </data>
   <data name="StarsPending" xml:space="preserve">
     <value>Pending</value>
   </data>
@@ -9311,6 +9320,51 @@ The channel &quot;**{1}**&quot; will become private.</value>
   </data>
   <data name="StarsRefunded" xml:space="preserve">
     <value>Refund</value>
+  </data>
+  <data name="StarsSubscriptionAgain" xml:space="preserve">
+    <value>Subscribe Again</value>
+  </data>
+  <data name="StarsSubscriptionCancel" xml:space="preserve">
+    <value>Cancel Subscription</value>
+  </data>
+  <data name="StarsSubscriptionCancelInfo" xml:space="preserve">
+    <value>If you cancel now, you will still be able to access your subscription until {0}.</value>
+  </data>
+  <data name="StarsSubscriptionCancelledText" xml:space="preserve">
+    <value>You have cancelled your subscription.</value>
+  </data>
+  <data name="StarsSubscriptionChannel" xml:space="preserve">
+    <value>Subscription</value>
+  </data>
+  <data name="StarsSubscriptionExpired" xml:space="preserve">
+    <value>expired on {0}</value>
+  </data>
+  <data name="StarsSubscriptionExpiredInfo" xml:space="preserve">
+    <value>Your subscription expired on {0}.</value>
+  </data>
+  <data name="StarsSubscriptionRenews" xml:space="preserve">
+    <value>renews on {0}</value>
+  </data>
+  <data name="StarsSubscriptionSince" xml:space="preserve">
+    <value>Subscribed</value>
+  </data>
+  <data name="StarsSubscriptionStatusCancelled" xml:space="preserve">
+    <value>cancelled</value>
+  </data>
+  <data name="StarsSubscriptionStatusExpired" xml:space="preserve">
+    <value>expired</value>
+  </data>
+  <data name="StarsSubscriptionTitle" xml:space="preserve">
+    <value>Subscription</value>
+  </data>
+  <data name="StarsSubscriptionUntilExpired" xml:space="preserve">
+    <value>Expired</value>
+  </data>
+  <data name="StarsSubscriptionUntilExpires" xml:space="preserve">
+    <value>Expires</value>
+  </data>
+  <data name="StarsSubscriptionUntilRenews" xml:space="preserve">
+    <value>Renews</value>
   </data>
   <data name="StarsTOS" xml:space="preserve">
     <value>By proceeding and purchasing Stars, you agree with the **Terms and Conditions**.</value>

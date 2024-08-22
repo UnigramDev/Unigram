@@ -15,17 +15,23 @@ namespace Telegram.ViewModels.Stars
 {
     public class StarsViewModel : ViewModelBase, IIncrementalCollectionOwner, IHandle
     {
+        private readonly SubscriptionCollection _subscriptions;
+
         private string _nextOffset = string.Empty;
         private StarTransactionDirection _direction;
 
         public StarsViewModel(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator)
             : base(clientService, settingsService, aggregator)
         {
+            _subscriptions = new SubscriptionCollection(clientService, settingsService, aggregator);
+
             Items = new IncrementalCollection<StarTransaction>(this);
             OwnedStarCount = clientService.OwnedStarCount;
         }
 
         public IncrementalCollection<StarTransaction> Items { get; private set; }
+
+        public IncrementalCollection<StarSubscription> Subscriptions => _subscriptions.Items;
 
         private long _ownedStarCount;
         public long OwnedStarCount
@@ -44,7 +50,17 @@ namespace Telegram.ViewModels.Stars
             BeginOnUIThread(() => RaisePropertyChanged(nameof(OwnedStarCount)));
         }
 
-        public async Task<LoadMoreItemsResult> LoadMoreItemsAsync(uint count)
+        public Task<LoadMoreItemsResult> LoadMoreItemsAsync(uint count)
+        {
+            if (_subscriptions.HasMoreItems)
+            {
+                return _subscriptions.LoadMoreItemsAsync(count);
+            }
+
+            return LoadMoreItemsAsync2(count);
+        }
+
+        public async Task<LoadMoreItemsResult> LoadMoreItemsAsync2(uint count)
         {
             var totalCount = 0u;
 
@@ -74,6 +90,48 @@ namespace Telegram.ViewModels.Stars
         }
 
         public bool HasMoreItems { get; private set; } = true;
+
+        class SubscriptionCollection : ViewModelBase, IIncrementalCollectionOwner
+        {
+            private string _nextOffset = string.Empty;
+
+            public SubscriptionCollection(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator)
+                : base(clientService, settingsService, aggregator)
+            {
+                Items = new IncrementalCollection<StarSubscription>(this);
+            }
+
+            public IncrementalCollection<StarSubscription> Items { get; private set; }
+
+            public async Task<LoadMoreItemsResult> LoadMoreItemsAsync(uint count)
+            {
+                var totalCount = 0u;
+
+                var response = await ClientService.SendAsync(new GetStarSubscriptions(false, _nextOffset));
+                if (response is StarSubscriptions subscriptions)
+                {
+                    foreach (var item in subscriptions.Subscriptions)
+                    {
+                        Items.Add(item);
+                        totalCount++;
+                    }
+
+                    _nextOffset = subscriptions.NextOffset;
+                    HasMoreItems = subscriptions.NextOffset.Length > 0;
+                }
+                else
+                {
+                    HasMoreItems = false;
+                }
+
+                return new LoadMoreItemsResult
+                {
+                    Count = totalCount
+                };
+            }
+
+            public bool HasMoreItems { get; private set; } = true;
+        }
 
         private int _selectedIndex;
         public int SelectedIndex

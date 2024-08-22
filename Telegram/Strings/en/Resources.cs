@@ -14203,6 +14203,16 @@ namespace Telegram
         public static string StarMediaPurchase => Resource.GetString("StarMediaPurchase");
         
         /// <summary>
+        /// Localized resource similar to "My subscriptions"
+        /// </summary>
+        public static string StarMySubscriptions => Resource.GetString("StarMySubscriptions");
+        
+        /// <summary>
+        /// Localized resource similar to "Show More"
+        /// </summary>
+        public static string StarMySubscriptionsExpand => Resource.GetString("StarMySubscriptionsExpand");
+        
+        /// <summary>
         /// Localized resource similar to "Stars Acquired!"
         /// </summary>
         public static string StarsAcquired => Resource.GetString("StarsAcquired");
@@ -14263,6 +14273,11 @@ namespace Telegram
         public static string StarsNeededText => Resource.GetString("StarsNeededText");
         
         /// <summary>
+        /// Localized resource similar to "per month"
+        /// </summary>
+        public static string StarsParticipantSubscriptionPerMonth => Resource.GetString("StarsParticipantSubscriptionPerMonth");
+        
+        /// <summary>
         /// Localized resource similar to "Pending"
         /// </summary>
         public static string StarsPending => Resource.GetString("StarsPending");
@@ -14281,6 +14296,81 @@ namespace Telegram
         /// Localized resource similar to "Refund"
         /// </summary>
         public static string StarsRefunded => Resource.GetString("StarsRefunded");
+        
+        /// <summary>
+        /// Localized resource similar to "Subscribe Again"
+        /// </summary>
+        public static string StarsSubscriptionAgain => Resource.GetString("StarsSubscriptionAgain");
+        
+        /// <summary>
+        /// Localized resource similar to "Cancel Subscription"
+        /// </summary>
+        public static string StarsSubscriptionCancel => Resource.GetString("StarsSubscriptionCancel");
+        
+        /// <summary>
+        /// Localized resource similar to "If you cancel now, you will still be able to access your subscription until {0}."
+        /// </summary>
+        public static string StarsSubscriptionCancelInfo => Resource.GetString("StarsSubscriptionCancelInfo");
+        
+        /// <summary>
+        /// Localized resource similar to "You have cancelled your subscription."
+        /// </summary>
+        public static string StarsSubscriptionCancelledText => Resource.GetString("StarsSubscriptionCancelledText");
+        
+        /// <summary>
+        /// Localized resource similar to "Subscription"
+        /// </summary>
+        public static string StarsSubscriptionChannel => Resource.GetString("StarsSubscriptionChannel");
+        
+        /// <summary>
+        /// Localized resource similar to "expired on {0}"
+        /// </summary>
+        public static string StarsSubscriptionExpired => Resource.GetString("StarsSubscriptionExpired");
+        
+        /// <summary>
+        /// Localized resource similar to "Your subscription expired on {0}."
+        /// </summary>
+        public static string StarsSubscriptionExpiredInfo => Resource.GetString("StarsSubscriptionExpiredInfo");
+        
+        /// <summary>
+        /// Localized resource similar to "renews on {0}"
+        /// </summary>
+        public static string StarsSubscriptionRenews => Resource.GetString("StarsSubscriptionRenews");
+        
+        /// <summary>
+        /// Localized resource similar to "Subscribed"
+        /// </summary>
+        public static string StarsSubscriptionSince => Resource.GetString("StarsSubscriptionSince");
+        
+        /// <summary>
+        /// Localized resource similar to "cancelled"
+        /// </summary>
+        public static string StarsSubscriptionStatusCancelled => Resource.GetString("StarsSubscriptionStatusCancelled");
+        
+        /// <summary>
+        /// Localized resource similar to "expired"
+        /// </summary>
+        public static string StarsSubscriptionStatusExpired => Resource.GetString("StarsSubscriptionStatusExpired");
+        
+        /// <summary>
+        /// Localized resource similar to "Subscription"
+        /// </summary>
+        public static string StarsSubscriptionTitle => Resource.GetString("StarsSubscriptionTitle");
+        
+        /// <summary>
+        /// Localized resource similar to "Expired"
+        /// </summary>
+        public static string StarsSubscriptionUntilExpired => Resource.GetString("StarsSubscriptionUntilExpired");
+        
+        /// <summary>
+        /// Localized resource similar to "Expires"
+        /// </summary>
+        public static string StarsSubscriptionUntilExpires => Resource.GetString("StarsSubscriptionUntilExpires");
+        
+        /// <summary>
+        /// Localized resource similar to "Renews"
+        /// </summary>
+        public static string StarsSubscriptionUntilRenews => Resource.GetString("StarsSubscriptionUntilRenews");
         
         /// <summary>
         /// Localized resource similar to "By proceeding and purchasing Stars, you agree with the **Terms and Conditions**."
