@@ -1,120 +1,133 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">x86</Platform>
-    <ProjectGuid>{2235E8EE-374A-4E49-8050-9B701467775D}</ProjectGuid>
-    <OutputType>AppContainerExe</OutputType>
-    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net8.0-windows10.0.22621.0</TargetFramework>
+    <TargetPlatformMinVersion>10.0.17763.0</TargetPlatformMinVersion>
+    <WindowsSdkPackageVersion>10.0.22621.42</WindowsSdkPackageVersion>
     <RootNamespace>Telegram</RootNamespace>
-    <AssemblyName>Telegram</AssemblyName>
-    <DefaultLanguage>en</DefaultLanguage>
-    <TargetPlatformIdentifier>UAP</TargetPlatformIdentifier>
-    <TargetPlatformVersion>10.0.22621.0</TargetPlatformVersion>
-    <TargetPlatformMinVersion>10.0.18362.0</TargetPlatformMinVersion>
-    <MinimumVisualStudioVersion>14</MinimumVisualStudioVersion>
-    <FileAlignment>512</FileAlignment>
-    <ProjectTypeGuids>{A5A43C5B-DE2A-4C0C-9213-0A381AF9435A};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
-    <PackageCertificateKeyFile>
-    </PackageCertificateKeyFile>
-    <AppxAutoIncrementPackageRevision>False</AppxAutoIncrementPackageRevision>
-    <AppxSymbolPackageEnabled>True</AppxSymbolPackageEnabled>
-    <AppxBundle>Always</AppxBundle>
-    <AppxBundlePlatforms>x64</AppxBundlePlatforms>
-    <PackageCertificateKeyFile>Telegram_TemporaryKey.pfx</PackageCertificateKeyFile>
-    <BuildAppxSideloadPackageForUap>False</BuildAppxSideloadPackageForUap>
-    <GenerateAppInstallerFile>False</GenerateAppInstallerFile>
-    <AppInstallerUpdateFrequency>0</AppInstallerUpdateFrequency>
-    <AppInstallerCheckForUpdateFrequency>OnApplicationRun</AppInstallerCheckForUpdateFrequency>
-    <GenerateTestArtifacts>False</GenerateTestArtifacts>
-    <HoursBetweenUpdateChecks>0</HoursBetweenUpdateChecks>
-    <AppxPackageSigningTimestampDigestAlgorithm>SHA256</AppxPackageSigningTimestampDigestAlgorithm>
-    <LangVersion>10.0</LangVersion>
-    <AppxPackageSigningEnabled>False</AppxPackageSigningEnabled>
-    <ProjectPriIndexName>Telegram</ProjectPriIndexName>
-    <PackageCertificateThumbprint>1D34EE14119A1938972F9892C21A35C04CB26763</PackageCertificateThumbprint>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
-    <DebugSymbols>true</DebugSymbols>
-    <OutputPath>bin\x86\Debug\</OutputPath>
-    <DefineConstants>TRACE;DEBUG;NETFX_CORE;WINDOWS_UWP;CODE_ANALYSIS;ENABLE_CALLS</DefineConstants>
-    <NoWarn>;2008</NoWarn>
-    <DebugType>full</DebugType>
-    <PlatformTarget>x86</PlatformTarget>
-    <UseVSHostingProcess>false</UseVSHostingProcess>
-    <ErrorReport>prompt</ErrorReport>
-    <Prefer32Bit>true</Prefer32Bit>
-    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
-    <DebugSymbols>true</DebugSymbols>
-    <OutputPath>bin\x64\Debug\</OutputPath>
-    <DefineConstants>TRACE;DEBUG;NETFX_CORE;WINDOWS_UWP;ENABLE_CALLS;CODE_ANALYSIS</DefineConstants>
-    <NoWarn>;2008</NoWarn>
-    <DebugType>full</DebugType>
-    <PlatformTarget>x64</PlatformTarget>
-    <UseVSHostingProcess>false</UseVSHostingProcess>
-    <ErrorReport>prompt</ErrorReport>
-    <Prefer32Bit>true</Prefer32Bit>
-    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|ARM64'">
-    <DebugSymbols>true</DebugSymbols>
-    <OutputPath>bin\ARM64\Debug\</OutputPath>
-    <DefineConstants>TRACE;DEBUG;NETFX_CORE;WINDOWS_UWP;CODE_ANALYSIS;ENABLE_CALLS</DefineConstants>
-    <NoWarn>;2008</NoWarn>
-    <DebugType>full</DebugType>
-    <PlatformTarget>ARM64</PlatformTarget>
-    <UseVSHostingProcess>false</UseVSHostingProcess>
-    <ErrorReport>prompt</ErrorReport>
-    <Prefer32Bit>true</Prefer32Bit>
-    <CodeAnalysisRuleSet />
-    <LangVersion>8.0</LangVersion>
-    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x86'">
-    <OutputPath>bin\x86\Release\</OutputPath>
+    <ApplicationManifest>app.manifest</ApplicationManifest>
+    <Platforms>x86;x64;ARM64</Platforms>
+    <RuntimeIdentifiers Condition="$([MSBuild]::GetTargetFrameworkVersion('$(TargetFramework)')) &gt;= 8">win-x86;win-x64;win-arm64</RuntimeIdentifiers>
+    <RuntimeIdentifiers Condition="$([MSBuild]::GetTargetFrameworkVersion('$(TargetFramework)')) &lt; 8">win10-x86;win10-x64;win10-arm64</RuntimeIdentifiers>
+    <UseWinUI>true</UseWinUI>
+    <PublishAot>true</PublishAot>
+
     <DefineConstants>TRACE;NETFX_CORE;WINDOWS_UWP;CODE_ANALYSIS;ENABLE_CALLS</DefineConstants>
-    <Optimize>true</Optimize>
-    <NoWarn>;2008</NoWarn>
-    <DebugType>pdbonly</DebugType>
-    <PlatformTarget>x86</PlatformTarget>
-    <UseVSHostingProcess>false</UseVSHostingProcess>
-    <ErrorReport>prompt</ErrorReport>
-    <Prefer32Bit>true</Prefer32Bit>
-    <UseDotNetNativeToolchain>true</UseDotNetNativeToolchain>
-    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <EnableDefaultItems>false</EnableDefaultItems>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|ARM64'">
-    <OutputPath>bin\ARM64\Release\</OutputPath>
-    <DefineConstants>TRACE;NETFX_CORE;WINDOWS_UWP;CODE_ANALYSIS;ENABLE_CALLS</DefineConstants>
-    <Optimize>true</Optimize>
-    <NoWarn>;2008</NoWarn>
-    <DebugType>pdbonly</DebugType>
-    <PlatformTarget>ARM64</PlatformTarget>
-    <UseVSHostingProcess>false</UseVSHostingProcess>
-    <ErrorReport>prompt</ErrorReport>
-    <Prefer32Bit>true</Prefer32Bit>
-    <UseDotNetNativeToolchain>true</UseDotNetNativeToolchain>
-    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
-    <OutputPath>bin\x64\Release\</OutputPath>
-    <DefineConstants>TRACE;NETFX_CORE;WINDOWS_UWP;CODE_ANALYSIS;ENABLE_CALLS</DefineConstants>
-    <Optimize>true</Optimize>
-    <NoWarn>;2008</NoWarn>
-    <DebugType>pdbonly</DebugType>
-    <PlatformTarget>x64</PlatformTarget>
-    <UseVSHostingProcess>false</UseVSHostingProcess>
-    <ErrorReport>prompt</ErrorReport>
-    <Prefer32Bit>true</Prefer32Bit>
-    <UseDotNetNativeToolchain>true</UseDotNetNativeToolchain>
-    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-  </PropertyGroup>
-  <PropertyGroup>
-    <RestoreProjectStyle>PackageReference</RestoreProjectStyle>
-  </PropertyGroup>
+  <ItemGroup>
+    <Compile Remove="AppPackages\**" />
+    <Compile Remove="BundleArtifacts\**" />
+    <Content Remove="AppPackages\**" />
+    <Content Remove="BundleArtifacts\**" />
+    <EmbeddedResource Remove="AppPackages\**" />
+    <EmbeddedResource Remove="BundleArtifacts\**" />
+    <None Remove="AppPackages\**" />
+    <None Remove="BundleArtifacts\**" />
+    <Page Remove="AppPackages\**" />
+    <Page Remove="BundleArtifacts\**" />
+    <PRIResource Remove="AppPackages\**" />
+    <PRIResource Remove="BundleArtifacts\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Windows.CsWinRT" Version="2.1.1" />
+    <PackageReference Include="Microsoft.Windows.SDK.BuildTools" Version="10.0.22621.3233" />
+    <PackageReference Include="Microsoft.WindowsAppSDK" Version="1.6.240807006-preview1" />
+    <Manifest Include="$(ApplicationManifest)" />
+  </ItemGroup>
+  
+  <ItemGroup>
+    <None Remove="Build.targets" />
+    <None Remove="Telegram.csproj" />
+    <None Remove="Telegram.csproj.user" />
+    <None Remove="Telegram.Diagnostics.dll" />
+    <None Remove="Assets\i420.bat" />
+    <None Remove="Assets\i420.fxlib" />
+    <None Remove="Common\LocalDatabase.cs" />
+    <None Remove="Common\ParticlesLayer.cs" />
+    <None Remove="Common\SizeHelpers.cs" />
+    <None Remove="Controls\AnimatedImage - Copy.cs" />
+    <None Remove="Controls\FrameEx.cs" />
+    <None Remove="Controls\ZoomBox.cs" />
+    <None Remove="Selectors\StickerTemplateSelector.cs" />
+    <None Remove="Services\ProxyService.cs" />
+    <None Remove="Themes\ThemeGreen.taml" />
+    <None Remove="Themes\ThemeGreen.xaml" />
+    <None Remove="Views\IntroPage.xaml" />
+    <None Remove="Views\IntroPage.xaml.cs" />
+    <None Remove="Assets\Animations\EmptyChat.tgs" />
+    <None Remove="Assets\Fonts\Telegram.json" />
+    <None Remove="Assets\Icons\ActionFile.json" />
+    <None Remove="Assets\Icons\ActionGame.json" />
+    <None Remove="Assets\Icons\ActionSticker.json" />
+    <None Remove="Assets\Icons\ActionTyping.json" />
+    <None Remove="Assets\Icons\ActionVideo.json" />
+    <None Remove="Assets\Icons\ActionVoice.json" />
+    <None Remove="Assets\Icons\Business.json" />
+    <None Remove="Assets\Icons\Dots.json" />
+    <None Remove="Assets\Icons\More.json" />
+    <None Remove="Assets\Icons\PremiumGifting.json" />
+    <None Remove="Assets\Icons\TeachingTipLinkCopied.json" />
+    <None Remove="Assets\Icons\VoiceRecognition.json" />
+    <None Remove="Assets\Images\Particles.scale-100.png" />
+    <None Remove="Assets\Images\Particles.scale-125.png" />
+    <None Remove="Assets\Images\Particles.scale-150.png" />
+    <None Remove="Assets\Images\Particles.scale-200.png" />
+    <None Remove="Assets\Images\Particles.scale-400.png" />
+    <None Remove="Assets\Mockup\a0.png" />
+    <None Remove="Assets\Mockup\a1.png" />
+    <None Remove="Assets\Mockup\a10.png" />
+    <None Remove="Assets\Mockup\a11.png" />
+    <None Remove="Assets\Mockup\a12.png" />
+    <None Remove="Assets\Mockup\a13.png" />
+    <None Remove="Assets\Mockup\a14.png" />
+    <None Remove="Assets\Mockup\a2.png" />
+    <None Remove="Assets\Mockup\a3.png" />
+    <None Remove="Assets\Mockup\a4.png" />
+    <None Remove="Assets\Mockup\a5.png" />
+    <None Remove="Assets\Mockup\a6.png" />
+    <None Remove="Assets\Mockup\a7.png" />
+    <None Remove="Assets\Mockup\a8.png" />
+    <None Remove="Assets\Mockup\a9.png" />
+    <None Remove="Assets\Mockup\Avatar0.png" />
+    <None Remove="Assets\Mockup\Avatar1.png" />
+    <None Remove="Assets\Mockup\Avatar10.png" />
+    <None Remove="Assets\Mockup\Avatar11.png" />
+    <None Remove="Assets\Mockup\Avatar12.png" />
+    <None Remove="Assets\Mockup\Avatar13.png" />
+    <None Remove="Assets\Mockup\Avatar14.png" />
+    <None Remove="Assets\Mockup\Avatar15.png" />
+    <None Remove="Assets\Mockup\Avatar16.png" />
+    <None Remove="Assets\Mockup\Avatar17.png" />
+    <None Remove="Assets\Mockup\Avatar18.png" />
+    <None Remove="Assets\Mockup\Avatar19.png" />
+    <None Remove="Assets\Mockup\Avatar2.png" />
+    <None Remove="Assets\Mockup\Avatar20.png" />
+    <None Remove="Assets\Mockup\Avatar21.png" />
+    <None Remove="Assets\Mockup\Avatar22.png" />
+    <None Remove="Assets\Mockup\Avatar3.png" />
+    <None Remove="Assets\Mockup\Avatar4.png" />
+    <None Remove="Assets\Mockup\Avatar5.png" />
+    <None Remove="Assets\Mockup\Avatar6.png" />
+    <None Remove="Assets\Mockup\Avatar7.png" />
+    <None Remove="Assets\Mockup\Avatar8.png" />
+    <None Remove="Assets\Mockup\Avatar9.png" />
+    <None Remove="Assets\Mockup\hot.png" />
+    <None Remove="Assets\Mockup\sticker0.webp" />
+    <None Remove="Assets\Mockup\sticker1.webp" />
+    <None Remove="Controls\Messages\MessageTextBlock.cs" />
+    <None Remove="Properties\PublishProfiles\win10-arm64.pubxml" />
+    <None Remove="Properties\PublishProfiles\win10-x64.pubxml" />
+    <None Remove="Properties\PublishProfiles\win10-x86.pubxml" />
+    <None Remove="ViewModels\Popups\ChooseUsersViewModel.cs" />
+    <None Remove="Views\Popups\ChooseUsersPopup.xaml" />
+    <None Remove="Views\Popups\ChooseUsersPopup.xaml.cs" />
+    <None Remove="Views\Popups\ComposeInfoPopup.xaml" />
+    <None Remove="Views\Popups\ComposeInfoPopup.xaml.cs" />
+    <None Remove="Views\Popups\ComposeWebPagePopup.xaml" />
+    <None Remove="Views\Popups\ComposeWebPagePopup.xaml.cs" />
+  </ItemGroup>
   <ItemGroup>
     <Compile Include="Assets\Icons\ActionFile.cs" />
     <Compile Include="Assets\Icons\ActionGame.cs" />
@@ -3635,11 +3648,6 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <SDKReference Include="WindowsDesktop, Version=10.0.22621.0">
-      <Name>Windows Desktop Extensions for the UWP</Name>
-    </SDKReference>
-  </ItemGroup>
-  <ItemGroup>
     <Reference Include="Microsoft.AppCenter, Version=0.0.0.0, Culture=neutral, PublicKeyToken=8a600e2fee7ba272, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\Libraries\AppCenter\Microsoft.AppCenter.dll</HintPath>
@@ -3660,23 +3668,4 @@
     <ReferenceCopyLocalPaths Include="$(ProjectDir)\..\Libraries\rlottie\$(Platform)\RLottie.pri" />
     <!--<ReferenceCopyLocalPaths Condition=" '$(Configuration)' == 'Debug' " Include="$(ProjectDir)\..\Libraries\rlottie\$(Platform)\zlib1.dll" />-->
   </ItemGroup>
-  <ItemGroup />
-  <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">
-    <VisualStudioVersion>14.0</VisualStudioVersion>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|ARM'">
-    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|ARM'">
-    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-  </PropertyGroup>
-  <Import Project="$(MSBuildExtensionsPath)\Microsoft\WindowsXaml\v$(VisualStudioVersion)\Microsoft.Windows.UI.Xaml.CSharp.targets" />
-  <PropertyGroup>
-    <PreBuildEvent>
-    </PreBuildEvent>
-  </PropertyGroup>
-  <PropertyGroup>
-    <PostBuildEvent>
-    </PostBuildEvent>
-  </PropertyGroup>
 </Project>
