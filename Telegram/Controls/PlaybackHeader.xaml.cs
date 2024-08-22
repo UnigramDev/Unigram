@@ -14,7 +14,7 @@ using Telegram.Navigation.Services;
 using Telegram.Services;
 using Telegram.Td.Api;
 using Windows.System;
-using Windows.UI.Composition;
+using Microsoft.UI.Composition;
 using Windows.UI.Text;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Automation;

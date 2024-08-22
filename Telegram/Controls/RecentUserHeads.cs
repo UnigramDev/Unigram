@@ -13,7 +13,7 @@ using System.Numerics;
 using Telegram.Common;
 using Telegram.Td.Api;
 using Windows.Foundation;
-using Windows.UI.Composition;
+using Microsoft.UI.Composition;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Data;

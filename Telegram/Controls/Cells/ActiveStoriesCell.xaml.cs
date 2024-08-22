@@ -11,7 +11,7 @@ using System.Globalization;
 using System.Numerics;
 using Telegram.Td.Api;
 using Telegram.ViewModels.Stories;
-using Windows.UI.Composition;
+using Microsoft.UI.Composition;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Controls.Primitives;
 using Microsoft.UI.Xaml.Hosting;

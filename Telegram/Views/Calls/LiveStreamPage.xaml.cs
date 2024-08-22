@@ -20,7 +20,7 @@ using Windows.Devices.Enumeration;
 using Windows.Devices.Input;
 using Windows.System.Display;
 using Windows.UI;
-using Windows.UI.Composition;
+using Microsoft.UI.Composition;
 using Windows.UI.ViewManagement;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;

@@ -643,7 +643,7 @@ public static class IAnimatedVisualSource2_stub
 }
 public static class IAnimatedVisualSource_stub
 {
-    public static Microsoft.UI.Xaml.Controls.IAnimatedVisual TryCreateAnimatedVisual_stub(this Microsoft.UI.Xaml.Controls.IAnimatedVisualSource sender, Windows.UI.Composition.Compositor compositor, out object diagnostics)
+    public static Microsoft.UI.Xaml.Controls.IAnimatedVisual TryCreateAnimatedVisual_stub(this Microsoft.UI.Xaml.Controls.IAnimatedVisualSource sender, Microsoft.UI.Composition.Compositor compositor, out object diagnostics)
     {
         try
         {
@@ -1756,7 +1756,7 @@ public static class DirectRectangleClip_stub
             throw new RuntimeException(ex);
         }
     }
-    public static void AnimateBottomLeft_stub(this Telegram.Native.Composition.DirectRectangleClip sender, Windows.UI.Composition.Compositor compositor, float from, float to, double duration)
+    public static void AnimateBottomLeft_stub(this Telegram.Native.Composition.DirectRectangleClip sender, Microsoft.UI.Composition.Compositor compositor, float from, float to, double duration)
     {
         try
         {
@@ -1768,7 +1768,7 @@ public static class DirectRectangleClip_stub
             throw new RuntimeException(ex);
         }
     }
-    public static void AnimateBottomRight_stub(this Telegram.Native.Composition.DirectRectangleClip sender, Windows.UI.Composition.Compositor compositor, float from, float to, double duration)
+    public static void AnimateBottomRight_stub(this Telegram.Native.Composition.DirectRectangleClip sender, Microsoft.UI.Composition.Compositor compositor, float from, float to, double duration)
     {
         try
         {
@@ -1792,7 +1792,7 @@ public static class DirectRectangleClip_stub
             throw new RuntimeException(ex);
         }
     }
-    public static void AnimateBottom_stub(this Telegram.Native.Composition.DirectRectangleClip sender, Windows.UI.Composition.Compositor compositor, float from, float to, double duration)
+    public static void AnimateBottom_stub(this Telegram.Native.Composition.DirectRectangleClip sender, Microsoft.UI.Composition.Compositor compositor, float from, float to, double duration)
     {
         try
         {
@@ -1804,7 +1804,7 @@ public static class DirectRectangleClip_stub
             throw new RuntimeException(ex);
         }
     }
-    public static void AnimateTop_stub(this Telegram.Native.Composition.DirectRectangleClip sender, Windows.UI.Composition.Compositor compositor, float from, float to, double duration)
+    public static void AnimateTop_stub(this Telegram.Native.Composition.DirectRectangleClip sender, Microsoft.UI.Composition.Compositor compositor, float from, float to, double duration)
     {
         try
         {
@@ -5521,7 +5521,7 @@ public static class DisplayRequest_stub
 }
 public static class CompositionAnimation_stub
 {
-    public static void ClearAllParameters_stub(this Windows.UI.Composition.CompositionAnimation sender)
+    public static void ClearAllParameters_stub(this Microsoft.UI.Composition.CompositionAnimation sender)
     {
         try
         {
@@ -5533,7 +5533,7 @@ public static class CompositionAnimation_stub
             throw new RuntimeException(ex);
         }
     }
-    public static void SetReferenceParameter_stub(this Windows.UI.Composition.CompositionAnimation sender, string key, Windows.UI.Composition.CompositionObject compositionObject)
+    public static void SetReferenceParameter_stub(this Microsoft.UI.Composition.CompositionAnimation sender, string key, Microsoft.UI.Composition.CompositionObject compositionObject)
     {
         try
         {
@@ -5545,7 +5545,7 @@ public static class CompositionAnimation_stub
             throw new RuntimeException(ex);
         }
     }
-    public static void SetScalarParameter_stub(this Windows.UI.Composition.CompositionAnimation sender, string key, float value)
+    public static void SetScalarParameter_stub(this Microsoft.UI.Composition.CompositionAnimation sender, string key, float value)
     {
         try
         {
@@ -5560,7 +5560,7 @@ public static class CompositionAnimation_stub
 }
 public static class CompositionObject_stub
 {
-    public static void StartAnimation_stub(this Windows.UI.Composition.CompositionObject sender, string propertyName, Windows.UI.Composition.CompositionAnimation animation)
+    public static void StartAnimation_stub(this Microsoft.UI.Composition.CompositionObject sender, string propertyName, Microsoft.UI.Composition.CompositionAnimation animation)
     {
         try
         {
@@ -5572,7 +5572,7 @@ public static class CompositionObject_stub
             throw new RuntimeException(ex);
         }
     }
-    public static Windows.UI.Composition.AnimationController TryGetAnimationController_stub(this Windows.UI.Composition.CompositionObject sender, string propertyName)
+    public static Microsoft.UI.Composition.AnimationController TryGetAnimationController_stub(this Microsoft.UI.Composition.CompositionObject sender, string propertyName)
     {
         try
         {
@@ -5584,7 +5584,7 @@ public static class CompositionObject_stub
             throw new RuntimeException(ex);
         }
     }
-    public static void Dispose_stub(this Windows.UI.Composition.CompositionObject sender)
+    public static void Dispose_stub(this Microsoft.UI.Composition.CompositionObject sender)
     {
         try
         {
@@ -5596,7 +5596,7 @@ public static class CompositionObject_stub
             throw new RuntimeException(ex);
         }
     }
-    public static void StopAnimation_stub(this Windows.UI.Composition.CompositionObject sender, string propertyName)
+    public static void StopAnimation_stub(this Microsoft.UI.Composition.CompositionObject sender, string propertyName)
     {
         try
         {
@@ -5608,7 +5608,7 @@ public static class CompositionObject_stub
             throw new RuntimeException(ex);
         }
     }
-    public static void StartAnimation_stub(this Windows.UI.Composition.CompositionObject sender, string propertyName, Windows.UI.Composition.CompositionAnimation animation, Windows.UI.Composition.AnimationController animationController)
+    public static void StartAnimation_stub(this Microsoft.UI.Composition.CompositionObject sender, string propertyName, Microsoft.UI.Composition.CompositionAnimation animation, Microsoft.UI.Composition.AnimationController animationController)
     {
         try
         {
@@ -5623,7 +5623,7 @@ public static class CompositionObject_stub
 }
 public static class Compositor_stub
 {
-    public static Windows.UI.Composition.Vector2KeyFrameAnimation CreateVector2KeyFrameAnimation_stub(this Windows.UI.Composition.Compositor sender)
+    public static Microsoft.UI.Composition.Vector2KeyFrameAnimation CreateVector2KeyFrameAnimation_stub(this Microsoft.UI.Composition.Compositor sender)
     {
         try
         {
@@ -5635,7 +5635,7 @@ public static class Compositor_stub
             throw new RuntimeException(ex);
         }
     }
-    public static Windows.UI.Composition.CompositionSpriteShape CreateSpriteShape_stub(this Windows.UI.Composition.Compositor sender, Windows.UI.Composition.CompositionGeometry geometry)
+    public static Microsoft.UI.Composition.CompositionSpriteShape CreateSpriteShape_stub(this Microsoft.UI.Composition.Compositor sender, Microsoft.UI.Composition.CompositionGeometry geometry)
     {
         try
         {
@@ -5647,7 +5647,7 @@ public static class Compositor_stub
             throw new RuntimeException(ex);
         }
     }
-    public static Windows.UI.Composition.CompositionColorBrush CreateColorBrush_stub(this Windows.UI.Composition.Compositor sender, Windows.UI.Color color)
+    public static Microsoft.UI.Composition.CompositionColorBrush CreateColorBrush_stub(this Microsoft.UI.Composition.Compositor sender, Windows.UI.Color color)
     {
         try
         {
@@ -5659,7 +5659,7 @@ public static class Compositor_stub
             throw new RuntimeException(ex);
         }
     }
-    public static Windows.UI.Composition.CompositionEffectFactory CreateEffectFactory_stub(this Windows.UI.Composition.Compositor sender, Windows.Graphics.Effects.IGraphicsEffect graphicsEffect)
+    public static Microsoft.UI.Composition.CompositionEffectFactory CreateEffectFactory_stub(this Microsoft.UI.Composition.Compositor sender, Windows.Graphics.Effects.IGraphicsEffect graphicsEffect)
     {
         try
         {
@@ -5671,7 +5671,7 @@ public static class Compositor_stub
             throw new RuntimeException(ex);
         }
     }
-    public static Windows.UI.Composition.CompositionPathGeometry CreatePathGeometry_stub(this Windows.UI.Composition.Compositor sender, Windows.UI.Composition.CompositionPath path)
+    public static Microsoft.UI.Composition.CompositionPathGeometry CreatePathGeometry_stub(this Microsoft.UI.Composition.Compositor sender, Microsoft.UI.Composition.CompositionPath path)
     {
         try
         {
@@ -5683,7 +5683,7 @@ public static class Compositor_stub
             throw new RuntimeException(ex);
         }
     }
-    public static Windows.UI.Composition.CompositionSurfaceBrush CreateSurfaceBrush_stub(this Windows.UI.Composition.Compositor sender, Windows.UI.Composition.ICompositionSurface surface)
+    public static Microsoft.UI.Composition.CompositionSurfaceBrush CreateSurfaceBrush_stub(this Microsoft.UI.Composition.Compositor sender, Microsoft.UI.Composition.ICompositionSurface surface)
     {
         try
         {
@@ -5695,7 +5695,7 @@ public static class Compositor_stub
             throw new RuntimeException(ex);
         }
     }
-    public static Windows.UI.Composition.CompositionVisualSurface CreateVisualSurface_stub(this Windows.UI.Composition.Compositor sender)
+    public static Microsoft.UI.Composition.CompositionVisualSurface CreateVisualSurface_stub(this Microsoft.UI.Composition.Compositor sender)
     {
         try
         {
@@ -5707,7 +5707,7 @@ public static class Compositor_stub
             throw new RuntimeException(ex);
         }
     }
-    public static Windows.UI.Composition.ContainerVisual CreateContainerVisual_stub(this Windows.UI.Composition.Compositor sender)
+    public static Microsoft.UI.Composition.ContainerVisual CreateContainerVisual_stub(this Microsoft.UI.Composition.Compositor sender)
     {
         try
         {
@@ -5719,7 +5719,7 @@ public static class Compositor_stub
             throw new RuntimeException(ex);
         }
     }
-    public static Windows.UI.Composition.ShapeVisual CreateShapeVisual_stub(this Windows.UI.Composition.Compositor sender)
+    public static Microsoft.UI.Composition.ShapeVisual CreateShapeVisual_stub(this Microsoft.UI.Composition.Compositor sender)
     {
         try
         {
@@ -5731,7 +5731,7 @@ public static class Compositor_stub
             throw new RuntimeException(ex);
         }
     }
-    public static Windows.UI.Composition.SpriteVisual CreateSpriteVisual_stub(this Windows.UI.Composition.Compositor sender)
+    public static Microsoft.UI.Composition.SpriteVisual CreateSpriteVisual_stub(this Microsoft.UI.Composition.Compositor sender)
     {
         try
         {
@@ -5743,7 +5743,7 @@ public static class Compositor_stub
             throw new RuntimeException(ex);
         }
     }
-    public static Windows.UI.Composition.StepEasingFunction CreateStepEasingFunction_stub(this Windows.UI.Composition.Compositor sender)
+    public static Microsoft.UI.Composition.StepEasingFunction CreateStepEasingFunction_stub(this Microsoft.UI.Composition.Compositor sender)
     {
         try
         {
@@ -5755,7 +5755,7 @@ public static class Compositor_stub
             throw new RuntimeException(ex);
         }
     }
-    public static Windows.UI.Composition.CubicBezierEasingFunction CreateCubicBezierEasingFunction_stub(this Windows.UI.Composition.Compositor sender, System.Numerics.Vector2 controlPoint1, System.Numerics.Vector2 controlPoint2)
+    public static Microsoft.UI.Composition.CubicBezierEasingFunction CreateCubicBezierEasingFunction_stub(this Microsoft.UI.Composition.Compositor sender, System.Numerics.Vector2 controlPoint1, System.Numerics.Vector2 controlPoint2)
     {
         try
         {
@@ -5767,7 +5767,7 @@ public static class Compositor_stub
             throw new RuntimeException(ex);
         }
     }
-    public static Windows.UI.Composition.ExpressionAnimation CreateExpressionAnimation_stub(this Windows.UI.Composition.Compositor sender)
+    public static Microsoft.UI.Composition.ExpressionAnimation CreateExpressionAnimation_stub(this Microsoft.UI.Composition.Compositor sender)
     {
         try
         {
@@ -5779,7 +5779,7 @@ public static class Compositor_stub
             throw new RuntimeException(ex);
         }
     }
-    public static Windows.UI.Composition.ColorKeyFrameAnimation CreateColorKeyFrameAnimation_stub(this Windows.UI.Composition.Compositor sender)
+    public static Microsoft.UI.Composition.ColorKeyFrameAnimation CreateColorKeyFrameAnimation_stub(this Microsoft.UI.Composition.Compositor sender)
     {
         try
         {
@@ -5791,7 +5791,7 @@ public static class Compositor_stub
             throw new RuntimeException(ex);
         }
     }
-    public static Windows.UI.Composition.ScalarKeyFrameAnimation CreateScalarKeyFrameAnimation_stub(this Windows.UI.Composition.Compositor sender)
+    public static Microsoft.UI.Composition.ScalarKeyFrameAnimation CreateScalarKeyFrameAnimation_stub(this Microsoft.UI.Composition.Compositor sender)
     {
         try
         {
@@ -5803,7 +5803,7 @@ public static class Compositor_stub
             throw new RuntimeException(ex);
         }
     }
-    public static Windows.UI.Composition.CompositionColorBrush CreateColorBrush_stub(this Windows.UI.Composition.Compositor sender)
+    public static Microsoft.UI.Composition.CompositionColorBrush CreateColorBrush_stub(this Microsoft.UI.Composition.Compositor sender)
     {
         try
         {
@@ -5815,7 +5815,7 @@ public static class Compositor_stub
             throw new RuntimeException(ex);
         }
     }
-    public static Windows.UI.Composition.ExpressionAnimation CreateExpressionAnimation_stub(this Windows.UI.Composition.Compositor sender, string expression)
+    public static Microsoft.UI.Composition.ExpressionAnimation CreateExpressionAnimation_stub(this Microsoft.UI.Composition.Compositor sender, string expression)
     {
         try
         {
@@ -5827,7 +5827,7 @@ public static class Compositor_stub
             throw new RuntimeException(ex);
         }
     }
-    public static Windows.UI.Composition.PathKeyFrameAnimation CreatePathKeyFrameAnimation_stub(this Windows.UI.Composition.Compositor sender)
+    public static Microsoft.UI.Composition.PathKeyFrameAnimation CreatePathKeyFrameAnimation_stub(this Microsoft.UI.Composition.Compositor sender)
     {
         try
         {
@@ -5839,7 +5839,7 @@ public static class Compositor_stub
             throw new RuntimeException(ex);
         }
     }
-    public static Windows.UI.Composition.CompositionPathGeometry CreatePathGeometry_stub(this Windows.UI.Composition.Compositor sender)
+    public static Microsoft.UI.Composition.CompositionPathGeometry CreatePathGeometry_stub(this Microsoft.UI.Composition.Compositor sender)
     {
         try
         {
@@ -5851,7 +5851,7 @@ public static class Compositor_stub
             throw new RuntimeException(ex);
         }
     }
-    public static Windows.UI.Composition.CompositionPropertySet CreatePropertySet_stub(this Windows.UI.Composition.Compositor sender)
+    public static Microsoft.UI.Composition.CompositionPropertySet CreatePropertySet_stub(this Microsoft.UI.Composition.Compositor sender)
     {
         try
         {
@@ -5863,7 +5863,7 @@ public static class Compositor_stub
             throw new RuntimeException(ex);
         }
     }
-    public static Windows.UI.Composition.CompositionContainerShape CreateContainerShape_stub(this Windows.UI.Composition.Compositor sender)
+    public static Microsoft.UI.Composition.CompositionContainerShape CreateContainerShape_stub(this Microsoft.UI.Composition.Compositor sender)
     {
         try
         {
@@ -5875,7 +5875,7 @@ public static class Compositor_stub
             throw new RuntimeException(ex);
         }
     }
-    public static Windows.UI.Composition.CompositionColorGradientStop CreateColorGradientStop_stub(this Windows.UI.Composition.Compositor sender, float offset, Windows.UI.Color color)
+    public static Microsoft.UI.Composition.CompositionColorGradientStop CreateColorGradientStop_stub(this Microsoft.UI.Composition.Compositor sender, float offset, Windows.UI.Color color)
     {
         try
         {
@@ -5887,7 +5887,7 @@ public static class Compositor_stub
             throw new RuntimeException(ex);
         }
     }
-    public static Windows.UI.Composition.CompositionLinearGradientBrush CreateLinearGradientBrush_stub(this Windows.UI.Composition.Compositor sender)
+    public static Microsoft.UI.Composition.CompositionLinearGradientBrush CreateLinearGradientBrush_stub(this Microsoft.UI.Composition.Compositor sender)
     {
         try
         {
@@ -5899,7 +5899,7 @@ public static class Compositor_stub
             throw new RuntimeException(ex);
         }
     }
-    public static Windows.UI.Composition.AnimationController CreateAnimationController_stub(this Windows.UI.Composition.Compositor sender)
+    public static Microsoft.UI.Composition.AnimationController CreateAnimationController_stub(this Microsoft.UI.Composition.Compositor sender)
     {
         try
         {
@@ -5911,7 +5911,7 @@ public static class Compositor_stub
             throw new RuntimeException(ex);
         }
     }
-    public static Windows.UI.Composition.InsetClip CreateInsetClip_stub(this Windows.UI.Composition.Compositor sender)
+    public static Microsoft.UI.Composition.InsetClip CreateInsetClip_stub(this Microsoft.UI.Composition.Compositor sender)
     {
         try
         {
@@ -5923,7 +5923,7 @@ public static class Compositor_stub
             throw new RuntimeException(ex);
         }
     }
-    public static Windows.UI.Composition.BooleanKeyFrameAnimation CreateBooleanKeyFrameAnimation_stub(this Windows.UI.Composition.Compositor sender)
+    public static Microsoft.UI.Composition.BooleanKeyFrameAnimation CreateBooleanKeyFrameAnimation_stub(this Microsoft.UI.Composition.Compositor sender)
     {
         try
         {
@@ -5935,7 +5935,7 @@ public static class Compositor_stub
             throw new RuntimeException(ex);
         }
     }
-    public static Windows.UI.Composition.CompositionEllipseGeometry CreateEllipseGeometry_stub(this Windows.UI.Composition.Compositor sender)
+    public static Microsoft.UI.Composition.CompositionEllipseGeometry CreateEllipseGeometry_stub(this Microsoft.UI.Composition.Compositor sender)
     {
         try
         {
@@ -5947,7 +5947,7 @@ public static class Compositor_stub
             throw new RuntimeException(ex);
         }
     }
-    public static Windows.UI.Composition.CompositionRadialGradientBrush CreateRadialGradientBrush_stub(this Windows.UI.Composition.Compositor sender)
+    public static Microsoft.UI.Composition.CompositionRadialGradientBrush CreateRadialGradientBrush_stub(this Microsoft.UI.Composition.Compositor sender)
     {
         try
         {
@@ -5959,7 +5959,7 @@ public static class Compositor_stub
             throw new RuntimeException(ex);
         }
     }
-    public static Windows.UI.Composition.CompositionRoundedRectangleGeometry CreateRoundedRectangleGeometry_stub(this Windows.UI.Composition.Compositor sender)
+    public static Microsoft.UI.Composition.CompositionRoundedRectangleGeometry CreateRoundedRectangleGeometry_stub(this Microsoft.UI.Composition.Compositor sender)
     {
         try
         {
@@ -5971,7 +5971,7 @@ public static class Compositor_stub
             throw new RuntimeException(ex);
         }
     }
-    public static Windows.UI.Composition.CompositionScopedBatch CreateScopedBatch_stub(this Windows.UI.Composition.Compositor sender, Windows.UI.Composition.CompositionBatchTypes batchType)
+    public static Microsoft.UI.Composition.CompositionScopedBatch CreateScopedBatch_stub(this Microsoft.UI.Composition.Compositor sender, Microsoft.UI.Composition.CompositionBatchTypes batchType)
     {
         try
         {
@@ -5983,7 +5983,7 @@ public static class Compositor_stub
             throw new RuntimeException(ex);
         }
     }
-    public static Windows.UI.Composition.Vector3KeyFrameAnimation CreateVector3KeyFrameAnimation_stub(this Windows.UI.Composition.Compositor sender)
+    public static Microsoft.UI.Composition.Vector3KeyFrameAnimation CreateVector3KeyFrameAnimation_stub(this Microsoft.UI.Composition.Compositor sender)
     {
         try
         {
@@ -5995,7 +5995,7 @@ public static class Compositor_stub
             throw new RuntimeException(ex);
         }
     }
-    public static Windows.UI.Composition.DropShadow CreateDropShadow_stub(this Windows.UI.Composition.Compositor sender)
+    public static Microsoft.UI.Composition.DropShadow CreateDropShadow_stub(this Microsoft.UI.Composition.Compositor sender)
     {
         try
         {
@@ -6007,7 +6007,7 @@ public static class Compositor_stub
             throw new RuntimeException(ex);
         }
     }
-    public static Windows.UI.Composition.CompositionGeometricClip CreateGeometricClip_stub(this Windows.UI.Composition.Compositor sender, Windows.UI.Composition.CompositionGeometry geometry)
+    public static Microsoft.UI.Composition.CompositionGeometricClip CreateGeometricClip_stub(this Microsoft.UI.Composition.Compositor sender, Microsoft.UI.Composition.CompositionGeometry geometry)
     {
         try
         {
@@ -6019,7 +6019,7 @@ public static class Compositor_stub
             throw new RuntimeException(ex);
         }
     }
-    public static Windows.UI.Composition.CompositionGeometricClip CreateGeometricClip_stub(this Windows.UI.Composition.Compositor sender)
+    public static Microsoft.UI.Composition.CompositionGeometricClip CreateGeometricClip_stub(this Microsoft.UI.Composition.Compositor sender)
     {
         try
         {
@@ -6031,7 +6031,7 @@ public static class Compositor_stub
             throw new RuntimeException(ex);
         }
     }
-    public static Windows.UI.Composition.CompositionRectangleGeometry CreateRectangleGeometry_stub(this Windows.UI.Composition.Compositor sender)
+    public static Microsoft.UI.Composition.CompositionRectangleGeometry CreateRectangleGeometry_stub(this Microsoft.UI.Composition.Compositor sender)
     {
         try
         {
@@ -6043,7 +6043,7 @@ public static class Compositor_stub
             throw new RuntimeException(ex);
         }
     }
-    public static Windows.UI.Composition.CompositionMaskBrush CreateMaskBrush_stub(this Windows.UI.Composition.Compositor sender)
+    public static Microsoft.UI.Composition.CompositionMaskBrush CreateMaskBrush_stub(this Microsoft.UI.Composition.Compositor sender)
     {
         try
         {
@@ -6055,7 +6055,7 @@ public static class Compositor_stub
             throw new RuntimeException(ex);
         }
     }
-    public static Windows.UI.Composition.CompositionSurfaceBrush CreateSurfaceBrush_stub(this Windows.UI.Composition.Compositor sender)
+    public static Microsoft.UI.Composition.CompositionSurfaceBrush CreateSurfaceBrush_stub(this Microsoft.UI.Composition.Compositor sender)
     {
         try
         {
@@ -6067,7 +6067,7 @@ public static class Compositor_stub
             throw new RuntimeException(ex);
         }
     }
-    public static Windows.UI.Composition.CompositionSpriteShape CreateSpriteShape_stub(this Windows.UI.Composition.Compositor sender)
+    public static Microsoft.UI.Composition.CompositionSpriteShape CreateSpriteShape_stub(this Microsoft.UI.Composition.Compositor sender)
     {
         try
         {
@@ -6079,7 +6079,7 @@ public static class Compositor_stub
             throw new RuntimeException(ex);
         }
     }
-    public static Windows.UI.Composition.LinearEasingFunction CreateLinearEasingFunction_stub(this Windows.UI.Composition.Compositor sender)
+    public static Microsoft.UI.Composition.LinearEasingFunction CreateLinearEasingFunction_stub(this Microsoft.UI.Composition.Compositor sender)
     {
         try
         {
@@ -6091,7 +6091,7 @@ public static class Compositor_stub
             throw new RuntimeException(ex);
         }
     }
-    public static Windows.UI.Composition.CompositionEffectFactory CreateEffectFactory_stub(this Windows.UI.Composition.Compositor sender, Windows.Graphics.Effects.IGraphicsEffect graphicsEffect, System.Collections.Generic.IEnumerable<string> animatableProperties)
+    public static Microsoft.UI.Composition.CompositionEffectFactory CreateEffectFactory_stub(this Microsoft.UI.Composition.Compositor sender, Windows.Graphics.Effects.IGraphicsEffect graphicsEffect, System.Collections.Generic.IEnumerable<string> animatableProperties)
     {
         try
         {
@@ -6103,7 +6103,7 @@ public static class Compositor_stub
             throw new RuntimeException(ex);
         }
     }
-    public static Windows.UI.Composition.SpringVector3NaturalMotionAnimation CreateSpringVector3Animation_stub(this Windows.UI.Composition.Compositor sender)
+    public static Microsoft.UI.Composition.SpringVector3NaturalMotionAnimation CreateSpringVector3Animation_stub(this Microsoft.UI.Composition.Compositor sender)
     {
         try
         {
@@ -6115,7 +6115,7 @@ public static class Compositor_stub
             throw new RuntimeException(ex);
         }
     }
-    public static Windows.UI.Composition.SpringScalarNaturalMotionAnimation CreateSpringScalarAnimation_stub(this Windows.UI.Composition.Compositor sender)
+    public static Microsoft.UI.Composition.SpringScalarNaturalMotionAnimation CreateSpringScalarAnimation_stub(this Microsoft.UI.Composition.Compositor sender)
     {
         try
         {
@@ -6127,7 +6127,7 @@ public static class Compositor_stub
             throw new RuntimeException(ex);
         }
     }
-    public static Windows.UI.Composition.CompositionViewBox CreateViewBox_stub(this Windows.UI.Composition.Compositor sender)
+    public static Microsoft.UI.Composition.CompositionViewBox CreateViewBox_stub(this Microsoft.UI.Composition.Compositor sender)
     {
         try
         {
@@ -6139,7 +6139,7 @@ public static class Compositor_stub
             throw new RuntimeException(ex);
         }
     }
-    public static Windows.UI.Composition.InsetClip CreateInsetClip_stub(this Windows.UI.Composition.Compositor sender, float leftInset, float topInset, float rightInset, float bottomInset)
+    public static Microsoft.UI.Composition.InsetClip CreateInsetClip_stub(this Microsoft.UI.Composition.Compositor sender, float leftInset, float topInset, float rightInset, float bottomInset)
     {
         try
         {
@@ -6151,7 +6151,7 @@ public static class Compositor_stub
             throw new RuntimeException(ex);
         }
     }
-    public static Windows.UI.Composition.CompositionLineGeometry CreateLineGeometry_stub(this Windows.UI.Composition.Compositor sender)
+    public static Microsoft.UI.Composition.CompositionLineGeometry CreateLineGeometry_stub(this Microsoft.UI.Composition.Compositor sender)
     {
         try
         {
@@ -6163,7 +6163,7 @@ public static class Compositor_stub
             throw new RuntimeException(ex);
         }
     }
-    public static Windows.UI.Composition.CompositionBackdropBrush CreateBackdropBrush_stub(this Windows.UI.Composition.Compositor sender)
+    public static Microsoft.UI.Composition.CompositionBackdropBrush CreateBackdropBrush_stub(this Microsoft.UI.Composition.Compositor sender)
     {
         try
         {
@@ -6175,7 +6175,7 @@ public static class Compositor_stub
             throw new RuntimeException(ex);
         }
     }
-    public static Windows.UI.Composition.RectangleClip CreateRectangleClip_stub(this Windows.UI.Composition.Compositor sender, float left, float top, float right, float bottom, System.Numerics.Vector2 topLeftRadius, System.Numerics.Vector2 topRightRadius, System.Numerics.Vector2 bottomRightRadius, System.Numerics.Vector2 bottomLeftRadius)
+    public static Microsoft.UI.Composition.RectangleClip CreateRectangleClip_stub(this Microsoft.UI.Composition.Compositor sender, float left, float top, float right, float bottom, System.Numerics.Vector2 topLeftRadius, System.Numerics.Vector2 topRightRadius, System.Numerics.Vector2 bottomRightRadius, System.Numerics.Vector2 bottomLeftRadius)
     {
         try
         {
@@ -6190,7 +6190,7 @@ public static class Compositor_stub
 }
 public static class Vector2KeyFrameAnimation_stub
 {
-    public static void InsertKeyFrame_stub(this Windows.UI.Composition.Vector2KeyFrameAnimation sender, float normalizedProgressKey, System.Numerics.Vector2 value, Windows.UI.Composition.CompositionEasingFunction easingFunction)
+    public static void InsertKeyFrame_stub(this Microsoft.UI.Composition.Vector2KeyFrameAnimation sender, float normalizedProgressKey, System.Numerics.Vector2 value, Microsoft.UI.Composition.CompositionEasingFunction easingFunction)
     {
         try
         {
@@ -6202,7 +6202,7 @@ public static class Vector2KeyFrameAnimation_stub
             throw new RuntimeException(ex);
         }
     }
-    public static void InsertKeyFrame_stub(this Windows.UI.Composition.Vector2KeyFrameAnimation sender, float normalizedProgressKey, System.Numerics.Vector2 value)
+    public static void InsertKeyFrame_stub(this Microsoft.UI.Composition.Vector2KeyFrameAnimation sender, float normalizedProgressKey, System.Numerics.Vector2 value)
     {
         try
         {
@@ -6217,7 +6217,7 @@ public static class Vector2KeyFrameAnimation_stub
 }
 public static class CompositionEffectFactory_stub
 {
-    public static Windows.UI.Composition.CompositionEffectBrush CreateBrush_stub(this Windows.UI.Composition.CompositionEffectFactory sender)
+    public static Microsoft.UI.Composition.CompositionEffectBrush CreateBrush_stub(this Microsoft.UI.Composition.CompositionEffectFactory sender)
     {
         try
         {
@@ -6232,7 +6232,7 @@ public static class CompositionEffectFactory_stub
 }
 public static class CompositionEffectBrush_stub
 {
-    public static void SetSourceParameter_stub(this Windows.UI.Composition.CompositionEffectBrush sender, string name, Windows.UI.Composition.CompositionBrush source)
+    public static void SetSourceParameter_stub(this Microsoft.UI.Composition.CompositionEffectBrush sender, string name, Microsoft.UI.Composition.CompositionBrush source)
     {
         try
         {
@@ -6247,7 +6247,7 @@ public static class CompositionEffectBrush_stub
 }
 public static class AnimationController_stub
 {
-    public static void Pause_stub(this Windows.UI.Composition.AnimationController sender)
+    public static void Pause_stub(this Microsoft.UI.Composition.AnimationController sender)
     {
         try
         {
@@ -6259,7 +6259,7 @@ public static class AnimationController_stub
             throw new RuntimeException(ex);
         }
     }
-    public static void Resume_stub(this Windows.UI.Composition.AnimationController sender)
+    public static void Resume_stub(this Microsoft.UI.Composition.AnimationController sender)
     {
         try
         {
@@ -6274,7 +6274,7 @@ public static class AnimationController_stub
 }
 public static class VisualCollection_stub
 {
-    public static void InsertAtTop_stub(this Windows.UI.Composition.VisualCollection sender, Windows.UI.Composition.Visual newChild)
+    public static void InsertAtTop_stub(this Microsoft.UI.Composition.VisualCollection sender, Microsoft.UI.Composition.Visual newChild)
     {
         try
         {
@@ -6286,7 +6286,7 @@ public static class VisualCollection_stub
             throw new RuntimeException(ex);
         }
     }
-    public static void InsertAtBottom_stub(this Windows.UI.Composition.VisualCollection sender, Windows.UI.Composition.Visual newChild)
+    public static void InsertAtBottom_stub(this Microsoft.UI.Composition.VisualCollection sender, Microsoft.UI.Composition.Visual newChild)
     {
         try
         {
@@ -6298,7 +6298,7 @@ public static class VisualCollection_stub
             throw new RuntimeException(ex);
         }
     }
-    public static void RemoveAll_stub(this Windows.UI.Composition.VisualCollection sender)
+    public static void RemoveAll_stub(this Microsoft.UI.Composition.VisualCollection sender)
     {
         try
         {
@@ -6313,7 +6313,7 @@ public static class VisualCollection_stub
 }
 public static class CompositionPropertySet_stub
 {
-    public static void InsertScalar_stub(this Windows.UI.Composition.CompositionPropertySet sender, string propertyName, float value)
+    public static void InsertScalar_stub(this Microsoft.UI.Composition.CompositionPropertySet sender, string propertyName, float value)
     {
         try
         {
@@ -6325,7 +6325,7 @@ public static class CompositionPropertySet_stub
             throw new RuntimeException(ex);
         }
     }
-    public static void InsertVector4_stub(this Windows.UI.Composition.CompositionPropertySet sender, string propertyName, System.Numerics.Vector4 value)
+    public static void InsertVector4_stub(this Microsoft.UI.Composition.CompositionPropertySet sender, string propertyName, System.Numerics.Vector4 value)
     {
         try
         {
@@ -6337,7 +6337,7 @@ public static class CompositionPropertySet_stub
             throw new RuntimeException(ex);
         }
     }
-    public static void InsertVector3_stub(this Windows.UI.Composition.CompositionPropertySet sender, string propertyName, System.Numerics.Vector3 value)
+    public static void InsertVector3_stub(this Microsoft.UI.Composition.CompositionPropertySet sender, string propertyName, System.Numerics.Vector3 value)
     {
         try
         {
@@ -6349,7 +6349,7 @@ public static class CompositionPropertySet_stub
             throw new RuntimeException(ex);
         }
     }
-    public static void InsertColor_stub(this Windows.UI.Composition.CompositionPropertySet sender, string propertyName, Windows.UI.Color value)
+    public static void InsertColor_stub(this Microsoft.UI.Composition.CompositionPropertySet sender, string propertyName, Windows.UI.Color value)
     {
         try
         {
@@ -6361,7 +6361,7 @@ public static class CompositionPropertySet_stub
             throw new RuntimeException(ex);
         }
     }
-    public static Windows.UI.Composition.CompositionGetValueStatus TryGetVector3_stub(this Windows.UI.Composition.CompositionPropertySet sender, string propertyName, out System.Numerics.Vector3 value)
+    public static Microsoft.UI.Composition.CompositionGetValueStatus TryGetVector3_stub(this Microsoft.UI.Composition.CompositionPropertySet sender, string propertyName, out System.Numerics.Vector3 value)
     {
         try
         {
@@ -6373,7 +6373,7 @@ public static class CompositionPropertySet_stub
             throw new RuntimeException(ex);
         }
     }
-    public static void InsertBoolean_stub(this Windows.UI.Composition.CompositionPropertySet sender, string propertyName, bool value)
+    public static void InsertBoolean_stub(this Microsoft.UI.Composition.CompositionPropertySet sender, string propertyName, bool value)
     {
         try
         {
@@ -6388,7 +6388,7 @@ public static class CompositionPropertySet_stub
 }
 public static class ColorKeyFrameAnimation_stub
 {
-    public static void InsertKeyFrame_stub(this Windows.UI.Composition.ColorKeyFrameAnimation sender, float normalizedProgressKey, Windows.UI.Color value, Windows.UI.Composition.CompositionEasingFunction easingFunction)
+    public static void InsertKeyFrame_stub(this Microsoft.UI.Composition.ColorKeyFrameAnimation sender, float normalizedProgressKey, Windows.UI.Color value, Microsoft.UI.Composition.CompositionEasingFunction easingFunction)
     {
         try
         {
@@ -6400,7 +6400,7 @@ public static class ColorKeyFrameAnimation_stub
             throw new RuntimeException(ex);
         }
     }
-    public static void InsertKeyFrame_stub(this Windows.UI.Composition.ColorKeyFrameAnimation sender, float normalizedProgressKey, Windows.UI.Color value)
+    public static void InsertKeyFrame_stub(this Microsoft.UI.Composition.ColorKeyFrameAnimation sender, float normalizedProgressKey, Windows.UI.Color value)
     {
         try
         {
@@ -6415,7 +6415,7 @@ public static class ColorKeyFrameAnimation_stub
 }
 public static class ScalarKeyFrameAnimation_stub
 {
-    public static void InsertKeyFrame_stub(this Windows.UI.Composition.ScalarKeyFrameAnimation sender, float normalizedProgressKey, float value, Windows.UI.Composition.CompositionEasingFunction easingFunction)
+    public static void InsertKeyFrame_stub(this Microsoft.UI.Composition.ScalarKeyFrameAnimation sender, float normalizedProgressKey, float value, Microsoft.UI.Composition.CompositionEasingFunction easingFunction)
     {
         try
         {
@@ -6427,7 +6427,7 @@ public static class ScalarKeyFrameAnimation_stub
             throw new RuntimeException(ex);
         }
     }
-    public static void InsertKeyFrame_stub(this Windows.UI.Composition.ScalarKeyFrameAnimation sender, float normalizedProgressKey, float value)
+    public static void InsertKeyFrame_stub(this Microsoft.UI.Composition.ScalarKeyFrameAnimation sender, float normalizedProgressKey, float value)
     {
         try
         {
@@ -6442,7 +6442,7 @@ public static class ScalarKeyFrameAnimation_stub
 }
 public static class PathKeyFrameAnimation_stub
 {
-    public static void InsertKeyFrame_stub(this Windows.UI.Composition.PathKeyFrameAnimation sender, float normalizedProgressKey, Windows.UI.Composition.CompositionPath path, Windows.UI.Composition.CompositionEasingFunction easingFunction)
+    public static void InsertKeyFrame_stub(this Microsoft.UI.Composition.PathKeyFrameAnimation sender, float normalizedProgressKey, Microsoft.UI.Composition.CompositionPath path, Microsoft.UI.Composition.CompositionEasingFunction easingFunction)
     {
         try
         {
@@ -6454,7 +6454,7 @@ public static class PathKeyFrameAnimation_stub
             throw new RuntimeException(ex);
         }
     }
-    public static void InsertKeyFrame_stub(this Windows.UI.Composition.PathKeyFrameAnimation sender, float normalizedProgressKey, Windows.UI.Composition.CompositionPath path)
+    public static void InsertKeyFrame_stub(this Microsoft.UI.Composition.PathKeyFrameAnimation sender, float normalizedProgressKey, Microsoft.UI.Composition.CompositionPath path)
     {
         try
         {
@@ -6469,7 +6469,7 @@ public static class PathKeyFrameAnimation_stub
 }
 public static class KeyFrameAnimation_stub
 {
-    public static void InsertExpressionKeyFrame_stub(this Windows.UI.Composition.KeyFrameAnimation sender, float normalizedProgressKey, string value, Windows.UI.Composition.CompositionEasingFunction easingFunction)
+    public static void InsertExpressionKeyFrame_stub(this Microsoft.UI.Composition.KeyFrameAnimation sender, float normalizedProgressKey, string value, Microsoft.UI.Composition.CompositionEasingFunction easingFunction)
     {
         try
         {
@@ -6484,7 +6484,7 @@ public static class KeyFrameAnimation_stub
 }
 public static class BooleanKeyFrameAnimation_stub
 {
-    public static void InsertKeyFrame_stub(this Windows.UI.Composition.BooleanKeyFrameAnimation sender, float normalizedProgressKey, bool value)
+    public static void InsertKeyFrame_stub(this Microsoft.UI.Composition.BooleanKeyFrameAnimation sender, float normalizedProgressKey, bool value)
     {
         try
         {
@@ -6499,7 +6499,7 @@ public static class BooleanKeyFrameAnimation_stub
 }
 public static class Vector3KeyFrameAnimation_stub
 {
-    public static void InsertKeyFrame_stub(this Windows.UI.Composition.Vector3KeyFrameAnimation sender, float normalizedProgressKey, System.Numerics.Vector3 value)
+    public static void InsertKeyFrame_stub(this Microsoft.UI.Composition.Vector3KeyFrameAnimation sender, float normalizedProgressKey, System.Numerics.Vector3 value)
     {
         try
         {
@@ -6511,7 +6511,7 @@ public static class Vector3KeyFrameAnimation_stub
             throw new RuntimeException(ex);
         }
     }
-    public static void InsertKeyFrame_stub(this Windows.UI.Composition.Vector3KeyFrameAnimation sender, float normalizedProgressKey, System.Numerics.Vector3 value, Windows.UI.Composition.CompositionEasingFunction easingFunction)
+    public static void InsertKeyFrame_stub(this Microsoft.UI.Composition.Vector3KeyFrameAnimation sender, float normalizedProgressKey, System.Numerics.Vector3 value, Microsoft.UI.Composition.CompositionEasingFunction easingFunction)
     {
         try
         {
@@ -6526,7 +6526,7 @@ public static class Vector3KeyFrameAnimation_stub
 }
 public static class CompositionScopedBatch_stub
 {
-    public static void End_stub(this Windows.UI.Composition.CompositionScopedBatch sender)
+    public static void End_stub(this Microsoft.UI.Composition.CompositionScopedBatch sender)
     {
         try
         {
@@ -6541,11 +6541,11 @@ public static class CompositionScopedBatch_stub
 }
 public static class CompositionCapabilities_stub
 {
-    public static Windows.UI.Composition.CompositionCapabilities GetForCurrentView_stub()
+    public static Microsoft.UI.Composition.CompositionCapabilities GetForCurrentView_stub()
     {
         try
         {
-            return Windows.UI.Composition.CompositionCapabilities.GetForCurrentView();
+            return Microsoft.UI.Composition.CompositionCapabilities.GetForCurrentView();
         }
         catch (Exception ex)
         {
@@ -6553,7 +6553,7 @@ public static class CompositionCapabilities_stub
             throw new RuntimeException(ex);
         }
     }
-    public static bool AreEffectsFast_stub(this Windows.UI.Composition.CompositionCapabilities sender)
+    public static bool AreEffectsFast_stub(this Microsoft.UI.Composition.CompositionCapabilities sender)
     {
         try
         {
@@ -6568,7 +6568,7 @@ public static class CompositionCapabilities_stub
 }
 public static class InteractionTracker_stub
 {
-    public static int TryUpdatePosition_stub(this Windows.UI.Composition.Interactions.InteractionTracker sender, System.Numerics.Vector3 value)
+    public static int TryUpdatePosition_stub(this Microsoft.UI.Composition.Interactions.InteractionTracker sender, System.Numerics.Vector3 value)
     {
         try
         {
@@ -6580,7 +6580,7 @@ public static class InteractionTracker_stub
             throw new RuntimeException(ex);
         }
     }
-    public static int TryUpdatePositionWithAnimation_stub(this Windows.UI.Composition.Interactions.InteractionTracker sender, Windows.UI.Composition.CompositionAnimation animation)
+    public static int TryUpdatePositionWithAnimation_stub(this Microsoft.UI.Composition.Interactions.InteractionTracker sender, Microsoft.UI.Composition.CompositionAnimation animation)
     {
         try
         {
@@ -6592,11 +6592,11 @@ public static class InteractionTracker_stub
             throw new RuntimeException(ex);
         }
     }
-    public static Windows.UI.Composition.Interactions.InteractionTracker CreateWithOwner_stub(Windows.UI.Composition.Compositor compositor, Windows.UI.Composition.Interactions.IInteractionTrackerOwner owner)
+    public static Microsoft.UI.Composition.Interactions.InteractionTracker CreateWithOwner_stub(Microsoft.UI.Composition.Compositor compositor, Microsoft.UI.Composition.Interactions.IInteractionTrackerOwner owner)
     {
         try
         {
-            return Windows.UI.Composition.Interactions.InteractionTracker.CreateWithOwner(compositor, owner);
+            return Microsoft.UI.Composition.Interactions.InteractionTracker.CreateWithOwner(compositor, owner);
         }
         catch (Exception ex)
         {
@@ -6604,7 +6604,7 @@ public static class InteractionTracker_stub
             throw new RuntimeException(ex);
         }
     }
-    public static void ConfigurePositionXInertiaModifiers_stub(this Windows.UI.Composition.Interactions.InteractionTracker sender, System.Collections.Generic.IEnumerable<Windows.UI.Composition.Interactions.InteractionTrackerInertiaModifier> modifiers)
+    public static void ConfigurePositionXInertiaModifiers_stub(this Microsoft.UI.Composition.Interactions.InteractionTracker sender, System.Collections.Generic.IEnumerable<Microsoft.UI.Composition.Interactions.InteractionTrackerInertiaModifier> modifiers)
     {
         try
         {
@@ -6619,11 +6619,11 @@ public static class InteractionTracker_stub
 }
 public static class VisualInteractionSource_stub
 {
-    public static Windows.UI.Composition.Interactions.VisualInteractionSource Create_stub(Windows.UI.Composition.Visual source)
+    public static Microsoft.UI.Composition.Interactions.VisualInteractionSource Create_stub(Microsoft.UI.Composition.Visual source)
     {
         try
         {
-            return Windows.UI.Composition.Interactions.VisualInteractionSource.Create(source);
+            return Microsoft.UI.Composition.Interactions.VisualInteractionSource.Create(source);
         }
         catch (Exception ex)
         {
@@ -6631,7 +6631,7 @@ public static class VisualInteractionSource_stub
             throw new RuntimeException(ex);
         }
     }
-    public static void TryRedirectForManipulation_stub(this Windows.UI.Composition.Interactions.VisualInteractionSource sender, Windows.UI.Input.PointerPoint pointerPoint)
+    public static void TryRedirectForManipulation_stub(this Microsoft.UI.Composition.Interactions.VisualInteractionSource sender, Windows.UI.Input.PointerPoint pointerPoint)
     {
         try
         {
@@ -6646,7 +6646,7 @@ public static class VisualInteractionSource_stub
 }
 public static class CompositionInteractionSourceCollection_stub
 {
-    public static void Add_stub(this Windows.UI.Composition.Interactions.CompositionInteractionSourceCollection sender, Windows.UI.Composition.Interactions.ICompositionInteractionSource value)
+    public static void Add_stub(this Microsoft.UI.Composition.Interactions.CompositionInteractionSourceCollection sender, Microsoft.UI.Composition.Interactions.ICompositionInteractionSource value)
     {
         try
         {
@@ -6661,11 +6661,11 @@ public static class CompositionInteractionSourceCollection_stub
 }
 public static class InteractionTrackerInertiaRestingValue_stub
 {
-    public static Windows.UI.Composition.Interactions.InteractionTrackerInertiaRestingValue Create_stub(Windows.UI.Composition.Compositor compositor)
+    public static Microsoft.UI.Composition.Interactions.InteractionTrackerInertiaRestingValue Create_stub(Microsoft.UI.Composition.Compositor compositor)
     {
         try
         {
-            return Windows.UI.Composition.Interactions.InteractionTrackerInertiaRestingValue.Create(compositor);
+            return Microsoft.UI.Composition.Interactions.InteractionTrackerInertiaRestingValue.Create(compositor);
         }
         catch (Exception ex)
         {
@@ -8716,7 +8716,7 @@ public static class DataTemplateSelector_stub
 }
 public static class Image_stub
 {
-    public static Windows.UI.Composition.CompositionBrush GetAlphaMask_stub(this Microsoft.UI.Xaml.Controls.Image sender)
+    public static Microsoft.UI.Composition.CompositionBrush GetAlphaMask_stub(this Microsoft.UI.Xaml.Controls.Image sender)
     {
         try
         {
@@ -8731,7 +8731,7 @@ public static class Image_stub
 }
 public static class TextBlock_stub
 {
-    public static Windows.UI.Composition.CompositionBrush GetAlphaMask_stub(this Microsoft.UI.Xaml.Controls.TextBlock sender)
+    public static Microsoft.UI.Composition.CompositionBrush GetAlphaMask_stub(this Microsoft.UI.Xaml.Controls.TextBlock sender)
     {
         try
         {
@@ -9310,7 +9310,7 @@ public static class ElementCompositionPreview_stub
             throw new RuntimeException(ex);
         }
     }
-    public static void SetElementChildVisual_stub(Microsoft.UI.Xaml.UIElement element, Windows.UI.Composition.Visual visual)
+    public static void SetElementChildVisual_stub(Microsoft.UI.Xaml.UIElement element, Microsoft.UI.Composition.Visual visual)
     {
         try
         {
@@ -9322,7 +9322,7 @@ public static class ElementCompositionPreview_stub
             throw new RuntimeException(ex);
         }
     }
-    public static Windows.UI.Composition.Visual GetElementVisual_stub(Microsoft.UI.Xaml.UIElement element)
+    public static Microsoft.UI.Composition.Visual GetElementVisual_stub(Microsoft.UI.Xaml.UIElement element)
     {
         try
         {
@@ -9334,7 +9334,7 @@ public static class ElementCompositionPreview_stub
             throw new RuntimeException(ex);
         }
     }
-    public static Windows.UI.Composition.CompositionPropertySet GetScrollViewerManipulationPropertySet_stub(Microsoft.UI.Xaml.Controls.ScrollViewer scrollViewer)
+    public static Microsoft.UI.Composition.CompositionPropertySet GetScrollViewerManipulationPropertySet_stub(Microsoft.UI.Xaml.Controls.ScrollViewer scrollViewer)
     {
         try
         {
@@ -9346,7 +9346,7 @@ public static class ElementCompositionPreview_stub
             throw new RuntimeException(ex);
         }
     }
-    public static Windows.UI.Composition.Visual GetElementChildVisual_stub(Microsoft.UI.Xaml.UIElement element)
+    public static Microsoft.UI.Composition.Visual GetElementChildVisual_stub(Microsoft.UI.Xaml.UIElement element)
     {
         try
         {
@@ -9778,7 +9778,7 @@ public static class SoftwareBitmapSource_stub
 }
 public static class Shape_stub
 {
-    public static Windows.UI.Composition.CompositionBrush GetAlphaMask_stub(this Microsoft.UI.Xaml.Shapes.Shape sender)
+    public static Microsoft.UI.Composition.CompositionBrush GetAlphaMask_stub(this Microsoft.UI.Xaml.Shapes.Shape sender)
     {
         try
         {

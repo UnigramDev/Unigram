@@ -9,7 +9,7 @@ using Microsoft.Graphics.Canvas.Effects;
 using System;
 using Telegram.Common;
 using Windows.UI;
-using Windows.UI.Composition;
+using Microsoft.UI.Composition;
 using Windows.UI.Core;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Media;

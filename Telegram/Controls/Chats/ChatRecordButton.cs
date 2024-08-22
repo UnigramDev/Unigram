@@ -26,7 +26,7 @@ using Windows.Storage;
 using Windows.System;
 using Windows.System.Display;
 using Windows.System.Profile;
-using Windows.UI.Composition;
+using Microsoft.UI.Composition;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Hosting;

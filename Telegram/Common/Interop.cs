@@ -7,7 +7,7 @@
 using System;
 using System.Numerics;
 using System.Runtime.InteropServices;
-using Windows.UI.Composition;
+using Microsoft.UI.Composition;
 using Windows.UI.WindowManagement;
 
 namespace Telegram.Common

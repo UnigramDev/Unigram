@@ -9,7 +9,7 @@ using System.Linq;
 using System.Numerics;
 using Telegram.Common;
 using Windows.Foundation;
-using Windows.UI.Composition;
+using Microsoft.UI.Composition;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Hosting;

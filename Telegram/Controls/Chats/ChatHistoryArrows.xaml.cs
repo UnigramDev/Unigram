@@ -6,7 +6,7 @@
 //
 using System.Numerics;
 using Telegram.Common;
-using Windows.UI.Composition;
+using Microsoft.UI.Composition;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Hosting;
@@ -200,7 +200,7 @@ namespace Telegram.Controls.Chats
 
             var compositor = mentions.Compositor;
 
-            var batch = compositor.CreateScopedBatch(Windows.UI.Composition.CompositionBatchTypes.Animation);
+            var batch = compositor.CreateScopedBatch(Microsoft.UI.Composition.CompositionBatchTypes.Animation);
             batch.Completed += (s, args) =>
             {
                 reactions.Properties.InsertVector3("Translation", Vector3.Zero);

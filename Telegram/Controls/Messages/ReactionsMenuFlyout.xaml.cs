@@ -21,7 +21,7 @@ using Telegram.ViewModels.Stories;
 using Windows.Foundation;
 using Windows.System;
 using Windows.UI;
-using Windows.UI.Composition;
+using Microsoft.UI.Composition;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Automation;
 using Microsoft.UI.Xaml.Automation.Peers;

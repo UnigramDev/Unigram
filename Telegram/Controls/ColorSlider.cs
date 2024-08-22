@@ -9,7 +9,7 @@ using System.Collections.Generic;
 using System.Numerics;
 using Windows.Foundation;
 using Windows.UI;
-using Windows.UI.Composition;
+using Microsoft.UI.Composition;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Hosting;

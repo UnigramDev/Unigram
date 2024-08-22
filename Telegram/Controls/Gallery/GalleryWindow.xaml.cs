@@ -26,7 +26,7 @@ using Telegram.ViewModels.Users;
 using Telegram.Views;
 using Windows.Devices.Input;
 using Windows.Foundation;
-using Windows.UI.Composition;
+using Microsoft.UI.Composition;
 using Windows.UI.Input;
 using Windows.UI.ViewManagement;
 using Microsoft.UI.Xaml;

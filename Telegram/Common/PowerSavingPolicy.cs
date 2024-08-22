@@ -8,7 +8,7 @@ using System;
 using Telegram.Services;
 using Windows.System;
 using Windows.System.Power;
-using Windows.UI.Composition;
+using Microsoft.UI.Composition;
 using Windows.UI.ViewManagement;
 
 namespace Telegram.Common

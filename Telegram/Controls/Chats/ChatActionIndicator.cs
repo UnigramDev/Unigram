@@ -9,7 +9,7 @@ using System.Numerics;
 using Telegram.Assets.Icons;
 using Telegram.Td.Api;
 using Windows.UI;
-using Windows.UI.Composition;
+using Microsoft.UI.Composition;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Hosting;
 using Microsoft.UI.Xaml.Media;

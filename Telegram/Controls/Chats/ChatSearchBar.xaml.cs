@@ -101,7 +101,7 @@ namespace Telegram.Controls.Chats
 
             ElementCompositionPreview.SetIsTranslationEnabled(_viewClipperOuter, true);
 
-            var batch = visual.Compositor.CreateScopedBatch(Windows.UI.Composition.CompositionBatchTypes.Animation);
+            var batch = visual.Compositor.CreateScopedBatch(Microsoft.UI.Composition.CompositionBatchTypes.Animation);
             batch.Completed += (s, args) =>
             {
                 visual.Clip = null;
@@ -174,7 +174,7 @@ namespace Telegram.Controls.Chats
             ElementCompositionPreview.SetIsTranslationEnabled(SecondaryRoot, true);
             ElementCompositionPreview.SetIsTranslationEnabled(_viewDate, true);
 
-            var batch = visual.Compositor.CreateScopedBatch(Windows.UI.Composition.CompositionBatchTypes.Animation);
+            var batch = visual.Compositor.CreateScopedBatch(Microsoft.UI.Composition.CompositionBatchTypes.Animation);
             batch.Completed += (s, args) =>
             {
                 visual.Clip = null;

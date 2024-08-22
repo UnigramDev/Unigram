@@ -6,7 +6,7 @@ using Telegram.Navigation;
 using Telegram.ViewModels.Chats;
 using Telegram.ViewModels.Stories;
 using Windows.Foundation;
-using Windows.UI.Composition;
+using Microsoft.UI.Composition;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Controls.Primitives;

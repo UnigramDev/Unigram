@@ -40,7 +40,7 @@ using Telegram.Views.Settings;
 using Telegram.Views.Users;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.Foundation;
-using Windows.UI.Composition;
+using Microsoft.UI.Composition;
 using Windows.UI.Core;
 using Windows.UI.ViewManagement;
 using Microsoft.UI.Xaml;

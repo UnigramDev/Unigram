@@ -27,7 +27,7 @@ using Telegram.ViewModels;
 using Windows.Foundation;
 using Windows.Storage.Streams;
 using Windows.UI;
-using Windows.UI.Composition;
+using Microsoft.UI.Composition;
 using Windows.UI.Input;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;

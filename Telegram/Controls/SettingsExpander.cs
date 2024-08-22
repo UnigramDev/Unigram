@@ -103,7 +103,7 @@ namespace Telegram.Controls
             opacity.InsertKeyFrame(newValue ? 1 : 0, 1);
             opacity.Duration = Constants.FastAnimation;
 
-            var batch = visual.Compositor.CreateScopedBatch(Windows.UI.Composition.CompositionBatchTypes.Animation);
+            var batch = visual.Compositor.CreateScopedBatch(Microsoft.UI.Composition.CompositionBatchTypes.Animation);
             batch.Completed += (s, args) =>
             {
                 PopupRoot.Visibility = newValue

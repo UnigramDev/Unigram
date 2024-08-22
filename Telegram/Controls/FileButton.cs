@@ -9,7 +9,7 @@ using System;
 using System.Numerics;
 using System.Runtime.CompilerServices;
 using Telegram.Controls.Media;
-using Windows.UI.Composition;
+using Microsoft.UI.Composition;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Automation;
 using Microsoft.UI.Xaml.Controls;

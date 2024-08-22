@@ -12,7 +12,7 @@ using Telegram.Streams;
 using Telegram.ViewModels.Authorization;
 using Telegram.ViewModels.Delegates;
 using Windows.Foundation;
-using Windows.UI.Composition;
+using Microsoft.UI.Composition;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Hosting;
 using Microsoft.UI.Xaml.Input;

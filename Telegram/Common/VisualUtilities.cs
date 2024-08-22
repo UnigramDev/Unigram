@@ -75,7 +75,7 @@ namespace Telegram.Common
 
             sender.Visibility = Visibility.Visible;
 
-            var batch = Window.Current.Compositor.CreateScopedBatch(Windows.UI.Composition.CompositionBatchTypes.Animation);
+            var batch = Window.Current.Compositor.CreateScopedBatch(Microsoft.UI.Composition.CompositionBatchTypes.Animation);
             batch.Completed += (s, args) =>
             {
                 visual.Opacity = newValue ? 1 : 0;

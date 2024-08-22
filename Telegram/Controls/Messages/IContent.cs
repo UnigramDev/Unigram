@@ -6,7 +6,7 @@
 //
 using Telegram.Td.Api;
 using Telegram.ViewModels;
-using Windows.UI.Composition;
+using Microsoft.UI.Composition;
 
 namespace Telegram.Controls.Messages
 {

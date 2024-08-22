@@ -21,7 +21,7 @@ using Telegram.Views.Popups;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.Data.Json;
 using Windows.UI;
-using Windows.UI.Composition;
+using Microsoft.UI.Composition;
 using Windows.UI.Core.Preview;
 using Windows.UI.ViewManagement;
 using Windows.UI.WindowManagement;

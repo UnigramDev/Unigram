@@ -5,7 +5,7 @@
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
 using Windows.Foundation;
-using Windows.UI.Composition.Interactions;
+using Microsoft.UI.Composition.Interactions;
 
 namespace Telegram.Composition
 {
