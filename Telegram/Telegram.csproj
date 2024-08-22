@@ -1237,6 +1237,9 @@
     <Compile Include="Views\Popups\VideoChatStreamsPopup.xaml.cs">
       <DependentUpon>VideoChatStreamsPopup.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\Stars\Popups\JoinChatPopup.xaml.cs">
+      <DependentUpon>JoinChatPopup.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\Stars\Popups\SubscriptionPopup.xaml.cs">
       <DependentUpon>SubscriptionPopup.xaml</DependentUpon>
     </Compile>
@@ -3038,6 +3041,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Views\Stars\Popups\JoinChatPopup.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Views\Stars\Popups\SubscriptionPopup.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -3578,7 +3585,7 @@
       <Version>2.8.6</Version>
     </PackageReference>
     <PackageReference Include="Microsoft.Web.WebView2">
-      <Version>1.0.2592.51</Version>
+      <Version>1.0.2651.64</Version>
     </PackageReference>
     <PackageReference Include="Newtonsoft.Json">
       <Version>13.0.3</Version>
@@ -3611,7 +3618,7 @@
     </PackageReference>
     <!-- Used by AppCenter -->
     <PackageReference Include="SQLitePCLRaw.bundle_winsqlite3">
-      <Version>2.1.8</Version>
+      <Version>2.1.9</Version>
     </PackageReference>
     <PackageReference Include="System.Reflection.Metadata">
       <Version>8.0.0</Version>
