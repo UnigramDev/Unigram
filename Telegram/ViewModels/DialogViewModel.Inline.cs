@@ -33,10 +33,12 @@ namespace Telegram.ViewModels
             get => _inlineBotResults;
             set
             {
-                Set(ref _inlineBotResults, value);
-                RaisePropertyChanged(nameof(IsInlineBotResultsVisible));
+                if (Set(ref _inlineBotResults, value))
+                {
+                    RaisePropertyChanged(nameof(IsInlineBotResultsVisible));
 
-                _inlineBotResults?.Reset();
+                    _inlineBotResults?.Reset();
+                }
             }
         }
 

@@ -920,16 +920,23 @@ namespace Telegram.Controls.Chats
             return text.Substring(0, index) + replace + text.Substring(index + search.Length);
         }
 
+        private bool _hasInlinePlaceholder;
+
         private void UpdateInlinePlaceholder(string username, string placeholder)
         {
             if (InlinePlaceholderTextContentPresenter != null)
             {
-                InlinePlaceholderTextContentPresenter.Inlines.Clear();
-
                 if (username != null && placeholder != null)
                 {
+                    _hasInlinePlaceholder = true;
+                    InlinePlaceholderTextContentPresenter.Inlines.Clear();
                     InlinePlaceholderTextContentPresenter.Inlines.Add(new Run { Text = "@" + username + " ", Foreground = null });
                     InlinePlaceholderTextContentPresenter.Inlines.Add(new Run { Text = placeholder });
+                }
+                else if (_hasInlinePlaceholder)
+                {
+                    _hasInlinePlaceholder = false;
+                    InlinePlaceholderTextContentPresenter.Inlines.Clear();
                 }
             }
         }

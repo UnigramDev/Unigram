@@ -898,12 +898,13 @@ namespace Telegram.Controls
             TextEntityType type = default;
 
             var hidden = 0;
+            var flags = default(TextStyle);
 
             for (int i = 0; i < value.Length; i++)
             {
-                var range = Document.GetRange(i, i + 1);
-                var flags = default(TextStyle);
+                flags = default;
 
+                var range = Document.GetRange(i, i + 1);
                 if (range.ParagraphFormat.SpaceAfter != 0)
                 {
                     flags = TextStyle.Quote;
@@ -1048,12 +1049,13 @@ namespace Telegram.Controls
             TextEntityType type = default;
 
             var hidden = 0;
+            var flags = default(TextStyle);
 
             for (int i = 0; i < value.Length; i++)
             {
-                var range = Document.GetRange(selection.StartPosition + i, selection.StartPosition + i + 1);
-                var flags = default(TextStyle);
+                flags = default;
 
+                var range = Document.GetRange(i, i + 1);
                 if (range.ParagraphFormat.SpaceAfter != 0)
                 {
                     flags = TextStyle.Quote;
