@@ -5,7 +5,7 @@
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
 using Telegram.ViewModels.Settings;
-using Windows.UI.Xaml;
+using Microsoft.UI.Xaml;
 
 namespace Telegram.Controls
 {

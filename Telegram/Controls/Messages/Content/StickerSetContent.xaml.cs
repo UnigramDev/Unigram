@@ -8,7 +8,7 @@ using Telegram.Streams;
 using Telegram.Td.Api;
 using Telegram.ViewModels;
 using Windows.Foundation;
-using Windows.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Controls;
 
 namespace Telegram.Controls.Messages.Content
 {
@@ -76,7 +76,7 @@ namespace Telegram.Controls.Messages.Content
                     Width = size,
                     Height = size,
                     FrameSize = new Size(size, size),
-                    DecodeFrameType = Windows.UI.Xaml.Media.Imaging.DecodePixelType.Logical,
+                    DecodeFrameType = Microsoft.UI.Xaml.Media.Imaging.DecodePixelType.Logical,
                     Source = new DelayedFileSource(message.ClientService, stickerSet.Stickers[i]),
                     AutoPlay = false,
                     IsViewportAware = true

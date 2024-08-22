@@ -16,7 +16,7 @@ using Telegram.ViewModels.Delegates;
 using Telegram.Views;
 using Telegram.Views.Popups;
 using Windows.System;
-using Windows.UI.Xaml.Navigation;
+using Microsoft.UI.Xaml.Navigation;
 
 namespace Telegram.ViewModels
 {

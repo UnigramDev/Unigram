@@ -11,9 +11,9 @@ using Telegram.Entities;
 using Telegram.ViewModels.BasicGroups;
 using Telegram.Views.Popups;
 using Windows.Storage.Pickers;
-using Windows.UI.Xaml;
-using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Media.Imaging;
+using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Media.Imaging;
 
 namespace Telegram.Views.BasicGroups
 {

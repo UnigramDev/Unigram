@@ -10,11 +10,11 @@ using Telegram.Streams;
 using Telegram.Td.Api;
 using Telegram.ViewModels;
 using Windows.UI.Composition;
-using Windows.UI.Xaml;
-using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Media;
-using Windows.UI.Xaml.Media.Imaging;
-using Windows.UI.Xaml.Shapes;
+using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Media;
+using Microsoft.UI.Xaml.Media.Imaging;
+using Microsoft.UI.Xaml.Shapes;
 
 namespace Telegram.Controls.Messages.Content
 {

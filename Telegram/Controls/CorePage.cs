@@ -1,5 +1,5 @@
 ﻿using Windows.ApplicationModel.Core;
-using Windows.UI.Xaml;
+using Microsoft.UI.Xaml;
 
 namespace Telegram.Controls
 {

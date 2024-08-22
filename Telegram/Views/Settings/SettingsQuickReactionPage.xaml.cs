@@ -11,8 +11,8 @@ using Telegram.Td.Api;
 using Telegram.ViewModels.Drawers;
 using Telegram.ViewModels.Settings;
 using Windows.Foundation;
-using Windows.UI.Xaml;
-using Windows.UI.Xaml.Navigation;
+using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Navigation;
 
 namespace Telegram.Views.Settings
 {

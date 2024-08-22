@@ -25,11 +25,11 @@ using Windows.UI.Composition;
 using Windows.UI.Core.Preview;
 using Windows.UI.ViewManagement;
 using Windows.UI.WindowManagement;
-using Windows.UI.Xaml;
-using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Controls.Primitives;
-using Windows.UI.Xaml.Hosting;
-using Windows.UI.Xaml.Media;
+using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Controls.Primitives;
+using Microsoft.UI.Xaml.Hosting;
+using Microsoft.UI.Xaml.Media;
 
 namespace Telegram.Views
 {

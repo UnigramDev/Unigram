@@ -4,8 +4,8 @@ using Telegram.Converters;
 using Telegram.Navigation;
 using Telegram.Services;
 using Telegram.Td.Api;
-using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Media;
+using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Media;
 
 namespace Telegram.Controls.Cells.Revenue
 {
@@ -31,9 +31,9 @@ namespace Telegram.Controls.Cells.Revenue
                 Subtitle.Text = string.Format(Strings.StarsSubscriptionExpired, Formatter.Date(subscription.ExpirationDate));
                 Date.Text = Strings.StarsSubscriptionStatusCancelled;
                 Date.Foreground = BootStrapper.Current.Resources["SystemFillColorCriticalBrush"] as Brush;
-                Date.VerticalAlignment = Windows.UI.Xaml.VerticalAlignment.Center;
+                Date.VerticalAlignment = Microsoft.UI.Xaml.VerticalAlignment.Center;
 
-                Stars.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
+                Stars.Visibility = Microsoft.UI.Xaml.Visibility.Collapsed;
 
                 SetRow(Date, 0);
                 SetRowSpan(Date, 2);
@@ -43,9 +43,9 @@ namespace Telegram.Controls.Cells.Revenue
                 Subtitle.Text = string.Format(Strings.StarsSubscriptionExpired, Formatter.Date(subscription.ExpirationDate));
                 Date.Text = Strings.StarsSubscriptionStatusExpired;
                 Date.Foreground = BootStrapper.Current.Resources["SystemFillColorCriticalBrush"] as Brush;
-                Date.VerticalAlignment = Windows.UI.Xaml.VerticalAlignment.Center;
+                Date.VerticalAlignment = Microsoft.UI.Xaml.VerticalAlignment.Center;
 
-                Stars.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
+                Stars.Visibility = Microsoft.UI.Xaml.Visibility.Collapsed;
 
                 SetRow(Date, 0);
                 SetRowSpan(Date, 2);
@@ -56,9 +56,9 @@ namespace Telegram.Controls.Cells.Revenue
                 StarCount.Text = subscription.Pricing.StarCount.ToString("N0");
                 Date.Text = Strings.StarsParticipantSubscriptionPerMonth;
                 Date.Foreground = BootStrapper.Current.Resources["SystemControlDisabledChromeDisabledLowBrush"] as Brush;
-                Date.VerticalAlignment = Windows.UI.Xaml.VerticalAlignment.Top;
+                Date.VerticalAlignment = Microsoft.UI.Xaml.VerticalAlignment.Top;
 
-                Stars.Visibility = Windows.UI.Xaml.Visibility.Visible;
+                Stars.Visibility = Microsoft.UI.Xaml.Visibility.Visible;
 
                 SetRow(Date, 1);
                 SetRowSpan(Date, 1);

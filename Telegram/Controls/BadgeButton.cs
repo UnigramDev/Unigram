@@ -10,12 +10,12 @@ using System.Collections.Generic;
 using System.Numerics;
 using Windows.UI;
 using Windows.UI.Composition;
-using Windows.UI.Xaml;
-using Windows.UI.Xaml.Automation;
-using Windows.UI.Xaml.Automation.Peers;
-using Windows.UI.Xaml.Automation.Provider;
-using Windows.UI.Xaml.Hosting;
-using Windows.UI.Xaml.Media;
+using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Automation;
+using Microsoft.UI.Xaml.Automation.Peers;
+using Microsoft.UI.Xaml.Automation.Provider;
+using Microsoft.UI.Xaml.Hosting;
+using Microsoft.UI.Xaml.Media;
 
 namespace Telegram.Controls
 {

@@ -2,8 +2,8 @@
 using System.Runtime.InteropServices;
 using Windows.Devices.Input;
 using Windows.Foundation;
-using Windows.UI.Xaml;
-using Windows.UI.Xaml.Input;
+using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Input;
 
 namespace Telegram.Common
 {

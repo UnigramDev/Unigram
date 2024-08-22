@@ -14,9 +14,9 @@ using Telegram.Services.Settings;
 using Telegram.Td.Api;
 using Telegram.ViewModels;
 using Telegram.ViewModels.Drawers;
-using Windows.UI.Xaml;
-using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Hosting;
+using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Hosting;
 
 namespace Telegram.Controls
 {

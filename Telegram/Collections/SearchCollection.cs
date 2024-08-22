@@ -13,7 +13,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Telegram.Common;
 using Windows.Foundation;
-using Windows.UI.Xaml.Data;
+using Microsoft.UI.Xaml.Data;
 
 namespace Telegram.Collections
 {

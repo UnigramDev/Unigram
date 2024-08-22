@@ -7,7 +7,7 @@
 using System;
 using Telegram.ViewModels.Settings;
 using Windows.Security.Credentials;
-using Windows.UI.Xaml;
+using Microsoft.UI.Xaml;
 
 namespace Telegram.Views.Settings
 {

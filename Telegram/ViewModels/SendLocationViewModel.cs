@@ -12,7 +12,7 @@ using Telegram.Navigation;
 using Telegram.Services;
 using Telegram.Td.Api;
 using Windows.Foundation;
-using Windows.UI.Xaml.Data;
+using Microsoft.UI.Xaml.Data;
 
 namespace Telegram.ViewModels
 {

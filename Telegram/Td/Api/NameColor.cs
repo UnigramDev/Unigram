@@ -9,7 +9,7 @@ using System.Collections.Generic;
 using Telegram.Common;
 using Telegram.Controls;
 using Windows.UI;
-using Windows.UI.Xaml;
+using Microsoft.UI.Xaml;
 
 namespace Telegram.Td.Api
 {

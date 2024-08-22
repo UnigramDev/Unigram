@@ -10,13 +10,13 @@ using Telegram.Td.Api;
 using Telegram.ViewModels;
 using Windows.Foundation;
 using Windows.Storage.Streams;
-using Windows.UI.Xaml;
-using Windows.UI.Xaml.Controls;
+using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Controls;
 using Point = Windows.Foundation.Point;
 
 namespace Telegram.Controls.Messages.Content
 {
-    public sealed class ContactContent : Windows.UI.Xaml.Controls.Control, IContent
+    public sealed class ContactContent : Microsoft.UI.Xaml.Controls.Control, IContent
     {
         private MessageViewModel _message;
         public MessageViewModel Message => _message;

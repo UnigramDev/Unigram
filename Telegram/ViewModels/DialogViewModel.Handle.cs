@@ -15,7 +15,7 @@ using Telegram.Navigation;
 using Telegram.Services;
 using Telegram.Td.Api;
 using Windows.UI.Core;
-using Windows.UI.Xaml;
+using Microsoft.UI.Xaml;
 
 namespace Telegram.ViewModels
 {

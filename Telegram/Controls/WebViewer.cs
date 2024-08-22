@@ -7,8 +7,8 @@ using Telegram.Common;
 using Telegram.Native;
 using Telegram.Services;
 using Windows.Data.Json;
-using Windows.UI.Xaml;
-using Windows.UI.Xaml.Controls;
+using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Controls;
 
 namespace Telegram.Controls
 {

@@ -22,12 +22,12 @@ using Windows.System.Display;
 using Windows.UI;
 using Windows.UI.Composition;
 using Windows.UI.ViewManagement;
-using Windows.UI.Xaml;
-using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Controls.Primitives;
-using Windows.UI.Xaml.Hosting;
-using Windows.UI.Xaml.Input;
-using Windows.UI.Xaml.Media;
+using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Controls.Primitives;
+using Microsoft.UI.Xaml.Hosting;
+using Microsoft.UI.Xaml.Input;
+using Microsoft.UI.Xaml.Media;
 
 namespace Telegram.Views.Calls
 {
@@ -730,12 +730,12 @@ namespace Telegram.Views.Calls
             root.StartAnimation("Opacity", anim);
         }
 
-        private void Viewport_PointerEntered(object sender, Windows.UI.Xaml.Input.PointerRoutedEventArgs e)
+        private void Viewport_PointerEntered(object sender, Microsoft.UI.Xaml.Input.PointerRoutedEventArgs e)
         {
 
         }
 
-        private void Viewport_PointerExited(object sender, Windows.UI.Xaml.Input.PointerRoutedEventArgs e)
+        private void Viewport_PointerExited(object sender, Microsoft.UI.Xaml.Input.PointerRoutedEventArgs e)
         {
 
         }

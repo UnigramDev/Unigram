@@ -19,10 +19,10 @@ using Windows.ApplicationModel.ExtendedExecution;
 using Windows.System;
 using Windows.UI.Core;
 using Windows.UI.ViewManagement;
-using Windows.UI.Xaml;
-using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Media;
-using Windows.UI.Xaml.Resources;
+using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Media;
+using Microsoft.UI.Xaml.Resources;
 
 namespace Telegram.Navigation
 {

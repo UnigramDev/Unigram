@@ -8,8 +8,8 @@ using Telegram.Common;
 using Telegram.Td;
 using Telegram.ViewModels.Settings;
 using Telegram.ViewModels.Settings.Privacy;
-using Windows.UI.Xaml;
-using Windows.UI.Xaml.Navigation;
+using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Navigation;
 
 namespace Telegram.Views.Settings.Privacy
 {

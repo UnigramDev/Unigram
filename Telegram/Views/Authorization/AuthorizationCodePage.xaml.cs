@@ -9,8 +9,8 @@ using Telegram.Controls;
 using Telegram.Streams;
 using Telegram.Td.Api;
 using Telegram.ViewModels.Authorization;
-using Windows.UI.Xaml;
-using Windows.UI.Xaml.Navigation;
+using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Navigation;
 
 namespace Telegram.Views.Authorization
 {

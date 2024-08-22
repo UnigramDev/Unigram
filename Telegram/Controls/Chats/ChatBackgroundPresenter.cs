@@ -14,11 +14,11 @@ using Telegram.Services;
 using Telegram.Td.Api;
 using Windows.UI;
 using Windows.UI.Composition;
-using Windows.UI.Xaml;
-using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Hosting;
-using Windows.UI.Xaml.Media;
-using Windows.UI.Xaml.Media.Imaging;
+using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Hosting;
+using Microsoft.UI.Xaml.Media;
+using Microsoft.UI.Xaml.Media.Imaging;
 
 namespace Telegram.Controls.Chats
 {

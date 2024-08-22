@@ -22,9 +22,9 @@ using Windows.Graphics.Imaging;
 using Windows.Media.Core;
 using Windows.Storage;
 using Windows.UI;
-using Windows.UI.Xaml;
-using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Media.Imaging;
+using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Media.Imaging;
 
 namespace Telegram.Views.Popups
 {
@@ -188,7 +188,7 @@ namespace Telegram.Views.Popups
 
                     var image = new Image();
                     image.Height = 40;
-                    image.Stretch = Windows.UI.Xaml.Media.Stretch.UniformToFill;
+                    image.Stretch = Microsoft.UI.Xaml.Media.Stretch.UniformToFill;
                     image.Source = bitmap;
 
                     TrimThumbnails.Children.Add(image);

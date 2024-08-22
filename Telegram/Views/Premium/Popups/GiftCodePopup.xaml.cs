@@ -12,8 +12,8 @@ using Telegram.Services;
 using Telegram.Td;
 using Telegram.Td.Api;
 using Telegram.Views.Popups;
-using Windows.UI.Xaml;
-using Windows.UI.Xaml.Documents;
+using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Documents;
 
 namespace Telegram.Views.Premium.Popups
 {

@@ -6,8 +6,8 @@
 //
 using Telegram.Controls;
 using Windows.UI;
-using Windows.UI.Xaml;
-using Windows.UI.Xaml.Controls;
+using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Controls;
 
 namespace Telegram.Views.Popups
 {
@@ -61,7 +61,7 @@ namespace Telegram.Views.Popups
             TextField.Color = args.NewColor;
         }
 
-        private void System_Click(object sender, Windows.UI.Xaml.RoutedEventArgs e)
+        private void System_Click(object sender, Microsoft.UI.Xaml.RoutedEventArgs e)
         {
             _color = default;
             Hide(ContentDialogResult.Primary);

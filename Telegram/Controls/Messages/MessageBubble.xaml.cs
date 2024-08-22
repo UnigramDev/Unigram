@@ -30,14 +30,14 @@ using Windows.Foundation;
 using Windows.UI;
 using Windows.UI.Composition;
 using Windows.UI.Text;
-using Windows.UI.Xaml;
-using Windows.UI.Xaml.Automation;
-using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Core.Direct;
-using Windows.UI.Xaml.Documents;
-using Windows.UI.Xaml.Hosting;
-using Windows.UI.Xaml.Markup;
-using Windows.UI.Xaml.Media;
+using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Automation;
+using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Core.Direct;
+using Microsoft.UI.Xaml.Documents;
+using Microsoft.UI.Xaml.Hosting;
+using Microsoft.UI.Xaml.Markup;
+using Microsoft.UI.Xaml.Media;
 
 namespace Telegram.Controls.Messages
 {

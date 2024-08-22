@@ -10,7 +10,7 @@ using Telegram.Services;
 using Telegram.Td.Api;
 using Telegram.ViewModels;
 using Windows.Foundation;
-using Windows.UI.Xaml.Data;
+using Microsoft.UI.Xaml.Data;
 
 namespace Telegram.Collections
 {

@@ -12,9 +12,9 @@ using Telegram.Navigation;
 using Telegram.ViewModels.Settings;
 using Telegram.Views.Host;
 using Windows.ApplicationModel.DataTransfer;
-using Windows.UI.Xaml;
-using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Controls.Primitives;
+using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Controls.Primitives;
 
 namespace Telegram.Views.Settings.Popups
 {

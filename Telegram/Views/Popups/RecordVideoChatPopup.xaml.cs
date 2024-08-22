@@ -5,7 +5,7 @@
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
 using Telegram.Controls;
-using Windows.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Controls;
 
 namespace Telegram.Views.Popups
 {
@@ -37,7 +37,7 @@ namespace Telegram.Views.Popups
         {
         }
 
-        private void Label_KeyDown(object sender, Windows.UI.Xaml.Input.KeyRoutedEventArgs e)
+        private void Label_KeyDown(object sender, Microsoft.UI.Xaml.Input.KeyRoutedEventArgs e)
         {
             if (e.Key != Windows.System.VirtualKey.Enter)
             {

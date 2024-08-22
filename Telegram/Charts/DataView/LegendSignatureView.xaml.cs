@@ -8,9 +8,9 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using Telegram.Converters;
-using Windows.UI.Xaml;
-using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Media;
+using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Media;
 
 namespace Telegram.Charts.DataView
 {

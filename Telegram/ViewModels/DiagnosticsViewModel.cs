@@ -22,9 +22,9 @@ using Windows.Devices.Enumeration;
 using Windows.Media.Capture;
 using Windows.Media.MediaProperties;
 using Windows.Storage;
-using Windows.UI.Xaml;
-using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Navigation;
+using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Navigation;
 
 namespace Telegram.ViewModels
 {

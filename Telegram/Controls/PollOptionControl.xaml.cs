@@ -9,9 +9,9 @@ using System.Linq;
 using Telegram.Common;
 using Telegram.Services;
 using Telegram.Td.Api;
-using Windows.UI.Xaml;
-using Windows.UI.Xaml.Automation;
-using Windows.UI.Xaml.Controls.Primitives;
+using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Automation;
+using Microsoft.UI.Xaml.Controls.Primitives;
 
 namespace Telegram.Controls
 {

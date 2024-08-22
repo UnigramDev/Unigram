@@ -19,13 +19,13 @@ using Telegram.ViewModels;
 using Windows.Foundation;
 using Windows.UI.Composition;
 using Windows.UI.Composition.Interactions;
-using Windows.UI.Xaml;
-using Windows.UI.Xaml.Automation.Peers;
-using Windows.UI.Xaml.Automation.Provider;
-using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Hosting;
-using Windows.UI.Xaml.Input;
-using Windows.UI.Xaml.Media;
+using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Automation.Peers;
+using Microsoft.UI.Xaml.Automation.Provider;
+using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Hosting;
+using Microsoft.UI.Xaml.Input;
+using Microsoft.UI.Xaml.Media;
 
 namespace Telegram.Controls.Messages
 {

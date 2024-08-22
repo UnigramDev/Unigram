@@ -20,7 +20,7 @@ using Telegram.Td.Api;
 using Telegram.ViewModels.Delegates;
 using Telegram.ViewModels.Gallery;
 using Telegram.Views;
-using Windows.UI.Xaml;
+using Microsoft.UI.Xaml;
 
 namespace Telegram.ViewModels
 {

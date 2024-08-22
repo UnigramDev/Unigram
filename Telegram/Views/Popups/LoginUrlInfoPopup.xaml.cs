@@ -8,7 +8,7 @@ using Telegram.Common;
 using Telegram.Controls;
 using Telegram.Services;
 using Telegram.Td.Api;
-using Windows.UI.Xaml;
+using Microsoft.UI.Xaml;
 
 namespace Telegram.Views.Popups
 {

@@ -6,7 +6,7 @@
 //
 using Telegram.Common;
 using Telegram.ViewModels.Settings;
-using Windows.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Controls;
 
 namespace Telegram.Views.Settings
 {
@@ -25,7 +25,7 @@ namespace Telegram.Views.Settings
             }
         }
 
-        private void Shortcuts_Click(object sender, Windows.UI.Xaml.RoutedEventArgs e)
+        private void Shortcuts_Click(object sender, Microsoft.UI.Xaml.RoutedEventArgs e)
         {
             Frame.Navigate(typeof(SettingsShortcutsPage));
         }

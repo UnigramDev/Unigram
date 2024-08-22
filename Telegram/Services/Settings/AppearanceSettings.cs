@@ -13,7 +13,7 @@ using Telegram.Views;
 using Windows.Storage;
 using Windows.UI;
 using Windows.UI.ViewManagement;
-using Windows.UI.Xaml;
+using Microsoft.UI.Xaml;
 
 namespace Telegram.Services.Settings
 {

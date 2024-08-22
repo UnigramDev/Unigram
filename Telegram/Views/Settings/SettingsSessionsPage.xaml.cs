@@ -7,7 +7,7 @@
 using Telegram.Controls.Cells;
 using Telegram.Td.Api;
 using Telegram.ViewModels.Settings;
-using Windows.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Controls;
 
 namespace Telegram.Views.Settings
 {

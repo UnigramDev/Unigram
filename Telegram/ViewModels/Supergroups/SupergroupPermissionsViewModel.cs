@@ -10,7 +10,7 @@ using Telegram.Services;
 using Telegram.Td.Api;
 using Telegram.Views.Supergroups;
 using Telegram.Views.Supergroups.Popups;
-using Windows.UI.Xaml.Navigation;
+using Microsoft.UI.Xaml.Navigation;
 
 namespace Telegram.ViewModels.Supergroups
 {

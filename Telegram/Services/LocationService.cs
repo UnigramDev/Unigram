@@ -13,7 +13,7 @@ using Windows.ApplicationModel.ExtendedExecution;
 using Windows.Devices.Enumeration;
 using Windows.Devices.Geolocation;
 using Windows.System;
-using Windows.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Controls;
 
 namespace Telegram.Services
 {

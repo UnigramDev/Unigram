@@ -10,9 +10,9 @@ using System.Globalization;
 using System.Linq;
 using Telegram.Controls;
 using Telegram.Td;
-using Windows.UI.Xaml;
-using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Hosting;
+using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Hosting;
 
 namespace Telegram.Views.Popups
 {

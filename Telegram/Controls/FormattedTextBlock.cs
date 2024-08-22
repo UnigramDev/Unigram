@@ -19,12 +19,12 @@ using Telegram.Td.Api;
 using Windows.Devices.Input;
 using Windows.UI;
 using Windows.UI.Text;
-using Windows.UI.Xaml;
-using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Core.Direct;
-using Windows.UI.Xaml.Documents;
-using Windows.UI.Xaml.Input;
-using Windows.UI.Xaml.Media;
+using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Core.Direct;
+using Microsoft.UI.Xaml.Documents;
+using Microsoft.UI.Xaml.Input;
+using Microsoft.UI.Xaml.Media;
 
 namespace Telegram.Controls
 {

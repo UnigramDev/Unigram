@@ -9,10 +9,10 @@ using Telegram.Common;
 using Telegram.Navigation;
 using Telegram.Services;
 using Windows.System;
-using Windows.UI.Xaml;
-using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Controls.Primitives;
-using Windows.UI.Xaml.Media;
+using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Controls.Primitives;
+using Microsoft.UI.Xaml.Media;
 
 namespace Telegram.Views.Tabbed
 {
@@ -330,18 +330,18 @@ namespace Telegram.Views.Tabbed
             };
         }
 
-        private Windows.UI.Xaml.Controls.IconElement GetFaviconSource2(string faviconUri)
+        private Microsoft.UI.Xaml.Controls.IconElement GetFaviconSource2(string faviconUri)
         {
             if (Uri.TryCreate(faviconUri, UriKind.Absolute, out Uri favicon))
             {
-                return new Windows.UI.Xaml.Controls.BitmapIcon
+                return new Microsoft.UI.Xaml.Controls.BitmapIcon
                 {
                     UriSource = favicon,
                     ShowAsMonochrome = false
                 };
             }
 
-            return new Windows.UI.Xaml.Controls.FontIcon
+            return new Microsoft.UI.Xaml.Controls.FontIcon
             {
                 Glyph = "\uE774",
                 FontFamily = BootStrapper.Current.Resources["SymbolThemeFontFamily"] as FontFamily

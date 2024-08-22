@@ -5,10 +5,10 @@ using Telegram.Converters;
 using Telegram.Td.Api;
 using Telegram.ViewModels.Business;
 using Windows.UI;
-using Windows.UI.Xaml;
-using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Media;
-using Windows.UI.Xaml.Navigation;
+using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Media;
+using Microsoft.UI.Xaml.Navigation;
 
 namespace Telegram.Views.Business
 {
@@ -159,11 +159,11 @@ namespace Telegram.Views.Business
             //if (badge)
             //{
             //    badgeControl.Background = new SolidColorBrush(_gradient[index]);
-            //    badgeControl.Visibility = Windows.UI.Xaml.Visibility.Visible;
+            //    badgeControl.Visibility = Microsoft.UI.Xaml.Visibility.Visible;
             //}
             //else
             //{
-            //    badgeControl.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
+            //    badgeControl.Visibility = Microsoft.UI.Xaml.Visibility.Collapsed;
             //}
 
             args.Handled = true;
@@ -242,12 +242,12 @@ namespace Telegram.Views.Business
                 : Strings.SubscribeToPremium, Locale.FormatCurrency(option.Amount / option.MonthCount, option.Currency));
         }
 
-        private void PurchaseShadow_Loaded(object sender, Windows.UI.Xaml.RoutedEventArgs e)
+        private void PurchaseShadow_Loaded(object sender, Microsoft.UI.Xaml.RoutedEventArgs e)
         {
             DropShadowEx.Attach(PurchaseShadow);
         }
 
-        private void Purchase_Click(object sender, Windows.UI.Xaml.RoutedEventArgs e)
+        private void Purchase_Click(object sender, Microsoft.UI.Xaml.RoutedEventArgs e)
         {
             //Hide();
             //ViewModel.Purchase();

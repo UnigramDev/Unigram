@@ -8,7 +8,7 @@ using Telegram.Common;
 using Telegram.Controls;
 using Telegram.Services;
 using Telegram.Td.Api;
-using Windows.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Controls;
 
 namespace Telegram.Views.Settings.LoginEmail
 {
@@ -66,7 +66,7 @@ namespace Telegram.Views.Settings.LoginEmail
         {
         }
 
-        private void PrimaryInput_KeyDown(object sender, Windows.UI.Xaml.Input.KeyRoutedEventArgs e)
+        private void PrimaryInput_KeyDown(object sender, Microsoft.UI.Xaml.Input.KeyRoutedEventArgs e)
         {
             if (e.Key == Windows.System.VirtualKey.Enter)
             {

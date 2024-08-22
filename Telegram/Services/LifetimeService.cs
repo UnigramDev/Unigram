@@ -14,8 +14,8 @@ using Telegram.Navigation;
 using Telegram.Views;
 using Telegram.Views.Host;
 using Windows.Storage;
-using Windows.UI.Xaml;
-using Windows.UI.Xaml.Media;
+using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Media;
 
 namespace Telegram.Services
 {

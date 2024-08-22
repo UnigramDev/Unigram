@@ -19,7 +19,7 @@ using Telegram.Native;
 using Telegram.Td.Api;
 using Telegram.ViewModels;
 using Windows.UI;
-using Windows.UI.Xaml.Media;
+using Microsoft.UI.Xaml.Media;
 
 namespace Telegram.Td.Api
 {

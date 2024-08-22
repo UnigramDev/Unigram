@@ -30,13 +30,13 @@ using Windows.ApplicationModel.DataTransfer;
 using Windows.Foundation;
 using Windows.UI.Composition;
 using Windows.UI.ViewManagement;
-using Windows.UI.Xaml;
-using Windows.UI.Xaml.Automation;
-using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Controls.Primitives;
-using Windows.UI.Xaml.Hosting;
-using Windows.UI.Xaml.Media;
-using Windows.UI.Xaml.Navigation;
+using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Automation;
+using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Controls.Primitives;
+using Microsoft.UI.Xaml.Hosting;
+using Microsoft.UI.Xaml.Media;
+using Microsoft.UI.Xaml.Navigation;
 using Point = Windows.Foundation.Point;
 
 namespace Telegram.Views.Host
@@ -500,7 +500,7 @@ namespace Telegram.Views.Host
             args.IsContainerPrepared = true;
         }
 
-        private void OnContextRequested(UIElement sender, Windows.UI.Xaml.Input.ContextRequestedEventArgs args)
+        private void OnContextRequested(UIElement sender, Microsoft.UI.Xaml.Input.ContextRequestedEventArgs args)
         {
             var container = sender as ListViewItem;
             if (container.Content is ISessionService session && !session.IsActive)
@@ -904,11 +904,11 @@ namespace Telegram.Views.Host
             var tsc = new TaskCompletionSource<bool>();
             void handler(object sender, object e)
             {
-                Windows.UI.Xaml.Media.CompositionTarget.Rendered -= handler;
+                Microsoft.UI.Xaml.Media.CompositionTarget.Rendered -= handler;
                 tsc.SetResult(true);
             }
 
-            Windows.UI.Xaml.Media.CompositionTarget.Rendered += handler;
+            Microsoft.UI.Xaml.Media.CompositionTarget.Rendered += handler;
             return tsc.Task;
         }
 

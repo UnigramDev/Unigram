@@ -10,7 +10,7 @@ using Telegram.Converters;
 using Telegram.Td.Api;
 using Telegram.ViewModels.Delegates;
 using Telegram.ViewModels.Supergroups;
-using Windows.UI.Xaml;
+using Microsoft.UI.Xaml;
 
 namespace Telegram.Views.Supergroups
 {

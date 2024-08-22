@@ -8,8 +8,8 @@ using Telegram.Common;
 using Telegram.Controls;
 using Telegram.ViewModels;
 using Telegram.Views.Popups;
-using Windows.UI.Xaml;
-using Windows.UI.Xaml.Navigation;
+using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Navigation;
 
 namespace Telegram.Views
 {

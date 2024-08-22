@@ -16,7 +16,7 @@ using Telegram.ViewModels.Chats;
 using Telegram.ViewModels.Profile;
 using Telegram.Views;
 using Telegram.Views.Chats;
-using Windows.UI.Xaml.Navigation;
+using Microsoft.UI.Xaml.Navigation;
 
 namespace Telegram.ViewModels
 {

@@ -1729,7 +1729,7 @@ public static class VoipVideoRendererToken_stub
 }
 public static class CompositionDevice_stub
 {
-    public static Telegram.Native.Composition.DirectRectangleClip CreateRectangleClip_stub(Windows.UI.Xaml.UIElement element)
+    public static Telegram.Native.Composition.DirectRectangleClip CreateRectangleClip_stub(Microsoft.UI.Xaml.UIElement element)
     {
         try
         {
@@ -7708,7 +7708,7 @@ public static class ViewModePreferences_stub
 }
 public static class UIElement_stub
 {
-    public static bool CapturePointer_stub(this Windows.UI.Xaml.UIElement sender, Windows.UI.Xaml.Input.Pointer value)
+    public static bool CapturePointer_stub(this Microsoft.UI.Xaml.UIElement sender, Microsoft.UI.Xaml.Input.Pointer value)
     {
         try
         {
@@ -7720,7 +7720,7 @@ public static class UIElement_stub
             throw new RuntimeException(ex);
         }
     }
-    public static void ReleasePointerCapture_stub(this Windows.UI.Xaml.UIElement sender, Windows.UI.Xaml.Input.Pointer value)
+    public static void ReleasePointerCapture_stub(this Microsoft.UI.Xaml.UIElement sender, Microsoft.UI.Xaml.Input.Pointer value)
     {
         try
         {
@@ -7732,7 +7732,7 @@ public static class UIElement_stub
             throw new RuntimeException(ex);
         }
     }
-    public static void Measure_stub(this Windows.UI.Xaml.UIElement sender, Windows.Foundation.Size availableSize)
+    public static void Measure_stub(this Microsoft.UI.Xaml.UIElement sender, Windows.Foundation.Size availableSize)
     {
         try
         {
@@ -7744,7 +7744,7 @@ public static class UIElement_stub
             throw new RuntimeException(ex);
         }
     }
-    public static void AddHandler_stub(this Windows.UI.Xaml.UIElement sender, Windows.UI.Xaml.RoutedEvent routedEvent, object handler, bool handledEventsToo)
+    public static void AddHandler_stub(this Microsoft.UI.Xaml.UIElement sender, Microsoft.UI.Xaml.RoutedEvent routedEvent, object handler, bool handledEventsToo)
     {
         try
         {
@@ -7756,7 +7756,7 @@ public static class UIElement_stub
             throw new RuntimeException(ex);
         }
     }
-    public static void RemoveHandler_stub(this Windows.UI.Xaml.UIElement sender, Windows.UI.Xaml.RoutedEvent routedEvent, object handler)
+    public static void RemoveHandler_stub(this Microsoft.UI.Xaml.UIElement sender, Microsoft.UI.Xaml.RoutedEvent routedEvent, object handler)
     {
         try
         {
@@ -7768,7 +7768,7 @@ public static class UIElement_stub
             throw new RuntimeException(ex);
         }
     }
-    public static async Task<Windows.ApplicationModel.DataTransfer.DataPackageOperation> StartDragAsync_stub(this Windows.UI.Xaml.UIElement sender, Windows.UI.Input.PointerPoint pointerPoint)
+    public static async Task<Windows.ApplicationModel.DataTransfer.DataPackageOperation> StartDragAsync_stub(this Microsoft.UI.Xaml.UIElement sender, Windows.UI.Input.PointerPoint pointerPoint)
     {
         try
         {
@@ -7780,7 +7780,7 @@ public static class UIElement_stub
             throw new RuntimeException(ex);
         }
     }
-    public static void Arrange_stub(this Windows.UI.Xaml.UIElement sender, Windows.Foundation.Rect finalRect)
+    public static void Arrange_stub(this Microsoft.UI.Xaml.UIElement sender, Windows.Foundation.Rect finalRect)
     {
         try
         {
@@ -7792,7 +7792,7 @@ public static class UIElement_stub
             throw new RuntimeException(ex);
         }
     }
-    public static Windows.UI.Xaml.Media.GeneralTransform TransformToVisual_stub(this Windows.UI.Xaml.UIElement sender, Windows.UI.Xaml.UIElement visual)
+    public static Microsoft.UI.Xaml.Media.GeneralTransform TransformToVisual_stub(this Microsoft.UI.Xaml.UIElement sender, Microsoft.UI.Xaml.UIElement visual)
     {
         try
         {
@@ -7804,7 +7804,7 @@ public static class UIElement_stub
             throw new RuntimeException(ex);
         }
     }
-    public static void UpdateLayout_stub(this Windows.UI.Xaml.UIElement sender)
+    public static void UpdateLayout_stub(this Microsoft.UI.Xaml.UIElement sender)
     {
         try
         {
@@ -7816,7 +7816,7 @@ public static class UIElement_stub
             throw new RuntimeException(ex);
         }
     }
-    public static void InvalidateArrange_stub(this Windows.UI.Xaml.UIElement sender)
+    public static void InvalidateArrange_stub(this Microsoft.UI.Xaml.UIElement sender)
     {
         try
         {
@@ -7828,7 +7828,7 @@ public static class UIElement_stub
             throw new RuntimeException(ex);
         }
     }
-    public static bool CancelDirectManipulations_stub(this Windows.UI.Xaml.UIElement sender)
+    public static bool CancelDirectManipulations_stub(this Microsoft.UI.Xaml.UIElement sender)
     {
         try
         {
@@ -7840,7 +7840,7 @@ public static class UIElement_stub
             throw new RuntimeException(ex);
         }
     }
-    public static void InvalidateMeasure_stub(this Windows.UI.Xaml.UIElement sender)
+    public static void InvalidateMeasure_stub(this Microsoft.UI.Xaml.UIElement sender)
     {
         try
         {
@@ -7852,7 +7852,7 @@ public static class UIElement_stub
             throw new RuntimeException(ex);
         }
     }
-    public static void ReleasePointerCaptures_stub(this Windows.UI.Xaml.UIElement sender)
+    public static void ReleasePointerCaptures_stub(this Microsoft.UI.Xaml.UIElement sender)
     {
         try
         {
@@ -7864,7 +7864,7 @@ public static class UIElement_stub
             throw new RuntimeException(ex);
         }
     }
-    public static void StartBringIntoView_stub(this Windows.UI.Xaml.UIElement sender)
+    public static void StartBringIntoView_stub(this Microsoft.UI.Xaml.UIElement sender)
     {
         try
         {
@@ -7879,7 +7879,7 @@ public static class UIElement_stub
 }
 public static class FrameworkElement_stub
 {
-    public static object FindName_stub(this Windows.UI.Xaml.FrameworkElement sender, string name)
+    public static object FindName_stub(this Microsoft.UI.Xaml.FrameworkElement sender, string name)
     {
         try
         {
@@ -7891,7 +7891,7 @@ public static class FrameworkElement_stub
             throw new RuntimeException(ex);
         }
     }
-    public static Windows.UI.Xaml.Data.BindingExpression GetBindingExpression_stub(this Windows.UI.Xaml.FrameworkElement sender, Windows.UI.Xaml.DependencyProperty dp)
+    public static Microsoft.UI.Xaml.Data.BindingExpression GetBindingExpression_stub(this Microsoft.UI.Xaml.FrameworkElement sender, Microsoft.UI.Xaml.DependencyProperty dp)
     {
         try
         {
@@ -7903,7 +7903,7 @@ public static class FrameworkElement_stub
             throw new RuntimeException(ex);
         }
     }
-    public static void SetBinding_stub(this Windows.UI.Xaml.FrameworkElement sender, Windows.UI.Xaml.DependencyProperty dp, Windows.UI.Xaml.Data.BindingBase binding)
+    public static void SetBinding_stub(this Microsoft.UI.Xaml.FrameworkElement sender, Microsoft.UI.Xaml.DependencyProperty dp, Microsoft.UI.Xaml.Data.BindingBase binding)
     {
         try
         {
@@ -7918,7 +7918,7 @@ public static class FrameworkElement_stub
 }
 public static class DependencyObject_stub
 {
-    public static void ClearValue_stub(this Windows.UI.Xaml.DependencyObject sender, Windows.UI.Xaml.DependencyProperty dp)
+    public static void ClearValue_stub(this Microsoft.UI.Xaml.DependencyObject sender, Microsoft.UI.Xaml.DependencyProperty dp)
     {
         try
         {
@@ -7930,7 +7930,7 @@ public static class DependencyObject_stub
             throw new RuntimeException(ex);
         }
     }
-    public static object GetValue_stub(this Windows.UI.Xaml.DependencyObject sender, Windows.UI.Xaml.DependencyProperty dp)
+    public static object GetValue_stub(this Microsoft.UI.Xaml.DependencyObject sender, Microsoft.UI.Xaml.DependencyProperty dp)
     {
         try
         {
@@ -7942,7 +7942,7 @@ public static class DependencyObject_stub
             throw new RuntimeException(ex);
         }
     }
-    public static void SetValue_stub(this Windows.UI.Xaml.DependencyObject sender, Windows.UI.Xaml.DependencyProperty dp, object value)
+    public static void SetValue_stub(this Microsoft.UI.Xaml.DependencyObject sender, Microsoft.UI.Xaml.DependencyProperty dp, object value)
     {
         try
         {
@@ -7954,7 +7954,7 @@ public static class DependencyObject_stub
             throw new RuntimeException(ex);
         }
     }
-    public static long RegisterPropertyChangedCallback_stub(this Windows.UI.Xaml.DependencyObject sender, Windows.UI.Xaml.DependencyProperty dp, Windows.UI.Xaml.DependencyPropertyChangedCallback callback)
+    public static long RegisterPropertyChangedCallback_stub(this Microsoft.UI.Xaml.DependencyObject sender, Microsoft.UI.Xaml.DependencyProperty dp, Microsoft.UI.Xaml.DependencyPropertyChangedCallback callback)
     {
         try
         {
@@ -7966,7 +7966,7 @@ public static class DependencyObject_stub
             throw new RuntimeException(ex);
         }
     }
-    public static void UnregisterPropertyChangedCallback_stub(this Windows.UI.Xaml.DependencyObject sender, Windows.UI.Xaml.DependencyProperty dp, long token)
+    public static void UnregisterPropertyChangedCallback_stub(this Microsoft.UI.Xaml.DependencyObject sender, Microsoft.UI.Xaml.DependencyProperty dp, long token)
     {
         try
         {
@@ -7981,11 +7981,11 @@ public static class DependencyObject_stub
 }
 public static class DependencyProperty_stub
 {
-    public static Windows.UI.Xaml.DependencyProperty Register_stub(string name, System.Type propertyType, System.Type ownerType, Windows.UI.Xaml.PropertyMetadata typeMetadata)
+    public static Microsoft.UI.Xaml.DependencyProperty Register_stub(string name, System.Type propertyType, System.Type ownerType, Microsoft.UI.Xaml.PropertyMetadata typeMetadata)
     {
         try
         {
-            return Windows.UI.Xaml.DependencyProperty.Register(name, propertyType, ownerType, typeMetadata);
+            return Microsoft.UI.Xaml.DependencyProperty.Register(name, propertyType, ownerType, typeMetadata);
         }
         catch (Exception ex)
         {
@@ -7993,11 +7993,11 @@ public static class DependencyProperty_stub
             throw new RuntimeException(ex);
         }
     }
-    public static Windows.UI.Xaml.DependencyProperty RegisterAttached_stub(string name, System.Type propertyType, System.Type ownerType, Windows.UI.Xaml.PropertyMetadata defaultMetadata)
+    public static Microsoft.UI.Xaml.DependencyProperty RegisterAttached_stub(string name, System.Type propertyType, System.Type ownerType, Microsoft.UI.Xaml.PropertyMetadata defaultMetadata)
     {
         try
         {
-            return Windows.UI.Xaml.DependencyProperty.RegisterAttached(name, propertyType, ownerType, defaultMetadata);
+            return Microsoft.UI.Xaml.DependencyProperty.RegisterAttached(name, propertyType, ownerType, defaultMetadata);
         }
         catch (Exception ex)
         {
@@ -8008,11 +8008,11 @@ public static class DependencyProperty_stub
 }
 public static class VisualStateManager_stub
 {
-    public static bool GoToState_stub(Windows.UI.Xaml.Controls.Control control, string stateName, bool useTransitions)
+    public static bool GoToState_stub(Microsoft.UI.Xaml.Controls.Control control, string stateName, bool useTransitions)
     {
         try
         {
-            return Windows.UI.Xaml.VisualStateManager.GoToState(control, stateName, useTransitions);
+            return Microsoft.UI.Xaml.VisualStateManager.GoToState(control, stateName, useTransitions);
         }
         catch (Exception ex)
         {
@@ -8023,7 +8023,7 @@ public static class VisualStateManager_stub
 }
 public static class DispatcherTimer_stub
 {
-    public static void Stop_stub(this Windows.UI.Xaml.DispatcherTimer sender)
+    public static void Stop_stub(this Microsoft.UI.Xaml.DispatcherTimer sender)
     {
         try
         {
@@ -8035,7 +8035,7 @@ public static class DispatcherTimer_stub
             throw new RuntimeException(ex);
         }
     }
-    public static void Start_stub(this Windows.UI.Xaml.DispatcherTimer sender)
+    public static void Start_stub(this Microsoft.UI.Xaml.DispatcherTimer sender)
     {
         try
         {
@@ -8050,7 +8050,7 @@ public static class DispatcherTimer_stub
 }
 public static class Window_stub
 {
-    public static void SetTitleBar_stub(this Windows.UI.Xaml.Window sender, Windows.UI.Xaml.UIElement value)
+    public static void SetTitleBar_stub(this Microsoft.UI.Xaml.Window sender, Microsoft.UI.Xaml.UIElement value)
     {
         try
         {
@@ -8062,7 +8062,7 @@ public static class Window_stub
             throw new RuntimeException(ex);
         }
     }
-    public static void Activate_stub(this Windows.UI.Xaml.Window sender)
+    public static void Activate_stub(this Microsoft.UI.Xaml.Window sender)
     {
         try
         {
@@ -8074,7 +8074,7 @@ public static class Window_stub
             throw new RuntimeException(ex);
         }
     }
-    public static void Close_stub(this Windows.UI.Xaml.Window sender)
+    public static void Close_stub(this Microsoft.UI.Xaml.Window sender)
     {
         try
         {
@@ -8089,7 +8089,7 @@ public static class Window_stub
 }
 public static class DragStartingEventArgs_stub
 {
-    public static Windows.UI.Xaml.DragOperationDeferral GetDeferral_stub(this Windows.UI.Xaml.DragStartingEventArgs sender)
+    public static Microsoft.UI.Xaml.DragOperationDeferral GetDeferral_stub(this Microsoft.UI.Xaml.DragStartingEventArgs sender)
     {
         try
         {
@@ -8104,7 +8104,7 @@ public static class DragStartingEventArgs_stub
 }
 public static class DragUI_stub
 {
-    public static void SetContentFromDataPackage_stub(this Windows.UI.Xaml.DragUI sender)
+    public static void SetContentFromDataPackage_stub(this Microsoft.UI.Xaml.DragUI sender)
     {
         try
         {
@@ -8119,7 +8119,7 @@ public static class DragUI_stub
 }
 public static class DragOperationDeferral_stub
 {
-    public static void Complete_stub(this Windows.UI.Xaml.DragOperationDeferral sender)
+    public static void Complete_stub(this Microsoft.UI.Xaml.DragOperationDeferral sender)
     {
         try
         {
@@ -8134,11 +8134,11 @@ public static class DragOperationDeferral_stub
 }
 public static class AutomationProperties_stub
 {
-    public static void SetName_stub(Windows.UI.Xaml.DependencyObject element, string value)
+    public static void SetName_stub(Microsoft.UI.Xaml.DependencyObject element, string value)
     {
         try
         {
-            Windows.UI.Xaml.Automation.AutomationProperties.SetName(element, value);
+            Microsoft.UI.Xaml.Automation.AutomationProperties.SetName(element, value);
         }
         catch (Exception ex)
         {
@@ -8146,11 +8146,11 @@ public static class AutomationProperties_stub
             throw new RuntimeException(ex);
         }
     }
-    public static string GetName_stub(Windows.UI.Xaml.DependencyObject element)
+    public static string GetName_stub(Microsoft.UI.Xaml.DependencyObject element)
     {
         try
         {
-            return Windows.UI.Xaml.Automation.AutomationProperties.GetName(element);
+            return Microsoft.UI.Xaml.Automation.AutomationProperties.GetName(element);
         }
         catch (Exception ex)
         {
@@ -8158,11 +8158,11 @@ public static class AutomationProperties_stub
             throw new RuntimeException(ex);
         }
     }
-    public static void SetAutomationControlType_stub(Windows.UI.Xaml.UIElement element, Windows.UI.Xaml.Automation.Peers.AutomationControlType value)
+    public static void SetAutomationControlType_stub(Microsoft.UI.Xaml.UIElement element, Microsoft.UI.Xaml.Automation.Peers.AutomationControlType value)
     {
         try
         {
-            Windows.UI.Xaml.Automation.AutomationProperties.SetAutomationControlType(element, value);
+            Microsoft.UI.Xaml.Automation.AutomationProperties.SetAutomationControlType(element, value);
         }
         catch (Exception ex)
         {
@@ -8170,11 +8170,11 @@ public static class AutomationProperties_stub
             throw new RuntimeException(ex);
         }
     }
-    public static void SetPositionInSet_stub(Windows.UI.Xaml.DependencyObject element, int value)
+    public static void SetPositionInSet_stub(Microsoft.UI.Xaml.DependencyObject element, int value)
     {
         try
         {
-            Windows.UI.Xaml.Automation.AutomationProperties.SetPositionInSet(element, value);
+            Microsoft.UI.Xaml.Automation.AutomationProperties.SetPositionInSet(element, value);
         }
         catch (Exception ex)
         {
@@ -8182,11 +8182,11 @@ public static class AutomationProperties_stub
             throw new RuntimeException(ex);
         }
     }
-    public static void SetSizeOfSet_stub(Windows.UI.Xaml.DependencyObject element, int value)
+    public static void SetSizeOfSet_stub(Microsoft.UI.Xaml.DependencyObject element, int value)
     {
         try
         {
-            Windows.UI.Xaml.Automation.AutomationProperties.SetSizeOfSet(element, value);
+            Microsoft.UI.Xaml.Automation.AutomationProperties.SetSizeOfSet(element, value);
         }
         catch (Exception ex)
         {
@@ -8194,11 +8194,11 @@ public static class AutomationProperties_stub
             throw new RuntimeException(ex);
         }
     }
-    public static System.Collections.Generic.IList<Windows.UI.Xaml.UIElement> GetControlledPeers_stub(Windows.UI.Xaml.DependencyObject element)
+    public static System.Collections.Generic.IList<Microsoft.UI.Xaml.UIElement> GetControlledPeers_stub(Microsoft.UI.Xaml.DependencyObject element)
     {
         try
         {
-            return Windows.UI.Xaml.Automation.AutomationProperties.GetControlledPeers(element);
+            return Microsoft.UI.Xaml.Automation.AutomationProperties.GetControlledPeers(element);
         }
         catch (Exception ex)
         {
@@ -8206,11 +8206,11 @@ public static class AutomationProperties_stub
             throw new RuntimeException(ex);
         }
     }
-    public static Windows.UI.Xaml.Automation.Peers.AccessibilityView GetAccessibilityView_stub(Windows.UI.Xaml.DependencyObject element)
+    public static Microsoft.UI.Xaml.Automation.Peers.AccessibilityView GetAccessibilityView_stub(Microsoft.UI.Xaml.DependencyObject element)
     {
         try
         {
-            return Windows.UI.Xaml.Automation.AutomationProperties.GetAccessibilityView(element);
+            return Microsoft.UI.Xaml.Automation.AutomationProperties.GetAccessibilityView(element);
         }
         catch (Exception ex)
         {
@@ -8221,11 +8221,11 @@ public static class AutomationProperties_stub
 }
 public static class AutomationPeer_stub
 {
-    public static bool ListenerExists_stub(Windows.UI.Xaml.Automation.Peers.AutomationEvents eventId)
+    public static bool ListenerExists_stub(Microsoft.UI.Xaml.Automation.Peers.AutomationEvents eventId)
     {
         try
         {
-            return Windows.UI.Xaml.Automation.Peers.AutomationPeer.ListenerExists(eventId);
+            return Microsoft.UI.Xaml.Automation.Peers.AutomationPeer.ListenerExists(eventId);
         }
         catch (Exception ex)
         {
@@ -8233,7 +8233,7 @@ public static class AutomationPeer_stub
             throw new RuntimeException(ex);
         }
     }
-    public static object GetPattern_stub(this Windows.UI.Xaml.Automation.Peers.AutomationPeer sender, Windows.UI.Xaml.Automation.Peers.PatternInterface patternInterface)
+    public static object GetPattern_stub(this Microsoft.UI.Xaml.Automation.Peers.AutomationPeer sender, Microsoft.UI.Xaml.Automation.Peers.PatternInterface patternInterface)
     {
         try
         {
@@ -8245,7 +8245,7 @@ public static class AutomationPeer_stub
             throw new RuntimeException(ex);
         }
     }
-    public static void RaiseAutomationEvent_stub(this Windows.UI.Xaml.Automation.Peers.AutomationPeer sender, Windows.UI.Xaml.Automation.Peers.AutomationEvents eventId)
+    public static void RaiseAutomationEvent_stub(this Microsoft.UI.Xaml.Automation.Peers.AutomationPeer sender, Microsoft.UI.Xaml.Automation.Peers.AutomationEvents eventId)
     {
         try
         {
@@ -8257,7 +8257,7 @@ public static class AutomationPeer_stub
             throw new RuntimeException(ex);
         }
     }
-    public static void RaisePropertyChangedEvent_stub(this Windows.UI.Xaml.Automation.Peers.AutomationPeer sender, Windows.UI.Xaml.Automation.AutomationProperty automationProperty, object oldValue, object newValue)
+    public static void RaisePropertyChangedEvent_stub(this Microsoft.UI.Xaml.Automation.Peers.AutomationPeer sender, Microsoft.UI.Xaml.Automation.AutomationProperty automationProperty, object oldValue, object newValue)
     {
         try
         {
@@ -8272,11 +8272,11 @@ public static class AutomationPeer_stub
 }
 public static class FrameworkElementAutomationPeer_stub
 {
-    public static Windows.UI.Xaml.Automation.Peers.AutomationPeer CreatePeerForElement_stub(Windows.UI.Xaml.UIElement element)
+    public static Microsoft.UI.Xaml.Automation.Peers.AutomationPeer CreatePeerForElement_stub(Microsoft.UI.Xaml.UIElement element)
     {
         try
         {
-            return Windows.UI.Xaml.Automation.Peers.FrameworkElementAutomationPeer.CreatePeerForElement(element);
+            return Microsoft.UI.Xaml.Automation.Peers.FrameworkElementAutomationPeer.CreatePeerForElement(element);
         }
         catch (Exception ex)
         {
@@ -8284,11 +8284,11 @@ public static class FrameworkElementAutomationPeer_stub
             throw new RuntimeException(ex);
         }
     }
-    public static Windows.UI.Xaml.Automation.Peers.AutomationPeer FromElement_stub(Windows.UI.Xaml.UIElement element)
+    public static Microsoft.UI.Xaml.Automation.Peers.AutomationPeer FromElement_stub(Microsoft.UI.Xaml.UIElement element)
     {
         try
         {
-            return Windows.UI.Xaml.Automation.Peers.FrameworkElementAutomationPeer.FromElement(element);
+            return Microsoft.UI.Xaml.Automation.Peers.FrameworkElementAutomationPeer.FromElement(element);
         }
         catch (Exception ex)
         {
@@ -8299,7 +8299,7 @@ public static class FrameworkElementAutomationPeer_stub
 }
 public static class IInvokeProvider_stub
 {
-    public static void Invoke_stub(this Windows.UI.Xaml.Automation.Provider.IInvokeProvider sender)
+    public static void Invoke_stub(this Microsoft.UI.Xaml.Automation.Provider.IInvokeProvider sender)
     {
         try
         {
@@ -8314,11 +8314,11 @@ public static class IInvokeProvider_stub
 }
 public static class Grid_stub
 {
-    public static void SetColumn_stub(Windows.UI.Xaml.FrameworkElement element, int value)
+    public static void SetColumn_stub(Microsoft.UI.Xaml.FrameworkElement element, int value)
     {
         try
         {
-            Windows.UI.Xaml.Controls.Grid.SetColumn(element, value);
+            Microsoft.UI.Xaml.Controls.Grid.SetColumn(element, value);
         }
         catch (Exception ex)
         {
@@ -8326,11 +8326,11 @@ public static class Grid_stub
             throw new RuntimeException(ex);
         }
     }
-    public static void SetColumnSpan_stub(Windows.UI.Xaml.FrameworkElement element, int value)
+    public static void SetColumnSpan_stub(Microsoft.UI.Xaml.FrameworkElement element, int value)
     {
         try
         {
-            Windows.UI.Xaml.Controls.Grid.SetColumnSpan(element, value);
+            Microsoft.UI.Xaml.Controls.Grid.SetColumnSpan(element, value);
         }
         catch (Exception ex)
         {
@@ -8338,11 +8338,11 @@ public static class Grid_stub
             throw new RuntimeException(ex);
         }
     }
-    public static void SetRow_stub(Windows.UI.Xaml.FrameworkElement element, int value)
+    public static void SetRow_stub(Microsoft.UI.Xaml.FrameworkElement element, int value)
     {
         try
         {
-            Windows.UI.Xaml.Controls.Grid.SetRow(element, value);
+            Microsoft.UI.Xaml.Controls.Grid.SetRow(element, value);
         }
         catch (Exception ex)
         {
@@ -8350,11 +8350,11 @@ public static class Grid_stub
             throw new RuntimeException(ex);
         }
     }
-    public static void SetRowSpan_stub(Windows.UI.Xaml.FrameworkElement element, int value)
+    public static void SetRowSpan_stub(Microsoft.UI.Xaml.FrameworkElement element, int value)
     {
         try
         {
-            Windows.UI.Xaml.Controls.Grid.SetRowSpan(element, value);
+            Microsoft.UI.Xaml.Controls.Grid.SetRowSpan(element, value);
         }
         catch (Exception ex)
         {
@@ -8362,11 +8362,11 @@ public static class Grid_stub
             throw new RuntimeException(ex);
         }
     }
-    public static int GetRow_stub(Windows.UI.Xaml.FrameworkElement element)
+    public static int GetRow_stub(Microsoft.UI.Xaml.FrameworkElement element)
     {
         try
         {
-            return Windows.UI.Xaml.Controls.Grid.GetRow(element);
+            return Microsoft.UI.Xaml.Controls.Grid.GetRow(element);
         }
         catch (Exception ex)
         {
@@ -8377,7 +8377,7 @@ public static class Grid_stub
 }
 public static class ListViewBase_stub
 {
-    public static void ScrollIntoView_stub(this Windows.UI.Xaml.Controls.ListViewBase sender, object item, Windows.UI.Xaml.Controls.ScrollIntoViewAlignment alignment)
+    public static void ScrollIntoView_stub(this Microsoft.UI.Xaml.Controls.ListViewBase sender, object item, Microsoft.UI.Xaml.Controls.ScrollIntoViewAlignment alignment)
     {
         try
         {
@@ -8389,7 +8389,7 @@ public static class ListViewBase_stub
             throw new RuntimeException(ex);
         }
     }
-    public static void ScrollIntoView_stub(this Windows.UI.Xaml.Controls.ListViewBase sender, object item)
+    public static void ScrollIntoView_stub(this Microsoft.UI.Xaml.Controls.ListViewBase sender, object item)
     {
         try
         {
@@ -8401,7 +8401,7 @@ public static class ListViewBase_stub
             throw new RuntimeException(ex);
         }
     }
-    public static void SelectAll_stub(this Windows.UI.Xaml.Controls.ListViewBase sender)
+    public static void SelectAll_stub(this Microsoft.UI.Xaml.Controls.ListViewBase sender)
     {
         try
         {
@@ -8416,7 +8416,7 @@ public static class ListViewBase_stub
 }
 public static class ItemsControl_stub
 {
-    public static Windows.UI.Xaml.DependencyObject ContainerFromItem_stub(this Windows.UI.Xaml.Controls.ItemsControl sender, object item)
+    public static Microsoft.UI.Xaml.DependencyObject ContainerFromItem_stub(this Microsoft.UI.Xaml.Controls.ItemsControl sender, object item)
     {
         try
         {
@@ -8428,7 +8428,7 @@ public static class ItemsControl_stub
             throw new RuntimeException(ex);
         }
     }
-    public static Windows.UI.Xaml.DependencyObject ContainerFromIndex_stub(this Windows.UI.Xaml.Controls.ItemsControl sender, int index)
+    public static Microsoft.UI.Xaml.DependencyObject ContainerFromIndex_stub(this Microsoft.UI.Xaml.Controls.ItemsControl sender, int index)
     {
         try
         {
@@ -8440,7 +8440,7 @@ public static class ItemsControl_stub
             throw new RuntimeException(ex);
         }
     }
-    public static object ItemFromContainer_stub(this Windows.UI.Xaml.Controls.ItemsControl sender, Windows.UI.Xaml.DependencyObject container)
+    public static object ItemFromContainer_stub(this Microsoft.UI.Xaml.Controls.ItemsControl sender, Microsoft.UI.Xaml.DependencyObject container)
     {
         try
         {
@@ -8452,7 +8452,7 @@ public static class ItemsControl_stub
             throw new RuntimeException(ex);
         }
     }
-    public static Windows.UI.Xaml.DependencyObject GroupHeaderContainerFromItemContainer_stub(this Windows.UI.Xaml.Controls.ItemsControl sender, Windows.UI.Xaml.DependencyObject itemContainer)
+    public static Microsoft.UI.Xaml.DependencyObject GroupHeaderContainerFromItemContainer_stub(this Microsoft.UI.Xaml.Controls.ItemsControl sender, Microsoft.UI.Xaml.DependencyObject itemContainer)
     {
         try
         {
@@ -8464,7 +8464,7 @@ public static class ItemsControl_stub
             throw new RuntimeException(ex);
         }
     }
-    public static int IndexFromContainer_stub(this Windows.UI.Xaml.Controls.ItemsControl sender, Windows.UI.Xaml.DependencyObject container)
+    public static int IndexFromContainer_stub(this Microsoft.UI.Xaml.Controls.ItemsControl sender, Microsoft.UI.Xaml.DependencyObject container)
     {
         try
         {
@@ -8479,7 +8479,7 @@ public static class ItemsControl_stub
 }
 public static class ScrollViewer_stub
 {
-    public static bool ChangeView_stub(this Windows.UI.Xaml.Controls.ScrollViewer sender, double? horizontalOffset, double? verticalOffset, float? zoomFactor, bool disableAnimation)
+    public static bool ChangeView_stub(this Microsoft.UI.Xaml.Controls.ScrollViewer sender, double? horizontalOffset, double? verticalOffset, float? zoomFactor, bool disableAnimation)
     {
         try
         {
@@ -8491,7 +8491,7 @@ public static class ScrollViewer_stub
             throw new RuntimeException(ex);
         }
     }
-    public static bool ChangeView_stub(this Windows.UI.Xaml.Controls.ScrollViewer sender, double? horizontalOffset, double? verticalOffset, float? zoomFactor)
+    public static bool ChangeView_stub(this Microsoft.UI.Xaml.Controls.ScrollViewer sender, double? horizontalOffset, double? verticalOffset, float? zoomFactor)
     {
         try
         {
@@ -8503,11 +8503,11 @@ public static class ScrollViewer_stub
             throw new RuntimeException(ex);
         }
     }
-    public static void SetVerticalScrollBarVisibility_stub(Windows.UI.Xaml.DependencyObject element, Windows.UI.Xaml.Controls.ScrollBarVisibility verticalScrollBarVisibility)
+    public static void SetVerticalScrollBarVisibility_stub(Microsoft.UI.Xaml.DependencyObject element, Microsoft.UI.Xaml.Controls.ScrollBarVisibility verticalScrollBarVisibility)
     {
         try
         {
-            Windows.UI.Xaml.Controls.ScrollViewer.SetVerticalScrollBarVisibility(element, verticalScrollBarVisibility);
+            Microsoft.UI.Xaml.Controls.ScrollViewer.SetVerticalScrollBarVisibility(element, verticalScrollBarVisibility);
         }
         catch (Exception ex)
         {
@@ -8515,11 +8515,11 @@ public static class ScrollViewer_stub
             throw new RuntimeException(ex);
         }
     }
-    public static void SetVerticalScrollMode_stub(Windows.UI.Xaml.DependencyObject element, Windows.UI.Xaml.Controls.ScrollMode verticalScrollMode)
+    public static void SetVerticalScrollMode_stub(Microsoft.UI.Xaml.DependencyObject element, Microsoft.UI.Xaml.Controls.ScrollMode verticalScrollMode)
     {
         try
         {
-            Windows.UI.Xaml.Controls.ScrollViewer.SetVerticalScrollMode(element, verticalScrollMode);
+            Microsoft.UI.Xaml.Controls.ScrollViewer.SetVerticalScrollMode(element, verticalScrollMode);
         }
         catch (Exception ex)
         {
@@ -8527,11 +8527,11 @@ public static class ScrollViewer_stub
             throw new RuntimeException(ex);
         }
     }
-    public static void SetIsVerticalRailEnabled_stub(Windows.UI.Xaml.DependencyObject element, bool isVerticalRailEnabled)
+    public static void SetIsVerticalRailEnabled_stub(Microsoft.UI.Xaml.DependencyObject element, bool isVerticalRailEnabled)
     {
         try
         {
-            Windows.UI.Xaml.Controls.ScrollViewer.SetIsVerticalRailEnabled(element, isVerticalRailEnabled);
+            Microsoft.UI.Xaml.Controls.ScrollViewer.SetIsVerticalRailEnabled(element, isVerticalRailEnabled);
         }
         catch (Exception ex)
         {
@@ -8539,11 +8539,11 @@ public static class ScrollViewer_stub
             throw new RuntimeException(ex);
         }
     }
-    public static void SetHorizontalScrollBarVisibility_stub(Windows.UI.Xaml.DependencyObject element, Windows.UI.Xaml.Controls.ScrollBarVisibility horizontalScrollBarVisibility)
+    public static void SetHorizontalScrollBarVisibility_stub(Microsoft.UI.Xaml.DependencyObject element, Microsoft.UI.Xaml.Controls.ScrollBarVisibility horizontalScrollBarVisibility)
     {
         try
         {
-            Windows.UI.Xaml.Controls.ScrollViewer.SetHorizontalScrollBarVisibility(element, horizontalScrollBarVisibility);
+            Microsoft.UI.Xaml.Controls.ScrollViewer.SetHorizontalScrollBarVisibility(element, horizontalScrollBarVisibility);
         }
         catch (Exception ex)
         {
@@ -8551,11 +8551,11 @@ public static class ScrollViewer_stub
             throw new RuntimeException(ex);
         }
     }
-    public static void SetHorizontalScrollMode_stub(Windows.UI.Xaml.DependencyObject element, Windows.UI.Xaml.Controls.ScrollMode horizontalScrollMode)
+    public static void SetHorizontalScrollMode_stub(Microsoft.UI.Xaml.DependencyObject element, Microsoft.UI.Xaml.Controls.ScrollMode horizontalScrollMode)
     {
         try
         {
-            Windows.UI.Xaml.Controls.ScrollViewer.SetHorizontalScrollMode(element, horizontalScrollMode);
+            Microsoft.UI.Xaml.Controls.ScrollViewer.SetHorizontalScrollMode(element, horizontalScrollMode);
         }
         catch (Exception ex)
         {
@@ -8563,11 +8563,11 @@ public static class ScrollViewer_stub
             throw new RuntimeException(ex);
         }
     }
-    public static void SetIsHorizontalRailEnabled_stub(Windows.UI.Xaml.DependencyObject element, bool isHorizontalRailEnabled)
+    public static void SetIsHorizontalRailEnabled_stub(Microsoft.UI.Xaml.DependencyObject element, bool isHorizontalRailEnabled)
     {
         try
         {
-            Windows.UI.Xaml.Controls.ScrollViewer.SetIsHorizontalRailEnabled(element, isHorizontalRailEnabled);
+            Microsoft.UI.Xaml.Controls.ScrollViewer.SetIsHorizontalRailEnabled(element, isHorizontalRailEnabled);
         }
         catch (Exception ex)
         {
@@ -8578,7 +8578,7 @@ public static class ScrollViewer_stub
 }
 public static class ContainerContentChangingEventArgs_stub
 {
-    public static void RegisterUpdateCallback_stub(this Windows.UI.Xaml.Controls.ContainerContentChangingEventArgs sender, Windows.Foundation.TypedEventHandler<Windows.UI.Xaml.Controls.ListViewBase, Windows.UI.Xaml.Controls.ContainerContentChangingEventArgs> callback)
+    public static void RegisterUpdateCallback_stub(this Microsoft.UI.Xaml.Controls.ContainerContentChangingEventArgs sender, Windows.Foundation.TypedEventHandler<Microsoft.UI.Xaml.Controls.ListViewBase, Microsoft.UI.Xaml.Controls.ContainerContentChangingEventArgs> callback)
     {
         try
         {
@@ -8590,7 +8590,7 @@ public static class ContainerContentChangingEventArgs_stub
             throw new RuntimeException(ex);
         }
     }
-    public static void RegisterUpdateCallback_stub(this Windows.UI.Xaml.Controls.ContainerContentChangingEventArgs sender, uint callbackPhase, Windows.Foundation.TypedEventHandler<Windows.UI.Xaml.Controls.ListViewBase, Windows.UI.Xaml.Controls.ContainerContentChangingEventArgs> callback)
+    public static void RegisterUpdateCallback_stub(this Microsoft.UI.Xaml.Controls.ContainerContentChangingEventArgs sender, uint callbackPhase, Windows.Foundation.TypedEventHandler<Microsoft.UI.Xaml.Controls.ListViewBase, Microsoft.UI.Xaml.Controls.ContainerContentChangingEventArgs> callback)
     {
         try
         {
@@ -8605,7 +8605,7 @@ public static class ContainerContentChangingEventArgs_stub
 }
 public static class Control_stub
 {
-    public static bool Focus_stub(this Windows.UI.Xaml.Controls.Control sender, Windows.UI.Xaml.FocusState value)
+    public static bool Focus_stub(this Microsoft.UI.Xaml.Controls.Control sender, Microsoft.UI.Xaml.FocusState value)
     {
         try
         {
@@ -8620,7 +8620,7 @@ public static class Control_stub
 }
 public static class UIElementCollection_stub
 {
-    public static void Move_stub(this Windows.UI.Xaml.Controls.UIElementCollection sender, uint oldIndex, uint newIndex)
+    public static void Move_stub(this Microsoft.UI.Xaml.Controls.UIElementCollection sender, uint oldIndex, uint newIndex)
     {
         try
         {
@@ -8635,11 +8635,11 @@ public static class UIElementCollection_stub
 }
 public static class Canvas_stub
 {
-    public static void SetZIndex_stub(Windows.UI.Xaml.UIElement element, int value)
+    public static void SetZIndex_stub(Microsoft.UI.Xaml.UIElement element, int value)
     {
         try
         {
-            Windows.UI.Xaml.Controls.Canvas.SetZIndex(element, value);
+            Microsoft.UI.Xaml.Controls.Canvas.SetZIndex(element, value);
         }
         catch (Exception ex)
         {
@@ -8647,11 +8647,11 @@ public static class Canvas_stub
             throw new RuntimeException(ex);
         }
     }
-    public static void SetLeft_stub(Windows.UI.Xaml.UIElement element, double length)
+    public static void SetLeft_stub(Microsoft.UI.Xaml.UIElement element, double length)
     {
         try
         {
-            Windows.UI.Xaml.Controls.Canvas.SetLeft(element, length);
+            Microsoft.UI.Xaml.Controls.Canvas.SetLeft(element, length);
         }
         catch (Exception ex)
         {
@@ -8659,11 +8659,11 @@ public static class Canvas_stub
             throw new RuntimeException(ex);
         }
     }
-    public static void SetTop_stub(Windows.UI.Xaml.UIElement element, double length)
+    public static void SetTop_stub(Microsoft.UI.Xaml.UIElement element, double length)
     {
         try
         {
-            Windows.UI.Xaml.Controls.Canvas.SetTop(element, length);
+            Microsoft.UI.Xaml.Controls.Canvas.SetTop(element, length);
         }
         catch (Exception ex)
         {
@@ -8674,11 +8674,11 @@ public static class Canvas_stub
 }
 public static class ToolTipService_stub
 {
-    public static void SetToolTip_stub(Windows.UI.Xaml.DependencyObject element, object value)
+    public static void SetToolTip_stub(Microsoft.UI.Xaml.DependencyObject element, object value)
     {
         try
         {
-            Windows.UI.Xaml.Controls.ToolTipService.SetToolTip(element, value);
+            Microsoft.UI.Xaml.Controls.ToolTipService.SetToolTip(element, value);
         }
         catch (Exception ex)
         {
@@ -8686,11 +8686,11 @@ public static class ToolTipService_stub
             throw new RuntimeException(ex);
         }
     }
-    public static object GetToolTip_stub(Windows.UI.Xaml.DependencyObject element)
+    public static object GetToolTip_stub(Microsoft.UI.Xaml.DependencyObject element)
     {
         try
         {
-            return Windows.UI.Xaml.Controls.ToolTipService.GetToolTip(element);
+            return Microsoft.UI.Xaml.Controls.ToolTipService.GetToolTip(element);
         }
         catch (Exception ex)
         {
@@ -8701,7 +8701,7 @@ public static class ToolTipService_stub
 }
 public static class DataTemplateSelector_stub
 {
-    public static Windows.UI.Xaml.DataTemplate SelectTemplate_stub(this Windows.UI.Xaml.Controls.DataTemplateSelector sender, object item, Windows.UI.Xaml.DependencyObject container)
+    public static Microsoft.UI.Xaml.DataTemplate SelectTemplate_stub(this Microsoft.UI.Xaml.Controls.DataTemplateSelector sender, object item, Microsoft.UI.Xaml.DependencyObject container)
     {
         try
         {
@@ -8716,7 +8716,7 @@ public static class DataTemplateSelector_stub
 }
 public static class Image_stub
 {
-    public static Windows.UI.Composition.CompositionBrush GetAlphaMask_stub(this Windows.UI.Xaml.Controls.Image sender)
+    public static Windows.UI.Composition.CompositionBrush GetAlphaMask_stub(this Microsoft.UI.Xaml.Controls.Image sender)
     {
         try
         {
@@ -8731,7 +8731,7 @@ public static class Image_stub
 }
 public static class TextBlock_stub
 {
-    public static Windows.UI.Composition.CompositionBrush GetAlphaMask_stub(this Windows.UI.Xaml.Controls.TextBlock sender)
+    public static Windows.UI.Composition.CompositionBrush GetAlphaMask_stub(this Microsoft.UI.Xaml.Controls.TextBlock sender)
     {
         try
         {
@@ -8746,7 +8746,7 @@ public static class TextBlock_stub
 }
 public static class MenuFlyout_stub
 {
-    public static void ShowAt_stub(this Windows.UI.Xaml.Controls.MenuFlyout sender, Windows.UI.Xaml.UIElement targetElement, Windows.Foundation.Point point)
+    public static void ShowAt_stub(this Microsoft.UI.Xaml.Controls.MenuFlyout sender, Microsoft.UI.Xaml.UIElement targetElement, Windows.Foundation.Point point)
     {
         try
         {
@@ -8761,7 +8761,7 @@ public static class MenuFlyout_stub
 }
 public static class ContentDialog_stub
 {
-    public static async Task<Windows.UI.Xaml.Controls.ContentDialogResult> ShowAsync_stub(this Windows.UI.Xaml.Controls.ContentDialog sender)
+    public static async Task<Microsoft.UI.Xaml.Controls.ContentDialogResult> ShowAsync_stub(this Microsoft.UI.Xaml.Controls.ContentDialog sender)
     {
         try
         {
@@ -8773,7 +8773,7 @@ public static class ContentDialog_stub
             throw new RuntimeException(ex);
         }
     }
-    public static void Hide_stub(this Windows.UI.Xaml.Controls.ContentDialog sender)
+    public static void Hide_stub(this Microsoft.UI.Xaml.Controls.ContentDialog sender)
     {
         try
         {
@@ -8788,7 +8788,7 @@ public static class ContentDialog_stub
 }
 public static class Frame_stub
 {
-    public static void GoBack_stub(this Windows.UI.Xaml.Controls.Frame sender)
+    public static void GoBack_stub(this Microsoft.UI.Xaml.Controls.Frame sender)
     {
         try
         {
@@ -8800,7 +8800,7 @@ public static class Frame_stub
             throw new RuntimeException(ex);
         }
     }
-    public static bool Navigate_stub(this Windows.UI.Xaml.Controls.Frame sender, System.Type sourcePageType)
+    public static bool Navigate_stub(this Microsoft.UI.Xaml.Controls.Frame sender, System.Type sourcePageType)
     {
         try
         {
@@ -8812,7 +8812,7 @@ public static class Frame_stub
             throw new RuntimeException(ex);
         }
     }
-    public static bool Navigate_stub(this Windows.UI.Xaml.Controls.Frame sender, System.Type sourcePageType, object parameter, Windows.UI.Xaml.Media.Animation.NavigationTransitionInfo infoOverride)
+    public static bool Navigate_stub(this Microsoft.UI.Xaml.Controls.Frame sender, System.Type sourcePageType, object parameter, Microsoft.UI.Xaml.Media.Animation.NavigationTransitionInfo infoOverride)
     {
         try
         {
@@ -8824,7 +8824,7 @@ public static class Frame_stub
             throw new RuntimeException(ex);
         }
     }
-    public static void GoBack_stub(this Windows.UI.Xaml.Controls.Frame sender, Windows.UI.Xaml.Media.Animation.NavigationTransitionInfo transitionInfoOverride)
+    public static void GoBack_stub(this Microsoft.UI.Xaml.Controls.Frame sender, Microsoft.UI.Xaml.Media.Animation.NavigationTransitionInfo transitionInfoOverride)
     {
         try
         {
@@ -8836,7 +8836,7 @@ public static class Frame_stub
             throw new RuntimeException(ex);
         }
     }
-    public static string GetNavigationState_stub(this Windows.UI.Xaml.Controls.Frame sender)
+    public static string GetNavigationState_stub(this Microsoft.UI.Xaml.Controls.Frame sender)
     {
         try
         {
@@ -8848,7 +8848,7 @@ public static class Frame_stub
             throw new RuntimeException(ex);
         }
     }
-    public static void SetNavigationState_stub(this Windows.UI.Xaml.Controls.Frame sender, string navigationState)
+    public static void SetNavigationState_stub(this Microsoft.UI.Xaml.Controls.Frame sender, string navigationState)
     {
         try
         {
@@ -8860,7 +8860,7 @@ public static class Frame_stub
             throw new RuntimeException(ex);
         }
     }
-    public static void GoForward_stub(this Windows.UI.Xaml.Controls.Frame sender)
+    public static void GoForward_stub(this Microsoft.UI.Xaml.Controls.Frame sender)
     {
         try
         {
@@ -8875,7 +8875,7 @@ public static class Frame_stub
 }
 public static class TextBox_stub
 {
-    public static void SelectAll_stub(this Windows.UI.Xaml.Controls.TextBox sender)
+    public static void SelectAll_stub(this Microsoft.UI.Xaml.Controls.TextBox sender)
     {
         try
         {
@@ -8890,7 +8890,7 @@ public static class TextBox_stub
 }
 public static class RichTextBlock_stub
 {
-    public static void Select_stub(this Windows.UI.Xaml.Controls.RichTextBlock sender, Windows.UI.Xaml.Documents.TextPointer start, Windows.UI.Xaml.Documents.TextPointer end)
+    public static void Select_stub(this Microsoft.UI.Xaml.Controls.RichTextBlock sender, Microsoft.UI.Xaml.Documents.TextPointer start, Microsoft.UI.Xaml.Documents.TextPointer end)
     {
         try
         {
@@ -8902,7 +8902,7 @@ public static class RichTextBlock_stub
             throw new RuntimeException(ex);
         }
     }
-    public static Windows.UI.Xaml.Documents.TextPointer GetPositionFromPoint_stub(this Windows.UI.Xaml.Controls.RichTextBlock sender, Windows.Foundation.Point point)
+    public static Microsoft.UI.Xaml.Documents.TextPointer GetPositionFromPoint_stub(this Microsoft.UI.Xaml.Controls.RichTextBlock sender, Windows.Foundation.Point point)
     {
         try
         {
@@ -8917,7 +8917,7 @@ public static class RichTextBlock_stub
 }
 public static class HandwritingView_stub
 {
-    public static bool TryClose_stub(this Windows.UI.Xaml.Controls.HandwritingView sender)
+    public static bool TryClose_stub(this Microsoft.UI.Xaml.Controls.HandwritingView sender)
     {
         try
         {
@@ -8932,7 +8932,7 @@ public static class HandwritingView_stub
 }
 public static class WebView_stub
 {
-    public static void AddWebAllowedObject_stub(this Windows.UI.Xaml.Controls.WebView sender, string name, object pObject)
+    public static void AddWebAllowedObject_stub(this Microsoft.UI.Xaml.Controls.WebView sender, string name, object pObject)
     {
         try
         {
@@ -8944,7 +8944,7 @@ public static class WebView_stub
             throw new RuntimeException(ex);
         }
     }
-    public static void Navigate_stub(this Windows.UI.Xaml.Controls.WebView sender, System.Uri source)
+    public static void Navigate_stub(this Microsoft.UI.Xaml.Controls.WebView sender, System.Uri source)
     {
         try
         {
@@ -8956,7 +8956,7 @@ public static class WebView_stub
             throw new RuntimeException(ex);
         }
     }
-    public static void NavigateToString_stub(this Windows.UI.Xaml.Controls.WebView sender, string text)
+    public static void NavigateToString_stub(this Microsoft.UI.Xaml.Controls.WebView sender, string text)
     {
         try
         {
@@ -8968,7 +8968,7 @@ public static class WebView_stub
             throw new RuntimeException(ex);
         }
     }
-    public static async Task<string> InvokeScriptAsync_stub(this Windows.UI.Xaml.Controls.WebView sender, string scriptName, System.Collections.Generic.IEnumerable<string> arguments)
+    public static async Task<string> InvokeScriptAsync_stub(this Microsoft.UI.Xaml.Controls.WebView sender, string scriptName, System.Collections.Generic.IEnumerable<string> arguments)
     {
         try
         {
@@ -8980,7 +8980,7 @@ public static class WebView_stub
             throw new RuntimeException(ex);
         }
     }
-    public static void Refresh_stub(this Windows.UI.Xaml.Controls.WebView sender)
+    public static void Refresh_stub(this Microsoft.UI.Xaml.Controls.WebView sender)
     {
         try
         {
@@ -8995,7 +8995,7 @@ public static class WebView_stub
 }
 public static class ContentDialogButtonClickEventArgs_stub
 {
-    public static Windows.UI.Xaml.Controls.ContentDialogButtonClickDeferral GetDeferral_stub(this Windows.UI.Xaml.Controls.ContentDialogButtonClickEventArgs sender)
+    public static Microsoft.UI.Xaml.Controls.ContentDialogButtonClickDeferral GetDeferral_stub(this Microsoft.UI.Xaml.Controls.ContentDialogButtonClickEventArgs sender)
     {
         try
         {
@@ -9010,7 +9010,7 @@ public static class ContentDialogButtonClickEventArgs_stub
 }
 public static class ContentDialogButtonClickDeferral_stub
 {
-    public static void Complete_stub(this Windows.UI.Xaml.Controls.ContentDialogButtonClickDeferral sender)
+    public static void Complete_stub(this Microsoft.UI.Xaml.Controls.ContentDialogButtonClickDeferral sender)
     {
         try
         {
@@ -9025,7 +9025,7 @@ public static class ContentDialogButtonClickDeferral_stub
 }
 public static class PasswordBox_stub
 {
-    public static void SelectAll_stub(this Windows.UI.Xaml.Controls.PasswordBox sender)
+    public static void SelectAll_stub(this Microsoft.UI.Xaml.Controls.PasswordBox sender)
     {
         try
         {
@@ -9040,7 +9040,7 @@ public static class PasswordBox_stub
 }
 public static class CalendarView_stub
 {
-    public static void SetDisplayDate_stub(this Windows.UI.Xaml.Controls.CalendarView sender, System.DateTimeOffset date)
+    public static void SetDisplayDate_stub(this Microsoft.UI.Xaml.Controls.CalendarView sender, System.DateTimeOffset date)
     {
         try
         {
@@ -9055,7 +9055,7 @@ public static class CalendarView_stub
 }
 public static class FlyoutBase_stub
 {
-    public static void Hide_stub(this Windows.UI.Xaml.Controls.Primitives.FlyoutBase sender)
+    public static void Hide_stub(this Microsoft.UI.Xaml.Controls.Primitives.FlyoutBase sender)
     {
         try
         {
@@ -9067,7 +9067,7 @@ public static class FlyoutBase_stub
             throw new RuntimeException(ex);
         }
     }
-    public static void ShowAt_stub(this Windows.UI.Xaml.Controls.Primitives.FlyoutBase sender, Windows.UI.Xaml.DependencyObject placementTarget, Windows.UI.Xaml.Controls.Primitives.FlyoutShowOptions showOptions)
+    public static void ShowAt_stub(this Microsoft.UI.Xaml.Controls.Primitives.FlyoutBase sender, Microsoft.UI.Xaml.DependencyObject placementTarget, Microsoft.UI.Xaml.Controls.Primitives.FlyoutShowOptions showOptions)
     {
         try
         {
@@ -9079,7 +9079,7 @@ public static class FlyoutBase_stub
             throw new RuntimeException(ex);
         }
     }
-    public static void ShowAt_stub(this Windows.UI.Xaml.Controls.Primitives.FlyoutBase sender, Windows.UI.Xaml.FrameworkElement placementTarget)
+    public static void ShowAt_stub(this Microsoft.UI.Xaml.Controls.Primitives.FlyoutBase sender, Microsoft.UI.Xaml.FrameworkElement placementTarget)
     {
         try
         {
@@ -9091,11 +9091,11 @@ public static class FlyoutBase_stub
             throw new RuntimeException(ex);
         }
     }
-    public static Windows.UI.Xaml.Controls.Primitives.FlyoutBase GetAttachedFlyout_stub(Windows.UI.Xaml.FrameworkElement element)
+    public static Microsoft.UI.Xaml.Controls.Primitives.FlyoutBase GetAttachedFlyout_stub(Microsoft.UI.Xaml.FrameworkElement element)
     {
         try
         {
-            return Windows.UI.Xaml.Controls.Primitives.FlyoutBase.GetAttachedFlyout(element);
+            return Microsoft.UI.Xaml.Controls.Primitives.FlyoutBase.GetAttachedFlyout(element);
         }
         catch (Exception ex)
         {
@@ -9103,11 +9103,11 @@ public static class FlyoutBase_stub
             throw new RuntimeException(ex);
         }
     }
-    public static void ShowAttachedFlyout_stub(Windows.UI.Xaml.FrameworkElement flyoutOwner)
+    public static void ShowAttachedFlyout_stub(Microsoft.UI.Xaml.FrameworkElement flyoutOwner)
     {
         try
         {
-            Windows.UI.Xaml.Controls.Primitives.FlyoutBase.ShowAttachedFlyout(flyoutOwner);
+            Microsoft.UI.Xaml.Controls.Primitives.FlyoutBase.ShowAttachedFlyout(flyoutOwner);
         }
         catch (Exception ex)
         {
@@ -9118,11 +9118,11 @@ public static class FlyoutBase_stub
 }
 public static class XamlDirect_stub
 {
-    public static Windows.UI.Xaml.Core.Direct.XamlDirect GetDefault_stub()
+    public static Microsoft.UI.Xaml.Core.Direct.XamlDirect GetDefault_stub()
     {
         try
         {
-            return Windows.UI.Xaml.Core.Direct.XamlDirect.GetDefault();
+            return Microsoft.UI.Xaml.Core.Direct.XamlDirect.GetDefault();
         }
         catch (Exception ex)
         {
@@ -9130,7 +9130,7 @@ public static class XamlDirect_stub
             throw new RuntimeException(ex);
         }
     }
-    public static Windows.UI.Xaml.Core.Direct.IXamlDirectObject GetXamlDirectObject_stub(this Windows.UI.Xaml.Core.Direct.XamlDirect sender, object @object)
+    public static Microsoft.UI.Xaml.Core.Direct.IXamlDirectObject GetXamlDirectObject_stub(this Microsoft.UI.Xaml.Core.Direct.XamlDirect sender, object @object)
     {
         try
         {
@@ -9142,7 +9142,7 @@ public static class XamlDirect_stub
             throw new RuntimeException(ex);
         }
     }
-    public static Windows.UI.Xaml.Core.Direct.IXamlDirectObject GetXamlDirectObjectProperty_stub(this Windows.UI.Xaml.Core.Direct.XamlDirect sender, Windows.UI.Xaml.Core.Direct.IXamlDirectObject xamlDirectObject, Windows.UI.Xaml.Core.Direct.XamlPropertyIndex propertyIndex)
+    public static Microsoft.UI.Xaml.Core.Direct.IXamlDirectObject GetXamlDirectObjectProperty_stub(this Microsoft.UI.Xaml.Core.Direct.XamlDirect sender, Microsoft.UI.Xaml.Core.Direct.IXamlDirectObject xamlDirectObject, Microsoft.UI.Xaml.Core.Direct.XamlPropertyIndex propertyIndex)
     {
         try
         {
@@ -9154,7 +9154,7 @@ public static class XamlDirect_stub
             throw new RuntimeException(ex);
         }
     }
-    public static void ClearCollection_stub(this Windows.UI.Xaml.Core.Direct.XamlDirect sender, Windows.UI.Xaml.Core.Direct.IXamlDirectObject xamlDirectObject)
+    public static void ClearCollection_stub(this Microsoft.UI.Xaml.Core.Direct.XamlDirect sender, Microsoft.UI.Xaml.Core.Direct.IXamlDirectObject xamlDirectObject)
     {
         try
         {
@@ -9166,7 +9166,7 @@ public static class XamlDirect_stub
             throw new RuntimeException(ex);
         }
     }
-    public static Windows.UI.Xaml.Core.Direct.IXamlDirectObject CreateInstance_stub(this Windows.UI.Xaml.Core.Direct.XamlDirect sender, Windows.UI.Xaml.Core.Direct.XamlTypeIndex typeIndex)
+    public static Microsoft.UI.Xaml.Core.Direct.IXamlDirectObject CreateInstance_stub(this Microsoft.UI.Xaml.Core.Direct.XamlDirect sender, Microsoft.UI.Xaml.Core.Direct.XamlTypeIndex typeIndex)
     {
         try
         {
@@ -9178,7 +9178,7 @@ public static class XamlDirect_stub
             throw new RuntimeException(ex);
         }
     }
-    public static void SetDoubleProperty_stub(this Windows.UI.Xaml.Core.Direct.XamlDirect sender, Windows.UI.Xaml.Core.Direct.IXamlDirectObject xamlDirectObject, Windows.UI.Xaml.Core.Direct.XamlPropertyIndex propertyIndex, double value)
+    public static void SetDoubleProperty_stub(this Microsoft.UI.Xaml.Core.Direct.XamlDirect sender, Microsoft.UI.Xaml.Core.Direct.IXamlDirectObject xamlDirectObject, Microsoft.UI.Xaml.Core.Direct.XamlPropertyIndex propertyIndex, double value)
     {
         try
         {
@@ -9190,7 +9190,7 @@ public static class XamlDirect_stub
             throw new RuntimeException(ex);
         }
     }
-    public static void SetEnumProperty_stub(this Windows.UI.Xaml.Core.Direct.XamlDirect sender, Windows.UI.Xaml.Core.Direct.IXamlDirectObject xamlDirectObject, Windows.UI.Xaml.Core.Direct.XamlPropertyIndex propertyIndex, uint value)
+    public static void SetEnumProperty_stub(this Microsoft.UI.Xaml.Core.Direct.XamlDirect sender, Microsoft.UI.Xaml.Core.Direct.IXamlDirectObject xamlDirectObject, Microsoft.UI.Xaml.Core.Direct.XamlPropertyIndex propertyIndex, uint value)
     {
         try
         {
@@ -9202,7 +9202,7 @@ public static class XamlDirect_stub
             throw new RuntimeException(ex);
         }
     }
-    public static object GetObject_stub(this Windows.UI.Xaml.Core.Direct.XamlDirect sender, Windows.UI.Xaml.Core.Direct.IXamlDirectObject xamlDirectObject)
+    public static object GetObject_stub(this Microsoft.UI.Xaml.Core.Direct.XamlDirect sender, Microsoft.UI.Xaml.Core.Direct.IXamlDirectObject xamlDirectObject)
     {
         try
         {
@@ -9214,7 +9214,7 @@ public static class XamlDirect_stub
             throw new RuntimeException(ex);
         }
     }
-    public static void AddToCollection_stub(this Windows.UI.Xaml.Core.Direct.XamlDirect sender, Windows.UI.Xaml.Core.Direct.IXamlDirectObject xamlDirectObject, Windows.UI.Xaml.Core.Direct.IXamlDirectObject value)
+    public static void AddToCollection_stub(this Microsoft.UI.Xaml.Core.Direct.XamlDirect sender, Microsoft.UI.Xaml.Core.Direct.IXamlDirectObject xamlDirectObject, Microsoft.UI.Xaml.Core.Direct.IXamlDirectObject value)
     {
         try
         {
@@ -9226,7 +9226,7 @@ public static class XamlDirect_stub
             throw new RuntimeException(ex);
         }
     }
-    public static void SetObjectProperty_stub(this Windows.UI.Xaml.Core.Direct.XamlDirect sender, Windows.UI.Xaml.Core.Direct.IXamlDirectObject xamlDirectObject, Windows.UI.Xaml.Core.Direct.XamlPropertyIndex propertyIndex, object value)
+    public static void SetObjectProperty_stub(this Microsoft.UI.Xaml.Core.Direct.XamlDirect sender, Microsoft.UI.Xaml.Core.Direct.IXamlDirectObject xamlDirectObject, Microsoft.UI.Xaml.Core.Direct.XamlPropertyIndex propertyIndex, object value)
     {
         try
         {
@@ -9238,7 +9238,7 @@ public static class XamlDirect_stub
             throw new RuntimeException(ex);
         }
     }
-    public static void SetStringProperty_stub(this Windows.UI.Xaml.Core.Direct.XamlDirect sender, Windows.UI.Xaml.Core.Direct.IXamlDirectObject xamlDirectObject, Windows.UI.Xaml.Core.Direct.XamlPropertyIndex propertyIndex, string value)
+    public static void SetStringProperty_stub(this Microsoft.UI.Xaml.Core.Direct.XamlDirect sender, Microsoft.UI.Xaml.Core.Direct.IXamlDirectObject xamlDirectObject, Microsoft.UI.Xaml.Core.Direct.XamlPropertyIndex propertyIndex, string value)
     {
         try
         {
@@ -9253,7 +9253,7 @@ public static class XamlDirect_stub
 }
 public static class ISupportIncrementalLoading_stub
 {
-    public static async Task<Windows.UI.Xaml.Data.LoadMoreItemsResult> LoadMoreItemsAsync_stub(this Windows.UI.Xaml.Data.ISupportIncrementalLoading sender, uint count)
+    public static async Task<Microsoft.UI.Xaml.Data.LoadMoreItemsResult> LoadMoreItemsAsync_stub(this Microsoft.UI.Xaml.Data.ISupportIncrementalLoading sender, uint count)
     {
         try
         {
@@ -9268,7 +9268,7 @@ public static class ISupportIncrementalLoading_stub
 }
 public static class TextPointer_stub
 {
-    public static Windows.Foundation.Rect GetCharacterRect_stub(this Windows.UI.Xaml.Documents.TextPointer sender, Windows.UI.Xaml.Documents.LogicalDirection direction)
+    public static Windows.Foundation.Rect GetCharacterRect_stub(this Microsoft.UI.Xaml.Documents.TextPointer sender, Microsoft.UI.Xaml.Documents.LogicalDirection direction)
     {
         try
         {
@@ -9283,11 +9283,11 @@ public static class TextPointer_stub
 }
 public static class Typography_stub
 {
-    public static void SetVariants_stub(Windows.UI.Xaml.DependencyObject element, Windows.UI.Xaml.FontVariants value)
+    public static void SetVariants_stub(Microsoft.UI.Xaml.DependencyObject element, Microsoft.UI.Xaml.FontVariants value)
     {
         try
         {
-            Windows.UI.Xaml.Documents.Typography.SetVariants(element, value);
+            Microsoft.UI.Xaml.Documents.Typography.SetVariants(element, value);
         }
         catch (Exception ex)
         {
@@ -9298,11 +9298,11 @@ public static class Typography_stub
 }
 public static class ElementCompositionPreview_stub
 {
-    public static void SetIsTranslationEnabled_stub(Windows.UI.Xaml.UIElement element, bool value)
+    public static void SetIsTranslationEnabled_stub(Microsoft.UI.Xaml.UIElement element, bool value)
     {
         try
         {
-            Windows.UI.Xaml.Hosting.ElementCompositionPreview.SetIsTranslationEnabled(element, value);
+            Microsoft.UI.Xaml.Hosting.ElementCompositionPreview.SetIsTranslationEnabled(element, value);
         }
         catch (Exception ex)
         {
@@ -9310,11 +9310,11 @@ public static class ElementCompositionPreview_stub
             throw new RuntimeException(ex);
         }
     }
-    public static void SetElementChildVisual_stub(Windows.UI.Xaml.UIElement element, Windows.UI.Composition.Visual visual)
+    public static void SetElementChildVisual_stub(Microsoft.UI.Xaml.UIElement element, Windows.UI.Composition.Visual visual)
     {
         try
         {
-            Windows.UI.Xaml.Hosting.ElementCompositionPreview.SetElementChildVisual(element, visual);
+            Microsoft.UI.Xaml.Hosting.ElementCompositionPreview.SetElementChildVisual(element, visual);
         }
         catch (Exception ex)
         {
@@ -9322,11 +9322,11 @@ public static class ElementCompositionPreview_stub
             throw new RuntimeException(ex);
         }
     }
-    public static Windows.UI.Composition.Visual GetElementVisual_stub(Windows.UI.Xaml.UIElement element)
+    public static Windows.UI.Composition.Visual GetElementVisual_stub(Microsoft.UI.Xaml.UIElement element)
     {
         try
         {
-            return Windows.UI.Xaml.Hosting.ElementCompositionPreview.GetElementVisual(element);
+            return Microsoft.UI.Xaml.Hosting.ElementCompositionPreview.GetElementVisual(element);
         }
         catch (Exception ex)
         {
@@ -9334,11 +9334,11 @@ public static class ElementCompositionPreview_stub
             throw new RuntimeException(ex);
         }
     }
-    public static Windows.UI.Composition.CompositionPropertySet GetScrollViewerManipulationPropertySet_stub(Windows.UI.Xaml.Controls.ScrollViewer scrollViewer)
+    public static Windows.UI.Composition.CompositionPropertySet GetScrollViewerManipulationPropertySet_stub(Microsoft.UI.Xaml.Controls.ScrollViewer scrollViewer)
     {
         try
         {
-            return Windows.UI.Xaml.Hosting.ElementCompositionPreview.GetScrollViewerManipulationPropertySet(scrollViewer);
+            return Microsoft.UI.Xaml.Hosting.ElementCompositionPreview.GetScrollViewerManipulationPropertySet(scrollViewer);
         }
         catch (Exception ex)
         {
@@ -9346,11 +9346,11 @@ public static class ElementCompositionPreview_stub
             throw new RuntimeException(ex);
         }
     }
-    public static Windows.UI.Composition.Visual GetElementChildVisual_stub(Windows.UI.Xaml.UIElement element)
+    public static Windows.UI.Composition.Visual GetElementChildVisual_stub(Microsoft.UI.Xaml.UIElement element)
     {
         try
         {
-            return Windows.UI.Xaml.Hosting.ElementCompositionPreview.GetElementChildVisual(element);
+            return Microsoft.UI.Xaml.Hosting.ElementCompositionPreview.GetElementChildVisual(element);
         }
         catch (Exception ex)
         {
@@ -9361,7 +9361,7 @@ public static class ElementCompositionPreview_stub
 }
 public static class PointerRoutedEventArgs_stub
 {
-    public static Windows.UI.Input.PointerPoint GetCurrentPoint_stub(this Windows.UI.Xaml.Input.PointerRoutedEventArgs sender, Windows.UI.Xaml.UIElement relativeTo)
+    public static Windows.UI.Input.PointerPoint GetCurrentPoint_stub(this Microsoft.UI.Xaml.Input.PointerRoutedEventArgs sender, Microsoft.UI.Xaml.UIElement relativeTo)
     {
         try
         {
@@ -9376,11 +9376,11 @@ public static class PointerRoutedEventArgs_stub
 }
 public static class FocusManager_stub
 {
-    public static bool TryMoveFocus_stub(Windows.UI.Xaml.Input.FocusNavigationDirection focusNavigationDirection, Windows.UI.Xaml.Input.FindNextElementOptions focusNavigationOptions)
+    public static bool TryMoveFocus_stub(Microsoft.UI.Xaml.Input.FocusNavigationDirection focusNavigationDirection, Microsoft.UI.Xaml.Input.FindNextElementOptions focusNavigationOptions)
     {
         try
         {
-            return Windows.UI.Xaml.Input.FocusManager.TryMoveFocus(focusNavigationDirection, focusNavigationOptions);
+            return Microsoft.UI.Xaml.Input.FocusManager.TryMoveFocus(focusNavigationDirection, focusNavigationOptions);
         }
         catch (Exception ex)
         {
@@ -9388,11 +9388,11 @@ public static class FocusManager_stub
             throw new RuntimeException(ex);
         }
     }
-    public static Windows.UI.Xaml.UIElement FindNextFocusableElement_stub(Windows.UI.Xaml.Input.FocusNavigationDirection focusNavigationDirection)
+    public static Microsoft.UI.Xaml.UIElement FindNextFocusableElement_stub(Microsoft.UI.Xaml.Input.FocusNavigationDirection focusNavigationDirection)
     {
         try
         {
-            return Windows.UI.Xaml.Input.FocusManager.FindNextFocusableElement(focusNavigationDirection);
+            return Microsoft.UI.Xaml.Input.FocusManager.FindNextFocusableElement(focusNavigationDirection);
         }
         catch (Exception ex)
         {
@@ -9400,11 +9400,11 @@ public static class FocusManager_stub
             throw new RuntimeException(ex);
         }
     }
-    public static Windows.UI.Xaml.DependencyObject FindFirstFocusableElement_stub(Windows.UI.Xaml.DependencyObject searchScope)
+    public static Microsoft.UI.Xaml.DependencyObject FindFirstFocusableElement_stub(Microsoft.UI.Xaml.DependencyObject searchScope)
     {
         try
         {
-            return Windows.UI.Xaml.Input.FocusManager.FindFirstFocusableElement(searchScope);
+            return Microsoft.UI.Xaml.Input.FocusManager.FindFirstFocusableElement(searchScope);
         }
         catch (Exception ex)
         {
@@ -9416,7 +9416,7 @@ public static class FocusManager_stub
     {
         try
         {
-            return Windows.UI.Xaml.Input.FocusManager.GetFocusedElement();
+            return Microsoft.UI.Xaml.Input.FocusManager.GetFocusedElement();
         }
         catch (Exception ex)
         {
@@ -9427,7 +9427,7 @@ public static class FocusManager_stub
 }
 public static class ManipulationDeltaRoutedEventArgs_stub
 {
-    public static void Complete_stub(this Windows.UI.Xaml.Input.ManipulationDeltaRoutedEventArgs sender)
+    public static void Complete_stub(this Microsoft.UI.Xaml.Input.ManipulationDeltaRoutedEventArgs sender)
     {
         try
         {
@@ -9442,7 +9442,7 @@ public static class ManipulationDeltaRoutedEventArgs_stub
 }
 public static class ContextRequestedEventArgs_stub
 {
-    public static bool TryGetPosition_stub(this Windows.UI.Xaml.Input.ContextRequestedEventArgs sender, Windows.UI.Xaml.UIElement relativeTo, out Windows.Foundation.Point point)
+    public static bool TryGetPosition_stub(this Microsoft.UI.Xaml.Input.ContextRequestedEventArgs sender, Microsoft.UI.Xaml.UIElement relativeTo, out Windows.Foundation.Point point)
     {
         try
         {
@@ -9457,7 +9457,7 @@ public static class ContextRequestedEventArgs_stub
 }
 public static class GettingFocusEventArgs_stub
 {
-    public static bool TryCancel_stub(this Windows.UI.Xaml.Input.GettingFocusEventArgs sender)
+    public static bool TryCancel_stub(this Microsoft.UI.Xaml.Input.GettingFocusEventArgs sender)
     {
         try
         {
@@ -9469,7 +9469,7 @@ public static class GettingFocusEventArgs_stub
             throw new RuntimeException(ex);
         }
     }
-    public static bool TrySetNewFocusedElement_stub(this Windows.UI.Xaml.Input.GettingFocusEventArgs sender, Windows.UI.Xaml.DependencyObject element)
+    public static bool TrySetNewFocusedElement_stub(this Microsoft.UI.Xaml.Input.GettingFocusEventArgs sender, Microsoft.UI.Xaml.DependencyObject element)
     {
         try
         {
@@ -9484,7 +9484,7 @@ public static class GettingFocusEventArgs_stub
 }
 public static class LosingFocusEventArgs_stub
 {
-    public static bool TrySetNewFocusedElement_stub(this Windows.UI.Xaml.Input.LosingFocusEventArgs sender, Windows.UI.Xaml.DependencyObject element)
+    public static bool TrySetNewFocusedElement_stub(this Microsoft.UI.Xaml.Input.LosingFocusEventArgs sender, Microsoft.UI.Xaml.DependencyObject element)
     {
         try
         {
@@ -9496,7 +9496,7 @@ public static class LosingFocusEventArgs_stub
             throw new RuntimeException(ex);
         }
     }
-    public static bool TryCancel_stub(this Windows.UI.Xaml.Input.LosingFocusEventArgs sender)
+    public static bool TryCancel_stub(this Microsoft.UI.Xaml.Input.LosingFocusEventArgs sender)
     {
         try
         {
@@ -9511,11 +9511,11 @@ public static class LosingFocusEventArgs_stub
 }
 public static class XamlMarkupHelper_stub
 {
-    public static void UnloadObject_stub(Windows.UI.Xaml.DependencyObject element)
+    public static void UnloadObject_stub(Microsoft.UI.Xaml.DependencyObject element)
     {
         try
         {
-            Windows.UI.Xaml.Markup.XamlMarkupHelper.UnloadObject(element);
+            Microsoft.UI.Xaml.Markup.XamlMarkupHelper.UnloadObject(element);
         }
         catch (Exception ex)
         {
@@ -9526,7 +9526,7 @@ public static class XamlMarkupHelper_stub
 }
 public static class GeneralTransform_stub
 {
-    public static Windows.Foundation.Point TransformPoint_stub(this Windows.UI.Xaml.Media.GeneralTransform sender, Windows.Foundation.Point point)
+    public static Windows.Foundation.Point TransformPoint_stub(this Microsoft.UI.Xaml.Media.GeneralTransform sender, Windows.Foundation.Point point)
     {
         try
         {
@@ -9541,11 +9541,11 @@ public static class GeneralTransform_stub
 }
 public static class VisualTreeHelper_stub
 {
-    public static Windows.UI.Xaml.DependencyObject GetParent_stub(Windows.UI.Xaml.DependencyObject reference)
+    public static Microsoft.UI.Xaml.DependencyObject GetParent_stub(Microsoft.UI.Xaml.DependencyObject reference)
     {
         try
         {
-            return Windows.UI.Xaml.Media.VisualTreeHelper.GetParent(reference);
+            return Microsoft.UI.Xaml.Media.VisualTreeHelper.GetParent(reference);
         }
         catch (Exception ex)
         {
@@ -9553,11 +9553,11 @@ public static class VisualTreeHelper_stub
             throw new RuntimeException(ex);
         }
     }
-    public static System.Collections.Generic.IReadOnlyList<Windows.UI.Xaml.Controls.Primitives.Popup> GetOpenPopups_stub(Windows.UI.Xaml.Window window)
+    public static System.Collections.Generic.IReadOnlyList<Microsoft.UI.Xaml.Controls.Primitives.Popup> GetOpenPopups_stub(Microsoft.UI.Xaml.Window window)
     {
         try
         {
-            return Windows.UI.Xaml.Media.VisualTreeHelper.GetOpenPopups(window);
+            return Microsoft.UI.Xaml.Media.VisualTreeHelper.GetOpenPopups(window);
         }
         catch (Exception ex)
         {
@@ -9565,11 +9565,11 @@ public static class VisualTreeHelper_stub
             throw new RuntimeException(ex);
         }
     }
-    public static System.Collections.Generic.IEnumerable<Windows.UI.Xaml.UIElement> FindElementsInHostCoordinates_stub(Windows.Foundation.Point intersectingPoint, Windows.UI.Xaml.UIElement subtree)
+    public static System.Collections.Generic.IEnumerable<Microsoft.UI.Xaml.UIElement> FindElementsInHostCoordinates_stub(Windows.Foundation.Point intersectingPoint, Microsoft.UI.Xaml.UIElement subtree)
     {
         try
         {
-            return Windows.UI.Xaml.Media.VisualTreeHelper.FindElementsInHostCoordinates(intersectingPoint, subtree);
+            return Microsoft.UI.Xaml.Media.VisualTreeHelper.FindElementsInHostCoordinates(intersectingPoint, subtree);
         }
         catch (Exception ex)
         {
@@ -9577,11 +9577,11 @@ public static class VisualTreeHelper_stub
             throw new RuntimeException(ex);
         }
     }
-    public static Windows.UI.Xaml.DependencyObject GetChild_stub(Windows.UI.Xaml.DependencyObject reference, int childIndex)
+    public static Microsoft.UI.Xaml.DependencyObject GetChild_stub(Microsoft.UI.Xaml.DependencyObject reference, int childIndex)
     {
         try
         {
-            return Windows.UI.Xaml.Media.VisualTreeHelper.GetChild(reference, childIndex);
+            return Microsoft.UI.Xaml.Media.VisualTreeHelper.GetChild(reference, childIndex);
         }
         catch (Exception ex)
         {
@@ -9589,11 +9589,11 @@ public static class VisualTreeHelper_stub
             throw new RuntimeException(ex);
         }
     }
-    public static int GetChildrenCount_stub(Windows.UI.Xaml.DependencyObject reference)
+    public static int GetChildrenCount_stub(Microsoft.UI.Xaml.DependencyObject reference)
     {
         try
         {
-            return Windows.UI.Xaml.Media.VisualTreeHelper.GetChildrenCount(reference);
+            return Microsoft.UI.Xaml.Media.VisualTreeHelper.GetChildrenCount(reference);
         }
         catch (Exception ex)
         {
@@ -9601,11 +9601,11 @@ public static class VisualTreeHelper_stub
             throw new RuntimeException(ex);
         }
     }
-    public static void DisconnectChildrenRecursive_stub(Windows.UI.Xaml.UIElement element)
+    public static void DisconnectChildrenRecursive_stub(Microsoft.UI.Xaml.UIElement element)
     {
         try
         {
-            Windows.UI.Xaml.Media.VisualTreeHelper.DisconnectChildrenRecursive(element);
+            Microsoft.UI.Xaml.Media.VisualTreeHelper.DisconnectChildrenRecursive(element);
         }
         catch (Exception ex)
         {
@@ -9616,11 +9616,11 @@ public static class VisualTreeHelper_stub
 }
 public static class LoadedImageSurface_stub
 {
-    public static Windows.UI.Xaml.Media.LoadedImageSurface StartLoadFromStream_stub(Windows.Storage.Streams.IRandomAccessStream stream)
+    public static Microsoft.UI.Xaml.Media.LoadedImageSurface StartLoadFromStream_stub(Windows.Storage.Streams.IRandomAccessStream stream)
     {
         try
         {
-            return Windows.UI.Xaml.Media.LoadedImageSurface.StartLoadFromStream(stream);
+            return Microsoft.UI.Xaml.Media.LoadedImageSurface.StartLoadFromStream(stream);
         }
         catch (Exception ex)
         {
@@ -9628,11 +9628,11 @@ public static class LoadedImageSurface_stub
             throw new RuntimeException(ex);
         }
     }
-    public static Windows.UI.Xaml.Media.LoadedImageSurface StartLoadFromStream_stub(Windows.Storage.Streams.IRandomAccessStream stream, Windows.Foundation.Size desiredMaxSize)
+    public static Microsoft.UI.Xaml.Media.LoadedImageSurface StartLoadFromStream_stub(Windows.Storage.Streams.IRandomAccessStream stream, Windows.Foundation.Size desiredMaxSize)
     {
         try
         {
-            return Windows.UI.Xaml.Media.LoadedImageSurface.StartLoadFromStream(stream, desiredMaxSize);
+            return Microsoft.UI.Xaml.Media.LoadedImageSurface.StartLoadFromStream(stream, desiredMaxSize);
         }
         catch (Exception ex)
         {
@@ -9640,11 +9640,11 @@ public static class LoadedImageSurface_stub
             throw new RuntimeException(ex);
         }
     }
-    public static Windows.UI.Xaml.Media.LoadedImageSurface StartLoadFromUri_stub(System.Uri uri)
+    public static Microsoft.UI.Xaml.Media.LoadedImageSurface StartLoadFromUri_stub(System.Uri uri)
     {
         try
         {
-            return Windows.UI.Xaml.Media.LoadedImageSurface.StartLoadFromUri(uri);
+            return Microsoft.UI.Xaml.Media.LoadedImageSurface.StartLoadFromUri(uri);
         }
         catch (Exception ex)
         {
@@ -9652,7 +9652,7 @@ public static class LoadedImageSurface_stub
             throw new RuntimeException(ex);
         }
     }
-    public static void Dispose_stub(this Windows.UI.Xaml.Media.LoadedImageSurface sender)
+    public static void Dispose_stub(this Microsoft.UI.Xaml.Media.LoadedImageSurface sender)
     {
         try
         {
@@ -9667,7 +9667,7 @@ public static class LoadedImageSurface_stub
 }
 public static class ConnectedAnimationService_stub
 {
-    public static Windows.UI.Xaml.Media.Animation.ConnectedAnimation PrepareToAnimate_stub(this Windows.UI.Xaml.Media.Animation.ConnectedAnimationService sender, string key, Windows.UI.Xaml.UIElement source)
+    public static Microsoft.UI.Xaml.Media.Animation.ConnectedAnimation PrepareToAnimate_stub(this Microsoft.UI.Xaml.Media.Animation.ConnectedAnimationService sender, string key, Microsoft.UI.Xaml.UIElement source)
     {
         try
         {
@@ -9679,11 +9679,11 @@ public static class ConnectedAnimationService_stub
             throw new RuntimeException(ex);
         }
     }
-    public static Windows.UI.Xaml.Media.Animation.ConnectedAnimationService GetForCurrentView_stub()
+    public static Microsoft.UI.Xaml.Media.Animation.ConnectedAnimationService GetForCurrentView_stub()
     {
         try
         {
-            return Windows.UI.Xaml.Media.Animation.ConnectedAnimationService.GetForCurrentView();
+            return Microsoft.UI.Xaml.Media.Animation.ConnectedAnimationService.GetForCurrentView();
         }
         catch (Exception ex)
         {
@@ -9691,7 +9691,7 @@ public static class ConnectedAnimationService_stub
             throw new RuntimeException(ex);
         }
     }
-    public static Windows.UI.Xaml.Media.Animation.ConnectedAnimation GetAnimation_stub(this Windows.UI.Xaml.Media.Animation.ConnectedAnimationService sender, string key)
+    public static Microsoft.UI.Xaml.Media.Animation.ConnectedAnimation GetAnimation_stub(this Microsoft.UI.Xaml.Media.Animation.ConnectedAnimationService sender, string key)
     {
         try
         {
@@ -9706,7 +9706,7 @@ public static class ConnectedAnimationService_stub
 }
 public static class ConnectedAnimation_stub
 {
-    public static bool TryStart_stub(this Windows.UI.Xaml.Media.Animation.ConnectedAnimation sender, Windows.UI.Xaml.UIElement destination)
+    public static bool TryStart_stub(this Microsoft.UI.Xaml.Media.Animation.ConnectedAnimation sender, Microsoft.UI.Xaml.UIElement destination)
     {
         try
         {
@@ -9721,7 +9721,7 @@ public static class ConnectedAnimation_stub
 }
 public static class BitmapSource_stub
 {
-    public static async Task SetSourceAsync_stub(this Windows.UI.Xaml.Media.Imaging.BitmapSource sender, Windows.Storage.Streams.IRandomAccessStream streamSource)
+    public static async Task SetSourceAsync_stub(this Microsoft.UI.Xaml.Media.Imaging.BitmapSource sender, Windows.Storage.Streams.IRandomAccessStream streamSource)
     {
         try
         {
@@ -9733,7 +9733,7 @@ public static class BitmapSource_stub
             throw new RuntimeException(ex);
         }
     }
-    public static void SetSource_stub(this Windows.UI.Xaml.Media.Imaging.BitmapSource sender, Windows.Storage.Streams.IRandomAccessStream streamSource)
+    public static void SetSource_stub(this Microsoft.UI.Xaml.Media.Imaging.BitmapSource sender, Windows.Storage.Streams.IRandomAccessStream streamSource)
     {
         try
         {
@@ -9748,7 +9748,7 @@ public static class BitmapSource_stub
 }
 public static class WriteableBitmap_stub
 {
-    public static void Invalidate_stub(this Windows.UI.Xaml.Media.Imaging.WriteableBitmap sender)
+    public static void Invalidate_stub(this Microsoft.UI.Xaml.Media.Imaging.WriteableBitmap sender)
     {
         try
         {
@@ -9763,7 +9763,7 @@ public static class WriteableBitmap_stub
 }
 public static class SoftwareBitmapSource_stub
 {
-    public static async Task SetBitmapAsync_stub(this Windows.UI.Xaml.Media.Imaging.SoftwareBitmapSource sender, Windows.Graphics.Imaging.SoftwareBitmap softwareBitmap)
+    public static async Task SetBitmapAsync_stub(this Microsoft.UI.Xaml.Media.Imaging.SoftwareBitmapSource sender, Windows.Graphics.Imaging.SoftwareBitmap softwareBitmap)
     {
         try
         {
@@ -9778,7 +9778,7 @@ public static class SoftwareBitmapSource_stub
 }
 public static class Shape_stub
 {
-    public static Windows.UI.Composition.CompositionBrush GetAlphaMask_stub(this Windows.UI.Xaml.Shapes.Shape sender)
+    public static Windows.UI.Composition.CompositionBrush GetAlphaMask_stub(this Microsoft.UI.Xaml.Shapes.Shape sender)
     {
         try
         {

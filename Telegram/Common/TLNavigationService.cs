@@ -31,11 +31,11 @@ using Telegram.Views.Tabbed;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.UI.ViewManagement;
 using Windows.UI.WindowManagement;
-using Windows.UI.Xaml;
-using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Data;
-using Windows.UI.Xaml.Media;
-using Windows.UI.Xaml.Media.Animation;
+using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Data;
+using Microsoft.UI.Xaml.Media;
+using Microsoft.UI.Xaml.Media.Animation;
 
 namespace Telegram.Common
 {
@@ -446,7 +446,7 @@ namespace Telegram.Common
                         chatPage.Activate(this);
                         chatPage.ViewModel.NavigationService = this;
                         chatPage.ViewModel.Dispatcher = Dispatcher;
-                        await chatPage.ViewModel.NavigatedToAsync(chat.Id, Windows.UI.Xaml.Navigation.NavigationMode.New, state);
+                        await chatPage.ViewModel.NavigatedToAsync(chat.Id, Microsoft.UI.Xaml.Navigation.NavigationMode.New, state);
 
                         FrameFacade.RaiseNavigated(chat.Id);
                         Frame.ForwardStack.Clear();
@@ -512,7 +512,7 @@ namespace Telegram.Common
 
                                 GoBackAt(0, false);
 
-                                Frame.BackStack.Add(new Windows.UI.Xaml.Navigation.PageStackEntry(target, parameter, null));
+                                Frame.BackStack.Add(new Microsoft.UI.Xaml.Navigation.PageStackEntry(target, parameter, null));
                                 GoBack(state, new SlideNavigationTransitionInfo { Effect = SlideNavigationTransitionEffect.FromRight });
                                 Frame.ForwardStack.Clear();
                                 return;

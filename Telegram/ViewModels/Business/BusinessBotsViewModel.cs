@@ -11,8 +11,8 @@ using Telegram.Td.Api;
 using Telegram.ViewModels.Folders;
 using Telegram.Views.Popups;
 using Windows.Foundation;
-using Windows.UI.Xaml.Data;
-using Windows.UI.Xaml.Navigation;
+using Microsoft.UI.Xaml.Data;
+using Microsoft.UI.Xaml.Navigation;
 
 namespace Telegram.ViewModels.Business
 {

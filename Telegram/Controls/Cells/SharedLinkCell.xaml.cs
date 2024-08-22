@@ -10,11 +10,11 @@ using Telegram.Common;
 using Telegram.Navigation.Services;
 using Telegram.Td.Api;
 using Telegram.ViewModels;
-using Windows.UI.Xaml;
-using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Documents;
-using Windows.UI.Xaml.Input;
-using Windows.UI.Xaml.Media;
+using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Documents;
+using Microsoft.UI.Xaml.Input;
+using Microsoft.UI.Xaml.Media;
 
 namespace Telegram.Controls.Cells
 {

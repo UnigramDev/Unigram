@@ -8,8 +8,8 @@ using System;
 using Telegram.Common;
 using Telegram.Converters;
 using Telegram.ViewModels;
-using Windows.UI.Xaml;
-using Windows.UI.Xaml.Hosting;
+using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Hosting;
 
 namespace Telegram.Views
 {

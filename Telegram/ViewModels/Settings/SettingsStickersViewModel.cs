@@ -19,9 +19,9 @@ using Telegram.Td.Api;
 using Telegram.Views.Popups;
 using Telegram.Views.Settings;
 using Windows.Foundation;
-using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Data;
-using Windows.UI.Xaml.Navigation;
+using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Data;
+using Microsoft.UI.Xaml.Navigation;
 
 namespace Telegram.ViewModels.Settings
 {

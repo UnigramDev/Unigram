@@ -23,7 +23,7 @@ using Windows.Data.Xml.Dom;
 using Windows.Networking.PushNotifications;
 using Windows.Storage;
 using Windows.UI.Notifications;
-using Windows.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Controls;
 
 namespace Telegram.Services
 {

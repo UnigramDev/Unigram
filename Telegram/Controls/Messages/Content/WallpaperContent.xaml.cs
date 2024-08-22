@@ -8,7 +8,7 @@ using System;
 using Telegram.Controls.Chats;
 using Telegram.Td.Api;
 using Telegram.ViewModels;
-using Windows.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Controls;
 
 namespace Telegram.Controls.Messages.Content
 {

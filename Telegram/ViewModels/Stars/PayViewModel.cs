@@ -18,7 +18,7 @@ using Telegram.Streams;
 using Telegram.Td;
 using Telegram.Td.Api;
 using Telegram.ViewModels.Payments;
-using Windows.UI.Xaml.Navigation;
+using Microsoft.UI.Xaml.Navigation;
 
 namespace Telegram.ViewModels.Stars
 {

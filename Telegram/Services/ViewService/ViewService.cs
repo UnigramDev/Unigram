@@ -13,7 +13,7 @@ using Telegram.Views.Host;
 using Windows.ApplicationModel.Core;
 using Windows.Foundation;
 using Windows.UI.ViewManagement;
-using Windows.UI.Xaml;
+using Microsoft.UI.Xaml;
 
 namespace Telegram.Services.ViewService
 {

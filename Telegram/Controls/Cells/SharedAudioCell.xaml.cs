@@ -11,8 +11,8 @@ using Telegram.Navigation;
 using Telegram.Services;
 using Telegram.Td.Api;
 using Telegram.ViewModels;
-using Windows.UI.Xaml;
-using Windows.UI.Xaml.Media;
+using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Media;
 
 namespace Telegram.Controls.Cells
 {

@@ -12,9 +12,9 @@ using Telegram.Controls.Cells;
 using Telegram.Converters;
 using Telegram.Streams;
 using Telegram.Td.Api;
-using Windows.UI.Xaml;
-using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Media;
+using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Media;
 
 namespace Telegram.Views.Settings.Popups
 {
@@ -89,12 +89,12 @@ namespace Telegram.Views.Settings.Popups
             Icon.Play();
         }
 
-        private void AcceptCallsPanel_Click(object sender, Windows.UI.Xaml.RoutedEventArgs e)
+        private void AcceptCallsPanel_Click(object sender, Microsoft.UI.Xaml.RoutedEventArgs e)
         {
             AcceptCalls.IsChecked = AcceptCalls.IsChecked != true;
         }
 
-        private void AcceptSecretChatsPanel_Click(object sender, Windows.UI.Xaml.RoutedEventArgs e)
+        private void AcceptSecretChatsPanel_Click(object sender, Microsoft.UI.Xaml.RoutedEventArgs e)
         {
             AcceptSecretChats.IsChecked = AcceptSecretChats.IsChecked != true;
         }

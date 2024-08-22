@@ -12,9 +12,9 @@ using System.Numerics;
 using Telegram.Td.Api;
 using Telegram.ViewModels.Stories;
 using Windows.UI.Composition;
-using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Controls.Primitives;
-using Windows.UI.Xaml.Hosting;
+using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Controls.Primitives;
+using Microsoft.UI.Xaml.Hosting;
 
 namespace Telegram.Controls.Cells
 {

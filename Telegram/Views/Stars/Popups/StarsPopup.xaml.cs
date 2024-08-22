@@ -10,7 +10,7 @@ using Telegram.Controls.Cells.Revenue;
 using Telegram.Td.Api;
 using Telegram.ViewModels.Stars;
 using Telegram.Views.Popups;
-using Windows.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Controls;
 
 namespace Telegram.Views.Stars.Popups
 {
@@ -62,13 +62,13 @@ namespace Telegram.Views.Stars.Popups
             return count.ToString("N0");
         }
 
-        private void Buy_Click(object sender, Windows.UI.Xaml.RoutedEventArgs e)
+        private void Buy_Click(object sender, Microsoft.UI.Xaml.RoutedEventArgs e)
         {
             Hide();
             ViewModel.NavigationService.ShowPopupAsync(typeof(BuyPopup));
         }
 
-        private async void Gift_Click(object sender, Windows.UI.Xaml.RoutedEventArgs e)
+        private async void Gift_Click(object sender, Microsoft.UI.Xaml.RoutedEventArgs e)
         {
             Hide();
 

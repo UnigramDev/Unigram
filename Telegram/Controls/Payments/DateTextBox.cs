@@ -6,7 +6,7 @@
 //
 using System;
 using System.Text;
-using Windows.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Controls;
 
 namespace Telegram.Controls.Payments
 {

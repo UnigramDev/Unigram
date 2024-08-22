@@ -8,7 +8,7 @@ using System;
 using Telegram.Controls;
 using Telegram.Controls.Cells;
 using Telegram.Converters;
-using Windows.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Controls;
 
 namespace Telegram.Views.Monetization.Popups
 {

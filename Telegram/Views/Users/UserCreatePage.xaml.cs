@@ -6,7 +6,7 @@
 //
 using Telegram.Controls;
 using Telegram.ViewModels.Users;
-using Windows.UI.Xaml;
+using Microsoft.UI.Xaml;
 
 namespace Telegram.Views.Users
 {

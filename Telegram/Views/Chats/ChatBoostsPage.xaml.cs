@@ -8,7 +8,7 @@ using Telegram.Common;
 using Telegram.Controls.Cells;
 using Telegram.Td.Api;
 using Telegram.ViewModels.Chats;
-using Windows.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Controls;
 
 namespace Telegram.Views.Chats
 {
@@ -72,7 +72,7 @@ namespace Telegram.Views.Chats
             ViewModel.OpenProfile(e.ClickedItem as ChatBoost);
         }
 
-        private async void LoadMore_Click(object sender, Windows.UI.Xaml.RoutedEventArgs e)
+        private async void LoadMore_Click(object sender, Microsoft.UI.Xaml.RoutedEventArgs e)
         {
             await ViewModel.LoadMoreItemsAsync(50);
         }

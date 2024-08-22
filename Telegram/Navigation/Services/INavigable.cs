@@ -6,7 +6,7 @@
 //
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Windows.UI.Xaml.Navigation;
+using Microsoft.UI.Xaml.Navigation;
 
 namespace Telegram.Navigation.Services
 {

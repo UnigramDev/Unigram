@@ -7,7 +7,7 @@
 using Telegram.Controls;
 using Telegram.Services;
 using Telegram.Td.Api;
-using Windows.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Controls;
 
 namespace Telegram.Views.Popups
 {
@@ -25,8 +25,8 @@ namespace Telegram.Views.Popups
 
             Title = Strings.VoipStreamWith;
             Schedule.Visibility = start
-                ? Windows.UI.Xaml.Visibility.Visible
-                : Windows.UI.Xaml.Visibility.Collapsed;
+                ? Microsoft.UI.Xaml.Visibility.Visible
+                : Microsoft.UI.Xaml.Visibility.Collapsed;
 
             if (start)
             {
@@ -59,7 +59,7 @@ namespace Telegram.Views.Popups
         {
         }
 
-        private void Schedule_Click(object sender, Windows.UI.Xaml.RoutedEventArgs e)
+        private void Schedule_Click(object sender, Microsoft.UI.Xaml.RoutedEventArgs e)
         {
             IsScheduleSelected = true;
             Hide(ContentDialogResult.Primary);

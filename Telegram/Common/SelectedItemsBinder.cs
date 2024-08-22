@@ -8,8 +8,8 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using Telegram.Collections;
-using Windows.UI.Xaml;
-using Windows.UI.Xaml.Controls;
+using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Controls;
 
 namespace Telegram.Common
 {

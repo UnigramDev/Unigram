@@ -6,9 +6,9 @@
 //
 using System.Numerics;
 using Telegram.ViewModels;
-using Windows.UI.Xaml;
-using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Hosting;
+using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Hosting;
 
 namespace Telegram.Controls.Cells
 {

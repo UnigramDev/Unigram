@@ -16,8 +16,8 @@ using Telegram.Services.Settings;
 using Telegram.Views.Popups;
 using Windows.Storage;
 using Windows.UI;
-using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Media;
+using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Media;
 
 namespace Telegram.ViewModels.Settings
 {

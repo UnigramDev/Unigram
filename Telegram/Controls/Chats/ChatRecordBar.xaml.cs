@@ -6,10 +6,10 @@ using Telegram.Controls.Media;
 using Telegram.Td.Api;
 using Windows.UI;
 using Windows.UI.Composition;
-using Windows.UI.Xaml;
-using Windows.UI.Xaml.Hosting;
-using Windows.UI.Xaml.Input;
-using Windows.UI.Xaml.Media;
+using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Hosting;
+using Microsoft.UI.Xaml.Input;
+using Microsoft.UI.Xaml.Media;
 
 namespace Telegram.Controls.Chats
 {

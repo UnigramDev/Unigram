@@ -7,7 +7,7 @@
 using System.Linq;
 using Telegram.Controls;
 using Telegram.ViewModels;
-using Windows.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Controls;
 
 namespace Telegram.Views.Popups
 {

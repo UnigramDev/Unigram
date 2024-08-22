@@ -7,8 +7,8 @@
 using System;
 using Windows.Foundation;
 using Windows.UI;
-using Windows.UI.Xaml;
-using Windows.UI.Xaml.Media;
+using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Media;
 
 namespace Telegram.Common
 {

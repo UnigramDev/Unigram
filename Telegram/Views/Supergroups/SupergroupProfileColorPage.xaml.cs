@@ -16,9 +16,9 @@ using Telegram.ViewModels.Drawers;
 using Telegram.ViewModels.Settings;
 using Telegram.ViewModels.Supergroups;
 using Telegram.Views.Supergroups.Popups;
-using Windows.UI.Xaml;
-using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Navigation;
+using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Navigation;
 
 namespace Telegram.Views.Supergroups
 {

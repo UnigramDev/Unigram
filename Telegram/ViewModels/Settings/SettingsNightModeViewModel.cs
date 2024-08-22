@@ -11,7 +11,7 @@ using Telegram.Td.Api;
 using Windows.Devices.Geolocation;
 using Windows.Services.Maps;
 using Windows.System;
-using Windows.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Controls;
 
 namespace Telegram.ViewModels.Settings
 {

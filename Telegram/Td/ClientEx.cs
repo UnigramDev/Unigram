@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 using Telegram.Controls;
 using Telegram.Services;
 using Telegram.Td.Api;
-using Windows.UI.Xaml.Media;
+using Microsoft.UI.Xaml.Media;
 
 namespace Telegram.Td
 {

@@ -8,8 +8,8 @@ using System;
 using System.Text;
 using Telegram.Common;
 using Telegram.Entities;
-using Windows.UI.Xaml;
-using Windows.UI.Xaml.Controls;
+using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Controls;
 
 namespace Telegram.Controls
 {

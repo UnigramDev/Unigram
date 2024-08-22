@@ -7,7 +7,7 @@
 using Telegram.Controls;
 using Telegram.ViewModels;
 using Telegram.Views.Host;
-using Windows.UI.Xaml;
+using Microsoft.UI.Xaml;
 
 namespace Telegram.Views
 {
@@ -63,7 +63,7 @@ namespace Telegram.Views
             ViewModel.Ask();
         }
 
-        private void ContentPopup_PrimaryButtonClick(Windows.UI.Xaml.Controls.ContentDialog sender, Windows.UI.Xaml.Controls.ContentDialogButtonClickEventArgs args)
+        private void ContentPopup_PrimaryButtonClick(Microsoft.UI.Xaml.Controls.ContentDialog sender, Microsoft.UI.Xaml.Controls.ContentDialogButtonClickEventArgs args)
         {
             ViewModel.Logout();
         }

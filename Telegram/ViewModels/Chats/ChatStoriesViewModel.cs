@@ -21,9 +21,9 @@ using Telegram.Td.Api;
 using Telegram.ViewModels.Stories;
 using Telegram.Views.Chats;
 using Windows.Foundation;
-using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Data;
-using Windows.UI.Xaml.Navigation;
+using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Data;
+using Microsoft.UI.Xaml.Navigation;
 
 namespace Telegram.ViewModels.Chats
 {

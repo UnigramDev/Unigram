@@ -14,10 +14,10 @@ using Telegram.Views;
 using Telegram.Views.Settings;
 using Windows.ApplicationModel.Core;
 using Windows.Foundation;
-using Windows.UI.Xaml;
-using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Media.Animation;
-using Windows.UI.Xaml.Navigation;
+using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Media.Animation;
+using Microsoft.UI.Xaml.Navigation;
 
 namespace Telegram.Navigation.Services
 {

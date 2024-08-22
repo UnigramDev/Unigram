@@ -16,9 +16,9 @@ using Telegram.Views.Business;
 using Telegram.Views.Folders;
 using Telegram.Views.Settings;
 using Telegram.Views.Stars.Popups;
-using Windows.UI.Xaml;
-using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Navigation;
+using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Navigation;
 
 namespace Telegram.Views
 {

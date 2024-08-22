@@ -9,9 +9,9 @@ using System.Collections.Generic;
 using System.Numerics;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
-using Windows.UI.Xaml;
-using Windows.UI.Xaml.Hosting;
-using Windows.UI.Xaml.Media;
+using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Hosting;
+using Microsoft.UI.Xaml.Media;
 
 namespace Telegram.Common
 {

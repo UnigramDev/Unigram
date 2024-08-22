@@ -7,8 +7,8 @@
 using Telegram.Collections;
 using Telegram.Td.Api;
 using Telegram.ViewModels;
-using Windows.UI.Xaml;
-using Windows.UI.Xaml.Controls;
+using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Controls;
 
 namespace Telegram.Selectors
 {

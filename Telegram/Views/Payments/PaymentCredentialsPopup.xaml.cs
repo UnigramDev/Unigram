@@ -8,7 +8,7 @@ using Telegram.Common;
 using Telegram.Controls;
 using Telegram.Td.Api;
 using Telegram.ViewModels.Payments;
-using Windows.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Controls;
 
 namespace Telegram.Views.Payments
 {

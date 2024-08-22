@@ -10,10 +10,10 @@ using Telegram.Services.Settings;
 using Telegram.Streams;
 using Telegram.Td.Api;
 using Telegram.ViewModels.Drawers;
-using Windows.UI.Xaml;
-using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Hosting;
-using Windows.UI.Xaml.Input;
+using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Hosting;
+using Microsoft.UI.Xaml.Input;
 using Point = Windows.Foundation.Point;
 
 namespace Telegram.Controls.Drawers

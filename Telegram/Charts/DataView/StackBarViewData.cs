@@ -7,8 +7,8 @@
 using Telegram.Charts.Data;
 using Telegram.Common;
 using Windows.UI;
-using Windows.UI.Xaml;
-using Windows.UI.Xaml.Media;
+using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Media;
 
 namespace Telegram.Charts.DataView
 {

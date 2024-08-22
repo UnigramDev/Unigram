@@ -11,7 +11,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Telegram.Services;
 using Telegram.Td.Api;
-using Windows.UI.Xaml.Data;
+using Microsoft.UI.Xaml.Data;
 
 namespace Telegram.ViewModels.Stories
 {

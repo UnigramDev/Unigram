@@ -32,11 +32,11 @@ using Windows.System.Display;
 using Windows.UI;
 using Windows.UI.Text;
 using Windows.UI.ViewManagement;
-using Windows.UI.Xaml;
-using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Controls.Primitives;
-using Windows.UI.Xaml.Hosting;
-using Windows.UI.Xaml.Media;
+using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Controls.Primitives;
+using Microsoft.UI.Xaml.Hosting;
+using Microsoft.UI.Xaml.Media;
 using Point = Windows.Foundation.Point;
 
 namespace Telegram.Views.Calls
@@ -2096,7 +2096,7 @@ namespace Telegram.Views.Calls
             }
         }
 
-        private void Participant_ContextRequested(UIElement sender, Windows.UI.Xaml.Input.ContextRequestedEventArgs args)
+        private void Participant_ContextRequested(UIElement sender, Microsoft.UI.Xaml.Input.ContextRequestedEventArgs args)
         {
             var flyout = new MenuFlyout();
 
@@ -2353,7 +2353,7 @@ namespace Telegram.Views.Calls
             }
         }
 
-        private void Viewport_PointerEntered(object sender, Windows.UI.Xaml.Input.PointerRoutedEventArgs e)
+        private void Viewport_PointerEntered(object sender, Microsoft.UI.Xaml.Input.PointerRoutedEventArgs e)
         {
             var point = e.GetCurrentPoint(PointerListener);
             if (point.Position.X > PointerListener.ActualWidth - 224 && Viewport.Mode == ParticipantsGridMode.Docked)
@@ -2370,7 +2370,7 @@ namespace Telegram.Views.Calls
             }
         }
 
-        private void Viewport_PointerExited(object sender, Windows.UI.Xaml.Input.PointerRoutedEventArgs e)
+        private void Viewport_PointerExited(object sender, Microsoft.UI.Xaml.Input.PointerRoutedEventArgs e)
         {
             ShowHideInfo(false);
         }
@@ -2465,7 +2465,7 @@ namespace Telegram.Views.Calls
         Expanded
     }
 
-    public class ParticipantsGrid : Windows.UI.Xaml.Controls.Panel
+    public class ParticipantsGrid : Microsoft.UI.Xaml.Controls.Panel
     {
         private ParticipantsGridMode _mode = ParticipantsGridMode.Compact;
         public ParticipantsGridMode Mode

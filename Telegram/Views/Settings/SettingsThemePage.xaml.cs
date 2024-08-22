@@ -6,8 +6,8 @@
 //
 using Telegram.Services;
 using Telegram.ViewModels.Settings;
-using Windows.UI.Xaml;
-using Windows.UI.Xaml.Controls;
+using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Controls;
 
 namespace Telegram.Views.Settings
 {

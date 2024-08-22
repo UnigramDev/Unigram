@@ -22,9 +22,9 @@ using Telegram.Views.Settings.LoginEmail;
 using Telegram.Views.Settings.Password;
 using Telegram.Views.Settings.Popups;
 using Telegram.Views.Settings.Privacy;
-using Windows.UI.Xaml;
-using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Navigation;
+using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Navigation;
 
 namespace Telegram.ViewModels.Settings
 {

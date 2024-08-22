@@ -15,7 +15,7 @@ using Telegram.Services;
 using Telegram.Td.Api;
 using Telegram.Views;
 using Windows.Foundation;
-using Windows.UI.Xaml.Data;
+using Microsoft.UI.Xaml.Data;
 
 namespace Telegram.ViewModels.Drawers
 {

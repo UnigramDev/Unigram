@@ -10,7 +10,7 @@ using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using Telegram.Common;
 using Telegram.Navigation;
-using Windows.UI.Xaml;
+using Microsoft.UI.Xaml;
 
 namespace Telegram.Services
 {

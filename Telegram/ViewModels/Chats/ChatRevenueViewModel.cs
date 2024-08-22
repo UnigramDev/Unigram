@@ -15,8 +15,8 @@ using Telegram.ViewModels.Supergroups;
 using Telegram.Views;
 using Telegram.Views.Chats.Popups;
 using Telegram.Views.Monetization.Popups;
-using Windows.UI.Xaml.Data;
-using Windows.UI.Xaml.Navigation;
+using Microsoft.UI.Xaml.Data;
+using Microsoft.UI.Xaml.Navigation;
 
 namespace Telegram.ViewModels.Chats
 {

@@ -11,9 +11,9 @@ using Telegram.Navigation;
 using Telegram.Services;
 using Telegram.Streams;
 using Telegram.Td.Api;
-using Windows.UI.Xaml;
-using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Documents;
+using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Documents;
 using Point = Windows.Foundation.Point;
 
 namespace Telegram.Controls

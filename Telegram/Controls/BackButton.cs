@@ -6,7 +6,7 @@
 //
 using Telegram.Common;
 using Telegram.Navigation;
-using Windows.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Controls;
 
 namespace Telegram.Controls
 {
@@ -18,7 +18,7 @@ namespace Telegram.Controls
             Click += OnClick;
         }
 
-        private void OnClick(object sender, Windows.UI.Xaml.RoutedEventArgs e)
+        private void OnClick(object sender, Microsoft.UI.Xaml.RoutedEventArgs e)
         {
             var master = this.GetParent<MasterDetailView>();
             if (master != null)

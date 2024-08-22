@@ -32,11 +32,11 @@ using Telegram.Views.Premium.Popups;
 using Telegram.Views.Users;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.UI.Text;
-using Windows.UI.Xaml;
-using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Controls.Primitives;
-using Windows.UI.Xaml.Media.Animation;
-using Windows.UI.Xaml.Navigation;
+using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Controls.Primitives;
+using Microsoft.UI.Xaml.Media.Animation;
+using Microsoft.UI.Xaml.Navigation;
 using Point = Windows.Foundation.Point;
 
 namespace Telegram.ViewModels

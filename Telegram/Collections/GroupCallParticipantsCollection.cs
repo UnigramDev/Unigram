@@ -14,7 +14,7 @@ using Telegram.Td.Api;
 using Telegram.ViewModels.Delegates;
 using Windows.Foundation;
 using Windows.System;
-using Windows.UI.Xaml.Data;
+using Microsoft.UI.Xaml.Data;
 
 namespace Telegram.Collections
 {

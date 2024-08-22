@@ -16,10 +16,10 @@ using Telegram.Td.Api;
 using Windows.Globalization.Fonts;
 using Windows.Storage;
 using Windows.UI;
-using Windows.UI.Xaml;
-using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Controls.Primitives;
-using Windows.UI.Xaml.Media;
+using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Controls.Primitives;
+using Microsoft.UI.Xaml.Media;
 using AcrylicBrush = Microsoft.UI.Xaml.Media.AcrylicBrush;
 
 namespace Telegram.Common

@@ -11,12 +11,12 @@ using Telegram.Td.Api;
 using Telegram.ViewModels.Chats;
 using Windows.Foundation;
 using Windows.System;
-using Windows.UI.Xaml;
-using Windows.UI.Xaml.Automation.Peers;
-using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Input;
-using Windows.UI.Xaml.Media;
-using Windows.UI.Xaml.Shapes;
+using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Automation.Peers;
+using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Input;
+using Microsoft.UI.Xaml.Media;
+using Microsoft.UI.Xaml.Shapes;
 using Point = Windows.Foundation.Point;
 
 namespace Telegram.Controls.Messages

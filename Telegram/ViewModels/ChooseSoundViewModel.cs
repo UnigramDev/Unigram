@@ -15,7 +15,7 @@ using Telegram.Navigation.Services;
 using Telegram.Services;
 using Telegram.Td.Api;
 using Windows.Storage.Pickers;
-using Windows.UI.Xaml.Navigation;
+using Microsoft.UI.Xaml.Navigation;
 
 namespace Telegram.ViewModels
 {

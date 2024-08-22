@@ -15,7 +15,7 @@ using Telegram.Navigation;
 using Telegram.Services;
 using Telegram.Td.Api;
 using Telegram.Views.Popups;
-using Windows.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Controls;
 
 namespace Telegram.ViewModels.Chats
 {

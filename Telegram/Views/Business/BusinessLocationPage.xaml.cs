@@ -4,10 +4,10 @@ using Telegram.Common;
 using Telegram.Navigation;
 using Telegram.Td.Api;
 using Telegram.ViewModels.Business;
-using Windows.UI.Xaml;
-using Windows.UI.Xaml.Media;
-using Windows.UI.Xaml.Media.Imaging;
-using Windows.UI.Xaml.Navigation;
+using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Media;
+using Microsoft.UI.Xaml.Media.Imaging;
+using Microsoft.UI.Xaml.Navigation;
 
 namespace Telegram.Views.Business
 {

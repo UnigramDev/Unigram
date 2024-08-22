@@ -20,10 +20,10 @@ using Telegram.ViewModels.Gallery;
 using Telegram.Views.Popups;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.UI;
-using Windows.UI.Xaml;
-using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Documents;
-using Windows.UI.Xaml.Media;
+using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Documents;
+using Microsoft.UI.Xaml.Media;
 
 namespace Telegram.Views.Stars.Popups
 {
@@ -122,7 +122,7 @@ namespace Telegram.Views.Stars.Popups
                 {
                     Title.Text = Strings.StarMediaPurchase;
 
-                    MediaPreview.Visibility = Windows.UI.Xaml.Visibility.Visible;
+                    MediaPreview.Visibility = Microsoft.UI.Xaml.Visibility.Visible;
 
                     UpdateMedia(clientService, paidMedia.Media[0], Media1, ref _media1Token);
 
@@ -130,13 +130,13 @@ namespace Telegram.Views.Stars.Popups
                     {
                         UpdateMedia(clientService, paidMedia.Media[1], Media2, ref _media2Token);
 
-                        Media2.Visibility = Windows.UI.Xaml.Visibility.Visible;
+                        Media2.Visibility = Microsoft.UI.Xaml.Visibility.Visible;
                     }
                     else
                     {
-                        Media2.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
-                        Media1.HorizontalAlignment = Windows.UI.Xaml.HorizontalAlignment.Center;
-                        Media1.HorizontalAlignment = Windows.UI.Xaml.HorizontalAlignment.Center;
+                        Media2.Visibility = Microsoft.UI.Xaml.Visibility.Collapsed;
+                        Media1.HorizontalAlignment = Microsoft.UI.Xaml.HorizontalAlignment.Center;
+                        Media1.HorizontalAlignment = Microsoft.UI.Xaml.HorizontalAlignment.Center;
                     }
                 }
 
@@ -151,7 +151,7 @@ namespace Telegram.Views.Stars.Popups
 
                 Title.Text = Strings.StarMediaPurchase;
 
-                MediaPreview.Visibility = Windows.UI.Xaml.Visibility.Visible;
+                MediaPreview.Visibility = Microsoft.UI.Xaml.Visibility.Visible;
 
                 UpdateMedia(clientService, sourceBusiness.Media[0], Media1, ref _media1Token);
 
@@ -159,13 +159,13 @@ namespace Telegram.Views.Stars.Popups
                 {
                     UpdateMedia(clientService, sourceBusiness.Media[1], Media2, ref _media2Token);
 
-                    Media2.Visibility = Windows.UI.Xaml.Visibility.Visible;
+                    Media2.Visibility = Microsoft.UI.Xaml.Visibility.Visible;
                 }
                 else
                 {
-                    Media2.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
-                    Media1.HorizontalAlignment = Windows.UI.Xaml.HorizontalAlignment.Center;
-                    Media1.HorizontalAlignment = Windows.UI.Xaml.HorizontalAlignment.Center;
+                    Media2.Visibility = Microsoft.UI.Xaml.Visibility.Collapsed;
+                    Media1.HorizontalAlignment = Microsoft.UI.Xaml.HorizontalAlignment.Center;
+                    Media1.HorizontalAlignment = Microsoft.UI.Xaml.HorizontalAlignment.Center;
                 }
 
                 AnimatedPhoto.Visibility = Visibility.Collapsed;
@@ -183,7 +183,7 @@ namespace Telegram.Views.Stars.Popups
                 Subtitle.Text = transaction.StarCount < 0
                     ? string.Format(Strings.ActionGiftStarsSubtitle, user.FirstName)
                     : Strings.ActionGiftStarsSubtitleYou;
-                Subtitle.Visibility = Windows.UI.Xaml.Visibility.Visible;
+                Subtitle.Visibility = Microsoft.UI.Xaml.Visibility.Visible;
 
                 if (sourceUser.Sticker != null)
                 {
@@ -205,7 +205,7 @@ namespace Telegram.Views.Stars.Popups
                 {
                     Title.Text = Strings.StarMediaPurchase;
 
-                    MediaPreview.Visibility = Windows.UI.Xaml.Visibility.Visible;
+                    MediaPreview.Visibility = Microsoft.UI.Xaml.Visibility.Visible;
 
                     UpdateMedia(clientService, paidMedia.Media[0], Media1, ref _media1Token);
 
@@ -213,13 +213,13 @@ namespace Telegram.Views.Stars.Popups
                     {
                         UpdateMedia(clientService, paidMedia.Media[1], Media2, ref _media2Token);
 
-                        Media2.Visibility = Windows.UI.Xaml.Visibility.Visible;
+                        Media2.Visibility = Microsoft.UI.Xaml.Visibility.Visible;
                     }
                     else
                     {
-                        Media2.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
-                        Media1.HorizontalAlignment = Windows.UI.Xaml.HorizontalAlignment.Center;
-                        Media1.HorizontalAlignment = Windows.UI.Xaml.HorizontalAlignment.Center;
+                        Media2.Visibility = Microsoft.UI.Xaml.Visibility.Collapsed;
+                        Media1.HorizontalAlignment = Microsoft.UI.Xaml.HorizontalAlignment.Center;
+                        Media1.HorizontalAlignment = Microsoft.UI.Xaml.HorizontalAlignment.Center;
                     }
                 }
                 else if (sourceChannel.Purpose is ChannelTransactionPurposeReaction)
@@ -227,14 +227,14 @@ namespace Telegram.Views.Stars.Popups
                     Title.Text = Strings.StarsReactionsSent;
                     Photo.SetChat(clientService, chat, 96);
 
-                    MediaPreview.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
+                    MediaPreview.Visibility = Microsoft.UI.Xaml.Visibility.Collapsed;
                 }
                 else if (sourceChannel.Purpose is ChannelTransactionPurposeJoin)
                 {
                     Title.Text = Strings.StarsTransactionSubscriptionMonthly;
                     Photo.SetChat(clientService, chat, 96);
 
-                    MediaPreview.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
+                    MediaPreview.Visibility = Microsoft.UI.Xaml.Visibility.Collapsed;
                 }
             }
             else

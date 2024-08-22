@@ -5,8 +5,8 @@ using Telegram.Navigation;
 using Telegram.Services;
 using Telegram.Td.Api;
 using Windows.UI;
-using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Media;
+using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Media;
 
 namespace Telegram.Controls.Cells.Revenue
 {
@@ -27,16 +27,16 @@ namespace Telegram.Controls.Cells.Revenue
 
             if (transaction.Partner is StarTransactionPartnerTelegram)
             {
-                MediaPreview.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
+                MediaPreview.Visibility = Microsoft.UI.Xaml.Visibility.Collapsed;
                 Photo.Source = new PlaceholderImage(Icons.Premium, true, Color.FromArgb(0xFF, 0xFD, 0xD2, 0x1A), Color.FromArgb(0xFF, 0xE4, 0x7B, 0x03));
                 Title.Text = Strings.StarsTransactionBot;
-                Subtitle.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
+                Subtitle.Visibility = Microsoft.UI.Xaml.Visibility.Collapsed;
             }
             else if (transaction.Partner is StarTransactionPartnerFragment)
             {
-                MediaPreview.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
+                MediaPreview.Visibility = Microsoft.UI.Xaml.Visibility.Collapsed;
                 Photo.Source = new PlaceholderImage(Icons.FragmentFilled, true, Colors.Black, Colors.Black);
-                Subtitle.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
+                Subtitle.Visibility = Microsoft.UI.Xaml.Visibility.Collapsed;
 
                 if (transaction.IsFragmentWithdrawal())
                 {
@@ -49,28 +49,28 @@ namespace Telegram.Controls.Cells.Revenue
             }
             else if (transaction.Partner is StarTransactionPartnerAppStore or StarTransactionPartnerGooglePlay)
             {
-                MediaPreview.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
+                MediaPreview.Visibility = Microsoft.UI.Xaml.Visibility.Collapsed;
                 Photo.Source = new PlaceholderImage(Icons.Premium, true, Color.FromArgb(0xFF, 0xFD, 0xD2, 0x1A), Color.FromArgb(0xFF, 0xE4, 0x7B, 0x03));
                 Title.Text = Strings.StarsTransactionInApp;
-                Subtitle.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
+                Subtitle.Visibility = Microsoft.UI.Xaml.Visibility.Collapsed;
             }
             else if (transaction.Partner is StarTransactionPartnerBot sourceBot && clientService.TryGetUser(sourceBot.UserId, out User botUser))
             {
                 Subtitle.Text = botUser.FullName();
-                Subtitle.Visibility = Windows.UI.Xaml.Visibility.Visible;
+                Subtitle.Visibility = Microsoft.UI.Xaml.Visibility.Visible;
 
                 if (sourceBot.Purpose is BotTransactionPurposeInvoicePayment invoicePayment)
                 {
                     Title.Text = invoicePayment.ProductInfo.Title;
                     Photo.SetUser(clientService, botUser, 36);
 
-                    MediaPreview.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
+                    MediaPreview.Visibility = Microsoft.UI.Xaml.Visibility.Collapsed;
                 }
                 else if (sourceBot.Purpose is BotTransactionPurposePaidMedia paidMedia)
                 {
                     Title.Text = Strings.StarMediaPurchase;
 
-                    MediaPreview.Visibility = Windows.UI.Xaml.Visibility.Visible;
+                    MediaPreview.Visibility = Microsoft.UI.Xaml.Visibility.Visible;
 
                     UpdateMedia(clientService, paidMedia.Media[0], Media1, ref _media1Token);
 
@@ -78,17 +78,17 @@ namespace Telegram.Controls.Cells.Revenue
                     {
                         UpdateMedia(clientService, paidMedia.Media[1], Media2, ref _media2Token);
 
-                        Media2.Visibility = Windows.UI.Xaml.Visibility.Visible;
+                        Media2.Visibility = Microsoft.UI.Xaml.Visibility.Visible;
                     }
                     else
                     {
-                        Media2.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
+                        Media2.Visibility = Microsoft.UI.Xaml.Visibility.Collapsed;
                     }
                 }
                 else
                 {
                     Title.Text = botUser.FullName();
-                    Subtitle.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
+                    Subtitle.Visibility = Microsoft.UI.Xaml.Visibility.Collapsed;
 
                     Photo.SetUser(clientService, botUser, 36);
                 }
@@ -96,11 +96,11 @@ namespace Telegram.Controls.Cells.Revenue
             else if (transaction.Partner is StarTransactionPartnerBusiness sourceBusiness && clientService.TryGetUser(sourceBusiness.UserId, out User businessUser))
             {
                 Subtitle.Text = businessUser.FullName();
-                Subtitle.Visibility = Windows.UI.Xaml.Visibility.Visible;
+                Subtitle.Visibility = Microsoft.UI.Xaml.Visibility.Visible;
 
                 Title.Text = Strings.StarMediaPurchase;
 
-                MediaPreview.Visibility = Windows.UI.Xaml.Visibility.Visible;
+                MediaPreview.Visibility = Microsoft.UI.Xaml.Visibility.Visible;
 
                 UpdateMedia(clientService, sourceBusiness.Media[0], Media1, ref _media1Token);
 
@@ -108,11 +108,11 @@ namespace Telegram.Controls.Cells.Revenue
                 {
                     UpdateMedia(clientService, sourceBusiness.Media[1], Media2, ref _media2Token);
 
-                    Media2.Visibility = Windows.UI.Xaml.Visibility.Visible;
+                    Media2.Visibility = Microsoft.UI.Xaml.Visibility.Visible;
                 }
                 else
                 {
-                    Media2.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
+                    Media2.Visibility = Microsoft.UI.Xaml.Visibility.Collapsed;
                 }
             }
             else if (transaction.Partner is StarTransactionPartnerUser sourceUser && clientService.TryGetUser(sourceUser.UserId, out User user))
@@ -121,22 +121,22 @@ namespace Telegram.Controls.Cells.Revenue
                     ? Strings.StarsGiftSent
                     : Strings.StarsGiftReceived;
                 Subtitle.Text = user.FullName();
-                Subtitle.Visibility = Windows.UI.Xaml.Visibility.Visible;
+                Subtitle.Visibility = Microsoft.UI.Xaml.Visibility.Visible;
 
                 Photo.SetUser(clientService, user, 36);
 
-                MediaPreview.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
+                MediaPreview.Visibility = Microsoft.UI.Xaml.Visibility.Collapsed;
             }
             else if (transaction.Partner is StarTransactionPartnerChannel sourceChannel && clientService.TryGetChat(sourceChannel.ChatId, out Chat chat))
             {
                 Subtitle.Text = chat.Title;
-                Subtitle.Visibility = Windows.UI.Xaml.Visibility.Visible;
+                Subtitle.Visibility = Microsoft.UI.Xaml.Visibility.Visible;
 
                 if (sourceChannel.Purpose is ChannelTransactionPurposePaidMedia paidMedia)
                 {
                     Title.Text = Strings.StarMediaPurchase;
 
-                    MediaPreview.Visibility = Windows.UI.Xaml.Visibility.Visible;
+                    MediaPreview.Visibility = Microsoft.UI.Xaml.Visibility.Visible;
 
                     UpdateMedia(clientService, paidMedia.Media[0], Media1, ref _media1Token);
 
@@ -144,11 +144,11 @@ namespace Telegram.Controls.Cells.Revenue
                     {
                         UpdateMedia(clientService, paidMedia.Media[1], Media2, ref _media2Token);
 
-                        Media2.Visibility = Windows.UI.Xaml.Visibility.Visible;
+                        Media2.Visibility = Microsoft.UI.Xaml.Visibility.Visible;
                     }
                     else
                     {
-                        Media2.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
+                        Media2.Visibility = Microsoft.UI.Xaml.Visibility.Collapsed;
                     }
                 }
                 else if (sourceChannel.Purpose is ChannelTransactionPurposeReaction)
@@ -156,22 +156,22 @@ namespace Telegram.Controls.Cells.Revenue
                     Title.Text = Strings.StarsReactionsSent;
                     Photo.SetChat(clientService, chat, 36);
 
-                    MediaPreview.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
+                    MediaPreview.Visibility = Microsoft.UI.Xaml.Visibility.Collapsed;
                 }
                 else if (sourceChannel.Purpose is ChannelTransactionPurposeJoin)
                 {
                     Title.Text = Strings.StarsTransactionSubscriptionMonthly;
                     Photo.SetChat(clientService, chat, 36);
 
-                    MediaPreview.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
+                    MediaPreview.Visibility = Microsoft.UI.Xaml.Visibility.Collapsed;
                 }
             }
             else
             {
-                MediaPreview.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
+                MediaPreview.Visibility = Microsoft.UI.Xaml.Visibility.Collapsed;
                 Photo.Source = PlaceholderImage.GetGlyph(Icons.QuestionCircle, long.MinValue);
                 Title.Text = Strings.StarsTransactionUnsupported;
-                Subtitle.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
+                Subtitle.Visibility = Microsoft.UI.Xaml.Visibility.Collapsed;
             }
 
             Date.Text = Formatter.DateAt(transaction.Date);

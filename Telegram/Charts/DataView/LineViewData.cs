@@ -9,7 +9,7 @@ using System.Collections.Generic;
 using Telegram.Charts.Data;
 using Telegram.Common;
 using Windows.UI;
-using Windows.UI.Xaml;
+using Microsoft.UI.Xaml;
 
 namespace Telegram.Charts.DataView
 {

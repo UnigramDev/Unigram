@@ -4,9 +4,9 @@
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
-using Windows.UI.Xaml;
-using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Controls.Primitives;
+using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Controls.Primitives;
 
 namespace Telegram.Controls
 {
@@ -17,7 +17,7 @@ namespace Telegram.Controls
     {
         public static bool IsConnected(this FrameworkElement element)
         {
-            return Windows.UI.Xaml.Media.VisualTreeHelper.GetParent(element) != null;
+            return Microsoft.UI.Xaml.Media.VisualTreeHelper.GetParent(element) != null;
         }
     }
 
@@ -87,7 +87,7 @@ namespace Telegram.Controls
             // whenever the control is a DataTemplate root or similar,
             // hence we're forced to use VisualTreeHelper here, but I'm quite sure it's slower.
 
-            var parent = Parent ?? Windows.UI.Xaml.Media.VisualTreeHelper.GetParent(this);
+            var parent = Parent ?? Microsoft.UI.Xaml.Media.VisualTreeHelper.GetParent(this);
             if (parent != null && !_loaded)
             {
                 _loaded = true;
@@ -167,7 +167,7 @@ namespace Telegram.Controls
             // whenever the control is a DataTemplate root or similar,
             // hence we're forced to use VisualTreeHelper here, but I'm quite sure it's slower.
 
-            var parent = Parent ?? Windows.UI.Xaml.Media.VisualTreeHelper.GetParent(this);
+            var parent = Parent ?? Microsoft.UI.Xaml.Media.VisualTreeHelper.GetParent(this);
             if (parent != null && !_loaded)
             {
                 _loaded = true;
@@ -247,7 +247,7 @@ namespace Telegram.Controls
             // whenever the control is a DataTemplate root or similar,
             // hence we're forced to use VisualTreeHelper here, but I'm quite sure it's slower.
 
-            var parent = Parent ?? Windows.UI.Xaml.Media.VisualTreeHelper.GetParent(this);
+            var parent = Parent ?? Microsoft.UI.Xaml.Media.VisualTreeHelper.GetParent(this);
             if (parent != null && !_loaded)
             {
                 _loaded = true;
@@ -327,7 +327,7 @@ namespace Telegram.Controls
             // whenever the control is a DataTemplate root or similar,
             // hence we're forced to use VisualTreeHelper here, but I'm quite sure it's slower.
 
-            var parent = Parent ?? Windows.UI.Xaml.Media.VisualTreeHelper.GetParent(this);
+            var parent = Parent ?? Microsoft.UI.Xaml.Media.VisualTreeHelper.GetParent(this);
             if (parent != null && !_loaded)
             {
                 _loaded = true;
@@ -407,7 +407,7 @@ namespace Telegram.Controls
             // whenever the control is a DataTemplate root or similar,
             // hence we're forced to use VisualTreeHelper here, but I'm quite sure it's slower.
 
-            var parent = Parent ?? Windows.UI.Xaml.Media.VisualTreeHelper.GetParent(this);
+            var parent = Parent ?? Microsoft.UI.Xaml.Media.VisualTreeHelper.GetParent(this);
             if (parent != null && !_loaded)
             {
                 _loaded = true;
@@ -487,7 +487,7 @@ namespace Telegram.Controls
             // whenever the control is a DataTemplate root or similar,
             // hence we're forced to use VisualTreeHelper here, but I'm quite sure it's slower.
 
-            var parent = Parent ?? Windows.UI.Xaml.Media.VisualTreeHelper.GetParent(this);
+            var parent = Parent ?? Microsoft.UI.Xaml.Media.VisualTreeHelper.GetParent(this);
             if (parent != null && !_loaded)
             {
                 _loaded = true;
@@ -567,7 +567,7 @@ namespace Telegram.Controls
             // whenever the control is a DataTemplate root or similar,
             // hence we're forced to use VisualTreeHelper here, but I'm quite sure it's slower.
 
-            var parent = Parent ?? Windows.UI.Xaml.Media.VisualTreeHelper.GetParent(this);
+            var parent = Parent ?? Microsoft.UI.Xaml.Media.VisualTreeHelper.GetParent(this);
             if (parent != null && !_loaded)
             {
                 _loaded = true;

@@ -7,7 +7,7 @@
 using System;
 using System.Globalization;
 using Telegram.Td.Api;
-using Windows.UI.Xaml.Data;
+using Microsoft.UI.Xaml.Data;
 
 namespace Telegram.Converters
 {

@@ -14,10 +14,10 @@ using Windows.Foundation;
 using Windows.System;
 using Windows.UI.Composition;
 using Windows.UI.Composition.Interactions;
-using Windows.UI.Xaml;
-using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Hosting;
-using Windows.UI.Xaml.Input;
+using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Hosting;
+using Microsoft.UI.Xaml.Input;
 
 namespace Telegram.Controls
 {

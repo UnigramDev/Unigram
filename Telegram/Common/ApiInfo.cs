@@ -8,7 +8,7 @@ using Telegram.Native;
 using Windows.ApplicationModel;
 using Windows.Foundation.Metadata;
 using Windows.System.Profile;
-using Windows.UI.Xaml.Navigation;
+using Microsoft.UI.Xaml.Navigation;
 
 namespace Telegram.Common
 {

@@ -6,10 +6,10 @@
 //
 using System.Numerics;
 using Windows.UI.Composition;
-using Windows.UI.Xaml;
-using Windows.UI.Xaml.Automation.Peers;
-using Windows.UI.Xaml.Hosting;
-using Windows.UI.Xaml.Shapes;
+using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Automation.Peers;
+using Microsoft.UI.Xaml.Hosting;
+using Microsoft.UI.Xaml.Shapes;
 
 namespace Telegram.Controls
 {

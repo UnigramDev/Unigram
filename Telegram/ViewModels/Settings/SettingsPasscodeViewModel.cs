@@ -13,7 +13,7 @@ using Telegram.Services;
 using Telegram.Services.Updates;
 using Telegram.Views.Popups;
 using Telegram.Views.Settings.Popups;
-using Windows.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Controls;
 
 namespace Telegram.ViewModels.Settings
 {

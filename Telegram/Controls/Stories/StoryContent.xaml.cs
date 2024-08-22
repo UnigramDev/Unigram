@@ -23,14 +23,14 @@ using Telegram.ViewModels.Stories;
 using Windows.UI;
 using Windows.UI.Composition;
 using Windows.UI.Text;
-using Windows.UI.Xaml;
-using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Documents;
-using Windows.UI.Xaml.Hosting;
-using Windows.UI.Xaml.Input;
-using Windows.UI.Xaml.Media;
-using Windows.UI.Xaml.Media.Imaging;
-using Windows.UI.Xaml.Shapes;
+using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Documents;
+using Microsoft.UI.Xaml.Hosting;
+using Microsoft.UI.Xaml.Input;
+using Microsoft.UI.Xaml.Media;
+using Microsoft.UI.Xaml.Media.Imaging;
+using Microsoft.UI.Xaml.Shapes;
 using Point = Windows.Foundation.Point;
 
 namespace Telegram.Controls.Stories
@@ -453,7 +453,7 @@ namespace Telegram.Controls.Stories
                     //{
                     //    Width = side,
                     //    Height = side,
-                    //    DecodeFrameType = Windows.UI.Xaml.Media.Imaging.DecodePixelType.Logical,
+                    //    DecodeFrameType = Microsoft.UI.Xaml.Media.Imaging.DecodePixelType.Logical,
                     //    FrameSize = new Windows.Foundation.Size(side, side),
                     //    Source = new ReactionFileSource(ViewModel.ClientService, suggestedReaction.ReactionType),
                     //    HorizontalAlignment = HorizontalAlignment.Left,

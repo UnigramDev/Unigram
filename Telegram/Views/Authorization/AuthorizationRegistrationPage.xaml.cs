@@ -7,8 +7,8 @@
 using Telegram.Common;
 using Telegram.Controls;
 using Telegram.ViewModels.Authorization;
-using Windows.UI.Xaml;
-using Windows.UI.Xaml.Navigation;
+using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Navigation;
 
 namespace Telegram.Views.Authorization
 {
@@ -54,7 +54,7 @@ namespace Telegram.Views.Authorization
             PrimaryInput.Focus(FocusState.Keyboard);
         }
 
-        private void PrimaryInput_KeyDown(object sender, Windows.UI.Xaml.Input.KeyRoutedEventArgs e)
+        private void PrimaryInput_KeyDown(object sender, Microsoft.UI.Xaml.Input.KeyRoutedEventArgs e)
         {
             if (e.Key == Windows.System.VirtualKey.Enter)
             {

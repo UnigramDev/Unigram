@@ -7,8 +7,8 @@
 using Telegram.Common;
 using Telegram.Controls.Cells;
 using Telegram.ViewModels;
-using Windows.UI.Xaml.Automation;
-using Windows.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Automation;
+using Microsoft.UI.Xaml.Controls;
 
 namespace Telegram.Views.Profile
 {

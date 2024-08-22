@@ -6,8 +6,8 @@ using Telegram.Navigation;
 using Telegram.Services;
 using Telegram.Td.Api;
 using Telegram.ViewModels.Business;
-using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Media;
+using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Media;
 
 namespace Telegram.Controls.Cells
 {
@@ -56,8 +56,8 @@ namespace Telegram.Controls.Cells
             }
 
             SwitchButton.Visibility = offsetMinute == 0 || hours.Is24x7()
-                ? Windows.UI.Xaml.Visibility.Collapsed
-                : Windows.UI.Xaml.Visibility.Visible;
+                ? Microsoft.UI.Xaml.Visibility.Collapsed
+                : Microsoft.UI.Xaml.Visibility.Visible;
 
             var days = new List<BusinessDay>(7);
             var target = (_switchToMyTime ? local : intervals).ToList();
@@ -172,7 +172,7 @@ namespace Telegram.Controls.Cells
             }
         }
 
-        private void Switch_Click(Windows.UI.Xaml.Documents.Hyperlink sender, Windows.UI.Xaml.Documents.HyperlinkClickEventArgs args)
+        private void Switch_Click(Microsoft.UI.Xaml.Documents.Hyperlink sender, Microsoft.UI.Xaml.Documents.HyperlinkClickEventArgs args)
         {
             _switchToMyTime = !_switchToMyTime;
 

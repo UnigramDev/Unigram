@@ -13,10 +13,10 @@ using Telegram.ViewModels.Authorization;
 using Telegram.ViewModels.Delegates;
 using Windows.Foundation;
 using Windows.UI.Composition;
-using Windows.UI.Xaml;
-using Windows.UI.Xaml.Hosting;
-using Windows.UI.Xaml.Input;
-using Windows.UI.Xaml.Navigation;
+using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Hosting;
+using Microsoft.UI.Xaml.Input;
+using Microsoft.UI.Xaml.Navigation;
 
 namespace Telegram.Views.Authorization
 {

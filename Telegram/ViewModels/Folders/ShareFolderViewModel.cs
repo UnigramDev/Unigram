@@ -14,7 +14,7 @@ using Telegram.Navigation.Services;
 using Telegram.Services;
 using Telegram.Td.Api;
 using Telegram.Views.Popups;
-using Windows.UI.Xaml.Navigation;
+using Microsoft.UI.Xaml.Navigation;
 
 namespace Telegram.ViewModels.Folders
 {

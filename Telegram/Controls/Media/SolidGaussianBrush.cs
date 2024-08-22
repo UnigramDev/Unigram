@@ -11,8 +11,8 @@ using Telegram.Common;
 using Windows.UI;
 using Windows.UI.Composition;
 using Windows.UI.Core;
-using Windows.UI.Xaml;
-using Windows.UI.Xaml.Media;
+using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Media;
 
 namespace Telegram.Controls.Media
 {

@@ -23,8 +23,8 @@ using Telegram.ViewModels.Delegates;
 using Telegram.Views.Folders;
 using Telegram.Views.Popups;
 using Windows.Foundation;
-using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Data;
+using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Data;
 
 namespace Telegram.ViewModels
 {

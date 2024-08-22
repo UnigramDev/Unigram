@@ -26,8 +26,8 @@ using Windows.Devices.Enumeration;
 using Windows.Graphics.Capture;
 using Windows.System.Display;
 using Windows.UI.ViewManagement;
-using Windows.UI.Xaml;
-using Windows.UI.Xaml.Controls;
+using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Controls;
 
 namespace Telegram.Services
 {

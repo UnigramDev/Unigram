@@ -8,9 +8,9 @@ using Telegram.Common;
 using Telegram.Controls.Messages;
 using Telegram.Services;
 using Telegram.Td.Api;
-using Windows.UI.Xaml.Automation;
-using Windows.UI.Xaml.Automation.Peers;
-using Windows.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Automation;
+using Microsoft.UI.Xaml.Automation.Peers;
+using Microsoft.UI.Xaml.Controls;
 
 namespace Telegram.Controls.Chats
 {

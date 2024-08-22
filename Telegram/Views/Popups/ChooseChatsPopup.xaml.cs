@@ -26,12 +26,12 @@ using Telegram.ViewModels.Folders;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.UI.Composition;
 using Windows.UI.Core;
-using Windows.UI.Xaml;
-using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Controls.Primitives;
-using Windows.UI.Xaml.Hosting;
-using Windows.UI.Xaml.Input;
-using Windows.UI.Xaml.Navigation;
+using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Controls.Primitives;
+using Microsoft.UI.Xaml.Hosting;
+using Microsoft.UI.Xaml.Input;
+using Microsoft.UI.Xaml.Navigation;
 
 namespace Telegram.Views.Popups
 {
@@ -825,7 +825,7 @@ namespace Telegram.Views.Popups
                 header.ItemTemplate = BootStrapper.Current.Resources["FolderPickerTemplate"] as DataTemplate;
                 header.ContainerContentChanging += Header_ContainerContentChanging;
                 header.Padding = new Thickness(12, 0, 12, 0);
-                header.ItemContainerTransitions = new Windows.UI.Xaml.Media.Animation.TransitionCollection();
+                header.ItemContainerTransitions = new Microsoft.UI.Xaml.Media.Animation.TransitionCollection();
 
                 foreach (var folder in target.OfType<FolderFlag>())
                 {

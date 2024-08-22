@@ -6,7 +6,7 @@
 //
 using Telegram.Common;
 using Telegram.ViewModels.Settings;
-using Windows.UI.Xaml.Navigation;
+using Microsoft.UI.Xaml.Navigation;
 
 namespace Telegram.Views.Settings
 {

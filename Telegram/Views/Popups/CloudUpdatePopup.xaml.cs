@@ -19,7 +19,7 @@ namespace Telegram.Views.Popups
             Closing += OnClosing;
         }
 
-        private void OnClosing(Windows.UI.Xaml.Controls.ContentDialog sender, Windows.UI.Xaml.Controls.ContentDialogClosingEventArgs args)
+        private void OnClosing(Microsoft.UI.Xaml.Controls.ContentDialog sender, Microsoft.UI.Xaml.Controls.ContentDialogClosingEventArgs args)
         {
             args.Cancel = _block;
         }

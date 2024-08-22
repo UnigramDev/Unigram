@@ -5,7 +5,7 @@
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
 using Telegram.Services;
-using Windows.UI.Xaml.Resources;
+using Microsoft.UI.Xaml.Resources;
 
 namespace Telegram.Common
 {

@@ -7,8 +7,8 @@
 using Telegram.Controls;
 using Telegram.Services;
 using Telegram.Td.Api;
-using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Input;
+using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Input;
 
 namespace Telegram.Views.Settings.Password
 {
@@ -109,7 +109,7 @@ namespace Telegram.Views.Settings.Password
             }
         }
 
-        private void Skip_Click(object sender, Windows.UI.Xaml.RoutedEventArgs e)
+        private void Skip_Click(object sender, Microsoft.UI.Xaml.RoutedEventArgs e)
         {
             Hide(ContentDialogResult.Primary);
         }

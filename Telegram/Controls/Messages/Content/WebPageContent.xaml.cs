@@ -16,12 +16,12 @@ using Telegram.Td.Api;
 using Telegram.ViewModels;
 using Windows.UI;
 using Windows.UI.Composition;
-using Windows.UI.Xaml;
-using Windows.UI.Xaml.Automation.Peers;
-using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Documents;
-using Windows.UI.Xaml.Hosting;
-using Windows.UI.Xaml.Media;
+using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Automation.Peers;
+using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Documents;
+using Microsoft.UI.Xaml.Hosting;
+using Microsoft.UI.Xaml.Media;
 
 namespace Telegram.Controls.Messages.Content
 {

@@ -8,9 +8,9 @@ using Telegram.Common;
 using Telegram.Controls;
 using Telegram.Td.Api;
 using Telegram.ViewModels.Stars;
-using Windows.UI.Xaml;
-using Windows.UI.Xaml.Automation;
-using Windows.UI.Xaml.Controls;
+using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Automation;
+using Microsoft.UI.Xaml.Controls;
 
 namespace Telegram.Views.Stars.Popups
 {

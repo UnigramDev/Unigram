@@ -23,7 +23,7 @@ using Windows.Media.Effects;
 using Windows.Media.MediaProperties;
 using Windows.Storage;
 using Windows.Storage.Pickers;
-using Windows.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Controls;
 
 namespace Telegram.ViewModels
 {

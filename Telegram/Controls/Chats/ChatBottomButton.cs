@@ -7,8 +7,8 @@
 using System.Numerics;
 using Telegram.Common;
 using Windows.UI.Composition;
-using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Hosting;
+using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Hosting;
 
 namespace Telegram.Controls.Chats
 {

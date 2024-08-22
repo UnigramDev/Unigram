@@ -12,11 +12,11 @@ using Telegram.Services;
 using Telegram.Streams;
 using Telegram.Td.Api;
 using Telegram.ViewModels.Drawers;
-using Windows.UI.Xaml;
-using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Hosting;
-using Windows.UI.Xaml.Media;
-using Windows.UI.Xaml.Shapes;
+using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Hosting;
+using Microsoft.UI.Xaml.Media;
+using Microsoft.UI.Xaml.Shapes;
 using Point = Windows.Foundation.Point;
 
 namespace Telegram.Views.Popups

@@ -10,7 +10,7 @@ using Windows.Foundation;
 using Windows.System;
 using Windows.UI.Core;
 using Windows.UI.Input;
-using Windows.UI.Xaml;
+using Microsoft.UI.Xaml;
 
 namespace Telegram.Services.Keyboard
 {

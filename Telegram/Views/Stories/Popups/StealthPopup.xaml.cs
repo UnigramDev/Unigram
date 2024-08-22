@@ -10,8 +10,8 @@ using Telegram.Controls;
 using Telegram.Controls.Media;
 using Telegram.Services;
 using Telegram.Td.Api;
-using Windows.UI.Xaml;
-using Windows.UI.Xaml.Controls;
+using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Controls;
 
 namespace Telegram.Views.Stories.Popups
 {

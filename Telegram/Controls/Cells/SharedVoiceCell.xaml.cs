@@ -10,7 +10,7 @@ using Telegram.Converters;
 using Telegram.Services;
 using Telegram.Td.Api;
 using Telegram.ViewModels;
-using Windows.UI.Xaml;
+using Microsoft.UI.Xaml;
 
 namespace Telegram.Controls.Cells
 {

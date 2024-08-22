@@ -11,11 +11,11 @@ using System.Linq;
 using Telegram.Td.Api;
 using Telegram.ViewModels;
 using Windows.Foundation;
-using Windows.UI.Xaml;
-using Windows.UI.Xaml.Automation.Peers;
-using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Input;
-using Windows.UI.Xaml.Media.Animation;
+using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Automation.Peers;
+using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Input;
+using Microsoft.UI.Xaml.Media.Animation;
 
 namespace Telegram.Controls.Messages
 {

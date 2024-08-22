@@ -27,8 +27,8 @@ using Telegram.Views.Folders;
 using Telegram.Views.Popups;
 using Telegram.Views.Settings.Popups;
 using Telegram.Views.Settings.Privacy;
-using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Navigation;
+using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Navigation;
 
 namespace Telegram.ViewModels
 {

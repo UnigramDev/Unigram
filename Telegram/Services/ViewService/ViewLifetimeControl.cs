@@ -33,7 +33,7 @@ using Telegram.Navigation;
 using Telegram.Views.Host;
 using Windows.UI.Core;
 using Windows.UI.ViewManagement;
-using Windows.UI.Xaml;
+using Microsoft.UI.Xaml;
 
 namespace Telegram.Services.ViewService
 {

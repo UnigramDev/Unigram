@@ -17,8 +17,8 @@ using Telegram.Services.Updates;
 using Telegram.Td.Api;
 using Telegram.Views.Payments;
 using Telegram.Views.Popups;
-using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Navigation;
+using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Navigation;
 
 namespace Telegram.ViewModels.Payments
 {

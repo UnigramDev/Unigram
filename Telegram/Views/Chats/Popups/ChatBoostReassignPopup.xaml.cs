@@ -13,9 +13,9 @@ using Telegram.Converters;
 using Telegram.Services;
 using Telegram.Services.Updates;
 using Telegram.Td.Api;
-using Windows.UI.Xaml;
-using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Controls.Primitives;
+using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Controls.Primitives;
 
 namespace Telegram.Views.Chats.Popups
 {
@@ -136,12 +136,12 @@ namespace Telegram.Views.Chats.Popups
 
         #endregion
 
-        private void PurchaseShadow_Loaded(object sender, Windows.UI.Xaml.RoutedEventArgs e)
+        private void PurchaseShadow_Loaded(object sender, Microsoft.UI.Xaml.RoutedEventArgs e)
         {
             DropShadowEx.Attach(PurchaseShadow);
         }
 
-        private async void Purchase_Click(object sender, Windows.UI.Xaml.RoutedEventArgs e)
+        private async void Purchase_Click(object sender, Microsoft.UI.Xaml.RoutedEventArgs e)
         {
             var selected = ScrollingHost.SelectedItems
                 .OfType<ChatBoostSlot>()

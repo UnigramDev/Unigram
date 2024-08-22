@@ -13,9 +13,9 @@ using Telegram.Navigation.Services;
 using Telegram.Services;
 using Telegram.Td.Api;
 using Windows.Foundation;
-using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Data;
-using Windows.UI.Xaml.Navigation;
+using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Data;
+using Microsoft.UI.Xaml.Navigation;
 
 namespace Telegram.ViewModels.Chats
 {

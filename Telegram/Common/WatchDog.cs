@@ -21,10 +21,10 @@ using Windows.ApplicationModel.Activation;
 using Windows.Storage;
 using Windows.System;
 using Windows.System.Profile;
-using Windows.UI.Xaml;
-using Windows.UI.Xaml.Automation.Peers;
-using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Media;
+using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Automation.Peers;
+using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Media;
 using File = System.IO.File;
 
 namespace Telegram
@@ -160,7 +160,7 @@ namespace Telegram
         }
 
         [HandleProcessCorruptedStateExceptions, SecurityCritical]
-        private static void OnUnhandledException(object sender, Windows.UI.Xaml.UnhandledExceptionEventArgs args)
+        private static void OnUnhandledException(object sender, Microsoft.UI.Xaml.UnhandledExceptionEventArgs args)
         {
             args.Handled = args.Exception is not LayoutCycleException;
 

@@ -7,7 +7,7 @@
 using System;
 using System.Threading.Tasks;
 using Telegram.Controls;
-using Windows.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Controls;
 
 namespace Telegram.Common
 {

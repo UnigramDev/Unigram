@@ -10,7 +10,7 @@ using Telegram.Common;
 using Telegram.Controls;
 using Telegram.Native;
 using Windows.System.UserProfile;
-using Windows.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Controls;
 
 namespace Telegram.Views.Popups
 {

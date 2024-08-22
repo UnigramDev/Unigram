@@ -10,9 +10,9 @@ using Telegram.Controls.Gallery;
 using Telegram.Td.Api;
 using Telegram.ViewModels;
 using Telegram.ViewModels.Chats;
-using Windows.UI.Xaml;
-using Windows.UI.Xaml.Automation;
-using Windows.UI.Xaml.Controls;
+using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Automation;
+using Microsoft.UI.Xaml.Controls;
 
 namespace Telegram.Views.Profile
 {

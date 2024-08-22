@@ -2,9 +2,9 @@
 using System.Globalization;
 using Telegram.Td.Api;
 using Telegram.ViewModels.Business;
-using Windows.UI.Xaml;
-using Windows.UI.Xaml.Media;
-using Windows.UI.Xaml.Media.Imaging;
+using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Media;
+using Microsoft.UI.Xaml.Media.Imaging;
 
 namespace Telegram.Views.Business
 {

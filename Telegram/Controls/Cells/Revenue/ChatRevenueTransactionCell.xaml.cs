@@ -3,8 +3,8 @@ using System.Globalization;
 using Telegram.Converters;
 using Telegram.Navigation;
 using Telegram.Td.Api;
-using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Media;
+using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Media;
 
 namespace Telegram.Controls.Cells.Revenue
 {

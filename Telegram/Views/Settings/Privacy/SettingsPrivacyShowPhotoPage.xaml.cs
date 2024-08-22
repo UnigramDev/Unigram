@@ -8,7 +8,7 @@ using Telegram.Td.Api;
 using Telegram.ViewModels.Delegates;
 using Telegram.ViewModels.Settings;
 using Telegram.ViewModels.Settings.Privacy;
-using Windows.UI.Xaml;
+using Microsoft.UI.Xaml;
 
 namespace Telegram.Views.Settings.Privacy
 {

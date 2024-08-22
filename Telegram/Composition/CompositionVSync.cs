@@ -5,7 +5,7 @@
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
 using System;
-using Windows.UI.Xaml.Media;
+using Microsoft.UI.Xaml.Media;
 
 namespace Telegram.Composition
 {

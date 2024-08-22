@@ -8,8 +8,8 @@ using System;
 using Telegram.Services;
 using Telegram.Streams;
 using Telegram.Td.Api;
-using Windows.UI.Xaml;
-using Windows.UI.Xaml.Controls;
+using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Controls;
 
 namespace Telegram.Controls.Cells.Premium
 {

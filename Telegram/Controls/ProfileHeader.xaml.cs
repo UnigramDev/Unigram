@@ -27,13 +27,13 @@ using Windows.Foundation;
 using Windows.UI;
 using Windows.UI.Composition;
 using Windows.UI.Text;
-using Windows.UI.Xaml;
-using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Controls.Primitives;
-using Windows.UI.Xaml.Documents;
-using Windows.UI.Xaml.Hosting;
-using Windows.UI.Xaml.Input;
-using Windows.UI.Xaml.Media;
+using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Controls.Primitives;
+using Microsoft.UI.Xaml.Documents;
+using Microsoft.UI.Xaml.Hosting;
+using Microsoft.UI.Xaml.Input;
+using Microsoft.UI.Xaml.Media;
 using Point = Windows.Foundation.Point;
 
 namespace Telegram.Controls
@@ -1580,7 +1580,7 @@ namespace Telegram.Controls
             player.IsCachingEnabled = true;
             player.IsHitTestVisible = false;
             player.FrameSize = new Size(320, 320);
-            player.DecodeFrameType = Windows.UI.Xaml.Media.Imaging.DecodePixelType.Logical;
+            player.DecodeFrameType = Microsoft.UI.Xaml.Media.Imaging.DecodePixelType.Logical;
             player.AutoPlay = true;
             player.Source = new DelayedFileSource(ViewModel.ClientService, effect.StickerValue);
             player.RenderTransformOrigin = new Point(0.5, 0.5);
@@ -1637,7 +1637,7 @@ namespace Telegram.Controls
                 pippo.IsCachingEnabled = true;
                 pippo.IsHitTestVisible = false;
                 pippo.FrameSize = new Size(size, size);
-                pippo.DecodeFrameType = Windows.UI.Xaml.Media.Imaging.DecodePixelType.Logical;
+                pippo.DecodeFrameType = Microsoft.UI.Xaml.Media.Imaging.DecodePixelType.Logical;
                 pippo.AutoPlay = true;
                 pippo.Source = new DelayedFileSource(ViewModel.ClientService, digit.StickerValue);
 

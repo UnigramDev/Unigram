@@ -23,7 +23,7 @@ using Telegram.ViewModels.Stories;
 using Telegram.Views;
 using Telegram.Views.Popups;
 using Windows.Foundation;
-using Windows.UI.Xaml;
+using Microsoft.UI.Xaml;
 using Point = Windows.Foundation.Point;
 
 namespace Telegram.ViewModels

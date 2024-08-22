@@ -16,7 +16,7 @@ using Telegram.Td.Api;
 using Telegram.Views;
 using Windows.ApplicationModel.Resources;
 using Windows.Storage;
-using Windows.UI.Xaml;
+using Microsoft.UI.Xaml;
 
 namespace Telegram.Services
 {

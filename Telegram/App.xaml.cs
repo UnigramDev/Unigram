@@ -57,8 +57,8 @@ using Windows.ApplicationModel.DataTransfer.ShareTarget;
 using Windows.ApplicationModel.ExtendedExecution;
 using Windows.UI.Notifications;
 using Windows.UI.ViewManagement;
-using Windows.UI.Xaml;
-using Windows.UI.Xaml.Controls;
+using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Controls;
 
 namespace Telegram
 {

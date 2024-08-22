@@ -9,7 +9,7 @@ using Telegram.Common;
 using Telegram.Navigation.Services;
 using Telegram.Services;
 using Telegram.Td.Api;
-using Windows.UI.Xaml.Navigation;
+using Microsoft.UI.Xaml.Navigation;
 
 namespace Telegram.ViewModels.Settings.Privacy
 {

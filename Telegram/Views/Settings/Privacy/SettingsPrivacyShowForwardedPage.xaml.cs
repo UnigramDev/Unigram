@@ -13,10 +13,10 @@ using Telegram.ViewModels;
 using Telegram.ViewModels.Settings;
 using Telegram.ViewModels.Settings.Privacy;
 using Windows.Foundation.Metadata;
-using Windows.UI.Xaml;
-using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Media;
-using Windows.UI.Xaml.Navigation;
+using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Media;
+using Microsoft.UI.Xaml.Navigation;
 
 namespace Telegram.Views.Settings.Privacy
 {
@@ -29,7 +29,7 @@ namespace Telegram.Views.Settings.Privacy
             InitializeComponent();
             Title = Strings.PrivacyForwards;
 
-            if (ApiInformation.IsPropertyPresent("Windows.UI.Xaml.UIElement", "Shadow"))
+            if (ApiInformation.IsPropertyPresent("Microsoft.UI.Xaml.UIElement", "Shadow"))
             {
                 var themeShadow = new ThemeShadow();
                 ToolTip.Shadow = themeShadow;

@@ -4,10 +4,10 @@ using System.Collections.Generic;
 using System.Numerics;
 using Telegram.Common;
 using Windows.UI.Composition;
-using Windows.UI.Xaml;
-using Windows.UI.Xaml.Hosting;
+using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Hosting;
 
-namespace Windows.UI.Xaml.Hosting
+namespace Microsoft.UI.Xaml.Hosting
 {
     public static class ElementComposition
     {

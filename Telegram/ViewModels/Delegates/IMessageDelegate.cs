@@ -8,7 +8,7 @@ using System.Collections.Generic;
 using Telegram.Navigation.Services;
 using Telegram.Services;
 using Telegram.Td.Api;
-using Windows.UI.Xaml;
+using Microsoft.UI.Xaml;
 
 namespace Telegram.ViewModels.Delegates
 {

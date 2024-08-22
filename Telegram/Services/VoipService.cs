@@ -21,7 +21,7 @@ using Windows.ApplicationModel.Calls;
 using Windows.Devices.Enumeration;
 using Windows.Graphics.Capture;
 using Windows.Storage;
-using Windows.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Controls;
 
 namespace Telegram.Services
 {

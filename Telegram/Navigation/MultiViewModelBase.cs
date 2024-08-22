@@ -9,7 +9,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Telegram.Navigation.Services;
 using Telegram.Services;
-using Windows.UI.Xaml.Navigation;
+using Microsoft.UI.Xaml.Navigation;
 
 namespace Telegram.Navigation
 {

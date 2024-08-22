@@ -7,10 +7,10 @@
 using System;
 using System.Numerics;
 using Windows.UI.Composition;
-using Windows.UI.Xaml;
-using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Hosting;
-using Windows.UI.Xaml.Media;
+using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Hosting;
+using Microsoft.UI.Xaml.Media;
 
 namespace Telegram.Controls
 {
@@ -167,7 +167,7 @@ namespace Telegram.Controls
             //{
             //    if (value > 0.0 && value < 359.0)
             //    {
-            //        Visibility = Windows.UI.Xaml.Visibility.Visible;
+            //        Visibility = Microsoft.UI.Xaml.Visibility.Visible;
             //    }
 
             //    if (value > Indicator.StartAngle)

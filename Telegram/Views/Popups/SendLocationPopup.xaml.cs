@@ -15,10 +15,10 @@ using Telegram.ViewModels;
 using Windows.Devices.Geolocation;
 using Windows.Foundation;
 using Windows.UI.Composition;
-using Windows.UI.Xaml;
-using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Hosting;
-using Windows.UI.Xaml.Media.Imaging;
+using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Hosting;
+using Microsoft.UI.Xaml.Media.Imaging;
 
 namespace Telegram.Views.Popups
 {

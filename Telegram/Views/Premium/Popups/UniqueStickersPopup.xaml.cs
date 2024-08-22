@@ -7,7 +7,7 @@
 using Telegram.Controls;
 using Telegram.Services;
 using Telegram.Td.Api;
-using Windows.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Controls;
 
 namespace Telegram.Views.Premium.Popups
 {
@@ -28,12 +28,12 @@ namespace Telegram.Views.Premium.Popups
         {
         }
 
-        private void Purchase_Click(object sender, Windows.UI.Xaml.RoutedEventArgs e)
+        private void Purchase_Click(object sender, Microsoft.UI.Xaml.RoutedEventArgs e)
         {
 
         }
 
-        private void PurchaseShadow_Loaded(object sender, Windows.UI.Xaml.RoutedEventArgs e)
+        private void PurchaseShadow_Loaded(object sender, Microsoft.UI.Xaml.RoutedEventArgs e)
         {
 
         }

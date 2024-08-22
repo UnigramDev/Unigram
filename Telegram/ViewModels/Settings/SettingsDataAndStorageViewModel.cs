@@ -18,8 +18,8 @@ using Telegram.Views.Popups;
 using Telegram.Views.Settings;
 using Telegram.Views.Settings.Popups;
 using Windows.Storage.Pickers;
-using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Navigation;
+using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Navigation;
 
 namespace Telegram.ViewModels.Settings
 {

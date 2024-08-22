@@ -10,11 +10,11 @@ using System.Numerics;
 using Windows.Foundation;
 using Windows.UI;
 using Windows.UI.Composition;
-using Windows.UI.Xaml;
-using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Hosting;
-using Windows.UI.Xaml.Media;
-using Windows.UI.Xaml.Shapes;
+using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Hosting;
+using Microsoft.UI.Xaml.Media;
+using Microsoft.UI.Xaml.Shapes;
 
 namespace Telegram.Controls
 {
@@ -116,7 +116,7 @@ namespace Telegram.Controls
             base.OnApplyTemplate();
         }
 
-        private void Thumb_PointerPressed(object sender, Windows.UI.Xaml.Input.PointerRoutedEventArgs e)
+        private void Thumb_PointerPressed(object sender, Microsoft.UI.Xaml.Input.PointerRoutedEventArgs e)
         {
             ((UIElement)sender).CapturePointer(e.Pointer);
 
@@ -129,7 +129,7 @@ namespace Telegram.Controls
             e.Handled = true;
         }
 
-        private void Thumb_PointerReleased(object sender, Windows.UI.Xaml.Input.PointerRoutedEventArgs e)
+        private void Thumb_PointerReleased(object sender, Microsoft.UI.Xaml.Input.PointerRoutedEventArgs e)
         {
             var pointer = e.GetCurrentPoint(_container);
             m_pointerPositions.Remove(pointer.PointerId);
@@ -143,7 +143,7 @@ namespace Telegram.Controls
             e.Handled = true;
         }
 
-        private void Thumb_PointerMoved(object sender, Windows.UI.Xaml.Input.PointerRoutedEventArgs e)
+        private void Thumb_PointerMoved(object sender, Microsoft.UI.Xaml.Input.PointerRoutedEventArgs e)
         {
             if (e.Pointer.IsInContact && m_pointerPositions.TryGetValue(e.Pointer.PointerId, out _))
             {
