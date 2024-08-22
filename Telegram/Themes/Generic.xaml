@@ -7319,7 +7319,7 @@
                 Value="Stretch" />
     </Style>
 
-    <Style TargetType="local:EdgeWebPresenter">
+    <!--<Style TargetType="local:EdgeWebPresenter">
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="local:EdgeWebPresenter">
@@ -7327,7 +7327,7 @@
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
-    </Style>
+    </Style>-->
 
     <Style TargetType="local:ChromiumWebPresenter">
         <Setter Property="Template">

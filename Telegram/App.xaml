@@ -33,8 +33,7 @@
                                         TintColor="#2C2C2C"
                                         TintOpacity="0.15"
                                         TintLuminosityOpacity="1"
-                                        FallbackColor="#2C2C2C"
-                                        BackgroundSource="Backdrop" />
+                                        FallbackColor="#2C2C2C" />
 
                     <StaticResource x:Key="UndoViewBackgroundBrush"
                                     ResourceKey="SystemControlChromeMediumAcrylicElementMediumBrush" />
@@ -72,8 +71,7 @@
                                         TintColor="#FCFCFC"
                                         TintOpacity="0.0"
                                         TintLuminosityOpacity="1"
-                                        FallbackColor="#F9F9F9"
-                                        BackgroundSource="Backdrop" />
+                                        FallbackColor="#F9F9F9" />
 
                     <StaticResource x:Key="UndoViewBackgroundBrush"
                                     ResourceKey="SystemControlChromeMediumAcrylicElementMediumBrush" />
