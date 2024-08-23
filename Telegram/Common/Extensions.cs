@@ -42,6 +42,7 @@ using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
 using Windows.UI.Xaml.Documents;
+using Windows.UI.Xaml.Hosting;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Media.Imaging;
 using Windows.UI.Xaml.Navigation;
@@ -562,6 +563,18 @@ namespace Telegram.Common
             {
                 // All the remote procedure calls must be wrapped in a try-catch block
             }
+        }
+
+        public static void CreateInsetClip(this UIElement element)
+        {
+            var visual = ElementComposition.GetElementVisual(element);
+            visual.Clip = visual.Compositor.CreateInsetClip();
+        }
+
+        public static void CreateInsetClip(this UIElement element, float leftInset, float topInset, float rightInset, float bottomInset)
+        {
+            var visual = ElementComposition.GetElementVisual(element);
+            visual.Clip = visual.Compositor.CreateInsetClip(leftInset, topInset, rightInset, bottomInset);
         }
 
         public static void Clear(this ITextDocument document)

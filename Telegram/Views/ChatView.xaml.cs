@@ -157,7 +157,7 @@ namespace Telegram.Views
                 _dateHeaderPanel = ElementComposition.GetElementVisual(DateHeaderRelative);
                 _dateHeader = ElementComposition.GetElementVisual(DateHeader);
 
-                _dateHeaderPanel.Clip = BootStrapper.Current.Compositor.CreateInsetClip();
+                _dateHeaderPanel.Clip = _dateHeaderPanel.Compositor.CreateInsetClip();
             }
 
             _debouncer = new DispatcherTimer();
@@ -4960,7 +4960,7 @@ namespace Telegram.Views
             }
             else
             {
-                messages.Clip = BootStrapper.Current.Compositor.CreateInsetClip(0, -44, 0, -8 - radius);
+                messages.Clip = messages.Compositor.CreateInsetClip(0, -44, 0, -8 - radius);
             }
         }
 

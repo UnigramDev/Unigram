@@ -6,14 +6,12 @@
 //
 using System;
 using Telegram.Common;
-using Telegram.Navigation;
 using Telegram.Services.Settings;
 using Telegram.Streams;
 using Telegram.Td.Api;
 using Telegram.ViewModels.Drawers;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Hosting;
 using Windows.UI.Xaml.Input;
 using Point = Windows.Foundation.Point;
 
@@ -67,7 +65,7 @@ namespace Telegram.Controls.Drawers
             _zoomer.DownloadFile = fileId => ViewModel.ClientService.DownloadFile(fileId, 32);
             _zoomer.SessionId = () => ViewModel.ClientService.SessionId;
 
-            ElementComposition.GetElementVisual(this).Clip = BootStrapper.Current.Compositor.CreateInsetClip();
+            this.CreateInsetClip();
 
             var header = VisualUtilities.DropShadow(Separator);
             header.Clip = header.Compositor.CreateInsetClip(0, 40, 0, -40);

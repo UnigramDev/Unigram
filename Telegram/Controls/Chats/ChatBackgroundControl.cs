@@ -15,7 +15,6 @@ using Windows.UI;
 using Windows.UI.Composition;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Hosting;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Media.Imaging;
 using Windows.UI.Xaml.Shapes;
@@ -39,7 +38,7 @@ namespace Telegram.Controls.Chats
             _presenter = new ChatBackgroundPresenter();
             _compositor = BootStrapper.Current.Compositor;
 
-            ElementComposition.GetElementVisual(this).Clip = _compositor.CreateInsetClip();
+            this.CreateInsetClip();
 
             Children.Add(_presenter);
 

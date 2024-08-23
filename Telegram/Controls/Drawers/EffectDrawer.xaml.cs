@@ -13,7 +13,6 @@ using Telegram.Td.Api;
 using Telegram.ViewModels.Drawers;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Hosting;
 
 namespace Telegram.Controls.Drawers
 {
@@ -35,7 +34,7 @@ namespace Telegram.Controls.Drawers
         {
             InitializeComponent();
 
-            ElementComposition.GetElementVisual(this).Clip = BootStrapper.Current.Compositor.CreateInsetClip();
+            this.CreateInsetClip();
 
             _handler = new AnimatedListHandler(List, AnimatedListType.Stickers);
 

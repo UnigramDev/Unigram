@@ -149,23 +149,23 @@ namespace Telegram.Controls.Chats
             Opening?.Invoke(this, EventArgs.Empty);
 
             _stickersPanel.Opacity = 0;
-            _stickersPanel.Clip = BootStrapper.Current.Compositor.CreateInsetClip(48, 48, 0, 0);
+            _stickersPanel.Clip = _stickersPanel.Compositor.CreateInsetClip(48, 48, 0, 0);
 
             _stickersShadow.Opacity = 0;
-            _stickersShadow.Clip = BootStrapper.Current.Compositor.CreateInsetClip(48, 48, -48, -4);
+            _stickersShadow.Clip = _stickersPanel.Compositor.CreateInsetClip(48, 48, -48, -4);
 
             ControlledPanel.Visibility = Visibility.Visible;
             ControlledPanel.Activate();
 
-            var opacity = BootStrapper.Current.Compositor.CreateScalarKeyFrameAnimation();
+            var opacity = _stickersPanel.Compositor.CreateScalarKeyFrameAnimation();
             opacity.InsertKeyFrame(0, 0);
             opacity.InsertKeyFrame(1, 1);
 
-            var clip = BootStrapper.Current.Compositor.CreateScalarKeyFrameAnimation();
+            var clip = _stickersPanel.Compositor.CreateScalarKeyFrameAnimation();
             clip.InsertKeyFrame(0, 48);
             clip.InsertKeyFrame(1, 0);
 
-            var clipShadow = BootStrapper.Current.Compositor.CreateScalarKeyFrameAnimation();
+            var clipShadow = _stickersPanel.Compositor.CreateScalarKeyFrameAnimation();
             clipShadow.InsertKeyFrame(0, 48);
             clipShadow.InsertKeyFrame(1, -48);
 
