@@ -587,7 +587,7 @@ namespace Telegram.Controls
             popup.Width = popup.MinWidth = popup.MaxWidth = 314;
             popup.IsLightDismissEnabled = true;
 
-            var confirm = await popup.ShowQueuedAsync();
+            var confirm = await popup.ShowQueuedAsync(XamlRoot);
             if (confirm != true)
             {
                 return;

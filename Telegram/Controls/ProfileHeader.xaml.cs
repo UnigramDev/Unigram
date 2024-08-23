@@ -1568,7 +1568,7 @@ namespace Telegram.Controls
                 return;
             }
 
-            foreach (var popup2 in VisualTreeHelper.GetOpenPopups(Window.Current))
+            foreach (var popup2 in VisualTreeHelper.GetOpenPopupsForXamlRoot(XamlRoot))
             {
                 popup2.IsOpen = false;
             }

@@ -150,7 +150,7 @@ namespace Telegram.Controls
 
         private void OnOpened(ContentDialog sender, ContentDialogOpenedEventArgs args)
         {
-            if (Window.Current.Content is RootPage root)
+            if (XamlRoot.Content is RootPage root)
             {
                 root.PopupOpened();
             }
@@ -173,7 +173,7 @@ namespace Telegram.Controls
 
         private void OnClosed(ContentDialog sender, ContentDialogClosedEventArgs args)
         {
-            if (Window.Current.Content is RootPage root)
+            if (XamlRoot.Content is RootPage root)
             {
                 root.PopupClosed();
             }

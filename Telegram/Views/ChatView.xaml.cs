@@ -927,7 +927,7 @@ namespace Telegram.Views
             {
                 ViewVisibleMessages(true);
 
-                var popups = VisualTreeHelper.GetOpenPopups(Window.Current);
+                var popups = VisualTreeHelper.GetOpenPopupsForXamlRoot(XamlRoot);
                 if (popups.Count > 0)
                 {
                     return;
@@ -966,7 +966,7 @@ namespace Telegram.Views
         {
             if (e.Visible)
             {
-                var popups = VisualTreeHelper.GetOpenPopups(Window.Current);
+                var popups = VisualTreeHelper.GetOpenPopupsForXamlRoot(XamlRoot);
                 if (popups.Count > 0)
                 {
                     return;
@@ -1013,7 +1013,7 @@ namespace Telegram.Views
             var focused = FocusManager.GetFocusedElement();
             if (focused is null or (not TextBox and not RichEditBox))
             {
-                foreach (var popup in VisualTreeHelper.GetOpenPopups(Window.Current))
+                foreach (var popup in VisualTreeHelper.GetOpenPopupsForXamlRoot(XamlRoot))
                 {
                     if (popup.Child is not ToolTip and not TeachingTip)
                     {
@@ -1128,7 +1128,7 @@ namespace Telegram.Views
             }
             else if (args.VirtualKey == VirtualKey.PageUp && args.OnlyKey && TextField.Document.Selection.StartPosition == 0 && ViewModel.Autocomplete == null)
             {
-                var popups = VisualTreeHelper.GetOpenPopups(Window.Current);
+                var popups = VisualTreeHelper.GetOpenPopupsForXamlRoot(XamlRoot);
                 if (popups.Count > 0)
                 {
                     return;
@@ -1171,7 +1171,7 @@ namespace Telegram.Views
             }
             else if ((args.VirtualKey == VirtualKey.PageDown || args.VirtualKey == VirtualKey.Down) && args.OnlyKey && TextField.Document.Selection.StartPosition == TextField.Document.GetRange(int.MaxValue, int.MaxValue).EndPosition && ViewModel.Autocomplete == null)
             {
-                var popups = VisualTreeHelper.GetOpenPopups(Window.Current);
+                var popups = VisualTreeHelper.GetOpenPopupsForXamlRoot(XamlRoot);
                 if (popups.Count > 0)
                 {
                     return;
@@ -2436,7 +2436,7 @@ namespace Telegram.Views
             var selectionStart = -1;
             var selectionEnd = -1;
 
-            if (args.TryGetPosition(Window.Current.Content as FrameworkElement, out Point point))
+            if (args.TryGetPosition(XamlRoot.Content, out Point point))
             {
                 var children = VisualTreeHelper.FindElementsInHostCoordinates(point, element);
 

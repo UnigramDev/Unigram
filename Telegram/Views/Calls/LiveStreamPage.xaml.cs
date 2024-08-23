@@ -445,7 +445,7 @@ namespace Telegram.Views.Calls
 
         private Task ConsolidateAsync()
         {
-            if (Window.Current.Content is RootPage root)
+            if (XamlRoot.Content is RootPage root)
             {
                 root.PresentContent(null);
                 return Task.CompletedTask;

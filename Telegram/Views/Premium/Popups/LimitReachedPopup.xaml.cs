@@ -340,7 +340,7 @@ namespace Telegram.Views.Premium.Popups
                 }
             };
 
-            if (Window.Current.Content is IToastHost host)
+            if (XamlRoot.Content is IToastHost host)
             {
                 void handler(object sender, object e)
                 {

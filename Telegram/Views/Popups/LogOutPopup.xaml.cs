@@ -33,7 +33,7 @@ namespace Telegram.Views
         {
             Hide();
 
-            if (Window.Current.Content is RootPage root)
+            if (XamlRoot.Content is RootPage root)
             {
                 root.Create();
             }

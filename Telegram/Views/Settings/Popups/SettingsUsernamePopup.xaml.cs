@@ -124,7 +124,7 @@ namespace Telegram.Views.Settings.Popups
                 ViewModel.ToggleUsername(username);
             };
 
-            if (Window.Current.Content is IToastHost host)
+            if (XamlRoot.Content is IToastHost host)
             {
                 void handler(object sender, object e)
                 {

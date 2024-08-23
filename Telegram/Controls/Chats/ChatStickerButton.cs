@@ -83,7 +83,7 @@ namespace Telegram.Controls.Chats
             {
                 _stickersTimer.Stop();
 
-                var popups = VisualTreeHelper.GetOpenPopups(Window.Current);
+                var popups = VisualTreeHelper.GetOpenPopupsForXamlRoot(XamlRoot);
 
                 foreach (var popup in popups)
                 {

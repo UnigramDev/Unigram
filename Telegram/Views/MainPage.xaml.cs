@@ -1086,7 +1086,7 @@ namespace Telegram.Views
             var focused = FocusManager.GetFocusedElement();
             if (focused is null or (not TextBox and not RichEditBox))
             {
-                var popups = VisualTreeHelper.GetOpenPopups(Window.Current);
+                var popups = VisualTreeHelper.GetOpenPopupsForXamlRoot(XamlRoot);
                 if (popups.Count > 0)
                 {
                     return;
@@ -1439,7 +1439,12 @@ namespace Telegram.Views
                 }
             }
 
-            var popups = VisualTreeHelper.GetOpenPopups(Window.Current);
+            if (XamlRoot == null)
+            {
+                return;
+            }
+
+            var popups = VisualTreeHelper.GetOpenPopupsForXamlRoot(XamlRoot);
             if (popups != null)
             {
                 foreach (var popup in popups)
