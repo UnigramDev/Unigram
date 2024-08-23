@@ -872,7 +872,7 @@ namespace Telegram.Controls
                 {
                     if (_task != null)
                     {
-                        _loader.Activated -= OnActivated;
+                        //_loader.Activated -= OnActivated;
                         _loader.Remove(_presentation);
 
                         if (_ticking)
@@ -1041,7 +1041,7 @@ namespace Telegram.Controls
                 }
                 else if (_task != null && tracker == 0)
                 {
-                    _loader.Activated -= OnActivated;
+                    //_loader.Activated -= OnActivated;
                     _loader.Remove(_presentation);
 
                     if (_ticking)
@@ -1092,7 +1092,7 @@ namespace Telegram.Controls
             if (_presentation.LoopCount != 1)
             {
                 _activated = true;
-                _loader.Activated += OnActivated;
+                //_loader.Activated += OnActivated;
             }
 
             _createdResourcesLock.Release();
@@ -1115,24 +1115,24 @@ namespace Telegram.Controls
             _pausedLock.Release();
         }
 
-        private async void OnActivated(object sender, WindowActivatedEventArgs args)
-        {
-            if (_disposed)
-            {
-                //UnregisterEvents();
+        //private async void OnActivated(object sender, WindowActivatedEventArgs args)
+        //{
+        //    if (_disposed)
+        //    {
+        //        //UnregisterEvents();
 
-                _loader.Activated -= OnActivated;
-                return;
-            }
+        //        _loader.Activated -= OnActivated;
+        //        return;
+        //    }
 
-            var activated = args.WindowActivationState != CoreWindowActivationState.Deactivated;
-            var subscribe = await Task.Run(() => Activated(activated));
+        //    var activated = args.WindowActivationState != CoreWindowActivationState.Deactivated;
+        //    var subscribe = await Task.Run(() => Activated(activated));
 
-            if (subscribe)
-            {
-                RegisterRendering();
-            }
-        }
+        //    if (subscribe)
+        //    {
+        //        RegisterRendering();
+        //    }
+        //}
 
         public bool Activated(bool active)
         {
@@ -1288,7 +1288,7 @@ namespace Telegram.Controls
             _foregroundNext = null;
             _backgroundNext = null;
 
-            _loader.Activated -= OnActivated;
+            //_loader.Activated -= OnActivated;
             _loader.Remove(_presentation);
         }
 
@@ -1633,11 +1633,11 @@ namespace Telegram.Controls
             }
         }
 
-        public event EventHandler<WindowActivatedEventArgs> Activated
-        {
-            add => _window.Activated += value;
-            remove => _window.Activated -= value;
-        }
+        //public event EventHandler<WindowActivatedEventArgs> Activated
+        //{
+        //    add => _window.Activated += value;
+        //    remove => _window.Activated -= value;
+        //}
 
         private void OnRendering(object sender, object e)
         {

@@ -18,15 +18,15 @@
 #include <winrt/Microsoft.Graphics.Canvas.Effects.h>
 #include <winrt/Windows.Storage.h>
 
-#include <Microsoft.Graphics.Canvas.h>
-#include <Microsoft.Graphics.Canvas.native.h>
+//#include <Microsoft.Graphics.Canvas.h>
+//#include <Microsoft.Graphics.Canvas.native.h>
 
 #include <d3d11.h>
 
-namespace ABI
-{
-    using namespace Microsoft::Graphics::Canvas;
-}
+//namespace ABI
+//{
+//    using namespace Microsoft::Graphics::Canvas;
+//}
 
 using namespace winrt::Microsoft::Graphics::Canvas;
 using namespace winrt::Microsoft::Graphics::Canvas::Effects;
@@ -268,9 +268,9 @@ struct VoipVideoRenderer : public rtc::VideoSinkInterface<webrtc::VideoFrame>
         }
         else
         {
-            m_bitmapY.as<ABI::ICanvasBitmap>()->SetPixelBytes(sizeY, (BYTE*)buffer->DataY());
-            m_bitmapU.as<ABI::ICanvasBitmap>()->SetPixelBytes(sizeUV, (BYTE*)buffer->DataU());
-            m_bitmapV.as<ABI::ICanvasBitmap>()->SetPixelBytes(sizeUV, (BYTE*)buffer->DataV());
+            //m_bitmapY.as<ABI::ICanvasBitmap>()->SetPixelBytes(sizeY, (BYTE*)buffer->DataY());
+            //m_bitmapU.as<ABI::ICanvasBitmap>()->SetPixelBytes(sizeUV, (BYTE*)buffer->DataU());
+            //m_bitmapV.as<ABI::ICanvasBitmap>()->SetPixelBytes(sizeUV, (BYTE*)buffer->DataV());
         }
 
         m_canvasControl->Invalidate();

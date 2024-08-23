@@ -2565,7 +2565,7 @@
         </Setter>
     </Style>
 
-    <Style TargetType="local:ConfettiView">
+    <!--<Style TargetType="local:ConfettiView">
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="local:ConfettiView">
@@ -2575,7 +2575,7 @@
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
-    </Style>
+    </Style>-->
 
     <Style TargetType="local:ScrollViewerScrim">
         <Setter Property="HorizontalAlignment"

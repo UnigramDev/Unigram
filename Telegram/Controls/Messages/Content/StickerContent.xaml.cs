@@ -316,54 +316,54 @@ namespace Telegram.Controls.Messages.Content
             var file = interaction.StickerValue;
             if (file.Local.IsDownloadingCompleted && Interactions.Children.Count < 4)
             {
-                var dispatcher = DispatcherQueue.GetForCurrentThread();
+                //var dispatcher = DispatcherQueue.GetForCurrentThread();
 
-                var height = 180 * message.ClientService.Config.GetNamedNumber("emojies_animated_zoom", 0.625f);
-                var player = new AnimatedImage();
-                player.Width = height * 3;
-                player.Height = height * 3;
-                //player.IsFlipped = !message.IsOutgoing;
-                player.LoopCount = 1;
-                player.IsHitTestVisible = false;
-                player.FrameSize = new Size(512, 512);
-                player.AutoPlay = true;
-                player.Source = new LocalFileSource(file);
-                player.LoopCompleted += (s, args) =>
-                {
-                    dispatcher.TryEnqueue(() =>
-                    {
-                        Interactions.Children.Remove(player);
+                //var height = 180 * message.ClientService.Config.GetNamedNumber("emojies_animated_zoom", 0.625f);
+                //var player = new AnimatedImage();
+                //player.Width = height * 3;
+                //player.Height = height * 3;
+                ////player.IsFlipped = !message.IsOutgoing;
+                //player.LoopCount = 1;
+                //player.IsHitTestVisible = false;
+                //player.FrameSize = new Size(512, 512);
+                //player.AutoPlay = true;
+                //player.Source = new LocalFileSource(file);
+                //player.LoopCompleted += (s, args) =>
+                //{
+                //    dispatcher.TryEnqueue(() =>
+                //    {
+                //        Interactions.Children.Remove(player);
 
-                        if (Interactions.Children.Count > 0)
-                        {
-                            return;
-                        }
+                //        if (Interactions.Children.Count > 0)
+                //        {
+                //            return;
+                //        }
 
-                        InteractionsPopup.IsOpen = false;
-                    });
-                };
+                //        InteractionsPopup.IsOpen = false;
+                //    });
+                //};
 
-                var random = new Random();
-                var x = height * (0.08 - (0.16 * random.NextDouble()));
-                var y = height * (0.08 - (0.16 * random.NextDouble()));
-                var shift = height * 0.075;
+                //var random = new Random();
+                //var x = height * (0.08 - (0.16 * random.NextDouble()));
+                //var y = height * (0.08 - (0.16 * random.NextDouble()));
+                //var shift = height * 0.075;
 
-                var left = (height * 2) - shift + x;
-                var right = 0 + shift - x;
-                var top = height + y;
-                var bottom = height - y;
+                //var left = (height * 2) - shift + x;
+                //var right = 0 + shift - x;
+                //var top = height + y;
+                //var bottom = height - y;
 
-                if (message.IsOutgoing)
-                {
-                    player.Margin = new Thickness(-left, -top, -right, -bottom);
-                }
-                else
-                {
-                    player.Margin = new Thickness(-right, -top, -left, -bottom);
-                }
+                //if (message.IsOutgoing)
+                //{
+                //    player.Margin = new Thickness(-left, -top, -right, -bottom);
+                //}
+                //else
+                //{
+                //    player.Margin = new Thickness(-right, -top, -left, -bottom);
+                //}
 
-                Interactions.Children.Add(player);
-                InteractionsPopup.IsOpen = true;
+                //Interactions.Children.Add(player);
+                //InteractionsPopup.IsOpen = true;
             }
             else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive)
             {
@@ -390,51 +390,51 @@ namespace Telegram.Controls.Messages.Content
             var file = regular.PremiumAnimation;
             if (file.Local.IsDownloadingCompleted && Interactions.Children.Count < 1)
             {
-                var dispatcher = DispatcherQueue.GetForCurrentThread();
+                //var dispatcher = DispatcherQueue.GetForCurrentThread();
 
-                var player = new AnimatedImage();
-                player.Width = 270;
-                player.Height = 270;
-                //player.IsFlipped = !message.IsOutgoing;
-                player.LoopCount = 1;
-                player.IsHitTestVisible = false;
-                player.FrameSize = new Size(270 * 2, 270 * 2);
-                player.AutoPlay = true;
-                player.Source = new LocalFileSource(file);
-                player.LoopCompleted += (s, args) =>
-                {
-                    dispatcher.TryEnqueue(() =>
-                    {
-                        Interactions.Children.Remove(player);
-                        InteractionsPopup.IsOpen = false;
-                    });
-                };
+                //var player = new AnimatedImage();
+                //player.Width = 270;
+                //player.Height = 270;
+                ////player.IsFlipped = !message.IsOutgoing;
+                //player.LoopCount = 1;
+                //player.IsHitTestVisible = false;
+                //player.FrameSize = new Size(270 * 2, 270 * 2);
+                //player.AutoPlay = true;
+                //player.Source = new LocalFileSource(file);
+                //player.LoopCompleted += (s, args) =>
+                //{
+                //    dispatcher.TryEnqueue(() =>
+                //    {
+                //        Interactions.Children.Remove(player);
+                //        InteractionsPopup.IsOpen = false;
+                //    });
+                //};
 
-                if (message.IsChannelPost || !message.IsOutgoing)
-                {
-                    player.RenderTransformOrigin = new Windows.Foundation.Point(0.5, 0.5);
-                    player.RenderTransform = new ScaleTransform
-                    {
-                        ScaleX = -1
-                    };
-                }
+                //if (message.IsChannelPost || !message.IsOutgoing)
+                //{
+                //    player.RenderTransformOrigin = new Windows.Foundation.Point(0.5, 0.5);
+                //    player.RenderTransform = new ScaleTransform
+                //    {
+                //        ScaleX = -1
+                //    };
+                //}
 
-                var left = 75;
-                var right = 15;
-                var top = 45;
-                var bottom = 45;
+                //var left = 75;
+                //var right = 15;
+                //var top = 45;
+                //var bottom = 45;
 
-                if (message.IsOutgoing)
-                {
-                    player.Margin = new Thickness(-left, -top, -right, -bottom);
-                }
-                else
-                {
-                    player.Margin = new Thickness(-right, -top, -left, -bottom);
-                }
+                //if (message.IsOutgoing)
+                //{
+                //    player.Margin = new Thickness(-left, -top, -right, -bottom);
+                //}
+                //else
+                //{
+                //    player.Margin = new Thickness(-right, -top, -left, -bottom);
+                //}
 
-                Interactions.Children.Add(player);
-                InteractionsPopup.IsOpen = true;
+                //Interactions.Children.Add(player);
+                //InteractionsPopup.IsOpen = true;
             }
             else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive)
             {

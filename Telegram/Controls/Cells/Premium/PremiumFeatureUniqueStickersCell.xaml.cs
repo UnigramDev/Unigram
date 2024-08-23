@@ -29,7 +29,7 @@ namespace Telegram.Controls.Cells.Premium
         {
             InitializeComponent();
 
-            _dispatcher = DispatcherQueue.GetForCurrentThread();
+            //_dispatcher = DispatcherQueue.GetForCurrentThread();
         }
 
         public void UpdateFeature(IClientService clientService, IList<Sticker> stickers)

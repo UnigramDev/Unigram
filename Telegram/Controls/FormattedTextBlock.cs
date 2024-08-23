@@ -18,10 +18,9 @@ using Telegram.Streams;
 using Telegram.Td.Api;
 using Microsoft.UI.Input;
 using Windows.UI;
-using Windows.UI.Text;
+using Microsoft.UI.Text;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
-using Microsoft.UI.Xaml.Core.Direct;
 using Microsoft.UI.Xaml.Documents;
 using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Media;
@@ -396,394 +395,394 @@ namespace Telegram.Controls
 
         public void SetText(IClientService clientService, StyledText styled, double fontSize = 0)
         {
-            _clientService = clientService;
-            _text = styled;
-            _fontSize = fontSize;
-
-            if (!_templateApplied)
-            {
-                return;
-            }
-
-            var locale = LocaleService.Current.FlowDirection;
-
-            // PERF: fast path if both model and view have one paragraph with one run
-            if (styled != null && styled.IsPlain && !HasCodeBlocks)
-            {
-                var direction = styled.Paragraphs[0].Direction switch
-                {
-                    TextDirectionality.LeftToRight => FlowDirection.LeftToRight,
-                    TextDirectionality.RightToLeft => FlowDirection.RightToLeft,
-                    _ => locale
-                };
-
-                if (TextBlock.Blocks.Count == 1
-                    && TextBlock.Blocks[0] is Paragraph paragraph
-                    && paragraph.Inlines.Count == 1
-                    && paragraph.Inlines[0] is Run run
-                    && run.FlowDirection == direction)
-                {
-                    run.Text = styled.Text;
-                    return;
-                }
-            }
-
-            var direct = XamlDirect.GetDefault();
-            var directBlock = direct.GetXamlDirectObject(TextBlock);
-            var blocks = direct.GetXamlDirectObjectProperty(directBlock, XamlPropertyIndex.RichTextBlock_Blocks);
-
-            foreach (var link in _links)
-            {
-                ToolTipService.SetToolTip(link, null);
-            }
-
-            _links.Clear();
-            _codeBlocks.Clear();
-            direct.ClearCollection(blocks);
-
-            if (string.IsNullOrEmpty(styled?.Text))
-            {
-                return;
-            }
-
-            TextHighlighter spoiler = null;
-
-            var preformatted = false;
-            TextParagraphType lastType = null;
-            TextParagraphType firstType = null;
-
-            var alignment = TextAlignment;
-
-            var text = styled.Text;
-            var workaround = 0;
-
-            foreach (var part in styled.Paragraphs)
-            {
-                // This should not happen, but it does.
-                text = styled.Text.Substring(part.Offset, Math.Min(part.Length, styled.Text.Length - part.Offset));
-
-                var type = part.Type;
-                var runs = part.Runs;
-                var previous = 0;
-
-                var paragraph = direct.CreateInstance(XamlTypeIndex.Paragraph);
-                var inlines = direct.GetXamlDirectObjectProperty(paragraph, XamlPropertyIndex.Paragraph_Inlines);
-
-                if (AutoFontSize)
-                {
-                    direct.SetDoubleProperty(paragraph, XamlPropertyIndex.TextElement_FontSize, Theme.Current.MessageFontSize);
-                }
-
-                // TODO: we use DetectFromContent, but this could be used too:
-                //direct.SetEnumProperty(paragraph, XamlPropertyIndex.Block_TextAlignment, part.Direction switch
-                //{
-                //    TextDirectionality.LeftToRight => (uint)TextAlignment.Left,
-                //    TextDirectionality.RightToLeft => (uint)TextAlignment.Right,
-                //    _ => (uint)TextAlignment.DetectFromContent
-                //});
-
-                if (alignment == TextAlignment.Center)
-                {
-                    direct.SetEnumProperty(paragraph, XamlPropertyIndex.Block_TextAlignment, (uint)alignment);
-                }
-
-                var direction = part.Direction switch
-                {
-                    TextDirectionality.LeftToRight => FlowDirection.LeftToRight,
-                    TextDirectionality.RightToLeft => FlowDirection.RightToLeft,
-                    _ => locale
-                };
-
-                if (part.Type is TextParagraphTypeQuote)
-                {
-                    var last = part == styled.Paragraphs[^1];
-                    var temp = direct.GetObject(paragraph) as Paragraph;
-                    temp.Margin = new Thickness(11, 6, 24, last ? 0 : 8);
-                    temp.FontSize = Theme.Current.CaptionFontSize;
-
-                    _codeBlocks.Add(new FormattedParagraph(temp, part.Type));
-                }
-
-                foreach (var entity in runs)
-                {
-                    if (entity.Offset > previous)
-                    {
-                        direct.AddToCollection(inlines, CreateDirectRun(direct, text.Substring(previous, entity.Offset - previous), direction, fontSize: fontSize));
-                    }
-
-                    if (entity.Length + entity.Offset > text.Length)
-                    {
-                        previous = entity.Offset + entity.Length;
-                        continue;
-                    }
-
-                    if (entity.HasFlag(Common.TextStyle.Monospace))
-                    {
-                        var data = text.Substring(entity.Offset, entity.Length);
-
-                        if (entity.Type is TextEntityTypeCode)
-                        {
-                            var hyperlink = new Hyperlink();
-                            hyperlink.Click += (s, args) => Entity_Click(entity.Offset, entity.Length, entity.Type, data);
-                            hyperlink.Foreground = TextBlock.Foreground;
-                            hyperlink.UnderlineStyle = UnderlineStyle.None;
-
-                            hyperlink.Inlines.Add(CreateRun(data, direction, fontFamily: new FontFamily("Consolas, " + Theme.Current.XamlAutoFontFamily), fontSize: fontSize));
-                            direct.AddToCollection(inlines, direct.GetXamlDirectObject(hyperlink));
-                        }
-                        else
-                        {
-                            direct.SetObjectProperty(paragraph, XamlPropertyIndex.TextElement_FontFamily, new FontFamily("Consolas, " + Theme.Current.XamlAutoFontFamily));
-                            direct.AddToCollection(inlines, CreateDirectRun(direct, data, direction));
-
-                            preformatted = true;
-
-                            var has = entity.Type is TextEntityTypePreCode { Language.Length: > 0 };
-
-                            var last = part == styled.Paragraphs[^1];
-                            var temp = direct.GetObject(paragraph) as Paragraph;
-                            temp.Margin = new Thickness(11, (has ? 22 : 0) + 6, has ? 8 : 24, last ? 0 : 8);
-
-                            if (entity.Type is TextEntityTypePreCode preCode && preCode.Language.Length > 0)
-                            {
-                                _codeBlocks.Add(new FormattedParagraph(temp, part.Type));
-                                ProcessCodeBlock(temp.Inlines, data, preCode.Language);
-                            }
-                            else
-                            {
-                                _codeBlocks.Add(new FormattedParagraph(temp, part.Type));
-                            }
-                        }
-                    }
-                    else
-                    {
-                        var local = inlines;
-
-                        if (_ignoreSpoilers is false && entity.HasFlag(Common.TextStyle.Spoiler))
-                        {
-                            var hyperlink = new Hyperlink();
-                            hyperlink.Click += (s, args) => Entity_Click(entity.Offset, entity.Length, new TextEntityTypeSpoiler(), null);
-                            hyperlink.Foreground = null;
-                            hyperlink.UnderlineStyle = UnderlineStyle.None;
-                            hyperlink.FontFamily = BootStrapper.Current.Resources["SpoilerFontFamily"] as FontFamily;
-                            //hyperlink.Foreground = foreground;
-
-                            spoiler ??= new TextHighlighter();
-                            spoiler.Ranges.Add(new TextRange { StartIndex = part.Offset + entity.Offset - workaround, Length = entity.Length });
-
-                            var temp = direct.GetXamlDirectObject(hyperlink);
-
-                            direct.AddToCollection(inlines, temp);
-                            local = direct.GetXamlDirectObjectProperty(temp, XamlPropertyIndex.Span_Inlines);
-                        }
-                        else if (entity.HasFlag(Common.TextStyle.Mention) || entity.HasFlag(Common.TextStyle.Url))
-                        {
-                            if (entity.Type is TextEntityTypeMentionName or TextEntityTypeTextUrl)
-                            {
-                                var hyperlink = new Hyperlink();
-                                object data;
-                                if (entity.Type is TextEntityTypeTextUrl textUrl)
-                                {
-                                    data = textUrl.Url;
-                                    MessageHelper.SetEntityData(hyperlink, textUrl.Url);
-                                    MessageHelper.SetEntityType(hyperlink, entity.Type);
-
-                                    _links.Add(hyperlink);
-                                    ToolTipService.SetToolTip(hyperlink, textUrl.Url);
-                                }
-                                else if (entity.Type is TextEntityTypeMentionName mentionName)
-                                {
-                                    data = mentionName.UserId;
-                                }
-
-                                hyperlink.Click += (s, args) => Entity_Click(entity.Offset, entity.Length, entity.Type, null);
-                                hyperlink.Foreground = HyperlinkForeground ?? GetBrush("MessageForegroundLinkBrush");
-                                hyperlink.UnderlineStyle = HyperlinkStyle;
-                                hyperlink.FontWeight = HyperlinkFontWeight;
-                                hyperlink.UnderlineStyle = UnderlineStyle.None;
-
-                                var temp = direct.GetXamlDirectObject(hyperlink);
-
-                                direct.AddToCollection(inlines, temp);
-                                local = direct.GetXamlDirectObjectProperty(temp, XamlPropertyIndex.Span_Inlines);
-                            }
-                            else
-                            {
-                                var hyperlink = new Hyperlink();
-                                //var original = entities.FirstOrDefault(x => x.Offset <= entity.Offset && x.Offset + x.Length >= entity.End);
-
-                                var data = text.Substring(entity.Offset, entity.Length);
-
-                                //if (original != null)
-                                //{
-                                //    data = text.Substring(original.Offset, original.Length);
-                                //}
-
-                                hyperlink.Click += (s, args) => Entity_Click(entity.Offset, entity.Length, entity.Type, data);
-                                hyperlink.Foreground = HyperlinkForeground ?? GetBrush("MessageForegroundLinkBrush");
-                                hyperlink.UnderlineStyle = HyperlinkStyle;
-                                hyperlink.FontWeight = HyperlinkFontWeight;
-                                hyperlink.UnderlineStyle = entity.Type is TextEntityTypeUrl
-                                    ? UnderlineStyle.Single
-                                    : UnderlineStyle.None;
-
-                                //if (entity.Type is TextEntityTypeUrl || entity.Type is TextEntityTypeEmailAddress || entity.Type is TextEntityTypeBankCardNumber)
-                                {
-                                    MessageHelper.SetEntityData(hyperlink, data);
-                                    MessageHelper.SetEntityType(hyperlink, entity.Type);
-                                }
-
-                                var temp = direct.GetXamlDirectObject(hyperlink);
-
-                                direct.AddToCollection(inlines, temp);
-                                local = direct.GetXamlDirectObjectProperty(temp, XamlPropertyIndex.Span_Inlines);
-                            }
-                        }
-
-                        if (entity.Type is TextEntityTypeCustomEmoji customEmoji && ((_ignoreSpoilers && entity.HasFlag(Common.TextStyle.Spoiler)) || !entity.HasFlag(Common.TextStyle.Spoiler)))
-                        {
-                            var data = text.Substring(entity.Offset, entity.Length);
-
-                            var player = new CustomEmojiIcon();
-                            player.LoopCount = 0;
-                            player.Source = new CustomEmojiFileSource(clientService, customEmoji.CustomEmojiId);
-                            player.HorizontalAlignment = HorizontalAlignment.Left;
-                            player.FlowDirection = FlowDirection.LeftToRight;
-                            player.Margin = new Thickness(0, -2, 0, -6);
-                            player.Style = EmojiStyle;
-                            player.IsHitTestVisible = false;
-                            player.IsEnabled = false;
-                            player.Emoji = data;
-
-                            var inline = new InlineUIContainer();
-                            inline.Child = player;
-
-                            // We are working around multiple issues here:
-                            // ZWNJ is always added right after a custom emoji to make sure that the line height always matches Segoe UI.
-                            // RTL/LTR mark is added in case the custom emoji is the first element in the Paragraph.
-                            // This is needed because we can't use TextReadingOrder = DetectFromContent due to a bug
-                            // that causes text selection and hit tests to follow the flow direction rather than the reading order.
-                            // Because of this, we're forced to use TextReadingOrder = UseFlowDirection, and to set each
-                            // Run.FlowDirection to the one calculated by calling GetStringTypeEx on the text of each paragraph.
-                            // Since InlineUIContainer doesn't have a FlowDirection property (and the child flow direction seems to be ignored)
-                            // the first custom emoji in a paragraph with reading order different from the one of the app, would appear on the
-                            // wrong side of the block, thus we add a RTL/LTR mark right before, and the RichTextBlock seems to respect this.
-
-                            if (entity.Offset == 0 && direction != locale)
-                            {
-                                direct.AddToCollection(inlines, CreateDirectRun(direct, direction == FlowDirection.RightToLeft ? Icons.RTL : Icons.LTR, direction));
-                            }
-
-                            // TODO: see if there's a better way
-                            direct.AddToCollection(inlines, direct.GetXamlDirectObject(inline));
-                            direct.AddToCollection(inlines, CreateDirectRun(direct, Icons.ZWNJ, direction));
-
-                            workaround++;
-                        }
-                        else
-                        {
-                            var run = CreateDirectRun(direct, text.Substring(entity.Offset, entity.Length), direction, fontSize: fontSize);
-                            var decorations = TextDecorations.None;
-
-                            if (entity.HasFlag(Common.TextStyle.Underline))
-                            {
-                                decorations |= TextDecorations.Underline;
-                            }
-                            if (entity.HasFlag(Common.TextStyle.Strikethrough))
-                            {
-                                decorations |= TextDecorations.Strikethrough;
-                            }
-
-                            if (decorations != TextDecorations.None)
-                            {
-                                direct.SetEnumProperty(run, XamlPropertyIndex.TextElement_TextDecorations, (uint)decorations);
-                            }
-
-                            if (entity.HasFlag(Common.TextStyle.Bold))
-                            {
-                                direct.SetObjectProperty(run, XamlPropertyIndex.TextElement_FontWeight, FontWeights.SemiBold);
-                            }
-                            if (entity.HasFlag(Common.TextStyle.Italic))
-                            {
-                                direct.SetEnumProperty(run, XamlPropertyIndex.TextElement_FontStyle, (uint)FontStyle.Italic);
-                            }
-
-                            direct.AddToCollection(local, run);
-                        }
-                    }
-
-                    previous = entity.Offset + entity.Length;
-                }
-
-                if (text.Length > previous)
-                {
-                    direct.AddToCollection(inlines, CreateDirectRun(direct, text.Substring(previous), direction, fontSize: fontSize));
-                }
-
-                // ZWJ is added to workaround a crash caused by emoji ad the end of a paragraph that is being highlighted
-                direct.AddToCollection(inlines, CreateDirectRun(direct, Icons.ZWJ, direction));
-                direct.AddToCollection(blocks, paragraph);
-
-                if (part.Offset == 0)
-                {
-                    firstType = type;
-                }
-
-                lastType = type;
-            }
-
-            //Padding = new Thickness(0, firstFormatted ? 4 : 0, 0, 0);
-
-            //ContentPanel.MaxWidth = preformatted ? double.PositiveInfinity : 432;
-
-            //_isFormatted = runs.Count > 0 || fontSize != 0;
-            HasCodeBlocks = preformatted;
-
-            if (spoiler?.Ranges.Count > 0)
-            {
-                spoiler.Foreground = new SolidColorBrush(Colors.Transparent);
-                spoiler.Background = new SolidColorBrush(Colors.Black);
-
-                _invalidateSpoilers = _spoiler != null;
-                _spoiler = spoiler;
-            }
-            else
-            {
-                _invalidateSpoilers = false;
-                _spoiler = null;
-            }
-
-            var topPadding = 0d;
-            var bottomPadding = false;
-
-            if (firstType is TextParagraphTypeMonospace { Language.Length: > 0 })
-            {
-                topPadding = 22 + 6;
-            }
-            else if (firstType is not null)
-            {
-                topPadding = 6;
-            }
-
-            if (AdjustLineEnding && styled.Paragraphs.Count > 0)
-            {
-                var direction = styled.Paragraphs[^1].Direction switch
-                {
-                    TextDirectionality.LeftToRight => FlowDirection.LeftToRight,
-                    TextDirectionality.RightToLeft => FlowDirection.RightToLeft,
-                    _ => locale
-                };
-
-                if (direction != locale || lastType is not null)
-                {
-                    bottomPadding = true;
-                }
-            }
-
-            HasLineEnding = bottomPadding;
-
-            Below.Margin = new Thickness(0, topPadding, 0, 0);
-            TextBlock.Margin = new Thickness(0, topPadding, 0, 0);
+            //_clientService = clientService;
+            //_text = styled;
+            //_fontSize = fontSize;
+
+            //if (!_templateApplied)
+            //{
+            //    return;
+            //}
+
+            //var locale = LocaleService.Current.FlowDirection;
+
+            //// PERF: fast path if both model and view have one paragraph with one run
+            //if (styled != null && styled.IsPlain && !HasCodeBlocks)
+            //{
+            //    var direction = styled.Paragraphs[0].Direction switch
+            //    {
+            //        TextDirectionality.LeftToRight => FlowDirection.LeftToRight,
+            //        TextDirectionality.RightToLeft => FlowDirection.RightToLeft,
+            //        _ => locale
+            //    };
+
+            //    if (TextBlock.Blocks.Count == 1
+            //        && TextBlock.Blocks[0] is Paragraph paragraph
+            //        && paragraph.Inlines.Count == 1
+            //        && paragraph.Inlines[0] is Run run
+            //        && run.FlowDirection == direction)
+            //    {
+            //        run.Text = styled.Text;
+            //        return;
+            //    }
+            //}
+
+            //var direct = XamlDirect.GetDefault();
+            //var directBlock = direct.GetXamlDirectObject(TextBlock);
+            //var blocks = direct.GetXamlDirectObjectProperty(directBlock, XamlPropertyIndex.RichTextBlock_Blocks);
+
+            //foreach (var link in _links)
+            //{
+            //    ToolTipService.SetToolTip(link, null);
+            //}
+
+            //_links.Clear();
+            //_codeBlocks.Clear();
+            //direct.ClearCollection(blocks);
+
+            //if (string.IsNullOrEmpty(styled?.Text))
+            //{
+            //    return;
+            //}
+
+            //TextHighlighter spoiler = null;
+
+            //var preformatted = false;
+            //TextParagraphType lastType = null;
+            //TextParagraphType firstType = null;
+
+            //var alignment = TextAlignment;
+
+            //var text = styled.Text;
+            //var workaround = 0;
+
+            //foreach (var part in styled.Paragraphs)
+            //{
+            //    // This should not happen, but it does.
+            //    text = styled.Text.Substring(part.Offset, Math.Min(part.Length, styled.Text.Length - part.Offset));
+
+            //    var type = part.Type;
+            //    var runs = part.Runs;
+            //    var previous = 0;
+
+            //    var paragraph = direct.CreateInstance(XamlTypeIndex.Paragraph);
+            //    var inlines = direct.GetXamlDirectObjectProperty(paragraph, XamlPropertyIndex.Paragraph_Inlines);
+
+            //    if (AutoFontSize)
+            //    {
+            //        direct.SetDoubleProperty(paragraph, XamlPropertyIndex.TextElement_FontSize, Theme.Current.MessageFontSize);
+            //    }
+
+            //    // TODO: we use DetectFromContent, but this could be used too:
+            //    //direct.SetEnumProperty(paragraph, XamlPropertyIndex.Block_TextAlignment, part.Direction switch
+            //    //{
+            //    //    TextDirectionality.LeftToRight => (uint)TextAlignment.Left,
+            //    //    TextDirectionality.RightToLeft => (uint)TextAlignment.Right,
+            //    //    _ => (uint)TextAlignment.DetectFromContent
+            //    //});
+
+            //    if (alignment == TextAlignment.Center)
+            //    {
+            //        direct.SetEnumProperty(paragraph, XamlPropertyIndex.Block_TextAlignment, (uint)alignment);
+            //    }
+
+            //    var direction = part.Direction switch
+            //    {
+            //        TextDirectionality.LeftToRight => FlowDirection.LeftToRight,
+            //        TextDirectionality.RightToLeft => FlowDirection.RightToLeft,
+            //        _ => locale
+            //    };
+
+            //    if (part.Type is TextParagraphTypeQuote)
+            //    {
+            //        var last = part == styled.Paragraphs[^1];
+            //        var temp = direct.GetObject(paragraph) as Paragraph;
+            //        temp.Margin = new Thickness(11, 6, 24, last ? 0 : 8);
+            //        temp.FontSize = Theme.Current.CaptionFontSize;
+
+            //        _codeBlocks.Add(new FormattedParagraph(temp, part.Type));
+            //    }
+
+            //    foreach (var entity in runs)
+            //    {
+            //        if (entity.Offset > previous)
+            //        {
+            //            direct.AddToCollection(inlines, CreateDirectRun(direct, text.Substring(previous, entity.Offset - previous), direction, fontSize: fontSize));
+            //        }
+
+            //        if (entity.Length + entity.Offset > text.Length)
+            //        {
+            //            previous = entity.Offset + entity.Length;
+            //            continue;
+            //        }
+
+            //        if (entity.HasFlag(Common.TextStyle.Monospace))
+            //        {
+            //            var data = text.Substring(entity.Offset, entity.Length);
+
+            //            if (entity.Type is TextEntityTypeCode)
+            //            {
+            //                var hyperlink = new Hyperlink();
+            //                hyperlink.Click += (s, args) => Entity_Click(entity.Offset, entity.Length, entity.Type, data);
+            //                hyperlink.Foreground = TextBlock.Foreground;
+            //                hyperlink.UnderlineStyle = UnderlineStyle.None;
+
+            //                hyperlink.Inlines.Add(CreateRun(data, direction, fontFamily: new FontFamily("Consolas, " + Theme.Current.XamlAutoFontFamily), fontSize: fontSize));
+            //                direct.AddToCollection(inlines, direct.GetXamlDirectObject(hyperlink));
+            //            }
+            //            else
+            //            {
+            //                direct.SetObjectProperty(paragraph, XamlPropertyIndex.TextElement_FontFamily, new FontFamily("Consolas, " + Theme.Current.XamlAutoFontFamily));
+            //                direct.AddToCollection(inlines, CreateDirectRun(direct, data, direction));
+
+            //                preformatted = true;
+
+            //                var has = entity.Type is TextEntityTypePreCode { Language.Length: > 0 };
+
+            //                var last = part == styled.Paragraphs[^1];
+            //                var temp = direct.GetObject(paragraph) as Paragraph;
+            //                temp.Margin = new Thickness(11, (has ? 22 : 0) + 6, has ? 8 : 24, last ? 0 : 8);
+
+            //                if (entity.Type is TextEntityTypePreCode preCode && preCode.Language.Length > 0)
+            //                {
+            //                    _codeBlocks.Add(new FormattedParagraph(temp, part.Type));
+            //                    ProcessCodeBlock(temp.Inlines, data, preCode.Language);
+            //                }
+            //                else
+            //                {
+            //                    _codeBlocks.Add(new FormattedParagraph(temp, part.Type));
+            //                }
+            //            }
+            //        }
+            //        else
+            //        {
+            //            var local = inlines;
+
+            //            if (_ignoreSpoilers is false && entity.HasFlag(Common.TextStyle.Spoiler))
+            //            {
+            //                var hyperlink = new Hyperlink();
+            //                hyperlink.Click += (s, args) => Entity_Click(entity.Offset, entity.Length, new TextEntityTypeSpoiler(), null);
+            //                hyperlink.Foreground = null;
+            //                hyperlink.UnderlineStyle = UnderlineStyle.None;
+            //                hyperlink.FontFamily = BootStrapper.Current.Resources["SpoilerFontFamily"] as FontFamily;
+            //                //hyperlink.Foreground = foreground;
+
+            //                spoiler ??= new TextHighlighter();
+            //                spoiler.Ranges.Add(new TextRange { StartIndex = part.Offset + entity.Offset - workaround, Length = entity.Length });
+
+            //                var temp = direct.GetXamlDirectObject(hyperlink);
+
+            //                direct.AddToCollection(inlines, temp);
+            //                local = direct.GetXamlDirectObjectProperty(temp, XamlPropertyIndex.Span_Inlines);
+            //            }
+            //            else if (entity.HasFlag(Common.TextStyle.Mention) || entity.HasFlag(Common.TextStyle.Url))
+            //            {
+            //                if (entity.Type is TextEntityTypeMentionName or TextEntityTypeTextUrl)
+            //                {
+            //                    var hyperlink = new Hyperlink();
+            //                    object data;
+            //                    if (entity.Type is TextEntityTypeTextUrl textUrl)
+            //                    {
+            //                        data = textUrl.Url;
+            //                        MessageHelper.SetEntityData(hyperlink, textUrl.Url);
+            //                        MessageHelper.SetEntityType(hyperlink, entity.Type);
+
+            //                        _links.Add(hyperlink);
+            //                        ToolTipService.SetToolTip(hyperlink, textUrl.Url);
+            //                    }
+            //                    else if (entity.Type is TextEntityTypeMentionName mentionName)
+            //                    {
+            //                        data = mentionName.UserId;
+            //                    }
+
+            //                    hyperlink.Click += (s, args) => Entity_Click(entity.Offset, entity.Length, entity.Type, null);
+            //                    hyperlink.Foreground = HyperlinkForeground ?? GetBrush("MessageForegroundLinkBrush");
+            //                    hyperlink.UnderlineStyle = HyperlinkStyle;
+            //                    hyperlink.FontWeight = HyperlinkFontWeight;
+            //                    hyperlink.UnderlineStyle = UnderlineStyle.None;
+
+            //                    var temp = direct.GetXamlDirectObject(hyperlink);
+
+            //                    direct.AddToCollection(inlines, temp);
+            //                    local = direct.GetXamlDirectObjectProperty(temp, XamlPropertyIndex.Span_Inlines);
+            //                }
+            //                else
+            //                {
+            //                    var hyperlink = new Hyperlink();
+            //                    //var original = entities.FirstOrDefault(x => x.Offset <= entity.Offset && x.Offset + x.Length >= entity.End);
+
+            //                    var data = text.Substring(entity.Offset, entity.Length);
+
+            //                    //if (original != null)
+            //                    //{
+            //                    //    data = text.Substring(original.Offset, original.Length);
+            //                    //}
+
+            //                    hyperlink.Click += (s, args) => Entity_Click(entity.Offset, entity.Length, entity.Type, data);
+            //                    hyperlink.Foreground = HyperlinkForeground ?? GetBrush("MessageForegroundLinkBrush");
+            //                    hyperlink.UnderlineStyle = HyperlinkStyle;
+            //                    hyperlink.FontWeight = HyperlinkFontWeight;
+            //                    hyperlink.UnderlineStyle = entity.Type is TextEntityTypeUrl
+            //                        ? UnderlineStyle.Single
+            //                        : UnderlineStyle.None;
+
+            //                    //if (entity.Type is TextEntityTypeUrl || entity.Type is TextEntityTypeEmailAddress || entity.Type is TextEntityTypeBankCardNumber)
+            //                    {
+            //                        MessageHelper.SetEntityData(hyperlink, data);
+            //                        MessageHelper.SetEntityType(hyperlink, entity.Type);
+            //                    }
+
+            //                    var temp = direct.GetXamlDirectObject(hyperlink);
+
+            //                    direct.AddToCollection(inlines, temp);
+            //                    local = direct.GetXamlDirectObjectProperty(temp, XamlPropertyIndex.Span_Inlines);
+            //                }
+            //            }
+
+            //            if (entity.Type is TextEntityTypeCustomEmoji customEmoji && ((_ignoreSpoilers && entity.HasFlag(Common.TextStyle.Spoiler)) || !entity.HasFlag(Common.TextStyle.Spoiler)))
+            //            {
+            //                var data = text.Substring(entity.Offset, entity.Length);
+
+            //                var player = new CustomEmojiIcon();
+            //                player.LoopCount = 0;
+            //                player.Source = new CustomEmojiFileSource(clientService, customEmoji.CustomEmojiId);
+            //                player.HorizontalAlignment = HorizontalAlignment.Left;
+            //                player.FlowDirection = FlowDirection.LeftToRight;
+            //                player.Margin = new Thickness(0, -2, 0, -6);
+            //                player.Style = EmojiStyle;
+            //                player.IsHitTestVisible = false;
+            //                player.IsEnabled = false;
+            //                player.Emoji = data;
+
+            //                var inline = new InlineUIContainer();
+            //                inline.Child = player;
+
+            //                // We are working around multiple issues here:
+            //                // ZWNJ is always added right after a custom emoji to make sure that the line height always matches Segoe UI.
+            //                // RTL/LTR mark is added in case the custom emoji is the first element in the Paragraph.
+            //                // This is needed because we can't use TextReadingOrder = DetectFromContent due to a bug
+            //                // that causes text selection and hit tests to follow the flow direction rather than the reading order.
+            //                // Because of this, we're forced to use TextReadingOrder = UseFlowDirection, and to set each
+            //                // Run.FlowDirection to the one calculated by calling GetStringTypeEx on the text of each paragraph.
+            //                // Since InlineUIContainer doesn't have a FlowDirection property (and the child flow direction seems to be ignored)
+            //                // the first custom emoji in a paragraph with reading order different from the one of the app, would appear on the
+            //                // wrong side of the block, thus we add a RTL/LTR mark right before, and the RichTextBlock seems to respect this.
+
+            //                if (entity.Offset == 0 && direction != locale)
+            //                {
+            //                    direct.AddToCollection(inlines, CreateDirectRun(direct, direction == FlowDirection.RightToLeft ? Icons.RTL : Icons.LTR, direction));
+            //                }
+
+            //                // TODO: see if there's a better way
+            //                direct.AddToCollection(inlines, direct.GetXamlDirectObject(inline));
+            //                direct.AddToCollection(inlines, CreateDirectRun(direct, Icons.ZWNJ, direction));
+
+            //                workaround++;
+            //            }
+            //            else
+            //            {
+            //                var run = CreateDirectRun(direct, text.Substring(entity.Offset, entity.Length), direction, fontSize: fontSize);
+            //                var decorations = TextDecorations.None;
+
+            //                if (entity.HasFlag(Common.TextStyle.Underline))
+            //                {
+            //                    decorations |= TextDecorations.Underline;
+            //                }
+            //                if (entity.HasFlag(Common.TextStyle.Strikethrough))
+            //                {
+            //                    decorations |= TextDecorations.Strikethrough;
+            //                }
+
+            //                if (decorations != TextDecorations.None)
+            //                {
+            //                    direct.SetEnumProperty(run, XamlPropertyIndex.TextElement_TextDecorations, (uint)decorations);
+            //                }
+
+            //                if (entity.HasFlag(Common.TextStyle.Bold))
+            //                {
+            //                    direct.SetObjectProperty(run, XamlPropertyIndex.TextElement_FontWeight, FontWeights.SemiBold);
+            //                }
+            //                if (entity.HasFlag(Common.TextStyle.Italic))
+            //                {
+            //                    direct.SetEnumProperty(run, XamlPropertyIndex.TextElement_FontStyle, (uint)FontStyle.Italic);
+            //                }
+
+            //                direct.AddToCollection(local, run);
+            //            }
+            //        }
+
+            //        previous = entity.Offset + entity.Length;
+            //    }
+
+            //    if (text.Length > previous)
+            //    {
+            //        direct.AddToCollection(inlines, CreateDirectRun(direct, text.Substring(previous), direction, fontSize: fontSize));
+            //    }
+
+            //    // ZWJ is added to workaround a crash caused by emoji ad the end of a paragraph that is being highlighted
+            //    direct.AddToCollection(inlines, CreateDirectRun(direct, Icons.ZWJ, direction));
+            //    direct.AddToCollection(blocks, paragraph);
+
+            //    if (part.Offset == 0)
+            //    {
+            //        firstType = type;
+            //    }
+
+            //    lastType = type;
+            //}
+
+            ////Padding = new Thickness(0, firstFormatted ? 4 : 0, 0, 0);
+
+            ////ContentPanel.MaxWidth = preformatted ? double.PositiveInfinity : 432;
+
+            ////_isFormatted = runs.Count > 0 || fontSize != 0;
+            //HasCodeBlocks = preformatted;
+
+            //if (spoiler?.Ranges.Count > 0)
+            //{
+            //    spoiler.Foreground = new SolidColorBrush(Colors.Transparent);
+            //    spoiler.Background = new SolidColorBrush(Colors.Black);
+
+            //    _invalidateSpoilers = _spoiler != null;
+            //    _spoiler = spoiler;
+            //}
+            //else
+            //{
+            //    _invalidateSpoilers = false;
+            //    _spoiler = null;
+            //}
+
+            //var topPadding = 0d;
+            //var bottomPadding = false;
+
+            //if (firstType is TextParagraphTypeMonospace { Language.Length: > 0 })
+            //{
+            //    topPadding = 22 + 6;
+            //}
+            //else if (firstType is not null)
+            //{
+            //    topPadding = 6;
+            //}
+
+            //if (AdjustLineEnding && styled.Paragraphs.Count > 0)
+            //{
+            //    var direction = styled.Paragraphs[^1].Direction switch
+            //    {
+            //        TextDirectionality.LeftToRight => FlowDirection.LeftToRight,
+            //        TextDirectionality.RightToLeft => FlowDirection.RightToLeft,
+            //        _ => locale
+            //    };
+
+            //    if (direction != locale || lastType is not null)
+            //    {
+            //        bottomPadding = true;
+            //    }
+            //}
+
+            //HasLineEnding = bottomPadding;
+
+            //Below.Margin = new Thickness(0, topPadding, 0, 0);
+            //TextBlock.Margin = new Thickness(0, topPadding, 0, 0);
         }
 
         private void OnSizeChanged(object sender, SizeChangedEventArgs e)
@@ -832,56 +831,56 @@ namespace Telegram.Controls
             }
         }
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private Run CreateRun(string text, FlowDirection direction, FontWeight? fontWeight = null, FontFamily fontFamily = null, double fontSize = 0)
-        {
-            var direct = XamlDirect.GetDefault();
-            var run = direct.CreateInstance(XamlTypeIndex.Run);
-            direct.SetStringProperty(run, XamlPropertyIndex.Run_Text, text);
-            direct.SetEnumProperty(run, XamlPropertyIndex.Run_FlowDirection, (uint)direction);
+        //[MethodImpl(MethodImplOptions.AggressiveInlining)]
+        //private Run CreateRun(string text, FlowDirection direction, FontWeight? fontWeight = null, FontFamily fontFamily = null, double fontSize = 0)
+        //{
+        //    var direct = XamlDirect.GetDefault();
+        //    var run = direct.CreateInstance(XamlTypeIndex.Run);
+        //    direct.SetStringProperty(run, XamlPropertyIndex.Run_Text, text);
+        //    direct.SetEnumProperty(run, XamlPropertyIndex.Run_FlowDirection, (uint)direction);
 
-            if (fontWeight != null)
-            {
-                direct.SetObjectProperty(run, XamlPropertyIndex.TextElement_FontWeight, fontWeight.Value);
-            }
+        //    if (fontWeight != null)
+        //    {
+        //        direct.SetObjectProperty(run, XamlPropertyIndex.TextElement_FontWeight, fontWeight.Value);
+        //    }
 
-            if (fontFamily != null)
-            {
-                direct.SetObjectProperty(run, XamlPropertyIndex.TextElement_FontFamily, fontFamily);
-            }
+        //    if (fontFamily != null)
+        //    {
+        //        direct.SetObjectProperty(run, XamlPropertyIndex.TextElement_FontFamily, fontFamily);
+        //    }
 
-            if (fontSize > 0)
-            {
-                direct.SetDoubleProperty(run, XamlPropertyIndex.TextElement_FontSize, fontSize);
-            }
+        //    if (fontSize > 0)
+        //    {
+        //        direct.SetDoubleProperty(run, XamlPropertyIndex.TextElement_FontSize, fontSize);
+        //    }
 
-            return direct.GetObject(run) as Run;
-        }
+        //    return direct.GetObject(run) as Run;
+        //}
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private IXamlDirectObject CreateDirectRun(XamlDirect direct, string text, FlowDirection direction, FontWeight? fontWeight = null, FontFamily fontFamily = null, double fontSize = 0)
-        {
-            var run = direct.CreateInstance(XamlTypeIndex.Run);
-            direct.SetStringProperty(run, XamlPropertyIndex.Run_Text, text);
-            direct.SetEnumProperty(run, XamlPropertyIndex.Run_FlowDirection, (uint)direction);
+        //[MethodImpl(MethodImplOptions.AggressiveInlining)]
+        //private IXamlDirectObject CreateDirectRun(XamlDirect direct, string text, FlowDirection direction, FontWeight? fontWeight = null, FontFamily fontFamily = null, double fontSize = 0)
+        //{
+        //    var run = direct.CreateInstance(XamlTypeIndex.Run);
+        //    direct.SetStringProperty(run, XamlPropertyIndex.Run_Text, text);
+        //    direct.SetEnumProperty(run, XamlPropertyIndex.Run_FlowDirection, (uint)direction);
 
-            if (fontWeight != null)
-            {
-                direct.SetObjectProperty(run, XamlPropertyIndex.TextElement_FontWeight, fontWeight.Value);
-            }
+        //    if (fontWeight != null)
+        //    {
+        //        direct.SetObjectProperty(run, XamlPropertyIndex.TextElement_FontWeight, fontWeight.Value);
+        //    }
 
-            if (fontFamily != null)
-            {
-                direct.SetObjectProperty(run, XamlPropertyIndex.TextElement_FontFamily, fontFamily);
-            }
+        //    if (fontFamily != null)
+        //    {
+        //        direct.SetObjectProperty(run, XamlPropertyIndex.TextElement_FontFamily, fontFamily);
+        //    }
 
-            if (fontSize > 0)
-            {
-                direct.SetDoubleProperty(run, XamlPropertyIndex.TextElement_FontSize, fontSize);
-            }
+        //    if (fontSize > 0)
+        //    {
+        //        direct.SetDoubleProperty(run, XamlPropertyIndex.TextElement_FontSize, fontSize);
+        //    }
 
-            return run;
-        }
+        //    return run;
+        //}
 
         #region PreCode
 
@@ -929,7 +928,7 @@ namespace Telegram.Controls
                     }
                     else if (syntax.Type == "italic")
                     {
-                        span.FontStyle = FontStyle.Italic;
+                        //span.FontStyle = FontStyle.Italic;
                     }
 
                     ProcessCodeBlock(span.Inlines, syntax.Children);
@@ -1166,7 +1165,7 @@ namespace Telegram.Controls
 
         public SolidColorBrush HyperlinkForeground { get; set; }
 
-        public FontWeight HyperlinkFontWeight { get; set; } = FontWeights.Normal;
+        //public FontWeight HyperlinkFontWeight { get; set; } = FontWeights.Normal;
 
         #endregion
 

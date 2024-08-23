@@ -8,7 +8,6 @@
       xmlns:controls="using:Telegram.Controls"
       xmlns:services="using:Telegram.Services"
       xmlns:settings="using:Telegram.Views.Settings"
-      muxc:BackdropMaterial.ApplyToRootOrPageBackground="True"
       mc:Ignorable="d"
       d:DesignHeight="300"
       d:DesignWidth="400">

@@ -1297,20 +1297,20 @@ namespace Telegram.Views.Popups
 
         private void Accept()
         {
-            if (CaptionInput.HandwritingView.IsOpen)
-            {
-                void handler(object s, RoutedEventArgs args)
-                {
-                    CaptionInput.HandwritingView.Unloaded -= handler;
+            //if (CaptionInput.HandwritingView.IsOpen)
+            //{
+            //    void handler(object s, RoutedEventArgs args)
+            //    {
+            //        CaptionInput.HandwritingView.Unloaded -= handler;
 
-                    ViewModel.Caption = CaptionInput.GetFormattedText();
-                    Hide(ContentDialogResult.Primary);
-                }
+            //        ViewModel.Caption = CaptionInput.GetFormattedText();
+            //        Hide(ContentDialogResult.Primary);
+            //    }
 
-                CaptionInput.HandwritingView.Unloaded += handler;
-                CaptionInput.HandwritingView.TryClose();
-            }
-            else
+            //    CaptionInput.HandwritingView.Unloaded += handler;
+            //    CaptionInput.HandwritingView.TryClose();
+            //}
+            //else
             {
                 ViewModel.Caption = CaptionInput.GetFormattedText();
                 Hide(ContentDialogResult.Primary);

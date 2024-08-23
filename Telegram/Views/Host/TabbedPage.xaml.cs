@@ -34,7 +34,7 @@ namespace Telegram.Views.Host
             InitializeComponent();
 
             Window.Current.SetTitleBar(Footer);
-            BackdropMaterial.SetApplyToRootOrPageBackground(this, true);
+            //BackdropMaterial.SetApplyToRootOrPageBackground(this, true);
 
             var coreTitleBar = CoreApplication.GetCurrentView().TitleBar;
             coreTitleBar.ExtendViewIntoTitleBar = true;

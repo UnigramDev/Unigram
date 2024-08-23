@@ -47,12 +47,12 @@ namespace LibVLCSharp.Platforms.Windows
 
         private void OnConnected(object sender, RoutedEventArgs e)
         {
-            Application.Current.Suspending += OnSuspending;
+            //Application.Current.Suspending += OnSuspending;
         }
 
         private void OnDisconnected(object sender, RoutedEventArgs e)
         {
-            Application.Current.Suspending -= OnSuspending;
+            //Application.Current.Suspending -= OnSuspending;
             DestroySwapChain();
         }
 

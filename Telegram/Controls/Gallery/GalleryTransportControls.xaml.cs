@@ -31,7 +31,7 @@ namespace Telegram.Controls.Gallery
         {
             InitializeComponent();
 
-            _dispatcherQueue = DispatcherQueue.GetForCurrentThread();
+            //_dispatcherQueue = DispatcherQueue.GetForCurrentThread();
 
             var muted = SettingsService.Current.VolumeMuted;
             var volume = (int)Math.Round(SettingsService.Current.VolumeLevel * 100);

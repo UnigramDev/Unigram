@@ -7084,7 +7084,7 @@ public static class JumpListItem_stub
 }
 public static class ITextRange_stub
 {
-    public static void SetRange_stub(this Windows.UI.Text.ITextRange sender, int startPosition, int endPosition)
+    public static void SetRange_stub(this Microsoft.UI.Text.ITextRange sender, int startPosition, int endPosition)
     {
         try
         {
@@ -7096,7 +7096,7 @@ public static class ITextRange_stub
             throw new RuntimeException(ex);
         }
     }
-    public static void GetText_stub(this Windows.UI.Text.ITextRange sender, Windows.UI.Text.TextGetOptions options, out string value)
+    public static void GetText_stub(this Microsoft.UI.Text.ITextRange sender, Microsoft.UI.Text.TextGetOptions options, out string value)
     {
         try
         {
@@ -7108,7 +7108,7 @@ public static class ITextRange_stub
             throw new RuntimeException(ex);
         }
     }
-    public static Windows.UI.Text.ITextRange GetClone_stub(this Windows.UI.Text.ITextRange sender)
+    public static Microsoft.UI.Text.ITextRange GetClone_stub(this Microsoft.UI.Text.ITextRange sender)
     {
         try
         {
@@ -7120,7 +7120,7 @@ public static class ITextRange_stub
             throw new RuntimeException(ex);
         }
     }
-    public static void GetRect_stub(this Windows.UI.Text.ITextRange sender, Windows.UI.Text.PointOptions options, out Windows.Foundation.Rect rect, out int hit)
+    public static void GetRect_stub(this Microsoft.UI.Text.ITextRange sender, Microsoft.UI.Text.PointOptions options, out Windows.Foundation.Rect rect, out int hit)
     {
         try
         {
@@ -7132,7 +7132,7 @@ public static class ITextRange_stub
             throw new RuntimeException(ex);
         }
     }
-    public static void SetText_stub(this Windows.UI.Text.ITextRange sender, Windows.UI.Text.TextSetOptions options, string value)
+    public static void SetText_stub(this Microsoft.UI.Text.ITextRange sender, Microsoft.UI.Text.TextSetOptions options, string value)
     {
         try
         {
@@ -7144,7 +7144,7 @@ public static class ITextRange_stub
             throw new RuntimeException(ex);
         }
     }
-    public static int StartOf_stub(this Windows.UI.Text.ITextRange sender, Windows.UI.Text.TextRangeUnit unit, bool extend)
+    public static int StartOf_stub(this Microsoft.UI.Text.ITextRange sender, Microsoft.UI.Text.TextRangeUnit unit, bool extend)
     {
         try
         {
@@ -7156,7 +7156,7 @@ public static class ITextRange_stub
             throw new RuntimeException(ex);
         }
     }
-    public static void Collapse_stub(this Windows.UI.Text.ITextRange sender, bool value)
+    public static void Collapse_stub(this Microsoft.UI.Text.ITextRange sender, bool value)
     {
         try
         {
@@ -7168,7 +7168,7 @@ public static class ITextRange_stub
             throw new RuntimeException(ex);
         }
     }
-    public static int Expand_stub(this Windows.UI.Text.ITextRange sender, Windows.UI.Text.TextRangeUnit unit)
+    public static int Expand_stub(this Microsoft.UI.Text.ITextRange sender, Microsoft.UI.Text.TextRangeUnit unit)
     {
         try
         {
@@ -7180,7 +7180,7 @@ public static class ITextRange_stub
             throw new RuntimeException(ex);
         }
     }
-    public static int MoveEnd_stub(this Windows.UI.Text.ITextRange sender, Windows.UI.Text.TextRangeUnit unit, int count)
+    public static int MoveEnd_stub(this Microsoft.UI.Text.ITextRange sender, Microsoft.UI.Text.TextRangeUnit unit, int count)
     {
         try
         {
@@ -7192,7 +7192,7 @@ public static class ITextRange_stub
             throw new RuntimeException(ex);
         }
     }
-    public static void Cut_stub(this Windows.UI.Text.ITextRange sender)
+    public static void Cut_stub(this Microsoft.UI.Text.ITextRange sender)
     {
         try
         {
@@ -7204,7 +7204,7 @@ public static class ITextRange_stub
             throw new RuntimeException(ex);
         }
     }
-    public static void Copy_stub(this Windows.UI.Text.ITextRange sender)
+    public static void Copy_stub(this Microsoft.UI.Text.ITextRange sender)
     {
         try
         {
@@ -7216,7 +7216,7 @@ public static class ITextRange_stub
             throw new RuntimeException(ex);
         }
     }
-    public static int Move_stub(this Windows.UI.Text.ITextRange sender, Windows.UI.Text.TextRangeUnit unit, int count)
+    public static int Move_stub(this Microsoft.UI.Text.ITextRange sender, Microsoft.UI.Text.TextRangeUnit unit, int count)
     {
         try
         {
@@ -7228,7 +7228,7 @@ public static class ITextRange_stub
             throw new RuntimeException(ex);
         }
     }
-    public static bool CanPaste_stub(this Windows.UI.Text.ITextRange sender, int format)
+    public static bool CanPaste_stub(this Microsoft.UI.Text.ITextRange sender, int format)
     {
         try
         {
@@ -7240,7 +7240,7 @@ public static class ITextRange_stub
             throw new RuntimeException(ex);
         }
     }
-    public static void Paste_stub(this Windows.UI.Text.ITextRange sender, int format)
+    public static void Paste_stub(this Microsoft.UI.Text.ITextRange sender, int format)
     {
         try
         {
@@ -7252,7 +7252,7 @@ public static class ITextRange_stub
             throw new RuntimeException(ex);
         }
     }
-    public static int Delete_stub(this Windows.UI.Text.ITextRange sender, Windows.UI.Text.TextRangeUnit unit, int count)
+    public static int Delete_stub(this Microsoft.UI.Text.ITextRange sender, Microsoft.UI.Text.TextRangeUnit unit, int count)
     {
         try
         {
@@ -7264,7 +7264,7 @@ public static class ITextRange_stub
             throw new RuntimeException(ex);
         }
     }
-    public static int EndOf_stub(this Windows.UI.Text.ITextRange sender, Windows.UI.Text.TextRangeUnit unit, bool extend)
+    public static int EndOf_stub(this Microsoft.UI.Text.ITextRange sender, Microsoft.UI.Text.TextRangeUnit unit, bool extend)
     {
         try
         {
@@ -7276,7 +7276,7 @@ public static class ITextRange_stub
             throw new RuntimeException(ex);
         }
     }
-    public static int FindText_stub(this Windows.UI.Text.ITextRange sender, string value, int scanLength, Windows.UI.Text.FindOptions options)
+    public static int FindText_stub(this Microsoft.UI.Text.ITextRange sender, string value, int scanLength, Microsoft.UI.Text.FindOptions options)
     {
         try
         {
@@ -7288,7 +7288,7 @@ public static class ITextRange_stub
             throw new RuntimeException(ex);
         }
     }
-    public static int MoveStart_stub(this Windows.UI.Text.ITextRange sender, Windows.UI.Text.TextRangeUnit unit, int count)
+    public static int MoveStart_stub(this Microsoft.UI.Text.ITextRange sender, Microsoft.UI.Text.TextRangeUnit unit, int count)
     {
         try
         {
@@ -7303,7 +7303,7 @@ public static class ITextRange_stub
 }
 public static class ITextDocument_stub
 {
-    public static void GetText_stub(this Windows.UI.Text.ITextDocument sender, Windows.UI.Text.TextGetOptions options, out string value)
+    public static void GetText_stub(this Microsoft.UI.Text.ITextDocument sender, Microsoft.UI.Text.TextGetOptions options, out string value)
     {
         try
         {
@@ -7315,7 +7315,7 @@ public static class ITextDocument_stub
             throw new RuntimeException(ex);
         }
     }
-    public static Windows.UI.Text.ITextCharacterFormat GetDefaultCharacterFormat_stub(this Windows.UI.Text.ITextDocument sender)
+    public static Microsoft.UI.Text.ITextCharacterFormat GetDefaultCharacterFormat_stub(this Microsoft.UI.Text.ITextDocument sender)
     {
         try
         {
@@ -7327,7 +7327,7 @@ public static class ITextDocument_stub
             throw new RuntimeException(ex);
         }
     }
-    public static Windows.UI.Text.ITextRange GetRange_stub(this Windows.UI.Text.ITextDocument sender, int startPosition, int endPosition)
+    public static Microsoft.UI.Text.ITextRange GetRange_stub(this Microsoft.UI.Text.ITextDocument sender, int startPosition, int endPosition)
     {
         try
         {
@@ -7339,7 +7339,7 @@ public static class ITextDocument_stub
             throw new RuntimeException(ex);
         }
     }
-    public static bool CanRedo_stub(this Windows.UI.Text.ITextDocument sender)
+    public static bool CanRedo_stub(this Microsoft.UI.Text.ITextDocument sender)
     {
         try
         {
@@ -7351,7 +7351,7 @@ public static class ITextDocument_stub
             throw new RuntimeException(ex);
         }
     }
-    public static void Redo_stub(this Windows.UI.Text.ITextDocument sender)
+    public static void Redo_stub(this Microsoft.UI.Text.ITextDocument sender)
     {
         try
         {
@@ -7363,7 +7363,7 @@ public static class ITextDocument_stub
             throw new RuntimeException(ex);
         }
     }
-    public static bool CanUndo_stub(this Windows.UI.Text.ITextDocument sender)
+    public static bool CanUndo_stub(this Microsoft.UI.Text.ITextDocument sender)
     {
         try
         {
@@ -7375,7 +7375,7 @@ public static class ITextDocument_stub
             throw new RuntimeException(ex);
         }
     }
-    public static bool CanCopy_stub(this Windows.UI.Text.ITextDocument sender)
+    public static bool CanCopy_stub(this Microsoft.UI.Text.ITextDocument sender)
     {
         try
         {
@@ -7387,7 +7387,7 @@ public static class ITextDocument_stub
             throw new RuntimeException(ex);
         }
     }
-    public static bool CanPaste_stub(this Windows.UI.Text.ITextDocument sender)
+    public static bool CanPaste_stub(this Microsoft.UI.Text.ITextDocument sender)
     {
         try
         {
@@ -7399,7 +7399,7 @@ public static class ITextDocument_stub
             throw new RuntimeException(ex);
         }
     }
-    public static int BatchDisplayUpdates_stub(this Windows.UI.Text.ITextDocument sender)
+    public static int BatchDisplayUpdates_stub(this Microsoft.UI.Text.ITextDocument sender)
     {
         try
         {
@@ -7411,7 +7411,7 @@ public static class ITextDocument_stub
             throw new RuntimeException(ex);
         }
     }
-    public static int ApplyDisplayUpdates_stub(this Windows.UI.Text.ITextDocument sender)
+    public static int ApplyDisplayUpdates_stub(this Microsoft.UI.Text.ITextDocument sender)
     {
         try
         {
@@ -7423,7 +7423,7 @@ public static class ITextDocument_stub
             throw new RuntimeException(ex);
         }
     }
-    public static void Undo_stub(this Windows.UI.Text.ITextDocument sender)
+    public static void Undo_stub(this Microsoft.UI.Text.ITextDocument sender)
     {
         try
         {
@@ -7435,7 +7435,7 @@ public static class ITextDocument_stub
             throw new RuntimeException(ex);
         }
     }
-    public static void BeginUndoGroup_stub(this Windows.UI.Text.ITextDocument sender)
+    public static void BeginUndoGroup_stub(this Microsoft.UI.Text.ITextDocument sender)
     {
         try
         {
@@ -7447,7 +7447,7 @@ public static class ITextDocument_stub
             throw new RuntimeException(ex);
         }
     }
-    public static void EndUndoGroup_stub(this Windows.UI.Text.ITextDocument sender)
+    public static void EndUndoGroup_stub(this Microsoft.UI.Text.ITextDocument sender)
     {
         try
         {
@@ -7459,7 +7459,7 @@ public static class ITextDocument_stub
             throw new RuntimeException(ex);
         }
     }
-    public static void SetText_stub(this Windows.UI.Text.ITextDocument sender, Windows.UI.Text.TextSetOptions options, string value)
+    public static void SetText_stub(this Microsoft.UI.Text.ITextDocument sender, Microsoft.UI.Text.TextSetOptions options, string value)
     {
         try
         {
@@ -7471,7 +7471,7 @@ public static class ITextDocument_stub
             throw new RuntimeException(ex);
         }
     }
-    public static Windows.UI.Text.ITextParagraphFormat GetDefaultParagraphFormat_stub(this Windows.UI.Text.ITextDocument sender)
+    public static Microsoft.UI.Text.ITextParagraphFormat GetDefaultParagraphFormat_stub(this Microsoft.UI.Text.ITextDocument sender)
     {
         try
         {
@@ -7483,7 +7483,7 @@ public static class ITextDocument_stub
             throw new RuntimeException(ex);
         }
     }
-    public static void LoadFromStream_stub(this Windows.UI.Text.ITextDocument sender, Windows.UI.Text.TextSetOptions options, Windows.Storage.Streams.IRandomAccessStream value)
+    public static void LoadFromStream_stub(this Microsoft.UI.Text.ITextDocument sender, Microsoft.UI.Text.TextSetOptions options, Windows.Storage.Streams.IRandomAccessStream value)
     {
         try
         {
@@ -7498,7 +7498,7 @@ public static class ITextDocument_stub
 }
 public static class ITextParagraphFormat_stub
 {
-    public static void SetIndents_stub(this Windows.UI.Text.ITextParagraphFormat sender, float start, float left, float right)
+    public static void SetIndents_stub(this Microsoft.UI.Text.ITextParagraphFormat sender, float start, float left, float right)
     {
         try
         {

@@ -2,9 +2,9 @@
 
 #include "PixelBuffer.g.h"
 
-#include <winrt/Windows.UI.Xaml.Media.Imaging.h>
+#include <winrt/Microsoft.UI.Xaml.Media.Imaging.h>
 
-using namespace winrt::Windows::UI::Xaml::Media::Imaging;
+using namespace winrt::Microsoft::UI::Xaml::Media::Imaging;
 using namespace winrt::Windows::Storage::Streams;
 
 namespace winrt::Telegram::Native::implementation

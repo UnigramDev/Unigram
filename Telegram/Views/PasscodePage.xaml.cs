@@ -11,7 +11,6 @@ using Telegram.Services;
 using Windows.ApplicationModel;
 using Windows.Security.Credentials;
 using Windows.Security.Cryptography;
-using Windows.UI.Core;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Input;
@@ -111,8 +110,9 @@ namespace Telegram.Views
 
         private async void OnOpened(ContentDialog sender, ContentDialogOpenedEventArgs args)
         {
-            Window.Current.Activated += Window_Activated;
-            Window.Current.SizeChanged += Window_SizeChanged;
+            // TODO: resolve Window.Current from XamlRoot
+            //Window.Current.Activated += Window_Activated;
+            //Window.Current.SizeChanged += Window_SizeChanged;
 
             Field.LosingFocus += Field_LosingFocus;
 
@@ -142,8 +142,9 @@ namespace Telegram.Views
             }
             else
             {
-                Window.Current.Activated -= Window_Activated;
-                Window.Current.SizeChanged -= Window_SizeChanged;
+                // TODO: resolve Window.Current from XamlRoot
+                //Window.Current.Activated -= Window_Activated;
+                //Window.Current.SizeChanged -= Window_SizeChanged;
 
                 Field.LosingFocus -= Field_LosingFocus;
 
@@ -153,13 +154,13 @@ namespace Telegram.Views
 
         #region Bounds
 
-        private void Window_Activated(object sender, WindowActivatedEventArgs e)
-        {
-            if (e.WindowActivationState != CoreWindowActivationState.Deactivated)
-            {
-                Field.Focus(FocusState.Keyboard);
-            }
-        }
+        //private void Window_Activated(object sender, WindowActivatedEventArgs e)
+        //{
+        //    if (e.WindowActivationState != CoreWindowActivationState.Deactivated)
+        //    {
+        //        Field.Focus(FocusState.Keyboard);
+        //    }
+        //}
 
         private void Window_SizeChanged(object sender, WindowSizeChangedEventArgs e)
         {

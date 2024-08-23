@@ -33,7 +33,6 @@ using Microsoft.UI.Text;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Automation;
 using Microsoft.UI.Xaml.Controls;
-using Microsoft.UI.Xaml.Core.Direct;
 using Microsoft.UI.Xaml.Documents;
 using Microsoft.UI.Xaml.Hosting;
 using Microsoft.UI.Xaml.Markup;
@@ -583,7 +582,7 @@ namespace Telegram.Controls.Messages
         {
             if (_cornerRadius == null)
             {
-                _cornerRadius = CompositionDevice.CreateRectangleClip(ContentPanel);
+                //_cornerRadius = CompositionDevice.CreateRectangleClip(ContentPanel);
                 _cornerRadius.Set(
                     (float)ContentPanel.CornerRadius.TopLeft,
                     (float)ContentPanel.CornerRadius.TopRight,
@@ -1921,24 +1920,24 @@ namespace Telegram.Controls.Messages
             return text.Length > 0;
         }
 
-        private Run CreateRun(string text, FontWeight? fontWeight = null, FontFamily fontFamily = null)
-        {
-            var direct = XamlDirect.GetDefault();
-            var run = direct.CreateInstance(XamlTypeIndex.Run);
-            direct.SetStringProperty(run, XamlPropertyIndex.Run_Text, text);
+        //private Run CreateRun(string text, FontWeight? fontWeight = null, FontFamily fontFamily = null)
+        //{
+        //    var direct = XamlDirect.GetDefault();
+        //    var run = direct.CreateInstance(XamlTypeIndex.Run);
+        //    direct.SetStringProperty(run, XamlPropertyIndex.Run_Text, text);
 
-            if (fontWeight != null)
-            {
-                direct.SetObjectProperty(run, XamlPropertyIndex.TextElement_FontWeight, fontWeight.Value);
-            }
+        //    if (fontWeight != null)
+        //    {
+        //        direct.SetObjectProperty(run, XamlPropertyIndex.TextElement_FontWeight, fontWeight.Value);
+        //    }
 
-            if (fontFamily != null)
-            {
-                direct.SetObjectProperty(run, XamlPropertyIndex.TextElement_FontFamily, fontFamily);
-            }
+        //    if (fontFamily != null)
+        //    {
+        //        direct.SetObjectProperty(run, XamlPropertyIndex.TextElement_FontFamily, fontFamily);
+        //    }
 
-            return direct.GetObject(run) as Run;
-        }
+        //    return direct.GetObject(run) as Run;
+        //}
 
         private Brush GetBrush(string key)
         {
@@ -2164,15 +2163,15 @@ namespace Telegram.Controls.Messages
 
                 if (reply)
                 {
-                    _cornerRadius.AnimateBottom(Window.Current.Compositor, ContentPanel.ActualSize.Y * yScale, ContentPanel.ActualSize.Y, outer / 1000);
+                    //_cornerRadius.AnimateBottom(Window.Current.Compositor, ContentPanel.ActualSize.Y * yScale, ContentPanel.ActualSize.Y, outer / 1000);
                 }
                 else
                 {
                     var scaled = ContentPanel.ActualSize.Y * yScale;
                     var diff = (scaled - ContentPanel.ActualSize.Y) / 2;
 
-                    _cornerRadius.AnimateTop(Window.Current.Compositor, -diff, 0, outer / 1000);
-                    _cornerRadius.AnimateBottom(Window.Current.Compositor, ContentPanel.ActualSize.Y + diff, ContentPanel.ActualSize.Y, outer / 1000);
+                    //_cornerRadius.AnimateTop(Window.Current.Compositor, -diff, 0, outer / 1000);
+                    //_cornerRadius.AnimateBottom(Window.Current.Compositor, ContentPanel.ActualSize.Y + diff, ContentPanel.ActualSize.Y, outer / 1000);
                 }
             }
 

@@ -45,7 +45,6 @@ using Windows.ApplicationModel;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.Foundation;
 using Microsoft.UI.Composition;
-using Windows.UI.Core;
 using Microsoft.UI.Text;
 using Windows.UI.ViewManagement;
 using Microsoft.UI.Xaml;
@@ -772,11 +771,12 @@ namespace Telegram.Views
             //Bindings.StopTracking();
             //Bindings.Update();
 
-            Window.Current.Activated += Window_Activated;
-            Window.Current.VisibilityChanged += Window_VisibilityChanged;
+            // TODO: resolve Window.Current from XamlRoot
+            //Window.Current.Activated += Window_Activated;
+            //Window.Current.VisibilityChanged += Window_VisibilityChanged;
 
-            Window.Current.CoreWindow.CharacterReceived += OnCharacterReceived;
-            WindowContext.Current.InputListener.KeyDown += OnAcceleratorKeyActivated;
+            //Window.Current.CoreWindow.CharacterReceived += OnCharacterReceived;
+            //WindowContext.Current.InputListener.KeyDown += OnAcceleratorKeyActivated;
 
             ViewVisibleMessages();
 
@@ -796,11 +796,12 @@ namespace Telegram.Views
 
             UnloadVisibleMessages();
 
-            Window.Current.Activated -= Window_Activated;
-            Window.Current.VisibilityChanged -= Window_VisibilityChanged;
+            // TODO: resolve Window.Current from XamlRoot
+            //Window.Current.Activated -= Window_Activated;
+            //Window.Current.VisibilityChanged -= Window_VisibilityChanged;
 
-            Window.Current.CoreWindow.CharacterReceived -= OnCharacterReceived;
-            WindowContext.Current.InputListener.KeyDown -= OnAcceleratorKeyActivated;
+            //Window.Current.CoreWindow.CharacterReceived -= OnCharacterReceived;
+            //WindowContext.Current.InputListener.KeyDown -= OnAcceleratorKeyActivated;
 
             _loadedThemeTask?.TrySetResult(true);
             _updateThemeTask?.TrySetResult(true);
@@ -920,30 +921,30 @@ namespace Telegram.Views
             FlyoutArea = null;
         }
 
-        private void Window_Activated(object sender, WindowActivatedEventArgs e)
-        {
-            var mode = Window.Current.CoreWindow.ActivationMode;
-            if (mode == CoreWindowActivationMode.ActivatedInForeground)
-            {
-                ViewVisibleMessages(true);
+        //private void Window_Activated(object sender, WindowActivatedEventArgs e)
+        //{
+        //    var mode = Window.Current.CoreWindow.ActivationMode;
+        //    if (mode == CoreWindowActivationMode.ActivatedInForeground)
+        //    {
+        //        ViewVisibleMessages(true);
 
-                var popups = VisualTreeHelper.GetOpenPopups(Window.Current);
-                if (popups.Count > 0)
-                {
-                    return;
-                }
+        //        var popups = VisualTreeHelper.GetOpenPopups(Window.Current);
+        //        if (popups.Count > 0)
+        //        {
+        //            return;
+        //        }
 
-                var element = FocusManager.GetFocusedElement();
-                if (element is not TextBox and not RichEditBox)
-                {
-                    TrySetFocusState(FocusState.Programmatic, true);
-                }
-            }
-            else if (mode == CoreWindowActivationMode.Deactivated)
-            {
-                ViewModel.SaveDraft();
-            }
-        }
+        //        var element = FocusManager.GetFocusedElement();
+        //        if (element is not TextBox and not RichEditBox)
+        //        {
+        //            TrySetFocusState(FocusState.Programmatic, true);
+        //        }
+        //    }
+        //    else if (mode == CoreWindowActivationMode.Deactivated)
+        //    {
+        //        ViewModel.SaveDraft();
+        //    }
+        //}
 
         private void TrySetFocusState(FocusState state, bool fast)
         {
@@ -962,19 +963,19 @@ namespace Telegram.Views
             }
         }
 
-        private void Window_VisibilityChanged(object sender, VisibilityChangedEventArgs e)
-        {
-            if (e.Visible)
-            {
-                var popups = VisualTreeHelper.GetOpenPopups(Window.Current);
-                if (popups.Count > 0)
-                {
-                    return;
-                }
+        //private void Window_VisibilityChanged(object sender, VisibilityChangedEventArgs e)
+        //{
+        //    if (e.Visible)
+        //    {
+        //        var popups = VisualTreeHelper.GetOpenPopups(Window.Current);
+        //        if (popups.Count > 0)
+        //        {
+        //            return;
+        //        }
 
-                _focusState.Set(FocusState.Programmatic);
-            }
-        }
+        //        _focusState.Set(FocusState.Programmatic);
+        //    }
+        //}
 
         public void Search()
         {
@@ -1002,40 +1003,40 @@ namespace Telegram.Views
             ViewModel.SearchExecute(string.Empty);
         }
 
-        private void OnCharacterReceived(CoreWindow sender, CharacterReceivedEventArgs args)
-        {
-            var character = Encoding.UTF32.GetString(BitConverter.GetBytes(args.KeyCode));
-            if (character.Length == 0 || (char.IsControl(character[0]) && character != "\u0016") || char.IsWhiteSpace(character[0]))
-            {
-                return;
-            }
+        //private void OnCharacterReceived(CoreWindow sender, CharacterReceivedEventArgs args)
+        //{
+        //    var character = Encoding.UTF32.GetString(BitConverter.GetBytes(args.KeyCode));
+        //    if (character.Length == 0 || (char.IsControl(character[0]) && character != "\u0016") || char.IsWhiteSpace(character[0]))
+        //    {
+        //        return;
+        //    }
 
-            var focused = FocusManager.GetFocusedElement();
-            if (focused is null or (not TextBox and not RichEditBox))
-            {
-                foreach (var popup in VisualTreeHelper.GetOpenPopups(Window.Current))
-                {
-                    if (popup.Child is not ToolTip and not TeachingTip)
-                    {
-                        return;
-                    }
-                }
+        //    var focused = FocusManager.GetFocusedElement();
+        //    if (focused is null or (not TextBox and not RichEditBox))
+        //    {
+        //        foreach (var popup in VisualTreeHelper.GetOpenPopups(Window.Current))
+        //        {
+        //            if (popup.Child is not ToolTip and not TeachingTip)
+        //            {
+        //                return;
+        //            }
+        //        }
 
-                TextField.Focus(FocusState.Keyboard);
+        //        TextField.Focus(FocusState.Keyboard);
 
-                // For some reason, this is paste
-                if (character == "\u0016")
-                {
-                    TextField.PasteFromClipboard();
-                }
-                else
-                {
-                    TextField.InsertText(character);
-                }
+        //        // For some reason, this is paste
+        //        if (character == "\u0016")
+        //        {
+        //            TextField.PasteFromClipboard();
+        //        }
+        //        else
+        //        {
+        //            TextField.InsertText(character);
+        //        }
 
-                args.Handled = true;
-            }
-        }
+        //        args.Handled = true;
+        //    }
+        //}
 
         private void OnAcceleratorKeyActivated(Window sender, InputKeyDownEventArgs args)
         {

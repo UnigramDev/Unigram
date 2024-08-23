@@ -48,8 +48,8 @@ namespace Telegram.Navigation
         public BootStrapper()
         {
             Current = this;
-            Resuming += OnResuming;
-            Suspending += OnSuspending;
+            //Resuming += OnResuming;
+            //Suspending += OnSuspending;
 
             UISettings.TextScaleFactorChanged += OnTextScaleFactorChanged;
             TextScaleFactor = UISettings.TextScaleFactor;
@@ -65,42 +65,42 @@ namespace Telegram.Navigation
             return WindowContext.ForEachAsync(window => WindowContext.Current.ConsolidateAsync());
         }
 
-        protected override void OnWindowCreated(WindowCreatedEventArgs args)
-        {
-            Logger.Info();
+        //protected override void OnWindowCreated(WindowCreatedEventArgs args)
+        //{
+        //    Logger.Info();
 
-            IsMainWindowCreated = true;
-            //should be called to initialize and set new SynchronizationContext
-            //if (!WindowWrapper.ActiveWrappers.Any())
-            // handle window
+        //    IsMainWindowCreated = true;
+        //    //should be called to initialize and set new SynchronizationContext
+        //    //if (!WindowWrapper.ActiveWrappers.Any())
+        //    // handle window
 
-            // Hook up the default Back handler
-            // WARNING: this is used by Xbox (and some Windows users)
-            SystemNavigationManager.GetForCurrentView().BackRequested += BackHandler;
+        //    // Hook up the default Back handler
+        //    // WARNING: this is used by Xbox (and some Windows users)
+        //    SystemNavigationManager.GetForCurrentView().BackRequested += BackHandler;
 
-            CustomXamlResourceLoader.Current = new XamlResourceLoader();
-            CreateWindowWrapper(args.Window);
-            ViewService.OnWindowCreated();
+        //    CustomXamlResourceLoader.Current = new XamlResourceLoader();
+        //    CreateWindowWrapper(args.Window);
+        //    ViewService.OnWindowCreated();
 
-            args.Window.Activated += OnActivated;
-            args.Window.Closed += OnClosed;
-            base.OnWindowCreated(args);
-        }
+        //    args.Window.Activated += OnActivated;
+        //    args.Window.Closed += OnClosed;
+        //    base.OnWindowCreated(args);
+        //}
 
-        private void OnActivated(object sender, WindowActivatedEventArgs e)
-        {
-            OnWindowActivated(e.WindowActivationState != CoreWindowActivationState.Deactivated);
-        }
+        //private void OnActivated(object sender, WindowActivatedEventArgs e)
+        //{
+        //    OnWindowActivated(e.WindowActivationState != CoreWindowActivationState.Deactivated);
+        //}
 
-        private void OnClosed(object sender, CoreWindowEventArgs e)
-        {
-            SystemNavigationManager.GetForCurrentView().BackRequested -= BackHandler;
+        //private void OnClosed(object sender, CoreWindowEventArgs e)
+        //{
+        //    SystemNavigationManager.GetForCurrentView().BackRequested -= BackHandler;
 
-            Window.Current.Activated -= OnActivated;
-            Window.Current.Closed -= OnClosed;
+        //    Window.Current.Activated -= OnActivated;
+        //    Window.Current.Closed -= OnClosed;
 
-            OnWindowClosed();
-        }
+        //    OnWindowClosed();
+        //}
 
         protected virtual void OnWindowClosed()
         {
@@ -145,47 +145,47 @@ namespace Telegram.Navigation
 
         // it is the intent of Template 10 to no longer require Launched/Activated overrides, only OnStartAsync()
 
-        protected sealed override void OnActivated(IActivatedEventArgs e)
-        {
-            Logger.Info();
-            CallInternalActivated(e);
-        }
+        //protected sealed override void OnActivated(IActivatedEventArgs e)
+        //{
+        //    Logger.Info();
+        //    CallInternalActivated(e);
+        //}
 
-        protected sealed override void OnCachedFileUpdaterActivated(CachedFileUpdaterActivatedEventArgs args)
-        {
-            Logger.Info();
-            CallInternalActivated(args);
-        }
+        //protected sealed override void OnCachedFileUpdaterActivated(CachedFileUpdaterActivatedEventArgs args)
+        //{
+        //    Logger.Info();
+        //    CallInternalActivated(args);
+        //}
 
-        protected sealed override void OnFileActivated(FileActivatedEventArgs args)
-        {
-            Logger.Info();
-            CallInternalActivated(args);
-        }
+        //protected sealed override void OnFileActivated(FileActivatedEventArgs args)
+        //{
+        //    Logger.Info();
+        //    CallInternalActivated(args);
+        //}
 
-        protected sealed override void OnFileOpenPickerActivated(FileOpenPickerActivatedEventArgs args)
-        {
-            Logger.Info();
-            CallInternalActivated(args);
-        }
+        //protected sealed override void OnFileOpenPickerActivated(FileOpenPickerActivatedEventArgs args)
+        //{
+        //    Logger.Info();
+        //    CallInternalActivated(args);
+        //}
 
-        protected sealed override void OnFileSavePickerActivated(FileSavePickerActivatedEventArgs args)
-        {
-            Logger.Info();
-            CallInternalActivated(args);
-        }
+        //protected sealed override void OnFileSavePickerActivated(FileSavePickerActivatedEventArgs args)
+        //{
+        //    Logger.Info();
+        //    CallInternalActivated(args);
+        //}
 
-        protected sealed override void OnSearchActivated(SearchActivatedEventArgs args)
-        {
-            Logger.Info();
-            CallInternalActivated(args);
-        }
+        //protected sealed override void OnSearchActivated(SearchActivatedEventArgs args)
+        //{
+        //    Logger.Info();
+        //    CallInternalActivated(args);
+        //}
 
-        protected sealed override void OnShareTargetActivated(ShareTargetActivatedEventArgs args)
-        {
-            Logger.Info();
-            CallInternalActivated(args);
-        }
+        //protected sealed override void OnShareTargetActivated(ShareTargetActivatedEventArgs args)
+        //{
+        //    Logger.Info();
+        //    CallInternalActivated(args);
+        //}
 
         public bool PrelaunchActivated { get; private set; }
 
@@ -225,92 +225,92 @@ namespace Telegram.Navigation
 
         // it is the intent of Template 10 to no longer require Launched/Activated overrides, only OnStartAsync()
 
-        protected sealed override void OnLaunched(LaunchActivatedEventArgs e)
-        {
-            Logger.Info(e.Kind);
-            WatchDog.Launch(e.PreviousExecutionState);
-            CallInternalLaunchAsync(e);
-        }
+        //protected sealed override void OnLaunched(LaunchActivatedEventArgs e)
+        //{
+        //    Logger.Info(e.Kind);
+        //    WatchDog.Launch(e.PreviousExecutionState);
+        //    CallInternalLaunchAsync(e);
+        //}
 
-        private void CallInternalLaunchAsync(LaunchActivatedEventArgs e)
-        {
-            CurrentState = States.BeforeLaunch;
-            InternalLaunch(e);
-            CurrentState = States.AfterLaunch;
-        }
+        //private void CallInternalLaunchAsync(LaunchActivatedEventArgs e)
+        //{
+        //    CurrentState = States.BeforeLaunch;
+        //    InternalLaunch(e);
+        //    CurrentState = States.AfterLaunch;
+        //}
 
-        /// <summary>
-        /// This handles all the preliminary stuff unique to Launched before calling OnStartAsync().
-        /// This is private because it is a specialized prelude to OnStartAsync().
-        /// OnStartAsync will not be called if state restore is determined
-        /// </summary>
-        private void InternalLaunch(LaunchActivatedEventArgs e)
-        {
-            Logger.Info($"Previous: {e.PreviousExecutionState}");
+        ///// <summary>
+        ///// This handles all the preliminary stuff unique to Launched before calling OnStartAsync().
+        ///// This is private because it is a specialized prelude to OnStartAsync().
+        ///// OnStartAsync will not be called if state restore is determined
+        ///// </summary>
+        //private void InternalLaunch(LaunchActivatedEventArgs e)
+        //{
+        //    Logger.Info($"Previous: {e.PreviousExecutionState}");
 
-            PrelaunchActivated = e.PrelaunchActivated;
+        //    PrelaunchActivated = e.PrelaunchActivated;
 
-            if (e.PreviousExecutionState != ApplicationExecutionState.Running || Window.Current.Content == null)
-            {
-                try
-                {
-                    InitializeFrame(e);
-                }
-                catch (Exception)
-                {
-                    // nothing
-                }
-            }
+        //    if (e.PreviousExecutionState != ApplicationExecutionState.Running || Window.Current.Content == null)
+        //    {
+        //        try
+        //        {
+        //            InitializeFrame(e);
+        //        }
+        //        catch (Exception)
+        //        {
+        //            // nothing
+        //        }
+        //    }
 
-            // okay, now handle launch
-            bool restored = false;
-            switch (e.PreviousExecutionState)
-            {
-                case ApplicationExecutionState.Suspended:
-                case ApplicationExecutionState.Terminated:
-                    {
-                        OnResuming(this, null, AppExecutionState.Terminated);
+        //    // okay, now handle launch
+        //    bool restored = false;
+        //    switch (e.PreviousExecutionState)
+        //    {
+        //        case ApplicationExecutionState.Suspended:
+        //        case ApplicationExecutionState.Terminated:
+        //            {
+        //                OnResuming(this, null, AppExecutionState.Terminated);
 
-                        /*
-                            Restore state if you need to/can do.
-                            Remember that only the primary tile or when user has
-                            switched to the app (for instance via the task switcher)
-                            should restore. (this includes toast with no data payload)
-                            The rest are already providing a nav path.
+        //                /*
+        //                    Restore state if you need to/can do.
+        //                    Remember that only the primary tile or when user has
+        //                    switched to the app (for instance via the task switcher)
+        //                    should restore. (this includes toast with no data payload)
+        //                    The rest are already providing a nav path.
 
-                            In the event that the cache has expired, attempting to restore
-                            from state will fail because of missing values. 
-                            This is okay & by design.
-                        */
+        //                    In the event that the cache has expired, attempting to restore
+        //                    from state will fail because of missing values. 
+        //                    This is okay & by design.
+        //                */
 
 
-                        //restored = await CallAutoRestoreAsync(e, restored);
-                        break;
-                    }
-                case ApplicationExecutionState.ClosedByUser:
-                case ApplicationExecutionState.NotRunning:
-                default:
-                    break;
-            }
+        //                //restored = await CallAutoRestoreAsync(e, restored);
+        //                break;
+        //            }
+        //        case ApplicationExecutionState.ClosedByUser:
+        //        case ApplicationExecutionState.NotRunning:
+        //        default:
+        //            break;
+        //    }
 
-            // handle pre-launch
-            if (e.PrelaunchActivated)
-            {
-                OnPrelaunch(e, out bool runOnStartAsync);
-                if (!runOnStartAsync)
-                {
-                    return;
-                }
-            }
+        //    // handle pre-launch
+        //    if (e.PrelaunchActivated)
+        //    {
+        //        OnPrelaunch(e, out bool runOnStartAsync);
+        //        if (!runOnStartAsync)
+        //        {
+        //            return;
+        //        }
+        //    }
 
-            if (!restored)
-            {
-                var kind = e.PreviousExecutionState == ApplicationExecutionState.Running ? StartKind.Activate : StartKind.Launch;
-                CallOnStart(e, true, kind);
-            }
+        //    if (!restored)
+        //    {
+        //        var kind = e.PreviousExecutionState == ApplicationExecutionState.Running ? StartKind.Activate : StartKind.Launch;
+        //        CallOnStart(e, true, kind);
+        //    }
 
-            CallActivateWindow(ActivateWindowSources.Launching);
-        }
+        //    CallActivateWindow(ActivateWindowSources.Launching);
+        //}
 
         private void BackHandler(object sender, BackRequestedEventArgs args)
         {

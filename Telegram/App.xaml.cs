@@ -106,42 +106,42 @@ namespace Telegram
             }
         }
 
-        protected override async void OnBackgroundActivated(BackgroundActivatedEventArgs args)
-        {
-            base.OnBackgroundActivated(args);
+        //protected override async void OnBackgroundActivated(BackgroundActivatedEventArgs args)
+        //{
+        //    base.OnBackgroundActivated(args);
 
-            if (args.TaskInstance.TriggerDetails is AppServiceTriggerDetails appService && string.Equals(appService.CallerPackageFamilyName, Package.Current.Id.FamilyName))
-            {
-                NotifyIcon.Connect(appService.AppServiceConnection, args.TaskInstance);
-            }
-            else
-            {
-                var deferral = args.TaskInstance.GetDeferral();
+        //    if (args.TaskInstance.TriggerDetails is AppServiceTriggerDetails appService && string.Equals(appService.CallerPackageFamilyName, Package.Current.Id.FamilyName))
+        //    {
+        //        NotifyIcon.Connect(appService.AppServiceConnection, args.TaskInstance);
+        //    }
+        //    else
+        //    {
+        //        var deferral = args.TaskInstance.GetDeferral();
 
-                if (args.TaskInstance.TriggerDetails is ToastNotificationActionTriggerDetail triggerDetail)
-                {
-                    var data = Toast.GetData(triggerDetail);
-                    if (data == null)
-                    {
-                        deferral.Complete();
-                        return;
-                    }
+        //        if (args.TaskInstance.TriggerDetails is ToastNotificationActionTriggerDetail triggerDetail)
+        //        {
+        //            var data = Toast.GetData(triggerDetail);
+        //            if (data == null)
+        //            {
+        //                deferral.Complete();
+        //                return;
+        //            }
 
-                    var session = TypeResolver.Current.Lifetime.ActiveItem.Id;
-                    if (data.TryGetValue("session", out string value) && int.TryParse(value, out int result))
-                    {
-                        session = result;
-                    }
+        //            var session = TypeResolver.Current.Lifetime.ActiveItem.Id;
+        //            if (data.TryGetValue("session", out string value) && int.TryParse(value, out int result))
+        //            {
+        //                session = result;
+        //            }
 
-                    if (TypeResolver.Current.TryResolve(session, out INotificationsService service))
-                    {
-                        await service.ProcessAsync(data);
-                    }
-                }
+        //            if (TypeResolver.Current.TryResolve(session, out INotificationsService service))
+        //            {
+        //                await service.ProcessAsync(data);
+        //            }
+        //        }
 
-                deferral.Complete();
-            }
-        }
+        //        deferral.Complete();
+        //    }
+        //}
 
         public override void OnInitialize(IActivatedEventArgs args)
         {

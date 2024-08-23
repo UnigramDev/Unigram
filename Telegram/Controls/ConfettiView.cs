@@ -15,10 +15,10 @@ using Microsoft.UI.Xaml.Controls;
 
 namespace Telegram.Controls
 {
-    [TemplatePart(Name = "Canvas", Type = typeof(CanvasAnimatedControl))]
+    //[TemplatePart(Name = "Canvas", Type = typeof(CanvasAnimatedControl))]
     public class ConfettiView : Control
     {
-        private CanvasAnimatedControl Canvas;
+        //private CanvasAnimatedControl Canvas;
         private readonly string CanvasPartName = "Canvas";
 
         public static Color[] _colors = new Color[]
@@ -48,24 +48,24 @@ namespace Telegram.Controls
             DefaultStyleKey = typeof(ConfettiView);
         }
 
-        public float CanvasWidth => (float)(Canvas?.Size.Width ?? 0);
-        public float CanvasHeight => (float)(Canvas?.Size.Height ?? 0);
+        public float CanvasWidth => 0;// (float)(Canvas?.Size.Width ?? 0);
+        public float CanvasHeight => 0;// (float)(Canvas?.Size.Height ?? 0);
 
         public event EventHandler Completed;
 
         protected override void OnApplyTemplate()
         {
-            var canvas = GetTemplateChild(CanvasPartName) as CanvasAnimatedControl;
-            if (canvas == null)
-            {
-                return;
-            }
+            //var canvas = GetTemplateChild(CanvasPartName) as CanvasAnimatedControl;
+            //if (canvas == null)
+            //{
+            //    return;
+            //}
 
-            Canvas = canvas;
-            Canvas.Loaded += OnLoaded;
-            Canvas.Unloaded += OnUnloaded;
-            //Canvas.CreateResources += OnCreateResources;
-            Canvas.Draw += OnDraw;
+            //Canvas = canvas;
+            //Canvas.Loaded += OnLoaded;
+            //Canvas.Unloaded += OnUnloaded;
+            ////Canvas.CreateResources += OnCreateResources;
+            //Canvas.Draw += OnDraw;
 
             base.OnApplyTemplate();
         }
@@ -80,63 +80,63 @@ namespace Telegram.Controls
 
         private void OnUnloaded(object sender, RoutedEventArgs e)
         {
-            Canvas.Loaded -= OnLoaded;
-            Canvas.Unloaded -= OnUnloaded;
-            //Canvas.CreateResources -= OnCreateResources;
-            Canvas.Draw -= OnDraw;
-            Canvas.RemoveFromVisualTree();
-            Canvas = null;
+            //Canvas.Loaded -= OnLoaded;
+            //Canvas.Unloaded -= OnUnloaded;
+            ////Canvas.CreateResources -= OnCreateResources;
+            //Canvas.Draw -= OnDraw;
+            //Canvas.RemoveFromVisualTree();
+            //Canvas = null;
         }
 
-        private void OnDraw(ICanvasAnimatedControl sender, CanvasAnimatedDrawEventArgs args)
-        {
-            lock (_particlesLock)
-            {
-                if (_started is false)
-                {
-                    sender.Paused = true;
-                    return;
-                }
+        //private void OnDraw(ICanvasAnimatedControl sender, CanvasAnimatedDrawEventArgs args)
+        //{
+        //    lock (_particlesLock)
+        //    {
+        //        if (_started is false)
+        //        {
+        //            sender.Paused = true;
+        //            return;
+        //        }
 
-                int i = (int)args.Timing.ElapsedTime.TotalMilliseconds;
-                if (i > 18)
-                {
-                    //i = 16;
-                }
+        //        int i = (int)args.Timing.ElapsedTime.TotalMilliseconds;
+        //        if (i > 18)
+        //        {
+        //            //i = 16;
+        //        }
 
-                for (int j = 0; j < _particles.Count; j++)
-                {
-                    _particles[j].Draw(args);
+        //        for (int j = 0; j < _particles.Count; j++)
+        //        {
+        //            _particles[j].Draw(args);
 
-                    if (_particles[j].Update(i))
-                    {
-                        _particles.RemoveAt(j);
-                        j--;
-                    }
-                }
+        //            if (_particles[j].Update(i))
+        //            {
+        //                _particles.RemoveAt(j);
+        //                j--;
+        //            }
+        //        }
 
-                if (_fallingDownCount >= _particlesCount / 2 && _speedCoef > 0.2f)
-                {
-                    StartFall();
+        //        if (_fallingDownCount >= _particlesCount / 2 && _speedCoef > 0.2f)
+        //        {
+        //            StartFall();
 
-                    _speedCoef -= i / 16.0f * 0.15f;
+        //            _speedCoef -= i / 16.0f * 0.15f;
 
-                    if (_speedCoef < 0.2f)
-                    {
-                        _speedCoef = 0.2f;
-                    }
-                }
+        //            if (_speedCoef < 0.2f)
+        //            {
+        //                _speedCoef = 0.2f;
+        //            }
+        //        }
 
-                if (_particles.Count > 0)
-                {
-                    //invalidate();
-                    return;
-                }
+        //        if (_particles.Count > 0)
+        //        {
+        //            //invalidate();
+        //            return;
+        //        }
 
-                _started = false;
-                Completed?.Invoke(this, EventArgs.Empty);
-            }
-        }
+        //        _started = false;
+        //        Completed?.Invoke(this, EventArgs.Empty);
+        //    }
+        //}
 
         public void Start()
         {
@@ -154,10 +154,10 @@ namespace Telegram.Controls
                 }
 
                 //invalidate();
-                if (Canvas != null)
-                {
-                    Canvas.Paused = false;
-                }
+                //if (Canvas != null)
+                //{
+                //    Canvas.Paused = false;
+                //}
             }
         }
 
@@ -245,28 +245,28 @@ namespace Telegram.Controls
                 _confetti = confetti;
             }
 
-            public void Draw(CanvasAnimatedDrawEventArgs canvas)
-            {
-                if (type == 0)
-                {
-                    canvas.DrawingSession.FillCircle(x, y, typeSize, _colors[colorType]);
-                    return;
-                }
+            //public void Draw(CanvasAnimatedDrawEventArgs canvas)
+            //{
+            //    if (type == 0)
+            //    {
+            //        canvas.DrawingSession.FillCircle(x, y, typeSize, _colors[colorType]);
+            //        return;
+            //    }
 
-                static Rect Rect(double x1, double y1, double x2, double y2)
-                {
-                    return new Rect(x1, y1, x2 - x1, y2 - y1);
-                }
+            //    static Rect Rect(double x1, double y1, double x2, double y2)
+            //    {
+            //        return new Rect(x1, y1, x2 - x1, y2 - y1);
+            //    }
 
-                var rect = Rect(x - typeSize, y - 2.0f, x + typeSize, y + 2.0f);
-                canvas.DrawingSession.Transform = Matrix3x2.CreateRotation(DegreeToRadian(rotation), new Point(rect.X + rect.Width / 2, rect.Y + rect.Height / 2).ToVector2());
-                canvas.DrawingSession.FillRoundedRectangle(rect, 2.0f, 2.0f, _colors[colorType]);
-                canvas.DrawingSession.Transform = Matrix3x2.Identity;
-            }
+            //    var rect = Rect(x - typeSize, y - 2.0f, x + typeSize, y + 2.0f);
+            //    canvas.DrawingSession.Transform = Matrix3x2.CreateRotation(DegreeToRadian(rotation), new Point(rect.X + rect.Width / 2, rect.Y + rect.Height / 2).ToVector2());
+            //    canvas.DrawingSession.FillRoundedRectangle(rect, 2.0f, 2.0f, _colors[colorType]);
+            //    canvas.DrawingSession.Transform = Matrix3x2.Identity;
+            //}
 
             public bool Update(int i)
             {
-                float coefficient = _confetti.CanvasWidth / 360f;
+                float coefficient = /*_confetti.CanvasWidth /*/ 360f;
 
                 float f = i / 16.0f;
                 float f2 = x;
@@ -338,7 +338,7 @@ namespace Telegram.Controls
                     }
                 }
 
-                if (y >= _confetti.CanvasHeight)
+                //if (y >= _confetti.CanvasHeight)
                 {
                     return true;
                 }

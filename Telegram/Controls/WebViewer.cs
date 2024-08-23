@@ -51,7 +51,8 @@ namespace Telegram.Controls
             }
             else
             {
-                _presenter = new EdgeWebPresenter();
+                // TODO: not supported presenter
+                //_presenter = new EdgeWebPresenter();
             }
 
             _presenter.Navigating += OnNavigating;
@@ -77,9 +78,12 @@ namespace Telegram.Controls
             _presenter.Navigating -= OnNavigating;
             _presenter.EventReceived -= OnEventReceived;
 
-            _presenter = new EdgeWebPresenter();
-            _presenter.Navigating += OnNavigating;
-            _presenter.EventReceived += OnEventReceived;
+            //_presenter = new EdgeWebPresenter();
+            //_presenter.Navigating += OnNavigating;
+            //_presenter.EventReceived += OnEventReceived;
+
+            // TODO: not supported presenter
+            _presenter = null;
 
             Content = _presenter;
 
@@ -200,7 +204,7 @@ namespace Telegram.Controls
         }
     }
 
-    public class EdgeWebPresenter : WebPresenter
+    /*public class EdgeWebPresenter : WebPresenter
     {
         private WebView View;
 
@@ -274,7 +278,7 @@ namespace Telegram.Controls
         {
             View?.NavigateToString(string.Empty);
         }
-    }
+    }*/
 
     public class ChromiumWebPresenter : WebPresenter
     {

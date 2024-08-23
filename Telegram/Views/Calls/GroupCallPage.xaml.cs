@@ -2299,7 +2299,7 @@ namespace Telegram.Views.Calls
                     {
                         if (token.IsMatch(child.EndpointId, child.Surface))
                         {
-                            token.Stretch = child.GetStretch(_mode, list);
+                            //token.Stretch = child.GetStretch(_mode, list);
                             continue;
                         }
                     }
@@ -2318,7 +2318,7 @@ namespace Telegram.Views.Calls
 
                     if (future != null)
                     {
-                        future.Stretch = child.GetStretch(_mode, list);
+                        //future.Stretch = child.GetStretch(_mode, list);
                         future.IsMirrored = participant.IsCurrentUser && participant.ScreenSharingVideoInfo?.EndpointId != child.EndpointId;
                         tokens[child.EndpointId] = future;
                     }

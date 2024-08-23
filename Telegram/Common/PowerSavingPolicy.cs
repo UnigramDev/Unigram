@@ -51,7 +51,7 @@ namespace Telegram.Common
 
             }
 
-            m_compositionCapabilities = CompositionCapabilities.GetForCurrentView();
+            m_compositionCapabilities = new CompositionCapabilities();
             m_compositionCapabilities.Changed += CompositionCapabilities_Changed;
 
             m_uiSettings = new UISettings();

@@ -1,6 +1,5 @@
 namespace Telegram.Native.Opus
 {
-    [bindable]
     [default_interface]
     runtimeclass OpusOutput : Windows.Foundation.IClosable
     {

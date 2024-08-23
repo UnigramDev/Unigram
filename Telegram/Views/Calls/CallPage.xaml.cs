@@ -89,7 +89,7 @@ namespace Telegram.Views.Calls
                 _visual.StartAnimating();
             }
 
-            _dispatcherQueue = DispatcherQueue.GetForCurrentThread();
+            //_dispatcherQueue = DispatcherQueue.GetForCurrentThread();
 
             _durationTimer = new DispatcherTimer();
             _durationTimer.Interval = TimeSpan.FromMilliseconds(500);

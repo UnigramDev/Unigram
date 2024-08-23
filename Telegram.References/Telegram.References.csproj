@@ -1,0 +1,58 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0-windows10.0.22621.0</TargetFramework>
+    <TargetPlatformMinVersion>10.0.17763.0</TargetPlatformMinVersion>
+    <WindowsSdkPackageVersion>10.0.22621.42</WindowsSdkPackageVersion>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <Platforms>x86;x64;ARM64</Platforms>
+    <RuntimeIdentifiers Condition="$([MSBuild]::GetTargetFrameworkVersion('$(TargetFramework)')) &gt;= 8">win-x86;win-x64;win-arm64</RuntimeIdentifiers>
+    <RuntimeIdentifiers Condition="$([MSBuild]::GetTargetFrameworkVersion('$(TargetFramework)')) &lt; 8">win10-x86;win10-x64;win10-arm64</RuntimeIdentifiers>
+
+    <RunAnalyzersDuringBuild>false</RunAnalyzersDuringBuild>
+    <RunAnalyzersDuringLiveAnalysis>false</RunAnalyzersDuringLiveAnalysis>
+    <RunAnalyzers>false</RunAnalyzers>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <CsWinRTWindowsMetadata>10.0.22621.0 "C:\Users\Fela\.nuget\packages\microsoft.graphics.win2d\1.2.0\lib\uap10.0\Microsoft.Graphics.Canvas.winmd"</CsWinRTWindowsMetadata>
+    <CsWinRTIncludes>Telegram.Td;Telegram.Native;Telegram.Native.Calls;RLottie</CsWinRTIncludes>
+    <CsWinRTGenerateProjection>true</CsWinRTGenerateProjection>
+  </PropertyGroup>
+  
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Windows.CsWinRT" Version="2.1.1" />
+    <PackageReference Include="Microsoft.Windows.SDK.BuildTools" Version="10.0.22621.3233" />
+    <PackageReference Include="Microsoft.WindowsAppSDK" Version="1.6.240821007-preview2" />
+    <Manifest Include="$(ApplicationManifest)" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Web.WebView2">
+      <Version>1.0.2651.64</Version>
+    </PackageReference>
+    <PackageReference Include="Telegram.Td.UWP">
+      <Version>1.8.35</Version>
+    </PackageReference>
+    <PackageReference Include="Microsoft.Graphics.Win2D">
+      <Version>1.2.0</Version>
+    </PackageReference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Telegram.Native.Calls\Telegram.Native.Calls.vcxproj" />
+    <ProjectReference Include="..\Telegram.Native\Telegram.Native.vcxproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="RLottie">
+      <HintPath>$(ProjectDir)\..\Libraries\rlottie\x64\RLottie.winmd</HintPath>
+      <Implementation>RLottie.dll</Implementation>
+    </Reference>
+    <ReferenceCopyLocalPaths Include="$(ProjectDir)\..\Libraries\rlottie\x64\RLottie.dll" />
+    <ReferenceCopyLocalPaths Include="$(ProjectDir)\..\Libraries\rlottie\x64\RLottie.pri" />
+    <!--<ReferenceCopyLocalPaths Condition=" '$(Configuration)' == 'Debug' " Include="$(ProjectDir)\..\Libraries\rlottie\$(Platform)\zlib1.dll" />-->
+  </ItemGroup>
+
+</Project>

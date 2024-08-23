@@ -395,8 +395,8 @@ namespace Telegram.Services.Settings
             }
             else if (NightMode == NightMode.Scheduled && RequestedTheme == TelegramTheme.Light)
             {
-                TimeSpan start;
-                TimeSpan end;
+                TimeSpan start = default;
+                TimeSpan end = default;
 
                 if (IsLocationBased && Location.Latitude != 0 && Location.Longitude != 0)
                 {

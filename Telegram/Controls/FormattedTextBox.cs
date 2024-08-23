@@ -310,18 +310,19 @@ namespace Telegram.Controls
 
                 // If handwriting panel is open, the app would crash on send.
                 // Still, someone should fill a ticket to Microsoft about this.
-                if (send && HandwritingView.IsOpen)
-                {
-                    void handler(object s, RoutedEventArgs args)
-                    {
-                        OnAccept();
-                        HandwritingView.Unloaded -= handler;
-                    }
+                //if (send && HandwritingView.IsOpen)
+                //{
+                //    void handler(object s, RoutedEventArgs args)
+                //    {
+                //        OnAccept();
+                //        HandwritingView.Unloaded -= handler;
+                //    }
 
-                    HandwritingView.Unloaded += handler;
-                    HandwritingView.TryClose();
-                }
-                else if (send)
+                //    HandwritingView.Unloaded += handler;
+                //    HandwritingView.TryClose();
+                //}
+                //else
+                if (send)
                 {
                     OnAccept();
                 }

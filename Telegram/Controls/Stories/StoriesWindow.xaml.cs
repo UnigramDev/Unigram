@@ -49,7 +49,7 @@ namespace Telegram.Controls.Stories
             _stealthTimer.Interval = TimeSpan.FromSeconds(1);
             _stealthTimer.Tick += StealthTimer_Tick;
 
-            _dispatcherQueue = DispatcherQueue.GetForCurrentThread();
+            //_dispatcherQueue = DispatcherQueue.GetForCurrentThread();
         }
 
         private void StealthTimer_Tick(object sender, object e)
@@ -783,16 +783,16 @@ namespace Telegram.Controls.Stories
 
         private void OnLoaded(object sender, RoutedEventArgs e)
         {
-            WindowContext.Current.Activated += OnActivated;
-            WindowContext.Current.InputListener.KeyDown += OnAcceleratorKeyActivated;
+            //WindowContext.Current.Activated += OnActivated;
+            //WindowContext.Current.InputListener.KeyDown += OnAcceleratorKeyActivated;
 
             StoriesWindow_Loaded(sender, e);
         }
 
         private void OnUnloaded(object sender, RoutedEventArgs e)
         {
-            WindowContext.Current.Activated -= OnActivated;
-            WindowContext.Current.InputListener.KeyDown -= OnAcceleratorKeyActivated;
+            //WindowContext.Current.Activated -= OnActivated;
+            //WindowContext.Current.InputListener.KeyDown -= OnAcceleratorKeyActivated;
 
             _viewModel?.Aggregator.Unsubscribe(this);
             _stealthTimer.Stop();

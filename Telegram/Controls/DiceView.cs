@@ -81,7 +81,7 @@ namespace Telegram.Controls
         private bool _unloaded;
 
         public DiceView()
-            : this(CompositionCapabilities.GetForCurrentView().AreEffectsFast())
+            : this(false/*CompositionCapabilities.GetForCurrentView().AreEffectsFast()*/)
         {
         }
 
@@ -287,7 +287,7 @@ namespace Telegram.Controls
                     }
                 }
 
-                animations[i].RenderSync(_bitmaps[i], index[i]);
+                //animations[i].RenderSync(_bitmaps[i], index[i]);
 
                 if (i == 1 && !_isLoopingEnabled[i])
                 {

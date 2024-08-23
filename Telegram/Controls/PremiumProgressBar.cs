@@ -63,8 +63,8 @@ namespace Telegram.Controls
             _valueRoot = ElementComposition.GetElementVisual(ValueRoot);
             _thumb = ElementComposition.GetElementVisual(Thumb);
 
-            _thumbClip = CompositionDevice.CreateRectangleClip(Thumb.Children[0]);
-            _thumbClip.Set(20, 20, 20, 0);
+            //_thumbClip = CompositionDevice.CreateRectangleClip(Thumb.Children[0]);
+            //_thumbClip.Set(20, 20, 20, 0);
 
             ValueRoot.SizeChanged += OnSizeChanged;
             Thumb.SizeChanged += OnSizeChanged;
@@ -163,7 +163,7 @@ namespace Telegram.Controls
                 fadePrev.InsertKeyFrame(show ? 1 : 0, 0);
                 fadePrev.Duration = duration;
 
-                _thumbClip.AnimateBottomLeft(_thumb.Compositor, show ? 0 : 20, show ? 20 : 0, duration.TotalMilliseconds / 1000 + 0.1);
+                //_thumbClip.AnimateBottomLeft(_thumb.Compositor, show ? 0 : 20, show ? 20 : 0, duration.TotalMilliseconds / 1000 + 0.1);
 
                 core.StartAnimation("Translation.X", animCore);
                 prev.StartAnimation("Translation.X", animPrev);
@@ -195,7 +195,7 @@ namespace Telegram.Controls
                 fadeNext.InsertKeyFrame(show ? 1 : 0, 0);
                 fadeNext.Duration = duration;
 
-                _thumbClip.AnimateBottomRight(_thumb.Compositor, show ? 0 : 20, show ? 20 : 0, duration.TotalMilliseconds / 1000 + 0.1);
+                //_thumbClip.AnimateBottomRight(_thumb.Compositor, show ? 0 : 20, show ? 20 : 0, duration.TotalMilliseconds / 1000 + 0.1);
 
                 core.StartAnimation("Translation.X", animCore);
                 next.StartAnimation("Translation.X", animNext);
@@ -238,8 +238,8 @@ namespace Telegram.Controls
                 fadeNext.InsertKeyFrame(show ? 1 : 0, 0);
                 fadeNext.Duration = duration;
 
-                _thumbClip.AnimateBottomLeft(_thumb.Compositor, show ? 20 : 0, show ? 0 : 20, duration.TotalMilliseconds / 1000 + 0.1);
-                _thumbClip.AnimateBottomRight(_thumb.Compositor, show ? 0 : 20, show ? 20 : 0, duration.TotalMilliseconds / 1000 + 0.1);
+                //_thumbClip.AnimateBottomLeft(_thumb.Compositor, show ? 20 : 0, show ? 0 : 20, duration.TotalMilliseconds / 1000 + 0.1);
+                //_thumbClip.AnimateBottomRight(_thumb.Compositor, show ? 0 : 20, show ? 20 : 0, duration.TotalMilliseconds / 1000 + 0.1);
 
                 core.StartAnimation("Translation.X", animCore);
                 prev.StartAnimation("Translation.X", animPrev);

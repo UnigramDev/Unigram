@@ -665,7 +665,7 @@ namespace Telegram.Controls.Chats
             public Recorder()
             {
                 _recordQueue = new ConcurrentQueueWorker(1);
-                _dispatcherQueue = DispatcherQueue.GetForCurrentThread();
+                //_dispatcherQueue = DispatcherQueue.GetForCurrentThread();
             }
 
             public static void Release()

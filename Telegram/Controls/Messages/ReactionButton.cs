@@ -311,28 +311,28 @@ namespace Telegram.Controls.Messages
                         var presenter = Presenter;
                         var popup = Overlay;
 
-                        var dispatcher = DispatcherQueue.GetForCurrentThread();
+                        //var dispatcher = DispatcherQueue.GetForCurrentThread();
 
-                        var aroundView = new AnimatedImage();
-                        aroundView.Width = 32 * 3;
-                        aroundView.Height = 32 * 3;
-                        aroundView.LoopCount = 1;
-                        aroundView.FrameSize = new Size(32 * 3, 32 * 3);
-                        aroundView.DecodeFrameType = DecodePixelType.Logical;
-                        aroundView.AutoPlay = true;
-                        aroundView.Source = new LocalFileSource(around);
-                        aroundView.LoopCompleted += (s, args) =>
-                        {
-                            dispatcher.TryEnqueue(Continue2);
-                        };
+                        //var aroundView = new AnimatedImage();
+                        //aroundView.Width = 32 * 3;
+                        //aroundView.Height = 32 * 3;
+                        //aroundView.LoopCount = 1;
+                        //aroundView.FrameSize = new Size(32 * 3, 32 * 3);
+                        //aroundView.DecodeFrameType = DecodePixelType.Logical;
+                        //aroundView.AutoPlay = true;
+                        //aroundView.Source = new LocalFileSource(around);
+                        //aroundView.LoopCompleted += (s, args) =>
+                        //{
+                        //    dispatcher.TryEnqueue(Continue2);
+                        //};
 
-                        var root = new Grid();
-                        root.Width = 32 * 3;
-                        root.Height = 32 * 3;
-                        root.Children.Add(aroundView);
+                        //var root = new Grid();
+                        //root.Width = 32 * 3;
+                        //root.Height = 32 * 3;
+                        //root.Children.Add(aroundView);
 
-                        popup.Child = root;
-                        popup.IsOpen = true;
+                        //popup.Child = root;
+                        //popup.IsOpen = true;
                     }
                 }
             }
@@ -362,46 +362,46 @@ namespace Telegram.Controls.Messages
                 var presenter = Presenter;
                 var popup = Overlay;
 
-                var dispatcher = DispatcherQueue.GetForCurrentThread();
+                //var dispatcher = DispatcherQueue.GetForCurrentThread();
 
-                var centerView = new AnimatedImage();
-                centerView.Width = 32;
-                centerView.Height = 32;
-                centerView.LoopCount = 1;
-                centerView.FrameSize = new Size(32, 32);
-                centerView.DecodeFrameType = DecodePixelType.Logical;
-                centerView.AutoPlay = true;
-                centerView.Source = new LocalFileSource(center);
-                centerView.Ready += (s, args) =>
-                {
-                    dispatcher.TryEnqueue(Start);
-                };
-                centerView.LoopCompleted += (s, args) =>
-                {
-                    dispatcher.TryEnqueue(Continue1);
-                };
+                //var centerView = new AnimatedImage();
+                //centerView.Width = 32;
+                //centerView.Height = 32;
+                //centerView.LoopCount = 1;
+                //centerView.FrameSize = new Size(32, 32);
+                //centerView.DecodeFrameType = DecodePixelType.Logical;
+                //centerView.AutoPlay = true;
+                //centerView.Source = new LocalFileSource(center);
+                //centerView.Ready += (s, args) =>
+                //{
+                //    dispatcher.TryEnqueue(Start);
+                //};
+                //centerView.LoopCompleted += (s, args) =>
+                //{
+                //    dispatcher.TryEnqueue(Continue1);
+                //};
 
-                var aroundView = new AnimatedImage();
-                aroundView.Width = 32 * 3;
-                aroundView.Height = 32 * 3;
-                aroundView.LoopCount = 1;
-                aroundView.FrameSize = new Size(32 * 3, 32 * 3);
-                aroundView.DecodeFrameType = DecodePixelType.Logical;
-                aroundView.AutoPlay = true;
-                aroundView.Source = new LocalFileSource(around);
-                aroundView.LoopCompleted += (s, args) =>
-                {
-                    dispatcher.TryEnqueue(Continue2);
-                };
+                //var aroundView = new AnimatedImage();
+                //aroundView.Width = 32 * 3;
+                //aroundView.Height = 32 * 3;
+                //aroundView.LoopCount = 1;
+                //aroundView.FrameSize = new Size(32 * 3, 32 * 3);
+                //aroundView.DecodeFrameType = DecodePixelType.Logical;
+                //aroundView.AutoPlay = true;
+                //aroundView.Source = new LocalFileSource(around);
+                //aroundView.LoopCompleted += (s, args) =>
+                //{
+                //    dispatcher.TryEnqueue(Continue2);
+                //};
 
-                var root = new Grid();
-                root.Width = 32 * 3;
-                root.Height = 32 * 3;
-                root.Children.Add(centerView);
-                root.Children.Add(aroundView);
+                //var root = new Grid();
+                //root.Width = 32 * 3;
+                //root.Height = 32 * 3;
+                //root.Children.Add(centerView);
+                //root.Children.Add(aroundView);
 
-                popup.Child = root;
-                popup.IsOpen = true;
+                //popup.Child = root;
+                //popup.IsOpen = true;
             }
             else
             {

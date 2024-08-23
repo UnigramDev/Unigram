@@ -86,8 +86,8 @@ namespace Telegram.Navigation
             _lifetime = TypeResolver.Current.Lifetime;
             _inputListener = new InputListener(window);
 
-            window.Activated += OnActivated;
-            window.Closed += OnClosed;
+            //window.Activated += OnActivated;
+            //window.Closed += OnClosed;
             window.CoreWindow.ResizeStarted += OnResizeStarted;
             window.CoreWindow.ResizeCompleted += OnResizeCompleted;
 
@@ -178,8 +178,8 @@ namespace Telegram.Navigation
             NavigationServices.ForEach(x => x.Suspend());
             NavigationServices.Clear();
 
-            _window.Activated -= OnActivated;
-            _window.Closed -= OnClosed;
+            //_window.Activated -= OnActivated;
+            //_window.Closed -= OnClosed;
             _window.CoreWindow.ResizeStarted -= OnResizeStarted;
             _window.CoreWindow.ResizeCompleted -= OnResizeCompleted;
         }
@@ -244,24 +244,24 @@ namespace Telegram.Navigation
 
         public CoreWindowActivationMode ActivationMode => _window.CoreWindow.ActivationMode;
 
-        public event EventHandler<WindowActivatedEventArgs> Activated;
+        //public event EventHandler<WindowActivatedEventArgs> Activated;
 
-        private void OnActivated(object sender, WindowActivatedEventArgs e)
-        {
-            Activated?.Invoke(sender, e);
+        //private void OnActivated(object sender, WindowActivatedEventArgs e)
+        //{
+        //    Activated?.Invoke(sender, e);
 
-            lock (_activeLock)
-            {
-                if (e.WindowActivationState != CoreWindowActivationState.Deactivated)
-                {
-                    Active = this;
-                }
-                else if (Active == this)
-                {
-                    Active = null;
-                }
-            }
-        }
+        //    lock (_activeLock)
+        //    {
+        //        if (e.WindowActivationState != CoreWindowActivationState.Deactivated)
+        //        {
+        //            Active = this;
+        //        }
+        //        else if (Active == this)
+        //        {
+        //            Active = null;
+        //        }
+        //    }
+        //}
 
         private void OnResizeStarted(CoreWindow sender, object args)
         {
@@ -606,8 +606,8 @@ namespace Telegram.Navigation
             }
             else
             {
-                var launch = args as LaunchActivatedEventArgs;
-                Activate(launch?.Arguments, service);
+                //var launch = args as LaunchActivatedEventArgs;
+                //Activate(launch?.Arguments, service);
             }
         }
 
@@ -671,7 +671,7 @@ namespace Telegram.Navigation
                 buttonHover = Color.FromArgb(25, 255, 255, 255);
                 buttonPressed = Color.FromArgb(51, 255, 255, 255);
             }
-            else if (theme == ApplicationTheme.Light)
+            else
             {
                 //background = Color.FromArgb(255, 230, 230, 230);
                 foreground = Colors.Black;

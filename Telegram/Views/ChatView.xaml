@@ -222,7 +222,6 @@
                                                  IsTextSelectionEnabled="False"
                                                  HyperlinkStyle="None"
                                                  HyperlinkForeground="#FFFFFF"
-                                                 HyperlinkFontWeight="SemiBold"
                                                  Padding="0,0,0,4"
                                                  Margin="0,0,0,8" />
 
@@ -264,7 +263,6 @@
                                                  IsTextSelectionEnabled="False"
                                                  HyperlinkStyle="None"
                                                  HyperlinkForeground="#FFFFFF"
-                                                 HyperlinkFontWeight="SemiBold"
                                                  Padding="0,0,0,4"
                                                  Margin="0,0,0,8" />
 
@@ -315,7 +313,6 @@
                                                  IsTextSelectionEnabled="False"
                                                  HyperlinkStyle="None"
                                                  HyperlinkForeground="#FFFFFF"
-                                                 HyperlinkFontWeight="SemiBold"
                                                  Padding="0,0,0,4"
                                                  Margin="0,0,0,8" />
 
@@ -356,7 +353,6 @@
                                                      IsTextSelectionEnabled="False"
                                                      HyperlinkStyle="None"
                                                      HyperlinkForeground="#FFFFFF"
-                                                     HyperlinkFontWeight="SemiBold"
                                                      Padding="0,0,0,4" />
                     </messages:MessageService>
 
@@ -423,7 +419,6 @@
                                              IsTextSelectionEnabled="False"
                                              HyperlinkStyle="None"
                                              HyperlinkForeground="#FFFFFF"
-                                             HyperlinkFontWeight="SemiBold"
                                              Padding="0,0,0,4" />
             </messages:MessageService>
         </DataTemplate>

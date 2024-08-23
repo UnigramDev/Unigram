@@ -347,10 +347,10 @@ namespace Telegram.Controls
 
         public bool IsLightDismissEnabled { get; set; }
 
-        private void OnSizeChanged(object sender, WindowSizeChangedEventArgs e)
-        {
-            //UpdateViewBase();
-        }
+        //private void OnSizeChanged(object sender, WindowSizeChangedEventArgs e)
+        //{
+        //    //UpdateViewBase();
+        //}
 
         private void OnLoading(FrameworkElement sender, object args)
         {
