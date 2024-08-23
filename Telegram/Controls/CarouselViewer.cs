@@ -9,7 +9,7 @@ using System.Numerics;
 using Telegram.Common;
 using Telegram.Composition;
 using Telegram.Navigation;
-using Windows.Devices.Input;
+using Microsoft.UI.Input;
 using Windows.Foundation;
 using Windows.System;
 using Microsoft.UI.Composition;

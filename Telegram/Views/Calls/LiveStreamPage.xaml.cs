@@ -17,7 +17,7 @@ using Telegram.Td.Api;
 using Telegram.Views.Host;
 using Telegram.Views.Popups;
 using Windows.Devices.Enumeration;
-using Windows.Devices.Input;
+using Microsoft.UI.Input;
 using Windows.System.Display;
 using Windows.UI;
 using Microsoft.UI.Composition;

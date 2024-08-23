@@ -15,7 +15,7 @@ using Telegram.ViewModels;
 using Windows.UI;
 using Microsoft.UI.Composition;
 using Microsoft.UI.Composition.Interactions;
-using Windows.UI.Input;
+using Microsoft.UI.Input;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Automation.Peers;
 using Microsoft.UI.Xaml.Controls;
@@ -348,7 +348,7 @@ namespace Telegram.Controls
 
         private void OnPointerPressed(object sender, PointerRoutedEventArgs e)
         {
-            if (e.Pointer.PointerDeviceType != Windows.Devices.Input.PointerDeviceType.Mouse)
+            if (e.Pointer.PointerDeviceType != PointerDeviceType.Mouse)
             {
                 try
                 {

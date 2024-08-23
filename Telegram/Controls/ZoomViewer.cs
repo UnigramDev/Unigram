@@ -5,6 +5,7 @@
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
 using System;
+using Microsoft.UI.Input;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Input;
@@ -113,7 +114,7 @@ namespace Telegram.Controls
 
         private void ScrollingHost_PointerPressed(object sender, PointerRoutedEventArgs e)
         {
-            if (e.Pointer.PointerDeviceType != Windows.Devices.Input.PointerDeviceType.Mouse)
+            if (e.Pointer.PointerDeviceType != PointerDeviceType.Mouse)
             {
                 return;
             }
@@ -129,7 +130,7 @@ namespace Telegram.Controls
 
         private void ScrollingHost_PointerMoved(object sender, PointerRoutedEventArgs e)
         {
-            if (e.Pointer.PointerDeviceType != Windows.Devices.Input.PointerDeviceType.Mouse)
+            if (e.Pointer.PointerDeviceType != PointerDeviceType.Mouse)
             {
                 return;
             }
@@ -147,7 +148,7 @@ namespace Telegram.Controls
 
         private void ScrollingHost_PointerReleased(object sender, PointerRoutedEventArgs e)
         {
-            if (e.Pointer.PointerDeviceType != Windows.Devices.Input.PointerDeviceType.Mouse)
+            if (e.Pointer.PointerDeviceType != PointerDeviceType.Mouse)
             {
                 return;
             }

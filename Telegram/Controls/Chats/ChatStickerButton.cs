@@ -13,7 +13,7 @@ using Telegram.Services;
 using Telegram.Services.Settings;
 using Telegram.Views;
 using Telegram.Views.Popups;
-using Windows.Devices.Input;
+using Microsoft.UI.Input;
 using Microsoft.UI.Composition;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;

@@ -6,7 +6,7 @@
 //
 using System;
 using Windows.Foundation;
-using Windows.UI.Input;
+using Microsoft.UI.Input;
 
 namespace Telegram.Charts
 {

@@ -16,7 +16,7 @@ using Telegram.Navigation;
 using Telegram.Services;
 using Telegram.Streams;
 using Telegram.Td.Api;
-using Windows.Devices.Input;
+using Microsoft.UI.Input;
 using Windows.UI;
 using Windows.UI.Text;
 using Microsoft.UI.Xaml;

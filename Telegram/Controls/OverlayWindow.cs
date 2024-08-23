@@ -11,7 +11,7 @@ using Telegram.Navigation.Services;
 using Telegram.Services;
 using Telegram.Services.Keyboard;
 using Telegram.Views.Host;
-using Windows.Devices.Input;
+using Microsoft.UI.Input;
 using Windows.Foundation;
 using Windows.UI;
 using Windows.UI.Core;

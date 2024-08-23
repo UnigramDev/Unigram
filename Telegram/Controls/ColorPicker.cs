@@ -8,7 +8,7 @@ using System;
 using Telegram.Common;
 using Windows.Foundation;
 using Windows.UI;
-using Windows.UI.Input;
+using Microsoft.UI.Input;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Input;

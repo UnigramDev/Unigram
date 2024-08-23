@@ -28,7 +28,7 @@ using Windows.Foundation;
 using Windows.Storage.Streams;
 using Windows.UI;
 using Microsoft.UI.Composition;
-using Windows.UI.Input;
+using Microsoft.UI.Input;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Documents;

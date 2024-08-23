@@ -9,7 +9,7 @@ using System.Linq;
 using Telegram.Td.Api;
 using Telegram.ViewModels.Drawers;
 using Telegram.Views.Popups;
-using Windows.Devices.Input;
+using Microsoft.UI.Input;
 using Windows.UI.ViewManagement;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
