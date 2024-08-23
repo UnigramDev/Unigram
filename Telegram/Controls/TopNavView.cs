@@ -8,6 +8,7 @@ using System;
 using System.Linq;
 using System.Numerics;
 using Telegram.Common;
+using Telegram.Navigation;
 using Windows.Foundation;
 using Windows.UI.Composition;
 using Windows.UI.Xaml;
@@ -172,7 +173,7 @@ namespace Telegram.Controls
                     float outgoingEndPosition = (float)(nextPos - prevPos);
                     float incomingStartPosition = (float)(prevPos - nextPos);
 
-                    var scopedBatch = Window.Current.Compositor.CreateScopedBatch(CompositionBatchTypes.Animation);
+                    var scopedBatch = BootStrapper.Current.Compositor.CreateScopedBatch(CompositionBatchTypes.Animation);
                     scopedBatch.Completed += OnAnimationCompleted;
 
                     // Play the animation on both the previous and next indicators

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Numerics;
 using Telegram.Common;
+using Telegram.Navigation;
 using Windows.UI;
 using Windows.UI.Composition;
 using Windows.UI.Xaml;
@@ -31,7 +32,7 @@ namespace Telegram.Composition
         {
             _maxLevel = maxLevel;
 
-            var compositor = Window.Current.Compositor;
+            var compositor = BootStrapper.Current.Compositor;
 
             var size = new Vector2(width, height);
             var halfSize = size / 2;

@@ -10,11 +10,11 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
+using Telegram.Navigation;
 using Telegram.Td.Api;
 using Telegram.ViewModels.Drawers;
 using Windows.UI;
 using Windows.UI.Composition;
-using Windows.UI.Xaml;
 
 namespace Telegram.Common
 {
@@ -122,14 +122,16 @@ namespace Telegram.Common
         {
             var backgroundColor = Color.FromArgb(0x33, 0x7A, 0x8A, 0x96);
 
-            var background = Window.Current.Compositor.CreatePathGeometry(path);
-            var backgroundShape = Window.Current.Compositor.CreateSpriteShape(background);
-            backgroundShape.FillBrush = Window.Current.Compositor.CreateColorBrush(backgroundColor);
+            var compositor = BootStrapper.Current.Compositor;
 
-            visual = Window.Current.Compositor.CreateShapeVisual();
+            var background = compositor.CreatePathGeometry(path);
+            var backgroundShape = compositor.CreateSpriteShape(background);
+            backgroundShape.FillBrush = compositor.CreateColorBrush(backgroundColor);
+
+            visual = compositor.CreateShapeVisual();
             visual.Shapes.Add(backgroundShape);
             visual.RelativeSizeAdjustment = Vector2.One;
-            visual.ViewBox = Window.Current.Compositor.CreateViewBox();
+            visual.ViewBox = compositor.CreateViewBox();
             visual.ViewBox.Size = new Vector2(width, height);
             visual.ViewBox.Stretch = CompositionStretch.Uniform;
 
@@ -138,19 +140,19 @@ namespace Telegram.Common
                 var transparent = Color.FromArgb(0x00, 0x7A, 0x8A, 0x96);
                 var foregroundColor = Color.FromArgb(0x33, 0x7A, 0x8A, 0x96);
 
-                var gradient = Window.Current.Compositor.CreateLinearGradientBrush();
+                var gradient = compositor.CreateLinearGradientBrush();
                 gradient.StartPoint = new Vector2(0, 0);
                 gradient.EndPoint = new Vector2(1, 0);
-                gradient.ColorStops.Add(Window.Current.Compositor.CreateColorGradientStop(0.0f, transparent));
-                gradient.ColorStops.Add(Window.Current.Compositor.CreateColorGradientStop(0.5f, foregroundColor));
-                gradient.ColorStops.Add(Window.Current.Compositor.CreateColorGradientStop(1.0f, transparent));
+                gradient.ColorStops.Add(compositor.CreateColorGradientStop(0.0f, transparent));
+                gradient.ColorStops.Add(compositor.CreateColorGradientStop(0.5f, foregroundColor));
+                gradient.ColorStops.Add(compositor.CreateColorGradientStop(1.0f, transparent));
 
-                var foregroundShape = Window.Current.Compositor.CreateSpriteShape(background);
+                var foregroundShape = compositor.CreateSpriteShape(background);
                 foregroundShape.FillBrush = gradient;
 
                 visual.Shapes.Add(foregroundShape);
 
-                var animation = Window.Current.Compositor.CreateVector2KeyFrameAnimation();
+                var animation = compositor.CreateVector2KeyFrameAnimation();
                 animation.InsertKeyFrame(0, new Vector2(-width, 0));
                 animation.InsertKeyFrame(1, new Vector2(width, 0));
                 animation.IterationBehavior = AnimationIterationBehavior.Forever;

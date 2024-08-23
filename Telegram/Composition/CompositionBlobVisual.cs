@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Numerics;
+using Telegram.Navigation;
 using Windows.UI;
 using Windows.UI.Composition;
 using Windows.UI.Xaml;
@@ -31,7 +32,7 @@ namespace Telegram.Composition
         {
             _maxLevel = maxLevel;
 
-            var compositor = Window.Current.Compositor;
+            var compositor = BootStrapper.Current.Compositor;
 
             var size = new Vector2(width, height);
             var halfSize = size / 2;
@@ -159,7 +160,7 @@ namespace Telegram.Composition
 
             if (!immediately)
             {
-                var animation = Window.Current.Compositor.CreateVector3KeyFrameAnimation();
+                var animation = BootStrapper.Current.Compositor.CreateVector3KeyFrameAnimation();
                 animation.InsertKeyFrame(0, new Vector3(0));
                 animation.InsertKeyFrame(1, new Vector3(1));
 
@@ -188,7 +189,7 @@ namespace Telegram.Composition
 
             _animating = false;
 
-            var animation = Window.Current.Compositor.CreateVector3KeyFrameAnimation();
+            var animation = BootStrapper.Current.Compositor.CreateVector3KeyFrameAnimation();
             animation.InsertKeyFrame(0, new Vector3(1));
             animation.InsertKeyFrame(1, new Vector3(0));
 
@@ -229,7 +230,7 @@ namespace Telegram.Composition
                 if (_smallVisual != null && MathF.Abs(value - _smallLevel) > 0.01)
                 {
                     var lv = 0.45f + (0.55f - 0.45f) * value;
-                    var animation = Window.Current.Compositor.CreateVector3KeyFrameAnimation();
+                    var animation = BootStrapper.Current.Compositor.CreateVector3KeyFrameAnimation();
                     animation.InsertKeyFrame(1, new Vector3(lv));
                     _smallVisual.StartAnimation("Scale", animation);
                 }
@@ -264,7 +265,7 @@ namespace Telegram.Composition
                 if (MathF.Abs(value - _level) > 0.01)
                 {
                     var lv = _minScale + (_maxScale - _minScale) * value;
-                    var animation = Window.Current.Compositor.CreateVector2KeyFrameAnimation();
+                    var animation = BootStrapper.Current.Compositor.CreateVector2KeyFrameAnimation();
                     animation.InsertKeyFrame(1, new Vector2(lv));
                     _shape.StartAnimation("Scale", animation);
                 }

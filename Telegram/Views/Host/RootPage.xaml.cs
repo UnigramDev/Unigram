@@ -924,7 +924,7 @@ namespace Telegram.Views.Host
                     await Test();
                 }
 
-                var visual = Window.Current.Compositor.CreateRedirectVisual(this, Vector2.Zero, ActualSize, true);
+                var visual = BootStrapper.Current.Compositor.CreateRedirectVisual(this, Vector2.Zero, ActualSize, true);
                 await VisualUtilities.WaitForCompositionRenderedAsync();
 
                 ElementCompositionPreview.SetElementChildVisual(Transition, visual);
@@ -1142,7 +1142,7 @@ namespace Telegram.Views.Host
 
             ElementCompositionPreview.SetIsTranslationEnabled(Info, true);
 
-            var batch = Window.Current.Compositor.CreateScopedBatch(CompositionBatchTypes.Animation);
+            var batch = BootStrapper.Current.Compositor.CreateScopedBatch(CompositionBatchTypes.Animation);
             batch.Completed += (s, args) =>
             {
                 Theme.Visibility = Visibility.Collapsed;

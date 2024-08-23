@@ -333,7 +333,7 @@ namespace Telegram.Views.Popups
 
         private void UpdateProfileBackgroundCustomEmoji(ProfileColors color)
         {
-            var compositor = Window.Current.Compositor;
+            var compositor = BootStrapper.Current.Compositor;
 
             // Create a VisualSurface positioned at the same location as this control and feed that
             // through the color effect.
@@ -384,7 +384,7 @@ namespace Telegram.Views.Popups
                 Mode = BlendEffectMode.SoftLight
             };
 
-            var borderEffectFactory = Window.Current.Compositor.CreateEffectFactory(blend);
+            var borderEffectFactory = BootStrapper.Current.Compositor.CreateEffectFactory(blend);
             var borderEffectBrush = borderEffectFactory.CreateBrush();
             borderEffectBrush.SetSourceParameter("Foreground", brush);
             borderEffectBrush.SetSourceParameter("Background", radial); // compositor.CreateColorBrush(Color.FromArgb(80, 0x00, 0x00, 0x00)));

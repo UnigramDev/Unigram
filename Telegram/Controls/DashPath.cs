@@ -7,6 +7,7 @@
 using Microsoft.Graphics.Canvas.Geometry;
 using System;
 using System.Numerics;
+using Telegram.Navigation;
 using Windows.Foundation;
 using Windows.UI.Composition;
 using Windows.UI.Xaml;
@@ -22,7 +23,7 @@ namespace Telegram.Controls
 
         public DashPath()
         {
-            _visual = Window.Current.Compositor.CreateShapeVisual();
+            _visual = BootStrapper.Current.Compositor.CreateShapeVisual();
             ElementCompositionPreview.SetElementChildVisual(this, _visual);
         }
 
@@ -74,16 +75,16 @@ namespace Telegram.Controls
                 result = CanvasGeometry.CreatePath(builder);
             }
 
-            var geometry = Window.Current.Compositor.CreatePathGeometry(new CompositionPath(result));
+            var geometry = BootStrapper.Current.Compositor.CreatePathGeometry(new CompositionPath(result));
 
-            var shape1 = Window.Current.Compositor.CreateSpriteShape(geometry);
+            var shape1 = BootStrapper.Current.Compositor.CreateSpriteShape(geometry);
             shape1.StrokeThickness = 0;
-            shape1.FillBrush = Window.Current.Compositor.CreateColorBrush(brush1.Color);
+            shape1.FillBrush = BootStrapper.Current.Compositor.CreateColorBrush(brush1.Color);
             shape1.Offset = new Vector2(0, h * 4);
 
-            var shape2 = Window.Current.Compositor.CreateSpriteShape(geometry);
+            var shape2 = BootStrapper.Current.Compositor.CreateSpriteShape(geometry);
             shape2.StrokeThickness = 0;
-            shape2.FillBrush = Window.Current.Compositor.CreateColorBrush(brush2.Color);
+            shape2.FillBrush = BootStrapper.Current.Compositor.CreateColorBrush(brush2.Color);
             shape2.Offset = new Vector2(0, h * 2);
 
             _visual.Shapes.Clear();
@@ -123,10 +124,10 @@ namespace Telegram.Controls
                 result = CanvasGeometry.CreatePath(builder);
             }
 
-            var geometry = Window.Current.Compositor.CreatePathGeometry(new CompositionPath(result));
-            var shape = Window.Current.Compositor.CreateSpriteShape(geometry);
+            var geometry = BootStrapper.Current.Compositor.CreatePathGeometry(new CompositionPath(result));
+            var shape = BootStrapper.Current.Compositor.CreateSpriteShape(geometry);
             shape.StrokeThickness = 0;
-            shape.FillBrush = Window.Current.Compositor.CreateColorBrush(brush.Color);
+            shape.FillBrush = BootStrapper.Current.Compositor.CreateColorBrush(brush.Color);
 
             _visual.Shapes.Clear();
             _visual.Shapes.Add(shape);

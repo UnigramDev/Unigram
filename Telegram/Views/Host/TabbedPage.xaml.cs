@@ -130,12 +130,12 @@ namespace Telegram.Views.Host
             //offset.InsertKeyFrame(1, show ? 0 : -40);
             //offset.Duration = Constants.FastAnimation;
 
-            //var scale = Window.Current.Compositor.CreateVector3KeyFrameAnimation();
+            //var scale = BootStrapper.Current.Compositor.CreateVector3KeyFrameAnimation();
             //scale.InsertKeyFrame(show ? 0 : 1, Vector3.Zero);
             //scale.InsertKeyFrame(show ? 1 : 0, Vector3.One);
             //scale.Duration = Constants.FastAnimation;
 
-            //var opacity = Window.Current.Compositor.CreateScalarKeyFrameAnimation();
+            //var opacity = BootStrapper.Current.Compositor.CreateScalarKeyFrameAnimation();
             //opacity.InsertKeyFrame(show ? 0 : 1, 0);
             //opacity.InsertKeyFrame(show ? 1 : 0, 1);
 

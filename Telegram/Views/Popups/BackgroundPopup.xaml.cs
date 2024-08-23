@@ -10,6 +10,7 @@ using Telegram.Common;
 using Telegram.Controls;
 using Telegram.Controls.Chats;
 using Telegram.Controls.Media;
+using Telegram.Navigation;
 using Telegram.Td.Api;
 using Telegram.ViewModels;
 using Telegram.ViewModels.Delegates;
@@ -39,7 +40,7 @@ namespace Telegram.Views.Popups
             Message1.Mockup(Strings.BackgroundPreviewLine1, false, DateTime.Now.AddSeconds(-25));
             Message2.Mockup(Strings.BackgroundPreviewLine2, true, DateTime.Now);
 
-            ElementComposition.GetElementVisual(ContentPanel).Clip = Window.Current.Compositor.CreateInsetClip();
+            ElementComposition.GetElementVisual(ContentPanel).Clip = BootStrapper.Current.Compositor.CreateInsetClip();
         }
 
         private void Color_Click(object sender, RoutedEventArgs e)

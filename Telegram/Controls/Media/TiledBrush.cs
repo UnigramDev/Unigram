@@ -6,10 +6,10 @@
 //
 using Microsoft.Graphics.Canvas.Effects;
 using System.Numerics;
+using Telegram.Navigation;
 using Windows.Graphics.Effects;
 using Windows.UI;
 using Windows.UI.Composition;
-using Windows.UI.Xaml;
 using Windows.UI.Xaml.Media;
 
 namespace Telegram.Controls.Media
@@ -35,7 +35,7 @@ namespace Telegram.Controls.Media
                 var logical = surface.DecodedSize.ToVector2();
                 var physical = surface.DecodedPhysicalSize.ToVector2();
 
-                var surfaceBrush = Window.Current.Compositor.CreateSurfaceBrush(surface);
+                var surfaceBrush = BootStrapper.Current.Compositor.CreateSurfaceBrush(surface);
                 surfaceBrush.Stretch = CompositionStretch.None;
                 surfaceBrush.SnapToPixels = true;
                 surfaceBrush.Scale = logical / physical;
@@ -92,13 +92,13 @@ namespace Telegram.Controls.Media
                     //effect = borderEffect;
                 }
 
-                var borderEffectFactory = Window.Current.Compositor.CreateEffectFactory(effect, new[] { "Tint.Color" });
+                var borderEffectFactory = BootStrapper.Current.Compositor.CreateEffectFactory(effect, new[] { "Tint.Color" });
                 var borderEffectBrush = borderEffectFactory.CreateBrush();
                 borderEffectBrush.SetSourceParameter("Source", surfaceBrush);
 
                 if (blend != null)
                 {
-                    var backdrop = Window.Current.Compositor.CreateBackdropBrush();
+                    var backdrop = BootStrapper.Current.Compositor.CreateBackdropBrush();
                     borderEffectBrush.SetSourceParameter("Backdrop", backdrop);
                 }
 
@@ -146,7 +146,7 @@ namespace Telegram.Controls.Media
                     var logical = surface.DecodedSize.ToVector2();
                     var physical = surface.DecodedPhysicalSize.ToVector2();
 
-                    var surfaceBrush = Window.Current.Compositor.CreateSurfaceBrush(surface);
+                    var surfaceBrush = BootStrapper.Current.Compositor.CreateSurfaceBrush(surface);
                     surfaceBrush.Stretch = CompositionStretch.None;
                     surfaceBrush.SnapToPixels = true;
                     surfaceBrush.Scale = logical / physical;

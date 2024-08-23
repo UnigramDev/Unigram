@@ -657,7 +657,7 @@ namespace Telegram.Controls
 
             try
             {
-                var compositor = Window.Current.Compositor;
+                var compositor = BootStrapper.Current.Compositor;
 
                 // Build an effect that takes the source image and uses the alpha channel and replaces all other channels with
                 // the ReplacementColor's RGB.

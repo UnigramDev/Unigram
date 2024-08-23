@@ -998,7 +998,7 @@ namespace Telegram.Controls.Stories
 
             Logger.Debug("ShowSkeleton " + _viewModel.ChatId);
 
-            var compositor = Window.Current.Compositor;
+            var compositor = BootStrapper.Current.Compositor;
             var rectangle = compositor.CreateRoundedRectangleGeometry();
             rectangle.Size = new Vector2(ActualSize.X - 2, ActualSize.Y - 2);
             rectangle.Offset = new Vector2(1, 1);
@@ -1043,7 +1043,7 @@ namespace Telegram.Controls.Stories
             Logger.Debug("ImageOpened " + _viewModel.ChatId);
 
             _loading = false;
-            ElementCompositionPreview.SetElementChildVisual(ActiveRoot, Window.Current.Compositor.CreateSpriteVisual());
+            ElementCompositionPreview.SetElementChildVisual(ActiveRoot, BootStrapper.Current.Compositor.CreateSpriteVisual());
 
             Video?.Clear();
 
@@ -1092,7 +1092,7 @@ namespace Telegram.Controls.Stories
 
                 photo.Scale = new Vector3(resize.X / 32f, resize.Y / 32f, 0);
 
-                var compositor = Window.Current.Compositor;
+                var compositor = BootStrapper.Current.Compositor;
 
                 var rect = compositor.CreateRoundedRectangleGeometry();
                 rect.Size = new Vector2(resize.X, resize.Y);
@@ -1151,7 +1151,7 @@ namespace Telegram.Controls.Stories
                 layout.CenterPoint = new Vector3(ActualSize / 2, 0);
                 layout.Scale = new Vector3(resize.X / ActualSize.X, resize.X / ActualSize.X, 1);
 
-                var compositor = Window.Current.Compositor;
+                var compositor = BootStrapper.Current.Compositor;
 
                 var rect = compositor.CreateRoundedRectangleGeometry();
                 rect.Size = new Vector2(resize.X, resize.Y);
@@ -1225,7 +1225,7 @@ namespace Telegram.Controls.Stories
         private void OnVout(AsyncMediaPlayer sender, MediaPlayerVoutEventArgs e)
         {
             _loading = false;
-            ElementCompositionPreview.SetElementChildVisual(ActiveRoot, Window.Current.Compositor.CreateSpriteVisual());
+            ElementCompositionPreview.SetElementChildVisual(ActiveRoot, BootStrapper.Current.Compositor.CreateSpriteVisual());
 
             Texture1.Source = null;
             Texture2.Source = null;
@@ -1313,7 +1313,7 @@ namespace Telegram.Controls.Stories
             if (e.Cache == 100 && _loading)
             {
                 _loading = false;
-                ElementCompositionPreview.SetElementChildVisual(ActiveRoot, Window.Current.Compositor.CreateSpriteVisual());
+                ElementCompositionPreview.SetElementChildVisual(ActiveRoot, BootStrapper.Current.Compositor.CreateSpriteVisual());
 
                 if (_viewModel?.SelectedItem != null && _viewModel.SelectedItem.ChatId != _openedChatId && _viewModel.SelectedItem.StoryId != _openedStoryId)
                 {
@@ -1680,7 +1680,7 @@ namespace Telegram.Controls.Stories
 
                 if (i == index)
                 {
-                    var compositor = Window.Current.Compositor;
+                    var compositor = BootStrapper.Current.Compositor;
 
                     _progressPropertySet = compositor.CreatePropertySet();
                     _progressPropertySet.InsertScalar("Progress", 0);

@@ -183,7 +183,7 @@ namespace Telegram.Controls.Messages.Content
             RecognizedIcon ??= GetTemplateChild(nameof(RecognizedIcon)) as Border;
             RecognizedIcon.Visibility = Visibility.Visible;
 
-            _previous = GetVisual(Window.Current.Compositor, Colors.Black, out _props);
+            _previous = GetVisual(BootStrapper.Current.Compositor, Colors.Black, out _props);
             ElementCompositionPreview.SetElementChildVisual(RecognizedIcon, _previous.RootVisual);
         }
 

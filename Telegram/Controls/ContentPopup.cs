@@ -78,7 +78,7 @@ namespace Telegram.Controls
                 return;
             }
 
-            var compositor = Window.Current.Compositor;
+            var compositor = BootStrapper.Current.Compositor;
             var prev = e.PreviousSize.ToVector2();
             var next = e.NewSize.ToVector2();
 

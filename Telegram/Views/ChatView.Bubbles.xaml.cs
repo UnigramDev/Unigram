@@ -772,8 +772,8 @@ namespace Telegram.Views
                 var first = direction == 1 ? panel.FirstCacheIndex : index + 1;
                 var last = direction == 1 ? index : panel.LastCacheIndex;
 
-                var batch = Window.Current.Compositor.CreateScopedBatch(CompositionBatchTypes.Animation);
-                var anim = Window.Current.Compositor.CreateScalarKeyFrameAnimation();
+                var batch = BootStrapper.Current.Compositor.CreateScopedBatch(CompositionBatchTypes.Animation);
+                var anim = BootStrapper.Current.Compositor.CreateScalarKeyFrameAnimation();
                 anim.InsertKeyFrame(0, diff * direction);
                 anim.InsertKeyFrame(1, 0);
                 //anim.Duration = TimeSpan.FromSeconds(5);

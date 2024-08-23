@@ -5,6 +5,7 @@
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
 using System.Numerics;
+using Telegram.Navigation;
 using Telegram.ViewModels;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -41,7 +42,7 @@ namespace Telegram.Controls.Cells
             var prev = e.OldState?.Name;
             var next = e.NewState?.Name;
 
-            var compositor = Window.Current.Compositor;
+            var compositor = BootStrapper.Current.Compositor;
 
             var iconUnselected = ElementComposition.GetElementVisual(UnselectedIcon);
             var iconSelected = ElementComposition.GetElementVisual(SelectedIcon);

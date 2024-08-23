@@ -3,6 +3,7 @@ using System.Numerics;
 using Telegram.Common;
 using Telegram.Composition;
 using Telegram.Controls.Media;
+using Telegram.Navigation;
 using Telegram.Td.Api;
 using Windows.UI;
 using Windows.UI.Composition;
@@ -142,28 +143,30 @@ namespace Telegram.Controls.Chats
 
             _slideVisual.Opacity = 1;
 
-            var batch = Window.Current.Compositor.CreateScopedBatch(CompositionBatchTypes.Animation);
+            var compositor = BootStrapper.Current.Compositor;
+
+            var batch = BootStrapper.Current.Compositor.CreateScopedBatch(CompositionBatchTypes.Animation);
             batch.Completed += (s, args) =>
             {
                 _elapsedTimer.Start();
                 AttachExpression();
             };
 
-            var slideAnimation = Window.Current.Compositor.CreateScalarKeyFrameAnimation();
+            var slideAnimation = compositor.CreateScalarKeyFrameAnimation();
             slideAnimation.InsertKeyFrame(0, slideWidth + 36);
             slideAnimation.InsertKeyFrame(1, 0);
             slideAnimation.Duration = TimeSpan.FromMilliseconds(300);
 
-            var elapsedAnimation = Window.Current.Compositor.CreateScalarKeyFrameAnimation();
+            var elapsedAnimation = compositor.CreateScalarKeyFrameAnimation();
             elapsedAnimation.InsertKeyFrame(0, -elapsedWidth);
             elapsedAnimation.InsertKeyFrame(1, 0);
             elapsedAnimation.Duration = TimeSpan.FromMilliseconds(300);
 
-            var visibleAnimation = Window.Current.Compositor.CreateScalarKeyFrameAnimation();
+            var visibleAnimation = compositor.CreateScalarKeyFrameAnimation();
             visibleAnimation.InsertKeyFrame(0, 0);
             visibleAnimation.InsertKeyFrame(1, 1);
 
-            var ellipseAnimation = Window.Current.Compositor.CreateVector3KeyFrameAnimation();
+            var ellipseAnimation = compositor.CreateVector3KeyFrameAnimation();
             ellipseAnimation.InsertKeyFrame(0, new Vector3(56f / 96f));
             ellipseAnimation.InsertKeyFrame(1, new Vector3(1));
             ellipseAnimation.Duration = TimeSpan.FromMilliseconds(200);
@@ -197,7 +200,7 @@ namespace Telegram.Controls.Chats
             var slidePosition = ActualSize.X - 48 - 36;
             var difference = slidePosition - ElapsedPanel.ActualSize.X;
 
-            var batch = Window.Current.Compositor.CreateScopedBatch(CompositionBatchTypes.Animation);
+            var batch = BootStrapper.Current.Compositor.CreateScopedBatch(CompositionBatchTypes.Animation);
             batch.Completed += (s, args) =>
             {
                 _elapsedTimer.Stop();
@@ -235,12 +238,12 @@ namespace Telegram.Controls.Chats
                 _ellipseVisual.Properties.InsertVector3("Translation", point);
             };
 
-            var slideAnimation = Window.Current.Compositor.CreateScalarKeyFrameAnimation();
+            var slideAnimation = BootStrapper.Current.Compositor.CreateScalarKeyFrameAnimation();
             slideAnimation.InsertKeyFrame(0, _slideVisual.Offset.X);
             slideAnimation.InsertKeyFrame(1, -slidePosition);
             slideAnimation.Duration = TimeSpan.FromMilliseconds(200);
 
-            var visibleAnimation = Window.Current.Compositor.CreateScalarKeyFrameAnimation();
+            var visibleAnimation = BootStrapper.Current.Compositor.CreateScalarKeyFrameAnimation();
             visibleAnimation.InsertKeyFrame(0, 1);
             visibleAnimation.InsertKeyFrame(1, 0);
 
@@ -252,7 +255,7 @@ namespace Telegram.Controls.Chats
                 var pause = ElementComposition.GetElementVisual(PauseRoot);
                 pause.CenterPoint = new Vector3(18);
 
-                var scale = Window.Current.Compositor.CreateVector3KeyFrameAnimation();
+                var scale = BootStrapper.Current.Compositor.CreateVector3KeyFrameAnimation();
                 scale.InsertKeyFrame(0, Vector3.One);
                 scale.InsertKeyFrame(1, Vector3.Zero);
 
@@ -272,7 +275,7 @@ namespace Telegram.Controls.Chats
 
             DetachExpression();
 
-            var ellipseAnimation = Window.Current.Compositor.CreateScalarKeyFrameAnimation();
+            var ellipseAnimation = BootStrapper.Current.Compositor.CreateScalarKeyFrameAnimation();
             ellipseAnimation.InsertKeyFrame(0, -57);
             ellipseAnimation.InsertKeyFrame(1, 0);
 
@@ -292,7 +295,7 @@ namespace Telegram.Controls.Chats
             var pause = ElementComposition.GetElementVisual(PauseRoot);
             pause.CenterPoint = new Vector3(18);
 
-            var scale = Window.Current.Compositor.CreateVector3KeyFrameAnimation();
+            var scale = BootStrapper.Current.Compositor.CreateVector3KeyFrameAnimation();
             scale.InsertKeyFrame(0, Vector3.Zero);
             scale.InsertKeyFrame(1, Vector3.One);
 
@@ -344,12 +347,12 @@ namespace Telegram.Controls.Chats
 
         private void AttachExpression()
         {
-            var elapsedExpression = Window.Current.Compositor.CreateExpressionAnimation("min(0, slide.Offset.X + ((root.Size.X - 48 - 36 - slide.Size.X) - elapsed.Size.X))");
+            var elapsedExpression = BootStrapper.Current.Compositor.CreateExpressionAnimation("min(0, slide.Offset.X + ((root.Size.X - 48 - 36 - slide.Size.X) - elapsed.Size.X))");
             elapsedExpression.SetReferenceParameter("slide", _slideVisual);
             elapsedExpression.SetReferenceParameter("elapsed", _elapsedVisual);
             elapsedExpression.SetReferenceParameter("root", _rootVisual);
 
-            var ellipseExpression = Window.Current.Compositor.CreateExpressionAnimation("Vector3(max(0, min(1, 1 + slide.Offset.X / (root.Size.X - 48 - 36))), max(0, min(1, 1 + slide.Offset.X / (root.Size.X - 48 - 36))), 1)");
+            var ellipseExpression = BootStrapper.Current.Compositor.CreateExpressionAnimation("Vector3(max(0, min(1, 1 + slide.Offset.X / (root.Size.X - 48 - 36))), max(0, min(1, 1 + slide.Offset.X / (root.Size.X - 48 - 36))), 1)");
             ellipseExpression.SetReferenceParameter("slide", _slideVisual);
             ellipseExpression.SetReferenceParameter("elapsed", _elapsedVisual);
             ellipseExpression.SetReferenceParameter("root", _rootVisual);
@@ -390,7 +393,7 @@ namespace Telegram.Controls.Chats
                 Waveform.Visibility = Visibility.Visible;
                 Waveform.UpdateWaveform(new VoiceNote(0, result.Waveform, string.Empty, null, null));
 
-                var compositor = Window.Current.Compositor;
+                var compositor = BootStrapper.Current.Compositor;
                 var ellipse = compositor.CreateRoundedRectangleGeometry();
                 ellipse.CornerRadius = new Vector2(WaveformBackground.ActualSize.Y / 2);
                 ellipse.Size = new Vector2(WaveformBackground.ActualSize.Y, WaveformBackground.ActualSize.Y);
@@ -435,7 +438,7 @@ namespace Telegram.Controls.Chats
                 WaveformLabel.Text = string.Empty;
                 Waveform.Visibility = Visibility.Collapsed;
 
-                var compositor = Window.Current.Compositor;
+                var compositor = BootStrapper.Current.Compositor;
                 var ellipse = compositor.CreateRoundedRectangleGeometry();
                 ellipse.CornerRadius = new Vector2(WaveformBackground.ActualSize.Y / 2);
                 ellipse.Size = new Vector2(WaveformBackground.ActualSize.Y, WaveformBackground.ActualSize.Y);

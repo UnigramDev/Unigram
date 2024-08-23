@@ -947,7 +947,7 @@ namespace Telegram.Controls.Cells
                 return;
             }
 
-            _stroke.FillBrush = Window.Current.Compositor.CreateColorBrush(newValue.Color);
+            _stroke.FillBrush = BootStrapper.Current.Compositor.CreateColorBrush(newValue.Color);
 
             if (IsConnected)
             {
@@ -963,7 +963,7 @@ namespace Telegram.Controls.Cells
                 return;
             }
 
-            _stroke.FillBrush = Window.Current.Compositor.CreateColorBrush(solid.Color);
+            _stroke.FillBrush = BootStrapper.Current.Compositor.CreateColorBrush(solid.Color);
         }
 
         #endregion
@@ -997,7 +997,7 @@ namespace Telegram.Controls.Cells
                 return new CompositionPath(result);
             }
 
-            var compositor = Window.Current.Compositor;
+            var compositor = BootStrapper.Current.Compositor;
             //12.711,5.352 11.648,4.289 6.5,9.438 4.352,7.289 3.289,8.352 6.5,11.563
 
             var polygon = compositor.CreatePathGeometry();
@@ -1055,7 +1055,7 @@ namespace Telegram.Controls.Cells
 
             if (animate)
             {
-                var compositor = Window.Current.Compositor;
+                var compositor = BootStrapper.Current.Compositor;
 
                 var anim3 = compositor.CreateScalarKeyFrameAnimation();
                 anim3.InsertKeyFrame(selected ? 0 : 1, 0);
@@ -1144,7 +1144,7 @@ namespace Telegram.Controls.Cells
                 return;
             }
 
-            var brush = Window.Current.Compositor.CreateColorBrush(newValue.Color);
+            var brush = BootStrapper.Current.Compositor.CreateColorBrush(newValue.Color);
 
             if (_shapes != null)
             {
@@ -1173,7 +1173,7 @@ namespace Telegram.Controls.Cells
                 return;
             }
 
-            var brush = Window.Current.Compositor.CreateColorBrush(solid.Color);
+            var brush = BootStrapper.Current.Compositor.CreateColorBrush(solid.Color);
 
             if (_shapes != null)
             {
@@ -1201,10 +1201,10 @@ namespace Telegram.Controls.Cells
                     solid.RegisterColorChangedCallback(callback, ref token);
                 }
 
-                return Window.Current.Compositor.CreateColorBrush(solid.Color);
+                return BootStrapper.Current.Compositor.CreateColorBrush(solid.Color);
             }
 
-            return Window.Current.Compositor.CreateColorBrush(Colors.Black);
+            return BootStrapper.Current.Compositor.CreateColorBrush(Colors.Black);
         }
 
         private void InitializeTicks()
@@ -1222,8 +1222,10 @@ namespace Telegram.Controls.Cells
 
             var join = stroke / 2 * sqrt;
 
-            var line11 = Window.Current.Compositor.CreateLineGeometry();
-            var line12 = Window.Current.Compositor.CreateLineGeometry();
+            var compositor = BootStrapper.Current.Compositor;
+
+            var line11 = compositor.CreateLineGeometry();
+            var line12 = compositor.CreateLineGeometry();
 
             line11.Start = new Vector2(width - height + side + join - length - distance, height - side - length);
             line11.End = new Vector2(width - height + side + join - distance, height - side);
@@ -1231,27 +1233,27 @@ namespace Telegram.Controls.Cells
             line12.Start = new Vector2(width - height + side - distance, height - side);
             line12.End = new Vector2(width - side - distance, side);
 
-            var shape11 = Window.Current.Compositor.CreateSpriteShape(line11);
+            var shape11 = compositor.CreateSpriteShape(line11);
             shape11.StrokeThickness = stroke;
             shape11.StrokeBrush = GetBrush(StrokeProperty, ref _strokeToken, OnStrokeChanged);
             shape11.IsStrokeNonScaling = true;
             shape11.StrokeStartCap = CompositionStrokeCap.Round;
 
-            var shape12 = Window.Current.Compositor.CreateSpriteShape(line12);
+            var shape12 = compositor.CreateSpriteShape(line12);
             shape12.StrokeThickness = stroke;
             shape12.StrokeBrush = GetBrush(StrokeProperty, ref _strokeToken, OnStrokeChanged);
             shape12.IsStrokeNonScaling = true;
             shape12.StrokeEndCap = CompositionStrokeCap.Round;
 
-            var visual1 = Window.Current.Compositor.CreateShapeVisual();
+            var visual1 = compositor.CreateShapeVisual();
             visual1.Shapes.Add(shape12);
             visual1.Shapes.Add(shape11);
             visual1.Size = new Vector2(width, height);
             visual1.CenterPoint = new Vector3(width, height / 2f, 0);
 
 
-            var line21 = Window.Current.Compositor.CreateLineGeometry();
-            var line22 = Window.Current.Compositor.CreateLineGeometry();
+            var line21 = compositor.CreateLineGeometry();
+            var line22 = compositor.CreateLineGeometry();
 
             line21.Start = new Vector2(width - height + side + join - length, height - side - length);
             line21.End = new Vector2(width - height + side + join, height - side);
@@ -1259,23 +1261,23 @@ namespace Telegram.Controls.Cells
             line22.Start = new Vector2(width - height + side, height - side);
             line22.End = new Vector2(width - side, side);
 
-            var shape21 = Window.Current.Compositor.CreateSpriteShape(line21);
+            var shape21 = compositor.CreateSpriteShape(line21);
             shape21.StrokeThickness = stroke;
             shape21.StrokeBrush = GetBrush(StrokeProperty, ref _strokeToken, OnStrokeChanged);
             shape21.StrokeStartCap = CompositionStrokeCap.Round;
 
-            var shape22 = Window.Current.Compositor.CreateSpriteShape(line22);
+            var shape22 = compositor.CreateSpriteShape(line22);
             shape22.StrokeThickness = stroke;
             shape22.StrokeBrush = GetBrush(StrokeProperty, ref _strokeToken, OnStrokeChanged);
             shape22.StrokeEndCap = CompositionStrokeCap.Round;
 
-            var visual2 = Window.Current.Compositor.CreateShapeVisual();
+            var visual2 = compositor.CreateShapeVisual();
             visual2.Shapes.Add(shape22);
             visual2.Shapes.Add(shape21);
             visual2.Size = new Vector2(width, height);
 
 
-            var container = Window.Current.Compositor.CreateSpriteVisual();
+            var container = compositor.CreateSpriteVisual();
             container.Children.InsertAtTop(visual2);
             container.Children.InsertAtTop(visual1);
             container.Size = new Vector2(width, height);
@@ -1339,21 +1341,23 @@ namespace Telegram.Controls.Cells
             var duration = 250;
             var percent = stroke / length;
 
-            var linear = Window.Current.Compositor.CreateLinearEasingFunction();
+            var compositor = BootStrapper.Current.Compositor;
 
-            var anim11 = Window.Current.Compositor.CreateScalarKeyFrameAnimation();
+            var linear = compositor.CreateLinearEasingFunction();
+
+            var anim11 = compositor.CreateScalarKeyFrameAnimation();
             anim11.InsertKeyFrame(0, 0);
             anim11.InsertKeyFrame(1, 1, linear);
             anim11.Duration = TimeSpan.FromMilliseconds(duration - percent * duration);
 
-            var anim12 = Window.Current.Compositor.CreateScalarKeyFrameAnimation();
+            var anim12 = compositor.CreateScalarKeyFrameAnimation();
             anim12.InsertKeyFrame(0, 0);
             anim12.InsertKeyFrame(1, 1);
             anim12.DelayBehavior = AnimationDelayBehavior.SetInitialValueBeforeDelay;
             anim12.DelayTime = anim11.Duration;
             anim12.Duration = TimeSpan.FromMilliseconds(400);
 
-            var anim22 = Window.Current.Compositor.CreateVector3KeyFrameAnimation();
+            var anim22 = compositor.CreateVector3KeyFrameAnimation();
             anim22.InsertKeyFrame(0, new Vector3(1));
             anim22.InsertKeyFrame(0.2f, new Vector3(1.1f));
             anim22.InsertKeyFrame(1, new Vector3(1));
@@ -1365,7 +1369,7 @@ namespace Telegram.Controls.Cells
                 _line12.StartAnimation("TrimEnd", anim12);
                 _visual1.StartAnimation("Scale", anim22);
 
-                var anim21 = Window.Current.Compositor.CreateScalarKeyFrameAnimation();
+                var anim21 = compositor.CreateScalarKeyFrameAnimation();
                 anim21.InsertKeyFrame(0, 0);
                 anim21.InsertKeyFrame(1, 1, linear);
                 anim11.Duration = TimeSpan.FromMilliseconds(duration);

@@ -7,6 +7,7 @@
 using System;
 using System.Collections.Generic;
 using System.Numerics;
+using Telegram.Navigation;
 using Windows.Foundation;
 using Windows.UI;
 using Windows.UI.Composition;
@@ -198,11 +199,11 @@ namespace Telegram.Controls
                 //if (ApiInformation.IsMethodPresent(".Compositor", "CreateSpringVector3Animation"))
                 if (false)
                 {
-                    var scale = Window.Current.Compositor.CreateSpringVector3Animation();
+                    var scale = BootStrapper.Current.Compositor.CreateSpringVector3Animation();
                     scale.InitialValue = new Vector3(zoom ? 0.5f : 1);
                     scale.FinalValue = new Vector3(zoom ? 1 : 0.5f);
 
-                    var offset = Window.Current.Compositor.CreateSpringVector3Animation();
+                    var offset = BootStrapper.Current.Compositor.CreateSpringVector3Animation();
                     //offset.InitialValue = new Vector3(_current.X * w, -60, 0);
                     offset.InitialValue = _thumbVisual.Offset;
                     offset.FinalValue = new Vector3(_current.X * w, zoom ? -60 : 0, 0);
@@ -215,18 +216,18 @@ namespace Telegram.Controls
                     _container.Height = 200;
                     _container.Margin = new Thickness(0, -180, 0, 0);
 
-                    var batch = Window.Current.Compositor.CreateScopedBatch(CompositionBatchTypes.Animation);
+                    var batch = BootStrapper.Current.Compositor.CreateScopedBatch(CompositionBatchTypes.Animation);
                     batch.Completed += (s, args) =>
                     {
                         _container.Height = zoom ? 200 : 20;
                         _container.Margin = new Thickness(0, zoom ? -180 : 0, 0, 0);
                     };
 
-                    var scale = Window.Current.Compositor.CreateSpringVector3Animation();
+                    var scale = BootStrapper.Current.Compositor.CreateSpringVector3Animation();
                     scale.InitialValue = new Vector3(zoom ? 0.5f : 1);
                     scale.FinalValue = new Vector3(zoom ? 1 : 0.5f);
 
-                    var offset = Window.Current.Compositor.CreateVector3KeyFrameAnimation();
+                    var offset = BootStrapper.Current.Compositor.CreateVector3KeyFrameAnimation();
                     offset.InsertKeyFrame(0, _thumbVisual.Offset);
                     offset.InsertKeyFrame(1, new Vector3(_current.X * w, zoom ? -60 : 0, 0));
 

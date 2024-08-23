@@ -75,7 +75,9 @@ namespace Telegram.Common
 
             sender.Visibility = Visibility.Visible;
 
-            var batch = Window.Current.Compositor.CreateScopedBatch(Windows.UI.Composition.CompositionBatchTypes.Animation);
+            var compositor = visual.Compositor;
+
+            var batch = compositor.CreateScopedBatch(Windows.UI.Composition.CompositionBatchTypes.Animation);
             batch.Completed += (s, args) =>
             {
                 visual.Opacity = newValue ? 1 : 0;
@@ -84,14 +86,14 @@ namespace Telegram.Common
                 sender.Visibility = newValue ? Visibility.Visible : Visibility.Collapsed;
             };
 
-            var anim1 = Window.Current.Compositor.CreateScalarKeyFrameAnimation();
+            var anim1 = compositor.CreateScalarKeyFrameAnimation();
             anim1.InsertKeyFrame(0, newValue ? 0 : 1);
             anim1.InsertKeyFrame(1, newValue ? 1 : 0);
             visual.StartAnimation("Opacity", anim1);
 
             if (scale)
             {
-                var anim2 = Window.Current.Compositor.CreateVector3KeyFrameAnimation();
+                var anim2 = compositor.CreateVector3KeyFrameAnimation();
                 anim2.InsertKeyFrame(0, new Vector3(newValue ? 0 : 1));
                 anim2.InsertKeyFrame(1, new Vector3(newValue ? 1 : 0));
                 visual.StartAnimation("Scale", anim2);

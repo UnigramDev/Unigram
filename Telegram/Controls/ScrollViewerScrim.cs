@@ -6,6 +6,7 @@
 //
 using System.Numerics;
 using Telegram.Common;
+using Telegram.Navigation;
 using Windows.UI.Composition;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -109,7 +110,7 @@ namespace Telegram.Controls
             }
 
             _scrollViewer = scrollViewer;
-            _propertySet = Window.Current.Compositor.CreatePropertySet();
+            _propertySet = BootStrapper.Current.Compositor.CreatePropertySet();
             _propertySet.InsertScalar("ScrollableHeight", (float)scrollViewer.ScrollableHeight);
             _propertySet.InsertScalar("TopInset", _topInset);
             _propertySet.InsertScalar("BottomInset", _bottomInset);
@@ -118,11 +119,11 @@ namespace Telegram.Controls
             var bottom = ElementComposition.GetElementVisual(_bottomScrim);
             var props = ElementCompositionPreview.GetScrollViewerManipulationPropertySet(scrollViewer);
 
-            var topAnimation = Window.Current.Compositor.CreateExpressionAnimation("Clamp(-(Scroll.Translation.Y / Props.TopInset), 0, 1)");
+            var topAnimation = BootStrapper.Current.Compositor.CreateExpressionAnimation("Clamp(-(Scroll.Translation.Y / Props.TopInset), 0, 1)");
             topAnimation.SetReferenceParameter("Scroll", props);
             topAnimation.SetReferenceParameter("Props", _propertySet);
 
-            var bottomAnimation = Window.Current.Compositor.CreateExpressionAnimation("Clamp((Props.ScrollableHeight + Scroll.Translation.Y) / Props.BottomInset, 0, 1)");
+            var bottomAnimation = BootStrapper.Current.Compositor.CreateExpressionAnimation("Clamp((Props.ScrollableHeight + Scroll.Translation.Y) / Props.BottomInset, 0, 1)");
             bottomAnimation.SetReferenceParameter("Scroll", props);
             bottomAnimation.SetReferenceParameter("Props", _propertySet);
 

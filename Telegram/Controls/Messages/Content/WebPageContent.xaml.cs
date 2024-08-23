@@ -684,7 +684,7 @@ namespace Telegram.Controls.Messages.Content
                 return;
             }
 
-            var compositor = Window.Current.Compositor;
+            var compositor = BootStrapper.Current.Compositor;
             var rectangle = compositor.CreateRoundedRectangleGeometry();
             rectangle.Size = new Vector2(ActualSize.X - 2, ActualSize.Y - 2);
             rectangle.Offset = new Vector2(1, 1);
@@ -726,7 +726,7 @@ namespace Telegram.Controls.Messages.Content
 
         public void HideSkeleton()
         {
-            ElementCompositionPreview.SetElementChildVisual(this, Window.Current.Compositor.CreateSpriteVisual());
+            ElementCompositionPreview.SetElementChildVisual(this, BootStrapper.Current.Compositor.CreateSpriteVisual());
         }
 
         #endregion

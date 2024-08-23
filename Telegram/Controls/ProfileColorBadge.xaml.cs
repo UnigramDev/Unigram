@@ -72,7 +72,7 @@ namespace Telegram.Controls
                 var group = CanvasGeometry.CreateGroup(device, new[] { ellipse1, ellipse2 }, CanvasFilledRegionDetermination.Alternate);
 
                 var visual = ElementComposition.GetElementVisual(NamePrimary);
-                visual.Clip = Window.Current.Compositor.CreateGeometricClip(Window.Current.Compositor.CreatePathGeometry(new CompositionPath(group)));
+                visual.Clip = BootStrapper.Current.Compositor.CreateGeometricClip(BootStrapper.Current.Compositor.CreatePathGeometry(new CompositionPath(group)));
             }
             else
             {

@@ -5,6 +5,7 @@
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
 using System.Numerics;
+using Telegram.Navigation;
 using Windows.UI;
 using Windows.UI.Composition;
 using Windows.UI.Xaml;
@@ -18,12 +19,14 @@ namespace Telegram.Common
     {
         public static SpriteVisual Attach(UIElement element, float radius = 20, float opacity = 0.25f, UIElement target = null)
         {
-            var shadow = Window.Current.Compositor.CreateDropShadow();
+            var compositor = BootStrapper.Current.Compositor;
+
+            var shadow = compositor.CreateDropShadow();
             shadow.BlurRadius = radius;
             shadow.Opacity = opacity;
             shadow.Color = Colors.Black;
 
-            var visual = Window.Current.Compositor.CreateSpriteVisual();
+            var visual = compositor.CreateSpriteVisual();
             visual.Shadow = shadow;
             visual.Size = new Vector2(0, 0);
             visual.Offset = new Vector3(0, 0, 0);

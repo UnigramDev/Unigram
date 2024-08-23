@@ -408,7 +408,7 @@ namespace Telegram.Controls.Gallery
                         : Stretch.Uniform;
                 }
 
-                var anim = Window.Current.Compositor.CreateScalarKeyFrameAnimation();
+                var anim = BootStrapper.Current.Compositor.CreateScalarKeyFrameAnimation();
                 anim.InsertKeyFrame(0, fullScreen ? 0 : 1);
                 anim.InsertKeyFrame(1, fullScreen ? 1 : 0);
 

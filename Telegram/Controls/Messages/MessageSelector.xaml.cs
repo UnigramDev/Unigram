@@ -13,6 +13,7 @@ using Telegram.Common;
 using Telegram.Composition;
 using Telegram.Controls.Chats;
 using Telegram.Controls.Messages.Content;
+using Telegram.Navigation;
 using Telegram.Services;
 using Telegram.Td.Api;
 using Telegram.ViewModels;
@@ -134,7 +135,7 @@ namespace Telegram.Controls.Messages
                 return;
             }
 
-            var visual = GetVisual(Window.Current.Compositor, out var source, out _props);
+            var visual = GetVisual(BootStrapper.Current.Compositor, out var source, out _props);
 
             _source = source;
             _previous = visual;
@@ -343,11 +344,11 @@ namespace Telegram.Controls.Messages
 
                 if (animate)
                 {
-                    var offset = Window.Current.Compositor.CreateScalarKeyFrameAnimation();
+                    var offset = BootStrapper.Current.Compositor.CreateScalarKeyFrameAnimation();
                     offset.InsertKeyFrame(0, value ? -36 : 0);
                     offset.InsertKeyFrame(1, value ? 0 : -36);
 
-                    var scale = Window.Current.Compositor.CreateVector3KeyFrameAnimation();
+                    var scale = BootStrapper.Current.Compositor.CreateVector3KeyFrameAnimation();
                     scale.InsertKeyFrame(0, value ? Vector3.Zero : Vector3.One);
                     scale.InsertKeyFrame(1, value ? Vector3.One : Vector3.Zero);
 

@@ -13,6 +13,7 @@ using Telegram.Composition;
 using Telegram.Controls;
 using Telegram.Controls.Media;
 using Telegram.Native.Calls;
+using Telegram.Navigation;
 using Telegram.Services;
 using Telegram.Td.Api;
 using Windows.Devices.Enumeration;
@@ -257,11 +258,11 @@ namespace Telegram.Views.Calls
 
             if (x1 != _viewfinder.Offset.X || y1 != _viewfinder.Offset.Y)
             {
-                var anim = Window.Current.Compositor.CreateVector3KeyFrameAnimation();
+                var anim = BootStrapper.Current.Compositor.CreateVector3KeyFrameAnimation();
                 anim.InsertKeyFrame(0, _viewfinder.Offset);
                 anim.InsertKeyFrame(1, new Vector3(x1, y1, 0));
 
-                var batch = Window.Current.Compositor.CreateScopedBatch(CompositionBatchTypes.Animation);
+                var batch = BootStrapper.Current.Compositor.CreateScopedBatch(CompositionBatchTypes.Animation);
                 batch.Completed += (s, args) =>
                 {
                     _viewfinder.Offset = new Vector3(x1, y1, 0);

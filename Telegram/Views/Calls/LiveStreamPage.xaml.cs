@@ -721,7 +721,7 @@ namespace Telegram.Views.Calls
 
             _bottomRootCollapsed = !show;
 
-            var anim = Window.Current.Compositor.CreateScalarKeyFrameAnimation();
+            var anim = BootStrapper.Current.Compositor.CreateScalarKeyFrameAnimation();
             anim.InsertKeyFrame(0, show ? 0 : 1);
             anim.InsertKeyFrame(1, show ? 1 : 0);
 

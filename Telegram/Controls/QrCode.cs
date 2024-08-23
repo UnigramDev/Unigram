@@ -8,6 +8,7 @@ using Microsoft.Graphics.Canvas.Geometry;
 using System;
 using System.Numerics;
 using Telegram.Native;
+using Telegram.Navigation;
 using Windows.UI;
 using Windows.UI.Composition;
 using Windows.UI.Xaml;
@@ -260,7 +261,7 @@ namespace Telegram.Controls
             large((data.Size - 7) * pixel - 2, 0);
             large(0, (data.Size - 7) * pixel - 2);
 
-            var compositor = Window.Current.Compositor;
+            var compositor = BootStrapper.Current.Compositor;
             var blackBrush = compositor.CreateColorBrush(foreground);
 
             var path1 = compositor.CreatePathGeometry(new CompositionPath(CanvasGeometry.CreateGroup(null, geometries, CanvasFilledRegionDetermination.Winding)));

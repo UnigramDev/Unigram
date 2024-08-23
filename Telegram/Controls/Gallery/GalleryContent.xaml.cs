@@ -8,6 +8,7 @@ using LibVLCSharp.Shared;
 using System;
 using System.Numerics;
 using Telegram.Common;
+using Telegram.Navigation;
 using Telegram.Services;
 using Telegram.Streams;
 using Telegram.Td.Api;
@@ -118,7 +119,7 @@ namespace Telegram.Controls.Gallery
                 var prev = e.PreviousSize.ToVector2();
                 var next = e.NewSize.ToVector2();
 
-                var anim = Window.Current.Compositor.CreateVector3KeyFrameAnimation();
+                var anim = BootStrapper.Current.Compositor.CreateVector3KeyFrameAnimation();
                 anim.InsertKeyFrame(0, new Vector3(prev / next, 1));
                 anim.InsertKeyFrame(1, Vector3.One);
 
@@ -126,7 +127,7 @@ namespace Telegram.Controls.Gallery
                 panel.CenterPoint = new Vector3(next.X / 2, next.Y / 2, 0);
                 panel.StartAnimation("Scale", anim);
 
-                var factor = Window.Current.Compositor.CreateExpressionAnimation("Vector3(1 / content.Scale.X, 1 / content.Scale.Y, 1)");
+                var factor = BootStrapper.Current.Compositor.CreateExpressionAnimation("Vector3(1 / content.Scale.X, 1 / content.Scale.Y, 1)");
                 factor.SetReferenceParameter("content", panel);
 
                 var button = ElementComposition.GetElementVisual(Button);

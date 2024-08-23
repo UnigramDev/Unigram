@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
 using Telegram.Common;
+using Telegram.Navigation;
 using Telegram.Services;
 using Telegram.Services.Settings;
 using Telegram.Streams;
@@ -76,7 +77,7 @@ namespace Telegram.Controls.Drawers
         {
             InitializeComponent();
 
-            ElementComposition.GetElementVisual(this).Clip = Window.Current.Compositor.CreateInsetClip();
+            ElementComposition.GetElementVisual(this).Clip = BootStrapper.Current.Compositor.CreateInsetClip();
 
             var header = DropShadowEx.Attach(Separator);
             header.Clip = header.Compositor.CreateInsetClip(0, 40, 0, -40);

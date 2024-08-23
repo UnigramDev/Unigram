@@ -6,6 +6,7 @@
 //
 using System;
 using Telegram.Common;
+using Telegram.Navigation;
 using Telegram.Services.Settings;
 using Telegram.Streams;
 using Telegram.Td.Api;
@@ -66,7 +67,7 @@ namespace Telegram.Controls.Drawers
             _zoomer.DownloadFile = fileId => ViewModel.ClientService.DownloadFile(fileId, 32);
             _zoomer.SessionId = () => ViewModel.ClientService.SessionId;
 
-            ElementComposition.GetElementVisual(this).Clip = Window.Current.Compositor.CreateInsetClip();
+            ElementComposition.GetElementVisual(this).Clip = BootStrapper.Current.Compositor.CreateInsetClip();
 
             var header = DropShadowEx.Attach(Separator);
             header.Clip = header.Compositor.CreateInsetClip(0, 40, 0, -40);

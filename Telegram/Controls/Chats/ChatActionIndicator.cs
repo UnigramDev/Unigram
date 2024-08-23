@@ -7,6 +7,7 @@
 using Microsoft.UI.Xaml.Controls;
 using System.Numerics;
 using Telegram.Assets.Icons;
+using Telegram.Navigation;
 using Telegram.Td.Api;
 using Windows.UI;
 using Windows.UI.Composition;
@@ -44,7 +45,7 @@ namespace Telegram.Controls.Chats
             }
 
             var color = Fill?.Color ?? Colors.Black;
-            var visual = GetVisual(type, Window.Current.Compositor, color, out _props);
+            var visual = GetVisual(type, BootStrapper.Current.Compositor, color, out _props);
 
             _action = type;
             _previous = visual;
