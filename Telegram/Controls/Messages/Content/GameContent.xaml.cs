@@ -10,10 +10,12 @@ using Telegram.Common;
 using Telegram.Td.Api;
 using Telegram.ViewModels;
 using Windows.UI.Text;
+using Microsoft.UI.Text;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Documents;
 using Microsoft.UI.Xaml.Media;
+using FontWeights = Microsoft.UI.Text.FontWeights;
 
 namespace Telegram.Controls.Messages.Content
 {

@@ -24,6 +24,7 @@ using Windows.Foundation;
 using Windows.System;
 using Windows.UI;
 using Windows.UI.Text;
+using Microsoft.UI.Text;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Documents;
@@ -32,6 +33,7 @@ using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Media.Imaging;
 using Microsoft.UI.Xaml.Navigation;
 using Microsoft.UI.Xaml.Shapes;
+using FontWeights = Microsoft.UI.Text.FontWeights;
 using Point = Windows.Foundation.Point;
 
 namespace Telegram.Views

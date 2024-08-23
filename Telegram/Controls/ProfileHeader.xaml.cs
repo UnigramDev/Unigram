@@ -25,8 +25,9 @@ using Telegram.Td.Api;
 using Telegram.ViewModels;
 using Windows.Foundation;
 using Windows.UI;
-using Microsoft.UI.Composition;
 using Windows.UI.Text;
+using Microsoft.UI.Composition;
+using Microsoft.UI.Text;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Controls.Primitives;
@@ -34,6 +35,7 @@ using Microsoft.UI.Xaml.Documents;
 using Microsoft.UI.Xaml.Hosting;
 using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Media;
+using FontWeights = Microsoft.UI.Text.FontWeights;
 using Point = Windows.Foundation.Point;
 
 namespace Telegram.Controls

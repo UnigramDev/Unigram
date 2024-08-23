@@ -11,7 +11,7 @@ using Telegram.Controls.Drawers;
 using Telegram.Navigation;
 using Windows.Foundation;
 using Windows.System;
-using Windows.UI.Text;
+using Microsoft.UI.Text;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Controls.Primitives;

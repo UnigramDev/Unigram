@@ -6,7 +6,7 @@
 //
 using System.Collections.Generic;
 using System.Linq;
-using Windows.UI.Text;
+using Microsoft.UI.Text;
 
 namespace Telegram.Common
 {

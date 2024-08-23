@@ -30,7 +30,7 @@ using Windows.Foundation;
 using Windows.System;
 using Windows.System.Display;
 using Windows.UI;
-using Windows.UI.Text;
+using Microsoft.UI.Text;
 using Windows.UI.ViewManagement;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;

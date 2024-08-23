@@ -46,7 +46,7 @@ using Windows.ApplicationModel.DataTransfer;
 using Windows.Foundation;
 using Microsoft.UI.Composition;
 using Windows.UI.Core;
-using Windows.UI.Text;
+using Microsoft.UI.Text;
 using Windows.UI.ViewManagement;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Automation;

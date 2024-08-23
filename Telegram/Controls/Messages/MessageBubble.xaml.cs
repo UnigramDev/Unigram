@@ -29,7 +29,7 @@ using Telegram.ViewModels.Stories;
 using Windows.Foundation;
 using Windows.UI;
 using Microsoft.UI.Composition;
-using Windows.UI.Text;
+using Microsoft.UI.Text;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Automation;
 using Microsoft.UI.Xaml.Controls;
@@ -38,6 +38,7 @@ using Microsoft.UI.Xaml.Documents;
 using Microsoft.UI.Xaml.Hosting;
 using Microsoft.UI.Xaml.Markup;
 using Microsoft.UI.Xaml.Media;
+using FontWeights = Microsoft.UI.Text.FontWeights;
 
 namespace Telegram.Controls.Messages
 {

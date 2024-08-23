@@ -46,6 +46,7 @@ using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Media.Imaging;
 using Microsoft.UI.Xaml.Navigation;
 using static Telegram.Services.GenerationService;
+using RichEditTextDocument = Microsoft.UI.Text.RichEditTextDocument;
 using Point = Windows.Foundation.Point;
 
 namespace Telegram.Common
@@ -564,11 +565,11 @@ namespace Telegram.Common
             }
         }
 
-        public static void Clear(this ITextDocument document)
+        public static void Clear(this RichEditTextDocument document)
         {
             using (var stream = new InMemoryRandomAccessStream())
             {
-                document.LoadFromStream(TextSetOptions.None, stream);
+                document.LoadFromStream(Microsoft.UI.Text.TextSetOptions.None, stream);
             }
         }
 

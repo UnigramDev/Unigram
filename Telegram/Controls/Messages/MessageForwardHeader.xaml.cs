@@ -12,7 +12,7 @@ using Telegram.ViewModels;
 using Windows.Foundation;
 using Windows.UI;
 using Microsoft.UI.Composition;
-using Windows.UI.Text;
+using Microsoft.UI.Text;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Automation.Peers;
 using Microsoft.UI.Xaml.Controls;

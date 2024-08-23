@@ -31,7 +31,7 @@ using Telegram.Views.Popups;
 using Telegram.Views.Premium.Popups;
 using Telegram.Views.Users;
 using Windows.ApplicationModel.DataTransfer;
-using Windows.UI.Text;
+using Microsoft.UI.Text;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Controls.Primitives;
