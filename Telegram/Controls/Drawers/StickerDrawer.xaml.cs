@@ -65,7 +65,7 @@ namespace Telegram.Controls.Drawers
             _zoomer.DownloadFile = fileId => ViewModel.ClientService.DownloadFile(fileId, 32);
             _zoomer.SessionId = () => ViewModel.ClientService.SessionId;
 
-            var header = DropShadowEx.Attach(Separator);
+            var header = VisualUtilities.DropShadow(Separator);
             header.Clip = header.Compositor.CreateInsetClip(0, 40, 0, -40);
 
             //var debouncer = new EventDebouncer<TextChangedEventArgs>(Constants.TypingTimeout, handler => FieldStickers.TextChanged += new TextChangedEventHandler(handler));

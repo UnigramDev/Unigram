@@ -441,7 +441,7 @@ namespace Telegram.Controls.Stories
 
                     var shadow = new Border();
 
-                    DropShadowEx.Attach(path, target: shadow);
+                    VisualUtilities.DropShadow(path, target: shadow);
 
                     var test2 = new Grid();
                     test2.Padding = new Thickness(6);

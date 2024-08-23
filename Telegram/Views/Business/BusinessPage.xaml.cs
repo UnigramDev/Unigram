@@ -244,7 +244,7 @@ namespace Telegram.Views.Business
 
         private void PurchaseShadow_Loaded(object sender, Windows.UI.Xaml.RoutedEventArgs e)
         {
-            DropShadowEx.Attach(PurchaseShadow);
+            VisualUtilities.DropShadow(PurchaseShadow);
         }
 
         private void Purchase_Click(object sender, Windows.UI.Xaml.RoutedEventArgs e)

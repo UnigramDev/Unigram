@@ -85,7 +85,7 @@ namespace Telegram.Views.Premium.Popups
 
         private void PurchaseShadow_Loaded(object sender, RoutedEventArgs e)
         {
-            DropShadowEx.Attach(PurchaseShadow);
+            VisualUtilities.DropShadow(PurchaseShadow);
         }
 
         private void OnSelectionChanged(object sender, SelectionChangedEventArgs e)

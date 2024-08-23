@@ -9,14 +9,51 @@ using System.Collections.Generic;
 using System.Numerics;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
+using Telegram.Navigation;
+using Windows.UI;
+using Windows.UI.Composition;
 using Windows.UI.Xaml;
+using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Hosting;
 using Windows.UI.Xaml.Media;
+using Windows.UI.Xaml.Shapes;
 
 namespace Telegram.Common
 {
     public class VisualUtilities
     {
+        public static SpriteVisual DropShadow(UIElement element, float radius = 20, float opacity = 0.25f, UIElement target = null)
+        {
+            var compositor = BootStrapper.Current.Compositor;
+
+            var shadow = compositor.CreateDropShadow();
+            shadow.BlurRadius = radius;
+            shadow.Opacity = opacity;
+            shadow.Color = Colors.Black;
+
+            var visual = compositor.CreateSpriteVisual();
+            visual.Shadow = shadow;
+            visual.Size = new Vector2(0, 0);
+            visual.Offset = new Vector3(0, 0, 0);
+            visual.RelativeSizeAdjustment = Vector2.One;
+
+            switch (element)
+            {
+                case Image image:
+                    shadow.Mask = image.GetAlphaMask();
+                    break;
+                case Shape shape:
+                    shadow.Mask = shape.GetAlphaMask();
+                    break;
+                case TextBlock textBlock:
+                    shadow.Mask = textBlock.GetAlphaMask();
+                    break;
+            }
+
+            ElementCompositionPreview.SetElementChildVisual(target ?? element, visual);
+            return visual;
+        }
+
         public static void ShakeView(FrameworkElement view, float x = 2)
         {
             // We use first child inside the control (usually a Grid)
@@ -135,7 +172,7 @@ namespace Telegram.Common
             var weak = new WeakReference(callback);
             void handler(object sender, object e)
             {
-                CompositionTarget.Rendering -= handler;
+                Windows.UI.Xaml.Media.CompositionTarget.Rendering -= handler;
 
                 if (weak.Target is Action callback)
                 {
@@ -145,7 +182,7 @@ namespace Telegram.Common
 
             try
             {
-                CompositionTarget.Rendering += handler;
+                Windows.UI.Xaml.Media.CompositionTarget.Rendering += handler;
             }
             catch
             {
@@ -158,13 +195,13 @@ namespace Telegram.Common
             var tsc = new TaskCompletionSource<bool>();
             void handler(object sender, object e)
             {
-                CompositionTarget.Rendering -= handler;
+                Windows.UI.Xaml.Media.CompositionTarget.Rendering -= handler;
                 tsc.SetResult(true);
             }
 
             try
             {
-                CompositionTarget.Rendering += handler;
+                Windows.UI.Xaml.Media.CompositionTarget.Rendering += handler;
             }
             catch
             {
@@ -181,7 +218,7 @@ namespace Telegram.Common
             var weak = new WeakReference(callback);
             void handler(object sender, object e)
             {
-                CompositionTarget.Rendered -= handler;
+                Windows.UI.Xaml.Media.CompositionTarget.Rendered -= handler;
 
                 if (weak.Target is Action callback)
                 {
@@ -191,7 +228,7 @@ namespace Telegram.Common
 
             try
             {
-                CompositionTarget.Rendered += handler;
+                Windows.UI.Xaml.Media.CompositionTarget.Rendered += handler;
             }
             catch
             {
@@ -204,13 +241,13 @@ namespace Telegram.Common
             var tsc = new TaskCompletionSource<bool>();
             void handler(object sender, object e)
             {
-                CompositionTarget.Rendered -= handler;
+                Windows.UI.Xaml.Media.CompositionTarget.Rendered -= handler;
                 tsc.SetResult(true);
             }
 
             try
             {
-                CompositionTarget.Rendered += handler;
+                Windows.UI.Xaml.Media.CompositionTarget.Rendered += handler;
             }
             catch
             {

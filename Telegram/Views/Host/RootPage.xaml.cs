@@ -99,7 +99,7 @@ namespace Telegram.Views.Host
 
             Navigation.Content = _navigationService.Frame;
 
-            DropShadowEx.Attach(ThemeShadow);
+            VisualUtilities.DropShadow(ThemeShadow);
 
             //if (ApiInfo.IsXbox)
             //{

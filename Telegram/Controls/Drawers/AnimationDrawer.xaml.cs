@@ -69,7 +69,7 @@ namespace Telegram.Controls.Drawers
 
             ElementComposition.GetElementVisual(this).Clip = BootStrapper.Current.Compositor.CreateInsetClip();
 
-            var header = DropShadowEx.Attach(Separator);
+            var header = VisualUtilities.DropShadow(Separator);
             header.Clip = header.Compositor.CreateInsetClip(0, 40, 0, -40);
 
             var debouncer = new EventDebouncer<TextChangedEventArgs>(Constants.TypingTimeout, handler => SearchField.TextChanged += new TextChangedEventHandler(handler));

@@ -85,7 +85,7 @@ namespace Telegram.Views
 
             UpdateChatFolders();
 
-            DropShadowEx.Attach(UpdateShadow);
+            VisualUtilities.DropShadow(UpdateShadow);
 
             ChatsList.RegisterPropertyChangedCallback(ListViewBase.SelectionModeProperty, List_SelectionModeChanged);
 

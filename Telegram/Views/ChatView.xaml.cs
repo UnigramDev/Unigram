@@ -189,7 +189,7 @@ namespace Telegram.Views
                 btnSendMessage.SlowModeDelayExpiresIn = fullInfo.SlowModeDelayExpiresIn;
             };
 
-            _textShadowVisual = DropShadowEx.Attach(Separator);
+            _textShadowVisual = VisualUtilities.DropShadow(Separator);
             _textShadowVisual.IsVisible = false;
         }
 

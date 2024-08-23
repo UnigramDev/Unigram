@@ -29,7 +29,7 @@ namespace Telegram.Controls.Chats
         {
             InitializeComponent();
 
-            var visual = DropShadowEx.Attach(ArrowShadow, 2);
+            var visual = VisualUtilities.DropShadow(ArrowShadow, 2);
             visual.Offset = new Vector3(0, 1, 0);
 
             ElementCompositionPreview.SetIsTranslationEnabled(Ellipse, true);

@@ -126,7 +126,7 @@ namespace Telegram.Views.Calls
             // Why does this crashes due to an access violation exception on certain devices?
             ElementCompositionPreview.SetElementChildVisual(BlurPanel, _blurVisual);
 
-            DropShadowEx.Attach(ViewfinderShadow);
+            VisualUtilities.DropShadow(ViewfinderShadow);
 
             #endregion
 
