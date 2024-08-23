@@ -9,7 +9,6 @@ using System.Numerics;
 using Telegram.Common;
 using Telegram.Controls;
 using Telegram.Controls.Cells;
-using Telegram.Navigation;
 using Telegram.Td.Api;
 using Telegram.ViewModels;
 using Windows.Devices.Geolocation;
@@ -134,10 +133,12 @@ namespace Telegram.Views.Popups
             var latitude = point.Coordinate.Point.Position.Latitude;
             var longitude = point.Coordinate.Point.Position.Longitude;
 
-            var width = MapPresenter.ActualWidth * WindowContext.Current.RasterizationScale;
-            var height = MapPresenter.ActualHeight * WindowContext.Current.RasterizationScale;
+            var rasterization = XamlRoot.RasterizationScale;
 
-            var pixels = 96 * WindowContext.Current.RasterizationScale;
+            var width = MapPresenter.ActualWidth * rasterization;
+            var height = MapPresenter.ActualHeight * rasterization;
+
+            var pixels = 96 * rasterization;
             var scale = pixels * 39.37 * 156543.04 * Math.Cos(latitude * Math.PI / 180) / Math.Pow(2, 15);
             var accuracy = point.Coordinate.Accuracy * 39.37;
 

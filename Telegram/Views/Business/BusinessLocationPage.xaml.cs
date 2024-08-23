@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Globalization;
 using Telegram.Common;
-using Telegram.Navigation;
 using Telegram.Td.Api;
 using Telegram.ViewModels.Business;
 using Windows.UI.Xaml;
@@ -45,8 +44,8 @@ namespace Telegram.Views.Business
         {
             if (valid)
             {
-                var width = 1000 * WindowContext.Current.RasterizationScale;
-                var height = 200 * WindowContext.Current.RasterizationScale;
+                var width = 1000 * XamlRoot.RasterizationScale;
+                var height = 200 * XamlRoot.RasterizationScale;
 
                 var latitude = location.Latitude.ToString(CultureInfo.InvariantCulture);
                 var longitude = location.Longitude.ToString(CultureInfo.InvariantCulture);

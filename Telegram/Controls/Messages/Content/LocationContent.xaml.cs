@@ -8,7 +8,6 @@ using System;
 using System.Globalization;
 using Telegram.Common;
 using Telegram.Converters;
-using Telegram.Navigation;
 using Telegram.Td.Api;
 using Telegram.ViewModels;
 using Windows.UI.Xaml;
@@ -79,8 +78,8 @@ namespace Telegram.Controls.Messages.Content
                 return;
             }
 
-            var width = 320 * WindowContext.Current.RasterizationScale;
-            var height = 200 * WindowContext.Current.RasterizationScale;
+            var width = 320 * XamlRoot.RasterizationScale;
+            var height = 200 * XamlRoot.RasterizationScale;
 
             var latitude = location.Location.Latitude.ToString(CultureInfo.InvariantCulture);
             var longitude = location.Location.Longitude.ToString(CultureInfo.InvariantCulture);
