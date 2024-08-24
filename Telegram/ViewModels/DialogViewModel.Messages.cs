@@ -974,7 +974,7 @@ namespace Telegram.ViewModels
             if (confirm == ContentDialogResult.Primary)
             {
                 ClientService.Send(new SetMessageFactCheck(message.ChatId, message.Id, popup.Text));
-                ToastPopup.Show(NavigationService.XamlRoot, string.IsNullOrEmpty(popup.Text?.Text) ? Strings.FactCheckDeleted : Strings.FactCheckEdited, ToastPopupIcon.Info);
+                ShowToast(string.IsNullOrEmpty(popup.Text?.Text) ? Strings.FactCheckDeleted : Strings.FactCheckEdited, ToastPopupIcon.Info);
             }
         }
 
@@ -1435,7 +1435,7 @@ namespace Telegram.ViewModels
             }
 
             ClientService.Send(new AddFavoriteSticker(new InputFileId(sticker.Sticker.StickerValue.Id)));
-            ToastPopup.Show(NavigationService.XamlRoot, Strings.AddedToFavorites, ToastPopupIcon.Info);
+            ShowToast(Strings.AddedToFavorites, ToastPopupIcon.Info);
         }
 
         #endregion
@@ -1451,7 +1451,7 @@ namespace Telegram.ViewModels
             }
 
             ClientService.Send(new RemoveFavoriteSticker(new InputFileId(sticker.Sticker.StickerValue.Id)));
-            ToastPopup.Show(NavigationService.XamlRoot, Strings.RemovedFromFavorites, ToastPopupIcon.Info);
+            ShowToast(Strings.RemovedFromFavorites, ToastPopupIcon.Info);
         }
 
         #endregion
@@ -1482,7 +1482,7 @@ namespace Telegram.ViewModels
                 ClientService.Send(new AddSavedAnimation(new InputFileId(previewAnimation.Animation.AnimationValue.Id)));
             }
 
-            ToastPopup.Show(NavigationService.XamlRoot, Strings.GifSavedHint, ToastPopupIcon.Gif);
+            ShowToast(Strings.GifSavedHint, ToastPopupIcon.Gif);
         }
 
         #endregion

@@ -248,7 +248,7 @@ namespace Telegram.ViewModels.Settings
 
                 if (popup.SelectedChatId != 0)
                 {
-                    ToastPopup.Show(NavigationService.XamlRoot, Strings.EditProfileChannelSet, ToastPopupIcon.Success);
+                    ShowToast(Strings.EditProfileChannelSet, ToastPopupIcon.Success);
                 }
             }
         }

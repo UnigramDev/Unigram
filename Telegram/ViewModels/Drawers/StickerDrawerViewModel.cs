@@ -736,15 +736,26 @@ namespace Telegram.ViewModels.Drawers
                         {
                             int i = 0;
 
+                            var added = new HashSet<int>();
+                            var items = new List<Sticker>();
+
                             foreach (var suggestion in emojis.EmojiKeywordsValue.DistinctBy(x => x.Emoji))
                             {
                                 var response = await _clientService.SendAsync(new GetStickers(_type, suggestion.Emoji, 100, _chatId));
                                 if (response is Stickers stickers && stickers.StickersValue.Count > 0)
                                 {
+                                    foreach (var item in stickers.StickersValue)
+                                    {
+                                        if (added.Contains(item.StickerValue.Id))
+                                        {
+                                            continue;
+                                        }
+
+                                        added.Add(item.StickerValue.Id);
+                                        items.Add(item);
+                                    }
+
                                     i++;
-                                    Add(new StickerSetViewModel(_clientService,
-                                        new StickerSetInfo(0, suggestion.Emoji, "emoji", null, Array.Empty<ClosedVectorPath>(), false, false, false, false, _type, false, false, false, stickers.StickersValue.Count, stickers.StickersValue),
-                                        new StickerSet(0, suggestion.Emoji, "emoji", null, Array.Empty<ClosedVectorPath>(), false, false, false, false, _type, false, false, false, stickers.StickersValue, Array.Empty<Emojis>())));
                                 }
 
                                 if (i > 9)
@@ -752,6 +763,10 @@ namespace Telegram.ViewModels.Drawers
                                     break;
                                 }
                             }
+
+                            Add(new StickerSetViewModel(_clientService,
+                                new StickerSetInfo(0, string.Empty, "emoji", null, Array.Empty<ClosedVectorPath>(), false, false, false, false, _type, false, false, false, items.Count, items),
+                                new StickerSet(0, string.Empty, "emoji", null, Array.Empty<ClosedVectorPath>(), false, false, false, false, _type, false, false, false, items, Array.Empty<Emojis>())));
                         }
                     }
                 }

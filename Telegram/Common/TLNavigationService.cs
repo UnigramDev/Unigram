@@ -182,7 +182,7 @@ namespace Telegram.Common
             var response = await ClientService.SendAsync(new GetPaymentForm(inputInvoice, Theme.Current.Parameters));
             if (response is not PaymentForm paymentForm)
             {
-                ToastPopup.Show(XamlRoot, Strings.PaymentInvoiceLinkInvalid, ToastPopupIcon.Info);
+                ShowToast(Strings.PaymentInvoiceLinkInvalid, ToastPopupIcon.Info);
                 return;
             }
 
@@ -217,7 +217,7 @@ namespace Telegram.Common
             var response = await ClientService.SendAsync(new GetPaymentReceipt(message.ChatId, message.Id));
             if (response is not PaymentReceipt paymentReceipt)
             {
-                ToastPopup.Show(XamlRoot, Strings.PaymentInvoiceLinkInvalid, ToastPopupIcon.Info);
+                ShowToast(Strings.PaymentInvoiceLinkInvalid, ToastPopupIcon.Info);
                 return;
             }
 

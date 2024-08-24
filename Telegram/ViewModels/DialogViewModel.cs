@@ -3623,7 +3623,7 @@ namespace Telegram.ViewModels
                 if (confirm == ContentDialogResult.Primary)
                 {
                     ClientService.Send(new SetReadDatePrivacySettings(new ReadDatePrivacySettings(true)));
-                    ToastPopup.Show(NavigationService.XamlRoot, Strings.PremiumReadSet, ToastPopupIcon.Info);
+                    ShowToast(Strings.PremiumReadSet, ToastPopupIcon.Info);
                 }
                 else if (confirm == ContentDialogResult.Secondary && IsPremiumAvailable && !IsPremium)
                 {

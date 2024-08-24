@@ -634,20 +634,20 @@ namespace Telegram.ViewModels
                 {
                     if (userId == ClientService.Options.MyId)
                     {
-                        ToastPopup.Show(NavigationService.XamlRoot, messagesCount > 1
+                        ShowToast(messagesCount > 1
                             ? Strings.FwdMessagesToSavedMessages
                             : Strings.FwdMessageToSavedMessages, ToastPopupIcon.SavedMessages);
                     }
                     else
                     {
-                        ToastPopup.Show(NavigationService.XamlRoot, messagesCount > 1
+                        ShowToast(messagesCount > 1
                             ? string.Format(Strings.FwdMessagesToUser, chat.Title)
                             : string.Format(Strings.FwdMessageToUser, chat.Title), ToastPopupIcon.Forward);
                     }
                 }
                 else if (chat.IsBasicGroup(out _))
                 {
-                    ToastPopup.Show(NavigationService.XamlRoot, messagesCount > 1
+                    ShowToast(messagesCount > 1
                         ? string.Format(Strings.FwdMessagesToGroup, chat.Title)
                         : string.Format(Strings.FwdMessageToGroup, chat.Title), ToastPopupIcon.Forward);
 
@@ -656,13 +656,13 @@ namespace Telegram.ViewModels
                 {
                     if (isChannel)
                     {
-                        ToastPopup.Show(NavigationService.XamlRoot, messagesCount > 1
+                        ShowToast(messagesCount > 1
                             ? string.Format(Strings.FwdMessagesToChats, chat.Title)
                             : string.Format(Strings.FwdMessageToChats, chat.Title), ToastPopupIcon.Forward);
                     }
                     else
                     {
-                        ToastPopup.Show(NavigationService.XamlRoot, messagesCount > 1
+                        ShowToast(messagesCount > 1
                             ? string.Format(Strings.FwdMessagesToGroup, chat.Title)
                             : string.Format(Strings.FwdMessageToGroup, chat.Title), ToastPopupIcon.Forward);
                     }
@@ -670,7 +670,7 @@ namespace Telegram.ViewModels
             }
             else
             {
-                ToastPopup.Show(NavigationService.XamlRoot, messagesCount > 1
+                ShowToast(messagesCount > 1
                     ? Locale.Declension(Strings.R.FwdMessagesToManyChats, chats.Count)
                     : Locale.Declension(Strings.R.FwdMessageToManyChats, chats.Count), ToastPopupIcon.Forward);
             }
@@ -682,16 +682,16 @@ namespace Telegram.ViewModels
             {
                 if (ClientService.IsSavedMessages(chats[0]))
                 {
-                    ToastPopup.Show(NavigationService.XamlRoot, Strings.StorySharedToSavedMessages, ToastPopupIcon.SavedMessages);
+                    ShowToast(Strings.StorySharedToSavedMessages, ToastPopupIcon.SavedMessages);
                 }
                 else
                 {
-                    ToastPopup.Show(NavigationService.XamlRoot, string.Format(Strings.StorySharedTo, chats[0].Title), ToastPopupIcon.Forward);
+                    ShowToast(string.Format(Strings.StorySharedTo, chats[0].Title), ToastPopupIcon.Forward);
                 }
             }
             else
             {
-                ToastPopup.Show(NavigationService.XamlRoot, Locale.Declension(Strings.R.StorySharedToManyChats, chats.Count), ToastPopupIcon.Forward);
+                ShowToast(Locale.Declension(Strings.R.StorySharedToManyChats, chats.Count), ToastPopupIcon.Forward);
             }
         }
 

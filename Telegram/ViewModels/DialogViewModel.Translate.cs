@@ -161,7 +161,7 @@ namespace Telegram.ViewModels
             };
 
             // TODO: add undo button
-            ToastPopup.Show(NavigationService.XamlRoot, toast, ToastPopupIcon.Translate);
+            ShowToast(toast, ToastPopupIcon.Translate);
         }
 
         public async void ShowTranslate()
@@ -205,7 +205,7 @@ namespace Telegram.ViewModels
             var toast = string.Format(Strings.AddedToDoNotTranslate, languageName);
 
             // TODO: add undo button
-            ToastPopup.Show(NavigationService.XamlRoot, toast, ToastPopupIcon.Translate);
+            ShowToast(toast, ToastPopupIcon.Translate);
 
             var languages = Settings.Translate.DoNot;
             languages.Add(DetectedLanguage);

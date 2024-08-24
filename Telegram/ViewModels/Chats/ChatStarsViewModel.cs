@@ -207,7 +207,7 @@ namespace Telegram.ViewModels.Chats
         {
             if (NextWithdrawalDate != 0)
             {
-                ToastPopup.Show(NavigationService.XamlRoot, string.Format(Strings.BotStarsWithdrawalToast, Formatter.Duration(NextWithdrawalDate - DateTime.Now.ToTimestamp())), ToastPopupIcon.Info);
+                ShowToast(string.Format(Strings.BotStarsWithdrawalToast, Formatter.Duration(NextWithdrawalDate - DateTime.Now.ToTimestamp())), ToastPopupIcon.Info);
                 return;
             }
 
@@ -224,7 +224,7 @@ namespace Telegram.ViewModels.Chats
             {
                 if (args.Value < ClientService.Options.StarWithdrawalCountMin)
                 {
-                    ToastPopup.Show(NavigationService.XamlRoot, Locale.Declension(Strings.R.BotStarsWithdrawMinLimit, ClientService.Options.StarWithdrawalCountMin), ToastPopupIcon.Info);
+                    ShowToast(Locale.Declension(Strings.R.BotStarsWithdrawMinLimit, ClientService.Options.StarWithdrawalCountMin), ToastPopupIcon.Info);
                     args.Cancel = true;
                 }
             };

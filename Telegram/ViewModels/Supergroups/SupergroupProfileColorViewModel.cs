@@ -455,7 +455,7 @@ namespace Telegram.ViewModels.Supergroups
 
             if (changed)
             {
-                ToastPopup.Show(NavigationService.XamlRoot, Strings.ChannelAppearanceUpdated, ToastPopupIcon.Success);
+                ShowToast(Strings.ChannelAppearanceUpdated, ToastPopupIcon.Success);
             }
 
             _confirmed = true;

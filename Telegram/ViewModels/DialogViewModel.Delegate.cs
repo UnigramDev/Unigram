@@ -83,13 +83,13 @@ namespace Telegram.ViewModels
                             {
                                 if (supergroup.IsChannel)
                                 {
-                                    ToastPopup.Show(NavigationService.XamlRoot, replyToMessage.Quote != null && replyToMessage.Quote.IsManual
+                                    ShowToast(replyToMessage.Quote != null && replyToMessage.Quote.IsManual
                                         ? Strings.QuotePrivateChannel
                                         : Strings.ReplyPrivateChannel, ToastPopupIcon.Info);
                                 }
                                 else
                                 {
-                                    ToastPopup.Show(NavigationService.XamlRoot, replyToMessage.Quote != null && replyToMessage.Quote.IsManual
+                                    ShowToast(replyToMessage.Quote != null && replyToMessage.Quote.IsManual
                                         ? Strings.QuotePrivateGroup
                                         : Strings.ReplyPrivateGroup, ToastPopupIcon.Info);
                                 }
@@ -99,9 +99,9 @@ namespace Telegram.ViewModels
                         }
                         else if (replyToMessage.MessageId == 0)
                         {
-                            ToastPopup.Show(NavigationService.XamlRoot, replyToMessage.Quote != null && replyToMessage.Quote.IsManual
-                                        ? Strings.QuotePrivate
-                                        : Strings.ReplyPrivate, ToastPopupIcon.Info);
+                            ShowToast(replyToMessage.Quote != null && replyToMessage.Quote.IsManual
+                                ? Strings.QuotePrivate
+                                : Strings.ReplyPrivate, ToastPopupIcon.Info);
                             return;
                         }
 
@@ -109,9 +109,9 @@ namespace Telegram.ViewModels
                     }
                     else if (replyToMessage.Origin != null && replyToMessage.MessageId == 0)
                     {
-                        ToastPopup.Show(NavigationService.XamlRoot, replyToMessage.Quote != null && replyToMessage.Quote.IsManual
-                                        ? Strings.QuotePrivate
-                                        : Strings.ReplyPrivate, ToastPopupIcon.Info);
+                        ShowToast(replyToMessage.Quote != null && replyToMessage.Quote.IsManual
+                            ? Strings.QuotePrivate
+                            : Strings.ReplyPrivate, ToastPopupIcon.Info);
                     }
                     else if (replyToMessage.ChatId == message.ChatId || replyToMessage.ChatId == 0)
                     {

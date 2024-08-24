@@ -49,7 +49,7 @@ namespace Telegram.ViewModels.Settings.Privacy
                 CanSetBirthdate = false;
 
                 ClientService.Send(new SetBirthdate(popup.Value));
-                ToastPopup.Show(NavigationService.XamlRoot, Strings.PrivacyBirthdaySetDone, ToastPopupIcon.Success);
+                ShowToast(Strings.PrivacyBirthdaySetDone, ToastPopupIcon.Success);
             }
         }
     }

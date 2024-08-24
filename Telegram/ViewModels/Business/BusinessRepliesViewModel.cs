@@ -91,7 +91,7 @@ namespace Telegram.ViewModels.Business
             {
                 if (!ClientService.CheckQuickReplyShortcutName(args.Text))
                 {
-                    ToastPopup.Show(NavigationService.XamlRoot, Strings.BusinessRepliesNameBusy, ToastPopupIcon.Error);
+                    ShowToast(Strings.BusinessRepliesNameBusy, ToastPopupIcon.Error);
                     args.Cancel = true;
                 }
             };
@@ -121,7 +121,7 @@ namespace Telegram.ViewModels.Business
             {
                 if (!ClientService.CheckQuickReplyShortcutName(args.Text))
                 {
-                    ToastPopup.Show(NavigationService.XamlRoot, Strings.BusinessRepliesNameBusy, ToastPopupIcon.Error);
+                    ShowToast(Strings.BusinessRepliesNameBusy, ToastPopupIcon.Error);
                     args.Cancel = true;
                 }
             };

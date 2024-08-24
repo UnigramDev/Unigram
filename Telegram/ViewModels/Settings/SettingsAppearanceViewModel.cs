@@ -228,7 +228,7 @@ namespace Telegram.ViewModels.Settings
                 if (Settings.Appearance.NightMode != NightMode.Disabled)
                 {
                     Settings.Appearance.NightMode = NightMode.Disabled;
-                    ToastPopup.Show(NavigationService.XamlRoot, Strings.AutoNightModeOff, ToastPopupIcon.AutoNightOff);
+                    ShowToast(Strings.AutoNightModeOff, ToastPopupIcon.AutoNightOff);
                 }
 
                 Settings.Appearance.ForceNightMode = value;

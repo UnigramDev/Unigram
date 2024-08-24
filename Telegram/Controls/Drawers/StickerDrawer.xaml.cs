@@ -66,16 +66,16 @@ namespace Telegram.Controls.Drawers
             var header = VisualUtilities.DropShadow(Separator);
             header.Clip = header.Compositor.CreateInsetClip(0, 40, 0, -40);
 
-            //var debouncer = new EventDebouncer<TextChangedEventArgs>(Constants.TypingTimeout, handler => FieldStickers.TextChanged += new TextChangedEventHandler(handler));
-            //debouncer.Invoked += async (s, args) =>
-            //{
-            //    var items = ViewModel.SearchStickers;
-            //    if (items != null && string.Equals(FieldStickers.Text, items.Query))
-            //    {
-            //        await items.LoadMoreItemsAsync(1);
-            //        await items.LoadMoreItemsAsync(2);
-            //    }
-            //};
+            var debouncer = new EventDebouncer<TextChangedEventArgs>(Constants.TypingTimeout, handler => SearchField.TextChanged += new TextChangedEventHandler(handler));
+            debouncer.Invoked += async (s, args) =>
+            {
+                var items = ViewModel.SearchStickers as SearchStickerSetsCollection;
+                if (items != null && string.Equals(SearchField.Text, items.Query))
+                {
+                    await items.LoadMoreItemsAsync(1);
+                    await items.LoadMoreItemsAsync(2);
+                }
+            };
         }
 
         public Services.Settings.StickersTab Tab => Services.Settings.StickersTab.Stickers;

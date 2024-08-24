@@ -531,7 +531,7 @@ namespace Telegram.ViewModels
             if (confirm == ContentDialogResult.Primary)
             {
                 ClientService.Send(new SetBirthdate(popup.Value));
-                ToastPopup.Show(NavigationService.XamlRoot, Strings.PrivacyBirthdaySetDone, ToastPopupIcon.Success);
+                ShowToast(Strings.PrivacyBirthdaySetDone, ToastPopupIcon.Success);
             }
             else if (popup.ShowPrivacySettings)
             {

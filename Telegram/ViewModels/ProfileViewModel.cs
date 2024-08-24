@@ -833,7 +833,7 @@ namespace Telegram.ViewModels
                 if (confirm == ContentDialogResult.Primary)
                 {
                     ClientService.Send(new SetUserPrivacySettingRules(new UserPrivacySettingShowStatus(), new UserPrivacySettingRules(new UserPrivacySettingRule[] { new UserPrivacySettingRuleAllowAll() })));
-                    ToastPopup.Show(NavigationService.XamlRoot, Strings.PremiumLastSeenSet, ToastPopupIcon.Info);
+                    ShowToast(Strings.PremiumLastSeenSet, ToastPopupIcon.Info);
                 }
                 else if (confirm == ContentDialogResult.Secondary && IsPremiumAvailable && !IsPremium)
                 {

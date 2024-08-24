@@ -534,7 +534,7 @@ namespace Telegram.Common
             }
             else if (internalLink is InternalLinkTypeUnsupportedProxy)
             {
-                ToastPopup.Show(navigation.XamlRoot, Strings.ProxyLinkUnsupported, ToastPopupIcon.Error);
+                navigation.ShowToast(Strings.ProxyLinkUnsupported, ToastPopupIcon.Error);
             }
             else if (internalLink is InternalLinkTypePublicChat publicChat)
             {
@@ -680,7 +680,7 @@ namespace Telegram.Common
             {
                 if (linkInfo.ChatId == 0 || !clientService.TryGetChat(linkInfo.ChatId, out Chat chat))
                 {
-                    ToastPopup.Show(navigation.XamlRoot, Strings.NoUsernameFound, ToastPopupIcon.Info);
+                    navigation.ShowToast(Strings.NoUsernameFound, ToastPopupIcon.Info);
                     return;
                 }
 
@@ -718,12 +718,12 @@ namespace Telegram.Common
                 }
                 else
                 {
-                    ToastPopup.Show(navigation.XamlRoot, Strings.StoryNotFound, ToastPopupIcon.ExpiredStory);
+                    navigation.ShowToast(Strings.StoryNotFound, ToastPopupIcon.ExpiredStory);
                 }
             }
             else
             {
-                ToastPopup.Show(navigation.XamlRoot, Strings.NoUsernameFound, ToastPopupIcon.Info);
+                navigation.ShowToast(Strings.NoUsernameFound, ToastPopupIcon.Info);
             }
         }
 
@@ -793,7 +793,7 @@ namespace Telegram.Common
             }
             else
             {
-                ToastPopup.Show(navigation.XamlRoot, Strings.NoUsernameFound, ToastPopupIcon.Info);
+                navigation.ShowToast(Strings.NoUsernameFound, ToastPopupIcon.Info);
             }
         }
 
@@ -806,7 +806,7 @@ namespace Telegram.Common
             }
             else
             {
-                ToastPopup.Show(navigation.XamlRoot, Strings.NoUsernameFound, ToastPopupIcon.Info);
+                navigation.ShowToast(Strings.NoUsernameFound, ToastPopupIcon.Info);
             }
         }
 
@@ -1165,12 +1165,12 @@ namespace Telegram.Common
                 }
                 else
                 {
-                    ToastPopup.Show(navigation.XamlRoot, Strings.NoUsernameFound, ToastPopupIcon.Info);
+                    navigation.ShowToast(Strings.NoUsernameFound, ToastPopupIcon.Info);
                 }
             }
             else
             {
-                ToastPopup.Show(navigation.XamlRoot, Strings.NoUsernameFound, ToastPopupIcon.Info);
+                navigation.ShowToast(Strings.NoUsernameFound, ToastPopupIcon.Info);
             }
         }
 
@@ -1195,7 +1195,7 @@ namespace Telegram.Common
             }
             else
             {
-                ToastPopup.Show(navigation.XamlRoot, Strings.NoUsernameFound, ToastPopupIcon.Info);
+                navigation.ShowToast(Strings.NoUsernameFound, ToastPopupIcon.Info);
             }
         }
 
@@ -1243,7 +1243,7 @@ namespace Telegram.Common
             }
             else
             {
-                ToastPopup.Show(navigation.XamlRoot, Strings.NoUsernameFound, ToastPopupIcon.Info);
+                navigation.ShowToast(Strings.NoUsernameFound, ToastPopupIcon.Info);
             }
         }
 
@@ -1283,7 +1283,7 @@ namespace Telegram.Common
 
                             var text = new FormattedText(message, new[] { entity });
 
-                            ToastPopup.Show(navigation.XamlRoot, text, ToastPopupIcon.JoinRequested);
+                            navigation.ShowToast(text, ToastPopupIcon.JoinRequested);
                         }
                         else if (error.MessageEquals(ErrorType.FLOOD_WAIT))
                         {

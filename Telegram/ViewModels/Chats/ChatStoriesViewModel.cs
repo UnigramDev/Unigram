@@ -100,7 +100,7 @@ namespace Telegram.ViewModels.Chats
                 Items.Remove(story);
             }
 
-            ToastPopup.Show(NavigationService.XamlRoot, IsPostedToChatPage ? Strings.StoryRemovedFromProfile : Strings.StorySavedToProfile);
+            ShowToast(IsPostedToChatPage ? Strings.StoryRemovedFromProfile : Strings.StorySavedToProfile);
         }
 
 
@@ -118,7 +118,7 @@ namespace Telegram.ViewModels.Chats
                 }
             }
 
-            ToastPopup.Show(NavigationService.XamlRoot, Locale.Declension(IsPostedToChatPage ? Strings.R.StoriesRemovedFromProfile : Strings.R.StoriesSavedToProfile, selection.Length));
+            ShowToast(Locale.Declension(IsPostedToChatPage ? Strings.R.StoriesRemovedFromProfile : Strings.R.StoriesSavedToProfile, selection.Length));
             UnselectStories();
         }
 
@@ -127,7 +127,7 @@ namespace Telegram.ViewModels.Chats
             if (_pinnedStoryIds.Contains(story.StoryId))
             {
                 _pinnedStoryIds.Remove(story.StoryId);
-                ToastPopup.Show(NavigationService.XamlRoot, Locale.Declension(Strings.R.StoriesUnpinned, 1), ToastPopupIcon.Unpin);
+                ShowToast(Locale.Declension(Strings.R.StoriesUnpinned, 1), ToastPopupIcon.Unpin);
 
                 Items.Remove(story);
 
@@ -140,14 +140,14 @@ namespace Telegram.ViewModels.Chats
             else if (_pinnedStoryIds.Count < ClientService.Options.PinnedStoryCountMax)
             {
                 _pinnedStoryIds.Insert(0, story.StoryId);
-                ToastPopup.Show(NavigationService.XamlRoot, Locale.Declension(Strings.R.StoriesPinned, 1), ToastPopupIcon.Pin);
+                ShowToast(Locale.Declension(Strings.R.StoriesPinned, 1), ToastPopupIcon.Pin);
 
                 Items.Remove(story);
                 Items.Insert(0, story);
             }
             else
             {
-                ToastPopup.Show(NavigationService.XamlRoot, Locale.Declension(Strings.R.StoriesPinLimit, ClientService.Options.PinnedStoryCountMax), ToastPopupIcon.Info);
+                ShowToast(Locale.Declension(Strings.R.StoriesPinLimit, ClientService.Options.PinnedStoryCountMax), ToastPopupIcon.Info);
                 return;
             }
 

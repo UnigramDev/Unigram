@@ -152,7 +152,7 @@ namespace Telegram.ViewModels
                 interaction.BlockList = new BlockListStories();
 
                 ClientService.Send(new SetMessageSenderBlockList(interaction.ActorId, new BlockListStories()));
-                ToastPopup.Show(NavigationService.XamlRoot, string.Format(Strings.StoryHiddenHint, user.FirstName), ToastPopupIcon.Info);
+                ShowToast(string.Format(Strings.StoryHiddenHint, user.FirstName), ToastPopupIcon.Info);
             }
         }
 
@@ -163,7 +163,7 @@ namespace Telegram.ViewModels
                 interaction.BlockList = null;
 
                 ClientService.Send(new SetMessageSenderBlockList(interaction.ActorId, null));
-                ToastPopup.Show(NavigationService.XamlRoot, string.Format(Strings.StoryShownHint, user.FirstName), ToastPopupIcon.Info);
+                ShowToast(string.Format(Strings.StoryShownHint, user.FirstName), ToastPopupIcon.Info);
             }
         }
 
@@ -174,7 +174,7 @@ namespace Telegram.ViewModels
                 interaction.BlockList = null;
 
                 ClientService.Send(new SetMessageSenderBlockList(interaction.ActorId, null));
-                ToastPopup.Show(NavigationService.XamlRoot, string.Format(Strings.StoryShownHint, user.FirstName), ToastPopupIcon.Info);
+                ShowToast(string.Format(Strings.StoryShownHint, user.FirstName), ToastPopupIcon.Info);
             }
         }
 
