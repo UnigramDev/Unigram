@@ -16,7 +16,6 @@ using Telegram.Navigation;
 using Telegram.Navigation.Services;
 using Telegram.Services;
 using Telegram.Services.Settings;
-using Telegram.Streams;
 using Telegram.Td.Api;
 using Telegram.Views.Popups;
 using Telegram.Views.Settings;
@@ -229,7 +228,7 @@ namespace Telegram.ViewModels.Settings
                 if (Settings.Appearance.NightMode != NightMode.Disabled)
                 {
                     Settings.Appearance.NightMode = NightMode.Disabled;
-                    ToastPopup.Show(Strings.AutoNightModeOff, new LocalFileSource("ms-appx:///Assets/Toasts/AutoNightOff.tgs"));
+                    ToastPopup.Show(NavigationService.XamlRoot, Strings.AutoNightModeOff, ToastPopupIcon.AutoNightOff);
                 }
 
                 Settings.Appearance.ForceNightMode = value;
@@ -378,7 +377,7 @@ namespace Telegram.ViewModels.Settings
             var accent = settings.AccentColor.ToColor();
             var outgoing = settings.OutgoingMessageAccentColor.ToColor();
 
-            await _themeService.CreateThemeAsync(ThemeAccentInfo.FromAccent(tint, accent, outgoing));
+            await _themeService.CreateThemeAsync(NavigationService, ThemeAccentInfo.FromAccent(tint, accent, outgoing));
         }
 
         public void OpenWallpaper()

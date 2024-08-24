@@ -189,7 +189,7 @@ namespace Telegram.Common
 
         #region Device Access
 
-        public static async Task<bool> CheckIfUnsupportedAsync()
+        public static async Task<bool> CheckIfUnsupportedAsync(XamlRoot xamlRoot)
         {
             if (ApiInfo.IsMediaSupported)
             {
@@ -199,15 +199,15 @@ namespace Telegram.Common
             // VoIP isn't supported on Windows N because:
             // - MediaCapture is used for capturing video (no alternatives on WinRT)
             // - MediaFoundation is used for encoding/decoding video frames (can fallback for WebRTC's software)
-            await MessagePopup.ShowAsync(Strings.VoipPlatformUnsupportedText, Strings.VoipPlatformUnsupportedTitle, Strings.OK);
+            await MessagePopup.ShowAsync(xamlRoot, Strings.VoipPlatformUnsupportedText, Strings.VoipPlatformUnsupportedTitle, Strings.OK);
             return true;
         }
 
-        public static async Task<bool> CheckAccessAsync(bool video, bool required = true, ElementTheme requestedTheme = ElementTheme.Default)
+        public static async Task<bool> CheckAccessAsync(XamlRoot xamlRoot, bool video, bool required = true, ElementTheme requestedTheme = ElementTheme.Default)
         {
             try
             {
-                var audioPermission = await CheckDeviceAccessAsync(true, video, required, requestedTheme);
+                var audioPermission = await CheckDeviceAccessAsync(xamlRoot, true, video, required, requestedTheme);
                 if (audioPermission == false)
                 {
                     return false;
@@ -215,7 +215,7 @@ namespace Telegram.Common
 
                 if (video)
                 {
-                    var videoPermission = await CheckDeviceAccessAsync(false, true, required, requestedTheme);
+                    var videoPermission = await CheckDeviceAccessAsync(xamlRoot, false, true, required, requestedTheme);
                     if (videoPermission == false)
                     {
                         return false;
@@ -231,7 +231,7 @@ namespace Telegram.Common
             }
         }
 
-        private static async Task<bool> CheckDeviceAccessAsync(bool audio, bool video, bool required, ElementTheme requestedTheme = ElementTheme.Default)
+        private static async Task<bool> CheckDeviceAccessAsync(XamlRoot xamlRoot, bool audio, bool video, bool required, ElementTheme requestedTheme = ElementTheme.Default)
         {
             // For some reason, as far as I understood, CurrentStatus is always Unspecified on Xbox
             if (string.Equals(AnalyticsInfo.VersionInfo.DeviceFamily, "Windows.Xbox"))
@@ -280,7 +280,7 @@ namespace Telegram.Common
                     RequestedTheme = requestedTheme
                 };
 
-                var confirm = await popup.ShowQueuedAsync();
+                var confirm = await popup.ShowQueuedAsync(xamlRoot);
                 if (confirm == ContentDialogResult.Primary)
                 {
                     await Launcher.LaunchUriAsync(new Uri("ms-settings:appsfeatures-app"));

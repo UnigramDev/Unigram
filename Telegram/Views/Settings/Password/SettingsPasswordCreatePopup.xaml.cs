@@ -56,7 +56,7 @@ namespace Telegram.Views.Settings.Password
 
             if (!string.Equals(password1, password2))
             {
-                ToastPopup.Show(Strings.PasswordDoNotMatch);
+                ToastPopup.Show(XamlRoot, Strings.PasswordDoNotMatch);
                 args.Cancel = true;
                 return;
             }

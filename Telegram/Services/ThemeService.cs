@@ -9,8 +9,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Telegram.Common;
-using Telegram.Controls;
+using Telegram.Navigation.Services;
 using Telegram.Services.Settings;
 using Telegram.Td;
 using Telegram.Td.Api;
@@ -33,7 +32,7 @@ namespace Telegram.Services
         Task InstallThemeAsync(StorageFile file);
         void SetTheme(ThemeInfoBase info, bool apply);
 
-        Task CreateThemeAsync(ThemeInfoBase theme);
+        Task CreateThemeAsync(INavigationService navigation, ThemeInfoBase theme);
     }
 
     public partial class ThemeService : IThemeService
@@ -182,9 +181,9 @@ namespace Telegram.Services
             _settingsService.Appearance.UpdateNightMode();
         }
 
-        public async Task CreateThemeAsync(ThemeInfoBase theme)
+        public async Task CreateThemeAsync(INavigationService navigation, ThemeInfoBase theme)
         {
-            var confirm = await MessagePopup.ShowAsync(Strings.CreateNewThemeAlert, Strings.NewTheme, Strings.CreateTheme, Strings.Cancel);
+            var confirm = await navigation.ShowPopupAsync(Strings.CreateNewThemeAlert, Strings.NewTheme, Strings.CreateTheme, Strings.Cancel);
             if (confirm != ContentDialogResult.Primary)
             {
                 return;
@@ -199,7 +198,7 @@ namespace Telegram.Services
             input.PrimaryButtonText = Strings.OK;
             input.SecondaryButtonText = Strings.Cancel;
 
-            confirm = await input.ShowQueuedAsync();
+            confirm = await navigation.ShowPopupAsync(input);
             if (confirm != ContentDialogResult.Primary)
             {
                 return;

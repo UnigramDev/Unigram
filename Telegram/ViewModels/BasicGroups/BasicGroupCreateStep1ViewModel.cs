@@ -85,7 +85,7 @@ namespace Telegram.ViewModels.BasicGroups
                 }
                 else if (response is Error error)
                 {
-                    AlertsService.ShowAddUserAlert(Dispatcher, error.Message, false);
+                    AlertsService.ShowAddUserAlert(NavigationService.XamlRoot, error.Message, false);
                 }
             }
             else

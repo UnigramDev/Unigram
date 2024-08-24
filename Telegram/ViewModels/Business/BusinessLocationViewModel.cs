@@ -1,5 +1,4 @@
 ﻿using System.Threading.Tasks;
-using Telegram.Controls;
 using Telegram.Navigation.Services;
 using Telegram.Services;
 using Telegram.Td.Api;
@@ -79,7 +78,7 @@ namespace Telegram.ViewModels.Business
 
         public async void Clear()
         {
-            var confirm = await MessagePopup.ShowAsync(Strings.BusinessLocationClearMessage, Strings.BusinessLocationClearTitle, Strings.Remove, Strings.Cancel, destructive: true);
+            var confirm = await ShowPopupAsync(Strings.BusinessLocationClearMessage, Strings.BusinessLocationClearTitle, Strings.Remove, Strings.Cancel, destructive: true);
             if (confirm == ContentDialogResult.Primary)
             {
                 Address = string.Empty;

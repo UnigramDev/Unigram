@@ -4,7 +4,6 @@
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
-using Telegram.Controls;
 using Telegram.Navigation.Services;
 using Telegram.Services;
 using Telegram.Td.Api;
@@ -66,7 +65,7 @@ namespace Telegram.Common
                 case AuthorizationStateWaitPassword waitPassword:
                     if (!string.IsNullOrEmpty(waitPassword.RecoveryEmailAddressPattern))
                     {
-                        await MessagePopup.ShowAsync(string.Format(Strings.RestoreEmailSent, waitPassword.RecoveryEmailAddressPattern), Strings.AppName, Strings.OK);
+                        await ShowPopupAsync(string.Format(Strings.RestoreEmailSent, waitPassword.RecoveryEmailAddressPattern), Strings.AppName, Strings.OK);
                     }
 
                     Navigate(string.IsNullOrEmpty(waitPassword.RecoveryEmailAddressPattern)

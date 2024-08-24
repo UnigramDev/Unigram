@@ -436,7 +436,7 @@ namespace Telegram.ViewModels.Settings
 
             if (Popup != null)
             {
-                _ = Popup.ShowQueuedAsync();
+                ShowPopup(Popup);
             }
 
             return confirm;
@@ -455,7 +455,7 @@ namespace Telegram.ViewModels.Settings
 
             if (Popup != null)
             {
-                _ = Popup.ShowQueuedAsync();
+                ShowPopup(Popup);
             }
 
             return confirm;

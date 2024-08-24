@@ -130,7 +130,7 @@ namespace Telegram.ViewModels.Users
             }
 
             ClientService.Send(new SetProfilePhoto(new InputChatPhotoPrevious(item.Id), false));
-            ToastPopup.Show(item.IsVideo ? Strings.MainProfileVideoSetHint : Strings.MainProfilePhotoSetHint);
+            ToastPopup.Show(NavigationService.XamlRoot, item.IsVideo ? Strings.MainProfileVideoSetHint : Strings.MainProfilePhotoSetHint);
         }
     }
 }

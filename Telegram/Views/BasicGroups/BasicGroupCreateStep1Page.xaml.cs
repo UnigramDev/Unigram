@@ -54,7 +54,7 @@ namespace Telegram.Views.BasicGroups
                 }
                 else
                 {
-                    await MessagePopup.ShowAsync(Strings.OpenImageUnsupported, Strings.AppName, Strings.OK);
+                    await ViewModel.ShowPopupAsync(Strings.OpenImageUnsupported, Strings.AppName, Strings.OK);
                 }
             }
             catch { }

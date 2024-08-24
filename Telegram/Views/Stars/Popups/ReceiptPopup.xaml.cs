@@ -417,7 +417,7 @@ namespace Telegram.Views.Stars.Popups
             dataPackage.SetText(_transactionId);
             ClipboardEx.TrySetContent(dataPackage);
 
-            ToastPopup.Show(Strings.StarsTransactionIDCopied, new LocalFileSource("ms-appx:///Assets/Toasts/Copied.tgs"));
+            ToastPopup.Show(XamlRoot, Strings.StarsTransactionIDCopied, ToastPopupIcon.Copied);
         }
 
         private async void MediaPreview_Click(object sender, RoutedEventArgs e)

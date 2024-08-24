@@ -8,7 +8,6 @@ using System.Threading.Tasks;
 using Telegram.Controls;
 using Telegram.Navigation.Services;
 using Telegram.Services;
-using Telegram.Streams;
 using Telegram.Td.Api;
 using Telegram.Views.Settings.Popups;
 using Windows.UI.Xaml.Controls;
@@ -50,7 +49,7 @@ namespace Telegram.ViewModels.Settings.Privacy
                 CanSetBirthdate = false;
 
                 ClientService.Send(new SetBirthdate(popup.Value));
-                ToastPopup.Show(Strings.PrivacyBirthdaySetDone, new LocalFileSource("ms-appx:///Assets/Toasts/Success.tgs"));
+                ToastPopup.Show(NavigationService.XamlRoot, Strings.PrivacyBirthdaySetDone, ToastPopupIcon.Success);
             }
         }
     }

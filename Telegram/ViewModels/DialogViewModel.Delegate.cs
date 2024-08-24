@@ -15,7 +15,6 @@ using Telegram.Controls.Messages.Content;
 using Telegram.Controls.Stories;
 using Telegram.Converters;
 using Telegram.Services.Updates;
-using Telegram.Streams;
 using Telegram.Td.Api;
 using Telegram.ViewModels.Chats;
 using Telegram.ViewModels.Gallery;
@@ -84,15 +83,15 @@ namespace Telegram.ViewModels
                             {
                                 if (supergroup.IsChannel)
                                 {
-                                    ToastPopup.Show(replyToMessage.Quote != null && replyToMessage.Quote.IsManual
+                                    ToastPopup.Show(NavigationService.XamlRoot, replyToMessage.Quote != null && replyToMessage.Quote.IsManual
                                         ? Strings.QuotePrivateChannel
-                                        : Strings.ReplyPrivateChannel, new LocalFileSource("ms-appx:///Assets/Toasts/Info.tgs"));
+                                        : Strings.ReplyPrivateChannel, ToastPopupIcon.Info);
                                 }
                                 else
                                 {
-                                    ToastPopup.Show(replyToMessage.Quote != null && replyToMessage.Quote.IsManual
+                                    ToastPopup.Show(NavigationService.XamlRoot, replyToMessage.Quote != null && replyToMessage.Quote.IsManual
                                         ? Strings.QuotePrivateGroup
-                                        : Strings.ReplyPrivateGroup, new LocalFileSource("ms-appx:///Assets/Toasts/Info.tgs"));
+                                        : Strings.ReplyPrivateGroup, ToastPopupIcon.Info);
                                 }
 
                                 return;
@@ -100,9 +99,9 @@ namespace Telegram.ViewModels
                         }
                         else if (replyToMessage.MessageId == 0)
                         {
-                            ToastPopup.Show(replyToMessage.Quote != null && replyToMessage.Quote.IsManual
+                            ToastPopup.Show(NavigationService.XamlRoot, replyToMessage.Quote != null && replyToMessage.Quote.IsManual
                                         ? Strings.QuotePrivate
-                                        : Strings.ReplyPrivate, new LocalFileSource("ms-appx:///Assets/Toasts/Info.tgs"));
+                                        : Strings.ReplyPrivate, ToastPopupIcon.Info);
                             return;
                         }
 
@@ -110,9 +109,9 @@ namespace Telegram.ViewModels
                     }
                     else if (replyToMessage.Origin != null && replyToMessage.MessageId == 0)
                     {
-                        ToastPopup.Show(replyToMessage.Quote != null && replyToMessage.Quote.IsManual
+                        ToastPopup.Show(NavigationService.XamlRoot, replyToMessage.Quote != null && replyToMessage.Quote.IsManual
                                         ? Strings.QuotePrivate
-                                        : Strings.ReplyPrivate, new LocalFileSource("ms-appx:///Assets/Toasts/Info.tgs"));
+                                        : Strings.ReplyPrivate, ToastPopupIcon.Info);
                     }
                     else if (replyToMessage.ChatId == message.ChatId || replyToMessage.ChatId == 0)
                     {
@@ -180,7 +179,7 @@ namespace Telegram.ViewModels
         {
             if (sticker.SetId != 0)
             {
-                await StickersPopup.ShowAsync(sticker.SetId, Sticker_Click);
+                await StickersPopup.ShowAsync(NavigationService, sticker.SetId, Sticker_Click);
             }
         }
 
@@ -529,7 +528,7 @@ namespace Telegram.ViewModels
                 var text = builder.ToString();
                 var markdown = Extensions.ReplacePremiumLink(text, new PremiumFeatureVoiceRecognition());
 
-                ToastPopup.Show(markdown, new LocalFileSource("ms-appx:///Assets/Toasts/Transcribe.tgs"));
+                ToastPopup.Show(NavigationService.XamlRoot, markdown, ToastPopupIcon.Transcribe);
             }
         }
 

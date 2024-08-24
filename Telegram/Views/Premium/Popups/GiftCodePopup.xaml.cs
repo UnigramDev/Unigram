@@ -143,7 +143,7 @@ namespace Telegram.Views.Premium.Popups
 
         private void CopyLink_Click(object sender, RoutedEventArgs e)
         {
-            MessageHelper.CopyLink(_clientService, new InternalLinkTypePremiumGiftCode(_giftCode));
+            MessageHelper.CopyLink(_clientService, XamlRoot, new InternalLinkTypePremiumGiftCode(_giftCode));
         }
 
         private async void ShareLink_Click(Hyperlink sender, HyperlinkClickEventArgs args)

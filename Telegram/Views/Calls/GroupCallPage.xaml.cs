@@ -1114,7 +1114,7 @@ namespace Telegram.Views.Calls
                     CheckBoxLabel = _service.IsChannel ? Strings.VoipChannelLeaveAlertEndChat : Strings.VoipGroupLeaveAlertEndChat
                 };
 
-                var confirm = await popup.ShowQueuedAsync();
+                var confirm = await popup.ShowQueuedAsync(XamlRoot);
                 if (confirm == ContentDialogResult.Primary)
                 {
                     Dispose(popup.IsChecked == true);
@@ -1146,7 +1146,7 @@ namespace Telegram.Views.Calls
             popup.PrimaryButtonText = Strings.VoipGroupEnd;
             popup.SecondaryButtonText = Strings.Cancel;
 
-            var confirm = await popup.ShowQueuedAsync();
+            var confirm = await popup.ShowQueuedAsync(XamlRoot);
             if (confirm == ContentDialogResult.Primary)
             {
                 Dispose(true);
@@ -1186,7 +1186,7 @@ namespace Telegram.Views.Calls
             //}
             else if (currentUser != null && currentUser.CanUnmuteSelf && _service.IsMuted)
             {
-                var permissions = await MediaDeviceWatcher.CheckAccessAsync(false, false, ElementTheme.Dark);
+                var permissions = await MediaDeviceWatcher.CheckAccessAsync(XamlRoot, false, false, ElementTheme.Dark);
                 if (permissions == false || _service == null)
                 {
                     return;
@@ -1208,7 +1208,7 @@ namespace Telegram.Views.Calls
         {
             if (_service?.IsVideoEnabled == false)
             {
-                var permissions = await MediaDeviceWatcher.CheckAccessAsync(true, false, ElementTheme.Dark);
+                var permissions = await MediaDeviceWatcher.CheckAccessAsync(XamlRoot, true, false, ElementTheme.Dark);
                 if (permissions == false || _service == null)
                 {
                     return;
@@ -1488,7 +1488,7 @@ namespace Telegram.Views.Calls
             var aliases = await _service.CanChooseAliasAsync(chat.Id);
             if (aliases)
             {
-                flyout.CreateFlyoutItem(async () => await _service.RejoinAsync(), Strings.VoipGroupDisplayAs, Icons.Person);
+                flyout.CreateFlyoutItem(async () => await _service.RejoinAsync(XamlRoot), Strings.VoipGroupDisplayAs, Icons.Person);
                 flyout.CreateFlyoutSeparator();
             }
 
@@ -1687,7 +1687,7 @@ namespace Telegram.Views.Calls
             input.MaxLength = 64;
             input.MinLength = 0;
 
-            var confirm = await input.ShowQueuedAsync();
+            var confirm = await input.ShowQueuedAsync(XamlRoot);
             if (confirm == ContentDialogResult.Primary)
             {
                 _clientService.Send(new SetGroupCallTitle(call.Id, input.Text));
@@ -1707,7 +1707,7 @@ namespace Telegram.Views.Calls
             var input = new RecordVideoChatPopup(call.Title);
             input.RequestedTheme = ElementTheme.Dark;
 
-            var confirm = await input.ShowQueuedAsync();
+            var confirm = await input.ShowQueuedAsync(XamlRoot);
             if (confirm == ContentDialogResult.Primary)
             {
                 _clientService.Send(new StartGroupCallRecording(call.Id, input.FileName, input.RecordVideo, input.UsePortraitOrientation));
@@ -1729,7 +1729,7 @@ namespace Telegram.Views.Calls
             popup.PrimaryButtonText = Strings.Stop;
             popup.SecondaryButtonText = Strings.Cancel;
 
-            var confirm = await popup.ShowQueuedAsync();
+            var confirm = await popup.ShowQueuedAsync(XamlRoot);
             if (confirm == ContentDialogResult.Primary)
             {
                 _clientService.Send(new EndGroupCallRecording(call.Id));

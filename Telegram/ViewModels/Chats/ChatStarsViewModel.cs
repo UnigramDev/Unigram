@@ -14,7 +14,6 @@ using Telegram.Converters;
 using Telegram.Navigation;
 using Telegram.Navigation.Services;
 using Telegram.Services;
-using Telegram.Streams;
 using Telegram.Td.Api;
 using Telegram.Views.Monetization.Popups;
 using Telegram.Views.Popups;
@@ -208,7 +207,7 @@ namespace Telegram.ViewModels.Chats
         {
             if (NextWithdrawalDate != 0)
             {
-                ToastPopup.Show(string.Format(Strings.BotStarsWithdrawalToast, Formatter.Duration(NextWithdrawalDate - DateTime.Now.ToTimestamp())), new LocalFileSource("ms-appx:///Assets/Toasts/Info.tgs"));
+                ToastPopup.Show(NavigationService.XamlRoot, string.Format(Strings.BotStarsWithdrawalToast, Formatter.Duration(NextWithdrawalDate - DateTime.Now.ToTimestamp())), ToastPopupIcon.Info);
                 return;
             }
 
@@ -225,12 +224,12 @@ namespace Telegram.ViewModels.Chats
             {
                 if (args.Value < ClientService.Options.StarWithdrawalCountMin)
                 {
-                    ToastPopup.Show(Locale.Declension(Strings.R.BotStarsWithdrawMinLimit, ClientService.Options.StarWithdrawalCountMin), new LocalFileSource("ms-appx:///Assets/Toasts/Info.tgs"));
+                    ToastPopup.Show(NavigationService.XamlRoot, Locale.Declension(Strings.R.BotStarsWithdrawMinLimit, ClientService.Options.StarWithdrawalCountMin), ToastPopupIcon.Info);
                     args.Cancel = true;
                 }
             };
 
-            var confirm = await popup.ShowQueuedAsync();
+            var confirm = await ShowPopupAsync(popup);
             if (confirm != ContentDialogResult.Primary)
             {
                 return;

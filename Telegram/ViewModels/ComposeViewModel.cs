@@ -436,7 +436,7 @@ namespace Telegram.ViewModels
                 popup.HasPaidMediaAllowed = fullInfo.HasPaidMediaAllowed;
             }
 
-            var confirm = await popup.OpenAsync();
+            var confirm = await popup.OpenAsync(NavigationService.XamlRoot);
             if (confirm != ContentDialogResult.Primary)
             {
                 if (formattedText != null)

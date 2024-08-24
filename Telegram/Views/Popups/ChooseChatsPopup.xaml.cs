@@ -17,7 +17,6 @@ using Telegram.Controls.Cells;
 using Telegram.Controls.Media;
 using Telegram.Navigation;
 using Telegram.Services;
-using Telegram.Streams;
 using Telegram.Td;
 using Telegram.Td.Api;
 using Telegram.ViewModels;
@@ -774,7 +773,7 @@ namespace Telegram.Views.Popups
             });
 
             Loaded += handler;
-            return this.ShowQueuedAsync();
+            return this.ShowQueuedAsync(XamlRoot);
         }
 
         #endregion
@@ -1127,7 +1126,7 @@ namespace Telegram.Views.Popups
                         ChatsPanel.SelectedItems.Remove(item);
                     }
 
-                    ToastPopup.Show(Locale.Declension(Strings.R.BotMultiContactsSelectorLimit, requestUsers.MaxQuantity), new LocalFileSource("ms-appx:///Assets/Toasts/Info.tgs"));
+                    ToastPopup.Show(XamlRoot, Locale.Declension(Strings.R.BotMultiContactsSelectorLimit, requestUsers.MaxQuantity), ToastPopupIcon.Info);
                 }
             }
 
@@ -1172,7 +1171,7 @@ namespace Telegram.Views.Popups
                     var text = string.Format(Strings.MessageLockedPremiumLocked, tempUser.FirstName);
                     var markdown = ClientEx.ParseMarkdown(text);
 
-                    var confirm = await ToastPopup.ShowActionAsync(markdown, Strings.UserBlockedNonPremiumButton, new LocalFileSource("ms-appx:///Assets/Toasts/Premium.tgs"));
+                    var confirm = await ToastPopup.ShowActionAsync(XamlRoot, markdown, Strings.UserBlockedNonPremiumButton, ToastPopupIcon.Premium);
                     if (confirm == ContentDialogResult.Primary)
                     {
                         Hide();

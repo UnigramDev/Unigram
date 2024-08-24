@@ -780,9 +780,9 @@ namespace Telegram.Views.Popups
                         : ttl is MessageSelfDestructTypeImmediately
                         ? Strings.TimerPeriodPhotoSetOnce
                         : Strings.TimerPeriodPhotoKeep,
-                    new LocalFileSource(ttl == null
-                        ? "ms-appx:///Assets/Toasts/AutoRemoveOff.tgs"
-                        : "ms-appx:///Assets/Toasts/AutoRemoveOn.tgs"),
+                    ttl == null
+                        ? ToastPopupIcon.AutoRemoveOff
+                        : ToastPopupIcon.AutoRemoveOn,
                     TeachingTipPlacementMode.TopLeft);
             }
 
@@ -1049,7 +1049,7 @@ namespace Telegram.Views.Popups
             //{
             //    if (args.Value < ClientService.Options.StarWithdrawalCountMin)
             //    {
-            //        ToastPopup.Show(Locale.Declension(Strings.R.BotStarsWithdrawMinLimit, ClientService.Options.StarWithdrawalCountMin), new LocalFileSource("ms-appx:///Assets/Toasts/Info.tgs"));
+            //        ToastPopup.Show(Locale.Declension(Strings.R.BotStarsWithdrawMinLimit, ClientService.Options.StarWithdrawalCountMin), ToastPopupIcon.Info);
             //        args.Cancel = true;
             //    }
             //};

@@ -22,7 +22,6 @@ using Telegram.Navigation;
 using Telegram.Navigation.Services;
 using Telegram.Services;
 using Telegram.Services.Settings;
-using Telegram.Streams;
 using Telegram.Td.Api;
 using Telegram.ViewModels;
 using Telegram.Views.Authorization;
@@ -995,7 +994,7 @@ namespace Telegram.Views.Host
             if (SettingsService.Current.Appearance.NightMode != NightMode.Disabled)
             {
                 SettingsService.Current.Appearance.NightMode = NightMode.Disabled;
-                ToastPopup.Show(Strings.AutoNightModeOff, new LocalFileSource("ms-appx:///Assets/Toasts/AutoNightOff.tgs"));
+                ToastPopup.Show(XamlRoot, Strings.AutoNightModeOff, ToastPopupIcon.AutoNightOff);
             }
 
             SettingsService.Current.Appearance.ForceNightMode = ActualTheme != ElementTheme.Dark;

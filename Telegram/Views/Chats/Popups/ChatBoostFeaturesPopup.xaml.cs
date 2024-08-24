@@ -157,7 +157,7 @@ namespace Telegram.Views.Chats.Popups
 
         private void CopyLink_Click(object sender, RoutedEventArgs e)
         {
-            MessageHelper.CopyLink(_status.BoostUrl);
+            MessageHelper.CopyLink(XamlRoot, _status.BoostUrl);
         }
 
         private void PurchaseShadow_Loaded(object sender, RoutedEventArgs e)
@@ -198,7 +198,7 @@ namespace Telegram.Views.Chats.Popups
                     // TODO: reassign boost slots
                     Hide();
 
-                    await new ChatBoostReassignPopup(_clientService, _chat, _slots).ShowQueuedAsync();
+                    await _navigationService.ShowPopupAsync(new ChatBoostReassignPopup(_clientService, _chat, _slots));
                 }
                 else
                 {

@@ -29,13 +29,13 @@ namespace Telegram.Views.Stars.Popups
             {
                 Hide();
                 await ViewModel.ShowPopupAsync(new ReceiptPopup(ViewModel.ClientService, ViewModel.NavigationService, transaction));
-                await this.ShowQueuedAsync();
+                await this.ShowQueuedAsync(XamlRoot);
             }
             else if (e.ClickedItem is StarSubscription subscription)
             {
                 Hide();
                 await ViewModel.ShowPopupAsync(new SubscriptionPopup(ViewModel.ClientService, ViewModel.NavigationService, subscription));
-                await this.ShowQueuedAsync();
+                await this.ShowQueuedAsync(XamlRoot);
             }
         }
 
@@ -75,7 +75,7 @@ namespace Telegram.Views.Stars.Popups
             var user = await ChooseChatsPopup.PickUserAsync(ViewModel.ClientService, Strings.GiftStarsTitle, false);
             if (user == null)
             {
-                _ = this.ShowQueuedAsync();
+                _ = this.ShowQueuedAsync(XamlRoot);
                 return;
             }
 

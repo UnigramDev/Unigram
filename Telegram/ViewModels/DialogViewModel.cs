@@ -21,7 +21,6 @@ using Telegram.Navigation;
 using Telegram.Navigation.Services;
 using Telegram.Services;
 using Telegram.Services.Factories;
-using Telegram.Streams;
 using Telegram.Td;
 using Telegram.Td.Api;
 using Telegram.ViewModels.Chats;
@@ -2978,7 +2977,7 @@ namespace Telegram.ViewModels
             {
                 if (error.MessageEquals(ErrorType.INVITE_REQUEST_SENT))
                 {
-                    await MessagePopup.ShowAsync(chat.Type is ChatTypeSupergroup supergroup && supergroup.IsChannel ? Strings.RequestToJoinChannelSentDescription : Strings.RequestToJoinGroupSentDescription, Strings.RequestToJoinSent, Strings.OK);
+                    await ShowPopupAsync(chat.Type is ChatTypeSupergroup supergroup && supergroup.IsChannel ? Strings.RequestToJoinChannelSentDescription : Strings.RequestToJoinGroupSentDescription, Strings.RequestToJoinSent, Strings.OK);
                     return;
 
                     var message = Strings.RequestToJoinSent + Environment.NewLine + (chat.Type is ChatTypeSupergroup supergroup2 && supergroup2.IsChannel ? Strings.RequestToJoinChannelSentDescription : Strings.RequestToJoinGroupSentDescription);
@@ -2986,7 +2985,7 @@ namespace Telegram.ViewModels
 
                     var text = new FormattedText(message, new[] { entity });
 
-                    ToastPopup.Show(text, new LocalFileSource("ms-appx:///Assets/Toasts/JoinRequested.tgs"));
+                    ToastPopup.Show(NavigationService.XamlRoot, text, ToastPopupIcon.JoinRequested);
                 }
             }
             else if (Constants.DEBUG)
@@ -3295,11 +3294,11 @@ namespace Telegram.ViewModels
 
             if (chat.Type is ChatTypePrivate or ChatTypeSecret)
             {
-                _voipService.Start(chat.Id, video);
+                _voipService.Start(NavigationService, chat.Id, video);
             }
             else
             {
-                await _voipGroupService.JoinAsync(chat.Id);
+                await _voipGroupService.JoinAsync(NavigationService.XamlRoot, chat.Id);
             }
         }
 
@@ -3624,7 +3623,7 @@ namespace Telegram.ViewModels
                 if (confirm == ContentDialogResult.Primary)
                 {
                     ClientService.Send(new SetReadDatePrivacySettings(new ReadDatePrivacySettings(true)));
-                    ToastPopup.Show(Strings.PremiumReadSet, new LocalFileSource("ms-appx:///Assets/Toasts/Info.tgs"));
+                    ToastPopup.Show(NavigationService.XamlRoot, Strings.PremiumReadSet, ToastPopupIcon.Info);
                 }
                 else if (confirm == ContentDialogResult.Secondary && IsPremiumAvailable && !IsPremium)
                 {
@@ -3828,7 +3827,7 @@ namespace Telegram.ViewModels
             popup.PrimaryButtonText = Strings.OK;
             popup.SecondaryButtonText = Strings.Cancel;
 
-            var confirm = await popup.ShowQueuedAsync();
+            var confirm = await navigation.ShowPopupAsync(popup);
             if (confirm != ContentDialogResult.Primary)
             {
                 return (null, string.Empty);
@@ -3848,7 +3847,7 @@ namespace Telegram.ViewModels
             input.PrimaryButtonText = Strings.OK;
             input.SecondaryButtonText = Strings.Cancel;
 
-            var inputResult = await input.ShowQueuedAsync();
+            var inputResult = await navigation.ShowPopupAsync(input);
             if (inputResult == ContentDialogResult.Primary)
             {
                 return (reason, input.Text);
@@ -4074,7 +4073,7 @@ namespace Telegram.ViewModels
                 return;
             }
 
-            await _voipGroupService.JoinAsync(chat.Id);
+            await _voipGroupService.JoinAsync(NavigationService.XamlRoot, chat.Id);
         }
 
         #endregion

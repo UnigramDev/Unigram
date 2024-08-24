@@ -23,7 +23,7 @@ namespace Telegram.Services
 {
     public interface IProfilePhotoService
     {
-        Task<bool> SetPhotoAsync(long? chatId, bool isPublic = false, bool isPersonal = false);
+        Task<bool> SetPhotoAsync(INavigationService navigation, long? chatId, bool isPublic = false, bool isPersonal = false);
         Task<bool> CreatePhotoAsync(INavigationService navigation, long? chatId, bool isPublic = false, bool isPersonal = false);
     }
 
@@ -36,7 +36,7 @@ namespace Telegram.Services
             _clientService = clientService;
         }
 
-        public async Task<bool> SetPhotoAsync(long? chatId, bool isPublic, bool isPersonal)
+        public async Task<bool> SetPhotoAsync(INavigationService navigation, long? chatId, bool isPublic, bool isPersonal)
         {
             try
             {
@@ -53,12 +53,12 @@ namespace Telegram.Services
                     var confirm = await dialog.ShowAsync();
                     if (confirm == ContentDialogResult.Primary)
                     {
-                        return await EditPhotoAsync(chatId, isPublic, isPersonal, media);
+                        return await EditPhotoAsync(navigation, chatId, isPublic, isPersonal, media);
                     }
                 }
                 else
                 {
-                    await MessagePopup.ShowAsync(Strings.OpenImageUnsupported, Strings.AppName, Strings.OK);
+                    await navigation.ShowPopupAsync(Strings.OpenImageUnsupported, Strings.AppName, Strings.OK);
                 }
             }
             catch { }
@@ -85,7 +85,7 @@ namespace Telegram.Services
             return false;
         }
 
-        private async Task<bool> EditPhotoAsync(long? chatId, bool isPublic, bool isPersonal, StorageMedia file)
+        private async Task<bool> EditPhotoAsync(INavigationService navigation, long? chatId, bool isPublic, bool isPersonal, StorageMedia file)
         {
             InputChatPhoto inputPhoto;
             if (file is StorageVideo media)
@@ -139,7 +139,7 @@ namespace Telegram.Services
                 }
                 else if (isPersonal)
                 {
-                    var confirm = await MessagePopup.ShowAsync(string.Format(Strings.SetUserPhotoAlertMessage, user.FirstName, user.FirstName), Strings.AppName, Strings.SetPhoto, Strings.Cancel);
+                    var confirm = await navigation.ShowPopupAsync(string.Format(Strings.SetUserPhotoAlertMessage, user.FirstName, user.FirstName), Strings.AppName, Strings.SetPhoto, Strings.Cancel);
                     if (confirm == ContentDialogResult.Primary)
                     {
                         _clientService.Send(new SetUserPersonalProfilePhoto(user.Id, inputPhoto));
@@ -148,7 +148,7 @@ namespace Telegram.Services
                 }
                 else
                 {
-                    var confirm = await MessagePopup.ShowAsync(string.Format(Strings.SuggestPhotoAlertMessage, user.FirstName), Strings.AppName, Strings.SuggestPhotoShort, Strings.Cancel);
+                    var confirm = await navigation.ShowPopupAsync(string.Format(Strings.SuggestPhotoAlertMessage, user.FirstName), Strings.AppName, Strings.SuggestPhotoShort, Strings.Cancel);
                     if (confirm == ContentDialogResult.Primary)
                     {
                         _clientService.Send(new SuggestUserProfilePhoto(user.Id, inputPhoto));

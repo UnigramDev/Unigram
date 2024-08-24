@@ -353,7 +353,7 @@ namespace Telegram.ViewModels.Settings
             }
             else
             {
-                await StickersPopup.ShowAsync(stickerSet.Id);
+                await StickersPopup.ShowAsync(NavigationService, stickerSet.Id);
             }
         }
 

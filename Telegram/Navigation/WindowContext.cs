@@ -363,8 +363,11 @@ namespace Telegram.Navigation
                 }
             }
 
+            // TODO: WinUI - most likely XamlRoot is going to be null at this stage.
+            // As well, Content may be null too.
+
             _locked.Closing += handler;
-            await _locked.ShowQueuedAsync();
+            await _locked.ShowQueuedAsync(Content?.XamlRoot);
 
             _locked = null;
         }
@@ -419,7 +422,7 @@ namespace Telegram.Navigation
                     case AuthorizationStateWaitPassword waitPassword:
                         if (!string.IsNullOrEmpty(waitPassword.RecoveryEmailAddressPattern))
                         {
-                            await MessagePopup.ShowAsync(string.Format(Strings.RestoreEmailSent, waitPassword.RecoveryEmailAddressPattern), Strings.AppName, Strings.OK);
+                            await service.ShowPopupAsync(string.Format(Strings.RestoreEmailSent, waitPassword.RecoveryEmailAddressPattern), Strings.AppName, Strings.OK);
                         }
 
                         service.Navigate(typeof(AuthorizationPasswordPage), navigationStackEnabled: false);
@@ -593,7 +596,10 @@ namespace Telegram.Navigation
 
                 if (file.Files[0] is StorageFile item)
                 {
-                    await new ThemePreviewPopup(item).ShowQueuedAsync();
+                    // TODO: WinUI - most likely XamlRoot is going to be null at this stage.
+                    // As well, Content may be null too.
+
+                    await new ThemePreviewPopup(item).ShowQueuedAsync(Content?.XamlRoot);
                 }
             }
             else if (args is CommandLineActivatedEventArgs commandLine)

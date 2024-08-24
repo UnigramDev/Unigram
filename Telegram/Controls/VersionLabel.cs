@@ -56,7 +56,7 @@ namespace Telegram.Controls
 
         private void CopyVersion()
         {
-            MessageHelper.CopyText(GetVersion());
+            MessageHelper.CopyText(XamlRoot, GetVersion());
         }
 
         public static string GetVersion()

@@ -2934,7 +2934,7 @@ namespace Telegram.Views
 
         private async void Downloads_Click(object sender, RoutedEventArgs e)
         {
-            await new DownloadsPopup(ViewModel.SessionId, ViewModel.NavigationService).ShowQueuedAsync();
+            await ViewModel.NavigationService.ShowPopupAsync(new DownloadsPopup(ViewModel.SessionId, ViewModel.NavigationService));
         }
 
         private void Photo_Click(object sender, RoutedEventArgs e)

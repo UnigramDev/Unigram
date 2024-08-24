@@ -11,6 +11,7 @@ using System.Threading.Tasks;
 using Telegram.Common;
 using Telegram.Controls;
 using Telegram.Controls.Cells;
+using Telegram.Navigation.Services;
 using Telegram.Services;
 using Telegram.Td.Api;
 using Windows.UI.Xaml;
@@ -34,7 +35,7 @@ namespace Telegram.Views.Popups
             SecondaryButtonText = Strings.Cancel;
         }
 
-        public Task<ContentDialogResult> ShowAsync(IClientService clientService, long supergroupId, ChatEventLogFilters filters, IList<long> userIds)
+        public Task<ContentDialogResult> ShowAsync(IClientService clientService, INavigationService navigation, long supergroupId, ChatEventLogFilters filters, IList<long> userIds)
         {
             _clientService = clientService;
 
@@ -102,7 +103,7 @@ namespace Telegram.Views.Popups
             });
 
             //ScrollingHost.ItemsSource = new ChatMemberCollection(clientService, supergroupId, new SupergroupMembersFilterAdministrators());
-            return this.ShowQueuedAsync();
+            return navigation.ShowPopupAsync(this);
         }
 
         private void Event_Toggled(object sender, RoutedEventArgs e)

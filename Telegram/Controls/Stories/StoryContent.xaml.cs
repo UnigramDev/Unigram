@@ -1538,7 +1538,7 @@ namespace Telegram.Controls.Stories
         {
             if (story.ClientService.TryGetUser(story.Chat, out User user) && user.HasActiveUsername(out string username))
             {
-                MessageHelper.CopyLink(story.ClientService, new InternalLinkTypeStory(username, story.StoryId));
+                MessageHelper.CopyLink(story.ClientService, XamlRoot, new InternalLinkTypeStory(username, story.StoryId));
             }
         }
 
@@ -1586,7 +1586,7 @@ namespace Telegram.Controls.Stories
             }
             else if (e.Type is TextEntityTypeCode or TextEntityTypePre or TextEntityTypePreCode && e.Data is string code)
             {
-                MessageHelper.CopyText(code);
+                MessageHelper.CopyText(XamlRoot, code);
             }
             else if (e.Type is TextEntityTypeSpoiler)
             {

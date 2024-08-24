@@ -11,6 +11,7 @@ using System.Threading.Tasks;
 using Telegram.Common;
 using Telegram.Controls;
 using Telegram.Native.Calls;
+using Telegram.Navigation.Services;
 using Telegram.Services.Updates;
 using Telegram.Services.ViewService;
 using Telegram.Td.Api;
@@ -21,6 +22,7 @@ using Windows.ApplicationModel.Calls;
 using Windows.Devices.Enumeration;
 using Windows.Graphics.Capture;
 using Windows.Storage;
+using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 
 namespace Telegram.Services
@@ -58,8 +60,8 @@ namespace Telegram.Services
 
         void Show();
 
-        void Start(long chatId, bool video);
-        void StartWithUser(long userId, bool video);
+        void Start(INavigationService navigation, long chatId, bool video);
+        void StartWithUser(INavigationService navigation, long userId, bool video);
 
         Task DiscardAsync();
 
@@ -249,7 +251,7 @@ namespace Telegram.Services
 
 #endif
 
-        public void Start(long chatId, bool video)
+        public void Start(INavigationService navigation, long chatId, bool video)
         {
             var chat = ClientService.GetChat(chatId);
             if (chat == null)
@@ -259,13 +261,13 @@ namespace Telegram.Services
 
             if (ClientService.TryGetUser(chat, out User user))
             {
-                StartWithUser(user.Id, video);
+                StartWithUser(navigation, user.Id, video);
             }
         }
 
-        public async void StartWithUser(long userId, bool video)
+        public async void StartWithUser(INavigationService navigation, long userId, bool video)
         {
-            if (await MediaDeviceWatcher.CheckIfUnsupportedAsync())
+            if (await MediaDeviceWatcher.CheckIfUnsupportedAsync(navigation.XamlRoot))
             {
                 return;
             }
@@ -282,7 +284,7 @@ namespace Telegram.Services
                 var callUser = ClientService.GetUser(call.UserId);
                 if (callUser != null && callUser.Id != user.Id)
                 {
-                    var confirm = await MessagePopup.ShowAsync(string.Format(Strings.VoipOngoingAlert, callUser.FullName(), user.FullName()), Strings.VoipOngoingAlertTitle, Strings.OK, Strings.Cancel);
+                    var confirm = await navigation.ShowPopupAsync(string.Format(Strings.VoipOngoingAlert, callUser.FullName(), user.FullName()), Strings.VoipOngoingAlertTitle, Strings.OK, Strings.Cancel);
                     if (confirm == ContentDialogResult.Primary)
                     {
 
@@ -299,11 +301,11 @@ namespace Telegram.Services
             var fullInfo = ClientService.GetUserFull(user.Id);
             if (fullInfo != null && fullInfo.HasPrivateCalls)
             {
-                await MessagePopup.ShowAsync(string.Format(Strings.CallNotAvailable, user.FirstName), Strings.VoipFailed, Strings.OK);
+                await navigation.ShowPopupAsync(string.Format(Strings.CallNotAvailable, user.FirstName), Strings.VoipFailed, Strings.OK);
                 return;
             }
 
-            var permissions = await MediaDeviceWatcher.CheckAccessAsync(video, false);
+            var permissions = await MediaDeviceWatcher.CheckAccessAsync(navigation.XamlRoot, video, false);
             if (permissions == false)
             {
                 return;
@@ -319,11 +321,11 @@ namespace Telegram.Services
                     var message = video
                         ? Strings.VoipPeerVideoOutdated
                         : Strings.VoipPeerOutdated;
-                    await MessagePopup.ShowAsync(string.Format(message, user.FirstName), Strings.AppName, Strings.OK);
+                    await navigation.ShowPopupAsync(string.Format(message, user.FirstName), Strings.AppName, Strings.OK);
                 }
                 else if (error.Code == 400 && error.Message.Equals("USER_PRIVACY_RESTRICTED"))
                 {
-                    await MessagePopup.ShowAsync(string.Format(Strings.CallNotAvailable, user.FullName()), Strings.AppName, Strings.OK);
+                    await navigation.ShowPopupAsync(string.Format(Strings.CallNotAvailable, user.FullName()), Strings.AppName, Strings.OK);
                 }
             }
         }
@@ -599,7 +601,9 @@ namespace Telegram.Services
                         var message = update.Call.IsVideo
                             ? Strings.VoipPeerVideoOutdated
                             : Strings.VoipPeerOutdated;
-                        BeginOnUIThread(async () => await MessagePopup.ShowAsync(string.Format(message, user.FirstName), Strings.AppName, Strings.OK));
+
+                        // TODO: WinUI - missing XamlRoot
+                        BeginOnUIThread(async () => await MessagePopup.ShowAsync(null as XamlRoot, string.Format(message, user.FirstName), Strings.AppName, Strings.OK));
                     }
 
                     _call = null;
@@ -713,7 +717,8 @@ namespace Telegram.Services
         {
             var dialog = new CallRatingPopup();
 
-            var confirm = await dialog.ShowQueuedAsync();
+            // TODO: WinUI - missing XamlRoot
+            var confirm = await dialog.ShowQueuedAsync(null);
             if (confirm == ContentDialogResult.Primary)
             {
                 // We need updates here

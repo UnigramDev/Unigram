@@ -212,8 +212,12 @@ namespace Telegram.Common
             {
                 var flyoutItem = new MenuFlyoutItem();
                 flyoutItem.CommandParameter = parameter;
-                flyoutItem.Command = new RelayCommand<T>(command);
                 flyoutItem.Text = text;
+
+                if (command != null)
+                {
+                    flyoutItem.Command = new RelayCommand<T>(command);
+                }
 
                 if (destructive)
                 {
@@ -255,8 +259,12 @@ namespace Telegram.Common
             if (value)
             {
                 var flyoutItem = new MenuFlyoutItem();
-                flyoutItem.Command = new RelayCommand(command);
                 flyoutItem.Text = text;
+
+                if (command != null)
+                {
+                    flyoutItem.Command = new RelayCommand(command);
+                }
 
                 if (destructive)
                 {
@@ -290,8 +298,12 @@ namespace Telegram.Common
             {
                 var flyoutItem = new MenuFlyoutItem();
                 flyoutItem.CommandParameter = parameter;
-                flyoutItem.Command = new RelayCommand<T3>(command);
                 flyoutItem.Text = text;
+
+                if (command != null)
+                {
+                    flyoutItem.Command = new RelayCommand<T3>(command);
+                }
 
                 if (icon != null)
                 {
@@ -326,8 +338,12 @@ namespace Telegram.Common
         {
             var flyoutItem = new MenuFlyoutItem();
             flyoutItem.IsEnabled = command != null;
-            flyoutItem.Command = new RelayCommand(command);
             flyoutItem.Text = text;
+
+            if (command != null)
+            {
+                flyoutItem.Command = new RelayCommand(command);
+            }
 
             if (destructive)
             {
@@ -367,8 +383,12 @@ namespace Telegram.Common
         {
             var flyoutItem = new MenuFlyoutItem();
             flyoutItem.IsEnabled = enabled;
-            flyoutItem.Command = new RelayCommand(command);
             flyoutItem.Text = text;
+
+            if (command != null)
+            {
+                flyoutItem.Command = new RelayCommand(command);
+            }
 
             if (icon != null)
             {
@@ -403,8 +423,12 @@ namespace Telegram.Common
         {
             var flyoutItem = new MenuFlyoutItem();
             flyoutItem.CommandParameter = parameter;
-            flyoutItem.Command = new RelayCommand<T>(command);
             flyoutItem.Text = text;
+
+            if (command != null)
+            {
+                flyoutItem.Command = new RelayCommand<T>(command);
+            }
 
             if (destructive)
             {

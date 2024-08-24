@@ -106,7 +106,7 @@ namespace Telegram.Common
                     popup.Closed += OnClosed;
                 }
 
-                return popup.ShowQueuedAsync();
+                return popup.ShowQueuedAsync(frame.XamlRoot);
             }
 
             return Task.FromResult(ContentDialogResult.None);

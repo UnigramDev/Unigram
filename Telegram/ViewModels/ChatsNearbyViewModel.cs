@@ -59,7 +59,7 @@ namespace Telegram.ViewModels
 
         protected override async Task OnNavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
         {
-            var location = await _locationService.GetPositionAsync();
+            var location = await _locationService.GetPositionAsync(NavigationService);
             if (location == null)
             {
                 var confirm = await ShowPopupAsync(Strings.GpsDisabledAlert, Strings.AppName, Strings.ConnectingToProxyEnable, Strings.Cancel);

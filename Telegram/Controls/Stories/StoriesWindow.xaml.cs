@@ -9,7 +9,6 @@ using Telegram.Controls.Messages;
 using Telegram.Navigation;
 using Telegram.Services;
 using Telegram.Services.Keyboard;
-using Telegram.Streams;
 using Telegram.Td.Api;
 using Telegram.ViewModels.Stories;
 using Telegram.Views.Stories.Popups;
@@ -1033,7 +1032,7 @@ namespace Telegram.Controls.Stories
                 var text = Strings.StealthModeOn + Environment.NewLine + Strings.StealthModeOnHint;
                 var entity = new TextEntity(0, Strings.StealthModeOn.Length, new TextEntityTypeBold());
 
-                ToastPopup.Show(new FormattedText(text, new[] { entity }));
+                ToastPopup.Show(XamlRoot, new FormattedText(text, new[] { entity }));
             }
             else if (story.ClientService.IsPremium)
             {
@@ -1089,7 +1088,7 @@ namespace Telegram.Controls.Stories
             return ShowToast(target, text, null, placement);
         }
 
-        public TeachingTip ShowToast(FrameworkElement target, string text, AnimatedImageSource icon, TeachingTipPlacementMode placement = TeachingTipPlacementMode.TopRight)
+        public TeachingTip ShowToast(FrameworkElement target, string text, ToastPopupIcon? icon, TeachingTipPlacementMode placement = TeachingTipPlacementMode.TopRight)
         {
             var toast = ToastPopup.Show(target, text, icon, placement, ElementTheme.Dark);
             toast.Closing += Toast_Closing;
@@ -1099,7 +1098,7 @@ namespace Telegram.Controls.Stories
 
         public Task<ContentDialogResult> ShowActionAsync(FrameworkElement target, object text, TeachingTipPlacementMode placement, ElementTheme requestedTheme = ElementTheme.Dark)
         {
-            var toast = ToastPopup.ShowToastImpl(Window.Current, target, null, null, placement, requestedTheme);
+            var toast = ToastPopup.ShowImpl(XamlRoot, target, null, null, placement, requestedTheme);
             if (toast.Content is Grid content)
             {
                 var tsc = new TaskCompletionSource<ContentDialogResult>();

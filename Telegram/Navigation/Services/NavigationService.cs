@@ -10,7 +10,9 @@ using System.Threading.Tasks;
 using Telegram.Common;
 using Telegram.Controls;
 using Telegram.Services.ViewService;
+using Telegram.Td.Api;
 using Telegram.Views;
+using Telegram.Views.Popups;
 using Telegram.Views.Settings;
 using Windows.ApplicationModel.Core;
 using Windows.Foundation;
@@ -28,6 +30,8 @@ namespace Telegram.Navigation.Services
         void GoForward();
 
         object Content { get; }
+
+        XamlRoot XamlRoot { get; }
 
         bool Navigate(Type page, object parameter = null, NavigationState state = null, NavigationTransitionInfo infoOverride = null, bool navigationStackEnabled = true);
 
@@ -49,6 +53,17 @@ namespace Telegram.Navigation.Services
         Task<ViewLifetimeControl> OpenAsync(Type page, object parameter = null, string title = null, Size size = default);
         Task<ContentDialogResult> ShowPopupAsync(Type sourcePopupType, object parameter = null, TaskCompletionSource<object> tsc = null, ElementTheme requestedTheme = ElementTheme.Default);
         Task<ContentDialogResult> ShowPopupAsync(ContentPopup popup, object parameter = null, ElementTheme requestedTheme = ElementTheme.Default);
+
+        Task<ContentDialogResult> ShowPopupAsync(string message, string title = null, string primary = null, string secondary = null, bool destructive = false, ElementTheme requestedTheme = ElementTheme.Default);
+        //Task<ContentDialogResult> ShowPopupAsync(FrameworkElement target, string message, string title = null, string primary = null, string secondary = null, bool destructive = false, ElementTheme requestedTheme = ElementTheme.Default);
+        Task<ContentDialogResult> ShowPopupAsync(FormattedText message, string title = null, string primary = null, string secondary = null, bool destructive = false, ElementTheme requestedTheme = ElementTheme.Default);
+        ////Task<ContentDialogResult> ShowPopupAsync(FrameworkElement target, FormattedText message, string title = null, string primary = null, string secondary = null, bool destructive = false, ElementTheme requestedTheme = ElementTheme.Default);
+        void ShowPopup(string message, string title = null, string primary = null, string secondary = null, bool destructive = false, ElementTheme requestedTheme = ElementTheme.Default);
+        void ShowPopup(FormattedText message, string title = null, string primary = null, string secondary = null, bool destructive = false, ElementTheme requestedTheme = ElementTheme.Default);
+        Task<InputPopupResult> ShowInputAsync(InputPopupType type, string message, string title = null, string placeholderText = null, string primary = null, string secondary = null, bool destructive = false, ElementTheme requestedTheme = ElementTheme.Default);
+        //Task<InputPopupResult> ShowInputAsync(FrameworkElement target, InputPopupType type, string message, string title = null, string placeholderText = null, string primary = null, string secondary = null, bool destructive = false, ElementTheme requestedTheme = ElementTheme.Default)
+
+        // TODO: additional methods for basic toast
 
         object CurrentPageParam { get; }
         Type CurrentPageType { get; }
@@ -126,6 +141,7 @@ namespace Telegram.Navigation.Services
         public bool IsInMainView { get; }
         public Frame Frame => FrameFacade.Frame;
         public object Content => Frame.Content;
+        public XamlRoot XamlRoot => FrameFacade.Frame.XamlRoot;
 
         public IDispatcherContext Dispatcher { get; }
 
@@ -436,8 +452,48 @@ namespace Telegram.Navigation.Services
                 popup.Closed += OnClosed;
             }
 
-            return popup.ShowQueuedAsync();
+            return popup.ShowQueuedAsync(XamlRoot);
         }
+
+        public Task<ContentDialogResult> ShowPopupAsync(string message, string title = null, string primary = null, string secondary = null, bool destructive = false, ElementTheme requestedTheme = ElementTheme.Default)
+        {
+            return MessagePopup.ShowAsync(XamlRoot, message, title, primary, secondary, destructive, requestedTheme);
+        }
+
+        //public Task<ContentDialogResult> ShowPopupAsync(FrameworkElement target, string message, string title = null, string primary = null, string secondary = null, bool destructive = false, ElementTheme requestedTheme = ElementTheme.Default)
+        //{
+        //    return MessagePopup.ShowAsync(target, message, title, primary, secondary, destructive, requestedTheme);
+        //}
+
+        public Task<ContentDialogResult> ShowPopupAsync(FormattedText message, string title = null, string primary = null, string secondary = null, bool destructive = false, ElementTheme requestedTheme = ElementTheme.Default)
+        {
+            return MessagePopup.ShowAsync(XamlRoot, message, title, primary, secondary, destructive, requestedTheme);
+        }
+
+        ////public Task<ContentDialogResult> ShowPopupAsync(FrameworkElement target, FormattedText message, string title = null, string primary = null, string secondary = null, bool destructive = false, ElementTheme requestedTheme = ElementTheme.Default)
+        ////{
+        ////    return MessagePopup.ShowAsync(target, message, title, primary, secondary, destructive, requestedTheme);
+        ////}
+
+        public void ShowPopup(string message, string title = null, string primary = null, string secondary = null, bool destructive = false, ElementTheme requestedTheme = ElementTheme.Default)
+        {
+            _ = MessagePopup.ShowAsync(XamlRoot, message, title, primary, secondary, destructive, requestedTheme);
+        }
+
+        public void ShowPopup(FormattedText message, string title = null, string primary = null, string secondary = null, bool destructive = false, ElementTheme requestedTheme = ElementTheme.Default)
+        {
+            _ = MessagePopup.ShowAsync(XamlRoot, message, title, primary, secondary, destructive, requestedTheme);
+        }
+
+        public Task<InputPopupResult> ShowInputAsync(InputPopupType type, string message, string title = null, string placeholderText = null, string primary = null, string secondary = null, bool destructive = false, ElementTheme requestedTheme = ElementTheme.Default)
+        {
+            return InputPopup.ShowAsync(XamlRoot, type, message, title, placeholderText, primary, secondary, destructive, requestedTheme);
+        }
+
+        //public Task<InputPopupResult> ShowInputAsync(FrameworkElement target, InputPopupType type, string message, string title = null, string placeholderText = null, string primary = null, string secondary = null, bool destructive = false, ElementTheme requestedTheme = ElementTheme.Default)
+        //{
+        //    return InputPopup.ShowAsync(target, type, message, title, placeholderText, primary, secondary, destructive, requestedTheme);
+        //}
 
         public event EventHandler<NavigatingEventArgs> Navigating;
 

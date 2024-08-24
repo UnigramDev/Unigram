@@ -106,7 +106,7 @@ namespace Telegram.Controls.Messages
                 countryName = factCheck.CountryCode;
             }
 
-            await MessagePopup.ShowAsync(string.Format(Strings.FactCheckToast, countryName), Strings.FactCheckDialog, Strings.OK);
+            await MessagePopup.ShowAsync(XamlRoot, string.Format(Strings.FactCheckToast, countryName), Strings.FactCheckDialog, Strings.OK);
         }
 
         private void Label_IsTextTrimmedChanged(TextBlock sender, IsTextTrimmedChangedEventArgs args)

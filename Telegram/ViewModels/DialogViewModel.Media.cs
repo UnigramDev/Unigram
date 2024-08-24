@@ -348,7 +348,7 @@ namespace Telegram.ViewModels
             popup.Caption = formattedText
                 .Substring(0, ClientService.Options.MessageCaptionLengthMax);
 
-            var confirm = await popup.OpenAsync();
+            var confirm = await popup.OpenAsync(NavigationService.XamlRoot);
 
             TextField?.Focus(FocusState.Programmatic);
 

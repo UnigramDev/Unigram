@@ -12,7 +12,6 @@ using Telegram.Controls;
 using Telegram.Navigation;
 using Telegram.Navigation.Services;
 using Telegram.Services;
-using Telegram.Streams;
 using Telegram.Td.Api;
 using Telegram.ViewModels.Settings;
 using Telegram.Views.Chats.Popups;
@@ -456,7 +455,7 @@ namespace Telegram.ViewModels.Supergroups
 
             if (changed)
             {
-                ToastPopup.Show(Strings.ChannelAppearanceUpdated, new LocalFileSource("ms-appx:///Assets/Toasts/Success.tgs"));
+                ToastPopup.Show(NavigationService.XamlRoot, Strings.ChannelAppearanceUpdated, ToastPopupIcon.Success);
             }
 
             _confirmed = true;

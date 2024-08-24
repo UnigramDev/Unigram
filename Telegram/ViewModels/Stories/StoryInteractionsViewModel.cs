@@ -12,7 +12,6 @@ using Telegram.Controls;
 using Telegram.Navigation;
 using Telegram.Navigation.Services;
 using Telegram.Services;
-using Telegram.Streams;
 using Telegram.Td.Api;
 using Telegram.ViewModels.Stories;
 using Windows.UI.Xaml;
@@ -153,7 +152,7 @@ namespace Telegram.ViewModels
                 interaction.BlockList = new BlockListStories();
 
                 ClientService.Send(new SetMessageSenderBlockList(interaction.ActorId, new BlockListStories()));
-                ToastPopup.Show(string.Format(Strings.StoryHiddenHint, user.FirstName), new LocalFileSource("ms-appx:///Assets/Toasts/Info.tgs"));
+                ToastPopup.Show(NavigationService.XamlRoot, string.Format(Strings.StoryHiddenHint, user.FirstName), ToastPopupIcon.Info);
             }
         }
 
@@ -164,7 +163,7 @@ namespace Telegram.ViewModels
                 interaction.BlockList = null;
 
                 ClientService.Send(new SetMessageSenderBlockList(interaction.ActorId, null));
-                ToastPopup.Show(string.Format(Strings.StoryShownHint, user.FirstName), new LocalFileSource("ms-appx:///Assets/Toasts/Info.tgs"));
+                ToastPopup.Show(NavigationService.XamlRoot, string.Format(Strings.StoryShownHint, user.FirstName), ToastPopupIcon.Info);
             }
         }
 
@@ -175,7 +174,7 @@ namespace Telegram.ViewModels
                 interaction.BlockList = null;
 
                 ClientService.Send(new SetMessageSenderBlockList(interaction.ActorId, null));
-                ToastPopup.Show(string.Format(Strings.StoryShownHint, user.FirstName), new LocalFileSource("ms-appx:///Assets/Toasts/Info.tgs"));
+                ToastPopup.Show(NavigationService.XamlRoot, string.Format(Strings.StoryShownHint, user.FirstName), ToastPopupIcon.Info);
             }
         }
 

@@ -6,7 +6,7 @@
 //
 using Telegram.Common;
 using Telegram.Controls;
-using Telegram.Navigation;
+using Windows.UI.Xaml;
 
 namespace Telegram.Services
 {
@@ -300,53 +300,7 @@ namespace Telegram.Services
         //    }
         //}
 
-        private static async void ShowPeerFloodAlert(IDispatcherContext fragment, int reason)
-        {
-            var dialog = new MessagePopup();
-            dialog.Title = Strings.AppName;
-            dialog.PrimaryButtonText = Strings.OK;
-
-            if (reason != 2)
-            {
-                dialog.SecondaryButtonText = Strings.MoreInfo;
-                dialog.SecondaryButtonClick += (s, args) =>
-                {
-                    MessageHelper.NavigateToUsername(null, null, "spambot", null, null);
-                };
-            }
-
-            if (reason == 0)
-            {
-                dialog.Message = Strings.NobodyLikesSpam1;
-            }
-            else if (reason == 1)
-            {
-                dialog.Message = Strings.NobodyLikesSpam2;
-            }
-            else if (reason == 2)
-            {
-                //builder.setMessage((String)args[1]);
-            }
-
-            await dialog.ShowQueuedAsync();
-        }
-
-        public static void ShowSimpleToast(IDispatcherContext fragment, string text)
-        {
-            if (text == null)
-            {
-                return;
-            }
-
-            // TODO:
-            //Toast toast = Toast.makeText(baseFragment.getParentActivity(), text, Toast.LENGTH_LONG);
-            //toast.show();
-            //return toast;
-
-            ShowSimpleAlert(text);
-        }
-
-        public static async void ShowSimpleAlert(string text)
+        public static async void ShowSimpleAlert(XamlRoot xamlRoot, string text)
         {
             if (text == null)
             {
@@ -358,7 +312,7 @@ namespace Telegram.Services
             dialog.Message = text;
             dialog.PrimaryButtonText = Strings.OK;
 
-            await dialog.ShowQueuedAsync();
+            await dialog.ShowQueuedAsync(xamlRoot);
         }
 
         private static string GetFloodWaitString(string error)
@@ -367,17 +321,17 @@ namespace Telegram.Services
             return string.Format(Strings.FloodWaitTime, Locale.FormatCallDuration(time));
         }
 
-        public static void ShowFloodWaitAlert(string error)
+        public static void ShowFloodWaitAlert(XamlRoot xamlRoot, string error)
         {
             if (error == null || !error.StartsWith("FLOOD_WAIT"))
             {
                 return;
             }
 
-            ShowSimpleAlert(GetFloodWaitString(error));
+            ShowSimpleAlert(xamlRoot, GetFloodWaitString(error));
         }
 
-        public static async void ShowAddUserAlert(IDispatcherContext fragment, string error, bool channel)
+        public static async void ShowAddUserAlert(XamlRoot xamlRoot, string error, bool channel)
         {
             if (error == null)
             {
@@ -442,7 +396,7 @@ namespace Telegram.Services
                     break;
             }
 
-            await dialog.ShowQueuedAsync();
+            await dialog.ShowQueuedAsync(xamlRoot);
         }
     }
 }

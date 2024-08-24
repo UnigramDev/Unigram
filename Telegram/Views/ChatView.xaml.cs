@@ -3752,7 +3752,7 @@ namespace Telegram.Views
                 var dialog = new CalendarPopup(date);
                 dialog.MaxDate = DateTimeOffset.Now.Date;
 
-                var confirm = await dialog.ShowQueuedAsync();
+                var confirm = await dialog.ShowQueuedAsync(XamlRoot);
                 if (confirm == ContentDialogResult.Primary && dialog.SelectedDates.Count > 0)
                 {
                     var first = dialog.SelectedDates.FirstOrDefault();

@@ -369,7 +369,7 @@ namespace Telegram.Views.Popups
             _ignoreClosing = false;
 
             await ViewModel.NavigationService.ShowPromoAsync(new PremiumSourceFeature(new PremiumFeatureBackgroundForBoth()));
-            await this.ShowQueuedAsync();
+            await this.ShowQueuedAsync(XamlRoot);
         }
 
         private void OnClosing(ContentDialog sender, ContentDialogClosingEventArgs args)

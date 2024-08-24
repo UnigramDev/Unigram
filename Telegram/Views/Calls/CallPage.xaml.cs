@@ -773,7 +773,7 @@ namespace Telegram.Views.Calls
             }
             else
             {
-                var permissions = await MediaDeviceWatcher.CheckAccessAsync(call.IsVideo);
+                var permissions = await MediaDeviceWatcher.CheckAccessAsync(XamlRoot, call.IsVideo);
                 if (permissions == false)
                 {
                     _clientService.Send(new DiscardCall(call.Id, false, 0, call.IsVideo, 0));
@@ -991,7 +991,7 @@ namespace Telegram.Views.Calls
             _debugDialog = dialog;
             _debugTimer.Start();
 
-            await dialog.ShowQueuedAsync();
+            await dialog.ShowQueuedAsync(XamlRoot);
         }
 
         private void DebugTimer_Tick(object sender, object e)

@@ -168,7 +168,7 @@ namespace Telegram.ViewModels.Settings
             }
             else if (update.File != null && launch && Constants.RELEASE)
             {
-                await CloudUpdateService.LaunchAsync(Dispatcher, false);
+                await CloudUpdateService.LaunchAsync(NavigationService, false);
             }
 
             UpdateFile(update, update?.Document, true);

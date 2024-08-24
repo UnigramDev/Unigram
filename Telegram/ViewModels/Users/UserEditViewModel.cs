@@ -239,7 +239,7 @@ namespace Telegram.ViewModels.Users
 
         public async void SetPhoto()
         {
-            var success = await _profilePhotoService.SetPhotoAsync(_userId, isPersonal: false);
+            var success = await _profilePhotoService.SetPhotoAsync(NavigationService, _userId, isPersonal: false);
             if (success)
             {
                 NavigationService.NavigateToChat(_userId);
@@ -257,7 +257,7 @@ namespace Telegram.ViewModels.Users
 
         public async void SetPersonalPhoto()
         {
-            await _profilePhotoService.SetPhotoAsync(_userId, isPersonal: true);
+            await _profilePhotoService.SetPhotoAsync(NavigationService, _userId, isPersonal: true);
         }
 
         public async void CreatePersonalPhoto()

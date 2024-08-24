@@ -272,9 +272,9 @@ namespace Telegram.Controls
             }
         }
 
-        public async Task<ContentDialogResult> OpenAsync()
+        public async Task<ContentDialogResult> OpenAsync(XamlRoot xamlRoot)
         {
-            await this.ShowQueuedAsync();
+            await this.ShowQueuedAsync(xamlRoot);
             return _result;
         }
 

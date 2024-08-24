@@ -14,7 +14,6 @@ using Telegram.Navigation;
 using Telegram.Navigation.Services;
 using Telegram.Services;
 using Telegram.Services.Updates;
-using Telegram.Streams;
 using Telegram.Td;
 using Telegram.Td.Api;
 using Telegram.ViewModels.Payments;
@@ -114,14 +113,14 @@ namespace Telegram.ViewModels.Stars
                     var formatted = ClientEx.ParseMarkdown(text);
 
                     Aggregator.Publish(new UpdateConfetti());
-                    ToastPopup.Show(formatted, new LocalFileSource("ms-appx:///Assets/Toasts/Success.tgs"));
+                    ToastPopup.Show(NavigationService.XamlRoot, formatted, ToastPopupIcon.Success);
 
                     return PayResult.Succeeded;
                 }
             }
             else if (response is Error error)
             {
-                ToastPopup.ShowError(error);
+                ToastPopup.ShowError(NavigationService.XamlRoot, error);
             }
 
             return PayResult.Failed;

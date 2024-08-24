@@ -115,7 +115,7 @@ namespace Telegram.ViewModels
             var tags = Client.Execute(new GetLogTags()) as LogTags;
             if (tags != null)
             {
-                Tags.ReplaceWith(tags.Tags.Select(x => new DiagnosticsTag(Settings)
+                Tags.ReplaceWith(tags.Tags.Select(x => new DiagnosticsTag(NavigationService, Settings)
                 {
                     Name = x,
                     Default = ((LogVerbosityLevel)Client.Execute(new GetLogTagVerbosityLevel(x))).VerbosityLevel,
@@ -284,7 +284,7 @@ namespace Telegram.ViewModels
                 await FillVideoCaptureCapabilityFromDeviceWithoutProfiles(builder, device.Id);
             }
 
-            MessageHelper.CopyText(builder.ToString());
+            MessageHelper.CopyText(NavigationService.XamlRoot, builder.ToString());
 
             try
             {
@@ -383,13 +383,15 @@ namespace Telegram.ViewModels
 
     public class DiagnosticsTag : BindableBase
     {
+        private readonly INavigationService _navigationService;
         private readonly ISettingsService _settings;
 
         public string Name { get; set; }
         public int Default { get; set; }
 
-        public DiagnosticsTag(ISettingsService settings)
+        public DiagnosticsTag(INavigationService navigationService, ISettingsService settings)
         {
+            _navigationService = navigationService;
             _settings = settings;
         }
 
@@ -420,13 +422,13 @@ namespace Telegram.ViewModels
                 return new ChooseOptionItem(x, Enum.GetName(typeof(VerbosityLevel), x), x == _value);
             }).ToArray();
 
-            var dialog = new ChooseOptionPopup(items);
-            dialog.Title = Name;
-            dialog.PrimaryButtonText = Strings.OK;
-            dialog.SecondaryButtonText = Strings.Cancel;
+            var popup = new ChooseOptionPopup(items);
+            popup.Title = Name;
+            popup.PrimaryButtonText = Strings.OK;
+            popup.SecondaryButtonText = Strings.Cancel;
 
-            var confirm = await dialog.ShowQueuedAsync();
-            if (confirm == ContentDialogResult.Primary && dialog.SelectedIndex is VerbosityLevel index)
+            var confirm = await _navigationService.ShowPopupAsync(popup);
+            if (confirm == ContentDialogResult.Primary && popup.SelectedIndex is VerbosityLevel index)
             {
                 Value = index;
                 RaisePropertyChanged(nameof(Text));
