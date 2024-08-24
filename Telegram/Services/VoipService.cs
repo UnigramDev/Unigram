@@ -60,8 +60,8 @@ namespace Telegram.Services
 
         void Show();
 
-        void Start(INavigationService navigation, long chatId, bool video);
-        void StartWithUser(INavigationService navigation, long userId, bool video);
+        void Start(INavigationService navigation, Chat chat, bool video);
+        void Start(INavigationService navigation, User user, bool video);
 
         Task DiscardAsync();
 
@@ -251,9 +251,8 @@ namespace Telegram.Services
 
 #endif
 
-        public void Start(INavigationService navigation, long chatId, bool video)
+        public void Start(INavigationService navigation, Chat chat, bool video)
         {
-            var chat = ClientService.GetChat(chatId);
             if (chat == null)
             {
                 return;
@@ -261,18 +260,17 @@ namespace Telegram.Services
 
             if (ClientService.TryGetUser(chat, out User user))
             {
-                StartWithUser(navigation, user.Id, video);
+                Start(navigation, user, video);
             }
         }
 
-        public async void StartWithUser(INavigationService navigation, long userId, bool video)
+        public async void Start(INavigationService navigation, User user, bool video)
         {
             if (await MediaDeviceWatcher.CheckIfUnsupportedAsync(navigation.XamlRoot))
             {
                 return;
             }
 
-            var user = ClientService.GetUser(userId);
             if (user == null)
             {
                 return;

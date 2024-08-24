@@ -3294,7 +3294,7 @@ namespace Telegram.ViewModels
 
             if (chat.Type is ChatTypePrivate or ChatTypeSecret)
             {
-                _voipService.Start(NavigationService, chat.Id, video);
+                _voipService.Start(NavigationService, chat, video);
             }
             else
             {
