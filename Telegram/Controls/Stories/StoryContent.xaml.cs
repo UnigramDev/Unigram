@@ -612,7 +612,7 @@ namespace Telegram.Controls.Stories
 
                     var window = element.GetParent<StoriesWindow>();
                     var result = await window?.ShowActionAsync(element.Content as Border, text, TeachingTipPlacementMode.Top);
-                    
+
                     if (result == ContentDialogResult.Primary)
                     {
                         MessageHelper.OpenUrl(ViewModel.ClientService, ViewModel.NavigationService, typeLink.Url);

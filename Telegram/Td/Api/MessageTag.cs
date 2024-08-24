@@ -24,7 +24,7 @@ namespace Telegram.Td.Api
         }
 
         private string _label;
-        
+
         /// <summary>
         /// Label of the tag; 0-12 characters.
         /// </summary>

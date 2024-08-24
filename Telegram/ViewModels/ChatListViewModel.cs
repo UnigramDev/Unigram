@@ -901,7 +901,7 @@ namespace Telegram.ViewModels
                     }
                 }
             }
-            
+
             private void NotifyChanged()
             {
                 OnPropertyChanged(new PropertyChangedEventArgs(nameof(IsEmpty)));

@@ -49,7 +49,7 @@ namespace Telegram.Controls.Chats
                     : Strings.BizBotStop;
 
                 ToggleButton.Visibility = manageBar.CanBotReply
-                    ? Visibility.Visible 
+                    ? Visibility.Visible
                     : Visibility.Collapsed;
             }
             else

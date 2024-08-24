@@ -389,7 +389,7 @@ namespace Telegram.Views
 
             _blockingAction = true;
 
-            var confirm = await MessagePopup.ShowAsync(XamlRoot,string.Format(Strings.AreYouSureShareMyContactInfoWebapp, _botUser.FullName()), Strings.ShareYouPhoneNumberTitle, Strings.OK, Strings.Cancel);
+            var confirm = await MessagePopup.ShowAsync(XamlRoot, string.Format(Strings.AreYouSureShareMyContactInfoWebapp, _botUser.FullName()), Strings.ShareYouPhoneNumberTitle, Strings.OK, Strings.Cancel);
             if (confirm == ContentDialogResult.Primary && _clientService.TryGetUser(_clientService.Options.MyId, out User user))
             {
                 var chat = await _clientService.SendAsync(new CreatePrivateChat(_botUser.Id, false)) as Chat;

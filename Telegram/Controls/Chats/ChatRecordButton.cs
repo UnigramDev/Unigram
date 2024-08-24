@@ -957,7 +957,7 @@ namespace Telegram.Controls.Chats
                 Logger.Debug("Pause invoked");
 
                 var tsc = new TaskCompletionSource<ChatRecordResult>();
-                
+
                 _ = _recordQueue.Enqueue(async () =>
                 {
                     Logger.Debug("Enqueued pause invoked");

@@ -157,7 +157,7 @@ namespace Telegram.Controls
             }
         }
 
-        private void UpdateActiveStories(IClientService clientService, long chatId, bool hasActiveStories,  bool hasUnreadActiveStories, int side)
+        private void UpdateActiveStories(IClientService clientService, long chatId, bool hasActiveStories, bool hasUnreadActiveStories, int side)
         {
             if (chatId == 0 || !hasActiveStories)
             {

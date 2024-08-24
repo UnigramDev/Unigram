@@ -9,7 +9,6 @@ using System.Linq;
 using Telegram.Common;
 using Telegram.Controls;
 using Telegram.Native;
-using Telegram.Td.Api;
 using Windows.System.UserProfile;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;

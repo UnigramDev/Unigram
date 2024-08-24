@@ -226,7 +226,7 @@ namespace Telegram.Common
                     return chatId;
                 }
             }
-            
+
             if (currentPageOnly)
             {
                 return 0;

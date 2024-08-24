@@ -7,22 +7,22 @@
 using System;
 using System.Numerics;
 using System.Runtime.CompilerServices;
+using Telegram.Common;
 using Telegram.Controls.Cells;
 using Telegram.Converters;
-using Telegram.Common;
+using Telegram.Navigation;
+using Telegram.Streams;
 using Telegram.Td.Api;
 using Telegram.ViewModels;
+using Windows.Foundation;
 using Windows.UI;
 using Windows.UI.Composition;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Hosting;
-using Windows.UI.Xaml.Media;
-using Telegram.Streams;
 using Windows.UI.Xaml.Controls.Primitives;
-using Windows.Foundation;
+using Windows.UI.Xaml.Hosting;
 using Windows.UI.Xaml.Input;
-using Telegram.Navigation;
+using Windows.UI.Xaml.Media;
 
 namespace Telegram.Controls.Messages
 {

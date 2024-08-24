@@ -39,7 +39,7 @@ namespace Unigram
                 {
                     // If we successfully registered this instance, we can now just
                     // go ahead and do normal XAML initialization.
-                    global::Windows.UI.Xaml.Application.Start((p) => new App(id));
+                    global::Microsoft.UI.Xaml.Application.Start((p) => new App(id));
                 }
                 else
                 {
@@ -73,14 +73,14 @@ namespace Unigram
                     //{
                     //    AppInstance.FindOrRegisterInstanceForKey("REUSABLE" + App.Id.ToString());
                     //    UpdateSharedInstanceNumber();
-                    //    global::Windows.UI.Xaml.Application.Start((p) => new App());
+                    //    global::Microsoft.UI.Xaml.Application.Start((p) => new App());
                     //}
                     var instance = AppInstance.FindOrRegisterInstanceForKey(_lastId.ToString());
                     if (instance.IsCurrentInstance)
                     {
                         // If we successfully registered this instance, we can now just
                         // go ahead and do normal XAML initialization.
-                        global::Windows.UI.Xaml.Application.Start((p) => new App(0));
+                        global::Microsoft.UI.Xaml.Application.Start((p) => new App(0));
                     }
                     else
                     {

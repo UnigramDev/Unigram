@@ -73,7 +73,7 @@ namespace Telegram.Controls.Messages
 
             BackgroundOverlay.Margin = new Thickness(0, 0, -Padding.Right, 0);
             ExpandBackground.Visibility = Expand.Visibility = Label.IsTextTrimmed
-                ? Visibility.Visible 
+                ? Visibility.Visible
                 : Visibility.Collapsed;
 
             Button.Click += Button_Click;

@@ -90,7 +90,7 @@ namespace Telegram.Views.Popups
 
                 var secondary = string.Format(Strings.ApplyWallpaperForMeAndPeer, user.FirstName);
 
-                if ( ViewModel.IsPremium is false)
+                if (ViewModel.IsPremium is false)
                 {
                     secondary += Icons.Spacing + Icons.LockClosedFilled14;
                 }

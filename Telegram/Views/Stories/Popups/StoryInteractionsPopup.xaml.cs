@@ -49,7 +49,7 @@ namespace Telegram.Views.Stories.Popups
 
                 var premium = story.ClientService.IsPremium;
                 var count = story.HasExpiredViewers && !premium
-                    ? story.InteractionInfo.ReactionCount 
+                    ? story.InteractionInfo.ReactionCount
                     : story.InteractionInfo.ViewCount;
 
                 if (count >= 9)
@@ -69,7 +69,7 @@ namespace Telegram.Views.Stories.Popups
                     ? Visibility.Visible
                     : Visibility.Collapsed;
 
-                SortBy.Visibility =  premium && story.InteractionInfo.ReactionCount >= 10
+                SortBy.Visibility = premium && story.InteractionInfo.ReactionCount >= 10
                     ? Visibility.Visible
                     : Visibility.Collapsed;
 

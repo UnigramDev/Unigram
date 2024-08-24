@@ -579,7 +579,7 @@ namespace Telegram.Common
         #endregion
     }
 
-        public class ThemeOutgoing : ResourceDictionary
+    public class ThemeOutgoing : ResourceDictionary
     {
         [ThreadStatic]
         private static Dictionary<string, (Color Color, SolidColorBrush Brush)> _light;

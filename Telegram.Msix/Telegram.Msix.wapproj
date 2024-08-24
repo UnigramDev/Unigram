@@ -63,9 +63,11 @@
     <GenerateTestArtifacts>True</GenerateTestArtifacts>
     <HoursBetweenUpdateChecks>0</HoursBetweenUpdateChecks>
     <AppxPackageSigningTimestampDigestAlgorithm>SHA256</AppxPackageSigningTimestampDigestAlgorithm>
-    <AppxPackageSigningEnabled>False</AppxPackageSigningEnabled>
+    <AppxPackageSigningEnabled>True</AppxPackageSigningEnabled>
     <EntryPointProjectUniqueName>..\Telegram\Telegram.csproj</EntryPointProjectUniqueName>
     <PackageCertificateKeyFile>Telegram.Msix_TemporaryKey.pfx</PackageCertificateKeyFile>
+    <!--<CreatePackageMakeAppxParameters>/pb artifacts.txt</CreatePackageMakeAppxParameters>
+    <CreateResourcePackageMakeAppxParameters>/pb artifacts.txt</CreateResourcePackageMakeAppxParameters>-->
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x86'">
     <AppxBundle>Always</AppxBundle>

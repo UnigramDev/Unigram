@@ -48,7 +48,7 @@ namespace Telegram.Views.Premium.Popups
                     : string.Format(Strings.BoostingLinkAllowsToUser, user.FullName()));
 
                 var footer = Strings.BoostingSendLinkToFriends;
-                
+
                 var markdown = ClientEx.ParseMarkdown(footer);
                 if (markdown.Entities.Count == 1)
                 {

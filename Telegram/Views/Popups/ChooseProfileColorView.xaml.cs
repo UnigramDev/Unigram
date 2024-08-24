@@ -40,7 +40,7 @@ namespace Telegram.Views.Popups
         public string PrimaryButtonText { get; private set; }
 
         public void Initialize(IClientService clientService, MessageSender sender)
-        { 
+        {
             //Title = Strings.UserColorTitle;
 
             _clientService = clientService;
