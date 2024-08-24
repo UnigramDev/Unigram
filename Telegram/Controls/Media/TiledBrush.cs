@@ -5,13 +5,12 @@
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
 using Microsoft.Graphics.Canvas.Effects;
+using Microsoft.UI.Composition;
+using Microsoft.UI.Xaml.Media;
 using System.Numerics;
 using Telegram.Navigation;
 using Windows.Graphics.Effects;
 using Windows.UI;
-using Microsoft.UI.Composition;
-using Microsoft.UI.Xaml;
-using Microsoft.UI.Xaml.Media;
 
 namespace Telegram.Controls.Media
 {

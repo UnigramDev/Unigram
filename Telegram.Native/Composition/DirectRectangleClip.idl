@@ -19,10 +19,10 @@ namespace Telegram.Native.Composition
         void SetInset(Single uniform);
         void SetInset(Single left, Single top, Single right, Single bottom);
 
-        void AnimateTop(Windows.UI.Composition.Compositor compositor, Single from, Single to, Double duration);
-        void AnimateBottom(Windows.UI.Composition.Compositor compositor, Single from, Single to, Double duration);
+        void AnimateTop(Microsoft.UI.Composition.Compositor compositor, Single from, Single to, Double duration);
+        void AnimateBottom(Microsoft.UI.Composition.Compositor compositor, Single from, Single to, Double duration);
 
-        void AnimateBottomLeft(Windows.UI.Composition.Compositor compositor, Single from, Single to, Double duration);
-        void AnimateBottomRight(Windows.UI.Composition.Compositor compositor, Single from, Single to, Double duration);
+        void AnimateBottomLeft(Microsoft.UI.Composition.Compositor compositor, Single from, Single to, Double duration);
+        void AnimateBottomRight(Microsoft.UI.Composition.Compositor compositor, Single from, Single to, Double duration);
     }
 }

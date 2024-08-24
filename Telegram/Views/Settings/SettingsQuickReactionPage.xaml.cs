@@ -4,6 +4,8 @@
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Navigation;
 using Telegram.Common;
 using Telegram.Controls.Messages;
 using Telegram.Streams;
@@ -11,8 +13,6 @@ using Telegram.Td.Api;
 using Telegram.ViewModels.Drawers;
 using Telegram.ViewModels.Settings;
 using Windows.Foundation;
-using Microsoft.UI.Xaml;
-using Microsoft.UI.Xaml.Navigation;
 
 namespace Telegram.Views.Settings
 {

@@ -1,9 +1,9 @@
-﻿using System.Threading.Tasks;
+﻿using Microsoft.UI.Xaml.Navigation;
+using System.Threading.Tasks;
 using Telegram.Navigation.Services;
 using Telegram.Services;
 using Telegram.Td.Api;
 using Telegram.Views;
-using Microsoft.UI.Xaml.Navigation;
 
 namespace Telegram.ViewModels.Business
 {

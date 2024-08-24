@@ -4,6 +4,10 @@
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+using Microsoft.UI.Input;
+using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Input;
+using Microsoft.UI.Xaml.Media;
 using System.Collections.Generic;
 using System.Linq;
 using Telegram.Common;
@@ -11,10 +15,6 @@ using Telegram.Controls.Media;
 using Telegram.Services;
 using Telegram.Td.Api;
 using Windows.UI;
-using Microsoft.UI.Input;
-using Microsoft.UI.Xaml.Controls;
-using Microsoft.UI.Xaml.Input;
-using Microsoft.UI.Xaml.Media;
 
 namespace Telegram.Controls.Cells.Premium
 {

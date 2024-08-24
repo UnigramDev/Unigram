@@ -36,12 +36,12 @@ namespace winrt::Telegram::Native::Calls::implementation
         return m_sourceGroups;
     }
 
-    winrt::Windows::UI::Xaml::Media::Stretch VoipVideoRendererToken::Stretch()
+    winrt::Microsoft::UI::Xaml::Media::Stretch VoipVideoRendererToken::Stretch()
     {
         return m_sink->m_stretch;
     }
 
-    void VoipVideoRendererToken::Stretch(winrt::Windows::UI::Xaml::Media::Stretch value)
+    void VoipVideoRendererToken::Stretch(winrt::Microsoft::UI::Xaml::Media::Stretch value)
     {
         m_sink->m_stretch = value;
     }

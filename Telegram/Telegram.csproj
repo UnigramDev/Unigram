@@ -3,7 +3,7 @@
     <OutputType>WinExe</OutputType>
     <TargetFramework>net8.0-windows10.0.22621.0</TargetFramework>
     <TargetPlatformMinVersion>10.0.17763.0</TargetPlatformMinVersion>
-    <WindowsSdkPackageVersion>10.0.22621.42</WindowsSdkPackageVersion>
+    <TargetPlatformVersion>10.0.22621.756</TargetPlatformVersion>
     <RootNamespace>Telegram</RootNamespace>
     <ApplicationManifest>app.manifest</ApplicationManifest>
     <Platforms>x86;x64;ARM64</Platforms>
@@ -36,9 +36,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.Windows.CsWinRT" Version="2.1.1" />
+    <PackageReference Include="Microsoft.Windows.CsWinRT" Version="2.0.3" />
     <PackageReference Include="Microsoft.Windows.SDK.BuildTools" Version="10.0.22621.3233" />
-    <PackageReference Include="Microsoft.WindowsAppSDK" Version="1.6.240821007-preview2" />
+    <PackageReference Include="Microsoft.WindowsAppSDK" Version="1.5.240607001" />
     <Manifest Include="$(ApplicationManifest)" />
   </ItemGroup>
   
@@ -122,9 +122,6 @@
     <None Remove="Assets\Mockup\sticker0.webp" />
     <None Remove="Assets\Mockup\sticker1.webp" />
     <None Remove="Controls\Messages\MessageTextBlock.cs" />
-    <None Remove="Properties\PublishProfiles\win10-arm64.pubxml" />
-    <None Remove="Properties\PublishProfiles\win10-x64.pubxml" />
-    <None Remove="Properties\PublishProfiles\win10-x86.pubxml" />
     <None Remove="ViewModels\Popups\ChooseUsersViewModel.cs" />
     <None Remove="Views\Popups\ChooseUsersPopup.xaml" />
     <None Remove="Views\Popups\ChooseUsersPopup.xaml.cs" />
@@ -1827,7 +1824,6 @@
     <Compile Include="Converters\InitialNameStringConverter.cs" />
     <Compile Include="Converters\NullToVisibilityConverter.cs" />
     <Compile Include="Controls\Media\Icons.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Themes\Messages.xaml.cs">
       <DependentUpon>Messages.xaml</DependentUpon>
     </Compile>
@@ -2158,7 +2154,6 @@
     <Content Include="Assets\Logos\StoreLogo.scale-200.png" />
     <Content Include="Assets\Logos\StoreLogo.scale-400.png" />
     <None Include="Package.StoreAssociation.xml" />
-    <Content Include="Properties\Default.rd.xml" />
   </ItemGroup>
   <ItemGroup>
     <ApplicationDefinition Include="App.xaml">
@@ -3592,9 +3587,9 @@
     </Page>
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Microsoft.Web.WebView2">
+    <!--<PackageReference Include="Microsoft.Web.WebView2">
       <Version>1.0.2651.64</Version>
-    </PackageReference>
+    </PackageReference>-->
     <PackageReference Include="Newtonsoft.Json">
       <Version>13.0.3</Version>
     </PackageReference>

@@ -6,6 +6,7 @@
 //
 using Microsoft.Graphics.Canvas;
 using Microsoft.Graphics.Canvas.Geometry;
+using Microsoft.UI.Composition;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,8 +15,6 @@ using Telegram.Navigation;
 using Telegram.Td.Api;
 using Telegram.ViewModels.Drawers;
 using Windows.UI;
-using Microsoft.UI.Composition;
-using Microsoft.UI.Xaml;
 
 namespace Telegram.Common
 {

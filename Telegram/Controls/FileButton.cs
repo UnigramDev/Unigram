@@ -5,15 +5,16 @@
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
 using Microsoft.Graphics.Canvas.Geometry;
-using System;
-using System.Numerics;
-using System.Runtime.CompilerServices;
-using Telegram.Controls.Media;
 using Microsoft.UI.Composition;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Automation;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Hosting;
+using System;
+using System.Numerics;
+using System.Runtime.CompilerServices;
+using Telegram.Controls.Media;
+using Telegram.Navigation;
 
 namespace Telegram.Controls
 {
@@ -289,13 +290,13 @@ namespace Telegram.Controls
 
             var leftShape = compositor.CreateSpriteShape(leftLine);
             leftShape.StrokeThickness = lineWidth;
-            leftShape.StrokeBrush = compositor.CreateColorBrush(Windows.UI.Colors.White);
+            leftShape.StrokeBrush = compositor.CreateColorBrush(Microsoft.UI.Colors.White);
             leftShape.StrokeStartCap = CompositionStrokeCap.Round;
             leftShape.StrokeEndCap = CompositionStrokeCap.Round;
 
             var rightShape = compositor.CreateSpriteShape(rightLine);
             rightShape.StrokeThickness = lineWidth;
-            rightShape.StrokeBrush = compositor.CreateColorBrush(Windows.UI.Colors.White);
+            rightShape.StrokeBrush = compositor.CreateColorBrush(Microsoft.UI.Colors.White);
             rightShape.StrokeStartCap = CompositionStrokeCap.Round;
             rightShape.StrokeEndCap = CompositionStrokeCap.Round;
 
@@ -306,7 +307,7 @@ namespace Telegram.Controls
 
             var arrowShape = compositor.CreateSpriteShape(arrowPath);
             arrowShape.StrokeThickness = lineWidth;
-            arrowShape.StrokeBrush = compositor.CreateColorBrush(Windows.UI.Colors.White);
+            arrowShape.StrokeBrush = compositor.CreateColorBrush(Microsoft.UI.Colors.White);
             arrowShape.StrokeStartCap = CompositionStrokeCap.Round;
             arrowShape.StrokeEndCap = CompositionStrokeCap.Round;
             arrowShape.StrokeLineJoin = CompositionStrokeLineJoin.Round;

@@ -1,8 +1,8 @@
-﻿using Telegram.Common;
-using Telegram.Td.Api;
-using Microsoft.UI.Xaml;
+﻿using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media;
+using Telegram.Common;
+using Telegram.Td.Api;
 
 namespace Telegram.Controls.Stories.Widgets
 {

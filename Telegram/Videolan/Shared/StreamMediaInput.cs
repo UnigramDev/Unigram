@@ -1,7 +1,6 @@
 ﻿using System;
 using System.IO;
 #if !APPLE && !ANDROID && !NETSTANDARD2_1 && !NET40
-using LibVLCSharp.Shared.Helpers;
 #endif
 
 namespace LibVLCSharp.Shared

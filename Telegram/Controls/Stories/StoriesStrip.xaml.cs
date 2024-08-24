@@ -1,4 +1,11 @@
-﻿using System;
+﻿using Microsoft.UI.Composition;
+using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Automation;
+using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Controls.Primitives;
+using Microsoft.UI.Xaml.Hosting;
+using Microsoft.UI.Xaml.Input;
+using System;
 using System.Collections.Specialized;
 using System.Numerics;
 using Telegram.Common;
@@ -7,13 +14,6 @@ using Telegram.Controls.Media;
 using Telegram.Td.Api;
 using Telegram.ViewModels.Stories;
 using Windows.Foundation;
-using Microsoft.UI.Composition;
-using Microsoft.UI.Xaml;
-using Microsoft.UI.Xaml.Automation;
-using Microsoft.UI.Xaml.Controls;
-using Microsoft.UI.Xaml.Controls.Primitives;
-using Microsoft.UI.Xaml.Hosting;
-using Microsoft.UI.Xaml.Input;
 using Point = Windows.Foundation.Point;
 
 namespace Telegram.Controls.Stories
@@ -601,7 +601,7 @@ namespace Telegram.Controls.Stories
                 //_collapsed = false;
 
                 //ChatsList.Padding = new Thickness(0, 88, 0, 0);
-                //ComposeButton.Background = new SolidColorBrush(Windows.UI.Colors.Red);
+                //ComposeButton.Background = new SolidColorBrush(Microsoft.UI.Colors.Red);
                 //m_progressAnimation.Properties.InsertBoolean("Collapsed", false);
                 //scrollViewer.ChangeView(null, 88, null, true);
                 //scrollViewer.SetVerticalPadding(88);

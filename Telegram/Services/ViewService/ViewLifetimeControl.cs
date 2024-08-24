@@ -26,6 +26,7 @@
 // certain objects may be bound to UI on given threads. Properties of those objects should only be updated
 // on that UI thread.
 
+using Microsoft.UI.Xaml;
 using System;
 using System.Collections.Concurrent;
 using System.Threading.Tasks;
@@ -33,7 +34,6 @@ using Telegram.Navigation;
 using Telegram.Views.Host;
 using Windows.UI.Core;
 using Windows.UI.ViewManagement;
-using Microsoft.UI.Xaml;
 
 namespace Telegram.Services.ViewService
 {

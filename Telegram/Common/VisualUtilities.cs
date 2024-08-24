@@ -4,14 +4,19 @@
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+using Microsoft.UI;
+using Microsoft.UI.Composition;
+using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Hosting;
+using Microsoft.UI.Xaml.Media;
+using Microsoft.UI.Xaml.Shapes;
 using System;
 using System.Collections.Generic;
 using System.Numerics;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
-using Microsoft.UI.Xaml;
-using Microsoft.UI.Xaml.Hosting;
-using Microsoft.UI.Xaml.Media;
+using Telegram.Navigation;
 
 namespace Telegram.Common
 {
@@ -109,7 +114,7 @@ namespace Telegram.Common
 
             var compositor = visual.Compositor;
 
-            var batch = compositor.CreateScopedBatch(Windows.UI.Composition.CompositionBatchTypes.Animation);
+            var batch = compositor.CreateScopedBatch(CompositionBatchTypes.Animation);
             batch.Completed += (s, args) =>
             {
                 visual.Opacity = newValue ? 1 : 0;
@@ -167,7 +172,7 @@ namespace Telegram.Common
             var weak = new WeakReference(callback);
             void handler(object sender, object e)
             {
-                Windows.UI.Xaml.Media.CompositionTarget.Rendering -= handler;
+                Microsoft.UI.Xaml.Media.CompositionTarget.Rendering -= handler;
 
                 if (weak.Target is Action callback)
                 {
@@ -177,7 +182,7 @@ namespace Telegram.Common
 
             try
             {
-                Windows.UI.Xaml.Media.CompositionTarget.Rendering += handler;
+                Microsoft.UI.Xaml.Media.CompositionTarget.Rendering += handler;
             }
             catch
             {
@@ -190,13 +195,13 @@ namespace Telegram.Common
             var tsc = new TaskCompletionSource<bool>();
             void handler(object sender, object e)
             {
-                Windows.UI.Xaml.Media.CompositionTarget.Rendering -= handler;
+                Microsoft.UI.Xaml.Media.CompositionTarget.Rendering -= handler;
                 tsc.SetResult(true);
             }
 
             try
             {
-                Windows.UI.Xaml.Media.CompositionTarget.Rendering += handler;
+                Microsoft.UI.Xaml.Media.CompositionTarget.Rendering += handler;
             }
             catch
             {
@@ -213,7 +218,7 @@ namespace Telegram.Common
             var weak = new WeakReference(callback);
             void handler(object sender, object e)
             {
-                Windows.UI.Xaml.Media.CompositionTarget.Rendered -= handler;
+                Microsoft.UI.Xaml.Media.CompositionTarget.Rendered -= handler;
 
                 if (weak.Target is Action callback)
                 {
@@ -223,7 +228,7 @@ namespace Telegram.Common
 
             try
             {
-                Windows.UI.Xaml.Media.CompositionTarget.Rendered += handler;
+                Microsoft.UI.Xaml.Media.CompositionTarget.Rendered += handler;
             }
             catch
             {
@@ -236,13 +241,13 @@ namespace Telegram.Common
             var tsc = new TaskCompletionSource<bool>();
             void handler(object sender, object e)
             {
-                Windows.UI.Xaml.Media.CompositionTarget.Rendered -= handler;
+                Microsoft.UI.Xaml.Media.CompositionTarget.Rendered -= handler;
                 tsc.SetResult(true);
             }
 
             try
             {
-                Windows.UI.Xaml.Media.CompositionTarget.Rendered += handler;
+                Microsoft.UI.Xaml.Media.CompositionTarget.Rendered += handler;
             }
             catch
             {

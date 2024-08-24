@@ -1,12 +1,12 @@
-﻿using System;
+﻿using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Navigation;
+using System;
 using System.Globalization;
 using Telegram.Common;
 using Telegram.Controls.Media;
 using Telegram.Converters;
 using Telegram.ViewModels.Chats;
-using Microsoft.UI.Xaml;
-using Microsoft.UI.Xaml.Controls;
-using Microsoft.UI.Xaml.Navigation;
 
 namespace Telegram.Controls.Cells
 {

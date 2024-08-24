@@ -6,6 +6,6 @@ namespace Telegram.Native
         Int32 PixelWidth { get; };
         Int32 PixelHeight { get; };
 
-        Windows.UI.Xaml.Media.Imaging.SurfaceImageSource Source { get; };
+        Microsoft.UI.Xaml.Media.Imaging.SurfaceImageSource Source { get; };
     }
 }

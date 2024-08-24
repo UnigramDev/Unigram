@@ -1,4 +1,6 @@
-﻿using Rg.DiffUtils;
+﻿using Microsoft.UI.Xaml.Data;
+using Microsoft.UI.Xaml.Navigation;
+using Rg.DiffUtils;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
@@ -11,8 +13,6 @@ using Telegram.Td.Api;
 using Telegram.ViewModels.Folders;
 using Telegram.Views.Popups;
 using Windows.Foundation;
-using Microsoft.UI.Xaml.Data;
-using Microsoft.UI.Xaml.Navigation;
 
 namespace Telegram.ViewModels.Business
 {

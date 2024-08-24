@@ -1,12 +1,12 @@
-﻿using Telegram.Common;
+﻿using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Controls.Primitives;
+using Microsoft.UI.Xaml.Navigation;
+using Telegram.Common;
 using Telegram.Controls;
 using Telegram.Controls.Drawers;
 using Telegram.Streams;
 using Telegram.ViewModels.Business;
 using Telegram.ViewModels.Drawers;
-using Microsoft.UI.Xaml;
-using Microsoft.UI.Xaml.Controls.Primitives;
-using Microsoft.UI.Xaml.Navigation;
 
 namespace Telegram.Views.Business
 {

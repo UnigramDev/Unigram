@@ -4,6 +4,8 @@
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Navigation;
 using System;
 using System.Linq;
 using System.Runtime.CompilerServices;
@@ -17,8 +19,6 @@ using Telegram.Services.Updates;
 using Telegram.Td.Api;
 using Telegram.Views.Payments;
 using Telegram.Views.Popups;
-using Microsoft.UI.Xaml.Controls;
-using Microsoft.UI.Xaml.Navigation;
 
 namespace Telegram.ViewModels.Payments
 {

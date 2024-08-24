@@ -3,7 +3,6 @@
 #include "ParticlesAnimation.g.h"
 
 using namespace winrt::Windows::Storage::Streams;
-using namespace winrt::Windows::UI::Xaml::Media::Imaging;
 
 namespace winrt::Telegram::Native::implementation
 {

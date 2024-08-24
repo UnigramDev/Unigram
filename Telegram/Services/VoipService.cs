@@ -5,6 +5,8 @@
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
 using Microsoft.Graphics.Canvas.UI.Xaml;
+using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Controls;
 using System;
 using System.IO;
 using System.Threading.Tasks;
@@ -22,7 +24,6 @@ using Windows.ApplicationModel.Calls;
 using Windows.Devices.Enumeration;
 using Windows.Graphics.Capture;
 using Windows.Storage;
-using Microsoft.UI.Xaml.Controls;
 
 namespace Telegram.Services
 {

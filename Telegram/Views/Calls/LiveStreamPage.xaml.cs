@@ -4,6 +4,15 @@
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+using Microsoft.UI;
+using Microsoft.UI.Composition;
+using Microsoft.UI.Input;
+using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Controls.Primitives;
+using Microsoft.UI.Xaml.Hosting;
+using Microsoft.UI.Xaml.Input;
+using Microsoft.UI.Xaml.Media;
 using System;
 using System.Threading.Tasks;
 using Telegram.Common;
@@ -17,17 +26,8 @@ using Telegram.Td.Api;
 using Telegram.Views.Host;
 using Telegram.Views.Popups;
 using Windows.Devices.Enumeration;
-using Microsoft.UI.Input;
 using Windows.System.Display;
-using Windows.UI;
-using Microsoft.UI.Composition;
 using Windows.UI.ViewManagement;
-using Microsoft.UI.Xaml;
-using Microsoft.UI.Xaml.Controls;
-using Microsoft.UI.Xaml.Controls.Primitives;
-using Microsoft.UI.Xaml.Hosting;
-using Microsoft.UI.Xaml.Input;
-using Microsoft.UI.Xaml.Media;
 
 namespace Telegram.Views.Calls
 {

@@ -1,4 +1,7 @@
-﻿using System.Globalization;
+﻿using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Navigation;
+using System.Globalization;
 using Telegram.Charts;
 using Telegram.Controls;
 using Telegram.Controls.Cells;
@@ -7,9 +10,6 @@ using Telegram.Controls.Media;
 using Telegram.Converters;
 using Telegram.Td.Api;
 using Telegram.ViewModels.Chats;
-using Microsoft.UI.Xaml;
-using Microsoft.UI.Xaml.Controls;
-using Microsoft.UI.Xaml.Navigation;
 
 namespace Telegram.Views.Chats
 {

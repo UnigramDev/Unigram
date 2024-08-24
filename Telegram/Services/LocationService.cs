@@ -4,6 +4,7 @@
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+using Microsoft.UI.Xaml.Controls;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -13,7 +14,6 @@ using Windows.ApplicationModel.ExtendedExecution;
 using Windows.Devices.Enumeration;
 using Windows.Devices.Geolocation;
 using Windows.System;
-using Microsoft.UI.Xaml.Controls;
 
 namespace Telegram.Services
 {

@@ -4,11 +4,8 @@ using System;
 using System.ComponentModel;
 using System.Threading.Tasks;
 using Telegram.Common;
-using Telegram.Native;
 using Telegram.Services;
 using Windows.Data.Json;
-using Microsoft.UI.Xaml;
-using Microsoft.UI.Xaml.Controls;
 
 namespace Telegram.Controls
 {

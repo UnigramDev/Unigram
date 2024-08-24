@@ -5,11 +5,11 @@
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
 using Microsoft.Graphics.Canvas.Geometry;
+using Microsoft.UI.Xaml;
 using System.Collections.Generic;
 using Telegram.Charts.Data;
 using Telegram.Common;
 using Windows.UI;
-using Microsoft.UI.Xaml;
 
 namespace Telegram.Charts.DataView
 {

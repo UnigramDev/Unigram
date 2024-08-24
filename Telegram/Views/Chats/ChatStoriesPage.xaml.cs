@@ -1,4 +1,10 @@
-﻿using System.Numerics;
+﻿using Microsoft.UI.Composition;
+using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Controls.Primitives;
+using Microsoft.UI.Xaml.Hosting;
+using Microsoft.UI.Xaml.Input;
+using System.Numerics;
 using Telegram.Common;
 using Telegram.Controls.Cells;
 using Telegram.Controls.Media;
@@ -6,12 +12,6 @@ using Telegram.Navigation;
 using Telegram.ViewModels.Chats;
 using Telegram.ViewModels.Stories;
 using Windows.Foundation;
-using Microsoft.UI.Composition;
-using Microsoft.UI.Xaml;
-using Microsoft.UI.Xaml.Controls;
-using Microsoft.UI.Xaml.Controls.Primitives;
-using Microsoft.UI.Xaml.Hosting;
-using Microsoft.UI.Xaml.Input;
 
 namespace Telegram.Views.Chats
 {

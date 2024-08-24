@@ -1,12 +1,13 @@
-﻿using Telegram.Common;
+﻿using Microsoft.UI;
+using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Media;
+using Telegram.Common;
 using Telegram.Controls.Media;
 using Telegram.Converters;
 using Telegram.Navigation;
 using Telegram.Services;
 using Telegram.Td.Api;
 using Windows.UI;
-using Microsoft.UI.Xaml.Controls;
-using Microsoft.UI.Xaml.Media;
 
 namespace Telegram.Controls.Cells.Revenue
 {
@@ -69,11 +70,11 @@ namespace Telegram.Controls.Cells.Revenue
                 else if (sourceBot.Purpose is BotTransactionPurposePaidMedia paidMedia)
                 {
                     Title.Text = Strings.StarMediaPurchase;
-                    Subtitle.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
+                    Subtitle.Visibility = Microsoft.UI.Xaml.Visibility.Collapsed;
 
                     if (paidMedia.Media.Count > 0)
                     {
-                        MediaPreview.Visibility = Windows.UI.Xaml.Visibility.Visible;
+                        MediaPreview.Visibility = Microsoft.UI.Xaml.Visibility.Visible;
 
                         UpdateMedia(clientService, paidMedia.Media[0], Media1, ref _media1Token);
 
@@ -81,18 +82,18 @@ namespace Telegram.Controls.Cells.Revenue
                         {
                             UpdateMedia(clientService, paidMedia.Media[1], Media2, ref _media2Token);
 
-                            Media2.Visibility = Windows.UI.Xaml.Visibility.Visible;
+                            Media2.Visibility = Microsoft.UI.Xaml.Visibility.Visible;
                         }
                         else
                         {
-                            Media2.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
+                            Media2.Visibility = Microsoft.UI.Xaml.Visibility.Collapsed;
                         }
                     }
                     else
                     {
                         Photo.SetUser(clientService, botUser, 36);
 
-                        MediaPreview.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
+                        MediaPreview.Visibility = Microsoft.UI.Xaml.Visibility.Collapsed;
                     }
                 }
                 else
@@ -102,7 +103,7 @@ namespace Telegram.Controls.Cells.Revenue
 
                     Photo.SetUser(clientService, botUser, 36);
 
-                    MediaPreview.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
+                    MediaPreview.Visibility = Microsoft.UI.Xaml.Visibility.Collapsed;
                 }
             }
             else if (transaction.Partner is StarTransactionPartnerBusiness sourceBusiness && clientService.TryGetUser(sourceBusiness.UserId, out User businessUser))

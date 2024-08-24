@@ -1,12 +1,12 @@
-﻿using System;
+﻿using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Media;
+using Microsoft.UI.Xaml.Media.Imaging;
+using Microsoft.UI.Xaml.Navigation;
+using System;
 using System.Globalization;
 using Telegram.Common;
 using Telegram.Td.Api;
 using Telegram.ViewModels.Business;
-using Microsoft.UI.Xaml;
-using Microsoft.UI.Xaml.Media;
-using Microsoft.UI.Xaml.Media.Imaging;
-using Microsoft.UI.Xaml.Navigation;
 
 namespace Telegram.Views.Business
 {

@@ -4,20 +4,20 @@
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+using Microsoft.UI.Composition;
+using Microsoft.UI.Composition.Interactions;
+using Microsoft.UI.Input;
+using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Hosting;
+using Microsoft.UI.Xaml.Input;
 using System;
 using System.Numerics;
 using Telegram.Common;
 using Telegram.Composition;
 using Telegram.Navigation;
-using Microsoft.UI.Input;
 using Windows.Foundation;
 using Windows.System;
-using Microsoft.UI.Composition;
-using Microsoft.UI.Composition.Interactions;
-using Microsoft.UI.Xaml;
-using Microsoft.UI.Xaml.Controls;
-using Microsoft.UI.Xaml.Hosting;
-using Microsoft.UI.Xaml.Input;
 
 namespace Telegram.Controls
 {
@@ -72,7 +72,7 @@ namespace Telegram.Controls
                 _hasInitialLoadedEventFired = true;
 
                 _hitTest = BootStrapper.Current.Compositor.CreateSpriteVisual();
-                _hitTest.Brush = BootStrapper.Current.Compositor.CreateColorBrush(Windows.UI.Colors.Transparent);
+                _hitTest.Brush = BootStrapper.Current.Compositor.CreateColorBrush(Microsoft.UI.Colors.Transparent);
 
                 if (ApiInfo.IsWindows11)
                 {

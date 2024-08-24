@@ -4,6 +4,11 @@
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+using Microsoft.UI;
+using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Documents;
+using Microsoft.UI.Xaml.Media;
 using System;
 using System.Text;
 using Telegram.Common;
@@ -16,11 +21,6 @@ using Telegram.ViewModels.Folders;
 using Telegram.ViewModels.Stories;
 using Telegram.Views;
 using Windows.Foundation;
-using Windows.UI;
-using Microsoft.UI.Xaml;
-using Microsoft.UI.Xaml.Controls;
-using Microsoft.UI.Xaml.Documents;
-using Microsoft.UI.Xaml.Media;
 
 namespace Telegram.Controls.Cells
 {

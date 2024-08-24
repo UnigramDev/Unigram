@@ -6,6 +6,7 @@
 //
 using Microsoft.Graphics.Canvas;
 using Microsoft.Graphics.Canvas.Brushes;
+using Microsoft.UI.Xaml.Media;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -19,7 +20,6 @@ using Telegram.Native;
 using Telegram.Td.Api;
 using Telegram.ViewModels;
 using Windows.UI;
-using Microsoft.UI.Xaml.Media;
 
 namespace Telegram.Td.Api
 {

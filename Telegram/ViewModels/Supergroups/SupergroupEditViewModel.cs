@@ -4,6 +4,8 @@
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Navigation;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -18,8 +20,6 @@ using Telegram.Views.Chats;
 using Telegram.Views.Popups;
 using Telegram.Views.Supergroups;
 using Telegram.Views.Supergroups.Popups;
-using Microsoft.UI.Xaml.Controls;
-using Microsoft.UI.Xaml.Navigation;
 
 namespace Telegram.ViewModels.Supergroups
 {

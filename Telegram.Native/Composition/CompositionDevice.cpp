@@ -5,7 +5,7 @@
 #include "Composition/CompositionDevice.g.cpp"
 #endif
 
-#include <winrt/Windows.UI.Xaml.Hosting.h>
+#include <winrt/Microsoft.UI.Xaml.Hosting.h>
 
 namespace winrt::Telegram::Native::Composition::implementation
 {
@@ -32,7 +32,7 @@ namespace winrt::Telegram::Native::Composition::implementation
 
 	winrt::Telegram::Native::Composition::DirectRectangleClip CompositionDevice::CreateRectangleClip(UIElement element)
 	{
-		return CreateRectangleClip(winrt::Windows::UI::Xaml::Hosting::ElementCompositionPreview::GetElementVisual(element));
+		return CreateRectangleClip(winrt::Microsoft::UI::Xaml::Hosting::ElementCompositionPreview::GetElementVisual(element));
 	}
 
 	winrt::Telegram::Native::Composition::DirectRectangleClip CompositionDevice::CreateRectangleClip(Visual visual)

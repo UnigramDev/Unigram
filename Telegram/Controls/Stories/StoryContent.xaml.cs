@@ -7,7 +7,17 @@
 using LibVLCSharp.Shared;
 using Microsoft.Graphics.Canvas;
 using Microsoft.Graphics.Canvas.Geometry;
+using Microsoft.UI;
+using Microsoft.UI.Composition;
+using Microsoft.UI.Text;
+using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Documents;
+using Microsoft.UI.Xaml.Hosting;
+using Microsoft.UI.Xaml.Input;
+using Microsoft.UI.Xaml.Media;
+using Microsoft.UI.Xaml.Media.Imaging;
+using Microsoft.UI.Xaml.Shapes;
 using System;
 using System.Diagnostics;
 using System.Linq;
@@ -21,16 +31,6 @@ using Telegram.Streams;
 using Telegram.Td.Api;
 using Telegram.ViewModels.Stories;
 using Windows.UI;
-using Microsoft.UI.Composition;
-using Microsoft.UI.Text;
-using Microsoft.UI.Xaml;
-using Microsoft.UI.Xaml.Controls;
-using Microsoft.UI.Xaml.Documents;
-using Microsoft.UI.Xaml.Hosting;
-using Microsoft.UI.Xaml.Input;
-using Microsoft.UI.Xaml.Media;
-using Microsoft.UI.Xaml.Media.Imaging;
-using Microsoft.UI.Xaml.Shapes;
 using Point = Windows.Foundation.Point;
 
 namespace Telegram.Controls.Stories
@@ -1672,7 +1672,7 @@ namespace Telegram.Controls.Stories
                     Height = 2,
                     RadiusX = 1,
                     RadiusY = 1,
-                    Fill = new SolidColorBrush(Windows.UI.Colors.White)
+                    Fill = new SolidColorBrush(Microsoft.UI.Colors.White)
                     {
                         Opacity = i < index ? 1 : 0.3
                     }
@@ -1691,7 +1691,7 @@ namespace Telegram.Controls.Stories
 
                     var shape2 = compositor.CreateSpriteShape();
                     shape2.Geometry = ellipse;
-                    shape2.FillBrush = compositor.CreateColorBrush(Windows.UI.Colors.White);
+                    shape2.FillBrush = compositor.CreateColorBrush(Microsoft.UI.Colors.White);
 
                     var visual = compositor.CreateShapeVisual();
                     visual.Shapes.Add(shape2);

@@ -4,14 +4,14 @@
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
-using System;
-using System.Collections.Generic;
-using Telegram.Controls.Media;
-using Telegram.Navigation;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Media;
+using System;
+using System.Collections.Generic;
+using Telegram.Controls.Media;
+using Telegram.Navigation;
 
 namespace Telegram.Controls
 {

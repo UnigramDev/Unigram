@@ -7,7 +7,14 @@
 using LinqToVisualTree;
 using Microsoft.Graphics.Canvas;
 using Microsoft.Graphics.Canvas.Geometry;
+using Microsoft.UI.Composition;
+using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Automation;
 using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Controls.Primitives;
+using Microsoft.UI.Xaml.Hosting;
+using Microsoft.UI.Xaml.Media;
+using Microsoft.UI.Xaml.Navigation;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -27,15 +34,7 @@ using Telegram.ViewModels;
 using Telegram.Views.Authorization;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.Foundation;
-using Microsoft.UI.Composition;
 using Windows.UI.ViewManagement;
-using Microsoft.UI.Xaml;
-using Microsoft.UI.Xaml.Automation;
-using Microsoft.UI.Xaml.Controls;
-using Microsoft.UI.Xaml.Controls.Primitives;
-using Microsoft.UI.Xaml.Hosting;
-using Microsoft.UI.Xaml.Media;
-using Microsoft.UI.Xaml.Navigation;
 using Point = Windows.Foundation.Point;
 
 namespace Telegram.Views.Host
@@ -932,8 +931,8 @@ namespace Telegram.Views.Host
                 //Transition.Background = new ImageBrush { ImageSource = bitmap, AlignmentX = AlignmentX.Center, AlignmentY = AlignmentY.Center, RelativeTransform = new ScaleTransform { ScaleY = -1, CenterY = 0.5 } };
 
                 Theme.Visibility = Visibility.Visible;
-                Theme.Foreground = new SolidColorBrush(ActualTheme != ElementTheme.Dark ? Windows.UI.Colors.White : Windows.UI.Colors.Black);
-                //Theme.Foreground = new SolidColorBrush(Windows.UI.Colors.White);
+                Theme.Foreground = new SolidColorBrush(ActualTheme != ElementTheme.Dark ? Microsoft.UI.Colors.White : Microsoft.UI.Colors.Black);
+                //Theme.Foreground = new SolidColorBrush(Microsoft.UI.Colors.White);
 
                 var actualWidth = (float)ActualWidth;
                 var actualHeight = (float)ActualHeight;
@@ -965,11 +964,11 @@ namespace Telegram.Views.Host
                 batch.Completed += (s, args) =>
                 {
                     visual.Clip = null;
-                    visual.Brush = visual.Compositor.CreateColorBrush(Windows.UI.Colors.Transparent);
+                    visual.Brush = visual.Compositor.CreateColorBrush(Microsoft.UI.Colors.Transparent);
                     //Transition.Background = null;
 
                     ElementCompositionPreview.SetElementChildVisual(Transition, visual.Compositor.CreateSpriteVisual());
-                    Theme.Foreground = new SolidColorBrush(ActualTheme == ElementTheme.Dark ? Windows.UI.Colors.White : Windows.UI.Colors.Black);
+                    Theme.Foreground = new SolidColorBrush(ActualTheme == ElementTheme.Dark ? Microsoft.UI.Colors.White : Microsoft.UI.Colors.Black);
                 };
 
                 CompositionEasingFunction ease;

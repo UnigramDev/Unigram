@@ -5,6 +5,10 @@
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
 using Microsoft.Graphics.Canvas.Geometry;
+using Microsoft.UI.Composition;
+using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Hosting;
 using System;
 using System.Numerics;
 using Telegram.Common;
@@ -17,10 +21,6 @@ using Telegram.ViewModels.Stories;
 using Telegram.Views;
 using Windows.Foundation;
 using Windows.UI;
-using Microsoft.UI.Composition;
-using Microsoft.UI.Xaml;
-using Microsoft.UI.Xaml.Controls;
-using Microsoft.UI.Xaml.Hosting;
 using Point = Windows.Foundation.Point;
 
 namespace Telegram.Controls

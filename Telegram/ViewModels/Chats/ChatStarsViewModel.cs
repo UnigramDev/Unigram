@@ -4,6 +4,9 @@
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Data;
+using Microsoft.UI.Xaml.Navigation;
 using System;
 using System.Threading.Tasks;
 using Telegram.Collections;
@@ -18,9 +21,6 @@ using Telegram.Td.Api;
 using Telegram.Views.Monetization.Popups;
 using Telegram.Views.Popups;
 using Telegram.Views.Stars.Popups;
-using Microsoft.UI.Xaml.Controls;
-using Microsoft.UI.Xaml.Data;
-using Microsoft.UI.Xaml.Navigation;
 
 namespace Telegram.ViewModels.Chats
 {

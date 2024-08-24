@@ -6,14 +6,13 @@
 //
 using Microsoft.Graphics.Canvas;
 using Microsoft.Graphics.Canvas.Effects;
+using Microsoft.UI.Composition;
+using Microsoft.UI.Xaml.Media;
 using System;
 using Telegram.Common;
 using Telegram.Navigation;
 using Windows.UI;
-using Microsoft.UI.Composition;
 using Windows.UI.Core;
-using Microsoft.UI.Xaml;
-using Microsoft.UI.Xaml.Media;
 
 namespace Telegram.Controls.Media
 {

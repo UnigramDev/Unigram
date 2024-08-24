@@ -1,10 +1,10 @@
-﻿using Telegram.Common;
+﻿using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Input;
+using Telegram.Common;
 using Telegram.Controls.Media;
 using Telegram.Views;
 using Windows.ApplicationModel;
-using Microsoft.UI.Xaml;
-using Microsoft.UI.Xaml.Controls;
-using Microsoft.UI.Xaml.Input;
 
 namespace Telegram.Controls
 {

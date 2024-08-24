@@ -6,14 +6,14 @@
 //
 using Microsoft.Graphics.Canvas;
 using Microsoft.Graphics.Canvas.Geometry;
-using Telegram.Navigation;
-using Telegram.Services;
-using Telegram.Td.Api;
 using Microsoft.UI.Composition;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Hosting;
 using Microsoft.UI.Xaml.Media;
+using Telegram.Navigation;
+using Telegram.Services;
+using Telegram.Td.Api;
 
 namespace Telegram.Controls
 {

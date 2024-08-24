@@ -1,6 +1,6 @@
-﻿using Telegram.ViewModels.Business;
-using Microsoft.UI.Xaml;
+﻿using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
+using Telegram.ViewModels.Business;
 
 namespace Telegram.Controls.Cells.Business
 {

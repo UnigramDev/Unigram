@@ -7,6 +7,8 @@
 using Microsoft.Graphics.Canvas;
 using Microsoft.Graphics.Canvas.UI;
 using Microsoft.Graphics.Canvas.UI.Xaml;
+using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Controls;
 using RLottie;
 using System;
 using System.Buffers;
@@ -23,9 +25,6 @@ using Windows.Data.Json;
 using Windows.Foundation;
 using Windows.Graphics;
 using Windows.Graphics.DirectX;
-using Microsoft.UI.Composition;
-using Microsoft.UI.Xaml;
-using Microsoft.UI.Xaml.Controls;
 
 namespace Telegram.Controls
 {

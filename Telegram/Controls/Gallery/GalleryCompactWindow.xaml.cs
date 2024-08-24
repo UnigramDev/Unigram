@@ -5,18 +5,18 @@
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
 using LibVLCSharp.Platforms.Windows;
+using Microsoft.UI;
+using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Hosting;
+using Microsoft.UI.Xaml.Input;
 using System;
 using Telegram.Common;
 using Telegram.Services.ViewService;
 using Telegram.Streams;
 using Telegram.ViewModels.Gallery;
 using Windows.ApplicationModel.Core;
-using Windows.UI;
 using Windows.UI.Core;
 using Windows.UI.ViewManagement;
-using Microsoft.UI.Xaml;
-using Microsoft.UI.Xaml.Hosting;
-using Microsoft.UI.Xaml.Input;
 
 namespace Telegram.Controls.Gallery
 {

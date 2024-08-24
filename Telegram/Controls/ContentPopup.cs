@@ -4,15 +4,6 @@
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
-using System.Numerics;
-using System.Threading.Tasks;
-using Telegram.Common;
-using Telegram.Composition;
-using Telegram.Navigation;
-using Telegram.Services;
-using Telegram.Views.Host;
-using Windows.Foundation;
-using Windows.UI;
 using Microsoft.UI.Composition;
 using Microsoft.UI.Input;
 using Microsoft.UI.Xaml;
@@ -23,6 +14,15 @@ using Microsoft.UI.Xaml.Hosting;
 using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Shapes;
+using System.Numerics;
+using System.Threading.Tasks;
+using Telegram.Common;
+using Telegram.Composition;
+using Telegram.Navigation;
+using Telegram.Services;
+using Telegram.Views.Host;
+using Windows.Foundation;
+using Windows.UI;
 
 namespace Telegram.Controls
 {

@@ -4,11 +4,11 @@
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
-using System.Numerics;
-using Telegram.Common;
 using Microsoft.UI.Composition;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Hosting;
+using System.Numerics;
+using Telegram.Common;
 
 namespace Telegram.Controls.Chats
 {

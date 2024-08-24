@@ -5,7 +5,15 @@
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
 using Microsoft.Graphics.Canvas.Geometry;
+using Microsoft.UI;
+using Microsoft.UI.Composition;
+using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Automation;
 using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Documents;
+using Microsoft.UI.Xaml.Hosting;
+using Microsoft.UI.Xaml.Markup;
+using Microsoft.UI.Xaml.Media;
 using System;
 using System.Collections.Generic;
 using System.Numerics;
@@ -26,17 +34,6 @@ using Telegram.Td.Api;
 using Telegram.ViewModels;
 using Telegram.ViewModels.Stories;
 using Windows.Foundation;
-using Windows.UI;
-using Microsoft.UI.Composition;
-using Microsoft.UI.Text;
-using Microsoft.UI.Xaml;
-using Microsoft.UI.Xaml.Automation;
-using Microsoft.UI.Xaml.Controls;
-using Microsoft.UI.Xaml.Documents;
-using Microsoft.UI.Xaml.Hosting;
-using Microsoft.UI.Xaml.Markup;
-using Microsoft.UI.Xaml.Media;
-using FontWeights = Microsoft.UI.Text.FontWeights;
 
 namespace Telegram.Controls.Messages
 {
@@ -1016,8 +1013,8 @@ namespace Telegram.Controls.Messages
 
                 var text = string.Format(header ? " {0} @" : "{0} @", Strings.ViaBot);
                 var hyperlink = new Hyperlink();
-                hyperlink.Inlines.Add(CreateRun(text, FontWeights.Normal));
-                hyperlink.Inlines.Add(CreateRun(viaBotUsername));
+                //hyperlink.Inlines.Add(CreateRun(text, FontWeights.Normal));
+                //hyperlink.Inlines.Add(CreateRun(viaBotUsername));
                 hyperlink.UnderlineStyle = UnderlineStyle.None;
                 hyperlink.Foreground = light ? new SolidColorBrush(Colors.White) : GetBrush("MessageHeaderForegroundBrush");
                 hyperlink.Click += ViaBot_Click;

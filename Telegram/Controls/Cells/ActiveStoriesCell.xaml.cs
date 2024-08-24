@@ -6,15 +6,16 @@
 //
 using Microsoft.Graphics.Canvas;
 using Microsoft.Graphics.Canvas.Geometry;
+using Microsoft.UI;
+using Microsoft.UI.Composition;
+using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Controls.Primitives;
+using Microsoft.UI.Xaml.Hosting;
 using System;
 using System.Globalization;
 using System.Numerics;
 using Telegram.Td.Api;
 using Telegram.ViewModels.Stories;
-using Microsoft.UI.Composition;
-using Microsoft.UI.Xaml.Controls;
-using Microsoft.UI.Xaml.Controls.Primitives;
-using Microsoft.UI.Xaml.Hosting;
 
 namespace Telegram.Controls.Cells
 {
@@ -230,7 +231,7 @@ namespace Telegram.Controls.Cells
 
             var shape2 = compositor.CreateSpriteShape();
             shape2.Geometry = ellisss;
-            shape2.StrokeBrush = compositor.CreateColorBrush(index == 1 ? Windows.UI.Colors.Red : Windows.UI.Colors.Blue);
+            shape2.StrokeBrush = compositor.CreateColorBrush(index == 1 ? Colors.Red : Colors.Blue);
             shape2.StrokeThickness = 2;
 
             var test = compositor.CreateShapeVisual();

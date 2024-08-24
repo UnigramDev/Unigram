@@ -1,6 +1,6 @@
-﻿using System.Globalization;
+﻿using Microsoft.UI.Xaml.Controls;
+using System.Globalization;
 using Telegram.Converters;
-using Microsoft.UI.Xaml.Controls;
 
 namespace Telegram.Controls.Cells
 {

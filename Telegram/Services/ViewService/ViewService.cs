@@ -4,6 +4,7 @@
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+using Microsoft.UI.Xaml;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
@@ -13,7 +14,6 @@ using Telegram.Views.Host;
 using Windows.ApplicationModel.Core;
 using Windows.Foundation;
 using Windows.UI.ViewManagement;
-using Microsoft.UI.Xaml;
 
 namespace Telegram.Services.ViewService
 {

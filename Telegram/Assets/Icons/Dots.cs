@@ -49,6 +49,7 @@ using System.Collections.Generic;
 using System.Numerics;
 using Windows.Graphics;
 using Windows.UI;
+using Microsoft.UI;
 using Microsoft.UI.Composition;
 
 namespace Telegram.Assets.Icons

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.UI.Xaml.Navigation;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
@@ -10,7 +11,6 @@ using Telegram.Services;
 using Telegram.Td.Api;
 using Telegram.Views.Business;
 using Telegram.Views.Business.Popups;
-using Microsoft.UI.Xaml.Navigation;
 
 namespace Telegram.ViewModels.Business
 {

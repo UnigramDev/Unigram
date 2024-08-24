@@ -1,4 +1,6 @@
-﻿using Rg.DiffUtils;
+﻿using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Navigation;
+using Rg.DiffUtils;
 using System.Threading.Tasks;
 using Telegram.Common;
 using Telegram.Controls;
@@ -9,8 +11,6 @@ using Telegram.Td.Api;
 using Telegram.ViewModels.Delegates;
 using Telegram.Views;
 using Telegram.Views.Popups;
-using Microsoft.UI.Xaml.Controls;
-using Microsoft.UI.Xaml.Navigation;
 
 namespace Telegram.ViewModels.Business
 {

@@ -4,10 +4,10 @@
 
 #include <D2d1_3.h>
 
-#include <winrt/Windows.UI.Xaml.Media.Imaging.h>
+#include <winrt/Microsoft.UI.Xaml.Media.Imaging.h>
 #include <windows.ui.xaml.media.dxinterop.h>
 
-using namespace winrt::Windows::UI::Xaml::Media::Imaging;
+using namespace winrt::Microsoft::UI::Xaml::Media::Imaging;
 
 namespace winrt::Telegram::Native::implementation
 {
