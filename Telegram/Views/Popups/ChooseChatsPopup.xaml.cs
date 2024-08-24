@@ -615,9 +615,9 @@ namespace Telegram.Views.Popups
         }
 
         [Obsolete]
-        public void Legacy()
+        public void Legacy(int sessionId)
         {
-            DataContext = TypeResolver.Current.Resolve<ChooseChatsViewModel>();
+            DataContext = TypeResolver.Current.Resolve<ChooseChatsViewModel>(sessionId);
         }
 
         private bool _legacyNavigated;
@@ -692,10 +692,10 @@ namespace Telegram.Views.Popups
 
         #region Show
 
-        public static async Task<Chat> PickChatAsync(string title, ChooseChatsOptions options)
+        public static async Task<Chat> PickChatAsync(int sessionId, string title, ChooseChatsOptions options)
         {
             var popup = new ChooseChatsPopup();
-            popup.Legacy();
+            popup.Legacy(sessionId);
             popup.ViewModel.Title = title;
             popup.ChatFolders.Visibility = Visibility.Collapsed;
 
@@ -710,7 +710,7 @@ namespace Telegram.Views.Popups
 
         public static async Task<User> PickUserAsync(IClientService clientService, string title, bool contact)
         {
-            return clientService.GetUser(await PickChatAsync(title, contact ? ChooseChatsOptions.Contacts : new ChooseChatsOptions()
+            return clientService.GetUser(await PickChatAsync(clientService.SessionId, title, contact ? ChooseChatsOptions.Contacts : new ChooseChatsOptions()
             {
                 AllowChannelChats = false,
                 AllowGroupChats = false,
@@ -726,10 +726,10 @@ namespace Telegram.Views.Popups
             }));
         }
 
-        public static async Task<IList<Chat>> PickChatsAsync(string title, long[] selected, ChooseChatsOptions options, ListViewSelectionMode selectionMode = ListViewSelectionMode.Multiple)
+        public static async Task<IList<Chat>> PickChatsAsync(int sessionId, string title, long[] selected, ChooseChatsOptions options, ListViewSelectionMode selectionMode = ListViewSelectionMode.Multiple)
         {
             var popup = new ChooseChatsPopup();
-            popup.Legacy();
+            popup.Legacy(sessionId);
             popup.ViewModel.SelectionMode = selectionMode;
             popup.ViewModel.Title = title;
             popup.PrimaryButtonText = Strings.OK;
@@ -745,7 +745,7 @@ namespace Telegram.Views.Popups
 
         public static async Task<IList<User>> PickUsersAsync(IClientService clientService, string title, ListViewSelectionMode selectionMode = ListViewSelectionMode.Multiple)
         {
-            return (await PickChatsAsync(title, Array.Empty<long>(), ChooseChatsOptions.InviteUsers, selectionMode))?.Select(x => clientService.GetUser(x)).Where(x => x != null).ToList();
+            return (await PickChatsAsync(clientService.SessionId, title, Array.Empty<long>(), ChooseChatsOptions.InviteUsers, selectionMode))?.Select(x => clientService.GetUser(x)).Where(x => x != null).ToList();
         }
 
         public Task<ContentDialogResult> PickAsync(IList<long> selectedItems, ChooseChatsOptions options, ListViewSelectionMode selectionMode = ListViewSelectionMode.Multiple)
@@ -780,7 +780,7 @@ namespace Telegram.Views.Popups
 
         #region PickFiltersAsync
 
-        public static async Task<IList<ChatFolderElement>> AddExecute(bool include, bool allowFilters, bool business, IList<ChatFolderElement> target)
+        public static async Task<IList<ChatFolderElement>> AddExecute(int sessionId, bool include, bool allowFilters, bool business, IList<ChatFolderElement> target)
         {
             if (allowFilters)
             {
@@ -857,7 +857,7 @@ namespace Telegram.Views.Popups
                 });
 
                 var popup = new ChooseChatsPopup();
-                popup.Legacy();
+                popup.Legacy(sessionId);
                 popup.ViewModel.Title = include ? Strings.FilterAlwaysShow : Strings.FilterNeverShow;
                 popup.ViewModel.AllowEmptySelection = true;
                 popup.ViewModel.Folders.Clear();
@@ -892,7 +892,7 @@ namespace Telegram.Views.Popups
             else
             {
                 var popup = new ChooseChatsPopup();
-                popup.Legacy();
+                popup.Legacy(sessionId);
                 popup.ViewModel.Title = include ? Strings.FilterAlwaysShow : Strings.FilterNeverShow;
                 popup.ViewModel.AllowEmptySelection = true;
                 popup.ViewModel.Folders.Clear();

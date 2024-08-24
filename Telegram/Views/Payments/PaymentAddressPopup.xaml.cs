@@ -18,10 +18,10 @@ namespace Telegram.Views.Payments
 
         public ValidatedOrderInfo ValidatedInfo { get; private set; }
 
-        public PaymentAddressPopup(InputInvoice inputInvoice, Invoice invoice, OrderInfo info)
+        public PaymentAddressPopup(int sessionId, InputInvoice inputInvoice, Invoice invoice, OrderInfo info)
         {
             InitializeComponent();
-            DataContext = TypeResolver.Current.Resolve<PaymentAddressViewModel>();
+            DataContext = TypeResolver.Current.Resolve<PaymentAddressViewModel>(sessionId);
 
             Title = Strings.PaymentShippingInfo;
             PrimaryButtonText = Strings.OK;

@@ -760,7 +760,7 @@ namespace Telegram.ViewModels
 
         public async void SendLocation()
         {
-            var popup = new SendLocationPopup();
+            var popup = new SendLocationPopup(SessionId);
 
             var confirm = await ShowPopupAsync(popup);
             if (confirm == ContentDialogResult.Primary)

@@ -34,10 +34,10 @@ namespace Telegram.Views.Popups
 
         public InputMessageContent Media { get; private set; }
 
-        public SendLocationPopup()
+        public SendLocationPopup(int sessionId)
         {
             InitializeComponent();
-            DataContext = TypeResolver.Current.Resolve<SendLocationViewModel>();
+            DataContext = TypeResolver.Current.Resolve<SendLocationViewModel>(sessionId);
 
             Title = Strings.AttachLocation;
 

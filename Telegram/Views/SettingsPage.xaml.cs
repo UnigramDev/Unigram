@@ -29,7 +29,6 @@ namespace Telegram.Views
         public SettingsPage()
         {
             InitializeComponent();
-            DataContext = TypeResolver.Current.Resolve<SettingsViewModel, ISettingsDelegate>(this);
 
             NavigationCacheMode = NavigationCacheMode.Required;
 

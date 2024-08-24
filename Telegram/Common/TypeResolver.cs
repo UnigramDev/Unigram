@@ -190,13 +190,6 @@ namespace Telegram.Views
             return result != null;
         }
 
-        public TService Resolve<TService, TDelegate>(TDelegate delegato)
-            where TService : IDelegable<TDelegate>
-            where TDelegate : IViewModelDelegate
-        {
-            return Resolve<TService, TDelegate>(delegato, int.MaxValue);
-        }
-
         public TService Resolve<TService, TDelegate>(TDelegate delegato, int session)
             where TService : IDelegable<TDelegate>
             where TDelegate : IViewModelDelegate
