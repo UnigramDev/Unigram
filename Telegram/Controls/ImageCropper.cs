@@ -229,7 +229,7 @@ namespace Telegram.Controls
 
             //if (animate && _clipVisual != null)
             //{
-            //    var animation = Window.Current.Compositor.CreatePathKeyFrameAnimation();
+            //    var animation = BootStrapper.Current.Compositor.CreatePathKeyFrameAnimation();
             //    animation.InsertKeyFrame(0, _clipGeometry.Path);
             //    animation.InsertKeyFrame(1, GetCheckMark(_clipVisual.Size, new Rect(rect.Left * w, rect.Top * h, rect.Width * w, rect.Height * h)));
             //    animation.Duration = TimeSpan.FromSeconds(3);

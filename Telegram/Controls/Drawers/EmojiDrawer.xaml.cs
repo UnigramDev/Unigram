@@ -76,9 +76,9 @@ namespace Telegram.Controls.Drawers
         {
             InitializeComponent();
 
-            ElementComposition.GetElementVisual(this).Clip = Window.Current.Compositor.CreateInsetClip();
+            this.CreateInsetClip();
 
-            var header = DropShadowEx.Attach(Separator);
+            var header = VisualUtilities.DropShadow(Separator);
             header.Clip = header.Compositor.CreateInsetClip(0, 40, 0, -40);
 
             _handler = new AnimatedListHandler(List, AnimatedListType.Emoji);

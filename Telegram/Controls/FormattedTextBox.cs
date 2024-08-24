@@ -125,7 +125,7 @@ namespace Telegram.Controls
 
             if (Document.Selection.Length != 0)
             {
-                MessageHelper.CopyText(GetFormattedText(Document.Selection), false);
+                MessageHelper.CopyText(null, GetFormattedText(Document.Selection));
             }
         }
 
@@ -135,7 +135,7 @@ namespace Telegram.Controls
 
             if (Document.Selection.Length != 0)
             {
-                MessageHelper.CopyText(GetFormattedText(Document.Selection, true), false);
+                MessageHelper.CopyText(null, GetFormattedText(Document.Selection, true));
             }
         }
 
@@ -588,7 +588,7 @@ namespace Telegram.Controls
             popup.Width = popup.MinWidth = popup.MaxWidth = 314;
             popup.IsLightDismissEnabled = true;
 
-            var confirm = await popup.ShowQueuedAsync();
+            var confirm = await popup.ShowQueuedAsync(XamlRoot);
             if (confirm != true)
             {
                 return;

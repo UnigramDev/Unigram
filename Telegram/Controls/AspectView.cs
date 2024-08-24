@@ -25,7 +25,7 @@ namespace Telegram.Controls
 
     public struct FixedSize
     {
-        public FixedSize(double  width, double height)
+        public FixedSize(double width, double height)
         {
             Width = width;
             Height = height;

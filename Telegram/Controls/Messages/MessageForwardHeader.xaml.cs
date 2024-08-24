@@ -6,6 +6,7 @@ using System.Numerics;
 using Telegram.Common;
 using Telegram.Controls.Media;
 using Telegram.Native;
+using Telegram.Navigation;
 using Telegram.Services;
 using Telegram.Td.Api;
 using Telegram.ViewModels;
@@ -214,7 +215,7 @@ namespace Telegram.Controls.Messages
                     _visual.Clip = _clip = _visual.Compositor.CreateGeometricClip();
                 }
 
-                _clip.Geometry = Window.Current.Compositor.CreatePathGeometry(new CompositionPath(result));
+                _clip.Geometry = BootStrapper.Current.Compositor.CreatePathGeometry(new CompositionPath(result));
             }
 
             base.OnPointerEntered(e);

@@ -10,6 +10,7 @@ using System;
 using System.Numerics;
 using Telegram.Controls.Media;
 using Telegram.Native.Calls;
+using Telegram.Navigation;
 using Telegram.Services;
 using Telegram.Td.Api;
 using Telegram.Views.Calls;
@@ -145,7 +146,7 @@ namespace Telegram.Controls.Cells
 
             _infoCollapsed = !show;
 
-            var anim = Window.Current.Compositor.CreateScalarKeyFrameAnimation();
+            var anim = BootStrapper.Current.Compositor.CreateScalarKeyFrameAnimation();
             //anim.InsertKeyFrame(0, show ? 0 : 1);
             anim.InsertKeyFrame(1, show ? 1 : 0);
 
@@ -181,7 +182,7 @@ namespace Telegram.Controls.Cells
 
             Back.IsEnabled = Mode.IsEnabled = Pin.IsEnabled = show;
 
-            var anim = Window.Current.Compositor.CreateScalarKeyFrameAnimation();
+            var anim = BootStrapper.Current.Compositor.CreateScalarKeyFrameAnimation();
             anim.InsertKeyFrame(1, show ? 1 : 0);
 
             var header = ElementComposition.GetElementVisual(Header);
@@ -211,13 +212,13 @@ namespace Telegram.Controls.Cells
                     Source = new CompositionEffectSourceParameter("backdrop")
                 };
 
-                var effectFactory = Window.Current.Compositor.CreateEffectFactory(graphicsEffect, new[] { "Blur.BlurAmount" });
+                var effectFactory = BootStrapper.Current.Compositor.CreateEffectFactory(graphicsEffect, new[] { "Blur.BlurAmount" });
                 var effectBrush = effectFactory.CreateBrush();
-                var backdrop = Window.Current.Compositor.CreateBackdropBrush();
+                var backdrop = BootStrapper.Current.Compositor.CreateBackdropBrush();
                 effectBrush.SetSourceParameter("backdrop", backdrop);
 
                 _pausedBrush = effectBrush;
-                _pausedVisual = Window.Current.Compositor.CreateSpriteVisual();
+                _pausedVisual = BootStrapper.Current.Compositor.CreateSpriteVisual();
                 _pausedVisual.Size = ActualSize;
                 _pausedVisual.Brush = effectBrush;
 
@@ -225,11 +226,11 @@ namespace Telegram.Controls.Cells
                 PausedRoot.Visibility = Visibility.Visible;
                 Scrim.Visibility = Visibility.Collapsed;
 
-                //var blur = Window.Current.Compositor.CreateScalarKeyFrameAnimation();
+                //var blur = BootStrapper.Current.Compositor.CreateScalarKeyFrameAnimation();
                 //blur.Duration = TimeSpan.FromMilliseconds(300);
                 //blur.InsertKeyFrame(1, 10);
 
-                //var anim = Window.Current.Compositor.CreateScalarKeyFrameAnimation();
+                //var anim = BootStrapper.Current.Compositor.CreateScalarKeyFrameAnimation();
                 //anim.InsertKeyFrame(0, show ? 0 : 1);
                 //anim.InsertKeyFrame(1, show ? 1 : 0);
 

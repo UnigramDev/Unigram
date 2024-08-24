@@ -70,11 +70,14 @@ namespace Telegram.Services
 
         Task<bool> CanChooseAliasAsync(long chatId);
 
-        Task JoinAsync(long chatId);
-        Task RejoinAsync();
+        // TODO: WinUI - passing XamlRoot is a bit ugly,
+        // but call window doesn't have a navigation service.
+
+        Task JoinAsync(XamlRoot xamlRoot, long chatId);
+        Task RejoinAsync(XamlRoot xamlRoot);
         Task LeaveAsync();
 
-        Task CreateAsync(long chatId);
+        Task CreateAsync(XamlRoot xamlRoot, long chatId);
         Task DiscardAsync();
 
 #if ENABLE_CALLS
@@ -208,9 +211,9 @@ namespace Telegram.Services
             return null;
         }
 
-        public async Task JoinAsync(long chatId)
+        public async Task JoinAsync(XamlRoot xamlRoot, long chatId)
         {
-            if (await MediaDeviceWatcher.CheckIfUnsupportedAsync())
+            if (await MediaDeviceWatcher.CheckIfUnsupportedAsync(xamlRoot))
             {
                 return;
             }
@@ -221,7 +224,7 @@ namespace Telegram.Services
                 return;
             }
 
-            await JoinAsyncInternal(chat, chat.VideoChat.GroupCallId, null);
+            await JoinAsyncInternal(xamlRoot, chat, chat.VideoChat.GroupCallId, null);
         }
 
         public Task LeaveAsync()
@@ -229,9 +232,9 @@ namespace Telegram.Services
             return DisposeAsync(false);
         }
 
-        public async Task CreateAsync(long chatId)
+        public async Task CreateAsync(XamlRoot xamlRoot, long chatId)
         {
-            if (await MediaDeviceWatcher.CheckIfUnsupportedAsync())
+            if (await MediaDeviceWatcher.CheckIfUnsupportedAsync(xamlRoot))
             {
                 return;
             }
@@ -246,7 +249,7 @@ namespace Telegram.Services
 
             var popup = new VideoChatAliasesPopup(ClientService, chat, true, _availableAliases?.Senders.ToArray());
 
-            var confirm = await popup.ShowQueuedAsync();
+            var confirm = await popup.ShowQueuedAsync(xamlRoot);
             if (confirm == ContentDialogResult.Primary)
             {
                 var participantId = popup.SelectedSender ?? new MessageSenderUser(ClientService.Options.MyId);
@@ -256,7 +259,7 @@ namespace Telegram.Services
                 {
                     var schedule = new ScheduleVideoChatPopup(chat.Type is ChatTypeSupergroup supergroup && supergroup.IsChannel);
 
-                    var again = await schedule.ShowQueuedAsync();
+                    var again = await schedule.ShowQueuedAsync(xamlRoot);
                     if (again != ContentDialogResult.Primary)
                     {
                         return;
@@ -268,7 +271,7 @@ namespace Telegram.Services
                 {
                     var streams = new VideoChatStreamsPopup(ClientService, chat.Id, true);
 
-                    var again = await streams.ShowQueuedAsync();
+                    var again = await streams.ShowQueuedAsync(xamlRoot);
                     if (again != ContentDialogResult.Primary)
                     {
                         return;
@@ -278,7 +281,7 @@ namespace Telegram.Services
                     {
                         var schedule = new ScheduleVideoChatPopup(true);
 
-                        var oneMore = await schedule.ShowQueuedAsync();
+                        var oneMore = await schedule.ShowQueuedAsync(xamlRoot);
                         if (oneMore != ContentDialogResult.Primary)
                         {
                             return;
@@ -291,12 +294,12 @@ namespace Telegram.Services
                 var response = await ClientService.SendAsync(new CreateVideoChat(chat.Id, string.Empty, startDate, popup.IsStartWithSelected));
                 if (response is GroupCallId groupCallId)
                 {
-                    await JoinAsyncInternal(chat, groupCallId.Id, participantId);
+                    await JoinAsyncInternal(xamlRoot, chat, groupCallId.Id, participantId);
                 }
             }
         }
 
-        private async Task JoinAsyncInternal(Chat chat, int groupCallId, MessageSender alias)
+        private async Task JoinAsyncInternal(XamlRoot xamlRoot, Chat chat, int groupCallId, MessageSender alias)
         {
             var activeCall = _call;
             if (activeCall != null)
@@ -308,7 +311,7 @@ namespace Telegram.Services
                 }
                 else
                 {
-                    var confirm = await MessagePopup.ShowAsync(string.Format(Strings.VoipOngoingChatAlert, _chat.Title, chat.Title), Strings.VoipOngoingChatAlertTitle, Strings.OK, Strings.Cancel);
+                    var confirm = await MessagePopup.ShowAsync(xamlRoot, string.Format(Strings.VoipOngoingChatAlert, _chat.Title, chat.Title), Strings.VoipOngoingChatAlertTitle, Strings.OK, Strings.Cancel);
                     if (confirm != ContentDialogResult.Primary)
                     {
                         return;
@@ -320,14 +323,14 @@ namespace Telegram.Services
 
             alias ??= chat.VideoChat.DefaultParticipantId;
 
-            alias ??= await PickAliasAsync(chat, false);
+            alias ??= await PickAliasAsync(xamlRoot, chat, false);
 
             var response = await ClientService.SendAsync(new GetGroupCall(groupCallId));
             if (response is GroupCall groupCall)
             {
                 if (!groupCall.IsRtmpStream)
                 {
-                    var permissions = await MediaDeviceWatcher.CheckAccessAsync(true, false);
+                    var permissions = await MediaDeviceWatcher.CheckAccessAsync(xamlRoot, true, false);
                     if (permissions == false)
                     {
                         return;
@@ -442,7 +445,7 @@ namespace Telegram.Services
             await LeaveAsync();
         }
 
-        public async Task RejoinAsync()
+        public async Task RejoinAsync(XamlRoot xamlRoot)
         {
             var call = _call;
             var chat = _chat;
@@ -452,14 +455,14 @@ namespace Telegram.Services
                 return;
             }
 
-            var alias = await PickAliasAsync(chat, true);
+            var alias = await PickAliasAsync(xamlRoot, chat, true);
             if (alias != null)
             {
                 Rejoin(call, alias);
             }
         }
 
-        private async Task<MessageSender> PickAliasAsync(Chat chat, bool darkTheme)
+        private async Task<MessageSender> PickAliasAsync(XamlRoot xamlRoot, Chat chat, bool darkTheme)
         {
             var available = await CanChooseAliasAsync(chat.Id);
             if (available && _availableAliases != null)
@@ -467,7 +470,7 @@ namespace Telegram.Services
                 var popup = new VideoChatAliasesPopup(ClientService, chat, false, _availableAliases.Senders.ToArray());
                 popup.RequestedTheme = darkTheme ? ElementTheme.Dark : ElementTheme.Default;
 
-                var confirm = await popup.ShowQueuedAsync();
+                var confirm = await popup.ShowQueuedAsync(xamlRoot);
                 if (confirm == ContentDialogResult.Primary)
                 {
                     return popup.SelectedSender;

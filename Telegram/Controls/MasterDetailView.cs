@@ -336,10 +336,10 @@ namespace Telegram.Controls
             ElementCompositionPreview.SetIsTranslationEnabled(BackButton, true);
 
             var detailVisual = ElementComposition.GetElementVisual(DetailPresenter);
-            detailVisual.Clip = Window.Current.Compositor.CreateInsetClip();
+            detailVisual.Clip = detailVisual.Compositor.CreateInsetClip();
 
             var detailVisual2 = ElementComposition.GetElementVisual(DetailHeaderPresenter2);
-            detailVisual2.Clip = Window.Current.Compositor.CreateInsetClip();
+            detailVisual2.Clip = detailVisual.Compositor.CreateInsetClip();
 
             var visual1 = ElementComposition.GetElementVisual(DetailHeaderBackground);
             var visual2 = ElementComposition.GetElementVisual(DetailHeaderPresenter);
@@ -482,7 +482,7 @@ namespace Telegram.Controls
         private void ShowHideDetailHeader(bool show, bool showBackground)
         {
             var detailVisual = ElementComposition.GetElementVisual(DetailPresenter);
-            detailVisual.Clip = Window.Current.Compositor.CreateInsetClip();
+            detailVisual.Clip = detailVisual.Compositor.CreateInsetClip();
 
             if (detailVisual.Clip is InsetClip clip)
             {

@@ -114,7 +114,7 @@ namespace Telegram.ViewModels
                 return;
             }
 
-            MessageHelper.CopyLink(link.ToString());
+            MessageHelper.CopyLink(NavigationService.XamlRoot, link.ToString());
         }
     }
 }

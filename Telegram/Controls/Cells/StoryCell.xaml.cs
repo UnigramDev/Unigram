@@ -44,7 +44,7 @@ namespace Telegram.Controls.Cells
             if (glyph != null)
             {
                 Glyph.Text = glyph;
-                DropShadowEx.Attach(Glyph, target: Shadow);
+                VisualUtilities.DropShadow(Glyph, target: Shadow);
             }
             else
             {

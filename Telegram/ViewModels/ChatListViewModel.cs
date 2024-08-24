@@ -17,7 +17,6 @@ using Telegram.Controls;
 using Telegram.Navigation;
 using Telegram.Navigation.Services;
 using Telegram.Services;
-using Telegram.Streams;
 using Telegram.Td.Api;
 using Telegram.ViewModels.Delegates;
 using Telegram.Views.Folders;
@@ -128,7 +127,7 @@ namespace Telegram.ViewModels
                 ClientService.Send(new AddChatToList(chat.Id, new ChatListArchive()));
             }
 
-            var confirm = await ToastPopup.ShowActionAsync(Strings.ChatArchived, Strings.Undo, new LocalFileSource("ms-appx:///Assets/Toasts/Archived.tgs"));
+            var confirm = await ToastPopup.ShowActionAsync(NavigationService.XamlRoot, Strings.ChatArchived, Strings.Undo, ToastPopupIcon.Archived);
             if (confirm == ContentDialogResult.Primary)
             {
                 ClientService.Send(new AddChatToList(chat.Id, new ChatListMain()));
@@ -151,7 +150,7 @@ namespace Telegram.ViewModels
             Delegate?.SetSelectionMode(false);
             SelectedItems.Clear();
 
-            var confirm = await ToastPopup.ShowActionAsync(Strings.ChatsArchived, Strings.Undo, new LocalFileSource("ms-appx:///Assets/Toasts/Archived.tgs"));
+            var confirm = await ToastPopup.ShowActionAsync(NavigationService.XamlRoot, Strings.ChatsArchived, Strings.Undo, ToastPopupIcon.Archived);
             if (confirm == ContentDialogResult.Primary)
             {
                 foreach (var undo in chats)
@@ -327,7 +326,7 @@ namespace Telegram.ViewModels
                     title = chat.Type is ChatTypeBasicGroup ? Strings.GroupDeletedUndo : Strings.ChatDeletedUndo;
                 }
 
-                var undo = await ToastPopup.ShowCountdownAsync(title, Strings.Undo, TimeSpan.FromSeconds(5));
+                var undo = await ToastPopup.ShowCountdownAsync(NavigationService.XamlRoot, title, Strings.Undo, TimeSpan.FromSeconds(5));
                 if (undo == ContentDialogResult.Primary)
                 {
                     _deletedChats.Remove(chat.Id);
@@ -382,7 +381,7 @@ namespace Telegram.ViewModels
                     Items.Handle(chat.Id, 0);
                 }
 
-                var undo = await ToastPopup.ShowCountdownAsync(Strings.ChatDeletedUndo, Strings.Undo, TimeSpan.FromSeconds(5));
+                var undo = await ToastPopup.ShowCountdownAsync(NavigationService.XamlRoot, Strings.ChatDeletedUndo, Strings.Undo, TimeSpan.FromSeconds(5));
                 if (undo == ContentDialogResult.Primary)
                 {
                     foreach (var chat in chats)
@@ -431,7 +430,7 @@ namespace Telegram.ViewModels
             var confirm = await ShowPopupAsync(dialog);
             if (confirm == ContentDialogResult.Primary)
             {
-                var undo = await ToastPopup.ShowCountdownAsync(Strings.HistoryClearedUndo, Strings.Undo, TimeSpan.FromSeconds(5));
+                var undo = await ToastPopup.ShowCountdownAsync(NavigationService.XamlRoot, Strings.HistoryClearedUndo, Strings.Undo, TimeSpan.FromSeconds(5));
                 if (undo == ContentDialogResult.Primary)
                 {
                     _deletedChats.Remove(chat.Id);
@@ -455,7 +454,7 @@ namespace Telegram.ViewModels
             var confirm = await ShowPopupAsync(Strings.AreYouSureClearHistoryFewChats, Locale.Declension(Strings.R.ChatsSelected, chats.Count), Strings.ClearHistory, Strings.Cancel);
             if (confirm == ContentDialogResult.Primary)
             {
-                var undo = await ToastPopup.ShowCountdownAsync(Strings.HistoryClearedUndo, Strings.Undo, TimeSpan.FromSeconds(5));
+                var undo = await ToastPopup.ShowCountdownAsync(NavigationService.XamlRoot, Strings.HistoryClearedUndo, Strings.Undo, TimeSpan.FromSeconds(5));
                 if (undo == ContentDialogResult.Primary)
                 {
                     foreach (var chat in chats)
@@ -902,7 +901,7 @@ namespace Telegram.ViewModels
                     }
                 }
             }
-            
+
             private void NotifyChanged()
             {
                 OnPropertyChanged(new PropertyChangedEventArgs(nameof(IsEmpty)));

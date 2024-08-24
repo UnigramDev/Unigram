@@ -8,6 +8,7 @@ using Microsoft.Graphics.Canvas;
 using Microsoft.Graphics.Canvas.Effects;
 using System;
 using Telegram.Common;
+using Telegram.Navigation;
 using Windows.UI;
 using Microsoft.UI.Composition;
 using Windows.UI.Core;
@@ -65,7 +66,7 @@ namespace Telegram.Controls.Media
             {
                 if (!PowerSavingPolicy.AreMaterialsEnabled)
                 {
-                    m_brush = Window.Current.Compositor.CreateColorBrush(FallbackColor);
+                    m_brush = BootStrapper.Current.Compositor.CreateColorBrush(FallbackColor);
                     CompositionBrush = m_brush;
                 }
                 else
@@ -97,8 +98,8 @@ namespace Telegram.Controls.Media
                     compositeEffect.Sources.Add(saturationEffect);
                     compositeEffect.Sources.Add(tintColorEffect);
 
-                    var effectFactory = Window.Current.Compositor.CreateEffectFactory(compositeEffect);
-                    var backdrop = Window.Current.Compositor.CreateBackdropBrush();
+                    var effectFactory = BootStrapper.Current.Compositor.CreateEffectFactory(compositeEffect);
+                    var backdrop = BootStrapper.Current.Compositor.CreateBackdropBrush();
 
                     var brush = effectFactory.CreateBrush();
                     brush.SetSourceParameter("Backdrop", backdrop);

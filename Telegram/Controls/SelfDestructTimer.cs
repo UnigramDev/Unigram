@@ -28,11 +28,11 @@ namespace Telegram.Controls
             DefaultStyleKey = typeof(SelfDestructTimer);
             Visibility = Visibility.Collapsed;
 
-            var ellipse = Window.Current.Compositor.CreateEllipseGeometry();
+            var ellipse = BootStrapper.Current.Compositor.CreateEllipseGeometry();
             ellipse.Radius = new Vector2((float)Radius);
             ellipse.Center = new Vector2((float)Center);
 
-            var shape = Window.Current.Compositor.CreateSpriteShape(ellipse);
+            var shape = BootStrapper.Current.Compositor.CreateSpriteShape(ellipse);
             shape.CenterPoint = new Vector2((float)Center);
             shape.StrokeThickness = 2;
             shape.StrokeStartCap = CompositionStrokeCap.Round;
@@ -40,10 +40,10 @@ namespace Telegram.Controls
 
             if (Foreground is SolidColorBrush brush)
             {
-                shape.StrokeBrush = Window.Current.Compositor.CreateColorBrush(brush.Color);
+                shape.StrokeBrush = BootStrapper.Current.Compositor.CreateColorBrush(brush.Color);
             }
 
-            var visual = Window.Current.Compositor.CreateShapeVisual();
+            var visual = BootStrapper.Current.Compositor.CreateShapeVisual();
             visual.Shapes.Add(shape);
             visual.Size = new Vector2((float)Center * 2);
             visual.CenterPoint = new Vector3((float)Center);
@@ -73,7 +73,7 @@ namespace Telegram.Controls
         {
             if (_shape != null && Foreground is SolidColorBrush brush)
             {
-                _shape.StrokeBrush = Window.Current.Compositor.CreateColorBrush(brush.Color);
+                _shape.StrokeBrush = BootStrapper.Current.Compositor.CreateColorBrush(brush.Color);
             }
         }
 
@@ -138,8 +138,8 @@ namespace Telegram.Controls
 
             var seconds = (float)difference.TotalSeconds;
 
-            var easing = Window.Current.Compositor.CreateLinearEasingFunction();
-            var angleAnimation = Window.Current.Compositor.CreateScalarKeyFrameAnimation();
+            var easing = BootStrapper.Current.Compositor.CreateLinearEasingFunction();
+            var angleAnimation = BootStrapper.Current.Compositor.CreateScalarKeyFrameAnimation();
             angleAnimation.InsertKeyFrame(0, 1f - (seconds / (Maximum ?? 0)));
             angleAnimation.InsertKeyFrame(1, 1f, easing);
             angleAnimation.Duration = difference;

@@ -12,6 +12,7 @@ using System.Threading.Tasks;
 using Telegram.Common;
 using Telegram.Converters;
 using Telegram.Navigation;
+using Telegram.Navigation.Services;
 using Telegram.Services.Updates;
 using Telegram.Td.Api;
 using Telegram.Views.Popups;
@@ -58,7 +59,7 @@ namespace Telegram.Services
             await UpdateAsync(false);
         }
 
-        public static async Task<bool> LaunchAsync(IDispatcherContext context, bool checkAvailability)
+        public static async Task<bool> LaunchAsync(INavigationService navigation, bool checkAvailability)
         {
             if (_disabled || !_updateLock.Wait(0))
             {
@@ -106,10 +107,10 @@ namespace Telegram.Services
                     _ = NotifyIcon.ExitAsync();
 
                     // If package manager fails, we fall back on App Installer
-                    await context.DispatchAsync(async () =>
+                    await navigation.Dispatcher.DispatchAsync(async () =>
                     {
                         // Try to install the update first using the package manager
-                        var installed = await InstallUpdateAsync(context, update.File);
+                        var installed = await InstallUpdateAsync(navigation, update.File);
                         if (installed is false)
                         {
                             // But only if App Installer is available
@@ -140,7 +141,7 @@ namespace Telegram.Services
             return false;
         }
 
-        private static async Task<bool> InstallUpdateAsync(IDispatcherContext context, StorageFile file)
+        private static async Task<bool> InstallUpdateAsync(INavigationService navigation, StorageFile file)
         {
             if (SettingsService.Current.Diagnostics.DisablePackageManager)
             {
@@ -153,7 +154,7 @@ namespace Telegram.Services
 
             try
             {
-                _ = popup.ShowQueuedAsync();
+                _ = popup.ShowQueuedAsync(navigation.XamlRoot);
 
                 await Task.Run(async () =>
                 {
@@ -166,7 +167,7 @@ namespace Telegram.Services
                     deployment.Progress = (result, delta) =>
                     {
                         Logger.Info(string.Format("{0}, {1}%", delta.state, delta.percentage));
-                        context.Dispatch(() => popup.UpdateProgress(delta));
+                        navigation.Dispatcher.Dispatch(() => popup.UpdateProgress(delta));
                     };
 
                     result = await deployment;

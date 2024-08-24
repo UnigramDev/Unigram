@@ -305,7 +305,7 @@ namespace Telegram.Controls.Messages.Content
         {
             if (_message?.SchedulingState != null)
             {
-                await MessagePopup.ShowAsync(Strings.MessageScheduledVote, Strings.AppName, Strings.OK);
+                await MessagePopup.ShowAsync(XamlRoot, Strings.MessageScheduledVote, Strings.AppName, Strings.OK);
                 return;
             }
 

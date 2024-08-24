@@ -39,7 +39,7 @@ namespace Telegram.Views.Popups
             Message1.Mockup(Strings.BackgroundPreviewLine1, false, DateTime.Now.AddSeconds(-25));
             Message2.Mockup(Strings.BackgroundPreviewLine2, true, DateTime.Now);
 
-            ElementComposition.GetElementVisual(ContentPanel).Clip = Window.Current.Compositor.CreateInsetClip();
+            ContentPanel.CreateInsetClip();
         }
 
         private void Color_Click(object sender, RoutedEventArgs e)
@@ -91,7 +91,7 @@ namespace Telegram.Views.Popups
 
                 var secondary = string.Format(Strings.ApplyWallpaperForMeAndPeer, user.FirstName);
 
-                if ( ViewModel.IsPremium is false)
+                if (ViewModel.IsPremium is false)
                 {
                     secondary += Icons.Spacing + Icons.LockClosedFilled14;
                 }
@@ -370,7 +370,7 @@ namespace Telegram.Views.Popups
             _ignoreClosing = false;
 
             await ViewModel.NavigationService.ShowPromoAsync(new PremiumSourceFeature(new PremiumFeatureBackgroundForBoth()));
-            await this.ShowQueuedAsync();
+            await this.ShowQueuedAsync(XamlRoot);
         }
 
         private void OnClosing(ContentDialog sender, ContentDialogClosingEventArgs args)

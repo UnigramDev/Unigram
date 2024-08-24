@@ -537,7 +537,7 @@ namespace Telegram.Controls.Chats
 
                 this.BeginOnUIThread(async () =>
                 {
-                    var confirm = await MessagePopup.ShowAsync(message, Strings.AppName, Strings.PermissionOpenSettings, Strings.OK);
+                    var confirm = await MessagePopup.ShowAsync(XamlRoot, message, Strings.AppName, Strings.PermissionOpenSettings, Strings.OK);
                     if (confirm == ContentDialogResult.Primary)
                     {
                         await Launcher.LaunchUriAsync(new Uri("ms-settings:appsfeatures-app"));
@@ -957,7 +957,7 @@ namespace Telegram.Controls.Chats
                 Logger.Debug("Pause invoked");
 
                 var tsc = new TaskCompletionSource<ChatRecordResult>();
-                
+
                 _ = _recordQueue.Enqueue(async () =>
                 {
                     Logger.Debug("Enqueued pause invoked");

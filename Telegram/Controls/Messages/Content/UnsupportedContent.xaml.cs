@@ -8,7 +8,6 @@ using System;
 using Telegram.Common;
 using Telegram.Navigation;
 using Telegram.Services;
-using Telegram.Streams;
 using Telegram.Td.Api;
 using Telegram.ViewModels;
 using Telegram.Views;
@@ -81,7 +80,7 @@ namespace Telegram.Controls.Messages.Content
                     var updates = await context.GetAppAndOptionalStorePackageUpdatesAsync();
                     if (updates == null && updates.Count == 0)
                     {
-                        ToastPopup.Show(Strings.CheckForUpdatesInfo, new LocalFileSource("ms-appx:///Assets/Toasts/Info.tgs"));
+                        ToastPopup.Show(XamlRoot, Strings.CheckForUpdatesInfo, ToastPopupIcon.Info);
                         return;
                     }
                 }
@@ -96,8 +95,10 @@ namespace Telegram.Controls.Messages.Content
             }
             else
             {
+                var navigationService = WindowContext.Current.GetNavigationService();
                 var service = TypeResolver.Current.Resolve<ICloudUpdateService>(_message.ClientService.SessionId);
-                if (service != null)
+
+                if (navigationService != null && service != null)
                 {
                     if (service.NextUpdate == null)
                     {
@@ -106,11 +107,11 @@ namespace Telegram.Controls.Messages.Content
 
                     if (service.NextUpdate != null)
                     {
-                        await CloudUpdateService.LaunchAsync(WindowContext.Current.Dispatcher, false);
+                        await CloudUpdateService.LaunchAsync(navigationService, false);
                     }
                     else
                     {
-                        ToastPopup.Show(Strings.CheckForUpdatesInfo, new LocalFileSource("ms-appx:///Assets/Toasts/Info.tgs"));
+                        ToastPopup.Show(XamlRoot, Strings.CheckForUpdatesInfo, ToastPopupIcon.Info);
                     }
                 }
             }

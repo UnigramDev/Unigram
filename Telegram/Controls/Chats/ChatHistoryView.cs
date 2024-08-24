@@ -555,7 +555,7 @@ namespace Telegram.Controls.Chats
         {
             if (IsSelectionEnabled is false && !_pressed)
             {
-                var point = e.GetCurrentPoint(Window.Current.Content as FrameworkElement);
+                var point = e.GetCurrentPoint(XamlRoot.Content);
                 if (point.Properties.PointerUpdateKind == PointerUpdateKind.LeftButtonPressed && e.Pointer.PointerDeviceType == PointerDeviceType.Mouse)
                 {
                     _recognizer.TryProcessDownEvent(point);
@@ -724,7 +724,7 @@ namespace Telegram.Controls.Chats
 
         internal void OnPointerReleased(MessageSelector item, PointerRoutedEventArgs e)
         {
-            var point = e.GetCurrentPoint(Window.Current.Content as FrameworkElement);
+            var point = e.GetCurrentPoint(XamlRoot.Content);
             if (point.Properties.PointerUpdateKind == PointerUpdateKind.LeftButtonReleased && e.Pointer.PointerDeviceType == PointerDeviceType.Mouse)
             {
                 _recognizer.TryProcessUpEvent(point);

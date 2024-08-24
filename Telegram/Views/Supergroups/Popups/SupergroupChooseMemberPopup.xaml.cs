@@ -8,7 +8,6 @@ using System;
 using Telegram.Common;
 using Telegram.Controls;
 using Telegram.Controls.Cells;
-using Telegram.Streams;
 using Telegram.Td;
 using Telegram.Td.Api;
 using Telegram.ViewModels;
@@ -91,7 +90,7 @@ namespace Telegram.Views.Supergroups.Popups
                     var text = string.Format(Strings.MessageLockedPremiumLocked, tempUser.FirstName);
                     var markdown = ClientEx.ParseMarkdown(text);
 
-                    var confirm = await ToastPopup.ShowActionAsync(markdown, Strings.UserBlockedNonPremiumButton, new LocalFileSource("ms-appx:///Assets/Toasts/Premium.tgs"));
+                    var confirm = await ToastPopup.ShowActionAsync(XamlRoot, markdown, Strings.UserBlockedNonPremiumButton, ToastPopupIcon.Premium);
                     if (confirm == ContentDialogResult.Primary)
                     {
                         Hide();

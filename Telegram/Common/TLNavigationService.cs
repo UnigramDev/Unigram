@@ -14,7 +14,6 @@ using Telegram.Navigation;
 using Telegram.Navigation.Services;
 using Telegram.Services;
 using Telegram.Services.ViewService;
-using Telegram.Streams;
 using Telegram.Td.Api;
 using Telegram.ViewModels;
 using Telegram.ViewModels.Payments;
@@ -160,7 +159,7 @@ namespace Telegram.Common
 
         public async void ShowLimitReached(PremiumLimitType type)
         {
-            await new LimitReachedPopup(this, _clientService, type).ShowQueuedAsync();
+            await new LimitReachedPopup(this, _clientService, type).ShowQueuedAsync(XamlRoot);
         }
 
         public async void ShowPromo(PremiumSource source = null)
@@ -183,7 +182,7 @@ namespace Telegram.Common
             var response = await ClientService.SendAsync(new GetPaymentForm(inputInvoice, Theme.Current.Parameters));
             if (response is not PaymentForm paymentForm)
             {
-                ToastPopup.Show(Strings.PaymentInvoiceLinkInvalid, new LocalFileSource("ms-appx:///Assets/Toasts/Info.tgs"));
+                ShowToast(Strings.PaymentInvoiceLinkInvalid, ToastPopupIcon.Info);
                 return;
             }
 
@@ -218,7 +217,7 @@ namespace Telegram.Common
             var response = await ClientService.SendAsync(new GetPaymentReceipt(message.ChatId, message.Id));
             if (response is not PaymentReceipt paymentReceipt)
             {
-                ToastPopup.Show(Strings.PaymentInvoiceLinkInvalid, new LocalFileSource("ms-appx:///Assets/Toasts/Info.tgs"));
+                ShowToast(Strings.PaymentInvoiceLinkInvalid, ToastPopupIcon.Info);
                 return;
             }
 
@@ -292,7 +291,7 @@ namespace Telegram.Common
 
                 if (user.RestrictionReason.Length > 0)
                 {
-                    await MessagePopup.ShowAsync(user.RestrictionReason, Strings.AppName, Strings.OK);
+                    await ShowPopupAsync(user.RestrictionReason, Strings.AppName, Strings.OK);
                     return;
                 }
                 else if (user.Id == _clientService.Options.AntiSpamBotUserId)
@@ -306,7 +305,7 @@ namespace Telegram.Common
 
                     var formatted = new FormattedText(text, new[] { new TextEntity(index, path.Length, new TextEntityTypeTextUrl("tg://")) });
 
-                    await MessagePopup.ShowAsync(formatted, Strings.AppName, Strings.OK);
+                    await ShowPopupAsync(formatted, Strings.AppName, Strings.OK);
                     return;
                 }
             }
@@ -320,13 +319,13 @@ namespace Telegram.Common
 
                 if (supergroup.Status is ChatMemberStatusLeft && !supergroup.IsPublic() && !_clientService.IsChatAccessible(chat))
                 {
-                    await MessagePopup.ShowAsync(Strings.ChannelCantOpenPrivate, Strings.AppName, Strings.OK);
+                    await ShowPopupAsync(Strings.ChannelCantOpenPrivate, Strings.AppName, Strings.OK);
                     return;
                 }
 
                 if (supergroup.RestrictionReason.Length > 0)
                 {
-                    await MessagePopup.ShowAsync(supergroup.RestrictionReason, Strings.AppName, Strings.OK);
+                    await ShowPopupAsync(supergroup.RestrictionReason, Strings.AppName, Strings.OK);
                     return;
                 }
             }
@@ -584,7 +583,7 @@ namespace Telegram.Common
             {
                 var popup = new SettingsPasscodeConfirmPopup();
 
-                var confirm = await popup.ShowQueuedAsync();
+                var confirm = await ShowPopupAsync(popup);
                 if (confirm == ContentDialogResult.Primary)
                 {
                     Navigate(typeof(SettingsPasscodePage));
@@ -594,7 +593,7 @@ namespace Telegram.Common
             {
                 var popup = new SettingsPasscodePopup();
 
-                var confirm = await popup.ShowQueuedAsync();
+                var confirm = await ShowPopupAsync(popup);
                 if (confirm == ContentDialogResult.Primary)
                 {
                     var viewModel = TypeResolver.Current.Resolve<SettingsPasscodeViewModel>(SessionId);
@@ -610,28 +609,28 @@ namespace Telegram.Common
         {
             var intro = new SettingsPasswordIntroPopup();
 
-            if (ContentDialogResult.Primary != await intro.ShowQueuedAsync())
+            if (ContentDialogResult.Primary != await ShowPopupAsync(intro))
             {
                 return null;
             }
 
             var password = new SettingsPasswordCreatePopup();
 
-            if (ContentDialogResult.Primary != await password.ShowQueuedAsync())
+            if (ContentDialogResult.Primary != await ShowPopupAsync(password))
             {
                 return null;
             }
 
             var hint = new SettingsPasswordHintPopup(null, null, password.Password);
 
-            if (ContentDialogResult.Primary != await hint.ShowQueuedAsync())
+            if (ContentDialogResult.Primary != await ShowPopupAsync(hint))
             {
                 return null;
             }
 
             var emailAddress = new SettingsPasswordEmailAddressPopup(ClientService, new SetPassword(string.Empty, password.Password, hint.Hint, true, string.Empty));
 
-            if (ContentDialogResult.Primary != await emailAddress.ShowQueuedAsync())
+            if (ContentDialogResult.Primary != await ShowPopupAsync(emailAddress))
             {
                 return null;
             }
@@ -642,7 +641,7 @@ namespace Telegram.Common
             {
                 var emailCode = new SettingsPasswordEmailCodePopup(ClientService, emailAddress.PasswordState?.RecoveryEmailAddressCodeInfo, SettingsPasswordEmailCodeType.New);
 
-                if (ContentDialogResult.Primary != await emailCode.ShowQueuedAsync())
+                if (ContentDialogResult.Primary != await ShowPopupAsync(emailCode))
                 {
                     return null;
                 }
@@ -654,7 +653,7 @@ namespace Telegram.Common
                 passwordState = emailAddress.PasswordState;
             }
 
-            await new SettingsPasswordDonePopup().ShowQueuedAsync();
+            await ShowPopupAsync(new SettingsPasswordDonePopup());
             return passwordState;
         }
     }

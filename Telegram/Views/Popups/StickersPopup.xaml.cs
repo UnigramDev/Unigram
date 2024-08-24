@@ -12,6 +12,7 @@ using Telegram.Common;
 using Telegram.Controls;
 using Telegram.Converters;
 using Telegram.Navigation;
+using Telegram.Navigation.Services;
 using Telegram.Streams;
 using Telegram.Td.Api;
 using Telegram.ViewModels;
@@ -29,10 +30,10 @@ namespace Telegram.Views.Popups
         private readonly AnimatedListHandler _handler;
         private readonly ZoomableListHandler _zoomer;
 
-        private StickersPopup()
+        private StickersPopup(INavigationService navigationService)
         {
             InitializeComponent();
-            DataContext = TypeResolver.Current.Resolve<StickersViewModel>();
+            DataContext = TypeResolver.Current.Resolve<StickersViewModel>(navigationService.SessionId);
 
             // TODO: this might need to change depending on context
             _handler = new AnimatedListHandler(ScrollingHost, AnimatedListType.Stickers);
@@ -56,49 +57,49 @@ namespace Telegram.Views.Popups
 
         public Action<Sticker> ItemClick { get; set; }
 
-        public static Task<ContentDialogResult> ShowAsync(StickerSet parameter)
+        public static Task<ContentDialogResult> ShowAsync(INavigationService navigation, StickerSet parameter)
         {
-            return ShowAsyncInternal(parameter, null);
+            return ShowAsyncInternal(navigation, parameter, null);
         }
 
-        public static Task<ContentDialogResult> ShowAsync(StickerSet parameter, Action<Sticker> callback)
+        public static Task<ContentDialogResult> ShowAsync(INavigationService navigation, StickerSet parameter, Action<Sticker> callback)
         {
-            return ShowAsyncInternal(parameter, callback);
+            return ShowAsyncInternal(navigation, parameter, callback);
         }
 
-        public static Task<ContentDialogResult> ShowAsync(HashSet<long> parameter)
+        public static Task<ContentDialogResult> ShowAsync(INavigationService navigation, HashSet<long> parameter)
         {
-            return ShowAsyncInternal(parameter, null);
+            return ShowAsyncInternal(navigation, parameter, null);
         }
 
-        public static Task<ContentDialogResult> ShowAsync(HashSet<long> parameter, Action<Sticker> callback)
+        public static Task<ContentDialogResult> ShowAsync(INavigationService navigation, HashSet<long> parameter, Action<Sticker> callback)
         {
-            return ShowAsyncInternal(parameter, callback);
+            return ShowAsyncInternal(navigation, parameter, callback);
         }
 
-        public static Task<ContentDialogResult> ShowAsync(long parameter)
+        public static Task<ContentDialogResult> ShowAsync(INavigationService navigation, long parameter)
         {
-            return ShowAsyncInternal(parameter, null);
+            return ShowAsyncInternal(navigation, parameter, null);
         }
 
-        public static Task<ContentDialogResult> ShowAsync(long parameter, Action<Sticker> callback)
+        public static Task<ContentDialogResult> ShowAsync(INavigationService navigation, long parameter, Action<Sticker> callback)
         {
-            return ShowAsyncInternal(parameter, callback);
+            return ShowAsyncInternal(navigation, parameter, callback);
         }
 
-        public static Task<ContentDialogResult> ShowAsync(InputFileId parameter)
+        public static Task<ContentDialogResult> ShowAsync(INavigationService navigation, InputFileId parameter)
         {
-            return ShowAsyncInternal(parameter, null);
+            return ShowAsyncInternal(navigation, parameter, null);
         }
 
-        public static Task<ContentDialogResult> ShowAsync(InputFileId parameter, Action<Sticker> callback)
+        public static Task<ContentDialogResult> ShowAsync(INavigationService navigation, InputFileId parameter, Action<Sticker> callback)
         {
-            return ShowAsyncInternal(parameter, callback);
+            return ShowAsyncInternal(navigation, parameter, callback);
         }
 
-        private static Task<ContentDialogResult> ShowAsyncInternal(object parameter, Action<Sticker> callback)
+        private static Task<ContentDialogResult> ShowAsyncInternal(INavigationService navigation, object parameter, Action<Sticker> callback)
         {
-            var popup = new StickersPopup();
+            var popup = new StickersPopup(navigation);
 
             popup.ViewModel.IsLoading = true;
             popup.ViewModel.Items.Clear();
@@ -112,17 +113,17 @@ namespace Telegram.Views.Popups
             });
 
             popup.Loaded += handler;
-            return popup.ShowQueuedAsync();
+            return popup.ShowQueuedAsync(navigation.XamlRoot);
         }
 
-        public static Task<ContentDialogResult> ShowAsync(string parameter)
+        public static Task<ContentDialogResult> ShowAsync(INavigationService navigation, string parameter)
         {
-            return ShowAsyncInternal(parameter, null);
+            return ShowAsyncInternal(navigation, parameter, null);
         }
 
-        public static Task<ContentDialogResult> ShowAsync(string parameter, Action<Sticker> callback)
+        public static Task<ContentDialogResult> ShowAsync(INavigationService navigation, string parameter, Action<Sticker> callback)
         {
-            return ShowAsyncInternal(parameter, callback);
+            return ShowAsyncInternal(navigation, parameter, callback);
         }
 
         #endregion

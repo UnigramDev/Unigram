@@ -5,7 +5,6 @@ using Telegram.Controls;
 using Telegram.Navigation;
 using Telegram.Navigation.Services;
 using Telegram.Services;
-using Telegram.Streams;
 using Telegram.Td.Api;
 using Telegram.ViewModels.Delegates;
 using Telegram.Views;
@@ -92,7 +91,7 @@ namespace Telegram.ViewModels.Business
             {
                 if (!ClientService.CheckQuickReplyShortcutName(args.Text))
                 {
-                    ToastPopup.Show(Strings.BusinessRepliesNameBusy, new LocalFileSource("ms-appx:///Assets/Toasts/Error.tgs"));
+                    ShowToast(Strings.BusinessRepliesNameBusy, ToastPopupIcon.Error);
                     args.Cancel = true;
                 }
             };
@@ -122,7 +121,7 @@ namespace Telegram.ViewModels.Business
             {
                 if (!ClientService.CheckQuickReplyShortcutName(args.Text))
                 {
-                    ToastPopup.Show(Strings.BusinessRepliesNameBusy, new LocalFileSource("ms-appx:///Assets/Toasts/Error.tgs"));
+                    ShowToast(Strings.BusinessRepliesNameBusy, ToastPopupIcon.Error);
                     args.Cancel = true;
                 }
             };

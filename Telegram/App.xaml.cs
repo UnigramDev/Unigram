@@ -78,6 +78,8 @@ namespace Telegram
         /// </summary>
         public App()
         {
+            TypeCrosserGenerator.Generate();
+
             if (SettingsService.Current.Diagnostics.LastUpdateVersion < Constants.BuildNumber)
             {
                 SettingsService.Current.Diagnostics.LastUpdateTime = DateTime.Now.ToTimestamp();
@@ -189,8 +191,7 @@ namespace Telegram
                 WindowContext.Current.Activate(args, navService, service.AuthorizationState);
             }
 
-            var context = WindowContext.Current.Dispatcher;
-            _ = Task.Run(() => OnStartSync(startKind, context, update));
+            _ = Task.Run(() => OnStartSync(startKind, navService, update));
 
             if (startKind != StartKind.Launch)
             {
@@ -241,7 +242,7 @@ namespace Telegram
             return new TLNavigationService(TypeResolver.Current.Resolve<IClientService>(session), TypeResolver.Current.Resolve<IViewService>(session), frame, session, id);
         }
 
-        private async void OnStartSync(StartKind startKind, IDispatcherContext context, ICloudUpdateService updateService)
+        private async void OnStartSync(StartKind startKind, INavigationService navigation, ICloudUpdateService updateService = null)
         {
             await RequestExtendedExecutionSessionAsync();
             await Toast.RegisterBackgroundTasks();
@@ -260,7 +261,7 @@ namespace Telegram
 
             if (Constants.RELEASE && startKind == StartKind.Launch)
             {
-                if (await CloudUpdateService.LaunchAsync(context, true))
+                if (await CloudUpdateService.LaunchAsync(navigation, true))
                 {
                     return;
                 }
@@ -333,7 +334,7 @@ namespace Telegram
             // #2034: Will this work? No one knows.
             SettingsService.Current.Appearance.UpdateNightMode(null);
 
-            OnStartSync(StartKind.Activate, WindowContext.Current.Dispatcher, null);
+            OnStartSync(StartKind.Activate, WindowContext.Current.GetNavigationService());
         }
 
         public override Task OnSuspendingAsync(object s, SuspendingEventArgs e)

@@ -173,7 +173,7 @@ namespace Telegram.Common
         {
             if (_popupHost.IsOpen)
             {
-                var pointer = e.GetCurrentPoint(Window.Current.Content);
+                var pointer = e.GetCurrentPoint(_listView.XamlRoot.Content);
                 var children = VisualTreeHelper.FindElementsInHostCoordinates(pointer.Position, _listView);
 
                 var container = children?.FirstOrDefault(x => x is SelectorItem) as SelectorItem;

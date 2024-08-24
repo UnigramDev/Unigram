@@ -20,13 +20,13 @@ namespace Telegram.Controls.Chats
         {
             InitializeComponent();
 
-            var visual = DropShadowEx.Attach(ArrowShadow, 2);
+            var visual = VisualUtilities.DropShadow(ArrowShadow, 2);
             visual.Offset = new Vector3(0, 1, 0);
 
-            visual = DropShadowEx.Attach(ArrowMentionsShadow, 2);
+            visual = VisualUtilities.DropShadow(ArrowMentionsShadow, 2);
             visual.Offset = new Vector3(0, 1, 0);
 
-            visual = DropShadowEx.Attach(ArrowReactionsShadow, 2);
+            visual = VisualUtilities.DropShadow(ArrowReactionsShadow, 2);
             visual.Offset = new Vector3(0, 1, 0);
 
             var reactions = ElementComposition.GetElementVisual(ReactionsPanel);

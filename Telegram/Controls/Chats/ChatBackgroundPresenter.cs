@@ -371,7 +371,7 @@ namespace Telegram.Controls.Chats
                     Source = new CompositionEffectSourceParameter("Backdrop")
                 };
 
-                var compositor = Window.Current.Compositor;
+                var compositor = BootStrapper.Current.Compositor;
                 var effectFactory = compositor.CreateEffectFactory(graphicsEffect, new[] { "Blur.BlurAmount" });
                 var effectBrush = effectFactory.CreateBrush();
                 var backdrop = compositor.CreateBackdropBrush();

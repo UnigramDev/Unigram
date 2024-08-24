@@ -115,7 +115,7 @@ namespace Telegram.Views
             {
                 var deferral = e.GetDeferral();
 
-                var confirm = await MessagePopup.ShowAsync(Strings.BotWebViewChangesMayNotBeSaved, _botUser.FirstName, Strings.BotWebViewCloseAnyway, Strings.Cancel, destructive: true);
+                var confirm = await MessagePopup.ShowAsync(XamlRoot, Strings.BotWebViewChangesMayNotBeSaved, _botUser.FirstName, Strings.BotWebViewCloseAnyway, Strings.Cancel, destructive: true);
                 if (confirm == ContentDialogResult.Primary)
                 {
                     _closeNeedConfirmation = false;
@@ -389,7 +389,7 @@ namespace Telegram.Views
 
             _blockingAction = true;
 
-            var confirm = await MessagePopup.ShowAsync(string.Format(Strings.AreYouSureShareMyContactInfoWebapp, _botUser.FullName()), Strings.ShareYouPhoneNumberTitle, Strings.OK, Strings.Cancel);
+            var confirm = await MessagePopup.ShowAsync(XamlRoot, string.Format(Strings.AreYouSureShareMyContactInfoWebapp, _botUser.FullName()), Strings.ShareYouPhoneNumberTitle, Strings.OK, Strings.Cancel);
             if (confirm == ContentDialogResult.Primary && _clientService.TryGetUser(_clientService.Options.MyId, out User user))
             {
                 var chat = await _clientService.SendAsync(new CreatePrivateChat(_botUser.Id, false)) as Chat;
@@ -437,7 +437,7 @@ namespace Telegram.Views
                 return;
             }
 
-            var confirm = await MessagePopup.ShowAsync(Strings.BotWebViewRequestWriteMessage, Strings.BotWebViewRequestWriteTitle, Strings.BotWebViewRequestAllow, Strings.BotWebViewRequestDontAllow);
+            var confirm = await MessagePopup.ShowAsync(XamlRoot, Strings.BotWebViewRequestWriteMessage, Strings.BotWebViewRequestWriteTitle, Strings.BotWebViewRequestAllow, Strings.BotWebViewRequestDontAllow);
             if (confirm == ContentDialogResult.Primary)
             {
                 await _clientService.SendAsync(new AllowBotToSendMessages(_botUser.Id));
@@ -552,7 +552,7 @@ namespace Telegram.Views
                 panel.Children.Add(action);
             }
 
-            await popup.ShowQueuedAsync();
+            await popup.ShowQueuedAsync(XamlRoot);
         }
 
         private void OpenInvoice(JsonObject eventData)
@@ -634,12 +634,12 @@ namespace Telegram.Views
             offset.InsertKeyFrame(1, show ? 0 : -28);
             offset.Duration = Constants.FastAnimation;
 
-            var scale = Window.Current.Compositor.CreateVector3KeyFrameAnimation();
+            var scale = BootStrapper.Current.Compositor.CreateVector3KeyFrameAnimation();
             scale.InsertKeyFrame(show ? 0 : 1, Vector3.Zero);
             scale.InsertKeyFrame(show ? 1 : 0, Vector3.One);
             scale.Duration = Constants.FastAnimation;
 
-            var opacity = Window.Current.Compositor.CreateScalarKeyFrameAnimation();
+            var opacity = BootStrapper.Current.Compositor.CreateScalarKeyFrameAnimation();
             opacity.InsertKeyFrame(show ? 0 : 1, 0);
             opacity.InsertKeyFrame(show ? 1 : 0, 1);
 
@@ -849,7 +849,7 @@ namespace Telegram.Views
 
         private async void MenuItemDeleteBot()
         {
-            var confirm = await MessagePopup.ShowAsync(string.Format(Strings.BotRemoveFromMenu, _menuBot.Name), Strings.BotRemoveFromMenuTitle, Strings.OK, Strings.Cancel);
+            var confirm = await MessagePopup.ShowAsync(XamlRoot, string.Format(Strings.BotRemoveFromMenu, _menuBot.Name), Strings.BotRemoveFromMenuTitle, Strings.OK, Strings.Cancel);
             if (confirm == ContentDialogResult.Primary)
             {
                 _menuBot.IsAdded = false;

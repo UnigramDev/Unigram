@@ -21,7 +21,6 @@ using Telegram.Native;
 using Telegram.Native.Composition;
 using Telegram.Navigation;
 using Telegram.Services;
-using Telegram.Streams;
 using Telegram.Td;
 using Telegram.Td.Api;
 using Telegram.ViewModels;
@@ -666,7 +665,7 @@ namespace Telegram.Controls.Messages
                 }
                 else if (message.ForwardInfo?.Origin is MessageOriginHiddenUser)
                 {
-                    ToastPopup.Show(Strings.HidAccount);
+                    ToastPopup.Show(XamlRoot, Strings.HidAccount);
                     //await MessagePopup.ShowAsync(Strings.HidAccount, Strings.AppName, Strings.OK);
                 }
             }
@@ -1168,7 +1167,7 @@ namespace Telegram.Controls.Messages
             }
             else if (message.ForwardInfo?.Origin is MessageOriginHiddenUser)
             {
-                ToastPopup.Show(Strings.HidAccount, new LocalFileSource("ms-appx:///Assets/Toasts/Info.tgs"));
+                ToastPopup.Show(XamlRoot, Strings.HidAccount, ToastPopupIcon.Info);
             }
             else if (message.Content is MessageAsyncStory asyncStory)
             {
@@ -2042,7 +2041,7 @@ namespace Telegram.Controls.Messages
             }
             else if (e.Type is TextEntityTypeCode or TextEntityTypePre or TextEntityTypePreCode && e.Data is string code)
             {
-                MessageHelper.CopyText(code);
+                MessageHelper.CopyText(XamlRoot, code);
             }
             else if (e.Type is TextEntityTypeSpoiler)
             {
@@ -2134,14 +2133,14 @@ namespace Telegram.Controls.Messages
 
             if (content is MessageText)
             {
-                var crossScale = Window.Current.Compositor.CreateVector3KeyFrameAnimation();
+                var crossScale = BootStrapper.Current.Compositor.CreateVector3KeyFrameAnimation();
                 crossScale.InsertKeyFrame(0, new Vector3(1, yScale, 1));
                 crossScale.InsertKeyFrame(1, new Vector3(1));
                 crossScale.Duration = TimeSpan.FromMilliseconds(outer);
                 crossScale.DelayTime = TimeSpan.FromMilliseconds(delay);
                 crossScale.DelayBehavior = AnimationDelayBehavior.SetInitialValueBeforeDelay;
 
-                var outOpacity = Window.Current.Compositor.CreateScalarKeyFrameAnimation();
+                var outOpacity = BootStrapper.Current.Compositor.CreateScalarKeyFrameAnimation();
                 outOpacity.InsertKeyFrame(0, 1);
                 outOpacity.InsertKeyFrame(1, 0);
                 outOpacity.Duration = TimeSpan.FromMilliseconds(outer);
@@ -2180,27 +2179,27 @@ namespace Telegram.Controls.Messages
             var media = ElementComposition.GetElementVisual(Media);
             var footer = ElementComposition.GetElementVisual(Footer);
 
-            var scale = Window.Current.Compositor.CreateVector3KeyFrameAnimation();
+            var scale = BootStrapper.Current.Compositor.CreateVector3KeyFrameAnimation();
             scale.InsertKeyFrame(0, new Vector3(xScale, 1, 1));
             scale.InsertKeyFrame(1, new Vector3(1));
             scale.Duration = TimeSpan.FromMilliseconds(inner);
             scale.DelayTime = TimeSpan.FromMilliseconds(delay);
             scale.DelayBehavior = AnimationDelayBehavior.SetInitialValueBeforeDelay;
 
-            var factor = Window.Current.Compositor.CreateExpressionAnimation("Vector3(1 / content.Scale.X, 1, 1)");
+            var factor = BootStrapper.Current.Compositor.CreateExpressionAnimation("Vector3(1 / content.Scale.X, 1, 1)");
             factor.SetReferenceParameter("content", panel);
 
             CompositionAnimation textScale = factor;
             if (fontScale != 1)
             {
-                var textScaleImpl = Window.Current.Compositor.CreateScalarKeyFrameAnimation();
+                var textScaleImpl = BootStrapper.Current.Compositor.CreateScalarKeyFrameAnimation();
                 textScaleImpl.InsertKeyFrame(0, fontScale);
                 textScaleImpl.InsertKeyFrame(1, 1);
                 textScaleImpl.Duration = TimeSpan.FromMilliseconds(outer);
                 textScaleImpl.DelayTime = TimeSpan.FromMilliseconds(delay);
                 textScaleImpl.DelayBehavior = AnimationDelayBehavior.SetInitialValueBeforeDelay;
 
-                textScale = Window.Current.Compositor.CreateExpressionAnimation("Vector3(this.Scale * (1 / content.Scale.X), this.Scale, 1)");
+                textScale = BootStrapper.Current.Compositor.CreateExpressionAnimation("Vector3(this.Scale * (1 / content.Scale.X), this.Scale, 1)");
                 textScale.SetReferenceParameter("content", panel);
                 textScale.Properties.InsertScalar("Scale", fontScale);
                 textScale.Properties.StartAnimation("Scale", textScaleImpl);
@@ -2209,7 +2208,7 @@ namespace Telegram.Controls.Messages
                 Media.Tag = textScale;
             }
 
-            var inOpacity = Window.Current.Compositor.CreateScalarKeyFrameAnimation();
+            var inOpacity = BootStrapper.Current.Compositor.CreateScalarKeyFrameAnimation();
             inOpacity.InsertKeyFrame(0, 0);
             inOpacity.InsertKeyFrame(1, 1);
             inOpacity.Duration = TimeSpan.FromMilliseconds(outer / 3 * 2);
@@ -2257,7 +2256,7 @@ namespace Telegram.Controls.Messages
                 textOffsetY = reply ? 16 : 0;
             }
 
-            var headerOffset = Window.Current.Compositor.CreateVector3KeyFrameAnimation();
+            var headerOffset = BootStrapper.Current.Compositor.CreateVector3KeyFrameAnimation();
             headerOffset.InsertKeyFrame(0, new Vector3(-(headerOffsetX * (1 / xScale)), headerOffsetY, 0));
             headerOffset.InsertKeyFrame(1, new Vector3(0));
             headerOffset.Duration = TimeSpan.FromMilliseconds(headerOffsetY > 0 ? outer : inner);
@@ -2265,7 +2264,7 @@ namespace Telegram.Controls.Messages
             headerOffset.DelayBehavior = AnimationDelayBehavior.SetInitialValueBeforeDelay;
             header.StartAnimation("Translation", headerOffset);
 
-            var textOffset = Window.Current.Compositor.CreateVector3KeyFrameAnimation();
+            var textOffset = BootStrapper.Current.Compositor.CreateVector3KeyFrameAnimation();
             textOffset.InsertKeyFrame(0, new Vector3(-textOffsetX, textOffsetY, 0));
             textOffset.InsertKeyFrame(1, new Vector3());
             textOffset.Duration = TimeSpan.FromMilliseconds(textOffsetY > 0 ? outer : inner);
@@ -2307,7 +2306,7 @@ namespace Telegram.Controls.Messages
             // TODO: this probably needs to go in MessageViewModel
             var outgoing = (message.IsOutgoing && !message.IsChannelPost) || (message.IsSaved && message.ForwardInfo?.Source is { IsOutgoing: true });
 
-            var anim = Window.Current.Compositor.CreateVector3KeyFrameAnimation();
+            var anim = BootStrapper.Current.Compositor.CreateVector3KeyFrameAnimation();
             anim.InsertKeyFrame(0, new Vector3(prev / next, 1));
             anim.InsertKeyFrame(1, Vector3.One);
 
@@ -2315,7 +2314,7 @@ namespace Telegram.Controls.Messages
             panel.CenterPoint = new Vector3(outgoing ? next.X : 0, 0, 0);
             panel.StartAnimation("Scale", anim);
 
-            var factor = Window.Current.Compositor.CreateExpressionAnimation("Vector3(1 / content.Scale.X, 1 / content.Scale.Y, 1)");
+            var factor = BootStrapper.Current.Compositor.CreateExpressionAnimation("Vector3(1 / content.Scale.X, 1 / content.Scale.Y, 1)");
             factor.SetReferenceParameter("content", panel);
 
             var header = ElementComposition.GetElementVisual(Header);
@@ -2365,7 +2364,7 @@ namespace Telegram.Controls.Messages
                 return;
             }
 
-            _highlight = Window.Current.Compositor.CreateContainerVisual();
+            _highlight = BootStrapper.Current.Compositor.CreateContainerVisual();
 
             var content = message.GeneratedContent ?? message.Content;
             var light = content is MessageSticker
@@ -2404,7 +2403,7 @@ namespace Telegram.Controls.Messages
 
             brush ??= _highlight.Compositor.CreateColorBrush(Theme.Accent);
 
-            var solid = Window.Current.Compositor.CreateSpriteVisual();
+            var solid = BootStrapper.Current.Compositor.CreateSpriteVisual();
             solid.Size = target.ActualSize;
             solid.Opacity = 0f;
             solid.Brush = brush;
@@ -2436,7 +2435,7 @@ namespace Telegram.Controls.Messages
                     var current = new List<Rect>();
                     var last = default(Rect);
 
-                    var visual = Window.Current.Compositor.CreateShapeVisual();
+                    var visual = BootStrapper.Current.Compositor.CreateShapeVisual();
                     visual.Size = target.ActualSize;
                     visual.Opacity = 0;
 
@@ -2591,7 +2590,7 @@ namespace Telegram.Controls.Messages
                         result = CanvasGeometry.CreatePath(builder);
                     }
 
-                    var shape = Window.Current.Compositor.CreateSpriteShape(Window.Current.Compositor.CreatePathGeometry(new CompositionPath(result)));
+                    var shape = BootStrapper.Current.Compositor.CreateSpriteShape(BootStrapper.Current.Compositor.CreatePathGeometry(new CompositionPath(result)));
                     shape.FillBrush = brush;
                     shape.StrokeThickness = 0;
                     visual.Shapes.Add(shape);
@@ -2607,11 +2606,11 @@ namespace Telegram.Controls.Messages
                     {
                         if (_cornerRadius != null)
                         {
-                            solid.Clip = Window.Current.Compositor.CreateRectangleClip(0, 0, (float)target.ActualWidth, (float)target.ActualHeight, new Vector2(_cornerRadius.TopLeft), new Vector2(_cornerRadius.TopRight), new Vector2(_cornerRadius.BottomRight), new Vector2(_cornerRadius.BottomLeft));
+                            solid.Clip = BootStrapper.Current.Compositor.CreateRectangleClip(0, 0, (float)target.ActualWidth, (float)target.ActualHeight, new Vector2(_cornerRadius.TopLeft), new Vector2(_cornerRadius.TopRight), new Vector2(_cornerRadius.BottomRight), new Vector2(_cornerRadius.BottomLeft));
                         }
                         else
                         {
-                            solid.Clip = Window.Current.Compositor.CreateRectangleClip(0, 0, (float)target.ActualWidth, (float)target.ActualHeight, new Vector2((float)ContentPanel.CornerRadius.TopLeft), new Vector2((float)ContentPanel.CornerRadius.TopRight), new Vector2((float)ContentPanel.CornerRadius.BottomRight), new Vector2((float)ContentPanel.CornerRadius.BottomLeft));
+                            solid.Clip = BootStrapper.Current.Compositor.CreateRectangleClip(0, 0, (float)target.ActualWidth, (float)target.ActualHeight, new Vector2((float)ContentPanel.CornerRadius.TopLeft), new Vector2((float)ContentPanel.CornerRadius.TopRight), new Vector2((float)ContentPanel.CornerRadius.BottomRight), new Vector2((float)ContentPanel.CornerRadius.BottomLeft));
                         }
                     }
 
@@ -2697,7 +2696,7 @@ namespace Telegram.Controls.Messages
             {
                 if (message.ReplyToState == MessageReplyToState.Deleted)
                 {
-                    ToastPopup.Show(Strings.StoryNotFound, new LocalFileSource("ms-appx:///Assets/Toasts/ExpiredStory.tgs"));
+                    ToastPopup.Show(XamlRoot, Strings.StoryNotFound, ToastPopupIcon.ExpiredStory);
                 }
                 else if (message.ReplyToItem is Story item)
                 {

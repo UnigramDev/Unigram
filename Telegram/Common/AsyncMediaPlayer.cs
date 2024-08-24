@@ -33,7 +33,7 @@ namespace Telegram.Common
         public AsyncMediaPlayer(params string[] options)
         {
             _dispatcherQueue = WindowContext.Current.Dispatcher;
-            
+
             // This should be not needed
             _dispatcherQueue ??= WindowContext.Main.Dispatcher;
 

@@ -328,7 +328,7 @@ namespace Telegram
 
             for (int i = 0; i < _instances.Count; i++)
             {
-                    builder.AppendLine("case \"" + _instances[i].FullName + "\":");
+                builder.AppendLine("case \"" + _instances[i].FullName + "\":");
                 builder.AppendLine("return (T)(object)" + GenerateConstructor(_instances[i], 4) + "; ");
             }
 

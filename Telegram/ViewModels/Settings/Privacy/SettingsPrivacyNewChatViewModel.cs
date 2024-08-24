@@ -72,7 +72,7 @@ namespace Telegram.ViewModels.Settings.Privacy
         {
             if (IsPremiumAvailable && !IsPremium)
             {
-                ToastPopup.ShowOption(NavigationService);
+                ToastPopup.ShowOptionPromo(NavigationService);
             }
         }
 

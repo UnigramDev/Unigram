@@ -15,7 +15,6 @@ using Telegram.Controls;
 using Telegram.Converters;
 using Telegram.Navigation.Services;
 using Telegram.Services;
-using Telegram.Streams;
 using Telegram.Td.Api;
 using Telegram.ViewModels.Delegates;
 using Telegram.ViewModels.Profile;
@@ -564,7 +563,7 @@ namespace Telegram.ViewModels
                 return;
             }
 
-            MessageHelper.CopyText(PhoneNumber.Format(user.PhoneNumber));
+            MessageHelper.CopyText(NavigationService.XamlRoot, PhoneNumber.Format(user.PhoneNumber));
         }
 
         public void CopyId()
@@ -577,11 +576,11 @@ namespace Telegram.ViewModels
 
             if (ClientService.TryGetUser(chat, out User user))
             {
-                MessageHelper.CopyText(user.Id.ToString());
+                MessageHelper.CopyText(NavigationService.XamlRoot, user.Id.ToString());
             }
             else
             {
-                MessageHelper.CopyText(chat.Id.ToString());
+                MessageHelper.CopyText(NavigationService.XamlRoot, chat.Id.ToString());
             }
         }
 
@@ -631,7 +630,7 @@ namespace Telegram.ViewModels
                     return;
                 }
 
-                MessageHelper.CopyText($"@{username}");
+                MessageHelper.CopyText(NavigationService.XamlRoot, $"@{username}");
             }
             else
             {
@@ -641,7 +640,7 @@ namespace Telegram.ViewModels
                     return;
                 }
 
-                MessageHelper.CopyText($"@{username}");
+                MessageHelper.CopyText(NavigationService.XamlRoot, $"@{username}");
             }
         }
 
@@ -661,7 +660,7 @@ namespace Telegram.ViewModels
                     return;
                 }
 
-                MessageHelper.CopyLink(ClientService, new InternalLinkTypePublicChat(username, string.Empty, false));
+                MessageHelper.CopyLink(ClientService, NavigationService.XamlRoot, new InternalLinkTypePublicChat(username, string.Empty, false));
             }
             else
             {
@@ -671,7 +670,7 @@ namespace Telegram.ViewModels
                     return;
                 }
 
-                MessageHelper.CopyLink(ClientService, new InternalLinkTypePublicChat(username, string.Empty, false));
+                MessageHelper.CopyLink(ClientService, NavigationService.XamlRoot, new InternalLinkTypePublicChat(username, string.Empty, false));
             }
         }
 
@@ -834,7 +833,7 @@ namespace Telegram.ViewModels
                 if (confirm == ContentDialogResult.Primary)
                 {
                     ClientService.Send(new SetUserPrivacySettingRules(new UserPrivacySettingShowStatus(), new UserPrivacySettingRules(new UserPrivacySettingRule[] { new UserPrivacySettingRuleAllowAll() })));
-                    ToastPopup.Show(Strings.PremiumLastSeenSet, new LocalFileSource("ms-appx:///Assets/Toasts/Info.tgs"));
+                    ShowToast(Strings.PremiumLastSeenSet, ToastPopupIcon.Info);
                 }
                 else if (confirm == ContentDialogResult.Secondary && IsPremiumAvailable && !IsPremium)
                 {
@@ -894,15 +893,15 @@ namespace Telegram.ViewModels
 
             if (chat.Type is ChatTypePrivate or ChatTypeSecret)
             {
-                _voipService.Start(chat.Id, video);
+                _voipService.Start(NavigationService, chat, video);
             }
             else if (chat.VideoChat.GroupCallId == 0)
             {
-                await _voipGroupService.CreateAsync(chat.Id);
+                await _voipGroupService.CreateAsync(NavigationService.XamlRoot, chat.Id);
             }
             else
             {
-                await _voipGroupService.JoinAsync(chat.Id);
+                await _voipGroupService.JoinAsync(NavigationService.XamlRoot, chat.Id);
             }
         }
 

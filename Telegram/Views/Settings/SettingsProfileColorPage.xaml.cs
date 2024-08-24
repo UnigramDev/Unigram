@@ -5,7 +5,6 @@
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
 using Telegram.Controls;
-using Telegram.Streams;
 using Telegram.Td.Api;
 using Telegram.ViewModels.Settings;
 using Microsoft.UI.Xaml;
@@ -101,7 +100,7 @@ namespace Telegram.Views.Settings
 
                     if (changed)
                     {
-                        ToastPopup.Show(Strings.UserColorApplied, new LocalFileSource("ms-appx:///Assets/Toasts/Success.tgs"));
+                        ToastPopup.Show(XamlRoot, Strings.UserColorApplied, ToastPopupIcon.Success);
                     }
 
                     _confirmed = true;
@@ -109,7 +108,7 @@ namespace Telegram.Views.Settings
                 }
                 else
                 {
-                    ToastPopup.ShowFeature(ViewModel.NavigationService, new PremiumFeatureAccentColor());
+                    ToastPopup.ShowFeaturePromo(ViewModel.NavigationService, new PremiumFeatureAccentColor());
                 }
             }
         }

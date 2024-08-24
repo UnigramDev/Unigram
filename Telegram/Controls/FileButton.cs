@@ -269,7 +269,7 @@ namespace Telegram.Controls
 
             OnGlyphChanged(string.Empty, Glyph, animate, Strings.AccActionCancelDownload, false);
 
-            var compositor = Window.Current.Compositor;
+            var compositor = BootStrapper.Current.Compositor;
             var diameter = 48f; // min(bounds.size.width, bounds.size.height)
             var factor = diameter / 48f;
 
@@ -320,7 +320,7 @@ namespace Telegram.Controls
             visual3.Shapes.Add(arrowShape);
             visual3.Size = new Vector2(48, 48);
 
-            var container = Window.Current.Compositor.CreateContainerVisual();
+            var container = BootStrapper.Current.Compositor.CreateContainerVisual();
             container.Children.InsertAtTop(visual1);
             container.Children.InsertAtTop(visual3);
             container.Size = new Vector2(48, 48);

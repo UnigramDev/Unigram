@@ -436,7 +436,7 @@ namespace Telegram.ViewModels
                 popup.HasPaidMediaAllowed = fullInfo.HasPaidMediaAllowed;
             }
 
-            var confirm = await popup.OpenAsync();
+            var confirm = await popup.OpenAsync(NavigationService.XamlRoot);
             if (confirm != ContentDialogResult.Primary)
             {
                 if (formattedText != null)
@@ -760,7 +760,7 @@ namespace Telegram.ViewModels
 
         public async void SendLocation()
         {
-            var popup = new SendLocationPopup();
+            var popup = new SendLocationPopup(SessionId);
 
             var confirm = await ShowPopupAsync(popup);
             if (confirm == ContentDialogResult.Primary)

@@ -8,6 +8,7 @@ using Microsoft.UI.Xaml.Controls;
 using System;
 using System.Collections.Generic;
 using System.Numerics;
+using Telegram.Navigation;
 using Windows.UI;
 using Microsoft.UI.Composition;
 using Microsoft.UI.Xaml;
@@ -214,7 +215,7 @@ namespace Telegram.Controls
                 return;
             }
 
-            var compositor = Window.Current.Compositor;
+            var compositor = BootStrapper.Current.Compositor;
             var rectangle = compositor.CreateRoundedRectangleGeometry();
             rectangle.Size = new Vector2(ActualSize.X - 2, ActualSize.Y - 2);
             rectangle.Offset = new Vector2(1, 1);
@@ -256,7 +257,7 @@ namespace Telegram.Controls
 
         public void HideSkeleton()
         {
-            ElementCompositionPreview.SetElementChildVisual(this, Window.Current.Compositor.CreateSpriteVisual());
+            ElementCompositionPreview.SetElementChildVisual(this, BootStrapper.Current.Compositor.CreateSpriteVisual());
         }
 
         #endregion

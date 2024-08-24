@@ -10,7 +10,6 @@ using Telegram.Controls;
 using Telegram.Navigation;
 using Telegram.Navigation.Services;
 using Telegram.Services;
-using Telegram.Streams;
 using Telegram.Td.Api;
 using Telegram.ViewModels.Delegates;
 using Telegram.Views.Settings;
@@ -196,7 +195,7 @@ namespace Telegram.ViewModels.Settings
 
         public async void SetPhoto()
         {
-            await _profilePhotoService.SetPhotoAsync(null);
+            await _profilePhotoService.SetPhotoAsync(NavigationService, null);
         }
 
         public async void CreatePhoto()
@@ -249,7 +248,7 @@ namespace Telegram.ViewModels.Settings
 
                 if (popup.SelectedChatId != 0)
                 {
-                    ToastPopup.Show(Strings.EditProfileChannelSet, new LocalFileSource("ms-appx:///Assets/Toasts/Success.tgs"));
+                    ShowToast(Strings.EditProfileChannelSet, ToastPopupIcon.Success);
                 }
             }
         }

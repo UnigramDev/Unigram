@@ -10,7 +10,6 @@ using System.Linq;
 using System.Text;
 using Telegram.Common;
 using Telegram.Controls;
-using Telegram.Streams;
 using Telegram.Td;
 using Telegram.Td.Api;
 using Telegram.ViewModels.Drawers;
@@ -227,7 +226,7 @@ namespace Telegram.Views.Supergroups.Popups
                     var count = ViewModel.Items.Count(x => x is ReactionTypeCustomEmoji);
                     if (count >= ViewModel.BoostLevel)
                     {
-                        ToastPopup.Show(Locale.Declension(Strings.R.ReactionReachLvlForReactionShort, count + 1, count + 1), new LocalFileSource("ms-appx:///Assets/Toasts/Info.tgs"));
+                        ToastPopup.Show(XamlRoot, Locale.Declension(Strings.R.ReactionReachLvlForReactionShort, count + 1, count + 1), ToastPopupIcon.Info);
                     }
 
                     CaptionInput.InsertEmoji(sticker);

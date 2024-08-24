@@ -15,7 +15,6 @@ using Telegram.Controls;
 using Telegram.Controls.Cells;
 using Telegram.Converters;
 using Telegram.Navigation;
-using Telegram.Streams;
 using Telegram.Td;
 using Telegram.Td.Api;
 using Telegram.Views;
@@ -145,7 +144,7 @@ namespace Telegram.Services
 
             dispatcher.Dispatch(() =>
             {
-                var toast = ToastPopup.Show(markdown, new LocalFileSource("ms-appx:///Assets/Toasts/SpeedLimit.tgs"));
+                var toast = ToastPopup.Show(navigationService.XamlRoot, markdown, ToastPopupIcon.SpeedLimit);
                 void handler(object sender, TextUrlClickEventArgs e)
                 {
                     toast.Click -= handler;
@@ -168,14 +167,20 @@ namespace Telegram.Services
             {
                 async void DeleteAccount()
                 {
-                    var decline = await MessagePopup.ShowAsync(Strings.TosUpdateDecline, Strings.TermsOfService, Strings.DeclineDeactivate, Strings.Back);
+                    var xamlRoot = WindowContext.Main?.Content?.XamlRoot;
+                    if (xamlRoot == null)
+                    {
+                        return;
+                    }
+
+                    var decline = await MessagePopup.ShowAsync(xamlRoot, Strings.TosUpdateDecline, Strings.TermsOfService, Strings.DeclineDeactivate, Strings.Back);
                     if (decline != ContentDialogResult.Primary)
                     {
                         Handle(update);
                         return;
                     }
 
-                    var delete = await MessagePopup.ShowAsync(Strings.TosDeclineDeleteAccount, Strings.AppName, Strings.Deactivate, Strings.Cancel);
+                    var delete = await MessagePopup.ShowAsync(xamlRoot, Strings.TosDeclineDeleteAccount, Strings.AppName, Strings.Deactivate, Strings.Cancel);
                     if (delete != ContentDialogResult.Primary)
                     {
                         Handle(update);
@@ -188,7 +193,13 @@ namespace Telegram.Services
                 await Task.Delay(2000);
                 BeginOnUIThread(async () =>
                 {
-                    var confirm = await MessagePopup.ShowAsync(terms.Text, Strings.PrivacyPolicyAndTerms, Strings.Agree, Strings.Cancel);
+                    var xamlRoot = WindowContext.Main?.Content?.XamlRoot;
+                    if (xamlRoot == null)
+                    {
+                        return;
+                    }
+
+                    var confirm = await MessagePopup.ShowAsync(xamlRoot, terms.Text, Strings.PrivacyPolicyAndTerms, Strings.Agree, Strings.Cancel);
                     if (confirm != ContentDialogResult.Primary)
                     {
                         DeleteAccount();
@@ -197,7 +208,7 @@ namespace Telegram.Services
 
                     if (terms.MinUserAge > 0)
                     {
-                        var age = await MessagePopup.ShowAsync(string.Format(Strings.TosAgeText, terms.MinUserAge), Strings.TosAgeTitle, Strings.Agree, Strings.Cancel);
+                        var age = await MessagePopup.ShowAsync(xamlRoot, string.Format(Strings.TosAgeText, terms.MinUserAge), Strings.TosAgeTitle, Strings.Agree, Strings.Cancel);
                         if (age != ContentDialogResult.Primary)
                         {
                             DeleteAccount();
@@ -218,7 +229,13 @@ namespace Telegram.Services
                 {
                     if (action is SuggestedActionEnableArchiveAndMuteNewChats)
                     {
-                        var confirm = await MessagePopup.ShowAsync(Strings.HideNewChatsAlertText, Strings.HideNewChatsAlertTitle, Strings.OK, Strings.Cancel);
+                        var xamlRoot = WindowContext.Main?.Content?.XamlRoot;
+                        if (xamlRoot == null)
+                        {
+                            return;
+                        }
+
+                        var confirm = await MessagePopup.ShowAsync(xamlRoot, Strings.HideNewChatsAlertText, Strings.HideNewChatsAlertTitle, Strings.OK, Strings.Cancel);
                         if (confirm == ContentDialogResult.Primary)
                         {
                             var response = await _clientService.SendAsync(new GetArchiveChatListSettings());
@@ -251,9 +268,15 @@ namespace Telegram.Services
 
             BeginOnUIThread(async () =>
             {
+                var xamlRoot = WindowContext.Main?.Content?.XamlRoot;
+                if (xamlRoot == null)
+                {
+                    return;
+                }
+
                 if (update.Type.StartsWith("AUTH_KEY_DROP_"))
                 {
-                    var confirm = await MessagePopup.ShowAsync(text, Strings.AppName, Strings.LogOut, Strings.Cancel);
+                    var confirm = await MessagePopup.ShowAsync(xamlRoot, text, Strings.AppName, Strings.LogOut, Strings.Cancel);
                     if (confirm == ContentDialogResult.Primary)
                     {
                         _clientService.Send(new Destroy());
@@ -261,7 +284,7 @@ namespace Telegram.Services
                 }
                 else
                 {
-                    await MessagePopup.ShowAsync(text, Strings.AppName, Strings.OK);
+                    await MessagePopup.ShowAsync(xamlRoot, text, Strings.AppName, Strings.OK);
                 }
             });
         }

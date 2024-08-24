@@ -768,12 +768,12 @@ namespace Telegram.Views
             _selectionAnchor = sender as RichTextBlock;
             _selectionAnchor.TextHighlighters.Clear();
 
-            var transform = _selectionAnchor.TransformToVisual(Window.Current.Content);
+            var transform = _selectionAnchor.TransformToVisual(XamlRoot.Content);
             var anchorPoint = transform.TransformPoint(new Point());
 
             _selectionAnchorPoint = new Point(anchorPoint.X, anchorPoint.Y + (_selectionAnchor.ActualHeight / 2));
 
-            var transform2 = ScrollingHost.ItemsPanelRoot.TransformToVisual(Window.Current.Content);
+            var transform2 = ScrollingHost.ItemsPanelRoot.TransformToVisual(XamlRoot.Content);
             var anchorPoint2 = transform2.TransformPoint(new Point());
 
             _stackPoint = anchorPoint;
@@ -811,10 +811,10 @@ namespace Telegram.Views
 
             //if (_selectionStart == sender)
             {
-                var transform = _selectionAnchor.TransformToVisual(Window.Current.Content);
+                var transform = _selectionAnchor.TransformToVisual(XamlRoot.Content);
                 var anchorPoint = transform.TransformPoint(new Point());
 
-                var point = e.GetCurrentPoint(Window.Current.Content);
+                var point = e.GetCurrentPoint(XamlRoot.Content);
                 var y1 = Math.Min(_selectionAnchorPoint.Y, point.Position.Y);
                 var y2 = Math.Max(_selectionAnchorPoint.Y, point.Position.Y);
 

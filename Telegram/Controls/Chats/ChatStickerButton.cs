@@ -9,6 +9,7 @@ using System;
 using System.Numerics;
 using Telegram.Assets.Icons;
 using Telegram.Controls.Media;
+using Telegram.Navigation;
 using Telegram.Services;
 using Telegram.Services.Settings;
 using Telegram.Views;
@@ -82,7 +83,7 @@ namespace Telegram.Controls.Chats
             {
                 _stickersTimer.Stop();
 
-                var popups = VisualTreeHelper.GetOpenPopups(Window.Current);
+                var popups = VisualTreeHelper.GetOpenPopupsForXamlRoot(XamlRoot);
 
                 foreach (var popup in popups)
                 {
@@ -148,23 +149,23 @@ namespace Telegram.Controls.Chats
             Opening?.Invoke(this, EventArgs.Empty);
 
             _stickersPanel.Opacity = 0;
-            _stickersPanel.Clip = Window.Current.Compositor.CreateInsetClip(48, 48, 0, 0);
+            _stickersPanel.Clip = _stickersPanel.Compositor.CreateInsetClip(48, 48, 0, 0);
 
             _stickersShadow.Opacity = 0;
-            _stickersShadow.Clip = Window.Current.Compositor.CreateInsetClip(48, 48, -48, -4);
+            _stickersShadow.Clip = _stickersPanel.Compositor.CreateInsetClip(48, 48, -48, -4);
 
             ControlledPanel.Visibility = Visibility.Visible;
             ControlledPanel.Activate();
 
-            var opacity = Window.Current.Compositor.CreateScalarKeyFrameAnimation();
+            var opacity = _stickersPanel.Compositor.CreateScalarKeyFrameAnimation();
             opacity.InsertKeyFrame(0, 0);
             opacity.InsertKeyFrame(1, 1);
 
-            var clip = Window.Current.Compositor.CreateScalarKeyFrameAnimation();
+            var clip = _stickersPanel.Compositor.CreateScalarKeyFrameAnimation();
             clip.InsertKeyFrame(0, 48);
             clip.InsertKeyFrame(1, 0);
 
-            var clipShadow = Window.Current.Compositor.CreateScalarKeyFrameAnimation();
+            var clipShadow = _stickersPanel.Compositor.CreateScalarKeyFrameAnimation();
             clipShadow.InsertKeyFrame(0, 48);
             clipShadow.InsertKeyFrame(1, -48);
 
@@ -189,22 +190,22 @@ namespace Telegram.Controls.Chats
 
             Closing?.Invoke(this, EventArgs.Empty);
 
-            var batch = Window.Current.Compositor.CreateScopedBatch(CompositionBatchTypes.Animation);
+            var batch = BootStrapper.Current.Compositor.CreateScopedBatch(CompositionBatchTypes.Animation);
             batch.Completed += (s, args) =>
             {
                 ControlledPanel.Visibility = Visibility.Collapsed;
                 ControlledPanel.Deactivate();
             };
 
-            var opacity = Window.Current.Compositor.CreateScalarKeyFrameAnimation();
+            var opacity = BootStrapper.Current.Compositor.CreateScalarKeyFrameAnimation();
             opacity.InsertKeyFrame(0, 1);
             opacity.InsertKeyFrame(1, 0);
 
-            var clip = Window.Current.Compositor.CreateScalarKeyFrameAnimation();
+            var clip = BootStrapper.Current.Compositor.CreateScalarKeyFrameAnimation();
             clip.InsertKeyFrame(0, 0);
             clip.InsertKeyFrame(1, 48);
 
-            var clipShadow = Window.Current.Compositor.CreateScalarKeyFrameAnimation();
+            var clipShadow = BootStrapper.Current.Compositor.CreateScalarKeyFrameAnimation();
             clipShadow.InsertKeyFrame(0, -48);
             clipShadow.InsertKeyFrame(1, 48);
 
@@ -303,7 +304,7 @@ namespace Telegram.Controls.Chats
             if (IsRuntimeCompatible())
             {
                 var animate = oldValue != StickersTab.None;
-                var visual = GetVisual(newValue, oldValue, animate, Window.Current.Compositor, out var source, out _props);
+                var visual = GetVisual(newValue, oldValue, animate, BootStrapper.Current.Compositor, out var source, out _props);
 
                 _source = source;
                 _previous = visual;

@@ -91,9 +91,9 @@ namespace Telegram.Views.Popups
             }
         }
 
-        public Task<bool> ShowQueuedAsync()
+        public Task<bool> ShowQueuedAsync(XamlRoot xamlRoot)
         {
-            if (Window.Current.Content is not IToastHost host)
+            if (xamlRoot.Content is not IToastHost host)
             {
                 return Task.FromResult(false);
             }

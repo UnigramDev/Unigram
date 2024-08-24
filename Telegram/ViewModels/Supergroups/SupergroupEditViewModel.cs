@@ -298,7 +298,7 @@ namespace Telegram.ViewModels.Supergroups
 
         public async void SetPhoto()
         {
-            await _profilePhotoService.SetPhotoAsync(Chat.Id);
+            await _profilePhotoService.SetPhotoAsync(NavigationService, Chat.Id);
         }
 
         public async void CreatePhoto()

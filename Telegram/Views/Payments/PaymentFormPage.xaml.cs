@@ -22,7 +22,7 @@ namespace Telegram.Views.Payments
         {
             InitializeComponent();
 
-            DropShadowEx.Attach(BuyShadow);
+            VisualUtilities.DropShadow(BuyShadow);
         }
 
         private string ConvertTitle(bool receipt, bool test)

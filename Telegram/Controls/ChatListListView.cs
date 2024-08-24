@@ -10,6 +10,7 @@ using System.Numerics;
 using Telegram.Common;
 using Telegram.Composition;
 using Telegram.Controls.Cells;
+using Telegram.Navigation;
 using Telegram.Td.Api;
 using Telegram.ViewModels;
 using Windows.UI;
@@ -195,7 +196,7 @@ namespace Telegram.Controls
             var child = VisualTreeHelper.GetChild(ScrollViewer, 0) as UIElement;
             var childSize = child.ActualSize.X > 0 && child.ActualSize.Y > 0 ? child.ActualSize : new Vector2(1, 1);
 
-            var visual = Window.Current.Compositor.CreateRedirectBrush(child, Vector2.Zero, childSize, true);
+            var visual = BootStrapper.Current.Compositor.CreateRedirectBrush(child, Vector2.Zero, childSize, true);
 
             await VisualUtilities.WaitForCompositionRenderedAsync();
 

@@ -43,7 +43,7 @@ namespace Telegram.Views.Settings.Password
 
                 if (string.Equals(password, hint))
                 {
-                    ToastPopup.Show(Strings.PasswordAsHintError);
+                    ToastPopup.Show(XamlRoot, Strings.PasswordAsHintError);
                     args.Cancel = true;
                     return;
                 }
@@ -69,7 +69,7 @@ namespace Telegram.Views.Settings.Password
 
                     if (error.CodeEquals(ErrorCode.FLOOD))
                     {
-                        AlertsService.ShowFloodWaitAlert(error.Message);
+                        AlertsService.ShowFloodWaitAlert(XamlRoot, error.Message);
                     }
                     else
                     {

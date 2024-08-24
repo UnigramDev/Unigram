@@ -301,7 +301,7 @@ namespace Telegram.ViewModels.Settings
 
         public async void Add()
         {
-            var popup = new ProxyPopup();
+            var popup = new ProxyPopup(ClientService);
 
             var confirm = await ShowPopupAsync2(popup);
             if (confirm != ContentDialogResult.Primary)
@@ -338,7 +338,7 @@ namespace Telegram.ViewModels.Settings
         {
             SelectedItems.Clear();
 
-            var popup = new ProxyPopup(connection);
+            var popup = new ProxyPopup(ClientService, connection);
 
             var confirm = await ShowPopupAsync2(popup);
             if (confirm != ContentDialogResult.Primary)
@@ -436,7 +436,7 @@ namespace Telegram.ViewModels.Settings
 
             if (Popup != null)
             {
-                _ = Popup.ShowQueuedAsync();
+                ShowPopup(Popup);
             }
 
             return confirm;
@@ -455,7 +455,7 @@ namespace Telegram.ViewModels.Settings
 
             if (Popup != null)
             {
-                _ = Popup.ShowQueuedAsync();
+                ShowPopup(Popup);
             }
 
             return confirm;

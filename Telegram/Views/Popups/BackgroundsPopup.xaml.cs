@@ -110,7 +110,7 @@ namespace Telegram.Views.Popups
             var confirm = await task;
             if (confirm != ContentDialogResult.Primary)
             {
-                await this.ShowQueuedAsync();
+                await this.ShowQueuedAsync(XamlRoot);
             }
             else
             {

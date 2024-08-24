@@ -245,7 +245,7 @@ namespace Telegram.Views.Premium.Popups
 
         private void PurchaseShadow_Loaded(object sender, RoutedEventArgs e)
         {
-            DropShadowEx.Attach(PurchaseShadow);
+            VisualUtilities.DropShadow(PurchaseShadow);
         }
 
         private void Purchase_Click(object sender, RoutedEventArgs e)
@@ -340,7 +340,7 @@ namespace Telegram.Views.Premium.Popups
                 }
             };
 
-            if (Window.Current.Content is IToastHost host)
+            if (XamlRoot.Content is IToastHost host)
             {
                 void handler(object sender, object e)
                 {

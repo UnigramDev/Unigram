@@ -46,7 +46,7 @@ namespace Telegram.Common
         {
             var lastInput = NativeUtils.GetLastInputTime();
             var idleTime = Environment.TickCount - lastInput;
-            
+
             if (idleTime >= _timeout && _lastTime < lastInput)
             {
                 _lastTime = lastInput;
@@ -62,7 +62,7 @@ namespace Telegram.Common
             {
                 var lastInput = NativeUtils.GetLastInputTime();
                 var idleTime = Environment.TickCount - lastInput;
-                
+
                 if (idleTime >= 60 * 1000)
                 {
                     return false;

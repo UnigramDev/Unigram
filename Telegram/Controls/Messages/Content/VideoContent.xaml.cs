@@ -255,6 +255,10 @@ namespace Telegram.Controls.Messages.Content
                     {
                         UpdateSource(message, file);
                     }
+                    else
+                    {
+                        UpdateSource(null, null);
+                    }
 
                     Button.SetGlyph(file.Id, message.SendingState is MessageSendingStatePending && message.MediaAlbumId != 0 ? MessageContentState.Confirm : MessageContentState.Play);
                     Button.Progress = 0;
@@ -288,7 +292,7 @@ namespace Telegram.Controls.Messages.Content
             {
                 if (file.Local.IsDownloadingCompleted)
                 {
-                    if (isSecret)
+                    if (isSecret || hasSpoiler)
                     {
                         source = new BitmapImage();
                         PlaceholderHelper.GetBlurred(source, file.Local.Path, 15);
@@ -313,14 +317,14 @@ namespace Telegram.Controls.Messages.Content
                     if (video.Minithumbnail != null)
                     {
                         source = new BitmapImage();
-                        PlaceholderHelper.GetBlurred(source, video.Minithumbnail.Data, isSecret ? 15 : 3);
+                        PlaceholderHelper.GetBlurred(source, video.Minithumbnail.Data, isSecret || hasSpoiler ? 15 : 3);
                     }
                 }
             }
             else if (video.Minithumbnail != null)
             {
                 source = new BitmapImage();
-                PlaceholderHelper.GetBlurred(source, video.Minithumbnail.Data, isSecret ? 15 : 3);
+                PlaceholderHelper.GetBlurred(source, video.Minithumbnail.Data, isSecret || hasSpoiler ? 15 : 3);
             }
 
             brush.Source = source;

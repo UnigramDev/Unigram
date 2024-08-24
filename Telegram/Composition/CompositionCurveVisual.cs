@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Numerics;
+using Telegram.Navigation;
 using Windows.UI;
 using Microsoft.UI.Composition;
 using Microsoft.UI.Xaml;
@@ -28,7 +29,7 @@ namespace Telegram.Composition
         {
             _maxLevel = maxLevel;
 
-            var compositor = Window.Current.Compositor;
+            var compositor = BootStrapper.Current.Compositor;
 
             var size = new Vector2(width, height);
 
@@ -210,7 +211,7 @@ namespace Telegram.Composition
                 if (MathF.Abs(value - _level) > 0.01)
                 {
                     var lv = _minOffset + (_maxOffset - _minOffset) * value;
-                    var animation = Window.Current.Compositor.CreateScalarKeyFrameAnimation();
+                    var animation = BootStrapper.Current.Compositor.CreateScalarKeyFrameAnimation();
                     animation.InsertKeyFrame(1, -14 + lv * 16.0f);
                     _shape.StartAnimation("Offset.Y", animation);
                 }

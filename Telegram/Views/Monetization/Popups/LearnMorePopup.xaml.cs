@@ -45,7 +45,7 @@ namespace Telegram.Views.Monetization.Popups
         private void Copy_Click(object sender, RoutedEventArgs e)
         {
             Hide(ContentDialogResult.Secondary);
-            MessageHelper.CopyText(_value);
+            MessageHelper.CopyText(XamlRoot, _value);
         }
     }
 }

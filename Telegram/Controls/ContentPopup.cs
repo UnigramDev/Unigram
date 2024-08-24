@@ -78,7 +78,7 @@ namespace Telegram.Controls
                 return;
             }
 
-            var compositor = Window.Current.Compositor;
+            var compositor = BootStrapper.Current.Compositor;
             var prev = e.PreviousSize.ToVector2();
             var next = e.NewSize.ToVector2();
 
@@ -150,7 +150,7 @@ namespace Telegram.Controls
 
         private void OnOpened(ContentDialog sender, ContentDialogOpenedEventArgs args)
         {
-            if (Window.Current.Content is RootPage root)
+            if (XamlRoot.Content is RootPage root)
             {
                 root.PopupOpened();
             }
@@ -173,7 +173,7 @@ namespace Telegram.Controls
 
         private void OnClosed(ContentDialog sender, ContentDialogClosedEventArgs args)
         {
-            if (Window.Current.Content is RootPage root)
+            if (XamlRoot.Content is RootPage root)
             {
                 root.PopupClosed();
             }
@@ -272,9 +272,9 @@ namespace Telegram.Controls
             }
         }
 
-        public async Task<ContentDialogResult> OpenAsync()
+        public async Task<ContentDialogResult> OpenAsync(XamlRoot xamlRoot)
         {
-            await this.ShowQueuedAsync();
+            await this.ShowQueuedAsync(xamlRoot);
             return _result;
         }
 

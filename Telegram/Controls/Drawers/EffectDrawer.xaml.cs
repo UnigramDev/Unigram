@@ -35,7 +35,7 @@ namespace Telegram.Controls.Drawers
         {
             InitializeComponent();
 
-            ElementComposition.GetElementVisual(this).Clip = Window.Current.Compositor.CreateInsetClip();
+            this.CreateInsetClip();
 
             _handler = new AnimatedListHandler(List, AnimatedListType.Stickers);
 

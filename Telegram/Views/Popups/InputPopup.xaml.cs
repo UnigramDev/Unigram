@@ -239,7 +239,7 @@ namespace Telegram.Views.Popups
 
         #region Static methods
 
-        public static async Task<InputPopupResult> ShowAsync(InputPopupType type, string message, string title = null, string placeholderText = null, string primary = null, string secondary = null, bool destructive = false, ElementTheme requestedTheme = ElementTheme.Default)
+        public static async Task<InputPopupResult> ShowAsync(XamlRoot xamlRoot, InputPopupType type, string message, string title = null, string placeholderText = null, string primary = null, string secondary = null, bool destructive = false, ElementTheme requestedTheme = ElementTheme.Default)
         {
             var popup = new InputPopup(type)
             {
@@ -252,7 +252,7 @@ namespace Telegram.Views.Popups
                 RequestedTheme = requestedTheme
             };
 
-            var confirm = await popup.ShowQueuedAsync();
+            var confirm = await popup.ShowQueuedAsync(xamlRoot);
             return new InputPopupResult(confirm, popup.Text, popup.Value);
         }
 

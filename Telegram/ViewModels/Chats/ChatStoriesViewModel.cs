@@ -16,7 +16,6 @@ using Telegram.Controls.Stories;
 using Telegram.Navigation;
 using Telegram.Navigation.Services;
 using Telegram.Services;
-using Telegram.Streams;
 using Telegram.Td.Api;
 using Telegram.ViewModels.Stories;
 using Telegram.Views.Chats;
@@ -101,7 +100,7 @@ namespace Telegram.ViewModels.Chats
                 Items.Remove(story);
             }
 
-            ToastPopup.Show(IsPostedToChatPage ? Strings.StoryRemovedFromProfile : Strings.StorySavedToProfile);
+            ShowToast(IsPostedToChatPage ? Strings.StoryRemovedFromProfile : Strings.StorySavedToProfile);
         }
 
 
@@ -119,7 +118,7 @@ namespace Telegram.ViewModels.Chats
                 }
             }
 
-            ToastPopup.Show(Locale.Declension(IsPostedToChatPage ? Strings.R.StoriesRemovedFromProfile : Strings.R.StoriesSavedToProfile, selection.Length));
+            ShowToast(Locale.Declension(IsPostedToChatPage ? Strings.R.StoriesRemovedFromProfile : Strings.R.StoriesSavedToProfile, selection.Length));
             UnselectStories();
         }
 
@@ -128,7 +127,7 @@ namespace Telegram.ViewModels.Chats
             if (_pinnedStoryIds.Contains(story.StoryId))
             {
                 _pinnedStoryIds.Remove(story.StoryId);
-                ToastPopup.Show(Locale.Declension(Strings.R.StoriesUnpinned, 1), new LocalFileSource("ms-appx:///Assets/Toasts/Unpin.tgs"));
+                ShowToast(Locale.Declension(Strings.R.StoriesUnpinned, 1), ToastPopupIcon.Unpin);
 
                 Items.Remove(story);
 
@@ -141,14 +140,14 @@ namespace Telegram.ViewModels.Chats
             else if (_pinnedStoryIds.Count < ClientService.Options.PinnedStoryCountMax)
             {
                 _pinnedStoryIds.Insert(0, story.StoryId);
-                ToastPopup.Show(Locale.Declension(Strings.R.StoriesPinned, 1), new LocalFileSource("ms-appx:///Assets/Toasts/Pin.tgs"));
+                ShowToast(Locale.Declension(Strings.R.StoriesPinned, 1), ToastPopupIcon.Pin);
 
                 Items.Remove(story);
                 Items.Insert(0, story);
             }
             else
             {
-                ToastPopup.Show(Locale.Declension(Strings.R.StoriesPinLimit, ClientService.Options.PinnedStoryCountMax), new LocalFileSource("ms-appx:///Assets/Toasts/Info.tgs"));
+                ShowToast(Locale.Declension(Strings.R.StoriesPinLimit, ClientService.Options.PinnedStoryCountMax), ToastPopupIcon.Info);
                 return;
             }
 

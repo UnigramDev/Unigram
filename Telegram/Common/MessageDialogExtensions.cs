@@ -29,7 +29,7 @@ namespace Telegram.Common
         /// <param name="dialog">The dialog.</param>
         /// <returns></returns>
         /// <exception cref="InvalidOperationException">This method can only be invoked from UI thread.</exception>
-        public static async Task<ContentDialogResult> ShowQueuedAsync(this ContentDialog dialog)
+        public static async Task<ContentDialogResult> ShowQueuedAsync(this ContentDialog dialog, XamlRoot xamlRoot)
         {
             while (_currentDialogShowRequest != null)
             {

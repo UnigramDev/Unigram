@@ -21,7 +21,7 @@ namespace Telegram.ViewModels.Gallery
 
         public IClientService ClientService => _clientService;
 
-        public RotationAngle RotationAngle { get; set; } 
+        public RotationAngle RotationAngle { get; set; }
 
         public abstract File GetFile();
 

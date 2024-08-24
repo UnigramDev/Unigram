@@ -22,7 +22,6 @@ using Telegram.Navigation;
 using Telegram.Navigation.Services;
 using Telegram.Services;
 using Telegram.Services.Settings;
-using Telegram.Streams;
 using Telegram.Td.Api;
 using Telegram.ViewModels;
 using Telegram.Views.Authorization;
@@ -99,7 +98,7 @@ namespace Telegram.Views.Host
 
             Navigation.Content = _navigationService.Frame;
 
-            DropShadowEx.Attach(ThemeShadow);
+            VisualUtilities.DropShadow(ThemeShadow);
 
             //if (ApiInfo.IsXbox)
             //{
@@ -924,7 +923,7 @@ namespace Telegram.Views.Host
                     await Test();
                 }
 
-                var visual = Window.Current.Compositor.CreateRedirectVisual(this, Vector2.Zero, ActualSize, true);
+                var visual = BootStrapper.Current.Compositor.CreateRedirectVisual(this, Vector2.Zero, ActualSize, true);
                 await VisualUtilities.WaitForCompositionRenderedAsync();
 
                 ElementCompositionPreview.SetElementChildVisual(Transition, visual);
@@ -995,7 +994,7 @@ namespace Telegram.Views.Host
             if (SettingsService.Current.Appearance.NightMode != NightMode.Disabled)
             {
                 SettingsService.Current.Appearance.NightMode = NightMode.Disabled;
-                ToastPopup.Show(Strings.AutoNightModeOff, new LocalFileSource("ms-appx:///Assets/Toasts/AutoNightOff.tgs"));
+                ToastPopup.Show(XamlRoot, Strings.AutoNightModeOff, ToastPopupIcon.AutoNightOff);
             }
 
             SettingsService.Current.Appearance.ForceNightMode = ActualTheme != ElementTheme.Dark;
@@ -1142,7 +1141,7 @@ namespace Telegram.Views.Host
 
             ElementCompositionPreview.SetIsTranslationEnabled(Info, true);
 
-            var batch = Window.Current.Compositor.CreateScopedBatch(CompositionBatchTypes.Animation);
+            var batch = BootStrapper.Current.Compositor.CreateScopedBatch(CompositionBatchTypes.Animation);
             batch.Completed += (s, args) =>
             {
                 Theme.Visibility = Visibility.Collapsed;

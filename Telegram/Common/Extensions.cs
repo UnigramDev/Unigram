@@ -106,7 +106,7 @@ namespace Telegram.Common
                     popup.Closed += OnClosed;
                 }
 
-                return popup.ShowQueuedAsync();
+                return popup.ShowQueuedAsync(frame.XamlRoot);
             }
 
             return Task.FromResult(ContentDialogResult.None);
@@ -563,6 +563,18 @@ namespace Telegram.Common
             {
                 // All the remote procedure calls must be wrapped in a try-catch block
             }
+        }
+
+        public static void CreateInsetClip(this UIElement element)
+        {
+            var visual = ElementComposition.GetElementVisual(element);
+            visual.Clip = visual.Compositor.CreateInsetClip();
+        }
+
+        public static void CreateInsetClip(this UIElement element, float leftInset, float topInset, float rightInset, float bottomInset)
+        {
+            var visual = ElementComposition.GetElementVisual(element);
+            visual.Clip = visual.Compositor.CreateInsetClip(leftInset, topInset, rightInset, bottomInset);
         }
 
         public static void Clear(this RichEditTextDocument document)

@@ -199,7 +199,7 @@ namespace Telegram.ViewModels.Settings
         {
             if (theme != null)
             {
-                await _themeService.CreateThemeAsync(theme);
+                await _themeService.CreateThemeAsync(NavigationService, theme);
                 await RefreshThemesAsync();
             }
         }

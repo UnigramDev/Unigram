@@ -17,6 +17,7 @@ using Windows.ApplicationModel;
 using Windows.ApplicationModel.Activation;
 using Windows.ApplicationModel.ExtendedExecution;
 using Windows.System;
+using Windows.UI.Composition;
 using Windows.UI.Core;
 using Windows.UI.ViewManagement;
 using Microsoft.UI.Xaml;
@@ -44,6 +45,10 @@ namespace Telegram.Navigation
         public UISettings UISettings => _uiSettings ??= new UISettings();
 
         public double TextScaleFactor { get; private set; }
+
+        // This is just a wrapper around current window's compositor.
+        // This is done to simplify the porting to WinUI 3 (as there's no concept of current window)
+        public Compositor Compositor => Window.Current.Compositor;
 
         public BootStrapper()
         {

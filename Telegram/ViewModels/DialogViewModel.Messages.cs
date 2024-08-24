@@ -20,7 +20,6 @@ using Telegram.Converters;
 using Telegram.Entities;
 using Telegram.Native;
 using Telegram.Services;
-using Telegram.Streams;
 using Telegram.Td;
 using Telegram.Td.Api;
 using Telegram.ViewModels.Chats;
@@ -601,7 +600,7 @@ namespace Telegram.ViewModels
                     }
                 }
 
-                MessageHelper.CopyText(builder.ToString());
+                MessageHelper.CopyText(NavigationService.XamlRoot, builder.ToString());
             }
         }
 
@@ -717,7 +716,7 @@ namespace Telegram.ViewModels
 
             if (input != null)
             {
-                MessageHelper.CopyText(input);
+                MessageHelper.CopyText(NavigationService.XamlRoot, input);
             }
         }
 
@@ -726,7 +725,7 @@ namespace Telegram.ViewModels
             var input = quote?.Quote;
             if (input != null)
             {
-                MessageHelper.CopyText(input);
+                MessageHelper.CopyText(NavigationService.XamlRoot, input);
             }
         }
 
@@ -777,7 +776,7 @@ namespace Telegram.ViewModels
             var response = await ClientService.SendAsync(new GetMessageLink(chat.Id, message.Id, 0, false, ThreadId != 0));
             if (response is MessageLink link)
             {
-                MessageHelper.CopyLink(link.Link, link.IsPublic);
+                MessageHelper.CopyLink(NavigationService.XamlRoot, link.Link, link.IsPublic);
             }
         }
 
@@ -975,7 +974,7 @@ namespace Telegram.ViewModels
             if (confirm == ContentDialogResult.Primary)
             {
                 ClientService.Send(new SetMessageFactCheck(message.ChatId, message.Id, popup.Text));
-                ToastPopup.Show(string.IsNullOrEmpty(popup.Text?.Text) ? Strings.FactCheckDeleted : Strings.FactCheckEdited, new LocalFileSource("ms-appx:///Assets/Toasts/Info.tgs"));
+                ShowToast(string.IsNullOrEmpty(popup.Text?.Text) ? Strings.FactCheckDeleted : Strings.FactCheckEdited, ToastPopupIcon.Info);
             }
         }
 
@@ -1332,7 +1331,7 @@ namespace Telegram.ViewModels
                 var confirm = await ShowPopupAsync(Strings.ShareYouLocationInfo, Strings.ShareYouLocationTitle, Strings.OK, Strings.Cancel);
                 if (confirm == ContentDialogResult.Primary)
                 {
-                    var location = await _locationService.GetPositionAsync();
+                    var location = await _locationService.GetPositionAsync(NavigationService);
                     if (location != null)
                     {
                         await SendMessageAsync(null, new InputMessageLocation(location, 0, 0, 0), null);
@@ -1436,7 +1435,7 @@ namespace Telegram.ViewModels
             }
 
             ClientService.Send(new AddFavoriteSticker(new InputFileId(sticker.Sticker.StickerValue.Id)));
-            ToastPopup.Show(Strings.AddedToFavorites, new LocalFileSource("ms-appx:///Assets/Toasts/Info.tgs"));
+            ShowToast(Strings.AddedToFavorites, ToastPopupIcon.Info);
         }
 
         #endregion
@@ -1452,7 +1451,7 @@ namespace Telegram.ViewModels
             }
 
             ClientService.Send(new RemoveFavoriteSticker(new InputFileId(sticker.Sticker.StickerValue.Id)));
-            ToastPopup.Show(Strings.RemovedFromFavorites, new LocalFileSource("ms-appx:///Assets/Toasts/Info.tgs"));
+            ShowToast(Strings.RemovedFromFavorites, ToastPopupIcon.Info);
         }
 
         #endregion
@@ -1483,7 +1482,7 @@ namespace Telegram.ViewModels
                 ClientService.Send(new AddSavedAnimation(new InputFileId(previewAnimation.Animation.AnimationValue.Id)));
             }
 
-            ToastPopup.Show(Strings.GifSavedHint, new LocalFileSource("ms-appx:///Assets/Toasts/Gif.tgs"));
+            ShowToast(Strings.GifSavedHint, ToastPopupIcon.Gif);
         }
 
         #endregion
@@ -1518,7 +1517,7 @@ namespace Telegram.ViewModels
             var temp = new FormattedText(title, new[] { entity });
             var markdown = ClientEx.ParseMarkdown(temp);
 
-            ToastPopup.Show(markdown, new LocalFileSource("ms-appx:///Assets/Toasts/SoundDownload.tgs"));
+            ToastPopup.Show(NavigationService.XamlRoot, markdown, ToastPopupIcon.SoundDownload);
         }
 
         #endregion
@@ -1618,16 +1617,16 @@ namespace Telegram.ViewModels
             {
                 if (chatEvent.Action is ChatEventStickerSetChanged stickerSetChanged && stickerSetChanged.NewStickerSetId != 0)
                 {
-                    await StickersPopup.ShowAsync(stickerSetChanged.NewStickerSetId);
+                    await StickersPopup.ShowAsync(NavigationService, stickerSetChanged.NewStickerSetId);
                 }
                 else if (chatEvent.Action is ChatEventCustomEmojiStickerSetChanged customEmojiStickerSetChanged && customEmojiStickerSetChanged.NewStickerSetId != 0)
                 {
-                    await StickersPopup.ShowAsync(customEmojiStickerSetChanged.NewStickerSetId);
+                    await StickersPopup.ShowAsync(NavigationService, customEmojiStickerSetChanged.NewStickerSetId);
                 }
             }
             else if (message.Content is MessageVideoChatStarted or MessageVideoChatScheduled)
             {
-                await _voipGroupService.JoinAsync(message.ChatId);
+                await _voipGroupService.JoinAsync(NavigationService.XamlRoot, message.ChatId);
             }
             else if (message.Content is MessagePaymentSuccessful)
             {
@@ -1819,7 +1818,7 @@ namespace Telegram.ViewModels
                     sets.Add(sticker.SetId);
                 }
 
-                await StickersPopup.ShowAsync(sets);
+                await StickersPopup.ShowAsync(NavigationService, sets);
             }
         }
 

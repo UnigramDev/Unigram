@@ -129,7 +129,7 @@ namespace Telegram.ViewModels.Settings
             }
             else
             {
-                ToastPopup.ShowFeature(NavigationService, new PremiumFeatureRealTimeChatTranslation());
+                ToastPopup.ShowFeaturePromo(NavigationService, new PremiumFeatureRealTimeChatTranslation());
             }
         }
 

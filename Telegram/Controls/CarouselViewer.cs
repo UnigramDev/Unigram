@@ -71,8 +71,8 @@ namespace Telegram.Controls
             {
                 _hasInitialLoadedEventFired = true;
 
-                _hitTest = Window.Current.Compositor.CreateSpriteVisual();
-                _hitTest.Brush = Window.Current.Compositor.CreateColorBrush(Windows.UI.Colors.Transparent);
+                _hitTest = BootStrapper.Current.Compositor.CreateSpriteVisual();
+                _hitTest.Brush = BootStrapper.Current.Compositor.CreateColorBrush(Windows.UI.Colors.Transparent);
 
                 if (ApiInfo.IsWindows11)
                 {
@@ -322,7 +322,7 @@ namespace Telegram.Controls
             _trackerOwner = new WeakInteractionTrackerOwner();
 
             //Create tracker and associate interaction source
-            _tracker = InteractionTracker.CreateWithOwner(Window.Current.Compositor, _trackerOwner);
+            _tracker = InteractionTracker.CreateWithOwner(BootStrapper.Current.Compositor, _trackerOwner);
             _tracker.InteractionSources.Add(_interactionSource);
 
             _tracker.Properties.InsertScalar("RestingValue", _restingValue);

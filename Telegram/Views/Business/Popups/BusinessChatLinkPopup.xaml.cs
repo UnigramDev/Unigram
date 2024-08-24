@@ -1,7 +1,6 @@
 ﻿using Telegram.Common;
 using Telegram.Controls;
 using Telegram.Controls.Media;
-using Telegram.Streams;
 using Telegram.Td.Api;
 using Telegram.ViewModels.Business;
 using Telegram.ViewModels.Drawers;
@@ -72,7 +71,7 @@ namespace Telegram.Views.Business.Popups
 
         private void Link_Click(object sender, RoutedEventArgs e)
         {
-            MessageHelper.CopyLink(_chatLink.Link);
+            MessageHelper.CopyLink(XamlRoot, _chatLink.Link);
         }
 
         private void More_Click(object sender, RoutedEventArgs e)
@@ -89,7 +88,7 @@ namespace Telegram.Views.Business.Popups
 
         private async void Edit_Click(object sender, RoutedEventArgs e)
         {
-            ToastPopup.Show(Strings.BusinessLinkSaved, new LocalFileSource("ms-appx:///Assets/Toasts/Success.tgs"));
+            ToastPopup.Show(XamlRoot, Strings.BusinessLinkSaved, ToastPopupIcon.Success);
 
             var text = CaptionInput.GetFormattedText();
 

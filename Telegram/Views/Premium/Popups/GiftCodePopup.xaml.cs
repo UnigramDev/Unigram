@@ -48,7 +48,7 @@ namespace Telegram.Views.Premium.Popups
                     : string.Format(Strings.BoostingLinkAllowsToUser, user.FullName()));
 
                 var footer = Strings.BoostingSendLinkToFriends;
-                
+
                 var markdown = ClientEx.ParseMarkdown(footer);
                 if (markdown.Entities.Count == 1)
                 {
@@ -123,7 +123,7 @@ namespace Telegram.Views.Premium.Popups
 
         private void PurchaseShadow_Loaded(object sender, RoutedEventArgs e)
         {
-            DropShadowEx.Attach(PurchaseShadow);
+            VisualUtilities.DropShadow(PurchaseShadow);
         }
 
         private async void Purchase_Click(object sender, RoutedEventArgs e)
@@ -143,7 +143,7 @@ namespace Telegram.Views.Premium.Popups
 
         private void CopyLink_Click(object sender, RoutedEventArgs e)
         {
-            MessageHelper.CopyLink(_clientService, new InternalLinkTypePremiumGiftCode(_giftCode));
+            MessageHelper.CopyLink(_clientService, XamlRoot, new InternalLinkTypePremiumGiftCode(_giftCode));
         }
 
         private async void ShareLink_Click(Hyperlink sender, HyperlinkClickEventArgs args)

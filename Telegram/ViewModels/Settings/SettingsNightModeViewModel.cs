@@ -27,7 +27,7 @@ namespace Telegram.ViewModels.Settings
 
         public async void UpdateLocation()
         {
-            var location = await _locationService.GetPositionAsync();
+            var location = await _locationService.GetPositionAsync(NavigationService);
             if (location == null)
             {
                 var confirm = await ShowPopupAsync(Strings.GpsDisabledAlert, Strings.AppName, Strings.ConnectingToProxyEnable, Strings.Cancel);

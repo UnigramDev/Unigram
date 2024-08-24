@@ -53,7 +53,7 @@ namespace Telegram.Controls.Drawers
         {
             InitializeComponent();
 
-            ElementComposition.GetElementVisual(this).Clip = Window.Current.Compositor.CreateInsetClip();
+            this.CreateInsetClip();
 
             _handler = new AnimatedListHandler(List, AnimatedListType.Stickers);
             _toolbarHandler = new AnimatedListHandler(Toolbar, AnimatedListType.Stickers);
@@ -64,19 +64,19 @@ namespace Telegram.Controls.Drawers
             _zoomer.DownloadFile = fileId => ViewModel.ClientService.DownloadFile(fileId, 32);
             _zoomer.SessionId = () => ViewModel.ClientService.SessionId;
 
-            var header = DropShadowEx.Attach(Separator);
+            var header = VisualUtilities.DropShadow(Separator);
             header.Clip = header.Compositor.CreateInsetClip(0, 40, 0, -40);
 
-            //var debouncer = new EventDebouncer<TextChangedEventArgs>(Constants.TypingTimeout, handler => FieldStickers.TextChanged += new TextChangedEventHandler(handler));
-            //debouncer.Invoked += async (s, args) =>
-            //{
-            //    var items = ViewModel.SearchStickers;
-            //    if (items != null && string.Equals(FieldStickers.Text, items.Query))
-            //    {
-            //        await items.LoadMoreItemsAsync(1);
-            //        await items.LoadMoreItemsAsync(2);
-            //    }
-            //};
+            var debouncer = new EventDebouncer<TextChangedEventArgs>(Constants.TypingTimeout, handler => SearchField.TextChanged += new TextChangedEventHandler(handler));
+            debouncer.Invoked += async (s, args) =>
+            {
+                var items = ViewModel.SearchStickers as SearchStickerSetsCollection;
+                if (items != null && string.Equals(SearchField.Text, items.Query))
+                {
+                    await items.LoadMoreItemsAsync(1);
+                    await items.LoadMoreItemsAsync(2);
+                }
+            };
         }
 
         public Services.Settings.StickersTab Tab => Services.Settings.StickersTab.Stickers;

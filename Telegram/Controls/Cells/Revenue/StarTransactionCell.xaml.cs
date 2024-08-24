@@ -69,20 +69,30 @@ namespace Telegram.Controls.Cells.Revenue
                 else if (sourceBot.Purpose is BotTransactionPurposePaidMedia paidMedia)
                 {
                     Title.Text = Strings.StarMediaPurchase;
+                    Subtitle.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
 
-                    MediaPreview.Visibility = Microsoft.UI.Xaml.Visibility.Visible;
-
-                    UpdateMedia(clientService, paidMedia.Media[0], Media1, ref _media1Token);
-
-                    if (paidMedia.Media.Count > 1)
+                    if (paidMedia.Media.Count > 0)
                     {
-                        UpdateMedia(clientService, paidMedia.Media[1], Media2, ref _media2Token);
+                        MediaPreview.Visibility = Windows.UI.Xaml.Visibility.Visible;
 
-                        Media2.Visibility = Microsoft.UI.Xaml.Visibility.Visible;
+                        UpdateMedia(clientService, paidMedia.Media[0], Media1, ref _media1Token);
+
+                        if (paidMedia.Media.Count > 1)
+                        {
+                            UpdateMedia(clientService, paidMedia.Media[1], Media2, ref _media2Token);
+
+                            Media2.Visibility = Windows.UI.Xaml.Visibility.Visible;
+                        }
+                        else
+                        {
+                            Media2.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
+                        }
                     }
                     else
                     {
-                        Media2.Visibility = Microsoft.UI.Xaml.Visibility.Collapsed;
+                        Photo.SetUser(clientService, botUser, 36);
+
+                        MediaPreview.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
                     }
                 }
                 else
@@ -91,6 +101,8 @@ namespace Telegram.Controls.Cells.Revenue
                     Subtitle.Visibility = Microsoft.UI.Xaml.Visibility.Collapsed;
 
                     Photo.SetUser(clientService, botUser, 36);
+
+                    MediaPreview.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
                 }
             }
             else if (transaction.Partner is StarTransactionPartnerBusiness sourceBusiness && clientService.TryGetUser(sourceBusiness.UserId, out User businessUser))

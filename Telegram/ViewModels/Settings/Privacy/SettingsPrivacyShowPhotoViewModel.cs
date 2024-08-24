@@ -55,7 +55,7 @@ namespace Telegram.ViewModels.Settings.Privacy
 
         public async void SetPhoto()
         {
-            await _profilePhotoService.SetPhotoAsync(null, true);
+            await _profilePhotoService.SetPhotoAsync(NavigationService, null, true);
         }
 
         public async void CreatePhoto()

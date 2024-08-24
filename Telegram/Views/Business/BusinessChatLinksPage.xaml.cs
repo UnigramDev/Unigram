@@ -135,7 +135,7 @@ namespace Telegram.Views.Business
 
         private void CreateFooter_Click(object sender, TextUrlClickEventArgs e)
         {
-            MessageHelper.CopyLink("https://" + e.Url);
+            MessageHelper.CopyLink(XamlRoot, "https://" + e.Url);
         }
 
         public void UpdateBusinessChatLink(BusinessChatLink chatLink)

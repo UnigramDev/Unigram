@@ -53,7 +53,7 @@ namespace Telegram.ViewModels.BasicGroups
 
         public async void AddMembers()
         {
-            var chats = await ChooseChatsPopup.PickChatsAsync(Strings.SelectContacts, Items.Select(x => x.Id).ToArray(), ChooseChatsOptions.Users);
+            var chats = await ChooseChatsPopup.PickChatsAsync(SessionId, Strings.SelectContacts, Items.Select(x => x.Id).ToArray(), ChooseChatsOptions.Users);
             if (chats != null)
             {
                 Items.ReplaceWith(chats);
@@ -85,7 +85,7 @@ namespace Telegram.ViewModels.BasicGroups
                 }
                 else if (response is Error error)
                 {
-                    AlertsService.ShowAddUserAlert(Dispatcher, error.Message, false);
+                    AlertsService.ShowAddUserAlert(NavigationService.XamlRoot, error.Message, false);
                 }
             }
             else

@@ -7,6 +7,7 @@
 using Microsoft.UI.Xaml.Controls;
 using Telegram.Assets.Icons;
 using Telegram.Common;
+using Telegram.Navigation;
 using Windows.UI;
 using Microsoft.UI.Composition;
 using Microsoft.UI.Xaml;
@@ -37,7 +38,7 @@ namespace Telegram.Controls
         {
             DefaultStyleKey = typeof(DownloadsIndicator);
 
-            var compositor = Window.Current.Compositor;
+            var compositor = BootStrapper.Current.Compositor;
             var source = new Downloading();
 
             var visual = source.TryCreateAnimatedVisual(compositor, out _);
@@ -115,7 +116,7 @@ namespace Telegram.Controls
 
                 var batch = PrepareBatch();
 
-                var compositor = Window.Current.Compositor;
+                var compositor = BootStrapper.Current.Compositor;
                 var linearEasing = compositor.CreateLinearEasingFunction();
 
                 _animation.Duration = _visual.Duration / (_state == State.IndeterminateToCompleted ? 3 : 2);

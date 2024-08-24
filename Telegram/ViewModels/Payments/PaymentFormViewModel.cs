@@ -349,7 +349,7 @@ namespace Telegram.ViewModels.Payments
                     }
                     else if (choose.SelectedIndex is PaymentOption paymentOption)
                     {
-                        var option = new PaymentCredentialsPopup(regular, paymentOption);
+                        var option = new PaymentCredentialsPopup(SessionId, regular, paymentOption);
 
                         var confirm2 = await ShowPopupAsync(option);
                         if (confirm2 == ContentDialogResult.Primary && option.Credentials != null)
@@ -363,7 +363,7 @@ namespace Telegram.ViewModels.Payments
                 }
             }
 
-            var popup = new PaymentCredentialsPopup(regular);
+            var popup = new PaymentCredentialsPopup(SessionId, regular);
 
             var confirm = await ShowPopupAsync(popup);
             if (confirm == ContentDialogResult.Primary && popup.Credentials != null)
@@ -380,7 +380,7 @@ namespace Telegram.ViewModels.Payments
                 return;
             }
 
-            var popup = new PaymentAddressPopup(_inputInvoice, regular.Invoice, _info);
+            var popup = new PaymentAddressPopup(SessionId, _inputInvoice, regular.Invoice, _info);
 
             var confirm = await ShowPopupAsync(popup);
             if (confirm == ContentDialogResult.Primary && popup.ValidatedInfo != null)

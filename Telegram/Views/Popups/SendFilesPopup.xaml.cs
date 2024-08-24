@@ -655,7 +655,7 @@ namespace Telegram.Views.Popups
                             Source = new CompositionEffectSourceParameter("Backdrop")
                         };
 
-                        var compositor = Window.Current.Compositor;
+                        var compositor = BootStrapper.Current.Compositor;
                         var effectFactory = compositor.CreateEffectFactory(graphicsEffect, new[] { "Blur.BlurAmount" });
                         var effectBrush = effectFactory.CreateBrush();
                         var backdrop = compositor.CreateBackdropBrush();
@@ -780,9 +780,9 @@ namespace Telegram.Views.Popups
                         : ttl is MessageSelfDestructTypeImmediately
                         ? Strings.TimerPeriodPhotoSetOnce
                         : Strings.TimerPeriodPhotoKeep,
-                    new LocalFileSource(ttl == null
-                        ? "ms-appx:///Assets/Toasts/AutoRemoveOff.tgs"
-                        : "ms-appx:///Assets/Toasts/AutoRemoveOn.tgs"),
+                    ttl == null
+                        ? ToastPopupIcon.AutoRemoveOff
+                        : ToastPopupIcon.AutoRemoveOn,
                     TeachingTipPlacementMode.TopLeft);
             }
 
@@ -900,7 +900,7 @@ namespace Telegram.Views.Popups
             var focused = FocusManager.GetFocusedElement();
             if (focused is null or (not TextBox and not RichEditBox and not Button and not MenuFlyoutItem))
             {
-                var popups = VisualTreeHelper.GetOpenPopups(Window.Current);
+                var popups = VisualTreeHelper.GetOpenPopupsForXamlRoot(XamlRoot);
 
                 foreach (var popup in popups)
                 {
@@ -1049,7 +1049,7 @@ namespace Telegram.Views.Popups
             //{
             //    if (args.Value < ClientService.Options.StarWithdrawalCountMin)
             //    {
-            //        ToastPopup.Show(Locale.Declension(Strings.R.BotStarsWithdrawMinLimit, ClientService.Options.StarWithdrawalCountMin), new LocalFileSource("ms-appx:///Assets/Toasts/Info.tgs"));
+            //        ToastPopup.Show(Locale.Declension(Strings.R.BotStarsWithdrawMinLimit, ClientService.Options.StarWithdrawalCountMin), ToastPopupIcon.Info);
             //        args.Cancel = true;
             //    }
             //};

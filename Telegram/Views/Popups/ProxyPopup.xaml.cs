@@ -19,16 +19,20 @@ namespace Telegram.Views.Popups
 {
     public sealed partial class ProxyPopup : ContentPopup
     {
-        public ProxyPopup()
+        private readonly IClientService _clientService;
+
+        public ProxyPopup(IClientService clientService)
         {
             InitializeComponent();
+
+            _clientService = clientService;
 
             PrimaryButtonText = Strings.OK;
             SecondaryButtonText = Strings.Cancel;
         }
 
-        public ProxyPopup(ProxyViewModel proxy)
-            : this()
+        public ProxyPopup(IClientService clientService, ProxyViewModel proxy)
+            : this(clientService)
         {
             InitializeComponent();
 
@@ -135,7 +139,7 @@ namespace Telegram.Views.Popups
             //}
 
             var title = Strings.ProxySettings;
-            var link = new Uri(MeUrlPrefixConverter.Convert(TypeResolver.Current.Resolve<IClientService>(), $"socks?{string.Join("&", builder)}"));
+            var link = new Uri(MeUrlPrefixConverter.Convert(_clientService, $"socks?{string.Join("&", builder)}"));
 
             // TODO: currently not used
             //await new ChooseChatsPopup().ShowAsync(link, title);

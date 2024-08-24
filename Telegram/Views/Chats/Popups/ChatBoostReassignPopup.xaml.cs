@@ -138,7 +138,7 @@ namespace Telegram.Views.Chats.Popups
 
         private void PurchaseShadow_Loaded(object sender, Microsoft.UI.Xaml.RoutedEventArgs e)
         {
-            DropShadowEx.Attach(PurchaseShadow);
+            VisualUtilities.DropShadow(PurchaseShadow);
         }
 
         private async void Purchase_Click(object sender, Microsoft.UI.Xaml.RoutedEventArgs e)

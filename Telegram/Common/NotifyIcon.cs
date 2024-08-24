@@ -15,6 +15,7 @@ using Windows.ApplicationModel.AppService;
 using Windows.ApplicationModel.Background;
 using Windows.Foundation.Collections;
 using Windows.Foundation.Metadata;
+using Windows.UI.Xaml;
 
 namespace Telegram.Common
 {
@@ -77,7 +78,8 @@ namespace Telegram.Common
             {
                 if (response.Message.TryGet<string>("Debug", out var message))
                 {
-                    await MessagePopup.ShowAsync(message);
+                    // TODO: XamlRoot here is not needed, WinUI 3 will not have this code
+                    await MessagePopup.ShowAsync(null as XamlRoot, message);
                 }
             }
         }

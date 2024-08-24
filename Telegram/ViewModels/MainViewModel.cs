@@ -17,7 +17,6 @@ using Telegram.Navigation;
 using Telegram.Navigation.Services;
 using Telegram.Services;
 using Telegram.Services.Updates;
-using Telegram.Streams;
 using Telegram.Td;
 using Telegram.Td.Api;
 using Telegram.ViewModels.Folders;
@@ -491,7 +490,7 @@ namespace Telegram.ViewModels
             var markdown = new FormattedText(message, new[] { entity });
             var text = ClientEx.ParseMarkdown(markdown);
 
-            ToastPopup.Show(text, new LocalFileSource("ms-appx:///Assets/Toasts/Success.tgs"));
+            ToastPopup.Show(NavigationService.XamlRoot, text, ToastPopupIcon.Success);
         }
 
         public async void DenySession()
@@ -532,7 +531,7 @@ namespace Telegram.ViewModels
             if (confirm == ContentDialogResult.Primary)
             {
                 ClientService.Send(new SetBirthdate(popup.Value));
-                ToastPopup.Show(Strings.PrivacyBirthdaySetDone, new LocalFileSource("ms-appx:///Assets/Toasts/Success.tgs"));
+                ShowToast(Strings.PrivacyBirthdaySetDone, ToastPopupIcon.Success);
             }
             else if (popup.ShowPrivacySettings)
             {
@@ -547,7 +546,7 @@ namespace Telegram.ViewModels
 
         public async void UpdateApp()
         {
-            await CloudUpdateService.LaunchAsync(Dispatcher, false);
+            await CloudUpdateService.LaunchAsync(NavigationService, false);
         }
 
         public async void CreateSecretChat()

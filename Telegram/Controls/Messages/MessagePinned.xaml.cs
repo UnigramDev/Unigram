@@ -184,7 +184,7 @@ namespace Telegram.Controls.Messages
             Canvas.SetZIndex(referenceShow, 1);
             Canvas.SetZIndex(referenceHide, 0);
 
-            var batch = Window.Current.Compositor.CreateScopedBatch(CompositionBatchTypes.Animation);
+            var batch = BootStrapper.Current.Compositor.CreateScopedBatch(CompositionBatchTypes.Animation);
             batch.Completed += (s, args) =>
             {
                 _playing = false;
@@ -197,7 +197,7 @@ namespace Telegram.Controls.Messages
 
             if (cross)
             {
-                var hide1 = Window.Current.Compositor.CreateVector3KeyFrameAnimation();
+                var hide1 = BootStrapper.Current.Compositor.CreateVector3KeyFrameAnimation();
                 hide1.InsertKeyFrame(0, new Vector3(0));
                 hide1.InsertKeyFrame(1, new Vector3(0, prev ? -8 : 8, 0));
 
@@ -208,7 +208,7 @@ namespace Telegram.Controls.Messages
                 textVisualHide.Offset = Vector3.Zero;
             }
 
-            var hide2 = Window.Current.Compositor.CreateScalarKeyFrameAnimation();
+            var hide2 = BootStrapper.Current.Compositor.CreateScalarKeyFrameAnimation();
             hide2.InsertKeyFrame(0, 1);
             hide2.InsertKeyFrame(1, 0);
 
@@ -220,7 +220,7 @@ namespace Telegram.Controls.Messages
 
             if (cross)
             {
-                var show1 = Window.Current.Compositor.CreateVector3KeyFrameAnimation();
+                var show1 = BootStrapper.Current.Compositor.CreateVector3KeyFrameAnimation();
                 show1.InsertKeyFrame(0, new Vector3(0, prev ? 8 : -8, 0));
                 show1.InsertKeyFrame(1, new Vector3(0));
 
@@ -231,7 +231,7 @@ namespace Telegram.Controls.Messages
                 textVisualShow.Offset = Vector3.Zero;
             }
 
-            var show2 = Window.Current.Compositor.CreateScalarKeyFrameAnimation();
+            var show2 = BootStrapper.Current.Compositor.CreateScalarKeyFrameAnimation();
             show2.InsertKeyFrame(0, 0);
             show2.InsertKeyFrame(1, 1);
 
@@ -440,7 +440,7 @@ namespace Telegram.Controls.Messages
         {
             RegisterPropertyChangedCallback(BorderBrushProperty, OnBorderBrushChanged);
 
-            var compositor = Window.Current.Compositor;
+            var compositor = BootStrapper.Current.Compositor;
 
             var visual = compositor.CreateShapeVisual();
             visual.Size = new Vector2(2, 36);
@@ -524,7 +524,7 @@ namespace Telegram.Controls.Messages
                 return;
             }
 
-            _fore.FillBrush = Window.Current.Compositor.CreateColorBrush(newValue.Color);
+            _fore.FillBrush = BootStrapper.Current.Compositor.CreateColorBrush(newValue.Color);
 
             if (IsConnected)
             {
@@ -540,7 +540,7 @@ namespace Telegram.Controls.Messages
                 return;
             }
 
-            _fore.FillBrush = Window.Current.Compositor.CreateColorBrush(solid.Color);
+            _fore.FillBrush = BootStrapper.Current.Compositor.CreateColorBrush(solid.Color);
         }
 
         #endregion
@@ -558,10 +558,10 @@ namespace Telegram.Controls.Messages
             var value = GetValue(dp);
             if (value is SolidColorBrush solid)
             {
-                return Window.Current.Compositor.CreateColorBrush(solid.Color);
+                return BootStrapper.Current.Compositor.CreateColorBrush(solid.Color);
             }
 
-            return Window.Current.Compositor.CreateColorBrush(Colors.White);
+            return BootStrapper.Current.Compositor.CreateColorBrush(Colors.White);
         }
 
         private readonly Queue<(int, int, int)> _queue = new Queue<(int, int, int)>();

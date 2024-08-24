@@ -34,12 +34,12 @@ namespace Telegram.Controls
             _manager.Loaded += OnLoaded;
             _manager.Unloaded += OnUnloaded;
 
-            var ellipse = Window.Current.Compositor.CreateEllipseGeometry();
+            var ellipse = BootStrapper.Current.Compositor.CreateEllipseGeometry();
             ellipse.Radius = new Vector2((float)Radius);
             ellipse.Center = new Vector2((float)Center);
             ellipse.TrimEnd = 0f;
 
-            var shape = Window.Current.Compositor.CreateSpriteShape(ellipse);
+            var shape = BootStrapper.Current.Compositor.CreateSpriteShape(ellipse);
             shape.CenterPoint = new Vector2((float)Center);
             shape.StrokeThickness = 2;
             shape.StrokeStartCap = CompositionStrokeCap.Round;
@@ -47,16 +47,16 @@ namespace Telegram.Controls
 
             if (Foreground is SolidColorBrush brush)
             {
-                shape.StrokeBrush = Window.Current.Compositor.CreateColorBrush(brush.Color);
+                shape.StrokeBrush = BootStrapper.Current.Compositor.CreateColorBrush(brush.Color);
             }
 
-            var visual = Window.Current.Compositor.CreateShapeVisual();
+            var visual = BootStrapper.Current.Compositor.CreateShapeVisual();
             visual.Shapes.Add(shape);
             visual.Size = new Vector2((float)Center * 2);
             visual.CenterPoint = new Vector3((float)Center);
 
-            var easing = Window.Current.Compositor.CreateLinearEasingFunction();
-            var forever = Window.Current.Compositor.CreateScalarKeyFrameAnimation();
+            var easing = BootStrapper.Current.Compositor.CreateLinearEasingFunction();
+            var forever = BootStrapper.Current.Compositor.CreateScalarKeyFrameAnimation();
             forever.InsertKeyFrame(0, 220, easing);
             forever.InsertKeyFrame(1, 580, easing);
             forever.IterationBehavior = AnimationIterationBehavior.Forever;
@@ -99,7 +99,7 @@ namespace Telegram.Controls
         {
             if (_shape != null && Foreground is SolidColorBrush brush)
             {
-                _shape.StrokeBrush = Window.Current.Compositor.CreateColorBrush(brush.Color);
+                _shape.StrokeBrush = BootStrapper.Current.Compositor.CreateColorBrush(brush.Color);
             }
         }
 
@@ -172,9 +172,9 @@ namespace Telegram.Controls
             }
             else
             {
-                var linear = Window.Current.Compositor.CreateLinearEasingFunction();
-                var trimStart = Window.Current.Compositor.CreateScalarKeyFrameAnimation();
-                var trimEnd = Window.Current.Compositor.CreateScalarKeyFrameAnimation();
+                var linear = BootStrapper.Current.Compositor.CreateLinearEasingFunction();
+                var trimStart = BootStrapper.Current.Compositor.CreateScalarKeyFrameAnimation();
+                var trimEnd = BootStrapper.Current.Compositor.CreateScalarKeyFrameAnimation();
 
                 if (oldValue == 0)
                 {
@@ -197,7 +197,7 @@ namespace Telegram.Controls
                     trimStart.InsertKeyFrame(1, ShrinkOut ? 1 : 0, linear);
                     trimEnd.InsertKeyFrame(1, 1, linear);
 
-                    var batch = Window.Current.Compositor.CreateScopedBatch(CompositionBatchTypes.Animation);
+                    var batch = BootStrapper.Current.Compositor.CreateScopedBatch(CompositionBatchTypes.Animation);
                     batch.Completed += (s, args) =>
                     {
                         if (_spinning)

@@ -163,7 +163,7 @@ namespace Telegram.ViewModels.Chats
 
         public void Copy()
         {
-            MessageHelper.CopyLink(_inviteLink);
+            MessageHelper.CopyLink(NavigationService.XamlRoot, _inviteLink);
         }
 
         public async void Revoke()

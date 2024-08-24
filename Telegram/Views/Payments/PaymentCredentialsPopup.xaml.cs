@@ -18,10 +18,10 @@ namespace Telegram.Views.Payments
 
         public SavedCredentials Credentials { get; private set; }
 
-        public PaymentCredentialsPopup(PaymentFormTypeRegular paymentForm)
+        public PaymentCredentialsPopup(int sessionId, PaymentFormTypeRegular paymentForm)
         {
             InitializeComponent();
-            DataContext = TypeResolver.Current.Resolve<PaymentCredentialsViewModel>();
+            DataContext = TypeResolver.Current.Resolve<PaymentCredentialsViewModel>(sessionId);
 
             Title = Strings.PaymentCardInfo;
 
@@ -38,10 +38,10 @@ namespace Telegram.Views.Payments
             }
         }
 
-        public PaymentCredentialsPopup(PaymentFormTypeRegular paymentForm, PaymentOption paymentOption)
+        public PaymentCredentialsPopup(int sessionId, PaymentFormTypeRegular paymentForm, PaymentOption paymentOption)
         {
             InitializeComponent();
-            DataContext = TypeResolver.Current.Resolve<PaymentCredentialsViewModel>();
+            DataContext = TypeResolver.Current.Resolve<PaymentCredentialsViewModel>(sessionId);
 
             Title = Strings.PaymentCardInfo;
 

@@ -174,14 +174,14 @@ namespace Telegram.ViewModels.Gallery
                 {
                     if (chatPhoto.Sticker?.Type is ChatPhotoStickerTypeRegularOrMask regularOrMask)
                     {
-                        await StickersPopup.ShowAsync(regularOrMask.StickerSetId);
+                        await StickersPopup.ShowAsync(NavigationService, regularOrMask.StickerSetId);
                     }
                     else if (chatPhoto.Sticker?.Type is ChatPhotoStickerTypeCustomEmoji customEmoji)
                     {
                         var response = await ClientService.SendAsync(new GetCustomEmojiStickers(new[] { customEmoji.CustomEmojiId }));
                         if (response is Stickers stickers && stickers.StickersValue.Count == 1)
                         {
-                            await StickersPopup.ShowAsync(stickers.StickersValue[0].SetId);
+                            await StickersPopup.ShowAsync(NavigationService, stickers.StickersValue[0].SetId);
                         }
                     }
                 }
@@ -193,7 +193,7 @@ namespace Telegram.ViewModels.Gallery
                         return;
                     }
 
-                    await StickersPopup.ShowAsync(new InputFileId(file.Id));
+                    await StickersPopup.ShowAsync(NavigationService, new InputFileId(file.Id));
                 }
             }
         }

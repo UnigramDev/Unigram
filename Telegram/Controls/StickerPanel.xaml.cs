@@ -57,8 +57,8 @@ namespace Telegram.Controls
         {
             InitializeComponent();
 
-            var header = DropShadowEx.Attach(HeaderSeparator);
-            var shadow = DropShadowEx.Attach(ShadowElement);
+            var header = VisualUtilities.DropShadow(HeaderSeparator);
+            var shadow = VisualUtilities.DropShadow(ShadowElement);
 
             header.Clip = header.Compositor.CreateInsetClip(0, -40, 0, 40);
         }

@@ -15,7 +15,6 @@ using Telegram.Controls;
 using Telegram.Navigation;
 using Telegram.Navigation.Services;
 using Telegram.Services;
-using Telegram.Streams;
 using Telegram.Td.Api;
 using Telegram.Views.Popups;
 using Windows.ApplicationModel.DataTransfer;
@@ -635,45 +634,45 @@ namespace Telegram.ViewModels
                 {
                     if (userId == ClientService.Options.MyId)
                     {
-                        ToastPopup.Show(messagesCount > 1
+                        ShowToast(messagesCount > 1
                             ? Strings.FwdMessagesToSavedMessages
-                            : Strings.FwdMessageToSavedMessages, new LocalFileSource("ms-appx:///Assets/Toasts/SavedMessages.tgs"));
+                            : Strings.FwdMessageToSavedMessages, ToastPopupIcon.SavedMessages);
                     }
                     else
                     {
-                        ToastPopup.Show(messagesCount > 1
+                        ShowToast(messagesCount > 1
                             ? string.Format(Strings.FwdMessagesToUser, chat.Title)
-                            : string.Format(Strings.FwdMessageToUser, chat.Title), new LocalFileSource("ms-appx:///Assets/Toasts/Forward.tgs"));
+                            : string.Format(Strings.FwdMessageToUser, chat.Title), ToastPopupIcon.Forward);
                     }
                 }
                 else if (chat.IsBasicGroup(out _))
                 {
-                    ToastPopup.Show(messagesCount > 1
+                    ShowToast(messagesCount > 1
                         ? string.Format(Strings.FwdMessagesToGroup, chat.Title)
-                        : string.Format(Strings.FwdMessageToGroup, chat.Title), new LocalFileSource("ms-appx:///Assets/Toasts/Forward.tgs"));
+                        : string.Format(Strings.FwdMessageToGroup, chat.Title), ToastPopupIcon.Forward);
 
                 }
                 else if (chat.IsSupergroup(out _, out bool isChannel))
                 {
                     if (isChannel)
                     {
-                        ToastPopup.Show(messagesCount > 1
+                        ShowToast(messagesCount > 1
                             ? string.Format(Strings.FwdMessagesToChats, chat.Title)
-                            : string.Format(Strings.FwdMessageToChats, chat.Title), new LocalFileSource("ms-appx:///Assets/Toasts/Forward.tgs"));
+                            : string.Format(Strings.FwdMessageToChats, chat.Title), ToastPopupIcon.Forward);
                     }
                     else
                     {
-                        ToastPopup.Show(messagesCount > 1
+                        ShowToast(messagesCount > 1
                             ? string.Format(Strings.FwdMessagesToGroup, chat.Title)
-                            : string.Format(Strings.FwdMessageToGroup, chat.Title), new LocalFileSource("ms-appx:///Assets/Toasts/Forward.tgs"));
+                            : string.Format(Strings.FwdMessageToGroup, chat.Title), ToastPopupIcon.Forward);
                     }
                 }
             }
             else
             {
-                ToastPopup.Show(messagesCount > 1
+                ShowToast(messagesCount > 1
                     ? Locale.Declension(Strings.R.FwdMessagesToManyChats, chats.Count)
-                    : Locale.Declension(Strings.R.FwdMessageToManyChats, chats.Count), new LocalFileSource("ms-appx:///Assets/Toasts/Forward.tgs"));
+                    : Locale.Declension(Strings.R.FwdMessageToManyChats, chats.Count), ToastPopupIcon.Forward);
             }
         }
 
@@ -683,16 +682,16 @@ namespace Telegram.ViewModels
             {
                 if (ClientService.IsSavedMessages(chats[0]))
                 {
-                    ToastPopup.Show(Strings.StorySharedToSavedMessages, new LocalFileSource("ms-appx:///Assets/Toasts/SavedMessages.tgs"));
+                    ShowToast(Strings.StorySharedToSavedMessages, ToastPopupIcon.SavedMessages);
                 }
                 else
                 {
-                    ToastPopup.Show(string.Format(Strings.StorySharedTo, chats[0].Title), new LocalFileSource("ms-appx:///Assets/Toasts/Forward.tgs"));
+                    ShowToast(string.Format(Strings.StorySharedTo, chats[0].Title), ToastPopupIcon.Forward);
                 }
             }
             else
             {
-                ToastPopup.Show(Locale.Declension(Strings.R.StorySharedToManyChats, chats.Count), new LocalFileSource("ms-appx:///Assets/Toasts/Forward.tgs"));
+                ShowToast(Locale.Declension(Strings.R.StorySharedToManyChats, chats.Count), ToastPopupIcon.Forward);
             }
         }
 

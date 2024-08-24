@@ -1031,7 +1031,7 @@ namespace Telegram.Controls.Messages
                     return message.ImportInfo.SenderName;
                 }
             }
-            
+
             if (clientService.TryGetChat(message.SenderId, out Chat senderChat))
             {
                 sender = message.SenderId;

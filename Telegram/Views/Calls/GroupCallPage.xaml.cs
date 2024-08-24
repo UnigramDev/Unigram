@@ -635,7 +635,7 @@ namespace Telegram.Views.Calls
             ElementCompositionPreview.SetIsTranslationEnabled(ScrollingHost, true);
 
             // Root offset
-            var rootOffset = Window.Current.Compositor.CreateVector3KeyFrameAnimation();
+            var rootOffset = BootStrapper.Current.Compositor.CreateVector3KeyFrameAnimation();
 
             if (_mode == ParticipantsGridMode.Docked)
             {
@@ -649,7 +649,7 @@ namespace Telegram.Views.Calls
             rootOffset.InsertKeyFrame(1, Vector3.Zero);
 
             // ScrollingHost offset
-            var listOffset = Window.Current.Compositor.CreateVector3KeyFrameAnimation();
+            var listOffset = BootStrapper.Current.Compositor.CreateVector3KeyFrameAnimation();
 
             if (_mode == ParticipantsGridMode.Docked)
             {
@@ -741,7 +741,7 @@ namespace Telegram.Views.Calls
             ElementCompositionPreview.SetIsTranslationEnabled(LeaveInfo, true);
 
             // Root
-            var rootOffset = Window.Current.Compositor.CreateVector3KeyFrameAnimation();
+            var rootOffset = BootStrapper.Current.Compositor.CreateVector3KeyFrameAnimation();
 
             var prevCenter = prevSize.X / 2 - BottomRoot.ActualSize.X / 2;
             var nextCenter = nextSize.X / 2 - BottomRoot.ActualSize.X / 2;
@@ -759,7 +759,7 @@ namespace Telegram.Views.Calls
             rootOffset.InsertKeyFrame(1, Vector3.Zero);
 
             // ScrollingHost offset
-            var listOffset = Window.Current.Compositor.CreateVector3KeyFrameAnimation();
+            var listOffset = BootStrapper.Current.Compositor.CreateVector3KeyFrameAnimation();
 
             if (next == ParticipantsGridMode.Docked)
             {
@@ -773,7 +773,7 @@ namespace Telegram.Views.Calls
             listOffset.InsertKeyFrame(1, Vector3.Zero);
 
             // Audio scale
-            var audioScale = Window.Current.Compositor.CreateVector3KeyFrameAnimation();
+            var audioScale = BootStrapper.Current.Compositor.CreateVector3KeyFrameAnimation();
 
             if (expanded)
             {
@@ -787,7 +787,7 @@ namespace Telegram.Views.Calls
             audioScale.InsertKeyFrame(1, Vector3.One);
 
             // Audio info offset
-            var audioInfoOffset = Window.Current.Compositor.CreateVector3KeyFrameAnimation();
+            var audioInfoOffset = BootStrapper.Current.Compositor.CreateVector3KeyFrameAnimation();
 
             if (expanded)
             {
@@ -801,7 +801,7 @@ namespace Telegram.Views.Calls
             audioInfoOffset.InsertKeyFrame(1, Vector3.Zero);
 
             // Other offset
-            var otherOffset = Window.Current.Compositor.CreateVector3KeyFrameAnimation();
+            var otherOffset = BootStrapper.Current.Compositor.CreateVector3KeyFrameAnimation();
 
             if (expanded)
             {
@@ -815,7 +815,7 @@ namespace Telegram.Views.Calls
             otherOffset.InsertKeyFrame(1, Vector3.Zero);
 
             // Other scales
-            var otherScale = Window.Current.Compositor.CreateVector3KeyFrameAnimation();
+            var otherScale = BootStrapper.Current.Compositor.CreateVector3KeyFrameAnimation();
 
             if (expanded)
             {
@@ -1067,10 +1067,10 @@ namespace Telegram.Views.Calls
 
             var amplitude = Math.Min(value, 1);
 
-            var outer = Window.Current.Compositor.CreateVector3KeyFrameAnimation();
+            var outer = BootStrapper.Current.Compositor.CreateVector3KeyFrameAnimation();
             outer.InsertKeyFrame(1, new Vector3(0.9f + 0.5f * amplitude));
 
-            var inner = Window.Current.Compositor.CreateVector3KeyFrameAnimation();
+            var inner = BootStrapper.Current.Compositor.CreateVector3KeyFrameAnimation();
             inner.InsertKeyFrame(1, new Vector3(1f + 0.15f * amplitude));
 
             wave.CenterPoint = new Vector3(18, 18, 0);
@@ -1082,7 +1082,7 @@ namespace Telegram.Views.Calls
 
         private Task ConsolidateAsync()
         {
-            if (Window.Current.Content is RootPage root)
+            if (XamlRoot.Content is RootPage root)
             {
                 root.PresentContent(null);
                 return Task.CompletedTask;
@@ -1114,7 +1114,7 @@ namespace Telegram.Views.Calls
                     CheckBoxLabel = _service.IsChannel ? Strings.VoipChannelLeaveAlertEndChat : Strings.VoipGroupLeaveAlertEndChat
                 };
 
-                var confirm = await popup.ShowQueuedAsync();
+                var confirm = await popup.ShowQueuedAsync(XamlRoot);
                 if (confirm == ContentDialogResult.Primary)
                 {
                     Dispose(popup.IsChecked == true);
@@ -1146,7 +1146,7 @@ namespace Telegram.Views.Calls
             popup.PrimaryButtonText = Strings.VoipGroupEnd;
             popup.SecondaryButtonText = Strings.Cancel;
 
-            var confirm = await popup.ShowQueuedAsync();
+            var confirm = await popup.ShowQueuedAsync(XamlRoot);
             if (confirm == ContentDialogResult.Primary)
             {
                 Dispose(true);
@@ -1186,7 +1186,7 @@ namespace Telegram.Views.Calls
             //}
             else if (currentUser != null && currentUser.CanUnmuteSelf && _service.IsMuted)
             {
-                var permissions = await MediaDeviceWatcher.CheckAccessAsync(false, false, ElementTheme.Dark);
+                var permissions = await MediaDeviceWatcher.CheckAccessAsync(XamlRoot, false, false, ElementTheme.Dark);
                 if (permissions == false || _service == null)
                 {
                     return;
@@ -1208,7 +1208,7 @@ namespace Telegram.Views.Calls
         {
             if (_service?.IsVideoEnabled == false)
             {
-                var permissions = await MediaDeviceWatcher.CheckAccessAsync(true, false, ElementTheme.Dark);
+                var permissions = await MediaDeviceWatcher.CheckAccessAsync(XamlRoot, true, false, ElementTheme.Dark);
                 if (permissions == false || _service == null)
                 {
                     return;
@@ -1488,7 +1488,7 @@ namespace Telegram.Views.Calls
             var aliases = await _service.CanChooseAliasAsync(chat.Id);
             if (aliases)
             {
-                flyout.CreateFlyoutItem(async () => await _service.RejoinAsync(), Strings.VoipGroupDisplayAs, Icons.Person);
+                flyout.CreateFlyoutItem(async () => await _service.RejoinAsync(XamlRoot), Strings.VoipGroupDisplayAs, Icons.Person);
                 flyout.CreateFlyoutSeparator();
             }
 
@@ -1687,7 +1687,7 @@ namespace Telegram.Views.Calls
             input.MaxLength = 64;
             input.MinLength = 0;
 
-            var confirm = await input.ShowQueuedAsync();
+            var confirm = await input.ShowQueuedAsync(XamlRoot);
             if (confirm == ContentDialogResult.Primary)
             {
                 _clientService.Send(new SetGroupCallTitle(call.Id, input.Text));
@@ -1707,7 +1707,7 @@ namespace Telegram.Views.Calls
             var input = new RecordVideoChatPopup(call.Title);
             input.RequestedTheme = ElementTheme.Dark;
 
-            var confirm = await input.ShowQueuedAsync();
+            var confirm = await input.ShowQueuedAsync(XamlRoot);
             if (confirm == ContentDialogResult.Primary)
             {
                 _clientService.Send(new StartGroupCallRecording(call.Id, input.FileName, input.RecordVideo, input.UsePortraitOrientation));
@@ -1729,7 +1729,7 @@ namespace Telegram.Views.Calls
             popup.PrimaryButtonText = Strings.Stop;
             popup.SecondaryButtonText = Strings.Cancel;
 
-            var confirm = await popup.ShowQueuedAsync();
+            var confirm = await popup.ShowQueuedAsync(XamlRoot);
             if (confirm == ContentDialogResult.Primary)
             {
                 _clientService.Send(new EndGroupCallRecording(call.Id));
@@ -2414,7 +2414,7 @@ namespace Telegram.Views.Calls
                 _visual.StopAnimating();
             }
 
-            var anim = Window.Current.Compositor.CreateScalarKeyFrameAnimation();
+            var anim = BootStrapper.Current.Compositor.CreateScalarKeyFrameAnimation();
             anim.InsertKeyFrame(0, show ? 0 : 1);
             anim.InsertKeyFrame(1, show ? 1 : 0);
 
@@ -2448,7 +2448,7 @@ namespace Telegram.Views.Calls
             var prev = e.PreviousSize.ToVector2();
             var next = e.NewSize.ToVector2();
 
-            var animation = Window.Current.Compositor.CreateVector3KeyFrameAnimation();
+            var animation = BootStrapper.Current.Compositor.CreateVector3KeyFrameAnimation();
             animation.InsertKeyFrame(0, new Vector3(0, prev.Y - next.Y, 0));
             animation.InsertKeyFrame(1, Vector3.Zero);
 
@@ -2658,7 +2658,7 @@ namespace Telegram.Views.Calls
                             ElementCompositionPreview.SetIsTranslationEnabled(Children[index], true);
 
                             var visual = ElementComposition.GetElementVisual(Children[index]);
-                            var offset = Window.Current.Compositor.CreateVector3KeyFrameAnimation();
+                            var offset = BootStrapper.Current.Compositor.CreateVector3KeyFrameAnimation();
                             offset.InsertKeyFrame(0, new Vector3((float)(prev.X - point.X), (float)(prev.Y - point.Y), 0));
                             offset.InsertKeyFrame(1, Vector3.Zero);
                             offset.Duration = TimeSpan.FromMilliseconds(300);
@@ -2668,7 +2668,7 @@ namespace Telegram.Views.Calls
                         if (prev.Width != size.Width || prev.Height != size.Height)
                         {
                             var visual = ElementComposition.GetElementVisual(Children[index]);
-                            var scale = Window.Current.Compositor.CreateVector3KeyFrameAnimation();
+                            var scale = BootStrapper.Current.Compositor.CreateVector3KeyFrameAnimation();
                             scale.InsertKeyFrame(0, new Vector3((float)(prev.Width / size.Width), (float)(prev.Height / size.Height), 0));
                             scale.InsertKeyFrame(1, Vector3.One);
                             scale.Duration = TimeSpan.FromMilliseconds(300);

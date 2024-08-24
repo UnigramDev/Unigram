@@ -9,6 +9,7 @@ using System;
 using System.Numerics;
 using Telegram.Common;
 using Telegram.Controls.Stories;
+using Telegram.Navigation;
 using Telegram.Navigation.Services;
 using Telegram.Services;
 using Telegram.Td.Api;
@@ -156,7 +157,7 @@ namespace Telegram.Controls
             }
         }
 
-        private void UpdateActiveStories(IClientService clientService, long chatId, bool hasActiveStories,  bool hasUnreadActiveStories, int side)
+        private void UpdateActiveStories(IClientService clientService, long chatId, bool hasActiveStories, bool hasUnreadActiveStories, int side)
         {
             if (chatId == 0 || !hasActiveStories)
             {
@@ -252,7 +253,7 @@ namespace Telegram.Controls
 
         private void UpdateSegments(int side, bool closeFriends, int total, int unread, float unreadThickness = 2.0f, float readThickness = 1.0f)
         {
-            var compositor = Window.Current.Compositor;
+            var compositor = BootStrapper.Current.Compositor;
             var read = total - unread;
 
             var unreadPath = GetSegments(compositor, side, total, 0, unread, unreadThickness, unreadThickness * 2);
@@ -349,7 +350,7 @@ namespace Telegram.Controls
 
         public void ShowIndeterminate(int side, int unreadCount, bool closeFriends)
         {
-            var compositor = Window.Current.Compositor;
+            var compositor = BootStrapper.Current.Compositor;
 
             var center = new Vector2(side * 0.5f);
             //var clip = compositor.CreateRectangleClip(0, 0, side, side, center, center, center, center);

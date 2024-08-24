@@ -135,7 +135,7 @@ namespace Telegram.Views
 
             InitializeStickers();
 
-            //ElementComposition.GetElementVisual(this).Clip = Window.Current.Compositor.CreateInsetClip();
+            //ElementComposition.GetElementVisual(this).Clip = BootStrapper.Current.Compositor.CreateInsetClip();
             ElementCompositionPreview.SetIsTranslationEnabled(ButtonMore, true);
             ElementCompositionPreview.SetIsTranslationEnabled(TextFieldPanel, true);
             ElementCompositionPreview.SetIsTranslationEnabled(btnAttach, true);
@@ -156,7 +156,7 @@ namespace Telegram.Views
                 _dateHeaderPanel = ElementComposition.GetElementVisual(DateHeaderRelative);
                 _dateHeader = ElementComposition.GetElementVisual(DateHeader);
 
-                _dateHeaderPanel.Clip = Window.Current.Compositor.CreateInsetClip();
+                _dateHeaderPanel.Clip = _dateHeaderPanel.Compositor.CreateInsetClip();
             }
 
             _debouncer = new DispatcherTimer();
@@ -188,7 +188,7 @@ namespace Telegram.Views
                 btnSendMessage.SlowModeDelayExpiresIn = fullInfo.SlowModeDelayExpiresIn;
             };
 
-            _textShadowVisual = DropShadowEx.Attach(Separator);
+            _textShadowVisual = VisualUtilities.DropShadow(Separator);
             _textShadowVisual.IsVisible = false;
         }
 
@@ -487,9 +487,9 @@ namespace Telegram.Views
                 owner.UpdateMessage(args.OldItems[0] as MessageViewModel);
                 owner.Measure(new Size(ActualWidth, ActualHeight));
 
-                var batch = Window.Current.Compositor.CreateScopedBatch(CompositionBatchTypes.Animation);
+                var batch = BootStrapper.Current.Compositor.CreateScopedBatch(CompositionBatchTypes.Animation);
 
-                var anim = Window.Current.Compositor.CreateVector3KeyFrameAnimation();
+                var anim = BootStrapper.Current.Compositor.CreateVector3KeyFrameAnimation();
                 anim.InsertKeyFrame(0, new Vector3(0, -(float)owner.DesiredSize.Height, 0));
                 anim.InsertKeyFrame(1, new Vector3());
                 //anim.Duration = TimeSpan.FromSeconds(1);
@@ -552,7 +552,7 @@ namespace Telegram.Views
                     return;
                 }
 
-                var batch = Window.Current.Compositor.CreateScopedBatch(CompositionBatchTypes.Animation);
+                var batch = BootStrapper.Current.Compositor.CreateScopedBatch(CompositionBatchTypes.Animation);
                 var diff = owner.ActualSize.Y;
 
                 if (animateSendout)
@@ -596,7 +596,7 @@ namespace Telegram.Views
                 var inner = 250 * 1;
                 var delay = 0;
 
-                var anim = Window.Current.Compositor.CreateScalarKeyFrameAnimation();
+                var anim = BootStrapper.Current.Compositor.CreateScalarKeyFrameAnimation();
                 anim.InsertKeyFrame(0, diff);
                 anim.InsertKeyFrame(1, 0);
                 anim.Duration = TimeSpan.FromMilliseconds(outer);
@@ -655,7 +655,7 @@ namespace Telegram.Views
 
                         bubble.AnimateSendout(xScale, yScale, fontScale, outer, inner, delay, reply);
 
-                        anim = Window.Current.Compositor.CreateScalarKeyFrameAnimation();
+                        anim = BootStrapper.Current.Compositor.CreateScalarKeyFrameAnimation();
                         anim.InsertKeyFrame(0, yOffset);
                         anim.InsertKeyFrame(1, 0);
                         anim.Duration = TimeSpan.FromMilliseconds(outer);
@@ -928,7 +928,7 @@ namespace Telegram.Views
         //    {
         //        ViewVisibleMessages(true);
 
-        //        var popups = VisualTreeHelper.GetOpenPopups(Window.Current);
+        //        var popups = VisualTreeHelper.GetOpenPopupsForXamlRoot(XamlRoot);
         //        if (popups.Count > 0)
         //        {
         //            return;
@@ -967,7 +967,7 @@ namespace Telegram.Views
         //{
         //    if (e.Visible)
         //    {
-        //        var popups = VisualTreeHelper.GetOpenPopups(Window.Current);
+        //        var popups = VisualTreeHelper.GetOpenPopupsForXamlRoot(XamlRoot);
         //        if (popups.Count > 0)
         //        {
         //            return;
@@ -1014,7 +1014,7 @@ namespace Telegram.Views
         //    var focused = FocusManager.GetFocusedElement();
         //    if (focused is null or (not TextBox and not RichEditBox))
         //    {
-        //        foreach (var popup in VisualTreeHelper.GetOpenPopups(Window.Current))
+        //        foreach (var popup in VisualTreeHelper.GetOpenPopupsForXamlRoot(XamlRoot))
         //        {
         //            if (popup.Child is not ToolTip and not TeachingTip)
         //            {
@@ -1129,7 +1129,7 @@ namespace Telegram.Views
             }
             else if (args.VirtualKey == VirtualKey.PageUp && args.OnlyKey && TextField.Document.Selection.StartPosition == 0 && ViewModel.Autocomplete == null)
             {
-                var popups = VisualTreeHelper.GetOpenPopups(Window.Current);
+                var popups = VisualTreeHelper.GetOpenPopupsForXamlRoot(XamlRoot);
                 if (popups.Count > 0)
                 {
                     return;
@@ -1172,7 +1172,7 @@ namespace Telegram.Views
             }
             else if ((args.VirtualKey == VirtualKey.PageDown || args.VirtualKey == VirtualKey.Down) && args.OnlyKey && TextField.Document.Selection.StartPosition == TextField.Document.GetRange(int.MaxValue, int.MaxValue).EndPosition && ViewModel.Autocomplete == null)
             {
-                var popups = VisualTreeHelper.GetOpenPopups(Window.Current);
+                var popups = VisualTreeHelper.GetOpenPopupsForXamlRoot(XamlRoot);
                 if (popups.Count > 0)
                 {
                     return;
@@ -2437,7 +2437,7 @@ namespace Telegram.Views
             var selectionStart = -1;
             var selectionEnd = -1;
 
-            if (args.TryGetPosition(Window.Current.Content as FrameworkElement, out Point point))
+            if (args.TryGetPosition(XamlRoot.Content, out Point point))
             {
                 var children = VisualTreeHelper.FindElementsInHostCoordinates(point, element);
 
@@ -2864,7 +2864,7 @@ namespace Telegram.Views
                 var elli1 = CanvasGeometry.CreateEllipse(device, -2, 12, 14, 14);
                 var group1 = CanvasGeometry.CreateGroup(device, new[] { elli1, rect1 }, CanvasFilledRegionDetermination.Alternate);
 
-                var compositor = Window.Current.Compositor;
+                var compositor = BootStrapper.Current.Compositor;
                 var geometry = compositor.CreatePathGeometry(new CompositionPath(group1));
                 var clip = compositor.CreateGeometricClip(geometry);
 
@@ -3685,7 +3685,7 @@ namespace Telegram.Views
             var manage = ElementComposition.GetElementVisual(ManagePanel);
             manage.StopAnimation("Opacity");
 
-            var batch = Window.Current.Compositor.CreateScopedBatch(CompositionBatchTypes.Animation);
+            var batch = BootStrapper.Current.Compositor.CreateScopedBatch(CompositionBatchTypes.Animation);
             batch.Completed += (s, args) =>
             {
                 if (show)
@@ -3753,7 +3753,7 @@ namespace Telegram.Views
                 var dialog = new CalendarPopup(date);
                 dialog.MaxDate = DateTimeOffset.Now.Date;
 
-                var confirm = await dialog.ShowQueuedAsync();
+                var confirm = await dialog.ShowQueuedAsync(XamlRoot);
                 if (confirm == ContentDialogResult.Primary && dialog.SelectedDates.Count > 0)
                 {
                     var first = dialog.SelectedDates.FirstOrDefault();
@@ -4816,7 +4816,7 @@ namespace Telegram.Views
             var field = ElementComposition.GetElementVisual(TextFieldPanel);
             var attach = ElementComposition.GetElementVisual(btnAttach);
 
-            var batch = Window.Current.Compositor.CreateScopedBatch(CompositionBatchTypes.Animation);
+            var batch = BootStrapper.Current.Compositor.CreateScopedBatch(CompositionBatchTypes.Animation);
             batch.Completed += (s, args) =>
             {
                 field.Properties.InsertVector3("Translation", Vector3.Zero);
@@ -4831,17 +4831,17 @@ namespace Telegram.Views
                 UpdateTextAreaRadius();
             };
 
-            var offset = Window.Current.Compositor.CreateVector3KeyFrameAnimation();
+            var offset = BootStrapper.Current.Compositor.CreateVector3KeyFrameAnimation();
             offset.InsertKeyFrame(show ? 0 : 1, new Vector3(-40, 0, 0));
             offset.InsertKeyFrame(show ? 1 : 0, new Vector3());
             offset.Duration = Constants.FastAnimation;
 
-            var scale = Window.Current.Compositor.CreateVector3KeyFrameAnimation();
+            var scale = BootStrapper.Current.Compositor.CreateVector3KeyFrameAnimation();
             scale.InsertKeyFrame(show ? 0 : 1, Vector3.Zero);
             scale.InsertKeyFrame(show ? 1 : 0, Vector3.One);
             scale.Duration = Constants.FastAnimation;
 
-            var opacity = Window.Current.Compositor.CreateScalarKeyFrameAnimation();
+            var opacity = BootStrapper.Current.Compositor.CreateScalarKeyFrameAnimation();
             opacity.InsertKeyFrame(show ? 0 : 1, 0);
             opacity.InsertKeyFrame(show ? 1 : 0, 1);
 
@@ -4871,7 +4871,7 @@ namespace Telegram.Views
 
             await ListAutocomplete.UpdateLayoutAsync();
 
-            var batch = Window.Current.Compositor.CreateScopedBatch(CompositionBatchTypes.Animation);
+            var batch = BootStrapper.Current.Compositor.CreateScopedBatch(CompositionBatchTypes.Animation);
             batch.Completed += (s, args) =>
             {
                 list.Properties.InsertVector3("Translation", Vector3.Zero);
@@ -4887,7 +4887,7 @@ namespace Telegram.Views
                 }
             };
 
-            var offset = Window.Current.Compositor.CreateVector3KeyFrameAnimation();
+            var offset = BootStrapper.Current.Compositor.CreateVector3KeyFrameAnimation();
             offset.InsertKeyFrame(show ? 0 : 1, new Vector3(0, ListAutocomplete.ActualSize.Y, 0));
             offset.InsertKeyFrame(show ? 1 : 0, new Vector3());
             offset.Duration = Constants.FastAnimation;
@@ -4961,7 +4961,7 @@ namespace Telegram.Views
             }
             else
             {
-                messages.Clip = Window.Current.Compositor.CreateInsetClip(0, -44, 0, -8 - radius);
+                messages.Clip = messages.Compositor.CreateInsetClip(0, -44, 0, -8 - radius);
             }
         }
 
@@ -4980,7 +4980,7 @@ namespace Telegram.Views
                 //var diff = (float)ListAutocomplete.ActualHeight;
                 //var visual = ElementComposition.GetElementVisual(ListAutocomplete);
 
-                //var anim = Window.Current.Compositor.CreateSpringVector3Animation();
+                //var anim = BootStrapper.Current.Compositor.CreateSpringVector3Animation();
                 //anim.InitialValue = new Vector3();
                 //anim.FinalValue = new Vector3(0, diff, 0);
 
@@ -5551,8 +5551,8 @@ namespace Telegram.Views
                 var first = direction == 1 ? panel.FirstCacheIndex : index + 1;
                 var last = direction == 1 ? index : panel.LastCacheIndex;
 
-                var batch = Window.Current.Compositor.CreateScopedBatch(CompositionBatchTypes.Animation);
-                var anim = Window.Current.Compositor.CreateScalarKeyFrameAnimation();
+                var batch = BootStrapper.Current.Compositor.CreateScopedBatch(CompositionBatchTypes.Animation);
+                var anim = BootStrapper.Current.Compositor.CreateScalarKeyFrameAnimation();
                 anim.InsertKeyFrame(0, diff * direction);
                 anim.InsertKeyFrame(1, 0);
                 //anim.Duration = TimeSpan.FromSeconds(5);

@@ -11,7 +11,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using Telegram.Collections;
 using Telegram.Common;
-using Telegram.Controls;
 using Telegram.Navigation;
 using Telegram.Navigation.Services;
 using Telegram.Services;
@@ -260,7 +259,7 @@ namespace Telegram.ViewModels.Folders
             }
             else
             {
-                var confirm = await MessagePopup.ShowAsync(info.HasMyInviteLinks ? Strings.FilterDeleteAlertLinks : Strings.FilterDeleteAlert, Strings.FilterDelete, Strings.Delete, Strings.Cancel, destructive: true);
+                var confirm = await navigationService.ShowPopupAsync(info.HasMyInviteLinks ? Strings.FilterDeleteAlertLinks : Strings.FilterDeleteAlert, Strings.FilterDelete, Strings.Delete, Strings.Cancel, destructive: true);
                 if (confirm != ContentDialogResult.Primary)
                 {
                     return;
