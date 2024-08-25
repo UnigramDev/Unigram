@@ -32,6 +32,8 @@ namespace Telegram.Views.Popups
     {
         public StorageMedia ResultMedia { get; private set; }
 
+        private readonly ImageCropperMask _mask;
+
         private readonly StorageFile _file;
         private readonly StorageMedia _media;
 
@@ -53,27 +55,13 @@ namespace Telegram.Views.Popups
                 Proportions.IsEnabled = false;
             }
 
+            _mask = mask;
+
             _file = media.File;
             _media = media;
 
-            Loaded += async (s, args) =>
-            {
-                WindowContext.Current.InputListener.KeyDown += OnAcceleratorKeyActivated;
-
-                if (mask == ImageCropperMask.Ellipse)
-                {
-                    await Cropper.SetSourceAsync(media.File, proportions: BitmapProportions.Square);
-                }
-                else
-                {
-                    await Cropper.SetSourceAsync(media.File, media.EditState.Rotation, media.EditState.Flip, media.EditState.Proportions, media.EditState.Rectangle);
-                }
-            };
-            Unloaded += (s, args) =>
-            {
-                WindowContext.Current.InputListener.KeyDown -= OnAcceleratorKeyActivated;
-                Media.Source = null;
-            };
+            Loaded += OnLoaded;
+            Unloaded += OnUnloaded;
 
             if (mask == ImageCropperMask.Ellipse && string.Equals(media.File.FileType, ".mp4", StringComparison.OrdinalIgnoreCase))
             {
@@ -83,6 +71,35 @@ namespace Telegram.Views.Popups
 
                 InitializeVideo(media.File);
             }
+        }
+
+        private async void OnLoaded(object sender, RoutedEventArgs e)
+        {
+            var context = WindowContext.ForXamlRoot(this);
+            if (context != null)
+            {
+                context.InputListener.KeyDown += OnAcceleratorKeyActivated;
+            }
+
+            if (_mask == ImageCropperMask.Ellipse)
+            {
+                await Cropper.SetSourceAsync(_media.File, proportions: BitmapProportions.Square);
+            }
+            else
+            {
+                await Cropper.SetSourceAsync(_media.File, _media.EditState.Rotation, _media.EditState.Flip, _media.EditState.Proportions, _media.EditState.Rectangle);
+            }
+        }
+
+        private void OnUnloaded(object sender, RoutedEventArgs e)
+        {
+            var context = WindowContext.ForXamlRoot(this);
+            if (context != null)
+            {
+                context.InputListener.KeyDown -= OnAcceleratorKeyActivated;
+            }
+
+            Media.Source = null;
         }
 
         private void OnAcceleratorKeyActivated(Window sender, InputKeyDownEventArgs args)

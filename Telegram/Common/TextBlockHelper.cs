@@ -438,7 +438,7 @@ namespace Telegram.Common
 
         private static void Hyperlink_Click(Hyperlink sender, TextEntityType type, string data)
         {
-            var navigationService = WindowContext.Current.GetNavigationService();
+            var navigationService = WindowContext.GetNavigationService(sender.XamlRoot);
             if (navigationService == null)
             {
                 return;

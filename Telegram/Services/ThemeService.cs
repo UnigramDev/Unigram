@@ -239,7 +239,7 @@ namespace Telegram.Services
 
             SetTheme(preparing, true);
 
-            if (Window.Current.Content is Views.Host.RootPage root)
+            if (navigation.XamlRoot.Content is Views.Host.RootPage root)
             {
                 root.ShowEditor(preparing);
             }

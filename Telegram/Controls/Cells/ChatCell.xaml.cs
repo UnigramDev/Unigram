@@ -1811,7 +1811,7 @@ namespace Telegram.Controls.Cells
                     return;
                 }
 
-                var service = WindowContext.Current.NavigationServices.GetByFrameId($"Main{_clientService.SessionId}") as NavigationService;
+                var service = WindowContext.GetNavigationService(this);
                 service?.NavigateToChat(chat, state: new NavigationState
                 {
                     { "package", e.DataView }

@@ -45,12 +45,12 @@ namespace Telegram.Services.Keyboard
                                 or VirtualKey.GamepadLeftShoulder
                                 or VirtualKey.Escape)
             {
-                BootStrapper.Current.RaiseBackRequested(args.VirtualKey);
+                BootStrapper.Current.RaiseBackRequested(null, args.VirtualKey);
             }
             else if (args.OnlyAlt && args.VirtualKey is VirtualKey.Back
                                                      or VirtualKey.Left)
             {
-                BootStrapper.Current.RaiseBackRequested(args.VirtualKey);
+                BootStrapper.Current.RaiseBackRequested(null,args.VirtualKey);
             }
             else if (args.VirtualKey is VirtualKey.GoForward
                                      or VirtualKey.NavigationRight

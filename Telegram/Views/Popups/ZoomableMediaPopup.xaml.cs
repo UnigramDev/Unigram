@@ -30,6 +30,7 @@ namespace Telegram.Views.Popups
         {
             InitializeComponent();
 
+            // TODO: WinUI - These handlers are no longer needed and can be removed
             Connected += OnLoaded;
             Disconnected += OnUnloaded;
         }

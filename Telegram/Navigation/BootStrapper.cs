@@ -335,7 +335,7 @@ namespace Telegram.Navigation
             //}
             var handled = NavigationService?.CanGoBack == false;
 
-            RaiseBackRequested(VirtualKey.GoBack, ref handled);
+            RaiseBackRequested(null, VirtualKey.GoBack, ref handled);
             args.Handled = handled;
         }
 
@@ -344,13 +344,13 @@ namespace Telegram.Navigation
         public void RaiseBackRequested()
         {
             var handled = false;
-            RaiseBackRequested(VirtualKey.GoBack, ref handled);
+            RaiseBackRequested(null, VirtualKey.GoBack, ref handled);
         }
 
-        public void RaiseBackRequested(VirtualKey key)
+        public void RaiseBackRequested(XamlRoot xamlRoot, VirtualKey key)
         {
             var handled = false;
-            RaiseBackRequested(key, ref handled);
+            RaiseBackRequested(xamlRoot, key, ref handled);
         }
 
         /// <summary>
@@ -359,7 +359,7 @@ namespace Telegram.Navigation
         /// Views or Viewodels can override this behavior by handling the BackRequested 
         /// event and setting the Handled property of the BackRequestedEventArgs to true.
         /// </summary>
-        private void RaiseBackRequested(VirtualKey key, ref bool handled)
+        private void RaiseBackRequested(XamlRoot xamlRoot, VirtualKey key, ref bool handled)
         {
             Logger.Info();
 
@@ -370,7 +370,10 @@ namespace Telegram.Navigation
                 return;
             }
 
-            var popups = VisualTreeHelper.GetOpenPopups(Window.Current);
+            var popups = xamlRoot == null
+                ? VisualTreeHelper.GetOpenPopups(Window.Current)
+                : VisualTreeHelper.GetOpenPopupsForXamlRoot(xamlRoot);
+
             foreach (var popup in popups)
             {
                 if (popup.Child is INavigablePage page)

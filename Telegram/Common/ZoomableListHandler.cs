@@ -278,6 +278,7 @@ namespace Telegram.Common
                 _popupPanel.SetAnimation(animation);
             }
 
+            // TODO: WinUI - Can be safely removed.
             var bounds = ApplicationView.GetForCurrentView().VisibleBounds;
             if (bounds != Window.Current.Bounds)
             {

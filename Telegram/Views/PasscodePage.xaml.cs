@@ -7,6 +7,7 @@
 using System;
 using Telegram.Common;
 using Telegram.Controls;
+using Telegram.Navigation;
 using Telegram.Services;
 using Windows.ApplicationModel;
 using Windows.Security.Credentials;
@@ -111,8 +112,12 @@ namespace Telegram.Views
 
         private async void OnOpened(ContentDialog sender, ContentDialogOpenedEventArgs args)
         {
-            Window.Current.Activated += Window_Activated;
-            Window.Current.SizeChanged += Window_SizeChanged;
+            var context = WindowContext.ForXamlRoot(this);
+            if (context != null)
+            {
+                context.Activated += Window_Activated;
+                context.SizeChanged += Window_SizeChanged;
+            }
 
             Field.LosingFocus += Field_LosingFocus;
 
@@ -142,8 +147,12 @@ namespace Telegram.Views
             }
             else
             {
-                Window.Current.Activated -= Window_Activated;
-                Window.Current.SizeChanged -= Window_SizeChanged;
+                var context = WindowContext.ForXamlRoot(this);
+                if (context != null)
+                {
+                    context.Activated -= Window_Activated;
+                    context.SizeChanged -= Window_SizeChanged;
+                }
 
                 Field.LosingFocus -= Field_LosingFocus;
 

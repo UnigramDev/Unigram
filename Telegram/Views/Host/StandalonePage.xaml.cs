@@ -108,7 +108,12 @@ namespace Telegram.Views.Host
 
         private void OnLoaded(object sender, RoutedEventArgs e)
         {
-            WindowContext.Current.InputListener.KeyDown += OnAcceleratorKeyActivated;
+            var context = WindowContext.ForXamlRoot(this);
+            if (context != null)
+            {
+                context.InputListener.KeyDown += OnAcceleratorKeyActivated;
+            }
+
             InitializeTitleBar();
         }
 
@@ -117,7 +122,12 @@ namespace Telegram.Views.Host
             MasterDetail.NavigationService.FrameFacade.Navigating -= OnNavigating;
             MasterDetail.Dispose();
 
-            WindowContext.Current.InputListener.KeyDown -= OnAcceleratorKeyActivated;
+            var context = WindowContext.ForXamlRoot(this);
+            if (context != null)
+            {
+                context.InputListener.KeyDown -= OnAcceleratorKeyActivated;
+            }
+
             UnloadTitleBar();
         }
 

@@ -75,11 +75,11 @@ namespace Telegram.Views.Settings.Password
 
                     if (error.MessageEquals(ErrorType.EMAIL_INVALID))
                     {
-                        await MessagePopup.ShowAsync(target: null, Strings.EmailAddressInvalid, Strings.RestorePasswordNoEmailTitle, Strings.OK);
+                        await MessagePopup.ShowAsync(XamlRoot, target: null, Strings.EmailAddressInvalid, Strings.RestorePasswordNoEmailTitle, Strings.OK);
                     }
                     else if (error.MessageEquals(ErrorType.EMAIL_NOT_ALLOWED))
                     {
-                        await MessagePopup.ShowAsync(target: null, Strings.EmailNotAllowed, Strings.RestorePasswordNoEmailTitle, Strings.OK);
+                        await MessagePopup.ShowAsync(XamlRoot, target: null, Strings.EmailNotAllowed, Strings.RestorePasswordNoEmailTitle, Strings.OK);
                     }
 
                     args.Cancel = true;
@@ -117,7 +117,7 @@ namespace Telegram.Views.Settings.Password
 
         private async void Skip_Click(object sender, RoutedEventArgs e)
         {
-            var confirm = await MessagePopup.ShowAsync(target: null, Strings.YourEmailSkipWarningText, Strings.YourEmailSkipWarning, Strings.YourEmailSkip, Strings.Cancel);
+            var confirm = await MessagePopup.ShowAsync(XamlRoot, target: null, Strings.YourEmailSkipWarningText, Strings.YourEmailSkipWarning, Strings.YourEmailSkip, Strings.Cancel);
             if (confirm == ContentDialogResult.Primary)
             {
                 _skip = true;

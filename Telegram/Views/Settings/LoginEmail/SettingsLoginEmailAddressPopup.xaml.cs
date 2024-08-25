@@ -54,11 +54,11 @@ namespace Telegram.Views.Settings.LoginEmail
 
                 if (error.MessageEquals(ErrorType.EMAIL_INVALID))
                 {
-                    await MessagePopup.ShowAsync(target: null, Strings.EmailAddressInvalid, Strings.RestorePasswordNoEmailTitle, Strings.OK);
+                    await MessagePopup.ShowAsync(XamlRoot, target: null, Strings.EmailAddressInvalid, Strings.RestorePasswordNoEmailTitle, Strings.OK);
                 }
                 else if (error.MessageEquals(ErrorType.EMAIL_NOT_ALLOWED))
                 {
-                    await MessagePopup.ShowAsync(target: null, Strings.EmailNotAllowed, Strings.RestorePasswordNoEmailTitle, Strings.OK);
+                    await MessagePopup.ShowAsync(XamlRoot, target: null, Strings.EmailNotAllowed, Strings.RestorePasswordNoEmailTitle, Strings.OK);
                 }
             }
 
