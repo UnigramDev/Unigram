@@ -7,7 +7,6 @@
 using System.Linq;
 using Telegram.Common;
 using Telegram.Controls;
-using Telegram.Controls.Gallery;
 using Telegram.Controls.Media;
 using Telegram.Converters;
 using Telegram.Navigation;
@@ -453,9 +452,7 @@ namespace Telegram.Views.Stars.Popups
             var aggregator = TypeResolver.Current.Resolve<IEventAggregator>(_clientService.SessionId);
 
             var viewModel = new StandaloneGalleryViewModel(_clientService, storageService, aggregator, items, item);
-
-            viewModel.NavigationService = _navigationService;
-            await GalleryWindow.ShowAsync(XamlRoot, viewModel, () => Media1);
+            _navigationService.ShowGallery(viewModel, () => Media1);
         }
     }
 }

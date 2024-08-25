@@ -11,7 +11,6 @@ using System.Globalization;
 using System.Linq;
 using System.Net;
 using Telegram.Common;
-using Telegram.Controls.Gallery;
 using Telegram.Navigation;
 using Telegram.Navigation.Services;
 using Telegram.Services;
@@ -507,7 +506,7 @@ namespace Telegram.ViewModels
             return !Settings.AutoDownload.Disabled;
         }
 
-        public override async void OpenMedia(MessageViewModel message, FrameworkElement target, int timestamp = 0)
+        public override void OpenMedia(MessageViewModel message, FrameworkElement target, int timestamp = 0)
         {
             var content = target.Tag as GalleryMedia;
             content ??= _viewModel.Gallery.Items.FirstOrDefault();
@@ -515,7 +514,7 @@ namespace Telegram.ViewModels
             _viewModel.Gallery.SelectedItem = content;
             _viewModel.Gallery.FirstItem = content;
 
-            await GalleryWindow.ShowAsync(target.XamlRoot, _viewModel.Gallery, () => target);
+            _viewModel.NavigationService.ShowGallery(_viewModel.Gallery, () => target);
         }
     }
 }

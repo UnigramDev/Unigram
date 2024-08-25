@@ -10,9 +10,11 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Telegram.Common;
 using Telegram.Controls;
+using Telegram.Controls.Gallery;
 using Telegram.Services.ViewService;
 using Telegram.Td;
 using Telegram.Td.Api;
+using Telegram.ViewModels.Gallery;
 using Telegram.Views;
 using Telegram.Views.Popups;
 using Telegram.Views.Settings;
@@ -69,6 +71,8 @@ namespace Telegram.Navigation.Services
         ToastPopup ShowToast(string text, ToastPopupIcon icon, ElementTheme requestedTheme = ElementTheme.Dark, TimeSpan? dismissAfter = null);
         ToastPopup ShowToast(FormattedText text, ElementTheme requestedTheme = ElementTheme.Dark, TimeSpan? dismissAfter = null);
         ToastPopup ShowToast(FormattedText text, ToastPopupIcon icon, ElementTheme requestedTheme = ElementTheme.Dark, TimeSpan? dismissAfter = null);
+
+        void ShowGallery(GalleryViewModelBase parameter, Func<FrameworkElement> closing = null, long timestamp = 0);
 
         object CurrentPageParam { get; }
         Type CurrentPageType { get; }
@@ -518,6 +522,12 @@ namespace Telegram.Navigation.Services
         public ToastPopup ShowToast(FormattedText text, ToastPopupIcon icon, ElementTheme requestedTheme = ElementTheme.Dark, TimeSpan? dismissAfter = null)
         {
             return ToastPopup.Show(XamlRoot, text, icon, TeachingTipPlacementMode.Center, requestedTheme, dismissAfter);
+        }
+
+        public void ShowGallery(GalleryViewModelBase parameter, Func<FrameworkElement> closing = null, long timestamp = 0)
+        {
+            parameter.NavigationService = this;
+            _ = GalleryWindow.ShowAsync(XamlRoot, parameter, closing, timestamp);
         }
 
         public event EventHandler<NavigatingEventArgs> Navigating;
