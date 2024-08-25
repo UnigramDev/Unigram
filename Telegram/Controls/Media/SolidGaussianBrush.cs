@@ -38,13 +38,13 @@ namespace Telegram.Controls.Media
 
         private void UpdateBrushByDispatcher()
         {
-            if (Dispatcher.HasThreadAccess)
+            if (DispatcherQueue.HasThreadAccess)
             {
                 UpdateBrush();
             }
             else
             {
-                _ = Dispatcher.RunAsync(CoreDispatcherPriority.Normal, UpdateBrush);
+                DispatcherQueue.TryEnqueue(UpdateBrush);
             }
         }
 

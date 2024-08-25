@@ -396,7 +396,7 @@ namespace Telegram.Controls.Cells
                 ValueAnimator animator = CreateTransitionAnimator(d, true);
                 animator.AddListener(new AnimatorUpdateListener(null, animation =>
                 {
-                    _ = chartView.Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () =>
+                    _ = chartView.DispatcherQueue.TryEnqueue(() =>
                     {
                         chartView.Visibility = Visibility.Collapsed;
                     });
@@ -450,7 +450,7 @@ namespace Telegram.Controls.Cells
                 ValueAnimator animator = CreateTransitionAnimator(d, false);
                 animator.AddListener(new AnimatorUpdateListener(animator =>
                 {
-                    _ = zoomedChartView.Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () =>
+                    _ = zoomedChartView.DispatcherQueue.TryEnqueue(() =>
                     {
                         zoomedChartView.Visibility = Visibility.Collapsed;
                     });
@@ -549,7 +549,7 @@ namespace Telegram.Controls.Cells
 
                 if (hidden)
                 {
-                    _ = chartView.Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () =>
+                    _ = chartView.DispatcherQueue.TryEnqueue(() =>
                     {
                         chartView.Visibility = Visibility.Visible;
                     });

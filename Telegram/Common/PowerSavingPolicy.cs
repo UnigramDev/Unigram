@@ -5,9 +5,9 @@
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
 using Microsoft.UI.Composition;
+using Microsoft.UI.Dispatching;
 using System;
 using Telegram.Services;
-using Windows.System;
 using Windows.System.Power;
 using Windows.UI.ViewManagement;
 

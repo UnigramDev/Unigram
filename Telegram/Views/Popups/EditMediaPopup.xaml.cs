@@ -547,9 +547,9 @@ namespace Telegram.Views.Popups
             }
         }
 
-        private async void MediaPlayer_PositionChanged(Windows.Media.Playback.MediaPlaybackSession sender, object args)
+        private void MediaPlayer_PositionChanged(Windows.Media.Playback.MediaPlaybackSession sender, object args)
         {
-            await TrimRange.Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () =>
+            DispatcherQueue.TryEnqueue(() =>
             {
                 if (sender.Position.TotalMilliseconds >= TrimRange.Maximum * sender.NaturalDuration.TotalMilliseconds)
                 {

@@ -5,6 +5,7 @@
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
 using LinqToVisualTree;
+using Microsoft.UI.Dispatching;
 using Microsoft.UI.Input;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
@@ -1050,13 +1051,13 @@ namespace Telegram.Common
         {
             try
             {
-                if (element.Dispatcher.HasThreadAccess)
+                if (element.DispatcherQueue.HasThreadAccess)
                 {
                     action();
                 }
                 else
                 {
-                    _ = element.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
+                    _ = element.DispatcherQueue.TryEnqueue(() =>
                     {
                         try
                         {

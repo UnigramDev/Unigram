@@ -1,4 +1,5 @@
 ﻿using LibVLCSharp.Shared;
+using Microsoft.UI.Dispatching;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Controls.Primitives;
@@ -10,9 +11,9 @@ using Telegram.Services;
 using Telegram.Services.Keyboard;
 using Telegram.Td.Api;
 using Telegram.ViewModels.Gallery;
-using Windows.System;
 using Windows.System.Display;
 using Windows.UI.ViewManagement;
+using VirtualKey = Windows.System.VirtualKey;
 
 namespace Telegram.Controls.Gallery
 {
@@ -31,7 +32,7 @@ namespace Telegram.Controls.Gallery
         {
             InitializeComponent();
 
-            //_dispatcherQueue = DispatcherQueue.GetForCurrentThread();
+            _dispatcherQueue = DispatcherQueue.GetForCurrentThread();
 
             var muted = SettingsService.Current.VolumeMuted;
             var volume = (int)Math.Round(SettingsService.Current.VolumeLevel * 100);

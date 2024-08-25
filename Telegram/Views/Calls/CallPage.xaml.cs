@@ -7,6 +7,7 @@
 using Microsoft.Graphics.Canvas.Effects;
 using Microsoft.UI;
 using Microsoft.UI.Composition;
+using Microsoft.UI.Dispatching;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Controls.Primitives;
@@ -26,7 +27,6 @@ using Telegram.Navigation;
 using Telegram.Services;
 using Telegram.Td.Api;
 using Windows.Devices.Enumeration;
-using Windows.System;
 using Windows.System.Display;
 using Windows.UI.ViewManagement;
 using Point = Windows.Foundation.Point;
@@ -90,7 +90,7 @@ namespace Telegram.Views.Calls
                 _visual.StartAnimating();
             }
 
-            //_dispatcherQueue = DispatcherQueue.GetForCurrentThread();
+            _dispatcherQueue = DispatcherQueue.GetForCurrentThread();
 
             _durationTimer = new DispatcherTimer();
             _durationTimer.Interval = TimeSpan.FromMilliseconds(500);

@@ -7,6 +7,7 @@
 using Microsoft.Graphics.Canvas;
 using Microsoft.Graphics.Canvas.Geometry;
 using Microsoft.UI.Composition;
+using Microsoft.UI.Dispatching;
 using Microsoft.UI.Text;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Automation;
@@ -2296,7 +2297,7 @@ namespace Telegram.Views
             var file = interaction;
             if (file.Local.IsDownloadingCompleted && SendEffectInteractions.Children.Count < 4)
             {
-                var dispatcher = Windows.System.DispatcherQueue.GetForCurrentThread();
+                var dispatcher = DispatcherQueue.GetForCurrentThread();
 
                 var height = 180 * ViewModel.ClientService.Config.GetNamedNumber("emojies_animated_zoom", 0.625f);
                 var player = new AnimatedImage();

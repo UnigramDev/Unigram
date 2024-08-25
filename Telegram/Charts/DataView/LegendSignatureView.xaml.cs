@@ -339,13 +339,13 @@ namespace Telegram.Charts.DataView
         internal void setVisibility(Visibility visibility)
         {
             //throw new NotImplementedException();
-            if (Dispatcher.HasThreadAccess)
+            if (DispatcherQueue.HasThreadAccess)
             {
                 Visibility = visibility;
             }
             else
             {
-                _ = Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () => Visibility = visibility);
+                DispatcherQueue.TryEnqueue(() => Visibility = visibility);
             }
         }
     }

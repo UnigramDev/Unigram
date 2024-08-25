@@ -1,4 +1,5 @@
 ﻿using Microsoft.UI;
+using Microsoft.UI.Dispatching;
 using Microsoft.UI.Text;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
@@ -21,7 +22,6 @@ using Telegram.Td.Api;
 using Telegram.ViewModels.Stories;
 using Telegram.Views.Stories.Popups;
 using Windows.Foundation;
-using DispatcherQueue = Windows.System.DispatcherQueue;
 using VirtualKey = Windows.System.VirtualKey;
 
 namespace Telegram.Controls.Stories
@@ -47,7 +47,7 @@ namespace Telegram.Controls.Stories
             _stealthTimer.Interval = TimeSpan.FromSeconds(1);
             _stealthTimer.Tick += StealthTimer_Tick;
 
-            //_dispatcherQueue = DispatcherQueue.GetForCurrentThread();
+            _dispatcherQueue = DispatcherQueue.GetForCurrentThread();
         }
 
         private void StealthTimer_Tick(object sender, object e)

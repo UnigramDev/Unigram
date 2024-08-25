@@ -24,13 +24,13 @@ namespace Telegram.Charts
             var start = Formatter.ToLocalTime(v1 / 1000);
             var end = Formatter.ToLocalTime(v2 / 1000);
 
-            if (Dispatcher.HasThreadAccess)
+            if (DispatcherQueue.HasThreadAccess)
             {
                 Label1.Text = string.Format("{0} - {1}", Formatter.ShortDate.Format(start), Formatter.ShortDate.Format(end));
             }
             else
             {
-                _ = Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () => Label1.Text = string.Format("{0} - {1}", Formatter.ShortDate.Format(start), Formatter.ShortDate.Format(end)));
+                DispatcherQueue.TryEnqueue(() => Label1.Text = string.Format("{0} - {1}", Formatter.ShortDate.Format(start), Formatter.ShortDate.Format(end)));
             }
         }
 

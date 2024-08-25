@@ -323,7 +323,7 @@ namespace Telegram.Controls
             if (enqueue)
             {
                 _subscribed = false;
-                _ = Dispatcher.RunIdleAsync(idle => SetValue(_enqueuedState, _enqueued));
+                DispatcherQueue.TryEnqueue(() => SetValue(_enqueuedState, _enqueued));
             }
         }
 

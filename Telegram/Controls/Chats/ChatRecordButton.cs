@@ -5,6 +5,7 @@
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
 using Microsoft.UI.Composition;
+using Microsoft.UI.Dispatching;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Hosting;
@@ -27,9 +28,9 @@ using Windows.Media.Devices;
 using Windows.Media.Effects;
 using Windows.Media.MediaProperties;
 using Windows.Storage;
-using Windows.System;
 using Windows.System.Display;
 using Windows.System.Profile;
+using WinRT;
 
 namespace Telegram.Controls.Chats
 {
@@ -664,7 +665,7 @@ namespace Telegram.Controls.Chats
             public Recorder()
             {
                 _recordQueue = new ConcurrentQueueWorker(1);
-                //_dispatcherQueue = DispatcherQueue.GetForCurrentThread();
+                _dispatcherQueue = DispatcherQueue.GetForCurrentThread();
             }
 
             public static void Release()

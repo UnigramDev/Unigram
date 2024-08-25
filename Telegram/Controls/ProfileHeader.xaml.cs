@@ -7,6 +7,7 @@
 using Microsoft.Graphics.Canvas.Effects;
 using Microsoft.UI;
 using Microsoft.UI.Composition;
+using Microsoft.UI.Dispatching;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Controls.Primitives;
@@ -1686,7 +1687,7 @@ namespace Telegram.Controls
             popup.XamlRoot = XamlRoot;
             popup.IsOpen = true;
 
-            var dispatcher = Windows.System.DispatcherQueue.GetForCurrentThread();
+            var dispatcher = DispatcherQueue.GetForCurrentThread();
 
             player.LoopCompleted += (s, args) =>
             {
