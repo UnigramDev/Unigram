@@ -48,7 +48,7 @@ namespace Telegram.Controls.Gallery
 
         public IClientService ClientService => ViewModel?.ClientService;
 
-        private Func<FrameworkElement> _closing;
+        private WeakReference<FrameworkElement> _closing;
 
         private readonly DispatcherTimer _inactivityTimer;
 
@@ -249,7 +249,7 @@ namespace Telegram.Controls.Gallery
             OnBackRequested(new BackRequestedRoutedEventArgs());
         }
 
-        public static Task<ContentDialogResult> ShowAsync(ViewModelBase viewModelBase, IStorageService storageService, Chat chat, Func<FrameworkElement> closing = null)
+        public static Task<ContentDialogResult> ShowAsync(ViewModelBase viewModelBase, IStorageService storageService, Chat chat, FrameworkElement closing = null)
         {
             var clientService = viewModelBase.ClientService;
             var aggregator = viewModelBase.Aggregator;
@@ -301,7 +301,7 @@ namespace Telegram.Controls.Gallery
             return Task.FromResult(ContentDialogResult.None);
         }
 
-        public static Task<ContentDialogResult> ShowAsync(XamlRoot xamlRoot, GalleryViewModelBase parameter, Func<FrameworkElement> closing = null, long timestamp = 0)
+        public static Task<ContentDialogResult> ShowAsync(XamlRoot xamlRoot, GalleryViewModelBase parameter, FrameworkElement closing = null, long timestamp = 0)
         {
             var popup = new GalleryWindow
             {
@@ -311,13 +311,12 @@ namespace Telegram.Controls.Gallery
             return popup.ShowAsyncInternal(xamlRoot, parameter, closing);
         }
 
-        private Task<ContentDialogResult> ShowAsyncInternal(XamlRoot xamlRoot, GalleryViewModelBase parameter, Func<FrameworkElement> closing = null)
+        private Task<ContentDialogResult> ShowAsyncInternal(XamlRoot xamlRoot, GalleryViewModelBase parameter, FrameworkElement closing = null)
         {
-            _closing = closing;
-
-            if (_closing != null && IsConstrainedToRootBounds)
+            if (closing != null && IsConstrainedToRootBounds)
             {
-                ConnectedAnimationService.GetForCurrentView().PrepareToAnimate("FullScreenPicture", _closing());
+                _closing = new WeakReference<FrameworkElement>(closing);
+                ConnectedAnimationService.GetForCurrentView().PrepareToAnimate("FullScreenPicture", closing);
             }
 
             Load(parameter);
@@ -457,8 +456,7 @@ namespace Telegram.Controls.Gallery
                         var animation = ConnectedAnimationService.GetForCurrentView().PrepareToAnimate("FullScreenPicture", root);
                         if (animation != null)
                         {
-                            var element = _closing();
-                            if (element.IsLoaded)
+                            if (_closing.TryGetTarget(out FrameworkElement element) && element.IsConnected())
                             {
                                 void handler(ConnectedAnimation s, object e)
                                 {
