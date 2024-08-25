@@ -11,7 +11,6 @@ using System.Linq;
 using System.Text;
 using Telegram.Common;
 using Telegram.Controls;
-using Telegram.Controls.Gallery;
 using Telegram.Controls.Messages.Content;
 using Telegram.Controls.Stories;
 using Telegram.Converters;
@@ -408,8 +407,7 @@ namespace Telegram.ViewModels
                         }
                     }
 
-                    viewModel.NavigationService = NavigationService;
-                    await GalleryWindow.ShowAsync(NavigationService.XamlRoot, viewModel, target != null ? () => target : null, timestamp);
+                    NavigationService.ShowGallery(viewModel, target != null ? () => target : null, timestamp);
                 }
 
                 TextField?.Focus(FocusState.Programmatic);
@@ -447,11 +445,9 @@ namespace Telegram.ViewModels
                     .ToList();
 
                 var viewModel = new StandaloneGalleryViewModel(ClientService, StorageService, Aggregator, items, item);
+                NavigationService.ShowGallery(viewModel, target != null ? () => target : null, timestamp);
 
-                viewModel.NavigationService = NavigationService;
-                await GalleryWindow.ShowAsync(NavigationService.XamlRoot, viewModel, target != null ? () => target : null, timestamp);
-
-                TextField?.Focus(FocusState.Programmatic);
+                //TextField?.Focus(FocusState.Programmatic);
             }
         }
 

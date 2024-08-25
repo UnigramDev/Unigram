@@ -20,7 +20,6 @@ using System.Globalization;
 using System.Linq;
 using Telegram.Common;
 using Telegram.Controls;
-using Telegram.Controls.Gallery;
 using Telegram.Controls.Media;
 using Telegram.Controls.Messages.Content;
 using Telegram.Converters;
@@ -1689,7 +1688,7 @@ namespace Telegram.Views
             return _padding;
         }
 
-        private async void Image_Click(object sender, RoutedEventArgs e)
+        private void Image_Click(object sender, RoutedEventArgs e)
         {
             var image = sender as ImageView;
             var item = image.DataContext as GalleryMedia;
@@ -1698,7 +1697,7 @@ namespace Telegram.Views
                 ViewModel.Gallery.SelectedItem = item;
                 ViewModel.Gallery.FirstItem = item;
 
-                await GalleryWindow.ShowAsync(XamlRoot, ViewModel.Gallery, () => image);
+                ViewModel.NavigationService.ShowGallery(ViewModel.Gallery, () => image);
             }
         }
 

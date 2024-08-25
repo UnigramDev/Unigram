@@ -16,7 +16,6 @@ using System.Text;
 using System.Threading.Tasks;
 using Telegram.Common;
 using Telegram.Controls;
-using Telegram.Controls.Gallery;
 using Telegram.Controls.Messages;
 using Telegram.Converters;
 using Telegram.Entities;
@@ -1638,17 +1637,13 @@ namespace Telegram.ViewModels
             }
             else if (message.Content is MessageChatChangePhoto chatChangePhoto)
             {
-                var viewModel = new ChatPhotosViewModel(ClientService, StorageService, Aggregator, Chat, chatChangePhoto.Photo);
-                viewModel.NavigationService = NavigationService;
-                await GalleryWindow.ShowAsync(NavigationService.XamlRoot, viewModel);
+                NavigationService.ShowGallery(new ChatPhotosViewModel(ClientService, StorageService, Aggregator, Chat, chatChangePhoto.Photo));
             }
             else if (message.Content is MessageSuggestProfilePhoto suggestProfilePhoto)
             {
                 if (message.IsOutgoing)
                 {
-                    var viewModel = new ChatPhotosViewModel(ClientService, StorageService, Aggregator, Chat, suggestProfilePhoto.Photo);
-                    viewModel.NavigationService = NavigationService;
-                    await GalleryWindow.ShowAsync(NavigationService.XamlRoot, viewModel);
+                    NavigationService.ShowGallery(new ChatPhotosViewModel(ClientService, StorageService, Aggregator, Chat, suggestProfilePhoto.Photo));
                 }
                 else
                 {
