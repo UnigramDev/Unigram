@@ -456,7 +456,7 @@ namespace Telegram.Views.Stars.Popups
             var viewModel = new StandaloneGalleryViewModel(_clientService, storageService, aggregator, items, item);
 
             viewModel.NavigationService = _navigationService;
-            await GalleryWindow.ShowAsync(viewModel, () => Media1);
+            await GalleryWindow.ShowAsync(XamlRoot, viewModel, () => Media1);
         }
     }
 }

@@ -43,9 +43,9 @@ namespace Telegram.Views.Channels
                 var media = await picker.PickSingleMediaAsync();
                 if (media is StoragePhoto or StorageVideo)
                 {
-                    var dialog = new EditMediaPopup(media, ImageCropperMask.Ellipse);
+                    var popup = new EditMediaPopup(media, ImageCropperMask.Ellipse);
 
-                    var confirm = await dialog.ShowAsync();
+                    var confirm = await popup.ShowAsync(XamlRoot);
                     if (confirm == ContentDialogResult.Primary)
                     {
                         ViewModel.EditPhotoCommand.Execute(media);

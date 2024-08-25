@@ -1683,6 +1683,7 @@ namespace Telegram.Controls
             popup.VerticalOffset = point.Y - 8 - (320 - UserBirthday.ActualHeight) / 2;
             popup.Child = content;
             popup.IsHitTestVisible = false;
+            popup.XamlRoot = XamlRoot;
             popup.IsOpen = true;
 
             var dispatcher = Windows.System.DispatcherQueue.GetForCurrentThread();

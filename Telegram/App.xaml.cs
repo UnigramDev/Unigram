@@ -92,14 +92,16 @@ namespace Telegram
             InitializeComponent();
         }
 
-        protected override void OnWindowActivated(bool active)
+        protected override void OnWindowActivated(Window window, bool active)
         {
             SettingsService.Current.Appearance.UpdateTimer();
 
-            var aggregator = TypeResolver.Current.Resolve<IEventAggregator>();
+            var navigation = WindowContext.GetNavigationService(window);
+            
+            var aggregator = TypeResolver.Current.Resolve<IEventAggregator>(navigation.SessionId);
             aggregator?.Publish(new UpdateWindowActivated(active));
 
-            var clientService = TypeResolver.Current.Resolve<IClientService>();
+            var clientService = TypeResolver.Current.Resolve<IClientService>(navigation.SessionId);
             if (clientService != null)
             {
                 clientService.Options.Online = active;

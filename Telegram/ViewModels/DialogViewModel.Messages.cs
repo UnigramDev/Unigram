@@ -1640,7 +1640,7 @@ namespace Telegram.ViewModels
             {
                 var viewModel = new ChatPhotosViewModel(ClientService, StorageService, Aggregator, Chat, chatChangePhoto.Photo);
                 viewModel.NavigationService = NavigationService;
-                await GalleryWindow.ShowAsync(viewModel);
+                await GalleryWindow.ShowAsync(NavigationService.XamlRoot, viewModel);
             }
             else if (message.Content is MessageSuggestProfilePhoto suggestProfilePhoto)
             {
@@ -1648,7 +1648,7 @@ namespace Telegram.ViewModels
                 {
                     var viewModel = new ChatPhotosViewModel(ClientService, StorageService, Aggregator, Chat, suggestProfilePhoto.Photo);
                     viewModel.NavigationService = NavigationService;
-                    await GalleryWindow.ShowAsync(viewModel);
+                    await GalleryWindow.ShowAsync(NavigationService.XamlRoot, viewModel);
                 }
                 else
                 {
@@ -1664,7 +1664,7 @@ namespace Telegram.ViewModels
                     var media = await StorageMedia.CreateAsync(cached);
                     var popup = new EditMediaPopup(media, ImageCropperMask.Ellipse);
 
-                    var confirm = await popup.ShowAsync();
+                    var confirm = await popup.ShowAsync(NavigationService.XamlRoot);
                     if (confirm == ContentDialogResult.Primary)
                     {
                         await EditPhotoAsync(media);

@@ -271,7 +271,7 @@ namespace Telegram.Controls.Gallery
 
                 var viewModel = new UserPhotosViewModel(clientService, storageService, aggregator, user, userFull);
                 viewModel.NavigationService = navigationService;
-                return ShowAsync(viewModel, closing);
+                return ShowAsync(navigationService.XamlRoot, viewModel, closing);
             }
             else if (chat.Type is ChatTypeBasicGroup)
             {
@@ -283,7 +283,7 @@ namespace Telegram.Controls.Gallery
 
                 var viewModel = new ChatPhotosViewModel(clientService, storageService, aggregator, chat, basicGroupFull.Photo);
                 viewModel.NavigationService = navigationService;
-                return ShowAsync(viewModel, closing);
+                return ShowAsync(navigationService.XamlRoot, viewModel, closing);
             }
             else if (chat.Type is ChatTypeSupergroup)
             {
@@ -295,23 +295,23 @@ namespace Telegram.Controls.Gallery
 
                 var viewModel = new ChatPhotosViewModel(clientService, storageService, aggregator, chat, supergroupFull.Photo);
                 viewModel.NavigationService = navigationService;
-                return ShowAsync(viewModel, closing);
+                return ShowAsync(navigationService.XamlRoot, viewModel, closing);
             }
 
             return Task.FromResult(ContentDialogResult.None);
         }
 
-        public static Task<ContentDialogResult> ShowAsync(GalleryViewModelBase parameter, Func<FrameworkElement> closing = null, long timestamp = 0)
+        public static Task<ContentDialogResult> ShowAsync(XamlRoot xamlRoot, GalleryViewModelBase parameter, Func<FrameworkElement> closing = null, long timestamp = 0)
         {
             var popup = new GalleryWindow
             {
                 InitialPosition = timestamp
             };
 
-            return popup.ShowAsyncInternal(parameter, closing);
+            return popup.ShowAsyncInternal(xamlRoot, parameter, closing);
         }
 
-        private Task<ContentDialogResult> ShowAsyncInternal(GalleryViewModelBase parameter, Func<FrameworkElement> closing = null)
+        private Task<ContentDialogResult> ShowAsyncInternal(XamlRoot xamlRoot, GalleryViewModelBase parameter, Func<FrameworkElement> closing = null)
         {
             _closing = closing;
 
@@ -360,7 +360,7 @@ namespace Telegram.Controls.Gallery
             });
 
             Loaded += handler;
-            return ShowAsync();
+            return ShowAsync(xamlRoot);
         }
 
         protected override void MaskTitleAndStatusBar()

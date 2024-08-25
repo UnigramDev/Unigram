@@ -85,7 +85,7 @@ namespace Telegram.Controls
 
                     var window = new StoriesWindow();
                     window.Update(viewModel, activeStories, StoryOpenOrigin.ProfilePhoto, pointz, origin);
-                    _ = window.ShowAsync();
+                    _ = window.ShowAsync(XamlRoot);
                 }
             }
 

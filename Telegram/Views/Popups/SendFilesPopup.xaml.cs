@@ -825,9 +825,9 @@ namespace Telegram.Views.Popups
             var button = sender as ToggleButton;
             if (button.Tag is StorageMedia media)
             {
-                var dialog = new EditMediaPopup(media);
+                var popup = new EditMediaPopup(media);
 
-                var confirm = await dialog.ShowAsync();
+                var confirm = await popup.ShowAsync(XamlRoot);
                 if (confirm == ContentDialogResult.Primary)
                 {
                     media.Refresh();

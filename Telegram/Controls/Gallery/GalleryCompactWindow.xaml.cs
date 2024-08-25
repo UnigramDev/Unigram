@@ -100,6 +100,7 @@ namespace Telegram.Controls.Gallery
 
         private async void Controls_CompactClick(object sender, RoutedEventArgs e)
         {
+            // TODO: WinUI - Rewrite
             var mainDispatcher = CoreApplication.MainView.Dispatcher;
             if (mainDispatcher == null || _player == null)
             {
@@ -115,7 +116,7 @@ namespace Telegram.Controls.Gallery
             {
                 var nextId = ApplicationView.GetForCurrentView().Id;
                 _ = ApplicationViewSwitcher.SwitchAsync(nextId, prevId, ApplicationViewSwitchingOptions.ConsolidateViews);
-                _ = GalleryWindow.ShowAsync(_viewModel, null, position);
+                _ = GalleryWindow.ShowAsync(null, _viewModel, null, position);
             });
         }
 

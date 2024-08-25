@@ -1698,7 +1698,7 @@ namespace Telegram.Views
                 ViewModel.Gallery.SelectedItem = item;
                 ViewModel.Gallery.FirstItem = item;
 
-                await GalleryWindow.ShowAsync(ViewModel.Gallery, () => image);
+                await GalleryWindow.ShowAsync(XamlRoot, ViewModel.Gallery, () => image);
             }
         }
 

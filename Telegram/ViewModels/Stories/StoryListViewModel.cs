@@ -215,7 +215,7 @@ namespace Telegram.ViewModels.Stories
 
             var window = new StoriesWindow();
             window.Update(viewModel, activeStories, StoryOpenOrigin.ProfilePhoto, origin, closing);
-            _ = window.ShowAsync();
+            _ = window.ShowAsync(NavigationService.XamlRoot);
         }
 
         public class ItemsCollection : ObservableCollection<ActiveStoriesViewModel>, ISupportIncrementalLoading

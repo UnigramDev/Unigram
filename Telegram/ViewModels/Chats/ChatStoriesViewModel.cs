@@ -205,7 +205,7 @@ namespace Telegram.ViewModels.Chats
 
             var window = new StoriesWindow();
             window.Update(viewModel, activeStories, StoryOpenOrigin.Card, origin, closing);
-            _ = window.ShowAsync();
+            _ = window.ShowAsync(NavigationService.XamlRoot);
         }
 
         public async Task<LoadMoreItemsResult> LoadMoreItemsAsync(uint count)

@@ -3866,7 +3866,7 @@ namespace Telegram.Views
                         return new Rect(point.X + 4, point.Y + 4, 112, 112);
                     });
 
-                    _ = window.ShowAsync();
+                    _ = window.ShowAsync(XamlRoot);
 
                 }
             }
