@@ -18,7 +18,6 @@ using System.Numerics;
 using Telegram.Common;
 using Telegram.Controls;
 using Telegram.Controls.Chats;
-using Telegram.Controls.Gallery;
 using Telegram.Controls.Messages;
 using Telegram.Converters;
 using Telegram.Navigation;
@@ -27,7 +26,6 @@ using Telegram.ViewModels;
 using Telegram.ViewModels.Chats;
 using Telegram.ViewModels.Gallery;
 using Windows.Foundation;
-using Windows.UI.Core;
 using Point = Windows.Foundation.Point;
 
 namespace Telegram.Views

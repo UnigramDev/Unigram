@@ -65,7 +65,7 @@ namespace Telegram.Navigation
             return WindowContext.ForEachAsync(window => WindowContext.Current.ConsolidateAsync());
         }
 
-        protected virtual void OnWindowCreated(Window window)
+        protected virtual WindowContext OnWindowCreated(Window window)
         {
             Logger.Info();
 
@@ -79,11 +79,12 @@ namespace Telegram.Navigation
             //SystemNavigationManager.GetForCurrentView().BackRequested += BackHandler;
 
             CustomXamlResourceLoader.Current = new XamlResourceLoader();
-            CreateWindowWrapper(window);
+            var context = CreateWindowWrapper(window);
             ViewService.OnWindowCreated();
 
             window.Activated += OnActivated;
             window.Closed += OnClosed;
+            return context;
         }
 
         private void OnActivated(object sender, WindowActivatedEventArgs e)
@@ -521,35 +522,18 @@ namespace Telegram.Navigation
 
 #warning TODO: melma
             var window = new Window();
+            window.ExtendsContentIntoTitleBar = true;
+            window.SystemBackdrop = new MicaBackdrop
+            {
+                Kind = Microsoft.UI.Composition.SystemBackdrops.MicaKind.Base
+            };
             window.Activate();
-            OnWindowCreated(window);
+            var context = OnWindowCreated(window);
             Logger.Info();
 
             Compositor ??= window.Compositor;
             IsMainWindowCreated = true;
-            //should be called to initialize and set new SynchronizationContext
-            //if (!WindowWrapper.ActiveWrappers.Any())
-            // handle window
-            //var wrapper = CreateWindowWrapper(window);
-            window.Content = CreateRootElement(e);
-
-            //wrapper.Initialize();
-
-            //((FrameworkElement)window.Content).Loading += (s, args) =>
-            //{
-            //    wrapper.TrySetMicaBackdrop();
-            //    WindowContext.AddWindow(wrapper);
-            //};
-            return;
-
-            if (Window.Current.Content == null)
-            {
-                Window.Current.Content = CreateRootElement(e);
-            }
-            else
-            {
-                // if there's custom content then do nothing
-            }
+            context.Content = CreateRootElement(e, context);
         }
 
         #endregion

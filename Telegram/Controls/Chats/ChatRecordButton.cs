@@ -540,7 +540,7 @@ namespace Telegram.Controls.Chats
                     var confirm = await MessagePopup.ShowAsync(XamlRoot, message, Strings.AppName, Strings.PermissionOpenSettings, Strings.OK);
                     if (confirm == ContentDialogResult.Primary)
                     {
-                        await Launcher.LaunchUriAsync(new Uri("ms-settings:appsfeatures-app"));
+                        await Windows.System.Launcher.LaunchUriAsync(new Uri("ms-settings:appsfeatures-app"));
                     }
                 });
 

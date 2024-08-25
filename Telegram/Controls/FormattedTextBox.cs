@@ -29,7 +29,6 @@ using Windows.ApplicationModel.DataTransfer;
 using Windows.Foundation;
 using Windows.System;
 using Windows.UI;
-using Windows.UI.Core;
 
 namespace Telegram.Controls
 {
@@ -229,27 +228,25 @@ namespace Telegram.Controls
 
         private void OnLoaded(object sender, RoutedEventArgs e)
         {
-            Window.Current.CoreWindow.CharacterReceived += OnCharacterReceived;
+            CharacterReceived += OnCharacterReceived;
         }
 
         private void OnUnloaded(object sender, RoutedEventArgs e)
         {
-            Window.Current.CoreWindow.CharacterReceived -= OnCharacterReceived;
+            CharacterReceived -= OnCharacterReceived;
         }
 
         public bool IsReplaceEmojiEnabled { get; set; } = true;
 
-        private void OnCharacterReceived(CoreWindow sender, CharacterReceivedEventArgs args)
+        private void OnCharacterReceived(UIElement sender, CharacterReceivedRoutedEventArgs args)
         {
             if (FocusState == FocusState.Unfocused || !IsReplaceEmojiEnabled || string.Equals(Document.Selection.CharacterFormat.Name, "Consolas", StringComparison.OrdinalIgnoreCase))
             {
                 return;
             }
 
-            var character = Encoding.UTF32.GetString(BitConverter.GetBytes(args.KeyCode));
-
             //var matches = Emoticon.Data.Keys.Where(x => x.EndsWith(character)).ToArray();
-            if (Emoticon.Matches.TryGetValue(character[0], out string[] matches))
+            if (Emoticon.Matches.TryGetValue(args.Character, out string[] matches))
             {
                 var length = matches.Max(x => x.Length);
                 var start = Math.Max(Document.Selection.EndPosition - length, 0);

@@ -161,13 +161,13 @@ namespace Telegram.Views
 
         #region Bounds
 
-        //private void Window_Activated(object sender, WindowActivatedEventArgs e)
-        //{
-        //    if (e.WindowActivationState != CoreWindowActivationState.Deactivated)
-        //    {
-        //        Field.Focus(FocusState.Keyboard);
-        //    }
-        //}
+        private void Window_Activated(object sender, WindowActivatedEventArgs e)
+        {
+            if (e.WindowActivationState != WindowActivationState.Deactivated)
+            {
+                Field.Focus(FocusState.Keyboard);
+            }
+        }
 
         private void Window_SizeChanged(object sender, WindowSizeChangedEventArgs e)
         {

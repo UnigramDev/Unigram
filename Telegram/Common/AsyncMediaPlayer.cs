@@ -5,12 +5,12 @@
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
 using LibVLCSharp.Shared;
+using Microsoft.UI.Dispatching;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Text.RegularExpressions;
 using System.Threading;
-using Telegram.Navigation;
 using Telegram.Streams;
 using Windows.Foundation;
 using Windows.Storage;
@@ -19,7 +19,7 @@ namespace Telegram.Common
 {
     public class AsyncMediaPlayer
     {
-        private readonly IDispatcherContext _dispatcherQueue;
+        private readonly DispatcherQueue _dispatcherQueue;
 
         private readonly LibVLC _library;
         private readonly MediaPlayer _player;
@@ -30,12 +30,9 @@ namespace Telegram.Common
         private readonly object _closeLock = new();
         private bool _closed;
 
-        public AsyncMediaPlayer(params string[] options)
+        public AsyncMediaPlayer(DispatcherQueue dispatcherQueue, params string[] options)
         {
-            _dispatcherQueue = WindowContext.Current.Dispatcher;
-
-            // This should be not needed
-            _dispatcherQueue ??= WindowContext.Main.Dispatcher;
+            _dispatcherQueue = dispatcherQueue;
 
             // Generating plugins cache requires a breakpoint in bank.c#662
             _library = new LibVLC(options); //"--quiet", "--reset-plugins-cache");
@@ -213,57 +210,77 @@ namespace Telegram.Common
 
         private void OnVout(object sender, MediaPlayerVoutEventArgs e)
         {
-            _dispatcherQueue.Dispatch(() => Vout?.Invoke(this, e));
+            Dispatch(() => Vout?.Invoke(this, e));
         }
 
         private void OnESSelected(object sender, MediaPlayerESSelectedEventArgs e)
         {
-            _dispatcherQueue.Dispatch(() => ESSelected?.Invoke(this, e));
+            Dispatch(() => ESSelected?.Invoke(this, e));
         }
 
         private void OnEndReached(object sender, EventArgs e)
         {
-            _dispatcherQueue.Dispatch(() => EndReached?.Invoke(this, e));
+            Dispatch(() => EndReached?.Invoke(this, e));
         }
 
         private void OnBuffering(object sender, MediaPlayerBufferingEventArgs e)
         {
-            _dispatcherQueue.Dispatch(() => Buffering?.Invoke(this, e));
+            Dispatch(() => Buffering?.Invoke(this, e));
         }
 
         private void OnTimeChanged(object sender, MediaPlayerTimeChangedEventArgs e)
         {
-            _dispatcherQueue.Dispatch(() => TimeChanged?.Invoke(this, e));
+            Dispatch(() => TimeChanged?.Invoke(this, e));
         }
 
         private void OnLengthChanged(object sender, MediaPlayerLengthChangedEventArgs e)
         {
-            _dispatcherQueue.Dispatch(() => LengthChanged?.Invoke(this, e));
+            Dispatch(() => LengthChanged?.Invoke(this, e));
         }
 
         private void OnPlaying(object sender, EventArgs e)
         {
-            _dispatcherQueue.Dispatch(() => Playing?.Invoke(this, e));
+            Dispatch(() => Playing?.Invoke(this, e));
         }
 
         private void OnPaused(object sender, EventArgs e)
         {
-            _dispatcherQueue.Dispatch(() => Paused?.Invoke(this, e));
+            Dispatch(() => Paused?.Invoke(this, e));
         }
 
         private void OnStopped(object sender, EventArgs e)
         {
-            _dispatcherQueue.Dispatch(() => Stopped?.Invoke(this, e));
+            Dispatch(() => Stopped?.Invoke(this, e));
         }
 
         private void OnVolumeChanged(object sender, MediaPlayerVolumeChangedEventArgs e)
         {
-            _dispatcherQueue.Dispatch(() => VolumeChanged?.Invoke(this, e));
+            Dispatch(() => VolumeChanged?.Invoke(this, e));
         }
 
         private void OnEncounteredError(object sender, EventArgs e)
         {
-            _dispatcherQueue.Dispatch(() => EncounteredError?.Invoke(this, e));
+            Dispatch(() => EncounteredError?.Invoke(this, e));
+        }
+
+        [DebuggerNonUserCode]
+        public void Dispatch(DispatcherQueueHandler action, DispatcherQueuePriority priority = DispatcherQueuePriority.Normal)
+        {
+            if (_dispatcherQueue.HasThreadAccess && priority == DispatcherQueuePriority.Normal)
+            {
+                action();
+            }
+            else
+            {
+                try
+                {
+                    _dispatcherQueue.TryEnqueue(priority, action);
+                }
+                catch
+                {
+                    // Most likey Excep_InvalidComObject_NoRCW_Wrapper, so we can just ignore it
+                }
+            }
         }
 
         #endregion

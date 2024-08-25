@@ -15,7 +15,6 @@ using System.Linq;
 using Telegram.Td.Api;
 using Telegram.ViewModels.Drawers;
 using Telegram.Views.Popups;
-using Windows.UI.ViewManagement;
 
 namespace Telegram.Common
 {
@@ -278,17 +277,6 @@ namespace Telegram.Common
                 _popupPanel.SetAnimation(animation);
             }
 
-            // TODO: WinUI - Can be safely removed.
-            var bounds = ApplicationView.GetForCurrentView().VisibleBounds;
-            if (bounds != Window.Current.Bounds)
-            {
-                _popupPanel.Margin = new Thickness(bounds.X, bounds.Y, Window.Current.Bounds.Width - bounds.Right, Window.Current.Bounds.Height - bounds.Bottom);
-            }
-            else
-            {
-                _popupPanel.Margin = new Thickness();
-            }
-
             //if (item is TLDocument content && content.StickerSet != null)
             //{
             //    Debug.WriteLine(string.Join(" ", UnigramContainer.Current.ResolveType<IStickersService>().GetEmojiForSticker(content.Id)));
@@ -296,8 +284,8 @@ namespace Telegram.Common
 
             Opening?.Invoke();
 
-            _popupPanel.Width = bounds.Width;
-            _popupPanel.Height = bounds.Height;
+            _popupPanel.Width = _listView.XamlRoot.Size.Width;
+            _popupPanel.Height = _listView.XamlRoot.Size.Height;
             _popupContent = item;
             _popupHost.XamlRoot = _listView.XamlRoot;
             _popupHost.IsOpen = true;

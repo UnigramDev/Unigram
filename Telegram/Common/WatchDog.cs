@@ -97,7 +97,7 @@ namespace Telegram
 
             TaskScheduler.UnobservedTaskException += (s, args) =>
             {
-                Crashes.TrackCrash(args.Exception);
+                //Crashes.TrackCrash(args.Exception);
                 args.SetObserved();
             };
 
@@ -119,10 +119,10 @@ namespace Telegram
             //    }
             //};
 
-            Crashes.CreatingErrorReport += (s, args) =>
-            {
-                Track(args.ReportId, args.Exception);
-            };
+            //Crashes.CreatingErrorReport += (s, args) =>
+            //{
+            //    Track(args.ReportId, args.Exception);
+            //};
 
             Crashes.SentErrorReport += (s, args) =>
             {
@@ -234,45 +234,45 @@ namespace Telegram
             }
         }
 
-        class StackFrame : NativeStackFrame
-        {
-            private FatalErrorFrame _frame;
+        //class StackFrame : NativeStackFrame
+        //{
+        //    private FatalErrorFrame _frame;
 
-            public StackFrame(FatalErrorFrame frame)
-            {
-                _frame = frame;
-            }
+        //    public StackFrame(FatalErrorFrame frame)
+        //    {
+        //        _frame = frame;
+        //    }
 
-            public override IntPtr GetNativeIP()
-            {
-                return (IntPtr)_frame.NativeIP;
-            }
+        //    public override IntPtr GetNativeIP()
+        //    {
+        //        return (IntPtr)_frame.NativeIP;
+        //    }
 
-            public override IntPtr GetNativeImageBase()
-            {
-                return (IntPtr)_frame.NativeImageBase;
-            }
-        }
+        //    public override IntPtr GetNativeImageBase()
+        //    {
+        //        return (IntPtr)_frame.NativeImageBase;
+        //    }
+        //}
 
         public static void FatalErrorCallback(FatalError error)
         {
-            Crashes.TrackCrash(ToException(error));
+            //Crashes.TrackCrash(ToException(error));
         }
 
-        private static Exception ToException(FatalError error)
-        {
-            if (error == null)
-            {
-                return null;
-            }
+        //private static Exception ToException(FatalError error)
+        //{
+        //    if (error == null)
+        //    {
+        //        return null;
+        //    }
 
-            if (error.StackTrace.Contains("libvlc.dll") || error.StackTrace.Contains("libvlccore.dll"))
-            {
-                return new VLCException(error.Message + Environment.NewLine + error.StackTrace, error.StackTrace, error.Frames.Select(x => new StackFrame(x)));
-            }
+        //    if (error.StackTrace.Contains("libvlc.dll") || error.StackTrace.Contains("libvlccore.dll"))
+        //    {
+        //        return new VLCException(error.Message + Environment.NewLine + error.StackTrace, error.StackTrace, error.Frames.Select(x => new StackFrame(x)));
+        //    }
 
-            return new NativeException(error.Message + Environment.NewLine + error.StackTrace, error.StackTrace, error.Frames.Select(x => new StackFrame(x)));
-        }
+        //    return new NativeException(error.Message + Environment.NewLine + error.StackTrace, error.StackTrace, error.Frames.Select(x => new StackFrame(x)));
+        //}
 
         private static Exception ToException2(FatalError error)
         {
@@ -294,7 +294,7 @@ namespace Telegram
             var exception = TdException.FromMessage(message);
             if (exception.IsUnhandled)
             {
-                Crashes.TrackCrash(exception);
+                //Crashes.TrackCrash(exception);
             }
         }
 
@@ -381,11 +381,11 @@ namespace Telegram
         }
     }
 
-    public class VLCException : NativeException
-    {
-        public VLCException(string message, string stackTrace, IEnumerable<NativeStackFrame> frames)
-            : base(message, stackTrace, frames)
-        {
-        }
-    }
+    //public class VLCException : NativeException
+    //{
+    //    public VLCException(string message, string stackTrace, IEnumerable<NativeStackFrame> frames)
+    //        : base(message, stackTrace, frames)
+    //    {
+    //    }
+    //}
 }

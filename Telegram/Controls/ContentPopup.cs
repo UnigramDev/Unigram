@@ -41,7 +41,8 @@ namespace Telegram.Controls
             DefaultStyleKey = typeof(ContentPopup);
             DefaultButton = ContentDialogButton.Primary;
 
-            if (Window.Current.Content is FrameworkElement element)
+            // TODO: missing
+            if (Window.Current?.Content is FrameworkElement element)
             {
                 var app = BootStrapper.Current.RequestedTheme == ApplicationTheme.Dark ? ElementTheme.Dark : ElementTheme.Light;
                 var frame = element.RequestedTheme;

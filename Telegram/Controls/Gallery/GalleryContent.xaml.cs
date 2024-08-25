@@ -408,7 +408,7 @@ namespace Telegram.Controls.Gallery
 
         private void OnInitialized(object sender, LibVLCSharp.Platforms.Windows.InitializedEventArgs e)
         {
-            _player = new AsyncMediaPlayer(e.SwapChainOptions);
+            _player = new AsyncMediaPlayer(DispatcherQueue, e.SwapChainOptions);
             _player.Buffering += OnBuffering;
             _player.Stopped += OnStopped;
 

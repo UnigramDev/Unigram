@@ -12,7 +12,6 @@ using System;
 using Telegram.Common;
 using Telegram.Navigation;
 using Windows.UI;
-using Windows.UI.Core;
 
 namespace Telegram.Controls.Media
 {

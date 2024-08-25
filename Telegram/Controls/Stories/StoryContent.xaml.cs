@@ -1210,7 +1210,7 @@ namespace Telegram.Controls.Stories
 
             Logger.Info();
 
-            _player = new AsyncMediaPlayer(e.SwapChainOptions);
+            _player = new AsyncMediaPlayer(DispatcherQueue, e.SwapChainOptions);
             _player.ESSelected += OnESSelected;
             _player.Vout += OnVout;
             _player.Buffering += OnBuffering;

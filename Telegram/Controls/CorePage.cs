@@ -38,11 +38,11 @@ namespace Telegram.Controls
             {
                 _registered = true;
 
-                var application = CoreApplication.GetCurrentView().TitleBar;
-                application.IsVisibleChanged += OnLayoutMetricsChanged;
-                application.LayoutMetricsChanged += OnLayoutMetricsChanged;
+                //var application = CoreApplication.GetCurrentView().TitleBar;
+                //application.IsVisibleChanged += OnLayoutMetricsChanged;
+                //application.LayoutMetricsChanged += OnLayoutMetricsChanged;
 
-                OnLayoutMetricsChanged(application, null);
+                //OnLayoutMetricsChanged(application, null);
             }
         }
 
@@ -52,9 +52,9 @@ namespace Telegram.Controls
             {
                 _registered = false;
 
-                var application = CoreApplication.GetCurrentView().TitleBar;
-                application.IsVisibleChanged -= OnLayoutMetricsChanged;
-                application.LayoutMetricsChanged -= OnLayoutMetricsChanged;
+                //var application = CoreApplication.GetCurrentView().TitleBar;
+                //application.IsVisibleChanged -= OnLayoutMetricsChanged;
+                //application.LayoutMetricsChanged -= OnLayoutMetricsChanged;
             }
         }
 

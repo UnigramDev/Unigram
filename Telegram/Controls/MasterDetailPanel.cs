@@ -4,6 +4,7 @@
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+using Microsoft.UI.Input;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Input;
@@ -193,20 +194,20 @@ namespace Telegram.Controls
 
         private void Grip_PointerEntered(object sender, PointerRoutedEventArgs e)
         {
-            Window.Current.CoreWindow.PointerCursor = _resizeCursor;
+            ProtectedCursor = InputSystemCursor.Create(InputSystemCursorShape.SizeWestEast);
         }
 
         private void Grip_PointerExited(object sender, PointerRoutedEventArgs e)
         {
             if (!_pointerPressed)
             {
-                Window.Current.CoreWindow.PointerCursor = _defaultCursor;
+                ProtectedCursor = InputSystemCursor.Create(InputSystemCursorShape.Arrow);
             }
         }
 
         private void Grip_Unloaded(object sender, RoutedEventArgs e)
         {
-            Window.Current.CoreWindow.PointerCursor = _defaultCursor;
+            ProtectedCursor = InputSystemCursor.Create(InputSystemCursorShape.Arrow);
         }
 
         private void Grip_PointerPressed(object sender, PointerRoutedEventArgs e)
@@ -270,7 +271,7 @@ namespace Telegram.Controls
             var point = e.GetCurrentPoint(grip);
             if (point.Position.X is < 0 or > 8)
             {
-                Window.Current.CoreWindow.PointerCursor = _defaultCursor;
+                ProtectedCursor = InputSystemCursor.Create(InputSystemCursorShape.Arrow);
             }
         }
 

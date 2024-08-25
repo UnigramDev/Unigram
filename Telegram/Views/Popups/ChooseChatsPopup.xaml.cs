@@ -15,7 +15,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
-using System.Text;
 using System.Threading.Tasks;
 using Telegram.Collections;
 using Telegram.Common;
@@ -31,7 +30,6 @@ using Telegram.ViewModels;
 using Telegram.ViewModels.Drawers;
 using Telegram.ViewModels.Folders;
 using Windows.ApplicationModel.DataTransfer;
-using Windows.UI.Core;
 
 namespace Telegram.Views.Popups
 {
@@ -1245,27 +1243,18 @@ namespace Telegram.Views.Popups
 
         private void OnOpened(ContentDialog sender, ContentDialogOpenedEventArgs args)
         {
-            Window.Current.CoreWindow.CharacterReceived += OnCharacterReceived;
+            CharacterReceived += OnCharacterReceived;
         }
 
         private void OnClosing(ContentDialog sender, ContentDialogClosingEventArgs args)
         {
             ViewModel.PropertyChanged -= OnPropertyChanged;
-            Window.Current.CoreWindow.CharacterReceived -= OnCharacterReceived;
+            CharacterReceived -= OnCharacterReceived;
         }
 
-        private void OnCharacterReceived(CoreWindow sender, CharacterReceivedEventArgs args)
+        private void OnCharacterReceived(UIElement sender, CharacterReceivedRoutedEventArgs args)
         {
-            var character = Encoding.UTF32.GetString(BitConverter.GetBytes(args.KeyCode));
-            if (character.Length == 0)
-            {
-                return;
-            }
-            else if (character != "\u0016" && character != "\r" && char.IsControl(character[0]))
-            {
-                return;
-            }
-            else if (character != "\u0016" && character != "\r" && char.IsWhiteSpace(character[0]))
+            if (args.Character != '\u0016' && args.Character != '\r' && char.IsControl(args.Character) && char.IsWhiteSpace(args.Character))
             {
                 return;
             }
@@ -1273,12 +1262,12 @@ namespace Telegram.Views.Popups
             var focused = FocusManager.GetFocusedElement();
             if (focused is null or (not TextBox and not RichEditBox and not Button and not MenuFlyoutItem))
             {
-                if (character == "\u0016" && CaptionInput.CanPasteClipboardContent)
+                if (args.Character == '\u0016' && CaptionInput.CanPasteClipboardContent)
                 {
                     CaptionInput.Focus(FocusState.Keyboard);
                     CaptionInput.PasteFromClipboard();
                 }
-                else if (character == "\r" && IsPrimaryButtonEnabled && (SearchPanel == null || SearchPanel.Visibility == Visibility.Collapsed))
+                else if (args.Character == '\r' && IsPrimaryButtonEnabled && (SearchPanel == null || SearchPanel.Visibility == Visibility.Collapsed))
                 {
                     Accept();
                 }
@@ -1287,8 +1276,8 @@ namespace Telegram.Views.Popups
                     Search_Click(null, null);
 
                     SearchField.Focus(FocusState.Keyboard);
-                    SearchField.Text = character;
-                    SearchField.SelectionStart = character.Length;
+                    SearchField.Text = args.Character.ToString();
+                    SearchField.SelectionStart = 1;
                 }
 
                 args.Handled = true;

@@ -19,6 +19,8 @@ namespace Telegram.Common
     {
         public static async Task RegisterBackgroundTasks()
         {
+            return;
+
             try
             {
                 //BackgroundExecutionManager.RemoveAccess();

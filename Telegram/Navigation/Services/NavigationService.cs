@@ -21,7 +21,6 @@ using Telegram.ViewModels.Gallery;
 using Telegram.Views;
 using Telegram.Views.Popups;
 using Telegram.Views.Settings;
-using Windows.ApplicationModel.Core;
 using Windows.Foundation;
 
 namespace Telegram.Navigation.Services

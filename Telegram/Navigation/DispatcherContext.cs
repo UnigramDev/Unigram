@@ -37,6 +37,8 @@ namespace Telegram.Navigation
 
         private readonly DispatcherQueue _dispatcher;
 
+        public static implicit operator DispatcherQueue(DispatcherContext d) => d._dispatcher;
+
         [DebuggerNonUserCode]
         public Task DispatchAsync(Action action, DispatcherQueuePriority priority = DispatcherQueuePriority.Normal)
         {

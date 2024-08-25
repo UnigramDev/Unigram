@@ -190,6 +190,7 @@ namespace Telegram.Controls.Gallery
                     return false;
                 }
 
+                return true;
                 return ApplicationView.GetForCurrentView().IsViewModeSupported(ApplicationViewMode.CompactOverlay);
             }
 

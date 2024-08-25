@@ -770,15 +770,11 @@ namespace Telegram.Views
             //Bindings.StopTracking();
             //Bindings.Update();
 
-            var context = WindowContext.ForXamlRoot(this);
-            if (context != null)
-            {
-                context.Activated += Window_Activated;
-                context.VisibilityChanged += Window_VisibilityChanged;
+            ViewModel.NavigationService.Window.Activated += Window_Activated;
+            ViewModel.NavigationService.Window.VisibilityChanged += Window_VisibilityChanged;
 
-                context.CoreWindow.CharacterReceived += OnCharacterReceived;
-                context.InputListener.KeyDown += OnAcceleratorKeyActivated;
-            }
+            //ViewModel.NavigationService.Window.CoreWindow.CharacterReceived += OnCharacterReceived;
+            ViewModel.NavigationService.Window.InputListener.KeyDown += OnAcceleratorKeyActivated;
 
             ViewVisibleMessages();
 
@@ -798,15 +794,11 @@ namespace Telegram.Views
 
             UnloadVisibleMessages();
 
-            var context = WindowContext.ForXamlRoot(this);
-            if (context != null)
-            {
-                context.Activated -= Window_Activated;
-                context.VisibilityChanged -= Window_VisibilityChanged;
+            ViewModel.NavigationService.Window.Activated -= Window_Activated;
+            ViewModel.NavigationService.Window.VisibilityChanged -= Window_VisibilityChanged;
 
-                context.CoreWindow.CharacterReceived -= OnCharacterReceived;
-                context.InputListener.KeyDown -= OnAcceleratorKeyActivated;
-            }
+            //ViewModel.NavigationService.Window.CoreWindow.CharacterReceived -= OnCharacterReceived;
+            ViewModel.NavigationService.Window.InputListener.KeyDown -= OnAcceleratorKeyActivated;
 
             _loadedThemeTask?.TrySetResult(true);
             _updateThemeTask?.TrySetResult(true);
@@ -926,30 +918,29 @@ namespace Telegram.Views
             FlyoutArea = null;
         }
 
-        //private void Window_Activated(object sender, WindowActivatedEventArgs e)
-        //{
-        //    var mode = Window.Current.CoreWindow.ActivationMode;
-        //    if (mode == CoreWindowActivationMode.ActivatedInForeground)
-        //    {
-        //        ViewVisibleMessages(true);
+        private void Window_Activated(object sender, WindowActivatedEventArgs e)
+        {
+            if (e.WindowActivationState != WindowActivationState.Deactivated)
+            {
+                ViewVisibleMessages(true);
 
-        //        var popups = VisualTreeHelper.GetOpenPopupsForXamlRoot(XamlRoot);
-        //        if (popups.Count > 0)
-        //        {
-        //            return;
-        //        }
+                var popups = VisualTreeHelper.GetOpenPopupsForXamlRoot(XamlRoot);
+                if (popups.Count > 0)
+                {
+                    return;
+                }
 
-        //        var element = FocusManager.GetFocusedElement();
-        //        if (element is not TextBox and not RichEditBox)
-        //        {
-        //            TrySetFocusState(FocusState.Programmatic, true);
-        //        }
-        //    }
-        //    else if (mode == CoreWindowActivationMode.Deactivated)
-        //    {
-        //        ViewModel.SaveDraft();
-        //    }
-        //}
+                var element = FocusManager.GetFocusedElement();
+                if (element is not TextBox and not RichEditBox)
+                {
+                    TrySetFocusState(FocusState.Programmatic, true);
+                }
+            }
+            else
+            {
+                ViewModel.SaveDraft();
+            }
+        }
 
         private void TrySetFocusState(FocusState state, bool fast)
         {
@@ -968,19 +959,19 @@ namespace Telegram.Views
             }
         }
 
-        //private void Window_VisibilityChanged(object sender, VisibilityChangedEventArgs e)
-        //{
-        //    if (e.Visible)
-        //    {
-        //        var popups = VisualTreeHelper.GetOpenPopupsForXamlRoot(XamlRoot);
-        //        if (popups.Count > 0)
-        //        {
-        //            return;
-        //        }
+        private void Window_VisibilityChanged(object sender, WindowVisibilityChangedEventArgs e)
+        {
+            if (e.Visible)
+            {
+                var popups = VisualTreeHelper.GetOpenPopupsForXamlRoot(XamlRoot);
+                if (popups.Count > 0)
+                {
+                    return;
+                }
 
-        //        _focusState.Set(FocusState.Programmatic);
-        //    }
-        //}
+                _focusState.Set(FocusState.Programmatic);
+            }
+        }
 
         public void Search()
         {

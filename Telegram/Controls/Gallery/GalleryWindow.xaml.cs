@@ -6,6 +6,7 @@
 //
 using Microsoft.UI.Composition;
 using Microsoft.UI.Input;
+using Microsoft.UI.Windowing;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Controls.Primitives;
@@ -334,17 +335,17 @@ namespace Telegram.Controls.Gallery
 
                 PrepareNext(0, true);
 
-                var applicationView = ApplicationView.GetForCurrentView();
+                var appWindow = parameter.NavigationService.Window.AppWindow;
 
-                _wasFullScreen = applicationView.IsFullScreenMode || ApiInfo.IsXbox;
+                _wasFullScreen = parameter.NavigationService.Window.IsFullScreenMode || ApiInfo.IsXbox;
 
                 if (CanUnconstrainFromRootBounds && !_wasFullScreen)
                 {
-                    applicationView.TryEnterFullScreenMode();
+                    parameter.NavigationService.Window.TryEnterFullScreenMode();
                 }
 
-                applicationView.VisibleBoundsChanged += OnVisibleBoundsChanged;
-                OnVisibleBoundsChanged(applicationView, null);
+                appWindow.Changed += OnVisibleBoundsChanged;
+                OnVisibleBoundsChanged(appWindow, null);
 
                 InitializeBackButton();
                 Controls.Focus(FocusState.Programmatic);
@@ -384,9 +385,9 @@ namespace Telegram.Controls.Gallery
             }
         }
 
-        private void OnVisibleBoundsChanged(ApplicationView sender, object args)
+        private void OnVisibleBoundsChanged(AppWindow sender, AppWindowChangedEventArgs e)
         {
-            var fullScreen = sender.IsFullScreenMode || ApiInfo.IsXbox;
+            var fullScreen = sender.Presenter.Kind == AppWindowPresenterKind.FullScreen || ApiInfo.IsXbox;
 
             if (_lastFullScreen != fullScreen)
             {
@@ -423,10 +424,9 @@ namespace Telegram.Controls.Gallery
         {
             e.Handled = true;
 
-            var applicationView = ApplicationView.GetForCurrentView();
-            if (applicationView.IsFullScreenMode && !_wasFullScreen)
+            if (ViewModel.NavigationService.Window.IsFullScreenMode && !_wasFullScreen)
             {
-                applicationView.ExitFullScreenMode();
+                ViewModel.NavigationService.Window.ExitFullScreenMode();
 
                 if (e.Key == VirtualKey.Escape)
                 {
@@ -435,7 +435,7 @@ namespace Telegram.Controls.Gallery
                 }
             }
 
-            applicationView.VisibleBoundsChanged -= OnVisibleBoundsChanged;
+            ViewModel.NavigationService.Window.AppWindow.Changed -= OnVisibleBoundsChanged;
 
             var translate = true;
 
@@ -889,16 +889,16 @@ namespace Telegram.Controls.Gallery
             LayoutRoot.HasPrevious = index > 0;
             LayoutRoot.HasNext = index < viewModel.Items.Count - 1;
 
-            if (UIViewSettings.GetForCurrentView().UserInteractionMode == UserInteractionMode.Mouse)
+            //if (UIViewSettings.GetForCurrentView().UserInteractionMode == UserInteractionMode.Mouse)
             {
                 PrevButton.Visibility = index > 0 ? Visibility.Visible : Visibility.Collapsed;
                 NextButton.Visibility = index < viewModel.Items.Count - 1 ? Visibility.Visible : Visibility.Collapsed;
             }
-            else
-            {
-                PrevButton.Visibility = Visibility.Collapsed;
-                NextButton.Visibility = Visibility.Collapsed;
-            }
+            //else
+            //{
+            //    PrevButton.Visibility = Visibility.Collapsed;
+            //    NextButton.Visibility = Visibility.Collapsed;
+            //}
 
             if (set)
             {
@@ -1155,14 +1155,13 @@ namespace Telegram.Controls.Gallery
 
         private void FullScreen_Click(object sender, RoutedEventArgs e)
         {
-            var applicationView = ApplicationView.GetForCurrentView();
-            if (applicationView.IsFullScreenMode)
+            if (ViewModel.NavigationService.Window.IsFullScreenMode)
             {
-                applicationView.ExitFullScreenMode();
+                ViewModel.NavigationService.Window.ExitFullScreenMode();
             }
             else
             {
-                applicationView.TryEnterFullScreenMode();
+                ViewModel.NavigationService.Window.TryEnterFullScreenMode();
             }
         }
     }

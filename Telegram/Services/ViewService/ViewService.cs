@@ -53,6 +53,8 @@ namespace Telegram.Services.ViewService
 
         internal static void OnWindowCreated()
         {
+            return;
+
             var view = CoreApplication.GetCurrentView();
             if (!view.IsMain && !view.IsHosted)
             {
@@ -212,7 +214,7 @@ namespace Telegram.Services.ViewService
                     newAppView.Title = title;
                     newWindow.PersistedId = "Floating";
 
-                    var nav = BootStrapper.Current.NavigationServiceFactory(BootStrapper.BackButton.Ignore, session, id, false);
+                    var nav = BootStrapper.Current.NavigationServiceFactory(newWindow, BootStrapper.BackButton.Ignore, session, id, false);
                     nav.Navigate(page, parameter);
 
                     var control = ViewLifetimeControl.GetForCurrentView();

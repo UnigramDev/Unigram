@@ -13,14 +13,11 @@ using Telegram.Controls;
 using Telegram.Streams;
 using Telegram.Td.Api;
 using Windows.Foundation;
-using Windows.UI.ViewManagement;
 
 namespace Telegram.Views.Popups
 {
     public sealed partial class ZoomableMediaPopup : GridEx
     {
-        private ApplicationView _applicationView;
-
         private long _fileToken;
         private long _thumbnailToken;
 
@@ -37,42 +34,16 @@ namespace Telegram.Views.Popups
 
         private void OnLoaded(object sender, RoutedEventArgs e)
         {
-            _applicationView = ApplicationView.GetForCurrentView();
-            _applicationView.VisibleBoundsChanged += OnVisibleBoundsChanged;
-
-            OnVisibleBoundsChanged(_applicationView, null);
         }
 
         private void OnUnloaded(object sender, RoutedEventArgs e)
         {
             _lastItem = null;
-
-            if (_applicationView != null)
-            {
-                _applicationView.VisibleBoundsChanged -= OnVisibleBoundsChanged;
-            }
         }
 
         public Action<int> DownloadFile { get; set; }
 
         public Func<int> SessionId { get; set; }
-
-        private void OnVisibleBoundsChanged(ApplicationView sender, object args)
-        {
-            if (sender == null)
-            {
-                return;
-            }
-
-            if (/*BackgroundElement != null &&*/ Window.Current?.Bounds is Rect bounds && sender.VisibleBounds != bounds)
-            {
-                Margin = new Thickness(sender.VisibleBounds.X - bounds.Left, sender.VisibleBounds.Y - bounds.Top, bounds.Width - (sender.VisibleBounds.Right - bounds.Left), bounds.Height - (sender.VisibleBounds.Bottom - bounds.Top));
-            }
-            else
-            {
-                Margin = new Thickness();
-            }
-        }
 
         public void SetSticker(Sticker sticker)
         {

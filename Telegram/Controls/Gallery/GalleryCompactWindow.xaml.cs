@@ -51,7 +51,7 @@ namespace Telegram.Controls.Gallery
 
         private void OnInitialized(object sender, InitializedEventArgs e)
         {
-            _player = new AsyncMediaPlayer(e.SwapChainOptions);
+            _player = new AsyncMediaPlayer(DispatcherQueue, e.SwapChainOptions);
 
             Controls.Attach(_player);
 

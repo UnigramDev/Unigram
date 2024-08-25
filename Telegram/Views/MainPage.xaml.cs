@@ -50,7 +50,6 @@ using Telegram.Views.Users;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.Foundation;
 using Windows.UI.Core;
-using Windows.UI.ViewManagement;
 using Point = Windows.Foundation.Point;
 
 namespace Telegram.Views
@@ -899,12 +898,8 @@ namespace Telegram.Views
 
             Subscribe();
 
-            var context = WindowContext.ForXamlRoot(XamlRoot);
-            if (context != null)
-            {
-                context.CoreWindow.CharacterReceived += OnCharacterReceived;
-                context.InputListener.KeyDown += OnAcceleratorKeyActivated;
-            }
+            //NavigationService.Window.CoreWindow.CharacterReceived += OnCharacterReceived;
+            NavigationService.Window.InputListener.KeyDown += OnAcceleratorKeyActivated;
 
             OnStateChanged(null, null);
 
@@ -1064,12 +1059,8 @@ namespace Telegram.Views
 
         private void OnUnloaded(object sender, RoutedEventArgs e)
         {
-            var context = WindowContext.ForXamlRoot(this);
-            if (context != null)
-            {
-                context.CoreWindow.CharacterReceived -= OnCharacterReceived;
-                context.InputListener.KeyDown -= OnAcceleratorKeyActivated;
-            }
+            //NavigationService.Window.CoreWindow.CharacterReceived -= OnCharacterReceived;
+            NavigationService.Window.InputListener.KeyDown -= OnAcceleratorKeyActivated;
 
             Bindings.StopTracking();
 

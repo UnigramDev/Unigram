@@ -15,20 +15,18 @@ namespace Telegram.Services.Keyboard
         public bool ControlKey { get; set; }
         public bool ShiftKey { get; set; }
         public VirtualKey VirtualKey { get; set; }
-        public bool WindowsKey { get; internal set; }
 
         public uint RepeatCount { get; set; }
 
-        public bool OnlyWindows => WindowsKey & !AltKey & !ControlKey & !ShiftKey;
-        public bool OnlyAlt => !WindowsKey & AltKey & !ControlKey & !ShiftKey;
-        public bool OnlyControl => !WindowsKey & !AltKey & ControlKey & !ShiftKey;
-        public bool OnlyShift => !WindowsKey & !AltKey & !ControlKey & ShiftKey;
+        public bool OnlyAlt => AltKey & !ControlKey & !ShiftKey;
+        public bool OnlyControl => !AltKey & ControlKey & !ShiftKey;
+        public bool OnlyShift => !AltKey & !ControlKey & ShiftKey;
 
-        public bool OnlyKey => !WindowsKey && !AltKey && !ControlKey && !ShiftKey;
+        public bool OnlyKey => !AltKey && !ControlKey && !ShiftKey;
 
         public override string ToString()
         {
-            return $"KeyboardEventArgs = Handled {Handled}, AltKey {AltKey}, ControlKey {ControlKey}, ShiftKey {ShiftKey}, VirtualKey {VirtualKey}, WindowsKey {WindowsKey}, OnlyWindows {OnlyWindows}, OnlyAlt {OnlyAlt}, OnlyControl {OnlyControl}, OnlyShift {OnlyShift}";
+            return $"KeyboardEventArgs = Handled {Handled}, AltKey {AltKey}, ControlKey {ControlKey}, ShiftKey {ShiftKey}, VirtualKey {VirtualKey}, OnlyAlt {OnlyAlt}, OnlyControl {OnlyControl}, OnlyShift {OnlyShift}";
         }
     }
 }

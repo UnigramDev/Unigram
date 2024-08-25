@@ -31,7 +31,6 @@ using Windows.Graphics.Imaging;
 using Windows.Storage;
 using Windows.Storage.Streams;
 using Windows.UI;
-using Windows.UI.Core;
 
 namespace Telegram.Controls
 {
@@ -1085,7 +1084,8 @@ namespace Telegram.Controls
             _foregroundPrev = new PixelBuffer(new WriteableBitmap(width, height));
             _backgroundNext = new PixelBuffer(new WriteableBitmap(width, height));
 
-            _activated = Window.Current.CoreWindow.ActivationMode != CoreWindowActivationMode.Deactivated;
+            // TODO: missing
+            _activated = false; // Window.Current.CoreWindow.ActivationMode != CoreWindowActivationMode.Deactivated;
 
             // Automatically pause only if looping
             if (_presentation.LoopCount != 1)

@@ -4,8 +4,8 @@
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
-using Microsoft.UI;
 using Microsoft.UI.Input;
+using Microsoft.UI.Windowing;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Controls.Primitives;
@@ -19,15 +19,11 @@ using Telegram.Services;
 using Telegram.Services.Keyboard;
 using Telegram.Views.Host;
 using Windows.Foundation;
-using Windows.UI.Core.Preview;
-using Windows.UI.ViewManagement;
 
 namespace Telegram.Controls
 {
     public abstract class OverlayWindow : ContentControl, INavigablePage
     {
-        private ApplicationView _applicationView;
-
         private Popup _popupHost;
 
         private bool _closing;
@@ -72,23 +68,15 @@ namespace Telegram.Controls
             base.OnPointerPressed(e);
         }
 
-        private void OnVisibleBoundsChanged(ApplicationView sender, object args)
+        private void OnVisibleBoundsChanged(XamlRoot sender, XamlRootChangedEventArgs args)
         {
             if (sender == null)
             {
                 return;
             }
 
-            if (/*BackgroundElement != null &&*/ Window.Current?.Bounds is Rect bounds && sender.VisibleBounds != bounds)
-            {
-                Margin = new Thickness(sender.VisibleBounds.X - bounds.Left, sender.VisibleBounds.Y - bounds.Top, bounds.Width - (sender.VisibleBounds.Right - bounds.Left), bounds.Height - (sender.VisibleBounds.Bottom - bounds.Top));
-                UpdateViewBase();
-            }
-            else
-            {
-                Margin = new Thickness();
-                UpdateViewBase();
-            }
+            Margin = new Thickness();
+            UpdateViewBase();
         }
 
         protected virtual void MaskTitleAndStatusBar(WindowContext window)
@@ -98,11 +86,11 @@ namespace Telegram.Controls
                 root.PopupOpened();
             }
 
-            var titlebar = ApplicationView.GetForCurrentView().TitleBar;
-            //titlebar.BackgroundColor = Colors.Black;
-            titlebar.ForegroundColor = Colors.White;
-            //titlebar.ButtonBackgroundColor = Colors.Black;
-            titlebar.ButtonForegroundColor = Colors.White;
+            //var titlebar = ApplicationView.GetForCurrentView().TitleBar;
+            ////titlebar.BackgroundColor = Colors.Black;
+            //titlebar.ForegroundColor = Colors.White;
+            ////titlebar.ButtonBackgroundColor = Colors.Black;
+            //titlebar.ButtonForegroundColor = Colors.White;
         }
 
         protected void UnmaskTitleAndStatusBar(WindowContext window)
@@ -112,7 +100,7 @@ namespace Telegram.Controls
                 root.PopupClosed();
             }
 
-            WindowContext.Current.UpdateTitleBar();
+            //window.UpdateTitleBar();
         }
 
         public bool IsConstrainedToRootBounds => _popupHost?.IsConstrainedToRootBounds ?? !CanUnconstrainFromRootBounds;
@@ -162,10 +150,13 @@ namespace Telegram.Controls
             //    await Task.Delay(200);
             //}
 
-            _applicationView = ApplicationView.GetForCurrentView();
-            OnVisibleBoundsChanged(_applicationView, null);
+            var context = WindowContext.ForXamlRoot(xamlRoot);
+            if (context != null)
+            {
+                context.AppWindow.Closing += OnCloseRequested;
+            }
 
-            SystemNavigationManagerPreview.GetForCurrentView().CloseRequested += OnCloseRequested;
+            OnVisibleBoundsChanged(xamlRoot, null);
 
             Padding = new Thickness(0, 40, 0, 0);
 
@@ -178,12 +169,12 @@ namespace Telegram.Controls
             return await _callback.Task;
         }
 
-        private void OnCloseRequested(object sender, SystemNavigationCloseRequestedPreviewEventArgs e)
+        private void OnCloseRequested(AppWindow sender, AppWindowClosingEventArgs e)
         {
             var args = new BackRequestedRoutedEventArgs();
             OnBackRequested(args);
 
-            e.Handled = args.Handled;
+            e.Cancel = args.Handled;
         }
 
         private void DisplayRegion_Changed(Rect sender, object args)
@@ -211,10 +202,7 @@ namespace Telegram.Controls
 
         private void PopupHost_Loading(FrameworkElement sender, object args)
         {
-            if (_applicationView != null)
-            {
-                OnVisibleBoundsChanged(_applicationView, null);
-            }
+            OnVisibleBoundsChanged(null, null);
         }
 
         private void PopupHost_Loaded(object sender, RoutedEventArgs e)
@@ -224,27 +212,19 @@ namespace Telegram.Controls
 
         private void PopupHost_Opened(object sender, object e)
         {
-            MaskTitleAndStatusBar();
+            MaskTitleAndStatusBar(WindowContext.ForXamlRoot(_popupHost));
 
-            if (_applicationView != null)
-            {
-                _applicationView.VisibleBoundsChanged += OnVisibleBoundsChanged;
-                OnVisibleBoundsChanged(_applicationView, null);
-            }
+            _popupHost.XamlRoot.Changed += OnVisibleBoundsChanged;
+            OnVisibleBoundsChanged(null, null);
         }
 
         private void PopupHost_Closed(object sender, object e)
         {
-            UnmaskTitleAndStatusBar();
+            UnmaskTitleAndStatusBar(WindowContext.ForXamlRoot(_popupHost));
 
             //_callback.TrySetResult(_result);
 
-            if (_applicationView != null)
-            {
-                _applicationView.VisibleBoundsChanged -= OnVisibleBoundsChanged;
-            }
-
-            SystemNavigationManagerPreview.GetForCurrentView().CloseRequested -= OnCloseRequested;
+            _popupHost.XamlRoot.Changed -= OnVisibleBoundsChanged;
         }
 
         public void OnBackRequested(BackRequestedRoutedEventArgs e)
@@ -318,10 +298,7 @@ namespace Telegram.Controls
             Container = (Border)GetTemplateChild("Container");
             BackgroundElement = (Border)GetTemplateChild("BackgroundElement");
 
-            if (_applicationView != null)
-            {
-                OnVisibleBoundsChanged(_applicationView, null);
-            }
+            OnVisibleBoundsChanged(null, null);
 
             Container.Tapped += Outside_Tapped;
             BackgroundElement.Tapped += Inside_Tapped;
@@ -374,11 +351,10 @@ namespace Telegram.Controls
 
         private void UpdateViewBase()
         {
-            if (_applicationView != null)
+            if (_popupHost?.XamlRoot != null)
             {
-                var bounds = _applicationView.VisibleBounds;
-                Width = bounds.Width;
-                Height = bounds.Height;
+                Width = _popupHost.XamlRoot.Size.Width;
+                Height = _popupHost.XamlRoot.Size.Height;
             }
         }
 
