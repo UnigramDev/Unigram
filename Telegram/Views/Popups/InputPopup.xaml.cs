@@ -13,6 +13,7 @@ using System.Threading.Tasks;
 using Telegram.Common;
 using Telegram.Controls;
 using Telegram.Navigation;
+using Telegram.Views.Host;
 using Windows.Globalization.NumberFormatting;
 
 namespace Telegram.Views.Popups
@@ -255,8 +256,13 @@ namespace Telegram.Views.Popups
             return new InputPopupResult(confirm, popup.Text, popup.Value);
         }
 
-        public static async Task<InputPopupResult> ShowAsync(FrameworkElement target, InputPopupType type, string message, string title = null, string placeholderText = null, string primary = null, string secondary = null, bool destructive = false, ElementTheme requestedTheme = ElementTheme.Default)
+        public static async Task<InputPopupResult> ShowAsync(XamlRoot xamlRoot, FrameworkElement target, InputPopupType type, string message, string title = null, string placeholderText = null, string primary = null, string secondary = null, bool destructive = false, ElementTheme requestedTheme = ElementTheme.Default)
         {
+            if (xamlRoot.Content is not IToastHost host)
+            {
+                return null;
+            }
+
             var popup = new InputTeachingTip(type)
             {
                 Title = title ?? string.Empty,
@@ -275,6 +281,13 @@ namespace Telegram.Views.Popups
                 // TODO:
                 RequestedTheme = target?.ActualTheme ?? requestedTheme
             };
+
+            popup.Closed += (s, args) =>
+            {
+                host.Disconnect(s);
+            };
+
+            host.Connect(popup);
 
             var confirm = await popup.ShowAsync();
             return new InputPopupResult(confirm, popup.Text, popup.Value);

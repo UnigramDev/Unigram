@@ -296,6 +296,7 @@ namespace Telegram.Navigation
             }
 
             var popups = VisualTreeHelper.GetOpenPopupsForXamlRoot(xamlRoot);
+
             foreach (var popup in popups)
             {
                 if (popup.Child is INavigablePage page)

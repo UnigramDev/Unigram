@@ -898,8 +898,13 @@ namespace Telegram.Views
             }
 
             Subscribe();
-            Window.Current.CoreWindow.CharacterReceived += OnCharacterReceived;
-            WindowContext.Current.InputListener.KeyDown += OnAcceleratorKeyActivated;
+
+            var context = WindowContext.ForXamlRoot(XamlRoot);
+            if (context != null)
+            {
+                context.CoreWindow.CharacterReceived += OnCharacterReceived;
+                context.InputListener.KeyDown += OnAcceleratorKeyActivated;
+            }
 
             OnStateChanged(null, null);
 
@@ -1059,8 +1064,12 @@ namespace Telegram.Views
 
         private void OnUnloaded(object sender, RoutedEventArgs e)
         {
-            Window.Current.CoreWindow.CharacterReceived -= OnCharacterReceived;
-            WindowContext.Current.InputListener.KeyDown -= OnAcceleratorKeyActivated;
+            var context = WindowContext.ForXamlRoot(this);
+            if (context != null)
+            {
+                context.CoreWindow.CharacterReceived -= OnCharacterReceived;
+                context.InputListener.KeyDown -= OnAcceleratorKeyActivated;
+            }
 
             Bindings.StopTracking();
 

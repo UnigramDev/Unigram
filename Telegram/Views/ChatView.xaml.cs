@@ -769,12 +769,15 @@ namespace Telegram.Views
             //Bindings.StopTracking();
             //Bindings.Update();
 
-            // TODO: resolve Window.Current from XamlRoot
-            //Window.Current.Activated += Window_Activated;
-            //Window.Current.VisibilityChanged += Window_VisibilityChanged;
+            var context = WindowContext.ForXamlRoot(this);
+            if (context != null)
+            {
+                context.Activated += Window_Activated;
+                context.VisibilityChanged += Window_VisibilityChanged;
 
-            //Window.Current.CoreWindow.CharacterReceived += OnCharacterReceived;
-            //WindowContext.Current.InputListener.KeyDown += OnAcceleratorKeyActivated;
+                context.CoreWindow.CharacterReceived += OnCharacterReceived;
+                context.InputListener.KeyDown += OnAcceleratorKeyActivated;
+            }
 
             ViewVisibleMessages();
 
@@ -794,12 +797,15 @@ namespace Telegram.Views
 
             UnloadVisibleMessages();
 
-            // TODO: resolve Window.Current from XamlRoot
-            //Window.Current.Activated -= Window_Activated;
-            //Window.Current.VisibilityChanged -= Window_VisibilityChanged;
+            var context = WindowContext.ForXamlRoot(this);
+            if (context != null)
+            {
+                context.Activated -= Window_Activated;
+                context.VisibilityChanged -= Window_VisibilityChanged;
 
-            //Window.Current.CoreWindow.CharacterReceived -= OnCharacterReceived;
-            //WindowContext.Current.InputListener.KeyDown -= OnAcceleratorKeyActivated;
+                context.CoreWindow.CharacterReceived -= OnCharacterReceived;
+                context.InputListener.KeyDown -= OnAcceleratorKeyActivated;
+            }
 
             _loadedThemeTask?.TrySetResult(true);
             _updateThemeTask?.TrySetResult(true);

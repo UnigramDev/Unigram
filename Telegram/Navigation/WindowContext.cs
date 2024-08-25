@@ -49,6 +49,8 @@ namespace Telegram.Navigation
         private readonly InputListener _inputListener;
         public InputListener InputListener => _inputListener;
 
+        public CoreWindow CoreWindow => _window.CoreWindow;
+
         public int Id { get; }
 
         private string _persistedId;
@@ -86,8 +88,10 @@ namespace Telegram.Navigation
             _lifetime = TypeResolver.Current.Lifetime;
             _inputListener = new InputListener(window);
 
-            //window.Activated += OnActivated;
-            //window.Closed += OnClosed;
+            window.Activated += OnActivated;
+            window.VisibilityChanged += OnVisibilityChanged;
+            window.SizeChanged += OnSizeChanged;
+            window.Closed += OnClosed;
             window.CoreWindow.ResizeStarted += OnResizeStarted;
             window.CoreWindow.ResizeCompleted += OnResizeCompleted;
 
@@ -178,8 +182,10 @@ namespace Telegram.Navigation
             NavigationServices.ForEach(x => x.Suspend());
             NavigationServices.Clear();
 
-            //_window.Activated -= OnActivated;
-            //_window.Closed -= OnClosed;
+            _window.Activated -= OnActivated;
+            _window.VisibilityChanged -= OnVisibilityChanged;
+            _window.SizeChanged -= OnSizeChanged;
+            _window.Closed -= OnClosed;
             _window.CoreWindow.ResizeStarted -= OnResizeStarted;
             _window.CoreWindow.ResizeCompleted -= OnResizeCompleted;
         }
@@ -206,9 +212,20 @@ namespace Telegram.Navigation
 
                     if (value is FrameworkElement element)
                     {
+                        element.Loading += OnLoading;
                         element.Loaded += OnLoaded;
                     }
                 }
+            }
+        }
+
+        private void OnLoading(FrameworkElement sender, object args)
+        {
+            sender.Loading -= OnLoading;
+
+            lock (_allLock)
+            {
+                _mapping[sender.UIContext] = this;
             }
         }
 
@@ -250,18 +267,32 @@ namespace Telegram.Navigation
         //{
         //    Activated?.Invoke(sender, e);
 
-        //    lock (_activeLock)
-        //    {
-        //        if (e.WindowActivationState != CoreWindowActivationState.Deactivated)
-        //        {
-        //            Active = this;
-        //        }
-        //        else if (Active == this)
-        //        {
-        //            Active = null;
-        //        }
-        //    }
-        //}
+            lock (_activeLock)
+            {
+                if (e.WindowActivationState != CoreWindowActivationState.Deactivated)
+                {
+                    Active = this;
+                }
+                else if (Active == this)
+                {
+                    Active = null;
+                }
+            }
+        }
+
+        public event EventHandler<VisibilityChangedEventArgs> VisibilityChanged;
+
+        private void OnVisibilityChanged(object sender, VisibilityChangedEventArgs e)
+        {
+            VisibilityChanged?.Invoke(sender, e);
+        }
+
+        public event EventHandler<WindowSizeChangedEventArgs> SizeChanged;
+
+        private void OnSizeChanged(object sender, WindowSizeChangedEventArgs e)
+        {
+            SizeChanged?.Invoke(sender, e);
+        }
 
         private void OnResizeStarted(CoreWindow sender, object args)
         {
@@ -301,6 +332,28 @@ namespace Telegram.Navigation
             else if (Window.Current.Content is StandalonePage standalonePage && standalonePage.NavigationService != null)
             {
                 return standalonePage.NavigationService;
+            }
+
+            return null;
+        }
+
+        public static INavigationService GetNavigationService(UIElement element)
+        {
+            var context = ForXamlRoot(element);
+            if (context != null)
+            {
+                return context.GetNavigationService();
+            }
+
+            return null;
+        }
+
+        public static INavigationService GetNavigationService(XamlRoot xamlRoot)
+        {
+            var context = ForXamlRoot(xamlRoot);
+            if (context != null)
+            {
+                return context.GetNavigationService();
             }
 
             return null;
@@ -727,11 +780,13 @@ namespace Telegram.Navigation
 
         public static bool IsKeyDown(Windows.System.VirtualKey key)
         {
+            //return (InputKeyboardSource.GetKeyStateForCurrentThread(key) & Windows.UI.Core.CoreVirtualKeyStates.Down) != 0;
             return (Window.Current.CoreWindow.GetKeyState(key) & CoreVirtualKeyStates.Down) != 0;
         }
 
         public static bool IsKeyDownAsync(Windows.System.VirtualKey key)
         {
+            //return (InputKeyboardSource.GetKeyStateForCurrentThread(key) & Windows.UI.Core.CoreVirtualKeyStates.Down) != 0;
             return (Window.Current.CoreWindow.GetAsyncKeyState(key) & CoreVirtualKeyStates.Down) != 0;
         }
 
@@ -759,6 +814,30 @@ namespace Telegram.Navigation
             }
 
             return Task.WhenAll(tasks);
+        }
+
+        private static readonly Dictionary<UIContext, WindowContext> _mapping = new();
+
+        public static WindowContext ForXamlRoot(XamlRoot xamlRoot)
+        {
+            WindowContext context;
+            lock (_allLock)
+            {
+                _mapping.TryGetValue(xamlRoot.UIContext, out context);
+            }
+
+            return context;
+        }
+
+        public static WindowContext ForXamlRoot(UIElement element)
+        {
+            WindowContext context;
+            lock (_allLock)
+            {
+                _mapping.TryGetValue(element.UIContext, out context);
+            }
+
+            return context;
         }
 
         private static readonly object _allLock = new();

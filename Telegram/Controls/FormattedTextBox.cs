@@ -299,12 +299,12 @@ namespace Telegram.Controls
             }
             else if (e.Key == VirtualKey.Enter)
             {
-                var ctrl = Window.Current.CoreWindow.GetKeyState(VirtualKey.Control);
-                var shift = Window.Current.CoreWindow.GetKeyState(VirtualKey.Shift);
+                var ctrl = WindowContext.IsKeyDown(VirtualKey.Control);
+                var shift = WindowContext.IsKeyDown(VirtualKey.Shift);
 
                 var send = SettingsService.Current.IsSendByEnterEnabled
-                    ? !ctrl.HasFlag(CoreVirtualKeyStates.Down) && !shift.HasFlag(CoreVirtualKeyStates.Down)
-                    : ctrl.HasFlag(CoreVirtualKeyStates.Down) && !shift.HasFlag(CoreVirtualKeyStates.Down);
+                    ? !ctrl && !shift
+                    : ctrl && !shift;
 
                 AcceptsReturn = !send;
                 e.Handled = send;

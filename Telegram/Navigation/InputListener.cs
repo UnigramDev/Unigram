@@ -36,41 +36,41 @@ namespace Telegram.Services.Keyboard
         //        return;
         //    }
 
-        //    var args = KeyboardEventArgs(e);
-        //    if (args.VirtualKey is VirtualKey.GoBack
-        //                        or VirtualKey.NavigationLeft
-        //                        or VirtualKey.GamepadLeftShoulder
-        //                        or VirtualKey.Escape)
-        //    {
-        //        BootStrapper.Current.RaiseBackRequested(args.VirtualKey);
-        //    }
-        //    else if (args.OnlyAlt && args.VirtualKey is VirtualKey.Back
-        //                                             or VirtualKey.Left)
-        //    {
-        //        BootStrapper.Current.RaiseBackRequested(args.VirtualKey);
-        //    }
-        //    else if (args.VirtualKey is VirtualKey.GoForward
-        //                             or VirtualKey.NavigationRight
-        //                             or VirtualKey.GamepadRightShoulder)
-        //    {
-        //        BootStrapper.Current.RaiseForwardRequested();
-        //    }
-        //    else if (args.OnlyAlt && args.VirtualKey is VirtualKey.Right)
-        //    {
-        //        BootStrapper.Current.RaiseForwardRequested();
-        //    }
-        //    else
-        //    {
-        //        try
-        //        {
-        //            RaiseAsMulticastDelegate(args);
-        //        }
-        //        finally
-        //        {
-        //            e.Handled = args.Handled;
-        //        }
-        //    }
-        //}
+            var args = KeyboardEventArgs(e);
+            if (args.VirtualKey is VirtualKey.GoBack
+                                or VirtualKey.NavigationLeft
+                                or VirtualKey.GamepadLeftShoulder
+                                or VirtualKey.Escape)
+            {
+                BootStrapper.Current.RaiseBackRequested(null, args.VirtualKey);
+            }
+            else if (args.OnlyAlt && args.VirtualKey is VirtualKey.Back
+                                                     or VirtualKey.Left)
+            {
+                BootStrapper.Current.RaiseBackRequested(null,args.VirtualKey);
+            }
+            else if (args.VirtualKey is VirtualKey.GoForward
+                                     or VirtualKey.NavigationRight
+                                     or VirtualKey.GamepadRightShoulder)
+            {
+                BootStrapper.Current.RaiseForwardRequested();
+            }
+            else if (args.OnlyAlt && args.VirtualKey is VirtualKey.Right)
+            {
+                BootStrapper.Current.RaiseForwardRequested();
+            }
+            else
+            {
+                try
+                {
+                    RaiseAsMulticastDelegate(args);
+                }
+                finally
+                {
+                    e.Handled = args.Handled;
+                }
+            }
+        }
 
         private void RaiseAsMulticastDelegate(InputKeyDownEventArgs args)
         {

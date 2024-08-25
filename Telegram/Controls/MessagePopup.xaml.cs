@@ -132,9 +132,9 @@ namespace Telegram.Controls
             return popup.ShowQueuedAsync(xamlRoot);
         }
 
-        public static Task<ContentDialogResult> ShowAsync(FrameworkElement target, string message, string title = null, string primary = null, string secondary = null, bool destructive = false, ElementTheme requestedTheme = ElementTheme.Default)
+        public static Task<ContentDialogResult> ShowAsync(XamlRoot xamlRoot, FrameworkElement target, string message, string title = null, string primary = null, string secondary = null, bool destructive = false, ElementTheme requestedTheme = ElementTheme.Default)
         {
-            if (Window.Current.Content is not IToastHost host)
+            if (xamlRoot.Content is not IToastHost host)
             {
                 return Task.FromResult(ContentDialogResult.None);
             }
@@ -175,9 +175,9 @@ namespace Telegram.Controls
             return tsc.Task;
         }
 
-        public static Task<ContentDialogResult> ShowAsync(FrameworkElement target, FrameworkElement content, string primary = null, string secondary = null, bool destructive = false, ElementTheme requestedTheme = ElementTheme.Default)
+        public static Task<ContentDialogResult> ShowAsync(XamlRoot xamlRoot, FrameworkElement target, FrameworkElement content, string primary = null, string secondary = null, bool destructive = false, ElementTheme requestedTheme = ElementTheme.Default)
         {
-            if (Window.Current.Content is not IToastHost host)
+            if (xamlRoot.Content is not IToastHost host)
             {
                 return Task.FromResult(ContentDialogResult.None);
             }

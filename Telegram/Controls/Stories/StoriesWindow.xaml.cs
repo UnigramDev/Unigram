@@ -781,16 +781,24 @@ namespace Telegram.Controls.Stories
 
         private void OnLoaded(object sender, RoutedEventArgs e)
         {
-            //WindowContext.Current.Activated += OnActivated;
-            //WindowContext.Current.InputListener.KeyDown += OnAcceleratorKeyActivated;
-
+            var context = WindowContext.ForXamlRoot(this);
+            if (context != null)
+            {
+                context.Activated += OnActivated;
+                context.InputListener.KeyDown += OnAcceleratorKeyActivated;
+            }
+            
             StoriesWindow_Loaded(sender, e);
         }
 
         private void OnUnloaded(object sender, RoutedEventArgs e)
         {
-            //WindowContext.Current.Activated -= OnActivated;
-            //WindowContext.Current.InputListener.KeyDown -= OnAcceleratorKeyActivated;
+            var context = WindowContext.ForXamlRoot(this);
+            if (context != null)
+            {
+                context.Activated -= OnActivated;
+                context.InputListener.KeyDown -= OnAcceleratorKeyActivated;
+            }
 
             _viewModel?.Aggregator.Unsubscribe(this);
             _stealthTimer.Stop();

@@ -181,7 +181,11 @@ namespace Telegram.Controls
 
         private void OnLoaded(object sender, RoutedEventArgs e)
         {
-            WindowContext.Current.InputListener.KeyDown += OnKeyDown;
+            var context = WindowContext.ForXamlRoot(this);
+            if (context != null)
+            {
+                context.InputListener.KeyDown += OnKeyDown;
+            }
 
             var canvas = VisualTreeHelper.GetParent(this) as Canvas;
             if (canvas != null)
@@ -201,7 +205,11 @@ namespace Telegram.Controls
 
         private void OnUnloaded(object sender, RoutedEventArgs e)
         {
-            WindowContext.Current.InputListener.KeyDown -= OnKeyDown;
+            var context = WindowContext.ForXamlRoot(this);
+            if (context != null)
+            {
+                context.InputListener.KeyDown -= OnKeyDown;
+            }
         }
 
         private void OnKeyDown(Window sender, Services.Keyboard.InputKeyDownEventArgs args)

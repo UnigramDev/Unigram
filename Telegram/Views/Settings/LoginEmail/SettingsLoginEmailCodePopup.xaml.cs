@@ -51,11 +51,11 @@ namespace Telegram.Views.Settings.LoginEmail
 
                 if (error.MessageEquals(ErrorType.EMAIL_VERIFY_EXPIRED))
                 {
-                    await MessagePopup.ShowAsync(target: null, Strings.CodeExpired, Strings.RestorePasswordNoEmailTitle, Strings.OK);
+                    await MessagePopup.ShowAsync(XamlRoot, target: null, Strings.CodeExpired, Strings.RestorePasswordNoEmailTitle, Strings.OK);
                 }
                 else if (error.MessageEquals(ErrorType.CODE_INVALID))
                 {
-                    await MessagePopup.ShowAsync(target: null, Strings.InvalidCode, Strings.RestorePasswordNoEmailTitle, Strings.OK);
+                    await MessagePopup.ShowAsync(XamlRoot, target: null, Strings.InvalidCode, Strings.RestorePasswordNoEmailTitle, Strings.OK);
                 }
             }
 

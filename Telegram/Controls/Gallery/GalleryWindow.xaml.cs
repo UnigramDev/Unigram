@@ -667,7 +667,11 @@ namespace Telegram.Controls.Gallery
 
         private void OnLoaded(object sender, RoutedEventArgs e)
         {
-            WindowContext.Current.InputListener.KeyDown += OnAcceleratorKeyActivated;
+            var context = WindowContext.ForXamlRoot(this);
+            if (context != null)
+            {
+                context.InputListener.KeyDown += OnAcceleratorKeyActivated;
+            }
         }
 
         private void Load(object parameter)
@@ -682,7 +686,12 @@ namespace Telegram.Controls.Gallery
         private void OnUnloaded(object sender, RoutedEventArgs e)
         {
             Unload();
-            WindowContext.Current.InputListener.KeyDown -= OnAcceleratorKeyActivated;
+
+            var context = WindowContext.ForXamlRoot(this);
+            if (context != null)
+            {
+                context.InputListener.KeyDown -= OnAcceleratorKeyActivated;
+            }
         }
 
         private void Unload()
