@@ -71,7 +71,7 @@ namespace Telegram.ViewModels.Supergroups
                     ? ListViewSelectionMode.Single
                     : ListViewSelectionMode.Multiple;
 
-                var selected = await ChooseChatsPopup.PickUsersAsync(ClientService, header, selectionMode);
+                var selected = await ChooseChatsPopup.PickUsersAsync(ClientService, NavigationService, header, selectionMode);
                 if (selected == null || selected.Count == 0)
                 {
                     return;

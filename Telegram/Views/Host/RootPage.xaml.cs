@@ -223,10 +223,12 @@ namespace Telegram.Views.Host
 
             Navigation.IsPaneOpen = false;
 
-            var service = WindowContext.Current.NavigationServices.GetByFrameId($"{session.Id}") as NavigationService;
+            var context = WindowContext.ForXamlRoot(this);
+
+            var service = context.NavigationServices.GetByFrameId($"{session.Id}") as NavigationService;
             if (service == null)
             {
-                service = BootStrapper.Current.NavigationServiceFactory(BootStrapper.BackButton.Attach, new Frame { CacheSize = 0 }, session.Id, $"{session.Id}", true) as NavigationService;
+                service = BootStrapper.Current.NavigationServiceFactory(context, BootStrapper.BackButton.Attach, new Frame { CacheSize = 0 }, session.Id, $"{session.Id}", true) as NavigationService;
                 service.Frame.Navigating += OnNavigating;
                 service.Frame.Navigated += OnNavigated;
 

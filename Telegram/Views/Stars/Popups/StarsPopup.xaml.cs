@@ -72,7 +72,7 @@ namespace Telegram.Views.Stars.Popups
         {
             Hide();
 
-            var user = await ChooseChatsPopup.PickUserAsync(ViewModel.ClientService, Strings.GiftStarsTitle, false);
+            var user = await ChooseChatsPopup.PickUserAsync(ViewModel.ClientService, ViewModel.NavigationService, Strings.GiftStarsTitle, false);
             if (user == null)
             {
                 _ = this.ShowQueuedAsync(XamlRoot);

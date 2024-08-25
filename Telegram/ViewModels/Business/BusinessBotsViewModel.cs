@@ -127,7 +127,7 @@ namespace Telegram.ViewModels.Business
 
         public async void AddExcluded()
         {
-            var result = await ChooseChatsPopup.AddExecute(SessionId, false, IsExclude, true, ExcludedChats.ToList());
+            var result = await ChooseChatsPopup.AddExecute(NavigationService, false, IsExclude, true, ExcludedChats.ToList());
             if (result != null)
             {
                 ExcludedChats.ReplaceWith(result);
@@ -155,7 +155,7 @@ namespace Telegram.ViewModels.Business
 
         public async void AddIncluded()
         {
-            var result = await ChooseChatsPopup.AddExecute(SessionId, true, true, true, IncludedChats.ToList());
+            var result = await ChooseChatsPopup.AddExecute(NavigationService, true, true, true, IncludedChats.ToList());
             if (result != null)
             {
                 IncludedChats.ReplaceWith(result);

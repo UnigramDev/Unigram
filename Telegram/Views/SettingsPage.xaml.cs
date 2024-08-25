@@ -62,7 +62,6 @@ namespace Telegram.Views
             {
                 _masterDetail = value;
                 _masterDetail.NavigationService.Frame.Navigated += OnNavigated;
-                ViewModel.NavigationService = value.NavigationService;
             }
         }
 
@@ -190,7 +189,7 @@ namespace Telegram.Views
                 return;
             }
 
-            await GalleryWindow.ShowAsync(ViewModel, ViewModel.StorageService, chat, () => Photo);
+            await GalleryWindow.ShowAsync(ViewModel, ViewModel.StorageService, chat, Photo);
         }
 
         #region Binding

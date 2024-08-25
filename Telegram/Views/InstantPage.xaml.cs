@@ -1697,7 +1697,7 @@ namespace Telegram.Views
                 ViewModel.Gallery.SelectedItem = item;
                 ViewModel.Gallery.FirstItem = item;
 
-                ViewModel.NavigationService.ShowGallery(ViewModel.Gallery, () => image);
+                ViewModel.NavigationService.ShowGallery(ViewModel.Gallery, image);
             }
         }
 

@@ -362,10 +362,10 @@ namespace Telegram.Controls.Gallery
             return ShowAsync(xamlRoot);
         }
 
-        protected override void MaskTitleAndStatusBar()
+        protected override void MaskTitleAndStatusBar(WindowContext window)
         {
-            base.MaskTitleAndStatusBar();
-            Window.Current.SetTitleBar(TitleBar);
+            base.MaskTitleAndStatusBar(window);
+            window.SetTitleBar(TitleBar);
         }
 
         private void InitializeBackButton()
@@ -441,7 +441,7 @@ namespace Telegram.Controls.Gallery
 
             if (ViewModel != null)
             {
-                WindowContext.Current.EnableScreenCapture(ViewModel.GetHashCode());
+                ViewModel.NavigationService.Window.EnableScreenCapture(ViewModel.GetHashCode());
 
                 ViewModel.Aggregator.Unsubscribe(this);
                 ViewModel.Items.CollectionChanged -= OnCollectionChanged;

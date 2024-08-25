@@ -651,7 +651,7 @@ namespace Telegram.ViewModels
 
         public async void SendContact()
         {
-            var user = await ChooseChatsPopup.PickUserAsync(ClientService, Strings.ShareContactTitle, true);
+            var user = await ChooseChatsPopup.PickUserAsync(ClientService, NavigationService, Strings.ShareContactTitle, true);
             if (user == null)
             {
                 return;

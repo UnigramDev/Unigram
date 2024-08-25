@@ -176,7 +176,7 @@ namespace Telegram.Views
 
         private void UpdateView()
         {
-            var bounds = Window.Current.Bounds;
+            var bounds = WindowContext.Current.Bounds;
 
             Margin = new Thickness();
             MinWidth = bounds.Width;

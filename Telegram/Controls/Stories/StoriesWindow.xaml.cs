@@ -71,10 +71,10 @@ namespace Telegram.Controls.Stories
             }
         }
 
-        protected override void MaskTitleAndStatusBar()
+        protected override void MaskTitleAndStatusBar(WindowContext window)
         {
-            base.MaskTitleAndStatusBar();
-            Window.Current.SetTitleBar(TitleBar);
+            base.MaskTitleAndStatusBar(window);
+            window.SetTitleBar(TitleBar);
         }
 
         protected override void OnPointerWheelChanged(PointerRoutedEventArgs e)

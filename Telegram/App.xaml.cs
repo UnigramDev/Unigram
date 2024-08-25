@@ -97,14 +97,16 @@ namespace Telegram
             SettingsService.Current.Appearance.UpdateTimer();
 
             var navigation = WindowContext.GetNavigationService(window);
-            
-            var aggregator = TypeResolver.Current.Resolve<IEventAggregator>(navigation.SessionId);
-            aggregator?.Publish(new UpdateWindowActivated(active));
-
-            var clientService = TypeResolver.Current.Resolve<IClientService>(navigation.SessionId);
-            if (clientService != null)
+            if (navigation != null)
             {
-                clientService.Options.Online = active;
+                var aggregator = TypeResolver.Current.Resolve<IEventAggregator>(navigation.SessionId);
+                aggregator?.Publish(new UpdateWindowActivated(active));
+
+                var clientService = TypeResolver.Current.Resolve<IClientService>(navigation.SessionId);
+                if (clientService != null)
+                {
+                    clientService.Options.Online = active;
+                }
             }
         }
 
@@ -201,7 +203,7 @@ namespace Telegram
             }
         }
 
-        public override UIElement CreateRootElement(LaunchActivatedEventArgs e)
+        public override UIElement CreateRootElement(LaunchActivatedEventArgs e, WindowContext window)
         {
             //var id = Toast.GetSession(e);
             //if (id != null)
@@ -221,7 +223,7 @@ namespace Telegram
             //else
             {
                 var navigationFrame = new Frame();
-                var navigationService = NavigationServiceFactory(BackButton.Ignore, navigationFrame, sessionId, $"{sessionId}", true) as NavigationService;
+                var navigationService = NavigationServiceFactory(window, BackButton.Ignore, navigationFrame, sessionId, $"{sessionId}", true) as NavigationService;
 
                 return new RootPage(navigationService) { FlowDirection = LocaleService.Current.FlowDirection };
             }
@@ -232,14 +234,14 @@ namespace Telegram
             return new StandalonePage(navigationService) { FlowDirection = LocaleService.Current.FlowDirection };
         }
 
-        protected override INavigationService CreateNavigationService(Frame frame, int session, string id, bool root)
+        protected override INavigationService CreateNavigationService(WindowContext window, Frame frame, int session, string id, bool root)
         {
             if (root)
             {
-                return new TLRootNavigationService(TypeResolver.Current.Resolve<ISessionService>(session), frame, session, id);
+                return new TLRootNavigationService(TypeResolver.Current.Resolve<ISessionService>(session), window, frame, session, id);
             }
 
-            return new TLNavigationService(TypeResolver.Current.Resolve<IClientService>(session), TypeResolver.Current.Resolve<IViewService>(session), frame, session, id);
+            return new TLNavigationService(TypeResolver.Current.Resolve<IClientService>(session), TypeResolver.Current.Resolve<IViewService>(session), window, frame, session, id);
         }
 
         private async void OnStartSync(StartKind startKind, INavigationService navigation, ICloudUpdateService updateService = null)

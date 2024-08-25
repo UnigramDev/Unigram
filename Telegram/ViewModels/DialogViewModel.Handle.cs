@@ -633,7 +633,7 @@ namespace Telegram.ViewModels
 
                     if (!update.Message.IsOutgoing && Settings.Notifications.InAppSounds)
                     {
-                        if (WindowContext.Current.ActivationMode == CoreWindowActivationMode.ActivatedInForeground)
+                        if (NavigationService.Window.ActivationMode != WindowActivationState.Deactivated)
                         {
                             _notificationsService.PlaySound();
                         }

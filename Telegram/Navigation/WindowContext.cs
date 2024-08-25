@@ -360,6 +360,10 @@ namespace Telegram.Navigation
             {
                 return standalonePage.NavigationService;
             }
+            else if (window.Content is Page { DataContext: ViewModelBase viewModel })
+            {
+                return viewModel.NavigationService;
+            }
 
             return null;
         }
@@ -433,6 +437,29 @@ namespace Telegram.Navigation
         public void Unlock()
         {
             _locked?.Update();
+        }
+
+        #endregion
+
+        #region Helper methods
+
+        public Rect Bounds => _window.Bounds;
+
+        public void SetTitleBar(UIElement element)
+        {
+            _window.SetTitleBar(element);
+        }
+
+        public bool IsFullScreenMode => _window.AppWindow.Presenter.Kind == AppWindowPresenterKind.FullScreen;
+
+        public void ExitFullScreenMode()
+        {
+            _window.AppWindow.SetPresenter(AppWindowPresenterKind.Overlapped);
+        }
+
+        public void TryEnterFullScreenMode()
+        {
+            _window.AppWindow.SetPresenter(AppWindowPresenterKind.FullScreen);
         }
 
         #endregion

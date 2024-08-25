@@ -252,7 +252,7 @@ namespace Telegram.Views
             ShowHideDateHeader(minDateValue > 0 && minDateIndex > 0, minDateValue > 0 && minDateIndex is > 0 and < int.MaxValue);
 
             // Read and play messages logic:
-            if (messages.Count > 0 && WindowContext.Current.ActivationMode == CoreWindowActivationMode.ActivatedInForeground && !_fromPreview)
+            if (messages.Count > 0 && ViewModel.NavigationService.Window.ActivationMode != WindowActivationState.Deactivated && !_fromPreview)
             {
                 MessageSource source = ViewModel.Type switch
                 {
@@ -266,7 +266,7 @@ namespace Telegram.Views
                 ViewModel.ClientService.Send(new ViewMessages(chat.Id, messages, source, false));
             }
 
-            if (animations.Count > 0 && !intermediate && WindowContext.Current.ActivationMode == CoreWindowActivationMode.ActivatedInForeground)
+            if (animations.Count > 0 && !intermediate && ViewModel.NavigationService.Window.ActivationMode != WindowActivationState.Deactivated)
             {
                 Play(animations);
             }
@@ -408,8 +408,7 @@ namespace Telegram.Views
                         viewModel = new StandaloneGalleryViewModel(ViewModel.ClientService, ViewModel.StorageService, ViewModel.Aggregator, new GalleryMessage(ViewModel.ClientService, message));
                     }
 
-                    viewModel.NavigationService = ViewModel.NavigationService;
-                    await GalleryWindow.ShowAsync(viewModel, () => target);
+                    ViewModel.NavigationService.ShowGallery(viewModel, target);
                 }
                 else
                 {

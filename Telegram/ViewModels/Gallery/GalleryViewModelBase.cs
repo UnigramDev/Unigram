@@ -136,12 +136,12 @@ namespace Telegram.ViewModels.Gallery
             if (item.IsProtected && !_hasProtectedContent)
             {
                 _hasProtectedContent = true;
-                WindowContext.Current.DisableScreenCapture(GetHashCode());
+                NavigationService.Window.DisableScreenCapture(GetHashCode());
             }
             else if (_hasProtectedContent && !item.IsProtected)
             {
                 _hasProtectedContent = false;
-                WindowContext.Current.EnableScreenCapture(GetHashCode());
+                NavigationService.Window.EnableScreenCapture(GetHashCode());
             }
         }
 

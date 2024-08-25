@@ -6,6 +6,7 @@
 //
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Navigation;
+using Telegram.Navigation;
 using Telegram.Navigation.Services;
 using Telegram.Services;
 using Telegram.Td.Api;
@@ -20,8 +21,8 @@ namespace Telegram.Common
     {
         private readonly ILifetimeService _lifetimeService;
 
-        public TLRootNavigationService(ISessionService sessionService, Frame frame, int session, string id)
-            : base(frame, session, id)
+        public TLRootNavigationService(ISessionService sessionService, WindowContext window, Frame frame, int session, string id)
+            : base(window, frame, session, id)
         {
             _lifetimeService = TypeResolver.Current.Lifetime;
         }

@@ -45,8 +45,8 @@ namespace Telegram.Common
 
         private readonly Dictionary<string, AppWindow> _instantWindows = new Dictionary<string, AppWindow>();
 
-        public TLNavigationService(IClientService clientService, IViewService viewService, Frame frame, int session, string id)
-            : base(frame, session, id)
+        public TLNavigationService(IClientService clientService, IViewService viewService, WindowContext window, Frame frame, int session, string id)
+            : base(window, frame, session, id)
         {
             _clientService = clientService;
             _passcodeService = TypeResolver.Current.Passcode;
@@ -74,7 +74,7 @@ namespace Telegram.Common
                 TabViewItem CreateTabViewItem()
                 {
                     var frame = new Frame();
-                    var service = new TLNavigationService(ClientService, null, frame, ClientService.SessionId, "InstantView"); // BootStrapper.Current.NavigationServiceFactory(BootStrapper.BackButton.Ignore, frame, _clientService.SessionId, "ciccio", false);
+                    var service = new TLNavigationService(ClientService, null, Window, frame, ClientService.SessionId, "InstantView"); // BootStrapper.Current.NavigationServiceFactory(BootStrapper.BackButton.Ignore, frame, _clientService.SessionId, "ciccio", false);
 
                     service.Navigate(typeof(InstantPage), new InstantPageArgs(instantView, url));
 
@@ -200,7 +200,7 @@ namespace Telegram.Common
                 PersistedId = "Payments",
                 Content = control =>
                 {
-                    var nav = BootStrapper.Current.NavigationServiceFactory(BootStrapper.BackButton.Ignore, SessionId, "Payments" + Guid.NewGuid(), false);
+                    var nav = BootStrapper.Current.NavigationServiceFactory(Window, BootStrapper.BackButton.Ignore, SessionId, "Payments" + Guid.NewGuid(), false);
                     nav.Navigate(typeof(PaymentFormPage), new PaymentFormArgs(inputInvoice, paymentForm, content));
 
                     return BootStrapper.Current.CreateRootElement(nav);
@@ -235,7 +235,7 @@ namespace Telegram.Common
                 PersistedId = "Payments",
                 Content = control =>
                 {
-                    var nav = BootStrapper.Current.NavigationServiceFactory(BootStrapper.BackButton.Ignore, SessionId, "Payments" + Guid.NewGuid(), false);
+                    var nav = BootStrapper.Current.NavigationServiceFactory(Window, BootStrapper.BackButton.Ignore, SessionId, "Payments" + Guid.NewGuid(), false);
                     nav.Navigate(typeof(PaymentFormPage), paymentReceipt);
 
                     return BootStrapper.Current.CreateRootElement(nav);
@@ -423,7 +423,7 @@ namespace Telegram.Common
                     }
 
                     // This is horrible here but I don't want to bloat this method with dozens of parameters.
-                    var masterDetailPanel = Window.Current.Content.GetChild<MasterDetailPanel>();
+                    var masterDetailPanel = Window.Content.GetChild<MasterDetailPanel>();
                     if (masterDetailPanel != null)
                     {
                         await OpenAsync(target, parameter, size: new Windows.Foundation.Size(masterDetailPanel.ActualDetailWidth, masterDetailPanel.ActualHeight));
@@ -596,7 +596,9 @@ namespace Telegram.Common
                 if (confirm == ContentDialogResult.Primary)
                 {
                     var viewModel = TypeResolver.Current.Resolve<SettingsPasscodeViewModel>(SessionId);
-                    if (viewModel != null && await viewModel.ToggleAsync())
+                    viewModel.NavigationService = this;
+
+                    if (await viewModel.ToggleAsync())
                     {
                         Navigate(typeof(SettingsPasscodePage));
                     }

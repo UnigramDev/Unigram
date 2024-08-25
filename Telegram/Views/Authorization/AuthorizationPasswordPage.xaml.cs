@@ -23,7 +23,6 @@ namespace Telegram.Views.Authorization
         public AuthorizationPasswordPage()
         {
             InitializeComponent();
-            Window.Current.SetTitleBar(TitleBar);
 
             Header.Source = new LocalFileSource("ms-appx:///Assets/Animations/AuthorizationStateWaitPassword.tgs")
             {
@@ -38,11 +37,13 @@ namespace Telegram.Views.Authorization
 
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
+            ViewModel.NavigationService.Window.SetTitleBar(TitleBar);
             ViewModel.PropertyChanged += OnPropertyChanged;
         }
 
         protected override void OnNavigatedFrom(NavigationEventArgs e)
         {
+            ViewModel.NavigationService.Window.SetTitleBar(null);
             ViewModel.PropertyChanged -= OnPropertyChanged;
         }
 
