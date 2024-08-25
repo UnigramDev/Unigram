@@ -28,7 +28,7 @@ namespace Telegram.ViewModels.Settings
 
         public async void Block()
         {
-            var selected = await ChooseChatsPopup.PickChatAsync(SessionId, Strings.BlockUser, ChooseChatsOptions.Users);
+            var selected = await ChooseChatsPopup.PickChatAsync(NavigationService, Strings.BlockUser, ChooseChatsOptions.Users);
             if (selected == null)
             {
                 return;

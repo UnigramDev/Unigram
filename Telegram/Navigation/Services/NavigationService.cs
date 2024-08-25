@@ -72,7 +72,7 @@ namespace Telegram.Navigation.Services
         ToastPopup ShowToast(FormattedText text, ElementTheme requestedTheme = ElementTheme.Dark, TimeSpan? dismissAfter = null);
         ToastPopup ShowToast(FormattedText text, ToastPopupIcon icon, ElementTheme requestedTheme = ElementTheme.Dark, TimeSpan? dismissAfter = null);
 
-        void ShowGallery(GalleryViewModelBase parameter, Func<FrameworkElement> closing = null, long timestamp = 0);
+        void ShowGallery(GalleryViewModelBase parameter, FrameworkElement closing = null, long timestamp = 0);
 
         object CurrentPageParam { get; }
         Type CurrentPageType { get; }
@@ -93,13 +93,9 @@ namespace Telegram.Navigation.Services
         Frame Frame { get; }
         FrameFacade FrameFacade { get; }
 
-        int SessionId { get; }
+        WindowContext Window { get; }
 
-        /// <summary>
-        /// Specifies if this instance of INavigationService associated with <see cref="CoreApplication.MainView"/> or any other secondary view.
-        /// </summary>
-        /// <returns><value>true</value> if associated with MainView, <value>false</value> otherwise</returns>
-        bool IsInMainView { get; }
+        int SessionId { get; }
 
         void AddToBackStack(Type type, object parameter = null, NavigationTransitionInfo info = null);
         void InsertToBackStack(int index, Type type, object parameter = null, NavigationTransitionInfo info = null);
@@ -146,8 +142,8 @@ namespace Telegram.Navigation.Services
         };
 
         private readonly IViewService viewService = new ViewService();
+        public WindowContext Window { get; }
         public FrameFacade FrameFacade { get; }
-        public bool IsInMainView { get; }
         public Frame Frame => FrameFacade.Frame;
         public object Content => Frame.Content;
         public XamlRoot XamlRoot => FrameFacade.Frame.XamlRoot;
@@ -217,10 +213,10 @@ namespace Telegram.Navigation.Services
             BackStack.Clear();
         }
 
-        public NavigationService(Frame frame, int session, string id)
+        public NavigationService(WindowContext window, Frame frame, int session, string id)
         {
-            IsInMainView = WindowContext.Current.IsInMainView;
-            Dispatcher = WindowContext.Current.Dispatcher;
+            Window = window;
+            Dispatcher = window.Dispatcher;
             SessionId = session;
             FrameFacade = new FrameFacade(this, frame, id);
             FrameFacade.Navigating += (s, e) =>
@@ -524,7 +520,7 @@ namespace Telegram.Navigation.Services
             return ToastPopup.Show(XamlRoot, text, icon, TeachingTipPlacementMode.Center, requestedTheme, dismissAfter);
         }
 
-        public void ShowGallery(GalleryViewModelBase parameter, Func<FrameworkElement> closing = null, long timestamp = 0)
+        public void ShowGallery(GalleryViewModelBase parameter, FrameworkElement closing = null, long timestamp = 0)
         {
             parameter.NavigationService = this;
             _ = GalleryWindow.ShowAsync(XamlRoot, parameter, closing, timestamp);

@@ -4,6 +4,7 @@
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+using Telegram.Navigation;
 using Telegram.Navigation.Services;
 using Telegram.Services;
 using Telegram.Td.Api;
@@ -20,8 +21,8 @@ namespace Telegram.Common
     {
         private readonly ILifetimeService _lifetimeService;
 
-        public TLRootNavigationService(ISessionService sessionService, Frame frame, int session, string id)
-            : base(frame, session, id)
+        public TLRootNavigationService(ISessionService sessionService, WindowContext window, Frame frame, int session, string id)
+            : base(window, frame, session, id)
         {
             _lifetimeService = TypeResolver.Current.Lifetime;
         }

@@ -21,16 +21,17 @@ namespace Telegram.Views.Authorization
         public AuthorizationCodePage()
         {
             InitializeComponent();
-            Window.Current.SetTitleBar(TitleBar);
         }
 
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
+            ViewModel.NavigationService.Window.SetTitleBar(TitleBar);
             ViewModel.PropertyChanged += OnPropertyChanged;
         }
 
         protected override void OnNavigatedFrom(NavigationEventArgs e)
         {
+            ViewModel.NavigationService.Window.SetTitleBar(null);
             ViewModel.PropertyChanged -= OnPropertyChanged;
         }
 

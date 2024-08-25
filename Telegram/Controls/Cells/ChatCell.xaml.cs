@@ -1727,7 +1727,9 @@ namespace Telegram.Controls.Cells
                 Height = 360
             };
 
-            var service = new TLNavigationService(_clientService, null, frame, _clientService.SessionId, "ciccio"); // BootStrapper.Current.NavigationServiceFactory(BootStrapper.BackButton.Ignore, frame, _clientService.SessionId, "ciccio", false);
+            var context = WindowContext.ForXamlRoot(this);
+
+            var service = new TLNavigationService(_clientService, null, context, frame, _clientService.SessionId, "ciccio"); // BootStrapper.Current.NavigationServiceFactory(BootStrapper.BackButton.Ignore, frame, _clientService.SessionId, "ciccio", false);
             service.NavigateToChat(_chat);
 
             grid.Children.Add(frame);

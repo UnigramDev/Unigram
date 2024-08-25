@@ -212,7 +212,7 @@ namespace Telegram.Services.ViewService
                     newAppView.Title = title;
                     newWindow.PersistedId = "Floating";
 
-                    var nav = BootStrapper.Current.NavigationServiceFactory(BootStrapper.BackButton.Ignore, session, id, false);
+                    var nav = BootStrapper.Current.NavigationServiceFactory(newWindow, BootStrapper.BackButton.Ignore, session, id, false);
                     nav.Navigate(page, parameter);
 
                     var control = ViewLifetimeControl.GetForCurrentView();

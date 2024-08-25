@@ -544,21 +544,21 @@ namespace Telegram.Navigation
         /// A developer should call this when creating a new/secondary frame.
         /// The shell back button should only be setup one time.
         /// </summary>
-        public INavigationService NavigationServiceFactory(BackButton backButton, int session, string id, bool root)
+        public INavigationService NavigationServiceFactory(WindowContext window, BackButton backButton, int session, string id, bool root)
         {
             Logger.Info($"{nameof(backButton)}: {backButton}");
 
-            return NavigationServiceFactory(backButton, new Frame(), session, id, root);
+            return NavigationServiceFactory(window, backButton, new Frame(), session, id, root);
         }
 
         /// <summary>
         /// Creates the NavigationService instance for given Frame.
         /// </summary>
-        protected virtual INavigationService CreateNavigationService(Frame frame, int session, string id, bool root)
+        protected virtual INavigationService CreateNavigationService(WindowContext window, Frame frame, int session, string id, bool root)
         {
             Logger.Info($"Frame: {frame}");
 
-            return new NavigationService(frame, session, id);
+            return new NavigationService(window, frame, session, id);
         }
 
         /// <summary>
@@ -568,7 +568,7 @@ namespace Telegram.Navigation
         /// A developer should call this when creating a new/secondary frame.
         /// The shell back button should only be setup one time.
         /// </summary>
-        public INavigationService NavigationServiceFactory(BackButton backButton, Frame frame, int session, string id, bool root)
+        public INavigationService NavigationServiceFactory(WindowContext window, BackButton backButton, Frame frame, int session, string id, bool root)
         {
             Logger.Info($"{nameof(backButton)}: {backButton} {nameof(frame)}: {frame}");
 
@@ -583,7 +583,7 @@ namespace Telegram.Navigation
                 }
             }
 
-            var navigationService = CreateNavigationService(frame, session, id, root);
+            var navigationService = CreateNavigationService(window, frame, session, id, root);
             navigationService.FrameFacade.BackButtonHandling = backButton;
             WindowContext.Current.NavigationServices.Add(navigationService);
 
@@ -634,11 +634,11 @@ namespace Telegram.Navigation
                 // This can happen from ShareTarget
                 if (WindowContext.Current == null)
                 {
-                    Window.Current.Content = CreateRootElement(e);
+                    Window.Current.Content = CreateRootElement(e, null);
                 }
                 else
                 {
-                    WindowContext.Current.Content = CreateRootElement(e);
+                    WindowContext.Current.Content = CreateRootElement(e, WindowContext.Current);
                 }
             }
             else
@@ -661,7 +661,7 @@ namespace Telegram.Navigation
         ///  By default, Template 10 will setup the root element to be a Template 10
         ///  Modal Dialog control. If you desire something different, you can set it here.
         /// </summary>
-        public abstract UIElement CreateRootElement(IActivatedEventArgs e);
+        public abstract UIElement CreateRootElement(IActivatedEventArgs e, WindowContext window);
 
         public abstract UIElement CreateRootElement(INavigationService navigationService);
 
@@ -838,8 +838,7 @@ namespace Telegram.Navigation
                 Logger.Info();
 
                 //allow only main view NavigationService as others won't be able to use Dispatcher and processing will stuck
-                var services = WindowContext.All.SelectMany(x => x.NavigationServices).Where(x => x.IsInMainView);
-                foreach (INavigationService nav in services.ToArray())
+                foreach (INavigationService nav in WindowContext.Main.NavigationServices.ToArray())
                 {
                     try
                     {

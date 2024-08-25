@@ -2061,7 +2061,7 @@ namespace Telegram.ViewModels
 
             if (chat.Type is ChatTypeSecret || chat.HasProtectedContent)
             {
-                WindowContext.Current.DisableScreenCapture(GetHashCode());
+                NavigationService.Window.DisableScreenCapture(GetHashCode());
             }
 
             Chat = chat;
@@ -2305,7 +2305,7 @@ namespace Telegram.ViewModels
 
         protected override void OnNavigatedFrom(NavigationState suspensionState, bool suspending)
         {
-            WindowContext.Current.EnableScreenCapture(GetHashCode());
+            NavigationService.Window.EnableScreenCapture(GetHashCode());
 
             var chat = _chat;
             if (chat == null)
@@ -3497,7 +3497,7 @@ namespace Telegram.ViewModels
                     ? Strings.AddSubscriber
                     : Strings.AddMember;
 
-                var selected = await ChooseChatsPopup.PickUsersAsync(ClientService, header);
+                var selected = await ChooseChatsPopup.PickUsersAsync(ClientService, NavigationService, header);
                 if (selected == null || selected.Count == 0)
                 {
                     return;

@@ -220,7 +220,7 @@ namespace Telegram.ViewModels.Folders
 
         public async Task AddIncludeAsync()
         {
-            var result = await ChooseChatsPopup.AddExecute(SessionId, true, _folder == null || (!_folder.IsShareable && Links.Count == 0), false, Include.ToList());
+            var result = await ChooseChatsPopup.AddExecute(NavigationService, true, _folder == null || (!_folder.IsShareable && Links.Count == 0), false, Include.ToList());
             if (result != null)
             {
                 foreach (var item in result.OfType<FolderChat>())
@@ -256,7 +256,7 @@ namespace Telegram.ViewModels.Folders
 
         public async Task AddExcludeAsync()
         {
-            var result = await ChooseChatsPopup.AddExecute(SessionId, false, true, false, Exclude.ToList());
+            var result = await ChooseChatsPopup.AddExecute(NavigationService, false, true, false, Exclude.ToList());
             if (result != null)
             {
                 foreach (var item in result.OfType<FolderChat>())

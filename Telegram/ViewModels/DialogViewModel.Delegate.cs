@@ -407,14 +407,14 @@ namespace Telegram.ViewModels
                         }
                     }
 
-                    NavigationService.ShowGallery(viewModel, target != null ? () => target : null, timestamp);
+                    NavigationService.ShowGallery(viewModel, target, timestamp);
                 }
 
-                TextField?.Focus(FocusState.Programmatic);
+                //TextField?.Focus(FocusState.Programmatic);
             }
         }
 
-        public async void OpenPaidMedia(MessageViewModel message, PaidMedia media, FrameworkElement target, int timestamp = 0)
+        public void OpenPaidMedia(MessageViewModel message, PaidMedia media, FrameworkElement target, int timestamp = 0)
         {
             if (message.Content is MessagePaidAlbum album)
             {
@@ -445,7 +445,7 @@ namespace Telegram.ViewModels
                     .ToList();
 
                 var viewModel = new StandaloneGalleryViewModel(ClientService, StorageService, Aggregator, items, item);
-                NavigationService.ShowGallery(viewModel, target != null ? () => target : null, timestamp);
+                NavigationService.ShowGallery(viewModel, target, timestamp);
 
                 //TextField?.Focus(FocusState.Programmatic);
             }

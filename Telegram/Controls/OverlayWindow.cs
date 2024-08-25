@@ -92,9 +92,9 @@ namespace Telegram.Controls
             }
         }
 
-        protected virtual void MaskTitleAndStatusBar()
+        protected virtual void MaskTitleAndStatusBar(WindowContext window)
         {
-            if (Window.Current.Content is RootPage root)
+            if (window.Content is RootPage root)
             {
                 root.PopupOpened();
             }
@@ -106,9 +106,9 @@ namespace Telegram.Controls
             titlebar.ButtonForegroundColor = Colors.White;
         }
 
-        protected void UnmaskTitleAndStatusBar()
+        protected void UnmaskTitleAndStatusBar(WindowContext window)
         {
-            if (Window.Current.Content is RootPage root)
+            if (window.Content is RootPage root)
             {
                 root.PopupClosed();
             }
@@ -225,7 +225,7 @@ namespace Telegram.Controls
 
         private void PopupHost_Opened(object sender, object e)
         {
-            MaskTitleAndStatusBar();
+            MaskTitleAndStatusBar(WindowContext.Current);
 
             if (_applicationView != null)
             {
@@ -236,7 +236,7 @@ namespace Telegram.Controls
 
         private void PopupHost_Closed(object sender, object e)
         {
-            UnmaskTitleAndStatusBar();
+            UnmaskTitleAndStatusBar(WindowContext.Current);
 
             //_callback.TrySetResult(_result);
 

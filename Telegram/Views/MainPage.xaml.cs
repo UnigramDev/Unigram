@@ -42,7 +42,6 @@ using Windows.ApplicationModel.DataTransfer;
 using Windows.Foundation;
 using Windows.UI.Composition;
 using Windows.UI.Core;
-using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Automation.Peers;
 using Windows.UI.Xaml.Controls;
@@ -136,12 +135,12 @@ namespace Telegram.Views
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
             Initialize();
-            Window.Current.SetTitleBar(TitleBarHandle);
+            NavigationService.Window.SetTitleBar(TitleBarHandle);
         }
 
         protected override void OnNavigatedFrom(NavigationEventArgs e)
         {
-            Window.Current.SetTitleBar(null);
+            NavigationService.Window.SetTitleBar(null);
         }
 
         public void Dispose()
@@ -587,7 +586,7 @@ namespace Telegram.Views
 
             try
             {
-                ApplicationView.GetForCurrentView().Title = text;
+                NavigationService.Window.Title = text;
             }
             catch { }
         }
@@ -601,7 +600,7 @@ namespace Telegram.Views
 
             try
             {
-                ApplicationView.GetForCurrentView().Title = string.Empty;
+                NavigationService.Window.Title = string.Empty;
             }
             catch { }
         }
@@ -3036,9 +3035,9 @@ namespace Telegram.Views
 
         public void PopupOpened()
         {
-            Window.Current.SetTitleBar(null);
+            NavigationService.Window.SetTitleBar(null);
 
-            if (MasterDetail.NavigationService.Frame.Content is IActivablePage page)
+            if (NavigationService.Frame.Content is IActivablePage page)
             {
                 page.PopupOpened();
             }
@@ -3046,9 +3045,9 @@ namespace Telegram.Views
 
         public void PopupClosed()
         {
-            Window.Current.SetTitleBar(TitleBarHandle);
+            NavigationService.Window.SetTitleBar(TitleBarHandle);
 
-            if (MasterDetail.NavigationService.Frame.Content is IActivablePage page)
+            if (NavigationService.Frame.Content is IActivablePage page)
             {
                 page.PopupClosed();
             }
