@@ -325,16 +325,7 @@ namespace Telegram.Navigation
 
         public INavigationService GetNavigationService()
         {
-            if (Window.Current.Content is RootPage rootPage && rootPage.NavigationService != null)
-            {
-                return rootPage.NavigationService;
-            }
-            else if (Window.Current.Content is StandalonePage standalonePage && standalonePage.NavigationService != null)
-            {
-                return standalonePage.NavigationService;
-            }
-
-            return null;
+            return GetNavigationService(_window);
         }
 
         public static INavigationService GetNavigationService(UIElement element)
@@ -354,6 +345,20 @@ namespace Telegram.Navigation
             if (context != null)
             {
                 return context.GetNavigationService();
+            }
+
+            return null;
+        }
+
+        public static INavigationService GetNavigationService(Window window)
+        {
+            if (window.Content is RootPage rootPage && rootPage.NavigationService != null)
+            {
+                return rootPage.NavigationService;
+            }
+            else if (window.Content is StandalonePage standalonePage && standalonePage.NavigationService != null)
+            {
+                return standalonePage.NavigationService;
             }
 
             return null;

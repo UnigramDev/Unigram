@@ -714,7 +714,7 @@ namespace Telegram.Common
 
                     var window = new StoriesWindow();
                     window.Update(viewModel, activeStories, StoryOpenOrigin.Card, Rect.Empty, null);
-                    _ = window.ShowAsync();
+                    _ = window.ShowAsync(navigation.XamlRoot);
                 }
                 else
                 {

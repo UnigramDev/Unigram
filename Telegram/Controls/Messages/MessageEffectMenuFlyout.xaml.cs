@@ -258,6 +258,7 @@ namespace Telegram.Controls.Messages
             _popup.ShouldConstrainToRootBounds = false;
             _popup.RequestedTheme = element.ActualTheme;
             _popup.IsLightDismissEnabled = true;
+            _popup.XamlRoot = element.XamlRoot;
             _popup.IsOpen = true;
             //_popup.Opacity = 0.5;
             //_popup.Scale = new Vector3(28f / 32f);

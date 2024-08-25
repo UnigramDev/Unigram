@@ -367,7 +367,7 @@ namespace Telegram.ViewModels
 
                 var window = new StoriesWindow();
                 window.Update(viewModel, activeStories, StoryOpenOrigin.Card, origin, GetOrigin);
-                _ = window.ShowAsync();
+                _ = window.ShowAsync(NavigationService.XamlRoot);
             }
             else
             {
@@ -409,7 +409,7 @@ namespace Telegram.ViewModels
                     }
 
                     viewModel.NavigationService = NavigationService;
-                    await GalleryWindow.ShowAsync(viewModel, target != null ? () => target : null, timestamp);
+                    await GalleryWindow.ShowAsync(NavigationService.XamlRoot, viewModel, target != null ? () => target : null, timestamp);
                 }
 
                 TextField?.Focus(FocusState.Programmatic);
@@ -449,7 +449,7 @@ namespace Telegram.ViewModels
                 var viewModel = new StandaloneGalleryViewModel(ClientService, StorageService, Aggregator, items, item);
 
                 viewModel.NavigationService = NavigationService;
-                await GalleryWindow.ShowAsync(viewModel, target != null ? () => target : null, timestamp);
+                await GalleryWindow.ShowAsync(NavigationService.XamlRoot, viewModel, target != null ? () => target : null, timestamp);
 
                 TextField?.Focus(FocusState.Programmatic);
             }

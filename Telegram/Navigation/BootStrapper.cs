@@ -94,25 +94,31 @@ namespace Telegram.Navigation
 
         private void OnActivated(object sender, WindowActivatedEventArgs e)
         {
-            OnWindowActivated(e.WindowActivationState != CoreWindowActivationState.Deactivated);
+            if (sender is Window window)
+            {
+                OnWindowActivated(window, e.WindowActivationState != CoreWindowActivationState.Deactivated);
+            }
         }
 
         private void OnClosed(object sender, CoreWindowEventArgs e)
         {
             SystemNavigationManager.GetForCurrentView().BackRequested -= BackHandler;
 
-            Window.Current.Activated -= OnActivated;
-            Window.Current.Closed -= OnClosed;
+            if (sender is Window window)
+            {
+                window.Activated -= OnActivated;
+                window.Closed -= OnClosed;
 
-            OnWindowClosed();
+                OnWindowClosed(window);
+            }
         }
 
-        protected virtual void OnWindowClosed()
+        protected virtual void OnWindowClosed(Window window)
         {
 
         }
 
-        protected virtual void OnWindowActivated(bool active)
+        protected virtual void OnWindowActivated(Window window, bool active)
         {
 
         }

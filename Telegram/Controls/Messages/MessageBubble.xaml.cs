@@ -2721,7 +2721,7 @@ namespace Telegram.Controls.Messages
 
             var window = new StoriesWindow();
             window.Update(viewModel, activeStories, StoryOpenOrigin.Card, origin, GetStoryOrigin);
-            _ = window.ShowAsync();
+            _ = window.ShowAsync(XamlRoot);
         }
 
         private Rect GetStoryOrigin(ActiveStoriesViewModel activeStories)

@@ -44,6 +44,8 @@ namespace Telegram.Common
                 popup.OnCreate();
             }
 
+            dialog.XamlRoot = xamlRoot;
+
             var request = _currentDialogShowRequest = new TaskCompletionSource<ContentDialog>();
             var result = await dialog.ShowAsync();
             _currentDialogShowRequest = null;

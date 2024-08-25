@@ -224,6 +224,7 @@ namespace Telegram.Controls.Messages
             _popup.RequestedTheme = presenter.ActualTheme;
             _popup.ShouldConstrainToRootBounds = false;
             _popup.AllowFocusOnInteraction = false;
+            _popup.XamlRoot = flyout.XamlRoot;
             _popup.IsOpen = true;
 
             var visualPill = ElementComposition.GetElementVisual(Pill);
@@ -511,6 +512,7 @@ namespace Telegram.Controls.Messages
             _popup.RequestedTheme = presenter.ActualTheme;
             _popup.ShouldConstrainToRootBounds = false;
             _popup.AllowFocusOnInteraction = false;
+            _popup.XamlRoot = presenter.XamlRoot;
             _popup.IsOpen = true;
 
             var visualPill = ElementComposition.GetElementVisual(Pill);

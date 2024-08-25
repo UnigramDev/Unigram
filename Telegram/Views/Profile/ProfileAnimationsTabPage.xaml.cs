@@ -64,7 +64,7 @@ namespace Telegram.Views.Profile
 
             var viewModel = new ChatGalleryViewModel(ViewModel.ClientService, ViewModel.StorageService, ViewModel.Aggregator, message.ChatId, ViewModel.ThreadId, ViewModel.SavedMessagesTopicId, message, true);
             viewModel.NavigationService = ViewModel.NavigationService;
-            await GalleryWindow.ShowAsync(viewModel, () => element);
+            await GalleryWindow.ShowAsync(XamlRoot, viewModel, () => element);
         }
     }
 }

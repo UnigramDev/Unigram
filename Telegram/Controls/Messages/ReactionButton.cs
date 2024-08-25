@@ -332,6 +332,7 @@ namespace Telegram.Controls.Messages
                         root.Children.Add(aroundView);
 
                         popup.Child = root;
+                        popup.XamlRoot = XamlRoot;
                         popup.IsOpen = true;
                     }
                 }
@@ -401,6 +402,7 @@ namespace Telegram.Controls.Messages
                 root.Children.Add(aroundView);
 
                 popup.Child = root;
+                popup.XamlRoot = XamlRoot;
                 popup.IsOpen = true;
             }
             else

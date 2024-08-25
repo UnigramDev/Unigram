@@ -299,6 +299,7 @@ namespace Telegram.Common
             _popupPanel.Width = bounds.Width;
             _popupPanel.Height = bounds.Height;
             _popupContent = item;
+            _popupHost.XamlRoot = _listView.XamlRoot;
             _popupHost.IsOpen = true;
 
             //_scrollingHost.CancelDirectManipulations();

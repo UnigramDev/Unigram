@@ -120,7 +120,7 @@ namespace Telegram.Controls
 
         public bool CanUnconstrainFromRootBounds => SettingsService.Current.FullScreenGallery;
 
-        public async Task<ContentDialogResult> ShowAsync()
+        public async Task<ContentDialogResult> ShowAsync(XamlRoot xamlRoot)
         {
             Current = this;
             Margin = new Thickness();
@@ -173,6 +173,7 @@ namespace Telegram.Controls
             Logger.Info();
 
             _closing = false;
+            _popupHost.XamlRoot = xamlRoot;
             _popupHost.IsOpen = true;
 
             return await _callback.Task;
