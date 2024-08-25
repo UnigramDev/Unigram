@@ -2615,7 +2615,7 @@ namespace Telegram.Views
         {
             if (_shouldGoBackWithDetail && MasterDetail.NavigationService.CanGoBack)
             {
-                BootStrapper.Current.RaiseBackRequested();
+                BootStrapper.Current.RaiseBackRequested(XamlRoot);
             }
             else
             {

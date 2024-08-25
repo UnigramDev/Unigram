@@ -8,14 +8,15 @@
     <Logo>Assets\Logos\StoreLogo.png</Logo>
   </Properties>
   <Dependencies>
-    <TargetDeviceFamily Name="Windows.Universal" MinVersion="10.0.0.0" MaxVersionTested="10.0.0.0" />
+    <TargetDeviceFamily Name="Windows.Universal" MinVersion="10.0.17763.0" MaxVersionTested="10.0.22621.0" />
+    <TargetDeviceFamily Name="Windows.Desktop" MinVersion="10.0.17763.0" MaxVersionTested="10.0.22621.0" />
   </Dependencies>
   <Resources>
     <Resource Language="x-generate" />
   </Resources>
   <Applications>
     <!-- desktop4:SupportsMultipleInstances="true" -->
-    <Application Id="App" Executable="$targetnametoken$.exe" EntryPoint="Telegram.App">
+    <Application Id="App" Executable="$targetnametoken$.exe" EntryPoint="$targetentrypoint$">
       <uap:VisualElements DisplayName="Telegram" Square150x150Logo="Assets\Logos\Square150x150Logo.png" Square44x44Logo="Assets\Logos\Square44x44Logo.png" Description="Unigram" BackgroundColor="#404040">
         <uap:LockScreen Notification="badgeAndTileText" BadgeLogo="Assets\Logos\LockScreenLogo.png" />
         <uap:DefaultTile Wide310x150Logo="Assets\Logos\Wide310x150Logo.png" Square71x71Logo="Assets\Logos\Square71x71Logo.png" Square310x310Logo="Assets\Logos\Square310x310Logo.png">
@@ -27,7 +28,7 @@
         </uap:DefaultTile>
         <uap:SplashScreen uap5:Optional="true" Image="Assets\Logos\SplashScreen.png" BackgroundColor="transparent" />
       </uap:VisualElements>
-      <Extensions>
+      <!--<Extensions>
         <uap:Extension Category="windows.voipCall" />
         <uap3:Extension Category="windows.appUriHandler">
           <uap3:AppUriHandler>
@@ -92,7 +93,7 @@
         <uap:Extension Category="windows.appService">
           <uap:AppService Name="org.Telegram.bridge" />
         </uap:Extension>
-      </Extensions>
+      </Extensions>-->
     </Application>
   </Applications>
   <Capabilities>
@@ -105,6 +106,7 @@
     <uap3:Capability Name="backgroundMediaPlayback" />
     <uap6:Capability Name="graphicsCapture" />
     <rescap:Capability Name="packageManagement" />
+    <rescap:Capability Name="runFullTrust" />
     <rescap:Capability Name="oneProcessVoIP" />
     <rescap:Capability Name="confirmAppClose" />
     <DeviceCapability Name="location" />

@@ -56,7 +56,7 @@ namespace Telegram.Controls
                 }
             }
 
-            BootStrapper.Current.RaiseBackRequested();
+            BootStrapper.Current.RaiseBackRequested(XamlRoot);
         }
     }
 }

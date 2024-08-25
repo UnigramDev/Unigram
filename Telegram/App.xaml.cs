@@ -52,7 +52,6 @@ using Telegram.Views.Supergroups;
 using Telegram.Views.Supergroups.Popups;
 using Telegram.Views.Users;
 using Windows.ApplicationModel;
-using Windows.ApplicationModel.Activation;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.ApplicationModel.DataTransfer.ShareTarget;
 using Windows.ApplicationModel.ExtendedExecution;
@@ -144,7 +143,7 @@ namespace Telegram
         //    }
         //}
 
-        public override void OnInitialize(IActivatedEventArgs args)
+        public override void OnInitialize(LaunchActivatedEventArgs args)
         {
             //Locator.Configure();
             //UnigramContainer.Current.ResolveType<IGenerationService>();
@@ -156,29 +155,29 @@ namespace Telegram
             }
         }
 
-        public override async void OnStart(StartKind startKind, IActivatedEventArgs args)
+        public override async void OnStart(StartKind startKind, LaunchActivatedEventArgs args)
         {
 #if DEBUG
             DebugSettings.EnableFrameRateCounter = false;
 #endif
 
-            if (startKind == StartKind.Activate)
-            {
-                var lifetime = TypeResolver.Current.Lifetime;
-                var sessionId = lifetime.ActiveItem.Id;
+            //if (startKind == StartKind.Activate)
+            //{
+            //    var lifetime = TypeResolver.Current.Lifetime;
+            //    var sessionId = lifetime.ActiveItem.Id;
 
-                var id = Toast.GetSession(args);
-                if (id != null)
-                {
-                    lifetime.ActiveItem = lifetime.Items.FirstOrDefault(x => x.Id == id.Value) ?? lifetime.ActiveItem;
-                }
+            //    var id = Toast.GetSession(args);
+            //    if (id != null)
+            //    {
+            //        lifetime.ActiveItem = lifetime.Items.FirstOrDefault(x => x.Id == id.Value) ?? lifetime.ActiveItem;
+            //    }
 
-                if (sessionId != TypeResolver.Current.Lifetime.ActiveItem.Id)
-                {
-                    var root = Window.Current.Content as RootPage;
-                    root?.Switch(lifetime.ActiveItem);
-                }
-            }
+            //    if (sessionId != TypeResolver.Current.Lifetime.ActiveItem.Id)
+            //    {
+            //        var root = Window.Current.Content as RootPage;
+            //        root?.Switch(lifetime.ActiveItem);
+            //    }
+            //}
 
             var navService = WindowContext.Current.NavigationServices.GetByFrameId($"{TypeResolver.Current.Lifetime.ActiveItem.Id}");
 
@@ -200,24 +199,24 @@ namespace Telegram
             }
         }
 
-        public override UIElement CreateRootElement(IActivatedEventArgs e)
+        public override UIElement CreateRootElement(LaunchActivatedEventArgs e)
         {
-            var id = Toast.GetSession(e);
-            if (id != null)
-            {
-                TypeResolver.Current.Lifetime.ActiveItem = TypeResolver.Current.Lifetime.Items.FirstOrDefault(x => x.Id == id.Value) ?? TypeResolver.Current.Lifetime.ActiveItem;
-            }
+            //var id = Toast.GetSession(e);
+            //if (id != null)
+            //{
+            //    TypeResolver.Current.Lifetime.ActiveItem = TypeResolver.Current.Lifetime.Items.FirstOrDefault(x => x.Id == id.Value) ?? TypeResolver.Current.Lifetime.ActiveItem;
+            //}
 
             var sessionId = TypeResolver.Current.Lifetime.ActiveItem.Id;
 
-            if (e is ContactPanelActivatedEventArgs /*|| (e is ProtocolActivatedEventArgs protocol && protocol.Uri.PathAndQuery.Contains("domain=telegrampassport", StringComparison.OrdinalIgnoreCase))*/)
-            {
-                var navigationFrame = new Frame { FlowDirection = LocaleService.Current.FlowDirection };
-                var navigationService = NavigationServiceFactory(BackButton.Ignore, navigationFrame, sessionId, $"Main{sessionId}", false) as NavigationService;
+            //if (e is ContactPanelActivatedEventArgs /*|| (e is ProtocolActivatedEventArgs protocol && protocol.Uri.PathAndQuery.Contains("domain=telegrampassport", StringComparison.OrdinalIgnoreCase))*/)
+            //{
+            //    var navigationFrame = new Frame { FlowDirection = LocaleService.Current.FlowDirection };
+            //    var navigationService = NavigationServiceFactory(BackButton.Ignore, navigationFrame, sessionId, $"Main{sessionId}", false) as NavigationService;
 
-                return navigationFrame;
-            }
-            else
+            //    return navigationFrame;
+            //}
+            //else
             {
                 var navigationFrame = new Frame();
                 var navigationService = NavigationServiceFactory(BackButton.Ignore, navigationFrame, sessionId, $"{sessionId}", true) as NavigationService;
@@ -313,37 +312,6 @@ namespace Telegram
                 _extendedSession.Dispose();
                 _extendedSession = null;
             }
-        }
-
-        public override void OnResuming(object s, object e, AppExecutionState previousExecutionState)
-        {
-            Logger.Info("OnResuming");
-
-            // #1225: Will this work? No one knows.
-            foreach (var network in TypeResolver.Current.ResolveAll<INetworkService>())
-            {
-                network.Reconnect();
-            }
-
-            //foreach (var client in TLContainer.Current.ResolveAll<IClientService>())
-            //{
-            //    client.TryInitialize();
-            //}
-
-            // #2034: Will this work? No one knows.
-            SettingsService.Current.Appearance.UpdateNightMode(null);
-
-            OnStartSync(StartKind.Activate, WindowContext.Current.GetNavigationService());
-        }
-
-        public override Task OnSuspendingAsync(object s, SuspendingEventArgs e)
-        {
-            Logger.Info("OnSuspendingAsync");
-
-            TypeResolver.Current.Passcode.CloseTime = DateTime.UtcNow;
-
-            return Task.WhenAll(TypeResolver.Current.ResolveAll<IVoipService>().Select(x => x.DiscardAsync()));
-            //await Task.WhenAll(TLContainer.Current.ResolveAll<IClientService>().Select(x => x.CloseAsync()));
         }
 
         public override INavigable ViewModelForPage(UIElement page, int sessionId)

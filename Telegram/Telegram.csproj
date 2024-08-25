@@ -9,7 +9,17 @@
     <Platforms>x86;x64;ARM64</Platforms>
     <RuntimeIdentifiers Condition="$([MSBuild]::GetTargetFrameworkVersion('$(TargetFramework)')) &gt;= 8">win-x86;win-x64;win-arm64</RuntimeIdentifiers>
     <RuntimeIdentifiers Condition="$([MSBuild]::GetTargetFrameworkVersion('$(TargetFramework)')) &lt; 8">win10-x86;win10-x64;win10-arm64</RuntimeIdentifiers>
+    <PublishProfile>win-$(Platform).pubxml</PublishProfile>
     <UseWinUI>true</UseWinUI>
+    <EnableMsixTooling>true</EnableMsixTooling>
+    <GenerateAppInstallerFile>False</GenerateAppInstallerFile>
+    <AppxPackageSigningEnabled>True</AppxPackageSigningEnabled>
+    <AppxPackageSigningTimestampDigestAlgorithm>SHA256</AppxPackageSigningTimestampDigestAlgorithm>
+    <AppxAutoIncrementPackageRevision>True</AppxAutoIncrementPackageRevision>
+    <AppxSymbolPackageEnabled>False</AppxSymbolPackageEnabled>
+    <GenerateTestArtifacts>True</GenerateTestArtifacts>
+    <AppxBundle>Never</AppxBundle>
+    <HoursBetweenUpdateChecks>0</HoursBetweenUpdateChecks>
     <!--<PublishAot>true</PublishAot>-->
 
     <DefineConstants>TRACE;NETFX_CORE;WINDOWS_UWP;CODE_ANALYSIS;ENABLE_CALLS</DefineConstants>
@@ -19,7 +29,44 @@
     <RunAnalyzersDuringLiveAnalysis>false</RunAnalyzersDuringLiveAnalysis>
     <RunAnalyzers>false</RunAnalyzers>
     <ReportAnalyzer>true</ReportAnalyzer>
+
+    <!-- Needed for Unpackaged deployment -->
+    <!--<WindowsAppSDKSelfContained>true</WindowsAppSDKSelfContained>-->
   </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Windows.CsWinRT" Version="2.0.3" />
+    <PackageReference Include="Microsoft.Windows.SDK.BuildTools" Version="10.0.22621.756" />
+    <PackageReference Include="Microsoft.WindowsAppSDK" Version="1.5.240607001" />
+    <Manifest Include="$(ApplicationManifest)" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ReferenceCopyLocalPaths Include="..\packages\Telegram.Td.UWP.1.8.35\runtimes\win10-x64\native\libcrypto-3-x64.dll" />
+    <ReferenceCopyLocalPaths Include="..\packages\Telegram.Td.UWP.1.8.35\runtimes\win10-x64\native\libssl-3-x64.dll" />
+    <ReferenceCopyLocalPaths Include="..\packages\Telegram.Td.UWP.1.8.35\runtimes\win10-x64\native\Telegram.Td.dll" />
+    <ReferenceCopyLocalPaths Include="..\packages\Telegram.Td.UWP.1.8.35\runtimes\win10-x64\native\Telegram.Td.pri" />
+    <ReferenceCopyLocalPaths Include="..\packages\Telegram.Td.UWP.1.8.35\runtimes\win10-x64\native\zlib1.dll" />
+  </ItemGroup>
+
+  <!--
+    Defining the "Msix" ProjectCapability here allows the Single-project MSIX Packaging
+    Tools extension to be activated for this project even if the Windows App SDK Nuget
+    package has not yet been restored.
+  -->
+  <ItemGroup Condition="'$(DisableMsixProjectCapabilityAddedByProject)'!='true' and '$(EnableMsixTooling)'=='true'">
+    <ProjectCapability Include="Msix" />
+  </ItemGroup>
+
+  <!--
+    Defining the "HasPackageAndPublishMenuAddedByProject" property here allows the Solution
+    Explorer "Package and Publish" context menu entry to be enabled for this project even if
+    the Windows App SDK Nuget package has not yet been restored.
+  -->
+  <PropertyGroup Condition="'$(DisableHasPackageAndPublishMenuAddedByProject)'!='true' and '$(EnableMsixTooling)'=='true'">
+    <HasPackageAndPublishMenu>true</HasPackageAndPublishMenu>
+  </PropertyGroup>
+
   <ItemGroup>
     <Compile Remove="AppPackages\**" />
     <Compile Remove="BundleArtifacts\**" />
@@ -33,16 +80,6 @@
     <Page Remove="BundleArtifacts\**" />
     <PRIResource Remove="AppPackages\**" />
     <PRIResource Remove="BundleArtifacts\**" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <PackageReference Include="Microsoft.Windows.CsWinRT" Version="2.0.3" />
-    <PackageReference Include="Microsoft.Windows.SDK.BuildTools" Version="10.0.22621.3233" />
-    <PackageReference Include="Microsoft.WindowsAppSDK" Version="1.5.240607001" />
-    <Manifest Include="$(ApplicationManifest)" />
-  </ItemGroup>
-  
-  <ItemGroup>
     <None Remove="Build.targets" />
     <None Remove="Telegram.csproj" />
     <None Remove="Telegram.csproj.user" />
@@ -292,6 +329,8 @@
     <Compile Include="Controls\TabbedPageHeader.xaml.cs">
       <DependentUpon>TabbedPageHeader.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Generated Files\CsWinRT\WinRTEventHelpers.cs" />
+    <Compile Include="Generated Files\WinRTEventHelpers.cs" />
     <Compile Include="Services\ClientService.SavedMessages.cs" />
     <Compile Include="Composition\CompositionVoiceBlobVisual.cs" />
     <Compile Include="Composition\CompositionBlobVisual.cs" />
@@ -1286,7 +1325,6 @@
     <Compile Include="Navigation\TypedEventHandler.cs" />
     <Compile Include="Navigation\ViewModelBase.cs" />
     <Compile Include="Navigation\WindowContext.cs" />
-    <Compile Include="Program.cs" />
     <Compile Include="Selectors\AutocompleteTemplateSelector.cs" />
     <Compile Include="Selectors\MemberTemplateSelector.cs" />
     <Compile Include="Selectors\MessageContentTemplateSelector.cs" />
@@ -1876,9 +1914,6 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <AppxManifest Include="Package.appxmanifest">
-      <SubType>Designer</SubType>
-    </AppxManifest>
     <Content Include="Assets\Emoji\apple.ttf" />
     <Content Include="Assets\Animations\TwoFactorSetupDone.tgs" />
     <Content Include="Assets\Animations\TwoFactorSetupHint.tgs" />
@@ -1950,6 +1985,7 @@
     <Content Include="Assets\Animations\BusinessChatLinks.tgs" />
     <Content Include="Assets\Toasts\SpeedLimit.tgs" />
     <Content Include="Assets\Animations\YourStars.tgs" />
+    <Content Include="Properties\launchSettings.json" />
     <None Include="app.manifest" />
     <None Include="Assets\i420.hlsl" />
     <Content Include="Assets\Images\Reply.scale-100.png" />
@@ -2033,6 +2069,15 @@
     <Content Include="Assets\Animations\VoiceUnmuteToRaiseHand.tgs" />
     <Content Include="Assets\i420.bin" />
     <None Include=".editorconfig" />
+    <None Include="Generated Files\cswinrt.rsp" />
+    <None Include="Generated Files\CsWinRT\cswinrt.rsp" />
+    <None Include="Generated Files\CsWinRT\cswinrt_internal.rsp" />
+    <None Include="Generated Files\cswinrt_internal.rsp" />
+    <None Include="Package.appxmanifest" />
+    <None Include="Properties\PublishProfiles\win-arm64.pubxml" />
+    <None Include="Properties\PublishProfiles\win-x64.pubxml" />
+    <None Include="Properties\PublishProfiles\win-x64.pubxml.user" />
+    <None Include="Properties\PublishProfiles\win-x86.pubxml" />
     <PRIResource Include="Strings\en\Resources.resw">
       <CustomToolNamespace>Telegram</CustomToolNamespace>
       <SubType>Designer</SubType>

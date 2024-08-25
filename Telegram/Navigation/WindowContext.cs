@@ -29,7 +29,6 @@ using Telegram.Views.Calls;
 using Telegram.Views.Host;
 using Telegram.Views.Popups;
 using Windows.ApplicationModel;
-using Windows.ApplicationModel.Activation;
 using Windows.ApplicationModel.Contacts;
 using Windows.ApplicationModel.Core;
 using Windows.ApplicationModel.DataTransfer;
@@ -394,7 +393,7 @@ namespace Telegram.Navigation
             return ContactPanel != null;
         }
 
-        public async void Activate(IActivatedEventArgs args, INavigationService service, AuthorizationState state)
+        public async void Activate(LaunchActivatedEventArgs args, INavigationService service, AuthorizationState state)
         {
             try
             {
@@ -433,7 +432,7 @@ namespace Telegram.Navigation
             catch { }
         }
 
-        private async void Activate(IActivatedEventArgs args, INavigationService service)
+        private async void Activate(LaunchActivatedEventArgs args, INavigationService service)
         {
             service ??= Current.NavigationServices.FirstOrDefault();
 
@@ -442,179 +441,179 @@ namespace Telegram.Navigation
                 return;
             }
 
-            if (args is ShareTargetActivatedEventArgs share)
+            //if (args is ShareTargetActivatedEventArgs share)
+            //{
+            //    WatchDog.TrackEvent("ShareTarget");
+            //    var package = new DataPackage();
+
+            //    try
+            //    {
+            //        var operation = share.ShareOperation.Data;
+            //        if (operation.AvailableFormats.Contains(StandardDataFormats.ApplicationLink))
+            //        {
+            //            package.SetApplicationLink(await operation.GetApplicationLinkAsync());
+            //        }
+            //        if (operation.AvailableFormats.Contains(StandardDataFormats.Bitmap))
+            //        {
+            //            package.SetBitmap(await operation.GetBitmapAsync());
+            //        }
+            //        //if (operation.Contains(StandardDataFormats.Html))
+            //        //{
+            //        //    package.SetHtmlFormat(await operation.GetHtmlFormatAsync());
+            //        //}
+            //        //if (operation.Contains(StandardDataFormats.Rtf))
+            //        //{
+            //        //    package.SetRtf(await operation.GetRtfAsync());
+            //        //}
+            //        if (operation.AvailableFormats.Contains(StandardDataFormats.StorageItems))
+            //        {
+            //            package.SetStorageItems(await operation.GetStorageItemsAsync());
+            //        }
+            //        if (operation.AvailableFormats.Contains(StandardDataFormats.Text))
+            //        {
+            //            package.SetText(await operation.GetTextAsync());
+            //        }
+            //        //if (operation.Contains(StandardDataFormats.Uri))
+            //        //{
+            //        //    package.SetUri(await operation.GetUriAsync());
+            //        //}
+            //        if (operation.AvailableFormats.Contains(StandardDataFormats.WebLink))
+            //        {
+            //            package.SetWebLink(await operation.GetWebLinkAsync());
+            //        }
+            //    }
+            //    catch { }
+
+            //    var query = "tg://";
+            //    var chatId = 0L;
+
+            //    try
+            //    {
+            //        var contactId = await ContactsService.GetContactIdAsync(share.ShareOperation.Contacts.FirstOrDefault());
+            //        if (contactId is long userId)
+            //        {
+            //            var response = await _lifetime.ActiveItem.ClientService.SendAsync(new CreatePrivateChat(userId, false));
+            //            if (response is Chat chat)
+            //            {
+            //                query = $"ms-contact-profile://meh?ContactRemoteIds=u" + userId;
+            //                chatId = chat.Id;
+            //            }
+            //        }
+            //    }
+            //    catch
+            //    {
+            //        // ShareOperation.Contacts can throw an InvalidCastException
+            //    }
+
+            //    App.DataPackages[chatId] = package.GetView();
+
+            //    App.ShareOperation = share.ShareOperation;
+            //    App.ShareWindow = _window;
+
+            //    var options = new Windows.System.LauncherOptions();
+            //    options.TargetApplicationPackageFamilyName = Package.Current.Id.FamilyName;
+
+            //    try
+            //    {
+            //        await Windows.System.Launcher.LaunchUriAsync(new Uri(query), options);
+            //    }
+            //    catch
+            //    {
+            //        // It's too early?
+            //    }
+            //}
+            //else if (args is ContactPanelActivatedEventArgs contact)
+            //{
+            //    SetContactPanel(contact.ContactPanel);
+
+            //    if (Application.Current.Resources.TryGet("PageHeaderBackgroundBrush", out SolidColorBrush backgroundBrush))
+            //    {
+            //        contact.ContactPanel.HeaderColor = backgroundBrush.Color;
+            //    }
+
+            //    var contactId = await ContactsService.GetContactIdAsync(contact.Contact.Id);
+            //    if (contactId is long userId)
+            //    {
+            //        var response = await _lifetime.ActiveItem.ClientService.SendAsync(new CreatePrivateChat(userId, false));
+            //        if (response is Chat chat)
+            //        {
+            //            service.NavigateToChat(chat);
+            //        }
+            //        else
+            //        {
+            //            ContactPanelFallback(service);
+            //        }
+            //    }
+            //    else
+            //    {
+            //        ContactPanelFallback(service);
+            //    }
+            //}
+            //else if (args is ProtocolActivatedEventArgs protocol)
+            //{
+            //    if (service?.Frame?.Content is MainPage page)
+            //    {
+            //        page.Activate(protocol.Uri.ToString());
+            //    }
+            //    else
+            //    {
+            //        service.NavigateToMain(protocol.Uri.ToString());
+            //    }
+
+            //    if (App.ShareOperation != null)
+            //    {
+            //        try
+            //        {
+            //            App.ShareOperation.ReportCompleted();
+            //            App.ShareOperation = null;
+            //        }
+            //        catch { }
+            //    }
+
+            //    if (App.ShareWindow != null)
+            //    {
+            //        try
+            //        {
+            //            await App.ShareWindow.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
+            //            {
+            //                App.ShareWindow.Close();
+            //                App.ShareWindow = null;
+            //            });
+            //        }
+            //        catch { }
+            //    }
+            //}
+            //else if (args is FileActivatedEventArgs file)
+            //{
+            //    if (service?.Frame?.Content is MainPage page)
+            //    {
+            //        //page.Activate(launch);
+            //    }
+            //    else
+            //    {
+            //        service.NavigateToMain(string.Empty);
+            //    }
+
+            //    if (file.Files[0] is StorageFile item)
+            //    {
+            //        // TODO: WinUI - most likely XamlRoot is going to be null at this stage.
+            //        // As well, Content may be null too.
+
+            //        await new ThemePreviewPopup(item).ShowQueuedAsync(Content?.XamlRoot);
+            //    }
+            //}
+            //else if (args is CommandLineActivatedEventArgs commandLine)
+            //{
+            //    Activate(commandLine.Operation.Arguments, service);
+            //}
+            //else if (args is ToastNotificationActivatedEventArgs toastNotificationActivated)
+            //{
+            //    Activate(toastNotificationActivated.Argument, service);
+            //}
+            //else
             {
-                WatchDog.TrackEvent("ShareTarget");
-                var package = new DataPackage();
-
-                try
-                {
-                    var operation = share.ShareOperation.Data;
-                    if (operation.AvailableFormats.Contains(StandardDataFormats.ApplicationLink))
-                    {
-                        package.SetApplicationLink(await operation.GetApplicationLinkAsync());
-                    }
-                    if (operation.AvailableFormats.Contains(StandardDataFormats.Bitmap))
-                    {
-                        package.SetBitmap(await operation.GetBitmapAsync());
-                    }
-                    //if (operation.Contains(StandardDataFormats.Html))
-                    //{
-                    //    package.SetHtmlFormat(await operation.GetHtmlFormatAsync());
-                    //}
-                    //if (operation.Contains(StandardDataFormats.Rtf))
-                    //{
-                    //    package.SetRtf(await operation.GetRtfAsync());
-                    //}
-                    if (operation.AvailableFormats.Contains(StandardDataFormats.StorageItems))
-                    {
-                        package.SetStorageItems(await operation.GetStorageItemsAsync());
-                    }
-                    if (operation.AvailableFormats.Contains(StandardDataFormats.Text))
-                    {
-                        package.SetText(await operation.GetTextAsync());
-                    }
-                    //if (operation.Contains(StandardDataFormats.Uri))
-                    //{
-                    //    package.SetUri(await operation.GetUriAsync());
-                    //}
-                    if (operation.AvailableFormats.Contains(StandardDataFormats.WebLink))
-                    {
-                        package.SetWebLink(await operation.GetWebLinkAsync());
-                    }
-                }
-                catch { }
-
-                var query = "tg://";
-                var chatId = 0L;
-
-                try
-                {
-                    var contactId = await ContactsService.GetContactIdAsync(share.ShareOperation.Contacts.FirstOrDefault());
-                    if (contactId is long userId)
-                    {
-                        var response = await _lifetime.ActiveItem.ClientService.SendAsync(new CreatePrivateChat(userId, false));
-                        if (response is Chat chat)
-                        {
-                            query = $"ms-contact-profile://meh?ContactRemoteIds=u" + userId;
-                            chatId = chat.Id;
-                        }
-                    }
-                }
-                catch
-                {
-                    // ShareOperation.Contacts can throw an InvalidCastException
-                }
-
-                App.DataPackages[chatId] = package.GetView();
-
-                App.ShareOperation = share.ShareOperation;
-                App.ShareWindow = _window;
-
-                var options = new Windows.System.LauncherOptions();
-                options.TargetApplicationPackageFamilyName = Package.Current.Id.FamilyName;
-
-                try
-                {
-                    await Windows.System.Launcher.LaunchUriAsync(new Uri(query), options);
-                }
-                catch
-                {
-                    // It's too early?
-                }
-            }
-            else if (args is ContactPanelActivatedEventArgs contact)
-            {
-                SetContactPanel(contact.ContactPanel);
-
-                if (Application.Current.Resources.TryGet("PageHeaderBackgroundBrush", out SolidColorBrush backgroundBrush))
-                {
-                    contact.ContactPanel.HeaderColor = backgroundBrush.Color;
-                }
-
-                var contactId = await ContactsService.GetContactIdAsync(contact.Contact.Id);
-                if (contactId is long userId)
-                {
-                    var response = await _lifetime.ActiveItem.ClientService.SendAsync(new CreatePrivateChat(userId, false));
-                    if (response is Chat chat)
-                    {
-                        service.NavigateToChat(chat);
-                    }
-                    else
-                    {
-                        ContactPanelFallback(service);
-                    }
-                }
-                else
-                {
-                    ContactPanelFallback(service);
-                }
-            }
-            else if (args is ProtocolActivatedEventArgs protocol)
-            {
-                if (service?.Frame?.Content is MainPage page)
-                {
-                    page.Activate(protocol.Uri.ToString());
-                }
-                else
-                {
-                    service.NavigateToMain(protocol.Uri.ToString());
-                }
-
-                if (App.ShareOperation != null)
-                {
-                    try
-                    {
-                        App.ShareOperation.ReportCompleted();
-                        App.ShareOperation = null;
-                    }
-                    catch { }
-                }
-
-                if (App.ShareWindow != null)
-                {
-                    try
-                    {
-                        await App.ShareWindow.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
-                        {
-                            App.ShareWindow.Close();
-                            App.ShareWindow = null;
-                        });
-                    }
-                    catch { }
-                }
-            }
-            else if (args is FileActivatedEventArgs file)
-            {
-                if (service?.Frame?.Content is MainPage page)
-                {
-                    //page.Activate(launch);
-                }
-                else
-                {
-                    service.NavigateToMain(string.Empty);
-                }
-
-                if (file.Files[0] is StorageFile item)
-                {
-                    // TODO: WinUI - most likely XamlRoot is going to be null at this stage.
-                    // As well, Content may be null too.
-
-                    await new ThemePreviewPopup(item).ShowQueuedAsync(Content?.XamlRoot);
-                }
-            }
-            else if (args is CommandLineActivatedEventArgs commandLine)
-            {
-                Activate(commandLine.Operation.Arguments, service);
-            }
-            else if (args is ToastNotificationActivatedEventArgs toastNotificationActivated)
-            {
-                Activate(toastNotificationActivated.Argument, service);
-            }
-            else
-            {
-                //var launch = args as LaunchActivatedEventArgs;
-                //Activate(launch?.Arguments, service);
+                var launch = args as LaunchActivatedEventArgs;
+                Activate(launch?.Arguments, service);
             }
         }
 
