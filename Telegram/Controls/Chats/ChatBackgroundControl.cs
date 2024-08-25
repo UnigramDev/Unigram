@@ -19,6 +19,7 @@ using Telegram.Navigation;
 using Telegram.Services;
 using Telegram.Td.Api;
 using Windows.UI;
+using WinRT;
 
 namespace Telegram.Controls.Chats
 {
@@ -420,7 +421,7 @@ namespace Telegram.Controls.Chats
         {
             var width = context.PixelWidth;
             var height = context.PixelHeight;
-            var buffer = (IBufferByteAccess)context.PixelBuffer;
+            var buffer = context.PixelBuffer.As<IBufferByteAccess>();
             buffer.Buffer(out byte* imageBytes);
 
             for (int y = 0; y < height; y++)
