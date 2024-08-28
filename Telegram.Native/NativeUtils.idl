@@ -49,5 +49,9 @@ namespace Telegram.Native
         static FatalError GetBackTrace(UInt64 code);
 
         static void Crash();
+
+
+
+        static void GenerateGradient(Microsoft.UI.Xaml.Media.Imaging.WriteableBitmap context, Windows.UI.Color[] colors, Windows.Foundation.Numerics.Vector2[] positions);
     }
 } // namespace Telegram.Native

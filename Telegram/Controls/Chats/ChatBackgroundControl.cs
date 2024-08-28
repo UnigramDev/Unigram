@@ -15,6 +15,7 @@ using System;
 using System.Linq;
 using System.Numerics;
 using Telegram.Common;
+using Telegram.Native;
 using Telegram.Navigation;
 using Telegram.Services;
 using Telegram.Td.Api;
@@ -357,7 +358,7 @@ namespace Telegram.Controls.Chats
         public void Next(BackgroundFillFreeformGradient freeform, WriteableBitmap bitmap, Vector2[] positions)
         {
             var colors = freeform.GetColors();
-            GenerateGradient(bitmap, colors, positions);
+            NativeUtils.GenerateGradient(bitmap, colors, positions);
             bitmap.Invalidate();
         }
 
@@ -413,7 +414,7 @@ namespace Telegram.Controls.Chats
         private static unsafe WriteableBitmap GenerateGradient(int width, int height, Color[] colors, Vector2[] positions)
         {
             var context = new WriteableBitmap(width, height);
-            GenerateGradient(context, colors, positions);
+            NativeUtils.GenerateGradient(context, colors, positions);
             return context;
         }
 
