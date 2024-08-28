@@ -29,7 +29,7 @@
         <ResourceDictionary Source="ms-appx:///Controls/Messages/Content/PaidMediaContent.xaml" />
         <ResourceDictionary Source="ms-appx:///Controls/Messages/Content/PhotoContent.xaml" />
         <ResourceDictionary Source="ms-appx:///Controls/Messages/Content/PollContent.xaml" />
-        <ResourceDictionary Source="ms-appx:///Controls/Messages/Content/PremiumGiveawayContent.xaml" />
+        <ResourceDictionary Source="ms-appx:///Controls/Messages/Content/GiveawayContent.xaml" />
         <ResourceDictionary Source="ms-appx:///Controls/Messages/Content/PreviewContent.xaml" />
         <ResourceDictionary Source="ms-appx:///Controls/Messages/Content/StickerContent.xaml" />
         <ResourceDictionary Source="ms-appx:///Controls/Messages/Content/StickerSetContent.xaml" />

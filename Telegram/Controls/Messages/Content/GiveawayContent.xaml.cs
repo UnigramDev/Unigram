@@ -16,16 +16,16 @@ using Windows.UI.Xaml.Controls;
 
 namespace Telegram.Controls.Messages.Content
 {
-    public sealed class PremiumGiveawayContent : Control, IContent
+    public sealed class GiveawayContent : Control, IContent
     {
         private MessageViewModel _message;
         public MessageViewModel Message => _message;
 
-        public PremiumGiveawayContent(MessageViewModel message)
+        public GiveawayContent(MessageViewModel message)
         {
             _message = message;
 
-            DefaultStyleKey = typeof(PremiumGiveawayContent);
+            DefaultStyleKey = typeof(GiveawayContent);
         }
 
         #region InitializeComponent
@@ -67,7 +67,7 @@ namespace Telegram.Controls.Messages.Content
         {
             _message = message;
 
-            var giveaway = message.Content as MessagePremiumGiveaway;
+            var giveaway = message.Content as MessageGiveaway;
             if (giveaway == null || !_templateApplied)
             {
                 return;
@@ -76,10 +76,13 @@ namespace Telegram.Controls.Messages.Content
             Animation.Source = new DelayedFileSource(message.ClientService, giveaway.Sticker);
             Count.Text = $"X{giveaway.WinnerCount}";
 
-            var months = Locale.Declension(Strings.R.Months, giveaway.MonthCount, false);
-            var duration = string.Format(Strings.BoostingGiveawayMsgInfo, giveaway.WinnerCount.ToString("N0"), string.Format(months, $"**{giveaway.MonthCount}**"));
+            if (giveaway.Prize is GiveawayPrizePremium prizePremium)
+            {
+                var months = Locale.Declension(Strings.R.Months, prizePremium.MonthCount, false);
+                var duration = string.Format(Strings.BoostingGiveawayMsgInfo, giveaway.WinnerCount.ToString("N0"), string.Format(months, $"**{prizePremium.MonthCount}**"));
 
-            TextBlockHelper.SetMarkdown(PrizesLabel, duration);
+                TextBlockHelper.SetMarkdown(PrizesLabel, duration);
+            }
 
             ParticipantsLabel.Text = giveaway.Parameters.OnlyNewMembers
                 ? Locale.Declension(Strings.R.BoostingGiveawayMsgNewSubsPlural, 1 + giveaway.Parameters.AdditionalChatIds.Count, false)
@@ -152,12 +155,12 @@ namespace Telegram.Controls.Messages.Content
 
         public bool IsValid(MessageContent content, bool primary)
         {
-            return content is MessagePremiumGiveaway;
+            return content is MessageGiveaway;
         }
 
         private async void Button_Click(object sender, RoutedEventArgs e)
         {
-            var giveaway = _message.Content as MessagePremiumGiveaway;
+            var giveaway = _message.Content as MessageGiveaway;
             if (giveaway == null)
             {
                 return;
@@ -166,8 +169,8 @@ namespace Telegram.Controls.Messages.Content
             Button.ShowSkeleton();
 
             // TODO: how des it work?
-            var response = await _message.ClientService.SendAsync(new GetPremiumGiveawayInfo(_message.ChatId, _message.Id));
-            if (response is not PremiumGiveawayInfoOngoing and not PremiumGiveawayInfoCompleted)
+            var response = await _message.ClientService.SendAsync(new GetGiveawayInfo(_message.ChatId, _message.Id));
+            if (response is not GiveawayInfoOngoing and not GiveawayInfoCompleted)
             {
                 // TODO
                 return;
@@ -179,25 +182,29 @@ namespace Telegram.Controls.Messages.Content
 
             var creationTimeStamp = response switch
             {
-                PremiumGiveawayInfoOngoing ongoing => ongoing.CreationDate,
-                PremiumGiveawayInfoCompleted completed1 => completed1.CreationDate,
+                GiveawayInfoOngoing ongoing => ongoing.CreationDate,
+                GiveawayInfoCompleted completed1 => completed1.CreationDate,
                 _ => _message.Date
             };
 
             var selectionTimeStamp = response switch
             {
-                PremiumGiveawayInfoCompleted completed2 => completed2.ActualWinnersSelectionDate,
+                GiveawayInfoCompleted completed2 => completed2.ActualWinnersSelectionDate,
                 _ => giveaway.Parameters.WinnersSelectionDate
             };
 
             var winnerCount = response switch
             {
-                PremiumGiveawayInfoCompleted completed6 => completed6.WinnerCount.ToString("N0"),
+                GiveawayInfoCompleted completed6 => completed6.WinnerCount.ToString("N0"),
                 _ => giveaway.WinnerCount.ToString("N0")
             };
 
             var message1 = Locale.Declension(Strings.R.BoostingGiveawayHowItWorksText, giveaway.WinnerCount, false);
-            message1 = string.Format(message1, string.Empty, boostedChat.Title, winnerCount, Locale.Declension(Strings.R.BoldMonths, giveaway.MonthCount));
+
+            if (giveaway.Prize is GiveawayPrizePremium prizePremium)
+            {
+                message1 = string.Format(message1, string.Empty, boostedChat.Title, winnerCount, Locale.Declension(Strings.R.BoldMonths, prizePremium.MonthCount));
+            }
 
             var selectionDate = Formatter.DayMonthFull.Format(Formatter.ToLocalTime(selectionTimeStamp));
 
@@ -210,7 +217,7 @@ namespace Telegram.Controls.Messages.Content
                 if (giveaway.Parameters.AdditionalChatIds.Count > 0)
                 {
                     var several = Locale.Declension(Strings.R.BoostingGiveawayHowItWorksSubTextDateSeveral2, giveaway.Parameters.AdditionalChatIds.Count, false);
-                    var key = response is PremiumGiveawayInfoCompleted
+                    var key = response is GiveawayInfoCompleted
                         ? Strings.R.BoostingGiveawayHowItWorksSubTextDateSeveralEnd1
                         : Strings.R.BoostingGiveawayHowItWorksSubTextDateSeveral1;
 
@@ -221,7 +228,7 @@ namespace Telegram.Controls.Messages.Content
                 }
                 else
                 {
-                    var key = response is PremiumGiveawayInfoCompleted
+                    var key = response is GiveawayInfoCompleted
                         ? Strings.R.BoostingGiveawayHowItWorksSubTextDateEnd
                         : Strings.R.BoostingGiveawayHowItWorksSubTextDate;
 
@@ -234,7 +241,7 @@ namespace Telegram.Controls.Messages.Content
                 if (giveaway.Parameters.AdditionalChatIds.Count > 0)
                 {
                     var several = Locale.Declension(Strings.R.BoostingGiveawayHowItWorksSubTextSeveral2, giveaway.Parameters.AdditionalChatIds.Count);
-                    var key = response is PremiumGiveawayInfoCompleted
+                    var key = response is GiveawayInfoCompleted
                         ? Strings.R.BoostingGiveawayHowItWorksSubTextSeveralEnd1
                         : Strings.R.BoostingGiveawayHowItWorksSubTextSeveral1;
 
@@ -243,7 +250,7 @@ namespace Telegram.Controls.Messages.Content
                 }
                 else
                 {
-                    var key = response is PremiumGiveawayInfoCompleted
+                    var key = response is GiveawayInfoCompleted
                         ? Strings.R.BoostingGiveawayHowItWorksSubTextEnd
                         : Strings.R.BoostingGiveawayHowItWorksSubText;
 
@@ -257,7 +264,7 @@ namespace Telegram.Controls.Messages.Content
             string primary;
             string secondary;
 
-            if (response is PremiumGiveawayInfoCompleted completed)
+            if (response is GiveawayInfoCompleted completed)
             {
                 if (completed.ActivationCount > 0)
                 {
@@ -279,7 +286,7 @@ namespace Telegram.Controls.Messages.Content
                     ? Strings.Close
                     : string.Empty;
             }
-            else if (response is PremiumGiveawayInfoOngoing ongoing)
+            else if (response is GiveawayInfoOngoing ongoing)
             {
                 string Participating()
                 {
@@ -341,11 +348,11 @@ namespace Telegram.Controls.Messages.Content
                 title = Strings.BoostingGiveAwayAbout;
                 message3 = ongoing.Status switch
                 {
-                    PremiumGiveawayParticipantStatusEligible => Eligible(),
-                    PremiumGiveawayParticipantStatusParticipating => Participating(),
-                    PremiumGiveawayParticipantStatusAdministrator administrator => string.Format(Strings.BoostingGiveawayNotEligibleAdmin, _message.ClientService.GetTitle(administrator.ChatId)),
-                    PremiumGiveawayParticipantStatusAlreadyWasMember already => string.Format(Strings.BoostingGiveawayNotEligible, Formatter.DateAt(already.JoinedChatDate)),
-                    PremiumGiveawayParticipantStatusDisallowedCountry => Strings.BoostingGiveawayNotEligibleCountry,
+                    GiveawayParticipantStatusEligible => Eligible(),
+                    GiveawayParticipantStatusParticipating => Participating(),
+                    GiveawayParticipantStatusAdministrator administrator => string.Format(Strings.BoostingGiveawayNotEligibleAdmin, _message.ClientService.GetTitle(administrator.ChatId)),
+                    GiveawayParticipantStatusAlreadyWasMember already => string.Format(Strings.BoostingGiveawayNotEligible, Formatter.DateAt(already.JoinedChatDate)),
+                    GiveawayParticipantStatusDisallowedCountry => Strings.BoostingGiveawayNotEligibleCountry,
                     _ => string.Empty
                 };
 
@@ -358,7 +365,7 @@ namespace Telegram.Controls.Messages.Content
             }
 
             var confirm = await MessagePopup.ShowAsync(XamlRoot, message1 + "\n\n" + message2 + "\n\n" + message3, title, primary, secondary);
-            if (confirm == ContentDialogResult.Primary && response is PremiumGiveawayInfoCompleted completed3 && completed3.GiftCode.Length > 0)
+            if (confirm == ContentDialogResult.Primary && response is GiveawayInfoCompleted completed3 && completed3.GiftCode.Length > 0)
             {
                 MessageHelper.OpenTelegramUrl(_message.ClientService, _message.Delegate.NavigationService, new InternalLinkTypePremiumGiftCode(completed3.GiftCode));
             }

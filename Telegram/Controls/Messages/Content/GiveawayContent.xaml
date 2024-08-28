@@ -7,12 +7,12 @@
                     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
                     mc:Ignorable="d">
 
-    <Style TargetType="local:PremiumGiveawayContent">
+    <Style TargetType="local:GiveawayContent">
         <Setter Property="IsTabStop"
                 Value="False" />
         <Setter Property="Template">
             <Setter.Value>
-                <ControlTemplate TargetType="local:PremiumGiveawayContent">
+                <ControlTemplate TargetType="local:GiveawayContent">
                     <StackPanel>
                         <Grid>
                             <controls:AnimatedImage x:Name="Animation"

@@ -1699,9 +1699,9 @@ namespace Telegram.ViewModels
             {
                 MessageHelper.OpenTelegramUrl(ClientService, NavigationService, new InternalLinkTypePremiumGiftCode(premiumGiftCode.Code));
             }
-            else if (message.Content is MessagePremiumGiveawayCompleted premiumGiveawayCompleted)
+            else if (message.Content is MessageGiveawayCompleted giveawayCompleted)
             {
-                await LoadMessageSliceAsync(message.Id, premiumGiveawayCompleted.GiveawayMessageId);
+                await LoadMessageSliceAsync(message.Id, giveawayCompleted.GiveawayMessageId);
             }
         }
 

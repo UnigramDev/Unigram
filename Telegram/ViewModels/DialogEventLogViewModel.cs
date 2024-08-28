@@ -31,7 +31,7 @@ namespace Telegram.ViewModels
 
         private long _minEventId = long.MaxValue;
 
-        private ChatEventLogFilters _filters = new ChatEventLogFilters(true, true, true, true, true, true, true, true, true, true, true, true, true);
+        private ChatEventLogFilters _filters = new ChatEventLogFilters(true, true, true, true, true, true, true, true, true, true, true, true, true, true);
         public ChatEventLogFilters Filters
         {
             get => _filters;

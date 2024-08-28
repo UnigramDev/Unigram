@@ -1465,7 +1465,7 @@ namespace Telegram.Controls.Cells
 
                 return new FormattedText(animatedEmoji.Emoji, Array.Empty<TextEntity>());
             }
-            else if (content is MessagePremiumGiveaway)
+            else if (content is MessageGiveaway)
             {
                 return Text(Strings.BoostingGiveaway);
             }

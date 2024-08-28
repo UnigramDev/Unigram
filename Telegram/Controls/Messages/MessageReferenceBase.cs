@@ -313,6 +313,9 @@ namespace Telegram.Controls.Messages
                 case MessageGame game:
                     SetGameTemplate(clientService, sender, game, title, outgoing, white);
                     break;
+                case MessageGiveaway giveaway:
+                    SetGiveawayTemplate(clientService, sender, giveaway, title, outgoing, white);
+                    break;
                 case MessageInvoice invoice:
                     SetInvoiceTemplate(clientService, sender, invoice, title, outgoing, white);
                     break;
@@ -351,9 +354,6 @@ namespace Telegram.Controls.Messages
                     break;
                 case MessageVoiceNote voiceNote:
                     SetVoiceNoteTemplate(clientService, sender, text, quote, voiceNote, title, outgoing, white);
-                    break;
-                case MessagePremiumGiveaway premiumGiveaway:
-                    SetPremiumGiveawayTemplate(clientService, sender, premiumGiveaway, title, outgoing, white);
                     break;
                 default:
                     SetServiceTextTemplate(clientService, message, title, outgoing, white);
@@ -767,7 +767,7 @@ namespace Telegram.Controls.Messages
                 white);
         }
 
-        private void SetPremiumGiveawayTemplate(IClientService clientService, MessageSender sender, MessagePremiumGiveaway premiumGiveaway, string title, bool outgoing, bool white)
+        private void SetGiveawayTemplate(IClientService clientService, MessageSender sender, MessageGiveaway giveaway, string title, bool outgoing, bool white)
         {
             HideThumbnail();
 

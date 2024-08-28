@@ -306,10 +306,10 @@ namespace Telegram.Controls.Messages
                 MessageGameScore gameScore => UpdateGameScore(message, gameScore, active),
                 MessageGiftedPremium giftedPremium => UpdateGiftedPremium(message, giftedPremium, active),
                 MessageGiftedStars giftedStars => UpdateGiftedStars(message, giftedStars, active),
+                MessageGiveawayCreated giveawayCreated => UpdateGiveawayCreated(message, giveawayCreated, active),
+                MessageGiveawayCompleted giveawayCompleted => UpdateGiveawayCompleted(message, giveawayCompleted, active),
                 MessageInviteVideoChatParticipants inviteVideoChatParticipants => UpdateInviteVideoChatParticipants(message, inviteVideoChatParticipants, active),
                 MessageProximityAlertTriggered proximityAlertTriggered => UpdateProximityAlertTriggered(message, proximityAlertTriggered, active),
-                MessagePremiumGiveawayCreated premiumGiveawayCreated => UpdatePremiumGiveawayCreated(message, premiumGiveawayCreated, active),
-                MessagePremiumGiveawayCompleted premiumGiveawayCompleted => UpdatePremiumGiveawayCompleted(message, premiumGiveawayCompleted, active),
                 MessagePremiumGiftCode premiumGiftCode => UpdatePremiumGiftCode(message, premiumGiftCode, active),
                 MessagePassportDataSent passportDataSent => UpdatePassportDataSent(message, passportDataSent, active),
                 MessagePaymentSuccessful paymentSuccessful => UpdatePaymentSuccessful(message, paymentSuccessful, active),
@@ -1999,7 +1999,7 @@ namespace Telegram.Controls.Messages
             return (content, entities);
         }
 
-        private static (string, IList<TextEntity>) UpdatePremiumGiveawayCreated(MessageViewModel message, MessagePremiumGiveawayCreated premiumGiveawayCreated, bool active)
+        private static (string, IList<TextEntity>) UpdateGiveawayCreated(MessageViewModel message, MessageGiveawayCreated giveawayCreated, bool active)
         {
             var content = string.Empty;
             var entities = active ? new List<TextEntity>() : null;
@@ -2009,16 +2009,16 @@ namespace Telegram.Controls.Messages
             return (content, entities);
         }
 
-        private static (string, IList<TextEntity>) UpdatePremiumGiveawayCompleted(MessageViewModel message, MessagePremiumGiveawayCompleted premiumGiveawayCompleted, bool active)
+        private static (string, IList<TextEntity>) UpdateGiveawayCompleted(MessageViewModel message, MessageGiveawayCompleted giveawayCompleted, bool active)
         {
             var content = string.Empty;
             var entities = active ? new List<TextEntity>() : null;
 
-            content = Locale.Declension(Strings.R.BoostingGiveawayServiceWinnersSelected, premiumGiveawayCompleted.WinnerCount);
+            content = Locale.Declension(Strings.R.BoostingGiveawayServiceWinnersSelected, giveawayCompleted.WinnerCount);
 
-            if (premiumGiveawayCompleted.UnclaimedPrizeCount > 0)
+            if (giveawayCompleted.UnclaimedPrizeCount > 0)
             {
-                content = string.Format("{0} {1}", content, Locale.Declension(Strings.R.BoostingGiveawayServiceUndistributed, premiumGiveawayCompleted.UnclaimedPrizeCount));
+                content = string.Format("{0} {1}", content, Locale.Declension(Strings.R.BoostingGiveawayServiceUndistributed, giveawayCompleted.UnclaimedPrizeCount));
             }
 
             return (content, entities);

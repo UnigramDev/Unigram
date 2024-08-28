@@ -1583,6 +1583,7 @@ namespace Telegram.Td.Api
                 case MessageDice:
                 case MessageDocument:
                 case MessageGame:
+                case MessageGiveaway:
                 case MessageInvoice:
                 case MessageLocation:
                 case MessagePaidAlbum:
@@ -1596,7 +1597,6 @@ namespace Telegram.Td.Api
                 case MessageVideo:
                 case MessageVideoNote:
                 case MessageVoiceNote:
-                case MessagePremiumGiveaway:
                     return false;
                 case MessageAsyncStory asyncStory:
                     return asyncStory.ViaMention;

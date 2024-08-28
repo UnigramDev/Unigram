@@ -155,7 +155,7 @@ namespace Telegram.Views.Popups
                 }
                 else
                 {
-                    if (messages.Count == 1 && messages[0].Content is MessagePremiumGiveaway giveaway)
+                    if (messages.Count == 1 && messages[0].Content is MessageGiveaway giveaway)
                     {
                         Title = Strings.BoostingGiveawayDeleteMsgTitle;
                         TextBlockHelper.SetMarkdown(Message, string.Format(Strings.BoostingGiveawayDeleteMsgText, Formatter.DateAt(giveaway.Parameters.WinnersSelectionDate)));

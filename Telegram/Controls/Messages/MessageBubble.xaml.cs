@@ -1551,7 +1551,7 @@ namespace Telegram.Controls.Messages
                     Panel.Placeholder = content is MessageBigEmoji;
                 }
             }
-            else if (content is MessageGame or MessagePremiumGiveaway or MessageUnsupported or MessageAsyncStory)
+            else if (content is MessageGame or MessageGiveaway or MessageUnsupported or MessageAsyncStory)
             {
                 ContentPanel.Padding = new Thickness(0, 4, 0, 0);
                 Media.Margin = new Thickness(10, -6, 10, 0);
@@ -1739,9 +1739,9 @@ namespace Telegram.Controls.Messages
             {
                 Media.Child = new VoiceNoteContent(message);
             }
-            else if (content is MessagePremiumGiveaway)
+            else if (content is MessageGiveaway)
             {
-                Media.Child = new PremiumGiveawayContent(message);
+                Media.Child = new GiveawayContent(message);
             }
             else if (content is MessageAsyncStory story && story.State != MessageStoryState.Expired)
             {
