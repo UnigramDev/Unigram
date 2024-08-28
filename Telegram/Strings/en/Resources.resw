@@ -627,6 +627,15 @@ to: {1}</value>
   <data name="ActionSkip" xml:space="preserve">
     <value>Skip</value>
   </data>
+  <data name="ActionStarGiveawayPrize_one" xml:space="preserve">
+    <value>You won a prize in a giveaway organized by **un1**.\10\10Your prize is **{0} Star**.</value>
+  </data>
+  <data name="ActionStarGiveawayPrize_other" xml:space="preserve">
+    <value>You won a prize in a giveaway organized by **un1**.\10\10Your prize is **{0} Stars**.</value>
+  </data>
+  <data name="ActionStarGiveawayPrizeTitle" xml:space="preserve">
+    <value>Congratulations!</value>
+  </data>
   <data name="ActionSuggestPhotoFromYouDescription" xml:space="preserve">
     <value>You suggested this photo for {0}&apos;s Telegram profile</value>
   </data>
@@ -1709,6 +1718,12 @@ Once deleted, the Giveaway Announcement cannot be restored.</value>
   <data name="BoostingGiveAwayFromCountries" xml:space="preserve">
     <value>from {0}</value>
   </data>
+  <data name="BoostingGiveawayHowItWorksIncludeText_one" xml:space="preserve">
+    <value>**{1}** also included **{0}** **{2}** in the prizes. Admins of the channel are responsible for delivering these prizes.</value>
+  </data>
+  <data name="BoostingGiveawayHowItWorksIncludeText_other" xml:space="preserve">
+    <value>**{1}** also included **{0}** **{2}** in the prizes. Admins of the channel are responsible for delivering these prizes.</value>
+  </data>
   <data name="BoostingGiveawayHowItWorksSubText_one" xml:space="preserve">
     <value>On **{1}**, Telegram will automatically select **{2}** random user that joined **{3}**.</value>
   </data>
@@ -1781,8 +1796,23 @@ Once deleted, the Giveaway Announcement cannot be restored.</value>
   <data name="BoostingGiveawayHowItWorksTextEnd_other" xml:space="preserve">
     <value>This giveaway was sponsored by the admins of **{1}**, who acquired **{2} Telegram Premium** subscriptions for {3} for its followers.</value>
   </data>
+  <data name="BoostingGiveawayHowItWorksTextEndGroup_one" xml:space="preserve">
+    <value>This giveaway was sponsored by the admins of **{1}**, who acquired **{2} Telegram Premium** subscription for {3} for its members.</value>
+  </data>
+  <data name="BoostingGiveawayHowItWorksTextEndGroup_other" xml:space="preserve">
+    <value>This giveaway was sponsored by the admins of **{1}**, who acquired **{2} Telegram Premium** subscriptions for {3} for its members.</value>
+  </data>
+  <data name="BoostingGiveawayHowItWorksTextGroup_one" xml:space="preserve">
+    <value>This giveaway is sponsored by the admins of **{1}**, who acquired **{2} Telegram Premium** subscription for {3} for its members.</value>
+  </data>
+  <data name="BoostingGiveawayHowItWorksTextGroup_other" xml:space="preserve">
+    <value>This giveaway is sponsored by the admins of **{1}**, who acquired **{2} Telegram Premium** subscriptions for {3} for its members.</value>
+  </data>
   <data name="BoostingGiveawayJustStarted" xml:space="preserve">
     <value>{0} just started a giveaway of Telegram Premium subscriptions for its followers.</value>
+  </data>
+  <data name="BoostingGiveawayJustStartedGroup" xml:space="preserve">
+    <value>{0} just started a giveaway of Telegram Premium subscriptions to its members.</value>
   </data>
   <data name="BoostingGiveawayMsgAllSubsPlural_one" xml:space="preserve">
     <value>All subscribers of the channel:</value>
@@ -1934,6 +1964,75 @@ from **{0}**.</value>
   </data>
   <data name="BoostingShowMoreBoosts_other" xml:space="preserve">
     <value>Show {0} More Boosts</value>
+  </data>
+  <data name="BoostingStarsGiveawayAdditionPrizeCountHint_one" xml:space="preserve">
+    <value>All prizes: **{0} Star**.</value>
+  </data>
+  <data name="BoostingStarsGiveawayAdditionPrizeCountHint_other" xml:space="preserve">
+    <value>All prizes: **{0} Stars**.</value>
+  </data>
+  <data name="BoostingStarsGiveawayAdditionPrizeCountNameHint_one" xml:space="preserve">
+    <value>All prizes: **{1}** {2} with **{0} Star**.</value>
+  </data>
+  <data name="BoostingStarsGiveawayAdditionPrizeCountNameHint_other" xml:space="preserve">
+    <value>All prizes: **{1}** {2} with **{0} Stars**.</value>
+  </data>
+  <data name="BoostingStarsGiveawayAdditionPrizeHint" xml:space="preserve">
+    <value>Turn this on if you want to give the winners your own prizes in addition to Stars.</value>
+  </data>
+  <data name="BoostingStarsGiveawayHowItWorksText_one" xml:space="preserve">
+    <value>This giveaway is sponsored by the admins of **{1}**, who acquired **{0} Star** for its followers.</value>
+  </data>
+  <data name="BoostingStarsGiveawayHowItWorksText_other" xml:space="preserve">
+    <value>This giveaway is sponsored by the admins of **{1}**, who acquired **{0} Stars** for its followers.</value>
+  </data>
+  <data name="BoostingStarsGiveawayHowItWorksTextEnd_one" xml:space="preserve">
+    <value>This giveaway was sponsored by the admins of **{1}**, who acquired **{0} Star** for its followers.</value>
+  </data>
+  <data name="BoostingStarsGiveawayHowItWorksTextEnd_other" xml:space="preserve">
+    <value>This giveaway was sponsored by the admins of **{1}**, who acquired **{0} Stars** for its followers.</value>
+  </data>
+  <data name="BoostingStarsGiveawayHowItWorksTextEndGroup_one" xml:space="preserve">
+    <value>This giveaway was sponsored by the admins of **{1}**, who acquired **{0} Star** for its members.</value>
+  </data>
+  <data name="BoostingStarsGiveawayHowItWorksTextEndGroup_other" xml:space="preserve">
+    <value>This giveaway was sponsored by the admins of **{1}**, who acquired **{0} Stars** for its members.</value>
+  </data>
+  <data name="BoostingStarsGiveawayHowItWorksTextGroup_one" xml:space="preserve">
+    <value>This giveaway is sponsored by the admins of **{1}**, who acquired **{0} Star** for its members.</value>
+  </data>
+  <data name="BoostingStarsGiveawayHowItWorksTextGroup_other" xml:space="preserve">
+    <value>This giveaway is sponsored by the admins of **{1}**, who acquired **{0} Stars** for its members.</value>
+  </data>
+  <data name="BoostingStarsGiveawayJustStarted_one" xml:space="preserve">
+    <value>{1} just started a giveaway of {0} Star to its followers.</value>
+  </data>
+  <data name="BoostingStarsGiveawayJustStarted_other" xml:space="preserve">
+    <value>{1} just started a giveaway of {0} Stars to its followers.</value>
+  </data>
+  <data name="BoostingStarsGiveawayJustStartedGroup_one" xml:space="preserve">
+    <value>{1} just started a giveaway of {0} Star to its members.</value>
+  </data>
+  <data name="BoostingStarsGiveawayJustStartedGroup_other" xml:space="preserve">
+    <value>{1} just started a giveaway of {0} Stars to its members.</value>
+  </data>
+  <data name="BoostingStarsGiveawayMsgInfoPlural1_one" xml:space="preserve">
+    <value>**{0} Star** will be distributed</value>
+  </data>
+  <data name="BoostingStarsGiveawayMsgInfoPlural1_other" xml:space="preserve">
+    <value>**{0} Stars** will be distributed</value>
+  </data>
+  <data name="BoostingStarsGiveawayMsgInfoPlural2_one" xml:space="preserve">
+    <value>to the **{0}** winner.</value>
+  </data>
+  <data name="BoostingStarsGiveawayMsgInfoPlural2_other" xml:space="preserve">
+    <value>among **{0}** winners.</value>
+  </data>
+  <data name="BoostingStarsGiveawayResultsMsgAllWinnersReceivedLinks_one" xml:space="preserve">
+    <value>All winners received %d Star in total.</value>
+  </data>
+  <data name="BoostingStarsGiveawayResultsMsgAllWinnersReceivedLinks_other" xml:space="preserve">
+    <value>All winners received %d Stars in total.</value>
   </data>
   <data name="BoostingTelegramPremiumFor" xml:space="preserve">
     <value>Telegram Premium for {0}</value>

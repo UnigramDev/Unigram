@@ -13,13 +13,14 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="local:GiveawayContent">
-                    <StackPanel>
+                    <StackPanel MaxWidth="248">
                         <Grid>
                             <controls:AnimatedImage x:Name="Animation"
                                                     Width="120"
                                                     Height="120"
                                                     FrameSize="120,120"
-                                                    DecodeFrameType="Logical" />
+                                                    DecodeFrameType="Logical"
+                                                    Margin="0,-32,0,0" />
                             <controls:BadgeControl x:Name="Count"
                                                    HorizontalAlignment="Center"
                                                    VerticalAlignment="Bottom" />

@@ -4,6 +4,7 @@
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+using System;
 using System.Text;
 using Telegram.Common;
 using Telegram.Converters;
@@ -73,7 +74,10 @@ namespace Telegram.Controls.Messages.Content
                 return;
             }
 
-            Animation.Source = new DelayedFileSource(message.ClientService, giveaway.Sticker);
+            Animation.Source = giveaway.Sticker != null
+                ? new DelayedFileSource(message.ClientService, giveaway.Sticker)
+                : null;
+
             Count.Text = $"X{giveaway.WinnerCount}";
 
             if (giveaway.Prize is GiveawayPrizePremium prizePremium)
@@ -82,6 +86,13 @@ namespace Telegram.Controls.Messages.Content
                 var duration = string.Format(Strings.BoostingGiveawayMsgInfo, giveaway.WinnerCount.ToString("N0"), string.Format(months, $"**{prizePremium.MonthCount}**"));
 
                 TextBlockHelper.SetMarkdown(PrizesLabel, duration);
+            }
+            else if (giveaway.Prize is GiveawayPrizeStars prizeStars)
+            {
+                var stars = Locale.Declension(Strings.R.BoostingStarsGiveawayMsgInfoPlural1, prizeStars.StarCount);
+                var winners = Locale.Declension(Strings.R.BoostingStarsGiveawayMsgInfoPlural2, giveaway.WinnerCount);
+
+                TextBlockHelper.SetMarkdown(PrizesLabel, string.Format("{0} {1}", stars, winners));
             }
 
             ParticipantsLabel.Text = giveaway.Parameters.OnlyNewMembers
@@ -179,6 +190,7 @@ namespace Telegram.Controls.Messages.Content
             Button.HideSkeleton();
 
             var boostedChat = _message.ClientService.GetChat(giveaway.Parameters.BoostedChatId);
+            var isChannel = boostedChat.Type is ChatTypeSupergroup { IsChannel: true };
 
             var creationTimeStamp = response switch
             {
@@ -199,11 +211,48 @@ namespace Telegram.Controls.Messages.Content
                 _ => giveaway.WinnerCount.ToString("N0")
             };
 
-            var message1 = Locale.Declension(Strings.R.BoostingGiveawayHowItWorksText, giveaway.WinnerCount, false);
-
+            string message1;
             if (giveaway.Prize is GiveawayPrizePremium prizePremium)
             {
-                message1 = string.Format(message1, string.Empty, boostedChat.Title, winnerCount, Locale.Declension(Strings.R.BoldMonths, prizePremium.MonthCount));
+                if (response is GiveawayInfoCompleted)
+                {
+                    message1 = Locale.Declension(isChannel
+                        ? Strings.R.BoostingGiveawayHowItWorksTextEnd
+                        : Strings.R.BoostingGiveawayHowItWorksTextEndGroup, giveaway.WinnerCount, false);
+                    message1 = string.Format(message1, string.Empty, boostedChat.Title, winnerCount, Locale.Declension(Strings.R.BoldMonths, prizePremium.MonthCount));
+                }
+                else
+                {
+                    message1 = Locale.Declension(isChannel
+                        ? Strings.R.BoostingGiveawayHowItWorksText
+                        : Strings.R.BoostingGiveawayHowItWorksTextGroup, giveaway.WinnerCount, false);
+                    message1 = string.Format(message1, string.Empty, boostedChat.Title, winnerCount, Locale.Declension(Strings.R.BoldMonths, prizePremium.MonthCount));
+                }
+            }
+            else if (giveaway.Prize is GiveawayPrizeStars prizeStars)
+            {
+                if (response is GiveawayInfoCompleted)
+                {
+                    message1 = Locale.Declension(isChannel
+                        ? Strings.R.BoostingStarsGiveawayHowItWorksTextEnd
+                        : Strings.R.BoostingStarsGiveawayHowItWorksTextEndGroup, prizeStars.StarCount, boostedChat.Title);
+                }
+                else
+                {
+                    message1 = Locale.Declension(isChannel
+                        ? Strings.R.BoostingStarsGiveawayHowItWorksText
+                        : Strings.R.BoostingStarsGiveawayHowItWorksTextGroup, prizeStars.StarCount, boostedChat.Title);
+                }
+            }
+            else
+            {
+                return;
+            }
+
+            if (giveaway.Parameters.PrizeDescription.Length > 0)
+            {
+                var additional = Locale.Declension(Strings.R.BoostingGiveawayHowItWorksIncludeText, giveaway.WinnerCount, false);
+                message1 += "\n\n" + string.Format(additional, giveaway.WinnerCount, boostedChat.Title, giveaway.Parameters.PrizeDescription);
             }
 
             var selectionDate = Formatter.DayMonthFull.Format(Formatter.ToLocalTime(selectionTimeStamp));

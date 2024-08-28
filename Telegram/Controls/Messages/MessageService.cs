@@ -107,6 +107,14 @@ namespace Telegram.Controls.Messages
                 var animation = FindName("Animation") as AnimatedImage;
                 animation.Source = new DelayedFileSource(message.ClientService, premiumGiftCode.Sticker);
             }
+            else if (message.Content is MessageGiveawayPrizeStars giveawayPrizeStars)
+            {
+                var title = FindName("Title") as TextBlock;
+                title.Text = Strings.ActionStarGiveawayPrizeTitle;
+
+                //var animation = FindName("Animation") as AnimatedImage;
+                //animation.Source = new DelayedFileSource(message.ClientService, giveawayPrizeStars.Sticker);
+            }
             else if (message.Content is MessageGiftedPremium giftedPremium)
             {
                 var title = FindName("Title") as TextBlock;
@@ -308,6 +316,7 @@ namespace Telegram.Controls.Messages
                 MessageGiftedStars giftedStars => UpdateGiftedStars(message, giftedStars, active),
                 MessageGiveawayCreated giveawayCreated => UpdateGiveawayCreated(message, giveawayCreated, active),
                 MessageGiveawayCompleted giveawayCompleted => UpdateGiveawayCompleted(message, giveawayCompleted, active),
+                MessageGiveawayPrizeStars giveawayPrizeStars => UpdateGiveawayPrizeStars(message, giveawayPrizeStars, active),
                 MessageInviteVideoChatParticipants inviteVideoChatParticipants => UpdateInviteVideoChatParticipants(message, inviteVideoChatParticipants, active),
                 MessageProximityAlertTriggered proximityAlertTriggered => UpdateProximityAlertTriggered(message, proximityAlertTriggered, active),
                 MessagePremiumGiftCode premiumGiftCode => UpdatePremiumGiftCode(message, premiumGiftCode, active),
@@ -2004,7 +2013,20 @@ namespace Telegram.Controls.Messages
             var content = string.Empty;
             var entities = active ? new List<TextEntity>() : null;
 
-            content = string.Format(Strings.BoostingGiveawayJustStarted, message.Chat.Title);
+            var channel = message.Chat.Type is ChatTypeSupergroup { IsChannel: true };
+
+            if (giveawayCreated.StarCount > 0)
+            {
+                content = Locale.Declension(channel
+                    ? Strings.R.BoostingStarsGiveawayJustStarted
+                    : Strings.R.BoostingStarsGiveawayJustStartedGroup, giveawayCreated.StarCount, message.Chat.Title);
+            }
+            else
+            {
+                content = string.Format(channel
+                    ? Strings.BoostingGiveawayJustStarted
+                    : Strings.BoostingGiveawayJustStartedGroup, message.Chat.Title);
+            }
 
             return (content, entities);
         }
@@ -2020,6 +2042,19 @@ namespace Telegram.Controls.Messages
             {
                 content = string.Format("{0} {1}", content, Locale.Declension(Strings.R.BoostingGiveawayServiceUndistributed, giveawayCompleted.UnclaimedPrizeCount));
             }
+
+            return (content, entities);
+        }
+
+        private static (string, IList<TextEntity>) UpdateGiveawayPrizeStars(MessageViewModel message, MessageGiveawayPrizeStars giveawayPrizeStars, bool active)
+        {
+            var content = string.Empty;
+            var entities = active ? new List<TextEntity>() : null;
+
+            var boostedChat = message.ClientService.GetChat(giveawayPrizeStars.BoostedChatId);
+
+            content = Locale.Declension(Strings.R.ActionStarGiveawayPrize, giveawayPrizeStars.StarCount);
+            content = ReplaceWithLink(content, "un1", boostedChat, entities);
 
             return (content, entities);
         }
