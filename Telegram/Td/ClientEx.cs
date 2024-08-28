@@ -163,6 +163,7 @@ namespace Telegram.Td
             {
                 BackgroundColor = Reverse(themeParameters.BackgroundColor),
                 SecondaryBackgroundColor = Reverse(themeParameters.SecondaryBackgroundColor),
+                BottomBarBackgroundColor = Reverse(themeParameters.BottomBarBackgroundColor),
                 TextColor = Reverse(themeParameters.TextColor),
                 ButtonColor = Reverse(themeParameters.ButtonColor),
                 ButtonTextColor = Reverse(themeParameters.ButtonTextColor),

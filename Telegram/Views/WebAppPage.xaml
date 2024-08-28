@@ -13,7 +13,6 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition />
-            <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
         <Grid x:Name="TitlePanel">
             <Grid.ColumnDefinitions>
@@ -78,15 +77,38 @@
                             Grid.RowSpan="2"
                             Grid.Row="1" />
 
-        <Button x:Name="MainButton"
-                Click="MainButton_Click"
-                Height="48"
-                CornerRadius="0"
-                BorderThickness="0"
-                VerticalAlignment="Bottom"
-                HorizontalAlignment="Stretch"
-                FontWeight="SemiBold"
-                Visibility="Collapsed"
-                Grid.Row="2" />
+        <Grid x:Name="BottomBarPanel"
+              VerticalAlignment="Bottom"
+              Height="96">
+            <Border x:Name="SecondaryButtonPanel"
+                    Visibility="Collapsed"
+                    HorizontalAlignment="Stretch"
+                    VerticalAlignment="Top"
+                    Height="48">
+                <Button x:Name="SecondaryButton"
+                        Click="SecondaryButton_Click"
+                        Background="Transparent"
+                        CornerRadius="0"
+                        BorderThickness="0"
+                        VerticalAlignment="Stretch"
+                        HorizontalAlignment="Stretch"
+                        FontWeight="SemiBold" />
+            </Border>
+
+            <Border x:Name="MainButtonPanel"
+                    Visibility="Collapsed"
+                    HorizontalAlignment="Stretch"
+                    VerticalAlignment="Top"
+                    Height="48">
+                <Button x:Name="MainButton"
+                        Click="MainButton_Click"
+                        Background="Transparent"
+                        CornerRadius="0"
+                        BorderThickness="0"
+                        VerticalAlignment="Stretch"
+                        HorizontalAlignment="Stretch"
+                        FontWeight="SemiBold" />
+            </Border>
+        </Grid>
     </Grid>
 </controls:UserControlEx>

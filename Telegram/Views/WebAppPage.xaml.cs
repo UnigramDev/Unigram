@@ -140,6 +140,11 @@ namespace Telegram.Views
             PostEvent("main_button_pressed");
         }
 
+        private void SecondaryButton_Click(object sender, RoutedEventArgs e)
+        {
+            PostEvent("secondary_button_pressed");
+        }
+
         private void View_Navigating(object sender, WebViewerNavigatingEventArgs e)
         {
             if (Uri.TryCreate(e.Url, UriKind.Absolute, out Uri uri))
@@ -190,6 +195,10 @@ namespace Telegram.Views
             else if (eventName == "web_app_setup_main_button")
             {
                 ProcessMainButtonMessage(eventData);
+            }
+            else if (eventName == "web_app_setup_secondary_button")
+            {
+                ProcessSecondaryButtonMessage(eventData);
             }
             else if (eventName == "web_app_setup_back_button")
             {
@@ -250,6 +259,10 @@ namespace Telegram.Views
             else if (eventName == "web_app_set_background_color")
             {
                 ProcessBackgroundColor(eventData);
+            }
+            else if (eventName == "web_app_set_bottom_bar_color")
+            {
+                ProcessBottomBarColor(eventData);
             }
         }
 
@@ -351,6 +364,23 @@ namespace Telegram.Views
             }
         }
 
+        private void ProcessBottomBarColor(JsonObject eventData)
+        {
+            ProcessBottomBarColor(ProcessColor(eventData, out _backgroundColorKey));
+        }
+
+        private void ProcessBottomBarColor(Color? color)
+        {
+            if (color is Color c)
+            {
+                BottomBarPanel.Background = new SolidColorBrush(c);
+            }
+            else
+            {
+                BottomBarPanel.Background = null;
+            }
+        }
+
         private Color? ProcessColor(JsonObject eventData, out string key)
         {
             if (eventData.ContainsKey("color"))
@@ -368,6 +398,7 @@ namespace Telegram.Views
                 {
                     "bg_color" => Theme.Current.Parameters.BackgroundColor.ToColor(),
                     "secondary_bg_color" => Theme.Current.Parameters.SecondaryBackgroundColor.ToColor(),
+                    "bottom_bar_bg_color" => Theme.Current.Parameters.BottomBarBackgroundColor.ToColor(),
                     _ => new Color?(),
                 };
 
@@ -676,64 +707,341 @@ namespace Telegram.Views
 
             if (is_visible && !string.IsNullOrEmpty(text.Trim()))
             {
-                void SetColor(string value, DependencyProperty property)
+                void SetColor(DependencyObject element, string value, DependencyProperty property)
                 {
                     var color = ParseColor(value);
                     if (color is Color c)
                     {
-                        MainButton.SetValue(property, new SolidColorBrush(c));
+                        element.SetValue(property, new SolidColorBrush(c));
                     }
                     else
                     {
-                        MainButton.ClearValue(property);
+                        element.ClearValue(property);
                     }
                 }
 
-                SetColor(color, BackgroundProperty);
-                SetColor(text_color, ForegroundProperty);
+                SetColor(MainButtonPanel, color, Border.BackgroundProperty);
+                SetColor(MainButton, text_color, ForegroundProperty);
 
                 MainButton.Content = text;
                 MainButton.IsEnabled = is_active;
 
-                ShowHideMainButton(true);
+                ShowHideButtons(true, !_secondaryButtonCollapsed, _secondaryButtonPosition);
             }
             else
             {
-                ShowHideMainButton(false);
+                ShowHideButtons(false, !_secondaryButtonCollapsed, _secondaryButtonPosition);
+            }
+        }
+
+        private void ProcessSecondaryButtonMessage(JsonObject eventData)
+        {
+            var is_visible = eventData.GetNamedBoolean("is_visible", false); // whether to show the button(false by default);
+            var is_active = eventData.GetNamedBoolean("is_active", true); // whether the button is active(true by default);
+            var is_progress_visible = eventData.GetNamedBoolean("is_progress_visible", false); // whether to show the loading process on the button(false by default);
+            var has_shine_effect = eventData.GetNamedBoolean("has_shine_effect", false);
+            var text = eventData.GetNamedString("text", string.Empty); // text on the button(trim(text) should be non-empty, if empty, the button can be hidden);
+            var color = eventData.GetNamedString("color", string.Empty); // background color of the button(by default button_colorfrom the theme);
+            var text_color = eventData.GetNamedString("text_color", string.Empty); // text color on the button(by default button_text_colorfrom the theme).
+            var position = eventData.GetNamedString("position", "left");
+
+            if (is_visible && !string.IsNullOrEmpty(text.Trim()))
+            {
+                void SetColor(DependencyObject element, string value, DependencyProperty property)
+                {
+                    var color = ParseColor(value);
+                    if (color is Color c)
+                    {
+                        element.SetValue(property, new SolidColorBrush(c));
+                    }
+                    else
+                    {
+                        element.ClearValue(property);
+                    }
+                }
+
+                SetColor(SecondaryButtonPanel, color, Border.BackgroundProperty);
+                SetColor(SecondaryButton, text_color, ForegroundProperty);
+
+                SecondaryButton.Content = text;
+                SecondaryButton.IsEnabled = is_active;
+
+                ShowHideButtons(!_mainButtonCollapsed, true, position switch
+                {
+                    "left" => SecondaryButtonPosition.Left,
+                    "top" => SecondaryButtonPosition.Top,
+                    "right" => SecondaryButtonPosition.Right,
+                    "bottom" => SecondaryButtonPosition.Bottom,
+                    _ => SecondaryButtonPosition.Left
+                });
+            }
+            else
+            {
+                ShowHideButtons(!_mainButtonCollapsed, false, _secondaryButtonPosition);
             }
         }
 
         private bool _mainButtonCollapsed = true;
+        private bool _secondaryButtonCollapsed = true;
+        private SecondaryButtonPosition _secondaryButtonPosition;
 
-        private void ShowHideMainButton(bool show)
+        enum SecondaryButtonPosition
         {
-            if (_mainButtonCollapsed != show)
-            {
-                return;
-            }
+            Left,
+            Top,
+            Right,
+            Bottom
+        }
 
-            _mainButtonCollapsed = !show;
-
-            Grid.SetRowSpan(View, 2);
-            MainButton.Visibility = Visibility.Visible;
-
-            var visual = ElementComposition.GetElementVisual(MainButton);
-            var batch = visual.Compositor.CreateScopedBatch(CompositionBatchTypes.Animation);
+        private void ShowHideButtons(bool main1, bool secondary1, SecondaryButtonPosition position)
+        {
+            var batch = BootStrapper.Current.Compositor.CreateScopedBatch(CompositionBatchTypes.Animation);
             batch.Completed += (s, args) =>
             {
-                Grid.SetRowSpan(View, show ? 1 : 2);
-                MainButton.Visibility = show
-                    ? Visibility.Visible
-                    : Visibility.Collapsed;
+                MainButtonPanel.Visibility = _mainButtonCollapsed
+                    ? Visibility.Collapsed
+                    : Visibility.Visible;
+
+                SecondaryButtonPanel.Visibility = _secondaryButtonCollapsed
+                    ? Visibility.Collapsed
+                    : Visibility.Visible;
             };
 
-            var anim = visual.Compositor.CreateScalarKeyFrameAnimation();
-            anim.InsertKeyFrame(0, show ? 48 : 0);
-            anim.InsertKeyFrame(1, show ? 0 : 48);
-            anim.Duration = Constants.FastAnimation;
+            if (_mainButtonCollapsed != main1 && _secondaryButtonCollapsed != secondary1)
+            {
+                // Both buttons were already visible, position may have changed
 
-            visual.StartAnimation("Translation.Y", anim);
+                if (_secondaryButtonPosition == position || _secondaryButtonCollapsed || _mainButtonCollapsed)
+                {
+                    return;
+                }
+
+                _secondaryButtonPosition = position;
+
+                var panel = ElementComposition.GetElementVisual(BottomBarPanel);
+                var main = ElementComposition.GetElementVisual(MainButtonPanel);
+                var seco = ElementComposition.GetElementVisual(SecondaryButtonPanel);
+
+                var compositor = main.Compositor;
+
+                panel.Clip ??= compositor.CreateInsetClip();
+                main.Clip ??= compositor.CreateInsetClip();
+                seco.Clip ??= compositor.CreateInsetClip();
+
+                var mainTranslation = compositor.CreateVector3KeyFrameAnimation();
+                var secoTranslation = compositor.CreateVector3KeyFrameAnimation();
+
+                var panelClip = compositor.CreateScalarKeyFrameAnimation();
+                var buttonClip = compositor.CreateScalarKeyFrameAnimation();
+
+                var half = BottomBarPanel.ActualSize.X / 2;
+                var quart = half / 2;
+
+                if (position == SecondaryButtonPosition.Left)
+                {
+                    mainTranslation.InsertKeyFrame(1, new Vector3(half - quart, 48, 0));
+                    secoTranslation.InsertKeyFrame(1, new Vector3(-quart, 48, 0));
+
+                    panelClip.InsertKeyFrame(1, 48);
+                    buttonClip.InsertKeyFrame(1, quart);
+                }
+                else if (position == SecondaryButtonPosition.Top)
+                {
+                    mainTranslation.InsertKeyFrame(1, new Vector3(0, 48, 0));
+                    secoTranslation.InsertKeyFrame(1, new Vector3(0, 0, 0));
+
+                    panelClip.InsertKeyFrame(1, 0);
+                    buttonClip.InsertKeyFrame(1, 0);
+                }
+                else if (position == SecondaryButtonPosition.Right)
+                {
+                    secoTranslation.InsertKeyFrame(1, new Vector3(half - quart, 48, 0));
+                    mainTranslation.InsertKeyFrame(1, new Vector3(-quart, 48, 0));
+
+                    panelClip.InsertKeyFrame(1, 48);
+                    buttonClip.InsertKeyFrame(1, quart);
+                }
+                else if (position == SecondaryButtonPosition.Bottom)
+                {
+                    secoTranslation.InsertKeyFrame(1, new Vector3(0, 48, 0));
+                    mainTranslation.InsertKeyFrame(1, new Vector3(0, 0, 0));
+
+                    panelClip.InsertKeyFrame(1, 0);
+                    buttonClip.InsertKeyFrame(1, 0);
+                }
+
+                main.StartAnimation("Offset", mainTranslation);
+                seco.StartAnimation("Offset", secoTranslation);
+
+                main.Clip.StartAnimation("LeftInset", buttonClip);
+                seco.Clip.StartAnimation("LeftInset", buttonClip);
+                main.Clip.StartAnimation("RightInset", buttonClip);
+                seco.Clip.StartAnimation("RightInset", buttonClip);
+
+                panel.Clip.StartAnimation("TopInset", panelClip);
+            }
+            else
+            {
+                void ShowHideDouble(UIElement first, UIElement second, bool show, SecondaryButtonPosition Position)
+                {
+                    first.Visibility = Visibility.Visible;
+
+                    var panel = ElementComposition.GetElementVisual(BottomBarPanel);
+                    var main = ElementComposition.GetElementVisual(first);
+                    var seco = ElementComposition.GetElementVisual(second);
+
+                    var compositor = main.Compositor;
+
+                    panel.Clip ??= compositor.CreateInsetClip();
+                    main.Clip ??= compositor.CreateInsetClip();
+                    seco.Clip ??= compositor.CreateInsetClip();
+
+                    var mainTranslation = compositor.CreateVector3KeyFrameAnimation();
+                    var secoTranslation = compositor.CreateVector3KeyFrameAnimation();
+
+                    var panelClip = compositor.CreateScalarKeyFrameAnimation();
+                    var buttonClip = compositor.CreateScalarKeyFrameAnimation();
+
+                    var buttonOpacity = compositor.CreateScalarKeyFrameAnimation();
+
+                    var half = BottomBarPanel.ActualSize.X / 2;
+                    var quart = half / 2;
+
+                    Canvas.SetZIndex(first, 0);
+                    Canvas.SetZIndex(second, 1);
+
+                    buttonOpacity.InsertKeyFrame(1, show ? 1 : 0);
+
+                    if (Position == SecondaryButtonPosition.Left)
+                    {
+                        main.Offset = new Vector3(half - quart, 48, 0);
+                        main.Clip = compositor.CreateInsetClip(quart, 0, quart, 0);
+
+                        //mainTranslation.InsertKeyFrame(1, new Vector3(half - quart, 48, 0));
+                        secoTranslation.InsertKeyFrame(1, new Vector3(show ? -quart : 0, 48, 0));
+
+                        panelClip.InsertKeyFrame(1, 48);
+                        buttonClip.InsertKeyFrame(1, show ? quart : 0);
+                    }
+                    else if (Position == SecondaryButtonPosition.Top)
+                    {
+                        mainTranslation.InsertKeyFrame(1, new Vector3(0, show ? 48 : 96, 0));
+                        secoTranslation.InsertKeyFrame(1, new Vector3(0, show ? 0 : 48, 0));
+
+                        panelClip.InsertKeyFrame(1, show ? 0 : 48);
+                        buttonClip.InsertKeyFrame(1, 0);
+                    }
+                    else if (Position == SecondaryButtonPosition.Right)
+                    {
+                        main.Offset = new Vector3(-quart, 48, 0);
+                        main.Clip = compositor.CreateInsetClip(quart, 0, quart, 0);
+
+                        secoTranslation.InsertKeyFrame(1, new Vector3(show ? half - quart : 0, 48, 0));
+                        //mainTranslation.InsertKeyFrame(1, new Vector3(-quart, 48, 0));
+
+                        panelClip.InsertKeyFrame(1, 48);
+                        buttonClip.InsertKeyFrame(1, show ? quart : 0);
+
+                        buttonOpacity.InsertKeyFrame(1, show ? 1 : 0);
+                    }
+                    else if (Position == SecondaryButtonPosition.Bottom)
+                    {
+                        seco.Offset = new Vector3(0, 48, 0);
+                        //secoTranslation.InsertKeyFrame(1, new Vector3(0, 48, 0));
+                        mainTranslation.InsertKeyFrame(1, new Vector3(0, show ? 0 : 48, 0));
+
+                        panelClip.InsertKeyFrame(1, show ? 0 : 48);
+                        buttonClip.InsertKeyFrame(1, 0);
+                    }
+
+                    main.StartAnimation("Opacity", buttonOpacity);
+                    main.StartAnimation("Offset", mainTranslation);
+                    seco.StartAnimation("Offset", secoTranslation);
+
+                    //main.Clip.StartAnimation("LeftInset", buttonClip);
+                    seco.Clip.StartAnimation("LeftInset", buttonClip);
+                    //main.Clip.StartAnimation("RightInset", buttonClip);
+                    seco.Clip.StartAnimation("RightInset", buttonClip);
+
+                    panel.Clip.StartAnimation("TopInset", panelClip);
+                }
+
+                void ShowHideSingle(UIElement first, bool show)
+                {
+                    first.Visibility = Visibility.Visible;
+
+                    var panel = ElementComposition.GetElementVisual(BottomBarPanel);
+                    var main = ElementComposition.GetElementVisual(first);
+
+                    var compositor = main.Compositor;
+
+                    panel.Clip ??= compositor.CreateInsetClip();
+                    main.Clip ??= compositor.CreateInsetClip();
+
+                    var mainTranslation = compositor.CreateVector3KeyFrameAnimation();
+
+                    var panelClip = compositor.CreateScalarKeyFrameAnimation();
+
+                    var buttonOpacity = compositor.CreateScalarKeyFrameAnimation();
+
+                    var half = BottomBarPanel.ActualSize.X / 2;
+                    var quart = half / 2;
+
+                    buttonOpacity.InsertKeyFrame(1, show ? 1 : 0);
+
+                    mainTranslation.InsertKeyFrame(1, new Vector3(0, show ? 48 : 96, 0));
+
+                    panelClip.InsertKeyFrame(1, show ? 48 : 96);
+
+                    main.StartAnimation("Opacity", buttonOpacity);
+                    main.StartAnimation("Offset", mainTranslation);
+
+                    panel.Clip.StartAnimation("TopInset", panelClip);
+                }
+
+                if (_mainButtonCollapsed == main1 && secondary1)
+                {
+                    ShowHideDouble(MainButtonPanel, SecondaryButtonPanel, main1, main1 ? position : _secondaryButtonPosition);
+                }
+                else if (_secondaryButtonCollapsed == secondary1 && main1)
+                {
+                    ShowHideDouble(SecondaryButtonPanel, MainButtonPanel, secondary1, (secondary1 ? position : _secondaryButtonPosition) switch
+                    {
+                        SecondaryButtonPosition.Left => SecondaryButtonPosition.Right,
+                        SecondaryButtonPosition.Top => SecondaryButtonPosition.Bottom,
+                        SecondaryButtonPosition.Right => SecondaryButtonPosition.Left,
+                        SecondaryButtonPosition.Bottom => SecondaryButtonPosition.Top
+                    });
+                }
+                else if (_mainButtonCollapsed == main1)
+                {
+                    ShowHideSingle(MainButtonPanel, main1);
+                }
+                else if (_secondaryButtonCollapsed == secondary1)
+                {
+                    ShowHideSingle(SecondaryButtonPanel, secondary1);
+                }
+
+                _mainButtonCollapsed = !main1;
+                _secondaryButtonCollapsed = !secondary1;
+
+                _secondaryButtonPosition = position;
+            }
+
             batch.End();
+
+            double margin;
+            if (_secondaryButtonPosition == SecondaryButtonPosition.Top || _secondaryButtonPosition == SecondaryButtonPosition.Bottom)
+            {
+                margin = _mainButtonCollapsed && _secondaryButtonCollapsed ? 0 : !_mainButtonCollapsed && !_secondaryButtonCollapsed ? 96 : 48;
+            }
+            else
+            {
+                margin = !_mainButtonCollapsed || !_secondaryButtonCollapsed ? 48 : 0;
+            }
+
+            BackgroundPanel.Margin = new Thickness(0, 0, 0, margin);
+            View.Margin = new Thickness(0, 0, 0, margin);
         }
 
         private void SwitchInlineQueryMessage(JsonObject eventData)
@@ -882,6 +1190,7 @@ namespace Telegram.Views
                 {
                     "bg_color" => Theme.Current.Parameters.BackgroundColor.ToColor(),
                     "secondary_bg_color" => Theme.Current.Parameters.SecondaryBackgroundColor.ToColor(),
+                    "bottom_bar_bg_color" => Theme.Current.Parameters.BottomBarBackgroundColor.ToColor(),
                     _ => new Color?(),
                 });
             }
@@ -892,6 +1201,7 @@ namespace Telegram.Views
                 {
                     "bg_color" => Theme.Current.Parameters.BackgroundColor.ToColor(),
                     "secondary_bg_color" => Theme.Current.Parameters.SecondaryBackgroundColor.ToColor(),
+                    "bottom_bar_bg_color" => Theme.Current.Parameters.BottomBarBackgroundColor.ToColor(),
                     _ => new Color?(),
                 });
             }
