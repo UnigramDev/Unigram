@@ -244,6 +244,13 @@ namespace Telegram.Views.Stars.Popups
 
                     MediaPreview.Visibility = Visibility.Collapsed;
                 }
+                else if (sourceChat.Purpose is ChatTransactionPurposeGiveaway)
+                {
+                    Title.Text = Strings.StarsGiveawayPrizeReceived;
+                    Photo.SetChat(clientService, chat, 96);
+
+                    MediaPreview.Visibility = Visibility.Collapsed;
+                }
             }
             else
             {

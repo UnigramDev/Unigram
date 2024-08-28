@@ -9393,6 +9393,9 @@ The channel &quot;**{1}**&quot; will become private.</value>
   <data name="StarsGiftSent" xml:space="preserve">
     <value>Sent Gift</value>
   </data>
+  <data name="StarsGiveawayPrizeReceived" xml:space="preserve">
+    <value>Received Prize</value>
+  </data>
   <data name="StarsNeededText" xml:space="preserve">
     <value>Buy **Stars** and use them on **{0}** and other miniapps.</value>
   </data>

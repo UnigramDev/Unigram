@@ -178,6 +178,13 @@ namespace Telegram.Controls.Cells.Revenue
 
                     MediaPreview.Visibility = Visibility.Collapsed;
                 }
+                else if (sourceChat.Purpose is ChatTransactionPurposeGiveaway)
+                {
+                    Title.Text = Strings.StarsGiveawayPrizeReceived;
+                    Photo.SetChat(clientService, chat, 36);
+
+                    MediaPreview.Visibility = Visibility.Collapsed;
+                }
             }
             else
             {
