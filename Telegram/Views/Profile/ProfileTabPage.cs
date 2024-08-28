@@ -18,7 +18,7 @@ using Telegram.ViewModels.Profile;
 
 namespace Telegram.Views.Profile
 {
-    public class ProfileTabPage : PageEx, INavigablePage
+    public partial class ProfileTabPage : PageEx, INavigablePage
     {
         public ProfileViewModel ViewModel => DataContext as ProfileViewModel;
 

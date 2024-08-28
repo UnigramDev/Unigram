@@ -9,7 +9,7 @@ using Microsoft.UI.Xaml.Controls;
 
 namespace Telegram.Controls
 {
-    public class ContentPageHeader : ContentControl
+    public partial class ContentPageHeader : ContentControl
     {
         public ContentPageHeader()
         {

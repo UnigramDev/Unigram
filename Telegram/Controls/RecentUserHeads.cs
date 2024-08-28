@@ -24,12 +24,12 @@ namespace Telegram.Controls
 {
     public delegate void RecentUserHeadChangedHandler(ProfilePicture sender, MessageSender messageSender);
 
-    public class RecentUserHeadChangedEventArgs : EventArgs
+    public partial class RecentUserHeadChangedEventArgs : EventArgs
     {
 
     }
 
-    public class RecentUserHeads : Control
+    public partial class RecentUserHeads : Control
     {
         private readonly RecentUserCollection _items = new RecentUserCollection();
         private readonly HashSet<UIElement> _toBeRemoved = new HashSet<UIElement>();
@@ -434,7 +434,7 @@ namespace Telegram.Controls
         }
     }
 
-    public class RecentUserCollection : ObservableCollection<MessageSender>
+    public partial class RecentUserCollection : ObservableCollection<MessageSender>
     {
         public RecentUserCollection()
         {

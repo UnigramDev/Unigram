@@ -12,7 +12,7 @@ using System;
 
 namespace Telegram.Controls
 {
-    public class SettingsExpander : ContentControl
+    public partial class SettingsExpander : ContentControl
     {
         private ToggleButton ActionButton;
         private Border PopupHost;

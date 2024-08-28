@@ -14,7 +14,7 @@ using Telegram.Views.Business.Popups;
 
 namespace Telegram.ViewModels.Business
 {
-    public class BusinessViewModel : ViewModelBase
+    public partial class BusinessViewModel : ViewModelBase
     {
         private IList<BusinessFeature> _features;
         private Dictionary<Type, Animation> _animations;

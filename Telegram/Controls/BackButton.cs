@@ -10,7 +10,7 @@ using Telegram.Navigation;
 
 namespace Telegram.Controls
 {
-    public class BackButton : GlyphButton
+    public partial class BackButton : GlyphButton
     {
         public BackButton()
         {

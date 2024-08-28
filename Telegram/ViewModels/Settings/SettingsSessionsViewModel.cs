@@ -20,7 +20,7 @@ using Telegram.Views.Settings.Popups;
 
 namespace Telegram.ViewModels.Settings
 {
-    public class SettingsSessionsViewModel : ViewModelBase
+    public partial class SettingsSessionsViewModel : ViewModelBase
     {
         public SettingsSessionsViewModel(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator)
             : base(clientService, settingsService, aggregator)
@@ -228,7 +228,7 @@ namespace Telegram.ViewModels.Settings
         }
     }
 
-    public class KeyedGroup
+    public partial class KeyedGroup
     {
         public string Title { get; set; }
         public string Footer { get; set; }

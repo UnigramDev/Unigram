@@ -20,7 +20,7 @@ using Telegram.Views.Monetization.Popups;
 
 namespace Telegram.ViewModels.Chats
 {
-    public class ChatRevenueViewModel : MultiViewModelBase, IIncrementalCollectionOwner, IHandle
+    public partial class ChatRevenueViewModel : MultiViewModelBase, IIncrementalCollectionOwner, IHandle
     {
         private ChatBoostStatus _status;
         private ChatBoostFeatures _features;

@@ -9,7 +9,7 @@ using Microsoft.UI.Xaml.Shapes;
 
 namespace Telegram.Controls
 {
-    public class ProgressShape : ProgressBar
+    public partial class ProgressShape : ProgressBar
     {
         private Shape HorizontalDecreaseRect;
 

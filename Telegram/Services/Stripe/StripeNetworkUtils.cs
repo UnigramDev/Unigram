@@ -13,7 +13,7 @@ namespace Telegram.Services.Stripe
     /// Utility class for static functions useful for networking and data transfer. You probably will
     /// not need to call functions from this class in your code.
     /// </summary>
-    public class StripeNetworkUtils
+    public partial class StripeNetworkUtils
     {
         /// <summary>
         /// A utility function to map the fields of a <see cref="Card"/> object into a <see langword="Dictionary"/> we

@@ -11,7 +11,7 @@ using Telegram.Td.Api;
 
 namespace Telegram.Streams
 {
-    public class RemoteFileSource : AnimatedImageSource
+    public partial class RemoteFileSource : AnimatedImageSource
     {
         private readonly ManualResetEvent _event;
 

@@ -15,7 +15,7 @@ using Windows.UI;
 
 namespace Telegram.Controls.Media
 {
-    public class SolidGaussianBrush : XamlCompositionBrushBase
+    public partial class SolidGaussianBrush : XamlCompositionBrushBase
     {
         private bool m_isConnected;
         private CompositionBrush m_brush;

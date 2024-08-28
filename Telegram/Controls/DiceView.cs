@@ -29,7 +29,7 @@ using Windows.Graphics.DirectX;
 namespace Telegram.Controls
 {
     [TemplatePart(Name = "Canvas", Type = typeof(CanvasControl))]
-    public class DiceView : Control, IPlayerView
+    public partial class DiceView : Control, IPlayerView
     {
         private CanvasControl _canvas;
         private CanvasBitmap[] _bitmaps;

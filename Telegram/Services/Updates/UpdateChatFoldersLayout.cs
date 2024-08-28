@@ -6,7 +6,7 @@
 //
 namespace Telegram.Services.Updates
 {
-    public class UpdateChatFoldersLayout
+    public partial class UpdateChatFoldersLayout
     {
     }
 }

@@ -19,7 +19,7 @@ using Windows.UI;
 
 namespace Telegram.Controls
 {
-    public class ColorSlider : Control
+    public partial class ColorSlider : Control
     {
         private readonly Dictionary<uint, Point> m_pointerPositions;
 

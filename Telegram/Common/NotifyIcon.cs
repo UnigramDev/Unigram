@@ -19,7 +19,7 @@ using Windows.Foundation.Metadata;
 
 namespace Telegram.Common
 {
-    public class NotifyIcon
+    public partial class NotifyIcon
     {
         private static AppServiceConnection _connection;
         private static BackgroundTaskDeferral _deferral;

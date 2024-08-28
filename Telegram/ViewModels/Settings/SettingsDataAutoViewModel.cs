@@ -13,7 +13,7 @@ using Telegram.Services.Settings;
 
 namespace Telegram.ViewModels.Settings
 {
-    public class SettingsDataAutoViewModel : ViewModelBase
+    public partial class SettingsDataAutoViewModel : ViewModelBase
     {
         private AutoDownloadType _type;
 

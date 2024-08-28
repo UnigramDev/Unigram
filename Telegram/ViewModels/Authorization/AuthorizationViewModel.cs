@@ -20,7 +20,7 @@ using Telegram.Views.Settings;
 
 namespace Telegram.ViewModels.Authorization
 {
-    public class AuthorizationViewModel : ViewModelBase, IDelegable<ISignInDelegate>, IHandle
+    public partial class AuthorizationViewModel : ViewModelBase, IDelegable<ISignInDelegate>, IHandle
     {
         private readonly ISessionService _sessionService;
         private readonly ILifetimeService _lifetimeService;
@@ -275,7 +275,7 @@ namespace Telegram.ViewModels.Authorization
 
         public Resources S { get; } = new();
 
-        public class Resources : BindableBase
+        public partial class Resources : BindableBase
         {
             public string YourPhone => Strings.YourPhone;
             public string StartText => Strings.StartText;

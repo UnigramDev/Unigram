@@ -28,7 +28,7 @@ namespace Telegram.ViewModels.Stars
         Failed
     }
 
-    public class PayViewModel : ViewModelBase, IHandle
+    public partial class PayViewModel : ViewModelBase, IHandle
     {
         private InputInvoice _inputInvoice;
 

@@ -11,7 +11,7 @@ using Telegram.Td.Api;
 
 namespace Telegram.ViewModels
 {
-    public class ChatViewModel : BindableBase
+    public partial class ChatViewModel : BindableBase
     {
         private readonly IClientService _clientService;
 

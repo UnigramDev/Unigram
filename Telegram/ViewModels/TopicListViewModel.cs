@@ -21,7 +21,7 @@ using Windows.Foundation;
 
 namespace Telegram.ViewModels
 {
-    public class TopicListViewModel : ViewModelBase, IDelegable<IChatListDelegate>
+    public partial class TopicListViewModel : ViewModelBase, IDelegable<IChatListDelegate>
     {
         private readonly INotificationsService _notificationsService;
 
@@ -433,7 +433,7 @@ namespace Telegram.ViewModels
             }
         }
 
-        public class ItemsCollection : ObservableCollection<ForumTopic>
+        public partial class ItemsCollection : ObservableCollection<ForumTopic>
             , ISupportIncrementalLoading
         //, IHandle<UpdateAuthorizationState>
         //, IHandle<UpdateChatDraftMessage>

@@ -12,7 +12,7 @@ using Telegram.Td.Api;
 
 namespace Telegram.ViewModels.Stories
 {
-    public class StoryViewModel : BindableBase
+    public partial class StoryViewModel : BindableBase
     {
         public IClientService ClientService { get; }
 

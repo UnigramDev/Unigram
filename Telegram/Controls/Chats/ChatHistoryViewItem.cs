@@ -26,7 +26,7 @@ namespace Telegram.Controls.Chats
         ServiceGiftCode
     }
 
-    public class ChatHistoryViewItem : ListViewItemEx
+    public partial class ChatHistoryViewItem : ListViewItemEx
     {
         private readonly ChatHistoryView _owner;
         private ChatHistoryViewItemType _typeName;
@@ -49,7 +49,7 @@ namespace Telegram.Controls.Chats
         }
     }
 
-    public class AccessibleChatListViewItem : ListViewItem
+    public partial class AccessibleChatListViewItem : ListViewItem
     {
         private readonly IClientService _clientService;
 
@@ -69,7 +69,7 @@ namespace Telegram.Controls.Chats
         }
     }
 
-    public class TableAccessibleChatListViewItem : TableListViewItem
+    public partial class TableAccessibleChatListViewItem : TableListViewItem
     {
         private readonly IClientService _clientService;
 
@@ -89,7 +89,7 @@ namespace Telegram.Controls.Chats
         }
     }
 
-    public class ChatListViewAutomationPeer : ListViewItemAutomationPeer
+    public partial class ChatListViewAutomationPeer : ListViewItemAutomationPeer
     {
         private readonly ListViewItem _owner;
         private readonly IClientService _clientService;
@@ -137,7 +137,7 @@ namespace Telegram.Controls.Chats
         }
     }
 
-    public class ChatGridViewItem : GridViewItem
+    public partial class ChatGridViewItem : GridViewItem
     {
         private readonly IClientService _clientService;
 
@@ -157,7 +157,7 @@ namespace Telegram.Controls.Chats
         }
     }
 
-    public class ChatGridViewAutomationPeer : GridViewItemAutomationPeer
+    public partial class ChatGridViewAutomationPeer : GridViewItemAutomationPeer
     {
         private readonly ChatGridViewItem _owner;
         private readonly IClientService _clientService;

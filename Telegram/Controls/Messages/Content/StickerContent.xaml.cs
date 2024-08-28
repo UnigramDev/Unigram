@@ -19,7 +19,7 @@ using Windows.Foundation;
 
 namespace Telegram.Controls.Messages.Content
 {
-    public sealed class StickerContent : HyperlinkButton, IContent, IPlayerView
+    public sealed partial class StickerContent : HyperlinkButton, IContent, IPlayerView
     {
         private MessageViewModel _message;
         public MessageViewModel Message => _message;

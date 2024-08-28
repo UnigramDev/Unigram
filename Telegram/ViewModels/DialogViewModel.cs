@@ -40,7 +40,7 @@ using Point = Windows.Foundation.Point;
 
 namespace Telegram.ViewModels
 {
-    public class ChatMessageIdNavigationArgs
+    public partial class ChatMessageIdNavigationArgs
     {
         public ChatMessageIdNavigationArgs(long chatId, long threadId)
         {
@@ -53,7 +53,7 @@ namespace Telegram.ViewModels
         public long MessageId { get; }
     }
 
-    public class ChatSavedMessagesTopicIdNavigationArgs
+    public partial class ChatSavedMessagesTopicIdNavigationArgs
     {
         public ChatSavedMessagesTopicIdNavigationArgs(long chatId, long savedMessagesTopicId)
         {
@@ -66,7 +66,7 @@ namespace Telegram.ViewModels
         public long SavedMessagesTopicId { get; }
     }
 
-    public class ChatBusinessRepliesIdNavigationArgs
+    public partial class ChatBusinessRepliesIdNavigationArgs
     {
         public ChatBusinessRepliesIdNavigationArgs(long chatId, string quickReplyShortcut)
         {
@@ -4079,7 +4079,7 @@ namespace Telegram.ViewModels
         #endregion
     }
 
-    public class UserCommand
+    public partial class UserCommand
     {
         public UserCommand(long userId, BotCommand command)
         {
@@ -4091,7 +4091,7 @@ namespace Telegram.ViewModels
         public BotCommand Item { get; set; }
     }
 
-    public class MessageCollection : MvxObservableCollection<MessageViewModel>
+    public partial class MessageCollection : MvxObservableCollection<MessageViewModel>
     {
         private readonly Dictionary<long, MessageViewModel> _messages = new();
 
@@ -4583,7 +4583,7 @@ namespace Telegram.ViewModels
         }
     }
 
-    public class DialogUnreadMessagesViewModel : BindableBase
+    public partial class DialogUnreadMessagesViewModel : BindableBase
     {
         private readonly DialogViewModel _viewModel;
         private readonly SearchMessagesFilter _filter;
@@ -4675,7 +4675,7 @@ namespace Telegram.ViewModels
         }
     }
 
-    public class MessageComposerHeader
+    public partial class MessageComposerHeader
     {
         public IClientService ClientService { get; }
 

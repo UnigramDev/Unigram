@@ -8,7 +8,7 @@ using Telegram.Assets.Icons;
 
 namespace Telegram.Controls
 {
-    public class MoreButton : BadgeButton
+    public partial class MoreButton : BadgeButton
     {
         public MoreButton()
         {

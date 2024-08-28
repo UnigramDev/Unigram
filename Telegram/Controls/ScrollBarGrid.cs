@@ -12,12 +12,12 @@ namespace Telegram.Controls
     // This is needed by deprecated UpdateManager.Subscribe method.
     // Since Grid is a RCW type, it gets garbage collected as
     // EventAggregator uses a ConditionalWeakTable to hold subscribers.
-    public class ClrGrid : Grid
+    public partial class ClrGrid : Grid
     {
 
     }
 
-    public class ScrollBarGrid : Grid
+    public partial class ScrollBarGrid : Grid
     {
         protected override Size MeasureOverride(Size availableSize)
         {

@@ -42,7 +42,7 @@ namespace Telegram.Services
         #endregion
     }
 
-    public class NotificationsService : INotificationsService
+    public partial class NotificationsService : INotificationsService
     //IHandle<UpdateUnreadMessageCount>,
     //IHandle<UpdateUnreadChatCount>,
     //IHandle<UpdateChatReadInbox>,

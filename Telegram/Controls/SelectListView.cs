@@ -10,7 +10,7 @@ using Microsoft.UI.Xaml.Controls.Primitives;
 
 namespace Telegram.Controls
 {
-    public class SelectListView : ListView
+    public partial class SelectListView : ListView
     {
         public SelectListView()
         {

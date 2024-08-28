@@ -9,7 +9,7 @@ using Microsoft.UI.Xaml.Controls;
 
 namespace Telegram.Controls
 {
-    public class MultipleListView : ListView
+    public partial class MultipleListView : ListView
     {
         protected override DependencyObject GetContainerForItemOverride()
         {
@@ -17,7 +17,7 @@ namespace Telegram.Controls
         }
     }
 
-    public class MultipleListViewItem : TableListViewItem
+    public partial class MultipleListViewItem : TableListViewItem
     {
         private readonly ListViewBase _owner;
         private readonly bool _multi;
@@ -56,7 +56,7 @@ namespace Telegram.Controls
         void UpdateState(bool selected, bool animate, bool multiple);
     }
 
-    public class MultipleVisualStateManager : VisualStateManager
+    public partial class MultipleVisualStateManager : VisualStateManager
     {
         private bool _multi;
 

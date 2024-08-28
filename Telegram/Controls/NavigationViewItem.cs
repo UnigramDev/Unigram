@@ -8,7 +8,7 @@ using Microsoft.UI.Xaml;
 
 namespace Telegram.Controls
 {
-    public class NavigationViewItem : NavigationViewItemBase
+    public partial class NavigationViewItem : NavigationViewItemBase
     {
         public NavigationViewItem()
         {

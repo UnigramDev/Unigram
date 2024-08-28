@@ -27,7 +27,7 @@ using Telegram.ViewModels;
 
 namespace Telegram.Controls
 {
-    public class ChatListSwipedEventArgs : EventArgs
+    public partial class ChatListSwipedEventArgs : EventArgs
     {
         public CarouselDirection Direction { get; }
 
@@ -37,7 +37,7 @@ namespace Telegram.Controls
         }
     }
 
-    public class ChatListListView : TopNavView
+    public partial class ChatListListView : TopNavView
     {
         public ChatListViewModel ViewModel => DataContext as ChatListViewModel;
 
@@ -446,7 +446,7 @@ namespace Telegram.Controls
         #endregion
     }
 
-    public class ChatListListViewItem : TopNavViewItem
+    public partial class ChatListListViewItem : TopNavViewItem
     {
         private readonly ChatListListView _list;
 
@@ -547,7 +547,7 @@ namespace Telegram.Controls
         }
     }
 
-    public class ChatListVisualStateManager : VisualStateManager
+    public partial class ChatListVisualStateManager : VisualStateManager
     {
         private bool _multi;
 
@@ -578,7 +578,7 @@ namespace Telegram.Controls
         }
     }
 
-    public class ChatListListViewItemAutomationPeer : ListViewItemAutomationPeer
+    public partial class ChatListListViewItemAutomationPeer : ListViewItemAutomationPeer
     {
         private readonly ChatListListViewItem _owner;
 

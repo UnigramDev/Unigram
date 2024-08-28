@@ -34,7 +34,7 @@ namespace Telegram.ViewModels.Supergroups
         DisableSponsoredMessages
     }
 
-    public class SupergroupProfileColorViewModel : ViewModelBase
+    public partial class SupergroupProfileColorViewModel : ViewModelBase
     {
         private ChatBoostStatus _status;
         private ChatBoostFeatures _features;

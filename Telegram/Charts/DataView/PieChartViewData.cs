@@ -8,7 +8,7 @@ using Telegram.Charts.Data;
 
 namespace Telegram.Charts.DataView
 {
-    public class PieChartViewData : StackLinearViewData
+    public partial class PieChartViewData : StackLinearViewData
     {
         public float selectionA;
         public float drawingPart;

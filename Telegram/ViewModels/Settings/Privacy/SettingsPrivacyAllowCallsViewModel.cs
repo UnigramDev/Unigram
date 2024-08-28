@@ -10,7 +10,7 @@ using Telegram.Views.Settings.Privacy;
 
 namespace Telegram.ViewModels.Settings.Privacy
 {
-    public class SettingsPrivacyAllowCallsViewModel : SettingsPrivacyViewModelBase
+    public partial class SettingsPrivacyAllowCallsViewModel : SettingsPrivacyViewModelBase
     {
         private readonly SettingsPrivacyAllowP2PCallsViewModel _allowP2PCallsRules;
 

@@ -26,7 +26,7 @@ using Windows.UI;
 
 namespace Telegram.Controls
 {
-    public class ContentPopup : ContentDialog
+    public partial class ContentPopup : ContentDialog
     {
         private ContentDialogResult _result;
 

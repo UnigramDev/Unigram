@@ -32,7 +32,7 @@ namespace Telegram.ViewModels
         }
     }
 
-    public class CreateChatPhotoViewModel : ViewModelBase
+    public partial class CreateChatPhotoViewModel : ViewModelBase
     {
         private long? _chatId;
         private bool _isPublic;
@@ -152,7 +152,7 @@ namespace Telegram.ViewModels
         }
     }
 
-    public class BackgroundDiffHandler : IDiffHandler<Background>
+    public partial class BackgroundDiffHandler : IDiffHandler<Background>
     {
         public bool CompareItems(Background oldItem, Background newItem)
         {

@@ -14,7 +14,7 @@ using Telegram.ViewModels.Delegates;
 
 namespace Telegram.ViewModels.Settings.Privacy
 {
-    public class SettingsPrivacyShowPhotoViewModel : SettingsPrivacyViewModelBase, IDelegable<IUserDelegate>, IHandle
+    public partial class SettingsPrivacyShowPhotoViewModel : SettingsPrivacyViewModelBase, IDelegable<IUserDelegate>, IHandle
     {
         public IUserDelegate Delegate { get; set; }
 

@@ -6,7 +6,7 @@
 //
 namespace Telegram.Charts
 {
-    public class FastOutSlowInInterpolator : LookupTableInterpolator
+    public partial class FastOutSlowInInterpolator : LookupTableInterpolator
     {
         /**
          * Lookup table values sampled with x at regular intervals between 0 and 1 for a total of

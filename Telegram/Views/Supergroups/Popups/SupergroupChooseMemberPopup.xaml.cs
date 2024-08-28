@@ -24,7 +24,7 @@ namespace Telegram.Views.Supergroups.Popups
         Block
     }
 
-    public class SupergroupChooseMemberArgs
+    public partial class SupergroupChooseMemberArgs
     {
         public SupergroupChooseMemberArgs(long chatId, SupergroupChooseMemberMode mode)
         {

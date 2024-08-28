@@ -29,7 +29,7 @@ namespace Telegram.Services
         Task UpdateAsync(bool force);
     }
 
-    public class CloudUpdateService : ICloudUpdateService
+    public partial class CloudUpdateService : ICloudUpdateService
     {
         private readonly IClientService _clientService;
         private readonly INetworkService _networkService;
@@ -380,7 +380,7 @@ namespace Telegram.Services
         }
     }
 
-    public class CloudUpdate
+    public partial class CloudUpdate
     {
         public long MessageId { get; set; }
 

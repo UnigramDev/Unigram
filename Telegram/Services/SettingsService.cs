@@ -118,7 +118,7 @@ namespace Telegram.Services
         Miles
     }
 
-    public class SettingsServiceBase
+    public partial class SettingsServiceBase
     {
         protected readonly ApplicationDataContainer _container;
 
@@ -200,7 +200,7 @@ namespace Telegram.Services
         }
     }
 
-    public class SettingsService : SettingsServiceBase, ISettingsService
+    public partial class SettingsService : SettingsServiceBase, ISettingsService
     {
         private static SettingsService _current;
         public static SettingsService Current => _current ??= new SettingsService();
@@ -740,7 +740,7 @@ namespace Telegram.Services
         }
     }
 
-    public class ChatSettingsBase : SettingsServiceBase
+    public partial class ChatSettingsBase : SettingsServiceBase
     {
         public ChatSettingsBase(ApplicationDataContainer container = null)
             : base(container)

@@ -10,7 +10,7 @@ using Telegram.ViewModels.Chats;
 
 namespace Telegram.Controls.Chats
 {
-    public class ChatSearchTextBox : SuggestTextBox
+    public partial class ChatSearchTextBox : SuggestTextBox
     {
         private ChatSearchState _state;
         public ChatSearchState State

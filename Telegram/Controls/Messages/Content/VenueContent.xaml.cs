@@ -15,7 +15,7 @@ using Telegram.ViewModels;
 
 namespace Telegram.Controls.Messages.Content
 {
-    public sealed class VenueContent : Control, IContent
+    public sealed partial class VenueContent : Control, IContent
     {
         private MessageViewModel _message;
         public MessageViewModel Message => _message;

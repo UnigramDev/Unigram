@@ -22,7 +22,7 @@ namespace Telegram.Services
         IEnumerable<SettingsSearchEntry> Search(string query);
     }
 
-    public class SettingsSearchService : ISettingsSearchService
+    public partial class SettingsSearchService : ISettingsSearchService
     {
         private readonly IClientService _clientService;
         private List<SettingsSearchEntry> _searchIndex;
@@ -288,7 +288,7 @@ namespace Telegram.Services
         }
     }
 
-    public class SettingsSearchPage : SettingsSearchEntry
+    public partial class SettingsSearchPage : SettingsSearchEntry
     {
         public SettingsSearchPage(Type page, string text, IAnimatedVisualSource2 icon = null, SettingsSearchEntry[] items = null)
             : base(text, icon)
@@ -348,7 +348,7 @@ namespace Telegram.Services
         public override bool IsValid => Page != null;
     }
 
-    public class SettingsSearchAction : SettingsSearchEntry
+    public partial class SettingsSearchAction : SettingsSearchEntry
     {
         public SettingsSearchAction(Action action, string text)
             : base(text, null)
@@ -366,7 +366,7 @@ namespace Telegram.Services
         public override bool IsValid => true;
     }
 
-    public class SettingsSearchFaq : SettingsSearchEntry
+    public partial class SettingsSearchFaq : SettingsSearchEntry
     {
         public SettingsSearchFaq(string url, string text, IAnimatedVisualSource2 icon = null)
             : base(text, icon)

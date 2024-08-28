@@ -18,7 +18,7 @@ namespace Telegram.ViewModels.Business
         Custom
     }
 
-    public class BusinessAwayViewModel : BusinessRecipientsViewModelBase, IHandle
+    public partial class BusinessAwayViewModel : BusinessRecipientsViewModelBase, IHandle
     {
         public BusinessAwayViewModel(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator)
             : base(clientService, settingsService, aggregator)

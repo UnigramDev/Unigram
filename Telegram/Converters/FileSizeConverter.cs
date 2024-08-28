@@ -10,7 +10,7 @@ using System.Globalization;
 
 namespace Telegram.Converters
 {
-    public class FileSizeConverter : IValueConverter
+    public partial class FileSizeConverter : IValueConverter
     {
         public static string Convert(long bytesCount, bool allowGb = false)
         {

@@ -9,7 +9,7 @@ using Telegram.Td.Api;
 
 namespace Telegram.Converters
 {
-    public class ChannelParticipantToTypeConverter
+    public partial class ChannelParticipantToTypeConverter
     {
         public static string Convert(IClientService clientService, ChatMember member)
         {

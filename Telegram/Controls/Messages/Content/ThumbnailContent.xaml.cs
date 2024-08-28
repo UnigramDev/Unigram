@@ -13,7 +13,7 @@ using Telegram.ViewModels;
 
 namespace Telegram.Controls.Messages.Content
 {
-    public sealed class ThumbnailContent : Control, IContentWithFile
+    public sealed partial class ThumbnailContent : Control, IContentWithFile
     {
         private MessageViewModel _message;
         public MessageViewModel Message => _message;

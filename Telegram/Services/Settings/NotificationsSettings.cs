@@ -11,7 +11,7 @@ using Windows.Storage;
 
 namespace Telegram.Services.Settings
 {
-    public class NotificationsSettings : SettingsServiceBase
+    public partial class NotificationsSettings : SettingsServiceBase
     {
         private readonly Dictionary<Type, ScopeNotificationSettings> _scopeNotificationSettings = new();
 

@@ -12,7 +12,7 @@ using Telegram.Td.Api;
 
 namespace Telegram.Common
 {
-    public class TextStyleRun
+    public partial class TextStyleRun
     {
         public TextStyle Flags { get; set; }
 
@@ -540,7 +540,7 @@ namespace Telegram.Common
         Quote = 512,
     }
 
-    public class StyledText
+    public partial class StyledText
     {
         public StyledText(string text, IList<StyledParagraph> paragraphs)
         {
@@ -564,7 +564,7 @@ namespace Telegram.Common
         public bool IsPlain { get; }
     }
 
-    public class StyledParagraph
+    public partial class StyledParagraph
     {
         public StyledParagraph(string text, IList<TextEntity> entities)
             : this(text, 0, text.Length, entities)
@@ -614,12 +614,12 @@ namespace Telegram.Common
 
     }
 
-    public class TextParagraphTypeQuote : TextParagraphType
+    public partial class TextParagraphTypeQuote : TextParagraphType
     {
 
     }
 
-    public class TextParagraphTypeMonospace : TextParagraphType
+    public partial class TextParagraphTypeMonospace : TextParagraphType
     {
         public TextParagraphTypeMonospace(string language)
         {

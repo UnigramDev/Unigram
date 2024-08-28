@@ -11,7 +11,7 @@ using Telegram.Charts.DataView;
 
 namespace Telegram.Charts
 {
-    public class BarChartView : BaseChartView<ChartData, BarViewData>
+    public partial class BarChartView : BaseChartView<ChartData, BarViewData>
     {
 
         public BarChartView()

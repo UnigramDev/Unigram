@@ -13,7 +13,7 @@ using Windows.Foundation;
 
 namespace Telegram.Td.Api
 {
-    public class MessageAlbum : MessageContent
+    public partial class MessageAlbum : MessageContent
     {
         public bool IsMedia { get; }
 
@@ -152,7 +152,7 @@ namespace Telegram.Td.Api
         }
     }
 
-    public class MessagePaidAlbum : MessageContent
+    public partial class MessagePaidAlbum : MessageContent
     {
         public FormattedText Caption { get; set; }
 

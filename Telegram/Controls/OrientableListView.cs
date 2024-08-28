@@ -9,7 +9,7 @@ using Microsoft.UI.Xaml.Controls;
 
 namespace Telegram.Controls
 {
-    public class OrientableListView : GridView
+    public partial class OrientableListView : GridView
     {
         private bool _needUpdate;
 

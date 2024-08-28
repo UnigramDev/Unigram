@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 namespace Telegram.Common
 {
     // TODO: rename to CriticalSection because it sounds cooler
-    public class DisposableMutex : IDisposable
+    public partial class DisposableMutex : IDisposable
     {
         private readonly SemaphoreSlim _semaphore;
 

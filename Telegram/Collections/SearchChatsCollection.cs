@@ -17,7 +17,7 @@ namespace Telegram.Collections
         public string Glyph { get; }
     }
 
-    public class SearchChatsFilterContent : ISearchChatsFilter
+    public partial class SearchChatsFilterContent : ISearchChatsFilter
     {
         private readonly SearchMessagesFilter _filter;
 
@@ -49,7 +49,7 @@ namespace Telegram.Collections
         };
     }
 
-    public class SearchChatsFilterChat : ISearchChatsFilter
+    public partial class SearchChatsFilterChat : ISearchChatsFilter
     {
         private readonly IClientService _clientService;
         private readonly Chat _chat;
@@ -73,7 +73,7 @@ namespace Telegram.Collections
         };
     }
 
-    public class SearchChatsFilterDateRange : ISearchChatsFilter
+    public partial class SearchChatsFilterDateRange : ISearchChatsFilter
     {
         private readonly DateRange _range;
 

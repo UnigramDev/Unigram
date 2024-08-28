@@ -10,7 +10,7 @@ using System.Text;
 
 namespace Telegram.Controls.Payments
 {
-    public class DateTextBox : TextBox
+    public partial class DateTextBox : TextBox
     {
         private string previousText = string.Empty;
         private int selectionStart;

@@ -26,7 +26,7 @@ using Windows.UI;
 
 namespace Telegram.Controls.Messages.Content
 {
-    public sealed class WebPageContent : HyperlinkButton, IContentWithPlayback
+    public sealed partial class WebPageContent : HyperlinkButton, IContentWithPlayback
     {
         private CancellationTokenSource _instantViewToken;
 
@@ -733,7 +733,7 @@ namespace Telegram.Controls.Messages.Content
         #endregion
     }
 
-    public class WebPageContentAutomationPeer : HyperlinkButtonAutomationPeer
+    public partial class WebPageContentAutomationPeer : HyperlinkButtonAutomationPeer
     {
         private WebPageContent _owner;
 

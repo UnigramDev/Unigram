@@ -27,7 +27,7 @@ using Windows.Foundation;
 
 namespace Telegram.Controls.Messages
 {
-    public sealed class MessageFooter : ControlEx
+    public sealed partial class MessageFooter : ControlEx
     {
         private MessageTicksState _ticksState;
         private long _ticksHash;

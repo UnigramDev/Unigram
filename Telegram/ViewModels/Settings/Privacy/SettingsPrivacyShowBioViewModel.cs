@@ -9,7 +9,7 @@ using Telegram.Td.Api;
 
 namespace Telegram.ViewModels.Settings.Privacy
 {
-    public class SettingsPrivacyShowBioViewModel : SettingsPrivacyViewModelBase
+    public partial class SettingsPrivacyShowBioViewModel : SettingsPrivacyViewModelBase
     {
         public SettingsPrivacyShowBioViewModel(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator)
             : base(clientService, settingsService, aggregator, new UserPrivacySettingShowBio())

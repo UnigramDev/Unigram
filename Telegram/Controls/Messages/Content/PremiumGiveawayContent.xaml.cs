@@ -16,7 +16,7 @@ using Telegram.ViewModels;
 
 namespace Telegram.Controls.Messages.Content
 {
-    public sealed class PremiumGiveawayContent : Control, IContent
+    public sealed partial class PremiumGiveawayContent : Control, IContent
     {
         private MessageViewModel _message;
         public MessageViewModel Message => _message;

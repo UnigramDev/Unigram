@@ -10,7 +10,7 @@ using Windows.UI;
 
 namespace Telegram.Composition
 {
-    public class CompositionVoiceBlobVisual
+    public partial class CompositionVoiceBlobVisual
     {
         private readonly SpriteVisual _visual;
 

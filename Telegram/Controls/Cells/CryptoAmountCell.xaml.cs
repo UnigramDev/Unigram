@@ -4,7 +4,7 @@ using Telegram.Converters;
 
 namespace Telegram.Controls.Cells
 {
-    public class CryptoAmount
+    public partial class CryptoAmount
     {
         public string Cryptocurrency { get; set; }
 

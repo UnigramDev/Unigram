@@ -16,7 +16,7 @@ using Telegram.ViewModels;
 
 namespace Telegram.Controls.Messages.Content
 {
-    public sealed class PollContent : ControlEx, IContent
+    public sealed partial class PollContent : ControlEx, IContent
     {
         private MessageViewModel _message;
         public MessageViewModel Message => _message;

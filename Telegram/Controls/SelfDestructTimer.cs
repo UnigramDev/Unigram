@@ -15,7 +15,7 @@ using Telegram.Navigation;
 
 namespace Telegram.Controls
 {
-    public class SelfDestructTimer : Control
+    public partial class SelfDestructTimer : Control
     {
         private readonly ShapeVisual _visual;
         private readonly CompositionSpriteShape _shape;

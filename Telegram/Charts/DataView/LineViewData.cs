@@ -13,7 +13,7 @@ using Windows.UI;
 
 namespace Telegram.Charts.DataView
 {
-    public class LineViewData
+    public partial class LineViewData
     {
 
         public readonly ChartData.Line line;

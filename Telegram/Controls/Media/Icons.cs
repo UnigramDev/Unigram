@@ -11,7 +11,7 @@ using Telegram.ViewModels;
 
 namespace Telegram.Controls.Media
 {
-    public class Icons
+    public partial class Icons
     {
         public const string RTL = "\u200F";
         public const string LTR = "\u200E";

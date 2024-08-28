@@ -9,7 +9,7 @@ using Telegram.Td.Api;
 
 namespace Telegram.ViewModels.Settings.Privacy
 {
-    public class SettingsPrivacyAllowP2PCallsViewModel : SettingsPrivacyViewModelBase
+    public partial class SettingsPrivacyAllowP2PCallsViewModel : SettingsPrivacyViewModelBase
     {
         public SettingsPrivacyAllowP2PCallsViewModel(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator)
             : base(clientService, settingsService, aggregator, new UserPrivacySettingAllowPeerToPeerCalls())

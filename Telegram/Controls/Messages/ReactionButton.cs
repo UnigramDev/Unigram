@@ -22,7 +22,7 @@ using VirtualKey = Windows.System.VirtualKey;
 
 namespace Telegram.Controls.Messages
 {
-    public class ReactionButton : ToggleButtonEx
+    public partial class ReactionButton : ToggleButtonEx
     {
         private Image Presenter;
         private CustomEmojiIcon Icon;
@@ -552,7 +552,7 @@ namespace Telegram.Controls.Messages
         //}
     }
 
-    public class ReactionButtonAutomationPeer : ToggleButtonAutomationPeer
+    public partial class ReactionButtonAutomationPeer : ToggleButtonAutomationPeer
     {
         private readonly ReactionButton _owner;
 

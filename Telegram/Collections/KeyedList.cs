@@ -6,10 +6,14 @@
 //
 using System.Collections.Generic;
 using System.Linq;
+using WinRT;
 
 namespace Telegram.Collections
 {
-    public class KeyedList<TKey, T> : MvxObservableCollection<T>
+    [WinRTRuntimeClassName("Windows.Foundation.Collections.IVector`1")]
+    [WinRTExposedType(typeof(MvxObservableCollectionWinRTTypeDetails))]
+    [GeneratedBindableCustomProperty]
+    public partial class KeyedList<TKey, T> : MvxObservableCollection<T>
     {
         private TKey _key;
         public TKey Key

@@ -18,7 +18,7 @@ using Telegram.ViewModels;
 
 namespace Telegram.Controls.Messages.Content
 {
-    public sealed class PhotoContent : Control, IContentWithFile
+    public sealed partial class PhotoContent : Control, IContentWithFile
     {
         private readonly bool _album;
 

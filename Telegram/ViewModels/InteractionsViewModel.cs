@@ -18,7 +18,7 @@ using Telegram.Td.Api;
 
 namespace Telegram.ViewModels
 {
-    public class InteractionsViewModel : ViewModelBase, IIncrementalCollectionOwner
+    public partial class InteractionsViewModel : ViewModelBase, IIncrementalCollectionOwner
     {
         private MessageReplyTo _replyTo;
 

@@ -14,7 +14,7 @@ using Windows.Storage;
 
 namespace Telegram.Views
 {
-    public class TypeResolver
+    public partial class TypeResolver
     {
         private static readonly TypeResolver _instance = new TypeResolver();
 

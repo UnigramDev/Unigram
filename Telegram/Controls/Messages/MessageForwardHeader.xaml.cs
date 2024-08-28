@@ -24,7 +24,7 @@ using Windows.Foundation;
 
 namespace Telegram.Controls.Messages
 {
-    public class MessageForwardHeader : HyperlinkButton
+    public partial class MessageForwardHeader : HyperlinkButton
     {
         private Visual _visual;
         private CompositionGeometricClip _clip;
@@ -367,7 +367,7 @@ namespace Telegram.Controls.Messages
         }
     }
 
-    public class MessageForwardHeaderAutomationPeer : HyperlinkButtonAutomationPeer
+    public partial class MessageForwardHeaderAutomationPeer : HyperlinkButtonAutomationPeer
     {
         private readonly MessageForwardHeader _owner;
 

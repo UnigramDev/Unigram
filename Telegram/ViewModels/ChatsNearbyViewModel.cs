@@ -21,7 +21,7 @@ using Windows.System;
 
 namespace Telegram.ViewModels
 {
-    public class ChatsNearbyViewModel : ViewModelBase, IHandle
+    public partial class ChatsNearbyViewModel : ViewModelBase, IHandle
     {
         private readonly ILocationService _locationService;
 

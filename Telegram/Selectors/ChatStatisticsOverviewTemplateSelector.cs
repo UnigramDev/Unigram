@@ -10,7 +10,7 @@ using Telegram.Td.Api;
 
 namespace Telegram.Selectors
 {
-    public class ChatStatisticsOverviewTemplateSelector : DataTemplateSelector
+    public partial class ChatStatisticsOverviewTemplateSelector : DataTemplateSelector
     {
         public DataTemplate ChannelTemplate { get; set; }
         public DataTemplate SupergroupTemplate { get; set; }

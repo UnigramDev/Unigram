@@ -6,7 +6,7 @@
 //
 namespace Telegram.Services.Updates
 {
-    public class UpdateConfetti
+    public partial class UpdateConfetti
     {
 
     }

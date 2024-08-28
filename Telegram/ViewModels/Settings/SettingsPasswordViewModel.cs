@@ -16,7 +16,7 @@ using Telegram.Views.Settings.Password;
 
 namespace Telegram.ViewModels.Settings
 {
-    public class SettingsPasswordViewModel : ViewModelBase
+    public partial class SettingsPasswordViewModel : ViewModelBase
     {
         private PasswordState _passwordState;
         private string _password;

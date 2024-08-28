@@ -16,7 +16,7 @@ using Telegram.Td.Api;
 
 namespace Telegram
 {
-    public sealed class Logger
+    public sealed partial class Logger
     {
         public enum LogLevel
         {
@@ -53,7 +53,7 @@ namespace Telegram
 
 #if !DEBUG
             var report = WatchDog.BuildReport(exception);
-            Microsoft.AppCenter.Crashes.Crashes.TrackError(exception, attachments: Microsoft.AppCenter.Crashes.ErrorAttachmentLog.AttachmentWithText(report, "crash.txt"));
+            //Microsoft.AppCenter.Crashes.Crashes.TrackError(exception, attachments: Microsoft.AppCenter.Crashes.ErrorAttachmentLog.AttachmentWithText(report, "crash.txt"));
 #endif
         }
 
@@ -136,7 +136,7 @@ namespace Telegram
         }
     }
 
-    public class RuntimeException : Exception
+    public partial class RuntimeException : Exception
     {
         public RuntimeException(Exception innerException)
             : base(innerException.Message, innerException)

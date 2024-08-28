@@ -40,7 +40,7 @@ namespace Telegram.Services
         Task<GetVenuesResult> GetVenuesAsync(long chatId, double latitude, double longitude, string query = null, string offset = null);
     }
 
-    public class LocationService : ILocationService
+    public partial class LocationService : ILocationService
     {
         private readonly IClientService _clientService;
 

@@ -7,7 +7,7 @@ using Windows.ApplicationModel.Core;
 namespace Telegram.Views.Host
 {
     // TODO: Inheriting from TabViewItem causes TabView to throw E_INVALIDARG in release.
-    //public class TabbedPageItem : TabViewItem
+    //public partial class TabbedPageItem : TabViewItem
     //{
     //    private bool _isBackButtonVisible;
     //    public bool IsBackButtonVisible

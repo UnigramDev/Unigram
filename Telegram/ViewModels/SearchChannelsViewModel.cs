@@ -22,7 +22,7 @@ using Telegram.Views.Popups;
 
 namespace Telegram.ViewModels
 {
-    public class SearchChannelsViewModel : ViewModelBase, IIncrementalCollectionOwner
+    public partial class SearchChannelsViewModel : ViewModelBase, IIncrementalCollectionOwner
     {
         private readonly KeyedCollection<SearchResult> _recent = new(Strings.SearchMyChannels, new SearchResultDiffHandler());
         private readonly KeyedCollection<SearchResult> _similar = new(Strings.SearchRecommendedChannels, new SearchResultDiffHandler());

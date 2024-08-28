@@ -12,7 +12,7 @@ using Telegram.Charts.DataView;
 
 namespace Telegram.Charts
 {
-    public class StackBarChartView : BaseChartView<StackBarChartData, StackBarViewData>
+    public partial class StackBarChartView : BaseChartView<StackBarChartData, StackBarViewData>
     {
 
         private int[] yMaxPoints;

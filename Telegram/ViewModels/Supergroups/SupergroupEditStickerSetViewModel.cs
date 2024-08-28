@@ -16,7 +16,7 @@ using Telegram.Td.Api;
 
 namespace Telegram.ViewModels.Supergroups
 {
-    public class SupergroupEditStickerSetArgs
+    public partial class SupergroupEditStickerSetArgs
     {
         public SupergroupEditStickerSetArgs(long chatId, StickerType stickerType)
         {
@@ -29,7 +29,7 @@ namespace Telegram.ViewModels.Supergroups
         public StickerType StickerType { get; }
     }
 
-    public class SupergroupEditStickerSetViewModel : ViewModelBase, IHandle
+    public partial class SupergroupEditStickerSetViewModel : ViewModelBase, IHandle
     {
         public SupergroupEditStickerSetViewModel(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator)
             : base(clientService, settingsService, aggregator)

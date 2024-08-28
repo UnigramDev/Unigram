@@ -71,7 +71,7 @@ namespace Telegram.Services
 #endif
     }
 
-    public class VoipService : ServiceBase
+    public partial class VoipService : ServiceBase
         , IVoipService
     //, IHandle<UpdateCall>
     //, IHandle<UpdateNewCallSignalingData>

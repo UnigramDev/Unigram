@@ -1,6 +1,6 @@
-﻿using Microsoft.AppCenter;
-using Microsoft.AppCenter.Analytics;
-using Microsoft.AppCenter.Crashes;
+﻿//using Microsoft.AppCenter;
+//using Microsoft.AppCenter.Analytics;
+//using Microsoft.AppCenter.Crashes;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Automation.Peers;
 using Microsoft.UI.Xaml.Controls;
@@ -63,7 +63,7 @@ namespace Telegram
      * 
      */
 
-    public class WatchDog
+    public partial class WatchDog
     {
         private static readonly bool _disabled = Constants.DEBUG;
 
@@ -124,39 +124,39 @@ namespace Telegram
             //    Track(args.ReportId, args.Exception);
             //};
 
-            Crashes.SentErrorReport += (s, args) =>
-            {
-                if (File.Exists(GetErrorReportPath(args.Report.Id)))
-                {
-                    File.Delete(GetErrorReportPath(args.Report.Id));
-                }
-            };
+            //Crashes.SentErrorReport += (s, args) =>
+            //{
+            //    if (File.Exists(GetErrorReportPath(args.Report.Id)))
+            //    {
+            //        File.Delete(GetErrorReportPath(args.Report.Id));
+            //    }
+            //};
 
-            Crashes.ShouldProcessErrorReport = report =>
-            {
-                return report.Id == _lastSessionErrorReportId;
-            };
+            //Crashes.ShouldProcessErrorReport = report =>
+            //{
+            //    return report.Id == _lastSessionErrorReportId;
+            //};
 
-            Crashes.GetErrorAttachments = report =>
-            {
-                var path = GetErrorReportPath(report.Id);
-                if (path.Length > 0 && File.Exists(path))
-                {
-                    var data = File.ReadAllText(path);
-                    return new[] { ErrorAttachmentLog.AttachmentWithText(data, "crash.txt") };
-                }
+            //Crashes.GetErrorAttachments = report =>
+            //{
+            //    var path = GetErrorReportPath(report.Id);
+            //    if (path.Length > 0 && File.Exists(path))
+            //    {
+            //        var data = File.ReadAllText(path);
+            //        return new[] { ErrorAttachmentLog.AttachmentWithText(data, "crash.txt") };
+            //    }
 
-                return Array.Empty<ErrorAttachmentLog>();
-            };
+            //    return Array.Empty<ErrorAttachmentLog>();
+            //};
 
-            AppCenter.Start(Constants.AppCenterId, typeof(Analytics), typeof(Crashes));
-            Analytics.TrackEvent("Windows",
-                new Dictionary<string, string>
-                {
-                    { "DeviceFamily", AnalyticsInfo.VersionInfo.DeviceFamily },
-                    { "Architecture", Package.Current.Id.Architecture.ToString() },
-                    { "Processor", OSArchitecture().ToString() }
-                });
+            //AppCenter.Start(Constants.AppCenterId, typeof(Analytics), typeof(Crashes));
+            //Analytics.TrackEvent("Windows",
+            //    new Dictionary<string, string>
+            //    {
+            //        { "DeviceFamily", AnalyticsInfo.VersionInfo.DeviceFamily },
+            //        { "Architecture", Package.Current.Id.Architecture.ToString() },
+            //        { "Processor", OSArchitecture().ToString() }
+            //    });
         }
 
         [HandleProcessCorruptedStateExceptions, SecurityCritical]
@@ -167,7 +167,7 @@ namespace Telegram
             if (args.Exception is LayoutCycleException)
             {
                 Logger.Info("LayoutCycleException");
-                Analytics.TrackEvent("LayoutCycleException");
+                //Analytics.TrackEvent("LayoutCycleException");
                 SettingsService.Current.Diagnostics.LastCrashWasLayoutCycle = true;
             }
             else if (args.Exception is NotSupportedException)
@@ -214,7 +214,7 @@ namespace Telegram
                 return;
             }
 
-            Analytics.TrackEvent(name);
+            //Analytics.TrackEvent(name);
         }
 
         private static void Read()
@@ -381,7 +381,7 @@ namespace Telegram
         }
     }
 
-    //public class VLCException : NativeException
+    //public partial class VLCException : NativeException
     //{
     //    public VLCException(string message, string stackTrace, IEnumerable<NativeStackFrame> frames)
     //        : base(message, stackTrace, frames)

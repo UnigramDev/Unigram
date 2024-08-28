@@ -13,7 +13,7 @@ using Windows.System;
 
 namespace Telegram.Controls
 {
-    public class LoopingPicker : Button
+    public partial class LoopingPicker : Button
     {
         private Button NextButton;
         private Button PrevButton;
@@ -216,7 +216,7 @@ namespace Telegram.Controls
         #endregion
     }
 
-    public class LoopingPickerValueChangedEventArgs
+    public partial class LoopingPickerValueChangedEventArgs
     {
         public LoopingPickerValueChangedEventArgs(int oldValue, int newValue)
         {

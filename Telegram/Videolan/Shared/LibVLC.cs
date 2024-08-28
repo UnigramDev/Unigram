@@ -12,7 +12,7 @@ namespace LibVLCSharp.Shared
     /// Main LibVLC API object representing a libvlc instance in native code.
     /// Note: You may create multiple mediaplayers from a single LibVLC instance
     /// </summary>
-    public class LibVLC : Internal
+    public partial class LibVLC : Internal
     {
         /// <summary>
         /// Determines whether two object instances are equal.

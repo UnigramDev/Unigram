@@ -12,7 +12,7 @@ using Windows.Foundation;
 
 namespace Telegram.Controls.Messages.Content
 {
-    public sealed class StickerSetContent : Control, IContent
+    public sealed partial class StickerSetContent : Control, IContent
     {
         private MessageViewModel _message;
         public MessageViewModel Message => _message;

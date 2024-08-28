@@ -8,7 +8,7 @@ using System.Collections.Generic;
 
 namespace Telegram.Common
 {
-    public class MultiValueDictionary<TKey, TValue> : Dictionary<TKey, IList<TValue>>
+    public partial class MultiValueDictionary<TKey, TValue> : Dictionary<TKey, IList<TValue>>
     {
         public void Add(TKey key, TValue value)
         {

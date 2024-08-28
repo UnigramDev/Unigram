@@ -18,7 +18,7 @@ using Telegram.Views.Settings.Popups;
 
 namespace Telegram.ViewModels.Users
 {
-    public class UserEditViewModel : ViewModelBase, IDelegable<IUserDelegate>, IHandle
+    public partial class UserEditViewModel : ViewModelBase, IDelegable<IUserDelegate>, IHandle
     {
         public IUserDelegate Delegate { get; set; }
 

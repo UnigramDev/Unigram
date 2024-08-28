@@ -13,7 +13,7 @@ using Telegram.Charts.DataView;
 
 namespace Telegram.Charts
 {
-    public class LinearChartView : BaseChartView<ChartData, LineViewData>
+    public partial class LinearChartView : BaseChartView<ChartData, LineViewData>
     {
         protected bool drawSteps = false;
 

@@ -8,6 +8,7 @@ using Microsoft.UI.Xaml.Data;
 using System.Runtime.InteropServices.WindowsRuntime;
 using System.Threading.Tasks;
 using Windows.Foundation;
+using WinRT;
 
 namespace Telegram.Collections
 {
@@ -18,8 +19,9 @@ namespace Telegram.Collections
         bool HasMoreItems { get; }
     }
 
-    // TODO: Does it make sense to replace local implementations with this?
-    public class IncrementalCollection<T> : MvxObservableCollection<T>, ISupportIncrementalLoading
+    [WinRTRuntimeClassName("Windows.Foundation.Collections.IVector`1")]
+    [WinRTExposedType(typeof(IncrementalCollectionWinRTTypeDetails))]
+    public partial class IncrementalCollection<T> : MvxObservableCollection<T>, ISupportIncrementalLoading
     {
         private readonly IIncrementalCollectionOwner _owner;
 

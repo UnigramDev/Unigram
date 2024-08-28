@@ -6,7 +6,7 @@
 //
 namespace Telegram.Charts.DataView
 {
-    public class ChartBottomSignatureData
+    public partial class ChartBottomSignatureData
     {
         public readonly int step;
         public readonly int stepMax;

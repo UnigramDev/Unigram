@@ -6,7 +6,7 @@
 //
 namespace Telegram.Charts.DataView
 {
-    public class TransitionParams
+    public partial class TransitionParams
     {
         public float pickerStartOut;
         public float pickerEndOut;

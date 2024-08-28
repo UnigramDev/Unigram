@@ -21,7 +21,7 @@ using Windows.UI;
 
 namespace Telegram.ViewModels.Settings
 {
-    public class SettingsThemeViewModel : ViewModelBase
+    public partial class SettingsThemeViewModel : ViewModelBase
     {
         private readonly IThemeService _themeService;
 
@@ -183,7 +183,7 @@ namespace Telegram.ViewModels.Settings
         }
     }
 
-    public class ThemeBrush : BindableBase
+    public partial class ThemeBrush : BindableBase
     {
         public ThemeBrush(string key, Color color, bool alpha)
         {
@@ -239,7 +239,7 @@ namespace Telegram.ViewModels.Settings
         }
     }
 
-    public class ThemeBrushDiffHandler : IDiffHandler<ThemeBrush>
+    public partial class ThemeBrushDiffHandler : IDiffHandler<ThemeBrush>
     {
         public bool CompareItems(ThemeBrush oldItem, ThemeBrush newItem)
         {

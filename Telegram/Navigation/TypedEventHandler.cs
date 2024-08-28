@@ -8,7 +8,7 @@ using System.ComponentModel;
 
 namespace Telegram.Navigation
 {
-    public class CancelEventArgs<T> : CancelEventArgs
+    public partial class CancelEventArgs<T> : CancelEventArgs
     {
         public CancelEventArgs(T value)
         {

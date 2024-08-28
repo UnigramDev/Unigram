@@ -20,6 +20,7 @@ using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Linq;
 using System.Runtime.CompilerServices;
+using WinRT;
 
 namespace Telegram.Collections
 {
@@ -28,7 +29,9 @@ namespace Telegram.Collections
         void ReplaceWith(IEnumerable collection);
     }
 
-    public class MvxObservableCollection<T>
+    [WinRTRuntimeClassName("Windows.Foundation.Collections.IVector`1")]
+    [WinRTExposedType(typeof(MvxObservableCollectionWinRTTypeDetails))]
+    public partial class MvxObservableCollection<T>
         : ObservableCollection<T>
         , IMvxObservableCollection
         , IList<T>

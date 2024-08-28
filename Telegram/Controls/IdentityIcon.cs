@@ -24,7 +24,7 @@ namespace Telegram.Controls
         Scam
     }
 
-    public class IdentityIcon : Control
+    public partial class IdentityIcon : Control
     {
         private AnimatedImage Status;
         private FontIcon Icon;
@@ -287,7 +287,7 @@ namespace Telegram.Controls
         }
     }
 
-    public class IdentityIconAutomationPeer : FrameworkElementAutomationPeer
+    public partial class IdentityIconAutomationPeer : FrameworkElementAutomationPeer
     {
         private readonly IdentityIcon _owner;
 

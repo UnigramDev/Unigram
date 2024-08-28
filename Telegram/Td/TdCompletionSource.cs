@@ -10,7 +10,7 @@ using Telegram.Td.Api;
 
 namespace Telegram.Td
 {
-    class TdCompletionSource : TaskCompletionSource<BaseObject>, ClientResultHandler
+    partial class TdCompletionSource : TaskCompletionSource<BaseObject>, ClientResultHandler
     {
         private readonly Action<BaseObject> _closure;
 

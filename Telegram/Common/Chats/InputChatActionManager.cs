@@ -11,7 +11,7 @@ using Telegram.Td.Api;
 
 namespace Telegram.Common.Chats
 {
-    public class InputChatActionManager
+    public partial class InputChatActionManager
     {
         public static string GetTypingString(ChatType chatType, IDictionary<MessageSender, ChatAction> typingUsers, IClientService clientService, out ChatAction commonAction)
         {

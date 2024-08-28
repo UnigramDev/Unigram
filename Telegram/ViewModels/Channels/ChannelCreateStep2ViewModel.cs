@@ -11,7 +11,7 @@ using Telegram.ViewModels.Supergroups;
 
 namespace Telegram.ViewModels.Channels
 {
-    public class ChannelCreateStep2ViewModel : SupergroupEditViewModelBase
+    public partial class ChannelCreateStep2ViewModel : SupergroupEditViewModelBase
     {
         public ChannelCreateStep2ViewModel(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator)
             : base(clientService, settingsService, aggregator)

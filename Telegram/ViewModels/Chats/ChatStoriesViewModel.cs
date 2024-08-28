@@ -26,7 +26,7 @@ using Windows.Foundation;
 
 namespace Telegram.ViewModels.Chats
 {
-    public class ChatStoriesViewModel : ViewModelBase, IIncrementalCollectionOwner
+    public partial class ChatStoriesViewModel : ViewModelBase, IIncrementalCollectionOwner
     {
         private ChatStoriesType _type = ChatStoriesType.Pinned;
         private long _chatId;

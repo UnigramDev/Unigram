@@ -23,10 +23,12 @@ using Telegram.Views;
 using Telegram.Views.Chats;
 using Telegram.Views.Popups;
 using Telegram.Views.Profile;
+using WinRT;
 
 namespace Telegram.ViewModels.Profile
 {
-    public class ProfileTabItem
+    [GeneratedBindableCustomProperty]
+    public partial class ProfileTabItem
     {
         public string Text { get; set; }
 
@@ -42,12 +44,12 @@ namespace Telegram.ViewModels.Profile
         }
     }
 
-    public class ProfileMyArgs
+    public partial class ProfileMyArgs
     {
 
     }
 
-    public class ProfileTabsViewModel : MultiViewModelBase, IHandle
+    public partial class ProfileTabsViewModel : MultiViewModelBase, IHandle
     {
         private readonly IPlaybackService _playbackService;
         private readonly IStorageService _storageService;
@@ -387,7 +389,7 @@ namespace Telegram.ViewModels.Profile
             return null;
         }
 
-        public class MessageDiffHandler : IDiffHandler<MessageWithOwner>
+        public partial class MessageDiffHandler : IDiffHandler<MessageWithOwner>
         {
             public bool CompareItems(MessageWithOwner oldItem, MessageWithOwner newItem)
             {

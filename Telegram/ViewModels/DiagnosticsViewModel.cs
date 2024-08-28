@@ -28,7 +28,7 @@ using Windows.Storage;
 
 namespace Telegram.ViewModels
 {
-    public class DiagnosticsViewModel : ViewModelBase
+    public partial class DiagnosticsViewModel : ViewModelBase
     {
         public DiagnosticsViewModel(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator)
             : base(clientService, settingsService, aggregator)
@@ -375,13 +375,13 @@ namespace Telegram.ViewModels
         Verbose = 5
     }
 
-    public class DiagnosticsOption
+    public partial class DiagnosticsOption
     {
         public string Name { get; set; }
         public object Value { get; set; }
     }
 
-    public class DiagnosticsTag : BindableBase
+    public partial class DiagnosticsTag : BindableBase
     {
         private readonly INavigationService _navigationService;
         private readonly ISettingsService _settings;

@@ -71,7 +71,7 @@ namespace Telegram.Assets.Icons
     // |________________|______________|_______|_________________|
     // | #000000        | Color_000000 | Color | #FF000000 Black |
     // -----------------------------------------------------------
-    public sealed class StickerToGif
+    public sealed partial class StickerToGif
         : Microsoft.UI.Xaml.Controls.IAnimatedVisualSource
         , Microsoft.UI.Xaml.Controls.IAnimatedVisualSource2
     {
@@ -163,7 +163,7 @@ namespace Telegram.Assets.Icons
         /// Returns a map from marker names to corresponding progress values.
         /// </summary>
         public IReadOnlyDictionary<string, double> Markers =>
-            new Dictionary<string, double>
+            new DictionaryStringDouble
             {
             };
 
@@ -196,7 +196,7 @@ namespace Telegram.Assets.Icons
         {
         }
 
-        sealed class StickerToGif_AnimatedVisual_UAPv11 : Microsoft.UI.Xaml.Controls.IAnimatedVisual
+        sealed partial class StickerToGif_AnimatedVisual_UAPv11 : Microsoft.UI.Xaml.Controls.IAnimatedVisual
         {
             const long c_durationTicks = 3333333;
             readonly Compositor _c;

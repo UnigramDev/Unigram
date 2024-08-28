@@ -10,7 +10,7 @@ using Telegram.Controls;
 
 namespace Telegram.Converters
 {
-    public class ProportionsToLabelConverter : IValueConverter
+    public partial class ProportionsToLabelConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, string language)
         {

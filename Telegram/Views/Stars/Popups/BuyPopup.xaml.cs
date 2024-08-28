@@ -14,12 +14,12 @@ using Telegram.ViewModels.Stars;
 
 namespace Telegram.Views.Stars.Popups
 {
-    public class SubtractedStar : Control
+    public partial class SubtractedStar : Control
     {
 
     }
 
-    public class BuyStarsArgs
+    public partial class BuyStarsArgs
     {
         public long StarCount { get; set; }
 

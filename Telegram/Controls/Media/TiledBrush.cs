@@ -14,7 +14,7 @@ using Windows.UI;
 
 namespace Telegram.Controls.Media
 {
-    public class TiledBrush : XamlCompositionBrushBase
+    public partial class TiledBrush : XamlCompositionBrushBase
     {
         public LoadedImageSurface ImageSource { get; set; }
 

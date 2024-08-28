@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.Runtime.InteropServices.WindowsRuntime;
 using System.Threading.Tasks;
 using Windows.Foundation;
+using WinRT;
 
 namespace Telegram.Collections
 {
@@ -17,6 +18,8 @@ namespace Telegram.Collections
 
     }
 
+    [WinRTRuntimeClassName("Windows.Foundation.Collections.IVector`1")]
+    [WinRTExposedType(typeof(IncrementalCollectionWinRTTypeDetails))]
     public abstract class LegacyIncrementalCollection<T> : MvxObservableCollection<T>, IGroupSupportIncrementalLoading
     {
         private bool _hasMoreItems = true;

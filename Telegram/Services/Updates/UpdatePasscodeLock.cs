@@ -6,7 +6,7 @@
 //
 namespace Telegram.Services.Updates
 {
-    public class UpdatePasscodeLock
+    public partial class UpdatePasscodeLock
     {
         public UpdatePasscodeLock(bool enabled)
         {

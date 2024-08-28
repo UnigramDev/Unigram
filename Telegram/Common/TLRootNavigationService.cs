@@ -16,7 +16,7 @@ using Telegram.Views.Authorization;
 
 namespace Telegram.Common
 {
-    public class TLRootNavigationService : NavigationService
+    public partial class TLRootNavigationService : NavigationService
     //, IHandle<UpdateAuthorizationState>
     {
         private readonly ILifetimeService _lifetimeService;

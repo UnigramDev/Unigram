@@ -17,7 +17,7 @@ using Telegram.ViewModels;
 
 namespace Telegram.Controls.Messages.Content
 {
-    public sealed class DiceContent : HyperlinkButton, IContentWithFile, IPlayerView
+    public sealed partial class DiceContent : HyperlinkButton, IContentWithFile, IPlayerView
     {
         private MessageViewModel _message;
         public MessageViewModel Message => _message;

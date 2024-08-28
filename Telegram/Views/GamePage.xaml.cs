@@ -13,7 +13,7 @@ using Telegram.Views.Popups;
 
 namespace Telegram.Views
 {
-    public class GameConfiguration
+    public partial class GameConfiguration
     {
         public GameConfiguration(MessageViewModel message, string url, string title, string username)
         {

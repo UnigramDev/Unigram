@@ -35,7 +35,7 @@ using Point = Windows.Foundation.Point;
 
 namespace Telegram.Controls.Stories
 {
-    public class StoryEventArgs : EventArgs
+    public partial class StoryEventArgs : EventArgs
     {
         public ActiveStoriesViewModel ActiveStories { get; }
 
@@ -1595,7 +1595,7 @@ namespace Telegram.Controls.Stories
         }
     }
 
-    public class StoryContentPhotoTimer
+    public partial class StoryContentPhotoTimer
     {
         private readonly Stopwatch _watch;
         private readonly DispatcherTimer _timer;
@@ -1644,7 +1644,7 @@ namespace Telegram.Controls.Stories
         }
     }
 
-    public class StoryProgress : Grid
+    public partial class StoryProgress : Grid
     {
         private CompositionPropertySet _progressPropertySet;
         private AnimationController _progressController;

@@ -14,7 +14,7 @@ using Telegram.Td.Api;
 
 namespace Telegram.ViewModels.Payments
 {
-    public class PaymentAddressViewModel : ViewModelBase
+    public partial class PaymentAddressViewModel : ViewModelBase
     {
         private InputInvoice _inputInvoice;
 

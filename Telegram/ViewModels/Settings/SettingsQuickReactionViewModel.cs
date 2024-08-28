@@ -9,7 +9,7 @@ using Telegram.Services;
 
 namespace Telegram.ViewModels.Settings
 {
-    public class SettingsQuickReactionViewModel : ViewModelBase
+    public partial class SettingsQuickReactionViewModel : ViewModelBase
     {
         public SettingsQuickReactionViewModel(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator)
             : base(clientService, settingsService, aggregator)

@@ -24,7 +24,7 @@ using Telegram.ViewModels.Drawers;
 
 namespace Telegram.Views.Popups
 {
-    public class CreatePollViewModel : ViewModelBase
+    public partial class CreatePollViewModel : ViewModelBase
     {
         public CreatePollViewModel(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator) : base(clientService, settingsService, aggregator)
         {
@@ -411,7 +411,7 @@ namespace Telegram.Views.Popups
         }
     }
 
-    public class PollOptionViewModel : BindableBase
+    public partial class PollOptionViewModel : BindableBase
     {
         private readonly Action<PollOptionViewModel> _remove;
 

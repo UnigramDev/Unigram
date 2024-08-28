@@ -23,7 +23,7 @@ using Telegram.Views.Popups;
 
 namespace Telegram.Controls.Chats
 {
-    public class ChatStickerButton : AnimatedGlyphToggleButton
+    public partial class ChatStickerButton : AnimatedGlyphToggleButton
     {
         private Border Icon;
 

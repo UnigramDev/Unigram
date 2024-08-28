@@ -202,7 +202,7 @@ namespace Telegram.Controls
         }
     }
 
-    public class InlineQueryTemplateSelector : DataTemplateSelector
+    public partial class InlineQueryTemplateSelector : DataTemplateSelector
     {
         public DataTemplate StickerTemplate { get; set; }
         public DataTemplate AnimationTemplate { get; set; }

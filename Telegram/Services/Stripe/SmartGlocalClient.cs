@@ -15,7 +15,7 @@ using JsonValue = Windows.Data.Json.JsonValue;
 
 namespace Telegram.Services.Stripe
 {
-    public class SmartGlocalClient : IDisposable
+    public partial class SmartGlocalClient : IDisposable
     {
         private readonly string _publicToken;
         private HttpClient _client;

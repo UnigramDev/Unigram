@@ -28,7 +28,7 @@ using Windows.Foundation;
 
 namespace Telegram.ViewModels
 {
-    public class ChatListViewModel : ViewModelBase, IDelegable<IChatListDelegate>
+    public partial class ChatListViewModel : ViewModelBase, IDelegable<IChatListDelegate>
     {
         private readonly INotificationsService _notificationsService;
 
@@ -583,7 +583,7 @@ namespace Telegram.ViewModels
             //RaisePropertyChanged(nameof(Items));
         }
 
-        public class ItemsCollection : ObservableCollection<Chat>, ISupportIncrementalLoading
+        public partial class ItemsCollection : ObservableCollection<Chat>, ISupportIncrementalLoading
         {
             private readonly IClientService _clientService;
             private readonly IEventAggregator _aggregator;
@@ -925,7 +925,7 @@ namespace Telegram.ViewModels
     }
 
     // TODO: always load User when creating by Chat
-    public class SearchResult : BindableBase
+    public partial class SearchResult : BindableBase
     {
         private readonly IClientService _clientService;
         private readonly bool _canSendMessageToUser;

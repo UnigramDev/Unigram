@@ -16,7 +16,7 @@ using Telegram.Td.Api;
 
 namespace Telegram.ViewModels.Profile
 {
-    public class ProfileChannelsTabViewModel : ViewModelBase, IHandle, IIncrementalCollectionOwner
+    public partial class ProfileChannelsTabViewModel : ViewModelBase, IHandle, IIncrementalCollectionOwner
     {
         private long _chatId;
 

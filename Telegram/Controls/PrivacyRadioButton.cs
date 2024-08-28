@@ -9,7 +9,7 @@ using Telegram.ViewModels.Settings;
 
 namespace Telegram.Controls
 {
-    public class PrivacyRadioButton : FauxRadioButton
+    public partial class PrivacyRadioButton : FauxRadioButton
     {
         #region Type
 

@@ -44,12 +44,12 @@ using User = Telegram.Td.Api.User;
 
 namespace Telegram.Common
 {
-    public class OpenUrlSource
+    public partial class OpenUrlSource
     {
 
     }
 
-    public class OpenUrlSourceChat : OpenUrlSource
+    public partial class OpenUrlSourceChat : OpenUrlSource
     {
         public long ChatId { get; }
 
@@ -59,7 +59,7 @@ namespace Telegram.Common
         }
     }
 
-    public class TonSite
+    public partial class TonSite
     {
         public static bool TryCreate(IClientService clientService, Uri uri, out string magic)
         {
@@ -107,7 +107,7 @@ namespace Telegram.Common
         }
     }
 
-    public class MessageHelper
+    public partial class MessageHelper
     {
         public static async void CopyLink(IClientService clientService, XamlRoot xamlRoot, InternalLinkType type)
         {

@@ -9,7 +9,7 @@ using Microsoft.UI.Xaml.Controls;
 
 namespace Telegram.Controls
 {
-    public class AnimatedIconToggleButton : AnimatedGlyphToggleButton
+    public partial class AnimatedIconToggleButton : AnimatedGlyphToggleButton
     {
         public AnimatedIconToggleButton()
         {

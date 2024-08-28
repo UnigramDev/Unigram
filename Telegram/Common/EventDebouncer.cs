@@ -10,7 +10,7 @@ using System.Threading;
 
 namespace Telegram.Common
 {
-    public class EventDebouncer<TEventArgs>
+    public partial class EventDebouncer<TEventArgs>
     {
         private readonly DispatcherTimer _timer;
         private readonly Timer _backgroundTimer;

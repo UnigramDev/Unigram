@@ -46,7 +46,7 @@ namespace Telegram.Controls
         Ellipse
     }
 
-    public sealed class ImageCropperThumb : Control
+    public sealed partial class ImageCropperThumb : Control
     {
         #region constructors
         public ImageCropperThumb()
@@ -56,7 +56,7 @@ namespace Telegram.Controls
         #endregion
     }
 
-    public class ImageCropper : ContentControl
+    public partial class ImageCropper : ContentControl
     {
         private readonly Dictionary<uint, Point> m_pointerPositions;
 

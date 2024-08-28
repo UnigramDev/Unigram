@@ -18,7 +18,7 @@ using FontWeights = Microsoft.UI.Text.FontWeights;
 
 namespace Telegram.Controls.Messages.Content
 {
-    public sealed class GameContent : HyperlinkButton, IContent, IContentWithPlayback
+    public sealed partial class GameContent : HyperlinkButton, IContent, IContentWithPlayback
     {
         private MessageViewModel _message;
         public MessageViewModel Message => _message;

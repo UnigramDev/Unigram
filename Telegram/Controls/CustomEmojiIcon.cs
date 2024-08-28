@@ -18,7 +18,7 @@ using Point = Windows.Foundation.Point;
 
 namespace Telegram.Controls
 {
-    public class CustomEmojiIcon : AnimatedImage
+    public partial class CustomEmojiIcon : AnimatedImage
     {
         public CustomEmojiIcon()
         {
@@ -86,7 +86,7 @@ namespace Telegram.Controls
         }
     }
 
-    public class CustomEmojiContainer : Grid
+    public partial class CustomEmojiContainer : Grid
     {
         private readonly RichTextBlock _parent;
         private readonly CustomEmojiIcon _child;

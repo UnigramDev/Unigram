@@ -16,7 +16,7 @@ using Telegram.Native.Composition;
 
 namespace Telegram.Controls
 {
-    public class PremiumProgressBar : RangeBase
+    public partial class PremiumProgressBar : RangeBase
     {
         private AnimatedTextBlock ValueText;
         private Grid ValueRoot;

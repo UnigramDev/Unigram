@@ -11,7 +11,7 @@ using Telegram.ViewModels.Drawers;
 
 namespace Telegram.Streams
 {
-    public class DelayedFileSource : LocalFileSource
+    public partial class DelayedFileSource : LocalFileSource
     {
         private readonly IClientService _clientService;
 

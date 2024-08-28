@@ -7,7 +7,7 @@ namespace LibVLCSharp.Shared
     /// <summary>
     /// The renderer discoverer can be used to find and use a Chromecast or other distant renderers.
     /// </summary>
-    public class RendererDiscoverer : Internal
+    public partial class RendererDiscoverer : Internal
     {
         RendererDiscovererEventManager _eventManager;
         const string Bonjour = "Bonjour_renderer";
@@ -117,7 +117,7 @@ namespace LibVLCSharp.Shared
     /// <summary>
     /// A renderer item represents a device that libvlc can use to render media.
     /// </summary>
-    public class RendererItem : Internal
+    public partial class RendererItem : Internal
     {
         const int VideoRenderer = 0x0002;
         const int AudioRenderer = 0x0001;

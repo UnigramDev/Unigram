@@ -71,7 +71,7 @@ namespace Telegram.Assets.Icons
     // |________________|______________|_______|_________________|
     // | #000000        | Foreground   | Color | #FF000000 Black |
     // -----------------------------------------------------------
-    public sealed class MuteUnmute
+    public sealed partial class MuteUnmute
         : Microsoft.UI.Xaml.Controls.IAnimatedVisualSource
         , Microsoft.UI.Xaml.Controls.IAnimatedVisualSource2
     {
@@ -163,7 +163,7 @@ namespace Telegram.Assets.Icons
         /// Returns a map from marker names to corresponding progress values.
         /// </summary>
         public IReadOnlyDictionary<string, double> Markers =>
-            new Dictionary<string, double>
+            new DictionaryStringDouble
             {
                 { "NormalToChecked_Start", 0.0 },
                 { "NormalToChecked_End", 0.5 },
@@ -200,7 +200,7 @@ namespace Telegram.Assets.Icons
         {
         }
 
-        sealed class MuteUnmute_AnimatedVisual_UAPv11 : Microsoft.UI.Xaml.Controls.IAnimatedVisual
+        sealed partial class MuteUnmute_AnimatedVisual_UAPv11 : Microsoft.UI.Xaml.Controls.IAnimatedVisual
         {
             const long c_durationTicks = 13333333;
             readonly Compositor _c;

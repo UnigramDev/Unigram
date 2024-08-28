@@ -14,7 +14,7 @@ using Telegram.Td.Api;
 
 namespace Telegram.ViewModels
 {
-    public class ChatJoinRequestsViewModel : ViewModelBase, IIncrementalCollectionOwner
+    public partial class ChatJoinRequestsViewModel : ViewModelBase, IIncrementalCollectionOwner
     {
         private readonly Chat _chat;
         private readonly string _inviteLink;

@@ -9,7 +9,7 @@ using Windows.System;
 
 namespace Telegram.Services.Keyboard
 {
-    public class InputKeyDownEventArgs : HandledEventArgs
+    public partial class InputKeyDownEventArgs : HandledEventArgs
     {
         public bool AltKey { get; set; }
         public bool ControlKey { get; set; }

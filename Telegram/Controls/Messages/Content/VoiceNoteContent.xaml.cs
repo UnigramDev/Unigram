@@ -24,7 +24,7 @@ using Windows.UI;
 namespace Telegram.Controls.Messages.Content
 {
     // TODO: turn the whole control into a Button
-    public sealed class VoiceNoteContent : ControlEx, IContentWithFile
+    public sealed partial class VoiceNoteContent : ControlEx, IContentWithFile
     {
         private MessageViewModel _message;
         public MessageViewModel Message => _message;

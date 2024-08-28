@@ -11,7 +11,7 @@ using System.Text.RegularExpressions;
 
 namespace Telegram.Common
 {
-    public class PhoneNumber
+    public partial class PhoneNumber
     {
         public static string Format(string number)
         {

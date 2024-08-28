@@ -3,7 +3,7 @@ using Microsoft.UI.Xaml.Controls;
 
 namespace Telegram.Controls
 {
-    public class MenuFlyoutReadDateItem : MenuFlyoutItem
+    public partial class MenuFlyoutReadDateItem : MenuFlyoutItem
     {
         public MenuFlyoutReadDateItem()
         {

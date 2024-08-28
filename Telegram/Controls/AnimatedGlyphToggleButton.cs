@@ -16,7 +16,7 @@ using Telegram.Common;
 
 namespace Telegram.Controls
 {
-    public class AnimatedGlyphToggleButton : ToggleButton
+    public partial class AnimatedGlyphToggleButton : ToggleButton
     {
         private FrameworkElement _label1;
         private FrameworkElement _label2;
@@ -226,7 +226,7 @@ namespace Telegram.Controls
         }
     }
 
-    public class AnimatedGlyphToggleButtonAutomationPeer : ToggleButtonAutomationPeer
+    public partial class AnimatedGlyphToggleButtonAutomationPeer : ToggleButtonAutomationPeer
     {
         private readonly AnimatedGlyphToggleButton _owner;
 

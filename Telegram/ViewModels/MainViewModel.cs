@@ -30,7 +30,7 @@ using Telegram.Views.Settings.Privacy;
 
 namespace Telegram.ViewModels
 {
-    public class MainViewModel : MultiViewModelBase, IDisposable
+    public partial class MainViewModel : MultiViewModelBase, IDisposable
     {
         private readonly IContactsService _contactsService;
         private readonly IPasscodeService _passcodeService;
@@ -647,7 +647,7 @@ namespace Telegram.ViewModels
         }
     }
 
-    public class ChatFolderViewModel : BindableBase
+    public partial class ChatFolderViewModel : BindableBase
     {
         public static ChatFolderViewModel Main => new(new ChatListMain())
         {
@@ -819,7 +819,7 @@ namespace Telegram.ViewModels
         Setup
     }
 
-    public class ChatFolderCollection : ObservableCollection<ChatFolderViewModel>, IKeyIndexMapping
+    public partial class ChatFolderCollection : ObservableCollection<ChatFolderViewModel>, IKeyIndexMapping
     {
         public ChatFolderCollection()
         {

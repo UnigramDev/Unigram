@@ -18,7 +18,7 @@ using Telegram.Views.Popups;
 
 namespace Telegram.Controls.Chats
 {
-    public class ChatThemeChangedEventArgs : EventArgs
+    public partial class ChatThemeChangedEventArgs : EventArgs
     {
         public ChatTheme Theme { get; }
 
@@ -28,7 +28,7 @@ namespace Telegram.Controls.Chats
         }
     }
 
-    public class ChatThemeSelectedEventArgs : EventArgs
+    public partial class ChatThemeSelectedEventArgs : EventArgs
     {
         public bool Applied { get; }
 

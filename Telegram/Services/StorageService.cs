@@ -18,7 +18,7 @@ using SAP = Windows.Storage.AccessCache.StorageApplicationPermissions;
 
 namespace Telegram.Services
 {
-    public class DownloadFolder
+    public partial class DownloadFolder
     {
         public string DisplayPath { get; }
 
@@ -68,7 +68,7 @@ namespace Telegram.Services
         Task<DownloadFolder> SetDownloadFolderAsync(StorageFolder folder);
     }
 
-    public class StorageService : IStorageService
+    public partial class StorageService : IStorageService
     {
         private readonly IClientService _clientService;
 

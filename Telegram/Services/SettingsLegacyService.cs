@@ -26,7 +26,7 @@ namespace Telegram.Services
     }
 
     // https://github.com/Windows-XAML/Template10/wiki/Docs-%7C-SettingsService
-    public class SettingsLegacyService : ISettingsLegacyService
+    public partial class SettingsLegacyService : ISettingsLegacyService
     {
         /// <summary>
         /// Creates an <c>ISettingsService</c> object targeting the requested (optional) <paramref name="folderName"/>

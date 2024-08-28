@@ -5,7 +5,7 @@ namespace LibVLCSharp.Shared
     /// <summary>
     /// Internal event used by LibVLCSharp.
     /// </summary>
-    public class MediaPlayerChangingEventArgs : EventArgs
+    public partial class MediaPlayerChangingEventArgs : EventArgs
     {
         /// <summary>
         /// MediaPlayerChangingEventArgs constructor, used internally by LibVLCSharp

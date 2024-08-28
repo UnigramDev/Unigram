@@ -14,7 +14,7 @@ using Telegram.Charts.DataView;
 
 namespace Telegram.Charts
 {
-    public class DoubleLinearChartView : BaseChartView<DoubleLinearChartData, LineViewData>
+    public partial class DoubleLinearChartView : BaseChartView<DoubleLinearChartData, LineViewData>
     {
         protected bool drawSteps = true;
 

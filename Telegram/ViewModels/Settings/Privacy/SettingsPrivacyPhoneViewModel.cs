@@ -14,7 +14,7 @@ using Telegram.Td.Api;
 
 namespace Telegram.ViewModels.Settings.Privacy
 {
-    public class SettingsPrivacyPhoneViewModel : MultiViewModelBase
+    public partial class SettingsPrivacyPhoneViewModel : MultiViewModelBase
     {
         private readonly SettingsPrivacyShowPhoneViewModel _showPhone;
         private readonly SettingsPrivacyAllowFindingByPhoneNumberViewModel _allowFindingByPhoneNumber;

@@ -6,7 +6,7 @@
 //
 namespace Telegram.Td.Api
 {
-    public class UpdateChatSwitchInlineQuery
+    public partial class UpdateChatSwitchInlineQuery
     {
         public long ChatId { get; set; }
 

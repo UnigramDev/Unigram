@@ -8,7 +8,7 @@ using System;
 
 namespace Telegram.Td.Api
 {
-    public class MessageHeaderDate : MessageContent
+    public partial class MessageHeaderDate : MessageContent
     {
         public NativeObject ToUnmanaged()
         {

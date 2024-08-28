@@ -15,7 +15,7 @@ namespace Telegram.Controls.Chats
     /// <summary>
     /// This button is intended to be placed over the BubbleTextBox
     /// </summary>
-    public class ChatBottomButton : Button
+    public partial class ChatBottomButton : Button
     {
         private ContentPresenter _label1;
         private ContentPresenter _label2;

@@ -11,7 +11,7 @@ using Telegram.Common;
 
 namespace Telegram.Services.Settings
 {
-    public class EmojiSettings : SettingsServiceBase
+    public partial class EmojiSettings : SettingsServiceBase
     {
         private readonly string[] _modifiers = new string[]
         {

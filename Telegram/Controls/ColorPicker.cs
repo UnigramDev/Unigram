@@ -20,7 +20,7 @@ namespace Telegram.Controls
     [TemplatePart(Name = "Spectrum", Type = typeof(Border))]
     [TemplatePart(Name = "SpectrumThumb", Type = typeof(UIElement))]
     [TemplatePart(Name = "ValueSlider", Type = typeof(Slider))]
-    public class ColorPicker : Control
+    public partial class ColorPicker : Control
     {
         private Border Spectrum;
         private UIElement SpectrumThumb;
@@ -207,7 +207,7 @@ namespace Telegram.Controls
 
     }
 
-    public sealed class ColorChangedEventArgs : EventArgs
+    public sealed partial class ColorChangedEventArgs : EventArgs
     {
         public ColorChangedEventArgs(Color newColor, Color oldColor)
         {

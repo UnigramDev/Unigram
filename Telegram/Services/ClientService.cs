@@ -2934,14 +2934,14 @@ namespace Telegram.Services
         private IList<int> _quickReplyShortcutIds;
     }
 
-    public class QuickReplyShortcutInfo
+    public partial class QuickReplyShortcutInfo
     {
         public QuickReplyShortcut Shortcut { get; set; }
 
         public IList<QuickReplyMessage> Messages { get; set; }
     }
 
-    public class ChatListUnreadCount
+    public partial class ChatListUnreadCount
     {
         public ChatList ChatList { get; set; }
 
@@ -2949,7 +2949,7 @@ namespace Telegram.Services
         public UpdateUnreadMessageCount UnreadMessageCount { get; set; }
     }
 
-    public class MessageSenderEqualityComparer : IEqualityComparer<MessageSender>
+    public partial class MessageSenderEqualityComparer : IEqualityComparer<MessageSender>
     {
         public bool Equals(MessageSender x, MessageSender y)
         {

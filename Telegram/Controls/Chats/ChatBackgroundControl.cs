@@ -23,7 +23,7 @@ using WinRT;
 
 namespace Telegram.Controls.Chats
 {
-    public class ChatBackgroundControl : GridEx
+    public partial class ChatBackgroundControl : GridEx
     {
         private IClientService _clientService;
         private IEventAggregator _aggregator;
@@ -237,7 +237,7 @@ namespace Telegram.Controls.Chats
         }
     }
 
-    public class ChatBackgroundPreview : Grid
+    public partial class ChatBackgroundPreview : Grid
     {
         private readonly ChatBackgroundFreeform _background = new(false);
 
@@ -275,7 +275,7 @@ namespace Telegram.Controls.Chats
         }
     }
 
-    public class ChatBackgroundFreeform
+    public partial class ChatBackgroundFreeform
     {
         private static readonly Color[] _colors = new Color[]
         {

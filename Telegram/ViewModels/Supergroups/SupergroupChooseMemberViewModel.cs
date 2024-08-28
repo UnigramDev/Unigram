@@ -14,7 +14,7 @@ using Telegram.Views.Supergroups.Popups;
 
 namespace Telegram.ViewModels.Supergroups
 {
-    public class SupergroupChooseMemberViewModel : SupergroupMembersViewModelBase
+    public partial class SupergroupChooseMemberViewModel : SupergroupMembersViewModelBase
     {
         public SupergroupChooseMemberViewModel(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator)
             : base(clientService, settingsService, aggregator, new SupergroupMembersFilterRecent(), query => new SupergroupMembersFilterSearch(query))

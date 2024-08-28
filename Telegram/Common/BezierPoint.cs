@@ -8,7 +8,7 @@ using System;
 
 namespace Telegram.Common
 {
-    public class BezierPoint
+    public partial class BezierPoint
     {
         private static float A(float a1, float a2)
         {

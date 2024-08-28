@@ -15,7 +15,7 @@ using Windows.Foundation;
 
 namespace Telegram.Collections
 {
-    public class SearchMembersAndUsersCollection : ObservableCollection<KeyedList<string, object>>, ISupportIncrementalLoading
+    public partial class SearchMembersAndUsersCollection : ObservableCollection<KeyedList<string, object>>, ISupportIncrementalLoading
     {
         private readonly IClientService _clientService;
         private readonly long _chatId;

@@ -7,10 +7,13 @@
 using System;
 using System.Collections.Generic;
 using Telegram.Common;
+using WinRT;
 
 namespace Telegram.Collections
 {
-    public class SortedObservableCollection<T> : MvxObservableCollection<T>
+    [WinRTRuntimeClassName("Windows.Foundation.Collections.IVector`1")]
+    [WinRTExposedType(typeof(MvxObservableCollectionWinRTTypeDetails))]
+    public partial class SortedObservableCollection<T> : MvxObservableCollection<T>
     {
         private readonly IComparer<T> _comparer;
 

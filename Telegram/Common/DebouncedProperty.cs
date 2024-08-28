@@ -10,7 +10,7 @@ using System.Threading;
 
 namespace Telegram.Common
 {
-    public class DebouncedProperty<T>
+    public partial class DebouncedProperty<T>
     {
         private readonly DispatcherTimer _timer;
         private readonly Timer _backgroundTimer;

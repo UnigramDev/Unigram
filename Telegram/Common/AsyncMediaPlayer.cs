@@ -17,7 +17,7 @@ using Windows.Storage;
 
 namespace Telegram.Common
 {
-    public class AsyncMediaPlayer
+    public partial class AsyncMediaPlayer
     {
         private readonly DispatcherQueue _dispatcherQueue;
 

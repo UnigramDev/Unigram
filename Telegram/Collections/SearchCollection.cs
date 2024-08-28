@@ -14,10 +14,13 @@ using System.Threading;
 using System.Threading.Tasks;
 using Telegram.Common;
 using Windows.Foundation;
+using WinRT;
 
 namespace Telegram.Collections
 {
-    public class SearchCollection<T, TSource> : DiffObservableCollection<T>, ISupportIncrementalLoading where TSource : IEnumerable<T>
+    [WinRTRuntimeClassName("Windows.Foundation.Collections.IVector`1")]
+    [WinRTExposedType(typeof(MvxObservableCollectionWinRTTypeDetails))]
+    public partial class SearchCollection<T, TSource> : DiffObservableCollection<T>, ISupportIncrementalLoading where TSource : IEnumerable<T>
     {
         private readonly Func<object, string, TSource> _factory;
         private readonly object _sender;

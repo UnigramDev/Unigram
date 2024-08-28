@@ -13,7 +13,7 @@ using Windows.UI.ViewManagement;
 
 namespace Telegram.Services
 {
-    public class ThemeAccentInfo : ThemeInfoBase
+    public partial class ThemeAccentInfo : ThemeInfoBase
     {
         protected ThemeAccentInfo(TelegramThemeType type, Color accent, Dictionary<string, Color> values, Dictionary<AccentShade, Color> shades)
         {

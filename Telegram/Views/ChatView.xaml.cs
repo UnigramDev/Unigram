@@ -5804,7 +5804,7 @@ namespace Telegram.Views
         Overlay
     }
 
-    public class ChatHeaderButton : Button
+    public partial class ChatHeaderButton : Button
     {
         protected override AutomationPeer OnCreateAutomationPeer()
         {
@@ -5812,7 +5812,7 @@ namespace Telegram.Views
         }
     }
 
-    public class ChatHeaderButtonAutomationPeer : ButtonAutomationPeer
+    public partial class ChatHeaderButtonAutomationPeer : ButtonAutomationPeer
     {
         private readonly ChatHeaderButton _owner;
 

@@ -69,7 +69,7 @@ namespace Telegram.Assets.Icons
     // |________________|______________|_______|_________________|
     // | #FFFFFF        | Color_000000 | Color | #FFFFFFFF White |
     // -----------------------------------------------------------
-    public sealed class Fragment
+    public sealed partial class Fragment
         : Microsoft.UI.Xaml.Controls.IAnimatedVisualSource
         , Microsoft.UI.Xaml.Controls.IAnimatedVisualSource2
     {
@@ -172,7 +172,7 @@ namespace Telegram.Assets.Icons
         /// Returns a map from marker names to corresponding progress values.
         /// </summary>
         public IReadOnlyDictionary<string, double> Markers =>
-            new Dictionary<string, double>
+            new DictionaryStringDouble
             {
             };
 
@@ -205,7 +205,7 @@ namespace Telegram.Assets.Icons
         {
         }
 
-        sealed class Icon_1_AnimatedVisual_UAPv11 : Microsoft.UI.Xaml.Controls.IAnimatedVisual2
+        sealed partial class Icon_1_AnimatedVisual_UAPv11 : Microsoft.UI.Xaml.Controls.IAnimatedVisual2
         {
             const long c_durationTicks = 9833333;
             readonly Compositor _c;
@@ -1375,7 +1375,7 @@ namespace Telegram.Assets.Icons
             }
         }
 
-        sealed class Icon_1_AnimatedVisual_UAPv7 : Microsoft.UI.Xaml.Controls.IAnimatedVisual2
+        sealed partial class Icon_1_AnimatedVisual_UAPv7 : Microsoft.UI.Xaml.Controls.IAnimatedVisual2
         {
             const long c_durationTicks = 9833333;
             readonly Compositor _c;

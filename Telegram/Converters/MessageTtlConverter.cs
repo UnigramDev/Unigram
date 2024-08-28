@@ -10,7 +10,7 @@ using Telegram.Common;
 
 namespace Telegram.Converters
 {
-    public class MessageTtlConverter : IValueConverter
+    public partial class MessageTtlConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, string language)
         {

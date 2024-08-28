@@ -9,7 +9,7 @@ using Telegram.Td.Api;
 
 namespace Telegram.Td
 {
-    class TdHandler : ClientResultHandler
+    public partial class TdHandler : ClientResultHandler
     {
         private readonly Action<BaseObject> _callback;
 

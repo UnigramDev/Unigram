@@ -576,7 +576,7 @@ namespace Telegram.Views.Popups
         }
     }
 
-    public sealed class SmoothPathBuilder
+    public sealed partial class SmoothPathBuilder
     {
         private List<Vector2> _controlPoints;
         private readonly List<Vector2> _path;

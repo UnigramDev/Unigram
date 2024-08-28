@@ -25,7 +25,7 @@ namespace Telegram.Common
         On
     }
 
-    public class PowerSavingPolicy
+    public partial class PowerSavingPolicy
     {
         private static bool m_isDisabledByPolicy;
         private static bool m_isPowerSavingMode;

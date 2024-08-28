@@ -6,7 +6,7 @@
 //
 namespace Telegram.Services.Updates
 {
-    public class UpdateAppVersion
+    public partial class UpdateAppVersion
     {
         public CloudUpdate Update { get; set; }
 

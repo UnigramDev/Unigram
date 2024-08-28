@@ -9,7 +9,7 @@ using System.Numerics;
 
 namespace Telegram.Charts
 {
-    public class CubicBezierInterpolator //implements Interpolator
+    public partial class CubicBezierInterpolator //implements Interpolator
     {
         public static readonly CubicBezierInterpolator DEFAULT = new CubicBezierInterpolator(0.25, 0.1, 0.25, 1);
         public static readonly CubicBezierInterpolator EASE_OUT = new CubicBezierInterpolator(0, 0, .58, 1);

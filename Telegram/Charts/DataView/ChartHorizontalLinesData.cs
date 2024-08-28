@@ -12,7 +12,7 @@ using Telegram.Converters;
 
 namespace Telegram.Charts.DataView
 {
-    public class ChartHorizontalLinesData
+    public partial class ChartHorizontalLinesData
     {
 
         public int[] values;

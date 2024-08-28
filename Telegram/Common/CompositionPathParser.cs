@@ -18,7 +18,7 @@ using Windows.UI;
 
 namespace Telegram.Common
 {
-    public class CompositionPathParser
+    public partial class CompositionPathParser
     {
         public static CompositionPath Parse(string data)
         {

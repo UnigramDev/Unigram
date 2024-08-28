@@ -16,7 +16,7 @@ using Telegram.Td;
 
 namespace Telegram.Views.Popups
 {
-    public class TranslateToLanguage
+    public partial class TranslateToLanguage
     {
         public TranslateToLanguage(string id, string name, string nativeName)
         {

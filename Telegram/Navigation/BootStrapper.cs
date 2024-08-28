@@ -598,7 +598,7 @@ namespace Telegram.Navigation
         }
     }
 
-    public class BackRequestedRoutedEventArgs : HandledEventArgs
+    public partial class BackRequestedRoutedEventArgs : HandledEventArgs
     {
         public BackRequestedRoutedEventArgs(VirtualKey key = VirtualKey.None)
         {

@@ -10,7 +10,7 @@ using Windows.Globalization.NumberFormatting;
 
 namespace Telegram.Common
 {
-    public class CurrencyNumberFormatter : INumberFormatter2, INumberParser
+    public partial class CurrencyNumberFormatter : INumberFormatter2, INumberParser
     {
         private readonly CurrencyFormatter _formatter;
         private readonly string _currencySymbol;

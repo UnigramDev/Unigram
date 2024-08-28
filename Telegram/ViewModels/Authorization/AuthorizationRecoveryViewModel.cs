@@ -15,7 +15,7 @@ using Telegram.Td.Api;
 
 namespace Telegram.ViewModels.Authorization
 {
-    public class AuthorizationRecoveryViewModel : ViewModelBase
+    public partial class AuthorizationRecoveryViewModel : ViewModelBase
     {
         private AuthorizationStateWaitPassword _parameters;
 

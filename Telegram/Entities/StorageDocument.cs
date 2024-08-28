@@ -8,7 +8,7 @@ using Windows.Storage;
 
 namespace Telegram.Entities
 {
-    public class StorageDocument : StorageMedia
+    public partial class StorageDocument : StorageMedia
     {
         public StorageDocument(StorageFile file, ulong fileSize)
             : base(file, fileSize)

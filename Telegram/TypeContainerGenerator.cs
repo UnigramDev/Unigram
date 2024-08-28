@@ -30,7 +30,7 @@ using Telegram.ViewModels.Users;
 
 namespace Telegram
 {
-    public class TypeContainerGenerator
+    public partial class TypeContainerGenerator
     {
         private static List<Type> _globals;
         private static List<(Type Key, Type Value)> _singletons;
@@ -252,7 +252,7 @@ namespace Telegram
             var builder = new FormattedBuilder();
             builder.AppendLine("namespace Telegram.Views");
             builder.AppendLine("{");
-            builder.AppendLine("public class TypeLocator");
+            builder.AppendLine("public partial class TypeLocator");
             builder.AppendLine("{");
             builder.AppendLine("private readonly int _session;");
             builder.AppendLine();

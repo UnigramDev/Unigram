@@ -22,6 +22,7 @@ using Telegram.Views;
 using Telegram.Views.Popups;
 using Telegram.Views.Settings;
 using Windows.Foundation;
+using WinRT;
 
 namespace Telegram.Navigation.Services
 {
@@ -101,7 +102,8 @@ namespace Telegram.Navigation.Services
         void ClearBackStack();
     }
 
-    public class NavigationStackItem : BindableBase
+    [GeneratedBindableCustomProperty]
+    public partial class NavigationStackItem : BindableBase
     {
         public NavigationStackItem(Type sourcePageType, object parameter, string title, HostedNavigationMode mode)
         {

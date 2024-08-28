@@ -18,7 +18,7 @@ using Telegram.ViewModels.Settings;
 
 namespace Telegram.ViewModels.Folders
 {
-    public class AddFolderViewModel : ViewModelBase
+    public partial class AddFolderViewModel : ViewModelBase
     {
         public AddFolderViewModel(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator)
             : base(clientService, settingsService, aggregator)

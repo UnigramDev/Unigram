@@ -19,7 +19,7 @@ using Windows.System;
 
 namespace Telegram.Controls.Messages.Content
 {
-    public sealed class UnsupportedContent : Control, IContent
+    public sealed partial class UnsupportedContent : Control, IContent
     {
         private MessageViewModel _message;
         public MessageViewModel Message => _message;

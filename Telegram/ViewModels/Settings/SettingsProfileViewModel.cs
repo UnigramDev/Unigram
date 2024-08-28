@@ -19,7 +19,7 @@ using Telegram.Views.Settings.Popups;
 
 namespace Telegram.ViewModels.Settings
 {
-    public class SettingsProfileViewModel : ViewModelBase, IDelegable<IUserDelegate>, IHandle
+    public partial class SettingsProfileViewModel : ViewModelBase, IDelegable<IUserDelegate>, IHandle
     {
         public IUserDelegate Delegate { get; set; }
 

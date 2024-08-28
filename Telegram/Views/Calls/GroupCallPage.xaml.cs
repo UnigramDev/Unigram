@@ -2466,7 +2466,7 @@ namespace Telegram.Views.Calls
         Expanded
     }
 
-    public class ParticipantsGrid : Microsoft.UI.Xaml.Controls.Panel
+    public partial class ParticipantsGrid : Microsoft.UI.Xaml.Controls.Panel
     {
         private ParticipantsGridMode _mode = ParticipantsGridMode.Compact;
         public ParticipantsGridMode Mode

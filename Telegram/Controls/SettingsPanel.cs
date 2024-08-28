@@ -10,7 +10,7 @@ using Windows.Foundation;
 
 namespace Telegram.Controls
 {
-    public class SettingsPanel : Panel
+    public partial class SettingsPanel : Panel
     {
         public SettingsPanel()
         {

@@ -69,7 +69,7 @@ namespace Telegram.Assets.Icons
     // |________________|______________|_______|_______________|
     // | #979797        | Foreground   | Color |   #FF979797   |
     // ---------------------------------------------------------
-    public sealed class VoiceRecognition
+    public sealed partial class VoiceRecognition
         : Microsoft.UI.Xaml.Controls.IAnimatedVisualSource
         , Microsoft.UI.Xaml.Controls.IAnimatedVisualSource2
     {
@@ -161,7 +161,7 @@ namespace Telegram.Assets.Icons
         /// Returns a map from marker names to corresponding progress values.
         /// </summary>
         public IReadOnlyDictionary<string, double> Markers =>
-            new Dictionary<string, double>
+            new DictionaryStringDouble
             {
                 { "NormalToChecked_Start", 0.0 },
                 { "NormalToChecked_End", 20d / 40d },
@@ -198,7 +198,7 @@ namespace Telegram.Assets.Icons
         {
         }
 
-        sealed class VoiceRecognition_AnimatedVisual_UAPv11 : Microsoft.UI.Xaml.Controls.IAnimatedVisual
+        sealed partial class VoiceRecognition_AnimatedVisual_UAPv11 : Microsoft.UI.Xaml.Controls.IAnimatedVisual
         {
             const long c_durationTicks = 6666666;
             readonly Compositor _c;

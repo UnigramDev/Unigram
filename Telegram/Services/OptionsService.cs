@@ -732,7 +732,7 @@ namespace Telegram.Services
         long SystemProxy { get; set; }
     }
 
-    public class OptionsService : IOptionsService
+    public partial class OptionsService : IOptionsService
     {
         private readonly IClientService _clientService;
         private readonly Dictionary<string, OptionValue> _values = new Dictionary<string, OptionValue>();

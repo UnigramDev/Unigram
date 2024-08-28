@@ -27,7 +27,7 @@ namespace Telegram.Services
         IList<ShortcutList> Update(Shortcut shortcut, ShortcutCommand command);
     }
 
-    public class InvokedShortcut : Shortcut
+    public partial class InvokedShortcut : Shortcut
     {
         public IList<ShortcutCommand> Commands { get; }
 
@@ -38,7 +38,7 @@ namespace Telegram.Services
         }
     }
 
-    public class ShortcutsService : ViewModelBase, IShortcutsService
+    public partial class ShortcutsService : ViewModelBase, IShortcutsService
     {
         #region Const
 
@@ -574,7 +574,7 @@ namespace Telegram.Services
         }
     }
 
-    public sealed class ShortcutList : KeyedList<string, ShortcutInfo>
+    public sealed partial class ShortcutList : KeyedList<string, ShortcutInfo>
     {
         public ShortcutList(string key)
             : base(key)
@@ -582,7 +582,7 @@ namespace Telegram.Services
         }
     }
 
-    public sealed class ShortcutInfo : BindableBase
+    public sealed partial class ShortcutInfo : BindableBase
     {
         public ShortcutInfo(Shortcut shortcut, ShortcutCommand command)
         {
@@ -605,7 +605,7 @@ namespace Telegram.Services
         }
     }
 
-    public class Shortcut
+    public partial class Shortcut
     {
         public VirtualKeyModifiers Modifiers { get; }
         public VirtualKey Key { get; }

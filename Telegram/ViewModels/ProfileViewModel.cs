@@ -31,7 +31,7 @@ using Telegram.Views.Users;
 
 namespace Telegram.ViewModels
 {
-    public class ProfileViewModel : ProfileTabsViewModel, IDelegable<IProfileDelegate>, IHandle
+    public partial class ProfileViewModel : ProfileTabsViewModel, IDelegable<IProfileDelegate>, IHandle
     {
         public string LastSeen { get; internal set; }
 
@@ -1273,7 +1273,7 @@ namespace Telegram.ViewModels
 
     }
 
-    public class ChatMemberCollection : LegacyIncrementalCollection<ChatMember>
+    public partial class ChatMemberCollection : LegacyIncrementalCollection<ChatMember>
     {
         private readonly IClientService _clientService;
         private readonly long _chatId;
@@ -1347,7 +1347,7 @@ namespace Telegram.ViewModels
         }
     }
 
-    public class ChatMemberGroupedCollection : LegacyIncrementalCollection<object>
+    public partial class ChatMemberGroupedCollection : LegacyIncrementalCollection<object>
     {
         private readonly IClientService _clientService;
         private readonly long _chatId;
@@ -1505,7 +1505,7 @@ namespace Telegram.ViewModels
         }
     }
 
-    public class ChatMemberComparer : IComparer<ChatMember>
+    public partial class ChatMemberComparer : IComparer<ChatMember>
     {
         private readonly IClientService _clientService;
         private readonly bool _epoch;

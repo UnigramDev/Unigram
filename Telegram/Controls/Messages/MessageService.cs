@@ -28,7 +28,7 @@ using FontWeights = Microsoft.UI.Text.FontWeights;
 
 namespace Telegram.Controls.Messages
 {
-    public class MessageService : Button
+    public partial class MessageService : Button
     {
         private MessageViewModel _message;
 

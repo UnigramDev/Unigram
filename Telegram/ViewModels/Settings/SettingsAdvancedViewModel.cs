@@ -18,7 +18,7 @@ using Telegram.Td.Api;
 
 namespace Telegram.ViewModels.Settings
 {
-    public class SettingsAdvancedViewModel : ViewModelBase, IHandle
+    public partial class SettingsAdvancedViewModel : ViewModelBase, IHandle
     {
         private readonly ICloudUpdateService _cloudUpdateService;
         private CloudUpdate _update;

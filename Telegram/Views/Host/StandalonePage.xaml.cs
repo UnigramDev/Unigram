@@ -16,7 +16,7 @@ using Windows.ApplicationModel.Core;
 
 namespace Telegram.Views.Host
 {
-    public class StandaloneViewModel : ViewModelBase
+    public partial class StandaloneViewModel : ViewModelBase
     {
         public StandaloneViewModel(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator)
             : base(clientService, settingsService, aggregator)

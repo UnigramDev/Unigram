@@ -13,7 +13,7 @@ using Windows.Data.Json;
 
 namespace Telegram.Services.Stripe
 {
-    public class StripeClient : IDisposable
+    public partial class StripeClient : IDisposable
     {
         private readonly string _publishableKey;
         private HttpClient _client;

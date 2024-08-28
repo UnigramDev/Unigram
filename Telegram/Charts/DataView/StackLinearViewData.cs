@@ -8,7 +8,7 @@ using Telegram.Charts.Data;
 
 namespace Telegram.Charts.DataView
 {
-    public class StackLinearViewData : LineViewData
+    public partial class StackLinearViewData : LineViewData
     {
         public StackLinearViewData(ChartData.Line line)
             : base(line)

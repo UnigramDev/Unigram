@@ -16,7 +16,7 @@ using Telegram.ViewModels.Drawers;
 
 namespace Telegram.Controls.Drawers
 {
-    public class StickerDrawerItemClickEventArgs : EventArgs
+    public partial class StickerDrawerItemClickEventArgs : EventArgs
     {
         public StickerDrawerItemClickEventArgs(Sticker sticker, bool fromStickerSet)
         {

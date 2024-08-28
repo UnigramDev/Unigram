@@ -25,7 +25,7 @@ using Windows.UI.Text;
 
 namespace Telegram.Controls.Messages.Content
 {
-    public sealed class AlbumContent : Grid, IContentWithFile
+    public sealed partial class AlbumContent : Grid, IContentWithFile
     {
         public MessageViewModel Message => _message;
         private MessageViewModel _message;

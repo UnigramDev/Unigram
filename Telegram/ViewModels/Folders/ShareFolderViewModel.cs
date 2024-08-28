@@ -18,7 +18,7 @@ using Telegram.Views.Popups;
 
 namespace Telegram.ViewModels.Folders
 {
-    public class ShareFolderViewModel : ViewModelBase
+    public partial class ShareFolderViewModel : ViewModelBase
     {
         public ShareFolderViewModel(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator)
             : base(clientService, settingsService, aggregator)

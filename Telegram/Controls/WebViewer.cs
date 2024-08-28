@@ -9,7 +9,7 @@ using Windows.Data.Json;
 
 namespace Telegram.Controls
 {
-    public class WebViewerEventReceivedEventArgs : EventArgs
+    public partial class WebViewerEventReceivedEventArgs : EventArgs
     {
         public string EventName { get; }
 
@@ -22,7 +22,7 @@ namespace Telegram.Controls
         }
     }
 
-    public class WebViewerNavigatingEventArgs : CancelEventArgs
+    public partial class WebViewerNavigatingEventArgs : CancelEventArgs
     {
         public string Url { get; }
 
@@ -32,7 +32,7 @@ namespace Telegram.Controls
         }
     }
 
-    public class WebViewer : ContentControl
+    public partial class WebViewer : ContentControl
     {
         private WebPresenter _presenter;
         private bool _initialized;
@@ -201,7 +201,7 @@ namespace Telegram.Controls
         }
     }
 
-    /*public class EdgeWebPresenter : WebPresenter
+    /*public partial class EdgeWebPresenter : WebPresenter
     {
         private WebView View;
 
@@ -277,7 +277,7 @@ namespace Telegram.Controls
         }
     }*/
 
-    public class ChromiumWebPresenter : WebPresenter
+    public partial class ChromiumWebPresenter : WebPresenter
     {
         private WebView2 View;
 

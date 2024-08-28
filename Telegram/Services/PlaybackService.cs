@@ -32,7 +32,7 @@ namespace Telegram.Services
         List
     }
 
-    public class PlaybackPositionChangedEventArgs
+    public partial class PlaybackPositionChangedEventArgs
     {
         public TimeSpan Position { get; set; }
         public TimeSpan Duration { get; set; }
@@ -82,7 +82,7 @@ namespace Telegram.Services
         event TypedEventHandler<IPlaybackService, object> PlaylistChanged;
     }
 
-    public class PlaybackService : IPlaybackService
+    public partial class PlaybackService : IPlaybackService
     {
         private readonly ISettingsService _settingsService;
 
@@ -756,7 +756,7 @@ namespace Telegram.Services
         }
     }
 
-    public class PlaybackItem
+    public partial class PlaybackItem
     {
         public IClientService ClientService => Message.ClientService;
 

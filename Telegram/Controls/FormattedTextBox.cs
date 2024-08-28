@@ -47,7 +47,7 @@ namespace Telegram.Controls
         All = Bold | Italic | Underline | Strikethrough | Mono | Spoiler | Quote | TextUrl
     }
 
-    public class FormattedTextBox : RichEditBox
+    public partial class FormattedTextBox : RichEditBox
     {
         private readonly FormattedTextFlyout _selectionFlyout;
         private readonly MenuFlyoutSubItem _proofingFlyout;

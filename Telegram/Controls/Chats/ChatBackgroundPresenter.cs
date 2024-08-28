@@ -22,7 +22,7 @@ using Telegram.Td.Api;
 
 namespace Telegram.Controls.Chats
 {
-    public class ChatBackgroundPresenter : ControlEx
+    public partial class ChatBackgroundPresenter : ControlEx
     {
         private readonly ChatBackgroundFreeform _freeform = new();
         private readonly DispatcherTimer _freeformTimer;

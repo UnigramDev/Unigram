@@ -16,7 +16,7 @@ using Telegram.Views.Popups;
 
 namespace Telegram.ViewModels.Settings
 {
-    public class SettingsBlockedChatsViewModel : ViewModelBase, IIncrementalCollectionOwner
+    public partial class SettingsBlockedChatsViewModel : ViewModelBase, IIncrementalCollectionOwner
     {
         public SettingsBlockedChatsViewModel(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator)
             : base(clientService, settingsService, aggregator)

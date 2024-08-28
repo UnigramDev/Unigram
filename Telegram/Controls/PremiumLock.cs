@@ -8,7 +8,7 @@ using Microsoft.UI.Xaml.Controls;
 
 namespace Telegram.Controls
 {
-    public class PremiumLock : Control
+    public partial class PremiumLock : Control
     {
         public PremiumLock()
         {

@@ -19,7 +19,7 @@ using Telegram.Views.Settings;
 
 namespace Telegram.ViewModels.Settings
 {
-    public class SettingsStorageViewModel : ViewModelBase
+    public partial class SettingsStorageViewModel : ViewModelBase
     {
         public SettingsStorageViewModel(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator)
             : base(clientService, settingsService, aggregator)

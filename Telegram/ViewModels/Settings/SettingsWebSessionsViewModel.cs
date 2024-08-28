@@ -19,7 +19,7 @@ using Telegram.Td.Api;
 
 namespace Telegram.ViewModels.Settings
 {
-    public class SettingsWebSessionsViewModel : ViewModelBase
+    public partial class SettingsWebSessionsViewModel : ViewModelBase
     {
         public SettingsWebSessionsViewModel(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator)
             : base(clientService, settingsService, aggregator)
@@ -133,7 +133,7 @@ namespace Telegram.ViewModels.Settings
             }
         }
 
-        public class TLAuthorizationComparer : IComparer<ConnectedWebsite>
+        public partial class TLAuthorizationComparer : IComparer<ConnectedWebsite>
         {
             public int Compare(ConnectedWebsite x, ConnectedWebsite y)
             {

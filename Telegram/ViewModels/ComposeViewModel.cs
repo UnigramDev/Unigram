@@ -669,7 +669,7 @@ namespace Telegram.ViewModels
             await SendContactAsync(contact, options);
 
 #if !DEBUG
-            Microsoft.AppCenter.Analytics.Analytics.TrackEvent("SendContact");
+            //Microsoft.AppCenter.Analytics.Analytics.TrackEvent("SendContact");
 #endif
         }
 
@@ -777,7 +777,7 @@ namespace Telegram.ViewModels
                 await SendMessageAsync(reply, input, options);
 
 #if !DEBUG
-                Microsoft.AppCenter.Analytics.Analytics.TrackEvent("SendLocation");
+                //Microsoft.AppCenter.Analytics.Analytics.TrackEvent("SendLocation");
 #endif
             }
         }

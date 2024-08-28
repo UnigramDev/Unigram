@@ -11,7 +11,7 @@ using Microsoft.UI.Xaml.Media;
 
 namespace Telegram.Controls
 {
-    public class GlyphToggleButton : ToggleButton
+    public partial class GlyphToggleButton : ToggleButton
     {
         public GlyphToggleButton()
         {

@@ -72,7 +72,7 @@ namespace Telegram.Assets.Icons
     // | #000000        | Color_000000 | Color | #FF000000 Black |
     // | #E877FF        | Color_E877FF | Color |    #FFE877FF    |
     // -----------------------------------------------------------
-    public sealed class Double
+    public sealed partial class Double
         : Microsoft.UI.Xaml.Controls.IAnimatedVisualSource
         , Microsoft.UI.Xaml.Controls.IAnimatedVisualSource2
     {
@@ -193,7 +193,7 @@ namespace Telegram.Assets.Icons
         /// Returns a map from marker names to corresponding progress values.
         /// </summary>
         public IReadOnlyDictionary<string, double> Markers =>
-            new Dictionary<string, double>
+            new DictionaryStringDouble
             {
                 { "NormalToPointerOver_Start", 0.0 },
                 { "NormalToPointerOver_End", 1 },
@@ -232,7 +232,7 @@ namespace Telegram.Assets.Icons
         {
         }
 
-        sealed class Double_AnimatedVisual_UAPv11 : Microsoft.UI.Xaml.Controls.IAnimatedVisual
+        sealed partial class Double_AnimatedVisual_UAPv11 : Microsoft.UI.Xaml.Controls.IAnimatedVisual
         {
             const long c_durationTicks = 20000000;
             readonly Compositor _c;
@@ -1240,7 +1240,7 @@ namespace Telegram.Assets.Icons
             }
         }
 
-        sealed class Double_AnimatedVisual_UAPv8 : Microsoft.UI.Xaml.Controls.IAnimatedVisual
+        sealed partial class Double_AnimatedVisual_UAPv8 : Microsoft.UI.Xaml.Controls.IAnimatedVisual
         {
             const long c_durationTicks = 20000000;
             readonly Compositor _c;

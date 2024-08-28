@@ -9,7 +9,7 @@ using Telegram.ViewModels;
 
 namespace Telegram.Collections.Handlers
 {
-    public class SearchResultDiffHandler : IDiffHandler<SearchResult>
+    public partial class SearchResultDiffHandler : IDiffHandler<SearchResult>
     {
         public bool CompareItems(SearchResult oldItem, SearchResult newItem)
         {

@@ -20,7 +20,7 @@ using Telegram.Navigation;
 
 namespace Telegram.Common
 {
-    public class VisualUtilities
+    public partial class VisualUtilities
     {
         public static SpriteVisual DropShadow(UIElement element, float radius = 20, float opacity = 0.25f, UIElement target = null)
         {

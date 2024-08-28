@@ -60,7 +60,7 @@ namespace Telegram.Assets.Icons
     // Frame rate:  60 fps
     // Frame count: 30
     // Duration:    500.0 mS
-    public sealed class Business
+    public sealed partial class Business
         : Microsoft.UI.Xaml.Controls.IAnimatedVisualSource
         , Microsoft.UI.Xaml.Controls.IAnimatedVisualSource2
     {
@@ -148,7 +148,7 @@ namespace Telegram.Assets.Icons
         /// Returns a map from marker names to corresponding progress values.
         /// </summary>
         public IReadOnlyDictionary<string, double> Markers =>
-            new Dictionary<string, double>
+            new DictionaryStringDouble
             {
                 { "NormalToPointerOver_Start", 0.0 },
                 { "NormalToPointerOver_End", 1 },
@@ -170,7 +170,7 @@ namespace Telegram.Assets.Icons
         {
         }
 
-        sealed class Business_AnimatedVisual_UAPv15 : Microsoft.UI.Xaml.Controls.IAnimatedVisual2
+        sealed partial class Business_AnimatedVisual_UAPv15 : Microsoft.UI.Xaml.Controls.IAnimatedVisual2
         {
             const long c_durationTicks = 5000000;
             readonly Compositor _c;
@@ -1052,7 +1052,7 @@ namespace Telegram.Assets.Icons
             }
         }
 
-        sealed class Business_AnimatedVisual_UAPv11 : Microsoft.UI.Xaml.Controls.IAnimatedVisual2
+        sealed partial class Business_AnimatedVisual_UAPv11 : Microsoft.UI.Xaml.Controls.IAnimatedVisual2
         {
             const long c_durationTicks = 5000000;
             readonly Compositor _c;
@@ -1939,7 +1939,7 @@ namespace Telegram.Assets.Icons
             }
         }
 
-        sealed class Business_AnimatedVisual_UAPv8 : Microsoft.UI.Xaml.Controls.IAnimatedVisual2
+        sealed partial class Business_AnimatedVisual_UAPv8 : Microsoft.UI.Xaml.Controls.IAnimatedVisual2
         {
             const long c_durationTicks = 5000000;
             readonly Compositor _c;

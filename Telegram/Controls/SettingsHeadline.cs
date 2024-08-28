@@ -12,7 +12,7 @@ using Telegram.Streams;
 
 namespace Telegram.Controls
 {
-    public class SettingsHeadline : Control
+    public partial class SettingsHeadline : Control
     {
         public SettingsHeadline()
         {
@@ -108,7 +108,7 @@ namespace Telegram.Controls
         }
     }
 
-    public class SettingsHeadlineAutomationPeer : FrameworkElementAutomationPeer
+    public partial class SettingsHeadlineAutomationPeer : FrameworkElementAutomationPeer
     {
         private readonly SettingsHeadline _owner;
 

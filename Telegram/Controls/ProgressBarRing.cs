@@ -16,7 +16,7 @@ using Telegram.Navigation;
 
 namespace Telegram.Controls
 {
-    public class ProgressBarRing : ProgressBar
+    public partial class ProgressBarRing : ProgressBar
     {
         private readonly FrameworkElementState _manager;
 

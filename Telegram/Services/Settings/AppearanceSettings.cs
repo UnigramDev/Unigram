@@ -84,14 +84,14 @@ namespace Telegram.Services.Settings
         }
     }
 
-    public class InstalledEmojiSet
+    public partial class InstalledEmojiSet
     {
         public string Id { get; set; }
         public string Title { get; set; }
         public int Version { get; set; }
     }
 
-    public class AppearanceSettings : SettingsServiceBase
+    public partial class AppearanceSettings : SettingsServiceBase
     {
         private readonly UISettings _uiSettings;
 
@@ -589,7 +589,7 @@ namespace Telegram.Services.Settings
         }
     }
 
-    public class ThemeTypeSettingsBase : SettingsServiceBase
+    public partial class ThemeTypeSettingsBase : SettingsServiceBase
     {
         public ThemeTypeSettingsBase(ApplicationDataContainer container)
             : base(container)
@@ -608,7 +608,7 @@ namespace Telegram.Services.Settings
         }
     }
 
-    public class ThemeSettingsBase : SettingsServiceBase
+    public partial class ThemeSettingsBase : SettingsServiceBase
     {
         private readonly TelegramTheme _prefix;
 

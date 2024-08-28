@@ -9,7 +9,7 @@ using Microsoft.UI.Xaml.Controls;
 
 namespace Telegram.Controls
 {
-    public class PrefixTextBox : TextBox
+    public partial class PrefixTextBox : TextBox
     {
         private string _value;
 

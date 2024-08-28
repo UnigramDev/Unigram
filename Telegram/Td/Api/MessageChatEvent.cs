@@ -8,7 +8,7 @@ using System;
 
 namespace Telegram.Td.Api
 {
-    public class MessageChatEvent : MessageContent
+    public partial class MessageChatEvent : MessageContent
     {
         /// <summary>
         /// Action performed by the user.

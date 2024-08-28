@@ -22,7 +22,7 @@ using Point = Windows.Foundation.Point;
 namespace Telegram.Controls.Messages
 {
     // Simplified version of ReactionButton
-    public class SavedMessagesTagButton : RadioButton
+    public partial class SavedMessagesTagButton : RadioButton
     {
         private Grid LayoutRoot;
         private Image Presenter;
@@ -278,7 +278,7 @@ namespace Telegram.Controls.Messages
         }
     }
 
-    public class ReactionAsTagPath : SavedMessagesTagPath
+    public partial class ReactionAsTagPath : SavedMessagesTagPath
     {
         public ReactionAsTagPath()
             : base(true)
@@ -287,7 +287,7 @@ namespace Telegram.Controls.Messages
         }
     }
 
-    public class SavedMessagesTagPath : Path
+    public partial class SavedMessagesTagPath : Path
     {
         private readonly PathFigure _figure;
         private readonly EllipseGeometry _ellipse;
@@ -379,7 +379,7 @@ namespace Telegram.Controls.Messages
         }
     }
 
-    public class SavedMessagesTagButtonAutomationPeer : RadioButtonAutomationPeer
+    public partial class SavedMessagesTagButtonAutomationPeer : RadioButtonAutomationPeer
     {
         private readonly SavedMessagesTagButton _owner;
 

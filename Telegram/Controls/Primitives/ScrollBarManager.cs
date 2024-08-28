@@ -10,7 +10,7 @@ using Microsoft.UI.Xaml.Media;
 
 namespace Telegram.Controls.Primitives
 {
-    public class ScrollBarManager : VisualStateManager
+    public partial class ScrollBarManager : VisualStateManager
     {
         protected override bool GoToStateCore(Control control, FrameworkElement templateRoot, string stateName, VisualStateGroup group, VisualState state, bool useTransitions)
         {

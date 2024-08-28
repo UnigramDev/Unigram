@@ -14,7 +14,7 @@ using Telegram.ViewModels.Gallery;
 
 namespace Telegram.ViewModels.Users
 {
-    public class UserPhotosViewModel : GalleryViewModelBase
+    public partial class UserPhotosViewModel : GalleryViewModelBase
     {
         private readonly DisposableMutex _loadMoreLock = new DisposableMutex();
         private readonly User _user;

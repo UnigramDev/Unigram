@@ -11,7 +11,7 @@ using Windows.Globalization;
 
 namespace Telegram.Entities
 {
-    public class Country
+    public partial class Country
     {
         public Country(string code, string phoneCode, string name)
         {
@@ -314,7 +314,7 @@ namespace Telegram.Entities
         #endregion
     }
 
-    public class CountryDiffHandler : IDiffHandler<Country>
+    public partial class CountryDiffHandler : IDiffHandler<Country>
     {
         public bool CompareItems(Country oldItem, Country newItem)
         {

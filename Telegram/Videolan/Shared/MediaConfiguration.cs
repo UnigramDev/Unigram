@@ -7,7 +7,7 @@ namespace LibVLCSharp.Shared
     /// Configuration helper designed to be used for advanced libvlc configuration
     /// <para/> More info at https://wiki.videolan.org/VLC_command-line_help/
     /// </summary>
-    public class MediaConfiguration
+    public partial class MediaConfiguration
     {
         readonly Dictionary<string, string> _options = new Dictionary<string, string>
         {

@@ -17,7 +17,7 @@ namespace Telegram.Controls
     public delegate string TextValueProvider(double newValue);
     public delegate string IconValueProvider(double newValue);
 
-    public class MenuFlyoutSlider : MenuFlyoutItem
+    public partial class MenuFlyoutSlider : MenuFlyoutItem
     {
         private MenuFlyoutSliderPresenter Presenter;
 
@@ -174,7 +174,7 @@ namespace Telegram.Controls
         #endregion
     }
 
-    public class MenuFlyoutSliderStateManager : VisualStateManager
+    public partial class MenuFlyoutSliderStateManager : VisualStateManager
     {
         protected override bool GoToStateCore(Control control, FrameworkElement templateRoot, string stateName, VisualStateGroup group, VisualState state, bool useTransitions)
         {
@@ -187,7 +187,7 @@ namespace Telegram.Controls
         }
     }
 
-    public class MenuFlyoutSliderPresenter : Slider
+    public partial class MenuFlyoutSliderPresenter : Slider
     {
         private Grid HorizontalDecreaseRect;
 

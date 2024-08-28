@@ -25,7 +25,7 @@ using Windows.Globalization;
 
 namespace Telegram.ViewModels.Settings
 {
-    public class SettingsLanguageViewModel : ViewModelBase
+    public partial class SettingsLanguageViewModel : ViewModelBase
     {
         private readonly ILocaleService _localeService;
         private readonly List<LanguagePackInfo> _officialLanguages = new();

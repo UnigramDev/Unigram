@@ -18,7 +18,7 @@ using Telegram.Td.Api;
 
 namespace Telegram.ViewModels.Settings
 {
-    public class SettingsUsernameViewModel : ViewModelBase, IHandle
+    public partial class SettingsUsernameViewModel : ViewModelBase, IHandle
     {
         private long _userId;
 
@@ -417,7 +417,7 @@ namespace Telegram.ViewModels.Settings
         }
     }
 
-    public class UsernameInfo : BindableBase
+    public partial class UsernameInfo : BindableBase
     {
         private readonly IClientService _clientService;
         private readonly bool _tme;
@@ -485,7 +485,7 @@ namespace Telegram.ViewModels.Settings
         public bool IsEditable { get; }
     }
 
-    public class UsernameInfoDiffHandler : IDiffHandler<UsernameInfo>
+    public partial class UsernameInfoDiffHandler : IDiffHandler<UsernameInfo>
     {
         public bool CompareItems(UsernameInfo oldItem, UsernameInfo newItem)
         {

@@ -13,7 +13,7 @@ using Telegram.ViewModels.Delegates;
 
 namespace Telegram.ViewModels
 {
-    public class MessageViewModel : MessageWithOwner
+    public partial class MessageViewModel : MessageWithOwner
     {
         private readonly IPlaybackService _playbackService;
 
@@ -343,7 +343,7 @@ namespace Telegram.ViewModels
         }
     }
 
-    public class MessageWithOwner
+    public partial class MessageWithOwner
     {
         protected readonly IClientService _clientService;
         protected Message _message;

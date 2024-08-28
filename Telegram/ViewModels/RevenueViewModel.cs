@@ -20,7 +20,7 @@ using Telegram.Views.Chats;
 
 namespace Telegram.ViewModels
 {
-    public class RevenueViewModel : MultiViewModelBase, IHandle
+    public partial class RevenueViewModel : MultiViewModelBase, IHandle
     {
         protected readonly ChatStatisticsViewModel _statisticsViewModel;
         protected readonly ChatBoostsViewModel _boostsViewModel;

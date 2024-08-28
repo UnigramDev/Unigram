@@ -6,6 +6,7 @@
 //
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
+using WinRT;
 
 namespace Telegram.Collections
 {
@@ -14,7 +15,9 @@ namespace Telegram.Collections
         void Disconnect();
     }
 
-    public class SynchronizedList<T> : MvxObservableCollection<T>, ISynchronizedList
+    [WinRTRuntimeClassName("Windows.Foundation.Collections.IVector`1")]
+    [WinRTExposedType(typeof(MvxObservableCollectionWinRTTypeDetails))]
+    public partial class SynchronizedList<T> : MvxObservableCollection<T>, ISynchronizedList
     {
         private ObservableCollection<T> _source;
 

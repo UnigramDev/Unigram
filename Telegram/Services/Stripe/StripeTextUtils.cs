@@ -9,7 +9,7 @@ using System.Text.RegularExpressions;
 
 namespace Telegram.Services.Stripe
 {
-    public class StripeTextUtils
+    public partial class StripeTextUtils
     {
         /// <summary>
         /// Check to see if the input number has any of the given prefixes.

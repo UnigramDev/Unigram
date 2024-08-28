@@ -17,7 +17,7 @@ using Telegram.Views.Authorization;
 namespace Telegram.Navigation.Services
 {
     // DOCS: https://github.com/Windows-XAML/Template10/wiki/Docs-%7C-NavigationService
-    public class FrameFacade
+    public partial class FrameFacade
     {
         internal FrameFacade(NavigationService navigationService, Frame frame, string id)
         {

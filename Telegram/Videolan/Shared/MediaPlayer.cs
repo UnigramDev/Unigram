@@ -9,7 +9,7 @@ namespace LibVLCSharp.Shared
     /// <summary>
     /// The MediaPlayer type is used to control playback, set renderers, provide events and much more
     /// </summary>
-    public class MediaPlayer : Internal
+    public partial class MediaPlayer : Internal
     {
         readonly struct Native
         {

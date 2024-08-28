@@ -13,7 +13,7 @@ namespace Telegram.Common
     // Source file: dxaml\xcp\dxaml\lib\AutomaticDragHelper.cpp
     // Note: this is needed because just enabling CanDrag on a Button doesn't seem to work.
     // This is supposedly the source code of what happens when you set CanDrag to true.
-    public class AutomaticDragHelper
+    public partial class AutomaticDragHelper
     {
         [DllImport("user32.dll")]
         private static extern int GetSystemMetrics(int nIndex);

@@ -11,7 +11,7 @@ using Windows.Storage;
 
 namespace Telegram.Entities
 {
-    public class StoragePhoto : StorageMedia
+    public partial class StoragePhoto : StorageMedia
     {
         private readonly int _width;
         private readonly int _height;

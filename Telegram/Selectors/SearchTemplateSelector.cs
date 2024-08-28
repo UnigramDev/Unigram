@@ -12,7 +12,7 @@ using Telegram.ViewModels;
 
 namespace Telegram.Selectors
 {
-    public class SearchTemplateSelector : DataTemplateSelector
+    public partial class SearchTemplateSelector : DataTemplateSelector
     {
         public DataTemplate HeaderTemplate { get; set; }
         public DataTemplate ChatTemplate { get; set; }

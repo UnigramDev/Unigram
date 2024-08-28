@@ -1,6 +1,6 @@
 ﻿namespace Telegram.Td.Api
 {
-    public class UpdatePaymentCompleted
+    public partial class UpdatePaymentCompleted
     {
         public string Slug { get; set; }
 

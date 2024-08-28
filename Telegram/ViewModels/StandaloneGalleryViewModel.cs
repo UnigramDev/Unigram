@@ -11,7 +11,7 @@ using Telegram.ViewModels.Gallery;
 
 namespace Telegram.ViewModels
 {
-    public class StandaloneGalleryViewModel : GalleryViewModelBase
+    public partial class StandaloneGalleryViewModel : GalleryViewModelBase
     {
         public StandaloneGalleryViewModel(IClientService clientService, IStorageService storageService, IEventAggregator aggregator, GalleryMedia item)
             : base(clientService, storageService, aggregator)

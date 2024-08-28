@@ -9,7 +9,7 @@ using Windows.Foundation;
 
 namespace Telegram.Composition
 {
-    public class WeakInteractionTrackerOwner : IInteractionTrackerOwner
+    public partial class WeakInteractionTrackerOwner : IInteractionTrackerOwner
     {
         public event TypedEventHandler<InteractionTracker, InteractionTrackerIdleStateEnteredArgs> IdleStateEntered;
         public event TypedEventHandler<InteractionTracker, InteractionTrackerInertiaStateEnteredArgs> InertiaStateEntered;

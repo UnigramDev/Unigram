@@ -23,7 +23,7 @@ using Windows.Storage.Pickers;
 
 namespace Telegram.ViewModels.Settings
 {
-    public class SettingsBackgroundsViewModel : ViewModelBase, IHandle
+    public partial class SettingsBackgroundsViewModel : ViewModelBase, IHandle
     {
         private long? _chatId;
 
@@ -258,7 +258,7 @@ namespace Telegram.ViewModels.Settings
         }
     }
 
-    public class BackgroundDiffHandler : IDiffHandler<Background>
+    public partial class BackgroundDiffHandler : IDiffHandler<Background>
     {
         public bool CompareItems(Background oldItem, Background newItem)
         {

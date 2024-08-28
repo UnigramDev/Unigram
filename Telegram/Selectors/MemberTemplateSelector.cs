@@ -10,7 +10,7 @@ using Telegram.Td.Api;
 
 namespace Telegram.Selectors
 {
-    public class MemberTemplateSelector : DataTemplateSelector
+    public partial class MemberTemplateSelector : DataTemplateSelector
     {
         public DataTemplate ItemTemplate { get; set; }
         public DataTemplate AdminTemplate { get; set; }

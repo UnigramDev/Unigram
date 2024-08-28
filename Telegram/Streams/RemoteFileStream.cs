@@ -12,7 +12,7 @@ using Telegram.Td.Api;
 
 namespace Telegram.Streams
 {
-    public class RemoteFileStream : MediaInput
+    public partial class RemoteFileStream : MediaInput
     {
         private readonly File _file;
 

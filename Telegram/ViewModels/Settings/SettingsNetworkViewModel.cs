@@ -20,7 +20,7 @@ using Telegram.Td.Api;
 
 namespace Telegram.ViewModels.Settings
 {
-    public class SettingsNetworkViewModel : ViewModelBase
+    public partial class SettingsNetworkViewModel : ViewModelBase
     {
         public SettingsNetworkViewModel(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator)
             : base(clientService, settingsService, aggregator)
@@ -153,7 +153,7 @@ namespace Telegram.ViewModels.Settings
         }
     }
 
-    public class NetworkStatisticsItem
+    public partial class NetworkStatisticsItem
     {
         public NetworkStatisticsItem(NetworkStatisticsEntry entry)
             : this(entry as NetworkStatisticsEntryFile)
@@ -213,7 +213,7 @@ namespace Telegram.ViewModels.Settings
         public long ReceivedBytes { get; }
     }
 
-    public class FileTypeNotes : FileType
+    public partial class FileTypeNotes : FileType
     {
         public NativeObject ToUnmanaged()
         {
@@ -221,7 +221,7 @@ namespace Telegram.ViewModels.Settings
         }
     }
 
-    public class FileTypeOther : FileType
+    public partial class FileTypeOther : FileType
     {
         public NativeObject ToUnmanaged()
         {
@@ -229,7 +229,7 @@ namespace Telegram.ViewModels.Settings
         }
     }
 
-    public class FileTypeTotal : FileType
+    public partial class FileTypeTotal : FileType
     {
         public NativeObject ToUnmanaged()
         {

@@ -9,7 +9,7 @@ using Microsoft.UI.Xaml.Controls;
 
 namespace Telegram.Controls
 {
-    public class SelectGridView : GridView
+    public partial class SelectGridView : GridView
     {
         public SelectGridView()
         {

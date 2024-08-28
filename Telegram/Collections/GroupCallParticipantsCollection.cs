@@ -18,7 +18,7 @@ using Windows.Foundation;
 
 namespace Telegram.Collections
 {
-    public class GroupCallParticipantsCollection : ObservableCollection<GroupCallParticipant>
+    public partial class GroupCallParticipantsCollection : ObservableCollection<GroupCallParticipant>
         , ISupportIncrementalLoading
         , IDelegable<IGroupCallDelegate>
     //, IHandle<UpdateGroupCall>

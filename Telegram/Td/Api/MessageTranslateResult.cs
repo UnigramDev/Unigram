@@ -14,7 +14,7 @@ namespace Telegram.Td.Api
 
     }
 
-    public class MessageTranslateResultText : MessageTranslateResult
+    public partial class MessageTranslateResultText : MessageTranslateResult
     {
         public MessageTranslateResultText(string language, StyledText text)
         {
@@ -27,7 +27,7 @@ namespace Telegram.Td.Api
         public StyledText Text { get; }
     }
 
-    public class MessageTranslateResultPending : MessageTranslateResult
+    public partial class MessageTranslateResultPending : MessageTranslateResult
     {
 
     }

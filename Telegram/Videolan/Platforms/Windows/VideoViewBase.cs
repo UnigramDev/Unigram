@@ -428,7 +428,7 @@ namespace LibVLCSharp.Platforms.Windows
     }
 
     [Guid("63aad0b8-7c24-40ff-85a8-640d944cc325")]
-    internal class ISwapChainPanelNative : SharpDX.DXGI.ISwapChainPanelNative
+    internal partial class ISwapChainPanelNative : SharpDX.DXGI.ISwapChainPanelNative
     {
         public ISwapChainPanelNative(IntPtr nativePtr) : base(nativePtr) { }
     }

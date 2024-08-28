@@ -15,7 +15,7 @@ using Telegram.Td.Api;
 
 namespace Telegram.ViewModels.Profile
 {
-    public class ProfileGroupsTabViewModel : ViewModelBase, IIncrementalCollectionOwner
+    public partial class ProfileGroupsTabViewModel : ViewModelBase, IIncrementalCollectionOwner
     {
         private long _userId;
         private long _nextOffsetId;

@@ -64,7 +64,7 @@ namespace Telegram.Assets.Icons
     // Frame rate:  60 fps
     // Frame count: 75
     // Duration:    1250.0 mS
-    sealed class ReactionsMore
+    sealed partial class ReactionsMore
         : Microsoft.UI.Xaml.Controls.IAnimatedVisualSource
         , Microsoft.UI.Xaml.Controls.IAnimatedVisualSource2
     {
@@ -131,7 +131,7 @@ namespace Telegram.Assets.Icons
         /// Returns a map from marker names to corresponding progress values.
         /// </summary>
         public IReadOnlyDictionary<string, double> Markers =>
-            new Dictionary<string, double>
+            new DictionaryStringDouble
             {
                 { "NormalToChecked_Start", 0.0 },
                 { "NormalToChecked_End", 30d / 75d },
@@ -159,7 +159,7 @@ namespace Telegram.Assets.Icons
         {
         }
 
-        sealed class ReactionsMore_AnimatedVisual_UAPv11 : Microsoft.UI.Xaml.Controls.IAnimatedVisual
+        sealed partial class ReactionsMore_AnimatedVisual_UAPv11 : Microsoft.UI.Xaml.Controls.IAnimatedVisual
         {
             const long c_durationTicks = 12500000;
             readonly Compositor _c;
@@ -1104,7 +1104,7 @@ namespace Telegram.Assets.Icons
             }
         }
 
-        sealed class ReactionsMore_AnimatedVisual_UAPv7 : Microsoft.UI.Xaml.Controls.IAnimatedVisual
+        sealed partial class ReactionsMore_AnimatedVisual_UAPv7 : Microsoft.UI.Xaml.Controls.IAnimatedVisual
         {
             const long c_durationTicks = 12500000;
             readonly Compositor _c;

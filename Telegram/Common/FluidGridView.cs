@@ -12,7 +12,7 @@ using System.Collections.Specialized;
 
 namespace Telegram.Common
 {
-    public class FluidGridView
+    public partial class FluidGridView
     {
         private static void OnSizeChanged(object sender, SizeChangedEventArgs e)
         {
@@ -367,7 +367,7 @@ namespace Telegram.Common
         #endregion
     }
 
-    public class FluidGridViewTriggerCollection : ObservableCollection<FluidGridViewTriggerBase>
+    public partial class FluidGridViewTriggerCollection : ObservableCollection<FluidGridViewTriggerBase>
     {
         public ItemsControl Owner { get; private set; }
 
@@ -441,7 +441,7 @@ namespace Telegram.Common
         #endregion
     }
 
-    public class FluidGridViewTrigger : FluidGridViewTriggerBase
+    public partial class FluidGridViewTrigger : FluidGridViewTriggerBase
     {
         #region RowsOrColumns
         public int RowsOrColumns
@@ -504,7 +504,7 @@ namespace Telegram.Common
         #endregion
     }
 
-    public class FixedGridViewTrigger : FluidGridViewTriggerBase
+    public partial class FixedGridViewTrigger : FluidGridViewTriggerBase
     {
         #region ItemLength
         public double ItemLength
@@ -537,7 +537,7 @@ namespace Telegram.Common
         #endregion
     }
 
-    public class LengthGridViewTrigger : FluidGridViewTriggerBase
+    public partial class LengthGridViewTrigger : FluidGridViewTriggerBase
     {
         #region ItemLength
         public double ItemLength

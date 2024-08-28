@@ -18,7 +18,7 @@ using Telegram.Views.Popups;
 
 namespace Telegram.Common
 {
-    public class ZoomableListHandler
+    public partial class ZoomableListHandler
     {
         private readonly ListViewBase _listView;
         private readonly FrameworkElementState _manager;

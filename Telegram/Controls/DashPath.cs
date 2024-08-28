@@ -16,7 +16,7 @@ using Windows.Foundation;
 
 namespace Telegram.Controls
 {
-    public class DashPath : FrameworkElement
+    public partial class DashPath : FrameworkElement
     {
         private readonly ShapeVisual _visual;
         private int _count;

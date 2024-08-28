@@ -6,7 +6,7 @@
 //
 namespace Telegram.Controls
 {
-    public class NavigationViewItemSeparator : NavigationViewItemBase
+    public partial class NavigationViewItemSeparator : NavigationViewItemBase
     {
         public NavigationViewItemSeparator()
         {

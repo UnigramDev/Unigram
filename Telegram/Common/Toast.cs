@@ -15,7 +15,7 @@ using Windows.UI.Notifications;
 
 namespace Telegram.Common
 {
-    public class Toast
+    public partial class Toast
     {
         public static async Task RegisterBackgroundTasks()
         {

@@ -25,7 +25,7 @@ using Point = Windows.Foundation.Point;
 
 namespace Telegram.Controls
 {
-    public class ActiveStoriesSegments : HyperlinkButton
+    public partial class ActiveStoriesSegments : HyperlinkButton
     {
         private static readonly Color _storyUnreadTopColor = Color.FromArgb(0xFF, 0x34, 0xC7, 0x6F);
         private static readonly Color _storyUnreadBottomColor = Color.FromArgb(0xFF, 0x3D, 0xA1, 0xFD);

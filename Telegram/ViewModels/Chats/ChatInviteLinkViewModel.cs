@@ -19,7 +19,7 @@ using Windows.Foundation;
 
 namespace Telegram.ViewModels.Chats
 {
-    public class ChatInviteLinkViewModel : ViewModelBase, IHandle
+    public partial class ChatInviteLinkViewModel : ViewModelBase, IHandle
     {
         public ChatInviteLinkViewModel(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator)
             : base(clientService, settingsService, aggregator)
@@ -183,7 +183,7 @@ namespace Telegram.ViewModels.Chats
             //ClientService.Send(new ReplacePermanentChatInviteLink(chat.Id));
         }
 
-        public class ItemsCollection : MvxObservableCollection<object>, IGroupSupportIncrementalLoading
+        public partial class ItemsCollection : MvxObservableCollection<object>, IGroupSupportIncrementalLoading
         {
             private readonly ChatInviteLinkViewModel _viewModel;
             private readonly Chat _chat;

@@ -18,7 +18,7 @@ using Windows.Foundation;
 
 namespace Telegram.Controls
 {
-    public class TopNavView : ListViewEx
+    public partial class TopNavView : ListViewEx
     {
         private readonly Vector2 c_frame1point1 = new(0.9f, 0.1f);
         private readonly Vector2 c_frame1point2 = new(1.0f, 0.2f);
@@ -339,7 +339,7 @@ namespace Telegram.Controls
         }
     }
 
-    public class TopNavViewItem : TextListViewItem
+    public partial class TopNavViewItem : TextListViewItem
     {
         private UIElement SelectionIndicator;
 
@@ -359,7 +359,7 @@ namespace Telegram.Controls
         }
     }
 
-    public class TopNavViewItemManager : VisualStateManager
+    public partial class TopNavViewItemManager : VisualStateManager
     {
         private readonly static string[] _allowedStates = new[]
         {

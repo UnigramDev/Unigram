@@ -13,7 +13,7 @@ using Telegram.ViewModels.Drawers;
 
 namespace Telegram.Selectors
 {
-    public class AutocompleteTemplateSelector : DataTemplateSelector
+    public partial class AutocompleteTemplateSelector : DataTemplateSelector
     {
         public DataTemplate MentionTemplate { get; set; }
         public DataTemplate CommandTemplate { get; set; }

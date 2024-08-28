@@ -13,7 +13,7 @@ using System.Numerics;
 
 namespace Telegram.Controls
 {
-    public class AnimatedGlyphButton : Button
+    public partial class AnimatedGlyphButton : Button
     {
         private TextBlock _label1;
         private TextBlock _label2;

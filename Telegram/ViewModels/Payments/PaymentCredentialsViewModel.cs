@@ -13,7 +13,7 @@ using Telegram.Td.Api;
 
 namespace Telegram.ViewModels.Payments
 {
-    public class PaymentCredentialsViewModel : ViewModelBase
+    public partial class PaymentCredentialsViewModel : ViewModelBase
     {
         private PaymentFormTypeRegular _paymentForm;
 

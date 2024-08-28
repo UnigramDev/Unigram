@@ -27,7 +27,7 @@ namespace Telegram.ViewModels
         Time
     }
 
-    public class StoryInteractionsViewModel : ViewModelBase, IIncrementalCollectionOwner
+    public partial class StoryInteractionsViewModel : ViewModelBase, IIncrementalCollectionOwner
     {
         private string _nextOffset = string.Empty;
         private CancellationTokenSource _nextToken;

@@ -17,7 +17,7 @@ using Windows.Foundation;
 
 namespace Telegram.Controls.Messages.Content
 {
-    public sealed class PaidMediaContent : Control, IContent
+    public sealed partial class PaidMediaContent : Control, IContent
     {
         private MessageViewModel _message;
         public MessageViewModel Message => _message;
@@ -129,7 +129,7 @@ namespace Telegram.Controls.Messages.Content
         }
     }
 
-    public sealed class PaidMediaContentPanel : Grid, IContentWithFile
+    public sealed partial class PaidMediaContentPanel : Grid, IContentWithFile
     {
         public MessageViewModel Message => _message;
         private MessageViewModel _message;

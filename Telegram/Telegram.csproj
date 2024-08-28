@@ -4,6 +4,7 @@
     <TargetFramework>net8.0-windows10.0.22621.0</TargetFramework>
     <TargetPlatformMinVersion>10.0.17763.0</TargetPlatformMinVersion>
     <TargetPlatformVersion>10.0.22621.756</TargetPlatformVersion>
+    <WindowsSdkPackageVersion>10.0.22621.38</WindowsSdkPackageVersion>
     <RootNamespace>Telegram</RootNamespace>
     <ApplicationManifest>app.manifest</ApplicationManifest>
     <Platforms>x86;x64;ARM64</Platforms>
@@ -20,7 +21,7 @@
     <GenerateTestArtifacts>True</GenerateTestArtifacts>
     <AppxBundle>Never</AppxBundle>
     <HoursBetweenUpdateChecks>0</HoursBetweenUpdateChecks>
-    <!--<PublishAot>true</PublishAot>-->
+    <PublishAot>true</PublishAot>
 
     <DefineConstants>TRACE;NETFX_CORE;WINDOWS_UWP;CODE_ANALYSIS;ENABLE_CALLS</DefineConstants>
     <EnableDefaultItems>false</EnableDefaultItems>
@@ -28,7 +29,6 @@
     <RunAnalyzersDuringBuild>false</RunAnalyzersDuringBuild>
     <RunAnalyzersDuringLiveAnalysis>false</RunAnalyzersDuringLiveAnalysis>
     <RunAnalyzers>false</RunAnalyzers>
-    <ReportAnalyzer>true</ReportAnalyzer>
     <PackageCertificateKeyFile>Telegram_TemporaryKey.pfx</PackageCertificateKeyFile>
 
     <!-- Needed for Unpackaged deployment -->
@@ -36,11 +36,11 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.AppCenter.Analytics" Version="5.0.5" />
-    <PackageReference Include="Microsoft.AppCenter.Crashes" Version="5.0.5" />
-    <PackageReference Include="Microsoft.Windows.CsWinRT" Version="2.0.3" />
+    <!--<PackageReference Include="Microsoft.AppCenter.Analytics" Version="5.0.5" />
+    <PackageReference Include="Microsoft.AppCenter.Crashes" Version="5.0.5" />-->
+    <PackageReference Include="Microsoft.Windows.CsWinRT" Version="2.1.1" />
     <PackageReference Include="Microsoft.Windows.SDK.BuildTools" Version="10.0.22621.756" />
-    <PackageReference Include="Microsoft.WindowsAppSDK" Version="1.5.240607001" />
+    <PackageReference Include="Microsoft.WindowsAppSDK" Version="1.6.240821007-preview2" />
     <Manifest Include="$(ApplicationManifest)" />
   </ItemGroup>
 
@@ -332,8 +332,28 @@
     <Compile Include="Controls\TabbedPageHeader.xaml.cs">
       <DependentUpon>TabbedPageHeader.xaml</DependentUpon>
     </Compile>
+    <Compile Include="CsWinRT.cs" />
     <Compile Include="Generated Files\CsWinRT\WinRTEventHelpers.cs" />
     <Compile Include="Generated Files\WinRTEventHelpers.cs" />
+    <Compile Include="Rg.DiffUtils\BatchingStepsWrapper.cs" />
+    <Compile Include="Rg.DiffUtils\CenteredArray.cs" />
+    <Compile Include="Rg.DiffUtils\Diagonal.cs" />
+    <Compile Include="Rg.DiffUtils\DiagonalComparer.cs" />
+    <Compile Include="Rg.DiffUtils\DiffEqualityComparer.cs" />
+    <Compile Include="Rg.DiffUtils\DiffHandler.cs" />
+    <Compile Include="Rg.DiffUtils\DiffItem.cs" />
+    <Compile Include="Rg.DiffUtils\DiffObservableCollection.cs" />
+    <Compile Include="Rg.DiffUtils\DiffOptions.cs" />
+    <Compile Include="Rg.DiffUtils\DiffPostponedUpdate.cs" />
+    <Compile Include="Rg.DiffUtils\DiffRange.cs" />
+    <Compile Include="Rg.DiffUtils\DiffResult.cs" />
+    <Compile Include="Rg.DiffUtils\DiffStatus.cs" />
+    <Compile Include="Rg.DiffUtils\DiffStep.cs" />
+    <Compile Include="Rg.DiffUtils\DiffUtil.cs" />
+    <Compile Include="Rg.DiffUtils\Extension.cs" />
+    <Compile Include="Rg.DiffUtils\IDiffEqualityComparer.cs" />
+    <Compile Include="Rg.DiffUtils\IDiffHandler.cs" />
+    <Compile Include="Rg.DiffUtils\Snake.cs" />
     <Compile Include="Services\ClientService.SavedMessages.cs" />
     <Compile Include="Composition\CompositionVoiceBlobVisual.cs" />
     <Compile Include="Composition\CompositionBlobVisual.cs" />
@@ -3641,9 +3661,9 @@
     <PackageReference Include="Newtonsoft.Json">
       <Version>13.0.3</Version>
     </PackageReference>
-    <PackageReference Include="Rg.DiffUtils">
+    <!--<PackageReference Include="Rg.DiffUtils">
       <Version>1.0.0</Version>
-    </PackageReference>
+    </PackageReference>-->
     <PackageReference Include="SharpDX.Direct3D11">
       <Version>4.2.0</Version>
     </PackageReference>
@@ -3654,7 +3674,7 @@
       <Version>4.5.0</Version>
     </PackageReference>
     <PackageReference Include="Microsoft.Graphics.Win2D">
-      <Version>1.2.0</Version>
+      <Version>1.2.1-experimental2</Version>
     </PackageReference>
     <PackageReference Include="VideoLAN.LibVLC.UWP">
       <Version>3.3.7</Version>

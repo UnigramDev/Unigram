@@ -25,7 +25,7 @@ namespace Telegram.Services.Factories
         MessageViewModel Create(IMessageDelegate delegato, Chat chat, Message message, bool processText);
     }
 
-    public class MessageFactory : IMessageFactory
+    public partial class MessageFactory : IMessageFactory
     {
         private readonly IClientService _clientService;
         private readonly IPlaybackService _playbackService;
@@ -243,7 +243,7 @@ namespace Telegram.Services.Factories
         }
     }
 
-    public class InputMessageFactory
+    public partial class InputMessageFactory
     {
         public InputFile InputFile { get; set; }
         public Func<InputFile, FormattedText, InputMessageContent> Delegate { get; set; }

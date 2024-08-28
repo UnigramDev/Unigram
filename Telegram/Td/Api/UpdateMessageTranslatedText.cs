@@ -6,7 +6,7 @@
 //
 namespace Telegram.Td.Api
 {
-    public class UpdateMessageTranslatedText
+    public partial class UpdateMessageTranslatedText
     {
         public UpdateMessageTranslatedText(long chatId, long messageId, MessageTranslateResult translatedText)
         {

@@ -13,7 +13,7 @@ using Telegram.ViewModels.Gallery;
 
 namespace Telegram.ViewModels.Chats
 {
-    public class ChatGalleryViewModel : GalleryViewModelBase
+    public partial class ChatGalleryViewModel : GalleryViewModelBase
     {
         private readonly DisposableMutex _loadMoreLock = new DisposableMutex();
 

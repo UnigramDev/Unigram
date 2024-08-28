@@ -20,7 +20,7 @@ using Windows.Foundation;
 
 namespace Telegram.ViewModels.Settings
 {
-    public class SettingsNotificationsExceptionsViewModel : MultiViewModelBase
+    public partial class SettingsNotificationsExceptionsViewModel : MultiViewModelBase
     {
         public SettingsNotificationsExceptionsViewModel(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator)
             : base(clientService, settingsService, aggregator)
@@ -65,7 +65,7 @@ namespace Telegram.ViewModels.Settings
 
         public ItemsCollection Items { get; private set; }
 
-        public class ItemsCollection : MvxObservableCollection<Chat>, ISupportIncrementalLoading
+        public partial class ItemsCollection : MvxObservableCollection<Chat>, ISupportIncrementalLoading
         {
             private readonly IClientService _clientService;
             private readonly NotificationSettingsScope _scope;

@@ -5,7 +5,7 @@ using System.Runtime.InteropServices;
 
 namespace LibVLCSharp.Shared
 {
-    internal abstract class EventManager
+    internal abstract partial class EventManager
     {
         internal readonly struct Native
         {
@@ -21,7 +21,7 @@ namespace LibVLCSharp.Shared
         /// <summary>
         /// The class that manages one type of event
         /// </summary>
-        internal class EventTypeManager : IDisposable
+        internal partial class EventTypeManager : IDisposable
         {
             internal Action<IntPtr> EventHandler { get; }
             internal GCHandle Handle { get; }

@@ -20,7 +20,7 @@ using Windows.System;
 
 namespace Telegram.ViewModels
 {
-    public class InstantViewModel : MultiViewModelBase
+    public partial class InstantViewModel : MultiViewModelBase
     {
         private readonly ITranslateService _translateService;
         private readonly IMessageFactory _messageFactory;

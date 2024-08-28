@@ -17,7 +17,7 @@ using Windows.UI.ViewManagement;
 
 namespace Telegram.Services
 {
-    public class ThemeCustomInfo : ThemeAccentInfo
+    public partial class ThemeCustomInfo : ThemeAccentInfo
     {
         public ThemeCustomInfo(TelegramTheme parent, Color accent, string name)
             : base(TelegramThemeType.Custom, accent, null, null)

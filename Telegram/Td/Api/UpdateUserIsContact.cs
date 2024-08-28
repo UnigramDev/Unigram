@@ -6,7 +6,7 @@
 //
 namespace Telegram.Td.Api
 {
-    public class UpdateUserIsContact
+    public partial class UpdateUserIsContact
     {
         public UpdateUserIsContact(long userId)
         {

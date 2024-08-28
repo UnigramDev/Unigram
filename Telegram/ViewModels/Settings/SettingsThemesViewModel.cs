@@ -25,7 +25,7 @@ using Windows.UI.ViewManagement;
 
 namespace Telegram.ViewModels.Settings
 {
-    public class SettingsThemesViewModel : ViewModelBase
+    public partial class SettingsThemesViewModel : ViewModelBase
     {
         private readonly IThemeService _themeService;
         private readonly bool _darkOnly;

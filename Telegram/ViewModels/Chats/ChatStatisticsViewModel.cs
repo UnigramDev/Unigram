@@ -22,7 +22,7 @@ using Windows.Data.Json;
 
 namespace Telegram.ViewModels.Chats
 {
-    public class ChatStatisticsViewModel : ViewModelBase
+    public partial class ChatStatisticsViewModel : ViewModelBase
     {
         public ChatStatisticsViewModel(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator)
             : base(clientService, settingsService, aggregator)
@@ -251,7 +251,7 @@ namespace Telegram.ViewModels.Chats
         }
     }
 
-    public class ChatItemInteractionCounters
+    public partial class ChatItemInteractionCounters
     {
         public int ForwardCount { get; }
         public int ViewCount { get; }
@@ -266,7 +266,7 @@ namespace Telegram.ViewModels.Chats
 
     }
 
-    public class MessageInteractionCounters : ChatItemInteractionCounters
+    public partial class MessageInteractionCounters : ChatItemInteractionCounters
     {
         public Message Message { get; }
 
@@ -277,7 +277,7 @@ namespace Telegram.ViewModels.Chats
         }
     }
 
-    public class StoryInteractionCounters : ChatItemInteractionCounters
+    public partial class StoryInteractionCounters : ChatItemInteractionCounters
     {
         public Story Story { get; }
 
@@ -288,7 +288,7 @@ namespace Telegram.ViewModels.Chats
         }
     }
 
-    public class ChartViewData
+    public partial class ChartViewData
     {
 
         public bool isError;

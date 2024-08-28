@@ -8,7 +8,7 @@ using Windows.ApplicationModel;
 
 namespace Telegram.Controls
 {
-    public class VersionLabel : Button
+    public partial class VersionLabel : Button
     {
         private int _advanced;
 

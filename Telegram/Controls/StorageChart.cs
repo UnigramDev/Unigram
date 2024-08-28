@@ -18,7 +18,7 @@ using Windows.UI;
 
 namespace Telegram.Controls
 {
-    public class StorageChart : Control
+    public partial class StorageChart : Control
     {
         private const float MIN_TRIM = 0.0001f;
         private const float PAD_TRIM = 0.03f;
@@ -226,7 +226,7 @@ namespace Telegram.Controls
         }
     }
 
-    public class StorageChartItem
+    public partial class StorageChartItem
     {
         public string Name { get; set; }
 

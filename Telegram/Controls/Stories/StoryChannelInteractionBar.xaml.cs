@@ -180,7 +180,7 @@ namespace Telegram.Controls.Stories
         }
     }
 
-    public class StoryReactionButton : ToggleButton
+    public partial class StoryReactionButton : ToggleButton
     {
         private Image Presenter;
         private CustomEmojiIcon Icon;

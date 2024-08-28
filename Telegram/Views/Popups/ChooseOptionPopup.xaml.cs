@@ -10,6 +10,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Telegram.Controls;
 using Telegram.Navigation;
+using WinRT;
 
 namespace Telegram.Views.Popups
 {
@@ -55,7 +56,8 @@ namespace Telegram.Views.Popups
         }
     }
 
-    public class ChooseOptionItem
+    [GeneratedBindableCustomProperty]
+    public partial class ChooseOptionItem
     {
         public ChooseOptionItem(object value, string text, bool check)
         {
@@ -71,7 +73,8 @@ namespace Telegram.Views.Popups
         public string Footer { get; set; }
     }
 
-    public class SettingsOptionItem
+    [GeneratedBindableCustomProperty]
+    public partial class SettingsOptionItem
     {
         public SettingsOptionItem(string text)
         {
@@ -81,7 +84,8 @@ namespace Telegram.Views.Popups
         public string Text { get; set; }
     }
 
-    public class SettingsOptionItem<T> : SettingsOptionItem
+    [GeneratedBindableCustomProperty]
+    public partial class SettingsOptionItem<T> : SettingsOptionItem
     {
         public SettingsOptionItem(T value, string text)
             : base(text)

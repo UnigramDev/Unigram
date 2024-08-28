@@ -10,7 +10,7 @@ using Telegram.Services;
 
 namespace Telegram.Converters
 {
-    public class MeUrlPrefixConverter : IValueConverter
+    public partial class MeUrlPrefixConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, string language)
         {

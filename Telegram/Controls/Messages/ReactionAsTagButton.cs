@@ -15,7 +15,7 @@ using Telegram.Views.Popups;
 
 namespace Telegram.Controls.Messages
 {
-    public class ReactionAsTagButton : ReactionButton
+    public partial class ReactionAsTagButton : ReactionButton
     {
         private MessageTag _tag;
 

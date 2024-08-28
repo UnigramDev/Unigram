@@ -8,7 +8,7 @@ using Microsoft.UI.Xaml.Controls;
 
 namespace Telegram.Controls
 {
-    public class PremiumStarCount : Control
+    public partial class PremiumStarCount : Control
     {
         public PremiumStarCount()
         {

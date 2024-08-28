@@ -10,7 +10,7 @@ using Microsoft.UI.Xaml.Controls;
 namespace Telegram.Controls
 {
     // TODO: RadioButtonEx?
-    public class FauxRadioButton : RadioButton
+    public partial class FauxRadioButton : RadioButton
     {
         private UIElement Chevron;
 

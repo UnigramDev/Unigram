@@ -10,7 +10,7 @@ namespace LibVLCSharp.Shared
     /// <summary>
     /// Media is an abstract representation of a playable media. It can be a network stream or a local video/audio file.
     /// </summary>
-    public class Media : Internal
+    public partial class Media : Internal
     {
         internal struct Native
         {

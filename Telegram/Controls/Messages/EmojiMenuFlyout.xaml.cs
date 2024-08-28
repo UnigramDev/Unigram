@@ -27,7 +27,7 @@ using Point = Windows.Foundation.Point;
 
 namespace Telegram.Controls.Messages
 {
-    public class EmojiSelectedEventArgs : EventArgs
+    public partial class EmojiSelectedEventArgs : EventArgs
     {
         public long CustomEmojiId { get; }
 

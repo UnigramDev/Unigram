@@ -410,7 +410,7 @@ namespace Telegram.Controls.Messages
         }
     }
 
-    public class ReactionsPanelAutomationPeer : FrameworkElementAutomationPeer
+    public partial class ReactionsPanelAutomationPeer : FrameworkElementAutomationPeer
     {
         public ReactionsPanelAutomationPeer(ReactionsPanel owner)
             : base(owner)

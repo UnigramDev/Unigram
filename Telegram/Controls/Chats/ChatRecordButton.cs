@@ -40,7 +40,7 @@ namespace Telegram.Controls.Chats
         Video
     }
 
-    public class ChatRecordResult
+    public partial class ChatRecordResult
     {
         public ChatRecordResult(TimeSpan duration, IList<byte> waveform)
         {
@@ -53,7 +53,7 @@ namespace Telegram.Controls.Chats
         public IList<byte> Waveform { get; }
     }
 
-    public class ChatRecordStartedEventArgs : EventArgs
+    public partial class ChatRecordStartedEventArgs : EventArgs
     {
         public ChatRecordStartedEventArgs(DateTime startedAt)
         {
@@ -63,7 +63,7 @@ namespace Telegram.Controls.Chats
         public DateTime StartedAt { get; }
     }
 
-    public class ChatRecordButton : AnimatedIconToggleButton
+    public partial class ChatRecordButton : AnimatedIconToggleButton
     {
         public ComposeViewModel ViewModel => DataContext as ComposeViewModel;
 
@@ -639,7 +639,7 @@ namespace Telegram.Controls.Chats
 
         public event EventHandler<float> QuantumProcessed;
 
-        public class Recorder
+        public partial class Recorder
         {
             public event EventHandler RecordingFailed;
             public event EventHandler RecordingStarted;

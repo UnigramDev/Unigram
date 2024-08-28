@@ -17,7 +17,7 @@ using Telegram.ViewModels.Delegates;
 
 namespace Telegram.ViewModels.Supergroups
 {
-    public class SupergroupEditLinkedChatViewModel : SupergroupViewModelBase, IDelegable<ISupergroupDelegate>, IHandle
+    public partial class SupergroupEditLinkedChatViewModel : SupergroupViewModelBase, IDelegable<ISupergroupDelegate>, IHandle
     {
         public ISupergroupDelegate Delegate { get; set; }
 

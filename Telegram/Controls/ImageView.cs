@@ -17,7 +17,7 @@ using Windows.Foundation;
 
 namespace Telegram.Controls
 {
-    public class ImageView : HyperlinkButton
+    public partial class ImageView : HyperlinkButton
     {
         protected FrameworkElement Holder;
 

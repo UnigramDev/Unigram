@@ -50,7 +50,7 @@ namespace Telegram.Services.Settings
         Channel
     }
 
-    public class AutoDownloadSettings
+    public partial class AutoDownloadSettings
     {
         private AutoDownloadSettings()
         {

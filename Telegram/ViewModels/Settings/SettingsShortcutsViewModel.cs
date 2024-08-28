@@ -13,7 +13,7 @@ using Telegram.Views.Popups;
 
 namespace Telegram.ViewModels.Settings
 {
-    public class SettingsShortcutsViewModel : ViewModelBase
+    public partial class SettingsShortcutsViewModel : ViewModelBase
     {
         private readonly IShortcutsService _shortcutsService;
 

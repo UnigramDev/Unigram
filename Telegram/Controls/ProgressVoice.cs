@@ -15,7 +15,7 @@ using Point = Windows.Foundation.Point;
 
 namespace Telegram.Controls
 {
-    public class ProgressVoice : ProgressBar
+    public partial class ProgressVoice : ProgressBar
     {
         private Path ProgressBarIndicator;
         private Path HorizontalTrackRect;

@@ -11,7 +11,7 @@ using Telegram.Td.Api;
 
 namespace Telegram.Converters
 {
-    public class LastSeenConverter : IValueConverter
+    public partial class LastSeenConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, string language)
         {

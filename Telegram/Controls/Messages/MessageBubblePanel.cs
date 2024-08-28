@@ -14,7 +14,7 @@ using Windows.Foundation;
 
 namespace Telegram.Controls.Messages
 {
-    public class MessageBubblePanel : Panel
+    public partial class MessageBubblePanel : Panel
     {
         // Needed for Text CanvasTextLayout
         public bool ForceNewLine { get; set; }

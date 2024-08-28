@@ -15,7 +15,7 @@ using Windows.Storage;
 
 namespace Telegram.Entities
 {
-    public class StorageVideo : StorageMedia
+    public partial class StorageVideo : StorageMedia
     {
         private StorageVideo(StorageFile file, ulong fileSize, double totalMilliseconds, int width, int height)
             : base(file, fileSize)

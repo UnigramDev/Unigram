@@ -2,7 +2,7 @@
 
 namespace Telegram.Td.Api
 {
-    public class MessageTag : BindableBase
+    public partial class MessageTag : BindableBase
     {
         public MessageTag(SavedMessagesTag tag)
         {

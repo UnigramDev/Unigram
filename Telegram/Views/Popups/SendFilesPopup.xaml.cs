@@ -1068,7 +1068,7 @@ namespace Telegram.Views.Popups
         }
     }
 
-    public class SendFilesAlbumPanel : Grid
+    public partial class SendFilesAlbumPanel : Grid
     {
         public const double ITEM_MARGIN = 2;
         public const double MAX_WIDTH = 320 + ITEM_MARGIN;

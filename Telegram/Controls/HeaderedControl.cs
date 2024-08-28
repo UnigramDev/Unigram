@@ -11,7 +11,7 @@ using Windows.Foundation;
 
 namespace Telegram.Controls
 {
-    public class HeaderedControl : ItemsControl
+    public partial class HeaderedControl : ItemsControl
     {
         public HeaderedControl()
         {
@@ -124,7 +124,7 @@ namespace Telegram.Controls
         }
     }
 
-    public class TextUrlClickEventArgs
+    public partial class TextUrlClickEventArgs
     {
         public TextUrlClickEventArgs(string url)
         {
@@ -134,7 +134,7 @@ namespace Telegram.Controls
         public string Url { get; }
     }
 
-    public class HeaderedControlPanel : StackPanel
+    public partial class HeaderedControlPanel : StackPanel
     {
         protected override Size MeasureOverride(Size availableSize)
         {

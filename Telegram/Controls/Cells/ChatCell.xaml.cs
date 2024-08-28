@@ -49,7 +49,7 @@ namespace Telegram.Controls.Cells
         Read
     }
 
-    public sealed class ChatCell : ControlEx, IMultipleElement
+    public sealed partial class ChatCell : ControlEx, IMultipleElement
     {
         private bool _selected;
 
@@ -2366,7 +2366,7 @@ namespace Telegram.Controls.Cells
 
     }
 
-    public class ChatFoldersPanel : Panel
+    public partial class ChatFoldersPanel : Panel
     {
         protected override Size MeasureOverride(Size availableSize)
         {

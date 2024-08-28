@@ -27,7 +27,7 @@ namespace Telegram.ViewModels.Settings
         Custom
     }
 
-    public class SettingsProxyViewModel : ViewModelBase, IHandle
+    public partial class SettingsProxyViewModel : ViewModelBase, IHandle
     {
         private readonly INetworkService _networkService;
         private int _systemProxyId;
@@ -462,7 +462,7 @@ namespace Telegram.ViewModels.Settings
         }
     }
 
-    public class ProxyViewModel : BindableBase
+    public partial class ProxyViewModel : BindableBase
     {
         private readonly Proxy _proxy;
 
@@ -503,15 +503,15 @@ namespace Telegram.ViewModels.Settings
     {
     }
 
-    public class ConnectionStatusChecking : ConnectionStatus
+    public partial class ConnectionStatusChecking : ConnectionStatus
     {
     }
 
-    public class ConnectionStatusConnecting : ConnectionStatus
+    public partial class ConnectionStatusConnecting : ConnectionStatus
     {
     }
 
-    public class ConnectionStatusReady : ConnectionStatus
+    public partial class ConnectionStatusReady : ConnectionStatus
     {
         public ConnectionStatusReady(bool connected, double seconds)
         {
@@ -523,7 +523,7 @@ namespace Telegram.ViewModels.Settings
         public double Seconds { get; private set; }
     }
 
-    public class ConnectionStatusError : ConnectionStatus
+    public partial class ConnectionStatusError : ConnectionStatus
     {
         public ConnectionStatusError(Error error)
         {

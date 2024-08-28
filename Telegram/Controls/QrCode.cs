@@ -19,7 +19,7 @@ using Windows.UI;
 
 namespace Telegram.Controls
 {
-    public class QrCode : Control
+    public partial class QrCode : Control
     {
         private string _text;
 

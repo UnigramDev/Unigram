@@ -11,7 +11,7 @@ using System;
 namespace Telegram.Navigation.Services
 {
     // DOCS: https://github.com/Windows-XAML/Template10/wiki/Docs-%7C-NavigationService
-    public class NavigatedEventArgs : EventArgs
+    public partial class NavigatedEventArgs : EventArgs
     {
         public NavigatedEventArgs() { }
         public NavigatedEventArgs(NavigationEventArgs e, Page page)

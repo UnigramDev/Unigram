@@ -10,7 +10,7 @@ using System.Collections.Generic;
 
 namespace Telegram.Common
 {
-    public class UniqueList<TKey, TValue> : IList<TValue>
+    public partial class UniqueList<TKey, TValue> : IList<TValue>
     {
         private readonly Func<TValue, TKey> _selector;
         private readonly SortedList<TKey, TValue> _inner;

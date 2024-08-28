@@ -14,7 +14,7 @@ using Telegram.Views.Settings;
 
 namespace Telegram.ViewModels
 {
-    public class LogOutViewModel : ViewModelBase
+    public partial class LogOutViewModel : ViewModelBase
     {
         private readonly INotificationsService _pushService;
         private readonly IContactsService _contactsService;

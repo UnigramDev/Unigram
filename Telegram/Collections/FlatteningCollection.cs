@@ -21,7 +21,7 @@ namespace Telegram.Collections
         string Key { get; }
     }
 
-    public class FlatteningCollection : IncrementalCollection<object>
+    public partial class FlatteningCollection : IncrementalCollection<object>
     {
         private readonly List<IKeyedCollection> _groups = new();
 

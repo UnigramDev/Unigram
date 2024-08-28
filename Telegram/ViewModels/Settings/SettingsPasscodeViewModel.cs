@@ -17,7 +17,7 @@ using Telegram.Views.Settings.Popups;
 
 namespace Telegram.ViewModels.Settings
 {
-    public class SettingsPasscodeViewModel : ViewModelBase, IHandle
+    public partial class SettingsPasscodeViewModel : ViewModelBase, IHandle
     {
         private readonly IPasscodeService _passcodeService;
 

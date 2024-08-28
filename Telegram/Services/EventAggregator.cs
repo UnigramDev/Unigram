@@ -35,7 +35,7 @@ namespace Telegram.Services
         void Publish(object message, long token, bool forget);
     }
 
-    public class EventAggregator : IEventAggregator
+    public partial class EventAggregator : IEventAggregator
     {
         private static IEventAggregator _current;
         public static IEventAggregator Current => _current ??= new EventAggregator();
@@ -97,7 +97,7 @@ namespace Telegram.Services
             }
         }
 
-        public class TypeHandler
+        public partial class TypeHandler
         {
             protected readonly ConditionalWeakTable<object, Delegate> _delegates = new();
 
@@ -230,7 +230,7 @@ namespace Telegram.Services
             }
         }
 
-        public class LongHandler : TypeHandler
+        public partial class LongHandler : TypeHandler
         {
             public override bool Handle(object message, bool forget)
             {
@@ -267,7 +267,7 @@ namespace Telegram.Services
         #endregion
     }
 
-    public class SubscriptionBuilder
+    public partial class SubscriptionBuilder
     {
         private readonly EventAggregator _aggregator;
         private readonly object _subscriber;

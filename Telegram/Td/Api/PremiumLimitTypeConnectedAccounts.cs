@@ -8,7 +8,7 @@ using System;
 
 namespace Telegram.Td.Api
 {
-    public class PremiumLimitTypeConnectedAccounts : PremiumLimitType
+    public partial class PremiumLimitTypeConnectedAccounts : PremiumLimitType
     {
         public NativeObject ToUnmanaged()
         {

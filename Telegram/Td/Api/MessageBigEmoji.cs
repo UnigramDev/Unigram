@@ -8,7 +8,7 @@ using System;
 
 namespace Telegram.Td.Api
 {
-    public class MessageBigEmoji : MessageContent
+    public partial class MessageBigEmoji : MessageContent
     {
         public FormattedText Text { get; set; }
 

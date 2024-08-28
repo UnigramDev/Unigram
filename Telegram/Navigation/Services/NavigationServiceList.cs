@@ -9,7 +9,7 @@ using System.Linq;
 
 namespace Telegram.Navigation.Services
 {
-    public class NavigationServiceList : List<INavigationService>
+    public partial class NavigationServiceList : List<INavigationService>
     {
         public INavigationService GetByFrameId(string frameId) => this.FirstOrDefault(x => x.FrameFacade.FrameId == frameId);
         public INavigationService RemoveByFrameId(string frameId)

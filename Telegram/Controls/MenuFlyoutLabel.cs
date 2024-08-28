@@ -9,7 +9,7 @@ using Microsoft.UI.Xaml.Controls;
 
 namespace Telegram.Controls
 {
-    public class MenuFlyoutLabel : MenuFlyoutSeparator
+    public partial class MenuFlyoutLabel : MenuFlyoutSeparator
     {
         public MenuFlyoutLabel()
         {

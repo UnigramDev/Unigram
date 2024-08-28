@@ -6,7 +6,7 @@ namespace LibVLCSharp.Shared
     /// The MediaPlayerChanged event indicates when a new MediaPlayer has been set up with the VideoView
     /// and is ready to use for a first time playback.
     /// </summary>
-    public class MediaPlayerChangedEventArgs : EventArgs
+    public partial class MediaPlayerChangedEventArgs : EventArgs
     {
         /// <summary>
         /// MediaPlayerChangedEventArgs constructor, used internally by LibVLCSharp
