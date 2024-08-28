@@ -429,7 +429,7 @@ namespace Telegram.Controls
 
         private void Load()
         {
-            if (_suppressEvents > 0)
+            //if (_suppressEvents > 0)
             {
                 return;
             }
@@ -1732,6 +1732,9 @@ namespace Telegram.Controls
                     continue;
                 }
 
+                //_delegates.TryRemove(work.CorrelationId, out _);
+                //return;
+
                 try
                 {
                     if (work.Presentation.Source is LocalFileSource local)
@@ -1776,6 +1779,7 @@ namespace Telegram.Controls
                 catch
                 {
                     // Shit happens...
+                    _delegates.TryRemove(work.CorrelationId, out _);
                 }
             }
         }
