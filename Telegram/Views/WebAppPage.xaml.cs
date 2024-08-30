@@ -145,6 +145,12 @@ namespace Telegram.Views
             PostEvent("secondary_button_pressed");
         }
 
+        private void View_NewWindowRequested(object sender, WebViewerNewWindowRequestedEventArgs e)
+        {
+            ByNavigation(navigation => MessageHelper.OpenUrl(_clientService, navigation, e.Url));
+            e.Cancel = true;
+        }
+
         private void View_Navigating(object sender, WebViewerNavigatingEventArgs e)
         {
             if (Uri.TryCreate(e.Url, UriKind.Absolute, out Uri uri))
@@ -1172,12 +1178,8 @@ namespace Telegram.Views
 
         private async void ByNavigation(Action<INavigationService> action)
         {
-            var service = WindowContext.Main.NavigationServices.GetByFrameId($"Main{_clientService.SessionId}");
-            if (service != null)
-            {
-                action(service);
-                await ApplicationViewSwitcher.SwitchAsync(WindowContext.Main.Id);
-            }
+            WindowContext.Main.Dispatcher.Dispatch(() => action(WindowContext.Main.GetNavigationService()));
+            await ApplicationViewSwitcher.SwitchAsync(WindowContext.Main.Id);
         }
 
         private void OnActualThemeChanged(FrameworkElement sender, object args)

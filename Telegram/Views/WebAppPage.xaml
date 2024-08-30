@@ -73,13 +73,15 @@
         <controls:WebViewer x:Name="View"
                             Navigating="View_Navigating"
                             EventReceived="View_EventReceived"
+                            NewWindowRequested="View_NewWindowRequested"
                             SizeChanged="View_SizeChanged"
                             Grid.RowSpan="2"
                             Grid.Row="1" />
 
         <Grid x:Name="BottomBarPanel"
               VerticalAlignment="Bottom"
-              Height="96">
+              Height="96"
+              Grid.Row="1">
             <Border x:Name="SecondaryButtonPanel"
                     Visibility="Collapsed"
                     HorizontalAlignment="Stretch"
