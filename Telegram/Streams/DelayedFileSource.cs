@@ -83,7 +83,7 @@ namespace Telegram.Streams
 
         public override bool Equals(object obj)
         {
-            if (obj is DelayedFileSource y)
+            if (obj is DelayedFileSource y && !y.IsUnique && !IsUnique)
             {
                 return y.Id == Id;
             }
@@ -93,6 +93,11 @@ namespace Telegram.Streams
 
         public override int GetHashCode()
         {
+            if (IsUnique)
+            {
+                return base.GetHashCode();
+            }
+
             return Id.GetHashCode();
         }
     }

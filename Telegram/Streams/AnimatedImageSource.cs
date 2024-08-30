@@ -59,9 +59,11 @@ namespace Telegram.Streams
 
         public abstract long Offset { get; }
 
+        public bool IsUnique { get; set; }
+
         public override bool Equals(object obj)
         {
-            if (obj is AnimatedImageSource y)
+            if (obj is AnimatedImageSource y && !y.IsUnique && !IsUnique)
             {
                 return y.Id == Id;
             }
@@ -71,6 +73,11 @@ namespace Telegram.Streams
 
         public override int GetHashCode()
         {
+            if (IsUnique)
+            {
+                return base.GetHashCode();
+            }
+
             return Id.GetHashCode();
         }
     }

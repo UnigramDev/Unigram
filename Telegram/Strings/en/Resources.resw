@@ -133,8 +133,8 @@
   <data name="AccDescrContactSorting" xml:space="preserve">
     <value>Change sorting</value>
   </data>
-  <data name="AccDescrCustomEmoji" xml:space="preserve">
-    <value>{0}, custom emoji</value>
+  <data name="AccDescrCustomEmoji2" xml:space="preserve">
+    <value>Custom emoji</value>
   </data>
   <data name="AccDescrEmojiButton" xml:space="preserve">
     <value>Emoji, stickers, and GIFs</value>
@@ -1855,6 +1855,9 @@ below after this announcement:</value>
   </data>
   <data name="BoostingGiveawayPrizes" xml:space="preserve">
     <value>**Giveaway Prizes**</value>
+  </data>
+  <data name="BoostingGiveawayResults" xml:space="preserve">
+    <value>Giveaway results</value>
   </data>
   <data name="BoostingGiveawayServiceUndistributed_one" xml:space="preserve">
     <value>{0} undistributed link code was forwarded to channel administrators.</value>

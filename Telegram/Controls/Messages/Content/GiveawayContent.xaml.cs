@@ -68,12 +68,23 @@ namespace Telegram.Controls.Messages.Content
         {
             _message = message;
 
-            var giveaway = message.Content as MessageGiveaway;
-            if (giveaway == null || !_templateApplied)
+            if (!_templateApplied)
             {
                 return;
             }
 
+            if (message.Content is MessageGiveaway giveaway)
+            {
+                UpdateMessageGiveaway(message, giveaway);
+            }
+            else if (message.Content is MessageGiveawayWinners giveawayWinners)
+            {
+                UpdateMessageGiveawayWinners(message, giveawayWinners);
+            }
+        }
+
+        private void UpdateMessageGiveaway(MessageViewModel message, MessageGiveaway giveaway)
+        { 
             Animation.Source = giveaway.Sticker != null
                 ? new DelayedFileSource(message.ClientService, giveaway.Sticker)
                 : null;
@@ -151,6 +162,61 @@ namespace Telegram.Controls.Messages.Content
             WinnersLabel.Text = Formatter.DateAt(giveaway.Parameters.WinnersSelectionDate);
         }
 
+        private void UpdateMessageGiveawayWinners(MessageViewModel message, MessageGiveawayWinners giveaway)
+        {
+            // TODO:
+            Animation.Source = new AnimatedEmojiFileSource(message.ClientService, "\U0001F389");
+
+            Count.Text = $"X{giveaway.WinnerCount}";
+
+            if (giveaway.Prize is GiveawayPrizePremium prizePremium)
+            {
+                var months = Locale.Declension(Strings.R.Months, prizePremium.MonthCount, false);
+                var duration = string.Format(Strings.BoostingGiveawayMsgInfo, giveaway.WinnerCount.ToString("N0"), string.Format(months, $"**{prizePremium.MonthCount}**"));
+
+                TextBlockHelper.SetMarkdown(PrizesLabel, duration);
+            }
+            else if (giveaway.Prize is GiveawayPrizeStars prizeStars)
+            {
+                var stars = Locale.Declension(Strings.R.BoostingStarsGiveawayMsgInfoPlural1, prizeStars.StarCount);
+                var winners = Locale.Declension(Strings.R.BoostingStarsGiveawayMsgInfoPlural2, giveaway.WinnerCount);
+
+                TextBlockHelper.SetMarkdown(PrizesLabel, string.Format("{0} {1}", stars, winners));
+            }
+
+            //ParticipantsLabel.Text = giveaway.Parameters.OnlyNewMembers
+            //    ? Locale.Declension(Strings.R.BoostingGiveawayMsgNewSubsPlural, 1 + giveaway.Parameters.AdditionalChatIds.Count, false)
+            //    : Locale.Declension(Strings.R.BoostingGiveawayMsgAllSubsPlural, 1 + giveaway.Parameters.AdditionalChatIds.Count, false);
+
+            ParticipantsPanel.Children.Clear();
+
+            //if (message.ClientService.TryGetChat(giveaway.Parameters.BoostedChatId, out Chat boostedChat))
+            //{
+            //    var button = new ChatPill();
+            //    button.SetChat(message.ClientService, boostedChat);
+            //    button.Click += Chat_Click;
+            //    button.Margin = new Thickness(0, 4, 0, 0);
+            //    button.HorizontalAlignment = HorizontalAlignment.Center;
+
+            //    ParticipantsPanel.Children.Add(button);
+            //}
+
+            foreach (var user in message.ClientService.GetUsers(giveaway.WinnerUserIds))
+            {
+                var button = new ChatPill();
+                button.SetUser(message.ClientService, user);
+                button.Click += Chat_Click;
+                button.Margin = new Thickness(0, 4, 0, 0);
+                button.HorizontalAlignment = HorizontalAlignment.Center;
+
+                ParticipantsPanel.Children.Add(button);
+            }
+
+            FromLabel.Visibility = Visibility.Collapsed;
+
+            //WinnersLabel.Text = Formatter.DateAt(giveaway.Parameters.WinnersSelectionDate);
+        }
+
         private void Chat_Click(object sender, RoutedEventArgs e)
         {
             if (sender is ChatPill pill)
@@ -166,7 +232,7 @@ namespace Telegram.Controls.Messages.Content
 
         public bool IsValid(MessageContent content, bool primary)
         {
-            return content is MessageGiveaway;
+            return content is MessageGiveaway or MessageGiveawayWinners;
         }
 
         private async void Button_Click(object sender, RoutedEventArgs e)

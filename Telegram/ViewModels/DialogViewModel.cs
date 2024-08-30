@@ -1955,14 +1955,18 @@ namespace Telegram.ViewModels
                 message.Content is MessageGameScore ||
                 message.Content is MessagePaymentSuccessful)
             {
-                message.ReplyToState = MessageReplyToState.Loading;
+                message.ReplyToState = message.Content is MessageGiveawayWinners
+                    ? MessageReplyToState.Hidden
+                    : MessageReplyToState.Loading;
 
                 ClientService.GetReplyTo(message, response =>
                 {
                     if (response is Message result)
                     {
                         message.ReplyToItem = CreateMessage(result);
-                        message.ReplyToState = MessageReplyToState.None;
+                        message.ReplyToState = message.Content is MessageGiveawayWinners
+                            ? MessageReplyToState.Hidden
+                            : MessageReplyToState.None;
                     }
                     else if (response is Story story)
                     {

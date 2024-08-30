@@ -1469,6 +1469,10 @@ namespace Telegram.Controls.Cells
             {
                 return Text(Strings.BoostingGiveaway);
             }
+            else if (content is MessageGiveawayWinners)
+            {
+                return Text(Strings.BoostingGiveawayResults);
+            }
             else if (content is MessagePaidMedia paidMedia)
             {
                 if (paidMedia.Media.All(x => x.IsPhoto()))

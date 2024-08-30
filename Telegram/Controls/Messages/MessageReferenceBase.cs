@@ -316,6 +316,9 @@ namespace Telegram.Controls.Messages
                 case MessageGiveaway giveaway:
                     SetGiveawayTemplate(clientService, sender, giveaway, title, outgoing, white);
                     break;
+                case MessageGiveawayWinners giveawayWinners:
+                    SetGiveawayWinnersTemplate(clientService, sender, giveawayWinners, title, outgoing, white);
+                    break;
                 case MessageInvoice invoice:
                     SetInvoiceTemplate(clientService, sender, invoice, title, outgoing, white);
                     break;
@@ -776,6 +779,20 @@ namespace Telegram.Controls.Messages
                 sender,
                 title,
                 Strings.BoostingGiveaway,
+                null,
+                false,
+                white);
+        }
+
+        private void SetGiveawayWinnersTemplate(IClientService clientService, MessageSender sender, MessageGiveawayWinners giveaway, string title, bool outgoing, bool white)
+        {
+            HideThumbnail();
+
+            SetText(clientService,
+                outgoing,
+                sender,
+                title,
+                Strings.BoostingGiveawayResults,
                 null,
                 false,
                 white);

@@ -335,6 +335,7 @@
     </Compile>
     <Compile Include="Controls\ToastPopup.cs" />
     <Compile Include="Services\Settings\TranslateSettings.cs" />
+    <Compile Include="Streams\AnimatedEmojiFileSource.cs" />
     <Compile Include="Streams\ParticlesImageSource.cs" />
     <Compile Include="Stub.cs" />
     <Compile Include="Td\Api\MessageTag.cs" />

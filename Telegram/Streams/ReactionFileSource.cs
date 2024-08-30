@@ -91,7 +91,7 @@ namespace Telegram.Streams
 
         public override bool Equals(object obj)
         {
-            if (obj is CustomEmojiFileSource y)
+            if (obj is CustomEmojiFileSource y && !y.IsUnique && !IsUnique)
             {
                 return y.Id == Id;
             }
@@ -101,6 +101,11 @@ namespace Telegram.Streams
 
         public override int GetHashCode()
         {
+            if (IsUnique)
+            {
+                return base.GetHashCode();
+            }
+
             return _reaction switch
             {
                 ReactionTypeEmoji emoji => emoji.Emoji.GetHashCode(),

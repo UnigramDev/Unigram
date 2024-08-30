@@ -10,21 +10,21 @@ using Telegram.Td.Api;
 
 namespace Telegram.Streams
 {
-    public class CustomEmojiFileSource : DelayedFileSource
+    public class AnimatedEmojiFileSource : DelayedFileSource
     {
         private readonly IClientService _clientService;
-        private readonly long _customEmojiId;
+        private readonly string _emoji;
 
-        public CustomEmojiFileSource(IClientService clientService, long customEmojiId)
+        public AnimatedEmojiFileSource(IClientService clientService, string emoji)
             : base(clientService, null as File)
         {
             _clientService = clientService;
-            _customEmojiId = customEmojiId;
+            _emoji = emoji;
 
             DownloadFile(null, null);
         }
 
-        public override long Id => _customEmojiId;
+        public override long Id => _emoji.GetHashCode();
 
         public override async void DownloadFile(object sender, UpdateHandler<File> handler)
         {
@@ -36,10 +36,10 @@ namespace Telegram.Streams
             {
                 if (_file == null)
                 {
-                    var response = await _clientService.SendAsync(new GetCustomEmojiStickers(new[] { _customEmojiId }));
-                    if (response is Stickers stickers && stickers.StickersValue.Count == 1)
+                    var response = await _clientService.SendAsync(new GetAnimatedEmoji(_emoji));
+                    if (response is AnimatedEmoji emoji)
                     {
-                        var sticker = stickers.StickersValue[0];
+                        var sticker = emoji.Sticker;
 
                         _file = sticker.StickerValue;
                         Format = sticker.Format;
@@ -91,7 +91,7 @@ namespace Telegram.Streams
                 return base.GetHashCode();
             }
 
-            return Id.GetHashCode();
+            return _emoji.GetHashCode();
         }
     }
 }
