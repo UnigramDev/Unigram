@@ -24,6 +24,8 @@ namespace Telegram.Streams
             DownloadFile(null, null);
         }
 
+        public bool UseCenterAnimation { get; set; }
+
         public override long Id => GetHashCode();
 
         public override async void DownloadFile(object sender, UpdateHandler<File> handler)
@@ -42,7 +44,14 @@ namespace Telegram.Streams
                         var response = await _clientService.SendAsync(new GetEmojiReaction(emoji.Emoji));
                         if (response is EmojiReaction reaction)
                         {
-                            sticker = reaction.ActivateAnimation;
+                            sticker = UseCenterAnimation
+                                ? reaction.CenterAnimation
+                                : reaction.ActivateAnimation;
+
+                            if (UseCenterAnimation)
+                            {
+                                _clientService.DownloadFile(reaction.AroundAnimation.StickerValue.Id, 8);
+                            }
                         }
                     }
                     else if (_reaction is ReactionTypeCustomEmoji customEmoji)

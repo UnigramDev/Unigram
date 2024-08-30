@@ -103,7 +103,7 @@ namespace Telegram.Controls.Messages
 
         public void OnContextRequested()
         {
-            var chosen = _interaction;
+            var chosen = _reaction;
             if (chosen != null)
             {
                 OnClick(_message, chosen);
@@ -160,7 +160,7 @@ namespace Telegram.Controls.Messages
 
         private void FilterByTag()
         {
-            var chosen = _interaction;
+            var chosen = _reaction;
             if (chosen == null)
             {
                 return;
@@ -171,7 +171,7 @@ namespace Telegram.Controls.Messages
 
         private async void RenameTag()
         {
-            var chosen = _interaction;
+            var chosen = _reaction;
             if (chosen == null || !_message.ClientService.TryGetSavedMessagesTag(chosen.Type, out MessageTag tag))
             {
                 return;
@@ -198,7 +198,7 @@ namespace Telegram.Controls.Messages
 
         private void RemoveTag()
         {
-            var chosen = _interaction;
+            var chosen = _reaction;
             if (chosen == null)
             {
                 return;

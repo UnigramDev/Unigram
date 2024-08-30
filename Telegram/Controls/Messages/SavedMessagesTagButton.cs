@@ -4,6 +4,7 @@
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+using System;
 using System.Text;
 using Telegram.Common;
 using Telegram.Streams;
@@ -25,7 +26,6 @@ namespace Telegram.Controls.Messages
     public class SavedMessagesTagButton : RadioButton
     {
         private Grid LayoutRoot;
-        private Image Presenter;
         private CustomEmojiIcon Icon;
         private AnimatedTextBlock Count;
 
@@ -44,7 +44,7 @@ namespace Telegram.Controls.Messages
 
         public string GetAutomationName()
         {
-            if (_tag is SavedMessagesTag interaction)
+            if (_reaction is SavedMessagesTag interaction)
             {
                 if (interaction.Tag is ReactionTypeEmoji emoji)
                 {
@@ -60,73 +60,51 @@ namespace Telegram.Controls.Messages
         }
 
         private ChatSearchViewModel _viewModel;
-        private SavedMessagesTag _tag;
-        private EmojiReaction _reaction;
-
-        public SavedMessagesTag Tag => _tag;
-        public EmojiReaction EmojiReaction => _reaction;
-
+        private SavedMessagesTag _reaction;
         private ReactionType _reactionType;
 
-        public async void SetReaction(ChatSearchViewModel viewModel, SavedMessagesTag tag, EmojiReaction value)
+        public SavedMessagesTag Reaction => _reaction;
+
+        public void SetReaction(ChatSearchViewModel viewModel, SavedMessagesTag reaction)
         {
-            if (Presenter == null)
+            if (Icon == null)
             {
                 _viewModel = viewModel;
-                _tag = tag;
-                _reaction = value;
+                _reaction = reaction;
                 return;
             }
 
-            var recycled = tag.Tag.AreTheSame(_tag?.Tag);
+            var recycled = reaction.Tag.AreTheSame(_reaction?.Tag);
 
             _viewModel = viewModel;
-            _tag = tag;
-            _reaction = value;
+            _reaction = reaction;
 
-            UpdateInteraction(viewModel, tag, recycled);
+            UpdateInteraction(viewModel, reaction, recycled);
 
-            var center = value?.CenterAnimation?.StickerValue;
-            if (center == null || _reactionType.AreTheSame(tag.Tag))
+            if (_reactionType.AreTheSame(reaction.Tag))
             {
                 return;
             }
 
-            _reactionType = tag.Tag;
-            Presenter.Source = null;
+            _reactionType = reaction.Tag;
 
-            var bitmap = await EmojiCache.GetLottieFrameAsync(viewModel.ClientService, center, 32, 32);
-            if (_reactionType.AreTheSame(tag.Tag))
+            using (Icon.BeginBatchUpdate())
             {
-                Presenter.Source = bitmap;
+                var custom = reaction.Tag is ReactionTypeCustomEmoji;
+                var size = custom ? 20 : 32;
+
+                Icon.Width = Icon.Height = size;
+                Icon.FrameSize = new Size(size, size);
+                Icon.LoopCount = custom ? 3 : 1;
+
+                Icon.IsViewportAware = custom;
+
+                Icon.Source = new ReactionFileSource(viewModel.ClientService, reaction.Tag)
+                {
+                    UseCenterAnimation = true,
+                    IsUnique = true
+                };
             }
-        }
-
-        public void SetReaction(ChatSearchViewModel viewModel, SavedMessagesTag tag)
-        {
-            if (Presenter == null)
-            {
-                _viewModel = viewModel;
-                _tag = tag;
-                return;
-            }
-
-            var recycled = tag.Tag.AreTheSame(_tag?.Tag);
-
-            _viewModel = viewModel;
-            _tag = tag;
-
-            UpdateInteraction(viewModel, tag, recycled);
-
-            if (_reactionType.AreTheSame(tag.Tag))
-            {
-                return;
-            }
-
-            _reactionType = tag.Tag;
-
-            Icon ??= GetTemplateChild(nameof(Icon)) as CustomEmojiIcon;
-            Icon.Source = new ReactionFileSource(viewModel.ClientService, tag.Tag);
         }
 
         private void UpdateInteraction(ChatSearchViewModel viewModel, SavedMessagesTag tag, bool recycled)
@@ -195,15 +173,11 @@ namespace Telegram.Controls.Messages
         protected override void OnApplyTemplate()
         {
             LayoutRoot = GetTemplateChild(nameof(LayoutRoot)) as Grid;
-            Presenter = GetTemplateChild(nameof(Presenter)) as Image;
+            Icon = GetTemplateChild(nameof(Icon)) as CustomEmojiIcon;
 
-            if (_tag?.Tag is ReactionTypeCustomEmoji)
+            if (_reaction != null)
             {
-                SetReaction(_viewModel, _tag);
-            }
-            else if (_tag != null)
-            {
-                SetReaction(_viewModel, _tag, _reaction);
+                SetReaction(_viewModel, _reaction);
             }
 
             base.OnApplyTemplate();
@@ -216,8 +190,8 @@ namespace Telegram.Controls.Messages
 
         private void OnClick(object sender, RoutedEventArgs e)
         {
-            var chosen = _tag;
-            if (chosen == null || Presenter == null)
+            var chosen = _reaction;
+            if (chosen == null || Icon == null)
             {
                 return;
             }
@@ -229,7 +203,7 @@ namespace Telegram.Controls.Messages
             }
             else
             {
-                _viewModel.SavedMessagesTag = _tag.Tag;
+                _viewModel.SavedMessagesTag = _reaction.Tag;
                 SetValue(IsCheckedProperty, true);
             }
         }

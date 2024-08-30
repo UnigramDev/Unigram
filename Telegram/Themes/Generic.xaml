@@ -814,11 +814,7 @@
                             <ColumnDefinition />
                         </Grid.ColumnDefinitions>
                         <Grid Margin="0,-4">
-                            <Image x:Name="Presenter"
-                                   Width="32"
-                                   Height="32" />
-                            <local:CustomEmojiIcon x:Name="Icon"
-                                                   x:Load="False" />
+                            <local:CustomEmojiIcon x:Name="Icon" />
                             <Popup x:Name="Overlay"
                                    IsHitTestVisible="False"
                                    Margin="-32"
@@ -901,11 +897,7 @@
                                                     Grid.ColumnSpan="2" />
 
                         <Grid Margin="0,-4">
-                            <Image x:Name="Presenter"
-                                   Width="32"
-                                   Height="32" />
-                            <local:CustomEmojiIcon x:Name="Icon"
-                                                   x:Load="False" />
+                            <local:CustomEmojiIcon x:Name="Icon" />
                             <Popup x:Name="Overlay"
                                    IsHitTestVisible="False"
                                    Margin="-32"
@@ -980,11 +972,7 @@
                                                        Grid.ColumnSpan="2" />
 
                         <Grid Margin="0,-4">
-                            <Image x:Name="Presenter"
-                                   Width="32"
-                                   Height="32" />
-                            <local:CustomEmojiIcon x:Name="Icon"
-                                                   x:Load="False" />
+                            <local:CustomEmojiIcon x:Name="Icon" />
                         </Grid>
 
                         <local:AnimatedTextBlock x:Name="Count"

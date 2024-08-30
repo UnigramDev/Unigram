@@ -47,7 +47,7 @@ namespace Telegram.Controls.Messages
 
         public bool HasReactions => _reactions.Count > 0 || _customReactions.Count > 0;
 
-        public async void UpdateMessageReactions(MessageViewModel message, bool animate = false)
+        public void UpdateMessageReactions(MessageViewModel message, bool animate = false)
         {
             var reactions = message?.InteractionInfo?.Reactions;
             if (reactions == null || reactions.AreTags != _prevAsTags || message?.ChatId != _chatId || message?.Id != _messageId)
@@ -66,8 +66,6 @@ namespace Telegram.Controls.Messages
                 {
                     Padding = new Thickness(reactions.AreTags ? 8 : 4, 0, 4, 4);
                 }
-
-                List<string> missingEmoji = null;
 
                 message.UnreadReactions
                     .Select(x => x.Type)
@@ -104,16 +102,11 @@ namespace Telegram.Controls.Messages
 
                     if (oldItem.Type is ReactionTypeEmoji emoji)
                     {
-                        var required = UpdateButton<string, EmojiReaction>(_reactions, emoji.Emoji, message, oldItem, reactions.AreTags, message.ClientService.TryGetCachedReaction, changed, index);
-                        if (required)
-                        {
-                            missingEmoji ??= new List<string>();
-                            missingEmoji.Add(emoji.Emoji);
-                        }
+                        UpdateButton<string>(_reactions, emoji.Emoji, message, oldItem, reactions.AreTags, changed, index);
                     }
                     else if (oldItem.Type is ReactionTypeCustomEmoji customEmoji)
                     {
-                        UpdateButton<long, Sticker>(_customReactions, customEmoji.CustomEmojiId, message, oldItem, reactions.AreTags, EmojiCache.TryGet, changed, index);
+                        UpdateButton<long>(_customReactions, customEmoji.CustomEmojiId, message, oldItem, reactions.AreTags, changed, index);
                     }
                 }
 
@@ -170,81 +163,18 @@ namespace Telegram.Controls.Messages
 
                 _prevValue = reactions?.Reactions.ToArray();
                 _prevAsTags = reactions?.AreTags ?? false;
-
-                if (missingEmoji != null)
-                {
-                    foreach (var emoji in missingEmoji)
-                    {
-                        var response = await message.ClientService.SendAsync(new GetEmojiReaction(emoji));
-                        if (response is EmojiReaction reaction)
-                        {
-                            UpdateButton<string, EmojiReaction>(_reactions, emoji, message, reaction, reactions.AreTags, Animate);
-                        }
-                    }
-                }
             }
         }
 
-        delegate bool TryGetValue<TKey, T>(TKey key, out T value);
-
-        private void UpdateButton<T, TValue>(IDictionary<T, ReactionButton> cache, T key, MessageViewModel message, object value, bool isTag, Func<ReactionType, bool> animate)
+        private void UpdateButton<T>(IDictionary<T, ReactionButton> cache, T key, MessageViewModel message, MessageReaction item, bool isTag, bool animate, int index)
         {
-            if (cache.TryGetValue(key, out ReactionButton button))
-            {
-                if (value is EmojiReaction reaction)
-                {
-                    button.SetReaction(message, button.Reaction, reaction);
-                }
-                else if (value is Sticker sticker)
-                {
-                    button.SetReaction(message, button.Reaction);
-                }
-
-                if (animate(button.Reaction.Type))
-                {
-                    button.SetUnread(new UnreadReaction(button.Reaction.Type, null, false));
-                }
-            }
-        }
-
-        private bool UpdateButton<T, TValue>(IDictionary<T, ReactionButton> cache, T key, MessageViewModel message, MessageReaction item, bool isTag, TryGetValue<T, TValue> tryGet, bool animate, int index)
-        {
-            var required = false;
-
             var button = GetOrCreateButton(cache, key, isTag, index);
-            if (button.EmojiReaction != null)
-            {
-                button.SetReaction(message, item, button.EmojiReaction);
-            }
-            else if (item.Type is ReactionTypeCustomEmoji)
-            {
-                button.SetReaction(message, item);
-            }
-            else if (tryGet(key, out TValue value))
-            {
-                if (value is EmojiReaction reaction)
-                {
-                    button.SetReaction(message, item, reaction);
-                }
-                else if (value is Sticker sticker)
-                {
-                    button.SetReaction(message, item);
-                }
-            }
-            else
-            {
-                button.SetReaction(message, item, null as EmojiReaction);
-
-                animate = false;
-                required = true;
-            }
+            button.SetReaction(message, item);
 
             if (animate)
             {
                 button.SetUnread(new UnreadReaction(item.Type, null, false));
             }
-
-            return required;
         }
 
         private ReactionButton GetOrCreateButton<T>(IDictionary<T, ReactionButton> cache, T key, bool isTag, int index)
