@@ -243,7 +243,7 @@ namespace Telegram.Td.Api
                 return oldCustomEmoji.CustomEmojiId == newCustomEmoji.CustomEmojiId;
             }
 
-            return false;
+            return x is ReactionTypePaid && y is ReactionTypePaid;
         }
 
         public static bool AreTheSame(this MessageSelfDestructType x, MessageSelfDestructType y)
@@ -1584,6 +1584,7 @@ namespace Telegram.Td.Api
                 case MessageDocument:
                 case MessageGame:
                 case MessageGiveaway:
+                case MessageGiveawayWinners:
                 case MessageInvoice:
                 case MessageLocation:
                 case MessagePaidAlbum:

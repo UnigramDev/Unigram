@@ -651,7 +651,7 @@ namespace Telegram.ViewModels.Drawers
         {
             if (FullType is StickerFullTypeCustomEmoji)
             {
-                return string.Format(Strings.AccDescrCustomEmoji, Emoji);
+                return Strings.AccDescrCustomEmoji2;
             }
 
             return Emoji ?? base.ToString();

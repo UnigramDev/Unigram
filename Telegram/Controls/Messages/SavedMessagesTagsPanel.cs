@@ -51,7 +51,6 @@ namespace Telegram.Controls.Messages
             var items = tags?.Tags.Where(x => x.Count > 0).ToArray() ?? Array.Empty<SavedMessagesTag>();
             if (items.Length > 0)
             {
-                List<long> missingCustomEmoji = null;
                 List<string> missingEmoji = null;
 
                 void UpdateItem(SavedMessagesTag oldItem, SavedMessagesTag newItem, int index = 0)
@@ -73,12 +72,7 @@ namespace Telegram.Controls.Messages
                     }
                     else if (oldItem.Tag is ReactionTypeCustomEmoji customEmoji)
                     {
-                        var required = UpdateButton<long, Sticker>(_customReactions, customEmoji.CustomEmojiId, viewModel, oldItem, EmojiCache.TryGet, index);
-                        if (required)
-                        {
-                            missingCustomEmoji ??= new List<long>();
-                            missingCustomEmoji.Add(customEmoji.CustomEmojiId);
-                        }
+                        UpdateButton<long, Sticker>(_customReactions, customEmoji.CustomEmojiId, viewModel, oldItem, EmojiCache.TryGet, index);
                     }
                 }
 
@@ -132,24 +126,6 @@ namespace Telegram.Controls.Messages
 
                 _prevValue = items;
 
-                if (missingCustomEmoji != null)
-                {
-                    var response = await EmojiCache.GetAsync(viewModel.ClientService, missingCustomEmoji);
-                    if (response != null)
-                    {
-                        foreach (var sticker in response)
-                        {
-                            if (sticker.FullType is not StickerFullTypeCustomEmoji customEmoji)
-                            {
-                                continue;
-                            }
-
-                            EmojiCache.AddOrUpdate(sticker);
-                            UpdateButton<long, Sticker>(_customReactions, customEmoji.CustomEmojiId, viewModel, sticker);
-                        }
-                    }
-                }
-
                 if (missingEmoji != null)
                 {
                     foreach (var emoji in missingEmoji)
@@ -185,7 +161,7 @@ namespace Telegram.Controls.Messages
                 }
                 else if (value is Sticker sticker)
                 {
-                    button.SetReaction(viewModel, button.Tag, sticker);
+                    button.SetReaction(viewModel, button.Tag);
                 }
             }
         }
@@ -199,9 +175,9 @@ namespace Telegram.Controls.Messages
             {
                 button.SetReaction(viewModel, item, button.EmojiReaction);
             }
-            else if (button.CustomReaction != null)
+            else if (item.Tag is ReactionTypeCustomEmoji)
             {
-                button.SetReaction(viewModel, item, button.CustomReaction);
+                button.SetReaction(viewModel, item);
             }
             else if (tryGet(key, out TValue value))
             {
@@ -211,7 +187,7 @@ namespace Telegram.Controls.Messages
                 }
                 else if (value is Sticker sticker)
                 {
-                    button.SetReaction(viewModel, item, sticker);
+                    button.SetReaction(viewModel, item);
                 }
             }
             else

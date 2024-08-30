@@ -49,9 +49,9 @@ namespace Telegram.Controls.Messages
                 {
                     return Locale.Declension(Strings.R.AccDescrNumberOfPeopleReactions, interaction.TotalCount, emoji.Emoji);
                 }
-                else if (_sticker is Sticker sticker)
+                else
                 {
-                    return Locale.Declension(Strings.R.AccDescrNumberOfPeopleReactions, interaction.TotalCount, string.Format(Strings.AccDescrCustomEmoji, sticker.Emoji));
+                    return Locale.Declension(Strings.R.AccDescrNumberOfPeopleReactions, interaction.TotalCount, Strings.AccDescrCustomEmoji2);
                 }
             }
 
@@ -61,14 +61,12 @@ namespace Telegram.Controls.Messages
         protected MessageViewModel _message;
         protected MessageReaction _interaction;
         private EmojiReaction _reaction;
-        private Sticker _sticker;
         private UnreadReaction _unread;
 
         public MessageReaction Reaction => _interaction;
         public EmojiReaction EmojiReaction => _reaction;
-        public Sticker CustomReaction => _sticker;
 
-        private long _presenterId;
+        private ReactionType _reactionType;
 
         public void SetUnread(UnreadReaction unread)
         {
@@ -113,28 +111,27 @@ namespace Telegram.Controls.Messages
             }
 
             var center = value?.CenterAnimation?.StickerValue;
-            if (center == null || center.Id == _presenterId)
+            if (center == null || interaction.Type.AreTheSame(_reactionType))
             {
                 return;
             }
 
-            _presenterId = center.Id;
+            _reactionType = interaction.Type;
             Presenter.Source = null;
 
             var bitmap = await EmojiCache.GetLottieFrameAsync(_message.ClientService, center, 32, 32);
-            if (center.Id == _presenterId)
+            if (interaction.Type.AreTheSame(_reactionType))
             {
                 Presenter.Source = bitmap;
             }
         }
 
-        public void SetReaction(MessageViewModel message, MessageReaction interaction, Sticker value)
+        public void SetReaction(MessageViewModel message, MessageReaction interaction)
         {
             if (Presenter == null)
             {
                 _message = message;
                 _interaction = interaction;
-                _sticker = value;
                 return;
             }
 
@@ -144,19 +141,21 @@ namespace Telegram.Controls.Messages
 
             _message = message;
             _interaction = interaction;
-            _sticker = value;
 
             UpdateInteraction(message, interaction, recycled);
 
-            if (_presenterId == value?.StickerValue.Id)
+            if (interaction.Type.AreTheSame(_reactionType))
             {
                 return;
             }
 
-            _presenterId = value.StickerValue.Id;
+            _reactionType = interaction.Type;
 
             Icon ??= GetTemplateChild(nameof(Icon)) as CustomEmojiIcon;
-            Icon.Source = new DelayedFileSource(message.ClientService, value);
+            Icon.Source = new ReactionFileSource(message.ClientService, interaction.Type)
+            {
+                IsUnique = true
+            };
         }
 
         protected virtual void UpdateInteraction(MessageViewModel message, MessageReaction interaction, bool recycled)
@@ -229,9 +228,9 @@ namespace Telegram.Controls.Messages
             Presenter = GetTemplateChild(nameof(Presenter)) as Image;
             Overlay = GetTemplateChild(nameof(Overlay)) as Popup;
 
-            if (_sticker != null)
+            if (_interaction.Type is ReactionTypeCustomEmoji)
             {
-                SetReaction(_message, _interaction, _sticker);
+                SetReaction(_message, _interaction);
             }
             else if (_interaction != null)
             {
@@ -297,7 +296,7 @@ namespace Telegram.Controls.Messages
                     var next = random.Next(0, stickers.StickersValue.Count);
 
                     var around = await _message.ClientService.DownloadFileAsync(stickers.StickersValue[next].StickerValue, 32);
-                    if (around.Local.IsDownloadingCompleted && IsLoaded && _sticker?.FullType is StickerFullTypeCustomEmoji customEmoji)
+                    if (around.Local.IsDownloadingCompleted && IsLoaded && _reactionType is ReactionTypeCustomEmoji customEmoji)
                     {
                         if (Icon != null)
                         {
