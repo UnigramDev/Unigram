@@ -1,0 +1,9 @@
+namespace Telegram.Native
+{
+    [default_interface]
+    runtimeclass TextFormat 
+    {
+        TextFormat();
+        Windows.Foundation.Numerics.Vector2 ContentEnd(Double fontSize, Double width);
+    }
+}

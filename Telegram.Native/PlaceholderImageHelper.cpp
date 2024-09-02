@@ -731,6 +731,81 @@ namespace winrt::Telegram::Native::implementation
         return result;
     }
 
+    winrt::Telegram::Native::TextFormat PlaceholderImageHelper::CreateTextFormat2(hstring text, IVector<TextEntity> entities, double fontSize, double width)
+    {
+        winrt::com_ptr<TextFormat> textFormat;
+        CreateTextFormatImpl(text, entities, fontSize, width, textFormat);
+        return textFormat.as<winrt::Telegram::Native::TextFormat>();
+    }
+
+    HRESULT PlaceholderImageHelper::CreateTextFormatImpl(hstring text, IVector<TextEntity> entities, double fontSize, double width, winrt::com_ptr<TextFormat>& textFormat2)
+    {
+        std::lock_guard const guard(m_criticalSection);
+        HRESULT result;
+
+        //ReturnIfFailed(result, CreateTextFormat(fontSize));
+
+        winrt::com_ptr<IDWriteTextFormat> textFormat;
+        ReturnIfFailed(result, m_dwriteFactory->CreateTextFormat(
+            L"Segoe UI Emoji",						// font family name
+            m_fontCollection.get(),			        // system font collection
+            DWRITE_FONT_WEIGHT_NORMAL,				// font weight 
+            DWRITE_FONT_STYLE_NORMAL,				// font style
+            DWRITE_FONT_STRETCH_NORMAL,				// default font stretch
+            fontSize,								// font size
+            L"",									// locale name
+            textFormat.put()
+        ));
+        ReturnIfFailed(result, textFormat->SetTextAlignment(DWRITE_TEXT_ALIGNMENT_LEADING));
+        ReturnIfFailed(result, textFormat->SetParagraphAlignment(DWRITE_PARAGRAPH_ALIGNMENT_NEAR));
+
+        winrt::com_ptr<IDWriteTextLayout> textLayout;
+        ReturnIfFailed(result, m_dwriteFactory->CreateTextLayout(
+            text.data(),					// The string to be laid out and formatted.
+            text.size(),        			// The length of the string.
+            textFormat.get(),			    // The text format to apply to the string (contains font information, etc).
+            width,							// The width of the layout box.
+            INFINITY,						// The height of the layout box.
+            textLayout.put()				// The IDWriteTextLayout interface pointer.
+        ));
+
+        for (const TextEntity& entity : entities)
+        {
+            UINT32 startPosition = entity.Offset();
+            UINT32 length = entity.Length();
+            auto name = winrt::get_class_name(entity.Type());
+
+            if (name == winrt::name_of<TextEntityTypeBold>())
+            {
+                ReturnIfFailed(result, textLayout->SetFontWeight(DWRITE_FONT_WEIGHT_SEMI_BOLD, { startPosition, length }));
+            }
+            else if (name == winrt::name_of<TextEntityTypeItalic>())
+            {
+                ReturnIfFailed(result, textLayout->SetFontStyle(DWRITE_FONT_STYLE_ITALIC, { startPosition, length }));
+            }
+            else if (name == winrt::name_of<TextEntityTypeStrikethrough>())
+            {
+                ReturnIfFailed(result, textLayout->SetStrikethrough(TRUE, { startPosition, length }));
+            }
+            else if (name == winrt::name_of<TextEntityTypeUnderline>())
+            {
+                ReturnIfFailed(result, textLayout->SetUnderline(TRUE, { startPosition, length }));
+            }
+            //else if (name == winrt::name_of<TextEntityTypeCustomEmoji>())
+            //{
+            //    textLayout->SetInlineObject(m_customEmoji.get(), { startPosition, length });
+            //}
+            else if (name == winrt::name_of<TextEntityTypeCode>() || name == winrt::name_of<TextEntityTypePre>() || name == winrt::name_of<TextEntityTypePreCode>())
+            {
+                ReturnIfFailed(result, textLayout->SetFontCollection(m_systemCollection.get(), { startPosition, length }));
+                ReturnIfFailed(result, textLayout->SetFontFamilyName(L"Consolas", { startPosition, length }));
+            }
+        }
+
+        textFormat2 = winrt::make_self<TextFormat>(textLayout, text.size(), fontSize, width);
+        return result;
+    }
+
     float2 PlaceholderImageHelper::ContentEnd(hstring text, IVector<TextEntity> entities, double fontSize, double width)
     {
         float2 offset;

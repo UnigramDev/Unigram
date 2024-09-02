@@ -407,6 +407,10 @@
     <ClInclude Include="Helpers\MathHelper.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="TelegramWebviewProxy.h" />
+    <ClInclude Include="TextFormat.h">
+      <DependentUpon>TextFormat.idl</DependentUpon>
+      <SubType>Code</SubType>
+    </ClInclude>
     <ClInclude Include="VideoAnimation.h">
       <DependentUpon>VideoAnimation.idl</DependentUpon>
     </ClInclude>
@@ -973,6 +977,10 @@
       <DependentUpon>SurfaceImage.idl</DependentUpon>
       <SubType>Code</SubType>
     </ClCompile>
+    <ClCompile Include="TextFormat.cpp">
+      <DependentUpon>TextFormat.idl</DependentUpon>
+      <SubType>Code</SubType>
+    </ClCompile>
     <ClCompile Include="VideoAnimationStreamSource.cpp">
       <DependentUpon>VideoAnimationStreamSource.idl</DependentUpon>
       <SubType>Code</SubType>
@@ -1232,6 +1240,9 @@
       <SubType>Designer</SubType>
     </Midl>
     <Midl Include="TelegramWebviewProxy.idl" />
+    <Midl Include="TextFormat.idl">
+      <SubType>Designer</SubType>
+    </Midl>
     <Midl Include="VideoAnimation.idl" />
     <Midl Include="VideoAnimationStreamSource.idl">
       <SubType>Designer</SubType>

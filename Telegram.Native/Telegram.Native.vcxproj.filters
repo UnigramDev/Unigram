@@ -1223,5 +1223,6 @@
     <Midl Include="SurfaceImage.idl" />
     <Midl Include="FatalError.idl" />
     <Midl Include="ParticlesAnimation.idl" />
+    <Midl Include="TextFormat.idl" />
   </ItemGroup>
 </Project>
