@@ -110,6 +110,14 @@ namespace Telegram.ViewModels
             }
 
             Children.Clear();
+
+            //Chats = null;
+            //SearchChats = null;
+            //Stories = null;
+            //Topics = null;
+            //Contacts = null;
+            //Calls = null;
+            //Settings = null;
         }
 
         public ILifetimeService Lifetime => _lifetimeService;
@@ -462,13 +470,13 @@ namespace Telegram.ViewModels
                 .Subscribe<UpdateWindowActivated>(Handle);
         }
 
-        public ChatListViewModel Chats { get; }
-        public SearchChatsViewModel SearchChats { get; }
-        public StoryListViewModel Stories { get; }
-        public TopicListViewModel Topics { get; }
-        public ContactsViewModel Contacts { get; }
-        public CallsViewModel Calls { get; }
-        public SettingsViewModel Settings { get; }
+        public ChatListViewModel Chats { get; private set; }
+        public SearchChatsViewModel SearchChats { get; private set; }
+        public StoryListViewModel Stories { get; private set; }
+        public TopicListViewModel Topics { get; private set; }
+        public ContactsViewModel Contacts { get; private set; }
+        public CallsViewModel Calls { get; private set; }
+        public SettingsViewModel Settings { get; private set; }
 
 
 

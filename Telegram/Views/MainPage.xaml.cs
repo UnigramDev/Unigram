@@ -8,6 +8,7 @@ using Microsoft.UI.Xaml.Controls;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Linq;
 using System.Numerics;
 using System.Threading.Tasks;
@@ -3736,6 +3737,7 @@ namespace Telegram.Views
 
         private bool _testLeak;
 
+        [Conditional("DEBUG")]
         public void LeakTest(bool enable)
         {
             if (!_testLeak)
@@ -3748,12 +3750,14 @@ namespace Telegram.Views
                 return;
             }
 
+            return;
+
             _viewModel = null;
             LayoutRoot.Children.Clear();
 
-            LayoutRoot = null;
             NavigationResults = null;
             ContactsResults = null;
+            LayoutRoot = null;
             State = null;
             TitleBarrr = null;
             ChatTabsLeft = null;
@@ -3791,10 +3795,11 @@ namespace Telegram.Views
             TopicListPresenter = null;
             EmptyState = null;
             TopicList = null;
-            UnconfirmedCard = null;
             ArchivedChatsPresenter = null;
             ArchivedChatsPanel = null;
             ArchivedChats = null;
+            SetBirthdateCard = null;
+            UnconfirmedCard = null;
             ChatTabs = null;
             ChatTabsView = null;
             ChatFolders = null;
@@ -3813,7 +3818,6 @@ namespace Telegram.Views
             LogoBasic = null;
             LogoPremium = null;
             LogoEmoji = null;
-
         }
     }
 
