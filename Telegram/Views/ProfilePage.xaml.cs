@@ -315,11 +315,18 @@ namespace Telegram.Views
                 return;
             }
 
-            if (e.Content is ProfileStoriesTabPage && e.Parameter is ChatStoriesType type)
+            if (e.Content is ProfileStoriesTabPage)
             {
-                tabPage.DataContext = type == ChatStoriesType.Pinned
-                    ? ViewModel.PinnedStoriesTab
-                    : ViewModel.ArchivedStoriesTab;
+                if (e.Parameter is ChatStoriesType type)
+                {
+                    tabPage.DataContext = type == ChatStoriesType.Pinned
+                        ? ViewModel.PinnedStoriesTab
+                        : ViewModel.ArchivedStoriesTab;
+                }
+                else
+                {
+                    tabPage.DataContext = ViewModel.PinnedStoriesTab;
+                }
             }
 
             if (tabPage.ScrollingHost.ItemsSource != null)
