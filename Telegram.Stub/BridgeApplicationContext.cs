@@ -75,14 +75,14 @@ namespace Telegram.Stub
                     local.Values.Add("AddLocalhostExemption", true);
                 }
 
-                if (local.Values.ContainsKey("MigratedV2"))
-                {
-                    // Already migrated
-                }
-                else if (Migrate())
-                {
-                    local.Values.Add("MigratedV2", true);
-                }
+                //if (local.Values.ContainsKey("MigratedV2"))
+                //{
+                //    // Already migrated
+                //}
+                //else if (Migrate())
+                //{
+                //    local.Values.Add("MigratedV2", true);
+                //}
             }
             catch
             {
