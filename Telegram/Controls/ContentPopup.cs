@@ -26,7 +26,7 @@ using Windows.UI.Xaml.Shapes;
 
 namespace Telegram.Controls
 {
-    public class ContentPopup : ContentDialog
+    public class ContentPopup : ContentDialogEx
     {
         private ContentDialogResult _result;
 
@@ -35,6 +35,8 @@ namespace Telegram.Controls
         private Border BorderElement;
         private Border ContentElement;
         private Grid CommandSpace;
+
+        private Rectangle Smoke;
 
         public ContentPopup()
         {
@@ -52,12 +54,8 @@ namespace Telegram.Controls
                 }
             }
 
-            Loaded += OnLoaded;
-            Unloaded += OnUnloaded;
-
-            Opened += OnOpened;
-            Closing += OnClosing;
-            Closed += OnClosed;
+            Connected += OnLoaded;
+            Disconnected += OnUnloaded;
 
             ElementCompositionPreview.SetIsTranslationEnabled(this, true);
         }
@@ -148,39 +146,13 @@ namespace Telegram.Controls
 
         }
 
-        private void OnOpened(ContentDialog sender, ContentDialogOpenedEventArgs args)
+        private void OnLoaded(object sender, RoutedEventArgs e)
         {
             if (XamlRoot.Content is RootPage root)
             {
                 root.PopupOpened();
             }
-        }
 
-        private void OnClosing(ContentDialog sender, ContentDialogClosingEventArgs args)
-        {
-            var canvas = VisualTreeHelper.GetParent(this) as Canvas;
-            if (canvas != null)
-            {
-                foreach (var child in canvas.Children)
-                {
-                    if (child is Rectangle rectangle)
-                    {
-                        rectangle.Visibility = Visibility.Collapsed;
-                    }
-                }
-            }
-        }
-
-        private void OnClosed(ContentDialog sender, ContentDialogClosedEventArgs args)
-        {
-            if (XamlRoot.Content is RootPage root)
-            {
-                root.PopupClosed();
-            }
-        }
-
-        private void OnLoaded(object sender, RoutedEventArgs e)
-        {
             var context = WindowContext.ForXamlRoot(this);
             if (context != null)
             {
@@ -194,8 +166,10 @@ namespace Telegram.Controls
                 {
                     if (child is Rectangle rectangle)
                     {
-                        rectangle.Visibility = Visibility.Visible;
-                        rectangle.Fill = new SolidColorBrush(ActualTheme == ElementTheme.Light
+                        // TODO: I don't remember why it is needed to show-hide it.
+                        Smoke = rectangle;
+                        Smoke.Visibility = Visibility.Visible;
+                        Smoke.Fill = new SolidColorBrush(ActualTheme == ElementTheme.Light
                             ? Color.FromArgb(0x99, 0xFF, 0xFF, 0xFF)
                             : Color.FromArgb(0x99, 0x00, 0x00, 0x00));
                     }
@@ -205,10 +179,20 @@ namespace Telegram.Controls
 
         private void OnUnloaded(object sender, RoutedEventArgs e)
         {
+            if (XamlRoot.Content is RootPage root)
+            {
+                root.PopupClosed();
+            }
+
             var context = WindowContext.ForXamlRoot(this);
             if (context != null)
             {
                 context.InputListener.KeyDown -= OnKeyDown;
+            }
+
+            if (Smoke != null)
+            {
+                Smoke.Visibility = Visibility.Collapsed;
             }
         }
 
