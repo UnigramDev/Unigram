@@ -133,6 +133,9 @@
   <data name="AccDescrContactSorting" xml:space="preserve">
     <value>Change sorting</value>
   </data>
+  <data name="AccDescrCustomEmoji" xml:space="preserve">
+    <value>{0}, custom emoji</value>
+  </data>
   <data name="AccDescrCustomEmoji2" xml:space="preserve">
     <value>Custom emoji</value>
   </data>
@@ -2119,10 +2122,10 @@ from **{0}**.</value>
     <value>Change Bot Settings</value>
   </data>
   <data name="BotDAU_one" xml:space="preserve">
-    <value>{0} user</value>
+    <value>{0} monthly user</value>
   </data>
   <data name="BotDAU_other" xml:space="preserve">
-    <value>{0} users</value>
+    <value>{0} monthly users</value>
   </data>
   <data name="BotEditCommands" xml:space="preserve">
     <value>Edit Commands</value>
@@ -8821,7 +8824,7 @@ The channel &quot;**{1}**&quot; will become private.</value>
     <value>Apps you use</value>
   </data>
   <data name="SearchAppsPopular" xml:space="preserve">
-    <value>Popular apps</value>
+    <value>Grossing apps</value>
   </data>
   <data name="SearchFrom" xml:space="preserve">
     <value>from:</value>
@@ -8974,7 +8977,7 @@ The channel &quot;**{1}**&quot; will become private.</value>
     <value>Disable filtering</value>
   </data>
   <data name="SensitiveInfo" xml:space="preserve">
-    <value>Display sensitive media in public channels on all your Telegram devices.</value>
+    <value>Do not hide media that contains content suitable only for adults.</value>
   </data>
   <data name="SensitiveTitle" xml:space="preserve">
     <value>Sensitive content</value>
