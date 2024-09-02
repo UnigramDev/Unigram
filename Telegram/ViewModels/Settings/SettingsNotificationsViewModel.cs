@@ -276,6 +276,8 @@ namespace Telegram.ViewModels.Settings
                 ReloadSound();
             }
 
+            ExceptionsCount = Alert ? Strings.NotificationsOn : Strings.NotificationsOff;
+
             var chats = await ClientService.SendAsync(new GetChatNotificationSettingsExceptions(_scope, false)) as Telegram.Td.Api.Chats;
             if (chats != null)
             {
