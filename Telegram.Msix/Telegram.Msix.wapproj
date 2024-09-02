@@ -65,7 +65,6 @@
     <AppxPackageSigningTimestampDigestAlgorithm>SHA256</AppxPackageSigningTimestampDigestAlgorithm>
     <AppxPackageSigningEnabled>True</AppxPackageSigningEnabled>
     <EntryPointProjectUniqueName>..\Telegram\Telegram.csproj</EntryPointProjectUniqueName>
-    <PackageCertificateKeyFile>Telegram.Msix_TemporaryKey.pfx</PackageCertificateKeyFile>
     <!--<CreatePackageMakeAppxParameters>/pb artifacts.txt</CreatePackageMakeAppxParameters>
     <CreateResourcePackageMakeAppxParameters>/pb artifacts.txt</CreateResourcePackageMakeAppxParameters>-->
   </PropertyGroup>
@@ -113,6 +112,8 @@
     <PreBuildEvent>
       powershell.exe -NoProfile -ExecutionPolicy RemoteSigned -file "$(SolutionDir)UpdateManifest.ps1" -path "$(ProjectDir)\" -config "$(ConfigurationName)" -mode "$(UapAppxPackageBuildMode)"
     </PreBuildEvent>
+    <PackageCertificateThumbprint>00592121057E83395EE3C577DAA34E01F7244252</PackageCertificateThumbprint>
+    <AppxPackageSigningTimestampServerUrl>http://timestamp.digicert.com</AppxPackageSigningTimestampServerUrl>
   </PropertyGroup>
   <ItemGroup>
     <AppxManifest Include="Package.appxmanifest">
