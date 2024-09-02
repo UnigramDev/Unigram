@@ -92,8 +92,10 @@ namespace Telegram.Stub
 
         private bool Migrate()
         {
-            var destination = Path.GetDirectoryName(ApplicationData.Current.LocalFolder.Path);
+            var destination = ApplicationData.Current.LocalFolder.Path;
             var source = destination.Replace(Package.Current.Id.FamilyName, "TelegramFZ-LLC.Unigram_1vfw5zm9jmzqy");
+
+            var migrated = false;
 
             if (Directory.Exists(source))
             {
@@ -119,16 +121,20 @@ namespace Telegram.Stub
                             continue;
                         }
 
-                        if (process.MainModule.FileName.Contains("1vfw5zm9jmzqy") || process.MainModule.FileName.Contains("3epzvh0nk91te"))
+                        try
                         {
-                            process.Kill();
+                            if (process.MainModule.FileName.Contains("1vfw5zm9jmzqy") || process.MainModule.FileName.Contains("3epzvh0nk91te"))
+                            {
+                                process.Kill();
+                            }
+                        }
+                        catch
+                        {
+                            // It's not always possible to access MainModule
                         }
                     }
 
-                    var localSource = Path.Combine(source, "LocalState");
-                    var localDestination = Path.Combine(destination, "LocalState");
-
-                    var accounts = Directory.GetDirectories(localSource);
+                    var accounts = Directory.GetDirectories(source);
 
                     foreach (var folder in accounts)
                     {
@@ -139,12 +145,15 @@ namespace Telegram.Stub
 
                             if (File.Exists(binlogSource))
                             {
+                                var directorty = Path.GetFileName(binlogDestination);
+
                                 var session = Path.GetFileName(folder);
                                 var container = ApplicationData.Current.LocalSettings.CreateContainer($"{session}", ApplicationDataCreateDisposition.Always);
 
                                 container.Values["UserId"] = 1L;
                                 container.Values["UseTestDC"] = binlog == "td_test.binlog";
 
+                                Directory.CreateDirectory(directorty);
                                 File.Copy(binlogSource, binlogDestination, true);
                             }
                         }
@@ -153,10 +162,11 @@ namespace Telegram.Stub
                         Migrate("td_test.binlog");
                     }
 
+                    migrated = true;
                 }
-                catch
+                catch (Exception ex)
                 {
-
+                    MessageBox.Show(ex.ToString());
                 }
                 finally
                 {
@@ -164,7 +174,7 @@ namespace Telegram.Stub
                 }
             }
 
-            return false;
+            return migrated;
         }
 
         /*[DllImport("..\\Telegram.Diagnostics.dll")]
