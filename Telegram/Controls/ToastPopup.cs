@@ -44,6 +44,7 @@ namespace Telegram.Controls
         SavedMessages,
         SoundDownload,
         SpeedLimit,
+        StarsSent,
         Success,
         Transcribe,
         Translate,
@@ -229,7 +230,7 @@ namespace Telegram.Controls
                 toast.Closed += handler;
             }
 
-            if (target == null || dismissAfter.HasValue)
+            if ((target == null || dismissAfter.HasValue) && (dismissAfter == null || dismissAfter.Value.TotalSeconds > 0))
             {
                 var timer = new DispatcherTimer();
                 timer.Interval = dismissAfter ?? TimeSpan.FromSeconds(3);

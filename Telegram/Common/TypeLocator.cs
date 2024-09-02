@@ -899,6 +899,11 @@ namespace Telegram.Views
                         _clientService,
                         _settingsService,
                         _eventAggregator);
+                case "Telegram.ViewModels.Stars.ReactViewModel":
+                    return (T)(object)new Telegram.ViewModels.Stars.ReactViewModel(
+                        _clientService,
+                        _settingsService,
+                        _eventAggregator);
                 case "Telegram.ViewModels.Business.BusinessViewModel":
                     return (T)(object)new Telegram.ViewModels.Business.BusinessViewModel(
                         _clientService,

@@ -265,8 +265,10 @@
     <Compile Include="Controls\Messages\MessageFactCheck.xaml.cs">
       <DependentUpon>MessageFactCheck.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\Messages\ReactionAsPaidButton.cs" />
     <Compile Include="Controls\Messages\ReactionAsTagButton.cs" />
     <Compile Include="Common\AsyncMediaPlayer.cs" />
+    <Compile Include="Td\Api\ReactionTypeEqualityComparer.cs" />
     <Compile Include="Controls\PremiumStarCount.cs" />
     <Compile Include="Controls\Stories\Widgets\StoryWeatherWidget.xaml.cs">
       <DependentUpon>StoryWeatherWidget.xaml</DependentUpon>
@@ -909,6 +911,7 @@
     <Compile Include="ViewModels\Settings\Privacy\SettingsPrivacyShowBioViewModel.cs" />
     <Compile Include="ViewModels\Settings\Privacy\SettingsPrivacyNewChatViewModel.cs" />
     <Compile Include="ViewModels\Settings\SettingsPowerSavingViewModel.cs" />
+    <Compile Include="ViewModels\Stars\ReactViewModel.cs" />
     <Compile Include="ViewModels\Stars\PayViewModel.cs" />
     <Compile Include="ViewModels\Stars\StarsViewModel.cs" />
     <Compile Include="ViewModels\Stars\BuyViewModel.cs" />
@@ -1239,6 +1242,9 @@
     </Compile>
     <Compile Include="Views\Stars\Popups\JoinChatPopup.xaml.cs">
       <DependentUpon>JoinChatPopup.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Stars\Popups\ReactPopup.xaml.cs">
+      <DependentUpon>ReactPopup.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Stars\Popups\SubscriptionPopup.xaml.cs">
       <DependentUpon>SubscriptionPopup.xaml</DependentUpon>
@@ -1934,6 +1940,13 @@
     <Content Include="Assets\Animations\BusinessChatLinks.tgs" />
     <Content Include="Assets\Toasts\SpeedLimit.tgs" />
     <Content Include="Assets\Animations\YourStars.tgs" />
+    <Content Include="Assets\Animations\PaidReactionActivate.tgs" />
+    <Content Include="Assets\Animations\PaidReactionAround1.tgs" />
+    <Content Include="Assets\Animations\PaidReactionAround2.tgs" />
+    <Content Include="Assets\Animations\PaidReactionAround3.tgs" />
+    <Content Include="Assets\Animations\PaidReactionAround4.tgs" />
+    <Content Include="Assets\Animations\PaidReactionAround5.tgs" />
+    <Content Include="Assets\Animations\PaidReactionCenter.tgs" />
     <None Include="Assets\i420.hlsl" />
     <Content Include="Assets\Images\Reply.scale-100.png" />
     <Content Include="Assets\Images\Reply.scale-125.png" />
@@ -2111,6 +2124,7 @@
     <Content Include="Assets\Toasts\Premium.tgs" />
     <Content Include="Assets\Toasts\Gif.tgs" />
     <None Include="Assets\Toasts\Pin.tgs" />
+    <Content Include="Assets\Toasts\StarsSent.tgs" />
     <None Include="Assets\Toasts\Unpin.tgs" />
     <None Include="Telegram_StoreKey.pfx" />
     <None Include="Telegram_TemporaryKey.pfx" />
@@ -3038,6 +3052,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\Stars\Popups\JoinChatPopup.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\Stars\Popups\ReactPopup.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

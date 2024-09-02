@@ -195,6 +195,7 @@ namespace Telegram
                 typeof(StarsViewModel),
                 typeof(BuyViewModel),
                 typeof(PayViewModel),
+                typeof(ReactViewModel),
                 typeof(BusinessViewModel),
                 typeof(BusinessLocationViewModel),
                 typeof(BusinessHoursViewModel),

@@ -124,6 +124,18 @@
               Height="40"
               CornerRadius="20"
               VerticalAlignment="Bottom">
+            <Rectangle x:Name="PaidReaction"
+                       Visibility="Collapsed"
+                       Margin="-4,0">
+                <Rectangle.Fill>
+                    <LinearGradientBrush StartPoint="0,0"
+                                         EndPoint="1,0">
+                        <GradientStop Color="#54E8AB02" />
+                        <GradientStop Color="#00E8AB02"
+                                      Offset="1" />
+                    </LinearGradientBrush>
+                </Rectangle.Fill>
+            </Rectangle>
             <Button x:Name="Expand"
                     AutomationProperties.Name="{CustomResource AccDescrMoreReactions}"
                     Click="Expand_Click"

@@ -826,6 +826,7 @@
                                                  x:Load="False"
                                                  Foreground="{ThemeResource MessageReactionForegroundBrush}"
                                                  TextStyle="{StaticResource CaptionTextBlockStyle}"
+                                                 FontWeight="SemiBold"
                                                  VerticalAlignment="Center"
                                                  AutomationProperties.AccessibilityView="Raw"
                                                  IsTabStop="False"
@@ -835,6 +836,104 @@
                         <local:RecentUserHeads x:Name="RecentChoosers"
                                                x:Load="False"
                                                BorderBrush="{ThemeResource MessageReactionBackgroundBrush}"
+                                               ItemSize="20"
+                                               Margin="-4,0,0,0"
+                                               AutomationProperties.AccessibilityView="Raw"
+                                               IsTabStop="False"
+                                               Grid.Column="1" />
+                    </Grid>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <SolidColorBrush x:Key="MessageReactionPaidBackgroundBrush"
+                     Color="#40E8AB02" />
+    <SolidColorBrush x:Key="MessageReactionPaidForegroundBrush"
+                     Color="#FFE8AB02" />
+
+    <SolidColorBrush x:Key="MessageReactionPaidChosenBackgroundBrush"
+                     Color="#FFE8AB02" />
+    <SolidColorBrush x:Key="MessageReactionPaidChosenForegroundBrush"
+                     Color="#FFFFFFFF" />
+
+    <Style TargetType="messages:ReactionAsPaidButton">
+        <Setter Property="CornerRadius"
+                Value="12" />
+        <Setter Property="MinWidth"
+                Value="44" />
+        <Setter Property="UseSystemFocusVisuals"
+                Value="True" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="messages:ReactionAsPaidButton">
+                    <Grid x:Name="LayoutRoot"
+                          Background="{ThemeResource MessageReactionPaidBackgroundBrush}"
+                          CornerRadius="{TemplateBinding CornerRadius}">
+                        <VisualStateManager.VisualStateGroups>
+                            <VisualStateGroup x:Name="CommonStates">
+                                <VisualState x:Name="Normal" />
+                                <VisualState x:Name="PointerOver" />
+                                <VisualState x:Name="Pressed" />
+                                <VisualState x:Name="Checked">
+                                    <VisualState.Setters>
+                                        <Setter Target="LayoutRoot.Background"
+                                                Value="{ThemeResource MessageReactionPaidChosenBackgroundBrush}" />
+                                        <Setter Target="RecentChoosers.BorderBrush"
+                                                Value="{ThemeResource MessageReactionPaidChosenBackgroundBrush}" />
+                                        <Setter Target="Count.Foreground"
+                                                Value="{ThemeResource MessageReactionPaidChosenForegroundBrush}" />
+                                    </VisualState.Setters>
+                                </VisualState>
+                                <VisualState x:Name="CheckedPointerOver">
+                                    <VisualState.Setters>
+                                        <Setter Target="LayoutRoot.Background"
+                                                Value="{ThemeResource MessageReactionPaidChosenBackgroundBrush}" />
+                                        <Setter Target="RecentChoosers.BorderBrush"
+                                                Value="{ThemeResource MessageReactionPaidChosenBackgroundBrush}" />
+                                        <Setter Target="Count.Foreground"
+                                                Value="{ThemeResource MessageReactionPaidChosenForegroundBrush}" />
+                                    </VisualState.Setters>
+                                </VisualState>
+                                <VisualState x:Name="CheckedPressed">
+                                    <VisualState.Setters>
+                                        <Setter Target="LayoutRoot.Background"
+                                                Value="{ThemeResource MessageReactionPaidChosenBackgroundBrush}" />
+                                        <Setter Target="RecentChoosers.BorderBrush"
+                                                Value="{ThemeResource MessageReactionPaidChosenBackgroundBrush}" />
+                                        <Setter Target="Count.Foreground"
+                                                Value="{ThemeResource MessageReactionPaidChosenForegroundBrush}" />
+                                    </VisualState.Setters>
+                                </VisualState>
+                            </VisualStateGroup>
+                        </VisualStateManager.VisualStateGroups>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition />
+                        </Grid.ColumnDefinitions>
+                        <Grid Margin="0,-4">
+                            <local:CustomEmojiIcon x:Name="Icon" />
+                            <Popup x:Name="Overlay"
+                                   IsHitTestVisible="False"
+                                   Margin="-32"
+                                   Width="96"
+                                   Height="96" />
+                        </Grid>
+
+                        <local:AnimatedTextBlock x:Name="Count"
+                                                 x:Load="False"
+                                                 Foreground="{ThemeResource MessageReactionPaidForegroundBrush}"
+                                                 TextStyle="{StaticResource CaptionTextBlockStyle}"
+                                                 FontWeight="SemiBold"
+                                                 VerticalAlignment="Center"
+                                                 AutomationProperties.AccessibilityView="Raw"
+                                                 IsTabStop="False"
+                                                 Margin="0,1,8,2"
+                                                 Grid.Column="1" />
+
+                        <local:RecentUserHeads x:Name="RecentChoosers"
+                                               x:Load="False"
+                                               BorderBrush="{ThemeResource MessageReactionPaidBackgroundBrush}"
                                                ItemSize="20"
                                                Margin="-4,0,0,0"
                                                AutomationProperties.AccessibilityView="Raw"
@@ -910,6 +1009,7 @@
                                                  Visibility="Collapsed"
                                                  Foreground="{ThemeResource MessageReactionForegroundBrush}"
                                                  TextStyle="{StaticResource CaptionTextBlockStyle}"
+                                                 FontWeight="SemiBold"
                                                  VerticalAlignment="Center"
                                                  AutomationProperties.AccessibilityView="Raw"
                                                  IsTabStop="False"
@@ -7256,22 +7356,26 @@
                                    x:Load="False"
                                    Style="{TemplateBinding TextStyle}"
                                    Foreground="{TemplateBinding Foreground}"
+                                   FontWeight="{TemplateBinding FontWeight}"
                                    Typography.NumeralAlignment="Tabular" />
                         <TextBlock x:Name="SuffixPart"
                                    x:Load="False"
                                    Style="{TemplateBinding TextStyle}"
                                    Foreground="{TemplateBinding Foreground}"
+                                   FontWeight="{TemplateBinding FontWeight}"
                                    Typography.NumeralAlignment="Tabular"
                                    Grid.Column="2" />
                         <TextBlock x:Name="PrevPart"
                                    x:Load="False"
                                    Style="{TemplateBinding TextStyle}"
                                    Foreground="{TemplateBinding Foreground}"
+                                   FontWeight="{TemplateBinding FontWeight}"
                                    Typography.NumeralAlignment="Tabular"
                                    Grid.ColumnSpan="2" />
                         <TextBlock x:Name="NextPart"
                                    Style="{TemplateBinding TextStyle}"
                                    Foreground="{TemplateBinding Foreground}"
+                                   FontWeight="{TemplateBinding FontWeight}"
                                    Typography.NumeralAlignment="Tabular"
                                    Grid.Column="1" />
                     </local:AnimatedTextBlockPresenter>

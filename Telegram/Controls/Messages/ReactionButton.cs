@@ -109,12 +109,12 @@ namespace Telegram.Controls.Messages
             using (Icon.BeginBatchUpdate())
             {
                 var custom = reaction.Type is ReactionTypeCustomEmoji;
-                var size = custom ? 20 : 32;
+                var size = reaction.Type is ReactionTypeCustomEmoji or ReactionTypePaid ? 20 : 32;
 
                 Icon.Width = Icon.Height = size;
                 Icon.FrameSize = new Size(size, size);
                 Icon.LoopCount = custom ? 3 : 1;
-
+                Icon.IsCachingEnabled = reaction.Type is not ReactionTypePaid;
                 Icon.IsViewportAware = custom;
 
                 Icon.Source = new ReactionFileSource(message.ClientService, reaction.Type)
@@ -241,16 +241,12 @@ namespace Telegram.Controls.Messages
             }
             else
             {
-                message.ClientService.Send(new AddMessageReaction(message.ChatId, message.Id, chosen.Type, false, false));
-            }
-
-            if (chosen.IsChosen is false)
-            {
                 Animate();
+                message.ClientService.Send(new AddMessageReaction(message.ChatId, message.Id, chosen.Type, false, false));
             }
         }
 
-        private async void Animate()
+        protected async void Animate()
         {
             if (_reactionType is ReactionTypeEmoji emoji)
             {
@@ -260,7 +256,7 @@ namespace Telegram.Controls.Messages
                     var around = await _message.ClientService.DownloadFileAsync(reaction.AroundAnimation.StickerValue, 32);
                     if (around.Local.IsDownloadingCompleted && this.IsConnected())
                     {
-                        Animate(around);
+                        Animate(around, true);
                     }
                 }
             }
@@ -275,13 +271,24 @@ namespace Telegram.Controls.Messages
                     var around = await _message.ClientService.DownloadFileAsync(stickers.StickersValue[next].StickerValue, 32);
                     if (around.Local.IsDownloadingCompleted && this.IsConnected())
                     {
-                        Animate(around);
+                        Animate(around, true);
                     }
+                }
+            }
+            else if (_reactionType is ReactionTypePaid)
+            {
+                var random = new Random();
+                var next = random.Next(1, 6);
+
+                var around = TdExtensions.GetLocalFile($"Assets\\Animations\\PaidReactionAround{next}.tgs");
+                if (around.Local.IsDownloadingCompleted && this.IsConnected())
+                {
+                    Animate(around, false);
                 }
             }
         }
 
-        private void Animate(File around)
+        protected void Animate(File around, bool cache)
         {
             _aroundCompleted = false;
             Icon?.Play();
@@ -295,6 +302,7 @@ namespace Telegram.Controls.Messages
             aroundView.LoopCount = 1;
             aroundView.FrameSize = new Size(32 * 3, 32 * 3);
             aroundView.DecodeFrameType = DecodePixelType.Logical;
+            aroundView.IsCachingEnabled = cache;
             aroundView.AutoPlay = true;
             aroundView.Source = new LocalFileSource(around);
             aroundView.LoopCompleted += (s, args) =>

@@ -21,8 +21,7 @@ namespace Telegram.Controls.Messages
 {
     public partial class ReactionsPanel : Panel, IDiffEqualityComparer<MessageReaction>
     {
-        private readonly Dictionary<string, ReactionButton> _reactions = new();
-        private readonly Dictionary<long, ReactionButton> _customReactions = new();
+        private readonly Dictionary<ReactionType, ReactionButton> _cache = new(new ReactionTypeEqualityComparer());
 
         private long _chatId;
         private long _messageId;
@@ -45,7 +44,7 @@ namespace Telegram.Controls.Messages
             return new ReactionsPanelAutomationPeer(this);
         }
 
-        public bool HasReactions => _reactions.Count > 0 || _customReactions.Count > 0;
+        public bool HasReactions => _cache.Count > 0;
 
         public void UpdateMessageReactions(MessageViewModel message, bool animate = false)
         {
@@ -54,9 +53,7 @@ namespace Telegram.Controls.Messages
             {
                 _prevValue = null;
 
-                _reactions.Clear();
-                _customReactions.Clear();
-
+                _cache.Clear();
                 Children.Clear();
             }
 
@@ -99,15 +96,7 @@ namespace Telegram.Controls.Messages
                     }
 
                     var changed = Animate(oldItem.Type);
-
-                    if (oldItem.Type is ReactionTypeEmoji emoji)
-                    {
-                        UpdateButton<string>(_reactions, emoji.Emoji, message, oldItem, reactions.AreTags, changed, index);
-                    }
-                    else if (oldItem.Type is ReactionTypeCustomEmoji customEmoji)
-                    {
-                        UpdateButton<long>(_customReactions, customEmoji.CustomEmojiId, message, oldItem, reactions.AreTags, changed, index);
-                    }
+                    UpdateButton(message, oldItem, reactions.AreTags, changed, index);
                 }
 
                 if (_prevValue == null)
@@ -138,14 +127,7 @@ namespace Telegram.Controls.Messages
                         {
                             if (step.Items[0].OldValue is MessageReaction oldReaction)
                             {
-                                if (oldReaction.Type is ReactionTypeEmoji oldEmoji)
-                                {
-                                    _reactions.Remove(oldEmoji.Emoji);
-                                }
-                                else if (oldReaction.Type is ReactionTypeCustomEmoji oldCustomEmoji)
-                                {
-                                    _customReactions.Remove(oldCustomEmoji.CustomEmojiId);
-                                }
+                                _cache.Remove(oldReaction.Type);
                             }
 
                             Children.RemoveAt(step.OldStartIndex);
@@ -166,9 +148,9 @@ namespace Telegram.Controls.Messages
             }
         }
 
-        private void UpdateButton<T>(IDictionary<T, ReactionButton> cache, T key, MessageViewModel message, MessageReaction item, bool isTag, bool animate, int index)
+        private void UpdateButton(MessageViewModel message, MessageReaction item, bool isTag, bool animate, int index)
         {
-            var button = GetOrCreateButton(cache, key, isTag, index);
+            var button = GetOrCreateButton(item.Type, isTag, index);
             button.SetReaction(message, item);
 
             if (animate)
@@ -177,18 +159,20 @@ namespace Telegram.Controls.Messages
             }
         }
 
-        private ReactionButton GetOrCreateButton<T>(IDictionary<T, ReactionButton> cache, T key, bool isTag, int index)
+        private ReactionButton GetOrCreateButton(ReactionType key, bool isTag, int index)
         {
-            if (cache.TryGetValue(key, out ReactionButton button))
+            if (_cache.TryGetValue(key, out ReactionButton button))
             {
                 return button;
             }
 
             button = isTag
                 ? new ReactionAsTagButton()
+                : key is ReactionTypePaid
+                ? new ReactionAsPaidButton()
                 : new ReactionButton();
 
-            cache[key] = button;
+            _cache[key] = button;
             Children.Insert(Math.Min(index, Children.Count), button);
 
             return button;

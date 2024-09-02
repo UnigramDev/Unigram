@@ -327,28 +327,6 @@ namespace Telegram.Services
 
         private readonly Dictionary<ReactionType, MessageTag> _savedMessagesTags = new(new ReactionTypeEqualityComparer());
 
-        private class ReactionTypeEqualityComparer : IEqualityComparer<ReactionType>
-        {
-            public bool Equals(ReactionType x, ReactionType y)
-            {
-                return x.AreTheSame(y);
-            }
-
-            public int GetHashCode(ReactionType obj)
-            {
-                if (obj is ReactionTypeEmoji emoji)
-                {
-                    return emoji.Emoji.GetHashCode();
-                }
-                else if (obj is ReactionTypeCustomEmoji customEmoji)
-                {
-                    return customEmoji.CustomEmojiId.GetHashCode();
-                }
-
-                return obj.GetHashCode();
-            }
-        }
-
         private TaskCompletionSource<bool> _authorizationStateTask = new();
         private AuthorizationState _authorizationState;
         private ConnectionState _connectionState;

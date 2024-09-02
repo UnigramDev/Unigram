@@ -3073,6 +3073,15 @@ Note: if you forget your passcode, you&apos;ll need to log out or reinstall the 
   <data name="ChannelEmojiStatusInfo" xml:space="preserve">
     <value>Choose a status that will be shown next to the channel&apos;s name.</value>
   </data>
+  <data name="ChannelEnablePaidReactions" xml:space="preserve">
+    <value>Enable Paid Reactions</value>
+  </data>
+  <data name="ChannelEnablePaidReactionsInfo" xml:space="preserve">
+    <value>Switch this on to let your subscribers set paid reactions with Telegram Stars, which you will be able to withdraw later as TON.</value>
+  </data>
+  <data name="ChannelEnablePaidReactionsInfoLink" xml:space="preserve">
+    <value>https://telegram.org/tos/stars/</value>
+  </data>
   <data name="ChannelHideMembers" xml:space="preserve">
     <value>Hide Members</value>
   </data>
@@ -5988,6 +5997,9 @@ You can change your language back at any time in Settings.</value>
   </data>
   <data name="LearnMore" xml:space="preserve">
     <value>Learn More</value>
+  </data>
+  <data name="LearnMoreArrow" xml:space="preserve">
+    <value>Learn More &gt;</value>
   </data>
   <data name="LeaveAComment" xml:space="preserve">
     <value>Leave a comment</value>
@@ -9425,6 +9437,21 @@ The channel &quot;**{1}**&quot; will become private.</value>
   </data>
   <data name="StarsRefunded" xml:space="preserve">
     <value>Refund</value>
+  </data>
+  <data name="StarsSentAnonymouslyTitle" xml:space="preserve">
+    <value>Stars sent anonymously!</value>
+  </data>
+  <data name="StarsSentText_one" xml:space="preserve">
+    <value>You reacted with **{0}** star.</value>
+  </data>
+  <data name="StarsSentText_other" xml:space="preserve">
+    <value>You reacted with **{0}** stars.</value>
+  </data>
+  <data name="StarsSentTitle" xml:space="preserve">
+    <value>Stars sent!</value>
+  </data>
+  <data name="StarsSentUndo" xml:space="preserve">
+    <value>Undo</value>
   </data>
   <data name="StarsSubscriptionAgain" xml:space="preserve">
     <value>Subscribe Again</value>
