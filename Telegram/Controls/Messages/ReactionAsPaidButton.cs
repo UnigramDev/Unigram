@@ -33,7 +33,7 @@ namespace Telegram.Controls.Messages
         protected override void OnClick(MessageViewModel message, MessageReaction chosen)
         {
             Animate();
-            message.ClientService.Send(new AddPaidMessageReaction(message.ChatId, message.Id, 1, true, true));
+            message.ClientService.Send(new AddPendingPaidMessageReaction(message.ChatId, message.Id, 1, true, true));
 
             ShowOrUpdateToast(message);
         }
@@ -138,6 +138,11 @@ namespace Telegram.Controls.Messages
 
                     if (_pendingTime == 0)
                     {
+                        Logger.Info("expired");
+
+                        message.ClientService.Send(new CommitPendingPaidMessageReactions(message.ChatId, message.Id));
+                        undo.Click -= handler;
+
                         _pendingTimer.Tick -= tick;
                         _pendingTimer.Stop();
                         _pendingTimer = null;
