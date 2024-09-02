@@ -132,20 +132,25 @@ namespace Telegram.Stub
 
                     foreach (var folder in accounts)
                     {
-                        var binlogSource = Path.Combine(folder, "td.binlog");
-                        var binlogDestination = binlogSource.Replace("TelegramFZ-LLC.Unigram_1vfw5zm9jmzqy", Package.Current.Id.FamilyName);
-
-                        var settings = ApplicationData.Current.LocalSettings;
-
-                        if (File.Exists(binlogSource))
+                        void Migrate(string binlog)
                         {
-                            var session = Path.GetFileName(folder);
-                            var container = ApplicationData.Current.LocalSettings.CreateContainer($"{session}", ApplicationDataCreateDisposition.Always);
+                            var binlogSource = Path.Combine(folder, binlog);
+                            var binlogDestination = binlogSource.Replace("TelegramFZ-LLC.Unigram_1vfw5zm9jmzqy", Package.Current.Id.FamilyName);
 
-                            container.Values["UserId"] = 1L;
+                            if (File.Exists(binlogSource))
+                            {
+                                var session = Path.GetFileName(folder);
+                                var container = ApplicationData.Current.LocalSettings.CreateContainer($"{session}", ApplicationDataCreateDisposition.Always);
 
-                            File.Copy(binlogSource, binlogDestination, true);
+                                container.Values["UserId"] = 1L;
+                                container.Values["UseTestDC"] = binlog == "td_test.binlog";
+
+                                File.Copy(binlogSource, binlogDestination, true);
+                            }
                         }
+
+                        Migrate("td.binlog");
+                        Migrate("td_test.binlog");
                     }
 
                 }
