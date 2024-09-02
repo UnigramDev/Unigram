@@ -16,7 +16,6 @@
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="Auto" />
             <ColumnDefinition Width="Auto" />
-            <ColumnDefinition Width="Auto" />
             <ColumnDefinition />
             <ColumnDefinition Width="Auto" />
         </Grid.ColumnDefinitions>
@@ -33,24 +32,34 @@
                               Margin="-8,0,4,0"
                               Grid.Column="1" />
 
-        <TextBlock x:Name="DomainText"
-                   VerticalAlignment="Center"
-                   Grid.Column="2" />
+        <ScrollViewer HorizontalScrollMode="Auto"
+                      HorizontalScrollBarVisibility="Hidden"
+                      VerticalScrollMode="Disabled"
+                      VerticalScrollBarVisibility="Disabled"
+                      Grid.Column="2">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition />
+                </Grid.ColumnDefinitions>
+                <TextBlock x:Name="DomainText"
+                           VerticalAlignment="Center" />
 
-        <controls:AnimatedTextBlock x:Name="PathText"
-                                    Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"
-                                    VerticalAlignment="Center"
-                                    Grid.Column="3" />
+                <controls:AnimatedTextBlock x:Name="PathText"
+                                            Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"
+                                            VerticalAlignment="Center"
+                                            Grid.Column="1" />
 
-        <TextBlock x:Name="SourceText"
-                   Foreground="Transparent"
-                   IsTextSelectionEnabled="True"
-                   HorizontalAlignment="Left"
-                   VerticalAlignment="Center"
-                   Grid.Column="2"
-                   Grid.ColumnSpan="2" />
+                <TextBlock x:Name="SourceText"
+                           Foreground="Transparent"
+                           IsTextSelectionEnabled="True"
+                           HorizontalAlignment="Left"
+                           VerticalAlignment="Center"
+                           Grid.ColumnSpan="2" />
+            </Grid>
+        </ScrollViewer>
 
         <ContentControl x:Name="OptionsPresenter"
-                        Grid.Column="5" />
+                        Grid.Column="3" />
     </Grid>
 </UserControl>
