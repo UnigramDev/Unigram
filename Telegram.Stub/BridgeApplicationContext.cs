@@ -7,6 +7,7 @@
 using Microsoft.Win32;
 using System;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -73,11 +74,92 @@ namespace Telegram.Stub
                     AddLocalhostExemption();
                     local.Values.Add("AddLocalhostExemption", true);
                 }
+
+                if (local.Values.ContainsKey("MigratedV2"))
+                {
+                    // Already migrated
+                }
+                else if (Migrate())
+                {
+                    local.Values.Add("MigratedV2", true);
+                }
             }
             catch
             {
                 // Can happen
             }
+        }
+
+        private bool Migrate()
+        {
+            var destination = Path.GetDirectoryName(ApplicationData.Current.LocalFolder.Path);
+            var source = destination.Replace(Package.Current.Id.FamilyName, "TelegramFZ-LLC.Unigram_1vfw5zm9jmzqy");
+
+            if (Directory.Exists(source))
+            {
+                try
+                {
+                    var confirm = MessageBox.Show("A previous installation of the app has been found. Do you want to migrate your accounts to this app?\n\nWARNING: secret chats will not be migrated.", "Unigram", MessageBoxButtons.YesNoCancel);
+                    if (confirm != DialogResult.Yes)
+                    {
+                        return confirm == DialogResult.No;
+                    }
+
+                    _closeRequested = false;
+
+                    _connection.RequestReceived -= OnRequestReceived;
+                    _connection.ServiceClosed -= OnServiceClosed;
+
+                    var current = Process.GetCurrentProcess();
+
+                    foreach (var process in Process.GetProcesses())
+                    {
+                        if (process.Id == current.Id)
+                        {
+                            continue;
+                        }
+
+                        if (process.MainModule.FileName.Contains("1vfw5zm9jmzqy") || process.MainModule.FileName.Contains("3epzvh0nk91te"))
+                        {
+                            process.Kill();
+                        }
+                    }
+
+                    var localSource = Path.Combine(source, "LocalState");
+                    var localDestination = Path.Combine(destination, "LocalState");
+
+                    var accounts = Directory.GetDirectories(localSource);
+
+                    foreach (var folder in accounts)
+                    {
+                        var binlogSource = Path.Combine(folder, "td.binlog");
+                        var binlogDestination = binlogSource.Replace("TelegramFZ-LLC.Unigram_1vfw5zm9jmzqy", Package.Current.Id.FamilyName);
+
+                        var settings = ApplicationData.Current.LocalSettings;
+
+                        if (File.Exists(binlogSource))
+                        {
+                            var session = Path.GetFileName(folder);
+                            var container = ApplicationData.Current.LocalSettings.CreateContainer($"{session}", ApplicationDataCreateDisposition.Always);
+
+                            container.Values["UserId"] = 1L;
+
+                            File.Copy(binlogSource, binlogDestination, true);
+                        }
+                    }
+
+                }
+                catch
+                {
+
+                }
+                finally
+                {
+                    OpenApp(null, null);
+                }
+            }
+
+            return false;
         }
 
         /*[DllImport("..\\Telegram.Diagnostics.dll")]
