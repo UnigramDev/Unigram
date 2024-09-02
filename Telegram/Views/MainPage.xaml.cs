@@ -2326,11 +2326,6 @@ namespace Telegram.Views
             MasterDetail.NavigationService.Navigate(typeof(SettingsProxyPage));
         }
 
-        private void ChatsNearby_Click(object sender, RoutedEventArgs e)
-        {
-            MasterDetail.NavigationService.Navigate(typeof(ChatsNearbyPage));
-        }
-
         public void UpdateChatFolders()
         {
             void handler(object sender, object e)

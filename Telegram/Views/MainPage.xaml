@@ -988,14 +988,6 @@
                                     </ListView.ItemTemplate>
                                     <ListView.Header>
                                         <StackPanel>
-                                            <controls:BadgeButton Content="{CustomResource AddPeopleNearby}"
-                                                                  Click="ChatsNearby_Click"
-                                                                  Style="{StaticResource IconBadgeButtonStyle}">
-                                                <controls:BadgeButton.IconSource>
-                                                    <icons:Location />
-                                                </controls:BadgeButton.IconSource>
-                                            </controls:BadgeButton>
-
                                             <controls:BadgeButton Content="{CustomResource CreateNewContact}"
                                                                   Click="NewContact_Click"
                                                                   Style="{StaticResource IconBadgeButtonStyle}">

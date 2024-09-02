@@ -183,7 +183,6 @@ namespace Telegram
                 typeof(PaymentFormViewModel),
                 typeof(InteractionsViewModel),
                 typeof(StoryInteractionsViewModel),
-                typeof(ChatsNearbyViewModel),
                 typeof(FoldersViewModel),
                 typeof(FolderViewModel),
                 typeof(ShareFolderViewModel),

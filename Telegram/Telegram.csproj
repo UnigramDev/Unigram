@@ -1333,7 +1333,6 @@
     <Compile Include="ViewModels\CallsViewModel.cs" />
     <Compile Include="ViewModels\Channels\ChannelCreateStep1ViewModel.cs" />
     <Compile Include="ViewModels\Channels\ChannelCreateStep2ViewModel.cs" />
-    <Compile Include="ViewModels\ChatsNearbyViewModel.cs" />
     <Compile Include="ViewModels\Chats\ChatGalleryViewModel.cs" />
     <Compile Include="ViewModels\Chats\ChatInviteLinkViewModel.cs" />
     <Compile Include="ViewModels\Chats\ChatPhotosViewModel.cs" />
@@ -1465,9 +1464,6 @@
     </Compile>
     <Compile Include="Views\PasscodePage.xaml.cs">
       <DependentUpon>PasscodePage.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\ChatsNearbyPage.xaml.cs">
-      <DependentUpon>ChatsNearbyPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Popups\CalendarPopup.xaml.cs">
       <DependentUpon>CalendarPopup.xaml</DependentUpon>
@@ -3138,10 +3134,6 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\PasscodePage.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Views\ChatsNearbyPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
