@@ -3644,7 +3644,7 @@ namespace Telegram.ViewModels
         {
             if (Search == null)
             {
-                Search = new ChatSearchViewModel(ClientService, Settings, Aggregator, this, query);
+                Search = new ChatSearchViewModel(ClientService, NavigationService, Settings, Aggregator, this, query);
             }
             else
             {

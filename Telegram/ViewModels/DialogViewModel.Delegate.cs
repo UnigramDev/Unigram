@@ -307,7 +307,7 @@ namespace Telegram.ViewModels
 
         public void OpenHashtag(string hashtag)
         {
-            Search = new ChatSearchViewModel(ClientService, Settings, Aggregator, this, hashtag);
+            Search = new ChatSearchViewModel(ClientService, NavigationService, Settings, Aggregator, this, hashtag);
         }
 
         public void OpenUrl(string url, bool untrust)
