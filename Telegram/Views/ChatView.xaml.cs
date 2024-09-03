@@ -772,15 +772,11 @@ namespace Telegram.Views
             //Bindings.StopTracking();
             //Bindings.Update();
 
-            var context = WindowContext.ForXamlRoot(this);
-            if (context != null)
-            {
-                context.Activated += Window_Activated;
-                context.VisibilityChanged += Window_VisibilityChanged;
+            ViewModel.NavigationService.Window.Activated += Window_Activated;
+            ViewModel.NavigationService.Window.VisibilityChanged += Window_VisibilityChanged;
 
-                context.CoreWindow.CharacterReceived += OnCharacterReceived;
-                context.InputListener.KeyDown += OnAcceleratorKeyActivated;
-            }
+            ViewModel.NavigationService.Window.CoreWindow.CharacterReceived += OnCharacterReceived;
+            ViewModel.NavigationService.Window.InputListener.KeyDown += OnAcceleratorKeyActivated;
 
             ViewVisibleMessages();
 
@@ -800,15 +796,11 @@ namespace Telegram.Views
 
             UnloadVisibleMessages();
 
-            var context = WindowContext.ForXamlRoot(this);
-            if (context != null)
-            {
-                context.Activated -= Window_Activated;
-                context.VisibilityChanged -= Window_VisibilityChanged;
+            ViewModel.NavigationService.Window.Activated -= Window_Activated;
+            ViewModel.NavigationService.Window.VisibilityChanged -= Window_VisibilityChanged;
 
-                context.CoreWindow.CharacterReceived -= OnCharacterReceived;
-                context.InputListener.KeyDown -= OnAcceleratorKeyActivated;
-            }
+            ViewModel.NavigationService.Window.CoreWindow.CharacterReceived -= OnCharacterReceived;
+            ViewModel.NavigationService.Window.InputListener.KeyDown -= OnAcceleratorKeyActivated;
 
             _loadedThemeTask?.TrySetResult(true);
             _updateThemeTask?.TrySetResult(true);
