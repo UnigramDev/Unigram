@@ -25,15 +25,9 @@ namespace Telegram.ViewModels.Stars
             : base(clientService, settingsService, aggregator)
         {
             Options = new MvxObservableCollection<StarPaymentOption>();
-            OwnedStarCount = clientService.OwnedStarCount;
         }
 
-        private long _ownedStarCount;
-        public long OwnedStarCount
-        {
-            get => _ownedStarCount;
-            set => Set(ref _ownedStarCount, value);
-        }
+        public string OwnedStarCount => ClientService.OwnedStarCount.ToString("N0");
 
         public BuyStarsArgs Arguments { get; private set; }
 
@@ -54,8 +48,6 @@ namespace Telegram.ViewModels.Stars
 
                 RaisePropertyChanged(nameof(CanExpand));
             }
-
-            await ClientService.GetStarTransactionsAsync(ClientService.MyId, string.Empty, null, string.Empty, 1);
         }
 
         public override void Subscribe()

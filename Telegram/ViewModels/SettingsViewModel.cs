@@ -42,16 +42,16 @@ namespace Telegram.ViewModels
 
         public IStorageService StorageService => _storageService;
 
-        public bool IsStarsAvailable => IsPremiumAvailable;
-
-        public bool IsBusinessAvailable => IsPremiumAvailable;
-
         private Chat _chat;
         public Chat Chat
         {
             get => _chat;
             set => Set(ref _chat, value);
         }
+
+        public string OwnedStarCount => ClientService.OwnedStarCount > 0
+            ? ClientService.OwnedStarCount.ToString("N0")
+            : string.Empty;
 
         public MvxObservableCollection<SettingsSearchEntry> Results { get; private set; }
 
@@ -77,7 +77,6 @@ namespace Telegram.ViewModels
                 }
             }
 
-            _ = ClientService.GetStarTransactionsAsync(ClientService.MyId, string.Empty, null, string.Empty, 1);
             return Task.CompletedTask;
         }
 
@@ -130,7 +129,7 @@ namespace Telegram.ViewModels
 
         private void Handle(UpdateOwnedStarCount update)
         {
-            BeginOnUIThread(() => RaisePropertyChanged(nameof(IsStarsAvailable)));
+            BeginOnUIThread(() => RaisePropertyChanged(nameof(OwnedStarCount)));
         }
 
         public void Handle(UpdateOption update)

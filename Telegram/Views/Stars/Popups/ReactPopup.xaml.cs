@@ -32,11 +32,6 @@ namespace Telegram.Views.Stars.Popups
 
         }
 
-        public string ConvertCount(long count)
-        {
-            return count.ToString("N0");
-        }
-
         private bool _submitted;
 
         private async void Purchase_Click(object sender, Windows.UI.Xaml.RoutedEventArgs e)

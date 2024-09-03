@@ -35,15 +35,9 @@ namespace Telegram.ViewModels.Stars
         public PayViewModel(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator)
             : base(clientService, settingsService, aggregator)
         {
-            OwnedStarCount = clientService.OwnedStarCount;
         }
 
-        private long _ownedStarCount;
-        public long OwnedStarCount
-        {
-            get => _ownedStarCount;
-            set => Set(ref _ownedStarCount, value);
-        }
+        public string OwnedStarCount => ClientService.OwnedStarCount.ToString("N0");
 
         public PaymentForm PaymentForm { get; private set; }
 
@@ -68,7 +62,6 @@ namespace Telegram.ViewModels.Stars
                 }
             }
 
-            _ = ClientService.GetStarTransactionsAsync(ClientService.MyId, string.Empty, null, string.Empty, 1);
             return Task.CompletedTask;
         }
 

@@ -331,6 +331,8 @@ namespace Telegram.Services
         private AuthorizationState _authorizationState;
         private ConnectionState _connectionState;
 
+        private long _ownedStarCount = -1;
+
         private JsonValueObject _config;
 
         private Background _selectedBackground;
@@ -954,7 +956,7 @@ namespace Telegram.Services
             {
                 if (ownerId == null || ownerId.IsUser(Options.MyId))
                 {
-                    OwnedStarCount = transactions.StarCount;
+                    _ownedStarCount = transactions.StarCount;
                     _aggregator.Publish(new UpdateOwnedStarCount(transactions.StarCount));
                 }
             }
@@ -1118,7 +1120,19 @@ namespace Telegram.Services
 
         public bool IsPremiumAvailable => _options.IsPremium || _options.IsPremiumAvailable;
 
-        public long OwnedStarCount { get; private set; }
+        public long OwnedStarCount
+        {
+            get
+            {
+                if (_ownedStarCount == -1)
+                {
+                    Send(new GetStarTransactions(MyId, string.Empty, null, string.Empty, 1));
+                    return 0;
+                }
+
+                return _ownedStarCount;
+            }
+        }
 
         public MessageSender MyId => new MessageSenderUser(_options.MyId);
 
@@ -2902,7 +2916,7 @@ namespace Telegram.Services
             }
             else if (update is UpdateOwnedStarCount updateOwnedStarCount)
             {
-                OwnedStarCount = updateOwnedStarCount.StarCount;
+                _ownedStarCount = updateOwnedStarCount.StarCount;
             }
 
             _aggregator.Publish(update);

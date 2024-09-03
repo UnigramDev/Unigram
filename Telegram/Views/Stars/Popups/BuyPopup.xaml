@@ -119,7 +119,7 @@
                                                    Height="18"
                                                    Grid.Row="1" />
 
-                        <TextBlock Text="{x:Bind ConvertCount(ViewModel.OwnedStarCount), Mode=OneWay}"
+                        <TextBlock Text="{x:Bind ViewModel.OwnedStarCount, Mode=OneWay}"
                                    FontWeight="SemiBold"
                                    FontSize="12"
                                    VerticalAlignment="Center"

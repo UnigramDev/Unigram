@@ -103,11 +103,6 @@ namespace Telegram.Views.Stars.Popups
             PurchaseText.Text = Locale.Declension(Strings.R.StarsConfirmPurchaseButton, stars.StarCount).Replace("\u2B50", Icons.Premium);
         }
 
-        public string ConvertCount(long count)
-        {
-            return count.ToString("N0");
-        }
-
         private bool _submitted;
 
         private async void Purchase_Click(object sender, Windows.UI.Xaml.RoutedEventArgs e)

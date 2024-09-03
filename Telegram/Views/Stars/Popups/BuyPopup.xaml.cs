@@ -119,11 +119,6 @@ namespace Telegram.Views.Stars.Popups
             args.Handled = true;
         }
 
-        public string ConvertCount(long count)
-        {
-            return count.ToString("N0");
-        }
-
         private void SettingsFooter_Click(object sender, TextUrlClickEventArgs e)
         {
             MessageHelper.OpenUrl(null, null, Strings.StarsTOSLink);
