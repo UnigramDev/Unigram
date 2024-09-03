@@ -197,6 +197,16 @@ namespace Telegram.Controls
                 {
                     constraint = previewDocument.Document;
                 }
+                else if (textMessage?.LinkPreview?.Type is LinkPreviewTypeEmbeddedAnimationPlayer previewEmbeddedAnimationPlayer)
+                {
+                    width = previewEmbeddedAnimationPlayer.Width;
+                    height = previewEmbeddedAnimationPlayer.Height;
+                }
+                else if (textMessage?.LinkPreview?.Type is LinkPreviewTypeEmbeddedVideoPlayer previewEmbeddedVideoPlayer)
+                {
+                    width = previewEmbeddedVideoPlayer.Width;
+                    height = previewEmbeddedVideoPlayer.Height;
+                }
                 else if (textMessage?.LinkPreview?.Type is LinkPreviewTypePhoto previewPhoto)
                 {
                     constraint = previewPhoto.Photo;
