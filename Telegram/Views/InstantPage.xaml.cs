@@ -15,6 +15,7 @@ using Telegram.Controls.Media;
 using Telegram.Controls.Messages.Content;
 using Telegram.Converters;
 using Telegram.Navigation;
+using Telegram.Navigation.Services;
 using Telegram.Services;
 using Telegram.Td.Api;
 using Telegram.ViewModels;
@@ -23,6 +24,7 @@ using Windows.Foundation;
 using Windows.System;
 using Windows.UI;
 using Windows.UI.Text;
+using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Documents;
@@ -1722,19 +1724,30 @@ namespace Telegram.Views
                 ViewModel.IsLoading = false;
                 ViewModel.NavigationService.Navigate(typeof(InstantPage), new InstantPageArgs(instantView, urlText.Url));
             }
-            else if (MessageHelper.TryCreateUri(urlText.Url, out Uri uri))
+            else if (MessageHelper.TryCreateUri(urlText.Url, out Uri url))
             {
                 ViewModel.IsLoading = false;
-
-                if (MessageHelper.IsTelegramUrl(uri))
-                {
-                    MessageHelper.OpenTelegramUrl(ViewModel.ClientService, ViewModel.NavigationService, uri);
-                }
-                else
-                {
-                    await Launcher.LaunchUriAsync(uri);
-                }
+                OpenUrl(url);
             }
+        }
+
+        private async void OpenUrl(Uri url)
+        {
+            if (MessageHelper.IsTelegramUrl(url))
+            {
+                var clientService = ViewModel.ClientService;
+                ByNavigation(navigation => MessageHelper.OpenTelegramUrl(clientService, navigation, url));
+            }
+            else
+            {
+                await Launcher.LaunchUriAsync(url);
+            }
+        }
+
+        private async void ByNavigation(Action<INavigationService> action)
+        {
+            WindowContext.Main.Dispatcher.Dispatch(() => action(WindowContext.Main.GetNavigationService()));
+            await ApplicationViewSwitcher.SwitchAsync(WindowContext.Main.Id);
         }
 
         private async void Hyperlink_Click(RichTextPhoneNumber phoneNumber)
