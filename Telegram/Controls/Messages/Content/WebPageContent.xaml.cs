@@ -294,7 +294,7 @@ namespace Telegram.Controls.Messages.Content
                     MaxWidth = maxWidth,
                 };
             }
-            else if (linkPreview.Type is LinkPreviewTypeAudio)
+            else if (linkPreview.Type is LinkPreviewTypeAudio { Audio: not null })
             {
                 Media.Child = new AudioContent(message);
             }
@@ -306,7 +306,7 @@ namespace Telegram.Controls.Messages.Content
             {
                 Media.Child = new StickerContent(message);
             }
-            else if (linkPreview.Type is LinkPreviewTypeVideo)
+            else if (linkPreview.Type is LinkPreviewTypeVideo { Video: not null })
             {
                 Media.Child = new VideoContent(message)
                 {

@@ -933,14 +933,14 @@ namespace Telegram.Td.Api
                             _ => (null, null, null)
                         },
                         LinkPreviewTypeAnimation animation => (animation.Animation.AnimationValue, animation.Animation.Thumbnail, animation.Animation.FileName),
-                        LinkPreviewTypeAudio audio => (audio.Audio.AudioValue, audio.Audio.AlbumCoverThumbnail, audio.Audio.FileName),
-                        LinkPreviewTypeBackground background => (background.Document.DocumentValue, background.Document.Thumbnail, background.Document.FileName),
+                        LinkPreviewTypeAudio audio => (audio.Audio?.AudioValue, audio.Audio?.AlbumCoverThumbnail, audio.Audio?.FileName),
+                        LinkPreviewTypeBackground background => (background.Document?.DocumentValue, background.Document?.Thumbnail, background.Document?.FileName),
                         LinkPreviewTypeDocument document => (document.Document.DocumentValue, document.Document.Thumbnail, document.Document.FileName),
                         LinkPreviewTypeEmbeddedAudioPlayer embeddedAudioPlayer => (embeddedAudioPlayer.Thumbnail?.GetFile(), null, null),
                         LinkPreviewTypeEmbeddedAnimationPlayer embeddedAnimationPlayer => (embeddedAnimationPlayer.Thumbnail?.GetFile(), null, null),
                         LinkPreviewTypeEmbeddedVideoPlayer embeddedVideoPlayer => (embeddedVideoPlayer.Thumbnail?.GetFile(), null, null),
                         LinkPreviewTypeSticker sticker => (sticker.Sticker.StickerValue, sticker.Sticker.Thumbnail, null),
-                        LinkPreviewTypeVideo video => (video.Video.VideoValue, video.Video.Thumbnail, video.Video.FileName),
+                        LinkPreviewTypeVideo video => (video.Video?.VideoValue, video.Video?.Thumbnail, video.Video?.FileName),
                         LinkPreviewTypeVideoNote videoNote => (videoNote.VideoNote.Video, videoNote.VideoNote.Thumbnail, null),
                         LinkPreviewTypePhoto photo => (photo.Photo.GetFile(), null, null),
                         LinkPreviewTypeApp app => (app.Photo.GetFile(), null, null),
@@ -966,7 +966,7 @@ namespace Telegram.Td.Api
 
         public static Minithumbnail GetMinithumbnail(this LinkPreview linkPreview)
         {
-            return linkPreview.Type switch
+            return linkPreview?.Type switch
             {
                 LinkPreviewTypeAlbum album => album.Media[0] switch
                 {
@@ -975,22 +975,22 @@ namespace Telegram.Td.Api
                     _ => null
                 },
                 LinkPreviewTypeAnimation animation => animation.Animation.Minithumbnail,
-                LinkPreviewTypeAudio audio => audio.Audio.AlbumCoverMinithumbnail,
-                LinkPreviewTypeBackground background => background.Document.Minithumbnail,
+                LinkPreviewTypeAudio audio => audio.Audio?.AlbumCoverMinithumbnail,
+                LinkPreviewTypeBackground background => background.Document?.Minithumbnail,
                 LinkPreviewTypeDocument document => document.Document.Minithumbnail,
-                LinkPreviewTypeEmbeddedAudioPlayer embeddedAudioPlayer => embeddedAudioPlayer.Thumbnail.Minithumbnail,
-                LinkPreviewTypeEmbeddedAnimationPlayer embeddedAnimationPlayer => embeddedAnimationPlayer.Thumbnail.Minithumbnail,
-                LinkPreviewTypeEmbeddedVideoPlayer embeddedVideoPlayer => embeddedVideoPlayer.Thumbnail.Minithumbnail,
-                LinkPreviewTypeVideo video => video.Video.Minithumbnail,
+                LinkPreviewTypeEmbeddedAudioPlayer embeddedAudioPlayer => embeddedAudioPlayer.Thumbnail?.Minithumbnail,
+                LinkPreviewTypeEmbeddedAnimationPlayer embeddedAnimationPlayer => embeddedAnimationPlayer.Thumbnail?.Minithumbnail,
+                LinkPreviewTypeEmbeddedVideoPlayer embeddedVideoPlayer => embeddedVideoPlayer.Thumbnail?.Minithumbnail,
+                LinkPreviewTypeVideo video => video.Video?.Minithumbnail,
                 LinkPreviewTypeVideoNote videoNote => videoNote.VideoNote.Minithumbnail,
                 LinkPreviewTypePhoto photo => photo.Photo.Minithumbnail,
                 LinkPreviewTypeApp app => app.Photo.Minithumbnail,
-                LinkPreviewTypeArticle article => article.Photo.Minithumbnail,
-                LinkPreviewTypeChannelBoost channelBoost => channelBoost.Photo.Minithumbnail,
-                LinkPreviewTypeChat chat => chat.Photo.Minithumbnail,
-                LinkPreviewTypeSupergroupBoost supergroupBoost => supergroupBoost.Photo.Minithumbnail,
-                LinkPreviewTypeUser user => user.Photo.Minithumbnail,
-                LinkPreviewTypeVideoChat videoChat => videoChat.Photo.Minithumbnail,
+                LinkPreviewTypeArticle article => article.Photo?.Minithumbnail,
+                LinkPreviewTypeChannelBoost channelBoost => channelBoost.Photo?.Minithumbnail,
+                LinkPreviewTypeChat chat => chat.Photo?.Minithumbnail,
+                LinkPreviewTypeSupergroupBoost supergroupBoost => supergroupBoost.Photo?.Minithumbnail,
+                LinkPreviewTypeUser user => user.Photo?.Minithumbnail,
+                LinkPreviewTypeVideoChat videoChat => videoChat.Photo?.Minithumbnail,
                 LinkPreviewTypeWebApp webApp => webApp.Photo.Minithumbnail,
                 _ => null
             };
@@ -998,7 +998,7 @@ namespace Telegram.Td.Api
 
         public static Thumbnail GetThumbnail(this LinkPreview linkPreview)
         {
-            return linkPreview.Type switch
+            return linkPreview?.Type switch
             {
                 LinkPreviewTypeAlbum album => album.Media[0] switch
                 {
@@ -1007,14 +1007,14 @@ namespace Telegram.Td.Api
                     _ => null
                 },
                 LinkPreviewTypeAnimation animation => animation.Animation.Thumbnail,
-                LinkPreviewTypeAudio audio => audio.Audio.AlbumCoverThumbnail,
-                LinkPreviewTypeBackground background => background.Document.Thumbnail,
+                LinkPreviewTypeAudio audio => audio.Audio?.AlbumCoverThumbnail,
+                LinkPreviewTypeBackground background => background.Document?.Thumbnail,
                 LinkPreviewTypeDocument document => document.Document.Thumbnail,
                 LinkPreviewTypeEmbeddedAudioPlayer embeddedAudioPlayer => embeddedAudioPlayer.Thumbnail?.GetThumbnail(),
                 LinkPreviewTypeEmbeddedAnimationPlayer embeddedAnimationPlayer => embeddedAnimationPlayer.Thumbnail?.GetThumbnail(),
                 LinkPreviewTypeEmbeddedVideoPlayer embeddedVideoPlayer => embeddedVideoPlayer.Thumbnail?.GetThumbnail(),
                 LinkPreviewTypeSticker sticker => sticker.Sticker.Thumbnail,
-                LinkPreviewTypeVideo video => video.Video.Thumbnail,
+                LinkPreviewTypeVideo video => video.Video?.Thumbnail,
                 LinkPreviewTypeVideoNote videoNote => videoNote.VideoNote.Thumbnail,
                 LinkPreviewTypePhoto photo => photo.Photo.GetThumbnail(),
                 LinkPreviewTypeApp app => app.Photo.GetThumbnail(),
@@ -1129,14 +1129,14 @@ namespace Telegram.Td.Api
                             _ => null
                         },
                         LinkPreviewTypeAnimation animation => animation.Animation.AnimationValue,
-                        LinkPreviewTypeAudio audio => audio.Audio.AudioValue,
-                        LinkPreviewTypeBackground background => background.Document.DocumentValue,
+                        LinkPreviewTypeAudio audio => audio.Audio?.AudioValue,
+                        LinkPreviewTypeBackground background => background.Document?.DocumentValue,
                         LinkPreviewTypeDocument document => document.Document.DocumentValue,
                         LinkPreviewTypeEmbeddedAudioPlayer embeddedAudioPlayer => embeddedAudioPlayer.Thumbnail?.GetFile(),
                         LinkPreviewTypeEmbeddedAnimationPlayer embeddedAnimationPlayer => embeddedAnimationPlayer.Thumbnail?.GetFile(),
                         LinkPreviewTypeEmbeddedVideoPlayer embeddedVideoPlayer => embeddedVideoPlayer.Thumbnail?.GetFile(),
                         LinkPreviewTypeSticker sticker => sticker.Sticker.StickerValue,
-                        LinkPreviewTypeVideo video => video.Video.VideoValue,
+                        LinkPreviewTypeVideo video => video.Video?.VideoValue,
                         LinkPreviewTypeVideoNote videoNote => videoNote.VideoNote.Video,
                         LinkPreviewTypePhoto photo => photo.Photo.GetFile(),
                         LinkPreviewTypeApp app => app.Photo.GetFile(),
@@ -1295,22 +1295,7 @@ namespace Telegram.Td.Api
                 case MessageSticker sticker:
                     return sticker.Sticker.Thumbnail;
                 case MessageText text:
-                    return text.LinkPreview?.Type switch
-                    {
-                        LinkPreviewTypeAlbum album => album.Media[0] switch
-                        {
-                            LinkPreviewAlbumMediaVideo albumVideo => albumVideo.Video.Thumbnail,
-                            _ => null
-                        },
-                        LinkPreviewTypeAnimation animation => animation.Animation.Thumbnail,
-                        LinkPreviewTypeAudio audio => audio.Audio.AlbumCoverThumbnail,
-                        LinkPreviewTypeBackground background => background.Document.Thumbnail,
-                        LinkPreviewTypeDocument document => document.Document.Thumbnail,
-                        LinkPreviewTypeSticker sticker => sticker.Sticker.Thumbnail,
-                        LinkPreviewTypeVideo video => video.Video.Thumbnail,
-                        LinkPreviewTypeVideoNote videoNote => videoNote.VideoNote.Thumbnail,
-                        _ => null
-                    };
+                    return text.LinkPreview?.GetThumbnail();
                 case MessageVideo video:
                     return video.Video.Thumbnail;
                 case MessageVideoNote videoNote:
@@ -1335,22 +1320,7 @@ namespace Telegram.Td.Api
                 case MessageGame game:
                     return game.Game.Animation?.Minithumbnail;
                 case MessageText text:
-                    return text.LinkPreview?.Type switch
-                    {
-                        LinkPreviewTypeAlbum album => album.Media[0] switch
-                        {
-                            LinkPreviewAlbumMediaVideo albumVideo => albumVideo.Video.Minithumbnail,
-                            _ => null
-                        },
-                        LinkPreviewTypeAnimation animation => animation.Animation.Minithumbnail,
-                        LinkPreviewTypeAudio audio => audio.Audio.AlbumCoverMinithumbnail,
-                        LinkPreviewTypeBackground background => background.Document.Minithumbnail,
-                        LinkPreviewTypeDocument document => document.Document.Minithumbnail,
-                        //LinkPreviewTypeSticker sticker => sticker.Sticker.Minithumbnail,
-                        LinkPreviewTypeVideo video => video.Video.Minithumbnail,
-                        LinkPreviewTypeVideoNote videoNote => videoNote.VideoNote.Minithumbnail,
-                        _ => null
-                    };
+                    return text.LinkPreview?.GetMinithumbnail();
                 case MessageVideo video:
                     return video.IsSecret && !secret ? null : video.Video.Minithumbnail;
                 case MessageVideoNote videoNote:

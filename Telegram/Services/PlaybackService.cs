@@ -681,7 +681,7 @@ namespace Telegram.Services
             }
             else if (message.Content is MessageText text && text.LinkPreview != null)
             {
-                if (text.LinkPreview.Type is LinkPreviewTypeAudio previewAudio)
+                if (text.LinkPreview.Type is LinkPreviewTypeAudio previewAudio && previewAudio.Audio != null)
                 {
                     file = previewAudio.Audio.AudioValue;
                     speed = previewAudio.Audio.Duration >= 10 * 60;

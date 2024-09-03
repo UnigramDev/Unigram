@@ -1500,7 +1500,7 @@ namespace Telegram.ViewModels
             }
             else if (message.Content is MessageText text && text.LinkPreview != null)
             {
-                if (text.LinkPreview.Type is LinkPreviewTypeAudio previewAudio)
+                if (text.LinkPreview.Type is LinkPreviewTypeAudio previewAudio && previewAudio != null)
                 {
                     ClientService.Send(new AddSavedNotificationSound(new InputFileId(previewAudio.Audio.AudioValue.Id)));
                 }

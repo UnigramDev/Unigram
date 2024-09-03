@@ -219,7 +219,7 @@ namespace Telegram.ViewModels.Gallery
                 {
                     return text.LinkPreview?.Type switch
                     {
-                        LinkPreviewTypeVideo previewVideo => previewVideo.Video.Duration,
+                        LinkPreviewTypeVideo previewVideo => previewVideo.Video?.Duration ?? 0,
                         LinkPreviewTypeAnimation previewAnimation => previewAnimation.Animation.Duration,
                         LinkPreviewTypeVideoNote previewVideoNote => previewVideoNote.VideoNote.Duration,
                         _ => 0
