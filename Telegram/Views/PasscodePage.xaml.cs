@@ -110,7 +110,7 @@ namespace Telegram.Views
             }
         }
 
-        private async void OnOpened(ContentDialog sender, ContentDialogOpenedEventArgs args)
+        private async void OnLoaded(object sender, RoutedEventArgs args)
         {
             var context = WindowContext.ForXamlRoot(this);
             if (context != null)
@@ -138,25 +138,25 @@ namespace Telegram.Views
             }
         }
 
+        private void OnUnloaded(object sender, RoutedEventArgs args)
+        {
+            var context = WindowContext.ForXamlRoot(this);
+            if (context != null)
+            {
+                context.Activated -= Window_Activated;
+                context.SizeChanged -= Window_SizeChanged;
+            }
+
+            Field.LosingFocus -= Field_LosingFocus;
+
+            _retryTimer.Stop();
+        }
 
         private void OnClosing(ContentDialog sender, ContentDialogClosingEventArgs args)
         {
             if (_passcodeService.IsLocked || !_accepted)
             {
                 args.Cancel = true;
-            }
-            else
-            {
-                var context = WindowContext.ForXamlRoot(this);
-                if (context != null)
-                {
-                    context.Activated -= Window_Activated;
-                    context.SizeChanged -= Window_SizeChanged;
-                }
-
-                Field.LosingFocus -= Field_LosingFocus;
-
-                _retryTimer.Stop();
             }
         }
 
