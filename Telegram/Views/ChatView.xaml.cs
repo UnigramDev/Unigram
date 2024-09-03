@@ -3426,7 +3426,7 @@ namespace Telegram.Views
             // TODO: max count
             if (message.Content is MessageText text)
             {
-                if (text.LinkPreview?.Type is LinkPreviewTypeAudio previewAudio && previewAudio.Audio != null)
+                if (text.LinkPreview?.Type is LinkPreviewTypeAudio previewAudio)
                 {
                     return previewAudio.Audio.Duration <= ViewModel.ClientService.Options.NotificationSoundDurationMax
                         && previewAudio.Audio.AudioValue.Size <= ViewModel.ClientService.Options.NotificationSoundSizeMax;

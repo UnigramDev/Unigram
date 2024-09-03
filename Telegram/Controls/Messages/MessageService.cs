@@ -112,8 +112,8 @@ namespace Telegram.Controls.Messages
                 var title = FindName("Title") as TextBlock;
                 title.Text = Strings.ActionStarGiveawayPrizeTitle;
 
-                //var animation = FindName("Animation") as AnimatedImage;
-                //animation.Source = new DelayedFileSource(message.ClientService, giveawayPrizeStars.Sticker);
+                var animation = FindName("Animation") as AnimatedImage;
+                animation.Source = new DelayedFileSource(message.ClientService, giveawayPrizeStars.Sticker);
             }
             else if (message.Content is MessageGiftedPremium giftedPremium)
             {

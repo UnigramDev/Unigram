@@ -1254,6 +1254,13 @@ namespace Telegram.Services
                     ProcessFiles(messageGiveaway.Sticker);
                 }
             }
+            else if (target is MessageGiveawayPrizeStars messageGiveawayPrizeStars)
+            {
+                if (messageGiveawayPrizeStars.Sticker != null)
+                {
+                    ProcessFiles(messageGiveawayPrizeStars.Sticker);
+                }
+            }
             else if (target is MessageInvoice messageInvoice)
             {
                 if (messageInvoice.PaidMedia != null)

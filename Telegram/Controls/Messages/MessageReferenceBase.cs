@@ -72,9 +72,9 @@ namespace Telegram.Controls.Messages
                 {
                     message = embedded.LinkPreview.Title;
                 }
-                else if (embedded.LinkPreview.HasAuthor(out string author))
+                else if (!string.IsNullOrEmpty(embedded.LinkPreview.Author))
                 {
-                    message = author;
+                    message = embedded.LinkPreview.Author;
                 }
                 else
                 {
