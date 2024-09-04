@@ -9420,6 +9420,9 @@ The channel &quot;**{1}**&quot; will become private.</value>
   <data name="StarsNeededText" xml:space="preserve">
     <value>Buy **Stars** and use them on **{0}** and other miniapps.</value>
   </data>
+  <data name="StarsNeededTextReactions" xml:space="preserve">
+    <value>Buy **Stars** to send paid reactions to **{0}** and other channels.</value>
+  </data>
   <data name="StarsNeededTitle_one" xml:space="preserve">
     <value>{0} Star Needed</value>
   </data>
