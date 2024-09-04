@@ -623,7 +623,7 @@ namespace Telegram.Views.Popups
 
         private bool _legacyNavigated;
 
-        public override void OnNavigatedTo()
+        public override void OnNavigatedTo(object parameter)
         {
             if (_legacyNavigated)
             {
@@ -655,7 +655,7 @@ namespace Telegram.Views.Popups
         {
             if (ViewModel != null)
             {
-                OnNavigatedTo();
+                OnNavigatedTo(null);
             }
 
             var button = GetTemplateChild("PrimarySplitButton") as Button;

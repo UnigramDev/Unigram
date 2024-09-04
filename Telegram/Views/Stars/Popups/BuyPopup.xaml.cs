@@ -48,9 +48,9 @@ namespace Telegram.Views.Stars.Popups
             InitializeComponent();
         }
 
-        public override void OnNavigatedTo()
+        public override void OnNavigatedTo(object parameter)
         {
-            if (ViewModel.Arguments is BuyStarsArgs args)
+            if (parameter is BuyStarsArgs args)
             {
                 if (ViewModel.ClientService.TryGetUser(args.SellerBotUserId, out User sellerUser))
                 {

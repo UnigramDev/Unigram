@@ -2127,6 +2127,9 @@ from **{0}**.</value>
   <data name="BotDAU_other" xml:space="preserve">
     <value>{0} monthly users</value>
   </data>
+  <data name="BotDefaultPrivacyPolicy" xml:space="preserve">
+    <value>https://telegram.org/privacy-tpa</value>
+  </data>
   <data name="BotEditCommands" xml:space="preserve">
     <value>Edit Commands</value>
   </data>
@@ -9435,8 +9438,41 @@ The channel &quot;**{1}**&quot; will become private.</value>
   <data name="StarsPurchaseCompletedInfo_other" xml:space="preserve">
     <value>You acquired &quot;**{1}**&quot; in **{2}** for **{0} Stars**.</value>
   </data>
+  <data name="StarsReactionAnonymous" xml:space="preserve">
+    <value>Anonymous</value>
+  </data>
+  <data name="StarsReactionSend" xml:space="preserve">
+    <value>Send ⭐️ {0}</value>
+  </data>
+  <data name="StarsReactionShowMeInTopSenders" xml:space="preserve">
+    <value>Show me in Top Senders</value>
+  </data>
   <data name="StarsReactionsSent" xml:space="preserve">
     <value>Star Reaction</value>
+  </data>
+  <data name="StarsReactionTerms" xml:space="preserve">
+    <value>By sending Stars you agree to the **Terms of Service**.</value>
+  </data>
+  <data name="StarsReactionTermsLink" xml:space="preserve">
+    <value>https://telegram.org/tos/stars</value>
+  </data>
+  <data name="StarsReactionText" xml:space="preserve">
+    <value>Choose how many stars you want to send to **{0}** to support this post.</value>
+  </data>
+  <data name="StarsReactionTextSent_one" xml:space="preserve">
+    <value>You sent **{0}** Star to support this post.</value>
+  </data>
+  <data name="StarsReactionTextSent_other" xml:space="preserve">
+    <value>You sent **{0}** Stars to support this post.</value>
+  </data>
+  <data name="StarsReactionTitle" xml:space="preserve">
+    <value>React with Stars</value>
+  </data>
+  <data name="StarsReactionTop" xml:space="preserve">
+    <value>TOP</value>
+  </data>
+  <data name="StarsReactionTopSenders" xml:space="preserve">
+    <value>Top Senders</value>
   </data>
   <data name="StarsRefunded" xml:space="preserve">
     <value>Refund</value>

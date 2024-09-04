@@ -1,6 +1,7 @@
 ﻿#include "pch.h"
 #include "CompositionDevice.h"
 #include "DirectRectangleClip.h"
+#include "DirectRectangleClip2.h"
 #if __has_include("Composition/CompositionDevice.g.cpp")
 #include "Composition/CompositionDevice.g.cpp"
 #endif
@@ -50,6 +51,28 @@ namespace winrt::Telegram::Native::Composition::implementation
 		auto result = winrt::make_self<implementation::DirectRectangleClip>(clip);
 		return *result;
 	}
+
+	winrt::Telegram::Native::Composition::DirectRectangleClip2 CompositionDevice::CreateRectangleClip2(UIElement element)
+	{
+		return CreateRectangleClip2(winrt::Windows::UI::Xaml::Hosting::ElementCompositionPreview::GetElementVisual(element));
+	}
+
+	winrt::Telegram::Native::Composition::DirectRectangleClip2 CompositionDevice::CreateRectangleClip2(Visual visual)
+	{
+		HRESULT hr;
+		auto compositor = visual.Compositor();
+		auto device = compositor.as<IDCompositionDesktopDevice>();
+
+		winrt::com_ptr<IDCompositionRectangleClip> clip;
+		hr = device->CreateRectangleClip(clip.put());
+
+		auto abi = visual.as<IDCompositionVisual2>();
+		hr = abi->SetClip(clip.get());
+
+		auto result = winrt::make_self<implementation::DirectRectangleClip2>(clip);
+		return *result;
+	}
+
 
 	void CompositionDevice::SetClip(Visual visual, winrt::Telegram::Native::Composition::DirectRectangleClip clip)
 	{

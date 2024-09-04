@@ -171,7 +171,7 @@ namespace winrt::Telegram::Native::Composition::implementation
 
     void DirectRectangleClip::AnimateBottomLeft(Compositor compositor, float from, float to, double duration)
     {
-        m_bottom = to;
+        m_bottomLeft = to;
 
         HRESULT hr;
         auto device = CompositionDevice::Current();
@@ -193,7 +193,7 @@ namespace winrt::Telegram::Native::Composition::implementation
 
     void DirectRectangleClip::AnimateBottomRight(Compositor compositor, float from, float to, double duration)
     {
-        m_bottom = to;
+        m_bottomRight = to;
 
         HRESULT hr;
         auto device = CompositionDevice::Current();

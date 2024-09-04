@@ -32,7 +32,7 @@ namespace Telegram.Views.Settings
             ViewModel.Add();
         }
 
-        public override void OnNavigatedTo()
+        public override void OnNavigatedTo(object parameter)
         {
             ViewModel.Popup = this;
         }

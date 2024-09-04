@@ -12,6 +12,20 @@ namespace Telegram.Common
     // ColorHelper is a set of color conversion utilities
     public static class ColorsHelper
     {
+        public static Color Mix(Color x, Color y, double amount)
+        {
+            static double Mix(double x, double y, double f)
+            {
+                return Math.Sqrt(Math.Pow(x, 2) * (1 - f) + Math.Pow(y, 2) * f);
+            }
+
+            return Color.FromArgb(
+                (byte)Mix(x.A, y.A, amount),
+                (byte)Mix(x.R, y.R, amount),
+                (byte)Mix(x.G, y.G, amount),
+                (byte)Mix(x.B, y.B, amount));
+        }
+
         public static Color AlphaBlend(Color color1, Color color2)
         {
             return AlphaBlend(color1, color2, color2.A);

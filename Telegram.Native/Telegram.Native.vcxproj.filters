@@ -750,6 +750,9 @@
     <ClCompile Include="InternalsRT\CoreWindowHelpers.cpp">
       <Filter>InternalsRT</Filter>
     </ClCompile>
+    <ClCompile Include="Composition\DirectRectangleClip2.cpp">
+      <Filter>Composition</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />
@@ -1184,6 +1187,9 @@
     <ClInclude Include="InternalsRT\CoreWindowHelpers.h">
       <Filter>InternalsRT</Filter>
     </ClInclude>
+    <ClInclude Include="Composition\DirectRectangleClip2.h">
+      <Filter>Composition</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="Telegram.Native.def" />
@@ -1224,5 +1230,8 @@
     <Midl Include="FatalError.idl" />
     <Midl Include="ParticlesAnimation.idl" />
     <Midl Include="TextFormat.idl" />
+    <Midl Include="Composition\DirectRectangleClip2.idl">
+      <Filter>Composition</Filter>
+    </Midl>
   </ItemGroup>
 </Project>

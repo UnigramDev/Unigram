@@ -32,7 +32,7 @@ namespace Telegram.Views.Stars.Popups
         private long _media1Token;
         private long _media2Token;
 
-        public override void OnNavigatedTo()
+        public override void OnNavigatedTo(object parameter)
         {
             if (ViewModel.PaymentForm?.Type is not PaymentFormTypeStars stars || !ViewModel.ClientService.TryGetUser(ViewModel.PaymentForm.SellerBotUserId, out User user))
             {

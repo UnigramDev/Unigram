@@ -136,7 +136,7 @@ namespace Telegram.Controls
 
         }
 
-        public virtual void OnNavigatedTo()
+        public virtual void OnNavigatedTo(object parameter)
         {
 
         }

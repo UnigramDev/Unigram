@@ -757,19 +757,32 @@ namespace Telegram.Controls.Messages
 
         private async void MessageToggleReaction(ReactionType reaction)
         {
-            if (reaction is ReactionTypePaid)
-            {
-                await _message.Delegate.NavigationService.ShowPopupAsync(typeof(ReactPopup), _message.Get());
-            }
-            else if (_message.InteractionInfo?.Reactions != null && _message.InteractionInfo.Reactions.IsChosen(reaction))
+            if (reaction is not ReactionTypePaid && _message.InteractionInfo?.Reactions != null && _message.InteractionInfo.Reactions.IsChosen(reaction))
             {
                 _message.ClientService.Send(new RemoveMessageReaction(_message.ChatId, _message.Id, reaction));
             }
             else
             {
-                await _message.ClientService.SendAsync(new AddMessageReaction(_message.ChatId, _message.Id, reaction, false, true));
+                BaseObject added;
+                if (reaction is ReactionTypePaid)
+                {
+                    var popup = new ReactPopup(_message.ClientService, _message);
 
-                if (_bubble != null && _bubble.IsLoaded)
+                    var confirm = await popup.ShowQueuedAsync(XamlRoot);
+                    if (confirm != ContentDialogResult.Primary)
+                    {
+                        return;
+                    }
+
+                    _message.ClientService.Options.IsPaidReactionAnonymous = popup.IsAnonymous;
+                    added = await PaidReactionService.AddPendingAsync(XamlRoot, _message, popup.StarCount, false, popup.IsAnonymous);
+                }
+                else
+                {
+                    added = await _message.ClientService.SendAsync(new AddMessageReaction(_message.ChatId, _message.Id, reaction, false, true));
+                }
+
+                if (added is Ok && _bubble != null && _bubble.IsLoaded)
                 {
                     var unread = new UnreadReaction(reaction, null, false);
 

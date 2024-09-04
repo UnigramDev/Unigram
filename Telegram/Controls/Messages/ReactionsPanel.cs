@@ -66,7 +66,7 @@ namespace Telegram.Controls.Messages
 
                 message.UnreadReactions
                     .Select(x => x.Type)
-                    .Discern(out var unreadEmoji, out var unreadCustomEmoji);
+                    .Discern(out bool paid, out var unreadEmoji, out var unreadCustomEmoji);
 
                 bool Animate(ReactionType reaction)
                 {
@@ -81,6 +81,10 @@ namespace Telegram.Controls.Messages
                         return animate
                             && unreadCustomEmoji != null
                             && unreadCustomEmoji.Contains(customEmoji.CustomEmojiId);
+                    }
+                    else if (reaction is ReactionTypePaid)
+                    {
+                        return animate && paid;
                     }
 
                     return false;

@@ -1786,6 +1786,169 @@
         </Setter>
     </Style>
 
+    <Style TargetType="local:PremiumSlider">
+        <Setter Property="UseSystemFocusVisuals"
+                Value="{StaticResource UseSystemFocusVisuals}" />
+        <Setter Property="FocusVisualMargin"
+                Value="-3" />
+        <Setter Property="IsFocusEngagementEnabled"
+                Value="True" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="local:PremiumSlider">
+                    <Grid>
+                        <Grid.Resources>
+                            <Style TargetType="Thumb"
+                                   x:Key="SliderThumbStyle">
+                                <Setter Property="Template">
+                                    <Setter.Value>
+                                        <ControlTemplate TargetType="Thumb">
+                                            <Border Margin="-2"
+                                                    Background="Transparent" />
+                                        </ControlTemplate>
+                                    </Setter.Value>
+                                </Setter>
+                            </Style>
+                        </Grid.Resources>
+                        <VisualStateManager.VisualStateGroups>
+                            <VisualStateGroup x:Name="CommonStates">
+                                <VisualState x:Name="Normal" />
+                                <VisualState x:Name="PointerOver" />
+                                <VisualState x:Name="Pressed" />
+                                <VisualState x:Name="Disabled" />
+                            </VisualStateGroup>
+                        </VisualStateManager.VisualStateGroups>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                        </Grid.RowDefinitions>
+                        <Canvas x:Name="ThumbRoot"
+                                HorizontalAlignment="Left"
+                                VerticalAlignment="Top"
+                                Height="46">
+                            <Grid x:Name="Thumb">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="40" />
+                                    <RowDefinition />
+                                </Grid.RowDefinitions>
+                                <Border Background="{StaticResource StarCountLinearGradientBrush}"
+                                        Height="40"
+                                        CornerRadius="0"
+                                        Grid.ColumnSpan="2" />
+                                <TextBlock Text="{TemplateBinding Glyph}"
+                                           FontFamily="{StaticResource SymbolThemeFontFamily}"
+                                           FontSize="20"
+                                           Foreground="#FFFFFF"
+                                           VerticalAlignment="Center"
+                                           Margin="12,0,4,0" />
+                                <local:AnimatedTextBlock x:Name="ValueText"
+                                                         Foreground="#FFFFFF"
+                                                         FontWeight="SemiBold"
+                                                         Margin="0,6,12,6"
+                                                         Grid.Column="1">
+                                    <local:AnimatedTextBlock.TextStyle>
+                                        <Style TargetType="TextBlock">
+                                            <Setter Property="FontSize"
+                                                    Value="20" />
+                                            <Setter Property="FontWeight"
+                                                    Value="SemiBold" />
+                                        </Style>
+                                    </local:AnimatedTextBlock.TextStyle>
+                                </local:AnimatedTextBlock>
+
+                                <Path x:Name="Arrow"
+                                      Data="M0 0V2C0.923101 2 1.80835 2.36668 2.46113 3.01945L6.76205 7.32038C7.66822 8.22654 9.13736 8.22654 10.0435 7.32038L14.3444 3.01945C14.9972 2.36668 15.8825 2 16.8056 2H16.81V0H0Z"
+                                      Fill="#EEAC0D"
+                                      Stretch="Uniform"
+                                      Height="8"
+                                      HorizontalAlignment="Center"
+                                      VerticalAlignment="Top"
+                                      Margin="0,-2,0,0"
+                                      Canvas.ZIndex="-2"
+                                      Grid.ColumnSpan="2"
+                                      Grid.Row="1" />
+                            </Grid>
+                        </Canvas>
+
+                        <Grid Background="#26EFAD0D"
+                              CornerRadius="10"
+                              Height="20"
+                              Control.IsTemplateFocusTarget="True"
+                              Grid.Row="1">
+                            <TextBlock Text="{TemplateBinding MinimumText}"
+                                       TextAlignment="Left"
+                                       FontWeight="SemiBold"
+                                       Margin="8,4,8,5" />
+                            <TextBlock Text="{TemplateBinding MaximumText}"
+                                       TextAlignment="Right"
+                                       FontWeight="SemiBold"
+                                       Margin="8,4,8,5" />
+
+                            <Grid x:Name="ValueRoot"
+                                  Background="{StaticResource StarCountLinearGradientBrush}">
+                                <TextBlock Text="{TemplateBinding MinimumText}"
+                                           TextAlignment="Left"
+                                           FontWeight="SemiBold"
+                                           Foreground="#FFFFFF"
+                                           Margin="8,4,8,5" />
+                                <TextBlock Text="{TemplateBinding MaximumText}"
+                                           TextAlignment="Right"
+                                           FontWeight="SemiBold"
+                                           Foreground="#FFFFFF"
+                                           Margin="8,4,8,5" />
+
+                                <Border x:Name="ValueThumb"
+                                        HorizontalAlignment="Left"
+                                        VerticalAlignment="Top"
+                                        Background="White"
+                                        BorderBrush="Transparent"
+                                        BorderThickness="2"
+                                        Width="16"
+                                        Height="16"
+                                        CornerRadius="8" />
+                            </Grid>
+                        </Grid>
+
+                        <Grid x:Name="SliderContainer"
+                              Grid.Row="1"
+                              Background="Transparent"
+                              MinHeight="{ThemeResource SliderHorizontalHeight}">
+                            <Grid x:Name="HorizontalTemplate">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
+                                <Rectangle x:Name="HorizontalTrackRect"
+                                           Fill="Transparent"
+                                           Height="{ThemeResource SliderTrackThemeHeight}"
+                                           Grid.Row="1"
+                                           Grid.ColumnSpan="3" />
+                                <Rectangle x:Name="HorizontalDecreaseRect"
+                                           Fill="Transparent"
+                                           Grid.Row="1" />
+                                <Thumb x:Name="HorizontalThumb"
+                                       Style="{StaticResource SliderThumbStyle}"
+                                       DataContext="{TemplateBinding Value}"
+                                       Height="{ThemeResource SliderHorizontalThumbHeight}"
+                                       Width="{ThemeResource SliderHorizontalThumbWidth}"
+                                       Grid.Row="0"
+                                       Grid.RowSpan="3"
+                                       Grid.Column="1"
+                                       FocusVisualMargin="-14,-6,-14,-6"
+                                       AutomationProperties.AccessibilityView="Raw" />
+                            </Grid>
+                        </Grid>
+                    </Grid>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
     <Style TargetType="local:TableListViewItem"
            BasedOn="{StaticResource DefaultTableListViewItemStyle}" />
 

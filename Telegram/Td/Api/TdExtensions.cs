@@ -2147,8 +2147,9 @@ namespace Telegram.Td.Api
             return string.Format(Strings.formatDateAtTime, Converters.Formatter.ShortDate.Format(date), Converters.Formatter.ShortTime.Format(date));
         }
 
-        public static void Discern(this IEnumerable<ReactionType> reactions, out HashSet<string> emoji, out HashSet<long> customEmoji)
+        public static void Discern(this IEnumerable<ReactionType> reactions, out bool paid, out HashSet<string> emoji, out HashSet<long> customEmoji)
         {
+            paid = false;
             emoji = null;
             customEmoji = null;
 
@@ -2163,6 +2164,10 @@ namespace Telegram.Td.Api
                 {
                     customEmoji ??= new HashSet<long>();
                     customEmoji.Add(customEmojiItem.CustomEmojiId);
+                }
+                else if (reaction is ReactionTypePaid)
+                {
+                    paid = true;
                 }
             }
         }

@@ -1,0 +1,28 @@
+namespace Telegram.Native.Composition
+{
+    [default_interface]
+    runtimeclass DirectRectangleClip2
+    {
+        Single Left;
+        Single Top;
+        Single Right;
+        Single Bottom;
+
+        Windows.Foundation.Numerics.Vector2 TopLeft;
+        Windows.Foundation.Numerics.Vector2 TopRight;
+        Windows.Foundation.Numerics.Vector2 BottomRight;
+        Windows.Foundation.Numerics.Vector2 BottomLeft;
+
+        void Set(Windows.Foundation.Numerics.Vector2 uniform);
+        void Set(Windows.Foundation.Numerics.Vector2 topLeft, Windows.Foundation.Numerics.Vector2 topRight, Windows.Foundation.Numerics.Vector2 bottomRight, Windows.Foundation.Numerics.Vector2 bottomLeft);
+
+        void SetInset(Single uniform);
+        void SetInset(Single left, Single top, Single right, Single bottom);
+
+        void AnimateTop(Windows.UI.Composition.Compositor compositor, Single from, Single to, Double duration);
+        void AnimateBottom(Windows.UI.Composition.Compositor compositor, Single from, Single to, Double duration);
+
+        void AnimateBottomLeft(Windows.UI.Composition.Compositor compositor, Windows.Foundation.Numerics.Vector2 from, Windows.Foundation.Numerics.Vector2 to, Double duration);
+        void AnimateBottomRight(Windows.UI.Composition.Compositor compositor, Windows.Foundation.Numerics.Vector2 from, Windows.Foundation.Numerics.Vector2 to, Double duration);
+    }
+}

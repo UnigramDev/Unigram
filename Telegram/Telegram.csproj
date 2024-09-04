@@ -207,6 +207,9 @@
     <Compile Include="Controls\Cells\Business\BusinessRepliesCell.xaml.cs">
       <DependentUpon>BusinessRepliesCell.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\Cells\PaidReactorCell.xaml.cs">
+      <DependentUpon>PaidReactorCell.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Controls\Cells\Revenue\StarSubscriptionCell.xaml.cs">
       <DependentUpon>StarSubscriptionCell.xaml</DependentUpon>
     </Compile>
@@ -265,9 +268,11 @@
     <Compile Include="Controls\Messages\MessageFactCheck.xaml.cs">
       <DependentUpon>MessageFactCheck.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Services\PaidReactionService.cs" />
     <Compile Include="Controls\Messages\ReactionAsPaidButton.cs" />
     <Compile Include="Controls\Messages\ReactionAsTagButton.cs" />
     <Compile Include="Common\AsyncMediaPlayer.cs" />
+    <Compile Include="Controls\PremiumSlider.cs" />
     <Compile Include="Td\Api\ReactionTypeEqualityComparer.cs" />
     <Compile Include="Controls\PremiumStarCount.cs" />
     <Compile Include="Controls\Stories\Widgets\StoryWeatherWidget.xaml.cs">
@@ -911,7 +916,6 @@
     <Compile Include="ViewModels\Settings\Privacy\SettingsPrivacyShowBioViewModel.cs" />
     <Compile Include="ViewModels\Settings\Privacy\SettingsPrivacyNewChatViewModel.cs" />
     <Compile Include="ViewModels\Settings\SettingsPowerSavingViewModel.cs" />
-    <Compile Include="ViewModels\Stars\ReactViewModel.cs" />
     <Compile Include="ViewModels\Stars\PayViewModel.cs" />
     <Compile Include="ViewModels\Stars\StarsViewModel.cs" />
     <Compile Include="ViewModels\Stars\BuyViewModel.cs" />
@@ -2198,6 +2202,10 @@
     <Page Include="Controls\Cells\ChatFolderCell.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Controls\Cells\PaidReactorCell.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Controls\Cells\Revenue\StarSubscriptionCell.xaml">
       <Generator>MSBuild:Compile</Generator>

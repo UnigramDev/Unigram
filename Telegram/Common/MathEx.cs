@@ -21,5 +21,10 @@ namespace Telegram.Common
             double degrees = 180 / Math.PI * radians;
             return degrees;
         }
+
+        public static double Lerp(double a, double b, double f)
+        {
+            return a + f * (b - a);
+        }
     }
 }

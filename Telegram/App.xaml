@@ -384,6 +384,15 @@
                               Offset="1.2065" />
             </LinearGradientBrush>
 
+            <LinearGradientBrush x:Key="StarCountLinearGradientBrush"
+                                 StartPoint="0,0"
+                                 EndPoint="1,0">
+                <GradientStop Color="#EEAC0D"
+                              Offset="0" />
+                <GradientStop Color="#F9D316"
+                              Offset="1" />
+            </LinearGradientBrush>
+
             <LinearGradientBrush x:Key="StoryPrivacyCloseFriendsBrush"
                                  EndPoint="0,1">
                 <GradientStop Color="#FF78d538" />

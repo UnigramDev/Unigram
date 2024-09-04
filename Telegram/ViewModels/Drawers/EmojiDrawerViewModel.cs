@@ -490,7 +490,7 @@ namespace Telegram.ViewModels.Drawers
             {
                 available.TopReactions
                     .Select(x => x.Type)
-                    .Discern(out var emoji, out var customEmoji);
+                    .Discern(out _, out var emoji, out var customEmoji);
 
                 foreach (var item in additional)
                 {
@@ -520,7 +520,7 @@ namespace Telegram.ViewModels.Drawers
 
             source
                 .Select(x => x.Type)
-                .Discern(out var missingReactions, out var missingEmoji);
+                .Discern(out _, out var missingReactions, out var missingEmoji);
 
             IDictionary<long, Sticker> assets = null;
             if (missingEmoji != null)
@@ -578,7 +578,7 @@ namespace Telegram.ViewModels.Drawers
                 .Union(available.PopularReactions)
                 .Union(available.RecentReactions)
                 .Select(x => x.Type)
-                .Discern(out var missingReactions, out var missingEmoji);
+                .Discern(out _, out var missingReactions, out var missingEmoji);
 
             IDictionary<long, Sticker> assets = null;
             if (missingEmoji != null)

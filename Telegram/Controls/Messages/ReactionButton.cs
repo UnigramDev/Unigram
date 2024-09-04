@@ -70,14 +70,15 @@ namespace Telegram.Controls.Messages
             if (Icon == null)
             {
                 _unread = unread;
-                return;
             }
-
-            _unread = unread;
-
-            if (unread != null)
+            else
             {
-                Animate();
+                _unread = null;
+
+                if (unread != null)
+                {
+                    Animate();
+                }
             }
         }
 

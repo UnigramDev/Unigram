@@ -102,7 +102,7 @@ namespace Telegram.Common
                     popup.DataContext = viewModel;
 
                     _ = viewModel.NavigatedToAsync(parameter, NavigationMode.New, null);
-                    popup.OnNavigatedTo();
+                    popup.OnNavigatedTo(parameter);
                     popup.Closed += OnClosed;
                 }
 
@@ -1413,7 +1413,7 @@ namespace Telegram.Common
                 file = Path.GetFileName(path);
             }
 
-            return new Uri("file:///" + directory + "\\" + Uri.EscapeUriString(file));
+            return new Uri("file:///" + directory + "\\" + Uri.EscapeDataString(file));
         }
     }
 }
