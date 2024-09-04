@@ -128,7 +128,7 @@ namespace Telegram.Controls.Messages.Content
                 return;
             }
 
-            if (small.Id != big.Photo.Id && !big.Photo.Local.IsDownloadingCompleted || isSecret)
+            if (small.Id != big.Photo.Id && !big.Photo.Local.IsDownloadingCompleted || isSecret || hasSpoiler)
             {
                 UpdateThumbnail(message, small, photo.Minithumbnail, true, isSecret, hasSpoiler);
             }
@@ -337,7 +337,7 @@ namespace Telegram.Controls.Messages.Content
                 if (file.Local.IsDownloadingCompleted)
                 {
                     source = new BitmapImage();
-                    PlaceholderHelper.GetBlurred(source, file.Local.Path, isSecret ? 15 : 3);
+                    PlaceholderHelper.GetBlurred(source, file.Local.Path, isSecret || (hasSpoiler && _hidden) ? 15 : 3);
                 }
                 else
                 {
@@ -354,14 +354,14 @@ namespace Telegram.Controls.Messages.Content
                     if (minithumbnail != null)
                     {
                         source = new BitmapImage();
-                        PlaceholderHelper.GetBlurred(source, minithumbnail.Data, isSecret ? 15 : 3);
+                        PlaceholderHelper.GetBlurred(source, minithumbnail.Data, isSecret || (hasSpoiler && _hidden) ? 15 : 3);
                     }
                 }
             }
             else if (minithumbnail != null)
             {
                 source = new BitmapImage();
-                PlaceholderHelper.GetBlurred(source, minithumbnail.Data, isSecret ? 15 : 3);
+                PlaceholderHelper.GetBlurred(source, minithumbnail.Data, isSecret || (hasSpoiler && _hidden) ? 15 : 3);
             }
 
             brush.ImageSource = source;
