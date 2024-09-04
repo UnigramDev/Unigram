@@ -648,7 +648,10 @@ namespace Telegram.Services
                     SoundEffects.Play(soundFile);
                 }
             }
-            catch (Exception) { }
+            catch (Exception ex)
+            {
+                Logger.Error(ex);
+            }
         }
 
         private string GetGroup(Chat chat)
