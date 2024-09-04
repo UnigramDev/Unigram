@@ -464,8 +464,8 @@ namespace Telegram.ViewModels
                 _clientService = clientService;
                 _aggregator = aggregator;
 
-                _viewModel = viewModel;
-                _viewModel.IsLoading = true;
+                //_viewModel = viewModel;
+                //_viewModel.IsLoading = true;
 
                 _chat = chat;
                 _hasMoreItems = chat != null;
@@ -479,7 +479,7 @@ namespace Telegram.ViewModels
 
             public async Task ReloadAsync(Chat chat)
             {
-                _viewModel.IsLoading = true;
+                //_viewModel.IsLoading = true;
 
                 using (await _loadMoreLock.WaitAsync())
                 {
@@ -543,7 +543,7 @@ namespace Telegram.ViewModels
 
                         _hasMoreItems = topics.Topics.Count > 0;
 
-                        _viewModel.IsLoading = false;
+                        //_viewModel.IsLoading = false;
                         //_viewModel.Delegate?.SetSelectedItems(_viewModel._selectedItems);
 
                         if (_hasMoreItems == false)
