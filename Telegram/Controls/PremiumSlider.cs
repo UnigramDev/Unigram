@@ -241,11 +241,12 @@ namespace Telegram.Controls
             }
 
             UpdateText();
+            UpdateClip();
 
-            if (_layoutUpdated == null)
-            {
-                LayoutUpdated += _layoutUpdated = new EventHandler<object>(OnLayoutUpdated);
-            }
+            //if (_layoutUpdated == null)
+            //{
+            //    LayoutUpdated += _layoutUpdated = new EventHandler<object>(OnLayoutUpdated);
+            //}
 
             if (_rendering == null)
             {
