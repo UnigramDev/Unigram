@@ -762,10 +762,14 @@ namespace Telegram.ViewModels
                 {
                     MessageHelper.OpenUrl(null, null, fullInfo.BotInfo.PrivacyPolicyUrl);
                 }
-                else
+                else if (fullInfo.BotInfo.Commands.Any(x => string.Equals(x.Command, "privacy", StringComparison.OrdinalIgnoreCase)))
                 {
                     ClientService.Send(new SendMessage(chat.Id, 0, null, null, null, new InputMessageText(new FormattedText("/privacy", Array.Empty<TextEntity>()), null, false)));
                     SendMessage();
+                }
+                else
+                {
+                    MessageHelper.OpenUrl(null, null, Strings.BotDefaultPrivacyPolicy);
                 }
             }
         }

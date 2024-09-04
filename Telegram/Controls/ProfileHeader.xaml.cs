@@ -1253,11 +1253,7 @@ namespace Telegram.Controls
                             }
 
                             flyout.CreateFlyoutItem(() => { }, Strings.BotShare, Icons.Share);
-
-                            if (fullInfo.BotInfo.PrivacyPolicyUrl.Length > 0 || fullInfo.BotInfo.Commands.Any(x => string.Equals(x.Command, "privacy", StringComparison.OrdinalIgnoreCase)))
-                            {
-                                flyout.CreateFlyoutItem(ViewModel.PrivacyPolicy, Strings.BotPrivacyPolicy, Icons.ShieldCheckmark);
-                            }
+                            flyout.CreateFlyoutItem(ViewModel.PrivacyPolicy, Strings.BotPrivacyPolicy, Icons.ShieldCheckmark);
                         }
                         else
                         {
