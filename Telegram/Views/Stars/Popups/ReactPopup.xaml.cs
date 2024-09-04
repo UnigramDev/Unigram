@@ -181,7 +181,7 @@ namespace Telegram.Views.Stars.Popups
                     UpdateButton(clientService, oldItem, index);
                 }
 
-                _offset = self?.StarCount > 0 ? 1 : 0;
+                _offset = self?.StarCount > 0 && reactors?.Count < 4 ? 1 : 0;
 
                 if (_prevValue == null)
                 {
