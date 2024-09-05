@@ -2603,7 +2603,7 @@ namespace Telegram.Views
                 }
                 else if (MessageReply_Loaded(message, properties))
                 {
-                    flyout.CreateFlyoutItem(ViewModel.ReplyToMessage, message, chat.Type is ChatTypeSupergroup { IsChannel: true } ? Strings.ReplyToAnotherChat : Strings.Reply, Icons.ArrowReply);
+                    flyout.CreateFlyoutItem(ViewModel.ReplyToMessage, message, properties.CanBeReplied ? Strings.Reply : Strings.ReplyToAnotherChat, Icons.ArrowReply);
                 }
 
                 if (MessageEdit_Loaded(message, properties))
