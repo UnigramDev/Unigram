@@ -786,7 +786,7 @@ namespace Telegram.ViewModels
 
         public void ToggleMute()
         {
-            ToggleMute(ClientService.Notifications.GetMutedFor(_chat) > 0);
+            ToggleMute(ClientService.Notifications.GetMuteFor(_chat) > 0);
         }
 
         private void ToggleMute(bool unmute)
@@ -797,7 +797,7 @@ namespace Telegram.ViewModels
                 return;
             }
 
-            _notificationsService.SetMuteFor(chat, ClientService.Notifications.GetMutedFor(chat) > 0 ? 0 : 632053052);
+            _notificationsService.SetMuteFor(chat, ClientService.Notifications.GetMuteFor(chat) > 0 ? 0 : 632053052, NavigationService.XamlRoot);
         }
 
         public async void OpenUsernameInfo(string username)
@@ -1084,11 +1084,11 @@ namespace Telegram.ViewModels
 
             if (value is int update)
             {
-                _notificationsService.SetMuteFor(chat, update);
+                _notificationsService.SetMuteFor(chat, update, NavigationService.XamlRoot);
             }
             else
             {
-                var mutedFor = Settings.Notifications.GetMutedFor(chat);
+                var mutedFor = Settings.Notifications.GetMuteFor(chat);
                 var popup = new ChatMutePopup(mutedFor);
 
                 var confirm = await ShowPopupAsync(popup);
@@ -1099,7 +1099,7 @@ namespace Telegram.ViewModels
 
                 if (mutedFor != popup.Value)
                 {
-                    _notificationsService.SetMuteFor(chat, popup.Value);
+                    _notificationsService.SetMuteFor(chat, popup.Value, NavigationService.XamlRoot);
                 }
             }
         }

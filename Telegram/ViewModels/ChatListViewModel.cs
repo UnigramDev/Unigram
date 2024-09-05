@@ -236,7 +236,7 @@ namespace Telegram.ViewModels
 
         public void NotifyChat(Chat chat)
         {
-            _notificationsService.SetMuteFor(chat, ClientService.Notifications.GetMutedFor(chat) > 0 ? 0 : 632053052);
+            _notificationsService.SetMuteFor(chat, ClientService.Notifications.GetMuteFor(chat) > 0 ? 0 : 632053052, NavigationService.XamlRoot);
         }
 
         #endregion
@@ -253,11 +253,11 @@ namespace Telegram.ViewModels
 
             if (value.Item2 is int update)
             {
-                _notificationsService.SetMuteFor(chat, update);
+                _notificationsService.SetMuteFor(chat, update, NavigationService.XamlRoot);
             }
             else
             {
-                var mutedFor = Settings.Notifications.GetMutedFor(chat);
+                var mutedFor = Settings.Notifications.GetMuteFor(chat);
                 var popup = new ChatMutePopup(mutedFor);
 
                 var confirm = await ShowPopupAsync(popup);
@@ -268,7 +268,7 @@ namespace Telegram.ViewModels
 
                 if (mutedFor != popup.Value)
                 {
-                    _notificationsService.SetMuteFor(chat, popup.Value);
+                    _notificationsService.SetMuteFor(chat, popup.Value, NavigationService.XamlRoot);
                 }
             }
         }
@@ -281,7 +281,7 @@ namespace Telegram.ViewModels
         public void NotifySelectedChats()
         {
             var chats = SelectedItems.ToList();
-            var muted = chats.Any(x => ClientService.Notifications.GetMutedFor(x) > 0);
+            var muted = chats.Any(x => ClientService.Notifications.GetMuteFor(x) > 0);
 
             foreach (var chat in chats)
             {
@@ -290,7 +290,7 @@ namespace Telegram.ViewModels
                     continue;
                 }
 
-                _notificationsService.SetMuteFor(chat, muted ? 0 : 632053052);
+                _notificationsService.SetMuteFor(chat, muted ? 0 : 632053052, NavigationService.XamlRoot);
             }
 
             Delegate?.SetSelectionMode(false);

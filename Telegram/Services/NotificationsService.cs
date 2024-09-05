@@ -18,10 +18,12 @@ using Telegram.Navigation;
 using Telegram.Td;
 using Telegram.Td.Api;
 using Telegram.Views;
+using Telegram.Views.Popups;
 using Windows.Data.Xml.Dom;
 using Windows.Networking.PushNotifications;
 using Windows.Storage;
 using Windows.UI.Notifications;
+using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 
 namespace Telegram.Services
@@ -34,7 +36,7 @@ namespace Telegram.Services
 
         #region Chats related
 
-        void SetMuteFor(Chat chat, int muteFor);
+        void SetMuteFor(Chat chat, int muteFor, XamlRoot xamlRoot);
 
         #endregion
     }
@@ -871,7 +873,7 @@ namespace Telegram.Services
             }
         }
 
-        public void SetMuteFor(Chat chat, int value)
+        public void SetMuteFor(Chat chat, int value, XamlRoot xamlRoot)
         {
             if (_settings.Notifications.TryGetScope(chat, out ScopeNotificationSettings scope))
             {
@@ -887,6 +889,24 @@ namespace Telegram.Services
                 settings.MuteFor = value;
 
                 _clientService.Send(new SetChatNotificationSettings(chat.Id, settings));
+
+                if (xamlRoot == null)
+                {
+                    return;
+                }
+
+                if (value == 0)
+                {
+                    ToastPopup.Show(xamlRoot, Strings.NotificationsUnmutedHint, ToastPopupIcon.Unmute);
+                }
+                else if (value >= 632053052)
+                {
+                    ToastPopup.Show(xamlRoot, Strings.NotificationsMutedHint, ToastPopupIcon.Mute);
+                }
+                else
+                {
+                    ToastPopup.Show(xamlRoot, string.Format(Strings.NotificationsMutedForHint, Locale.FormatMuteFor(value)), ToastPopupIcon.MuteFor);
+                }
             }
         }
     }

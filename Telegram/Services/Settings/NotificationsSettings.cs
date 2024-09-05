@@ -27,13 +27,13 @@ namespace Telegram.Services.Settings
         {
             if (topic.NotificationSettings.UseDefaultMuteFor)
             {
-                return GetMutedFor(chat);
+                return GetMuteFor(chat);
             }
 
             return topic.NotificationSettings.MuteFor;
         }
 
-        public int GetMutedFor(Chat chat)
+        public int GetMuteFor(Chat chat)
         {
             if (chat.NotificationSettings.UseDefaultMuteFor && TryGetScope(chat, out var scope))
             {

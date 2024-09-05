@@ -39,6 +39,8 @@ namespace Telegram.Controls
         Info,
         JoinRequested,
         LinkCopied,
+        Mute,
+        MuteFor,
         Pin,
         Premium,
         SavedMessages,
@@ -48,6 +50,7 @@ namespace Telegram.Controls
         Success,
         Transcribe,
         Translate,
+        Unmute,
         Unpin
     }
 

@@ -447,6 +447,16 @@ namespace Telegram.Common
             }
         }
 
+        public static string FormatMuteFor(int timeout)
+        {
+            if (timeout < 60 * 60 * 24)
+            {
+                return Declension(Strings.R.Hours, timeout / 60 / 60);
+            }
+
+            return Declension(Strings.R.Days, timeout / 60 / 60 / 24);
+        }
+
         private static Dictionary<string, string> _translitChars;
         public static string[] GetQuery(string src)
         {

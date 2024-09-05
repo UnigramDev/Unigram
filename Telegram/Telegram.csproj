@@ -2129,8 +2129,11 @@
     <Content Include="Assets\Toasts\Archived.tgs" />
     <Content Include="Assets\Toasts\Premium.tgs" />
     <Content Include="Assets\Toasts\Gif.tgs" />
+    <Content Include="Assets\Toasts\Mute.tgs" />
+    <Content Include="Assets\Toasts\MuteFor.tgs" />
     <None Include="Assets\Toasts\Pin.tgs" />
     <Content Include="Assets\Toasts\StarsSent.tgs" />
+    <Content Include="Assets\Toasts\Unmute.tgs" />
     <None Include="Assets\Toasts\Unpin.tgs" />
     <None Include="Telegram_StoreKey.pfx" />
     <None Include="Telegram_TemporaryKey.pfx" />

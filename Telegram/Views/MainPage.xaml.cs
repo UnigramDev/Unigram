@@ -1807,7 +1807,7 @@ namespace Telegram.Views
         {
             if (ViewModel.Chats.SelectedItems.Count > 0)
             {
-                var muted = ViewModel.Chats.SelectedItems.Any(x => ViewModel.ClientService.Notifications.GetMutedFor(x) > 0);
+                var muted = ViewModel.Chats.SelectedItems.Any(x => ViewModel.ClientService.Notifications.GetMuteFor(x) > 0);
                 ManageMute.Glyph = muted ? Icons.Alert : Icons.AlertOff;
                 Automation.SetToolTip(ManageMute, muted ? Strings.UnmuteNotifications : Strings.MuteNotifications);
 
@@ -3111,7 +3111,7 @@ namespace Telegram.Views
                 return;
             }
 
-            var muted = ViewModel.ClientService.Notifications.GetMutedFor(chat) > 0;
+            var muted = ViewModel.ClientService.Notifications.GetMuteFor(chat) > 0;
             var archived = chat.Positions.Any(x => x.List is ChatListArchive);
 
             flyout.CreateFlyoutItem(DialogArchive_Loaded, viewModel.ArchiveChat, chat, archived ? Strings.Unarchive : Strings.Archive, archived ? Icons.Unarchive : Icons.Archive);

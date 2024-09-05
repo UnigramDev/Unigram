@@ -7005,6 +7005,12 @@ Please make sure you entered the right Server URL and Stream Key in your app.</v
   <data name="NotificationsGroups" xml:space="preserve">
     <value>Groups</value>
   </data>
+  <data name="NotificationsMutedForHint" xml:space="preserve">
+    <value>Notifications muted for {0}</value>
+  </data>
+  <data name="NotificationsMutedHint" xml:space="preserve">
+    <value>Notifications muted</value>
+  </data>
   <data name="NotificationsOff" xml:space="preserve">
     <value>Off</value>
   </data>
@@ -7036,6 +7042,9 @@ Stories</value>
   </data>
   <data name="NotificationsStoryUnmutedHint" xml:space="preserve">
     <value>You will receive a notification whenever **{0}** posts a new story.</value>
+  </data>
+  <data name="NotificationsUnmutedHint" xml:space="preserve">
+    <value>Notifications unmuted</value>
   </data>
   <data name="NotifyIconExit" xml:space="preserve">
     <value>Quit Unigram</value>
