@@ -28,8 +28,6 @@ namespace Telegram.Services
 {
     public interface INotificationsService
     {
-        Task CloseAsync();
-
         Task ProcessAsync(Dictionary<string, string> data);
 
         void PlaySound();
@@ -706,7 +704,10 @@ namespace Telegram.Services
                 var collection = new ToastCollection($"{_sessionService.Id}", displayName, launchArg, icon);
                 await ToastNotificationManager.GetDefault().GetToastCollectionManager().SaveToastCollectionAsync(collection);
             }
-            catch { }
+            catch (Exception ex)
+            {
+                Logger.Error(ex);
+            }
         }
 
         private async Task<ToastNotificationHistory> GetCollectionHistoryAsync()
@@ -721,19 +722,6 @@ namespace Telegram.Services
             catch
             {
                 return ToastNotificationManager.History;
-            }
-        }
-
-        public async Task CloseAsync()
-        {
-            try
-            {
-                var channel = await PushNotificationChannelManager.CreatePushNotificationChannelForApplicationAsync();
-                channel.Close();
-            }
-            catch (Exception)
-            {
-                Debugger.Break();
             }
         }
 
