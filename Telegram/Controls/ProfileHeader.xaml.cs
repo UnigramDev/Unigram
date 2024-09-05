@@ -239,7 +239,7 @@ namespace Telegram.Controls
 
         private void OnActualThemeChanged(FrameworkElement sender, object args)
         {
-            if (_actualTheme == sender.ActualTheme)
+            if (_actualTheme == sender.ActualTheme || _actualTheme == ElementTheme.Default)
             {
                 return;
             }
@@ -366,7 +366,7 @@ namespace Telegram.Controls
 
         public void UpdateChatAccentColors(Chat chat)
         {
-            _actualTheme = WindowContext.Current.ActualTheme;
+            _actualTheme = ViewModel.NavigationService.Window.ActualTheme;
 
             if (ViewModel.ClientService.TryGetProfileColor(chat.ProfileAccentColorId, out ProfileColor color))
             {
