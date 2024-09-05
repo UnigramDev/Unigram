@@ -8,12 +8,15 @@ using Telegram.Common;
 using Telegram.Controls;
 using Telegram.Controls.Cells;
 using Telegram.Controls.Media;
+using Telegram.Navigation;
 using Telegram.Td.Api;
 using Telegram.ViewModels.Settings;
 using Telegram.Views.Popups;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Controls.Primitives;
 using Windows.UI.Xaml.Input;
+using Windows.UI.Xaml.Media;
 
 namespace Telegram.Views.Settings
 {
@@ -79,5 +82,42 @@ namespace Telegram.Views.Settings
         }
 
         #endregion
+
+        private void Alert_Click(object sender, RoutedEventArgs e)
+        {
+            var muted = !ViewModel.Scope.Alert;
+            if (muted)
+            {
+                ViewModel.Scope.Alert = true;
+                ViewModel.Scope.Save();
+            }
+            else
+            {
+                var flyout = new MenuFlyout();
+
+                //if (muted is false)
+                //{
+                //    var silent = chat.DefaultDisableNotification;
+                //    flyout.CreateFlyoutItem(true, () => { },
+                //        silent ? Strings.SoundOn : Strings.SoundOff,
+                //        silent ? Icons.MusicNote2 : Icons.MusicNoteOff2);
+                //}
+
+                flyout.CreateFlyoutItem<int?>(ViewModel.MuteFor, 60 * 60, Strings.MuteFor1h, Icons.ClockAlarmHour);
+                flyout.CreateFlyoutItem<int?>(ViewModel.MuteFor, null, Strings.MuteForPopup, Icons.AlertSnooze);
+
+                var toggle = flyout.CreateFlyoutItem(
+                    muted ? ViewModel.Unmute : ViewModel.Mute,
+                    muted ? Strings.UnmuteNotifications : Strings.MuteNotifications,
+                    muted ? Icons.Speaker3 : Icons.SpeakerOff);
+
+                if (muted is false)
+                {
+                    toggle.Foreground = BootStrapper.Current.Resources["DangerButtonBackground"] as Brush;
+                }
+
+                flyout.ShowAt(sender as UIElement, FlyoutPlacementMode.BottomEdgeAlignedLeft);
+            }
+        }
     }
 }

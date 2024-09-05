@@ -197,11 +197,29 @@ namespace Telegram.ViewModels.Settings
 
         public string Glyph => _glyph;
 
-        private bool _alert;
+        private int _muteFor;
+        public int MuteFor
+        {
+            get => _muteFor;
+            set
+            {
+                if (Set(ref _muteFor, value))
+                {
+                    RaisePropertyChanged(nameof(Alert));
+                }
+            }
+        }
+
         public bool Alert
         {
-            get => _alert;
-            set => Set(ref _alert, value);
+            get => _muteFor == 0;
+            set
+            {
+                if (Set(ref _muteFor, value ? 0 : int.MaxValue))
+                {
+                    RaisePropertyChanged(nameof(MuteFor));
+                }
+            }
         }
 
         private bool _preview;
@@ -251,7 +269,7 @@ namespace Telegram.ViewModels.Settings
             {
                 BeginOnUIThread(() =>
                 {
-                    Alert = update.NotificationSettings.MuteFor == 0;
+                    MuteFor = update.NotificationSettings.MuteFor;
                     Preview = update.NotificationSettings.ShowPreview;
                     SoundId = update.NotificationSettings.SoundId;
 
@@ -266,7 +284,7 @@ namespace Telegram.ViewModels.Settings
             var settings = await ClientService.SendAsync(new GetScopeNotificationSettings(_scope)) as ScopeNotificationSettings;
             if (settings != null)
             {
-                Alert = settings.MuteFor == 0;
+                MuteFor = settings.MuteFor;
                 Preview = settings.ShowPreview;
                 SoundId = settings.SoundId;
 
@@ -279,7 +297,7 @@ namespace Telegram.ViewModels.Settings
             ExceptionsCount = Alert ? Strings.NotificationsOn : Strings.NotificationsOff;
 
             var chats = await ClientService.SendAsync(new GetChatNotificationSettingsExceptions(_scope, false)) as Telegram.Td.Api.Chats;
-            if (chats != null)
+            if (chats?.ChatIds.Count > 0)
             {
                 ExceptionsCount = string.Format("{0}, {1}", Alert ? Strings.NotificationsOn : Strings.NotificationsOff, Locale.Declension(Strings.R.Exception, chats.ChatIds.Count));
             }
@@ -290,7 +308,7 @@ namespace Telegram.ViewModels.Settings
             var settings = await ClientService.SendAsync(new GetScopeNotificationSettings(_scope)) as ScopeNotificationSettings;
             if (settings != null)
             {
-                await ClientService.SendAsync(new SetScopeNotificationSettings(_scope, new ScopeNotificationSettings(_alert ? 0 : int.MaxValue, _soundId, _preview, settings.UseDefaultMuteStories, settings.MuteStories, settings.StorySoundId, settings.ShowStorySender, _disablePinnedMessage, _disableMention)));
+                await ClientService.SendAsync(new SetScopeNotificationSettings(_scope, new ScopeNotificationSettings(_muteFor, _soundId, _preview, settings.UseDefaultMuteStories, settings.MuteStories, settings.StorySoundId, settings.ShowStorySender, _disablePinnedMessage, _disableMention)));
 
                 ReloadSound();
             }

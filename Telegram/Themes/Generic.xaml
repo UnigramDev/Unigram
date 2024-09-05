@@ -2905,16 +2905,30 @@
                               Padding="0,6"
                               Margin="0,4"
                               Control.IsTemplateFocusTarget="True">
-                            <TextBlock x:Name="ValueText"
-                                       Foreground="{ThemeResource TextFillColorSecondaryBrush}"
-                                       Padding="0,12,0,20"
-                                       FontFamily="Segoe UI"
-                                       FontSize="40"
-                                       FontWeight="Bold"
-                                       TextLineBounds="Tight"
-                                       TextAlignment="Center"
-                                       VerticalAlignment="Center"
-                                       HorizontalAlignment="Center" />
+                            <local:AnimatedTextBlock x:Name="ValueText"
+                                                     Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                                     Padding="0,12,0,20"
+                                                     FontFamily="Segoe UI"
+                                                     FontSize="40"
+                                                     FontWeight="Bold"
+                                                     TextAlignment="Center"
+                                                     VerticalAlignment="Center"
+                                                     HorizontalAlignment="Center">
+                                <local:AnimatedTextBlock.TextStyle>
+                                    <Style TargetType="TextBlock">
+                                        <Setter Property="FontFamily"
+                                                Value="Segoe UI" />
+                                        <Setter Property="FontSize"
+                                                Value="40" />
+                                        <Setter Property="FontWeight"
+                                                Value="Bold" />
+                                        <Setter Property="TextLineBounds"
+                                                Value="Tight" />
+                                        <Setter Property="TextAlignment"
+                                                Value="Center" />
+                                    </Style>
+                                </local:AnimatedTextBlock.TextStyle>
+                            </local:AnimatedTextBlock>
 
                             <TextBlock Text="{TemplateBinding Header}"
                                        Foreground="{ThemeResource TextFillColorSecondaryBrush}"

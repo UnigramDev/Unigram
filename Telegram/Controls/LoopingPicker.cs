@@ -18,7 +18,7 @@ namespace Telegram.Controls
         private Button NextButton;
         private Button PrevButton;
 
-        private TextBlock ValueText;
+        private AnimatedTextBlock ValueText;
 
         private readonly int _digits = 2;
 
@@ -38,7 +38,7 @@ namespace Telegram.Controls
             NextButton = GetTemplateChild(nameof(NextButton)) as Button;
             PrevButton = GetTemplateChild(nameof(PrevButton)) as Button;
 
-            ValueText = GetTemplateChild(nameof(ValueText)) as TextBlock;
+            ValueText = GetTemplateChild(nameof(ValueText)) as AnimatedTextBlock;
             ValueText.Text = Value.ToString($"D{_digits}");
 
             NextButton.Click += NextButton_Click;
@@ -102,19 +102,21 @@ namespace Telegram.Controls
 
         protected override void OnPointerWheelChanged(PointerRoutedEventArgs e)
         {
-            if (FocusState == FocusState.Keyboard)
+            var pointer = e.GetCurrentPoint(this);
+            if (pointer.Properties.MouseWheelDelta > 0)
             {
-                var pointer = e.GetCurrentPoint(this);
-                if (pointer.Properties.MouseWheelDelta > 0)
-                {
-                    Increase();
-                    e.Handled = true;
-                }
-                else if (pointer.Properties.MouseWheelDelta < 0)
-                {
-                    Decrease();
-                    e.Handled = true;
-                }
+                Increase();
+                e.Handled = true;
+            }
+            else if (pointer.Properties.MouseWheelDelta < 0)
+            {
+                Decrease();
+                e.Handled = true;
+            }
+
+            if (FocusState != FocusState.Keyboard)
+            {
+                Focus(FocusState.Keyboard);
             }
 
             base.OnPointerWheelChanged(e);
