@@ -378,7 +378,8 @@
                     </Button.ContextFlyout>
                 </controls:BadgeButton>
 
-                <cells:ProfileHoursCell x:Name="BusinessHours" />
+                <cells:ProfileHoursCell x:Name="BusinessHours"
+                                        Visibility="Collapsed" />
 
                 <controls:BadgeButton x:Name="ChatId"
                                       Click="{x:Bind ViewModel.CopyId}"
