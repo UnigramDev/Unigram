@@ -227,7 +227,7 @@ namespace Telegram
                 var navigationFrame = new Frame();
                 var navigationService = NavigationServiceFactory(window, BackButton.Ignore, navigationFrame, sessionId, $"{sessionId}", true) as NavigationService;
 
-                return new RootPage(navigationService) { FlowDirection = LocaleService.Current.FlowDirection };
+                return new RootPage(window, navigationService) { FlowDirection = LocaleService.Current.FlowDirection };
             }
         }
 

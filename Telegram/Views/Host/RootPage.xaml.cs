@@ -49,6 +49,8 @@ namespace Telegram.Views.Host
     public sealed partial class RootPage : Page, IToastHost
     {
         private readonly ILifetimeService _lifetime;
+        private readonly WindowContext _context;
+
         private NavigationService _navigationService;
 
         private RootDestination _navigationViewSelected;
@@ -56,12 +58,13 @@ namespace Telegram.Views.Host
 
         private long _attachmentMenuBots;
 
-        public RootPage(NavigationService service)
+        public RootPage(WindowContext context, NavigationService service)
         {
             RequestedTheme = SettingsService.Current.Appearance.GetCalculatedElementTheme();
             InitializeComponent();
 
             _lifetime = TypeResolver.Current.Lifetime;
+            _context = context;
 
             _navigationViewSelected = RootDestination.Chats;
             _navigationViewItems = new MvxObservableCollection<object>
@@ -224,12 +227,10 @@ namespace Telegram.Views.Host
 
             Navigation.IsPaneOpen = false;
 
-            var context = WindowContext.ForXamlRoot(this);
-
-            var service = context.NavigationServices.GetByFrameId($"{session.Id}") as NavigationService;
+            var service = _context.NavigationServices.GetByFrameId($"{session.Id}") as NavigationService;
             if (service == null)
             {
-                service = BootStrapper.Current.NavigationServiceFactory(context, BootStrapper.BackButton.Attach, new Frame { CacheSize = 0 }, session.Id, $"{session.Id}", true) as NavigationService;
+                service = BootStrapper.Current.NavigationServiceFactory(_context, BootStrapper.BackButton.Attach, new Frame { CacheSize = 0 }, session.Id, $"{session.Id}", true) as NavigationService;
                 service.Frame.Navigating += OnNavigating;
                 service.Frame.Navigated += OnNavigated;
 
