@@ -333,7 +333,7 @@ namespace Telegram.Controls.Messages
                 _repliesLabel = string.Empty;
             }
 
-            if (message.IsChannelPost && message.SenderId is MessageSenderChat && !string.IsNullOrEmpty(message.AuthorSignature))
+            if (message.IsChannelPost && message.SenderId.IsChat(message.ChatId) && !string.IsNullOrEmpty(message.AuthorSignature))
             {
                 _authorLabel = $"{message.AuthorSignature}, ";
             }
