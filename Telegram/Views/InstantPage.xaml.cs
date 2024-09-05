@@ -20,6 +20,7 @@ using Telegram.Services;
 using Telegram.Td.Api;
 using Telegram.ViewModels;
 using Telegram.ViewModels.Gallery;
+using Telegram.Views.Popups;
 using Windows.Foundation;
 using Windows.System;
 using Windows.UI;
@@ -1775,6 +1776,45 @@ namespace Telegram.Views
         private void Header_GoForwardClicked(object sender, RoutedEventArgs e)
         {
             Frame.GoForward();
+        }
+
+        private void Feedback_Click(object sender, RoutedEventArgs e)
+        {
+            var viewModel = ViewModel;
+            ByNavigation(navigation => viewModel.Feedback(navigation));
+        }
+
+        private async void Share_Click(object sender, RoutedEventArgs e)
+        {
+            var link = ViewModel.ShareLink;
+            if (link == null)
+            {
+                return;
+            }
+
+            await this.ShowPopupAsync(ViewModel.SessionId, typeof(ChooseChatsPopup), new ChooseChatsConfigurationPostLink(new HttpUrl(link.ToString())));
+        }
+
+        private void Browser_Click(object sender, RoutedEventArgs e)
+        {
+            var link = ViewModel.ShareLink;
+            if (link == null)
+            {
+                return;
+            }
+
+            MessageHelper.OpenUrl(null, null, link.ToString());
+        }
+
+        private void Copy_Click(object sender, RoutedEventArgs e)
+        {
+            var link = ViewModel.ShareLink;
+            if (link == null)
+            {
+                return;
+            }
+
+            MessageHelper.CopyLink(XamlRoot, link.ToString());
         }
     }
 }
