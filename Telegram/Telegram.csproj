@@ -362,7 +362,6 @@
     <Compile Include="Controls\Chats\ChatRecordBar.xaml.cs">
       <DependentUpon>ChatRecordBar.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Controls\ScrollBarGrid.cs" />
     <Compile Include="Controls\Contacts\ContactsSortedByHeader.xaml.cs">
       <DependentUpon>ContactsSortedByHeader.xaml</DependentUpon>
     </Compile>
