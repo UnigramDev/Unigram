@@ -3083,7 +3083,7 @@ Note: if you forget your passcode, you&apos;ll need to log out or reinstall the 
     <value>Enable Paid Reactions</value>
   </data>
   <data name="ChannelEnablePaidReactionsInfo" xml:space="preserve">
-    <value>Switch this on to let your subscribers set paid reactions with Telegram Stars, which you will be able to withdraw later as TON.</value>
+    <value>Switch this on to let your subscribers react to posts with Telegram Stars, which you will be able to withdraw as TON.</value>
   </data>
   <data name="ChannelEnablePaidReactionsInfoLink" xml:space="preserve">
     <value>https://telegram.org/tos/stars/</value>
@@ -8972,6 +8972,9 @@ The channel &quot;**{1}**&quot; will become private.</value>
   </data>
   <data name="SendWithoutCompression" xml:space="preserve">
     <value>Send without compression</value>
+  </data>
+  <data name="SendWithoutGrouping" xml:space="preserve">
+    <value>Send without Grouping</value>
   </data>
   <data name="SendWithoutSound" xml:space="preserve">
     <value>Send Without Sound</value>

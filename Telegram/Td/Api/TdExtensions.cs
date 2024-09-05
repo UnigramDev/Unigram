@@ -256,7 +256,7 @@ namespace Telegram.Td.Api
             else if (x is MessageSelfDestructTypeImmediately
                 && y is MessageSelfDestructTypeImmediately)
             {
-                return false;
+                return true;
             }
 
             return x == null && y == null;

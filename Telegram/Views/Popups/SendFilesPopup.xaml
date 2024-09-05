@@ -130,7 +130,7 @@
         </Style>
 
         <DataTemplate x:Key="FileItemTemplate">
-            <Grid Padding="0,6,0,6">
+            <Grid Padding="24,6,24,6">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto" />
                     <ColumnDefinition />
@@ -277,7 +277,7 @@
 
         <ItemsPanelTemplate x:Key="AlbumPanelTemplate">
             <local:SendFilesAlbumPanel Loading="SendFilesAlbumPanel_Loading"
-                                       Margin="24,0,22,-2" />
+                                       Margin="0,0,-2,-2" />
         </ItemsPanelTemplate>
 
     </ContentControl.Resources>
@@ -294,22 +294,9 @@
             <TextBlock Text="{x:Bind SendWithoutCompression, Mode=OneWay}"
                        VerticalAlignment="Center" />
 
-            <controls:GlyphToggleButton x:Name="AlbumButton"
-                                        CheckedGlyph="&#xE90C;"
-                                        Glyph="&#xE90C;"
-                                        CheckedForeground="{ThemeResource TelegramBackgroundAccentBrush}"
-                                        Click="Album_Click"
-                                        FontFamily="{StaticResource TelegramThemeFontFamily}"
-                                        Visibility="{x:Bind IsAlbumAvailable, Mode=OneWay}"
-                                        IsChecked="{x:Bind IsAlbum, Mode=OneWay}"
-                                        IsOneWay="False"
-                                        FontSize="20"
-                                        Margin="-8,0,0,0"
-                                        Grid.Column="2" />
-
             <controls:MoreButton Click="Menu_Click"
                                  Visibility="{x:Bind IsMediaOnly, Mode=OneWay}"
-                                 Grid.Column="3" />
+                                 Grid.Column="2" />
         </Grid>
     </ContentDialog.Title>
 
@@ -384,8 +371,7 @@
                       Drop="ListView_Drop"
                       CanReorderItems="True"
                       CanDragItems="True"
-                      AllowDrop="True"
-                      Padding="24,0,24,0">
+                      AllowDrop="True">
                 <ListView.ItemContainerStyle>
                     <Style TargetType="ListViewItem">
                         <Setter Property="HorizontalContentAlignment"
@@ -416,8 +402,7 @@
                       SelectionMode="None"
                       DragEnter="ListView_DragEnter"
                       Drop="ListView_Drop"
-                      AllowDrop="True"
-                      Padding="0,0,0,0">
+                      AllowDrop="True">
                 <ListView.ItemContainerStyle>
                     <Style TargetType="ListViewItem">
                         <Setter Property="HorizontalContentAlignment"
