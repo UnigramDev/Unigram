@@ -2344,19 +2344,25 @@ namespace Telegram.Services
             {
                 if (_chats.TryGetValue(updateChatAddedToList.ChatId, out Chat value))
                 {
-                    value.ChatLists.Add(updateChatAddedToList.ChatList);
+                    lock (value)
+                    {
+                        value.ChatLists.Add(updateChatAddedToList.ChatList);
+                    }
                 }
             }
             else if (update is UpdateChatRemovedFromList updateChatRemovedFromList)
             {
                 if (_chats.TryGetValue(updateChatRemovedFromList.ChatId, out Chat value))
                 {
-                    foreach (var chatList in value.ChatLists)
+                    lock (value)
                     {
-                        if (chatList.AreTheSame(updateChatRemovedFromList.ChatList))
+                        foreach (var chatList in value.ChatLists)
                         {
-                            value.ChatLists.Remove(chatList);
-                            break;
+                            if (chatList.AreTheSame(updateChatRemovedFromList.ChatList))
+                            {
+                                value.ChatLists.Remove(chatList);
+                                break;
+                            }
                         }
                     }
                 }
