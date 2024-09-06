@@ -17,6 +17,7 @@ using Telegram.Native.Calls;
 using Telegram.Services.Updates;
 using Telegram.Services.ViewService;
 using Telegram.Td.Api;
+using Telegram.Views;
 using Telegram.Views.Calls;
 using Telegram.Views.Popups;
 using Windows.ApplicationModel.Calls;
@@ -1036,7 +1037,7 @@ namespace Telegram.Services
                 }
             }
 
-            Aggregator.Publish(new UpdateCallDialog(update.GroupCall));
+            Aggregator.Publish(new UpdateCallDialog(TypeResolver.Current.Resolve<IVoipService>(SessionId).Call, update.GroupCall));
 #endif
         }
 
