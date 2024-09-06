@@ -3014,7 +3014,7 @@ namespace Telegram.ViewModels
 
         public void ToggleMute()
         {
-            ToggleMute(ClientService.Notifications.GetMuteFor(_chat) > 0);
+            ToggleMute(ClientService.Notifications.IsMuted(_chat));
         }
 
         private void ToggleMute(bool unmute)
@@ -3773,8 +3773,8 @@ namespace Telegram.ViewModels
             }
             else
             {
-                var mutedFor = Settings.Notifications.GetMuteFor(chat);
-                var popup = new ChatMutePopup(mutedFor);
+                var muteFor = Settings.Notifications.GetMuteFor(chat);
+                var popup = new ChatMutePopup(muteFor);
 
                 var confirm = await ShowPopupAsync(popup);
                 if (confirm != ContentDialogResult.Primary)
@@ -3782,7 +3782,7 @@ namespace Telegram.ViewModels
                     return;
                 }
 
-                if (mutedFor != popup.Value)
+                if (muteFor != popup.Value)
                 {
                     _notificationsService.SetMuteFor(chat, popup.Value, NavigationService.XamlRoot);
                 }

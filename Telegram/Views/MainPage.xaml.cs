@@ -1807,7 +1807,7 @@ namespace Telegram.Views
         {
             if (ViewModel.Chats.SelectedItems.Count > 0)
             {
-                var muted = ViewModel.Chats.SelectedItems.Any(x => ViewModel.ClientService.Notifications.GetMuteFor(x) > 0);
+                var muted = ViewModel.Chats.SelectedItems.Any(x => ViewModel.ClientService.Notifications.IsMuted(x));
                 ManageMute.Glyph = muted ? Icons.Alert : Icons.AlertOff;
                 Automation.SetToolTip(ManageMute, muted ? Strings.UnmuteNotifications : Strings.MuteNotifications);
 
@@ -3111,7 +3111,7 @@ namespace Telegram.Views
                 return;
             }
 
-            var muted = ViewModel.ClientService.Notifications.GetMuteFor(chat) > 0;
+            var muted = ViewModel.ClientService.Notifications.IsMuted(chat);
             var archived = chat.Positions.Any(x => x.List is ChatListArchive);
 
             flyout.CreateFlyoutItem(DialogArchive_Loaded, viewModel.ArchiveChat, chat, archived ? Strings.Unarchive : Strings.Archive, archived ? Icons.Unarchive : Icons.Archive);
@@ -3381,7 +3381,7 @@ namespace Telegram.Views
                 flyout.CreateFlyoutItem(viewModel.PinTopic, topic, topic.IsPinned ? Strings.UnpinFromTop : Strings.PinToTop, topic.IsPinned ? Icons.PinOff : Icons.Pin);
             }
 
-            var muted = ViewModel.ClientService.Notifications.GetMutedFor(chat, topic) > 0;
+            var muted = ViewModel.ClientService.Notifications.GetMuteFor(chat, topic) > 0;
             flyout.CreateFlyoutItem(viewModel.NotifyTopic, topic, muted ? Strings.Unmute : Strings.Mute, topic.IsPinned ? Icons.Alert : Icons.AlertOff);
 
             if (canManage)

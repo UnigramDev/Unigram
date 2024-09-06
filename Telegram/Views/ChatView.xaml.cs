@@ -2128,7 +2128,7 @@ namespace Telegram.Views
             }
             if ((user != null && user.Type is not UserTypeDeleted && user.Id != ViewModel.ClientService.Options.MyId) || basicGroup != null || (supergroup != null && !supergroup.IsChannel))
             {
-                var muted = ViewModel.ClientService.Notifications.GetMuteFor(chat) > 0;
+                var muted = ViewModel.ClientService.Notifications.IsMuted(chat);
                 var silent = chat.DefaultDisableNotification;
 
                 var mute = new MenuFlyoutSubItem();
@@ -4413,7 +4413,7 @@ namespace Telegram.Views
                 }
                 else
                 {
-                    ShowAction(ViewModel.ClientService.Notifications.GetMuteFor(chat) > 0 ? Strings.ChannelUnmute : Strings.ChannelMute, true);
+                    ShowAction(ViewModel.ClientService.Notifications.IsMuted(chat) ? Strings.ChannelUnmute : Strings.ChannelMute, true);
                 }
             }
         }
@@ -5064,7 +5064,7 @@ namespace Telegram.Views
             }
             else if (ViewModel.ClientService.IsRepliesChat(chat))
             {
-                ShowAction(ViewModel.ClientService.Notifications.GetMuteFor(chat) > 0 ? Strings.ChannelUnmute : Strings.ChannelMute, true);
+                ShowAction(ViewModel.ClientService.Notifications.IsMuted(chat) ? Strings.ChannelUnmute : Strings.ChannelMute, true);
             }
             else if (chat.BlockList is BlockListMain)
             {
@@ -5312,7 +5312,7 @@ namespace Telegram.Views
                 }
                 else
                 {
-                    ShowAction(ViewModel.ClientService.Notifications.GetMuteFor(chat) > 0 ? Strings.ChannelUnmute : Strings.ChannelMute, true);
+                    ShowAction(ViewModel.ClientService.Notifications.IsMuted(chat) ? Strings.ChannelUnmute : Strings.ChannelMute, true);
                 }
             }
             else

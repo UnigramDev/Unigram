@@ -310,7 +310,7 @@ namespace Telegram.Controls.Cells
                 return;
             }
 
-            var muted = _clientService.Notifications.GetMutedFor(_chat, topic) > 0;
+            var muted = _clientService.Notifications.GetMuteFor(_chat, topic) > 0;
             VisualStateManager.GoToState(this, muted ? "Muted" : "Unmuted", false);
             MutedIcon.Visibility = muted ? Visibility.Visible : Visibility.Collapsed;
         }

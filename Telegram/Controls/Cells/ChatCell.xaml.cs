@@ -705,7 +705,7 @@ namespace Telegram.Controls.Cells
                 return;
             }
 
-            var muted = _clientService.Notifications.GetMuteFor(chat) > 0;
+            var muted = _clientService.Notifications.IsMuted(chat);
             MutedIcon.Visibility = muted ? Visibility.Visible : Visibility.Collapsed;
             UnreadBadge.IsUnmuted = !muted;
 

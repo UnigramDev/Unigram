@@ -236,7 +236,7 @@ namespace Telegram.ViewModels
 
         public void NotifyChat(Chat chat)
         {
-            _notificationsService.SetMuteFor(chat, ClientService.Notifications.GetMuteFor(chat) > 0 ? 0 : 632053052, NavigationService.XamlRoot);
+            _notificationsService.SetMuteFor(chat, ClientService.Notifications.IsMuted(chat) ? 0 : 632053052, NavigationService.XamlRoot);
         }
 
         #endregion
@@ -257,8 +257,8 @@ namespace Telegram.ViewModels
             }
             else
             {
-                var mutedFor = Settings.Notifications.GetMuteFor(chat);
-                var popup = new ChatMutePopup(mutedFor);
+                var muteFor = Settings.Notifications.GetMuteFor(chat);
+                var popup = new ChatMutePopup(muteFor);
 
                 var confirm = await ShowPopupAsync(popup);
                 if (confirm != ContentDialogResult.Primary)
@@ -266,7 +266,7 @@ namespace Telegram.ViewModels
                     return;
                 }
 
-                if (mutedFor != popup.Value)
+                if (muteFor != popup.Value)
                 {
                     _notificationsService.SetMuteFor(chat, popup.Value, NavigationService.XamlRoot);
                 }
@@ -281,7 +281,7 @@ namespace Telegram.ViewModels
         public void NotifySelectedChats()
         {
             var chats = SelectedItems.ToList();
-            var muted = chats.Any(x => ClientService.Notifications.GetMuteFor(x) > 0);
+            var muted = chats.Any(x => ClientService.Notifications.IsMuted(x));
 
             foreach (var chat in chats)
             {

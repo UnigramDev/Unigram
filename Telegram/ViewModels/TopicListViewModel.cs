@@ -190,7 +190,7 @@ namespace Telegram.ViewModels
         {
             if (Chat is Chat chat)
             {
-                _notificationsService.SetMuteFor(chat, ClientService.Notifications.GetMutedFor(chat, topic) > 0 ? 0 : 632053052, NavigationService.XamlRoot);
+                _notificationsService.SetMuteFor(chat, ClientService.Notifications.GetMuteFor(chat, topic) > 0 ? 0 : 632053052, NavigationService.XamlRoot);
             }
         }
 

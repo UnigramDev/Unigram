@@ -672,11 +672,11 @@ namespace Telegram.Controls
 
         public void UpdateChatNotificationSettings(Chat chat)
         {
-            var unmuted = ViewModel.ClientService.Notifications.GetMuteFor(chat) == 0;
-            Notifications.Content = unmuted ? Strings.ChatsMute : Strings.ChatsUnmute;
-            Notifications.Glyph = unmuted
-                ? (_filledIcons ? Icons.AlertFilled : Icons.Alert)
-                : (_filledIcons ? Icons.AlertOffFilled : Icons.AlertOff);
+            var muted = ViewModel.ClientService.Notifications.IsMuted(chat);
+            Notifications.Content = muted ? Strings.ChatsUnmute : Strings.ChatsMute;
+            Notifications.Glyph = muted
+                ? (_filledIcons ? Icons.AlertOffFilled : Icons.AlertOff)
+                : (_filledIcons ? Icons.AlertFilled : Icons.Alert);
         }
 
         public void UpdateUser(Chat chat, User user, bool secret)
@@ -1511,7 +1511,7 @@ namespace Telegram.Controls
                 return;
             }
 
-            var muted = ViewModel.ClientService.Notifications.GetMuteFor(chat) > 0;
+            var muted = ViewModel.ClientService.Notifications.IsMuted(chat);
             if (muted)
             {
                 ViewModel.Unmute();

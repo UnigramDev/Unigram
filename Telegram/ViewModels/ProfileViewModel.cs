@@ -786,7 +786,7 @@ namespace Telegram.ViewModels
 
         public void ToggleMute()
         {
-            ToggleMute(ClientService.Notifications.GetMuteFor(_chat) > 0);
+            ToggleMute(ClientService.Notifications.IsMuted(_chat));
         }
 
         private void ToggleMute(bool unmute)
@@ -797,7 +797,7 @@ namespace Telegram.ViewModels
                 return;
             }
 
-            _notificationsService.SetMuteFor(chat, ClientService.Notifications.GetMuteFor(chat) > 0 ? 0 : 632053052, NavigationService.XamlRoot);
+            _notificationsService.SetMuteFor(chat, ClientService.Notifications.IsMuted(chat) ? 0 : 632053052, NavigationService.XamlRoot);
         }
 
         public async void OpenUsernameInfo(string username)
