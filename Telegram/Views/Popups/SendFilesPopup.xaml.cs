@@ -558,8 +558,8 @@ namespace Telegram.Views.Popups
                     {
                         Items.Add(photo);
 
-                        UpdateView();
                         UpdatePanel();
+                        UpdateView();
                     }
                 }
                 else if (package.AvailableFormats.Contains(StandardDataFormats.StorageItems))
@@ -572,8 +572,8 @@ namespace Telegram.Views.Popups
                         Items.Add(item);
                     }
 
-                    UpdateView();
                     UpdatePanel();
+                    UpdateView();
                 }
             }
             catch { }

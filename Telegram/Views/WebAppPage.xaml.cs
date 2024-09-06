@@ -98,7 +98,14 @@ namespace Telegram.Views
 
         private async void Hide()
         {
-            await WindowContext.Current.ConsolidateAsync();
+            if (WindowContext.Current != null)
+            {
+                await WindowContext.Current.ConsolidateAsync();
+            }
+            else
+            {
+                await ApplicationView.GetForCurrentView().TryConsolidateAsync();
+            }
         }
 
         private void OnReleased(object sender, System.EventArgs e)

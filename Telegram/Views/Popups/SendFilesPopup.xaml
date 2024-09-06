@@ -387,9 +387,6 @@
                     </Style>
                 </ListView.ItemContainerStyle>
             </ListView>
-
-            <controls:ScrollViewerScrim Background="{ThemeResource ContentDialogBackground}"
-                                        ScrollingHost="{x:Bind ScrollingHost}" />
         </Grid>
         <Grid x:Name="AlbumPanel"
               x:Load="False"
@@ -420,9 +417,6 @@
                     </Style>
                 </ListView.ItemContainerStyle>
             </ListView>
-
-            <controls:ScrollViewerScrim Background="{ThemeResource ContentDialogBackground}"
-                                        ScrollingHost="{x:Bind Album}" />
         </Grid>
 
         <Button x:Name="PaidMediaButton"
