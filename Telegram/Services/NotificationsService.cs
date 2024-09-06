@@ -449,18 +449,24 @@ namespace Telegram.Services
 
             if (_suppress == true)
             {
+                Logger.Info("_suppress is true");
+
                 // This is an unsynced message, we don't want to show a notification for it as it has been probably pushed already by WNS
                 return;
             }
 
             if (_clientService.ConnectionState is ConnectionStateUpdating)
             {
+                Logger.Info("ConnectionState is ConnectionStateUpdating");
+
                 // This is an unsynced message, we don't want to show a notification for it as it has been probably pushed already by WNS
                 return;
             }
 
             if (!_sessionService.IsActive && !SettingsService.Current.IsAllAccountsNotifications)
             {
+                Logger.Info("Session is not active");
+
                 return;
             }
 
@@ -488,6 +494,8 @@ namespace Telegram.Services
             if (time < DateTime.Now.AddHours(-1))
             {
                 _clientService.Send(new RemoveNotification(group, notification.Id));
+
+                Logger.Info("Notification is too old");
                 return;
             }
 
@@ -508,6 +516,7 @@ namespace Telegram.Services
             var chat = _clientService.GetChat(message.ChatId);
             if (chat == null)
             {
+                Logger.Info("Chat is null");
                 return;
             }
 
@@ -523,6 +532,8 @@ namespace Telegram.Services
                 Td.Api.File soundFile = null;
                 if (soundId != -1 && soundId != 0 && !silent)
                 {
+                    Logger.Info("Custom notification sound");
+
                     var response = await _clientService.SendAsync(new GetSavedNotificationSound(soundId));
                     if (response is NotificationSound notificationSound)
                     {
@@ -573,6 +584,7 @@ namespace Telegram.Services
 
                 if (service.CurrentPageType == typeof(ChatPage) && (long)service.CurrentPageParam == chat.Id)
                 {
+                    Logger.Info("Chat is open");
                     return false;
                 }
 
@@ -650,7 +662,7 @@ namespace Telegram.Services
             }
             catch (Exception ex)
             {
-                Logger.Error(ex);
+                Logger.Error(ex.ToString());
             }
         }
 
@@ -708,7 +720,7 @@ namespace Telegram.Services
             }
             catch (Exception ex)
             {
-                Logger.Error(ex);
+                Logger.Error(ex.ToString());
             }
         }
 
