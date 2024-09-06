@@ -49,7 +49,7 @@ namespace Telegram.Streams
                                 ? reaction.CenterAnimation
                                 : reaction.ActivateAnimation;
 
-                            if (UseCenterAnimation)
+                            if (UseCenterAnimation && reaction.AroundAnimation != null)
                             {
                                 _clientService.DownloadFile(reaction.AroundAnimation.StickerValue.Id, 8);
                             }
