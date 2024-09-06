@@ -502,7 +502,7 @@ namespace Telegram.Controls.Chats
                         return true;
                     }
 
-                    autocomplete = GetCommands(result.ToLower());
+                    autocomplete = GetCommands(result);
                     return true;
                 }
             }
@@ -516,7 +516,20 @@ namespace Telegram.Controls.Chats
             var all = ViewModel.BotCommands;
             if (all != null)
             {
-                var results = new AutocompleteList(command, all.Where(x => x.Item.Command.ToLower().StartsWith(command, StringComparison.OrdinalIgnoreCase)));
+                var results = new AutocompleteList(command, all.Where(x => x.Item.Command.StartsWith(command, StringComparison.OrdinalIgnoreCase)));
+                if (results.Count > 0)
+                {
+                    return results;
+                }
+            }
+            else if (ViewModel.ClientService.TryGetUser(ViewModel.Chat, out var user) && user.Type is UserTypeRegular)
+            {
+                // TODO: is this actually needed?
+                ViewModel.ClientService.Send(new LoadQuickReplyShortcuts());
+
+                var replies = ViewModel.ClientService.GetQuickReplyShortcuts();
+
+                var results = new AutocompleteList(command, replies.Where(x => x.Name.StartsWith(command, StringComparison.OrdinalIgnoreCase)));
                 if (results.Count > 0)
                 {
                     return results;

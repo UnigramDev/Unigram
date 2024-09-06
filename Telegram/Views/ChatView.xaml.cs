@@ -3660,6 +3660,11 @@ namespace Telegram.Views
                     ButtonStickers.Collapse();
                 }
             }
+            else if (e.ClickedItem is QuickReplyShortcut shortcut)
+            {
+                TextField.SetText(null, null);
+                ViewModel.ClientService.Send(new SendQuickReplyShortcutMessages(ViewModel.Chat.Id, shortcut.Id, 0));
+            }
         }
 
         private void List_SelectionModeChanged(DependencyObject sender, DependencyProperty dp)
@@ -3919,13 +3924,28 @@ namespace Telegram.Views
                 command.Text = $"/{userCommand.Item.Command} ";
                 description.Text = userCommand.Item.Description;
 
-                var user = ViewModel.ClientService.GetUser(userCommand.UserId);
-                if (user == null)
+                if (ViewModel.ClientService.TryGetUser(userCommand.UserId, out User user))
                 {
-                    return;
+                    photo.SetUser(ViewModel.ClientService, user, 32);
                 }
+            }
+            else if (args.Item is QuickReplyShortcut shortcut)
+            {
+                var content = args.ItemContainer.ContentTemplateRoot as Grid;
 
-                photo.SetUser(ViewModel.ClientService, user, 32);
+                var photo = content.Children[0] as ProfilePicture;
+                var title = content.Children[1] as TextBlock;
+
+                var command = title.Inlines[0] as Run;
+                var description = title.Inlines[1] as Run;
+
+                command.Text = $"/{shortcut.Name} ";
+                description.Text = Locale.Declension(Strings.R.messages, shortcut.MessageCount);
+
+                if (ViewModel.ClientService.TryGetUser(ViewModel.ClientService.Options.MyId, out User user))
+                {
+                    photo.SetUser(ViewModel.ClientService, user, 32);
+                }
             }
             else if (args.Item is User user)
             {
