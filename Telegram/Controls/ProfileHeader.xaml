@@ -138,6 +138,7 @@
                            TextAlignment="Center" />
 
                 <Button x:Name="SubtitleWhen"
+                        Visibility="Collapsed"
                         Click="{x:Bind ViewModel.ShowLastSeen}"
                         VerticalAlignment="Bottom"
                         FontSize="11"
@@ -354,6 +355,7 @@
                 </controls:BadgeButton>
 
                 <controls:BadgeButton x:Name="UserBirthday"
+                                      Visibility="Collapsed"
                                       Click="Birthday_Click"
                                       Content="[Birthday Today]"
                                       Badge="21 Mar 2024 (99 years old)"
@@ -409,6 +411,7 @@
                 </controls:BadgeButton>
 
                 <Border x:Name="BotMainApp"
+                        Visibility="Collapsed"
                         Background="{ThemeResource SettingsItemBackground}">
                     <Button Click="{x:Bind ViewModel.OpenMainWebApp}"
                             Content="{CustomResource ProfileBotOpenApp}"
@@ -439,7 +442,8 @@
                                       Glyph="&#xF166;" />
             </controls:HeaderedControl>
 
-            <controls:HeaderedControl x:Name="BotPanel">
+            <controls:HeaderedControl x:Name="BotPanel"
+                                      Visibility="Collapsed">
                 <controls:BadgeButton x:Name="Stars"
                                       Click="{x:Bind ViewModel.OpenBalance}"
                                       Content="{CustomResource StarsBalance}"
