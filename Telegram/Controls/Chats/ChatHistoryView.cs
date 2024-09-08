@@ -532,7 +532,7 @@ namespace Telegram.Controls.Chats
             if (args.TapCount == 2 && args.PointerDeviceType == PointerDeviceType.Mouse)
             {
                 _raised = true;
-                sender.CompleteGesture();
+                sender.TryCompleteGesture();
 
                 var children = VisualTreeHelper.FindElementsInHostCoordinates(args.Position, this);
                 var selector = children?.FirstOrDefault(x => x is SelectorItem) as SelectorItem;
@@ -563,12 +563,12 @@ namespace Telegram.Controls.Chats
                 }
                 else if (_recognizer.IsActive)
                 {
-                    _recognizer.CompleteGesture();
+                    _recognizer.TryCompleteGesture();
                 }
             }
             else if (_recognizer.IsActive)
             {
-                _recognizer.CompleteGesture();
+                _recognizer.TryCompleteGesture();
             }
 
             _pressed = !_raised;
@@ -732,7 +732,7 @@ namespace Telegram.Controls.Chats
             }
             else if (_recognizer.IsActive)
             {
-                _recognizer.CompleteGesture();
+                _recognizer.TryCompleteGesture();
             }
 
             var handled = _firstItem != null && ViewModel.SelectedItems.ContainsKey(_firstItem.Id) == _operation;
@@ -758,7 +758,7 @@ namespace Telegram.Controls.Chats
 
         internal void OnPointerCanceled(MessageSelector item, PointerRoutedEventArgs e)
         {
-            _recognizer.CompleteGesture();
+            _recognizer.TryCompleteGesture();
         }
 
         enum SelectionDirection

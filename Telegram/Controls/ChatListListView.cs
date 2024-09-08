@@ -541,7 +541,7 @@ namespace Telegram.Controls
 
         protected override void OnPointerCanceled(PointerRoutedEventArgs e)
         {
-            _recognizer.CompleteGesture();
+            _recognizer.TryCompleteGesture();
             base.OnPointerCanceled(e);
         }
 

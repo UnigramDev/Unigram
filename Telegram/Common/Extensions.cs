@@ -473,7 +473,7 @@ namespace Telegram.Common
             }
             catch
             {
-                recognizer.CompleteGesture();
+                recognizer.TryCompleteGesture();
             }
         }
 
@@ -485,7 +485,7 @@ namespace Telegram.Common
             }
             catch
             {
-                recognizer.CompleteGesture();
+                recognizer.TryCompleteGesture();
             }
         }
 
@@ -497,7 +497,19 @@ namespace Telegram.Common
             }
             catch
             {
+                recognizer.TryCompleteGesture();
+            }
+        }
+
+        public static void TryCompleteGesture(this GestureRecognizer recognizer)
+        {
+            try
+            {
                 recognizer.CompleteGesture();
+            }
+            catch
+            {
+                // All the remote procedure calls must be wrapped in a try-catch block
             }
         }
 

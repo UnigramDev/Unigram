@@ -67,7 +67,7 @@ namespace Telegram.Controls
         private void OnPointerCanceled(object sender, PointerRoutedEventArgs e)
         {
             _sender = sender;
-            _recognizer.CompleteGesture();
+            _recognizer.TryCompleteGesture();
         }
 
         private void OnPointerReleased(object sender, PointerRoutedEventArgs e)
