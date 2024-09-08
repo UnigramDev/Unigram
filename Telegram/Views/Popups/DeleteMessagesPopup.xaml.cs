@@ -108,10 +108,11 @@ namespace Telegram.Views.Popups
                 RevokeCheck.Visibility = Visibility.Collapsed;
 
                 var mapped = messages.ToDictionary(x => new MessageId(x));
+                var scheduled = messages.Any(x => x.SchedulingState != null);
 
-                var canBeDeletedForAllUsers = properties.Values.All(x => x.CanBeDeletedForAllUsers);
+                var canBeDeletedForAllUsers = properties.Values.All(x => x.CanBeDeletedForAllUsers) && !scheduled;
                 var canBeDeletedOnlyForSelf = properties.Values.All(x => x.CanBeDeletedOnlyForSelf);
-                var anyCanBeDeletedForAllUsers = properties.Any(x => mapped[x.Key].IsOutgoing && x.Value.CanBeDeletedForAllUsers);
+                var anyCanBeDeletedForAllUsers = properties.Any(x => mapped[x.Key].IsOutgoing && x.Value.CanBeDeletedForAllUsers) && !scheduled;
 
                 if (savedMessagesTopicId != 0)
                 {
