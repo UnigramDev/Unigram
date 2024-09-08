@@ -2779,10 +2779,17 @@ namespace Telegram.Views
 
             if (ViewModel.Chats.SelectionMode != ListViewSelectionMode.Multiple)
             {
-                ChatsList.SelectedItem = chat;
+                try
+                {
+                    ChatsList.SelectedItem = chat;
 
-                // TODO: would be great, but doesn't seem to work well enough :(
-                //VisualUtilities.QueueCallbackForCompositionRendered(() => ChatsList.SelectedItem = chat);
+                    // TODO: would be great, but doesn't seem to work well enough :(
+                    //VisualUtilities.QueueCallbackForCompositionRendered(() => ChatsList.SelectedItem = chat);
+                }
+                catch
+                {
+                    // All the remote procedure calls must be wrapped in a try-catch block
+                }
             }
         }
 
@@ -2968,32 +2975,39 @@ namespace Telegram.Views
 
         private void ChatsList_GettingFocus(UIElement sender, GettingFocusEventArgs args)
         {
-            // ListViewBase ignores GettingFocus events with Direction equals to None
-            // What we do here is to simulate the default behavior, so that closing the active chat
-            // will move the focus to the last selected item in the chat list if possible.
-            if (args.Direction == FocusNavigationDirection.None && args.OldFocusedElement is not ChatListListViewItem)
+            try
             {
-                if (ChatsList.TryGetContainer(ViewModel?.Chats.LastSelectedItem ?? 0, out SelectorItem container))
+                // ListViewBase ignores GettingFocus events with Direction equals to None
+                // What we do here is to simulate the default behavior, so that closing the active chat
+                // will move the focus to the last selected item in the chat list if possible.
+                if (args.Direction == FocusNavigationDirection.None && args.OldFocusedElement is not ChatListListViewItem)
                 {
-                    if (args.TrySetNewFocusedElement(container))
+                    if (ChatsList.TryGetContainer(ViewModel?.Chats.LastSelectedItem ?? 0, out SelectorItem container))
                     {
-                        args.Handled = true;
+                        if (args.TrySetNewFocusedElement(container))
+                        {
+                            args.Handled = true;
+                        }
                     }
-                }
-                else if (sender != ChatsList)
-                {
-                    if (args.TrySetNewFocusedElement(ChatsList))
+                    else if (sender != ChatsList)
                     {
-                        args.Handled = true;
+                        if (args.TrySetNewFocusedElement(ChatsList))
+                        {
+                            args.Handled = true;
+                        }
                     }
-                }
 
-                if (args.NewFocusedElement is ChatListListViewItem item)
-                {
-                    // Let's disable the awkward focus rect that would appear on activation.
-                    // ChatListListViewItem.OnLostFocus takes care of reenabling it.
-                    item.UseSystemFocusVisuals = false;
+                    if (args.NewFocusedElement is ChatListListViewItem item)
+                    {
+                        // Let's disable the awkward focus rect that would appear on activation.
+                        // ChatListListViewItem.OnLostFocus takes care of reenabling it.
+                        item.UseSystemFocusVisuals = false;
+                    }
                 }
+            }
+            catch
+            {
+                // All the remote procedure calls must be wrapped in a try-catch block
             }
         }
 
