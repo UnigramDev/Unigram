@@ -401,7 +401,18 @@ namespace Telegram.Controls
 
 
 
+        public static bool IsAnyPopupOpen(XamlRoot xamlRoot)
+        {
+            foreach (var popup in VisualTreeHelper.GetOpenPopupsForXamlRoot(xamlRoot))
+            {
+                if (popup.Child is ContentDialog)
+                {
+                    return true;
+                }
+            }
 
+            return false;
+        }
 
         public static ContentPopup Block()
         {

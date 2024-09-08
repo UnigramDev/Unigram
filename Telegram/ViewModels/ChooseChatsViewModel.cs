@@ -92,6 +92,16 @@ namespace Telegram.ViewModels
         private ChooseChatsConfiguration _configuration;
         public ChooseChatsConfiguration Configuration => _configuration;
 
+        public override INavigationService NavigationService
+        {
+            get => base.NavigationService;
+            set
+            {
+                SearchChats.NavigationService = value;
+                base.NavigationService = value;
+            }
+        }
+
         protected override Task OnNavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
         {
             // The following is absolutely awful

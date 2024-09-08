@@ -13,11 +13,13 @@ using System.Threading.Tasks;
 using Telegram.Collections;
 using Telegram.Collections.Handlers;
 using Telegram.Common;
+using Telegram.Controls;
 using Telegram.Navigation;
 using Telegram.Services;
 using Telegram.Td;
 using Telegram.Td.Api;
 using Telegram.Views.Popups;
+using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Data;
 
@@ -444,6 +446,18 @@ namespace Telegram.ViewModels
 
             TopChats.Remove(chat);
             ClientService.Send(new RemoveTopChat(new TopChatCategoryUsers(), chat.Id));
+        }
+
+        public override Task<ContentDialogResult> ShowPopupAsync(string message, string title = null, string primary = null, string secondary = null, bool destructive = false, ElementTheme requestedTheme = ElementTheme.Default)
+        {
+            // SearchChatsViewModel is used by ChooseChatsViewModel,
+            // we still want the popups to properly open on top.
+            if (ContentPopup.IsAnyPopupOpen(NavigationService.XamlRoot))
+            {
+                return base.ShowPopupAsync(target: null, message, title, primary, secondary, destructive, requestedTheme);
+            }
+
+            return base.ShowPopupAsync(message, title, primary, secondary, destructive, requestedTheme);
         }
 
         #endregion

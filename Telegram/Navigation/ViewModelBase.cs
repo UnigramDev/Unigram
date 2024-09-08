@@ -130,7 +130,7 @@ namespace Telegram.Navigation
             _ = NavigationService.ShowPopupAsync(sourcePopupType, parameter, tsc, requestedTheme);
         }
 
-        public Task<ContentDialogResult> ShowPopupAsync(string message, string title = null, string primary = null, string secondary = null, bool destructive = false, ElementTheme requestedTheme = ElementTheme.Default)
+        public virtual Task<ContentDialogResult> ShowPopupAsync(string message, string title = null, string primary = null, string secondary = null, bool destructive = false, ElementTheme requestedTheme = ElementTheme.Default)
         {
             return MessagePopup.ShowAsync(NavigationService.XamlRoot, message, title, primary, secondary, destructive, requestedTheme);
         }
