@@ -877,6 +877,7 @@ namespace Telegram.Views.Host
             var resize = ThemePage == null;
 
             FindName("ThemePage");
+            ThemePage.ViewModel.NavigationService = _navigationService;
             ThemePage.Load(theme);
 
             if (resize)
