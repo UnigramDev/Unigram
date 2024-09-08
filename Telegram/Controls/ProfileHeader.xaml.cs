@@ -823,6 +823,8 @@ namespace Telegram.Controls
                         ? Locale.Declension(Strings.R.ProfileBirthdayValueYear, years, Formatter.Birthdate(fullInfo.Birthdate))
                         : string.Format(Strings.ProfileBirthdayValue, Formatter.Birthdate(fullInfo.Birthdate));
                 }
+
+                UserBirthday.Visibility = Visibility.Visible;
             }
             else
             {
