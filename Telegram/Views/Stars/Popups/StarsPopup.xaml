@@ -128,6 +128,7 @@
 
                     <controls:TopNavView x:Name="Navigation"
                                          SelectedIndex="{x:Bind ViewModel.SelectedIndex, Mode=TwoWay}"
+                                         Visibility="{x:Bind ViewModel.Items.Count, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"
                                          Height="40">
                         <controls:TopNavViewItem Content="{CustomResource StarsTransactionsAll}" />
                         <controls:TopNavViewItem Content="{CustomResource StarsTransactionsIncoming}" />

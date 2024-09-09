@@ -201,7 +201,7 @@
             <ListView.Footer>
                 <StackPanel Margin="0,0,0,24">
                     <Button Content="{CustomResource NotifyMoreOptions}"
-                            Click="{x:Bind ViewModel.Expand}"
+                            Click="Expand_Click"
                             Visibility="{x:Bind ViewModel.CanExpand, Mode=OneWay}"
                             HorizontalAlignment="Stretch"
                             Margin="12,2,12,8" />
@@ -212,6 +212,10 @@
                                              Margin="12,0" />
                 </StackPanel>
             </ListView.Footer>
+            <!-- TODO: WinUI -->
+            <ListView.ItemContainerTransitions>
+                <TransitionCollection />
+            </ListView.ItemContainerTransitions>
         </ListView>
 
         <controls:ScrollViewerScrim Background="{ThemeResource ContentDialogBackground}"

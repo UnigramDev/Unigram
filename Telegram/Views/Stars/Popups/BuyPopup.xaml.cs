@@ -11,6 +11,7 @@ using Telegram.ViewModels.Stars;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Automation;
 using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Media.Animation;
 
 namespace Telegram.Views.Stars.Popups
 {
@@ -144,6 +145,16 @@ namespace Telegram.Views.Stars.Popups
         private void SettingsFooter_Click(object sender, TextUrlClickEventArgs e)
         {
             MessageHelper.OpenUrl(null, null, Strings.StarsTOSLink);
+        }
+
+        private void Expand_Click(object sender, RoutedEventArgs e)
+        {
+            if (ScrollingHost.ItemContainerTransitions.Empty())
+            {
+                ScrollingHost.ItemContainerTransitions.Add(new AddDeleteThemeTransition());
+            }
+
+            ViewModel.Expand();
         }
     }
 }
