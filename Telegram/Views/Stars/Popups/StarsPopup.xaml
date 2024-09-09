@@ -121,6 +121,10 @@
                                 </Border>
                             </ControlTemplate>
                         </ListView.Template>
+                        <!-- TOOD: WinUI -->
+                        <ListView.ItemContainerTransitions>
+                            <TransitionCollection />
+                        </ListView.ItemContainerTransitions>
                     </ListView>
 
                     <Border Visibility="{x:Bind ViewModel.Subscriptions.Count, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"
@@ -141,6 +145,10 @@
                     <revenue:StarTransactionCell />
                 </DataTemplate>
             </ListView.ItemTemplate>
+            <!-- TOOD: WinUI -->
+            <ListView.ItemContainerTransitions>
+                <TransitionCollection />
+            </ListView.ItemContainerTransitions>
         </ListView>
 
         <controls:ScrollViewerScrim Background="{ThemeResource ContentDialogBackground}"
