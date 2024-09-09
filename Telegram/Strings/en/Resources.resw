@@ -579,6 +579,10 @@
 from: {0} 
 to: {1}</value>
   </data>
+  <data name="ActionReactionsChangedList" xml:space="preserve">
+    <value>un1 changed chat reactions:
+{0}</value>
+  </data>
   <data name="ActionRefunded" xml:space="preserve">
     <value>un1 refunded {0}</value>
   </data>
@@ -631,10 +635,14 @@ to: {1}</value>
     <value>Skip</value>
   </data>
   <data name="ActionStarGiveawayPrize_one" xml:space="preserve">
-    <value>You won a prize in a giveaway organized by **un1**.\10\10Your prize is **{0} Star**.</value>
+    <value>You won a prize in a giveaway organized by **un1**.
+
+Your prize is **{0} Star**.</value>
   </data>
   <data name="ActionStarGiveawayPrize_other" xml:space="preserve">
-    <value>You won a prize in a giveaway organized by **un1**.\10\10Your prize is **{0} Stars**.</value>
+    <value>You won a prize in a giveaway organized by **un1**.
+
+Your prize is **{0} Stars**.</value>
   </data>
   <data name="ActionStarGiveawayPrizeTitle" xml:space="preserve">
     <value>Congratulations!</value>

@@ -612,18 +612,72 @@ namespace Telegram.Controls.Messages
 
             var fromUser = message.GetSender();
 
-            if (availableReactionsChanged.NewAvailableReactions is ChatAvailableReactionsAll
-                || (availableReactionsChanged.NewAvailableReactions is ChatAvailableReactionsSome some && some.Reactions.Count > 0))
+            var oldAllOrNone = availableReactionsChanged.OldAvailableReactions is ChatAvailableReactionsAll or ChatAvailableReactionsSome { Reactions.Count: 0 };
+            var newAllOrNone = availableReactionsChanged.NewAvailableReactions is ChatAvailableReactionsAll or ChatAvailableReactionsSome { Reactions.Count: 0 };
+
+            static FormattedText ToString(ChatAvailableReactions reactions, bool active)
             {
-                content = ReplaceWithLink(string.Format(Strings.ActionReactionsChanged,
-                    string.Join(", ", availableReactionsChanged.OldAvailableReactions),
-                    string.Join(", ", availableReactionsChanged.NewAvailableReactions)), "un1", fromUser, entities);
+                if (reactions is ChatAvailableReactionsAll || reactions is not ChatAvailableReactionsSome some)
+                {
+                    return new FormattedText(Strings.AllReactions, Array.Empty<TextEntity>());
+                }
+
+                if (some.Reactions.Count > 0)
+                {
+                    var content = new StringBuilder();
+                    var entities = active ? new List<TextEntity>() : null;
+
+                    foreach (var item in some.Reactions)
+                    {
+                        if (item is ReactionTypeEmoji emoji)
+                        {
+                            content.Append(emoji.Emoji);
+                        }
+                        else if (item is ReactionTypeCustomEmoji customEmoji)
+                        {
+                            entities?.Add(new TextEntity(content.Length, 2, new TextEntityTypeCustomEmoji(customEmoji.CustomEmojiId)));
+                            content.Append("\U0001F921");
+                        }
+                    }
+
+                    return new FormattedText(content.ToString(), active ? entities : Array.Empty<TextEntity>());
+                }
+
+                return new FormattedText(Strings.NoReactions, Array.Empty<TextEntity>());
+            }
+
+            static string Format(string content, IList<TextEntity> entities, params FormattedText[] format)
+            {
+                for (int i = 0; i < format.Length; i++)
+                {
+                    var index = content.IndexOf($"{{{i}}}");
+                    if (index >= 0)
+                    {
+                        content = content.Remove(index, 3);
+                        content = content.Insert(index, format[i].Text);
+
+                        foreach (var entity in format[i].Entities)
+                        {
+                            entities?.Add(new TextEntity(entity.Offset + index, entity.Length, entity.Type));
+                        }
+                    }
+                }
+
+                return content;
+            }
+
+            if (oldAllOrNone || newAllOrNone)
+            {
+                var oldText = ToString(availableReactionsChanged.OldAvailableReactions, active);
+                var newText = ToString(availableReactionsChanged.NewAvailableReactions, active);
+
+                content = ReplaceWithLink(Strings.ActionReactionsChanged, "un1", fromUser, entities);
+                content = Format(content, entities, oldText, newText);
             }
             else
             {
-                content = ReplaceWithLink(string.Format(Strings.ActionReactionsChanged,
-                    string.Join(", ", availableReactionsChanged.OldAvailableReactions),
-                    string.Join(", ", availableReactionsChanged.NewAvailableReactions)), "un1", fromUser, entities);
+                content = ReplaceWithLink(Strings.ActionReactionsChangedList, "un1", fromUser, entities);
+                content = Format(content, entities, ToString(availableReactionsChanged.NewAvailableReactions, active));
             }
 
             return (content, entities);
