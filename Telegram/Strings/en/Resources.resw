@@ -202,6 +202,9 @@
   <data name="AccDescrMsgUnread" xml:space="preserve">
     <value>Not seen</value>
   </data>
+  <data name="AccDescrNotificationsMuted" xml:space="preserve">
+    <value>Muted</value>
+  </data>
   <data name="AccDescrNumberOfPeopleReactions_one" xml:space="preserve">
     <value>{0} person reacted with {1}</value>
   </data>
@@ -6288,7 +6291,7 @@ Upgrade to **Telegram Premium** to increase this limit to **{1}**.</value>
     <value>Quick log in using QR code</value>
   </data>
   <data name="LoginWithQrCodeSkip" xml:space="preserve">
-    <value>Or log in using your phone number</value>
+    <value>Log in by phone number</value>
   </data>
   <data name="LoginWithQrCodeStep1" xml:space="preserve">
     <value>Open Telegram on your phone</value>
