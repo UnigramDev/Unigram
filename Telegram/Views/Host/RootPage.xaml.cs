@@ -412,7 +412,7 @@ namespace Telegram.Views.Host
 
             if (_attachmentMenuBots != botsHash)
             {
-                for (int i = bots.Count - 1; i >= 0; i--)
+                for (int i = 0; i < bots.Count; i++)
                 {
                     _navigationViewItems.Insert(index - 1, bots[i]);
                     index++;
