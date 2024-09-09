@@ -2252,6 +2252,14 @@ namespace Telegram.Views
             {
                 Status_Click(null, null);
             }
+            else if (destination == RootDestination.NewGroup)
+            {
+                NewGroup_Click(null, null);
+            }
+            else if (destination == RootDestination.NewChannel)
+            {
+                NewChannel_Click(null, null);
+            }
             else if (destination == RootDestination.MyProfile)
             {
                 MasterDetail.NavigationService.Navigate(typeof(ProfilePage), new ProfileMyArgs());
@@ -3740,11 +3748,8 @@ namespace Telegram.Views
             Header = null;
             rpMasterTitlebar = null;
             Stories = null;
-            Calls = null;
             SettingsRoot = null;
             SettingsView = null;
-            CallsRoot = null;
-            CallsList = null;
             ContactsRoot = null;
             ContactsSearchListView = null;
             ContactsPanel = null;

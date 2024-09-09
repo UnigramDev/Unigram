@@ -80,6 +80,8 @@ namespace Telegram.Views.Host
                 // ------------
                 RootDestination.Separator,
                 // ------------
+                RootDestination.NewGroup,
+                RootDestination.NewChannel,
                 RootDestination.Chats,
                 RootDestination.Contacts,
                 RootDestination.Calls,
@@ -622,13 +624,21 @@ namespace Telegram.Views.Host
                         content.Glyph = Icons.PersonAdd;
                         break;
 
+                    case RootDestination.NewGroup:
+                        content.Text = Strings.NewGroup;
+                        content.Glyph = Icons.People;
+                        break;
+                    case RootDestination.NewChannel:
+                        content.Text = Strings.NewChannel;
+                        content.Glyph = Icons.Megaphone;
+                        break;
                     case RootDestination.Chats:
                         content.Text = Strings.FilterChats;
                         content.Glyph = Icons.ChatMultiple;
                         break;
                     case RootDestination.Contacts:
                         content.Text = Strings.Contacts;
-                        content.Glyph = Icons.People;
+                        content.Glyph = Icons.Person;
                         break;
                     case RootDestination.Calls:
                         content.Text = Strings.Calls;
@@ -1269,6 +1279,8 @@ namespace Telegram.Views.Host
         ArchivedChats,
         SavedMessages,
 
+        NewGroup,
+        NewChannel,
         Chats,
         Contacts,
         Calls,
