@@ -3838,7 +3838,7 @@ namespace Telegram.Views
                 return;
             }
 
-            if (message.Content is MessageAsyncStory asyncStory)
+            if (message.Content is MessageAsyncStory asyncStory && asyncStory.State != MessageStoryState.Expired)
             {
                 var segments = button.FindName("Segments") as ActiveStoriesSegments;
                 if (segments != null)
@@ -3851,23 +3851,29 @@ namespace Telegram.Views
                     var item = asyncStory.Story;
                     item ??= await _viewModel.ClientService.SendAsync(new GetStory(asyncStory.StorySenderChatId, asyncStory.StoryId, true)) as Story;
 
-                    var story = new StoryViewModel(message.ClientService, item);
-                    var activeStories = new ActiveStoriesViewModel(message.ClientService, message.Delegate.Settings, message.Delegate.Aggregator, story);
-
-                    var viewModel = new StoryListViewModel(message.ClientService, message.Delegate.Settings, message.Delegate.Aggregator, activeStories);
-                    viewModel.NavigationService = _viewModel.NavigationService;
-
-                    var window = new StoriesWindow();
-                    window.Update(viewModel, activeStories, StoryOpenOrigin.Mention, origin, _ =>
+                    if (item != null)
                     {
-                        var transform = segments.TransformToVisual(null);
-                        var point = transform.TransformPoint(new Windows.Foundation.Point());
+                        var story = new StoryViewModel(message.ClientService, item);
+                        var activeStories = new ActiveStoriesViewModel(message.ClientService, message.Delegate.Settings, message.Delegate.Aggregator, story);
 
-                        return new Rect(point.X + 4, point.Y + 4, 112, 112);
-                    });
+                        var viewModel = new StoryListViewModel(message.ClientService, message.Delegate.Settings, message.Delegate.Aggregator, activeStories);
+                        viewModel.NavigationService = _viewModel.NavigationService;
 
-                    _ = window.ShowAsync(XamlRoot);
+                        var window = new StoriesWindow();
+                        window.Update(viewModel, activeStories, StoryOpenOrigin.Mention, origin, _ =>
+                        {
+                            var transform = segments.TransformToVisual(null);
+                            var point = transform.TransformPoint(new Windows.Foundation.Point());
 
+                            return new Rect(point.X + 4, point.Y + 4, 112, 112);
+                        });
+
+                        _ = window.ShowAsync(XamlRoot);
+                    }
+                    else
+                    {
+                        ToastPopup.Show(XamlRoot, Strings.StoryNotFound, ToastPopupIcon.ExpiredStory);
+                    }
                 }
             }
             else

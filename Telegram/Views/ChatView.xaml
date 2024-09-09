@@ -223,15 +223,14 @@
                                                  HyperlinkStyle="None"
                                                  HyperlinkForeground="#FFFFFF"
                                                  HyperlinkFontWeight="SemiBold"
-                                                 Padding="0,0,0,4"
-                                                 Margin="0,0,0,8" />
+                                                 Padding="0,0,0,4" />
 
                     <Border x:Name="View"
                             Background="{ThemeResource MessageServiceBackgroundBrush}"
                             CornerRadius="12"
                             HorizontalAlignment="Center"
                             Padding="12,4,12,4"
-                            Margin="0,0,0,12">
+                            Margin="0,8,0,12">
                         <TextBlock Text="{CustomResource ViewPhotoAction}"
                                    Foreground="#FFFFFF"
                                    TextAlignment="Center"
