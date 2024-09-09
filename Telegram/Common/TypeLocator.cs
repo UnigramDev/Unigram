@@ -156,6 +156,11 @@ namespace Telegram.Views
                             _clientService,
                             _settingsService,
                             _eventAggregator));
+                case "Telegram.ViewModels.CallsViewModel":
+                    return (T)(object)new Telegram.ViewModels.CallsViewModel(
+                        _clientService,
+                        _settingsService,
+                        _eventAggregator);
                 case "Telegram.ViewModels.ChooseChatsViewModel":
                     return (T)(object)new Telegram.ViewModels.ChooseChatsViewModel(
                         _clientService,

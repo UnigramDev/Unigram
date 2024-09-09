@@ -458,6 +458,7 @@ namespace Telegram
                 ChatStoriesPage => TypeResolver.Current.Resolve<ChatStoriesViewModel>(sessionId),
 
                 // Popups
+                CallsPopup => TypeResolver.Current.Resolve<CallsViewModel>(sessionId),
                 SettingsUsernamePopup => TypeResolver.Current.Resolve<SettingsUsernameViewModel>(sessionId),
                 SettingsDataAutoPopup => TypeResolver.Current.Resolve<SettingsDataAutoViewModel>(sessionId),
                 ChooseChatsPopup => TypeResolver.Current.Resolve<ChooseChatsViewModel>(sessionId),

@@ -65,8 +65,7 @@ namespace Telegram.ViewModels
                 new ChatFolderViewModel[]
                 {
                     new ChatFolderViewModel(int.MaxValue - 1, Strings.Contacts, "\uE95E", "\uE95D"),
-                    new ChatFolderViewModel(int.MaxValue - 2, Strings.Calls, "\uE991", "\uE990"),
-                    new ChatFolderViewModel(int.MaxValue - 3, Strings.Settings, "\uE98F", "\uE98E"),
+                    new ChatFolderViewModel(int.MaxValue - 2, Strings.Settings, "\uE98F", "\uE98E"),
                 }
             };
 
@@ -79,13 +78,11 @@ namespace Telegram.ViewModels
             Stories = new StoryListViewModel(clientService, settingsService, aggregator, new StoryListMain());
             Topics = new TopicListViewModel(clientService, settingsService, aggregator, pushService, 0);
             Contacts = new ContactsViewModel(clientService, settingsService, voipService, aggregator);
-            Calls = new CallsViewModel(clientService, settingsService, aggregator);
             Settings = new SettingsViewModel(clientService, settingsService, storageService, aggregator, settingsSearchService);
 
             // This must represent pivot tabs
             Children.Add(Chats);
             Children.Add(Contacts);
-            Children.Add(Calls);
             Children.Add(Settings);
 
             // Any additional child
@@ -471,7 +468,6 @@ namespace Telegram.ViewModels
         public StoryListViewModel Stories { get; private set; }
         public TopicListViewModel Topics { get; private set; }
         public ContactsViewModel Contacts { get; private set; }
-        public CallsViewModel Calls { get; private set; }
         public SettingsViewModel Settings { get; private set; }
 
 

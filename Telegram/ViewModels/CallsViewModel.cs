@@ -112,22 +112,18 @@ namespace Telegram.ViewModels
 
         public async void DeleteCall(TLCallGroup group)
         {
-            var popup = new MessagePopup
+            var everyone = new CheckBox
             {
-                Title = Strings.DeleteCalls,
-                Message = Strings.DeleteSelectedCallsText,
-                PrimaryButtonText = Strings.Delete,
-                SecondaryButtonText = Strings.Cancel,
-                CheckBoxLabel = Strings.DeleteCallsForEveryone
+                Content = Strings.DeleteCallsForEveryone,
             };
 
-            var confirm = await ShowPopupAsync(popup);
+            var confirm = await MessagePopup.ShowAsync(NavigationService.XamlRoot, target: null, Strings.DeleteSelectedCallsText, Strings.DeleteCalls, everyone, Strings.Delete, Strings.Cancel, destructive: true);
             if (confirm != ContentDialogResult.Primary)
             {
                 return;
             }
 
-            var response = await ClientService.SendAsync(new DeleteMessages(group.ChatId, group.Items.Select(x => x.Id).ToArray(), popup.IsChecked == true));
+            var response = await ClientService.SendAsync(new DeleteMessages(group.ChatId, group.Items.Select(x => x.Id).ToArray(), everyone.IsChecked == true));
             if (response is Ok)
             {
                 Items.Remove(group);

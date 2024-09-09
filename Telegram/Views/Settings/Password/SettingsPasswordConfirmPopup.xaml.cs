@@ -179,7 +179,7 @@ namespace Telegram.Views.Settings.Password
                 }
                 else if (response is Error error)
                 {
-                    await MessagePopup.ShowAsync(XamlRoot, target: null, error.Message ?? "Error message", error.Code.ToString());
+                    await MessagePopup.ShowAsync(XamlRoot, target: null, error.Message ?? "Error message", error.Code.ToString(), Strings.OK);
                 }
             }
             else if (_passwordState.PendingResetDate == 0)
