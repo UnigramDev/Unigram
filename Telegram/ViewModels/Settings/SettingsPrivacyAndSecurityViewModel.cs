@@ -298,11 +298,11 @@ namespace Telegram.ViewModels.Settings
 
         public void Handle(UpdateOption update)
         {
-            if (update.Name.Equals("disable_top_chats"))
+            if (update.Name == OptionsService.R.DisableTopChats)
             {
                 BeginOnUIThread(() => RaisePropertyChanged(nameof(IsContactsSuggestEnabled)));
             }
-            else if (update.Name.Equals("ignore_sensitive_content_restrictions"))
+            else if (update.Name == OptionsService.R.IgnoreSensitiveContentRestrictions)
             {
                 BeginOnUIThread(() => RaisePropertyChanged(nameof(IgnoreSensitiveContentRestrictions)));
             }

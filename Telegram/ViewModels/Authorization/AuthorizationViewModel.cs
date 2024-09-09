@@ -40,8 +40,6 @@ namespace Telegram.ViewModels.Authorization
 
         protected override Task OnNavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
         {
-            LocaleService.Current.Changed += OnLocaleChanged;
-
             ClientService.Send(new GetCountryCode(), result =>
             {
                 if (result is Text text)
@@ -59,6 +57,9 @@ namespace Telegram.ViewModels.Authorization
 
             if (waitState && mode != NavigationMode.Refresh)
             {
+                LocaleService.Current.Changed += OnLocaleChanged;
+                Handle(new UpdateOption(OptionsService.R.SuggestedLanguagePackId, new OptionValueString(ClientService.Options.SuggestedLanguagePackId)));
+
                 IsLoading = false;
 
                 Delegate.UpdateQrCodeMode(QrCodeMode.Loading);
@@ -117,9 +118,34 @@ namespace Telegram.ViewModels.Authorization
             LocaleService.Current.Changed -= OnLocaleChanged;
         }
 
+        public override void Subscribe()
+        {
+            Aggregator.Subscribe<UpdateOption>(this, Handle);
+        }
+
         private void OnLocaleChanged(object sender, LocaleChangedEventArgs e)
         {
             BeginOnUIThread(() => S.Handle(e));
+        }
+
+        public async void Handle(UpdateOption update)
+        {
+            if (update.Name == OptionsService.R.SuggestedLanguagePackId || update.Name == OptionsService.R.LanguagePackId)
+            {
+                var options = ClientService.Options;
+                if (options.SuggestedLanguagePackId != options.LanguagePackId)
+                {
+                    var response = await ClientService.SendAsync(new GetLanguagePackStrings(options.SuggestedLanguagePackId, new[] { nameof(Strings.ContinueOnThisLanguage) }));
+                    if (response is LanguagePackStrings strings && strings.Strings.Count > 0 && strings.Strings[0].Value is LanguagePackStringValueOrdinary ordinary)
+                    {
+                        BeginOnUIThread(() => ContinueOnThisLanguageText = ordinary.Value);
+                    }
+                }
+                else
+                {
+                    BeginOnUIThread(() => ContinueOnThisLanguageText = null);
+                }
+            }
         }
 
         private void GotUserCountry(string code)
@@ -140,6 +166,22 @@ namespace Telegram.ViewModels.Authorization
                 {
                     SelectedCountry = country;
                 });
+            }
+        }
+
+        private string _continueOnThisLanguageText;
+        public string ContinueOnThisLanguageText
+        {
+            get => _continueOnThisLanguageText;
+            set => Set(ref _continueOnThisLanguageText, value);
+        }
+
+        public async void ContinueOnThisLanguage()
+        {
+            var response = await ClientService.SendAsync(new GetLanguagePackInfo(ClientService.Options.SuggestedLanguagePackId));
+            if (response is LanguagePackInfo langpack)
+            {
+                await LocaleService.Current.SetLanguageAsync(langpack, false);
             }
         }
 

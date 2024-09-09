@@ -15,6 +15,7 @@ using Telegram.Td;
 using Telegram.Td.Api;
 using Telegram.Views;
 using Windows.ApplicationModel.Resources;
+using Windows.Globalization;
 using Windows.Storage;
 using Windows.UI.Xaml;
 
@@ -114,6 +115,17 @@ namespace Telegram.Services
 
         private static ILocaleService _current;
         public static ILocaleService Current => _current ??= new LocaleService();
+
+        public static string SystemLanguageId()
+        {
+            var languageId = ApplicationLanguages.Languages[0].Split('-');
+            if (languageId[0] == "pt")
+            {
+                return ApplicationLanguages.Languages[0].ToLower();
+            }
+
+            return languageId[0];
+        }
 
         public CultureInfo CurrentCulture => _currentCulture;
 

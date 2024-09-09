@@ -547,7 +547,7 @@ namespace Telegram.Views
 
         public void Handle(UpdateOption update)
         {
-            if (update.Name.Equals("expect_blocking") || update.Name.Equals("enabled_proxy_id"))
+            if (update.Name == OptionsService.R.ExpectBlocking || update.Name == OptionsService.R.EnabledProxyId)
             {
                 this.BeginOnUIThread(() => SetProxyVisibility(_clientService.Options.ExpectBlocking, _clientService.Options.EnabledProxyId, _clientService.ConnectionState));
             }

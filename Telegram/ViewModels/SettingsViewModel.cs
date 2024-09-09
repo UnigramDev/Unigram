@@ -134,7 +134,7 @@ namespace Telegram.ViewModels
 
         public void Handle(UpdateOption update)
         {
-            if (update.Name == "is_premium_available" || update.Name == "is_premium")
+            if (update.Name == OptionsService.R.IsPremium || update.Name == OptionsService.R.IsPremiumAvailable)
             {
                 BeginOnUIThread(() => RaisePropertyChanged(nameof(IsPremiumAvailable)));
             }

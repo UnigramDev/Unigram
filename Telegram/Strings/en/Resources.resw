@@ -1730,10 +1730,10 @@ Once deleted, the Giveaway Announcement cannot be restored.</value>
     <value>from {0}</value>
   </data>
   <data name="BoostingGiveawayHowItWorksIncludeText_one" xml:space="preserve">
-    <value>**{1}** also included **{0}** **{2}** in the prizes. Admins of the channel are responsible for delivering these prizes.</value>
+    <value>**{1}** also included **{0}** **{2}** with the prizes. The channel admins are responsible for delivering these prizes.</value>
   </data>
   <data name="BoostingGiveawayHowItWorksIncludeText_other" xml:space="preserve">
-    <value>**{1}** also included **{0}** **{2}** in the prizes. Admins of the channel are responsible for delivering these prizes.</value>
+    <value>**{1}** also included **{0}** **{2}** with the prizes. The channel admins are responsible for delivering these prizes.</value>
   </data>
   <data name="BoostingGiveawayHowItWorksSubText_one" xml:space="preserve">
     <value>On **{1}**, Telegram will automatically select **{2}** random user that joined **{3}**.</value>
@@ -2043,10 +2043,10 @@ from **{0}**.</value>
     <value>among **{0}** winners.</value>
   </data>
   <data name="BoostingStarsGiveawayResultsMsgAllWinnersReceivedLinks_one" xml:space="preserve">
-    <value>All winners received %d Star in total.</value>
+    <value>All winners received a total of {0} Star.</value>
   </data>
   <data name="BoostingStarsGiveawayResultsMsgAllWinnersReceivedLinks_other" xml:space="preserve">
-    <value>All winners received %d Stars in total.</value>
+    <value>All winners received a total of {0} Stars.</value>
   </data>
   <data name="BoostingTelegramPremiumFor" xml:space="preserve">
     <value>Telegram Premium for {0}</value>
@@ -2237,7 +2237,7 @@ It will be able to access your **IP address** and basic device info.</value>
     <value>Stars from your total balance can be used for ads or withdrawn as rewards 21 days after they are earned.</value>
   </data>
   <data name="BotStarsOverviewTotalBalance" xml:space="preserve">
-    <value>Lifetime rewards</value>
+    <value>Total balance</value>
   </data>
   <data name="BotStarsTransactionsMore" xml:space="preserve">
     <value>Show more transactions</value>
@@ -2246,7 +2246,7 @@ It will be able to access your **IP address** and basic device info.</value>
     <value>Next withdrawal will be available in **{0}**.</value>
   </data>
   <data name="BotStarsWithdrawInfo" xml:space="preserve">
-    <value>You can collect rewards for Stars using Fragment, or use Stars to advertise your bot. **Learn more &gt;**</value>
+    <value>You can collect rewards for Stars using Fragment, or use Stars to advertise your bot. You cannot withdraw less than 1000 stars. **Learn more &gt;**</value>
   </data>
   <data name="BotStarsWithdrawInfoLink" xml:space="preserve">
     <value>https://telegram.org/privacy</value>
@@ -3287,7 +3287,7 @@ Ask your **Premium** subscribers to boost your channel with this link:</value>
     <value>Show Authors&apos; Profiles</value>
   </data>
   <data name="ChannelSignProfilesInfo" xml:space="preserve">
-    <value>Add names and photos of admins to the messages they post, linking to their profiles.</value>
+    <value>Allow admins to post as their channel or personal account, linking to their profile.</value>
   </data>
   <data name="ChannelSilentBroadcast" xml:space="preserve">
     <value>Silent Broadcast</value>
@@ -3731,6 +3731,9 @@ Minimum length is 5 characters.</value>
   </data>
   <data name="Continue" xml:space="preserve">
     <value>Continue</value>
+  </data>
+  <data name="ContinueOnThisLanguage" xml:space="preserve">
+    <value>Continue in English</value>
   </data>
   <data name="ConvertGroup" xml:space="preserve">
     <value>Convert to Supergroup</value>
@@ -4919,10 +4922,10 @@ Duration: {1}</value>
     <value>un1 enabled signatures</value>
   </data>
   <data name="EventLogToggledSignaturesProfilesOff" xml:space="preserve">
-    <value>un1 disabled authors&apos; profiles</value>
+    <value>un1 disabled author profiles</value>
   </data>
   <data name="EventLogToggledSignaturesProfilesOn" xml:space="preserve">
-    <value>un1 enabled authors&apos; profiles</value>
+    <value>un1 enabled author profiles</value>
   </data>
   <data name="EventLogToggledSlowmodeOff" xml:space="preserve">
     <value>un1 disabled the slow mode</value>
@@ -7014,10 +7017,10 @@ Please make sure you entered the right Server URL and Stream Key in your app.</v
     <value>Groups</value>
   </data>
   <data name="NotificationsMutedForHint" xml:space="preserve">
-    <value>Notifications muted for {0}</value>
+    <value>Notifications muted for {0}.</value>
   </data>
   <data name="NotificationsMutedHint" xml:space="preserve">
-    <value>Notifications muted</value>
+    <value>Notifications muted.</value>
   </data>
   <data name="NotificationsOff" xml:space="preserve">
     <value>Off</value>
@@ -7052,7 +7055,7 @@ Stories</value>
     <value>You will receive a notification whenever **{0}** posts a new story.</value>
   </data>
   <data name="NotificationsUnmutedHint" xml:space="preserve">
-    <value>Notifications unmuted</value>
+    <value>Notifications unmuted.</value>
   </data>
   <data name="NotifyIconExit" xml:space="preserve">
     <value>Quit Unigram</value>
@@ -7767,6 +7770,12 @@ Payments will go directly to the developer of {0}. Telegram cannot provide any g
   </data>
   <data name="PremiumPreviewDownloadSpeedDescription" xml:space="preserve">
     <value>No more limits on the speed with which media and documents are downloaded.</value>
+  </data>
+  <data name="PremiumPreviewEffects" xml:space="preserve">
+    <value>Message Effects</value>
+  </data>
+  <data name="PremiumPreviewEffectsDescription" xml:space="preserve">
+    <value>Add over 500 animated effects to private messages.</value>
   </data>
   <data name="PremiumPreviewEmoji" xml:space="preserve">
     <value>Animated Emoji</value>
@@ -9480,7 +9489,7 @@ The channel &quot;**{1}**&quot; will become private.</value>
     <value>https://telegram.org/tos/stars</value>
   </data>
   <data name="StarsReactionText" xml:space="preserve">
-    <value>Choose how many stars you want to send to **{0}** to support this post.</value>
+    <value>Choose how many Stars you want to send to **{0}** to support this post.</value>
   </data>
   <data name="StarsReactionTextSent_one" xml:space="preserve">
     <value>You sent **{0}** Star to support this post.</value>
@@ -9525,7 +9534,7 @@ The channel &quot;**{1}**&quot; will become private.</value>
     <value>If you cancel now, you will still be able to access your subscription until {0}.</value>
   </data>
   <data name="StarsSubscriptionCancelledText" xml:space="preserve">
-    <value>You have cancelled your subscription.</value>
+    <value>You have canceled your subscription.</value>
   </data>
   <data name="StarsSubscriptionChannel" xml:space="preserve">
     <value>Subscription</value>
@@ -9543,7 +9552,7 @@ The channel &quot;**{1}**&quot; will become private.</value>
     <value>Subscribed</value>
   </data>
   <data name="StarsSubscriptionStatusCancelled" xml:space="preserve">
-    <value>cancelled</value>
+    <value>canceled</value>
   </data>
   <data name="StarsSubscriptionStatusExpired" xml:space="preserve">
     <value>expired</value>
@@ -10021,7 +10030,7 @@ Here’s what is now unlocked.</value>
     <value>Gift Stars to Friends</value>
   </data>
   <data name="TelegramStarsInfo" xml:space="preserve">
-    <value>Buy Stars to unlock content and service
+    <value>Buy Stars to unlock content and services
 in miniapps on Telegram.</value>
   </data>
   <data name="TelegramTones" xml:space="preserve">

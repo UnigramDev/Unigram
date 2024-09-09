@@ -2715,11 +2715,11 @@ namespace Telegram.Services
             {
                 _options.Update(updateOption.Name, updateOption.Value);
 
-                if (updateOption.Name == "my_id" && updateOption.Value is OptionValueInteger myId)
+                if (updateOption.Name == OptionsService.R.MyId && updateOption.Value is OptionValueInteger myId)
                 {
                     _settings.UserId = myId.Value;
                 }
-                else if (updateOption.Name == "is_premium" || updateOption.Name == "is_premium_available")
+                else if (updateOption.Name == OptionsService.R.IsPremium || updateOption.Name == OptionsService.R.IsPremiumAvailable)
                 {
                     _aggregator.Publish(new UpdatePremiumState(IsPremium, IsPremiumAvailable));
                 }
