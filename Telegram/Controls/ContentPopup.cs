@@ -179,12 +179,17 @@ namespace Telegram.Controls
 
         private void OnUnloaded(object sender, RoutedEventArgs e)
         {
-            // TODO: XamlRoot seems to be null at times.
-            // It's unclear why this happens, and if it happens after a successful Loaded event.
-            // If this is the case, the handling below is problematic, because MainPage title bar will be never restored.
-            if (XamlRoot?.Content is RootPage root)
+            try
             {
-                root.PopupClosed();
+                if (XamlRoot.Content is RootPage root)
+                {
+                    root.PopupClosed();
+                }
+            }
+            catch
+            {
+                // XamlRoot.Content seems to throw a NullReferenceException
+                // whenever corresponding window has been already closed.
             }
 
             var context = WindowContext.ForXamlRoot(this);
