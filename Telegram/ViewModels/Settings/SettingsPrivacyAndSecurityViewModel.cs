@@ -207,7 +207,7 @@ namespace Telegram.ViewModels.Settings
             new SettingsOptionItem<int>(180, Locale.Declension(Strings.R.Months, 6)),
             new SettingsOptionItem<int>(365, Locale.Declension(Strings.R.Months, 12)),
             new SettingsOptionItem<int>(548, Locale.Declension(Strings.R.Months, 18)),
-            new SettingsOptionItem<int>(548, Locale.Declension(Strings.R.Months, 24))
+            new SettingsOptionItem<int>(730, Locale.Declension(Strings.R.Months, 24))
         };
 
         private int _blockedUsers;
