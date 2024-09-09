@@ -4282,6 +4282,7 @@
                                    AutomationProperties.AccessibilityView="Raw"
                                    Visibility="Collapsed"
                                    TextAlignment="Center"
+                                   HorizontalAlignment="Center"
                                    VerticalAlignment="Center"
                                    Margin="0,1,0,2"
                                    Foreground="#FFFFFF"
