@@ -187,6 +187,10 @@ namespace Telegram
                 return;
             }
 
+            if (SettingsService.Current.Diagnostics.ShowMemoryUsage)
+            {
+                _ = MessagePopup.ShowAsync(Window.Current.Content.XamlRoot, args.Exception.ToString(), "Unhandled exception", "OK");
+            }
         }
 
         public static Architecture OSArchitecture()
