@@ -335,6 +335,115 @@ namespace Telegram.Views.Popups
         }
     }
 
+    public record ChooseChatsOptionsRequestChat : ChooseChatsOptions
+    {
+        public ChooseChatsOptionsRequestChat(ChooseChatsConfigurationRequestChat requestChat)
+        {
+            BotIsMember = requestChat.BotIsMember;
+            BotAdministratorRights = requestChat.BotAdministratorRights;
+            UserAdministratorRights = requestChat.UserAdministratorRights;
+            ChatIsCreated = requestChat.ChatIsCreated;
+            ChatHasUsername = requestChat.ChatHasUsername;
+            RestrictChatHasUsername = requestChat.RestrictChatHasUsername;
+            ChatIsForum = requestChat.ChatIsForum;
+            RestrictChatIsForum = requestChat.RestrictChatIsForum;
+            ChatIsChannel = requestChat.ChatIsChannel;
+
+            Mode = ChooseChatsMode.Chats;
+        }
+
+        /// <summary>
+        /// True, if the bot must be a member of the chat; for basic group and supergroup
+        /// chats only.
+        /// </summary>
+        public bool BotIsMember { get; }
+
+        /// <summary>
+        /// Expected bot administrator rights in the chat; may be null if they aren't restricted.
+        /// </summary>
+        public ChatAdministratorRights BotAdministratorRights { get; }
+
+        /// <summary>
+        /// Expected user administrator rights in the chat; may be null if they aren't restricted.
+        /// </summary>
+        public ChatAdministratorRights UserAdministratorRights { get; }
+
+        /// <summary>
+        /// True, if the chat must be created by the current user.
+        /// </summary>
+        public bool ChatIsCreated { get; }
+
+        /// <summary>
+        /// True, if the chat must have a username; otherwise, the chat must not have a username.
+        /// Ignored if RestrictChatHasUsername is false.
+        /// </summary>
+        public bool ChatHasUsername { get; }
+
+        /// <summary>
+        /// True, if the chat must or must not have a username.
+        /// </summary>
+        public bool RestrictChatHasUsername { get; }
+
+        /// <summary>
+        /// True, if the chat must be a forum supergroup; otherwise, the chat must not be
+        /// a forum supergroup. Ignored if RestrictChatIsForum is false.
+        /// </summary>
+        public bool ChatIsForum { get; }
+
+        /// <summary>
+        /// True, if the chat must or must not be a forum supergroup.
+        /// </summary>
+        public bool RestrictChatIsForum { get; }
+
+        /// <summary>
+        /// True, if the chat must be a channel; otherwise, a basic group or a supergroup
+        /// chat is shared.
+        /// </summary>
+        public bool ChatIsChannel { get; }
+
+        public override bool Allow(IClientService clientService, Chat chat)
+        {
+            if (ChatIsCreated)
+            {
+                return false;
+            }
+
+            if (clientService.TryGetSupergroup(chat, out Supergroup supergroup))
+            {
+                if (RestrictChatHasUsername && ChatHasUsername != supergroup.HasActiveUsername())
+                {
+                    return false;
+                }
+                else if (RestrictChatIsForum && ChatIsForum != supergroup.IsForum)
+                {
+                    return false;
+                }
+
+                return ChatIsChannel == supergroup.IsChannel;
+            }
+            else if (clientService.TryGetBasicGroup(chat, out BasicGroup basicGroup))
+            {
+                if (RestrictChatHasUsername && ChatHasUsername)
+                {
+                    return false;
+                }
+                else if (RestrictChatIsForum && ChatIsForum)
+                {
+                    return false;
+                }
+
+                return !ChatIsChannel;
+            }
+
+            return false;
+        }
+
+        public override bool Allow(IClientService clientService, User user)
+        {
+            return false;
+        }
+    }
+
     #endregion
 
     #region Configurations

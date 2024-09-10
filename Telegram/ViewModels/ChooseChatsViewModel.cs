@@ -264,6 +264,17 @@ namespace Telegram.ViewModels
                     ? Strings.ChooseUsers
                     : Strings.ChooseUsers;
             }
+            else if (parameter is ChooseChatsConfigurationRequestChat configurationRequestChat)
+            {
+                SelectionMode = ListViewSelectionMode.Single;
+                Options = new ChooseChatsOptionsRequestChat(configurationRequestChat);
+                IsCommentEnabled = false;
+                IsChatSelection = false;
+
+                Title = configurationRequestChat.ChatIsChannel
+                    ? Strings.ChooseChannel
+                    : Strings.ChooseGroup;
+            }
 
             #endregion
 

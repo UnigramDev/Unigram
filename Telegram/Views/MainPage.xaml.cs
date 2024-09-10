@@ -2277,7 +2277,7 @@ namespace Telegram.Views
             }
             else if (destination == RootDestination.News)
             {
-                MessageHelper.NavigateToUsername(ViewModel.ClientService, MasterDetail.NavigationService, "unigram", null, null);
+                MessageHelper.NavigateToUsername(ViewModel.ClientService, MasterDetail.NavigationService, "unigram");
             }
         }
 
