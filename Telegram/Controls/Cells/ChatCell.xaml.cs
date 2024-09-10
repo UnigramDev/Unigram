@@ -1863,7 +1863,7 @@ namespace Telegram.Controls.Cells
 
             FromLabel.Text = from;
             BriefLabel.Inlines.Add(new Run { Text = message });
-            _dateLabel = Formatter.ShortTime.Format(date);
+            _dateLabel = Formatter.Time(date);
             _stateLabel = sent ? "\uE601" : string.Empty;
 
             TimeLabel.Text = _stateLabel + "\u00A0" + _dateLabel;

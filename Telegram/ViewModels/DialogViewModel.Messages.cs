@@ -445,8 +445,7 @@ namespace Telegram.ViewModels
                         title = ClientService.GetTitle(senderChat);
                     }
 
-                    var date = Formatter.ToLocalTime(message.Date);
-                    builder.AppendLine(string.Format("{0}, [{1} {2}]", title, Formatter.ShortDate.Format(date), Formatter.ShortTime.Format(date)));
+                    builder.AppendLine(string.Format("{0}, [{1} {2}]", title, Formatter.Date(message.Date), Formatter.Time(message.Date)));
 
                     if (message.ForwardInfo?.Origin is MessageOriginChat fromChat)
                     {

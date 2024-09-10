@@ -32,8 +32,13 @@ namespace Telegram.Native
         static String GetCurrentCulture();
         static String GetKeyboardCulture();
 
+        [default_overload]
         static String FormatTime(Int32 value);
-        static String FormatDate(Int32 value);
+        static String FormatTime(Windows.Foundation.DateTime value);
+
+        [default_overload]
+        static String FormatDate(Int32 value, String format);
+        static String FormatDate(Windows.Foundation.DateTime value, String format);
 
         [default_overload]
         static Boolean IsFileReadable(String path);

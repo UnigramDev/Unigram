@@ -287,8 +287,8 @@ namespace Telegram.Controls.Messages
             else if (message.ImportInfo != null)
             {
                 var original = Formatter.ToLocalTime(message.ImportInfo.Date);
-                var date = Formatter.ShortDate.Format(original);
-                var time = Formatter.ShortTime.Format(original);
+                var date = Formatter.Date(original);
+                var time = Formatter.Time(original);
 
                 _dateLabel = string.Format("{0}, {1} {2} {3}", date, time, "Imported", Formatter.Time(message.Date));
             }
@@ -304,7 +304,7 @@ namespace Telegram.Controls.Messages
 
         public void Mockup(bool outgoing, DateTime date)
         {
-            _dateLabel = Formatter.ShortTime.Format(date);
+            _dateLabel = Formatter.Time(date);
             _stateLabel = outgoing ? "\u00A0\uE603" : string.Empty;
             UpdateLabel();
             UpdateTicks(outgoing, outgoing ? true : null);

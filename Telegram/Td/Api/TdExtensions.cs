@@ -2128,8 +2128,7 @@ namespace Telegram.Td.Api
 
         public static string GetStartsAt(this MessageVideoChatScheduled messageVideoChatScheduled)
         {
-            var date = Converters.Formatter.ToLocalTime(messageVideoChatScheduled.StartDate);
-            return string.Format(Strings.formatDateAtTime, Converters.Formatter.ShortDate.Format(date), Converters.Formatter.ShortTime.Format(date));
+            return Converters.Formatter.DateAt(messageVideoChatScheduled.StartDate);
         }
 
         public static string GetStartsAt(this GroupCall groupCall)
@@ -2137,14 +2136,14 @@ namespace Telegram.Td.Api
             var date = Converters.Formatter.ToLocalTime(groupCall.ScheduledStartDate);
             if (date.Date == DateTime.Today)
             {
-                return string.Format(Strings.TodayAtFormattedWithToday, Converters.Formatter.ShortTime.Format(date));
+                return string.Format(Strings.TodayAtFormattedWithToday, Converters.Formatter.Time(date));
             }
             else if (date.Date.AddDays(1) == DateTime.Today)
             {
-                return string.Format(Strings.YesterdayAtFormatted, Converters.Formatter.ShortTime.Format(date));
+                return string.Format(Strings.YesterdayAtFormatted, Converters.Formatter.Time(date));
             }
 
-            return string.Format(Strings.formatDateAtTime, Converters.Formatter.ShortDate.Format(date), Converters.Formatter.ShortTime.Format(date));
+            return Converters.Formatter.DateAt(date);
         }
 
         public static void Discern(this IEnumerable<ReactionType> reactions, out bool paid, out HashSet<string> emoji, out HashSet<long> customEmoji)
