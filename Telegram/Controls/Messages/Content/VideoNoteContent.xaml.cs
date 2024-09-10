@@ -150,7 +150,7 @@ namespace Telegram.Controls.Messages.Content
 
                 Player.Source = null;
             }
-            else if (file.Remote.IsUploadingActive || message.SendingState is MessageSendingStateFailed)
+            else if (file.Remote.IsUploadingActive || message.SendingState is MessageSendingStateFailed || (message.SendingState is MessageSendingStatePending && !file.Remote.IsUploadingCompleted))
             {
                 //Button.Glyph = Icons.Cancel;
                 Button.SetGlyph(file.Id, MessageContentState.Uploading);

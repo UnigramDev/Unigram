@@ -144,7 +144,7 @@ namespace Telegram.Controls.Messages.Content
 
                     Subtitle.Text = string.Format("{0} / {1}", FileSizeConverter.Convert(file.Local.DownloadedSize, size), FileSizeConverter.Convert(size));
                 }
-                else if (file.Remote.IsUploadingActive || message.SendingState is MessageSendingStateFailed)
+                else if (file.Remote.IsUploadingActive || message.SendingState is MessageSendingStateFailed || (message.SendingState is MessageSendingStatePending && !file.Remote.IsUploadingCompleted))
                 {
                     var generating = file.Local.DownloadedSize < size;
 
@@ -210,7 +210,7 @@ namespace Telegram.Controls.Messages.Content
                         Subtitle.Text = video.GetDuration() + Environment.NewLine + string.Format("{0} / {1}", FileSizeConverter.Convert(file.Local.DownloadedSize, size), FileSizeConverter.Convert(size));
                     }
                 }
-                else if (file.Remote.IsUploadingActive || message.SendingState is MessageSendingStateFailed)
+                else if (file.Remote.IsUploadingActive || message.SendingState is MessageSendingStateFailed || (message.SendingState is MessageSendingStatePending && !file.Remote.IsUploadingCompleted))
                 {
                     var generating = file.Local.DownloadedSize < size;
 
