@@ -2511,7 +2511,20 @@ namespace Telegram.Views
             var properties = await message.ClientService.SendAsync(new GetMessageProperties(message.ChatId, message.Id)) as MessageProperties;
             if (properties == null)
             {
-                return;
+                if (ViewModel.Type == DialogType.BusinessReplies)
+                {
+                    properties = new MessageProperties
+                    {
+                        CanBeDeletedOnlyForSelf = true,
+                        CanBeEdited = true,
+                        CanBeReplied = true,
+                        CanBeSaved = true
+                    };
+                }
+                else
+                {
+                    return;
+                }
             }
 
             var selected = ViewModel.SelectedItems;
