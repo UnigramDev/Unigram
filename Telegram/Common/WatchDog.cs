@@ -128,7 +128,14 @@ namespace Telegram
             {
                 if (File.Exists(GetErrorReportPath(args.Report.Id)))
                 {
-                    File.Delete(GetErrorReportPath(args.Report.Id));
+                    try
+                    {
+                        File.Delete(GetErrorReportPath(args.Report.Id));
+                    }
+                    catch
+                    {
+                        // Somehow AppCenter messes up and the file might still be open
+                    }
                 }
             };
 

@@ -124,7 +124,7 @@ namespace Telegram.Services
 
         public Task OpenFileAsync(File file)
         {
-            return OpenFileAsync(file);
+            return OpenFileAsync(file, false);
         }
 
         public Task OpenFileWithAsync(File file)
@@ -132,7 +132,7 @@ namespace Telegram.Services
             return OpenFileAsync(file, true);
         }
 
-        private async Task OpenFileAsync(File file, bool displayApplicationPicker = false)
+        private async Task OpenFileAsync(File file, bool displayApplicationPicker)
         {
             // When opening a file, we always want to retrieve the permanent copy
             var permanent = await _clientService.GetPermanentFileAsync(file);
