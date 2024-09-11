@@ -9,6 +9,7 @@ using System.Numerics;
 using System.Runtime.CompilerServices;
 using Telegram.Common;
 using Telegram.Controls.Cells;
+using Telegram.Controls.Media;
 using Telegram.Converters;
 using Telegram.Navigation;
 using Telegram.Streams;
@@ -452,7 +453,7 @@ namespace Telegram.Controls.Messages
                     _ticksHash = messageHash;
 
                     // TODO: 
-                    return "\u00A0failed"; // Failed
+                    return Icons.LTR + "\u00A0failed"; // Failed
                 }
                 else if (message.SendingState is MessageSendingStatePending)
                 {
@@ -461,7 +462,7 @@ namespace Telegram.Controls.Messages
                     _ticksState = MessageTicksState.Pending;
                     _ticksHash = messageHash;
 
-                    return "\u00A0\uEA06"; // Pending
+                    return Icons.LTR + "\u00A0\uEA06"; // Pending
                 }
                 else if (message.Id <= maxId)
                 {
@@ -470,7 +471,7 @@ namespace Telegram.Controls.Messages
                     _ticksState = MessageTicksState.Read;
                     _ticksHash = messageHash;
 
-                    return "\u00A0\uEA07"; // Read
+                    return Icons.LTR + "\u00A0\uEA07"; // Read
                 }
 
                 UpdateTicks(true, false, _ticksState == MessageTicksState.Pending && _ticksHash == messageHash);
@@ -478,7 +479,7 @@ namespace Telegram.Controls.Messages
                 _ticksState = MessageTicksState.Sent;
                 _ticksHash = messageHash;
 
-                return "\u00A0\uEA07"; // Unread
+                return Icons.LTR + "\u00A0\uEA07"; // Unread
             }
 
             UpdateTicks(false, null);
