@@ -31,6 +31,13 @@ namespace Telegram.ViewModels
 
         public IncrementalCollection<TLCallGroup> Items { get; }
 
+        private bool _isEmpty;
+        public bool IsEmpty
+        {
+            get => _isEmpty;
+            set => Set(ref _isEmpty, value);
+        }
+
         private string _nextOffset = string.Empty;
         private bool _hasMoreItems = true;
 
@@ -103,7 +110,12 @@ namespace Telegram.ViewModels
                 }
             }
 
-            return new LoadMoreItemsResult { Count = totalCount };
+            IsEmpty = Items.Empty();
+
+            return new LoadMoreItemsResult
+            {
+                Count = totalCount
+            };
         }
 
         public bool HasMoreItems => _hasMoreItems;

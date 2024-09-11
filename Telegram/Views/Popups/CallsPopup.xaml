@@ -35,11 +35,38 @@
         <controls:ScrollViewerScrim Background="{ThemeResource ContentDialogBackground}"
                                     ScrollingHost="{x:Bind ScrollingHost}" />
 
-        <controls:GlyphButton Click="{x:Bind Close}"
-                              HorizontalAlignment="Right"
-                              VerticalAlignment="Top"
-                              Margin="0,-64,0,0"
-                              Glyph="&#xE711;"
-                              CornerRadius="20" />
+        <Grid x:Name="EmptyState"
+              x:Load="{x:Bind ViewModel.IsEmpty, Mode=OneWay}"
+              VerticalAlignment="Center"
+              Margin="0,-96,0,0">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition />
+            </Grid.RowDefinitions>
+            <controls:AnimatedImage Source="ms-appx:///Assets/Animations/EmptyCalls.tgs"
+                                    IsCachingEnabled="False"
+                                    AutoPlay="True"
+                                    FrameSize="140,140"
+                                    DecodeFrameType="Logical"
+                                    LoopCount="1"
+                                    Width="140"
+                                    Height="140"
+                                    Margin="0,0,0,12" />
+
+            <TextBlock Text="{CustomResource NoRecentCalls}"
+                       FontSize="20"
+                       FontFamily="XamlAutoFontFamily"
+                       FontWeight="SemiBold"
+                       TextAlignment="Center"
+                       VerticalAlignment="Top"
+                       Margin="0,0,0,8"
+                       Grid.Row="1" />
+
+            <TextBlock Text="{CustomResource NoRecentCallsInfo}"
+                       Style="{StaticResource BodyTextBlockStyle}"
+                       TextAlignment="Center"
+                       Grid.Row="2" />
+        </Grid>
     </Grid>
 </controls:ContentPopup>

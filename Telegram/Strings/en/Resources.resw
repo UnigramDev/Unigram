@@ -6888,6 +6888,13 @@ to unlock up to {0} similar channels.</value>
   <data name="NoReactions" xml:space="preserve">
     <value>No reactions</value>
   </data>
+  <data name="NoRecentCalls" xml:space="preserve">
+    <value>No recent calls</value>
+  </data>
+  <data name="NoRecentCallsInfo" xml:space="preserve">
+    <value>Your recent voice and video calls
+will appear here.</value>
+  </data>
   <data name="NoResult" xml:space="preserve">
     <value>No results</value>
   </data>
