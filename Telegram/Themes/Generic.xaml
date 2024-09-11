@@ -207,6 +207,7 @@
                                       ZoomMode="{TemplateBinding ScrollViewer.ZoomMode}"
                                       IsDeferredScrollingEnabled="{TemplateBinding ScrollViewer.IsDeferredScrollingEnabled}"
                                       BringIntoViewOnFocusChange="{TemplateBinding ScrollViewer.BringIntoViewOnFocusChange}"
+                                      CanContentRenderOutsideBounds="{TemplateBinding ScrollViewer.CanContentRenderOutsideBounds}"
                                       AutomationProperties.AccessibilityView="Raw">
                             <ItemsPresenter Header="{TemplateBinding Header}"
                                             HeaderTemplate="{TemplateBinding HeaderTemplate}"
