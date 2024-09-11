@@ -18,11 +18,11 @@ namespace Telegram.Views.Popups
 {
     public sealed partial class ScheduleMessagePopup : ContentPopup
     {
-        public ScheduleMessagePopup(User user, DateTime? until, bool reminder)
+        public ScheduleMessagePopup(User user, bool reminder)
         {
             InitializeComponent();
 
-            var date = until ?? DateTime.Now.AddMinutes(10);
+            var date = DateTime.Now.AddMinutes(10);
             Date.Date = date.Date;
             Time.Time = date.TimeOfDay;
 
