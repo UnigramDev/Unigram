@@ -345,11 +345,18 @@ namespace Telegram.Controls.Chats
         public static ImageSource Create(BackgroundFillFreeformGradient freeform, int offset = 0)
         {
             var colors = freeform.GetColors();
-
             var next = Gather(_positions, offset % 8);
-            var bitmap = GenerateGradient(50, 50, colors, next);
 
+            var bitmap = GenerateGradient(50, 50, colors, next);
             return bitmap;
+        }
+
+        public static void Update(WriteableBitmap bitmap, BackgroundFillFreeformGradient freeform, int offset = 0)
+        {
+            var colors = freeform.GetColors();
+            var next = Gather(_positions, offset % 8);
+
+            GenerateGradient(bitmap, colors, next);
         }
 
         public void Next(BackgroundFillFreeformGradient freeform, WriteableBitmap bitmap, Vector2[] positions)

@@ -110,6 +110,22 @@ namespace Telegram.Views.Settings
             }
         }
 
+        private void OnSelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (List.SelectedItem is ChatThemeViewModel chatTheme)
+            {
+                // Speed up background preview by manually applying it
+                if (ActualTheme == ElementTheme.Light)
+                {
+                    BackgroundControl.Update(chatTheme.LightSettings.Background, false);
+                }
+                else
+                {
+                    BackgroundControl.Update(chatTheme.DarkSettings.Background, true);
+                }
+            }
+        }
+
         #region Context menu
 
         private void Theme_ContextRequested(UIElement sender, ContextRequestedEventArgs args)
