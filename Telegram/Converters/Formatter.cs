@@ -440,12 +440,22 @@ namespace Telegram.Converters
                 return string.Empty;
             }
 
-            if (birthdate.Year == 0)
+            try
             {
-                return DayMonthFull.Format(new DateTime(2020, birthdate.Month, birthdate.Day));
-            }
+                if (birthdate.Year == 0)
+                {
+                    return DayMonthFull.Format(new DateTime(2020, birthdate.Month, birthdate.Day));
+                }
 
-            return DayMonthAbbreviatedYear.Format(new DateTime(birthdate.Year, birthdate.Month, birthdate.Day));
+                return DayMonthAbbreviatedYear.Format(new DateTime(birthdate.Year, birthdate.Month, birthdate.Day));
+            }
+            catch (Exception ex)
+            {
+                Logger.Info(birthdate);
+                Logger.Error(ex);
+
+                return string.Empty;
+            }
         }
     }
 }
