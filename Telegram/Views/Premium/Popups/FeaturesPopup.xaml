@@ -8,7 +8,8 @@
                        xmlns:cells="using:Telegram.Controls.Cells.Premium"
                        xmlns:selectors="using:Telegram.Selectors"
                        mc:Ignorable="d"
-                       Padding="0">
+                       Padding="0"
+                       IsDismissButtonVisible="True">
 
     <Grid>
         <Grid.RowDefinitions>
@@ -96,11 +97,5 @@
                                   Margin="0"
                                   Height="32" />
         </Grid>
-
-        <controls:GlyphButton Click="{x:Bind Close}"
-                              HorizontalAlignment="Right"
-                              VerticalAlignment="Top"
-                              Glyph="&#xE711;"
-                              CornerRadius="20" />
     </Grid>
 </controls:ContentPopup>

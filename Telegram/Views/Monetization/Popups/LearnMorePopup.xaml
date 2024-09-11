@@ -8,7 +8,8 @@
                        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
                        mc:Ignorable="d"
                        Opened="OnOpened"
-                       Padding="0">
+                       Padding="0"
+                       IsDismissButtonVisible="True">
 
     <Grid>
         <Grid.RowDefinitions>
@@ -46,7 +47,7 @@
                            Margin="0,8,0,4" />
 
                 <StackPanel>
-                    <Grid Padding="12,8,12,16">
+                    <Grid Padding="0,8,0,16">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="Auto" />
                             <ColumnDefinition />
@@ -78,7 +79,7 @@
                                    Grid.Column="1"
                                    Grid.Row="1" />
                     </Grid>
-                    <Grid Padding="12,8,12,16">
+                    <Grid Padding="0,8,0,16">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="Auto" />
                             <ColumnDefinition />
@@ -110,7 +111,7 @@
                                    Grid.Column="1"
                                    Grid.Row="1" />
                     </Grid>
-                    <Grid Padding="12,8,12,16">
+                    <Grid Padding="0,8,0,16">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="Auto" />
                             <ColumnDefinition />
@@ -190,11 +191,5 @@
                                   Margin="0"
                                   Height="32" />
         </Grid>
-
-        <controls:GlyphButton Click="{x:Bind Close}"
-                              HorizontalAlignment="Right"
-                              VerticalAlignment="Top"
-                              Glyph="&#xE711;"
-                              CornerRadius="20" />
     </Grid>
 </controls:ContentPopup>

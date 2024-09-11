@@ -4,6 +4,7 @@
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+using System;
 using System.Numerics;
 using System.Threading.Tasks;
 using Telegram.Common;
@@ -35,6 +36,8 @@ namespace Telegram.Controls
         private Border BorderElement;
         private Border ContentElement;
         private Grid CommandSpace;
+
+        private Button DismissButton;
 
         private Rectangle Smoke;
 
@@ -242,6 +245,12 @@ namespace Telegram.Controls
                 rectangle.PointerReleased += Rectangle_PointerReleased;
             }
 
+            if (IsDismissButtonVisible)
+            {
+                DismissButton = GetTemplateChild(nameof(DismissButton)) as Button;
+                DismissButton.Click += DismissButton_Click;
+            }
+
             CommandSpace = GetTemplateChild(nameof(CommandSpace)) as Grid;
             AnimationElement = GetTemplateChild(nameof(AnimationElement)) as Border;
             BackgroundElement = GetTemplateChild(nameof(BackgroundElement)) as Border;
@@ -253,6 +262,11 @@ namespace Telegram.Controls
             {
                 ContentElement.SizeChanged += OnSizeChanged;
             }
+        }
+
+        private void DismissButton_Click(object sender, RoutedEventArgs e)
+        {
+            Close();
         }
 
         private void PrimaryButton_Loaded(object sender, RoutedEventArgs e)
@@ -334,6 +348,43 @@ namespace Telegram.Controls
 
         public static readonly DependencyProperty IsPrimaryButtonSplitProperty =
             DependencyProperty.Register("IsPrimaryButtonSplit", typeof(bool), typeof(ContentPopup), new PropertyMetadata(false));
+
+        #endregion
+
+        #region IsDismissButtonVisible
+
+        public bool IsDismissButtonVisible
+        {
+            get { return (bool)GetValue(IsDismissButtonVisibleProperty); }
+            set { SetValue(IsDismissButtonVisibleProperty, value); }
+        }
+
+        public static readonly DependencyProperty IsDismissButtonVisibleProperty =
+            DependencyProperty.Register("IsDismissButtonVisible", typeof(bool), typeof(ContentPopup), new PropertyMetadata(false, OnDismissButtonVisibleChanged));
+
+        private static void OnDismissButtonVisibleChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            var sender = d as ContentPopup;
+            if (sender?.DismissButton != null || (bool)e.NewValue)
+            {
+                if (sender.DismissButton == null)
+                {
+                    sender.DismissButton = sender.GetTemplateChild(nameof(sender.DismissButton)) as Button;
+
+                    if (sender.DismissButton != null)
+                    {
+                        sender.DismissButton.Click += sender.DismissButton_Click;
+                    }
+                }
+
+                if (sender.DismissButton != null)
+                {
+                    sender.DismissButton.Visibility = (bool)e.NewValue
+                        ? Visibility.Visible
+                        : Visibility.Collapsed;
+                }
+            }
+        }
 
         #endregion
 

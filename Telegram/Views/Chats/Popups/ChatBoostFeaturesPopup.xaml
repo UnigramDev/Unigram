@@ -8,14 +8,14 @@
                        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
                        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
                        mc:Ignorable="d"
-                       Title="TITLE"
-                       Padding="0,24,0,0">
+                       Padding="0"
+                       IsDismissButtonVisible="True">
 
     <Grid>
         <ListView x:Name="ScrollingHost"
                   ContainerContentChanging="OnContainerContentChanging"
                   SelectionMode="None"
-                  Padding="24,0,24,12">
+                  Padding="24,24,24,12">
             <ListView.Header>
                 <Grid>
                     <Grid.RowDefinitions>
@@ -62,6 +62,10 @@
                     <cells:ChatBoostFeaturesCell />
                 </DataTemplate>
             </ListView.ItemTemplate>
+            <!-- TODO: WinUI -->
+            <ListView.ItemContainerTransitions>
+                <TransitionCollection />
+            </ListView.ItemContainerTransitions>
         </ListView>
 
         <controls:ScrollViewerScrim Background="{ThemeResource ContentDialogBackground}"
@@ -96,12 +100,5 @@
                                   Margin="0"
                                   Height="32" />
         </Grid>
-
-        <controls:GlyphButton Click="{x:Bind Close}"
-                              HorizontalAlignment="Right"
-                              VerticalAlignment="Top"
-                              Glyph="&#xE711;"
-                              Margin="0,-64,0,0"
-                              CornerRadius="20" />
     </Grid>
 </controls:ContentPopup>

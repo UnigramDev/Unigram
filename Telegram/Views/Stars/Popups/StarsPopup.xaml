@@ -8,6 +8,7 @@
                        xmlns:revenue="using:Telegram.Controls.Cells.Revenue"
                        mc:Ignorable="d"
                        Padding="0"
+                       IsDismissButtonVisible="True"
                        VerticalContentAlignment="Stretch">
 
     <Grid>
@@ -153,11 +154,5 @@
 
         <controls:ScrollViewerScrim Background="{ThemeResource ContentDialogBackground}"
                                     ScrollingHost="{x:Bind ScrollingHost}" />
-
-        <controls:GlyphButton Click="{x:Bind Close}"
-                              HorizontalAlignment="Right"
-                              VerticalAlignment="Top"
-                              Glyph="&#xE711;"
-                              CornerRadius="20" />
     </Grid>
 </controls:ContentPopup>

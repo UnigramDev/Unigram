@@ -8,7 +8,8 @@
                        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
                        mc:Ignorable="d"
                        VerticalContentAlignment="Stretch"
-                       Padding="0,24,0,0">
+                       Padding="0,24,0,0"
+                       IsDismissButtonVisible="True">
 
     <Grid>
         <ListView x:Name="ScrollingHost"

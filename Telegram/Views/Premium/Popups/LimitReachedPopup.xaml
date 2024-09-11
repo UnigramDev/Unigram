@@ -5,8 +5,8 @@
                        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
                        xmlns:controls="using:Telegram.Controls"
                        mc:Ignorable="d"
-                       Title="TITLE"
-                       Padding="0,24">
+                       Padding="0,24"
+                       IsDismissButtonVisible="True">
 
     <Grid>
         <ListView x:Name="ScrollingHost"
@@ -191,12 +191,5 @@
                 </Grid>
             </controls:BadgeButton>
         </Grid>
-
-        <controls:GlyphButton Click="{x:Bind Close}"
-                              HorizontalAlignment="Right"
-                              VerticalAlignment="Top"
-                              Glyph="&#xE711;"
-                              Margin="0,-64,0,0"
-                              CornerRadius="20" />
     </Grid>
 </controls:ContentPopup>

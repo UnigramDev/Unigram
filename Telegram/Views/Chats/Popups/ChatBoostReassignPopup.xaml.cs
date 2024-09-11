@@ -158,7 +158,7 @@ namespace Telegram.Views.Chats.Popups
             }
         }
 
-        private void OnClosing(ContentDialog sender, ContentDialogClosingEventArgs args)
+        private void OnUnloaded(object sender, RoutedEventArgs args)
         {
             _cooldownTimer?.Stop();
         }
