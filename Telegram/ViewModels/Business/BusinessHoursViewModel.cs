@@ -15,7 +15,7 @@ using TimeZone = Telegram.Td.Api.TimeZone;
 
 namespace Telegram.ViewModels.Business
 {
-    public class BusinessHoursRange
+    public partial class BusinessHoursRange
     {
         public BusinessHoursRange(TimeSpan start, TimeSpan end)
         {
@@ -52,7 +52,7 @@ namespace Telegram.ViewModels.Business
         }
     }
 
-    public class BusinessDay
+    public partial class BusinessDay
     {
         public BusinessDay(DayOfWeek dayOfWeek)
         {
@@ -194,7 +194,7 @@ namespace Telegram.ViewModels.Business
         }
     }
 
-    public class BusinessHoursViewModel : BusinessFeatureViewModelBase
+    public partial class BusinessHoursViewModel : BusinessFeatureViewModelBase
     {
         public BusinessHoursViewModel(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator)
             : base(clientService, settingsService, aggregator)

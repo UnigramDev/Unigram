@@ -28,7 +28,7 @@ using System.Windows.Input;
 
 namespace Telegram.Common
 {
-    public class RelayCommand : ICommand
+    public partial class RelayCommand : ICommand
     {
         private readonly Action _execute;
         private readonly Func<bool> _canExecute;
@@ -80,7 +80,7 @@ namespace Telegram.Common
         }
     }
 
-    public class RelayCommand<T> : ICommand
+    public partial class RelayCommand<T> : ICommand
     {
         private readonly Action<T> _execute;
         private readonly Func<T, bool> _canExecute;
@@ -155,7 +155,7 @@ namespace Telegram.Common
     ////  Description = "A command whose sole purpose is to relay its functionality to other objects by invoking delegates.",
     ////  UrlContacts = "http://www.galasoft.ch/contact_en.html",
     ////  Email = "laurent@galasoft.ch")]
-    public class RelayCommand2 : ICommand
+    public partial class RelayCommand2 : ICommand
     {
         private readonly WeakAction _execute;
 
@@ -268,7 +268,7 @@ namespace Telegram.Common
     /// This will enable (or restore) the CommandManager class which handles
     /// automatic enabling/disabling of controls based on the CanExecute delegate.</remarks>
     ////[ClassInfo(typeof(RelayCommand))]
-    public class RelayCommand2<T> : ICommand
+    public partial class RelayCommand2<T> : ICommand
     {
         private readonly WeakAction<T> _execute;
 
@@ -404,7 +404,7 @@ namespace Telegram.Common
     ////    Description = "A class allowing to store and invoke actions without keeping a hard reference to the action's target.",
     ////    UrlContacts = "http://www.galasoft.ch/contact_en.html",
     ////    Email = "laurent@galasoft.ch")]
-    public class WeakAction
+    public partial class WeakAction
     {
 #if SILVERLIGHT
         private Action _action;
@@ -628,7 +628,7 @@ namespace Telegram.Common
     /// </summary>
     /// <typeparam name="T">The type of the Action's parameter.</typeparam>
     ////[ClassInfo(typeof(WeakAction))]
-    public class WeakAction<T> : WeakAction
+    public partial class WeakAction<T> : WeakAction
     {
 #if SILVERLIGHT
         private Action<T> _action;
@@ -793,7 +793,7 @@ namespace Telegram.Common
     /// <typeparam name="TResult">The type of the result of the Func that will be stored
     /// by this weak reference.</typeparam>
     ////[ClassInfo(typeof(WeakAction)]
-    public class WeakFunc<TResult>
+    public partial class WeakFunc<TResult>
     {
         private Func<TResult> _staticFunc;
 
@@ -1016,7 +1016,7 @@ namespace Telegram.Common
     /// <typeparam name="T">The type of the Func's parameter.</typeparam>
     /// <typeparam name="TResult">The type of the Func's return value.</typeparam>
     ////[ClassInfo(typeof(WeakAction))]
-    public class WeakFunc<T, TResult> : WeakFunc<TResult>
+    public partial class WeakFunc<T, TResult> : WeakFunc<TResult>
     {
         private Func<T, TResult> _staticFunc;
 

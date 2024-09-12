@@ -442,7 +442,7 @@ namespace LibVLCSharp.Shared
     /// <summary>
     /// Media metadata changed
     /// </summary>
-    public class MediaMetaChangedEventArgs : EventArgs
+    public partial class MediaMetaChangedEventArgs : EventArgs
     {
         /// <summary>
         /// Type of the metadata that changed
@@ -458,7 +458,7 @@ namespace LibVLCSharp.Shared
     /// <summary>
     /// Media parsed status changed
     /// </summary>
-    public class MediaParsedChangedEventArgs : EventArgs
+    public partial class MediaParsedChangedEventArgs : EventArgs
     {
         /// <summary>
         /// The new parsed status
@@ -474,7 +474,7 @@ namespace LibVLCSharp.Shared
     /// <summary>
     /// Media sub item added
     /// </summary>
-    public class MediaSubItemAddedEventArgs : EventArgs
+    public partial class MediaSubItemAddedEventArgs : EventArgs
     {
         /// <summary>
         /// The newly added media subitem
@@ -490,7 +490,7 @@ namespace LibVLCSharp.Shared
     /// <summary>
     /// The duration of the media changed
     /// </summary>
-    public class MediaDurationChangedEventArgs : EventArgs
+    public partial class MediaDurationChangedEventArgs : EventArgs
     {
         /// <summary>
         /// The new media duration
@@ -506,7 +506,7 @@ namespace LibVLCSharp.Shared
     /// <summary>
     /// The media has been freed
     /// </summary>
-    public class MediaFreedEventArgs : EventArgs
+    public partial class MediaFreedEventArgs : EventArgs
     {
         /// <summary>
         /// Freed media
@@ -522,7 +522,7 @@ namespace LibVLCSharp.Shared
     /// <summary>
     /// The state of the media changed
     /// </summary>
-    public class MediaStateChangedEventArgs : EventArgs
+    public partial class MediaStateChangedEventArgs : EventArgs
     {
         /// <summary>
         /// New media state
@@ -538,7 +538,7 @@ namespace LibVLCSharp.Shared
     /// <summary>
     /// A media sub item tree has been added
     /// </summary>
-    public class MediaSubItemTreeAddedEventArgs : EventArgs
+    public partial class MediaSubItemTreeAddedEventArgs : EventArgs
     {
         /// <summary>
         /// New media sub item tree
@@ -558,7 +558,7 @@ namespace LibVLCSharp.Shared
     /// <summary>
     /// The mediaplayer's media changed
     /// </summary>
-    public class MediaPlayerMediaChangedEventArgs : EventArgs
+    public partial class MediaPlayerMediaChangedEventArgs : EventArgs
     {
         /// <summary>
         /// New mediaplayer's media
@@ -574,7 +574,7 @@ namespace LibVLCSharp.Shared
     /// <summary>
     /// The mediaplayer buffering information
     /// </summary>
-    public class MediaPlayerBufferingEventArgs : EventArgs
+    public partial class MediaPlayerBufferingEventArgs : EventArgs
     {
         /// <summary>
         /// Caching information
@@ -590,7 +590,7 @@ namespace LibVLCSharp.Shared
     /// <summary>
     /// The mediaplayer's time changed
     /// </summary>
-    public class MediaPlayerTimeChangedEventArgs : EventArgs
+    public partial class MediaPlayerTimeChangedEventArgs : EventArgs
     {
         /// <summary>
         /// Mediaplayer's current time
@@ -606,7 +606,7 @@ namespace LibVLCSharp.Shared
     /// <summary>
     /// The mediaplayer's position changed
     /// </summary>
-    public class MediaPlayerPositionChangedEventArgs : EventArgs
+    public partial class MediaPlayerPositionChangedEventArgs : EventArgs
     {
         /// <summary>
         /// Mediaplayer's current position
@@ -622,7 +622,7 @@ namespace LibVLCSharp.Shared
     /// <summary>
     /// The mediaplayer's seekable status changed
     /// </summary>
-    public class MediaPlayerSeekableChangedEventArgs : EventArgs
+    public partial class MediaPlayerSeekableChangedEventArgs : EventArgs
     {
         /// <summary>
         /// The new seekable capability
@@ -638,7 +638,7 @@ namespace LibVLCSharp.Shared
     /// <summary>
     /// The mediaplayer's pausable status changed
     /// </summary>
-    public class MediaPlayerPausableChangedEventArgs : EventArgs
+    public partial class MediaPlayerPausableChangedEventArgs : EventArgs
     {
         /// <summary>
         /// The new pausable capability
@@ -654,7 +654,7 @@ namespace LibVLCSharp.Shared
     /// <summary>
     /// The mediaplayer's title changed
     /// </summary>
-    public class MediaPlayerTitleChangedEventArgs : EventArgs
+    public partial class MediaPlayerTitleChangedEventArgs : EventArgs
     {
         /// <summary>
         /// The new title
@@ -670,7 +670,7 @@ namespace LibVLCSharp.Shared
     /// <summary>
     /// The mediaplayer's chapter changed
     /// </summary>
-    public class MediaPlayerChapterChangedEventArgs : EventArgs
+    public partial class MediaPlayerChapterChangedEventArgs : EventArgs
     {
         /// <summary>
         /// The new chapter
@@ -686,7 +686,7 @@ namespace LibVLCSharp.Shared
     /// <summary>
     /// The mediaplayer had a snapshot taken
     /// </summary>
-    public class MediaPlayerSnapshotTakenEventArgs : EventArgs
+    public partial class MediaPlayerSnapshotTakenEventArgs : EventArgs
     {
         /// <summary>
         /// Filename of the newly taken snapshot
@@ -702,7 +702,7 @@ namespace LibVLCSharp.Shared
     /// <summary>
     /// The mediaplayer's length changed
     /// </summary>
-    public class MediaPlayerLengthChangedEventArgs : EventArgs
+    public partial class MediaPlayerLengthChangedEventArgs : EventArgs
     {
         /// <summary>
         /// The new mediaplayer length
@@ -718,7 +718,7 @@ namespace LibVLCSharp.Shared
     /// <summary>
     /// The mediaplayer's video output changed
     /// </summary>
-    public class MediaPlayerVoutEventArgs : EventArgs
+    public partial class MediaPlayerVoutEventArgs : EventArgs
     {
         /// <summary>
         /// Number of available video outputs
@@ -734,7 +734,7 @@ namespace LibVLCSharp.Shared
     /// <summary>
     /// The mediaplayer scrambled status changed
     /// </summary>
-    public class MediaPlayerScrambledChangedEventArgs : EventArgs
+    public partial class MediaPlayerScrambledChangedEventArgs : EventArgs
     {
         /// <summary>
         /// The scrambled status
@@ -750,7 +750,7 @@ namespace LibVLCSharp.Shared
     /// <summary>
     /// The mediaplayer has a new Elementary Stream (ES)
     /// </summary>
-    public class MediaPlayerESAddedEventArgs : EventArgs
+    public partial class MediaPlayerESAddedEventArgs : EventArgs
     {
         /// <summary>
         /// The Id of the new Elementary Stream (ES)
@@ -772,7 +772,7 @@ namespace LibVLCSharp.Shared
     /// <summary>
     /// An Elementary Stream (ES) was deleted
     /// </summary>
-    public class MediaPlayerESDeletedEventArgs : EventArgs
+    public partial class MediaPlayerESDeletedEventArgs : EventArgs
     {
         /// <summary>
         /// The Id of the deleted Elementary Stream (ES)
@@ -794,7 +794,7 @@ namespace LibVLCSharp.Shared
     /// <summary>
     /// An Elementary Stream (ES) was selected
     /// </summary>
-    public class MediaPlayerESSelectedEventArgs : EventArgs
+    public partial class MediaPlayerESSelectedEventArgs : EventArgs
     {
         /// <summary>
         /// The Id of the selected Elementary Stream (ES)
@@ -816,7 +816,7 @@ namespace LibVLCSharp.Shared
     /// <summary>
     /// The mediaplayer's audio device changed
     /// </summary>
-    public class MediaPlayerAudioDeviceEventArgs : EventArgs
+    public partial class MediaPlayerAudioDeviceEventArgs : EventArgs
     {
         /// <summary>
         /// String describing the audio device
@@ -832,7 +832,7 @@ namespace LibVLCSharp.Shared
     /// <summary>
     /// The mediaplayer's volume changed
     /// </summary>
-    public class MediaPlayerVolumeChangedEventArgs : EventArgs
+    public partial class MediaPlayerVolumeChangedEventArgs : EventArgs
     {
         /// <summary>
         /// The new volume
@@ -879,7 +879,7 @@ namespace LibVLCSharp.Shared
     /// <summary>
     /// An item has been added to the MediaList
     /// </summary>
-    public class MediaListItemAddedEventArgs : MediaListBaseEventArgs
+    public partial class MediaListItemAddedEventArgs : MediaListBaseEventArgs
     {
         internal MediaListItemAddedEventArgs(Media media, int index) : base(media, index)
         {
@@ -889,7 +889,7 @@ namespace LibVLCSharp.Shared
     /// <summary>
     /// An item is about to be added to the MediaList
     /// </summary>
-    public class MediaListWillAddItemEventArgs : MediaListBaseEventArgs
+    public partial class MediaListWillAddItemEventArgs : MediaListBaseEventArgs
     {
         internal MediaListWillAddItemEventArgs(Media media, int index) : base(media, index)
         {
@@ -899,7 +899,7 @@ namespace LibVLCSharp.Shared
     /// <summary>
     /// An item has been deleted from the MediaList
     /// </summary>
-    public class MediaListItemDeletedEventArgs : MediaListBaseEventArgs
+    public partial class MediaListItemDeletedEventArgs : MediaListBaseEventArgs
     {
         internal MediaListItemDeletedEventArgs(Media media, int index) : base(media, index)
         {
@@ -909,7 +909,7 @@ namespace LibVLCSharp.Shared
     /// <summary>
     /// An item is about to be deleted from the MediaList
     /// </summary>
-    public class MediaListWillDeleteItemEventArgs : MediaListBaseEventArgs
+    public partial class MediaListWillDeleteItemEventArgs : MediaListBaseEventArgs
     {
         internal MediaListWillDeleteItemEventArgs(Media media, int index) : base(media, index)
         {
@@ -923,7 +923,7 @@ namespace LibVLCSharp.Shared
     /// <summary>
     /// A new RendererItem has been found
     /// </summary>
-    public class RendererDiscovererItemAddedEventArgs : EventArgs
+    public partial class RendererDiscovererItemAddedEventArgs : EventArgs
     {
         internal RendererDiscovererItemAddedEventArgs(RendererItem rendererItem)
         {
@@ -939,7 +939,7 @@ namespace LibVLCSharp.Shared
     /// <summary>
     /// A RendererItem has been deleted
     /// </summary>
-    public class RendererDiscovererItemDeletedEventArgs : EventArgs
+    public partial class RendererDiscovererItemDeletedEventArgs : EventArgs
     {
         internal RendererDiscovererItemDeletedEventArgs(RendererItem rendererItem)
         {
@@ -957,7 +957,7 @@ namespace LibVLCSharp.Shared
     /// <summary>
     /// The LibVLC Log Event Arg
     /// </summary>
-    public sealed class LogEventArgs : EventArgs
+    public sealed partial class LogEventArgs : EventArgs
     {
         internal LogEventArgs(LogLevel level, string message, string module, string sourceFile, uint? sourceLine)
         {

@@ -23,7 +23,7 @@ using Windows.UI.Xaml.Navigation;
 
 namespace Telegram.ViewModels
 {
-    public class ChooseChatsViewModel : ViewModelBase
+    public partial class ChooseChatsViewModel : ViewModelBase
     {
         private readonly ChooseChatsTracker _tracker;
 
@@ -726,7 +726,7 @@ namespace Telegram.ViewModels
 
     }
 
-    public class ChooseChatsTracker
+    public partial class ChooseChatsTracker
     {
         private readonly IClientService _clientService;
 

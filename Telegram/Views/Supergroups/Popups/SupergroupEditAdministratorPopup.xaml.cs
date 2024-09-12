@@ -13,7 +13,7 @@ using Windows.UI.Xaml;
 
 namespace Telegram.Views.Supergroups.Popups
 {
-    public class SupergroupEditMemberArgs
+    public partial class SupergroupEditMemberArgs
     {
         public long ChatId { get; }
 

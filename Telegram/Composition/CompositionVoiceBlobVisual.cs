@@ -9,7 +9,7 @@ using Windows.UI.Xaml.Hosting;
 
 namespace Telegram.Composition
 {
-    public class CompositionVoiceBlobVisual
+    public partial class CompositionVoiceBlobVisual
     {
         private readonly SpriteVisual _visual;
 

@@ -28,7 +28,7 @@ using Windows.UI.Xaml.Media;
 
 namespace Telegram.Controls
 {
-    public class TextEntityClickEventArgs : EventArgs
+    public partial class TextEntityClickEventArgs : EventArgs
     {
         public TextEntityClickEventArgs(int offset, int length, TextEntityType type, object data)
         {
@@ -47,7 +47,7 @@ namespace Telegram.Controls
         public object Data { get; }
     }
 
-    public class FormattedParagraph
+    public partial class FormattedParagraph
     {
         public Paragraph Paragraph { get; }
 
@@ -60,7 +60,7 @@ namespace Telegram.Controls
         }
     }
 
-    public class FormattedTextBlock : Control
+    public partial class FormattedTextBlock : Control
     {
         private IClientService _clientService;
         private StyledText _text;

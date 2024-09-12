@@ -44,7 +44,7 @@ namespace Telegram.Services
         Url
     }
 
-    public class GenerationService : IGenerationService
+    public partial class GenerationService : IGenerationService
     //, IHandle<UpdateFileGenerationStart>
     //, IHandle<UpdateFileGenerationStop>
     {
@@ -551,7 +551,7 @@ namespace Telegram.Services
             //StorageApplicationPermissions.FutureAccessList.Remove(args[0]);
         }
 
-        public class VideoConversion
+        public partial class VideoConversion
         {
             public bool Transcode { get; set; }
             public bool Mute { get; set; }
@@ -570,7 +570,7 @@ namespace Telegram.Services
             public Rect CropRectangle { get; set; }
         }
 
-        public class ChatPhotoConversion
+        public partial class ChatPhotoConversion
         {
             public int StickerFileId { get; set; }
 

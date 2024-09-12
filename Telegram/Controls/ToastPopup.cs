@@ -54,7 +54,7 @@ namespace Telegram.Controls
         Unpin
     }
 
-    public class ToastPopup : TeachingTip
+    public partial class ToastPopup : TeachingTip
     {
         public ToastPopup()
         {

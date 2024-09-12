@@ -9,7 +9,7 @@ using System;
 
 namespace Telegram.Services.Settings
 {
-    public class DiagnosticsSettings : SettingsServiceBase
+    public partial class DiagnosticsSettings : SettingsServiceBase
     {
         public DiagnosticsSettings()
             : base("Diagnostics")

@@ -27,7 +27,7 @@ using Windows.UI.Xaml.Shapes;
 
 namespace Telegram.Controls.Messages
 {
-    public class MessageReplyPattern : Control
+    public partial class MessageReplyPattern : Control
     {
         private static readonly Vector4[] _clones = new[]
         {
@@ -103,7 +103,7 @@ namespace Telegram.Controls.Messages
         #endregion
     }
 
-    public sealed class MessageReply : MessageReferenceBase
+    public sealed partial class MessageReply : MessageReferenceBase
     {
         public MessageReply()
         {
@@ -437,7 +437,7 @@ namespace Telegram.Controls.Messages
         }
     }
 
-    public class MessageReplyAutomationPeer : HyperlinkButtonAutomationPeer
+    public partial class MessageReplyAutomationPeer : HyperlinkButtonAutomationPeer
     {
         private readonly MessageReply _owner;
 

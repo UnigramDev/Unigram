@@ -22,7 +22,7 @@ using Windows.UI.Xaml.Navigation;
 
 namespace Telegram.ViewModels
 {
-    public class SettingsViewModel : ViewModelBase, IChildViewModel, IDelegable<ISettingsDelegate>, IHandle
+    public partial class SettingsViewModel : ViewModelBase, IChildViewModel, IDelegable<ISettingsDelegate>, IHandle
     {
         private readonly ISettingsSearchService _searchService;
         private readonly IStorageService _storageService;

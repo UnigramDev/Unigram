@@ -9,7 +9,7 @@ using System.Collections.Generic;
 
 namespace Telegram.Common
 {
-    public class EqualityComparerDelegate<T> : IEqualityComparer<T>
+    public partial class EqualityComparerDelegate<T> : IEqualityComparer<T>
     {
         private readonly Func<T, T, bool> _equals;
         private readonly Func<T, int> _getHashCode;

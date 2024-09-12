@@ -9,7 +9,7 @@ using Windows.UI.Xaml.Media;
 
 namespace Telegram.Composition
 {
-    public class CompositionVSync
+    public partial class CompositionVSync
     {
         private TimeSpan _interval;
         private TimeSpan _elapsed;

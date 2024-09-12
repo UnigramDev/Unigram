@@ -33,7 +33,7 @@ using Windows.UI.Xaml.Shapes;
 
 namespace Telegram.Controls.Cells
 {
-    public sealed class ForumTopicCell : ControlEx, IMultipleElement
+    public sealed partial class ForumTopicCell : ControlEx, IMultipleElement
     {
         private bool _selected;
 
@@ -1393,7 +1393,7 @@ namespace Telegram.Controls.Cells
 
     }
 
-    public class ForumTopicCellPanel : Panel
+    public partial class ForumTopicCellPanel : Panel
     {
         protected override Size MeasureOverride(Size availableSize)
         {

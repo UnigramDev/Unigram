@@ -21,7 +21,7 @@ using Windows.UI.Xaml.Data;
 
 namespace Telegram.ViewModels
 {
-    public class DownloadsViewModel : ViewModelBase, IHandle
+    public partial class DownloadsViewModel : ViewModelBase, IHandle
     {
         private readonly IStorageService _storageService;
 
@@ -173,7 +173,7 @@ namespace Telegram.ViewModels
             }
         }
 
-        public class ItemCollection : ObservableCollection<FileDownloadViewModel>, ISupportIncrementalLoading
+        public partial class ItemCollection : ObservableCollection<FileDownloadViewModel>, ISupportIncrementalLoading
         {
             private readonly ConcurrentDictionary<int, FileDownloadViewModel> _items = new();
 
@@ -277,7 +277,7 @@ namespace Telegram.ViewModels
         }
     }
 
-    public class FileDownloadViewModel : BindableBase
+    public partial class FileDownloadViewModel : BindableBase
     {
         private readonly FileDownload _fileDownload;
 
@@ -328,7 +328,7 @@ namespace Telegram.ViewModels
         public int FileId => _fileDownload.FileId;
     }
 
-    public class FileDownloadDiffHandler : IDiffHandler<FileDownloadViewModel>
+    public partial class FileDownloadDiffHandler : IDiffHandler<FileDownloadViewModel>
     {
         public bool CompareItems(FileDownloadViewModel oldItem, FileDownloadViewModel newItem)
         {

@@ -1,6 +1,6 @@
 ﻿namespace Telegram.Td.Api
 {
-    public class UpdateMessageEffect
+    public partial class UpdateMessageEffect
     {
         public UpdateMessageEffect(MessageEffect effect)
         {

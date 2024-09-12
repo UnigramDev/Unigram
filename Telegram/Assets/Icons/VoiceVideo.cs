@@ -68,7 +68,7 @@ namespace Telegram.Assets.Icons
     // |________________|______________|_______|_________________|
     // | #000000        | Foreground   | Color | #FF000000 Black |
     // -----------------------------------------------------------
-    public sealed class VoiceVideo
+    public sealed partial class VoiceVideo
         : Microsoft.UI.Xaml.Controls.IAnimatedVisualSource
         , Microsoft.UI.Xaml.Controls.IAnimatedVisualSource2
     {

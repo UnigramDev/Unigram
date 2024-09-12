@@ -19,7 +19,7 @@ using Windows.UI.Xaml.Navigation;
 
 namespace Telegram.ViewModels.Premium
 {
-    public class PromoViewModel : ViewModelBase
+    public partial class PromoViewModel : ViewModelBase
     {
         public PromoViewModel(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator)
             : base(clientService, settingsService, aggregator)

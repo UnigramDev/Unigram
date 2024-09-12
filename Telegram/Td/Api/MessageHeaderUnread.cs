@@ -8,7 +8,7 @@ using System;
 
 namespace Telegram.Td.Api
 {
-    public class MessageHeaderUnread : MessageContent
+    public partial class MessageHeaderUnread : MessageContent
     {
         public NativeObject ToUnmanaged()
         {

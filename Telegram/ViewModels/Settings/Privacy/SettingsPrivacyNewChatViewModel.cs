@@ -14,7 +14,7 @@ using Windows.UI.Xaml.Navigation;
 
 namespace Telegram.ViewModels.Settings.Privacy
 {
-    public class SettingsPrivacyNewChatViewModel : ViewModelBase
+    public partial class SettingsPrivacyNewChatViewModel : ViewModelBase
     {
         public SettingsPrivacyNewChatViewModel(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator)
             : base(clientService, settingsService, aggregator)

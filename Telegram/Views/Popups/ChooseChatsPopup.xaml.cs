@@ -448,7 +448,7 @@ namespace Telegram.Views.Popups
 
     #region Configurations
 
-    public class ChooseChatsConfigurationGroupCall : ChooseChatsConfiguration
+    public partial class ChooseChatsConfigurationGroupCall : ChooseChatsConfiguration
     {
         public ChooseChatsConfigurationGroupCall(GroupCall call)
         {
@@ -458,7 +458,7 @@ namespace Telegram.Views.Popups
         public GroupCall GroupCall { get; }
     }
 
-    public class ChooseChatsConfigurationDataPackage : ChooseChatsConfiguration
+    public partial class ChooseChatsConfigurationDataPackage : ChooseChatsConfiguration
     {
         public ChooseChatsConfigurationDataPackage(DataPackageView package)
         {
@@ -468,7 +468,7 @@ namespace Telegram.Views.Popups
         public DataPackageView Package { get; }
     }
 
-    public class ChooseChatsConfigurationSwitchInline : ChooseChatsConfiguration
+    public partial class ChooseChatsConfigurationSwitchInline : ChooseChatsConfiguration
     {
         public ChooseChatsConfigurationSwitchInline(string query, TargetChat targetChat, User bot)
         {
@@ -484,7 +484,7 @@ namespace Telegram.Views.Popups
         public User Bot { get; }
     }
 
-    public class ChooseChatsConfigurationPostText : ChooseChatsConfiguration
+    public partial class ChooseChatsConfigurationPostText : ChooseChatsConfiguration
     {
         public ChooseChatsConfigurationPostText(FormattedText text)
         {
@@ -494,7 +494,7 @@ namespace Telegram.Views.Popups
         public FormattedText Text { get; }
     }
 
-    public class ChooseChatsConfigurationShareMessage : ChooseChatsConfiguration
+    public partial class ChooseChatsConfigurationShareMessage : ChooseChatsConfiguration
     {
         public ChooseChatsConfigurationShareMessage(long chatId, long messageId, bool withMyScore = false)
         {
@@ -510,7 +510,7 @@ namespace Telegram.Views.Popups
         public bool WithMyScore { get; }
     }
 
-    public class ChooseChatsConfigurationReplyToMessage : ChooseChatsConfiguration
+    public partial class ChooseChatsConfigurationReplyToMessage : ChooseChatsConfiguration
     {
         public ChooseChatsConfigurationReplyToMessage(MessageViewModel message, InputTextQuote quote = null)
         {
@@ -523,7 +523,7 @@ namespace Telegram.Views.Popups
         public InputTextQuote Quote { get; }
     }
 
-    public class ChooseChatsConfigurationShareStory : ChooseChatsConfiguration
+    public partial class ChooseChatsConfigurationShareStory : ChooseChatsConfiguration
     {
         public ChooseChatsConfigurationShareStory(long chatId, int storyId)
         {
@@ -536,7 +536,7 @@ namespace Telegram.Views.Popups
         public int StoryId { get; }
     }
 
-    public class ChooseChatsConfigurationShareMessages : ChooseChatsConfiguration
+    public partial class ChooseChatsConfigurationShareMessages : ChooseChatsConfiguration
     {
         public ChooseChatsConfigurationShareMessages(IEnumerable<MessageId> messageIds)
         {
@@ -546,7 +546,7 @@ namespace Telegram.Views.Popups
         public IList<MessageId> MessageIds { get; }
     }
 
-    public class ChooseChatsConfigurationPostLink : ChooseChatsConfiguration
+    public partial class ChooseChatsConfigurationPostLink : ChooseChatsConfiguration
     {
         public ChooseChatsConfigurationPostLink(HttpUrl url)
         {
@@ -556,7 +556,7 @@ namespace Telegram.Views.Popups
         public HttpUrl Url { get; }
     }
 
-    public class ChooseChatsConfigurationPostMessage : ChooseChatsConfiguration
+    public partial class ChooseChatsConfigurationPostMessage : ChooseChatsConfiguration
     {
         public ChooseChatsConfigurationPostMessage(InputMessageContent content)
         {
@@ -566,7 +566,7 @@ namespace Telegram.Views.Popups
         public InputMessageContent Content { get; }
     }
 
-    public class ChooseChatsConfigurationStartBot : ChooseChatsConfiguration
+    public partial class ChooseChatsConfigurationStartBot : ChooseChatsConfiguration
     {
         public ChooseChatsConfigurationStartBot(User bot, string token = null)
         {
@@ -579,7 +579,7 @@ namespace Telegram.Views.Popups
         public string Token { get; }
     }
 
-    public class ChooseChatsConfigurationRequestUsers : ChooseChatsConfiguration
+    public partial class ChooseChatsConfigurationRequestUsers : ChooseChatsConfiguration
     {
         public ChooseChatsConfigurationRequestUsers(long chatId, long messageId, KeyboardButtonTypeRequestUsers requestUsers)
         {
@@ -632,7 +632,7 @@ namespace Telegram.Views.Popups
         public int Id { get; }
     }
 
-    public class ChooseChatsConfigurationRequestChat : ChooseChatsConfiguration
+    public partial class ChooseChatsConfigurationRequestChat : ChooseChatsConfiguration
     {
         public ChooseChatsConfigurationRequestChat(KeyboardButtonTypeRequestChat requestChat)
         {

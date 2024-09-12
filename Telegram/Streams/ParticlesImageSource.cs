@@ -6,7 +6,7 @@
 //
 namespace Telegram.Streams
 {
-    public class ParticlesImageSource : AnimatedImageSource
+    public partial class ParticlesImageSource : AnimatedImageSource
     {
         public override string FilePath => string.Empty;
 

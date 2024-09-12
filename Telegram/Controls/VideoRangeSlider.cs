@@ -11,7 +11,7 @@ using Windows.UI.Xaml.Input;
 
 namespace Telegram.Controls
 {
-    public class VideoRangeSlider : RangeBase
+    public partial class VideoRangeSlider : RangeBase
     {
         private bool _pressed;
         private double _delta;

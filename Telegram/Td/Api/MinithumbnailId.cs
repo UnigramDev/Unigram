@@ -8,7 +8,7 @@ using System.Collections.Generic;
 
 namespace Telegram.Td.Api
 {
-    public class MinithumbnailId
+    public partial class MinithumbnailId
     {
         public MinithumbnailId(int id, Minithumbnail minithumbnail, bool videoNote)
         {

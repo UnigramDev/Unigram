@@ -21,7 +21,7 @@ using Windows.UI.Xaml.Media.Imaging;
 
 namespace Telegram.Controls.Messages
 {
-    public class ReactionButton : ToggleButtonEx
+    public partial class ReactionButton : ToggleButtonEx
     {
         private CustomEmojiIcon Icon;
         private Popup Overlay;
@@ -415,7 +415,7 @@ namespace Telegram.Controls.Messages
         //}
     }
 
-    public class ReactionButtonAutomationPeer : ToggleButtonAutomationPeer
+    public partial class ReactionButtonAutomationPeer : ToggleButtonAutomationPeer
     {
         private readonly ReactionButton _owner;
 

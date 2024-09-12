@@ -11,7 +11,7 @@ using Windows.UI.Xaml.Data;
 
 namespace Telegram.Converters
 {
-    public class FileTypeToStringConverter : IValueConverter
+    public partial class FileTypeToStringConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, string language)
         {

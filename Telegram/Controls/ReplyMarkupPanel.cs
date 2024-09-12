@@ -16,7 +16,7 @@ using Windows.UI.Xaml.Controls;
 
 namespace Telegram.Controls
 {
-    public class ReplyMarkupButtonClickEventArgs : EventArgs
+    public partial class ReplyMarkupButtonClickEventArgs : EventArgs
     {
         public ReplyMarkupButtonClickEventArgs(KeyboardButton button, bool oneTime)
         {
@@ -29,7 +29,7 @@ namespace Telegram.Controls
         public bool OneTime { get; }
     }
 
-    public class ReplyMarkupInlineButtonClickEventArgs : EventArgs
+    public partial class ReplyMarkupInlineButtonClickEventArgs : EventArgs
     {
         public ReplyMarkupInlineButtonClickEventArgs(InlineKeyboardButton button)
         {
@@ -39,7 +39,7 @@ namespace Telegram.Controls
         public InlineKeyboardButton Button { get; }
     }
 
-    public class ReplyMarkupPanel : Grid
+    public partial class ReplyMarkupPanel : Grid
     {
         private readonly double _keyboardHeight = 260;
 
@@ -295,7 +295,7 @@ namespace Telegram.Controls
         public event EventHandler<ReplyMarkupInlineButtonClickEventArgs> InlineButtonClick;
     }
 
-    public class ReplyMarkupRow : Panel
+    public partial class ReplyMarkupRow : Panel
     {
         protected override Size MeasureOverride(Size availableSize)
         {

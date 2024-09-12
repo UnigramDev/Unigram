@@ -10,7 +10,7 @@ using Windows.UI.Xaml.Controls;
 
 namespace Telegram.Controls.Chats
 {
-    public class ChatSendButton : GlyphButton
+    public partial class ChatSendButton : GlyphButton
     {
         private TextBlock _expiresInLabel;
 

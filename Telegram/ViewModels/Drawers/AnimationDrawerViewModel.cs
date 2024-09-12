@@ -19,7 +19,7 @@ using Windows.UI.Xaml.Data;
 
 namespace Telegram.ViewModels.Drawers
 {
-    public class AnimationDrawerViewModel : ViewModelBase
+    public partial class AnimationDrawerViewModel : ViewModelBase
     {
         private bool _updated;
 
@@ -199,7 +199,7 @@ namespace Telegram.ViewModels.Drawers
 
     }
 
-    public class AnimationsCollection : MvxObservableCollection<Animation>/*, IKeyIndexMapping*/
+    public partial class AnimationsCollection : MvxObservableCollection<Animation>/*, IKeyIndexMapping*/
     {
         public virtual string Name => "tg/recentlyUsed";
         public virtual string Title => Strings.RecentStickers;
@@ -222,7 +222,7 @@ namespace Telegram.ViewModels.Drawers
         }
     }
 
-    public class TrendingAnimationsCollection : SearchAnimationsCollection
+    public partial class TrendingAnimationsCollection : SearchAnimationsCollection
     {
         public TrendingAnimationsCollection(IClientService clientService)
             : base(clientService, string.Empty)
@@ -233,7 +233,7 @@ namespace Telegram.ViewModels.Drawers
         public override string Title => Strings.FeaturedGifs;
     }
 
-    public class SearchAnimationsCollection : AnimationsCollection, ISupportIncrementalLoading
+    public partial class SearchAnimationsCollection : AnimationsCollection, ISupportIncrementalLoading
     {
         private readonly IClientService _clientService;
         private readonly string _query;

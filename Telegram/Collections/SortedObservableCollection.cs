@@ -10,7 +10,7 @@ using Telegram.Common;
 
 namespace Telegram.Collections
 {
-    public class SortedObservableCollection<T> : MvxObservableCollection<T>
+    public partial class SortedObservableCollection<T> : MvxObservableCollection<T>
     {
         private readonly IComparer<T> _comparer;
 

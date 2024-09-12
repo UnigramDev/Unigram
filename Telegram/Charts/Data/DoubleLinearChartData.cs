@@ -8,7 +8,7 @@ using Windows.Data.Json;
 
 namespace Telegram.Charts.Data
 {
-    public class DoubleLinearChartData : ChartData
+    public partial class DoubleLinearChartData : ChartData
     {
         public float[] linesK;
 

@@ -25,7 +25,7 @@ using Windows.UI.Xaml.Data;
 
 namespace Telegram.ViewModels
 {
-    public class SearchChatsViewModel : ViewModelBase, IIncrementalCollectionOwner
+    public partial class SearchChatsViewModel : ViewModelBase, IIncrementalCollectionOwner
     {
         private readonly KeyedCollection<SearchResult> _recent = new(Strings.Recent, new SearchResultDiffHandler());
         private readonly KeyedCollection<SearchResult> _chatsAndContacts = new(Strings.ChatsAndContacts, new SearchResultDiffHandler());
@@ -463,7 +463,7 @@ namespace Telegram.ViewModels
         #endregion
     }
 
-    public class KeyedCollection<T> : DiffObservableCollection<T>, IKeyedCollection
+    public partial class KeyedCollection<T> : DiffObservableCollection<T>, IKeyedCollection
     {
         public string Key { get; }
 

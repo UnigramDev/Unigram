@@ -6,7 +6,7 @@
 //
 namespace Telegram.Views
 {
-    public class TypeLocator
+    public partial class TypeLocator
     {
         private readonly int _session;
 

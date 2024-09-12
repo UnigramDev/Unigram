@@ -10,7 +10,7 @@ using Windows.UI;
 
 namespace Telegram.Charts
 {
-    public class Paint
+    public partial class Paint
     {
         private Color _color;
         public Color Color

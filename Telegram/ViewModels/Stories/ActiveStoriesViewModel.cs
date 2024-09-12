@@ -22,7 +22,7 @@ namespace Telegram.ViewModels.Stories
         Read
     }
 
-    public class ActiveStoriesViewModel : ComposeViewModel
+    public partial class ActiveStoriesViewModel : ComposeViewModel
     {
         private readonly IClientService _clientService;
         private readonly long _chatId;

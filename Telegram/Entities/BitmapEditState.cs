@@ -12,7 +12,7 @@ using Windows.Graphics.Imaging;
 
 namespace Telegram.Entities
 {
-    public class BitmapEditState
+    public partial class BitmapEditState
     {
         public Rect Rectangle { get; set; } = new Rect(0, 0, 1, 1);
         public BitmapProportions Proportions { get; set; } = BitmapProportions.Custom;

@@ -70,7 +70,7 @@ namespace Telegram.Assets.Icons
     // |________________|______________|_______|_________________|
     // | #000000        | Color_000000 | Color | #FF000000 Black |
     // -----------------------------------------------------------
-    public sealed class StickerToGif
+    public sealed partial class StickerToGif
         : Microsoft.UI.Xaml.Controls.IAnimatedVisualSource
         , Microsoft.UI.Xaml.Controls.IAnimatedVisualSource2
     {

@@ -21,7 +21,7 @@ using Windows.UI.Xaml.Media;
 
 namespace Telegram.Services
 {
-    public class PaidReactionService : IEquatable<MessageViewModel>
+    public partial class PaidReactionService : IEquatable<MessageViewModel>
     {
         private int _sessionId;
 

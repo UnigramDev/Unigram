@@ -9,7 +9,7 @@ using Telegram.Td.Api;
 
 namespace Telegram.ViewModels.Settings.Privacy
 {
-    public class SettingsPrivacyAllowChatInvitesViewModel : SettingsPrivacyViewModelBase
+    public partial class SettingsPrivacyAllowChatInvitesViewModel : SettingsPrivacyViewModelBase
     {
         public SettingsPrivacyAllowChatInvitesViewModel(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator)
             : base(clientService, settingsService, aggregator, new UserPrivacySettingAllowChatInvites())

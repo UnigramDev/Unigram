@@ -17,7 +17,7 @@ using Windows.UI.Xaml.Navigation;
 
 namespace Telegram.ViewModels.Stars
 {
-    public class BuyViewModel : ViewModelBase, IHandle
+    public partial class BuyViewModel : ViewModelBase, IHandle
     {
         private IList<StarPaymentOption> _options;
 

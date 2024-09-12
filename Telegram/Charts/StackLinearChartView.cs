@@ -15,7 +15,7 @@ using Windows.Foundation;
 
 namespace Telegram.Charts
 {
-    public class StackLinearChartView : StackLinearChartView<StackLinearViewData>
+    public partial class StackLinearChartView : StackLinearChartView<StackLinearViewData>
     {
 
     }

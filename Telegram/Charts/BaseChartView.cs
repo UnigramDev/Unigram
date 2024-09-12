@@ -2212,7 +2212,7 @@ namespace Telegram.Charts
             void OnDateSelected(long date);
         }
 
-        public class SharedUiComponents
+        public partial class SharedUiComponents
         {
 
             //private Bitmap pickerRoundBitmap;

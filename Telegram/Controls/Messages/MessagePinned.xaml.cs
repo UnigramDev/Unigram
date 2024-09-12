@@ -412,7 +412,7 @@ namespace Telegram.Controls.Messages
         #endregion
     }
 
-    public class MessagePinnedAutomationPeer : HyperlinkButtonAutomationPeer
+    public partial class MessagePinnedAutomationPeer : HyperlinkButtonAutomationPeer
     {
         private readonly MessagePinned _owner;
 
@@ -428,7 +428,7 @@ namespace Telegram.Controls.Messages
         }
     }
 
-    public class MessagePinnedLine : ControlEx
+    public partial class MessagePinnedLine : ControlEx
     {
         private readonly CompositionSpriteShape _back;
         private readonly CompositionSpriteShape _fore;

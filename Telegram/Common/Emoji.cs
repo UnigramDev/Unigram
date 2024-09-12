@@ -19,7 +19,7 @@ using WinRT;
 
 namespace Telegram.Common
 {
-    public class EmojiSet
+    public partial class EmojiSet
     {
         public string Id { get; set; }
         public string Title { get; set; }
@@ -68,7 +68,7 @@ namespace Telegram.Common
         Fitz6
     }
 
-    public class EmojiData
+    public partial class EmojiData
     {
         protected EmojiData()
         {
@@ -83,7 +83,7 @@ namespace Telegram.Common
         public string Value { get; protected set; }
     }
 
-    public class EmojiSkinData : EmojiData, INotifyPropertyChanged
+    public partial class EmojiSkinData : EmojiData, INotifyPropertyChanged
     {
         private readonly string _value;
 
@@ -155,7 +155,7 @@ namespace Telegram.Common
     }
 
     [GeneratedBindableCustomProperty]
-    public class EmojiGroup
+    public partial class EmojiGroup
     {
         public string Title { get; set; }
         public string Glyph { get; set; }

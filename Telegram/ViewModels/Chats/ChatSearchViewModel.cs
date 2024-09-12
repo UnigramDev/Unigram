@@ -20,7 +20,7 @@ using Windows.UI.Xaml.Controls;
 
 namespace Telegram.ViewModels.Chats
 {
-    public class ChatSearchViewModel : ViewModelBase, IDisposable
+    public partial class ChatSearchViewModel : ViewModelBase, IDisposable
     {
         private readonly DialogViewModel _dialog;
         private readonly DisposableMutex _loadMoreLock;
@@ -372,7 +372,7 @@ namespace Telegram.ViewModels.Chats
         }
     }
 
-    public class ChatSearchMediaFilter
+    public partial class ChatSearchMediaFilter
     {
         public SearchMessagesFilter Filter { get; private set; }
         public string Glyph { get; private set; }

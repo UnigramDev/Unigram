@@ -1,6 +1,6 @@
 ﻿namespace Telegram.Td.Api
 {
-    public class UpdateGreetingSticker
+    public partial class UpdateGreetingSticker
     {
         public UpdateGreetingSticker(Sticker sticker)
         {

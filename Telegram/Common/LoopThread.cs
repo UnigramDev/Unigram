@@ -9,7 +9,7 @@ using System.Threading;
 
 namespace Telegram.Common
 {
-    public class LoopThread
+    public partial class LoopThread
     {
         private TimeSpan _interval;
 

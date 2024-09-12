@@ -16,7 +16,7 @@ using Windows.UI.Xaml.Input;
 
 namespace Telegram.Controls
 {
-    public class SuggestTextBox : TextBox
+    public partial class SuggestTextBox : TextBox
     {
         public SuggestTextBox()
         {

@@ -27,7 +27,7 @@ using Windows.UI.Xaml.Shapes;
 
 namespace Telegram.Controls
 {
-    public class ContentPopup : ContentDialogEx
+    public partial class ContentPopup : ContentDialogEx
     {
         private ContentDialogResult _result;
 

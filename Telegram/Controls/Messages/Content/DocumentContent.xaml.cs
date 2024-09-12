@@ -18,7 +18,7 @@ using Windows.UI.Xaml.Media.Imaging;
 namespace Telegram.Controls.Messages.Content
 {
     // TODO: turn the whole control into a Button
-    public sealed class DocumentContent : Control, IContent
+    public sealed partial class DocumentContent : Control, IContent
     {
         private MessageViewModel _message;
         public MessageViewModel Message => _message;

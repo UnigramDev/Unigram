@@ -6,7 +6,7 @@ using Windows.UI.Xaml.Navigation;
 
 namespace Telegram.ViewModels.Business
 {
-    public class BusinessIntroViewModel : BusinessFeatureViewModelBase, IHandle
+    public partial class BusinessIntroViewModel : BusinessFeatureViewModelBase, IHandle
     {
         public BusinessIntroViewModel(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator)
             : base(clientService, settingsService, aggregator)

@@ -13,7 +13,7 @@ using Windows.UI.Xaml.Shapes;
 
 namespace Telegram.Controls
 {
-    public class CallToggleButton : AnimatedGlyphToggleButton
+    public partial class CallToggleButton : AnimatedGlyphToggleButton
     {
         private InsetClip _visual;
 

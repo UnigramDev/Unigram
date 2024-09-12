@@ -17,7 +17,7 @@ using Windows.UI.Xaml.Navigation;
 
 namespace Telegram.ViewModels.Folders
 {
-    public class RemoveFolderViewModel : ViewModelBase
+    public partial class RemoveFolderViewModel : ViewModelBase
     {
         public RemoveFolderViewModel(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator)
             : base(clientService, settingsService, aggregator)

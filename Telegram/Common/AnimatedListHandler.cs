@@ -29,7 +29,7 @@ namespace Telegram.Common
         Other
     }
 
-    public class AnimatedListHandler
+    public partial class AnimatedListHandler
     {
         private readonly ListViewBase _listView;
         private readonly DispatcherTimer _debouncer;

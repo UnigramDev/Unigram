@@ -9,7 +9,7 @@ using Windows.System;
 
 namespace Telegram.Services
 {
-    public class ServiceBase : BindableBase
+    public partial class ServiceBase : BindableBase
     {
         private readonly IClientService _clientService;
         private readonly ISettingsService _settingsService;

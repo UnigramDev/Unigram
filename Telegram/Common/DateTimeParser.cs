@@ -12,7 +12,7 @@ using Telegram.Td.Api;
 
 namespace Telegram.Common
 {
-    public class DateTimeParser
+    public partial class DateTimeParser
     {
         private enum DateRangeFormat
         {

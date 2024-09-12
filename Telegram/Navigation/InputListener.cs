@@ -14,7 +14,7 @@ using Windows.UI.Xaml;
 
 namespace Telegram.Services.Keyboard
 {
-    public class InputListener
+    public partial class InputListener
     {
         private readonly Window _window;
 

@@ -6,7 +6,7 @@
 //
 namespace Telegram.Td.Api
 {
-    public class UpdatePremiumState
+    public partial class UpdatePremiumState
     {
         public bool IsPremium { get; }
 

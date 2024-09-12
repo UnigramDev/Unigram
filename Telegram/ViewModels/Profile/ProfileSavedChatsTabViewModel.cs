@@ -12,7 +12,7 @@ using Windows.UI.Xaml.Data;
 
 namespace Telegram.ViewModels.Profile
 {
-    public class ProfileSavedChatsTabViewModel : ViewModelBase, IHandle, IIncrementalCollectionOwner, IDelegable<ISavedMessagesChatsDelegate>
+    public partial class ProfileSavedChatsTabViewModel : ViewModelBase, IHandle, IIncrementalCollectionOwner, IDelegable<ISavedMessagesChatsDelegate>
     {
         private readonly HashSet<long> _pinnedTopics = new();
         private readonly HashSet<long> _topics = new();

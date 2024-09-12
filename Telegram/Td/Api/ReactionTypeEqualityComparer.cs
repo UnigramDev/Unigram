@@ -8,7 +8,7 @@ using System.Collections.Generic;
 
 namespace Telegram.Td.Api
 {
-    public class ReactionTypeEqualityComparer : IEqualityComparer<ReactionType>
+    public partial class ReactionTypeEqualityComparer : IEqualityComparer<ReactionType>
     {
         public bool Equals(ReactionType x, ReactionType y)
         {

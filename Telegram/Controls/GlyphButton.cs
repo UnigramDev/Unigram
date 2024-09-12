@@ -9,7 +9,7 @@ using Windows.UI.Xaml.Controls;
 
 namespace Telegram.Controls
 {
-    public class GlyphButton : Button
+    public partial class GlyphButton : Button
     {
         public GlyphButton()
         {
@@ -28,7 +28,7 @@ namespace Telegram.Controls
         #endregion
     }
 
-    public class GlyphHyperlinkButton : HyperlinkButton
+    public partial class GlyphHyperlinkButton : HyperlinkButton
     {
         public GlyphHyperlinkButton()
         {

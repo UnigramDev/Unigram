@@ -12,7 +12,7 @@ using Windows.UI.Xaml.Controls;
 
 namespace Telegram.Controls.Payments
 {
-    public class LabeledPricesPanel : Grid
+    public partial class LabeledPricesPanel : Grid
     {
         public LabeledPricesPanel()
         {

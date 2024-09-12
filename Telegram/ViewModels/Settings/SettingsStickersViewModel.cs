@@ -36,7 +36,7 @@ namespace Telegram.ViewModels.Settings
         EmojiArchived
     }
 
-    public class SettingsStickersViewModel : ViewModelBase, IHandle
+    public partial class SettingsStickersViewModel : ViewModelBase, IHandle
     {
         private StickersType _type;
 
@@ -416,7 +416,7 @@ namespace Telegram.ViewModels.Settings
             NavigationService.Navigate(typeof(SettingsQuickReactionPage));
         }
 
-        public class ItemsCollection : DiffObservableCollection<StickerSetInfo>, ISupportIncrementalLoading
+        public partial class ItemsCollection : DiffObservableCollection<StickerSetInfo>, ISupportIncrementalLoading
         {
             private readonly IClientService _clientService;
             private readonly StickerType _type;
@@ -463,7 +463,7 @@ namespace Telegram.ViewModels.Settings
             public bool HasMoreItems => _hasMoreItems;
         }
 
-        public class ArchivedCollection : DiffObservableCollection<StickerSetInfo>, ISupportIncrementalLoading
+        public partial class ArchivedCollection : DiffObservableCollection<StickerSetInfo>, ISupportIncrementalLoading
         {
             private readonly IClientService _clientService;
             private readonly StickerType _type;
@@ -509,7 +509,7 @@ namespace Telegram.ViewModels.Settings
             public bool HasMoreItems => _hasMoreItems;
         }
 
-        public class TrendingCollection : DiffObservableCollection<StickerSetInfo>, ISupportIncrementalLoading
+        public partial class TrendingCollection : DiffObservableCollection<StickerSetInfo>, ISupportIncrementalLoading
         {
             private readonly IClientService _clientService;
             private readonly StickerType _type;

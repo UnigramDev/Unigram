@@ -10,7 +10,7 @@ using Windows.UI.Xaml.Controls;
 
 namespace Telegram.Controls
 {
-    public class SettingsComboBox : ComboBox
+    public partial class SettingsComboBox : ComboBox
     {
         private TextBlock PlaceholderTextBlock;
 

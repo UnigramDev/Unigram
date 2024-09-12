@@ -9,7 +9,7 @@ using Windows.UI;
 
 namespace Telegram.Charts.DataView
 {
-    public class BarViewData : LineViewData
+    public partial class BarViewData : LineViewData
     {
         public readonly Paint unselectedPaint = new Paint();
 

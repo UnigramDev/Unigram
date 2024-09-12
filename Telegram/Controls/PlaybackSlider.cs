@@ -14,7 +14,7 @@ using Windows.UI.Xaml.Input;
 
 namespace Telegram.Controls
 {
-    public class PlaybackSlider : RangeBase
+    public partial class PlaybackSlider : RangeBase
     {
         private Grid LayoutRoot;
 
@@ -153,7 +153,7 @@ namespace Telegram.Controls
         }
     }
 
-    public class PlaybackSliderAutomationPeer : RangeBaseAutomationPeer, IValueProvider
+    public partial class PlaybackSliderAutomationPeer : RangeBaseAutomationPeer, IValueProvider
     {
         private readonly PlaybackSlider _owner;
 

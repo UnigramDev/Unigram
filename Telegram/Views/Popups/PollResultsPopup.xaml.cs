@@ -100,7 +100,7 @@ namespace Telegram.Views.Popups
         }
     }
 
-    public class PollResultViewModel : ViewModelBase
+    public partial class PollResultViewModel : ViewModelBase
     {
         private readonly long _chatId;
         private readonly long _messageId;

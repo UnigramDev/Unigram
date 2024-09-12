@@ -36,7 +36,7 @@ namespace Telegram.Controls
         public double Height { get; set; }
     }
 
-    public class AspectView : Grid
+    public partial class AspectView : Grid
     {
         #region Constraint
 

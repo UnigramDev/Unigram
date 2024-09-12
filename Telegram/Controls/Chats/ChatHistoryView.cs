@@ -27,7 +27,7 @@ using VirtualKey = Windows.System.VirtualKey;
 
 namespace Telegram.Controls.Chats
 {
-    public class ChatHistoryView : ListViewEx
+    public partial class ChatHistoryView : ListViewEx
     {
         public DialogViewModel ViewModel { get; set; }
         public IDialogDelegate Delegate { get; set; }

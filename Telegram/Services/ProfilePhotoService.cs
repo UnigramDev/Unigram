@@ -27,7 +27,7 @@ namespace Telegram.Services
         Task<bool> CreatePhotoAsync(INavigationService navigation, long? chatId, bool isPublic = false, bool isPersonal = false);
     }
 
-    public class ProfilePhotoService : IProfilePhotoService
+    public partial class ProfilePhotoService : IProfilePhotoService
     {
         private readonly IClientService _clientService;
 

@@ -34,7 +34,7 @@ namespace Telegram.Services
         Task<BaseObject> SetAuthenticationPhoneNumberAsync(SetAuthenticationPhoneNumber function);
     }
 
-    public class SessionService : ViewModelBase, ISessionService
+    public partial class SessionService : ViewModelBase, ISessionService
     {
         private readonly ILifetimeService _lifetimeService;
         private readonly int _id;

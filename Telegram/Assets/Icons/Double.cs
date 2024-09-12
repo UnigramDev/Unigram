@@ -71,7 +71,7 @@ namespace Telegram.Assets.Icons
     // | #000000        | Color_000000 | Color | #FF000000 Black |
     // | #E877FF        | Color_E877FF | Color |    #FFE877FF    |
     // -----------------------------------------------------------
-    public sealed class Double
+    public sealed partial class Double
         : Microsoft.UI.Xaml.Controls.IAnimatedVisualSource
         , Microsoft.UI.Xaml.Controls.IAnimatedVisualSource2
     {

@@ -16,7 +16,7 @@ using Windows.UI.Xaml.Hosting;
 
 namespace Telegram.Controls
 {
-    public class DownloadsIndicator : Control
+    public partial class DownloadsIndicator : Control
     {
         private readonly IAnimatedVisualSource2 _visualSource;
         private readonly IAnimatedVisual _visual;

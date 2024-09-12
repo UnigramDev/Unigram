@@ -10,7 +10,7 @@ using System.Collections.Generic;
 
 namespace Telegram.Common
 {
-    public class LoopThreadPool
+    public partial class LoopThreadPool
     {
         private static readonly ConcurrentDictionary<TimeSpan, LoopThread> _specificFrameRate = new();
 

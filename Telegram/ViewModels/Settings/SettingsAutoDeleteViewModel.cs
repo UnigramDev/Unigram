@@ -18,7 +18,7 @@ using Windows.UI.Xaml.Navigation;
 
 namespace Telegram.ViewModels.Settings
 {
-    public class SettingsAutoDeleteViewModel : ViewModelBase
+    public partial class SettingsAutoDeleteViewModel : ViewModelBase
     {
         public SettingsAutoDeleteViewModel(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator)
             : base(clientService, settingsService, aggregator)
@@ -98,7 +98,7 @@ namespace Telegram.ViewModels.Settings
         }
     }
 
-    public class SettingsAutoDeleteItem : BindableBase
+    public partial class SettingsAutoDeleteItem : BindableBase
     {
         public SettingsAutoDeleteItem(int value, string text)
         {

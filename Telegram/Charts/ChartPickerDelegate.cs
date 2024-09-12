@@ -10,7 +10,7 @@ using Windows.UI.Input;
 
 namespace Telegram.Charts
 {
-    public class ChartPickerDelegate
+    public partial class ChartPickerDelegate
     {
         public bool disabled;
         readonly IListener view;
@@ -88,7 +88,7 @@ namespace Telegram.Charts
         }
 
 
-        public class CapturesData
+        public partial class CapturesData
         {
             public readonly IListener view;
             public readonly int state;

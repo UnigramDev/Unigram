@@ -7,7 +7,7 @@ namespace LibVLCSharp.Shared
     /// <summary>
     /// MediaDiscoverer should be used to find media on NAS and any SMB/UPnP-enabled device on your local network.
     /// </summary>
-    public class MediaDiscoverer : Internal
+    public partial class MediaDiscoverer : Internal
     {
         MediaDiscovererEventManager _eventManager;
         MediaList _mediaList;

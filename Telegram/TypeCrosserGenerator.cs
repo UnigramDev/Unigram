@@ -11,7 +11,7 @@ using System.Text;
 
 namespace Telegram
 {
-    public class TypeCrosserGenerator
+    public partial class TypeCrosserGenerator
     {
         public static void Generate()
         {
@@ -141,7 +141,7 @@ namespace Telegram
         }
     }
 
-    public class FormattedBuilder
+    public partial class FormattedBuilder
     {
         private readonly StringBuilder _builder;
         private int _indent;

@@ -13,7 +13,7 @@ using Windows.UI.Xaml.Controls;
 
 namespace Telegram.Controls
 {
-    public class PhoneTextBox : TextBox
+    public partial class PhoneTextBox : TextBox
     {
         private string _previousText = string.Empty;
         private int _selectionStart;

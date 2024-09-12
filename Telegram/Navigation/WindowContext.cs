@@ -40,7 +40,7 @@ using Windows.UI.Xaml.Media;
 
 namespace Telegram.Navigation
 {
-    public class WindowContext
+    public partial class WindowContext
     {
         private readonly ILifetimeService _lifetime;
 

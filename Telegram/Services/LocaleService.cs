@@ -38,7 +38,7 @@ namespace Telegram.Services
         event EventHandler<LocaleChangedEventArgs> Changed;
     }
 
-    public class LocaleChangedEventArgs : EventArgs
+    public partial class LocaleChangedEventArgs : EventArgs
     {
         public IList<LanguagePackString> Strings { get; }
 
@@ -48,7 +48,7 @@ namespace Telegram.Services
         }
     }
 
-    public class LocaleService : ILocaleService
+    public partial class LocaleService : ILocaleService
     {
         public const string LANGPACK = "unigram";
 

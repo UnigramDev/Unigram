@@ -24,7 +24,7 @@ using Windows.UI.Xaml.Media;
 
 namespace Telegram.Controls.Chats
 {
-    public class ChatStickerButton : AnimatedGlyphToggleButton
+    public partial class ChatStickerButton : AnimatedGlyphToggleButton
     {
         private Border Icon;
 

@@ -22,7 +22,7 @@ using Windows.UI.Xaml.Input;
 
 namespace Telegram.Controls
 {
-    public class CaptionTextBox : FormattedTextBox
+    public partial class CaptionTextBox : FormattedTextBox
     {
         public ComposeViewModel ViewModel { get; set; }
 

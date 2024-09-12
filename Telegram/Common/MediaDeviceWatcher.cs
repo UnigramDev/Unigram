@@ -18,7 +18,7 @@ using Windows.UI.Xaml.Controls;
 
 namespace Telegram.Common
 {
-    public class MediaDeviceWatcher
+    public partial class MediaDeviceWatcher
     {
         private readonly DeviceClass _class;
         private readonly DeviceWatcher _watcher;

@@ -21,7 +21,7 @@ using Windows.UI.Xaml.Navigation;
 
 namespace Telegram.ViewModels.Settings
 {
-    public class SettingsNotificationsViewModel : MultiViewModelBase, IHandle
+    public partial class SettingsNotificationsViewModel : MultiViewModelBase, IHandle
     {
         public SettingsNotificationsViewModel(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator)
             : base(clientService, settingsService, aggregator)
@@ -179,7 +179,7 @@ namespace Telegram.ViewModels.Settings
         }
     }
 
-    public class SettingsNotificationsScope : ViewModelBase
+    public partial class SettingsNotificationsScope : ViewModelBase
     {
         private readonly NotificationSettingsScope _scope;
         private readonly string _title;

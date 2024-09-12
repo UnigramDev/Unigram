@@ -18,7 +18,7 @@ using Windows.UI.Xaml.Shapes;
 
 namespace Telegram.Controls.Messages.Content
 {
-    public sealed class VideoNoteContent : Control, IContentWithFile, IContentWithMask, IPlayerView
+    public sealed partial class VideoNoteContent : Control, IContentWithFile, IContentWithMask, IPlayerView
     {
         private MessageViewModel _message;
         public MessageViewModel Message => _message;

@@ -8,7 +8,7 @@ using System.Collections.Generic;
 
 namespace Telegram.Navigation.Services
 {
-    public class NavigationState : Dictionary<string, object>
+    public partial class NavigationState : Dictionary<string, object>
     {
         public static NavigationState GetSwitchQuery(string query, long botId)
         {

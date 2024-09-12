@@ -11,7 +11,7 @@ using Windows.UI.Xaml.Navigation;
 namespace Telegram.Navigation.Services
 {
     // DOCS: https://github.com/Windows-XAML/Template10/wiki/Docs-%7C-NavigationService
-    public class NavigatingEventArgs : NavigatedEventArgs
+    public partial class NavigatingEventArgs : NavigatedEventArgs
     {
         public NavigatingEventArgs()
         {

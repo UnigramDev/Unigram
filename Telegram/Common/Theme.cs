@@ -24,7 +24,7 @@ using AcrylicBrush = Microsoft.UI.Xaml.Media.AcrylicBrush;
 
 namespace Telegram.Common
 {
-    public class Theme : ResourceDictionary
+    public partial class Theme : ResourceDictionary
     {
         [ThreadStatic]
         public static Theme Current;
@@ -580,7 +580,7 @@ namespace Telegram.Common
         #endregion
     }
 
-    public class ThemeOutgoing : ResourceDictionary
+    public partial class ThemeOutgoing : ResourceDictionary
     {
         [ThreadStatic]
         private static Dictionary<string, (Color Color, SolidColorBrush Brush)> _light;
@@ -698,7 +698,7 @@ namespace Telegram.Common
         }
     }
 
-    public class ThemeIncoming : ResourceDictionary
+    public partial class ThemeIncoming : ResourceDictionary
     {
         [ThreadStatic]
         private static Dictionary<string, (Color Color, SolidColorBrush Brush)> _light;

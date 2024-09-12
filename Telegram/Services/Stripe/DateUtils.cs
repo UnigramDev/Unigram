@@ -8,7 +8,7 @@ using System;
 
 namespace Telegram.Services.Stripe
 {
-    public class DateUtils
+    public partial class DateUtils
     {
         /// <summary>
         /// Determines whether or not the input year has already passed.

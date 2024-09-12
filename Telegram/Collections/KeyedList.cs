@@ -11,7 +11,7 @@ using WinRT;
 namespace Telegram.Collections
 {
     [GeneratedBindableCustomProperty]
-    public class KeyedList<TKey, T> : MvxObservableCollection<T>
+    public partial class KeyedList<TKey, T> : MvxObservableCollection<T>
     {
         private TKey _key;
         public TKey Key

@@ -23,7 +23,7 @@ using Windows.UI.Xaml.Navigation;
 
 namespace Telegram.ViewModels.Folders
 {
-    public class FolderViewModel : ViewModelBase
+    public partial class FolderViewModel : ViewModelBase
     {
         public FolderViewModel(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator)
             : base(clientService, settingsService, aggregator)
@@ -502,16 +502,16 @@ namespace Telegram.ViewModels.Folders
         }
     }
 
-    public class ChatFolderElement
+    public partial class ChatFolderElement
     {
     }
 
-    public class FolderFlag : ChatFolderElement
+    public partial class FolderFlag : ChatFolderElement
     {
         public ChatListFolderFlags Flag { get; set; }
     }
 
-    public class FolderChat : ChatFolderElement
+    public partial class FolderChat : ChatFolderElement
     {
         public Chat Chat { get; set; }
     }

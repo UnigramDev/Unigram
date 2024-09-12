@@ -14,7 +14,7 @@ using Telegram.ViewModels.Delegates;
 
 namespace Telegram.ViewModels
 {
-    public class QuickReplyMessageViewModel : MessageViewModel
+    public partial class QuickReplyMessageViewModel : MessageViewModel
     {
         public QuickReplyMessageViewModel(IClientService clientService, IPlaybackService playbackService, IMessageDelegate delegato, Chat chat, Message message, bool processText = false)
             : base(clientService, playbackService, delegato, chat, message, processText)
@@ -24,7 +24,7 @@ namespace Telegram.ViewModels
         public bool CanBeEdited { get; set; }
     }
 
-    public class DialogBusinessRepliesViewModel : DialogViewModel, IDiffHandler<MessageViewModel>
+    public partial class DialogBusinessRepliesViewModel : DialogViewModel, IDiffHandler<MessageViewModel>
     {
         public DialogBusinessRepliesViewModel(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator, ILocationService locationService, INotificationsService pushService, IPlaybackService playbackService, IVoipService voipService, IVoipGroupService voipGroupService, INetworkService networkService, IStorageService storageService, ITranslateService translateService, IMessageFactory messageFactory)
             : base(clientService, settingsService, aggregator, locationService, pushService, playbackService, voipService, voipGroupService, networkService, storageService, translateService, messageFactory)

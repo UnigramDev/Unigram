@@ -9,7 +9,7 @@ using Windows.UI.Xaml;
 
 namespace Telegram.Common
 {
-    public class FrameworkElementState
+    public partial class FrameworkElementState
     {
         public FrameworkElementState(FrameworkElement element)
         {

@@ -13,7 +13,7 @@ using Telegram.Views.Supergroups.Popups;
 
 namespace Telegram.ViewModels.Supergroups
 {
-    public class SupergroupBannedViewModel : SupergroupMembersViewModelBase
+    public partial class SupergroupBannedViewModel : SupergroupMembersViewModelBase
     {
         public SupergroupBannedViewModel(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator)
             : base(clientService, settingsService, aggregator, new SupergroupMembersFilterBanned(), query => new SupergroupMembersFilterBanned(query))

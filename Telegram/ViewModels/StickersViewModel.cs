@@ -17,7 +17,7 @@ using Windows.UI.Xaml.Navigation;
 
 namespace Telegram.ViewModels
 {
-    public class StickersViewModel : ViewModelBase
+    public partial class StickersViewModel : ViewModelBase
     {
         public StickersViewModel(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator)
             : base(clientService, settingsService, aggregator)

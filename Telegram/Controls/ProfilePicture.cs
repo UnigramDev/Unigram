@@ -27,7 +27,7 @@ namespace Telegram.Controls
         Superellipse
     }
 
-    public class ProfilePicture : HyperlinkButton
+    public partial class ProfilePicture : HyperlinkButton
     {
         private long _fileToken;
         private int? _fileId;
@@ -656,7 +656,7 @@ namespace Telegram.Controls
         }
     }
 
-    public class PlaceholderImage
+    public partial class PlaceholderImage
     {
         public string Initials { get; }
 

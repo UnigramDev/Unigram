@@ -10,7 +10,7 @@ using Windows.UI.Xaml.Controls;
 
 namespace Telegram.Selectors
 {
-    public class PremiumFeatureTemplateSelector : DataTemplateSelector
+    public partial class PremiumFeatureTemplateSelector : DataTemplateSelector
     {
         public DataTemplate ItemTemplate { get; set; }
 

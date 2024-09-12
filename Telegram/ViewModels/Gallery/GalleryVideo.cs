@@ -10,7 +10,7 @@ using Telegram.Td.Api;
 
 namespace Telegram.ViewModels.Gallery
 {
-    public class GalleryVideo : GalleryMedia
+    public partial class GalleryVideo : GalleryMedia
     {
         private readonly Video _video;
         private readonly FormattedText _caption;

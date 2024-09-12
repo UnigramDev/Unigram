@@ -40,7 +40,7 @@ using Windows.UI.Xaml.Media;
 
 namespace Telegram.Controls.Messages
 {
-    public class MessageBubbleHighlightOptions
+    public partial class MessageBubbleHighlightOptions
     {
         public MessageBubbleHighlightOptions(TextQuote quote, bool moveFocus = true, bool highlight = true)
         {
@@ -62,7 +62,7 @@ namespace Telegram.Controls.Messages
         public bool Highlight { get; } = true;
     }
 
-    public sealed class MessageBubble : Control
+    public sealed partial class MessageBubble : Control
     {
         private MessageViewModel _message;
 

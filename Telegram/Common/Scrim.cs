@@ -45,7 +45,7 @@ namespace Telegram.Common
         }
     }
 
-    public class CubicBezierGradient : DependencyObject
+    public partial class CubicBezierGradient : DependencyObject
     {
         #region TopColor
 

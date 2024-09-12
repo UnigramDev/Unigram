@@ -23,7 +23,7 @@ using WinRT;
 
 namespace Telegram.ViewModels.Drawers
 {
-    public class StickerDrawerViewModel : ViewModelBase
+    public partial class StickerDrawerViewModel : ViewModelBase
     {
         private readonly DisposableMutex _supergroupLock = new();
 
@@ -417,7 +417,7 @@ namespace Telegram.ViewModels.Drawers
         }
     }
 
-    public class SupergroupStickerSetViewModel : StickerSetViewModel
+    public partial class SupergroupStickerSetViewModel : StickerSetViewModel
     {
         public SupergroupStickerSetViewModel(IClientService clientService, StickerSetInfo info)
             : base(clientService, info)
@@ -447,7 +447,7 @@ namespace Telegram.ViewModels.Drawers
     }
 
     [GeneratedBindableCustomProperty]
-    public class StickerSetViewModel
+    public partial class StickerSetViewModel
     {
         protected readonly IClientService _clientService;
 
@@ -590,7 +590,7 @@ namespace Telegram.ViewModels.Drawers
         }
     }
 
-    public class StickerViewModel
+    public partial class StickerViewModel
     {
         private readonly IClientService _clientService;
 
@@ -660,7 +660,7 @@ namespace Telegram.ViewModels.Drawers
         }
     }
 
-    public class MoreStickerViewModel : StickerViewModel
+    public partial class MoreStickerViewModel : StickerViewModel
     {
         public MoreStickerViewModel(IClientService clientService, long setId, int totalCount)
             : base(clientService, setId)
@@ -671,7 +671,7 @@ namespace Telegram.ViewModels.Drawers
         public int TotalCount { get; set; }
     }
 
-    public class SearchStickerSetsCollection : MvxObservableCollection<StickerSetViewModel>, ISupportIncrementalLoading
+    public partial class SearchStickerSetsCollection : MvxObservableCollection<StickerSetViewModel>, ISupportIncrementalLoading
     {
         private readonly IClientService _clientService;
         private readonly StickerType _type;

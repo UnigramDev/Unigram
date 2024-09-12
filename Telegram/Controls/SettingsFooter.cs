@@ -11,7 +11,7 @@ using Windows.UI.Xaml.Controls;
 
 namespace Telegram.Controls
 {
-    public class SettingsFooter : Control
+    public partial class SettingsFooter : Control
     {
         public SettingsFooter()
         {
@@ -71,7 +71,7 @@ namespace Telegram.Controls
         }
     }
 
-    public class SettingsFooterAutomationPeer : FrameworkElementAutomationPeer
+    public partial class SettingsFooterAutomationPeer : FrameworkElementAutomationPeer
     {
         private readonly SettingsFooter _owner;
 

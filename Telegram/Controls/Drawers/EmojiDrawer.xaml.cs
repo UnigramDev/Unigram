@@ -26,7 +26,7 @@ using StickerSetViewModel = Telegram.ViewModels.Drawers.StickerSetViewModel;
 
 namespace Telegram.Controls.Drawers
 {
-    public class TopicsEmojiDrawer : EmojiDrawer
+    public partial class TopicsEmojiDrawer : EmojiDrawer
     {
         public TopicsEmojiDrawer()
             : base(EmojiDrawerMode.EmojiStatus)
@@ -35,7 +35,7 @@ namespace Telegram.Controls.Drawers
         }
     }
 
-    public class ChatPhotoEmojiDrawer : EmojiDrawer
+    public partial class ChatPhotoEmojiDrawer : EmojiDrawer
     {
         public ChatPhotoEmojiDrawer()
             : base(EmojiDrawerMode.ChatPhoto)
@@ -766,7 +766,7 @@ namespace Telegram.Controls.Drawers
         }
     }
 
-    public class EmojiGridViewItem : GridViewItem
+    public partial class EmojiGridViewItem : GridViewItem
     {
         private readonly string _typeName;
 

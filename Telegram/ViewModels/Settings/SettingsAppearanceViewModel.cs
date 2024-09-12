@@ -23,7 +23,7 @@ using Windows.UI.Xaml.Navigation;
 
 namespace Telegram.ViewModels.Settings
 {
-    public class SettingsAppearanceViewModel : ViewModelBase
+    public partial class SettingsAppearanceViewModel : ViewModelBase
     {
         private readonly IThemeService _themeService;
 
@@ -406,7 +406,7 @@ namespace Telegram.ViewModels.Settings
         }
     }
 
-    public class ChatThemeViewModel
+    public partial class ChatThemeViewModel
     {
         public IClientService ClientService { get; }
 

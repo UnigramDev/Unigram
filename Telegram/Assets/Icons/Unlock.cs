@@ -68,7 +68,7 @@ namespace Telegram.Assets.Icons
     // |________________|______________|_______|_________________|
     // | #000000        | Color_000000 | Color | #FF000000 Black |
     // -----------------------------------------------------------
-    public sealed class Unlock
+    public sealed partial class Unlock
         : Microsoft.UI.Xaml.Controls.IAnimatedVisualSource
         , Microsoft.UI.Xaml.Controls.IAnimatedVisualSource2
     {

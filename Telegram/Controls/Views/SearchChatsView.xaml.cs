@@ -12,7 +12,7 @@ using Windows.UI.Xaml.Input;
 
 namespace Telegram.Controls.Views
 {
-    public class ItemContextRequestedEventArgs : EventArgs
+    public partial class ItemContextRequestedEventArgs : EventArgs
     {
         public ItemContextRequestedEventArgs(object item, ContextRequestedEventArgs eventArgs)
         {

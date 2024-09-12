@@ -35,7 +35,7 @@ using static Telegram.Services.GenerationService;
 
 namespace Telegram.ViewModels
 {
-    public class MessageQuote
+    public partial class MessageQuote
     {
         public MessageViewModel Message { get; set; }
 

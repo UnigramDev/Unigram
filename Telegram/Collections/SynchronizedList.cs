@@ -14,7 +14,7 @@ namespace Telegram.Collections
         void Disconnect();
     }
 
-    public class SynchronizedList<T> : MvxObservableCollection<T>, ISynchronizedList
+    public partial class SynchronizedList<T> : MvxObservableCollection<T>, ISynchronizedList
     {
         private ObservableCollection<T> _source;
 

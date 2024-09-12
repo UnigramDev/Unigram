@@ -8,7 +8,7 @@ using Telegram.Td.Api;
 
 namespace Telegram.Services.Updates
 {
-    public class UpdateCallDialog
+    public partial class UpdateCallDialog
     {
         public UpdateCallDialog(Call call, GroupCall groupCall)
         {

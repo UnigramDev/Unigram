@@ -44,7 +44,7 @@ namespace Telegram.Services.ViewService
     // A ViewLifetimeControl is instantiated for every secondary view. ViewLifetimeControl's reference count
     // keeps track of when the secondary view thinks it's in use and when the main view is interacting with the secondary view (about to show
     // it to the user, etc.) When the reference count drops to zero, the secondary view is closed.
-    public sealed class ViewLifetimeControl
+    public sealed partial class ViewLifetimeControl
     {
         private static readonly ConcurrentDictionary<int, ViewLifetimeControl> WindowControlsMap = new();
 

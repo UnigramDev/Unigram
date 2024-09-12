@@ -14,7 +14,7 @@ using Windows.UI.Xaml.Media.Imaging;
 
 namespace Telegram.ViewModels.Channels
 {
-    public class ChannelCreateStep1ViewModel : ViewModelBase
+    public partial class ChannelCreateStep1ViewModel : ViewModelBase
     {
         public ChannelCreateStep1ViewModel(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator)
             : base(clientService, settingsService, aggregator)

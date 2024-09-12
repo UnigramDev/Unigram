@@ -11,7 +11,7 @@ using Windows.UI.Xaml.Controls;
 
 namespace Telegram.Controls.Messages.Content
 {
-    public sealed class InvoiceContent : Control, IContent
+    public sealed partial class InvoiceContent : Control, IContent
     {
         private MessageViewModel _message;
         public MessageViewModel Message => _message;

@@ -6,7 +6,7 @@
 //
 namespace Telegram.Services.Settings
 {
-    public class VoIPSettings : SettingsServiceBase
+    public partial class VoIPSettings : SettingsServiceBase
     {
         public VoIPSettings()
             : base("VoIP")

@@ -10,7 +10,7 @@ namespace LibVLCSharp.Shared
     /// Dialogs can be raised by libvlc for network actions and logins.
     /// You may only call once PostLogin or PostAction or Dismiss after which this instance will be invalid.
     /// </summary>
-    public class Dialog
+    public partial class Dialog
     {
         IntPtr _id;
 

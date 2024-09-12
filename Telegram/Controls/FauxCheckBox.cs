@@ -10,7 +10,7 @@ using Windows.UI.Xaml.Controls;
 namespace Telegram.Controls
 {
     // TODO: CheckBoxEx?
-    public class FauxCheckBox : CheckBox
+    public partial class FauxCheckBox : CheckBox
     {
         private UIElement Chevron;
 

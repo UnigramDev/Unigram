@@ -15,7 +15,7 @@ using Windows.UI.Xaml.Navigation;
 
 namespace Telegram.ViewModels.Settings.Privacy
 {
-    public class SettingsPrivacyShowBirthdateViewModel : SettingsPrivacyViewModelBase
+    public partial class SettingsPrivacyShowBirthdateViewModel : SettingsPrivacyViewModelBase
     {
         public SettingsPrivacyShowBirthdateViewModel(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator)
             : base(clientService, settingsService, aggregator, new UserPrivacySettingShowBirthdate())

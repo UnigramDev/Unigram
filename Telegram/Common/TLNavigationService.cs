@@ -38,7 +38,7 @@ using Windows.UI.Xaml.Media.Animation;
 
 namespace Telegram.Common
 {
-    public class TLNavigationService : NavigationService
+    public partial class TLNavigationService : NavigationService
     {
         private readonly IClientService _clientService;
         private readonly IPasscodeService _passcodeService;

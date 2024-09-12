@@ -11,7 +11,7 @@ using Windows.UI.Xaml.Controls;
 
 namespace Telegram.Controls
 {
-    public class ChatPill : HyperlinkButton
+    public partial class ChatPill : HyperlinkButton
     {
         private ProfilePicture Photo;
         private TextBlock Title;

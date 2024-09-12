@@ -68,7 +68,7 @@ namespace Telegram.Assets.Icons
     // |________________|______________|_______|_________________|
     // | #000000        | Foreground   | Color | #000000FF White |
     // -----------------------------------------------------------
-    public sealed class Sun
+    public sealed partial class Sun
         : Microsoft.UI.Xaml.Controls.IAnimatedVisualSource
         , Microsoft.UI.Xaml.Controls.IAnimatedVisualSource2
     {

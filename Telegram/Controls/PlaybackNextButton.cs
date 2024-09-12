@@ -15,7 +15,7 @@ using Windows.UI.Xaml.Media;
 
 namespace Telegram.Controls
 {
-    public class PlaybackNextButton : GlyphButton
+    public partial class PlaybackNextButton : GlyphButton
     {
         private CompositionSpriteShape _line;
         private CompositionSpriteShape _triangle1;

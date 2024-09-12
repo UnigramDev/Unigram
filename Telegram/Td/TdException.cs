@@ -8,7 +8,7 @@ using System;
 
 namespace Telegram.Td
 {
-    public class TdException : Exception
+    public partial class TdException : Exception
     {
         public TdException(string message)
             : base(message)
@@ -77,22 +77,22 @@ namespace Telegram.Td
         }
     }
 
-    public class TdDatabaseBrokenException : TdException
+    public partial class TdDatabaseBrokenException : TdException
     {
 
     }
 
-    public class TdDiskFullException : TdException
+    public partial class TdDiskFullException : TdException
     {
 
     }
 
-    public class TdDiskException : TdException
+    public partial class TdDiskException : TdException
     {
 
     }
 
-    public class TdBinlogReindexException : TdException
+    public partial class TdBinlogReindexException : TdException
     {
 
     }

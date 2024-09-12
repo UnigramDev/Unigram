@@ -31,7 +31,7 @@ namespace Telegram.Services
         Task RemoveAsync();
     }
 
-    public class ContactsService : IContactsService
+    public partial class ContactsService : IContactsService
     //, IHandle<Telegram.Td.Api.UpdateAuthorizationState>/*, IHandle<Telegram.Td.Api.UpdateUser>*/
     {
         private readonly IClientService _clientService;

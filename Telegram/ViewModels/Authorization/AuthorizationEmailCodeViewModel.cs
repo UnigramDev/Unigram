@@ -14,7 +14,7 @@ using Windows.UI.Xaml.Navigation;
 
 namespace Telegram.ViewModels.Authorization
 {
-    public class AuthorizationEmailCodeViewModel : ViewModelBase
+    public partial class AuthorizationEmailCodeViewModel : ViewModelBase
     {
         public AuthorizationEmailCodeViewModel(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator)
             : base(clientService, settingsService, aggregator)

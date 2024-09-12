@@ -17,7 +17,7 @@ using Windows.UI.Xaml.Data;
 
 namespace Telegram.Collections
 {
-    public class SearchCollection<T, TSource> : DiffObservableCollection<T>, ISupportIncrementalLoading where TSource : IEnumerable<T>
+    public partial class SearchCollection<T, TSource> : DiffObservableCollection<T>, ISupportIncrementalLoading where TSource : IEnumerable<T>
     {
         private readonly Func<object, string, TSource> _factory;
         private readonly object _sender;

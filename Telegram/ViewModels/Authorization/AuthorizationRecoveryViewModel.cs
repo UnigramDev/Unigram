@@ -15,7 +15,7 @@ using Windows.UI.Xaml.Navigation;
 
 namespace Telegram.ViewModels.Authorization
 {
-    public class AuthorizationRecoveryViewModel : ViewModelBase
+    public partial class AuthorizationRecoveryViewModel : ViewModelBase
     {
         private AuthorizationStateWaitPassword _parameters;
 

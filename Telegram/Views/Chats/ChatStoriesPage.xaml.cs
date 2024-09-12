@@ -21,7 +21,7 @@ namespace Telegram.Views.Chats
         Archive
     }
 
-    public class ChatStoriesArgs
+    public partial class ChatStoriesArgs
     {
         public ChatStoriesArgs(long chatId, ChatStoriesType type)
         {

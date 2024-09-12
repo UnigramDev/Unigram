@@ -9,7 +9,7 @@ namespace LibVLCSharp.Shared
     /// <summary>
     /// A <see cref="MediaInput"/> implementation that reads from a .NET stream
     /// </summary>
-    public class StreamMediaInput : MediaInput
+    public partial class StreamMediaInput : MediaInput
     {
         private readonly Stream _stream;
 #if NET40

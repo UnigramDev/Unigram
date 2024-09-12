@@ -70,7 +70,7 @@ namespace Telegram.Assets.Icons
     // |________________|______________|_______|_________________|
     // | #000000        | Foreground   | Color | #FF000000 Black |
     // -----------------------------------------------------------
-    public sealed class MuteUnmute
+    public sealed partial class MuteUnmute
         : Microsoft.UI.Xaml.Controls.IAnimatedVisualSource
         , Microsoft.UI.Xaml.Controls.IAnimatedVisualSource2
     {

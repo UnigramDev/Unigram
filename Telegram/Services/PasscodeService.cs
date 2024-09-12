@@ -40,7 +40,7 @@ namespace Telegram.Services
         void Reset();
     }
 
-    public class PasscodeService : IPasscodeService
+    public partial class PasscodeService : IPasscodeService
     {
         private readonly PasscodeLockSettings _settingsService;
 

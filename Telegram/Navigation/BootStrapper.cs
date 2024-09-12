@@ -802,7 +802,7 @@ namespace Telegram.Navigation
             }
         }
 
-        public class LifecycleLogic
+        public partial class LifecycleLogic
         {
             public async Task<bool> AutoRestoreAsync(ILaunchActivatedEventArgs e, INavigationService nav)
             {
@@ -864,7 +864,7 @@ namespace Telegram.Navigation
         }
     }
 
-    public class BackRequestedRoutedEventArgs : HandledEventArgs
+    public partial class BackRequestedRoutedEventArgs : HandledEventArgs
     {
         public BackRequestedRoutedEventArgs(VirtualKey key = VirtualKey.None)
         {

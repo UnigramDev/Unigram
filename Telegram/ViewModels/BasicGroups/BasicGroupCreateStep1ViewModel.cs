@@ -17,7 +17,7 @@ using Windows.UI.Xaml.Media.Imaging;
 
 namespace Telegram.ViewModels.BasicGroups
 {
-    public class BasicGroupCreateStep1ViewModel : ViewModelBase
+    public partial class BasicGroupCreateStep1ViewModel : ViewModelBase
     {
         private bool _uploadingPhoto;
         private readonly Action _uploadingCallback;

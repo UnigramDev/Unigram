@@ -19,7 +19,7 @@ namespace Telegram.Common
         Auto
     }
 
-    public class SelectedItemsBinder : DependencyObject
+    public partial class SelectedItemsBinder : DependencyObject
     {
         #region Attached
 

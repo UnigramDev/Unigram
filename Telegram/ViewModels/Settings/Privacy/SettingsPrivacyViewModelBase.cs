@@ -24,7 +24,7 @@ using Windows.UI.Xaml.Navigation;
 
 namespace Telegram.ViewModels.Settings
 {
-    public class SettingsPrivacyViewModelBase : MultiViewModelBase, IHandle
+    public partial class SettingsPrivacyViewModelBase : MultiViewModelBase, IHandle
     {
         private readonly UserPrivacySetting _inputKey;
 

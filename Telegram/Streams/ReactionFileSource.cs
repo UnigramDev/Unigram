@@ -11,7 +11,7 @@ using Telegram.Td.Api;
 
 namespace Telegram.Streams
 {
-    public class ReactionFileSource : DelayedFileSource
+    public partial class ReactionFileSource : DelayedFileSource
     {
         private readonly IClientService _clientService;
         private readonly ReactionType _reaction;

@@ -13,7 +13,7 @@ using Windows.UI.Xaml.Navigation;
 
 namespace Telegram.ViewModels
 {
-    public class ChatNotificationsViewModel : ChooseSoundViewModel
+    public partial class ChatNotificationsViewModel : ChooseSoundViewModel
     {
         public ChatNotificationsViewModel(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator)
             : base(clientService, settingsService, aggregator)

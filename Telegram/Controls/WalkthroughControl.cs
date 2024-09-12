@@ -10,7 +10,7 @@ using Windows.UI.Xaml.Controls;
 
 namespace Telegram.Controls
 {
-    public class WalkthroughControl : ContentPageHeader
+    public partial class WalkthroughControl : ContentPageHeader
     {
         public AnimatedImage Header { get; private set; }
         private Button Action;

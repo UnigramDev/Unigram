@@ -27,7 +27,7 @@ namespace Telegram.Views.Popups
         Stars
     }
 
-    public class InputPopupResult
+    public partial class InputPopupResult
     {
         public ContentDialogResult Result { get; set; }
 
@@ -43,7 +43,7 @@ namespace Telegram.Views.Popups
         }
     }
 
-    public class InputPopupValidatingEventArgs : CancelEventArgs
+    public partial class InputPopupValidatingEventArgs : CancelEventArgs
     {
         public InputPopupValidatingEventArgs(string text, double value)
         {

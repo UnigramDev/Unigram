@@ -28,7 +28,7 @@ namespace Telegram.Services
         event EventHandler<Proxy> ProxyChanged;
     }
 
-    public class NetworkService : INetworkService
+    public partial class NetworkService : INetworkService
     {
         private readonly IClientService _clientService;
         private readonly ISettingsService _settingsService;

@@ -8,7 +8,7 @@ using System;
 
 namespace Telegram.Services.Settings
 {
-    public class PasscodeLockSettings : SettingsServiceBase
+    public partial class PasscodeLockSettings : SettingsServiceBase
     {
         public PasscodeLockSettings()
             : base("PasscodeLock")

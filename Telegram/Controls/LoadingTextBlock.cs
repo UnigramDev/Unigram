@@ -23,7 +23,7 @@ using Windows.UI.Xaml.Media;
 
 namespace Telegram.Controls
 {
-    public class LoadingTextBlock : Control
+    public partial class LoadingTextBlock : Control
     {
         private ContainerVisual _skeleton;
         private SpriteVisual _foreground;

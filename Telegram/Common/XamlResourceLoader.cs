@@ -9,7 +9,7 @@ using Windows.UI.Xaml.Resources;
 
 namespace Telegram.Common
 {
-    public class XamlResourceLoader : CustomXamlResourceLoader
+    public partial class XamlResourceLoader : CustomXamlResourceLoader
     {
         protected override object GetResource(string resourceId, string objectType, string propertyName, string propertyType)
         {

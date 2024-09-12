@@ -272,7 +272,7 @@ namespace Telegram.Controls.Messages
         }
     }
 
-    public class SavedMessagesTagsPanelAutomationPeer : FrameworkElementAutomationPeer
+    public partial class SavedMessagesTagsPanelAutomationPeer : FrameworkElementAutomationPeer
     {
         public SavedMessagesTagsPanelAutomationPeer(SavedMessagesTagsPanel owner)
             : base(owner)

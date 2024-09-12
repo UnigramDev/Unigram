@@ -10,7 +10,7 @@ using Windows.Storage;
 
 namespace Telegram.Services.Settings
 {
-    public class TranslateSettings : SettingsServiceBase
+    public partial class TranslateSettings : SettingsServiceBase
     {
         public TranslateSettings(ApplicationDataContainer container)
             : base(container)

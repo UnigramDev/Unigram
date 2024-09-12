@@ -735,7 +735,7 @@ namespace Telegram.Controls.Messages
 
         #endregion
 
-        public class MessageSelectorAutomationPeer : ToggleButtonAutomationPeer, ISelectionItemProvider
+        public partial class MessageSelectorAutomationPeer : ToggleButtonAutomationPeer, ISelectionItemProvider
         {
             private readonly MessageSelector _owner;
 

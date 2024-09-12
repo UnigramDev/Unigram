@@ -62,7 +62,7 @@ namespace Telegram.Assets.Icons
     // |________________|______________|_______|_________________|
     // | #FFFFFF        | Foreground   | Color | #FFFFFFFF White |
     // -----------------------------------------------------------
-    public sealed class More
+    public sealed partial class More
         : Microsoft.UI.Xaml.Controls.IAnimatedVisualSource
         , Microsoft.UI.Xaml.Controls.IAnimatedVisualSource2
     {

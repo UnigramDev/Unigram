@@ -6,7 +6,7 @@
 //
 namespace Telegram.Services.Stripe
 {
-    public class StripeToken
+    public partial class StripeToken
     {
         public string Id { get; set; }
         public string Type { get; set; }

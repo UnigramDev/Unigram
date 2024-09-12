@@ -29,7 +29,7 @@ namespace Telegram.ViewModels.Folders
         Left
     }
 
-    public class FoldersViewModel : ViewModelBase, IHandle
+    public partial class FoldersViewModel : ViewModelBase, IHandle
     {
         public FoldersViewModel(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator)
             : base(clientService, settingsService, aggregator)

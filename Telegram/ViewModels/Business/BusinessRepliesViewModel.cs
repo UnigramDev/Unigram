@@ -14,7 +14,7 @@ using Windows.UI.Xaml.Navigation;
 
 namespace Telegram.ViewModels.Business
 {
-    public class BusinessRepliesViewModel : ViewModelBase, IDelegable<IBusinessRepliesDelegate>, IHandle
+    public partial class BusinessRepliesViewModel : ViewModelBase, IDelegable<IBusinessRepliesDelegate>, IHandle
     {
         public IBusinessRepliesDelegate Delegate { get; set; }
 

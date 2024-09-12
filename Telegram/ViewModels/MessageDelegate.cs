@@ -23,7 +23,7 @@ using Windows.UI.Xaml;
 
 namespace Telegram.ViewModels
 {
-    public class MessageDelegate : ViewModelBase, IMessageDelegate
+    public partial class MessageDelegate : ViewModelBase, IMessageDelegate
     {
         private readonly ViewModelBase _viewModel;
 
@@ -376,7 +376,7 @@ namespace Telegram.ViewModels
         #endregion
     }
 
-    public class ChatMessageDelegate : MessageDelegate
+    public partial class ChatMessageDelegate : MessageDelegate
     {
         private readonly Chat _chat;
 
@@ -395,7 +395,7 @@ namespace Telegram.ViewModels
         public override Chat Chat => _chat;
     }
 
-    public class DialogMessageDelegate : MessageDelegate
+    public partial class DialogMessageDelegate : MessageDelegate
     {
         private readonly DialogViewModel _viewModel;
 
@@ -489,7 +489,7 @@ namespace Telegram.ViewModels
         #endregion
     }
 
-    public class InstantMessageDelegate : MessageDelegate
+    public partial class InstantMessageDelegate : MessageDelegate
     {
         private readonly InstantViewModel _viewModel;
 

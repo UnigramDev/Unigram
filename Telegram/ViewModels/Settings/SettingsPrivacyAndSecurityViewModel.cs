@@ -28,7 +28,7 @@ using Windows.UI.Xaml.Navigation;
 
 namespace Telegram.ViewModels.Settings
 {
-    public class SettingsPrivacyAndSecurityViewModel : MultiViewModelBase, IHandle
+    public partial class SettingsPrivacyAndSecurityViewModel : MultiViewModelBase, IHandle
     {
         private readonly IContactsService _contactsService;
         private readonly IPasscodeService _passcodeService;

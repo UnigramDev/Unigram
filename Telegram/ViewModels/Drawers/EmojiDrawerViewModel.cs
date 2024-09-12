@@ -31,7 +31,7 @@ namespace Telegram.ViewModels.Drawers
         Topics
     }
 
-    public class EmojiDrawerViewModel : ViewModelBase
+    public partial class EmojiDrawerViewModel : ViewModelBase
     {
         private bool _updated;
 
@@ -648,7 +648,7 @@ namespace Telegram.ViewModels.Drawers
     }
 
     [GeneratedBindableCustomProperty]
-    public class RecentEmoji
+    public partial class RecentEmoji
     {
         public string Title { get; }
 
@@ -668,7 +668,7 @@ namespace Telegram.ViewModels.Drawers
         }
     }
 
-    public class EmojiSetDiffHandler : IDiffHandler<object>
+    public partial class EmojiSetDiffHandler : IDiffHandler<object>
     {
         public bool CompareItems(object oldItem, object newItem)
         {

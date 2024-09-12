@@ -5,7 +5,7 @@ namespace LibVLCSharp.Platforms.Windows
     /// <summary>
     /// Provides data for the <see cref="VideoView{TInitializedEventArgs}.Initialized"/> event.
     /// </summary>
-    public class InitializedEventArgs : EventArgs
+    public partial class InitializedEventArgs : EventArgs
     {
         /// <summary>
         /// Initializes a new instance of <see cref="InitializedEventArgs"/> class

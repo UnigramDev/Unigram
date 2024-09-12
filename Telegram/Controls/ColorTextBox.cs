@@ -15,7 +15,7 @@ using Windows.UI.Xaml.Controls;
 
 namespace Telegram.Controls
 {
-    public class ColorTextBox : TextBox
+    public partial class ColorTextBox : TextBox
     {
         private string _previousText = string.Empty;
         private int _selectionStart;

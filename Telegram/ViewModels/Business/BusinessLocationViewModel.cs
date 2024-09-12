@@ -8,7 +8,7 @@ using Windows.UI.Xaml.Navigation;
 
 namespace Telegram.ViewModels.Business
 {
-    public class BusinessLocationViewModel : BusinessFeatureViewModelBase
+    public partial class BusinessLocationViewModel : BusinessFeatureViewModelBase
     {
         public BusinessLocationViewModel(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator)
             : base(clientService, settingsService, aggregator)

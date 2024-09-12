@@ -5,7 +5,7 @@ namespace LibVLCSharp.Shared
     /// <summary>
     /// Small helper for determining the current platform
     /// </summary>
-    public class PlatformHelper
+    public partial class PlatformHelper
     {
         /// <summary>
         /// Returns true if running on Windows, false otherwise

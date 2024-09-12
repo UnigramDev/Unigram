@@ -15,7 +15,7 @@ using Windows.UI.Xaml.Controls;
 
 namespace Telegram.ViewModels.Settings
 {
-    public class SettingsNightModeViewModel : SettingsThemesViewModel
+    public partial class SettingsNightModeViewModel : SettingsThemesViewModel
     {
         private readonly ILocationService _locationService;
 

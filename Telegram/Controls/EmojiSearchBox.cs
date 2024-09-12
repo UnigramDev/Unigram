@@ -29,7 +29,7 @@ namespace Telegram.Controls
         Combined
     }
 
-    public class EmojiCategorySelectedEventArgs : EventArgs
+    public partial class EmojiCategorySelectedEventArgs : EventArgs
     {
         public EmojiCategory Category { get; set; }
 
@@ -39,7 +39,7 @@ namespace Telegram.Controls
         }
     }
 
-    public class EmojiSearchBox : Control
+    public partial class EmojiSearchBox : Control
     {
         private TextBox TextField;
 

@@ -16,7 +16,7 @@ using Windows.UI.Xaml.Navigation;
 
 namespace Telegram.ViewModels.Supergroups
 {
-    public class SupergroupMembersViewModelBase : SupergroupViewModelBase, IDelegable<ISupergroupDelegate>
+    public partial class SupergroupMembersViewModelBase : SupergroupViewModelBase, IDelegable<ISupergroupDelegate>
     {
         private readonly SupergroupMembersFilter _filter;
         private readonly Func<string, SupergroupMembersFilter> _find;
@@ -148,7 +148,7 @@ namespace Telegram.ViewModels.Supergroups
             return null;
         }
 
-        public class ChatMemberHandler : IDiffHandler<ChatMember>
+        public partial class ChatMemberHandler : IDiffHandler<ChatMember>
         {
             public bool CompareItems(ChatMember oldItem, ChatMember newItem)
             {

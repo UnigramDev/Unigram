@@ -15,7 +15,7 @@ using Windows.UI.Xaml.Input;
 
 namespace Telegram.Controls
 {
-    public class MasterDetailPanel : Panel
+    public partial class MasterDetailPanel : Panel
     {
         private const double columnCompactWidthLeft = 72;
         private const double columnMinimalWidthLeft = 260;

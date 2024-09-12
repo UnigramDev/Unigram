@@ -11,7 +11,7 @@ using Windows.UI.Xaml.Controls;
 
 namespace Telegram.Controls.Gallery
 {
-    public class GalleryBottomPanel : Panel
+    public partial class GalleryBottomPanel : Panel
     {
         protected override Size MeasureOverride(Size availableSize)
         {

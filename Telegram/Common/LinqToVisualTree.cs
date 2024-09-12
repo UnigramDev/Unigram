@@ -16,7 +16,7 @@ namespace LinqToVisualTree
     /// Adapts a DependencyObject to provide methods required for generate
     /// a Linq To Tree API
     /// </summary>
-    public class VisualTreeAdapter : ILinqTree<DependencyObject>
+    public partial class VisualTreeAdapter : ILinqTree<DependencyObject>
     {
         private readonly DependencyObject _item;
 

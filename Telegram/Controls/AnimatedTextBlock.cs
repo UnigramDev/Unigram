@@ -14,7 +14,7 @@ using Windows.UI.Xaml.Hosting;
 
 namespace Telegram.Controls
 {
-    public class AnimatedTextBlock : Control
+    public partial class AnimatedTextBlock : Control
     {
         private AnimatedTextBlockPresenter Presenter;
 
@@ -358,7 +358,7 @@ namespace Telegram.Controls
         }
     }
 
-    public class AnimatedTextBlockPresenter : Panel
+    public partial class AnimatedTextBlockPresenter : Panel
     {
         public AnimatedTextBlock Owner { get; set; }
 

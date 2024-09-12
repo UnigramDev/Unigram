@@ -10,7 +10,7 @@ using Telegram.Td.Api;
 
 namespace Telegram.Streams
 {
-    public class AnimatedEmojiFileSource : DelayedFileSource
+    public partial class AnimatedEmojiFileSource : DelayedFileSource
     {
         private readonly IClientService _clientService;
         private readonly string _emoji;

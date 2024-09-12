@@ -15,7 +15,7 @@ using Windows.UI.Xaml.Controls.Primitives;
 
 namespace Telegram.Controls.Messages
 {
-    public class ReactionAsTagButton : ReactionButton
+    public partial class ReactionAsTagButton : ReactionButton
     {
         private MessageTag _tag;
 

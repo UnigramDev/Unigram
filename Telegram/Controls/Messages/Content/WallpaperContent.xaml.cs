@@ -12,7 +12,7 @@ using Windows.UI.Xaml.Controls;
 
 namespace Telegram.Controls.Messages.Content
 {
-    public sealed class WallpaperContent : Control, IContent
+    public sealed partial class WallpaperContent : Control, IContent
     {
         private MessageViewModel _message;
         public MessageViewModel Message => _message;

@@ -16,7 +16,7 @@ using Windows.UI.Xaml.Navigation;
 
 namespace Telegram.ViewModels.Business
 {
-    public class BusinessBotsViewModel : BusinessFeatureViewModelBase
+    public partial class BusinessBotsViewModel : BusinessFeatureViewModelBase
     {
         public BusinessBotsViewModel(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator)
             : base(clientService, settingsService, aggregator)
@@ -311,7 +311,7 @@ namespace Telegram.ViewModels.Business
             };
         }
 
-        public class BotsCollection : ObservableCollection<User>, ISupportIncrementalLoading
+        public partial class BotsCollection : ObservableCollection<User>, ISupportIncrementalLoading
         {
             private readonly IClientService _clientService;
             private readonly string _query;

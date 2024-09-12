@@ -14,7 +14,7 @@ using Windows.UI.Xaml.Controls;
 
 namespace Telegram.ViewModels.Chats
 {
-    public class ChatPhotosViewModel : GalleryViewModelBase
+    public partial class ChatPhotosViewModel : GalleryViewModelBase
     {
         private readonly DisposableMutex _loadMoreLock = new DisposableMutex();
         private readonly Chat _chat;
@@ -227,7 +227,7 @@ namespace Telegram.ViewModels.Chats
 
     }
 
-    //public class GalleryChatPhotoItem : GalleryItem
+    //public partial class GalleryChatPhotoItem : GalleryItem
     //{
     //    private readonly TLChatPhoto _photo;
     //    private readonly ITLDialogWith _from;

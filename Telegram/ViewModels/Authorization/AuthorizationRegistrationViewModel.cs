@@ -12,7 +12,7 @@ using Windows.UI.Xaml.Controls;
 
 namespace Telegram.ViewModels.Authorization
 {
-    public class AuthorizationRegistrationViewModel : ViewModelBase
+    public partial class AuthorizationRegistrationViewModel : ViewModelBase
     {
         public AuthorizationRegistrationViewModel(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator)
             : base(clientService, settingsService, aggregator)

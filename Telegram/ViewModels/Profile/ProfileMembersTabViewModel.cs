@@ -9,7 +9,7 @@ using Telegram.ViewModels.Supergroups;
 
 namespace Telegram.ViewModels.Profile
 {
-    public class ProfileMembersTabViewModel : SupergroupMembersViewModel
+    public partial class ProfileMembersTabViewModel : SupergroupMembersViewModel
     {
         public ProfileMembersTabViewModel(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator)
             : base(clientService, settingsService, aggregator)

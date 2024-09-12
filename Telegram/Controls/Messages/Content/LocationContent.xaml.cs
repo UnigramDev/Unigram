@@ -18,7 +18,7 @@ using Windows.UI.Xaml.Shapes;
 
 namespace Telegram.Controls.Messages.Content
 {
-    public sealed class LocationContent : Control, IContent
+    public sealed partial class LocationContent : Control, IContent
     {
         private MessageViewModel _message;
         public MessageViewModel Message => _message;

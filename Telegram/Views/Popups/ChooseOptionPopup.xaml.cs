@@ -56,7 +56,7 @@ namespace Telegram.Views.Popups
         }
     }
 
-    public class ChooseOptionItem
+    public partial class ChooseOptionItem
     {
         public ChooseOptionItem(object value, string text, bool check)
         {
@@ -73,7 +73,7 @@ namespace Telegram.Views.Popups
     }
 
     [GeneratedBindableCustomProperty]
-    public class SettingsOptionItem
+    public partial class SettingsOptionItem
     {
         public SettingsOptionItem(string text)
         {
@@ -84,7 +84,7 @@ namespace Telegram.Views.Popups
     }
 
     [GeneratedBindableCustomProperty]
-    public class SettingsOptionItem<T> : SettingsOptionItem
+    public partial class SettingsOptionItem<T> : SettingsOptionItem
     {
         public SettingsOptionItem(T value, string text)
             : base(text)

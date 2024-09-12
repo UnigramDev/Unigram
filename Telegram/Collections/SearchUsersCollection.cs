@@ -15,7 +15,7 @@ using Windows.UI.Xaml.Data;
 
 namespace Telegram.Collections
 {
-    public class SearchUsersCollection : ObservableCollection<KeyedList<string, object>>, ISupportIncrementalLoading
+    public partial class SearchUsersCollection : ObservableCollection<KeyedList<string, object>>, ISupportIncrementalLoading
     {
         private readonly IClientService _clientService;
         private readonly string _query;

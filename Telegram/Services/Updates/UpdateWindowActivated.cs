@@ -6,7 +6,7 @@
 //
 namespace Telegram.Services.Updates
 {
-    public class UpdateWindowActivated
+    public partial class UpdateWindowActivated
     {
         public bool IsActive { get; set; }
 

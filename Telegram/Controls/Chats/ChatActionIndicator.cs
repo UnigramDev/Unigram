@@ -17,7 +17,7 @@ using Windows.UI.Xaml.Media;
 
 namespace Telegram.Controls.Chats
 {
-    public class ChatActionIndicator : FrameworkElement
+    public partial class ChatActionIndicator : FrameworkElement
     {
         // This should be held in memory, or animation will stop
         private CompositionPropertySet _props;

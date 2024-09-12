@@ -28,7 +28,7 @@ namespace Telegram.Collections
         void ReplaceWith(IEnumerable collection);
     }
 
-    public class MvxObservableCollection<T>
+    public partial class MvxObservableCollection<T>
         : ObservableCollection<T>
         , IMvxObservableCollection
         , IList<T>

@@ -35,7 +35,7 @@ namespace Telegram.Controls
         Theme,
     }
 
-    public class FileButton : GlyphHyperlinkButton
+    public partial class FileButton : GlyphHyperlinkButton
     {
         private Grid RootGrid;
 

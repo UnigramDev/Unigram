@@ -7,7 +7,7 @@ namespace LibVLCSharp.Shared
     /// <summary>
     /// Equalizer settings can be applied to a media player using this type
     /// </summary>
-    public class Equalizer : Internal
+    public partial class Equalizer : Internal
     {
         struct Native
         {

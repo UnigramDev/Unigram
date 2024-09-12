@@ -9,7 +9,7 @@ using Windows.UI.Xaml.Controls;
 
 namespace Telegram.Controls
 {
-    public class BadgeControl : Control
+    public partial class BadgeControl : Control
     {
         public BadgeControl()
         {

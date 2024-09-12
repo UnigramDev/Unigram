@@ -104,7 +104,7 @@ namespace Telegram.Navigation.Services
     }
 
     [GeneratedBindableCustomProperty]
-    public class NavigationStackItem : BindableBase
+    public partial class NavigationStackItem : BindableBase
     {
         public NavigationStackItem(Type sourcePageType, object parameter, string title, HostedNavigationMode mode)
         {

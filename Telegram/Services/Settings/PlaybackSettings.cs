@@ -8,7 +8,7 @@ using Windows.Storage;
 
 namespace Telegram.Services.Settings
 {
-    public class PlaybackSettings : SettingsServiceBase
+    public partial class PlaybackSettings : SettingsServiceBase
     {
         public PlaybackSettings(ApplicationDataContainer container)
             : base(container)

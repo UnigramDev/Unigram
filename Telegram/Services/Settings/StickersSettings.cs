@@ -24,7 +24,7 @@ namespace Telegram.Services.Settings
         None
     }
 
-    public class StickersSettings : SettingsServiceBase
+    public partial class StickersSettings : SettingsServiceBase
     {
         public StickersSettings(ApplicationDataContainer container)
             : base(container)

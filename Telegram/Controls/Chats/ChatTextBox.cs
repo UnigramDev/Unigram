@@ -36,7 +36,7 @@ using Windows.UI.Xaml.Input;
 
 namespace Telegram.Controls.Chats
 {
-    public class ChatTextBox : FormattedTextBox
+    public partial class ChatTextBox : FormattedTextBox
     {
         private TextBlock InlinePlaceholderTextContentPresenter;
         private ScrollViewer ContentElement;
@@ -539,7 +539,7 @@ namespace Telegram.Controls.Chats
             return null;
         }
 
-        public class UsernameCollection : MvxObservableCollection<object>, IAutocompleteCollection, ISupportIncrementalLoading
+        public partial class UsernameCollection : MvxObservableCollection<object>, IAutocompleteCollection, ISupportIncrementalLoading
         {
             private readonly IClientService _clientService;
             private readonly long _chatId;
@@ -615,7 +615,7 @@ namespace Telegram.Controls.Chats
             public bool InsertOnKeyDown => true;
         }
 
-        public class EmojiCollection : MvxObservableCollection<object>, IAutocompleteCollection, ISupportIncrementalLoading
+        public partial class EmojiCollection : MvxObservableCollection<object>, IAutocompleteCollection, ISupportIncrementalLoading
         {
             private readonly IClientService _clientService;
             private readonly string _query;
@@ -696,7 +696,7 @@ namespace Telegram.Controls.Chats
             public bool InsertOnKeyDown => true;
         }
 
-        public class SearchHashtagsCollection : MvxObservableCollection<object>, IAutocompleteCollection, ISupportIncrementalLoading
+        public partial class SearchHashtagsCollection : MvxObservableCollection<object>, IAutocompleteCollection, ISupportIncrementalLoading
         {
             private readonly IClientService _clientService;
             private readonly string _query;
@@ -994,7 +994,7 @@ namespace Telegram.Controls.Chats
         public bool InsertOnKeyDown { get; }
     }
 
-    public class AutocompleteList : List<object>, IAutocompleteCollection
+    public partial class AutocompleteList : List<object>, IAutocompleteCollection
     {
         public string Query { get; }
 
@@ -1009,7 +1009,7 @@ namespace Telegram.Controls.Chats
         }
     }
 
-    public class AutocompleteDiffHandler : IDiffHandler<object>
+    public partial class AutocompleteDiffHandler : IDiffHandler<object>
     {
         public bool CompareItems(object oldItem, object newItem)
         {
@@ -1031,7 +1031,7 @@ namespace Telegram.Controls.Chats
         }
     }
 
-    public class AutocompleteCollection : DiffObservableCollection<object>, ISupportIncrementalLoading, IAutocompleteCollection
+    public partial class AutocompleteCollection : DiffObservableCollection<object>, ISupportIncrementalLoading, IAutocompleteCollection
     {
         private readonly DisposableMutex _mutex = new();
         private CancellationTokenSource _token;

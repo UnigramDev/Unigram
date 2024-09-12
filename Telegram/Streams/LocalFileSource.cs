@@ -13,7 +13,7 @@ using Path = System.IO.Path;
 
 namespace Telegram.Streams
 {
-    public class LocalFileSource : AnimatedImageSource
+    public partial class LocalFileSource : AnimatedImageSource
     {
         private long _offset;
 

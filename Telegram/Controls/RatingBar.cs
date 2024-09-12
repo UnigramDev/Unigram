@@ -15,7 +15,7 @@ using Windows.UI.Xaml.Media;
 
 namespace Telegram.Controls
 {
-    public class RatingBar : Control
+    public partial class RatingBar : Control
     {
         private readonly Dictionary<int, FontIcon> _unselected = new Dictionary<int, FontIcon>();
 
@@ -131,7 +131,7 @@ namespace Telegram.Controls
 
     public delegate void RatingBarValueChangedEventHandler(object sender, RatingBarValueChangedEventArgs e);
 
-    public class RatingBarValueChangedEventArgs : EventArgs
+    public partial class RatingBarValueChangedEventArgs : EventArgs
     {
         public RatingBarValueChangedEventArgs(int newValue, int oldValue)
         {

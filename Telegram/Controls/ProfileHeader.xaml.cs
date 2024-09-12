@@ -38,7 +38,7 @@ using Point = Windows.Foundation.Point;
 
 namespace Telegram.Controls
 {
-    public class ProfileHeaderPattern : Control
+    public partial class ProfileHeaderPattern : Control
     {
         public ProfileHeaderPattern()
         {

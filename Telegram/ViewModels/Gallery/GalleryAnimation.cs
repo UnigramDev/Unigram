@@ -10,7 +10,7 @@ using Telegram.Td.Api;
 
 namespace Telegram.ViewModels.Gallery
 {
-    public class GalleryAnimation : GalleryMedia
+    public partial class GalleryAnimation : GalleryMedia
     {
         private readonly Animation _animation;
         private readonly FormattedText _caption;

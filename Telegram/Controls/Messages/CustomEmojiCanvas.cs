@@ -20,7 +20,7 @@ using Windows.UI.Xaml.Media;
 
 namespace Telegram.Controls.Messages
 {
-    public class CustomEmojiCanvas : Canvas
+    public partial class CustomEmojiCanvas : Canvas
     {
         public void UpdateEntities(IClientService clientService, IList<EmojiPosition> positions)
         {
@@ -59,7 +59,7 @@ namespace Telegram.Controls.Messages
         }
     }
 
-    public class EmojiCache
+    public partial class EmojiCache
     {
         private static readonly ConcurrentDictionary<long, Sticker> _stickers = new();
 

@@ -14,7 +14,7 @@ using Telegram.Views;
 
 namespace Telegram.ViewModels.Drawers
 {
-    public class EffectDrawerViewModel : ViewModelBase
+    public partial class EffectDrawerViewModel : ViewModelBase
     {
         private bool _updated;
 

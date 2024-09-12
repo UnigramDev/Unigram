@@ -16,7 +16,7 @@ using Windows.UI.Xaml.Navigation;
 
 namespace Telegram.ViewModels.Users
 {
-    public class UserCreateViewModel : ViewModelBase
+    public partial class UserCreateViewModel : ViewModelBase
     {
         public UserCreateViewModel(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator)
             : base(clientService, settingsService, aggregator)

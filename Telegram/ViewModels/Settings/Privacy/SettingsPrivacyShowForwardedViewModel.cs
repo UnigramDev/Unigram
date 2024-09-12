@@ -9,7 +9,7 @@ using Telegram.Td.Api;
 
 namespace Telegram.ViewModels.Settings.Privacy
 {
-    public class SettingsPrivacyShowForwardedViewModel : SettingsPrivacyViewModelBase
+    public partial class SettingsPrivacyShowForwardedViewModel : SettingsPrivacyViewModelBase
     {
         public SettingsPrivacyShowForwardedViewModel(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator)
             : base(clientService, settingsService, aggregator, new UserPrivacySettingShowLinkInForwardedMessages())

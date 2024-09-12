@@ -8,7 +8,7 @@ using System;
 
 namespace Telegram.Td.Api
 {
-    public class MessageSponsored : MessageContent
+    public partial class MessageSponsored : MessageContent
     {
         public MessageSponsored(SponsoredMessage message)
         {

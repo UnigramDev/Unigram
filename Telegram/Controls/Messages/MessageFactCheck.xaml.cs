@@ -14,7 +14,7 @@ using Windows.UI.Xaml.Shapes;
 
 namespace Telegram.Controls.Messages
 {
-    public sealed class MessageFactCheck : Control
+    public sealed partial class MessageFactCheck : Control
     {
         private MessageViewModel _message;
 

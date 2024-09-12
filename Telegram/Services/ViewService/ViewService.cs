@@ -33,7 +33,7 @@ namespace Telegram.Services.ViewService
         Task<ViewLifetimeControl> OpenAsync(ViewServiceParams parameters);
     }
 
-    public class ViewServiceParams
+    public partial class ViewServiceParams
     {
         public ApplicationViewMode ViewMode { get; set; } = ApplicationViewMode.Default;
 
@@ -47,7 +47,7 @@ namespace Telegram.Services.ViewService
         public string PersistedId { get; set; }
     }
 
-    public sealed class ViewService : IViewService
+    public sealed partial class ViewService : IViewService
     {
         private static readonly TaskCompletionSource<bool> _mainWindowCreated = new();
 

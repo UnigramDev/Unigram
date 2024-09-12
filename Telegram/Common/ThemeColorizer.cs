@@ -11,7 +11,7 @@ using Windows.UI;
 
 namespace Telegram.Common
 {
-    public class ThemeColorizer
+    public partial class ThemeColorizer
     {
         private double _hueThreshold = 0;
         private double _lightnessMin = 0;

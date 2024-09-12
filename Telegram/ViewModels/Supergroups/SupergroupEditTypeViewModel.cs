@@ -13,7 +13,7 @@ using Windows.UI.Xaml.Navigation;
 
 namespace Telegram.ViewModels.Supergroups
 {
-    public class SupergroupEditTypeViewModel : SupergroupEditViewModelBase
+    public partial class SupergroupEditTypeViewModel : SupergroupEditViewModelBase
     {
         public SupergroupEditTypeViewModel(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator)
             : base(clientService, settingsService, aggregator)

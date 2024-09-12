@@ -71,7 +71,7 @@ namespace Telegram.Assets.Icons
     // | #000000        | Color_000000 | Color | #FF000000 Black |
     // | #FFFFFF        | Color_FFFFFF | Color | #FFFFFFFF White |
     // -----------------------------------------------------------
-    public sealed class Addone
+    public sealed partial class Addone
         : Microsoft.UI.Xaml.Controls.IAnimatedVisualSource
         , Microsoft.UI.Xaml.Controls.IAnimatedVisualSource2
     {

@@ -4,7 +4,7 @@ using Windows.UI.Xaml.Controls;
 
 namespace Telegram.Controls.Cells
 {
-    public class CryptoAmount
+    public partial class CryptoAmount
     {
         public string Cryptocurrency { get; set; }
 

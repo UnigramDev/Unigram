@@ -18,7 +18,7 @@ using Windows.UI.Xaml.Navigation;
 
 namespace Telegram.ViewModels.Chats
 {
-    public class ChatBoostsViewModel : ViewModelBase, IIncrementalCollectionOwner
+    public partial class ChatBoostsViewModel : ViewModelBase, IIncrementalCollectionOwner
     {
         private long _chatId;
         private string _nextOffset = string.Empty;

@@ -16,7 +16,7 @@ using Windows.UI.Xaml.Controls;
 
 namespace Telegram.ViewModels
 {
-    public class ContactsViewModel : MultiViewModelBase, IChildViewModel
+    public partial class ContactsViewModel : MultiViewModelBase, IChildViewModel
     {
         private readonly IVoipService _voipService;
 
@@ -195,7 +195,7 @@ namespace Telegram.ViewModels
 
     }
 
-    public class UserComparer : IComparer<User>
+    public partial class UserComparer : IComparer<User>
     {
         public UserComparer(bool epoch)
         {

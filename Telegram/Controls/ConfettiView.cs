@@ -16,7 +16,7 @@ using Windows.UI.Xaml.Controls;
 namespace Telegram.Controls
 {
     [TemplatePart(Name = "Canvas", Type = typeof(CanvasAnimatedControl))]
-    public class ConfettiView : Control
+    public partial class ConfettiView : Control
     {
         private CanvasAnimatedControl Canvas;
         private readonly string CanvasPartName = "Canvas";

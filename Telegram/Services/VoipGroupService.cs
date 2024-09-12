@@ -96,7 +96,7 @@ namespace Telegram.Services
         Task ConsolidateAsync();
     }
 
-    public class VoipGroupService : ServiceBase, IVoipGroupService
+    public partial class VoipGroupService : ServiceBase, IVoipGroupService
     {
         private readonly IViewService _viewService;
 

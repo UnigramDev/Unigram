@@ -68,7 +68,7 @@ namespace Telegram.Assets.Icons
     // |________________|______________|_______|_______________|
     // | #979797        | Foreground   | Color |   #FF979797   |
     // ---------------------------------------------------------
-    public sealed class VoiceRecognition
+    public sealed partial class VoiceRecognition
         : Microsoft.UI.Xaml.Controls.IAnimatedVisualSource
         , Microsoft.UI.Xaml.Controls.IAnimatedVisualSource2
     {

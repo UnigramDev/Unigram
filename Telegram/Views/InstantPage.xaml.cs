@@ -38,7 +38,7 @@ using Point = Windows.Foundation.Point;
 
 namespace Telegram.Views
 {
-    public class InstantPageArgs
+    public partial class InstantPageArgs
     {
         public InstantPageArgs(WebPageInstantView instantView, string url)
         {
@@ -690,7 +690,7 @@ namespace Telegram.Views
 
         #region Text selection
 
-        public class SelectionRange
+        public partial class SelectionRange
         {
             public int Start { get; set; }
             public int End { get; set; }

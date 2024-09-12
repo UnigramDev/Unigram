@@ -14,7 +14,7 @@ using Windows.UI;
 
 namespace Telegram.Charts.Data
 {
-    public class ChartData
+    public partial class ChartData
     {
         public long[] x;
         public float[] xPercentage;
@@ -303,7 +303,7 @@ namespace Telegram.Charts.Data
             return right;
         }
 
-        public class Line
+        public partial class Line
         {
             public int[] y;
 

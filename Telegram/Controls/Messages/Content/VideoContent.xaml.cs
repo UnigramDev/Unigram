@@ -17,7 +17,7 @@ using Windows.UI.Xaml.Media.Imaging;
 
 namespace Telegram.Controls.Messages.Content
 {
-    public sealed class VideoContent : Control, IContentWithFile, IPlayerView
+    public sealed partial class VideoContent : Control, IContentWithFile, IPlayerView
     {
         private MessageViewModel _message;
         public MessageViewModel Message => _message;

@@ -18,7 +18,7 @@ using Windows.UI.Xaml.Media;
 namespace Telegram.Controls.Messages.Content
 {
     // TODO: turn the whole control into a Button
-    public sealed class AudioContent : ControlEx, IContent
+    public sealed partial class AudioContent : ControlEx, IContent
     {
         private MessageViewModel _message;
         public MessageViewModel Message => _message;

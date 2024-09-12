@@ -17,7 +17,7 @@ using Point = Windows.Foundation.Point;
 
 namespace Telegram.Controls.Drawers
 {
-    public class ItemContextRequestedEventArgs<T> : EventArgs
+    public partial class ItemContextRequestedEventArgs<T> : EventArgs
     {
         private readonly ContextRequestedEventArgs _args;
 

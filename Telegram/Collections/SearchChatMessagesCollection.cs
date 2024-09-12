@@ -13,7 +13,7 @@ using Windows.UI.Xaml.Data;
 
 namespace Telegram.Collections
 {
-    public class SearchChatMessagesCollection : MvxObservableCollection<Message>, ISupportIncrementalLoading
+    public partial class SearchChatMessagesCollection : MvxObservableCollection<Message>, ISupportIncrementalLoading
     {
         private readonly IClientService _clientService;
 

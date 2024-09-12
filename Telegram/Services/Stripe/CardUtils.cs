@@ -7,7 +7,7 @@
 
 namespace Telegram.Services.Stripe
 {
-    public class CardUtils
+    public partial class CardUtils
     {
         public static int LENGTH_COMMON_CARD = 16;
         public static int LENGTH_AMERICAN_EXPRESS = 15;

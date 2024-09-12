@@ -14,7 +14,7 @@ using Windows.UI.Xaml.Data;
 
 namespace Telegram.Collections
 {
-    public class MediaCollection : ObservableCollection<MessageWithOwner>, ISupportIncrementalLoading
+    public partial class MediaCollection : ObservableCollection<MessageWithOwner>, ISupportIncrementalLoading
     {
         private readonly IClientService _clientService;
         private readonly SearchMessagesFilter _filter;

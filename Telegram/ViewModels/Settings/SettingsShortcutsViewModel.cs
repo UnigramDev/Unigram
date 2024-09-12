@@ -13,7 +13,7 @@ using Windows.UI.Xaml.Controls;
 
 namespace Telegram.ViewModels.Settings
 {
-    public class SettingsShortcutsViewModel : ViewModelBase
+    public partial class SettingsShortcutsViewModel : ViewModelBase
     {
         private readonly IShortcutsService _shortcutsService;
 

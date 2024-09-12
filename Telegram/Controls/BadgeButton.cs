@@ -20,7 +20,7 @@ using Windows.UI.Xaml.Media;
 
 namespace Telegram.Controls
 {
-    public class BadgeButton : GlyphButton
+    public partial class BadgeButton : GlyphButton
     {
         private BadgeButtonAutomationPeer _peer;
 
@@ -263,7 +263,7 @@ namespace Telegram.Controls
         #endregion
     }
 
-    public class BadgeButtonWithImage : BadgeButton
+    public partial class BadgeButtonWithImage : BadgeButton
     {
 
 
@@ -280,7 +280,7 @@ namespace Telegram.Controls
 
     }
 
-    public class BadgeButtonAutomationPeer : ButtonAutomationPeer, IValueProvider
+    public partial class BadgeButtonAutomationPeer : ButtonAutomationPeer, IValueProvider
     {
         private readonly BadgeButton _owner;
 

@@ -8,7 +8,7 @@ using Windows.UI.Xaml.Hosting;
 
 namespace Telegram.Composition
 {
-    public class CompositionBlobVisual
+    public partial class CompositionBlobVisual
     {
         private readonly ShapeVisual _visual;
         private readonly Visual _smallVisual;
@@ -240,7 +240,7 @@ namespace Telegram.Composition
         }
     }
 
-    public class CompositionBlobShape
+    public partial class CompositionBlobShape
     {
         private readonly int _pointsCount;
         private readonly float _smoothness;

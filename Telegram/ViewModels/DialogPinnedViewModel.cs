@@ -9,7 +9,7 @@ using Telegram.Services.Factories;
 
 namespace Telegram.ViewModels
 {
-    public class DialogPinnedViewModel : DialogViewModel
+    public partial class DialogPinnedViewModel : DialogViewModel
     {
         public DialogPinnedViewModel(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator, ILocationService locationService, INotificationsService pushService, IPlaybackService playbackService, IVoipService voipService, IVoipGroupService voipGroupService, INetworkService networkService, IStorageService storageService, ITranslateService translateService, IMessageFactory messageFactory)
             : base(clientService, settingsService, aggregator, locationService, pushService, playbackService, voipService, voipGroupService, networkService, storageService, translateService, messageFactory)

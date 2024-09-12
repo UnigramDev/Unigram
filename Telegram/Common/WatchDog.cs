@@ -63,7 +63,7 @@ namespace Telegram
      * 
      */
 
-    public class WatchDog
+    public partial class WatchDog
     {
         private static readonly bool _disabled = Constants.DEBUG;
 
@@ -392,7 +392,7 @@ namespace Telegram
         }
     }
 
-    public class VLCException : NativeException
+    public partial class VLCException : NativeException
     {
         public VLCException(string message, string stackTrace, IEnumerable<NativeStackFrame> frames)
             : base(message, stackTrace, frames)

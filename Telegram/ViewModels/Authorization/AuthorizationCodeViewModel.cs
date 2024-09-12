@@ -15,7 +15,7 @@ using Windows.UI.Xaml.Navigation;
 
 namespace Telegram.ViewModels.Authorization
 {
-    public class AuthorizationCodeViewModel : ViewModelBase
+    public partial class AuthorizationCodeViewModel : ViewModelBase
     {
         private bool _confirmedGoBack;
 

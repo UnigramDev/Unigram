@@ -27,7 +27,7 @@ using Windows.UI.Xaml.Data;
 
 namespace Telegram.ViewModels.Stories
 {
-    public class StoryListViewModel : ViewModelBase
+    public partial class StoryListViewModel : ViewModelBase
     {
         private readonly IStorageService _storageService;
         private readonly ITranslateService _translateService;
@@ -218,7 +218,7 @@ namespace Telegram.ViewModels.Stories
             _ = window.ShowAsync(NavigationService.XamlRoot);
         }
 
-        public class ItemsCollection : ObservableCollection<ActiveStoriesViewModel>, ISupportIncrementalLoading
+        public partial class ItemsCollection : ObservableCollection<ActiveStoriesViewModel>, ISupportIncrementalLoading
         {
             private readonly IClientService _clientService;
             private readonly IEventAggregator _aggregator;

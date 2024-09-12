@@ -68,7 +68,7 @@ namespace Telegram.Assets.Icons
     // |________________|______________|_______|_________________|
     // | #FFFFFF        | Color_000000 | Color | #FFFFFFFF White |
     // -----------------------------------------------------------
-    public sealed class Fragment
+    public sealed partial class Fragment
         : Microsoft.UI.Xaml.Controls.IAnimatedVisualSource
         , Microsoft.UI.Xaml.Controls.IAnimatedVisualSource2
     {

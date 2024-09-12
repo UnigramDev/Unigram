@@ -16,7 +16,7 @@ using Point = Windows.Foundation.Point;
 
 namespace Telegram.Controls.Messages.Content
 {
-    public sealed class ContactContent : Windows.UI.Xaml.Controls.Control, IContent
+    public sealed partial class ContactContent : Windows.UI.Xaml.Controls.Control, IContent
     {
         private MessageViewModel _message;
         public MessageViewModel Message => _message;

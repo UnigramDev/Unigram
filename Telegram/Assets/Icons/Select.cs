@@ -69,7 +69,7 @@ namespace Telegram.Assets.Icons
     // | #FF0000        | Color_FF0000 | Color |  #FFFF0000 Red  |
     // | #FFFFFF        | Color_FFFFFF | Color | #FFFFFFFF White |
     // -----------------------------------------------------------
-    public sealed class Select
+    public sealed partial class Select
         : Microsoft.UI.Xaml.Controls.IAnimatedVisualSource
         , Microsoft.UI.Xaml.Controls.IAnimatedVisualSource2
     {

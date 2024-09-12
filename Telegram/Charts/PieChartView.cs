@@ -17,7 +17,7 @@ using Windows.UI;
 
 namespace Telegram.Charts
 {
-    public class PieChartView : StackLinearChartView<PieChartViewData>
+    public partial class PieChartView : StackLinearChartView<PieChartViewData>
     {
 
         float[] values;

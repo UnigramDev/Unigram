@@ -11,7 +11,7 @@ using Windows.UI.Xaml.Controls.Primitives;
 
 namespace Telegram.Controls
 {
-    public class TableListView : SelectListView
+    public partial class TableListView : SelectListView
     {
         public TableListView()
         {
@@ -65,7 +65,7 @@ namespace Telegram.Controls
         }
     }
 
-    public class TableListViewItem : TextListViewItem
+    public partial class TableListViewItem : TextListViewItem
     {
         public TableListViewItem()
         {

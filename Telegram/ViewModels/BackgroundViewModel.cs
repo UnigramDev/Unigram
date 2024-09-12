@@ -22,7 +22,7 @@ using Windows.UI.Xaml.Navigation;
 
 namespace Telegram.ViewModels
 {
-    public class BackgroundInfo
+    public partial class BackgroundInfo
     {
         public InputBackground Background { get; set; }
         public BackgroundType Type { get; set; }
@@ -37,7 +37,7 @@ namespace Telegram.ViewModels
         }
     }
 
-    public class BackgroundParameters
+    public partial class BackgroundParameters
     {
         public string Slug { get; }
 
@@ -61,7 +61,7 @@ namespace Telegram.ViewModels
         }
     }
 
-    public class PatternInfo
+    public partial class PatternInfo
     {
         public long BackgroundId { get; }
 
@@ -74,7 +74,7 @@ namespace Telegram.ViewModels
         }
     }
 
-    public class BackgroundViewModel : ViewModelBase, IDelegable<IBackgroundDelegate>
+    public partial class BackgroundViewModel : ViewModelBase, IDelegable<IBackgroundDelegate>
     {
         public IBackgroundDelegate Delegate { get; set; }
 

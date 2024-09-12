@@ -6,7 +6,7 @@
 //
 namespace Telegram.Charts
 {
-    public class StepChartView : LinearChartView
+    public partial class StepChartView : LinearChartView
     {
         public StepChartView()
         {

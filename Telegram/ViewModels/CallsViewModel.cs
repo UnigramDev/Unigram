@@ -21,7 +21,7 @@ using Windows.UI.Xaml.Data;
 
 namespace Telegram.ViewModels
 {
-    public class CallsViewModel : ViewModelBase, IIncrementalCollectionOwner
+    public partial class CallsViewModel : ViewModelBase, IIncrementalCollectionOwner
     {
         public CallsViewModel(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator)
             : base(clientService, settingsService, aggregator)
@@ -145,7 +145,7 @@ namespace Telegram.ViewModels
         #endregion
     }
 
-    public class TLCallGroup
+    public partial class TLCallGroup
     {
         public TLCallGroup(IEnumerable<Message> messages, long chatId, User peer, bool failed)
         {

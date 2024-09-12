@@ -16,7 +16,7 @@ using Windows.UI.Xaml.Input;
 
 namespace Telegram.Controls.Drawers
 {
-    public class StickerDrawerItemClickEventArgs : EventArgs
+    public partial class StickerDrawerItemClickEventArgs : EventArgs
     {
         public StickerDrawerItemClickEventArgs(Sticker sticker, bool fromStickerSet)
         {

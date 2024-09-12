@@ -6,7 +6,7 @@
 //
 namespace Telegram.Charts
 {
-    public class DoubleStepChartView : DoubleLinearChartView
+    public partial class DoubleStepChartView : DoubleLinearChartView
     {
         public DoubleStepChartView()
         {

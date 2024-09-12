@@ -16,7 +16,7 @@ using Telegram.Td.Api;
 
 namespace Telegram
 {
-    public sealed class Logger
+    public sealed partial class Logger
     {
         public enum LogLevel
         {
@@ -136,7 +136,7 @@ namespace Telegram
         }
     }
 
-    public class RuntimeException : Exception
+    public partial class RuntimeException : Exception
     {
         public RuntimeException(Exception innerException)
             : base(innerException.Message, innerException)

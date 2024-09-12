@@ -11,7 +11,7 @@ using Windows.UI.Xaml.Controls;
 
 namespace Telegram.Selectors
 {
-    public class MessageContentTemplateSelector : DataTemplateSelector
+    public partial class MessageContentTemplateSelector : DataTemplateSelector
     {
         public DataTemplate PhotoTemplate { get; set; }
         public DataTemplate VideoTemplate { get; set; }

@@ -11,7 +11,7 @@ using Windows.Storage;
 
 namespace Telegram.Entities
 {
-    public class StorageAudio : StorageMedia
+    public partial class StorageAudio : StorageMedia
     {
         private StorageAudio(StorageFile file, ulong fileSize, double totalMilliseconds, string title, string performer)
             : base(file, fileSize)

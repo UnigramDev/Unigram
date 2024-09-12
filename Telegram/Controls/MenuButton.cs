@@ -21,7 +21,7 @@ namespace Telegram.Controls
         Dismiss,
     }
 
-    public class MenuButton : ToggleButton
+    public partial class MenuButton : ToggleButton
     {
         private CompositionSpriteShape _shape1;
         private CompositionSpriteShape _shape2;

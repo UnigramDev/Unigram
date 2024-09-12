@@ -23,7 +23,7 @@ using Windows.UI.Xaml.Navigation;
 
 namespace Telegram.ViewModels.Settings
 {
-    public class SettingsDataAndStorageViewModel : ViewModelBase
+    public partial class SettingsDataAndStorageViewModel : ViewModelBase
     {
         private readonly IStorageService _storageService;
 

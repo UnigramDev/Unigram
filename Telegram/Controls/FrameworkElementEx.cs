@@ -23,7 +23,7 @@ namespace Telegram.Controls
 
     // TODO: would be great to find a way to have this as a template.
 
-    public class ControlEx : Control
+    public partial class ControlEx : Control
     {
         private bool _loaded;
         private bool _unloaded;
@@ -103,7 +103,7 @@ namespace Telegram.Controls
         }
     }
 
-    public class UserControlEx : UserControl
+    public partial class UserControlEx : UserControl
     {
         private bool _loaded;
         private bool _unloaded;
@@ -183,7 +183,7 @@ namespace Telegram.Controls
         }
     }
 
-    public class PageEx : Page
+    public partial class PageEx : Page
     {
         private bool _loaded;
         private bool _unloaded;
@@ -263,7 +263,7 @@ namespace Telegram.Controls
         }
     }
 
-    public class ContentDialogEx : ContentDialog
+    public partial class ContentDialogEx : ContentDialog
     {
         private bool _loaded;
         private bool _unloaded;
@@ -343,7 +343,7 @@ namespace Telegram.Controls
         }
     }
 
-    public class GridEx : Grid
+    public partial class GridEx : Grid
     {
         private bool _loaded;
         private bool _unloaded;
@@ -423,7 +423,7 @@ namespace Telegram.Controls
         }
     }
 
-    public class ToggleButtonEx : ToggleButton
+    public partial class ToggleButtonEx : ToggleButton
     {
         private bool _loaded;
         private bool _unloaded;
@@ -503,7 +503,7 @@ namespace Telegram.Controls
         }
     }
 
-    public class ListViewEx : ListView
+    public partial class ListViewEx : ListView
     {
         private bool _loaded;
         private bool _unloaded;
@@ -583,7 +583,7 @@ namespace Telegram.Controls
         }
     }
 
-    public class ListViewItemEx : ListViewItem
+    public partial class ListViewItemEx : ListViewItem
     {
         private bool _loaded;
         private bool _unloaded;

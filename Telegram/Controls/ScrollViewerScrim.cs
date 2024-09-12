@@ -16,7 +16,7 @@ using Windows.UI.Xaml.Shapes;
 
 namespace Telegram.Controls
 {
-    public class ScrollViewerScrim : Control
+    public partial class ScrollViewerScrim : Control
     {
         private CompositionPropertySet _propertySet;
 

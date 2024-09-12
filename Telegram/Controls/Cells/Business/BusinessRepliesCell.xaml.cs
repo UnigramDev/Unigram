@@ -114,7 +114,7 @@ namespace Telegram.Controls.Cells.Business
         }
     }
 
-    public class BusinessRepliesPanel : Panel
+    public partial class BusinessRepliesPanel : Panel
     {
         protected override Size MeasureOverride(Size availableSize)
         {

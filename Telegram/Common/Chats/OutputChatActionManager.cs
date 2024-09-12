@@ -10,7 +10,7 @@ using Telegram.Td.Api;
 
 namespace Telegram.Common.Chats
 {
-    public class OutputChatActionManager
+    public partial class OutputChatActionManager
     {
         private readonly IClientService _clientService;
         private readonly Chat _chat;

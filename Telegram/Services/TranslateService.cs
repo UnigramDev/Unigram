@@ -30,7 +30,7 @@ namespace Telegram.Services
         bool Translate(MessageViewModel message, string toLanguage);
     }
 
-    public class TranslateService : ITranslateService
+    public partial class TranslateService : ITranslateService
     {
         private readonly IClientService _clientService;
         private readonly ISettingsService _settings;

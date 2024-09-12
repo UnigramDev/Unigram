@@ -14,7 +14,7 @@ using Telegram.ViewModels.Gallery;
 
 namespace Telegram.ViewModels
 {
-    public class InstantGalleryViewModel : GalleryViewModelBase
+    public partial class InstantGalleryViewModel : GalleryViewModelBase
     {
         private readonly bool _shouldGroup;
 

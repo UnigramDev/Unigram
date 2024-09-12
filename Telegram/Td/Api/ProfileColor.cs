@@ -12,7 +12,7 @@ using Windows.UI.Xaml;
 
 namespace Telegram.Td.Api
 {
-    public class ProfileColor
+    public partial class ProfileColor
     {
         public ProfileColor(ProfileAccentColor accent)
         {
@@ -62,7 +62,7 @@ namespace Telegram.Td.Api
         public int MinSupergroupChatBoostLevel { get; }
     }
 
-    public class ProfileColors
+    public partial class ProfileColors
     {
         public ProfileColors(ProfileAccentColors colors)
         {

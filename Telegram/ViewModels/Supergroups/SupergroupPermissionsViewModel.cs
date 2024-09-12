@@ -14,7 +14,7 @@ using Windows.UI.Xaml.Navigation;
 
 namespace Telegram.ViewModels.Supergroups
 {
-    public class SupergroupPermissionsViewModel : SupergroupMembersViewModelBase
+    public partial class SupergroupPermissionsViewModel : SupergroupMembersViewModelBase
     {
         public SupergroupPermissionsViewModel(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator)
             : base(clientService, settingsService, aggregator, new SupergroupMembersFilterRestricted(), query => new SupergroupMembersFilterRestricted(query))

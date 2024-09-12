@@ -20,7 +20,7 @@ namespace Telegram.Common
         Sticker
     }
 
-    public class AutocompleteEntityFinder
+    public partial class AutocompleteEntityFinder
     {
         private static readonly HashSet<char> _symbols = new HashSet<char> { ':', '#', '@', '/' };
 

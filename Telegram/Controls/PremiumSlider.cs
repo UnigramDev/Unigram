@@ -27,7 +27,7 @@ using VirtualKey = Windows.System.VirtualKey;
 
 namespace Telegram.Controls
 {
-    public class PremiumSlider : Slider
+    public partial class PremiumSlider : Slider
     {
         private AnimatedTextBlock ValueText;
         private Grid ValueRoot;

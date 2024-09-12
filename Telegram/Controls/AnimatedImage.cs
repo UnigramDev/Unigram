@@ -36,17 +36,17 @@ using Windows.UI.Xaml.Media.Imaging;
 
 namespace Telegram.Controls
 {
-    public class AnimatedImagePositionChangedEventArgs : EventArgs
+    public partial class AnimatedImagePositionChangedEventArgs : EventArgs
     {
         public int Position { get; set; }
     }
 
-    public class AnimatedImageLoopCompletedEventArgs : CancelEventArgs
+    public partial class AnimatedImageLoopCompletedEventArgs : CancelEventArgs
     {
 
     }
 
-    public class AnimatedImage : ControlEx, IPlayerView
+    public partial class AnimatedImage : ControlEx, IPlayerView
     {
         enum PlayingState
         {
@@ -733,7 +733,7 @@ namespace Telegram.Controls
         #endregion
     }
 
-    public class AnimatedImagePresenter
+    public partial class AnimatedImagePresenter
     {
         private bool _ticking;
         private bool _rendering;
@@ -1394,7 +1394,7 @@ namespace Telegram.Controls
         Loop,
     }
 
-    public class LottieAnimatedImageTask : AnimatedImageTask
+    public partial class LottieAnimatedImageTask : AnimatedImageTask
     {
         private readonly LottieAnimation _animation;
         private readonly HashSet<int> _markers;
@@ -1463,7 +1463,7 @@ namespace Telegram.Controls
         }
     }
 
-    public class VideoAnimatedImageTask : AnimatedImageTask
+    public partial class VideoAnimatedImageTask : AnimatedImageTask
     {
         private readonly CachedVideoAnimation _animation;
 
@@ -1516,7 +1516,7 @@ namespace Telegram.Controls
         }
     }
 
-    public class WebpAnimatedImageTask : AnimatedImageTask
+    public partial class WebpAnimatedImageTask : AnimatedImageTask
     {
         private readonly IBuffer _animation;
 
@@ -1540,7 +1540,7 @@ namespace Telegram.Controls
         }
     }
 
-    public class ParticlesAnimatedImageTask : AnimatedImageTask
+    public partial class ParticlesAnimatedImageTask : AnimatedImageTask
     {
         private readonly ParticlesAnimation _animation;
 
@@ -1588,7 +1588,7 @@ namespace Telegram.Controls
 
     public record AnimatedImagePresentation(AnimatedImageSource Source, int PixelWidth, int PixelHeight, double RasterizationScale, bool LimitFps, int LoopCount, bool AutoPlay, bool IsCachingEnabled);
 
-    public class AnimatedImageLoader
+    public partial class AnimatedImageLoader
     {
         [ThreadStatic]
         private static AnimatedImageLoader _current;

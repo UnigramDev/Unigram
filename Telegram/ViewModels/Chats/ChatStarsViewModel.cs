@@ -24,7 +24,7 @@ using Windows.UI.Xaml.Navigation;
 
 namespace Telegram.ViewModels.Chats
 {
-    public class ChatStarsViewModel : ViewModelBase, IIncrementalCollectionOwner, IHandle
+    public partial class ChatStarsViewModel : ViewModelBase, IIncrementalCollectionOwner, IHandle
     {
         private MessageSender _ownerId;
 

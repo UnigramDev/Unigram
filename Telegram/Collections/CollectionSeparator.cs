@@ -6,7 +6,7 @@
 //
 namespace Telegram.Collections
 {
-    public class CollectionSeparator
+    public partial class CollectionSeparator
     {
         public string Footer { get; set; }
 

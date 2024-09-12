@@ -19,7 +19,7 @@ namespace Telegram.Services
         string SystemLanguageCode { get; }
     }
 
-    public class DeviceInfoService : IDeviceInfoService
+    public partial class DeviceInfoService : IDeviceInfoService
     {
         public static string DefaultSystemManufacturer = "System manufacturer";
         public static string DefaultSystemProductName = "System Product Name";

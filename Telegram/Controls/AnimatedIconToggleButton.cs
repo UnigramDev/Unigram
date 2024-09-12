@@ -10,7 +10,7 @@ using Windows.UI.Xaml.Media;
 
 namespace Telegram.Controls
 {
-    public class AnimatedIconToggleButton : AnimatedGlyphToggleButton
+    public partial class AnimatedIconToggleButton : AnimatedGlyphToggleButton
     {
         private AnimatedIcon Icon;
 

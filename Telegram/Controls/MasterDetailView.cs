@@ -30,7 +30,7 @@ namespace Telegram.Controls
         Background
     }
 
-    public sealed class MasterDetailView : ContentControl, IDisposable
+    public sealed partial class MasterDetailView : ContentControl, IDisposable
     {
         private MasterDetailPanel AdaptivePanel;
         private Frame DetailFrame;

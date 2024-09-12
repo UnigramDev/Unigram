@@ -24,7 +24,7 @@ using Windows.UI.Xaml.Navigation;
 
 namespace Telegram.ViewModels.Payments
 {
-    public class PaymentFormArgs
+    public partial class PaymentFormArgs
     {
         public PaymentFormArgs(InputInvoice inputInvoice, PaymentForm paymentForm, MessageContent content)
         {
@@ -40,7 +40,7 @@ namespace Telegram.ViewModels.Payments
         public MessageContent Content { get; }
     }
 
-    public class PaymentFormViewModel : ViewModelBase
+    public partial class PaymentFormViewModel : ViewModelBase
     {
         public PaymentFormViewModel(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator)
             : base(clientService, settingsService, aggregator)

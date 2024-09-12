@@ -13,7 +13,7 @@ using Windows.UI.Xaml.Hosting;
 
 namespace Telegram.Controls
 {
-    public class CallHangupButton : AnimatedGlyphToggleButton
+    public partial class CallHangupButton : AnimatedGlyphToggleButton
     {
         private Visual _visual;
 

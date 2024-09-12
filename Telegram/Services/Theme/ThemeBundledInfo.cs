@@ -9,7 +9,7 @@ using Windows.UI;
 
 namespace Telegram.Services
 {
-    public class ThemeBundledInfo : ThemeInfoBase
+    public partial class ThemeBundledInfo : ThemeInfoBase
     {
         public override bool IsOfficial => true;
     }

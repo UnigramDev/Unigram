@@ -3,7 +3,7 @@ using Windows.UI.Xaml;
 
 namespace Telegram.Controls
 {
-    public class SystemOverlayMetrics
+    public partial class SystemOverlayMetrics
     {
         public SystemOverlayMetrics(CoreApplicationViewTitleBar sender)
         {
@@ -22,7 +22,7 @@ namespace Telegram.Controls
         public bool IsVisible { get; }
     }
 
-    public class CorePage : PageEx
+    public partial class CorePage : PageEx
     {
         private bool _registered;
 

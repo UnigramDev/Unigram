@@ -63,7 +63,7 @@ namespace Telegram.Assets.Icons
     // Frame rate:  60 fps
     // Frame count: 60
     // Duration:    1000.0 mS
-    public sealed class ActionVideo
+    public sealed partial class ActionVideo
         : Microsoft.UI.Xaml.Controls.IAnimatedVisualSource
         , Microsoft.UI.Xaml.Controls.IAnimatedVisualSource2
     {

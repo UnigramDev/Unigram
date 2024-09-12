@@ -8,7 +8,7 @@ using System;
 
 namespace Telegram.Charts
 {
-    public class SegmentTree
+    public partial class SegmentTree
     {
 
         private readonly Node[] heap;

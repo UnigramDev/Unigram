@@ -8,7 +8,7 @@ namespace LibVLCSharp.Shared
     /// <summary>
     /// The MediaList holds a list of Media types
     /// </summary>
-    public class MediaList : Internal, IEnumerable<Media>
+    public partial class MediaList : Internal, IEnumerable<Media>
     {
         MediaListEventManager _eventManager;
         readonly object _syncLock = new object();

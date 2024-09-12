@@ -63,7 +63,7 @@ namespace Telegram.Assets.Icons
     // Frame rate:  60 fps
     // Frame count: 120
     // Duration:    2000.0 mS
-    public sealed class ActionSticker
+    public sealed partial class ActionSticker
         : Microsoft.UI.Xaml.Controls.IAnimatedVisualSource
         , Microsoft.UI.Xaml.Controls.IAnimatedVisualSource2
     {

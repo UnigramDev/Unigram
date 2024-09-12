@@ -11,7 +11,7 @@ using Windows.UI.Xaml.Controls;
 
 namespace Telegram.Selectors
 {
-    public class StickerSetTemplateSelector : DataTemplateSelector
+    public partial class StickerSetTemplateSelector : DataTemplateSelector
     {
         public DataTemplate GroupTemplate { get; set; }
         public DataTemplate RecentsTemplate { get; set; }

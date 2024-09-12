@@ -19,7 +19,7 @@ using Windows.UI.Xaml.Navigation;
 
 namespace Telegram.ViewModels.Supergroups
 {
-    public class SupergroupEditRestrictedViewModel : ViewModelBase, IDelegable<IMemberPopupDelegate>
+    public partial class SupergroupEditRestrictedViewModel : ViewModelBase, IDelegable<IMemberPopupDelegate>
     {
         public IMemberPopupDelegate Delegate { get; set; }
 

@@ -15,7 +15,7 @@ namespace Telegram.Td.Api
         Expired
     }
 
-    public class MessageAsyncStory : MessageContent
+    public partial class MessageAsyncStory : MessageContent
     {
         /// <summary>
         /// True, if the story was automatically forwarded because of a mention of the user.

@@ -3,7 +3,7 @@
     /// <summary>
     /// VideoView implementation for the UWP platform
     /// </summary>
-    public class VideoView : VideoView<InitializedEventArgs>
+    public partial class VideoView : VideoView<InitializedEventArgs>
     {
         /// <summary>
         /// Creates args for <see cref="VideoView{TInitializedEventArgs}.Initialized"/> event

@@ -13,7 +13,7 @@ using Windows.UI.Xaml.Data;
 
 namespace Telegram.ViewModels.Stars
 {
-    public class StarsViewModel : ViewModelBase, IIncrementalCollectionOwner, IHandle
+    public partial class StarsViewModel : ViewModelBase, IIncrementalCollectionOwner, IHandle
     {
         private readonly SubscriptionCollection _subscriptions;
 

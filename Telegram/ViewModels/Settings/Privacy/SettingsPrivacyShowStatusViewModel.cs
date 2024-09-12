@@ -13,7 +13,7 @@ using Windows.UI.Xaml.Navigation;
 
 namespace Telegram.ViewModels.Settings.Privacy
 {
-    public class SettingsPrivacyShowStatusViewModel : SettingsPrivacyViewModelBase
+    public partial class SettingsPrivacyShowStatusViewModel : SettingsPrivacyViewModelBase
     {
         public SettingsPrivacyShowStatusViewModel(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator)
             : base(clientService, settingsService, aggregator, new UserPrivacySettingShowStatus())

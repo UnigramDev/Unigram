@@ -27,7 +27,7 @@ using Windows.UI.Xaml.Media;
 
 namespace Telegram.Controls.Messages
 {
-    public class MessageService : Button
+    public partial class MessageService : Button
     {
         private MessageViewModel _message;
 

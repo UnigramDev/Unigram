@@ -147,7 +147,7 @@ namespace Telegram.Views.Stars.Popups
         }
     }
 
-    public class PaidReactorsPanel : Panel, IDiffEqualityComparer<PaidReactor>
+    public partial class PaidReactorsPanel : Panel, IDiffEqualityComparer<PaidReactor>
     {
         private readonly Dictionary<PaidReactor, PaidReactorCell> _cache = new();
 
@@ -336,7 +336,7 @@ namespace Telegram.Views.Stars.Popups
         }
     }
 
-    public class SteppedValue
+    public partial class SteppedValue
     {
         public double progress = 0;
         public double aprogress;

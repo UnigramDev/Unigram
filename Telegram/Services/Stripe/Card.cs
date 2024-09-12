@@ -8,7 +8,7 @@ using System.Text.RegularExpressions;
 
 namespace Telegram.Services.Stripe
 {
-    public class Card
+    public partial class Card
     {
         public enum StringDef
         {

@@ -21,7 +21,7 @@ using Windows.UI.Xaml.Input;
 namespace Telegram.Controls
 {
     [TemplatePart(Name = "Canvas", Type = typeof(CanvasControl))]
-    public class PencilCanvas : Control
+    public partial class PencilCanvas : Control
     {
         private static readonly Color? ERASING_STROKE = null;
         private static readonly float ERASING_STROKE_THICKNESS = 20;
@@ -268,7 +268,7 @@ namespace Telegram.Controls
         Eraser
     }
 
-    public sealed class SmoothPathBuilder
+    public sealed partial class SmoothPathBuilder
     {
         private List<Vector2> _controlPoints;
         private List<Vector2> _path;

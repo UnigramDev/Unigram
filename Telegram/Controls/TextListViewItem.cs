@@ -14,7 +14,7 @@ using Windows.UI.Xaml.Controls;
 
 namespace Telegram.Controls
 {
-    public class TextListView : ListView
+    public partial class TextListView : ListView
     {
         protected override DependencyObject GetContainerForItemOverride()
         {
@@ -22,7 +22,7 @@ namespace Telegram.Controls
         }
     }
 
-    public class TextListViewItem : ListViewItemEx
+    public partial class TextListViewItem : ListViewItemEx
     {
         protected override AutomationPeer OnCreateAutomationPeer()
         {
@@ -30,7 +30,7 @@ namespace Telegram.Controls
         }
     }
 
-    public class TextListViewItemAutomationPeer : ListViewItemAutomationPeer
+    public partial class TextListViewItemAutomationPeer : ListViewItemAutomationPeer
     {
         private readonly ListViewItem _owner;
 
@@ -72,7 +72,7 @@ namespace Telegram.Controls
 
 
 
-    public class TextGridViewItem : GridViewItem
+    public partial class TextGridViewItem : GridViewItem
     {
         protected override AutomationPeer OnCreateAutomationPeer()
         {
@@ -80,7 +80,7 @@ namespace Telegram.Controls
         }
     }
 
-    public class TextGridViewItemAutomationPeer : GridViewItemAutomationPeer
+    public partial class TextGridViewItemAutomationPeer : GridViewItemAutomationPeer
     {
         private readonly GridViewItem _owner;
 

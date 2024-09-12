@@ -8,7 +8,7 @@ using Windows.Data.Json;
 
 namespace Telegram.Charts.Data
 {
-    public class StackBarChartData : ChartData
+    public partial class StackBarChartData : ChartData
     {
         public int[] ySum;
         public SegmentTree ySumSegmentTree;

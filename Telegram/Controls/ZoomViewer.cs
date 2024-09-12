@@ -12,7 +12,7 @@ using Point = Windows.Foundation.Point;
 
 namespace Telegram.Controls
 {
-    public class ZoomViewer : ContentControl
+    public partial class ZoomViewer : ContentControl
     {
         private ScrollViewer ScrollingHost;
 

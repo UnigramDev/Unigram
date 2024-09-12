@@ -13,7 +13,7 @@ using Windows.UI.Xaml.Navigation;
 
 namespace Telegram.Navigation
 {
-    public class MultiViewModelBase : ViewModelBase
+    public partial class MultiViewModelBase : ViewModelBase
     {
         public readonly List<ViewModelBase> Children;
 
