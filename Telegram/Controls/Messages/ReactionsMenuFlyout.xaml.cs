@@ -29,6 +29,7 @@ using Telegram.Td.Api;
 using Telegram.ViewModels;
 using Telegram.ViewModels.Drawers;
 using Telegram.ViewModels.Stories;
+using Telegram.Views.Stars.Popups;
 using Windows.Foundation;
 using Windows.System;
 using Point = Windows.Foundation.Point;
@@ -290,7 +291,7 @@ namespace Telegram.Controls.Messages
 
             foreach (var item in items)
             {
-                static AnimatedImage Create(double size, bool auto)
+                static AnimatedImage Create(double size, bool auto, bool cache)
                 {
                     var animated = new AnimatedImage();
                     animated.AutoPlay = auto;
@@ -298,14 +299,20 @@ namespace Telegram.Controls.Messages
                     animated.LoopCount = auto ? 1 : 0;
                     animated.FrameSize = new Size(size, size);
                     animated.DecodeFrameType = DecodePixelType.Logical;
+                    animated.IsCachingEnabled = cache;
                     animated.Width = size;
                     animated.Height = size;
 
                     return animated;
                 }
 
-                var visible = Create(28, true);
-                var preload = Create(32, false);
+                if (item.Item1.Type is ReactionTypePaid)
+                {
+                    PaidReaction.Visibility = Visibility.Visible;
+                }
+
+                var visible = Create(28, true, item.Item2.Id != 0);
+                var preload = Create(32, false, item.Item2.Id != 0);
 
                 visible.Source = new DelayedFileSource(clientService, item.Item2);
                 preload.Source = new DelayedFileSource(clientService, item.Item2.StickerValue);
@@ -333,6 +340,8 @@ namespace Telegram.Controls.Messages
 
                 Grid.SetColumn(preload, index);
                 Grid.SetColumn(button, index);
+
+                Canvas.SetZIndex(button, 1);
 
                 Presenter.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Auto) });
                 Presenter.Children.Insert(index, button);
@@ -748,15 +757,32 @@ namespace Telegram.Controls.Messages
 
         private async void MessageToggleReaction(ReactionType reaction)
         {
-            if (_message.InteractionInfo?.Reactions != null && _message.InteractionInfo.Reactions.IsChosen(reaction))
+            if (reaction is not ReactionTypePaid && _message.InteractionInfo?.Reactions != null && _message.InteractionInfo.Reactions.IsChosen(reaction))
             {
                 _message.ClientService.Send(new RemoveMessageReaction(_message.ChatId, _message.Id, reaction));
             }
             else
             {
-                await _message.ClientService.SendAsync(new AddMessageReaction(_message.ChatId, _message.Id, reaction, false, true));
+                BaseObject added;
+                if (reaction is ReactionTypePaid)
+                {
+                    var popup = new ReactPopup(_message.ClientService, _message);
 
-                if (_bubble != null && _bubble.IsLoaded)
+                    var confirm = await popup.ShowQueuedAsync(XamlRoot);
+                    if (confirm != ContentDialogResult.Primary)
+                    {
+                        return;
+                    }
+
+                    _message.ClientService.Options.IsPaidReactionAnonymous = popup.IsAnonymous;
+                    added = await PaidReactionService.AddPendingAsync(XamlRoot, _message, popup.StarCount, false, popup.IsAnonymous);
+                }
+                else
+                {
+                    added = await _message.ClientService.SendAsync(new AddMessageReaction(_message.ChatId, _message.Id, reaction, false, true));
+                }
+
+                if (added is Ok && _bubble != null && _bubble.IsLoaded)
                 {
                     var unread = new UnreadReaction(reaction, null, false);
 

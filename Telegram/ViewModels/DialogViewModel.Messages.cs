@@ -445,8 +445,7 @@ namespace Telegram.ViewModels
                         title = ClientService.GetTitle(senderChat);
                     }
 
-                    var date = Formatter.ToLocalTime(message.Date);
-                    builder.AppendLine(string.Format("{0}, [{1} {2}]", title, Formatter.ShortDate.Format(date), Formatter.ShortTime.Format(date)));
+                    builder.AppendLine(string.Format("{0}, [{1} {2}]", title, Formatter.Date(message.Date), Formatter.Time(message.Date)));
 
                     if (message.ForwardInfo?.Origin is MessageOriginChat fromChat)
                     {
@@ -1699,9 +1698,9 @@ namespace Telegram.ViewModels
             {
                 MessageHelper.OpenTelegramUrl(ClientService, NavigationService, new InternalLinkTypePremiumGiftCode(premiumGiftCode.Code));
             }
-            else if (message.Content is MessagePremiumGiveawayCompleted premiumGiveawayCompleted)
+            else if (message.Content is MessageGiveawayCompleted giveawayCompleted)
             {
-                await LoadMessageSliceAsync(message.Id, premiumGiveawayCompleted.GiveawayMessageId);
+                await LoadMessageSliceAsync(message.Id, giveawayCompleted.GiveawayMessageId);
             }
         }
 

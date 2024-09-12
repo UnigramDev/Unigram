@@ -185,6 +185,12 @@ namespace Telegram.Views.Premium.Popups
                     subtitleValue = Strings.PremiumPreviewBusinessDescription;
                     badge = true;
                     break;
+                case PremiumFeatureMessageEffects:
+                    iconValue = Icons.ChatSparkeFilled;
+                    titleValue = Strings.PremiumPreviewEffects;
+                    subtitleValue = Strings.PremiumPreviewEffectsDescription;
+                    badge = true;
+                    break;
             }
 
             var title = content.FindName("Title") as TextBlock;

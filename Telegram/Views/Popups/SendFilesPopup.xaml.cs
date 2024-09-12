@@ -141,12 +141,12 @@ namespace Telegram.Views.Popups
         private bool _isAlbum = true;
         public bool IsAlbum
         {
-            get => _isAlbum;
+            get => _isAlbum && IsAlbumAvailable;
             set
             {
                 if (_isAlbum != value)
                 {
-                    _isAlbum = IsAlbumAvailable && value;
+                    _isAlbum = value && IsAlbumAvailable;
                     PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(IsAlbum)));
                 }
             }
@@ -429,20 +429,32 @@ namespace Telegram.Views.Popups
 
             var glyph = root.FindName("Glyph") as TextBlock;
             glyph.Text = storage is StoragePhoto
-                ? Icons.Image
+                ? Icons.ImageFilled24
                 : storage is StorageVideo
-                ? Icons.Play
-                : Icons.Document;
+                ? Icons.PlayFilled24
+                : Icons.DocumentFilled24;
 
             var title = root.FindName("Title") as TextBlock;
+            var titleTrim = root.FindName("TitleTrim") as TextBlock;
             var subtitle = root.FindName("Subtitle") as TextBlock;
 
-            if (title == null || subtitle == null)
+            if (title == null || titleTrim == null || subtitle == null)
             {
                 return;
             }
 
-            title.Text = storage.File.Name;
+            var index = storage.File.Name.LastIndexOf('.');
+            if (index > 0)
+            {
+                title.Text = storage.File.Name.Substring(0, index + 1);
+                titleTrim.Text = storage.File.Name.Substring(index + 1);
+            }
+            else
+            {
+                title.Text = storage.File.Name;
+                titleTrim.Text = string.Empty;
+            }
+
             subtitle.Text = FileSizeConverter.Convert((long)storage.Size);
         }
 
@@ -557,8 +569,8 @@ namespace Telegram.Views.Popups
                     {
                         Items.Add(photo);
 
-                        UpdateView();
                         UpdatePanel();
+                        UpdateView();
                     }
                 }
                 else if (package.AvailableFormats.Contains(StandardDataFormats.StorageItems))
@@ -571,8 +583,8 @@ namespace Telegram.Views.Popups
                         Items.Add(item);
                     }
 
-                    UpdateView();
                     UpdatePanel();
+                    UpdateView();
                 }
             }
             catch { }
@@ -596,14 +608,7 @@ namespace Telegram.Views.Popups
 
         private void UpdatePanel()
         {
-            if (IsAlbum && !IsAlbumAvailable)
-            {
-                IsAlbum = false;
-            }
-            else if (_wasAlbum && IsAlbumAvailable)
-            {
-                IsAlbum = true;
-            }
+            IsAlbum = IsAlbumAvailable;
 
             var state = IsAlbum && IsAlbumAvailable && IsMediaSelected ? 1 : 0;
             if (state != _panelState)
@@ -736,8 +741,8 @@ namespace Telegram.Views.Popups
 
         private void Album_Click(object sender, RoutedEventArgs e)
         {
-            _wasAlbum = AlbumButton.IsChecked == true;
-            IsAlbum = _wasAlbum;
+            //_wasAlbum = AlbumButton.IsChecked == true;
+            //IsAlbum = _wasAlbum;
 
             UpdateView();
             UpdatePanel();
@@ -767,7 +772,7 @@ namespace Telegram.Views.Popups
             void Update(MessageSelfDestructType ttl)
             {
                 media.Ttl = ttl;
-                ToastPopup.Show(sender as FrameworkElement,
+                ToastPopup.Show(XamlRoot,
                     media is StorageVideo
                         ? ttl is MessageSelfDestructTypeTimer timer1
                         ? Locale.Declension(Strings.R.TimerPeriodVideoSetSeconds, timer1.SelfDestructTime)
@@ -781,8 +786,10 @@ namespace Telegram.Views.Popups
                         : Strings.TimerPeriodPhotoKeep,
                     ttl == null
                         ? ToastPopupIcon.AutoRemoveOff
-                        : ToastPopupIcon.AutoRemoveOn,
-                    TeachingTipPlacementMode.TopLeft);
+                        : ToastPopupIcon.AutoRemoveOn);
+
+                UpdateView();
+                UpdatePanel();
             }
 
             var command = new RelayCommand<MessageSelfDestructType>(Update);
@@ -862,6 +869,11 @@ namespace Telegram.Views.Popups
             var self = IsSavedMessages;
 
             var flyout = new MenuFlyout();
+
+            if (IsAlbumAvailable)
+            {
+                flyout.CreateFlyoutItem(() => { IsAlbum = false; Hide(ContentDialogResult.Primary); }, Strings.SendWithoutGrouping, "\uE90C");
+            }
 
             flyout.CreateFlyoutItem(() => { Silent = true; Hide(ContentDialogResult.Primary); }, Strings.SendWithoutSound, Icons.AlertOff);
             flyout.CreateFlyoutItem(() => { Schedule = true; Hide(ContentDialogResult.Primary); }, self ? Strings.SetReminder : Strings.ScheduleMessage, Icons.CalendarClock);
@@ -1032,7 +1044,7 @@ namespace Telegram.Views.Popups
         private async void MakeContentPaid()
         {
             var popup = new InputTeachingTip(InputPopupType.Stars);
-            popup.Value = 0;
+            popup.Value = StarCount;
             popup.Maximum = ViewModel.ClientService.Options.PaidMediaMessageStarCountMax;
 
             popup.Title = Strings.PaidContentTitle;

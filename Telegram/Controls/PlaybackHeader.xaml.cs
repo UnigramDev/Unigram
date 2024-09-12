@@ -165,7 +165,7 @@ namespace Telegram.Controls
             if (message.Content is MessageVoiceNote || message.Content is MessageVideoNote || linkPreview?.Type is LinkPreviewTypeVoiceNote or LinkPreviewTypeVideoNote)
             {
                 var title = string.Empty;
-                var date = Formatter.ToLocalTime(message.Date);
+                var date = Formatter.DateAt(message.Date);
 
                 if (_clientService.TryGetUser(message.SenderId, out Telegram.Td.Api.User senderUser))
                 {
@@ -176,9 +176,7 @@ namespace Telegram.Controls
                     title = _clientService.GetTitle(senderChat);
                 }
 
-                var subtitle = string.Format(Strings.formatDateAtTime, Formatter.ShortDate.Format(date), Formatter.ShortTime.Format(date));
-
-                UpdateText(message.ChatId, message.Id, title, subtitle);
+                UpdateText(message.ChatId, message.Id, title, date);
 
                 PreviousButton.Visibility = Visibility.Collapsed;
                 NextButton.Visibility = Visibility.Collapsed;

@@ -10,14 +10,10 @@ namespace Telegram.Services.Updates
 {
     public partial class UpdateCallDialog
     {
-        public UpdateCallDialog(Call call)
+        public UpdateCallDialog(Call call, GroupCall groupCall)
         {
             Call = call;
-        }
-
-        public UpdateCallDialog(GroupCall call)
-        {
-            GroupCall = call;
+            GroupCall = groupCall;
         }
 
         public UpdateCallDialog()

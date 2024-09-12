@@ -17,6 +17,7 @@ using Telegram.Navigation.Services;
 using Telegram.Services.Updates;
 using Telegram.Services.ViewService;
 using Telegram.Td.Api;
+using Telegram.Views;
 using Telegram.Views.Calls;
 using Telegram.Views.Popups;
 using Windows.ApplicationModel;
@@ -630,7 +631,7 @@ namespace Telegram.Services
                 }
             }
 
-            Aggregator.Publish(new UpdateCallDialog(_call));
+            Aggregator.Publish(new UpdateCallDialog(_call, TypeResolver.Current.Resolve<IVoipGroupService>(SessionId).Call));
         }
 
         private void OnAudioLevelUpdated(VoipManager sender, float args)

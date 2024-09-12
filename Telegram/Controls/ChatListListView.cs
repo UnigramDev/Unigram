@@ -448,15 +448,33 @@ namespace Telegram.Controls
 
     public partial class ChatListListViewItem : TopNavViewItem
     {
-        private readonly ChatListListView _list;
+        private readonly ChatListListView _owner;
 
         private readonly bool _multi;
         private bool _selected;
 
-        public ChatListListViewItem()
+        public ChatListListViewItem(ChatListListView list)
         {
-            _multi = true;
             DefaultStyleKey = typeof(ChatListListViewItem);
+
+            _multi = true;
+            _owner = list;
+
+            _recognizer = new GestureRecognizer();
+            _recognizer.GestureSettings = GestureSettings.HoldWithMouse;
+
+            Connected += OnLoaded;
+            Disconnected += OnUnloaded;
+        }
+
+        private void OnLoaded(object sender, RoutedEventArgs e)
+        {
+            _recognizer.Holding += OnHolding;
+        }
+
+        private void OnUnloaded(object sender, RoutedEventArgs e)
+        {
+            _recognizer.Holding -= OnHolding;
         }
 
         public bool IsSingle => !_multi;
@@ -471,7 +489,7 @@ namespace Telegram.Controls
             if (ContentTemplateRoot is IMultipleElement test)
             {
                 _selected = selected;
-                test.UpdateState(selected, true, _list.SelectionMode == ListViewSelectionMode.Multiple);
+                test.UpdateState(selected, true, _owner.SelectionMode == ListViewSelectionMode.Multiple);
             }
         }
 
@@ -488,24 +506,11 @@ namespace Telegram.Controls
             return new ChatListListViewItemAutomationPeer(this);
         }
 
-        public ChatListListViewItem(ChatListListView list)
-        {
-            DefaultStyleKey = typeof(ChatListListViewItem);
-
-            _multi = true;
-            _list = list;
-            //RegisterPropertyChangedCallback(IsSelectedProperty, OnSelectedChanged);
-
-            _recognizer = new GestureRecognizer();
-            _recognizer.GestureSettings = GestureSettings.HoldWithMouse;
-            _recognizer.Holding += OnHolding;
-        }
-
         private void OnSelectedChanged(DependencyObject sender, DependencyProperty dp)
         {
             if (ContentTemplateRoot is ChatCell content)
             {
-                content?.UpdateViewState(_list.ItemFromContainer(this) as Chat, _list._viewState == MasterDetailState.Compact, false);
+                content?.UpdateViewState(_owner.ItemFromContainer(this) as Chat, _owner._viewState == MasterDetailState.Compact, false);
             }
         }
 
@@ -536,7 +541,7 @@ namespace Telegram.Controls
 
         protected override void OnPointerCanceled(PointerRoutedEventArgs e)
         {
-            _recognizer.CompleteGesture();
+            _recognizer.TryCompleteGesture();
             base.OnPointerCanceled(e);
         }
 

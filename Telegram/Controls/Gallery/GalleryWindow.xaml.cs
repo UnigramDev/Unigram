@@ -587,8 +587,7 @@ namespace Telegram.Controls.Gallery
 
         private string ConvertDate(int value)
         {
-            var date = Formatter.ToLocalTime(value);
-            return string.Format(Strings.formatDateAtTime, Formatter.ShortDate.Format(date), Formatter.ShortTime.Format(date));
+            return Formatter.DateAt(value);
         }
 
         private string ConvertOf(GalleryMedia item, int index, int count)

@@ -5,6 +5,7 @@
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
 using Microsoft.UI.Dispatching;
+using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using System;
 using System.Collections.Generic;
@@ -20,6 +21,7 @@ using Telegram.Navigation;
 using Telegram.Td;
 using Telegram.Td.Api;
 using Telegram.Views;
+using Telegram.Views.Popups;
 using Windows.Data.Xml.Dom;
 using Windows.Networking.PushNotifications;
 using Windows.Storage;
@@ -29,15 +31,13 @@ namespace Telegram.Services
 {
     public interface INotificationsService
     {
-        Task CloseAsync();
-
         Task ProcessAsync(Dictionary<string, string> data);
 
         void PlaySound();
 
         #region Chats related
 
-        void SetMuteFor(Chat chat, int muteFor);
+        void SetMuteFor(Chat chat, int muteFor, XamlRoot xamlRoot);
 
         #endregion
     }
@@ -450,18 +450,24 @@ namespace Telegram.Services
 
             if (_suppress == true)
             {
+                Logger.Info("_suppress is true");
+
                 // This is an unsynced message, we don't want to show a notification for it as it has been probably pushed already by WNS
                 return;
             }
 
             if (_clientService.ConnectionState is ConnectionStateUpdating)
             {
+                Logger.Info("ConnectionState is ConnectionStateUpdating");
+
                 // This is an unsynced message, we don't want to show a notification for it as it has been probably pushed already by WNS
                 return;
             }
 
             if (!_sessionService.IsActive && !SettingsService.Current.IsAllAccountsNotifications)
             {
+                Logger.Info("Session is not active");
+
                 return;
             }
 
@@ -489,6 +495,8 @@ namespace Telegram.Services
             if (time < DateTime.Now.AddHours(-1))
             {
                 _clientService.Send(new RemoveNotification(group, notification.Id));
+
+                Logger.Info("Notification is too old");
                 return;
             }
 
@@ -509,6 +517,7 @@ namespace Telegram.Services
             var chat = _clientService.GetChat(message.ChatId);
             if (chat == null)
             {
+                Logger.Info("Chat is null");
                 return;
             }
 
@@ -524,6 +533,8 @@ namespace Telegram.Services
                 Td.Api.File soundFile = null;
                 if (soundId != -1 && soundId != 0 && !silent)
                 {
+                    Logger.Info("Custom notification sound");
+
                     var response = await _clientService.SendAsync(new GetSavedNotificationSound(soundId));
                     if (response is NotificationSound notificationSound)
                     {
@@ -574,6 +585,7 @@ namespace Telegram.Services
 
                 if (service.CurrentPageType == typeof(ChatPage) && (long)service.CurrentPageParam == chat.Id)
                 {
+                    Logger.Info("Chat is open");
                     return false;
                 }
 
@@ -649,7 +661,10 @@ namespace Telegram.Services
                     SoundEffects.Play(soundFile);
                 }
             }
-            catch (Exception) { }
+            catch (Exception ex)
+            {
+                Logger.Error(ex.ToString());
+            }
         }
 
         private string GetGroup(Chat chat)
@@ -704,7 +719,10 @@ namespace Telegram.Services
                 var collection = new ToastCollection($"{_sessionService.Id}", displayName, launchArg, icon);
                 await ToastNotificationManager.GetDefault().GetToastCollectionManager().SaveToastCollectionAsync(collection);
             }
-            catch { }
+            catch (Exception ex)
+            {
+                Logger.Error(ex.ToString());
+            }
         }
 
         private async Task<ToastNotificationHistory> GetCollectionHistoryAsync()
@@ -719,19 +737,6 @@ namespace Telegram.Services
             catch
             {
                 return ToastNotificationManager.History;
-            }
-        }
-
-        public async Task CloseAsync()
-        {
-            try
-            {
-                var channel = await PushNotificationChannelManager.CreatePushNotificationChannelForApplicationAsync();
-                channel.Close();
-            }
-            catch (Exception)
-            {
-                Debugger.Break();
             }
         }
 
@@ -881,7 +886,7 @@ namespace Telegram.Services
             }
         }
 
-        public void SetMuteFor(Chat chat, int value)
+        public void SetMuteFor(Chat chat, int value, XamlRoot xamlRoot)
         {
             if (_settings.Notifications.TryGetScope(chat, out ScopeNotificationSettings scope))
             {
@@ -897,6 +902,24 @@ namespace Telegram.Services
                 settings.MuteFor = value;
 
                 _clientService.Send(new SetChatNotificationSettings(chat.Id, settings));
+
+                if (xamlRoot == null)
+                {
+                    return;
+                }
+
+                if (value == 0)
+                {
+                    ToastPopup.Show(xamlRoot, Strings.NotificationsUnmutedHint, ToastPopupIcon.Unmute);
+                }
+                else if (value >= 632053052)
+                {
+                    ToastPopup.Show(xamlRoot, Strings.NotificationsMutedHint, ToastPopupIcon.Mute);
+                }
+                else
+                {
+                    ToastPopup.Show(xamlRoot, string.Format(Strings.NotificationsMutedForHint, Locale.FormatMuteFor(value)), ToastPopupIcon.MuteFor);
+                }
             }
         }
     }

@@ -40,10 +40,10 @@ namespace Telegram.Views.Stories.Popups
             }
         }
 
-        public override void OnNavigatedTo()
+        public override void OnNavigatedTo(object parameter)
         {
             var story = ViewModel.Story;
-            if (story?.InteractionInfo != null && story.CanGetInteractions && (story.ClientService.IsPremium || story.InteractionInfo.ReactionCount > 0))
+            if (story?.InteractionInfo != null && story.CanGetInteractions && (story.ClientService.IsPremium || story.InteractionInfo.ReactionCount > 0 || story.InteractionInfo.ViewCount > 0))
             {
                 ViewModel.Items.CollectionChanged += OnCollectionChanged;
 

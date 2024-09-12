@@ -9,6 +9,7 @@ using Microsoft.UI.Xaml.Hosting;
 using System;
 using Telegram.Common;
 using Telegram.Converters;
+using Telegram.Native;
 using Telegram.ViewModels;
 
 namespace Telegram.Views
@@ -39,6 +40,9 @@ namespace Telegram.Views
 
         private void Crash_Click(object sender, RoutedEventArgs e)
         {
+            NativeUtils.Crash();
+            return;
+
             ElementCompositionPreview.GetElementVisual(null);
             return;
 
@@ -55,6 +59,9 @@ namespace Telegram.Views
 
         private void Bridge_Click(object sender, RoutedEventArgs e)
         {
+            ElementCompositionPreview.GetElementVisual(null);
+            return;
+
             NotifyIcon.Debug("Message received");
         }
     }

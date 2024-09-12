@@ -10,124 +10,144 @@
                        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
                        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
                        mc:Ignorable="d"
-                       Padding="0,24"
+                       Padding="0,24,0,0"
                        PrimaryButtonClick="OnPrimaryButtonClick">
 
     <Grid>
-        <StackPanel Margin="24,0">
-            <StackPanel x:Name="Group"
-                        x:Load="{x:Bind ConvertType(ViewModel.Chat.Type, x:False)}">
-                <RadioButton IsChecked="{x:Bind ViewModel.IsAllSelected, Mode=TwoWay}"
-                             Content="{CustomResource AllReactions}"
-                             GroupName="AvailableReactions" />
-                <RadioButton IsChecked="{x:Bind ViewModel.IsSomeSelected, Mode=TwoWay}"
-                             Content="{CustomResource SomeReactions}"
-                             GroupName="AvailableReactions" />
-                <RadioButton IsChecked="{x:Bind ViewModel.IsNoneSelected, Mode=TwoWay}"
-                             Content="{CustomResource NoReactions}"
-                             GroupName="AvailableReactions" />
+        <ScrollViewer x:Name="ScrollingHost"
+                      VerticalScrollBarVisibility="Auto"
+                      VerticalScrollMode="Auto">
+            <StackPanel Margin="24,0,24,24">
+                <StackPanel x:Name="Group"
+                            x:Load="{x:Bind ConvertType(ViewModel.Chat.Type, x:False)}">
+                    <RadioButton IsChecked="{x:Bind ViewModel.IsAllSelected, Mode=TwoWay}"
+                                 Content="{CustomResource AllReactions}"
+                                 GroupName="AvailableReactions" />
+                    <RadioButton IsChecked="{x:Bind ViewModel.IsSomeSelected, Mode=TwoWay}"
+                                 Content="{CustomResource SomeReactions}"
+                                 GroupName="AvailableReactions" />
+                    <RadioButton IsChecked="{x:Bind ViewModel.IsNoneSelected, Mode=TwoWay}"
+                                 Content="{CustomResource NoReactions}"
+                                 GroupName="AvailableReactions" />
 
-                <TextBlock Text="{x:Bind ConvertFooter(ViewModel.Available), Mode=OneWay}"
-                           Style="{StaticResource InfoCaptionTextBlockStyle}"
-                           Margin="0,4,0,16" />
+                    <TextBlock Text="{x:Bind ConvertFooter(ViewModel.Available), Mode=OneWay}"
+                               Style="{StaticResource InfoCaptionTextBlockStyle}"
+                               Margin="0,0,0,24" />
+                </StackPanel>
+
+                <StackPanel x:Name="Channel"
+                            x:Load="{x:Bind ConvertType(ViewModel.Chat.Type, x:True)}">
+                    <CheckBox IsChecked="{x:Bind ConvertAvailable(ViewModel.Available), BindBack=ConvertAvailableBack, Mode=TwoWay}"
+                              Content="{CustomResource EnableReactions}" />
+
+                    <TextBlock Text="{CustomResource EnableReactionsChannelInfo}"
+                               Style="{StaticResource InfoCaptionTextBlockStyle}"
+                               Margin="0,0,0,24" />
+                </StackPanel>
+
+
+                <StackPanel x:Name="CaptionPanel"
+                            Visibility="{x:Bind ViewModel.IsSomeSelected, Mode=OneWay}">
+
+                    <TextBlock Text="{x:Bind ConvertHeader(ViewModel.Chat.Type)}"
+                               Style="{StaticResource BaseTextBlockStyle}"
+                               Margin="0,0,0,8" />
+
+                    <Grid>
+                        <controls:FormattedTextBox x:Name="CaptionInput"
+                                                   InputScope="Chat"
+                                                   AllowedEntities="None"
+                                                   FontFamily="{ThemeResource EmojiThemeFontFamily}"
+                                                   PlaceholderText="{CustomResource AddCaption}"
+                                                   TextChangedForRealNoCap="CaptionInput_TextChanged"
+                                                   Padding="10,6,36,5"
+                                                   Grid.Row="1">
+                            <FlyoutBase.AttachedFlyout>
+                                <Flyout x:Name="EmojiFlyout"
+                                        Placement="Top"
+                                        ShowMode="Transient">
+                                    <Flyout.FlyoutPresenterStyle>
+                                        <Style TargetType="FlyoutPresenter">
+                                            <Setter Property="Padding"
+                                                    Value="0" />
+                                        </Style>
+                                    </Flyout.FlyoutPresenterStyle>
+                                    <drawers:EmojiDrawer x:Name="EmojiPanel"
+                                                         ItemClick="Emoji_ItemClick"
+                                                         Width="300"
+                                                         Height="360" />
+                                </Flyout>
+                            </FlyoutBase.AttachedFlyout>
+                        </controls:FormattedTextBox>
+
+                        <messages:CustomEmojiCanvas x:Name="CustomEmoji"
+                                                    IsHitTestVisible="False"
+                                                    Margin="10,4,-2,-2" />
+
+                        <controls:GlyphButton Click="Emoji_Click"
+                                              Glyph="&#xF164;"
+                                              AllowFocusOnInteraction="False"
+                                              HorizontalAlignment="Right"
+                                              VerticalAlignment="Bottom"
+                                              Width="36"
+                                              Height="32" />
+                    </Grid>
+
+                    <TextBlock x:Name="ChannelFooter"
+                               x:Load="False"
+                               Style="{StaticResource InfoCaptionTextBlockStyle}"
+                               Margin="0,4,0,0" />
+                </StackPanel>
+
+                <StackPanel x:Name="MaximumRoot"
+                            Visibility="{x:Bind ViewModel.IsSomeSelectedInChannel, Mode=OneWay}">
+                    <TextBlock Text="{CustomResource MaximumReactionsHeader}"
+                               Style="{StaticResource BaseTextBlockStyle}"
+                               Margin="0,24,0,8" />
+
+                    <Grid>
+                        <TextBlock Text="1"
+                                   Style="{StaticResource CaptionTextBlockStyle}"
+                                   Margin="6,0,0,0" />
+
+                        <controls:AnimatedTextBlock x:Name="MaximumCount"
+                                                    Text="{x:Bind ConvertMaximumCount(ViewModel.MaxReactionCount), Mode=OneWay}"
+                                                    TextStyle="{StaticResource CaptionTextBlockStyle}"
+                                                    TextAlignment="Center"
+                                                    HorizontalAlignment="Center" />
+
+                        <TextBlock Text="{x:Bind ViewModel.MaximumMaxReactionCount}"
+                                   Style="{StaticResource CaptionTextBlockStyle}"
+                                   HorizontalAlignment="Right"
+                                   Margin="0,0,4,0" />
+                    </Grid>
+
+                    <Slider Maximum="{x:Bind ViewModel.MaximumMaxReactionCount}"
+                            Minimum="1"
+                            Value="{x:Bind ViewModel.MaxReactionCount, Mode=TwoWay}"
+                            SmallChange="1"
+                            LargeChange="1"
+                            TickFrequency="11"
+                            TickPlacement="Outside"
+                            IsThumbToolTipEnabled="False" />
+
+                    <TextBlock Text="{CustomResource MaximumReactionsInfo}"
+                               Style="{StaticResource InfoCaptionTextBlockStyle}" />
+                </StackPanel>
+
+                <StackPanel x:Name="PaidReactions"
+                            x:Load="{x:Bind ViewModel.CanEnablePaidReaction, Mode=OneWay}">
+                    <CheckBox IsChecked="{x:Bind ViewModel.EnablePaidReactions, Mode=TwoWay}"
+                              Content="{CustomResource ChannelEnablePaidReactions}"
+                              Margin="0,24,0,0" />
+
+                    <TextBlock Text="{CustomResource ChannelEnablePaidReactionsInfo}"
+                               Style="{StaticResource InfoCaptionTextBlockStyle}" />
+                </StackPanel>
             </StackPanel>
+        </ScrollViewer>
 
-            <StackPanel x:Name="Channel"
-                        x:Load="{x:Bind ConvertType(ViewModel.Chat.Type, x:True)}">
-                <CheckBox IsChecked="{x:Bind ConvertAvailable(ViewModel.Available), BindBack=ConvertAvailableBack, Mode=TwoWay}"
-                          Content="{CustomResource EnableReactions}" />
-
-                <TextBlock Text="{CustomResource EnableReactionsChannelInfo}"
-                           Style="{StaticResource InfoCaptionTextBlockStyle}"
-                           Margin="0,4,0,16" />
-            </StackPanel>
-
-
-            <StackPanel x:Name="CaptionPanel"
-                        Visibility="{x:Bind ViewModel.IsSomeSelected, Mode=OneWay}">
-
-                <TextBlock Text="{x:Bind ConvertHeader(ViewModel.Chat.Type)}"
-                           Style="{StaticResource BaseTextBlockStyle}"
-                           Margin="0,16,0,8" />
-
-                <Grid>
-                    <controls:FormattedTextBox x:Name="CaptionInput"
-                                               InputScope="Chat"
-                                               AllowedEntities="None"
-                                               FontFamily="{ThemeResource EmojiThemeFontFamily}"
-                                               PlaceholderText="{CustomResource AddCaption}"
-                                               TextChangedForRealNoCap="CaptionInput_TextChanged"
-                                               Padding="10,6,36,5"
-                                               Grid.Row="1">
-                        <FlyoutBase.AttachedFlyout>
-                            <Flyout x:Name="EmojiFlyout"
-                                    Placement="Top"
-                                    ShowMode="Transient">
-                                <Flyout.FlyoutPresenterStyle>
-                                    <Style TargetType="FlyoutPresenter">
-                                        <Setter Property="Padding"
-                                                Value="0" />
-                                    </Style>
-                                </Flyout.FlyoutPresenterStyle>
-                                <drawers:EmojiDrawer x:Name="EmojiPanel"
-                                                     ItemClick="Emoji_ItemClick"
-                                                     Width="300"
-                                                     Height="360" />
-                            </Flyout>
-                        </FlyoutBase.AttachedFlyout>
-                    </controls:FormattedTextBox>
-
-                    <messages:CustomEmojiCanvas x:Name="CustomEmoji"
-                                                IsHitTestVisible="False"
-                                                Margin="10,4,-2,-2" />
-
-                    <controls:GlyphButton Click="Emoji_Click"
-                                          Glyph="&#xF164;"
-                                          AllowFocusOnInteraction="False"
-                                          HorizontalAlignment="Right"
-                                          VerticalAlignment="Bottom"
-                                          Width="36"
-                                          Height="32" />
-                </Grid>
-
-                <TextBlock x:Name="ChannelFooter"
-                           x:Load="False"
-                           Style="{StaticResource InfoCaptionTextBlockStyle}"
-                           Margin="0,4,0,0" />
-            </StackPanel>
-
-            <StackPanel x:Name="MaximumRoot"
-                        Visibility="{x:Bind ViewModel.IsSomeSelectedInChannel, Mode=OneWay}">
-                <TextBlock Text="{CustomResource MaximumReactionsHeader}"
-                           Style="{StaticResource BaseTextBlockStyle}"
-                           Margin="0,32,0,8" />
-
-                <Grid>
-                    <TextBlock Text="1"
-                               Margin="6,0,0,0" />
-
-                    <controls:AnimatedTextBlock x:Name="MaximumCount"
-                                                Text="{x:Bind ConvertMaximumCount(ViewModel.MaxReactionCount), Mode=OneWay}"
-                                                TextAlignment="Center"
-                                                HorizontalAlignment="Center" />
-
-                    <TextBlock Text="{x:Bind ViewModel.MaximumMaxReactionCount}"
-                               HorizontalAlignment="Right"
-                               Margin="0,0,4,0" />
-                </Grid>
-
-                <Slider Maximum="{x:Bind ViewModel.MaximumMaxReactionCount}"
-                        Minimum="1"
-                        Value="{x:Bind ViewModel.MaxReactionCount, Mode=TwoWay}"
-                        SmallChange="1"
-                        LargeChange="1"
-                        TickFrequency="11"
-                        TickPlacement="Outside"
-                        IsThumbToolTipEnabled="False" />
-
-                <TextBlock Text="{CustomResource MaximumReactionsInfo}"
-                           Style="{StaticResource InfoCaptionTextBlockStyle}" />
-            </StackPanel>
-        </StackPanel>
+        <controls:ScrollViewerScrim Background="{ThemeResource ContentDialogBackground}"
+                                    ScrollingHost="{x:Bind ScrollingHost}" />
     </Grid>
 </controls:ContentPopup>

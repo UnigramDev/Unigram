@@ -167,7 +167,7 @@ namespace Telegram.ViewModels
 
         public string GetAdminTitle(MessageViewModel message)
         {
-            if (message.IsChannelPost && message.HasSenderPhoto)
+            if (message.IsChannelPost)
             {
                 return string.Empty;
             }

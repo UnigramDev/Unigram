@@ -453,7 +453,7 @@ namespace Telegram.Navigation.Services
                 popup.DataContext = viewModel;
 
                 _ = viewModel.NavigatedToAsync(parameter, NavigationMode.New, null);
-                popup.OnNavigatedTo();
+                popup.OnNavigatedTo(parameter);
                 popup.Closed += OnClosed;
             }
 

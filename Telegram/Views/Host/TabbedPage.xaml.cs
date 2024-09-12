@@ -26,7 +26,7 @@ namespace Telegram.Views.Host
     //    public event EventHandler IsBackButtonVisibleChanged;
     //}
 
-    public sealed partial class TabbedPage : UserControl
+    public sealed partial class TabbedPage : UserControl, IToastHost
     {
         public TabbedPage(TabViewItem newTab, bool forWebApps)
         {
@@ -64,6 +64,23 @@ namespace Telegram.Views.Host
 
                 //newTab.IsClosable = false;
                 //newTab.IsBackButtonVisibleChanged += OnIsBackButtonVisibleChanged;
+            }
+        }
+
+        public void Connect(TeachingTip toast)
+        {
+            Resources.Remove("TeachingTip");
+            Resources.Add("TeachingTip", toast);
+        }
+
+        public void Disconnect(TeachingTip toast)
+        {
+            if (Resources.TryGetValue("TeachingTip", out object cached))
+            {
+                if (cached == toast)
+                {
+                    Resources.Remove("TeachingTip");
+                }
             }
         }
 

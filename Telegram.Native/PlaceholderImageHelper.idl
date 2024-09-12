@@ -1,4 +1,5 @@
 import "SurfaceImage.idl";
+import "TextFormat.idl";
 
 namespace Telegram.Native
 {
@@ -22,6 +23,8 @@ namespace Telegram.Native
 
 		SurfaceImage Create(Int32 pixelWidth, Int32 pixelHeight);
 		void Invalidate(SurfaceImage imageSource, Windows.Storage.Streams.IBuffer buffer);
+
+		TextFormat CreateTextFormat2(String text, Windows.Foundation.Collections.IVector<Telegram.Td.Api.TextEntity> entities, Double fontSize, Double width);
 
 		Windows.Foundation.Numerics.Vector2 ContentEnd(String text, Windows.Foundation.Collections.IVector<Telegram.Td.Api.TextEntity> entities, Double fontSize, Double width);
 		Windows.Foundation.Collections.IVector<Windows.Foundation.Rect> LineMetrics(String text, Windows.Foundation.Collections.IVector<Telegram.Td.Api.TextEntity> entities, Double fontSize, Double width, Boolean rtl);

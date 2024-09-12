@@ -35,8 +35,7 @@ namespace Telegram.Views.Supergroups.Popups
                 return Strings.UserRestrictionsUntilForever;
             }
 
-            var dateTime = Formatter.ToLocalTime(date);
-            return Formatter.ShortDate.Format(dateTime) + ", " + Formatter.ShortTime.Format(dateTime);
+            return Formatter.DateAt(date);
         }
 
         private string ConvertCanSendCount(int count)

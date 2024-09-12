@@ -108,6 +108,14 @@ namespace Telegram.Controls.Messages
                 var animation = FindName("Animation") as AnimatedImage;
                 animation.Source = new DelayedFileSource(message.ClientService, premiumGiftCode.Sticker);
             }
+            else if (message.Content is MessageGiveawayPrizeStars giveawayPrizeStars)
+            {
+                var title = FindName("Title") as TextBlock;
+                title.Text = Strings.ActionStarGiveawayPrizeTitle;
+
+                var animation = FindName("Animation") as AnimatedImage;
+                animation.Source = new DelayedFileSource(message.ClientService, giveawayPrizeStars.Sticker);
+            }
             else if (message.Content is MessageGiftedPremium giftedPremium)
             {
                 var title = FindName("Title") as TextBlock;
@@ -307,10 +315,11 @@ namespace Telegram.Controls.Messages
                 MessageGameScore gameScore => UpdateGameScore(message, gameScore, active),
                 MessageGiftedPremium giftedPremium => UpdateGiftedPremium(message, giftedPremium, active),
                 MessageGiftedStars giftedStars => UpdateGiftedStars(message, giftedStars, active),
+                MessageGiveawayCreated giveawayCreated => UpdateGiveawayCreated(message, giveawayCreated, active),
+                MessageGiveawayCompleted giveawayCompleted => UpdateGiveawayCompleted(message, giveawayCompleted, active),
+                MessageGiveawayPrizeStars giveawayPrizeStars => UpdateGiveawayPrizeStars(message, giveawayPrizeStars, active),
                 MessageInviteVideoChatParticipants inviteVideoChatParticipants => UpdateInviteVideoChatParticipants(message, inviteVideoChatParticipants, active),
                 MessageProximityAlertTriggered proximityAlertTriggered => UpdateProximityAlertTriggered(message, proximityAlertTriggered, active),
-                MessagePremiumGiveawayCreated premiumGiveawayCreated => UpdatePremiumGiveawayCreated(message, premiumGiveawayCreated, active),
-                MessagePremiumGiveawayCompleted premiumGiveawayCompleted => UpdatePremiumGiveawayCompleted(message, premiumGiveawayCompleted, active),
                 MessagePremiumGiftCode premiumGiftCode => UpdatePremiumGiftCode(message, premiumGiftCode, active),
                 MessagePassportDataSent passportDataSent => UpdatePassportDataSent(message, passportDataSent, active),
                 MessagePaymentSuccessful paymentSuccessful => UpdatePaymentSuccessful(message, paymentSuccessful, active),
@@ -604,18 +613,72 @@ namespace Telegram.Controls.Messages
 
             var fromUser = message.GetSender();
 
-            if (availableReactionsChanged.NewAvailableReactions is ChatAvailableReactionsAll
-                || (availableReactionsChanged.NewAvailableReactions is ChatAvailableReactionsSome some && some.Reactions.Count > 0))
+            var oldAllOrNone = availableReactionsChanged.OldAvailableReactions is ChatAvailableReactionsAll or ChatAvailableReactionsSome { Reactions.Count: 0 };
+            var newAllOrNone = availableReactionsChanged.NewAvailableReactions is ChatAvailableReactionsAll or ChatAvailableReactionsSome { Reactions.Count: 0 };
+
+            static FormattedText ToString(ChatAvailableReactions reactions, bool active)
             {
-                content = ReplaceWithLink(string.Format(Strings.ActionReactionsChanged,
-                    string.Join(", ", availableReactionsChanged.OldAvailableReactions),
-                    string.Join(", ", availableReactionsChanged.NewAvailableReactions)), "un1", fromUser, entities);
+                if (reactions is ChatAvailableReactionsAll || reactions is not ChatAvailableReactionsSome some)
+                {
+                    return new FormattedText(Strings.AllReactions, Array.Empty<TextEntity>());
+                }
+
+                if (some.Reactions.Count > 0)
+                {
+                    var content = new StringBuilder();
+                    var entities = active ? new List<TextEntity>() : null;
+
+                    foreach (var item in some.Reactions)
+                    {
+                        if (item is ReactionTypeEmoji emoji)
+                        {
+                            content.Append(emoji.Emoji);
+                        }
+                        else if (item is ReactionTypeCustomEmoji customEmoji)
+                        {
+                            entities?.Add(new TextEntity(content.Length, 2, new TextEntityTypeCustomEmoji(customEmoji.CustomEmojiId)));
+                            content.Append("\U0001F921");
+                        }
+                    }
+
+                    return new FormattedText(content.ToString(), active ? entities : Array.Empty<TextEntity>());
+                }
+
+                return new FormattedText(Strings.NoReactions, Array.Empty<TextEntity>());
+            }
+
+            static string Format(string content, IList<TextEntity> entities, params FormattedText[] format)
+            {
+                for (int i = 0; i < format.Length; i++)
+                {
+                    var index = content.IndexOf($"{{{i}}}");
+                    if (index >= 0)
+                    {
+                        content = content.Remove(index, 3);
+                        content = content.Insert(index, format[i].Text);
+
+                        foreach (var entity in format[i].Entities)
+                        {
+                            entities?.Add(new TextEntity(entity.Offset + index, entity.Length, entity.Type));
+                        }
+                    }
+                }
+
+                return content;
+            }
+
+            if (oldAllOrNone || newAllOrNone)
+            {
+                var oldText = ToString(availableReactionsChanged.OldAvailableReactions, active);
+                var newText = ToString(availableReactionsChanged.NewAvailableReactions, active);
+
+                content = ReplaceWithLink(Strings.ActionReactionsChanged, "un1", fromUser, entities);
+                content = Format(content, entities, oldText, newText);
             }
             else
             {
-                content = ReplaceWithLink(string.Format(Strings.ActionReactionsChanged,
-                    string.Join(", ", availableReactionsChanged.OldAvailableReactions),
-                    string.Join(", ", availableReactionsChanged.NewAvailableReactions)), "un1", fromUser, entities);
+                content = ReplaceWithLink(Strings.ActionReactionsChangedList, "un1", fromUser, entities);
+                content = Format(content, entities, ToString(availableReactionsChanged.NewAvailableReactions, active));
             }
 
             return (content, entities);
@@ -2000,27 +2063,53 @@ namespace Telegram.Controls.Messages
             return (content, entities);
         }
 
-        private static (string, IList<TextEntity>) UpdatePremiumGiveawayCreated(MessageViewModel message, MessagePremiumGiveawayCreated premiumGiveawayCreated, bool active)
+        private static (string, IList<TextEntity>) UpdateGiveawayCreated(MessageViewModel message, MessageGiveawayCreated giveawayCreated, bool active)
         {
             var content = string.Empty;
             var entities = active ? new List<TextEntity>() : null;
 
-            content = string.Format(Strings.BoostingGiveawayJustStarted, message.Chat.Title);
+            var channel = message.Chat.Type is ChatTypeSupergroup { IsChannel: true };
+
+            if (giveawayCreated.StarCount > 0)
+            {
+                content = Locale.Declension(channel
+                    ? Strings.R.BoostingStarsGiveawayJustStarted
+                    : Strings.R.BoostingStarsGiveawayJustStartedGroup, giveawayCreated.StarCount, message.Chat.Title);
+            }
+            else
+            {
+                content = string.Format(channel
+                    ? Strings.BoostingGiveawayJustStarted
+                    : Strings.BoostingGiveawayJustStartedGroup, message.Chat.Title);
+            }
 
             return (content, entities);
         }
 
-        private static (string, IList<TextEntity>) UpdatePremiumGiveawayCompleted(MessageViewModel message, MessagePremiumGiveawayCompleted premiumGiveawayCompleted, bool active)
+        private static (string, IList<TextEntity>) UpdateGiveawayCompleted(MessageViewModel message, MessageGiveawayCompleted giveawayCompleted, bool active)
         {
             var content = string.Empty;
             var entities = active ? new List<TextEntity>() : null;
 
-            content = Locale.Declension(Strings.R.BoostingGiveawayServiceWinnersSelected, premiumGiveawayCompleted.WinnerCount);
+            content = Locale.Declension(Strings.R.BoostingGiveawayServiceWinnersSelected, giveawayCompleted.WinnerCount);
 
-            if (premiumGiveawayCompleted.UnclaimedPrizeCount > 0)
+            if (giveawayCompleted.UnclaimedPrizeCount > 0)
             {
-                content = string.Format("{0} {1}", content, Locale.Declension(Strings.R.BoostingGiveawayServiceUndistributed, premiumGiveawayCompleted.UnclaimedPrizeCount));
+                content = string.Format("{0} {1}", content, Locale.Declension(Strings.R.BoostingGiveawayServiceUndistributed, giveawayCompleted.UnclaimedPrizeCount));
             }
+
+            return (content, entities);
+        }
+
+        private static (string, IList<TextEntity>) UpdateGiveawayPrizeStars(MessageViewModel message, MessageGiveawayPrizeStars giveawayPrizeStars, bool active)
+        {
+            var content = string.Empty;
+            var entities = active ? new List<TextEntity>() : null;
+
+            var boostedChat = message.ClientService.GetChat(giveawayPrizeStars.BoostedChatId);
+
+            content = Locale.Declension(Strings.R.ActionStarGiveawayPrize, giveawayPrizeStars.StarCount);
+            content = ReplaceWithLink(content, "un1", boostedChat, entities);
 
             return (content, entities);
         }

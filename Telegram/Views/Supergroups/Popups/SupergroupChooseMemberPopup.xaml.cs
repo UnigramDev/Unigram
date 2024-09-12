@@ -61,7 +61,7 @@ namespace Telegram.Views.Supergroups.Popups
             };
         }
 
-        public override void OnNavigatedTo()
+        public override void OnNavigatedTo(object parameter)
         {
             Title = ViewModel.Mode switch
             {

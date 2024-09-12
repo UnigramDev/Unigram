@@ -48,6 +48,8 @@ namespace Telegram.Views.Host
     public sealed partial class RootPage : Page, IToastHost
     {
         private readonly ILifetimeService _lifetime;
+        private readonly WindowContext _context;
+
         private NavigationService _navigationService;
 
         private RootDestination _navigationViewSelected;
@@ -55,12 +57,13 @@ namespace Telegram.Views.Host
 
         private long _attachmentMenuBots;
 
-        public RootPage(NavigationService service)
+        public RootPage(WindowContext context, NavigationService service)
         {
             RequestedTheme = SettingsService.Current.Appearance.GetCalculatedElementTheme();
             InitializeComponent();
 
             _lifetime = TypeResolver.Current.Lifetime;
+            _context = context;
 
             _navigationViewSelected = RootDestination.Chats;
             _navigationViewItems = new MvxObservableCollection<object>
@@ -76,6 +79,8 @@ namespace Telegram.Views.Host
                 // ------------
                 RootDestination.Separator,
                 // ------------
+                RootDestination.NewGroup,
+                RootDestination.NewChannel,
                 RootDestination.Chats,
                 RootDestination.Contacts,
                 RootDestination.Calls,
@@ -223,12 +228,10 @@ namespace Telegram.Views.Host
 
             Navigation.IsPaneOpen = false;
 
-            var context = WindowContext.ForXamlRoot(this);
-
-            var service = context.NavigationServices.GetByFrameId($"{session.Id}") as NavigationService;
+            var service = _context.NavigationServices.GetByFrameId($"{session.Id}") as NavigationService;
             if (service == null)
             {
-                service = BootStrapper.Current.NavigationServiceFactory(context, BootStrapper.BackButton.Attach, new Frame { CacheSize = 0 }, session.Id, $"{session.Id}", true) as NavigationService;
+                service = BootStrapper.Current.NavigationServiceFactory(_context, BootStrapper.BackButton.Attach, new Frame { CacheSize = 0 }, session.Id, $"{session.Id}", true) as NavigationService;
                 service.Frame.Navigating += OnNavigating;
                 service.Frame.Navigated += OnNavigated;
 
@@ -408,7 +411,7 @@ namespace Telegram.Views.Host
 
             if (_attachmentMenuBots != botsHash)
             {
-                for (int i = bots.Count - 1; i >= 0; i--)
+                for (int i = 0; i < bots.Count; i++)
                 {
                     _navigationViewItems.Insert(index - 1, bots[i]);
                     index++;
@@ -620,13 +623,21 @@ namespace Telegram.Views.Host
                         content.Glyph = Icons.PersonAdd;
                         break;
 
+                    case RootDestination.NewGroup:
+                        content.Text = Strings.NewGroup;
+                        content.Glyph = Icons.People;
+                        break;
+                    case RootDestination.NewChannel:
+                        content.Text = Strings.NewChannel;
+                        content.Glyph = Icons.Megaphone;
+                        break;
                     case RootDestination.Chats:
                         content.Text = Strings.FilterChats;
                         content.Glyph = Icons.ChatMultiple;
                         break;
                     case RootDestination.Contacts:
                         content.Text = Strings.Contacts;
-                        content.Glyph = Icons.People;
+                        content.Glyph = Icons.Person;
                         break;
                     case RootDestination.Calls:
                         content.Text = Strings.Calls;
@@ -875,6 +886,7 @@ namespace Telegram.Views.Host
             var resize = ThemePage == null;
 
             FindName("ThemePage");
+            ThemePage.ViewModel.NavigationService = _navigationService;
             ThemePage.Load(theme);
 
             if (resize)
@@ -1266,6 +1278,8 @@ namespace Telegram.Views.Host
         ArchivedChats,
         SavedMessages,
 
+        NewGroup,
+        NewChannel,
         Chats,
         Contacts,
         Calls,

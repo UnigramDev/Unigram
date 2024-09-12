@@ -109,6 +109,20 @@ namespace Telegram.ViewModels.Supergroups
             set => Set(ref _maxReactionCount, value);
         }
 
+        private bool _canEnablePaidReaction;
+        public bool CanEnablePaidReaction
+        {
+            get => _canEnablePaidReaction;
+            set => Set(ref _canEnablePaidReaction, value);
+        }
+
+        private bool _enablePaidReactions;
+        public bool EnablePaidReactions
+        {
+            get => _enablePaidReactions;
+            set => Set(ref _enablePaidReactions, value);
+        }
+        
         public MvxObservableCollection<ReactionType> Items { get; private set; }
 
         protected override async Task OnNavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
@@ -123,7 +137,7 @@ namespace Telegram.ViewModels.Supergroups
                 return;
             }
 
-            AllowCustomEmoji = chat.Type is ChatTypeSupergroup supergroup && supergroup.IsChannel;
+            AllowCustomEmoji = chat.Type is ChatTypeSupergroup { IsChannel: true };
 
             MaxReactionCount = chat.AvailableReactions switch
             {
@@ -147,6 +161,20 @@ namespace Telegram.ViewModels.Supergroups
 
             Items.ReplaceWith(items);
             Available = available;
+            EnablePaidReactions = items.Any(x => x is ReactionTypePaid);
+
+            if (ClientService.TryGetSupergroupFull(chat, out SupergroupFullInfo cached))
+            {
+                CanEnablePaidReaction = cached.CanEnablePaidReaction;
+            }
+            else if (chat.Type is ChatTypeSupergroup supergroup)
+            {
+                var fullInfo = await ClientService.SendAsync(new GetSupergroupFullInfo(supergroup.SupergroupId)) as SupergroupFullInfo;
+                if (fullInfo != null)
+                {
+                    CanEnablePaidReaction = cached.CanEnablePaidReaction;
+                }
+            }
 
             if (AllowCustomEmoji)
             {
@@ -176,11 +204,17 @@ namespace Telegram.ViewModels.Supergroups
                 ? MaxReactionCount
                 : MaximumMaxReactionCount;
 
+            var items = Items.ToList();
+            if (CanEnablePaidReaction && EnablePaidReactions)
+            {
+                items.Insert(0, new ReactionTypePaid());
+            }
+
             ChatAvailableReactions value = _available switch
             {
                 SupergroupAvailableReactions.All => new ChatAvailableReactionsAll(),
                 SupergroupAvailableReactions.None => new ChatAvailableReactionsSome(Array.Empty<ReactionType>(), maxReactionCount),
-                SupergroupAvailableReactions.Some => new ChatAvailableReactionsSome(Items, maxReactionCount),
+                SupergroupAvailableReactions.Some => new ChatAvailableReactionsSome(items, maxReactionCount),
                 _ => null
             };
 

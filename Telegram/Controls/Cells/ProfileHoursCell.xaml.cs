@@ -176,7 +176,7 @@ namespace Telegram.Controls.Cells
         {
             _switchToMyTime = !_switchToMyTime;
 
-            if (IsExpanded)
+            if (IsExpanded && _clientService != null && _hours != null)
             {
                 UpdateHours(_clientService, _hours);
             }

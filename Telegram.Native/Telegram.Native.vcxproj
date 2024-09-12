@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="..\packages\Microsoft.WindowsAppSDK.1.6.240821007-preview2\build\native\Microsoft.WindowsAppSDK.props" Condition="Exists('..\packages\Microsoft.WindowsAppSDK.1.6.240821007-preview2\build\native\Microsoft.WindowsAppSDK.props')" />
+  <Import Project="..\packages\Microsoft.WindowsAppSDK.1.6.240829007\build\native\Microsoft.WindowsAppSDK.props" Condition="Exists('..\packages\Microsoft.WindowsAppSDK.1.6.240829007\build\native\Microsoft.WindowsAppSDK.props')" />
   <Import Project="..\packages\Microsoft.Windows.SDK.BuildTools.10.0.22621.756\build\Microsoft.Windows.SDK.BuildTools.props" Condition="Exists('..\packages\Microsoft.Windows.SDK.BuildTools.10.0.22621.756\build\Microsoft.Windows.SDK.BuildTools.props')" />
   <Import Project="..\packages\Microsoft.Windows.CppWinRT.2.0.240405.15\build\native\Microsoft.Windows.CppWinRT.props" Condition="Exists('..\packages\Microsoft.Windows.CppWinRT.2.0.240405.15\build\native\Microsoft.Windows.CppWinRT.props')" />
   <ItemGroup Label="ProjectConfigurations">
@@ -320,6 +320,7 @@
     <ClInclude Include="Composition\DirectRectangleClip.h">
       <DependentUpon>Composition\DirectRectangleClip.idl</DependentUpon>
     </ClInclude>
+    <ClInclude Include="Composition\DirectRectangleClip2.h" />
     <ClInclude Include="DebugUtils.h" />
     <ClInclude Include="FatalError.h">
       <DependentUpon>FatalError.idl</DependentUpon>
@@ -409,6 +410,10 @@
     <ClInclude Include="Helpers\MathHelper.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="TelegramWebviewProxy.h" />
+    <ClInclude Include="TextFormat.h">
+      <DependentUpon>TextFormat.idl</DependentUpon>
+      <SubType>Code</SubType>
+    </ClInclude>
     <ClInclude Include="VideoAnimation.h">
       <DependentUpon>VideoAnimation.idl</DependentUpon>
     </ClInclude>
@@ -931,6 +936,7 @@
     <ClCompile Include="..\Libraries\libwebp\src\utils\utils.c">
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="Composition\DirectRectangleClip2.cpp" />
     <ClCompile Include="FatalError.cpp">
       <DependentUpon>FatalError.idl</DependentUpon>
       <SubType>Code</SubType>
@@ -973,6 +979,10 @@
     </ClCompile>
     <ClCompile Include="SurfaceImage.cpp">
       <DependentUpon>SurfaceImage.idl</DependentUpon>
+      <SubType>Code</SubType>
+    </ClCompile>
+    <ClCompile Include="TextFormat.cpp">
+      <DependentUpon>TextFormat.idl</DependentUpon>
       <SubType>Code</SubType>
     </ClCompile>
     <ClCompile Include="VideoAnimationStreamSource.cpp">
@@ -1198,6 +1208,7 @@
     </Midl>
     <Midl Include="Composition\CompositionDevice.idl" />
     <Midl Include="Composition\DirectRectangleClip.idl" />
+    <Midl Include="Composition\DirectRectangleClip2.idl" />
     <Midl Include="FatalError.idl">
       <SubType>Designer</SubType>
     </Midl>
@@ -1234,6 +1245,9 @@
       <SubType>Designer</SubType>
     </Midl>
     <Midl Include="TelegramWebviewProxy.idl" />
+    <Midl Include="TextFormat.idl">
+      <SubType>Designer</SubType>
+    </Midl>
     <Midl Include="VideoAnimation.idl" />
     <Midl Include="VideoAnimationStreamSource.idl">
       <SubType>Designer</SubType>
@@ -1242,10 +1256,10 @@
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
     <Import Project="..\packages\Microsoft.Windows.CppWinRT.2.0.240405.15\build\native\Microsoft.Windows.CppWinRT.targets" Condition="Exists('..\packages\Microsoft.Windows.CppWinRT.2.0.240405.15\build\native\Microsoft.Windows.CppWinRT.targets')" />
-    <Import Project="..\packages\Telegram.Td.UWP.1.8.35\build\native\Telegram.Td.UWP.targets" Condition="Exists('..\packages\Telegram.Td.UWP.1.8.35\build\native\Telegram.Td.UWP.targets')" />
+    <Import Project="..\packages\Telegram.Td.UWP.1.8.36\build\native\Telegram.Td.UWP.targets" Condition="Exists('..\packages\Telegram.Td.UWP.1.8.36\build\native\Telegram.Td.UWP.targets')" />
     <Import Project="..\packages\Microsoft.Web.WebView2.1.0.2651.64\build\native\Microsoft.Web.WebView2.targets" Condition="Exists('..\packages\Microsoft.Web.WebView2.1.0.2651.64\build\native\Microsoft.Web.WebView2.targets')" />
     <Import Project="..\packages\Microsoft.Windows.SDK.BuildTools.10.0.22621.756\build\Microsoft.Windows.SDK.BuildTools.targets" Condition="Exists('..\packages\Microsoft.Windows.SDK.BuildTools.10.0.22621.756\build\Microsoft.Windows.SDK.BuildTools.targets')" />
-    <Import Project="..\packages\Microsoft.WindowsAppSDK.1.6.240821007-preview2\build\native\Microsoft.WindowsAppSDK.targets" Condition="Exists('..\packages\Microsoft.WindowsAppSDK.1.6.240821007-preview2\build\native\Microsoft.WindowsAppSDK.targets')" />
+    <Import Project="..\packages\Microsoft.WindowsAppSDK.1.6.240829007\build\native\Microsoft.WindowsAppSDK.targets" Condition="Exists('..\packages\Microsoft.WindowsAppSDK.1.6.240829007\build\native\Microsoft.WindowsAppSDK.targets')" />
   </ImportGroup>
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>
@@ -1253,11 +1267,11 @@
     </PropertyGroup>
     <Error Condition="!Exists('..\packages\Microsoft.Windows.CppWinRT.2.0.240405.15\build\native\Microsoft.Windows.CppWinRT.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.Windows.CppWinRT.2.0.240405.15\build\native\Microsoft.Windows.CppWinRT.props'))" />
     <Error Condition="!Exists('..\packages\Microsoft.Windows.CppWinRT.2.0.240405.15\build\native\Microsoft.Windows.CppWinRT.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.Windows.CppWinRT.2.0.240405.15\build\native\Microsoft.Windows.CppWinRT.targets'))" />
-    <Error Condition="!Exists('..\packages\Telegram.Td.UWP.1.8.35\build\native\Telegram.Td.UWP.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Telegram.Td.UWP.1.8.35\build\native\Telegram.Td.UWP.targets'))" />
+    <Error Condition="!Exists('..\packages\Telegram.Td.UWP.1.8.36\build\native\Telegram.Td.UWP.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Telegram.Td.UWP.1.8.36\build\native\Telegram.Td.UWP.targets'))" />
     <Error Condition="!Exists('..\packages\Microsoft.Web.WebView2.1.0.2651.64\build\native\Microsoft.Web.WebView2.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.Web.WebView2.1.0.2651.64\build\native\Microsoft.Web.WebView2.targets'))" />
     <Error Condition="!Exists('..\packages\Microsoft.Windows.SDK.BuildTools.10.0.22621.756\build\Microsoft.Windows.SDK.BuildTools.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.Windows.SDK.BuildTools.10.0.22621.756\build\Microsoft.Windows.SDK.BuildTools.props'))" />
     <Error Condition="!Exists('..\packages\Microsoft.Windows.SDK.BuildTools.10.0.22621.756\build\Microsoft.Windows.SDK.BuildTools.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.Windows.SDK.BuildTools.10.0.22621.756\build\Microsoft.Windows.SDK.BuildTools.targets'))" />
-    <Error Condition="!Exists('..\packages\Microsoft.WindowsAppSDK.1.6.240821007-preview2\build\native\Microsoft.WindowsAppSDK.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.WindowsAppSDK.1.6.240821007-preview2\build\native\Microsoft.WindowsAppSDK.props'))" />
-    <Error Condition="!Exists('..\packages\Microsoft.WindowsAppSDK.1.6.240821007-preview2\build\native\Microsoft.WindowsAppSDK.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.WindowsAppSDK.1.6.240821007-preview2\build\native\Microsoft.WindowsAppSDK.targets'))" />
+    <Error Condition="!Exists('..\packages\Microsoft.WindowsAppSDK.1.6.240829007\build\native\Microsoft.WindowsAppSDK.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.WindowsAppSDK.1.6.240829007\build\native\Microsoft.WindowsAppSDK.props'))" />
+    <Error Condition="!Exists('..\packages\Microsoft.WindowsAppSDK.1.6.240829007\build\native\Microsoft.WindowsAppSDK.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.WindowsAppSDK.1.6.240829007\build\native\Microsoft.WindowsAppSDK.targets'))" />
   </Target>
 </Project>

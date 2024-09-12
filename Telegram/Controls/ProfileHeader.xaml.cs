@@ -241,7 +241,7 @@ namespace Telegram.Controls
 
         private void OnActualThemeChanged(FrameworkElement sender, object args)
         {
-            if (_actualTheme == sender.ActualTheme)
+            if (_actualTheme == sender.ActualTheme || _actualTheme == ElementTheme.Default)
             {
                 return;
             }
@@ -368,7 +368,7 @@ namespace Telegram.Controls
 
         public void UpdateChatAccentColors(Chat chat)
         {
-            _actualTheme = WindowContext.Current.ActualTheme;
+            _actualTheme = ViewModel.NavigationService.Window.ActualTheme;
 
             if (ViewModel.ClientService.TryGetProfileColor(chat.ProfileAccentColorId, out ProfileColor color))
             {
@@ -674,11 +674,11 @@ namespace Telegram.Controls
 
         public void UpdateChatNotificationSettings(Chat chat)
         {
-            var unmuted = ViewModel.ClientService.Notifications.GetMutedFor(chat) == 0;
-            Notifications.Content = unmuted ? Strings.ChatsMute : Strings.ChatsUnmute;
-            Notifications.Glyph = unmuted
-                ? (_filledIcons ? Icons.AlertFilled : Icons.Alert)
-                : (_filledIcons ? Icons.AlertOffFilled : Icons.AlertOff);
+            var muted = ViewModel.ClientService.Notifications.IsMuted(chat);
+            Notifications.Content = muted ? Strings.ChatsUnmute : Strings.ChatsMute;
+            Notifications.Glyph = muted
+                ? (_filledIcons ? Icons.AlertOffFilled : Icons.AlertOff)
+                : (_filledIcons ? Icons.AlertFilled : Icons.Alert);
         }
 
         public void UpdateUser(Chat chat, User user, bool secret)
@@ -825,6 +825,8 @@ namespace Telegram.Controls
                         ? Locale.Declension(Strings.R.ProfileBirthdayValueYear, years, Formatter.Birthdate(fullInfo.Birthdate))
                         : string.Format(Strings.ProfileBirthdayValue, Formatter.Birthdate(fullInfo.Birthdate));
                 }
+
+                UserBirthday.Visibility = Visibility.Visible;
             }
             else
             {
@@ -1255,11 +1257,7 @@ namespace Telegram.Controls
                             }
 
                             flyout.CreateFlyoutItem(() => { }, Strings.BotShare, Icons.Share);
-
-                            if (fullInfo.BotInfo.PrivacyPolicyUrl.Length > 0 || fullInfo.BotInfo.Commands.Any(x => string.Equals(x.Command, "privacy", StringComparison.OrdinalIgnoreCase)))
-                            {
-                                flyout.CreateFlyoutItem(ViewModel.PrivacyPolicy, Strings.BotPrivacyPolicy, Icons.ShieldCheckmark);
-                            }
+                            flyout.CreateFlyoutItem(ViewModel.PrivacyPolicy, Strings.BotPrivacyPolicy, Icons.ShieldCheckmark);
                         }
                         else
                         {
@@ -1517,7 +1515,7 @@ namespace Telegram.Controls
                 return;
             }
 
-            var muted = ViewModel.ClientService.Notifications.GetMutedFor(chat) > 0;
+            var muted = ViewModel.ClientService.Notifications.IsMuted(chat);
             if (muted)
             {
                 ViewModel.Unmute();

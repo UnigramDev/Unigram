@@ -7,6 +7,7 @@
 using Telegram.Collections;
 using Telegram.Common;
 using Telegram.Navigation;
+using Telegram.Navigation.Services;
 using Telegram.Services;
 using Telegram.Td.Api;
 using Telegram.Views.Popups;
@@ -128,7 +129,7 @@ namespace Telegram.ViewModels.Gallery
         {
             RaisePropertyChanged(nameof(Position));
 
-            if (item == null)
+            if (item == null || NavigationService == null)
             {
                 return;
             }
@@ -142,6 +143,16 @@ namespace Telegram.ViewModels.Gallery
             {
                 _hasProtectedContent = false;
                 NavigationService.Window.EnableScreenCapture(GetHashCode());
+            }
+        }
+
+        public override INavigationService NavigationService
+        {
+            get => base.NavigationService;
+            set
+            {
+                base.NavigationService = value;
+                OnSelectedItemChanged(SelectedItem);
             }
         }
 

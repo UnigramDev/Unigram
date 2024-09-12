@@ -18,6 +18,7 @@ using System.Numerics;
 using System.Runtime.CompilerServices;
 using Telegram.Common;
 using Telegram.Controls.Cells;
+using Telegram.Controls.Media;
 using Telegram.Converters;
 using Telegram.Navigation;
 using Telegram.Streams;
@@ -288,8 +289,8 @@ namespace Telegram.Controls.Messages
             else if (message.ImportInfo != null)
             {
                 var original = Formatter.ToLocalTime(message.ImportInfo.Date);
-                var date = Formatter.ShortDate.Format(original);
-                var time = Formatter.ShortTime.Format(original);
+                var date = Formatter.Date(original);
+                var time = Formatter.Time(original);
 
                 _dateLabel = string.Format("{0}, {1} {2} {3}", date, time, "Imported", Formatter.Time(message.Date));
             }
@@ -305,7 +306,7 @@ namespace Telegram.Controls.Messages
 
         public void Mockup(bool outgoing, DateTime date)
         {
-            _dateLabel = Formatter.ShortTime.Format(date);
+            _dateLabel = Formatter.Time(date);
             _stateLabel = outgoing ? "\u00A0\uE603" : string.Empty;
             UpdateLabel();
             UpdateTicks(outgoing, outgoing ? true : null);
@@ -334,7 +335,7 @@ namespace Telegram.Controls.Messages
                 _repliesLabel = string.Empty;
             }
 
-            if (message.IsChannelPost && !message.HasSenderPhoto && !string.IsNullOrEmpty(message.AuthorSignature))
+            if (message.IsChannelPost && (message.SenderId.IsChat(message.ChatId) || !message.HasSenderPhoto) && !string.IsNullOrEmpty(message.AuthorSignature))
             {
                 _authorLabel = $"{message.AuthorSignature}, ";
             }
@@ -453,7 +454,7 @@ namespace Telegram.Controls.Messages
                     _ticksHash = messageHash;
 
                     // TODO: 
-                    return "\u00A0failed"; // Failed
+                    return Icons.LTR + "\u00A0failed"; // Failed
                 }
                 else if (message.SendingState is MessageSendingStatePending)
                 {
@@ -462,7 +463,7 @@ namespace Telegram.Controls.Messages
                     _ticksState = MessageTicksState.Pending;
                     _ticksHash = messageHash;
 
-                    return "\u00A0\uEA06"; // Pending
+                    return Icons.LTR + "\u00A0\uEA06"; // Pending
                 }
                 else if (message.Id <= maxId)
                 {
@@ -471,7 +472,7 @@ namespace Telegram.Controls.Messages
                     _ticksState = MessageTicksState.Read;
                     _ticksHash = messageHash;
 
-                    return "\u00A0\uEA07"; // Read
+                    return Icons.LTR + "\u00A0\uEA07"; // Read
                 }
 
                 UpdateTicks(true, false, _ticksState == MessageTicksState.Pending && _ticksHash == messageHash);
@@ -479,7 +480,7 @@ namespace Telegram.Controls.Messages
                 _ticksState = MessageTicksState.Sent;
                 _ticksHash = messageHash;
 
-                return "\u00A0\uEA07"; // Unread
+                return Icons.LTR + "\u00A0\uEA07"; // Unread
             }
 
             UpdateTicks(false, null);

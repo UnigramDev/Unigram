@@ -52,7 +52,7 @@ namespace Telegram.ViewModels
                 _chatId = chat.Id;
                 Title = ClientService.GetTitle(chat);
 
-                AlwaysAlert = Settings.Notifications.GetMutedFor(chat) == 0;
+                AlwaysAlert = !Settings.Notifications.IsMuted(chat);
 
                 if (chat.NotificationSettings.UseDefaultShowPreview)
                 {

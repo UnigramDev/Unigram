@@ -48,6 +48,7 @@ namespace Telegram.Controls.Messages.Content
         private Grid DownloadPanel;
         private FileButton Download;
         private TextBlock Title;
+        private TextBlock TitleTrim;
         private TextBlock Subtitle;
         private bool _templateApplied;
 
@@ -58,6 +59,7 @@ namespace Telegram.Controls.Messages.Content
             DownloadPanel = GetTemplateChild(nameof(DownloadPanel)) as Grid;
             Download = GetTemplateChild(nameof(Download)) as FileButton;
             Title = GetTemplateChild(nameof(Title)) as TextBlock;
+            TitleTrim = GetTemplateChild(nameof(TitleTrim)) as TextBlock;
             Subtitle = GetTemplateChild(nameof(Subtitle)) as TextBlock;
 
             ButtonDrag = new AutomaticDragHelper(Button, true);
@@ -102,7 +104,25 @@ namespace Telegram.Controls.Messages.Content
 
             message.PlaybackService.SourceChanged += OnPlaybackStateChanged;
 
-            Title.Text = audio.GetTitle();
+            if (string.IsNullOrEmpty(audio.Performer) || string.IsNullOrEmpty(audio.Title))
+            {
+                var index = audio.FileName.LastIndexOf('.');
+                if (index > 0)
+                {
+                    Title.Text = audio.FileName.Substring(0, index + 1);
+                    TitleTrim.Text = audio.FileName.Substring(index + 1);
+                }
+                else
+                {
+                    Title.Text = audio.FileName;
+                    TitleTrim.Text = string.Empty;
+                }
+            }
+            else
+            {
+                Title.Text = $"{audio.Performer} - {audio.Title}";
+                TitleTrim.Text = string.Empty;
+            }
 
             if (audio.AlbumCoverThumbnail != null)
             {
@@ -231,7 +251,7 @@ namespace Telegram.Controls.Messages.Content
 
                 Subtitle.Text = string.Format("{0} / {1}", FileSizeConverter.Convert(file.Local.DownloadedSize, size), FileSizeConverter.Convert(size));
             }
-            else if (file.Remote.IsUploadingActive || message.SendingState is MessageSendingStateFailed)
+            else if (file.Remote.IsUploadingActive || message.SendingState is MessageSendingStateFailed || (message.SendingState is MessageSendingStatePending && !file.Remote.IsUploadingCompleted))
             {
                 DownloadPanel.Visibility = Visibility.Collapsed;
 

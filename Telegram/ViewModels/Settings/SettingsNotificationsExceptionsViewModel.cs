@@ -10,6 +10,8 @@ using Microsoft.UI.Xaml.Navigation;
 using System.Runtime.InteropServices.WindowsRuntime;
 using System.Threading.Tasks;
 using Telegram.Collections;
+using Telegram.Common;
+using Telegram.Controls;
 using Telegram.Controls.Media;
 using Telegram.Navigation;
 using Telegram.Navigation.Services;
@@ -34,15 +36,15 @@ namespace Telegram.ViewModels.Settings
                 switch (scope)
                 {
                     case SettingsNotificationsExceptionsScope.PrivateChats:
-                        Scope = new SettingsNotificationsScope(ClientService, typeof(NotificationSettingsScopePrivateChats), Strings.NotificationsPrivateChats, Icons.Person);
+                        Scope = new SettingsNotificationsScope(ClientService, new NotificationSettingsScopePrivateChats(), Strings.NotificationsPrivateChats, Icons.Person);
                         Items = new ItemsCollection(ClientService, new NotificationSettingsScopePrivateChats());
                         break;
                     case SettingsNotificationsExceptionsScope.GroupChats:
-                        Scope = new SettingsNotificationsScope(ClientService, typeof(NotificationSettingsScopeGroupChats), Strings.NotificationsGroups, Icons.People);
+                        Scope = new SettingsNotificationsScope(ClientService, new NotificationSettingsScopeGroupChats(), Strings.NotificationsGroups, Icons.People);
                         Items = new ItemsCollection(ClientService, new NotificationSettingsScopeGroupChats());
                         break;
                     case SettingsNotificationsExceptionsScope.ChannelChats:
-                        Scope = new SettingsNotificationsScope(ClientService, typeof(NotificationSettingsScopeChannelChats), Strings.NotificationsChannels, Icons.Megaphone);
+                        Scope = new SettingsNotificationsScope(ClientService, new NotificationSettingsScopeChannelChats(), Strings.NotificationsChannels, Icons.Megaphone);
                         Items = new ItemsCollection(ClientService, new NotificationSettingsScopeChannelChats());
                         break;
                 }
@@ -136,6 +138,47 @@ namespace Telegram.ViewModels.Settings
                 UseDefaultDisableMentionNotifications = true,
                 UseDefaultDisablePinnedMessageNotifications = true,
             }));
+        }
+
+        public void Mute()
+        {
+            Scope.Alert = false;
+            Scope.Save();
+        }
+
+        public void Unmute()
+        {
+            Scope.Alert = true;
+            Scope.Save();
+        }
+
+        public async void MuteFor(int? value)
+        {
+            if (value is int update)
+            {
+                Scope.MuteFor = update;
+                Scope.Save();
+
+                ShowToast(Strings.NotificationsUnmutedHint, ToastPopupIcon.Unmute);
+            }
+            else
+            {
+                var popup = new ChatMutePopup(Scope.MuteFor);
+
+                var confirm = await ShowPopupAsync(popup);
+                if (confirm != ContentDialogResult.Primary)
+                {
+                    return;
+                }
+
+                if (Scope.MuteFor != popup.Value)
+                {
+                    Scope.MuteFor = popup.Value;
+                    Scope.Save();
+
+                    ShowToast(string.Format(Strings.NotificationsMutedForHint, Locale.FormatMuteFor(popup.Value)), ToastPopupIcon.MuteFor);
+                }
+            }
         }
     }
 

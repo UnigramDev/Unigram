@@ -223,63 +223,58 @@
                     </controls:BadgeButton>
                 </controls:TopNavView>
 
-                <Rectangle x:Name="PremiumLine"
-                           x:Load="{x:Bind ViewModel.IsPremiumAvailable, Mode=OneWay}"
-                           Fill="{ThemeResource NavigationViewItemSeparatorForeground}"
-                           Margin="12,2"
-                           Height="1" />
+                <StackPanel x:Name="PremiumRoot"
+                            x:Load="{x:Bind ViewModel.IsPremiumAvailable, Mode=OneWay}">
+                    <Rectangle Fill="{ThemeResource NavigationViewItemSeparatorForeground}"
+                               Margin="12,2"
+                               Height="1" />
 
-                <controls:BadgeButton x:Name="Premium"
-                                      x:Load="{x:Bind ViewModel.IsPremiumAvailable, Mode=OneWay}"
-                                      Click="Premium_Click"
-                                      Content="{CustomResource TelegramPremium}"
-                                      Style="{StaticResource IconBadgeButtonStyle}">
-                    <controls:BadgeButton.IconSource>
-                        <icons:Premium />
-                    </controls:BadgeButton.IconSource>
-                </controls:BadgeButton>
+                    <controls:BadgeButton Click="Premium_Click"
+                                          Content="{CustomResource TelegramPremium}"
+                                          Style="{StaticResource IconBadgeButtonStyle}">
+                        <controls:BadgeButton.IconSource>
+                            <icons:Premium />
+                        </controls:BadgeButton.IconSource>
+                    </controls:BadgeButton>
 
-                <controls:BadgeButton x:Name="Stars"
-                                      x:Load="{x:Bind ViewModel.IsStarsAvailable, Mode=OneWay}"
-                                      Click="Stars_Click"
-                                      Content="{CustomResource MenuTelegramStars}"
-                                      Style="{StaticResource IconBadgeButtonStyle}">
-                    <controls:BadgeButton.IconSource>
-                        <icons:PremiumStars />
-                    </controls:BadgeButton.IconSource>
-                </controls:BadgeButton>
+                    <controls:BadgeButton Click="Stars_Click"
+                                          Badge="{x:Bind ViewModel.OwnedStarCount, Mode=OneWay}"
+                                          Content="{CustomResource MenuTelegramStars}"
+                                          Style="{StaticResource IconBadgeButtonStyle}">
+                        <controls:BadgeButton.IconSource>
+                            <icons:PremiumStars />
+                        </controls:BadgeButton.IconSource>
+                    </controls:BadgeButton>
 
-                <controls:BadgeButton x:Name="Business"
-                                      x:Load="{x:Bind ViewModel.IsBusinessAvailable, Mode=OneWay}"
-                                      Click="Business_Click"
-                                      Style="{StaticResource IconBadgeButtonStyle}">
-                    <controls:BadgeButton.IconSource>
-                        <icons:Business />
-                    </controls:BadgeButton.IconSource>
-                    <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition />
-                            <ColumnDefinition />
-                        </Grid.ColumnDefinitions>
-                        <TextBlock Text="{CustomResource TelegramBusiness}" />
-                        <controls:BadgeControl Text="NEW"
-                                               VerticalAlignment="Bottom"
-                                               CornerRadius="4"
-                                               Margin="4,0,0,0"
-                                               Grid.Column="1" />
-                    </Grid>
-                </controls:BadgeButton>
+                    <controls:BadgeButton Click="Business_Click"
+                                          Style="{StaticResource IconBadgeButtonStyle}">
+                        <controls:BadgeButton.IconSource>
+                            <icons:Business />
+                        </controls:BadgeButton.IconSource>
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition />
+                                <ColumnDefinition />
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Text="{CustomResource TelegramBusiness}" />
+                            <controls:BadgeControl Text="NEW"
+                                                   VerticalAlignment="Bottom"
+                                                   CornerRadius="4"
+                                                   Margin="4,0,0,0"
+                                                   Grid.Column="1" />
+                        </Grid>
+                    </controls:BadgeButton>
 
-                <controls:BadgeButton x:Name="PremiumGifting"
-                                      x:Load="False"
-                                      Click="{x:Bind ViewModel.PremiumGifting}"
-                                      Content="{CustomResource TelegramPremium}"
-                                      Style="{StaticResource IconBadgeButtonStyle}">
-                    <controls:BadgeButton.IconSource>
-                        <icons:PremiumGifting />
-                    </controls:BadgeButton.IconSource>
-                </controls:BadgeButton>
-
+                    <controls:BadgeButton x:Name="PremiumGifting"
+                                          x:Load="False"
+                                          Click="{x:Bind ViewModel.PremiumGifting}"
+                                          Content="{CustomResource TelegramPremium}"
+                                          Style="{StaticResource IconBadgeButtonStyle}">
+                        <controls:BadgeButton.IconSource>
+                            <icons:PremiumGifting />
+                        </controls:BadgeButton.IconSource>
+                    </controls:BadgeButton>
+                </StackPanel>
                 <Rectangle Fill="{ThemeResource NavigationViewItemSeparatorForeground}"
                            Margin="12,2"
                            Height="1" />

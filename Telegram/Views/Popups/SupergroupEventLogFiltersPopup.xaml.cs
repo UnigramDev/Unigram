@@ -39,7 +39,7 @@ namespace Telegram.Views.Popups
         {
             _clientService = clientService;
 
-            filters ??= new ChatEventLogFilters(true, true, true, true, true, true, true, true, true, true, true, true, true);
+            filters ??= new ChatEventLogFilters(true, true, true, true, true, true, true, true, true, true, true, true, true, true);
 
             MemberRestrictions.IsChecked = filters.MemberRestrictions;
             MemberPromotions.IsChecked = filters.MemberPromotions;

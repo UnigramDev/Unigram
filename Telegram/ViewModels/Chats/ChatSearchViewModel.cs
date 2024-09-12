@@ -13,6 +13,7 @@ using Telegram.Collections;
 using Telegram.Common;
 using Telegram.Controls.Media;
 using Telegram.Navigation;
+using Telegram.Navigation.Services;
 using Telegram.Services;
 using Telegram.Td.Api;
 using Telegram.Views.Popups;
@@ -24,11 +25,13 @@ namespace Telegram.ViewModels.Chats
         private readonly DialogViewModel _dialog;
         private readonly DisposableMutex _loadMoreLock;
 
-        public ChatSearchViewModel(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator, DialogViewModel viewModel, string query)
+        public ChatSearchViewModel(IClientService clientService, INavigationService navigationService, ISettingsService settingsService, IEventAggregator aggregator, DialogViewModel viewModel, string query)
             : base(clientService, settingsService, aggregator)
         {
             _dialog = viewModel;
             _loadMoreLock = new DisposableMutex();
+
+            NavigationService = navigationService;
 
             NextCommand = new RelayCommand(NextExecute, NextCanExecute);
             PreviousCommand = new RelayCommand(PreviousExecute, PreviousCanExecute);
@@ -39,13 +42,7 @@ namespace Telegram.ViewModels.Chats
             }
         }
 
-        public DialogViewModel Dialog
-        {
-            get
-            {
-                return _dialog;
-            }
-        }
+        public DialogViewModel Dialog => _dialog;
 
         private ICollection _autocomplete;
         public ICollection Autocomplete

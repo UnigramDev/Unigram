@@ -243,7 +243,7 @@ namespace Telegram.Td.Api
                 return oldCustomEmoji.CustomEmojiId == newCustomEmoji.CustomEmojiId;
             }
 
-            return false;
+            return x is ReactionTypePaid && y is ReactionTypePaid;
         }
 
         public static bool AreTheSame(this MessageSelfDestructType x, MessageSelfDestructType y)
@@ -256,7 +256,7 @@ namespace Telegram.Td.Api
             else if (x is MessageSelfDestructTypeImmediately
                 && y is MessageSelfDestructTypeImmediately)
             {
-                return false;
+                return true;
             }
 
             return x == null && y == null;
@@ -934,7 +934,7 @@ namespace Telegram.Td.Api
                         },
                         LinkPreviewTypeAnimation animation => (animation.Animation.AnimationValue, animation.Animation.Thumbnail, animation.Animation.FileName),
                         LinkPreviewTypeAudio audio => (audio.Audio.AudioValue, audio.Audio.AlbumCoverThumbnail, audio.Audio.FileName),
-                        LinkPreviewTypeBackground background => (background.Document.DocumentValue, background.Document.Thumbnail, background.Document.FileName),
+                        LinkPreviewTypeBackground background => (background.Document?.DocumentValue, background.Document?.Thumbnail, background.Document?.FileName),
                         LinkPreviewTypeDocument document => (document.Document.DocumentValue, document.Document.Thumbnail, document.Document.FileName),
                         LinkPreviewTypeEmbeddedAudioPlayer embeddedAudioPlayer => (embeddedAudioPlayer.Thumbnail?.GetFile(), null, null),
                         LinkPreviewTypeEmbeddedAnimationPlayer embeddedAnimationPlayer => (embeddedAnimationPlayer.Thumbnail?.GetFile(), null, null),
@@ -966,7 +966,7 @@ namespace Telegram.Td.Api
 
         public static Minithumbnail GetMinithumbnail(this LinkPreview linkPreview)
         {
-            return linkPreview.Type switch
+            return linkPreview?.Type switch
             {
                 LinkPreviewTypeAlbum album => album.Media[0] switch
                 {
@@ -976,21 +976,21 @@ namespace Telegram.Td.Api
                 },
                 LinkPreviewTypeAnimation animation => animation.Animation.Minithumbnail,
                 LinkPreviewTypeAudio audio => audio.Audio.AlbumCoverMinithumbnail,
-                LinkPreviewTypeBackground background => background.Document.Minithumbnail,
+                LinkPreviewTypeBackground background => background.Document?.Minithumbnail,
                 LinkPreviewTypeDocument document => document.Document.Minithumbnail,
-                LinkPreviewTypeEmbeddedAudioPlayer embeddedAudioPlayer => embeddedAudioPlayer.Thumbnail.Minithumbnail,
-                LinkPreviewTypeEmbeddedAnimationPlayer embeddedAnimationPlayer => embeddedAnimationPlayer.Thumbnail.Minithumbnail,
-                LinkPreviewTypeEmbeddedVideoPlayer embeddedVideoPlayer => embeddedVideoPlayer.Thumbnail.Minithumbnail,
+                LinkPreviewTypeEmbeddedAudioPlayer embeddedAudioPlayer => embeddedAudioPlayer.Thumbnail?.Minithumbnail,
+                LinkPreviewTypeEmbeddedAnimationPlayer embeddedAnimationPlayer => embeddedAnimationPlayer.Thumbnail?.Minithumbnail,
+                LinkPreviewTypeEmbeddedVideoPlayer embeddedVideoPlayer => embeddedVideoPlayer.Thumbnail?.Minithumbnail,
                 LinkPreviewTypeVideo video => video.Video.Minithumbnail,
                 LinkPreviewTypeVideoNote videoNote => videoNote.VideoNote.Minithumbnail,
                 LinkPreviewTypePhoto photo => photo.Photo.Minithumbnail,
                 LinkPreviewTypeApp app => app.Photo.Minithumbnail,
-                LinkPreviewTypeArticle article => article.Photo.Minithumbnail,
-                LinkPreviewTypeChannelBoost channelBoost => channelBoost.Photo.Minithumbnail,
-                LinkPreviewTypeChat chat => chat.Photo.Minithumbnail,
-                LinkPreviewTypeSupergroupBoost supergroupBoost => supergroupBoost.Photo.Minithumbnail,
-                LinkPreviewTypeUser user => user.Photo.Minithumbnail,
-                LinkPreviewTypeVideoChat videoChat => videoChat.Photo.Minithumbnail,
+                LinkPreviewTypeArticle article => article.Photo?.Minithumbnail,
+                LinkPreviewTypeChannelBoost channelBoost => channelBoost.Photo?.Minithumbnail,
+                LinkPreviewTypeChat chat => chat.Photo?.Minithumbnail,
+                LinkPreviewTypeSupergroupBoost supergroupBoost => supergroupBoost.Photo?.Minithumbnail,
+                LinkPreviewTypeUser user => user.Photo?.Minithumbnail,
+                LinkPreviewTypeVideoChat videoChat => videoChat.Photo?.Minithumbnail,
                 LinkPreviewTypeWebApp webApp => webApp.Photo.Minithumbnail,
                 _ => null
             };
@@ -998,7 +998,7 @@ namespace Telegram.Td.Api
 
         public static Thumbnail GetThumbnail(this LinkPreview linkPreview)
         {
-            return linkPreview.Type switch
+            return linkPreview?.Type switch
             {
                 LinkPreviewTypeAlbum album => album.Media[0] switch
                 {
@@ -1008,7 +1008,7 @@ namespace Telegram.Td.Api
                 },
                 LinkPreviewTypeAnimation animation => animation.Animation.Thumbnail,
                 LinkPreviewTypeAudio audio => audio.Audio.AlbumCoverThumbnail,
-                LinkPreviewTypeBackground background => background.Document.Thumbnail,
+                LinkPreviewTypeBackground background => background.Document?.Thumbnail,
                 LinkPreviewTypeDocument document => document.Document.Thumbnail,
                 LinkPreviewTypeEmbeddedAudioPlayer embeddedAudioPlayer => embeddedAudioPlayer.Thumbnail?.GetThumbnail(),
                 LinkPreviewTypeEmbeddedAnimationPlayer embeddedAnimationPlayer => embeddedAnimationPlayer.Thumbnail?.GetThumbnail(),
@@ -1130,7 +1130,7 @@ namespace Telegram.Td.Api
                         },
                         LinkPreviewTypeAnimation animation => animation.Animation.AnimationValue,
                         LinkPreviewTypeAudio audio => audio.Audio.AudioValue,
-                        LinkPreviewTypeBackground background => background.Document.DocumentValue,
+                        LinkPreviewTypeBackground background => background.Document?.DocumentValue,
                         LinkPreviewTypeDocument document => document.Document.DocumentValue,
                         LinkPreviewTypeEmbeddedAudioPlayer embeddedAudioPlayer => embeddedAudioPlayer.Thumbnail?.GetFile(),
                         LinkPreviewTypeEmbeddedAnimationPlayer embeddedAnimationPlayer => embeddedAnimationPlayer.Thumbnail?.GetFile(),
@@ -1295,22 +1295,7 @@ namespace Telegram.Td.Api
                 case MessageSticker sticker:
                     return sticker.Sticker.Thumbnail;
                 case MessageText text:
-                    return text.LinkPreview?.Type switch
-                    {
-                        LinkPreviewTypeAlbum album => album.Media[0] switch
-                        {
-                            LinkPreviewAlbumMediaVideo albumVideo => albumVideo.Video.Thumbnail,
-                            _ => null
-                        },
-                        LinkPreviewTypeAnimation animation => animation.Animation.Thumbnail,
-                        LinkPreviewTypeAudio audio => audio.Audio.AlbumCoverThumbnail,
-                        LinkPreviewTypeBackground background => background.Document.Thumbnail,
-                        LinkPreviewTypeDocument document => document.Document.Thumbnail,
-                        LinkPreviewTypeSticker sticker => sticker.Sticker.Thumbnail,
-                        LinkPreviewTypeVideo video => video.Video.Thumbnail,
-                        LinkPreviewTypeVideoNote videoNote => videoNote.VideoNote.Thumbnail,
-                        _ => null
-                    };
+                    return text.LinkPreview?.GetThumbnail();
                 case MessageVideo video:
                     return video.Video.Thumbnail;
                 case MessageVideoNote videoNote:
@@ -1335,22 +1320,7 @@ namespace Telegram.Td.Api
                 case MessageGame game:
                     return game.Game.Animation?.Minithumbnail;
                 case MessageText text:
-                    return text.LinkPreview?.Type switch
-                    {
-                        LinkPreviewTypeAlbum album => album.Media[0] switch
-                        {
-                            LinkPreviewAlbumMediaVideo albumVideo => albumVideo.Video.Minithumbnail,
-                            _ => null
-                        },
-                        LinkPreviewTypeAnimation animation => animation.Animation.Minithumbnail,
-                        LinkPreviewTypeAudio audio => audio.Audio.AlbumCoverMinithumbnail,
-                        LinkPreviewTypeBackground background => background.Document.Minithumbnail,
-                        LinkPreviewTypeDocument document => document.Document.Minithumbnail,
-                        //LinkPreviewTypeSticker sticker => sticker.Sticker.Minithumbnail,
-                        LinkPreviewTypeVideo video => video.Video.Minithumbnail,
-                        LinkPreviewTypeVideoNote videoNote => videoNote.VideoNote.Minithumbnail,
-                        _ => null
-                    };
+                    return text.LinkPreview?.GetMinithumbnail();
                 case MessageVideo video:
                     return video.IsSecret && !secret ? null : video.Video.Minithumbnail;
                 case MessageVideoNote videoNote:
@@ -1470,7 +1440,7 @@ namespace Telegram.Td.Api
             {
                 return true;
             }
-            else if (linkPreview.HasAuthor())
+            else if (!string.IsNullOrEmpty(linkPreview.Author))
             {
                 return true;
             }
@@ -1481,46 +1451,6 @@ namespace Telegram.Td.Api
             }
 
             return false;
-        }
-
-        public static bool HasAuthor(this LinkPreview linkPreview)
-        {
-            var author = linkPreview.Type switch
-            {
-                LinkPreviewTypeAnimation animation => animation.Author,
-                LinkPreviewTypeApp app => app.Author,
-                LinkPreviewTypeArticle article => article.Author,
-                LinkPreviewTypeAudio audio => audio.Author,
-                LinkPreviewTypeDocument document => document.Author,
-                LinkPreviewTypeEmbeddedAudioPlayer audioPlayer => audioPlayer.Author,
-                LinkPreviewTypeEmbeddedAnimationPlayer animationPlayer => animationPlayer.Author,
-                LinkPreviewTypeEmbeddedVideoPlayer videoPlayer => videoPlayer.Author,
-                LinkPreviewTypePhoto photo => photo.Author,
-                LinkPreviewTypeVideo video => video.Author,
-                _ => null
-            };
-
-            return !string.IsNullOrWhiteSpace(author);
-        }
-
-        public static bool HasAuthor(this LinkPreview linkPreview, out string author)
-        {
-            author = linkPreview.Type switch
-            {
-                LinkPreviewTypeAnimation animation => animation.Author,
-                LinkPreviewTypeApp app => app.Author,
-                LinkPreviewTypeArticle article => article.Author,
-                LinkPreviewTypeAudio audio => audio.Author,
-                LinkPreviewTypeDocument document => document.Author,
-                LinkPreviewTypeEmbeddedAudioPlayer audioPlayer => audioPlayer.Author,
-                LinkPreviewTypeEmbeddedAnimationPlayer animationPlayer => animationPlayer.Author,
-                LinkPreviewTypeEmbeddedVideoPlayer videoPlayer => videoPlayer.Author,
-                LinkPreviewTypePhoto photo => photo.Author,
-                LinkPreviewTypeVideo video => video.Author,
-                _ => null
-            };
-
-            return !string.IsNullOrWhiteSpace(author);
         }
 
         public static bool HasMedia(this LinkPreview linkPreview)
@@ -1566,7 +1496,7 @@ namespace Telegram.Td.Api
                 return false;
             }
 
-            return linkPreview.SiteName.Length > 0 || linkPreview.Title.Length > 0 || linkPreview.HasAuthor() || linkPreview.Description?.Text.Length > 0;
+            return linkPreview.SiteName.Length > 0 || linkPreview.Title.Length > 0 || linkPreview.Author.Length > 0 || linkPreview.Description?.Text.Length > 0;
         }
 
         public static bool IsService(this Message message)
@@ -1583,6 +1513,8 @@ namespace Telegram.Td.Api
                 case MessageDice:
                 case MessageDocument:
                 case MessageGame:
+                case MessageGiveaway:
+                case MessageGiveawayWinners:
                 case MessageInvoice:
                 case MessageLocation:
                 case MessagePaidAlbum:
@@ -1596,7 +1528,6 @@ namespace Telegram.Td.Api
                 case MessageVideo:
                 case MessageVideoNote:
                 case MessageVoiceNote:
-                case MessagePremiumGiveaway:
                     return false;
                 case MessageAsyncStory asyncStory:
                     return asyncStory.ViaMention;
@@ -2197,8 +2128,7 @@ namespace Telegram.Td.Api
 
         public static string GetStartsAt(this MessageVideoChatScheduled messageVideoChatScheduled)
         {
-            var date = Converters.Formatter.ToLocalTime(messageVideoChatScheduled.StartDate);
-            return string.Format(Strings.formatDateAtTime, Converters.Formatter.ShortDate.Format(date), Converters.Formatter.ShortTime.Format(date));
+            return Converters.Formatter.DateAt(messageVideoChatScheduled.StartDate);
         }
 
         public static string GetStartsAt(this GroupCall groupCall)
@@ -2206,18 +2136,19 @@ namespace Telegram.Td.Api
             var date = Converters.Formatter.ToLocalTime(groupCall.ScheduledStartDate);
             if (date.Date == DateTime.Today)
             {
-                return string.Format(Strings.TodayAtFormattedWithToday, Converters.Formatter.ShortTime.Format(date));
+                return string.Format(Strings.TodayAtFormattedWithToday, Converters.Formatter.Time(date));
             }
             else if (date.Date.AddDays(1) == DateTime.Today)
             {
-                return string.Format(Strings.YesterdayAtFormatted, Converters.Formatter.ShortTime.Format(date));
+                return string.Format(Strings.YesterdayAtFormatted, Converters.Formatter.Time(date));
             }
 
-            return string.Format(Strings.formatDateAtTime, Converters.Formatter.ShortDate.Format(date), Converters.Formatter.ShortTime.Format(date));
+            return Converters.Formatter.DateAt(date);
         }
 
-        public static void Discern(this IEnumerable<ReactionType> reactions, out HashSet<string> emoji, out HashSet<long> customEmoji)
+        public static void Discern(this IEnumerable<ReactionType> reactions, out bool paid, out HashSet<string> emoji, out HashSet<long> customEmoji)
         {
+            paid = false;
             emoji = null;
             customEmoji = null;
 
@@ -2232,6 +2163,10 @@ namespace Telegram.Td.Api
                 {
                     customEmoji ??= new HashSet<long>();
                     customEmoji.Add(customEmojiItem.CustomEmojiId);
+                }
+                else if (reaction is ReactionTypePaid)
+                {
+                    paid = true;
                 }
             }
         }

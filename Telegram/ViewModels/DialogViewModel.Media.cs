@@ -56,32 +56,21 @@ namespace Telegram.ViewModels
             if (schedule == true || (_type == DialogType.ScheduledMessages && schedule == null))
             {
                 var user = ClientService.GetUser(chat);
-                var until = DateTime.Now;
+                var popup = new ScheduleMessagePopup(user, ClientService.IsSavedMessages(chat));
 
-                if (_type == DialogType.ScheduledMessages)
-                {
-                    var last = Items.LastOrDefault();
-                    if (last != null && last.SchedulingState is MessageSchedulingStateSendAtDate sendAtDate)
-                    {
-                        until = Formatter.ToLocalTime(sendAtDate.SendDate);
-                    }
-                }
-
-                var dialog = new ScheduleMessagePopup(user, until.AddMinutes(1), ClientService.IsSavedMessages(chat));
-                var confirm = await ShowPopupAsync(dialog);
-
+                var confirm = await ShowPopupAsync(popup);
                 if (confirm != ContentDialogResult.Primary)
                 {
                     return null;
                 }
 
-                if (dialog.IsUntilOnline)
+                if (popup.IsUntilOnline)
                 {
                     return new MessageSendOptions(false, false, false, Settings.Stickers.DynamicPackOrder && reorder, new MessageSchedulingStateSendWhenOnline(), 0, 0, false);
                 }
                 else
                 {
-                    return new MessageSendOptions(false, false, false, Settings.Stickers.DynamicPackOrder && reorder, new MessageSchedulingStateSendAtDate(dialog.Value.ToTimestamp()), 0, 0, false);
+                    return new MessageSendOptions(false, false, false, Settings.Stickers.DynamicPackOrder && reorder, new MessageSchedulingStateSendAtDate(popup.Value.ToTimestamp()), 0, 0, false);
                 }
             }
             else

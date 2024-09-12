@@ -1,4 +1,5 @@
 ﻿using Microsoft.UI;
+using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media;
 using Telegram.Common;
@@ -50,31 +51,31 @@ namespace Telegram.Controls.Cells.Revenue
             }
             else if (transaction.Partner is StarTransactionPartnerAppStore or StarTransactionPartnerGooglePlay)
             {
-                MediaPreview.Visibility = Microsoft.UI.Xaml.Visibility.Collapsed;
+                MediaPreview.Visibility = Visibility.Collapsed;
                 Photo.Source = new PlaceholderImage(Icons.Premium, true, Color.FromArgb(0xFF, 0xFD, 0xD2, 0x1A), Color.FromArgb(0xFF, 0xE4, 0x7B, 0x03));
                 Title.Text = Strings.StarsTransactionInApp;
-                Subtitle.Visibility = Microsoft.UI.Xaml.Visibility.Collapsed;
+                Subtitle.Visibility = Visibility.Collapsed;
             }
             else if (transaction.Partner is StarTransactionPartnerBot sourceBot && clientService.TryGetUser(sourceBot.UserId, out User botUser))
             {
                 Subtitle.Text = botUser.FullName();
-                Subtitle.Visibility = Microsoft.UI.Xaml.Visibility.Visible;
+                Subtitle.Visibility = Visibility.Visible;
 
                 if (sourceBot.Purpose is BotTransactionPurposeInvoicePayment invoicePayment)
                 {
                     Title.Text = invoicePayment.ProductInfo.Title;
                     Photo.SetUser(clientService, botUser, 36);
 
-                    MediaPreview.Visibility = Microsoft.UI.Xaml.Visibility.Collapsed;
+                    MediaPreview.Visibility = Visibility.Collapsed;
                 }
                 else if (sourceBot.Purpose is BotTransactionPurposePaidMedia paidMedia)
                 {
                     Title.Text = Strings.StarMediaPurchase;
-                    Subtitle.Visibility = Microsoft.UI.Xaml.Visibility.Collapsed;
+                    Subtitle.Visibility = Visibility.Collapsed;
 
                     if (paidMedia.Media.Count > 0)
                     {
-                        MediaPreview.Visibility = Microsoft.UI.Xaml.Visibility.Visible;
+                        MediaPreview.Visibility = Visibility.Visible;
 
                         UpdateMedia(clientService, paidMedia.Media[0], Media1, ref _media1Token);
 
@@ -82,38 +83,38 @@ namespace Telegram.Controls.Cells.Revenue
                         {
                             UpdateMedia(clientService, paidMedia.Media[1], Media2, ref _media2Token);
 
-                            Media2.Visibility = Microsoft.UI.Xaml.Visibility.Visible;
+                            Media2.Visibility = Visibility.Visible;
                         }
                         else
                         {
-                            Media2.Visibility = Microsoft.UI.Xaml.Visibility.Collapsed;
+                            Media2.Visibility = Visibility.Collapsed;
                         }
                     }
                     else
                     {
                         Photo.SetUser(clientService, botUser, 36);
 
-                        MediaPreview.Visibility = Microsoft.UI.Xaml.Visibility.Collapsed;
+                        MediaPreview.Visibility = Visibility.Collapsed;
                     }
                 }
                 else
                 {
                     Title.Text = botUser.FullName();
-                    Subtitle.Visibility = Microsoft.UI.Xaml.Visibility.Collapsed;
+                    Subtitle.Visibility = Visibility.Collapsed;
 
                     Photo.SetUser(clientService, botUser, 36);
 
-                    MediaPreview.Visibility = Microsoft.UI.Xaml.Visibility.Collapsed;
+                    MediaPreview.Visibility = Visibility.Collapsed;
                 }
             }
             else if (transaction.Partner is StarTransactionPartnerBusiness sourceBusiness && clientService.TryGetUser(sourceBusiness.UserId, out User businessUser))
             {
                 Subtitle.Text = businessUser.FullName();
-                Subtitle.Visibility = Microsoft.UI.Xaml.Visibility.Visible;
+                Subtitle.Visibility = Visibility.Visible;
 
                 Title.Text = Strings.StarMediaPurchase;
 
-                MediaPreview.Visibility = Microsoft.UI.Xaml.Visibility.Visible;
+                MediaPreview.Visibility = Visibility.Visible;
 
                 UpdateMedia(clientService, sourceBusiness.Media[0], Media1, ref _media1Token);
 
@@ -121,11 +122,11 @@ namespace Telegram.Controls.Cells.Revenue
                 {
                     UpdateMedia(clientService, sourceBusiness.Media[1], Media2, ref _media2Token);
 
-                    Media2.Visibility = Microsoft.UI.Xaml.Visibility.Visible;
+                    Media2.Visibility = Visibility.Visible;
                 }
                 else
                 {
-                    Media2.Visibility = Microsoft.UI.Xaml.Visibility.Collapsed;
+                    Media2.Visibility = Visibility.Collapsed;
                 }
             }
             else if (transaction.Partner is StarTransactionPartnerUser sourceUser && clientService.TryGetUser(sourceUser.UserId, out User user))
@@ -134,22 +135,22 @@ namespace Telegram.Controls.Cells.Revenue
                     ? Strings.StarsGiftSent
                     : Strings.StarsGiftReceived;
                 Subtitle.Text = user.FullName();
-                Subtitle.Visibility = Microsoft.UI.Xaml.Visibility.Visible;
+                Subtitle.Visibility = Visibility.Visible;
 
                 Photo.SetUser(clientService, user, 36);
 
-                MediaPreview.Visibility = Microsoft.UI.Xaml.Visibility.Collapsed;
+                MediaPreview.Visibility = Visibility.Collapsed;
             }
-            else if (transaction.Partner is StarTransactionPartnerChannel sourceChannel && clientService.TryGetChat(sourceChannel.ChatId, out Chat chat))
+            else if (transaction.Partner is StarTransactionPartnerChat sourceChat && clientService.TryGetChat(sourceChat.ChatId, out Chat chat))
             {
                 Subtitle.Text = chat.Title;
-                Subtitle.Visibility = Microsoft.UI.Xaml.Visibility.Visible;
+                Subtitle.Visibility = Visibility.Visible;
 
-                if (sourceChannel.Purpose is ChannelTransactionPurposePaidMedia paidMedia)
+                if (sourceChat.Purpose is ChatTransactionPurposePaidMedia paidMedia)
                 {
                     Title.Text = Strings.StarMediaPurchase;
 
-                    MediaPreview.Visibility = Microsoft.UI.Xaml.Visibility.Visible;
+                    MediaPreview.Visibility = Visibility.Visible;
 
                     UpdateMedia(clientService, paidMedia.Media[0], Media1, ref _media1Token);
 
@@ -157,34 +158,41 @@ namespace Telegram.Controls.Cells.Revenue
                     {
                         UpdateMedia(clientService, paidMedia.Media[1], Media2, ref _media2Token);
 
-                        Media2.Visibility = Microsoft.UI.Xaml.Visibility.Visible;
+                        Media2.Visibility = Visibility.Visible;
                     }
                     else
                     {
-                        Media2.Visibility = Microsoft.UI.Xaml.Visibility.Collapsed;
+                        Media2.Visibility = Visibility.Collapsed;
                     }
                 }
-                else if (sourceChannel.Purpose is ChannelTransactionPurposeReaction)
+                else if (sourceChat.Purpose is ChatTransactionPurposeReaction)
                 {
                     Title.Text = Strings.StarsReactionsSent;
                     Photo.SetChat(clientService, chat, 36);
 
-                    MediaPreview.Visibility = Microsoft.UI.Xaml.Visibility.Collapsed;
+                    MediaPreview.Visibility = Visibility.Collapsed;
                 }
-                else if (sourceChannel.Purpose is ChannelTransactionPurposeJoin)
+                else if (sourceChat.Purpose is ChatTransactionPurposeJoin)
                 {
                     Title.Text = Strings.StarsTransactionSubscriptionMonthly;
                     Photo.SetChat(clientService, chat, 36);
 
-                    MediaPreview.Visibility = Microsoft.UI.Xaml.Visibility.Collapsed;
+                    MediaPreview.Visibility = Visibility.Collapsed;
+                }
+                else if (sourceChat.Purpose is ChatTransactionPurposeGiveaway)
+                {
+                    Title.Text = Strings.StarsGiveawayPrizeReceived;
+                    Photo.SetChat(clientService, chat, 36);
+
+                    MediaPreview.Visibility = Visibility.Collapsed;
                 }
             }
             else
             {
-                MediaPreview.Visibility = Microsoft.UI.Xaml.Visibility.Collapsed;
+                MediaPreview.Visibility = Visibility.Collapsed;
                 Photo.Source = PlaceholderImage.GetGlyph(Icons.QuestionCircle, long.MinValue);
                 Title.Text = Strings.StarsTransactionUnsupported;
-                Subtitle.Visibility = Microsoft.UI.Xaml.Visibility.Collapsed;
+                Subtitle.Visibility = Visibility.Collapsed;
             }
 
             Date.Text = Formatter.DateAt(transaction.Date);

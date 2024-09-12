@@ -370,23 +370,23 @@ namespace Telegram.Common
                         return Declension(Strings.R.UpdatedMinutes, diff);
                     }
 
-                    var format = string.Format(Strings.TodayAtFormatted, Formatter.ShortTime.Format(online)); //getInstance().formatterDay.format(new Date(date)));
+                    var format = string.Format(Strings.TodayAtFormatted, Formatter.Time(online)); //getInstance().formatterDay.format(new Date(date)));
                     return string.Format(Strings.LocationUpdatedFormatted, format);
                 }
                 else if (dateDay + 1 == day && year == dateYear)
                 {
-                    var format = string.Format(Strings.YesterdayAtFormatted, Formatter.ShortTime.Format(online)); //getInstance().formatterDay.format(new Date(date)));
+                    var format = string.Format(Strings.YesterdayAtFormatted, Formatter.Time(online)); //getInstance().formatterDay.format(new Date(date)));
                     return string.Format(Strings.LocationUpdatedFormatted, format);
                 }
                 else if (Math.Abs(DateTime.Now.ToTimestamp() / 1000 - date) < 31536000000L)
                 {
-                    var format = string.Format(Strings.formatDateAtTime, Formatter.ShortDate.Format(online), Formatter.ShortTime.Format(online)); //getInstance().formatterMonth.format(new Date(date)), getInstance().formatterDay.format(new Date(date)));
-                    return string.Format(Strings.LocationUpdatedFormatted, format);
+                    //getInstance().formatterMonth.format(new Date(date)), getInstance().formatterDay.format(new Date(date)));
+                    return string.Format(Strings.LocationUpdatedFormatted, Formatter.DateAt(online));
                 }
                 else
                 {
-                    var format = string.Format(Strings.formatDateAtTime, Formatter.ShortDate.Format(online), Formatter.ShortTime.Format(online)); //getInstance().formatterYear.format(new Date(date)), getInstance().formatterDay.format(new Date(date)));
-                    return string.Format(Strings.LocationUpdatedFormatted, format);
+                    //getInstance().formatterYear.format(new Date(date)), getInstance().formatterDay.format(new Date(date)));
+                    return string.Format(Strings.LocationUpdatedFormatted, Formatter.DateAt(online));
                 }
             }
             catch (Exception)
@@ -409,19 +409,19 @@ namespace Telegram.Common
                 int dateYear = online.Year;
                 if (dateDay == day && year == dateYear)
                 {
-                    return string.Format(Strings.TodayAtFormattedWithToday, Formatter.ShortTime.Format(online));
+                    return string.Format(Strings.TodayAtFormattedWithToday, Formatter.Time(online));
                 }
                 else if (dateDay + 1 == day && year == dateYear)
                 {
-                    return string.Format(Strings.YesterdayAtFormatted, Formatter.ShortTime.Format(online));
+                    return string.Format(Strings.YesterdayAtFormatted, Formatter.Time(online));
                 }
                 else if (Math.Abs(DateTime.Now.ToTimestamp() / 1000 - date) < 31536000000L)
                 {
-                    return string.Format(Strings.formatDateAtTime, Formatter.ShortDate.Format(online), Formatter.ShortTime.Format(online));
+                    return Formatter.DateAt(online);
                 }
                 else
                 {
-                    return string.Format(Strings.formatDateAtTime, Formatter.ShortDate.Format(online), Formatter.ShortTime.Format(online));
+                    return Formatter.DateAt(online);
                 }
             }
             catch (Exception)
@@ -445,6 +445,16 @@ namespace Telegram.Common
             {
                 return string.Format(Strings.AutoLockInTime, Declension(Strings.R.Hours, timeout / 60 / 60));
             }
+        }
+
+        public static string FormatMuteFor(int timeout)
+        {
+            if (timeout < 60 * 60 * 24)
+            {
+                return Declension(Strings.R.Hours, timeout / 60 / 60);
+            }
+
+            return Declension(Strings.R.Days, timeout / 60 / 60 / 24);
         }
 
         private static Dictionary<string, string> _translitChars;

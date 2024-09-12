@@ -145,7 +145,7 @@ namespace Telegram.ViewModels.Settings
 
         public void Handle(UpdateOption update)
         {
-            if (string.Equals(update.Name, "enabled_proxy_id", StringComparison.OrdinalIgnoreCase))
+            if (update.Name == OptionsService.R.EnabledProxyId)
             {
                 BeginOnUIThread(() => Handle(ClientService.ConnectionState, ClientService.Options.EnabledProxyId));
             }

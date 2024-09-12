@@ -194,7 +194,7 @@ namespace Telegram.ViewModels
 
             if (string.IsNullOrEmpty(query))
             {
-                var response = await ClientService.SendAsync(new GetPopularWebAppBots(string.Empty, 50));
+                var response = await ClientService.SendAsync(new GetGrossingWebAppBots(string.Empty, 50));
                 if (response is FoundUsers foundUsers && !cancellationToken.IsCancellationRequested)
                 {
                     foreach (var user in ClientService.GetUsers(foundUsers.UserIds))

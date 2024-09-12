@@ -24,6 +24,19 @@ namespace Telegram.Controls.Media
 
         protected override void OnConnected()
         {
+            try
+            {
+                CreateResources();
+            }
+            catch
+            {
+                OnDisconnected();
+                CreateResources();
+            }
+        }
+
+        private void CreateResources()
+        {
             _connected = true;
             _negative = IsNegative;
 

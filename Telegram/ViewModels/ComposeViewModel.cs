@@ -546,7 +546,7 @@ namespace Telegram.ViewModels
                     var input = factory.PaidDelegate?.Invoke(factory.InputFile);
                     if (input != null)
                     {
-                        await SendMessageAsync(reply, new InputMessagePaidMedia(starCount, new[] { input }, caption, file.ShowCaptionAboveMedia), options);
+                        await SendMessageAsync(reply, new InputMessagePaidMedia(starCount, new[] { input }, caption, file.ShowCaptionAboveMedia, string.Empty), options);
                     }
                 }
                 else
@@ -569,7 +569,7 @@ namespace Telegram.ViewModels
                     var input = factory.PaidDelegate?.Invoke(factory.InputFile);
                     if (input != null)
                     {
-                        await SendMessageAsync(reply, new InputMessagePaidMedia(starCount, new[] { input }, caption, video.ShowCaptionAboveMedia), options);
+                        await SendMessageAsync(reply, new InputMessagePaidMedia(starCount, new[] { input }, caption, video.ShowCaptionAboveMedia, string.Empty), options);
                     }
                 }
                 else
@@ -901,7 +901,7 @@ namespace Telegram.ViewModels
 
             if (starCount > 0)
             {
-                return await SendMessageAsync(reply, new InputMessagePaidMedia(starCount, paidOperations, caption, showCaptionAboveMedia), options);
+                return await SendMessageAsync(reply, new InputMessagePaidMedia(starCount, paidOperations, caption, showCaptionAboveMedia, string.Empty), options);
             }
 
             return await ClientService.SendAsync(CreateSendMessageAlbum(chat.Id, ThreadId, reply, options, operations));

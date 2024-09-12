@@ -805,7 +805,7 @@ namespace Telegram.Views
 
             if (message.IsService)
             {
-                if (message.Content is MessagePremiumGiftCode)
+                if (message.Content is MessagePremiumGiftCode or MessageGiveawayPrizeStars)
                 {
                     return ChatHistoryViewItemType.ServiceGiftCode;
                 }

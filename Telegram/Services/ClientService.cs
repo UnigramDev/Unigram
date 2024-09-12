@@ -327,31 +327,11 @@ namespace Telegram.Services
 
         private readonly Dictionary<ReactionType, MessageTag> _savedMessagesTags = new(new ReactionTypeEqualityComparer());
 
-        private class ReactionTypeEqualityComparer : IEqualityComparer<ReactionType>
-        {
-            public bool Equals(ReactionType x, ReactionType y)
-            {
-                return x.AreTheSame(y);
-            }
-
-            public int GetHashCode(ReactionType obj)
-            {
-                if (obj is ReactionTypeEmoji emoji)
-                {
-                    return emoji.Emoji.GetHashCode();
-                }
-                else if (obj is ReactionTypeCustomEmoji customEmoji)
-                {
-                    return customEmoji.CustomEmojiId.GetHashCode();
-                }
-
-                return obj.GetHashCode();
-            }
-        }
-
         private TaskCompletionSource<bool> _authorizationStateTask = new();
         private AuthorizationState _authorizationState;
         private ConnectionState _connectionState;
+
+        private long _ownedStarCount = -1;
 
         private JsonValueObject _config;
 
@@ -976,7 +956,7 @@ namespace Telegram.Services
             {
                 if (ownerId == null || ownerId.IsUser(Options.MyId))
                 {
-                    OwnedStarCount = transactions.StarCount;
+                    _ownedStarCount = transactions.StarCount;
                     _aggregator.Publish(new UpdateOwnedStarCount(transactions.StarCount));
                 }
             }
@@ -1140,7 +1120,19 @@ namespace Telegram.Services
 
         public bool IsPremiumAvailable => _options.IsPremium || _options.IsPremiumAvailable;
 
-        public long OwnedStarCount { get; private set; }
+        public long OwnedStarCount
+        {
+            get
+            {
+                if (_ownedStarCount == -1)
+                {
+                    Send(new GetStarTransactions(MyId, string.Empty, null, string.Empty, 1));
+                    return 0;
+                }
+
+                return _ownedStarCount;
+            }
+        }
 
         public MessageSender MyId => new MessageSenderUser(_options.MyId);
 
@@ -1444,7 +1436,7 @@ namespace Telegram.Services
         {
             var map = new Dictionary<MessageId, MessageProperties>();
 
-            foreach (var messageId in messageIds)
+            foreach (var messageId in messageIds.ToArray())
             {
                 var properties = await SendAsync(new GetMessageProperties(messageId.ChatId, messageId.Id)) as MessageProperties;
                 if (properties != null)
@@ -2352,19 +2344,25 @@ namespace Telegram.Services
             {
                 if (_chats.TryGetValue(updateChatAddedToList.ChatId, out Chat value))
                 {
-                    value.ChatLists.Add(updateChatAddedToList.ChatList);
+                    lock (value)
+                    {
+                        value.ChatLists.Add(updateChatAddedToList.ChatList);
+                    }
                 }
             }
             else if (update is UpdateChatRemovedFromList updateChatRemovedFromList)
             {
                 if (_chats.TryGetValue(updateChatRemovedFromList.ChatId, out Chat value))
                 {
-                    foreach (var chatList in value.ChatLists)
+                    lock (value)
                     {
-                        if (chatList.AreTheSame(updateChatRemovedFromList.ChatList))
+                        foreach (var chatList in value.ChatLists)
                         {
-                            value.ChatLists.Remove(chatList);
-                            break;
+                            if (chatList.AreTheSame(updateChatRemovedFromList.ChatList))
+                            {
+                                value.ChatLists.Remove(chatList);
+                                break;
+                            }
                         }
                     }
                 }
@@ -2717,11 +2715,11 @@ namespace Telegram.Services
             {
                 _options.Update(updateOption.Name, updateOption.Value);
 
-                if (updateOption.Name == "my_id" && updateOption.Value is OptionValueInteger myId)
+                if (updateOption.Name == OptionsService.R.MyId && updateOption.Value is OptionValueInteger myId)
                 {
                     _settings.UserId = myId.Value;
                 }
-                else if (updateOption.Name == "is_premium" || updateOption.Name == "is_premium_available")
+                else if (updateOption.Name == OptionsService.R.IsPremium || updateOption.Name == OptionsService.R.IsPremiumAvailable)
                 {
                     _aggregator.Publish(new UpdatePremiumState(IsPremium, IsPremiumAvailable));
                 }
@@ -2924,7 +2922,7 @@ namespace Telegram.Services
             }
             else if (update is UpdateOwnedStarCount updateOwnedStarCount)
             {
-                OwnedStarCount = updateOwnedStarCount.StarCount;
+                _ownedStarCount = updateOwnedStarCount.StarCount;
             }
 
             _aggregator.Publish(update);

@@ -333,6 +333,115 @@ namespace Telegram.Views.Popups
         }
     }
 
+    public record ChooseChatsOptionsRequestChat : ChooseChatsOptions
+    {
+        public ChooseChatsOptionsRequestChat(ChooseChatsConfigurationRequestChat requestChat)
+        {
+            BotIsMember = requestChat.BotIsMember;
+            BotAdministratorRights = requestChat.BotAdministratorRights;
+            UserAdministratorRights = requestChat.UserAdministratorRights;
+            ChatIsCreated = requestChat.ChatIsCreated;
+            ChatHasUsername = requestChat.ChatHasUsername;
+            RestrictChatHasUsername = requestChat.RestrictChatHasUsername;
+            ChatIsForum = requestChat.ChatIsForum;
+            RestrictChatIsForum = requestChat.RestrictChatIsForum;
+            ChatIsChannel = requestChat.ChatIsChannel;
+
+            Mode = ChooseChatsMode.Chats;
+        }
+
+        /// <summary>
+        /// True, if the bot must be a member of the chat; for basic group and supergroup
+        /// chats only.
+        /// </summary>
+        public bool BotIsMember { get; }
+
+        /// <summary>
+        /// Expected bot administrator rights in the chat; may be null if they aren't restricted.
+        /// </summary>
+        public ChatAdministratorRights BotAdministratorRights { get; }
+
+        /// <summary>
+        /// Expected user administrator rights in the chat; may be null if they aren't restricted.
+        /// </summary>
+        public ChatAdministratorRights UserAdministratorRights { get; }
+
+        /// <summary>
+        /// True, if the chat must be created by the current user.
+        /// </summary>
+        public bool ChatIsCreated { get; }
+
+        /// <summary>
+        /// True, if the chat must have a username; otherwise, the chat must not have a username.
+        /// Ignored if RestrictChatHasUsername is false.
+        /// </summary>
+        public bool ChatHasUsername { get; }
+
+        /// <summary>
+        /// True, if the chat must or must not have a username.
+        /// </summary>
+        public bool RestrictChatHasUsername { get; }
+
+        /// <summary>
+        /// True, if the chat must be a forum supergroup; otherwise, the chat must not be
+        /// a forum supergroup. Ignored if RestrictChatIsForum is false.
+        /// </summary>
+        public bool ChatIsForum { get; }
+
+        /// <summary>
+        /// True, if the chat must or must not be a forum supergroup.
+        /// </summary>
+        public bool RestrictChatIsForum { get; }
+
+        /// <summary>
+        /// True, if the chat must be a channel; otherwise, a basic group or a supergroup
+        /// chat is shared.
+        /// </summary>
+        public bool ChatIsChannel { get; }
+
+        public override bool Allow(IClientService clientService, Chat chat)
+        {
+            if (ChatIsCreated)
+            {
+                return false;
+            }
+
+            if (clientService.TryGetSupergroup(chat, out Supergroup supergroup))
+            {
+                if (RestrictChatHasUsername && ChatHasUsername != supergroup.HasActiveUsername())
+                {
+                    return false;
+                }
+                else if (RestrictChatIsForum && ChatIsForum != supergroup.IsForum)
+                {
+                    return false;
+                }
+
+                return ChatIsChannel == supergroup.IsChannel;
+            }
+            else if (clientService.TryGetBasicGroup(chat, out BasicGroup basicGroup))
+            {
+                if (RestrictChatHasUsername && ChatHasUsername)
+                {
+                    return false;
+                }
+                else if (RestrictChatIsForum && ChatIsForum)
+                {
+                    return false;
+                }
+
+                return !ChatIsChannel;
+            }
+
+            return false;
+        }
+
+        public override bool Allow(IClientService clientService, User user)
+        {
+            return false;
+        }
+    }
+
     #endregion
 
     #region Configurations
@@ -621,7 +730,7 @@ namespace Telegram.Views.Popups
 
         private bool _legacyNavigated;
 
-        public override void OnNavigatedTo()
+        public override void OnNavigatedTo(object parameter)
         {
             if (_legacyNavigated)
             {
@@ -653,7 +762,7 @@ namespace Telegram.Views.Popups
         {
             if (ViewModel != null)
             {
-                OnNavigatedTo();
+                OnNavigatedTo(null);
             }
 
             var button = GetTemplateChild("PrimarySplitButton") as Button;
@@ -974,10 +1083,15 @@ namespace Telegram.Views.Popups
             {
                 return;
             }
-            else if (args.ItemContainer.ContentTemplateRoot is ChatShareCell content)
+            else if (args.ItemContainer.ContentTemplateRoot is ChatShareCell chatCell)
             {
-                content.UpdateState(args.ItemContainer.IsSelected, false, true);
-                content.UpdateChat(ViewModel.ClientService, args, OnContainerContentChanging);
+                chatCell.UpdateState(args.ItemContainer.IsSelected, false, true);
+                chatCell.UpdateChat(ViewModel.ClientService, args, OnContainerContentChanging);
+            }
+            else if (args.ItemContainer.ContentTemplateRoot is ForumTopicShareCell topicCell)
+            {
+                topicCell.UpdateCell(ViewModel.ClientService, args.Item as ForumTopic);
+                args.Handled = true;
             }
         }
 
@@ -1096,6 +1210,85 @@ namespace Telegram.Views.Popups
 
         #endregion
 
+        #region Forum
+
+        private bool _forumCollapsed = true;
+
+        private void ShowHideForum(Chat chat)
+        {
+            if (chat == null)
+            {
+                ShowHideForum(false);
+                return;
+            }
+
+            ShowHideForum(true);
+
+            var viewModel = new TopicListViewModel.ItemsCollection(ViewModel.ClientService, ViewModel.Aggregator, null, chat);
+            ForumList.ItemsSource = viewModel;
+        }
+
+        private void ShowHideForum(bool show)
+        {
+            if (_forumCollapsed != show)
+            {
+                return;
+            }
+
+            _forumCollapsed = !show;
+
+            FindName(nameof(ForumGrid));
+            MainGrid.Visibility = Visibility.Visible;
+            ForumGrid.Visibility = Visibility.Visible;
+
+            var chats = ElementComposition.GetElementVisual(MainGrid);
+            var panel = ElementComposition.GetElementVisual(ForumGrid);
+
+            chats.CenterPoint = panel.CenterPoint = new Vector3(MainGrid.ActualSize / 2, 0);
+
+            var batch = panel.Compositor.CreateScopedBatch(CompositionBatchTypes.Animation);
+            batch.Completed += (s, args) =>
+            {
+                MainGrid.Visibility = _forumCollapsed ? Visibility.Visible : Visibility.Collapsed;
+                ForumGrid.Visibility = _forumCollapsed ? Visibility.Collapsed : Visibility.Visible;
+
+                if (_forumCollapsed)
+                {
+                    ChatsPanel.Focus(FocusState.Pointer);
+                }
+            };
+
+            var scale1 = panel.Compositor.CreateVector3KeyFrameAnimation();
+            scale1.InsertKeyFrame(show ? 0 : 1, new Vector3(1.05f, 1.05f, 1));
+            scale1.InsertKeyFrame(show ? 1 : 0, new Vector3(1));
+            scale1.Duration = TimeSpan.FromMilliseconds(200);
+
+            var scale2 = panel.Compositor.CreateVector3KeyFrameAnimation();
+            scale2.InsertKeyFrame(show ? 0 : 1, new Vector3(1));
+            scale2.InsertKeyFrame(show ? 1 : 0, new Vector3(0.95f, 0.95f, 1));
+            scale2.Duration = TimeSpan.FromMilliseconds(200);
+
+            var opacity1 = panel.Compositor.CreateScalarKeyFrameAnimation();
+            opacity1.InsertKeyFrame(show ? 0 : 1, 0);
+            opacity1.InsertKeyFrame(show ? 1 : 0, 1);
+            opacity1.Duration = TimeSpan.FromMilliseconds(200);
+
+            var opacity2 = panel.Compositor.CreateScalarKeyFrameAnimation();
+            opacity2.InsertKeyFrame(show ? 0 : 1, 1);
+            opacity2.InsertKeyFrame(show ? 1 : 0, 0);
+            opacity2.Duration = TimeSpan.FromMilliseconds(200);
+
+            panel.StartAnimation("Scale", scale1);
+            panel.StartAnimation("Opacity", opacity1);
+
+            chats.StartAnimation("Scale", scale2);
+            chats.StartAnimation("Opacity", opacity2);
+
+            batch.End();
+        }
+
+        #endregion
+
         #region Comment
 
         private Visibility ConvertCommentVisibility(int count, bool enabled)
@@ -1129,12 +1322,16 @@ namespace Telegram.Views.Popups
                 }
             }
 
-            ViewModel.SelectedItems = new MvxObservableCollection<Chat>(ChatsPanel.SelectedItems.Cast<Chat>());
+            var selection = ChatsPanel.SelectedItems
+                .OfType<Chat>()
+                .Where(x => ViewModel.ClientService.IsForum(x) ? ViewModel.SelectedTopics.ContainsKey(x.Id) : true);
+
+            ViewModel.SelectedItems = new MvxObservableCollection<Chat>(selection);
         }
 
         private void List_ItemClick(object sender, ItemClickEventArgs e)
         {
-            ItemClick(e.ClickedItem as Chat);
+            ItemClick(e.ClickedItem as Chat, true);
         }
 
         private async void ListView_ItemClick(object sender, ItemClickEventArgs e)
@@ -1161,6 +1358,12 @@ namespace Telegram.Views.Popups
                     item = response as Chat;
                 }
             }
+            else if (item is ForumTopic topic && ForumList.ItemsSource is TopicListViewModel.ItemsCollection collection)
+            {
+                item = collection.Chat;
+                ViewModel.SelectedTopics[collection.Chat.Id] = topic.Info.MessageThreadId;
+                ShowHideForum(null);
+            }
 
             if (ViewModel.SearchChats.CanSendMessageToUser && ViewModel.ClientService.TryGetUser(item as Chat, out User tempUser))
             {
@@ -1182,7 +1385,7 @@ namespace Telegram.Views.Popups
             }
 
             var chat = item as Chat;
-            if (chat == null || ItemClick(chat))
+            if (chat == null || ItemClick(chat, e.ClickedItem is Chat))
             {
                 return;
             }
@@ -1220,11 +1423,9 @@ namespace Telegram.Views.Popups
             {
                 ChatsPanel.SelectedItem = chat;
             }
-
-            ItemClick(chat);
         }
 
-        private bool ItemClick(Chat chat)
+        private bool ItemClick(Chat chat, bool origin)
         {
             if (ViewModel.Options.CanPostMessages && (ViewModel.ClientService.IsSavedMessages(chat) || ViewModel.SelectionMode == ListViewSelectionMode.None))
             {
@@ -1236,6 +1437,20 @@ namespace Telegram.Views.Popups
                     Hide();
                     return true;
                 }
+            }
+            else if (ViewModel.Options.CanPostMessages && origin && ViewModel.ClientService.IsForum(chat))
+            {
+                if (ViewModel.SelectedItems.Contains(chat))
+                {
+                    ViewModel.SelectedTopics.Remove(chat.Id);
+                    ShowHideForum(null);
+                }
+                else
+                {
+                    ShowHideForum(chat);
+                }
+
+                return false;
             }
 
             return false;

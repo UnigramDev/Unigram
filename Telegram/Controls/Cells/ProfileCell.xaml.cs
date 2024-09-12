@@ -574,7 +574,7 @@ namespace Telegram.Controls.Cells
             }
             else if (args.Phase == 1)
             {
-                var value = clientService.Notifications.GetMutedFor(chat);
+                var value = clientService.Notifications.GetMuteFor(chat);
                 if (value == 0)
                 {
                     var builder = new StringBuilder(Strings.NotificationExceptionsAlwaysOn);

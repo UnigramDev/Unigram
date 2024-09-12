@@ -175,7 +175,7 @@ namespace Telegram.Controls
             return tsc.Task;
         }
 
-        public static Task<ContentDialogResult> ShowAsync(XamlRoot xamlRoot, FrameworkElement target, FrameworkElement content, string primary = null, string secondary = null, bool destructive = false, ElementTheme requestedTheme = ElementTheme.Default)
+        public static Task<ContentDialogResult> ShowAsync(XamlRoot xamlRoot, FrameworkElement target, string message, string title = null, FrameworkElement content = null, string primary = null, string secondary = null, bool destructive = false, ElementTheme requestedTheme = ElementTheme.Default)
         {
             if (xamlRoot.Content is not IToastHost host)
             {
@@ -185,6 +185,8 @@ namespace Telegram.Controls
             var tsc = new TaskCompletionSource<ContentDialogResult>();
             var popup = new TeachingTip
             {
+                Title = title,
+                Subtitle = message,
                 Content = content,
                 ActionButtonContent = primary,
                 ActionButtonStyle = BootStrapper.Current.Resources[destructive ? "DangerButtonStyle" : "AccentButtonStyle"] as Style,

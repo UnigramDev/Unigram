@@ -471,13 +471,6 @@ namespace Telegram.Services
                     ProcessFiles(businessStartPage.Sticker);
                 }
             }
-            else if (target is ChannelTransactionPurposePaidMedia channelTransactionPurposePaidMedia)
-            {
-                foreach (var item in channelTransactionPurposePaidMedia.Media)
-                {
-                    ProcessFiles(item);
-                }
-            }
             else if (target is Chat chat)
             {
                 if (chat.Background != null)
@@ -624,6 +617,13 @@ namespace Telegram.Services
                 if (chatTheme.LightSettings != null)
                 {
                     ProcessFiles(chatTheme.LightSettings);
+                }
+            }
+            else if (target is ChatTransactionPurposePaidMedia chatTransactionPurposePaidMedia)
+            {
+                foreach (var item in chatTransactionPurposePaidMedia.Media)
+                {
+                    ProcessFiles(item);
                 }
             }
             else if (target is DatedFile datedFile)
@@ -1247,6 +1247,20 @@ namespace Telegram.Services
                     ProcessFiles(messageGiftedStars.Sticker);
                 }
             }
+            else if (target is MessageGiveaway messageGiveaway)
+            {
+                if (messageGiveaway.Sticker != null)
+                {
+                    ProcessFiles(messageGiveaway.Sticker);
+                }
+            }
+            else if (target is MessageGiveawayPrizeStars messageGiveawayPrizeStars)
+            {
+                if (messageGiveawayPrizeStars.Sticker != null)
+                {
+                    ProcessFiles(messageGiveawayPrizeStars.Sticker);
+                }
+            }
             else if (target is MessageInvoice messageInvoice)
             {
                 if (messageInvoice.PaidMedia != null)
@@ -1291,13 +1305,6 @@ namespace Telegram.Services
                 if (messagePremiumGiftCode.Sticker != null)
                 {
                     ProcessFiles(messagePremiumGiftCode.Sticker);
-                }
-            }
-            else if (target is MessagePremiumGiveaway messagePremiumGiveaway)
-            {
-                if (messagePremiumGiveaway.Sticker != null)
-                {
-                    ProcessFiles(messagePremiumGiveaway.Sticker);
                 }
             }
             else if (target is MessageReplyToMessage messageReplyToMessage)
@@ -2125,11 +2132,11 @@ namespace Telegram.Services
                     ProcessFiles(item);
                 }
             }
-            else if (target is StarTransactionPartnerChannel starTransactionPartnerChannel)
+            else if (target is StarTransactionPartnerChat starTransactionPartnerChat)
             {
-                if (starTransactionPartnerChannel.Purpose != null)
+                if (starTransactionPartnerChat.Purpose != null)
                 {
-                    ProcessFiles(starTransactionPartnerChannel.Purpose);
+                    ProcessFiles(starTransactionPartnerChat.Purpose);
                 }
             }
             else if (target is StarTransactionPartnerUser starTransactionPartnerUser)

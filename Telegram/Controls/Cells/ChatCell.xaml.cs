@@ -527,6 +527,12 @@ namespace Telegram.Controls.Cells
                 }
             }
 
+            if (_clientService.Notifications.IsMuted(chat))
+            {
+                builder.Append(Strings.AccDescrNotificationsMuted);
+                builder.Append(", ");
+            }
+
             if (chat.UnreadCount > 0)
             {
                 builder.Append(Locale.Declension(Strings.R.NewMessages, chat.UnreadCount));
@@ -705,7 +711,7 @@ namespace Telegram.Controls.Cells
                 return;
             }
 
-            var muted = _clientService.Notifications.GetMutedFor(chat) > 0;
+            var muted = _clientService.Notifications.IsMuted(chat);
             MutedIcon.Visibility = muted ? Visibility.Visible : Visibility.Collapsed;
             UnreadBadge.IsUnmuted = !muted;
 
@@ -1465,9 +1471,13 @@ namespace Telegram.Controls.Cells
 
                 return new FormattedText(animatedEmoji.Emoji, Array.Empty<TextEntity>());
             }
-            else if (content is MessagePremiumGiveaway)
+            else if (content is MessageGiveaway)
             {
                 return Text(Strings.BoostingGiveaway);
+            }
+            else if (content is MessageGiveawayWinners)
+            {
+                return Text(Strings.BoostingGiveawayResults);
             }
             else if (content is MessagePaidMedia paidMedia)
             {
@@ -1853,7 +1863,7 @@ namespace Telegram.Controls.Cells
 
             FromLabel.Text = from;
             BriefLabel.Inlines.Add(new Run { Text = message });
-            _dateLabel = Formatter.ShortTime.Format(date);
+            _dateLabel = Formatter.Time(date);
             _stateLabel = sent ? "\uE601" : string.Empty;
 
             TimeLabel.Text = _stateLabel + "\u00A0" + _dateLabel;

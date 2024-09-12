@@ -11,6 +11,7 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using Telegram.Common;
+using Telegram.Controls;
 using Telegram.Converters;
 using Telegram.Navigation;
 using Telegram.Navigation.Services;
@@ -503,17 +504,43 @@ namespace Telegram.ViewModels.Payments
                 return;
             }
 
+            var popup = ContentPopup.Block();
+
             var response = await ClientService.SendAsync(new SendPaymentForm(_inputInvoice, formId, infoId, shippingId, credentials, 0));
             if (response is PaymentResult result)
             {
                 if (Uri.TryCreate(result.VerificationUrl, UriKind.Absolute, out Uri uri))
                 {
+                    Aggregator.Subscribe<UpdateNewMessage>(this, Handle);
+
+                    // TODO: WebView2 within the app
                     await Windows.System.Launcher.LaunchUriAsync(uri);
                 }
+                else
+                {
+                    //await ApplicationViewSwitcher.SwitchAsync(WindowContext.Main.Id);
+                    await WindowContext.Current.ConsolidateAsync();
 
-                await WindowContext.Current.ConsolidateAsync();
+                    Aggregator.Publish(new UpdateConfetti());
+                }
+            }
+            else
+            {
+                popup.Hide();
+            }
+        }
 
-                Aggregator.Publish(new UpdateConfetti());
+        private void Handle(UpdateNewMessage update)
+        {
+            if (update.Message.Content is MessagePaymentSuccessful && ClientService.TryGetChat(update.Message.ChatId, out Chat chat) && chat.Type is ChatTypePrivate privata && privata.UserId == PaymentForm.SellerBotUserId)
+            {
+                BeginOnUIThread(async () =>
+                {
+                    //await ApplicationViewSwitcher.SwitchAsync(WindowContext.Main.Id);
+                    await WindowContext.Current.ConsolidateAsync();
+
+                    Aggregator.Publish(new UpdateConfetti());
+                });
             }
         }
 

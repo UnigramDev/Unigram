@@ -38,18 +38,18 @@
   <ItemGroup>
     <!--<PackageReference Include="Microsoft.AppCenter.Analytics" Version="5.0.5" />
     <PackageReference Include="Microsoft.AppCenter.Crashes" Version="5.0.5" />-->
-    <PackageReference Include="Microsoft.Windows.CsWinRT" Version="2.1.1" />
+    <PackageReference Include="Microsoft.Windows.CsWinRT" Version="2.1.3" />
     <PackageReference Include="Microsoft.Windows.SDK.BuildTools" Version="10.0.22621.756" />
-    <PackageReference Include="Microsoft.WindowsAppSDK" Version="1.6.240821007-preview2" />
+    <PackageReference Include="Microsoft.WindowsAppSDK" Version="1.6.240829007" />
     <Manifest Include="$(ApplicationManifest)" />
   </ItemGroup>
 
   <ItemGroup>
-    <ReferenceCopyLocalPaths Include="..\packages\Telegram.Td.UWP.1.8.35\runtimes\win10-x64\native\libcrypto-3-x64.dll" />
-    <ReferenceCopyLocalPaths Include="..\packages\Telegram.Td.UWP.1.8.35\runtimes\win10-x64\native\libssl-3-x64.dll" />
-    <ReferenceCopyLocalPaths Include="..\packages\Telegram.Td.UWP.1.8.35\runtimes\win10-x64\native\Telegram.Td.dll" />
-    <ReferenceCopyLocalPaths Include="..\packages\Telegram.Td.UWP.1.8.35\runtimes\win10-x64\native\Telegram.Td.pri" />
-    <ReferenceCopyLocalPaths Include="..\packages\Telegram.Td.UWP.1.8.35\runtimes\win10-x64\native\zlib1.dll" />
+    <ReferenceCopyLocalPaths Include="..\packages\Telegram.Td.UWP.1.8.36\runtimes\win10-x64\native\libcrypto-3-x64.dll" />
+    <ReferenceCopyLocalPaths Include="..\packages\Telegram.Td.UWP.1.8.36\runtimes\win10-x64\native\libssl-3-x64.dll" />
+    <ReferenceCopyLocalPaths Include="..\packages\Telegram.Td.UWP.1.8.36\runtimes\win10-x64\native\Telegram.Td.dll" />
+    <ReferenceCopyLocalPaths Include="..\packages\Telegram.Td.UWP.1.8.36\runtimes\win10-x64\native\Telegram.Td.pri" />
+    <ReferenceCopyLocalPaths Include="..\packages\Telegram.Td.UWP.1.8.36\runtimes\win10-x64\native\zlib1.dll" />
   </ItemGroup>
 
   <!--
@@ -262,6 +262,12 @@
     <Compile Include="Controls\Cells\Business\BusinessRepliesCell.xaml.cs">
       <DependentUpon>BusinessRepliesCell.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\Cells\ForumTopicShareCell.xaml.cs">
+      <DependentUpon>ForumTopicShareCell.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\Cells\PaidReactorCell.xaml.cs">
+      <DependentUpon>PaidReactorCell.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Controls\Cells\Revenue\StarSubscriptionCell.xaml.cs">
       <DependentUpon>StarSubscriptionCell.xaml</DependentUpon>
     </Compile>
@@ -320,8 +326,12 @@
     <Compile Include="Controls\Messages\MessageFactCheck.xaml.cs">
       <DependentUpon>MessageFactCheck.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Services\PaidReactionService.cs" />
+    <Compile Include="Controls\Messages\ReactionAsPaidButton.cs" />
     <Compile Include="Controls\Messages\ReactionAsTagButton.cs" />
     <Compile Include="Common\AsyncMediaPlayer.cs" />
+    <Compile Include="Controls\PremiumSlider.cs" />
+    <Compile Include="Td\Api\ReactionTypeEqualityComparer.cs" />
     <Compile Include="Controls\PremiumStarCount.cs" />
     <Compile Include="Controls\Stories\Widgets\StoryWeatherWidget.xaml.cs">
       <DependentUpon>StoryWeatherWidget.xaml</DependentUpon>
@@ -412,6 +422,7 @@
     </Compile>
     <Compile Include="Controls\ToastPopup.cs" />
     <Compile Include="Services\Settings\TranslateSettings.cs" />
+    <Compile Include="Streams\AnimatedEmojiFileSource.cs" />
     <Compile Include="Streams\ParticlesImageSource.cs" />
     <Compile Include="Td\Api\MessageTag.cs" />
     <Compile Include="Td\Api\MinithumbnailId.cs" />
@@ -427,7 +438,6 @@
     <Compile Include="Controls\Chats\ChatRecordBar.xaml.cs">
       <DependentUpon>ChatRecordBar.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Controls\ScrollBarGrid.cs" />
     <Compile Include="Controls\Contacts\ContactsSortedByHeader.xaml.cs">
       <DependentUpon>ContactsSortedByHeader.xaml</DependentUpon>
     </Compile>
@@ -447,8 +457,8 @@
     <Compile Include="Controls\Messages\Content\UnsupportedContent.xaml.cs">
       <DependentUpon>UnsupportedContent.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Controls\Messages\Content\PremiumGiveawayContent.xaml.cs">
-      <DependentUpon>PremiumGiveawayContent.xaml</DependentUpon>
+    <Compile Include="Controls\Messages\Content\GiveawayContent.xaml.cs">
+      <DependentUpon>GiveawayContent.xaml</DependentUpon>
     </Compile>
     <Compile Include="Controls\Messages\ReactionsMenuFlyout.xaml.cs">
       <DependentUpon>ReactionsMenuFlyout.xaml</DependentUpon>
@@ -1160,6 +1170,9 @@
     <Compile Include="Views\Popups\BackgroundPopup.xaml.cs">
       <DependentUpon>BackgroundPopup.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\Popups\CallsPopup.xaml.cs">
+      <DependentUpon>CallsPopup.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\Popups\CollectiblePopup.xaml.cs">
       <DependentUpon>CollectiblePopup.xaml</DependentUpon>
     </Compile>
@@ -1315,6 +1328,9 @@
     <Compile Include="Views\Stars\Popups\JoinChatPopup.xaml.cs">
       <DependentUpon>JoinChatPopup.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\Stars\Popups\ReactPopup.xaml.cs">
+      <DependentUpon>ReactPopup.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\Stars\Popups\SubscriptionPopup.xaml.cs">
       <DependentUpon>SubscriptionPopup.xaml</DependentUpon>
     </Compile>
@@ -1407,7 +1423,6 @@
     <Compile Include="ViewModels\CallsViewModel.cs" />
     <Compile Include="ViewModels\Channels\ChannelCreateStep1ViewModel.cs" />
     <Compile Include="ViewModels\Channels\ChannelCreateStep2ViewModel.cs" />
-    <Compile Include="ViewModels\ChatsNearbyViewModel.cs" />
     <Compile Include="ViewModels\Chats\ChatGalleryViewModel.cs" />
     <Compile Include="ViewModels\Chats\ChatInviteLinkViewModel.cs" />
     <Compile Include="ViewModels\Chats\ChatPhotosViewModel.cs" />
@@ -1539,9 +1554,6 @@
     </Compile>
     <Compile Include="Views\PasscodePage.xaml.cs">
       <DependentUpon>PasscodePage.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\ChatsNearbyPage.xaml.cs">
-      <DependentUpon>ChatsNearbyPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Popups\CalendarPopup.xaml.cs">
       <DependentUpon>CalendarPopup.xaml</DependentUpon>
@@ -2008,6 +2020,14 @@
     <Content Include="Assets\Animations\BusinessChatLinks.tgs" />
     <Content Include="Assets\Toasts\SpeedLimit.tgs" />
     <Content Include="Assets\Animations\YourStars.tgs" />
+    <Content Include="Assets\Animations\PaidReactionActivate.tgs" />
+    <Content Include="Assets\Animations\PaidReactionAround1.tgs" />
+    <Content Include="Assets\Animations\PaidReactionAround2.tgs" />
+    <Content Include="Assets\Animations\PaidReactionAround3.tgs" />
+    <Content Include="Assets\Animations\PaidReactionAround4.tgs" />
+    <Content Include="Assets\Animations\PaidReactionAround5.tgs" />
+    <Content Include="Assets\Animations\PaidReactionCenter.tgs" />
+    <Content Include="Assets\Animations\EmptyCalls.tgs" />
     <Content Include="Properties\launchSettings.json" />
     <None Include="app.manifest" />
     <None Include="Assets\i420.hlsl" />
@@ -2195,7 +2215,11 @@
     <Content Include="Assets\Toasts\Archived.tgs" />
     <Content Include="Assets\Toasts\Premium.tgs" />
     <Content Include="Assets\Toasts\Gif.tgs" />
+    <Content Include="Assets\Toasts\Mute.tgs" />
+    <Content Include="Assets\Toasts\MuteFor.tgs" />
     <None Include="Assets\Toasts\Pin.tgs" />
+    <Content Include="Assets\Toasts\StarsSent.tgs" />
+    <Content Include="Assets\Toasts\Unmute.tgs" />
     <None Include="Assets\Toasts\Unpin.tgs" />
     <None Include="Telegram_StoreKey.pfx" />
     <None Include="Telegram_TemporaryKey.pfx" />
@@ -2268,6 +2292,14 @@
     <Page Include="Controls\Cells\ChatFolderCell.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Controls\Cells\ForumTopicShareCell.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\Cells\PaidReactorCell.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Controls\Cells\Revenue\StarSubscriptionCell.xaml">
       <Generator>MSBuild:Compile</Generator>
@@ -2521,7 +2553,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Controls\Messages\Content\PremiumGiveawayContent.xaml">
+    <Page Include="Controls\Messages\Content\GiveawayContent.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -2921,6 +2953,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="Views\Popups\CallsPopup.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Views\Popups\CollectiblePopup.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -3125,6 +3161,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="Views\Stars\Popups\ReactPopup.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Views\Stars\Popups\SubscriptionPopup.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -3218,10 +3258,6 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\PasscodePage.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Views\ChatsNearbyPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

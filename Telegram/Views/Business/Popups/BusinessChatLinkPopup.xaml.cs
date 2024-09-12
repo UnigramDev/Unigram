@@ -36,14 +36,6 @@ namespace Telegram.Views.Business.Popups
             CaptionInput.SetText(chatLink.Text);
         }
 
-        private void ContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
-        {
-        }
-
-        private void ContentDialog_SecondaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
-        {
-        }
-
         private void Emoji_Click(object sender, RoutedEventArgs e)
         {
             // We don't want to unfocus the text are when the context menu gets opened

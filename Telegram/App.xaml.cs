@@ -223,7 +223,7 @@ namespace Telegram
                 var navigationFrame = new Frame();
                 var navigationService = NavigationServiceFactory(window, BackButton.Ignore, navigationFrame, sessionId, $"{sessionId}", true) as NavigationService;
 
-                return new RootPage(navigationService) { FlowDirection = LocaleService.Current.FlowDirection };
+                return new RootPage(window, navigationService) { FlowDirection = LocaleService.Current.FlowDirection };
             }
         }
 
@@ -320,7 +320,6 @@ namespace Telegram
         {
             return page switch
             {
-                ChatsNearbyPage => TypeResolver.Current.Resolve<ChatsNearbyViewModel>(sessionId),
                 DiagnosticsPage => TypeResolver.Current.Resolve<DiagnosticsViewModel>(sessionId),
                 LogOutPopup => TypeResolver.Current.Resolve<LogOutViewModel>(sessionId),
                 ProfilePage profile => TypeResolver.Current.Resolve<ProfileViewModel, IProfileDelegate>(profile, sessionId),
@@ -424,6 +423,7 @@ namespace Telegram
                 ChatStoriesPage => TypeResolver.Current.Resolve<ChatStoriesViewModel>(sessionId),
 
                 // Popups
+                CallsPopup => TypeResolver.Current.Resolve<CallsViewModel>(sessionId),
                 SettingsUsernamePopup => TypeResolver.Current.Resolve<SettingsUsernameViewModel>(sessionId),
                 SettingsDataAutoPopup => TypeResolver.Current.Resolve<SettingsDataAutoViewModel>(sessionId),
                 ChooseChatsPopup => TypeResolver.Current.Resolve<ChooseChatsViewModel>(sessionId),

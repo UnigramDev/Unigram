@@ -22,7 +22,7 @@ namespace Telegram.Controls
         }
     }
 
-    public partial class TextListViewItem : ListViewItem
+    public partial class TextListViewItem : ListViewItemEx
     {
         protected override AutomationPeer OnCreateAutomationPeer()
         {

@@ -32,7 +32,7 @@ namespace Telegram.Views.Stars.Popups
         private long _media1Token;
         private long _media2Token;
 
-        public override void OnNavigatedTo()
+        public override void OnNavigatedTo(object parameter)
         {
             if (ViewModel.PaymentForm?.Type is not PaymentFormTypeStars stars || !ViewModel.ClientService.TryGetUser(ViewModel.PaymentForm.SellerBotUserId, out User user))
             {
@@ -103,11 +103,6 @@ namespace Telegram.Views.Stars.Popups
             PurchaseText.Text = Locale.Declension(Strings.R.StarsConfirmPurchaseButton, stars.StarCount).Replace("\u2B50", Icons.Premium);
         }
 
-        public string ConvertCount(long count)
-        {
-            return count.ToString("N0");
-        }
-
         private bool _submitted;
 
         private async void Purchase_Click(object sender, Microsoft.UI.Xaml.RoutedEventArgs e)
@@ -149,7 +144,7 @@ namespace Telegram.Views.Stars.Popups
 
                 if (result == PayResult.StarsNeeded && ViewModel.PaymentForm?.Type is PaymentFormTypeStars stars)
                 {
-                    await ViewModel.NavigationService.ShowPopupAsync(typeof(BuyPopup), new BuyStarsArgs(stars.StarCount, ViewModel.PaymentForm.SellerBotUserId));
+                    await ViewModel.NavigationService.ShowPopupAsync(typeof(BuyPopup), BuyStarsArgs.ForSellerBotUser(stars.StarCount, ViewModel.PaymentForm.SellerBotUserId));
                 }
 
                 return;

@@ -7,6 +7,7 @@
                        xmlns:controls="using:Telegram.Controls"
                        mc:Ignorable="d"
                        Padding="0"
+                       IsDismissButtonVisible="True"
                        VerticalContentAlignment="Stretch">
 
     <controls:ContentPopup.Resources>
@@ -119,7 +120,7 @@
                                                    Height="18"
                                                    Grid.Row="1" />
 
-                        <TextBlock Text="{x:Bind ConvertCount(ViewModel.OwnedStarCount), Mode=OneWay}"
+                        <TextBlock Text="{x:Bind ViewModel.OwnedStarCount, Mode=OneWay}"
                                    FontWeight="SemiBold"
                                    FontSize="12"
                                    VerticalAlignment="Center"
@@ -201,7 +202,7 @@
             <ListView.Footer>
                 <StackPanel Margin="0,0,0,24">
                     <Button Content="{CustomResource NotifyMoreOptions}"
-                            Click="{x:Bind ViewModel.Expand}"
+                            Click="Expand_Click"
                             Visibility="{x:Bind ViewModel.CanExpand, Mode=OneWay}"
                             HorizontalAlignment="Stretch"
                             Margin="12,2,12,8" />
@@ -212,15 +213,13 @@
                                              Margin="12,0" />
                 </StackPanel>
             </ListView.Footer>
+            <!-- TODO: WinUI -->
+            <ListView.ItemContainerTransitions>
+                <TransitionCollection />
+            </ListView.ItemContainerTransitions>
         </ListView>
 
         <controls:ScrollViewerScrim Background="{ThemeResource ContentDialogBackground}"
                                     ScrollingHost="{x:Bind ScrollingHost}" />
-
-        <controls:GlyphButton Click="{x:Bind Close}"
-                              HorizontalAlignment="Right"
-                              VerticalAlignment="Top"
-                              Glyph="&#xE711;"
-                              CornerRadius="20" />
     </Grid>
 </controls:ContentPopup>

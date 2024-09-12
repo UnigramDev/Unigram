@@ -79,7 +79,7 @@ namespace Telegram.Views.Stars.Popups
                 return;
             }
 
-            await ViewModel.NavigationService.ShowPopupAsync(typeof(BuyPopup), new BuyStarsArgs(user.Id));
+            await ViewModel.NavigationService.ShowPopupAsync(typeof(BuyPopup), BuyStarsArgs.ForReceiverUser(user.Id));
         }
     }
 }

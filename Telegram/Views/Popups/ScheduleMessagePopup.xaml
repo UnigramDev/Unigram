@@ -15,12 +15,11 @@
                             Margin="0,12,0,12"
                             HorizontalAlignment="Stretch" />
         <TimePicker x:Name="Time"
-                    Margin="0,0,0,12"
                     HorizontalAlignment="Stretch" />
 
         <HyperlinkButton x:Name="Online"
                          Click="Online_Click"
                          HorizontalAlignment="Left"
-                         Margin="0,0,0,-20" />
+                         Margin="0,12,0,-20" />
     </StackPanel>
 </controls:ContentPopup>

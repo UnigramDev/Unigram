@@ -23,17 +23,22 @@ namespace Telegram.Services.Settings
 
         public Dictionary<Type, ScopeNotificationSettings> Scope => _scopeNotificationSettings;
 
-        public int GetMutedFor(Chat chat, ForumTopic topic)
+        public int GetMuteFor(Chat chat, ForumTopic topic)
         {
             if (topic.NotificationSettings.UseDefaultMuteFor)
             {
-                return GetMutedFor(chat);
+                return GetMuteFor(chat);
             }
 
             return topic.NotificationSettings.MuteFor;
         }
 
-        public int GetMutedFor(Chat chat)
+        public bool IsMuted(Chat chat)
+        {
+            return GetMuteFor(chat) > 0;
+        }
+
+        public int GetMuteFor(Chat chat)
         {
             if (chat.NotificationSettings.UseDefaultMuteFor && TryGetScope(chat, out var scope))
             {

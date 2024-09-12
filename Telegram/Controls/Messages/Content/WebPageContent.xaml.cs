@@ -470,7 +470,7 @@ namespace Telegram.Controls.Messages.Content
                     empty = false;
                     SubtitleLabel.Text += linkPreview.Title;
                 }
-                else if (linkPreview.HasAuthor(out string author))
+                else if (!string.IsNullOrWhiteSpace(linkPreview.Author))
                 {
                     if (TitleLabel.Text.Length > 0)
                     {
@@ -478,7 +478,7 @@ namespace Telegram.Controls.Messages.Content
                     }
 
                     empty = false;
-                    SubtitleLabel.Text += author;
+                    SubtitleLabel.Text += linkPreview.Author;
                 }
                 else
                 {

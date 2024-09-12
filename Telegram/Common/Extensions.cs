@@ -102,7 +102,7 @@ namespace Telegram.Common
                     popup.DataContext = viewModel;
 
                     _ = viewModel.NavigatedToAsync(parameter, NavigationMode.New, null);
-                    popup.OnNavigatedTo();
+                    popup.OnNavigatedTo(parameter);
                     popup.Closed += OnClosed;
                 }
 
@@ -473,7 +473,7 @@ namespace Telegram.Common
             }
             catch
             {
-                recognizer.CompleteGesture();
+                recognizer.TryCompleteGesture();
             }
         }
 
@@ -485,7 +485,7 @@ namespace Telegram.Common
             }
             catch
             {
-                recognizer.CompleteGesture();
+                recognizer.TryCompleteGesture();
             }
         }
 
@@ -497,7 +497,19 @@ namespace Telegram.Common
             }
             catch
             {
+                recognizer.TryCompleteGesture();
+            }
+        }
+
+        public static void TryCompleteGesture(this GestureRecognizer recognizer)
+        {
+            try
+            {
                 recognizer.CompleteGesture();
+            }
+            catch
+            {
+                // All the remote procedure calls must be wrapped in a try-catch block
             }
         }
 
@@ -981,6 +993,27 @@ namespace Telegram.Common
             int height = (int)(originalHeight * ratio);
 
             return new InputThumbnail(await file.ToGeneratedAsync(conversion, arguments), width, height);
+        }
+
+        public static async Task<InputThumbnail> ToVideoThumbnailAsync(this StorageVideo file, VideoConversion video = null, ConversionType conversion = ConversionType.Copy, string arguments = null)
+        {
+            double originalWidth = file.Width;
+            double originalHeight = file.Height;
+
+            if (!video.CropRectangle.IsEmpty)
+            {
+                originalWidth = video.CropRectangle.Width;
+                originalHeight = video.CropRectangle.Height;
+            }
+
+            double ratioX = 90 / originalWidth;
+            double ratioY = 90 / originalHeight;
+            double ratio = Math.Min(ratioX, ratioY);
+
+            int width = (int)(originalWidth * ratio);
+            int height = (int)(originalHeight * ratio);
+
+            return new InputThumbnail(await file.File.ToGeneratedAsync(conversion, arguments), width, height);
         }
 
         //public static IEnumerable<TSource> DistinctBy<TSource, TKey>(this IEnumerable<TSource> source, Func<TSource, TKey> keySelector)

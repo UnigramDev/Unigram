@@ -103,7 +103,7 @@ namespace Telegram.ViewModels.Chats
                 var response = await ClientService.SendAsync(new GetChatMessagePosition(first.ChatId, first.Id, _filter, _threadId, _savedMessagesTopicId));
                 if (response is Count count)
                 {
-                    _firstPosition = count.CountValue;
+                    _firstPosition = count.CountValue - 1;
                 }
                 else
                 {

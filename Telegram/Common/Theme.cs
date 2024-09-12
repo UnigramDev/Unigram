@@ -438,6 +438,7 @@ namespace Telegram.Common
                 {
                     BackgroundColor = themeParameters["ContentDialogBackground"],
                     SecondaryBackgroundColor = themeParameters["ContentDialogBackground"],
+                    BottomBarBackgroundColor = themeParameters["ContentDialogBackground"],
                     TextColor = themeParameters["ContentDialogForeground"],
                     ButtonColor = themeParameters["AccentButtonBackground"],
                     ButtonTextColor = themeParameters["AccentButtonForeground"],

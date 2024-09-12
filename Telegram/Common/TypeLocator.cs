@@ -156,6 +156,11 @@ namespace Telegram.Views
                             _clientService,
                             _settingsService,
                             _eventAggregator));
+                case "Telegram.ViewModels.CallsViewModel":
+                    return (T)(object)new Telegram.ViewModels.CallsViewModel(
+                        _clientService,
+                        _settingsService,
+                        _eventAggregator);
                 case "Telegram.ViewModels.ChooseChatsViewModel":
                     return (T)(object)new Telegram.ViewModels.ChooseChatsViewModel(
                         _clientService,
@@ -838,12 +843,6 @@ namespace Telegram.Views
                         _clientService,
                         _settingsService,
                         _eventAggregator);
-                case "Telegram.ViewModels.ChatsNearbyViewModel":
-                    return (T)(object)new Telegram.ViewModels.ChatsNearbyViewModel(
-                        _clientService,
-                        _settingsService,
-                        _eventAggregator,
-                        _locationService ??= new Telegram.Services.LocationService(_clientService));
                 case "Telegram.ViewModels.Folders.FoldersViewModel":
                     return (T)(object)new Telegram.ViewModels.Folders.FoldersViewModel(
                         _clientService,

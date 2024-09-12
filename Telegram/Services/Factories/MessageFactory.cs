@@ -113,7 +113,7 @@ namespace Telegram.Services.Factories
             }
 
             var generated = await video.File.ToGeneratedAsync(ConversionType.Transcode, JsonConvert.SerializeObject(conversion));
-            var thumbnail = await video.File.ToVideoThumbnailAsync(conversion, ConversionType.TranscodeThumbnail, JsonConvert.SerializeObject(conversion));
+            var thumbnail = await video.ToVideoThumbnailAsync(conversion, ConversionType.TranscodeThumbnail, JsonConvert.SerializeObject(conversion));
 
             if (animated && ttl == null)
             {

@@ -2125,7 +2125,7 @@ namespace Telegram.Views
             }
             if ((user != null && user.Type is not UserTypeDeleted && user.Id != ViewModel.ClientService.Options.MyId) || basicGroup != null || (supergroup != null && !supergroup.IsChannel))
             {
-                var muted = ViewModel.ClientService.Notifications.GetMutedFor(chat) > 0;
+                var muted = ViewModel.ClientService.Notifications.IsMuted(chat);
                 var silent = chat.DefaultDisableNotification;
 
                 var mute = new MenuFlyoutSubItem();
@@ -2508,7 +2508,20 @@ namespace Telegram.Views
             var properties = await message.ClientService.SendAsync(new GetMessageProperties(message.ChatId, message.Id)) as MessageProperties;
             if (properties == null)
             {
-                return;
+                if (ViewModel.Type == DialogType.BusinessReplies)
+                {
+                    properties = new MessageProperties
+                    {
+                        CanBeDeletedOnlyForSelf = true,
+                        CanBeEdited = true,
+                        CanBeReplied = true,
+                        CanBeSaved = true
+                    };
+                }
+                else
+                {
+                    return;
+                }
             }
 
             var selected = ViewModel.SelectedItems;
@@ -2600,7 +2613,7 @@ namespace Telegram.Views
                 }
                 else if (MessageReply_Loaded(message, properties))
                 {
-                    flyout.CreateFlyoutItem(ViewModel.ReplyToMessage, message, chat.Type is ChatTypeSupergroup { IsChannel: true } ? Strings.ReplyToAnotherChat : Strings.Reply, Icons.ArrowReply);
+                    flyout.CreateFlyoutItem(ViewModel.ReplyToMessage, message, properties.CanBeReplied ? Strings.Reply : Strings.ReplyToAnotherChat, Icons.ArrowReply);
                 }
 
                 if (MessageEdit_Loaded(message, properties))
@@ -3657,6 +3670,11 @@ namespace Telegram.Views
                     ButtonStickers.Collapse();
                 }
             }
+            else if (e.ClickedItem is QuickReplyShortcut shortcut)
+            {
+                TextField.SetText(null, null);
+                ViewModel.ClientService.Send(new SendQuickReplyShortcutMessages(ViewModel.Chat.Id, shortcut.Id, 0));
+            }
         }
 
         private void List_SelectionModeChanged(DependencyObject sender, DependencyProperty dp)
@@ -3830,7 +3848,7 @@ namespace Telegram.Views
                 return;
             }
 
-            if (message.Content is MessageAsyncStory asyncStory)
+            if (message.Content is MessageAsyncStory asyncStory && asyncStory.State != MessageStoryState.Expired)
             {
                 var segments = button.FindName("Segments") as ActiveStoriesSegments;
                 if (segments != null)
@@ -3843,23 +3861,29 @@ namespace Telegram.Views
                     var item = asyncStory.Story;
                     item ??= await _viewModel.ClientService.SendAsync(new GetStory(asyncStory.StorySenderChatId, asyncStory.StoryId, true)) as Story;
 
-                    var story = new StoryViewModel(message.ClientService, item);
-                    var activeStories = new ActiveStoriesViewModel(message.ClientService, message.Delegate.Settings, message.Delegate.Aggregator, story);
-
-                    var viewModel = new StoryListViewModel(message.ClientService, message.Delegate.Settings, message.Delegate.Aggregator, activeStories);
-                    viewModel.NavigationService = _viewModel.NavigationService;
-
-                    var window = new StoriesWindow();
-                    window.Update(viewModel, activeStories, StoryOpenOrigin.Mention, origin, _ =>
+                    if (item != null)
                     {
-                        var transform = segments.TransformToVisual(null);
-                        var point = transform.TransformPoint(new Windows.Foundation.Point());
+                        var story = new StoryViewModel(message.ClientService, item);
+                        var activeStories = new ActiveStoriesViewModel(message.ClientService, message.Delegate.Settings, message.Delegate.Aggregator, story);
 
-                        return new Rect(point.X + 4, point.Y + 4, 112, 112);
-                    });
+                        var viewModel = new StoryListViewModel(message.ClientService, message.Delegate.Settings, message.Delegate.Aggregator, activeStories);
+                        viewModel.NavigationService = _viewModel.NavigationService;
 
-                    _ = window.ShowAsync(XamlRoot);
+                        var window = new StoriesWindow();
+                        window.Update(viewModel, activeStories, StoryOpenOrigin.Mention, origin, _ =>
+                        {
+                            var transform = segments.TransformToVisual(null);
+                            var point = transform.TransformPoint(new Windows.Foundation.Point());
 
+                            return new Rect(point.X + 4, point.Y + 4, 112, 112);
+                        });
+
+                        _ = window.ShowAsync(XamlRoot);
+                    }
+                    else
+                    {
+                        ToastPopup.Show(XamlRoot, Strings.StoryNotFound, ToastPopupIcon.ExpiredStory);
+                    }
                 }
             }
             else
@@ -3916,13 +3940,28 @@ namespace Telegram.Views
                 command.Text = $"/{userCommand.Item.Command} ";
                 description.Text = userCommand.Item.Description;
 
-                var user = ViewModel.ClientService.GetUser(userCommand.UserId);
-                if (user == null)
+                if (ViewModel.ClientService.TryGetUser(userCommand.UserId, out User user))
                 {
-                    return;
+                    photo.SetUser(ViewModel.ClientService, user, 32);
                 }
+            }
+            else if (args.Item is QuickReplyShortcut shortcut)
+            {
+                var content = args.ItemContainer.ContentTemplateRoot as Grid;
 
-                photo.SetUser(ViewModel.ClientService, user, 32);
+                var photo = content.Children[0] as ProfilePicture;
+                var title = content.Children[1] as TextBlock;
+
+                var command = title.Inlines[0] as Run;
+                var description = title.Inlines[1] as Run;
+
+                command.Text = $"/{shortcut.Name} ";
+                description.Text = Locale.Declension(Strings.R.messages, shortcut.MessageCount);
+
+                if (ViewModel.ClientService.TryGetUser(ViewModel.ClientService.Options.MyId, out User user))
+                {
+                    photo.SetUser(ViewModel.ClientService, user, 32);
+                }
             }
             else if (args.Item is User user)
             {
@@ -4410,7 +4449,7 @@ namespace Telegram.Views
                 }
                 else
                 {
-                    ShowAction(ViewModel.ClientService.Notifications.GetMutedFor(chat) > 0 ? Strings.ChannelUnmute : Strings.ChannelMute, true);
+                    ShowAction(ViewModel.ClientService.Notifications.IsMuted(chat) ? Strings.ChannelUnmute : Strings.ChannelMute, true);
                 }
             }
         }
@@ -5061,7 +5100,7 @@ namespace Telegram.Views
             }
             else if (ViewModel.ClientService.IsRepliesChat(chat))
             {
-                ShowAction(ViewModel.ClientService.Notifications.GetMutedFor(chat) > 0 ? Strings.ChannelUnmute : Strings.ChannelMute, true);
+                ShowAction(ViewModel.ClientService.Notifications.IsMuted(chat) ? Strings.ChannelUnmute : Strings.ChannelMute, true);
             }
             else if (chat.BlockList is BlockListMain)
             {
@@ -5309,7 +5348,7 @@ namespace Telegram.Views
                 }
                 else
                 {
-                    ShowAction(ViewModel.ClientService.Notifications.GetMutedFor(chat) > 0 ? Strings.ChannelUnmute : Strings.ChannelMute, true);
+                    ShowAction(ViewModel.ClientService.Notifications.IsMuted(chat) ? Strings.ChannelUnmute : Strings.ChannelMute, true);
                 }
             }
             else

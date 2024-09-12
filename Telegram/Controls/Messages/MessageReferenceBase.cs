@@ -72,9 +72,9 @@ namespace Telegram.Controls.Messages
                 {
                     message = embedded.LinkPreview.Title;
                 }
-                else if (embedded.LinkPreview.HasAuthor(out string author))
+                else if (!string.IsNullOrEmpty(embedded.LinkPreview.Author))
                 {
-                    message = author;
+                    message = embedded.LinkPreview.Author;
                 }
                 else
                 {
@@ -313,6 +313,12 @@ namespace Telegram.Controls.Messages
                 case MessageGame game:
                     SetGameTemplate(clientService, sender, game, title, outgoing, white);
                     break;
+                case MessageGiveaway giveaway:
+                    SetGiveawayTemplate(clientService, sender, giveaway, title, outgoing, white);
+                    break;
+                case MessageGiveawayWinners giveawayWinners:
+                    SetGiveawayWinnersTemplate(clientService, sender, giveawayWinners, title, outgoing, white);
+                    break;
                 case MessageInvoice invoice:
                     SetInvoiceTemplate(clientService, sender, invoice, title, outgoing, white);
                     break;
@@ -351,9 +357,6 @@ namespace Telegram.Controls.Messages
                     break;
                 case MessageVoiceNote voiceNote:
                     SetVoiceNoteTemplate(clientService, sender, text, quote, voiceNote, title, outgoing, white);
-                    break;
-                case MessagePremiumGiveaway premiumGiveaway:
-                    SetPremiumGiveawayTemplate(clientService, sender, premiumGiveaway, title, outgoing, white);
                     break;
                 default:
                     SetServiceTextTemplate(clientService, message, title, outgoing, white);
@@ -767,7 +770,7 @@ namespace Telegram.Controls.Messages
                 white);
         }
 
-        private void SetPremiumGiveawayTemplate(IClientService clientService, MessageSender sender, MessagePremiumGiveaway premiumGiveaway, string title, bool outgoing, bool white)
+        private void SetGiveawayTemplate(IClientService clientService, MessageSender sender, MessageGiveaway giveaway, string title, bool outgoing, bool white)
         {
             HideThumbnail();
 
@@ -776,6 +779,20 @@ namespace Telegram.Controls.Messages
                 sender,
                 title,
                 Strings.BoostingGiveaway,
+                null,
+                false,
+                white);
+        }
+
+        private void SetGiveawayWinnersTemplate(IClientService clientService, MessageSender sender, MessageGiveawayWinners giveaway, string title, bool outgoing, bool white)
+        {
+            HideThumbnail();
+
+            SetText(clientService,
+                outgoing,
+                sender,
+                title,
+                Strings.BoostingGiveawayResults,
                 null,
                 false,
                 white);

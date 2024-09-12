@@ -40,11 +40,11 @@ namespace Telegram.Controls
         }
 
         public static readonly DependencyProperty SourceProperty =
-            DependencyProperty.Register("Source", typeof(IAnimatedVisualSource2), typeof(AnimatedIconToggleButton), new PropertyMetadata(null, OnSourceChanged));
+            DependencyProperty.Register("Source", typeof(IAnimatedVisualSource2), typeof(AnimatedIconButton), new PropertyMetadata(null, OnSourceChanged));
 
         private static void OnSourceChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            var sender = d as AnimatedIconToggleButton;
+            var sender = d as AnimatedIconButton;
             var newValue = e.NewValue as IAnimatedVisualSource2;
 
             if (newValue != null && sender?.Foreground is SolidColorBrush foreground)

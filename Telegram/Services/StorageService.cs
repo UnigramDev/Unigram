@@ -124,18 +124,15 @@ namespace Telegram.Services
 
         public Task OpenFileAsync(File file)
         {
-            return OpenFileAsync(file, null);
+            return OpenFileAsync(file, false);
         }
 
         public Task OpenFileWithAsync(File file)
         {
-            return OpenFileAsync(file, new LauncherOptions
-            {
-                DisplayApplicationPicker = true
-            });
+            return OpenFileAsync(file, true);
         }
 
-        private async Task OpenFileAsync(File file, LauncherOptions options = null)
+        private async Task OpenFileAsync(File file, bool displayApplicationPicker)
         {
             // When opening a file, we always want to retrieve the permanent copy
             var permanent = await _clientService.GetPermanentFileAsync(file);
@@ -146,6 +143,16 @@ namespace Telegram.Services
 
             try
             {
+                LauncherOptions options = null;
+                if (displayApplicationPicker)
+                {
+                    // Even constructing LauncherOptions may throw HRESULT 0x800706BA
+                    options = new LauncherOptions
+                    {
+                        DisplayApplicationPicker = true
+                    };
+                }
+
                 var opened = options != null
                     ? await Launcher.LaunchFileAsync(permanent, options)
                     : await Launcher.LaunchFileAsync(permanent);

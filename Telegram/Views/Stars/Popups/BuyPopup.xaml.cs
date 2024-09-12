@@ -7,6 +7,7 @@
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Automation;
 using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Media.Animation;
 using Telegram.Common;
 using Telegram.Controls;
 using Telegram.Td.Api;
@@ -23,19 +24,36 @@ namespace Telegram.Views.Stars.Popups
     {
         public long StarCount { get; set; }
 
+        public long ChatId { get; set; }
+
         public long SellerBotUserId { get; set; }
 
         public long ReceiverUserId { get; set; }
 
-        public BuyStarsArgs(long starCount, long sellerBotUserId)
+        public static BuyStarsArgs ForReceiverUser(long receiverUserId)
         {
-            StarCount = starCount;
-            SellerBotUserId = sellerBotUserId;
+            return new BuyStarsArgs
+            {
+                ReceiverUserId = receiverUserId,
+            };
         }
 
-        public BuyStarsArgs(long receiverUserId)
+        public static BuyStarsArgs ForSellerBotUser(long starCount, long sellerBotUserId)
         {
-            ReceiverUserId = receiverUserId;
+            return new BuyStarsArgs
+            {
+                StarCount = starCount,
+                SellerBotUserId = sellerBotUserId,
+            };
+        }
+
+        public static BuyStarsArgs ForChannel(long starCount, long chatId)
+        {
+            return new BuyStarsArgs
+            {
+                StarCount = starCount,
+                ChatId = chatId
+            };
         }
     }
 
@@ -48,11 +66,16 @@ namespace Telegram.Views.Stars.Popups
             InitializeComponent();
         }
 
-        public override void OnNavigatedTo()
+        public override void OnNavigatedTo(object parameter)
         {
-            if (ViewModel.Arguments is BuyStarsArgs args)
+            if (parameter is BuyStarsArgs args)
             {
-                if (ViewModel.ClientService.TryGetUser(args.SellerBotUserId, out User sellerUser))
+                if (ViewModel.ClientService.TryGetChat(args.ChatId, out Chat chat))
+                {
+                    TitleLabel.Text = Locale.Declension(Strings.R.StarsNeededTitle, args.StarCount);
+                    TextBlockHelper.SetMarkdown(SubtitleLabel, string.Format(Strings.StarsNeededTextReactions, chat.Title));
+                }
+                else if (ViewModel.ClientService.TryGetUser(args.SellerBotUserId, out User sellerUser))
                 {
                     TitleLabel.Text = Locale.Declension(Strings.R.StarsNeededTitle, args.StarCount);
                     TextBlockHelper.SetMarkdown(SubtitleLabel, string.Format(Strings.StarsNeededText, sellerUser.FullName()));
@@ -73,7 +96,7 @@ namespace Telegram.Views.Stars.Popups
             {
                 Hide();
 
-                if (ViewModel.Arguments?.ReceiverUserId is long receiverUserId)
+                if (ViewModel.Arguments?.ReceiverUserId is long receiverUserId && receiverUserId != 0)
                 {
                     ViewModel.NavigationService.NavigateToInvoice(new InputInvoiceTelegram(new TelegramPaymentPurposeGiftedStars(receiverUserId, option.Currency, option.Amount, option.StarCount)));
                 }
@@ -119,14 +142,19 @@ namespace Telegram.Views.Stars.Popups
             args.Handled = true;
         }
 
-        public string ConvertCount(long count)
-        {
-            return count.ToString("N0");
-        }
-
         private void SettingsFooter_Click(object sender, TextUrlClickEventArgs e)
         {
             MessageHelper.OpenUrl(null, null, Strings.StarsTOSLink);
+        }
+
+        private void Expand_Click(object sender, RoutedEventArgs e)
+        {
+            if (ScrollingHost.ItemContainerTransitions.Empty())
+            {
+                ScrollingHost.ItemContainerTransitions.Add(new AddDeleteThemeTransition());
+            }
+
+            ViewModel.Expand();
         }
     }
 }

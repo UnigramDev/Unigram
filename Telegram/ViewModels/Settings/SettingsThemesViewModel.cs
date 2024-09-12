@@ -182,13 +182,13 @@ namespace Telegram.ViewModels.Settings
                     accent = BootStrapper.Current.UISettings.GetColorValue(UIColorType.Accent);
                 }
 
-                var dialog = new ChooseColorPopup();
-                dialog.Color = accent;
+                var popup = new ChooseColorPopup();
+                popup.Color = accent;
 
-                var confirm = await ShowPopupAsync(dialog);
+                var confirm = await ShowPopupAsync(popup);
                 if (confirm == ContentDialogResult.Primary)
                 {
-                    await SetThemeAsync(ThemeAccentInfo.FromAccent(type, dialog.Color));
+                    await SetThemeAsync(ThemeAccentInfo.FromAccent(type, popup.Color));
                 }
             }
         }

@@ -7,7 +7,8 @@
                        mc:Ignorable="d"
                        PrimaryButtonClick="ContentDialog_PrimaryButtonClick"
                        SecondaryButtonClick="ContentDialog_SecondaryButtonClick"
-                       Padding="24,20,24,24">
+                       Padding="24,20,24,24"
+                       IsDismissButtonVisible="True">
 
     <Grid>
         <StackPanel>
@@ -52,12 +53,5 @@
                                       Height="32" />
             </Grid>
         </StackPanel>
-
-        <controls:GlyphButton Click="{x:Bind Close}"
-                              HorizontalAlignment="Right"
-                              VerticalAlignment="Top"
-                              Margin="0,-20,-24,0"
-                              Glyph="&#xE711;"
-                              CornerRadius="20" />
     </Grid>
 </controls:ContentPopup>

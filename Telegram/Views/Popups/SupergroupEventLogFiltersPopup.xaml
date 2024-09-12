@@ -15,7 +15,8 @@
                        SecondaryButtonClick="ContentDialog_SecondaryButtonClick">
 
     <ContentDialog.Resources>
-        <Style TargetType="CheckBox">
+        <Style TargetType="CheckBox"
+               BasedOn="{StaticResource DefaultCheckBoxStyle}">
             <Setter Property="Margin"
                     Value="12,0,12,4" />
         </Style>

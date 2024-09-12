@@ -105,7 +105,7 @@ namespace Telegram.Streams
 
         public override bool Equals(object obj)
         {
-            if (obj is LocalFileSource y)
+            if (obj is LocalFileSource y && !y.IsUnique && !IsUnique)
             {
                 return y.FilePath == FilePath;
             }
@@ -115,6 +115,11 @@ namespace Telegram.Streams
 
         public override int GetHashCode()
         {
+            if (IsUnique)
+            {
+                return base.GetHashCode();
+            }
+
             return FilePath.GetHashCode();
         }
     }

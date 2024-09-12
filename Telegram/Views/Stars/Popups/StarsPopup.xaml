@@ -8,6 +8,7 @@
                        xmlns:revenue="using:Telegram.Controls.Cells.Revenue"
                        mc:Ignorable="d"
                        Padding="0"
+                       IsDismissButtonVisible="True"
                        VerticalContentAlignment="Stretch">
 
     <Grid>
@@ -121,6 +122,10 @@
                                 </Border>
                             </ControlTemplate>
                         </ListView.Template>
+                        <!-- TOOD: WinUI -->
+                        <ListView.ItemContainerTransitions>
+                            <TransitionCollection />
+                        </ListView.ItemContainerTransitions>
                     </ListView>
 
                     <Border Visibility="{x:Bind ViewModel.Subscriptions.Count, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"
@@ -128,6 +133,7 @@
 
                     <controls:TopNavView x:Name="Navigation"
                                          SelectedIndex="{x:Bind ViewModel.SelectedIndex, Mode=TwoWay}"
+                                         Visibility="{x:Bind ViewModel.Items.Count, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"
                                          Height="40">
                         <controls:TopNavViewItem Content="{CustomResource StarsTransactionsAll}" />
                         <controls:TopNavViewItem Content="{CustomResource StarsTransactionsIncoming}" />
@@ -140,15 +146,13 @@
                     <revenue:StarTransactionCell />
                 </DataTemplate>
             </ListView.ItemTemplate>
+            <!-- TOOD: WinUI -->
+            <ListView.ItemContainerTransitions>
+                <TransitionCollection />
+            </ListView.ItemContainerTransitions>
         </ListView>
 
         <controls:ScrollViewerScrim Background="{ThemeResource ContentDialogBackground}"
                                     ScrollingHost="{x:Bind ScrollingHost}" />
-
-        <controls:GlyphButton Click="{x:Bind Close}"
-                              HorizontalAlignment="Right"
-                              VerticalAlignment="Top"
-                              Glyph="&#xE711;"
-                              CornerRadius="20" />
     </Grid>
 </controls:ContentPopup>

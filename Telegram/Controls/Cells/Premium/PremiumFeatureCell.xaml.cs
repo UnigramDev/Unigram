@@ -138,6 +138,10 @@ namespace Telegram.Controls.Cells.Premium
                     titleValue = Strings.PremiumPreviewMessagePrivacy;
                     subtitleValue = Strings.PremiumPreviewMessagePrivacyDescription;
                     break;
+                case PremiumFeatureMessageEffects:
+                    titleValue = Strings.PremiumPreviewEffects;
+                    subtitleValue = Strings.PremiumPreviewEffectsDescription;
+                    break;
             }
 
             Title.Text = titleValue;

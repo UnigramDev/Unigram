@@ -84,10 +84,17 @@
                         HorizontalAlignment="Stretch"
                         Margin="0,4,0,8" />
 
-                <HyperlinkButton x:Name="Switch2"
-                                 Click="Switch2_Click"
-                                 Content="{x:Bind ViewModel.S.LoginWithQrCode, Mode=OneWay}"
-                                 HorizontalAlignment="Center" />
+                <Button x:Name="Switch2"
+                        Click="Switch2_Click"
+                        Content="{x:Bind ViewModel.S.LoginWithQrCode, Mode=OneWay}"
+                        Style="{StaticResource AccentTextButtonStyle}"
+                        HorizontalAlignment="Center" />
+
+                <Button Click="{x:Bind ViewModel.ContinueOnThisLanguage}"
+                        Content="{x:Bind ViewModel.ContinueOnThisLanguageText, Mode=OneWay}"
+                        Visibility="{x:Bind ViewModel.ContinueOnThisLanguageText, Mode=OneWay, Converter={StaticResource NullToVisibilityConverter}}"
+                        Style="{StaticResource AccentTextButtonStyle}"
+                        HorizontalAlignment="Center" />
             </StackPanel>
         </StackPanel>
 
@@ -138,7 +145,8 @@
                            TextAlignment="Center" />
 
                 <Grid HorizontalAlignment="Center"
-                      Margin="0,8,0,0">
+                      RowSpacing="8"
+                      Margin="0,8,0,8">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="Auto" />
                         <ColumnDefinition />
@@ -148,40 +156,49 @@
                         <RowDefinition Height="Auto" />
                         <RowDefinition Height="Auto" />
                     </Grid.RowDefinitions>
-                    <TextBlock Text="1."
-                               FontWeight="SemiBold"
-                               Margin="0,0,8,8" />
-                    <TextBlock Text="2."
-                               FontWeight="SemiBold"
-                               Margin="0,0,8,8"
-                               Grid.Row="1" />
-                    <TextBlock Text="3."
-                               FontWeight="SemiBold"
-                               Margin="0,0,8,8"
-                               Grid.Row="2" />
+                    <controls:BadgeControl Text="1"
+                                           HorizontalAlignment="Left"
+                                           VerticalAlignment="Bottom"
+                                           Margin="0,0,8,0" />
+                    <controls:BadgeControl Text="2"
+                                           HorizontalAlignment="Left"
+                                           VerticalAlignment="Bottom"
+                                           Margin="0,0,8,0"
+                                           Grid.Row="1" />
+                    <controls:BadgeControl Text="3"
+                                           HorizontalAlignment="Left"
+                                           VerticalAlignment="Bottom"
+                                           Margin="0,0,8,0"
+                                           Grid.Row="2" />
 
                     <TextBlock Text="{x:Bind ViewModel.S.LoginWithQrCodeStep1, Mode=OneWay}"
                                Style="{StaticResource BodyTextBlockStyle}"
-                               VerticalAlignment="Top"
+                               VerticalAlignment="Bottom"
                                Grid.Column="1" />
 
                     <TextBlock Text="{x:Bind ViewModel.S.LoginWithQrCodeStep2, Mode=OneWay}"
                                Style="{StaticResource BodyTextBlockStyle}"
-                               VerticalAlignment="Top"
+                               VerticalAlignment="Bottom"
                                Grid.Column="1"
                                Grid.Row="1" />
 
                     <TextBlock Text="{x:Bind ViewModel.S.LoginWithQrCodeStep3, Mode=OneWay}"
                                Style="{StaticResource BodyTextBlockStyle}"
-                               VerticalAlignment="Top"
+                               VerticalAlignment="Bottom"
                                Grid.Column="1"
                                Grid.Row="2" />
                 </Grid>
 
-                <HyperlinkButton Click="Switch1_Click"
-                                 Content="{x:Bind ViewModel.S.LoginWithQrCodeSkip, Mode=OneWay}"
-                                 HorizontalAlignment="Center"
-                                 Grid.Row="6" />
+                <Button Click="Switch1_Click"
+                        Content="{x:Bind ViewModel.S.LoginWithQrCodeSkip, Mode=OneWay}"
+                        Style="{StaticResource AccentTextButtonStyle}"
+                        HorizontalAlignment="Center" />
+
+                <Button Click="{x:Bind ViewModel.ContinueOnThisLanguage}"
+                        Content="{x:Bind ViewModel.ContinueOnThisLanguageText, Mode=OneWay}"
+                        Visibility="{x:Bind ViewModel.ContinueOnThisLanguageText, Mode=OneWay, Converter={StaticResource NullToVisibilityConverter}}"
+                        Style="{StaticResource AccentTextButtonStyle}"
+                        HorizontalAlignment="Center" />
             </StackPanel>
 
         </StackPanel>
@@ -190,12 +207,13 @@
                                HorizontalAlignment="Center"
                                Grid.Row="2" />
 
-        <HyperlinkButton x:Name="Proxy"
-                         Click="{x:Bind ViewModel.Proxy}"
-                         Content="{x:Bind ViewModel.S.ProxySettings, Mode=OneWay}"
-                         HorizontalAlignment="Right"
-                         Margin="12,0"
-                         Grid.Row="1" />
+        <Button x:Name="Proxy"
+                Click="{x:Bind ViewModel.Proxy}"
+                Content="{x:Bind ViewModel.S.ProxySettings, Mode=OneWay}"
+                Style="{StaticResource AccentTextButtonStyle}"
+                HorizontalAlignment="Right"
+                Margin="12,0"
+                Grid.Row="1" />
 
         <Border x:Name="TitleBar"
                 Background="Transparent" />

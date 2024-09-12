@@ -28,11 +28,12 @@
             <ListView.Header>
                 <controls:SettingsPanel IsHeader="True">
                     <controls:HeaderedControl>
-                        <CheckBox x:Name="Alert"
-                                  Click="{x:Bind ViewModel.Scope.Save}"
-                                  IsChecked="{x:Bind ViewModel.Scope.Alert, Mode=TwoWay}"
-                                  Content="{CustomResource Alert}"
-                                  Style="{StaticResource SettingsCheckBoxStyle}" />
+                        <controls:FauxCheckBox x:Name="Alert"
+                                               Click="Alert_Click"
+                                               IsChecked="{x:Bind ViewModel.Scope.Alert, Mode=OneWay}"
+                                               Content="{CustomResource Alert}"
+                                               Style="{StaticResource SettingsCheckBoxStyle}"
+                                               IsFaux="True" />
                     </controls:HeaderedControl>
 
                     <controls:HeaderedControl Header="{CustomResource Settings}">
@@ -50,6 +51,7 @@
                     </controls:HeaderedControl>
 
                     <TextBlock x:Name="HeaderLabel"
+                               Visibility="{x:Bind ViewModel.Items.Count, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"
                                Text="{CustomResource NotificationsExceptions}"
                                Style="{StaticResource BaseTextBlockStyle}"
                                Margin="24,16,24,4" />

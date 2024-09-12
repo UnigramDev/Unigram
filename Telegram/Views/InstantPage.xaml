@@ -269,7 +269,7 @@
                         <ColumnDefinition />
                     </Grid.ColumnDefinitions>
                     <controls:GlyphButton Glyph="&#xE72D;"
-                                          Click="{x:Bind ViewModel.Share}"
+                                          Click="Share_Click"
                                           Style="{StaticResource HeaderGlyphButtonStyle}"
                                           AutomationProperties.Name="{CustomResource ShareLink}"
                                           ToolTipService.ToolTip="{CustomResource ShareLink}" />
@@ -277,14 +277,14 @@
                                          Grid.Column="1">
                         <Button.Flyout>
                             <MenuFlyout Placement="BottomEdgeAlignedRight">
-                                <MenuFlyoutItem Click="{x:Bind ViewModel.Browser}"
+                                <MenuFlyoutItem Click="Browser_Click"
                                                 Text="{CustomResource OpenInExternalApp}">
                                     <MenuFlyoutItem.Icon>
                                         <FontIcon Glyph="&#xE7AC;"
                                                   Style="{StaticResource DefaultFontIconStyle}" />
                                     </MenuFlyoutItem.Icon>
                                 </MenuFlyoutItem>
-                                <MenuFlyoutItem Click="{x:Bind ViewModel.Copy}"
+                                <MenuFlyoutItem Click="Copy_Click"
                                                 Text="{CustomResource CopyLink}">
                                     <MenuFlyoutItem.Icon>
                                         <FontIcon Glyph="&#xE8C8;"
@@ -324,7 +324,7 @@
             </ListView.ItemContainerStyle>
             <ListView.Footer>
                 <Grid Background="{ThemeResource PageBackgroundDarkBrush}">
-                    <Button Click="{x:Bind ViewModel.Feedback}"
+                    <Button Click="Feedback_Click"
                             Content="{CustomResource PreviewFeedback2}"
                             HorizontalContentAlignment="Right"
                             VerticalAlignment="Center"

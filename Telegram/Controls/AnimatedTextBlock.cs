@@ -6,6 +6,7 @@
 //
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Documents;
 using Microsoft.UI.Xaml.Hosting;
 using System;
 using System.Numerics;
@@ -294,7 +295,7 @@ namespace Telegram.Controls
             PrevPart?.Measure(availableSize);
             NextPart?.Measure(availableSize);
 
-            static double Width(TextBlock block, out double height)
+            static double Width(TextBlock block, bool metrics, out double height)
             {
                 if (block == null)
                 {
@@ -302,16 +303,22 @@ namespace Telegram.Controls
                     return 0;
                 }
 
-                // This is NOT optimal, but this control triggers a small amount of measures.
-                //var rect = block.ContentEnd.GetCharacterRect(LogicalDirection.Forward);
                 height = block.DesiredSize.Height;
-                return block.DesiredSize.Width; //rect.Right;
+
+                if (metrics)
+                {
+                    // This is NOT optimal, but this control triggers a small amount of measures.
+                    var rect = block.ContentEnd.GetCharacterRect(LogicalDirection.Forward);
+                    return rect.Right;
+                }
+
+                return block.DesiredSize.Width;
             }
 
-            _prefixRight = Width(PrefixPart, out double height1);
-            _nextRight = Width(NextPart, out double height2);
+            _prefixRight = Width(PrefixPart, false, out double height1);
+            _nextRight = Width(NextPart, false, out double height2);
 
-            var width = Math.Max(0, Math.Round(_prefixRight + _nextRight + Width(SuffixPart, out double height3)));
+            var width = Math.Max(0, Math.Round(_prefixRight + _nextRight + Width(SuffixPart, false, out double height3)));
             var height = Math.Max(0, Math.Max(height1, Math.Max(height2, height3)));
 
             return new Size(width, height);
@@ -357,8 +364,6 @@ namespace Telegram.Controls
 
         protected override Size MeasureOverride(Size availableSize)
         {
-            Logger.Info(availableSize);
-
             if (Owner != null)
             {
                 return Owner.DoMeasure(availableSize);
@@ -369,8 +374,6 @@ namespace Telegram.Controls
 
         protected override Size ArrangeOverride(Size finalSize)
         {
-            Logger.Info(finalSize);
-
             if (Owner != null)
             {
                 return Owner.DoArrange(finalSize);

@@ -62,8 +62,8 @@ $h["RELEASE"] = @{
     AppName = "Unigram"
 }
 $h["DIRECT"] = @{
-    Name = "TelegramFZ-LLC.Unigram";
-    Publisher = 'CN=Telegram FZ-LLC, O=Telegram FZ-LLC, POBox=501, L=Dubai, C=AE, OID.2.5.4.15=Private Organization, OID.1.3.6.1.4.1.311.60.2.1.3=AE, SERIALNUMBER=94349';
+    Name = "TelegramFZ-LLC.Windows";
+    Publisher = 'CN=Telegram FZ-LLC, O=Telegram FZ-LLC, L=Dubai, C=AE, SERIALNUMBER=94349, OID.2.5.4.15=Private Organization, OID.1.3.6.1.4.1.311.60.2.1.2=Dubai, OID.1.3.6.1.4.1.311.60.2.1.3=AE';
     DisplayName = ("Unigram{0}Telegram for Windows" -f [char]0x2014);
     PublisherDisplayName = "Telegram FZ-LLC";
     AppName = "Unigram"

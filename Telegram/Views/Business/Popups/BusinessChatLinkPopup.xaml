@@ -9,9 +9,7 @@
                        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
                        xmlns:drawers="using:Telegram.Controls.Drawers"
                        mc:Ignorable="d"
-                       Title="TITLE"
-                       PrimaryButtonClick="ContentDialog_PrimaryButtonClick"
-                       SecondaryButtonClick="ContentDialog_SecondaryButtonClick"
+                       IsDismissButtonVisible="True"
                        Padding="0,12,0,0">
 
     <Grid>
@@ -114,17 +112,10 @@
 
         </StackPanel>
 
-        <controls:GlyphButton Click="{x:Bind Close}"
-                              HorizontalAlignment="Right"
-                              VerticalAlignment="Top"
-                              Margin="0,-52,0,0"
-                              Glyph="&#xE711;"
-                              CornerRadius="20" />
-
         <controls:MoreButton Click="More_Click"
                              HorizontalAlignment="Right"
                              VerticalAlignment="Top"
-                             Margin="0,-16,0,0"
+                             Margin="0,-50,40,0"
                              CornerRadius="20" />
     </Grid>
 </controls:ContentPopup>

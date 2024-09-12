@@ -9,6 +9,7 @@
 #include <map>
 
 #include <SurfaceImage.h>
+#include <TextFormat.h>
 
 #include <winrt/Windows.Foundation.h>
 #include <winrt/Windows.UI.h>
@@ -68,6 +69,8 @@ namespace winrt::Telegram::Native::implementation
         winrt::Telegram::Native::SurfaceImage Create(int32_t pixelWidth, int32_t pixelHeight);
         HRESULT Invalidate(winrt::Telegram::Native::SurfaceImage imageSource, IBuffer buffer);
 
+        winrt::Telegram::Native::TextFormat CreateTextFormat2(hstring text, IVector<TextEntity> entities, double fontSize, double width);
+
         float2 ContentEnd(hstring text, IVector<TextEntity> entities, double fontSize, double width);
         IVector<Windows::Foundation::Rect> LineMetrics(hstring text, IVector<TextEntity> entities, double fontSize, double width, bool rtl);
         IVector<Windows::Foundation::Rect> RangeMetrics(hstring text, int32_t offset, int32_t length, IVector<TextEntity> entities, double fontSize, double width, bool rtl);
@@ -83,12 +86,13 @@ namespace winrt::Telegram::Native::implementation
         HRESULT InternalDrawThumbnailPlaceholder(IWICBitmapSource* wicBitmapSource, float blurAmount, IBuffer randomAccessStream, bool minithumbnail);
         HRESULT SaveImageToStream(ID2D1Image* image, REFGUID wicFormat, IRandomAccessStream randomAccessStream);
 
+        HRESULT CreateTextFormatImpl(hstring text, IVector<TextEntity> entities, double fontSize, double width, winrt::com_ptr<TextFormat>& textFormat);
         HRESULT ContentEndImpl(hstring text, IVector<TextEntity> entities, double fontSize, double width, float2& offset);
         HRESULT RangeMetricsImpl(hstring text, int32_t offset, int32_t length, IVector<TextEntity> entities, double fontSize, double width, bool rtl, IVector<Windows::Foundation::Rect>& rects);
         HRESULT TrimMetricsImpl(hstring text, int32_t offset, int32_t length, IVector<TextEntity> entities, double fontSize, double width, double height, bool rtl, int32_t& output);
 
 
-    private:
+    public:
         static std::mutex s_criticalSection;
         static winrt::com_ptr<PlaceholderImageHelper> s_current;
 

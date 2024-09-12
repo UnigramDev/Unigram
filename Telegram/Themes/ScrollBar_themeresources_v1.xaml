@@ -1060,11 +1060,11 @@
                                           VerticalAlignment="Center" />
 
                         </Grid>
-                        <controls:ScrollBarGrid x:Name="HorizontalPanningRoot"
-                                                UseLayoutRounding="False"
-                                                MinWidth="24"
-                                                Visibility="Collapsed"
-                                                Opacity="0">
+                        <Grid x:Name="HorizontalPanningRoot"
+                              UseLayoutRounding="False"
+                              MinWidth="24"
+                              Visibility="Collapsed"
+                              Opacity="0">
                             <Border x:Name="HorizontalPanningThumb"
                                     VerticalAlignment="Bottom"
                                     HorizontalAlignment="Left"
@@ -1074,7 +1074,7 @@
                                     MinWidth="32"
                                     Margin="0,2,0,2" />
 
-                        </controls:ScrollBarGrid>
+                        </Grid>
                         <Grid x:Name="VerticalRoot"
                               Background="{TemplateBinding Background}"
                               BorderBrush="{TemplateBinding BorderBrush}"
@@ -1152,11 +1152,11 @@
                                           HorizontalAlignment="Center" />
 
                         </Grid>
-                        <controls:ScrollBarGrid x:Name="VerticalPanningRoot"
-                                                UseLayoutRounding="False"
-                                                MinHeight="24"
-                                                Visibility="Collapsed"
-                                                Opacity="0">
+                        <Grid x:Name="VerticalPanningRoot"
+                              UseLayoutRounding="False"
+                              MinHeight="24"
+                              Visibility="Collapsed"
+                              Opacity="0">
                             <Border x:Name="VerticalPanningThumb"
                                     VerticalAlignment="Top"
                                     HorizontalAlignment="Right"
@@ -1166,7 +1166,7 @@
                                     MinHeight="32"
                                     Margin="2,0,2,0" />
 
-                        </controls:ScrollBarGrid>
+                        </Grid>
 
                     </Grid>
 

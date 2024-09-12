@@ -201,7 +201,7 @@ namespace Telegram.Views.Stars.Popups
 
                 MediaPreview.Visibility = Visibility.Collapsed;
             }
-            else if (transaction.Partner is StarTransactionPartnerChannel sourceChannel && clientService.TryGetChat(sourceChannel.ChatId, out Chat chat))
+            else if (transaction.Partner is StarTransactionPartnerChat sourceChat && clientService.TryGetChat(sourceChat.ChatId, out Chat chat))
             {
                 FromPhoto.SetChat(clientService, chat, 24);
                 FromPhoto.Visibility = Visibility.Visible;
@@ -210,7 +210,7 @@ namespace Telegram.Views.Stars.Popups
 
                 Subtitle.Visibility = Visibility.Collapsed;
 
-                if (sourceChannel.Purpose is ChannelTransactionPurposePaidMedia paidMedia)
+                if (sourceChat.Purpose is ChatTransactionPurposePaidMedia paidMedia)
                 {
                     Title.Text = Strings.StarMediaPurchase;
 
@@ -231,16 +231,23 @@ namespace Telegram.Views.Stars.Popups
                         Media1.HorizontalAlignment = HorizontalAlignment.Center;
                     }
                 }
-                else if (sourceChannel.Purpose is ChannelTransactionPurposeReaction)
+                else if (sourceChat.Purpose is ChatTransactionPurposeReaction)
                 {
                     Title.Text = Strings.StarsReactionsSent;
                     Photo.SetChat(clientService, chat, 96);
 
                     MediaPreview.Visibility = Visibility.Collapsed;
                 }
-                else if (sourceChannel.Purpose is ChannelTransactionPurposeJoin)
+                else if (sourceChat.Purpose is ChatTransactionPurposeJoin)
                 {
                     Title.Text = Strings.StarsTransactionSubscriptionMonthly;
+                    Photo.SetChat(clientService, chat, 96);
+
+                    MediaPreview.Visibility = Visibility.Collapsed;
+                }
+                else if (sourceChat.Purpose is ChatTransactionPurposeGiveaway)
+                {
+                    Title.Text = Strings.StarsGiveawayPrizeReceived;
                     Photo.SetChat(clientService, chat, 96);
 
                     MediaPreview.Visibility = Visibility.Collapsed;
@@ -439,7 +446,7 @@ namespace Telegram.Views.Stars.Popups
                 return result;
             }
 
-            if (_transaction.Partner is not StarTransactionPartnerChannel { Purpose: ChannelTransactionPurposePaidMedia paidMedia })
+            if (_transaction.Partner is not StarTransactionPartnerChat { Purpose: ChatTransactionPurposePaidMedia paidMedia })
             {
                 return;
             }

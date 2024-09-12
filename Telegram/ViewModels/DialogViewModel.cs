@@ -1955,14 +1955,18 @@ namespace Telegram.ViewModels
                 message.Content is MessageGameScore ||
                 message.Content is MessagePaymentSuccessful)
             {
-                message.ReplyToState = MessageReplyToState.Loading;
+                message.ReplyToState = message.Content is MessageGiveawayWinners
+                    ? MessageReplyToState.Hidden
+                    : MessageReplyToState.Loading;
 
                 ClientService.GetReplyTo(message, response =>
                 {
                     if (response is Message result)
                     {
                         message.ReplyToItem = CreateMessage(result);
-                        message.ReplyToState = MessageReplyToState.None;
+                        message.ReplyToState = message.Content is MessageGiveawayWinners
+                            ? MessageReplyToState.Hidden
+                            : MessageReplyToState.None;
                     }
                     else if (response is Story story)
                     {
@@ -3010,7 +3014,7 @@ namespace Telegram.ViewModels
 
         public void ToggleMute()
         {
-            ToggleMute(ClientService.Notifications.GetMutedFor(_chat) > 0);
+            ToggleMute(ClientService.Notifications.IsMuted(_chat));
         }
 
         private void ToggleMute(bool unmute)
@@ -3021,7 +3025,7 @@ namespace Telegram.ViewModels
                 return;
             }
 
-            _notificationsService.SetMuteFor(chat, unmute ? 0 : 632053052);
+            _notificationsService.SetMuteFor(chat, unmute ? 0 : 632053052, NavigationService.XamlRoot);
         }
 
         #endregion
@@ -3640,7 +3644,7 @@ namespace Telegram.ViewModels
         {
             if (Search == null)
             {
-                Search = new ChatSearchViewModel(ClientService, Settings, Aggregator, this, query);
+                Search = new ChatSearchViewModel(ClientService, NavigationService, Settings, Aggregator, this, query);
             }
             else
             {
@@ -3765,12 +3769,12 @@ namespace Telegram.ViewModels
 
             if (value is int update)
             {
-                _notificationsService.SetMuteFor(chat, update);
+                _notificationsService.SetMuteFor(chat, update, NavigationService.XamlRoot);
             }
             else
             {
-                var mutedFor = Settings.Notifications.GetMutedFor(chat);
-                var popup = new ChatMutePopup(mutedFor);
+                var muteFor = Settings.Notifications.GetMuteFor(chat);
+                var popup = new ChatMutePopup(muteFor);
 
                 var confirm = await ShowPopupAsync(popup);
                 if (confirm != ContentDialogResult.Primary)
@@ -3778,9 +3782,9 @@ namespace Telegram.ViewModels
                     return;
                 }
 
-                if (mutedFor != popup.Value)
+                if (muteFor != popup.Value)
                 {
-                    _notificationsService.SetMuteFor(chat, popup.Value);
+                    _notificationsService.SetMuteFor(chat, popup.Value, NavigationService.XamlRoot);
                 }
             }
         }

@@ -988,14 +988,6 @@
                                     </ListView.ItemTemplate>
                                     <ListView.Header>
                                         <StackPanel>
-                                            <controls:BadgeButton Content="{CustomResource AddPeopleNearby}"
-                                                                  Click="ChatsNearby_Click"
-                                                                  Style="{StaticResource IconBadgeButtonStyle}">
-                                                <controls:BadgeButton.IconSource>
-                                                    <icons:Location />
-                                                </controls:BadgeButton.IconSource>
-                                            </controls:BadgeButton>
-
                                             <controls:BadgeButton Content="{CustomResource CreateNewContact}"
                                                                   Click="NewContact_Click"
                                                                   Style="{StaticResource IconBadgeButtonStyle}">
@@ -1012,30 +1004,6 @@
                                          </ListView.ItemContainerTransitions>-->
                                 </ListView>
                             </Grid>
-                        </Grid>
-                    </PivotItem>
-                    <PivotItem x:Name="Calls"
-                               Header="{CustomResource Calls}">
-                        <Grid x:Name="CallsRoot"
-                              x:Load="False"
-                              Margin="0,80,0,0">
-                            <ListView x:Name="CallsList"
-                                      ItemsSource="{x:Bind ViewModel.Calls.Items}"
-                                      ItemContainerStyle="{StaticResource DefaultListViewItemStyle}"
-                                      ItemClick="ListView_ItemClick"
-                                      IsItemClickEnabled="True"
-                                      ChoosingItemContainer="Calls_ChoosingItemContainer"
-                                      ContainerContentChanging="Calls_ContainerContentChanging"
-                                      SelectionMode="None">
-                                <ListView.ItemTemplate>
-                                    <DataTemplate>
-                                        <cells:CallCell />
-                                    </DataTemplate>
-                                </ListView.ItemTemplate>
-                                <!--<ListView.ItemContainerTransitions>
-                                     <TransitionCollection/>
-                                     </ListView.ItemContainerTransitions>-->
-                            </ListView>
                         </Grid>
                     </PivotItem>
                     <PivotItem Header="{CustomResource Settings}">

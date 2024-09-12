@@ -10,7 +10,6 @@ using System.Numerics;
 using Telegram.Common;
 using Telegram.Native.Calls;
 using Telegram.Services.Settings;
-using Windows.Globalization;
 using Windows.Storage;
 using Windows.System.Profile;
 
@@ -670,21 +669,21 @@ namespace Telegram.Services
         private string _languagePackId;
         public string LanguagePackId
         {
-            get => _languagePackId ??= GetValueOrDefault(_local, "LanguagePackId", ApplicationLanguages.Languages[0].Split('-').First());
+            get => _languagePackId ??= GetValueOrDefault(_local, "LanguagePackId", LocaleService.SystemLanguageId());
             set => AddOrUpdateValue(ref _languagePackId, _local, "LanguagePackId", value);
         }
 
         private string _languagePluralId;
         public string LanguagePluralId
         {
-            get => _languagePluralId ??= GetValueOrDefault(_local, "LanguagePluralId", ApplicationLanguages.Languages[0].Split('-').First());
+            get => _languagePluralId ??= GetValueOrDefault(_local, "LanguagePluralId", LocaleService.SystemLanguageId());
             set => AddOrUpdateValue(ref _languagePluralId, _local, "LanguagePluralId", value);
         }
 
         private string _languageBaseId;
         public string LanguageBaseId
         {
-            get => _languageBaseId ??= GetValueOrDefault(_local, "LanguageBaseId", ApplicationLanguages.Languages[0].Split('-').First());
+            get => _languageBaseId ??= GetValueOrDefault(_local, "LanguageBaseId", LocaleService.SystemLanguageId());
             set => AddOrUpdateValue(ref _languageBaseId, _local, "LanguageBaseId", value);
         }
 

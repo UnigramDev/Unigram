@@ -75,46 +75,13 @@ namespace Telegram.ViewModels
             set => Set(ref _title, value);
         }
 
-        public async void Share()
-        {
-            var link = ShareLink;
-            if (link == null)
-            {
-                return;
-            }
-
-            await ShowPopupAsync(typeof(ChooseChatsPopup), new ChooseChatsConfigurationPostLink(new HttpUrl(link.ToString())));
-        }
-
-        public async void Feedback()
+        public async void Feedback(INavigationService service)
         {
             var response = await ClientService.SendAsync(new SearchPublicChat("previews"));
             if (response is Chat chat)
             {
-                NavigationService.NavigateToChat(chat);
+                service.NavigateToChat(chat);
             }
-        }
-
-        public async void Browser()
-        {
-            var link = ShareLink;
-            if (link == null)
-            {
-                return;
-            }
-
-            await Launcher.LaunchUriAsync(link);
-        }
-
-        public void Copy()
-        {
-            var link = ShareLink;
-            if (link == null)
-            {
-                return;
-            }
-
-            MessageHelper.CopyLink(NavigationService.XamlRoot, link.ToString());
         }
     }
 }

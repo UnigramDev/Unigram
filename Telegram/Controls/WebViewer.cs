@@ -32,6 +32,16 @@ namespace Telegram.Controls
         }
     }
 
+    public partial class WebViewerNewWindowRequestedEventArgs : CancelEventArgs
+    {
+        public string Url { get; }
+
+        public WebViewerNewWindowRequestedEventArgs(string url)
+        {
+            Url = url;
+        }
+    }
+
     public partial class WebViewer : ContentControl
     {
         private WebPresenter _presenter;
@@ -54,6 +64,7 @@ namespace Telegram.Controls
 
             _presenter.Navigating += OnNavigating;
             _presenter.EventReceived += OnEventReceived;
+            _presenter.NewWindowRequested += OnNewWindowRequested;
 
             Content = _presenter;
         }
@@ -74,10 +85,12 @@ namespace Telegram.Controls
 
             _presenter.Navigating -= OnNavigating;
             _presenter.EventReceived -= OnEventReceived;
+            _presenter.NewWindowRequested -= OnNewWindowRequested;
 
             //_presenter = new EdgeWebPresenter();
             //_presenter.Navigating += OnNavigating;
             //_presenter.EventReceived += OnEventReceived;
+            //_presenter.NewWindowRequested += OnNewWindowRequested;
 
             // TODO: not supported presenter
             _presenter = null;
@@ -105,9 +118,16 @@ namespace Telegram.Controls
             EventReceived?.Invoke(this, e);
         }
 
+        private void OnNewWindowRequested(object sender, WebViewerNewWindowRequestedEventArgs e)
+        {
+            NewWindowRequested?.Invoke(this, e);
+        }
+
         public event EventHandler<WebViewerNavigatingEventArgs> Navigating;
 
         public event EventHandler<WebViewerEventReceivedEventArgs> EventReceived;
+
+        public event EventHandler<WebViewerNewWindowRequestedEventArgs> NewWindowRequested;
 
         public async void Navigate(string uri)
         {
@@ -178,6 +198,8 @@ namespace Telegram.Controls
 
         public event EventHandler<WebViewerNavigatingEventArgs> Navigating;
 
+        public event EventHandler<WebViewerNewWindowRequestedEventArgs> NewWindowRequested;
+
         public abstract void Navigate(string uri);
 
         public abstract void NavigateToString(string htmlContent);
@@ -194,6 +216,13 @@ namespace Telegram.Controls
         }
 
         protected bool OnNavigating(string url)
+        {
+            var args = new WebViewerNavigatingEventArgs(url);
+            Navigating?.Invoke(this, args);
+            return args.Cancel;
+        }
+
+        protected bool OnNewWindowRequested(string url)
         {
             var args = new WebViewerNavigatingEventArgs(url);
             Navigating?.Invoke(this, args);
@@ -317,6 +346,8 @@ namespace Telegram.Controls
 
             if (View.CoreWebView2 != null)
             {
+                View.CoreWebView2.NewWindowRequested += OnNewWindowRequested;
+
                 await View.CoreWebView2.AddScriptToExecuteOnDocumentCreatedAsync(@"window.external={invoke:s=>window.chrome.webview.postMessage(s)}");
                 await View.CoreWebView2.AddScriptToExecuteOnDocumentCreatedAsync(@"
 window.TelegramWebviewProxy = {
@@ -370,6 +401,11 @@ postEvent: function(eventType, eventData) {
                     OnEventReceived(eventName, null);
                 }
             }
+        }
+
+        private void OnNewWindowRequested(CoreWebView2 sender, CoreWebView2NewWindowRequestedEventArgs args)
+        {
+            args.Handled = OnNewWindowRequested(args.Uri);
         }
 
         public override void Navigate(string uri)

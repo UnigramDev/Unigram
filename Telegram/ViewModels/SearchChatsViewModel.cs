@@ -4,6 +4,7 @@
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Data;
 using Rg.DiffUtils;
@@ -15,6 +16,7 @@ using System.Threading.Tasks;
 using Telegram.Collections;
 using Telegram.Collections.Handlers;
 using Telegram.Common;
+using Telegram.Controls;
 using Telegram.Navigation;
 using Telegram.Services;
 using Telegram.Td;
@@ -444,6 +446,18 @@ namespace Telegram.ViewModels
 
             TopChats.Remove(chat);
             ClientService.Send(new RemoveTopChat(new TopChatCategoryUsers(), chat.Id));
+        }
+
+        public override Task<ContentDialogResult> ShowPopupAsync(string message, string title = null, string primary = null, string secondary = null, bool destructive = false, ElementTheme requestedTheme = ElementTheme.Default)
+        {
+            // SearchChatsViewModel is used by ChooseChatsViewModel,
+            // we still want the popups to properly open on top.
+            if (ContentPopup.IsAnyPopupOpen(NavigationService.XamlRoot))
+            {
+                return base.ShowPopupAsync(target: null, message, title, primary, secondary, destructive, requestedTheme);
+            }
+
+            return base.ShowPopupAsync(message, title, primary, secondary, destructive, requestedTheme);
         }
 
         #endregion

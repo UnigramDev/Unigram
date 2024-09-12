@@ -5,11 +5,11 @@
                        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
                        xmlns:controls="using:Telegram.Controls"
                        mc:Ignorable="d"
-                       Padding="24,0">
+                       Padding="0"
+                       IsDismissButtonVisible="True">
 
     <Grid>
         <ScrollViewer x:Name="ScrollingHost"
-                      Margin="-24,0"
                       Padding="12,0">
             <StackPanel  Margin="0,24,0,72">
                 <Grid>
@@ -146,7 +146,7 @@
         <Grid x:Name="PurchasePanel"
               VerticalAlignment="Bottom"
               HorizontalAlignment="Stretch"
-              Margin="0,12,0,24"
+              Margin="24,12,24,24"
               Height="32"
               Grid.Row="1">
             <controls:BadgeButton x:Name="PurchaseCommand"
@@ -166,12 +166,5 @@
                     Content="{CustomResource StarsSubscriptionCancel}"
                     Style="{StaticResource DangerTextButtonStyle}" />
         </Grid>
-
-        <controls:GlyphButton Click="{x:Bind Close}"
-                              HorizontalAlignment="Right"
-                              VerticalAlignment="Top"
-                              Glyph="&#xE711;"
-                              Margin="0,0,-24,0"
-                              CornerRadius="20" />
     </Grid>
 </controls:ContentPopup>

@@ -46,14 +46,11 @@ namespace Telegram.Controls.Messages
 
         public bool HasReactions => _reactions.Count > 0 || _customReactions.Count > 0;
 
-        public async void UpdateMessageReactions(ChatSearchViewModel viewModel, SavedMessagesTags tags)
+        public void UpdateMessageReactions(ChatSearchViewModel viewModel, SavedMessagesTags tags)
         {
             var items = tags?.Tags.Where(x => x.Count > 0).ToArray() ?? Array.Empty<SavedMessagesTag>();
             if (items.Length > 0)
             {
-                List<long> missingCustomEmoji = null;
-                List<string> missingEmoji = null;
-
                 void UpdateItem(SavedMessagesTag oldItem, SavedMessagesTag newItem, int index = 0)
                 {
                     if (newItem != null)
@@ -64,21 +61,11 @@ namespace Telegram.Controls.Messages
 
                     if (oldItem.Tag is ReactionTypeEmoji emoji)
                     {
-                        var required = UpdateButton<string, EmojiReaction>(_reactions, emoji.Emoji, viewModel, oldItem, viewModel.ClientService.TryGetCachedReaction, index);
-                        if (required)
-                        {
-                            missingEmoji ??= new List<string>();
-                            missingEmoji.Add(emoji.Emoji);
-                        }
+                        UpdateButton<string>(_reactions, emoji.Emoji, viewModel, oldItem, index);
                     }
                     else if (oldItem.Tag is ReactionTypeCustomEmoji customEmoji)
                     {
-                        var required = UpdateButton<long, Sticker>(_customReactions, customEmoji.CustomEmojiId, viewModel, oldItem, EmojiCache.TryGet, index);
-                        if (required)
-                        {
-                            missingCustomEmoji ??= new List<long>();
-                            missingCustomEmoji.Add(customEmoji.CustomEmojiId);
-                        }
+                        UpdateButton<long>(_customReactions, customEmoji.CustomEmojiId, viewModel, oldItem, index);
                     }
                 }
 
@@ -131,36 +118,6 @@ namespace Telegram.Controls.Messages
                 }
 
                 _prevValue = items;
-
-                if (missingCustomEmoji != null)
-                {
-                    var response = await EmojiCache.GetAsync(viewModel.ClientService, missingCustomEmoji);
-                    if (response != null)
-                    {
-                        foreach (var sticker in response)
-                        {
-                            if (sticker.FullType is not StickerFullTypeCustomEmoji customEmoji)
-                            {
-                                continue;
-                            }
-
-                            EmojiCache.AddOrUpdate(sticker);
-                            UpdateButton<long, Sticker>(_customReactions, customEmoji.CustomEmojiId, viewModel, sticker);
-                        }
-                    }
-                }
-
-                if (missingEmoji != null)
-                {
-                    foreach (var emoji in missingEmoji)
-                    {
-                        var response = await viewModel.ClientService.SendAsync(new GetEmojiReaction(emoji));
-                        if (response is EmojiReaction reaction)
-                        {
-                            UpdateButton<string, EmojiReaction>(_reactions, emoji, viewModel, reaction);
-                        }
-                    }
-                }
             }
             else
             {
@@ -173,55 +130,10 @@ namespace Telegram.Controls.Messages
             }
         }
 
-        delegate bool TryGetValue<TKey, T>(TKey key, out T value);
-
-        private void UpdateButton<T, TValue>(IDictionary<T, SavedMessagesTagButton> cache, T key, ChatSearchViewModel viewModel, object value)
+        private void UpdateButton<T>(IDictionary<T, SavedMessagesTagButton> cache, T key, ChatSearchViewModel viewModel, SavedMessagesTag item, int index)
         {
-            if (cache.TryGetValue(key, out SavedMessagesTagButton button))
-            {
-                if (value is EmojiReaction reaction)
-                {
-                    button.SetReaction(viewModel, button.Tag, reaction);
-                }
-                else if (value is Sticker sticker)
-                {
-                    button.SetReaction(viewModel, button.Tag, sticker);
-                }
-            }
-        }
-
-        private bool UpdateButton<T, TValue>(IDictionary<T, SavedMessagesTagButton> cache, T key, ChatSearchViewModel viewModel, SavedMessagesTag item, TryGetValue<T, TValue> tryGet, int index)
-        {
-            var required = false;
-
             var button = GetOrCreateButton(cache, key, index);
-            if (button.EmojiReaction != null)
-            {
-                button.SetReaction(viewModel, item, button.EmojiReaction);
-            }
-            else if (button.CustomReaction != null)
-            {
-                button.SetReaction(viewModel, item, button.CustomReaction);
-            }
-            else if (tryGet(key, out TValue value))
-            {
-                if (value is EmojiReaction reaction)
-                {
-                    button.SetReaction(viewModel, item, reaction);
-                }
-                else if (value is Sticker sticker)
-                {
-                    button.SetReaction(viewModel, item, sticker);
-                }
-            }
-            else
-            {
-                button.SetReaction(viewModel, item, null as EmojiReaction);
-
-                required = true;
-            }
-
-            return required;
+            button.SetReaction(viewModel, item);
         }
 
         private SavedMessagesTagButton GetOrCreateButton<T>(IDictionary<T, SavedMessagesTagButton> cache, T key, int index)

@@ -130,7 +130,7 @@
         </Style>
 
         <DataTemplate x:Key="FileItemTemplate">
-            <Grid Padding="0,6,0,6">
+            <Grid Padding="24,6,24,6">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto" />
                     <ColumnDefinition />
@@ -148,16 +148,28 @@
                                FontSize="{StaticResource GlyphLargeFontSize}"
                                HorizontalAlignment="Center"
                                VerticalAlignment="Center"
-                               Text="&#xE7C3;" />
+                               Text="&#xEA1C;" />
                 </Border>
                 <StackPanel Margin="8,0,0,2"
                             VerticalAlignment="Center"
                             Grid.Column="1">
-                    <TextBlock x:Name="Title"
-                               Foreground="{ThemeResource MessageForegroundBrush}"
-                               TextWrapping="NoWrap"
-                               TextTrimming="CharacterEllipsis"
-                               Style="{StaticResource BaseTextBlockStyle}" />
+                    <Grid HorizontalAlignment="Left">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                        <TextBlock x:Name="Title"
+                                   Foreground="{ThemeResource MessageForegroundBrush}"
+                                   TextWrapping="NoWrap"
+                                   TextTrimming="CharacterEllipsis"
+                                   Style="{StaticResource BaseTextBlockStyle}" />
+                        <TextBlock x:Name="TitleTrim"
+                                   Foreground="{ThemeResource MessageForegroundBrush}"
+                                   TextWrapping="NoWrap"
+                                   TextTrimming="CharacterEllipsis"
+                                   Style="{StaticResource BaseTextBlockStyle}"
+                                   Grid.Column="1" />
+                    </Grid>
                     <TextBlock x:Name="Subtitle"
                                Style="{StaticResource DisabledCaptionTextBlockStyle}" />
                 </StackPanel>
@@ -277,7 +289,7 @@
 
         <ItemsPanelTemplate x:Key="AlbumPanelTemplate">
             <local:SendFilesAlbumPanel Loading="SendFilesAlbumPanel_Loading"
-                                       Margin="24,0,22,-2" />
+                                       Margin="0,0,-2,-2" />
         </ItemsPanelTemplate>
 
     </ContentControl.Resources>
@@ -294,22 +306,9 @@
             <TextBlock Text="{x:Bind SendWithoutCompression, Mode=OneWay}"
                        VerticalAlignment="Center" />
 
-            <controls:GlyphToggleButton x:Name="AlbumButton"
-                                        CheckedGlyph="&#xE90C;"
-                                        Glyph="&#xE90C;"
-                                        CheckedForeground="{ThemeResource TelegramBackgroundAccentBrush}"
-                                        Click="Album_Click"
-                                        FontFamily="{StaticResource TelegramThemeFontFamily}"
-                                        Visibility="{x:Bind IsAlbumAvailable, Mode=OneWay}"
-                                        IsChecked="{x:Bind IsAlbum, Mode=OneWay}"
-                                        IsOneWay="False"
-                                        FontSize="20"
-                                        Margin="-8,0,0,0"
-                                        Grid.Column="2" />
-
             <controls:MoreButton Click="Menu_Click"
                                  Visibility="{x:Bind IsMediaOnly, Mode=OneWay}"
-                                 Grid.Column="3" />
+                                 Grid.Column="2" />
         </Grid>
     </ContentDialog.Title>
 
@@ -384,8 +383,7 @@
                       Drop="ListView_Drop"
                       CanReorderItems="True"
                       CanDragItems="True"
-                      AllowDrop="True"
-                      Padding="24,0,24,0">
+                      AllowDrop="True">
                 <ListView.ItemContainerStyle>
                     <Style TargetType="ListViewItem">
                         <Setter Property="HorizontalContentAlignment"
@@ -401,9 +399,6 @@
                     </Style>
                 </ListView.ItemContainerStyle>
             </ListView>
-
-            <controls:ScrollViewerScrim Background="{ThemeResource ContentDialogBackground}"
-                                        ScrollingHost="{x:Bind ScrollingHost}" />
         </Grid>
         <Grid x:Name="AlbumPanel"
               x:Load="False"
@@ -416,8 +411,7 @@
                       SelectionMode="None"
                       DragEnter="ListView_DragEnter"
                       Drop="ListView_Drop"
-                      AllowDrop="True"
-                      Padding="0,0,0,0">
+                      AllowDrop="True">
                 <ListView.ItemContainerStyle>
                     <Style TargetType="ListViewItem">
                         <Setter Property="HorizontalContentAlignment"
@@ -435,9 +429,6 @@
                     </Style>
                 </ListView.ItemContainerStyle>
             </ListView>
-
-            <controls:ScrollViewerScrim Background="{ThemeResource ContentDialogBackground}"
-                                        ScrollingHost="{x:Bind Album}" />
         </Grid>
 
         <Button x:Name="PaidMediaButton"

@@ -184,7 +184,7 @@ namespace Telegram.Controls.Cells
 
                 Subtitle.Text = string.Format("{0} / {1}", FileSizeConverter.Convert(file.Local.DownloadedSize, size), FileSizeConverter.Convert(size));
             }
-            else if (file.Remote.IsUploadingActive || message.SendingState is MessageSendingStateFailed)
+            else if (file.Remote.IsUploadingActive || message.SendingState is MessageSendingStateFailed || (message.SendingState is MessageSendingStatePending && !file.Remote.IsUploadingCompleted))
             {
                 DownloadPanel.Visibility = Visibility.Collapsed;
 

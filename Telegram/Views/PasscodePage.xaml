@@ -8,7 +8,8 @@
                        mc:Ignorable="d"
                        TitleTemplate="{x:Null}"
                        IsFullWindow="True"
-                       Opened="OnOpened"
+                       Connected="OnLoaded"
+                       Disconnected="OnUnloaded"
                        Closing="OnClosing">
 
     <ContentDialog.Style>

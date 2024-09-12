@@ -195,7 +195,9 @@ namespace Telegram.ViewModels.Settings
             30,
             90,
             180,
-            365
+            365,
+            548,
+            730
         };
 
         public List<SettingsOptionItem<int>> AccountTtlOptions { get; } = new()
@@ -203,7 +205,9 @@ namespace Telegram.ViewModels.Settings
             new SettingsOptionItem<int>(30, Locale.Declension(Strings.R.Months, 1)),
             new SettingsOptionItem<int>(90, Locale.Declension(Strings.R.Months, 3)),
             new SettingsOptionItem<int>(180, Locale.Declension(Strings.R.Months, 6)),
-            new SettingsOptionItem<int>(365, Locale.Declension(Strings.R.Years, 1))
+            new SettingsOptionItem<int>(365, Locale.Declension(Strings.R.Months, 12)),
+            new SettingsOptionItem<int>(548, Locale.Declension(Strings.R.Months, 18)),
+            new SettingsOptionItem<int>(730, Locale.Declension(Strings.R.Months, 24))
         };
 
         private int _blockedUsers;
@@ -294,11 +298,11 @@ namespace Telegram.ViewModels.Settings
 
         public void Handle(UpdateOption update)
         {
-            if (update.Name.Equals("disable_top_chats"))
+            if (update.Name == OptionsService.R.DisableTopChats)
             {
                 BeginOnUIThread(() => RaisePropertyChanged(nameof(IsContactsSuggestEnabled)));
             }
-            else if (update.Name.Equals("ignore_sensitive_content_restrictions"))
+            else if (update.Name == OptionsService.R.IgnoreSensitiveContentRestrictions)
             {
                 BeginOnUIThread(() => RaisePropertyChanged(nameof(IgnoreSensitiveContentRestrictions)));
             }

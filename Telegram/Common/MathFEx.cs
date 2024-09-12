@@ -21,5 +21,10 @@ namespace Telegram.Common
             float degrees = 180 / MathF.PI * radians;
             return degrees;
         }
+
+        public static float Lerp(float a, float b, float f)
+        {
+            return a + f * (b - a);
+        }
     }
 }

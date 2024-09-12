@@ -64,8 +64,7 @@ namespace Telegram.ViewModels
                 new ChatFolderViewModel[]
                 {
                     new ChatFolderViewModel(int.MaxValue - 1, Strings.Contacts, "\uE95E", "\uE95D"),
-                    new ChatFolderViewModel(int.MaxValue - 2, Strings.Calls, "\uE991", "\uE990"),
-                    new ChatFolderViewModel(int.MaxValue - 3, Strings.Settings, "\uE98F", "\uE98E"),
+                    new ChatFolderViewModel(int.MaxValue - 2, Strings.Settings, "\uE98F", "\uE98E"),
                 }
             };
 
@@ -78,13 +77,11 @@ namespace Telegram.ViewModels
             Stories = new StoryListViewModel(clientService, settingsService, aggregator, new StoryListMain());
             Topics = new TopicListViewModel(clientService, settingsService, aggregator, pushService, 0);
             Contacts = new ContactsViewModel(clientService, settingsService, voipService, aggregator);
-            Calls = new CallsViewModel(clientService, settingsService, aggregator);
             Settings = new SettingsViewModel(clientService, settingsService, storageService, aggregator, settingsSearchService);
 
             // This must represent pivot tabs
             Children.Add(Chats);
             Children.Add(Contacts);
-            Children.Add(Calls);
             Children.Add(Settings);
 
             // Any additional child
@@ -109,6 +106,14 @@ namespace Telegram.ViewModels
             }
 
             Children.Clear();
+
+            //Chats = null;
+            //SearchChats = null;
+            //Stories = null;
+            //Topics = null;
+            //Contacts = null;
+            //Calls = null;
+            //Settings = null;
         }
 
         public ILifetimeService Lifetime => _lifetimeService;
@@ -385,13 +390,9 @@ namespace Telegram.ViewModels
             UnreadCount = unreadCount.UnreadMessageCount.UnreadCount;
             UnreadMutedCount = unreadCount.UnreadMessageCount.UnreadCount - unreadCount.UnreadMessageCount.UnreadUnmutedCount;
 
-            if (_voipService.Call != null)
+            if (_voipService.Call != null || _voipGroupService.Call != null)
             {
-                Aggregator.Publish(new UpdateCallDialog(_voipService.Call));
-            }
-            else if (_voipGroupService.Call != null)
-            {
-                Aggregator.Publish(new UpdateCallDialog(_voipGroupService.Call));
+                Aggregator.Publish(new UpdateCallDialog(_voipService.Call, _voipGroupService.Call));
             }
 
             if (mode == NavigationMode.New)
@@ -461,13 +462,12 @@ namespace Telegram.ViewModels
                 .Subscribe<UpdateWindowActivated>(Handle);
         }
 
-        public ChatListViewModel Chats { get; }
-        public SearchChatsViewModel SearchChats { get; }
-        public StoryListViewModel Stories { get; }
-        public TopicListViewModel Topics { get; }
-        public ContactsViewModel Contacts { get; }
-        public CallsViewModel Calls { get; }
-        public SettingsViewModel Settings { get; }
+        public ChatListViewModel Chats { get; private set; }
+        public SearchChatsViewModel SearchChats { get; private set; }
+        public StoryListViewModel Stories { get; private set; }
+        public TopicListViewModel Topics { get; private set; }
+        public ContactsViewModel Contacts { get; private set; }
+        public SettingsViewModel Settings { get; private set; }
 
 
 
@@ -601,6 +601,8 @@ namespace Telegram.ViewModels
         public async void AddToFolder(ChatFolderViewModel folder)
         {
             var viewModel = TypeResolver.Current.Resolve<FolderViewModel>(SessionId);
+            viewModel.NavigationService = NavigationService;
+
             await viewModel.NavigatedToAsync(folder.ChatFolderId, NavigationMode.New, null);
 
             if (viewModel.Folder != null)

@@ -29,7 +29,7 @@
         <ResourceDictionary Source="ms-appx:///Controls/Messages/Content/PaidMediaContent.xaml" />
         <ResourceDictionary Source="ms-appx:///Controls/Messages/Content/PhotoContent.xaml" />
         <ResourceDictionary Source="ms-appx:///Controls/Messages/Content/PollContent.xaml" />
-        <ResourceDictionary Source="ms-appx:///Controls/Messages/Content/PremiumGiveawayContent.xaml" />
+        <ResourceDictionary Source="ms-appx:///Controls/Messages/Content/GiveawayContent.xaml" />
         <ResourceDictionary Source="ms-appx:///Controls/Messages/Content/PreviewContent.xaml" />
         <ResourceDictionary Source="ms-appx:///Controls/Messages/Content/StickerContent.xaml" />
         <ResourceDictionary Source="ms-appx:///Controls/Messages/Content/StickerSetContent.xaml" />
@@ -207,6 +207,7 @@
                                       ZoomMode="{TemplateBinding ScrollViewer.ZoomMode}"
                                       IsDeferredScrollingEnabled="{TemplateBinding ScrollViewer.IsDeferredScrollingEnabled}"
                                       BringIntoViewOnFocusChange="{TemplateBinding ScrollViewer.BringIntoViewOnFocusChange}"
+                                      CanContentRenderOutsideBounds="{TemplateBinding ScrollViewer.CanContentRenderOutsideBounds}"
                                       AutomationProperties.AccessibilityView="Raw">
                             <ItemsPresenter Header="{TemplateBinding Header}"
                                             HeaderTemplate="{TemplateBinding HeaderTemplate}"
@@ -814,11 +815,7 @@
                             <ColumnDefinition />
                         </Grid.ColumnDefinitions>
                         <Grid Margin="0,-4">
-                            <Image x:Name="Presenter"
-                                   Width="32"
-                                   Height="32" />
-                            <local:CustomEmojiIcon x:Name="Icon"
-                                                   x:Load="False" />
+                            <local:CustomEmojiIcon x:Name="Icon" />
                             <Popup x:Name="Overlay"
                                    IsHitTestVisible="False"
                                    Margin="-32"
@@ -830,6 +827,7 @@
                                                  x:Load="False"
                                                  Foreground="{ThemeResource MessageReactionForegroundBrush}"
                                                  TextStyle="{StaticResource CaptionTextBlockStyle}"
+                                                 FontWeight="SemiBold"
                                                  VerticalAlignment="Center"
                                                  AutomationProperties.AccessibilityView="Raw"
                                                  IsTabStop="False"
@@ -839,6 +837,104 @@
                         <local:RecentUserHeads x:Name="RecentChoosers"
                                                x:Load="False"
                                                BorderBrush="{ThemeResource MessageReactionBackgroundBrush}"
+                                               ItemSize="20"
+                                               Margin="-4,0,0,0"
+                                               AutomationProperties.AccessibilityView="Raw"
+                                               IsTabStop="False"
+                                               Grid.Column="1" />
+                    </Grid>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <SolidColorBrush x:Key="MessageReactionPaidBackgroundBrush"
+                     Color="#40E8AB02" />
+    <SolidColorBrush x:Key="MessageReactionPaidForegroundBrush"
+                     Color="#FFE8AB02" />
+
+    <SolidColorBrush x:Key="MessageReactionPaidChosenBackgroundBrush"
+                     Color="#FFE8AB02" />
+    <SolidColorBrush x:Key="MessageReactionPaidChosenForegroundBrush"
+                     Color="#FFFFFFFF" />
+
+    <Style TargetType="messages:ReactionAsPaidButton">
+        <Setter Property="CornerRadius"
+                Value="12" />
+        <Setter Property="MinWidth"
+                Value="44" />
+        <Setter Property="UseSystemFocusVisuals"
+                Value="True" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="messages:ReactionAsPaidButton">
+                    <Grid x:Name="LayoutRoot"
+                          Background="{ThemeResource MessageReactionPaidBackgroundBrush}"
+                          CornerRadius="{TemplateBinding CornerRadius}">
+                        <VisualStateManager.VisualStateGroups>
+                            <VisualStateGroup x:Name="CommonStates">
+                                <VisualState x:Name="Normal" />
+                                <VisualState x:Name="PointerOver" />
+                                <VisualState x:Name="Pressed" />
+                                <VisualState x:Name="Checked">
+                                    <VisualState.Setters>
+                                        <Setter Target="LayoutRoot.Background"
+                                                Value="{ThemeResource MessageReactionPaidChosenBackgroundBrush}" />
+                                        <Setter Target="RecentChoosers.BorderBrush"
+                                                Value="{ThemeResource MessageReactionPaidChosenBackgroundBrush}" />
+                                        <Setter Target="Count.Foreground"
+                                                Value="{ThemeResource MessageReactionPaidChosenForegroundBrush}" />
+                                    </VisualState.Setters>
+                                </VisualState>
+                                <VisualState x:Name="CheckedPointerOver">
+                                    <VisualState.Setters>
+                                        <Setter Target="LayoutRoot.Background"
+                                                Value="{ThemeResource MessageReactionPaidChosenBackgroundBrush}" />
+                                        <Setter Target="RecentChoosers.BorderBrush"
+                                                Value="{ThemeResource MessageReactionPaidChosenBackgroundBrush}" />
+                                        <Setter Target="Count.Foreground"
+                                                Value="{ThemeResource MessageReactionPaidChosenForegroundBrush}" />
+                                    </VisualState.Setters>
+                                </VisualState>
+                                <VisualState x:Name="CheckedPressed">
+                                    <VisualState.Setters>
+                                        <Setter Target="LayoutRoot.Background"
+                                                Value="{ThemeResource MessageReactionPaidChosenBackgroundBrush}" />
+                                        <Setter Target="RecentChoosers.BorderBrush"
+                                                Value="{ThemeResource MessageReactionPaidChosenBackgroundBrush}" />
+                                        <Setter Target="Count.Foreground"
+                                                Value="{ThemeResource MessageReactionPaidChosenForegroundBrush}" />
+                                    </VisualState.Setters>
+                                </VisualState>
+                            </VisualStateGroup>
+                        </VisualStateManager.VisualStateGroups>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition />
+                        </Grid.ColumnDefinitions>
+                        <Grid Margin="0,-4">
+                            <local:CustomEmojiIcon x:Name="Icon" />
+                            <Popup x:Name="Overlay"
+                                   IsHitTestVisible="False"
+                                   Margin="-32"
+                                   Width="96"
+                                   Height="96" />
+                        </Grid>
+
+                        <local:AnimatedTextBlock x:Name="Count"
+                                                 x:Load="False"
+                                                 Foreground="{ThemeResource MessageReactionPaidForegroundBrush}"
+                                                 TextStyle="{StaticResource CaptionTextBlockStyle}"
+                                                 FontWeight="SemiBold"
+                                                 VerticalAlignment="Center"
+                                                 AutomationProperties.AccessibilityView="Raw"
+                                                 IsTabStop="False"
+                                                 Margin="0,1,8,2"
+                                                 Grid.Column="1" />
+
+                        <local:RecentUserHeads x:Name="RecentChoosers"
+                                               x:Load="False"
+                                               BorderBrush="{ThemeResource MessageReactionPaidBackgroundBrush}"
                                                ItemSize="20"
                                                Margin="-4,0,0,0"
                                                AutomationProperties.AccessibilityView="Raw"
@@ -901,11 +997,7 @@
                                                     Grid.ColumnSpan="2" />
 
                         <Grid Margin="0,-4">
-                            <Image x:Name="Presenter"
-                                   Width="32"
-                                   Height="32" />
-                            <local:CustomEmojiIcon x:Name="Icon"
-                                                   x:Load="False" />
+                            <local:CustomEmojiIcon x:Name="Icon" />
                             <Popup x:Name="Overlay"
                                    IsHitTestVisible="False"
                                    Margin="-32"
@@ -918,6 +1010,7 @@
                                                  Visibility="Collapsed"
                                                  Foreground="{ThemeResource MessageReactionForegroundBrush}"
                                                  TextStyle="{StaticResource CaptionTextBlockStyle}"
+                                                 FontWeight="SemiBold"
                                                  VerticalAlignment="Center"
                                                  AutomationProperties.AccessibilityView="Raw"
                                                  IsTabStop="False"
@@ -980,11 +1073,7 @@
                                                        Grid.ColumnSpan="2" />
 
                         <Grid Margin="0,-4">
-                            <Image x:Name="Presenter"
-                                   Width="32"
-                                   Height="32" />
-                            <local:CustomEmojiIcon x:Name="Icon"
-                                                   x:Load="False" />
+                            <local:CustomEmojiIcon x:Name="Icon" />
                         </Grid>
 
                         <local:AnimatedTextBlock x:Name="Count"
@@ -1690,6 +1779,169 @@
                                            FontWeight="SemiBold"
                                            Foreground="#FFFFFF"
                                            Margin="8,4,8,5" />
+                            </Grid>
+                        </Grid>
+                    </Grid>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style TargetType="local:PremiumSlider">
+        <Setter Property="UseSystemFocusVisuals"
+                Value="{StaticResource UseSystemFocusVisuals}" />
+        <Setter Property="FocusVisualMargin"
+                Value="-3" />
+        <Setter Property="IsFocusEngagementEnabled"
+                Value="True" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="local:PremiumSlider">
+                    <Grid>
+                        <Grid.Resources>
+                            <Style TargetType="Thumb"
+                                   x:Key="SliderThumbStyle">
+                                <Setter Property="Template">
+                                    <Setter.Value>
+                                        <ControlTemplate TargetType="Thumb">
+                                            <Border Margin="-2"
+                                                    Background="Transparent" />
+                                        </ControlTemplate>
+                                    </Setter.Value>
+                                </Setter>
+                            </Style>
+                        </Grid.Resources>
+                        <VisualStateManager.VisualStateGroups>
+                            <VisualStateGroup x:Name="CommonStates">
+                                <VisualState x:Name="Normal" />
+                                <VisualState x:Name="PointerOver" />
+                                <VisualState x:Name="Pressed" />
+                                <VisualState x:Name="Disabled" />
+                            </VisualStateGroup>
+                        </VisualStateManager.VisualStateGroups>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                        </Grid.RowDefinitions>
+                        <Canvas x:Name="ThumbRoot"
+                                HorizontalAlignment="Left"
+                                VerticalAlignment="Top"
+                                Height="46">
+                            <Grid x:Name="Thumb">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="40" />
+                                    <RowDefinition />
+                                </Grid.RowDefinitions>
+                                <Border Background="{StaticResource StarCountLinearGradientBrush}"
+                                        Height="40"
+                                        CornerRadius="0"
+                                        Grid.ColumnSpan="2" />
+                                <TextBlock Text="{TemplateBinding Glyph}"
+                                           FontFamily="{StaticResource SymbolThemeFontFamily}"
+                                           FontSize="20"
+                                           Foreground="#FFFFFF"
+                                           VerticalAlignment="Center"
+                                           Margin="12,0,4,0" />
+                                <local:AnimatedTextBlock x:Name="ValueText"
+                                                         Foreground="#FFFFFF"
+                                                         FontWeight="SemiBold"
+                                                         Margin="0,6,12,6"
+                                                         Grid.Column="1">
+                                    <local:AnimatedTextBlock.TextStyle>
+                                        <Style TargetType="TextBlock">
+                                            <Setter Property="FontSize"
+                                                    Value="20" />
+                                            <Setter Property="FontWeight"
+                                                    Value="SemiBold" />
+                                        </Style>
+                                    </local:AnimatedTextBlock.TextStyle>
+                                </local:AnimatedTextBlock>
+
+                                <Path x:Name="Arrow"
+                                      Data="M0 0V2C0.923101 2 1.80835 2.36668 2.46113 3.01945L6.76205 7.32038C7.66822 8.22654 9.13736 8.22654 10.0435 7.32038L14.3444 3.01945C14.9972 2.36668 15.8825 2 16.8056 2H16.81V0H0Z"
+                                      Fill="#EEAC0D"
+                                      Stretch="Uniform"
+                                      Height="8"
+                                      HorizontalAlignment="Center"
+                                      VerticalAlignment="Top"
+                                      Margin="0,-2,0,0"
+                                      Canvas.ZIndex="-2"
+                                      Grid.ColumnSpan="2"
+                                      Grid.Row="1" />
+                            </Grid>
+                        </Canvas>
+
+                        <Grid Background="#26EFAD0D"
+                              CornerRadius="10"
+                              Height="20"
+                              Control.IsTemplateFocusTarget="True"
+                              Grid.Row="1">
+                            <TextBlock Text="{TemplateBinding MinimumText}"
+                                       TextAlignment="Left"
+                                       FontWeight="SemiBold"
+                                       Margin="8,4,8,5" />
+                            <TextBlock Text="{TemplateBinding MaximumText}"
+                                       TextAlignment="Right"
+                                       FontWeight="SemiBold"
+                                       Margin="8,4,8,5" />
+
+                            <Grid x:Name="ValueRoot"
+                                  Background="{StaticResource StarCountLinearGradientBrush}">
+                                <TextBlock Text="{TemplateBinding MinimumText}"
+                                           TextAlignment="Left"
+                                           FontWeight="SemiBold"
+                                           Foreground="#FFFFFF"
+                                           Margin="8,4,8,5" />
+                                <TextBlock Text="{TemplateBinding MaximumText}"
+                                           TextAlignment="Right"
+                                           FontWeight="SemiBold"
+                                           Foreground="#FFFFFF"
+                                           Margin="8,4,8,5" />
+
+                                <Border x:Name="ValueThumb"
+                                        HorizontalAlignment="Left"
+                                        VerticalAlignment="Top"
+                                        Background="White"
+                                        BorderBrush="Transparent"
+                                        BorderThickness="2"
+                                        Width="16"
+                                        Height="16"
+                                        CornerRadius="8" />
+                            </Grid>
+                        </Grid>
+
+                        <Grid x:Name="SliderContainer"
+                              Grid.Row="1"
+                              Background="Transparent"
+                              MinHeight="{ThemeResource SliderHorizontalHeight}">
+                            <Grid x:Name="HorizontalTemplate">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
+                                <Rectangle x:Name="HorizontalTrackRect"
+                                           Fill="Transparent"
+                                           Height="{ThemeResource SliderTrackThemeHeight}"
+                                           Grid.Row="1"
+                                           Grid.ColumnSpan="3" />
+                                <Rectangle x:Name="HorizontalDecreaseRect"
+                                           Fill="Transparent"
+                                           Grid.Row="1" />
+                                <Thumb x:Name="HorizontalThumb"
+                                       Style="{StaticResource SliderThumbStyle}"
+                                       DataContext="{TemplateBinding Value}"
+                                       Height="{ThemeResource SliderHorizontalThumbHeight}"
+                                       Width="{ThemeResource SliderHorizontalThumbWidth}"
+                                       Grid.Row="0"
+                                       Grid.RowSpan="3"
+                                       Grid.Column="1"
+                                       FocusVisualMargin="-14,-6,-14,-6"
+                                       AutomationProperties.AccessibilityView="Raw" />
                             </Grid>
                         </Grid>
                     </Grid>
@@ -2654,16 +2906,30 @@
                               Padding="0,6"
                               Margin="0,4"
                               Control.IsTemplateFocusTarget="True">
-                            <TextBlock x:Name="ValueText"
-                                       Foreground="{ThemeResource TextFillColorSecondaryBrush}"
-                                       Padding="0,12,0,20"
-                                       FontFamily="Segoe UI"
-                                       FontSize="40"
-                                       FontWeight="Bold"
-                                       TextLineBounds="Tight"
-                                       TextAlignment="Center"
-                                       VerticalAlignment="Center"
-                                       HorizontalAlignment="Center" />
+                            <local:AnimatedTextBlock x:Name="ValueText"
+                                                     Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                                     Padding="0,12,0,20"
+                                                     FontFamily="Segoe UI"
+                                                     FontSize="40"
+                                                     FontWeight="Bold"
+                                                     TextAlignment="Center"
+                                                     VerticalAlignment="Center"
+                                                     HorizontalAlignment="Center">
+                                <local:AnimatedTextBlock.TextStyle>
+                                    <Style TargetType="TextBlock">
+                                        <Setter Property="FontFamily"
+                                                Value="Segoe UI" />
+                                        <Setter Property="FontSize"
+                                                Value="40" />
+                                        <Setter Property="FontWeight"
+                                                Value="Bold" />
+                                        <Setter Property="TextLineBounds"
+                                                Value="Tight" />
+                                        <Setter Property="TextAlignment"
+                                                Value="Center" />
+                                    </Style>
+                                </local:AnimatedTextBlock.TextStyle>
+                            </local:AnimatedTextBlock>
 
                             <TextBlock Text="{TemplateBinding Header}"
                                        Foreground="{ThemeResource TextFillColorSecondaryBrush}"
@@ -3122,6 +3388,14 @@
                                                 Margin="2,0,0,0"
                                                 Grid.Column="3" />
                                     </Grid>
+
+                                    <local:GlyphButton x:Name="DismissButton"
+                                                       x:Load="False"
+                                                       HorizontalAlignment="Right"
+                                                       VerticalAlignment="Top"
+                                                       Margin="0,-24,-24,0"
+                                                       Glyph="&#xE711;"
+                                                       CornerRadius="20" />
                                 </Grid>
                             </Border>
 
@@ -4017,6 +4291,7 @@
                                    AutomationProperties.AccessibilityView="Raw"
                                    Visibility="Collapsed"
                                    TextAlignment="Center"
+                                   HorizontalAlignment="Center"
                                    VerticalAlignment="Center"
                                    Margin="0,1,0,2"
                                    Foreground="#FFFFFF"
@@ -7268,22 +7543,26 @@
                                    x:Load="False"
                                    Style="{TemplateBinding TextStyle}"
                                    Foreground="{TemplateBinding Foreground}"
+                                   FontWeight="{TemplateBinding FontWeight}"
                                    Typography.NumeralAlignment="Tabular" />
                         <TextBlock x:Name="SuffixPart"
                                    x:Load="False"
                                    Style="{TemplateBinding TextStyle}"
                                    Foreground="{TemplateBinding Foreground}"
+                                   FontWeight="{TemplateBinding FontWeight}"
                                    Typography.NumeralAlignment="Tabular"
                                    Grid.Column="2" />
                         <TextBlock x:Name="PrevPart"
                                    x:Load="False"
                                    Style="{TemplateBinding TextStyle}"
                                    Foreground="{TemplateBinding Foreground}"
+                                   FontWeight="{TemplateBinding FontWeight}"
                                    Typography.NumeralAlignment="Tabular"
                                    Grid.ColumnSpan="2" />
                         <TextBlock x:Name="NextPart"
                                    Style="{TemplateBinding TextStyle}"
                                    Foreground="{TemplateBinding Foreground}"
+                                   FontWeight="{TemplateBinding FontWeight}"
                                    Typography.NumeralAlignment="Tabular"
                                    Grid.Column="1" />
                     </local:AnimatedTextBlockPresenter>

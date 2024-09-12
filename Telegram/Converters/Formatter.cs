@@ -195,8 +195,7 @@ namespace Telegram.Converters
 
         public static string BannedUntil(int date)
         {
-            var banned = ToLocalTime(date);
-            return ShortDate.Format(banned) + ", " + ShortTime.Format(banned);
+            return DateAt(date);
 
             //try
             //{
@@ -308,14 +307,14 @@ namespace Telegram.Converters
 
             if (dateTime.Date == DateTime.Now.Date)
             {
-                return string.Format(Strings.PmReadTodayAt, ShortTime.Format(dateTime));
+                return string.Format(Strings.PmReadTodayAt, Time(dateTime));
             }
             else if (dateTime.Date == DateTime.Now.Date.AddDays(-1))
             {
-                return string.Format(Strings.PmReadYesterdayAt, ShortTime.Format(dateTime));
+                return string.Format(Strings.PmReadYesterdayAt, Time(dateTime));
             }
 
-            return string.Format(Strings.PmReadDateTimeAt, ShortDate.Format(dateTime), ShortTime.Format(dateTime));
+            return string.Format(Strings.PmReadDateTimeAt, Date(dateTime), Time(dateTime));
         }
 
         public static string DateExtended(int value)
@@ -326,7 +325,7 @@ namespace Telegram.Converters
             if (dateTime.Date == DateTime.Now.Date)
             {
                 //TimeLabel.Text = dateTime.ToString(string.Format("{0}", shortTimePattern), cultureInfo);
-                return ShortTime.Format(dateTime);
+                return Time(dateTime);
             }
 
             //Week
@@ -343,7 +342,7 @@ namespace Telegram.Converters
 
             //Long long time ago
             //TimeLabel.Text = dateTime.ToString(string.Format("d.MM.yyyy", shortTimePattern), cultureInfo);
-            return ShortDate.Format(dateTime);
+            return Date(dateTime);
         }
 
         public static string Duration(int value)
@@ -366,12 +365,17 @@ namespace Telegram.Converters
 
         public static string Time(DateTime value)
         {
-            return ShortTime.Format(value);
+            return NativeUtils.FormatTime(value);
         }
 
         public static string Date(int value)
         {
             return ShortDate.Format(ToLocalTime(value));
+        }
+
+        public static string Date(DateTime value)
+        {
+            return ShortDate.Format(value);
         }
 
         public static DateTime ToLocalTime(long value)
@@ -387,8 +391,12 @@ namespace Telegram.Converters
 
         public static string DateAt(int value)
         {
-            var date = ToLocalTime(value);
-            return string.Format(Strings.formatDateAtTime, ShortDate.Format(date), ShortTime.Format(date));
+            return string.Format(Strings.formatDateAtTime, Date(value), Time(value));
+        }
+
+        public static string DateAt(DateTime value)
+        {
+            return string.Format(Strings.formatDateAtTime, Date(value), Time(value));
         }
 
         public static string ShortNumber(int number)
@@ -432,12 +440,22 @@ namespace Telegram.Converters
                 return string.Empty;
             }
 
-            if (birthdate.Year == 0)
+            try
             {
-                return DayMonthFull.Format(new DateTime(2020, birthdate.Month, birthdate.Day));
-            }
+                if (birthdate.Year == 0)
+                {
+                    return DayMonthFull.Format(new DateTime(2020, birthdate.Month, birthdate.Day));
+                }
 
-            return DayMonthAbbreviatedYear.Format(new DateTime(birthdate.Year, birthdate.Month, birthdate.Day));
+                return DayMonthAbbreviatedYear.Format(new DateTime(birthdate.Year, birthdate.Month, birthdate.Day));
+            }
+            catch (Exception ex)
+            {
+                Logger.Info(birthdate);
+                Logger.Error(ex);
+
+                return string.Empty;
+            }
         }
     }
 }

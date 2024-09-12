@@ -7,19 +7,20 @@
                     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
                     mc:Ignorable="d">
 
-    <Style TargetType="local:PremiumGiveawayContent">
+    <Style TargetType="local:GiveawayContent">
         <Setter Property="IsTabStop"
                 Value="False" />
         <Setter Property="Template">
             <Setter.Value>
-                <ControlTemplate TargetType="local:PremiumGiveawayContent">
-                    <StackPanel>
+                <ControlTemplate TargetType="local:GiveawayContent">
+                    <StackPanel MaxWidth="248">
                         <Grid>
                             <controls:AnimatedImage x:Name="Animation"
                                                     Width="120"
                                                     Height="120"
                                                     FrameSize="120,120"
-                                                    DecodeFrameType="Logical" />
+                                                    DecodeFrameType="Logical"
+                                                    Margin="0,-32,0,0" />
                             <controls:BadgeControl x:Name="Count"
                                                    HorizontalAlignment="Center"
                                                    VerticalAlignment="Bottom" />

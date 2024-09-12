@@ -437,6 +437,74 @@ namespace winrt::Telegram::Native::implementation
         return L"en-US";
     }
 
+    hstring NativeUtils::FormatTime(winrt::Windows::Foundation::DateTime value)
+    {
+        FILETIME fileTime = winrt::clock::to_file_time(value);
+        FILETIME localFileTime;
+        if (FileTimeToLocalFileTime(&fileTime, &localFileTime))
+        {
+            SYSTEMTIME systemTime;
+            if (FileTimeToSystemTime(&localFileTime, &systemTime))
+            {
+                TCHAR timeString[128];
+                if (GetTimeFormatEx(LOCALE_NAME_USER_DEFAULT, TIME_NOSECONDS, &systemTime, nullptr, timeString, 128))
+                {
+                    return hstring(timeString);
+                }
+
+                switch (GetLastError())
+                {
+                case ERROR_INSUFFICIENT_BUFFER:
+                    return L"E_INSUFFICIENT_BUFFER";
+                case ERROR_INVALID_FLAGS:
+                    return L"E_INVALID_FLAGS";
+                case ERROR_INVALID_PARAMETER:
+                    return L"E_INVALID_PARAMETER";
+                case ERROR_OUTOFMEMORY:
+                    return L"E_OUTOFMEMORY";
+                default:
+                    return L"E_UNKNOWN";
+                }
+            }
+        }
+
+        return hstring();
+    }
+
+    hstring NativeUtils::FormatDate(winrt::Windows::Foundation::DateTime value, hstring format)
+    {
+        FILETIME fileTime = winrt::clock::to_file_time(value);
+        FILETIME localFileTime;
+        if (FileTimeToLocalFileTime(&fileTime, &localFileTime))
+        {
+            SYSTEMTIME systemTime;
+            if (FileTimeToSystemTime(&localFileTime, &systemTime))
+            {
+                TCHAR dateString[256];
+                if (GetDateFormatEx(LOCALE_NAME_USER_DEFAULT, NULL, &systemTime, format.data(), dateString, 256, NULL))
+                {
+                    return hstring(dateString);
+                }
+
+                switch (GetLastError())
+                {
+                case ERROR_INSUFFICIENT_BUFFER:
+                    return L"E_INSUFFICIENT_BUFFER";
+                case ERROR_INVALID_FLAGS:
+                    return L"E_INVALID_FLAGS";
+                case ERROR_INVALID_PARAMETER:
+                    return L"E_INVALID_PARAMETER";
+                case ERROR_OUTOFMEMORY:
+                    return L"E_OUTOFMEMORY";
+                default:
+                    return L"E_UNKNOWN";
+                }
+            }
+        }
+
+        return hstring();
+    }
+
     hstring NativeUtils::FormatTime(int value)
     {
         FILETIME fileTime;
@@ -476,7 +544,7 @@ namespace winrt::Telegram::Native::implementation
         return hstring();
     }
 
-    hstring NativeUtils::FormatDate(int value)
+    hstring NativeUtils::FormatDate(int value, hstring format)
     {
         // TODO: DATE_MONTHDAY doesn't seem to work, so we're not using this method.
 
@@ -492,16 +560,16 @@ namespace winrt::Telegram::Native::implementation
             SYSTEMTIME systemTime;
             if (FileTimeToSystemTime(&localFileTime, &systemTime))
             {
-                SYSTEMTIME todayTime;
-                GetSystemTime(&todayTime);
+                //SYSTEMTIME todayTime;
+                //GetSystemTime(&todayTime);
 
-                int difference = abs(systemTime.wMonth - todayTime.wMonth + 12 * (systemTime.wYear - todayTime.wYear));
-                DWORD flags = difference >= 11
-                    ? DATE_LONGDATE
-                    : DATE_MONTHDAY;
+                //int difference = abs(systemTime.wMonth - todayTime.wMonth + 12 * (systemTime.wYear - todayTime.wYear));
+                //DWORD flags = difference >= 11
+                //    ? DATE_LONGDATE
+                //    : DATE_MONTHDAY;
 
                 TCHAR dateString[256];
-                if (GetDateFormatEx(LOCALE_NAME_USER_DEFAULT, flags, &systemTime, nullptr, dateString, 256, nullptr))
+                if (GetDateFormatEx(LOCALE_NAME_USER_DEFAULT, NULL, &systemTime, format.data(), dateString, 256, NULL))
                 {
                     return hstring(dateString);
                 }

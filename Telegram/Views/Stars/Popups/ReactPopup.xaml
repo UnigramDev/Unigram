@@ -1,0 +1,165 @@
+﻿<controls:ContentPopup x:Class="Telegram.Views.Stars.Popups.ReactPopup"
+                       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                       xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                       xmlns:muxc="using:Microsoft.UI.Xaml.Controls"
+                       xmlns:controls="using:Telegram.Controls"
+                       xmlns:local="using:Telegram.Views.Stars.Popups"
+                       mc:Ignorable="d"
+                       Padding="0"
+                       IsDismissButtonVisible="True">
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+            <Grid Margin="8,8,8,0">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition />
+                </Grid.ColumnDefinitions>
+                <controls:PremiumStarCount Width="18"
+                                           Height="18"
+                                           Grid.Row="1" />
+
+                <TextBlock x:Name="OwnedStarCount"
+                           FontWeight="SemiBold"
+                           FontSize="12"
+                           VerticalAlignment="Center"
+                           Grid.Column="1"
+                           Grid.Row="1" />
+
+                <TextBlock Text="{CustomResource StarsBalance}"
+                           Style="{StaticResource CaptionTextBlockStyle}"
+                           Margin="2,0,0,-2"
+                           Grid.ColumnSpan="2"
+                           Grid.Row="0" />
+            </Grid>
+
+            <TextBlock Text="{CustomResource StarsReactionTitle}"
+                       FontSize="20"
+                       FontFamily="XamlAutoFontFamily"
+                       FontWeight="SemiBold"
+                       TextAlignment="Center"
+                       VerticalAlignment="Top"
+                       Margin="0,24,0,8"
+                       Grid.Row="0" />
+        </Grid>
+
+        <StackPanel Grid.Row="1">
+            <controls:PremiumSlider x:Name="StarCountSlider"
+                                    IsThumbToolTipEnabled="False"
+                                    Glyph="&#xEA87;"
+                                    ValueChanged="StarCountSlider_ValueChanged"
+                                    Minimum="0"
+                                    Maximum="1000"
+                                    Margin="24,0,24,12" />
+
+            <TextBlock x:Name="Subtitle"
+                       Style="{StaticResource BodyTextBlockStyle}"
+                       TextAlignment="Center"
+                       Margin="12,0,12,12" />
+
+            <StackPanel x:Name="TopReactorsRoot"
+                        Margin="0,12,0,0">
+                <Grid Margin="0,0,0,12"
+                      Grid.ColumnSpan="2">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition />
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition />
+                    </Grid.ColumnDefinitions>
+                    <Border BorderBrush="{ThemeResource SettingsItemBorderBrush}"
+                            BorderThickness="0,1,0,0"
+                            Margin="24,0,8,0"
+                            VerticalAlignment="Center" />
+                    <Border Background="{StaticResource StarCountLinearGradientBrush}"
+                            Height="24"
+                            CornerRadius="12"
+                            Grid.Column="1">
+                        <TextBlock Text="{CustomResource StarsReactionTopSenders}"
+                                   Style="{StaticResource CaptionTextBlockStyle}"
+                                   FontWeight="SemiBold"
+                                   Foreground="#FFFFFF"
+                                   VerticalAlignment="Center"
+                                   Margin="8,1,8,3" />
+                    </Border>
+                    <Border BorderBrush="{ThemeResource SettingsItemBorderBrush}"
+                            BorderThickness="0,1,0,0"
+                            Margin="8,0,24,0"
+                            VerticalAlignment="Center"
+                            Grid.Column="2" />
+                </Grid>
+
+                <local:PaidReactorsPanel x:Name="TopReactors">
+                    <local:PaidReactorsPanel.ChildrenTransitions>
+                        <TransitionCollection>
+                            <RepositionThemeTransition />
+                        </TransitionCollection>
+                    </local:PaidReactorsPanel.ChildrenTransitions>
+                </local:PaidReactorsPanel>
+            </StackPanel>
+
+            <Border BorderBrush="{ThemeResource SettingsItemBorderBrush}"
+                    BorderThickness="0,1,0,0"
+                    Margin="24,12,24,0"
+                    VerticalAlignment="Center" />
+
+            <CheckBox x:Name="Anonymous"
+                      Content="{CustomResource StarsReactionShowMeInTopSenders}"
+                      HorizontalAlignment="Center"
+                      Click="Anonymous_Click"
+                      Margin="0,14,0,14" />
+        </StackPanel>
+
+        <Grid x:Name="PurchasePanel"
+              VerticalAlignment="Bottom"
+              HorizontalAlignment="Stretch"
+              Margin="24,0,24,16"
+              Grid.Row="2">
+            <controls:BadgeButton x:Name="PurchaseCommand"
+                                  Click="Purchase_Click"
+                                  Style="{StaticResource AccentButtonStyle}"
+                                  FontFamily="{StaticResource EmojiThemeFontFamilyWithSymbols}"
+                                  HorizontalAlignment="Stretch"
+                                  HorizontalContentAlignment="Center"
+                                  FontWeight="SemiBold"
+                                  BorderThickness="1"
+                                  Height="32">
+                <Grid>
+                    <TextBlock x:Name="PurchaseText"
+                               VerticalAlignment="Center"
+                               Margin="0,3,0,5" />
+                    <muxc:ProgressRing x:Name="PurchaseRing"
+                                       Visibility="Collapsed"
+                                       Foreground="#FFFFFF"
+                                       Width="20"
+                                       Height="20" />
+                </Grid>
+            </controls:BadgeButton>
+        </Grid>
+
+        <controls:SettingsFooter IsLink="True"
+                                 Click="SettingsFooter_Click"
+                                 Text="{CustomResource StarsReactionTerms}"
+                                 TextAlignment="Center"
+                                 Margin="12,0,12,24"
+                                 Grid.Row="3" />
+    </Grid>
+</controls:ContentPopup>

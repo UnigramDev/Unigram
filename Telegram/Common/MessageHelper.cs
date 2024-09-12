@@ -402,7 +402,7 @@ namespace Telegram.Common
         {
             if (info is LoginUrlInfoOpen infoOpen)
             {
-                OpenUrl(null, null, infoOpen.Url, !infoOpen.SkipConfirmation);
+                OpenUrl(null, navigation, infoOpen.Url, !infoOpen.SkipConfirmation);
             }
             else if (info is LoginUrlInfoRequestConfirmation requestConfirmation)
             {
@@ -417,11 +417,11 @@ namespace Telegram.Common
                 var response = await clientService.SendAsync(new GetExternalLink(url, popup.HasWriteAccess));
                 if (response is HttpUrl httpUrl)
                 {
-                    OpenUrl(null, null, httpUrl.Url, false);
+                    OpenUrl(null, null, httpUrl.Url);
                 }
                 else if (response is Error)
                 {
-                    OpenUrl(null, null, url, false);
+                    OpenUrl(null, null, url);
                 }
             }
         }

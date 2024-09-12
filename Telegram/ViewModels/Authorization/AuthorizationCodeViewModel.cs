@@ -101,7 +101,7 @@ namespace Telegram.ViewModels.Authorization
             {
                 if (_codeInfo.Type is AuthenticationCodeTypeFragment fragment)
                 {
-                    MessageHelper.OpenUrl(ClientService, NavigationService, fragment.Url, false);
+                    MessageHelper.OpenUrl(ClientService, NavigationService, fragment.Url);
                 }
                 else
                 {

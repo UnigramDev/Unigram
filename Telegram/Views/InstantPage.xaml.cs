@@ -24,10 +24,12 @@ using Telegram.Controls.Media;
 using Telegram.Controls.Messages.Content;
 using Telegram.Converters;
 using Telegram.Navigation;
+using Telegram.Navigation.Services;
 using Telegram.Services;
 using Telegram.Td.Api;
 using Telegram.ViewModels;
 using Telegram.ViewModels.Gallery;
+using Telegram.Views.Popups;
 using Windows.Foundation;
 using Windows.System;
 using Windows.UI.Text;
@@ -1723,19 +1725,30 @@ namespace Telegram.Views
                 ViewModel.IsLoading = false;
                 ViewModel.NavigationService.Navigate(typeof(InstantPage), new InstantPageArgs(instantView, urlText.Url));
             }
-            else if (MessageHelper.TryCreateUri(urlText.Url, out Uri uri))
+            else if (MessageHelper.TryCreateUri(urlText.Url, out Uri url))
             {
                 ViewModel.IsLoading = false;
-
-                if (MessageHelper.IsTelegramUrl(uri))
-                {
-                    MessageHelper.OpenTelegramUrl(ViewModel.ClientService, ViewModel.NavigationService, uri);
-                }
-                else
-                {
-                    await Launcher.LaunchUriAsync(uri);
-                }
+                OpenUrl(url);
             }
+        }
+
+        private async void OpenUrl(Uri url)
+        {
+            if (MessageHelper.IsTelegramUrl(url))
+            {
+                var clientService = ViewModel.ClientService;
+                ByNavigation(navigation => MessageHelper.OpenTelegramUrl(clientService, navigation, url));
+            }
+            else
+            {
+                await Launcher.LaunchUriAsync(url);
+            }
+        }
+
+        private async void ByNavigation(Action<INavigationService> action)
+        {
+            WindowContext.Main.Dispatcher.Dispatch(() => action(WindowContext.Main.GetNavigationService()));
+            //await ApplicationViewSwitcher.SwitchAsync(WindowContext.Main.Id);
         }
 
         private async void Hyperlink_Click(RichTextPhoneNumber phoneNumber)
@@ -1763,6 +1776,45 @@ namespace Telegram.Views
         private void Header_GoForwardClicked(object sender, RoutedEventArgs e)
         {
             Frame.GoForward();
+        }
+
+        private void Feedback_Click(object sender, RoutedEventArgs e)
+        {
+            var viewModel = ViewModel;
+            ByNavigation(navigation => viewModel.Feedback(navigation));
+        }
+
+        private async void Share_Click(object sender, RoutedEventArgs e)
+        {
+            var link = ViewModel.ShareLink;
+            if (link == null)
+            {
+                return;
+            }
+
+            await this.ShowPopupAsync(ViewModel.SessionId, typeof(ChooseChatsPopup), new ChooseChatsConfigurationPostLink(new HttpUrl(link.ToString())));
+        }
+
+        private void Browser_Click(object sender, RoutedEventArgs e)
+        {
+            var link = ViewModel.ShareLink;
+            if (link == null)
+            {
+                return;
+            }
+
+            MessageHelper.OpenUrl(null, null, link.ToString());
+        }
+
+        private void Copy_Click(object sender, RoutedEventArgs e)
+        {
+            var link = ViewModel.ShareLink;
+            if (link == null)
+            {
+                return;
+            }
+
+            MessageHelper.CopyLink(XamlRoot, link.ToString());
         }
     }
 }
