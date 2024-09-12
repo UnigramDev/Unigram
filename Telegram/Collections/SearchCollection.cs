@@ -18,8 +18,6 @@ using WinRT;
 
 namespace Telegram.Collections
 {
-    [WinRTRuntimeClassName("Windows.Foundation.Collections.IVector`1")]
-    [WinRTExposedType(typeof(MvxObservableCollectionWinRTTypeDetails))]
     public partial class SearchCollection<T, TSource> : DiffObservableCollection<T>, ISupportIncrementalLoading where TSource : IEnumerable<T>
     {
         private readonly Func<object, string, TSource> _factory;

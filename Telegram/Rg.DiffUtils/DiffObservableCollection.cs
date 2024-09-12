@@ -9,8 +9,6 @@ using WinRT;
 
 namespace Rg.DiffUtils
 {
-    [WinRTRuntimeClassName("Windows.Foundation.Collections.IVector`1")]
-    [WinRTExposedType(typeof(MvxObservableCollectionWinRTTypeDetails))]
     public partial class DiffObservableCollection<T> : ObservableCollection<T>
     {
         public IDiffHandler<T> DefaultDiffHandler { get; }

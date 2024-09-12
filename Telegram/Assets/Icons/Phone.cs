@@ -128,7 +128,7 @@ namespace Telegram.Assets.Icons
         /// Returns a map from marker names to corresponding progress values.
         /// </summary>
         public IReadOnlyDictionary<string, double> Markers =>
-            new DictionaryStringDouble
+            new Dictionary<string, double>
             {
                 { "NormalToPointerOver_Start", 0.0 },
                 { "NormalToPointerOver_End", 1 },

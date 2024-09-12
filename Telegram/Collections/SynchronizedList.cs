@@ -15,8 +15,6 @@ namespace Telegram.Collections
         void Disconnect();
     }
 
-    [WinRTRuntimeClassName("Windows.Foundation.Collections.IVector`1")]
-    [WinRTExposedType(typeof(MvxObservableCollectionWinRTTypeDetails))]
     public partial class SynchronizedList<T> : MvxObservableCollection<T>, ISynchronizedList
     {
         private ObservableCollection<T> _source;

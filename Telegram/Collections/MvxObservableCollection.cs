@@ -29,8 +29,6 @@ namespace Telegram.Collections
         void ReplaceWith(IEnumerable collection);
     }
 
-    [WinRTRuntimeClassName("Windows.Foundation.Collections.IVector`1")]
-    [WinRTExposedType(typeof(MvxObservableCollectionWinRTTypeDetails))]
     public partial class MvxObservableCollection<T>
         : ObservableCollection<T>
         , IMvxObservableCollection

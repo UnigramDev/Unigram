@@ -10,8 +10,6 @@ using WinRT;
 
 namespace Telegram.Collections
 {
-    [WinRTRuntimeClassName("Windows.Foundation.Collections.IVector`1")]
-    [WinRTExposedType(typeof(MvxObservableCollectionWinRTTypeDetails))]
     [GeneratedBindableCustomProperty]
     public partial class KeyedList<TKey, T> : MvxObservableCollection<T>
     {

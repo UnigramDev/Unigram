@@ -19,8 +19,6 @@ namespace Telegram.Collections
         bool HasMoreItems { get; }
     }
 
-    [WinRTRuntimeClassName("Windows.Foundation.Collections.IVector`1")]
-    [WinRTExposedType(typeof(IncrementalCollectionWinRTTypeDetails))]
     public partial class IncrementalCollection<T> : MvxObservableCollection<T>, ISupportIncrementalLoading
     {
         private readonly IIncrementalCollectionOwner _owner;
