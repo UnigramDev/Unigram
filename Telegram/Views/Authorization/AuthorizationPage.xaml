@@ -145,7 +145,8 @@
                            TextAlignment="Center" />
 
                 <Grid HorizontalAlignment="Center"
-                      Margin="0,8,0,0">
+                      RowSpacing="8"
+                      Margin="0,8,0,8">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="Auto" />
                         <ColumnDefinition />
@@ -155,32 +156,35 @@
                         <RowDefinition Height="Auto" />
                         <RowDefinition Height="Auto" />
                     </Grid.RowDefinitions>
-                    <TextBlock Text="1."
-                               FontWeight="SemiBold"
-                               Margin="0,0,8,8" />
-                    <TextBlock Text="2."
-                               FontWeight="SemiBold"
-                               Margin="0,0,8,8"
-                               Grid.Row="1" />
-                    <TextBlock Text="3."
-                               FontWeight="SemiBold"
-                               Margin="0,0,8,8"
-                               Grid.Row="2" />
+                    <controls:BadgeControl Text="1"
+                                           HorizontalAlignment="Left"
+                                           VerticalAlignment="Bottom"
+                                           Margin="0,0,8,0" />
+                    <controls:BadgeControl Text="2"
+                                           HorizontalAlignment="Left"
+                                           VerticalAlignment="Bottom"
+                                           Margin="0,0,8,0"
+                                           Grid.Row="1" />
+                    <controls:BadgeControl Text="3"
+                                           HorizontalAlignment="Left"
+                                           VerticalAlignment="Bottom"
+                                           Margin="0,0,8,0"
+                                           Grid.Row="2" />
 
                     <TextBlock Text="{x:Bind ViewModel.S.LoginWithQrCodeStep1, Mode=OneWay}"
                                Style="{StaticResource BodyTextBlockStyle}"
-                               VerticalAlignment="Top"
+                               VerticalAlignment="Bottom"
                                Grid.Column="1" />
 
                     <TextBlock Text="{x:Bind ViewModel.S.LoginWithQrCodeStep2, Mode=OneWay}"
                                Style="{StaticResource BodyTextBlockStyle}"
-                               VerticalAlignment="Top"
+                               VerticalAlignment="Bottom"
                                Grid.Column="1"
                                Grid.Row="1" />
 
                     <TextBlock Text="{x:Bind ViewModel.S.LoginWithQrCodeStep3, Mode=OneWay}"
                                Style="{StaticResource BodyTextBlockStyle}"
-                               VerticalAlignment="Top"
+                               VerticalAlignment="Bottom"
                                Grid.Column="1"
                                Grid.Row="2" />
                 </Grid>
