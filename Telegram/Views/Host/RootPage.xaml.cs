@@ -875,8 +875,6 @@ namespace Telegram.Views.Host
             }
 
             SetChecked(RootDestination.Chats, value);
-            SetChecked(RootDestination.Contacts, value);
-            SetChecked(RootDestination.Calls, value);
             SetChecked(RootDestination.Settings, value);
         }
 

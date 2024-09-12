@@ -6798,6 +6798,9 @@ to unlock up to {0} similar channels.</value>
   <data name="NewChatsFromNonContactsCheck" xml:space="preserve">
     <value>Automatically archive</value>
   </data>
+  <data name="NewContact" xml:space="preserve">
+    <value>New Contact</value>
+  </data>
   <data name="NewConversationShortcut" xml:space="preserve">
     <value>New conversation</value>
   </data>
@@ -6815,6 +6818,9 @@ to unlock up to {0} similar channels.</value>
   </data>
   <data name="NewMessages_other" xml:space="preserve">
     <value>{0} new messages</value>
+  </data>
+  <data name="NewMessageTitle" xml:space="preserve">
+    <value>New Message</value>
   </data>
   <data name="NewPoll" xml:space="preserve">
     <value>New Poll</value>

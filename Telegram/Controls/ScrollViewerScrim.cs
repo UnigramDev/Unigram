@@ -28,6 +28,8 @@ namespace Telegram.Controls
         {
             DefaultStyleKey = typeof(ScrollViewerScrim);
 
+            this.CreateInsetClip();
+
             Loaded += OnLoaded;
             RegisterPropertyChangedCallback(BackgroundProperty, OnBackgroundChanged);
         }

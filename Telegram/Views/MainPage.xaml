@@ -28,10 +28,6 @@
         <CollectionViewSource x:Name="NavigationResults"
                               Source="{x:Bind ViewModel.NavigationItems}"
                               IsSourceGrouped="True" />
-
-        <CollectionViewSource x:Name="ContactsResults"
-                              Source="{x:Bind ViewModel.Contacts.Search, Mode=OneWay}"
-                              IsSourceGrouped="True" />
     </Page.Resources>
 
     <Grid x:Name="LayoutRoot">
@@ -520,33 +516,7 @@
                                                   VerticalAlignment="Center"
                                                   Margin="-40,-4,0,-4"
                                                   Width="44"
-                                                  Height="40">
-                                <FlyoutBase.AttachedFlyout>
-                                    <MenuFlyout Placement="BottomEdgeAlignedRight">
-                                        <MenuFlyoutItem Click="NewGroup_Click"
-                                                        Text="{CustomResource NewGroup}">
-                                            <MenuFlyoutItem.Icon>
-                                                <FontIcon Glyph="&#xE716;"
-                                                          Style="{StaticResource DefaultFontIconStyle}" />
-                                            </MenuFlyoutItem.Icon>
-                                        </MenuFlyoutItem>
-                                        <MenuFlyoutItem Click="{x:Bind ViewModel.CreateSecretChat}"
-                                                        Text="{CustomResource NewSecretChat}">
-                                            <MenuFlyoutItem.Icon>
-                                                <FontIcon Glyph="&#xE916;"
-                                                          Style="{StaticResource DefaultFontIconStyle}" />
-                                            </MenuFlyoutItem.Icon>
-                                        </MenuFlyoutItem>
-                                        <MenuFlyoutItem Click="NewChannel_Click"
-                                                        Text="{CustomResource NewChannel}">
-                                            <MenuFlyoutItem.Icon>
-                                                <FontIcon Glyph="&#xE789;"
-                                                          Style="{StaticResource DefaultFontIconStyle}" />
-                                            </MenuFlyoutItem.Icon>
-                                        </MenuFlyoutItem>
-                                    </MenuFlyout>
-                                </FlyoutBase.AttachedFlyout>
-                            </controls:GlyphButton>
+                                                  Height="40" />
                             <controls:GlyphButton x:Name="Proxy"
                                                   Glyph="&#xEA19;"
                                                   Click="Proxy_Click"
@@ -894,115 +864,6 @@
                                         </controls:MoreButton.Flyout>
                                     </controls:MoreButton>
                                 </Grid>
-                            </Grid>
-                        </Grid>
-                    </PivotItem>
-                    <PivotItem Header="{CustomResource Contacts}">
-                        <Grid x:Name="ContactsRoot"
-                              x:Load="False"
-                              Margin="0,80,0,0">
-                            <ListView x:Name="ContactsSearchListView"
-                                      x:Load="False"
-                                      ItemsSource="{x:Bind ContactsResults.View, Mode=OneWay}"
-                                      ItemContainerStyle="{StaticResource DefaultListViewItemStyle}"
-                                      IsItemClickEnabled="True"
-                                      SelectionMode="None"
-                                      ItemClick="ListView_ItemClick"
-                                      SelectionChanged="ListView_SelectionChanged"
-                                      ChoosingItemContainer="UsersListView_ChoosingItemContainer"
-                                      ContainerContentChanging="DialogsSearchListView_ContainerContentChanging">
-                                <ListView.ItemTemplate>
-                                    <DataTemplate>
-                                        <cells:ProfileCell />
-                                    </DataTemplate>
-                                </ListView.ItemTemplate>
-                                <ListView.ItemContainerTransitions>
-                                    <TransitionCollection />
-                                </ListView.ItemContainerTransitions>
-                                <ListView.GroupStyle>
-                                    <GroupStyle>
-                                        <GroupStyle.HeaderTemplate>
-                                            <DataTemplate>
-                                                <TextBlock Text="{Binding Key}"
-                                                           Style="{StaticResource BaseTextBlockStyle}" />
-                                            </DataTemplate>
-                                        </GroupStyle.HeaderTemplate>
-                                        <GroupStyle.HeaderContainerStyle>
-                                            <Style TargetType="ListViewHeaderItem">
-                                                <Setter Property="Background"
-                                                        Value="Transparent" />
-                                                <Setter Property="FontFamily"
-                                                        Value="{ThemeResource ContentControlThemeFontFamily}" />
-                                                <Setter Property="FontSize"
-                                                        Value="{ThemeResource ListViewHeaderItemThemeFontSize}" />
-                                                <Setter Property="Margin"
-                                                        Value="0,0,0,0" />
-                                                <Setter Property="Padding"
-                                                        Value="12,16,12,8" />
-                                                <Setter Property="HorizontalContentAlignment"
-                                                        Value="Stretch" />
-                                                <Setter Property="VerticalContentAlignment"
-                                                        Value="Top" />
-                                                <Setter Property="MinHeight"
-                                                        Value="0" />
-                                                <Setter Property="UseSystemFocusVisuals"
-                                                        Value="True" />
-                                                <Setter Property="Template">
-                                                    <Setter.Value>
-                                                        <ControlTemplate TargetType="ListViewHeaderItem">
-                                                            <Border Visibility="{Binding Content.Count, RelativeSource={RelativeSource Mode=TemplatedParent}, Converter={StaticResource BooleanToVisibilityConverter}}">
-                                                                <Border Background="{TemplateBinding Background}"
-                                                                        BorderBrush="{TemplateBinding BorderBrush}"
-                                                                        BorderThickness="{TemplateBinding BorderThickness}"
-                                                                        Visibility="{Binding Content.Key, RelativeSource={RelativeSource Mode=TemplatedParent}, Converter={StaticResource NullToVisibilityConverter}}">
-                                                                    <ContentPresenter x:Name="ContentPresenter"
-                                                                                      Margin="{TemplateBinding Padding}"
-                                                                                      Content="{TemplateBinding Content}"
-                                                                                      ContentTemplate="{TemplateBinding ContentTemplate}"
-                                                                                      ContentTransitions="{TemplateBinding ContentTransitions}"
-                                                                                      HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
-                                                                                      VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}" />
-                                                                </Border>
-                                                            </Border>
-                                                        </ControlTemplate>
-                                                    </Setter.Value>
-                                                </Setter>
-                                            </Style>
-                                        </GroupStyle.HeaderContainerStyle>
-                                    </GroupStyle>
-                                </ListView.GroupStyle>
-                            </ListView>
-                            <Grid x:Name="ContactsPanel">
-                                <ListView x:Name="UsersListView"
-                                          ItemsSource="{x:Bind ViewModel.Contacts.Items}"
-                                          ItemContainerStyle="{StaticResource DefaultListViewItemStyle}"
-                                          IsItemClickEnabled="True"
-                                          ItemClick="ListView_ItemClick"
-                                          ChoosingItemContainer="UsersListView_ChoosingItemContainer"
-                                          ContainerContentChanging="UsersListView_ContainerContentChanging"
-                                          SelectionMode="None">
-                                    <ListView.ItemTemplate>
-                                        <DataTemplate>
-                                            <cells:ProfileCell />
-                                        </DataTemplate>
-                                    </ListView.ItemTemplate>
-                                    <ListView.Header>
-                                        <StackPanel>
-                                            <controls:BadgeButton Content="{CustomResource CreateNewContact}"
-                                                                  Click="NewContact_Click"
-                                                                  Style="{StaticResource IconBadgeButtonStyle}">
-                                                <controls:BadgeButton.IconSource>
-                                                    <icons:PersonAdd />
-                                                </controls:BadgeButton.IconSource>
-                                            </controls:BadgeButton>
-
-                                            <contacts:ContactsSortedByHeader DataContext="{x:Bind ViewModel.Contacts}" />
-                                        </StackPanel>
-                                    </ListView.Header>
-                                    <!--<ListView.ItemContainerTransitions>
-                                         <TransitionCollection/>
-                                         </ListView.ItemContainerTransitions>-->
-                                </ListView>
                             </Grid>
                         </Grid>
                     </PivotItem>
