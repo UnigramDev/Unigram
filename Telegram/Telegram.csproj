@@ -271,6 +271,7 @@
     <Compile Include="Controls\Messages\MessageFactCheck.xaml.cs">
       <DependentUpon>MessageFactCheck.xaml</DependentUpon>
     </Compile>
+    <Compile Include="CsWinRT.cs" />
     <Compile Include="Services\PaidReactionService.cs" />
     <Compile Include="Controls\Messages\ReactionAsPaidButton.cs" />
     <Compile Include="Controls\Messages\ReactionAsTagButton.cs" />

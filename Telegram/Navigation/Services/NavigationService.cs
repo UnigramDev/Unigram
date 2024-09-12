@@ -24,6 +24,7 @@ using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media.Animation;
 using Windows.UI.Xaml.Navigation;
+using WinRT;
 
 namespace Telegram.Navigation.Services
 {
@@ -102,6 +103,7 @@ namespace Telegram.Navigation.Services
         void ClearBackStack();
     }
 
+    [GeneratedBindableCustomProperty]
     public class NavigationStackItem : BindableBase
     {
         public NavigationStackItem(Type sourcePageType, object parameter, string title, HostedNavigationMode mode)

@@ -19,6 +19,7 @@ using Telegram.Views;
 using Windows.Foundation;
 using Windows.Storage;
 using Windows.UI.Xaml.Data;
+using WinRT;
 
 namespace Telegram.ViewModels.Drawers
 {
@@ -445,6 +446,7 @@ namespace Telegram.ViewModels.Drawers
         public long ChatId { get; private set; }
     }
 
+    [GeneratedBindableCustomProperty]
     public class StickerSetViewModel
     {
         protected readonly IClientService _clientService;

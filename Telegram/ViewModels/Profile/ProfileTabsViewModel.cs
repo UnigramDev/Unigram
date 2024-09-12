@@ -23,9 +23,11 @@ using Telegram.Views.Popups;
 using Telegram.Views.Profile;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
+using WinRT;
 
 namespace Telegram.ViewModels.Profile
 {
+    [GeneratedBindableCustomProperty]
     public class ProfileTabItem
     {
         public string Text { get; set; }

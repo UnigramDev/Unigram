@@ -15,6 +15,7 @@ using Telegram.Services;
 using Telegram.Services.Settings;
 using Telegram.Td.Api;
 using Telegram.ViewModels.Drawers;
+using WinRT;
 
 namespace Telegram.Common
 {
@@ -153,6 +154,7 @@ namespace Telegram.Common
         #endregion
     }
 
+    [GeneratedBindableCustomProperty]
     public class EmojiGroup
     {
         public string Title { get; set; }

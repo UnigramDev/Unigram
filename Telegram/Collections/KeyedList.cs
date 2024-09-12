@@ -6,9 +6,11 @@
 //
 using System.Collections.Generic;
 using System.Linq;
+using WinRT;
 
 namespace Telegram.Collections
 {
+    [GeneratedBindableCustomProperty]
     public class KeyedList<TKey, T> : MvxObservableCollection<T>
     {
         private TKey _key;
