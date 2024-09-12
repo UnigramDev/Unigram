@@ -28,11 +28,6 @@ namespace Telegram.Views.Supergroups
 
         private string ConvertHistory(int available)
         {
-            if (ViewModel.Chat?.Type is ChatTypeSupergroup supergroup && supergroup.IsChannel)
-            {
-                return Strings.ChannelSignMessagesInfo;
-            }
-
             return ViewModel.AllHistoryAvailableOptions[available].Value
                 ? Strings.ChatHistoryVisibleInfo
                 : Strings.ChatHistoryHiddenInfo;
