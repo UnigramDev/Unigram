@@ -60,7 +60,7 @@ namespace Telegram.ViewModels
                 return;
             }
 
-            ContentPopup.Block();
+            ContentPopup.Block(NavigationService.XamlRoot);
 
             Settings.Clear();
             Settings.PasscodeLock.Clear();
