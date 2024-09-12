@@ -70,53 +70,78 @@ namespace Telegram.ViewModels
 
         public async void OpenReply(MessageViewModel message)
         {
-            if (message.ReplyToState != MessageReplyToState.Deleted)
+            if (message.ReplyToState == MessageReplyToState.Deleted || message.ReplyTo is not MessageReplyToMessage replyToMessage)
             {
-                if (message.ReplyTo is MessageReplyToMessage replyToMessage)
-                {
-                    if (replyToMessage.ChatId != message.ChatId && ClientService.TryGetChat(replyToMessage.ChatId, out Chat replyToChat))
-                    {
-                        if (ClientService.TryGetSupergroup(replyToChat, out Supergroup supergroup))
-                        {
-                            if (supergroup.Status is ChatMemberStatusLeft && !supergroup.IsPublic() && !ClientService.IsChatAccessible(replyToChat))
-                            {
-                                if (supergroup.IsChannel)
-                                {
-                                    ShowToast(replyToMessage.Quote != null && replyToMessage.Quote.IsManual
-                                        ? Strings.QuotePrivateChannel
-                                        : Strings.ReplyPrivateChannel, ToastPopupIcon.Info);
-                                }
-                                else
-                                {
-                                    ShowToast(replyToMessage.Quote != null && replyToMessage.Quote.IsManual
-                                        ? Strings.QuotePrivateGroup
-                                        : Strings.ReplyPrivateGroup, ToastPopupIcon.Info);
-                                }
+                return;
+            }
 
-                                return;
-                            }
-                        }
-                        else if (replyToMessage.MessageId == 0)
+            if (replyToMessage.ChatId != message.ChatId && ClientService.TryGetChat(replyToMessage.ChatId, out Chat replyToChat))
+            {
+                if (ClientService.TryGetSupergroup(replyToChat, out Supergroup supergroup))
+                {
+                    if (supergroup.Status is ChatMemberStatusLeft && !supergroup.IsPublic() && !ClientService.IsChatAccessible(replyToChat))
+                    {
+                        if (supergroup.IsChannel)
                         {
                             ShowToast(replyToMessage.Quote != null && replyToMessage.Quote.IsManual
-                                ? Strings.QuotePrivate
-                                : Strings.ReplyPrivate, ToastPopupIcon.Info);
-                            return;
+                                ? Strings.QuotePrivateChannel
+                                : Strings.ReplyPrivateChannel, ToastPopupIcon.Info);
+                        }
+                        else
+                        {
+                            ShowToast(replyToMessage.Quote != null && replyToMessage.Quote.IsManual
+                                ? Strings.QuotePrivateGroup
+                                : Strings.ReplyPrivateGroup, ToastPopupIcon.Info);
                         }
 
-                        NavigationService.NavigateToChat(replyToChat, replyToMessage.MessageId);
-                    }
-                    else if (replyToMessage.Origin != null && replyToMessage.MessageId == 0)
-                    {
-                        ShowToast(replyToMessage.Quote != null && replyToMessage.Quote.IsManual
-                            ? Strings.QuotePrivate
-                            : Strings.ReplyPrivate, ToastPopupIcon.Info);
-                    }
-                    else if (replyToMessage.ChatId == message.ChatId || replyToMessage.ChatId == 0)
-                    {
-                        await LoadMessageSliceAsync(message.Id, replyToMessage.MessageId, highlight: replyToMessage.Quote);
+                        return;
                     }
                 }
+                else if (replyToMessage.MessageId == 0)
+                {
+                    ShowToast(replyToMessage.Quote != null && replyToMessage.Quote.IsManual
+                        ? Strings.QuotePrivate
+                        : Strings.ReplyPrivate, ToastPopupIcon.Info);
+                    return;
+                }
+
+                long chatId = replyToChat.Id;
+                long messageId = replyToMessage.MessageId;
+
+                long threadId = 0;
+
+                if (message.ChatId == ClientService.Options.RepliesBotChatId)
+                {
+                    // TODO: 172 is this correct?
+                    if (message.ForwardInfo?.Origin is MessageOriginUser or MessageOriginChat && message.ForwardInfo?.Source != null)
+                    {
+                        chatId = message.ForwardInfo.Source.ChatId;
+                        threadId = message.ForwardInfo.Source.MessageId;
+                    }
+                    else if (message.ForwardInfo?.Origin is MessageOriginChannel fromChannel)
+                    {
+                        chatId = fromChannel.ChatId;
+                        threadId = fromChannel.MessageId;
+                    }
+
+                    var response = await ClientService.SendAsync(new GetMessageThread(chatId, threadId));
+                    if (response is not MessageThreadInfo)
+                    {
+                        return;
+                    }
+                }
+
+                NavigationService.NavigateToChat(chatId, messageId, thread: threadId);
+            }
+            else if (replyToMessage.Origin != null && replyToMessage.MessageId == 0)
+            {
+                ShowToast(replyToMessage.Quote != null && replyToMessage.Quote.IsManual
+                    ? Strings.QuotePrivate
+                    : Strings.ReplyPrivate, ToastPopupIcon.Info);
+            }
+            else if (replyToMessage.ChatId == message.ChatId || replyToMessage.ChatId == 0)
+            {
+                await LoadMessageSliceAsync(message.Id, replyToMessage.MessageId, highlight: replyToMessage.Quote);
             }
         }
 
