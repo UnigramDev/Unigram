@@ -9,6 +9,7 @@ using Telegram.Navigation;
 using Telegram.Services;
 using Telegram.Td.Api;
 using Telegram.Views.Channels;
+using Telegram.Views.Supergroups;
 using Windows.Storage;
 using Windows.UI.Xaml.Media.Imaging;
 
@@ -56,7 +57,7 @@ namespace Telegram.ViewModels.Channels
             {
                 // TODO: photo
 
-                NavigationService.Navigate(typeof(ChannelCreateStep2Page), chat.Id);
+                NavigationService.Navigate(typeof(SupergroupEditTypePage), chat.Id);
                 NavigationService.GoBackAt(0, false);
             }
         }

@@ -394,7 +394,6 @@ namespace Telegram
                 RemoveFolderPopup => TypeResolver.Current.Resolve<RemoveFolderViewModel>(sessionId),
                 //
                 ChannelCreateStep1Page => TypeResolver.Current.Resolve<ChannelCreateStep1ViewModel>(sessionId),
-                ChannelCreateStep2Page channelCreateStep2 => TypeResolver.Current.Resolve<ChannelCreateStep2ViewModel, ISupergroupEditDelegate>(channelCreateStep2, sessionId),
                 BasicGroupCreateStep1Page => TypeResolver.Current.Resolve<BasicGroupCreateStep1ViewModel>(sessionId),
                 SettingsBlockedChatsPage => TypeResolver.Current.Resolve<SettingsBlockedChatsViewModel>(sessionId),
                 SettingsStickersPage => TypeResolver.Current.Resolve<SettingsStickersViewModel>(sessionId),

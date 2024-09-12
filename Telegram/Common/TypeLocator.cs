@@ -514,11 +514,6 @@ namespace Telegram.Views
                         _clientService,
                         _settingsService,
                         _eventAggregator);
-                case "Telegram.ViewModels.Channels.ChannelCreateStep2ViewModel":
-                    return (T)(object)new Telegram.ViewModels.Channels.ChannelCreateStep2ViewModel(
-                        _clientService,
-                        _settingsService,
-                        _eventAggregator);
                 case "Telegram.ViewModels.BasicGroups.BasicGroupCreateStep1ViewModel":
                     return (T)(object)new Telegram.ViewModels.BasicGroups.BasicGroupCreateStep1ViewModel(
                         _clientService,

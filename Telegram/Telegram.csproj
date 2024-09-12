@@ -1351,7 +1351,6 @@
     <Compile Include="ViewModels\BasicGroups\BasicGroupCreateStep1ViewModel.cs" />
     <Compile Include="ViewModels\CallsViewModel.cs" />
     <Compile Include="ViewModels\Channels\ChannelCreateStep1ViewModel.cs" />
-    <Compile Include="ViewModels\Channels\ChannelCreateStep2ViewModel.cs" />
     <Compile Include="ViewModels\Chats\ChatGalleryViewModel.cs" />
     <Compile Include="ViewModels\Chats\ChatInviteLinkViewModel.cs" />
     <Compile Include="ViewModels\Chats\ChatPhotosViewModel.cs" />
@@ -1441,9 +1440,6 @@
     </Compile>
     <Compile Include="Views\Channels\ChannelCreateStep1Page.xaml.cs">
       <DependentUpon>ChannelCreateStep1Page.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\Channels\ChannelCreateStep2Page.xaml.cs">
-      <DependentUpon>ChannelCreateStep2Page.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\ChatPage.xaml.cs">
       <DependentUpon>ChatPage.xaml</DependentUpon>
@@ -3125,10 +3121,6 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Views\Channels\ChannelCreateStep1Page.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Views\Channels\ChannelCreateStep2Page.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
