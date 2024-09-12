@@ -430,20 +430,32 @@ namespace Telegram.Views.Popups
 
             var glyph = root.FindName("Glyph") as TextBlock;
             glyph.Text = storage is StoragePhoto
-                ? Icons.Image
+                ? Icons.ImageFilled24
                 : storage is StorageVideo
-                ? Icons.Play
-                : Icons.Document;
+                ? Icons.PlayFilled24
+                : Icons.DocumentFilled24;
 
             var title = root.FindName("Title") as TextBlock;
+            var titleTrim = root.FindName("TitleTrim") as TextBlock;
             var subtitle = root.FindName("Subtitle") as TextBlock;
 
-            if (title == null || subtitle == null)
+            if (title == null || titleTrim == null || subtitle == null)
             {
                 return;
             }
 
-            title.Text = storage.File.Name;
+            var index = storage.File.Name.LastIndexOf('.');
+            if (index > 0)
+            {
+                title.Text = storage.File.Name.Substring(0, index + 1);
+                titleTrim.Text = storage.File.Name.Substring(index + 1);
+            }
+            else
+            {
+                title.Text = storage.File.Name;
+                titleTrim.Text = string.Empty;
+            }
+
             subtitle.Text = FileSizeConverter.Convert((long)storage.Size);
         }
 

@@ -148,16 +148,28 @@
                                FontSize="{StaticResource GlyphLargeFontSize}"
                                HorizontalAlignment="Center"
                                VerticalAlignment="Center"
-                               Text="&#xE7C3;" />
+                               Text="&#xEA1C;" />
                 </Border>
                 <StackPanel Margin="8,0,0,2"
                             VerticalAlignment="Center"
                             Grid.Column="1">
-                    <TextBlock x:Name="Title"
-                               Foreground="{ThemeResource MessageForegroundBrush}"
-                               TextWrapping="NoWrap"
-                               TextTrimming="CharacterEllipsis"
-                               Style="{StaticResource BaseTextBlockStyle}" />
+                    <Grid HorizontalAlignment="Left">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                        <TextBlock x:Name="Title"
+                                   Foreground="{ThemeResource MessageForegroundBrush}"
+                                   TextWrapping="NoWrap"
+                                   TextTrimming="CharacterEllipsis"
+                                   Style="{StaticResource BaseTextBlockStyle}" />
+                        <TextBlock x:Name="TitleTrim"
+                                   Foreground="{ThemeResource MessageForegroundBrush}"
+                                   TextWrapping="NoWrap"
+                                   TextTrimming="CharacterEllipsis"
+                                   Style="{StaticResource BaseTextBlockStyle}"
+                                   Grid.Column="1" />
+                    </Grid>
                     <TextBlock x:Name="Subtitle"
                                Style="{StaticResource DisabledCaptionTextBlockStyle}" />
                 </StackPanel>
