@@ -144,7 +144,7 @@ namespace Telegram.Views.Stars.Popups
 
                 if (result == PayResult.StarsNeeded && ViewModel.PaymentForm?.Type is PaymentFormTypeStars stars)
                 {
-                    await ViewModel.NavigationService.ShowPopupAsync(typeof(BuyPopup), BuyStarsArgs.ForSellerBotUser(stars.StarCount, ViewModel.PaymentForm.SellerBotUserId));
+                    await ViewModel.NavigationService.ShowPopupAsync(new BuyPopup(), BuyStarsArgs.ForSellerBotUser(stars.StarCount, ViewModel.PaymentForm.SellerBotUserId));
                 }
 
                 return;

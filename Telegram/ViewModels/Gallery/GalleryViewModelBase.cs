@@ -226,7 +226,7 @@ namespace Telegram.ViewModels.Gallery
         {
             if (_selectedItem is GalleryMessage message)
             {
-                await ShowPopupAsync(typeof(ChooseChatsPopup), new ChooseChatsConfigurationShareMessage(message.ChatId, message.Id));
+                await ShowPopupAsync(new ChooseChatsPopup(), new ChooseChatsConfigurationShareMessage(message.ChatId, message.Id));
             }
             else
             {
@@ -236,7 +236,7 @@ namespace Telegram.ViewModels.Gallery
                     return;
                 }
 
-                await ShowPopupAsync(typeof(ChooseChatsPopup), new ChooseChatsConfigurationPostMessage(input));
+                await ShowPopupAsync(new ChooseChatsPopup(), new ChooseChatsConfigurationPostMessage(input));
             }
         }
 

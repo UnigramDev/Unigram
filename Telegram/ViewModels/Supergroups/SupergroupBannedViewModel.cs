@@ -28,7 +28,7 @@ namespace Telegram.ViewModels.Supergroups
                 return;
             }
 
-            NavigationService.ShowPopupAsync(typeof(SupergroupChooseMemberPopup), new SupergroupChooseMemberArgs(chat.Id, SupergroupChooseMemberMode.Block));
+            NavigationService.ShowPopupAsync(new SupergroupChooseMemberPopup(), new SupergroupChooseMemberArgs(chat.Id, SupergroupChooseMemberMode.Block));
         }
 
         #region Context menu

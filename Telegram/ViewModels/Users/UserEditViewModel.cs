@@ -279,7 +279,7 @@ namespace Telegram.ViewModels.Users
 
         public async void ChangeUsername()
         {
-            await ShowPopupAsync(typeof(SettingsUsernamePopup), _userId);
+            await ShowPopupAsync(new SettingsUsernamePopup(), _userId);
         }
 
         public void ShowBalance()

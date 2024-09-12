@@ -110,24 +110,14 @@ namespace Telegram.Navigation
 
         #region Popups
 
-        public Task<ContentDialogResult> ShowPopupAsync(ContentPopup popup)
+        public Task<ContentDialogResult> ShowPopupAsync(ContentPopup popup, object parameter = null, ElementTheme requestedTheme = ElementTheme.Default)
         {
-            return popup.ShowQueuedAsync(NavigationService.XamlRoot);
+            return NavigationService.ShowPopupAsync(popup, parameter, requestedTheme);
         }
 
-        public void ShowPopup(ContentPopup popup)
+        public void ShowPopup(ContentPopup popup, object parameter = null, ElementTheme requestedTheme = ElementTheme.Default)
         {
-            _ = popup.ShowQueuedAsync(NavigationService.XamlRoot);
-        }
-
-        public Task<ContentDialogResult> ShowPopupAsync(Type sourcePopupType, object parameter = null, TaskCompletionSource<object> tsc = null, ElementTheme requestedTheme = ElementTheme.Default)
-        {
-            return NavigationService.ShowPopupAsync(sourcePopupType, parameter, tsc, requestedTheme);
-        }
-
-        public void ShowPopup(Type sourcePopupType, object parameter = null, TaskCompletionSource<object> tsc = null, ElementTheme requestedTheme = ElementTheme.Default)
-        {
-            _ = NavigationService.ShowPopupAsync(sourcePopupType, parameter, tsc, requestedTheme);
+            _ = NavigationService.ShowPopupAsync(popup, parameter, requestedTheme);
         }
 
         public virtual Task<ContentDialogResult> ShowPopupAsync(string message, string title = null, string primary = null, string secondary = null, bool destructive = false, ElementTheme requestedTheme = ElementTheme.Default)

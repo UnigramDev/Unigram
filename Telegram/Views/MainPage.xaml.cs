@@ -1467,7 +1467,7 @@ namespace Telegram.Views
         {
             if (App.DataPackages.TryRemove(0, out DataPackageView package))
             {
-                await MasterDetail.NavigationService.ShowPopupAsync(typeof(ChooseChatsPopup), new ChooseChatsConfigurationDataPackage(package));
+                await MasterDetail.NavigationService.ShowPopupAsync(new ChooseChatsPopup(), new ChooseChatsConfigurationDataPackage(package));
             }
 
             if (MessageHelper.IsTelegramUrl(scheme))
@@ -2238,7 +2238,7 @@ namespace Telegram.Views
             }
             else if (destination == RootDestination.Calls)
             {
-                _ = ViewModel.NavigationService.ShowPopupAsync(typeof(CallsPopup));
+                _ = ViewModel.NavigationService.ShowPopupAsync(new CallsPopup());
             }
             else if (destination == RootDestination.Settings)
             {

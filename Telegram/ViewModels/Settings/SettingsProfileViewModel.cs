@@ -229,7 +229,7 @@ namespace Telegram.ViewModels.Settings
 
         public async void ChangeUsername()
         {
-            await ShowPopupAsync(typeof(SettingsUsernamePopup));
+            await ShowPopupAsync(new SettingsUsernamePopup());
         }
 
         public void ChangeProfileColor()

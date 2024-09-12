@@ -544,7 +544,7 @@ namespace Telegram.ViewModels
                 var user = ClientService.GetUser(chat.Type is ChatTypePrivate privata ? privata.UserId : chat.Type is ChatTypeSecret secret ? secret.UserId : 0);
                 if (user != null)
                 {
-                    await ShowPopupAsync(typeof(ChooseChatsPopup), new ChooseChatsConfigurationPostMessage(new InputMessageContact(new Contact(user.PhoneNumber, user.FirstName, user.LastName, string.Empty, user.Id))));
+                    await ShowPopupAsync(new ChooseChatsPopup(), new ChooseChatsConfigurationPostMessage(new InputMessageContact(new Contact(user.PhoneNumber, user.FirstName, user.LastName, string.Empty, user.Id))));
                 }
             }
         }
@@ -740,7 +740,7 @@ namespace Telegram.ViewModels
                     return;
                 }
 
-                await ShowPopupAsync(typeof(ChooseChatsPopup), new ChooseChatsConfigurationStartBot(user));
+                await ShowPopupAsync(new ChooseChatsPopup(), new ChooseChatsConfigurationStartBot(user));
             }
             else
             {
@@ -1240,7 +1240,7 @@ namespace Telegram.ViewModels
                 return;
             }
 
-            NavigationService.ShowPopupAsync(typeof(SupergroupEditAdministratorPopup), new SupergroupEditMemberArgs(chat.Id, member.MemberId));
+            NavigationService.ShowPopupAsync(new SupergroupEditAdministratorPopup(), new SupergroupEditMemberArgs(chat.Id, member.MemberId));
         }
 
         public void RestrictMember(ChatMember member)
@@ -1251,7 +1251,7 @@ namespace Telegram.ViewModels
                 return;
             }
 
-            NavigationService.ShowPopupAsync(typeof(SupergroupEditRestrictedPopup), new SupergroupEditMemberArgs(chat.Id, member.MemberId));
+            NavigationService.ShowPopupAsync(new SupergroupEditRestrictedPopup(), new SupergroupEditMemberArgs(chat.Id, member.MemberId));
         }
 
         public async void RemoveMember(ChatMember member)

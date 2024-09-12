@@ -77,39 +77,33 @@ namespace Telegram.Common
 
         // TODO: this is a duplicat of INavigationService.ShowPopupAsync, and it's needed by GamePage, GroupCallPage and LiveStreamPage.
         // Must be removed at some point.
-        public static Task<ContentDialogResult> ShowPopupAsync(this Page frame, int sessionId, Type sourcePopupType, object parameter = null, TaskCompletionSource<object> tsc = null)
+        public static Task<ContentDialogResult> ShowPopupAsync(this Page frame, int sessionId, ContentPopup popup, object parameter = null)
         {
-            var popup = (tsc != null ? Activator.CreateInstance(sourcePopupType, tsc) : Activator.CreateInstance(sourcePopupType)) as ContentPopup;
-            if (popup != null)
+            var viewModel = BootStrapper.Current.ViewModelForPage(popup, sessionId);
+            if (viewModel != null)
             {
-                var viewModel = BootStrapper.Current.ViewModelForPage(popup, sessionId);
-                if (viewModel != null)
+                //viewModel.NavigationService = this;
+
+                void OnOpened(ContentDialog sender, ContentDialogOpenedEventArgs args)
                 {
-                    //viewModel.NavigationService = this;
-
-                    void OnOpened(ContentDialog sender, ContentDialogOpenedEventArgs args)
-                    {
-                        popup.Opened -= OnOpened;
-                    }
-
-                    void OnClosed(ContentDialog sender, ContentDialogClosedEventArgs args)
-                    {
-                        viewModel.NavigatedFrom(null, false);
-                        popup.OnNavigatedFrom();
-                        popup.Closed -= OnClosed;
-                    }
-
-                    popup.DataContext = viewModel;
-
-                    _ = viewModel.NavigatedToAsync(parameter, NavigationMode.New, null);
-                    popup.OnNavigatedTo(parameter);
-                    popup.Closed += OnClosed;
+                    popup.Opened -= OnOpened;
                 }
 
-                return popup.ShowQueuedAsync(frame.XamlRoot);
+                void OnClosed(ContentDialog sender, ContentDialogClosedEventArgs args)
+                {
+                    viewModel.NavigatedFrom(null, false);
+                    popup.OnNavigatedFrom();
+                    popup.Closed -= OnClosed;
+                }
+
+                popup.DataContext = viewModel;
+
+                _ = viewModel.NavigatedToAsync(parameter, NavigationMode.New, null);
+                popup.OnNavigatedTo(parameter);
+                popup.Closed += OnClosed;
             }
 
-            return Task.FromResult(ContentDialogResult.None);
+            return popup.ShowQueuedAsync(frame.XamlRoot);
         }
 
         public static void AddCubicBezier(this PathFigure figure, Point controlPoint1, Point controlPoint2, Point endPoint)

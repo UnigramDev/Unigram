@@ -726,7 +726,7 @@ namespace Telegram.Controls.Stories
             {
                 ActiveCard.Suspend(StoryPauseSource.Popup);
 
-                var confirm = await ViewModel.ShowPopupAsync(typeof(StoryInteractionsPopup), story, requestedTheme: ElementTheme.Dark);
+                var confirm = await ViewModel.ShowPopupAsync(new StoryInteractionsPopup(), story, requestedTheme: ElementTheme.Dark);
                 if (await ContinuePopupAsync(confirm == ContentDialogResult.Primary, new PremiumStoryFeaturePermanentViewsHistory()))
                 {
                     ActiveCard.Resume(StoryPauseSource.Popup);

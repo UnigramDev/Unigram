@@ -206,7 +206,7 @@ namespace Telegram.ViewModels.Settings
 
         public async void ShareTheme(ThemeCustomInfo theme)
         {
-            await ShowPopupAsync(typeof(ChooseChatsPopup), new ChooseChatsConfigurationPostMessage(new InputMessageDocument(new InputFileLocal(theme.Path), null, false, null)));
+            await ShowPopupAsync(new ChooseChatsPopup(), new ChooseChatsConfigurationPostMessage(new InputMessageDocument(new InputFileLocal(theme.Path), null, false, null)));
         }
 
         public async void EditTheme(ThemeCustomInfo theme)

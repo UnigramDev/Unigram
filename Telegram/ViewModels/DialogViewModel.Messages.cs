@@ -126,7 +126,7 @@ namespace Telegram.ViewModels
 
                 GetReply(true);
 
-                var confirm = await ShowPopupAsync(typeof(ChooseChatsPopup), new ChooseChatsConfigurationReplyToMessage(message));
+                var confirm = await ShowPopupAsync(new ChooseChatsPopup(), new ChooseChatsConfigurationReplyToMessage(message));
                 if (confirm != ContentDialogResult.Primary)
                 {
                     ComposerHeader = header;
@@ -176,7 +176,7 @@ namespace Telegram.ViewModels
 
                 GetReply(true);
 
-                var confirm = await ShowPopupAsync(typeof(ChooseChatsPopup), new ChooseChatsConfigurationReplyToMessage(message, quote.ToInput()));
+                var confirm = await ShowPopupAsync(new ChooseChatsPopup(), new ChooseChatsConfigurationReplyToMessage(message, quote.ToInput()));
                 if (confirm != ContentDialogResult.Primary)
                 {
                     ComposerHeader = header;
@@ -323,11 +323,11 @@ namespace Telegram.ViewModels
 
             if (message.Content is MessageAlbum album)
             {
-                await ShowPopupAsync(typeof(ChooseChatsPopup), new ChooseChatsConfigurationShareMessages(album.Messages.Select(x => new MessageId(x))));
+                await ShowPopupAsync(new ChooseChatsPopup(), new ChooseChatsConfigurationShareMessages(album.Messages.Select(x => new MessageId(x))));
             }
             else
             {
-                await ShowPopupAsync(typeof(ChooseChatsPopup), new ChooseChatsConfigurationShareMessage(message.ChatId, message.Id));
+                await ShowPopupAsync(new ChooseChatsPopup(), new ChooseChatsConfigurationShareMessage(message.ChatId, message.Id));
             }
 
             TextField?.Focus(FocusState.Programmatic);
@@ -377,7 +377,7 @@ namespace Telegram.ViewModels
             {
                 IsSelectionEnabled = false;
 
-                await ShowPopupAsync(typeof(ChooseChatsPopup), new ChooseChatsConfigurationShareMessages(messages.Select(x => x.Key)));
+                await ShowPopupAsync(new ChooseChatsPopup(), new ChooseChatsConfigurationShareMessages(messages.Select(x => x.Key)));
                 TextField?.Focus(FocusState.Programmatic);
             }
         }
@@ -1019,7 +1019,7 @@ namespace Telegram.ViewModels
 
         public async void ShowMessageInteractions(MessageViewModel message)
         {
-            await ShowPopupAsync(typeof(InteractionsPopup), new MessageReplyToMessage(message.ChatId, message.Id, null, null, 0, null));
+            await ShowPopupAsync(new InteractionsPopup(), new MessageReplyToMessage(message.ChatId, message.Id, null, null, 0, null));
         }
 
         #endregion
@@ -1161,7 +1161,7 @@ namespace Telegram.ViewModels
                 }
                 else
                 {
-                    await ShowPopupAsync(typeof(ChooseChatsPopup), new ChooseChatsConfigurationSwitchInline(switchInline.Query, switchInline.TargetChat, bot));
+                    await ShowPopupAsync(new ChooseChatsPopup(), new ChooseChatsConfigurationSwitchInline(switchInline.Query, switchInline.TargetChat, bot));
                 }
             }
             else if (inline.Type is InlineKeyboardButtonTypeUrl urlButton)
@@ -1358,11 +1358,11 @@ namespace Telegram.ViewModels
             }
             else if (keyboardButton.Type is KeyboardButtonTypeRequestUsers requestUsers)
             {
-                await NavigationService.ShowPopupAsync(typeof(ChooseChatsPopup), new ChooseChatsConfigurationRequestUsers(message.ChatId, message.Id, requestUsers));
+                await NavigationService.ShowPopupAsync(new ChooseChatsPopup(), new ChooseChatsConfigurationRequestUsers(message.ChatId, message.Id, requestUsers));
             }
             else if (keyboardButton.Type is KeyboardButtonTypeRequestChat requestChat)
             {
-                await NavigationService.ShowPopupAsync(typeof(ChooseChatsPopup), new ChooseChatsConfigurationRequestChat(requestChat));
+                await NavigationService.ShowPopupAsync(new ChooseChatsPopup(), new ChooseChatsConfigurationRequestChat(requestChat));
             }
         }
 
@@ -1690,7 +1690,7 @@ namespace Telegram.ViewModels
                     }
                     else
                     {
-                        await ShowPopupAsync(typeof(BackgroundPopup), new BackgroundParameters(chatSetBackground.Background.Background, message.ChatId, message.Id));
+                        await ShowPopupAsync(new BackgroundPopup(), new BackgroundParameters(chatSetBackground.Background.Background, message.ChatId, message.Id));
                     }
                 }
             }

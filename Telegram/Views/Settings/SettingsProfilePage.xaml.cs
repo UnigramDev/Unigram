@@ -27,7 +27,7 @@ namespace Telegram.Views.Settings
 
         private async void LogOut_Click(object sender, RoutedEventArgs e)
         {
-            await ViewModel.ShowPopupAsync(typeof(LogOutPopup));
+            await ViewModel.ShowPopupAsync(new LogOutPopup());
         }
 
         #region Delegate

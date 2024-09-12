@@ -64,19 +64,19 @@ namespace Telegram.Views
 
         private async void Share_Click(object sender, RoutedEventArgs e)
         {
-            await this.ShowPopupAsync(_shareMessage.ClientService.SessionId, typeof(ChooseChatsPopup), new ChooseChatsConfigurationShareMessage(_shareMessage.ChatId, _shareMessage.Id));
+            await this.ShowPopupAsync(_shareMessage.ClientService.SessionId, new ChooseChatsPopup(), new ChooseChatsConfigurationShareMessage(_shareMessage.ChatId, _shareMessage.Id));
         }
 
         private async void View_EventReceived(object sender, WebViewerEventReceivedEventArgs e)
         {
             if (e.EventName == "share_game")
             {
-                await this.ShowPopupAsync(_shareMessage.ClientService.SessionId, typeof(ChooseChatsPopup), new ChooseChatsConfigurationShareMessage(_shareMessage.ChatId, _shareMessage.Id, false));
+                await this.ShowPopupAsync(_shareMessage.ClientService.SessionId, new ChooseChatsPopup(), new ChooseChatsConfigurationShareMessage(_shareMessage.ChatId, _shareMessage.Id, false));
             }
 
             else if (e.EventName == "share_score")
             {
-                await this.ShowPopupAsync(_shareMessage.ClientService.SessionId, typeof(ChooseChatsPopup), new ChooseChatsConfigurationShareMessage(_shareMessage.ChatId, _shareMessage.Id, true));
+                await this.ShowPopupAsync(_shareMessage.ClientService.SessionId, new ChooseChatsPopup(), new ChooseChatsConfigurationShareMessage(_shareMessage.ChatId, _shareMessage.Id, true));
             }
         }
     }

@@ -469,7 +469,7 @@ namespace Telegram.ViewModels
             var response = await ClientService.SendAsync(new GetBackgroundUrl(background.Name, background.Type));
             if (response is HttpUrl url)
             {
-                await ShowPopupAsync(typeof(ChooseChatsPopup), new ChooseChatsConfigurationPostLink(url));
+                await ShowPopupAsync(new ChooseChatsPopup(), new ChooseChatsConfigurationPostLink(url));
             }
         }
 

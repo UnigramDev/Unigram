@@ -112,7 +112,7 @@ namespace Telegram.ViewModels.Settings
         {
             var tsc = new TaskCompletionSource<object>();
 
-            var confirm = await ShowPopupAsync(typeof(ChooseSoundPopup), Scope.SoundId, tsc);
+            var confirm = await ShowPopupAsync(new ChooseSoundPopup(tsc), Scope.SoundId);
             if (confirm != ContentDialogResult.Primary)
             {
                 return;

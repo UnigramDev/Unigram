@@ -134,7 +134,7 @@ namespace Telegram.ViewModels.Settings
                     await file.CopyAsync(ApplicationData.Current.TemporaryFolder, Constants.WallpaperLocalFileName, NameCollisionOption.ReplaceExisting);
 
                     var tsc = new TaskCompletionSource<object>();
-                    await ShowPopupAsync(typeof(BackgroundPopup), new BackgroundParameters(Constants.WallpaperLocalFileName, _chatId), tsc);
+                    await ShowPopupAsync(new BackgroundPopup(tsc), new BackgroundParameters(Constants.WallpaperLocalFileName, _chatId));
 
                     var delayed = await tsc.Task;
                     var confirm = delayed is bool close && close
@@ -162,7 +162,7 @@ namespace Telegram.ViewModels.Settings
         public async Task<ContentDialogResult> ChangeToColorAsync(bool refresh)
         {
             var tsc = new TaskCompletionSource<object>();
-            await ShowPopupAsync(typeof(BackgroundPopup), new BackgroundParameters(Constants.WallpaperColorFileName, _chatId), tsc);
+            await ShowPopupAsync(new BackgroundPopup(tsc), new BackgroundParameters(Constants.WallpaperColorFileName, _chatId));
 
             var delayed = await tsc.Task;
             var confirm = delayed is bool close && close
@@ -185,7 +185,7 @@ namespace Telegram.ViewModels.Settings
         public async Task<ContentDialogResult> ChangeAsync(Background background, bool refresh)
         {
             var tsc = new TaskCompletionSource<object>();
-            await ShowPopupAsync(typeof(BackgroundPopup), new BackgroundParameters(background, _chatId), tsc);
+            await ShowPopupAsync(new BackgroundPopup(tsc), new BackgroundParameters(background, _chatId));
 
             var delayed = await tsc.Task;
             var confirm = delayed is bool close && close
@@ -229,7 +229,7 @@ namespace Telegram.ViewModels.Settings
             var response = await ClientService.SendAsync(new GetBackgroundUrl(background.Name, background.Type));
             if (response is HttpUrl url)
             {
-                await ShowPopupAsync(typeof(ChooseChatsPopup), new ChooseChatsConfigurationPostLink(url));
+                await ShowPopupAsync(new ChooseChatsPopup(), new ChooseChatsConfigurationPostLink(url));
             }
         }
 

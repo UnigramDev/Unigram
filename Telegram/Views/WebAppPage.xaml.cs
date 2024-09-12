@@ -1090,7 +1090,7 @@ namespace Telegram.Views
 
             if (target.AllowBotChats || target.AllowUserChats || target.AllowGroupChats || target.AllowChannelChats)
             {
-                ByNavigation(navigation => navigation.ShowPopupAsync(typeof(ChooseChatsPopup), new ChooseChatsConfigurationSwitchInline(query, target, _botUser)));
+                ByNavigation(navigation => navigation.ShowPopupAsync(new ChooseChatsPopup(), new ChooseChatsConfigurationSwitchInline(query, target, _botUser)));
             }
             else if (_sourceChat != null)
             {

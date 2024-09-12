@@ -135,7 +135,7 @@ namespace Telegram.ViewModels.Supergroups
                 return;
             }
 
-            NavigationService.ShowPopupAsync(typeof(SupergroupEditAdministratorPopup), new SupergroupEditMemberArgs(chat.Id, member.MemberId));
+            NavigationService.ShowPopupAsync(new SupergroupEditAdministratorPopup(), new SupergroupEditMemberArgs(chat.Id, member.MemberId));
         }
 
         public void RestrictMember(ChatMember member)
@@ -146,7 +146,7 @@ namespace Telegram.ViewModels.Supergroups
                 return;
             }
 
-            NavigationService.ShowPopupAsync(typeof(SupergroupEditRestrictedPopup), new SupergroupEditMemberArgs(chat.Id, member.MemberId));
+            NavigationService.ShowPopupAsync(new SupergroupEditRestrictedPopup(), new SupergroupEditMemberArgs(chat.Id, member.MemberId));
         }
 
         public async void RemoveMember(ChatMember member)

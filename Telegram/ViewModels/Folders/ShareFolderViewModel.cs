@@ -157,7 +157,7 @@ namespace Telegram.ViewModels.Folders
 
         public async void Share()
         {
-            await ShowPopupAsync(typeof(ChooseChatsPopup), new ChooseChatsConfigurationPostLink(new HttpUrl(_inviteLink)));
+            await ShowPopupAsync(new ChooseChatsPopup(), new ChooseChatsConfigurationPostLink(new HttpUrl(_inviteLink)));
         }
     }
 }

@@ -308,7 +308,7 @@ namespace Telegram.ViewModels.Authorization
 
         public void Proxy()
         {
-            ShowPopupAsync(typeof(SettingsProxyPopup));
+            ShowPopupAsync(new SettingsProxyPopup());
         }
 
         #region Strings

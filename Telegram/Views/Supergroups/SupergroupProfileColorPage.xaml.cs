@@ -142,7 +142,7 @@ namespace Telegram.Views.Supergroups
             var tsc = new TaskCompletionSource<object>();
             var args = new SupergroupEditStickerSetArgs(ViewModel.Chat.Id, new StickerTypeCustomEmoji());
 
-            var confirm = await ViewModel.NavigationService.ShowPopupAsync(typeof(SupergroupEditStickerSetPopup), args, tsc);
+            var confirm = await ViewModel.NavigationService.ShowPopupAsync(new SupergroupEditStickerSetPopup(tsc), args);
             var set = await tsc.Task as StickerSetInfo;
 
             if (confirm == ContentDialogResult.Primary)
@@ -166,7 +166,7 @@ namespace Telegram.Views.Supergroups
             var tsc = new TaskCompletionSource<object>();
             var args = new SupergroupEditStickerSetArgs(ViewModel.Chat.Id, new StickerTypeRegular());
 
-            var confirm = await ViewModel.NavigationService.ShowPopupAsync(typeof(SupergroupEditStickerSetPopup), args, tsc);
+            var confirm = await ViewModel.NavigationService.ShowPopupAsync(new SupergroupEditStickerSetPopup(tsc), args);
             var set = await tsc.Task as StickerSetInfo;
 
             if (confirm == ContentDialogResult.Primary)

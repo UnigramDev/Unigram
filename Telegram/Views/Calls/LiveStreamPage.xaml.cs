@@ -705,7 +705,7 @@ namespace Telegram.Views.Calls
                 return;
             }
 
-            await this.ShowPopupAsync(_clientService.SessionId, typeof(ChooseChatsPopup), new ChooseChatsConfigurationGroupCall(call));
+            await this.ShowPopupAsync(_clientService.SessionId, new ChooseChatsPopup(), new ChooseChatsConfigurationGroupCall(call));
         }
 
         private readonly ScrollViewer _scrollingHost;

@@ -33,7 +33,7 @@ namespace Telegram.Views.Settings
         {
             if (e.ClickedItem is Chat chat)
             {
-                ViewModel.ShowPopupAsync(typeof(ChatNotificationsPopup), chat.Id);
+                ViewModel.ShowPopupAsync(new ChatNotificationsPopup(), chat.Id);
             }
         }
 

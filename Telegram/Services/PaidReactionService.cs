@@ -66,7 +66,7 @@ namespace Telegram.Services
         {
             if (message.ClientService.OwnedStarCount < _pendingCount + starCount)
             {
-                _ = message.Delegate.NavigationService.ShowPopupAsync(typeof(BuyPopup), BuyStarsArgs.ForChannel(starCount, message.ChatId));
+                _ = message.Delegate.NavigationService.ShowPopupAsync(new BuyPopup(), BuyStarsArgs.ForChannel(starCount, message.ChatId));
                 return null;
             }
 
