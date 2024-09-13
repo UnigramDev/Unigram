@@ -429,6 +429,9 @@ namespace Telegram.Common
                     }
                 }
 
+                PatchTextControlElevationBorderFocusedBrush(requested, target, lookup, "TextControlElevationBorderFocusedBrush", create, GetShade);
+                PatchTextControlElevationBorderFocusedBrush(requested, target, lookup, "TextControlBorderBrushFocused", create, GetShade);
+
                 if (create)
                 {
                     ThemeDictionaries.Add(requested == TelegramTheme.Light ? "Light" : "Dark", target);
@@ -465,6 +468,43 @@ namespace Telegram.Common
                 // The exception MIGHT be related to StaticResources
                 // but I'm not able to confirm this.
             }
+        }
+
+        private void PatchTextControlElevationBorderFocusedBrush(TelegramTheme requested, ResourceDictionary target, Dictionary<string, object> lookup, string key, bool create, Func<AccentShade, Color> getShade)
+        {
+            // TextControlElevationBorderFocusedBrush is the only gradient that requires theming,
+            // Hence we hardcode the logic to update this brush as it's not worth it to support this scenario.
+            AddOrUpdate(target, key, create, (LinearGradientBrush brush) =>
+            {
+                if (create)
+                {
+                    brush.MappingMode = BrushMappingMode.Absolute;
+                    brush.StartPoint = new Windows.Foundation.Point(0, 0);
+                    brush.EndPoint = new Windows.Foundation.Point(0, 2);
+                    brush.RelativeTransform = new ScaleTransform
+                    {
+                        ScaleY = -1,
+                        CenterY = 0.5
+                    };
+                    brush.GradientStops = new GradientStopCollection
+                    {
+                        new GradientStop
+                        {
+                            Offset = 1.0
+                        },
+                        new GradientStop
+                        {
+                            Offset = 1.0
+                        }
+                    };
+                }
+
+                if (lookup.TryGet("ControlStrokeColorDefaultBrush", out Color stroke))
+                {
+                    brush.GradientStops[0].Color = getShade(requested == TelegramTheme.Light ? AccentShade.Dark1 : AccentShade.Light1);
+                    brush.GradientStops[1].Color = stroke;
+                }
+            });
         }
 
         private void AddOrUpdate<T>(ResourceDictionary target, string key, bool create, Action<T> callback) where T : new()
