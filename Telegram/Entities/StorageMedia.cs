@@ -18,6 +18,14 @@ using Windows.UI.Xaml.Media.Imaging;
 
 namespace Telegram.Entities
 {
+    public partial class StorageInvalid : StorageMedia
+    {
+        public StorageInvalid()
+            : base(null, 0)
+        {
+        }
+    }
+
     public abstract class StorageMedia : BindableBase
     {
         public StorageMedia(StorageFile file, ulong fileSize)

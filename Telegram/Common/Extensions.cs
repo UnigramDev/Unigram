@@ -202,7 +202,13 @@ namespace Telegram.Common
                 return null;
             }
 
-            return await StorageMedia.CreateAsync(file);
+            var media = await StorageMedia.CreateAsync(file);
+            if (media != null)
+            {
+                return media;
+            }
+
+            return new StorageInvalid();
         }
 
         public static Version ToVersion(this PackageVersion version)

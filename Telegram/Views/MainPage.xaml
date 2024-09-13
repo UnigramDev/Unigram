@@ -514,9 +514,9 @@
                                                   ToolTipService.ToolTip="{CustomResource NewConversationShortcut}"
                                                   FontSize="16"
                                                   VerticalAlignment="Center"
-                                                  Margin="-40,-4,0,-4"
-                                                  Width="44"
-                                                  Height="40" />
+                                                  Margin="-32,-4,0,-4"
+                                                  Width="36"
+                                                  Height="32" />
                             <controls:GlyphButton x:Name="Proxy"
                                                   Glyph="&#xEA19;"
                                                   Click="Proxy_Click"

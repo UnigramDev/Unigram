@@ -6801,6 +6801,9 @@ to unlock up to {0} similar channels.</value>
   <data name="NewContact" xml:space="preserve">
     <value>New Contact</value>
   </data>
+  <data name="NewContactTitle" xml:space="preserve">
+    <value>New Contact</value>
+  </data>
   <data name="NewConversationShortcut" xml:space="preserve">
     <value>New conversation</value>
   </data>

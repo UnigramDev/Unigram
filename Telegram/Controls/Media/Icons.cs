@@ -362,6 +362,7 @@ namespace Telegram.Controls.Media
         public const string ChatBubblesQuestion = "\uE783";
         public const string ChatMultiple = "\uE992";
         public const string ChatMultipleFilled = "\uEA0D";
+        public const string CameraAddFilled = "\uEA92";
 
         public const string TopSpeed = "\uE90D";
 

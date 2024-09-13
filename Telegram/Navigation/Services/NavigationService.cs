@@ -18,7 +18,6 @@ using Telegram.ViewModels.Gallery;
 using Telegram.Views;
 using Telegram.Views.Popups;
 using Telegram.Views.Settings;
-using Windows.ApplicationModel.Core;
 using Windows.Foundation;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -452,6 +451,11 @@ namespace Telegram.Navigation.Services
 
         public Task<ContentDialogResult> ShowPopupAsync(string message, string title = null, string primary = null, string secondary = null, bool destructive = false, ElementTheme requestedTheme = ElementTheme.Default)
         {
+            if (ContentPopup.IsAnyPopupOpen(XamlRoot))
+            {
+                return MessagePopup.ShowAsync(XamlRoot, target: null, message, title, primary, secondary, destructive, requestedTheme);
+            }
+
             return MessagePopup.ShowAsync(XamlRoot, message, title, primary, secondary, destructive, requestedTheme);
         }
 
@@ -472,6 +476,11 @@ namespace Telegram.Navigation.Services
 
         public void ShowPopup(string message, string title = null, string primary = null, string secondary = null, bool destructive = false, ElementTheme requestedTheme = ElementTheme.Default)
         {
+            if (ContentPopup.IsAnyPopupOpen(XamlRoot))
+            {
+                _ = MessagePopup.ShowAsync(XamlRoot, target: null, message, title, primary, secondary, destructive, requestedTheme);
+            }
+
             _ = MessagePopup.ShowAsync(XamlRoot, message, title, primary, secondary, destructive, requestedTheme);
         }
 

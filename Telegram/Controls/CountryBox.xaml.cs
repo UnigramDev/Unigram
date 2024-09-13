@@ -26,6 +26,12 @@ namespace Telegram.Controls
             Input.ItemsSource = _countries;
         }
 
+        public object Header
+        {
+            get => Input.Header;
+            set => Input.Header = value;
+        }
+
         public int TabIndex
         {
             get => Input.TabIndex;

@@ -13,10 +13,9 @@ using Telegram.Services.Factories;
 using Telegram.Services.ViewService;
 using Telegram.ViewModels;
 using Telegram.ViewModels.Authorization;
-using Telegram.ViewModels.BasicGroups;
 using Telegram.ViewModels.Business;
-using Telegram.ViewModels.Channels;
 using Telegram.ViewModels.Chats;
+using Telegram.ViewModels.Create;
 using Telegram.ViewModels.Drawers;
 using Telegram.ViewModels.Folders;
 using Telegram.ViewModels.Payments;
@@ -109,7 +108,6 @@ namespace Telegram
                 typeof(ProfileGroupsTabViewModel),
                 typeof(ProfileChannelsTabViewModel),
                 typeof(ProfileSavedChatsTabViewModel),
-                typeof(UserCreateViewModel),
                 typeof(UserEditViewModel),
                 typeof(SupergroupEditViewModel),
                 typeof(SupergroupEditTypeViewModel),
@@ -128,8 +126,9 @@ namespace Telegram
                 typeof(ChatBoostsViewModel),
                 typeof(ChatRevenueViewModel),
                 typeof(MessageStatisticsViewModel),
-                typeof(ChannelCreateStep1ViewModel),
-                typeof(BasicGroupCreateStep1ViewModel),
+                typeof(NewContactViewModel),
+                typeof(NewChannelViewModel),
+                typeof(NewGroupViewModel),
                 typeof(InstantViewModel),
                 typeof(LogOutViewModel),
                 typeof(DiagnosticsViewModel),

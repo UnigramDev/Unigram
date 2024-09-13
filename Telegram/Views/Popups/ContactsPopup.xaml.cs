@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Numerics;
 using Telegram.Collections;
 using Telegram.Common;
 using Telegram.Controls;
@@ -8,13 +7,9 @@ using Telegram.Controls.Media;
 using Telegram.Td.Api;
 using Telegram.ViewModels;
 using Telegram.ViewModels.Stories;
-using Telegram.Views.BasicGroups;
-using Telegram.Views.Channels;
-using Telegram.Views.Users;
-using Windows.UI.Composition;
+using Telegram.Views.Create;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Hosting;
 using Windows.UI.Xaml.Input;
 
 namespace Telegram.Views.Popups
@@ -138,85 +133,22 @@ namespace Telegram.Views.Popups
         private void NewGroup_Click(object sender, RoutedEventArgs e)
         {
             Hide();
-            ViewModel.NavigationService.Navigate(typeof(BasicGroupCreateStep1Page));
+            _ = ViewModel.NavigationService.ShowPopupAsync(new NewGroupPopup());
         }
 
         private void NewContact_Click(object sender, RoutedEventArgs e)
         {
             Hide();
-            ViewModel.NavigationService.Navigate(typeof(UserCreatePage));
+            _ = ViewModel.NavigationService.ShowPopupAsync(new NewContactPopup());
         }
 
         private void NewChannel_Click(object sender, RoutedEventArgs e)
         {
             Hide();
-            ViewModel.NavigationService.Navigate(typeof(ChannelCreateStep1Page));
+            _ = ViewModel.NavigationService.ShowPopupAsync(new NewChannelPopup());
         }
 
         #region Search
-
-        private bool _searchCollapsed = true;
-
-        private void ShowHideSearch(bool show)
-        {
-            if (_searchCollapsed != show)
-            {
-                return;
-            }
-
-            _searchCollapsed = !show;
-
-            FindName(nameof(ContactsSearchListView));
-            ContactsPanel.Visibility = Visibility.Visible;
-            ContactsSearchListView.Visibility = Visibility.Visible;
-
-            if (show)
-            {
-                //DialogsSearchPanel.Update();
-                //SearchField.ControlledList = DialogsSearchPanel.Root;
-                //Stories.Collapse();
-            }
-
-            var chats = ElementComposition.GetElementVisual(ContactsPanel);
-            var panel = ElementComposition.GetElementVisual(ContactsSearchListView);
-
-            chats.CenterPoint = panel.CenterPoint = new Vector3(ContactsPanel.ActualSize / 2, 0);
-
-            var batch = panel.Compositor.CreateScopedBatch(CompositionBatchTypes.Animation);
-            batch.Completed += (s, args) =>
-            {
-                ContactsPanel.Visibility = _searchCollapsed ? Visibility.Visible : Visibility.Collapsed;
-                ContactsSearchListView.Visibility = _searchCollapsed ? Visibility.Collapsed : Visibility.Visible;
-            };
-
-            var scale1 = panel.Compositor.CreateVector3KeyFrameAnimation();
-            scale1.InsertKeyFrame(show ? 0 : 1, new Vector3(1.05f, 1.05f, 1));
-            scale1.InsertKeyFrame(show ? 1 : 0, new Vector3(1));
-            scale1.Duration = TimeSpan.FromMilliseconds(200);
-
-            var scale2 = panel.Compositor.CreateVector3KeyFrameAnimation();
-            scale2.InsertKeyFrame(show ? 0 : 1, new Vector3(1));
-            scale2.InsertKeyFrame(show ? 1 : 0, new Vector3(0.95f, 0.95f, 1));
-            scale2.Duration = TimeSpan.FromMilliseconds(200);
-
-            var opacity1 = panel.Compositor.CreateScalarKeyFrameAnimation();
-            opacity1.InsertKeyFrame(show ? 0 : 1, 0);
-            opacity1.InsertKeyFrame(show ? 1 : 0, 1);
-            opacity1.Duration = TimeSpan.FromMilliseconds(200);
-
-            var opacity2 = panel.Compositor.CreateScalarKeyFrameAnimation();
-            opacity2.InsertKeyFrame(show ? 0 : 1, 1);
-            opacity2.InsertKeyFrame(show ? 1 : 0, 0);
-            opacity2.Duration = TimeSpan.FromMilliseconds(200);
-
-            panel.StartAnimation("Scale", scale1);
-            panel.StartAnimation("Opacity", opacity1);
-
-            chats.StartAnimation("Scale", scale2);
-            chats.StartAnimation("Opacity", opacity2);
-
-            batch.End();
-        }
 
         private void Search_Click(object sender, RoutedEventArgs e)
         {
@@ -256,9 +188,6 @@ namespace Telegram.Views.Popups
 
         private void SearchReset()
         {
-            //DialogsPanel.Visibility = Visibility.Visible;
-            ShowHideSearch(false);
-
             SearchField.Text = string.Empty;
 
             if (ContactsPanel != null)

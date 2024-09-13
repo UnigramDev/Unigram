@@ -4,24 +4,22 @@
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
-using Telegram.Common;
 using Telegram.Navigation;
 using Telegram.Services;
 using Telegram.Td.Api;
-using Telegram.Views.Channels;
 using Telegram.Views.Supergroups;
-using Windows.Storage;
 using Windows.UI.Xaml.Media.Imaging;
 
-namespace Telegram.ViewModels.Channels
+namespace Telegram.ViewModels.Create
 {
-    public partial class ChannelCreateStep1ViewModel : ViewModelBase
+    public partial class NewChannelViewModel : ViewModelBase
     {
-        public ChannelCreateStep1ViewModel(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator)
+        private readonly IProfilePhotoService _profilePhotoService;
+
+        public NewChannelViewModel(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator, IProfilePhotoService profilePhotoService)
             : base(clientService, settingsService, aggregator)
         {
-            SendCommand = new RelayCommand(SendExecute, () => !string.IsNullOrWhiteSpace(Title));
-            EditPhotoCommand = new RelayCommand<StorageFile>(EditPhotoExecute);
+            _profilePhotoService = profilePhotoService;
         }
 
         private string _title;
@@ -30,8 +28,10 @@ namespace Telegram.ViewModels.Channels
             get => _title;
             set
             {
-                Set(ref _title, value);
-                SendCommand.RaiseCanExecuteChanged();
+                if (Set(ref _title, value))
+                {
+                    RaisePropertyChanged(nameof(CanCreate));
+                }
             }
         }
 
@@ -42,6 +42,8 @@ namespace Telegram.ViewModels.Channels
             set => Set(ref _about, value);
         }
 
+        private InputChatPhoto _inputPhoto;
+
         private BitmapImage _preview;
         public BitmapImage Preview
         {
@@ -49,22 +51,26 @@ namespace Telegram.ViewModels.Channels
             set => Set(ref _preview, value);
         }
 
-        public RelayCommand SendCommand { get; }
-        private async void SendExecute()
+        public bool CanCreate => !string.IsNullOrWhiteSpace(Title);
+
+        public async void Create()
         {
             var response = await ClientService.SendAsync(new CreateNewSupergroupChat(_title, false, true, _about ?? string.Empty, null, 0, false));
             if (response is Chat chat)
             {
-                // TODO: photo
+                if (_inputPhoto != null)
+                {
+                    ClientService.Send(new SetChatPhoto(chat.Id, _inputPhoto));
+                }
 
                 NavigationService.Navigate(typeof(SupergroupEditTypePage), chat.Id);
                 NavigationService.GoBackAt(0, false);
             }
         }
 
-        public RelayCommand<StorageFile> EditPhotoCommand { get; }
-        private async void EditPhotoExecute(StorageFile file)
+        public async void ChoosePhoto()
         {
+            _inputPhoto = await _profilePhotoService.PreviewSetPhotoAsync(NavigationService);
         }
     }
 }

@@ -1348,9 +1348,9 @@
     <Compile Include="Services\ViewService\ViewLifetimeControl.cs" />
     <Compile Include="Services\ViewService\ViewService.cs" />
     <Compile Include="ViewModels\BackgroundViewModel.cs" />
-    <Compile Include="ViewModels\BasicGroups\BasicGroupCreateStep1ViewModel.cs" />
+    <Compile Include="ViewModels\Create\NewGroupViewModel.cs" />
     <Compile Include="ViewModels\CallsViewModel.cs" />
-    <Compile Include="ViewModels\Channels\ChannelCreateStep1ViewModel.cs" />
+    <Compile Include="ViewModels\Create\NewChannelViewModel.cs" />
     <Compile Include="ViewModels\Chats\ChatGalleryViewModel.cs" />
     <Compile Include="ViewModels\Chats\ChatInviteLinkViewModel.cs" />
     <Compile Include="ViewModels\Chats\ChatPhotosViewModel.cs" />
@@ -1434,12 +1434,12 @@
     <Compile Include="ViewModels\Supergroups\SupergroupMembersViewModelBase.cs" />
     <Compile Include="ViewModels\Supergroups\SupergroupPermissionsViewModel.cs" />
     <Compile Include="Navigation\MultiViewModelBase.cs" />
-    <Compile Include="ViewModels\Users\UserCreateViewModel.cs" />
-    <Compile Include="Views\BasicGroups\BasicGroupCreateStep1Page.xaml.cs">
-      <DependentUpon>BasicGroupCreateStep1Page.xaml</DependentUpon>
+    <Compile Include="ViewModels\Create\NewContactViewModel.cs" />
+    <Compile Include="Views\Create\NewGroupPopup.xaml.cs">
+      <DependentUpon>NewGroupPopup.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\Channels\ChannelCreateStep1Page.xaml.cs">
-      <DependentUpon>ChannelCreateStep1Page.xaml</DependentUpon>
+    <Compile Include="Views\Create\NewChannelPopup.xaml.cs">
+      <DependentUpon>NewChannelPopup.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\ChatPage.xaml.cs">
       <DependentUpon>ChatPage.xaml</DependentUpon>
@@ -1870,8 +1870,8 @@
     <Compile Include="Views\Settings\SettingsStoragePage.xaml.cs">
       <DependentUpon>SettingsStoragePage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\Users\UserCreatePage.xaml.cs">
-      <DependentUpon>UserCreatePage.xaml</DependentUpon>
+    <Compile Include="Views\Create\NewContactPopup.xaml.cs">
+      <DependentUpon>NewContactPopup.xaml</DependentUpon>
     </Compile>
   </ItemGroup>
   <ItemGroup>
@@ -3116,11 +3116,11 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\BasicGroups\BasicGroupCreateStep1Page.xaml">
+    <Page Include="Views\Create\NewGroupPopup.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Views\Channels\ChannelCreateStep1Page.xaml">
+    <Page Include="Views\Create\NewChannelPopup.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -3604,7 +3604,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Views\Users\UserCreatePage.xaml">
+    <Page Include="Views\Create\NewContactPopup.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

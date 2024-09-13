@@ -12,7 +12,6 @@ using System.Diagnostics;
 using System.Linq;
 using System.Numerics;
 using System.Threading.Tasks;
-using Telegram.Collections;
 using Telegram.Common;
 using Telegram.Composition;
 using Telegram.Controls;
@@ -32,13 +31,10 @@ using Telegram.ViewModels;
 using Telegram.ViewModels.Delegates;
 using Telegram.ViewModels.Drawers;
 using Telegram.ViewModels.Profile;
-using Telegram.ViewModels.Stories;
-using Telegram.Views.BasicGroups;
-using Telegram.Views.Channels;
+using Telegram.Views.Create;
 using Telegram.Views.Host;
 using Telegram.Views.Popups;
 using Telegram.Views.Settings;
-using Telegram.Views.Users;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.Foundation;
 using Windows.UI.Composition;
@@ -625,7 +621,7 @@ namespace Telegram.Views
 
                     CallBanner.Update(ViewModel.VoipService);
                 }
-                else if (update.GroupCall != null && (update.GroupCall.IsJoined || update.GroupCall.NeedRejoin))
+                else if (update.GroupCall != null && (ViewModel.VoipGroupService.Call != null || update.GroupCall.IsJoined || update.GroupCall.NeedRejoin))
                 {
                     UpdatePlaybackHidden(true);
                     FindName(nameof(CallBanner));
@@ -2151,11 +2147,11 @@ namespace Telegram.Views
             }
             else if (destination == RootDestination.NewGroup)
             {
-                MasterDetail.NavigationService.Navigate(typeof(BasicGroupCreateStep1Page));
+                _ = ViewModel.NavigationService.ShowPopupAsync(new NewGroupPopup());
             }
             else if (destination == RootDestination.NewChannel)
             {
-                MasterDetail.NavigationService.Navigate(typeof(ChannelCreateStep1Page));
+                _ = ViewModel.NavigationService.ShowPopupAsync(new NewChannelPopup());
             }
             else if (destination == RootDestination.MyProfile)
             {

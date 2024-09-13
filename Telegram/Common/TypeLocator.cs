@@ -407,11 +407,6 @@ namespace Telegram.Views
                         _clientService,
                         _settingsService,
                         _eventAggregator);
-                case "Telegram.ViewModels.Users.UserCreateViewModel":
-                    return (T)(object)new Telegram.ViewModels.Users.UserCreateViewModel(
-                        _clientService,
-                        _settingsService,
-                        _eventAggregator);
                 case "Telegram.ViewModels.Users.UserEditViewModel":
                     return (T)(object)new Telegram.ViewModels.Users.UserEditViewModel(
                         _clientService,
@@ -509,16 +504,23 @@ namespace Telegram.Views
                         _clientService,
                         _settingsService,
                         _eventAggregator);
-                case "Telegram.ViewModels.Channels.ChannelCreateStep1ViewModel":
-                    return (T)(object)new Telegram.ViewModels.Channels.ChannelCreateStep1ViewModel(
+                case "Telegram.ViewModels.Create.NewContactViewModel":
+                    return (T)(object)new Telegram.ViewModels.Create.NewContactViewModel(
                         _clientService,
                         _settingsService,
                         _eventAggregator);
-                case "Telegram.ViewModels.BasicGroups.BasicGroupCreateStep1ViewModel":
-                    return (T)(object)new Telegram.ViewModels.BasicGroups.BasicGroupCreateStep1ViewModel(
+                case "Telegram.ViewModels.Create.NewChannelViewModel":
+                    return (T)(object)new Telegram.ViewModels.Create.NewChannelViewModel(
                         _clientService,
                         _settingsService,
-                        _eventAggregator);
+                        _eventAggregator,
+                        _profilePhotoService ??= new Telegram.Services.ProfilePhotoService(_clientService));
+                case "Telegram.ViewModels.Create.NewGroupViewModel":
+                    return (T)(object)new Telegram.ViewModels.Create.NewGroupViewModel(
+                        _clientService,
+                        _settingsService,
+                        _eventAggregator,
+                        _profilePhotoService ??= new Telegram.Services.ProfilePhotoService(_clientService));
                 case "Telegram.ViewModels.InstantViewModel":
                     return (T)(object)new Telegram.ViewModels.InstantViewModel(
                         _clientService,

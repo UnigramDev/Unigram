@@ -28,7 +28,8 @@ namespace Telegram.ViewModels.Drawers
         ChatPhoto,
         UserPhoto,
         Background,
-        Topics
+        Topics,
+        Text
     }
 
     public partial class EmojiDrawerViewModel : ViewModelBase
@@ -202,7 +203,7 @@ namespace Telegram.ViewModels.Drawers
 
             var stickers = new List<object>();
 
-            if (_mode == EmojiDrawerMode.Chat)
+            if (_mode is EmojiDrawerMode.Chat or EmojiDrawerMode.Text)
             {
                 var recents = Emoji.GetRecents(SettingsService.Current.Stickers.SkinTone);
                 var emojiGroups = Emoji.Get(SettingsService.Current.Stickers.SkinTone);
@@ -214,6 +215,11 @@ namespace Telegram.ViewModels.Drawers
                 {
                     if (item.Value.Contains(';'))
                     {
+                        if (_mode == EmojiDrawerMode.Text)
+                        {
+                            continue;
+                        }
+
                         var split = item.Value.Split(';');
                         if (split.Length == 2 && long.TryParse(split[1], out long customEmojiId))
                         {
@@ -263,6 +269,11 @@ namespace Telegram.ViewModels.Drawers
                 stickers.AddRange(emojiGroups);
 
                 StandardSets.ReplaceWith(emojiGroups);
+
+                if (_mode == EmojiDrawerMode.Text)
+                {
+                    return;
+                }
             }
 
             var installedSets = _allowCustomEmoji || _mode != EmojiDrawerMode.Reactions
