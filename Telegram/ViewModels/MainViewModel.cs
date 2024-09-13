@@ -64,8 +64,7 @@ namespace Telegram.ViewModels
                 Folders,
                 new ChatFolderViewModel[]
                 {
-                    new ChatFolderViewModel(int.MaxValue - 1, Strings.Contacts, "\uE95E", "\uE95D"),
-                    new ChatFolderViewModel(int.MaxValue - 2, Strings.Settings, "\uE98F", "\uE98E"),
+                    new ChatFolderViewModel(int.MaxValue - 1, Strings.Settings, "\uE98F", "\uE98E"),
                 }
             };
 

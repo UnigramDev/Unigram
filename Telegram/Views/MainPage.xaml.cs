@@ -2001,7 +2001,7 @@ namespace Telegram.Views
         }
 
         private const int INDEX_CHATS = 0;
-        private const int INDEX_SETTINGS = 2;
+        private const int INDEX_SETTINGS = 1;
 
         private void Search_TextChanged(object sender, TextChangedEventArgs e)
         {
