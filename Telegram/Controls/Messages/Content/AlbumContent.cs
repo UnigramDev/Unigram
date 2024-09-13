@@ -168,7 +168,9 @@ namespace Telegram.Controls.Messages.Content
                     continue;
                 }
 
-                Children.Add(new MessageSelector(pos, element));
+                var selector = new MessageSelector(pos, element);
+
+                Children.Add(selector);
 
                 if (album.IsMedia)
                 {
@@ -183,10 +185,12 @@ namespace Telegram.Controls.Messages.Content
                 }
                 else if (pos == album.Messages.Last())
                 {
+                    element.Margin = new Thickness(0, 0, 0, 2);
                     return;
                 }
 
-                element.Margin = new Thickness(0, 0, 0, 8);
+                element.Margin = new Thickness(0, 0, 0, 2);
+                selector.Margin = new Thickness(0, 0, 0, 6);
 
                 var caption = pos.GetCaption();
                 if (string.IsNullOrEmpty(caption?.Text))
