@@ -510,10 +510,17 @@ namespace Telegram.ViewModels
             // This is a new background and it has to be uploaded to Telegram servers
             if (background.Id == Constants.WallpaperLocalId)
             {
-                var item = await ApplicationData.Current.TemporaryFolder.GetFileAsync(Constants.WallpaperLocalFileName);
-                var generated = await item.ToGeneratedAsync(ConversionType.Copy, forceCopy: true);
+                try
+                {
+                    var item = await ApplicationData.Current.TemporaryFolder.GetFileAsync(Constants.WallpaperLocalFileName);
+                    var generated = await item.ToGeneratedAsync(ConversionType.Copy, forceCopy: true);
 
-                return new BackgroundInfo(new InputBackgroundLocal(generated), new BackgroundTypeWallpaper(_isBlurEnabled, false), dark);
+                    return new BackgroundInfo(new InputBackgroundLocal(generated), new BackgroundTypeWallpaper(_isBlurEnabled, false), dark);
+                }
+                catch
+                {
+                    return null;
+                }
             }
             else
             {
