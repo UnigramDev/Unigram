@@ -373,6 +373,11 @@ namespace Telegram.Converters
             return ShortDate.Format(ToLocalTime(value));
         }
 
+        public static string Date(int value, string format)
+        {
+            return NativeUtils.FormatDate(value, format);
+        }
+
         public static string Date(DateTime value)
         {
             return ShortDate.Format(value);
@@ -440,22 +445,12 @@ namespace Telegram.Converters
                 return string.Empty;
             }
 
-            try
+            if (birthdate.Year == 0)
             {
-                if (birthdate.Year == 0)
-                {
-                    return DayMonthFull.Format(new DateTime(2020, birthdate.Month, birthdate.Day));
-                }
-
-                return DayMonthAbbreviatedYear.Format(new DateTime(birthdate.Year, birthdate.Month, birthdate.Day));
+                return NativeUtils.FormatDate(new DateTime(2021, birthdate.Month, birthdate.Day), Strings.formatterMonth);
             }
-            catch (Exception ex)
-            {
-                Logger.Info(birthdate);
-                Logger.Error(ex);
 
-                return string.Empty;
-            }
+            return NativeUtils.FormatDate(new DateTime(birthdate.Year, birthdate.Month, birthdate.Day), Strings.formatterBoostExpired);
         }
     }
 }
