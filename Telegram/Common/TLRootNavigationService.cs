@@ -29,6 +29,8 @@ namespace Telegram.Common
 
         public async void Handle(UpdateAuthorizationState update)
         {
+            Logger.Info(update.AuthorizationState);
+
             switch (update.AuthorizationState)
             {
                 case AuthorizationStateReady:
