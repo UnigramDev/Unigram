@@ -4,7 +4,6 @@
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
-using System;
 using System.Text;
 using Telegram.Common;
 using Telegram.Converters;
@@ -84,7 +83,7 @@ namespace Telegram.Controls.Messages.Content
         }
 
         private void UpdateMessageGiveaway(MessageViewModel message, MessageGiveaway giveaway)
-        { 
+        {
             Animation.Source = giveaway.Sticker != null
                 ? new DelayedFileSource(message.ClientService, giveaway.Sticker)
                 : null;

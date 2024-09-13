@@ -50,7 +50,7 @@ namespace Telegram.Services.Keyboard
             else if (args.OnlyAlt && args.VirtualKey is VirtualKey.Back
                                                      or VirtualKey.Left)
             {
-                BootStrapper.Current.RaiseBackRequested(null,args.VirtualKey);
+                BootStrapper.Current.RaiseBackRequested(null, args.VirtualKey);
             }
             else if (args.VirtualKey is VirtualKey.GoForward
                                      or VirtualKey.NavigationRight

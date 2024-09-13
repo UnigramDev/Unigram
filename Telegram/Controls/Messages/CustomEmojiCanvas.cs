@@ -4,19 +4,14 @@
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
-using RLottie;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Telegram.Common;
-using Telegram.Native;
-using Telegram.Navigation;
 using Telegram.Services;
 using Telegram.Streams;
 using Telegram.Td.Api;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Media;
 
 namespace Telegram.Controls.Messages
 {

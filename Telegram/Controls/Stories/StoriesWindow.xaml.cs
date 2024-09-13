@@ -788,7 +788,7 @@ namespace Telegram.Controls.Stories
                 context.Activated += OnActivated;
                 context.InputListener.KeyDown += OnAcceleratorKeyActivated;
             }
-            
+
             StoriesWindow_Loaded(sender, e);
         }
 

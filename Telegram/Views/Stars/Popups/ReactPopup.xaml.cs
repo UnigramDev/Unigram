@@ -13,19 +13,12 @@ using Telegram.Controls;
 using Telegram.Controls.Cells;
 using Telegram.Controls.Media;
 using Telegram.Services;
-using Telegram.Streams;
 using Telegram.Td.Api;
 using Telegram.ViewModels;
-using Telegram.ViewModels.Stars;
 using Windows.Foundation;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
-using Windows.UI.Xaml.Hosting;
-using Windows.UI.Xaml.Input;
-using Windows.UI.Xaml.Media;
-using Windows.UI.Xaml.Media.Imaging;
-using Windows.UI.Xaml.Shapes;
 
 namespace Telegram.Views.Stars.Popups
 {
