@@ -272,7 +272,12 @@ namespace Telegram.Controls
         {
             if (sender is Button button && FocusPrimaryButton)
             {
-                button.Focus(FocusState.Keyboard);
+                if (button.Focus(FocusState.Keyboard))
+                {
+                    return;
+                }
+
+                this.Focus(FocusState.Pointer);
             }
         }
 
