@@ -794,7 +794,7 @@ namespace Telegram.Services
                 return;
             }
 
-            await callPage.Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () =>
+            callPage.BeginOnUIThread(() =>
             {
                 if (controller != null)
                 {
