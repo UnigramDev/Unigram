@@ -58,7 +58,7 @@ namespace Telegram.Common
 
         public async void NavigateToWebApp(User botUser, string url, long launchId = 0, AttachmentMenuBot menuBot = null, Chat sourceChat = null)
         {
-            await OpenAsync(new ViewServiceParams
+            await OpenAsync(new ViewServiceOptions
             {
                 Width = 384,
                 Height = 640,
@@ -102,7 +102,7 @@ namespace Telegram.Common
                     return tabViewItem;
                 }
 
-                NavigateToTab(CreateTabViewItem, new ViewServiceParams
+                NavigateToTab(CreateTabViewItem, new ViewServiceOptions
                 {
                     Width = 820,
                     Height = 640,
@@ -120,7 +120,7 @@ namespace Telegram.Common
 
         public void NavigateToWeb3(string url)
         {
-            NavigateToTab(() => WebBrowserPage.Create(ClientService, url), new ViewServiceParams
+            NavigateToTab(() => WebBrowserPage.Create(ClientService, url), new ViewServiceOptions
             {
                 Width = 820,
                 Height = 640,
@@ -128,7 +128,7 @@ namespace Telegram.Common
             });
         }
 
-        private async void NavigateToTab(Func<TabViewItem> newTab, ViewServiceParams parameters)
+        private async void NavigateToTab(Func<TabViewItem> newTab, ViewServiceOptions parameters)
         {
             var oldViewId = WindowContext.Current.Id;
 
@@ -147,7 +147,7 @@ namespace Telegram.Common
             }
             else
             {
-                await OpenAsync(new ViewServiceParams
+                await OpenAsync(new ViewServiceOptions
                 {
                     Width = parameters.Width,
                     Height = parameters.Height,
@@ -193,7 +193,7 @@ namespace Telegram.Common
                 return;
             }
 
-            var parameters = new ViewServiceParams
+            var parameters = new ViewServiceOptions
             {
                 Title = Strings.PaymentCheckout,
                 Width = 380,
@@ -229,7 +229,7 @@ namespace Telegram.Common
                 return;
             }
 
-            var parameters = new ViewServiceParams
+            var parameters = new ViewServiceOptions
             {
                 Title = Strings.PaymentCheckout,
                 Width = 380,

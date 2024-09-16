@@ -214,7 +214,7 @@ namespace Telegram.Services
 
         public async Task JoinAsync(XamlRoot xamlRoot, long chatId)
         {
-            if (await MediaDeviceWatcher.CheckIfUnsupportedAsync(xamlRoot))
+            if (MediaDeviceWatcher.IsUnsupported(xamlRoot))
             {
                 return;
             }
@@ -235,7 +235,7 @@ namespace Telegram.Services
 
         public async Task CreateAsync(XamlRoot xamlRoot, long chatId)
         {
-            if (await MediaDeviceWatcher.CheckIfUnsupportedAsync(xamlRoot))
+            if (MediaDeviceWatcher.IsUnsupported(xamlRoot))
             {
                 return;
             }
@@ -1163,7 +1163,7 @@ namespace Telegram.Services
                         return;
                     }
 
-                    var parameters = new ViewServiceParams
+                    var parameters = new ViewServiceOptions
                     {
                         Title = IsChannel ? Strings.VoipChannelVoiceChat : Strings.VoipGroupVoiceChat,
                         Width = call.IsRtmpStream ? 580 : 380,

@@ -1071,9 +1071,9 @@ namespace Telegram.Controls.Gallery
             }
             else
             {
-                var parameters = new ViewServiceParams
+                var parameters = new ViewServiceOptions
                 {
-                    ViewMode = ApplicationViewMode.CompactOverlay,
+                    ViewMode = ViewServiceMode.CompactOverlay,
                     Width = width,
                     Height = height,
                     PersistedId = "PIP",

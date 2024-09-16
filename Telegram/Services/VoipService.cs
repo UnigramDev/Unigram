@@ -267,7 +267,7 @@ namespace Telegram.Services
 
         public async void Start(INavigationService navigation, User user, bool video)
         {
-            if (await MediaDeviceWatcher.CheckIfUnsupportedAsync(navigation.XamlRoot))
+            if (MediaDeviceWatcher.IsUnsupported(navigation.XamlRoot))
             {
                 return;
             }
@@ -772,7 +772,7 @@ namespace Telegram.Services
 
             if (_callPage == null)
             {
-                var parameters = new ViewServiceParams
+                var parameters = new ViewServiceOptions
                 {
                     Width = 720,
                     Height = 540,

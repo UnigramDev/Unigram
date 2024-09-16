@@ -53,7 +53,7 @@ namespace Telegram.Navigation.Services
         void Suspend();
 
 
-        Task<ViewLifetimeControl> OpenAsync(ViewServiceParams parameters);
+        Task<ViewLifetimeControl> OpenAsync(ViewServiceOptions parameters);
         Task<ViewLifetimeControl> OpenAsync(Type page, object parameter = null, string title = null, Size size = default);
         Task<ContentDialogResult> ShowPopupAsync(ContentPopup popup, object parameter = null, ElementTheme requestedTheme = ElementTheme.Default);
 
@@ -403,7 +403,7 @@ namespace Telegram.Navigation.Services
             }
         }
 
-        public Task<ViewLifetimeControl> OpenAsync(ViewServiceParams parameters) => viewService.OpenAsync(parameters);
+        public Task<ViewLifetimeControl> OpenAsync(ViewServiceOptions parameters) => viewService.OpenAsync(parameters);
 
         public Task<ViewLifetimeControl> OpenAsync(Type page, object parameter = null, string title = null, Size size = default)
         {

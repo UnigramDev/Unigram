@@ -30,12 +30,18 @@ namespace Telegram.Services.ViewService
         /// It won't not be called before all previously started async operations on <see cref="CoreDispatcher"/> complete. <remarks>DO NOT call operations on Dispatcher after this</remarks></returns>
         Task<ViewLifetimeControl> OpenAsync(Type page, object parameter = null, string title = null, Size size = default, int session = 0, string id = "0");
 
-        Task<ViewLifetimeControl> OpenAsync(ViewServiceParams parameters);
+        Task<ViewLifetimeControl> OpenAsync(ViewServiceOptions options);
     }
 
-    public partial class ViewServiceParams
+    public enum ViewServiceMode
     {
-        public ApplicationViewMode ViewMode { get; set; } = ApplicationViewMode.Default;
+        Default,
+        CompactOverlay
+    }
+
+    public partial class ViewServiceOptions
+    {
+        public ViewServiceMode ViewMode { get; set; } = ViewServiceMode.Default;
 
         public string Title { get; set; }
 
@@ -70,7 +76,7 @@ namespace Telegram.Services.ViewService
             _mainWindowCreated.TrySetResult(true);
         }
 
-        public Task<ViewLifetimeControl> OpenAsync(ViewServiceParams parameters)
+        public Task<ViewLifetimeControl> OpenAsync(ViewServiceOptions parameters)
         {
             if (ApiInfo.HasMultipleViews)
             {
@@ -93,7 +99,7 @@ namespace Telegram.Services.ViewService
             }
         }
 
-        private async Task<ViewLifetimeControl> FacadeAsync(ViewServiceParams parameters)
+        private async Task<ViewLifetimeControl> FacadeAsync(ViewServiceOptions parameters)
         {
             var tsc = new TaskCompletionSource<ViewLifetimeControl>();
 
@@ -111,7 +117,7 @@ namespace Telegram.Services.ViewService
             return await tsc.Task;
         }
 
-        private async Task<ViewLifetimeControl> OpenAsyncInternal(ViewServiceParams parameters)
+        private async Task<ViewLifetimeControl> OpenAsyncInternal(ViewServiceOptions parameters)
         {
             await _mainWindowCreated.Task;
 
@@ -138,15 +144,20 @@ namespace Telegram.Services.ViewService
                 });
 
                 var control = await tsc.Task;
+                var viewMode = parameters.ViewMode switch
+                {
+                    ViewServiceMode.CompactOverlay => ApplicationViewMode.CompactOverlay,
+                    _ => ApplicationViewMode.Default
+                };
 
-                var preferences = ViewModePreferences.CreateDefault(parameters.ViewMode);
+                var preferences = ViewModePreferences.CreateDefault(viewMode);
                 if (parameters.Width != 0 && parameters.Height != 0)
                 {
                     preferences.CustomSize = new Size(parameters.Width, parameters.Height);
                     preferences.ViewSizePreference = ViewSizePreference.Custom;
                 }
 
-                await ApplicationViewSwitcher.TryShowAsViewModeAsync(control.Id, parameters.ViewMode, preferences);
+                await ApplicationViewSwitcher.TryShowAsViewModeAsync(control.Id, viewMode, preferences);
 
                 if (parameters.Width != 0 && parameters.Height != 0)
                 {
