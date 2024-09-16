@@ -505,7 +505,10 @@ namespace Telegram.Common
         {
             try
             {
-                recognizer.CompleteGesture();
+                if (recognizer.IsActive)
+                {
+                    recognizer.CompleteGesture();
+                }
             }
             catch
             {
