@@ -30,6 +30,10 @@
                             Value="Stretch" />
                 </Style>
             </ListView.ItemContainerStyle>
+            <!-- TODO: WinUI 3 -->
+            <ListView.ItemContainerTransitions>
+                <TransitionCollection />
+            </ListView.ItemContainerTransitions>
         </ListView>
 
         <controls:ScrollViewerScrim Background="{ThemeResource ContentDialogBackground}"

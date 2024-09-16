@@ -25,7 +25,6 @@ using Telegram.Td.Api;
 using Telegram.ViewModels.Delegates;
 using Telegram.Views.Host;
 using Telegram.Views.Popups;
-using Windows.Devices.Enumeration;
 using Windows.Foundation;
 using Windows.System;
 using Windows.System.Display;
@@ -1562,7 +1561,7 @@ namespace Telegram.Views.Calls
 
                 _dispatcherQueue.TryEnqueue(DispatcherQueuePriority.Normal, async () =>
                 {
-                    var videoDevices = await DeviceInformation.FindAllAsync(DeviceClass.VideoCapture);
+                    var videoDevices = await Windows.Devices.Enumeration.DeviceInformation.FindAllAsync(Windows.Devices.Enumeration.DeviceClass.VideoCapture);
                     foreach (var device in videoDevices)
                     {
                         var deviceItem = new ToggleMenuFlyoutItem();
@@ -1592,7 +1591,7 @@ namespace Telegram.Views.Calls
 
                 _dispatcherQueue.TryEnqueue(DispatcherQueuePriority.Normal, async () =>
                 {
-                    var inputDevices = await DeviceInformation.FindAllAsync(DeviceClass.AudioCapture);
+                    var inputDevices = await Windows.Devices.Enumeration.DeviceInformation.FindAllAsync(Windows.Devices.Enumeration.DeviceClass.AudioCapture);
                     foreach (var device in inputDevices)
                     {
                         var deviceItem = new ToggleMenuFlyoutItem();
@@ -1622,7 +1621,7 @@ namespace Telegram.Views.Calls
 
                 _dispatcherQueue.TryEnqueue(DispatcherQueuePriority.Normal, async () =>
                 {
-                    var outputDevices = await DeviceInformation.FindAllAsync(DeviceClass.AudioRender);
+                    var outputDevices = await Windows.Devices.Enumeration.DeviceInformation.FindAllAsync(Windows.Devices.Enumeration.DeviceClass.AudioRender);
                     foreach (var device in outputDevices)
                     {
                         var deviceItem = new ToggleMenuFlyoutItem();
@@ -2465,7 +2464,7 @@ namespace Telegram.Views.Calls
         Expanded
     }
 
-    public partial class ParticipantsGrid : Windows.UI.Xaml.Controls.Panel
+    public partial class ParticipantsGrid : Panel
     {
         private ParticipantsGridMode _mode = ParticipantsGridMode.Compact;
         public ParticipantsGridMode Mode
