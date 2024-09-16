@@ -24,6 +24,7 @@ using Telegram.Streams;
 using Telegram.Td;
 using Telegram.Td.Api;
 using Telegram.ViewModels;
+using Telegram.Views;
 using Windows.Foundation;
 using Windows.Storage.Streams;
 using Windows.UI;
@@ -1739,8 +1740,22 @@ namespace Telegram.Controls.Cells
 
             var context = WindowContext.ForXamlRoot(this);
 
-            var service = new TLNavigationService(_clientService, null, context, frame, _clientService.SessionId, "ciccio"); // BootStrapper.Current.NavigationServiceFactory(BootStrapper.BackButton.Ignore, frame, _clientService.SessionId, "ciccio", false);
+            var service = new TLNavigationService(_clientService, null, context, frame, _clientService.SessionId, "ChatPreview");
             service.NavigateToChat(_chat);
+
+            var chatPage = frame.Content as ChatPage;
+            var chatView = chatPage?.Content as ChatView;
+
+            if (chatView != null)
+            {
+                void handler(object sender, RoutedEventArgs e)
+                {
+                    chatView.Unloaded -= handler;
+                    chatView.Deactivate(false);
+                }
+
+                chatView.Unloaded += handler;
+            }
 
             grid.Children.Add(frame);
             grid.CornerRadius = new CornerRadius(8);
