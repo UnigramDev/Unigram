@@ -728,6 +728,12 @@ namespace Telegram.ViewModels
                 {
                     Handle(update.ChatId, update.Position.Order);
                 }
+
+                // Can't be else otherwise cell won't update while archive is open
+                if (update.Position.List is ChatListArchive)
+                {
+                    _viewModel.Delegate?.UpdateChatListArchive();
+                }
             }
 
             public void Handle(UpdateChatLastMessage update)
@@ -743,7 +749,22 @@ namespace Telegram.ViewModels
             public void Handle(long chatId, IList<ChatPosition> positions, bool lastMessage = false)
             {
                 var chat = GetChat(chatId);
-                var order = positions.GetOrder(_chatList);
+                var order = 0L;
+
+                for (int i = 0; i < positions.Count; i++)
+                {
+                    var position = positions[i];
+                    if (position.List.AreTheSame(_chatList))
+                    {
+                        order = position.Order;
+                    }
+                    
+                    // Can't be else otherwise cell won't update while archive is open
+                    if (position.List is ChatListArchive)
+                    {
+                        _viewModel.Delegate?.UpdateChatListArchive();
+                    }
+                }
 
                 Handle(chat, order, lastMessage);
             }
@@ -789,8 +810,11 @@ namespace Telegram.ViewModels
                         {
                             Remove(chat);
                         }
+                        else
+                        {
+                            _chats.Add(chat.Id);
+                        }
 
-                        _chats.Add(chat.Id);
                         Insert(Math.Min(Count, next), chat);
 
                         if (next == Count - 1)
