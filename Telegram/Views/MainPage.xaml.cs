@@ -264,14 +264,6 @@ namespace Telegram.Views
             this.BeginOnUIThread(() => Downloads.UpdateFileDownloads(update));
         }
 
-        public void Handle(UpdateChatPosition update)
-        {
-            if (update.Position.List is ChatListArchive)
-            {
-                this.BeginOnUIThread(() => ArchivedChats.UpdateChatList(ViewModel.ClientService, new ChatListArchive()));
-            }
-        }
-
         public void Handle(UpdateChatIsMarkedAsUnread update)
         {
             Handle(update.ChatId, (chatView, chat) => chatView.UpdateChatReadInbox(chat));
@@ -948,7 +940,6 @@ namespace Telegram.Views
         {
             ViewModel.Aggregator.Subscribe<UpdateFileDownloads>(this, Handle)
                 .Subscribe<UpdateChatActiveStories>(Handle)
-                .Subscribe<UpdateChatPosition>(Handle)
                 .Subscribe<UpdateChatIsMarkedAsUnread>(Handle)
                 .Subscribe<UpdateChatReadInbox>(Handle)
                 .Subscribe<UpdateChatReadOutbox>(Handle)
@@ -2183,6 +2174,11 @@ namespace Telegram.Views
         private void Proxy_Click(object sender, RoutedEventArgs e)
         {
             MasterDetail.NavigationService.Navigate(typeof(SettingsProxyPage));
+        }
+
+        public void UpdateChatListArchive()
+        {
+            this.BeginOnUIThread(() => ArchivedChats.UpdateChatList(ViewModel.ClientService, new ChatListArchive()));
         }
 
         public void UpdateChatFolders()
