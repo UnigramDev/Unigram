@@ -1678,22 +1678,25 @@ namespace Telegram.Views
                     flyout.CreateFlyoutItem(ViewModel.SendContact, Strings.AttachContact, Icons.Person);
                 }
 
-                if (ViewModel.IsPremium
-                    && ViewModel.ClientService.Options.GiftPremiumFromAttachmentMenu
-                    && ViewModel.ClientService.TryGetUserFull(chat, out UserFullInfo fullInfo) && fullInfo.PremiumGiftOptions.Count > 0)
+                if (ViewModel.Type is DialogType.History or DialogType.Thread)
                 {
-                    flyout.CreateFlyoutItem(ViewModel.GiftPremium, Strings.GiftPremium, Icons.GiftPremium);
-                }
-
-                var bots = ViewModel.ClientService.GetBotsForChat(chat.Id);
-                if (bots.Count > 0)
-                {
-                    flyout.CreateFlyoutSeparator();
-
-                    foreach (var bot in bots)
+                    if (ViewModel.IsPremium
+                        && ViewModel.ClientService.Options.GiftPremiumFromAttachmentMenu
+                        && ViewModel.ClientService.TryGetUserFull(chat, out UserFullInfo fullInfo) && fullInfo.PremiumGiftOptions.Count > 0)
                     {
-                        var item = flyout.CreateFlyoutItem(ViewModel.OpenMiniApp, bot, bot.Name, bot.BotUserId == 1985737506 ? Icons.Wallet : Icons.Bot);
-                        item.ContextRequested += AttachmentMenuBot_ContextRequested;
+                        flyout.CreateFlyoutItem(ViewModel.GiftPremium, Strings.GiftPremium, Icons.GiftPremium);
+                    }
+
+                    var bots = ViewModel.ClientService.GetBotsForChat(chat.Id);
+                    if (bots.Count > 0)
+                    {
+                        flyout.CreateFlyoutSeparator();
+
+                        foreach (var bot in bots)
+                        {
+                            var item = flyout.CreateFlyoutItem(ViewModel.OpenMiniApp, bot, bot.Name, bot.BotUserId == 1985737506 ? Icons.Wallet : Icons.Bot);
+                            item.ContextRequested += AttachmentMenuBot_ContextRequested;
+                        }
                     }
                 }
             }

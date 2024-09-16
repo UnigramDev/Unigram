@@ -588,6 +588,11 @@ namespace Telegram.Controls.Gallery
 
         private string ConvertDate(int value)
         {
+            if (value == 0)
+            {
+                return string.Empty;
+            }
+
             return Formatter.DateAt(value);
         }
 

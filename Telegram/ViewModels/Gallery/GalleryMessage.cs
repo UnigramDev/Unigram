@@ -67,6 +67,11 @@ namespace Telegram.ViewModels.Gallery
         {
             get
             {
+                if (_message.SchedulingState != null)
+                {
+                    return null;
+                }
+
                 if (_message.ForwardInfo != null)
                 {
                     // TODO: ...
