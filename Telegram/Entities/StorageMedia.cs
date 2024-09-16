@@ -86,20 +86,6 @@ namespace Telegram.Entities
             }
         }
 
-        protected bool _hasSpoiler;
-        public bool HasSpoiler
-        {
-            get => _hasSpoiler;
-            set => Set(ref _hasSpoiler, value);
-        }
-
-        protected bool _showCaptionAboveMedia = false;
-        public bool ShowCaptionAboveMedia
-        {
-            get => _showCaptionAboveMedia;
-            set => Set(ref _showCaptionAboveMedia, value);
-        }
-
         protected MessageSelfDestructType _ttl;
         public MessageSelfDestructType Ttl
         {
