@@ -122,7 +122,7 @@ namespace Telegram.ViewModels.Supergroups
             get => _enablePaidReactions;
             set => Set(ref _enablePaidReactions, value);
         }
-        
+
         public MvxObservableCollection<ReactionType> Items { get; private set; }
 
         protected override async Task OnNavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)

@@ -19,6 +19,7 @@ namespace Telegram.Collections
         bool HasMoreItems { get; }
     }
 
+    // TODO: Does it make sense to replace local implementations with this?
     public partial class IncrementalCollection<T> : MvxObservableCollection<T>, ISupportIncrementalLoading
     {
         private readonly IIncrementalCollectionOwner _owner;

@@ -4,19 +4,22 @@
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+using Microsoft.UI.Xaml.Navigation;
 using Microsoft.UI.Xaml.Controls;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Telegram.Collections;
 using Telegram.Common;
 using Telegram.Converters;
 using Telegram.Navigation;
+using Telegram.Navigation.Services;
 using Telegram.Services;
 using Telegram.Td.Api;
 
 namespace Telegram.ViewModels
 {
-    public partial class ContactsViewModel : MultiViewModelBase, IChildViewModel
+    public partial class ContactsViewModel : MultiViewModelBase, IHandle
     {
         private readonly IVoipService _voipService;
 
@@ -34,31 +37,16 @@ namespace Telegram.ViewModels
             Items = new SortedObservableCollection<User>(_comparer);
         }
 
-        public async void Activate()
+        protected override Task OnNavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
+        {
+            Load(Settings.IsContactsSortedByEpoch);
+            return Task.CompletedTask;
+        }
+
+        public override void Subscribe()
         {
             Aggregator.Subscribe<UpdateUserStatus>(this, Handle)
                 .Subscribe<UpdateUserIsContact>(Handle);
-
-            using (await _loadMoreLock.WaitAsync())
-            {
-                var response = await ClientService.SendAsync(new GetContacts());
-                if (response is Telegram.Td.Api.Users users)
-                {
-                    var items = new List<User>();
-
-                    foreach (var user in ClientService.GetUsers(users.UserIds))
-                    {
-                        items.Add(user);
-                    }
-
-                    Items.ReplaceWith(items);
-                }
-            }
-        }
-
-        public void Deactivate()
-        {
-            Aggregator.Unsubscribe(this);
         }
 
         public bool IsSortedByEpoch
@@ -93,8 +81,16 @@ namespace Telegram.ViewModels
                     }
 
                     Items.ReplaceWith(items);
+                    IsEmpty = items.Empty();
                 }
             }
+        }
+
+        private bool _isEmpty;
+        public bool IsEmpty
+        {
+            get => _isEmpty;
+            set => Set(ref _isEmpty, value);
         }
 
         private SearchUsersCollection _search;

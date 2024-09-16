@@ -276,6 +276,7 @@ namespace Telegram.Controls.Chats
         {
             if (_pattern != null && _patternPath == file.Local.Path && _rasterizationScale == scale)
             {
+                UpdatePattern(pattern, 1);
                 return;
             }
 
@@ -309,10 +310,11 @@ namespace Telegram.Controls.Chats
                         BorderBrush = null;
                         UpdatePattern(pattern, 1);
                     }
-                    else
-                    {
-                        s.Dispose();
-                    }
+                    // TODO: Dispose here shouldn't be needed
+                    //else
+                    //{
+                    //    s.Dispose();
+                    //}
                 }
 
                 if (_pattern != null)

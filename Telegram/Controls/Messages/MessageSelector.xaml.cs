@@ -157,9 +157,9 @@ namespace Telegram.Controls.Messages
                 }
                 else
                 {
-                    Icon.VerticalAlignment = VerticalAlignment.Center;
+                    Icon.VerticalAlignment = VerticalAlignment.Bottom;
                     Icon.HorizontalAlignment = HorizontalAlignment.Left;
-                    Icon.Margin = new Thickness(28, 0, 0, 4);
+                    Icon.Margin = new Thickness(28, 0, 0, 0);
                 }
 
                 Grid.SetColumn(Icon, 1);
@@ -306,7 +306,7 @@ namespace Telegram.Controls.Messages
                     {
                         Icon.VerticalAlignment = VerticalAlignment.Bottom;
                         Icon.HorizontalAlignment = HorizontalAlignment.Left;
-                        Icon.Margin = new Thickness(28, 0, 0, 4);
+                        Icon.Margin = new Thickness(28, 0, 0, 0);
                     }
 
                     Grid.SetColumn(Icon, 1);

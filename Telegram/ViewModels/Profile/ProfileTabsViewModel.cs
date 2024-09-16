@@ -538,7 +538,7 @@ namespace Telegram.ViewModels.Profile
         public async void ForwardMessage(MessageWithOwner message)
         {
             UnselectMessages();
-            await ShowPopupAsync(typeof(ChooseChatsPopup), new ChooseChatsConfigurationShareMessage(message.ChatId, message.Id));
+            await ShowPopupAsync(new ChooseChatsPopup(), new ChooseChatsConfigurationShareMessage(message.ChatId, message.Id));
         }
 
         #endregion
@@ -584,7 +584,7 @@ namespace Telegram.ViewModels.Profile
             if (messages.Count > 0)
             {
                 UnselectMessages();
-                await ShowPopupAsync(typeof(ChooseChatsPopup), new ChooseChatsConfigurationShareMessages(messages.Select(x => x.Key)));
+                await ShowPopupAsync(new ChooseChatsPopup(), new ChooseChatsConfigurationShareMessages(messages.Select(x => x.Key)));
             }
         }
 

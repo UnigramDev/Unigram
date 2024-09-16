@@ -10,7 +10,7 @@ using Telegram.ViewModels;
 
 namespace Telegram.Controls.Messages
 {
-    public class ReactionAsPaidButton : ReactionButton
+    public partial class ReactionAsPaidButton : ReactionButton
     {
         public ReactionAsPaidButton()
         {

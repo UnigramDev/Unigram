@@ -33,7 +33,7 @@ namespace Telegram.Views.Premium.Popups
 
                 if (await ViewModel.OpenAsync(feature))
                 {
-                    await ShowAsync();
+                    await this.ShowQueuedAsync(XamlRoot);
                 }
             }
         }

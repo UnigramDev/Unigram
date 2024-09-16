@@ -274,7 +274,12 @@ namespace Telegram.Controls
         {
             if (sender is Button button && FocusPrimaryButton)
             {
-                button.Focus(FocusState.Keyboard);
+                if (button.Focus(FocusState.Keyboard))
+                {
+                    return;
+                }
+
+                this.Focus(FocusState.Pointer);
             }
         }
 
@@ -474,7 +479,7 @@ namespace Telegram.Controls
             return false;
         }
 
-        public static ContentPopup Block()
+        public static ContentPopup Block(XamlRoot xamlRoot)
         {
             var content = new Grid();
             content.Children.Add(new Microsoft.UI.Xaml.Controls.ProgressRing
@@ -501,7 +506,7 @@ namespace Telegram.Controls
 
             toast.Closing += OnBlockedClosing;
 
-            _ = toast.ShowAsync();
+            _ = toast.ShowQueuedAsync(xamlRoot);
             return toast;
         }
 

@@ -62,5 +62,7 @@
                                FontFamily="{ThemeResource EmojiThemeFontFamily}"
                                FontSize="14"
                                Width="40"
-                               Height="32" />
+                               Height="32"
+                               IsTabStop="False"
+                               VerticalAlignment="Bottom" />
 </Grid>

@@ -38,6 +38,8 @@ namespace Telegram.Views.Popups
 
         private void OnClosing(ContentDialog sender, ContentDialogClosingEventArgs args)
         {
+            _completion.TrySetResult(null);
+
             UnloadAtIndex(0);
             UnloadAtIndex(1);
         }
@@ -74,7 +76,7 @@ namespace Telegram.Views.Popups
 
         private void ContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
         {
-            ViewModel.Completion = _completion;
+            _completion.SetResult(ViewModel.Send());
         }
 
         private void ContentDialog_SecondaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)

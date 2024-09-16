@@ -160,7 +160,7 @@ namespace Telegram.ViewModels.Chats
 
         public async void ShareLink()
         {
-            await ShowPopupAsync(typeof(ChooseChatsPopup), new ChooseChatsConfigurationPostLink(new HttpUrl("https://" + Link)));
+            await ShowPopupAsync(new ChooseChatsPopup(), new ChooseChatsConfigurationPostLink(new HttpUrl("https://" + Link)));
         }
 
         public void OpenProfile(ChatBoost chatBoost)

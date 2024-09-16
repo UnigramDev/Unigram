@@ -163,12 +163,12 @@ namespace Telegram.Common
 
         public async void ShowPromo(PremiumSource source = null)
         {
-            await ShowPopupAsync(typeof(PromoPopup), source);
+            await ShowPopupAsync(new PromoPopup(), source);
         }
 
         public Task ShowPromoAsync(PremiumSource source = null, ElementTheme requestedTheme = ElementTheme.Default)
         {
-            return ShowPopupAsync(typeof(PromoPopup), source, requestedTheme: requestedTheme);
+            return ShowPopupAsync(new PromoPopup(), source, requestedTheme: requestedTheme);
         }
 
         public void NavigateToInvoice(MessageViewModel message)
@@ -188,7 +188,7 @@ namespace Telegram.Common
             // TODO: how can we do this while coming from a mini app?
             if (paymentForm.Type is PaymentFormTypeStars)
             {
-                await ShowPopupAsync(typeof(PayPopup), new PaymentFormArgs(inputInvoice, paymentForm, content));
+                await ShowPopupAsync(new PayPopup(), new PaymentFormArgs(inputInvoice, paymentForm, content));
                 return;
             }
 

@@ -115,7 +115,7 @@ namespace Telegram.Controls.Chats
 
                     TitleLabel.Text = channel ? Strings.VoipChannelVoiceChat : Strings.VoipGroupVoiceChat;
 
-                    JoinButton.Background = BootStrapper.Current.Resources["StartButtonBackground"] as Brush;
+                    JoinButton.Background = BootStrapper.Current.Resources["PillButtonBackground"] as Brush;
                     JoinButton.Content = Strings.VoipChatJoin;
                 }
 

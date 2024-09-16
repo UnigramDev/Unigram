@@ -13,10 +13,8 @@ using Telegram.Controls;
 using Telegram.Controls.Cells;
 using Telegram.Controls.Media;
 using Telegram.Services;
-using Telegram.Streams;
 using Telegram.Td.Api;
 using Telegram.ViewModels;
-using Telegram.ViewModels.Stars;
 using Windows.Foundation;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
@@ -147,7 +145,7 @@ namespace Telegram.Views.Stars.Popups
         }
     }
 
-    public class PaidReactorsPanel : Panel, IDiffEqualityComparer<PaidReactor>
+    public partial class PaidReactorsPanel : Panel, IDiffEqualityComparer<PaidReactor>
     {
         private readonly Dictionary<PaidReactor, PaidReactorCell> _cache = new();
 
@@ -336,7 +334,7 @@ namespace Telegram.Views.Stars.Popups
         }
     }
 
-    public class SteppedValue
+    public partial class SteppedValue
     {
         public double progress = 0;
         public double aprogress;

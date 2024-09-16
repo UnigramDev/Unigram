@@ -173,7 +173,7 @@ namespace Telegram.Views
 
         private async void Stars_Click(object sender, RoutedEventArgs e)
         {
-            await MasterDetail.NavigationService.ShowPopupAsync(typeof(StarsPopup));
+            await MasterDetail.NavigationService.ShowPopupAsync(new StarsPopup());
         }
 
         private void Business_Click(object sender, RoutedEventArgs e)

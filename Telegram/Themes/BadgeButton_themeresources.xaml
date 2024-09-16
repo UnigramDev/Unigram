@@ -848,7 +848,7 @@
                             </VisualStateGroup>
                         </VisualStateManager.VisualStateGroups>
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="48" />
+                            <ColumnDefinition Width="52" />
                             <ColumnDefinition Width="Auto" />
                             <ColumnDefinition />
                             <ColumnDefinition Width="Auto" />
@@ -857,7 +857,7 @@
                         <TextBlock FontSize="{StaticResource GlyphMediumFontSize}"
                                    HorizontalAlignment="Left"
                                    VerticalAlignment="Center"
-                                   Margin="12,0,0,0"
+                                   Margin="16,0,0,0"
                                    AutomationProperties.AccessibilityView="Raw"
                                    Text="{TemplateBinding Glyph}"
                                    FontFamily="{StaticResource SymbolThemeFontFamily}" />

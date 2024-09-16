@@ -1,0 +1,77 @@
+<controls:ContentPopup x:Class="Telegram.Views.Create.NewGroupPopup"
+                       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                       xmlns:local="using:Telegram.Views"
+                       xmlns:controls="using:Telegram.Controls"
+                       xmlns:cells="using:Telegram.Controls.Cells"
+                       xmlns:drawers="using:Telegram.Controls.Drawers"
+                       xmlns:muxc="using:Microsoft.UI.Xaml.Controls"
+                       xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                       mc:Ignorable="d"
+                       PrimaryButtonClick="OnPrimaryButtonClick"
+                       IsPrimaryButtonEnabled="{x:Bind ViewModel.CanCreate, Mode=OneWay}"
+                       Padding="24,16,24,24">
+
+    <StackPanel>
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition />
+            </Grid.ColumnDefinitions>
+            <controls:ProfilePicture Click="{x:Bind ViewModel.ChoosePhoto}"
+                                     Source="{x:Bind ConvertPhoto(ViewModel.Title, ViewModel.Preview), Mode=OneWay}"
+                                     AutomationProperties.Name="{CustomResource AccDescrProfilePicture}"
+                                     Height="64"
+                                     Width="64" />
+
+            <TextBlock Text="{CustomResource NewChannel}"
+                       FontSize="20"
+                       FontFamily="XamlAutoFontFamily"
+                       FontWeight="SemiBold"
+                       VerticalAlignment="Center"
+                       Margin="12,0,0,0"
+                       Grid.Column="1" />
+        </Grid>
+
+        <Grid Margin="0,16">
+            <TextBox x:Name="TitleLabel"
+                     Loaded="Title_Loaded"
+                     Text="{x:Bind ViewModel.Title, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                     FontFamily="{ThemeResource EmojiThemeFontFamily}"
+                     MaxLength="{StaticResource ChatTitleMaxLength}"
+                     Header="{CustomResource EnterGroupNamePlaceholder}">
+                <FlyoutBase.AttachedFlyout>
+                    <Flyout x:Name="EmojiFlyout"
+                            Placement="Top"
+                            ShowMode="Transient">
+                        <Flyout.FlyoutPresenterStyle>
+                            <Style TargetType="FlyoutPresenter"
+                                   BasedOn="{StaticResource DefaultFlyoutPresenterStyle}">
+                                <Setter Property="Padding"
+                                        Value="0" />
+                            </Style>
+                        </Flyout.FlyoutPresenterStyle>
+                        <drawers:EmojiDrawer x:Name="EmojiPanel"
+                                             ItemClick="Emoji_ItemClick"
+                                             Width="300"
+                                             Height="360" />
+                    </Flyout>
+                </FlyoutBase.AttachedFlyout>
+            </TextBox>
+            <controls:GlyphButton Click="Emoji_Click"
+                                  Glyph="&#xE76E;"
+                                  AllowFocusOnInteraction="False"
+                                  HorizontalAlignment="Right"
+                                  VerticalAlignment="Bottom"
+                                  Width="36"
+                                  Height="32" />
+        </Grid>
+
+        <ComboBox ItemsSource="{x:Bind ViewModel.TtlOptions}"
+                  SelectedIndex="{x:Bind ViewModel.Ttl, Mode=TwoWay}"
+                  DisplayMemberPath="Text"
+                  Header="{CustomResource AutoDeleteMessages}"
+                  HorizontalAlignment="Stretch" />
+    </StackPanel>
+</controls:ContentPopup>

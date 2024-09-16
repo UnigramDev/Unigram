@@ -264,7 +264,7 @@ namespace Telegram.ViewModels
             var file = await ApplicationData.Current.LocalFolder.TryGetItemAsync(fileName) as StorageFile;
             if (file != null)
             {
-                await ShowPopupAsync(typeof(ChooseChatsPopup), new ChooseChatsConfigurationPostMessage(new InputMessageDocument(new InputFileLocal(file.Path), null, true, null)));
+                await ShowPopupAsync(new ChooseChatsPopup(), new ChooseChatsConfigurationPostMessage(new InputMessageDocument(new InputFileLocal(file.Path), null, true, null)));
             }
         }
 
@@ -291,7 +291,7 @@ namespace Telegram.ViewModels
                 var file = await ApplicationData.Current.LocalFolder.CreateFileAsync("video_info.txt", CreationCollisionOption.ReplaceExisting);
 
                 await FileIO.WriteTextAsync(file, builder.ToString());
-                await ShowPopupAsync(typeof(ChooseChatsPopup), new ChooseChatsConfigurationPostMessage(new InputMessageDocument(new InputFileLocal(file.Path), null, true, null)));
+                await ShowPopupAsync(new ChooseChatsPopup(), new ChooseChatsConfigurationPostMessage(new InputMessageDocument(new InputFileLocal(file.Path), null, true, null)));
             }
             catch { }
         }

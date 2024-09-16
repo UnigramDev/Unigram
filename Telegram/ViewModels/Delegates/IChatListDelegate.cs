@@ -25,6 +25,8 @@ namespace Telegram.ViewModels.Delegates
 
         void UpdateChatFolders();
 
+        void UpdateChatListArchive();
+
         Task UpdateLayoutAsync();
     }
 }

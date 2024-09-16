@@ -22,9 +22,6 @@
                              Color="#545a68" />
             <SolidColorBrush x:Key="PlaceholderBackgroundBrush"
                              Color="#262a2d" />
-
-            <StaticResource x:Key="AccentButtonBackgroundDisabled"
-                            ResourceKey="SystemAccentColorDark2" />
         </ResourceDictionary>
         <ResourceDictionary x:Key="Light">
             <x:String x:Key="BreadcrumbBarChevronLeftToRight">&#xE0E3;</x:String>
@@ -45,9 +42,6 @@
                              Color="#c2c2c2" />
             <SolidColorBrush x:Key="PlaceholderBackgroundBrush"
                              Color="#f6f6f6" />
-
-            <StaticResource x:Key="AccentButtonBackgroundDisabled"
-                            ResourceKey="SystemAccentColorLight2" />
         </ResourceDictionary>
     </ResourceDictionary.ThemeDictionaries>
 

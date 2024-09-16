@@ -794,7 +794,7 @@ namespace Telegram.Services
                 return;
             }
 
-            callPage.DispatcherQueue.TryEnqueue(() =>
+            callPage.BeginOnUIThread(() =>
             {
                 if (controller != null)
                 {

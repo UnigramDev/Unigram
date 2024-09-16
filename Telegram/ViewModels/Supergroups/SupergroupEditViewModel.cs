@@ -395,7 +395,7 @@ namespace Telegram.ViewModels.Supergroups
         {
             if (_chat is Chat chat)
             {
-                NavigationService.ShowPopupAsync(typeof(SupergroupReactionsPopup), chat.Id);
+                NavigationService.ShowPopupAsync(new SupergroupReactionsPopup(), chat.Id);
             }
         }
 

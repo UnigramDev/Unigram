@@ -109,19 +109,19 @@ namespace Telegram.Views.Supergroups.Popups
             }
             else
             {
-                var sourcePopupType = ViewModel.Mode switch
+                ContentPopup popup = ViewModel.Mode switch
                 {
-                    SupergroupChooseMemberMode.Promote => typeof(SupergroupEditAdministratorPopup),
-                    SupergroupChooseMemberMode.Restrict => typeof(SupergroupEditRestrictedPopup),
+                    SupergroupChooseMemberMode.Promote => new SupergroupEditAdministratorPopup(),
+                    SupergroupChooseMemberMode.Restrict => new SupergroupEditRestrictedPopup(),
                     _ => null
                 };
 
-                if (sourcePopupType == null)
+                if (popup == null)
                 {
                     return;
                 }
 
-                _ = ViewModel.NavigationService.ShowPopupAsync(sourcePopupType, new SupergroupEditMemberArgs(chat.Id, messageSender));
+                _ = ViewModel.NavigationService.ShowPopupAsync(popup, new SupergroupEditMemberArgs(chat.Id, messageSender));
             }
         }
 

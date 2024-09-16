@@ -1740,19 +1740,6 @@ namespace Telegram.Td.Api
             return 0;
         }
 
-        public static long GetOrder(this IList<ChatPosition> positions, ChatList chatList)
-        {
-            for (int i = 0; i < positions.Count; i++)
-            {
-                if (positions[i].List.AreTheSame(chatList))
-                {
-                    return positions[i].Order;
-                }
-            }
-
-            return 0;
-        }
-
         public static int ToYears(this Birthdate birthdate)
         {
             if (birthdate.Year == 0)

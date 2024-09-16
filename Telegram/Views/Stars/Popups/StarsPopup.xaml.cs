@@ -65,7 +65,7 @@ namespace Telegram.Views.Stars.Popups
         private void Buy_Click(object sender, Microsoft.UI.Xaml.RoutedEventArgs e)
         {
             Hide();
-            ViewModel.NavigationService.ShowPopupAsync(typeof(BuyPopup));
+            ViewModel.NavigationService.ShowPopupAsync(new BuyPopup());
         }
 
         private async void Gift_Click(object sender, Microsoft.UI.Xaml.RoutedEventArgs e)
@@ -79,7 +79,7 @@ namespace Telegram.Views.Stars.Popups
                 return;
             }
 
-            await ViewModel.NavigationService.ShowPopupAsync(typeof(BuyPopup), BuyStarsArgs.ForReceiverUser(user.Id));
+            await ViewModel.NavigationService.ShowPopupAsync(new BuyPopup(), BuyStarsArgs.ForReceiverUser(user.Id));
         }
     }
 }

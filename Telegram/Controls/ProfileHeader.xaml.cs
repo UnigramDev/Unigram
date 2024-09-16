@@ -1343,6 +1343,11 @@ namespace Telegram.Controls
                 {
                     flyout.CreateFlyoutItem(ViewModel.Discuss, Strings.ViewDiscussion, Icons.ChatEmpty);
                 }
+
+                if (supergroup.Status is ChatMemberStatusMember or ChatMemberStatusRestricted)
+                {
+                    flyout.CreateFlyoutItem(ViewModel.DeleteChat, supergroup.IsChannel ? Strings.LeaveChannelMenu : Strings.LeaveMegaMenu, Icons.Delete, destructive: true);
+                }
             }
             else if (chat.Type is ChatTypeBasicGroup basic && basicGroup != null)
             {

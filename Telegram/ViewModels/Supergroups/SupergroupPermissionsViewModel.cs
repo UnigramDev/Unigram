@@ -424,7 +424,7 @@ namespace Telegram.ViewModels.Supergroups
                 return;
             }
 
-            NavigationService.ShowPopupAsync(typeof(SupergroupChooseMemberPopup), new SupergroupChooseMemberArgs(chat.Id, SupergroupChooseMemberMode.Restrict));
+            NavigationService.ShowPopupAsync(new SupergroupChooseMemberPopup(), new SupergroupChooseMemberArgs(chat.Id, SupergroupChooseMemberMode.Restrict));
         }
 
         public void Banned()
@@ -448,7 +448,7 @@ namespace Telegram.ViewModels.Supergroups
                 return;
             }
 
-            NavigationService.ShowPopupAsync(typeof(SupergroupEditRestrictedPopup), new SupergroupEditMemberArgs(chat.Id, member.MemberId));
+            NavigationService.ShowPopupAsync(new SupergroupEditRestrictedPopup(), new SupergroupEditMemberArgs(chat.Id, member.MemberId));
         }
 
         public async void UnbanMember(ChatMember member)

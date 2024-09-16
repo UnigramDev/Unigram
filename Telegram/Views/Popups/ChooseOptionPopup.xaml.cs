@@ -56,7 +56,6 @@ namespace Telegram.Views.Popups
         }
     }
 
-    [GeneratedBindableCustomProperty]
     public partial class ChooseOptionItem
     {
         public ChooseOptionItem(object value, string text, bool check)

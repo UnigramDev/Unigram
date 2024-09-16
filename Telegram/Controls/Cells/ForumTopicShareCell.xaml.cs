@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
-using Telegram.Services;
+﻿using Telegram.Services;
 using Telegram.Streams;
 using Telegram.Td.Api;
 using Windows.Foundation;

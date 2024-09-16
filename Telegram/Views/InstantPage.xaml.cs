@@ -1792,7 +1792,7 @@ namespace Telegram.Views
                 return;
             }
 
-            await this.ShowPopupAsync(ViewModel.SessionId, typeof(ChooseChatsPopup), new ChooseChatsConfigurationPostLink(new HttpUrl(link.ToString())));
+            await this.ShowPopupAsync(ViewModel.SessionId, new ChooseChatsPopup(), new ChooseChatsConfigurationPostLink(new HttpUrl(link.ToString())));
         }
 
         private void Browser_Click(object sender, RoutedEventArgs e)

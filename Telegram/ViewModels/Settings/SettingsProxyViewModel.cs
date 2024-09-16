@@ -414,7 +414,7 @@ namespace Telegram.ViewModels.Settings
             var response = await ClientService.SendAsync(new GetProxyLink(proxy.Id));
             if (response is HttpUrl httpUrl)
             {
-                await ShowPopupAsync(typeof(ChooseChatsPopup), new ChooseChatsConfigurationPostLink(httpUrl));
+                await ShowPopupAsync(new ChooseChatsPopup(), new ChooseChatsConfigurationPostLink(httpUrl));
             }
         }
 

@@ -390,7 +390,7 @@ namespace Telegram.ViewModels.Folders
         {
             var tsc = new TaskCompletionSource<object>();
 
-            var confirm = await ShowPopupAsync(typeof(ShareFolderPopup), Tuple.Create(Id.Value, link), tsc);
+            var confirm = await ShowPopupAsync(new ShareFolderPopup(tsc), Tuple.Create(Id.Value, link));
             if (confirm == ContentDialogResult.Primary)
             {
                 var result = await tsc.Task;

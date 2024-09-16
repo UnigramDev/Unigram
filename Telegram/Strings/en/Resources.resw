@@ -5356,6 +5356,9 @@ Duration: {1}</value>
   <data name="formatterBannedUntilThisYear24H" xml:space="preserve">
     <value>MMM dd, HH:mm</value>
   </data>
+  <data name="formatterBoostExpired" xml:space="preserve">
+    <value>MMM dd, yyyy</value>
+  </data>
   <data name="formatterMonth" xml:space="preserve">
     <value>MMM dd</value>
   </data>
@@ -6798,6 +6801,12 @@ to unlock up to {0} similar channels.</value>
   <data name="NewChatsFromNonContactsCheck" xml:space="preserve">
     <value>Automatically archive</value>
   </data>
+  <data name="NewContact" xml:space="preserve">
+    <value>New Contact</value>
+  </data>
+  <data name="NewContactTitle" xml:space="preserve">
+    <value>New Contact</value>
+  </data>
   <data name="NewConversationShortcut" xml:space="preserve">
     <value>New conversation</value>
   </data>
@@ -6815,6 +6824,9 @@ to unlock up to {0} similar channels.</value>
   </data>
   <data name="NewMessages_other" xml:space="preserve">
     <value>{0} new messages</value>
+  </data>
+  <data name="NewMessageTitle" xml:space="preserve">
+    <value>New Message</value>
   </data>
   <data name="NewPoll" xml:space="preserve">
     <value>New Poll</value>

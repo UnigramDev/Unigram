@@ -544,7 +544,7 @@ namespace Telegram.ViewModels
                 var user = ClientService.GetUser(chat.Type is ChatTypePrivate privata ? privata.UserId : chat.Type is ChatTypeSecret secret ? secret.UserId : 0);
                 if (user != null)
                 {
-                    await ShowPopupAsync(typeof(ChooseChatsPopup), new ChooseChatsConfigurationPostMessage(new InputMessageContact(new Contact(user.PhoneNumber, user.FirstName, user.LastName, string.Empty, user.Id))));
+                    await ShowPopupAsync(new ChooseChatsPopup(), new ChooseChatsConfigurationPostMessage(new InputMessageContact(new Contact(user.PhoneNumber, user.FirstName, user.LastName, string.Empty, user.Id))));
                 }
             }
         }
@@ -740,7 +740,7 @@ namespace Telegram.ViewModels
                     return;
                 }
 
-                await ShowPopupAsync(typeof(ChooseChatsPopup), new ChooseChatsConfigurationStartBot(user));
+                await ShowPopupAsync(new ChooseChatsPopup(), new ChooseChatsConfigurationStartBot(user));
             }
             else
             {
@@ -985,6 +985,50 @@ namespace Telegram.ViewModels
             }
 
             ClientService.Send(new JoinChat(chat.Id));
+        }
+
+        public async void DeleteChat()
+        {
+            var chat = _chat;
+            if (chat == null)
+            {
+                return;
+            }
+
+            Logger.Info(chat.Type);
+
+            var updated = await ClientService.SendAsync(new GetChat(chat.Id)) as Chat ?? chat;
+            var dialog = new DeleteChatPopup(ClientService, updated, null, false);
+
+            var confirm = await ShowPopupAsync(dialog);
+            if (confirm == ContentDialogResult.Primary)
+            {
+                var check = dialog.IsChecked == true;
+
+                if (updated.Type is ChatTypeSecret secret)
+                {
+                    await ClientService.SendAsync(new CloseSecretChat(secret.SecretChatId));
+                }
+                else if (updated.Type is ChatTypeBasicGroup or ChatTypeSupergroup)
+                {
+                    await ClientService.SendAsync(new LeaveChat(updated.Id));
+                }
+
+                var user = ClientService.GetUser(updated);
+                if (user != null && user.Type is UserTypeRegular)
+                {
+                    ClientService.Send(new DeleteChatHistory(updated.Id, true, check));
+                }
+                else
+                {
+                    if (updated.Type is ChatTypePrivate privata && check)
+                    {
+                        await ClientService.SendAsync(new SetMessageSenderBlockList(new MessageSenderUser(privata.UserId), new BlockListMain()));
+                    }
+
+                    ClientService.Send(new DeleteChatHistory(updated.Id, true, false));
+                }
+            }
         }
 
         public async void Delete()
@@ -1240,7 +1284,7 @@ namespace Telegram.ViewModels
                 return;
             }
 
-            NavigationService.ShowPopupAsync(typeof(SupergroupEditAdministratorPopup), new SupergroupEditMemberArgs(chat.Id, member.MemberId));
+            NavigationService.ShowPopupAsync(new SupergroupEditAdministratorPopup(), new SupergroupEditMemberArgs(chat.Id, member.MemberId));
         }
 
         public void RestrictMember(ChatMember member)
@@ -1251,7 +1295,7 @@ namespace Telegram.ViewModels
                 return;
             }
 
-            NavigationService.ShowPopupAsync(typeof(SupergroupEditRestrictedPopup), new SupergroupEditMemberArgs(chat.Id, member.MemberId));
+            NavigationService.ShowPopupAsync(new SupergroupEditRestrictedPopup(), new SupergroupEditMemberArgs(chat.Id, member.MemberId));
         }
 
         public async void RemoveMember(ChatMember member)

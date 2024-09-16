@@ -18,6 +18,14 @@ using Windows.Storage.FileProperties;
 
 namespace Telegram.Entities
 {
+    public partial class StorageInvalid : StorageMedia
+    {
+        public StorageInvalid()
+            : base(null, 0)
+        {
+        }
+    }
+
     public abstract class StorageMedia : BindableBase
     {
         public StorageMedia(StorageFile file, ulong fileSize)
@@ -76,20 +84,6 @@ namespace Telegram.Entities
 
                 return _preview;
             }
-        }
-
-        protected bool _hasSpoiler;
-        public bool HasSpoiler
-        {
-            get => _hasSpoiler;
-            set => Set(ref _hasSpoiler, value);
-        }
-
-        protected bool _showCaptionAboveMedia = false;
-        public bool ShowCaptionAboveMedia
-        {
-            get => _showCaptionAboveMedia;
-            set => Set(ref _showCaptionAboveMedia, value);
         }
 
         protected MessageSelfDestructType _ttl;

@@ -147,7 +147,7 @@ namespace Telegram.ViewModels.Stories
 
         public Task ShareStoryAsync(StoryViewModel story)
         {
-            return ShowPopupAsync(typeof(ChooseChatsPopup), new ChooseChatsConfigurationShareStory(story.ChatId, story.StoryId), requestedTheme: ElementTheme.Dark);
+            return ShowPopupAsync(new ChooseChatsPopup(), new ChooseChatsConfigurationShareStory(story.ChatId, story.StoryId), requestedTheme: ElementTheme.Dark);
         }
 
         public Task TranslateStoryAsync(StoryViewModel story)

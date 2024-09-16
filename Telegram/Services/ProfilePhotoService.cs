@@ -13,7 +13,6 @@ using Telegram.Controls;
 using Telegram.Entities;
 using Telegram.Navigation.Services;
 using Telegram.Td.Api;
-using Telegram.ViewModels;
 using Telegram.Views.Popups;
 using Windows.Foundation;
 using Windows.Storage.Pickers;
@@ -23,7 +22,9 @@ namespace Telegram.Services
 {
     public interface IProfilePhotoService
     {
+        Task<InputChatPhoto> PreviewSetPhotoAsync(INavigationService navigation);
         Task<bool> SetPhotoAsync(INavigationService navigation, long? chatId, bool isPublic = false, bool isPersonal = false);
+        Task<InputChatPhoto> PreviewCreatePhotoAsync(INavigationService navigation);
         Task<bool> CreatePhotoAsync(INavigationService navigation, long? chatId, bool isPublic = false, bool isPersonal = false);
     }
 
@@ -36,7 +37,7 @@ namespace Telegram.Services
             _clientService = clientService;
         }
 
-        public async Task<bool> SetPhotoAsync(INavigationService navigation, long? chatId, bool isPublic, bool isPersonal)
+        public async Task<InputChatPhoto> PreviewSetPhotoAsync(INavigationService navigation)
         {
             try
             {
@@ -53,41 +54,57 @@ namespace Telegram.Services
                     var confirm = await popup.ShowAsync(navigation.XamlRoot);
                     if (confirm == ContentDialogResult.Primary)
                     {
-                        return await EditPhotoAsync(navigation, chatId, isPublic, isPersonal, media);
+                        return await EditPhotoAsync(navigation, media);
                     }
                 }
-                else
+                else if (media is StorageInvalid)
                 {
                     await navigation.ShowPopupAsync(Strings.OpenImageUnsupported, Strings.AppName, Strings.OK);
                 }
             }
             catch { }
 
+            return null;
+        }
+
+        public async Task<bool> SetPhotoAsync(INavigationService navigation, long? chatId, bool isPublic, bool isPersonal)
+        {
+            var inputPhoto = await PreviewSetPhotoAsync(navigation);
+            if (inputPhoto != null)
+            {
+                return await Complete(navigation, chatId, isPublic, isPersonal, inputPhoto);
+            }
+
             return false;
+        }
+
+        public async Task<InputChatPhoto> PreviewCreatePhotoAsync(INavigationService navigation)
+        {
+            var tsc = new TaskCompletionSource<object>();
+
+            var confirm = await navigation.ShowPopupAsync(new CreateChatPhotoPopup(tsc));
+            if (confirm != ContentDialogResult.Primary)
+            {
+                return null;
+            }
+
+            return await tsc.Task as InputChatPhoto;
         }
 
         public async Task<bool> CreatePhotoAsync(INavigationService navigation, long? chatId, bool isPublic, bool isPersonal)
         {
-            var tsc = new TaskCompletionSource<object>();
-
-            var confirm = await navigation.ShowPopupAsync(typeof(CreateChatPhotoPopup), new CreateChatPhotoParameters(chatId, isPublic, isPersonal), tsc);
-            if (confirm != ContentDialogResult.Primary)
+            var inputPhoto = await PreviewCreatePhotoAsync(navigation);
+            if (inputPhoto != null)
             {
-                return false;
-            }
-
-            var success = await tsc.Task;
-            if (success is bool value)
-            {
-                return value;
+                return await Complete(navigation, chatId, isPublic, isPersonal, inputPhoto);
             }
 
             return false;
         }
 
-        private async Task<bool> EditPhotoAsync(INavigationService navigation, long? chatId, bool isPublic, bool isPersonal, StorageMedia file)
+        private async Task<InputChatPhoto> EditPhotoAsync(INavigationService navigation, StorageMedia file)
         {
-            InputChatPhoto inputPhoto;
+            InputChatPhoto inputPhoto = null;
             if (file is StorageVideo media)
             {
                 var props = await media.File.Properties.GetVideoPropertiesAsync();
@@ -126,16 +143,18 @@ namespace Telegram.Services
                 var generated = await photo.File.ToGeneratedAsync(ConversionType.Compress, JsonConvert.SerializeObject(photo.EditState));
                 inputPhoto = new InputChatPhotoStatic(generated);
             }
-            else
-            {
-                return false;
-            }
 
+            return inputPhoto;
+        }
+
+        private async Task<bool> Complete(INavigationService navigation, long? chatId, bool isPublic, bool isPersonal, InputChatPhoto inputPhoto)
+        {
             if (chatId.HasValue && _clientService.TryGetUser(chatId.Value, out User user))
             {
                 if (user.Type is UserTypeBot userTypeBot && userTypeBot.CanBeEdited)
                 {
                     _clientService.Send(new SetBotProfilePhoto(user.Id, inputPhoto));
+                    return true;
                 }
                 else if (isPersonal)
                 {

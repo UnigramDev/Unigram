@@ -160,7 +160,7 @@ namespace Telegram.Controls.Chats
         {
             var tsc = new TaskCompletionSource<object>();
 
-            var confirm = await _viewModel.ShowPopupAsync(typeof(BackgroundsPopup), _viewModel.Chat.Id, tsc);
+            var confirm = await _viewModel.ShowPopupAsync(new BackgroundsPopup(tsc), _viewModel.Chat.Id);
             var delayed = await tsc.Task;
 
             if (delayed is bool close && close)

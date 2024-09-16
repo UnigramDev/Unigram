@@ -4,11 +4,8 @@
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
-using LinqToVisualTree;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
 using System.Numerics;
 using Telegram.Common;
 using Telegram.Native.Composition;
@@ -27,7 +24,7 @@ using VirtualKey = Windows.System.VirtualKey;
 
 namespace Telegram.Controls
 {
-    public class PremiumSlider : Slider
+    public partial class PremiumSlider : Slider
     {
         private AnimatedTextBlock ValueText;
         private Grid ValueRoot;

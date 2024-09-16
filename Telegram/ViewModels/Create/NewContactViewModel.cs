@@ -4,7 +4,6 @@
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
-using Microsoft.UI.Xaml.Navigation;
 using System;
 using System.Threading.Tasks;
 using Telegram.Common;
@@ -13,15 +12,15 @@ using Telegram.Navigation;
 using Telegram.Navigation.Services;
 using Telegram.Services;
 using Telegram.Td.Api;
+using Microsoft.UI.Xaml.Navigation;
 
-namespace Telegram.ViewModels.Users
+namespace Telegram.ViewModels.Create
 {
-    public partial class UserCreateViewModel : ViewModelBase
+    public partial class NewContactViewModel : ViewModelBase
     {
-        public UserCreateViewModel(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator)
+        public NewContactViewModel(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator)
             : base(clientService, settingsService, aggregator)
         {
-            SendCommand = new RelayCommand(SendExecute, () => !string.IsNullOrEmpty(_firstName) && !string.IsNullOrEmpty(_phoneNumber));
         }
 
         protected override Task OnNavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
@@ -30,11 +29,10 @@ namespace Telegram.ViewModels.Users
             {
                 if (result is Text text)
                 {
-                    BeginOnUIThread(() => GotUserCountry(text.TextValue));
+                    GotUserCountry(text.TextValue);
                 }
             });
 
-            IsLoading = false;
             return Task.CompletedTask;
         }
 
@@ -50,13 +48,14 @@ namespace Telegram.ViewModels.Users
                 }
             }
 
-            if (country != null && SelectedCountry == null && string.IsNullOrEmpty(PhoneNumber))
+            BeginOnUIThread(() =>
             {
-                BeginOnUIThread(() =>
+                if (country != null && SelectedCountry == null && string.IsNullOrEmpty(PhoneNumber))
                 {
+                    _phoneNumber = $"+{country.PhoneCode}";
                     SelectedCountry = country;
-                });
-            }
+                }
+            });
         }
 
         private Country _selectedCountry;
@@ -72,8 +71,10 @@ namespace Telegram.ViewModels.Users
             get => _firstName;
             set
             {
-                Set(ref _firstName, value);
-                SendCommand.RaiseCanExecuteChanged();
+                if (Set(ref _firstName, value))
+                {
+                    RaisePropertyChanged(nameof(CanCreate));
+                }
             }
         }
 
@@ -90,13 +91,16 @@ namespace Telegram.ViewModels.Users
             get => _phoneNumber;
             set
             {
-                Set(ref _phoneNumber, value);
-                SendCommand.RaiseCanExecuteChanged();
+                if (Set(ref _firstName, value))
+                {
+                    RaisePropertyChanged(nameof(CanCreate));
+                }
             }
         }
 
-        public RelayCommand SendCommand { get; }
-        private async void SendExecute()
+        public bool CanCreate => !string.IsNullOrWhiteSpace(FirstName) && !string.IsNullOrWhiteSpace(PhoneNumber);
+
+        public async void Create()
         {
             var phoneNumber = _phoneNumber?.Trim('+').Replace(" ", string.Empty);
 

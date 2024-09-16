@@ -48,7 +48,7 @@ namespace Telegram.Services.Factories
 
 
 
-        public static async Task<InputMessageFactory> CreatePhotoAsync(StoragePhoto photo, bool spoiler = false, MessageSelfDestructType ttl = null, BitmapEditState editState = null)
+        public static async Task<InputMessageFactory> CreatePhotoAsync(StoragePhoto photo, bool captionAboveMedia = false, bool spoiler = false, MessageSelfDestructType ttl = null, BitmapEditState editState = null)
         {
             var conversionType = ConversionType.Compress;
             var file = photo.File;
@@ -76,12 +76,12 @@ namespace Telegram.Services.Factories
             return new InputMessageFactory
             {
                 InputFile = generated,
-                Delegate = (inputFile, caption) => new InputMessagePhoto(generated, thumbnail, Array.Empty<int>(), size.Width, size.Height, caption, photo.ShowCaptionAboveMedia, ttl, spoiler),
+                Delegate = (inputFile, caption) => new InputMessagePhoto(generated, thumbnail, Array.Empty<int>(), size.Width, size.Height, caption, captionAboveMedia, ttl, spoiler),
                 PaidDelegate = (inputFile) => new InputPaidMedia(new InputPaidMediaTypePhoto(), generated, thumbnail, Array.Empty<int>(), size.Width, size.Height)
             };
         }
 
-        public static async Task<InputMessageFactory> CreateVideoAsync(StorageVideo video, bool animated, bool spoiler = false, MessageSelfDestructType ttl = null, VideoTransformEffectDefinition transform = null)
+        public static async Task<InputMessageFactory> CreateVideoAsync(StorageVideo video, bool animated, bool captionAboveMedia = false, bool spoiler = false, MessageSelfDestructType ttl = null, VideoTransformEffectDefinition transform = null)
         {
             var duration = video.TotalSeconds;
             var videoWidth = video.Width;
@@ -120,14 +120,14 @@ namespace Telegram.Services.Factories
                 return new InputMessageFactory
                 {
                     InputFile = generated,
-                    Delegate = (inputFile, caption) => new InputMessageAnimation(inputFile, thumbnail, Array.Empty<int>(), duration, videoWidth, videoHeight, caption, video.ShowCaptionAboveMedia, spoiler)
+                    Delegate = (inputFile, caption) => new InputMessageAnimation(inputFile, thumbnail, Array.Empty<int>(), duration, videoWidth, videoHeight, caption, captionAboveMedia, spoiler)
                 };
             }
 
             return new InputMessageFactory
             {
                 InputFile = generated,
-                Delegate = (inputFile, caption) => new InputMessageVideo(inputFile, thumbnail, Array.Empty<int>(), duration, videoWidth, videoHeight, true, caption, video.ShowCaptionAboveMedia, ttl, spoiler),
+                Delegate = (inputFile, caption) => new InputMessageVideo(inputFile, thumbnail, Array.Empty<int>(), duration, videoWidth, videoHeight, true, caption, captionAboveMedia, ttl, spoiler),
                 PaidDelegate = (inputFile) => new InputPaidMedia(new InputPaidMediaTypeVideo(duration, true), inputFile, thumbnail, Array.Empty<int>(), videoWidth, videoHeight)
             };
         }

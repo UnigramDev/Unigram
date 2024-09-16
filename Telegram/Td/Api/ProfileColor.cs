@@ -13,7 +13,7 @@ using Windows.UI;
 
 namespace Telegram.Td.Api
 {
-    public partial class ProfileColor : BindableBase
+    public partial class ProfileColor
     {
         public ProfileColor(ProfileAccentColor accent)
         {

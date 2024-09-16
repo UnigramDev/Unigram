@@ -17,10 +17,9 @@ using Telegram.Services.Updates;
 using Telegram.Services.ViewService;
 using Telegram.ViewModels;
 using Telegram.ViewModels.Authorization;
-using Telegram.ViewModels.BasicGroups;
 using Telegram.ViewModels.Business;
-using Telegram.ViewModels.Channels;
 using Telegram.ViewModels.Chats;
+using Telegram.ViewModels.Create;
 using Telegram.ViewModels.Delegates;
 using Telegram.ViewModels.Folders;
 using Telegram.ViewModels.Payments;
@@ -32,10 +31,9 @@ using Telegram.ViewModels.Supergroups;
 using Telegram.ViewModels.Users;
 using Telegram.Views;
 using Telegram.Views.Authorization;
-using Telegram.Views.BasicGroups;
 using Telegram.Views.Business;
-using Telegram.Views.Channels;
 using Telegram.Views.Chats;
+using Telegram.Views.Create;
 using Telegram.Views.Folders;
 using Telegram.Views.Folders.Popups;
 using Telegram.Views.Host;
@@ -326,7 +324,9 @@ namespace Telegram
                 InstantPage => TypeResolver.Current.Resolve<InstantViewModel>(sessionId),
                 //
                 SettingsPage settings => TypeResolver.Current.Resolve<SettingsViewModel, ISettingsDelegate>(settings, sessionId),
-                UserCreatePage => TypeResolver.Current.Resolve<UserCreateViewModel>(sessionId),
+                NewContactPopup => TypeResolver.Current.Resolve<NewContactViewModel>(sessionId),
+                NewChannelPopup => TypeResolver.Current.Resolve<NewChannelViewModel>(sessionId),
+                NewGroupPopup => TypeResolver.Current.Resolve<NewGroupViewModel>(sessionId),
                 UserEditPage userEdit => TypeResolver.Current.Resolve<UserEditViewModel, IUserDelegate>(userEdit, sessionId),
                 //
                 SupergroupChooseMemberPopup => TypeResolver.Current.Resolve<SupergroupChooseMemberViewModel>(sessionId),
@@ -358,9 +358,6 @@ namespace Telegram
                 AddFolderPopup => TypeResolver.Current.Resolve<AddFolderViewModel>(sessionId),
                 RemoveFolderPopup => TypeResolver.Current.Resolve<RemoveFolderViewModel>(sessionId),
                 //
-                ChannelCreateStep1Page => TypeResolver.Current.Resolve<ChannelCreateStep1ViewModel>(sessionId),
-                ChannelCreateStep2Page channelCreateStep2 => TypeResolver.Current.Resolve<ChannelCreateStep2ViewModel, ISupergroupEditDelegate>(channelCreateStep2, sessionId),
-                BasicGroupCreateStep1Page => TypeResolver.Current.Resolve<BasicGroupCreateStep1ViewModel>(sessionId),
                 SettingsBlockedChatsPage => TypeResolver.Current.Resolve<SettingsBlockedChatsViewModel>(sessionId),
                 SettingsStickersPage => TypeResolver.Current.Resolve<SettingsStickersViewModel>(sessionId),
                 //
@@ -423,6 +420,7 @@ namespace Telegram
                 ChatStoriesPage => TypeResolver.Current.Resolve<ChatStoriesViewModel>(sessionId),
 
                 // Popups
+                ContactsPopup => TypeResolver.Current.Resolve<ContactsViewModel>(sessionId),
                 CallsPopup => TypeResolver.Current.Resolve<CallsViewModel>(sessionId),
                 SettingsUsernamePopup => TypeResolver.Current.Resolve<SettingsUsernameViewModel>(sessionId),
                 SettingsDataAutoPopup => TypeResolver.Current.Resolve<SettingsDataAutoViewModel>(sessionId),

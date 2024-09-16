@@ -9,7 +9,6 @@ using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Threading.Tasks;
@@ -21,9 +20,7 @@ using Telegram.Navigation;
 using Telegram.Td;
 using Telegram.Td.Api;
 using Telegram.Views;
-using Telegram.Views.Popups;
 using Windows.Data.Xml.Dom;
-using Windows.Networking.PushNotifications;
 using Windows.Storage;
 using Windows.UI.Notifications;
 

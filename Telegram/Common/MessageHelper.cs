@@ -888,7 +888,7 @@ namespace Telegram.Common
             var response = await clientService.SendAsync(new SearchBackground(slug));
             if (response is Background background)
             {
-                await navigation.ShowPopupAsync(typeof(BackgroundPopup), new BackgroundParameters(background));
+                await navigation.ShowPopupAsync(new BackgroundPopup(), new BackgroundParameters(background));
             }
         }
 
@@ -1062,7 +1062,7 @@ namespace Telegram.Common
 
         public static async void NavigateToShare(INavigationService navigation, FormattedText text, bool hasUrl)
         {
-            await navigation.ShowPopupAsync(typeof(ChooseChatsPopup), new ChooseChatsConfigurationPostText(text));
+            await navigation.ShowPopupAsync(new ChooseChatsPopup(), new ChooseChatsConfigurationPostText(text));
         }
 
         public static async void NavigateToProxy(IClientService clientService, INavigationService navigation, string server, int port, ProxyType type)
@@ -1181,7 +1181,7 @@ namespace Telegram.Common
             {
                 if (group)
                 {
-                    await navigation.ShowPopupAsync(typeof(ChooseChatsPopup), new ChooseChatsConfigurationStartBot(user, startParameter));
+                    await navigation.ShowPopupAsync(new ChooseChatsPopup(), new ChooseChatsConfigurationStartBot(user, startParameter));
                 }
                 else if (autoStart)
                 {
@@ -1320,7 +1320,7 @@ namespace Telegram.Common
             {
                 var tsc = new TaskCompletionSource<object>();
 
-                var confirm = await navigation.ShowPopupAsync(typeof(AddFolderPopup), info, tsc);
+                var confirm = await navigation.ShowPopupAsync(new AddFolderPopup(tsc), info);
                 if (confirm == ContentDialogResult.Primary)
                 {
                     var result = await tsc.Task;

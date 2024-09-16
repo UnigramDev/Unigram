@@ -152,7 +152,7 @@ namespace Telegram.ViewModels.Settings
 
         private async void OpenAutoDownload(AutoDownloadType type)
         {
-            await ShowPopupAsync(typeof(SettingsDataAutoPopup), type);
+            await ShowPopupAsync(new SettingsDataAutoPopup(), type);
             RaisePropertyChanged(nameof(AutoDownload));
             RaisePropertyChanged(nameof(AutoDownloadDefault));
         }
