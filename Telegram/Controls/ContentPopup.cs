@@ -466,6 +466,13 @@ namespace Telegram.Controls
 
         public static bool IsAnyPopupOpen(XamlRoot xamlRoot)
         {
+            // If XamlRoot is null we aren't in a popup
+            // TODO: Problem persists, because then popup fails to open because of no XamlRoot.
+            if (xamlRoot == null)
+            {
+                return false;
+            }
+
             foreach (var popup in VisualTreeHelper.GetOpenPopupsForXamlRoot(xamlRoot))
             {
                 if (popup.Child is ContentDialog)

@@ -146,7 +146,7 @@ namespace Telegram.Navigation.Services
         public FrameFacade FrameFacade { get; }
         public Frame Frame => FrameFacade.Frame;
         public object Content => Frame.Content;
-        public XamlRoot XamlRoot => FrameFacade.Frame.XamlRoot;
+        public XamlRoot XamlRoot => Window.Content?.XamlRoot;
 
         public IDispatcherContext Dispatcher { get; }
 
