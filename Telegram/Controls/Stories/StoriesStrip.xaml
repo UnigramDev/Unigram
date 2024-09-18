@@ -23,7 +23,7 @@
                   SelectionMode="None"
                   IsItemClickEnabled="True"
                   ItemClick="ScrollingHost_ItemClick"
-                  Padding="4,0,0,4">
+                  Padding="0,0,0,4">
             <ListView.ItemsPanel>
                 <ItemsPanelTemplate>
                     <ItemsStackPanel Orientation="Horizontal" />
