@@ -548,7 +548,7 @@ namespace Telegram.Controls.Stories
             if (test != null && _collapsed)
             {
                 var transform = test.TransformToVisual(ControlledList);
-                var point = transform.TransformPoint(new Point()).ToVector2();
+                var point = transform.TransformVector2();
 
                 Logger.Info(point.Y);
 

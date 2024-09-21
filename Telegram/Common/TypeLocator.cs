@@ -25,6 +25,7 @@ namespace Telegram.Views
         private readonly Telegram.Services.INotificationsService _notificationsService;
         private readonly Telegram.Services.ViewService.IViewService _viewService;
         private readonly Telegram.Services.IVoipService _voipService;
+        private readonly Telegram.Services.VoipServiceV2 _voipServiceV2;
 
         private Telegram.Services.ISettingsSearchService _settingsSearchService;
         private Telegram.Services.ICloudUpdateService _cloudUpdateService;
@@ -82,6 +83,11 @@ namespace Telegram.Views
                 _settingsService,
                 _eventAggregator,
                 _viewService);
+
+            _voipServiceV2 = new Services.VoipServiceV2(
+                _clientService,
+                _settingsService,
+                _eventAggregator);
         }
 
         public T Resolve<T>()

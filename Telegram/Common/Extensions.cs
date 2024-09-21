@@ -10,6 +10,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Numerics;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Text;
@@ -1079,6 +1080,26 @@ namespace Telegram.Common
             }
 
             return defaultValue;
+        }
+
+        public static Vector2 TransformVector2(this GeneralTransform transform, Vector2 point)
+        {
+            return transform.TransformPoint(point.ToPoint()).ToVector2();
+        }
+
+        public static Vector2 TransformVector2(this GeneralTransform transform)
+        {
+            return transform.TransformPoint(new Point()).ToVector2();
+        }
+
+        public static Vector2 TransformToVector2(this UIElement element, UIElement visual)
+        {
+            return element.TransformToVisual(visual).TransformVector2();
+        }
+
+        public static Point TransformToPoint(this UIElement element, UIElement visual)
+        {
+            return element.TransformToVisual(visual).TransformPoint(new Point());
         }
 
         public static void BeginOnUIThread(this DependencyObject element, Action action)

@@ -319,7 +319,7 @@ namespace Telegram.Controls.Chats
 
             // calculate the position object in order to know how much to scroll to
             var transform = selectorItem.TransformToVisual((UIElement)scrollViewer.Content);
-            var position = transform.TransformPoint(new Point(0, 0));
+            var position = transform.TransformPoint(new Point());
 
             if (alignment == VerticalAlignment.Top)
             {

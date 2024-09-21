@@ -1064,7 +1064,7 @@ namespace Telegram.Controls.Stories
         internal void TryStart(StoryOpenOrigin ciccio, Windows.Foundation.Rect origin, bool show = true)
         {
             var transform = TransformToVisual(null);
-            var point = transform.TransformPoint(new Windows.Foundation.Point()).ToVector2();
+            var point = transform.TransformVector2();
 
             if (origin.IsEmpty && Window.Current.Content is FrameworkElement root)
             {

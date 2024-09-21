@@ -83,7 +83,7 @@ namespace Telegram.Controls
             var next = e.NewSize.ToVector2();
 
             var transform = CommandSpace.TransformToVisual(ContentElement);
-            var point = transform.TransformPoint(new Point()).ToVector2();
+            var point = transform.TransformVector2();
 
             var visual = ElementComposition.GetElementVisual(this);
             var content = ElementComposition.GetElementVisual(ContentElement);

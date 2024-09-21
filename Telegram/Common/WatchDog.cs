@@ -63,6 +63,11 @@ namespace Telegram
      * 
      */
 
+    public class Properties : Dictionary<string, object>
+    {
+
+    }
+
     public partial class WatchDog
     {
         private static readonly bool _disabled = Constants.DEBUG;
@@ -218,14 +223,14 @@ namespace Telegram
         [DllImport("kernel32.dll", SetLastError = true)]
         private static extern bool IsWow64Process2(IntPtr process, out ushort processMachine, out ushort nativeMachine);
 
-        public static void TrackEvent(string name)
+        public static void TrackEvent(string name, Properties properties = null)
         {
             if (_disabled)
             {
                 return;
             }
 
-            Analytics.TrackEvent(name);
+            Analytics.TrackEvent(name, properties?.ToDictionary(x => x.Key, y => y.Value.ToString()));
         }
 
         private static void Read()

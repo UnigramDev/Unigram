@@ -144,7 +144,7 @@ namespace Telegram.Controls.Messages
             if (Parent is FrameworkElement parent)
             {
                 var transform = TransformToVisual(parent);
-                var point = transform.TransformPoint(new Windows.Foundation.Point(0, 0));
+                var point = transform.TransformPoint(new Windows.Foundation.Point());
 
                 placement = point.X < (parent.ActualWidth - (point.X + ActualWidth))
                         ? FlyoutPlacementMode.BottomEdgeAlignedLeft
