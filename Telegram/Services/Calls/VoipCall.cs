@@ -505,7 +505,7 @@ namespace Telegram.Services.Calls
         {
             if (ClientService.TryGetUser(UserId, out User user))
             {
-                InitializeSystemCallAsync(user, false).Wait();
+                InitializeSystemCallAsync(user, IsOutgoing).Wait();
             }
 
             // If the system request fails, we still want to ring and show the call window
