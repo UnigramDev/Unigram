@@ -630,9 +630,8 @@ namespace Telegram.Views.Calls
             {
                 _visual.StopAnimating();
             }
-            else if (_enstablished)
+            else if (_enstablished && PowerSavingPolicy.AreMaterialsEnabled && ApiInfo.CanAnimatePaths)
             {
-                // TODO: only if call is still connected
                 _visual.StartAnimating();
             }
 
