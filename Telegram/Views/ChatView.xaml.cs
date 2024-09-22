@@ -428,7 +428,7 @@ namespace Telegram.Views
                 OnNavigatedTo();
             }
 
-            if (viewModel.NavigationService.FrameFacade.FrameId == "ciccio")
+            if (viewModel.NavigationService.FrameFacade.FrameId == "ChatPreview")
             {
                 _fromPreview = true;
 
