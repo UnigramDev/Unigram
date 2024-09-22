@@ -3015,7 +3015,7 @@ namespace Telegram.Views
 
             if (properties.CanBeRepliedInAnotherChat)
             {
-                return true;
+                return message.ChatId != ViewModel.ClientService.Options.RepliesBotChatId;
             }
 
             var chat = message.Chat;
