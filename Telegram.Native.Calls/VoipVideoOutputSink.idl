@@ -1,0 +1,21 @@
+import "FrameReceivedEventArgs.idl";
+
+namespace Telegram.Native.Calls
+{
+    [default_interface]
+    runtimeclass VoipVideoOutputSink
+    {
+        VoipVideoOutputSink(Windows.UI.Composition.SpriteVisual visual, Boolean mirrored);
+
+        Boolean IsMirrored;
+
+        Int32 PixelWidth{ get; };
+        Int32 PixelHeight{ get; };
+
+        event Windows.Foundation.TypedEventHandler<VoipVideoOutputSink, FrameReceivedEventArgs> FrameReceived;
+
+        Boolean Matches(String endpointId, Guid visualId);
+
+        void Stop();
+    }
+}

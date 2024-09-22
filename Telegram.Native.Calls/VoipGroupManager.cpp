@@ -181,14 +181,14 @@ namespace winrt::Telegram::Native::Calls::implementation
         }
     }
 
-    winrt::Telegram::Native::Calls::VoipVideoRendererToken VoipGroupManager::AddIncomingVideoOutput(int32_t audioSource, GroupCallParticipantVideoInfo videoInfo, CanvasControl canvas)
+    winrt::Telegram::Native::Calls::VoipVideoRendererToken VoipGroupManager::AddIncomingVideoOutput(hstring endpointId, CanvasControl canvas, winrt::guid visualId)
     {
         if (m_impl)
         {
             auto renderer = std::make_shared<VoipVideoRenderer>(canvas);
-            m_impl->addIncomingVideoOutput(winrt::to_string(videoInfo.EndpointId()), renderer);
+            m_impl->addIncomingVideoOutput(winrt::to_string(endpointId), renderer);
 
-            return *winrt::make_self<VoipVideoRendererToken>(renderer, audioSource, videoInfo.EndpointId(), videoInfo.SourceGroups(), canvas);
+            return *winrt::make_self<VoipVideoRendererToken>(renderer, endpointId, visualId);
         }
 
         return nullptr;

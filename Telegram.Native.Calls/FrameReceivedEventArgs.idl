@@ -1,0 +1,9 @@
+namespace Telegram.Native.Calls
+{
+    [default_interface]
+    runtimeclass FrameReceivedEventArgs 
+    {
+        Int32 PixelWidth { get; };
+        Int32 PixelHeight{ get; };
+    }
+}

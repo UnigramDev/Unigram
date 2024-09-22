@@ -11,6 +11,7 @@
 #include "VideoCaptureInterface.h"
 #include "SignalingDataEmittedEventArgs.h"
 #include "RemoteMediaStateUpdatedEventArgs.h"
+#include "VoipVideoOutput.h"
 
 //using namespace winrt::Windows::Foundation;
 //using namespace winrt::Windows::Foundation::Collections;
@@ -50,27 +51,18 @@ namespace winrt::Telegram::Native::Calls::implementation
             return CallProtocol(true, true, minLayer, maxLayer, args);
         }
 
-        VoipManager(hstring version, VoipDescriptor descriptor);
+        VoipManager();
+        void Start(hstring version, VoipDescriptor descriptor);
 
         void Close();
 
-        hstring m_version;
-        VoipDescriptor m_descriptor = nullptr;
-
-        std::unique_ptr<tgcalls::Instance> m_impl = nullptr;
-        std::shared_ptr<tgcalls::VideoCaptureInterface> m_capturer = nullptr;
-        //std::shared_ptr<rtc::VideoSinkInterface<webrtc::VideoFrame>> m_renderer = nullptr;
-
-        void Start();
-
-        //void SetNetworkType(NetworkType networkType);
         bool IsMuted();
         void IsMuted(bool value);
         void SetAudioOutputGainControlEnabled(bool enabled);
         void SetEchoCancellationStrength(int strength);
 
         bool SupportsVideo();
-        winrt::Telegram::Native::Calls::VoipVideoRendererToken SetIncomingVideoOutput(winrt::Microsoft::Graphics::Canvas::UI::Xaml::CanvasControl canvas);
+        void SetIncomingVideoOutput(winrt::Telegram::Native::Calls::VoipVideoOutputSink sink);
 
         void SetAudioInputDevice(hstring id);
         void SetAudioOutputDevice(hstring id);
@@ -95,7 +87,7 @@ namespace winrt::Telegram::Native::Calls::implementation
 
         winrt::event_token StateUpdated(Windows::Foundation::TypedEventHandler<
             winrt::Telegram::Native::Calls::VoipManager,
-            VoipState> const& value);
+            VoipReadyState> const& value);
         void StateUpdated(winrt::event_token const& token);
 
         winrt::event_token SignalBarsUpdated(Windows::Foundation::TypedEventHandler<
@@ -129,13 +121,13 @@ namespace winrt::Telegram::Native::Calls::implementation
         void SignalingDataEmitted(winrt::event_token const& token);
 
     private:
-        bool m_isMuted = false;
+        std::unique_ptr<tgcalls::Instance> m_impl = nullptr;
 
-        std::shared_ptr<VoipVideoRenderer> m_renderer = nullptr;
+        bool m_isMuted = false;
 
         winrt::event<Windows::Foundation::TypedEventHandler<
             winrt::Telegram::Native::Calls::VoipManager,
-            VoipState>> m_stateUpdatedEventSource;
+            VoipReadyState>> m_stateUpdatedEventSource;
         winrt::event<Windows::Foundation::TypedEventHandler<
             winrt::Telegram::Native::Calls::VoipManager,
             int>> m_signalBarsUpdatedEventSource;

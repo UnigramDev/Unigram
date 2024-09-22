@@ -22,7 +22,7 @@ namespace Telegram.Native.Calls
         void SetJoinResponsePayload(String payload);
         void RemoveSsrcs(Windows.Foundation.Collections.IVector<Int32> ssrcs);
 
-        VoipVideoRendererToken AddIncomingVideoOutput(Int32 audioSource, Telegram.Td.Api.GroupCallParticipantVideoInfo videoInfo, Microsoft.Graphics.Canvas.UI.Xaml.CanvasControl canvas);
+        VoipVideoRendererToken AddIncomingVideoOutput(String endpointId, Microsoft.Graphics.Canvas.UI.Xaml.CanvasControl canvas, Guid visualId);
         void AddUnifiedVideoOutput(Microsoft.Graphics.Canvas.UI.Xaml.CanvasControl canvas);
 
         Boolean IsMuted;

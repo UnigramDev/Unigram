@@ -5,6 +5,7 @@
 #endif
 
 #include "VoipVideoRendererToken.h"
+#include "VoipVideoOutputSink.h"
 
 #include "StaticThreads.h"
 #include "platform/uwp/UwpContext.h"
@@ -16,6 +17,10 @@ namespace winrt::Telegram::Native::Calls::implementation
         m_impl = tgcalls::VideoCaptureInterface::Create(
             tgcalls::StaticThreads::getThreads(),
             winrt::to_string(id));
+        m_impl->setOnFatalError([this] {
+            m_failed = true;
+            m_fatalErrorOccurred(*this, nullptr);
+            });
     }
 
     VoipVideoCapture::~VoipVideoCapture()
@@ -52,7 +57,23 @@ namespace winrt::Telegram::Native::Calls::implementation
         }
     }
 
-    winrt::Telegram::Native::Calls::VoipVideoRendererToken VoipVideoCapture::SetOutput(winrt::Microsoft::Graphics::Canvas::UI::Xaml::CanvasControl canvas, bool enableBlur)
+    void VoipVideoCapture::SetOutputV2(winrt::Telegram::Native::Calls::VoipVideoOutputSink sink)
+    {
+        if (m_impl)
+        {
+            if (sink != nullptr)
+            {
+                auto implementation = winrt::get_self<VoipVideoOutputSink>(sink);
+                m_impl->setOutput(implementation->Sink());
+            }
+            else
+            {
+                m_impl->setOutput(nullptr);
+            }
+        }
+    }
+
+    winrt::Telegram::Native::Calls::VoipVideoRendererToken VoipVideoCapture::SetOutput(winrt::Microsoft::Graphics::Canvas::UI::Xaml::CanvasControl canvas, winrt::guid visualId, bool enableBlur)
     {
         if (m_impl)
         {
@@ -60,7 +81,7 @@ namespace winrt::Telegram::Native::Calls::implementation
             {
                 auto renderer = std::make_shared<VoipVideoRenderer>(canvas, true, enableBlur);
                 m_impl->setOutput(renderer);
-                return *winrt::make_self<VoipVideoRendererToken>(renderer, canvas);
+                return *winrt::make_self<VoipVideoRendererToken>(renderer, visualId);
             }
             else
             {
@@ -70,4 +91,24 @@ namespace winrt::Telegram::Native::Calls::implementation
 
         return nullptr;
     }
+
+    winrt::event_token VoipVideoCapture::FatalErrorOccurred(Windows::Foundation::TypedEventHandler<
+        winrt::Telegram::Native::Calls::VoipCaptureBase,
+        winrt::Windows::Foundation::IInspectable> const& value)
+    {
+        auto token = m_fatalErrorOccurred.add(value);
+
+        if (m_failed)
+        {
+            m_fatalErrorOccurred(*this, nullptr);
+        }
+
+        return token;
+    }
+
+    void VoipVideoCapture::FatalErrorOccurred(winrt::event_token const& token)
+    {
+        m_fatalErrorOccurred.remove(token);
+    }
+
 } // namespace winrt::Telegram::Native::Calls::implementation

@@ -52,7 +52,7 @@ namespace Telegram.Controls.Cells
             header.Opacity = 0;
         }
 
-        public bool IsMatch(GroupCallParticipant participant, GroupCallParticipantVideoInfo videoInfo)
+        public bool Matches(GroupCallParticipant participant, GroupCallParticipantVideoInfo videoInfo)
         {
             return participant != null && participant.ParticipantId.AreTheSame(ParticipantId) && _videoInfo.EndpointId == _videoInfo.EndpointId;
         }
@@ -62,6 +62,8 @@ namespace Telegram.Controls.Cells
             get => CanvasRoot.Child as CanvasControl;
             set => CanvasRoot.Child = value;
         }
+
+        public Guid VisualId { get; set; }
 
         public VoipVideoChannelQuality Quality => ActualHeight switch
         {

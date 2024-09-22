@@ -27,7 +27,7 @@ namespace winrt::Telegram::Native::Calls::implementation
         void SetJoinResponsePayload(hstring payload);
         void RemoveSsrcs(IVector<int32_t> ssrcs);
 
-        winrt::Telegram::Native::Calls::VoipVideoRendererToken AddIncomingVideoOutput(int32_t audioSource, GroupCallParticipantVideoInfo videoInfo, CanvasControl canvas);
+        winrt::Telegram::Native::Calls::VoipVideoRendererToken AddIncomingVideoOutput(hstring endpointId, CanvasControl canvas, winrt::guid visualId);
         void AddUnifiedVideoOutput(CanvasControl canvas);
 
         bool IsMuted();

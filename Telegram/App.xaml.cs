@@ -345,8 +345,9 @@ namespace Telegram
 
             TypeResolver.Current.Passcode.CloseTime = DateTime.UtcNow;
 
-            return Task.WhenAll(TypeResolver.Current.ResolveAll<IVoipService>().Select(x => x.DiscardAsync()));
+            //return Task.WhenAll(TypeResolver.Current.ResolveAll<IVoipService>().Select(x => x.DiscardAsync()));
             //await Task.WhenAll(TLContainer.Current.ResolveAll<IClientService>().Select(x => x.CloseAsync()));
+            return Task.CompletedTask;
         }
 
         public override INavigable ViewModelForPage(UIElement page, int sessionId)

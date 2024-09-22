@@ -388,10 +388,7 @@ namespace Telegram.ViewModels
             UnreadCount = unreadCount.UnreadMessageCount.UnreadCount;
             UnreadMutedCount = unreadCount.UnreadMessageCount.UnreadCount - unreadCount.UnreadMessageCount.UnreadUnmutedCount;
 
-            if (_voipService.Call != null || _voipGroupService.Call != null)
-            {
-                Aggregator.Publish(new UpdateCallDialog(_voipService.Call, _voipGroupService.Call));
-            }
+            Aggregator.Publish(new UpdateActiveCall());
 
             if (mode == NavigationMode.New)
             {

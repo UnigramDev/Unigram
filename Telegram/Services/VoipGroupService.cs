@@ -634,7 +634,7 @@ namespace Telegram.Services
             }
         }
 
-        private void OnFatalErrorOccurred(VoipScreenCapture sender, object args)
+        private void OnFatalErrorOccurred(VoipCaptureBase sender, object args)
         {
             EndScreenSharing();
         }
@@ -1037,7 +1037,7 @@ namespace Telegram.Services
                 }
             }
 
-            Aggregator.Publish(new UpdateCallDialog(TypeResolver.Current.Resolve<IVoipService>(SessionId).Call, update.GroupCall));
+            Aggregator.Publish(new UpdateActiveCall());
 #endif
         }
 

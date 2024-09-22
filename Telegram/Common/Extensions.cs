@@ -35,6 +35,7 @@ using Windows.Storage;
 using Windows.Storage.FileProperties;
 using Windows.Storage.Pickers;
 using Windows.Storage.Streams;
+using Windows.System.Display;
 using Windows.UI;
 using Windows.UI.Core;
 using Windows.UI.Input;
@@ -574,6 +575,30 @@ namespace Telegram.Common
             try
             {
                 call.NotifyCallEnded();
+            }
+            catch
+            {
+                // All the remote procedure calls must be wrapped in a try-catch block
+            }
+        }
+
+        public static void TryRequestActive(this DisplayRequest displayRequest)
+        {
+            try
+            {
+                displayRequest.RequestActive();
+            }
+            catch
+            {
+                // All the remote procedure calls must be wrapped in a try-catch block
+            }
+        }
+
+        public static void TryRequestRelease(this DisplayRequest displayRequest)
+        {
+            try
+            {
+                displayRequest.RequestRelease();
             }
             catch
             {

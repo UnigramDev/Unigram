@@ -10,18 +10,17 @@ namespace Telegram.Native.Calls
     {
         static Telegram.Td.Api.CallProtocol Protocol{ get; };
 
-        VoipManager(String version, VoipDescriptor descriptor);
-        void Start();
+        VoipManager();
+        void Start(String version, VoipDescriptor descriptor);
 
 
 
-        //void SetNetworkType(NetworkType networkType);
         Boolean IsMuted;
         void SetAudioOutputGainControlEnabled(Boolean enabled);
         void SetEchoCancellationStrength(Int32 strength);
 
         Boolean SupportsVideo{ get; };
-        VoipVideoRendererToken SetIncomingVideoOutput(Microsoft.Graphics.Canvas.UI.Xaml.CanvasControl canvas);
+        void SetIncomingVideoOutput(VoipVideoOutputSink sink);
 
         void SetAudioInputDevice(String id);
         void SetAudioOutputDevice(String id);
@@ -44,7 +43,7 @@ namespace Telegram.Native.Calls
 
 
 
-        event Windows.Foundation.TypedEventHandler<VoipManager, VoipState> StateUpdated;
+        event Windows.Foundation.TypedEventHandler<VoipManager, VoipReadyState> StateUpdated;
         event Windows.Foundation.TypedEventHandler<VoipManager, Int32> SignalBarsUpdated;
         event Windows.Foundation.TypedEventHandler<VoipManager, Single> AudioLevelUpdated;
         event Windows.Foundation.TypedEventHandler<VoipManager, Boolean> RemoteBatteryLevelIsLowUpdated;
