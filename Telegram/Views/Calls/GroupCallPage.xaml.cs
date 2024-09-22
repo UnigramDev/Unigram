@@ -2296,7 +2296,7 @@ namespace Telegram.Views.Calls
                     // Check if already playing
                     if (tokens.TryGetValue(child.EndpointId, out var token))
                     {
-                        if (token.IsMatch(child.EndpointId, child.Surface))
+                        if (token.Matches(child.EndpointId, child.VisualId))
                         {
                             token.Stretch = child.GetStretch(_mode, list);
                             continue;
@@ -2304,15 +2304,16 @@ namespace Telegram.Views.Calls
                     }
 
                     child.Surface = new CanvasControl();
+                    child.VisualId = Guid.NewGuid();
 
                     VoipVideoRendererToken future;
                     if (participant.ScreenSharingVideoInfo?.EndpointId == child.EndpointId && participant.IsCurrentUser && _service.IsScreenSharing)
                     {
-                        future = _service.ScreenSharing.AddIncomingVideoOutput(participant.AudioSourceId, participant.ScreenSharingVideoInfo, child.Surface);
+                        future = _service.ScreenSharing.AddIncomingVideoOutput(child.EndpointId, child.Surface, child.VisualId);
                     }
                     else
                     {
-                        future = _manager.AddIncomingVideoOutput(participant.AudioSourceId, child.VideoInfo, child.Surface);
+                        future = _manager.AddIncomingVideoOutput(child.VideoInfo.EndpointId, child.Surface, child.VisualId);
                     }
 
                     if (future != null)

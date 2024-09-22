@@ -566,7 +566,7 @@ namespace Telegram.Services
 
             if (_capturer != null)
             {
-                _capturer.SetOutput(null);
+                _capturer.SetOutput(null, Guid.Empty);
                 _manager.SetVideoCapture(null);
 
                 _capturer.Dispose();
@@ -913,7 +913,7 @@ namespace Telegram.Services
 
                 if (_capturer != null)
                 {
-                    _capturer.SetOutput(null);
+                    _capturer.SetOutput(null, Guid.Empty);
                     _capturer.Dispose();
                     _capturer = null;
                 }
@@ -1093,7 +1093,7 @@ namespace Telegram.Services
 
                     if (_currentUser?.VideoInfo != null && update.Participant.VideoInfo == null && _capturer != null)
                     {
-                        _capturer.SetOutput(null);
+                        _capturer.SetOutput(null, Guid.Empty);
                         _manager.SetVideoCapture(null);
 
                         _capturer.Dispose();
@@ -1166,8 +1166,8 @@ namespace Telegram.Services
                     var parameters = new ViewServiceOptions
                     {
                         Title = IsChannel ? Strings.VoipChannelVoiceChat : Strings.VoipGroupVoiceChat,
-                        Width = call.IsRtmpStream ? 580 : 380,
-                        Height = call.IsRtmpStream ? 380 : 580,
+                        Width = 720,
+                        Height = 540,
                         PersistedId = call.IsRtmpStream ? "LiveStream" : "VideoChat",
                         Content = call.IsRtmpStream
                             ? control => new LiveStreamPage(ClientService, Aggregator, this)

@@ -1,5 +1,3 @@
-import "VoipVideoRendererToken.idl";
-
 namespace Telegram.Native.Calls
 {
     enum VoipVideoChannelQuality
@@ -12,14 +10,12 @@ namespace Telegram.Native.Calls
     [default_interface]
     runtimeclass VoipVideoChannelInfo
     {
-        VoipVideoChannelInfo();
         VoipVideoChannelInfo(Int32 audioSource, String endpointId, IVector<Telegram.Td.Api.GroupCallVideoSourceGroup> sourceGroups, VoipVideoChannelQuality minQuality, VoipVideoChannelQuality maxQuality);
-        VoipVideoChannelInfo(VoipVideoRendererToken token, VoipVideoChannelQuality minQuality, VoipVideoChannelQuality maxQuality);
 
-        Int32 AudioSource;
-        String EndpointId;
-        IVector<Telegram.Td.Api.GroupCallVideoSourceGroup> SourceGroups;
-        VoipVideoChannelQuality MinQuality;
-        VoipVideoChannelQuality MaxQuality;
+        Int32 AudioSource{ get; };
+        String EndpointId{ get; };
+        IVector<Telegram.Td.Api.GroupCallVideoSourceGroup> SourceGroups{ get; };
+        VoipVideoChannelQuality MinQuality{ get; };
+        VoipVideoChannelQuality MaxQuality{ get; };
     }
 }

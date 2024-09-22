@@ -28,7 +28,7 @@ namespace winrt::Telegram::Native::Calls::implementation
         void RemoveSsrcs(IVector<int32_t> ssrcs);
 
         winrt::Telegram::Native::Calls::VoipVideoRendererToken AddIncomingVideoOutput(hstring endpointId, CanvasControl canvas, winrt::guid visualId);
-        void AddUnifiedVideoOutput(CanvasControl canvas);
+        void AddUnifiedVideoOutput(winrt::Telegram::Native::Calls::VoipVideoOutputSink sink);
 
         bool IsMuted();
         void IsMuted(bool value);
@@ -68,8 +68,6 @@ namespace winrt::Telegram::Native::Calls::implementation
     private:
         std::unique_ptr<tgcalls::GroupInstanceCustomImpl> m_impl = nullptr;
         std::shared_ptr<tgcalls::VideoCaptureInterface> m_capturer = nullptr;
-
-        std::shared_ptr<VoipVideoRenderer> m_unifiedRenderer = nullptr;
 
         bool m_isMuted = true;
         bool m_isNoiseSuppressionEnabled = true;

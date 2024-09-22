@@ -7,6 +7,7 @@
 #include "VoipVideoCapture.h"
 #include "VoipScreenCapture.h"
 #include "VoipVideoRendererToken.h"
+#include "VoipVideoOutputSink.h"
 #include "GroupNetworkStateChangedEventArgs.h"
 #include "BroadcastPartRequestedEventArgs.h"
 #include "BroadcastTimeRequestedEventArgs.h"
@@ -31,22 +32,22 @@ namespace winrt::Telegram::Native::Calls::implementation
         impl.networkStateUpdated = [this](tgcalls::GroupNetworkState state) {
             auto args = winrt::make_self<GroupNetworkStateChangedEventArgs>(state.isConnected, state.isTransitioningFromBroadcastToRtc);
             m_networkStateUpdated(*this, *args);
-        };
+            };
         impl.audioLevelsUpdated = [this](tgcalls::GroupLevelsUpdate const& levels) {
             auto args = winrt::single_threaded_vector<winrt::Telegram::Native::Calls::VoipGroupParticipant>(/*std::move(levels)*/);
 
             for (const tgcalls::GroupLevelUpdate& x : levels.updates)
             {
-                args.Append(winrt::Telegram::Native::Calls::VoipGroupParticipant {
+                args.Append(winrt::Telegram::Native::Calls::VoipGroupParticipant{
                     .AudioSource = static_cast<int32_t>(x.ssrc),
                         .Level = x.value.level,
                         .IsSpeaking = x.value.voice,
                         .IsMuted = x.value.isMuted
-                });
+                    });
             }
 
             m_audioLevelsUpdated(*this, args);
-        };
+            };
         impl.initialInputDeviceId = winrt::to_string(descriptor.AudioInputId());
         impl.initialOutputDeviceId = winrt::to_string(descriptor.AudioOutputId());
         impl.initialEnableNoiseSuppression = m_isNoiseSuppressionEnabled = descriptor.IsNoiseSuppressionEnabled();
@@ -72,7 +73,7 @@ namespace winrt::Telegram::Native::Calls::implementation
 
             m_broadcastTimeRequested(*this, *args);
             return task;
-        };
+            };
 
         impl.requestVideoBroadcastPart = [this](int64_t time, int64_t period, int32_t channel, tgcalls::VideoChannelDescription::Quality quality, std::function<void(tgcalls::BroadcastPart&&)> done) {
             int scale = 0;
@@ -104,7 +105,7 @@ namespace winrt::Telegram::Native::Calls::implementation
 
             m_broadcastPartRequested(*this, *args);
             return task;
-        };
+            };
 
         impl.requestAudioBroadcastPart = [this](int64_t time, int64_t period, std::function<void(tgcalls::BroadcastPart&&)> done) {
             int scale = 0;
@@ -122,7 +123,7 @@ namespace winrt::Telegram::Native::Calls::implementation
 
             m_broadcastPartRequested(*this, *args);
             return task;
-        };
+            };
 
         m_impl = std::make_unique<tgcalls::GroupInstanceCustomImpl>(std::move(impl));
     }
@@ -194,19 +195,12 @@ namespace winrt::Telegram::Native::Calls::implementation
         return nullptr;
     }
 
-    void VoipGroupManager::AddUnifiedVideoOutput(CanvasControl canvas)
+    void VoipGroupManager::AddUnifiedVideoOutput(winrt::Telegram::Native::Calls::VoipVideoOutputSink sink)
     {
-        if (m_impl)
+        if (m_impl && sink)
         {
-            if (canvas != nullptr)
-            {
-                m_unifiedRenderer = std::make_shared<VoipVideoRenderer>(canvas);
-                m_impl->addIncomingVideoOutput("unified", m_unifiedRenderer);
-            }
-            else
-            {
-                m_unifiedRenderer.reset();
-            }
+            auto implementation = winrt::get_self<VoipVideoOutputSink>(sink);
+            m_impl->addIncomingVideoOutput("unified", implementation->Sink());
         }
     }
 

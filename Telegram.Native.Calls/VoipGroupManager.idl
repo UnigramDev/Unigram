@@ -3,6 +3,7 @@ import "VoipGroupDescriptor.idl";
 import "VoipVideoCapture.idl";
 import "VoipVideoChannelInfo.idl";
 import "VoipVideoRendererToken.idl";
+import "VoipVideoOutputSink.idl";
 import "GroupNetworkStateChangedEventArgs.idl";
 import "BroadcastTimeRequestedEventArgs.idl";
 import "BroadcastPartRequestedEventArgs.idl";
@@ -23,7 +24,7 @@ namespace Telegram.Native.Calls
         void RemoveSsrcs(Windows.Foundation.Collections.IVector<Int32> ssrcs);
 
         VoipVideoRendererToken AddIncomingVideoOutput(String endpointId, Microsoft.Graphics.Canvas.UI.Xaml.CanvasControl canvas, Guid visualId);
-        void AddUnifiedVideoOutput(Microsoft.Graphics.Canvas.UI.Xaml.CanvasControl canvas);
+        void AddUnifiedVideoOutput(VoipVideoOutputSink sink);
 
         Boolean IsMuted;
         Boolean IsNoiseSuppressionEnabled;

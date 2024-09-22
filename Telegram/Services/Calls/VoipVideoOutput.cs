@@ -20,12 +20,17 @@ namespace Telegram.Services.Calls
 
         public VoipVideoOutput(UIElement element, bool mirrored)
         {
+            _sink = CreateSink(element, mirrored);
+            _sink.FrameReceived += OnFrameReceived;
+        }
+
+        public static VoipVideoOutputSink CreateSink(UIElement element, bool mirrored)
+        {
             var visual = BootStrapper.Current.Compositor.CreateSpriteVisual();
             visual.RelativeSizeAdjustment = Vector2.One;
             ElementCompositionPreview.SetElementChildVisual(element, visual);
 
-            _sink = new VoipVideoOutputSink(visual, mirrored);
-            _sink.FrameReceived += OnFrameReceived;
+            return new VoipVideoOutputSink(visual, mirrored);
         }
 
         public void Stop()

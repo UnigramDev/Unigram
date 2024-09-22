@@ -81,15 +81,13 @@
         <TextBlock x:Name="Label"
                    Margin="12,-2,0,0"
                    VerticalAlignment="Center"
-                   Foreground="{ThemeResource MessageForegroundBrush}"
+                   Foreground="{ThemeResource MessageSubtleForegroundBrush}"
                    FontFamily="{ThemeResource EmojiThemeFontFamily}"
                    Style="{StaticResource BodyTextBlockStyle}">
             <Run x:Name="TitleLabel"
                  Foreground="{ThemeResource MessageForegroundBrush}"
                  FontWeight="SemiBold" /><Run Text="," />
-            <Run x:Name="ServiceLabel"
-                 Foreground="{ThemeResource MessageSubtleForegroundBrush}" /><Run x:Name="MessageLabel"
-                                                                                  Foreground="{ThemeResource MessageHeaderForegroundBrush}" />
+            <Run x:Name="ServiceLabel" />
         </TextBlock>
 
         <controls:RecentUserHeads x:Name="RecentUsers"

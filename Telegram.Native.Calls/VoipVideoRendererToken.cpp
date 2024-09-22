@@ -3,37 +3,18 @@
 
 namespace winrt::Telegram::Native::Calls::implementation
 {
-    VoipVideoRendererToken::VoipVideoRendererToken(std::shared_ptr<VoipVideoRenderer> sink, CanvasControl canvasControl)
-        : m_sink(sink),
-        m_audioSource(0),
-        m_endpointId(L""),
-        m_sourceGroups(),
-        m_canvasControl(std::make_shared<CanvasControl>(canvasControl))
+    VoipVideoRendererToken::VoipVideoRendererToken(std::shared_ptr<VoipVideoRenderer> sink, winrt::guid visualId)
+        : m_sink(sink)
+        , m_endpointId(L"")
+        , m_visualId(visualId)
     {
     }
 
-    VoipVideoRendererToken::VoipVideoRendererToken(std::shared_ptr<VoipVideoRenderer> sink, int32_t audioSource, hstring endpointId, IVector<GroupCallVideoSourceGroup> sourceGroups, CanvasControl canvasControl)
-        : m_sink(sink),
-        m_audioSource(audioSource),
-        m_endpointId(endpointId),
-        m_sourceGroups(sourceGroups),
-        m_canvasControl(std::make_shared<CanvasControl>(canvasControl))
+    VoipVideoRendererToken::VoipVideoRendererToken(std::shared_ptr<VoipVideoRenderer> sink, hstring endpointId, winrt::guid visualId)
+        : m_sink(sink)
+        , m_endpointId(endpointId)
+        , m_visualId(visualId)
     {
-    }
-
-    int32_t VoipVideoRendererToken::AudioSource()
-    {
-        return m_audioSource;
-    }
-
-    hstring VoipVideoRendererToken::EndpointId()
-    {
-        return m_endpointId;
-    }
-
-    IVector<GroupCallVideoSourceGroup> VoipVideoRendererToken::SourceGroups()
-    {
-        return m_sourceGroups;
     }
 
     winrt::Windows::UI::Xaml::Media::Stretch VoipVideoRendererToken::Stretch()
@@ -56,17 +37,14 @@ namespace winrt::Telegram::Native::Calls::implementation
         m_sink->m_flip = value;
     }
 
-    bool VoipVideoRendererToken::IsMatch(hstring endpointId, CanvasControl canvasControl)
+    bool VoipVideoRendererToken::Matches(hstring endpointId, winrt::guid visualId)
     {
-        return m_endpointId == endpointId && *m_canvasControl == canvasControl;
+        return m_endpointId == endpointId && m_visualId == visualId;
     }
 
     void VoipVideoRendererToken::Stop()
     {
         m_sink.reset();
         m_sink = nullptr;
-
-        m_canvasControl.reset();
-        m_canvasControl = nullptr;
     }
 }
