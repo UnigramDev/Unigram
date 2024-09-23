@@ -68,7 +68,9 @@ namespace Telegram.Views
             Title.Text = botUser.FullName();
             View.Navigate(url);
 
-            ElementCompositionPreview.SetIsTranslationEnabled(MainButton, true);
+            var panel = ElementComposition.GetElementVisual(BottomBarPanel);
+            panel.Clip = panel.Compositor.CreateInsetClip(0, 96, 0, 0);
+
             ElementCompositionPreview.SetIsTranslationEnabled(Title, true);
 
             Window.Current.SetTitleBar(TitleGrip);
