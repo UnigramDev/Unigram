@@ -277,7 +277,7 @@ namespace Telegram.Views.Popups
         {
             AddAnOption.IsReadOnly = false;
 
-            if (sender is FormattedTextBox textBox)
+            if (sender is FormattedTextBox textBox && textBox.Parent != null)
             {
                 OnVisibleChanged(textBox.Parent.GetChild<GlyphButton>(), true);
             }
@@ -285,7 +285,7 @@ namespace Telegram.Views.Popups
 
         private void Question_LostFocus(object sender, RoutedEventArgs e)
         {
-            if (sender is FormattedTextBox textBox)
+            if (sender is FormattedTextBox textBox && textBox.Parent != null)
             {
                 OnVisibleChanged(textBox.Parent.GetChild<GlyphButton>(), false);
             }
