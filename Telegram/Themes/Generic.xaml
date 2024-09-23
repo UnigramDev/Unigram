@@ -6014,6 +6014,7 @@
             <Setter.Value>
                 <ControlTemplate TargetType="local:GlassToggleButton">
                     <Grid x:Name="RootGrid"
+                          Background="{ThemeResource GlassAcrylicBackground}"
                           CornerRadius="{TemplateBinding CornerRadius}">
                         <VisualStateManager.VisualStateGroups>
                             <VisualStateGroup x:Name="CommonStates">
@@ -6030,10 +6031,6 @@
                                 </VisualState>
                             </VisualStateGroup>
                         </VisualStateManager.VisualStateGroups>
-                        <Grid.Background>
-                            <AcrylicBrush TintColor="#FFFFFF"
-                                          TintOpacity="0" />
-                        </Grid.Background>
                         <TextBlock x:Name="ContentPresenter"
                                    Foreground="#FFFFFF"
                                    Text="{TemplateBinding Glyph}"

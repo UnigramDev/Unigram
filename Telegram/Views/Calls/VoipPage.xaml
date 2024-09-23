@@ -103,16 +103,13 @@
                 </Grid>
 
                 <Border x:Name="WeakNetwork"
+                        Background="{ThemeResource GlassAcrylicBackground}"
                         HorizontalAlignment="Center"
                         Height="24"
                         CornerRadius="12"
                         Padding="12,0"
                         Margin="0,12,0,0"
                         Grid.Row="2">
-                    <Border.Background>
-                        <AcrylicBrush TintColor="#FFFFFF"
-                                      TintOpacity="0" />
-                    </Border.Background>
                     <TextBlock Text="{CustomResource VoipWeakNetwork}"
                                VerticalAlignment="Center" />
                 </Border>

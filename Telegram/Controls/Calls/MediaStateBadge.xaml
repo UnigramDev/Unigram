@@ -8,15 +8,12 @@
              d:DesignWidth="400"
              HorizontalAlignment="Center">
 
-    <Border HorizontalAlignment="Center"
+    <Border Background="{ThemeResource GlassAcrylicBackground}"
+            HorizontalAlignment="Center"
             Height="24"
             CornerRadius="12"
             Padding="12,0"
             Margin="0,0,0,8">
-        <Border.Background>
-            <AcrylicBrush TintColor="#FFFFFF"
-                          TintOpacity="0" />
-        </Border.Background>
 
         <TextBlock x:Name="TextValue"
                    VerticalAlignment="Center" />
