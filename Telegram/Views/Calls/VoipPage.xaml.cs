@@ -1136,7 +1136,7 @@ namespace Telegram.Views.Calls
             var inputId = _call.AudioInputId;
             var outputId = _call.AudioOutputId;
 
-            if (MediaDeviceCoordinator.VideoInput.Count > 0)
+            if (MediaDeviceCoordinator.HasVideoInput)
             {
                 var video = new MenuFlyoutSubItem();
                 video.Text = Strings.VoipDeviceCamera;
@@ -1158,7 +1158,7 @@ namespace Telegram.Views.Calls
                 flyout.Items.Add(video);
             }
 
-            if (MediaDeviceCoordinator.AudioInput.Count > 0)
+            if (MediaDeviceCoordinator.HasAudioInput)
             {
                 var defaultInput = new ToggleMenuFlyoutItem();
                 defaultInput.Text = Strings.Default;
@@ -1189,7 +1189,7 @@ namespace Telegram.Views.Calls
                 flyout.Items.Add(input);
             }
 
-            if (MediaDeviceCoordinator.AudioOutput.Count > 0)
+            if (MediaDeviceCoordinator.HasAudioOutput)
             {
                 var defaultOutput = new ToggleMenuFlyoutItem();
                 defaultOutput.Text = Strings.Default;

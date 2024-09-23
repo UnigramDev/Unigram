@@ -26,6 +26,8 @@ namespace Telegram.Services
         public VoipService(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator)
             : base(clientService, settingsService, aggregator)
         {
+            MediaDeviceCoordinator.Start();
+
             Aggregator.Subscribe<UpdateCall>(this, Handle)
                 .Subscribe<UpdateNewCallSignalingData>(Handle);
         }
