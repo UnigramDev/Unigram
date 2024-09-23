@@ -1545,15 +1545,35 @@ namespace Telegram.Controls.Cells
             {
                 if (message.IsSaved(clientService.Options.MyId))
                 {
-                    return string.Format(format, clientService.GetTitle(message.ForwardInfo?.Origin, message.ImportInfo));
+                    if (message.ForwardInfo?.Origin is MessageOriginUser originUser)
+                    {
+                        fromUser = clientService.GetUser(originUser.SenderUserId);
+                    }
+                    else if (message.ForwardInfo?.Origin is MessageOriginChat originChat)
+                    {
+                        fromChat = clientService.GetChat(originChat.SenderChatId);
+                    }
+                    else if (message.ForwardInfo?.Origin is MessageOriginChannel originChannel)
+                    {
+                        fromChat = clientService.GetChat(originChannel.ChatId);
+                    }
+                    else if (message.ForwardInfo?.Origin is MessageOriginHiddenUser originHiddenUser)
+                    {
+                        return string.Format(format, originHiddenUser.SenderName);
+                    }
+                    else if (message.ImportInfo != null)
+                    {
+                        return string.Format(format, message.ImportInfo);
+                    }
                 }
-                else if (message.SenderId.IsUser(clientService.Options.MyId))
+                
+                if (fromUser != null)
                 {
-                    return string.Format(format, Strings.FromYou);
-                }
-                else if (fromUser != null)
-                {
-                    if (!string.IsNullOrEmpty(fromUser.FirstName))
+                    if (fromUser.Id == clientService.Options.MyId)
+                    {
+                        return string.Format(format, Strings.FromYou);
+                    }
+                    else if (!string.IsNullOrEmpty(fromUser.FirstName))
                     {
                         return string.Format(format, fromUser.FirstName.Trim());
                     }
@@ -1588,7 +1608,7 @@ namespace Telegram.Controls.Cells
                 return false;
             }
 
-            if (message.IsOutgoing && message.ChatId != clientService.Options.MyId)
+            if (message.IsOutgoing || message.ChatId == clientService.Options.MyId)
             {
                 senderChat = null;
                 return clientService.TryGetUser(message.SenderId, out senderUser)
