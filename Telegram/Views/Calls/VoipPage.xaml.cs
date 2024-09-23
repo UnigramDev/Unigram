@@ -478,12 +478,14 @@ namespace Telegram.Views.Calls
             if (show)
             {
                 element.Visibility = Visibility.Visible;
+                BottomShadow.Visibility = Visibility.Visible;
 
                 var visual1 = ElementComposition.GetElementVisual(element);
                 var visual2 = ElementComposition.GetElementVisual(PhotoTransform);
                 var detail = ElementComposition.GetElementVisual(DetailRoot);
                 var title = ElementComposition.GetElementVisual(Title);
                 var photo = ElementComposition.GetElementVisual(Photo);
+                var shadow = ElementComposition.GetElementVisual(BottomShadow);
 
                 visual1.Scale = Vector3.One;
                 visual1.Offset = Vector3.Zero;
@@ -494,6 +496,7 @@ namespace Telegram.Views.Calls
                 visual2.Offset = Vector3.Zero;
                 visual2.Opacity = 0;
                 photo.Clip = null;
+                shadow.Opacity = 1;
 
                 _visual.StopAnimating();
             }
