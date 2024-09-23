@@ -98,6 +98,10 @@ namespace Telegram.Views.Calls
 
                 ShowHideVideoToPlain(true, LocalVideo);
             }
+            else if (PowerSavingPolicy.AreMaterialsEnabled && ApiInfo.CanAnimatePaths)
+            {
+                _visual.StartAnimating();
+            }
 
             if (call.ClientService.TryGetUser(call.UserId, out User user))
             {
@@ -143,11 +147,6 @@ namespace Telegram.Views.Calls
             var geometry = blob.Compositor.CreatePathGeometry(new CompositionPath(CanvasGeometry.CreateGroup(device, new[] { outerClip, innerClip }, CanvasFilledRegionDetermination.Alternate)));
 
             blob.Clip = blob.Compositor.CreateGeometricClip(geometry);
-
-            if (PowerSavingPolicy.AreMaterialsEnabled && ApiInfo.CanAnimatePaths)
-            {
-                _visual.StartAnimating();
-            }
         }
 
         private void Duration_Tick(object sender, object e)
