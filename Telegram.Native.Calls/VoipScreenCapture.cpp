@@ -4,7 +4,6 @@
 #include "VoipScreenCapture.g.cpp"
 #endif
 
-#include "VoipVideoRendererToken.h"
 #include "VoipVideoOutputSink.h"
 
 #include "StaticThreads.h"
@@ -63,7 +62,7 @@ namespace winrt::Telegram::Native::Calls::implementation
         }
     }
 
-    void VoipScreenCapture::SetOutputV2(winrt::Telegram::Native::Calls::VoipVideoOutputSink sink)
+    void VoipScreenCapture::SetOutput(winrt::Telegram::Native::Calls::VoipVideoOutputSink sink)
     {
         if (m_impl)
         {
@@ -77,25 +76,6 @@ namespace winrt::Telegram::Native::Calls::implementation
                 m_impl->setOutput(nullptr);
             }
         }
-    }
-
-    winrt::Telegram::Native::Calls::VoipVideoRendererToken VoipScreenCapture::SetOutput(winrt::Microsoft::Graphics::Canvas::UI::Xaml::CanvasControl canvas, winrt::guid visualId, bool enableBlur)
-    {
-        if (m_impl)
-        {
-            if (canvas != nullptr)
-            {
-                auto renderer = std::make_shared<VoipVideoRenderer>(canvas, true, enableBlur);
-                m_impl->setOutput(renderer);
-                return *winrt::make_self<VoipVideoRendererToken>(renderer, visualId);
-            }
-            else
-            {
-                m_impl->setOutput(nullptr);
-            }
-        }
-
-        return nullptr;
     }
 
     winrt::event_token VoipScreenCapture::FatalErrorOccurred(Windows::Foundation::TypedEventHandler<

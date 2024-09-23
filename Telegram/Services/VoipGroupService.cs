@@ -566,7 +566,7 @@ namespace Telegram.Services
 
             if (_capturer != null)
             {
-                _capturer.SetOutput(null, Guid.Empty);
+                _capturer.SetOutput(null);
                 _manager.SetVideoCapture(null);
 
                 _capturer.Dispose();
@@ -913,7 +913,7 @@ namespace Telegram.Services
 
                 if (_capturer != null)
                 {
-                    _capturer.SetOutput(null, Guid.Empty);
+                    _capturer.SetOutput(null);
                     _capturer.Dispose();
                     _capturer = null;
                 }
@@ -1093,7 +1093,7 @@ namespace Telegram.Services
 
                     if (_currentUser?.VideoInfo != null && update.Participant.VideoInfo == null && _capturer != null)
                     {
-                        _capturer.SetOutput(null, Guid.Empty);
+                        _capturer.SetOutput(null);
                         _manager.SetVideoCapture(null);
 
                         _capturer.Dispose();

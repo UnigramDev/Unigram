@@ -7,15 +7,13 @@ namespace Telegram.Native.Calls
     {
         VoipVideoOutputSink(Windows.UI.Composition.SpriteVisual visual, Boolean mirrored);
 
+        void Stop();
+
         Boolean IsMirrored;
 
         Int32 PixelWidth{ get; };
         Int32 PixelHeight{ get; };
 
         event Windows.Foundation.TypedEventHandler<VoipVideoOutputSink, FrameReceivedEventArgs> FrameReceived;
-
-        Boolean Matches(String endpointId, Guid visualId);
-
-        void Stop();
     }
 }

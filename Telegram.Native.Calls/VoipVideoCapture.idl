@@ -1,5 +1,4 @@
 import "Telegram.Native.Calls.idl";
-import "VoipVideoRendererToken.idl";
 import "VoipVideoOutputSink.idl";
 
 namespace Telegram.Native.Calls
@@ -8,9 +7,7 @@ namespace Telegram.Native.Calls
     unsealed runtimeclass VoipCaptureBase : Windows.Foundation.IClosable
     {
         void SetState(VoipVideoState state);
-        void SetOutputV2(VoipVideoOutputSink sink);
-        VoipVideoRendererToken SetOutput(Microsoft.Graphics.Canvas.UI.Xaml.CanvasControl canvas, Guid visualId);
-        VoipVideoRendererToken SetOutput(Microsoft.Graphics.Canvas.UI.Xaml.CanvasControl canvas, Guid visualId, Boolean enableBlur);
+        void SetOutput(VoipVideoOutputSink sink);
 
         event Windows.Foundation.TypedEventHandler<VoipCaptureBase, IInspectable> FatalErrorOccurred;
     }

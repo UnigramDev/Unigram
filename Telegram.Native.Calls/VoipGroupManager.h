@@ -5,8 +5,6 @@
 
 #include "rtc_base/synchronization/mutex.h"
 
-#include "VoipVideoRenderer.h"
-
 #include <winrt/Telegram.Td.Api.h>
 
 using namespace winrt::Microsoft::Graphics::Canvas::UI::Xaml;
@@ -27,8 +25,7 @@ namespace winrt::Telegram::Native::Calls::implementation
         void SetJoinResponsePayload(hstring payload);
         void RemoveSsrcs(IVector<int32_t> ssrcs);
 
-        winrt::Telegram::Native::Calls::VoipVideoRendererToken AddIncomingVideoOutput(hstring endpointId, CanvasControl canvas, winrt::guid visualId);
-        void AddUnifiedVideoOutput(winrt::Telegram::Native::Calls::VoipVideoOutputSink sink);
+        void AddIncomingVideoOutput(hstring endpointId, winrt::Telegram::Native::Calls::VoipVideoOutputSink sink);
 
         bool IsMuted();
         void IsMuted(bool value);
@@ -67,7 +64,6 @@ namespace winrt::Telegram::Native::Calls::implementation
 
     private:
         std::unique_ptr<tgcalls::GroupInstanceCustomImpl> m_impl = nullptr;
-        std::shared_ptr<tgcalls::VideoCaptureInterface> m_capturer = nullptr;
 
         bool m_isMuted = true;
         bool m_isNoiseSuppressionEnabled = true;

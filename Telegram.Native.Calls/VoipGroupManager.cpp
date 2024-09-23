@@ -6,7 +6,6 @@
 
 #include "VoipVideoCapture.h"
 #include "VoipScreenCapture.h"
-#include "VoipVideoRendererToken.h"
 #include "VoipVideoOutputSink.h"
 #include "GroupNetworkStateChangedEventArgs.h"
 #include "BroadcastPartRequestedEventArgs.h"
@@ -182,25 +181,12 @@ namespace winrt::Telegram::Native::Calls::implementation
         }
     }
 
-    winrt::Telegram::Native::Calls::VoipVideoRendererToken VoipGroupManager::AddIncomingVideoOutput(hstring endpointId, CanvasControl canvas, winrt::guid visualId)
-    {
-        if (m_impl)
-        {
-            auto renderer = std::make_shared<VoipVideoRenderer>(canvas);
-            m_impl->addIncomingVideoOutput(winrt::to_string(endpointId), renderer);
-
-            return *winrt::make_self<VoipVideoRendererToken>(renderer, endpointId, visualId);
-        }
-
-        return nullptr;
-    }
-
-    void VoipGroupManager::AddUnifiedVideoOutput(winrt::Telegram::Native::Calls::VoipVideoOutputSink sink)
+    void VoipGroupManager::AddIncomingVideoOutput(hstring endpointId, winrt::Telegram::Native::Calls::VoipVideoOutputSink sink)
     {
         if (m_impl && sink)
         {
             auto implementation = winrt::get_self<VoipVideoOutputSink>(sink);
-            m_impl->addIncomingVideoOutput("unified", implementation->Sink());
+            m_impl->addIncomingVideoOutput(winrt::to_string(endpointId), implementation->Sink());
         }
     }
 
@@ -256,20 +242,18 @@ namespace winrt::Telegram::Native::Calls::implementation
                 if (auto screen = videoCapture.try_as<winrt::default_interface<VoipScreenCapture>>())
                 {
                     auto implementation = winrt::get_self<VoipScreenCapture>(screen);
-                    m_capturer = implementation->m_impl;
+                    m_impl->setVideoCapture(implementation->m_impl);
                 }
                 else if (auto video = videoCapture.try_as<winrt::default_interface<VoipVideoCapture>>())
                 {
                     auto implementation = winrt::get_self<VoipVideoCapture>(video);
-                    m_capturer = implementation->m_impl;
+                    m_impl->setVideoCapture(implementation->m_impl);
                 }
             }
             else
             {
-                m_capturer = nullptr;
+                m_impl->setVideoCapture(nullptr);
             }
-
-            m_impl->setVideoCapture(m_capturer);
         }
     }
 

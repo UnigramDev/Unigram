@@ -267,7 +267,7 @@ namespace Telegram.Services.Calls
         {
             lock (_managerLock)
             {
-                _camera?.SetOutputV2(output?.Sink);
+                _camera?.SetOutput(output?.Sink);
             }
         }
 
@@ -692,7 +692,7 @@ namespace Telegram.Services.Calls
 
                 _camera.FatalErrorOccurred -= OnFatalErrorOccurred;
 
-                _camera.SetOutputV2(null);
+                _camera.SetOutput(null);
 
                 _camera.Dispose();
                 _camera = null;

@@ -5,7 +5,6 @@
 #include <stddef.h>
 #include <memory>
 
-#include "VoipVideoRendererToken.h"
 #include "VoipVideoOutputSink.h"
 
 #include "api/media_stream_interface.h"

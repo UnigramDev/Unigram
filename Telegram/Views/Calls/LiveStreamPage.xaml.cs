@@ -311,7 +311,7 @@ namespace Telegram.Views.Calls
             }
 
             controller.NetworkStateUpdated += OnNetworkStateUpdated;
-            controller.AddUnifiedVideoOutput(_unifiedVideo = VoipVideoOutput.CreateSink(Viewport, false));
+            controller.AddIncomingVideoOutput("unified", _unifiedVideo = VoipVideoOutput.CreateSink(Viewport, false));
 
             _manager = controller;
         }

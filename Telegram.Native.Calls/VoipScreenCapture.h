@@ -20,8 +20,7 @@ namespace winrt::Telegram::Native::Calls::implementation
         void SwitchToDevice(hstring deviceId);
         void SetState(VoipVideoState state);
         void SetPreferredAspectRatio(float aspectRatio);
-        void SetOutputV2(winrt::Telegram::Native::Calls::VoipVideoOutputSink sink);
-        winrt::Telegram::Native::Calls::VoipVideoRendererToken SetOutput(winrt::Microsoft::Graphics::Canvas::UI::Xaml::CanvasControl canvas, winrt::guid visualId, bool enableBlur = true);
+        void SetOutput(winrt::Telegram::Native::Calls::VoipVideoOutputSink sink);
 
         std::shared_ptr<tgcalls::VideoCaptureInterface> m_impl = nullptr;
 

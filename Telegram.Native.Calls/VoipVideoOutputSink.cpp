@@ -8,16 +8,13 @@ namespace winrt::Telegram::Native::Calls::implementation
 {
     VoipVideoOutputSink::VoipVideoOutputSink(SpriteVisual visual, bool mirrored)
         : m_sink(std::make_shared<VoipVideoOutput>(visual, mirrored))
-        , m_endpointId(L"")
-        , m_visualId()
     {
     }
 
-    VoipVideoOutputSink::VoipVideoOutputSink(SpriteVisual visual, bool mirrored, hstring endpointId, winrt::guid visualId)
-        : m_sink(std::make_shared<VoipVideoOutput>(visual, mirrored))
-        , m_endpointId(endpointId)
-        , m_visualId(visualId)
+    void VoipVideoOutputSink::Stop()
     {
+        m_sink.reset();
+        m_sink = nullptr;
     }
 
     bool VoipVideoOutputSink::IsMirrored()
@@ -55,16 +52,5 @@ namespace winrt::Telegram::Native::Calls::implementation
     void VoipVideoOutputSink::FrameReceived(winrt::event_token const& token)
     {
         m_sink->m_frameReceivedEventSource.remove(token);
-    }
-
-    bool VoipVideoOutputSink::Matches(hstring endpointId, winrt::guid visualId)
-    {
-        return m_endpointId == endpointId && m_visualId == visualId;
-    }
-
-    void VoipVideoOutputSink::Stop()
-    {
-        m_sink.reset();
-        m_sink = nullptr;
     }
 }

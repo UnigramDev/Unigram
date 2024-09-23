@@ -664,23 +664,11 @@ public static class VoipCaptureBase_stub
             throw new RuntimeException(ex);
         }
     }
-    public static Telegram.Native.Calls.VoipVideoRendererToken SetOutput_stub(this Telegram.Native.Calls.VoipCaptureBase sender, Microsoft.Graphics.Canvas.UI.Xaml.CanvasControl canvas, System.Guid visualId)
+    public static void SetOutput_stub(this Telegram.Native.Calls.VoipCaptureBase sender, Telegram.Native.Calls.VoipVideoOutputSink sink)
     {
         try
         {
-            return sender.SetOutput(canvas, visualId);
-        }
-        catch (Exception ex)
-        {
-            Logger.Error(Environment.StackTrace);
-            throw new RuntimeException(ex);
-        }
-    }
-    public static void SetOutputV2_stub(this Telegram.Native.Calls.VoipCaptureBase sender, Telegram.Native.Calls.VoipVideoOutputSink sink)
-    {
-        try
-        {
-            sender.SetOutputV2(sink);
+            sender.SetOutput(sink);
         }
         catch (Exception ex)
         {
@@ -703,23 +691,11 @@ public static class VoipCaptureBase_stub
 }
 public static class VoipGroupManager_stub
 {
-    public static Telegram.Native.Calls.VoipVideoRendererToken AddIncomingVideoOutput_stub(this Telegram.Native.Calls.VoipGroupManager sender, string endpointId, Microsoft.Graphics.Canvas.UI.Xaml.CanvasControl canvas, System.Guid visualId)
+    public static void AddIncomingVideoOutput_stub(this Telegram.Native.Calls.VoipGroupManager sender, string endpointId, Telegram.Native.Calls.VoipVideoOutputSink sink)
     {
         try
         {
-            return sender.AddIncomingVideoOutput(endpointId, canvas, visualId);
-        }
-        catch (Exception ex)
-        {
-            Logger.Error(Environment.StackTrace);
-            throw new RuntimeException(ex);
-        }
-    }
-    public static void AddUnifiedVideoOutput_stub(this Telegram.Native.Calls.VoipGroupManager sender, Telegram.Native.Calls.VoipVideoOutputSink sink)
-    {
-        try
-        {
-            sender.AddUnifiedVideoOutput(sink);
+            sender.AddIncomingVideoOutput(endpointId, sink);
         }
         catch (Exception ex)
         {
@@ -980,33 +956,6 @@ public static class VoipVideoCapture_stub
 public static class VoipVideoOutputSink_stub
 {
     public static void Stop_stub(this Telegram.Native.Calls.VoipVideoOutputSink sender)
-    {
-        try
-        {
-            sender.Stop();
-        }
-        catch (Exception ex)
-        {
-            Logger.Error(Environment.StackTrace);
-            throw new RuntimeException(ex);
-        }
-    }
-}
-public static class VoipVideoRendererToken_stub
-{
-    public static bool Matches_stub(this Telegram.Native.Calls.VoipVideoRendererToken sender, string endpointId, System.Guid visualId)
-    {
-        try
-        {
-            return sender.Matches(endpointId, visualId);
-        }
-        catch (Exception ex)
-        {
-            Logger.Error(Environment.StackTrace);
-            throw new RuntimeException(ex);
-        }
-    }
-    public static void Stop_stub(this Telegram.Native.Calls.VoipVideoRendererToken sender)
     {
         try
         {

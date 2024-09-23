@@ -247,7 +247,6 @@
       <Filter>tgcalls\platform</Filter>
     </ClInclude>
     <ClInclude Include="VoipVideoCapture.h" />
-    <ClInclude Include="VoipVideoRenderer.h" />
     <ClInclude Include="..\Libraries\tgcalls\tgcalls\group\GroupInstanceImpl.h">
       <Filter>tgcalls\group</Filter>
     </ClInclude>
@@ -410,7 +409,6 @@
     <Midl Include="VoipGroupDescriptor.idl" />
     <Midl Include="GroupNetworkStateChangedEventArgs.idl" />
     <Midl Include="BroadcastPartRequestedEventArgs.idl" />
-    <Midl Include="VoipVideoRendererToken.idl" />
     <Midl Include="VoipScreenCapture.idl" />
     <Midl Include="VoipVideoChannelInfo.idl" />
     <Midl Include="BroadcastTimeRequestedEventArgs.idl" />

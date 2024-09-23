@@ -276,11 +276,6 @@
       <DependentUpon>VoipVideoChannelInfo.idl</DependentUpon>
       <SubType>Code</SubType>
     </ClInclude>
-    <ClInclude Include="VoipVideoRenderer.h" />
-    <ClInclude Include="VoipVideoRendererToken.h">
-      <DependentUpon>VoipVideoRendererToken.idl</DependentUpon>
-      <SubType>Code</SubType>
-    </ClInclude>
     <ClInclude Include="VoipVideoOutputSink.h">
       <DependentUpon>VoipVideoOutputSink.idl</DependentUpon>
       <SubType>Code</SubType>
@@ -504,10 +499,6 @@
       <DependentUpon>VoipVideoChannelInfo.idl</DependentUpon>
       <SubType>Code</SubType>
     </ClCompile>
-    <ClCompile Include="VoipVideoRendererToken.cpp">
-      <DependentUpon>VoipVideoRendererToken.idl</DependentUpon>
-      <SubType>Code</SubType>
-    </ClCompile>
     <ClCompile Include="VoipVideoOutputSink.cpp">
       <DependentUpon>VoipVideoOutputSink.idl</DependentUpon>
       <SubType>Code</SubType>
@@ -540,9 +531,6 @@
     </Midl>
     <Midl Include="VoipVideoCapture.idl" />
     <Midl Include="VoipVideoChannelInfo.idl">
-      <SubType>Designer</SubType>
-    </Midl>
-    <Midl Include="VoipVideoRendererToken.idl">
       <SubType>Designer</SubType>
     </Midl>
     <Midl Include="VoipVideoOutputSink.idl" />
