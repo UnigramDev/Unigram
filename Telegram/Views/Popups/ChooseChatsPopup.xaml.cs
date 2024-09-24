@@ -841,6 +841,7 @@ namespace Telegram.Views.Popups
         {
             var popup = new ChooseChatsPopup();
             popup.Legacy(navigationService.SessionId);
+            popup.ViewModel.NavigationService = navigationService;
             popup.ViewModel.SelectionMode = selectionMode;
             popup.ViewModel.AllowEmptySelection = allowEmptySelection;
             popup.ViewModel.Title = title;
@@ -970,6 +971,7 @@ namespace Telegram.Views.Popups
 
                 var popup = new ChooseChatsPopup();
                 popup.Legacy(navigationService.SessionId);
+                popup.ViewModel.NavigationService = navigationService;
                 popup.ViewModel.Title = include ? Strings.FilterAlwaysShow : Strings.FilterNeverShow;
                 popup.ViewModel.AllowEmptySelection = true;
                 popup.ViewModel.Folders.Clear();
@@ -1005,6 +1007,7 @@ namespace Telegram.Views.Popups
             {
                 var popup = new ChooseChatsPopup();
                 popup.Legacy(navigationService.SessionId);
+                popup.ViewModel.NavigationService = navigationService;
                 popup.ViewModel.Title = include ? Strings.FilterAlwaysShow : Strings.FilterNeverShow;
                 popup.ViewModel.AllowEmptySelection = true;
                 popup.ViewModel.Folders.Clear();
