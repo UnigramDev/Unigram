@@ -1,12 +1,11 @@
-﻿using System.Collections.Generic;
-using System.Diagnostics;
+﻿using System.Diagnostics;
 using Telegram.Common;
 using Telegram.Native.Calls;
 using Telegram.Navigation.Services;
-using Telegram.Td.Api;
-using Windows.UI.Xaml.Controls;
 using Telegram.Services.Calls;
 using Telegram.Services.Updates;
+using Telegram.Td.Api;
+using Windows.UI.Xaml.Controls;
 
 namespace Telegram.Services
 {

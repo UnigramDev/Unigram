@@ -17,7 +17,6 @@ using Telegram.Native.Calls;
 using Telegram.Services.Updates;
 using Telegram.Services.ViewService;
 using Telegram.Td.Api;
-using Telegram.Views;
 using Telegram.Views.Calls;
 using Telegram.Views.Popups;
 using Windows.ApplicationModel.Calls;

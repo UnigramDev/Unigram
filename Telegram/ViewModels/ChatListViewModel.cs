@@ -758,7 +758,7 @@ namespace Telegram.ViewModels
                     {
                         order = position.Order;
                     }
-                    
+
                     // Can't be else otherwise cell won't update while archive is open
                     if (position.List is ChatListArchive)
                     {

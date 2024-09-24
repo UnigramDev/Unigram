@@ -1566,7 +1566,7 @@ namespace Telegram.Controls.Cells
                         return string.Format(format, message.ImportInfo);
                     }
                 }
-                
+
                 if (fromUser != null)
                 {
                     if (fromUser.Id == clientService.Options.MyId)

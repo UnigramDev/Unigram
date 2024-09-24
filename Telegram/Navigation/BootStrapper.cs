@@ -15,7 +15,6 @@ using Telegram.Navigation.Services;
 using Telegram.Services.ViewService;
 using Windows.ApplicationModel;
 using Windows.ApplicationModel.Activation;
-using Windows.ApplicationModel.ExtendedExecution;
 using Windows.System;
 using Windows.UI.Composition;
 using Windows.UI.Core;
