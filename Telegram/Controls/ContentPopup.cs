@@ -277,7 +277,7 @@ namespace Telegram.Controls
                     return;
                 }
 
-                this.Focus(FocusState.Pointer);
+                this.Focus(FocusState.Programmatic);
             }
         }
 
