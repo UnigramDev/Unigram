@@ -806,6 +806,7 @@ namespace Telegram.Views.Popups
         {
             var popup = new ChooseChatsPopup();
             popup.Legacy(navigationService.SessionId);
+            popup.ViewModel.NavigationService = navigationService;
             popup.ViewModel.Title = title;
             popup.ChatFolders.Visibility = Visibility.Collapsed;
 
