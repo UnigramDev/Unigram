@@ -175,7 +175,7 @@ namespace Telegram.ViewModels.Authorization
 
             IsLoading = true;
 
-            var function = new ResendAuthenticationCode();
+            var function = new ResendAuthenticationCode(new ResendCodeReasonUserRequest());
 
             var response = await ClientService.SendAsync(function);
             if (response is Error error)
