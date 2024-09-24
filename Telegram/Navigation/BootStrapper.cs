@@ -697,12 +697,6 @@ namespace Telegram.Navigation
 
         #region lifecycle logic
 
-        public bool AutoRestoreAfterTerminated { get; set; } = true;
-        public bool AutoExtendExecutionSession { get; set; } = true;
-        public bool AutoSuspendAllFrames { get; set; } = true;
-
-        private readonly LifecycleLogic _LifecycleLogic = new LifecycleLogic();
-
         private void OnResuming(object sender, object e)
         {
             Logger.Info();
@@ -729,16 +723,6 @@ namespace Telegram.Navigation
                 //}
             }
             catch { }
-        }
-
-        private async Task<bool> CallAutoRestoreAsync(ILaunchActivatedEventArgs e, bool restored)
-        {
-            if (!AutoRestoreAfterTerminated)
-            {
-                return false;
-            }
-
-            return await _LifecycleLogic.AutoRestoreAsync(e, NavigationService);
         }
 
         private async void OnSuspending(object sender, SuspendingEventArgs e)
@@ -770,91 +754,6 @@ namespace Telegram.Navigation
         public const string DefaultTileID = "App";
 
         public enum AdditionalKinds { Primary, Toast, SecondaryTile, Other, JumpListItem }
-
-        /// <summary>
-        /// This determines the simplest case for starting. This should handle 80% of common scenarios. 
-        /// When Other is returned the developer must determine start manually using IActivatedEventArgs.Kind
-        /// </summary>
-        public static AdditionalKinds DetermineStartCause(IActivatedEventArgs args)
-        {
-            Logger.Info($"Kind: {args.Kind}");
-
-            if (args is ToastNotificationActivatedEventArgs)
-            {
-                return AdditionalKinds.Toast;
-            }
-            var e = args as ILaunchActivatedEventArgs;
-            if (e?.TileId == DefaultTileID && string.IsNullOrEmpty(e?.Arguments))
-            {
-                return AdditionalKinds.Primary;
-            }
-            else if (e?.TileId == DefaultTileID && !string.IsNullOrEmpty(e?.Arguments))
-            {
-                return AdditionalKinds.JumpListItem;
-            }
-            else if (!string.IsNullOrEmpty(e?.TileId) && e?.TileId != DefaultTileID)
-            {
-                return AdditionalKinds.SecondaryTile;
-            }
-            else
-            {
-                return AdditionalKinds.Other;
-            }
-        }
-
-        public partial class LifecycleLogic
-        {
-            public async Task<bool> AutoRestoreAsync(ILaunchActivatedEventArgs e, INavigationService nav)
-            {
-                var restored = false;
-                var launchedEvent = e;
-                if (DetermineStartCause(e) == AdditionalKinds.Primary || launchedEvent?.TileId == "")
-                {
-                    restored = await nav.LoadAsync();
-                    Logger.Info($"{nameof(restored)}: {restored}", member: nameof(nav.LoadAsync));
-                }
-                return restored;
-            }
-
-            public async Task AutoSuspendAllFramesAsync(object sender, SuspendingEventArgs e, bool autoExtendExecutionSession)
-            {
-                Logger.Info($"autoExtendExecutionSession: {autoExtendExecutionSession}");
-
-                if (autoExtendExecutionSession && !ApiInfo.IsDesktop)
-                {
-                    using (var session = new ExtendedExecutionSession { Reason = ExtendedExecutionReason.SavingData })
-                    {
-                        await SuspendAllFramesAsync();
-                    }
-                }
-                else
-                {
-                    await SuspendAllFramesAsync();
-                }
-            }
-
-            private async Task SuspendAllFramesAsync()
-            {
-                Logger.Info();
-
-                //allow only main view NavigationService as others won't be able to use Dispatcher and processing will stuck
-                foreach (INavigationService nav in WindowContext.Main.NavigationServices.ToArray())
-                {
-                    try
-                    {
-                        // call view model suspend (OnNavigatedfrom)
-                        // date the cache (which marks the date/time it was suspended)
-                        nav.FrameFacade.SetFrameState(CacheDateKey, DateTime.Now.ToString());
-                        Logger.Info($"Nav.FrameId: {nav.FrameFacade.FrameId}");
-                        await nav.Dispatcher.DispatchAsync(async () => await nav.SuspendingAsync());
-                    }
-                    catch (Exception ex)
-                    {
-                        Logger.Error($"FrameId: [{nav.FrameFacade.FrameId}] {ex} {ex.Message}");
-                    }
-                }
-            }
-        }
 
         public enum ActivateWindowSources
         {

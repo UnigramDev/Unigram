@@ -9,6 +9,7 @@ using Telegram.Controls;
 using Telegram.Navigation;
 using Telegram.Services;
 using Telegram.Td.Api;
+using Telegram.Views.Host;
 using Telegram.Views.Settings;
 using Windows.UI.Xaml.Controls;
 
@@ -61,6 +62,16 @@ namespace Telegram.ViewModels
             }
 
             ContentPopup.Block(NavigationService.XamlRoot);
+
+            WindowContext.ForEach(window =>
+            {
+                if (window.Content is not RootPage)
+                {
+                    _ = window.ConsolidateAsync();
+                }
+            });
+
+            NavigationService.Block();
 
             Settings.Clear();
             Settings.PasscodeLock.Clear();
