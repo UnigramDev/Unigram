@@ -61,23 +61,6 @@ namespace Telegram.ViewModels
                 return;
             }
 
-            ContentPopup.Block(NavigationService.XamlRoot);
-
-            WindowContext.ForEach(window =>
-            {
-                if (window.Content is not RootPage)
-                {
-                    _ = window.ConsolidateAsync();
-                }
-            });
-
-            NavigationService.Block();
-
-            Settings.Clear();
-            Settings.PasscodeLock.Clear();
-
-            await _contactsService.RemoveAsync();
-
             var response = await ClientService.SendAsync(new LogOut());
             if (response is Error error)
             {
