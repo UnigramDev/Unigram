@@ -51,10 +51,10 @@ namespace winrt::Telegram::Native::Calls::implementation
             return CallProtocol(true, true, minLayer, maxLayer, args);
         }
 
-        VoipManager();
-        void Start(hstring version, VoipDescriptor descriptor);
+        VoipManager() = default;
 
-        void Close();
+        void Start(hstring version, VoipDescriptor descriptor);
+        void Stop();
 
         bool IsMuted();
         void IsMuted(bool value);

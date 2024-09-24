@@ -329,7 +329,7 @@ namespace Telegram.Services.Calls
         public void Discard()
         {
             // TODO: dismiss reason
-            ClientService.Send(new DiscardCall(Id, false, 0, false, 0));
+            ClientService.Send(new DiscardCall(Id, false, Duration, IsVideo, 0));
         }
 
         public void ReceiveSignalingData(IList<byte> data)
@@ -629,6 +629,8 @@ namespace Telegram.Services.Calls
                 if (IsVideo && _camera == null)
                 {
                     _camera = new VoipVideoCapture(_videoInputId);
+                    _camera.FatalErrorOccurred += OnFatalErrorOccurred;
+
                     _videoState = VoipVideoState.Active;
                 }
             }
@@ -671,10 +673,9 @@ namespace Telegram.Services.Calls
                     _manager.RemoteBatteryLevelIsLowUpdated -= OnRemoteBatteryLevelIsLowUpdated;
                     _manager.SignalingDataEmitted -= OnSignalingDataEmitted;
 
-                    _manager.SetIncomingVideoOutput(null);
                     _manager.SetVideoCapture(null);
 
-                    _manager.Dispose();
+                    _manager.Stop();
                     _manager = null;
                 }
             }
@@ -694,7 +695,7 @@ namespace Telegram.Services.Calls
 
                 _camera.SetOutput(null);
 
-                _camera.Dispose();
+                _camera.Stop();
                 _camera = null;
             }
         }

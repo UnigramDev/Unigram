@@ -26,13 +26,7 @@ namespace winrt::Telegram::Native::Calls::implementation
             });
     }
 
-    VoipScreenCapture::~VoipScreenCapture()
-    {
-        m_impl.reset();
-        m_impl = nullptr;
-    }
-
-    void VoipScreenCapture::Close()
+    void VoipScreenCapture::Stop()
     {
         m_impl.reset();
         m_impl = nullptr;

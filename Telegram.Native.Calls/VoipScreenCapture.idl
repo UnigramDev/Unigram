@@ -2,7 +2,7 @@ import "VoipVideoCapture.idl";
 
 namespace Telegram.Native.Calls
 {
-    runtimeclass VoipScreenCapture : VoipCaptureBase, Windows.Foundation.IClosable
+    runtimeclass VoipScreenCapture : VoipCaptureBase
     {
         VoipScreenCapture(Windows.Graphics.Capture.GraphicsCaptureItem item);
 

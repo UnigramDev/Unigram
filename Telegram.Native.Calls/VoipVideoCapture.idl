@@ -4,17 +4,19 @@ import "VoipVideoOutputSink.idl";
 namespace Telegram.Native.Calls
 {
     [default_interface]
-    unsealed runtimeclass VoipCaptureBase : Windows.Foundation.IClosable
+    unsealed runtimeclass VoipCaptureBase
     {
         void SetState(VoipVideoState state);
         void SetOutput(VoipVideoOutputSink sink);
+
+        void Stop();
 
         event Windows.Foundation.TypedEventHandler<VoipCaptureBase, IInspectable> FatalErrorOccurred;
     }
 
 
     [default_interface]
-    runtimeclass VoipVideoCapture : VoipCaptureBase, Windows.Foundation.IClosable
+    runtimeclass VoipVideoCapture : VoipCaptureBase
     {
         VoipVideoCapture(String id);
 

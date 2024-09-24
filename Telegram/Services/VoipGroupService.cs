@@ -569,7 +569,7 @@ namespace Telegram.Services
                 _capturer.SetOutput(null);
                 _manager.SetVideoCapture(null);
 
-                _capturer.Dispose();
+                _capturer.Stop();
                 _capturer = null;
             }
             else
@@ -678,7 +678,7 @@ namespace Telegram.Services
 
                 //_screenCapturer.SetOutput(null);
                 _screenCapturer.FatalErrorOccurred -= OnFatalErrorOccurred;
-                _screenCapturer.Dispose();
+                _screenCapturer.Stop();
                 _screenCapturer = null;
             }
 
@@ -914,7 +914,7 @@ namespace Telegram.Services
                 if (_capturer != null)
                 {
                     _capturer.SetOutput(null);
-                    _capturer.Dispose();
+                    _capturer.Stop();
                     _capturer = null;
                 }
 
@@ -1096,7 +1096,7 @@ namespace Telegram.Services
                         _capturer.SetOutput(null);
                         _manager.SetVideoCapture(null);
 
-                        _capturer.Dispose();
+                        _capturer.Stop();
                         _capturer = null;
                     }
 

@@ -6,14 +6,13 @@ import "VoipDescriptor.idl";
 
 namespace Telegram.Native.Calls
 {
-    runtimeclass VoipManager : Windows.Foundation.IClosable
+    runtimeclass VoipManager
     {
         static Telegram.Td.Api.CallProtocol Protocol{ get; };
 
         VoipManager();
         void Start(String version, VoipDescriptor descriptor);
-
-
+        void Stop();
 
         Boolean IsMuted;
         void SetAudioOutputGainControlEnabled(Boolean enabled);

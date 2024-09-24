@@ -22,13 +22,9 @@ namespace winrt::Telegram::Native::Calls::implementation
             });
     }
 
-    VoipVideoCapture::~VoipVideoCapture()
+    void VoipVideoCapture::Stop()
     {
-        m_impl = nullptr;
-    }
-
-    void VoipVideoCapture::Close()
-    {
+        m_impl.reset();
         m_impl = nullptr;
     }
 

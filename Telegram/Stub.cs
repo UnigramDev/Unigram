@@ -652,18 +652,6 @@ public static class IBackgroundTaskRegistration_stub
 }
 public static class VoipCaptureBase_stub
 {
-    public static void Dispose_stub(this Telegram.Native.Calls.VoipCaptureBase sender)
-    {
-        try
-        {
-            sender.Dispose();
-        }
-        catch (Exception ex)
-        {
-            Logger.Error(Environment.StackTrace);
-            throw new RuntimeException(ex);
-        }
-    }
     public static void SetOutput_stub(this Telegram.Native.Calls.VoipCaptureBase sender, Telegram.Native.Calls.VoipVideoOutputSink sink)
     {
         try
@@ -681,6 +669,18 @@ public static class VoipCaptureBase_stub
         try
         {
             sender.SetState(state);
+        }
+        catch (Exception ex)
+        {
+            Logger.Error(Environment.StackTrace);
+            throw new RuntimeException(ex);
+        }
+    }
+    public static void Stop_stub(this Telegram.Native.Calls.VoipCaptureBase sender)
+    {
+        try
+        {
+            sender.Stop();
         }
         catch (Exception ex)
         {
@@ -814,18 +814,6 @@ public static class VoipGroupManager_stub
 }
 public static class VoipManager_stub
 {
-    public static void Dispose_stub(this Telegram.Native.Calls.VoipManager sender)
-    {
-        try
-        {
-            sender.Dispose();
-        }
-        catch (Exception ex)
-        {
-            Logger.Error(Environment.StackTrace);
-            throw new RuntimeException(ex);
-        }
-    }
     public static void ReceiveSignalingData_stub(this Telegram.Native.Calls.VoipManager sender, System.Collections.Generic.IList<byte> data)
     {
         try
@@ -898,14 +886,11 @@ public static class VoipManager_stub
             throw new RuntimeException(ex);
         }
     }
-}
-public static class VoipScreenCapture_stub
-{
-    public static void Dispose_stub(this Telegram.Native.Calls.VoipScreenCapture sender)
+    public static void Stop_stub(this Telegram.Native.Calls.VoipManager sender)
     {
         try
         {
-            sender.Dispose();
+            sender.Stop();
         }
         catch (Exception ex)
         {
@@ -913,6 +898,9 @@ public static class VoipScreenCapture_stub
             throw new RuntimeException(ex);
         }
     }
+}
+public static class VoipScreenCapture_stub
+{
     public static bool IsSupported_stub()
     {
         try
@@ -928,18 +916,6 @@ public static class VoipScreenCapture_stub
 }
 public static class VoipVideoCapture_stub
 {
-    public static void Dispose_stub(this Telegram.Native.Calls.VoipVideoCapture sender)
-    {
-        try
-        {
-            sender.Dispose();
-        }
-        catch (Exception ex)
-        {
-            Logger.Error(Environment.StackTrace);
-            throw new RuntimeException(ex);
-        }
-    }
     public static void SwitchToDevice_stub(this Telegram.Native.Calls.VoipVideoCapture sender, string deviceId)
     {
         try

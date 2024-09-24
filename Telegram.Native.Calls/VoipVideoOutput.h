@@ -135,90 +135,90 @@ struct VoipVideoOutput : public rtc::VideoSinkInterface<webrtc::VideoFrame>
         auto sizeY = buffer->StrideY() * height;
         auto sizeUV = sizeY / 2;
 
-        if (m_bitmapY == nullptr || m_bitmapY.SizeInPixels().Width != width || m_bitmapY.SizeInPixels().Height != height)
-        {
-            auto format = DirectXPixelFormat::R8UIntNormalized;
-
-            // This is needed to force BGRA rendering
-            uint8_t* fill = new uint8_t[width * height * 4];
-            std::fill_n(fill, width * height * 4, 0xFFFFFFFF);
-            auto bgra = winrt::array_view<uint8_t const>(fill, width * height * 4);
-
-            auto yView = winrt::array_view<uint8_t const>(buffer->DataY(), sizeY);
-            m_bitmapY = CanvasBitmap::CreateFromBytes(m_canvasDevice, yView, width, height, format);
-            auto uView = winrt::array_view<uint8_t const>(buffer->DataU(), sizeUV);
-            m_bitmapU = CanvasBitmap::CreateFromBytes(m_canvasDevice, uView, width / 2, height / 2, format);
-            auto vView = winrt::array_view<uint8_t const>(buffer->DataV(), sizeUV);
-            m_bitmapV = CanvasBitmap::CreateFromBytes(m_canvasDevice, vView, width / 2, height / 2, format);
-
-            if (m_shader == nullptr)
-            {
-                FILE* file = _wfopen(L"Assets\\i420.bin", L"rb");
-                fseek(file, 0, SEEK_END);
-                size_t length = ftell(file);
-                fseek(file, 0, SEEK_SET);
-                uint8_t* buffer = new uint8_t[length];
-                fread(buffer, 1, length, file);
-                fclose(file);
-
-                auto shaderView = winrt::array_view<uint8_t const>(buffer, buffer + length);
-                m_shader = PixelShaderEffect(shaderView);
-                m_shader.Source1BorderMode(EffectBorderMode::Hard);
-                m_shader.Source2BorderMode(EffectBorderMode::Hard);
-                m_shader.Source3BorderMode(EffectBorderMode::Hard);
-
-                delete[] buffer;
-            }
-
-            m_shader.Source1(m_bitmapY);
-            m_shader.Source2(m_bitmapU);
-            m_shader.Source3(m_bitmapV);
-            m_shader.Source4(CanvasBitmap::CreateFromBytes(m_canvasDevice, bgra, width, height, DirectXPixelFormat::R8G8B8A8UIntNormalized));
-
-            delete[] fill;
-        }
-        else
-        {
-            m_bitmapY.as<ABI::ICanvasBitmap>()->SetPixelBytes(sizeY, (BYTE*)buffer->DataY());
-            m_bitmapU.as<ABI::ICanvasBitmap>()->SetPixelBytes(sizeUV, (BYTE*)buffer->DataU());
-            m_bitmapV.as<ABI::ICanvasBitmap>()->SetPixelBytes(sizeUV, (BYTE*)buffer->DataV());
-        }
-
-        float3x2 matrix;
-        auto finalSize = winrt::Windows::Foundation::Size(width, height);
-
-        switch (frame.rotation())
-        {
-        case webrtc::kVideoRotation_0:
-            matrix = float3x2::identity();
-            break;
-        case webrtc::kVideoRotation_180:
-            matrix = make_float3x2_rotation(180 * (M_PI / 180), float2(width / 2, height / 2));
-            break;
-        case webrtc::kVideoRotation_90:
-            finalSize = winrt::Windows::Foundation::Size(height, width);
-            matrix = make_float3x2_rotation(90 * (M_PI / 180), float2(height / 2, width / 2));
-            break;
-        case webrtc::kVideoRotation_270:
-            finalSize = winrt::Windows::Foundation::Size(height, width);
-            matrix = make_float3x2_rotation(270 * (M_PI / 180), float2(height / 2, width / 2));
-            break;
-        }
-
-        float x = (finalSize.Width - width) / 2;
-        float y = (finalSize.Height - height) / 2;
-
-        m_pixelWidth = m_frameReceivedArgs->m_pixelWidth = finalSize.Width;
-        m_pixelHeight = m_frameReceivedArgs->m_pixelHeight = finalSize.Height;
-        m_frameReceivedEventSource(nullptr, *m_frameReceivedArgs);
-
-        if (finalSize != m_surface.Size())
-        {
-            CanvasComposition::Resize(m_surface, finalSize);
-        }
-
         try
         {
+            if (m_bitmapY == nullptr || m_bitmapY.SizeInPixels().Width != width || m_bitmapY.SizeInPixels().Height != height)
+            {
+                auto format = DirectXPixelFormat::R8UIntNormalized;
+
+                // This is needed to force BGRA rendering
+                uint8_t* fill = new uint8_t[width * height * 4];
+                std::fill_n(fill, width * height * 4, 0xFFFFFFFF);
+                auto bgra = winrt::array_view<uint8_t const>(fill, width * height * 4);
+
+                auto yView = winrt::array_view<uint8_t const>(buffer->DataY(), sizeY);
+                m_bitmapY = CanvasBitmap::CreateFromBytes(m_canvasDevice, yView, width, height, format);
+                auto uView = winrt::array_view<uint8_t const>(buffer->DataU(), sizeUV);
+                m_bitmapU = CanvasBitmap::CreateFromBytes(m_canvasDevice, uView, width / 2, height / 2, format);
+                auto vView = winrt::array_view<uint8_t const>(buffer->DataV(), sizeUV);
+                m_bitmapV = CanvasBitmap::CreateFromBytes(m_canvasDevice, vView, width / 2, height / 2, format);
+
+                if (m_shader == nullptr)
+                {
+                    FILE* file = _wfopen(L"Assets\\i420.bin", L"rb");
+                    fseek(file, 0, SEEK_END);
+                    size_t length = ftell(file);
+                    fseek(file, 0, SEEK_SET);
+                    uint8_t* buffer = new uint8_t[length];
+                    fread(buffer, 1, length, file);
+                    fclose(file);
+
+                    auto shaderView = winrt::array_view<uint8_t const>(buffer, buffer + length);
+                    m_shader = PixelShaderEffect(shaderView);
+                    m_shader.Source1BorderMode(EffectBorderMode::Hard);
+                    m_shader.Source2BorderMode(EffectBorderMode::Hard);
+                    m_shader.Source3BorderMode(EffectBorderMode::Hard);
+
+                    delete[] buffer;
+                }
+
+                m_shader.Source1(m_bitmapY);
+                m_shader.Source2(m_bitmapU);
+                m_shader.Source3(m_bitmapV);
+                m_shader.Source4(CanvasBitmap::CreateFromBytes(m_canvasDevice, bgra, width, height, DirectXPixelFormat::R8G8B8A8UIntNormalized));
+
+                delete[] fill;
+            }
+            else
+            {
+                m_bitmapY.as<ABI::ICanvasBitmap>()->SetPixelBytes(sizeY, (BYTE*)buffer->DataY());
+                m_bitmapU.as<ABI::ICanvasBitmap>()->SetPixelBytes(sizeUV, (BYTE*)buffer->DataU());
+                m_bitmapV.as<ABI::ICanvasBitmap>()->SetPixelBytes(sizeUV, (BYTE*)buffer->DataV());
+            }
+
+            float3x2 matrix;
+            auto finalSize = winrt::Windows::Foundation::Size(width, height);
+
+            switch (frame.rotation())
+            {
+            case webrtc::kVideoRotation_0:
+                matrix = float3x2::identity();
+                break;
+            case webrtc::kVideoRotation_180:
+                matrix = make_float3x2_rotation(180 * (M_PI / 180), float2(width / 2, height / 2));
+                break;
+            case webrtc::kVideoRotation_90:
+                finalSize = winrt::Windows::Foundation::Size(height, width);
+                matrix = make_float3x2_rotation(90 * (M_PI / 180), float2(height / 2, width / 2));
+                break;
+            case webrtc::kVideoRotation_270:
+                finalSize = winrt::Windows::Foundation::Size(height, width);
+                matrix = make_float3x2_rotation(270 * (M_PI / 180), float2(height / 2, width / 2));
+                break;
+            }
+
+            float x = (finalSize.Width - width) / 2;
+            float y = (finalSize.Height - height) / 2;
+
+            m_pixelWidth = m_frameReceivedArgs->m_pixelWidth = finalSize.Width;
+            m_pixelHeight = m_frameReceivedArgs->m_pixelHeight = finalSize.Height;
+            m_frameReceivedEventSource(nullptr, *m_frameReceivedArgs);
+
+            if (finalSize != m_surface.Size())
+            {
+                CanvasComposition::Resize(m_surface, finalSize);
+            }
+
             auto drawingSession = CanvasComposition::CreateDrawingSession(m_surface);
             {
                 drawingSession.Transform(matrix * make_float3x2_scale(m_mirrored ? -1 : 1, 1, float2(finalSize.Width / 2, finalSize.Height / 2)));

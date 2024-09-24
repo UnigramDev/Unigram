@@ -30,15 +30,6 @@
 
 namespace winrt::Telegram::Native::Calls::implementation
 {
-    VoipManager::VoipManager()
-    {
-    }
-
-    void VoipManager::Close()
-    {
-        m_impl.reset();
-    }
-
     inline std::string hexStr(IVector<uint8_t> data)
     {
         std::stringstream ss;
@@ -222,6 +213,17 @@ namespace winrt::Telegram::Native::Calls::implementation
         }
 
         m_impl = tgcalls::Meta::Create(winrt::to_string(version), std::move(descriptorImpl));
+    }
+
+    void VoipManager::Stop()
+    {
+        if (m_impl)
+        {
+            m_impl->stop([this](tgcalls::FinalState finalState) {
+                m_impl.reset();
+                m_impl = nullptr;
+                });
+        }
     }
 
     bool VoipManager::IsMuted()

@@ -13,9 +13,7 @@ namespace winrt::Telegram::Native::Calls::implementation
     struct VoipScreenCapture : VoipScreenCaptureT<VoipScreenCapture, winrt::Telegram::Native::Calls::VoipCaptureBase>
     {
         VoipScreenCapture(GraphicsCaptureItem item);
-        ~VoipScreenCapture();
-
-        void Close();
+        void Stop();
 
         void SwitchToDevice(hstring deviceId);
         void SetState(VoipVideoState state);
