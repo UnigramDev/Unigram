@@ -152,7 +152,7 @@ namespace Telegram.ViewModels.Folders
 
         public void Copy()
         {
-            MessageHelper.CopyLink(NavigationService.XamlRoot, _inviteLink);
+            MessageHelper.CopyLink(XamlRoot, _inviteLink);
         }
 
         public async void Share()

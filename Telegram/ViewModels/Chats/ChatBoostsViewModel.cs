@@ -155,7 +155,7 @@ namespace Telegram.ViewModels.Chats
 
         public void CopyLink()
         {
-            MessageHelper.CopyLink(NavigationService.XamlRoot, "https://" + Link);
+            MessageHelper.CopyLink(XamlRoot, "https://" + Link);
         }
 
         public async void ShareLink()

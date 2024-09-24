@@ -78,7 +78,7 @@ namespace Telegram.ViewModels.Authorization
                 }
                 else if (error.CodeEquals(ErrorCode.FLOOD))
                 {
-                    AlertsService.ShowFloodWaitAlert(NavigationService.XamlRoot, error.Message);
+                    AlertsService.ShowFloodWaitAlert(XamlRoot, error.Message);
                     //await new MessageDialog($"{Resources.FloodWaitString}\r\n\r\n({result.Error.Message})", Resources.Error).ShowAsync();
                 }
             }

@@ -79,12 +79,12 @@ namespace Telegram.Common
 
         // TODO: this is a duplicat of INavigationService.ShowPopupAsync, and it's needed by GamePage, GroupCallPage and LiveStreamPage.
         // Must be removed at some point.
-        public static Task<ContentDialogResult> ShowPopupAsync(this Page frame, int sessionId, ContentPopup popup, object parameter = null)
+        public static Task<ContentDialogResult> ShowPopupAsync(this UserControl frame, int sessionId, ContentPopup popup, object parameter = null)
         {
             var viewModel = BootStrapper.Current.ViewModelForPage(popup, sessionId);
             if (viewModel != null)
             {
-                //viewModel.NavigationService = this;
+                viewModel.XamlRoot = frame.XamlRoot;
 
                 void OnOpened(ContentDialog sender, ContentDialogOpenedEventArgs args)
                 {

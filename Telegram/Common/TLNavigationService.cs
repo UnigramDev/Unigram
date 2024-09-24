@@ -67,6 +67,17 @@ namespace Telegram.Common
             });
         }
 
+        public async void NavigateToWebApp(User botUser, string url, string title, long gameChatId = 0, long gameMessageId = 0)
+        {
+            await OpenAsync(new ViewServiceOptions
+            {
+                Width = 384,
+                Height = 640,
+                PersistedId = "WebApp",
+                Content = control => new WebAppPage(ClientService, botUser, url, title, gameChatId, gameMessageId)
+            });
+        }
+
         public async void NavigateToInstant(string url, string fallbackUrl = null)
         {
             var response = await ClientService.SendAsync(new GetWebPageInstantView(url, true));

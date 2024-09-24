@@ -332,7 +332,7 @@ namespace Telegram.ViewModels.Settings
                     break;
             }
 
-            var confirm = await popup.PickAsync(NavigationService.XamlRoot, chats, ChooseChatsOptions.Privacy);
+            var confirm = await popup.PickAsync(XamlRoot, chats, ChooseChatsOptions.Privacy);
             if (confirm != ContentDialogResult.Primary)
             {
                 return;
@@ -406,7 +406,7 @@ namespace Telegram.ViewModels.Settings
                     break;
             }
 
-            var confirm = await popup.PickAsync(NavigationService.XamlRoot, chats, ChooseChatsOptions.Privacy);
+            var confirm = await popup.PickAsync(XamlRoot, chats, ChooseChatsOptions.Privacy);
             if (confirm != ContentDialogResult.Primary)
             {
                 return;

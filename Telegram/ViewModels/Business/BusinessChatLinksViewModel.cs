@@ -55,7 +55,7 @@ namespace Telegram.ViewModels.Business
 
         public void Copy(BusinessChatLink chatLink)
         {
-            MessageHelper.CopyLink(NavigationService.XamlRoot, chatLink.Link);
+            MessageHelper.CopyLink(XamlRoot, chatLink.Link);
         }
 
         public void Share(BusinessChatLink chatLink)

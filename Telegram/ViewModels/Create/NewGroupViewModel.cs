@@ -134,7 +134,7 @@ namespace Telegram.ViewModels.Create
                 }
                 else if (response is Error error)
                 {
-                    AlertsService.ShowAddUserAlert(NavigationService.XamlRoot, error.Message, false);
+                    AlertsService.ShowAddUserAlert(XamlRoot, error.Message, false);
                 }
             }
             else

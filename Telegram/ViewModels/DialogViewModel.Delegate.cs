@@ -226,13 +226,9 @@ namespace Telegram.ViewModels
                 ChatActionManager.SetTyping(new ChatActionStartPlayingGame());
 
                 var viaBot = message.GetViaBotUser();
-                if (viaBot != null && viaBot.HasActiveUsername(out string username))
+                if (viaBot != null)
                 {
-                    NavigationService.Navigate(typeof(GamePage), new GameConfiguration(message, answer.Url, game.Game.Title, username));
-                }
-                else
-                {
-                    NavigationService.Navigate(typeof(GamePage), new GameConfiguration(message, answer.Url, game.Game.Title, string.Empty));
+                    NavigationService.NavigateToWebApp(viaBot, answer.Url, game.Game.Title, message.ChatId, message.Id);
                 }
             }
         }
@@ -391,7 +387,7 @@ namespace Telegram.ViewModels
 
                 var window = new StoriesWindow();
                 window.Update(viewModel, activeStories, StoryOpenOrigin.Card, origin, GetOrigin);
-                _ = window.ShowAsync(NavigationService.XamlRoot);
+                _ = window.ShowAsync(XamlRoot);
             }
             else
             {
@@ -549,7 +545,7 @@ namespace Telegram.ViewModels
                 var text = builder.ToString();
                 var markdown = Extensions.ReplacePremiumLink(text, new PremiumFeatureVoiceRecognition());
 
-                ToastPopup.Show(NavigationService.XamlRoot, markdown, ToastPopupIcon.Transcribe);
+                ToastPopup.Show(XamlRoot, markdown, ToastPopupIcon.Transcribe);
             }
         }
 

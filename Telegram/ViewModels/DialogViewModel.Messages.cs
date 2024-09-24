@@ -598,7 +598,7 @@ namespace Telegram.ViewModels
                     }
                 }
 
-                MessageHelper.CopyText(NavigationService.XamlRoot, builder.ToString());
+                MessageHelper.CopyText(XamlRoot, builder.ToString());
             }
         }
 
@@ -714,7 +714,7 @@ namespace Telegram.ViewModels
 
             if (input != null)
             {
-                MessageHelper.CopyText(NavigationService.XamlRoot, input);
+                MessageHelper.CopyText(XamlRoot, input);
             }
         }
 
@@ -723,7 +723,7 @@ namespace Telegram.ViewModels
             var input = quote?.Quote;
             if (input != null)
             {
-                MessageHelper.CopyText(NavigationService.XamlRoot, input);
+                MessageHelper.CopyText(XamlRoot, input);
             }
         }
 
@@ -774,7 +774,7 @@ namespace Telegram.ViewModels
             var response = await ClientService.SendAsync(new GetMessageLink(chat.Id, message.Id, 0, false, ThreadId != 0));
             if (response is MessageLink link)
             {
-                MessageHelper.CopyLink(NavigationService.XamlRoot, link.Link, link.IsPublic);
+                MessageHelper.CopyLink(XamlRoot, link.Link, link.IsPublic);
             }
         }
 
@@ -1515,7 +1515,7 @@ namespace Telegram.ViewModels
             var temp = new FormattedText(title, new[] { entity });
             var markdown = ClientEx.ParseMarkdown(temp);
 
-            ToastPopup.Show(NavigationService.XamlRoot, markdown, ToastPopupIcon.SoundDownload);
+            ToastPopup.Show(XamlRoot, markdown, ToastPopupIcon.SoundDownload);
         }
 
         #endregion
@@ -1624,7 +1624,7 @@ namespace Telegram.ViewModels
             }
             else if (message.Content is MessageVideoChatStarted or MessageVideoChatScheduled)
             {
-                await _voipGroupService.JoinAsync(NavigationService.XamlRoot, message.ChatId);
+                await _voipGroupService.JoinAsync(XamlRoot, message.ChatId);
             }
             else if (message.Content is MessagePaymentSuccessful)
             {
@@ -1658,7 +1658,7 @@ namespace Telegram.ViewModels
                     var media = await StorageMedia.CreateAsync(cached);
                     var popup = new EditMediaPopup(media, ImageCropperMask.Ellipse);
 
-                    var confirm = await popup.ShowAsync(NavigationService.XamlRoot);
+                    var confirm = await popup.ShowAsync(XamlRoot);
                     if (confirm == ContentDialogResult.Primary)
                     {
                         await EditPhotoAsync(media);

@@ -4,6 +4,7 @@
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+using Microsoft.UI.Xaml.Controls;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -17,6 +18,7 @@ using Telegram.Services;
 using Telegram.Services.ViewService;
 using Telegram.Td;
 using Telegram.Td.Api;
+using Telegram.Views.Host;
 using Telegram.Views.Popups;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.Data.Json;
@@ -33,7 +35,7 @@ using Windows.UI.Xaml.Media;
 
 namespace Telegram.Views
 {
-    public sealed partial class WebAppPage : UserControlEx
+    public sealed partial class WebAppPage : UserControlEx, IToastHost
     {
         private readonly IClientService _clientService;
         private readonly IEventAggregator _aggregator;
@@ -43,6 +45,9 @@ namespace Telegram.Views
         private readonly AttachmentMenuBot _menuBot;
 
         private readonly long _launchId;
+
+        private readonly long _gameChatId;
+        private readonly long _gameMessageId;
 
         private bool _blockingAction;
         private bool _closeNeedConfirmation;
@@ -65,15 +70,17 @@ namespace Telegram.Views
             _menuBot = menuBot;
             _sourceChat = sourceChat;
 
-            Title.Text = botUser.FullName();
+            TitleText.Text = botUser.FullName();
+            Photo.SetUser(clientService, botUser, 24);
+
             View.Navigate(url);
 
             var panel = ElementComposition.GetElementVisual(BottomBarPanel);
             panel.Clip = panel.Compositor.CreateInsetClip(0, 96, 0, 0);
 
-            ElementCompositionPreview.SetIsTranslationEnabled(Title, true);
+            ElementCompositionPreview.SetIsTranslationEnabled(TitleText, true);
 
-            Window.Current.SetTitleBar(TitleGrip);
+            Window.Current.SetTitleBar(TitleBar);
 
             ViewLifetimeControl.GetForCurrentView().Released += OnReleased;
             SystemNavigationManagerPreview.GetForCurrentView().CloseRequested += OnCloseRequested;
@@ -83,6 +90,59 @@ namespace Telegram.Views
 
             navigationClient.TitleBarPreferredVisibilityMode = AppWindowTitleBarVisibility.AlwaysHidden;
         }
+
+        public WebAppPage(IClientService clientService, User botUser, string url, string title, long gameChatId = 0, long gameMessageId = 0)
+        {
+            InitializeComponent();
+
+            _clientService = clientService;
+            _aggregator = TypeResolver.Current.Resolve<IEventAggregator>(clientService.SessionId);
+
+            _botUser = botUser;
+            _gameChatId = gameChatId;
+            _gameMessageId = gameMessageId;
+
+            TitleText.Text = title;
+            Photo.SetUser(clientService, botUser, 24);
+
+            View.Navigate(url);
+
+            var panel = ElementComposition.GetElementVisual(BottomBarPanel);
+            panel.Clip = panel.Compositor.CreateInsetClip(0, 96, 0, 0);
+
+            ElementCompositionPreview.SetIsTranslationEnabled(TitleText, true);
+
+            Window.Current.SetTitleBar(TitleBar);
+
+            ViewLifetimeControl.GetForCurrentView().Released += OnReleased;
+            SystemNavigationManagerPreview.GetForCurrentView().CloseRequested += OnCloseRequested;
+
+            var coreWindow = (IInternalCoreWindowPhone)(object)Window.Current.CoreWindow;
+            var navigationClient = (IApplicationWindowTitleBarNavigationClient)coreWindow.NavigationClient;
+
+            navigationClient.TitleBarPreferredVisibilityMode = AppWindowTitleBarVisibility.AlwaysHidden;
+        }
+
+        #region IToastHost
+
+        public void Connect(TeachingTip toast)
+        {
+            Resources.Remove("TeachingTip");
+            Resources.Add("TeachingTip", toast);
+        }
+
+        public void Disconnect(TeachingTip toast)
+        {
+            if (Resources.TryGetValue("TeachingTip", out object cached))
+            {
+                if (cached == toast)
+                {
+                    Resources.Remove("TeachingTip");
+                }
+            }
+        }
+
+        #endregion
 
         private void Handle(UpdateWebAppMessageSent update)
         {
@@ -279,6 +339,20 @@ namespace Telegram.Views
             {
                 ProcessBottomBarColor(eventData);
             }
+            // Games
+            else if (eventName == "share_game")
+            {
+                ProcessShareGame(false);
+            }
+            else if (eventName == "share_score")
+            {
+                ProcessShareGame(true);
+            }
+        }
+
+        private async void ProcessShareGame(bool withMyScore)
+        {
+            await this.ShowPopupAsync(_clientService.SessionId, new ChooseChatsPopup(), new ChooseChatsConfigurationShareMessage(_gameChatId, _gameMessageId, withMyScore));
         }
 
         private async void RequestClipboardText(JsonObject eventData)
@@ -347,7 +421,7 @@ namespace Telegram.Views
                 var theme = luminance > 0.5 ? ElementTheme.Light : ElementTheme.Dark;
 
                 TitlePanel.Background = new SolidColorBrush(c);
-                Title.Foreground = brush;
+                TitleText.Foreground = brush;
                 BackButton.RequestedTheme = theme;
                 MoreButton.RequestedTheme = theme;
                 HideButton.RequestedTheme = theme;
@@ -355,7 +429,7 @@ namespace Telegram.Views
             else
             {
                 TitlePanel.ClearValue(Panel.BackgroundProperty);
-                Title.ClearValue(TextBlock.ForegroundProperty);
+                TitleText.ClearValue(TextBlock.ForegroundProperty);
                 BackButton.RequestedTheme = ElementTheme.Default;
                 MoreButton.RequestedTheme = ElementTheme.Default;
                 HideButton.RequestedTheme = ElementTheme.Default;
@@ -664,36 +738,43 @@ namespace Telegram.Views
             BackButton.Visibility = Visibility.Visible;
 
             var visual1 = ElementComposition.GetElementVisual(BackButton);
-            var visual2 = ElementComposition.GetElementVisual(Title);
+            var visual2 = ElementComposition.GetElementVisual(Photo);
 
             var batch = visual1.Compositor.CreateScopedBatch(CompositionBatchTypes.Animation);
             batch.Completed += (s, args) =>
             {
-                visual2.Properties.InsertVector3("Translation", Vector3.Zero);
-                BackButton.Visibility = show
-                    ? Visibility.Visible
-                    : Visibility.Collapsed;
+                BackButton.Visibility = _backButtonCollapsed
+                    ? Visibility.Collapsed
+                    : Visibility.Visible;
             };
 
-            var offset = visual1.Compositor.CreateScalarKeyFrameAnimation();
-            offset.InsertKeyFrame(0, show ? -28 : 0);
-            offset.InsertKeyFrame(1, show ? 0 : -28);
-            offset.Duration = Constants.FastAnimation;
+            var scale1 = BootStrapper.Current.Compositor.CreateVector3KeyFrameAnimation();
+            scale1.InsertKeyFrame(show ? 0 : 1, Vector3.Zero);
+            scale1.InsertKeyFrame(show ? 1 : 0, Vector3.One);
+            scale1.Duration = Constants.FastAnimation;
 
-            var scale = BootStrapper.Current.Compositor.CreateVector3KeyFrameAnimation();
-            scale.InsertKeyFrame(show ? 0 : 1, Vector3.Zero);
-            scale.InsertKeyFrame(show ? 1 : 0, Vector3.One);
-            scale.Duration = Constants.FastAnimation;
+            var opacity1 = BootStrapper.Current.Compositor.CreateScalarKeyFrameAnimation();
+            opacity1.InsertKeyFrame(show ? 0 : 1, 0);
+            opacity1.InsertKeyFrame(show ? 1 : 0, 1);
+            opacity1.Duration = Constants.FastAnimation;
 
-            var opacity = BootStrapper.Current.Compositor.CreateScalarKeyFrameAnimation();
-            opacity.InsertKeyFrame(show ? 0 : 1, 0);
-            opacity.InsertKeyFrame(show ? 1 : 0, 1);
+            var scale2 = BootStrapper.Current.Compositor.CreateVector3KeyFrameAnimation();
+            scale2.InsertKeyFrame(show ? 0 : 1, Vector3.One);
+            scale2.InsertKeyFrame(show ? 1 : 0, Vector3.Zero);
+            scale2.Duration = Constants.FastAnimation;
 
-            visual1.CenterPoint = new Vector3(24);
+            var opacity2 = BootStrapper.Current.Compositor.CreateScalarKeyFrameAnimation();
+            opacity2.InsertKeyFrame(show ? 0 : 1, 1);
+            opacity2.InsertKeyFrame(show ? 1 : 0, 0);
+            opacity2.Duration = Constants.FastAnimation;
 
-            visual2.StartAnimation("Translation.X", offset);
-            visual1.StartAnimation("Scale", scale);
-            visual1.StartAnimation("Opacity", opacity);
+            visual1.CenterPoint = new Vector3(24, 20, 0);
+            visual2.CenterPoint = new Vector3(12);
+
+            visual1.StartAnimation("Scale", scale1);
+            visual1.StartAnimation("Opacity", opacity1);
+            visual2.StartAnimation("Scale", scale2);
+            visual2.StartAnimation("Opacity", opacity2);
             batch.End();
         }
 
@@ -1129,21 +1210,29 @@ namespace Telegram.Views
         {
             var flyout = new MenuFlyout();
 
-            if (_settingsVisible)
+            if (_gameChatId != 0 && _gameMessageId != 0)
             {
-                flyout.CreateFlyoutItem(MenuItemSettings, Strings.BotWebViewSettings, Icons.Settings);
+                flyout.CreateFlyoutItem(MenuItemShare, Strings.ShareFile, Icons.Share);
+                flyout.CreateFlyoutItem(MenuItemReloadPage, Strings.BotWebViewReloadPage, Icons.ArrowClockwise);
             }
-
-            // TODO: check opening chat?
-            flyout.CreateFlyoutItem(MenuItemOpenBot, Strings.BotWebViewOpenBot, Icons.Bot);
-
-            flyout.CreateFlyoutItem(MenuItemReloadPage, Strings.BotWebViewReloadPage, Icons.ArrowClockwise);
-
-            flyout.CreateFlyoutItem(MenuItemTerms, Strings.BotWebViewToS, Icons.Info);
-
-            if (_menuBot != null && _menuBot.IsAdded)
+            else
             {
-                flyout.CreateFlyoutItem(MenuItemDeleteBot, Strings.BotWebViewDeleteBot, Icons.Delete, destructive: true);
+                if (_settingsVisible)
+                {
+                    flyout.CreateFlyoutItem(MenuItemSettings, Strings.BotWebViewSettings, Icons.Settings);
+                }
+
+                // TODO: check opening chat?
+                flyout.CreateFlyoutItem(MenuItemOpenBot, Strings.BotWebViewOpenBot, Icons.Bot);
+
+                flyout.CreateFlyoutItem(MenuItemReloadPage, Strings.BotWebViewReloadPage, Icons.ArrowClockwise);
+
+                flyout.CreateFlyoutItem(MenuItemTerms, Strings.BotWebViewToS, Icons.Info);
+
+                if (_menuBot != null && _menuBot.IsAdded)
+                {
+                    flyout.CreateFlyoutItem(MenuItemDeleteBot, Strings.BotWebViewDeleteBot, Icons.Delete, destructive: true);
+                }
             }
 
             flyout.ShowAt(sender as Button, FlyoutPlacementMode.BottomEdgeAlignedRight);
@@ -1163,6 +1252,11 @@ namespace Telegram.Views
         {
             ByNavigation(navigationService => navigationService.NavigateToUser(_botUser.Id));
             //Hide();
+        }
+
+        private void MenuItemShare()
+        {
+            ProcessShareGame(false);
         }
 
         private void MenuItemReloadPage()

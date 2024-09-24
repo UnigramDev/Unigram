@@ -505,7 +505,7 @@ namespace Telegram.ViewModels.Payments
                 return;
             }
 
-            var popup = ContentPopup.Block(NavigationService.XamlRoot);
+            var popup = ContentPopup.Block(XamlRoot);
 
             var response = await ClientService.SendAsync(new SendPaymentForm(_inputInvoice, formId, infoId, shippingId, credentials, 0));
             if (response is PaymentResult result)
