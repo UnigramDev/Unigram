@@ -9,15 +9,15 @@
                         mc:Ignorable="d"
                         ActualThemeChanged="OnActualThemeChanged">
 
-    <Grid CornerRadius="8">
+    <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition />
         </Grid.RowDefinitions>
-        <Grid x:Name="TitlePanel">
+        <Grid x:Name="TitlePanel"
+              Height="40">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="Auto"
-                                  MinWidth="16" />
+                <ColumnDefinition Width="48" />
                 <ColumnDefinition />
                 <ColumnDefinition Width="Auto" />
                 <ColumnDefinition Width="Auto" />
@@ -26,44 +26,150 @@
                                   Click="BackButton_Click"
                                   RenderTransformOrigin="0.5,0.5"
                                   Width="48"
-                                  Height="48"
-                                  Margin="4,0,-8,0"
-                                  CornerRadius="20"
-                                  Glyph="&#xe93e;"
-                                  Visibility="Collapsed">
-                <Button.RenderTransform>
-                    <ScaleTransform ScaleX="0.8"
-                                    ScaleY="0.8" />
-                </Button.RenderTransform>
-            </controls:GlyphButton>
+                                  Height="40"
+                                  HorizontalAlignment="Center"
+                                  VerticalAlignment="Center"
+                                  Glyph="&#xE72B;"
+                                  Visibility="Collapsed" />
 
-            <Border x:Name="TitleGrip"
+            <controls:ProfilePicture x:Name="Photo"
+                                     Width="24"
+                                     Height="24" />
+
+            <Border x:Name="TitleBar"
                     Background="Transparent"
                     Grid.Column="1">
-                <TextBlock x:Name="Title"
-                           Text="Adsasdsd"
-                           Foreground="{ThemeResource PageHeaderForegroundBrush}"
-                           Style="{StaticResource BaseTextBlockStyle}"
-                           FontFamily="{ThemeResource EmojiThemeFontFamilyWithSymbols}"
-                           TextWrapping="NoWrap"
-                           TextTrimming="CharacterEllipsis"
-                           MaxLines="1"
+                <TextBlock x:Name="TitleText"
                            VerticalAlignment="Center"
-                           Margin="8,0,0,0"
-                           FontSize="20" />
+                           TextLineBounds="TrimToCapHeight"
+                           TextWrapping="NoWrap"
+                           AutomationProperties.LiveSetting="Assertive"
+                           Foreground="{ThemeResource PageHeaderDisabledBrush}"
+                           Style="{StaticResource CaptionTextBlockStyle}"
+                           IsHitTestVisible="False"
+                           Margin="0,2,6,0" />
             </Border>
 
             <controls:MoreButton x:Name="MoreButton"
                                  Click="More_ContextRequested"
-                                 CornerRadius="20"
-                                 Margin="0,0,-8,0"
-                                 Grid.Column="2" />
+                                 Width="46"
+                                 Height="32"
+                                 Grid.Column="2">
+                <Button.Template>
+                    <ControlTemplate TargetType="controls:MoreButton">
+                        <Grid Background="{TemplateBinding Background}">
+                            <VisualStateManager.VisualStateGroups>
+                                <VisualStateGroup x:Name="CommonStates">
+                                    <VisualState x:Name="Normal" />
+                                    <VisualState x:Name="PointerOver">
+                                        <Storyboard>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Background"
+                                                                           Storyboard.TargetName="RootGrid">
+                                                <DiscreteObjectKeyFrame KeyTime="0"
+                                                                        Value="{ThemeResource NavigationViewItemBackgroundPointerOver}" />
+                                            </ObjectAnimationUsingKeyFrames>
+                                        </Storyboard>
+                                        <VisualState.Setters>
+                                            <Setter Target="Icon.(muxc:AnimatedIcon.State)"
+                                                    Value="PointerOver" />
+                                        </VisualState.Setters>
+                                    </VisualState>
+                                    <VisualState x:Name="Pressed">
+                                        <Storyboard>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Background"
+                                                                           Storyboard.TargetName="RootGrid">
+                                                <DiscreteObjectKeyFrame KeyTime="0"
+                                                                        Value="{ThemeResource NavigationViewItemBackgroundPressed}" />
+                                            </ObjectAnimationUsingKeyFrames>
+                                        </Storyboard>
+                                        <VisualState.Setters>
+                                            <Setter Target="Icon.(muxc:AnimatedIcon.State)"
+                                                    Value="Pressed" />
+                                        </VisualState.Setters>
+                                    </VisualState>
+                                    <VisualState x:Name="Disabled">
+                                        <Storyboard>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Foreground"
+                                                                           Storyboard.TargetName="ContentPresenter">
+                                                <DiscreteObjectKeyFrame KeyTime="0"
+                                                                        Value="{ThemeResource SystemControlForegroundBaseLowBrush}" />
+                                            </ObjectAnimationUsingKeyFrames>
+                                        </Storyboard>
+                                    </VisualState>
+                                </VisualStateGroup>
+                            </VisualStateManager.VisualStateGroups>
+                            <Border x:Name="RootGrid" />
 
-            <controls:GlyphButton x:Name="HideButton"
-                                  Click="{x:Bind Hide}"
-                                  Glyph="&#xE711;"
-                                  CornerRadius="20"
-                                  Grid.Column="3" />
+                            <muxc:AnimatedIcon x:Name="Icon"
+                                               muxc:AnimatedIcon.State="Normal"
+                                               Source="{TemplateBinding IconSource}"
+                                               HorizontalAlignment="Center"
+                                               VerticalAlignment="Center"
+                                               AutomationProperties.AccessibilityView="Raw"
+                                               Width="20"
+                                               Height="20" />
+                        </Grid>
+                    </ControlTemplate>
+                </Button.Template>
+            </controls:MoreButton>
+
+            <Button x:Name="HideButton"
+                    Click="{x:Bind Hide}"
+                    HorizontalAlignment="Right"
+                    VerticalAlignment="Top"
+                    Width="46"
+                    Height="32"
+                    Grid.Column="3">
+                <Button.Template>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="RootGrid"
+                                Background="Transparent">
+                            <VisualStateManager.VisualStateGroups>
+                                <VisualStateGroup x:Name="CommonStates">
+                                    <VisualState x:Name="Normal" />
+                                    <VisualState x:Name="PointerOver">
+                                        <Storyboard>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Background"
+                                                                           Storyboard.TargetName="RootGrid">
+                                                <DiscreteObjectKeyFrame KeyTime="0"
+                                                                        Value="#C42B1C" />
+                                            </ObjectAnimationUsingKeyFrames>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Stroke"
+                                                                           Storyboard.TargetName="ContentPresenter">
+                                                <DiscreteObjectKeyFrame KeyTime="0"
+                                                                        Value="#FFFFFF" />
+                                            </ObjectAnimationUsingKeyFrames>
+                                        </Storyboard>
+                                    </VisualState>
+                                    <VisualState x:Name="Pressed">
+                                        <Storyboard>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Background"
+                                                                           Storyboard.TargetName="RootGrid">
+                                                <DiscreteObjectKeyFrame KeyTime="0"
+                                                                        Value="#C73C30" />
+                                            </ObjectAnimationUsingKeyFrames>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Stroke"
+                                                                           Storyboard.TargetName="ContentPresenter">
+                                                <DiscreteObjectKeyFrame KeyTime="0"
+                                                                        Value="#FFFFFF" />
+                                            </ObjectAnimationUsingKeyFrames>
+                                        </Storyboard>
+                                    </VisualState>
+                                    <VisualState x:Name="Disabled" />
+                                </VisualStateGroup>
+                            </VisualStateManager.VisualStateGroups>
+
+                            <Path x:Name="ContentPresenter"
+                                  Data="M0.5 0.5 L9.5 9.5 M0.5 9.5 L9.5 0.5"
+                                  Stroke="#000000"
+                                  StrokeStartLineCap="Round"
+                                  StrokeEndLineCap="Round"
+                                  HorizontalAlignment="Center"
+                                  VerticalAlignment="Center" />
+                        </Border>
+                    </ControlTemplate>
+                </Button.Template>
+            </Button>
         </Grid>
 
         <Border x:Name="BackgroundPanel"

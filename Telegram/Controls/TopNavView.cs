@@ -154,8 +154,8 @@ namespace Telegram.Controls
                     float prevPos;
                     float nextPos;
 
-                    var prevPosPoint = prevIndicator.TransformToVisual(this).TransformPoint(new Point()).ToVector2();
-                    var nextPosPoint = nextIndicator.TransformToVisual(this).TransformPoint(new Point()).ToVector2();
+                    var prevPosPoint = prevIndicator.TransformToVisual(this).TransformVector2();
+                    var nextPosPoint = nextIndicator.TransformToVisual(this).TransformVector2();
                     var prevSize = prevIndicator.RenderSize.ToVector2();
                     var nextSize = nextIndicator.RenderSize.ToVector2();
 

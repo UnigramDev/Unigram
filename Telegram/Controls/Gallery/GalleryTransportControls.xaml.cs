@@ -376,11 +376,20 @@ namespace Telegram.Controls.Gallery
 
         private void UpdatePlaybackSpeed(double value)
         {
+            value = Math.Clamp(value, 0.5, 2);
             SettingsService.Current.Playback.VideoSpeed = value;
 
             _player.Rate = (float)value;
             SpeedText.Text = string.Format("{0:N1}x", value);
             SpeedButton.Badge = string.Format("{0:N1}x", value);
+        }
+
+        private void ChangePlaybackSpeed(float amount)
+        {
+            if (_player != null)
+            {
+                UpdatePlaybackSpeed(_player.Rate + amount);
+            }
         }
 
         private void Toggle_Click(object sender, RoutedEventArgs e)
@@ -525,6 +534,8 @@ namespace Telegram.Controls.Gallery
                 return;
             }
 
+            var keyCode = (int)args.VirtualKey;
+
             if (args.VirtualKey is VirtualKey.Space or VirtualKey.K && args.OnlyKey)
             {
                 TogglePlaybackState();
@@ -548,6 +559,11 @@ namespace Telegram.Controls.Gallery
             else if ((args.VirtualKey is VirtualKey.L && args.OnlyKey) || (args.VirtualKey is VirtualKey.Right && args.OnlyControl))
             {
                 _player.AddTime(10000);
+                args.Handled = true;
+            }
+            else if (keyCode is 188 or 190 && args.OnlyShift)
+            {
+                ChangePlaybackSpeed(keyCode is 188 ? -0.25f : 0.25f);
                 args.Handled = true;
             }
         }

@@ -302,61 +302,6 @@ namespace WinRT.GenericTypeInstantiations
         }
     }
 
-    internal static class Windows_Foundation_TypedEventHandler_2_Telegram_Native_Calls_VoipScreenCapture__object
-    {
-        private static bool Initialized { get; } = Init();
-
-        public static bool EnsureInitialized() => Initialized;
-
-
-        private static unsafe void Invoke(IObjectReference _obj, global::Telegram.Native.Calls.VoipScreenCapture sender, object args)
-        {
-            var ThisPtr = _obj.ThisPtr;
-
-            ObjectReferenceValue __sender = default;
-            ObjectReferenceValue __args = default;
-            try
-            {
-                __sender = global::ABI.Telegram.Native.Calls.VoipScreenCapture.CreateMarshaler2(sender);
-                __args = MarshalInspectable<object>.CreateMarshaler2(args);
-                global::WinRT.ExceptionHelpers.ThrowExceptionForHR((*(delegate* unmanaged[Stdcall]<IntPtr, IntPtr, IntPtr, int>**)ThisPtr)[3](ThisPtr, MarshalInspectable<object>.GetAbi(__sender), MarshalInspectable<object>.GetAbi(__args)));
-            }
-            finally
-            {
-                MarshalInspectable<object>.DisposeMarshaler(__sender);
-                MarshalInspectable<object>.DisposeMarshaler(__args);
-            }
-        }
-
-        [UnmanagedCallersOnly(CallConvs = new[] { typeof(CallConvStdcall) })]
-        private static unsafe int Do_Abi_Invoke(IntPtr thisPtr, IntPtr sender, IntPtr args)
-        {
-
-
-
-            try
-            {
-                global::ABI.Windows.Foundation.TypedEventHandlerMethods<global::Telegram.Native.Calls.VoipScreenCapture, IntPtr, object, IntPtr>.Abi_Invoke(thisPtr, global::ABI.Telegram.Native.Calls.VoipScreenCapture.FromAbi(sender), MarshalInspectable<object>.FromAbi(args));
-
-            }
-            catch (Exception __exception__)
-            {
-                global::WinRT.ExceptionHelpers.SetErrorInfo(__exception__);
-                return global::WinRT.ExceptionHelpers.GetHRForException(__exception__);
-            }
-            return 0;
-        }
-
-
-        private unsafe static bool Init()
-        {
-            global::ABI.Windows.Foundation.TypedEventHandlerMethods<global::Telegram.Native.Calls.VoipScreenCapture, IntPtr, object, IntPtr>.InitRcwHelper(&Invoke);
-            global::ABI.Windows.Foundation.TypedEventHandlerMethods<global::Telegram.Native.Calls.VoipScreenCapture, IntPtr, object, IntPtr>.InitCcw(&Do_Abi_Invoke);
-
-            return true;
-        }
-    }
-
     internal static class Windows_Foundation_Collections_IVector_1_Telegram_Td_Api_StarTransaction
     {
         private static bool Initialized { get; } = Init();
@@ -11056,6 +11001,58 @@ namespace WinRT.GenericTypeInstantiations
         }
     }
 
+    internal static class Windows_Foundation_TypedEventHandler_2_Telegram_Native_Calls_VoipManager__Telegram_Native_Calls_VoipReadyState
+    {
+        private static bool Initialized { get; } = Init();
+
+        public static bool EnsureInitialized() => Initialized;
+
+
+        private static unsafe void Invoke(IObjectReference _obj, global::Telegram.Native.Calls.VoipManager sender, global::Telegram.Native.Calls.VoipReadyState args)
+        {
+            var ThisPtr = _obj.ThisPtr;
+
+            ObjectReferenceValue __sender = default;
+            try
+            {
+                __sender = global::ABI.Telegram.Native.Calls.VoipManager.CreateMarshaler2(sender);
+                global::WinRT.ExceptionHelpers.ThrowExceptionForHR((*(delegate* unmanaged[Stdcall]<IntPtr, IntPtr, global::Telegram.Native.Calls.VoipReadyState, int>**)ThisPtr)[3](ThisPtr, MarshalInspectable<object>.GetAbi(__sender), args));
+            }
+            finally
+            {
+                MarshalInspectable<object>.DisposeMarshaler(__sender);
+            }
+        }
+
+        [UnmanagedCallersOnly(CallConvs = new[] { typeof(CallConvStdcall) })]
+        private static unsafe int Do_Abi_Invoke(IntPtr thisPtr, IntPtr sender, global::Telegram.Native.Calls.VoipReadyState args)
+        {
+
+
+
+            try
+            {
+                global::ABI.Windows.Foundation.TypedEventHandlerMethods<global::Telegram.Native.Calls.VoipManager, IntPtr, global::Telegram.Native.Calls.VoipReadyState, global::Telegram.Native.Calls.VoipReadyState>.Abi_Invoke(thisPtr, global::ABI.Telegram.Native.Calls.VoipManager.FromAbi(sender), args);
+
+            }
+            catch (Exception __exception__)
+            {
+                global::WinRT.ExceptionHelpers.SetErrorInfo(__exception__);
+                return global::WinRT.ExceptionHelpers.GetHRForException(__exception__);
+            }
+            return 0;
+        }
+
+
+        private unsafe static bool Init()
+        {
+            global::ABI.Windows.Foundation.TypedEventHandlerMethods<global::Telegram.Native.Calls.VoipManager, IntPtr, global::Telegram.Native.Calls.VoipReadyState, global::Telegram.Native.Calls.VoipReadyState>.InitRcwHelper(&Invoke);
+            global::ABI.Windows.Foundation.TypedEventHandlerMethods<global::Telegram.Native.Calls.VoipManager, IntPtr, global::Telegram.Native.Calls.VoipReadyState, global::Telegram.Native.Calls.VoipReadyState>.InitCcw(&Do_Abi_Invoke);
+
+            return true;
+        }
+    }
+
     internal static class Windows_Foundation_Collections_IVector_1_Telegram_Td_Api_SponsoredMessage
     {
         private static bool Initialized { get; } = Init();
@@ -14716,6 +14713,61 @@ namespace WinRT.GenericTypeInstantiations
         }
     }
 
+    internal static class Windows_Foundation_TypedEventHandler_2_Telegram_Native_Calls_VoipCaptureBase__object
+    {
+        private static bool Initialized { get; } = Init();
+
+        public static bool EnsureInitialized() => Initialized;
+
+
+        private static unsafe void Invoke(IObjectReference _obj, global::Telegram.Native.Calls.VoipCaptureBase sender, object args)
+        {
+            var ThisPtr = _obj.ThisPtr;
+
+            ObjectReferenceValue __sender = default;
+            ObjectReferenceValue __args = default;
+            try
+            {
+                __sender = global::ABI.Telegram.Native.Calls.VoipCaptureBase.CreateMarshaler2(sender);
+                __args = MarshalInspectable<object>.CreateMarshaler2(args);
+                global::WinRT.ExceptionHelpers.ThrowExceptionForHR((*(delegate* unmanaged[Stdcall]<IntPtr, IntPtr, IntPtr, int>**)ThisPtr)[3](ThisPtr, MarshalInspectable<object>.GetAbi(__sender), MarshalInspectable<object>.GetAbi(__args)));
+            }
+            finally
+            {
+                MarshalInspectable<object>.DisposeMarshaler(__sender);
+                MarshalInspectable<object>.DisposeMarshaler(__args);
+            }
+        }
+
+        [UnmanagedCallersOnly(CallConvs = new[] { typeof(CallConvStdcall) })]
+        private static unsafe int Do_Abi_Invoke(IntPtr thisPtr, IntPtr sender, IntPtr args)
+        {
+
+
+
+            try
+            {
+                global::ABI.Windows.Foundation.TypedEventHandlerMethods<global::Telegram.Native.Calls.VoipCaptureBase, IntPtr, object, IntPtr>.Abi_Invoke(thisPtr, global::ABI.Telegram.Native.Calls.VoipCaptureBase.FromAbi(sender), MarshalInspectable<object>.FromAbi(args));
+
+            }
+            catch (Exception __exception__)
+            {
+                global::WinRT.ExceptionHelpers.SetErrorInfo(__exception__);
+                return global::WinRT.ExceptionHelpers.GetHRForException(__exception__);
+            }
+            return 0;
+        }
+
+
+        private unsafe static bool Init()
+        {
+            global::ABI.Windows.Foundation.TypedEventHandlerMethods<global::Telegram.Native.Calls.VoipCaptureBase, IntPtr, object, IntPtr>.InitRcwHelper(&Invoke);
+            global::ABI.Windows.Foundation.TypedEventHandlerMethods<global::Telegram.Native.Calls.VoipCaptureBase, IntPtr, object, IntPtr>.InitCcw(&Do_Abi_Invoke);
+
+            return true;
+        }
+    }
+
     internal static class Windows_Foundation_TypedEventHandler_2_Telegram_Native_Calls_VoipScreenCapture__Boolean
     {
         private static bool Initialized { get; } = Init();
@@ -18302,6 +18354,61 @@ namespace WinRT.GenericTypeInstantiations
             &GetMany,
             &ReplaceAll);
             _ = global::WinRT.GenericTypeInstantiations.Windows_Foundation_Collections_IIterable_1_Telegram_Td_Api_PassportRequiredElement.EnsureInitialized();
+            return true;
+        }
+    }
+
+    internal static class Windows_Foundation_TypedEventHandler_2_Telegram_Native_Calls_VoipVideoOutputSink__Telegram_Native_Calls_FrameReceivedEventArgs
+    {
+        private static bool Initialized { get; } = Init();
+
+        public static bool EnsureInitialized() => Initialized;
+
+
+        private static unsafe void Invoke(IObjectReference _obj, global::Telegram.Native.Calls.VoipVideoOutputSink sender, global::Telegram.Native.Calls.FrameReceivedEventArgs args)
+        {
+            var ThisPtr = _obj.ThisPtr;
+
+            ObjectReferenceValue __sender = default;
+            ObjectReferenceValue __args = default;
+            try
+            {
+                __sender = global::ABI.Telegram.Native.Calls.VoipVideoOutputSink.CreateMarshaler2(sender);
+                __args = global::ABI.Telegram.Native.Calls.FrameReceivedEventArgs.CreateMarshaler2(args);
+                global::WinRT.ExceptionHelpers.ThrowExceptionForHR((*(delegate* unmanaged[Stdcall]<IntPtr, IntPtr, IntPtr, int>**)ThisPtr)[3](ThisPtr, MarshalInspectable<object>.GetAbi(__sender), MarshalInspectable<object>.GetAbi(__args)));
+            }
+            finally
+            {
+                MarshalInspectable<object>.DisposeMarshaler(__sender);
+                MarshalInspectable<object>.DisposeMarshaler(__args);
+            }
+        }
+
+        [UnmanagedCallersOnly(CallConvs = new[] { typeof(CallConvStdcall) })]
+        private static unsafe int Do_Abi_Invoke(IntPtr thisPtr, IntPtr sender, IntPtr args)
+        {
+
+
+
+            try
+            {
+                global::ABI.Windows.Foundation.TypedEventHandlerMethods<global::Telegram.Native.Calls.VoipVideoOutputSink, IntPtr, global::Telegram.Native.Calls.FrameReceivedEventArgs, IntPtr>.Abi_Invoke(thisPtr, global::ABI.Telegram.Native.Calls.VoipVideoOutputSink.FromAbi(sender), global::ABI.Telegram.Native.Calls.FrameReceivedEventArgs.FromAbi(args));
+
+            }
+            catch (Exception __exception__)
+            {
+                global::WinRT.ExceptionHelpers.SetErrorInfo(__exception__);
+                return global::WinRT.ExceptionHelpers.GetHRForException(__exception__);
+            }
+            return 0;
+        }
+
+
+        private unsafe static bool Init()
+        {
+            global::ABI.Windows.Foundation.TypedEventHandlerMethods<global::Telegram.Native.Calls.VoipVideoOutputSink, IntPtr, global::Telegram.Native.Calls.FrameReceivedEventArgs, IntPtr>.InitRcwHelper(&Invoke);
+            global::ABI.Windows.Foundation.TypedEventHandlerMethods<global::Telegram.Native.Calls.VoipVideoOutputSink, IntPtr, global::Telegram.Native.Calls.FrameReceivedEventArgs, IntPtr>.InitCcw(&Do_Abi_Invoke);
+
             return true;
         }
     }
@@ -21945,58 +22052,6 @@ namespace WinRT.GenericTypeInstantiations
             &GetMany,
             &ReplaceAll);
             _ = global::WinRT.GenericTypeInstantiations.Windows_Foundation_Collections_IIterable_1_Telegram_Td_Api_ChatFolderInviteLink.EnsureInitialized();
-            return true;
-        }
-    }
-
-    internal static class Windows_Foundation_TypedEventHandler_2_Telegram_Native_Calls_VoipManager__Telegram_Native_Calls_VoipState
-    {
-        private static bool Initialized { get; } = Init();
-
-        public static bool EnsureInitialized() => Initialized;
-
-
-        private static unsafe void Invoke(IObjectReference _obj, global::Telegram.Native.Calls.VoipManager sender, global::Telegram.Native.Calls.VoipState args)
-        {
-            var ThisPtr = _obj.ThisPtr;
-
-            ObjectReferenceValue __sender = default;
-            try
-            {
-                __sender = global::ABI.Telegram.Native.Calls.VoipManager.CreateMarshaler2(sender);
-                global::WinRT.ExceptionHelpers.ThrowExceptionForHR((*(delegate* unmanaged[Stdcall]<IntPtr, IntPtr, global::Telegram.Native.Calls.VoipState, int>**)ThisPtr)[3](ThisPtr, MarshalInspectable<object>.GetAbi(__sender), args));
-            }
-            finally
-            {
-                MarshalInspectable<object>.DisposeMarshaler(__sender);
-            }
-        }
-
-        [UnmanagedCallersOnly(CallConvs = new[] { typeof(CallConvStdcall) })]
-        private static unsafe int Do_Abi_Invoke(IntPtr thisPtr, IntPtr sender, global::Telegram.Native.Calls.VoipState args)
-        {
-
-
-
-            try
-            {
-                global::ABI.Windows.Foundation.TypedEventHandlerMethods<global::Telegram.Native.Calls.VoipManager, IntPtr, global::Telegram.Native.Calls.VoipState, global::Telegram.Native.Calls.VoipState>.Abi_Invoke(thisPtr, global::ABI.Telegram.Native.Calls.VoipManager.FromAbi(sender), args);
-
-            }
-            catch (Exception __exception__)
-            {
-                global::WinRT.ExceptionHelpers.SetErrorInfo(__exception__);
-                return global::WinRT.ExceptionHelpers.GetHRForException(__exception__);
-            }
-            return 0;
-        }
-
-
-        private unsafe static bool Init()
-        {
-            global::ABI.Windows.Foundation.TypedEventHandlerMethods<global::Telegram.Native.Calls.VoipManager, IntPtr, global::Telegram.Native.Calls.VoipState, global::Telegram.Native.Calls.VoipState>.InitRcwHelper(&Invoke);
-            global::ABI.Windows.Foundation.TypedEventHandlerMethods<global::Telegram.Native.Calls.VoipManager, IntPtr, global::Telegram.Native.Calls.VoipState, global::Telegram.Native.Calls.VoipState>.InitCcw(&Do_Abi_Invoke);
-
             return true;
         }
     }

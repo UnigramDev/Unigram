@@ -187,7 +187,8 @@ namespace Telegram.Controls
 
             var label = new TextBlock
             {
-                TextWrapping = TextWrapping.Wrap
+                TextWrapping = TextWrapping.Wrap,
+                FontFamily = BootStrapper.Current.Resources["EmojiThemeFontFamilyWithSymbols"] as FontFamily
             };
 
             TextBlockHelper.SetFormattedText(label, text);

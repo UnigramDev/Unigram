@@ -227,6 +227,10 @@
       <DependentUpon>BroadcastPartRequestedEventArgs.idl</DependentUpon>
       <SubType>Code</SubType>
     </ClInclude>
+    <ClInclude Include="FrameReceivedEventArgs.h">
+      <DependentUpon>FrameReceivedEventArgs.idl</DependentUpon>
+      <SubType>Code</SubType>
+    </ClInclude>
     <ClInclude Include="GroupNetworkStateChangedEventArgs.h">
       <DependentUpon>GroupNetworkStateChangedEventArgs.idl</DependentUpon>
       <SubType>Code</SubType>
@@ -275,11 +279,11 @@
       <DependentUpon>VoipVideoChannelInfo.idl</DependentUpon>
       <SubType>Code</SubType>
     </ClInclude>
-    <ClInclude Include="VoipVideoRenderer.h" />
-    <ClInclude Include="VoipVideoRendererToken.h">
-      <DependentUpon>VoipVideoRendererToken.idl</DependentUpon>
+    <ClInclude Include="VoipVideoOutputSink.h">
+      <DependentUpon>VoipVideoOutputSink.idl</DependentUpon>
       <SubType>Code</SubType>
     </ClInclude>
+    <ClInclude Include="VoipVideoOutput.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Libraries\tgcalls\tgcalls\ChannelManager.cpp">
@@ -434,6 +438,10 @@
       <DependentUpon>BroadcastPartRequestedEventArgs.idl</DependentUpon>
       <SubType>Code</SubType>
     </ClCompile>
+    <ClCompile Include="FrameReceivedEventArgs.cpp">
+      <DependentUpon>FrameReceivedEventArgs.idl</DependentUpon>
+      <SubType>Code</SubType>
+    </ClCompile>
     <ClCompile Include="GroupNetworkStateChangedEventArgs.cpp">
       <DependentUpon>GroupNetworkStateChangedEventArgs.idl</DependentUpon>
       <SubType>Code</SubType>
@@ -494,8 +502,8 @@
       <DependentUpon>VoipVideoChannelInfo.idl</DependentUpon>
       <SubType>Code</SubType>
     </ClCompile>
-    <ClCompile Include="VoipVideoRendererToken.cpp">
-      <DependentUpon>VoipVideoRendererToken.idl</DependentUpon>
+    <ClCompile Include="VoipVideoOutputSink.cpp">
+      <DependentUpon>VoipVideoOutputSink.idl</DependentUpon>
       <SubType>Code</SubType>
     </ClCompile>
   </ItemGroup>
@@ -504,6 +512,9 @@
       <SubType>Designer</SubType>
     </Midl>
     <Midl Include="BroadcastTimeRequestedEventArgs.idl" />
+    <Midl Include="FrameReceivedEventArgs.idl">
+      <SubType>Designer</SubType>
+    </Midl>
     <Midl Include="GroupNetworkStateChangedEventArgs.idl">
       <SubType>Designer</SubType>
     </Midl>
@@ -525,9 +536,7 @@
     <Midl Include="VoipVideoChannelInfo.idl">
       <SubType>Designer</SubType>
     </Midl>
-    <Midl Include="VoipVideoRendererToken.idl">
-      <SubType>Designer</SubType>
-    </Midl>
+    <Midl Include="VoipVideoOutputSink.idl" />
   </ItemGroup>
   <ItemGroup>
     <None Include="VoipManager.def" />

@@ -28,7 +28,7 @@ namespace Telegram.Navigation
         /// If a developer overrides this method, the developer can resolve DataContext or unwrap DataContext 
         /// available for the Page object when using a MVVM pattern that relies on a wrapped/porxy around ViewModels
         /// </summary>
-        public virtual INavigable ViewModelForPage(UIElement page, int sessionId) => null;
+        public virtual ViewModelBase ViewModelForPage(UIElement page, int sessionId) => null;
 
         public static new BootStrapper Current { get; private set; }
 

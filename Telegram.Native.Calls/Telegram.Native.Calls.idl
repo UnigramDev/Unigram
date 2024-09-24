@@ -7,7 +7,7 @@ namespace Telegram.Native.Calls
         Always,
     };
 
-    enum VoipState
+    enum VoipReadyState
     {
         WaitInit = 0,
         WaitInitAck = 1,

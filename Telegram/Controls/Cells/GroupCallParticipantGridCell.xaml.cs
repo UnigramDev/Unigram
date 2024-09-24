@@ -5,7 +5,6 @@
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
 using Microsoft.Graphics.Canvas.Effects;
-using Microsoft.Graphics.Canvas.UI.Xaml;
 using Microsoft.UI.Composition;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Automation.Peers;
@@ -19,6 +18,7 @@ using Telegram.Controls.Media;
 using Telegram.Native.Calls;
 using Telegram.Navigation;
 using Telegram.Services;
+using Telegram.Services.Calls;
 using Telegram.Td.Api;
 using Telegram.Views.Calls;
 using Windows.Foundation;
@@ -34,14 +34,16 @@ namespace Telegram.Controls.Cells
         private SpriteVisual _pausedVisual;
         private CompositionEffectBrush _pausedBrush;
 
+        private readonly VoipVideoOutputSink _sink;
         private readonly bool _screenSharing;
 
         public GroupCallParticipantGridCell(IClientService clientService, GroupCallParticipant participant, GroupCallParticipantVideoInfo videoInfo, bool screenSharing)
         {
-            _screenSharing = screenSharing;
-
             InitializeComponent();
             UpdateGroupCallParticipant(clientService, participant, videoInfo);
+
+            _sink = VoipVideoOutput.CreateSink(CanvasRoot, false);
+            _screenSharing = screenSharing;
 
             if (screenSharing)
             {
@@ -52,16 +54,12 @@ namespace Telegram.Controls.Cells
             header.Opacity = 0;
         }
 
-        public bool IsMatch(GroupCallParticipant participant, GroupCallParticipantVideoInfo videoInfo)
+        public bool Matches(GroupCallParticipant participant, GroupCallParticipantVideoInfo videoInfo)
         {
             return participant != null && participant.ParticipantId.AreTheSame(ParticipantId) && _videoInfo.EndpointId == _videoInfo.EndpointId;
         }
 
-        public CanvasControl Surface
-        {
-            get => CanvasRoot.Child as CanvasControl;
-            set => CanvasRoot.Child = value;
-        }
+        public VoipVideoOutputSink Sink => _sink;
 
         public VoipVideoChannelQuality Quality => ActualHeight switch
         {
@@ -70,6 +68,7 @@ namespace Telegram.Controls.Cells
             _ => VoipVideoChannelQuality.Thumbnail
         };
 
+        // TODO: this is currently not supported
         public Stretch GetStretch(ParticipantsGridMode mode, bool list)
         {
             if (_screenSharing || IsSelected || IsPinned)

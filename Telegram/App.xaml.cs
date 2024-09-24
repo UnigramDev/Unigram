@@ -314,7 +314,7 @@ namespace Telegram
             }
         }
 
-        public override INavigable ViewModelForPage(UIElement page, int sessionId)
+        public override ViewModelBase ViewModelForPage(UIElement page, int sessionId)
         {
             return page switch
             {

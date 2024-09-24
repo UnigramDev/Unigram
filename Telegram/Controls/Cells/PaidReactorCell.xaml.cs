@@ -1,7 +1,7 @@
-﻿using Telegram.Controls.Media;
+﻿using Microsoft.UI.Xaml.Controls;
+using Telegram.Controls.Media;
 using Telegram.Services;
 using Telegram.Td.Api;
-using Microsoft.UI.Xaml.Controls;
 
 namespace Telegram.Controls.Cells
 {

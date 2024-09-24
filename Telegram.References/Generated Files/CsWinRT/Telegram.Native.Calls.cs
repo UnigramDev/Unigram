@@ -189,6 +189,83 @@ namespace Telegram.Native.Calls
     }
     [global::WinRT.WindowsRuntimeType("Telegram.Native.Calls")][global::WinRT.WindowsRuntimeHelperType(typeof(global::ABI.Telegram.Native.Calls.EmitJsonPayloadDelegate))][global::WinRT.WinRTExposedType(typeof(global::ABI.Telegram.Native.Calls.EmitJsonPayloadDelegateWinRTTypeDetails))]public delegate void EmitJsonPayloadDelegate(int ssrc, string payload);
     [global::WinRT.WindowsRuntimeType("Telegram.Native.Calls")]
+    [global::WinRT.WindowsRuntimeHelperType(typeof(global::ABI.Telegram.Native.Calls.FrameReceivedEventArgs))]
+    [global::ABI.Telegram.Native.Calls.FrameReceivedEventArgsRcwFactory]
+    [global::WinRT.ProjectedRuntimeClass(typeof(IFrameReceivedEventArgs))]
+    public sealed class FrameReceivedEventArgs : global::System.Runtime.InteropServices.ICustomQueryInterface, IWinRTObject, IEquatable<FrameReceivedEventArgs>
+    {
+        private IntPtr ThisPtr => _inner == null ? (((IWinRTObject)this).NativeObject).ThisPtr : _inner.ThisPtr;
+
+        private readonly IObjectReference _inner = null;
+
+
+
+        private IObjectReference _objRef_global__Telegram_Native_Calls_IFrameReceivedEventArgs => _inner;
+
+
+        public static FrameReceivedEventArgs FromAbi(IntPtr thisPtr)
+        {
+            if (thisPtr == IntPtr.Zero) return null;
+            return MarshalInspectable<FrameReceivedEventArgs>.FromAbi(thisPtr);
+        }
+
+        internal FrameReceivedEventArgs(IObjectReference objRef)
+        {
+            _inner = objRef.As(global::ABI.Telegram.Native.Calls.IFrameReceivedEventArgsMethods.IID);
+
+        }
+
+
+        public static bool operator ==(FrameReceivedEventArgs x, FrameReceivedEventArgs y) => (x?.ThisPtr ?? IntPtr.Zero) == (y?.ThisPtr ?? IntPtr.Zero);
+        public static bool operator !=(FrameReceivedEventArgs x, FrameReceivedEventArgs y) => !(x == y);
+        public bool Equals(FrameReceivedEventArgs other) => this == other;
+        public override bool Equals(object obj) => obj is FrameReceivedEventArgs that && this == that;
+        public override int GetHashCode() => ThisPtr.GetHashCode();
+
+
+        bool IWinRTObject.HasUnwrappableNativeObject => true;
+        IObjectReference IWinRTObject.NativeObject => _inner;
+        private volatile global::System.Collections.Concurrent.ConcurrentDictionary<RuntimeTypeHandle, IObjectReference> _queryInterfaceCache;
+        private global::System.Collections.Concurrent.ConcurrentDictionary<RuntimeTypeHandle, IObjectReference> MakeQueryInterfaceCache()
+        {
+            global::System.Threading.Interlocked.CompareExchange(ref _queryInterfaceCache, new global::System.Collections.Concurrent.ConcurrentDictionary<RuntimeTypeHandle, IObjectReference>(), null); 
+            return _queryInterfaceCache;
+        }
+        global::System.Collections.Concurrent.ConcurrentDictionary<RuntimeTypeHandle, IObjectReference> IWinRTObject.QueryInterfaceCache => _queryInterfaceCache ?? MakeQueryInterfaceCache();
+        private volatile global::System.Collections.Concurrent.ConcurrentDictionary<RuntimeTypeHandle, object> _additionalTypeData;
+        private global::System.Collections.Concurrent.ConcurrentDictionary<RuntimeTypeHandle, object> MakeAdditionalTypeData()
+        {
+            global::System.Threading.Interlocked.CompareExchange(ref _additionalTypeData, new global::System.Collections.Concurrent.ConcurrentDictionary<RuntimeTypeHandle, object>(), null); 
+            return _additionalTypeData;
+        }
+        global::System.Collections.Concurrent.ConcurrentDictionary<RuntimeTypeHandle, object> IWinRTObject.AdditionalTypeData => _additionalTypeData ?? MakeAdditionalTypeData();
+
+        private struct InterfaceTag<I>{};
+
+
+        public int PixelHeight => global::ABI.Telegram.Native.Calls.IFrameReceivedEventArgsMethods.get_PixelHeight(_objRef_global__Telegram_Native_Calls_IFrameReceivedEventArgs);
+
+        public int PixelWidth => global::ABI.Telegram.Native.Calls.IFrameReceivedEventArgsMethods.get_PixelWidth(_objRef_global__Telegram_Native_Calls_IFrameReceivedEventArgs);
+
+        private bool IsOverridableInterface(Guid iid) => false;
+
+        global::System.Runtime.InteropServices.CustomQueryInterfaceResult global::System.Runtime.InteropServices.ICustomQueryInterface.GetInterface(ref Guid iid, out IntPtr ppv)
+        {
+            ppv = IntPtr.Zero;
+            if (IsOverridableInterface(iid) || global::WinRT.Interop.IID.IID_IInspectable == iid)
+            {
+                return global::System.Runtime.InteropServices.CustomQueryInterfaceResult.NotHandled;
+            }
+
+            if (((IWinRTObject)this).NativeObject.TryAs(iid, out ppv) >= 0)
+            {
+                return global::System.Runtime.InteropServices.CustomQueryInterfaceResult.Handled;
+            }
+
+            return global::System.Runtime.InteropServices.CustomQueryInterfaceResult.NotHandled;
+        }
+    }
+    [global::WinRT.WindowsRuntimeType("Telegram.Native.Calls")]
     [global::WinRT.WindowsRuntimeHelperType(typeof(global::ABI.Telegram.Native.Calls.GroupNetworkStateChangedEventArgs))]
     [global::ABI.Telegram.Native.Calls.GroupNetworkStateChangedEventArgsRcwFactory]
     [global::WinRT.ProjectedRuntimeClass(typeof(IGroupNetworkStateChangedEventArgs))]
@@ -279,6 +356,12 @@ namespace Telegram.Native.Calls
     {
         BroadcastTimeRequestedDeferral Deferral { get; }
     }
+    [global::WinRT.WindowsRuntimeType("Telegram.Native.Calls")][Guid("038D8FF3-25DA-52EF-943C-D32AAA1D1B78")][global::WinRT.WindowsRuntimeHelperType(typeof(global::ABI.Telegram.Native.Calls.IFrameReceivedEventArgs))]
+    internal interface IFrameReceivedEventArgs
+    {
+        int PixelHeight { get; }
+        int PixelWidth { get; }
+    }
     [global::WinRT.WindowsRuntimeType("Telegram.Native.Calls")][Guid("BD0146A5-4000-5A30-87F3-7EA31D1F25E3")][global::WinRT.WindowsRuntimeHelperType(typeof(global::ABI.Telegram.Native.Calls.IGroupNetworkStateChangedEventArgs))]
     internal interface IGroupNetworkStateChangedEventArgs
     {
@@ -296,14 +379,13 @@ namespace Telegram.Native.Calls
     {
         global::System.Collections.Generic.IList<byte> Data { get; }
     }
-    [global::WinRT.WindowsRuntimeType("Telegram.Native.Calls")][Guid("07EF2498-0E01-52E7-822F-300866DBC3C5")][global::WinRT.WindowsRuntimeHelperType(typeof(global::ABI.Telegram.Native.Calls.IVoipCaptureBase))]
+    [global::WinRT.WindowsRuntimeType("Telegram.Native.Calls")][Guid("70E5B9A6-F67B-5BDA-8326-322A8E23EABC")][global::WinRT.WindowsRuntimeHelperType(typeof(global::ABI.Telegram.Native.Calls.IVoipCaptureBase))]
     internal interface IVoipCaptureBase
     {
         void SetState(VoipVideoState state);
-        [global::Windows.Foundation.Metadata.Overload(@"SetOutput")]
-        VoipVideoRendererToken SetOutput(global::Microsoft.Graphics.Canvas.UI.Xaml.CanvasControl canvas);
-        [global::Windows.Foundation.Metadata.Overload(@"SetOutput2")]
-        VoipVideoRendererToken SetOutput(global::Microsoft.Graphics.Canvas.UI.Xaml.CanvasControl canvas, bool enableBlur);
+        void SetOutput(VoipVideoOutputSink sink);
+        void Stop();
+        event global::Windows.Foundation.TypedEventHandler<VoipCaptureBase, object> FatalErrorOccurred;
     }
     [global::WinRT.WindowsRuntimeType("Telegram.Native.Calls")][Guid("0D10D4C5-C79B-52FC-8BBC-A8D1E6443BAE")][global::WinRT.WindowsRuntimeHelperType(typeof(global::ABI.Telegram.Native.Calls.IVoipCaptureBaseFactory))]
     internal interface IVoipCaptureBaseFactory
@@ -333,15 +415,14 @@ namespace Telegram.Native.Calls
         VoipCaptureBase VideoCapture { get; set; }
         VoipVideoContentType VideoContentType { get; set; }
     }
-    [global::WinRT.WindowsRuntimeType("Telegram.Native.Calls")][Guid("5D21933E-CD18-5EFF-81FF-3A84DE5968CE")][global::WinRT.WindowsRuntimeHelperType(typeof(global::ABI.Telegram.Native.Calls.IVoipGroupManager))]
+    [global::WinRT.WindowsRuntimeType("Telegram.Native.Calls")][Guid("C7CD7124-7A93-51D2-BAA4-934B465834FD")][global::WinRT.WindowsRuntimeHelperType(typeof(global::ABI.Telegram.Native.Calls.IVoipGroupManager))]
     internal interface IVoipGroupManager
     {
         void SetConnectionMode(VoipGroupConnectionMode connectionMode, bool keepBroadcastIfWasEnabled, bool isUnifiedBroadcast);
         void EmitJoinPayload(EmitJsonPayloadDelegate completion);
         void SetJoinResponsePayload(string payload);
         void RemoveSsrcs(global::System.Collections.Generic.IList<int> ssrcs);
-        VoipVideoRendererToken AddIncomingVideoOutput(int audioSource, global::Telegram.Td.Api.GroupCallParticipantVideoInfo videoInfo, global::Microsoft.Graphics.Canvas.UI.Xaml.CanvasControl canvas);
-        void AddUnifiedVideoOutput(global::Microsoft.Graphics.Canvas.UI.Xaml.CanvasControl canvas);
+        void AddIncomingVideoOutput(string endpointId, VoipVideoOutputSink sink);
         void SetAudioOutputDevice(string id);
         void SetAudioInputDevice(string id);
         void SetVideoCapture(VoipCaptureBase videoCapture);
@@ -359,13 +440,14 @@ namespace Telegram.Native.Calls
     {
         VoipGroupManager CreateInstance(VoipGroupDescriptor descriptor);
     }
-    [global::WinRT.WindowsRuntimeType("Telegram.Native.Calls")][Guid("F2769AB3-B2BB-5C10-BBB9-A5286483BFEA")][global::WinRT.WindowsRuntimeHelperType(typeof(global::ABI.Telegram.Native.Calls.IVoipManager))]
+    [global::WinRT.WindowsRuntimeType("Telegram.Native.Calls")][Guid("44A8A93C-7730-5B7D-B181-0D81D4423F49")][global::WinRT.WindowsRuntimeHelperType(typeof(global::ABI.Telegram.Native.Calls.IVoipManager))]
     internal interface IVoipManager
     {
-        void Start();
+        void Start(string version, VoipDescriptor descriptor);
+        void Stop();
         void SetAudioOutputGainControlEnabled(bool enabled);
         void SetEchoCancellationStrength(int strength);
-        VoipVideoRendererToken SetIncomingVideoOutput(global::Microsoft.Graphics.Canvas.UI.Xaml.CanvasControl canvas);
+        void SetIncomingVideoOutput(VoipVideoOutputSink sink);
         void SetAudioInputDevice(string id);
         void SetAudioOutputDevice(string id);
         void SetAudioOutputDuckingEnabled(bool enabled);
@@ -383,22 +465,16 @@ namespace Telegram.Native.Calls
         event global::Windows.Foundation.TypedEventHandler<VoipManager, float> RemotePrefferedAspectRatioUpdated;
         event global::Windows.Foundation.TypedEventHandler<VoipManager, int> SignalBarsUpdated;
         event global::Windows.Foundation.TypedEventHandler<VoipManager, SignalingDataEmittedEventArgs> SignalingDataEmitted;
-        event global::Windows.Foundation.TypedEventHandler<VoipManager, VoipState> StateUpdated;
-    }
-    [global::WinRT.WindowsRuntimeType("Telegram.Native.Calls")][Guid("78B38B82-3044-5C2A-AE67-30D55BE0869F")][global::WinRT.WindowsRuntimeHelperType(typeof(global::ABI.Telegram.Native.Calls.IVoipManagerFactory))]
-    internal interface IVoipManagerFactory
-    {
-        VoipManager CreateInstance(string version, VoipDescriptor descriptor);
+        event global::Windows.Foundation.TypedEventHandler<VoipManager, VoipReadyState> StateUpdated;
     }
     [global::WinRT.WindowsRuntimeType("Telegram.Native.Calls")][Guid("57DBD681-D3D1-5E94-B32D-BA15753C6611")][global::WinRT.WindowsRuntimeHelperType(typeof(global::ABI.Telegram.Native.Calls.IVoipManagerStatics))]
     internal interface IVoipManagerStatics
     {
         global::Telegram.Td.Api.CallProtocol Protocol { get; }
     }
-    [global::WinRT.WindowsRuntimeType("Telegram.Native.Calls")][Guid("818A0058-CA5E-5859-B2BA-A0FC6EB9111A")][global::WinRT.WindowsRuntimeHelperType(typeof(global::ABI.Telegram.Native.Calls.IVoipScreenCapture))]
+    [global::WinRT.WindowsRuntimeType("Telegram.Native.Calls")][Guid("440546BB-C671-5431-9217-700298D01FA0")][global::WinRT.WindowsRuntimeHelperType(typeof(global::ABI.Telegram.Native.Calls.IVoipScreenCapture))]
     internal interface IVoipScreenCapture
     {
-        event global::Windows.Foundation.TypedEventHandler<VoipScreenCapture, object> FatalErrorOccurred;
         event global::Windows.Foundation.TypedEventHandler<VoipScreenCapture, bool> Paused;
     }
     [global::WinRT.WindowsRuntimeType("Telegram.Native.Calls")][Guid("258E2794-9166-5238-8BC6-C35A3F39AB0D")][global::WinRT.WindowsRuntimeHelperType(typeof(global::ABI.Telegram.Native.Calls.IVoipScreenCaptureFactory))]
@@ -422,31 +498,33 @@ namespace Telegram.Native.Calls
     {
         VoipVideoCapture CreateInstance(string id);
     }
-    [global::WinRT.WindowsRuntimeType("Telegram.Native.Calls")][Guid("AE59C23F-D6FB-56CA-882F-DA846BFF98D5")][global::WinRT.WindowsRuntimeHelperType(typeof(global::ABI.Telegram.Native.Calls.IVoipVideoChannelInfo))]
+    [global::WinRT.WindowsRuntimeType("Telegram.Native.Calls")][Guid("07E369A7-1685-595C-8C91-5579BA397B1A")][global::WinRT.WindowsRuntimeHelperType(typeof(global::ABI.Telegram.Native.Calls.IVoipVideoChannelInfo))]
     internal interface IVoipVideoChannelInfo
     {
-        int AudioSource { get; set; }
-        string EndpointId { get; set; }
-        VoipVideoChannelQuality MaxQuality { get; set; }
-        VoipVideoChannelQuality MinQuality { get; set; }
-        global::System.Collections.Generic.IList<global::Telegram.Td.Api.GroupCallVideoSourceGroup> SourceGroups { get; set; }
+        int AudioSource { get; }
+        string EndpointId { get; }
+        VoipVideoChannelQuality MaxQuality { get; }
+        VoipVideoChannelQuality MinQuality { get; }
+        global::System.Collections.Generic.IList<global::Telegram.Td.Api.GroupCallVideoSourceGroup> SourceGroups { get; }
     }
-    [global::WinRT.WindowsRuntimeType("Telegram.Native.Calls")][Guid("C7135A80-0166-5BCA-B00E-1766C67E5566")][global::WinRT.WindowsRuntimeHelperType(typeof(global::ABI.Telegram.Native.Calls.IVoipVideoChannelInfoFactory))]
+    [global::WinRT.WindowsRuntimeType("Telegram.Native.Calls")][Guid("EB4D90F5-3ED5-5A99-800C-AFE09D22E30D")][global::WinRT.WindowsRuntimeHelperType(typeof(global::ABI.Telegram.Native.Calls.IVoipVideoChannelInfoFactory))]
     internal interface IVoipVideoChannelInfoFactory
     {
         VoipVideoChannelInfo CreateInstance(int audioSource, string endpointId, global::System.Collections.Generic.IList<global::Telegram.Td.Api.GroupCallVideoSourceGroup> sourceGroups, VoipVideoChannelQuality minQuality, VoipVideoChannelQuality maxQuality);
-        VoipVideoChannelInfo CreateInstance2(VoipVideoRendererToken token, VoipVideoChannelQuality minQuality, VoipVideoChannelQuality maxQuality);
     }
-    [global::WinRT.WindowsRuntimeType("Telegram.Native.Calls")][Guid("228AE1A1-33CB-5C54-B4D3-CDFC0A56B4D8")][global::WinRT.WindowsRuntimeHelperType(typeof(global::ABI.Telegram.Native.Calls.IVoipVideoRendererToken))]
-    internal interface IVoipVideoRendererToken
+    [global::WinRT.WindowsRuntimeType("Telegram.Native.Calls")][Guid("AE48F308-D3C9-57B7-9F0B-AFF546D855AC")][global::WinRT.WindowsRuntimeHelperType(typeof(global::ABI.Telegram.Native.Calls.IVoipVideoOutputSink))]
+    internal interface IVoipVideoOutputSink
     {
-        bool IsMatch(string endpointId, global::Microsoft.Graphics.Canvas.UI.Xaml.CanvasControl canvasControl);
         void Stop();
-        int AudioSource { get; }
-        string EndpointId { get; }
         bool IsMirrored { get; set; }
-        global::System.Collections.Generic.IList<global::Telegram.Td.Api.GroupCallVideoSourceGroup> SourceGroups { get; }
-        global::Microsoft.UI.Xaml.Media.Stretch Stretch { get; set; }
+        int PixelHeight { get; }
+        int PixelWidth { get; }
+        event global::Windows.Foundation.TypedEventHandler<VoipVideoOutputSink, FrameReceivedEventArgs> FrameReceived;
+    }
+    [global::WinRT.WindowsRuntimeType("Telegram.Native.Calls")][Guid("8C8BF549-A573-57F1-A947-75D7121A4886")][global::WinRT.WindowsRuntimeHelperType(typeof(global::ABI.Telegram.Native.Calls.IVoipVideoOutputSinkFactory))]
+    internal interface IVoipVideoOutputSinkFactory
+    {
+        VoipVideoOutputSink CreateInstance(global::Microsoft.UI.Composition.SpriteVisual visual, bool mirrored);
     }
     [global::WinRT.WindowsRuntimeType("Telegram.Native.Calls")]
     [global::WinRT.WindowsRuntimeHelperType(typeof(global::ABI.Telegram.Native.Calls.RemoteMediaStateUpdatedEventArgs))]
@@ -609,7 +687,7 @@ namespace Telegram.Native.Calls
     [global::WinRT.WindowsRuntimeHelperType(typeof(global::ABI.Telegram.Native.Calls.VoipCaptureBase))]
     [global::ABI.Telegram.Native.Calls.VoipCaptureBaseRcwFactory]
     [global::WinRT.ProjectedRuntimeClass(typeof(IVoipCaptureBase))]
-    public class VoipCaptureBase : global::System.IDisposable, global::System.Runtime.InteropServices.ICustomQueryInterface, IWinRTObject, IEquatable<VoipCaptureBase>
+    public class VoipCaptureBase : global::System.Runtime.InteropServices.ICustomQueryInterface, IWinRTObject, IEquatable<VoipCaptureBase>
     {
         private IntPtr ThisPtr => _inner == null ? (((IWinRTObject)this).NativeObject).ThisPtr : _inner.ThisPtr;
 
@@ -625,14 +703,6 @@ namespace Telegram.Native.Calls
             return ___objRef_global__Telegram_Native_Calls_IVoipCaptureBase;
         }
         private IObjectReference _objRef_global__Telegram_Native_Calls_IVoipCaptureBase => ___objRef_global__Telegram_Native_Calls_IVoipCaptureBase ?? Make___objRef_global__Telegram_Native_Calls_IVoipCaptureBase();
-
-        private volatile IObjectReference ___objRef_global__System_IDisposable;
-        private IObjectReference Make___objRef_global__System_IDisposable()
-        {
-            global::System.Threading.Interlocked.CompareExchange(ref ___objRef_global__System_IDisposable, ((IWinRTObject)this).NativeObject.As<IUnknownVftbl>(global::ABI.System.IDisposableMethods.IID), null);
-            return ___objRef_global__System_IDisposable;
-        }
-        private IObjectReference _objRef_global__System_IDisposable => ___objRef_global__System_IDisposable ?? Make___objRef_global__System_IDisposable();
 
 
 
@@ -702,11 +772,15 @@ namespace Telegram.Native.Calls
 
         public void SetState(VoipVideoState state) => global::ABI.Telegram.Native.Calls.IVoipCaptureBaseMethods.SetState(_objRef_global__Telegram_Native_Calls_IVoipCaptureBase, state);
 
-        public VoipVideoRendererToken SetOutput(global::Microsoft.Graphics.Canvas.UI.Xaml.CanvasControl canvas) => global::ABI.Telegram.Native.Calls.IVoipCaptureBaseMethods.SetOutput(_objRef_global__Telegram_Native_Calls_IVoipCaptureBase, canvas);
+        public void SetOutput(VoipVideoOutputSink sink) => global::ABI.Telegram.Native.Calls.IVoipCaptureBaseMethods.SetOutput(_objRef_global__Telegram_Native_Calls_IVoipCaptureBase, sink);
 
-        public VoipVideoRendererToken SetOutput(global::Microsoft.Graphics.Canvas.UI.Xaml.CanvasControl canvas, bool enableBlur) => global::ABI.Telegram.Native.Calls.IVoipCaptureBaseMethods.SetOutput(_objRef_global__Telegram_Native_Calls_IVoipCaptureBase, canvas, enableBlur);
+        public void Stop() => global::ABI.Telegram.Native.Calls.IVoipCaptureBaseMethods.Stop(_objRef_global__Telegram_Native_Calls_IVoipCaptureBase);
 
-        public void Dispose() => global::ABI.System.IDisposableMethods.Dispose(_objRef_global__System_IDisposable);
+        public event global::Windows.Foundation.TypedEventHandler<VoipCaptureBase, object> FatalErrorOccurred
+        {
+            add => global::ABI.Telegram.Native.Calls.IVoipCaptureBaseMethods.Get_FatalErrorOccurred2(_objRef_global__Telegram_Native_Calls_IVoipCaptureBase, (IWinRTObject)this).Subscribe(value);
+            remove => global::ABI.Telegram.Native.Calls.IVoipCaptureBaseMethods.Get_FatalErrorOccurred2(_objRef_global__Telegram_Native_Calls_IVoipCaptureBase, (IWinRTObject)this).Unsubscribe(value);
+        }
 
         protected virtual bool IsOverridableInterface(Guid iid) => false;
 
@@ -1156,9 +1230,7 @@ namespace Telegram.Native.Calls
 
         public void RemoveSsrcs(global::System.Collections.Generic.IList<int> ssrcs) => global::ABI.Telegram.Native.Calls.IVoipGroupManagerMethods.RemoveSsrcs(_objRef_global__Telegram_Native_Calls_IVoipGroupManager, ssrcs);
 
-        public VoipVideoRendererToken AddIncomingVideoOutput(int audioSource, global::Telegram.Td.Api.GroupCallParticipantVideoInfo videoInfo, global::Microsoft.Graphics.Canvas.UI.Xaml.CanvasControl canvas) => global::ABI.Telegram.Native.Calls.IVoipGroupManagerMethods.AddIncomingVideoOutput(_objRef_global__Telegram_Native_Calls_IVoipGroupManager, audioSource, videoInfo, canvas);
-
-        public void AddUnifiedVideoOutput(global::Microsoft.Graphics.Canvas.UI.Xaml.CanvasControl canvas) => global::ABI.Telegram.Native.Calls.IVoipGroupManagerMethods.AddUnifiedVideoOutput(_objRef_global__Telegram_Native_Calls_IVoipGroupManager, canvas);
+        public void AddIncomingVideoOutput(string endpointId, VoipVideoOutputSink sink) => global::ABI.Telegram.Native.Calls.IVoipGroupManagerMethods.AddIncomingVideoOutput(_objRef_global__Telegram_Native_Calls_IVoipGroupManager, endpointId, sink);
 
         public void SetAudioOutputDevice(string id) => global::ABI.Telegram.Native.Calls.IVoipGroupManagerMethods.SetAudioOutputDevice(_objRef_global__Telegram_Native_Calls_IVoipGroupManager, id);
 
@@ -1248,7 +1320,7 @@ namespace Telegram.Native.Calls
     [global::WinRT.WindowsRuntimeHelperType(typeof(global::ABI.Telegram.Native.Calls.VoipManager))]
     [global::ABI.Telegram.Native.Calls.VoipManagerRcwFactory]
     [global::WinRT.ProjectedRuntimeClass(typeof(IVoipManager))]
-    public sealed class VoipManager : global::System.IDisposable, global::System.Runtime.InteropServices.ICustomQueryInterface, IWinRTObject, IEquatable<VoipManager>
+    public sealed class VoipManager : global::System.Runtime.InteropServices.ICustomQueryInterface, IWinRTObject, IEquatable<VoipManager>
     {
         private IntPtr ThisPtr => _inner == null ? (((IWinRTObject)this).NativeObject).ThisPtr : _inner.ThisPtr;
 
@@ -1257,73 +1329,31 @@ namespace Telegram.Native.Calls
 
 
         private IObjectReference _objRef_global__Telegram_Native_Calls_IVoipManager => _inner;
-        private volatile IObjectReference ___objRef_global__System_IDisposable;
-        private IObjectReference Make___objRef_global__System_IDisposable()
-        {
-            global::System.Threading.Interlocked.CompareExchange(ref ___objRef_global__System_IDisposable, ((IWinRTObject)this).NativeObject.As<IUnknownVftbl>(global::ABI.System.IDisposableMethods.IID), null);
-            return ___objRef_global__System_IDisposable;
-        }
-        private IObjectReference _objRef_global__System_IDisposable => ___objRef_global__System_IDisposable ?? Make___objRef_global__System_IDisposable();
 
 
-
-        private static class _IVoipManagerFactoryMethods
-        {
-            public static unsafe IntPtr CreateInstance(IObjectReference _obj, string version, VoipDescriptor descriptor)
-            {
-                var ThisPtr = _obj.ThisPtr;
-
-                ObjectReferenceValue __descriptor = default;
-                IntPtr __retval = default;
-                try
-                {
-                    __descriptor = global::ABI.Telegram.Native.Calls.VoipDescriptor.CreateMarshaler2(descriptor);
-                    MarshalString.Pinnable __version = new(version);
-                    fixed(void* ___version = __version)
-                    {
-                        global::WinRT.ExceptionHelpers.ThrowExceptionForHR((*(delegate* unmanaged[Stdcall]<IntPtr, IntPtr, IntPtr, IntPtr*, int>**)ThisPtr)[6](ThisPtr, MarshalString.GetAbi(ref __version), MarshalInspectable<object>.GetAbi(__descriptor), &__retval));
-                        return __retval;
-                    }
-                }
-                finally
-                {
-                    MarshalInspectable<object>.DisposeMarshaler(__descriptor);
-                }
-            }
-        }
-
-        private static volatile IObjectReference ___objRef_global__Telegram_Native_Calls_IVoipManagerFactory;
-        private static IObjectReference _objRef_global__Telegram_Native_Calls_IVoipManagerFactory
+        private static volatile IObjectReference ___objRef_global__Telegram_Native_Calls_VoipManager;
+        private static IObjectReference _objRef_global__Telegram_Native_Calls_VoipManager
         {
             get
             { 
-                var factory = ___objRef_global__Telegram_Native_Calls_IVoipManagerFactory;
+                var factory = ___objRef_global__Telegram_Native_Calls_VoipManager;
                 if (factory != null && factory.IsInCurrentContext)
                 {
                     return factory;
                 }
                 else
                 {
-                    return ___objRef_global__Telegram_Native_Calls_IVoipManagerFactory = ActivationFactory.Get("Telegram.Native.Calls.VoipManager", global::ABI.Telegram.Native.Calls.IVoipManagerFactoryMethods.IID);
+                    return ___objRef_global__Telegram_Native_Calls_VoipManager = ActivationFactory.Get("Telegram.Native.Calls.VoipManager");
                 }
             }
         }
 
-        public VoipManager(string version, VoipDescriptor descriptor) 
-        { 
-        IntPtr ptr = (_IVoipManagerFactoryMethods.CreateInstance(_objRef_global__Telegram_Native_Calls_IVoipManagerFactory, version, descriptor)); 
-        try 
-        { 
-        _inner = ComWrappersSupport.GetObjectReferenceForInterface(ptr, global::ABI.Telegram.Native.Calls.IVoipManagerMethods.IID, false); 
+        public VoipManager() 
+        {
+            _inner = global::ABI.WinRT.Interop.IActivationFactoryMethods.ActivateInstanceUnsafe(_objRef_global__Telegram_Native_Calls_VoipManager, global::ABI.Telegram.Native.Calls.IVoipManagerMethods.IID);
+            ComWrappersSupport.RegisterObjectForInterface(this, ThisPtr);
+            ComWrappersHelper.Init(_inner, false);
 
-        } 
-        finally 
-        { 
-        MarshalInspectable<object>.DisposeAbi(ptr); 
-        }
-
-        ComWrappersSupport.RegisterObjectForInterface(this, ThisPtr);
-        ComWrappersHelper.Init(_inner, false);
         }
 
         public static I As<I>() => ActivationFactory.Get("Telegram.Native.Calls.VoipManager").AsInterface<I>();
@@ -1387,13 +1417,15 @@ namespace Telegram.Native.Calls
         private struct InterfaceTag<I>{};
 
 
-        public void Start() => global::ABI.Telegram.Native.Calls.IVoipManagerMethods.Start(_objRef_global__Telegram_Native_Calls_IVoipManager);
+        public void Start(string version, VoipDescriptor descriptor) => global::ABI.Telegram.Native.Calls.IVoipManagerMethods.Start(_objRef_global__Telegram_Native_Calls_IVoipManager, version, descriptor);
+
+        public void Stop() => global::ABI.Telegram.Native.Calls.IVoipManagerMethods.Stop(_objRef_global__Telegram_Native_Calls_IVoipManager);
 
         public void SetAudioOutputGainControlEnabled(bool enabled) => global::ABI.Telegram.Native.Calls.IVoipManagerMethods.SetAudioOutputGainControlEnabled(_objRef_global__Telegram_Native_Calls_IVoipManager, enabled);
 
         public void SetEchoCancellationStrength(int strength) => global::ABI.Telegram.Native.Calls.IVoipManagerMethods.SetEchoCancellationStrength(_objRef_global__Telegram_Native_Calls_IVoipManager, strength);
 
-        public VoipVideoRendererToken SetIncomingVideoOutput(global::Microsoft.Graphics.Canvas.UI.Xaml.CanvasControl canvas) => global::ABI.Telegram.Native.Calls.IVoipManagerMethods.SetIncomingVideoOutput(_objRef_global__Telegram_Native_Calls_IVoipManager, canvas);
+        public void SetIncomingVideoOutput(VoipVideoOutputSink sink) => global::ABI.Telegram.Native.Calls.IVoipManagerMethods.SetIncomingVideoOutput(_objRef_global__Telegram_Native_Calls_IVoipManager, sink);
 
         public void SetAudioInputDevice(string id) => global::ABI.Telegram.Native.Calls.IVoipManagerMethods.SetAudioInputDevice(_objRef_global__Telegram_Native_Calls_IVoipManager, id);
 
@@ -1449,13 +1481,11 @@ namespace Telegram.Native.Calls
             remove => global::ABI.Telegram.Native.Calls.IVoipManagerMethods.Get_SignalingDataEmitted2(_objRef_global__Telegram_Native_Calls_IVoipManager, (IWinRTObject)this).Unsubscribe(value);
         }
 
-        public event global::Windows.Foundation.TypedEventHandler<VoipManager, VoipState> StateUpdated
+        public event global::Windows.Foundation.TypedEventHandler<VoipManager, VoipReadyState> StateUpdated
         {
             add => global::ABI.Telegram.Native.Calls.IVoipManagerMethods.Get_StateUpdated2(_objRef_global__Telegram_Native_Calls_IVoipManager, (IWinRTObject)this).Subscribe(value);
             remove => global::ABI.Telegram.Native.Calls.IVoipManagerMethods.Get_StateUpdated2(_objRef_global__Telegram_Native_Calls_IVoipManager, (IWinRTObject)this).Unsubscribe(value);
         }
-
-        public void Dispose() => global::ABI.System.IDisposableMethods.Dispose(_objRef_global__System_IDisposable);
 
         public bool IsMuted
         {
@@ -1483,11 +1513,19 @@ namespace Telegram.Native.Calls
             return global::System.Runtime.InteropServices.CustomQueryInterfaceResult.NotHandled;
         }
     }
+    [global::WinRT.WindowsRuntimeType("Telegram.Native.Calls")][global::WinRT.WinRTExposedType(typeof(global::WinRT.EnumTypeDetails<VoipReadyState>))]public enum VoipReadyState : int
+    {
+        WaitInit = unchecked((int)0),
+        WaitInitAck = unchecked((int)0x1),
+        Established = unchecked((int)0x2),
+        Failed = unchecked((int)0x3),
+        Reconnecting = unchecked((int)0x4),
+    }
     [global::WinRT.WindowsRuntimeType("Telegram.Native.Calls")]
     [global::WinRT.WindowsRuntimeHelperType(typeof(global::ABI.Telegram.Native.Calls.VoipScreenCapture))]
     [global::ABI.Telegram.Native.Calls.VoipScreenCaptureRcwFactory]
     [global::WinRT.ProjectedRuntimeClass(typeof(IVoipScreenCapture))]
-    public sealed class VoipScreenCapture : VoipCaptureBase, global::System.IDisposable, global::System.Runtime.InteropServices.ICustomQueryInterface, IWinRTObject, IEquatable<VoipScreenCapture>
+    public sealed class VoipScreenCapture : VoipCaptureBase, global::System.Runtime.InteropServices.ICustomQueryInterface, IWinRTObject, IEquatable<VoipScreenCapture>
     {
         private IntPtr ThisPtr => _inner == null ? (((IWinRTObject)this).NativeObject).ThisPtr : _inner.ThisPtr;
 
@@ -1496,14 +1534,6 @@ namespace Telegram.Native.Calls
 
 
         private IObjectReference _objRef_global__Telegram_Native_Calls_IVoipScreenCapture => _inner;
-        private volatile IObjectReference ___objRef_global__System_IDisposable;
-        private IObjectReference Make___objRef_global__System_IDisposable()
-        {
-            global::System.Threading.Interlocked.CompareExchange(ref ___objRef_global__System_IDisposable, ((IWinRTObject)this).NativeObject.As<IUnknownVftbl>(global::ABI.System.IDisposableMethods.IID), null);
-            return ___objRef_global__System_IDisposable;
-        }
-        private IObjectReference _objRef_global__System_IDisposable => ___objRef_global__System_IDisposable ?? Make___objRef_global__System_IDisposable();
-
 
 
         private static class _IVoipScreenCaptureFactoryMethods
@@ -1610,19 +1640,11 @@ namespace Telegram.Native.Calls
         private struct InterfaceTag<I>{};
 
 
-        public event global::Windows.Foundation.TypedEventHandler<VoipScreenCapture, object> FatalErrorOccurred
-        {
-            add => global::ABI.Telegram.Native.Calls.IVoipScreenCaptureMethods.Get_FatalErrorOccurred2(_objRef_global__Telegram_Native_Calls_IVoipScreenCapture, (IWinRTObject)this).Subscribe(value);
-            remove => global::ABI.Telegram.Native.Calls.IVoipScreenCaptureMethods.Get_FatalErrorOccurred2(_objRef_global__Telegram_Native_Calls_IVoipScreenCapture, (IWinRTObject)this).Unsubscribe(value);
-        }
-
         public event global::Windows.Foundation.TypedEventHandler<VoipScreenCapture, bool> Paused
         {
             add => global::ABI.Telegram.Native.Calls.IVoipScreenCaptureMethods.Get_Paused2(_objRef_global__Telegram_Native_Calls_IVoipScreenCapture, (IWinRTObject)this).Subscribe(value);
             remove => global::ABI.Telegram.Native.Calls.IVoipScreenCaptureMethods.Get_Paused2(_objRef_global__Telegram_Native_Calls_IVoipScreenCapture, (IWinRTObject)this).Unsubscribe(value);
         }
-
-        public void Dispose() => global::ABI.System.IDisposableMethods.Dispose(_objRef_global__System_IDisposable);
 
         protected override bool IsOverridableInterface(Guid iid) => base.IsOverridableInterface(iid);
 
@@ -1642,19 +1664,11 @@ namespace Telegram.Native.Calls
             return global::System.Runtime.InteropServices.CustomQueryInterfaceResult.NotHandled;
         }
     }
-    [global::WinRT.WindowsRuntimeType("Telegram.Native.Calls")][global::WinRT.WinRTExposedType(typeof(global::WinRT.EnumTypeDetails<VoipState>))]public enum VoipState : int
-    {
-        WaitInit = unchecked((int)0),
-        WaitInitAck = unchecked((int)0x1),
-        Established = unchecked((int)0x2),
-        Failed = unchecked((int)0x3),
-        Reconnecting = unchecked((int)0x4),
-    }
     [global::WinRT.WindowsRuntimeType("Telegram.Native.Calls")]
     [global::WinRT.WindowsRuntimeHelperType(typeof(global::ABI.Telegram.Native.Calls.VoipVideoCapture))]
     [global::ABI.Telegram.Native.Calls.VoipVideoCaptureRcwFactory]
     [global::WinRT.ProjectedRuntimeClass(typeof(IVoipVideoCapture))]
-    public sealed class VoipVideoCapture : VoipCaptureBase, global::System.IDisposable, global::System.Runtime.InteropServices.ICustomQueryInterface, IWinRTObject, IEquatable<VoipVideoCapture>
+    public sealed class VoipVideoCapture : VoipCaptureBase, global::System.Runtime.InteropServices.ICustomQueryInterface, IWinRTObject, IEquatable<VoipVideoCapture>
     {
         private IntPtr ThisPtr => _inner == null ? (((IWinRTObject)this).NativeObject).ThisPtr : _inner.ThisPtr;
 
@@ -1663,14 +1677,6 @@ namespace Telegram.Native.Calls
 
 
         private IObjectReference _objRef_global__Telegram_Native_Calls_IVoipVideoCapture => _inner;
-        private volatile IObjectReference ___objRef_global__System_IDisposable;
-        private IObjectReference Make___objRef_global__System_IDisposable()
-        {
-            global::System.Threading.Interlocked.CompareExchange(ref ___objRef_global__System_IDisposable, ((IWinRTObject)this).NativeObject.As<IUnknownVftbl>(global::ABI.System.IDisposableMethods.IID), null);
-            return ___objRef_global__System_IDisposable;
-        }
-        private IObjectReference _objRef_global__System_IDisposable => ___objRef_global__System_IDisposable ?? Make___objRef_global__System_IDisposable();
-
 
 
         private static class _IVoipVideoCaptureFactoryMethods
@@ -1755,8 +1761,6 @@ namespace Telegram.Native.Calls
 
         public void SetPreferredAspectRatio(float aspectRatio) => global::ABI.Telegram.Native.Calls.IVoipVideoCaptureMethods.SetPreferredAspectRatio(_objRef_global__Telegram_Native_Calls_IVoipVideoCapture, aspectRatio);
 
-        public void Dispose() => global::ABI.System.IDisposableMethods.Dispose(_objRef_global__System_IDisposable);
-
         protected override bool IsOverridableInterface(Guid iid) => base.IsOverridableInterface(iid);
 
         global::System.Runtime.InteropServices.CustomQueryInterfaceResult global::System.Runtime.InteropServices.ICustomQueryInterface.GetInterface(ref Guid iid, out IntPtr ppv)
@@ -1790,31 +1794,6 @@ namespace Telegram.Native.Calls
         private IObjectReference _objRef_global__Telegram_Native_Calls_IVoipVideoChannelInfo => _inner;
 
 
-        private static volatile IObjectReference ___objRef_global__Telegram_Native_Calls_VoipVideoChannelInfo;
-        private static IObjectReference _objRef_global__Telegram_Native_Calls_VoipVideoChannelInfo
-        {
-            get
-            { 
-                var factory = ___objRef_global__Telegram_Native_Calls_VoipVideoChannelInfo;
-                if (factory != null && factory.IsInCurrentContext)
-                {
-                    return factory;
-                }
-                else
-                {
-                    return ___objRef_global__Telegram_Native_Calls_VoipVideoChannelInfo = ActivationFactory.Get("Telegram.Native.Calls.VoipVideoChannelInfo");
-                }
-            }
-        }
-
-        public VoipVideoChannelInfo() 
-        {
-            _inner = global::ABI.WinRT.Interop.IActivationFactoryMethods.ActivateInstanceUnsafe(_objRef_global__Telegram_Native_Calls_VoipVideoChannelInfo, global::ABI.Telegram.Native.Calls.IVoipVideoChannelInfoMethods.IID);
-            ComWrappersSupport.RegisterObjectForInterface(this, ThisPtr);
-            ComWrappersHelper.Init(_inner, false);
-
-        }
-
         private static class _IVoipVideoChannelInfoFactoryMethods
         {
             public static unsafe IntPtr CreateInstance(IObjectReference _obj, int audioSource, string endpointId, global::System.Collections.Generic.IList<global::Telegram.Td.Api.GroupCallVideoSourceGroup> sourceGroups, VoipVideoChannelQuality minQuality, VoipVideoChannelQuality maxQuality)
@@ -1836,24 +1815,6 @@ namespace Telegram.Native.Calls
                 finally
                 {
                     MarshalInspectable<object>.DisposeMarshaler(__sourceGroups);
-                }
-            }
-
-            public static unsafe IntPtr CreateInstance2(IObjectReference _obj, VoipVideoRendererToken token, VoipVideoChannelQuality minQuality, VoipVideoChannelQuality maxQuality)
-            {
-                var ThisPtr = _obj.ThisPtr;
-
-                ObjectReferenceValue __token = default;
-                IntPtr __retval = default;
-                try
-                {
-                    __token = global::ABI.Telegram.Native.Calls.VoipVideoRendererToken.CreateMarshaler2(token);
-                    global::WinRT.ExceptionHelpers.ThrowExceptionForHR((*(delegate* unmanaged[Stdcall]<IntPtr, IntPtr, VoipVideoChannelQuality, VoipVideoChannelQuality, IntPtr*, int>**)ThisPtr)[7](ThisPtr, MarshalInspectable<object>.GetAbi(__token), minQuality, maxQuality, &__retval));
-                    return __retval;
-                }
-                finally
-                {
-                    MarshalInspectable<object>.DisposeMarshaler(__token);
                 }
             }
         }
@@ -1878,23 +1839,6 @@ namespace Telegram.Native.Calls
         public VoipVideoChannelInfo(int audioSource, string endpointId, global::System.Collections.Generic.IList<global::Telegram.Td.Api.GroupCallVideoSourceGroup> sourceGroups, VoipVideoChannelQuality minQuality, VoipVideoChannelQuality maxQuality) 
         { 
         IntPtr ptr = (_IVoipVideoChannelInfoFactoryMethods.CreateInstance(_objRef_global__Telegram_Native_Calls_IVoipVideoChannelInfoFactory, audioSource, endpointId, sourceGroups, minQuality, maxQuality)); 
-        try 
-        { 
-        _inner = ComWrappersSupport.GetObjectReferenceForInterface(ptr, global::ABI.Telegram.Native.Calls.IVoipVideoChannelInfoMethods.IID, false); 
-
-        } 
-        finally 
-        { 
-        MarshalInspectable<object>.DisposeAbi(ptr); 
-        }
-
-        ComWrappersSupport.RegisterObjectForInterface(this, ThisPtr);
-        ComWrappersHelper.Init(_inner, false);
-        }
-
-        public VoipVideoChannelInfo(VoipVideoRendererToken token, VoipVideoChannelQuality minQuality, VoipVideoChannelQuality maxQuality) 
-        { 
-        IntPtr ptr = (_IVoipVideoChannelInfoFactoryMethods.CreateInstance2(_objRef_global__Telegram_Native_Calls_IVoipVideoChannelInfoFactory, token, minQuality, maxQuality)); 
         try 
         { 
         _inner = ComWrappersSupport.GetObjectReferenceForInterface(ptr, global::ABI.Telegram.Native.Calls.IVoipVideoChannelInfoMethods.IID, false); 
@@ -1949,35 +1893,15 @@ namespace Telegram.Native.Calls
         private struct InterfaceTag<I>{};
 
 
-        public int AudioSource
-        {
-            get => global::ABI.Telegram.Native.Calls.IVoipVideoChannelInfoMethods.get_AudioSource(_objRef_global__Telegram_Native_Calls_IVoipVideoChannelInfo);
-            set => global::ABI.Telegram.Native.Calls.IVoipVideoChannelInfoMethods.set_AudioSource(_objRef_global__Telegram_Native_Calls_IVoipVideoChannelInfo, value);
-        }
+        public int AudioSource => global::ABI.Telegram.Native.Calls.IVoipVideoChannelInfoMethods.get_AudioSource(_objRef_global__Telegram_Native_Calls_IVoipVideoChannelInfo);
 
-        public string EndpointId
-        {
-            get => global::ABI.Telegram.Native.Calls.IVoipVideoChannelInfoMethods.get_EndpointId(_objRef_global__Telegram_Native_Calls_IVoipVideoChannelInfo);
-            set => global::ABI.Telegram.Native.Calls.IVoipVideoChannelInfoMethods.set_EndpointId(_objRef_global__Telegram_Native_Calls_IVoipVideoChannelInfo, value);
-        }
+        public string EndpointId => global::ABI.Telegram.Native.Calls.IVoipVideoChannelInfoMethods.get_EndpointId(_objRef_global__Telegram_Native_Calls_IVoipVideoChannelInfo);
 
-        public VoipVideoChannelQuality MaxQuality
-        {
-            get => global::ABI.Telegram.Native.Calls.IVoipVideoChannelInfoMethods.get_MaxQuality(_objRef_global__Telegram_Native_Calls_IVoipVideoChannelInfo);
-            set => global::ABI.Telegram.Native.Calls.IVoipVideoChannelInfoMethods.set_MaxQuality(_objRef_global__Telegram_Native_Calls_IVoipVideoChannelInfo, value);
-        }
+        public VoipVideoChannelQuality MaxQuality => global::ABI.Telegram.Native.Calls.IVoipVideoChannelInfoMethods.get_MaxQuality(_objRef_global__Telegram_Native_Calls_IVoipVideoChannelInfo);
 
-        public VoipVideoChannelQuality MinQuality
-        {
-            get => global::ABI.Telegram.Native.Calls.IVoipVideoChannelInfoMethods.get_MinQuality(_objRef_global__Telegram_Native_Calls_IVoipVideoChannelInfo);
-            set => global::ABI.Telegram.Native.Calls.IVoipVideoChannelInfoMethods.set_MinQuality(_objRef_global__Telegram_Native_Calls_IVoipVideoChannelInfo, value);
-        }
+        public VoipVideoChannelQuality MinQuality => global::ABI.Telegram.Native.Calls.IVoipVideoChannelInfoMethods.get_MinQuality(_objRef_global__Telegram_Native_Calls_IVoipVideoChannelInfo);
 
-        public global::System.Collections.Generic.IList<global::Telegram.Td.Api.GroupCallVideoSourceGroup> SourceGroups
-        {
-            get => global::ABI.Telegram.Native.Calls.IVoipVideoChannelInfoMethods.get_SourceGroups(_objRef_global__Telegram_Native_Calls_IVoipVideoChannelInfo);
-            set => global::ABI.Telegram.Native.Calls.IVoipVideoChannelInfoMethods.set_SourceGroups(_objRef_global__Telegram_Native_Calls_IVoipVideoChannelInfo, value);
-        }
+        public global::System.Collections.Generic.IList<global::Telegram.Td.Api.GroupCallVideoSourceGroup> SourceGroups => global::ABI.Telegram.Native.Calls.IVoipVideoChannelInfoMethods.get_SourceGroups(_objRef_global__Telegram_Native_Calls_IVoipVideoChannelInfo);
 
         private bool IsOverridableInterface(Guid iid) => false;
 
@@ -2010,10 +1934,10 @@ namespace Telegram.Native.Calls
         Generic = unchecked((int)0x2),
     }
     [global::WinRT.WindowsRuntimeType("Telegram.Native.Calls")]
-    [global::WinRT.WindowsRuntimeHelperType(typeof(global::ABI.Telegram.Native.Calls.VoipVideoRendererToken))]
-    [global::ABI.Telegram.Native.Calls.VoipVideoRendererTokenRcwFactory]
-    [global::WinRT.ProjectedRuntimeClass(typeof(IVoipVideoRendererToken))]
-    public sealed class VoipVideoRendererToken : global::System.Runtime.InteropServices.ICustomQueryInterface, IWinRTObject, IEquatable<VoipVideoRendererToken>
+    [global::WinRT.WindowsRuntimeHelperType(typeof(global::ABI.Telegram.Native.Calls.VoipVideoOutputSink))]
+    [global::ABI.Telegram.Native.Calls.VoipVideoOutputSinkRcwFactory]
+    [global::WinRT.ProjectedRuntimeClass(typeof(IVoipVideoOutputSink))]
+    public sealed class VoipVideoOutputSink : global::System.Runtime.InteropServices.ICustomQueryInterface, IWinRTObject, IEquatable<VoipVideoOutputSink>
     {
         private IntPtr ThisPtr => _inner == null ? (((IWinRTObject)this).NativeObject).ThisPtr : _inner.ThisPtr;
 
@@ -2021,26 +1945,81 @@ namespace Telegram.Native.Calls
 
 
 
-        private IObjectReference _objRef_global__Telegram_Native_Calls_IVoipVideoRendererToken => _inner;
+        private IObjectReference _objRef_global__Telegram_Native_Calls_IVoipVideoOutputSink => _inner;
 
 
-        public static VoipVideoRendererToken FromAbi(IntPtr thisPtr)
+        private static class _IVoipVideoOutputSinkFactoryMethods
+        {
+            public static unsafe IntPtr CreateInstance(IObjectReference _obj, global::Microsoft.UI.Composition.SpriteVisual visual, bool mirrored)
+            {
+                var ThisPtr = _obj.ThisPtr;
+
+                ObjectReferenceValue __visual = default;
+                IntPtr __retval = default;
+                try
+                {
+                    __visual = global::ABI.Microsoft.UI.Composition.SpriteVisual.CreateMarshaler2(visual);
+                    global::WinRT.ExceptionHelpers.ThrowExceptionForHR((*(delegate* unmanaged[Stdcall]<IntPtr, IntPtr, byte, IntPtr*, int>**)ThisPtr)[6](ThisPtr, MarshalInspectable<object>.GetAbi(__visual), (byte)(mirrored ? 1 : 0), &__retval));
+                    return __retval;
+                }
+                finally
+                {
+                    MarshalInspectable<object>.DisposeMarshaler(__visual);
+                }
+            }
+        }
+
+        private static volatile IObjectReference ___objRef_global__Telegram_Native_Calls_IVoipVideoOutputSinkFactory;
+        private static IObjectReference _objRef_global__Telegram_Native_Calls_IVoipVideoOutputSinkFactory
+        {
+            get
+            { 
+                var factory = ___objRef_global__Telegram_Native_Calls_IVoipVideoOutputSinkFactory;
+                if (factory != null && factory.IsInCurrentContext)
+                {
+                    return factory;
+                }
+                else
+                {
+                    return ___objRef_global__Telegram_Native_Calls_IVoipVideoOutputSinkFactory = ActivationFactory.Get("Telegram.Native.Calls.VoipVideoOutputSink", global::ABI.Telegram.Native.Calls.IVoipVideoOutputSinkFactoryMethods.IID);
+                }
+            }
+        }
+
+        public VoipVideoOutputSink(global::Microsoft.UI.Composition.SpriteVisual visual, bool mirrored) 
+        { 
+        IntPtr ptr = (_IVoipVideoOutputSinkFactoryMethods.CreateInstance(_objRef_global__Telegram_Native_Calls_IVoipVideoOutputSinkFactory, visual, mirrored)); 
+        try 
+        { 
+        _inner = ComWrappersSupport.GetObjectReferenceForInterface(ptr, global::ABI.Telegram.Native.Calls.IVoipVideoOutputSinkMethods.IID, false); 
+
+        } 
+        finally 
+        { 
+        MarshalInspectable<object>.DisposeAbi(ptr); 
+        }
+
+        ComWrappersSupport.RegisterObjectForInterface(this, ThisPtr);
+        ComWrappersHelper.Init(_inner, false);
+        }
+
+        public static VoipVideoOutputSink FromAbi(IntPtr thisPtr)
         {
             if (thisPtr == IntPtr.Zero) return null;
-            return MarshalInspectable<VoipVideoRendererToken>.FromAbi(thisPtr);
+            return MarshalInspectable<VoipVideoOutputSink>.FromAbi(thisPtr);
         }
 
-        internal VoipVideoRendererToken(IObjectReference objRef)
+        internal VoipVideoOutputSink(IObjectReference objRef)
         {
-            _inner = objRef.As(global::ABI.Telegram.Native.Calls.IVoipVideoRendererTokenMethods.IID);
+            _inner = objRef.As(global::ABI.Telegram.Native.Calls.IVoipVideoOutputSinkMethods.IID);
 
         }
 
 
-        public static bool operator ==(VoipVideoRendererToken x, VoipVideoRendererToken y) => (x?.ThisPtr ?? IntPtr.Zero) == (y?.ThisPtr ?? IntPtr.Zero);
-        public static bool operator !=(VoipVideoRendererToken x, VoipVideoRendererToken y) => !(x == y);
-        public bool Equals(VoipVideoRendererToken other) => this == other;
-        public override bool Equals(object obj) => obj is VoipVideoRendererToken that && this == that;
+        public static bool operator ==(VoipVideoOutputSink x, VoipVideoOutputSink y) => (x?.ThisPtr ?? IntPtr.Zero) == (y?.ThisPtr ?? IntPtr.Zero);
+        public static bool operator !=(VoipVideoOutputSink x, VoipVideoOutputSink y) => !(x == y);
+        public bool Equals(VoipVideoOutputSink other) => this == other;
+        public override bool Equals(object obj) => obj is VoipVideoOutputSink that && this == that;
         public override int GetHashCode() => ThisPtr.GetHashCode();
 
 
@@ -2064,27 +2043,23 @@ namespace Telegram.Native.Calls
         private struct InterfaceTag<I>{};
 
 
-        public bool IsMatch(string endpointId, global::Microsoft.Graphics.Canvas.UI.Xaml.CanvasControl canvasControl) => global::ABI.Telegram.Native.Calls.IVoipVideoRendererTokenMethods.IsMatch(_objRef_global__Telegram_Native_Calls_IVoipVideoRendererToken, endpointId, canvasControl);
+        public void Stop() => global::ABI.Telegram.Native.Calls.IVoipVideoOutputSinkMethods.Stop(_objRef_global__Telegram_Native_Calls_IVoipVideoOutputSink);
 
-        public void Stop() => global::ABI.Telegram.Native.Calls.IVoipVideoRendererTokenMethods.Stop(_objRef_global__Telegram_Native_Calls_IVoipVideoRendererToken);
-
-        public int AudioSource => global::ABI.Telegram.Native.Calls.IVoipVideoRendererTokenMethods.get_AudioSource(_objRef_global__Telegram_Native_Calls_IVoipVideoRendererToken);
-
-        public string EndpointId => global::ABI.Telegram.Native.Calls.IVoipVideoRendererTokenMethods.get_EndpointId(_objRef_global__Telegram_Native_Calls_IVoipVideoRendererToken);
+        public event global::Windows.Foundation.TypedEventHandler<VoipVideoOutputSink, FrameReceivedEventArgs> FrameReceived
+        {
+            add => global::ABI.Telegram.Native.Calls.IVoipVideoOutputSinkMethods.Get_FrameReceived2(_objRef_global__Telegram_Native_Calls_IVoipVideoOutputSink, (IWinRTObject)this).Subscribe(value);
+            remove => global::ABI.Telegram.Native.Calls.IVoipVideoOutputSinkMethods.Get_FrameReceived2(_objRef_global__Telegram_Native_Calls_IVoipVideoOutputSink, (IWinRTObject)this).Unsubscribe(value);
+        }
 
         public bool IsMirrored
         {
-            get => global::ABI.Telegram.Native.Calls.IVoipVideoRendererTokenMethods.get_IsMirrored(_objRef_global__Telegram_Native_Calls_IVoipVideoRendererToken);
-            set => global::ABI.Telegram.Native.Calls.IVoipVideoRendererTokenMethods.set_IsMirrored(_objRef_global__Telegram_Native_Calls_IVoipVideoRendererToken, value);
+            get => global::ABI.Telegram.Native.Calls.IVoipVideoOutputSinkMethods.get_IsMirrored(_objRef_global__Telegram_Native_Calls_IVoipVideoOutputSink);
+            set => global::ABI.Telegram.Native.Calls.IVoipVideoOutputSinkMethods.set_IsMirrored(_objRef_global__Telegram_Native_Calls_IVoipVideoOutputSink, value);
         }
 
-        public global::System.Collections.Generic.IList<global::Telegram.Td.Api.GroupCallVideoSourceGroup> SourceGroups => global::ABI.Telegram.Native.Calls.IVoipVideoRendererTokenMethods.get_SourceGroups(_objRef_global__Telegram_Native_Calls_IVoipVideoRendererToken);
+        public int PixelHeight => global::ABI.Telegram.Native.Calls.IVoipVideoOutputSinkMethods.get_PixelHeight(_objRef_global__Telegram_Native_Calls_IVoipVideoOutputSink);
 
-        public global::Microsoft.UI.Xaml.Media.Stretch Stretch
-        {
-            get => global::ABI.Telegram.Native.Calls.IVoipVideoRendererTokenMethods.get_Stretch(_objRef_global__Telegram_Native_Calls_IVoipVideoRendererToken);
-            set => global::ABI.Telegram.Native.Calls.IVoipVideoRendererTokenMethods.set_Stretch(_objRef_global__Telegram_Native_Calls_IVoipVideoRendererToken, value);
-        }
+        public int PixelWidth => global::ABI.Telegram.Native.Calls.IVoipVideoOutputSinkMethods.get_PixelWidth(_objRef_global__Telegram_Native_Calls_IVoipVideoOutputSink);
 
         private bool IsOverridableInterface(Guid iid) => false;
 
@@ -2587,6 +2562,31 @@ namespace ABI.Telegram.Native.Calls
         }
     }
     [global::System.ComponentModel.EditorBrowsable(global::System.ComponentModel.EditorBrowsableState.Never)]
+    public struct FrameReceivedEventArgs
+    {
+
+        public static IObjectReference CreateMarshaler(global::Telegram.Native.Calls.FrameReceivedEventArgs obj) => obj is null ? null : MarshalInspectable<global::Telegram.Native.Calls.FrameReceivedEventArgs>.CreateMarshaler<IUnknownVftbl>(obj, global::ABI.Telegram.Native.Calls.IFrameReceivedEventArgsMethods.IID);
+        public static ObjectReferenceValue CreateMarshaler2(global::Telegram.Native.Calls.FrameReceivedEventArgs obj) => MarshalInspectable<object>.CreateMarshaler2(obj, global::ABI.Telegram.Native.Calls.IFrameReceivedEventArgsMethods.IID);
+        public static IntPtr GetAbi(IObjectReference value) => value is null ? IntPtr.Zero : MarshalInterfaceHelper<object>.GetAbi(value);
+        public static global::Telegram.Native.Calls.FrameReceivedEventArgs FromAbi(IntPtr thisPtr) => global::Telegram.Native.Calls.FrameReceivedEventArgs.FromAbi(thisPtr);
+        public static IntPtr FromManaged(global::Telegram.Native.Calls.FrameReceivedEventArgs obj) => obj is null ? IntPtr.Zero : CreateMarshaler2(obj).Detach();
+        public static unsafe MarshalInterfaceHelper<global::Telegram.Native.Calls.FrameReceivedEventArgs>.MarshalerArray CreateMarshalerArray(global::Telegram.Native.Calls.FrameReceivedEventArgs[] array) => MarshalInterfaceHelper<global::Telegram.Native.Calls.FrameReceivedEventArgs>.CreateMarshalerArray2(array, (o) => CreateMarshaler2(o));
+        public static (int length, IntPtr data) GetAbiArray(object box) => MarshalInterfaceHelper<global::Telegram.Native.Calls.FrameReceivedEventArgs>.GetAbiArray(box);
+        public static unsafe global::Telegram.Native.Calls.FrameReceivedEventArgs[] FromAbiArray(object box) => MarshalInterfaceHelper<global::Telegram.Native.Calls.FrameReceivedEventArgs>.FromAbiArray(box, FromAbi);
+        public static void CopyAbiArray(global::Telegram.Native.Calls.FrameReceivedEventArgs[] array, object box) => MarshalInterfaceHelper<global::Telegram.Native.Calls.FrameReceivedEventArgs>.CopyAbiArray(array, box, FromAbi);
+        public static (int length, IntPtr data) FromManagedArray(global::Telegram.Native.Calls.FrameReceivedEventArgs[] array) => MarshalInterfaceHelper<global::Telegram.Native.Calls.FrameReceivedEventArgs>.FromManagedArray(array, (o) => FromManaged(o));
+        public static void DisposeMarshaler(IObjectReference value) => MarshalInspectable<object>.DisposeMarshaler(value);
+        public static void DisposeMarshalerArray(MarshalInterfaceHelper<global::Telegram.Native.Calls.FrameReceivedEventArgs>.MarshalerArray array) => MarshalInterfaceHelper<global::Telegram.Native.Calls.FrameReceivedEventArgs>.DisposeMarshalerArray(array);
+        public static void DisposeAbi(IntPtr abi) => MarshalInspectable<object>.DisposeAbi(abi);
+        public static unsafe void DisposeAbiArray(object box) => MarshalInspectable<object>.DisposeAbiArray(box);
+    }
+    [global::System.ComponentModel.EditorBrowsable(global::System.ComponentModel.EditorBrowsableState.Never)]
+    internal sealed class FrameReceivedEventArgsRcwFactoryAttribute : global::WinRT.WinRTImplementationTypeRcwFactoryAttribute
+    {
+        public override object CreateInstance(global::WinRT.IInspectable inspectable)
+            => new global::Telegram.Native.Calls.FrameReceivedEventArgs(inspectable.ObjRef);
+    }
+    [global::System.ComponentModel.EditorBrowsable(global::System.ComponentModel.EditorBrowsableState.Never)]
     public struct GroupNetworkStateChangedEventArgs
     {
 
@@ -2726,6 +2726,44 @@ namespace ABI.Telegram.Native.Calls
     internal interface IBroadcastTimeRequestedEventArgs : global::Telegram.Native.Calls.IBroadcastTimeRequestedEventArgs
     {
     }
+    internal static class IFrameReceivedEventArgsMethods
+    {
+
+        internal static unsafe int get_PixelHeight(IObjectReference _obj)
+        {
+            var ThisPtr = _obj.ThisPtr;
+
+            int __retval = default;
+            global::WinRT.ExceptionHelpers.ThrowExceptionForHR((*(delegate* unmanaged[Stdcall]<IntPtr, int*, int>**)ThisPtr)[7](ThisPtr, &__retval));
+            return __retval;
+        }
+
+        internal static unsafe int get_PixelWidth(IObjectReference _obj)
+        {
+            var ThisPtr = _obj.ThisPtr;
+
+            int __retval = default;
+            global::WinRT.ExceptionHelpers.ThrowExceptionForHR((*(delegate* unmanaged[Stdcall]<IntPtr, int*, int>**)ThisPtr)[6](ThisPtr, &__retval));
+            return __retval;
+        }
+
+
+
+        public static ref readonly global::System.Guid IID
+        {
+            [global::System.Runtime.CompilerServices.MethodImpl(global::System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
+            get
+            {
+                global::System.ReadOnlySpan<byte> data = new byte[] { 0xF3, 0x8F, 0x8D, 0x3, 0xDA, 0x25, 0xEF, 0x52, 0x94, 0x3C, 0xD3, 0x2A, 0xAA, 0x1D, 0x1B, 0x78 };
+                return ref global::System.Runtime.CompilerServices.Unsafe.As<byte, global::System.Guid>(ref global::System.Runtime.InteropServices.MemoryMarshal.GetReference(data));
+            }
+        }
+
+    }
+    [Guid("038D8FF3-25DA-52EF-943C-D32AAA1D1B78")]
+    internal interface IFrameReceivedEventArgs : global::Telegram.Native.Calls.IFrameReceivedEventArgs
+    {
+    }
     internal static class IGroupNetworkStateChangedEventArgsMethods
     {
 
@@ -2850,42 +2888,53 @@ namespace ABI.Telegram.Native.Calls
             global::WinRT.ExceptionHelpers.ThrowExceptionForHR((*(delegate* unmanaged[Stdcall]<IntPtr, global::Telegram.Native.Calls.VoipVideoState, int>**)ThisPtr)[6](ThisPtr, state));
         }
 
-        internal static unsafe global::Telegram.Native.Calls.VoipVideoRendererToken SetOutput(IObjectReference _obj, global::Microsoft.Graphics.Canvas.UI.Xaml.CanvasControl canvas)
+        internal static unsafe void SetOutput(IObjectReference _obj, global::Telegram.Native.Calls.VoipVideoOutputSink sink)
         {
             var ThisPtr = _obj.ThisPtr;
 
-            ObjectReferenceValue __canvas = default;
-            IntPtr __retval = default;
+            ObjectReferenceValue __sink = default;
             try
             {
-                __canvas = global::ABI.Microsoft.Graphics.Canvas.UI.Xaml.CanvasControl.CreateMarshaler2(canvas);
-                global::WinRT.ExceptionHelpers.ThrowExceptionForHR((*(delegate* unmanaged[Stdcall]<IntPtr, IntPtr, IntPtr*, int>**)ThisPtr)[7](ThisPtr, MarshalInspectable<object>.GetAbi(__canvas), &__retval));
-                return global::ABI.Telegram.Native.Calls.VoipVideoRendererToken.FromAbi(__retval);
+                __sink = global::ABI.Telegram.Native.Calls.VoipVideoOutputSink.CreateMarshaler2(sink);
+                global::WinRT.ExceptionHelpers.ThrowExceptionForHR((*(delegate* unmanaged[Stdcall]<IntPtr, IntPtr, int>**)ThisPtr)[7](ThisPtr, MarshalInspectable<object>.GetAbi(__sink)));
             }
             finally
             {
-                MarshalInspectable<object>.DisposeMarshaler(__canvas);
-                global::ABI.Telegram.Native.Calls.VoipVideoRendererToken.DisposeAbi(__retval);
+                MarshalInspectable<object>.DisposeMarshaler(__sink);
             }
         }
 
-        internal static unsafe global::Telegram.Native.Calls.VoipVideoRendererToken SetOutput(IObjectReference _obj, global::Microsoft.Graphics.Canvas.UI.Xaml.CanvasControl canvas, bool enableBlur)
+        internal static unsafe void Stop(IObjectReference _obj)
         {
             var ThisPtr = _obj.ThisPtr;
 
-            ObjectReferenceValue __canvas = default;
-            IntPtr __retval = default;
-            try
+            global::WinRT.ExceptionHelpers.ThrowExceptionForHR((*(delegate* unmanaged[Stdcall]<IntPtr, int>**)ThisPtr)[8](ThisPtr));
+        }
+
+        private volatile static global::System.Runtime.CompilerServices.ConditionalWeakTable<object, global::ABI.WinRT.Interop.EventSource<global::Windows.Foundation.TypedEventHandler<global::Telegram.Native.Calls.VoipCaptureBase, object>>> _FatalErrorOccurred_;
+        private static global::System.Runtime.CompilerServices.ConditionalWeakTable<object, global::ABI.WinRT.Interop.EventSource<global::Windows.Foundation.TypedEventHandler<global::Telegram.Native.Calls.VoipCaptureBase, object>>> MakeFatalErrorOccurredTable()
+        {
+            
+            global::System.Threading.Interlocked.CompareExchange(ref _FatalErrorOccurred_, new(), null);
+            return _FatalErrorOccurred_;
+        }
+        private static global::System.Runtime.CompilerServices.ConditionalWeakTable<object, global::ABI.WinRT.Interop.EventSource<global::Windows.Foundation.TypedEventHandler<global::Telegram.Native.Calls.VoipCaptureBase, object>>> _FatalErrorOccurred => _FatalErrorOccurred_ ?? MakeFatalErrorOccurredTable();
+
+
+
+        internal static unsafe global::ABI.WinRT.Interop.EventSource<global::Windows.Foundation.TypedEventHandler<global::Telegram.Native.Calls.VoipCaptureBase, object>> Get_FatalErrorOccurred2(IObjectReference _obj, object _thisObj)
+        {
+            return _FatalErrorOccurred.GetValue(_thisObj, (key) =>
             {
-                __canvas = global::ABI.Microsoft.Graphics.Canvas.UI.Xaml.CanvasControl.CreateMarshaler2(canvas);
-                global::WinRT.ExceptionHelpers.ThrowExceptionForHR((*(delegate* unmanaged[Stdcall]<IntPtr, IntPtr, byte, IntPtr*, int>**)ThisPtr)[8](ThisPtr, MarshalInspectable<object>.GetAbi(__canvas), (byte)(enableBlur ? 1 : 0), &__retval));
-                return global::ABI.Telegram.Native.Calls.VoipVideoRendererToken.FromAbi(__retval);
-            }
-            finally
-            {
-                MarshalInspectable<object>.DisposeMarshaler(__canvas);
-                global::ABI.Telegram.Native.Calls.VoipVideoRendererToken.DisposeAbi(__retval);
-            }
+
+                var ThisPtr = _obj.ThisPtr;
+
+                return 
+                new _EventSource_global__Windows_Foundation_TypedEventHandler_global__Telegram_Native_Calls_VoipCaptureBase__object_(_obj,
+                (*(delegate* unmanaged[Stdcall]<IntPtr, IntPtr, global::WinRT.EventRegistrationToken*, int>**)ThisPtr)[9],
+                (*(delegate* unmanaged[Stdcall]<IntPtr, global::WinRT.EventRegistrationToken, int>**)ThisPtr)[10],
+                0);
+            });
         }
 
 
@@ -2894,13 +2943,13 @@ namespace ABI.Telegram.Native.Calls
             [global::System.Runtime.CompilerServices.MethodImpl(global::System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
             get
             {
-                global::System.ReadOnlySpan<byte> data = new byte[] { 0x98, 0x24, 0xEF, 0x7, 0x1, 0xE, 0xE7, 0x52, 0x82, 0x2F, 0x30, 0x8, 0x66, 0xDB, 0xC3, 0xC5 };
+                global::System.ReadOnlySpan<byte> data = new byte[] { 0xA6, 0xB9, 0xE5, 0x70, 0x7B, 0xF6, 0xDA, 0x5B, 0x83, 0x26, 0x32, 0x2A, 0x8E, 0x23, 0xEA, 0xBC };
                 return ref global::System.Runtime.CompilerServices.Unsafe.As<byte, global::System.Guid>(ref global::System.Runtime.InteropServices.MemoryMarshal.GetReference(data));
             }
         }
 
     }
-    [Guid("07EF2498-0E01-52E7-822F-300866DBC3C5")]
+    [Guid("70E5B9A6-F67B-5BDA-8326-322A8E23EABC")]
     internal interface IVoipCaptureBase : global::Telegram.Native.Calls.IVoipCaptureBase
     {
     }
@@ -3396,41 +3445,23 @@ namespace ABI.Telegram.Native.Calls
             }
         }
 
-        internal static unsafe global::Telegram.Native.Calls.VoipVideoRendererToken AddIncomingVideoOutput(IObjectReference _obj, int audioSource, global::Telegram.Td.Api.GroupCallParticipantVideoInfo videoInfo, global::Microsoft.Graphics.Canvas.UI.Xaml.CanvasControl canvas)
+        internal static unsafe void AddIncomingVideoOutput(IObjectReference _obj, string endpointId, global::Telegram.Native.Calls.VoipVideoOutputSink sink)
         {
             var ThisPtr = _obj.ThisPtr;
 
-            ObjectReferenceValue __videoInfo = default;
-            ObjectReferenceValue __canvas = default;
-            IntPtr __retval = default;
+            ObjectReferenceValue __sink = default;
             try
             {
-                __videoInfo = global::ABI.Telegram.Td.Api.GroupCallParticipantVideoInfo.CreateMarshaler2(videoInfo);
-                __canvas = global::ABI.Microsoft.Graphics.Canvas.UI.Xaml.CanvasControl.CreateMarshaler2(canvas);
-                global::WinRT.ExceptionHelpers.ThrowExceptionForHR((*(delegate* unmanaged[Stdcall]<IntPtr, int, IntPtr, IntPtr, IntPtr*, int>**)ThisPtr)[10](ThisPtr, audioSource, MarshalInspectable<object>.GetAbi(__videoInfo), MarshalInspectable<object>.GetAbi(__canvas), &__retval));
-                return global::ABI.Telegram.Native.Calls.VoipVideoRendererToken.FromAbi(__retval);
+                __sink = global::ABI.Telegram.Native.Calls.VoipVideoOutputSink.CreateMarshaler2(sink);
+                MarshalString.Pinnable __endpointId = new(endpointId);
+                fixed(void* ___endpointId = __endpointId)
+                {
+                    global::WinRT.ExceptionHelpers.ThrowExceptionForHR((*(delegate* unmanaged[Stdcall]<IntPtr, IntPtr, IntPtr, int>**)ThisPtr)[10](ThisPtr, MarshalString.GetAbi(ref __endpointId), MarshalInspectable<object>.GetAbi(__sink)));
+                }
             }
             finally
             {
-                MarshalInspectable<object>.DisposeMarshaler(__videoInfo);
-                MarshalInspectable<object>.DisposeMarshaler(__canvas);
-                global::ABI.Telegram.Native.Calls.VoipVideoRendererToken.DisposeAbi(__retval);
-            }
-        }
-
-        internal static unsafe void AddUnifiedVideoOutput(IObjectReference _obj, global::Microsoft.Graphics.Canvas.UI.Xaml.CanvasControl canvas)
-        {
-            var ThisPtr = _obj.ThisPtr;
-
-            ObjectReferenceValue __canvas = default;
-            try
-            {
-                __canvas = global::ABI.Microsoft.Graphics.Canvas.UI.Xaml.CanvasControl.CreateMarshaler2(canvas);
-                global::WinRT.ExceptionHelpers.ThrowExceptionForHR((*(delegate* unmanaged[Stdcall]<IntPtr, IntPtr, int>**)ThisPtr)[11](ThisPtr, MarshalInspectable<object>.GetAbi(__canvas)));
-            }
-            finally
-            {
-                MarshalInspectable<object>.DisposeMarshaler(__canvas);
+                MarshalInspectable<object>.DisposeMarshaler(__sink);
             }
         }
 
@@ -3441,7 +3472,7 @@ namespace ABI.Telegram.Native.Calls
             MarshalString.Pinnable __id = new(id);
             fixed(void* ___id = __id)
             {
-                global::WinRT.ExceptionHelpers.ThrowExceptionForHR((*(delegate* unmanaged[Stdcall]<IntPtr, IntPtr, int>**)ThisPtr)[16](ThisPtr, MarshalString.GetAbi(ref __id)));
+                global::WinRT.ExceptionHelpers.ThrowExceptionForHR((*(delegate* unmanaged[Stdcall]<IntPtr, IntPtr, int>**)ThisPtr)[15](ThisPtr, MarshalString.GetAbi(ref __id)));
             }
         }
 
@@ -3452,7 +3483,7 @@ namespace ABI.Telegram.Native.Calls
             MarshalString.Pinnable __id = new(id);
             fixed(void* ___id = __id)
             {
-                global::WinRT.ExceptionHelpers.ThrowExceptionForHR((*(delegate* unmanaged[Stdcall]<IntPtr, IntPtr, int>**)ThisPtr)[17](ThisPtr, MarshalString.GetAbi(ref __id)));
+                global::WinRT.ExceptionHelpers.ThrowExceptionForHR((*(delegate* unmanaged[Stdcall]<IntPtr, IntPtr, int>**)ThisPtr)[16](ThisPtr, MarshalString.GetAbi(ref __id)));
             }
         }
 
@@ -3464,7 +3495,7 @@ namespace ABI.Telegram.Native.Calls
             try
             {
                 __videoCapture = global::ABI.Telegram.Native.Calls.VoipCaptureBase.CreateMarshaler2(videoCapture);
-                global::WinRT.ExceptionHelpers.ThrowExceptionForHR((*(delegate* unmanaged[Stdcall]<IntPtr, IntPtr, int>**)ThisPtr)[18](ThisPtr, MarshalInspectable<object>.GetAbi(__videoCapture)));
+                global::WinRT.ExceptionHelpers.ThrowExceptionForHR((*(delegate* unmanaged[Stdcall]<IntPtr, IntPtr, int>**)ThisPtr)[17](ThisPtr, MarshalInspectable<object>.GetAbi(__videoCapture)));
             }
             finally
             {
@@ -3476,7 +3507,7 @@ namespace ABI.Telegram.Native.Calls
         {
             var ThisPtr = _obj.ThisPtr;
 
-            global::WinRT.ExceptionHelpers.ThrowExceptionForHR((*(delegate* unmanaged[Stdcall]<IntPtr, int, double, int>**)ThisPtr)[19](ThisPtr, ssrc, volume));
+            global::WinRT.ExceptionHelpers.ThrowExceptionForHR((*(delegate* unmanaged[Stdcall]<IntPtr, int, double, int>**)ThisPtr)[18](ThisPtr, ssrc, volume));
         }
 
         internal static unsafe void SetRequestedVideoChannels(IObjectReference _obj, global::System.Collections.Generic.IList<global::Telegram.Native.Calls.VoipVideoChannelInfo> descriptions)
@@ -3487,7 +3518,7 @@ namespace ABI.Telegram.Native.Calls
             try
             {
                 __descriptions = MarshalInterface<global::System.Collections.Generic.IList<global::Telegram.Native.Calls.VoipVideoChannelInfo>>.CreateMarshaler2(descriptions, global::ABI.System.Collections.Generic.IListMethods<global::Telegram.Native.Calls.VoipVideoChannelInfo>.IID);
-                global::WinRT.ExceptionHelpers.ThrowExceptionForHR((*(delegate* unmanaged[Stdcall]<IntPtr, IntPtr, int>**)ThisPtr)[20](ThisPtr, MarshalInspectable<object>.GetAbi(__descriptions)));
+                global::WinRT.ExceptionHelpers.ThrowExceptionForHR((*(delegate* unmanaged[Stdcall]<IntPtr, IntPtr, int>**)ThisPtr)[19](ThisPtr, MarshalInspectable<object>.GetAbi(__descriptions)));
             }
             finally
             {
@@ -3499,14 +3530,14 @@ namespace ABI.Telegram.Native.Calls
             var ThisPtr = _obj.ThisPtr;
 
             byte __retval = default;
-            global::WinRT.ExceptionHelpers.ThrowExceptionForHR((*(delegate* unmanaged[Stdcall]<IntPtr, byte*, int>**)ThisPtr)[12](ThisPtr, &__retval));
+            global::WinRT.ExceptionHelpers.ThrowExceptionForHR((*(delegate* unmanaged[Stdcall]<IntPtr, byte*, int>**)ThisPtr)[11](ThisPtr, &__retval));
             return __retval != 0;
         }
         internal static unsafe void set_IsMuted(IObjectReference _obj, bool value)
         {
             var ThisPtr = _obj.ThisPtr;
 
-            global::WinRT.ExceptionHelpers.ThrowExceptionForHR((*(delegate* unmanaged[Stdcall]<IntPtr, byte, int>**)ThisPtr)[13](ThisPtr, (byte)(value ? 1 : 0)));
+            global::WinRT.ExceptionHelpers.ThrowExceptionForHR((*(delegate* unmanaged[Stdcall]<IntPtr, byte, int>**)ThisPtr)[12](ThisPtr, (byte)(value ? 1 : 0)));
         }
 
         internal static unsafe bool get_IsNoiseSuppressionEnabled(IObjectReference _obj)
@@ -3514,14 +3545,14 @@ namespace ABI.Telegram.Native.Calls
             var ThisPtr = _obj.ThisPtr;
 
             byte __retval = default;
-            global::WinRT.ExceptionHelpers.ThrowExceptionForHR((*(delegate* unmanaged[Stdcall]<IntPtr, byte*, int>**)ThisPtr)[14](ThisPtr, &__retval));
+            global::WinRT.ExceptionHelpers.ThrowExceptionForHR((*(delegate* unmanaged[Stdcall]<IntPtr, byte*, int>**)ThisPtr)[13](ThisPtr, &__retval));
             return __retval != 0;
         }
         internal static unsafe void set_IsNoiseSuppressionEnabled(IObjectReference _obj, bool value)
         {
             var ThisPtr = _obj.ThisPtr;
 
-            global::WinRT.ExceptionHelpers.ThrowExceptionForHR((*(delegate* unmanaged[Stdcall]<IntPtr, byte, int>**)ThisPtr)[15](ThisPtr, (byte)(value ? 1 : 0)));
+            global::WinRT.ExceptionHelpers.ThrowExceptionForHR((*(delegate* unmanaged[Stdcall]<IntPtr, byte, int>**)ThisPtr)[14](ThisPtr, (byte)(value ? 1 : 0)));
         }
 
 
@@ -3545,8 +3576,8 @@ namespace ABI.Telegram.Native.Calls
 
                 return 
                 new _EventSource_global__Windows_Foundation_TypedEventHandler_global__Telegram_Native_Calls_VoipGroupManager__global__System_Collections_Generic_IList_global__Telegram_Native_Calls_VoipGroupParticipant__(_obj,
-                (*(delegate* unmanaged[Stdcall]<IntPtr, IntPtr, global::WinRT.EventRegistrationToken*, int>**)ThisPtr)[23],
-                (*(delegate* unmanaged[Stdcall]<IntPtr, global::WinRT.EventRegistrationToken, int>**)ThisPtr)[24],
+                (*(delegate* unmanaged[Stdcall]<IntPtr, IntPtr, global::WinRT.EventRegistrationToken*, int>**)ThisPtr)[22],
+                (*(delegate* unmanaged[Stdcall]<IntPtr, global::WinRT.EventRegistrationToken, int>**)ThisPtr)[23],
                 0);
             });
         }
@@ -3571,8 +3602,8 @@ namespace ABI.Telegram.Native.Calls
 
                 return 
                 new _EventSource_global__Windows_Foundation_TypedEventHandler_global__Telegram_Native_Calls_VoipGroupManager__global__Telegram_Native_Calls_BroadcastPartRequestedEventArgs_(_obj,
-                (*(delegate* unmanaged[Stdcall]<IntPtr, IntPtr, global::WinRT.EventRegistrationToken*, int>**)ThisPtr)[27],
-                (*(delegate* unmanaged[Stdcall]<IntPtr, global::WinRT.EventRegistrationToken, int>**)ThisPtr)[28],
+                (*(delegate* unmanaged[Stdcall]<IntPtr, IntPtr, global::WinRT.EventRegistrationToken*, int>**)ThisPtr)[26],
+                (*(delegate* unmanaged[Stdcall]<IntPtr, global::WinRT.EventRegistrationToken, int>**)ThisPtr)[27],
                 1);
             });
         }
@@ -3597,8 +3628,8 @@ namespace ABI.Telegram.Native.Calls
 
                 return 
                 new _EventSource_global__Windows_Foundation_TypedEventHandler_global__Telegram_Native_Calls_VoipGroupManager__global__Telegram_Native_Calls_BroadcastTimeRequestedEventArgs_(_obj,
-                (*(delegate* unmanaged[Stdcall]<IntPtr, IntPtr, global::WinRT.EventRegistrationToken*, int>**)ThisPtr)[25],
-                (*(delegate* unmanaged[Stdcall]<IntPtr, global::WinRT.EventRegistrationToken, int>**)ThisPtr)[26],
+                (*(delegate* unmanaged[Stdcall]<IntPtr, IntPtr, global::WinRT.EventRegistrationToken*, int>**)ThisPtr)[24],
+                (*(delegate* unmanaged[Stdcall]<IntPtr, global::WinRT.EventRegistrationToken, int>**)ThisPtr)[25],
                 2);
             });
         }
@@ -3623,8 +3654,8 @@ namespace ABI.Telegram.Native.Calls
 
                 return 
                 new _EventSource_global__Windows_Foundation_TypedEventHandler_global__Telegram_Native_Calls_VoipGroupManager__global__Telegram_Native_Calls_GroupNetworkStateChangedEventArgs_(_obj,
-                (*(delegate* unmanaged[Stdcall]<IntPtr, IntPtr, global::WinRT.EventRegistrationToken*, int>**)ThisPtr)[21],
-                (*(delegate* unmanaged[Stdcall]<IntPtr, global::WinRT.EventRegistrationToken, int>**)ThisPtr)[22],
+                (*(delegate* unmanaged[Stdcall]<IntPtr, IntPtr, global::WinRT.EventRegistrationToken*, int>**)ThisPtr)[20],
+                (*(delegate* unmanaged[Stdcall]<IntPtr, global::WinRT.EventRegistrationToken, int>**)ThisPtr)[21],
                 3);
             });
         }
@@ -3635,13 +3666,13 @@ namespace ABI.Telegram.Native.Calls
             [global::System.Runtime.CompilerServices.MethodImpl(global::System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
             get
             {
-                global::System.ReadOnlySpan<byte> data = new byte[] { 0x3E, 0x93, 0x21, 0x5D, 0x18, 0xCD, 0xFF, 0x5E, 0x81, 0xFF, 0x3A, 0x84, 0xDE, 0x59, 0x68, 0xCE };
+                global::System.ReadOnlySpan<byte> data = new byte[] { 0x24, 0x71, 0xCD, 0xC7, 0x93, 0x7A, 0xD2, 0x51, 0xBA, 0xA4, 0x93, 0x4B, 0x46, 0x58, 0x34, 0xFD };
                 return ref global::System.Runtime.CompilerServices.Unsafe.As<byte, global::System.Guid>(ref global::System.Runtime.InteropServices.MemoryMarshal.GetReference(data));
             }
         }
 
     }
-    [Guid("5D21933E-CD18-5EFF-81FF-3A84DE5968CE")]
+    [Guid("C7CD7124-7A93-51D2-BAA4-934B465834FD")]
     internal interface IVoipGroupManager : global::Telegram.Native.Calls.IVoipGroupManager
     {
     }
@@ -3688,43 +3719,60 @@ namespace ABI.Telegram.Native.Calls
     {
 
 
-        internal static unsafe void Start(IObjectReference _obj)
+        internal static unsafe void Start(IObjectReference _obj, string version, global::Telegram.Native.Calls.VoipDescriptor descriptor)
         {
             var ThisPtr = _obj.ThisPtr;
 
-            global::WinRT.ExceptionHelpers.ThrowExceptionForHR((*(delegate* unmanaged[Stdcall]<IntPtr, int>**)ThisPtr)[6](ThisPtr));
+            ObjectReferenceValue __descriptor = default;
+            try
+            {
+                __descriptor = global::ABI.Telegram.Native.Calls.VoipDescriptor.CreateMarshaler2(descriptor);
+                MarshalString.Pinnable __version = new(version);
+                fixed(void* ___version = __version)
+                {
+                    global::WinRT.ExceptionHelpers.ThrowExceptionForHR((*(delegate* unmanaged[Stdcall]<IntPtr, IntPtr, IntPtr, int>**)ThisPtr)[6](ThisPtr, MarshalString.GetAbi(ref __version), MarshalInspectable<object>.GetAbi(__descriptor)));
+                }
+            }
+            finally
+            {
+                MarshalInspectable<object>.DisposeMarshaler(__descriptor);
+            }
+        }
+
+        internal static unsafe void Stop(IObjectReference _obj)
+        {
+            var ThisPtr = _obj.ThisPtr;
+
+            global::WinRT.ExceptionHelpers.ThrowExceptionForHR((*(delegate* unmanaged[Stdcall]<IntPtr, int>**)ThisPtr)[7](ThisPtr));
         }
 
         internal static unsafe void SetAudioOutputGainControlEnabled(IObjectReference _obj, bool enabled)
         {
             var ThisPtr = _obj.ThisPtr;
 
-            global::WinRT.ExceptionHelpers.ThrowExceptionForHR((*(delegate* unmanaged[Stdcall]<IntPtr, byte, int>**)ThisPtr)[9](ThisPtr, (byte)(enabled ? 1 : 0)));
+            global::WinRT.ExceptionHelpers.ThrowExceptionForHR((*(delegate* unmanaged[Stdcall]<IntPtr, byte, int>**)ThisPtr)[10](ThisPtr, (byte)(enabled ? 1 : 0)));
         }
 
         internal static unsafe void SetEchoCancellationStrength(IObjectReference _obj, int strength)
         {
             var ThisPtr = _obj.ThisPtr;
 
-            global::WinRT.ExceptionHelpers.ThrowExceptionForHR((*(delegate* unmanaged[Stdcall]<IntPtr, int, int>**)ThisPtr)[10](ThisPtr, strength));
+            global::WinRT.ExceptionHelpers.ThrowExceptionForHR((*(delegate* unmanaged[Stdcall]<IntPtr, int, int>**)ThisPtr)[11](ThisPtr, strength));
         }
 
-        internal static unsafe global::Telegram.Native.Calls.VoipVideoRendererToken SetIncomingVideoOutput(IObjectReference _obj, global::Microsoft.Graphics.Canvas.UI.Xaml.CanvasControl canvas)
+        internal static unsafe void SetIncomingVideoOutput(IObjectReference _obj, global::Telegram.Native.Calls.VoipVideoOutputSink sink)
         {
             var ThisPtr = _obj.ThisPtr;
 
-            ObjectReferenceValue __canvas = default;
-            IntPtr __retval = default;
+            ObjectReferenceValue __sink = default;
             try
             {
-                __canvas = global::ABI.Microsoft.Graphics.Canvas.UI.Xaml.CanvasControl.CreateMarshaler2(canvas);
-                global::WinRT.ExceptionHelpers.ThrowExceptionForHR((*(delegate* unmanaged[Stdcall]<IntPtr, IntPtr, IntPtr*, int>**)ThisPtr)[12](ThisPtr, MarshalInspectable<object>.GetAbi(__canvas), &__retval));
-                return global::ABI.Telegram.Native.Calls.VoipVideoRendererToken.FromAbi(__retval);
+                __sink = global::ABI.Telegram.Native.Calls.VoipVideoOutputSink.CreateMarshaler2(sink);
+                global::WinRT.ExceptionHelpers.ThrowExceptionForHR((*(delegate* unmanaged[Stdcall]<IntPtr, IntPtr, int>**)ThisPtr)[13](ThisPtr, MarshalInspectable<object>.GetAbi(__sink)));
             }
             finally
             {
-                MarshalInspectable<object>.DisposeMarshaler(__canvas);
-                global::ABI.Telegram.Native.Calls.VoipVideoRendererToken.DisposeAbi(__retval);
+                MarshalInspectable<object>.DisposeMarshaler(__sink);
             }
         }
 
@@ -3735,7 +3783,7 @@ namespace ABI.Telegram.Native.Calls
             MarshalString.Pinnable __id = new(id);
             fixed(void* ___id = __id)
             {
-                global::WinRT.ExceptionHelpers.ThrowExceptionForHR((*(delegate* unmanaged[Stdcall]<IntPtr, IntPtr, int>**)ThisPtr)[13](ThisPtr, MarshalString.GetAbi(ref __id)));
+                global::WinRT.ExceptionHelpers.ThrowExceptionForHR((*(delegate* unmanaged[Stdcall]<IntPtr, IntPtr, int>**)ThisPtr)[14](ThisPtr, MarshalString.GetAbi(ref __id)));
             }
         }
 
@@ -3746,7 +3794,7 @@ namespace ABI.Telegram.Native.Calls
             MarshalString.Pinnable __id = new(id);
             fixed(void* ___id = __id)
             {
-                global::WinRT.ExceptionHelpers.ThrowExceptionForHR((*(delegate* unmanaged[Stdcall]<IntPtr, IntPtr, int>**)ThisPtr)[14](ThisPtr, MarshalString.GetAbi(ref __id)));
+                global::WinRT.ExceptionHelpers.ThrowExceptionForHR((*(delegate* unmanaged[Stdcall]<IntPtr, IntPtr, int>**)ThisPtr)[15](ThisPtr, MarshalString.GetAbi(ref __id)));
             }
         }
 
@@ -3754,14 +3802,14 @@ namespace ABI.Telegram.Native.Calls
         {
             var ThisPtr = _obj.ThisPtr;
 
-            global::WinRT.ExceptionHelpers.ThrowExceptionForHR((*(delegate* unmanaged[Stdcall]<IntPtr, byte, int>**)ThisPtr)[15](ThisPtr, (byte)(enabled ? 1 : 0)));
+            global::WinRT.ExceptionHelpers.ThrowExceptionForHR((*(delegate* unmanaged[Stdcall]<IntPtr, byte, int>**)ThisPtr)[16](ThisPtr, (byte)(enabled ? 1 : 0)));
         }
 
         internal static unsafe void SetIsLowBatteryLevel(IObjectReference _obj, bool isLowBatteryLevel)
         {
             var ThisPtr = _obj.ThisPtr;
 
-            global::WinRT.ExceptionHelpers.ThrowExceptionForHR((*(delegate* unmanaged[Stdcall]<IntPtr, byte, int>**)ThisPtr)[16](ThisPtr, (byte)(isLowBatteryLevel ? 1 : 0)));
+            global::WinRT.ExceptionHelpers.ThrowExceptionForHR((*(delegate* unmanaged[Stdcall]<IntPtr, byte, int>**)ThisPtr)[17](ThisPtr, (byte)(isLowBatteryLevel ? 1 : 0)));
         }
 
         internal static unsafe string GetDebugInfo(IObjectReference _obj)
@@ -3771,7 +3819,7 @@ namespace ABI.Telegram.Native.Calls
             IntPtr __retval = default;
             try
             {
-                global::WinRT.ExceptionHelpers.ThrowExceptionForHR((*(delegate* unmanaged[Stdcall]<IntPtr, IntPtr*, int>**)ThisPtr)[17](ThisPtr, &__retval));
+                global::WinRT.ExceptionHelpers.ThrowExceptionForHR((*(delegate* unmanaged[Stdcall]<IntPtr, IntPtr*, int>**)ThisPtr)[18](ThisPtr, &__retval));
                 return MarshalString.FromAbi(__retval);
             }
             finally
@@ -3785,7 +3833,7 @@ namespace ABI.Telegram.Native.Calls
             var ThisPtr = _obj.ThisPtr;
 
             long __retval = default;
-            global::WinRT.ExceptionHelpers.ThrowExceptionForHR((*(delegate* unmanaged[Stdcall]<IntPtr, long*, int>**)ThisPtr)[18](ThisPtr, &__retval));
+            global::WinRT.ExceptionHelpers.ThrowExceptionForHR((*(delegate* unmanaged[Stdcall]<IntPtr, long*, int>**)ThisPtr)[19](ThisPtr, &__retval));
             return __retval;
         }
 
@@ -3797,7 +3845,7 @@ namespace ABI.Telegram.Native.Calls
             try
             {
                 __data = MarshalInterface<global::System.Collections.Generic.IList<byte>>.CreateMarshaler2(data, global::ABI.System.Collections.Generic.IListMethods<byte>.IID);
-                global::WinRT.ExceptionHelpers.ThrowExceptionForHR((*(delegate* unmanaged[Stdcall]<IntPtr, IntPtr, int>**)ThisPtr)[19](ThisPtr, MarshalInspectable<object>.GetAbi(__data)));
+                global::WinRT.ExceptionHelpers.ThrowExceptionForHR((*(delegate* unmanaged[Stdcall]<IntPtr, IntPtr, int>**)ThisPtr)[20](ThisPtr, MarshalInspectable<object>.GetAbi(__data)));
             }
             finally
             {
@@ -3813,7 +3861,7 @@ namespace ABI.Telegram.Native.Calls
             try
             {
                 __videoCapture = global::ABI.Telegram.Native.Calls.VoipCaptureBase.CreateMarshaler2(videoCapture);
-                global::WinRT.ExceptionHelpers.ThrowExceptionForHR((*(delegate* unmanaged[Stdcall]<IntPtr, IntPtr, int>**)ThisPtr)[20](ThisPtr, MarshalInspectable<object>.GetAbi(__videoCapture)));
+                global::WinRT.ExceptionHelpers.ThrowExceptionForHR((*(delegate* unmanaged[Stdcall]<IntPtr, IntPtr, int>**)ThisPtr)[21](ThisPtr, MarshalInspectable<object>.GetAbi(__videoCapture)));
             }
             finally
             {
@@ -3825,21 +3873,21 @@ namespace ABI.Telegram.Native.Calls
         {
             var ThisPtr = _obj.ThisPtr;
 
-            global::WinRT.ExceptionHelpers.ThrowExceptionForHR((*(delegate* unmanaged[Stdcall]<IntPtr, float, int>**)ThisPtr)[21](ThisPtr, aspect));
+            global::WinRT.ExceptionHelpers.ThrowExceptionForHR((*(delegate* unmanaged[Stdcall]<IntPtr, float, int>**)ThisPtr)[22](ThisPtr, aspect));
         }
         internal static unsafe bool get_IsMuted(IObjectReference _obj)
         {
             var ThisPtr = _obj.ThisPtr;
 
             byte __retval = default;
-            global::WinRT.ExceptionHelpers.ThrowExceptionForHR((*(delegate* unmanaged[Stdcall]<IntPtr, byte*, int>**)ThisPtr)[7](ThisPtr, &__retval));
+            global::WinRT.ExceptionHelpers.ThrowExceptionForHR((*(delegate* unmanaged[Stdcall]<IntPtr, byte*, int>**)ThisPtr)[8](ThisPtr, &__retval));
             return __retval != 0;
         }
         internal static unsafe void set_IsMuted(IObjectReference _obj, bool value)
         {
             var ThisPtr = _obj.ThisPtr;
 
-            global::WinRT.ExceptionHelpers.ThrowExceptionForHR((*(delegate* unmanaged[Stdcall]<IntPtr, byte, int>**)ThisPtr)[8](ThisPtr, (byte)(value ? 1 : 0)));
+            global::WinRT.ExceptionHelpers.ThrowExceptionForHR((*(delegate* unmanaged[Stdcall]<IntPtr, byte, int>**)ThisPtr)[9](ThisPtr, (byte)(value ? 1 : 0)));
         }
 
         internal static unsafe bool get_SupportsVideo(IObjectReference _obj)
@@ -3847,7 +3895,7 @@ namespace ABI.Telegram.Native.Calls
             var ThisPtr = _obj.ThisPtr;
 
             byte __retval = default;
-            global::WinRT.ExceptionHelpers.ThrowExceptionForHR((*(delegate* unmanaged[Stdcall]<IntPtr, byte*, int>**)ThisPtr)[11](ThisPtr, &__retval));
+            global::WinRT.ExceptionHelpers.ThrowExceptionForHR((*(delegate* unmanaged[Stdcall]<IntPtr, byte*, int>**)ThisPtr)[12](ThisPtr, &__retval));
             return __retval != 0;
         }
 
@@ -3872,8 +3920,8 @@ namespace ABI.Telegram.Native.Calls
 
                 return 
                 new _EventSource_global__Windows_Foundation_TypedEventHandler_global__Telegram_Native_Calls_VoipManager__float_(_obj,
-                (*(delegate* unmanaged[Stdcall]<IntPtr, IntPtr, global::WinRT.EventRegistrationToken*, int>**)ThisPtr)[26],
-                (*(delegate* unmanaged[Stdcall]<IntPtr, global::WinRT.EventRegistrationToken, int>**)ThisPtr)[27],
+                (*(delegate* unmanaged[Stdcall]<IntPtr, IntPtr, global::WinRT.EventRegistrationToken*, int>**)ThisPtr)[27],
+                (*(delegate* unmanaged[Stdcall]<IntPtr, global::WinRT.EventRegistrationToken, int>**)ThisPtr)[28],
                 0);
             });
         }
@@ -3898,8 +3946,8 @@ namespace ABI.Telegram.Native.Calls
 
                 return 
                 new _EventSource_global__Windows_Foundation_TypedEventHandler_global__Telegram_Native_Calls_VoipManager__bool_(_obj,
-                (*(delegate* unmanaged[Stdcall]<IntPtr, IntPtr, global::WinRT.EventRegistrationToken*, int>**)ThisPtr)[28],
-                (*(delegate* unmanaged[Stdcall]<IntPtr, global::WinRT.EventRegistrationToken, int>**)ThisPtr)[29],
+                (*(delegate* unmanaged[Stdcall]<IntPtr, IntPtr, global::WinRT.EventRegistrationToken*, int>**)ThisPtr)[29],
+                (*(delegate* unmanaged[Stdcall]<IntPtr, global::WinRT.EventRegistrationToken, int>**)ThisPtr)[30],
                 1);
             });
         }
@@ -3924,8 +3972,8 @@ namespace ABI.Telegram.Native.Calls
 
                 return 
                 new _EventSource_global__Windows_Foundation_TypedEventHandler_global__Telegram_Native_Calls_VoipManager__global__Telegram_Native_Calls_RemoteMediaStateUpdatedEventArgs_(_obj,
-                (*(delegate* unmanaged[Stdcall]<IntPtr, IntPtr, global::WinRT.EventRegistrationToken*, int>**)ThisPtr)[30],
-                (*(delegate* unmanaged[Stdcall]<IntPtr, global::WinRT.EventRegistrationToken, int>**)ThisPtr)[31],
+                (*(delegate* unmanaged[Stdcall]<IntPtr, IntPtr, global::WinRT.EventRegistrationToken*, int>**)ThisPtr)[31],
+                (*(delegate* unmanaged[Stdcall]<IntPtr, global::WinRT.EventRegistrationToken, int>**)ThisPtr)[32],
                 2);
             });
         }
@@ -3950,8 +3998,8 @@ namespace ABI.Telegram.Native.Calls
 
                 return 
                 new _EventSource_global__Windows_Foundation_TypedEventHandler_global__Telegram_Native_Calls_VoipManager__float_(_obj,
-                (*(delegate* unmanaged[Stdcall]<IntPtr, IntPtr, global::WinRT.EventRegistrationToken*, int>**)ThisPtr)[32],
-                (*(delegate* unmanaged[Stdcall]<IntPtr, global::WinRT.EventRegistrationToken, int>**)ThisPtr)[33],
+                (*(delegate* unmanaged[Stdcall]<IntPtr, IntPtr, global::WinRT.EventRegistrationToken*, int>**)ThisPtr)[33],
+                (*(delegate* unmanaged[Stdcall]<IntPtr, global::WinRT.EventRegistrationToken, int>**)ThisPtr)[34],
                 3);
             });
         }
@@ -3976,8 +4024,8 @@ namespace ABI.Telegram.Native.Calls
 
                 return 
                 new _EventSource_global__Windows_Foundation_TypedEventHandler_global__Telegram_Native_Calls_VoipManager__int_(_obj,
-                (*(delegate* unmanaged[Stdcall]<IntPtr, IntPtr, global::WinRT.EventRegistrationToken*, int>**)ThisPtr)[24],
-                (*(delegate* unmanaged[Stdcall]<IntPtr, global::WinRT.EventRegistrationToken, int>**)ThisPtr)[25],
+                (*(delegate* unmanaged[Stdcall]<IntPtr, IntPtr, global::WinRT.EventRegistrationToken*, int>**)ThisPtr)[25],
+                (*(delegate* unmanaged[Stdcall]<IntPtr, global::WinRT.EventRegistrationToken, int>**)ThisPtr)[26],
                 4);
             });
         }
@@ -4002,24 +4050,24 @@ namespace ABI.Telegram.Native.Calls
 
                 return 
                 new _EventSource_global__Windows_Foundation_TypedEventHandler_global__Telegram_Native_Calls_VoipManager__global__Telegram_Native_Calls_SignalingDataEmittedEventArgs_(_obj,
-                (*(delegate* unmanaged[Stdcall]<IntPtr, IntPtr, global::WinRT.EventRegistrationToken*, int>**)ThisPtr)[34],
-                (*(delegate* unmanaged[Stdcall]<IntPtr, global::WinRT.EventRegistrationToken, int>**)ThisPtr)[35],
+                (*(delegate* unmanaged[Stdcall]<IntPtr, IntPtr, global::WinRT.EventRegistrationToken*, int>**)ThisPtr)[35],
+                (*(delegate* unmanaged[Stdcall]<IntPtr, global::WinRT.EventRegistrationToken, int>**)ThisPtr)[36],
                 5);
             });
         }
 
-        private volatile static global::System.Runtime.CompilerServices.ConditionalWeakTable<object, global::ABI.WinRT.Interop.EventSource<global::Windows.Foundation.TypedEventHandler<global::Telegram.Native.Calls.VoipManager, global::Telegram.Native.Calls.VoipState>>> _StateUpdated_;
-        private static global::System.Runtime.CompilerServices.ConditionalWeakTable<object, global::ABI.WinRT.Interop.EventSource<global::Windows.Foundation.TypedEventHandler<global::Telegram.Native.Calls.VoipManager, global::Telegram.Native.Calls.VoipState>>> MakeStateUpdatedTable()
+        private volatile static global::System.Runtime.CompilerServices.ConditionalWeakTable<object, global::ABI.WinRT.Interop.EventSource<global::Windows.Foundation.TypedEventHandler<global::Telegram.Native.Calls.VoipManager, global::Telegram.Native.Calls.VoipReadyState>>> _StateUpdated_;
+        private static global::System.Runtime.CompilerServices.ConditionalWeakTable<object, global::ABI.WinRT.Interop.EventSource<global::Windows.Foundation.TypedEventHandler<global::Telegram.Native.Calls.VoipManager, global::Telegram.Native.Calls.VoipReadyState>>> MakeStateUpdatedTable()
         {
             
             global::System.Threading.Interlocked.CompareExchange(ref _StateUpdated_, new(), null);
             return _StateUpdated_;
         }
-        private static global::System.Runtime.CompilerServices.ConditionalWeakTable<object, global::ABI.WinRT.Interop.EventSource<global::Windows.Foundation.TypedEventHandler<global::Telegram.Native.Calls.VoipManager, global::Telegram.Native.Calls.VoipState>>> _StateUpdated => _StateUpdated_ ?? MakeStateUpdatedTable();
+        private static global::System.Runtime.CompilerServices.ConditionalWeakTable<object, global::ABI.WinRT.Interop.EventSource<global::Windows.Foundation.TypedEventHandler<global::Telegram.Native.Calls.VoipManager, global::Telegram.Native.Calls.VoipReadyState>>> _StateUpdated => _StateUpdated_ ?? MakeStateUpdatedTable();
 
 
 
-        internal static unsafe global::ABI.WinRT.Interop.EventSource<global::Windows.Foundation.TypedEventHandler<global::Telegram.Native.Calls.VoipManager, global::Telegram.Native.Calls.VoipState>> Get_StateUpdated2(IObjectReference _obj, object _thisObj)
+        internal static unsafe global::ABI.WinRT.Interop.EventSource<global::Windows.Foundation.TypedEventHandler<global::Telegram.Native.Calls.VoipManager, global::Telegram.Native.Calls.VoipReadyState>> Get_StateUpdated2(IObjectReference _obj, object _thisObj)
         {
             return _StateUpdated.GetValue(_thisObj, (key) =>
             {
@@ -4027,9 +4075,9 @@ namespace ABI.Telegram.Native.Calls
                 var ThisPtr = _obj.ThisPtr;
 
                 return 
-                new _EventSource_global__Windows_Foundation_TypedEventHandler_global__Telegram_Native_Calls_VoipManager__global__Telegram_Native_Calls_VoipState_(_obj,
-                (*(delegate* unmanaged[Stdcall]<IntPtr, IntPtr, global::WinRT.EventRegistrationToken*, int>**)ThisPtr)[22],
-                (*(delegate* unmanaged[Stdcall]<IntPtr, global::WinRT.EventRegistrationToken, int>**)ThisPtr)[23],
+                new _EventSource_global__Windows_Foundation_TypedEventHandler_global__Telegram_Native_Calls_VoipManager__global__Telegram_Native_Calls_VoipReadyState_(_obj,
+                (*(delegate* unmanaged[Stdcall]<IntPtr, IntPtr, global::WinRT.EventRegistrationToken*, int>**)ThisPtr)[23],
+                (*(delegate* unmanaged[Stdcall]<IntPtr, global::WinRT.EventRegistrationToken, int>**)ThisPtr)[24],
                 6);
             });
         }
@@ -4040,57 +4088,14 @@ namespace ABI.Telegram.Native.Calls
             [global::System.Runtime.CompilerServices.MethodImpl(global::System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
             get
             {
-                global::System.ReadOnlySpan<byte> data = new byte[] { 0xB3, 0x9A, 0x76, 0xF2, 0xBB, 0xB2, 0x10, 0x5C, 0xBB, 0xB9, 0xA5, 0x28, 0x64, 0x83, 0xBF, 0xEA };
+                global::System.ReadOnlySpan<byte> data = new byte[] { 0x3C, 0xA9, 0xA8, 0x44, 0x30, 0x77, 0x7D, 0x5B, 0xB1, 0x81, 0xD, 0x81, 0xD4, 0x42, 0x3F, 0x49 };
                 return ref global::System.Runtime.CompilerServices.Unsafe.As<byte, global::System.Guid>(ref global::System.Runtime.InteropServices.MemoryMarshal.GetReference(data));
             }
         }
 
     }
-    [Guid("F2769AB3-B2BB-5C10-BBB9-A5286483BFEA")]
+    [Guid("44A8A93C-7730-5B7D-B181-0D81D4423F49")]
     internal interface IVoipManager : global::Telegram.Native.Calls.IVoipManager
-    {
-    }
-    internal static class IVoipManagerFactoryMethods
-    {
-
-
-        internal static unsafe global::Telegram.Native.Calls.VoipManager CreateInstance(IObjectReference _obj, string version, global::Telegram.Native.Calls.VoipDescriptor descriptor)
-        {
-            var ThisPtr = _obj.ThisPtr;
-
-            ObjectReferenceValue __descriptor = default;
-            IntPtr __retval = default;
-            try
-            {
-                __descriptor = global::ABI.Telegram.Native.Calls.VoipDescriptor.CreateMarshaler2(descriptor);
-                MarshalString.Pinnable __version = new(version);
-                fixed(void* ___version = __version)
-                {
-                    global::WinRT.ExceptionHelpers.ThrowExceptionForHR((*(delegate* unmanaged[Stdcall]<IntPtr, IntPtr, IntPtr, IntPtr*, int>**)ThisPtr)[6](ThisPtr, MarshalString.GetAbi(ref __version), MarshalInspectable<object>.GetAbi(__descriptor), &__retval));
-                    return global::ABI.Telegram.Native.Calls.VoipManager.FromAbi(__retval);
-                }
-            }
-            finally
-            {
-                MarshalInspectable<object>.DisposeMarshaler(__descriptor);
-                global::ABI.Telegram.Native.Calls.VoipManager.DisposeAbi(__retval);
-            }
-        }
-
-
-        public static ref readonly global::System.Guid IID
-        {
-            [global::System.Runtime.CompilerServices.MethodImpl(global::System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
-            get
-            {
-                global::System.ReadOnlySpan<byte> data = new byte[] { 0x82, 0x8B, 0xB3, 0x78, 0x44, 0x30, 0x2A, 0x5C, 0xAE, 0x67, 0x30, 0xD5, 0x5B, 0xE0, 0x86, 0x9F };
-                return ref global::System.Runtime.CompilerServices.Unsafe.As<byte, global::System.Guid>(ref global::System.Runtime.InteropServices.MemoryMarshal.GetReference(data));
-            }
-        }
-
-    }
-    [Guid("78B38B82-3044-5C2A-AE67-30D55BE0869F")]
-    internal interface IVoipManagerFactory : global::Telegram.Native.Calls.IVoipManagerFactory
     {
     }
     internal static class IVoipManagerStaticsMethods
@@ -4133,32 +4138,6 @@ namespace ABI.Telegram.Native.Calls
     {
 
 
-        private volatile static global::System.Runtime.CompilerServices.ConditionalWeakTable<object, global::ABI.WinRT.Interop.EventSource<global::Windows.Foundation.TypedEventHandler<global::Telegram.Native.Calls.VoipScreenCapture, object>>> _FatalErrorOccurred_;
-        private static global::System.Runtime.CompilerServices.ConditionalWeakTable<object, global::ABI.WinRT.Interop.EventSource<global::Windows.Foundation.TypedEventHandler<global::Telegram.Native.Calls.VoipScreenCapture, object>>> MakeFatalErrorOccurredTable()
-        {
-            
-            global::System.Threading.Interlocked.CompareExchange(ref _FatalErrorOccurred_, new(), null);
-            return _FatalErrorOccurred_;
-        }
-        private static global::System.Runtime.CompilerServices.ConditionalWeakTable<object, global::ABI.WinRT.Interop.EventSource<global::Windows.Foundation.TypedEventHandler<global::Telegram.Native.Calls.VoipScreenCapture, object>>> _FatalErrorOccurred => _FatalErrorOccurred_ ?? MakeFatalErrorOccurredTable();
-
-
-
-        internal static unsafe global::ABI.WinRT.Interop.EventSource<global::Windows.Foundation.TypedEventHandler<global::Telegram.Native.Calls.VoipScreenCapture, object>> Get_FatalErrorOccurred2(IObjectReference _obj, object _thisObj)
-        {
-            return _FatalErrorOccurred.GetValue(_thisObj, (key) =>
-            {
-
-                var ThisPtr = _obj.ThisPtr;
-
-                return 
-                new _EventSource_global__Windows_Foundation_TypedEventHandler_global__Telegram_Native_Calls_VoipScreenCapture__object_(_obj,
-                (*(delegate* unmanaged[Stdcall]<IntPtr, IntPtr, global::WinRT.EventRegistrationToken*, int>**)ThisPtr)[6],
-                (*(delegate* unmanaged[Stdcall]<IntPtr, global::WinRT.EventRegistrationToken, int>**)ThisPtr)[7],
-                0);
-            });
-        }
-
         private volatile static global::System.Runtime.CompilerServices.ConditionalWeakTable<object, global::ABI.WinRT.Interop.EventSource<global::Windows.Foundation.TypedEventHandler<global::Telegram.Native.Calls.VoipScreenCapture, bool>>> _Paused_;
         private static global::System.Runtime.CompilerServices.ConditionalWeakTable<object, global::ABI.WinRT.Interop.EventSource<global::Windows.Foundation.TypedEventHandler<global::Telegram.Native.Calls.VoipScreenCapture, bool>>> MakePausedTable()
         {
@@ -4179,9 +4158,9 @@ namespace ABI.Telegram.Native.Calls
 
                 return 
                 new _EventSource_global__Windows_Foundation_TypedEventHandler_global__Telegram_Native_Calls_VoipScreenCapture__bool_(_obj,
-                (*(delegate* unmanaged[Stdcall]<IntPtr, IntPtr, global::WinRT.EventRegistrationToken*, int>**)ThisPtr)[8],
-                (*(delegate* unmanaged[Stdcall]<IntPtr, global::WinRT.EventRegistrationToken, int>**)ThisPtr)[9],
-                1);
+                (*(delegate* unmanaged[Stdcall]<IntPtr, IntPtr, global::WinRT.EventRegistrationToken*, int>**)ThisPtr)[6],
+                (*(delegate* unmanaged[Stdcall]<IntPtr, global::WinRT.EventRegistrationToken, int>**)ThisPtr)[7],
+                0);
             });
         }
 
@@ -4191,13 +4170,13 @@ namespace ABI.Telegram.Native.Calls
             [global::System.Runtime.CompilerServices.MethodImpl(global::System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
             get
             {
-                global::System.ReadOnlySpan<byte> data = new byte[] { 0x58, 0x0, 0x8A, 0x81, 0x5E, 0xCA, 0x59, 0x58, 0xB2, 0xBA, 0xA0, 0xFC, 0x6E, 0xB9, 0x11, 0x1A };
+                global::System.ReadOnlySpan<byte> data = new byte[] { 0xBB, 0x46, 0x5, 0x44, 0x71, 0xC6, 0x31, 0x54, 0x92, 0x17, 0x70, 0x2, 0x98, 0xD0, 0x1F, 0xA0 };
                 return ref global::System.Runtime.CompilerServices.Unsafe.As<byte, global::System.Guid>(ref global::System.Runtime.InteropServices.MemoryMarshal.GetReference(data));
             }
         }
 
     }
-    [Guid("818A0058-CA5E-5859-B2BA-A0FC6EB9111A")]
+    [Guid("440546BB-C671-5431-9217-700298D01FA0")]
     internal interface IVoipScreenCapture : global::Telegram.Native.Calls.IVoipScreenCapture
     {
     }
@@ -4358,12 +4337,6 @@ namespace ABI.Telegram.Native.Calls
             global::WinRT.ExceptionHelpers.ThrowExceptionForHR((*(delegate* unmanaged[Stdcall]<IntPtr, int*, int>**)ThisPtr)[6](ThisPtr, &__retval));
             return __retval;
         }
-        internal static unsafe void set_AudioSource(IObjectReference _obj, int value)
-        {
-            var ThisPtr = _obj.ThisPtr;
-
-            global::WinRT.ExceptionHelpers.ThrowExceptionForHR((*(delegate* unmanaged[Stdcall]<IntPtr, int, int>**)ThisPtr)[7](ThisPtr, value));
-        }
 
         internal static unsafe string get_EndpointId(IObjectReference _obj)
         {
@@ -4372,22 +4345,12 @@ namespace ABI.Telegram.Native.Calls
             IntPtr __retval = default;
             try
             {
-                global::WinRT.ExceptionHelpers.ThrowExceptionForHR((*(delegate* unmanaged[Stdcall]<IntPtr, IntPtr*, int>**)ThisPtr)[8](ThisPtr, &__retval));
+                global::WinRT.ExceptionHelpers.ThrowExceptionForHR((*(delegate* unmanaged[Stdcall]<IntPtr, IntPtr*, int>**)ThisPtr)[7](ThisPtr, &__retval));
                 return MarshalString.FromAbi(__retval);
             }
             finally
             {
                 MarshalString.DisposeAbi(__retval);
-            }
-        }
-        internal static unsafe void set_EndpointId(IObjectReference _obj, string value)
-        {
-            var ThisPtr = _obj.ThisPtr;
-
-            MarshalString.Pinnable __value = new(value);
-            fixed(void* ___value = __value)
-            {
-                global::WinRT.ExceptionHelpers.ThrowExceptionForHR((*(delegate* unmanaged[Stdcall]<IntPtr, IntPtr, int>**)ThisPtr)[9](ThisPtr, MarshalString.GetAbi(ref __value)));
             }
         }
 
@@ -4396,14 +4359,8 @@ namespace ABI.Telegram.Native.Calls
             var ThisPtr = _obj.ThisPtr;
 
             global::Telegram.Native.Calls.VoipVideoChannelQuality __retval = default;
-            global::WinRT.ExceptionHelpers.ThrowExceptionForHR((*(delegate* unmanaged[Stdcall]<IntPtr, global::Telegram.Native.Calls.VoipVideoChannelQuality*, int>**)ThisPtr)[14](ThisPtr, &__retval));
+            global::WinRT.ExceptionHelpers.ThrowExceptionForHR((*(delegate* unmanaged[Stdcall]<IntPtr, global::Telegram.Native.Calls.VoipVideoChannelQuality*, int>**)ThisPtr)[10](ThisPtr, &__retval));
             return __retval;
-        }
-        internal static unsafe void set_MaxQuality(IObjectReference _obj, global::Telegram.Native.Calls.VoipVideoChannelQuality value)
-        {
-            var ThisPtr = _obj.ThisPtr;
-
-            global::WinRT.ExceptionHelpers.ThrowExceptionForHR((*(delegate* unmanaged[Stdcall]<IntPtr, global::Telegram.Native.Calls.VoipVideoChannelQuality, int>**)ThisPtr)[15](ThisPtr, value));
         }
 
         internal static unsafe global::Telegram.Native.Calls.VoipVideoChannelQuality get_MinQuality(IObjectReference _obj)
@@ -4411,14 +4368,8 @@ namespace ABI.Telegram.Native.Calls
             var ThisPtr = _obj.ThisPtr;
 
             global::Telegram.Native.Calls.VoipVideoChannelQuality __retval = default;
-            global::WinRT.ExceptionHelpers.ThrowExceptionForHR((*(delegate* unmanaged[Stdcall]<IntPtr, global::Telegram.Native.Calls.VoipVideoChannelQuality*, int>**)ThisPtr)[12](ThisPtr, &__retval));
+            global::WinRT.ExceptionHelpers.ThrowExceptionForHR((*(delegate* unmanaged[Stdcall]<IntPtr, global::Telegram.Native.Calls.VoipVideoChannelQuality*, int>**)ThisPtr)[9](ThisPtr, &__retval));
             return __retval;
-        }
-        internal static unsafe void set_MinQuality(IObjectReference _obj, global::Telegram.Native.Calls.VoipVideoChannelQuality value)
-        {
-            var ThisPtr = _obj.ThisPtr;
-
-            global::WinRT.ExceptionHelpers.ThrowExceptionForHR((*(delegate* unmanaged[Stdcall]<IntPtr, global::Telegram.Native.Calls.VoipVideoChannelQuality, int>**)ThisPtr)[13](ThisPtr, value));
         }
 
         internal static unsafe global::System.Collections.Generic.IList<global::Telegram.Td.Api.GroupCallVideoSourceGroup> get_SourceGroups(IObjectReference _obj)
@@ -4428,28 +4379,13 @@ namespace ABI.Telegram.Native.Calls
             IntPtr __retval = default;
             try
             {
-                global::WinRT.ExceptionHelpers.ThrowExceptionForHR((*(delegate* unmanaged[Stdcall]<IntPtr, IntPtr*, int>**)ThisPtr)[10](ThisPtr, &__retval));
+                global::WinRT.ExceptionHelpers.ThrowExceptionForHR((*(delegate* unmanaged[Stdcall]<IntPtr, IntPtr*, int>**)ThisPtr)[8](ThisPtr, &__retval));
                 _ = global::WinRT.GenericTypeInstantiations.Windows_Foundation_Collections_IVector_1_Telegram_Td_Api_GroupCallVideoSourceGroup.EnsureInitialized();
                 return MarshalInterface<global::System.Collections.Generic.IList<global::Telegram.Td.Api.GroupCallVideoSourceGroup>>.FromAbi(__retval);
             }
             finally
             {
                 MarshalInterface<global::System.Collections.Generic.IList<global::Telegram.Td.Api.GroupCallVideoSourceGroup>>.DisposeAbi(__retval);
-            }
-        }
-        internal static unsafe void set_SourceGroups(IObjectReference _obj, global::System.Collections.Generic.IList<global::Telegram.Td.Api.GroupCallVideoSourceGroup> value)
-        {
-            var ThisPtr = _obj.ThisPtr;
-
-            ObjectReferenceValue __value = default;
-            try
-            {
-                __value = MarshalInterface<global::System.Collections.Generic.IList<global::Telegram.Td.Api.GroupCallVideoSourceGroup>>.CreateMarshaler2(value, global::ABI.System.Collections.Generic.IListMethods<global::Telegram.Td.Api.GroupCallVideoSourceGroup>.IID);
-                global::WinRT.ExceptionHelpers.ThrowExceptionForHR((*(delegate* unmanaged[Stdcall]<IntPtr, IntPtr, int>**)ThisPtr)[11](ThisPtr, MarshalInspectable<object>.GetAbi(__value)));
-            }
-            finally
-            {
-                MarshalInspectable<object>.DisposeMarshaler(__value);
             }
         }
 
@@ -4460,13 +4396,13 @@ namespace ABI.Telegram.Native.Calls
             [global::System.Runtime.CompilerServices.MethodImpl(global::System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
             get
             {
-                global::System.ReadOnlySpan<byte> data = new byte[] { 0x3F, 0xC2, 0x59, 0xAE, 0xFB, 0xD6, 0xCA, 0x56, 0x88, 0x2F, 0xDA, 0x84, 0x6B, 0xFF, 0x98, 0xD5 };
+                global::System.ReadOnlySpan<byte> data = new byte[] { 0xA7, 0x69, 0xE3, 0x7, 0x85, 0x16, 0x5C, 0x59, 0x8C, 0x91, 0x55, 0x79, 0xBA, 0x39, 0x7B, 0x1A };
                 return ref global::System.Runtime.CompilerServices.Unsafe.As<byte, global::System.Guid>(ref global::System.Runtime.InteropServices.MemoryMarshal.GetReference(data));
             }
         }
 
     }
-    [Guid("AE59C23F-D6FB-56CA-882F-DA846BFF98D5")]
+    [Guid("07E369A7-1685-595C-8C91-5579BA397B1A")]
     internal interface IVoipVideoChannelInfo : global::Telegram.Native.Calls.IVoipVideoChannelInfo
     {
     }
@@ -4497,145 +4433,91 @@ namespace ABI.Telegram.Native.Calls
             }
         }
 
-        internal static unsafe global::Telegram.Native.Calls.VoipVideoChannelInfo CreateInstance2(IObjectReference _obj, global::Telegram.Native.Calls.VoipVideoRendererToken token, global::Telegram.Native.Calls.VoipVideoChannelQuality minQuality, global::Telegram.Native.Calls.VoipVideoChannelQuality maxQuality)
-        {
-            var ThisPtr = _obj.ThisPtr;
-
-            ObjectReferenceValue __token = default;
-            IntPtr __retval = default;
-            try
-            {
-                __token = global::ABI.Telegram.Native.Calls.VoipVideoRendererToken.CreateMarshaler2(token);
-                global::WinRT.ExceptionHelpers.ThrowExceptionForHR((*(delegate* unmanaged[Stdcall]<IntPtr, IntPtr, global::Telegram.Native.Calls.VoipVideoChannelQuality, global::Telegram.Native.Calls.VoipVideoChannelQuality, IntPtr*, int>**)ThisPtr)[7](ThisPtr, MarshalInspectable<object>.GetAbi(__token), minQuality, maxQuality, &__retval));
-                return global::ABI.Telegram.Native.Calls.VoipVideoChannelInfo.FromAbi(__retval);
-            }
-            finally
-            {
-                MarshalInspectable<object>.DisposeMarshaler(__token);
-                global::ABI.Telegram.Native.Calls.VoipVideoChannelInfo.DisposeAbi(__retval);
-            }
-        }
-
 
         public static ref readonly global::System.Guid IID
         {
             [global::System.Runtime.CompilerServices.MethodImpl(global::System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
             get
             {
-                global::System.ReadOnlySpan<byte> data = new byte[] { 0x80, 0x5A, 0x13, 0xC7, 0x66, 0x1, 0xCA, 0x5B, 0xB0, 0xE, 0x17, 0x66, 0xC6, 0x7E, 0x55, 0x66 };
+                global::System.ReadOnlySpan<byte> data = new byte[] { 0xF5, 0x90, 0x4D, 0xEB, 0xD5, 0x3E, 0x99, 0x5A, 0x80, 0xC, 0xAF, 0xE0, 0x9D, 0x22, 0xE3, 0xD };
                 return ref global::System.Runtime.CompilerServices.Unsafe.As<byte, global::System.Guid>(ref global::System.Runtime.InteropServices.MemoryMarshal.GetReference(data));
             }
         }
 
     }
-    [Guid("C7135A80-0166-5BCA-B00E-1766C67E5566")]
+    [Guid("EB4D90F5-3ED5-5A99-800C-AFE09D22E30D")]
     internal interface IVoipVideoChannelInfoFactory : global::Telegram.Native.Calls.IVoipVideoChannelInfoFactory
     {
     }
-    internal static class IVoipVideoRendererTokenMethods
+    internal static class IVoipVideoOutputSinkMethods
     {
 
-
-        internal static unsafe bool IsMatch(IObjectReference _obj, string endpointId, global::Microsoft.Graphics.Canvas.UI.Xaml.CanvasControl canvasControl)
-        {
-            var ThisPtr = _obj.ThisPtr;
-
-            ObjectReferenceValue __canvasControl = default;
-            byte __retval = default;
-            try
-            {
-                __canvasControl = global::ABI.Microsoft.Graphics.Canvas.UI.Xaml.CanvasControl.CreateMarshaler2(canvasControl);
-                MarshalString.Pinnable __endpointId = new(endpointId);
-                fixed(void* ___endpointId = __endpointId)
-                {
-                    global::WinRT.ExceptionHelpers.ThrowExceptionForHR((*(delegate* unmanaged[Stdcall]<IntPtr, IntPtr, IntPtr, byte*, int>**)ThisPtr)[13](ThisPtr, MarshalString.GetAbi(ref __endpointId), MarshalInspectable<object>.GetAbi(__canvasControl), &__retval));
-                    return __retval != 0;
-                }
-            }
-            finally
-            {
-                MarshalInspectable<object>.DisposeMarshaler(__canvasControl);
-            }
-        }
 
         internal static unsafe void Stop(IObjectReference _obj)
         {
             var ThisPtr = _obj.ThisPtr;
 
-            global::WinRT.ExceptionHelpers.ThrowExceptionForHR((*(delegate* unmanaged[Stdcall]<IntPtr, int>**)ThisPtr)[14](ThisPtr));
+            global::WinRT.ExceptionHelpers.ThrowExceptionForHR((*(delegate* unmanaged[Stdcall]<IntPtr, int>**)ThisPtr)[6](ThisPtr));
         }
-        internal static unsafe int get_AudioSource(IObjectReference _obj)
-        {
-            var ThisPtr = _obj.ThisPtr;
-
-            int __retval = default;
-            global::WinRT.ExceptionHelpers.ThrowExceptionForHR((*(delegate* unmanaged[Stdcall]<IntPtr, int*, int>**)ThisPtr)[6](ThisPtr, &__retval));
-            return __retval;
-        }
-
-        internal static unsafe string get_EndpointId(IObjectReference _obj)
-        {
-            var ThisPtr = _obj.ThisPtr;
-
-            IntPtr __retval = default;
-            try
-            {
-                global::WinRT.ExceptionHelpers.ThrowExceptionForHR((*(delegate* unmanaged[Stdcall]<IntPtr, IntPtr*, int>**)ThisPtr)[7](ThisPtr, &__retval));
-                return MarshalString.FromAbi(__retval);
-            }
-            finally
-            {
-                MarshalString.DisposeAbi(__retval);
-            }
-        }
-
         internal static unsafe bool get_IsMirrored(IObjectReference _obj)
         {
             var ThisPtr = _obj.ThisPtr;
 
             byte __retval = default;
-            global::WinRT.ExceptionHelpers.ThrowExceptionForHR((*(delegate* unmanaged[Stdcall]<IntPtr, byte*, int>**)ThisPtr)[11](ThisPtr, &__retval));
+            global::WinRT.ExceptionHelpers.ThrowExceptionForHR((*(delegate* unmanaged[Stdcall]<IntPtr, byte*, int>**)ThisPtr)[7](ThisPtr, &__retval));
             return __retval != 0;
         }
         internal static unsafe void set_IsMirrored(IObjectReference _obj, bool value)
         {
             var ThisPtr = _obj.ThisPtr;
 
-            global::WinRT.ExceptionHelpers.ThrowExceptionForHR((*(delegate* unmanaged[Stdcall]<IntPtr, byte, int>**)ThisPtr)[12](ThisPtr, (byte)(value ? 1 : 0)));
+            global::WinRT.ExceptionHelpers.ThrowExceptionForHR((*(delegate* unmanaged[Stdcall]<IntPtr, byte, int>**)ThisPtr)[8](ThisPtr, (byte)(value ? 1 : 0)));
         }
 
-        internal static unsafe global::System.Collections.Generic.IList<global::Telegram.Td.Api.GroupCallVideoSourceGroup> get_SourceGroups(IObjectReference _obj)
+        internal static unsafe int get_PixelHeight(IObjectReference _obj)
         {
             var ThisPtr = _obj.ThisPtr;
 
-            IntPtr __retval = default;
-            try
-            {
-                global::WinRT.ExceptionHelpers.ThrowExceptionForHR((*(delegate* unmanaged[Stdcall]<IntPtr, IntPtr*, int>**)ThisPtr)[8](ThisPtr, &__retval));
-                _ = global::WinRT.GenericTypeInstantiations.Windows_Foundation_Collections_IVector_1_Telegram_Td_Api_GroupCallVideoSourceGroup.EnsureInitialized();
-                return MarshalInterface<global::System.Collections.Generic.IList<global::Telegram.Td.Api.GroupCallVideoSourceGroup>>.FromAbi(__retval);
-            }
-            finally
-            {
-                MarshalInterface<global::System.Collections.Generic.IList<global::Telegram.Td.Api.GroupCallVideoSourceGroup>>.DisposeAbi(__retval);
-            }
-        }
-
-        internal static unsafe global::Microsoft.UI.Xaml.Media.Stretch get_Stretch(IObjectReference _obj)
-        {
-            var ThisPtr = _obj.ThisPtr;
-
-            global::Microsoft.UI.Xaml.Media.Stretch __retval = default;
-            global::WinRT.ExceptionHelpers.ThrowExceptionForHR((*(delegate* unmanaged[Stdcall]<IntPtr, global::Microsoft.UI.Xaml.Media.Stretch*, int>**)ThisPtr)[9](ThisPtr, &__retval));
+            int __retval = default;
+            global::WinRT.ExceptionHelpers.ThrowExceptionForHR((*(delegate* unmanaged[Stdcall]<IntPtr, int*, int>**)ThisPtr)[10](ThisPtr, &__retval));
             return __retval;
         }
-        internal static unsafe void set_Stretch(IObjectReference _obj, global::Microsoft.UI.Xaml.Media.Stretch value)
+
+        internal static unsafe int get_PixelWidth(IObjectReference _obj)
         {
             var ThisPtr = _obj.ThisPtr;
 
-            global::WinRT.ExceptionHelpers.ThrowExceptionForHR((*(delegate* unmanaged[Stdcall]<IntPtr, global::Microsoft.UI.Xaml.Media.Stretch, int>**)ThisPtr)[10](ThisPtr, value));
+            int __retval = default;
+            global::WinRT.ExceptionHelpers.ThrowExceptionForHR((*(delegate* unmanaged[Stdcall]<IntPtr, int*, int>**)ThisPtr)[9](ThisPtr, &__retval));
+            return __retval;
         }
 
+
+        private volatile static global::System.Runtime.CompilerServices.ConditionalWeakTable<object, global::ABI.WinRT.Interop.EventSource<global::Windows.Foundation.TypedEventHandler<global::Telegram.Native.Calls.VoipVideoOutputSink, global::Telegram.Native.Calls.FrameReceivedEventArgs>>> _FrameReceived_;
+        private static global::System.Runtime.CompilerServices.ConditionalWeakTable<object, global::ABI.WinRT.Interop.EventSource<global::Windows.Foundation.TypedEventHandler<global::Telegram.Native.Calls.VoipVideoOutputSink, global::Telegram.Native.Calls.FrameReceivedEventArgs>>> MakeFrameReceivedTable()
+        {
+            
+            global::System.Threading.Interlocked.CompareExchange(ref _FrameReceived_, new(), null);
+            return _FrameReceived_;
+        }
+        private static global::System.Runtime.CompilerServices.ConditionalWeakTable<object, global::ABI.WinRT.Interop.EventSource<global::Windows.Foundation.TypedEventHandler<global::Telegram.Native.Calls.VoipVideoOutputSink, global::Telegram.Native.Calls.FrameReceivedEventArgs>>> _FrameReceived => _FrameReceived_ ?? MakeFrameReceivedTable();
+
+
+
+        internal static unsafe global::ABI.WinRT.Interop.EventSource<global::Windows.Foundation.TypedEventHandler<global::Telegram.Native.Calls.VoipVideoOutputSink, global::Telegram.Native.Calls.FrameReceivedEventArgs>> Get_FrameReceived2(IObjectReference _obj, object _thisObj)
+        {
+            return _FrameReceived.GetValue(_thisObj, (key) =>
+            {
+
+                var ThisPtr = _obj.ThisPtr;
+
+                return 
+                new _EventSource_global__Windows_Foundation_TypedEventHandler_global__Telegram_Native_Calls_VoipVideoOutputSink__global__Telegram_Native_Calls_FrameReceivedEventArgs_(_obj,
+                (*(delegate* unmanaged[Stdcall]<IntPtr, IntPtr, global::WinRT.EventRegistrationToken*, int>**)ThisPtr)[11],
+                (*(delegate* unmanaged[Stdcall]<IntPtr, global::WinRT.EventRegistrationToken, int>**)ThisPtr)[12],
+                0);
+            });
+        }
 
 
         public static ref readonly global::System.Guid IID
@@ -4643,14 +4525,53 @@ namespace ABI.Telegram.Native.Calls
             [global::System.Runtime.CompilerServices.MethodImpl(global::System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
             get
             {
-                global::System.ReadOnlySpan<byte> data = new byte[] { 0xA1, 0xE1, 0x8A, 0x22, 0xCB, 0x33, 0x54, 0x5C, 0xB4, 0xD3, 0xCD, 0xFC, 0xA, 0x56, 0xB4, 0xD8 };
+                global::System.ReadOnlySpan<byte> data = new byte[] { 0x8, 0xF3, 0x48, 0xAE, 0xC9, 0xD3, 0xB7, 0x57, 0x9F, 0xB, 0xAF, 0xF5, 0x46, 0xD8, 0x55, 0xAC };
                 return ref global::System.Runtime.CompilerServices.Unsafe.As<byte, global::System.Guid>(ref global::System.Runtime.InteropServices.MemoryMarshal.GetReference(data));
             }
         }
 
     }
-    [Guid("228AE1A1-33CB-5C54-B4D3-CDFC0A56B4D8")]
-    internal interface IVoipVideoRendererToken : global::Telegram.Native.Calls.IVoipVideoRendererToken
+    [Guid("AE48F308-D3C9-57B7-9F0B-AFF546D855AC")]
+    internal interface IVoipVideoOutputSink : global::Telegram.Native.Calls.IVoipVideoOutputSink
+    {
+    }
+    internal static class IVoipVideoOutputSinkFactoryMethods
+    {
+
+
+        internal static unsafe global::Telegram.Native.Calls.VoipVideoOutputSink CreateInstance(IObjectReference _obj, global::Microsoft.UI.Composition.SpriteVisual visual, bool mirrored)
+        {
+            var ThisPtr = _obj.ThisPtr;
+
+            ObjectReferenceValue __visual = default;
+            IntPtr __retval = default;
+            try
+            {
+                __visual = global::ABI.Microsoft.UI.Composition.SpriteVisual.CreateMarshaler2(visual);
+                global::WinRT.ExceptionHelpers.ThrowExceptionForHR((*(delegate* unmanaged[Stdcall]<IntPtr, IntPtr, byte, IntPtr*, int>**)ThisPtr)[6](ThisPtr, MarshalInspectable<object>.GetAbi(__visual), (byte)(mirrored ? 1 : 0), &__retval));
+                return global::ABI.Telegram.Native.Calls.VoipVideoOutputSink.FromAbi(__retval);
+            }
+            finally
+            {
+                MarshalInspectable<object>.DisposeMarshaler(__visual);
+                global::ABI.Telegram.Native.Calls.VoipVideoOutputSink.DisposeAbi(__retval);
+            }
+        }
+
+
+        public static ref readonly global::System.Guid IID
+        {
+            [global::System.Runtime.CompilerServices.MethodImpl(global::System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
+            get
+            {
+                global::System.ReadOnlySpan<byte> data = new byte[] { 0x49, 0xF5, 0x8B, 0x8C, 0x73, 0xA5, 0xF1, 0x57, 0xA9, 0x47, 0x75, 0xD7, 0x12, 0x1A, 0x48, 0x86 };
+                return ref global::System.Runtime.CompilerServices.Unsafe.As<byte, global::System.Guid>(ref global::System.Runtime.InteropServices.MemoryMarshal.GetReference(data));
+            }
+        }
+
+    }
+    [Guid("8C8BF549-A573-57F1-A947-75D7121A4886")]
+    internal interface IVoipVideoOutputSinkFactory : global::Telegram.Native.Calls.IVoipVideoOutputSinkFactory
     {
     }
     [global::System.ComponentModel.EditorBrowsable(global::System.ComponentModel.EditorBrowsableState.Never)]
@@ -4966,29 +4887,29 @@ namespace ABI.Telegram.Native.Calls
             => new global::Telegram.Native.Calls.VoipVideoChannelInfo(inspectable.ObjRef);
     }
     [global::System.ComponentModel.EditorBrowsable(global::System.ComponentModel.EditorBrowsableState.Never)]
-    public struct VoipVideoRendererToken
+    public struct VoipVideoOutputSink
     {
 
-        public static IObjectReference CreateMarshaler(global::Telegram.Native.Calls.VoipVideoRendererToken obj) => obj is null ? null : MarshalInspectable<global::Telegram.Native.Calls.VoipVideoRendererToken>.CreateMarshaler<IUnknownVftbl>(obj, global::ABI.Telegram.Native.Calls.IVoipVideoRendererTokenMethods.IID);
-        public static ObjectReferenceValue CreateMarshaler2(global::Telegram.Native.Calls.VoipVideoRendererToken obj) => MarshalInspectable<object>.CreateMarshaler2(obj, global::ABI.Telegram.Native.Calls.IVoipVideoRendererTokenMethods.IID);
+        public static IObjectReference CreateMarshaler(global::Telegram.Native.Calls.VoipVideoOutputSink obj) => obj is null ? null : MarshalInspectable<global::Telegram.Native.Calls.VoipVideoOutputSink>.CreateMarshaler<IUnknownVftbl>(obj, global::ABI.Telegram.Native.Calls.IVoipVideoOutputSinkMethods.IID);
+        public static ObjectReferenceValue CreateMarshaler2(global::Telegram.Native.Calls.VoipVideoOutputSink obj) => MarshalInspectable<object>.CreateMarshaler2(obj, global::ABI.Telegram.Native.Calls.IVoipVideoOutputSinkMethods.IID);
         public static IntPtr GetAbi(IObjectReference value) => value is null ? IntPtr.Zero : MarshalInterfaceHelper<object>.GetAbi(value);
-        public static global::Telegram.Native.Calls.VoipVideoRendererToken FromAbi(IntPtr thisPtr) => global::Telegram.Native.Calls.VoipVideoRendererToken.FromAbi(thisPtr);
-        public static IntPtr FromManaged(global::Telegram.Native.Calls.VoipVideoRendererToken obj) => obj is null ? IntPtr.Zero : CreateMarshaler2(obj).Detach();
-        public static unsafe MarshalInterfaceHelper<global::Telegram.Native.Calls.VoipVideoRendererToken>.MarshalerArray CreateMarshalerArray(global::Telegram.Native.Calls.VoipVideoRendererToken[] array) => MarshalInterfaceHelper<global::Telegram.Native.Calls.VoipVideoRendererToken>.CreateMarshalerArray2(array, (o) => CreateMarshaler2(o));
-        public static (int length, IntPtr data) GetAbiArray(object box) => MarshalInterfaceHelper<global::Telegram.Native.Calls.VoipVideoRendererToken>.GetAbiArray(box);
-        public static unsafe global::Telegram.Native.Calls.VoipVideoRendererToken[] FromAbiArray(object box) => MarshalInterfaceHelper<global::Telegram.Native.Calls.VoipVideoRendererToken>.FromAbiArray(box, FromAbi);
-        public static void CopyAbiArray(global::Telegram.Native.Calls.VoipVideoRendererToken[] array, object box) => MarshalInterfaceHelper<global::Telegram.Native.Calls.VoipVideoRendererToken>.CopyAbiArray(array, box, FromAbi);
-        public static (int length, IntPtr data) FromManagedArray(global::Telegram.Native.Calls.VoipVideoRendererToken[] array) => MarshalInterfaceHelper<global::Telegram.Native.Calls.VoipVideoRendererToken>.FromManagedArray(array, (o) => FromManaged(o));
+        public static global::Telegram.Native.Calls.VoipVideoOutputSink FromAbi(IntPtr thisPtr) => global::Telegram.Native.Calls.VoipVideoOutputSink.FromAbi(thisPtr);
+        public static IntPtr FromManaged(global::Telegram.Native.Calls.VoipVideoOutputSink obj) => obj is null ? IntPtr.Zero : CreateMarshaler2(obj).Detach();
+        public static unsafe MarshalInterfaceHelper<global::Telegram.Native.Calls.VoipVideoOutputSink>.MarshalerArray CreateMarshalerArray(global::Telegram.Native.Calls.VoipVideoOutputSink[] array) => MarshalInterfaceHelper<global::Telegram.Native.Calls.VoipVideoOutputSink>.CreateMarshalerArray2(array, (o) => CreateMarshaler2(o));
+        public static (int length, IntPtr data) GetAbiArray(object box) => MarshalInterfaceHelper<global::Telegram.Native.Calls.VoipVideoOutputSink>.GetAbiArray(box);
+        public static unsafe global::Telegram.Native.Calls.VoipVideoOutputSink[] FromAbiArray(object box) => MarshalInterfaceHelper<global::Telegram.Native.Calls.VoipVideoOutputSink>.FromAbiArray(box, FromAbi);
+        public static void CopyAbiArray(global::Telegram.Native.Calls.VoipVideoOutputSink[] array, object box) => MarshalInterfaceHelper<global::Telegram.Native.Calls.VoipVideoOutputSink>.CopyAbiArray(array, box, FromAbi);
+        public static (int length, IntPtr data) FromManagedArray(global::Telegram.Native.Calls.VoipVideoOutputSink[] array) => MarshalInterfaceHelper<global::Telegram.Native.Calls.VoipVideoOutputSink>.FromManagedArray(array, (o) => FromManaged(o));
         public static void DisposeMarshaler(IObjectReference value) => MarshalInspectable<object>.DisposeMarshaler(value);
-        public static void DisposeMarshalerArray(MarshalInterfaceHelper<global::Telegram.Native.Calls.VoipVideoRendererToken>.MarshalerArray array) => MarshalInterfaceHelper<global::Telegram.Native.Calls.VoipVideoRendererToken>.DisposeMarshalerArray(array);
+        public static void DisposeMarshalerArray(MarshalInterfaceHelper<global::Telegram.Native.Calls.VoipVideoOutputSink>.MarshalerArray array) => MarshalInterfaceHelper<global::Telegram.Native.Calls.VoipVideoOutputSink>.DisposeMarshalerArray(array);
         public static void DisposeAbi(IntPtr abi) => MarshalInspectable<object>.DisposeAbi(abi);
         public static unsafe void DisposeAbiArray(object box) => MarshalInspectable<object>.DisposeAbiArray(box);
     }
     [global::System.ComponentModel.EditorBrowsable(global::System.ComponentModel.EditorBrowsableState.Never)]
-    internal sealed class VoipVideoRendererTokenRcwFactoryAttribute : global::WinRT.WinRTImplementationTypeRcwFactoryAttribute
+    internal sealed class VoipVideoOutputSinkRcwFactoryAttribute : global::WinRT.WinRTImplementationTypeRcwFactoryAttribute
     {
         public override object CreateInstance(global::WinRT.IInspectable inspectable)
-            => new global::Telegram.Native.Calls.VoipVideoRendererToken(inspectable.ObjRef);
+            => new global::Telegram.Native.Calls.VoipVideoOutputSink(inspectable.ObjRef);
     }
 }
 #pragma warning restore CA1416

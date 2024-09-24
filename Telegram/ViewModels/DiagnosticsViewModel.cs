@@ -284,7 +284,7 @@ namespace Telegram.ViewModels
                 await FillVideoCaptureCapabilityFromDeviceWithoutProfiles(builder, device.Id);
             }
 
-            MessageHelper.CopyText(NavigationService.XamlRoot, builder.ToString());
+            MessageHelper.CopyText(XamlRoot, builder.ToString());
 
             try
             {

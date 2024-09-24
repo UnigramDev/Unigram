@@ -35,7 +35,6 @@ using Telegram.Views.Authorization;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.Foundation;
 using Windows.UI.ViewManagement;
-using Point = Windows.Foundation.Point;
 
 namespace Telegram.Views.Host
 {
@@ -950,7 +949,7 @@ namespace Telegram.Views.Host
                 var actualHeight = (float)ActualHeight;
 
                 var transform = Theme.TransformToVisual(this);
-                var point = transform.TransformPoint(new Point()).ToVector2();
+                var point = transform.TransformVector2();
 
                 var width = MathF.Max(actualWidth - point.X, actualHeight - point.Y);
                 var diaginal = MathF.Sqrt((width * width) + (width * width));

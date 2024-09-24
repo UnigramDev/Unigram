@@ -7,7 +7,6 @@
 using System;
 using System.Collections.Generic;
 using Telegram.Common;
-using WinRT;
 
 namespace Telegram.Collections
 {

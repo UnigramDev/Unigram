@@ -46,18 +46,18 @@ namespace Rg.DiffUtils
             stack.Push(new DiffRange(0, oldSize, 0, newSize));
 
             var max = (oldSize + newSize + 1) / 2;
-            
+
             var forward = new CenteredArray(max * 2 + 1);
             var backward = new CenteredArray(max * 2 + 1);
 
             var rangePool = new Stack<DiffRange>();
 
-            while(stack.Any())
+            while (stack.Any())
             {
                 var range = stack.Pop();
                 var snake = MidPoint(array1, array2, range, forward, backward, comparer);
 
-                if(snake != null)
+                if (snake != null)
                 {
                     if (snake.DiagonalSize > 0)
                         diagonals.Add(snake.ToDiagonal());

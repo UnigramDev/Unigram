@@ -2231,28 +2231,12 @@ namespace Telegram.Td.Api
 
         public static string GetDuration(this PaidMediaPreview preview)
         {
-            var duration = TimeSpan.FromSeconds(preview.Duration);
-            if (duration.TotalHours >= 1)
-            {
-                return duration.ToString("h\\:mm\\:ss");
-            }
-            else
-            {
-                return duration.ToString("mm\\:ss");
-            }
+            return ToDuration(preview.Duration);
         }
 
         public static string GetDuration(this Video video)
         {
-            var duration = TimeSpan.FromSeconds(video.Duration);
-            if (duration.TotalHours >= 1)
-            {
-                return duration.ToString("h\\:mm\\:ss");
-            }
-            else
-            {
-                return duration.ToString("mm\\:ss");
-            }
+            return ToDuration(video.Duration);
         }
 
         public static string GetDuration(this StoryVideo video)
@@ -2270,44 +2254,20 @@ namespace Telegram.Td.Api
 
         public static string GetDuration(this Audio audio)
         {
-            var duration = TimeSpan.FromSeconds(audio.Duration);
-            if (duration.TotalHours >= 1)
-            {
-                return duration.ToString("h\\:mm\\:ss");
-            }
-            else
-            {
-                return duration.ToString("mm\\:ss");
-            }
+            return ToDuration(audio.Duration);
         }
 
         public static string GetDuration(this VoiceNote voiceNote)
         {
-            var duration = TimeSpan.FromSeconds(voiceNote.Duration);
-            if (duration.TotalHours >= 1)
-            {
-                return duration.ToString("h\\:mm\\:ss");
-            }
-            else
-            {
-                return duration.ToString("mm\\:ss");
-            }
+            return ToDuration(voiceNote.Duration);
         }
 
         public static string GetDuration(this VideoNote videoNote)
         {
-            var duration = TimeSpan.FromSeconds(videoNote.Duration);
-            if (duration.TotalHours >= 1)
-            {
-                return duration.ToString("h\\:mm\\:ss");
-            }
-            else
-            {
-                return duration.ToString("mm\\:ss");
-            }
+            return ToDuration(videoNote.Duration);
         }
 
-        public static string GetDuration(this int totalSeconds)
+        public static string ToDuration(this int totalSeconds)
         {
             var duration = TimeSpan.FromSeconds(totalSeconds);
             if (duration.TotalHours >= 1)

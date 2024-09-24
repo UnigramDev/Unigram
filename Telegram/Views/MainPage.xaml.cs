@@ -32,6 +32,7 @@ using Telegram.Controls.Views;
 using Telegram.Navigation;
 using Telegram.Navigation.Services;
 using Telegram.Services;
+using Telegram.Services.Calls;
 using Telegram.Services.Keyboard;
 using Telegram.Services.Updates;
 using Telegram.Streams;
@@ -593,7 +594,7 @@ namespace Telegram.Views
             catch { }
         }
 
-        public void Handle(UpdateCallDialog update)
+        public void Handle(UpdateActiveCall update)
         {
             void UpdatePlaybackHidden(bool hidden)
             {
@@ -605,14 +606,17 @@ namespace Telegram.Views
 
             this.BeginOnUIThread(() =>
             {
-                if (update.Call != null && update.Call.IsValidState())
+                var call = ViewModel.VoipService.ActiveCall;
+                var groupCall = ViewModel.VoipGroupService.Call;
+
+                if (call != null)
                 {
                     UpdatePlaybackHidden(true);
                     FindName(nameof(CallBanner));
 
-                    CallBanner.Update(ViewModel.VoipService);
+                    CallBanner.Update(call);
                 }
-                else if (update.GroupCall != null && (ViewModel.VoipGroupService.Call != null || update.GroupCall.IsJoined || update.GroupCall.NeedRejoin))
+                else if (groupCall != null)
                 {
                     UpdatePlaybackHidden(true);
                     FindName(nameof(CallBanner));
@@ -626,7 +630,7 @@ namespace Telegram.Views
                     if (CallBanner != null)
                     {
                         CallBanner.Update(null as IVoipGroupService);
-                        CallBanner.Update(null as IVoipService);
+                        CallBanner.Update(null as VoipCall);
                         UnloadObject(CallBanner);
                     }
                 }
@@ -961,7 +965,7 @@ namespace Telegram.Views
                 .Subscribe<UpdateConnectionState>(Handle)
                 .Subscribe<UpdateOption>(Handle)
                 .Subscribe<UpdateSuggestedActions>(Handle)
-                .Subscribe<UpdateCallDialog>(Handle)
+                .Subscribe<UpdateActiveCall>(Handle)
                 .Subscribe<UpdateChatFoldersLayout>(Handle)
                 .Subscribe<UpdateConfetti>(Handle);
         }
@@ -1190,14 +1194,14 @@ namespace Telegram.Views
                 Downloads_Click(null, null);
                 args.Handled = true;
             }
-            else if (command is ShortcutCommand.CallAccept && ViewModel.VoipService.Call is Call acceptCall)
+            else if (command is ShortcutCommand.CallAccept && ViewModel.VoipService.ActiveCall is VoipCall acceptCall)
             {
-                ViewModel.ClientService.Send(new AcceptCall(acceptCall.Id, ViewModel.VoipService.Protocol));
+                acceptCall.Accept(XamlRoot);
                 args.Handled = true;
             }
-            else if (command is ShortcutCommand.CallReject && ViewModel.VoipService.Call is Call rejectCall)
+            else if (command is ShortcutCommand.CallReject && ViewModel.VoipService.ActiveCall is VoipCall rejectCall)
             {
-                ViewModel.ClientService.Send(new DiscardCall(rejectCall.Id, false, 0, false, 0));
+                rejectCall.Discard();
                 args.Handled = true;
             }
         }

@@ -22,6 +22,7 @@ using Telegram.Converters;
 using Telegram.Native.Calls;
 using Telegram.Navigation;
 using Telegram.Services;
+using Telegram.Services.Calls;
 using Telegram.Td.Api;
 using Telegram.Views.Host;
 using Telegram.Views.Popups;
@@ -40,6 +41,8 @@ namespace Telegram.Views.Calls
 
         private VoipGroupManager _manager;
         private bool _disposed;
+
+        private VoipVideoOutputSink _unifiedVideo;
 
         private readonly DispatcherTimer _inactivityTimer;
         private readonly DispatcherTimer _scheduledTimer;
@@ -149,21 +152,25 @@ namespace Telegram.Views.Calls
                 return;
             }
 
+            if (show is false && XamlRoot != null)
+            {
+                foreach (var popup in VisualTreeHelper.GetOpenPopupsForXamlRoot(XamlRoot))
+                {
+                    return;
+                }
+            }
+
             _transportCollapsed = !show;
-            TopButtons.IsHitTestVisible = false;
             BottomPanel.IsHitTestVisible = false;
 
-            var top = ElementComposition.GetElementVisual(TopButtons);
-            var top1 = ElementComposition.GetElementVisual(TitlePanel);
-            var top2 = ElementComposition.GetElementVisual(TopShadow);
-            var top3 = ElementComposition.GetElementVisual(SubtitleInfo);
+            var top = ElementComposition.GetElementVisual(TitleBar);
+            var top1 = ElementComposition.GetElementVisual(TopShadow);
             var bottom = ElementComposition.GetElementVisual(BottomPanel);
             var bottom1 = ElementComposition.GetElementVisual(BottomShadow);
 
             var batch = top.Compositor.CreateScopedBatch(CompositionBatchTypes.Animation);
             batch.Completed += (s, args) =>
             {
-                TopButtons.IsHitTestVisible = !_transportCollapsed;
                 BottomPanel.IsHitTestVisible = !_transportCollapsed;
             };
 
@@ -173,8 +180,6 @@ namespace Telegram.Views.Calls
 
             top.StartAnimation("Opacity", opacity);
             top1.StartAnimation("Opacity", opacity);
-            top2.StartAnimation("Opacity", opacity);
-            top3.StartAnimation("Opacity", opacity);
             bottom.StartAnimation("Opacity", opacity);
             bottom1.StartAnimation("Opacity", opacity);
 
@@ -203,7 +208,7 @@ namespace Telegram.Views.Calls
 
         private void OnAvailableStreamsChanged()
         {
-            if (_service.AvailableStreamsCount > 0)
+            if (_service.AvailableStreamsCount > 0 || !_service.IsConnected)
             {
                 _transportUnavailable = false;
                 _inactivityTimer.Start();
@@ -244,22 +249,17 @@ namespace Telegram.Views.Calls
 
         private void OnLoaded(object sender, RoutedEventArgs e)
         {
-            try
-            {
-                _displayRequest.RequestActive();
-            }
-            catch { }
+            _displayRequest.TryRequestActive();
         }
 
         private void OnUnloaded(object sender, RoutedEventArgs e)
         {
             Dispose();
 
-            try
-            {
-                _displayRequest.RequestRelease();
-            }
-            catch { }
+            _displayRequest.TryRequestRelease();
+
+            _scheduledTimer.Stop();
+            _inactivityTimer.Stop();
         }
 
         public void Dispose(bool? discard = null)
@@ -280,12 +280,11 @@ namespace Telegram.Views.Calls
 
             _disposed = true;
 
+            _unifiedVideo?.Stop();
+
             if (_manager != null)
             {
                 _manager.NetworkStateUpdated -= OnNetworkStateUpdated;
-
-                _manager.AddUnifiedVideoOutput(null);
-
                 _manager = null;
             }
 
@@ -294,8 +293,6 @@ namespace Telegram.Views.Calls
                 _service.AvailableStreamsChanged -= OnAvailableStreamsChanged;
                 _service = null;
             }
-
-            Viewport.RemoveFromVisualTree();
         }
 
         public void Connect(VoipGroupManager controller)
@@ -309,13 +306,10 @@ namespace Telegram.Views.Calls
             {
                 // Let's avoid duplicated events
                 _manager.NetworkStateUpdated -= OnNetworkStateUpdated;
-
-                _manager.AddUnifiedVideoOutput(null);
             }
 
             controller.NetworkStateUpdated += OnNetworkStateUpdated;
-
-            controller.AddUnifiedVideoOutput(Viewport);
+            controller.AddIncomingVideoOutput("unified", _unifiedVideo = VoipVideoOutput.CreateSink(Viewport, false));
 
             _manager = controller;
         }
@@ -331,11 +325,13 @@ namespace Telegram.Views.Calls
             {
                 view.ExitFullScreenMode();
 
-                Resize.Glyph = Icons.ArrowMaximize;
+                Resize.Glyph = Icons.ArrowMaximizeFilled24;
+                Resize.Content = ResizeText.Text = Strings.VoipMaximize;
             }
             else if (view.TryEnterFullScreenMode())
             {
-                Resize.Glyph = Icons.ArrowMinimize;
+                Resize.Glyph = Icons.ArrowMinimizeFilled24;
+                Resize.Content = ResizeText.Text = Strings.VoipMinimize;
             }
         }
 
@@ -349,8 +345,6 @@ namespace Telegram.Views.Calls
             this.BeginOnUIThread(() =>
             {
                 TitleInfo.Text = call.Title.Length > 0 ? call.Title : _clientService.GetTitle(_service.Chat);
-
-                RecordingInfo.Visibility = call.RecordDuration > 0 ? Visibility.Visible : Visibility.Collapsed;
 
                 if (call.ScheduledStartDate != 0)
                 {
@@ -375,24 +369,6 @@ namespace Telegram.Views.Calls
 
                     Menu.Visibility = Visibility.Collapsed;
                     Resize.Visibility = Visibility.Collapsed;
-
-                    var padding = 0;
-
-                    foreach (var item in TopButtons.Children)
-                    {
-                        if (item.Visibility == Visibility.Visible)
-                        {
-                            if (padding > 0)
-                            {
-                                padding -= 8;
-                            }
-
-                            padding += 40;
-                        }
-                    }
-
-                    TitlePanel.Margin = new Thickness(padding > 0 ? padding - 8 : 0, 0, 0, 0);
-                    SubtitleInfo.Margin = new Thickness(padding > 0 ? padding + 4 : 12, -8, 0, 12);
                 }
                 else
                 {
@@ -405,24 +381,6 @@ namespace Telegram.Views.Calls
 
                     Menu.Visibility = Visibility.Visible;
                     Resize.Visibility = Visibility.Visible;
-
-                    var padding = 0;
-
-                    foreach (var item in TopButtons.Children)
-                    {
-                        if (item.Visibility == Visibility.Visible)
-                        {
-                            if (padding > 0)
-                            {
-                                padding -= 8;
-                            }
-
-                            padding += 40;
-                        }
-                    }
-
-                    TitlePanel.Margin = new Thickness(padding > 0 ? padding - 8 : 0, 0, 0, 0);
-                    SubtitleInfo.Margin = new Thickness(padding > 0 ? padding + 4 : 12, -8, 0, 12);
 
                     SubtitleInfo.Text = Locale.Declension(Strings.R.Participants, call.ParticipantCount);
                     ParticipantsPanel.Visibility = Visibility.Visible;
@@ -440,6 +398,8 @@ namespace Telegram.Views.Calls
                 {
                     UpdateNetworkState(_service.Call, _service.CurrentUser, args.IsConnected);
                 }
+
+                OnAvailableStreamsChanged();
             });
         }
 
@@ -616,7 +576,7 @@ namespace Telegram.Views.Calls
 
             if (flyout.Items.Count > 0)
             {
-                flyout.ShowAt(sender as Button, FlyoutPlacementMode.BottomEdgeAlignedLeft);
+                flyout.ShowAt(sender as UIElement, FlyoutPlacementMode.Top);
             }
         }
 

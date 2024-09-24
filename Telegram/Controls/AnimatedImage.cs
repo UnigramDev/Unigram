@@ -429,7 +429,7 @@ namespace Telegram.Controls
 
         private void Load()
         {
-            //if (_suppressEvents > 0)
+            if (_suppressEvents > 0)
             {
                 return;
             }

@@ -1,7 +1,7 @@
 #pragma once
 
 #include "VoipVideoCapture.g.h"
-#include "VoipVideoRenderer.h"
+#include "VoipVideoOutput.h"
 #include "Instance.h"
 #include "InstanceImpl.h"
 #include "VideoCaptureInterface.h"
@@ -15,18 +15,25 @@ namespace winrt::Telegram::Native::Calls::implementation
     struct VoipVideoCapture : VoipVideoCaptureT<VoipVideoCapture, winrt::Telegram::Native::Calls::VoipCaptureBase>
     {
         VoipVideoCapture(hstring id);
-        VoipVideoCapture() = default;
-        ~VoipVideoCapture();
-
-        void Close();
+        void Stop();
 
         void SwitchToDevice(hstring deviceId);
         void SetState(VoipVideoState state);
         void SetPreferredAspectRatio(float aspectRatio);
-        winrt::Telegram::Native::Calls::VoipVideoRendererToken SetOutput(winrt::Microsoft::Graphics::Canvas::UI::Xaml::CanvasControl canvas, bool enableBlur = true);
+        void SetOutput(winrt::Telegram::Native::Calls::VoipVideoOutputSink sink);
 
         std::shared_ptr<tgcalls::VideoCaptureInterface> m_impl = nullptr;
+
+        winrt::event_token FatalErrorOccurred(Windows::Foundation::TypedEventHandler<
+            winrt::Telegram::Native::Calls::VoipCaptureBase,
+            winrt::Windows::Foundation::IInspectable> const& value);
+        void FatalErrorOccurred(winrt::event_token const& token);
+
     private:
+        bool m_failed{ false };
+        winrt::event<Windows::Foundation::TypedEventHandler<
+            winrt::Telegram::Native::Calls::VoipCaptureBase,
+            winrt::Windows::Foundation::IInspectable>> m_fatalErrorOccurred;
     };
 } // namespace winrt::Telegram::Native::Calls::implementation
 

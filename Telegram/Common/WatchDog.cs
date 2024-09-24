@@ -20,11 +20,9 @@ using Telegram.Native;
 using Telegram.Navigation;
 using Telegram.Services;
 using Telegram.Td;
-using Windows.ApplicationModel;
 using Windows.ApplicationModel.Activation;
 using Windows.Storage;
 using Windows.System;
-using Windows.System.Profile;
 using File = System.IO.File;
 
 namespace Telegram
@@ -62,6 +60,11 @@ namespace Telegram
      * base is 0x180000000 for x64 and 0x10000000 for x86
      * 
      */
+
+    public class Properties : Dictionary<string, object>
+    {
+
+    }
 
     public partial class WatchDog
     {
@@ -211,14 +214,14 @@ namespace Telegram
         [DllImport("kernel32.dll", SetLastError = true)]
         private static extern bool IsWow64Process2(IntPtr process, out ushort processMachine, out ushort nativeMachine);
 
-        public static void TrackEvent(string name)
+        public static void TrackEvent(string name, Properties properties = null)
         {
             if (_disabled)
             {
                 return;
             }
 
-            //Analytics.TrackEvent(name);
+            //Analytics.TrackEvent(name, properties?.ToDictionary(x => x.Key, y => y.Value.ToString()));
         }
 
         private static void Read()

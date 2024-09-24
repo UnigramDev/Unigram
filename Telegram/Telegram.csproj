@@ -251,8 +251,15 @@
     <Compile Include="Collections\SynchronizedList.cs" />
     <Compile Include="Common\AutomaticDragHelper.cs" />
     <Compile Include="Common\BezierPoint.cs" />
+    <Compile Include="Common\MediaDeviceCoordinator.cs" />
     <Compile Include="Common\SliderHelper.cs" />
     <Compile Include="Composition\WeakInteractionTrackerOwner.cs" />
+    <Compile Include="Controls\Calls\MediaStateBadge.xaml.cs">
+      <DependentUpon>MediaStateBadge.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\Calls\SignalBars.xaml.cs">
+      <DependentUpon>SignalBars.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Controls\Cells\Business\BusinessHoursCell.xaml.cs">
       <DependentUpon>BusinessHoursCell.xaml</DependentUpon>
     </Compile>
@@ -304,6 +311,7 @@
     <Compile Include="Controls\Drawers\EffectDrawer.xaml.cs">
       <DependentUpon>EffectDrawer.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\GlassToggleButton.cs" />
     <Compile Include="Controls\MenuFlyoutContent.cs" />
     <Compile Include="Controls\Messages\Content\PaidMediaContent.xaml.cs">
       <DependentUpon>PaidMediaContent.xaml</DependentUpon>
@@ -326,12 +334,26 @@
     <Compile Include="Controls\Messages\MessageFactCheck.xaml.cs">
       <DependentUpon>MessageFactCheck.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\SlideTextBlock.cs" />
     <Compile Include="CsWinRT.cs" />
+    <Compile Include="Services\Calls\VoipCall.cs" />
+    <Compile Include="Services\Calls\VoipCallAudioLevelUpdatedEventArgs.cs" />
+    <Compile Include="Services\Calls\VoipCallConnectionStateChangedEventArgs.cs" />
+    <Compile Include="Services\Calls\VoipCallMediaStateChangedEventArgs.cs" />
+    <Compile Include="Services\Calls\VoipCallRemoteBatteryLevelIsLowChangedEventArgs.cs" />
+    <Compile Include="Services\Calls\VoipCallSignalBarsUpdatedEventArgs.cs" />
+    <Compile Include="Services\Calls\VoipCallStateChangedEventArgs.cs" />
+    <Compile Include="Services\Calls\VoipConnectionState.cs" />
+    <Compile Include="Services\Calls\VoipState.cs" />
+    <Compile Include="Services\Calls\VoipVideoOutput.cs" />
+    <Compile Include="Services\Calls\VoipVideoStateChangedEventArgs.cs" />
     <Compile Include="Services\PaidReactionService.cs" />
     <Compile Include="Controls\Messages\ReactionAsPaidButton.cs" />
     <Compile Include="Controls\Messages\ReactionAsTagButton.cs" />
     <Compile Include="Common\AsyncMediaPlayer.cs" />
     <Compile Include="Controls\PremiumSlider.cs" />
+    <Compile Include="Services\Calls\VoipService.cs" />
+    <Compile Include="Services\Calls\VoipVideoType.cs" />
     <Compile Include="Td\Api\ReactionTypeEqualityComparer.cs" />
     <Compile Include="Controls\PremiumStarCount.cs" />
     <Compile Include="Controls\Stories\Widgets\StoryWeatherWidget.xaml.cs">
@@ -487,7 +509,6 @@
     <Compile Include="Services\ClientService.StoryList.cs" />
     <Compile Include="Services\ServiceBase.cs" />
     <Compile Include="Services\VoipGroupService.cs" />
-    <Compile Include="Services\VoipService.cs" />
     <Compile Include="Streams\AnimatedImageSource.cs" />
     <Compile Include="Streams\ReactionFileSource.cs" />
     <Compile Include="Streams\CustomEmojiFileSource.cs" />
@@ -669,8 +690,6 @@
     <Compile Include="Controls\AnimatedIconToggleButton.cs" />
     <Compile Include="Controls\AnimatedTextBlock.cs" />
     <Compile Include="Controls\BackButton.cs" />
-    <Compile Include="Controls\CallHangupButton.cs" />
-    <Compile Include="Controls\CallToggleButton.cs" />
     <Compile Include="Controls\CaptionTextBox.cs" />
     <Compile Include="Controls\Cells\CallCell.xaml.cs">
       <DependentUpon>CallCell.xaml</DependentUpon>
@@ -1091,14 +1110,14 @@
     <Compile Include="Views\Business\Popups\BusinessFeaturesPopup.xaml.cs">
       <DependentUpon>BusinessFeaturesPopup.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\Calls\CallPage.xaml.cs">
-      <DependentUpon>CallPage.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Views\Calls\GroupCallPage.xaml.cs">
       <DependentUpon>GroupCallPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Calls\LiveStreamPage.xaml.cs">
       <DependentUpon>LiveStreamPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Calls\VoipPage.xaml.cs">
+      <DependentUpon>VoipPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\ChatEventLogPage.xaml.cs">
       <DependentUpon>ChatEventLogPage.xaml</DependentUpon>
@@ -1414,7 +1433,7 @@
     <Compile Include="Services\ThemeService.cs" />
     <Compile Include="Navigation\Services\NavigationState.cs" />
     <Compile Include="Services\Updates\UpdateAppVersion.cs" />
-    <Compile Include="Services\Updates\UpdateCallDialog.cs" />
+    <Compile Include="Services\Updates\UpdateActiveCall.cs" />
     <Compile Include="Services\Updates\UpdateChatFoldersLayout.cs" />
     <Compile Include="Services\Updates\UpdateConfetti.cs" />
     <Compile Include="Services\Updates\UpdatePasscodeLock.cs" />
@@ -1917,9 +1936,6 @@
     <Compile Include="Views\BlankPage.xaml.cs">
       <DependentUpon>BlankPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\GamePage.xaml.cs">
-      <DependentUpon>GamePage.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Views\MainPage.xaml.cs">
       <DependentUpon>MainPage.xaml</DependentUpon>
     </Compile>
@@ -2262,6 +2278,14 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Charts\DataView\LegendSignatureView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\Calls\MediaStateBadge.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\Calls\SignalBars.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -2849,15 +2873,15 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Views\Calls\CallPage.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
     <Page Include="Views\Calls\GroupCallPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Views\Calls\LiveStreamPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\Calls\VoipPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -3250,10 +3274,6 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\BlankPage.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Views\GamePage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

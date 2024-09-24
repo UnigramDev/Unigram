@@ -811,9 +811,6 @@ namespace Telegram.Views
 
             //if (_selectionStart == sender)
             {
-                var transform = _selectionAnchor.TransformToVisual(XamlRoot.Content);
-                var anchorPoint = transform.TransformPoint(new Point());
-
                 var point = e.GetCurrentPoint(XamlRoot.Content);
                 var y1 = Math.Min(_selectionAnchorPoint.Y, point.Position.Y);
                 var y2 = Math.Max(_selectionAnchorPoint.Y, point.Position.Y);

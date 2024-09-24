@@ -426,7 +426,7 @@ namespace Telegram.Views
                 OnNavigatedTo();
             }
 
-            if (viewModel.NavigationService.FrameFacade.FrameId == "ciccio")
+            if (viewModel.NavigationService.FrameFacade.FrameId == "ChatPreview")
             {
                 _fromPreview = true;
 
@@ -3012,7 +3012,7 @@ namespace Telegram.Views
 
             if (properties.CanBeRepliedInAnotherChat)
             {
-                return true;
+                return message.ChatId != ViewModel.ClientService.Options.RepliesBotChatId;
             }
 
             var chat = message.Chat;

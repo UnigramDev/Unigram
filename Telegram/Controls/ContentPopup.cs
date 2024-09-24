@@ -14,7 +14,6 @@ using Microsoft.UI.Xaml.Hosting;
 using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Shapes;
-using System;
 using System.Numerics;
 using System.Threading.Tasks;
 using Telegram.Common;
@@ -22,7 +21,6 @@ using Telegram.Composition;
 using Telegram.Navigation;
 using Telegram.Services;
 using Telegram.Views.Host;
-using Windows.Foundation;
 using Windows.UI;
 
 namespace Telegram.Controls
@@ -85,7 +83,7 @@ namespace Telegram.Controls
             var next = e.NewSize.ToVector2();
 
             var transform = CommandSpace.TransformToVisual(ContentElement);
-            var point = transform.TransformPoint(new Point()).ToVector2();
+            var point = transform.TransformVector2();
 
             var visual = ElementComposition.GetElementVisual(this);
             var content = ElementComposition.GetElementVisual(ContentElement);
@@ -279,7 +277,7 @@ namespace Telegram.Controls
                     return;
                 }
 
-                this.Focus(FocusState.Pointer);
+                this.Focus(FocusState.Programmatic);
             }
         }
 
@@ -468,6 +466,13 @@ namespace Telegram.Controls
 
         public static bool IsAnyPopupOpen(XamlRoot xamlRoot)
         {
+            // If XamlRoot is null we aren't in a popup
+            // TODO: Problem persists, because then popup fails to open because of no XamlRoot.
+            if (xamlRoot == null)
+            {
+                return false;
+            }
+
             foreach (var popup in VisualTreeHelper.GetOpenPopupsForXamlRoot(xamlRoot))
             {
                 if (popup.Child is ContentDialog)

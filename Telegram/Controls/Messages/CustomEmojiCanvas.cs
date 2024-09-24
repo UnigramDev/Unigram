@@ -5,8 +5,6 @@
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
 using Microsoft.UI.Xaml.Controls;
-using Microsoft.UI.Xaml.Media;
-using RLottie;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;

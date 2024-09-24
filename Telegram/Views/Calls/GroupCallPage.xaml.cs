@@ -4,7 +4,6 @@
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
-using Microsoft.Graphics.Canvas.UI.Xaml;
 using Microsoft.UI;
 using Microsoft.UI.Text;
 using Microsoft.UI.Xaml;
@@ -13,7 +12,6 @@ using Microsoft.UI.Xaml.Controls.Primitives;
 using Microsoft.UI.Xaml.Hosting;
 using Microsoft.UI.Xaml.Media;
 using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
@@ -32,7 +30,6 @@ using Telegram.Td.Api;
 using Telegram.ViewModels.Delegates;
 using Telegram.Views.Host;
 using Telegram.Views.Popups;
-using Windows.Devices.Enumeration;
 using Windows.Foundation;
 using Windows.System;
 using Windows.System.Display;
@@ -51,9 +48,6 @@ namespace Telegram.Views.Calls
 
         private VoipGroupManager _manager;
         private bool _disposed;
-
-        private readonly ConcurrentDictionary<string, VoipVideoRendererToken> _listTokens = new();
-        private readonly ConcurrentDictionary<string, VoipVideoRendererToken> _gridTokens = new();
 
         private readonly Dictionary<string, GroupCallParticipantGridCell> _prevGrid = new();
         private readonly Dictionary<string, GroupCallParticipantGridCell> _gridCells = new();
@@ -298,12 +292,6 @@ namespace Telegram.Views.Calls
             _prevGrid.Clear();
             _prevList.Clear();
 
-            _listTokens.Values.ForEach(x => x.Stop());
-            _gridTokens.Values.ForEach(x => x.Stop());
-
-            _listTokens.Clear();
-            _gridTokens.Clear();
-
             _listCells.Clear();
             _gridCells.Clear();
 
@@ -321,7 +309,7 @@ namespace Telegram.Views.Calls
             {
                 if (collection[i] is GroupCallParticipantGridCell cell)
                 {
-                    cell.Surface = null;
+                    cell.Sink.Stop();
                 }
             }
         }
@@ -588,9 +576,6 @@ namespace Telegram.Views.Calls
             else
             {
                 _prevList.Clear();
-
-                _listTokens.Values.ForEach(x => x.Stop());
-                _listTokens.Clear();
 
                 _listCells.Clear();
 
@@ -1563,7 +1548,7 @@ namespace Telegram.Views.Calls
 
                 _dispatcherQueue.TryEnqueue(DispatcherQueuePriority.Normal, async () =>
                 {
-                    var videoDevices = await DeviceInformation.FindAllAsync(DeviceClass.VideoCapture);
+                    var videoDevices = await Windows.Devices.Enumeration.DeviceInformation.FindAllAsync(Windows.Devices.Enumeration.DeviceClass.VideoCapture);
                     foreach (var device in videoDevices)
                     {
                         var deviceItem = new ToggleMenuFlyoutItem();
@@ -1593,7 +1578,7 @@ namespace Telegram.Views.Calls
 
                 _dispatcherQueue.TryEnqueue(DispatcherQueuePriority.Normal, async () =>
                 {
-                    var inputDevices = await DeviceInformation.FindAllAsync(DeviceClass.AudioCapture);
+                    var inputDevices = await Windows.Devices.Enumeration.DeviceInformation.FindAllAsync(Windows.Devices.Enumeration.DeviceClass.AudioCapture);
                     foreach (var device in inputDevices)
                     {
                         var deviceItem = new ToggleMenuFlyoutItem();
@@ -1623,7 +1608,7 @@ namespace Telegram.Views.Calls
 
                 _dispatcherQueue.TryEnqueue(DispatcherQueuePriority.Normal, async () =>
                 {
-                    var outputDevices = await DeviceInformation.FindAllAsync(DeviceClass.AudioRender);
+                    var outputDevices = await Windows.Devices.Enumeration.DeviceInformation.FindAllAsync(Windows.Devices.Enumeration.DeviceClass.AudioRender);
                     foreach (var device in outputDevices)
                     {
                         var deviceItem = new ToggleMenuFlyoutItem();
@@ -2005,15 +1990,9 @@ namespace Telegram.Views.Calls
 
         private void RemoveItem(GroupCallParticipantGridCell cell, bool list)
         {
-            var tokens = list ? _listTokens : _gridTokens;
             var prev = list ? _prevList : _prevGrid;
             var cells = list ? _listCells : _gridCells;
             var viewport = list ? ListViewport.Children : Viewport.Children;
-
-            if (tokens.TryRemove(cell.EndpointId, out var token))
-            {
-                token.Stop();
-            }
 
             if (_selectedEndpointId == cell.EndpointId && !list)
             {
@@ -2023,7 +2002,7 @@ namespace Telegram.Views.Calls
             prev.Remove(cell.EndpointId);
             cells.Remove(cell.EndpointId);
 
-            cell.Surface = null;
+            cell.Sink.Stop();
             viewport.Remove(cell);
 
             if (_mode == ParticipantsGridMode.Compact)
@@ -2275,7 +2254,6 @@ namespace Telegram.Views.Calls
 
         private void UpdateVisibleParticipants(int first, int last, bool list)
         {
-            var tokens = list ? _listTokens : _gridTokens;
             var prev = list ? _prevList : _prevGrid;
             var viewport = list ? ListViewport.Children : Viewport.Children;
 
@@ -2296,37 +2274,30 @@ namespace Telegram.Views.Calls
                     next[child.EndpointId] = child;
 
                     // Check if already playing
-                    if (tokens.TryGetValue(child.EndpointId, out var token))
-                    {
-                        if (token.IsMatch(child.EndpointId, child.Surface))
-                        {
-                            //token.Stretch = child.GetStretch(_mode, list);
-                            continue;
-                        }
-                    }
+                    //if (tokens.TryGetValue(child.EndpointId, out var token))
+                    //{
+                    //    if (token.Matches(child.EndpointId, child.VisualId))
+                    //    {
+                    //        token.Stretch = child.GetStretch(_mode, list);
+                    //        continue;
+                    //    }
+                    //}
 
-                    child.Surface = new CanvasControl();
+                    //child.Surface = new CanvasControl();
+                    //child.VisualId = Guid.NewGuid();
 
-                    VoipVideoRendererToken future;
                     if (participant.ScreenSharingVideoInfo?.EndpointId == child.EndpointId && participant.IsCurrentUser && _service.IsScreenSharing)
                     {
-                        future = _service.ScreenSharing.AddIncomingVideoOutput(participant.AudioSourceId, participant.ScreenSharingVideoInfo, child.Surface);
+                        _service.ScreenSharing.AddIncomingVideoOutput(child.EndpointId, child.Sink);
                     }
                     else
                     {
-                        future = _manager.AddIncomingVideoOutput(participant.AudioSourceId, child.VideoInfo, child.Surface);
+                        _manager.AddIncomingVideoOutput(child.VideoInfo.EndpointId, child.Sink);
                     }
 
-                    if (future != null)
-                    {
-                        //future.Stretch = child.GetStretch(_mode, list);
-                        future.IsMirrored = participant.IsCurrentUser && participant.ScreenSharingVideoInfo?.EndpointId != child.EndpointId;
-                        tokens[child.EndpointId] = future;
-                    }
-                    else
-                    {
-                        next.Remove(child.EndpointId);
-                    }
+                    //child.Sink.Stretch = child.GetStretch(_mode, list);
+                    child.Sink.IsMirrored = participant.IsCurrentUser && participant.ScreenSharingVideoInfo?.EndpointId != child.EndpointId;
+                    //tokens[child.EndpointId] = future;
                 }
             }
 
@@ -2337,14 +2308,14 @@ namespace Telegram.Views.Calls
                     continue;
                 }
 
-                if (tokens.TryRemove(item, out var token))
-                {
-                    // Wait for token to be disposed to avoid
-                    // a race condition in CanvasControl.
-                    token.Stop();
-                }
+                //if (tokens.TryRemove(item, out var token))
+                //{
+                //    // Wait for token to be disposed to avoid
+                //    // a race condition in CanvasControl.
+                //    token.Stop();
+                //}
 
-                prev[item].Surface = null;
+                prev[item].Sink.Stop();
                 prev.Remove(item);
             }
 

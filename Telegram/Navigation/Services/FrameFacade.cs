@@ -98,21 +98,6 @@ namespace Telegram.Navigation.Services
             return Telegram.Services.SettingsLegacyService.Create(GetFrameStateKey(), true);
         }
 
-        public void SetFrameState(string key, string value)
-        {
-            FrameStateSettingsService().Write(key, value);
-        }
-
-        public string GetFrameState(string key, string otherwise)
-        {
-            return FrameStateSettingsService().Read(key, otherwise);
-        }
-
-        public void ClearFrameState()
-        {
-            FrameStateSettingsService().Clear();
-        }
-
         private string GetPageStateKey(string frameId, Type type, int backStackDepth, object parameter)
         {
             return $"{frameId}-{type}-{parameter}";
@@ -121,11 +106,6 @@ namespace Telegram.Navigation.Services
         public Telegram.Services.ISettingsLegacyService PageStateSettingsService(Type type, int depth = 0, object parameter = null)
         {
             var key = GetPageStateKey(FrameId, type, BackStackDepth + depth, parameter);
-            return FrameStateSettingsService().Open(key, true);
-        }
-
-        public Telegram.Services.ISettingsLegacyService PageStateSettingsService(string key)
-        {
             return FrameStateSettingsService().Open(key, true);
         }
 

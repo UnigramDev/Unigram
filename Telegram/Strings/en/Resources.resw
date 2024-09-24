@@ -10898,6 +10898,15 @@ However, it is currently available for purchase. **Learn more…**</value>
   <data name="ViewDiscussion" xml:space="preserve">
     <value>View Discussion</value>
   </data>
+  <data name="ViewersWatching_one" xml:space="preserve">
+    <value>{0} viewer</value>
+  </data>
+  <data name="ViewersWatching_other" xml:space="preserve">
+    <value>{0} viewers</value>
+  </data>
+  <data name="ViewersWatchingNobody" xml:space="preserve">
+    <value>Nobody watching</value>
+  </data>
   <data name="ViewInChat" xml:space="preserve">
     <value>View in chat</value>
   </data>
@@ -10952,8 +10961,17 @@ However, it is currently available for purchase. **Learn more…**</value>
   <data name="VoipBusy" xml:space="preserve">
     <value>Line busy</value>
   </data>
+  <data name="VoipCallEncryptionEndToEnd" xml:space="preserve">
+    <value>This call is end-to-end encrypted</value>
+  </data>
   <data name="VoipCallEnded" xml:space="preserve">
     <value>Call ended</value>
+  </data>
+  <data name="VoipCallEnded2" xml:space="preserve">
+    <value>Call Ended</value>
+  </data>
+  <data name="VoipCallFailed2" xml:space="preserve">
+    <value>Call Failed</value>
   </data>
   <data name="VoipChannelEditTitle" xml:space="preserve">
     <value>Edit live stream title</value>
@@ -11023,6 +11041,9 @@ However, it is currently available for purchase. **Learn more…**</value>
   </data>
   <data name="VoipDeviceOutput" xml:space="preserve">
     <value>Speakers and Headphones</value>
+  </data>
+  <data name="VoipEnd2" xml:space="preserve">
+    <value>end</value>
   </data>
   <data name="VoipEndCall" xml:space="preserve">
     <value>End call</value>
@@ -11188,17 +11209,35 @@ Participants will see that the chat is being recorded.</value>
   <data name="VoipHangingUp" xml:space="preserve">
     <value>Hanging up</value>
   </data>
+  <data name="VoipHintEncryptionKey" xml:space="preserve">
+    <value>Encryption key of this call</value>
+  </data>
   <data name="VoipIncoming" xml:space="preserve">
     <value>Incoming call</value>
   </data>
+  <data name="VoipMaximize" xml:space="preserve">
+    <value>maximize</value>
+  </data>
+  <data name="VoipMinimize" xml:space="preserve">
+    <value>minimize</value>
+  </data>
   <data name="VoipMute" xml:space="preserve">
     <value>Mute</value>
+  </data>
+  <data name="VoipMute2" xml:space="preserve">
+    <value>mute</value>
   </data>
   <data name="VoipMutedByAdmin" xml:space="preserve">
     <value>Muted by admin</value>
   </data>
   <data name="VoipMutedTapedForSpeak" xml:space="preserve">
     <value>You asked to speak</value>
+  </data>
+  <data name="VoipMyCameraIsOff" xml:space="preserve">
+    <value>Your camera is off</value>
+  </data>
+  <data name="VoipMyMicrophoneIsOff" xml:space="preserve">
+    <value>Your microphone is off</value>
   </data>
   <data name="VoipNoiseCancellation" xml:space="preserve">
     <value>Noise suppression</value>
@@ -11245,6 +11284,12 @@ Participants will see that the chat is being recorded.</value>
   <data name="VoipRinging" xml:space="preserve">
     <value>Ringing</value>
   </data>
+  <data name="VoipScreen2" xml:space="preserve">
+    <value>screen</value>
+  </data>
+  <data name="VoipSettings" xml:space="preserve">
+    <value>settings</value>
+  </data>
   <data name="VoipStartVideo" xml:space="preserve">
     <value>Start Video</value>
   </data>
@@ -11263,17 +11308,26 @@ Participants will see that the chat is being recorded.</value>
   <data name="VoipUseLessData" xml:space="preserve">
     <value>Use Less Data for Calls</value>
   </data>
+  <data name="VoipUserBatteryIsLow" xml:space="preserve">
+    <value>{0}&apos;s battery level is low</value>
+  </data>
   <data name="VoipUserCameraIsOff" xml:space="preserve">
     <value>{0}&apos;s camera is off</value>
   </data>
   <data name="VoipUserMicrophoneIsOff" xml:space="preserve">
     <value>{0}&apos;s microphone is off</value>
   </data>
+  <data name="VoipVideo2" xml:space="preserve">
+    <value>video</value>
+  </data>
   <data name="VoipVideoOnPause" xml:space="preserve">
     <value>Video on Pause</value>
   </data>
   <data name="VoipWaiting" xml:space="preserve">
     <value>Waiting</value>
+  </data>
+  <data name="VoipWeakNetwork" xml:space="preserve">
+    <value>Weak network signal</value>
   </data>
   <data name="Vote_one" xml:space="preserve">
     <value>{0} vote</value>

@@ -14,7 +14,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using Telegram.Common;
 using Windows.Foundation;
-using WinRT;
 
 namespace Telegram.Collections
 {

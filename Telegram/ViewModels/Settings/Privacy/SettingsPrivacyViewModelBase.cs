@@ -278,6 +278,7 @@ namespace Telegram.ViewModels.Settings
             var popup = new ChooseChatsPopup();
             popup.Legacy(SessionId);
             popup.PrimaryButtonText = Strings.OK;
+            popup.ViewModel.NavigationService = NavigationService;
             popup.ViewModel.AllowEmptySelection = true;
 
             var allowedPremium = false;
@@ -332,7 +333,7 @@ namespace Telegram.ViewModels.Settings
                     break;
             }
 
-            var confirm = await popup.PickAsync(NavigationService.XamlRoot, chats, ChooseChatsOptions.Privacy);
+            var confirm = await popup.PickAsync(XamlRoot, chats, ChooseChatsOptions.Privacy);
             if (confirm != ContentDialogResult.Primary)
             {
                 return;
@@ -388,6 +389,7 @@ namespace Telegram.ViewModels.Settings
             var popup = new ChooseChatsPopup();
             popup.Legacy(SessionId);
             popup.PrimaryButtonText = Strings.OK;
+            popup.ViewModel.NavigationService = NavigationService;
             popup.ViewModel.AllowEmptySelection = true;
 
             switch (_inputKey)
@@ -405,7 +407,7 @@ namespace Telegram.ViewModels.Settings
                     break;
             }
 
-            var confirm = await popup.PickAsync(NavigationService.XamlRoot, chats, ChooseChatsOptions.Privacy);
+            var confirm = await popup.PickAsync(XamlRoot, chats, ChooseChatsOptions.Privacy);
             if (confirm != ContentDialogResult.Primary)
             {
                 return;

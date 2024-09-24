@@ -13,6 +13,7 @@ using Telegram.Common;
 using Telegram.Composition;
 using Telegram.Native.Calls;
 using Telegram.Services;
+using Telegram.Services.Calls;
 using Telegram.Td.Api;
 using Windows.UI;
 
@@ -22,7 +23,7 @@ namespace Telegram.Controls
     {
         private readonly CompositionCurveVisual _curveVisual;
 
-        private IVoipService _service;
+        private VoipCall _service;
         private IVoipGroupService _groupService;
 
         public GroupCallActiveHeader()
@@ -33,20 +34,20 @@ namespace Telegram.Controls
             _curveVisual = new CompositionCurveVisual(Curve, 0, 0, 1.5f);
         }
 
-        public void Update(IVoipService value)
+        public void Update(VoipCall value)
         {
 #if ENABLE_CALLS
             if (_service != null)
             {
-                _service.MutedChanged -= OnMutedChanged;
+                _service.MediaStateChanged -= OnMediaStateChanged;
                 _service.AudioLevelUpdated -= OnAudioLevelUpdated;
             }
 
             _service = value;
 
-            if (_service != null && _service?.Call != null)
+            if (_service != null)
             {
-                _service.MutedChanged += OnMutedChanged;
+                _service.MediaStateChanged += OnMediaStateChanged;
                 _service.AudioLevelUpdated += OnAudioLevelUpdated;
 
                 if (PowerSavingPolicy.AreMaterialsEnabled && ApiInfo.CanAnimatePaths)
@@ -59,14 +60,14 @@ namespace Telegram.Controls
                     _curveVisual.Clear();
                 }
 
-                UpdateCurveColors(_service.IsMuted);
+                UpdateCurveColors(_service.AudioState == VoipAudioState.Muted);
 
                 Audio.Visibility = Visibility.Collapsed;
                 Dismiss.Visibility = Visibility.Collapsed;
 
                 try
                 {
-                    if (value.ClientService.TryGetUser(value.Call.UserId, out User user))
+                    if (value.ClientService.TryGetUser(value.UserId, out User user))
                     {
                         TitleInfo.Text = user.FullName();
                     }
@@ -147,10 +148,11 @@ namespace Telegram.Controls
                     Automation.SetToolTip(Audio, groupMuted ? Strings.VoipGroupUnmute : Strings.VoipGroupMute);
                 });
             }
-            else if (sender is VoipManager service && service.IsMuted is bool muted)
-            {
-                this.BeginOnUIThread(() => UpdateCurveColors(muted));
-            }
+        }
+
+        private void OnMediaStateChanged(VoipCall sender, VoipCallMediaStateChangedEventArgs args)
+        {
+            this.BeginOnUIThread(() => UpdateCurveColors(args.Audio == VoipAudioState.Muted));
         }
 
         private void OnAudioLevelsUpdated(object sender, IList<VoipGroupParticipant> args)
@@ -182,11 +184,11 @@ namespace Telegram.Controls
             }
         }
 
-        private void OnAudioLevelUpdated(object sender, float average)
+        private void OnAudioLevelUpdated(VoipCall sender, VoipCallAudioLevelUpdatedEventArgs args)
         {
             if (PowerSavingPolicy.AreMaterialsEnabled && ApiInfo.CanAnimatePaths)
             {
-                _curveVisual.UpdateLevel(average);
+                _curveVisual.UpdateLevel(args.AudioLevel);
             }
 #endif
         }

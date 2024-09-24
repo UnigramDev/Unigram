@@ -54,6 +54,7 @@ namespace Telegram
                 ( typeof(IGenerationService), typeof(GenerationService) ),
                 ( typeof(INetworkService), typeof(NetworkService) ),
                 ( typeof(IVoipService), typeof(VoipService) ),
+                ( typeof(IContactsService), typeof(ContactsService) ),
             };
 
             _lazySingletons = new List<(Type, Type)>
@@ -65,7 +66,6 @@ namespace Telegram
                 ( typeof(IVoipGroupService), typeof(VoipGroupService) ),
                 ( typeof(IDeviceInfoService), typeof(DeviceInfoService) ),
                 ( typeof(IEventAggregator), typeof(EventAggregator) ),
-                ( typeof(IContactsService), typeof(ContactsService) ),
                 ( typeof(ILocationService), typeof(LocationService) ),
                 ( typeof(IThemeService), typeof(ThemeService) ),
                 ( typeof(IMessageFactory), typeof(MessageFactory) ),

@@ -129,7 +129,7 @@ namespace Telegram.ViewModels
                 Content = Strings.DeleteCallsForEveryone,
             };
 
-            var confirm = await MessagePopup.ShowAsync(NavigationService.XamlRoot, target: null, Strings.DeleteSelectedCallsText, Strings.DeleteCalls, everyone, Strings.Delete, Strings.Cancel, destructive: true);
+            var confirm = await MessagePopup.ShowAsync(XamlRoot, target: null, Strings.DeleteSelectedCallsText, Strings.DeleteCalls, everyone, Strings.Delete, Strings.Cancel, destructive: true);
             if (confirm != ContentDialogResult.Primary)
             {
                 return;

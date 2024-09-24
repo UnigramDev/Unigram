@@ -378,7 +378,7 @@ namespace Telegram.Controls
             }
             else if (clientService.IsRepliesChat(chat))
             {
-                return PlaceholderImage.GetGlyph(Icons.ChatMultipleFilled, 5);
+                return PlaceholderImage.GetGlyph(Icons.ArrowReplyFilled, 5);
             }
 
             if (clientService.IsForum(chat))

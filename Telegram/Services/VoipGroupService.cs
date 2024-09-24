@@ -19,7 +19,6 @@ using Telegram.Native.Calls;
 using Telegram.Services.Updates;
 using Telegram.Services.ViewService;
 using Telegram.Td.Api;
-using Telegram.Views;
 using Telegram.Views.Calls;
 using Telegram.Views.Popups;
 using Windows.ApplicationModel.Calls;
@@ -214,7 +213,7 @@ namespace Telegram.Services
 
         public async Task JoinAsync(XamlRoot xamlRoot, long chatId)
         {
-            if (await MediaDeviceWatcher.CheckIfUnsupportedAsync(xamlRoot))
+            if (MediaDeviceWatcher.IsUnsupported(xamlRoot))
             {
                 return;
             }
@@ -235,7 +234,7 @@ namespace Telegram.Services
 
         public async Task CreateAsync(XamlRoot xamlRoot, long chatId)
         {
-            if (await MediaDeviceWatcher.CheckIfUnsupportedAsync(xamlRoot))
+            if (MediaDeviceWatcher.IsUnsupported(xamlRoot))
             {
                 return;
             }
@@ -569,7 +568,7 @@ namespace Telegram.Services
                 _capturer.SetOutput(null);
                 _manager.SetVideoCapture(null);
 
-                _capturer.Dispose();
+                _capturer.Stop();
                 _capturer = null;
             }
             else
@@ -634,7 +633,7 @@ namespace Telegram.Services
             }
         }
 
-        private void OnFatalErrorOccurred(VoipScreenCapture sender, object args)
+        private void OnFatalErrorOccurred(VoipCaptureBase sender, object args)
         {
             EndScreenSharing();
         }
@@ -678,7 +677,7 @@ namespace Telegram.Services
 
                 //_screenCapturer.SetOutput(null);
                 _screenCapturer.FatalErrorOccurred -= OnFatalErrorOccurred;
-                _screenCapturer.Dispose();
+                _screenCapturer.Stop();
                 _screenCapturer = null;
             }
 
@@ -914,7 +913,7 @@ namespace Telegram.Services
                 if (_capturer != null)
                 {
                     _capturer.SetOutput(null);
-                    _capturer.Dispose();
+                    _capturer.Stop();
                     _capturer = null;
                 }
 
@@ -1037,7 +1036,7 @@ namespace Telegram.Services
                 }
             }
 
-            Aggregator.Publish(new UpdateCallDialog(TypeResolver.Current.Resolve<IVoipService>(SessionId).Call, update.GroupCall));
+            Aggregator.Publish(new UpdateActiveCall());
 #endif
         }
 
@@ -1096,7 +1095,7 @@ namespace Telegram.Services
                         _capturer.SetOutput(null);
                         _manager.SetVideoCapture(null);
 
-                        _capturer.Dispose();
+                        _capturer.Stop();
                         _capturer = null;
                     }
 
@@ -1163,11 +1162,11 @@ namespace Telegram.Services
                         return;
                     }
 
-                    var parameters = new ViewServiceParams
+                    var parameters = new ViewServiceOptions
                     {
                         Title = IsChannel ? Strings.VoipChannelVoiceChat : Strings.VoipGroupVoiceChat,
-                        Width = call.IsRtmpStream ? 580 : 380,
-                        Height = call.IsRtmpStream ? 380 : 580,
+                        Width = 720,
+                        Height = 540,
                         PersistedId = call.IsRtmpStream ? "LiveStream" : "VideoChat",
                         Content = call.IsRtmpStream
                             ? control => new LiveStreamPage(ClientService, Aggregator, this)

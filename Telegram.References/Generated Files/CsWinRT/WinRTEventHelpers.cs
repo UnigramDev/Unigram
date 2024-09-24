@@ -10,6 +10,45 @@ using System;
 namespace WinRT
 {
 
+    internal sealed unsafe class _EventSource_global__Windows_Foundation_TypedEventHandler_global__Telegram_Native_Calls_VoipCaptureBase__object_ : global::ABI.WinRT.Interop.EventSource<global::Windows.Foundation.TypedEventHandler<global::Telegram.Native.Calls.VoipCaptureBase, object>>
+    {
+        private static readonly bool initialized = global::WinRT.GenericTypeInstantiations.Windows_Foundation_TypedEventHandler_2_Telegram_Native_Calls_VoipCaptureBase__object.EnsureInitialized();
+
+        internal _EventSource_global__Windows_Foundation_TypedEventHandler_global__Telegram_Native_Calls_VoipCaptureBase__object_(IObjectReference obj,
+        delegate* unmanaged[Stdcall]<System.IntPtr, System.IntPtr, WinRT.EventRegistrationToken*, int> addHandler,
+        delegate* unmanaged[Stdcall]<System.IntPtr, WinRT.EventRegistrationToken, int> removeHandler, int index) : base(obj, addHandler, removeHandler, index)
+        {
+            _ = initialized;
+        }
+
+        protected override ObjectReferenceValue CreateMarshaler(global::Windows.Foundation.TypedEventHandler<global::Telegram.Native.Calls.VoipCaptureBase, object> handler) =>
+        global::ABI.Windows.Foundation.TypedEventHandler<global::Telegram.Native.Calls.VoipCaptureBase, object>.CreateMarshaler2(handler);
+
+        protected override global::ABI.WinRT.Interop.EventSourceState<global::Windows.Foundation.TypedEventHandler<global::Telegram.Native.Calls.VoipCaptureBase, object>> CreateEventSourceState() =>
+        new EventState(ObjectReference.ThisPtr, Index);
+
+        private sealed class EventState : global::ABI.WinRT.Interop.EventSourceState<global::Windows.Foundation.TypedEventHandler<global::Telegram.Native.Calls.VoipCaptureBase, object>>
+        {
+            public EventState(System.IntPtr obj, int index)
+            : base(obj, index)
+            {
+            }
+
+            protected override global::Windows.Foundation.TypedEventHandler<global::Telegram.Native.Calls.VoipCaptureBase, object> GetEventInvoke()
+            {
+                return (global::Telegram.Native.Calls.VoipCaptureBase sender, object args) =>
+                {
+                    var targetDelegate = TargetDelegate;
+                    if (targetDelegate is null)
+                    {
+                        return ;
+                    }
+                    targetDelegate.Invoke(sender, args);
+                };
+            }
+        }
+    }
+
     internal sealed unsafe class _EventSource_global__Windows_Foundation_TypedEventHandler_global__Telegram_Native_Calls_VoipManager__global__Telegram_Native_Calls_RemoteMediaStateUpdatedEventArgs_ : global::ABI.WinRT.Interop.EventSource<global::Windows.Foundation.TypedEventHandler<global::Telegram.Native.Calls.VoipManager, global::Telegram.Native.Calls.RemoteMediaStateUpdatedEventArgs>>
     {
         private static readonly bool initialized = global::WinRT.GenericTypeInstantiations.Windows_Foundation_TypedEventHandler_2_Telegram_Native_Calls_VoipManager__Telegram_Native_Calls_RemoteMediaStateUpdatedEventArgs.EnsureInitialized();
@@ -127,33 +166,33 @@ namespace WinRT
         }
     }
 
-    internal sealed unsafe class _EventSource_global__Windows_Foundation_TypedEventHandler_global__Telegram_Native_Calls_VoipManager__global__Telegram_Native_Calls_VoipState_ : global::ABI.WinRT.Interop.EventSource<global::Windows.Foundation.TypedEventHandler<global::Telegram.Native.Calls.VoipManager, global::Telegram.Native.Calls.VoipState>>
+    internal sealed unsafe class _EventSource_global__Windows_Foundation_TypedEventHandler_global__Telegram_Native_Calls_VoipVideoOutputSink__global__Telegram_Native_Calls_FrameReceivedEventArgs_ : global::ABI.WinRT.Interop.EventSource<global::Windows.Foundation.TypedEventHandler<global::Telegram.Native.Calls.VoipVideoOutputSink, global::Telegram.Native.Calls.FrameReceivedEventArgs>>
     {
-        private static readonly bool initialized = global::WinRT.GenericTypeInstantiations.Windows_Foundation_TypedEventHandler_2_Telegram_Native_Calls_VoipManager__Telegram_Native_Calls_VoipState.EnsureInitialized();
+        private static readonly bool initialized = global::WinRT.GenericTypeInstantiations.Windows_Foundation_TypedEventHandler_2_Telegram_Native_Calls_VoipVideoOutputSink__Telegram_Native_Calls_FrameReceivedEventArgs.EnsureInitialized();
 
-        internal _EventSource_global__Windows_Foundation_TypedEventHandler_global__Telegram_Native_Calls_VoipManager__global__Telegram_Native_Calls_VoipState_(IObjectReference obj,
+        internal _EventSource_global__Windows_Foundation_TypedEventHandler_global__Telegram_Native_Calls_VoipVideoOutputSink__global__Telegram_Native_Calls_FrameReceivedEventArgs_(IObjectReference obj,
         delegate* unmanaged[Stdcall]<System.IntPtr, System.IntPtr, WinRT.EventRegistrationToken*, int> addHandler,
         delegate* unmanaged[Stdcall]<System.IntPtr, WinRT.EventRegistrationToken, int> removeHandler, int index) : base(obj, addHandler, removeHandler, index)
         {
             _ = initialized;
         }
 
-        protected override ObjectReferenceValue CreateMarshaler(global::Windows.Foundation.TypedEventHandler<global::Telegram.Native.Calls.VoipManager, global::Telegram.Native.Calls.VoipState> handler) =>
-        global::ABI.Windows.Foundation.TypedEventHandler<global::Telegram.Native.Calls.VoipManager, global::Telegram.Native.Calls.VoipState>.CreateMarshaler2(handler);
+        protected override ObjectReferenceValue CreateMarshaler(global::Windows.Foundation.TypedEventHandler<global::Telegram.Native.Calls.VoipVideoOutputSink, global::Telegram.Native.Calls.FrameReceivedEventArgs> handler) =>
+        global::ABI.Windows.Foundation.TypedEventHandler<global::Telegram.Native.Calls.VoipVideoOutputSink, global::Telegram.Native.Calls.FrameReceivedEventArgs>.CreateMarshaler2(handler);
 
-        protected override global::ABI.WinRT.Interop.EventSourceState<global::Windows.Foundation.TypedEventHandler<global::Telegram.Native.Calls.VoipManager, global::Telegram.Native.Calls.VoipState>> CreateEventSourceState() =>
+        protected override global::ABI.WinRT.Interop.EventSourceState<global::Windows.Foundation.TypedEventHandler<global::Telegram.Native.Calls.VoipVideoOutputSink, global::Telegram.Native.Calls.FrameReceivedEventArgs>> CreateEventSourceState() =>
         new EventState(ObjectReference.ThisPtr, Index);
 
-        private sealed class EventState : global::ABI.WinRT.Interop.EventSourceState<global::Windows.Foundation.TypedEventHandler<global::Telegram.Native.Calls.VoipManager, global::Telegram.Native.Calls.VoipState>>
+        private sealed class EventState : global::ABI.WinRT.Interop.EventSourceState<global::Windows.Foundation.TypedEventHandler<global::Telegram.Native.Calls.VoipVideoOutputSink, global::Telegram.Native.Calls.FrameReceivedEventArgs>>
         {
             public EventState(System.IntPtr obj, int index)
             : base(obj, index)
             {
             }
 
-            protected override global::Windows.Foundation.TypedEventHandler<global::Telegram.Native.Calls.VoipManager, global::Telegram.Native.Calls.VoipState> GetEventInvoke()
+            protected override global::Windows.Foundation.TypedEventHandler<global::Telegram.Native.Calls.VoipVideoOutputSink, global::Telegram.Native.Calls.FrameReceivedEventArgs> GetEventInvoke()
             {
-                return (global::Telegram.Native.Calls.VoipManager sender, global::Telegram.Native.Calls.VoipState args) =>
+                return (global::Telegram.Native.Calls.VoipVideoOutputSink sender, global::Telegram.Native.Calls.FrameReceivedEventArgs args) =>
                 {
                     var targetDelegate = TargetDelegate;
                     if (targetDelegate is null)
@@ -478,33 +517,33 @@ namespace WinRT
         }
     }
 
-    internal sealed unsafe class _EventSource_global__Windows_Foundation_TypedEventHandler_global__Telegram_Native_Calls_VoipScreenCapture__object_ : global::ABI.WinRT.Interop.EventSource<global::Windows.Foundation.TypedEventHandler<global::Telegram.Native.Calls.VoipScreenCapture, object>>
+    internal sealed unsafe class _EventSource_global__Windows_Foundation_TypedEventHandler_global__Telegram_Native_Calls_VoipManager__global__Telegram_Native_Calls_VoipReadyState_ : global::ABI.WinRT.Interop.EventSource<global::Windows.Foundation.TypedEventHandler<global::Telegram.Native.Calls.VoipManager, global::Telegram.Native.Calls.VoipReadyState>>
     {
-        private static readonly bool initialized = global::WinRT.GenericTypeInstantiations.Windows_Foundation_TypedEventHandler_2_Telegram_Native_Calls_VoipScreenCapture__object.EnsureInitialized();
+        private static readonly bool initialized = global::WinRT.GenericTypeInstantiations.Windows_Foundation_TypedEventHandler_2_Telegram_Native_Calls_VoipManager__Telegram_Native_Calls_VoipReadyState.EnsureInitialized();
 
-        internal _EventSource_global__Windows_Foundation_TypedEventHandler_global__Telegram_Native_Calls_VoipScreenCapture__object_(IObjectReference obj,
+        internal _EventSource_global__Windows_Foundation_TypedEventHandler_global__Telegram_Native_Calls_VoipManager__global__Telegram_Native_Calls_VoipReadyState_(IObjectReference obj,
         delegate* unmanaged[Stdcall]<System.IntPtr, System.IntPtr, WinRT.EventRegistrationToken*, int> addHandler,
         delegate* unmanaged[Stdcall]<System.IntPtr, WinRT.EventRegistrationToken, int> removeHandler, int index) : base(obj, addHandler, removeHandler, index)
         {
             _ = initialized;
         }
 
-        protected override ObjectReferenceValue CreateMarshaler(global::Windows.Foundation.TypedEventHandler<global::Telegram.Native.Calls.VoipScreenCapture, object> handler) =>
-        global::ABI.Windows.Foundation.TypedEventHandler<global::Telegram.Native.Calls.VoipScreenCapture, object>.CreateMarshaler2(handler);
+        protected override ObjectReferenceValue CreateMarshaler(global::Windows.Foundation.TypedEventHandler<global::Telegram.Native.Calls.VoipManager, global::Telegram.Native.Calls.VoipReadyState> handler) =>
+        global::ABI.Windows.Foundation.TypedEventHandler<global::Telegram.Native.Calls.VoipManager, global::Telegram.Native.Calls.VoipReadyState>.CreateMarshaler2(handler);
 
-        protected override global::ABI.WinRT.Interop.EventSourceState<global::Windows.Foundation.TypedEventHandler<global::Telegram.Native.Calls.VoipScreenCapture, object>> CreateEventSourceState() =>
+        protected override global::ABI.WinRT.Interop.EventSourceState<global::Windows.Foundation.TypedEventHandler<global::Telegram.Native.Calls.VoipManager, global::Telegram.Native.Calls.VoipReadyState>> CreateEventSourceState() =>
         new EventState(ObjectReference.ThisPtr, Index);
 
-        private sealed class EventState : global::ABI.WinRT.Interop.EventSourceState<global::Windows.Foundation.TypedEventHandler<global::Telegram.Native.Calls.VoipScreenCapture, object>>
+        private sealed class EventState : global::ABI.WinRT.Interop.EventSourceState<global::Windows.Foundation.TypedEventHandler<global::Telegram.Native.Calls.VoipManager, global::Telegram.Native.Calls.VoipReadyState>>
         {
             public EventState(System.IntPtr obj, int index)
             : base(obj, index)
             {
             }
 
-            protected override global::Windows.Foundation.TypedEventHandler<global::Telegram.Native.Calls.VoipScreenCapture, object> GetEventInvoke()
+            protected override global::Windows.Foundation.TypedEventHandler<global::Telegram.Native.Calls.VoipManager, global::Telegram.Native.Calls.VoipReadyState> GetEventInvoke()
             {
-                return (global::Telegram.Native.Calls.VoipScreenCapture sender, object args) =>
+                return (global::Telegram.Native.Calls.VoipManager sender, global::Telegram.Native.Calls.VoipReadyState args) =>
                 {
                     var targetDelegate = TargetDelegate;
                     if (targetDelegate is null)

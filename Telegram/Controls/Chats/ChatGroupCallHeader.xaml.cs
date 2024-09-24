@@ -87,8 +87,16 @@ namespace Telegram.Controls.Chats
             {
                 ShowHide(true);
 
-                TitleLabel.Text = call.ScheduledStartDate > 0 && call.Title.Length > 0 ? call.Title : channel ? Strings.VoipChannelVoiceChat : Strings.VoipGroupVoiceChat;
-                ServiceLabel.Text = call.ParticipantCount > 0 ? Locale.Declension(Strings.R.Participants, call.ParticipantCount) : Strings.MembersTalkingNobody;
+                if (channel)
+                {
+                    TitleLabel.Text = call.ScheduledStartDate > 0 && call.Title.Length > 0 ? call.Title : call.ScheduledStartDate != 0 ? Strings.VoipChannelScheduledVoiceChat : Strings.VoipChannelVoiceChat;
+                    ServiceLabel.Text = call.ParticipantCount > 0 ? Locale.Declension(Strings.R.ViewersWatching, call.ParticipantCount) : Strings.ViewersWatchingNobody;
+                }
+                else
+                {
+                    TitleLabel.Text = call.ScheduledStartDate > 0 && call.Title.Length > 0 ? call.Title : call.ScheduledStartDate != 0 ? Strings.VoipGroupScheduledVoiceChat : Strings.VoipGroupVoiceChat;
+                    ServiceLabel.Text = call.ParticipantCount > 0 ? Locale.Declension(Strings.R.Participants, call.ParticipantCount) : Strings.MembersTalkingNobody;
+                }
 
                 if (call.ScheduledStartDate != 0)
                 {
@@ -104,16 +112,12 @@ namespace Telegram.Controls.Chats
                         _scheduledTimer.Stop();
                     }
 
-                    TitleLabel.Text = call.Title.Length > 0 ? call.Title : channel ? Strings.VoipChannelScheduledVoiceChat : Strings.VoipGroupScheduledVoiceChat;
-
                     JoinButton.Background = BootStrapper.Current.Resources["VideoChatPurpleBrush"] as Brush;
                     JoinButton.Content = call.GetStartsIn();
                 }
                 else
                 {
                     _scheduledTimer.Stop();
-
-                    TitleLabel.Text = channel ? Strings.VoipChannelVoiceChat : Strings.VoipGroupVoiceChat;
 
                     JoinButton.Background = BootStrapper.Current.Resources["PillButtonBackground"] as Brush;
                     JoinButton.Content = Strings.VoipChatJoin;
@@ -144,18 +148,6 @@ namespace Telegram.Controls.Chats
 
             _call = call;
             return visible;
-        }
-
-        public void UpdateChatActions(IDictionary<int, ChatAction> actions)
-        {
-            if (actions != null && actions.Count > 0)
-            {
-                //MessageLabel.Text = InputChatActionManager.GetSpeakingString(null, actions);
-            }
-            else
-            {
-                MessageLabel.Text = string.Empty;
-            }
         }
 
         private bool _collapsed = true;

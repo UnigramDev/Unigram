@@ -151,7 +151,7 @@ namespace Telegram.Controls.Chats
             }
 
             var transform = TranslateRoot.TransformToVisual(show ? ShowOriginal : TranslateTo);
-            var point = transform.TransformPoint(new Windows.Foundation.Point()).ToVector2();
+            var point = transform.TransformVector2();
 
             var visual1 = ElementComposition.GetElementVisual(show ? ShowOriginal : TranslateTo);
             var visual2 = ElementComposition.GetElementVisual(show ? TranslateTo : ShowOriginal);

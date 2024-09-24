@@ -19,6 +19,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Numerics;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Text;
@@ -43,6 +44,7 @@ using Windows.Storage;
 using Windows.Storage.FileProperties;
 using Windows.Storage.Pickers;
 using Windows.Storage.Streams;
+using Windows.System.Display;
 using Windows.UI;
 using Windows.UI.Text;
 using static Telegram.Services.GenerationService;
@@ -77,12 +79,12 @@ namespace Telegram.Common
 
         // TODO: this is a duplicat of INavigationService.ShowPopupAsync, and it's needed by GamePage, GroupCallPage and LiveStreamPage.
         // Must be removed at some point.
-        public static Task<ContentDialogResult> ShowPopupAsync(this Page frame, int sessionId, ContentPopup popup, object parameter = null)
+        public static Task<ContentDialogResult> ShowPopupAsync(this UserControl frame, int sessionId, ContentPopup popup, object parameter = null)
         {
             var viewModel = BootStrapper.Current.ViewModelForPage(popup, sessionId);
             if (viewModel != null)
             {
-                //viewModel.NavigationService = this;
+                viewModel.XamlRoot = frame.XamlRoot;
 
                 void OnOpened(ContentDialog sender, ContentDialogOpenedEventArgs args)
                 {
@@ -573,6 +575,30 @@ namespace Telegram.Common
             try
             {
                 call.NotifyCallEnded();
+            }
+            catch
+            {
+                // All the remote procedure calls must be wrapped in a try-catch block
+            }
+        }
+
+        public static void TryRequestActive(this DisplayRequest displayRequest)
+        {
+            try
+            {
+                displayRequest.RequestActive();
+            }
+            catch
+            {
+                // All the remote procedure calls must be wrapped in a try-catch block
+            }
+        }
+
+        public static void TryRequestRelease(this DisplayRequest displayRequest)
+        {
+            try
+            {
+                displayRequest.RequestRelease();
             }
             catch
             {
@@ -1079,6 +1105,26 @@ namespace Telegram.Common
             }
 
             return defaultValue;
+        }
+
+        public static Vector2 TransformVector2(this GeneralTransform transform, Vector2 point)
+        {
+            return transform.TransformPoint(point.ToPoint()).ToVector2();
+        }
+
+        public static Vector2 TransformVector2(this GeneralTransform transform)
+        {
+            return transform.TransformPoint(new Point()).ToVector2();
+        }
+
+        public static Vector2 TransformToVector2(this UIElement element, UIElement visual)
+        {
+            return element.TransformToVisual(visual).TransformVector2();
+        }
+
+        public static Point TransformToPoint(this UIElement element, UIElement visual)
+        {
+            return element.TransformToVisual(visual).TransformPoint(new Point());
         }
 
         public static void BeginOnUIThread(this DependencyObject element, Action action)

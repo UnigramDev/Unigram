@@ -6,7 +6,6 @@
 //
 using Microsoft.UI.Xaml.Controls;
 using Telegram.Common;
-using Telegram.Controls;
 using Telegram.Navigation;
 using Telegram.Services;
 using Telegram.Td.Api;
@@ -59,13 +58,6 @@ namespace Telegram.ViewModels
             {
                 return;
             }
-
-            ContentPopup.Block(NavigationService.XamlRoot);
-
-            Settings.Clear();
-            Settings.PasscodeLock.Clear();
-
-            await _contactsService.RemoveAsync();
 
             var response = await ClientService.SendAsync(new LogOut());
             if (response is Error error)

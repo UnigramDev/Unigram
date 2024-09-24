@@ -8,7 +8,6 @@ using Microsoft.UI.Xaml;
 using System;
 using System.Collections.Generic;
 using Telegram.Common;
-using Telegram.Navigation;
 using Windows.UI;
 
 namespace Telegram.Td.Api

@@ -22,7 +22,7 @@ namespace Rg.DiffUtils
 
         public virtual bool CompareItems(T oldItem, T newItem)
         {
-            return _comparer(oldItem, newItem);;
+            return _comparer(oldItem, newItem); ;
         }
     }
 }

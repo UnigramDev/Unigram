@@ -89,6 +89,11 @@
                 </ResourceDictionary>
             </ResourceDictionary.ThemeDictionaries>
 
+            <AcrylicBrush x:Name="GlassAcrylicBackground"
+                          TintColor="#FFFFFF"
+                          TintOpacity="0"
+                          FallbackColor="#64FFFFFF"/>
+
             <!-- WinUI bug: https://github.com/microsoft/microsoft-ui-xaml/issues/xxxx -->
             <x:Boolean x:Key="HyperlinkUnderlineVisible">True</x:Boolean>
 

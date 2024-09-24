@@ -15,8 +15,6 @@ using Telegram.Services.Factories;
 using Telegram.Td.Api;
 using Telegram.ViewModels.Delegates;
 using Telegram.Views;
-using Telegram.Views.Popups;
-using Windows.System;
 
 namespace Telegram.ViewModels
 {

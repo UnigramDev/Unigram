@@ -15,110 +15,6 @@
       Unloaded="OnUnloaded"
       SizeChanged="OnSizeChanged">
 
-    <Page.Resources>
-        <SolidColorBrush x:Key="SignalBarForegroundBrush"
-                         Color="#FFFFFF" />
-        <SolidColorBrush x:Key="SignalBarForegroundDisabledBrush"
-                         Color="#99FFFFFF" />
-
-        <Style x:Key="CallGlyphButtonStyle"
-               TargetType="controls:GlyphButton">
-            <Setter Property="Background"
-                    Value="Transparent" />
-            <Setter Property="Foreground"
-                    Value="{ThemeResource SystemControlForegroundBaseHighBrush}" />
-            <Setter Property="BorderBrush"
-                    Value="{ThemeResource SystemControlForegroundBaseHighBrush}" />
-            <Setter Property="BorderThickness"
-                    Value="0" />
-            <Setter Property="Padding"
-                    Value="0" />
-            <Setter Property="HorizontalAlignment"
-                    Value="Center" />
-            <Setter Property="HorizontalContentAlignment"
-                    Value="Center" />
-            <Setter Property="VerticalAlignment"
-                    Value="Top" />
-            <Setter Property="VerticalContentAlignment"
-                    Value="Center" />
-            <Setter Property="FontFamily"
-                    Value="{StaticResource SymbolThemeFontFamily}" />
-            <Setter Property="FontSize"
-                    Value="{StaticResource GlyphLargeFontSize}" />
-            <Setter Property="FontWeight"
-                    Value="Normal" />
-            <Setter Property="Height"
-                    Value="48" />
-            <Setter Property="Width"
-                    Value="48" />
-            <Setter Property="UseSystemFocusVisuals"
-                    Value="True" />
-            <Setter Property="FocusVisualMargin"
-                    Value="-3" />
-            <Setter Property="CornerRadius"
-                    Value="24" />
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="controls:GlyphButton">
-                        <Grid Background="{TemplateBinding Background}"
-                              CornerRadius="{TemplateBinding CornerRadius}">
-                            <VisualStateManager.VisualStateGroups>
-                                <VisualStateGroup x:Name="CommonStates">
-                                    <VisualState x:Name="Normal" />
-                                    <VisualState x:Name="PointerOver">
-                                        <Storyboard>
-                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Background"
-                                                                           Storyboard.TargetName="RootGrid">
-                                                <DiscreteObjectKeyFrame KeyTime="0"
-                                                                        Value="{ThemeResource SystemControlBackgroundListLowBrush}" />
-                                            </ObjectAnimationUsingKeyFrames>
-                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Foreground"
-                                                                           Storyboard.TargetName="ContentPresenter">
-                                                <DiscreteObjectKeyFrame KeyTime="0"
-                                                                        Value="{ThemeResource SystemControlHighlightBaseMediumHighBrush}" />
-                                            </ObjectAnimationUsingKeyFrames>
-                                        </Storyboard>
-                                    </VisualState>
-                                    <VisualState x:Name="Pressed">
-                                        <Storyboard>
-                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Background"
-                                                                           Storyboard.TargetName="RootGrid">
-                                                <DiscreteObjectKeyFrame KeyTime="0"
-                                                                        Value="{ThemeResource SystemControlBackgroundListMediumBrush}" />
-                                            </ObjectAnimationUsingKeyFrames>
-                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Foreground"
-                                                                           Storyboard.TargetName="ContentPresenter">
-                                                <DiscreteObjectKeyFrame KeyTime="0"
-                                                                        Value="{ThemeResource SystemControlHighlightBaseMediumBrush}" />
-                                            </ObjectAnimationUsingKeyFrames>
-                                        </Storyboard>
-                                    </VisualState>
-                                    <VisualState x:Name="Disabled">
-                                        <Storyboard>
-                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Foreground"
-                                                                           Storyboard.TargetName="ContentPresenter">
-                                                <DiscreteObjectKeyFrame KeyTime="0"
-                                                                        Value="{ThemeResource SystemControlForegroundBaseLowBrush}" />
-                                            </ObjectAnimationUsingKeyFrames>
-                                        </Storyboard>
-                                    </VisualState>
-                                </VisualStateGroup>
-                            </VisualStateManager.VisualStateGroups>
-                            <Grid x:Name="RootGrid">
-                                <TextBlock x:Name="ContentPresenter"
-                                           Margin="{TemplateBinding Padding}"
-                                           HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
-                                           VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
-                                           AutomationProperties.AccessibilityView="Raw"
-                                           Text="{TemplateBinding Glyph}" />
-                            </Grid>
-                        </Grid>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
-        </Style>
-    </Page.Resources>
-
     <Grid Background="#FF000000"
           PointerMoved="Viewport_PointerEntered"
           PointerExited="Viewport_PointerExited"
@@ -144,7 +40,7 @@
                 <ColumnDefinition />
                 <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
-            <xaml:CanvasControl x:Name="Viewport" />
+            <Border x:Name="Viewport" />
 
             <Rectangle x:Name="BottomShadow"
                        Height="72"
@@ -180,64 +76,78 @@
         <Border x:Name="TitleArea"
                 Background="Transparent" />
 
-        <StackPanel x:Name="TopButtons"
-                    GotFocus="Transport_GotFocus"
-                    LostFocus="Transport_LostFocus"
-                    VerticalAlignment="Top"
-                    Orientation="Horizontal"
-                    Margin="0,0,0,-8"
-                    Grid.RowSpan="2">
-            <controls:AnimatedGlyphButton x:Name="Resize"
-                                          Click="Resize_Click"
-                                          Glyph="&#xE966;"
-                                          Width="40"
-                                          Height="48"
-                                          FontSize="16"
-                                          IsTabStop="False" />
-            <controls:GlyphButton x:Name="Menu"
-                                  Click="Menu_ContextRequested"
-                                  Glyph="&#xE930;"
-                                  Margin="-8,0,0,0"
-                                  Width="40"
-                                  Height="48" />
-        </StackPanel>
+        <Grid x:Name="TitleBar"
+              Background="Transparent"
+              VerticalAlignment="Top"
+              Height="40"
+              Grid.RowSpan="2">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="48" />
+                <ColumnDefinition />
+                <ColumnDefinition />
+            </Grid.ColumnDefinitions>
 
-        <Border x:Name="TitlePanel"
-                IsHitTestVisible="False"
-                Margin="32,0,0,0">
-            <Grid HorizontalAlignment="Left">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition />
-                    <ColumnDefinition Width="Auto" />
-                </Grid.ColumnDefinitions>
-                <TextBlock x:Name="TitleInfo"
-                           Text="{CustomResource VoipGroupVoiceChat}"
-                           TextLineBounds="TrimToCapHeight"
-                           TextWrapping="NoWrap"
-                           TextTrimming="CharacterEllipsis"
-                           VerticalAlignment="Center"
-                           Margin="12,0,0,0"
-                           AutomationProperties.LiveSetting="Assertive"
-                           Foreground="{ThemeResource PageHeaderForegroundBrush}"
-                           Style="{StaticResource CaptionTextBlockStyle}" />
+            <Canvas x:Name="LogoBasic"
+                    Width="16"
+                    Height="14"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center">
+                <Path Data="M14.6025 0.109437C9.96891 1.86558 5.33409 3.61851 0.69863 5.36857L0.69863 5.36857C0.391755 5.48441 0.151119 5.65913 0.0247189 5.96984L0.0247189 5.96984C-0.00823964 6.06584 -0.00823964 6.14328 0.0247189 6.21976L0.0247189 6.21976C0.169358 6.5228 0.426634 6.67031 0.735112 6.77303L0.735112 6.77303C1.51366 7.03255 2.29669 7.28279 3.0586 7.58486L3.0586 7.58486C3.77315 7.8687 4.38978 7.77046 5.0301 7.35575L5.0301 7.35575C7.12511 5.99896 9.23964 4.67322 11.3497 3.34011L11.3497 3.34011C11.5299 3.22651 11.7417 2.98396 11.9478 3.23324L11.9478 3.23324C12.1769 3.51067 11.8617 3.65819 11.7062 3.80859L11.7062 3.80859C10.158 5.30617 8.60157 6.79479 7.05087 8.28949L7.05087 8.28949C6.55616 8.76629 6.57984 9.14804 7.12959 9.54644L7.12959 9.54644C8.67037 10.6648 10.2121 11.781 11.7619 12.8869L11.7619 12.8869C11.9414 13.0152 12.165 13.1211 12.381 13.1531L12.381 13.1531C12.9948 13.2437 13.4037 12.8773 13.5663 12.1429L13.5663 12.1429C13.7676 11.2299 13.9692 10.3167 14.1692 9.4034L14.1692 9.4034C14.7685 6.66327 15.3653 3.92219 15.9685 1.18303L15.9685 1.18303C16.0463 0.82847 15.9852 0.522555 15.7272 0.264637L15.7272 0.264637C15.5365 0.0742392 15.3317 0 15.1148 0L15.1148 0C14.9506 0 14.7794 0.0425605 14.6025 0.109439"
+                      StrokeThickness="0"
+                      Stroke="#00000000">
+                    <Path.Fill>
+                        <LinearGradientBrush StartPoint="0.355035215616226,0"
+                                             EndPoint="0.916017889976501,0.0104505941271782"
+                                             MappingMode="RelativeToBoundingBox">
+                            <LinearGradientBrush.GradientStops>
+                                <GradientStopCollection>
+                                    <GradientStop Offset="0"
+                                                  Color="#008ED4" />
+                                    <GradientStop Offset="1"
+                                                  Color="#25AEF3" />
+                                </GradientStopCollection>
+                            </LinearGradientBrush.GradientStops>
+                        </LinearGradientBrush>
+                    </Path.Fill>
+                </Path>
+                <Path Data="M14.6025 0.109437C9.96891 1.86558 5.33409 3.61851 0.69863 5.36857L0.69863 5.36857C0.391755 5.48441 0.151119 5.65913 0.0247189 5.96984L0.0247189 5.96984C-0.00823964 6.06584 -0.00823964 6.14328 0.0247189 6.22008L0.0247189 6.22008C0.169358 6.52248 0.426634 6.67031 0.735112 6.77303L0.735112 6.77303C1.51366 7.03255 2.29669 7.28279 3.0586 7.58486L3.0586 7.58486C3.33316 7.69398 3.59332 7.74646 3.84547 7.74646L3.84547 7.74646C4.25059 7.74646 4.63554 7.6111 5.0301 7.35575L5.0301 7.35575C7.12511 5.99896 9.23964 4.67322 11.3497 3.34012L11.3497 3.34012C11.4729 3.26236 11.6105 3.12444 11.7516 3.12444L11.7516 3.12444C11.8166 3.12444 11.8825 3.1542 11.9478 3.23323L11.9478 3.23323C12.1775 3.51067 11.8617 3.65819 11.7062 3.80858L11.7062 3.80858C10.158 5.30617 8.60157 6.79479 7.05087 8.28949L7.05087 8.28949C6.55616 8.76629 6.57984 9.14804 7.12959 9.54644L7.12959 9.54644C8.67037 10.6648 10.2121 11.781 11.7619 12.8869L11.7619 12.8869C11.9414 13.0152 12.165 13.1211 12.381 13.1531L12.381 13.1531C12.4425 13.1624 12.5017 13.1666 12.559 13.1666L12.559 13.1666C13.0742 13.1666 13.4204 12.8037 13.5663 12.1429L13.5663 12.1429C13.7676 11.2299 13.9692 10.3167 14.1692 9.4034L14.1692 9.4034C14.7685 6.66327 15.3653 3.92219 15.9685 1.18303L15.9685 1.18303C16.0463 0.828471 15.9852 0.522555 15.7272 0.264637L15.7272 0.264637C15.5365 0.0742392 15.3317 0 15.1148 0L15.1148 0C14.9503 0 14.7794 0.0425605 14.6025 0.109439M3.17668 7.28759C2.52613 7.02935 1.85382 6.80663 1.2039 6.59127L1.2039 6.59127L0.836229 6.46967C0.558793 6.3772 0.408394 6.26872 0.320717 6.09688L0.320717 6.09688C0.321676 6.09336 0.322636 6.08824 0.324877 6.0812L0.324877 6.0812C0.405834 5.88984 0.552073 5.766 0.811909 5.66808L0.811909 5.66808C5.44737 3.91771 10.0825 2.16509 14.7161 0.408632L14.7161 0.408632C14.8738 0.349113 15.0044 0.319992 15.1148 0.319992L15.1148 0.319992C15.2636 0.319992 15.3823 0.372792 15.5007 0.490869L15.5007 0.490869C15.6687 0.658868 15.7151 0.845106 15.6556 1.1139L15.6556 1.1139C15.2357 3.023 14.8188 4.93274 14.4012 6.84247L14.4012 6.84247L13.8565 9.33524C13.6569 10.2482 13.4553 11.1611 13.2537 12.0738L13.2537 12.0738C13.0831 12.8469 12.6889 12.8469 12.559 12.8469L12.559 12.8469C12.5174 12.8469 12.4732 12.8434 12.4278 12.8366L12.4278 12.8366C12.279 12.8149 12.1042 12.7378 11.9474 12.6264L11.9474 12.6264C10.4844 11.5822 9.03836 10.5368 7.31743 9.28788L7.31743 9.28788C7.13087 9.15252 7.02463 9.02484 7.01823 8.92852L7.01823 8.92852C7.01119 8.82997 7.10175 8.68501 7.27295 8.51989L7.27295 8.51989C7.89694 7.91862 8.52189 7.31831 9.14685 6.71767L9.14685 6.71767C10.0748 5.82552 11.0035 4.9337 11.9286 4.03835L11.9286 4.03835C11.9516 4.01659 11.9791 3.99451 12.007 3.97211L12.007 3.97211C12.1321 3.87099 12.3212 3.71867 12.3462 3.47195L12.3462 3.47195C12.3615 3.31868 12.3106 3.16988 12.1942 3.02908L12.1942 3.02908C12.0409 2.8438 11.8684 2.80444 11.7516 2.80444L11.7516 2.80444C11.5427 2.80444 11.3785 2.92508 11.2591 3.01308L11.2591 3.01308C11.2316 3.03324 11.2047 3.0534 11.1788 3.06972L11.1788 3.06972L9.99803 3.81499C8.30878 4.88058 6.56192 5.98232 4.85634 7.08695L4.85634 7.08695C4.49858 7.31894 4.17763 7.42646 3.84547 7.42646L3.84547 7.42646C3.6314 7.42646 3.41252 7.38102 3.17668 7.28759"
+                      StrokeThickness="0"
+                      Stroke="#00000000">
+                    <Path.Fill>
+                        <LinearGradientBrush StartPoint="4.80645803691004E-06,0.5"
+                                             EndPoint="0.9999920129776,0.5"
+                                             MappingMode="RelativeToBoundingBox">
+                            <LinearGradientBrush.GradientStops>
+                                <GradientStopCollection>
+                                    <GradientStop Offset="0"
+                                                  Color="#008ED4" />
+                                    <GradientStop Offset="0.303017"
+                                                  Color="#008ED4" />
+                                    <GradientStop Offset="0.9"
+                                                  Color="#25AEF3" />
+                                    <GradientStop Offset="1"
+                                                  Color="#25AEF3" />
+                                </GradientStopCollection>
+                            </LinearGradientBrush.GradientStops>
+                        </LinearGradientBrush>
+                    </Path.Fill>
+                </Path>
+            </Canvas>
 
-                <TextBlock x:Name="RecordingInfo"
-                           Visibility="Collapsed"
-                           Foreground="Red"
-                           Style="{StaticResource BaseTextBlockStyle}"
-                           Text=" •"
-                           Grid.Column="1" />
-            </Grid>
-        </Border>
-
-        <TextBlock x:Name="SubtitleInfo"
-                   Foreground="{ThemeResource PageHeaderDisabledBrush}"
-                   Style="{StaticResource CaptionTextBlockStyle}"
-                   TextWrapping="NoWrap"
-                   TextTrimming="CharacterEllipsis"
-                   IsHitTestVisible="False"
-                   Margin="44,-8,0,12"
-                   Grid.Row="1" />
+            <TextBlock VerticalAlignment="Center"
+                       TextLineBounds="TrimToCapHeight"
+                       TextWrapping="NoWrap"
+                       AutomationProperties.LiveSetting="Assertive"
+                       Foreground="{ThemeResource PageHeaderDisabledBrush}"
+                       Style="{StaticResource CaptionTextBlockStyle}"
+                       IsHitTestVisible="False"
+                       Margin="0,2,6,0"
+                       Grid.Column="1">
+                <Run x:Name="TitleInfo"
+                     Foreground="{ThemeResource PageHeaderForegroundBrush}" /><Run Text="," />
+                <Run x:Name="SubtitleInfo" />
+            </TextBlock>
+        </Grid>
 
         <Border x:Name="PointerListener"
                 Background="Transparent"
@@ -268,33 +178,52 @@
                     GotFocus="Transport_GotFocus"
                     LostFocus="Transport_LostFocus"
                     Grid.Row="3">
-            <Grid x:Name="BottomRoot"
-                  HorizontalAlignment="Center">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="Auto" />
-                    <ColumnDefinition Width="Auto" />
-                    <ColumnDefinition Width="Auto" />
-                    <ColumnDefinition Width="Auto" />
-                    <ColumnDefinition Width="Auto" />
-                </Grid.ColumnDefinitions>
+            <Grid x:Name="ActiveButtons"
+                  HorizontalAlignment="Center"
+                  ColumnSpacing="16"
+                  RowSpacing="4"
+                  Margin="0,4,0,12">
                 <Grid.RowDefinitions>
-                    <RowDefinition Height="24" />
-                    <RowDefinition Height="Auto" />
                     <RowDefinition />
-                    <RowDefinition Height="Auto" />
+                    <RowDefinition />
                 </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition />
+                    <ColumnDefinition />
+                    <ColumnDefinition />
+                </Grid.ColumnDefinitions>
+                <controls:GlassToggleButton x:Name="Menu"
+                                            Click="Menu_ContextRequested"
+                                            Content="{CustomResource VoipSettings}"
+                                            Glyph="&#xEA96;" />
+                <controls:GlassToggleButton x:Name="Resize"
+                                            Click="Resize_Click"
+                                            Content="{CustomResource VoipMaximize}"
+                                            Glyph="&#xEA95;"
+                                            Grid.Column="1" />
+                <Border Background="{ThemeResource DangerButtonBackground}"
+                        CornerRadius="24"
+                        Grid.Column="2">
+                    <controls:GlyphButton x:Name="Leave"
+                                          Click="Leave_Click"
+                                          Content="{CustomResource VoipEnd2}"
+                                          Glyph="&#xEA1F;"
+                                          FontSize="24" />
+                </Border>
+                <TextBlock Text="{CustomResource VoipSettings}"
+                           TextAlignment="Center"
+                           Grid.Row="1" />
 
-                <controls:GlyphButton x:Name="Leave"
-                                      Click="Leave_Click"
-                                      Glyph="&#xE711;"
-                                      Background="#66FF0000"
-                                      Foreground="#FFFFFF"
-                                      Content="{CustomResource VoipGroupLeave}"
-                                      Style="{StaticResource CallGlyphButtonStyle}"
-                                      Margin="0,0,0,8"
-                                      Grid.Column="4"
-                                      Grid.Row="1" />
+                <TextBlock x:Name="ResizeText"
+                           Text="{CustomResource VoipMaximize}"
+                           TextAlignment="Center"
+                           Grid.Column="1"
+                           Grid.Row="1" />
 
+                <TextBlock Text="{CustomResource VoipEnd2}"
+                           TextAlignment="Center"
+                           Grid.Column="2"
+                           Grid.Row="1" />
             </Grid>
         </StackPanel>
     </Grid>

@@ -201,7 +201,7 @@ namespace Telegram.Navigation
 
                 if (value != null)
                 {
-                    IsCallInProgress = value is CallPage or GroupCallPage or LiveStreamPage;
+                    IsCallInProgress = value is VoipPage or GroupCallPage or LiveStreamPage;
 
                     if (_locked != null)
                     {
@@ -835,6 +835,17 @@ namespace Telegram.Navigation
         public static bool IsKeyDownAsync(Windows.System.VirtualKey key)
         {
             return (InputKeyboardSource.GetKeyStateForCurrentThread(key) & Windows.UI.Core.CoreVirtualKeyStates.Down) != 0;
+        }
+
+        public static async void Activate(string persistedId)
+        {
+            var oldViewId = WindowContext.Current.Id;
+
+            var already = WindowContext.All.FirstOrDefault(x => x.PersistedId == persistedId);
+            if (already != null)
+            {
+                await already.Dispatcher.DispatchAsync(() => ApplicationViewSwitcher.SwitchAsync(WindowContext.Current.Id, oldViewId).AsTask());
+            }
         }
 
         public static void ForEach(Action<WindowContext> action)

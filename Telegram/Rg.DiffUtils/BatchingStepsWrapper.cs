@@ -21,7 +21,7 @@ namespace Rg.DiffUtils
         {
             var lastStep = _steps.LastOrDefault();
 
-            if(_options.AllowBatching && lastStep != null
+            if (_options.AllowBatching && lastStep != null
                 && lastStep.Status == DiffStatus.Add
                 && index >= lastStep.NewStartIndex
                 && index <= lastStep.NewStartIndex + lastStep.Items.Count)

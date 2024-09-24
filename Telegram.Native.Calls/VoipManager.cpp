@@ -5,7 +5,7 @@
 #include <stddef.h>
 #include <memory>
 
-#include "VoipVideoRendererToken.h"
+#include "VoipVideoOutputSink.h"
 
 #include "api/media_stream_interface.h"
 #include "api/create_peerconnection_factory.h"
@@ -30,19 +30,6 @@
 
 namespace winrt::Telegram::Native::Calls::implementation
 {
-    VoipManager::VoipManager(hstring version, VoipDescriptor descriptor)
-    {
-        m_version = version;
-        m_descriptor = descriptor;
-    }
-
-    void VoipManager::Close()
-    {
-        m_descriptor = nullptr;
-        m_capturer.reset();
-        m_impl.reset();
-    }
-
     inline std::string hexStr(IVector<uint8_t> data)
     {
         std::stringstream ss;
@@ -56,17 +43,17 @@ namespace winrt::Telegram::Native::Calls::implementation
         return ss.str();
     }
 
-    void VoipManager::Start()
+    void VoipManager::Start(hstring version, VoipDescriptor descriptor)
     {
         auto logPath = Windows::Storage::ApplicationData::Current().LocalFolder().Path();
         logPath = logPath + hstring(L"\\tgcalls.txt");
 
         tgcalls::Config config = tgcalls::Config
         {
-            .initializationTimeout = m_descriptor.InitializationTimeout(),
-            .receiveTimeout = m_descriptor.ReceiveTimeout(),
+            .initializationTimeout = descriptor.InitializationTimeout(),
+            .receiveTimeout = descriptor.ReceiveTimeout(),
             .dataSaving = tgcalls::DataSaving::Never,
-            .enableP2P = m_descriptor.EnableP2p(),
+            .enableP2P = descriptor.EnableP2p(),
             .allowTCP = false,
             .enableStunMarking = false,
             .enableAEC = true,
@@ -88,25 +75,25 @@ namespace winrt::Telegram::Native::Calls::implementation
         };
 
         tgcalls::MediaDevicesConfig mediaConfig = {
-            .audioInputId = winrt::to_string(m_descriptor.AudioInputId()),
-            .audioOutputId = winrt::to_string(m_descriptor.AudioOutputId()),
+            .audioInputId = winrt::to_string(descriptor.AudioInputId()),
+            .audioOutputId = winrt::to_string(descriptor.AudioOutputId()),
             .inputVolume = 1.f,
             .outputVolume = 1.f
         };
 
         std::vector<uint8_t> persistentState = {};
-        if (m_descriptor.PersistentState())
+        if (descriptor.PersistentState())
         {
-            for (int i = 0; i < m_descriptor.PersistentState().Size(); i++)
+            for (int i = 0; i < descriptor.PersistentState().Size(); i++)
             {
-                persistentState[i] = m_descriptor.PersistentState().GetAt(i);
+                persistentState[i] = descriptor.PersistentState().GetAt(i);
             }
         }
 
         std::array<uint8_t, 256> encryptionKey = {};
         for (int i = 0; i < 256; i++)
         {
-            encryptionKey[i] = m_descriptor.EncryptionKey().GetAt(i);
+            encryptionKey[i] = descriptor.EncryptionKey().GetAt(i);
         }
 
         std::shared_ptr<std::array<uint8_t, 256>> encryptionKeyPointer
@@ -115,7 +102,7 @@ namespace winrt::Telegram::Native::Calls::implementation
         auto rtc = std::vector<tgcalls::RtcServer>();
         auto ids = std::vector<long>();
 
-        for (const CallServer& x : m_descriptor.Servers())
+        for (const CallServer& x : descriptor.Servers())
         {
             if (auto webRtc = x.Type().try_as<CallServerTypeWebrtc>())
             {
@@ -134,7 +121,7 @@ namespace winrt::Telegram::Native::Calls::implementation
                         server.port = port;
                         server.isTurn = false;
                         rtc.push_back(server);
-                    };
+                        };
                     pushStun(host);
                     pushStun(hostv6);
                 }
@@ -150,7 +137,7 @@ namespace winrt::Telegram::Native::Calls::implementation
                         server.password = password;
                         server.isTurn = true;
                         rtc.push_back(server);
-                    };
+                        };
                     pushTurn(host);
                     pushTurn(hostv6);
                 }
@@ -163,7 +150,7 @@ namespace winrt::Telegram::Native::Calls::implementation
 
         std::sort(ids.begin(), ids.end());
 
-        for (const CallServer& x : m_descriptor.Servers())
+        for (const CallServer& x : descriptor.Servers())
         {
             if (auto reflector = x.Type().try_as<CallServerTypeTelegramReflector>())
             {
@@ -182,56 +169,66 @@ namespace winrt::Telegram::Native::Calls::implementation
             }
         }
 
-        if (m_descriptor.VideoCapture())
+        tgcalls::Descriptor descriptorImpl = tgcalls::Descriptor
         {
-            auto implementation = winrt::get_self<implementation::VoipVideoCapture>(m_descriptor.VideoCapture());
-            m_capturer = implementation->m_impl;
-        }
-
-        tgcalls::Descriptor descriptor = tgcalls::Descriptor
-        {
-            .version = winrt::to_string(m_version),
+            .version = winrt::to_string(version),
             .config = config,
             .persistentState = persistentState,
             .endpoints = std::vector<tgcalls::Endpoint>(),
             .proxy = NULL,
             .rtcServers = rtc,
             .initialNetworkType = tgcalls::NetworkType(),
-            .encryptionKey = tgcalls::EncryptionKey(encryptionKeyPointer, m_descriptor.IsOutgoing()),
+            .encryptionKey = tgcalls::EncryptionKey(encryptionKeyPointer, descriptor.IsOutgoing()),
             .mediaDevicesConfig = mediaConfig,
-            .videoCapture = m_capturer,
             .stateUpdated = [this](tgcalls::State state) {
-                m_stateUpdatedEventSource(*this, (VoipState)state);
+                std::lock_guard const guard(m_lock);
+                m_stateUpdatedEventSource(*this, (VoipReadyState)state);
             },
             .signalBarsUpdated = [this](int signalBars) {
+                std::lock_guard const guard(m_lock);
                 m_signalBarsUpdatedEventSource(*this, signalBars);
             },
             .audioLevelUpdated = [this](float level) {
+                std::lock_guard const guard(m_lock);
                 m_audioLevelUpdated(*this, level);
             },
             .remoteBatteryLevelIsLowUpdated = [this](bool low) {
+                std::lock_guard const guard(m_lock);
                 m_remoteBatteryLevelIsLowUpdatedEventSource(*this, low);
             },
             .remoteMediaStateUpdated = [this](tgcalls::AudioState audio, tgcalls::VideoState video) {
+                std::lock_guard const guard(m_lock);
                 auto args = winrt::make_self<winrt::Telegram::Native::Calls::implementation::RemoteMediaStateUpdatedEventArgs>((VoipAudioState)audio, (VoipVideoState)video);
                 m_remoteMediaStateUpdatedEventSource(*this, *args);
             },
             .remotePrefferedAspectRatioUpdated = [this](float aspect) {
+                std::lock_guard const guard(m_lock);
                 m_remotePrefferedAspectRatioUpdatedEventSource(*this, aspect);
             },
             .signalingDataEmitted = [this](std::vector<uint8_t> data) {
+                std::lock_guard const guard(m_lock);
                 auto bytes = winrt::single_threaded_vector<uint8_t>(std::move(data));
                 auto args = winrt::make_self<winrt::Telegram::Native::Calls::implementation::SignalingDataEmittedEventArgs>(bytes);
                 m_signalingDataEmittedEventSource(*this, *args);
             }
         };
 
-        m_impl = tgcalls::Meta::Create(winrt::to_string(m_version), std::move(descriptor));
-        //impl->setVideoCapture(capturer);
+        if (descriptor.VideoCapture())
+        {
+            auto implementation = winrt::get_self<implementation::VoipVideoCapture>(descriptor.VideoCapture());
+            descriptorImpl.videoCapture = implementation->m_impl;
+        }
+
+        m_impl = tgcalls::Meta::Create(winrt::to_string(version), std::move(descriptorImpl));
     }
 
-
-    //void VoipManager::SetNetworkType(NetworkType networkType);
+    void VoipManager::Stop()
+    {
+        if (m_impl)
+        {
+            m_impl->stop([](tgcalls::FinalState) { });
+        }
+    }
 
     bool VoipManager::IsMuted()
     {
@@ -243,6 +240,10 @@ namespace winrt::Telegram::Native::Calls::implementation
         if (m_impl)
         {
             m_impl->setMuteMicrophone(m_isMuted = muteMicrophone);
+        }
+        else
+        {
+            m_isMuted = muteMicrophone;
         }
     }
 
@@ -272,24 +273,13 @@ namespace winrt::Telegram::Native::Calls::implementation
         return false;
     }
 
-    //void SetIncomingVideoOutput(std::shared_ptr<rtc::VideoSinkInterface<webrtc::VideoFrame>> sink);
-    winrt::Telegram::Native::Calls::VoipVideoRendererToken VoipManager::SetIncomingVideoOutput(winrt::Microsoft::Graphics::Canvas::UI::Xaml::CanvasControl canvas)
+    void VoipManager::SetIncomingVideoOutput(winrt::Telegram::Native::Calls::VoipVideoOutputSink sink)
     {
-        if (m_impl)
+        if (m_impl && sink)
         {
-            if (canvas != nullptr)
-            {
-                m_renderer = std::make_shared<VoipVideoRenderer>(canvas, false, false);
-                m_impl->setIncomingVideoOutput(m_renderer);
-                return *winrt::make_self<VoipVideoRendererToken>(m_renderer, canvas);
-            }
-            else
-            {
-                m_renderer.reset();
-            }
+            auto implementation = winrt::get_self<VoipVideoOutputSink>(sink);
+            m_impl->setIncomingVideoOutput(implementation->Sink());
         }
-
-        return nullptr;
     }
 
 
@@ -397,20 +387,18 @@ namespace winrt::Telegram::Native::Calls::implementation
                 if (auto screen = videoCapture.try_as<winrt::default_interface<VoipScreenCapture>>())
                 {
                     auto implementation = winrt::get_self<VoipScreenCapture>(screen);
-                    m_capturer = implementation->m_impl;
+                    m_impl->setVideoCapture(implementation->m_impl);
                 }
                 else if (auto video = videoCapture.try_as<winrt::default_interface<VoipVideoCapture>>())
                 {
                     auto implementation = winrt::get_self<VoipVideoCapture>(video);
-                    m_capturer = implementation->m_impl;
+                    m_impl->setVideoCapture(implementation->m_impl);
                 }
             }
             else
             {
-                m_capturer = nullptr;
+                m_impl->setVideoCapture(nullptr);
             }
-
-            m_impl->setVideoCapture(m_capturer);
         }
     }
 
@@ -426,13 +414,15 @@ namespace winrt::Telegram::Native::Calls::implementation
 
     winrt::event_token VoipManager::StateUpdated(Windows::Foundation::TypedEventHandler<
         winrt::Telegram::Native::Calls::VoipManager,
-        VoipState> const& value)
+        VoipReadyState> const& value)
     {
+        std::lock_guard const guard(m_lock);
         return m_stateUpdatedEventSource.add(value);
     }
 
     void VoipManager::StateUpdated(winrt::event_token const& token)
     {
+        std::lock_guard const guard(m_lock);
         m_stateUpdatedEventSource.remove(token);
     }
 
@@ -442,11 +432,13 @@ namespace winrt::Telegram::Native::Calls::implementation
         winrt::Telegram::Native::Calls::VoipManager,
         int> const& value)
     {
+        std::lock_guard const guard(m_lock);
         return m_signalBarsUpdatedEventSource.add(value);
     }
 
     void VoipManager::SignalBarsUpdated(winrt::event_token const& token)
     {
+        std::lock_guard const guard(m_lock);
         m_signalBarsUpdatedEventSource.remove(token);
     }
 
@@ -456,11 +448,13 @@ namespace winrt::Telegram::Native::Calls::implementation
         winrt::Telegram::Native::Calls::VoipManager,
         float> const& value)
     {
+        std::lock_guard const guard(m_lock);
         return m_audioLevelUpdated.add(value);
     }
 
     void VoipManager::AudioLevelUpdated(winrt::event_token const& token)
     {
+        std::lock_guard const guard(m_lock);
         m_audioLevelUpdated.remove(token);
     }
 
@@ -470,11 +464,13 @@ namespace winrt::Telegram::Native::Calls::implementation
         winrt::Telegram::Native::Calls::VoipManager,
         bool> const& value)
     {
+        std::lock_guard const guard(m_lock);
         return m_remoteBatteryLevelIsLowUpdatedEventSource.add(value);
     }
 
     void VoipManager::RemoteBatteryLevelIsLowUpdated(winrt::event_token const& token)
     {
+        std::lock_guard const guard(m_lock);
         m_remoteBatteryLevelIsLowUpdatedEventSource.remove(token);
     }
 
@@ -484,11 +480,13 @@ namespace winrt::Telegram::Native::Calls::implementation
         winrt::Telegram::Native::Calls::VoipManager,
         winrt::Telegram::Native::Calls::RemoteMediaStateUpdatedEventArgs> const& value)
     {
+        std::lock_guard const guard(m_lock);
         return m_remoteMediaStateUpdatedEventSource.add(value);
     }
 
     void VoipManager::RemoteMediaStateUpdated(winrt::event_token const& token)
     {
+        std::lock_guard const guard(m_lock);
         m_remoteMediaStateUpdatedEventSource.remove(token);
     }
 
@@ -498,11 +496,13 @@ namespace winrt::Telegram::Native::Calls::implementation
         winrt::Telegram::Native::Calls::VoipManager,
         float> const& value)
     {
+        std::lock_guard const guard(m_lock);
         return m_remotePrefferedAspectRatioUpdatedEventSource.add(value);
     }
 
     void VoipManager::RemotePrefferedAspectRatioUpdated(winrt::event_token const& token)
     {
+        std::lock_guard const guard(m_lock);
         m_remotePrefferedAspectRatioUpdatedEventSource.remove(token);
     }
 
@@ -512,11 +512,13 @@ namespace winrt::Telegram::Native::Calls::implementation
         winrt::Telegram::Native::Calls::VoipManager,
         winrt::Telegram::Native::Calls::SignalingDataEmittedEventArgs> const& value)
     {
+        std::lock_guard const guard(m_lock);
         return m_signalingDataEmittedEventSource.add(value);
     }
 
     void VoipManager::SignalingDataEmitted(winrt::event_token const& token)
     {
+        std::lock_guard const guard(m_lock);
         m_signalingDataEmittedEventSource.remove(token);
     }
 } // namespace winrt::Telegram::Native::Calls::implementation

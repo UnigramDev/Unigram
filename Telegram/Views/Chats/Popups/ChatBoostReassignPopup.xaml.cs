@@ -82,7 +82,7 @@ namespace Telegram.Views.Chats.Popups
                 var diff = slot.CooldownUntilDate - DateTime.Now.ToTimestamp();
                 if (diff > 0)
                 {
-                    content.Subtitle = string.Format(Strings.BoostingAvailableIn, diff.GetDuration());
+                    content.Subtitle = string.Format(Strings.BoostingAvailableIn, diff.ToDuration());
                     stop = false;
                 }
                 else

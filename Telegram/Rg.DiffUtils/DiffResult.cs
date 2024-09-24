@@ -151,7 +151,7 @@ namespace Rg.DiffUtils
 
                     var status = _oldItemStatuses[posX];
 
-                    if((status & FLAG_MOVED) != 0)
+                    if ((status & FLAG_MOVED) != 0)
                     {
                         var newPos = status >> FLAG_OFFSET;
 
@@ -192,7 +192,7 @@ namespace Rg.DiffUtils
 
                     var status = _newItemStatuses[posY];
 
-                    if((status & FLAG_MOVED) != 0)
+                    if ((status & FLAG_MOVED) != 0)
                     {
                         var oldPos = status >> FLAG_OFFSET;
                         var postponedUpdate = GetPostponedUpdate(postponedUpdates, oldPos, true);

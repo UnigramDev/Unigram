@@ -57,7 +57,7 @@ namespace Telegram.Common
 
         public async void NavigateToWebApp(User botUser, string url, long launchId = 0, AttachmentMenuBot menuBot = null, Chat sourceChat = null)
         {
-            await OpenAsync(new ViewServiceParams
+            await OpenAsync(new ViewServiceOptions
             {
                 Width = 384,
                 Height = 640,
@@ -66,15 +66,26 @@ namespace Telegram.Common
             });
         }
 
+        public async void NavigateToWebApp(User botUser, string url, string title, long gameChatId = 0, long gameMessageId = 0)
+        {
+            await OpenAsync(new ViewServiceOptions
+            {
+                Width = 384,
+                Height = 640,
+                PersistedId = "WebApp",
+                Content = control => new WebAppPage(ClientService, botUser, url, title, gameChatId, gameMessageId)
+            });
+        }
+
         public async void NavigateToInstant(string url, string fallbackUrl = null)
         {
             var response = await ClientService.SendAsync(new GetWebPageInstantView(url, true));
             if (response is WebPageInstantView instantView)
             {
-                TabViewItem CreateTabViewItem()
+                TabViewItem CreateTabViewItem(WindowContext window)
                 {
                     var frame = new Frame();
-                    var service = new TLNavigationService(ClientService, null, Window, frame, ClientService.SessionId, "InstantView"); // BootStrapper.Current.NavigationServiceFactory(BootStrapper.BackButton.Ignore, frame, _clientService.SessionId, "ciccio", false);
+                    var service = new TLNavigationService(ClientService, null, window, frame, ClientService.SessionId, "InstantView"); // BootStrapper.Current.NavigationServiceFactory(BootStrapper.BackButton.Ignore, frame, _clientService.SessionId, "ciccio", false);
 
                     service.Navigate(typeof(InstantPage), new InstantPageArgs(instantView, url));
 
@@ -101,7 +112,7 @@ namespace Telegram.Common
                     return tabViewItem;
                 }
 
-                NavigateToTab(CreateTabViewItem, new ViewServiceParams
+                NavigateToTab(CreateTabViewItem, new ViewServiceOptions
                 {
                     Width = 820,
                     Height = 640,
@@ -119,7 +130,7 @@ namespace Telegram.Common
 
         public void NavigateToWeb3(string url)
         {
-            NavigateToTab(() => WebBrowserPage.Create(ClientService, url), new ViewServiceParams
+            NavigateToTab(window => WebBrowserPage.Create(ClientService, url), new ViewServiceOptions
             {
                 Width = 820,
                 Height = 640,
@@ -127,7 +138,7 @@ namespace Telegram.Common
             });
         }
 
-        private async void NavigateToTab(Func<TabViewItem> newTab, ViewServiceParams parameters)
+        private async void NavigateToTab(Func<WindowContext, TabViewItem> newTab, ViewServiceOptions parameters)
         {
             var oldViewId = WindowContext.Current.Id;
 
@@ -138,7 +149,7 @@ namespace Telegram.Common
                 {
                     if (WindowContext.Current.Content is TabbedPage page)
                     {
-                        page.AddNewTab(newTab());
+                        page.AddNewTab(newTab(already));
                     }
 
                     await ApplicationViewSwitcher.SwitchAsync(WindowContext.Current.Id, oldViewId);
@@ -146,12 +157,12 @@ namespace Telegram.Common
             }
             else
             {
-                await OpenAsync(new ViewServiceParams
+                await OpenAsync(new ViewServiceOptions
                 {
                     Width = parameters.Width,
                     Height = parameters.Height,
                     PersistedId = parameters.PersistedId,
-                    Content = control => new TabbedPage(newTab(), string.Equals(parameters.PersistedId, "WebApps"))
+                    Content = control => new TabbedPage(newTab(WindowContext.Current), string.Equals(parameters.PersistedId, "WebApps"))
                 });
             }
         }
@@ -192,7 +203,7 @@ namespace Telegram.Common
                 return;
             }
 
-            var parameters = new ViewServiceParams
+            var parameters = new ViewServiceOptions
             {
                 Title = Strings.PaymentCheckout,
                 Width = 380,
@@ -228,7 +239,7 @@ namespace Telegram.Common
                 return;
             }
 
-            var parameters = new ViewServiceParams
+            var parameters = new ViewServiceOptions
             {
                 Title = Strings.PaymentCheckout,
                 Width = 380,

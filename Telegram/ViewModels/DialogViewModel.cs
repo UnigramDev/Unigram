@@ -2989,7 +2989,7 @@ namespace Telegram.ViewModels
 
                     var text = new FormattedText(message, new[] { entity });
 
-                    ToastPopup.Show(NavigationService.XamlRoot, text, ToastPopupIcon.JoinRequested);
+                    ToastPopup.Show(XamlRoot, text, ToastPopupIcon.JoinRequested);
                 }
             }
             else if (Constants.DEBUG)
@@ -3025,7 +3025,7 @@ namespace Telegram.ViewModels
                 return;
             }
 
-            _notificationsService.SetMuteFor(chat, unmute ? 0 : 632053052, NavigationService.XamlRoot);
+            _notificationsService.SetMuteFor(chat, unmute ? 0 : 632053052, XamlRoot);
         }
 
         #endregion
@@ -3302,7 +3302,7 @@ namespace Telegram.ViewModels
             }
             else
             {
-                await _voipGroupService.JoinAsync(NavigationService.XamlRoot, chat.Id);
+                await _voipGroupService.JoinAsync(XamlRoot, chat.Id);
             }
         }
 
@@ -3769,7 +3769,7 @@ namespace Telegram.ViewModels
 
             if (value is int update)
             {
-                _notificationsService.SetMuteFor(chat, update, NavigationService.XamlRoot);
+                _notificationsService.SetMuteFor(chat, update, XamlRoot);
             }
             else
             {
@@ -3784,7 +3784,7 @@ namespace Telegram.ViewModels
 
                 if (muteFor != popup.Value)
                 {
-                    _notificationsService.SetMuteFor(chat, popup.Value, NavigationService.XamlRoot);
+                    _notificationsService.SetMuteFor(chat, popup.Value, XamlRoot);
                 }
             }
         }
@@ -4077,7 +4077,7 @@ namespace Telegram.ViewModels
                 return;
             }
 
-            await _voipGroupService.JoinAsync(NavigationService.XamlRoot, chat.Id);
+            await _voipGroupService.JoinAsync(XamlRoot, chat.Id);
         }
 
         #endregion

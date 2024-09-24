@@ -17,7 +17,6 @@ using Telegram.Navigation;
 using Telegram.Streams;
 using Telegram.ViewModels.Authorization;
 using Telegram.ViewModels.Delegates;
-using Windows.Foundation;
 
 namespace Telegram.Views.Authorization
 {
@@ -95,10 +94,10 @@ namespace Telegram.Views.Authorization
             var inner2 = ElementComposition.GetElementVisual(PhoneInnerPanel);
 
             var transform1 = Logo2Panel.TransformToVisual(Logo1Panel);
-            var point1 = transform1.TransformPoint(new Point()).ToVector2();
+            var point1 = transform1.TransformVector2();
 
             var transform2 = Logo1Panel.TransformToVisual(Logo2Panel);
-            var point2 = transform2.TransformPoint(new Point()).ToVector2();
+            var point2 = transform2.TransformVector2();
 
             var batch = BootStrapper.Current.Compositor.CreateScopedBatch(CompositionBatchTypes.Animation);
             batch.Completed += (s, args) =>
@@ -177,10 +176,10 @@ namespace Telegram.Views.Authorization
             var inner2 = ElementComposition.GetElementVisual(PhoneInnerPanel);
 
             var transform1 = Logo2Panel.TransformToVisual(Logo1Panel);
-            var point1 = transform1.TransformPoint(new Point()).ToVector2();
+            var point1 = transform1.TransformVector2();
 
             var transform2 = Logo1Panel.TransformToVisual(Logo2Panel);
-            var point2 = transform2.TransformPoint(new Point()).ToVector2();
+            var point2 = transform2.TransformVector2();
 
             var batch = BootStrapper.Current.Compositor.CreateScopedBatch(CompositionBatchTypes.Animation);
             batch.Completed += (s, args) =>

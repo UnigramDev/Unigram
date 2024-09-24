@@ -278,7 +278,7 @@ namespace Telegram.Controls.Cells
                 var diff = slot.CooldownUntilDate - DateTime.Now.ToTimestamp();
                 if (diff > 0)
                 {
-                    SubtitleLabel.Text = string.Format(Strings.BoostingAvailableIn, diff.GetDuration());
+                    SubtitleLabel.Text = string.Format(Strings.BoostingAvailableIn, diff.ToDuration());
                 }
                 else
                 {

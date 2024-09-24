@@ -6,7 +6,6 @@
 //
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
-using WinRT;
 
 namespace Telegram.Collections
 {

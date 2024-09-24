@@ -189,7 +189,7 @@ namespace Telegram.Common
 
         #region Device Access
 
-        public static async Task<bool> CheckIfUnsupportedAsync(XamlRoot xamlRoot)
+        public static bool IsUnsupported(XamlRoot xamlRoot)
         {
             if (ApiInfo.IsMediaSupported)
             {
@@ -199,7 +199,7 @@ namespace Telegram.Common
             // VoIP isn't supported on Windows N because:
             // - MediaCapture is used for capturing video (no alternatives on WinRT)
             // - MediaFoundation is used for encoding/decoding video frames (can fallback for WebRTC's software)
-            await MessagePopup.ShowAsync(xamlRoot, Strings.VoipPlatformUnsupportedText, Strings.VoipPlatformUnsupportedTitle, Strings.OK);
+            _ = MessagePopup.ShowAsync(xamlRoot, Strings.VoipPlatformUnsupportedText, Strings.VoipPlatformUnsupportedTitle, Strings.OK);
             return true;
         }
 

@@ -106,14 +106,14 @@ namespace Telegram.ViewModels.Stars
                     var formatted = ClientEx.ParseMarkdown(text);
 
                     Aggregator.Publish(new UpdateConfetti());
-                    ToastPopup.Show(NavigationService.XamlRoot, formatted, ToastPopupIcon.Success);
+                    ToastPopup.Show(XamlRoot, formatted, ToastPopupIcon.Success);
 
                     return PayResult.Succeeded;
                 }
             }
             else if (response is Error error)
             {
-                ToastPopup.ShowError(NavigationService.XamlRoot, error);
+                ToastPopup.ShowError(XamlRoot, error);
             }
 
             return PayResult.Failed;

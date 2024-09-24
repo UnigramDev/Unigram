@@ -83,28 +83,39 @@ namespace Telegram.Common
                 return;
             }
 
+            static Task PlayImpl(string url, int? loopCount = 0, EffectType type = EffectType.Generic)
+            {
+                return Play(StorageFile.GetFileFromApplicationUriAsync(new Uri(url)), loopCount, type);
+            }
+
             switch (effect)
             {
                 case SoundEffect.Sent:
-                    _ = Play(StorageFile.GetFileFromApplicationUriAsync(new Uri("ms-appx:///Assets/Audio/sent.mp3")));
+                    _ = PlayImpl("ms-appx:///Assets/Audio/sent.mp3");
                     break;
                 case SoundEffect.VoipIncoming:
-                    _ = Play(StorageFile.GetFileFromApplicationUriAsync(new Uri("ms-appx:///Assets/Audio/voip_incoming.mp3")), null, EffectType.Voip);
+                    _ = PlayImpl("ms-appx:///Assets/Audio/voip_incoming.mp3", null, EffectType.Voip);
                     break;
                 case SoundEffect.VoipRingback:
-                    _ = Play(StorageFile.GetFileFromApplicationUriAsync(new Uri("ms-appx:///Assets/Audio/voip_ringback.mp3")), null, EffectType.Voip);
+                    _ = PlayImpl("ms-appx:///Assets/Audio/voip_ringback.mp3", null, EffectType.Voip);
                     break;
                 case SoundEffect.VoipConnecting:
-                    _ = Play(StorageFile.GetFileFromApplicationUriAsync(new Uri("ms-appx:///Assets/Audio/voip_connecting.mp3")), type: EffectType.Voip);
+                    _ = PlayImpl("ms-appx:///Assets/Audio/voip_connecting.mp3", type: EffectType.Voip);
                     break;
                 case SoundEffect.VoipBusy:
-                    _ = Play(StorageFile.GetFileFromApplicationUriAsync(new Uri("ms-appx:///Assets/Audio/voip_busy.mp3")), 4, type: EffectType.Voip);
+                    _ = PlayImpl("ms-appx:///Assets/Audio/voip_busy.mp3", 4, type: EffectType.Voip);
+                    break;
+                case SoundEffect.VoipEnd:
+                    _ = PlayImpl("ms-appx:///Assets/Audio/voip_end.mp3", type: EffectType.Voip);
+                    break;
+                case SoundEffect.VoipFailed:
+                    _ = PlayImpl("ms-appx:///Assets/Audio/voip_failed.mp3", type: EffectType.Voip);
                     break;
                 case SoundEffect.VideoChatJoin:
-                    _ = Play(StorageFile.GetFileFromApplicationUriAsync(new Uri("ms-appx:///Assets/Audio/voicechat_join.mp3")), type: EffectType.VideoChat);
+                    _ = PlayImpl("ms-appx:///Assets/Audio/voicechat_join.mp3", type: EffectType.VideoChat);
                     break;
                 case SoundEffect.VideoChatLeave:
-                    _ = Play(StorageFile.GetFileFromApplicationUriAsync(new Uri("ms-appx:///Assets/Audio/voicechat_leave.mp3")), type: EffectType.VideoChat);
+                    _ = PlayImpl("ms-appx:///Assets/Audio/voicechat_leave.mp3", type: EffectType.VideoChat);
                     break;
             }
         }
@@ -199,6 +210,8 @@ namespace Telegram.Common
         VoipIncoming,
         VoipRingback,
         VoipBusy,
+        VoipFailed,
+        VoipEnd,
         VoipConnecting,
         VideoChatJoin,
         VideoChatLeave
