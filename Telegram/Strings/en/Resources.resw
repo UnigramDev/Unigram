@@ -10962,7 +10962,7 @@ However, it is currently available for purchase. **Learn more…**</value>
     <value>Line busy</value>
   </data>
   <data name="VoipCallEncryptionEndToEnd" xml:space="preserve">
-    <value>This call is end to end encrypted</value>
+    <value>This call is end-to-end encrypted</value>
   </data>
   <data name="VoipCallEnded" xml:space="preserve">
     <value>Call ended</value>
@@ -11286,12 +11286,6 @@ Participants will see that the chat is being recorded.</value>
   </data>
   <data name="VoipScreen2" xml:space="preserve">
     <value>screen</value>
-  </data>
-  <data name="VoipScreencastUnsupported" xml:space="preserve">
-    <value>Bla bla bla</value>
-  </data>
-  <data name="VoipScreencastUnsupportedTitle" xml:space="preserve">
-    <value>Bla bla bla</value>
   </data>
   <data name="VoipSettings" xml:space="preserve">
     <value>settings</value>
