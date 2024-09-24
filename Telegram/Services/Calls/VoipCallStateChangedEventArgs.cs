@@ -2,7 +2,7 @@
 
 namespace Telegram.Services.Calls
 {
-    public class VoipCallStateChangedEventArgs
+    public partial class VoipCallStateChangedEventArgs
     {
         public VoipCallStateChangedEventArgs(VoipState state, VoipReadyState readyState)
         {

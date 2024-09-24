@@ -1,6 +1,6 @@
 ﻿namespace Telegram.Services.Calls
 {
-    public class VoipCallAudioLevelUpdatedEventArgs
+    public partial class VoipCallAudioLevelUpdatedEventArgs
     {
         public VoipCallAudioLevelUpdatedEventArgs(float audioLevel)
         {

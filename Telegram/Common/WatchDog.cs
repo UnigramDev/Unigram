@@ -63,7 +63,7 @@ namespace Telegram
      * 
      */
 
-    public class Properties : Dictionary<string, object>
+    public partial class Properties : Dictionary<string, object>
     {
 
     }

@@ -1348,7 +1348,7 @@ namespace Telegram.Views.Calls
         #endregion
     }
 
-    public class WindowEx : UserControlEx
+    public partial class WindowEx : UserControlEx
     {
         public WindowEx()
         {
