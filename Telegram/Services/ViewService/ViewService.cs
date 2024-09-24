@@ -76,13 +76,13 @@ namespace Telegram.Services.ViewService
             _mainWindowCreated.TrySetResult(true);
         }
 
-        public Task<ViewLifetimeControl> OpenAsync(ViewServiceOptions parameters)
+        public Task<ViewLifetimeControl> OpenAsync(ViewServiceOptions options)
         {
             if (ApiInfo.HasMultipleViews)
             {
                 try
                 {
-                    return OpenAsyncInternal(parameters);
+                    return OpenAsyncInternal(options);
                 }
                 catch (Exception ex)
                 {
@@ -95,11 +95,11 @@ namespace Telegram.Services.ViewService
             }
             else
             {
-                return FacadeAsync(parameters);
+                return FacadeAsync(options);
             }
         }
 
-        private async Task<ViewLifetimeControl> FacadeAsync(ViewServiceOptions parameters)
+        private async Task<ViewLifetimeControl> FacadeAsync(ViewServiceOptions options)
         {
             var tsc = new TaskCompletionSource<ViewLifetimeControl>();
 
@@ -107,7 +107,7 @@ namespace Telegram.Services.ViewService
             {
                 if (Window.Current.Content is RootPage root)
                 {
-                    root.PresentContent(parameters.Content(null));
+                    root.PresentContent(options.Content(null));
                     await ApplicationViewSwitcher.TryShowAsStandaloneAsync(ApplicationView.GetForCurrentView().Id);
                 }
 
@@ -117,7 +117,7 @@ namespace Telegram.Services.ViewService
             return await tsc.Task;
         }
 
-        private async Task<ViewLifetimeControl> OpenAsyncInternal(ViewServiceOptions parameters)
+        private async Task<ViewLifetimeControl> OpenAsyncInternal(ViewServiceOptions options)
         {
             await _mainWindowCreated.Task;
 
@@ -133,35 +133,37 @@ namespace Telegram.Services.ViewService
                     var newWindow = WindowContext.Current;
                     var newAppView = ApplicationView.GetForCurrentView();
 
-                    newAppView.Title = parameters.Title ?? string.Empty;
-                    newWindow.PersistedId = parameters.PersistedId ?? string.Empty;
+                    newAppView.Title = options.Title ?? string.Empty;
+                    newWindow.PersistedId = options.PersistedId ?? string.Empty;
 
                     var control = ViewLifetimeControl.GetForCurrentView();
-                    newWindow.Content = parameters.Content(control);
+                    newWindow.Content = options.Content(control);
                     newWindow.Activate();
 
                     tsc.SetResult(control);
+
+                    Logger.Info(newWindow.Content?.GetType());
                 });
 
                 var control = await tsc.Task;
-                var viewMode = parameters.ViewMode switch
+                var viewMode = options.ViewMode switch
                 {
                     ViewServiceMode.CompactOverlay => ApplicationViewMode.CompactOverlay,
                     _ => ApplicationViewMode.Default
                 };
 
                 var preferences = ViewModePreferences.CreateDefault(viewMode);
-                if (parameters.Width != 0 && parameters.Height != 0)
+                if (options.Width != 0 && options.Height != 0)
                 {
-                    preferences.CustomSize = new Size(parameters.Width, parameters.Height);
+                    preferences.CustomSize = new Size(options.Width, options.Height);
                     preferences.ViewSizePreference = ViewSizePreference.Custom;
                 }
 
                 await ApplicationViewSwitcher.TryShowAsViewModeAsync(control.Id, viewMode, preferences);
 
-                if (parameters.Width != 0 && parameters.Height != 0)
+                if (options.Width != 0 && options.Height != 0)
                 {
-                    newView.DispatcherQueue.TryEnqueue(() => ApplicationView.GetForCurrentView().TryResizeView(new Size(parameters.Width, parameters.Height)));
+                    newView.DispatcherQueue.TryEnqueue(() => ApplicationView.GetForCurrentView().TryResizeView(new Size(options.Width, options.Height)));
                 }
 
                 return control;

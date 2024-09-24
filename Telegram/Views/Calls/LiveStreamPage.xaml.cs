@@ -147,14 +147,17 @@ namespace Telegram.Views.Calls
 
         private void ShowHideTransport(bool show)
         {
-            foreach (var popup in VisualTreeHelper.GetOpenPopupsForXamlRoot(XamlRoot))
+            if (show != _transportCollapsed || ((_transportFocused || _transportUnavailable) && !show))
             {
                 return;
             }
 
-            if (show != _transportCollapsed || ((_transportFocused || _transportUnavailable) && !show))
+            if (show is false && XamlRoot != null)
             {
-                return;
+                foreach (var popup in VisualTreeHelper.GetOpenPopupsForXamlRoot(XamlRoot))
+                {
+                    return;
+                }
             }
 
             _transportCollapsed = !show;
@@ -246,22 +249,17 @@ namespace Telegram.Views.Calls
 
         private void OnLoaded(object sender, RoutedEventArgs e)
         {
-            try
-            {
-                _displayRequest.RequestActive();
-            }
-            catch { }
+            _displayRequest.TryRequestActive();
         }
 
         private void OnUnloaded(object sender, RoutedEventArgs e)
         {
             Dispose();
 
-            try
-            {
-                _displayRequest.RequestRelease();
-            }
-            catch { }
+            _displayRequest.TryRequestRelease();
+
+            _scheduledTimer.Stop();
+            _inactivityTimer.Stop();
         }
 
         public void Dispose(bool? discard = null)
