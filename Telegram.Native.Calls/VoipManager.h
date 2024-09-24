@@ -17,6 +17,7 @@
 //using namespace winrt::Windows::Foundation::Collections;
 
 #include <winrt/Telegram.Td.Api.h>
+#include <mutex>
 
 using namespace winrt::Telegram::Td::Api;
 
@@ -122,6 +123,7 @@ namespace winrt::Telegram::Native::Calls::implementation
 
     private:
         std::unique_ptr<tgcalls::Instance> m_impl = nullptr;
+        std::mutex m_lock;
 
         bool m_isMuted = false;
 
