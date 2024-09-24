@@ -33,6 +33,7 @@
 
     <!-- Needed for Unpackaged deployment -->
     <!--<WindowsAppSDKSelfContained>true</WindowsAppSDKSelfContained>-->
+    <HasPackageAndPublishMenu>true</HasPackageAndPublishMenu>
   </PropertyGroup>
 
   <ItemGroup>
