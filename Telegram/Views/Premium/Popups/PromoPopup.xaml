@@ -17,9 +17,6 @@
                   ContainerContentChanging="OnContainerContentChanging"
                   SelectionMode="None"
                   Padding="12,0">
-            <ListView.ItemContainerTransitions>
-                <TransitionCollection />
-            </ListView.ItemContainerTransitions>
             <ListView.Header>
                 <Grid>
                     <Grid.RowDefinitions>

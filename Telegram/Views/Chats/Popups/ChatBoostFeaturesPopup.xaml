@@ -62,10 +62,6 @@
                     <cells:ChatBoostFeaturesCell />
                 </DataTemplate>
             </ListView.ItemTemplate>
-            <!-- TODO: WinUI -->
-            <ListView.ItemContainerTransitions>
-                <TransitionCollection />
-            </ListView.ItemContainerTransitions>
         </ListView>
 
         <controls:ScrollViewerScrim Background="{ThemeResource ContentDialogBackground}"

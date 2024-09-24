@@ -42,9 +42,7 @@
                 </Style>
             </ListView.ItemContainerStyle>
             <ListView.ItemContainerTransitions>
-                <TransitionCollection>
-
-                </TransitionCollection>
+                <TransitionCollection />
             </ListView.ItemContainerTransitions>
         </ListView>
 

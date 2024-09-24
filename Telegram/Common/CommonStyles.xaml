@@ -957,7 +957,8 @@
                     <AddDeleteThemeTransition />
                     <ContentThemeTransition />
                     <ReorderThemeTransition />
-                    <EntranceThemeTransition IsStaggeringEnabled="False" />
+                    <!-- TODO: WinUI 3
+                    <EntranceThemeTransition IsStaggeringEnabled="False" />-->
                 </TransitionCollection>
             </Setter.Value>
         </Setter>
@@ -1003,6 +1004,9 @@
             </Setter.Value>
         </Setter>
     </Style>
+
+    <Style TargetType="ListView"
+           BasedOn="{StaticResource DefaultListViewStyle}" />
 
     <Style x:Key="EmptyHyperlinkButtonStyle"
            TargetType="HyperlinkButton">
@@ -2640,7 +2644,8 @@
                     <AddDeleteThemeTransition />
                     <ContentThemeTransition />
                     <ReorderThemeTransition />
-                    <EntranceThemeTransition IsStaggeringEnabled="False" />
+                    <!-- TODO: WinUI 3
+                    <EntranceThemeTransition IsStaggeringEnabled="False" />-->
                 </TransitionCollection>
             </Setter.Value>
         </Setter>
@@ -3545,7 +3550,8 @@
                     <AddDeleteThemeTransition />
                     <ContentThemeTransition />
                     <ReorderThemeTransition />
-                    <EntranceThemeTransition IsStaggeringEnabled="False" />
+                    <!-- TODO: WinUI 3
+                    <EntranceThemeTransition IsStaggeringEnabled="False" />-->
                 </TransitionCollection>
             </Setter.Value>
         </Setter>
@@ -3609,7 +3615,8 @@
                     <AddDeleteThemeTransition />
                     <ContentThemeTransition />
                     <ReorderThemeTransition />
-                    <EntranceThemeTransition IsStaggeringEnabled="False" />
+                    <!-- TODO: WinUI 3
+                    <EntranceThemeTransition IsStaggeringEnabled="False" />-->
                 </TransitionCollection>
             </Setter.Value>
         </Setter>

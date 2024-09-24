@@ -633,10 +633,6 @@
                     </controls:FauxCheckBox>
                 </DataTemplate>
             </ListView.ItemTemplate>
-            <!-- TODO: WinUI -->
-            <ListView.ItemContainerTransitions>
-                <TransitionCollection />
-            </ListView.ItemContainerTransitions>
         </controls:TableListView>
 
         <controls:ScrollViewerScrim Background="{ThemeResource PageBackgroundDarkBrush}"
