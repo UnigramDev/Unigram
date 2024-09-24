@@ -684,8 +684,7 @@ namespace Telegram.Views
                         _viewModel.Type is DialogType.History or DialogType.Thread or DialogType.ScheduledMessages
                         && TextArea.Visibility == Visibility.Visible);
 
-                    checkbox.UpdateMessage(message, Messages);
-                    checkbox.UpdateSelectionEnabled(ViewModel.IsSelectionEnabled, false);
+                    checkbox.UpdateMessage(message, Messages, ViewModel.IsSelectionEnabled);
 
                     content = checkbox.Content as FrameworkElement;
                 }

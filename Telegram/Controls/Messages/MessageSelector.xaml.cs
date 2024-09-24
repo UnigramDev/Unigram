@@ -37,7 +37,7 @@ namespace Telegram.Controls.Messages
 
         private bool _templateApplied;
 
-        private bool _isSelected;
+        private bool _selected;
 
         private MessageViewModel _message;
         private ChatHistoryView _owner;
@@ -130,7 +130,7 @@ namespace Telegram.Controls.Messages
 
         private void CreateIcon()
         {
-            if (Icon != null || !_isSelectionEnabled)
+            if (Icon != null || !_selectionEnabled)
             {
                 return;
             }
@@ -188,13 +188,13 @@ namespace Telegram.Controls.Messages
 
             if (_message != null)
             {
-                UpdateMessage(_message, _owner);
+                UpdateMessage(_message, _owner, _selectionEnabled);
             }
         }
 
         protected override void OnToggle()
         {
-            if (_isSelectionEnabled && _message is MessageViewModel message)
+            if (_selectionEnabled && _message is MessageViewModel message)
             {
                 base.OnToggle();
 
@@ -262,7 +262,7 @@ namespace Telegram.Controls.Messages
             }
         }
 
-        public void UpdateMessage(MessageViewModel message, ChatHistoryView owner)
+        public void UpdateMessage(MessageViewModel message, ChatHistoryView owner, bool selectionEnabled)
         {
             _message = message;
             _owner = owner;
@@ -274,14 +274,16 @@ namespace Telegram.Controls.Messages
 
             message.UpdateSelectionCallback(UpdateSelection);
 
-            var selected = _isSelectionEnabled && message.Delegate.SelectedItems.ContainsKey(message.Id);
-            if (selected == _isSelected)
+            var selected = selectionEnabled && message.Delegate.SelectedItems.ContainsKey(message.Id);
+            if (selected == _selected && selectionEnabled == _selectionEnabled)
             {
                 return;
             }
 
-            IsChecked = _isSelected = selected;
-            Presenter.IsHitTestVisible = !_isSelectionEnabled || IsAlbum;
+            _selectionEnabled = selectionEnabled;
+
+            IsChecked = _selected = selected;
+            Presenter.IsHitTestVisible = !_selectionEnabled || IsAlbum;
 
             CreateIcon();
             UpdateIcon(IsChecked is true, false);
@@ -289,7 +291,7 @@ namespace Telegram.Controls.Messages
             if (Icon != null)
             {
                 var icon = ElementComposition.GetElementVisual(Icon);
-                icon.Properties.InsertVector3("Translation", new Vector3(_isSelectionEnabled ? 0 : -36, 0, 0));
+                icon.Properties.InsertVector3("Translation", new Vector3(_selectionEnabled ? 0 : -36, 0, 0));
             }
 
             if (IsAlbumChild)
@@ -315,26 +317,26 @@ namespace Telegram.Controls.Messages
             else
             {
                 var presenter = ElementComposition.GetElementVisual(Presenter);
-                presenter.Offset = new Vector3(_isSelectionEnabled && (message.IsChannelPost || !message.IsOutgoing) ? 36 : 0, 0, 0);
+                presenter.Offset = new Vector3(_selectionEnabled && (message.IsChannelPost || !message.IsOutgoing) ? 36 : 0, 0, 0);
             }
         }
 
-        private bool _isSelectionEnabled;
+        private bool _selectionEnabled;
 
         public void UpdateSelectionEnabled(bool value, bool animate)
         {
-            if (_isSelectionEnabled == value)
+            if (_selectionEnabled == value)
             {
                 return;
             }
 
-            _isSelectionEnabled = value;
+            _selectionEnabled = value;
 
             if (_message is MessageViewModel message)
             {
                 var selected = value && message.Delegate.SelectedItems.ContainsKey(message.Id);
 
-                IsChecked = _isSelected = selected;
+                IsChecked = _selected = selected;
                 Presenter.IsHitTestVisible = !value || IsAlbum;
 
                 CreateIcon();
@@ -417,12 +419,12 @@ namespace Telegram.Controls.Messages
                     selected = message.Delegate.SelectedItems.ContainsKey(message.Id);
                 }
 
-                selected = _isSelectionEnabled && selected;
+                selected = _selectionEnabled && selected;
 
-                if (selected != _isSelected)
+                if (selected != _selected)
                 {
-                    IsChecked = _isSelected = selected;
-                    Presenter.IsHitTestVisible = !_isSelectionEnabled || IsAlbum;
+                    IsChecked = _selected = selected;
+                    Presenter.IsHitTestVisible = !_selectionEnabled || IsAlbum;
 
                     CreateIcon();
                     UpdateIcon(IsChecked is true, true);
@@ -817,7 +819,7 @@ namespace Telegram.Controls.Messages
                 _owner._owner.SelectedItems.Add(_owner.Message);
             }
 
-            public bool IsSelected => _owner._isSelected;
+            public bool IsSelected => _owner._selected;
 
             public IRawElementProviderSimple SelectionContainer
             {
