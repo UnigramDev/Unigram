@@ -1771,6 +1771,7 @@ namespace Telegram.Controls.Cells
                 void handler(object sender, RoutedEventArgs e)
                 {
                     chatView.Unloaded -= handler;
+                    chatView.ViewModel.NavigatedFrom(null, false);
                     chatView.Deactivate(false);
                 }
 
