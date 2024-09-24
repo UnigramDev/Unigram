@@ -66,7 +66,8 @@
                         <AddDeleteThemeTransition />
                         <ContentThemeTransition />
                         <ReorderThemeTransition />
-                        <EntranceThemeTransition IsStaggeringEnabled="False" />
+                        <!-- TODO: WinUI 3
+                        <EntranceThemeTransition IsStaggeringEnabled="False" />-->
                     </TransitionCollection>
                 </Setter.Value>
             </Setter>
@@ -802,7 +803,6 @@
               Grid.Row="2">
             <chats:ChatHistoryView x:Name="Messages"
                                    Style="{StaticResource BubbleListViewStyle}"
-                                   ItemContainerTransitions="{x:Null}"
                                    ShowsScrollingPlaceholders="False"
                                    IsItemClickEnabled="False"
                                    IsSelectionEnabled="{x:Bind ViewModel.IsSelectionEnabled, Mode=TwoWay}"
@@ -823,6 +823,9 @@
                                          VerticalAlignment="Bottom" />
                     </ItemsPanelTemplate>
                 </ListView.ItemsPanel>
+                <ListView.ItemContainerTransitions>
+                    <TransitionCollection />
+                </ListView.ItemContainerTransitions>
                 <ListView.ItemContainerStyle>
                     <Style TargetType="ListViewItem"
                            BasedOn="{StaticResource DefaultListViewItemStyle}">

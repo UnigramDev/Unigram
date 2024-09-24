@@ -17,6 +17,7 @@ using Telegram.Services;
 using Telegram.Td.Api;
 using Telegram.Views.Popups;
 using Telegram.Views.Settings.Popups;
+using WinRT;
 
 namespace Telegram.ViewModels.Settings
 {
@@ -228,6 +229,7 @@ namespace Telegram.ViewModels.Settings
         }
     }
 
+    [GeneratedBindableCustomProperty]
     public partial class KeyedGroup
     {
         public string Title { get; set; }

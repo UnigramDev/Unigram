@@ -32,7 +32,6 @@ namespace Telegram.Services
     }
 
     public partial class ContactsService : IContactsService
-    //, IHandle<Telegram.Td.Api.UpdateAuthorizationState>/*, IHandle<Telegram.Td.Api.UpdateUser>*/
     {
         private readonly IClientService _clientService;
         private readonly ISettingsService _settingsService;

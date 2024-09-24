@@ -31,7 +31,6 @@
                   SelectionChanged="OnSelectionChanged"
                   ChoosingItemContainer="OnChoosingItemContainer"
                   ContainerContentChanging="OnContainerContentChanging"
-                  ItemContainerTransitions="{x:Null}"
                   Padding="10,10,0,10"
                   common:FluidGridView.OrientationOnly="False"
                   common:FluidGridView.Padding="0,0,10,0"
@@ -57,6 +56,9 @@
                     </Grid>
                 </DataTemplate>
             </GridView.ItemTemplate>
+            <GridView.ItemContainerTransitions>
+                <TransitionCollection />
+            </GridView.ItemContainerTransitions>
             <GridView.ItemContainerStyle>
                 <Style TargetType="GridViewItem"
                        BasedOn="{StaticResource DefaultGridViewItemStyle}">

@@ -16,7 +16,7 @@
     <GenerateAppInstallerFile>False</GenerateAppInstallerFile>
     <AppxPackageSigningEnabled>True</AppxPackageSigningEnabled>
     <AppxPackageSigningTimestampDigestAlgorithm>SHA256</AppxPackageSigningTimestampDigestAlgorithm>
-    <AppxAutoIncrementPackageRevision>True</AppxAutoIncrementPackageRevision>
+    <AppxAutoIncrementPackageRevision>False</AppxAutoIncrementPackageRevision>
     <AppxSymbolPackageEnabled>False</AppxSymbolPackageEnabled>
     <GenerateTestArtifacts>True</GenerateTestArtifacts>
     <AppxBundle>Never</AppxBundle>
@@ -46,11 +46,11 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ReferenceCopyLocalPaths Include="..\packages\Telegram.Td.UWP.1.8.36\runtimes\win10-x64\native\libcrypto-3-x64.dll" />
-    <ReferenceCopyLocalPaths Include="..\packages\Telegram.Td.UWP.1.8.36\runtimes\win10-x64\native\libssl-3-x64.dll" />
-    <ReferenceCopyLocalPaths Include="..\packages\Telegram.Td.UWP.1.8.36\runtimes\win10-x64\native\Telegram.Td.dll" />
-    <ReferenceCopyLocalPaths Include="..\packages\Telegram.Td.UWP.1.8.36\runtimes\win10-x64\native\Telegram.Td.pri" />
-    <ReferenceCopyLocalPaths Include="..\packages\Telegram.Td.UWP.1.8.36\runtimes\win10-x64\native\zlib1.dll" />
+    <ReferenceCopyLocalPaths Include="C:\Source\Telegram\packages\Telegram.Td.UWP.1.8.36\runtimes\win10-x64\native\libcrypto-3-x64.dll" />
+    <ReferenceCopyLocalPaths Include="C:\Source\Telegram\packages\Telegram.Td.UWP.1.8.36\runtimes\win10-x64\native\libssl-3-x64.dll" />
+    <ReferenceCopyLocalPaths Include="C:\Source\Telegram\packages\Telegram.Td.UWP.1.8.36\runtimes\win10-x64\native\Telegram.Td.dll" />
+    <ReferenceCopyLocalPaths Include="C:\Source\Telegram\packages\Telegram.Td.UWP.1.8.36\runtimes\win10-x64\native\Telegram.Td.pri" />
+    <ReferenceCopyLocalPaths Include="C:\Source\Telegram\packages\Telegram.Td.UWP.1.8.36\runtimes\win10-x64\native\zlib1.dll" />
   </ItemGroup>
 
   <!--

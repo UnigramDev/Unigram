@@ -175,7 +175,8 @@
                     <AddDeleteThemeTransition />
                     <ContentThemeTransition />
                     <ReorderThemeTransition />
-                    <EntranceThemeTransition IsStaggeringEnabled="False" />
+                    <!-- TODO: WinUI 3
+                    <EntranceThemeTransition IsStaggeringEnabled="False" />-->
                 </TransitionCollection>
             </Setter.Value>
         </Setter>
@@ -2115,7 +2116,8 @@
                     <AddDeleteThemeTransition />
                     <ContentThemeTransition />
                     <ReorderThemeTransition />
-                    <EntranceThemeTransition IsStaggeringEnabled="False" />
+                    <!-- TODO: WinUI 3
+                    <EntranceThemeTransition IsStaggeringEnabled="False" />-->
                 </TransitionCollection>
             </Setter.Value>
         </Setter>

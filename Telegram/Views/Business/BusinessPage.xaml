@@ -152,10 +152,6 @@
                     </controls:HeaderedControl>
                 </controls:SettingsPanel>
             </ListView.Footer>
-            <!-- TODO: WinUI -->
-            <ListView.ItemContainerTransitions>
-                <TransitionCollection />
-            </ListView.ItemContainerTransitions>
         </controls:TableListView>
 
         <Grid x:Name="PurchasePanel"

@@ -52,7 +52,6 @@
                               ScrollViewer.HorizontalScrollMode="Auto"
                               ScrollViewer.VerticalScrollBarVisibility="Disabled"
                               ScrollViewer.VerticalScrollMode="Disabled"
-                              ItemContainerTransitions="{x:Null}"
                               Padding="12,16,0,12">
                         <GridView.ItemTemplate>
                             <DataTemplate>
@@ -71,6 +70,9 @@
                                 <ItemsStackPanel Orientation="Horizontal" />
                             </ItemsPanelTemplate>
                         </GridView.ItemsPanel>
+                        <GridView.ItemContainerTransitions>
+                            <TransitionCollection />
+                        </GridView.ItemContainerTransitions>
                         <GridView.Footer>
                             <Border Width="12" />
                         </GridView.Footer>

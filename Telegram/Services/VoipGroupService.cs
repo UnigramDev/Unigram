@@ -1044,18 +1044,21 @@ namespace Telegram.Services
         {
             if (_request == null)
             {
-                if (CoreApplication.MainView.DispatcherQueue.HasThreadAccess)
+                try
                 {
-                    try
+                    if (CoreApplication.MainView.DispatcherQueue.HasThreadAccess)
                     {
                         _request = new DisplayRequest();
-                        _request.RequestActive();
+                        _request.TryRequestActive();
                     }
-                    catch { }
+                    else
+                    {
+                        CoreApplication.MainView.DispatcherQueue.TryEnqueue(RequestActive);
+                    }
                 }
-                else
+                catch
                 {
-                    CoreApplication.MainView.DispatcherQueue.TryEnqueue(RequestActive);
+                    // Fails at times
                 }
             }
         }
@@ -1064,18 +1067,21 @@ namespace Telegram.Services
         {
             if (_request != null)
             {
-                if (CoreApplication.MainView.DispatcherQueue.HasThreadAccess)
+                try
                 {
-                    try
+                    if (CoreApplication.MainView.DispatcherQueue.HasThreadAccess)
                     {
-                        _request.RequestRelease();
+                        _request.TryRequestRelease();
                         _request = null;
                     }
-                    catch { }
+                    else
+                    {
+                        CoreApplication.MainView.DispatcherQueue.TryEnqueue(RequestRelease);
+                    }
                 }
-                else
+                catch
                 {
-                    CoreApplication.MainView.DispatcherQueue.TryEnqueue(RequestRelease);
+                    // Fails at times
                 }
             }
         }

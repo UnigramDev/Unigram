@@ -143,13 +143,6 @@
                         <ItemsStackPanel ItemsUpdatingScrollMode="KeepScrollOffset" />
                     </ItemsPanelTemplate>
                 </ListView.ItemsPanel>
-                <ListView.ItemContainerTransitions>
-                    <TransitionCollection>
-                        <AddDeleteThemeTransition />
-                        <ContentThemeTransition />
-                        <ReorderThemeTransition />
-                    </TransitionCollection>
-                </ListView.ItemContainerTransitions>
             </ListView>
 
             <controls:ScrollViewerScrim Background="{ThemeResource ContentDialogBackground}"

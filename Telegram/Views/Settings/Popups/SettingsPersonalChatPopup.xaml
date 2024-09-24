@@ -59,10 +59,6 @@
                                          Stroke="{ThemeResource ChatLastMessageStateBrush}" />
                 </DataTemplate>
             </ListView.ItemTemplate>
-            <!-- TODO: 24H2 glitch -->
-            <ListView.ItemContainerTransitions>
-                <TransitionCollection />
-            </ListView.ItemContainerTransitions>
         </ListView>
 
         <controls:ScrollViewerScrim Background="{ThemeResource ContentDialogBackground}"

@@ -24,8 +24,7 @@
                               SelectionMode="None"
                               ChoosingItemContainer="OnChoosingItemContainer"
                               ContainerContentChanging="OnContainerContentChanging"
-                              Style="{StaticResource HorizontalListViewStyle}"
-                              ItemContainerTransitions="{x:Null}">
+                              Style="{StaticResource HorizontalListViewStyle}">
                         <ItemsControl.ItemTemplate>
                             <DataTemplate x:DataType="services:ThemeInfoBase">
                                 <StackPanel Margin="12,12,0,12">
@@ -84,6 +83,9 @@
                                         Value="0" />
                             </Style>
                         </ItemsControl.ItemContainerStyle>
+                        <ListView.ItemContainerTransitions>
+                            <TransitionCollection />
+                        </ListView.ItemContainerTransitions>
                         <ListView.Footer>
                             <Border Width="12" />
                         </ListView.Footer>
@@ -94,8 +96,7 @@
                               BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
                               SelectionMode="None"
                               ContainerContentChanging="OnContainerContentChanging"
-                              Style="{StaticResource HorizontalListViewStyle}"
-                              ItemContainerTransitions="{x:Null}">
+                              Style="{StaticResource HorizontalListViewStyle}">
                         <ListView.ItemTemplate>
                             <DataTemplate x:DataType="services:ThemeAccentInfo">
                                 <RadioButton Tag="{x:Bind}"
@@ -123,6 +124,9 @@
                                 <ItemsStackPanel Orientation="Horizontal" />
                             </ItemsPanelTemplate>
                         </ListView.ItemsPanel>
+                        <ListView.ItemContainerTransitions>
+                            <TransitionCollection />
+                        </ListView.ItemContainerTransitions>
                         <ListView.Footer>
                             <HyperlinkButton Click="{x:Bind ViewModel.AccentTheme}"
                                              Width="24"

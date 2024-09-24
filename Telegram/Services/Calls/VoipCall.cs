@@ -18,7 +18,7 @@ using Windows.Graphics.Capture;
 
 namespace Telegram.Services.Calls
 {
-    public class VoipCall : ServiceBase
+    public partial class VoipCall : ServiceBase
     {
         public bool IsVideo { get; private set; }
 

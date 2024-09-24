@@ -17,7 +17,7 @@ namespace Telegram.Services
         void Start(INavigationService navigation, User user, bool video);
     }
 
-    public class VoipService : ServiceBase, IVoipService
+    public partial class VoipService : ServiceBase, IVoipService
     {
         private readonly object _activeLock = new();
         private VoipCall _activeCall;

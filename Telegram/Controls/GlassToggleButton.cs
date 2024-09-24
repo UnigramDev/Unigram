@@ -11,7 +11,7 @@ using Telegram.Navigation;
 
 namespace Telegram.Controls
 {
-    public class GlassToggleButton : GlyphToggleButton
+    public partial class GlassToggleButton : GlyphToggleButton
     {
         private Border CheckedPart;
         private TextBlock ContentPresenter;

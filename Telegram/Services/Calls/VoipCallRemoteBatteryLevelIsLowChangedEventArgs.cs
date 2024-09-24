@@ -1,6 +1,6 @@
 ﻿namespace Telegram.Services.Calls
 {
-    public class VoipCallRemoteBatteryLevelIsLowChangedEventArgs
+    public partial class VoipCallRemoteBatteryLevelIsLowChangedEventArgs
     {
         public VoipCallRemoteBatteryLevelIsLowChangedEventArgs(bool isLow)
         {

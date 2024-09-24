@@ -1,6 +1,6 @@
 ﻿namespace Telegram.Services.Calls
 {
-    public class VoipCallSignalBarsUpdatedEventArgs
+    public partial class VoipCallSignalBarsUpdatedEventArgs
     {
         public VoipCallSignalBarsUpdatedEventArgs(int count)
         {

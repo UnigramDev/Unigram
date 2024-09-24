@@ -2,7 +2,7 @@
 
 namespace Telegram.Services.Calls
 {
-    public class VoipCallMediaStateChangedEventArgs
+    public partial class VoipCallMediaStateChangedEventArgs
     {
         public VoipCallMediaStateChangedEventArgs(VoipAudioState audio, VoipVideoState video, bool screen)
         {
