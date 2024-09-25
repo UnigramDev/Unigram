@@ -4307,7 +4307,7 @@ namespace Telegram.Views
                 else
                 {
                     UnloadObject(Icon);
-                    Photo.Source = PlaceholderImage.GetGlyph(Icons.ChatMultiple, 5);
+                    Photo.Source = PlaceholderImage.GetGlyph(Icons.ArrowReplyFilled, 5);
                     Photo.IsEnabled = false;
                 }
             }
