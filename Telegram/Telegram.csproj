@@ -3640,7 +3640,7 @@
       <Version>2.8.6</Version>
     </PackageReference>
     <PackageReference Include="Microsoft.Web.WebView2">
-      <Version>1.0.2651.64</Version>
+      <Version>1.0.2792.45</Version>
     </PackageReference>
     <PackageReference Include="Newtonsoft.Json">
       <Version>13.0.3</Version>
@@ -3673,7 +3673,7 @@
     </PackageReference>
     <!-- Used by AppCenter -->
     <PackageReference Include="SQLitePCLRaw.bundle_winsqlite3">
-      <Version>2.1.9</Version>
+      <Version>2.1.10</Version>
     </PackageReference>
     <PackageReference Include="System.Reflection.Metadata">
       <Version>8.0.0</Version>
