@@ -3,6 +3,7 @@ using Telegram.Controls.Media;
 using Telegram.Converters;
 using Telegram.Navigation;
 using Telegram.Services;
+using Telegram.Streams;
 using Telegram.Td.Api;
 using Windows.UI;
 using Windows.UI.Xaml;
@@ -30,6 +31,7 @@ namespace Telegram.Controls.Cells.Revenue
             {
                 MediaPreview.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
                 Photo.Source = new PlaceholderImage(Icons.Premium, true, Color.FromArgb(0xFF, 0xFD, 0xD2, 0x1A), Color.FromArgb(0xFF, 0xE4, 0x7B, 0x03));
+                Sticker.Source = null;
                 Title.Text = Strings.StarsTransactionBot;
                 Subtitle.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
             }
@@ -37,6 +39,7 @@ namespace Telegram.Controls.Cells.Revenue
             {
                 MediaPreview.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
                 Photo.Source = new PlaceholderImage(Icons.FragmentFilled, true, Colors.Black, Colors.Black);
+                Sticker.Source = null;
                 Subtitle.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
 
                 if (transaction.IsFragmentWithdrawal())
@@ -52,6 +55,7 @@ namespace Telegram.Controls.Cells.Revenue
             {
                 MediaPreview.Visibility = Visibility.Collapsed;
                 Photo.Source = new PlaceholderImage(Icons.Premium, true, Color.FromArgb(0xFF, 0xFD, 0xD2, 0x1A), Color.FromArgb(0xFF, 0xE4, 0x7B, 0x03));
+                Sticker.Source = null;
                 Title.Text = Strings.StarsTransactionInApp;
                 Subtitle.Visibility = Visibility.Collapsed;
             }
@@ -59,6 +63,8 @@ namespace Telegram.Controls.Cells.Revenue
             {
                 Subtitle.Text = botUser.FullName();
                 Subtitle.Visibility = Visibility.Visible;
+
+                Sticker.Source = null;
 
                 if (sourceBot.Purpose is BotTransactionPurposeInvoicePayment invoicePayment)
                 {
@@ -115,6 +121,9 @@ namespace Telegram.Controls.Cells.Revenue
 
                 MediaPreview.Visibility = Visibility.Visible;
 
+                Photo.Source = null;
+                Sticker.Source = null;
+
                 UpdateMedia(clientService, sourceBusiness.Media[0], Media1, ref _media1Token);
 
                 if (sourceBusiness.Media.Count > 1)
@@ -130,20 +139,47 @@ namespace Telegram.Controls.Cells.Revenue
             }
             else if (transaction.Partner is StarTransactionPartnerUser sourceUser && clientService.TryGetUser(sourceUser.UserId, out User user))
             {
-                Title.Text = transaction.StarCount < 0
-                    ? Strings.StarsGiftSent
-                    : Strings.StarsGiftReceived;
-                Subtitle.Text = user.FullName();
                 Subtitle.Visibility = Visibility.Visible;
 
-                Photo.SetUser(clientService, user, 36);
-
                 MediaPreview.Visibility = Visibility.Collapsed;
+
+                if (sourceUser.Purpose is UserTransactionPurposeGiftedStars giftedStars)
+                {
+                    Title.Text = transaction.StarCount < 0
+                        ? Strings.StarsGiftSent
+                        : Strings.StarsGiftReceived;
+                    Subtitle.Text = user.FullName();
+
+                    Photo.SetUser(clientService, user, 36);
+                    Sticker.Source = null;
+                }
+                else if (sourceUser.Purpose is UserTransactionPurposeGiftSell giftSell)
+                {
+                    Title.Text = user.FullName();
+                    Subtitle.Text = transaction.StarCount < 0
+                        ? Strings.Gift2TransactionRefundedConverted
+                        : Strings.Gift2TransactionConverted;
+
+                    Photo.Source = null;
+                    Sticker.Source = new DelayedFileSource(clientService, giftSell.Gift.Sticker);
+                }
+                else if (sourceUser.Purpose is UserTransactionPurposeGiftSend giftSend)
+                {
+                    Title.Text = user.FullName();
+                    Subtitle.Text = transaction.StarCount < 0
+                        ? Strings.Gift2TransactionSent
+                        : Strings.Gift2TransactionRefundedSent;
+
+                    Photo.Source = null;
+                    Sticker.Source = new DelayedFileSource(clientService, giftSend.Gift.Sticker);
+                }
             }
             else if (transaction.Partner is StarTransactionPartnerChat sourceChat && clientService.TryGetChat(sourceChat.ChatId, out Chat chat))
             {
                 Subtitle.Text = chat.Title;
                 Subtitle.Visibility = Visibility.Visible;
+
+                Sticker.Source = null;
 
                 if (sourceChat.Purpose is ChatTransactionPurposePaidMedia paidMedia)
                 {
@@ -190,6 +226,7 @@ namespace Telegram.Controls.Cells.Revenue
             {
                 MediaPreview.Visibility = Visibility.Collapsed;
                 Photo.Source = PlaceholderImage.GetGlyph(Icons.QuestionCircle, long.MinValue);
+                Sticker.Source = null;
                 Title.Text = Strings.StarsTransactionUnsupported;
                 Subtitle.Visibility = Visibility.Collapsed;
             }

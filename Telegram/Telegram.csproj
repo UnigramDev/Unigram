@@ -280,6 +280,7 @@
       <DependentUpon>MessageFactCheck.xaml</DependentUpon>
     </Compile>
     <Compile Include="Controls\SlideTextBlock.cs" />
+    <Compile Include="Controls\TableView.cs" />
     <Compile Include="CsWinRT.cs" />
     <Compile Include="Services\Calls\VoipCall.cs" />
     <Compile Include="Services\Calls\VoipCallAudioLevelUpdatedEventArgs.cs" />

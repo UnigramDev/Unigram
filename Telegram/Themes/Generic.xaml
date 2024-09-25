@@ -142,6 +142,58 @@
         </Setter>
     </Style>
 
+    <Style TargetType="local:TableView">
+        <Setter Property="ItemsPanel">
+            <Setter.Value>
+                <ItemsPanelTemplate>
+                    <local:TableViewPanel />
+                </ItemsPanelTemplate>
+            </Setter.Value>
+        </Setter>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="local:TableView">
+                    <Grid BorderBrush="{ThemeResource ButtonBorderBrush}"
+                          BorderThickness="1"
+                          CornerRadius="2">
+                        <Border x:Name="RootGrid"
+                                Background="{ThemeResource ButtonBackground}"
+                                BorderBrush="{ThemeResource SettingsItemBorderBrush}"
+                                BorderThickness="1,0,0,0"
+                                CornerRadius="0,2,2,0" />
+
+                        <ItemsPresenter />
+                    </Grid>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style TargetType="local:TableViewItem">
+        <Setter Property="Padding"
+                Value="8,5,4,6" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="local:TableViewItem">
+                    <Border BorderBrush="{ThemeResource SettingsItemBorderBrush}"
+                            BorderThickness="{TemplateBinding BorderThickness}">
+                        <local:TableViewItemPresenter x:Name="RootGrid">
+                            <TextBlock x:Name="HeaderText"
+                                       Text="{TemplateBinding Header}"
+                                       Margin="8,5,8,6"
+                                       VerticalAlignment="Top" />
+
+                            <ContentPresenter x:Name="Presenter"
+                                              Margin="{TemplateBinding ContentMargin}"
+                                              Padding="{TemplateBinding Padding}"
+                                              VerticalAlignment="Top" />
+                        </local:TableViewItemPresenter>
+                    </Border>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
     <Style TargetType="local:ChatListListView">
         <Setter Property="IsTabStop"
                 Value="False" />

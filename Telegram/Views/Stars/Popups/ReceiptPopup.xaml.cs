@@ -55,7 +55,7 @@ namespace Telegram.Views.Stars.Popups
                 FromPhoto.Source = new PlaceholderImage(Icons.Premium, true, Color.FromArgb(0xFF, 0xFD, 0xD2, 0x1A), Color.FromArgb(0xFF, 0xE4, 0x7B, 0x03));
                 FromPhoto.Visibility = Visibility.Collapsed;
                 FromTitle.Text = Strings.StarsTransactionBot;
-                FromHeader.Text = Strings.StarsTransactionSource;
+                From.Header = Strings.StarsTransactionSource;
 
                 Title.Text = Strings.StarsTransactionBot;
                 Subtitle.Visibility = Visibility.Collapsed;
@@ -69,7 +69,7 @@ namespace Telegram.Views.Stars.Popups
                 FromPhoto.Source = new PlaceholderImage(Icons.FragmentFilled, true, Colors.Black, Colors.Black);
                 FromPhoto.Visibility = Visibility.Collapsed;
                 FromTitle.Text = Strings.Fragment;
-                FromHeader.Text = Strings.StarsTransactionSource;
+                From.Header = Strings.StarsTransactionSource;
 
                 Title.Text = Strings.StarsTransactionFragment;
                 Subtitle.Visibility = Visibility.Collapsed;
@@ -83,7 +83,7 @@ namespace Telegram.Views.Stars.Popups
                 FromPhoto.Source = new PlaceholderImage(Icons.Premium, true, Color.FromArgb(0xFF, 0xFD, 0xD2, 0x1A), Color.FromArgb(0xFF, 0xE4, 0x7B, 0x03));
                 FromPhoto.Visibility = Visibility.Collapsed;
                 FromTitle.Text = Strings.StarsTransactionInApp;
-                FromHeader.Text = Strings.StarsTransactionSource;
+                From.Header = Strings.StarsTransactionSource;
 
                 Title.Text = Strings.StarsTransactionInApp;
                 Subtitle.Visibility = Visibility.Collapsed;
@@ -97,7 +97,7 @@ namespace Telegram.Views.Stars.Popups
                 FromPhoto.SetUser(clientService, botUser, 24);
                 FromPhoto.Visibility = Visibility.Visible;
                 FromTitle.Text = botUser.FullName();
-                FromHeader.Text = Strings.StarsTransactionRecipient;
+                From.Header = Strings.StarsTransactionRecipient;
 
                 if (sourceBot.Purpose is BotTransactionPurposeInvoicePayment invoicePayment)
                 {
@@ -155,7 +155,7 @@ namespace Telegram.Views.Stars.Popups
                 FromPhoto.SetUser(clientService, businessUser, 24);
                 FromPhoto.Visibility = Visibility.Visible;
                 FromTitle.Text = businessUser.FullName();
-                FromHeader.Text = Strings.StarsTransactionRecipient;
+                From.Header = Strings.StarsTransactionRecipient;
 
                 Title.Text = Strings.StarMediaPurchase;
 
@@ -183,19 +183,47 @@ namespace Telegram.Views.Stars.Popups
                 FromPhoto.SetUser(clientService, user, 24);
                 FromPhoto.Visibility = Visibility.Visible;
                 FromTitle.Text = user.FullName();
-                FromHeader.Text = Strings.StarsTransactionRecipient;
-
-                Title.Text = transaction.StarCount < 0
-                    ? Strings.StarsGiftSent
-                    : Strings.StarsGiftReceived;
-                Subtitle.Text = transaction.StarCount < 0
-                    ? string.Format(Strings.ActionGiftStarsSubtitle, user.FirstName)
-                    : Strings.ActionGiftStarsSubtitleYou;
-                Subtitle.Visibility = Visibility.Visible;
+                From.Header = Strings.StarsTransactionRecipient;
 
                 if (sourceUser.Purpose is UserTransactionPurposeGiftedStars giftedStars)
                 {
+                    Title.Text = transaction.StarCount < 0
+                        ? Strings.StarsGiftSent
+                        : Strings.StarsGiftReceived;
+                    Subtitle.Text = transaction.StarCount < 0
+                        ? string.Format(Strings.ActionGiftStarsSubtitle, user.FirstName)
+                        : Strings.ActionGiftStarsSubtitleYou;
+                    Subtitle.Visibility = Visibility.Visible;
+
                     AnimatedPhoto.Source = new DelayedFileSource(clientService, giftedStars.Sticker);
+                }
+                else if (sourceUser.Purpose is UserTransactionPurposeGiftSell giftSell)
+                {
+                    Title.Text = transaction.StarCount < 0
+                        ? Strings.Gift2TransactionRefundedConverted
+                        : Strings.Gift2TransactionConverted;
+                    Subtitle.Visibility = Visibility.Collapsed;
+
+                    AnimatedPhoto.Source = new DelayedFileSource(clientService, giftSell.Gift.Sticker);
+
+                    Availability.Visibility = Visibility.Visible;
+                    Availability.Content = giftSell.Gift.RemainingCount > 0
+                        ? string.Format(Strings.Gift2AvailabilityValue, giftSell.Gift.RemainingCount, giftSell.Gift.TotalCount)
+                        : string.Format(Strings.Gift2AvailabilityValueNone, giftSell.Gift.TotalCount);
+                }
+                else if (sourceUser.Purpose is UserTransactionPurposeGiftSend giftSend)
+                {
+                    Title.Text = transaction.StarCount < 0
+                        ? Strings.Gift2TransactionSent
+                        : Strings.Gift2TransactionRefundedSent;
+                    Subtitle.Visibility = Visibility.Collapsed;
+
+                    AnimatedPhoto.Source = new DelayedFileSource(clientService, giftSend.Gift.Sticker);
+
+                    Availability.Visibility = Visibility.Visible;
+                    Availability.Content = giftSend.Gift.RemainingCount > 0
+                        ? string.Format(Strings.Gift2AvailabilityValue, giftSend.Gift.RemainingCount, giftSend.Gift.TotalCount)
+                        : string.Format(Strings.Gift2AvailabilityValueNone, giftSend.Gift.TotalCount);
                 }
 
                 MediaPreview.Visibility = Visibility.Collapsed;
@@ -205,7 +233,7 @@ namespace Telegram.Views.Stars.Popups
                 FromPhoto.SetChat(clientService, chat, 24);
                 FromPhoto.Visibility = Visibility.Visible;
                 FromTitle.Text = chat.Title;
-                FromHeader.Text = Strings.StarsTransactionRecipient;
+                From.Header = Strings.StarsTransactionRecipient;
 
                 Subtitle.Visibility = Visibility.Collapsed;
 
@@ -257,7 +285,7 @@ namespace Telegram.Views.Stars.Popups
                 FromPhoto.Source = PlaceholderImage.GetGlyph(Icons.QuestionCircle, long.MinValue);
                 FromPhoto.Visibility = Visibility.Collapsed;
                 FromTitle.Text = Strings.StarsTransactionUnsupported;
-                FromHeader.Text = Strings.StarsTransactionSource;
+                From.Header = Strings.StarsTransactionSource;
 
                 Title.Text = Strings.StarsTransactionUnsupported;
                 Subtitle.Visibility = Visibility.Collapsed;
@@ -267,7 +295,7 @@ namespace Telegram.Views.Stars.Popups
             }
 
             Identifier.Text = transaction.Id;
-            Date.Text = Formatter.DateAt(transaction.Date);
+            Date.Content = Formatter.DateAt(transaction.Date);
 
             StarCount.Text = (transaction.StarCount < 0 ? string.Empty : "+") + transaction.StarCount.ToString("N0");
             StarCount.Foreground = BootStrapper.Current.Resources[transaction.StarCount < 0 ? "SystemFillColorCriticalBrush" : "SystemFillColorSuccessBrush"] as Brush;
@@ -296,7 +324,7 @@ namespace Telegram.Views.Stars.Popups
                 FromPhoto.SetUser(clientService, user, 24);
                 FromPhoto.Visibility = Visibility.Visible;
                 FromTitle.Text = user.FullName();
-                FromHeader.Text = Strings.StarsTransactionRecipient;
+                From.Header = Strings.StarsTransactionRecipient;
 
                 Title.Text = receipt.ProductInfo.Title;
                 TextBlockHelper.SetFormattedText(Subtitle, receipt.ProductInfo.Description);
@@ -317,7 +345,7 @@ namespace Telegram.Views.Stars.Popups
                 FromPhoto.Source = PlaceholderImage.GetGlyph(Icons.QuestionCircle, long.MinValue);
                 FromPhoto.Visibility = Visibility.Collapsed;
                 FromTitle.Text = Strings.StarsTransactionUnsupported;
-                FromHeader.Text = Strings.StarsTransactionSource;
+                From.Header = Strings.StarsTransactionSource;
 
                 Title.Text = Strings.StarsTransactionUnsupported;
                 Subtitle.Visibility = Visibility.Collapsed;
@@ -325,7 +353,7 @@ namespace Telegram.Views.Stars.Popups
             }
 
             Identifier.Text = stars.TransactionId;
-            Date.Text = Formatter.DateAt(receipt.Date);
+            Date.Content = Formatter.DateAt(receipt.Date);
 
             StarCount.Text = (stars.StarCount < 0 ? string.Empty : "+") + stars.StarCount.ToString("N0");
             StarCount.Foreground = BootStrapper.Current.Resources[stars.StarCount < 0 ? "SystemFillColorCriticalBrush" : "SystemFillColorSuccessBrush"] as Brush;

@@ -93,101 +93,59 @@
                                Grid.Row="3" />
                 </Grid>
 
-                <Grid BorderBrush="{ThemeResource ButtonBorderBrush}"
-                      BorderThickness="1"
-                      CornerRadius="2"
-                      Margin="0,12,0,8">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="Auto" />
-                        <ColumnDefinition Width="Auto" />
-                        <ColumnDefinition />
-                    </Grid.ColumnDefinitions>
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="32" />
-                        <RowDefinition Height="Auto" />
-                        <RowDefinition MinHeight="32" />
-                        <RowDefinition Height="Auto" />
-                        <RowDefinition Height="32" />
-                    </Grid.RowDefinitions>
-                    <Border Background="{ThemeResource ButtonBackground}"
-                            CornerRadius="0,2,2,0"
-                            Grid.Column="1"
-                            Grid.ColumnSpan="2"
-                            Grid.RowSpan="9" />
-                    <Border BorderBrush="{ThemeResource SettingsItemBorderBrush}"
-                            BorderThickness="0,0,1,0"
-                            Grid.RowSpan="9" />
-                    <Border x:Name="ToLine"
-                            BorderBrush="{ThemeResource SettingsItemBorderBrush}"
-                            BorderThickness="0,1,0,1"
-                            Grid.ColumnSpan="3"
-                            Grid.Row="1"
-                            Grid.RowSpan="3" />
+                <controls:TableView Margin="0,12,0,8">
+                    <controls:TableViewItem x:Name="From"
+                                            Padding="0">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition />
+                            </Grid.ColumnDefinitions>
+                            <controls:ProfilePicture x:Name="FromPhoto"
+                                                     Margin="8,4,0,4"
+                                                     Width="24"
+                                                     Height="24" />
+                            <TextBlock Margin="8,5,4,6"
+                                       Style="{StaticResource BodyTextBlockStyle}"
+                                       VerticalAlignment="Top"
+                                       Grid.Column="1">
+                                <Hyperlink UnderlineStyle="None">
+                                    <Run x:Name="FromTitle" />
+                                </Hyperlink>
+                            </TextBlock>
+                        </Grid>
+                    </controls:TableViewItem>
+                    <controls:TableViewItem Header="{CustomResource StarsTransactionID}"
+                                            Padding="0">
+                        <Grid>
+                            <TextBlock x:Name="Identifier"
+                                       Style="{StaticResource BodyTextBlockStyle}"
+                                       FontFamily="Consolas"
+                                       TextWrapping="Wrap"
+                                       Margin="8,5,4,10"
+                                       VerticalAlignment="Top" />
 
-                    <TextBlock x:Name="FromHeader"
-                               Text="{CustomResource StarsTransactionRecipient}"
-                               Margin="8,5,8,6"
-                               VerticalAlignment="Top" />
-                    <controls:ProfilePicture x:Name="FromPhoto"
-                                             Margin="8,4,0,4"
-                                             Width="24"
-                                             Height="24"
-                                             Grid.Column="1" />
-                    <TextBlock Margin="8,5,4,6"
-                               Style="{StaticResource BodyTextBlockStyle}"
-                               VerticalAlignment="Top"
-                               Grid.Column="2">
-                        <Hyperlink UnderlineStyle="None">
-                            <Run x:Name="FromTitle" />
-                        </Hyperlink>
-                    </TextBlock>
+                            <TextBlock Text="&#xE8C8;"
+                                       FontFamily="{StaticResource SymbolThemeFontFamily}"
+                                       FontSize="20"
+                                       Foreground="{ThemeResource AccentButtonBackground}"
+                                       HorizontalAlignment="Right"
+                                       VerticalAlignment="Bottom"
+                                       Margin="4"
+                                       IsHitTestVisible="False" />
 
-                    <TextBlock Text="{CustomResource StarsTransactionID}"
-                               Margin="8,5,8,6"
-                               VerticalAlignment="Top"
-                               Grid.Row="2" />
-                    <TextBlock x:Name="Identifier"
-                               Style="{StaticResource BodyTextBlockStyle}"
-                               FontFamily="Consolas"
-                               TextWrapping="Wrap"
-                               Margin="8,5,4,10"
-                               VerticalAlignment="Top"
-                               Grid.Column="1"
-                               Grid.ColumnSpan="2"
-                               Grid.Row="2" />
-
-                    <TextBlock Text="&#xE8C8;"
-                               FontFamily="{StaticResource SymbolThemeFontFamily}"
-                               FontSize="20"
-                               Foreground="{ThemeResource AccentButtonBackground}"
-                               HorizontalAlignment="Right"
-                               VerticalAlignment="Bottom"
-                               Margin="4"
-                               IsHitTestVisible="False"
-                               Grid.Column="1"
-                               Grid.ColumnSpan="2"
-                               Grid.Row="2" />
-
-                    <Button Click="CopyLink_Click"
-                            HorizontalAlignment="Stretch"
-                            VerticalAlignment="Stretch"
-                            Opacity="0"
-                            Grid.Column="1"
-                            Grid.ColumnSpan="2"
-                            Grid.Row="2" />
-
-                    <TextBlock Text="{CustomResource StarsTransactionDate}"
-                               Margin="8,5,8,6"
-                               VerticalAlignment="Top"
-                               Grid.Row="4" />
-                    <TextBlock x:Name="Date"
-                               Style="{StaticResource BodyTextBlockStyle}"
-                               Margin="8,5,4,6"
-                               VerticalAlignment="Top"
-                               Grid.Column="1"
-                               Grid.ColumnSpan="2"
-                               Grid.Row="4" />
-                </Grid>
+                            <Button Click="CopyLink_Click"
+                                    HorizontalAlignment="Stretch"
+                                    VerticalAlignment="Stretch"
+                                    Opacity="0" />
+                        </Grid>
+                    </controls:TableViewItem>
+                    <controls:TableViewItem x:Name="Date"
+                                            Header="{CustomResource StarsTransactionDate}" />
+                    <controls:TableViewItem x:Name="Availability"
+                                            Header="{CustomResource Gift2Availability}"
+                                            Visibility="Collapsed" />
+                </controls:TableView>
 
                 <controls:SettingsFooter IsLink="True"
                                          Click="SettingsFooter_Click"

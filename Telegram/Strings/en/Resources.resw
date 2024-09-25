@@ -5473,6 +5473,27 @@ Duration: {1}</value>
   <data name="GifSavedHint" xml:space="preserve">
     <value>Added to Favorite GIFs.</value>
   </data>
+  <data name="Gift2Availability" xml:space="preserve">
+    <value>Availability</value>
+  </data>
+  <data name="Gift2AvailabilityValue" xml:space="preserve">
+    <value>{0} of {1} left</value>
+  </data>
+  <data name="Gift2AvailabilityValueNone" xml:space="preserve">
+    <value>None of {1} left</value>
+  </data>
+  <data name="Gift2TransactionConverted" xml:space="preserve">
+    <value>Converted Gift</value>
+  </data>
+  <data name="Gift2TransactionRefundedConverted" xml:space="preserve">
+    <value>Refunded Converted Gift</value>
+  </data>
+  <data name="Gift2TransactionRefundedSent" xml:space="preserve">
+    <value>Refunded Sent Gift</value>
+  </data>
+  <data name="Gift2TransactionSent" xml:space="preserve">
+    <value>Gift</value>
+  </data>
   <data name="GiftPremium" xml:space="preserve">
     <value>Gift Premium</value>
   </data>
