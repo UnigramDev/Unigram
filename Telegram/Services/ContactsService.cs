@@ -68,7 +68,7 @@ namespace Telegram.Services
 
         public async void Handle(Td.Api.UpdateUser update)
         {
-            if (_contacts == null)
+            if (_contacts == null || !_settingsService.IsContactsSyncEnabled)
             {
                 return;
             }
