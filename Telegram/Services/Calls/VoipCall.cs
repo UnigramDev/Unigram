@@ -350,7 +350,6 @@ namespace Telegram.Services.Calls
         {
             if (_state >= state)
             {
-                Debugger.Break();
                 return;
             }
 
@@ -540,14 +539,14 @@ namespace Telegram.Services.Calls
             var call_packet_timeout_ms = ClientService.Options.CallPacketTimeoutMs;
             var call_connect_timeout_ms = ClientService.Options.CallConnectTimeoutMs;
 
-            var version = ready.Protocol.LibraryVersions[0];
             var descriptor = new VoipDescriptor
             {
+                Version = ready.Protocol.LibraryVersions[0],
+                CustomParameters = ready.CustomParameters,
                 InitializationTimeout = call_packet_timeout_ms / 1000.0,
                 ReceiveTimeout = call_connect_timeout_ms / 1000.0,
                 Servers = ready.Servers,
                 EncryptionKey = ready.EncryptionKey,
-                CustomParameters = ready.CustomParameters,
                 IsOutgoing = IsOutgoing,
                 EnableP2p = ready.Protocol.UdpP2p && ready.AllowP2p,
                 VideoCapture = _camera,
@@ -562,7 +561,7 @@ namespace Telegram.Services.Calls
             manager.RemoteMediaStateUpdated += OnRemoteMediaStateUpdated;
             manager.RemoteBatteryLevelIsLowUpdated += OnRemoteBatteryLevelIsLowUpdated;
             manager.SignalingDataEmitted += OnSignalingDataEmitted;
-            manager.Start(version, descriptor);
+            manager.Start(descriptor);
 
             lock (_managerLock)
             {

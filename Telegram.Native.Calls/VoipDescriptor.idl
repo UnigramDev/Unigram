@@ -7,12 +7,13 @@ namespace Telegram.Native.Calls
     {
         VoipDescriptor();
 
+        String Version;
+        String CustomParameters;
         Double InitializationTimeout;
         Double ReceiveTimeout;
         Windows.Foundation.Collections.IVector<byte> PersistentState;
         Windows.Foundation.Collections.IVector<Telegram.Td.Api.CallServer> Servers;
         Windows.Foundation.Collections.IVector<byte> EncryptionKey;
-        String CustomParameters;
         Boolean IsOutgoing;
         Boolean EnableP2p;
         String AudioInputId;

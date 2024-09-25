@@ -7,7 +7,15 @@ namespace winrt::Telegram::Native::Calls::implementation
 {
     struct VoipDescriptor : VoipDescriptorT<VoipDescriptor>
     {
-        VoipDescriptor();
+        VoipDescriptor() = default;
+
+        hstring m_version;
+        hstring Version();
+        void Version(hstring value);
+
+        hstring m_customParameters;
+        hstring CustomParameters();
+        void CustomParameters(hstring value);
 
         double m_initializationTimeout{ 0 };
         double InitializationTimeout();
@@ -32,10 +40,6 @@ namespace winrt::Telegram::Native::Calls::implementation
         winrt::Windows::Foundation::Collections::IVector<uint8_t> m_encryptionKey{ nullptr };
         winrt::Windows::Foundation::Collections::IVector<uint8_t> EncryptionKey();
         void EncryptionKey(winrt::Windows::Foundation::Collections::IVector<uint8_t> value);
-
-        hstring m_customParameters;
-        hstring CustomParameters();
-        void CustomParameters(hstring value);
 
         bool m_isOutgoing;
         bool IsOutgoing();
