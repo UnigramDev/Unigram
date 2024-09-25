@@ -87,7 +87,7 @@
                                                Margin="0,0,0,3" />
                     </StackPanel>
                     <TextBlock x:Name="Subtitle"
-                               Style="{StaticResource InfoCaptionTextBlockStyle}"
+                               Style="{StaticResource InfoBodyTextBlockStyle}"
                                TextAlignment="Center"
                                Margin="12,0,12,8"
                                Grid.Row="3" />
@@ -115,7 +115,8 @@
                             </TextBlock>
                         </Grid>
                     </controls:TableViewItem>
-                    <controls:TableViewItem Header="{CustomResource StarsTransactionID}"
+                    <controls:TableViewItem x:Name="Transaction"
+                                            Header="{CustomResource StarsTransactionID}"
                                             Padding="0">
                         <Grid>
                             <TextBlock x:Name="Identifier"

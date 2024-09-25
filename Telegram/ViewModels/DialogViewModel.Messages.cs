@@ -1706,6 +1706,10 @@ namespace Telegram.ViewModels
             {
                 await LoadMessageSliceAsync(message.Id, giveawayCompleted.GiveawayMessageId);
             }
+            else if (message.Content is MessageGift gift)
+            {
+                await ShowPopupAsync(new Views.Stars.Popups.ReceiptPopup(ClientService, NavigationService, message, gift));
+            }
         }
 
         public async Task EditPhotoAsync(StorageMedia file)

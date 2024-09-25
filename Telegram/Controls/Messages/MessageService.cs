@@ -312,6 +312,7 @@ namespace Telegram.Controls.Messages
                 MessageForumTopicEdited forumTopicEdited => UpdateForumTopicEdited(message, forumTopicEdited, active),
                 MessageForumTopicIsClosedToggled forumTopicIsClosedToggled => UpdateForumTopicIsClosedToggled(message, forumTopicIsClosedToggled, active),
                 MessageGameScore gameScore => UpdateGameScore(message, gameScore, active),
+                MessageGift gift => UpdateGift(message, gift, active),
                 MessageGiftedPremium giftedPremium => UpdateGiftedPremium(message, giftedPremium, active),
                 MessageGiftedStars giftedStars => UpdateGiftedStars(message, giftedStars, active),
                 MessageGiveawayCreated giveawayCreated => UpdateGiveawayCreated(message, giveawayCreated, active),
@@ -1879,14 +1880,42 @@ namespace Telegram.Controls.Messages
             return (content, entities);
         }
 
+        private static (string, IList<TextEntity>) UpdateGift(MessageViewModel message, MessageGift gift, bool active)
+        {
+            var content = string.Empty;
+            var entities = active ? new List<TextEntity>() : null;
+
+            if (message.IsOutgoing)
+            {
+                content = ReplaceWithLink(Strings.ActionGiftOutbound, "un2", gift, entities);
+            }
+            else if (message.ChatId == message.ClientService.Options.TelegramServiceNotificationsChatId)
+            {
+                content = ReplaceWithLink(Strings.ActionGift2Received, "un2", gift, entities);
+            }
+            else if (message.ClientService.TryGetUser(message.SenderId, out User senderUser))
+            {
+                content = ReplaceWithLink(Strings.ActionGiftInbound, "un1", senderUser, entities);
+                content = ReplaceWithLink(content, "un2", gift, entities);
+            }
+
+            var formatted = ClientEx.ParseMarkdown(content, (IList<TextEntity>)entities ?? Array.Empty<TextEntity>());
+
+            return (formatted.Text, formatted.Entities);
+        }
+
         private static (string, IList<TextEntity>) UpdateGiftedPremium(MessageViewModel message, MessageGiftedPremium giftedPremium, bool active)
         {
             var content = string.Empty;
             var entities = active ? new List<TextEntity>() : null;
 
-            if (message.SenderId is MessageSenderUser user && user.UserId == message.ClientService.Options.MyId)
+            if (message.IsOutgoing)
             {
                 content = ReplaceWithLink(Strings.ActionGiftOutbound, "un2", giftedPremium, entities);
+            }
+            else if (message.ChatId == message.ClientService.Options.TelegramServiceNotificationsChatId)
+            {
+                content = ReplaceWithLink(Strings.ActionGift2Received, "un2", giftedPremium, entities);
             }
             else if (message.ClientService.TryGetUser(message.SenderId, out User senderUser))
             {
@@ -2568,6 +2597,11 @@ namespace Telegram.Controls.Messages
                 {
                     name = game.Title;
                     id = "tg-game://";
+                }
+                else if (obj is MessageGift gift)
+                {
+                    name = Locale.Declension(Strings.R.StarsCount, gift.Gift.StarCount);
+                    id = null;
                 }
                 else if (obj is MessageGiftedPremium giftedPremium)
                 {

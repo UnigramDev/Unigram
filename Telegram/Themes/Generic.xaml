@@ -143,6 +143,10 @@
     </Style>
 
     <Style TargetType="local:TableView">
+        <Setter Property="CornerRadius"
+                Value="2" />
+        <Setter Property="BorderThickness"
+                Value="1" />
         <Setter Property="ItemsPanel">
             <Setter.Value>
                 <ItemsPanelTemplate>
@@ -154,8 +158,8 @@
             <Setter.Value>
                 <ControlTemplate TargetType="local:TableView">
                     <Grid BorderBrush="{ThemeResource ButtonBorderBrush}"
-                          BorderThickness="1"
-                          CornerRadius="2">
+                          BorderThickness="{TemplateBinding BorderThickness}"
+                          CornerRadius="{TemplateBinding CornerRadius}">
                         <Border x:Name="RootGrid"
                                 Background="{ThemeResource ButtonBackground}"
                                 BorderBrush="{ThemeResource SettingsItemBorderBrush}"

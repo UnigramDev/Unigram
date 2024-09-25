@@ -361,6 +361,75 @@ namespace Telegram.Views.Stars.Popups
             Refund.Visibility = Visibility.Collapsed;
         }
 
+        public ReceiptPopup(IClientService clientService, INavigationService navigationService, MessageViewModel message, MessageGift gift)
+        {
+            InitializeComponent();
+
+            _clientService = clientService;
+            _navigationService = navigationService;
+
+            if (clientService.TryGetUser(message.SenderId, out User user))
+            {
+                FromPhoto.SetUser(clientService, user, 24);
+                FromPhoto.Visibility = Visibility.Visible;
+                FromTitle.Text = user.FullName();
+
+                if (message.IsOutgoing)
+                {
+                    From.Header = Strings.Gift2To;
+                    Title.Text = Strings.Gift2TitleSent;
+
+                    if (gift.IsSaved)
+                    {
+                        TextBlockHelper.SetMarkdown(Subtitle, string.Format(Strings.Gift2InfoOutPinned, user.FirstName));
+                    }
+                    else
+                    {
+                        TextBlockHelper.SetMarkdown(Subtitle, gift.WasConverted
+                            ? Locale.Declension(Strings.R.Gift2InfoOutConverted, gift.SellStarCount, user.FirstName)
+                            : Locale.Declension(Strings.R.Gift2InfoOut, gift.SellStarCount, user.FirstName));
+                    }
+                }
+                else
+                {
+                    From.Header = Strings.Gift2From;
+                    Title.Text = Strings.Gift2TitleReceived;
+
+                    if (gift.IsSaved)
+                    {
+                        TextBlockHelper.SetMarkdown(Subtitle, Strings.Gift2InfoPinned);
+                    }
+                    else
+                    {
+                        TextBlockHelper.SetMarkdown(Subtitle, gift.WasConverted
+                            ? Locale.Declension(Strings.R.Gift2InfoConverted, gift.SellStarCount)
+                            : Locale.Declension(Strings.R.Gift2Info, gift.SellStarCount));
+                    }
+                }
+
+                AnimatedPhoto.Source = new DelayedFileSource(clientService, gift.Gift.Sticker);
+            }
+            else
+            {
+                FromPhoto.Source = PlaceholderImage.GetGlyph(Icons.QuestionCircle, long.MinValue);
+                FromPhoto.Visibility = Visibility.Collapsed;
+                FromTitle.Text = Strings.StarsTransactionUnsupported;
+                From.Header = Strings.StarsTransactionSource;
+
+                Title.Text = Strings.StarsTransactionUnsupported;
+                Subtitle.Visibility = Visibility.Collapsed;
+                Photo.Source = PlaceholderImage.GetGlyph(Icons.QuestionCircle, long.MinValue);
+            }
+
+            Transaction.Visibility = Visibility.Collapsed;
+            Date.Content = Formatter.DateAt(message.Date);
+
+            StarCount.Text = "+" + gift.Gift.StarCount.ToString("N0");
+            StarCount.Foreground = BootStrapper.Current.Resources["SystemFillColorSuccessBrush"] as Brush;
+
+            Refund.Visibility = Visibility.Collapsed;
+        }
+
         private void Purchase_Click(object sender, RoutedEventArgs e)
         {
             Hide();
