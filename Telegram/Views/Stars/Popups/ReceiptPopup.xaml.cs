@@ -193,9 +193,9 @@ namespace Telegram.Views.Stars.Popups
                     : Strings.ActionGiftStarsSubtitleYou;
                 Subtitle.Visibility = Visibility.Visible;
 
-                if (sourceUser.Sticker != null)
+                if (sourceUser.Purpose is UserTransactionPurposeGiftedStars giftedStars)
                 {
-                    AnimatedPhoto.Source = new DelayedFileSource(clientService, sourceUser.Sticker);
+                    AnimatedPhoto.Source = new DelayedFileSource(clientService, giftedStars.Sticker);
                 }
 
                 MediaPreview.Visibility = Visibility.Collapsed;

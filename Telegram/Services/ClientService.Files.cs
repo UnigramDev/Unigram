@@ -268,7 +268,14 @@ namespace Telegram.Services
 
         public void ProcessFiles(object target)
         {
-            if (target is AnimatedChatPhoto animatedChatPhoto)
+            if (target is AlternativeVideo alternativeVideo)
+            {
+                if (alternativeVideo.Video != null)
+                {
+                    alternativeVideo.Video = ProcessFile(alternativeVideo.Video);
+                }
+            }
+            else if (target is AnimatedChatPhoto animatedChatPhoto)
             {
                 if (animatedChatPhoto.File != null)
                 {
@@ -809,6 +816,20 @@ namespace Telegram.Services
                     ProcessFiles(game.Photo);
                 }
             }
+            else if (target is Gift gift)
+            {
+                if (gift.Sticker != null)
+                {
+                    ProcessFiles(gift.Sticker);
+                }
+            }
+            else if (target is Gifts gifts)
+            {
+                foreach (var item in gifts.GiftsValue)
+                {
+                    ProcessFiles(item);
+                }
+            }
             else if (target is IdentityDocument identityDocument)
             {
                 if (identityDocument.FrontSide != null)
@@ -1233,6 +1254,13 @@ namespace Telegram.Services
                     ProcessFiles(messageGame.Game);
                 }
             }
+            else if (target is MessageGift messageGift)
+            {
+                if (messageGift.Gift != null)
+                {
+                    ProcessFiles(messageGift.Gift);
+                }
+            }
             else if (target is MessageGiftedPremium messageGiftedPremium)
             {
                 if (messageGiftedPremium.Sticker != null)
@@ -1365,6 +1393,10 @@ namespace Telegram.Services
             }
             else if (target is MessageVideo messageVideo)
             {
+                foreach (var item in messageVideo.AlternativeVideos)
+                {
+                    ProcessFiles(item);
+                }
                 if (messageVideo.Video != null)
                 {
                     ProcessFiles(messageVideo.Video);
@@ -2141,9 +2173,9 @@ namespace Telegram.Services
             }
             else if (target is StarTransactionPartnerUser starTransactionPartnerUser)
             {
-                if (starTransactionPartnerUser.Sticker != null)
+                if (starTransactionPartnerUser.Purpose != null)
                 {
-                    ProcessFiles(starTransactionPartnerUser.Sticker);
+                    ProcessFiles(starTransactionPartnerUser.Purpose);
                 }
             }
             else if (target is StarTransactions starTransactions)
@@ -2597,6 +2629,41 @@ namespace Telegram.Services
                 if (userFullInfo.PublicPhoto != null)
                 {
                     ProcessFiles(userFullInfo.PublicPhoto);
+                }
+            }
+            else if (target is UserGift userGift)
+            {
+                if (userGift.Gift != null)
+                {
+                    ProcessFiles(userGift.Gift);
+                }
+            }
+            else if (target is UserGifts userGifts)
+            {
+                foreach (var item in userGifts.Gifts)
+                {
+                    ProcessFiles(item);
+                }
+            }
+            else if (target is UserTransactionPurposeGiftedStars userTransactionPurposeGiftedStars)
+            {
+                if (userTransactionPurposeGiftedStars.Sticker != null)
+                {
+                    ProcessFiles(userTransactionPurposeGiftedStars.Sticker);
+                }
+            }
+            else if (target is UserTransactionPurposeGiftSell userTransactionPurposeGiftSell)
+            {
+                if (userTransactionPurposeGiftSell.Gift != null)
+                {
+                    ProcessFiles(userTransactionPurposeGiftSell.Gift);
+                }
+            }
+            else if (target is UserTransactionPurposeGiftSend userTransactionPurposeGiftSend)
+            {
+                if (userTransactionPurposeGiftSend.Gift != null)
+                {
+                    ProcessFiles(userTransactionPurposeGiftSend.Gift);
                 }
             }
             else if (target is Video video)

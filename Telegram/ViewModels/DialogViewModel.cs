@@ -2000,7 +2000,7 @@ namespace Telegram.ViewModels
                         }
                         else if (story.Content is StoryContentVideo video)
                         {
-                            message.GeneratedContent = new MessageVideo(new Video((int)video.Video.Duration, video.Video.Width, video.Video.Height, "video.mp4", "video/mp4", video.Video.HasStickers, true, video.Video.Minithumbnail, video.Video.Thumbnail, video.Video.Video), null, false, false, false);
+                            message.GeneratedContent = new MessageVideo(new Video((int)video.Video.Duration, video.Video.Width, video.Video.Height, "video.mp4", "video/mp4", video.Video.HasStickers, true, video.Video.Minithumbnail, video.Video.Thumbnail, video.Video.Video), Array.Empty<AlternativeVideo>(), null, false, false, false);
                         }
                     }
                     else
@@ -3102,7 +3102,8 @@ namespace Telegram.ViewModels
                 return;
             }
 
-            ClientService.Send(new ReportChat(chat.Id, Array.Empty<long>(), reason, string.Empty));
+            // TODO: upgrade report
+            //ClientService.Send(new ReportChat(chat.Id, Array.Empty<long>(), reason, string.Empty));
 
             if (chat.Type is ChatTypeBasicGroup or ChatTypeSupergroup)
             {
@@ -3809,7 +3810,8 @@ namespace Telegram.ViewModels
             var form = await GetReportFormAsync(NavigationService);
             if (form.Reason != null)
             {
-                ClientService.Send(new ReportChat(chat.Id, messages, form.Reason, form.Text));
+                // TODO: upgrade report
+                //ClientService.Send(new ReportChat(chat.Id, messages, form.Reason, form.Text));
             }
         }
 

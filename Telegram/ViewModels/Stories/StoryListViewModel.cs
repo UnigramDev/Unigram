@@ -185,7 +185,8 @@ namespace Telegram.ViewModels.Stories
             var form = await DialogViewModel.GetReportFormAsync(NavigationService);
             if (form.Reason != null)
             {
-                ClientService.Send(new ReportStory(story.ChatId, story.StoryId, form.Reason, form.Text));
+                // TODO: upgrade report
+                //ClientService.Send(new ReportStory(story.ChatId, story.StoryId, form.Reason, form.Text));
             }
         }
 
