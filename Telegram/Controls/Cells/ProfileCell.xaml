@@ -79,7 +79,7 @@
                    TextTrimming="CharacterEllipsis" />
         <controls:IdentityIcon x:Name="Identity"
                                VerticalAlignment="Bottom"
-                               Margin="4,0,0,2"
+                               Margin="4,0,0,0"
                                Grid.Column="1" />
     </Grid>
     <TextBlock x:Name="SubtitleLabel"
