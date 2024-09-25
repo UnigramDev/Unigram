@@ -717,9 +717,21 @@ namespace Telegram.Controls.Messages
                     ? Locale.Declension(Strings.R.Comments, info.ReplyCount)
                     : Strings.LeaveAComment);
             }
-            else if (message.ChatId == message.ClientService.Options.RepliesBotChatId && Action != null)
+            else if (message.ChatId == message.ClientService.Options.RepliesBotChatId)
             {
-                Action.Visibility = Visibility.Collapsed;
+                if (light)
+                {
+                    FindAction(outgoing);
+
+                    ActionButton.Glyph = Icons.ChatEmptyFilled16;
+                    Action.Visibility = Visibility.Visible;
+
+                    Automation.SetToolTip(ActionButton, Strings.ViewInChat);
+                }
+                else if (Action != null)
+                {
+                    Action.Visibility = Visibility.Collapsed;
+                }
             }
             else if (message.IsSaved)
             {
@@ -793,6 +805,10 @@ namespace Telegram.Controls.Messages
 
             var info = message.InteractionInfo?.ReplyInfo;
             if (info != null && light && message.IsChannelPost && message.InteractionInfo.ReplyInfo != null)
+            {
+                message.Delegate.OpenThread(message);
+            }
+            else if (message.ChatId == message.ClientService.Options.RepliesBotChatId)
             {
                 message.Delegate.OpenThread(message);
             }

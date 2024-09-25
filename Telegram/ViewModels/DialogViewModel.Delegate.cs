@@ -124,6 +124,8 @@ namespace Telegram.ViewModels
                         threadId = fromChannel.MessageId;
                     }
 
+                    await ClientService.SendAsync(new GetMessage(chatId, threadId));
+
                     var response = await ClientService.SendAsync(new GetMessageThread(chatId, threadId));
                     if (response is not MessageThreadInfo)
                     {
@@ -169,6 +171,8 @@ namespace Telegram.ViewModels
 
                     messageId = threadId;
                 }
+
+                await ClientService.SendAsync(new GetMessage(chatId, threadId));
 
                 var properties = await ClientService.SendAsync(new GetMessageProperties(chatId, threadId)) as MessageProperties;
                 if (properties == null || !properties.CanGetMessageThread)
