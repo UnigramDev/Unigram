@@ -164,7 +164,8 @@
                                    Text="&#xE9EB;"
                                    FontFamily="{StaticResource SymbolThemeFontFamily}" />
 
-                        <TextBlock Text="{CustomResource TextSizeHeader}"
+                        <TextBlock x:Name="TextSizeHeader"
+                                   Text="{CustomResource TextSizeHeader}"
                                    VerticalAlignment="Center"
                                    Grid.Column="1" />
                         <Slider x:Name="FontSizeSlider"
@@ -200,7 +201,8 @@
                                    Text="&#xE9E8;"
                                    FontFamily="{StaticResource SymbolThemeFontFamily}" />
 
-                        <TextBlock Text="{CustomResource BubbleRadius}"
+                        <TextBlock x:Name="BubbleRadiusHeader"
+                                   Text="{CustomResource BubbleRadius}"
                                    VerticalAlignment="Center"
                                    Grid.Column="1" />
                         <Slider x:Name="BubbleRadiusSlider"

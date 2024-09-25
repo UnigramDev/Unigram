@@ -874,11 +874,11 @@ public static class VoipManager_stub
             throw new RuntimeException(ex);
         }
     }
-    public static void Start_stub(this Telegram.Native.Calls.VoipManager sender, string version, Telegram.Native.Calls.VoipDescriptor descriptor)
+    public static void Start_stub(this Telegram.Native.Calls.VoipManager sender, Telegram.Native.Calls.VoipDescriptor descriptor)
     {
         try
         {
-            sender.Start(version, descriptor);
+            sender.Start(descriptor);
         }
         catch (Exception ex)
         {
