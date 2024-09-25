@@ -224,6 +224,9 @@ namespace Telegram.Views.Settings
 
             _compact = compact;
 
+            Grid.SetColumnSpan(TextSizeHeader, compact ? 2 : 1);
+            Grid.SetColumnSpan(BubbleRadiusHeader, compact ? 2 : 1);
+
             Grid.SetRow(ScalingSlider, compact ? 1 : 0);
             Grid.SetColumn(ScalingSlider, compact ? 0 : 2);
 
