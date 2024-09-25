@@ -125,6 +125,7 @@ namespace Telegram
                 typeof(ChatStatisticsViewModel),
                 typeof(ChatBoostsViewModel),
                 typeof(ChatRevenueViewModel),
+                typeof(ChatStarsViewModel),
                 typeof(MessageStatisticsViewModel),
                 typeof(NewContactViewModel),
                 typeof(NewChannelViewModel),
