@@ -71,7 +71,7 @@ namespace Telegram.Common
             }
 
             try { _execute(); }
-            catch { Debugger.Break(); }
+            catch { }
         }
 
         public void RaiseCanExecuteChanged()

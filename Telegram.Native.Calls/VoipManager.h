@@ -54,7 +54,7 @@ namespace winrt::Telegram::Native::Calls::implementation
 
         VoipManager() = default;
 
-        void Start(hstring version, VoipDescriptor descriptor);
+        void Start(VoipDescriptor descriptor);
         void Stop();
 
         bool IsMuted();

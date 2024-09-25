@@ -138,7 +138,7 @@ namespace Telegram.Services
             var state = ToState(update.Call);
             if (state == VoipState.None)
             {
-                Debugger.Break();
+                return;
             }
 
             var changed = false;

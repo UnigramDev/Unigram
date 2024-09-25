@@ -43,7 +43,7 @@ namespace winrt::Telegram::Native::Calls::implementation
         return ss.str();
     }
 
-    void VoipManager::Start(hstring version, VoipDescriptor descriptor)
+    void VoipManager::Start(VoipDescriptor descriptor)
     {
         auto logPath = Windows::Storage::ApplicationData::Current().LocalFolder().Path();
         logPath = logPath + hstring(L"\\tgcalls.txt");
@@ -71,7 +71,8 @@ namespace winrt::Telegram::Native::Calls::implementation
             .maxApiLayer = 92,
             .enableHighBitrateVideo = false,
             .preferredVideoCodecs = std::vector<std::string>(),
-            .protocolVersion = tgcalls::ProtocolVersion::V1
+            .protocolVersion = tgcalls::ProtocolVersion::V1,
+            .customParameters = winrt::to_string(descriptor.CustomParameters())
         };
 
         tgcalls::MediaDevicesConfig mediaConfig = {
@@ -171,7 +172,7 @@ namespace winrt::Telegram::Native::Calls::implementation
 
         tgcalls::Descriptor descriptorImpl = tgcalls::Descriptor
         {
-            .version = winrt::to_string(version),
+            .version = winrt::to_string(descriptor.Version()),
             .config = config,
             .persistentState = persistentState,
             .endpoints = std::vector<tgcalls::Endpoint>(),
@@ -219,7 +220,7 @@ namespace winrt::Telegram::Native::Calls::implementation
             descriptorImpl.videoCapture = implementation->m_impl;
         }
 
-        m_impl = tgcalls::Meta::Create(winrt::to_string(version), std::move(descriptorImpl));
+        m_impl = tgcalls::Meta::Create(descriptorImpl.version, std::move(descriptorImpl));
     }
 
     void VoipManager::Stop()
