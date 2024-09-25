@@ -808,39 +808,52 @@ namespace Telegram.ViewModels
                 goto AddDate;
             }
 
-            var fullInfo = ClientService.GetUserFull(user.Id);
-            fullInfo ??= await ClientService.SendAsync(new GetUserFullInfo(user.Id)) as UserFullInfo;
-
-            if (fullInfo != null && fullInfo.BotInfo?.Description.Length > 0)
+            if (chat.Id == ClientService.Options.VerificationCodesBotChatId)
             {
-                var entities = ClientEx.GetTextEntities(fullInfo.BotInfo.Description);
+                var entities = ClientEx.GetTextEntities(Strings.VerifyChatInfo);
+                var text = new FormattedText(Strings.VerifyChatInfo, entities);
 
-                foreach (var entity in entities)
-                {
-                    entity.Offset += Strings.BotInfoTitle.Length + Environment.NewLine.Length;
-                }
-
-                entities.Add(new TextEntity(0, Strings.BotInfoTitle.Length, new TextEntityTypeBold()));
-
-                var message = $"{Strings.BotInfoTitle}{Environment.NewLine}{fullInfo.BotInfo.Description}";
-                var text = new FormattedText(message, entities);
-
-                MessageContent content;
-                if (fullInfo.BotInfo.Animation != null)
-                {
-                    content = new MessageAnimation(fullInfo.BotInfo.Animation, text, false, false, false);
-                }
-                else if (fullInfo.BotInfo.Photo != null)
-                {
-                    content = new MessagePhoto(fullInfo.BotInfo.Photo, text, false, false, false);
-                }
-                else
-                {
-                    content = new MessageText(text, null, null);
-                }
+                var content = new MessageText(text, null, null);
 
                 messages.Add(new Message(0, new MessageSenderUser(user.Id), chat.Id, null, null, false, false, false, false, false, false, false, false, 0, 0, null, null, null, null, null, null, 0, 0, null, 0, 0, 0, 0, 0, string.Empty, 0, 0, false, string.Empty, content, null));
                 return;
+            }
+            else
+            {
+                var fullInfo = ClientService.GetUserFull(user.Id);
+                fullInfo ??= await ClientService.SendAsync(new GetUserFullInfo(user.Id)) as UserFullInfo;
+
+                if (fullInfo != null && fullInfo.BotInfo?.Description.Length > 0)
+                {
+                    var entities = ClientEx.GetTextEntities(fullInfo.BotInfo.Description);
+
+                    foreach (var entity in entities)
+                    {
+                        entity.Offset += Strings.BotInfoTitle.Length + Environment.NewLine.Length;
+                    }
+
+                    entities.Add(new TextEntity(0, Strings.BotInfoTitle.Length, new TextEntityTypeBold()));
+
+                    var message = $"{Strings.BotInfoTitle}{Environment.NewLine}{fullInfo.BotInfo.Description}";
+                    var text = new FormattedText(message, entities);
+
+                    MessageContent content;
+                    if (fullInfo.BotInfo.Animation != null)
+                    {
+                        content = new MessageAnimation(fullInfo.BotInfo.Animation, text, false, false, false);
+                    }
+                    else if (fullInfo.BotInfo.Photo != null)
+                    {
+                        content = new MessagePhoto(fullInfo.BotInfo.Photo, text, false, false, false);
+                    }
+                    else
+                    {
+                        content = new MessageText(text, null, null);
+                    }
+
+                    messages.Add(new Message(0, new MessageSenderUser(user.Id), chat.Id, null, null, false, false, false, false, false, false, false, false, 0, 0, null, null, null, null, null, null, 0, 0, null, 0, 0, 0, 0, 0, string.Empty, 0, 0, false, string.Empty, content, null));
+                    return;
+                }
             }
 
         AddDate:
@@ -3197,7 +3210,7 @@ namespace Telegram.ViewModels
                 return;
             }
 
-            if (ClientService.IsRepliesChat(chat))
+            if (chat.Id == ClientService.Options.RepliesBotChatId || chat.Id == ClientService.Options.VerificationCodesBotChatId)
             {
                 return;
             }
@@ -3979,7 +3992,7 @@ namespace Telegram.ViewModels
                 {
                     DeleteChat();
                 }
-                else if (ClientService.IsRepliesChat(chat))
+                else if (chat.Id == ClientService.Options.RepliesBotChatId || chat.Id == ClientService.Options.VerificationCodesBotChatId)
                 {
                     ToggleMute();
                 }
@@ -4532,7 +4545,7 @@ namespace Telegram.ViewModels
 
         private static bool AreTogether(MessageViewModel message1, MessageViewModel message2)
         {
-            if (message1.IsService || message2.IsService)
+            if (message1.IsService || message2.IsService || message1.ChatId == message1.ClientService.Options.VerificationCodesBotChatId)
             {
                 return false;
             }

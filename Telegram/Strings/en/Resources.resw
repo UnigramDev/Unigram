@@ -10862,6 +10862,12 @@ However, it is currently available for purchase. **Learn more…**</value>
   <data name="VerificationCode" xml:space="preserve">
     <value>Verification Code</value>
   </data>
+  <data name="VerifyChatInfo" xml:space="preserve">
+    <value>This chat is used to receive verification codes from third-party services.</value>
+  </data>
+  <data name="VerifyCodesNotifications" xml:space="preserve">
+    <value>Verification Codes</value>
+  </data>
   <data name="VersionAndUpdates" xml:space="preserve">
     <value>Version and Updates</value>
   </data>

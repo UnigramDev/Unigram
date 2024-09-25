@@ -1294,6 +1294,10 @@ namespace Telegram.ViewModels
                     NavigationService.NavigateToWebApp(botUser, webAppInfo.Url, webAppInfo.LaunchId, null, chat);
                 }
             }
+            else if (inline.Type is InlineKeyboardButtonTypeCopyText copyText)
+            {
+                MessageHelper.CopyText(XamlRoot, copyText.Text);
+            }
         }
 
         public async void KeyboardButtonExecute(MessageViewModel message, KeyboardButton keyboardButton)

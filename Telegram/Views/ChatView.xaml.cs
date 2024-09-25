@@ -3015,7 +3015,7 @@ namespace Telegram.Views
 
             if (properties.CanBeRepliedInAnotherChat)
             {
-                return message.ChatId != ViewModel.ClientService.Options.RepliesBotChatId;
+                return message.ChatId != ViewModel.ClientService.Options.RepliesBotChatId && message.ChatId != ViewModel.ClientService.Options.VerificationCodesBotChatId;
             }
 
             var chat = message.Chat;
@@ -3037,7 +3037,7 @@ namespace Telegram.Views
 
                 return supergroup.Status is not ChatMemberStatusLeft;
             }
-            else if (chat != null && chat.Id == ViewModel.ClientService.Options.RepliesBotChatId)
+            else if (message.ChatId == ViewModel.ClientService.Options.RepliesBotChatId && message.ChatId != ViewModel.ClientService.Options.VerificationCodesBotChatId)
             {
                 return false;
             }
@@ -5108,7 +5108,7 @@ namespace Telegram.Views
             {
                 ShowAction(Strings.DeleteThisChat, true);
             }
-            else if (ViewModel.ClientService.IsRepliesChat(chat))
+            else if (chat.Id == ViewModel.ClientService.Options.RepliesBotChatId || chat.Id == ViewModel.ClientService.Options.VerificationCodesBotChatId)
             {
                 ShowAction(ViewModel.ClientService.Notifications.IsMuted(chat) ? Strings.ChannelUnmute : Strings.ChannelMute, true);
             }
@@ -5152,11 +5152,8 @@ namespace Telegram.Views
 
         public void UpdateUserStatus(Chat chat, User user)
         {
-            if (ViewModel.ClientService.IsSavedMessages(user))
-            {
-                ViewModel.LastSeen = null;
-            }
-            else if (ViewModel.ClientService.IsRepliesChat(chat))
+            var options = ViewModel.ClientService.Options;
+            if (chat.Id == options.MyId || chat.Id == options.RepliesBotChatId || chat.Id == options.VerificationCodesBotChatId)
             {
                 ViewModel.LastSeen = null;
             }
