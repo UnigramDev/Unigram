@@ -27,6 +27,7 @@ namespace Telegram.Controls
 {
     public enum ToastPopupIcon
     {
+        None,
         Archived,
         AutoNightOff,
         AutoRemoveOff,
@@ -106,43 +107,28 @@ namespace Telegram.Controls
 
         public static ToastPopup Show(XamlRoot xamlRoot, string text, ElementTheme requestedTheme = ElementTheme.Dark, TimeSpan? dismissAfter = null)
         {
-            return Show(xamlRoot, ClientEx.ParseMarkdown(text), null, TeachingTipPlacementMode.Center, requestedTheme, dismissAfter);
+            return Show(xamlRoot, ClientEx.ParseMarkdown(text), null, requestedTheme, dismissAfter);
         }
 
         public static ToastPopup Show(XamlRoot xamlRoot, string text, ToastPopupIcon icon, ElementTheme requestedTheme = ElementTheme.Dark, TimeSpan? dismissAfter = null)
         {
-            return Show(xamlRoot, ClientEx.ParseMarkdown(text), icon, TeachingTipPlacementMode.Center, requestedTheme, dismissAfter);
+            return Show(xamlRoot, ClientEx.ParseMarkdown(text), icon, requestedTheme, dismissAfter);
+        }
+
+        public static ToastPopup Show(XamlRoot xamlRoot, string text, AnimatedImageSource icon, ElementTheme requestedTheme = ElementTheme.Dark, TimeSpan? dismissAfter = null)
+        {
+            return Show(xamlRoot, ClientEx.ParseMarkdown(text), icon, requestedTheme, dismissAfter);
         }
 
         public static ToastPopup Show(XamlRoot xamlRoot, FormattedText text, ElementTheme requestedTheme = ElementTheme.Dark, TimeSpan? dismissAfter = null)
         {
-            return Show(xamlRoot, text, null, TeachingTipPlacementMode.Center, requestedTheme, dismissAfter);
+            return Show(xamlRoot, text, null, requestedTheme, dismissAfter);
         }
 
         public static ToastPopup Show(XamlRoot xamlRoot, FormattedText text, ToastPopupIcon icon, ElementTheme requestedTheme = ElementTheme.Dark, TimeSpan? dismissAfter = null)
         {
-            return Show(xamlRoot, text, icon, TeachingTipPlacementMode.Center, requestedTheme, dismissAfter);
-        }
-
-        public static ToastPopup Show(FrameworkElement target, string text, TeachingTipPlacementMode placement, ElementTheme requestedTheme = ElementTheme.Dark, TimeSpan? dismissAfter = null)
-        {
-            return Show(target, text, null, placement, requestedTheme, dismissAfter);
-        }
-
-        public static ToastPopup Show(FrameworkElement target, string text, ToastPopupIcon? icon, TeachingTipPlacementMode placement, ElementTheme requestedTheme = ElementTheme.Dark, TimeSpan? dismissAfter = null)
-        {
-            return Show(target, ClientEx.ParseMarkdown(text), icon, placement, requestedTheme, dismissAfter);
-        }
-
-        public static ToastPopup Show(FrameworkElement target, FormattedText text, TeachingTipPlacementMode placement, ElementTheme requestedTheme = ElementTheme.Dark, TimeSpan? dismissAfter = null)
-        {
-            return Show(target, text, null, placement, requestedTheme, dismissAfter);
-        }
-
-        public static ToastPopup Show(XamlRoot xamlRoot, FormattedText text, ToastPopupIcon? icon, TeachingTipPlacementMode placement, ElementTheme requestedTheme = ElementTheme.Dark, TimeSpan? dismissAfter = null)
-        {
             AnimatedImage animated = null;
-            if (icon != null)
+            if (icon != ToastPopupIcon.None)
             {
                 animated = new AnimatedImage
                 {
@@ -158,13 +144,50 @@ namespace Telegram.Controls
                 };
             }
 
-            return ShowImpl(xamlRoot, null, text, animated, placement, requestedTheme, dismissAfter);
+            return ShowImpl(xamlRoot, null, text, animated, TeachingTipPlacementMode.Center, requestedTheme, dismissAfter);
         }
 
-        public static ToastPopup Show(FrameworkElement target, FormattedText text, ToastPopupIcon? icon, TeachingTipPlacementMode placement, ElementTheme requestedTheme = ElementTheme.Dark, TimeSpan? dismissAfter = null)
+        public static ToastPopup Show(XamlRoot xamlRoot, FormattedText text, AnimatedImageSource icon, ElementTheme requestedTheme = ElementTheme.Dark, TimeSpan? dismissAfter = null)
         {
             AnimatedImage animated = null;
             if (icon != null)
+            {
+                animated = new AnimatedImage
+                {
+                    Source = icon,
+                    Width = 32,
+                    Height = 32,
+                    AutoPlay = true,
+                    LoopCount = 1,
+                    IsCachingEnabled = false,
+                    FrameSize = new Size(32, 32),
+                    DecodeFrameType = DecodePixelType.Logical,
+                    Margin = new Thickness(-4, -12, 8, -12)
+                };
+            }
+
+            return ShowImpl(xamlRoot, null, text, animated, TeachingTipPlacementMode.Center, requestedTheme, dismissAfter);
+        }
+
+        public static ToastPopup Show(FrameworkElement target, string text, TeachingTipPlacementMode placement, ElementTheme requestedTheme = ElementTheme.Dark, TimeSpan? dismissAfter = null)
+        {
+            return Show(target, text, ToastPopupIcon.None, placement, requestedTheme, dismissAfter);
+        }
+
+        public static ToastPopup Show(FrameworkElement target, string text, ToastPopupIcon icon, TeachingTipPlacementMode placement, ElementTheme requestedTheme = ElementTheme.Dark, TimeSpan? dismissAfter = null)
+        {
+            return Show(target, ClientEx.ParseMarkdown(text), icon, placement, requestedTheme, dismissAfter);
+        }
+
+        public static ToastPopup Show(FrameworkElement target, FormattedText text, TeachingTipPlacementMode placement, ElementTheme requestedTheme = ElementTheme.Dark, TimeSpan? dismissAfter = null)
+        {
+            return Show(target, text, ToastPopupIcon.None, placement, requestedTheme, dismissAfter);
+        }
+
+        public static ToastPopup Show(FrameworkElement target, FormattedText text, ToastPopupIcon icon, TeachingTipPlacementMode placement, ElementTheme requestedTheme = ElementTheme.Dark, TimeSpan? dismissAfter = null)
+        {
+            AnimatedImage animated = null;
+            if (icon != ToastPopupIcon.None)
             {
                 animated = new AnimatedImage
                 {

@@ -250,6 +250,9 @@
     <Compile Include="Controls\Cells\StarWithdrawCell.xaml.cs">
       <DependentUpon>StarWithdrawCell.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\Cells\UserGiftCell.xaml.cs">
+      <DependentUpon>UserGiftCell.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Controls\Chats\ChatConnectedBotHeader.xaml.cs">
       <DependentUpon>ChatConnectedBotHeader.xaml</DependentUpon>
     </Compile>
@@ -522,6 +525,7 @@
     <Compile Include="ViewModels\DialogViewModel.Translate.cs" />
     <Compile Include="Td\Api\MessageTranslateResult.cs" />
     <Compile Include="ViewModels\Drawers\EffectDrawerViewModel.cs" />
+    <Compile Include="ViewModels\Profile\ProfileGiftsTabViewModel.cs" />
     <Compile Include="ViewModels\RevenueViewModel.cs" />
     <Compile Include="ViewModels\Profile\ProfileChannelsTabViewModel.cs" />
     <Compile Include="ViewModels\Profile\ProfileGroupsTabViewModel.cs" />
@@ -1157,6 +1161,9 @@
     </Compile>
     <Compile Include="Views\Premium\Popups\ChangePrivacyPopup.xaml.cs">
       <DependentUpon>ChangePrivacyPopup.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Profile\ProfileGiftsTabPage.xaml.cs">
+      <DependentUpon>ProfileGiftsTabPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\RevenuePage.xaml.cs">
       <DependentUpon>RevenuePage.xaml</DependentUpon>
@@ -2314,6 +2321,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Controls\Cells\UserGiftCell.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Controls\Cells\UsernameInfoCell.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -2951,6 +2962,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Views\Premium\Popups\ChangePrivacyPopup.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\Profile\ProfileGiftsTabPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

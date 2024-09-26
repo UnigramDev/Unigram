@@ -24,6 +24,7 @@ using Telegram.Td.Api;
 using Telegram.ViewModels.Chats;
 using Telegram.Views.Chats;
 using Telegram.Views.Popups;
+using Telegram.Views.Stars.Popups;
 using Telegram.Views.Users;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.Foundation;
@@ -1708,7 +1709,7 @@ namespace Telegram.ViewModels
             }
             else if (message.Content is MessageGift gift)
             {
-                await ShowPopupAsync(new Views.Stars.Popups.ReceiptPopup(ClientService, NavigationService, message, gift));
+                await ShowPopupAsync(new ReceiptPopup(ClientService, NavigationService, message, gift));
             }
             else if (message.Content is MessageGiftedStars giftedStars)
             {

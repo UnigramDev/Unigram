@@ -5565,6 +5565,30 @@ This action cannot be undone.</value>
   <data name="Gift2LimitedRibbon" xml:space="preserve">
     <value>limited</value>
   </data>
+  <data name="Gift2MadePrivate" xml:space="preserve">
+    <value>Gift is now hidden in your profile</value>
+  </data>
+  <data name="Gift2MadePrivateTitle" xml:space="preserve">
+    <value>Gift Hidden</value>
+  </data>
+  <data name="Gift2MadePublic" xml:space="preserve">
+    <value>Gift is now visible in your profile</value>
+  </data>
+  <data name="Gift2MadePublicTitle" xml:space="preserve">
+    <value>Gift Shown</value>
+  </data>
+  <data name="Gift2ProfileInvisible" xml:space="preserve">
+    <value>This gift is hidden. Only you can see it.</value>
+  </data>
+  <data name="Gift2ProfileMakeInvisible" xml:space="preserve">
+    <value>Hide from my Page</value>
+  </data>
+  <data name="Gift2ProfileMakeVisible" xml:space="preserve">
+    <value>Display on my Page</value>
+  </data>
+  <data name="Gift2ProfileVisible" xml:space="preserve">
+    <value>This gift is visible to visitors of your page.</value>
+  </data>
   <data name="Gift2TitleReceived" xml:space="preserve">
     <value>Received Gift</value>
   </data>
@@ -8361,6 +8385,9 @@ Payments will go directly to the developer of {0}. Telegram cannot provide any g
   <data name="ProfileChannel" xml:space="preserve">
     <value>Channel</value>
   </data>
+  <data name="ProfileGifts" xml:space="preserve">
+    <value>Gifts</value>
+  </data>
   <data name="ProfileMyStories" xml:space="preserve">
     <value>My Stories</value>
   </data>
@@ -9724,6 +9751,9 @@ The channel &quot;**{1}**&quot; will become private.</value>
   </data>
   <data name="StarsTransactionFragment" xml:space="preserve">
     <value>Purchase from Fragment</value>
+  </data>
+  <data name="StarsTransactionHidden" xml:space="preserve">
+    <value>Hidden User</value>
   </data>
   <data name="StarsTransactionID" xml:space="preserve">
     <value>Transaction ID</value>

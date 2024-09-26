@@ -1085,10 +1085,10 @@ namespace Telegram.Controls.Stories
 
         public TeachingTip ShowToast(FrameworkElement target, string text, TeachingTipPlacementMode placement = TeachingTipPlacementMode.TopRight)
         {
-            return ShowToast(target, text, null, placement);
+            return ShowToast(target, text, ToastPopupIcon.None, placement);
         }
 
-        public TeachingTip ShowToast(FrameworkElement target, string text, ToastPopupIcon? icon, TeachingTipPlacementMode placement = TeachingTipPlacementMode.TopRight)
+        public TeachingTip ShowToast(FrameworkElement target, string text, ToastPopupIcon icon, TeachingTipPlacementMode placement = TeachingTipPlacementMode.TopRight)
         {
             var toast = ToastPopup.Show(target, text, icon, placement, ElementTheme.Dark);
             toast.Closing += Toast_Closing;

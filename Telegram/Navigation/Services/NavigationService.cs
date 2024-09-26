@@ -4,7 +4,6 @@
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
-using Microsoft.UI.Xaml.Controls;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -505,22 +504,22 @@ namespace Telegram.Navigation.Services
 
         public ToastPopup ShowToast(string text, ElementTheme requestedTheme = ElementTheme.Dark, TimeSpan? dismissAfter = null)
         {
-            return ToastPopup.Show(XamlRoot, ClientEx.ParseMarkdown(text), null, TeachingTipPlacementMode.Center, requestedTheme, dismissAfter);
+            return ToastPopup.Show(XamlRoot, ClientEx.ParseMarkdown(text), null, requestedTheme, dismissAfter);
         }
 
         public ToastPopup ShowToast(string text, ToastPopupIcon icon, ElementTheme requestedTheme = ElementTheme.Dark, TimeSpan? dismissAfter = null)
         {
-            return ToastPopup.Show(XamlRoot, ClientEx.ParseMarkdown(text), icon, TeachingTipPlacementMode.Center, requestedTheme, dismissAfter);
+            return ToastPopup.Show(XamlRoot, ClientEx.ParseMarkdown(text), icon, requestedTheme, dismissAfter);
         }
 
         public ToastPopup ShowToast(FormattedText text, ElementTheme requestedTheme = ElementTheme.Dark, TimeSpan? dismissAfter = null)
         {
-            return ToastPopup.Show(XamlRoot, text, null, TeachingTipPlacementMode.Center, requestedTheme, dismissAfter);
+            return ToastPopup.Show(XamlRoot, text, null, requestedTheme, dismissAfter);
         }
 
         public ToastPopup ShowToast(FormattedText text, ToastPopupIcon icon, ElementTheme requestedTheme = ElementTheme.Dark, TimeSpan? dismissAfter = null)
         {
-            return ToastPopup.Show(XamlRoot, text, icon, TeachingTipPlacementMode.Center, requestedTheme, dismissAfter);
+            return ToastPopup.Show(XamlRoot, text, icon, requestedTheme, dismissAfter);
         }
 
         public void ShowGallery(GalleryViewModelBase parameter, FrameworkElement closing = null, long timestamp = 0)

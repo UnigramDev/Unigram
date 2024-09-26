@@ -908,7 +908,7 @@
     <SolidColorBrush x:Key="MessageReactionPaidBackgroundBrush"
                      Color="#40E8AB02" />
     <SolidColorBrush x:Key="MessageReactionPaidForegroundBrush"
-                     Color="#FFE8AB02" />
+                     Color="#FFBF7600" />
 
     <SolidColorBrush x:Key="MessageReactionPaidChosenBackgroundBrush"
                      Color="#FFE8AB02" />

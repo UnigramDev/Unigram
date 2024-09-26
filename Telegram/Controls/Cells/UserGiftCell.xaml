@@ -1,0 +1,106 @@
+﻿<UserControl x:Class="Telegram.Controls.Cells.UserGiftCell"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:controls="using:Telegram.Controls"
+             mc:Ignorable="d"
+             d:DesignHeight="300"
+             d:DesignWidth="400">
+
+    <UserControl.Resources>
+        <SolidColorBrush x:Key="MessageReactionPaidBackgroundBrush"
+                         Color="#40E8AB02" />
+        <SolidColorBrush x:Key="MessageReactionPaidForegroundBrush"
+                         Color="#FFBF7600" />
+    </UserControl.Resources>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+        <Border Background="{ThemeResource SettingsItemBackground}"
+                BorderBrush="{ThemeResource SettingsItemBorderBrush}"
+                BorderThickness="1"
+                CornerRadius="4"
+                Grid.RowSpan="2" />
+
+        <controls:ProfilePicture x:Name="Photo"
+                                 IsEnabled="False"
+                                 Width="24"
+                                 Height="24"
+                                 HorizontalAlignment="Left"
+                                 VerticalAlignment="Top"
+                                 Margin="4" />
+
+        <controls:AnimatedImage x:Name="Animated"
+                                Width="96"
+                                Height="96"
+                                FrameSize="96,96"
+                                DecodeFrameType="Logical"
+                                AutoPlay="False"
+                                IsViewportAware="True"
+                                Margin="0,4" />
+
+        <Border x:Name="Hidden"
+                x:Load="False"
+                Background="{ThemeResource MessageServiceBackgroundBrush}"
+                HorizontalAlignment="Center"
+                VerticalAlignment="Center"
+                CornerRadius="18">
+            <TextBlock Text="&#xEA28;"
+                       FontFamily="{StaticResource SymbolThemeFontFamily}"
+                       FontSize="20"
+                       Foreground="#FFFFFF"
+                       Margin="8" />
+        </Border>
+
+        <Grid Background="{ThemeResource MessageReactionPaidBackgroundBrush}"
+              HorizontalAlignment="Center"
+              Height="24"
+              CornerRadius="12"
+              Margin="0,0,0,12"
+              Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="32" />
+                <ColumnDefinition />
+            </Grid.ColumnDefinitions>
+            <controls:PremiumStarCount Width="18"
+                                       VerticalAlignment="Top"
+                                       Margin="0,-1,0,0" />
+
+            <TextBlock x:Name="StarCount"
+                       Foreground="{ThemeResource MessageReactionPaidForegroundBrush}"
+                       Style="{StaticResource CaptionTextBlockStyle}"
+                       FontWeight="SemiBold"
+                       Typography.NumeralAlignment="Tabular"
+                       VerticalAlignment="Center"
+                       Margin="0,1,8,2"
+                       Grid.Column="1" />
+        </Grid>
+
+        <Grid x:Name="RibbonRoot"
+              HorizontalAlignment="Right"
+              VerticalAlignment="Top"
+              Margin="0,-1,-1,0"
+              Width="62"
+              Height="62">
+            <Path Data="M59.6569 31.1569L30.8431 2.34315C29.3429 0.842855 27.308 0 25.1863 0H2.82843C1.04662 0 0.154282 2.15428 1.41421 3.41421L58.5858 60.5858C59.8457 61.8457 62 60.9534 62 59.1716V36.8137C62 34.692 61.1571 32.6571 59.6569 31.1569Z"
+                  Fill="{StaticResource NavigationViewSelectionIndicatorForeground}" />
+
+            <Border Width="62"
+                    VerticalAlignment="Center"
+                    RenderTransformOrigin="0.5,0.5"
+                    Margin="0,-14,-14,0">
+                <Border.RenderTransform>
+                    <RotateTransform Angle="45" />
+                </Border.RenderTransform>
+                <TextBlock x:Name="Ribbon"
+                           Foreground="#FFFFFF"
+                           TextAlignment="Center"
+                           FontSize="12" />
+            </Border>
+        </Grid>
+    </Grid>
+</UserControl>

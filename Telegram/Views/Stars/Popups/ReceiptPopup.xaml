@@ -21,6 +21,7 @@
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
                 </Grid.RowDefinitions>
                 <controls:ProfilePicture x:Name="Photo"
                                          Width="96"
@@ -33,7 +34,7 @@
                                         DecodeFrameType="Logical"
                                         IsViewportAware="True"
                                         LoopCount="1"
-                                        Margin="0,-24,0,8" />
+                                        Margin="0,-16,0,8" />
 
                 <HyperlinkButton x:Name="MediaPreview"
                                  Click="MediaPreview_Click"
@@ -89,14 +90,20 @@
                                            Margin="0,0,0,3" />
                 </StackPanel>
                 <TextBlock x:Name="Subtitle"
-                           Style="{StaticResource InfoBodyTextBlockStyle}"
+                           Style="{StaticResource BodyTextBlockStyle}"
                            TextAlignment="Center"
                            Margin="12,0,12,8"
                            Grid.Row="3" />
+                <TextBlock x:Name="Info"
+                           Style="{StaticResource InfoBodyTextBlockStyle}"
+                           TextAlignment="Center"
+                           Margin="12,0,12,8"
+                           Visibility="Collapsed"
+                           Grid.Row="4" />
             </Grid>
 
             <controls:TableView x:Name="TableRoot"
-                                Margin="0,12,0,8">
+                                Margin="0,12,0,0">
                 <controls:TableViewItem x:Name="From"
                                         Padding="0">
                     <Grid>
@@ -159,6 +166,8 @@
                 <controls:FormattedTextBlock x:Name="Caption"
                                              Margin="8,5,4,6" />
             </Border>
+
+            <Border Height="8" />
 
             <controls:SettingsFooter x:Name="Terms"
                                      IsLink="True"
