@@ -47,6 +47,7 @@ namespace Telegram.Controls
         SoundDownload,
         SpeedLimit,
         StarsSent,
+        StarsTopup,
         Success,
         Transcribe,
         Translate,

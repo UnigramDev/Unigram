@@ -5515,6 +5515,26 @@ Duration: {1}</value>
   <data name="Gift2AvailabilityValueNone" xml:space="preserve">
     <value>None of {0} left</value>
   </data>
+  <data name="Gift2ConvertButton" xml:space="preserve">
+    <value>Convert</value>
+  </data>
+  <data name="Gift2Converted_one" xml:space="preserve">
+    <value>{0} Star was sent to your balance</value>
+  </data>
+  <data name="Gift2Converted_other" xml:space="preserve">
+    <value>{0} Star were sent to your balance</value>
+  </data>
+  <data name="Gift2ConvertedTitle" xml:space="preserve">
+    <value>Converted Gift</value>
+  </data>
+  <data name="Gift2ConvertText" xml:space="preserve">
+    <value>Do you want to convert this gift from **{0}** to **{1}**?
+
+This action cannot be undone.</value>
+  </data>
+  <data name="Gift2ConvertTitle" xml:space="preserve">
+    <value>Convert Gift to Stars</value>
+  </data>
   <data name="Gift2From" xml:space="preserve">
     <value>From</value>
   </data>
@@ -5553,6 +5573,12 @@ Duration: {1}</value>
   </data>
   <data name="Gift2To" xml:space="preserve">
     <value>To</value>
+  </data>
+  <data name="Gift2ToBalance_one" xml:space="preserve">
+    <value>Convert to {0} Star</value>
+  </data>
+  <data name="Gift2ToBalance_other" xml:space="preserve">
+    <value>Convert to {0} Stars</value>
   </data>
   <data name="Gift2TransactionConverted" xml:space="preserve">
     <value>Converted Gift</value>

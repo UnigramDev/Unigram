@@ -5,174 +5,173 @@
                        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
                        xmlns:controls="using:Telegram.Controls"
                        mc:Ignorable="d"
-                       Padding="24,0"
+                       Padding="24,0,24,24"
                        IsDismissButtonVisible="True">
 
     <Grid>
-        <ScrollViewer x:Name="ScrollingHost"
-                      Margin="-24,0"
-                      Padding="12,0">
-            <StackPanel  Margin="0,24,0,72">
-                <Grid>
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="Auto" />
-                        <RowDefinition Height="Auto" />
-                        <RowDefinition Height="Auto" />
-                        <RowDefinition Height="Auto" />
-                    </Grid.RowDefinitions>
-                    <controls:ProfilePicture x:Name="Photo"
-                                             Width="96"
-                                             Height="96"
-                                             Margin="0,0,0,8" />
-                    <controls:AnimatedImage x:Name="AnimatedPhoto"
-                                            Width="120"
-                                            Height="120"
-                                            FrameSize="120,120"
-                                            DecodeFrameType="Logical"
-                                            IsViewportAware="True"
-                                            LoopCount="1"
-                                            Margin="0,-24,0,8" />
+        <Grid.RowDefinitions>
+            <RowDefinition />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+        <StackPanel Margin="0,24,0,0">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+                <controls:ProfilePicture x:Name="Photo"
+                                         Width="96"
+                                         Height="96"
+                                         Margin="0,0,0,8" />
+                <controls:AnimatedImage x:Name="AnimatedPhoto"
+                                        Width="120"
+                                        Height="120"
+                                        FrameSize="120,120"
+                                        DecodeFrameType="Logical"
+                                        IsViewportAware="True"
+                                        LoopCount="1"
+                                        Margin="0,-24,0,8" />
 
-                    <HyperlinkButton x:Name="MediaPreview"
-                                     Click="MediaPreview_Click"
-                                     Style="{StaticResource EmptyHyperlinkButtonStyle}"
-                                     Margin="0,0,0,8">
-                        <Grid Width="120"
-                              Height="120">
-                            <Border x:Name="Media2"
-                                    HorizontalAlignment="Right"
-                                    VerticalAlignment="Bottom"
-                                    CornerRadius="12"
-                                    Width="110"
-                                    Height="110" />
-                            <Border x:Name="Media1"
-                                    HorizontalAlignment="Left"
-                                    VerticalAlignment="Top"
-                                    CornerRadius="12"
-                                    Width="120"
-                                    Height="120"
-                                    BorderBrush="{ThemeResource ContentDialogBackground}"
-                                    BorderThickness="2"
-                                    Margin="-8" />
-                        </Grid>
-                    </HyperlinkButton>
+                <HyperlinkButton x:Name="MediaPreview"
+                                 Click="MediaPreview_Click"
+                                 Style="{StaticResource EmptyHyperlinkButtonStyle}"
+                                 Margin="0,0,0,8">
+                    <Grid Width="120"
+                          Height="120">
+                        <Border x:Name="Media2"
+                                HorizontalAlignment="Right"
+                                VerticalAlignment="Bottom"
+                                CornerRadius="12"
+                                Width="110"
+                                Height="110" />
+                        <Border x:Name="Media1"
+                                HorizontalAlignment="Left"
+                                VerticalAlignment="Top"
+                                CornerRadius="12"
+                                Width="120"
+                                Height="120"
+                                BorderBrush="{ThemeResource ContentDialogBackground}"
+                                BorderThickness="2"
+                                Margin="-8" />
+                    </Grid>
+                </HyperlinkButton>
 
-                    <TextBlock x:Name="Title"
-                               Text="{CustomResource GiftTelegramPremiumTitle}"
-                               FontSize="20"
-                               FontFamily="XamlAutoFontFamily"
-                               FontWeight="SemiBold"
-                               TextAlignment="Center"
-                               VerticalAlignment="Top"
-                               Grid.Row="1" />
-                    <StackPanel HorizontalAlignment="Center"
-                                Orientation="Horizontal"
-                                Margin="0,-2,0,0"
-                                Grid.Row="2">
-                        <TextBlock x:Name="StarCount"
-                                   Style="{StaticResource BaseTextBlockStyle}"
-                                   VerticalAlignment="Center" />
+                <TextBlock x:Name="Title"
+                           Text="{CustomResource GiftTelegramPremiumTitle}"
+                           FontSize="20"
+                           FontFamily="XamlAutoFontFamily"
+                           FontWeight="SemiBold"
+                           TextAlignment="Center"
+                           VerticalAlignment="Top"
+                           Grid.Row="1" />
+                <StackPanel HorizontalAlignment="Center"
+                            Orientation="Horizontal"
+                            Margin="0,-2,0,0"
+                            Grid.Row="2">
+                    <TextBlock x:Name="StarCount"
+                               Style="{StaticResource BaseTextBlockStyle}"
+                               VerticalAlignment="Center" />
 
-                        <controls:PremiumStarCount Width="24"
-                                                   Height="24"
-                                                   Grid.Column="4"
-                                                   Grid.RowSpan="2" />
+                    <controls:PremiumStarCount Width="24"
+                                               Height="24"
+                                               Grid.Column="4"
+                                               Grid.RowSpan="2" />
 
-                        <controls:BadgeControl x:Name="Refund"
-                                               Text="{CustomResource StarsRefunded}"
-                                               Background="{ThemeResource SystemFillColorSuccessBackgroundBrush}"
-                                               Foreground="{ThemeResource SystemFillColorSuccessBrush}"
-                                               CornerRadius="4"
-                                               VerticalAlignment="Bottom"
-                                               Margin="0,0,0,3" />
-                    </StackPanel>
-                    <TextBlock x:Name="Subtitle"
-                               Style="{StaticResource InfoBodyTextBlockStyle}"
-                               TextAlignment="Center"
-                               Margin="12,0,12,8"
-                               Grid.Row="3" />
-                </Grid>
+                    <controls:BadgeControl x:Name="Refund"
+                                           Text="{CustomResource StarsRefunded}"
+                                           Background="{ThemeResource SystemFillColorSuccessBackgroundBrush}"
+                                           Foreground="{ThemeResource SystemFillColorSuccessBrush}"
+                                           CornerRadius="4"
+                                           VerticalAlignment="Bottom"
+                                           Margin="0,0,0,3" />
+                </StackPanel>
+                <TextBlock x:Name="Subtitle"
+                           Style="{StaticResource InfoBodyTextBlockStyle}"
+                           TextAlignment="Center"
+                           Margin="12,0,12,8"
+                           Grid.Row="3" />
+            </Grid>
 
-                <controls:TableView x:Name="TableRoot"
-                                    Margin="0,12,0,0">
-                    <controls:TableViewItem x:Name="From"
-                                            Padding="0">
-                        <Grid>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="Auto" />
-                                <ColumnDefinition />
-                            </Grid.ColumnDefinitions>
-                            <controls:ProfilePicture x:Name="FromPhoto"
-                                                     Margin="8,4,0,4"
-                                                     Width="24"
-                                                     Height="24" />
-                            <TextBlock Margin="8,5,4,6"
-                                       Style="{StaticResource BodyTextBlockStyle}"
-                                       VerticalAlignment="Top"
-                                       Grid.Column="1">
+            <controls:TableView x:Name="TableRoot"
+                                Margin="0,12,0,8">
+                <controls:TableViewItem x:Name="From"
+                                        Padding="0">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition />
+                        </Grid.ColumnDefinitions>
+                        <controls:ProfilePicture x:Name="FromPhoto"
+                                                 Margin="8,4,0,4"
+                                                 Width="24"
+                                                 Height="24" />
+                        <TextBlock Margin="8,5,4,6"
+                                   Style="{StaticResource BodyTextBlockStyle}"
+                                   VerticalAlignment="Top"
+                                   Grid.Column="1">
                                 <Hyperlink UnderlineStyle="None">
                                     <Run x:Name="FromTitle" />
                                 </Hyperlink>
-                            </TextBlock>
-                        </Grid>
-                    </controls:TableViewItem>
-                    <controls:TableViewItem x:Name="Transaction"
-                                            Header="{CustomResource StarsTransactionID}"
-                                            Padding="0">
-                        <Grid>
-                            <TextBlock x:Name="Identifier"
-                                       Style="{StaticResource BodyTextBlockStyle}"
-                                       FontFamily="Consolas"
-                                       TextWrapping="Wrap"
-                                       Margin="8,5,4,10"
-                                       VerticalAlignment="Top" />
+                        </TextBlock>
+                    </Grid>
+                </controls:TableViewItem>
+                <controls:TableViewItem x:Name="Transaction"
+                                        Header="{CustomResource StarsTransactionID}"
+                                        Padding="0">
+                    <Grid>
+                        <TextBlock x:Name="Identifier"
+                                   Style="{StaticResource BodyTextBlockStyle}"
+                                   FontFamily="Consolas"
+                                   TextWrapping="Wrap"
+                                   Margin="8,5,4,10"
+                                   VerticalAlignment="Top" />
 
-                            <TextBlock Text="&#xE8C8;"
-                                       FontFamily="{StaticResource SymbolThemeFontFamily}"
-                                       FontSize="20"
-                                       Foreground="{ThemeResource AccentButtonBackground}"
-                                       HorizontalAlignment="Right"
-                                       VerticalAlignment="Bottom"
-                                       Margin="4"
-                                       IsHitTestVisible="False" />
+                        <TextBlock Text="&#xE8C8;"
+                                   FontFamily="{StaticResource SymbolThemeFontFamily}"
+                                   FontSize="20"
+                                   Foreground="{ThemeResource AccentButtonBackground}"
+                                   HorizontalAlignment="Right"
+                                   VerticalAlignment="Bottom"
+                                   Margin="4"
+                                   IsHitTestVisible="False" />
 
-                            <Button Click="CopyLink_Click"
-                                    HorizontalAlignment="Stretch"
-                                    VerticalAlignment="Stretch"
-                                    Opacity="0" />
-                        </Grid>
-                    </controls:TableViewItem>
-                    <controls:TableViewItem x:Name="Date"
-                                            Header="{CustomResource StarsTransactionDate}" />
-                    <controls:TableViewItem x:Name="Availability"
-                                            Header="{CustomResource Gift2Availability}"
-                                            Visibility="Collapsed" />
-                </controls:TableView>
-                <Border x:Name="CaptionRoot"
-                        Background="{ThemeResource ButtonBackground}"
-                        BorderBrush="{ThemeResource ButtonBorderBrush}"
-                        BorderThickness="1"
-                        CornerRadius="0,0,2,2"
-                        Visibility="Collapsed">
-                    <controls:FormattedTextBlock x:Name="Caption"
-                                                 Margin="8,5,4,6" />
-                </Border>
+                        <Button Click="CopyLink_Click"
+                                HorizontalAlignment="Stretch"
+                                VerticalAlignment="Stretch"
+                                Opacity="0" />
+                    </Grid>
+                </controls:TableViewItem>
+                <controls:TableViewItem x:Name="Date"
+                                        Header="{CustomResource StarsTransactionDate}" />
+                <controls:TableViewItem x:Name="Availability"
+                                        Header="{CustomResource Gift2Availability}"
+                                        Visibility="Collapsed" />
+            </controls:TableView>
+            <Border x:Name="CaptionRoot"
+                    Background="{ThemeResource ButtonBackground}"
+                    BorderBrush="{ThemeResource ButtonBorderBrush}"
+                    BorderThickness="1"
+                    CornerRadius="0,0,2,2"
+                    Visibility="Collapsed">
+                <controls:FormattedTextBlock x:Name="Caption"
+                                             Margin="8,5,4,6" />
+            </Border>
 
-                <controls:SettingsFooter IsLink="True"
-                                         Click="SettingsFooter_Click"
-                                         Text="{CustomResource StarsTransactionTOS}"
-                                         TextAlignment="Center"
-                                         Margin="12,8,12,8" />
-            </StackPanel>
-        </ScrollViewer>
-
-        <controls:ScrollViewerScrim Background="{ThemeResource ContentDialogBackground}"
-                                    ScrollingHost="{x:Bind ScrollingHost}" />
+            <controls:SettingsFooter x:Name="Terms"
+                                     IsLink="True"
+                                     Click="SettingsFooter_Click"
+                                     Text="{CustomResource StarsTransactionTOS}"
+                                     TextAlignment="Center"
+                                     Margin="0,4,0,4" />
+        </StackPanel>
 
         <Grid x:Name="PurchasePanel"
               VerticalAlignment="Bottom"
               HorizontalAlignment="Stretch"
-              Margin="0,12,0,24"
+              Margin="0,8,0,0"
               Grid.Row="1">
             <controls:BadgeButton x:Name="PurchaseCommand"
                                   Content="{CustomResource OK}"
@@ -187,5 +186,13 @@
                                   Margin="0"
                                   Height="32" />
         </Grid>
+
+        <Button x:Name="Convert"
+                Click="Convert_Click"
+                Style="{StaticResource AccentTextButtonStyle}"
+                HorizontalAlignment="Stretch"
+                Margin="0,8,0,-12"
+                Visibility="Collapsed"
+                Grid.Row="2" />
     </Grid>
 </controls:ContentPopup>

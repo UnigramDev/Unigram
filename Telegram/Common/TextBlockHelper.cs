@@ -209,7 +209,7 @@ namespace Telegram.Common
                 return;
             }
 
-            markdown = markdown.ReplaceSpoilers();
+            markdown = markdown.ReplaceSpoilers(false);
 
             var entities = markdown.Entities;
             var text = markdown.Text;

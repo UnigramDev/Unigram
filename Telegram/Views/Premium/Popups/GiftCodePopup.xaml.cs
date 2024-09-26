@@ -124,11 +124,6 @@ namespace Telegram.Views.Premium.Popups
             Date.Content = Formatter.DateAt(info.CreationDate);
         }
 
-        private void PurchaseShadow_Loaded(object sender, RoutedEventArgs e)
-        {
-            VisualUtilities.DropShadow(PurchaseShadow);
-        }
-
         private async void Purchase_Click(object sender, RoutedEventArgs e)
         {
             Hide();

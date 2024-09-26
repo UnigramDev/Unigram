@@ -372,12 +372,20 @@ namespace Telegram.Views.Stars.Popups
             Refund.Visibility = Visibility.Collapsed;
         }
 
+        private readonly MessageSender _giftSenderId;
+        private readonly long _giftMessageId;
+        private readonly MessageGift _gift;
+
         public ReceiptPopup(IClientService clientService, INavigationService navigationService, MessageViewModel message, MessageGift gift)
         {
             InitializeComponent();
 
             _clientService = clientService;
             _navigationService = navigationService;
+
+            _giftSenderId = message.SenderId;
+            _giftMessageId = message.Id;
+            _gift = gift;
 
             if (clientService.TryGetUser(message.SenderId, out User user))
             {
@@ -430,6 +438,7 @@ namespace Telegram.Views.Stars.Popups
             StarCount.Foreground = BootStrapper.Current.Resources["SystemFillColorSuccessBrush"] as Brush;
 
             Refund.Visibility = Visibility.Collapsed;
+            Terms.Visibility = Visibility.Collapsed;
 
             if (gift.Text?.Text.Length > 0)
             {
@@ -438,6 +447,16 @@ namespace Telegram.Views.Stars.Popups
 
                 CaptionRoot.Visibility = Visibility.Visible;
                 Caption.SetText(clientService, gift.Text);
+            }
+
+            if (gift.WasConverted || message.IsOutgoing)
+            {
+                Convert.Visibility = Visibility.Collapsed;
+            }
+            else
+            {
+                Convert.Visibility = Visibility.Visible;
+                Convert.Content = Locale.Declension(Strings.R.Gift2ToBalance, gift.SellStarCount);
             }
         }
 
@@ -568,6 +587,35 @@ namespace Telegram.Views.Stars.Popups
 
             var viewModel = new StandaloneGalleryViewModel(_clientService, storageService, aggregator, items, item);
             _navigationService.ShowGallery(viewModel, Media1);
+        }
+
+        private async void Convert_Click(object sender, RoutedEventArgs e)
+        {
+            if (_clientService.TryGetUser(_giftSenderId, out User user))
+            {
+                var message = string.Format(Strings.Gift2ConvertText, user.FirstName, Locale.Declension(Strings.R.StarsCount, _gift.SellStarCount));
+
+                var confirm = await MessagePopup.ShowAsync(XamlRoot, target: null, message, Strings.Gift2ConvertTitle, Strings.Gift2ConvertButton, Strings.Cancel);
+                if (confirm == ContentDialogResult.Primary)
+                {
+                    var response = await _clientService.SendAsync(new SellGift(user.Id, _giftMessageId));
+                    if (response is Ok)
+                    {
+                        Hide();
+
+                        var popup = new StarsPopup();
+
+                        void handler(object sender, object e)
+                        {
+                            popup.Opened -= handler;
+                            ToastPopup.Show(XamlRoot, string.Format("**{0}**\n{1}", Strings.Gift2ConvertedTitle, Locale.Declension(Strings.R.Gift2Converted, _gift.SellStarCount)), ToastPopupIcon.StarsTopup);
+                        }
+
+                        _ = _navigationService.ShowPopupAsync(popup);
+                        popup.Opened += handler;
+                    }
+                }
+            }
         }
     }
 }

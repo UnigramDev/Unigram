@@ -86,13 +86,19 @@
                                             Content="{CustomResource StarsBuyMore}"
                                             Style="{StaticResource AccentButtonStyle}"
                                             HorizontalAlignment="Stretch" />
+
+                                    <Button Click="Gift_Click"
+                                            Content="{CustomResource TelegramStarsGift}"
+                                            Style="{StaticResource AccentTextButtonStyle}"
+                                            HorizontalAlignment="Stretch"
+                                            Margin="0,8,0,0" />
                                 </StackPanel>
 
-                                <Button Click="Gift_Click"
-                                        Content="{CustomResource TelegramStarsGift}"
-                                        HorizontalAlignment="Stretch"
-                                        Margin="12,0,12,4"
-                                        Grid.Row="4" />
+                                <controls:SettingsFooter IsLink="True"
+                                                         Click="Footer_Click"
+                                                         Text="{CustomResource StarsTOS}"
+                                                         Margin="12,0,12,8"
+                                                         Grid.Row="4" />
 
                                 <TextBlock Text="{CustomResource StarMySubscriptions}"
                                            Style="{StaticResource BaseTextBlockStyle}"
