@@ -206,10 +206,13 @@ namespace Telegram.Views.Stars.Popups
 
                     AnimatedPhoto.Source = new DelayedFileSource(clientService, giftSell.Gift.Sticker);
 
-                    Availability.Visibility = Visibility.Visible;
-                    Availability.Content = giftSell.Gift.RemainingCount > 0
+                    if (giftSell.Gift.TotalCount > 0)
+                    {
+                        Availability.Visibility = Visibility.Visible;
+                        Availability.Content = giftSell.Gift.RemainingCount > 0
                         ? string.Format(Strings.Gift2AvailabilityValue, giftSell.Gift.RemainingCount, giftSell.Gift.TotalCount)
                         : string.Format(Strings.Gift2AvailabilityValueNone, giftSell.Gift.TotalCount);
+                    }
                 }
                 else if (sourceUser.Purpose is UserTransactionPurposeGiftSend giftSend)
                 {
@@ -220,10 +223,13 @@ namespace Telegram.Views.Stars.Popups
 
                     AnimatedPhoto.Source = new DelayedFileSource(clientService, giftSend.Gift.Sticker);
 
-                    Availability.Visibility = Visibility.Visible;
-                    Availability.Content = giftSend.Gift.RemainingCount > 0
-                        ? string.Format(Strings.Gift2AvailabilityValue, giftSend.Gift.RemainingCount, giftSend.Gift.TotalCount)
-                        : string.Format(Strings.Gift2AvailabilityValueNone, giftSend.Gift.TotalCount);
+                    if (giftSend.Gift.TotalCount > 0)
+                    {
+                        Availability.Visibility = Visibility.Visible;
+                        Availability.Content = giftSend.Gift.RemainingCount > 0
+                            ? string.Format(Strings.Gift2AvailabilityValue, giftSend.Gift.RemainingCount, giftSend.Gift.TotalCount)
+                            : string.Format(Strings.Gift2AvailabilityValueNone, giftSend.Gift.TotalCount);
+                    }
                 }
 
                 MediaPreview.Visibility = Visibility.Collapsed;
@@ -292,6 +298,11 @@ namespace Telegram.Views.Stars.Popups
                 Photo.Source = PlaceholderImage.GetGlyph(Icons.QuestionCircle, long.MinValue);
 
                 MediaPreview.Visibility = Visibility.Collapsed;
+            }
+
+            if (string.IsNullOrEmpty(transaction.Id))
+            {
+                Transaction.Visibility = Visibility.Collapsed;
             }
 
             Identifier.Text = transaction.Id;
@@ -379,16 +390,7 @@ namespace Telegram.Views.Stars.Popups
                     From.Header = Strings.Gift2To;
                     Title.Text = Strings.Gift2TitleSent;
 
-                    if (gift.IsSaved)
-                    {
-                        TextBlockHelper.SetMarkdown(Subtitle, string.Format(Strings.Gift2InfoOutPinned, user.FirstName));
-                    }
-                    else
-                    {
-                        TextBlockHelper.SetMarkdown(Subtitle, gift.WasConverted
-                            ? Locale.Declension(Strings.R.Gift2InfoOutConverted, gift.SellStarCount, user.FirstName)
-                            : Locale.Declension(Strings.R.Gift2InfoOut, gift.SellStarCount, user.FirstName));
-                    }
+                    TextBlockHelper.SetMarkdown(Subtitle, Locale.Declension(Strings.R.Gift2InfoOut, gift.SellStarCount, user.FirstName));
                 }
                 else
                 {
@@ -428,6 +430,15 @@ namespace Telegram.Views.Stars.Popups
             StarCount.Foreground = BootStrapper.Current.Resources["SystemFillColorSuccessBrush"] as Brush;
 
             Refund.Visibility = Visibility.Collapsed;
+
+            if (gift.Text?.Text.Length > 0)
+            {
+                TableRoot.BorderThickness = new Thickness(1, 1, 1, 0);
+                TableRoot.CornerRadius = new CornerRadius(2, 2, 0, 0);
+
+                CaptionRoot.Visibility = Visibility.Visible;
+                Caption.SetText(clientService, gift.Text);
+            }
         }
 
         private void Purchase_Click(object sender, RoutedEventArgs e)

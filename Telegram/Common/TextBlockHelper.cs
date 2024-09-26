@@ -209,6 +209,8 @@ namespace Telegram.Common
                 return;
             }
 
+            markdown = markdown.ReplaceSpoilers();
+
             var entities = markdown.Entities;
             var text = markdown.Text;
 

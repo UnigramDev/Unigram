@@ -162,7 +162,7 @@
                           CornerRadius="{TemplateBinding CornerRadius}">
                         <Border x:Name="RootGrid"
                                 Background="{ThemeResource ButtonBackground}"
-                                BorderBrush="{ThemeResource SettingsItemBorderBrush}"
+                                BorderBrush="{ThemeResource ControlStrokeColorDefaultBrush}"
                                 BorderThickness="1,0,0,0"
                                 CornerRadius="0,2,2,0" />
 
@@ -179,7 +179,7 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="local:TableViewItem">
-                    <Border BorderBrush="{ThemeResource SettingsItemBorderBrush}"
+                    <Border BorderBrush="{ThemeResource ControlStrokeColorDefaultBrush}"
                             BorderThickness="{TemplateBinding BorderThickness}">
                         <local:TableViewItemPresenter x:Name="RootGrid">
                             <TextBlock x:Name="HeaderText"

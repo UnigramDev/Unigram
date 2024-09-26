@@ -115,11 +115,83 @@ namespace Telegram.Controls.Messages
                 var animation = FindName("Animation") as AnimatedImage;
                 animation.Source = new DelayedFileSource(message.ClientService, giveawayPrizeStars.Sticker);
             }
+            else if (message.Content is MessageGift gift)
+            {
+                var title = FindName("Title") as TextBlock;
+                var subtitle = FindName("Subtitle") as TextBlock;
+                var button = FindName("ViewLabel") as TextBlock;
+                var ribbonRoot = FindName("RibbonRoot") as Grid;
+
+                var user = message.ClientService.GetUser(message.Chat);
+                var self = message.ClientService.GetUser(message.ClientService.Options.MyId);
+
+                if (user == null || self == null)
+                {
+                    return;
+                }
+
+                if (message.IsOutgoing)
+                {
+                    title.Text = gift.IsPrivate
+                        ? string.Format(Strings.Gift2ActionTitleInAnonymous, user.FirstName)
+                        : string.Format("{0} {1}", Strings.Gift2ActionTitle, self.FirstName);
+
+                    if (gift.Text.Text.Length > 0)
+                    {
+                        TextBlockHelper.SetFormattedText(subtitle, gift.Text);
+                    }
+                    else
+                    {
+                        TextBlockHelper.SetMarkdown(subtitle, Locale.Declension(Strings.R.Gift2ActionOutInfo, gift.SellStarCount, user.FirstName));
+                    }
+                }
+                else
+                {
+                    title.Text = gift.IsPrivate
+                        ? Strings.Gift2ActionTitleAnonymous
+                        : string.Format("{0} {1}", Strings.Gift2ActionTitle, user.FirstName);
+
+                    if (gift.Text.Text.Length > 0)
+                    {
+                        TextBlockHelper.SetFormattedText(subtitle, gift.Text);
+                    }
+                    else if (gift.IsSaved)
+                    {
+                        TextBlockHelper.SetMarkdown(subtitle, Strings.Gift2ActionSavedInfo);
+                    }
+                    else
+                    {
+                        TextBlockHelper.SetMarkdown(subtitle, gift.WasConverted
+                            ? Locale.Declension(Strings.R.Gift2ActionConvertedInfo, gift.SellStarCount)
+                            : Locale.Declension(Strings.R.Gift2ActionInfo, gift.SellStarCount));
+                    }
+                }
+
+                //subtitle.Text = string.Format(Strings.ActionGiftPremiumSubtitle, Locale.Declension(Strings.R.Months, giftedPremium.MonthCount));
+                button.Text = Strings.ActionGiftPremiumView;
+
+                var animation = FindName("Animation") as AnimatedImage;
+                animation.Source = new DelayedFileSource(message.ClientService, gift.Gift.Sticker);
+                animation.Margin = new Thickness(0, 0, 0, 8);
+
+                if (gift.Gift.TotalCount > 0)
+                {
+                    ribbonRoot.Visibility = Visibility.Visible;
+
+                    var ribbon = FindName("Ribbon") as TextBlock;
+                    ribbon.Text = string.Format(Strings.Gift2Limited1OfRibbon, gift.Gift.TotalCount);
+                }
+                else
+                {
+                    ribbonRoot.Visibility = Visibility.Collapsed;
+                }
+            }
             else if (message.Content is MessageGiftedPremium giftedPremium)
             {
                 var title = FindName("Title") as TextBlock;
                 var subtitle = FindName("Subtitle") as TextBlock;
                 var button = FindName("ViewLabel") as TextBlock;
+                var ribbonRoot = FindName("RibbonRoot") as Grid;
 
                 title.Text = Strings.ActionGiftPremiumTitle;
                 subtitle.Text = string.Format(Strings.ActionGiftPremiumSubtitle, Locale.Declension(Strings.R.Months, giftedPremium.MonthCount));
@@ -127,19 +199,23 @@ namespace Telegram.Controls.Messages
 
                 var animation = FindName("Animation") as AnimatedImage;
                 animation.Source = new DelayedFileSource(message.ClientService, giftedPremium.Sticker);
+                animation.Margin = new Thickness(0, -20, 0, 12);
+
+                ribbonRoot.Visibility = Visibility.Collapsed;
             }
             else if (message.Content is MessageGiftedStars giftedStars)
             {
                 var title = FindName("Title") as TextBlock;
                 var subtitle = FindName("Subtitle") as TextBlock;
                 var button = FindName("ViewLabel") as TextBlock;
+                var ribbonRoot = FindName("RibbonRoot") as Grid;
 
                 title.Text = Locale.Declension(Strings.R.ActionGiftStarsTitle, giftedStars.StarCount);
                 button.Text = Strings.ActionGiftStarsView;
 
-                if (message.ClientService.Options.MyId == giftedStars.ReceiverUserId)
+                if (giftedStars.ReceiverUserId == 0)
                 {
-                    subtitle.Text = Strings.ActionGiftStarsSubtitleYou;
+                    TextBlockHelper.SetMarkdown(subtitle, Strings.ActionGiftStarsSubtitleYou);
                 }
                 else if (message.ClientService.TryGetUser(giftedStars.ReceiverUserId, out User receiver))
                 {
@@ -148,6 +224,9 @@ namespace Telegram.Controls.Messages
 
                 var animation = FindName("Animation") as AnimatedImage;
                 animation.Source = new DelayedFileSource(message.ClientService, giftedStars.Sticker);
+                animation.Margin = new Thickness(0, -20, 0, 12);
+
+                ribbonRoot.Visibility = Visibility.Collapsed;
             }
             else if (message.Content is MessageChatChangePhoto chatChangePhoto)
             {

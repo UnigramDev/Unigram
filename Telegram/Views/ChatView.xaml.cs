@@ -3855,6 +3855,12 @@ namespace Telegram.Views
 
             if (message == null)
             {
+                button = button.GetParent<MessageService>();
+                message = button?.Tag as MessageViewModel;
+            }
+
+            if (message == null)
+            {
                 return;
             }
 

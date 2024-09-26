@@ -5476,6 +5476,36 @@ Duration: {1}</value>
   <data name="GifSavedHint" xml:space="preserve">
     <value>Added to Favorite GIFs.</value>
   </data>
+  <data name="Gift2ActionConvertedInfo_one" xml:space="preserve">
+    <value>You converted this gift to {0} Star.</value>
+  </data>
+  <data name="Gift2ActionConvertedInfo_other" xml:space="preserve">
+    <value>You converted this gift to {0} Stars.</value>
+  </data>
+  <data name="Gift2ActionInfo_one" xml:space="preserve">
+    <value>Display this gift on your page or convert it to {0} Star.</value>
+  </data>
+  <data name="Gift2ActionInfo_other" xml:space="preserve">
+    <value>Display this gift on your page or convert it to {0} Stars.</value>
+  </data>
+  <data name="Gift2ActionOutInfo_one" xml:space="preserve">
+    <value>**{1}** can display this gift on their page or convert it to {0} Star.</value>
+  </data>
+  <data name="Gift2ActionOutInfo_other" xml:space="preserve">
+    <value>**{1}** can display this gift on their page or convert it to {0} Stars.</value>
+  </data>
+  <data name="Gift2ActionSavedInfo" xml:space="preserve">
+    <value>You kept this gift on your page.</value>
+  </data>
+  <data name="Gift2ActionTitle" xml:space="preserve">
+    <value>Gift from</value>
+  </data>
+  <data name="Gift2ActionTitleAnonymous" xml:space="preserve">
+    <value>You received a gift!</value>
+  </data>
+  <data name="Gift2ActionTitleInAnonymous" xml:space="preserve">
+    <value>{0} received a gift!</value>
+  </data>
   <data name="Gift2Availability" xml:space="preserve">
     <value>Availability</value>
   </data>
@@ -5483,7 +5513,7 @@ Duration: {1}</value>
     <value>{0} of {1} left</value>
   </data>
   <data name="Gift2AvailabilityValueNone" xml:space="preserve">
-    <value>None of {1} left</value>
+    <value>None of {0} left</value>
   </data>
   <data name="Gift2From" xml:space="preserve">
     <value>From</value>
@@ -5506,17 +5536,14 @@ Duration: {1}</value>
   <data name="Gift2InfoOut_other" xml:space="preserve">
     <value>{1} can keep this gift in profile or convert it to **{0}** Stars.</value>
   </data>
-  <data name="Gift2InfoOutConverted_one" xml:space="preserve">
-    <value>{1} converted this gift to **{0}** Star.</value>
-  </data>
-  <data name="Gift2InfoOutConverted_other" xml:space="preserve">
-    <value>{1} converted this gift to **{0}** Stars.</value>
-  </data>
-  <data name="Gift2InfoOutPinned" xml:space="preserve">
-    <value>{0} kept this gift in your Profile.</value>
-  </data>
   <data name="Gift2InfoPinned" xml:space="preserve">
     <value>You kept this gift in your Profile.</value>
+  </data>
+  <data name="Gift2Limited1OfRibbon" xml:space="preserve">
+    <value>1 of {0}</value>
+  </data>
+  <data name="Gift2LimitedRibbon" xml:space="preserve">
+    <value>limited</value>
   </data>
   <data name="Gift2TitleReceived" xml:space="preserve">
     <value>Received Gift</value>

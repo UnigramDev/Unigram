@@ -1710,6 +1710,20 @@ namespace Telegram.ViewModels
             {
                 await ShowPopupAsync(new Views.Stars.Popups.ReceiptPopup(ClientService, NavigationService, message, gift));
             }
+            else if (message.Content is MessageGiftedStars giftedStars)
+            {
+                StarTransactionPartner partner;
+                if (message.SenderId is MessageSenderUser senderUser)
+                {
+                    partner = new StarTransactionPartnerUser(senderUser.UserId, new UserTransactionPurposeGiftedStars(giftedStars.Sticker));
+                }
+                else
+                {
+                    return;
+                }
+
+                await ShowPopupAsync(new Views.Stars.Popups.ReceiptPopup(ClientService, NavigationService, new StarTransaction(giftedStars.TransactionId, giftedStars.StarCount, false, message.Date, partner)));
+            }
         }
 
         public async Task EditPhotoAsync(StorageMedia file)

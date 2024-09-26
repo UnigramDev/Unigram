@@ -360,51 +360,76 @@
                                                      Padding="0,0,0,4" />
                     </messages:MessageService>
 
-                    <messages:MessageService x:Name="Service"
-                                             Click="ServiceMessage_Click"
-                                             Margin="0,4,0,0"
-                                             Padding="12,2,12,0"
-                                             Width="216">
-                        <StackPanel>
-                            <controls:AnimatedImage x:Name="Animation"
-                                                    Width="120"
-                                                    Height="120"
-                                                    FrameSize="120,120"
-                                                    DecodeFrameType="Logical"
-                                                    IsViewportAware="True"
-                                                    LoopCount="1"
-                                                    Margin="0,-20,0,12" />
+                    <Grid Width="216">
+                        <messages:MessageService x:Name="Service"
+                                                 Click="ServiceMessage_Click"
+                                                 Margin="0,4,0,0"
+                                                 Padding="12,2,12,0"
+                                                 Width="216">
+                            <StackPanel>
+                                <controls:AnimatedImage x:Name="Animation"
+                                                        Width="120"
+                                                        Height="120"
+                                                        FrameSize="120,120"
+                                                        DecodeFrameType="Logical"
+                                                        IsViewportAware="True"
+                                                        LoopCount="1"
+                                                        Margin="0,-20,0,12" />
 
-                            <TextBlock x:Name="Title"
-                                       Foreground="#FFFFFF"
-                                       Text="{CustomResource BoostingCongratulations}"
-                                       TextAlignment="Center"
-                                       Style="{StaticResource SubtitleTextBlockStyle}"
-                                       FontSize="16" />
+                                <TextBlock x:Name="Title"
+                                           Foreground="#FFFFFF"
+                                           Text="{CustomResource BoostingCongratulations}"
+                                           TextAlignment="Center"
+                                           Style="{StaticResource SubtitleTextBlockStyle}"
+                                           FontSize="16" />
 
-                            <TextBlock x:Name="Subtitle"
-                                       Foreground="#FFFFFF"
-                                       TextAlignment="Center"
-                                       TextWrapping="Wrap"
-                                       Style="{StaticResource CaptionTextBlockStyle}"
-                                       FontFamily="{StaticResource EmojiThemeFontFamilyWithSymbols}"
-                                       Padding="0,0,0,4"
-                                       Margin="0,0,0,8" />
-
-                            <Border x:Name="View"
-                                    Background="{ThemeResource MessageServiceBackgroundBrush}"
-                                    CornerRadius="12"
-                                    HorizontalAlignment="Center"
-                                    Padding="12,4,12,4"
-                                    Margin="0,0,0,12">
-                                <TextBlock x:Name="ViewLabel"
-                                           Text="{CustomResource BoostingReceivedGiftOpenBtn}"
+                                <TextBlock x:Name="Subtitle"
                                            Foreground="#FFFFFF"
                                            TextAlignment="Center"
-                                           Style="{StaticResource CaptionTextBlockStyle}" />
+                                           TextWrapping="Wrap"
+                                           Style="{StaticResource CaptionTextBlockStyle}"
+                                           FontFamily="{StaticResource EmojiThemeFontFamilyWithSymbols}"
+                                           Padding="0,0,0,4"
+                                           Margin="0,0,0,8" />
+
+                                <Border x:Name="View"
+                                        Background="{ThemeResource MessageServiceBackgroundBrush}"
+                                        CornerRadius="12"
+                                        HorizontalAlignment="Center"
+                                        Padding="12,4,12,4"
+                                        Margin="0,0,0,12">
+                                    <TextBlock x:Name="ViewLabel"
+                                               Text="{CustomResource BoostingReceivedGiftOpenBtn}"
+                                               Foreground="#FFFFFF"
+                                               TextAlignment="Center"
+                                               Style="{StaticResource CaptionTextBlockStyle}" />
+                                </Border>
+                            </StackPanel>
+                        </messages:MessageService>
+
+                        <Grid x:Name="RibbonRoot"
+                              HorizontalAlignment="Right"
+                              VerticalAlignment="Top"
+                              Margin="0,2,-2,0"
+                              Width="72"
+                              Height="72">
+                            <Path Data="M69.6569 41.1569L30.8431 2.34315C29.3429 0.842855 27.308 0 25.1863 0H2.82843C1.04662 0 0.154286 2.15429 1.41422 3.41422L68.5858 70.5858C69.8457 71.8457 72 70.9534 72 69.1716V46.8137C72 44.692 71.1571 42.6571 69.6569 41.1569Z"
+                                  Fill="{StaticResource MessageServiceBackgroundBrush}" />
+
+                            <Border Width="72"
+                                    VerticalAlignment="Center"
+                                    RenderTransformOrigin="0.5,0.5"
+                                    Margin="0,-14,-14,0">
+                                <Border.RenderTransform>
+                                    <RotateTransform Angle="45" />
+                                </Border.RenderTransform>
+                                <TextBlock x:Name="Ribbon"
+                                           Foreground="#FFFFFF"
+                                           TextAlignment="Center"
+                                           FontSize="12" />
                             </Border>
-                        </StackPanel>
-                    </messages:MessageService>
+                        </Grid>
+                    </Grid>
                 </StackPanel>
             </messages:MessageService>
         </DataTemplate>
