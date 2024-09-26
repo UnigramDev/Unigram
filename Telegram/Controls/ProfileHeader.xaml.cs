@@ -1709,7 +1709,10 @@ namespace Telegram.Controls
                     .Where(x => x.Emoji is /*"\U0001F389" or "\U0001F386" or*/ "\U0001F388" or "\U0001F973")
                     .ToList();
 
-                return stickers[_effect++ % stickers.Count];
+                if (stickers.Count > 0)
+                {
+                    return stickers[_effect++ % stickers.Count];
+                }
             }
 
             return null;
