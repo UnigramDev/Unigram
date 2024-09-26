@@ -254,11 +254,13 @@ namespace Telegram.Common
                     await capture.InitializeAsync(settings);
                     success = true;
                 }
-                catch { }
+                catch
+                {
+                    success = !required;
+                }
                 finally
                 {
                     capture?.Dispose();
-                    success = !required;
                 }
 
                 return success;
