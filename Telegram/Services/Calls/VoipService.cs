@@ -97,7 +97,7 @@ namespace Telegram.Services
                 return;
             }
 
-            var permissions = await MediaDeviceWatcher.CheckAccessAsync(navigation.XamlRoot, video, false);
+            var permissions = await MediaDeviceWatcher.CheckAccessAsync(navigation.XamlRoot, video);
             if (permissions == false)
             {
                 return;

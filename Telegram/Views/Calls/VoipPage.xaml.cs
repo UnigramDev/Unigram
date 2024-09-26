@@ -403,6 +403,8 @@ namespace Telegram.Views.Calls
                 LocalVideoOff.ShowHide(false, LocalVideoPanel);
 
                 Emoji.Visibility = Visibility.Collapsed;
+
+                ShowHideWealNetwork(false);
             }
         }
 
