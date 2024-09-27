@@ -30,6 +30,16 @@ namespace Telegram.Streams
             }
         }
 
+        public static DelayedFileSource FromSticker(IClientService clientService, Sticker sticker)
+        {
+            if (sticker == null)
+            {
+                return null;
+            }
+
+            return new DelayedFileSource(clientService, sticker);
+        }
+
         public DelayedFileSource(IClientService clientService, Sticker sticker)
             : this(clientService, sticker.StickerValue)
         {

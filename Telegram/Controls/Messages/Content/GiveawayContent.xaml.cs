@@ -84,9 +84,7 @@ namespace Telegram.Controls.Messages.Content
 
         private void UpdateMessageGiveaway(MessageViewModel message, MessageGiveaway giveaway)
         {
-            Animation.Source = giveaway.Sticker != null
-                ? new DelayedFileSource(message.ClientService, giveaway.Sticker)
-                : null;
+            Animation.Source = DelayedFileSource.FromSticker(message.ClientService, giveaway.Sticker);
 
             Count.Text = $"X{giveaway.WinnerCount}";
 
