@@ -161,7 +161,7 @@
 
                             <Path x:Name="ContentPresenter"
                                   Data="M0.5 0.5 L9.5 9.5 M0.5 9.5 L9.5 0.5"
-                                  Stroke="#000000"
+                                  Stroke="{ThemeResource TextFillColorPrimaryBrush}"
                                   StrokeStartLineCap="Round"
                                   StrokeEndLineCap="Round"
                                   HorizontalAlignment="Center"
