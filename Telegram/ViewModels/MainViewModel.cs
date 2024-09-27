@@ -371,9 +371,7 @@ namespace Telegram.ViewModels
             }
         }
 
-        private static bool _shown;
-
-        protected override async Task OnNavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
+        protected override Task OnNavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
         {
             //BeginOnUIThread(() => Calls.OnNavigatedToAsync(parameter, mode, state));
             //BeginOnUIThread(() => Settings.OnNavigatedToAsync(parameter, mode, state));
@@ -395,55 +393,7 @@ namespace Telegram.ViewModels
                 _ = Task.Run(() => _contactsService.JumpListAsync());
             }
 
-            if (ApiInfo.IsPackagedRelease && WatchDog.HasCrashedInLastSession && !_shown && DateTime.UtcNow.Date != SettingsService.Current.Diagnostics.LastCrashReported.Date)
-            {
-                _shown = true;
-
-                var layoutCycle = SettingsService.Current.Diagnostics.LastCrashWasLayoutCycle;
-                SettingsService.Current.Diagnostics.LastCrashWasLayoutCycle = false;
-
-                if (layoutCycle)
-                {
-                    var confirm = await ShowPopupAsync("The app terminated unexpectedly due to a layout cycle, please report this problem immediately.", "Something went wrong", "OK", "Cancel");
-                    if (confirm == ContentDialogResult.Primary)
-                    {
-                        var chat = await ClientService.SendAsync(new SearchPublicChat("unigraminsiders")) as Chat;
-                        if (chat != null)
-                        {
-                            var service = new DeviceInfoService();
-                            var payload = "Hi, I just had a layout cycle, can you please help me? My app version is {0}, running {1} on a {2}.";
-                            payload = string.Format(payload, service.ApplicationVersion, service.FullSystemVersion, service.DeviceModel);
-
-                            ClientService.Send(new SendMessage(chat.Id, 0, null, null, null, new InputMessageText(new FormattedText(payload, Array.Empty<TextEntity>()), null, false)));
-                            NavigationService.NavigateToChat(chat);
-                        }
-                    }
-                }
-                else
-                {
-                    // For now, we just ignore any other crash.
-                    return;
-
-                    var confirm = await ShowPopupAsync("It seems that the app terminated unexpectedly. Do you want to report this problem?", "Something went wrong", "OK", "Cancel");
-                    if (confirm == ContentDialogResult.Primary)
-                    {
-                        SettingsService.Current.Diagnostics.LastCrashReported = DateTime.UtcNow;
-
-                        var chat = await ClientService.SendAsync(new SearchPublicChat("unigraminsiders")) as Chat;
-                        if (chat != null)
-                        {
-                            var service = new DeviceInfoService();
-                            var payload = "Hi, I just had a crash, can you please help me? My app version is {0}, running {1} on a {2}.";
-                            payload = string.Format(payload, service.ApplicationVersion, service.FullSystemVersion, service.DeviceModel);
-
-                            ClientService.Send(new SendMessage(chat.Id, 0, null, null, null, new InputMessageText(new FormattedText(payload, Array.Empty<TextEntity>()), null, false)));
-                            NavigationService.NavigateToChat(chat);
-                        }
-                    }
-                }
-            }
-
-            //return base.OnNavigatedToAsync(parameter, mode, state);
+            return Task.CompletedTask;
         }
 
         public override void Subscribe()

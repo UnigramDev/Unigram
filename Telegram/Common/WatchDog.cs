@@ -176,13 +176,7 @@ namespace Telegram
         {
             args.Handled = args.Exception is not LayoutCycleException;
 
-            if (args.Exception is LayoutCycleException)
-            {
-                Logger.Info("LayoutCycleException");
-                Analytics.TrackEvent("LayoutCycleException");
-                SettingsService.Current.Diagnostics.LastCrashWasLayoutCycle = true;
-            }
-            else if (args.Exception is NotSupportedException)
+            if (args.Exception is NotSupportedException)
             {
                 var popups = VisualTreeHelper.GetOpenPopups(Window.Current);
 
@@ -198,6 +192,12 @@ namespace Telegram
 
                 return;
             }
+            else if (args.Exception is COMException { ErrorCode: -2147467259 })
+            {
+                return;
+            }
+
+            Crashes.TrackCrash(args.Exception);
 
             if (SettingsService.Current.Diagnostics.ShowMemoryUsage)
             {
