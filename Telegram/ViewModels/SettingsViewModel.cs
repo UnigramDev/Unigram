@@ -42,13 +42,6 @@ namespace Telegram.ViewModels
 
         public IStorageService StorageService => _storageService;
 
-        private Chat _chat;
-        public Chat Chat
-        {
-            get => _chat;
-            set => Set(ref _chat, value);
-        }
-
         public string OwnedStarCount => ClientService.OwnedStarCount > 0
             ? ClientService.OwnedStarCount.ToString("N0")
             : string.Empty;
@@ -57,23 +50,18 @@ namespace Telegram.ViewModels
 
         protected override Task OnNavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
         {
-            if (ClientService.TryGetChat(ClientService.Options.MyId, out Chat chat))
+            if (ClientService.TryGetUser(ClientService.Options.MyId, out User item))
             {
-                Chat = chat;
+                Delegate?.UpdateUser(null, item, false);
 
-                if (ClientService.TryGetUser(chat, out User item))
+                var cache = ClientService.GetUserFull(item.Id);
+                if (cache == null)
                 {
-                    Delegate?.UpdateUser(chat, item, false);
-
-                    var cache = ClientService.GetUserFull(item.Id);
-                    if (cache == null)
-                    {
-                        ClientService.Send(new GetUserFullInfo(item.Id));
-                    }
-                    else
-                    {
-                        Delegate?.UpdateUserFullInfo(chat, item, cache, false, false);
-                    }
+                    ClientService.Send(new GetUserFullInfo(item.Id));
+                }
+                else
+                {
+                    Delegate?.UpdateUserFullInfo(null, item, cache, false, false);
                 }
             }
 
@@ -97,33 +85,17 @@ namespace Telegram.ViewModels
 
         public void Handle(UpdateUser update)
         {
-            var chat = _chat;
-            if (chat == null)
+            if (update.User.Id == ClientService.Options.MyId)
             {
-                return;
-            }
-
-            if (chat.Type is ChatTypePrivate privata && privata.UserId == update.User.Id)
-            {
-                BeginOnUIThread(() => Delegate?.UpdateUser(chat, update.User, false));
-            }
-            else if (chat.Type is ChatTypeSecret secret && secret.UserId == update.User.Id)
-            {
-                BeginOnUIThread(() => Delegate?.UpdateUser(chat, update.User, true));
+                BeginOnUIThread(() => Delegate?.UpdateUser(null, update.User, false));
             }
         }
 
         public void Handle(UpdateUserFullInfo update)
         {
-            var chat = _chat;
-            if (chat == null)
+            if (update.UserId == ClientService.Options.MyId)
             {
-                return;
-            }
-
-            if (chat.Type is ChatTypePrivate privata && privata.UserId == update.UserId)
-            {
-                BeginOnUIThread(() => Delegate?.UpdateUserFullInfo(chat, ClientService.GetUser(update.UserId), update.UserFullInfo, false, false));
+                BeginOnUIThread(() => Delegate?.UpdateUserFullInfo(null, ClientService.GetUser(update.UserId), update.UserFullInfo, false, false));
             }
         }
 

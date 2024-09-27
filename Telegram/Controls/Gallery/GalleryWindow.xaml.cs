@@ -302,6 +302,23 @@ namespace Telegram.Controls.Gallery
             return Task.FromResult(ContentDialogResult.None);
         }
 
+        public static Task<ContentDialogResult> ShowAsync(ViewModelBase viewModelBase, IStorageService storageService, User user, FrameworkElement closing = null)
+        {
+            var clientService = viewModelBase.ClientService;
+            var aggregator = viewModelBase.Aggregator;
+            var navigationService = viewModelBase.NavigationService;
+
+            var userFull = clientService.GetUserFull(user.Id);
+            if (userFull?.Photo == null && userFull?.PublicPhoto == null && userFull?.PersonalPhoto == null)
+            {
+                return Task.FromResult(ContentDialogResult.None);
+            }
+
+            var viewModel = new UserPhotosViewModel(clientService, storageService, aggregator, user, userFull);
+            viewModel.NavigationService = navigationService;
+            return ShowAsync(navigationService.XamlRoot, viewModel, closing);
+        }
+
         public static Task<ContentDialogResult> ShowAsync(XamlRoot xamlRoot, GalleryViewModelBase parameter, FrameworkElement closing = null, long timestamp = 0)
         {
             var popup = new GalleryWindow

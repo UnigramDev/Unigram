@@ -183,13 +183,10 @@ namespace Telegram.Views
 
         private async void Photo_Click(object sender, RoutedEventArgs e)
         {
-            var chat = ViewModel.Chat;
-            if (chat == null)
+            if (ViewModel.ClientService.TryGetUser(ViewModel.ClientService.Options.MyId, out User user))
             {
-                return;
+                await GalleryWindow.ShowAsync(ViewModel, ViewModel.StorageService, user, Photo);
             }
-
-            await GalleryWindow.ShowAsync(ViewModel, ViewModel.StorageService, chat, Photo);
         }
 
         #region Binding
