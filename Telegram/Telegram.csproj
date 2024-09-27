@@ -3673,7 +3673,7 @@
     </PackageReference>
     <!-- Used by AppCenter -->
     <PackageReference Include="SQLitePCLRaw.bundle_winsqlite3">
-      <Version>2.1.9</Version>
+      <Version>2.1.10</Version>
     </PackageReference>
     <PackageReference Include="System.Reflection.Metadata">
       <Version>8.0.0</Version>
