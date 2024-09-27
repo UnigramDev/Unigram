@@ -100,24 +100,6 @@ namespace Telegram.Services.Settings
             set => AddOrUpdateValue(ref _useStorageOptimizer, "UseStorageOptimizer", value);
         }
 
-        private bool? _lastCrashWasLayoutCycle;
-        public bool LastCrashWasLayoutCycle
-        {
-            get => _lastCrashWasLayoutCycle ??= GetValueOrDefault("LastCrashWasLayoutCycle", false);
-            set => AddOrUpdateValue(ref _lastCrashWasLayoutCycle, "LastCrashWasLayoutCycle", value);
-        }
-
-        private DateTime? _lasCrashReported;
-        public DateTime LastCrashReported
-        {
-            get => _lasCrashReported ??= DateTime.FromFileTimeUtc(GetValueOrDefault("LastCrashReported", 2650467743999999999 /* DateTime.MaxValue */));
-            set
-            {
-                _lasCrashReported = value;
-                AddOrUpdateValue("LastCrashReported", value.ToFileTimeUtc());
-            }
-        }
-
         private bool? _hidePhoneNumber;
         public bool HidePhoneNumber
         {
