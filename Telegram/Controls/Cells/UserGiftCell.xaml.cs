@@ -13,7 +13,6 @@ namespace Telegram.Controls.Cells
         public UserGiftCell()
         {
             InitializeComponent();
-            Height = 140;
         }
 
         public void UpdateUserGift(IClientService clientService, UserGift gift)
@@ -29,7 +28,7 @@ namespace Telegram.Controls.Cells
 
             Animated.Source = new DelayedFileSource(clientService, gift.Gift.Sticker);
 
-            StarCount.Text = gift.SellStarCount > 0 
+            StarCount.Text = gift.SellStarCount > 0
                 ? gift.SellStarCount.ToString("N0")
                 : gift.Gift.StarCount.ToString("N0");
 
@@ -54,6 +53,30 @@ namespace Telegram.Controls.Cells
             {
                 FindName(nameof(Hidden));
                 Hidden.Visibility = Visibility.Visible;
+            }
+        }
+
+        public void UpdateGift(IClientService clientService, Gift gift)
+        {
+            Photo.Visibility = Visibility.Collapsed;
+
+            Animated.Source = new DelayedFileSource(clientService, gift.Sticker);
+
+            StarCount.Text = gift.StarCount.ToString("N0");
+
+            if (gift.TotalCount > 0)
+            {
+                RibbonRoot.Visibility = Visibility.Visible;
+                Ribbon.Text = Strings.Gift2LimitedRibbon;
+            }
+            else
+            {
+                RibbonRoot.Visibility = Visibility.Collapsed;
+            }
+
+            if (Hidden != null)
+            {
+                Hidden.Visibility = Visibility.Collapsed;
             }
         }
     }

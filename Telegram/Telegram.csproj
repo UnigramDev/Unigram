@@ -250,6 +250,9 @@
     <Compile Include="Controls\Cells\StarWithdrawCell.xaml.cs">
       <DependentUpon>StarWithdrawCell.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\Cells\PremiumGiftCell.xaml.cs">
+      <DependentUpon>PremiumGiftCell.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Controls\Cells\UserGiftCell.xaml.cs">
       <DependentUpon>UserGiftCell.xaml</DependentUpon>
     </Compile>
@@ -303,6 +306,7 @@
     <Compile Include="Controls\PremiumSlider.cs" />
     <Compile Include="Services\Calls\VoipService.cs" />
     <Compile Include="Services\Calls\VoipVideoType.cs" />
+    <Compile Include="Streams\PremiumInfoFileSource.cs" />
     <Compile Include="Td\Api\ReactionTypeEqualityComparer.cs" />
     <Compile Include="Controls\PremiumStarCount.cs" />
     <Compile Include="Controls\Stories\Widgets\StoryWeatherWidget.xaml.cs">
@@ -1279,6 +1283,9 @@
     </Compile>
     <Compile Include="Views\Popups\VideoChatStreamsPopup.xaml.cs">
       <DependentUpon>VideoChatStreamsPopup.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Stars\Popups\SendGiftPopup.xaml.cs">
+      <DependentUpon>SendGiftPopup.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Stars\Popups\JoinChatPopup.xaml.cs">
       <DependentUpon>JoinChatPopup.xaml</DependentUpon>
@@ -2321,6 +2328,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Controls\Cells\PremiumGiftCell.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Controls\Cells\UserGiftCell.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -3120,6 +3131,10 @@
     <Page Include="Views\Popups\VideoChatStreamsPopup.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Stars\Popups\SendGiftPopup.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="Views\Stars\Popups\JoinChatPopup.xaml">
       <Generator>MSBuild:Compile</Generator>

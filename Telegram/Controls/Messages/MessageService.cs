@@ -174,6 +174,7 @@ namespace Telegram.Controls.Messages
                 }
 
                 var animation = FindName("Animation") as AnimatedImage;
+                animation.LoopCount = 0;
                 animation.Source = new DelayedFileSource(message.ClientService, gift.Gift.Sticker);
                 animation.Margin = new Thickness(0, 0, 0, 8);
 
@@ -203,6 +204,7 @@ namespace Telegram.Controls.Messages
                 view.Visibility = Visibility.Visible;
 
                 var animation = FindName("Animation") as AnimatedImage;
+                animation.LoopCount = 1;
                 animation.Source = DelayedFileSource.FromSticker(message.ClientService, giftedPremium.Sticker);
                 animation.Margin = new Thickness(0, -20, 0, 12);
 
@@ -230,6 +232,7 @@ namespace Telegram.Controls.Messages
                 }
 
                 var animation = FindName("Animation") as AnimatedImage;
+                animation.LoopCount = 1;
                 animation.Source = DelayedFileSource.FromSticker(message.ClientService, giftedStars.Sticker);
                 animation.Margin = new Thickness(0, -20, 0, 12);
 

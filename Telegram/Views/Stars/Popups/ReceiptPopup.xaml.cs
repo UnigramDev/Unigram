@@ -418,8 +418,6 @@ namespace Telegram.Views.Stars.Popups
                             : Locale.Declension(Strings.R.Gift2Info, gift.SellStarCount));
                     }
                 }
-
-                AnimatedPhoto.Source = new DelayedFileSource(clientService, gift.Gift.Sticker);
             }
             else
             {
@@ -432,6 +430,9 @@ namespace Telegram.Views.Stars.Popups
                 Subtitle.Visibility = Visibility.Collapsed;
                 Photo.Source = PlaceholderImage.GetGlyph(Icons.QuestionCircle, long.MinValue);
             }
+
+            AnimatedPhoto.LoopCount = 0;
+            AnimatedPhoto.Source = new DelayedFileSource(clientService, gift.Gift.Sticker);
 
             Transaction.Visibility = Visibility.Collapsed;
             Date.Content = Formatter.DateAt(message.Date);
@@ -516,6 +517,7 @@ namespace Telegram.Views.Stars.Popups
                 Convert.Content = Locale.Declension(Strings.R.Gift2ToBalance, gift.SellStarCount);
             }
 
+            AnimatedPhoto.LoopCount = 0;
             AnimatedPhoto.Source = new DelayedFileSource(clientService, gift.Gift.Sticker);
 
             Transaction.Visibility = Visibility.Collapsed;

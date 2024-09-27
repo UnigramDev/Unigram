@@ -99,14 +99,8 @@ namespace Telegram.ViewModels.Stars
                     var user = ClientService.GetUser(PaymentForm.SellerBotUserId);
                     var extended = Locale.Declension(Strings.R.StarsPurchaseCompletedInfo, stars.StarCount, PaymentForm.ProductInfo.Title, user.FullName());
 
-                    var message = Strings.StarsPurchaseCompleted + Environment.NewLine + extended;
-                    var entity = new TextEntity(0, Strings.StarsPurchaseCompleted.Length, new TextEntityTypeBold());
-
-                    var text = new FormattedText(message, new[] { entity });
-                    var formatted = ClientEx.ParseMarkdown(text);
-
                     Aggregator.Publish(new UpdateConfetti());
-                    ToastPopup.Show(XamlRoot, formatted, ToastPopupIcon.Success);
+                    ToastPopup.Show(XamlRoot, string.Format("**{0}**\n{1}", Strings.StarsPurchaseCompleted, extended), ToastPopupIcon.Success);
 
                     return PayResult.Succeeded;
                 }

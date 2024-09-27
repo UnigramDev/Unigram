@@ -5538,6 +5538,12 @@ This action cannot be undone.</value>
   <data name="Gift2From" xml:space="preserve">
     <value>From</value>
   </data>
+  <data name="Gift2Hide" xml:space="preserve">
+    <value>Hide My Name</value>
+  </data>
+  <data name="Gift2HideInfo" xml:space="preserve">
+    <value>You can hide your name and message from visitors to {0}`s profile. {0} will still see your name and message.</value>
+  </data>
   <data name="Gift2Info_one" xml:space="preserve">
     <value>You can keep this gift in your Profile or convert it to **{0}** Star.</value>
   </data>
@@ -5577,6 +5583,18 @@ This action cannot be undone.</value>
   <data name="Gift2MadePublicTitle" xml:space="preserve">
     <value>Gift Shown</value>
   </data>
+  <data name="Gift2Message" xml:space="preserve">
+    <value>Enter Message</value>
+  </data>
+  <data name="Gift2Premium" xml:space="preserve">
+    <value>Gift Premium</value>
+  </data>
+  <data name="Gift2PremiumInfo" xml:space="preserve">
+    <value>Give **{0}** access to exclusive features with Telegram Premium.</value>
+  </data>
+  <data name="Gift2PremiumInfoLink" xml:space="preserve">
+    <value>See Features &gt;</value>
+  </data>
   <data name="Gift2ProfileInvisible" xml:space="preserve">
     <value>This gift is hidden. Only you can see it.</value>
   </data>
@@ -5588,6 +5606,30 @@ This action cannot be undone.</value>
   </data>
   <data name="Gift2ProfileVisible" xml:space="preserve">
     <value>This gift is visible to visitors of your page.</value>
+  </data>
+  <data name="Gift2Send_one" xml:space="preserve">
+    <value>Send a Gift for ⭐️ {0}</value>
+  </data>
+  <data name="Gift2Send_other" xml:space="preserve">
+    <value>Send a Gift for ⭐️ {0}</value>
+  </data>
+  <data name="Gift2Stars" xml:space="preserve">
+    <value>Gift Stars</value>
+  </data>
+  <data name="Gift2StarsInfo" xml:space="preserve">
+    <value>Give **{0}** gifts that can be kept on the profile or converted to Stars.</value>
+  </data>
+  <data name="Gift2StarsInfoLink" xml:space="preserve">
+    <value>What are Stars &gt;</value>
+  </data>
+  <data name="Gift2TabAll" xml:space="preserve">
+    <value>All Gifts</value>
+  </data>
+  <data name="Gift2TabLimited" xml:space="preserve">
+    <value>Limited</value>
+  </data>
+  <data name="Gift2Title" xml:space="preserve">
+    <value>Send a Gift</value>
   </data>
   <data name="Gift2TitleReceived" xml:space="preserve">
     <value>Received Gift</value>
@@ -5615,6 +5657,12 @@ This action cannot be undone.</value>
   </data>
   <data name="Gift2TransactionSent" xml:space="preserve">
     <value>Gift</value>
+  </data>
+  <data name="GiftMonths_one" xml:space="preserve">
+    <value>{0}-month</value>
+  </data>
+  <data name="GiftMonths_other" xml:space="preserve">
+    <value>{0}-months</value>
   </data>
   <data name="GiftPremium" xml:space="preserve">
     <value>Gift Premium</value>
@@ -10180,6 +10228,9 @@ The benefits of Telegram Business are **temporarily included** with Telegram Pre
   </data>
   <data name="TelegramPremium" xml:space="preserve">
     <value>Telegram Premium</value>
+  </data>
+  <data name="TelegramPremiumShort" xml:space="preserve">
+    <value>Premium</value>
   </data>
   <data name="TelegramPremiumSubscribedSubtitle" xml:space="preserve">
     <value>Thank you for subscribing to **Telegram Premium**.

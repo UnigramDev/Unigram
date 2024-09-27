@@ -4,18 +4,19 @@
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+using Rg.DiffUtils;
 using System.Collections.Generic;
 using System.Linq;
 using Telegram.Common;
 using Telegram.Controls;
+using Telegram.Controls.Cells;
 using Telegram.Navigation.Services;
 using Telegram.Services;
 using Telegram.Td.Api;
-using Windows.UI;
+using Telegram.Views.Stars.Popups;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Documents;
-using Windows.UI.Xaml.Media;
+using GiftGroup = Telegram.Collections.KeyedList<Telegram.Views.Premium.Popups.GiftPopup.GiftGroupType, Telegram.Td.Api.Gift>;
 
 namespace Telegram.Views.Premium.Popups
 {
@@ -24,7 +25,9 @@ namespace Telegram.Views.Premium.Popups
         private readonly IClientService _clientService;
         private readonly INavigationService _navigationService;
 
-        private PremiumPaymentOption _selectedOption;
+        private readonly long _userId;
+
+        private readonly DiffObservableCollection<Gift> _gifts = new(Constants.DiffOptions);
 
         public GiftPopup(IClientService clientService, INavigationService navigationService, User user, IList<PremiumPaymentOption> options)
         {
@@ -33,35 +36,86 @@ namespace Telegram.Views.Premium.Popups
             _clientService = clientService;
             _navigationService = navigationService;
 
-            _selectedOption = options.FirstOrDefault();
+            _userId = user.Id;
 
-            TextBlockHelper.SetMarkdown(Subtitle, string.Format(Strings.GiftTelegramPremiumDescription, user.FirstName));
+            Photo.SetUser(clientService, user, 96);
 
-            ScrollingHost.ItemsSource = options;
+            TextBlockHelper.SetMarkdown(PremiumInfo, string.Format(Strings.Gift2PremiumInfo, user.FirstName));
+            TextBlockHelper.SetMarkdown(StarsInfo, string.Format(Strings.Gift2StarsInfo, user.FirstName));
 
-            var footer = Strings.GiftPremiumListFeaturesAndTerms;
-            var hereBegin = footer.IndexOf('*');
-            var hereEnd = footer.IndexOf('*', hereBegin + 1);
+            ScrollingHost.ItemsSource = _gifts;
 
-            var hyperlink = new Hyperlink();
-            hyperlink.Inlines.Add(new Run { Text = footer.Substring(hereBegin + 1, hereEnd - hereBegin - 1) });
+            if (options.Count > 0)
+            {
+                PremiumOptions.ItemsSource = options
+                    .OrderBy(x => x.MonthCount)
+                    .ToList();
 
-            Footer.Inlines.Add(new Run { Text = footer.Substring(0, hereBegin) });
-            Footer.Inlines.Add(hyperlink);
-            Footer.Inlines.Add(new Run { Text = footer.Substring(hereEnd + 1) });
+                StarsRoot.Margin = new Thickness(0, 12, 0, 0);
+            }
+            else
+            {
+                PremiumTitle.Visibility = Visibility.Collapsed;
+                PremiumInfo.Visibility = Visibility.Collapsed;
+            }
+
+            InitializeGifts(clientService);
         }
 
-        private void OnItemClick(object sender, ItemClickEventArgs e)
+        public enum GiftGroupType
         {
-
+            All,
+            Limited,
+            StarCount
         }
 
-        private readonly Color[] _gradient = new Color[]
+        private async void InitializeGifts(IClientService clientService)
         {
-            Color.FromArgb(0xFF, 0x6F, 0x91, 0xFF),
-            Color.FromArgb(0xFF, 0x8B, 0x7C, 0xFF),
-            Color.FromArgb(0xFF, 0xA7, 0x67, 0xFF),
-        };
+            var response = await clientService.SendAsync(new GetAvailableGifts());
+            if (response is Gifts gifts)
+            {
+                //ScrollingHost.ItemsSource = gifts.GiftsValue;
+
+                var ciccio = new List<GiftGroup>();
+                ciccio.Add(new GiftGroup(GiftGroupType.All, gifts.GiftsValue));
+
+                //Navigation.Items.Add(new TopNavViewItem { Content = Strings.Gift2TabAll });
+
+                if (gifts.GiftsValue.Any(x => x.TotalCount > 0))
+                {
+                    ciccio.Add(new GiftGroup(GiftGroupType.Limited, gifts.GiftsValue.Where(x => x.TotalCount > 0)));
+
+                    //Navigation.Items.Add(new TopNavViewItem { Content = Strings.Gift2TabLimited });
+                }
+
+                var groups = gifts.GiftsValue
+                    .GroupBy(x => x.StarCount)
+                    .OrderBy(x => x.Key);
+
+                foreach (var group in groups)
+                {
+                    ciccio.Add(new GiftGroup(GiftGroupType.StarCount, group));
+                }
+
+                Navigation.ItemsSource = ciccio;
+                Navigation.SelectedIndex = 0;
+            }
+        }
+
+        private async void OnItemClick(object sender, ItemClickEventArgs e)
+        {
+            if (e.ClickedItem is Gift gift)
+            {
+                Hide();
+                await _clientService.SendAsync(new CreatePrivateChat(_clientService.Options.MyId, true));
+                await _navigationService.ShowPopupAsync(new SendGiftPopup(_clientService, _navigationService, gift, _userId));
+            }
+            else if (e.ClickedItem is PremiumPaymentOption option)
+            {
+                Hide();
+                MessageHelper.OpenTelegramUrl(_clientService, _navigationService, option.PaymentLink);
+            }
+        }
 
         private void OnContainerContentChanging(ListViewBase sender, ContainerContentChangingEventArgs args)
         {
@@ -69,57 +123,23 @@ namespace Telegram.Views.Premium.Popups
             {
                 return;
             }
-
-            var option = args.Item as PremiumPaymentOption;
-            var content = args.ItemContainer.ContentTemplateRoot as RadioButton;
-
-            var title = content.FindName("Title") as TextBlock;
-            var subtitle = content.FindName("Subtitle") as TextBlock;
-            var price = content.FindName("Price") as TextBlock;
-            var icon = content.FindName("Icon") as TextBlock;
-            var iconPanel = content.FindName("IconPanel") as Border;
-
-            var monthlyAmount = option.Amount / option.MonthCount;
-
-            title.Text = Locale.Declension(Strings.R.Months, option.MonthCount);
-            subtitle.Text = string.Format(Strings.PricePerMonth, Locale.FormatCurrency(monthlyAmount, option.Currency));
-            price.Text = Locale.FormatCurrency(option.Amount, option.Currency);
-
-            if (option.DiscountPercentage > 0)
+            else if (args.ItemContainer.ContentTemplateRoot is UserGiftCell userGiftCell && args.Item is Gift gift)
             {
-                icon.Text = string.Format(Strings.GiftPremiumOptionDiscount, option.DiscountPercentage);
-                iconPanel.Background = new SolidColorBrush(_gradient[args.ItemIndex]);
-                iconPanel.Visibility = Visibility.Visible;
+                userGiftCell.UpdateGift(_clientService, gift);
             }
-            else
+            else if (args.ItemContainer.ContentTemplateRoot is PremiumGiftCell premiumGiftCell && args.Item is PremiumPaymentOption option)
             {
-                iconPanel.Visibility = Visibility.Collapsed;
+                premiumGiftCell.UpdatePremiumGift(_clientService, option);
             }
 
-            content.Tag = option;
-            content.IsChecked = option == _selectedOption;
             args.Handled = true;
         }
 
-        private void Option_Checked(object sender, RoutedEventArgs e)
+        private void OnSelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            if (sender is FrameworkElement element && element.Tag is PremiumPaymentOption option)
+            if (Navigation.SelectedItem is GiftGroup group)
             {
-                _selectedOption = option;
-                PurchaseCommand.Content = string.Format(Strings.GiftSubscriptionFor, Locale.FormatCurrency(option.Amount, option.Currency));
-            }
-        }
-
-        private void PurchaseShadow_Loaded(object sender, RoutedEventArgs e)
-        {
-            VisualUtilities.DropShadow(PurchaseShadow);
-        }
-
-        private void Purchase_Click(object sender, RoutedEventArgs e)
-        {
-            if (_selectedOption?.PaymentLink != null)
-            {
-                MessageHelper.OpenTelegramUrl(_clientService, _navigationService, _selectedOption?.PaymentLink);
+                _gifts.ReplaceDiff(group);
             }
         }
     }
