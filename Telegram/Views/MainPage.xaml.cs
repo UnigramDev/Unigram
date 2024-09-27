@@ -2150,14 +2150,11 @@ namespace Telegram.Views
             }
             else if (destination == RootDestination.MyProfile)
             {
-                MasterDetail.NavigationService.Navigate(typeof(ProfilePage), new ProfileMyArgs());
+                ViewModel.NavigateToMyProfile(false);
             }
             else if (destination == RootDestination.SavedMessages)
             {
-                if (ViewModel.ClientService.TryGetChat(ViewModel.ClientService.Options.MyId, out Chat chat))
-                {
-                    MasterDetail.NavigationService.NavigateToChat(chat, force: false);
-                }
+                ViewModel.NavigateToMyProfile(true);
             }
             else if (destination == RootDestination.Tips && Uri.TryCreate(Strings.TelegramFeaturesUrl, UriKind.Absolute, out Uri tipsUri))
             {

@@ -20,6 +20,7 @@ using Telegram.Services.Updates;
 using Telegram.Td;
 using Telegram.Td.Api;
 using Telegram.ViewModels.Folders;
+using Telegram.ViewModels.Profile;
 using Telegram.ViewModels.Stories;
 using Telegram.Views;
 using Telegram.Views.Folders;
@@ -590,6 +591,20 @@ namespace Telegram.ViewModels
         public void ArchiveSettings()
         {
             ShowPopup(new SettingsArchivePopup(ClientService));
+        }
+
+        public async void NavigateToMyProfile(bool savedMessages)
+        {
+            await ClientService.SendAsync(new CreatePrivateChat(ClientService.Options.MyId, true));
+
+            if (savedMessages)
+            {
+                NavigationService.NavigateToChat(ClientService.Options.MyId, force: false);
+            }
+            else
+            {
+                NavigationService.Navigate(typeof(ProfilePage), new ProfileMyArgs());
+            }
         }
     }
 
