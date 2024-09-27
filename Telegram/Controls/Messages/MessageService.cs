@@ -105,7 +105,7 @@ namespace Telegram.Controls.Messages
                     : Strings.BoostingCongratulations;
 
                 var animation = FindName("Animation") as AnimatedImage;
-                animation.Source = new DelayedFileSource(message.ClientService, premiumGiftCode.Sticker);
+                animation.Source = DelayedFileSource.FromSticker(message.ClientService, premiumGiftCode.Sticker);
             }
             else if (message.Content is MessageGiveawayPrizeStars giveawayPrizeStars)
             {
@@ -113,7 +113,7 @@ namespace Telegram.Controls.Messages
                 title.Text = Strings.ActionStarGiveawayPrizeTitle;
 
                 var animation = FindName("Animation") as AnimatedImage;
-                animation.Source = new DelayedFileSource(message.ClientService, giveawayPrizeStars.Sticker);
+                animation.Source = DelayedFileSource.FromSticker(message.ClientService, giveawayPrizeStars.Sticker);
             }
             else if (message.Content is MessageGift gift)
             {
@@ -203,7 +203,7 @@ namespace Telegram.Controls.Messages
                 view.Visibility = Visibility.Visible;
 
                 var animation = FindName("Animation") as AnimatedImage;
-                animation.Source = new DelayedFileSource(message.ClientService, giftedPremium.Sticker);
+                animation.Source = DelayedFileSource.FromSticker(message.ClientService, giftedPremium.Sticker);
                 animation.Margin = new Thickness(0, -20, 0, 12);
 
                 ribbonRoot.Visibility = Visibility.Collapsed;
@@ -230,7 +230,7 @@ namespace Telegram.Controls.Messages
                 }
 
                 var animation = FindName("Animation") as AnimatedImage;
-                animation.Source = new DelayedFileSource(message.ClientService, giftedStars.Sticker);
+                animation.Source = DelayedFileSource.FromSticker(message.ClientService, giftedStars.Sticker);
                 animation.Margin = new Thickness(0, -20, 0, 12);
 
                 ribbonRoot.Visibility = Visibility.Collapsed;
