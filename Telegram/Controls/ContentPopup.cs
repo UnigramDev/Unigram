@@ -72,7 +72,7 @@ namespace Telegram.Controls
             AnimationElement.Width = e.NewSize.Width;
             AnimationElement.Height = e.NewSize.Height;
 
-            if (e.PreviousSize.Height == 0 || e.NewSize.Height == 0 || e.PreviousSize.Height == e.NewSize.Height)
+            if (e.PreviousSize.Height == 0 || e.NewSize.Height == 0 || e.PreviousSize.Height == e.NewSize.Height || VerticalContentAlignment == VerticalAlignment.Stretch)
             {
                 return;
             }

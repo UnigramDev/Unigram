@@ -266,9 +266,8 @@
                     </controls:BadgeButton>
 
                     <controls:BadgeButton x:Name="PremiumGifting"
-                                          x:Load="False"
                                           Click="{x:Bind ViewModel.PremiumGifting}"
-                                          Content="{CustomResource TelegramPremium}"
+                                          Content="{CustomResource SendAGift}"
                                           Style="{StaticResource IconBadgeButtonStyle}">
                         <controls:BadgeButton.IconSource>
                             <icons:PremiumGifting />

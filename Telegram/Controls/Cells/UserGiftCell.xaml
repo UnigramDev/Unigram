@@ -63,12 +63,13 @@
               Margin="0,0,0,12"
               Grid.Row="1">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="32" />
+                <ColumnDefinition Width="Auto" />
                 <ColumnDefinition />
             </Grid.ColumnDefinitions>
             <controls:PremiumStarCount Width="18"
                                        VerticalAlignment="Top"
-                                       Margin="0,-1,0,0" />
+                                       HorizontalAlignment="Left"
+                                       Margin="8,-1,4,0" />
 
             <TextBlock x:Name="StarCount"
                        Foreground="{ThemeResource MessageReactionPaidForegroundBrush}"

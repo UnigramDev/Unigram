@@ -5,8 +5,10 @@
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
 using Rg.DiffUtils;
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using Telegram.Collections;
 using Telegram.Common;
 using Telegram.Controls;
 using Telegram.Controls.Cells;
@@ -14,12 +16,27 @@ using Telegram.Navigation.Services;
 using Telegram.Services;
 using Telegram.Td.Api;
 using Telegram.Views.Stars.Popups;
+using Windows.Foundation;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using GiftGroup = Telegram.Collections.KeyedList<Telegram.Views.Premium.Popups.GiftPopup.GiftGroupType, Telegram.Td.Api.Gift>;
+using Windows.UI.Xaml.Documents;
 
 namespace Telegram.Views.Premium.Popups
 {
+    public partial class GiftGroup : KeyedList<GiftPopup.GiftGroupType, Gift>
+    {
+        public GiftGroup(GiftPopup.GiftGroupType key, IEnumerable<Gift> source)
+            : base(key, source)
+        {
+            if (key == GiftPopup.GiftGroupType.StarCount)
+            {
+                StarCount = this[0].StarCount;
+            }
+        }
+
+        public long StarCount { get; }
+    }
+
     public sealed partial class GiftPopup : ContentPopup
     {
         private readonly IClientService _clientService;
@@ -43,6 +60,9 @@ namespace Telegram.Views.Premium.Popups
             TextBlockHelper.SetMarkdown(PremiumInfo, string.Format(Strings.Gift2PremiumInfo, user.FirstName));
             TextBlockHelper.SetMarkdown(StarsInfo, string.Format(Strings.Gift2StarsInfo, user.FirstName));
 
+            AddLink(PremiumInfo, Strings.Gift2PremiumInfoLink, PremiumInfoLink_Click);
+            AddLink(StarsInfo, Strings.Gift2StarsInfoLink, StarsInfoLink_Click);
+
             ScrollingHost.ItemsSource = _gifts;
 
             if (options.Count > 0)
@@ -60,6 +80,28 @@ namespace Telegram.Views.Premium.Popups
             }
 
             InitializeGifts(clientService);
+        }
+
+        private void AddLink(TextBlock block, string text, TypedEventHandler<Hyperlink, HyperlinkClickEventArgs> handler)
+        {
+            var hyperlink = new Hyperlink();
+            hyperlink.UnderlineStyle = UnderlineStyle.None;
+            hyperlink.Inlines.Add(text);
+            hyperlink.Click += handler;
+
+            block.Inlines.Add(" ");
+            block.Inlines.Add(hyperlink);
+        }
+
+        private void PremiumInfoLink_Click(Hyperlink sender, HyperlinkClickEventArgs args)
+        {
+            Hide();
+            _navigationService.ShowPromo();
+        }
+
+        private void StarsInfoLink_Click(Hyperlink sender, HyperlinkClickEventArgs args)
+        {
+            // TODO: stars promo
         }
 
         public enum GiftGroupType
@@ -141,6 +183,23 @@ namespace Telegram.Views.Premium.Popups
             {
                 _gifts.ReplaceDiff(group);
             }
+        }
+
+        public static Visibility ConvertGiftGroupStartCountVisibility(GiftGroupType type)
+        {
+            return type == GiftGroupType.StarCount
+                ? Visibility.Visible
+                : Visibility.Collapsed;
+        }
+
+        public static string ConvertGiftGroupStarCountText(GiftGroupType type, long starCount)
+        {
+            return type switch
+            {
+                GiftGroupType.All => Strings.Gift2TabAll,
+                GiftGroupType.Limited => Strings.Gift2TabLimited,
+                _ => starCount.ToString("N0")
+            };
         }
     }
 }

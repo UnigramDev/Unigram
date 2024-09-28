@@ -9137,6 +9137,9 @@ The channel &quot;**{1}**&quot; will become private.</value>
   <data name="Send" xml:space="preserve">
     <value>Send</value>
   </data>
+  <data name="SendAGift" xml:space="preserve">
+    <value>Send a Gift</value>
+  </data>
   <data name="SendAnonymously" xml:space="preserve">
     <value>Send anonymously</value>
   </data>

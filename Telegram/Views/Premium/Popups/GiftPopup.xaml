@@ -6,9 +6,11 @@
                        xmlns:controls="using:Telegram.Controls"
                        xmlns:common="using:Telegram.Common"
                        xmlns:cells="using:Telegram.Controls.Cells"
+                       xmlns:popups="using:Telegram.Views.Premium.Popups"
                        mc:Ignorable="d"
                        Padding="0"
-                       IsDismissButtonVisible="True">
+                       IsDismissButtonVisible="True"
+                       VerticalContentAlignment="Stretch">
 
     <Grid>
         <GridView x:Name="ScrollingHost"
@@ -109,12 +111,13 @@
                         <TextBlock x:Name="StarsInfo"
                                    Style="{StaticResource BodyTextBlockStyle}"
                                    TextAlignment="Center"
-                                   Margin="12,0,12,8"
+                                   Margin="12,0,12,4"
                                    Grid.Row="2" />
                     </Grid>
 
                     <controls:TopNavView x:Name="Navigation"
                                          SelectionChanged="OnSelectionChanged"
+                                         ContainerContentChanging="OnContainerContentChanging"
                                          Height="40"
                                          Margin="0,0,0,-4">
                         <controls:TopNavView.ItemContainerStyle>
@@ -167,6 +170,27 @@
                                 </Setter>
                             </Style>
                         </controls:TopNavView.ItemContainerStyle>
+                        <controls:TopNavView.ItemTemplate>
+                            <DataTemplate x:DataType="popups:GiftGroup">
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto" />
+                                        <ColumnDefinition />
+                                    </Grid.ColumnDefinitions>
+                                    <controls:PremiumStarCount Visibility="{x:Bind popups:GiftPopup.ConvertGiftGroupStartCountVisibility(Key)}"
+                                                               Width="18"
+                                                               VerticalAlignment="Top"
+                                                               Margin="0,-1,4,0" />
+
+                                    <TextBlock Text="{x:Bind popups:GiftPopup.ConvertGiftGroupStarCountText(Key, StarCount)}"
+                                               Style="{StaticResource InfoCaptionTextBlockStyle}"
+                                               Typography.NumeralAlignment="Tabular"
+                                               VerticalAlignment="Center"
+                                               Margin="0,1,0,2"
+                                               Grid.Column="1" />
+                                </Grid>
+                            </DataTemplate>
+                        </controls:TopNavView.ItemTemplate>
                     </controls:TopNavView>
                 </StackPanel>
             </GridView.Header>
