@@ -1163,6 +1163,9 @@
     <Compile Include="Views\Popups\ChooseTimeZonePopup.xaml.cs">
       <DependentUpon>ChooseTimeZonePopup.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\Popups\ReportChatPopup.xaml.cs">
+      <DependentUpon>ReportChatPopup.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\Premium\Popups\ChangePrivacyPopup.xaml.cs">
       <DependentUpon>ChangePrivacyPopup.xaml</DependentUpon>
     </Compile>
@@ -1988,6 +1991,7 @@
     <Content Include="Assets\Animations\PaidReactionAround5.tgs" />
     <Content Include="Assets\Animations\PaidReactionCenter.tgs" />
     <Content Include="Assets\Animations\EmptyCalls.tgs" />
+    <Content Include="Assets\Animations\ReportText.tgs" />
     <None Include="Assets\i420.hlsl" />
     <Content Include="Assets\Images\Reply.scale-100.png" />
     <Content Include="Assets\Images\Reply.scale-125.png" />
@@ -2971,6 +2975,10 @@
     <Page Include="Views\Popups\ChooseTimeZonePopup.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\Popups\ReportChatPopup.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\Premium\Popups\ChangePrivacyPopup.xaml">
       <Generator>MSBuild:Compile</Generator>

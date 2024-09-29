@@ -748,7 +748,7 @@ namespace Telegram.Controls.Chats
                 return;
             }
 
-            if (ViewModel.SelectedItems.Count < 1)
+            if (ViewModel.SelectedItems.Count < 1 && ViewModel.IsReportingMessages == null)
             {
                 IsSelectionEnabled = false;
             }

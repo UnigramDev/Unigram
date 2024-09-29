@@ -3733,6 +3733,21 @@ namespace Telegram.Views
 
             if (show)
             {
+                if (ViewModel.IsReportingMessages != null)
+                {
+                    ManageCount.Visibility = Visibility.Collapsed;
+                    ButtonForward.Visibility = Visibility.Collapsed;
+                    ButtonDelete.Visibility = Visibility.Collapsed;
+                    ButtonReport.Visibility = Visibility.Visible;
+                }
+                else
+                {
+                    ManageCount.Visibility = Visibility.Visible;
+                    ButtonForward.Visibility = Visibility.Visible;
+                    ButtonDelete.Visibility = Visibility.Visible;
+                    ButtonReport.Visibility = Visibility.Collapsed;
+                }
+
                 ViewModel.SaveDraft(true);
                 ShowHideComposerHeader(false);
             }
@@ -3748,6 +3763,16 @@ namespace Telegram.Views
         private string ConvertSelection(int count)
         {
             return Locale.Declension(Strings.R.messages, count);
+        }
+
+        private string ConvertReportSelection(int count)
+        {
+            if (count == 0)
+            {
+                return Strings.ReportMessages;
+            }
+
+            return string.Format(Strings.ReportMessagesCount, Locale.Declension(Strings.R.messages, count));
         }
 
         public Visibility ConvertIsEmpty(bool empty, bool self, bool bot, bool should)

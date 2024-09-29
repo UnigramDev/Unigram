@@ -461,9 +461,15 @@ namespace Telegram.ViewModels
         public bool IsSelectionEnabled
         {
             get => _isSelectionEnabled;
-            set
+            set => ShowHideSelection(value);
+        }
+
+        public void ShowHideSelection(bool value, ReportSelection report = null)
+        {
+            if (_isSelectionEnabled != value)
             {
-                Set(ref _isSelectionEnabled, value);
+                Set(ref _isReportingMessages, report, nameof(IsReportingMessages));
+                Set(ref _isSelectionEnabled, value, nameof(IsSelectionEnabled));
 
                 if (value)
                 {
@@ -2340,7 +2346,6 @@ namespace Telegram.ViewModels
             LastPinnedMessage = null;
             LockedPinnedMessageId = 0;
 
-            DisposeSearch();
             IsSelectionEnabled = false;
 
             ClientService.Send(new CloseChat(chat.Id));
@@ -3115,8 +3120,7 @@ namespace Telegram.ViewModels
                 return;
             }
 
-            // TODO: upgrade report
-            //ClientService.Send(new ReportChat(chat.Id, Array.Empty<long>(), reason, string.Empty));
+            Report();
 
             if (chat.Type is ChatTypeBasicGroup or ChatTypeSupergroup)
             {
@@ -3807,6 +3811,13 @@ namespace Telegram.ViewModels
 
         #region Report Chat
 
+        private ReportSelection _isReportingMessages;
+        public ReportSelection IsReportingMessages
+        {
+            get => _isReportingMessages;
+            set => Set(ref _isReportingMessages, value);
+        }
+
         public async void Report()
         {
             await ReportAsync(Array.Empty<long>());
@@ -3820,11 +3831,25 @@ namespace Telegram.ViewModels
                 return;
             }
 
-            var form = await GetReportFormAsync(NavigationService);
-            if (form.Reason != null)
+            ReportChatPopup popup;
+            if (IsReportingMessages is ReportSelection selection)
             {
-                // TODO: upgrade report
-                //ClientService.Send(new ReportChat(chat.Id, messages, form.Reason, form.Text));
+                popup = new ReportChatPopup(ClientService, chat.Id, IsReportingMessages?.Option, messages, selection.Text);
+            }
+            else
+            {
+                popup = new ReportChatPopup(ClientService, chat.Id, null, messages, string.Empty);
+            }
+
+            await ShowPopupAsync(popup);
+
+            if (popup.Selection?.Result is ReportChatResultMessagesRequired)
+            {
+                ShowHideSelection(true, popup.Selection);
+            }
+            else if (IsReportingMessages != null)
+            {
+                ShowHideSelection(false);
             }
         }
 

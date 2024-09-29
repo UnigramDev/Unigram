@@ -8712,6 +8712,30 @@ Payments will go directly to the developer of {0}. Telegram cannot provide any g
   <data name="ReplyToQuote" xml:space="preserve">
     <value>Reply to quote from {0}</value>
   </data>
+  <data name="Report2" xml:space="preserve">
+    <value>Report</value>
+  </data>
+  <data name="Report2Comment" xml:space="preserve">
+    <value>Add Comment</value>
+  </data>
+  <data name="Report2CommentInfo" xml:space="preserve">
+    <value>Please help us by telling what is wrong with the message you have selected.</value>
+  </data>
+  <data name="Report2CommentInfoChannel" xml:space="preserve">
+    <value>Please help us by telling what is wrong with the channel you have selected.</value>
+  </data>
+  <data name="Report2CommentInfoGroup" xml:space="preserve">
+    <value>Please help us by telling what is wrong with the group you have selected.</value>
+  </data>
+  <data name="Report2CommentInfoUser" xml:space="preserve">
+    <value>Please help us by telling what is wrong with the user you have selected.</value>
+  </data>
+  <data name="Report2CommentOptional" xml:space="preserve">
+    <value>Add Comment (Optional)</value>
+  </data>
+  <data name="Report2Send" xml:space="preserve">
+    <value>Send Report</value>
+  </data>
   <data name="ReportChat" xml:space="preserve">
     <value>Report</value>
   </data>
@@ -8741,6 +8765,12 @@ Payments will go directly to the developer of {0}. Telegram cannot provide any g
   </data>
   <data name="ReportFalsePositive" xml:space="preserve">
     <value>Report False Positive</value>
+  </data>
+  <data name="ReportMessages" xml:space="preserve">
+    <value>Report Messages</value>
+  </data>
+  <data name="ReportMessagesCount" xml:space="preserve">
+    <value>Report {0}</value>
   </data>
   <data name="ReportSelectedMessages" xml:space="preserve">
     <value>Report Selected</value>
