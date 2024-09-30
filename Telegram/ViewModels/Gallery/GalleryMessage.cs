@@ -4,8 +4,11 @@
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+using System;
+using System.Collections.Generic;
 using Telegram.Services;
 using Telegram.Td.Api;
+using Telegram.Views.Popups;
 
 namespace Telegram.ViewModels.Gallery
 {
@@ -19,8 +22,7 @@ namespace Telegram.ViewModels.Gallery
         {
             _message = message;
 
-            var chat = clientService.GetChat(message.ChatId);
-            if (chat != null)
+            if (clientService.TryGetChat(message.ChatId, out Chat chat))
             {
                 _hasProtectedContent = chat.Type is ChatTypeSecret || chat.HasProtectedContent;
             }
@@ -30,8 +32,6 @@ namespace Telegram.ViewModels.Gallery
             : this(clientService, message.Get())
         {
         }
-
-        public Message Message => _message;
 
         public long ChatId => _message.ChatId;
         public long Id => _message.Id;
@@ -59,6 +59,29 @@ namespace Telegram.ViewModels.Gallery
             }
 
             return null;
+        }
+
+        public override IList<AdaptiveVideo> AdaptiveVideo
+        {
+            get
+            {
+                if (_message.Content is MessageVideo video && video.AlternativeVideos.Count > 0)
+                {
+                    var videos = new List<AdaptiveVideo>();
+
+                    for (int i = 0; i < video.AlternativeVideos.Count; i += 2)
+                    {
+                        if (string.Equals(video.AlternativeVideos[i].Codec, "h264", System.StringComparison.OrdinalIgnoreCase))
+                        {
+                            videos.Add(new AdaptiveVideo(video.AlternativeVideos[i], video.AlternativeVideos[i + 1].Video));
+                        }
+                    }
+
+                    return videos;
+                }
+
+                return Array.Empty<AdaptiveVideo>();
+            }
         }
 
         public override object Constraint => _message.Content;

@@ -64,7 +64,7 @@ namespace Telegram.Controls.Gallery
 
         private bool _unloaded;
 
-        private static readonly ConcurrentDictionary<int, long> _knownPositions = new();
+        private static readonly ConcurrentDictionary<int, double> _knownPositions = new();
         private long? _initialPosition;
 
         public long InitialPosition
@@ -649,7 +649,7 @@ namespace Telegram.Controls.Gallery
                 return;
             }
 
-            var position = 0L;
+            var position = 0d;
             var file = item.GetFile();
 
             if (_initialPosition is long initialPosition)
@@ -657,7 +657,7 @@ namespace Telegram.Controls.Gallery
                 _initialPosition = null;
                 position = initialPosition;
             }
-            else if (_knownPositions.TryRemove(file.Id, out long knownPosition))
+            else if (_knownPositions.TryRemove(file.Id, out double knownPosition))
             {
                 position = knownPosition;
             }
@@ -675,7 +675,7 @@ namespace Telegram.Controls.Gallery
 
             if (_current != null)
             {
-                _current.Stop(out int fileId, out long position);
+                _current.Stop(out int fileId, out double position);
                 _current = null;
 
                 if (fileId != 0)
@@ -1070,7 +1070,7 @@ namespace Telegram.Controls.Gallery
             //var mediaPlayer = _mediaPlayer;
             //var fileStream = _fileStream;
 
-            _current.Stop(out int fileId, out long time);
+            _current.Stop(out int fileId, out double time);
 
             var fileStream = new RemoteFileStream(ViewModel.ClientService, item.GetFile());
 

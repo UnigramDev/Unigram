@@ -69,7 +69,6 @@ namespace LibVLCSharp.Platforms.Windows
         /// </summary>
         protected override void OnApplyTemplate()
         {
-            base.OnApplyTemplate();
             _panel = (SwapChainPanel)GetTemplateChild(PartSwapChainPanelName);
 
 #if !WINUI

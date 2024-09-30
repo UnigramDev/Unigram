@@ -65,7 +65,7 @@ namespace Telegram.Common
             //_player.EndReached += OnEndReached;
         }
 
-        public void Play(RemoteFileStream input)
+        public void Play(MediaInput input)
         {
             Write(valid => PlayImpl(input, valid));
         }
@@ -199,7 +199,7 @@ namespace Telegram.Common
 
         #region Events
 
-        public event TypedEventHandler<AsyncMediaPlayer, MediaPlayerVoutEventArgs> Vout;
+        public event TypedEventHandler<AsyncMediaPlayer, EventArgs> Vout;
         public event TypedEventHandler<AsyncMediaPlayer, MediaPlayerESSelectedEventArgs> ESSelected;
         public event TypedEventHandler<AsyncMediaPlayer, EventArgs> EndReached;
         public event TypedEventHandler<AsyncMediaPlayer, MediaPlayerBufferingEventArgs> Buffering;
@@ -213,7 +213,7 @@ namespace Telegram.Common
 
         private void OnVout(object sender, MediaPlayerVoutEventArgs e)
         {
-            _dispatcherQueue.Dispatch(() => Vout?.Invoke(this, e));
+            _dispatcherQueue.Dispatch(() => Vout?.Invoke(this, EventArgs.Empty));
         }
 
         private void OnESSelected(object sender, MediaPlayerESSelectedEventArgs e)
@@ -223,7 +223,7 @@ namespace Telegram.Common
 
         private void OnEndReached(object sender, EventArgs e)
         {
-            _dispatcherQueue.Dispatch(() => EndReached?.Invoke(this, e));
+            _dispatcherQueue.Dispatch(() => EndReached?.Invoke(this, EventArgs.Empty));
         }
 
         private void OnBuffering(object sender, MediaPlayerBufferingEventArgs e)
@@ -243,17 +243,17 @@ namespace Telegram.Common
 
         private void OnPlaying(object sender, EventArgs e)
         {
-            _dispatcherQueue.Dispatch(() => Playing?.Invoke(this, e));
+            _dispatcherQueue.Dispatch(() => Playing?.Invoke(this, EventArgs.Empty));
         }
 
         private void OnPaused(object sender, EventArgs e)
         {
-            _dispatcherQueue.Dispatch(() => Paused?.Invoke(this, e));
+            _dispatcherQueue.Dispatch(() => Paused?.Invoke(this, EventArgs.Empty));
         }
 
         private void OnStopped(object sender, EventArgs e)
         {
-            _dispatcherQueue.Dispatch(() => Stopped?.Invoke(this, e));
+            _dispatcherQueue.Dispatch(() => Stopped?.Invoke(this, EventArgs.Empty));
         }
 
         private void OnVolumeChanged(object sender, MediaPlayerVolumeChangedEventArgs e)
@@ -263,7 +263,7 @@ namespace Telegram.Common
 
         private void OnEncounteredError(object sender, EventArgs e)
         {
-            _dispatcherQueue.Dispatch(() => EncounteredError?.Invoke(this, e));
+            _dispatcherQueue.Dispatch(() => EncounteredError?.Invoke(this, EventArgs.Empty));
         }
 
         #endregion

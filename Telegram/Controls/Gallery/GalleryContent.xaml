@@ -19,9 +19,10 @@
                          Style="{StaticResource ImmersiveFileButtonStyle}" />
 
     <Border x:Name="Panel">
-        <vlc:VideoView x:Name="Video"
-                       x:Load="False"
-                       IsTabStop="False"
-                       Initialized="OnInitialized" />
+        <controls:NativeVideoPlayer x:Name="Video"
+                                    x:Load="False"
+                                    IsTabStop="False"
+                                    FirstFrameReady="OnFirstFrameReady"
+                                    Closed="OnClosed" />
     </Border>
 </controls:AspectView>

@@ -16,31 +16,6 @@
                         Loaded="OnLoaded"
                         Unloaded="OnUnloaded">
 
-    <Control.Resources>
-        <Style x:Key="TransportLessMediaPlayerStyle"
-               TargetType="MediaPlayerElement">
-            <Setter Property="HorizontalAlignment"
-                    Value="Stretch" />
-            <Setter Property="VerticalAlignment"
-                    Value="Stretch" />
-            <Setter Property="IsTabStop"
-                    Value="False" />
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="MediaPlayerElement">
-                        <Grid x:Name="LayoutRoot">
-                            <Border Background="Transparent" />
-                            <MediaPlayerPresenter x:Name="MediaPlayerPresenter"
-                                                  IsFullWindow="{TemplateBinding IsFullWindow}"
-                                                  Stretch="{TemplateBinding Stretch}"
-                                                  MediaPlayer="{TemplateBinding MediaPlayer}" />
-                        </Grid>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
-        </Style>
-    </Control.Resources>
-
     <Grid RequestedTheme="Dark">
         <Grid>
             <Border x:Name="Layer"

@@ -24,13 +24,13 @@ namespace Telegram.Controls.Gallery
     {
         private GalleryViewModelBase _viewModel;
         private readonly RemoteFileStream _fileStream;
-        private readonly long _initialTime;
+        private readonly double _initialTime;
 
         private AsyncMediaPlayer _player;
 
         public static ViewLifetimeControl Current { get; private set; }
 
-        public GalleryCompactWindow(ViewLifetimeControl control, GalleryViewModelBase viewModel, RemoteFileStream stream, long time)
+        public GalleryCompactWindow(ViewLifetimeControl control, GalleryViewModelBase viewModel, RemoteFileStream stream, double position)
         {
             InitializeComponent();
 
@@ -38,7 +38,7 @@ namespace Telegram.Controls.Gallery
 
             _viewModel = viewModel;
             _fileStream = stream;
-            _initialTime = time;
+            _initialTime = position;
 
             Controls.IsCompact = true;
 
@@ -53,10 +53,10 @@ namespace Telegram.Controls.Gallery
         {
             _player = new AsyncMediaPlayer(e.SwapChainOptions);
 
-            Controls.Attach(_player);
+            //Controls.Attach(_player);
 
             _player.Play(_fileStream);
-            _player.Time = _initialTime;
+            _player.Time = (long)_initialTime;
         }
 
         private void OnUnloaded(object sender, RoutedEventArgs e)
@@ -120,14 +120,14 @@ namespace Telegram.Controls.Gallery
             });
         }
 
-        public void Play(GalleryViewModelBase viewModel, RemoteFileStream stream, long time)
+        public void Play(GalleryViewModelBase viewModel, RemoteFileStream stream, double time)
         {
             _viewModel = viewModel;
 
             if (_player != null)
             {
                 _player.Play(stream);
-                _player.Time = time;
+                _player.Time = (long)time;
             }
         }
 
