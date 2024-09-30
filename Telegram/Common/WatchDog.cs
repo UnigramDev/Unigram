@@ -192,14 +192,8 @@ namespace Telegram
 
                 return;
             }
-            else if (args.Exception is COMException { ErrorCode: -2147467259 })
-            {
-                return;
-            }
 
-            Crashes.TrackCrash(args.Exception);
-
-            if (SettingsService.Current.Diagnostics.ShowMemoryUsage)
+            if (SettingsService.Current.Diagnostics.ShowMemoryUsage && Window.Current != null)
             {
                 _ = MessagePopup.ShowAsync(Window.Current.Content.XamlRoot, args.Exception.ToString(), "Unhandled exception", "OK");
             }
