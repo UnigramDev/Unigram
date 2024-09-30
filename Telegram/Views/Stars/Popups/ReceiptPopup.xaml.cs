@@ -394,17 +394,16 @@ namespace Telegram.Views.Stars.Popups
                 FromPhoto.SetUser(clientService, user, 24);
                 FromPhoto.Visibility = Visibility.Visible;
                 FromTitle.Text = user.FullName();
+                From.Header = Strings.Gift2From;
 
                 if (message.IsOutgoing)
                 {
-                    From.Header = Strings.Gift2To;
                     Title.Text = Strings.Gift2TitleSent;
 
                     TextBlockHelper.SetMarkdown(Subtitle, Locale.Declension(Strings.R.Gift2InfoOut, gift.SellStarCount, user.FirstName));
                 }
                 else
                 {
-                    From.Header = Strings.Gift2From;
                     Title.Text = Strings.Gift2TitleReceived;
 
                     if (gift.IsSaved)
@@ -442,6 +441,14 @@ namespace Telegram.Views.Stars.Popups
 
             Refund.Visibility = Visibility.Collapsed;
             Terms.Visibility = Visibility.Collapsed;
+
+            if (gift.Gift.TotalCount > 0)
+            {
+                Availability.Visibility = Visibility.Visible;
+                Availability.Content = gift.Gift.RemainingCount > 0
+                ? string.Format(Strings.Gift2AvailabilityValue, gift.Gift.RemainingCount, gift.Gift.TotalCount)
+                : string.Format(Strings.Gift2AvailabilityValueNone, gift.Gift.TotalCount);
+            }
 
             if (gift.Text?.Text.Length > 0)
             {
@@ -528,6 +535,14 @@ namespace Telegram.Views.Stars.Popups
 
             Refund.Visibility = Visibility.Collapsed;
             Terms.Visibility = Visibility.Collapsed;
+
+            if (gift.Gift.TotalCount > 0)
+            {
+                Availability.Visibility = Visibility.Visible;
+                Availability.Content = gift.Gift.RemainingCount > 0
+                ? string.Format(Strings.Gift2AvailabilityValue, gift.Gift.RemainingCount, gift.Gift.TotalCount)
+                : string.Format(Strings.Gift2AvailabilityValueNone, gift.Gift.TotalCount);
+            }
 
             if (gift.Text?.Text.Length > 0)
             {
