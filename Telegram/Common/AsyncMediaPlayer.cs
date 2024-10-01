@@ -11,7 +11,6 @@ using System.Diagnostics;
 using System.Text.RegularExpressions;
 using System.Threading;
 using Telegram.Navigation;
-using Telegram.Streams;
 using Windows.Foundation;
 using Windows.Storage;
 

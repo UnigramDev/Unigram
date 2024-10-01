@@ -1,5 +1,4 @@
-﻿using System.Diagnostics;
-using Telegram.Common;
+﻿using Telegram.Common;
 using Telegram.Native.Calls;
 using Telegram.Navigation.Services;
 using Telegram.Services.Calls;

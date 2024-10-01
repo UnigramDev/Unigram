@@ -9,7 +9,6 @@ using System.Collections.Generic;
 using Telegram.Controls;
 using Telegram.Services;
 using Telegram.Td.Api;
-using Telegram.Views.Popups;
 
 namespace Telegram.ViewModels.Gallery
 {

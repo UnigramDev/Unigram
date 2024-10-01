@@ -31,7 +31,6 @@ using Telegram.Td.Api;
 using Telegram.ViewModels;
 using Telegram.ViewModels.Delegates;
 using Telegram.ViewModels.Drawers;
-using Telegram.ViewModels.Profile;
 using Telegram.Views.Create;
 using Telegram.Views.Host;
 using Telegram.Views.Popups;

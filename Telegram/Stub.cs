@@ -1,5 +1,4 @@
 using System;
-using System.Threading.Tasks;
 using Telegram;
 
 public static class StorageItemAccessList_stub
@@ -3256,6 +3255,18 @@ public static class WebView_stub
 }
 public static class CoreWebView2_stub
 {
+    public static void AddWebResourceRequestedFilter_stub(this Microsoft.Web.WebView2.Core.CoreWebView2 sender, string uri, Microsoft.Web.WebView2.Core.CoreWebView2WebResourceContext ResourceContext)
+    {
+        try
+        {
+            sender.AddWebResourceRequestedFilter(uri, ResourceContext);
+        }
+        catch (Exception ex)
+        {
+            Logger.Error(Environment.StackTrace);
+            throw new RuntimeException(ex);
+        }
+    }
     public static void GoBack_stub(this Microsoft.Web.WebView2.Core.CoreWebView2 sender)
     {
         try
@@ -3304,14 +3315,65 @@ public static class CoreWebView2_stub
             throw new RuntimeException(ex);
         }
     }
+    public static void Stop_stub(this Microsoft.Web.WebView2.Core.CoreWebView2 sender)
+    {
+        try
+        {
+            sender.Stop();
+        }
+        catch (Exception ex)
+        {
+            Logger.Error(Environment.StackTrace);
+            throw new RuntimeException(ex);
+        }
+    }
 }
 public static class CoreWebView2Environment_stub
 {
+    public static Microsoft.Web.WebView2.Core.CoreWebView2WebResourceResponse CreateWebResourceResponse_stub(this Microsoft.Web.WebView2.Core.CoreWebView2Environment sender, Windows.Storage.Streams.IRandomAccessStream Content, int StatusCode, string ReasonPhrase, string Headers)
+    {
+        try
+        {
+            return sender.CreateWebResourceResponse(Content, StatusCode, ReasonPhrase, Headers);
+        }
+        catch (Exception ex)
+        {
+            Logger.Error(Environment.StackTrace);
+            throw new RuntimeException(ex);
+        }
+    }
     public static string GetAvailableBrowserVersionString_stub()
     {
         try
         {
             return Microsoft.Web.WebView2.Core.CoreWebView2Environment.GetAvailableBrowserVersionString();
+        }
+        catch (Exception ex)
+        {
+            Logger.Error(Environment.StackTrace);
+            throw new RuntimeException(ex);
+        }
+    }
+}
+public static class CoreWebView2HttpRequestHeaders_stub
+{
+    public static bool Contains_stub(this Microsoft.Web.WebView2.Core.CoreWebView2HttpRequestHeaders sender, string name)
+    {
+        try
+        {
+            return sender.Contains(name);
+        }
+        catch (Exception ex)
+        {
+            Logger.Error(Environment.StackTrace);
+            throw new RuntimeException(ex);
+        }
+    }
+    public static string GetHeader_stub(this Microsoft.Web.WebView2.Core.CoreWebView2HttpRequestHeaders sender, string name)
+    {
+        try
+        {
+            return sender.GetHeader(name);
         }
         catch (Exception ex)
         {
@@ -3327,6 +3389,21 @@ public static class CoreWebView2WebMessageReceivedEventArgs_stub
         try
         {
             return sender.TryGetWebMessageAsString();
+        }
+        catch (Exception ex)
+        {
+            Logger.Error(Environment.StackTrace);
+            throw new RuntimeException(ex);
+        }
+    }
+}
+public static class CoreWebView2WebResourceRequestedEventArgs_stub
+{
+    public static Windows.Foundation.Deferral GetDeferral_stub(this Microsoft.Web.WebView2.Core.CoreWebView2WebResourceRequestedEventArgs sender)
+    {
+        try
+        {
+            return sender.GetDeferral();
         }
         catch (Exception ex)
         {
@@ -4983,6 +5060,18 @@ public static class JsonObject_stub
         try
         {
             return sender.GetNamedBoolean(name, defaultValue);
+        }
+        catch (Exception ex)
+        {
+            Logger.Error(Environment.StackTrace);
+            throw new RuntimeException(ex);
+        }
+    }
+    public static double GetNamedNumber_stub(this Windows.Data.Json.JsonObject sender, string name, double defaultValue)
+    {
+        try
+        {
+            return sender.GetNamedNumber(name, defaultValue);
         }
         catch (Exception ex)
         {
@@ -6807,6 +6896,18 @@ public static class DataWriter_stub
         try
         {
             sender.WriteByte(value);
+        }
+        catch (Exception ex)
+        {
+            Logger.Error(Environment.StackTrace);
+            throw new RuntimeException(ex);
+        }
+    }
+    public static void WriteBytes_stub(this Windows.Storage.Streams.DataWriter sender, byte[] value)
+    {
+        try
+        {
+            sender.WriteBytes(value);
         }
         catch (Exception ex)
         {

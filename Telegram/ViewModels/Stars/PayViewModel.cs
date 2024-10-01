@@ -14,7 +14,6 @@ using Telegram.Navigation;
 using Telegram.Navigation.Services;
 using Telegram.Services;
 using Telegram.Services.Updates;
-using Telegram.Td;
 using Telegram.Td.Api;
 using Telegram.ViewModels.Payments;
 using Windows.UI.Xaml.Navigation;
