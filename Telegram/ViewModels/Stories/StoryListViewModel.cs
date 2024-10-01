@@ -182,12 +182,10 @@ namespace Telegram.ViewModels.Stories
 
         public async Task ReportStoryAsync(StoryViewModel story)
         {
-            var form = await DialogViewModel.GetReportFormAsync(NavigationService);
-            if (form.Reason != null)
+            await ShowPopupAsync(new ReportStoryPopup(ClientService, story.ChatId, story.StoryId, null, string.Empty)
             {
-                // TODO: upgrade report
-                //ClientService.Send(new ReportStory(story.ChatId, story.StoryId, form.Reason, form.Text));
-            }
+                RequestedTheme = ElementTheme.Dark
+            });
         }
 
         public async void SaveStory(StoryViewModel story)

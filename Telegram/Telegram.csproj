@@ -1170,6 +1170,9 @@
     <Compile Include="Views\Popups\ChooseTimeZonePopup.xaml.cs">
       <DependentUpon>ChooseTimeZonePopup.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\Popups\ReportStoryPopup.xaml.cs">
+      <DependentUpon>ReportStoryPopup.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\Popups\ReportChatPopup.xaml.cs">
       <DependentUpon>ReportChatPopup.xaml</DependentUpon>
     </Compile>
@@ -2991,6 +2994,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Views\Popups\ChooseTimeZonePopup.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\Popups\ReportStoryPopup.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

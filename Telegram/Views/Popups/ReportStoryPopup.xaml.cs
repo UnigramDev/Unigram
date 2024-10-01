@@ -11,33 +11,33 @@ using Windows.UI.Xaml.Hosting;
 
 namespace Telegram.Views.Popups
 {
-    public record ReportChatSelection(ReportOption Option, IList<long> MessageIds, string Text, object Result);
+    public record ReportStorySelection(ReportOption Option, string Text, object Result);
 
-    public sealed partial class ReportChatPopup : ContentPopup
+    public sealed partial class ReportStoryPopup : ContentPopup
     {
         private readonly IClientService _clientService;
-        private readonly long _chatId;
+        private readonly long _storySenderChatId;
+        private readonly int _storyId;
 
-        private readonly Stack<ReportChatSelection> _history = new();
-        private ReportChatSelection _selection;
+        private readonly Stack<ReportStorySelection> _history = new();
+        private ReportStorySelection _selection;
 
-        public ReportChatPopup(IClientService clientService, long chatId, ReportOption option, IList<long> messageIds, string text)
+        public ReportStoryPopup(IClientService clientService, long storySenderChatId, int storyId, ReportOption option, string text)
         {
             InitializeComponent();
 
             _clientService = clientService;
-            _chatId = chatId;
+            _storySenderChatId = storySenderChatId;
+            _storyId = storyId;
 
             option ??= new ReportOption(Array.Empty<byte>(), Strings.Report2);
 
             Title.Text = option.Text;
 
-            Continue(option, messageIds, text);
+            Continue(option, text);
         }
 
-        public ReportChatSelection Selection => _selection;
-
-        private async void Continue(ReportOption option, IList<long> messageIds, string text)
+        private async void Continue(ReportOption option, string text)
         {
             IsEnabled = false;
 
@@ -46,23 +46,23 @@ namespace Telegram.Views.Popups
                 _history.Push(_selection);
             }
 
-            var response = await _clientService.SendAsync(new ReportChat(_chatId, option.Id, messageIds, text));
-            if (response is ReportChatResultTextRequired textRequired)
+            var response = await _clientService.SendAsync(new ReportStory(_storySenderChatId, _storyId, option.Id, text));
+            if (response is ReportStoryResultTextRequired textRequired)
             {
                 option = new ReportOption(textRequired.OptionId, option.Text);
             }
 
-            UpdateSelection(new ReportChatSelection(option, messageIds, text, response));
+            UpdateSelection(new ReportStorySelection(option, text, response));
 
             IsEnabled = true;
         }
 
-        private void UpdateSelection(ReportChatSelection selection)
+        private void UpdateSelection(ReportStorySelection selection)
         {
             _selection = selection;
             Title.Text = selection.Option.Text;
 
-            if (selection.Result is ReportChatResultOptionRequired optionRequired)
+            if (selection.Result is ReportStoryResultOptionRequired optionRequired)
             {
                 OptionRoot.Visibility = Visibility.Visible;
                 TextRoot.Visibility = Visibility.Collapsed;
@@ -70,7 +70,7 @@ namespace Telegram.Views.Popups
                 Subtitle.Text = optionRequired.Title;
                 ScrollingHost.ItemsSource = optionRequired.Options;
             }
-            else if (selection.Result is ReportChatResultTextRequired textRequired)
+            else if (selection.Result is ReportStoryResultTextRequired textRequired)
             {
                 Animated.Play();
 
@@ -83,33 +83,9 @@ namespace Telegram.Views.Popups
                     ? Strings.Report2CommentOptional
                     : Strings.Report2Comment;
 
-                if (_clientService.TryGetChat(_chatId, out Chat chat))
-                {
-                    if (chat.Type is ChatTypePrivate or ChatTypeSecret)
-                    {
-                        TextInfo.Text = Strings.Report2CommentInfoUser;
-                    }
-                    else if (chat.Type is ChatTypeBasicGroup)
-                    {
-                        TextInfo.Text = Strings.Report2CommentInfoGroup;
-                    }
-                    else if (chat.Type is ChatTypeSupergroup supergroup)
-                    {
-                        TextInfo.Text = supergroup.IsChannel
-                            ? Strings.Report2CommentInfoChannel
-                            : Strings.Report2CommentInfoGroup;
-                    }
-                    else
-                    {
-                        TextInfo.Text = Strings.Report2CommentInfo;
-                    }
-                }
-                else
-                {
-                    TextInfo.Text = Strings.Report2CommentInfo;
-                }
+                TextInfo.Text = Strings.Report2CommentInfoUser;
             }
-            else if (selection.Result is ReportChatResultMessagesRequired or ReportChatResultOk)
+            else if (selection.Result is ReportStoryResultOk)
             {
                 Hide();
             }
@@ -121,7 +97,7 @@ namespace Telegram.Views.Popups
         {
             if (e.ClickedItem is ReportOption option && _selection != null)
             {
-                Continue(option, _selection.MessageIds, _selection.Text);
+                Continue(option, _selection.Text);
             }
         }
 
@@ -142,7 +118,7 @@ namespace Telegram.Views.Popups
 
         private void Text_TextChanged(object sender, TextChangedEventArgs e)
         {
-            if (_selection?.Result is ReportChatResultTextRequired textRequired)
+            if (_selection?.Result is ReportStoryResultTextRequired textRequired)
             {
                 Send.IsEnabled = textRequired.IsOptional || !string.IsNullOrWhiteSpace(Text.Text);
             }
@@ -152,13 +128,13 @@ namespace Telegram.Views.Popups
         {
             if (_selection != null)
             {
-                Continue(_selection.Option, _selection.MessageIds, Text.Text);
+                Continue(_selection.Option, Text.Text);
             }
         }
 
         private void BackButton_Click(object sender, RoutedEventArgs e)
         {
-            if (_history.TryPop(out ReportChatSelection selection))
+            if (_history.TryPop(out ReportStorySelection selection))
             {
                 UpdateSelection(selection);
             }

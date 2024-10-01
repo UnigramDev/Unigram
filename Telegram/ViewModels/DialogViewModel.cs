@@ -464,7 +464,7 @@ namespace Telegram.ViewModels
             set => ShowHideSelection(value);
         }
 
-        public void ShowHideSelection(bool value, ReportSelection report = null)
+        public void ShowHideSelection(bool value, ReportChatSelection report = null)
         {
             if (_isSelectionEnabled != value)
             {
@@ -3811,8 +3811,8 @@ namespace Telegram.ViewModels
 
         #region Report Chat
 
-        private ReportSelection _isReportingMessages;
-        public ReportSelection IsReportingMessages
+        private ReportChatSelection _isReportingMessages;
+        public ReportChatSelection IsReportingMessages
         {
             get => _isReportingMessages;
             set => Set(ref _isReportingMessages, value);
@@ -3832,7 +3832,7 @@ namespace Telegram.ViewModels
             }
 
             ReportChatPopup popup;
-            if (IsReportingMessages is ReportSelection selection)
+            if (IsReportingMessages is ReportChatSelection selection)
             {
                 popup = new ReportChatPopup(ClientService, chat.Id, IsReportingMessages?.Option, messages, selection.Text);
             }
