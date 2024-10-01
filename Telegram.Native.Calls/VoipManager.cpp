@@ -30,7 +30,7 @@
 
 namespace winrt::Telegram::Native::Calls::implementation
 {
-    inline std::string hexStr(IVector<uint8_t> data)
+    inline static std::string hexStr(IVector<uint8_t> data)
     {
         std::stringstream ss;
         ss << std::hex;
@@ -181,36 +181,47 @@ namespace winrt::Telegram::Native::Calls::implementation
             .initialNetworkType = tgcalls::NetworkType(),
             .encryptionKey = tgcalls::EncryptionKey(encryptionKeyPointer, descriptor.IsOutgoing()),
             .mediaDevicesConfig = mediaConfig,
-            .stateUpdated = [this](tgcalls::State state) {
-                std::lock_guard const guard(m_lock);
-                m_stateUpdatedEventSource(*this, (VoipReadyState)state);
+            .stateUpdated = [weakThis{ get_weak() }](tgcalls::State state) {
+                if (auto strongThis = weakThis.get())
+                {
+                    strongThis->OnStateUpdated(state);
+                }
             },
-            .signalBarsUpdated = [this](int signalBars) {
-                std::lock_guard const guard(m_lock);
-                m_signalBarsUpdatedEventSource(*this, signalBars);
+            .signalBarsUpdated = [weakThis{ get_weak() }](int signalBars) {
+                if (auto strongThis = weakThis.get())
+                {
+                    strongThis->OnSignalBarsUpdated(signalBars);
+                }
             },
-            .audioLevelUpdated = [this](float level) {
-                std::lock_guard const guard(m_lock);
-                m_audioLevelUpdated(*this, level);
+            .audioLevelUpdated = [weakThis{ get_weak() }](float level) {
+                if (auto strongThis = weakThis.get())
+                {
+                    strongThis->OnAudioLevelUpdated(level);
+                }
             },
-            .remoteBatteryLevelIsLowUpdated = [this](bool low) {
-                std::lock_guard const guard(m_lock);
-                m_remoteBatteryLevelIsLowUpdatedEventSource(*this, low);
+            .remoteBatteryLevelIsLowUpdated = [weakThis{ get_weak() }](bool low) {
+                if (auto strongThis = weakThis.get())
+                {
+                    strongThis->OnRemoteBatteryLevelIsLowUpdated(low);
+                }
             },
-            .remoteMediaStateUpdated = [this](tgcalls::AudioState audio, tgcalls::VideoState video) {
-                std::lock_guard const guard(m_lock);
-                auto args = winrt::make_self<winrt::Telegram::Native::Calls::implementation::RemoteMediaStateUpdatedEventArgs>((VoipAudioState)audio, (VoipVideoState)video);
-                m_remoteMediaStateUpdatedEventSource(*this, *args);
+            .remoteMediaStateUpdated = [weakThis{ get_weak() }](tgcalls::AudioState audio, tgcalls::VideoState video) {
+                if (auto strongThis = weakThis.get())
+                {
+                    strongThis->OnRemoteMediaStateUpdated(audio, video);
+                }
             },
-            .remotePrefferedAspectRatioUpdated = [this](float aspect) {
-                std::lock_guard const guard(m_lock);
-                m_remotePrefferedAspectRatioUpdatedEventSource(*this, aspect);
+            .remotePrefferedAspectRatioUpdated = [weakThis{ get_weak() }](float aspect) {
+                if (auto strongThis = weakThis.get())
+                {
+                    strongThis->OnRemotePrefferedAspectRadioUpdated(aspect);
+                }
             },
-            .signalingDataEmitted = [this](std::vector<uint8_t> data) {
-                std::lock_guard const guard(m_lock);
-                auto bytes = winrt::single_threaded_vector<uint8_t>(std::move(data));
-                auto args = winrt::make_self<winrt::Telegram::Native::Calls::implementation::SignalingDataEmittedEventArgs>(bytes);
-                m_signalingDataEmittedEventSource(*this, *args);
+            .signalingDataEmitted = [weakThis{ get_weak() }](std::vector<uint8_t> data) {
+                if (auto strongThis = weakThis.get())
+                {
+                    strongThis->OnSignalingDataEmitted(data);
+                }
             }
         };
 
@@ -227,7 +238,7 @@ namespace winrt::Telegram::Native::Calls::implementation
     {
         if (m_impl)
         {
-            m_impl->stop([](tgcalls::FinalState) { });
+            m_impl->stop([](tgcalls::FinalState) {});
         }
     }
 
@@ -413,6 +424,54 @@ namespace winrt::Telegram::Native::Calls::implementation
 
 
 
+    void VoipManager::OnStateUpdated(tgcalls::State state)
+    {
+        std::lock_guard const guard(m_lock);
+        m_stateUpdatedEventSource(*this, (VoipReadyState)state);
+    }
+
+    void VoipManager::OnSignalBarsUpdated(int signalBars)
+    {
+        std::lock_guard const guard(m_lock);
+        m_signalBarsUpdatedEventSource(*this, signalBars);
+    }
+
+    void VoipManager::OnAudioLevelUpdated(float level)
+    {
+        std::lock_guard const guard(m_lock);
+        m_audioLevelUpdatedEventSource(*this, level);
+    }
+
+    void VoipManager::OnRemoteBatteryLevelIsLowUpdated(bool low)
+    {
+        std::lock_guard const guard(m_lock);
+        m_remoteBatteryLevelIsLowUpdatedEventSource(*this, low);
+    }
+
+    void VoipManager::OnRemoteMediaStateUpdated(tgcalls::AudioState audio, tgcalls::VideoState video)
+    {
+        std::lock_guard const guard(m_lock);
+        auto args = winrt::make_self<RemoteMediaStateUpdatedEventArgs>((VoipAudioState)audio, (VoipVideoState)video);
+        m_remoteMediaStateUpdatedEventSource(*this, *args);
+    }
+
+    void VoipManager::OnRemotePrefferedAspectRadioUpdated(float aspect)
+    {
+        std::lock_guard const guard(m_lock);
+        m_remotePrefferedAspectRatioUpdatedEventSource(*this, aspect);
+    }
+
+    void VoipManager::OnSignalingDataEmitted(std::vector<uint8_t> data)
+    {
+        std::lock_guard const guard(m_lock);
+        auto bytes = winrt::single_threaded_vector<uint8_t>(std::move(data));
+        auto args = winrt::make_self<SignalingDataEmittedEventArgs>(bytes);
+        m_signalingDataEmittedEventSource(*this, *args);
+    }
+
+
+
+
     winrt::event_token VoipManager::StateUpdated(Windows::Foundation::TypedEventHandler<
         winrt::Telegram::Native::Calls::VoipManager,
         VoipReadyState> const& value)
@@ -450,13 +509,13 @@ namespace winrt::Telegram::Native::Calls::implementation
         float> const& value)
     {
         std::lock_guard const guard(m_lock);
-        return m_audioLevelUpdated.add(value);
+        return m_audioLevelUpdatedEventSource.add(value);
     }
 
     void VoipManager::AudioLevelUpdated(winrt::event_token const& token)
     {
         std::lock_guard const guard(m_lock);
-        m_audioLevelUpdated.remove(token);
+        m_audioLevelUpdatedEventSource.remove(token);
     }
 
 
