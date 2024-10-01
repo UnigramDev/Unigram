@@ -406,11 +406,6 @@ namespace Telegram.Common
             return pointer.Offset - index;
         }
 
-        public static string ToP(this VideoPlayerLevel level)
-        {
-            return string.Format("{0}p", Math.Min(level.Width, level.Height));
-        }
-
         public static IEnumerable<AlternativeVideo> FindAlternatives(this GalleryMedia video, params string[] codecs)
         {
             var playlists = video.AlternativeVideos

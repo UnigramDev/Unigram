@@ -13,7 +13,30 @@ namespace Telegram.Controls
 
     public record VideoPlayerVolumeChangedEventArgs(double Volume);
 
-    public record VideoPlayerLevel(int Index, int Bitrate, int Width, int Height);
+    // Record somehow fails to compile in release
+    public class VideoPlayerLevel
+    {
+        public VideoPlayerLevel(int index, int bitrate, int width, int height)
+        {
+            Index = index;
+            Bitrate = bitrate;
+            Width = width;
+            Height = height;
+        }
+
+        public int Index { get; }
+
+        public int Bitrate { get; }
+
+        public int Width { get; }
+
+        public int Height { get; }
+
+        public string ToP()
+        {
+            return string.Format("{0}p", Math.Min(Width, Height));
+        }
+    }
 
     public record VideoPlayerLevelsChangedEventArgs(IList<VideoPlayerLevel> Levels, VideoPlayerLevel CurrentLevel, bool IsAuto);
 
