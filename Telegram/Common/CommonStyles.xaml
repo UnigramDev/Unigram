@@ -1097,6 +1097,9 @@
     <Style TargetType="ListView"
            BasedOn="{StaticResource DefaultListViewStyle}" />
 
+    <Style TargetType="controls:TextListView"
+           BasedOn="{StaticResource DefaultListViewStyle}" />
+
     <Style x:Key="EmptyHyperlinkButtonStyle"
            TargetType="HyperlinkButton">
         <Setter Property="HorizontalAlignment"
