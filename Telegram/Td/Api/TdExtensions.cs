@@ -77,7 +77,7 @@ namespace Telegram.Td.Api
             return true;
         }
 
-        public static string ShortCount(this Gift gift)
+        public static string TotalText(this Gift gift)
         {
             if (gift.TotalCount >= 10000)
             {
@@ -85,6 +85,16 @@ namespace Telegram.Td.Api
             }
 
             return gift.TotalCount.ToString();
+        }
+
+        public static string RemainingText(this Gift gift)
+        {
+            return gift.RemainingCount switch
+            {
+                0 => string.Format(Strings.Gift2AvailabilityValueNone, gift.TotalCount),
+                1 => string.Format(Strings.Gift2Availability3Value, gift.RemainingCount, gift.TotalCount),
+                _ => string.Format(Strings.Gift2AvailabilityValue, gift.RemainingCount, gift.TotalCount)
+            };
         }
 
         public static int CountUnread(this ChatActiveStories activeStories, out bool closeFriends)

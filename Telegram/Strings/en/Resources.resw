@@ -5509,6 +5509,9 @@ Duration: {1}</value>
   <data name="Gift2Availability" xml:space="preserve">
     <value>Availability</value>
   </data>
+  <data name="Gift2Availability3Value" xml:space="preserve">
+    <value>{0} of {1} left</value>
+  </data>
   <data name="Gift2AvailabilityValue" xml:space="preserve">
     <value>{0} of {1} left</value>
   </data>

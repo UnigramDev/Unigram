@@ -209,9 +209,7 @@ namespace Telegram.Views.Stars.Popups
                     if (giftSell.Gift.TotalCount > 0)
                     {
                         Availability.Visibility = Visibility.Visible;
-                        Availability.Content = giftSell.Gift.RemainingCount > 0
-                        ? string.Format(Strings.Gift2AvailabilityValue, giftSell.Gift.RemainingCount, giftSell.Gift.TotalCount)
-                        : string.Format(Strings.Gift2AvailabilityValueNone, giftSell.Gift.TotalCount);
+                        Availability.Content = giftSell.Gift.RemainingText();
                     }
                 }
                 else if (sourceUser.Purpose is UserTransactionPurposeGiftSend giftSend)
@@ -226,9 +224,7 @@ namespace Telegram.Views.Stars.Popups
                     if (giftSend.Gift.TotalCount > 0)
                     {
                         Availability.Visibility = Visibility.Visible;
-                        Availability.Content = giftSend.Gift.RemainingCount > 0
-                            ? string.Format(Strings.Gift2AvailabilityValue, giftSend.Gift.RemainingCount, giftSend.Gift.TotalCount)
-                            : string.Format(Strings.Gift2AvailabilityValueNone, giftSend.Gift.TotalCount);
+                        Availability.Content = giftSend.Gift.RemainingText();
                     }
                 }
 
@@ -445,9 +441,7 @@ namespace Telegram.Views.Stars.Popups
             if (gift.Gift.TotalCount > 0)
             {
                 Availability.Visibility = Visibility.Visible;
-                Availability.Content = gift.Gift.RemainingCount > 0
-                ? string.Format(Strings.Gift2AvailabilityValue, gift.Gift.RemainingCount, gift.Gift.TotalCount)
-                : string.Format(Strings.Gift2AvailabilityValueNone, gift.Gift.TotalCount);
+                Availability.Content = gift.Gift.RemainingText();
             }
 
             if (gift.Text?.Text.Length > 0)
@@ -539,9 +533,7 @@ namespace Telegram.Views.Stars.Popups
             if (gift.Gift.TotalCount > 0)
             {
                 Availability.Visibility = Visibility.Visible;
-                Availability.Content = gift.Gift.RemainingCount > 0
-                ? string.Format(Strings.Gift2AvailabilityValue, gift.Gift.RemainingCount, gift.Gift.TotalCount)
-                : string.Format(Strings.Gift2AvailabilityValueNone, gift.Gift.TotalCount);
+                Availability.Content = gift.Gift.RemainingText();
             }
 
             if (gift.Text?.Text.Length > 0)

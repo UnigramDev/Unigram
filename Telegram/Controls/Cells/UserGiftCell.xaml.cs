@@ -34,7 +34,7 @@ namespace Telegram.Controls.Cells
             if (gift.Gift.TotalCount > 0)
             {
                 RibbonRoot.Visibility = Visibility.Visible;
-                Ribbon.Text = string.Format(Strings.Gift2Limited1OfRibbon, gift.Gift.ShortCount());
+                Ribbon.Text = string.Format(Strings.Gift2Limited1OfRibbon, gift.Gift.TotalText());
             }
             else
             {
