@@ -58,6 +58,24 @@ namespace Telegram.Td.Api
             return last >= 24 * 60 * 7 - 1;
         }
 
+        public static bool IsHls(this MessageVideo video)
+        {
+            if (video.Video.Duration == 0 || video.AlternativeVideos.Count == 0)
+            {
+                return false;
+            }
+
+            foreach (var alternative in video.AlternativeVideos)
+            {
+                if (alternative.Width == 0 || alternative.Height == 0)
+                {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
         public static int CountUnread(this ChatActiveStories activeStories, out bool closeFriends)
         {
             var count = 0;

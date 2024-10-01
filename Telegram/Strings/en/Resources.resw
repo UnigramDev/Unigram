@@ -8508,6 +8508,12 @@ Payments will go directly to the developer of {0}. Telegram cannot provide any g
   <data name="QrCode" xml:space="preserve">
     <value>QR Code</value>
   </data>
+  <data name="Quality" xml:space="preserve">
+    <value>Quality</value>
+  </data>
+  <data name="QualityAuto" xml:space="preserve">
+    <value>Auto</value>
+  </data>
   <data name="Question" xml:space="preserve">
     <value>Question</value>
   </data>

@@ -13,6 +13,11 @@ using Telegram.Views.Popups;
 
 namespace Telegram.ViewModels.Gallery
 {
+    // TODO: reactor the whole GalleryMedia to just have two classes with different constructors
+    // GalleryMedia
+    //      |------- GalleryPhoto
+    //      |
+    // GalleryVideo
     public abstract class GalleryMedia
     {
         protected readonly IClientService _clientService;
@@ -30,7 +35,12 @@ namespace Telegram.ViewModels.Gallery
 
         public abstract File GetThumbnail();
 
-        public virtual IList<AdaptiveVideo> AdaptiveVideo => Array.Empty<AdaptiveVideo>();
+        public virtual bool IsHls()
+        {
+            return false;
+        }
+
+        public virtual IList<AlternativeVideo> AlternativeVideos => Array.Empty<AlternativeVideo>();
 
         public virtual object Constraint { get; private set; }
 

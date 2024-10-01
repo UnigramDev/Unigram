@@ -1,31 +1,24 @@
 ﻿using System;
+using System.Collections.Generic;
 using Telegram.ViewModels.Gallery;
 using Windows.Foundation;
 
 namespace Telegram.Controls
 {
-    public record VideoPlayerPositionChanged(double Position);
+    public record VideoPlayerPositionChangedEventArgs(double Position);
 
-    public record VideoPlayerDurationChanged(double Duration);
+    public record VideoPlayerDurationChangedEventArgs(double Duration);
 
-    public record VideoPlayerIsPlayingChanged(bool IsPlaying);
+    public record VideoPlayerIsPlayingChangedEventArgs(bool IsPlaying);
 
-    public record VideoPlayerVolumeChanged(double Volume);
+    public record VideoPlayerVolumeChangedEventArgs(double Volume);
+
+    public record VideoPlayerLevel(int Index, int Bitrate, int Width, int Height);
+
+    public record VideoPlayerLevelsChangedEventArgs(IList<VideoPlayerLevel> Levels, VideoPlayerLevel CurrentLevel, bool IsAuto);
 
     public abstract partial class VideoPlayerBase : UserControlEx
     {
-        private double _position;
-        public abstract double Position { get; set; }
-
-        private double _duration;
-        public abstract double Duration { get; }
-
-        private bool _isPlaying;
-        public abstract bool IsPlaying { get; }
-
-        private double _volume;
-        public abstract double Volume { get; set; }
-
         private double _rate;
         public abstract double Rate { get; set; }
 
@@ -48,54 +41,84 @@ namespace Telegram.Controls
 
         public abstract void AddTime(double value);
 
-        public event TypedEventHandler<VideoPlayerBase, EventArgs> FirstFrameReady;
-        public event TypedEventHandler<VideoPlayerBase, VideoPlayerPositionChanged> PositionChanged;
-        public event TypedEventHandler<VideoPlayerBase, VideoPlayerDurationChanged> DurationChanged;
-        public event TypedEventHandler<VideoPlayerBase, VideoPlayerIsPlayingChanged> IsPlayingChanged;
-        public event TypedEventHandler<VideoPlayerBase, VideoPlayerVolumeChanged> VolumeChanged;
-        public event TypedEventHandler<VideoPlayerBase, EventArgs> Closed;
+        protected bool _isFirstFrameReady;
 
-        protected void OnFirstFrameReady()
+        public event TypedEventHandler<VideoPlayerBase, EventArgs> FirstFrameReady;
+        protected void OnFirstFrameReady(bool value)
         {
-            FirstFrameReady?.Invoke(this, EventArgs.Empty);
+            if (/*_isFirstFrameReady != value &&*/ value)
+            {
+                _isFirstFrameReady = value;
+                FirstFrameReady?.Invoke(this, EventArgs.Empty);
+            }
         }
 
+        private double _position;
+        public abstract double Position { get; set; }
+
+        public event TypedEventHandler<VideoPlayerBase, VideoPlayerPositionChangedEventArgs> PositionChanged;
         protected void OnPositionChanged(double value)
         {
             //if (_position != value)
             {
                 _position = value;
-                PositionChanged?.Invoke(this, new VideoPlayerPositionChanged(value));
+                PositionChanged?.Invoke(this, new VideoPlayerPositionChangedEventArgs(value));
             }
         }
 
+        private double _duration;
+        public abstract double Duration { get; }
+
+        public event TypedEventHandler<VideoPlayerBase, VideoPlayerDurationChangedEventArgs> DurationChanged;
         protected void OnDurationChanged(double value)
         {
             //if (_duration != value)
             {
                 _duration = value;
-                DurationChanged?.Invoke(this, new VideoPlayerDurationChanged(value));
+                DurationChanged?.Invoke(this, new VideoPlayerDurationChangedEventArgs(value));
             }
         }
 
+        private bool _isPlaying;
+        public abstract bool IsPlaying { get; }
+
+        public event TypedEventHandler<VideoPlayerBase, VideoPlayerIsPlayingChangedEventArgs> IsPlayingChanged;
         protected void OnIsPlayingChanged(bool value)
         {
             //if (_isPlaying != value)
             {
                 _isPlaying = value;
-                IsPlayingChanged?.Invoke(this, new VideoPlayerIsPlayingChanged(value));
+                IsPlayingChanged?.Invoke(this, new VideoPlayerIsPlayingChangedEventArgs(value));
             }
         }
 
+        private double _volume;
+        public abstract double Volume { get; set; }
+
+        public event TypedEventHandler<VideoPlayerBase, VideoPlayerVolumeChangedEventArgs> VolumeChanged;
         protected void OnVolumeChanged(double value)
         {
             //if (_volume != value)
             {
                 _volume = value;
-                VolumeChanged?.Invoke(this, new VideoPlayerVolumeChanged(value));
+                VolumeChanged?.Invoke(this, new VideoPlayerVolumeChangedEventArgs(value));
             }
         }
 
+        public bool IsCurrentLevelAuto { get; protected set; } = true;
+
+        public abstract VideoPlayerLevel CurrentLevel { get; set; }
+
+        public IList<VideoPlayerLevel> Levels { get; private set; } = Array.Empty<VideoPlayerLevel>();
+
+        public event TypedEventHandler<VideoPlayerBase, VideoPlayerLevelsChangedEventArgs> LevelsChanged;
+        protected void OnLevelsChanged(IList<VideoPlayerLevel> levels, VideoPlayerLevel currentLevel)
+        {
+            Levels = levels;
+            LevelsChanged?.Invoke(this, new VideoPlayerLevelsChangedEventArgs(levels, currentLevel, IsCurrentLevelAuto));
+        }
+
+        public event TypedEventHandler<VideoPlayerBase, EventArgs> Closed;
         protected void OnClosed()
         {
             Closed?.Invoke(this, EventArgs.Empty);

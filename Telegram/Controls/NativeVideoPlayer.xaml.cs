@@ -4,14 +4,13 @@ using System;
 using Telegram.Common;
 using Telegram.Streams;
 using Telegram.ViewModels.Gallery;
-using Windows.Foundation;
 using Windows.UI.Xaml;
 
 namespace Telegram.Controls
 {
     public sealed partial class NativeVideoPlayer : VideoPlayerBase
     {
-        private AsyncMediaPlayer _player;
+        private AsyncMediaPlayer _core;
         private GalleryMedia _video;
 
         private long _initialPosition;
@@ -24,83 +23,83 @@ namespace Telegram.Controls
 
         private void OnDisconnected(object sender, RoutedEventArgs e)
         {
-            if (_player != null)
+            if (_core != null)
             {
-                _player.Vout -= OnVout;
-                _player.Stopped -= OnStopped;
-                _player.TimeChanged -= OnTimeChanged;
-                _player.LengthChanged -= OnLengthChanged;
-                _player.EndReached -= OnEndReached;
-                _player.Playing -= OnPlaying;
-                _player.Paused -= OnPaused;
-                _player.VolumeChanged -= OnVolumeChanged;
+                _core.Vout -= OnVout;
+                _core.Stopped -= OnStopped;
+                _core.TimeChanged -= OnTimeChanged;
+                _core.LengthChanged -= OnLengthChanged;
+                _core.EndReached -= OnEndReached;
+                _core.Playing -= OnPlaying;
+                _core.Paused -= OnPaused;
+                _core.VolumeChanged -= OnVolumeChanged;
 
-                _player.Close();
-                _player = null;
+                _core.Close();
+                _core = null;
             }
         }
 
         public override void Play(GalleryMedia video, double position)
         {
-            if (_player == null)
+            if (_core == null)
             {
                 _video = video;
                 _initialPosition = (long)position;
             }
             else
             {
-                _player.Play(new RemoteFileStream(video.ClientService, video.GetFile()));
-                _player.Time = (long)position;
+                _core.Play(new RemoteFileStream(video.ClientService, video.GetFile()));
+                _core.Time = (long)position;
             }
         }
 
         public override void Play()
         {
             //_player?.Play();
-            switch (_player.State)
+            switch (_core.State)
             {
                 case VLCState.Ended:
-                    _player.Stop();
+                    _core.Stop();
                     goto case VLCState.Stopped;
                 case VLCState.Paused:
                 case VLCState.Stopped:
                 case VLCState.Error:
-                    _player.Play();
+                    _core.Play();
                     break;
             }
         }
 
         public override void Pause()
         {
-            _player?.Pause();
+            _core?.Pause();
         }
 
         public override void Toggle()
         {
-            if (_player == null)
+            if (_core == null)
             {
                 return;
             }
 
-            switch (_player.State)
+            switch (_core.State)
             {
                 case VLCState.Ended:
-                    _player.Stop();
+                    _core.Stop();
                     goto case VLCState.Stopped;
                 case VLCState.Paused:
                 case VLCState.Stopped:
                 case VLCState.Error:
-                    _player.Play();
+                    _core.Play();
                     break;
                 default:
-                    _player.Pause();
+                    _core.Pause();
                     break;
             }
         }
 
         public override void Stop()
         {
-            _player?.Stop();
+            _core?.Stop();
         }
 
         public override void Clear()
@@ -110,17 +109,17 @@ namespace Telegram.Controls
 
         public override void AddTime(double value)
         {
-            _player?.AddTime((long)value);
+            _core?.AddTime((long)value);
         }
 
         public override double Position
         {
-            get => _player?.Time ?? 0;
+            get => _core?.Time / 1000d ?? 0;
             set
             {
-                if (_player != null)
+                if (_core != null)
                 {
-                    _player.Time = (long)value;
+                    _core.Time = (long)(value * 1000);
                     OnPositionChanged(value);
                 }
             }
@@ -128,22 +127,22 @@ namespace Telegram.Controls
 
         public override double Duration
         {
-            get => _player?.Length ?? 0;
+            get => _core?.Length / 1000d ?? 0;
         }
 
         public override bool IsPlaying
         {
-            get => _player?.IsPlaying ?? false;
+            get => _core?.IsPlaying ?? false;
         }
 
         public override double Volume
         {
-            get => _player?.Volume ?? 1;
+            get => _core?.Volume ?? 1;
             set
             {
-                if (_player != null)
+                if (_core != null)
                 {
-                    _player.Volume = (int)(value * 100);
+                    _core.Volume = (int)(value * 100);
                     OnVolumeChanged(value);
                 }
             }
@@ -151,12 +150,12 @@ namespace Telegram.Controls
 
         public override double Rate
         {
-            get => _player?.Rate ?? 1;
+            get => _core?.Rate ?? 1;
             set
             {
-                if (_player != null)
+                if (_core != null)
                 {
-                    _player.Rate = (float)(value);
+                    _core.Rate = (float)(value);
                     //OnRateChanged(value);
                 }
             }
@@ -164,33 +163,35 @@ namespace Telegram.Controls
 
         public override bool Mute
         {
-            get => _player?.Mute ?? false;
+            get => _core?.Mute ?? false;
             set
             {
-                if (_player != null)
+                if (_core != null)
                 {
-                    _player.Mute = value;
+                    _core.Mute = value;
                     //OnMuteChanged(value);
                 }
             }
         }
 
+        public override VideoPlayerLevel CurrentLevel { get; set; }
+
         private void OnInitialized(object sender, InitializedEventArgs e)
         {
-            _player = new AsyncMediaPlayer(e.SwapChainOptions);
-            _player.Vout += OnVout;
-            _player.Stopped += OnStopped;
-            _player.TimeChanged += OnTimeChanged;
-            _player.LengthChanged += OnLengthChanged;
-            _player.EndReached += OnEndReached;
-            _player.Playing += OnPlaying;
-            _player.Paused += OnPaused;
-            _player.VolumeChanged += OnVolumeChanged;
+            _core = new AsyncMediaPlayer(e.SwapChainOptions);
+            _core.Vout += OnVout;
+            _core.Stopped += OnStopped;
+            _core.TimeChanged += OnTimeChanged;
+            _core.LengthChanged += OnLengthChanged;
+            _core.EndReached += OnEndReached;
+            _core.Playing += OnPlaying;
+            _core.Paused += OnPaused;
+            _core.VolumeChanged += OnVolumeChanged;
 
             if (_video != null)
             {
-                _player.Play(new RemoteFileStream(_video.ClientService, _video.GetFile()));
-                _player.Time = _initialPosition;
+                _core.Play(new RemoteFileStream(_video.ClientService, _video.GetFile()));
+                _core.Time = _initialPosition;
             }
 
             _video = null;
@@ -199,7 +200,7 @@ namespace Telegram.Controls
 
         private void OnVout(AsyncMediaPlayer sender, EventArgs args)
         {
-            OnFirstFrameReady();
+            OnFirstFrameReady(true);
         }
 
         private void OnStopped(AsyncMediaPlayer sender, EventArgs args)
@@ -214,17 +215,17 @@ namespace Telegram.Controls
 
         private void OnTimeChanged(AsyncMediaPlayer sender, MediaPlayerTimeChangedEventArgs args)
         {
-            OnPositionChanged(args.Time);
+            OnPositionChanged(args.Time / 1000d);
         }
 
         private void OnLengthChanged(AsyncMediaPlayer sender, MediaPlayerLengthChangedEventArgs args)
         {
-            OnDurationChanged(args.Length);
+            OnDurationChanged(args.Length / 1000d);
         }
 
         private void OnEndReached(AsyncMediaPlayer sender, EventArgs args)
         {
-            OnPositionChanged(sender.Length);
+            OnPositionChanged(sender.Length / 1000d);
 
             if (IsLoopingEnabled)
             {

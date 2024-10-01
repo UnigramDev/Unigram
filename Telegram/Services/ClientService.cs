@@ -36,6 +36,7 @@ namespace Telegram.Services
 
         Task<BaseObject> CheckChatInviteLinkAsync(string inviteLink);
 
+        Task<File> GetFileAsync(int fileId);
         Task<StorageFile> GetFileAsync(File file, bool completed = true);
         Task<StorageFile> GetPermanentFileAsync(File file);
 

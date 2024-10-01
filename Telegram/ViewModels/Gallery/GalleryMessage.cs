@@ -8,7 +8,6 @@ using System;
 using System.Collections.Generic;
 using Telegram.Services;
 using Telegram.Td.Api;
-using Telegram.Views.Popups;
 
 namespace Telegram.ViewModels.Gallery
 {
@@ -61,26 +60,26 @@ namespace Telegram.ViewModels.Gallery
             return null;
         }
 
-        public override IList<AdaptiveVideo> AdaptiveVideo
+        public override bool IsHls()
+        {
+            if (_message.Content is MessageVideo video)
+            {
+                return video.IsHls();
+            }
+
+            return false;
+        }
+
+        public override IList<AlternativeVideo> AlternativeVideos
         {
             get
             {
-                if (_message.Content is MessageVideo video && video.AlternativeVideos.Count > 0)
+                if (_message.Content is MessageVideo video)
                 {
-                    var videos = new List<AdaptiveVideo>();
-
-                    for (int i = 0; i < video.AlternativeVideos.Count; i += 2)
-                    {
-                        if (string.Equals(video.AlternativeVideos[i].Codec, "h264", System.StringComparison.OrdinalIgnoreCase))
-                        {
-                            videos.Add(new AdaptiveVideo(video.AlternativeVideos[i], video.AlternativeVideos[i + 1].Video));
-                        }
-                    }
-
-                    return videos;
+                    return video.AlternativeVideos;
                 }
 
-                return Array.Empty<AdaptiveVideo>();
+                return Array.Empty<AlternativeVideo>();
             }
         }
 

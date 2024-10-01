@@ -1,7 +1,8 @@
-﻿using LibVLCSharp.Shared;
-using System;
+﻿using System;
+using System.Linq;
 using Telegram.Common;
 using Telegram.Controls.Media;
+using Telegram.Navigation;
 using Telegram.Services;
 using Telegram.Services.Keyboard;
 using Telegram.Td.Api;
@@ -213,6 +214,7 @@ namespace Telegram.Controls.Gallery
                 _player.DurationChanged -= OnDurationChanged;
                 _player.IsPlayingChanged -= OnIsPlayingChanged;
                 _player.VolumeChanged -= OnVolumeChanged;
+                _player.LevelsChanged -= OnLevelsChanged;
                 _player.Closed -= OnStopped;
             }
 
@@ -230,17 +232,64 @@ namespace Telegram.Controls.Gallery
                 _player.DurationChanged += OnDurationChanged;
                 _player.IsPlayingChanged += OnIsPlayingChanged;
                 _player.VolumeChanged += OnVolumeChanged;
+                _player.LevelsChanged += OnLevelsChanged;
                 _player.Closed += OnStopped;
 
-                OnPositionChanged(_player, new VideoPlayerPositionChanged(_player.Position));
-                OnDurationChanged(_player, new VideoPlayerDurationChanged(_player.Duration));
+                OnPositionChanged(_player, new VideoPlayerPositionChangedEventArgs(_player.Position));
+                OnDurationChanged(_player, new VideoPlayerDurationChangedEventArgs(_player.Duration));
+
+                ShowHideSettings(_player.Levels.Count > 0);
             }
 
             PlaybackButton.Glyph = Icons.PlayFilled24;
             Automation.SetToolTip(PlaybackButton, Strings.AccActionPlay);
         }
 
-        private void OnVolumeChanged(VideoPlayerBase sender, VideoPlayerVolumeChanged args)
+        private bool _settingsCollapsed;
+
+        private void ShowHideSettings(bool show)
+        {
+            if (_settingsCollapsed != show)
+            {
+                return;
+            }
+
+            _settingsCollapsed = !show;
+
+            SpeedRoot.Visibility = show
+                ? Visibility.Collapsed
+                : Visibility.Visible;
+
+            SettingsRoot.Visibility = show
+                ? Visibility.Visible
+                : Visibility.Collapsed;
+        }
+
+        private void OnLevelsChanged(VideoPlayerBase sender, VideoPlayerLevelsChangedEventArgs args)
+        {
+            ShowHideSettings(args.Levels.Count > 0);
+
+            if (args.CurrentLevel != null && !args.IsAuto)
+            {
+                var level = args.CurrentLevel;
+                var quality = Math.Min(level.Width, level.Height);
+
+                QualityText.Text = quality switch
+                {
+                    int n when n < 720 => "SD",
+                    int n when n < 1440 => "HD",
+                    int n when n < 2160 => "2K",
+                    int n when n < 4320 => "4K",
+                    _ => "8K"
+                };
+            }
+            else
+            {
+                QualityText.Text = "A";
+            }
+        }
+
+        private void OnVolumeChanged(VideoPlayerBase sender, VideoPlayerVolumeChangedEventArgs args)
         {
             if (_player == null)
             {
@@ -254,7 +303,7 @@ namespace Telegram.Controls.Gallery
             _player.Rate = SettingsService.Current.Playback.VideoSpeed;
         }
 
-        private void OnIsPlayingChanged(VideoPlayerBase sender, VideoPlayerIsPlayingChanged args)
+        private void OnIsPlayingChanged(VideoPlayerBase sender, VideoPlayerIsPlayingChangedEventArgs args)
         {
             if (args.IsPlaying)
             {
@@ -290,7 +339,7 @@ namespace Telegram.Controls.Gallery
             Visibility = Visibility.Collapsed;
         }
 
-        private void OnPositionChanged(VideoPlayerBase sender, VideoPlayerPositionChanged args)
+        private void OnPositionChanged(VideoPlayerBase sender, VideoPlayerPositionChangedEventArgs args)
         {
             if (_player == null || _scrubbing)
             {
@@ -301,7 +350,7 @@ namespace Telegram.Controls.Gallery
             TimeText.Text = FormatTime(args.Position);
         }
 
-        private void OnDurationChanged(VideoPlayerBase sender, VideoPlayerDurationChanged args)
+        private void OnDurationChanged(VideoPlayerBase sender, VideoPlayerDurationChangedEventArgs args)
         {
             if (_player == null)
             {
@@ -328,7 +377,7 @@ namespace Telegram.Controls.Gallery
 
         private string FormatTime(double time)
         {
-            var span = TimeSpan.FromMilliseconds(time);
+            var span = TimeSpan.FromSeconds(time);
             if (span.TotalHours >= 1)
             {
                 return span.ToString("h\\:mm\\:ss");
@@ -337,6 +386,57 @@ namespace Telegram.Controls.Gallery
             {
                 return span.ToString("mm\\:ss");
             }
+        }
+
+        private void Settings_Click(object sender, RoutedEventArgs e)
+        {
+            var current = _player.CurrentLevel;
+            var auto = _player.IsCurrentLevelAuto;
+
+            var flyout = new MenuFlyout();
+            var quality = new MenuFlyoutSubItem
+            {
+                Text = Strings.Quality,
+                Icon = MenuFlyoutHelper.CreateIcon(Icons.Options),
+                Style = BootStrapper.Current.Resources["DefaultMenuFlyoutSubItemStyle"] as Style
+            };
+
+            var item = new ToggleMenuFlyoutItem();
+            item.Text = current != null && auto ? string.Format("{0} ({1})", Strings.QualityAuto, current.ToP()) : Strings.QualityAuto;
+            item.IsChecked = _player.IsCurrentLevelAuto;
+            item.Click += (s, args) =>
+            {
+                _player.CurrentLevel = null;
+            };
+
+            quality.Items.Add(item);
+
+            foreach (var level in _player.Levels.OrderBy(x => x.Bitrate))
+            {
+                var option = new ToggleMenuFlyoutItem();
+                option.Text = level.ToP();
+                option.IsChecked = current?.Index == level.Index && !auto;
+                option.Click += (s, args) =>
+                {
+                    _player.CurrentLevel = level;
+                };
+
+                quality.Items.Add(option);
+            }
+
+            var speed = new MenuFlyoutSubItem
+            {
+                Text = Strings.Speed,
+                Icon = MenuFlyoutHelper.CreateIcon(Icons.TopSpeed),
+                Style = BootStrapper.Current.Resources["DefaultMenuFlyoutSubItemStyle"] as Style
+            };
+
+            speed.CreatePlaybackSpeed(_player.Rate, FlyoutPlacementMode.Bottom, UpdatePlaybackSpeed);
+
+            flyout.Items.Add(quality);
+            flyout.Items.Add(speed);
+
+            flyout.ShowAt(SettingsButton, FlyoutPlacementMode.TopEdgeAlignedRight);
         }
 
         private void Speed_Click(object sender, RoutedEventArgs e)

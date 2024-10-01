@@ -168,6 +168,17 @@ namespace Telegram.Controls.Gallery
                 return;
             }
 
+            if (show is false && XamlRoot != null)
+            {
+                foreach (var popup in VisualTreeHelper.GetOpenPopupsForXamlRoot(XamlRoot))
+                {
+                    if (popup.Child is not GalleryWindow)
+                    {
+                        return;
+                    }
+                }
+            }
+
             _transportCollapsed = !show;
             BottomPanel.IsHitTestVisible = false;
             BottomPanel.Visibility = Visibility.Visible;

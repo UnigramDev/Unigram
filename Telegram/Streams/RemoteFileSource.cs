@@ -5,6 +5,7 @@
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
 using System.Threading;
+using System.Threading.Tasks;
 using Telegram.Common;
 using Telegram.Services;
 using Telegram.Td.Api;
@@ -28,12 +29,17 @@ namespace Telegram.Streams
 
         private long _fileToken;
 
-        public RemoteFileSource(IClientService clientService, File file)
+        private readonly int _priority;
+        private readonly bool _limit;
+
+        public RemoteFileSource(IClientService clientService, File file, int priority = 32, bool limit = false)
         {
             _event = new ManualResetEvent(false);
 
             _clientService = clientService;
             _file = file;
+            _priority = priority;
+            _limit = limit;
 
             Format = new StickerFormatWebm();
 
@@ -47,13 +53,31 @@ namespace Telegram.Streams
         {
             _offset = offset;
 
-            if (_file.Local.CanBeDownloaded && !_file.Local.IsDownloadingCompleted)
+            if (_file.Local.CanBeDownloaded && !_file.Local.IsDownloadingCompleted && !_limit)
             {
-                _clientService.Send(new DownloadFile(_file.Id, 32, offset, 0, false));
+                _clientService.Send(new DownloadFile(_file.Id, _priority, offset, 0, false));
             }
         }
 
         public override void ReadCallback(long count)
+        {
+            if (MustWait(count))
+            {
+                _event.WaitOne();
+            }
+        }
+
+        public Task ReadCallbackAsync(long count)
+        {
+            if (MustWait(count))
+            {
+                return _event.WaitOneAsync();
+            }
+
+            return Task.CompletedTask;
+        }
+
+        protected bool MustWait(long count)
         {
             var begin = _file.Local.DownloadOffset;
             var end = _file.Local.DownloadOffset + _file.Local.DownloadedPrefixSize;
@@ -64,24 +88,22 @@ namespace Telegram.Streams
 
             if (_canceled)
             {
-                return;
+                return false;
             }
 
             if (_file.Local.Path.Length > 0 && (inBegin && inEnd || _file.Local.IsDownloadingCompleted))
             {
-
+                return false;
             }
-            else
-            {
-                _event.Reset();
 
-                _clientService.Send(new DownloadFile(_file.Id, 32, _offset, /*_chunk*/ 0, false));
-                _next = count;
+            _event.Reset();
 
-                //Logger.Debug($"Not enough data available, offset: {_offset}, next: {_next}, size: {_file.Size}");
+            _clientService.Send(new DownloadFile(_file.Id, 32, _offset, _limit ? count : 0, false));
+            _next = count;
 
-                _event.WaitOne();
-            }
+            //Logger.Debug($"Not enough data available, offset: {_offset}, next: {_next}, size: {_file.Size}");
+
+            return true;
         }
 
         public override string FilePath => _file.Local.Path;

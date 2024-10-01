@@ -377,7 +377,15 @@ namespace Telegram.Controls.Gallery
 
                 _fileId = file.Id;
 
-                FindName(nameof(Video));
+                // Always recreate HLS player for now, try to reuse native one
+                if (item.IsHls() && ChromiumWebPresenter.IsSupported())
+                {
+                    Video = new WebVideoPlayer();
+                }
+                else if (Video is not NativeVideoPlayer)
+                {
+                    Video = new NativeVideoPlayer();
+                }
 
                 controls.Attach(item, file);
                 controls.Attach(Video);
@@ -385,6 +393,29 @@ namespace Telegram.Controls.Gallery
                 Video.Play(item, position);
             }
             catch { }
+        }
+
+        private VideoPlayerBase Video
+        {
+            get => Panel.Child as VideoPlayerBase;
+            set
+            {
+                var video = Panel.Child as VideoPlayerBase;
+                if (video != null)
+                {
+                    video.FirstFrameReady -= OnFirstFrameReady;
+                    video.Closed -= OnClosed;
+                }
+
+                if (value != null)
+                {
+                    value.FirstFrameReady += OnFirstFrameReady;
+                    value.Closed += OnClosed;
+                    value.IsTabStop = false;
+                }
+
+                Panel.Child = value;
+            }
         }
 
         public void Unload()

@@ -77,6 +77,24 @@ namespace Telegram.Services
         private readonly HashSet<int> _canceledDownloads = new();
         private readonly HashSet<string> _completedDownloads = new();
 
+        public Task<File> GetFileAsync(int fileId)
+        {
+            var tsc = new TaskCompletionSource<File>();
+            Send(new GetFile(fileId), result =>
+            {
+                if (result is File file)
+                {
+                    tsc.SetResult(ProcessFile(file));
+                }
+                else
+                {
+                    tsc.SetResult(null);
+                }
+            });
+
+            return tsc.Task;
+        }
+
         public async Task<StorageFile> GetFileAsync(File file, bool completed = true)
         {
             // Extremely important to do this only for completed,
@@ -270,6 +288,10 @@ namespace Telegram.Services
         {
             if (target is AlternativeVideo alternativeVideo)
             {
+                if (alternativeVideo.HlsFile != null)
+                {
+                    alternativeVideo.HlsFile = ProcessFile(alternativeVideo.HlsFile);
+                }
                 if (alternativeVideo.Video != null)
                 {
                     alternativeVideo.Video = ProcessFile(alternativeVideo.Video);
