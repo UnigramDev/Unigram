@@ -135,7 +135,7 @@ namespace Telegram.Controls.Messages
                 {
                     title.Text = gift.IsPrivate
                         ? string.Format(Strings.Gift2ActionTitleInAnonymous, user.FirstName)
-                        : string.Format("{0} {1}", Strings.Gift2ActionTitle, self.FirstName);
+                        : string.Format(Strings.Gift2ActionTitle, self.FirstName);
 
                     if (gift.Text.Text.Length > 0)
                     {
@@ -152,7 +152,7 @@ namespace Telegram.Controls.Messages
                 {
                     title.Text = gift.IsPrivate
                         ? Strings.Gift2ActionTitleAnonymous
-                        : string.Format("{0} {1}", Strings.Gift2ActionTitle, user.FirstName);
+                        : string.Format(Strings.Gift2ActionTitle, user.FirstName);
 
                     if (gift.Text.Text.Length > 0)
                     {
