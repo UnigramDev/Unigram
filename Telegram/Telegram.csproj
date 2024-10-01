@@ -1264,10 +1264,10 @@
       <DependentUpon>InteractionsPopup.xaml</DependentUpon>
     </Compile>
     <Compile Include="ViewModels\InteractionsViewModel.cs" />
-    <Compile Include="Views\Popups\RecordVideoChatPopup.xaml.cs">
+    <Compile Include="Views\Calls\Popups\RecordVideoChatPopup.xaml.cs">
       <DependentUpon>RecordVideoChatPopup.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\Popups\ScheduleVideoChatPopup.xaml.cs">
+    <Compile Include="Views\Calls\Popups\ScheduleVideoChatPopup.xaml.cs">
       <DependentUpon>ScheduleVideoChatPopup.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Popups\BackgroundsPopup.xaml.cs">
@@ -1288,10 +1288,10 @@
     <Compile Include="Views\Popups\UnconfirmedSessionPopup.xaml.cs">
       <DependentUpon>UnconfirmedSessionPopup.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\Popups\VideoChatAliasesPopup.xaml.cs">
+    <Compile Include="Views\Calls\Popups\VideoChatAliasesPopup.xaml.cs">
       <DependentUpon>VideoChatAliasesPopup.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\Popups\VideoChatStreamsPopup.xaml.cs">
+    <Compile Include="Views\Calls\Popups\VideoChatStreamsPopup.xaml.cs">
       <DependentUpon>VideoChatStreamsPopup.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Stars\Popups\SendGiftPopup.xaml.cs">
@@ -1572,10 +1572,10 @@
     <Compile Include="Views\Popups\SendLocationPopup.xaml.cs">
       <DependentUpon>SendLocationPopup.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\Popups\SupergroupEditRestrictedUntilPopup.xaml.cs">
+    <Compile Include="Views\Supergroups\Popups\SupergroupEditRestrictedUntilPopup.xaml.cs">
       <DependentUpon>SupergroupEditRestrictedUntilPopup.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\Popups\SupergroupEventLogFiltersPopup.xaml.cs">
+    <Compile Include="Views\Supergroups\Popups\SupergroupEventLogFiltersPopup.xaml.cs">
       <DependentUpon>SupergroupEventLogFiltersPopup.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Popups\ThemePreviewPopup.xaml.cs">
@@ -3118,11 +3118,11 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\Popups\RecordVideoChatPopup.xaml">
+    <Page Include="Views\Calls\Popups\RecordVideoChatPopup.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Views\Popups\ScheduleVideoChatPopup.xaml">
+    <Page Include="Views\Calls\Popups\ScheduleVideoChatPopup.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -3150,11 +3150,11 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\Popups\VideoChatAliasesPopup.xaml">
+    <Page Include="Views\Calls\Popups\VideoChatAliasesPopup.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Views\Popups\VideoChatStreamsPopup.xaml">
+    <Page Include="Views\Calls\Popups\VideoChatStreamsPopup.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -3322,11 +3322,11 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Views\Popups\SupergroupEditRestrictedUntilPopup.xaml">
+    <Page Include="Views\Supergroups\Popups\SupergroupEditRestrictedUntilPopup.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Views\Popups\SupergroupEventLogFiltersPopup.xaml">
+    <Page Include="Views\Supergroups\Popups\SupergroupEventLogFiltersPopup.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

@@ -9,7 +9,7 @@ using Telegram.Services;
 using Telegram.Td.Api;
 using Windows.UI.Xaml.Controls;
 
-namespace Telegram.Views.Popups
+namespace Telegram.Views.Calls.Popups
 {
     public sealed partial class VideoChatStreamsPopup : ContentPopup
     {

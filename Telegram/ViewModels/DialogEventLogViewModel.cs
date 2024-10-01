@@ -14,7 +14,7 @@ using Telegram.Converters;
 using Telegram.Services;
 using Telegram.Services.Factories;
 using Telegram.Td.Api;
-using Telegram.Views.Popups;
+using Telegram.Views.Supergroups.Popups;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 

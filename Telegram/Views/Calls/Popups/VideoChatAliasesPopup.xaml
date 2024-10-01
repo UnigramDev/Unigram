@@ -1,4 +1,4 @@
-﻿<controls:ContentPopup x:Class="Telegram.Views.Popups.VideoChatAliasesPopup"
+﻿<controls:ContentPopup x:Class="Telegram.Views.Calls.Popups.VideoChatAliasesPopup"
                        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                        xmlns:local="using:Telegram.Views.Popups"

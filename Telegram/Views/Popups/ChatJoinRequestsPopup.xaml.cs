@@ -69,9 +69,9 @@ namespace Telegram.Views.Popups
                 primary.Content = ViewModel.IsChannel
                     ? Strings.AddToChannel
                     : Strings.AddToGroup;
-            //}
-            //else if (args.Phase == 1)
-            //{
+                //}
+                //else if (args.Phase == 1)
+                //{
                 var time = content.Children[2] as TextBlock;
                 time.Text = Formatter.DateExtended(request.Date);
 

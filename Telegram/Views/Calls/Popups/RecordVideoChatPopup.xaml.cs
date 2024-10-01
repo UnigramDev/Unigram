@@ -7,7 +7,7 @@
 using Telegram.Controls;
 using Windows.UI.Xaml.Controls;
 
-namespace Telegram.Views.Popups
+namespace Telegram.Views.Calls.Popups
 {
     public sealed partial class RecordVideoChatPopup : ContentPopup
     {

@@ -12,7 +12,7 @@ using Telegram.Native;
 using Windows.System.UserProfile;
 using Windows.UI.Xaml.Controls;
 
-namespace Telegram.Views.Popups
+namespace Telegram.Views.Supergroups.Popups
 {
     public sealed partial class SupergroupEditRestrictedUntilPopup : ContentPopup
     {
