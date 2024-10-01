@@ -4,6 +4,8 @@
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+using System;
+using System.Collections.Generic;
 using Telegram.Services;
 using Telegram.Td.Api;
 
@@ -19,8 +21,7 @@ namespace Telegram.ViewModels.Gallery
         {
             _message = message;
 
-            var chat = clientService.GetChat(message.ChatId);
-            if (chat != null)
+            if (clientService.TryGetChat(message.ChatId, out Chat chat))
             {
                 _hasProtectedContent = chat.Type is ChatTypeSecret || chat.HasProtectedContent;
             }
@@ -30,8 +31,6 @@ namespace Telegram.ViewModels.Gallery
             : this(clientService, message.Get())
         {
         }
-
-        public Message Message => _message;
 
         public long ChatId => _message.ChatId;
         public long Id => _message.Id;
@@ -59,6 +58,29 @@ namespace Telegram.ViewModels.Gallery
             }
 
             return null;
+        }
+
+        public override bool IsHls()
+        {
+            if (_message.Content is MessageVideo video)
+            {
+                return video.IsHls();
+            }
+
+            return false;
+        }
+
+        public override IList<AlternativeVideo> AlternativeVideos
+        {
+            get
+            {
+                if (_message.Content is MessageVideo video)
+                {
+                    return video.AlternativeVideos;
+                }
+
+                return Array.Empty<AlternativeVideo>();
+            }
         }
 
         public override object Constraint => _message.Content;

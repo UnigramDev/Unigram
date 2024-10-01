@@ -451,6 +451,9 @@
   <data name="ActionForwardsRestrictedGroup" xml:space="preserve">
     <value>un1 restricted forwarding from this group</value>
   </data>
+  <data name="ActionGift2Received" xml:space="preserve">
+    <value>You received a gift for **un2**</value>
+  </data>
   <data name="ActionGiftInbound" xml:space="preserve">
     <value>un1 sent you a gift for **un2**</value>
   </data>
@@ -5473,6 +5476,194 @@ Duration: {1}</value>
   <data name="GifSavedHint" xml:space="preserve">
     <value>Added to Favorite GIFs.</value>
   </data>
+  <data name="Gift2ActionConvertedInfo_one" xml:space="preserve">
+    <value>You converted this gift to {0} Star.</value>
+  </data>
+  <data name="Gift2ActionConvertedInfo_other" xml:space="preserve">
+    <value>You converted this gift to {0} Stars.</value>
+  </data>
+  <data name="Gift2ActionInfo_one" xml:space="preserve">
+    <value>Display this gift on your page or convert it to {0} Star.</value>
+  </data>
+  <data name="Gift2ActionInfo_other" xml:space="preserve">
+    <value>Display this gift on your page or convert it to {0} Stars.</value>
+  </data>
+  <data name="Gift2ActionOutInfo_one" xml:space="preserve">
+    <value>**{1}** can display this gift on their page or convert it to {0} Star.</value>
+  </data>
+  <data name="Gift2ActionOutInfo_other" xml:space="preserve">
+    <value>**{1}** can display this gift on their page or convert it to {0} Stars.</value>
+  </data>
+  <data name="Gift2ActionSavedInfo" xml:space="preserve">
+    <value>You kept this gift on your page.</value>
+  </data>
+  <data name="Gift2ActionTitle" xml:space="preserve">
+    <value>Gift from</value>
+  </data>
+  <data name="Gift2ActionTitleAnonymous" xml:space="preserve">
+    <value>You received a gift!</value>
+  </data>
+  <data name="Gift2ActionTitleInAnonymous" xml:space="preserve">
+    <value>{0} received a gift!</value>
+  </data>
+  <data name="Gift2Availability" xml:space="preserve">
+    <value>Availability</value>
+  </data>
+  <data name="Gift2AvailabilityValue" xml:space="preserve">
+    <value>{0} of {1} left</value>
+  </data>
+  <data name="Gift2AvailabilityValueNone" xml:space="preserve">
+    <value>None of {0} left</value>
+  </data>
+  <data name="Gift2ConvertButton" xml:space="preserve">
+    <value>Convert</value>
+  </data>
+  <data name="Gift2Converted_one" xml:space="preserve">
+    <value>{0} Star was sent to your balance</value>
+  </data>
+  <data name="Gift2Converted_other" xml:space="preserve">
+    <value>{0} Star were sent to your balance</value>
+  </data>
+  <data name="Gift2ConvertedTitle" xml:space="preserve">
+    <value>Converted Gift</value>
+  </data>
+  <data name="Gift2ConvertText" xml:space="preserve">
+    <value>Do you want to convert this gift from **{0}** to **{1}**?
+
+This action cannot be undone.</value>
+  </data>
+  <data name="Gift2ConvertTitle" xml:space="preserve">
+    <value>Convert Gift to Stars</value>
+  </data>
+  <data name="Gift2From" xml:space="preserve">
+    <value>From</value>
+  </data>
+  <data name="Gift2Hide" xml:space="preserve">
+    <value>Hide My Name</value>
+  </data>
+  <data name="Gift2HideInfo" xml:space="preserve">
+    <value>You can hide your name and message from visitors to {0}`s profile. {0} will still see your name and message.</value>
+  </data>
+  <data name="Gift2Info_one" xml:space="preserve">
+    <value>You can keep this gift in your Profile or convert it to **{0}** Star.</value>
+  </data>
+  <data name="Gift2Info_other" xml:space="preserve">
+    <value>You can keep this gift in your Profile or convert it to **{0}** Stars.</value>
+  </data>
+  <data name="Gift2InfoConverted_one" xml:space="preserve">
+    <value>You converted this gift to **{0}** Star.</value>
+  </data>
+  <data name="Gift2InfoConverted_other" xml:space="preserve">
+    <value>You converted this gift to **{0}** Stars.</value>
+  </data>
+  <data name="Gift2InfoOut_one" xml:space="preserve">
+    <value>{1} can keep this gift in profile or convert it to **{0}** Star.</value>
+  </data>
+  <data name="Gift2InfoOut_other" xml:space="preserve">
+    <value>{1} can keep this gift in profile or convert it to **{0}** Stars.</value>
+  </data>
+  <data name="Gift2InfoPinned" xml:space="preserve">
+    <value>You kept this gift in your Profile.</value>
+  </data>
+  <data name="Gift2Limited1OfRibbon" xml:space="preserve">
+    <value>1 of {0}</value>
+  </data>
+  <data name="Gift2LimitedRibbon" xml:space="preserve">
+    <value>limited</value>
+  </data>
+  <data name="Gift2MadePrivate" xml:space="preserve">
+    <value>Gift is now hidden in your profile</value>
+  </data>
+  <data name="Gift2MadePrivateTitle" xml:space="preserve">
+    <value>Gift Hidden</value>
+  </data>
+  <data name="Gift2MadePublic" xml:space="preserve">
+    <value>Gift is now visible in your profile</value>
+  </data>
+  <data name="Gift2MadePublicTitle" xml:space="preserve">
+    <value>Gift Shown</value>
+  </data>
+  <data name="Gift2Message" xml:space="preserve">
+    <value>Enter Message</value>
+  </data>
+  <data name="Gift2Premium" xml:space="preserve">
+    <value>Gift Premium</value>
+  </data>
+  <data name="Gift2PremiumInfo" xml:space="preserve">
+    <value>Give **{0}** access to exclusive features with Telegram Premium.</value>
+  </data>
+  <data name="Gift2PremiumInfoLink" xml:space="preserve">
+    <value>See Features &gt;</value>
+  </data>
+  <data name="Gift2ProfileInvisible" xml:space="preserve">
+    <value>This gift is hidden. Only you can see it.</value>
+  </data>
+  <data name="Gift2ProfileMakeInvisible" xml:space="preserve">
+    <value>Hide from my Page</value>
+  </data>
+  <data name="Gift2ProfileMakeVisible" xml:space="preserve">
+    <value>Display on my Page</value>
+  </data>
+  <data name="Gift2ProfileVisible" xml:space="preserve">
+    <value>This gift is visible to visitors of your page.</value>
+  </data>
+  <data name="Gift2Send_one" xml:space="preserve">
+    <value>Send a Gift for ⭐️ {0}</value>
+  </data>
+  <data name="Gift2Send_other" xml:space="preserve">
+    <value>Send a Gift for ⭐️ {0}</value>
+  </data>
+  <data name="Gift2Stars" xml:space="preserve">
+    <value>Gift Stars</value>
+  </data>
+  <data name="Gift2StarsInfo" xml:space="preserve">
+    <value>Give **{0}** gifts that can be kept on the profile or converted to Stars.</value>
+  </data>
+  <data name="Gift2StarsInfoLink" xml:space="preserve">
+    <value>What are Stars &gt;</value>
+  </data>
+  <data name="Gift2TabAll" xml:space="preserve">
+    <value>All Gifts</value>
+  </data>
+  <data name="Gift2TabLimited" xml:space="preserve">
+    <value>Limited</value>
+  </data>
+  <data name="Gift2Title" xml:space="preserve">
+    <value>Send a Gift</value>
+  </data>
+  <data name="Gift2TitleReceived" xml:space="preserve">
+    <value>Received Gift</value>
+  </data>
+  <data name="Gift2TitleSent" xml:space="preserve">
+    <value>Sent Gift</value>
+  </data>
+  <data name="Gift2To" xml:space="preserve">
+    <value>To</value>
+  </data>
+  <data name="Gift2ToBalance_one" xml:space="preserve">
+    <value>Convert to {0} Star</value>
+  </data>
+  <data name="Gift2ToBalance_other" xml:space="preserve">
+    <value>Convert to {0} Stars</value>
+  </data>
+  <data name="Gift2TransactionConverted" xml:space="preserve">
+    <value>Converted Gift</value>
+  </data>
+  <data name="Gift2TransactionRefundedConverted" xml:space="preserve">
+    <value>Refunded Converted Gift</value>
+  </data>
+  <data name="Gift2TransactionRefundedSent" xml:space="preserve">
+    <value>Refunded Sent Gift</value>
+  </data>
+  <data name="Gift2TransactionSent" xml:space="preserve">
+    <value>Gift</value>
+  </data>
+  <data name="GiftMonths_one" xml:space="preserve">
+    <value>{0}-month</value>
+  </data>
+  <data name="GiftMonths_other" xml:space="preserve">
+    <value>{0}-months</value>
+  </data>
   <data name="GiftPremium" xml:space="preserve">
     <value>Gift Premium</value>
   </data>
@@ -8242,6 +8433,9 @@ Payments will go directly to the developer of {0}. Telegram cannot provide any g
   <data name="ProfileChannel" xml:space="preserve">
     <value>Channel</value>
   </data>
+  <data name="ProfileGifts" xml:space="preserve">
+    <value>Gifts</value>
+  </data>
   <data name="ProfileMyStories" xml:space="preserve">
     <value>My Stories</value>
   </data>
@@ -8313,6 +8507,12 @@ Payments will go directly to the developer of {0}. Telegram cannot provide any g
   </data>
   <data name="QrCode" xml:space="preserve">
     <value>QR Code</value>
+  </data>
+  <data name="Quality" xml:space="preserve">
+    <value>Quality</value>
+  </data>
+  <data name="QualityAuto" xml:space="preserve">
+    <value>Auto</value>
   </data>
   <data name="Question" xml:space="preserve">
     <value>Question</value>
@@ -8518,6 +8718,30 @@ Payments will go directly to the developer of {0}. Telegram cannot provide any g
   <data name="ReplyToQuote" xml:space="preserve">
     <value>Reply to quote from {0}</value>
   </data>
+  <data name="Report2" xml:space="preserve">
+    <value>Report</value>
+  </data>
+  <data name="Report2Comment" xml:space="preserve">
+    <value>Add Comment</value>
+  </data>
+  <data name="Report2CommentInfo" xml:space="preserve">
+    <value>Please help us by telling what is wrong with the message you have selected.</value>
+  </data>
+  <data name="Report2CommentInfoChannel" xml:space="preserve">
+    <value>Please help us by telling what is wrong with the channel you have selected.</value>
+  </data>
+  <data name="Report2CommentInfoGroup" xml:space="preserve">
+    <value>Please help us by telling what is wrong with the group you have selected.</value>
+  </data>
+  <data name="Report2CommentInfoUser" xml:space="preserve">
+    <value>Please help us by telling what is wrong with the user you have selected.</value>
+  </data>
+  <data name="Report2CommentOptional" xml:space="preserve">
+    <value>Add Comment (Optional)</value>
+  </data>
+  <data name="Report2Send" xml:space="preserve">
+    <value>Send Report</value>
+  </data>
   <data name="ReportChat" xml:space="preserve">
     <value>Report</value>
   </data>
@@ -8547,6 +8771,12 @@ Payments will go directly to the developer of {0}. Telegram cannot provide any g
   </data>
   <data name="ReportFalsePositive" xml:space="preserve">
     <value>Report False Positive</value>
+  </data>
+  <data name="ReportMessages" xml:space="preserve">
+    <value>Report Messages</value>
+  </data>
+  <data name="ReportMessagesCount" xml:space="preserve">
+    <value>Report {0}</value>
   </data>
   <data name="ReportSelectedMessages" xml:space="preserve">
     <value>Report Selected</value>
@@ -8942,6 +9172,9 @@ The channel &quot;**{1}**&quot; will become private.</value>
   </data>
   <data name="Send" xml:space="preserve">
     <value>Send</value>
+  </data>
+  <data name="SendAGift" xml:space="preserve">
+    <value>Send a Gift</value>
   </data>
   <data name="SendAnonymously" xml:space="preserve">
     <value>Send anonymously</value>
@@ -9606,6 +9839,9 @@ The channel &quot;**{1}**&quot; will become private.</value>
   <data name="StarsTransactionFragment" xml:space="preserve">
     <value>Purchase from Fragment</value>
   </data>
+  <data name="StarsTransactionHidden" xml:space="preserve">
+    <value>Hidden User</value>
+  </data>
   <data name="StarsTransactionID" xml:space="preserve">
     <value>Transaction ID</value>
   </data>
@@ -10031,6 +10267,9 @@ The benefits of Telegram Business are **temporarily included** with Telegram Pre
   </data>
   <data name="TelegramPremium" xml:space="preserve">
     <value>Telegram Premium</value>
+  </data>
+  <data name="TelegramPremiumShort" xml:space="preserve">
+    <value>Premium</value>
   </data>
   <data name="TelegramPremiumSubscribedSubtitle" xml:space="preserve">
     <value>Thank you for subscribing to **Telegram Premium**.
@@ -10861,6 +11100,12 @@ However, it is currently available for purchase. **Learn more…**</value>
   </data>
   <data name="VerificationCode" xml:space="preserve">
     <value>Verification Code</value>
+  </data>
+  <data name="VerifyChatInfo" xml:space="preserve">
+    <value>This chat is used to receive verification codes from third-party services.</value>
+  </data>
+  <data name="VerifyCodesNotifications" xml:space="preserve">
+    <value>Verification Codes</value>
   </data>
   <data name="VersionAndUpdates" xml:space="preserve">
     <value>Version and Updates</value>

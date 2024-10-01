@@ -15,6 +15,7 @@ using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Xml.Linq;
 using Telegram.Controls;
@@ -25,6 +26,7 @@ using Telegram.Navigation;
 using Telegram.Services;
 using Telegram.Td;
 using Telegram.Td.Api;
+using Telegram.ViewModels.Gallery;
 using Windows.ApplicationModel;
 using Windows.ApplicationModel.AppService;
 using Windows.ApplicationModel.Calls;
@@ -404,6 +406,28 @@ namespace Telegram.Common
             return pointer.Offset - index;
         }
 
+        public static string ToP(this VideoPlayerLevel level)
+        {
+            return string.Format("{0}p", Math.Min(level.Width, level.Height));
+        }
+
+        public static IEnumerable<AlternativeVideo> FindAlternatives(this GalleryMedia video, params string[] codecs)
+        {
+            var playlists = video.AlternativeVideos
+                .GroupBy(x => x.Codec)
+                .ToDictionary(x => x.Key);
+
+            foreach (var codec in codecs)
+            {
+                if (playlists.TryGetValue(codec, out var playlist))
+                {
+                    return playlist;
+                }
+            }
+
+            return Enumerable.Empty<AlternativeVideo>();
+        }
+
         public static bool HasExtension(this IStorageFile file, params string[] extensions)
         {
             foreach (var ext in extensions)
@@ -428,6 +452,23 @@ namespace Telegram.Common
             }
 
             return false;
+        }
+
+        class TaskCompletion : TaskCompletionSource<bool>
+        {
+            public void SetCompleted(object state, bool timedOut)
+            {
+                TrySetResult(true);
+            }
+        }
+
+        public static Task WaitOneAsync(this WaitHandle waitHandle)
+        {
+            var tcs = new TaskCompletion();
+            var rwh = ThreadPool.RegisterWaitForSingleObject(waitHandle, tcs.SetCompleted, null, -1, true);
+            var t = tcs.Task;
+            t.ContinueWith((antecedent) => rwh.Unregister(null));
+            return t;
         }
 
         public static T Random<T>(this IList<T> source)

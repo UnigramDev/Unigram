@@ -81,5 +81,10 @@ namespace Telegram.Views.Stars.Popups
 
             await ViewModel.NavigationService.ShowPopupAsync(new BuyPopup(), BuyStarsArgs.ForReceiverUser(user.Id));
         }
+
+        private void Footer_Click(object sender, TextUrlClickEventArgs e)
+        {
+            MessageHelper.OpenUrl(null, null, Strings.StarsTOSLink);
+        }
     }
 }

@@ -44,7 +44,8 @@ namespace Telegram.Controls
         Spoiler = 32,
         Quote = 64,
         TextUrl = 128,
-        All = Bold | Italic | Underline | Strikethrough | Mono | Spoiler | Quote | TextUrl
+        CustomEmoji = 256,
+        All = Bold | Italic | Underline | Strikethrough | Mono | Spoiler | Quote | TextUrl | CustomEmoji
     }
 
     public partial class FormattedTextBox : RichEditBox

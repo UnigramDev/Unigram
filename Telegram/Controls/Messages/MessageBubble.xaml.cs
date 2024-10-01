@@ -648,26 +648,9 @@ namespace Telegram.Controls.Messages
                 return;
             }
 
-            if (message.IsSaved)
+            if (message.IsSaved || message.IsVerificationCode)
             {
-                if (message.ForwardInfo?.Origin is MessageOriginUser fromUser)
-                {
-                    message.Delegate.OpenUser(fromUser.SenderUserId);
-                }
-                else if (message.ForwardInfo?.Origin is MessageOriginChat fromChat)
-                {
-                    message.Delegate.OpenChat(fromChat.SenderChatId, true);
-                }
-                else if (message.ForwardInfo?.Origin is MessageOriginChannel fromChannel)
-                {
-                    // TODO: verify if this is sufficient
-                    message.Delegate.OpenChat(fromChannel.ChatId);
-                }
-                else if (message.ForwardInfo?.Origin is MessageOriginHiddenUser)
-                {
-                    ToastPopup.Show(XamlRoot, Strings.HidAccount);
-                    //await MessagePopup.ShowAsync(Strings.HidAccount, Strings.AppName, Strings.OK);
-                }
+                FwdFrom_Click(null, null);
             }
             else if (message.ClientService.TryGetChat(message.SenderId, out Chat senderChat))
             {
@@ -868,7 +851,7 @@ namespace Telegram.Controls.Messages
             var header = false;
             var forward = false;
 
-            if (!light && message.IsFirst && message.IsSaved && !outgoing)
+            if (!light && message.IsFirst && (message.IsSaved || message.IsVerificationCode) && !outgoing)
             {
                 var title = string.Empty;
                 var foreground = default(SolidColorBrush);
@@ -992,7 +975,7 @@ namespace Telegram.Controls.Messages
 
                 ForwardHeader.UpdateMessage(message, light);
             }
-            else if (message.ForwardInfo != null && (!message.IsSaved || !message.ForwardInfo.HasSameOrigin()))
+            else if (message.ForwardInfo != null && !message.IsVerificationCode && (!message.IsSaved || !message.ForwardInfo.HasSameOrigin()))
             {
                 LoadForwardLabel();
                 forward = true;
@@ -1198,7 +1181,7 @@ namespace Telegram.Controls.Messages
                 return;
             }
 
-            if (message.IsSaved)
+            if (message.IsSaved || message.IsVerificationCode)
             {
                 FwdFrom_Click(sender, args);
             }

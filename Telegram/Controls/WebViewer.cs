@@ -104,7 +104,7 @@ namespace Telegram.Controls
             }
 
         Cleanup:
-            return !_closed && _presenter is ChromiumWebPresenter;
+            return !_closed && _presenter is not null;
         }
 
         private void OnNavigating(object sender, WebViewerNavigatingEventArgs e)

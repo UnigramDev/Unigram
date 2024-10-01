@@ -370,24 +370,51 @@
                                       Margin="0,0,-8,0"
                                       Grid.Column="1" />
 
-                <TextBlock x:Name="SpeedText"
-                           TextAlignment="Center"
-                           Typography.NumeralAlignment="Tabular"
-                           HorizontalAlignment="Center"
-                           VerticalAlignment="Center"
-                           FontSize="10"
-                           Margin="0,5,0,6"
-                           Grid.Column="2" />
+                <Grid x:Name="SpeedRoot"
+                      Grid.Column="2">
+                    <TextBlock x:Name="SpeedText"
+                               TextAlignment="Center"
+                               Typography.NumeralAlignment="Tabular"
+                               HorizontalAlignment="Center"
+                               VerticalAlignment="Center"
+                               FontSize="10"
+                               Margin="0,5,0,6" />
 
-                <controls:BadgeButton x:Name="SpeedButton"
-                                      Click="Speed_Click"
-                                      Glyph="&#xEA13;"
-                                      Padding="8"
-                                      CornerRadius="4,13,4,4"
-                                      AutomationProperties.Name="{CustomResource Speed}"
-                                      ToolTipService.ToolTip="{CustomResource Speed}"
-                                      Style="{StaticResource DefaultGlyphButtonStyle}"
-                                      Grid.Column="2" />
+                    <controls:BadgeButton x:Name="SpeedButton"
+                                          Click="Speed_Click"
+                                          Glyph="&#xEA13;"
+                                          CornerRadius="4,13,4,4"
+                                          AutomationProperties.Name="{CustomResource Speed}"
+                                          ToolTipService.ToolTip="{CustomResource Speed}"
+                                          Style="{StaticResource DefaultGlyphButtonStyle}" />
+                </Grid>
+
+                <Grid x:Name="SettingsRoot"
+                      Visibility="Collapsed"
+                      Grid.Column="2">
+                    <controls:BadgeButton x:Name="SettingsButton"
+                                          Click="Settings_Click"
+                                          Glyph="&#xE713;"
+                                          Style="{StaticResource DefaultGlyphButtonStyle}"
+                                          CornerRadius="4,13,4,4" />
+                    <Border x:Name="QualityRoot"
+                            IsHitTestVisible="False"
+                            HorizontalAlignment="Right"
+                            VerticalAlignment="Bottom"
+                            Background="{ThemeResource NavigationViewSelectionIndicatorForeground}"
+                            CornerRadius="2"
+                            Margin="0,0,6,8">
+                        <TextBlock x:Name="QualityText"
+                                   Text="A"
+                                   Foreground="#FFFFFF"
+                                   TextLineBounds="Tight"
+                                   TextAlignment="Center"
+                                   OpticalMarginAlignment="TrimSideBearings"
+                                   FontWeight="SemiBold"
+                                   FontSize="9"
+                                   Margin="2" />
+                    </Border>
+                </Grid>
             </Grid>
         </Grid>
 

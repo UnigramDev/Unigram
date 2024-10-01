@@ -4,131 +4,222 @@
                        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
                        xmlns:controls="using:Telegram.Controls"
+                       xmlns:common="using:Telegram.Common"
+                       xmlns:cells="using:Telegram.Controls.Cells"
+                       xmlns:popups="using:Telegram.Views.Premium.Popups"
                        mc:Ignorable="d"
                        Padding="0"
-                       IsDismissButtonVisible="True">
+                       IsDismissButtonVisible="True"
+                       VerticalContentAlignment="Stretch">
 
     <Grid>
-        <ListView x:Name="ScrollingHost"
+        <GridView x:Name="ScrollingHost"
                   ContainerContentChanging="OnContainerContentChanging"
                   SelectionMode="None"
-                  Padding="12,0">
-            <ListView.Header>
-                <Grid>
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="Auto" />
-                        <RowDefinition Height="Auto" />
-                        <RowDefinition Height="Auto" />
-                    </Grid.RowDefinitions>
-                    <controls:AnimatedImage Source="ms-appx:///Assets/Animations/Premium.tgs"
-                                            IsCachingEnabled="False"
-                                            AutoPlay="True"
-                                            FrameSize="120,120"
-                                            DecodeFrameType="Logical"
-                                            LoopCount="1"
-                                            Width="120"
-                                            Height="120"
-                                            Margin="0,24,0,8" />
-                    <TextBlock Text="{CustomResource GiftTelegramPremiumTitle}"
-                               FontSize="20"
-                               FontFamily="XamlAutoFontFamily"
-                               FontWeight="SemiBold"
-                               TextAlignment="Center"
-                               VerticalAlignment="Top"
-                               Grid.Row="1" />
-                    <TextBlock x:Name="Subtitle"
-                               Style="{StaticResource InfoCaptionTextBlockStyle}"
-                               TextAlignment="Center"
-                               Margin="12,0,12,24"
-                               Grid.Row="2" />
-                </Grid>
-            </ListView.Header>
-            <ListView.ItemTemplate>
-                <DataTemplate>
-                    <RadioButton Style="{StaticResource SettingsRadioButtonStyle}"
-                                 Checked="Option_Checked"
-                                 HorizontalContentAlignment="Stretch"
-                                 Background="Transparent">
+                  IsItemClickEnabled="True"
+                  ItemClick="OnItemClick"
+                  Padding="4,0,0,4">
+            <common:FluidGridView.Triggers>
+                <common:FluidGridViewTrigger RowsOrColumns="3" />
+            </common:FluidGridView.Triggers>
+            <GridView.Header>
+                <StackPanel>
+                    <GridView x:Name="PremiumOptions"
+                              ContainerContentChanging="OnContainerContentChanging"
+                              SelectionMode="None"
+                              IsItemClickEnabled="True"
+                              ItemClick="OnItemClick"
+                              Padding="0">
+                        <common:FluidGridView.Triggers>
+                            <common:FluidGridViewTrigger RowsOrColumns="3" />
+                        </common:FluidGridView.Triggers>
+                        <GridView.Template>
+                            <ControlTemplate TargetType="GridView">
+                                <Border BorderBrush="{TemplateBinding BorderBrush}"
+                                        Background="{TemplateBinding Background}"
+                                        BorderThickness="{TemplateBinding BorderThickness}"
+                                        CornerRadius="{TemplateBinding CornerRadius}">
+                                    <ItemsPresenter Header="{TemplateBinding Header}"
+                                                    HeaderTemplate="{TemplateBinding HeaderTemplate}"
+                                                    HeaderTransitions="{TemplateBinding HeaderTransitions}"
+                                                    Footer="{TemplateBinding Footer}"
+                                                    FooterTemplate="{TemplateBinding FooterTemplate}"
+                                                    FooterTransitions="{TemplateBinding FooterTransitions}"
+                                                    Padding="{TemplateBinding Padding}" />
+                                </Border>
+                            </ControlTemplate>
+                        </GridView.Template>
+                        <GridView.ItemContainerStyle>
+                            <Style TargetType="GridViewItem"
+                                   BasedOn="{StaticResource DefaultGridViewItemStyle}">
+                                <Setter Property="Margin"
+                                        Value="0,4,4,0" />
+                                <Setter Property="Padding"
+                                        Value="0" />
+                                <Setter Property="HorizontalContentAlignment"
+                                        Value="Stretch" />
+                                <Setter Property="VerticalContentAlignment"
+                                        Value="Stretch" />
+                            </Style>
+                        </GridView.ItemContainerStyle>
+                        <GridView.Header>
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                </Grid.RowDefinitions>
+                                <controls:ProfilePicture x:Name="Photo"
+                                                         Width="96"
+                                                         Height="96"
+                                                         Margin="0,24,0,8" />
+                                <TextBlock x:Name="PremiumTitle"
+                                           Text="{CustomResource Gift2Premium}"
+                                           FontSize="20"
+                                           FontFamily="XamlAutoFontFamily"
+                                           FontWeight="SemiBold"
+                                           TextAlignment="Center"
+                                           VerticalAlignment="Top"
+                                           Grid.Row="1" />
+                                <TextBlock x:Name="PremiumInfo"
+                                           Style="{StaticResource BodyTextBlockStyle}"
+                                           TextAlignment="Center"
+                                           Margin="12,0,12,8"
+                                           Grid.Row="2" />
+                            </Grid>
+                        </GridView.Header>
+                        <GridView.ItemTemplate>
+                            <DataTemplate>
+                                <cells:PremiumGiftCell />
+                            </DataTemplate>
+                        </GridView.ItemTemplate>
+                    </GridView>
 
-                        <Grid Padding="0,0,0,8">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="Auto" />
-                                <ColumnDefinition />
-                                <ColumnDefinition Width="Auto" />
-                            </Grid.ColumnDefinitions>
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="Auto" />
-                                <RowDefinition Height="Auto" />
-                            </Grid.RowDefinitions>
-                            <TextBlock x:Name="Title"
-                                       VerticalAlignment="Top"
-                                       Grid.ColumnSpan="2" />
+                    <Grid x:Name="StarsRoot">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                        </Grid.RowDefinitions>
+                        <TextBlock Text="{CustomResource Gift2Stars}"
+                                   FontSize="20"
+                                   FontFamily="XamlAutoFontFamily"
+                                   FontWeight="SemiBold"
+                                   TextAlignment="Center"
+                                   VerticalAlignment="Top"
+                                   Grid.Row="1" />
+                        <TextBlock x:Name="StarsInfo"
+                                   Style="{StaticResource BodyTextBlockStyle}"
+                                   TextAlignment="Center"
+                                   Margin="12,0,12,4"
+                                   Grid.Row="2" />
+                    </Grid>
 
-                            <Border x:Name="IconPanel"
-                                    Margin="0,0,8,0"
-                                    Padding="8,0,8,2"
-                                    CornerRadius="4"
-                                    Grid.Row="1">
-                                <TextBlock x:Name="Icon"
-                                           Style="{StaticResource CaptionTextBlockStyle}"
-                                           Foreground="#FFFFFF"
-                                           HorizontalAlignment="Center"
-                                           VerticalAlignment="Center" />
-                            </Border>
+                    <controls:TopNavView x:Name="Navigation"
+                                         SelectionChanged="OnSelectionChanged"
+                                         ContainerContentChanging="OnContainerContentChanging"
+                                         Height="40"
+                                         Margin="0,0,0,-4">
+                        <controls:TopNavView.ItemContainerStyle>
+                            <Style TargetType="controls:TopNavViewItem">
+                                <Setter Property="HorizontalAlignment"
+                                        Value="Stretch" />
+                                <Setter Property="VerticalAlignment"
+                                        Value="Stretch" />
+                                <Setter Property="HorizontalContentAlignment"
+                                        Value="Center" />
+                                <Setter Property="VerticalContentAlignment"
+                                        Value="Center" />
+                                <Setter Property="UseSystemFocusVisuals"
+                                        Value="True" />
+                                <Setter Property="FocusVisualMargin"
+                                        Value="-3,5" />
+                                <Setter Property="CornerRadius"
+                                        Value="12" />
+                                <Setter Property="Template">
+                                    <Setter.Value>
+                                        <ControlTemplate TargetType="controls:TopNavViewItem">
+                                            <Grid x:Name="ContentBorder"
+                                                  Background="Transparent">
+                                                <ContentPresenter x:Name="ContentPresenter"
+                                                                  Grid.Column="1"
+                                                                  Margin="12,5,12,6"
+                                                                  TextWrapping="NoWrap"
+                                                                  Foreground="{TemplateBinding Foreground}"
+                                                                  ContentTransitions="{TemplateBinding ContentTransitions}"
+                                                                  ContentTemplate="{TemplateBinding ContentTemplate}"
+                                                                  Content="{TemplateBinding Content}"
+                                                                  HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                                                  ContentTemplateSelector="{TemplateBinding ContentTemplateSelector}"
+                                                                  VerticalAlignment="Center"
+                                                                  AutomationProperties.AccessibilityView="Raw"
+                                                                  Canvas.ZIndex="1" />
+                                                <Grid x:Name="SelectionIndicatorGrid"
+                                                      Margin="0,8,0,8"
+                                                      HorizontalAlignment="Stretch"
+                                                      VerticalAlignment="Stretch">
+                                                    <Rectangle x:Name="SelectionIndicator"
+                                                               Fill="{ThemeResource LayerOnMicaBaseAltFillColorSecondaryBrush}"
+                                                               Opacity="0"
+                                                               RadiusX="12"
+                                                               RadiusY="12" />
+                                                </Grid>
+                                            </Grid>
+                                        </ControlTemplate>
+                                    </Setter.Value>
+                                </Setter>
+                            </Style>
+                        </controls:TopNavView.ItemContainerStyle>
+                        <controls:TopNavView.ItemTemplate>
+                            <DataTemplate x:DataType="popups:GiftGroup">
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto" />
+                                        <ColumnDefinition />
+                                    </Grid.ColumnDefinitions>
+                                    <controls:PremiumStarCount Visibility="{x:Bind popups:GiftPopup.ConvertGiftGroupStartCountVisibility(Key)}"
+                                                               Width="18"
+                                                               VerticalAlignment="Top"
+                                                               Margin="0,-1,4,0" />
 
-                            <TextBlock x:Name="Subtitle"
-                                       Style="{StaticResource InfoCaptionTextBlockStyle}"
-                                       Grid.Column="1"
-                                       Grid.Row="1" />
-
-                            <TextBlock x:Name="Price"
-                                       Style="{StaticResource InfoBodyTextBlockStyle}"
-                                       VerticalAlignment="Center"
-                                       Grid.Column="2"
-                                       Grid.RowSpan="2" />
-                        </Grid>
-                    </RadioButton>
-                </DataTemplate>
-            </ListView.ItemTemplate>
-            <ListView.Footer>
-                <StackPanel Margin="0,0,0,72">
-                    <TextBlock x:Name="Footer"
-                               Style="{StaticResource InfoCaptionTextBlockStyle}"
-                               Margin="12,8,12,0" />
+                                    <TextBlock Text="{x:Bind popups:GiftPopup.ConvertGiftGroupStarCountText(Key, StarCount)}"
+                                               Style="{StaticResource InfoCaptionTextBlockStyle}"
+                                               Typography.NumeralAlignment="Tabular"
+                                               VerticalAlignment="Center"
+                                               Margin="0,1,0,2"
+                                               Grid.Column="1" />
+                                </Grid>
+                            </DataTemplate>
+                        </controls:TopNavView.ItemTemplate>
+                    </controls:TopNavView>
                 </StackPanel>
-            </ListView.Footer>
-        </ListView>
+            </GridView.Header>
+            <GridView.ItemContainerStyle>
+                <Style TargetType="GridViewItem"
+                       BasedOn="{StaticResource DefaultGridViewItemStyle}">
+                    <Setter Property="Margin"
+                            Value="0,4,4,0" />
+                    <Setter Property="Padding"
+                            Value="0" />
+                    <Setter Property="HorizontalContentAlignment"
+                            Value="Stretch" />
+                    <Setter Property="VerticalContentAlignment"
+                            Value="Stretch" />
+                </Style>
+            </GridView.ItemContainerStyle>
+            <GridView.ItemTemplate>
+                <DataTemplate>
+                    <cells:UserGiftCell />
+                </DataTemplate>
+            </GridView.ItemTemplate>
+            <GridView.ItemContainerTransitions>
+                <TransitionCollection>
+                    <RepositionThemeTransition />
+                </TransitionCollection>
+            </GridView.ItemContainerTransitions>
+        </GridView>
 
         <controls:ScrollViewerScrim Background="{ThemeResource ContentDialogBackground}"
                                     ScrollingHost="{x:Bind ScrollingHost}" />
-
-        <Grid x:Name="PurchasePanel"
-              VerticalAlignment="Bottom"
-              HorizontalAlignment="Stretch"
-              Margin="24,12,24,24"
-              Grid.Row="1">
-            <Rectangle x:Name="PurchaseShadow"
-                       Loaded="PurchaseShadow_Loaded"
-                       HorizontalAlignment="Stretch"
-                       VerticalAlignment="Stretch"
-                       Fill="White"
-                       Margin="0"
-                       RadiusX="4"
-                       RadiusY="4">
-            </Rectangle>
-            <Border Background="{StaticResource PremiumLinearGradientBrush}"
-                    CornerRadius="4"
-                    Height="32" />
-            <controls:BadgeButton x:Name="PurchaseCommand"
-                                  Click="Purchase_Click"
-                                  Style="{StaticResource StartButtonStyle}"
-                                  HorizontalAlignment="Stretch"
-                                  HorizontalContentAlignment="Center"
-                                  FontWeight="SemiBold"
-                                  Padding="16,3,16,5"
-                                  CornerRadius="4"
-                                  Margin="0"
-                                  Height="32" />
-        </Grid>
     </Grid>
 </controls:ContentPopup>

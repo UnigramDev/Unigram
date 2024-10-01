@@ -1,7 +1,8 @@
-﻿using LibVLCSharp.Shared;
-using System;
+﻿using System;
+using System.Linq;
 using Telegram.Common;
 using Telegram.Controls.Media;
+using Telegram.Navigation;
 using Telegram.Services;
 using Telegram.Services.Keyboard;
 using Telegram.Td.Api;
@@ -25,7 +26,7 @@ namespace Telegram.Controls.Gallery
         private bool _playing;
         private bool _unloaded;
 
-        private AsyncMediaPlayer _player;
+        private VideoPlayerBase _player;
 
         public GalleryTransportControls()
         {
@@ -125,11 +126,11 @@ namespace Telegram.Controls.Gallery
             }
             else if (e.Key == VirtualKey.Home)
             {
-                _player.Time = 0;
+                _player.Position = 0;
             }
             else if (e.Key == VirtualKey.End)
             {
-                _player.Time = _player.Length;
+                _player.Position = _player.Duration;
             }
         }
 
@@ -143,7 +144,7 @@ namespace Telegram.Controls.Gallery
         {
             if (_player != null)
             {
-                _player.Time = (long)Slider.Value;
+                _player.Position = (long)Slider.Value;
             }
 
             _scrubbing = false;
@@ -205,17 +206,16 @@ namespace Telegram.Controls.Gallery
 
         private DisplayRequest _request;
 
-        public void Attach(AsyncMediaPlayer mediaPlayer)
+        public void Attach(VideoPlayerBase mediaPlayer)
         {
             if (_player != null)
             {
-                _player.TimeChanged -= OnTimeChanged;
-                _player.LengthChanged -= OnLengthChanged;
-                _player.EndReached -= OnEndReached;
-                _player.Playing -= OnPlaying;
-                _player.Paused -= OnPaused;
-                _player.Stopped -= OnStopped;
+                _player.PositionChanged -= OnPositionChanged;
+                _player.DurationChanged -= OnDurationChanged;
+                _player.IsPlayingChanged -= OnIsPlayingChanged;
                 _player.VolumeChanged -= OnVolumeChanged;
+                _player.LevelsChanged -= OnLevelsChanged;
+                _player.Closed -= OnStopped;
             }
 
             if (_unloaded)
@@ -228,23 +228,68 @@ namespace Telegram.Controls.Gallery
 
             if (_player != null)
             {
-                _player.TimeChanged += OnTimeChanged;
-                _player.LengthChanged += OnLengthChanged;
-                _player.EndReached += OnEndReached;
-                _player.Playing += OnPlaying;
-                _player.Paused += OnPaused;
-                _player.Stopped += OnStopped;
+                _player.PositionChanged += OnPositionChanged;
+                _player.DurationChanged += OnDurationChanged;
+                _player.IsPlayingChanged += OnIsPlayingChanged;
                 _player.VolumeChanged += OnVolumeChanged;
+                _player.LevelsChanged += OnLevelsChanged;
+                _player.Closed += OnStopped;
 
-                OnTimeChanged(_player, new MediaPlayerTimeChangedEventArgs(_player.Time));
-                OnLengthChanged(_player, new MediaPlayerLengthChangedEventArgs(_player.Length));
+                OnPositionChanged(_player, new VideoPlayerPositionChangedEventArgs(_player.Position));
+                OnDurationChanged(_player, new VideoPlayerDurationChangedEventArgs(_player.Duration));
+
+                ShowHideSettings(_player.Levels.Count > 0);
             }
 
             PlaybackButton.Glyph = Icons.PlayFilled24;
             Automation.SetToolTip(PlaybackButton, Strings.AccActionPlay);
         }
 
-        private void OnVolumeChanged(AsyncMediaPlayer sender, MediaPlayerVolumeChangedEventArgs args)
+        private bool _settingsCollapsed;
+
+        private void ShowHideSettings(bool show)
+        {
+            if (_settingsCollapsed != show)
+            {
+                return;
+            }
+
+            _settingsCollapsed = !show;
+
+            SpeedRoot.Visibility = show
+                ? Visibility.Collapsed
+                : Visibility.Visible;
+
+            SettingsRoot.Visibility = show
+                ? Visibility.Visible
+                : Visibility.Collapsed;
+        }
+
+        private void OnLevelsChanged(VideoPlayerBase sender, VideoPlayerLevelsChangedEventArgs args)
+        {
+            ShowHideSettings(args.Levels.Count > 0);
+
+            if (args.CurrentLevel != null && !args.IsAuto)
+            {
+                var level = args.CurrentLevel;
+                var quality = Math.Min(level.Width, level.Height);
+
+                QualityText.Text = quality switch
+                {
+                    int n when n < 720 => "SD",
+                    int n when n < 1440 => "HD",
+                    int n when n < 2160 => "2K",
+                    int n when n < 4320 => "4K",
+                    _ => "8K"
+                };
+            }
+            else
+            {
+                QualityText.Text = "A";
+            }
+        }
+
+        private void OnVolumeChanged(VideoPlayerBase sender, VideoPlayerVolumeChangedEventArgs args)
         {
             if (_player == null)
             {
@@ -254,88 +299,66 @@ namespace Telegram.Controls.Gallery
             _player.VolumeChanged -= OnVolumeChanged;
 
             _player.Mute = SettingsService.Current.VolumeMuted;
-            _player.Volume = (int)Math.Round(SettingsService.Current.VolumeLevel * 100);
-            _player.Rate = (float)SettingsService.Current.Playback.VideoSpeed;
+            _player.Volume = SettingsService.Current.VolumeLevel;
+            _player.Rate = SettingsService.Current.Playback.VideoSpeed;
         }
 
-        private void OnEndReached(AsyncMediaPlayer sender, EventArgs args)
+        private void OnIsPlayingChanged(VideoPlayerBase sender, VideoPlayerIsPlayingChangedEventArgs args)
         {
-            if (_player == null)
+            if (args.IsPlaying)
             {
-                return;
+                PlaybackButton.Glyph = Icons.PauseFilled24;
+                Automation.SetToolTip(PlaybackButton, Strings.AccActionPause);
+
+                if (_request == null)
+                {
+                    _request = new DisplayRequest();
+                    _request.TryRequestActive();
+                }
             }
-
-            Slider.Value = _player.Length;
-            TimeText.Text = FormatTime(_player.Length);
-
-            if (_loopingEnabled)
+            else
             {
-                _player.Stop();
-                _player.Play();
+                PlaybackButton.Glyph = Icons.PlayFilled24;
+                Automation.SetToolTip(PlaybackButton, Strings.AccActionPlay);
+
+                if (_request != null)
+                {
+                    _request.TryRequestRelease();
+                    _request = null;
+                }
             }
         }
 
-        private void OnPlaying(AsyncMediaPlayer sender, EventArgs args)
+        private void OnStopped(VideoPlayerBase sender, EventArgs args)
         {
-            PlaybackButton.Glyph = Icons.PauseFilled24;
-            Automation.SetToolTip(PlaybackButton, Strings.AccActionPause);
+            //var source = _player == null || _player.State == VLCState.Stopped;
+            //Visibility = source
+            //    ? Visibility.Collapsed
+            //    : Visibility.Visible;
 
-            if (_request == null)
-            {
-                _request = new DisplayRequest();
-                _request.RequestActive();
-            }
+            Visibility = Visibility.Collapsed;
         }
 
-        private void OnPaused(AsyncMediaPlayer sender, EventArgs args)
-        {
-            PlaybackButton.Glyph = Icons.PlayFilled24;
-            Automation.SetToolTip(PlaybackButton, Strings.AccActionPlay);
-
-            if (_request != null)
-            {
-                _request.RequestRelease();
-                _request = null;
-            }
-        }
-
-        private void OnStopped(AsyncMediaPlayer sender, EventArgs args)
-        {
-            var source = _player == null || _player.State == VLCState.Stopped;
-            Visibility = source
-                ? Visibility.Collapsed
-                : Visibility.Visible;
-
-            PlaybackButton.Glyph = Icons.PlayFilled24;
-            Automation.SetToolTip(PlaybackButton, Strings.AccActionPlay);
-
-            if (_request != null && source)
-            {
-                _request.RequestRelease();
-                _request = null;
-            }
-        }
-
-        private void OnTimeChanged(AsyncMediaPlayer sender, MediaPlayerTimeChangedEventArgs args)
+        private void OnPositionChanged(VideoPlayerBase sender, VideoPlayerPositionChangedEventArgs args)
         {
             if (_player == null || _scrubbing)
             {
                 return;
             }
 
-            Slider.Value = args.Time;
-            TimeText.Text = FormatTime(args.Time);
+            Slider.Value = args.Position;
+            TimeText.Text = FormatTime(args.Position);
         }
 
-        private void OnLengthChanged(AsyncMediaPlayer sender, MediaPlayerLengthChangedEventArgs args)
+        private void OnDurationChanged(VideoPlayerBase sender, VideoPlayerDurationChangedEventArgs args)
         {
             if (_player == null)
             {
                 return;
             }
 
-            Slider.Maximum = args.Length;
-            LengthText.Text = FormatTime(args.Length);
+            Slider.Maximum = args.Duration;
+            LengthText.Text = FormatTime(args.Duration);
         }
 
         private void Slider_ValueChanged(object sender, RangeBaseValueChangedEventArgs e)
@@ -354,7 +377,7 @@ namespace Telegram.Controls.Gallery
 
         private string FormatTime(double time)
         {
-            var span = TimeSpan.FromMilliseconds(time);
+            var span = TimeSpan.FromSeconds(time);
             if (span.TotalHours >= 1)
             {
                 return span.ToString("h\\:mm\\:ss");
@@ -363,6 +386,57 @@ namespace Telegram.Controls.Gallery
             {
                 return span.ToString("mm\\:ss");
             }
+        }
+
+        private void Settings_Click(object sender, RoutedEventArgs e)
+        {
+            var current = _player.CurrentLevel;
+            var auto = _player.IsCurrentLevelAuto;
+
+            var flyout = new MenuFlyout();
+            var quality = new MenuFlyoutSubItem
+            {
+                Text = Strings.Quality,
+                Icon = MenuFlyoutHelper.CreateIcon(Icons.Options),
+                Style = BootStrapper.Current.Resources["DefaultMenuFlyoutSubItemStyle"] as Style
+            };
+
+            var item = new ToggleMenuFlyoutItem();
+            item.Text = current != null && auto ? string.Format("{0} ({1})", Strings.QualityAuto, current.ToP()) : Strings.QualityAuto;
+            item.IsChecked = _player.IsCurrentLevelAuto;
+            item.Click += (s, args) =>
+            {
+                _player.CurrentLevel = null;
+            };
+
+            quality.Items.Add(item);
+
+            foreach (var level in _player.Levels.OrderBy(x => x.Bitrate))
+            {
+                var option = new ToggleMenuFlyoutItem();
+                option.Text = level.ToP();
+                option.IsChecked = current?.Index == level.Index && !auto;
+                option.Click += (s, args) =>
+                {
+                    _player.CurrentLevel = level;
+                };
+
+                quality.Items.Add(option);
+            }
+
+            var speed = new MenuFlyoutSubItem
+            {
+                Text = Strings.Speed,
+                Icon = MenuFlyoutHelper.CreateIcon(Icons.TopSpeed),
+                Style = BootStrapper.Current.Resources["DefaultMenuFlyoutSubItemStyle"] as Style
+            };
+
+            speed.CreatePlaybackSpeed(_player.Rate, FlyoutPlacementMode.Bottom, UpdatePlaybackSpeed);
+
+            flyout.Items.Add(quality);
+            flyout.Items.Add(speed);
+
+            flyout.ShowAt(SettingsButton, FlyoutPlacementMode.TopEdgeAlignedRight);
         }
 
         private void Speed_Click(object sender, RoutedEventArgs e)
@@ -377,7 +451,7 @@ namespace Telegram.Controls.Gallery
             value = Math.Clamp(value, 0.5, 2);
             SettingsService.Current.Playback.VideoSpeed = value;
 
-            _player.Rate = (float)value;
+            _player.Rate = value;
             SpeedText.Text = string.Format("{0:N1}x", value);
             SpeedButton.Badge = string.Format("{0:N1}x", value);
         }
@@ -408,7 +482,7 @@ namespace Telegram.Controls.Gallery
 
             if (_player != null)
             {
-                _player.Volume = volume;
+                _player.Volume = volume / 100d;
                 _player.Mute = muted;
             }
 
@@ -438,7 +512,7 @@ namespace Telegram.Controls.Gallery
 
             if (_player != null)
             {
-                _player.Volume = volume;
+                _player.Volume = volume / 100d;
                 _player.Mute = muted;
             }
 
@@ -460,25 +534,7 @@ namespace Telegram.Controls.Gallery
 
         public void TogglePlaybackState()
         {
-            if (_player == null)
-            {
-                return;
-            }
-
-            switch (_player.State)
-            {
-                case VLCState.Ended:
-                    _player.Stop();
-                    goto case VLCState.Stopped;
-                case VLCState.Paused:
-                case VLCState.Stopped:
-                case VLCState.Error:
-                    _player.Play();
-                    break;
-                default:
-                    _player.Pause();
-                    break;
-            }
+            _player?.Toggle();
         }
 
         private void PlayAfterScrubbing()
@@ -489,18 +545,7 @@ namespace Telegram.Controls.Gallery
             }
 
             _playing = false;
-
-            switch (_player.State)
-            {
-                case VLCState.Ended:
-                    _player.Stop();
-                    goto case VLCState.Stopped;
-                case VLCState.Paused:
-                case VLCState.Stopped:
-                case VLCState.Error:
-                    _player.Play();
-                    break;
-            }
+            _player.Play();
         }
 
         private void PauseBeforeScrubbing()

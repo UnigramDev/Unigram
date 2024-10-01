@@ -4,13 +4,11 @@
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
-using LibVLCSharp.Shared;
 using System;
 using System.Numerics;
 using Telegram.Common;
 using Telegram.Navigation;
 using Telegram.Services;
-using Telegram.Streams;
 using Telegram.Td.Api;
 using Telegram.ViewModels.Delegates;
 using Telegram.ViewModels.Gallery;
@@ -355,9 +353,6 @@ namespace Telegram.Controls.Gallery
             }
         }
 
-        private AsyncMediaPlayer _player;
-
-        private RemoteFileStream _fileStream;
         private GalleryTransportControls _controls;
 
         private bool _stopped;
@@ -365,9 +360,7 @@ namespace Telegram.Controls.Gallery
         private bool _unloaded;
         private int _fileId;
 
-        private long _initialPosition;
-
-        public void Play(GalleryMedia item, long position, GalleryTransportControls controls)
+        public void Play(GalleryMedia item, double position, GalleryTransportControls controls)
         {
             if (_unloaded)
             {
@@ -384,44 +377,45 @@ namespace Telegram.Controls.Gallery
 
                 _fileId = file.Id;
 
+                // Always recreate HLS player for now, try to reuse native one
+                if (item.IsHls() && ChromiumWebPresenter.IsSupported())
+                {
+                    Video = new WebVideoPlayer();
+                }
+                else if (Video is not NativeVideoPlayer)
+                {
+                    Video = new NativeVideoPlayer();
+                }
+
                 controls.Attach(item, file);
+                controls.Attach(Video);
 
-                if (_player == null)
-                {
-                    _controls = controls;
-                    _fileStream = new RemoteFileStream(item.ClientService, file);
-                    _initialPosition = position;
-                    FindName(nameof(Video));
-                }
-                else
-                {
-                    controls.Attach(_player);
-
-                    _fileStream = null;
-                    _controls = null;
-                    _player.Play(new RemoteFileStream(item.ClientService, file));
-                    _player.Time = position;
-                }
+                Video.Play(item, position);
             }
             catch { }
         }
 
-        private void OnInitialized(object sender, LibVLCSharp.Platforms.Windows.InitializedEventArgs e)
+        private VideoPlayerBase Video
         {
-            _player = new AsyncMediaPlayer(e.SwapChainOptions);
-            _player.Buffering += OnBuffering;
-            _player.Stopped += OnStopped;
+            get => Panel.Child as VideoPlayerBase;
+            set
+            {
+                var video = Panel.Child as VideoPlayerBase;
+                if (video != null)
+                {
+                    video.FirstFrameReady -= OnFirstFrameReady;
+                    video.Closed -= OnClosed;
+                }
 
-            var stream = _fileStream;
-            var position = _initialPosition;
+                if (value != null)
+                {
+                    value.FirstFrameReady += OnFirstFrameReady;
+                    value.Closed += OnClosed;
+                    value.IsTabStop = false;
+                }
 
-            _controls.Attach(_player);
-            _player.Play(stream);
-            _player.Time = position;
-
-            _controls = null;
-            _fileStream = null;
-            _initialPosition = 0;
+                Panel.Child = value;
+            }
         }
 
         public void Unload()
@@ -435,29 +429,19 @@ namespace Telegram.Controls.Gallery
 
             if (Video != null)
             {
-                Video.Initialized -= OnInitialized;
-            }
-
-            if (_player != null)
-            {
-                _player.Buffering -= OnBuffering;
-                _player.Stopped -= OnStopped;
-                _player.Close();
+                Video.Stop();
             }
 
             UpdateManager.Unsubscribe(this, ref _fileToken);
             UpdateManager.Unsubscribe(this, ref _thumbnailToken, true);
         }
 
-        private void OnBuffering(AsyncMediaPlayer sender, MediaPlayerBufferingEventArgs args)
+        private void OnFirstFrameReady(VideoPlayerBase sender, EventArgs args)
         {
-            if (args.Cache == 100)
-            {
-                MediaOpened();
-            }
+            MediaOpened();
         }
 
-        private void OnStopped(object sender, EventArgs e)
+        private void OnClosed(VideoPlayerBase sender, EventArgs e)
         {
             if (_stopped)
             {
@@ -466,15 +450,15 @@ namespace Telegram.Controls.Gallery
             }
         }
 
-        public void Stop(out int fileId, out long position)
+        public void Stop(out int fileId, out double position)
         {
-            if (_player != null && !_unloaded)
+            if (Video != null && !_unloaded)
             {
                 fileId = _fileId;
-                position = _player.Time;
+                position = Video.Position;
 
                 _stopped = true;
-                _player.Stop();
+                Video.Stop();
             }
             else
             {

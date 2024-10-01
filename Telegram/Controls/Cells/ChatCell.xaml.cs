@@ -10,6 +10,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
 using System.Text;
+using System.Text.RegularExpressions;
 using Telegram.Common;
 using Telegram.Common.Chats;
 using Telegram.Controls.Chats;
@@ -277,7 +278,7 @@ namespace Telegram.Controls.Cells
 
                 TimeLabel.Text = _stateLabel + "\u00A0" + _dateLabel;
 
-                UpdateBriefLabel(UpdateBriefLabel(null, message.Content, message.IsOutgoing, false, false, out MinithumbnailId thumbnail));
+                UpdateBriefLabel(null, UpdateBriefLabel(null, message.Content, message.IsOutgoing, false, false, out MinithumbnailId thumbnail));
                 UpdateMinithumbnail(thumbnail);
             }
         }
@@ -313,7 +314,7 @@ namespace Telegram.Controls.Cells
 
             TimeLabel.Text = _stateLabel + "\u00A0" + _dateLabel;
 
-            UpdateBriefLabel(UpdateBriefLabel(chat, message.Content, message.IsOutgoing, false, false, out MinithumbnailId thumbnail));
+            UpdateBriefLabel(chat, UpdateBriefLabel(chat, message.Content, message.IsOutgoing, false, false, out MinithumbnailId thumbnail));
             UpdateMinithumbnail(thumbnail);
         }
 
@@ -631,7 +632,7 @@ namespace Telegram.Controls.Cells
             _stateLabel = UpdateStateIcon(chat.LastReadOutboxMessageId, chat, chat.DraftMessage, chat.LastMessage, chat.LastMessage?.SendingState);
             TimeLabel.Text = _stateLabel + "\u00A0" + _dateLabel;
 
-            UpdateBriefLabel(UpdateBriefLabel(chat, position, out MinithumbnailId thumbnail));
+            UpdateBriefLabel(chat, UpdateBriefLabel(chat, position, out MinithumbnailId thumbnail));
             UpdateMinithumbnail(thumbnail);
 
             UpdateChatChatLists(chat);
@@ -1227,12 +1228,24 @@ namespace Telegram.Controls.Cells
             }
         }
 
-        private void UpdateBriefLabel(FormattedText message)
+        private static readonly Regex _verificationCodes = new Regex("\\b\\d{3,8}\\b", RegexOptions.Compiled);
+
+        private void UpdateBriefLabel(Chat chat, FormattedText message)
         {
             BriefLabel.Inlines.Clear();
 
             if (message != null)
             {
+                if (chat?.Id == _clientService.Options.TelegramServiceNotificationsChatId || chat?.Id == _clientService.Options.VerificationCodesBotChatId)
+                {
+                    var match = _verificationCodes.Match(message.Text);
+                    if (match.Success)
+                    {
+                        message = new FormattedText(message.Text, message.Entities.ToList());
+                        message.Entities.Add(new TextEntity(match.Index, match.Length, new TextEntityTypeSpoiler()));
+                    }
+                }
+
                 var clean = message.ReplaceSpoilers();
                 var previous = 0;
 
@@ -1543,7 +1556,7 @@ namespace Telegram.Controls.Cells
 
             if (ShowFrom(clientService, chat, message, out User fromUser, out Chat fromChat))
             {
-                if (message.IsSaved(clientService.Options.MyId))
+                if (message.IsSaved(clientService.Options.MyId) || message.ChatId == clientService.Options.VerificationCodesBotChatId)
                 {
                     if (message.ForwardInfo?.Origin is MessageOriginUser originUser)
                     {
@@ -1551,10 +1564,12 @@ namespace Telegram.Controls.Cells
                     }
                     else if (message.ForwardInfo?.Origin is MessageOriginChat originChat)
                     {
+                        fromUser = null;
                         fromChat = clientService.GetChat(originChat.SenderChatId);
                     }
                     else if (message.ForwardInfo?.Origin is MessageOriginChannel originChannel)
                     {
+                        fromUser = null;
                         fromChat = clientService.GetChat(originChannel.ChatId);
                     }
                     else if (message.ForwardInfo?.Origin is MessageOriginHiddenUser originHiddenUser)
@@ -1608,7 +1623,7 @@ namespace Telegram.Controls.Cells
                 return false;
             }
 
-            if (message.IsOutgoing || message.ChatId == clientService.Options.MyId)
+            if (message.IsOutgoing || message.ChatId == clientService.Options.MyId || message.ChatId == clientService.Options.VerificationCodesBotChatId)
             {
                 senderChat = null;
                 return clientService.TryGetUser(message.SenderId, out senderUser)

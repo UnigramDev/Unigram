@@ -24,6 +24,7 @@ using Telegram.Td.Api;
 using Telegram.ViewModels.Chats;
 using Telegram.Views.Chats;
 using Telegram.Views.Popups;
+using Telegram.Views.Stars.Popups;
 using Telegram.Views.Users;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.Foundation;
@@ -1294,6 +1295,10 @@ namespace Telegram.ViewModels
                     NavigationService.NavigateToWebApp(botUser, webAppInfo.Url, webAppInfo.LaunchId, null, chat);
                 }
             }
+            else if (inline.Type is InlineKeyboardButtonTypeCopyText copyText)
+            {
+                MessageHelper.CopyText(XamlRoot, copyText.Text);
+            }
         }
 
         public async void KeyboardButtonExecute(MessageViewModel message, KeyboardButton keyboardButton)
@@ -1701,6 +1706,24 @@ namespace Telegram.ViewModels
             else if (message.Content is MessageGiveawayCompleted giveawayCompleted)
             {
                 await LoadMessageSliceAsync(message.Id, giveawayCompleted.GiveawayMessageId);
+            }
+            else if (message.Content is MessageGift gift)
+            {
+                await ShowPopupAsync(new ReceiptPopup(ClientService, NavigationService, message, gift));
+            }
+            else if (message.Content is MessageGiftedStars giftedStars)
+            {
+                StarTransactionPartner partner;
+                if (message.SenderId is MessageSenderUser senderUser)
+                {
+                    partner = new StarTransactionPartnerUser(senderUser.UserId, new UserTransactionPurposeGiftedStars(giftedStars.Sticker));
+                }
+                else
+                {
+                    return;
+                }
+
+                await ShowPopupAsync(new Views.Stars.Popups.ReceiptPopup(ClientService, NavigationService, new StarTransaction(giftedStars.TransactionId, giftedStars.StarCount, false, message.Date, partner)));
             }
         }
 

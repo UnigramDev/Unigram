@@ -55,7 +55,7 @@ namespace Telegram.Views.Stars.Popups
                 FromPhoto.Source = new PlaceholderImage(Icons.Premium, true, Color.FromArgb(0xFF, 0xFD, 0xD2, 0x1A), Color.FromArgb(0xFF, 0xE4, 0x7B, 0x03));
                 FromPhoto.Visibility = Visibility.Collapsed;
                 FromTitle.Text = Strings.StarsTransactionBot;
-                FromHeader.Text = Strings.StarsTransactionSource;
+                From.Header = Strings.StarsTransactionSource;
 
                 Title.Text = Strings.StarsTransactionBot;
                 Subtitle.Visibility = Visibility.Collapsed;
@@ -69,7 +69,7 @@ namespace Telegram.Views.Stars.Popups
                 FromPhoto.Source = new PlaceholderImage(Icons.FragmentFilled, true, Colors.Black, Colors.Black);
                 FromPhoto.Visibility = Visibility.Collapsed;
                 FromTitle.Text = Strings.Fragment;
-                FromHeader.Text = Strings.StarsTransactionSource;
+                From.Header = Strings.StarsTransactionSource;
 
                 Title.Text = Strings.StarsTransactionFragment;
                 Subtitle.Visibility = Visibility.Collapsed;
@@ -83,7 +83,7 @@ namespace Telegram.Views.Stars.Popups
                 FromPhoto.Source = new PlaceholderImage(Icons.Premium, true, Color.FromArgb(0xFF, 0xFD, 0xD2, 0x1A), Color.FromArgb(0xFF, 0xE4, 0x7B, 0x03));
                 FromPhoto.Visibility = Visibility.Collapsed;
                 FromTitle.Text = Strings.StarsTransactionInApp;
-                FromHeader.Text = Strings.StarsTransactionSource;
+                From.Header = Strings.StarsTransactionSource;
 
                 Title.Text = Strings.StarsTransactionInApp;
                 Subtitle.Visibility = Visibility.Collapsed;
@@ -97,7 +97,7 @@ namespace Telegram.Views.Stars.Popups
                 FromPhoto.SetUser(clientService, botUser, 24);
                 FromPhoto.Visibility = Visibility.Visible;
                 FromTitle.Text = botUser.FullName();
-                FromHeader.Text = Strings.StarsTransactionRecipient;
+                From.Header = Strings.StarsTransactionRecipient;
 
                 if (sourceBot.Purpose is BotTransactionPurposeInvoicePayment invoicePayment)
                 {
@@ -155,7 +155,7 @@ namespace Telegram.Views.Stars.Popups
                 FromPhoto.SetUser(clientService, businessUser, 24);
                 FromPhoto.Visibility = Visibility.Visible;
                 FromTitle.Text = businessUser.FullName();
-                FromHeader.Text = Strings.StarsTransactionRecipient;
+                From.Header = Strings.StarsTransactionRecipient;
 
                 Title.Text = Strings.StarMediaPurchase;
 
@@ -183,19 +183,53 @@ namespace Telegram.Views.Stars.Popups
                 FromPhoto.SetUser(clientService, user, 24);
                 FromPhoto.Visibility = Visibility.Visible;
                 FromTitle.Text = user.FullName();
-                FromHeader.Text = Strings.StarsTransactionRecipient;
+                From.Header = Strings.StarsTransactionRecipient;
 
-                Title.Text = transaction.StarCount < 0
-                    ? Strings.StarsGiftSent
-                    : Strings.StarsGiftReceived;
-                Subtitle.Text = transaction.StarCount < 0
-                    ? string.Format(Strings.ActionGiftStarsSubtitle, user.FirstName)
-                    : Strings.ActionGiftStarsSubtitleYou;
-                Subtitle.Visibility = Visibility.Visible;
-
-                if (sourceUser.Sticker != null)
+                if (sourceUser.Purpose is UserTransactionPurposeGiftedStars giftedStars)
                 {
-                    AnimatedPhoto.Source = new DelayedFileSource(clientService, sourceUser.Sticker);
+                    Title.Text = transaction.StarCount < 0
+                        ? Strings.StarsGiftSent
+                        : Strings.StarsGiftReceived;
+                    Subtitle.Text = transaction.StarCount < 0
+                        ? string.Format(Strings.ActionGiftStarsSubtitle, user.FirstName)
+                        : Strings.ActionGiftStarsSubtitleYou;
+                    Subtitle.Visibility = Visibility.Visible;
+
+                    AnimatedPhoto.Source = new DelayedFileSource(clientService, giftedStars.Sticker);
+                }
+                else if (sourceUser.Purpose is UserTransactionPurposeGiftSell giftSell)
+                {
+                    Title.Text = transaction.StarCount < 0
+                        ? Strings.Gift2TransactionRefundedConverted
+                        : Strings.Gift2TransactionConverted;
+                    Subtitle.Visibility = Visibility.Collapsed;
+
+                    AnimatedPhoto.Source = new DelayedFileSource(clientService, giftSell.Gift.Sticker);
+
+                    if (giftSell.Gift.TotalCount > 0)
+                    {
+                        Availability.Visibility = Visibility.Visible;
+                        Availability.Content = giftSell.Gift.RemainingCount > 0
+                        ? string.Format(Strings.Gift2AvailabilityValue, giftSell.Gift.RemainingCount, giftSell.Gift.TotalCount)
+                        : string.Format(Strings.Gift2AvailabilityValueNone, giftSell.Gift.TotalCount);
+                    }
+                }
+                else if (sourceUser.Purpose is UserTransactionPurposeGiftSend giftSend)
+                {
+                    Title.Text = transaction.StarCount < 0
+                        ? Strings.Gift2TransactionSent
+                        : Strings.Gift2TransactionRefundedSent;
+                    Subtitle.Visibility = Visibility.Collapsed;
+
+                    AnimatedPhoto.Source = new DelayedFileSource(clientService, giftSend.Gift.Sticker);
+
+                    if (giftSend.Gift.TotalCount > 0)
+                    {
+                        Availability.Visibility = Visibility.Visible;
+                        Availability.Content = giftSend.Gift.RemainingCount > 0
+                            ? string.Format(Strings.Gift2AvailabilityValue, giftSend.Gift.RemainingCount, giftSend.Gift.TotalCount)
+                            : string.Format(Strings.Gift2AvailabilityValueNone, giftSend.Gift.TotalCount);
+                    }
                 }
 
                 MediaPreview.Visibility = Visibility.Collapsed;
@@ -205,7 +239,7 @@ namespace Telegram.Views.Stars.Popups
                 FromPhoto.SetChat(clientService, chat, 24);
                 FromPhoto.Visibility = Visibility.Visible;
                 FromTitle.Text = chat.Title;
-                FromHeader.Text = Strings.StarsTransactionRecipient;
+                From.Header = Strings.StarsTransactionRecipient;
 
                 Subtitle.Visibility = Visibility.Collapsed;
 
@@ -257,7 +291,7 @@ namespace Telegram.Views.Stars.Popups
                 FromPhoto.Source = PlaceholderImage.GetGlyph(Icons.QuestionCircle, long.MinValue);
                 FromPhoto.Visibility = Visibility.Collapsed;
                 FromTitle.Text = Strings.StarsTransactionUnsupported;
-                FromHeader.Text = Strings.StarsTransactionSource;
+                From.Header = Strings.StarsTransactionSource;
 
                 Title.Text = Strings.StarsTransactionUnsupported;
                 Subtitle.Visibility = Visibility.Collapsed;
@@ -266,8 +300,13 @@ namespace Telegram.Views.Stars.Popups
                 MediaPreview.Visibility = Visibility.Collapsed;
             }
 
+            if (string.IsNullOrEmpty(transaction.Id))
+            {
+                Transaction.Visibility = Visibility.Collapsed;
+            }
+
             Identifier.Text = transaction.Id;
-            Date.Text = Formatter.DateAt(transaction.Date);
+            Date.Content = Formatter.DateAt(transaction.Date);
 
             StarCount.Text = (transaction.StarCount < 0 ? string.Empty : "+") + transaction.StarCount.ToString("N0");
             StarCount.Foreground = BootStrapper.Current.Resources[transaction.StarCount < 0 ? "SystemFillColorCriticalBrush" : "SystemFillColorSuccessBrush"] as Brush;
@@ -296,7 +335,7 @@ namespace Telegram.Views.Stars.Popups
                 FromPhoto.SetUser(clientService, user, 24);
                 FromPhoto.Visibility = Visibility.Visible;
                 FromTitle.Text = user.FullName();
-                FromHeader.Text = Strings.StarsTransactionRecipient;
+                From.Header = Strings.StarsTransactionRecipient;
 
                 Title.Text = receipt.ProductInfo.Title;
                 TextBlockHelper.SetFormattedText(Subtitle, receipt.ProductInfo.Description);
@@ -317,7 +356,7 @@ namespace Telegram.Views.Stars.Popups
                 FromPhoto.Source = PlaceholderImage.GetGlyph(Icons.QuestionCircle, long.MinValue);
                 FromPhoto.Visibility = Visibility.Collapsed;
                 FromTitle.Text = Strings.StarsTransactionUnsupported;
-                FromHeader.Text = Strings.StarsTransactionSource;
+                From.Header = Strings.StarsTransactionSource;
 
                 Title.Text = Strings.StarsTransactionUnsupported;
                 Subtitle.Visibility = Visibility.Collapsed;
@@ -325,7 +364,7 @@ namespace Telegram.Views.Stars.Popups
             }
 
             Identifier.Text = stars.TransactionId;
-            Date.Text = Formatter.DateAt(receipt.Date);
+            Date.Content = Formatter.DateAt(receipt.Date);
 
             StarCount.Text = (stars.StarCount < 0 ? string.Empty : "+") + stars.StarCount.ToString("N0");
             StarCount.Foreground = BootStrapper.Current.Resources[stars.StarCount < 0 ? "SystemFillColorCriticalBrush" : "SystemFillColorSuccessBrush"] as Brush;
@@ -333,9 +372,191 @@ namespace Telegram.Views.Stars.Popups
             Refund.Visibility = Visibility.Collapsed;
         }
 
+        private readonly MessageSender _giftSenderId;
+        private readonly long _giftMessageId;
+        private readonly long _giftStarCount;
+
+        public ReceiptPopup(IClientService clientService, INavigationService navigationService, MessageViewModel message, MessageGift gift)
+        {
+            InitializeComponent();
+
+            _clientService = clientService;
+            _navigationService = navigationService;
+
+            _giftSenderId = message.SenderId;
+            _giftMessageId = message.Id;
+            _giftStarCount = gift.SellStarCount;
+
+            MediaPreview.Visibility = Visibility.Collapsed;
+
+            if (clientService.TryGetUser(message.SenderId, out User user))
+            {
+                FromPhoto.SetUser(clientService, user, 24);
+                FromPhoto.Visibility = Visibility.Visible;
+                FromTitle.Text = user.FullName();
+                From.Header = Strings.Gift2From;
+
+                if (message.IsOutgoing)
+                {
+                    Title.Text = Strings.Gift2TitleSent;
+
+                    TextBlockHelper.SetMarkdown(Subtitle, Locale.Declension(Strings.R.Gift2InfoOut, gift.SellStarCount, user.FirstName));
+                }
+                else
+                {
+                    Title.Text = Strings.Gift2TitleReceived;
+
+                    if (gift.IsSaved)
+                    {
+                        TextBlockHelper.SetMarkdown(Subtitle, Strings.Gift2InfoPinned);
+                    }
+                    else
+                    {
+                        TextBlockHelper.SetMarkdown(Subtitle, gift.WasConverted
+                            ? Locale.Declension(Strings.R.Gift2InfoConverted, gift.SellStarCount)
+                            : Locale.Declension(Strings.R.Gift2Info, gift.SellStarCount));
+                    }
+                }
+            }
+            else
+            {
+                FromPhoto.Source = PlaceholderImage.GetGlyph(Icons.QuestionCircle, long.MinValue);
+                FromPhoto.Visibility = Visibility.Collapsed;
+                FromTitle.Text = Strings.StarsTransactionUnsupported;
+                From.Header = Strings.StarsTransactionSource;
+
+                Title.Text = Strings.StarsTransactionUnsupported;
+                Subtitle.Visibility = Visibility.Collapsed;
+                Photo.Source = PlaceholderImage.GetGlyph(Icons.QuestionCircle, long.MinValue);
+            }
+
+            AnimatedPhoto.LoopCount = 0;
+            AnimatedPhoto.Source = new DelayedFileSource(clientService, gift.Gift.Sticker);
+
+            Transaction.Visibility = Visibility.Collapsed;
+            Date.Content = Formatter.DateAt(message.Date);
+
+            StarCount.Text = "+" + gift.Gift.StarCount.ToString("N0");
+            StarCount.Foreground = BootStrapper.Current.Resources["SystemFillColorSuccessBrush"] as Brush;
+
+            Refund.Visibility = Visibility.Collapsed;
+            Terms.Visibility = Visibility.Collapsed;
+
+            if (gift.Gift.TotalCount > 0)
+            {
+                Availability.Visibility = Visibility.Visible;
+                Availability.Content = gift.Gift.RemainingCount > 0
+                ? string.Format(Strings.Gift2AvailabilityValue, gift.Gift.RemainingCount, gift.Gift.TotalCount)
+                : string.Format(Strings.Gift2AvailabilityValueNone, gift.Gift.TotalCount);
+            }
+
+            if (gift.Text?.Text.Length > 0)
+            {
+                TableRoot.BorderThickness = new Thickness(1, 1, 1, 0);
+                TableRoot.CornerRadius = new CornerRadius(2, 2, 0, 0);
+
+                CaptionRoot.Visibility = Visibility.Visible;
+                Caption.SetText(clientService, gift.Text);
+            }
+
+            if (gift.WasConverted || message.IsOutgoing)
+            {
+                Convert.Visibility = Visibility.Collapsed;
+            }
+            else
+            {
+                Convert.Visibility = Visibility.Visible;
+                Convert.Content = Locale.Declension(Strings.R.Gift2ToBalance, gift.SellStarCount);
+            }
+        }
+
+        public ReceiptPopup(IClientService clientService, INavigationService navigationService, UserGift gift, long userId)
+        {
+            InitializeComponent();
+
+            _clientService = clientService;
+            _navigationService = navigationService;
+
+            _giftSenderId = new MessageSenderUser(gift.SenderUserId);
+            _giftMessageId = gift.MessageId;
+            _giftStarCount = gift.SellStarCount;
+
+            MediaPreview.Visibility = Visibility.Collapsed;
+
+            if (clientService.TryGetUser(gift.SenderUserId, out User user))
+            {
+                FromPhoto.SetUser(clientService, user, 24);
+                FromPhoto.Visibility = Visibility.Visible;
+                FromTitle.Text = user.FullName();
+            }
+            else
+            {
+                FromPhoto.Source = PlaceholderImage.GetGlyph(Icons.AuthorHiddenFilled, 5);
+                FromPhoto.Visibility = Visibility.Visible;
+                FromTitle.Text = Strings.StarsTransactionHidden;
+            }
+
+            From.Header = Strings.Gift2From;
+            Title.Text = Strings.Gift2TitleReceived;
+
+            if (userId != clientService.Options.MyId)
+            {
+                Subtitle.Visibility = Visibility.Collapsed;
+            }
+            else
+            {
+                if (gift.IsSaved)
+                {
+                    TextBlockHelper.SetMarkdown(Subtitle, Strings.Gift2InfoPinned);
+                    Info.Text = Strings.Gift2ProfileVisible;
+                    PurchaseCommand.Content = Strings.Gift2ProfileMakeInvisible;
+                }
+                else
+                {
+                    TextBlockHelper.SetMarkdown(Subtitle, Locale.Declension(Strings.R.Gift2Info, gift.SellStarCount));
+                    Info.Text = Strings.Gift2ProfileInvisible;
+                    PurchaseCommand.Content = Strings.Gift2ProfileMakeVisible;
+                }
+
+                Info.Visibility = Visibility.Visible;
+
+                Convert.Visibility = Visibility.Visible;
+                Convert.Content = Locale.Declension(Strings.R.Gift2ToBalance, gift.SellStarCount);
+            }
+
+            AnimatedPhoto.LoopCount = 0;
+            AnimatedPhoto.Source = new DelayedFileSource(clientService, gift.Gift.Sticker);
+
+            Transaction.Visibility = Visibility.Collapsed;
+            Date.Content = Formatter.DateAt(gift.Date);
+
+            StarCount.Text = "+" + gift.Gift.StarCount.ToString("N0");
+            StarCount.Foreground = BootStrapper.Current.Resources["SystemFillColorSuccessBrush"] as Brush;
+
+            Refund.Visibility = Visibility.Collapsed;
+            Terms.Visibility = Visibility.Collapsed;
+
+            if (gift.Gift.TotalCount > 0)
+            {
+                Availability.Visibility = Visibility.Visible;
+                Availability.Content = gift.Gift.RemainingCount > 0
+                ? string.Format(Strings.Gift2AvailabilityValue, gift.Gift.RemainingCount, gift.Gift.TotalCount)
+                : string.Format(Strings.Gift2AvailabilityValueNone, gift.Gift.TotalCount);
+            }
+
+            if (gift.Text?.Text.Length > 0)
+            {
+                TableRoot.BorderThickness = new Thickness(1, 1, 1, 0);
+                TableRoot.CornerRadius = new CornerRadius(2, 2, 0, 0);
+
+                CaptionRoot.Visibility = Visibility.Visible;
+                Caption.SetText(clientService, gift.Text);
+            }
+        }
+
         private void Purchase_Click(object sender, RoutedEventArgs e)
         {
-            Hide();
+            Hide(ContentDialogResult.Primary);
         }
 
         private async void ShareLink_Click(Hyperlink sender, HyperlinkClickEventArgs args)
@@ -426,7 +647,7 @@ namespace Telegram.Views.Stars.Popups
             ToastPopup.Show(XamlRoot, Strings.StarsTransactionIDCopied, ToastPopupIcon.Copied);
         }
 
-        private async void MediaPreview_Click(object sender, RoutedEventArgs e)
+        private void MediaPreview_Click(object sender, RoutedEventArgs e)
         {
             GalleryMedia item = null;
             GalleryMedia Filter(PaidMedia x)
@@ -460,6 +681,35 @@ namespace Telegram.Views.Stars.Popups
 
             var viewModel = new StandaloneGalleryViewModel(_clientService, storageService, aggregator, items, item);
             _navigationService.ShowGallery(viewModel, Media1);
+        }
+
+        private async void Convert_Click(object sender, RoutedEventArgs e)
+        {
+            if (_clientService.TryGetUser(_giftSenderId, out User user))
+            {
+                var message = string.Format(Strings.Gift2ConvertText, user.FirstName, Locale.Declension(Strings.R.StarsCount, _giftStarCount));
+
+                var confirm = await MessagePopup.ShowAsync(XamlRoot, target: null, message, Strings.Gift2ConvertTitle, Strings.Gift2ConvertButton, Strings.Cancel);
+                if (confirm == ContentDialogResult.Primary)
+                {
+                    var response = await _clientService.SendAsync(new SellGift(user.Id, _giftMessageId));
+                    if (response is Ok)
+                    {
+                        Hide(ContentDialogResult.Secondary);
+
+                        var popup = new StarsPopup();
+
+                        void handler(object sender, object e)
+                        {
+                            popup.Opened -= handler;
+                            ToastPopup.Show(XamlRoot, string.Format("**{0}**\n{1}", Strings.Gift2ConvertedTitle, Locale.Declension(Strings.R.Gift2Converted, _giftStarCount)), ToastPopupIcon.StarsTopup);
+                        }
+
+                        _ = _navigationService.ShowPopupAsync(popup);
+                        popup.Opened += handler;
+                    }
+                }
+            }
         }
     }
 }

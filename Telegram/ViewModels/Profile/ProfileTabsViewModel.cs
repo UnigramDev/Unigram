@@ -61,6 +61,7 @@ namespace Telegram.ViewModels.Profile
         protected readonly ProfileStoriesTabViewModel _archivedStoriesTabViewModel;
         protected readonly ProfileGroupsTabViewModel _groupsTabViewModel;
         protected readonly ProfileChannelsTabViewModel _channelsTabViewModel;
+        protected readonly ProfileGiftsTabViewModel _giftsTabViewModel;
         protected readonly ProfileMembersTabViewModel _membersTabVieModel;
 
         public ProfileTabsViewModel(IClientService clientService, ISettingsService settingsService, IStorageService storageService, IEventAggregator aggregator, IPlaybackService playbackService)
@@ -76,6 +77,7 @@ namespace Telegram.ViewModels.Profile
             _archivedStoriesTabViewModel = TypeResolver.Current.Resolve<ProfileStoriesTabViewModel>(clientService.SessionId);
             _groupsTabViewModel = TypeResolver.Current.Resolve<ProfileGroupsTabViewModel>(clientService.SessionId);
             _channelsTabViewModel = TypeResolver.Current.Resolve<ProfileChannelsTabViewModel>(clientService.SessionId);
+            _giftsTabViewModel = TypeResolver.Current.Resolve<ProfileGiftsTabViewModel>(clientService.SessionId);
             _membersTabVieModel = TypeResolver.Current.Resolve<ProfileMembersTabViewModel>(clientService.SessionId);
             _membersTabVieModel.IsEmbedded = true;
 
@@ -87,6 +89,7 @@ namespace Telegram.ViewModels.Profile
             Children.Add(_archivedStoriesTabViewModel);
             Children.Add(_groupsTabViewModel);
             Children.Add(_channelsTabViewModel);
+            Children.Add(_giftsTabViewModel);
             Children.Add(_membersTabVieModel);
 
             Items = new ObservableCollection<ProfileTabItem>();
@@ -218,6 +221,11 @@ namespace Telegram.ViewModels.Profile
                 {
                     AddTab(new ProfileTabItem(Strings.ProfileStories, typeof(ProfileStoriesTabPage), ChatStoriesType.Pinned));
                     AddTab(new ProfileTabItem(Strings.ArchivedStories, typeof(ProfileStoriesTabPage), ChatStoriesType.Archive));
+
+                    if (cached != null && cached.GiftCount > 0)
+                    {
+                        AddTab(new ProfileTabItem(Strings.ProfileGifts, typeof(ProfileGiftsTabPage)));
+                    }
                 }
                 else
                 {
@@ -239,6 +247,11 @@ namespace Telegram.ViewModels.Profile
                     if (cached != null && cached.GroupInCommonCount > 0)
                     {
                         AddTab(new ProfileTabItem(Strings.SharedGroupsTab2, typeof(ProfileGroupsTabPage)));
+                    }
+
+                    if (cached != null && cached.GiftCount > 0)
+                    {
+                        AddTab(new ProfileTabItem(Strings.ProfileGifts, typeof(ProfileGiftsTabPage)));
                     }
                 }
             }

@@ -250,6 +250,12 @@
     <Compile Include="Controls\Cells\StarWithdrawCell.xaml.cs">
       <DependentUpon>StarWithdrawCell.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\Cells\PremiumGiftCell.xaml.cs">
+      <DependentUpon>PremiumGiftCell.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\Cells\UserGiftCell.xaml.cs">
+      <DependentUpon>UserGiftCell.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Controls\Chats\ChatConnectedBotHeader.xaml.cs">
       <DependentUpon>ChatConnectedBotHeader.xaml</DependentUpon>
     </Compile>
@@ -279,7 +285,15 @@
     <Compile Include="Controls\Messages\MessageFactCheck.xaml.cs">
       <DependentUpon>MessageFactCheck.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\NativeVideoPlayer.xaml.cs">
+      <DependentUpon>NativeVideoPlayer.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Controls\SlideTextBlock.cs" />
+    <Compile Include="Controls\TableView.cs" />
+    <Compile Include="Controls\VideoPlayerBase.cs" />
+    <Compile Include="Controls\WebVideoPlayer.xaml.cs">
+      <DependentUpon>WebVideoPlayer.xaml</DependentUpon>
+    </Compile>
     <Compile Include="CsWinRT.cs" />
     <Compile Include="Services\Calls\VoipCall.cs" />
     <Compile Include="Services\Calls\VoipCallAudioLevelUpdatedEventArgs.cs" />
@@ -299,6 +313,7 @@
     <Compile Include="Controls\PremiumSlider.cs" />
     <Compile Include="Services\Calls\VoipService.cs" />
     <Compile Include="Services\Calls\VoipVideoType.cs" />
+    <Compile Include="Streams\PremiumInfoFileSource.cs" />
     <Compile Include="Td\Api\ReactionTypeEqualityComparer.cs" />
     <Compile Include="Controls\PremiumStarCount.cs" />
     <Compile Include="Controls\Stories\Widgets\StoryWeatherWidget.xaml.cs">
@@ -521,6 +536,7 @@
     <Compile Include="ViewModels\DialogViewModel.Translate.cs" />
     <Compile Include="Td\Api\MessageTranslateResult.cs" />
     <Compile Include="ViewModels\Drawers\EffectDrawerViewModel.cs" />
+    <Compile Include="ViewModels\Profile\ProfileGiftsTabViewModel.cs" />
     <Compile Include="ViewModels\RevenueViewModel.cs" />
     <Compile Include="ViewModels\Profile\ProfileChannelsTabViewModel.cs" />
     <Compile Include="ViewModels\Profile\ProfileGroupsTabViewModel.cs" />
@@ -1154,8 +1170,14 @@
     <Compile Include="Views\Popups\ChooseTimeZonePopup.xaml.cs">
       <DependentUpon>ChooseTimeZonePopup.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\Popups\ReportChatPopup.xaml.cs">
+      <DependentUpon>ReportChatPopup.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\Premium\Popups\ChangePrivacyPopup.xaml.cs">
       <DependentUpon>ChangePrivacyPopup.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Profile\ProfileGiftsTabPage.xaml.cs">
+      <DependentUpon>ProfileGiftsTabPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\RevenuePage.xaml.cs">
       <DependentUpon>RevenuePage.xaml</DependentUpon>
@@ -1271,6 +1293,9 @@
     </Compile>
     <Compile Include="Views\Popups\VideoChatStreamsPopup.xaml.cs">
       <DependentUpon>VideoChatStreamsPopup.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Stars\Popups\SendGiftPopup.xaml.cs">
+      <DependentUpon>SendGiftPopup.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Stars\Popups\JoinChatPopup.xaml.cs">
       <DependentUpon>JoinChatPopup.xaml</DependentUpon>
@@ -1936,6 +1961,8 @@
     <Content Include="Assets\Animations\AuthorizationStateWaitPassword.tgs" />
     <Content Include="Assets\Animations\MyStories.tgs" />
     <Content Include="Assets\Animations\Expired.tgs" />
+    <Content Include="Assets\hls.html" />
+    <Content Include="Assets\hls.js" />
     <Content Include="Assets\Images\ArrowLeft.scale-100.png" />
     <Content Include="Assets\Images\ArrowLeft.scale-125.png" />
     <Content Include="Assets\Images\ArrowLeft.scale-150.png" />
@@ -1973,6 +2000,7 @@
     <Content Include="Assets\Animations\PaidReactionAround5.tgs" />
     <Content Include="Assets\Animations\PaidReactionCenter.tgs" />
     <Content Include="Assets\Animations\EmptyCalls.tgs" />
+    <Content Include="Assets\Animations\ReportText.tgs" />
     <None Include="Assets\i420.hlsl" />
     <Content Include="Assets\Images\Reply.scale-100.png" />
     <Content Include="Assets\Images\Reply.scale-125.png" />
@@ -2154,6 +2182,7 @@
     <None Include="Assets\Toasts\Pin.tgs" />
     <Content Include="Assets\Toasts\StarsSent.tgs" />
     <Content Include="Assets\Toasts\Unmute.tgs" />
+    <Content Include="Assets\Toasts\StarsTopup.tgs" />
     <None Include="Assets\Toasts\Unpin.tgs" />
     <None Include="Telegram_StoreKey.pfx" />
     <None Include="Telegram_TemporaryKey.pfx" />
@@ -2309,6 +2338,14 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Controls\Cells\StoryCell.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\Cells\PremiumGiftCell.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Controls\Cells\UserGiftCell.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -2612,6 +2649,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Controls\NativeVideoPlayer.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Controls\PlaybackHeader.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -2677,6 +2718,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Controls\ProfileColorBadge.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\WebVideoPlayer.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -2948,7 +2993,15 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="Views\Popups\ReportChatPopup.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Views\Premium\Popups\ChangePrivacyPopup.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\Profile\ProfileGiftsTabPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -3103,6 +3156,10 @@
     <Page Include="Views\Popups\VideoChatStreamsPopup.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Stars\Popups\SendGiftPopup.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="Views\Stars\Popups\JoinChatPopup.xaml">
       <Generator>MSBuild:Compile</Generator>
@@ -3640,7 +3697,7 @@
       <Version>2.8.6</Version>
     </PackageReference>
     <PackageReference Include="Microsoft.Web.WebView2">
-      <Version>1.0.2651.64</Version>
+      <Version>1.0.2792.45</Version>
     </PackageReference>
     <PackageReference Include="Newtonsoft.Json">
       <Version>13.0.3</Version>
@@ -3663,7 +3720,7 @@
       <Version>4.5.0</Version>
     </PackageReference>
     <PackageReference Include="Telegram.Td.UWP">
-      <Version>1.8.36</Version>
+      <Version>1.8.37</Version>
     </PackageReference>
     <PackageReference Include="VideoLAN.LibVLC.UWP">
       <Version>3.3.7</Version>

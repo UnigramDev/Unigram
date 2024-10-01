@@ -3015,7 +3015,7 @@ namespace Telegram.Views
 
             if (properties.CanBeRepliedInAnotherChat)
             {
-                return message.ChatId != ViewModel.ClientService.Options.RepliesBotChatId;
+                return message.ChatId != ViewModel.ClientService.Options.RepliesBotChatId && message.ChatId != ViewModel.ClientService.Options.VerificationCodesBotChatId;
             }
 
             var chat = message.Chat;
@@ -3037,7 +3037,7 @@ namespace Telegram.Views
 
                 return supergroup.Status is not ChatMemberStatusLeft;
             }
-            else if (chat != null && chat.Id == ViewModel.ClientService.Options.RepliesBotChatId)
+            else if (message.ChatId == ViewModel.ClientService.Options.RepliesBotChatId && message.ChatId != ViewModel.ClientService.Options.VerificationCodesBotChatId)
             {
                 return false;
             }
@@ -3733,6 +3733,21 @@ namespace Telegram.Views
 
             if (show)
             {
+                if (ViewModel.IsReportingMessages != null)
+                {
+                    ManageCount.Visibility = Visibility.Collapsed;
+                    ButtonForward.Visibility = Visibility.Collapsed;
+                    ButtonDelete.Visibility = Visibility.Collapsed;
+                    ButtonReport.Visibility = Visibility.Visible;
+                }
+                else
+                {
+                    ManageCount.Visibility = Visibility.Visible;
+                    ButtonForward.Visibility = Visibility.Visible;
+                    ButtonDelete.Visibility = Visibility.Visible;
+                    ButtonReport.Visibility = Visibility.Collapsed;
+                }
+
                 ViewModel.SaveDraft(true);
                 ShowHideComposerHeader(false);
             }
@@ -3748,6 +3763,16 @@ namespace Telegram.Views
         private string ConvertSelection(int count)
         {
             return Locale.Declension(Strings.R.messages, count);
+        }
+
+        private string ConvertReportSelection(int count)
+        {
+            if (count == 0)
+            {
+                return Strings.ReportMessages;
+            }
+
+            return string.Format(Strings.ReportMessagesCount, Locale.Declension(Strings.R.messages, count));
         }
 
         public Visibility ConvertIsEmpty(bool empty, bool self, bool bot, bool should)
@@ -3852,6 +3877,12 @@ namespace Telegram.Views
         {
             var button = sender as FrameworkElement;
             var message = button.Tag as MessageViewModel;
+
+            if (message == null)
+            {
+                button = button.GetParent<MessageService>();
+                message = button?.Tag as MessageViewModel;
+            }
 
             if (message == null)
             {
@@ -5108,7 +5139,7 @@ namespace Telegram.Views
             {
                 ShowAction(Strings.DeleteThisChat, true);
             }
-            else if (ViewModel.ClientService.IsRepliesChat(chat))
+            else if (chat.Id == ViewModel.ClientService.Options.RepliesBotChatId || chat.Id == ViewModel.ClientService.Options.VerificationCodesBotChatId)
             {
                 ShowAction(ViewModel.ClientService.Notifications.IsMuted(chat) ? Strings.ChannelUnmute : Strings.ChannelMute, true);
             }
@@ -5152,11 +5183,8 @@ namespace Telegram.Views
 
         public void UpdateUserStatus(Chat chat, User user)
         {
-            if (ViewModel.ClientService.IsSavedMessages(user))
-            {
-                ViewModel.LastSeen = null;
-            }
-            else if (ViewModel.ClientService.IsRepliesChat(chat))
+            var options = ViewModel.ClientService.Options;
+            if (chat.Id == options.MyId || chat.Id == options.RepliesBotChatId || chat.Id == options.VerificationCodesBotChatId)
             {
                 ViewModel.LastSeen = null;
             }

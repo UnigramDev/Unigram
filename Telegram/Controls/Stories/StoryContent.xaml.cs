@@ -1222,7 +1222,7 @@ namespace Telegram.Controls.Stories
             }
         }
 
-        private void OnVout(AsyncMediaPlayer sender, MediaPlayerVoutEventArgs e)
+        private void OnVout(AsyncMediaPlayer sender, EventArgs e)
         {
             _loading = false;
             ElementCompositionPreview.SetElementChildVisual(ActiveRoot, BootStrapper.Current.Compositor.CreateSpriteVisual());

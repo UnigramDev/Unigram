@@ -29,6 +29,7 @@ namespace Telegram.Controls
     {
         private ContentDialogResult _result;
 
+        private Grid LayoutRoot;
         private Border AnimationElement;
         private Border BackgroundElement;
         private Border BorderElement;
@@ -57,8 +58,6 @@ namespace Telegram.Controls
 
             Connected += OnLoaded;
             Disconnected += OnUnloaded;
-
-            ElementCompositionPreview.SetIsTranslationEnabled(this, true);
         }
 
         private void OnSizeChanged(object sender, SizeChangedEventArgs e)
@@ -72,7 +71,7 @@ namespace Telegram.Controls
             AnimationElement.Width = e.NewSize.Width;
             AnimationElement.Height = e.NewSize.Height;
 
-            if (e.PreviousSize.Height == 0 || e.NewSize.Height == 0 || e.PreviousSize.Height == e.NewSize.Height)
+            if (e.PreviousSize.Height == 0 || e.NewSize.Height == 0 || e.PreviousSize.Height == e.NewSize.Height || VerticalContentAlignment == VerticalAlignment.Stretch)
             {
                 return;
             }
@@ -84,7 +83,7 @@ namespace Telegram.Controls
             var transform = CommandSpace.TransformToVisual(ContentElement);
             var point = transform.TransformVector2();
 
-            var visual = ElementComposition.GetElementVisual(this);
+            var visual = ElementComposition.GetElementVisual(LayoutRoot);
             var content = ElementComposition.GetElementVisual(ContentElement);
             var background = ElementComposition.GetElementVisual(BackgroundElement);
             var border = ElementComposition.GetElementVisual(BorderElement);
@@ -114,7 +113,7 @@ namespace Telegram.Controls
             var batch = compositor.CreateScopedBatch(CompositionBatchTypes.Animation);
             batch.Completed += Batch_Completed;
 
-            visual.StartAnimation("Translation.Y", translate);
+            visual.StartAnimation("Offset.Y", translate);
             background.StartAnimation("Scale.Y", scale);
             border.StartAnimation("Scale.Y", scale);
             redirect.StartAnimation("Offset.Y", offset);
@@ -255,11 +254,10 @@ namespace Telegram.Controls
             BorderElement = GetTemplateChild(nameof(BorderElement)) as Border;
 
             ContentElement = GetTemplateChild(nameof(ContentElement)) as Border;
+            ContentElement.SizeChanged += OnSizeChanged;
 
-            if (ContentElement != null)
-            {
-                ContentElement.SizeChanged += OnSizeChanged;
-            }
+            LayoutRoot = GetTemplateChild(nameof(LayoutRoot)) as Grid;
+            ElementCompositionPreview.SetIsTranslationEnabled(LayoutRoot, true);
         }
 
         private void DismissButton_Click(object sender, RoutedEventArgs e)

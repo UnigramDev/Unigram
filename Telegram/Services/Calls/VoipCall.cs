@@ -503,6 +503,7 @@ namespace Telegram.Services.Calls
         {
             if (ClientService.TryGetUser(UserId, out User user))
             {
+                Logger.Info("Waiting for call creation");
                 InitializeSystemCallAsync(user, IsOutgoing).Wait();
             }
 
@@ -614,6 +615,7 @@ namespace Telegram.Services.Calls
                     : ViewServiceMode.CompactOverlay,
             };
 
+            Logger.Info("Waiting for window creation");
             service.OpenAsync(options).Wait();
         }
 
