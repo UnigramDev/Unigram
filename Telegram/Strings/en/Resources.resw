@@ -7076,6 +7076,9 @@ to unlock up to {0} similar channels.</value>
   <data name="NoComments" xml:space="preserve">
     <value>No comments here yet...</value>
   </data>
+  <data name="NoContactsYet" xml:space="preserve">
+    <value>You have no contacts on Telegram yet</value>
+  </data>
   <data name="NoEmojiPack" xml:space="preserve">
     <value>No emoji pack</value>
   </data>

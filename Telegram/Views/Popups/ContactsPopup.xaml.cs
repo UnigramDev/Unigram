@@ -199,5 +199,18 @@ namespace Telegram.Views.Popups
         }
 
         #endregion
+
+        private void ScrollingHeader_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            if (EmptyState != null)
+            {
+                EmptyState.Margin = new Thickness(0, e.NewSize.Height - 36, 0, 0);
+            }
+        }
+
+        private void EmptyState_Loaded(object sender, RoutedEventArgs e)
+        {
+            EmptyState.Margin = new Thickness(0, ScrollingHeader.ActualHeight - 36, 0, 0);
+        }
     }
 }
