@@ -383,14 +383,15 @@
                                            Style="{StaticResource SubtitleTextBlockStyle}"
                                            FontSize="16" />
 
-                                <TextBlock x:Name="Subtitle"
-                                           Foreground="#FFFFFF"
-                                           TextAlignment="Center"
-                                           TextWrapping="Wrap"
-                                           Style="{StaticResource CaptionTextBlockStyle}"
-                                           FontFamily="{StaticResource EmojiThemeFontFamilyWithSymbols}"
-                                           Padding="0,0,0,4"
-                                           Margin="0,0,0,8" />
+                                <controls:FormattedTextBlock x:Name="Subtitle"
+                                                             Foreground="#FFFFFF"
+                                                             TextAlignment="Center"
+                                                             TextStyle="{StaticResource CaptionRichTextBlockStyle}"
+                                                             FontFamily="{StaticResource EmojiThemeFontFamilyWithSymbols}"
+                                                             AutoFontSize="False"
+                                                             IsTextSelectionEnabled="False"
+                                                             Padding="0,0,0,4"
+                                                             Margin="0,0,0,8" />
 
                                 <Border x:Name="View"
                                         Background="{ThemeResource MessageServiceBackgroundBrush}"
@@ -1396,7 +1397,7 @@
 
             <!-- This is terrible, but it prevents accidental clicks while reporting -->
             <Border Background="Transparent" />
-            
+
             <controls:GlyphButton x:Name="ButtonManage"
                                   Glyph="&#xE711;"
                                   Click="{x:Bind ViewModel.UnselectMessages}" />

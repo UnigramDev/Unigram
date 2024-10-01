@@ -96,14 +96,15 @@
                                                Style="{StaticResource SubtitleTextBlockStyle}"
                                                FontSize="16" />
 
-                                    <TextBlock x:Name="Subtitle"
-                                               Foreground="#FFFFFF"
-                                               TextAlignment="Center"
-                                               TextWrapping="Wrap"
-                                               Style="{StaticResource CaptionTextBlockStyle}"
-                                               FontFamily="{StaticResource EmojiThemeFontFamilyWithSymbols}"
-                                               Padding="0,0,0,4"
-                                               Margin="0,0,0,8" />
+                                    <controls:FormattedTextBlock x:Name="Subtitle"
+                                                                 Foreground="#FFFFFF"
+                                                                 TextAlignment="Center"
+                                                                 TextStyle="{StaticResource CaptionRichTextBlockStyle}"
+                                                                 FontFamily="{StaticResource EmojiThemeFontFamilyWithSymbols}"
+                                                                 AutoFontSize="False"
+                                                                 IsTextSelectionEnabled="False"
+                                                                 Padding="0,0,0,4"
+                                                                 Margin="0,0,0,8" />
 
                                     <Border x:Name="View"
                                             Background="{ThemeResource MessageServiceBackgroundBrush}"
@@ -151,6 +152,7 @@
         <Grid x:Name="CaptionPanel"
               Margin="24,12,24,0">
             <controls:CaptionTextBox x:Name="CaptionInput"
+                                     TextChanged="OnTextChanged"
                                      InputScope="Chat"
                                      FontFamily="{ThemeResource EmojiThemeFontFamily}"
                                      PlaceholderText="{CustomResource Gift2Message}"

@@ -118,7 +118,7 @@ namespace Telegram.Controls.Messages
             else if (message.Content is MessageGift gift)
             {
                 var title = FindName("Title") as TextBlock;
-                var subtitle = FindName("Subtitle") as TextBlock;
+                var subtitle = FindName("Subtitle") as FormattedTextBlock;
                 var view = FindName("View") as Border;
                 var button = FindName("ViewLabel") as TextBlock;
                 var ribbonRoot = FindName("RibbonRoot") as Grid;
@@ -139,11 +139,11 @@ namespace Telegram.Controls.Messages
 
                     if (gift.Text.Text.Length > 0)
                     {
-                        TextBlockHelper.SetFormattedText(subtitle, gift.Text);
+                        subtitle.SetText(message.ClientService, gift.Text);
                     }
                     else
                     {
-                        TextBlockHelper.SetMarkdown(subtitle, Locale.Declension(Strings.R.Gift2ActionOutInfo, gift.SellStarCount, user.FirstName));
+                        subtitle.SetText(message.ClientService, ClientEx.ParseMarkdown(Locale.Declension(Strings.R.Gift2ActionOutInfo, gift.SellStarCount, user.FirstName)));
                     }
 
                     view.Visibility = Visibility.Collapsed;
@@ -156,17 +156,17 @@ namespace Telegram.Controls.Messages
 
                     if (gift.Text.Text.Length > 0)
                     {
-                        TextBlockHelper.SetFormattedText(subtitle, gift.Text);
+                        subtitle.SetText(message.ClientService, gift.Text);
                     }
                     else if (gift.IsSaved)
                     {
-                        TextBlockHelper.SetMarkdown(subtitle, Strings.Gift2ActionSavedInfo);
+                        subtitle.SetText(message.ClientService, ClientEx.ParseMarkdown(Strings.Gift2ActionSavedInfo));
                     }
                     else
                     {
-                        TextBlockHelper.SetMarkdown(subtitle, gift.WasConverted
+                        subtitle.SetText(message.ClientService, ClientEx.ParseMarkdown(gift.WasConverted
                             ? Locale.Declension(Strings.R.Gift2ActionConvertedInfo, gift.SellStarCount)
-                            : Locale.Declension(Strings.R.Gift2ActionInfo, gift.SellStarCount));
+                            : Locale.Declension(Strings.R.Gift2ActionInfo, gift.SellStarCount)));
                     }
 
                     view.Visibility = Visibility.Visible;
@@ -193,13 +193,13 @@ namespace Telegram.Controls.Messages
             else if (message.Content is MessageGiftedPremium giftedPremium)
             {
                 var title = FindName("Title") as TextBlock;
-                var subtitle = FindName("Subtitle") as TextBlock;
+                var subtitle = FindName("Subtitle") as FormattedTextBlock;
                 var view = FindName("View") as Border;
                 var button = FindName("ViewLabel") as TextBlock;
                 var ribbonRoot = FindName("RibbonRoot") as Grid;
 
                 title.Text = Strings.ActionGiftPremiumTitle;
-                subtitle.Text = string.Format(Strings.ActionGiftPremiumSubtitle, Locale.Declension(Strings.R.Months, giftedPremium.MonthCount));
+                subtitle.SetText(message.ClientService, ClientEx.ParseMarkdown(string.Format(Strings.ActionGiftPremiumSubtitle, Locale.Declension(Strings.R.Months, giftedPremium.MonthCount))));
                 button.Text = Strings.ActionGiftPremiumView;
                 view.Visibility = Visibility.Visible;
 
@@ -213,7 +213,7 @@ namespace Telegram.Controls.Messages
             else if (message.Content is MessageGiftedStars giftedStars)
             {
                 var title = FindName("Title") as TextBlock;
-                var subtitle = FindName("Subtitle") as TextBlock;
+                var subtitle = FindName("Subtitle") as FormattedTextBlock;
                 var view = FindName("View") as Border;
                 var button = FindName("ViewLabel") as TextBlock;
                 var ribbonRoot = FindName("RibbonRoot") as Grid;
@@ -224,11 +224,11 @@ namespace Telegram.Controls.Messages
 
                 if (giftedStars.ReceiverUserId == 0)
                 {
-                    TextBlockHelper.SetMarkdown(subtitle, Strings.ActionGiftStarsSubtitleYou);
+                    subtitle.SetText(message.ClientService, ClientEx.ParseMarkdown(Strings.ActionGiftStarsSubtitleYou));
                 }
                 else if (message.ClientService.TryGetUser(giftedStars.ReceiverUserId, out User receiver))
                 {
-                    TextBlockHelper.SetMarkdown(subtitle, string.Format(Strings.ActionGiftStarsSubtitle, receiver.FirstName));
+                    subtitle.SetText(message.ClientService, ClientEx.ParseMarkdown(string.Format(Strings.ActionGiftStarsSubtitle, receiver.FirstName)));
                 }
 
                 var animation = FindName("Animation") as AnimatedImage;

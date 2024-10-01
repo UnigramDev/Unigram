@@ -77,6 +77,22 @@ namespace Telegram.Views.Stars.Popups
             PurchaseText.Text = Locale.Declension(Strings.R.Gift2Send, gift.StarCount).Replace("\u2B50", Icons.Premium);
         }
 
+        private void OnTextChanged(object sender, RoutedEventArgs e)
+        {
+            _clientService.TryGetChatFromUser(_clientService.Options.MyId, out Chat chat);
+
+            var content = new MessageGift(_gift, CaptionInput.GetFormattedText(), _gift.DefaultSellStarCount, false, false, false);
+            var message = new Message(0, new MessageSenderUser(_clientService.Options.MyId), 0, null, null, false, false, false, false, false, false, false, false, 0, 0, null, null, null, Array.Empty<UnreadReaction>(), null, null, 0, 0, null, 0, 0, 0, 0, 0, string.Empty, 0, 0, false, string.Empty, content, null);
+
+            var playback = TypeResolver.Current.Playback;
+            var settings = TypeResolver.Current.Resolve<ISettingsService>(_clientService.SessionId);
+
+            var delegato = new ChatMessageDelegate(_clientService, settings, chat);
+            var viewModel = new MessageViewModel(_clientService, playback, delegato, chat, message, true);
+
+            Message.UpdateMessage(viewModel);
+        }
+
         private void Emoji_Click(object sender, RoutedEventArgs e)
         {
             // We don't want to unfocus the text are when the context menu gets opened
