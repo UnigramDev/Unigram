@@ -1,5 +1,4 @@
 ﻿using Telegram.Controls.Media;
-using Telegram.Converters;
 using Telegram.Services;
 using Telegram.Streams;
 using Telegram.Td.Api;
@@ -35,7 +34,7 @@ namespace Telegram.Controls.Cells
             if (gift.Gift.TotalCount > 0)
             {
                 RibbonRoot.Visibility = Visibility.Visible;
-                Ribbon.Text = string.Format(Strings.Gift2Limited1OfRibbon, Formatter.ShortNumber(gift.Gift.TotalCount));
+                Ribbon.Text = string.Format(Strings.Gift2Limited1OfRibbon, gift.Gift.ShortCount());
             }
             else
             {

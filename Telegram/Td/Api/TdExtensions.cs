@@ -15,6 +15,7 @@ using System.Text;
 using System.Threading;
 using Telegram.Common;
 using Telegram.Controls.Chats;
+using Telegram.Converters;
 using Telegram.Native;
 using Telegram.Td.Api;
 using Telegram.ViewModels;
@@ -74,6 +75,16 @@ namespace Telegram.Td.Api
             }
 
             return true;
+        }
+
+        public static string ShortCount(this Gift gift)
+        {
+            if (gift.TotalCount >= 10000)
+            {
+                return Formatter.ShortNumber(gift.TotalCount);
+            }
+
+            return gift.TotalCount.ToString();
         }
 
         public static int CountUnread(this ChatActiveStories activeStories, out bool closeFriends)

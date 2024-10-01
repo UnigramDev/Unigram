@@ -1684,7 +1684,7 @@ namespace Telegram.Views
                         && ViewModel.ClientService.Options.GiftPremiumFromAttachmentMenu
                         && ViewModel.ClientService.TryGetUserFull(chat, out UserFullInfo fullInfo) && fullInfo.PremiumGiftOptions.Count > 0)
                     {
-                        flyout.CreateFlyoutItem(ViewModel.GiftPremium, Strings.GiftPremium, Icons.GiftPremium);
+                        flyout.CreateFlyoutItem(ViewModel.GiftPremium, Strings.SendAGift, Icons.GiftPremium);
                     }
 
                     var bots = ViewModel.ClientService.GetBotsForChat(chat.Id);

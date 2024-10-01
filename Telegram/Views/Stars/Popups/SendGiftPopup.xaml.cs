@@ -5,6 +5,7 @@ using Telegram.Controls;
 using Telegram.Controls.Media;
 using Telegram.Navigation.Services;
 using Telegram.Services;
+using Telegram.Streams;
 using Telegram.Td.Api;
 using Telegram.ViewModels;
 using Telegram.ViewModels.Drawers;
@@ -189,7 +190,7 @@ namespace Telegram.Views.Stars.Popups
                 //var formatted = ClientEx.ParseMarkdown(text);
 
                 //Aggregator.Publish(new UpdateConfetti());
-                ToastPopup.Show(XamlRoot, "hurra", ToastPopupIcon.Success);
+                ToastPopup.Show(XamlRoot, string.Format("**{0}**\n{1}", Strings.StarsGiftCompleted, Locale.Declension(Strings.R.StarsGiftCompletedText, _gift.StarCount)), new DelayedFileSource(_clientService, _gift.Sticker));
 
                 return PayResult.Succeeded;
             }

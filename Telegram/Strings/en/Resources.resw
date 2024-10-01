@@ -9692,6 +9692,15 @@ The channel &quot;**{1}**&quot; will become private.</value>
   <data name="StarsFailed" xml:space="preserve">
     <value>Failed</value>
   </data>
+  <data name="StarsGiftCompleted" xml:space="preserve">
+    <value>Gift sent!</value>
+  </data>
+  <data name="StarsGiftCompletedText_one" xml:space="preserve">
+    <value>You spent **{0}** Star from your balance.</value>
+  </data>
+  <data name="StarsGiftCompletedText_other" xml:space="preserve">
+    <value>You spent **{0}** Stars from your balance.</value>
+  </data>
   <data name="StarsGiftReceived" xml:space="preserve">
     <value>Received Gift</value>
   </data>

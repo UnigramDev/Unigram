@@ -183,7 +183,7 @@ namespace Telegram.Controls.Messages
                     ribbonRoot.Visibility = Visibility.Visible;
 
                     var ribbon = FindName("Ribbon") as TextBlock;
-                    ribbon.Text = string.Format(Strings.Gift2Limited1OfRibbon, Formatter.ShortNumber(gift.Gift.TotalCount));
+                    ribbon.Text = string.Format(Strings.Gift2Limited1OfRibbon, gift.Gift.ShortCount());
                 }
                 else
                 {
