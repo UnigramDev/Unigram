@@ -111,14 +111,14 @@ namespace Telegram.Controls.Chats
                         _scheduledTimer.Stop();
                     }
 
-                    JoinButton.Background = BootStrapper.Current.Resources["VideoChatPurpleBrush"] as Brush;
+                    JoinButtonBackground.Background = BootStrapper.Current.Resources["VideoChatPurpleBrush"] as Brush;
                     JoinButton.Content = call.GetStartsIn();
                 }
                 else
                 {
                     _scheduledTimer.Stop();
 
-                    JoinButton.Background = BootStrapper.Current.Resources["PillButtonBackground"] as Brush;
+                    JoinButtonBackground.Background = BootStrapper.Current.Resources["PillButtonBackground"] as Brush;
                     JoinButton.Content = Strings.VoipChatJoin;
                 }
 
