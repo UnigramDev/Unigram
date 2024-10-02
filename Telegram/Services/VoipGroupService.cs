@@ -23,6 +23,7 @@ using Windows.ApplicationModel.Calls;
 using Windows.ApplicationModel.Core;
 using Windows.Data.Json;
 using Windows.Devices.Enumeration;
+using Windows.Foundation;
 using Windows.Graphics.Capture;
 using Windows.System.Display;
 using Windows.UI.ViewManagement;
@@ -31,6 +32,20 @@ using Windows.UI.Xaml.Controls;
 
 namespace Telegram.Services
 {
+    public partial class VoipGroupCallNetworkStateChangedEventArgs : EventArgs
+    {
+        public VoipGroupCallNetworkStateChangedEventArgs(bool isConnected, bool isTransitioningFromBroadcastToRtc)
+        {
+            IsConnected = isConnected;
+            IsTransitioningFromBroadcastToRtc = isTransitioningFromBroadcastToRtc;
+        }
+
+        public bool IsConnected { get; }
+
+        public bool IsTransitioningFromBroadcastToRtc { get; }
+    }
+
+
     public interface IVoipGroupService : INotifyPropertyChanged
     {
         event EventHandler AvailableStreamsChanged;
@@ -48,8 +63,6 @@ namespace Telegram.Services
         event EventHandler<IList<VoipGroupParticipant>> AudioLevelsUpdated;
 
         bool IsNoiseSuppressionEnabled { get; set; }
-
-        VoipGroupManager Manager { get; }
 #endif
 
         GroupCallParticipantsCollection Participants { get; }
@@ -161,12 +174,10 @@ namespace Telegram.Services
                 .Subscribe<UpdateGroupCallParticipant>(Handle);
         }
 
+        public event TypedEventHandler<VoipGroupService, VoipGroupCallNetworkStateChangedEventArgs> NetworkStateUpdated;
+
         public event EventHandler AvailableStreamsChanged;
         public int AvailableStreamsCount => _availableStreamsCount;
-
-#if ENABLE_CALLS
-        public VoipGroupManager Manager => _manager;
-#endif
 
         private GroupCallParticipantsCollection _participants;
         public GroupCallParticipantsCollection Participants
@@ -692,6 +703,16 @@ namespace Telegram.Services
 
 #if ENABLE_CALLS
 
+        public void SetRequestedVideoChannels(IList<VoipVideoChannelInfo> descriptions)
+        {
+            _manager?.SetRequestedVideoChannels(descriptions);
+        }
+
+        public void AddIncomingVideoOutput(string endpointId, VoipVideoOutputSink sink)
+        {
+            _manager?.AddIncomingVideoOutput(endpointId, sink);
+        }
+
         private async void OnBroadcastTimeRequested(VoipGroupManager sender, BroadcastTimeRequestedEventArgs args)
         {
             var call = _call;
@@ -772,6 +793,7 @@ namespace Telegram.Services
             //}
 
             _isConnected = args.IsConnected;
+            NetworkStateUpdated?.Invoke(this, new VoipGroupCallNetworkStateChangedEventArgs(args.IsConnected, args.IsTransitioningFromBroadcastToRtc));
         }
 
         private Dictionary<int, SpeakingParticipant> _speakingParticipants = new();

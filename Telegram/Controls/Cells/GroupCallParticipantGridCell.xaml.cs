@@ -87,6 +87,21 @@ namespace Telegram.Controls.Cells
 
         public bool IsScreenSharing => _screenSharing;
 
+        private bool _isConnected;
+        public bool IsConnected
+        {
+            get => _isConnected;
+            set
+            {
+                _isConnected = value;
+                
+                if (value is false)
+                {
+                    Sink.Stop();
+                }
+            }
+        }
+
         public bool IsSelected { get; set; }
 
         public bool IsPinned

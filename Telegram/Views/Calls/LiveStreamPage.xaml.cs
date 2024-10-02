@@ -33,14 +33,13 @@ using Windows.UI.Xaml.Media;
 
 namespace Telegram.Views.Calls
 {
-    public sealed partial class LiveStreamPage : Page
+    public sealed partial class LiveStreamPage : WindowEx
     {
         private readonly IClientService _clientService;
         private readonly IEventAggregator _aggregator;
 
-        private IVoipGroupService _service;
+        private VoipGroupService _service;
 
-        private VoipGroupManager _manager;
         private bool _disposed;
 
         private VoipVideoOutputSink _unifiedVideo;
@@ -51,7 +50,7 @@ namespace Telegram.Views.Calls
 
         private readonly DisplayRequest _displayRequest = new();
 
-        public LiveStreamPage(IClientService clientService, IEventAggregator aggregator, IVoipGroupService voipService)
+        public LiveStreamPage(IClientService clientService, IEventAggregator aggregator, VoipGroupService voipService)
         {
             InitializeComponent();
             Logger.Info();
@@ -80,28 +79,15 @@ namespace Telegram.Views.Calls
             };
 
             _service = voipService;
+            _service.NetworkStateUpdated += OnNetworkStateUpdated;
             _service.AvailableStreamsChanged += OnAvailableStreamsChanged;
-
-            var titleBar = ApplicationView.GetForCurrentView().TitleBar;
-            titleBar.ButtonBackgroundColor = Colors.Transparent;
-            titleBar.ButtonForegroundColor = Colors.White;
-            titleBar.ButtonInactiveBackgroundColor = Colors.Transparent;
-            titleBar.ButtonInactiveForegroundColor = Colors.White;
-            titleBar.ButtonHoverBackgroundColor = ColorEx.FromHex(0x19FFFFFF);
-            titleBar.ButtonHoverForegroundColor = ColorEx.FromHex(0xCCFFFFFF);
-            titleBar.ButtonPressedBackgroundColor = ColorEx.FromHex(0x33FFFFFF);
-            titleBar.ButtonPressedForegroundColor = ColorEx.FromHex(0x99FFFFFF);
+            _service.AddIncomingVideoOutput("unified", _unifiedVideo = VoipVideoOutput.CreateSink(Viewport, false));
 
             Window.Current.SetTitleBar(TitleArea);
 
             if (voipService.Call != null)
             {
                 Update(voipService.Call, voipService.CurrentUser);
-            }
-
-            if (voipService.Manager != null)
-            {
-                Connect(voipService.Manager);
             }
 
             ElementCompositionPreview.SetIsTranslationEnabled(Viewport, true);
@@ -283,36 +269,12 @@ namespace Telegram.Views.Calls
 
             _unifiedVideo?.Stop();
 
-            if (_manager != null)
-            {
-                _manager.NetworkStateUpdated -= OnNetworkStateUpdated;
-                _manager = null;
-            }
-
             if (_service != null)
             {
+                _service.NetworkStateUpdated -= OnNetworkStateUpdated;
                 _service.AvailableStreamsChanged -= OnAvailableStreamsChanged;
                 _service = null;
             }
-        }
-
-        public void Connect(VoipGroupManager controller)
-        {
-            if (_disposed)
-            {
-                return;
-            }
-
-            if (_manager != null)
-            {
-                // Let's avoid duplicated events
-                _manager.NetworkStateUpdated -= OnNetworkStateUpdated;
-            }
-
-            controller.NetworkStateUpdated += OnNetworkStateUpdated;
-            controller.AddIncomingVideoOutput("unified", _unifiedVideo = VoipVideoOutput.CreateSink(Viewport, false));
-
-            _manager = controller;
         }
 
         private void OnSizeChanged(object sender, SizeChangedEventArgs e)
@@ -338,60 +300,52 @@ namespace Telegram.Views.Calls
 
         public void Update(GroupCall call, GroupCallParticipant currentUser)
         {
-            if (_disposed)
-            {
-                return;
-            }
+            TitleInfo.Text = call.Title.Length > 0 ? call.Title : _clientService.GetTitle(_service.Chat);
 
-            this.BeginOnUIThread(() =>
+            if (call.ScheduledStartDate != 0)
             {
-                TitleInfo.Text = call.Title.Length > 0 ? call.Title : _clientService.GetTitle(_service.Chat);
+                var date = Formatter.ToLocalTime(call.ScheduledStartDate);
+                var duration = date - DateTime.Now;
 
-                if (call.ScheduledStartDate != 0)
+                if (duration.TotalDays < 1)
                 {
-                    var date = Formatter.ToLocalTime(call.ScheduledStartDate);
-                    var duration = date - DateTime.Now;
-
-                    if (duration.TotalDays < 1)
-                    {
-                        _scheduledTimer.Start();
-                    }
-                    else
-                    {
-                        _scheduledTimer.Stop();
-                    }
-
-                    FindName(nameof(ScheduledPanel));
-                    SubtitleInfo.Text = _service.IsChannel ? Strings.VoipChannelScheduledVoiceChat : Strings.VoipGroupScheduledVoiceChat;
-                    ParticipantsPanel.Visibility = Visibility.Collapsed;
-                    ScheduledInfo.Text = duration < TimeSpan.Zero ? Strings.VoipChatLateBy : Strings.VoipChatStartsIn;
-                    StartsAt.Text = call.GetStartsAt();
-                    StartsIn.Text = call.GetStartsIn();
-
-                    Menu.Visibility = Visibility.Collapsed;
-                    Resize.Visibility = Visibility.Collapsed;
+                    _scheduledTimer.Start();
                 }
                 else
                 {
                     _scheduledTimer.Stop();
-
-                    if (ScheduledPanel != null)
-                    {
-                        UnloadObject(ScheduledPanel);
-                    }
-
-                    Menu.Visibility = Visibility.Visible;
-                    Resize.Visibility = Visibility.Visible;
-
-                    SubtitleInfo.Text = Locale.Declension(Strings.R.Participants, call.ParticipantCount);
-                    ParticipantsPanel.Visibility = Visibility.Visible;
                 }
 
-                UpdateNetworkState(call, currentUser, _service.IsConnected);
-            });
+                FindName(nameof(ScheduledPanel));
+                SubtitleInfo.Text = _service.IsChannel ? Strings.VoipChannelScheduledVoiceChat : Strings.VoipGroupScheduledVoiceChat;
+                ParticipantsPanel.Visibility = Visibility.Collapsed;
+                ScheduledInfo.Text = duration < TimeSpan.Zero ? Strings.VoipChatLateBy : Strings.VoipChatStartsIn;
+                StartsAt.Text = call.GetStartsAt();
+                StartsIn.Text = call.GetStartsIn();
+
+                Menu.Visibility = Visibility.Collapsed;
+                Resize.Visibility = Visibility.Collapsed;
+            }
+            else
+            {
+                _scheduledTimer.Stop();
+
+                if (ScheduledPanel != null)
+                {
+                    UnloadObject(ScheduledPanel);
+                }
+
+                Menu.Visibility = Visibility.Visible;
+                Resize.Visibility = Visibility.Visible;
+
+                SubtitleInfo.Text = Locale.Declension(Strings.R.Participants, call.ParticipantCount);
+                ParticipantsPanel.Visibility = Visibility.Visible;
+            }
+
+            UpdateNetworkState(call, currentUser, _service.IsConnected);
         }
 
-        private void OnNetworkStateUpdated(VoipGroupManager sender, GroupNetworkStateChangedEventArgs args)
+        private void OnNetworkStateUpdated(VoipGroupService sender, VoipGroupCallNetworkStateChangedEventArgs args)
         {
             this.BeginOnUIThread(() =>
             {
@@ -404,17 +358,6 @@ namespace Telegram.Views.Calls
             });
         }
 
-        private Task ConsolidateAsync()
-        {
-            if (XamlRoot.Content is RootPage root)
-            {
-                root.PresentContent(null);
-                return Task.CompletedTask;
-            }
-
-            return WindowContext.Current.ConsolidateAsync();
-        }
-
         private async void Leave_Click(object sender, RoutedEventArgs e)
         {
             var chat = _service?.Chat;
@@ -422,7 +365,7 @@ namespace Telegram.Views.Calls
 
             if (chat == null || call == null)
             {
-                await ConsolidateAsync();
+                Close();
                 return;
             }
 
@@ -442,13 +385,13 @@ namespace Telegram.Views.Calls
                 if (confirm == ContentDialogResult.Primary)
                 {
                     Dispose(popup.IsChecked == true);
-                    await ConsolidateAsync();
+                    Close();
                 }
             }
             else
             {
                 Dispose(false);
-                await ConsolidateAsync();
+                Close();
             }
         }
 
@@ -459,7 +402,7 @@ namespace Telegram.Views.Calls
 
             if (chat == null || call == null)
             {
-                await ConsolidateAsync();
+                Close();
                 return;
             }
 
@@ -474,7 +417,7 @@ namespace Telegram.Views.Calls
             if (confirm == ContentDialogResult.Primary)
             {
                 Dispose(true);
-                await ConsolidateAsync();
+                Close();
             }
         }
 
@@ -570,9 +513,7 @@ namespace Telegram.Views.Calls
             if (call.CanBeManaged)
             {
                 flyout.CreateFlyoutSeparator();
-
-                var discard = flyout.CreateFlyoutItem(Discard, _service.IsChannel ? Strings.VoipChannelEndChat : Strings.VoipGroupEndChat, Icons.Dismiss);
-                discard.Foreground = new SolidColorBrush(Colors.IndianRed);
+                flyout.CreateFlyoutItem(Discard, _service.IsChannel ? Strings.VoipChannelEndChat : Strings.VoipGroupEndChat, Icons.Dismiss, destructive: true);
             }
 
             if (flyout.Items.Count > 0)
