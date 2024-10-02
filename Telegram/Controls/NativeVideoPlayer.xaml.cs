@@ -3,6 +3,7 @@ using LibVLCSharp.Shared;
 using System;
 using Telegram.Common;
 using Telegram.Streams;
+using Telegram.Td.Api;
 using Telegram.ViewModels.Gallery;
 using Windows.UI.Xaml;
 
@@ -12,6 +13,8 @@ namespace Telegram.Controls
     {
         private AsyncMediaPlayer _core;
         private GalleryMedia _video;
+
+        private long _bufferedToken;
 
         private long _initialPosition;
 
@@ -37,6 +40,8 @@ namespace Telegram.Controls
                 _core.Close();
                 _core = null;
             }
+
+            UpdateManager.Unsubscribe(this, ref _bufferedToken);
         }
 
         public override void Play(GalleryMedia video, double position)
@@ -48,9 +53,17 @@ namespace Telegram.Controls
             }
             else
             {
-                _core.Play(new RemoteFileStream(video.ClientService, video.GetFile()));
+                _core.Play(new RemoteFileStream(video.ClientService, video.File));
                 _core.Time = (long)position;
             }
+
+            UpdateManager.Subscribe(this, video.ClientService, video.File, ref _bufferedToken, UpdateBuffered);
+        }
+
+        private void UpdateBuffered(object target, File update)
+        {
+            var offset = update.Local.DownloadOffset + update.Local.DownloadedPrefixSize;
+            OnBufferedChanged(_buffered = update.Local.IsDownloadingCompleted || offset == update.Size ? 0 : offset / update.Size);
         }
 
         public override void Play()
@@ -125,6 +138,9 @@ namespace Telegram.Controls
             }
         }
 
+        private double _buffered;
+        public override double Buffered => _buffered;
+
         public override double Duration
         {
             get => _core?.Length / 1000d ?? 0;
@@ -174,8 +190,6 @@ namespace Telegram.Controls
             }
         }
 
-        public override VideoPlayerLevel CurrentLevel { get; set; }
-
         private void OnInitialized(object sender, InitializedEventArgs e)
         {
             _core = new AsyncMediaPlayer(e.SwapChainOptions);
@@ -190,7 +204,7 @@ namespace Telegram.Controls
 
             if (_video != null)
             {
-                _core.Play(new RemoteFileStream(_video.ClientService, _video.GetFile()));
+                _core.Play(new RemoteFileStream(_video.ClientService, _video.File));
                 _core.Time = _initialPosition;
             }
 

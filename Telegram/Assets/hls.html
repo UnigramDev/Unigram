@@ -179,9 +179,19 @@
             }
         }
 
+        function playerBufferedEnd() {
+            for (var i = 0; i < video.buffered.length; i++) {
+                if (video.currentTime >= video.buffered.start(i) && video.currentTime <= video.buffered.end(i)) {
+                    return video.buffered.end(i);
+                }
+            }
+            return 0;
+        }
+
         function refreshPlayerCurrentTime() {
             postPlayerEvent('playerCurrentTime', {
-                'value': video.currentTime
+                'value': video.currentTime,
+                'buffered': playerBufferedEnd()
             });
             currentTimeUpdateTimeout = setTimeout(() => {
                 refreshPlayerCurrentTime()

@@ -20,7 +20,6 @@ namespace Telegram.Controls.Gallery
     public sealed partial class GalleryTransportControls : UserControl
     {
         private readonly DispatcherQueue _dispatcherQueue;
-        private long _videoToken;
 
         private bool _loopingEnabled;
         private bool _playing;
@@ -149,6 +148,13 @@ namespace Telegram.Controls.Gallery
 
             _scrubbing = false;
             PlayAfterScrubbing();
+
+            // Workaround Slider visual states bug
+            var pointer = e.GetCurrentPoint(Slider);
+            if (pointer.Position.X >= 0 && pointer.Position.X <= Slider.ActualWidth && pointer.Position.Y >= 0 && pointer.Position.Y <= Slider.ActualHeight)
+            {
+                VisualStateManager.GoToState(Slider, "PointerOver", false);
+            }
         }
 
         private void Slider_PointerCanceled(object sender, PointerRoutedEventArgs e)
@@ -167,25 +173,22 @@ namespace Telegram.Controls.Gallery
 
         public void Attach(GalleryMedia item, File file)
         {
-            _loopingEnabled = item.IsLoop;
+            _loopingEnabled = item.IsLoopingEnabled;
 
-            Visibility = item.IsVideo && (item.IsVideoNote || !item.IsLoop)
+            Visibility = item.IsVideo && (item.IsVideoNote || !item.IsLoopingEnabled)
                 ? Visibility.Visible
                 : Visibility.Collapsed;
 
             CompactButton.Visibility = ConvertCompactVisibility(item)
                 ? Visibility.Visible
                 : Visibility.Collapsed;
-
-            UpdateManager.Subscribe(this, item.ClientService, file, ref _videoToken, UpdateVideo);
-            UpdateVideo(item, file);
         }
 
         private bool ConvertCompactVisibility(GalleryMedia item)
         {
-            if (item != null && item.IsVideo && !item.IsLoop)
+            if (item != null && item.IsVideo && !item.IsLoopingEnabled)
             {
-                if (item is GalleryMessage message && message.IsProtected)
+                if (item is GalleryMessage message && message.HasProtectedContent)
                 {
                     return false;
                 }
@@ -196,14 +199,6 @@ namespace Telegram.Controls.Gallery
             return false;
         }
 
-        private void UpdateVideo(object target, File file)
-        {
-            var offset = file.Local.DownloadOffset + file.Local.DownloadedPrefixSize;
-
-            PositionBar.Maximum = file.Size;
-            PositionBar.Value = file.Local.IsDownloadingCompleted || offset == file.Size ? 0 : offset;
-        }
-
         private DisplayRequest _request;
 
         public void Attach(VideoPlayerBase mediaPlayer)
@@ -211,6 +206,7 @@ namespace Telegram.Controls.Gallery
             if (_player != null)
             {
                 _player.PositionChanged -= OnPositionChanged;
+                _player.BufferedChanged -= OnBufferedChanged;
                 _player.DurationChanged -= OnDurationChanged;
                 _player.IsPlayingChanged -= OnIsPlayingChanged;
                 _player.VolumeChanged -= OnVolumeChanged;
@@ -229,6 +225,7 @@ namespace Telegram.Controls.Gallery
             if (_player != null)
             {
                 _player.PositionChanged += OnPositionChanged;
+                _player.BufferedChanged += OnBufferedChanged;
                 _player.DurationChanged += OnDurationChanged;
                 _player.IsPlayingChanged += OnIsPlayingChanged;
                 _player.VolumeChanged += OnVolumeChanged;
@@ -341,7 +338,7 @@ namespace Telegram.Controls.Gallery
 
         private void OnPositionChanged(VideoPlayerBase sender, VideoPlayerPositionChangedEventArgs args)
         {
-            if (_player == null || _scrubbing)
+            if (_scrubbing)
             {
                 return;
             }
@@ -350,24 +347,20 @@ namespace Telegram.Controls.Gallery
             TimeText.Text = FormatTime(args.Position);
         }
 
+        private void OnBufferedChanged(VideoPlayerBase sender, VideoPlayerBufferedChangedEventArgs args)
+        {
+            Buffered1.Width = new GridLength(args.Buffered, GridUnitType.Star);
+            Buffered2.Width = new GridLength(1 - args.Buffered, GridUnitType.Star);
+        }
+
         private void OnDurationChanged(VideoPlayerBase sender, VideoPlayerDurationChangedEventArgs args)
         {
-            if (_player == null)
-            {
-                return;
-            }
-
             Slider.Maximum = args.Duration;
             LengthText.Text = FormatTime(args.Duration);
         }
 
         private void Slider_ValueChanged(object sender, RangeBaseValueChangedEventArgs e)
         {
-            if (_player == null)
-            {
-                return;
-            }
-
             if (_scrubbing)
             {
                 Slider.Value = e.NewValue;

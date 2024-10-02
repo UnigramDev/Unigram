@@ -63,7 +63,7 @@ namespace Telegram.Controls.Gallery
 
         private void MediaOpened()
         {
-            if (_item is GalleryMessage message && message.IsProtected)
+            if (_item is GalleryMessage message && message.HasProtectedContent)
             {
                 UpdateManager.Unsubscribe(this, ref _fileToken);
 
@@ -164,7 +164,7 @@ namespace Telegram.Controls.Gallery
 
             //ScrollingHost.ChangeView(0, 0, 1, true);
 
-            var file = item?.GetFile();
+            var file = item?.File;
             if (file == null)
             {
                 return;
@@ -189,7 +189,7 @@ namespace Telegram.Controls.Gallery
                 Constraint = item.Constraint;
             }
 
-            var thumbnail = item.GetThumbnail();
+            var thumbnail = item.Thumbnail;
             if (thumbnail != null && (item.IsVideo || (item.IsPhoto && !file.Local.IsDownloadingCompleted)))
             {
                 UpdateThumbnail(item, thumbnail, null, true);
@@ -206,7 +206,7 @@ namespace Telegram.Controls.Gallery
 
         private void UpdateFile(GalleryMedia item, File file)
         {
-            var reference = item?.GetFile();
+            var reference = item?.File;
             if (reference == null || reference.Id != file.Id)
             {
                 return;
@@ -326,7 +326,7 @@ namespace Telegram.Controls.Gallery
                 return;
             }
 
-            var file = item.GetFile();
+            var file = item.File;
             if (file == null)
             {
                 return;
@@ -369,7 +369,7 @@ namespace Telegram.Controls.Gallery
 
             try
             {
-                var file = item.GetFile();
+                var file = item.File;
                 if (file.Id == _fileId || (!file.Local.IsDownloadingCompleted && !SettingsService.Current.IsStreamingEnabled))
                 {
                     return;

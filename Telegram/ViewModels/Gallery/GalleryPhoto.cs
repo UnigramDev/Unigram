@@ -17,29 +17,15 @@ namespace Telegram.ViewModels.Gallery
 
         private readonly bool _protect;
 
-        public GalleryPhoto(IClientService clientService, Photo photo, bool protect = false)
+        public GalleryPhoto(IClientService clientService, Photo photo, FormattedText caption = null, bool protect = false)
             : base(clientService)
         {
             _photo = photo;
+            _caption = caption ?? new FormattedText(string.Empty, Array.Empty<TextEntity>());
             _protect = protect;
-        }
 
-        public GalleryPhoto(IClientService clientService, Photo photo, FormattedText caption, bool protect = false)
-            : base(clientService)
-        {
-            _photo = photo;
-            _caption = caption;
-            _protect = protect;
-        }
-
-        public override File GetFile()
-        {
-            return _photo.GetBig()?.Photo;
-        }
-
-        public override File GetThumbnail()
-        {
-            return _photo?.GetSmall()?.Photo;
+            File =  _photo.GetBig()?.Photo;
+            Thumbnail = _photo?.GetSmall()?.Photo;
         }
 
         public override object Constraint => _photo;
@@ -48,9 +34,9 @@ namespace Telegram.ViewModels.Gallery
 
         public override bool HasStickers => _photo.HasStickers;
 
-        public override bool CanCopy => !_protect;
-        public override bool CanSave => !_protect;
-        public override bool CanShare => !_protect;
+        public override bool CanBeCopied => !_protect;
+        public override bool CanBeSaved => !_protect;
+        public override bool CanBeShared => !_protect;
 
         public override InputMessageContent ToInput()
         {

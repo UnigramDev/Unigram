@@ -31,6 +31,7 @@ using Windows.ApplicationModel;
 using Windows.ApplicationModel.AppService;
 using Windows.ApplicationModel.Calls;
 using Windows.ApplicationModel.DataTransfer;
+using Windows.Data.Json;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
 using Windows.Storage;
@@ -421,6 +422,11 @@ namespace Telegram.Common
             }
 
             return Enumerable.Empty<AlternativeVideo>();
+        }
+
+        public static int GetNamedInt32(this JsonObject obj, string name, int defaultValue)
+        {
+            return (int)obj.GetNamedNumber(name);
         }
 
         public static bool HasExtension(this IStorageFile file, params string[] extensions)

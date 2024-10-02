@@ -26,31 +26,27 @@ namespace Telegram.ViewModels.Gallery
 
             IsPersonal = isPersonal;
             IsPublic = isPublic;
+
+            if (_photo?.Animation != null)
+            {
+                File = _photo.Animation.File;
+            }
+            else
+            {
+                File = _photo?.GetBig()?.Photo;
+            }
+
+            Thumbnail = _photo?.GetSmall()?.Photo;
         }
 
         public long Id => _photo.Id;
 
         public long MessageId => _messageId;
 
-        public override File GetFile()
-        {
-            if (_photo?.Animation != null)
-            {
-                return _photo.Animation.File;
-            }
-
-            return _photo?.GetBig()?.Photo;
-        }
-
-        public override File GetThumbnail()
-        {
-            return _photo?.GetSmall()?.Photo;
-        }
-
         public ChatPhotoSticker Sticker => _photo.Sticker;
 
         public override bool IsVideo => _photo.Animation != null;
-        public override bool IsLoop => _photo.Animation != null;
+        public override bool IsLoopingEnabled => _photo.Animation != null;
 
         public override bool HasStickers => _photo.Sticker != null;
 
@@ -62,9 +58,9 @@ namespace Telegram.ViewModels.Gallery
 
         public override int Date => _photo.AddedDate;
 
-        public override bool CanCopy => true;
-        public override bool CanSave => true;
-        public override bool CanShare => _photo.Animation == null;
+        public override bool CanBeCopied => true;
+        public override bool CanBeSaved => true;
+        public override bool CanBeShared => _photo.Animation == null;
 
         public override InputMessageContent ToInput()
         {

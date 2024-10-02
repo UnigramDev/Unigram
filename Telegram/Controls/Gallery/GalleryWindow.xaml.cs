@@ -661,7 +661,7 @@ namespace Telegram.Controls.Gallery
             }
 
             var position = 0d;
-            var file = item.GetFile();
+            var file = item.File;
 
             if (_initialPosition is long initialPosition)
             {
@@ -798,7 +798,7 @@ namespace Telegram.Controls.Gallery
 
         private void LayoutRoot_ViewChanged(object sender, CarouselViewChangedEventArgs e)
         {
-            if (ViewModel?.SelectedItem is GalleryMedia item && item.IsVideo && (item.IsLoop || SettingsService.Current.IsStreamingEnabled))
+            if (ViewModel?.SelectedItem is GalleryMedia item && item.IsVideo && (item.IsLoopingEnabled || SettingsService.Current.IsStreamingEnabled))
             {
                 Play(LayoutRoot.CurrentElement, item);
             }
@@ -937,7 +937,7 @@ namespace Telegram.Controls.Gallery
             {
                 Dispose();
 
-                if (viewModel.Items[index].IsProtected is false)
+                if (viewModel.Items[index].HasProtectedContent is false)
                 {
                     viewModel.OpenMessage(viewModel.Items[index]);
                 }
@@ -1004,10 +1004,10 @@ namespace Telegram.Controls.Gallery
 
         private void PopulateContextRequested(MenuFlyout flyout, GalleryViewModelBase viewModel, GalleryMedia item)
         {
-            flyout.CreateFlyoutItem(() => item.CanView, viewModel.View, Strings.ShowInChat, Icons.ChatEmpty);
-            flyout.CreateFlyoutItem(() => item.CanShare, viewModel.Forward, Strings.Forward, Icons.Share);
-            flyout.CreateFlyoutItem(() => item.CanCopy, viewModel.Copy, Strings.Copy, Icons.DocumentCopy, VirtualKey.C);
-            flyout.CreateFlyoutItem(() => item.CanSave, viewModel.Save, Strings.SaveAs, Icons.SaveAs, VirtualKey.S);
+            flyout.CreateFlyoutItem(() => item.CanBeViewed, viewModel.View, Strings.ShowInChat, Icons.ChatEmpty);
+            flyout.CreateFlyoutItem(() => item.CanBeShared, viewModel.Forward, Strings.Forward, Icons.Share);
+            flyout.CreateFlyoutItem(() => item.CanBeCopied, viewModel.Copy, Strings.Copy, Icons.DocumentCopy, VirtualKey.C);
+            flyout.CreateFlyoutItem(() => item.CanBeSaved, viewModel.Save, Strings.SaveAs, Icons.SaveAs, VirtualKey.S);
 
             if (viewModel is UserPhotosViewModel userPhotos && userPhotos.CanDelete && userPhotos.SelectedIndex > 0)
             {
@@ -1083,7 +1083,7 @@ namespace Telegram.Controls.Gallery
 
             _current.Stop(out int fileId, out double time);
 
-            var fileStream = new RemoteFileStream(ViewModel.ClientService, item.GetFile());
+            var fileStream = new RemoteFileStream(ViewModel.ClientService, item.File);
 
             if (GalleryCompactWindow.Current is ViewLifetimeControl control)
             {

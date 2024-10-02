@@ -1,11 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
+using Telegram.Common;
 using Telegram.ViewModels.Gallery;
+using Windows.Data.Json;
 using Windows.Foundation;
 
 namespace Telegram.Controls
 {
     public record VideoPlayerPositionChangedEventArgs(double Position);
+
+    public record VideoPlayerBufferedChangedEventArgs(double Buffered);
 
     public record VideoPlayerDurationChangedEventArgs(double Duration);
 
@@ -22,6 +26,14 @@ namespace Telegram.Controls
             Bitrate = bitrate;
             Width = width;
             Height = height;
+        }
+
+        public VideoPlayerLevel(JsonObject level)
+        {
+            Index = level.GetNamedInt32("index", 0);
+            Bitrate = level.GetNamedInt32("bitrate", 100000);
+            Width = level.GetNamedInt32("width", 1280);
+            Height = level.GetNamedInt32("height", 720);
         }
 
         public int Index { get; }
@@ -89,6 +101,19 @@ namespace Telegram.Controls
             }
         }
 
+        private double _buffered;
+        public abstract double Buffered { get; }
+
+        public event TypedEventHandler<VideoPlayerBase, VideoPlayerBufferedChangedEventArgs> BufferedChanged;
+        protected void OnBufferedChanged(double value)
+        {
+            //if (_position != value)
+            {
+                _buffered = value;
+                BufferedChanged?.Invoke(this, new VideoPlayerBufferedChangedEventArgs(value));
+            }
+        }
+
         private double _duration;
         public abstract double Duration { get; }
 
@@ -130,7 +155,7 @@ namespace Telegram.Controls
 
         public bool IsCurrentLevelAuto { get; protected set; } = true;
 
-        public abstract VideoPlayerLevel CurrentLevel { get; set; }
+        public virtual VideoPlayerLevel CurrentLevel { get; set; }
 
         public IList<VideoPlayerLevel> Levels { get; private set; } = Array.Empty<VideoPlayerLevel>();
 

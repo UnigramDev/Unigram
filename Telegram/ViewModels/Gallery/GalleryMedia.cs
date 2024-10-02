@@ -30,9 +30,9 @@ namespace Telegram.ViewModels.Gallery
 
         public RotationAngle RotationAngle { get; set; }
 
-        public abstract File GetFile();
+        public File File { get; protected set; }
 
-        public abstract File GetThumbnail();
+        public File Thumbnail { get; protected set; }
 
         public virtual bool IsHls()
         {
@@ -55,18 +55,18 @@ namespace Telegram.ViewModels.Gallery
 
         public virtual bool IsVideo { get; private set; }
         public virtual bool IsStreamable { get; private set; } = true;
-        public virtual bool IsLoop { get; private set; }
+        public virtual bool IsLoopingEnabled { get; private set; }
         public virtual bool IsVideoNote { get; private set; }
 
         public virtual bool HasStickers { get; private set; }
 
-        public virtual bool CanShare { get; private set; }
-        public virtual bool CanView { get; private set; }
+        public virtual bool CanBeShared { get; private set; }
+        public virtual bool CanBeViewed { get; private set; }
 
-        public virtual bool CanSave { get; private set; }
-        public virtual bool CanCopy { get; private set; }
+        public virtual bool CanBeSaved { get; private set; }
+        public virtual bool CanBeCopied { get; private set; }
 
-        public virtual bool IsProtected { get; private set; } = false;
+        public virtual bool HasProtectedContent { get; private set; } = false;
 
         public virtual bool IsPublic { get; protected set; }
         public virtual bool IsPersonal { get; protected set; }

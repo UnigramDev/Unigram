@@ -108,17 +108,14 @@ namespace Telegram.Controls
             }
         }
 
+        private double _buffered;
+        public override double Buffered => _buffered;
+
         private double _duration;
-        public override double Duration
-        {
-            get => _duration;
-        }
+        public override double Duration => _duration;
 
         private bool _isPlaying;
-        public override bool IsPlaying
-        {
-            get => _isPlaying;
-        }
+        public override bool IsPlaying => _isPlaying;
 
         private double _volume = 1;
         public override double Volume
@@ -126,7 +123,6 @@ namespace Telegram.Controls
             get => _volume;
             set
             {
-                //_core.Volume = (int)(value * 100);
                 OnVolumeChanged(_volume = value);
                 ExecuteScript($"playerSetVolume({value})");
             }
@@ -140,8 +136,6 @@ namespace Telegram.Controls
             {
                 _rate = value;
                 ExecuteScript($"playerSetBaseRate({value})");
-                //_core.Rate = (float)(value);
-                //OnRateChanged(value);
             }
         }
 
@@ -153,8 +147,6 @@ namespace Telegram.Controls
             {
                 _mute = value;
                 ExecuteScript($"playerSetIsMuted({(value ? 1 : 0)})");
-                //_core.Mute = value;
-                //OnMuteChanged(value);
             }
         }
 
@@ -257,6 +249,9 @@ namespace Telegram.Controls
             }
             else if (int.TryParse(fileName, out int fileId))
             {
+                var file = _video.ClientService.GetFileAsync(fileId).Result;
+                var remote = new Telegram.Streams.RemoteFileSource(_video.ClientService, file, extension == ".m3u8" ? 32 : 31, true);
+
                 long offset = 0;
                 long limit = 0;
 
@@ -268,18 +263,22 @@ namespace Telegram.Controls
                         foreach (var part in ranges.Ranges)
                         {
                             offset = part.From ?? 0;
-                            limit = part.To ?? -1;
 
-                            limit = limit - offset + 1;
+                            if (part.To.HasValue)
+                            {
+                                limit = part.To.Value - offset + 1;
+                            }
+                            else
+                            {
+                                limit = Math.Min(file.Size - offset, 5 * 1024 * 1024);
+                            }
+
                             break;
                         }
                     }
                 }
 
                 Debug.WriteLine(resource + ", offset: " + offset + ", length:" + limit);
-
-                var file = _video.ClientService.GetFileAsync(fileId).Result;
-                var remote = new Telegram.Streams.RemoteFileSource(_video.ClientService, file, extension == ".m3u8" ? 32 : 31, true);
 
                 if (limit == 0)
                 {
@@ -316,7 +315,7 @@ namespace Telegram.Controls
                         writer.WriteBytes(buffer);
                         await writer.StoreAsync();
 
-                        CreateWebResourceResponse(memory, 206, "OK", "Content-Type: video/mp4");
+                        CreateWebResourceResponse(memory, 206, "OK", string.Format("Content-Type: video/mp4\nContent-Range: bytes {0}-{1}/{2}", offset, offset + limit - 1, file.Size));
                     }
                 }
             }
@@ -341,26 +340,25 @@ namespace Telegram.Controls
                     OnVolumeChanged(_volume = eventData.GetNamedNumber("volume", 1));
                     OnDurationChanged(_duration = eventData.GetNamedNumber("duration", 0));
 
-                    var levels = eventData.GetNamedArray("levels", new JsonArray());
-                    var currentLevel = (int)eventData.GetNamedNumber("currentLevel", -1);
-
-                    var mapped = new List<VideoPlayerLevel>();
-
-                    foreach (var level in levels.Select(x => x.GetObject()))
+                    if (eventData.ContainsKey("levels"))
                     {
-                        var index = (int)level.GetNamedNumber("index", 0);
-                        var bitrate = (int)level.GetNamedNumber("bitrate", 100000);
-                        var width = (int)level.GetNamedNumber("width", 1280);
-                        var height = (int)level.GetNamedNumber("height", 720);
+                        var levels = eventData.GetNamedArray("levels");
+                        var currentLevel = eventData.GetNamedInt32("currentLevel", -1);
 
-                        mapped.Add(new VideoPlayerLevel(index, bitrate, width, height));
+                        var mapped = new List<VideoPlayerLevel>(levels.Count);
+
+                        foreach (var level in levels.Select(x => x.GetObject()))
+                        {
+                            mapped.Add(new VideoPlayerLevel(level));
+                        }
+
+                        OnLevelsChanged(mapped, _currentLevel = mapped.Count == 0 || currentLevel == -1 ? null : mapped[currentLevel]);
                     }
-
-                    OnLevelsChanged(mapped, _currentLevel = mapped.Count == 0 || currentLevel == -1 ? null : mapped[currentLevel]);
                 }
                 else if (eventName == "playerCurrentTime")
                 {
                     OnPositionChanged(_position = eventData.GetNamedNumber("value", 0));
+                    OnBufferedChanged(_buffered = eventData.GetNamedNumber("buffered", 0) / Math.Max(_duration, 1));
                 }
             }
         }
