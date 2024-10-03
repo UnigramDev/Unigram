@@ -3214,7 +3214,7 @@ namespace Telegram.ViewModels
                 return;
             }
 
-            if (chat.Id == ClientService.Options.RepliesBotChatId || chat.Id == ClientService.Options.VerificationCodesBotChatId)
+            if (chat.Id == ClientService.Options.RepliesBotChatId || chat.Id == ClientService.Options.VerificationCodesBotChatId || Type == DialogType.EventLog)
             {
                 return;
             }

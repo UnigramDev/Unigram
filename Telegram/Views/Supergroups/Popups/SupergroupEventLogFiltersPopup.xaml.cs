@@ -63,7 +63,8 @@ namespace Telegram.Views.Supergroups.Popups
                     {
                         ScrollingHost.Items.Clear();
 
-                        if (clientService.Options.AntiSpamBotUserId != 0)
+                        var fullInfo = clientService.GetSupergroupFull(supergroupId);
+                        if (fullInfo?.HasAggressiveAntiSpamEnabled is true && clientService.TryGetUser(clientService.Options.AntiSpamBotUserId, out _))
                         {
                             var antiSpamSender = new MessageSenderUser(clientService.Options.AntiSpamBotUserId);
                             var antiSpam = new ChatMember(antiSpamSender, 0, 0, new ChatMemberStatusAdministrator());
