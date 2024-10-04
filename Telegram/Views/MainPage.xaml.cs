@@ -2951,6 +2951,38 @@ namespace Telegram.Views
             flyout.CreateFlyoutItem(DialogArchive_Loaded, viewModel.ArchiveChat, chat, archived ? Strings.Unarchive : Strings.Archive, archived ? Icons.Unarchive : Icons.Archive);
             flyout.CreateFlyoutItem(DialogPin_Loaded, viewModel.PinChat, chat, position.IsPinned ? Strings.UnpinFromTop : Strings.PinToTop, position.IsPinned ? Icons.PinOff : Icons.Pin);
 
+            var chatLists = await ViewModel.ClientService.SendAsync(new GetChatListsToAddChat(chat.Id)) as ChatLists;
+            if (chatLists != null && chatLists.ChatListsValue.Count > 0)
+            {
+                var folders = ViewModel.ClientService.ChatFolders.ToDictionary(x => x.Id);
+
+                var item = new MenuFlyoutSubItem();
+                item.Text = Strings.FilterAddTo;
+                item.Icon = MenuFlyoutHelper.CreateIcon(Icons.FolderAdd);
+
+                foreach (var chatList in chatLists.ChatListsValue.OfType<ChatListFolder>())
+                {
+                    if (folders.TryGetValue(chatList.ChatFolderId, out ChatFolderInfo folder))
+                    {
+                        var icon = Icons.ParseFolder(folder.Icon);
+                        var glyph = Icons.FolderToGlyph(icon);
+
+                        item.CreateFlyoutItem(viewModel.AddToFolder, (folder.Id, chat), folder.Title, glyph.Item1);
+                    }
+                }
+
+                if (folders.Count < 10 && item.Items.Count > 0)
+                {
+                    item.CreateFlyoutSeparator();
+                    item.CreateFlyoutItem(viewModel.CreateFolder, chat, Strings.CreateNewFilter, Icons.Add);
+                }
+
+                if (item.Items.Count > 0)
+                {
+                    flyout.Items.Add(item);
+                }
+            }
+
             if (viewModel.Items.ChatList is ChatListFolder chatListFolder)
             {
                 var response = await ViewModel.ClientService.SendAsync(new GetChatFolder(chatListFolder.ChatFolderId)) as ChatFolder;
@@ -2961,41 +2993,6 @@ namespace Telegram.Views
                     if (response.Any())
                     {
                         flyout.CreateFlyoutItem(viewModel.RemoveFromFolder, (chatListFolder.ChatFolderId, chat), Strings.FilterRemoveFrom, Icons.FolderMove);
-                    }
-                }
-            }
-            else
-            {
-                var response = await ViewModel.ClientService.SendAsync(new GetChatListsToAddChat(chat.Id)) as ChatLists;
-                if (response != null && response.ChatListsValue.Count > 0)
-                {
-                    var folders = ViewModel.ClientService.ChatFolders;
-
-                    var item = new MenuFlyoutSubItem();
-                    item.Text = Strings.FilterAddTo;
-                    item.Icon = MenuFlyoutHelper.CreateIcon(Icons.FolderAdd);
-
-                    foreach (var chatList in response.ChatListsValue.OfType<ChatListFolder>())
-                    {
-                        var folder = folders.FirstOrDefault(x => x.Id == chatList.ChatFolderId);
-                        if (folder != null)
-                        {
-                            var icon = Icons.ParseFolder(folder.Icon);
-                            var glyph = Icons.FolderToGlyph(icon);
-
-                            item.CreateFlyoutItem(viewModel.AddToFolder, (folder.Id, chat), folder.Title, glyph.Item1);
-                        }
-                    }
-
-                    if (folders.Count < 10 && item.Items.Count > 0)
-                    {
-                        item.CreateFlyoutSeparator();
-                        item.CreateFlyoutItem(viewModel.CreateFolder, chat, Strings.CreateNewFilter, Icons.Add);
-                    }
-
-                    if (item.Items.Count > 0)
-                    {
-                        flyout.Items.Add(item);
                     }
                 }
             }
