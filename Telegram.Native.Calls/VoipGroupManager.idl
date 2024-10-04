@@ -12,9 +12,11 @@ namespace Telegram.Native.Calls
     delegate void EmitJsonPayloadDelegate(Int32 ssrc, String payload);
 
     [default_interface]
-    runtimeclass VoipGroupManager : Windows.Foundation.IClosable
+    runtimeclass VoipGroupManager
     {
         VoipGroupManager(VoipGroupDescriptor descriptor);
+
+        void Stop();
 
         void SetConnectionMode(VoipGroupConnectionMode connectionMode, Boolean keepBroadcastIfWasEnabled, Boolean isUnifiedBroadcast);
 

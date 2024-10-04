@@ -17,7 +17,7 @@ using Windows.UI.Xaml;
 
 namespace Telegram.Services.Calls
 {
-    public partial class VoipCall : ServiceBase
+    public partial class VoipCall : VoipCallBase
     {
         public bool IsVideo { get; private set; }
 
@@ -63,7 +63,7 @@ namespace Telegram.Services.Calls
         }
 
         private string _videoInputId = "";
-        public string VideoInputId
+        public override string VideoInputId
         {
             get
             {
@@ -85,7 +85,7 @@ namespace Telegram.Services.Calls
         }
 
         private string _audioInputId = "";
-        public string AudioInputId
+        public override string AudioInputId
         {
             get
             {
@@ -104,7 +104,7 @@ namespace Telegram.Services.Calls
         }
 
         private string _audioOutputId = "";
-        public string AudioOutputId
+        public override string AudioOutputId
         {
             get
             {
@@ -324,7 +324,7 @@ namespace Telegram.Services.Calls
             }
         }
 
-        public void Discard()
+        public override void Discard()
         {
             // TODO: dismiss reason
             ClientService.Send(new DiscardCall(Id, false, Duration, IsVideo, 0));
@@ -615,10 +615,10 @@ namespace Telegram.Services.Calls
             };
 
             Logger.Info("Waiting for window creation");
-            service.OpenAsync(options).Wait();
+            _ = service.OpenAsync(options);
         }
 
-        private VoipPage CreatePresentation(ViewLifetimeControl control)
+        private UIElement CreatePresentation(ViewLifetimeControl control)
         {
             // Initialize video now, so that permissions are asked on the right window
             // TODO: this won't work for now, because WebRTC always initializes MediaCapture on the main thread
@@ -637,7 +637,7 @@ namespace Telegram.Services.Calls
             return new VoipPage(this);
         }
 
-        public void Show/*Window*/()
+        public override void Show()
         {
             WindowContext.Activate("Call");
         }

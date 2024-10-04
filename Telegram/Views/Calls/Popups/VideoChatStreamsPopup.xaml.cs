@@ -4,9 +4,11 @@
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+using Telegram.Common;
 using Telegram.Controls;
 using Telegram.Services;
 using Telegram.Td.Api;
+using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 
 namespace Telegram.Views.Calls.Popups
@@ -23,14 +25,11 @@ namespace Telegram.Views.Calls.Popups
             _clientService = clientService;
             _chatId = chatId;
 
-            Title = Strings.VoipStreamWith;
-            Schedule.Visibility = start
-                ? Windows.UI.Xaml.Visibility.Visible
-                : Windows.UI.Xaml.Visibility.Collapsed;
+            Title = Strings.Streaming;
 
             if (start)
             {
-                PrimaryButtonText = Strings.Start;
+                PrimaryButtonText = Strings.VoipChannelStartStreaming;
                 SecondaryButtonText = Strings.Cancel;
             }
             else
@@ -59,10 +58,20 @@ namespace Telegram.Views.Calls.Popups
         {
         }
 
-        private void Schedule_Click(object sender, Windows.UI.Xaml.RoutedEventArgs e)
+        private void Schedule_Click(object sender, RoutedEventArgs e)
         {
             IsScheduleSelected = true;
             Hide(ContentDialogResult.Primary);
+        }
+
+        private void CopyServer_Click(object sender, RoutedEventArgs e)
+        {
+            MessageHelper.CopyText(XamlRoot, ServerField.Text);
+        }
+
+        private void CopyKey_Click(object sender, RoutedEventArgs e)
+        {
+            MessageHelper.CopyText(XamlRoot, StreamKeyField.Text);
         }
     }
 }

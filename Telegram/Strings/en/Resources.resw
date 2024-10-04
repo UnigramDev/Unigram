@@ -9717,7 +9717,7 @@ The channel &quot;**{1}**&quot; will become private.</value>
     <value>Received Prize</value>
   </data>
   <data name="StarsNeededText" xml:space="preserve">
-    <value>Buy **Stars** and use them on **{0}** and other miniapps.</value>
+    <value>Buy **Stars** and use them in **{0}** and other mini apps.</value>
   </data>
   <data name="StarsNeededTextReactions" xml:space="preserve">
     <value>Buy **Stars** to send paid reactions to **{0}** and other channels.</value>
@@ -9917,6 +9917,9 @@ and enter your phone number.</value>
   </data>
   <data name="StartVoipChatPermission" xml:space="preserve">
     <value>Manage Live Streams</value>
+  </data>
+  <data name="StartVoipChatTitle" xml:space="preserve">
+    <value>Video Chat</value>
   </data>
   <data name="StatisticOverview" xml:space="preserve">
     <value>Overview</value>
@@ -10307,7 +10310,7 @@ Here’s what is now unlocked.</value>
   </data>
   <data name="TelegramStarsInfo" xml:space="preserve">
     <value>Buy Stars to unlock content and services
-in miniapps on Telegram.</value>
+in mini apps on Telegram.</value>
   </data>
   <data name="TelegramTones" xml:space="preserve">
     <value>Telegram tones</value>
@@ -11263,6 +11266,12 @@ However, it is currently available for purchase. **Learn more…**</value>
   <data name="VoipChannelScheduleVoiceChat" xml:space="preserve">
     <value>Schedule Live Stream</value>
   </data>
+  <data name="VoipChannelStartStreaming" xml:space="preserve">
+    <value>Start Streaming</value>
+  </data>
+  <data name="VoipChannelStartVoiceChat" xml:space="preserve">
+    <value>Start Live Stream</value>
+  </data>
   <data name="VoipChannelStopRecordingText" xml:space="preserve">
     <value>Do you want to stop recording this live stream?</value>
   </data>
@@ -11289,6 +11298,18 @@ However, it is currently available for purchase. **Learn more…**</value>
   </data>
   <data name="VoipChatStopScreenCapture" xml:space="preserve">
     <value>Stop sharing screen</value>
+  </data>
+  <data name="VoipChatStreamKey" xml:space="preserve">
+    <value>Stream Key</value>
+  </data>
+  <data name="VoipChatStreamServerUrl" xml:space="preserve">
+    <value>Server URL</value>
+  </data>
+  <data name="VoipChatStreamWithAnotherApp" xml:space="preserve">
+    <value>You can also stream with **another app &gt;**</value>
+  </data>
+  <data name="VoipChatStreamWithAnotherAppDescription" xml:space="preserve">
+    <value>Once you start broadcasting in your streaming app, tap Start Streaming below.</value>
   </data>
   <data name="VoipConnecting" xml:space="preserve">
     <value>Connecting</value>
@@ -11442,6 +11463,9 @@ Participants will see that the chat is being recorded.</value>
   <data name="VoipGroupStartRecordingTitle" xml:space="preserve">
     <value>Start recording</value>
   </data>
+  <data name="VoipGroupStartVoiceChat" xml:space="preserve">
+    <value>Start Video Chat</value>
+  </data>
   <data name="VoipGroupStopRecordCall" xml:space="preserve">
     <value>Stop recording</value>
   </data>
@@ -11505,11 +11529,17 @@ Participants will see that the chat is being recorded.</value>
   <data name="VoipOngoingAlert" xml:space="preserve">
     <value>End call with **{0}** and start a new one with **{1}**?</value>
   </data>
+  <data name="VoipOngoingAlert2" xml:space="preserve">
+    <value>End call with **{0}** and start a video chat in **{1}**?</value>
+  </data>
   <data name="VoipOngoingAlertTitle" xml:space="preserve">
     <value>Another call in progress</value>
   </data>
   <data name="VoipOngoingChatAlert" xml:space="preserve">
     <value>Leave video chat in **{0}** and start a new one in **{1}**?</value>
+  </data>
+  <data name="VoipOngoingChatAlert2" xml:space="preserve">
+    <value>Leave video chat in **{0}** and call **{1}**?</value>
   </data>
   <data name="VoipOngoingChatAlertTitle" xml:space="preserve">
     <value>Another video chat in progress</value>
@@ -11555,6 +11585,11 @@ Participants will see that the chat is being recorded.</value>
   </data>
   <data name="VoipStopVideo" xml:space="preserve">
     <value>Stop Video</value>
+  </data>
+  <data name="VoipStreamStart" xml:space="preserve">
+    <value>To stream video with another app,
+enter the server URL and Stream Key
+in your streaming app.</value>
   </data>
   <data name="VoipStreamWith" xml:space="preserve">
     <value>Stream with...</value>

@@ -10,6 +10,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
 using Telegram.Services;
+using Telegram.Services.Calls;
 using Telegram.Td.Api;
 using Telegram.ViewModels.Delegates;
 using Windows.Foundation;
@@ -21,37 +22,37 @@ namespace Telegram.Collections
     public partial class GroupCallParticipantsCollection : ObservableCollection<GroupCallParticipant>
         , ISupportIncrementalLoading
         , IDelegable<IGroupCallDelegate>
-    //, IHandle<UpdateGroupCall>
-    //, IHandle<UpdateGroupCallParticipant>
     {
         private readonly IClientService _clientService;
-        private readonly IEventAggregator _aggregator;
 
         private readonly Dictionary<int, GroupCallParticipant> _audioSources = new();
 
-        private GroupCall _groupCall;
+        private readonly VoipGroupCall _call;
+
+        private bool _loadedAllParticipants;
+        private int _participantCount;
 
         public IGroupCallDelegate Delegate { get; set; }
 
-        public GroupCallParticipantsCollection(IClientService clientService, IEventAggregator aggregator, GroupCall groupCall)
+        public GroupCallParticipantsCollection(VoipGroupCall call)
         {
-            _clientService = clientService;
-            _aggregator = aggregator;
+            _clientService = call.ClientService;
 
-            _groupCall = groupCall;
+            _call = call;
+            _call.PropertyChanged += OnPropertyChanged;
 
-            _aggregator.Subscribe<UpdateGroupCall>(this, Handle)
-                .Subscribe<UpdateGroupCallParticipant>(Handle);
+            _loadedAllParticipants = call.LoadedAllParticipants;
+            _participantCount = call.ParticipantCount;
         }
 
         public void Load()
         {
-            _clientService.Send(new LoadGroupCallParticipants(_groupCall.Id, 100));
+            _clientService.Send(new LoadGroupCallParticipants(_call.Id, 100));
         }
 
         public void Dispose()
         {
-            _aggregator.Unsubscribe(this);
+            _call.PropertyChanged -= OnPropertyChanged;
             Delegate = null;
         }
 
@@ -60,64 +61,60 @@ namespace Telegram.Collections
             return _audioSources.TryGetValue(audioSourceId, out participant);
         }
 
-        public void Handle(UpdateGroupCall update)
+        private void OnPropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
-            if (_groupCall.Id == update.GroupCall.Id)
+            if (_call.LoadedAllParticipants && _call.LoadedAllParticipants != _loadedAllParticipants)
             {
-                if (_groupCall.LoadedAllParticipants && _groupCall.LoadedAllParticipants != update.GroupCall.LoadedAllParticipants)
-                {
-                    Load();
-                }
-                else if (_groupCall.ParticipantCount == Items.Count && _groupCall.ParticipantCount < update.GroupCall.ParticipantCount)
-                {
-                    Load();
-                }
-
-                _groupCall = update.GroupCall;
-                OnPropertyChanged(new System.ComponentModel.PropertyChangedEventArgs("Count"));
+                Load();
             }
+            else if (_call.ParticipantCount == Items.Count && _call.ParticipantCount < _participantCount)
+            {
+                Load();
+            }
+
+            _loadedAllParticipants = _call.LoadedAllParticipants;
+            _participantCount = _call.ParticipantCount;
+
+            OnPropertyChanged(new System.ComponentModel.PropertyChangedEventArgs("Count"));
         }
 
-        public void Handle(UpdateGroupCallParticipant update)
+        public void Update(GroupCallParticipant participant)
         {
-            if (_groupCall.Id == update.GroupCallId)
+            TryEnqueue(() =>
             {
-                TryEnqueue(() =>
+                if (participant.Order.Length > 0)
                 {
-                    if (update.Participant.Order.Length > 0)
+                    var nextIndex = NextIndexOf(participant, out var updated, out int prevIndex);
+                    if (nextIndex >= 0)
                     {
-                        var nextIndex = NextIndexOf(update.Participant, out var updated, out int prevIndex);
-                        if (nextIndex >= 0)
+                        if (prevIndex >= 0)
                         {
-                            if (prevIndex >= 0)
-                            {
-                                RemoveAt(prevIndex);
-                            }
+                            RemoveAt(prevIndex);
+                        }
 
-                            _audioSources[update.Participant.IsCurrentUser ? 0 : update.Participant.AudioSourceId] = update.Participant;
-                            Insert(Math.Min(Count, nextIndex), update.Participant);
-                        }
-                        else if (updated != null)
-                        {
-                            Delegate?.UpdateGroupCallParticipant(updated);
-                        }
+                        _audioSources[participant.IsCurrentUser ? 0 : participant.AudioSourceId] = participant;
+                        Insert(Math.Min(Count, nextIndex), participant);
                     }
-                    else
+                    else if (updated != null)
                     {
-                        var already = this.FirstOrDefault(x => x.ParticipantId.AreTheSame(update.Participant.ParticipantId));
-                        if (already != null)
-                        {
-                            if (already.HasVideoInfo())
-                            {
-                                Delegate?.VideoInfoRemoved(already, already.ScreenSharingVideoInfo?.EndpointId, already.VideoInfo?.EndpointId);
-                            }
-
-                            _audioSources.Remove(update.Participant.IsCurrentUser ? 0 : update.Participant.AudioSourceId);
-                            Remove(already);
-                        }
+                        Delegate?.UpdateGroupCallParticipant(updated);
                     }
-                });
-            }
+                }
+                else
+                {
+                    var already = this.FirstOrDefault(x => x.ParticipantId.AreTheSame(participant.ParticipantId));
+                    if (already != null)
+                    {
+                        if (already.HasVideoInfo())
+                        {
+                            Delegate?.VideoInfoRemoved(already, already.ScreenSharingVideoInfo?.EndpointId, already.VideoInfo?.EndpointId);
+                        }
+
+                        _audioSources.Remove(participant.IsCurrentUser ? 0 : participant.AudioSourceId);
+                        Remove(already);
+                    }
+                }
+            });
         }
 
         private void TryEnqueue(DispatcherQueueHandler callback)
@@ -257,7 +254,7 @@ namespace Telegram.Collections
             {
                 count = (uint)Count;
 
-                var response = await _clientService.SendAsync(new LoadGroupCallParticipants(_groupCall.Id, 100));
+                var response = await _clientService.SendAsync(new LoadGroupCallParticipants(_call.Id, 100));
                 if (response is Ok)
                 {
                     count = (uint)Count - count;
@@ -271,6 +268,6 @@ namespace Telegram.Collections
             });
         }
 
-        public bool HasMoreItems => !_groupCall.LoadedAllParticipants;
+        public bool HasMoreItems => !_call.LoadedAllParticipants;
     }
 }

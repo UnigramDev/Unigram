@@ -10,6 +10,7 @@ using System.Numerics;
 using Telegram.Common;
 using Telegram.Converters;
 using Telegram.Navigation;
+using Telegram.Services.Calls;
 using Telegram.Td.Api;
 using Telegram.ViewModels;
 using Windows.UI.Composition;
@@ -74,19 +75,13 @@ namespace Telegram.Controls.Chats
         public bool UpdateGroupCall(Chat chat, GroupCall call)
         {
             var visible = true;
-            var channel = call?.IsRtmpStream is true || (chat.Type is ChatTypeSupergroup super && super.IsChannel);
+            var activeCallId = ViewModel.VoipService.ActiveCall is VoipGroupCall groupCall ? groupCall.Id : 0;
 
-            //if (chat.VideoChat.GroupCallId != call?.Id || !chat.VideoChat.HasParticipants || call == null || call.IsJoined)
-            //{
-            //    ShowHide(false);
-            //    visible = false;
-            //}
-            //else
-            if (call != null && chat.VideoChat.GroupCallId == call.Id && ((chat.VideoChat.HasParticipants && !(call.IsJoined || call.NeedRejoin)) || call.ScheduledStartDate > 0))
+            if (call != null && chat.VideoChat.GroupCallId == call.Id && chat.VideoChat.GroupCallId != activeCallId && (chat.VideoChat.HasParticipants || call.ScheduledStartDate > 0))
             {
                 ShowHide(true);
 
-                if (channel)
+                if (call.IsRtmpStream is true || chat.Type is ChatTypeSupergroup { IsChannel: true })
                 {
                     TitleLabel.Text = call.ScheduledStartDate > 0 && call.Title.Length > 0 ? call.Title : call.ScheduledStartDate != 0 ? Strings.VoipChannelScheduledVoiceChat : Strings.VoipChannelVoiceChat;
                     ServiceLabel.Text = call.ParticipantCount > 0 ? Locale.Declension(Strings.R.ViewersWatching, call.ParticipantCount) : Strings.ViewersWatchingNobody;

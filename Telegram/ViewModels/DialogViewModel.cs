@@ -102,7 +102,6 @@ namespace Telegram.ViewModels
         protected readonly INotificationsService _notificationsService;
         protected readonly IPlaybackService _playbackService;
         protected readonly IVoipService _voipService;
-        protected readonly IVoipGroupService _voipGroupService;
         protected readonly INetworkService _networkService;
         protected readonly IStorageService _storageService;
         protected readonly ITranslateService _translateService;
@@ -114,19 +113,20 @@ namespace Telegram.ViewModels
 
         public ITranslateService TranslateService => _translateService;
 
+        public IVoipService VoipService => _voipService;
+
         public DialogUnreadMessagesViewModel Mentions => _mentions;
         public DialogUnreadMessagesViewModel Reactions => _reactions;
 
         public IDialogDelegate Delegate { get; set; }
 
-        public DialogViewModel(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator, ILocationService locationService, INotificationsService pushService, IPlaybackService playbackService, IVoipService voipService, IVoipGroupService voipGroupService, INetworkService networkService, IStorageService storageService, ITranslateService translateService, IMessageFactory messageFactory)
+        public DialogViewModel(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator, ILocationService locationService, INotificationsService pushService, IPlaybackService playbackService, IVoipService voipService, INetworkService networkService, IStorageService storageService, ITranslateService translateService, IMessageFactory messageFactory)
             : base(clientService, settingsService, aggregator)
         {
             _locationService = locationService;
             _notificationsService = pushService;
             _playbackService = playbackService;
             _voipService = voipService;
-            _voipGroupService = voipGroupService;
             _networkService = networkService;
             _storageService = storageService;
             _translateService = translateService;
@@ -3306,7 +3306,7 @@ namespace Telegram.ViewModels
             Call(true);
         }
 
-        public async void Call(bool video)
+        public void Call(bool video)
         {
             var chat = _chat;
             if (chat == null)
@@ -3316,11 +3316,11 @@ namespace Telegram.ViewModels
 
             if (chat.Type is ChatTypePrivate or ChatTypeSecret)
             {
-                _voipService.Start(NavigationService, chat, video);
+                _voipService.StartPrivateCall(NavigationService, chat, video);
             }
             else
             {
-                await _voipGroupService.JoinAsync(XamlRoot, chat.Id);
+                _voipService.JoinGroupCall(NavigationService, chat.Id);
             }
         }
 
@@ -4109,7 +4109,7 @@ namespace Telegram.ViewModels
 
         #region Group calls
 
-        public async void JoinGroupCall()
+        public void JoinGroupCall()
         {
             var chat = _chat;
             if (chat == null)
@@ -4117,7 +4117,7 @@ namespace Telegram.ViewModels
                 return;
             }
 
-            await _voipGroupService.JoinAsync(XamlRoot, chat.Id);
+            _voipService.JoinGroupCall(NavigationService, chat.Id);
         }
 
         #endregion

@@ -5,7 +5,6 @@
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
 using System;
-using System.Threading.Tasks;
 using Telegram.Common;
 using Telegram.Controls;
 using Telegram.Controls.Media;
@@ -16,12 +15,9 @@ using Telegram.Services;
 using Telegram.Services.Calls;
 using Telegram.Td.Api;
 using Telegram.Views.Calls.Popups;
-using Telegram.Views.Host;
 using Telegram.Views.Popups;
-using Windows.Devices.Enumeration;
 using Windows.Devices.Input;
 using Windows.System.Display;
-using Windows.UI;
 using Windows.UI.Composition;
 using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
@@ -38,25 +34,19 @@ namespace Telegram.Views.Calls
         private readonly IClientService _clientService;
         private readonly IEventAggregator _aggregator;
 
-        private VoipGroupService _service;
+        private VoipGroupCall _call;
 
-        private bool _disposed;
-
-        private VoipVideoOutputSink _unifiedVideo;
+        private readonly VoipVideoOutputSink _unifiedVideo;
 
         private readonly DispatcherTimer _inactivityTimer;
         private readonly DispatcherTimer _scheduledTimer;
-        private readonly DispatcherTimer _debouncerTimer;
 
         private readonly DisplayRequest _displayRequest = new();
 
-        public LiveStreamPage(IClientService clientService, IEventAggregator aggregator, VoipGroupService voipService)
+        public LiveStreamPage(VoipGroupCall call)
         {
             InitializeComponent();
             Logger.Info();
-
-            _clientService = clientService;
-            _aggregator = aggregator;
 
             _inactivityTimer = new DispatcherTimer();
             _inactivityTimer.Interval = TimeSpan.FromSeconds(2);
@@ -71,23 +61,16 @@ namespace Telegram.Views.Calls
             _scheduledTimer.Interval = TimeSpan.FromSeconds(1);
             _scheduledTimer.Tick += OnTick;
 
-            _debouncerTimer = new DispatcherTimer();
-            _debouncerTimer.Interval = TimeSpan.FromMilliseconds(Constants.AnimatedThrottle);
-            _debouncerTimer.Tick += (s, args) =>
-            {
-                _debouncerTimer.Stop();
-            };
-
-            _service = voipService;
-            _service.NetworkStateUpdated += OnNetworkStateUpdated;
-            _service.AvailableStreamsChanged += OnAvailableStreamsChanged;
-            _service.AddIncomingVideoOutput("unified", _unifiedVideo = VoipVideoOutput.CreateSink(Viewport, false));
+            _call = call;
+            _call.NetworkStateUpdated += OnNetworkStateUpdated;
+            _call.AvailableStreamsChanged += OnAvailableStreamsChanged;
+            _call.AddIncomingVideoOutput("unified", _unifiedVideo = VoipVideoOutput.CreateSink(Viewport, false));
 
             Window.Current.SetTitleBar(TitleArea);
 
-            if (voipService.Call != null)
+            if (call != null)
             {
-                Update(voipService.Call, voipService.CurrentUser);
+                Update(call, call.CurrentUser);
             }
 
             ElementCompositionPreview.SetIsTranslationEnabled(Viewport, true);
@@ -195,7 +178,7 @@ namespace Telegram.Views.Calls
 
         private void OnAvailableStreamsChanged()
         {
-            if (_service.AvailableStreamsCount > 0 || !_service.IsConnected)
+            if (_call.AvailableStreamsCount > 0 || !_call.IsConnected)
             {
                 _transportUnavailable = false;
                 _inactivityTimer.Start();
@@ -208,13 +191,13 @@ namespace Telegram.Views.Calls
                 _transportUnavailable = true;
                 ShowHideTransport(true);
 
-                if (_clientService.TryGetSupergroup(_service.Chat, out Supergroup supergroup))
+                if (_clientService.TryGetSupergroup(_call.Chat, out Supergroup supergroup))
                 {
-                    TextBlockHelper.SetMarkdown(NoStream, supergroup.Status is ChatMemberStatusCreator ? Strings.NoRtmpStreamFromAppOwner : string.Format(Strings.NoRtmpStreamFromAppViewer, _service.Chat.Title));
+                    TextBlockHelper.SetMarkdown(NoStream, supergroup.Status is ChatMemberStatusCreator ? Strings.NoRtmpStreamFromAppOwner : string.Format(Strings.NoRtmpStreamFromAppViewer, _call.Chat.Title));
                 }
-                else if (_clientService.TryGetBasicGroup(_service.Chat, out BasicGroup basicGroup))
+                else if (_clientService.TryGetBasicGroup(_call.Chat, out BasicGroup basicGroup))
                 {
-                    TextBlockHelper.SetMarkdown(NoStream, basicGroup.Status is ChatMemberStatusCreator ? Strings.NoRtmpStreamFromAppOwner : string.Format(Strings.NoRtmpStreamFromAppViewer, _service.Chat.Title));
+                    TextBlockHelper.SetMarkdown(NoStream, basicGroup.Status is ChatMemberStatusCreator ? Strings.NoRtmpStreamFromAppOwner : string.Format(Strings.NoRtmpStreamFromAppViewer, _call.Chat.Title));
                 }
 
                 NoStream.Visibility = Visibility.Visible;
@@ -224,9 +207,9 @@ namespace Telegram.Views.Calls
 
         private void OnTick(object sender, object e)
         {
-            if (_service != null && _service.Call != null && _service.Call.ScheduledStartDate != 0)
+            if (_call != null && _call != null && _call.ScheduledStartDate != 0)
             {
-                StartsIn.Text = _service.Call.GetStartsIn();
+                StartsIn.Text = _call.GetStartsIn();
             }
             else
             {
@@ -241,40 +224,15 @@ namespace Telegram.Views.Calls
 
         private void OnUnloaded(object sender, RoutedEventArgs e)
         {
-            Dispose();
-
             _displayRequest.TryRequestRelease();
 
             _scheduledTimer.Stop();
             _inactivityTimer.Stop();
-        }
-
-        public void Dispose(bool? discard = null)
-        {
-            if (discard == true && _service != null)
-            {
-                _service.DiscardAsync();
-            }
-            else if (discard == false && _service != null)
-            {
-                _service.LeaveAsync();
-            }
-
-            if (_disposed)
-            {
-                return;
-            }
-
-            _disposed = true;
 
             _unifiedVideo?.Stop();
 
-            if (_service != null)
-            {
-                _service.NetworkStateUpdated -= OnNetworkStateUpdated;
-                _service.AvailableStreamsChanged -= OnAvailableStreamsChanged;
-                _service = null;
-            }
+            _call.NetworkStateUpdated -= OnNetworkStateUpdated;
+            _call.AvailableStreamsChanged -= OnAvailableStreamsChanged;
         }
 
         private void OnSizeChanged(object sender, SizeChangedEventArgs e)
@@ -298,9 +256,15 @@ namespace Telegram.Views.Calls
             }
         }
 
-        public void Update(GroupCall call, GroupCallParticipant currentUser)
+        public void Update(VoipGroupCall call, GroupCallParticipant currentUser)
         {
-            TitleInfo.Text = call.Title.Length > 0 ? call.Title : _clientService.GetTitle(_service.Chat);
+            if (call.IsClosed)
+            {
+                Close();
+                return;
+            }
+
+            TitleInfo.Text = call.Title.Length > 0 ? call.Title : _clientService.GetTitle(_call.Chat);
 
             if (call.ScheduledStartDate != 0)
             {
@@ -317,7 +281,7 @@ namespace Telegram.Views.Calls
                 }
 
                 FindName(nameof(ScheduledPanel));
-                SubtitleInfo.Text = _service.IsChannel ? Strings.VoipChannelScheduledVoiceChat : Strings.VoipGroupScheduledVoiceChat;
+                SubtitleInfo.Text = _call.IsChannel ? Strings.VoipChannelScheduledVoiceChat : Strings.VoipGroupScheduledVoiceChat;
                 ParticipantsPanel.Visibility = Visibility.Collapsed;
                 ScheduledInfo.Text = duration < TimeSpan.Zero ? Strings.VoipChatLateBy : Strings.VoipChatStartsIn;
                 StartsAt.Text = call.GetStartsAt();
@@ -342,16 +306,16 @@ namespace Telegram.Views.Calls
                 ParticipantsPanel.Visibility = Visibility.Visible;
             }
 
-            UpdateNetworkState(call, currentUser, _service.IsConnected);
+            UpdateNetworkState(call, currentUser, _call.IsConnected);
         }
 
-        private void OnNetworkStateUpdated(VoipGroupService sender, VoipGroupCallNetworkStateChangedEventArgs args)
+        private void OnNetworkStateUpdated(VoipGroupCall sender, VoipGroupCallNetworkStateChangedEventArgs args)
         {
             this.BeginOnUIThread(() =>
             {
-                if (_service != null)
+                if (_call != null)
                 {
-                    UpdateNetworkState(_service.Call, _service.CurrentUser, args.IsConnected);
+                    UpdateNetworkState(_call, _call.CurrentUser, args.IsConnected);
                 }
 
                 OnAvailableStreamsChanged();
@@ -360,92 +324,64 @@ namespace Telegram.Views.Calls
 
         private async void Leave_Click(object sender, RoutedEventArgs e)
         {
-            var chat = _service?.Chat;
-            var call = _service?.Call;
-
-            if (chat == null || call == null)
-            {
-                Close();
-                return;
-            }
-
-            if (call.CanBeManaged)
+            if (_call.CanBeManaged)
             {
                 var popup = new MessagePopup
                 {
                     RequestedTheme = ElementTheme.Dark,
-                    Title = _service.IsChannel ? Strings.VoipChannelLeaveAlertTitle : Strings.VoipGroupLeaveAlertTitle,
-                    Message = _service.IsChannel ? Strings.VoipChannelLeaveAlertText : Strings.VoipGroupLeaveAlertText,
+                    Title = _call.IsChannel ? Strings.VoipChannelLeaveAlertTitle : Strings.VoipGroupLeaveAlertTitle,
+                    Message = _call.IsChannel ? Strings.VoipChannelLeaveAlertText : Strings.VoipGroupLeaveAlertText,
                     PrimaryButtonText = Strings.VoipGroupLeave,
                     SecondaryButtonText = Strings.Cancel,
-                    CheckBoxLabel = _service.IsChannel ? Strings.VoipChannelLeaveAlertEndChat : Strings.VoipGroupLeaveAlertEndChat
+                    CheckBoxLabel = _call.IsChannel ? Strings.VoipChannelLeaveAlertEndChat : Strings.VoipGroupLeaveAlertEndChat
                 };
 
                 var confirm = await popup.ShowQueuedAsync(XamlRoot);
                 if (confirm == ContentDialogResult.Primary)
                 {
-                    Dispose(popup.IsChecked == true);
-                    Close();
+                    _call.Discard(popup.IsChecked == true);
                 }
             }
             else
             {
-                Dispose(false);
-                Close();
+                _call.Discard(false);
             }
         }
 
         private async void Discard()
         {
-            var chat = _service?.Chat;
-            var call = _service?.Call;
-
-            if (chat == null || call == null)
-            {
-                Close();
-                return;
-            }
-
             var popup = new MessagePopup();
             popup.RequestedTheme = ElementTheme.Dark;
-            popup.Title = _service.IsChannel ? Strings.VoipChannelEndAlertTitle : Strings.VoipGroupEndAlertTitle;
-            popup.Message = _service.IsChannel ? Strings.VoipChannelEndAlertText : Strings.VoipGroupEndAlertText;
+            popup.Title = _call.IsChannel ? Strings.VoipChannelEndAlertTitle : Strings.VoipGroupEndAlertTitle;
+            popup.Message = _call.IsChannel ? Strings.VoipChannelEndAlertText : Strings.VoipGroupEndAlertText;
             popup.PrimaryButtonText = Strings.VoipGroupEnd;
             popup.SecondaryButtonText = Strings.Cancel;
 
             var confirm = await popup.ShowQueuedAsync(XamlRoot);
             if (confirm == ContentDialogResult.Primary)
             {
-                Dispose(true);
+                _call.Discard(true);
                 Close();
             }
         }
 
-        private void UpdateNetworkState(GroupCall call, GroupCallParticipant currentUser, bool? connected = null)
+        private void UpdateNetworkState(VoipGroupCall call, GroupCallParticipant currentUser, bool? connected = null)
         {
 
         }
 
-        private async void Menu_ContextRequested(object sender, RoutedEventArgs e)
+        private void Menu_ContextRequested(object sender, RoutedEventArgs e)
         {
             var flyout = new MenuFlyout();
 
-            var chat = _service?.Chat;
-            var call = _service?.Call;
-
-            if (chat == null || call == null)
+            if (_call.CanBeManaged)
             {
-                return;
+                flyout.CreateFlyoutItem(SetTitle, _call.IsChannel ? Strings.VoipChannelEditTitle : Strings.VoipGroupEditTitle, Icons.Edit);
             }
 
-            if (call.CanBeManaged)
+            if (_call.CanBeManaged && _call.ScheduledStartDate == 0)
             {
-                flyout.CreateFlyoutItem(SetTitle, _service.IsChannel ? Strings.VoipChannelEditTitle : Strings.VoipGroupEditTitle, Icons.Edit);
-            }
-
-            if (call.CanBeManaged && call.ScheduledStartDate == 0)
-            {
-                if (call.RecordDuration > 0)
+                if (_call.RecordDuration > 0)
                 {
                     flyout.CreateFlyoutItem(StopRecording, Strings.VoipGroupStopRecordCall, Icons.Record);
                 }
@@ -455,18 +391,18 @@ namespace Telegram.Views.Calls
                 }
             }
 
-            if (call.ScheduledStartDate == 0)
+            if (_call.ScheduledStartDate == 0 && MediaDeviceCoordinator.HasAudioOutput)
             {
                 flyout.CreateFlyoutSeparator();
 
-                var outputId = _service.CurrentAudioOutput;
+                var outputId = _call.AudioOutputId;
 
                 var defaultOutput = new ToggleMenuFlyoutItem();
                 defaultOutput.Text = Strings.Default;
                 defaultOutput.IsChecked = outputId == string.Empty;
                 defaultOutput.Click += (s, args) =>
                 {
-                    _service.CurrentAudioOutput = string.Empty;
+                    _call.AudioOutputId = string.Empty;
                 };
 
                 var output = new MenuFlyoutSubItem();
@@ -474,15 +410,14 @@ namespace Telegram.Views.Calls
                 output.Icon = MenuFlyoutHelper.CreateIcon(Icons.Speaker3);
                 output.Items.Add(defaultOutput);
 
-                var outputDevices = await DeviceInformation.FindAllAsync(DeviceClass.AudioRender);
-                foreach (var device in outputDevices)
+                foreach (var device in MediaDeviceCoordinator.AudioOutput)
                 {
                     var deviceItem = new ToggleMenuFlyoutItem();
                     deviceItem.Text = device.Name;
                     deviceItem.IsChecked = outputId == device.Id;
                     deviceItem.Click += (s, args) =>
                     {
-                        _service.CurrentAudioOutput = device.Id;
+                        _call.AudioOutputId = device.Id;
                     };
 
                     output.Items.Add(deviceItem);
@@ -493,7 +428,7 @@ namespace Telegram.Views.Calls
 
             //flyout.CreateFlyoutItem(ShareInviteLink, Strings.VoipGroupShareInviteLink, Icons.Link);
 
-            if (chat.Type is ChatTypeSupergroup && _clientService.TryGetSupergroup(chat, out Supergroup supergroup))
+            if (_call.Chat.Type is ChatTypeSupergroup && _clientService.TryGetSupergroup(_call.Chat, out Supergroup supergroup))
             {
                 if (supergroup.Status is ChatMemberStatusCreator)
                 {
@@ -501,7 +436,7 @@ namespace Telegram.Views.Calls
                     flyout.CreateFlyoutItem(StreamWith, Strings.VoipStreamWith, Icons.Live);
                 }
             }
-            else if (chat.Type is ChatTypeBasicGroup && _clientService.TryGetBasicGroup(chat, out BasicGroup basicGroup))
+            else if (_call.Chat.Type is ChatTypeBasicGroup && _clientService.TryGetBasicGroup(_call.Chat, out BasicGroup basicGroup))
             {
                 if (basicGroup.Status is ChatMemberStatusCreator)
                 {
@@ -510,10 +445,10 @@ namespace Telegram.Views.Calls
                 }
             }
 
-            if (call.CanBeManaged)
+            if (_call.CanBeManaged)
             {
                 flyout.CreateFlyoutSeparator();
-                flyout.CreateFlyoutItem(Discard, _service.IsChannel ? Strings.VoipChannelEndChat : Strings.VoipGroupEndChat, Icons.Dismiss, destructive: true);
+                flyout.CreateFlyoutItem(Discard, _call.IsChannel ? Strings.VoipChannelEndChat : Strings.VoipGroupEndChat, Icons.Dismiss, destructive: true);
             }
 
             if (flyout.Items.Count > 0)
@@ -524,7 +459,7 @@ namespace Telegram.Views.Calls
 
         private async void StreamWith()
         {
-            var popup = new VideoChatStreamsPopup(_clientService, _service.Chat.Id, false);
+            var popup = new VideoChatStreamsPopup(_clientService, _call.Chat.Id, false);
             popup.RequestedTheme = ElementTheme.Dark;
 
             await popup.ShowQueuedAsync(XamlRoot);
@@ -532,82 +467,54 @@ namespace Telegram.Views.Calls
 
         private async void SetTitle()
         {
-            var call = _service.Call;
-            var chat = _service.Chat;
-
-            if (call == null || chat == null)
-            {
-                return;
-            }
-
             var input = new InputPopup();
             input.RequestedTheme = ElementTheme.Dark;
-            input.Title = _service.IsChannel ? Strings.VoipChannelTitle : Strings.VoipGroupTitle;
+            input.Title = _call.IsChannel ? Strings.VoipChannelTitle : Strings.VoipGroupTitle;
             input.PrimaryButtonText = Strings.Save;
             input.SecondaryButtonText = Strings.Cancel;
-            input.PlaceholderText = chat.Title;
-            input.Text = call.Title;
+            input.PlaceholderText = _call.Chat.Title;
+            input.Text = _call.Title;
             input.MaxLength = 64;
             input.MinLength = 0;
 
             var confirm = await input.ShowQueuedAsync(XamlRoot);
             if (confirm == ContentDialogResult.Primary)
             {
-                _clientService.Send(new SetGroupCallTitle(call.Id, input.Text));
+                _clientService.Send(new SetGroupCallTitle(_call.Id, input.Text));
             }
         }
 
         private async void StartRecording()
         {
-            var call = _service.Call;
-            var chat = _service.Chat;
-
-            if (call == null || chat == null)
-            {
-                return;
-            }
-
-            var input = new RecordVideoChatPopup(call.Title);
+            var input = new RecordVideoChatPopup(_call.Title);
             input.RequestedTheme = ElementTheme.Dark;
 
             var confirm = await input.ShowQueuedAsync(XamlRoot);
             if (confirm == ContentDialogResult.Primary)
             {
-                _clientService.Send(new StartGroupCallRecording(call.Id, input.FileName, input.RecordVideo, input.UsePortraitOrientation));
+                _clientService.Send(new StartGroupCallRecording(_call.Id, input.FileName, input.RecordVideo, input.UsePortraitOrientation));
             }
         }
 
         private async void StopRecording()
         {
-            var call = _service.Call;
-            if (call == null)
-            {
-                return;
-            }
-
             var popup = new MessagePopup();
             popup.RequestedTheme = ElementTheme.Dark;
             popup.Title = Strings.VoipGroupStopRecordingTitle;
-            popup.Message = _service.IsChannel ? Strings.VoipChannelStopRecordingText : Strings.VoipGroupStopRecordingText;
+            popup.Message = _call.IsChannel ? Strings.VoipChannelStopRecordingText : Strings.VoipGroupStopRecordingText;
             popup.PrimaryButtonText = Strings.Stop;
             popup.SecondaryButtonText = Strings.Cancel;
 
             var confirm = await popup.ShowQueuedAsync(XamlRoot);
             if (confirm == ContentDialogResult.Primary)
             {
-                _clientService.Send(new EndGroupCallRecording(call.Id));
+                _clientService.Send(new EndGroupCallRecording(_call.Id));
             }
         }
 
         private async void ShareInviteLink()
         {
-            var call = _service.Call;
-            if (call == null)
-            {
-                return;
-            }
-
-            await this.ShowPopupAsync(_clientService.SessionId, new ChooseChatsPopup(), new ChooseChatsConfigurationGroupCall(call));
+            await this.ShowPopupAsync(_clientService.SessionId, new ChooseChatsPopup(), new ChooseChatsConfigurationGroupCall(_call.Id));
         }
 
         private readonly ScrollViewer _scrollingHost;
@@ -632,12 +539,12 @@ namespace Telegram.Views.Calls
             root.StartAnimation("Opacity", anim);
         }
 
-        private void Viewport_PointerEntered(object sender, Windows.UI.Xaml.Input.PointerRoutedEventArgs e)
+        private void Viewport_PointerEntered(object sender, PointerRoutedEventArgs e)
         {
 
         }
 
-        private void Viewport_PointerExited(object sender, Windows.UI.Xaml.Input.PointerRoutedEventArgs e)
+        private void Viewport_PointerExited(object sender, PointerRoutedEventArgs e)
         {
 
         }

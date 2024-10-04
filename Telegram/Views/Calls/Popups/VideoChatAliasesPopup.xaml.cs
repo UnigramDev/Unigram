@@ -18,12 +18,15 @@ namespace Telegram.Views.Calls.Popups
     public sealed partial class VideoChatAliasesPopup : ContentPopup
     {
         private readonly IClientService _clientService;
+        private readonly bool _canSchedule;
 
         public VideoChatAliasesPopup(IClientService clientService, Chat chat, bool canSchedule, IList<MessageSender> senders)
         {
             InitializeComponent();
 
             _clientService = clientService;
+            _canSchedule = canSchedule;
+
             var already = senders.FirstOrDefault(x => x.AreTheSame(chat.VideoChat.DefaultParticipantId));
             var channel = chat.Type is ChatTypeSupergroup super && super.IsChannel;
 
@@ -31,14 +34,11 @@ namespace Telegram.Views.Calls.Popups
                 ? Strings.VoipGroupDisplayAs
                 : channel
                 ? Strings.StartVoipChannelTitle
-                : Strings.VoipGroupStartAs;
+                : Strings.StartVoipChatTitle;
 
             MessageLabel.Text = channel
                 ? Strings.VoipGroupStartAsInfo
                 : Strings.VoipGroupStartAsInfoGroup;
-
-            ScrollingHost.ItemsSource = senders;
-            ScrollingHost.SelectedItem = already ?? senders.FirstOrDefault();
 
             Schedule.Content = channel
                 ? Strings.VoipChannelScheduleVoiceChat
@@ -47,6 +47,13 @@ namespace Telegram.Views.Calls.Popups
             Schedule.Visibility = canSchedule
                 ? Visibility.Visible
                 : Visibility.Collapsed;
+
+            Start.Content = channel
+                ? Strings.VoipChannelStartVoiceChat
+                : Strings.VoipGroupStartVoiceChat;
+
+            ScrollingHost.ItemsSource = senders;
+            ScrollingHost.SelectedItem = already ?? senders.FirstOrDefault();
 
             if (clientService.TryGetSupergroup(chat, out Supergroup supergroup))
             {
@@ -64,9 +71,6 @@ namespace Telegram.Views.Calls.Popups
             {
                 StartWith.Visibility = Visibility.Collapsed;
             }
-
-            PrimaryButtonText = Strings.Start;
-            SecondaryButtonText = Strings.Close;
         }
 
         public bool IsScheduleSelected { get; private set; }
@@ -106,22 +110,22 @@ namespace Telegram.Views.Calls.Popups
 
         private void OnSelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            if (ScrollingHost.SelectedItem is MessageSender)
+            if (ScrollingHost.SelectedItem is MessageSender messageSender)
             {
-                //if (_clientService.TryGetUser(messageSender, out User user))
-                //{
-                //    PrimaryButtonText = string.Format(Strings.VoipGroupContinueAs, user.GetFullName());
-                //}
-                //else if (_clientService.TryGetChat(messageSender, out Chat chat))
-                //{
-                //    PrimaryButtonText = string.Format(Strings.VoipGroupContinueAs, _clientService.GetTitle(chat));
-                //}
+                if (_clientService.TryGetUser(messageSender, out User user))
+                {
+                    Start.Content = string.Format(Strings.VoipGroupContinueAs, user.FullName());
+                }
+                else if (_clientService.TryGetChat(messageSender, out Chat chat))
+                {
+                    Start.Content = string.Format(Strings.VoipGroupContinueAs, _clientService.GetTitle(chat));
+                }
 
-                IsPrimaryButtonEnabled = true;
+                Start.IsEnabled = true;
             }
             else
             {
-                IsPrimaryButtonEnabled = false;
+                Start.IsEnabled = false;
             }
         }
 
@@ -131,9 +135,14 @@ namespace Telegram.Views.Calls.Popups
             Hide(ContentDialogResult.Primary);
         }
 
-        private void StartWith_Click(object sender, RoutedEventArgs e)
+        private void StartWith_Click(object sender, TextUrlClickEventArgs e)
         {
             IsStartWithSelected = true;
+            Hide(ContentDialogResult.Primary);
+        }
+
+        private void Start_Click(object sender, RoutedEventArgs e)
+        {
             Hide(ContentDialogResult.Primary);
         }
     }

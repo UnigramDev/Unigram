@@ -34,7 +34,7 @@ namespace Telegram.Controls.Cells
         private SpriteVisual _pausedVisual;
         private CompositionEffectBrush _pausedBrush;
 
-        private readonly VoipVideoOutputSink _sink;
+        private VoipVideoOutputSink _sink;
         private readonly bool _screenSharing;
 
         public GroupCallParticipantGridCell(IClientService clientService, GroupCallParticipant participant, GroupCallParticipantVideoInfo videoInfo, bool screenSharing)
@@ -97,7 +97,8 @@ namespace Telegram.Controls.Cells
                 
                 if (value is false)
                 {
-                    Sink.Stop();
+                    _sink.Stop();
+                    _sink = VoipVideoOutput.CreateSink(CanvasRoot, false);
                 }
             }
         }
@@ -139,7 +140,7 @@ namespace Telegram.Controls.Cells
 
             if (participant.IsSpeaking)
             {
-                Speaking.BorderBrush = new SolidColorBrush { Color = Color.FromArgb(0xFF, 0x33, 0xc6, 0x59) };
+                Speaking.BorderBrush = new SolidColorBrush(Color.FromArgb(0xFF, 0x33, 0xc6, 0x59));
                 Glyph.Text = Icons.MicOn;
             }
             else

@@ -1629,7 +1629,7 @@ namespace Telegram.ViewModels
             }
             else if (message.Content is MessageVideoChatStarted or MessageVideoChatScheduled)
             {
-                await _voipGroupService.JoinAsync(XamlRoot, message.ChatId);
+                _voipService.JoinGroupCall(NavigationService, message.ChatId);
             }
             else if (message.Content is MessagePaymentSuccessful)
             {

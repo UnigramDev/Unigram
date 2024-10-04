@@ -1362,7 +1362,7 @@ namespace Telegram.Views.Calls
 
         public async void Close()
         {
-            if (XamlRoot.Content is RootPage root)
+            if (XamlRoot?.Content is RootPage root)
             {
                 root.PresentContent(null);
                 return;

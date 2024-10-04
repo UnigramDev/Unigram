@@ -63,7 +63,6 @@ namespace Telegram
                 ( typeof(ISettingsSearchService), typeof(SettingsSearchService) ),
                 ( typeof(ICloudUpdateService), typeof(CloudUpdateService) ),
                 ( typeof(IShortcutsService), typeof(ShortcutsService) ),
-                ( typeof(IVoipGroupService), typeof(VoipGroupService) ),
                 ( typeof(IDeviceInfoService), typeof(DeviceInfoService) ),
                 ( typeof(IEventAggregator), typeof(EventAggregator) ),
                 ( typeof(ILocationService), typeof(LocationService) ),

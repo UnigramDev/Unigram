@@ -564,18 +564,6 @@ public static class VoipGroupManager_stub
             throw new RuntimeException(ex);
         }
     }
-    public static void Dispose_stub(this Telegram.Native.Calls.VoipGroupManager sender)
-    {
-        try
-        {
-            sender.Dispose();
-        }
-        catch (Exception ex)
-        {
-            Logger.Error(Environment.StackTrace);
-            throw new RuntimeException(ex);
-        }
-    }
     public static void EmitJoinPayload_stub(this Telegram.Native.Calls.VoipGroupManager sender, Telegram.Native.Calls.EmitJsonPayloadDelegate completion)
     {
         try
@@ -665,6 +653,18 @@ public static class VoipGroupManager_stub
         try
         {
             sender.SetVolume(ssrc, volume);
+        }
+        catch (Exception ex)
+        {
+            Logger.Error(Environment.StackTrace);
+            throw new RuntimeException(ex);
+        }
+    }
+    public static void Stop_stub(this Telegram.Native.Calls.VoipGroupManager sender)
+    {
+        try
+        {
+            sender.Stop();
         }
         catch (Exception ex)
         {
@@ -5072,6 +5072,18 @@ public static class JsonObject_stub
         try
         {
             return sender.GetNamedNumber(name, defaultValue);
+        }
+        catch (Exception ex)
+        {
+            Logger.Error(Environment.StackTrace);
+            throw new RuntimeException(ex);
+        }
+    }
+    public static double GetNamedNumber_stub(this Windows.Data.Json.JsonObject sender, string name)
+    {
+        try
+        {
+            return sender.GetNamedNumber(name);
         }
         catch (Exception ex)
         {

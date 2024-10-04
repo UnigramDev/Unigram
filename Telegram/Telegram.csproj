@@ -295,6 +295,7 @@
       <DependentUpon>WebVideoPlayer.xaml</DependentUpon>
     </Compile>
     <Compile Include="CsWinRT.cs" />
+    <Compile Include="Services\Calls\VoipCallBase.cs" />
     <Compile Include="Services\Calls\VoipCall.cs" />
     <Compile Include="Services\Calls\VoipCallAudioLevelUpdatedEventArgs.cs" />
     <Compile Include="Services\Calls\VoipCallConnectionStateChangedEventArgs.cs" />
@@ -313,6 +314,8 @@
     <Compile Include="Controls\PremiumSlider.cs" />
     <Compile Include="Services\Calls\VoipService.cs" />
     <Compile Include="Services\Calls\VoipVideoType.cs" />
+    <Compile Include="Services\Calls\VoipGroupCall.cs" />
+    <Compile Include="Services\Calls\VoipGroupCallNetworkStateChangedEventArgs.cs" />
     <Compile Include="Streams\PremiumInfoFileSource.cs" />
     <Compile Include="Td\Api\ReactionTypeEqualityComparer.cs" />
     <Compile Include="Controls\PremiumStarCount.cs" />
@@ -447,7 +450,6 @@
     </Compile>
     <Compile Include="Services\ClientService.StoryList.cs" />
     <Compile Include="Services\ServiceBase.cs" />
-    <Compile Include="Services\VoipGroupService.cs" />
     <Compile Include="Streams\AnimatedImageSource.cs" />
     <Compile Include="Streams\ReactionFileSource.cs" />
     <Compile Include="Streams\CustomEmojiFileSource.cs" />
@@ -1056,6 +1058,9 @@
     <Compile Include="Views\Calls\LiveStreamPage.xaml.cs">
       <DependentUpon>LiveStreamPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\Calls\Popups\VideoChatAliasesPopup.xaml.cs">
+      <DependentUpon>VideoChatAliasesPopup.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\Calls\VoipPage.xaml.cs">
       <DependentUpon>VoipPage.xaml</DependentUpon>
     </Compile>
@@ -1290,9 +1295,6 @@
     </Compile>
     <Compile Include="Views\Popups\UnconfirmedSessionPopup.xaml.cs">
       <DependentUpon>UnconfirmedSessionPopup.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\Calls\Popups\VideoChatAliasesPopup.xaml.cs">
-      <DependentUpon>VideoChatAliasesPopup.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Calls\Popups\VideoChatStreamsPopup.xaml.cs">
       <DependentUpon>VideoChatStreamsPopup.xaml</DependentUpon>
@@ -2849,6 +2851,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="Views\Calls\Popups\VideoChatAliasesPopup.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Views\Calls\VoipPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -3156,10 +3162,6 @@
     <Page Include="Views\Popups\UnconfirmedSessionPopup.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Views\Calls\Popups\VideoChatAliasesPopup.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
     </Page>
     <Page Include="Views\Calls\Popups\VideoChatStreamsPopup.xaml">
       <SubType>Designer</SubType>

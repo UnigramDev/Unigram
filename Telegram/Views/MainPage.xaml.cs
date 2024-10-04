@@ -607,8 +607,6 @@ namespace Telegram.Views
             this.BeginOnUIThread(() =>
             {
                 var call = ViewModel.VoipService.ActiveCall;
-                var groupCall = ViewModel.VoipGroupService.Call;
-
                 if (call != null)
                 {
                     UpdatePlaybackHidden(true);
@@ -616,21 +614,13 @@ namespace Telegram.Views
 
                     CallBanner.Update(call);
                 }
-                else if (groupCall != null)
-                {
-                    UpdatePlaybackHidden(true);
-                    FindName(nameof(CallBanner));
-
-                    CallBanner.Update(ViewModel.VoipGroupService);
-                }
                 else
                 {
                     UpdatePlaybackHidden(false);
 
                     if (CallBanner != null)
                     {
-                        CallBanner.Update(null as IVoipGroupService);
-                        CallBanner.Update(null as VoipCall);
+                        CallBanner.Update(null);
                         UnloadObject(CallBanner);
                     }
                 }

@@ -17,6 +17,7 @@ using Telegram.Common;
 using Telegram.Controls.Chats;
 using Telegram.Converters;
 using Telegram.Native;
+using Telegram.Services.Calls;
 using Telegram.Td.Api;
 using Telegram.ViewModels;
 using Windows.UI;
@@ -2157,7 +2158,7 @@ namespace Telegram.Td.Api
             return Converters.Formatter.DateAt(messageVideoChatScheduled.StartDate);
         }
 
-        public static string GetStartsAt(this GroupCall groupCall)
+        public static string GetStartsAt(this VoipGroupCall groupCall)
         {
             var date = Converters.Formatter.ToLocalTime(groupCall.ScheduledStartDate);
             if (date.Date == DateTime.Today)
@@ -2229,6 +2230,29 @@ namespace Telegram.Td.Api
         }
 
         public static string GetStartsIn(this GroupCall groupCall)
+        {
+            var date = Converters.Formatter.ToLocalTime(groupCall.ScheduledStartDate);
+            var duration = date - DateTime.Now;
+
+            if (Math.Abs(duration.TotalDays) >= 7)
+            {
+                return Locale.Declension(Strings.R.Weeks, 1);
+            }
+            if (Math.Abs(duration.TotalDays) >= 1)
+            {
+                return Locale.Declension(Strings.R.Days, (int)Math.Round(duration.TotalSeconds / (24 * 60 * 60.0f)));
+            }
+            else if (Math.Abs(duration.TotalHours) >= 1)
+            {
+                return (duration.TotalSeconds < 0 ? "-" : "") + duration.ToString("h\\:mm\\:ss");
+            }
+            else
+            {
+                return (duration.TotalSeconds < 0 ? "-" : "") + duration.ToString("mm\\:ss");
+            }
+        }
+
+        public static string GetStartsIn(this VoipGroupCall groupCall)
         {
             var date = Converters.Formatter.ToLocalTime(groupCall.ScheduledStartDate);
             var duration = date - DateTime.Now;

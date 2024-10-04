@@ -38,15 +38,13 @@ namespace Telegram.ViewModels
         public IProfileDelegate Delegate { get; set; }
 
         private readonly IVoipService _voipService;
-        private readonly IVoipGroupService _voipGroupService;
         private readonly INotificationsService _notificationsService;
         private readonly ITranslateService _translateService;
 
-        public ProfileViewModel(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator, IPlaybackService playbackService, IVoipService voipService, IVoipGroupService voipGroupService, INotificationsService notificationsService, IStorageService storageService, ITranslateService translateService)
+        public ProfileViewModel(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator, IPlaybackService playbackService, IVoipService voipService, INotificationsService notificationsService, IStorageService storageService, ITranslateService translateService)
             : base(clientService, settingsService, storageService, aggregator, playbackService)
         {
             _voipService = voipService;
-            _voipGroupService = voipGroupService;
             _notificationsService = notificationsService;
             _translateService = translateService;
 
@@ -888,7 +886,7 @@ namespace Telegram.ViewModels
             Call(true);
         }
 
-        private async void Call(bool video)
+        private void Call(bool video)
         {
             var chat = _chat;
             if (chat == null)
@@ -898,15 +896,15 @@ namespace Telegram.ViewModels
 
             if (chat.Type is ChatTypePrivate or ChatTypeSecret)
             {
-                _voipService.Start(NavigationService, chat, video);
+                _voipService.StartPrivateCall(NavigationService, chat, video);
             }
             else if (chat.VideoChat.GroupCallId == 0)
             {
-                await _voipGroupService.CreateAsync(XamlRoot, chat.Id);
+                _voipService.CreateGroupCall(NavigationService, chat.Id);
             }
             else
             {
-                await _voipGroupService.JoinAsync(XamlRoot, chat.Id);
+                _voipService.JoinGroupCall(NavigationService, chat.Id);
             }
         }
 

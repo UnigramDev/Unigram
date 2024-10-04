@@ -168,7 +168,7 @@ namespace Telegram.ViewModels
 
         private void Call(User user, bool video)
         {
-            _voipService.Start(NavigationService, user, video);
+            _voipService.StartPrivateCall(NavigationService, user, video);
         }
 
         public async void CreateSecretChat(User user)

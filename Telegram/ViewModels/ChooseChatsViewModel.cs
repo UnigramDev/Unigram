@@ -623,7 +623,7 @@ namespace Telegram.ViewModels
             }
             else if (_configuration is ChooseChatsConfigurationGroupCall groupCall)
             {
-                var response = await ClientService.SendAsync(new GetGroupCallInviteLink(groupCall.GroupCall.Id, false));
+                var response = await ClientService.SendAsync(new GetGroupCallInviteLink(groupCall.GroupCallId, false));
                 if (response is HttpUrl httpUrl)
                 {
                     var formatted = new FormattedText(string.Format(Strings.VoipGroupInviteText, httpUrl.Url), Array.Empty<TextEntity>());

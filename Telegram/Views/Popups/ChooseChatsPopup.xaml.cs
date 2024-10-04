@@ -450,12 +450,12 @@ namespace Telegram.Views.Popups
 
     public partial class ChooseChatsConfigurationGroupCall : ChooseChatsConfiguration
     {
-        public ChooseChatsConfigurationGroupCall(GroupCall call)
+        public ChooseChatsConfigurationGroupCall(int groupCallId)
         {
-            GroupCall = call;
+            GroupCallId = groupCallId;
         }
 
-        public GroupCall GroupCall { get; }
+        public int GroupCallId { get; }
     }
 
     public partial class ChooseChatsConfigurationDataPackage : ChooseChatsConfiguration
