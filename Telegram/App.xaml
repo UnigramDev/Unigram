@@ -94,7 +94,7 @@
             <AcrylicBrush x:Name="GlassAcrylicBackground"
                           TintColor="#FFFFFF"
                           TintOpacity="0"
-                          FallbackColor="#64FFFFFF"/>
+                          FallbackColor="#64FFFFFF" />
 
             <!-- WinUI bug: https://github.com/microsoft/microsoft-ui-xaml/issues/xxxx -->
             <x:Boolean x:Key="HyperlinkUnderlineVisible">True</x:Boolean>
@@ -281,6 +281,13 @@
                         Value="CharacterEllipsis" />
                 <Setter Property="Foreground"
                         Value="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" />
+            </Style>
+
+            <Style x:Key="BaseCaptionTextBlockStyle"
+                   TargetType="TextBlock"
+                   BasedOn="{StaticResource CaptionTextBlockStyle}">
+                <Setter Property="FontWeight"
+                        Value="SemiBold" />
             </Style>
 
             <Style x:Key="SecretBodyTextBlockStyle"

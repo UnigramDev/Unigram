@@ -200,6 +200,7 @@
                 Click="Convert_Click"
                 Style="{StaticResource AccentTextButtonStyle}"
                 HorizontalAlignment="Stretch"
+                FontWeight="SemiBold"
                 Margin="0,8,0,-12"
                 Visibility="Collapsed"
                 Grid.Row="2" />
