@@ -10,10 +10,8 @@ using System.Numerics;
 using Telegram.Common;
 using Telegram.Composition;
 using Telegram.Native.Calls;
-using Telegram.Services;
 using Telegram.Services.Calls;
 using Telegram.Td.Api;
-using Windows.UI;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 
@@ -31,6 +29,7 @@ namespace Telegram.Controls
 
             // This should be used as a mask to apply a gradient to another visual
             _curveVisual = new CompositionCurveVisual(Curve, 0, 0, 1.5f);
+            _curveVisual.SetColorStops(0xFF59c7f8, 0xFF0078ff);
         }
 
         public void Update(VoipCallBase value)
@@ -115,14 +114,19 @@ namespace Telegram.Controls
         private void UpdateCurveColors(bool muted)
         {
             // TODO: there are multiple states to be supported: connecting, active, speaking, can't speak, late
-            _curveVisual.FillColor = muted
-                ? Color.FromArgb(0xFF, 0x00, 0x78, 0xff)
-                : Color.FromArgb(0xFF, 0x33, 0xc6, 0x59);
+            if (muted)
+            {
+                _curveVisual.SetColorStops(0xFF59c7f8, 0xFF0078ff);
+            }
+            else
+            {
+                _curveVisual.SetColorStops(0xFF0078ff, 0xFF33c659);
+            }
         }
 
         private void OnMutedChanged(object sender, EventArgs e)
         {
-            if (sender is VoipGroupManager groupService && groupService.IsMuted is bool groupMuted)
+            if (sender is VoipGroupCall groupCall && groupCall.IsMuted is bool groupMuted)
             {
                 this.BeginOnUIThread(() =>
                 {
@@ -204,6 +208,11 @@ namespace Telegram.Controls
         private void Curve_SizeChanged(object sender, SizeChangedEventArgs e)
         {
             _curveVisual.ActualSize = e.NewSize.ToVector2();
+
+            if (PowerSavingPolicy.AreMaterialsEnabled && ApiInfo.CanAnimatePaths)
+            {
+                _curveVisual.StartAnimating();
+            }
         }
     }
 }

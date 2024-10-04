@@ -306,34 +306,27 @@
                                 </VisualState>
                             </VisualStateGroup>
                         </VisualStateManager.VisualStateGroups>
-                        <ContentControl Content="{TemplateBinding Banner}"
-                                        IsTabStop="False"
-                                        TabIndex="3"
-                                        HorizontalContentAlignment="Stretch"
-                                        VerticalContentAlignment="Stretch"
-                                        VerticalAlignment="Top"
-                                        Canvas.ZIndex="2" />
-
                         <Grid x:Name="DetailHeaderPresenter2"
                               CornerRadius="{ThemeResource NavigationViewContentGridCornerRadius}">
                             <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" />
                                 <RowDefinition Height="64" />
                                 <RowDefinition />
                             </Grid.RowDefinitions>
-
                             <Border x:Name="MaterialPart"
                                     Background="{ThemeResource LayerFillColorDefaultBrush}"
                                     CornerRadius="{ThemeResource NavigationViewContentGridCornerRadius}"
-                                    Grid.RowSpan="2" />
+                                    Grid.RowSpan="3" />
 
                             <chats:ChatBackgroundControl x:Name="BackgroundPart"
                                                          Margin="{TemplateBinding BackgroundMargin}"
                                                          CornerRadius="9,0,0,0"
-                                                         Grid.RowSpan="2" />
+                                                         Grid.RowSpan="3" />
 
                             <Grid MaxWidth="1000"
                                   Margin="24,0"
-                                  Canvas.ZIndex="1">
+                                  Canvas.ZIndex="1"
+                                  Grid.Row="1">
                                 <muxc:BreadcrumbBar x:Name="DetailHeaderPresenter"
                                                     Visibility="Collapsed"
                                                     Margin="28,20,-24,0"
@@ -367,7 +360,15 @@
                             </Grid>
 
                             <Grid x:Name="DetailPresenter"
-                                  Grid.RowSpan="2" />
+                                  Grid.RowSpan="2"
+                                  Grid.Row="1" />
+
+                            <ContentControl Content="{TemplateBinding Banner}"
+                                            IsTabStop="False"
+                                            TabIndex="3"
+                                            HorizontalContentAlignment="Stretch"
+                                            VerticalContentAlignment="Stretch"
+                                            VerticalAlignment="Top" />
 
                             <Border x:Name="DetailHeaderBackground"
                                     Visibility="Collapsed"
@@ -376,25 +377,24 @@
                                     BorderBrush="{ThemeResource NavigationViewContentGridBorderBrush}"
                                     BorderThickness="0,0,0,1"
                                     BackgroundSizing="InnerBorderEdge"
-                                    VerticalAlignment="Top" />
+                                    VerticalAlignment="Top"
+                                    Grid.Row="1" />
 
                             <Border x:Name="BorderPart"
                                     BorderBrush="{ThemeResource NavigationViewContentGridBorderBrush}"
                                     BorderThickness="{ThemeResource NavigationViewContentGridBorderThickness}"
                                     CornerRadius="{ThemeResource NavigationViewContentGridCornerRadius}"
-                                    Grid.RowSpan="2" />
+                                    Grid.RowSpan="3" />
                         </Grid>
 
-                        <ContentControl x:Name="MasterFrame"
-                                        Content="{TemplateBinding Content}"
-                                        ContentTemplate="{TemplateBinding ContentTemplate}"
-                                        ContentTemplateSelector="{TemplateBinding ContentTemplateSelector}"
-                                        ContentTransitions="{TemplateBinding ContentTransitions}"
-                                        Visibility="{TemplateBinding MasterVisibility}"
-                                        HorizontalContentAlignment="Stretch"
-                                        VerticalContentAlignment="Stretch"
-                                        IsTabStop="False"
-                                        TabIndex="0" />
+                        <ContentPresenter x:Name="MasterFrame"
+                                          Content="{TemplateBinding Content}"
+                                          ContentTemplate="{TemplateBinding ContentTemplate}"
+                                          ContentTemplateSelector="{TemplateBinding ContentTemplateSelector}"
+                                          ContentTransitions="{TemplateBinding ContentTransitions}"
+                                          Visibility="{TemplateBinding MasterVisibility}"
+                                          HorizontalContentAlignment="Stretch"
+                                          VerticalContentAlignment="Stretch" />
 
                         <UserControl Canvas.ZIndex="2">
                             <Border x:Name="Grip"
