@@ -149,7 +149,7 @@ namespace Telegram.Views
             if (update.WebAppLaunchId == _launchId)
             {
                 _closeNeedConfirmation = false;
-                Hide();
+                Close();
             }
         }
 
@@ -158,7 +158,7 @@ namespace Telegram.Views
             PostEvent("invoice_closed", "{ slug: \"" + update.Slug + "\", status: " + update.Status + "}");
         }
 
-        private async void Hide()
+        private async void Close()
         {
             if (WindowContext.Current != null)
             {
@@ -245,6 +245,11 @@ namespace Telegram.Views
             }
         }
 
+        private void View_Navigated(object sender, WebViewerNavigatedEventArgs e)
+        {
+            SendViewport();
+        }
+
         private void View_EventReceived(object sender, WebViewerEventReceivedEventArgs e)
         {
             ReceiveEvent(e.EventName, e.EventData);
@@ -257,7 +262,7 @@ namespace Telegram.Views
             if (eventName == "web_app_close")
             {
                 // TODO: probably need to inform the web view
-                Hide();
+                Close();
             }
             else if (eventName == "web_app_data_send")
             {
@@ -1169,7 +1174,7 @@ namespace Telegram.Views
                 AllowChannelChats = values.Contains("channels")
             };
 
-            Hide();
+            Close();
 
             if (target.AllowBotChats || target.AllowUserChats || target.AllowGroupChats || target.AllowChannelChats)
             {
@@ -1316,6 +1321,11 @@ namespace Telegram.Views
         {
             var theme = ClientEx.GetThemeParametersJsonString(Theme.Current.Parameters);
             PostEvent("theme_changed", "{\"theme_params\": " + theme + "}");
+        }
+
+        private void HideButton_Click(object sender, RoutedEventArgs e)
+        {
+            Close();
         }
     }
 }

@@ -114,7 +114,7 @@
             </controls:MoreButton>
 
             <Button x:Name="HideButton"
-                    Click="{x:Bind Hide}"
+                    Click="HideButton_Click"
                     HorizontalAlignment="Right"
                     VerticalAlignment="Top"
                     Width="46"
@@ -178,6 +178,7 @@
 
         <controls:WebViewer x:Name="View"
                             Navigating="View_Navigating"
+                            Navigated="View_Navigated"
                             EventReceived="View_EventReceived"
                             NewWindowRequested="View_NewWindowRequested"
                             SizeChanged="View_SizeChanged"
