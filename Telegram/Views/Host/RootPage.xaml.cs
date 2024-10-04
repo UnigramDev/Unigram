@@ -45,7 +45,13 @@ namespace Telegram.Views.Host
         void Disconnect(TeachingTip toast);
     }
 
-    public sealed partial class RootPage : Page, IToastHost
+    public interface IPopupHost
+    {
+        void PopupOpened();
+        void PopupClosed();
+    }
+
+    public sealed partial class RootPage : Page, IPopupHost, IToastHost
     {
         private readonly ILifetimeService _lifetime;
         private readonly WindowContext _context;

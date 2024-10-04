@@ -94,9 +94,9 @@ namespace Telegram.Controls
 
         protected virtual void MaskTitleAndStatusBar(WindowContext window)
         {
-            if (window.Content is RootPage root)
+            if (window.Content is IPopupHost host)
             {
-                root.PopupOpened();
+                host.PopupOpened();
             }
 
             var titlebar = ApplicationView.GetForCurrentView().TitleBar;
@@ -108,9 +108,9 @@ namespace Telegram.Controls
 
         protected void UnmaskTitleAndStatusBar(WindowContext window)
         {
-            if (window.Content is RootPage root)
+            if (window.Content is IPopupHost host)
             {
-                root.PopupClosed();
+                host.PopupClosed();
             }
 
             WindowContext.Current.UpdateTitleBar();

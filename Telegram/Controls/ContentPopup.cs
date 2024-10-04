@@ -148,9 +148,9 @@ namespace Telegram.Controls
 
         private void OnLoaded(object sender, RoutedEventArgs e)
         {
-            if (XamlRoot.Content is RootPage root)
+            if (XamlRoot.Content is IPopupHost host)
             {
-                root.PopupOpened();
+                host.PopupOpened();
             }
 
             var context = WindowContext.ForXamlRoot(this);
@@ -181,9 +181,9 @@ namespace Telegram.Controls
         {
             try
             {
-                if (XamlRoot.Content is RootPage root)
+                if (XamlRoot.Content is IPopupHost host)
                 {
-                    root.PopupClosed();
+                    host.PopupClosed();
                 }
             }
             catch
