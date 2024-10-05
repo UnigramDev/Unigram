@@ -252,12 +252,19 @@ namespace Telegram.Controls
             AnimationElement = GetTemplateChild(nameof(AnimationElement)) as Border;
             BackgroundElement = GetTemplateChild(nameof(BackgroundElement)) as Border;
             BorderElement = GetTemplateChild(nameof(BorderElement)) as Border;
-
             ContentElement = GetTemplateChild(nameof(ContentElement)) as Border;
-            ContentElement.SizeChanged += OnSizeChanged;
-
             LayoutRoot = GetTemplateChild(nameof(LayoutRoot)) as Grid;
-            ElementCompositionPreview.SetIsTranslationEnabled(LayoutRoot, true);
+
+            if (ContentElement != null)
+            {
+                ContentElement.SizeChanged += OnSizeChanged;
+            }
+
+
+            if (LayoutRoot != null)
+            {
+                ElementCompositionPreview.SetIsTranslationEnabled(LayoutRoot, true);
+            }
         }
 
         private void DismissButton_Click(object sender, RoutedEventArgs e)
