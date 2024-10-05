@@ -26,6 +26,12 @@ namespace Telegram.Controls
 
         private void OnDisconnected(object sender, RoutedEventArgs e)
         {
+            if (IsUnloadedExpected)
+            {
+                IsUnloadedExpected = false;
+                return;
+            }
+
             if (_core != null)
             {
                 _core.Vout -= OnVout;

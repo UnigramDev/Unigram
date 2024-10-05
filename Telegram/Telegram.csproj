@@ -262,6 +262,9 @@
     <Compile Include="Controls\Drawers\EffectDrawer.xaml.cs">
       <DependentUpon>EffectDrawer.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\Gallery\GalleryCompactAppWindow.xaml.cs">
+      <DependentUpon>GalleryCompactAppWindow.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Controls\GlassToggleButton.cs" />
     <Compile Include="Controls\MenuFlyoutContent.cs" />
     <Compile Include="Controls\Messages\Content\PaidMediaContent.xaml.cs">
@@ -2484,6 +2487,10 @@
     <Page Include="Controls\FormattedTextFlyout.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\Gallery\GalleryCompactAppWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="Controls\Gallery\GalleryCompactWindow.xaml">
       <SubType>Designer</SubType>

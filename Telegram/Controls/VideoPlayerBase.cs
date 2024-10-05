@@ -62,6 +62,8 @@ namespace Telegram.Controls
 
         public bool IsLoopingEnabled { get; set; }
 
+        public bool IsUnloadedExpected { get; set; }
+
         public abstract void Play(GalleryMedia video, double position);
 
         public abstract void Play();
