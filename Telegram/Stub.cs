@@ -3382,21 +3382,6 @@ public static class CoreWebView2HttpRequestHeaders_stub
         }
     }
 }
-public static class CoreWebView2WebMessageReceivedEventArgs_stub
-{
-    public static string TryGetWebMessageAsString_stub(this Microsoft.Web.WebView2.Core.CoreWebView2WebMessageReceivedEventArgs sender)
-    {
-        try
-        {
-            return sender.TryGetWebMessageAsString();
-        }
-        catch (Exception ex)
-        {
-            Logger.Error(Environment.StackTrace);
-            throw new RuntimeException(ex);
-        }
-    }
-}
 public static class CoreWebView2WebResourceRequestedEventArgs_stub
 {
     public static Windows.Foundation.Deferral GetDeferral_stub(this Microsoft.Web.WebView2.Core.CoreWebView2WebResourceRequestedEventArgs sender)
