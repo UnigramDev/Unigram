@@ -304,6 +304,7 @@
                                Text="{CustomResource BoostingCongratulations}"
                                TextAlignment="Center"
                                Style="{StaticResource SubtitleTextBlockStyle}"
+                               FontFamily="{StaticResource EmojiThemeFontFamilyWithSymbols}"
                                FontSize="16" />
 
                     <controls:FormattedTextBlock x:Name="Text"
@@ -381,6 +382,7 @@
                                            Text="{CustomResource BoostingCongratulations}"
                                            TextAlignment="Center"
                                            Style="{StaticResource SubtitleTextBlockStyle}"
+                                           FontFamily="{StaticResource EmojiThemeFontFamilyWithSymbols}"
                                            FontSize="16" />
 
                                 <controls:FormattedTextBlock x:Name="Subtitle"
