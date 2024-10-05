@@ -17,7 +17,6 @@ using Telegram.Navigation;
 using Telegram.Services;
 using Telegram.Services.Keyboard;
 using Telegram.Services.ViewService;
-using Telegram.Streams;
 using Telegram.Td.Api;
 using Telegram.ViewModels.Chats;
 using Telegram.ViewModels.Delegates;
@@ -1075,6 +1074,53 @@ namespace Telegram.Controls.Gallery
                 height *= ratio;
             }
 
+            ////OnBackRequestedOverride(this, new BackRequestedRoutedEventArgs());
+
+            //var size = new Size(width * XamlRoot.RasterizationScale, height * XamlRoot.RasterizationScale);
+
+            //// Create a new AppWindow
+            //var appWindow = await AppWindow.TryCreateAsync();
+
+            //// Make sure we release the reference to this window, and release XAML resources, when it's closed
+            //appWindow.Closed += delegate { appWindow = null; };
+            //// Is CompactOverlay supported for this AppWindow? If not, then stop.
+            //if (appWindow.Presenter.IsPresentationSupported(AppWindowPresentationKind.CompactOverlay))
+            //{
+            //    var player = _current.GetChild<VideoPlayerBase>();
+            //    player.IsUnloadedExpected = true;
+
+            //    var parent = player.Parent as Border;
+            //    parent.Child = null;
+
+            //    var appWindowContent = new GalleryCompactAppWindow(appWindow, viewModel, player);
+
+            //    // Create a new frame for the window
+            //    // Navigate the frame to the CompactOverlay page inside it.
+            //    //appWindowFrame.Navigate(typeof(SecondaryAppWindowPage));
+            //    // Attach the frame to the window
+            //    ElementCompositionPreview.SetAppWindowContent(appWindow, appWindowContent);
+            //    // Let's set the title so that we can tell the windows apart
+            //    appWindow.TitleBar.ExtendsContentIntoTitleBar = true;
+            //    appWindow.TitleBar.ButtonInactiveBackgroundColor = Colors.Transparent;
+            //    appWindow.TitleBar.ButtonBackgroundColor = Colors.Transparent;
+            //    appWindow.TitleBar.ButtonForegroundColor = Colors.White;
+
+            //    // Request the Presentation of the window to CompactOverlay
+            //    var switched = appWindow.Presenter.RequestPresentation(AppWindowPresentationKind.CompactOverlay);
+            //    if (switched)
+            //    {
+            //        WindowManagementPreview.SetPreferredMinSize(appWindow, new Size(width, height));
+            //        appWindow.RequestSize(size);
+
+            //        appWindow.Presenter.RequestPresentation(AppWindowPresentationKind.CompactOverlay);
+
+            //        // If the request was satisfied, show the window
+            //        await appWindow.TryShowAsync();
+            //    }
+            //}
+
+            //return;
+
             var aggregator = TypeResolver.Current.Resolve<IEventAggregator>(viewModel.SessionId);
             var viewService = TypeResolver.Current.Resolve<IViewService>(viewModel.SessionId);
 
@@ -1083,15 +1129,13 @@ namespace Telegram.Controls.Gallery
 
             _current.Stop(out int fileId, out double time);
 
-            var fileStream = new RemoteFileStream(ViewModel.ClientService, item.File);
-
             if (GalleryCompactWindow.Current is ViewLifetimeControl control)
             {
                 control.Dispatcher.Dispatch(() =>
                 {
                     if (control.Window.Content is GalleryCompactWindow player)
                     {
-                        player.Play(viewModel, fileStream, time);
+                        player.Play(viewModel, item, time);
                     }
 
                     ApplicationView.GetForCurrentView().TryResizeView(new Size(width, height));
@@ -1105,7 +1149,7 @@ namespace Telegram.Controls.Gallery
                     Width = width,
                     Height = height,
                     PersistedId = "PIP",
-                    Content = control => new GalleryCompactWindow(control, viewModel, fileStream, time)
+                    Content = control => new GalleryCompactWindow(control, viewModel, item, time)
                 };
 
                 _ = viewService.OpenAsync(parameters);

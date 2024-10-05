@@ -4,11 +4,8 @@
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
-using LibVLCSharp.Platforms.Windows;
 using System;
-using Telegram.Common;
 using Telegram.Services.ViewService;
-using Telegram.Streams;
 using Telegram.ViewModels.Gallery;
 using Windows.ApplicationModel.Core;
 using Windows.UI;
@@ -17,30 +14,28 @@ using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Hosting;
 using Windows.UI.Xaml.Input;
+using Windows.UI.Xaml.Media;
 
 namespace Telegram.Controls.Gallery
 {
     public sealed partial class GalleryCompactWindow : UserControlEx
     {
         private GalleryViewModelBase _viewModel;
-        private readonly RemoteFileStream _fileStream;
-        private readonly double _initialTime;
-
-        private AsyncMediaPlayer _player;
 
         public static ViewLifetimeControl Current { get; private set; }
 
-        public GalleryCompactWindow(ViewLifetimeControl control, GalleryViewModelBase viewModel, RemoteFileStream stream, double position)
+        public GalleryCompactWindow(ViewLifetimeControl control, GalleryViewModelBase viewModel, GalleryMedia video, double position)
         {
             InitializeComponent();
 
             Current = control;
 
             _viewModel = viewModel;
-            _fileStream = stream;
-            _initialTime = position;
 
             Controls.IsCompact = true;
+            Controls.Attach(Video);
+
+            Video.Play(video, position);
 
             var view = ApplicationView.GetForCurrentView();
             view.TitleBar.ButtonForegroundColor = Colors.White;
@@ -49,22 +44,10 @@ namespace Telegram.Controls.Gallery
             visual.Opacity = 0;
         }
 
-        private void OnInitialized(object sender, InitializedEventArgs e)
-        {
-            _player = new AsyncMediaPlayer(e.SwapChainOptions);
-
-            //Controls.Attach(_player);
-
-            _player.Play(_fileStream);
-            _player.Time = (long)_initialTime;
-        }
-
         private void OnUnloaded(object sender, RoutedEventArgs e)
         {
             Current = null;
             Controls.Unload();
-
-            _player?.Close();
         }
 
         protected override void OnPointerEntered(PointerRoutedEventArgs e)
@@ -88,6 +71,14 @@ namespace Telegram.Controls.Gallery
                 return;
             }
 
+            if (show is false && XamlRoot != null)
+            {
+                foreach (var popup in VisualTreeHelper.GetOpenPopupsForXamlRoot(XamlRoot))
+                {
+                    return;
+                }
+            }
+
             _transportCollapsed = !show;
 
             var visual = ElementComposition.GetElementVisual(ControlsRoot);
@@ -102,15 +93,15 @@ namespace Telegram.Controls.Gallery
         {
             // TODO: WinUI - Rewrite
             var mainDispatcher = CoreApplication.MainView.Dispatcher;
-            if (mainDispatcher == null || _player == null)
+            if (mainDispatcher == null)
             {
                 return;
             }
 
-            var position = _player.Time;
+            var position = (long)Video.Position;
             var prevId = ApplicationView.GetForCurrentView().Id;
 
-            _player.Stop();
+            Video.Stop();
 
             await mainDispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
             {
@@ -120,20 +111,15 @@ namespace Telegram.Controls.Gallery
             });
         }
 
-        public void Play(GalleryViewModelBase viewModel, RemoteFileStream stream, double time)
+        public void Play(GalleryViewModelBase viewModel, GalleryMedia video, double time)
         {
             _viewModel = viewModel;
-
-            if (_player != null)
-            {
-                _player.Play(stream);
-                _player.Time = (long)time;
-            }
+            Video.Play(video, time);
         }
 
         public void Pause()
         {
-            _player?.Pause(true);
+            Video.Pause();
         }
     }
 }

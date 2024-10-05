@@ -233,16 +233,15 @@ namespace Telegram.Controls.Gallery
                 _player.Closed += OnStopped;
 
                 OnPositionChanged(_player, new VideoPlayerPositionChangedEventArgs(_player.Position));
+                OnBufferedChanged(_player, new VideoPlayerBufferedChangedEventArgs(_player.Buffered));
                 OnDurationChanged(_player, new VideoPlayerDurationChangedEventArgs(_player.Duration));
-
-                ShowHideSettings(_player.Levels.Count > 0);
+                OnIsPlayingChanged(_player, new VideoPlayerIsPlayingChangedEventArgs(_player.IsPlaying));
+                OnVolumeChanged(_player, new VideoPlayerVolumeChangedEventArgs(_player.Volume));
+                OnLevelsChanged(_player, new VideoPlayerLevelsChangedEventArgs(_player.Levels, _player.CurrentLevel, _player.IsCurrentLevelAuto));
             }
-
-            PlaybackButton.Glyph = Icons.PlayFilled24;
-            Automation.SetToolTip(PlaybackButton, Strings.AccActionPlay);
         }
 
-        private bool _settingsCollapsed;
+        private bool _settingsCollapsed = true;
 
         private void ShowHideSettings(bool show)
         {

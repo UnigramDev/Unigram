@@ -13,8 +13,7 @@
                         Disconnected="OnUnloaded">
 
     <Grid Background="Black">
-        <vlc:VideoView x:Name="Video"
-                       Initialized="OnInitialized" />
+        <controls:NativeVideoPlayer x:Name="Video" />
         <Grid x:Name="ControlsRoot"
               Background="{ThemeResource SystemControlPageBackgroundAltMediumBrush}">
             <Grid.RowDefinitions>
