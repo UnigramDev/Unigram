@@ -1605,7 +1605,7 @@ namespace Telegram.Controls.Cells
                         return string.Format(format, fromUser.Id);
                     }
                 }
-                else if (fromChat != null && fromChat.Id != chat.Id)
+                else if (fromChat != null && fromChat.Id != chat?.Id)
                 {
                     return string.Format(format, fromChat.Title);
                 }
