@@ -296,6 +296,7 @@
     </Compile>
     <Compile Include="CsWinRT.cs" />
     <Compile Include="Services\Calls\VoipCallBase.cs" />
+    <Compile Include="Services\Calls\VoipGroupCallParticipants.cs" />
     <Compile Include="Services\Calls\VoipCall.cs" />
     <Compile Include="Services\Calls\VoipCallAudioLevelUpdatedEventArgs.cs" />
     <Compile Include="Services\Calls\VoipCallConnectionStateChangedEventArgs.cs" />
