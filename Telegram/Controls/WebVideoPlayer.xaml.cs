@@ -60,9 +60,13 @@ namespace Telegram.Controls
             {
                 _ = Video.EnsureCoreWebView2Async();
             }
-            else
+            else if (_video.AlternativeVideos.Count > 0)
             {
                 _core.Navigate("http://127.0.0.1/hls.html");
+            }
+            else
+            {
+                _core.Navigate("http://127.0.0.1/mp4.html");
             }
         }
 
@@ -170,7 +174,15 @@ namespace Telegram.Controls
             _core.WebMessageReceived += OnWebMessageReceived;
 
             _core.AddWebResourceRequestedFilter("*", CoreWebView2WebResourceContext.All);
-            _core.Navigate("http://127.0.0.1/hls.html");
+
+            if (_video.AlternativeVideos.Count > 0)
+            {
+                _core.Navigate("http://127.0.0.1/hls.html");
+            }
+            else
+            {
+                _core.Navigate("http://127.0.0.1/mp4.html");
+            }
         }
 
         private void OnNavigationCompleted(CoreWebView2 sender, CoreWebView2NavigationCompletedEventArgs args)
@@ -215,10 +227,15 @@ namespace Telegram.Controls
                 }
             }
 
+            if (resource == "video.mp4")
+            {
+                resource = _video.File.Id + ".mp4";
+            }
+
             var fileName = System.IO.Path.GetFileNameWithoutExtension(resource);
             var extension = System.IO.Path.GetExtension(resource);
 
-            if (resource == "hls.html" || resource == "hls.js")
+            if (resource == "hls.html" || resource == "hls.js" || resource == "mp4.html")
             {
                 var file = await Package.Current.InstalledLocation.GetFileAsync("Assets\\" + resource);
 

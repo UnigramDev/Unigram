@@ -1966,6 +1966,7 @@
     <Content Include="Assets\Animations\AuthorizationStateWaitPassword.tgs" />
     <Content Include="Assets\Animations\MyStories.tgs" />
     <Content Include="Assets\Animations\Expired.tgs" />
+    <Content Include="Assets\mp4.html" />
     <Content Include="Assets\hls.html" />
     <Content Include="Assets\hls.js" />
     <Content Include="Assets\Images\ArrowLeft.scale-100.png" />
