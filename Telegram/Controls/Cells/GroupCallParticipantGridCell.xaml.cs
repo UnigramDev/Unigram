@@ -42,7 +42,6 @@ namespace Telegram.Controls.Cells
             InitializeComponent();
             UpdateGroupCallParticipant(clientService, participant, videoInfo);
 
-            _sink = VoipVideoOutput.CreateSink(CanvasRoot, false);
             _screenSharing = screenSharing;
 
             if (screenSharing)
@@ -59,7 +58,19 @@ namespace Telegram.Controls.Cells
             return participant != null && participant.ParticipantId.AreTheSame(ParticipantId) && _videoInfo.EndpointId == _videoInfo.EndpointId;
         }
 
-        public VoipVideoOutputSink Sink => _sink;
+        public VoipVideoOutputSink Connect(bool mirrored)
+        {
+            _sink?.Stop();
+            _sink = VoipVideoOutput.CreateSink(CanvasRoot, mirrored);
+
+            return _sink;
+        }
+
+        public void Disconnect()
+        {
+            _sink?.Stop();
+            _sink = null;
+        }
 
         public VoipVideoChannelQuality Quality => ActualHeight switch
         {
@@ -87,21 +98,7 @@ namespace Telegram.Controls.Cells
 
         public bool IsScreenSharing => _screenSharing;
 
-        private bool _isConnected;
-        public bool IsConnected
-        {
-            get => _isConnected;
-            set
-            {
-                _isConnected = value;
-                
-                if (value is false)
-                {
-                    _sink.Stop();
-                    _sink = VoipVideoOutput.CreateSink(CanvasRoot, false);
-                }
-            }
-        }
+        public bool IsConnected => _sink != null;
 
         public bool IsSelected { get; set; }
 

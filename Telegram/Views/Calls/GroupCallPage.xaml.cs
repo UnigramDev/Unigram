@@ -260,7 +260,7 @@ namespace Telegram.Views.Calls
             {
                 if (collection[i] is GroupCallParticipantGridCell cell)
                 {
-                    cell.IsConnected = false;
+                    cell.Disconnect();
                 }
             }
         }
@@ -1803,7 +1803,7 @@ namespace Telegram.Views.Calls
             prev.Remove(cell.EndpointId);
             cells.Remove(cell.EndpointId);
 
-            cell.IsConnected = false;
+            cell.Disconnect();
             viewport.Remove(cell);
 
             if (_mode == ParticipantsGridMode.Compact)
@@ -2094,16 +2094,14 @@ namespace Telegram.Views.Calls
 
                     if (participant.ScreenSharingVideoInfo?.EndpointId == child.EndpointId && participant.IsCurrentUser && _call.IsScreenSharing)
                     {
-                        _call.AddScreenSharingVideoOutput(child.EndpointId, child.Sink);
+                        _call.AddScreenSharingVideoOutput(child.EndpointId, child.Connect(false));
                     }
                     else
                     {
-                        _call.AddIncomingVideoOutput(child.VideoInfo.EndpointId, child.Sink);
+                        _call.AddIncomingVideoOutput(child.VideoInfo.EndpointId, child.Connect(participant.IsCurrentUser));
                     }
 
                     //child.Sink.Stretch = child.GetStretch(_mode, list);
-                    child.IsConnected = true;
-                    child.Sink.IsMirrored = participant.IsCurrentUser && participant.ScreenSharingVideoInfo?.EndpointId != child.EndpointId;
                     //tokens[child.EndpointId] = future;
                 }
             }
@@ -2122,7 +2120,7 @@ namespace Telegram.Views.Calls
                 //    token.Stop();
                 //}
 
-                prev[item].IsConnected = false;
+                prev[item].Disconnect();
                 prev.Remove(item);
             }
 
