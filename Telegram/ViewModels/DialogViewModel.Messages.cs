@@ -19,6 +19,7 @@ using Telegram.Converters;
 using Telegram.Entities;
 using Telegram.Native;
 using Telegram.Services;
+using Telegram.Streams;
 using Telegram.Td;
 using Telegram.Td.Api;
 using Telegram.ViewModels.Chats;
@@ -33,6 +34,7 @@ using Windows.System;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using static Telegram.Services.GenerationService;
+using User = Telegram.Td.Api.User;
 
 namespace Telegram.ViewModels
 {
@@ -1707,9 +1709,29 @@ namespace Telegram.ViewModels
             {
                 await LoadMessageSliceAsync(message.Id, giveawayCompleted.GiveawayMessageId);
             }
-            else if (message.Content is MessageGift gift)
+            else if (message.Content is MessageGift gift && ClientService.TryGetUser(message.Chat, out User user))
             {
-                await ShowPopupAsync(new ReceiptPopup(ClientService, NavigationService, message, gift));
+                var senderUserId = message.SenderId is MessageSenderUser senderUser ? senderUser.UserId : 0;
+                var userId = senderUserId == user.Id ? ClientService.Options.MyId : user.Id;
+
+                var userGift = new UserGift(senderUserId, gift.Text, gift.IsPrivate, gift.IsSaved, message.Date, gift.Gift, message.Id, gift.SellStarCount);
+
+                var confirm = await ShowPopupAsync(new ReceiptPopup(ClientService, NavigationService, userGift, userId));
+                if (confirm == ContentDialogResult.Primary)
+                {
+                    var response = await ClientService.SendAsync(new ToggleGiftIsSaved(userGift.SenderUserId, userGift.MessageId, !userGift.IsSaved));
+                    if (response is Ok)
+                    {
+                        if (userGift.IsSaved)
+                        {
+                            ToastPopup.Show(XamlRoot, string.Format("**{0}**\n{1}", Strings.Gift2MadePrivateTitle, Strings.Gift2MadePrivate), new DelayedFileSource(ClientService, userGift.Gift.Sticker));
+                        }
+                        else
+                        {
+                            ToastPopup.Show(XamlRoot, string.Format("**{0}**\n{1}", Strings.Gift2MadePublicTitle, Strings.Gift2MadePublic), new DelayedFileSource(ClientService, userGift.Gift.Sticker));
+                        }
+                    }
+                }
             }
             else if (message.Content is MessageGiftedStars giftedStars)
             {
