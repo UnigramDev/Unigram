@@ -265,7 +265,9 @@ namespace Telegram.Services
 
             BeginOnUIThread(async () =>
             {
-                var xamlRoot = WindowContext.Main?.Content?.XamlRoot;
+                var window = WindowContext.Active ?? WindowContext.Main;
+
+                var xamlRoot = window?.Content?.XamlRoot;
                 if (xamlRoot == null)
                 {
                     return;
@@ -278,6 +280,10 @@ namespace Telegram.Services
                     {
                         _clientService.Send(new Destroy());
                     }
+                }
+                else if (ContentPopup.IsAnyPopupOpen(xamlRoot))
+                {
+                    await MessagePopup.ShowAsync(xamlRoot, target: null, text, Strings.AppName, Strings.OK);
                 }
                 else
                 {
