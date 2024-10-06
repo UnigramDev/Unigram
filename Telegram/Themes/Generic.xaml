@@ -387,14 +387,16 @@
                                     Grid.RowSpan="3" />
                         </Grid>
 
-                        <ContentPresenter x:Name="MasterFrame"
-                                          Content="{TemplateBinding Content}"
-                                          ContentTemplate="{TemplateBinding ContentTemplate}"
-                                          ContentTemplateSelector="{TemplateBinding ContentTemplateSelector}"
-                                          ContentTransitions="{TemplateBinding ContentTransitions}"
-                                          Visibility="{TemplateBinding MasterVisibility}"
-                                          HorizontalContentAlignment="Stretch"
-                                          VerticalContentAlignment="Stretch" />
+                        <ContentControl x:Name="MasterFrame"
+                                        Content="{TemplateBinding Content}"
+                                        ContentTemplate="{TemplateBinding ContentTemplate}"
+                                        ContentTemplateSelector="{TemplateBinding ContentTemplateSelector}"
+                                        ContentTransitions="{TemplateBinding ContentTransitions}"
+                                        Visibility="{TemplateBinding MasterVisibility}"
+                                        HorizontalContentAlignment="Stretch"
+                                        VerticalContentAlignment="Stretch"
+                                        IsTabStop="False"
+                                        TabIndex="0" />
 
                         <UserControl Canvas.ZIndex="2">
                             <Border x:Name="Grip"
