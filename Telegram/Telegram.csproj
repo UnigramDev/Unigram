@@ -196,6 +196,7 @@
     <Compile Include="Collections\SynchronizedList.cs" />
     <Compile Include="Common\AutomaticDragHelper.cs" />
     <Compile Include="Common\BezierPoint.cs" />
+    <Compile Include="Common\FeatureTokenGenerator.cs" />
     <Compile Include="Common\MediaDeviceCoordinator.cs" />
     <Compile Include="Common\SliderHelper.cs" />
     <Compile Include="Composition\WeakInteractionTrackerOwner.cs" />
@@ -262,8 +263,8 @@
     <Compile Include="Controls\Drawers\EffectDrawer.xaml.cs">
       <DependentUpon>EffectDrawer.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Controls\Gallery\GalleryCompactAppWindow.xaml.cs">
-      <DependentUpon>GalleryCompactAppWindow.xaml</DependentUpon>
+    <Compile Include="Controls\Gallery\GalleryCompactOverlay.xaml.cs">
+      <DependentUpon>GalleryCompactOverlay.xaml</DependentUpon>
     </Compile>
     <Compile Include="Controls\GlassToggleButton.cs" />
     <Compile Include="Controls\MenuFlyoutContent.cs" />
@@ -411,9 +412,6 @@
       <DependentUpon>ContactsSortedByHeader.xaml</DependentUpon>
     </Compile>
     <Compile Include="Controls\DashPath.cs" />
-    <Compile Include="Controls\Gallery\GalleryCompactWindow.xaml.cs">
-      <DependentUpon>GalleryCompactWindow.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Controls\Gallery\GalleryContent.xaml.cs">
       <DependentUpon>GalleryContent.xaml</DependentUpon>
     </Compile>
@@ -2488,13 +2486,9 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Controls\Gallery\GalleryCompactAppWindow.xaml">
+    <Page Include="Controls\Gallery\GalleryCompactOverlay.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Controls\Gallery\GalleryCompactWindow.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Controls\Gallery\GalleryContent.xaml">
       <Generator>MSBuild:Compile</Generator>

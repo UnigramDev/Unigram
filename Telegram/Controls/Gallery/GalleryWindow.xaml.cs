@@ -16,13 +16,11 @@ using Telegram.Converters;
 using Telegram.Navigation;
 using Telegram.Services;
 using Telegram.Services.Keyboard;
-using Telegram.Services.ViewService;
 using Telegram.Td.Api;
 using Telegram.ViewModels.Chats;
 using Telegram.ViewModels.Delegates;
 using Telegram.ViewModels.Gallery;
 using Telegram.ViewModels.Users;
-using Telegram.Views;
 using Windows.Devices.Input;
 using Windows.Foundation;
 using Windows.UI.Composition;
@@ -252,7 +250,7 @@ namespace Telegram.Controls.Gallery
 
         public void OpenFile(GalleryMedia item, File file)
         {
-            Play(LayoutRoot.CurrentElement, item);
+            Play(CurrentElement, item);
         }
 
         public void OpenItem(GalleryMedia item)
@@ -329,17 +327,17 @@ namespace Telegram.Controls.Gallery
             return ShowAsync(navigationService.XamlRoot, viewModel, closing);
         }
 
-        public static Task<ContentDialogResult> ShowAsync(XamlRoot xamlRoot, GalleryViewModelBase parameter, FrameworkElement closing = null, long timestamp = 0)
+        public static Task<ContentDialogResult> ShowAsync(XamlRoot xamlRoot, GalleryViewModelBase parameter, FrameworkElement closing = null, long timestamp = 0, VideoPlayerBase player = null)
         {
             var popup = new GalleryWindow
             {
                 InitialPosition = timestamp
             };
 
-            return popup.ShowAsyncInternal(xamlRoot, parameter, closing);
+            return popup.ShowAsyncInternal(xamlRoot, parameter, closing, player);
         }
 
-        private Task<ContentDialogResult> ShowAsyncInternal(XamlRoot xamlRoot, GalleryViewModelBase parameter, FrameworkElement closing = null)
+        private Task<ContentDialogResult> ShowAsyncInternal(XamlRoot xamlRoot, GalleryViewModelBase parameter, FrameworkElement closing = null, VideoPlayerBase player = null)
         {
             if (closing != null && IsConstrainedToRootBounds)
             {
@@ -360,7 +358,7 @@ namespace Telegram.Controls.Gallery
                 parameter.Items.CollectionChanged -= OnCollectionChanged;
                 parameter.Items.CollectionChanged += OnCollectionChanged;
 
-                PrepareNext(0, true);
+                PrepareNext(0, true, false, player);
 
                 var applicationView = ApplicationView.GetForCurrentView();
 
@@ -544,7 +542,7 @@ namespace Telegram.Controls.Gallery
             _layer.StartAnimation("Opacity", CreateScalarAnimation(0, 1, true));
             _bottom.StartAnimation("Opacity", CreateScalarAnimation(0, 1, true));
 
-            var container = LayoutRoot.CurrentElement as Grid;
+            var container = LayoutRoot.CurrentElement as GalleryContent;
 
             var animation = ConnectedAnimationService.GetForCurrentView().GetAnimation("FullScreenPicture");
             if (animation != null)
@@ -568,22 +566,12 @@ namespace Telegram.Controls.Gallery
             InitializeVideo(container, item);
         }
 
-        private void InitializeVideo(Grid container, GalleryMedia item)
+        private void InitializeVideo(GalleryContent content, GalleryMedia item)
         {
             if (item.IsVideo)
             {
-                Play(container, item);
-
-                if (GalleryCompactWindow.Current is ViewLifetimeControl compact)
-                {
-                    compact.Dispatcher.Dispatch(() =>
-                    {
-                        if (compact.Window.Content is GalleryCompactWindow player)
-                        {
-                            player.Pause();
-                        }
-                    });
-                }
+                Play(content, item);
+                GalleryCompactOverlay.Pause();
             }
         }
 
@@ -652,9 +640,9 @@ namespace Telegram.Controls.Gallery
 
         private GalleryContent _current;
 
-        private void Play(FrameworkElement container, GalleryMedia item)
+        private void Play(GalleryContent content, GalleryMedia item, VideoPlayerBase player = null)
         {
-            if (_unloaded || container is not GalleryContent content)
+            if (_unloaded)
             {
                 return;
             }
@@ -672,10 +660,16 @@ namespace Telegram.Controls.Gallery
                 position = knownPosition;
             }
 
-            //_mediaPlayer.IsLoopingEnabled = item.IsLoop;
-
-            _current = content;
-            _current.Play(item, position, Controls);
+            if (player != null)
+            {
+                _current = content;
+                _current.Play(player, item, Controls);
+            }
+            else
+            {
+                _current = content;
+                _current.Play(item, position, Controls);
+            }
         }
 
         private void Dispose()
@@ -799,7 +793,7 @@ namespace Telegram.Controls.Gallery
         {
             if (ViewModel?.SelectedItem is GalleryMedia item && item.IsVideo && (item.IsLoopingEnabled || SettingsService.Current.IsStreamingEnabled))
             {
-                Play(LayoutRoot.CurrentElement, item);
+                Play(CurrentElement, item);
             }
         }
 
@@ -812,6 +806,8 @@ namespace Telegram.Controls.Gallery
         {
             ChangeView(CarouselDirection.Next, false);
         }
+
+        public GalleryContent CurrentElement => LayoutRoot.CurrentElement as GalleryContent;
 
         #region Flippitiflip
 
@@ -891,7 +887,7 @@ namespace Telegram.Controls.Gallery
             return false;
         }
 
-        private void PrepareNext(CarouselDirection direction, bool initialize = false, bool dispose = false)
+        private void PrepareNext(CarouselDirection direction, bool initialize = false, bool dispose = false, VideoPlayerBase player = null)
         {
             var viewModel = ViewModel;
             if (viewModel == null)
@@ -949,7 +945,7 @@ namespace Telegram.Controls.Gallery
             var item = viewModel.Items[index];
             if (item.IsVideo /*&& initialize*/)
             {
-                Play(target, item);
+                Play(target, item, player);
             }
         }
 
@@ -1037,125 +1033,16 @@ namespace Telegram.Controls.Gallery
 
             //if (_mediaPlayer == null || _mediaPlayer.Source == null)
             {
-                Play(LayoutRoot.CurrentElement, item);
+                Play(CurrentElement, item);
             }
 
-            var width = 320d;
-            var height = 200d;
+            var player = _current.Video;
+            player.IsUnloadedExpected = true;
 
-            var constraint = item.Constraint;
-            if (constraint is MessageAnimation messageAnimation)
-            {
-                constraint = messageAnimation.Animation;
-            }
-            else if (constraint is MessageVideo messageVideo)
-            {
-                constraint = messageVideo.Video;
-            }
-
-            if (constraint is Animation animation)
-            {
-                width = animation.Width;
-                height = animation.Height;
-            }
-            else if (constraint is Video video)
-            {
-                width = video.Width;
-                height = video.Height;
-            }
-
-            if (width > 320 || height > 320)
-            {
-                var ratioX = 320d / width;
-                var ratioY = 320d / height;
-                var ratio = Math.Min(ratioX, ratioY);
-
-                width *= ratio;
-                height *= ratio;
-            }
-
-            ////OnBackRequestedOverride(this, new BackRequestedRoutedEventArgs());
-
-            //var size = new Size(width * XamlRoot.RasterizationScale, height * XamlRoot.RasterizationScale);
-
-            //// Create a new AppWindow
-            //var appWindow = await AppWindow.TryCreateAsync();
-
-            //// Make sure we release the reference to this window, and release XAML resources, when it's closed
-            //appWindow.Closed += delegate { appWindow = null; };
-            //// Is CompactOverlay supported for this AppWindow? If not, then stop.
-            //if (appWindow.Presenter.IsPresentationSupported(AppWindowPresentationKind.CompactOverlay))
-            //{
-            //    var player = _current.GetChild<VideoPlayerBase>();
-            //    player.IsUnloadedExpected = true;
-
-            //    var parent = player.Parent as Border;
-            //    parent.Child = null;
-
-            //    var appWindowContent = new GalleryCompactAppWindow(appWindow, viewModel, player);
-
-            //    // Create a new frame for the window
-            //    // Navigate the frame to the CompactOverlay page inside it.
-            //    //appWindowFrame.Navigate(typeof(SecondaryAppWindowPage));
-            //    // Attach the frame to the window
-            //    ElementCompositionPreview.SetAppWindowContent(appWindow, appWindowContent);
-            //    // Let's set the title so that we can tell the windows apart
-            //    appWindow.TitleBar.ExtendsContentIntoTitleBar = true;
-            //    appWindow.TitleBar.ButtonInactiveBackgroundColor = Colors.Transparent;
-            //    appWindow.TitleBar.ButtonBackgroundColor = Colors.Transparent;
-            //    appWindow.TitleBar.ButtonForegroundColor = Colors.White;
-
-            //    // Request the Presentation of the window to CompactOverlay
-            //    var switched = appWindow.Presenter.RequestPresentation(AppWindowPresentationKind.CompactOverlay);
-            //    if (switched)
-            //    {
-            //        WindowManagementPreview.SetPreferredMinSize(appWindow, new Size(width, height));
-            //        appWindow.RequestSize(size);
-
-            //        appWindow.Presenter.RequestPresentation(AppWindowPresentationKind.CompactOverlay);
-
-            //        // If the request was satisfied, show the window
-            //        await appWindow.TryShowAsync();
-            //    }
-            //}
-
-            //return;
-
-            var aggregator = TypeResolver.Current.Resolve<IEventAggregator>(viewModel.SessionId);
-            var viewService = TypeResolver.Current.Resolve<IViewService>(viewModel.SessionId);
-
-            //var mediaPlayer = _mediaPlayer;
-            //var fileStream = _fileStream;
-
-            _current.Stop(out int fileId, out double time);
-
-            if (GalleryCompactWindow.Current is ViewLifetimeControl control)
-            {
-                control.Dispatcher.Dispatch(() =>
-                {
-                    if (control.Window.Content is GalleryCompactWindow player)
-                    {
-                        player.Play(viewModel, item, time);
-                    }
-
-                    ApplicationView.GetForCurrentView().TryResizeView(new Size(width, height));
-                });
-            }
-            else
-            {
-                var parameters = new ViewServiceOptions
-                {
-                    ViewMode = ViewServiceMode.CompactOverlay,
-                    Width = width,
-                    Height = height,
-                    PersistedId = "PIP",
-                    Content = control => new GalleryCompactWindow(control, viewModel, item, time)
-                };
-
-                _ = viewService.OpenAsync(parameters);
-            }
-
+            _current.Video = null;
             OnBackRequestedOverride(this, new BackRequestedRoutedEventArgs());
+
+            GalleryCompactOverlay.CreateOrUpdate(viewModel, item, player);
         }
 
         #endregion

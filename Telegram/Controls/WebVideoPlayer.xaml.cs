@@ -1,8 +1,10 @@
 ﻿using Microsoft.UI.Xaml.Controls;
 using Microsoft.Web.WebView2.Core;
 using System;
+using System.Buffers;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Net.Http.Headers;
 using System.Text;
@@ -30,14 +32,20 @@ namespace Telegram.Controls
         public WebVideoPlayer()
         {
             InitializeComponent();
+
+            Connected += OnConnected;
             Disconnected += OnDisconnected;
+        }
+
+        private void OnConnected(object sender, RoutedEventArgs e)
+        {
+            IsUnloadedExpected = false;
         }
 
         private void OnDisconnected(object sender, RoutedEventArgs e)
         {
             if (IsUnloadedExpected)
             {
-                IsUnloadedExpected = false;
                 return;
             }
 

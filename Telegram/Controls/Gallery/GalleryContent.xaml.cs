@@ -395,7 +395,33 @@ namespace Telegram.Controls.Gallery
             catch { }
         }
 
-        private VideoPlayerBase Video
+        public void Play(VideoPlayerBase player, GalleryMedia item, GalleryTransportControls controls)
+        {
+            if (_unloaded)
+            {
+                return;
+            }
+
+            try
+            {
+                var file = item.File;
+                if (file.Id == _fileId || (!file.Local.IsDownloadingCompleted && !SettingsService.Current.IsStreamingEnabled))
+                {
+                    return;
+                }
+
+                _fileId = file.Id;
+
+                Video = player;
+                //Video.IsUnloadedExpected = false;
+
+                controls.Attach(item, file);
+                controls.Attach(Video);
+            }
+            catch { }
+        }
+
+        public VideoPlayerBase Video
         {
             get => Panel.Child as VideoPlayerBase;
             set
@@ -403,12 +429,14 @@ namespace Telegram.Controls.Gallery
                 var video = Panel.Child as VideoPlayerBase;
                 if (video != null)
                 {
+                    video.SizeChanged -= OnVideoSizeChanged;
                     video.FirstFrameReady -= OnFirstFrameReady;
                     video.Closed -= OnClosed;
                 }
 
                 if (value != null)
                 {
+                    value.SizeChanged += OnVideoSizeChanged;
                     value.FirstFrameReady += OnFirstFrameReady;
                     value.Closed += OnClosed;
                     value.IsTabStop = false;
@@ -434,6 +462,15 @@ namespace Telegram.Controls.Gallery
 
             UpdateManager.Unsubscribe(this, ref _fileToken);
             UpdateManager.Unsubscribe(this, ref _thumbnailToken, true);
+        }
+
+        private void OnVideoSizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            if (sender is VideoPlayerBase player && e.NewSize.Width != 0 && e.NewSize.Height != 0)
+            {
+                player.IsUnloadedExpected = false;
+                player.SizeChanged -= OnVideoSizeChanged;
+            }
         }
 
         private void OnFirstFrameReady(VideoPlayerBase sender, EventArgs args)

@@ -21,14 +21,38 @@ namespace Telegram.Controls
         public NativeVideoPlayer()
         {
             InitializeComponent();
+
+            Connected += OnConnected;
             Disconnected += OnDisconnected;
+        }
+
+        private void OnConnected(object sender, RoutedEventArgs e)
+        {
+            IsUnloadedExpected = false;
+        }
+
+        private bool _isUnloadedExpected;
+        public override bool IsUnloadedExpected
+        {
+            get => _isUnloadedExpected;
+            set
+            {
+                _isUnloadedExpected = value;
+
+                if (value)
+                {
+                    Video.IsUnloadedExpected = value;
+                }
+            }
         }
 
         private void OnDisconnected(object sender, RoutedEventArgs e)
         {
+            Logger.Info(IsUnloadedExpected);
+
             if (IsUnloadedExpected)
             {
-                IsUnloadedExpected = false;
+                //IsUnloadedExpected = false;
                 return;
             }
 

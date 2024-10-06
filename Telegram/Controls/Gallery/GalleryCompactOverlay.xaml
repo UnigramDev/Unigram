@@ -1,4 +1,4 @@
-﻿<controls:UserControlEx x:Class="Telegram.Controls.Gallery.GalleryCompactAppWindow"
+﻿<controls:UserControlEx x:Class="Telegram.Controls.Gallery.GalleryCompactOverlay"
                         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                         xmlns:local="using:Telegram.Controls.Gallery"
@@ -14,6 +14,9 @@
 
     <Grid x:Name="LayoutRoot"
           Background="Black">
+        <controls:AspectView x:Name="Presenter"
+                             HorizontalAlignment="Center"
+                             VerticalAlignment="Center" />
 
         <Grid x:Name="ControlsRoot"
               Background="{ThemeResource SystemControlPageBackgroundAltMediumBrush}">
