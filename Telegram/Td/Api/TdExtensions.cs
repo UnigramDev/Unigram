@@ -93,8 +93,7 @@ namespace Telegram.Td.Api
             return gift.RemainingCount switch
             {
                 0 => string.Format(Strings.Gift2AvailabilityValueNone, gift.TotalCount),
-                1 => string.Format(Strings.Gift2Availability3Value, gift.RemainingCount, gift.TotalCount),
-                _ => string.Format(Strings.Gift2AvailabilityValue, gift.RemainingCount, gift.TotalCount)
+                _ => Locale.Declension(Strings.R.Gift2Availability4Value, gift.RemainingCount, gift.TotalCount)
             };
         }
 

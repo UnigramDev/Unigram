@@ -35,13 +35,13 @@
                                  Margin="4" />
 
         <controls:AnimatedImage x:Name="Animated"
-                                Width="96"
-                                Height="96"
-                                FrameSize="96,96"
+                                Width="88"
+                                Height="88"
+                                FrameSize="88,88"
                                 DecodeFrameType="Logical"
                                 AutoPlay="False"
                                 IsViewportAware="True"
-                                Margin="0,4" />
+                                Margin="4,8,4,4" />
 
         <Border x:Name="Hidden"
                 x:Load="False"
@@ -56,7 +56,8 @@
                        Margin="8" />
         </Border>
 
-        <Grid Background="{ThemeResource MessageReactionPaidBackgroundBrush}"
+        <Grid x:Name="StarCountRoot"
+              Background="{ThemeResource MessageReactionPaidBackgroundBrush}"
               HorizontalAlignment="Center"
               Height="24"
               CornerRadius="12"
@@ -78,6 +79,24 @@
                        Typography.NumeralAlignment="Tabular"
                        VerticalAlignment="Center"
                        Margin="0,1,8,2"
+                       Grid.Column="1" />
+        </Grid>
+
+        <Grid x:Name="SoldOutRoot"
+              Visibility="Collapsed"
+              Background="{ThemeResource SystemFillColorCriticalBackgroundBrush}"
+              HorizontalAlignment="Center"
+              Height="24"
+              CornerRadius="12"
+              Margin="0,0,0,12"
+              Grid.Row="1">
+            <TextBlock Text="{CustomResource Gift2SoldOut}"
+                       Foreground="{ThemeResource SystemFillColorCriticalBrush}"
+                       Style="{StaticResource CaptionTextBlockStyle}"
+                       FontWeight="SemiBold"
+                       Typography.NumeralAlignment="Tabular"
+                       VerticalAlignment="Center"
+                       Margin="8,1,8,2"
                        Grid.Column="1" />
         </Grid>
 

@@ -14,6 +14,7 @@ using Telegram.Controls;
 using Telegram.Controls.Cells;
 using Telegram.Navigation.Services;
 using Telegram.Services;
+using Telegram.Streams;
 using Telegram.Td.Api;
 using Telegram.Views.Stars.Popups;
 using Windows.Foundation;
@@ -148,9 +149,16 @@ namespace Telegram.Views.Premium.Popups
         {
             if (e.ClickedItem is Gift gift)
             {
-                Hide();
-                await _clientService.SendAsync(new CreatePrivateChat(_clientService.Options.MyId, true));
-                await _navigationService.ShowPopupAsync(new SendGiftPopup(_clientService, _navigationService, gift, _userId));
+                if (gift.TotalCount > 0 && gift.RemainingCount == 0)
+                {
+                    ToastPopup.Show(XamlRoot, string.Format("**{0}**\n{1}", Strings.Gift2SoldOutTitle, Locale.Declension(Strings.R.Gift2SoldOut, gift.TotalCount)), new DelayedFileSource(_clientService, gift.Sticker));
+                }
+                else
+                {
+                    Hide();
+                    await _clientService.SendAsync(new CreatePrivateChat(_clientService.Options.MyId, true));
+                    await _navigationService.ShowPopupAsync(new SendGiftPopup(_clientService, _navigationService, gift, _userId));
+                }
             }
             else if (e.ClickedItem is PremiumPaymentOption option)
             {

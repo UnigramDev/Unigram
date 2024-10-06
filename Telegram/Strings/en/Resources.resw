@@ -5512,6 +5512,12 @@ Duration: {1}</value>
   <data name="Gift2Availability3Value" xml:space="preserve">
     <value>{0} of {1} left</value>
   </data>
+  <data name="Gift2Availability4Value_one" xml:space="preserve">
+    <value>{0} of {1} left</value>
+  </data>
+  <data name="Gift2Availability4Value_other" xml:space="preserve">
+    <value>{0} of {1} left</value>
+  </data>
   <data name="Gift2AvailabilityValue" xml:space="preserve">
     <value>{0} of {1} left</value>
   </data>
@@ -5615,6 +5621,18 @@ This action cannot be undone. This will permanently destroy the gift.</value>
   </data>
   <data name="Gift2Send_other" xml:space="preserve">
     <value>Send a Gift for ⭐️ {0}</value>
+  </data>
+  <data name="Gift2SoldOut" xml:space="preserve">
+    <value>sold out</value>
+  </data>
+  <data name="Gift2SoldOut_one" xml:space="preserve">
+    <value>All {0} gifts were already sold.</value>
+  </data>
+  <data name="Gift2SoldOut_other" xml:space="preserve">
+    <value>All {0} gifts were already sold.</value>
+  </data>
+  <data name="Gift2SoldOutTitle" xml:space="preserve">
+    <value>Sold Out!</value>
   </data>
   <data name="Gift2Stars" xml:space="preserve">
     <value>Gift Stars</value>

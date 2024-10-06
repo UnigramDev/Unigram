@@ -67,10 +67,22 @@ namespace Telegram.Controls.Cells
             {
                 RibbonRoot.Visibility = Visibility.Visible;
                 Ribbon.Text = Strings.Gift2LimitedRibbon;
+                
+                if (gift.RemainingCount > 0)
+                {
+                    StarCountRoot.Visibility = Visibility.Visible;
+                    SoldOutRoot.Visibility = Visibility.Collapsed;
+                }
+                else
+                {
+                    StarCountRoot.Visibility = Visibility.Collapsed;
+                    SoldOutRoot.Visibility = Visibility.Visible;
+                }
             }
             else
             {
                 RibbonRoot.Visibility = Visibility.Collapsed;
+                SoldOutRoot.Visibility = Visibility.Collapsed;
             }
 
             if (Hidden != null)
