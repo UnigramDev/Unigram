@@ -2,8 +2,10 @@
 using Telegram.Services;
 using Telegram.Streams;
 using Telegram.Td.Api;
+using Windows.UI;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Media;
 
 namespace Telegram.Controls.Cells
 {
@@ -55,6 +57,12 @@ namespace Telegram.Controls.Cells
             }
         }
 
+        private readonly Color _ribbonLimitedTop = Color.FromArgb(0xFF, 0x6E, 0xD2, 0xFF);
+        private readonly Color _ribbonLimitedBottom = Color.FromArgb(0xFF, 0x35, 0xA5, 0xFC);
+
+        private readonly Color _ribbonSoldOutTop = Color.FromArgb(0xFF, 0xFF, 0x5B, 0x54);
+        private readonly Color _ribbonSoldOutBottom = Color.FromArgb(0xFF, 0xED, 0x1D, 0x27);
+
         public void UpdateGift(IClientService clientService, Gift gift)
         {
             Photo.Visibility = Visibility.Collapsed;
@@ -66,23 +74,16 @@ namespace Telegram.Controls.Cells
             if (gift.TotalCount > 0)
             {
                 RibbonRoot.Visibility = Visibility.Visible;
-                Ribbon.Text = Strings.Gift2LimitedRibbon;
-                
-                if (gift.RemainingCount > 0)
-                {
-                    StarCountRoot.Visibility = Visibility.Visible;
-                    SoldOutRoot.Visibility = Visibility.Collapsed;
-                }
-                else
-                {
-                    StarCountRoot.Visibility = Visibility.Collapsed;
-                    SoldOutRoot.Visibility = Visibility.Visible;
-                }
+                Ribbon.Text = gift.RemainingCount > 0
+                    ? Strings.Gift2LimitedRibbon
+                    : Strings.Gift2SoldOut;
+
+                RibbonTop.Color = gift.RemainingCount > 0 ? _ribbonLimitedTop : _ribbonSoldOutTop;
+                RibbonBottom.Color = gift.RemainingCount > 0 ? _ribbonLimitedBottom : _ribbonSoldOutBottom;
             }
             else
             {
                 RibbonRoot.Visibility = Visibility.Collapsed;
-                SoldOutRoot.Visibility = Visibility.Collapsed;
             }
 
             if (Hidden != null)

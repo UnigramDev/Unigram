@@ -82,32 +82,24 @@
                        Grid.Column="1" />
         </Grid>
 
-        <Grid x:Name="SoldOutRoot"
-              Visibility="Collapsed"
-              Background="{ThemeResource SystemFillColorCriticalBackgroundBrush}"
-              HorizontalAlignment="Center"
-              Height="24"
-              CornerRadius="12"
-              Margin="0,0,0,12"
-              Grid.Row="1">
-            <TextBlock Text="{CustomResource Gift2SoldOut}"
-                       Foreground="{ThemeResource SystemFillColorCriticalBrush}"
-                       Style="{StaticResource CaptionTextBlockStyle}"
-                       FontWeight="SemiBold"
-                       Typography.NumeralAlignment="Tabular"
-                       VerticalAlignment="Center"
-                       Margin="8,1,8,2"
-                       Grid.Column="1" />
-        </Grid>
-
         <Grid x:Name="RibbonRoot"
               HorizontalAlignment="Right"
               VerticalAlignment="Top"
               Margin="0,-1,-1,0"
               Width="62"
               Height="62">
-            <Path Data="M59.6569 31.1569L30.8431 2.34315C29.3429 0.842855 27.308 0 25.1863 0H2.82843C1.04662 0 0.154282 2.15428 1.41421 3.41421L58.5858 60.5858C59.8457 61.8457 62 60.9534 62 59.1716V36.8137C62 34.692 61.1571 32.6571 59.6569 31.1569Z"
-                  Fill="{StaticResource NavigationViewSelectionIndicatorForeground}" />
+            <Path Data="M59.6569 31.1569L30.8431 2.34315C29.3429 0.842855 27.308 0 25.1863 0H2.82843C1.04662 0 0.154282 2.15428 1.41421 3.41421L58.5858 60.5858C59.8457 61.8457 62 60.9534 62 59.1716V36.8137C62 34.692 61.1571 32.6571 59.6569 31.1569Z">
+                <Path.Fill>
+                    <LinearGradientBrush>
+                        <GradientStop x:Name="RibbonTop"
+                                      Color="#6ED2FF"
+                                      Offset="0" />
+                        <GradientStop x:Name="RibbonBottom"
+                                      Color="#35A5FC"
+                                      Offset="1" />
+                    </LinearGradientBrush>
+                </Path.Fill>
+            </Path>
 
             <Border Width="62"
                     VerticalAlignment="Center"
