@@ -21,6 +21,7 @@ using Windows.Foundation;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Documents;
+using Windows.UI.Xaml.Media.Animation;
 
 namespace Telegram.Views.Premium.Popups
 {
@@ -190,6 +191,19 @@ namespace Telegram.Views.Premium.Popups
             if (Navigation.SelectedItem is GiftGroup group)
             {
                 _gifts.ReplaceDiff(group);
+                return;
+
+                ScrollingHost.ItemContainerTransitions.Clear();
+
+                var diffResult = DiffUtil.CalculateDiff(_gifts, group, _gifts.DefaultDiffHandler, _gifts.DefaultOptions);
+                if (diffResult.MovedItems.Count == 0)
+                {
+                    ScrollingHost.ItemContainerTransitions.Add(new AddDeleteThemeTransition());
+                }
+
+                ScrollingHost.ItemContainerTransitions.Add(new RepositionThemeTransition());
+
+                _gifts.ReplaceDiff(diffResult);
             }
         }
 

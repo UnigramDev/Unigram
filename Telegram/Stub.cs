@@ -238,13 +238,13 @@ public static class Message_stub
         }
     }
 }
-public static class StartupTask_stub
+public static class LimitedAccessFeatures_stub
 {
-    public static void Disable_stub(this Windows.ApplicationModel.StartupTask sender)
+    public static Windows.ApplicationModel.LimitedAccessFeatureRequestResult TryUnlockFeature_stub(string featureId, string token, string attestation)
     {
         try
         {
-            sender.Disable();
+            return Windows.ApplicationModel.LimitedAccessFeatures.TryUnlockFeature(featureId, token, attestation);
         }
         catch (Exception ex)
         {
@@ -275,6 +275,21 @@ public static class SuspendingOperation_stub
         try
         {
             return sender.GetDeferral();
+        }
+        catch (Exception ex)
+        {
+            Logger.Error(Environment.StackTrace);
+            throw new RuntimeException(ex);
+        }
+    }
+}
+public static class StartupTask_stub
+{
+    public static void Disable_stub(this Windows.ApplicationModel.StartupTask sender)
+    {
+        try
+        {
+            sender.Disable();
         }
         catch (Exception ex)
         {
@@ -4530,6 +4545,18 @@ public static class ElementCompositionPreview_stub
             throw new RuntimeException(ex);
         }
     }
+    public static void SetAppWindowContent_stub(Windows.UI.WindowManagement.AppWindow appWindow, Windows.UI.Xaml.UIElement xamlContent)
+    {
+        try
+        {
+            Windows.UI.Xaml.Hosting.ElementCompositionPreview.SetAppWindowContent(appWindow, xamlContent);
+        }
+        catch (Exception ex)
+        {
+            Logger.Error(Environment.StackTrace);
+            throw new RuntimeException(ex);
+        }
+    }
     public static void SetElementChildVisual_stub(Windows.UI.Xaml.UIElement element, Windows.UI.Composition.Visual visual)
     {
         try
@@ -6463,6 +6490,21 @@ public static class MediaPlayer_stub
         }
     }
 }
+public static class CoreAppWindowPreview_stub
+{
+    public static int GetIdFromWindow_stub(Windows.UI.WindowManagement.AppWindow window)
+    {
+        try
+        {
+            return Windows.UI.Core.Preview.CoreAppWindowPreview.GetIdFromWindow(window);
+        }
+        catch (Exception ex)
+        {
+            Logger.Error(Environment.StackTrace);
+            throw new RuntimeException(ex);
+        }
+    }
+}
 public static class SystemNavigationCloseRequestedPreviewEventArgs_stub
 {
     public static Windows.Foundation.Deferral GetDeferral_stub(this Windows.UI.Core.Preview.SystemNavigationCloseRequestedPreviewEventArgs sender)
@@ -7814,6 +7856,33 @@ public static class ViewModePreferences_stub
         try
         {
             return Windows.UI.ViewManagement.ViewModePreferences.CreateDefault(mode);
+        }
+        catch (Exception ex)
+        {
+            Logger.Error(Environment.StackTrace);
+            throw new RuntimeException(ex);
+        }
+    }
+}
+public static class AppWindowPresenter_stub
+{
+    public static bool IsPresentationSupported_stub(this Windows.UI.WindowManagement.AppWindowPresenter sender, Windows.UI.WindowManagement.AppWindowPresentationKind presentationKind)
+    {
+        try
+        {
+            return sender.IsPresentationSupported(presentationKind);
+        }
+        catch (Exception ex)
+        {
+            Logger.Error(Environment.StackTrace);
+            throw new RuntimeException(ex);
+        }
+    }
+    public static bool RequestPresentation_stub(this Windows.UI.WindowManagement.AppWindowPresenter sender, Windows.UI.WindowManagement.AppWindowPresentationKind presentationKind)
+    {
+        try
+        {
+            return sender.RequestPresentation(presentationKind);
         }
         catch (Exception ex)
         {

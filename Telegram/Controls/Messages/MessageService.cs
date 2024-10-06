@@ -1409,7 +1409,7 @@ namespace Telegram.Controls.Messages
             var entities = active ? new List<TextEntity>() : null;
 
             long singleUserId = 0;
-            if (singleUserId == 0 && chatAddMembers.MemberUserIds.Count == 1)
+            if (chatAddMembers.MemberUserIds.Count == 1)
             {
                 singleUserId = chatAddMembers.MemberUserIds[0];
             }
