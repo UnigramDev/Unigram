@@ -1280,7 +1280,7 @@ namespace Telegram.Controls
                         }
                     }
 
-                    if (user.Type is UserTypeRegular)
+                    if (user.Type is UserTypeRegular && ViewModel.IsPremiumAvailable)
                     {
                         flyout.CreateFlyoutItem(ViewModel.GiftPremium, Strings.SendAGift, Icons.GiftPremium);
                     }
