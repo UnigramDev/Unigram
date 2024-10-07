@@ -96,7 +96,14 @@ namespace Telegram.Controls.Messages
         {
             if (Label != null)
             {
-                Label.Text = _effectGlyph + _pinnedGlyph + _repliesLabel + _viewsLabel + _editedLabel + _authorLabel + _dateLabel + _stateLabel;
+                if (Formatter.IsTimeRightToLeft)
+                {
+                    Label.Text = _effectGlyph + _pinnedGlyph + _repliesLabel + _viewsLabel + _editedLabel + _authorLabel + Icons.LTR + Icons.RTL + _dateLabel + _stateLabel;
+                }
+                else
+                {
+                    Label.Text = _effectGlyph + _pinnedGlyph + _repliesLabel + _viewsLabel + _editedLabel + _authorLabel + _dateLabel + _stateLabel;
+                }
             }
         }
 
@@ -453,7 +460,7 @@ namespace Telegram.Controls.Messages
                     _ticksHash = messageHash;
 
                     // TODO: 
-                    return Icons.LTR + "\u00A0failed"; // Failed
+                    return "\u00A0failed"; // Failed
                 }
                 else if (message.SendingState is MessageSendingStatePending)
                 {
@@ -462,7 +469,7 @@ namespace Telegram.Controls.Messages
                     _ticksState = MessageTicksState.Pending;
                     _ticksHash = messageHash;
 
-                    return Icons.LTR + "\u00A0\uEA06"; // Pending
+                    return "\u00A0\uEA06"; // Pending
                 }
                 else if (message.Id <= maxId)
                 {
@@ -471,7 +478,7 @@ namespace Telegram.Controls.Messages
                     _ticksState = MessageTicksState.Read;
                     _ticksHash = messageHash;
 
-                    return Icons.LTR + "\u00A0\uEA07"; // Read
+                    return "\u00A0\uEA07"; // Read
                 }
 
                 UpdateTicks(true, false, _ticksState == MessageTicksState.Pending && _ticksHash == messageHash);
@@ -479,7 +486,7 @@ namespace Telegram.Controls.Messages
                 _ticksState = MessageTicksState.Sent;
                 _ticksHash = messageHash;
 
-                return Icons.LTR + "\u00A0\uEA07"; // Unread
+                return "\u00A0\uEA07"; // Unread
             }
 
             UpdateTicks(false, null);
