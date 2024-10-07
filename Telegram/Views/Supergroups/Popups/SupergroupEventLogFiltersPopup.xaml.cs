@@ -93,9 +93,9 @@ namespace Telegram.Views.Supergroups.Popups
             MessagePins.Checked += Messages_Checked;
             MessagePins.Unchecked += Messages_Checked;
 
-            MembersAndAdminsCount.Text = CountSelection(MembersAndAdminsExpander, MembersAndAdminsCheck, MembersAndAdmins_Checked);
-            ChatSettingsCount.Text = CountSelection(ChatSettingsExpander, ChatSettingsCheck, ChatSettings_Checked);
-            MessagesCount.Text = CountSelection(MessagesExpander, MessagesCheck, Messages_Checked);
+            MembersAndAdminsCount.Text = CountSelection(MembersAndAdminsRoot, MembersAndAdminsCheck, MembersAndAdmins_Checked);
+            ChatSettingsCount.Text = CountSelection(ChatSettingsRoot, ChatSettingsCheck, ChatSettings_Checked);
+            MessagesCount.Text = CountSelection(MessagesRoot, MessagesCheck, Messages_Checked);
         }
 
         private async void Populate(IClientService clientService, long supergroupId, IList<long> selectedIds)
@@ -149,18 +149,18 @@ namespace Telegram.Views.Supergroups.Popups
                 AdminsRoot.Children.Add(selector);
             }
 
-            CountSelection(AdminsExpander, AdminsCheck, Admins_Checked);
+            CountSelection(AdminsRoot, AdminsCheck, Admins_Checked);
         }
 
         private void MembersAndAdmins_Checked(object sender, RoutedEventArgs e)
         {
             if ((CheckBox)sender == MembersAndAdminsCheck)
             {
-                MembersAndAdminsCount.Text = ToggleSelection(MembersAndAdminsExpander, MembersAndAdminsCheck, MembersAndAdmins_Checked);
+                MembersAndAdminsCount.Text = ToggleSelection(MembersAndAdminsRoot, MembersAndAdminsCheck, MembersAndAdmins_Checked);
             }
             else
             {
-                MembersAndAdminsCount.Text = CountSelection(MembersAndAdminsExpander, MembersAndAdminsCheck, MembersAndAdmins_Checked);
+                MembersAndAdminsCount.Text = CountSelection(MembersAndAdminsRoot, MembersAndAdminsCheck, MembersAndAdmins_Checked);
             }
         }
 
@@ -168,11 +168,11 @@ namespace Telegram.Views.Supergroups.Popups
         {
             if ((CheckBox)sender == ChatSettingsCheck)
             {
-                ChatSettingsCount.Text = ToggleSelection(ChatSettingsExpander, ChatSettingsCheck, ChatSettings_Checked);
+                ChatSettingsCount.Text = ToggleSelection(ChatSettingsRoot, ChatSettingsCheck, ChatSettings_Checked);
             }
             else
             {
-                ChatSettingsCount.Text = CountSelection(ChatSettingsExpander, ChatSettingsCheck, ChatSettings_Checked);
+                ChatSettingsCount.Text = CountSelection(ChatSettingsRoot, ChatSettingsCheck, ChatSettings_Checked);
             }
         }
 
@@ -180,11 +180,11 @@ namespace Telegram.Views.Supergroups.Popups
         {
             if ((CheckBox)sender == MessagesCheck)
             {
-                MessagesCount.Text = ToggleSelection(MessagesExpander, MessagesCheck, Messages_Checked);
+                MessagesCount.Text = ToggleSelection(MessagesRoot, MessagesCheck, Messages_Checked);
             }
             else
             {
-                MessagesCount.Text = CountSelection(MessagesExpander, MessagesCheck, Messages_Checked);
+                MessagesCount.Text = CountSelection(MessagesRoot, MessagesCheck, Messages_Checked);
             }
         }
 
@@ -192,17 +192,16 @@ namespace Telegram.Views.Supergroups.Popups
         {
             if ((CheckBox)sender == AdminsCheck)
             {
-                ToggleSelection(AdminsExpander, AdminsCheck, Admins_Checked);
+                ToggleSelection(AdminsRoot, AdminsCheck, Admins_Checked);
             }
             else
             {
-                CountSelection(AdminsExpander, AdminsCheck, Admins_Checked);
+                CountSelection(AdminsRoot, AdminsCheck, Admins_Checked);
             }
         }
 
-        private string CountSelection(SettingsExpander root, CheckBox parent, RoutedEventHandler handler)
+        private string CountSelection(StackPanel panel, CheckBox parent, RoutedEventHandler handler)
         {
-            var panel = root.Content as StackPanel;
             var count = 0;
             var total = 0;
 
@@ -235,9 +234,8 @@ namespace Telegram.Views.Supergroups.Popups
             return string.Format("{0}/{1}", count, total);
         }
 
-        private string ToggleSelection(SettingsExpander root, CheckBox parent, RoutedEventHandler handler)
+        private string ToggleSelection(StackPanel panel, CheckBox parent, RoutedEventHandler handler)
         {
-            var panel = root.Content as StackPanel;
             var total = 0;
             var check = parent.IsChecked == true;
 
