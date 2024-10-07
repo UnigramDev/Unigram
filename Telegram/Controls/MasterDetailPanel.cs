@@ -201,8 +201,8 @@ namespace Telegram.Controls
 
         private void Grip_PointerPressed(object sender, PointerRoutedEventArgs e)
         {
-            var master = Children[2] as FrameworkElement;
-            var grip = Children[3] as UserControl;
+            var master = Children[1] as FrameworkElement;
+            var grip = Children[2] as UserControl;
 
             _pointerPressed = true;
             _pointerDelta = e.GetCurrentPoint(this).Position.X - master.ActualWidth;
@@ -217,8 +217,8 @@ namespace Telegram.Controls
         {
             if (_pointerPressed)
             {
-                var master = Children[2] as FrameworkElement;
-                var grip = Children[3] as UserControl;
+                var master = Children[1] as FrameworkElement;
+                var grip = Children[2] as UserControl;
 
                 var point = e.GetCurrentPoint(this);
 
@@ -243,8 +243,8 @@ namespace Telegram.Controls
 
         private void Grip_PointerReleased(object sender, PointerRoutedEventArgs e)
         {
-            var master = Children[2] as FrameworkElement;
-            var grip = Children[3] as UserControl;
+            var master = Children[1] as FrameworkElement;
+            var grip = Children[2] as UserControl;
 
             _pointerPressed = false;
             VisualStateManager.GoToState(grip, "Normal", false);
