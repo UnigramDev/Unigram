@@ -34,25 +34,14 @@ namespace Telegram.Controls
         private bool _isUnloadedExpected;
         public override bool IsUnloadedExpected
         {
-            get => _isUnloadedExpected;
-            set
-            {
-                _isUnloadedExpected = value;
-
-                if (value)
-                {
-                    Video.IsUnloadedExpected = value;
-                }
-            }
+            get => Video.IsUnloadedExpected;
+            set => Video.IsUnloadedExpected = value;
         }
 
         private void OnDisconnected(object sender, RoutedEventArgs e)
         {
-            Logger.Info(IsUnloadedExpected);
-
             if (IsUnloadedExpected)
             {
-                //IsUnloadedExpected = false;
                 return;
             }
 
