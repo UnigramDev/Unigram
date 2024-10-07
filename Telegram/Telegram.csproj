@@ -197,7 +197,9 @@
     <Compile Include="Common\AutomaticDragHelper.cs" />
     <Compile Include="Common\BezierPoint.cs" />
     <Compile Include="Common\FeatureTokenGenerator.cs" />
-    <Compile Include="Common\MediaDeviceCoordinator.cs" />
+    <Compile Include="Common\MediaDeviceTracker.cs" />
+    <Compile Include="Common\MediaDeviceList.cs" />
+    <Compile Include="Common\MediaDevicePermissions.cs" />
     <Compile Include="Common\SliderHelper.cs" />
     <Compile Include="Composition\WeakInteractionTrackerOwner.cs" />
     <Compile Include="Controls\Calls\MediaStateBadge.xaml.cs">
@@ -594,7 +596,6 @@
     <Compile Include="Common\DateTimeParser.cs" />
     <Compile Include="Common\DebouncedProperty.cs" />
     <Compile Include="Common\EqualityComparerDelegate.cs" />
-    <Compile Include="Common\MediaDeviceWatcher.cs" />
     <Compile Include="Common\DisposableMutex.cs" />
     <Compile Include="Common\EventDebouncer.cs" />
     <Compile Include="Common\ImageHelper.cs" />

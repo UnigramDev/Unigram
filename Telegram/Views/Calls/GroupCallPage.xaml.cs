@@ -1012,7 +1012,7 @@ namespace Telegram.Views.Calls
             //}
             else if (currentUser != null && currentUser.CanUnmuteSelf && _call.IsMuted)
             {
-                var permissions = await MediaDeviceWatcher.CheckAccessAsync(XamlRoot, false, false, ElementTheme.Dark);
+                var permissions = await MediaDevicePermissions.CheckAccessAsync(XamlRoot, MediaDeviceAccess.Audio, ElementTheme.Dark);
                 if (permissions == false || _call == null)
                 {
                     return;
@@ -1032,10 +1032,10 @@ namespace Telegram.Views.Calls
 
         private async void Video_Click(object sender, RoutedEventArgs e)
         {
-            if (_call?.IsVideoEnabled == false)
+            if (_call.IsVideoEnabled == false)
             {
-                var permissions = await MediaDeviceWatcher.CheckAccessAsync(XamlRoot, true, false, ElementTheme.Dark);
-                if (permissions == false || _call == null)
+                var permissions = await MediaDevicePermissions.CheckAccessAsync(XamlRoot, MediaDeviceAccess.Video, ElementTheme.Dark);
+                if (permissions == false)
                 {
                     return;
                 }
@@ -1374,13 +1374,26 @@ namespace Telegram.Views.Calls
                 var inputId = _call.AudioInputId;
                 var outputId = _call.AudioOutputId;
 
-                if (MediaDeviceCoordinator.HasVideoInput)
-                {
-                    var video = new MenuFlyoutSubItem();
-                    video.Text = Strings.VoipDeviceCamera;
-                    video.Icon = MenuFlyoutHelper.CreateIcon(Icons.Camera);
+                var video = new MenuFlyoutSubItem();
+                video.Text = Strings.VoipDeviceCamera;
+                video.Icon = MenuFlyoutHelper.CreateIcon(Icons.Camera);
 
-                    foreach (var device in MediaDeviceCoordinator.VideoInput)
+                var input = new MenuFlyoutSubItem();
+                input.Text = Strings.VoipDeviceInput;
+                input.Icon = MenuFlyoutHelper.CreateIcon(Icons.MicOn);
+
+                var output = new MenuFlyoutSubItem();
+                output.Text = Strings.VoipDeviceOutput;
+                output.Icon = MenuFlyoutHelper.CreateIcon(Icons.Speaker3);
+
+                flyout.Items.Add(video);
+                flyout.Items.Add(input);
+                flyout.Items.Add(output);
+
+                var hasVideo = _call.Devices.HasDevices(MediaDeviceClass.VideoInput);
+                if (hasVideo is true)
+                {
+                    foreach (var device in _call.Devices.GetDevices(MediaDeviceClass.VideoInput))
                     {
                         var deviceItem = new ToggleMenuFlyoutItem();
                         deviceItem.Text = device.Name;
@@ -1392,26 +1405,16 @@ namespace Telegram.Views.Calls
 
                         video.Items.Add(deviceItem);
                     }
-
-                    flyout.Items.Add(video);
+                }
+                else
+                {
+                    video.CreateFlyoutItem(null, hasVideo.HasValue ? Strings.NotFoundCamera : Strings.Loading);
                 }
 
-                if (MediaDeviceCoordinator.HasAudioInput)
+                var hasInput = _call.Devices.HasDevices(MediaDeviceClass.AudioInput);
+                if (hasInput is true)
                 {
-                    var defaultInput = new ToggleMenuFlyoutItem();
-                    defaultInput.Text = Strings.Default;
-                    defaultInput.IsChecked = inputId == string.Empty;
-                    defaultInput.Click += (s, args) =>
-                    {
-                        _call.AudioInputId = string.Empty;
-                    };
-
-                    var input = new MenuFlyoutSubItem();
-                    input.Text = Strings.VoipDeviceInput;
-                    input.Icon = MenuFlyoutHelper.CreateIcon(Icons.MicOn);
-                    input.Items.Add(defaultInput);
-
-                    foreach (var device in MediaDeviceCoordinator.AudioInput)
+                    foreach (var device in _call.Devices.GetDevices(MediaDeviceClass.AudioInput))
                     {
                         var deviceItem = new ToggleMenuFlyoutItem();
                         deviceItem.Text = device.Name;
@@ -1423,26 +1426,16 @@ namespace Telegram.Views.Calls
 
                         input.Items.Add(deviceItem);
                     }
-
-                    flyout.Items.Add(input);
+                }
+                else
+                {
+                    input.CreateFlyoutItem(null, hasInput.HasValue ? Strings.NotFoundMicrophone : Strings.Loading);
                 }
 
-                if (MediaDeviceCoordinator.HasAudioOutput)
+                var hasOutput = _call.Devices.HasDevices(MediaDeviceClass.AudioOutput);
+                if (hasOutput is true)
                 {
-                    var defaultOutput = new ToggleMenuFlyoutItem();
-                    defaultOutput.Text = Strings.Default;
-                    defaultOutput.IsChecked = outputId == string.Empty;
-                    defaultOutput.Click += (s, args) =>
-                    {
-                        _call.AudioOutputId = string.Empty;
-                    };
-
-                    var output = new MenuFlyoutSubItem();
-                    output.Text = Strings.VoipDeviceOutput;
-                    output.Icon = MenuFlyoutHelper.CreateIcon(Icons.Speaker3);
-                    output.Items.Add(defaultOutput);
-
-                    foreach (var device in MediaDeviceCoordinator.AudioOutput)
+                    foreach (var device in _call.Devices.GetDevices(MediaDeviceClass.AudioOutput))
                     {
                         var deviceItem = new ToggleMenuFlyoutItem();
                         deviceItem.Text = device.Name;
@@ -1454,11 +1447,11 @@ namespace Telegram.Views.Calls
 
                         output.Items.Add(deviceItem);
                     }
-
-                    flyout.Items.Add(output);
                 }
-
-                flyout.CreateFlyoutItem(() => _call.IsNoiseSuppressionEnabled = !_call.IsNoiseSuppressionEnabled, Strings.VoipNoiseCancellation, _call.IsNoiseSuppressionEnabled ? Icons.Checkmark : null);
+                else
+                {
+                    output.CreateFlyoutItem(null, hasOutput.HasValue ? Strings.NotFoundSpeakers : Strings.Loading);
+                }
             }
 
             //flyout.CreateFlyoutItem(ShareInviteLink, Strings.VoipGroupShareInviteLink, Icons.Link);

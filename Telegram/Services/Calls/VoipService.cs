@@ -32,8 +32,6 @@ namespace Telegram.Services
         public VoipService(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator)
             : base(clientService, settingsService, aggregator)
         {
-            MediaDeviceCoordinator.Start();
-
             Aggregator.Subscribe<UpdateCall>(this, Handle)
                 .Subscribe<UpdateNewCallSignalingData>(Handle)
                 .Subscribe<UpdateGroupCall>(Handle)
@@ -135,7 +133,7 @@ namespace Telegram.Services
 
         public async void StartPrivateCall(INavigationService navigation, User user, bool video)
         {
-            if (MediaDeviceWatcher.IsUnsupported(navigation.XamlRoot))
+            if (MediaDevicePermissions.IsUnsupported(navigation.XamlRoot))
             {
                 return;
             }
@@ -158,7 +156,7 @@ namespace Telegram.Services
                 return;
             }
 
-            var permissions = await MediaDeviceWatcher.CheckAccessAsync(navigation.XamlRoot, video);
+            var permissions = await MediaDevicePermissions.CheckAccessAsync(navigation.XamlRoot, video ? MediaDeviceAccess.AudioAndVideo : MediaDeviceAccess.Audio);
             if (permissions == false)
             {
                 return;
@@ -189,7 +187,7 @@ namespace Telegram.Services
 
         public async void JoinGroupCall(INavigationService navigation, long chatId)
         {
-            if (MediaDeviceWatcher.IsUnsupported(navigation.XamlRoot))
+            if (MediaDevicePermissions.IsUnsupported(navigation.XamlRoot))
             {
                 return;
             }
@@ -211,7 +209,7 @@ namespace Telegram.Services
 
         public async void CreateGroupCall(INavigationService navigation, long chatId)
         {
-            if (MediaDeviceWatcher.IsUnsupported(navigation.XamlRoot))
+            if (MediaDevicePermissions.IsUnsupported(navigation.XamlRoot))
             {
                 return;
             }
@@ -310,7 +308,7 @@ namespace Telegram.Services
             {
                 if (!groupCall.IsRtmpStream)
                 {
-                    var permissions = await MediaDeviceWatcher.CheckAccessAsync(xamlRoot, true, false);
+                    var permissions = await MediaDevicePermissions.CheckAccessAsync(xamlRoot, MediaDeviceAccess.Audio);
                     if (permissions == false)
                     {
                         return;

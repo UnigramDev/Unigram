@@ -7145,6 +7145,15 @@ Please make sure you entered the right Server URL and Stream Key in your app.</v
   <data name="NoText" xml:space="preserve">
     <value>No text</value>
   </data>
+  <data name="NotFoundCamera" xml:space="preserve">
+    <value>No cameras found</value>
+  </data>
+  <data name="NotFoundMicrophone" xml:space="preserve">
+    <value>No microphones found</value>
+  </data>
+  <data name="NotFoundSpeakers" xml:space="preserve">
+    <value>No devices found</value>
+  </data>
   <data name="NotificationActionPinnedContactChannel" xml:space="preserve">
     <value>{0} pinned a contact</value>
   </data>
@@ -7720,14 +7729,23 @@ Payments will go directly to the developer of {0}. Telegram cannot provide any g
   <data name="PermissionNoAudio" xml:space="preserve">
     <value>Telegram needs microphone access so that you can send voice messages.</value>
   </data>
+  <data name="PermissionNoAudioCalls" xml:space="preserve">
+    <value>Unigram needs microphone access so that you can have calls. Please enable it in Settings.</value>
+  </data>
   <data name="PermissionNoAudioVideo" xml:space="preserve">
     <value>Telegram needs access to your microphone so that you can record videos.</value>
+  </data>
+  <data name="PermissionNoAudioVideoCalls" xml:space="preserve">
+    <value>Unigram needs microphone and camera access so that you can have video calls. Please enable it in Settings.</value>
   </data>
   <data name="PermissionNoCamera" xml:space="preserve">
     <value>Telegram needs camera access so that you can take photos and videos. Please enable it in Settings.</value>
   </data>
   <data name="PermissionNoLocationPosition" xml:space="preserve">
     <value>Telegram needs access to your location.</value>
+  </data>
+  <data name="PermissionNoVideoCalls" xml:space="preserve">
+    <value>Unigram needs camera access so that you can have video calls. Please enable it in Settings.</value>
   </data>
   <data name="PermissionOpenSettings" xml:space="preserve">
     <value>Settings</value>

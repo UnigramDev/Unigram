@@ -20,12 +20,9 @@ using Telegram.Views;
 using Telegram.Views.Calls;
 using Telegram.Views.Calls.Popups;
 using Windows.ApplicationModel.Calls;
-using Windows.ApplicationModel.Core;
 using Windows.Data.Json;
-using Windows.Devices.Enumeration;
 using Windows.Foundation;
 using Windows.Graphics.Capture;
-using Windows.System.Display;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 
@@ -34,11 +31,6 @@ namespace Telegram.Services.Calls
     public partial class VoipGroupCall : VoipCallBase
     {
         private readonly IViewService _viewService;
-
-        private readonly MediaDeviceWatcher _videoWatcher;
-
-        private readonly MediaDeviceWatcher _inputWatcher;
-        private readonly MediaDeviceWatcher _outputWatcher;
 
         private Chat _chat;
 
@@ -61,14 +53,14 @@ namespace Telegram.Services.Calls
         //private EventDebouncer<bool> _screenDebouncer;
         private int _screenSource;
 
+        private readonly MediaDeviceTracker _devices = new();
+
         private VoipCallCoordinator _coordinator;
         private VoipPhoneCall _systemCall;
 
         private bool _isScheduled;
         private bool _isConnected;
         private bool _isClosed;
-
-        private DisplayRequest _request;
 
         private int _availableStreamsCount = 0;
 
@@ -105,11 +97,7 @@ namespace Telegram.Services.Calls
 
             _isScheduled = groupCall.ScheduledStartDate > 0;
 
-            InitializeSystemCallAsync(chat).Wait();
-
-            _videoWatcher = new MediaDeviceWatcher(DeviceClass.VideoCapture, id => _capturer?.SwitchToDevice(id));
-            _inputWatcher = new MediaDeviceWatcher(DeviceClass.AudioCapture, id => _manager?.SetAudioInputDevice(id));
-            _outputWatcher = new MediaDeviceWatcher(DeviceClass.AudioRender, id => _manager?.SetAudioOutputDevice(id));
+            _devices.Changed += OnDeviceChanged;
 
             var descriptor = new VoipGroupDescriptor
             {
@@ -117,9 +105,6 @@ namespace Telegram.Services.Calls
                 //AudioOutputId = _outputWatcher.GetAndUpdateAsync().Result,
                 IsNoiseSuppressionEnabled = Settings.VoIP.IsNoiseSuppressionEnabled
             };
-
-            _inputWatcher.Start();
-            _outputWatcher.Start();
 
             _manager = new VoipGroupManager(descriptor);
             _manager.NetworkStateUpdated += OnNetworkStateUpdated;
@@ -129,6 +114,7 @@ namespace Telegram.Services.Calls
 
             _coordinator?.TryNotifyMutedChanged(_manager.IsMuted);
 
+            InitializeSystemCallAsync(chat).Wait();
             CreateWindow();
 
             if (groupCall.ScheduledStartDate > 0)
@@ -138,7 +124,6 @@ namespace Telegram.Services.Calls
             }
             else
             {
-                RequestActive();
                 Rejoin(alias);
             }
         }
@@ -332,7 +317,7 @@ namespace Telegram.Services.Calls
 
         public bool IsVideoEnabled => _capturer != null;
 
-        public async void ToggleCapturing()
+        public void ToggleCapturing()
         {
             if (_manager == null)
             {
@@ -349,7 +334,7 @@ namespace Telegram.Services.Calls
             }
             else
             {
-                _capturer = new VoipVideoCapture(await _videoWatcher.GetAndUpdateAsync());
+                _capturer = new VoipVideoCapture(_videoInputId);
                 _manager.SetVideoCapture(_capturer);
             }
 
@@ -660,7 +645,8 @@ namespace Telegram.Services.Calls
             Participants?.Dispose();
             Participants = null;
 
-            RequestRelease();
+            _devices.Changed -= OnDeviceChanged;
+            _devices.Stop();
 
             if (_manager != null)
             {
@@ -709,24 +695,56 @@ namespace Telegram.Services.Calls
             }
         }
 
+        public MediaDeviceTracker Devices => _devices;
+
+        private string _videoInputId = string.Empty;
         public override string VideoInputId
         {
-            get => _videoWatcher.Get();
-            set => _videoWatcher.Set(value);
+            get => _videoInputId;
+            set
+            {
+                _devices.Track(MediaDeviceClass.VideoInput, value);
+                _capturer?.SwitchToDevice(_videoInputId = value);
+            }
         }
 
+        private string _audioInputId = string.Empty;
         public override string AudioInputId
         {
-            get => _inputWatcher.Get();
-            set => _inputWatcher.Set(value);
+            get => _audioInputId;
+            set
+            {
+                _devices.Track(MediaDeviceClass.AudioInput, value);
+                _manager?.SetAudioInputDevice(_audioInputId = value);
+            }
         }
 
+        private string _audioOutputId = string.Empty;
         public override string AudioOutputId
         {
-            get => _outputWatcher.Get();
-            set => _outputWatcher.Set(value);
+            get => _audioOutputId;
+            set
+            {
+                _devices.Track(MediaDeviceClass.AudioOutput, value);
+                _manager?.SetAudioOutputDevice(_audioOutputId = value);
+            }
         }
 
+        private void OnDeviceChanged(object sender, MediaDeviceChangedEventArgs e)
+        {
+            switch (e.DeviceClass)
+            {
+                case MediaDeviceClass.VideoInput:
+                    _capturer?.SwitchToDevice(_videoInputId = e.DeviceId);
+                    break;
+                case MediaDeviceClass.AudioInput:
+                    _manager?.SetAudioInputDevice(_audioInputId = e.DeviceId);
+                    break;
+                case MediaDeviceClass.AudioOutput:
+                    _manager?.SetAudioOutputDevice(_audioOutputId = e.DeviceId);
+                    break;
+            }
+        }
 
         public bool IsMuted
         {
@@ -811,52 +829,6 @@ namespace Telegram.Services.Calls
             }
 
             RaisePropertyChanged(nameof(Call));
-        }
-
-        private void RequestActive()
-        {
-            if (_request == null)
-            {
-                try
-                {
-                    if (CoreApplication.MainView.DispatcherQueue.HasThreadAccess)
-                    {
-                        _request = new DisplayRequest();
-                        _request.TryRequestActive();
-                    }
-                    else
-                    {
-                        CoreApplication.MainView.DispatcherQueue.TryEnqueue(RequestActive);
-                    }
-                }
-                catch
-                {
-                    // Fails at times
-                }
-            }
-        }
-
-        private void RequestRelease()
-        {
-            if (_request != null)
-            {
-                try
-                {
-                    if (CoreApplication.MainView.DispatcherQueue.HasThreadAccess)
-                    {
-                        _request.TryRequestRelease();
-                        _request = null;
-                    }
-                    else
-                    {
-                        CoreApplication.MainView.DispatcherQueue.TryEnqueue(RequestRelease);
-                    }
-                }
-                catch
-                {
-                    // Fails at times
-                }
-            }
         }
 
         public void Update(GroupCallParticipant participant)

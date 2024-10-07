@@ -391,39 +391,38 @@ namespace Telegram.Views.Calls
                 }
             }
 
-            if (_call.ScheduledStartDate == 0 && MediaDeviceCoordinator.HasAudioOutput)
+            if (_call.ScheduledStartDate == 0)
             {
                 flyout.CreateFlyoutSeparator();
 
                 var outputId = _call.AudioOutputId;
 
-                var defaultOutput = new ToggleMenuFlyoutItem();
-                defaultOutput.Text = Strings.Default;
-                defaultOutput.IsChecked = outputId == string.Empty;
-                defaultOutput.Click += (s, args) =>
-                {
-                    _call.AudioOutputId = string.Empty;
-                };
-
                 var output = new MenuFlyoutSubItem();
                 output.Text = Strings.VoipDeviceOutput;
                 output.Icon = MenuFlyoutHelper.CreateIcon(Icons.Speaker3);
-                output.Items.Add(defaultOutput);
-
-                foreach (var device in MediaDeviceCoordinator.AudioOutput)
-                {
-                    var deviceItem = new ToggleMenuFlyoutItem();
-                    deviceItem.Text = device.Name;
-                    deviceItem.IsChecked = outputId == device.Id;
-                    deviceItem.Click += (s, args) =>
-                    {
-                        _call.AudioOutputId = device.Id;
-                    };
-
-                    output.Items.Add(deviceItem);
-                }
 
                 flyout.Items.Add(output);
+
+                var hasOutput = _call.Devices.HasDevices(MediaDeviceClass.AudioOutput);
+                if (hasOutput is true)
+                {
+                    foreach (var device in _call.Devices.GetDevices(MediaDeviceClass.AudioOutput))
+                    {
+                        var deviceItem = new ToggleMenuFlyoutItem();
+                        deviceItem.Text = device.Name;
+                        deviceItem.IsChecked = outputId == device.Id;
+                        deviceItem.Click += (s, args) =>
+                        {
+                            _call.AudioOutputId = device.Id;
+                        };
+
+                        output.Items.Add(deviceItem);
+                    }
+                }
+                else
+                {
+                    output.CreateFlyoutItem(null, hasOutput.HasValue ? Strings.NotFoundSpeakers : Strings.Loading);
+                }
             }
 
             //flyout.CreateFlyoutItem(ShareInviteLink, Strings.VoipGroupShareInviteLink, Icons.Link);
