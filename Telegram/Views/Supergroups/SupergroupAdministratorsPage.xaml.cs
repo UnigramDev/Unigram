@@ -83,7 +83,6 @@ namespace Telegram.Views.Supergroups
 
         public void UpdateSupergroup(Chat chat, Supergroup group)
         {
-            HeaderPanel.Footer = group.CanDeleteMessages() && !group.IsChannel ? Strings.ChannelAntiSpamInfo : string.Empty;
             AntiSpam.Visibility = group.CanDeleteMessages() && !group.IsChannel ? Visibility.Visible : Visibility.Collapsed;
             ChannelSignMessages.Visibility = group.CanChangeInfo() && group.IsChannel ? Visibility.Visible : Visibility.Collapsed;
 
@@ -102,6 +101,7 @@ namespace Telegram.Views.Supergroups
         {
             ViewModel.UpdateIsAggressiveAntiSpamEnabled(fullInfo.HasAggressiveAntiSpamEnabled);
             AntiSpam.Visibility = fullInfo.CanToggleAggressiveAntiSpam ? Visibility.Visible : Visibility.Collapsed;
+            HeaderPanel.Footer = fullInfo.CanToggleAggressiveAntiSpam ? Strings.ChannelAntiSpamInfo : string.Empty;
         }
 
         public void UpdateBasicGroup(Chat chat, BasicGroup group)
@@ -124,6 +124,7 @@ namespace Telegram.Views.Supergroups
         {
             ViewModel.UpdateIsAggressiveAntiSpamEnabled(false);
             AntiSpam.Visibility = fullInfo.CanToggleAggressiveAntiSpam ? Visibility.Visible : Visibility.Collapsed;
+            HeaderPanel.Footer = fullInfo.CanToggleAggressiveAntiSpam ? Strings.ChannelAntiSpamInfo : string.Empty;
         }
 
         private string ConvertSignMessagesFooter(bool showMessageSender)

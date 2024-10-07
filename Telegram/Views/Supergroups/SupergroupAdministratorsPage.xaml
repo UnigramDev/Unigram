@@ -28,7 +28,6 @@
             <ListView.Header>
                 <controls:SettingsPanel IsHeader="True">
                     <controls:HeaderedControl x:Name="HeaderPanel"
-                                              Footer="{CustomResource ChannelAntiSpamInfo}"
                                               Margin="0,0,0,32">
                         <controls:BadgeButton x:Name="EventLog"
                                               Content="{CustomResource EventLog}"
