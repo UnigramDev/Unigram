@@ -85,9 +85,9 @@ namespace Telegram.ViewModels
                 return;
             }
 
-            var popup = new SupergroupEventLogFiltersPopup();
+            var popup = new SupergroupEventLogFiltersPopup(ClientService, NavigationService, supergroup.Id, _filters, _userIds);
 
-            var confirm = await popup.ShowAsync(ClientService, NavigationService, supergroup.Id, _filters, _userIds);
+            var confirm = await ShowPopupAsync(popup);
             if (confirm == ContentDialogResult.Primary)
             {
                 Filters = popup.Filters;

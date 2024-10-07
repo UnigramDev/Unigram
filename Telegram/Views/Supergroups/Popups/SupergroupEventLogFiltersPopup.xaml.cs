@@ -7,10 +7,8 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 using Telegram.Common;
 using Telegram.Controls;
-using Telegram.Controls.Cells;
 using Telegram.Navigation.Services;
 using Telegram.Services;
 using Telegram.Td.Api;
@@ -21,152 +19,254 @@ namespace Telegram.Views.Supergroups.Popups
 {
     public sealed partial class SupergroupEventLogFiltersPopup : ContentPopup
     {
-        private IClientService _clientService;
+        private readonly IClientService _clientService;
 
-        public ChatEventLogFilters Filters { get; private set; }
-        public IList<long> UserIds { get; private set; }
-
-        public SupergroupEventLogFiltersPopup()
+        public SupergroupEventLogFiltersPopup(IClientService clientService, INavigationService navigation, long supergroupId, ChatEventLogFilters filters, IList<long> userIds)
         {
             InitializeComponent();
 
-            Title = Strings.Settings;
-            PrimaryButtonText = Strings.OK;
-            SecondaryButtonText = Strings.Cancel;
-        }
-
-        public Task<ContentDialogResult> ShowAsync(IClientService clientService, INavigationService navigation, long supergroupId, ChatEventLogFilters filters, IList<long> userIds)
-        {
             _clientService = clientService;
 
-            filters ??= new ChatEventLogFilters(true, true, true, true, true, true, true, true, true, true, true, true, true, true);
+            Title = Strings.EventLog;
+            PrimaryButtonText = Strings.OK;
+            SecondaryButtonText = Strings.Cancel;
 
-            MemberRestrictions.IsChecked = filters.MemberRestrictions;
-            MemberPromotions.IsChecked = filters.MemberPromotions;
-            MemberJoins.IsChecked = filters.MemberJoins || filters.MemberInvites;
-            InfoChanges.IsChecked = filters.InfoChanges || filters.SettingChanges;
-            InviteLinkChanges.IsChecked = filters.InviteLinkChanges;
-            MessageDeletions.IsChecked = filters.MessageDeletions;
-            MessageEdits.IsChecked = filters.MessageEdits;
-            MessagePins.IsChecked = filters.MessagePins;
-            MemberLeaves.IsChecked = filters.MemberLeaves;
-            VideoChatChanges.IsChecked = filters.VideoChatChanges;
-            ForumChanges.IsChecked = filters.ForumChanges;
-
-            Event_Toggled(null, null);
-
-            clientService.Send(new GetSupergroupMembers(supergroupId, new SupergroupMembersFilterAdministrators(), 0, 200), response =>
+            var supergroup = clientService.GetSupergroup(supergroupId);
+            if (supergroup.IsChannel)
             {
-                if (response is ChatMembers members)
-                {
-                    this.BeginOnUIThread(() =>
-                    {
-                        ScrollingHost.Items.Clear();
+                MembersAndAdminsCheck.Content = Strings.EventLogFilterSectionSubscribers;
+                ChatSettingsCheck.Content = Strings.EventLogFilterSectionChannelSettings;
 
-                        var fullInfo = clientService.GetSupergroupFull(supergroupId);
-                        if (fullInfo?.HasAggressiveAntiSpamEnabled is true && clientService.TryGetUser(clientService.Options.AntiSpamBotUserId, out _))
-                        {
-                            var antiSpamSender = new MessageSenderUser(clientService.Options.AntiSpamBotUserId);
-                            var antiSpam = new ChatMember(antiSpamSender, 0, 0, new ChatMemberStatusAdministrator());
+                MemberRestrictions.Visibility = Visibility.Collapsed;
+                MemberJoins.Content = Strings.EventLogFilterNewSubscribers;
+                MemberLeaves.Content = Strings.EventLogFilterLeavingSubscribers2;
 
-                            ScrollingHost.Items.Add(antiSpam);
-
-                            if (userIds.Contains(antiSpamSender.UserId))
-                            {
-                                ScrollingHost.SelectedItems.Add(antiSpam);
-                            }
-                        }
-
-                        foreach (var item in members.Members)
-                        {
-                            if (item.MemberId is MessageSenderUser senderUser)
-                            {
-                                ScrollingHost.Items.Add(item);
-
-                                if (userIds.Contains(senderUser.UserId))
-                                {
-                                    ScrollingHost.SelectedItems.Add(item);
-                                }
-                            }
-                        }
-
-                        if (ScrollingHost.SelectedItems.Count > 0)
-                        {
-                            FieldAllAdmins.IsChecked = null;
-                        }
-                        else
-                        {
-                            FieldAllAdmins.IsChecked = true;
-                            ScrollingHost.SelectAll();
-                        }
-                    });
-                }
-            });
-
-            //ScrollingHost.ItemsSource = new ChatMemberCollection(clientService, supergroupId, new SupergroupMembersFilterAdministrators());
-            return navigation.ShowPopupAsync(this);
-        }
-
-        private void Event_Toggled(object sender, RoutedEventArgs e)
-        {
-            if (EventFilters == null)
-            {
-                return;
-            }
-
-            var all = EventFilters.Children.OfType<CheckBox>().All(x => x.IsChecked == true);
-            var none = EventFilters.Children.OfType<CheckBox>().All(x => x.IsChecked == false);
-
-            FieldAllEvents.IsChecked = all ? true : none ? new bool?(false) : null;
-            IsPrimaryButtonEnabled = !none;
-        }
-
-        private void AllEvents_Toggled(object sender, RoutedEventArgs e)
-        {
-            if (EventFilters == null)
-            {
-                return;
-            }
-
-            foreach (CheckBox check in EventFilters.Children)
-            {
-                check.IsChecked = FieldAllEvents.IsChecked == true;
-            }
-
-            IsPrimaryButtonEnabled = FieldAllEvents.IsChecked == true;
-        }
-
-        private void Admin_Toggled(object sender, SelectionChangedEventArgs e)
-        {
-            if (EventFilters == null)
-            {
-                return;
-            }
-
-            var all = ScrollingHost.Items.All(x => ScrollingHost.SelectedItems.Contains(x));
-            var none = ScrollingHost.Items.All(x => !ScrollingHost.SelectedItems.Contains(x));
-
-            FieldAllAdmins.IsChecked = all ? true : none ? new bool?(false) : null;
-        }
-
-        private void AllAdmins_Toggled(object sender, RoutedEventArgs e)
-        {
-            if (EventFilters == null)
-            {
-                return;
-            }
-
-            if (FieldAllAdmins.IsChecked == true)
-            {
-                ScrollingHost.SelectAll();
+                InfoChanges.Content = Strings.EventLogFilterChannelInfo;
             }
             else
             {
-                ScrollingHost.SelectedItems.Clear();
+                MembersAndAdminsCheck.Content = Strings.EventLogFilterSectionMembers;
+                ChatSettingsCheck.Content = Strings.EventLogFilterSectionGroupSettings;
+
+                MemberRestrictions.Content = Strings.EventLogFilterNewRestrictions;
+                MemberJoins.Content = Strings.EventLogFilterNewMembers;
+                MemberLeaves.Content = Strings.EventLogFilterLeavingMembers2;
+
+                InfoChanges.Content = Strings.EventLogFilterGroupInfo;
+            }
+
+            MemberPromotions.IsChecked = filters.MemberPromotions;
+            MemberRestrictions.IsChecked = filters.MemberRestrictions;
+            MemberJoins.IsChecked = filters.MemberJoins;
+            MemberLeaves.IsChecked = filters.MemberLeaves;
+
+            InfoChanges.IsChecked = filters.InfoChanges;
+            InviteLinkChanges.IsChecked = filters.InviteLinkChanges;
+            VideoChatChanges.IsChecked = filters.VideoChatChanges;
+
+            MessageDeletions.IsChecked = filters.MessageDeletions;
+            MessageEdits.IsChecked = filters.MessageEdits;
+            MessagePins.IsChecked = filters.MessagePins;
+
+            Populate(clientService, supergroupId, userIds);
+
+            MemberPromotions.Checked += MembersAndAdmins_Checked;
+            MemberPromotions.Unchecked += MembersAndAdmins_Checked;
+            MemberRestrictions.Checked += MembersAndAdmins_Checked;
+            MemberRestrictions.Unchecked += MembersAndAdmins_Checked;
+            MemberJoins.Checked += MembersAndAdmins_Checked;
+            MemberJoins.Unchecked += MembersAndAdmins_Checked;
+            MemberLeaves.Checked += MembersAndAdmins_Checked;
+            MemberLeaves.Unchecked += MembersAndAdmins_Checked;
+
+            InfoChanges.Checked += ChatSettings_Checked;
+            InfoChanges.Unchecked += ChatSettings_Checked;
+            InviteLinkChanges.Checked += ChatSettings_Checked;
+            InviteLinkChanges.Unchecked += ChatSettings_Checked;
+            VideoChatChanges.Checked += ChatSettings_Checked;
+            VideoChatChanges.Unchecked += ChatSettings_Checked;
+
+            MessageDeletions.Checked += Messages_Checked;
+            MessageDeletions.Unchecked += Messages_Checked;
+            MessageEdits.Checked += Messages_Checked;
+            MessageEdits.Unchecked += Messages_Checked;
+            MessagePins.Checked += Messages_Checked;
+            MessagePins.Unchecked += Messages_Checked;
+
+            MembersAndAdminsCount.Text = CountSelection(MembersAndAdminsExpander, MembersAndAdminsCheck, MembersAndAdmins_Checked);
+            ChatSettingsCount.Text = CountSelection(ChatSettingsExpander, ChatSettingsCheck, ChatSettings_Checked);
+            MessagesCount.Text = CountSelection(MessagesExpander, MessagesCheck, Messages_Checked);
+        }
+
+        private async void Populate(IClientService clientService, long supergroupId, IList<long> selectedIds)
+        {
+            var response = await clientService.SendAsync(new GetSupergroupMembers(supergroupId, new SupergroupMembersFilterAdministrators(), 0, 200));
+            if (response is not ChatMembers members)
+            {
+                return;
+            }
+
+            var userIds = members.Members
+                .Select(x => x.MemberId)
+                .OfType<MessageSenderUser>()
+                .Select(x => x.UserId);
+
+            foreach (var sender in clientService.GetUsers(userIds))
+            {
+                var photo = new ProfilePicture
+                {
+                    Width = 28,
+                    Height = 28,
+                    Margin = new Thickness(0, -4, 8, 0),
+                    IsEnabled = false
+                };
+
+                photo.SetUser(_clientService, sender, 28);
+
+                var title = new TextBlock
+                {
+                    Text = sender.FullName()
+                };
+
+                Grid.SetColumn(title, 1);
+
+                var content = new Grid();
+                content.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Auto) });
+                content.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
+                content.Children.Add(photo);
+                content.Children.Add(title);
+
+                var selector = new CheckBox
+                {
+                    Tag = sender.Id,
+                    Content = content,
+                    IsChecked = selectedIds.Contains(sender.Id) || selectedIds.Empty()
+                };
+
+                selector.Checked += Admins_Checked;
+                selector.Unchecked += Admins_Checked;
+
+                AdminsRoot.Children.Add(selector);
+            }
+
+            CountSelection(AdminsExpander, AdminsCheck, Admins_Checked);
+        }
+
+        private void MembersAndAdmins_Checked(object sender, RoutedEventArgs e)
+        {
+            if ((CheckBox)sender == MembersAndAdminsCheck)
+            {
+                MembersAndAdminsCount.Text = ToggleSelection(MembersAndAdminsExpander, MembersAndAdminsCheck, MembersAndAdmins_Checked);
+            }
+            else
+            {
+                MembersAndAdminsCount.Text = CountSelection(MembersAndAdminsExpander, MembersAndAdminsCheck, MembersAndAdmins_Checked);
             }
         }
 
-        private void ContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
+        private void ChatSettings_Checked(object sender, RoutedEventArgs e)
+        {
+            if ((CheckBox)sender == ChatSettingsCheck)
+            {
+                ChatSettingsCount.Text = ToggleSelection(ChatSettingsExpander, ChatSettingsCheck, ChatSettings_Checked);
+            }
+            else
+            {
+                ChatSettingsCount.Text = CountSelection(ChatSettingsExpander, ChatSettingsCheck, ChatSettings_Checked);
+            }
+        }
+
+        private void Messages_Checked(object sender, RoutedEventArgs e)
+        {
+            if ((CheckBox)sender == MessagesCheck)
+            {
+                MessagesCount.Text = ToggleSelection(MessagesExpander, MessagesCheck, Messages_Checked);
+            }
+            else
+            {
+                MessagesCount.Text = CountSelection(MessagesExpander, MessagesCheck, Messages_Checked);
+            }
+        }
+
+        private void Admins_Checked(object sender, RoutedEventArgs e)
+        {
+            if ((CheckBox)sender == AdminsCheck)
+            {
+                ToggleSelection(AdminsExpander, AdminsCheck, Admins_Checked);
+            }
+            else
+            {
+                CountSelection(AdminsExpander, AdminsCheck, Admins_Checked);
+            }
+        }
+
+        private string CountSelection(SettingsExpander root, CheckBox parent, RoutedEventHandler handler)
+        {
+            var panel = root.Content as StackPanel;
+            var count = 0;
+            var total = 0;
+
+            foreach (CheckBox child in panel.Children)
+            {
+                if (child.Visibility == Visibility.Collapsed)
+                {
+                    continue;
+                }
+                else if (child.IsChecked == true)
+                {
+                    count++;
+                }
+
+                total++;
+            }
+
+            parent.Checked -= handler;
+            parent.Unchecked -= handler;
+
+            parent.IsChecked = total == count
+                ? true
+                : total == 0
+                ? false
+                : null;
+
+            parent.Checked += handler;
+            parent.Unchecked += handler;
+
+            return string.Format("{0}/{1}", count, total);
+        }
+
+        private string ToggleSelection(SettingsExpander root, CheckBox parent, RoutedEventHandler handler)
+        {
+            var panel = root.Content as StackPanel;
+            var total = 0;
+            var check = parent.IsChecked == true;
+
+            foreach (CheckBox child in panel.Children)
+            {
+                if (child.Visibility == Visibility.Collapsed)
+                {
+                    continue;
+                }
+
+                total++;
+
+                child.Checked -= handler;
+                child.Unchecked -= handler;
+
+                child.IsChecked = check;
+
+                child.Checked += handler;
+                child.Unchecked += handler;
+            }
+
+            return string.Format("{0}/{1}", check ? total : 0, total);
+        }
+
+        public ChatEventLogFilters Filters { get; private set; }
+
+        public IList<long> UserIds { get; private set; }
+
+        private void ContentPopup_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
         {
             Filters = new ChatEventLogFilters
             {
@@ -181,32 +281,33 @@ namespace Telegram.Views.Supergroups.Popups
                 MessageEdits = MessageEdits.IsChecked == true,
                 MessagePins = MessagePins.IsChecked == true,
                 MemberLeaves = MemberLeaves.IsChecked == true,
-                VideoChatChanges = VideoChatChanges.IsChecked == true,
-                ForumChanges = ForumChanges.IsChecked == true
+                VideoChatChanges = VideoChatChanges.IsChecked == true
             };
 
-            var areAllAdministratorsSelected = ScrollingHost.Items.All(x => ScrollingHost.SelectedItems.Contains(x));
-            UserIds = areAllAdministratorsSelected ? Array.Empty<long>() : ScrollingHost.SelectedItems.OfType<ChatMember>().Select(x => x.MemberId).OfType<MessageSenderUser>().Select(x => x.UserId).ToArray();
-        }
-
-        private void ContentDialog_SecondaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
-        {
-        }
-
-        #region Recycle
-
-        private void OnContainerContentChanging(ListViewBase sender, ContainerContentChangingEventArgs args)
-        {
-            if (args.InRecycleQueue)
+            if (Filters.MemberRestrictions && Filters.MemberPromotions && Filters.MemberJoins
+                && Filters.MemberInvites && Filters.InfoChanges && Filters.InviteLinkChanges
+                && Filters.SettingChanges && Filters.MessageDeletions && Filters.MessageEdits
+                && Filters.MessagePins && Filters.MemberLeaves && Filters.VideoChatChanges)
             {
-                return;
+                Filters.ForumChanges = true;
+                Filters.SubscriptionExtensions = true;
             }
-            else if (args.ItemContainer.ContentTemplateRoot is ProfileCell content)
-            {
-                content.UpdateSupergroupAdminFilter(_clientService, args, OnContainerContentChanging);
-            }
-        }
 
-        #endregion
+            var userIds = new List<long>();
+            var total = 0;
+
+            foreach (CheckBox child in AdminsRoot.Children)
+            {
+                if (child.IsChecked == true && child.Tag is long userId)
+                {
+                    userIds.Add(userId);
+                }
+
+                total++;
+            }
+
+            var areAllAdministratorsSelected = userIds.Count == total;
+            UserIds = areAllAdministratorsSelected ? Array.Empty<long>() : userIds;
+        }
     }
 }

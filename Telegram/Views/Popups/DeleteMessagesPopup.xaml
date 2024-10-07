@@ -82,7 +82,7 @@
                                        Grid.Column="1" />
 
                             <controls:AnimatedTextBlock x:Name="ReportSpamCount"
-                                                        FontWeight="SemiBold"
+                                                        TextStyle="{StaticResource BaseTextBlockStyle}"
                                                         VerticalAlignment="Center"
                                                         Grid.Column="2" />
                         </Grid>
@@ -118,7 +118,7 @@
                                        Grid.Column="1" />
 
                             <controls:AnimatedTextBlock x:Name="DeleteAllCount"
-                                                        FontWeight="SemiBold"
+                                                        TextStyle="{StaticResource BaseTextBlockStyle}"
                                                         VerticalAlignment="Center"
                                                         Grid.Column="2" />
                         </Grid>
@@ -154,7 +154,7 @@
                                        Grid.Column="1" />
 
                             <controls:AnimatedTextBlock x:Name="BanUserCount"
-                                                        FontWeight="SemiBold"
+                                                        TextStyle="{StaticResource BaseTextBlockStyle}"
                                                         VerticalAlignment="Center"
                                                         Grid.Column="2" />
                         </Grid>

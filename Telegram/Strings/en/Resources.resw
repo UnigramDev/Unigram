@@ -4733,35 +4733,74 @@ Learn more at telegram.org</value>
   <data name="EventLogFilterAll" xml:space="preserve">
     <value>All actions</value>
   </data>
+  <data name="EventLogFilterByActions" xml:space="preserve">
+    <value>Filter actions by type</value>
+  </data>
+  <data name="EventLogFilterByAdmins" xml:space="preserve">
+    <value>Filter actions by admins</value>
+  </data>
+  <data name="EventLogFilterByAdminsAll" xml:space="preserve">
+    <value>Show Actions by All Admins</value>
+  </data>
   <data name="EventLogFilterCalls" xml:space="preserve">
     <value>Video Chats</value>
   </data>
+  <data name="EventLogFilterChannelInfo" xml:space="preserve">
+    <value>Channel Info</value>
+  </data>
   <data name="EventLogFilterDeletedMessages" xml:space="preserve">
-    <value>Deleted messages</value>
+    <value>Deleted Messages</value>
   </data>
   <data name="EventLogFilterEditedMessages" xml:space="preserve">
-    <value>Edited messages</value>
+    <value>Edited Messages</value>
   </data>
   <data name="EventLogFilterGroupInfo" xml:space="preserve">
-    <value>Group info</value>
+    <value>Group Info</value>
   </data>
   <data name="EventLogFilterInvites" xml:space="preserve">
-    <value>Invite links</value>
+    <value>Invite Links</value>
   </data>
   <data name="EventLogFilterLeavingMembers" xml:space="preserve">
     <value>Members leaving</value>
+  </data>
+  <data name="EventLogFilterLeavingMembers2" xml:space="preserve">
+    <value>Members Left the Group</value>
+  </data>
+  <data name="EventLogFilterLeavingSubscribers2" xml:space="preserve">
+    <value>Subscribers Left the Channel</value>
   </data>
   <data name="EventLogFilterNewAdmins" xml:space="preserve">
     <value>Admin rights</value>
   </data>
   <data name="EventLogFilterNewMembers" xml:space="preserve">
-    <value>New members</value>
+    <value>New Members</value>
   </data>
   <data name="EventLogFilterNewRestrictions" xml:space="preserve">
-    <value>New exceptions</value>
+    <value>New Exceptions</value>
+  </data>
+  <data name="EventLogFilterNewSubscribers" xml:space="preserve">
+    <value>New Subscribers</value>
   </data>
   <data name="EventLogFilterPinnedMessages" xml:space="preserve">
-    <value>Pinned messages</value>
+    <value>Pinned Messages</value>
+  </data>
+  <data name="EventLogFilterSectionAdmin" xml:space="preserve">
+    <value>New Admin Rights</value>
+  </data>
+  <data name="EventLogFilterSectionChannelSettings" xml:space="preserve">
+    <value>Channel Settings</value>
+  </data>
+  <data name="EventLogFilterSectionGroupSettings" xml:space="preserve">
+    <value>Group Settings</value>
+  </data>
+  <data name="EventLogFilterSectionMembers" xml:space="preserve">
+    <value>Members And Admins</value>
+  </data>
+  <data name="EventLogFilterSectionMessages" xml:space="preserve">
+    <value>Messages</value>
+  </data>
+  <data name="EventLogFilterSectionSubscribers" xml:space="preserve">
+    <value>Subscribers And Admins</value>
   </data>
   <data name="EventLogInfoDetail" xml:space="preserve">
     <value>This is a list of notable actions by members and admins in the last 48 hours.</value>
