@@ -1105,7 +1105,7 @@ namespace Telegram.Views.Calls
                     {
                         var animation = service.PrepareToAnimate("Emoji", title);
                         animation.Configuration = new DirectConnectedAnimationConfiguration();
-                        animation.TryStart(Emoji, new[] { popup });
+                        animation.TryStart(Emoji);
                     }
                 }
 
