@@ -18,7 +18,7 @@ namespace Telegram.Controls
     public record VideoPlayerVolumeChangedEventArgs(double Volume);
 
     // Record somehow fails to compile in release
-    public class VideoPlayerLevel
+    public partial class VideoPlayerLevel
     {
         public VideoPlayerLevel(int index, int bitrate, int width, int height)
         {

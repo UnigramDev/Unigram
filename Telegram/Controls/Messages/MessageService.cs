@@ -1418,7 +1418,6 @@ namespace Telegram.Controls.Messages
 
             if (singleUserId != 0)
             {
-                var whoUser = message.ClientService.GetUser(singleUserId);
                 if (message.SenderId is MessageSenderUser senderUser && singleUserId == senderUser.UserId)
                 {
                     var chat = message.Chat;
@@ -1464,6 +1463,8 @@ namespace Telegram.Controls.Messages
                 }
                 else
                 {
+                    var whoUser = message.ClientService.GetUser(singleUserId);
+
                     if (message.IsOutgoing)
                     {
                         content = ReplaceWithLink(Strings.ActionYouAddUser, "un2", whoUser, entities);

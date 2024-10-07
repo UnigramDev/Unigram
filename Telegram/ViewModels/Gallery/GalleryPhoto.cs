@@ -24,7 +24,7 @@ namespace Telegram.ViewModels.Gallery
             _caption = caption ?? new FormattedText(string.Empty, Array.Empty<TextEntity>());
             _protect = protect;
 
-            File =  _photo.GetBig()?.Photo;
+            File = _photo.GetBig()?.Photo;
             Thumbnail = _photo?.GetSmall()?.Photo;
         }
 
