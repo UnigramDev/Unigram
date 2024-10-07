@@ -685,7 +685,7 @@ namespace Telegram.Views
                         && TextArea.Visibility == Visibility.Visible);
 
                     checkbox.UpdateMessage(message, Messages, ViewModel.IsSelectionEnabled);
-                    checkbox.HorizontalAlignment = message.Date == 0
+                    checkbox.HorizontalAlignment = message.Date == 0 && message.SchedulingState == null
                         ? HorizontalAlignment.Center
                         : HorizontalAlignment.Stretch;
 
