@@ -44,7 +44,7 @@
                            TextLineBounds="TrimToCapHeight"
                            TextWrapping="NoWrap"
                            AutomationProperties.LiveSetting="Assertive"
-                           Foreground="{ThemeResource PageHeaderDisabledBrush}"
+                           Foreground="{ThemeResource PageHeaderForegroundBrush}"
                            Style="{StaticResource CaptionTextBlockStyle}"
                            IsHitTestVisible="False"
                            Margin="0,2,6,0" />
