@@ -117,18 +117,6 @@ public static class ConnectedAnimation_stub
             throw new RuntimeException(ex);
         }
     }
-    public static bool TryStart_stub(this Windows.UI.Xaml.Media.Animation.ConnectedAnimation sender, Windows.UI.Xaml.UIElement destination, System.Collections.Generic.IEnumerable<Windows.UI.Xaml.UIElement> coordinatedElements)
-    {
-        try
-        {
-            return sender.TryStart(destination, coordinatedElements);
-        }
-        catch (Exception ex)
-        {
-            Logger.Error(Environment.StackTrace);
-            throw new RuntimeException(ex);
-        }
-    }
 }
 public static class ConnectedAnimationService_stub
 {
@@ -3768,35 +3756,11 @@ public static class DataPackageView_stub
 }
 public static class DataTransferManager_stub
 {
-    public static Windows.ApplicationModel.DataTransfer.DataTransferManager GetForCurrentView_stub()
-    {
-        try
-        {
-            return Windows.ApplicationModel.DataTransfer.DataTransferManager.GetForCurrentView();
-        }
-        catch (Exception ex)
-        {
-            Logger.Error(Environment.StackTrace);
-            throw new RuntimeException(ex);
-        }
-    }
     public static bool IsSupported_stub()
     {
         try
         {
             return Windows.ApplicationModel.DataTransfer.DataTransferManager.IsSupported();
-        }
-        catch (Exception ex)
-        {
-            Logger.Error(Environment.StackTrace);
-            throw new RuntimeException(ex);
-        }
-    }
-    public static void ShowShareUI_stub()
-    {
-        try
-        {
-            Windows.ApplicationModel.DataTransfer.DataTransferManager.ShowShareUI();
         }
         catch (Exception ex)
         {
@@ -4148,6 +4112,18 @@ public static class DeviceWatcher_stub
         try
         {
             sender.Start();
+        }
+        catch (Exception ex)
+        {
+            Logger.Error(Environment.StackTrace);
+            throw new RuntimeException(ex);
+        }
+    }
+    public static void Stop_stub(this Windows.Devices.Enumeration.DeviceWatcher sender)
+    {
+        try
+        {
+            sender.Stop();
         }
         catch (Exception ex)
         {
