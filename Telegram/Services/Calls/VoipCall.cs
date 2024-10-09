@@ -731,6 +731,8 @@ namespace Telegram.Services.Calls
                     screen.Paused -= OnPaused;
                 }
 
+                _manager.SetVideoCapture(null);
+
                 _camera.FatalErrorOccurred -= OnFatalErrorOccurred;
 
                 _camera.SetOutput(null);
@@ -765,6 +767,8 @@ namespace Telegram.Services.Calls
             {
                 if (_camera == sender)
                 {
+                    DisposeCamera();
+
                     if (_videoState != VoipVideoState.Inactive)
                     {
                         _videoState = VoipVideoState.Inactive;
@@ -775,8 +779,6 @@ namespace Telegram.Services.Calls
                     {
                         VideoFailed?.Invoke(this, EventArgs.Empty);
                     }
-
-                    DisposeCamera();
                 }
             }
         }
