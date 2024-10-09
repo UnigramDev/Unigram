@@ -361,7 +361,7 @@ namespace Telegram.Controls
 
                 if (eventName == "playerStatus")
                 {
-                    var isReady = eventData.GetNamedBoolean("isReady", false);
+                    OnReady(_isReady = eventData.GetNamedBoolean("isReady", false));
                     OnFirstFrameReady(_isFirstFrameReady = eventData.GetNamedBoolean("isFirstFrameReady", false));
                     OnIsPlayingChanged(_isPlaying = eventData.GetNamedBoolean("isPlaying", false));
                     _rate = eventData.GetNamedNumber("rate", 1);

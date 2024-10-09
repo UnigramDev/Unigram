@@ -78,6 +78,18 @@ namespace Telegram.Controls
 
         public abstract void AddTime(double value);
 
+        protected bool _isReady;
+
+        public event TypedEventHandler<VideoPlayerBase, EventArgs> Ready;
+        protected void OnReady(bool value)
+        {
+            if (/*_isReady != value &&*/ value)
+            {
+                _isReady = value;
+                Ready?.Invoke(this, EventArgs.Empty);
+            }
+        }
+
         protected bool _isFirstFrameReady;
 
         public event TypedEventHandler<VideoPlayerBase, EventArgs> FirstFrameReady;

@@ -277,9 +277,18 @@ namespace Telegram.Controls
             OnIsPlayingChanged(false);
         }
 
+        private bool _volumeWorkaround = true;
+
         private void OnVolumeChanged(AsyncMediaPlayer sender, MediaPlayerVolumeChangedEventArgs args)
         {
-            OnVolumeChanged(args.Volume);
+            if (_volumeWorkaround)
+            {
+                OnReady(true);
+            }
+            else
+            {
+                OnVolumeChanged(args.Volume / 100d);
+            }
         }
     }
 }

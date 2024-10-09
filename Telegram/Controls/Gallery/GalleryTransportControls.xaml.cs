@@ -205,11 +205,11 @@ namespace Telegram.Controls.Gallery
         {
             if (_player != null)
             {
+                _player.Ready += OnReady;
                 _player.PositionChanged -= OnPositionChanged;
                 _player.BufferedChanged -= OnBufferedChanged;
                 _player.DurationChanged -= OnDurationChanged;
                 _player.IsPlayingChanged -= OnIsPlayingChanged;
-                _player.VolumeChanged -= OnVolumeChanged;
                 _player.LevelsChanged -= OnLevelsChanged;
                 _player.Closed -= OnStopped;
             }
@@ -224,11 +224,11 @@ namespace Telegram.Controls.Gallery
 
             if (_player != null)
             {
+                _player.Ready += OnReady;
                 _player.PositionChanged += OnPositionChanged;
                 _player.BufferedChanged += OnBufferedChanged;
                 _player.DurationChanged += OnDurationChanged;
                 _player.IsPlayingChanged += OnIsPlayingChanged;
-                _player.VolumeChanged += OnVolumeChanged;
                 _player.LevelsChanged += OnLevelsChanged;
                 _player.Closed += OnStopped;
 
@@ -236,7 +236,6 @@ namespace Telegram.Controls.Gallery
                 OnBufferedChanged(_player, new VideoPlayerBufferedChangedEventArgs(_player.Buffered));
                 OnDurationChanged(_player, new VideoPlayerDurationChangedEventArgs(_player.Duration));
                 OnIsPlayingChanged(_player, new VideoPlayerIsPlayingChangedEventArgs(_player.IsPlaying));
-                OnVolumeChanged(_player, new VideoPlayerVolumeChangedEventArgs(_player.Volume));
                 OnLevelsChanged(_player, new VideoPlayerLevelsChangedEventArgs(_player.Levels, _player.CurrentLevel, _player.IsCurrentLevelAuto));
             }
         }
@@ -261,6 +260,13 @@ namespace Telegram.Controls.Gallery
                 : Visibility.Collapsed;
         }
 
+        private void OnReady(VideoPlayerBase sender, EventArgs args)
+        {
+            _player.Mute = SettingsService.Current.VolumeMuted;
+            _player.Volume = SettingsService.Current.VolumeLevel;
+            _player.Rate = SettingsService.Current.Playback.VideoSpeed;
+        }
+
         private void OnLevelsChanged(VideoPlayerBase sender, VideoPlayerLevelsChangedEventArgs args)
         {
             ShowHideSettings(args.Levels.Count > 0);
@@ -283,20 +289,6 @@ namespace Telegram.Controls.Gallery
             {
                 QualityText.Text = "A";
             }
-        }
-
-        private void OnVolumeChanged(VideoPlayerBase sender, VideoPlayerVolumeChangedEventArgs args)
-        {
-            if (_player == null)
-            {
-                return;
-            }
-
-            _player.VolumeChanged -= OnVolumeChanged;
-
-            _player.Mute = SettingsService.Current.VolumeMuted;
-            _player.Volume = SettingsService.Current.VolumeLevel;
-            _player.Rate = SettingsService.Current.Playback.VideoSpeed;
         }
 
         private void OnIsPlayingChanged(VideoPlayerBase sender, VideoPlayerIsPlayingChangedEventArgs args)
