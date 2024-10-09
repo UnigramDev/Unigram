@@ -70,6 +70,7 @@ namespace Telegram.ViewModels.Delegates
         void SendBotCommand(string command);
 
         string GetAdminTitle(MessageViewModel message);
+        bool IsAdministrator(MessageSender memberId);
         void UpdateAdministrators(long chatId);
     }
 }

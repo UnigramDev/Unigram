@@ -2202,6 +2202,7 @@
     <Content Include="Assets\Toasts\Gif.tgs" />
     <Content Include="Assets\Toasts\Mute.tgs" />
     <Content Include="Assets\Toasts\MuteFor.tgs" />
+    <Content Include="Assets\Toasts\Ban.tgs" />
     <None Include="Assets\Toasts\Pin.tgs" />
     <Content Include="Assets\Toasts\StarsSent.tgs" />
     <Content Include="Assets\Toasts\Unmute.tgs" />

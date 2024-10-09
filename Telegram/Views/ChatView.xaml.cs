@@ -2528,6 +2528,33 @@ namespace Telegram.Views
                         CanBeSaved = true
                     };
                 }
+                else if (ViewModel is DialogEventLogViewModel eventLog && message.Event is ChatEvent chatEvent)
+                {
+                    var senderId = chatEvent.Action switch
+                    {
+                        ChatEventMemberJoined => chatEvent.MemberId,
+                        ChatEventMemberJoinedByInviteLink => chatEvent.MemberId,
+                        ChatEventMemberJoinedByRequest => chatEvent.MemberId,
+                        ChatEventMemberLeft => chatEvent.MemberId,
+                        ChatEventMessageDeleted messageDeleted => messageDeleted.Message.SenderId,
+                        ChatEventMessageEdited messageEdited => messageEdited.NewMessage.SenderId,
+                        ChatEventMessagePinned messagePinned => messagePinned.Message.SenderId,
+                        ChatEventMessageUnpinned messageUnpinned => messageUnpinned.Message.SenderId,
+                        ChatEventPollStopped pollStopped => pollStopped.Message.SenderId,
+                        _ => null
+                    };
+
+                    if (senderId != null && !ViewModel.IsAdministrator(senderId))
+                    {
+                        flyout.CreateFlyoutItem(MessageReportFalsePositive_Loaded, ViewModel.ReportFalsePositive, message, Strings.ReportFalsePositive, Icons.ShieldError);
+                        flyout.CreateFlyoutSeparator();
+                        flyout.CreateFlyoutItem(eventLog.RestrictMember, senderId, Strings.Restrict, Icons.HandRight);
+                        flyout.CreateFlyoutItem(eventLog.BanMember, senderId, Strings.Ban, Icons.Block, destructive: true);
+                    }
+
+                    flyout.ShowAt(sender, args, FlyoutShowMode.Auto);
+                    return;
+                }
                 else
                 {
                     return;
@@ -2660,8 +2687,6 @@ namespace Telegram.Views
                 {
                     flyout.CreateFlyoutItem(ViewModel.FactCheckMessage, message, message.FactCheck == null ? Strings.AddFactCheck : Strings.EditFactCheck, Icons.CheckmarkStarburst);
                 }
-
-                flyout.CreateFlyoutItem(MessageReportFalsePositive_Loaded, ViewModel.ReportFalsePositive, message, Strings.ReportFalsePositive, Icons.ShieldError);
 
                 if (MessageDelete_Loaded(message, properties))
                 {

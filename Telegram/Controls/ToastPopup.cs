@@ -32,6 +32,7 @@ namespace Telegram.Controls
         AutoNightOff,
         AutoRemoveOff,
         AutoRemoveOn,
+        Ban,
         Copied,
         Error,
         ExpiredStory,

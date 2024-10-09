@@ -1501,6 +1501,9 @@ Please enable Unigram in the Startup Apps Settings.</value>
   <data name="BadgeNumberUnread" xml:space="preserve">
     <value>Count Unread Messages</value>
   </data>
+  <data name="Ban" xml:space="preserve">
+    <value>Ban</value>
+  </data>
   <data name="BannedPhoneNumber" xml:space="preserve">
     <value>This phone number is banned.</value>
   </data>
@@ -9127,6 +9130,12 @@ Payments will go directly to the developer of {0}. Telegram cannot provide any g
   <data name="RestorePasswordResetIn" xml:space="preserve">
     <value>You can reset your password in {0}.</value>
   </data>
+  <data name="Restrict" xml:space="preserve">
+    <value>Restrict</value>
+  </data>
+  <data name="RestrictedParticipantSending" xml:space="preserve">
+    <value>Restricted **{0}** from sending any messages</value>
+  </data>
   <data name="Restrictions_one" xml:space="preserve">
     <value>{0} ban</value>
   </data>
@@ -11211,6 +11220,9 @@ However, it is currently available for purchase. **Learn more…**</value>
   </data>
   <data name="UserProfileIcon" xml:space="preserve">
     <value>Add Icons to Profile</value>
+  </data>
+  <data name="UserRemovedFromChatHint" xml:space="preserve">
+    <value>**{0}** removed from **{1}**.</value>
   </data>
   <data name="UserReplyIcon" xml:space="preserve">
     <value>Add Icons to Replies</value>

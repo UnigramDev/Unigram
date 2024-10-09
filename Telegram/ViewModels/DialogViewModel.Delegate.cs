@@ -189,7 +189,7 @@ namespace Telegram.ViewModels
             }
         }
 
-
+        public bool IsAdministrator(MessageSender memberId) => _messageDelegate.IsAdministrator(memberId);
 
         public void OpenWebPage(LinkPreview linkPreview)
         {

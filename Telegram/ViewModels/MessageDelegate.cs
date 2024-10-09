@@ -213,6 +213,22 @@ namespace Telegram.ViewModels
             return string.Empty;
         }
 
+        public bool IsAdministrator(MessageSender memberId)
+        {
+            var chat = Chat;
+            if (chat == null || memberId is not MessageSenderUser user)
+            {
+                return false;
+            }
+
+            if (_admins.TryGetValue(chat.Id, out IDictionary<long, ChatAdministrator> value))
+            {
+                return value.ContainsKey(user.UserId);
+            }
+
+            return false;
+        }
+
         public void UpdateAdministrators(long chatId)
         {
             ClientService.Send(new GetChatAdministrators(chatId), result =>
