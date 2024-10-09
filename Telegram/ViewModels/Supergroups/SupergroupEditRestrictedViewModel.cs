@@ -5,6 +5,7 @@
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
 using System;
+using System.Collections.ObjectModel;
 using System.Threading.Tasks;
 using Telegram.Common;
 using Telegram.Navigation;
@@ -18,6 +19,8 @@ using Windows.UI.Xaml.Navigation;
 
 namespace Telegram.ViewModels.Supergroups
 {
+    public partial record SelectionValue(int Value, string Text, bool IsCustom = false);
+
     public partial class SupergroupEditRestrictedViewModel : ViewModelBase, IDelegable<IMemberPopupDelegate>
     {
         public IMemberPopupDelegate Delegate { get; set; }
@@ -25,6 +28,17 @@ namespace Telegram.ViewModels.Supergroups
         public SupergroupEditRestrictedViewModel(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator)
             : base(clientService, settingsService, aggregator)
         {
+            var time = DateTime.Now.ToTimestamp();
+
+            Duration = new()
+            {
+                new SelectionValue(time + 60 * 60, Locale.Declension(Strings.R.Hours, 1)),
+                new SelectionValue(time + 60 * 60 * 24, Locale.Declension(Strings.R.Days, 1)),
+                new SelectionValue(time + 60 * 60 * 24 * 7, Locale.Declension(Strings.R.Weeks, 1)),
+                new SelectionValue(time + 60 * 60 * 24 * 30, Locale.Declension(Strings.R.Months, 1)),
+                new SelectionValue(int.MaxValue, Strings.UserRestrictionsUntilForever),
+                new SelectionValue(int.MinValue, Strings.LimitByPeriodCustom)
+            };
         }
 
         private Chat _chat;
@@ -41,6 +55,15 @@ namespace Telegram.ViewModels.Supergroups
         {
             get => _member;
             set => Set(ref _member, value);
+        }
+
+        public ObservableCollection<SelectionValue> Duration { get; }
+
+        private SelectionValue _selectedDuration;
+        public SelectionValue SelectedDuration
+        {
+            get => _selectedDuration;
+            set => Set(ref _selectedDuration, value);
         }
 
         protected override async Task OnNavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
@@ -95,7 +118,6 @@ namespace Telegram.ViewModels.Supergroups
                     CanSendPolls = restricted.Permissions.CanSendPolls && chat.Permissions.CanSendPolls;
                     CanAddLinkPreviews = restricted.Permissions.CanAddLinkPreviews && chat.Permissions.CanAddLinkPreviews;
                     CanSendBasicMessages = restricted.Permissions.CanSendBasicMessages && chat.Permissions.CanSendBasicMessages;
-                    UntilDate = restricted.RestrictedUntilDate;
                 }
                 else if (member.Status is ChatMemberStatusBanned banned)
                 {
@@ -104,7 +126,6 @@ namespace Telegram.ViewModels.Supergroups
                     CanInviteUsers = false;
                     CanSendMediaMessages = false;
                     CanSendBasicMessages = false;
-                    UntilDate = banned.BannedUntilDate;
                 }
                 else
                 {
@@ -121,7 +142,6 @@ namespace Telegram.ViewModels.Supergroups
                     CanSendPolls = chat.Permissions.CanSendPolls;
                     CanAddLinkPreviews = chat.Permissions.CanAddLinkPreviews;
                     CanSendBasicMessages = chat.Permissions.CanSendBasicMessages;
-                    UntilDate = 0;
                 }
             }
         }
@@ -350,13 +370,6 @@ namespace Telegram.ViewModels.Supergroups
 
         #endregion
 
-        private int _untilDate;
-        public int UntilDate
-        {
-            get => _untilDate;
-            set => Set(ref _untilDate, value);
-        }
-
         public void OpenProfile()
         {
             var member = _member;
@@ -392,7 +405,7 @@ namespace Telegram.ViewModels.Supergroups
             var status = new ChatMemberStatusRestricted
             {
                 IsMember = true,
-                RestrictedUntilDate = _untilDate,
+                RestrictedUntilDate = SelectedDuration?.Value ?? 0,
                 Permissions = new ChatPermissions
                 {
                     CanChangeInfo = _canChangeInfo,
@@ -425,7 +438,7 @@ namespace Telegram.ViewModels.Supergroups
         public ChatMemberStatus SelectedStatus => new ChatMemberStatusRestricted
         {
             IsMember = true,
-            RestrictedUntilDate = _untilDate,
+            RestrictedUntilDate = SelectedDuration?.Value ?? 0,
             Permissions = new ChatPermissions
             {
                 CanChangeInfo = _canChangeInfo,
@@ -443,22 +456,6 @@ namespace Telegram.ViewModels.Supergroups
                 CanSendBasicMessages = _canSendBasicMessages,
             }
         };
-
-        public async void EditUntil()
-        {
-            // TODO: this is currently unsupported
-
-            var dialog = new SupergroupEditRestrictedUntilPopup(_untilDate);
-            var confirm = await ShowPopupAsync(dialog);
-            if (confirm == ContentDialogResult.Primary)
-            {
-                UntilDate = dialog.Value <= DateTime.Now ? 0 : dialog.Value.ToTimestamp();
-            }
-            else if (confirm == ContentDialogResult.Secondary)
-            {
-                UntilDate = 0;
-            }
-        }
 
         public async void Dismiss()
         {

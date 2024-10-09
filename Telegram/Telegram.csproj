@@ -1592,9 +1592,6 @@
     <Compile Include="Views\Popups\SendLocationPopup.xaml.cs">
       <DependentUpon>SendLocationPopup.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\Supergroups\Popups\SupergroupEditRestrictedUntilPopup.xaml.cs">
-      <DependentUpon>SupergroupEditRestrictedUntilPopup.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Views\Supergroups\Popups\SupergroupEventLogFiltersPopup.xaml.cs">
       <DependentUpon>SupergroupEventLogFiltersPopup.xaml</DependentUpon>
     </Compile>
@@ -3362,10 +3359,6 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Views\Popups\SendLocationPopup.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Views\Supergroups\Popups\SupergroupEditRestrictedUntilPopup.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

@@ -14,6 +14,8 @@ using Windows.UI.Xaml.Controls;
 
 namespace Telegram.Views.Chats.Popups
 {
+    public partial record SelectionValue(int Value, string Text, bool IsCustom = false);
+
     public sealed partial class ChatInviteLinkPopup : ContentPopup
     {
         private readonly IClientService _clientService;
@@ -31,8 +33,6 @@ namespace Telegram.Views.Chats.Popups
             new SelectionValue(100, "100"),
             new SelectionValue(int.MaxValue, Strings.LimitNumberOfUsesCustom)
         };
-
-        record SelectionValue(int Value, string Text, bool IsCustom = false);
 
         public ChatInviteLinkPopup(IClientService clientService, long chatId, bool channel, bool canCreateJoinRequests, ChatInviteLink inviteLink)
         {
@@ -290,6 +290,24 @@ namespace Telegram.Views.Chats.Popups
             }
         }
 
+        private void InsertLimitByPeriod(int value)
+        {
+            for (int i = 0; i < _limitByPeriod.Count; i++)
+            {
+                if (_limitByPeriod[i].Value == value)
+                {
+                    LimitByPeriod.SelectedIndex = i;
+                    break;
+                }
+                else if (_limitByPeriod[i].Value > value)
+                {
+                    _limitByPeriod.Insert(i, new SelectionValue(value, Formatter.DateAt(value), true));
+                    LimitByPeriod.SelectedIndex = i;
+                    break;
+                }
+            }
+        }
+
         private async void LimitNumberOfUses_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             if (LimitNumberOfUses.SelectedItem is SelectionValue value)
@@ -331,24 +349,6 @@ namespace Telegram.Views.Chats.Popups
                             break;
                         }
                     }
-                }
-            }
-        }
-
-        private void InsertLimitByPeriod(int value)
-        {
-            for (int i = 0; i < _limitByPeriod.Count; i++)
-            {
-                if (_limitByPeriod[i].Value == value)
-                {
-                    LimitByPeriod.SelectedIndex = i;
-                    break;
-                }
-                else if (_limitByPeriod[i].Value > value)
-                {
-                    _limitByPeriod.Insert(i, new SelectionValue(value, Formatter.DateAt(value), true));
-                    LimitByPeriod.SelectedIndex = i;
-                    break;
                 }
             }
         }

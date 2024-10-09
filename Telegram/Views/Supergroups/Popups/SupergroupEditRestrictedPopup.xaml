@@ -6,14 +6,18 @@
                        xmlns:controls="using:Telegram.Controls"
                        xmlns:cells="using:Telegram.Controls.Cells"
                        mc:Ignorable="d"
-                       Padding="0,24"
-                       PrimaryButtonClick="{x:Bind ViewModel.Continue}">
+                       Padding="0,24,0,0">
 
     <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
         <ScrollViewer x:Name="ScrollingHost"
                       VerticalScrollBarVisibility="Auto"
                       VerticalScrollMode="Auto">
-            <StackPanel Margin="24,0">
+            <StackPanel Margin="24,0,24,24">
                 <cells:ProfileCell x:Name="Cell"
                                    Click="{x:Bind ViewModel.OpenProfile}"
                                    Padding="0,0,0,12" />
@@ -90,18 +94,45 @@
                               Content="{CustomResource UserRestrictionsChangeInfo}" />
                 </StackPanel>
 
-                <!-- TODO: restriction duration -->
-                <!--<controls:BadgeButton Content="{CustomResource UserRestrictionsDuration}"
-                                      Badge="{x:Bind ConvertUntilDate(ViewModel.UntilDate), Mode=OneWay}"
-                                      Click="{x:Bind ViewModel.EditUntil}" />-->
-
-                <Button x:Name="DismissButton"
-                        Click="{x:Bind ViewModel.Dismiss}"
-                        Content="{CustomResource UserRestrictionsBlock}"
-                        Style="{StaticResource DangerTextButtonStyle}"
-                        Visibility="Collapsed"
-                        Margin="-12,16,0,0" />
+                <TextBlock Text="{CustomResource UserRestrictionsDuration}"
+                           Margin="0,8,0,8" />
+                <ComboBox x:Name="Duration"
+                          ItemsSource="{x:Bind ViewModel.Duration}"
+                          SelectedItem="{x:Bind ViewModel.SelectedDuration, Mode=TwoWay}"
+                          SelectionChanged="Duration_SelectionChanged"
+                          DisplayMemberPath="Text"
+                          HorizontalAlignment="Stretch" />
             </StackPanel>
         </ScrollViewer>
+
+        <controls:ScrollViewerScrim ScrollingHost="{x:Bind ScrollingHost}"
+                                    Background="{ThemeResource ContentDialogBackground}" />
+
+        <Grid Margin="24,0,24,24"
+              ColumnSpacing="4"
+              Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition />
+                <ColumnDefinition />
+            </Grid.ColumnDefinitions>
+            <Button Click="{x:Bind ViewModel.Continue}"
+                    Content="{CustomResource Done}"
+                    Style="{StaticResource AccentButtonStyle}"
+                    HorizontalAlignment="Stretch" />
+            <Button Click="Cancel_Click"
+                    Content="{CustomResource Cancel}"
+                    HorizontalAlignment="Stretch"
+                    Grid.Column="1" />
+        </Grid>
+
+        <Button x:Name="DismissButton"
+                Click="{x:Bind ViewModel.Dismiss}"
+                Content="{CustomResource UserRestrictionsBlock}"
+                Style="{StaticResource DangerTextButtonStyle}"
+                HorizontalAlignment="Stretch"
+                FontWeight="SemiBold"
+                Margin="24,-16,24,12"
+                Visibility="Collapsed"
+                Grid.Row="2" />
     </Grid>
 </controls:ContentPopup>

@@ -4,12 +4,17 @@
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+using Microsoft.UI.Xaml.Controls;
+using Telegram.Common;
 using Telegram.Controls;
 using Telegram.Converters;
+using Telegram.Navigation;
 using Telegram.Td.Api;
 using Telegram.ViewModels.Delegates;
 using Telegram.ViewModels.Supergroups;
+using Telegram.Views.Popups;
 using Windows.UI.Xaml;
+using Windows.UI.Xaml.Controls;
 
 namespace Telegram.Views.Supergroups.Popups
 {
@@ -21,9 +26,6 @@ namespace Telegram.Views.Supergroups.Popups
         {
             InitializeComponent();
             Title = Strings.UserRestrictions;
-
-            PrimaryButtonText = Strings.Done;
-            SecondaryButtonText = Strings.Cancel;
         }
 
         #region Binding
@@ -66,13 +68,23 @@ namespace Telegram.Views.Supergroups.Popups
 
         public void UpdateMember(Chat chat, User user, ChatMember member)
         {
-            if (member.Status is ChatMemberStatusRestricted)
+            if (member.Status is ChatMemberStatusRestricted restricted)
             {
                 DismissButton.Visibility = Visibility.Visible;
+
+                if (restricted.RestrictedUntilDate != 0)
+                {
+                    InsertDuration(restricted.RestrictedUntilDate);
+                }
+                else
+                {
+                    InsertDuration(int.MaxValue);
+                }
             }
             else
             {
                 DismissButton.Visibility = Visibility.Collapsed;
+                InsertDuration(int.MaxValue);
             }
 
             PermissionsPanel.Visibility = Visibility.Visible;
@@ -100,5 +112,70 @@ namespace Telegram.Views.Supergroups.Popups
         }
 
         #endregion
+
+        private async void Duration_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (Duration.SelectedItem is SelectionValue value)
+            {
+                if (value.Value == int.MinValue)
+                {
+                    var popup = new ChooseDateTimeToast
+                    {
+                        Title = Strings.ExpireAfter,
+                        //Header = Strings.PaidContentPriceTitle,
+                        ActionButtonContent = Strings.OK,
+                        ActionButtonStyle = BootStrapper.Current.Resources["AccentButtonStyle"] as Style,
+                        CloseButtonContent = Strings.Cancel,
+                        PreferredPlacement = TeachingTipPlacementMode.Center,
+                        IsLightDismissEnabled = true,
+                        ShouldConstrainToRootBounds = true,
+                    };
+
+                    var confirm = await popup.ShowAsync();
+                    if (confirm == ContentDialogResult.Primary)
+                    {
+                        InsertDuration((int)popup.Value.ToTimestamp());
+                    }
+                    else if (e.RemovedItems?.Count > 0)
+                    {
+                        Duration.SelectedItem = e.RemovedItems[0];
+                    }
+                }
+                else if (value.IsCustom is false)
+                {
+                    for (int i = 0; i < ViewModel.Duration.Count; i++)
+                    {
+                        if (ViewModel.Duration[i].IsCustom)
+                        {
+                            ViewModel.Duration.RemoveAt(i);
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+
+        private void InsertDuration(int value)
+        {
+            for (int i = 0; i < ViewModel.Duration.Count; i++)
+            {
+                if (ViewModel.Duration[i].Value == value)
+                {
+                    Duration.SelectedIndex = i;
+                    break;
+                }
+                else if (ViewModel.Duration[i].Value > value)
+                {
+                    ViewModel.Duration.Insert(i, new SelectionValue(value, Formatter.DateAt(value), true));
+                    Duration.SelectedIndex = i;
+                    break;
+                }
+            }
+        }
+
+        private void Cancel_Click(object sender, RoutedEventArgs e)
+        {
+            Hide(ContentDialogResult.Secondary);
+        }
     }
 }

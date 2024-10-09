@@ -35,7 +35,14 @@ namespace Telegram.Views.Popups
             Date.MinDate = DateTime.Today;
             Date.MaxDate = DateTime.Today.AddYears(1);
 
+            ActionButtonClick += OnActionButtonClick;
             Closed += OnClosed;
+        }
+
+        private void OnActionButtonClick(TeachingTip sender, object args)
+        {
+            _tsc.TrySetResult(ContentDialogResult.Primary);
+            IsOpen = false;
         }
 
         public DateTime Value
