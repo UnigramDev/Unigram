@@ -317,12 +317,15 @@ namespace Telegram.Views.Popups
                 _deleteAll = UpdateSelection(DeleteAllRoot, DeleteAllCount, DeleteAllCheck, DeleteAll_Checked);
             }
 
-            if (_messagesCount > 0)
+            if (_deleteAllCount > 0 && DeleteAllCheck.IsChecked == true)
             {
-                var count = DeleteAllCheck.IsChecked == true ? _deleteAllCount : _messagesCount;
-                Title = count == 1
+                Title = string.Format(Strings.DeleteMessagesTitle, Locale.Declension(Strings.R.messages, _deleteAllCount));
+            }
+            else if (_messagesCount > 0)
+            {
+                Title = _messagesCount == 1
                     ? Strings.DeleteSingleMessagesTitle
-                    : string.Format(Strings.DeleteMessagesTitle, Locale.Declension(Strings.R.messages, count));
+                    : string.Format(Strings.DeleteMessagesTitle, Locale.Declension(Strings.R.messages, _messagesCount));
             }
         }
 
