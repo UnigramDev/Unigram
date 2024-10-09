@@ -114,6 +114,12 @@ namespace Telegram.Controls.Gallery
         private async void Controls_CompactClick(object sender, RoutedEventArgs e)
         {
             // TODO: WinUI - Rewrite
+            if (_current == null)
+            {
+                // Button was already pressed
+                return;
+            }
+
             _current = null;
 
             _player.IsUnloadedExpected = true;

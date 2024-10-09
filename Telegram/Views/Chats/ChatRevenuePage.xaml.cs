@@ -110,12 +110,20 @@ namespace Telegram.Views.Chats
         {
             if (value > 0)
             {
-                element.Visibility = Visibility.Visible;
+                if (element != null)
+                {
+                    element.Visibility = Visibility.Visible;
+                }
+
                 return Icons.LockClosedFilled12 + Icons.Spacing + string.Format(Strings.BoostLevel, value);
             }
             else
             {
-                element.Visibility = Visibility.Collapsed;
+                if (element != null)
+                {
+                    element.Visibility = Visibility.Collapsed;
+                }
+
                 return string.Empty;
             }
         }

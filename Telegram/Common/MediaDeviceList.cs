@@ -186,12 +186,19 @@ namespace Telegram.Common
 
         private static MediaDeviceId GetDefaultId(MediaDeviceClass deviceClass)
         {
-            return deviceClass switch
+            try
             {
-                MediaDeviceClass.AudioInput => new MediaDeviceId(MediaDevice.GetDefaultAudioCaptureId(AudioDeviceRole.Communications), true),
-                MediaDeviceClass.AudioOutput => new MediaDeviceId(MediaDevice.GetDefaultAudioRenderId(AudioDeviceRole.Communications), true),
-                _ => new MediaDeviceId(Constants.DefaultDeviceId, true)
-            };
+                return deviceClass switch
+                {
+                    MediaDeviceClass.AudioInput => new MediaDeviceId(MediaDevice.GetDefaultAudioCaptureId(AudioDeviceRole.Communications), true),
+                    MediaDeviceClass.AudioOutput => new MediaDeviceId(MediaDevice.GetDefaultAudioRenderId(AudioDeviceRole.Communications), true),
+                    _ => new MediaDeviceId(Constants.DefaultDeviceId, true)
+                };
+            }
+            catch
+            {
+                return new MediaDeviceId(Constants.DefaultDeviceId, true);
+            }
         }
     }
 }

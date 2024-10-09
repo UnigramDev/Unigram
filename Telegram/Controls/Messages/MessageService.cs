@@ -1408,39 +1408,38 @@ namespace Telegram.Controls.Messages
             var content = string.Empty;
             var entities = active ? new List<TextEntity>() : null;
 
-            long singleUserId = 0;
-            if (chatAddMembers.MemberUserIds.Count == 1)
+            try
             {
-                singleUserId = chatAddMembers.MemberUserIds[0];
-            }
-
-            var fromUser = message.GetSender();
-
-            if (singleUserId != 0)
-            {
-                if (message.SenderId is MessageSenderUser senderUser && singleUserId == senderUser.UserId)
+                long singleUserId = 0;
+                if (chatAddMembers.MemberUserIds.Count == 1)
                 {
-                    var chat = message.Chat;
-                    if (chat == null)
-                    {
-                        return (content, entities);
-                    }
+                    singleUserId = chatAddMembers.MemberUserIds[0];
+                }
 
-                    var supergroup = chat.Type as ChatTypeSupergroup;
-                    if (supergroup != null && supergroup.IsChannel)
+                var fromUser = message.GetSender();
+
+                if (singleUserId != 0)
+                {
+                    if (message.SenderId is MessageSenderUser senderUser && singleUserId == senderUser.UserId)
                     {
-                        if (singleUserId == message.ClientService.Options.MyId)
+                        var chat = message.Chat;
+                        if (chat == null)
                         {
-                            content = Strings.ChannelJoined;
+                            return (content, entities);
                         }
-                        else
+
+                        if (message.Chat?.Type is ChatTypeSupergroup { IsChannel: true })
                         {
-                            content = ReplaceWithLink(Strings.EventLogChannelJoined, "un1", fromUser, entities);
+                            if (singleUserId == message.ClientService.Options.MyId)
+                            {
+                                content = Strings.ChannelJoined;
+                            }
+                            else
+                            {
+                                content = ReplaceWithLink(Strings.EventLogChannelJoined, "un1", fromUser, entities);
+                            }
                         }
-                    }
-                    else
-                    {
-                        if (supergroup != null && !supergroup.IsChannel)
+                        else if (message.Chat?.Type is ChatTypeSupergroup)
                         {
                             if (singleUserId == message.ClientService.Options.MyId)
                             {
@@ -1460,53 +1459,52 @@ namespace Telegram.Controls.Messages
                             content = ReplaceWithLink(Strings.ActionAddUserSelf, "un1", fromUser, entities);
                         }
                     }
-                }
-                else
-                {
-                    var whoUser = message.ClientService.GetUser(singleUserId);
+                    else
+                    {
+                        var whoUser = message.ClientService.GetUser(singleUserId);
 
-                    if (message.IsOutgoing)
-                    {
-                        content = ReplaceWithLink(Strings.ActionYouAddUser, "un2", whoUser, entities);
-                    }
-                    else if (singleUserId == message.ClientService.Options.MyId)
-                    {
-                        var chat = message.Chat;
-                        var supergroup = chat.Type as ChatTypeSupergroup;
-                        if (supergroup != null)
+                        if (message.IsOutgoing)
                         {
-                            if (supergroup.IsChannel)
+                            content = ReplaceWithLink(Strings.ActionYouAddUser, "un2", whoUser, entities);
+                        }
+                        else if (singleUserId == message.ClientService.Options.MyId)
+                        {
+                            if (message.Chat?.Type is ChatTypeSupergroup { IsChannel: true })
                             {
                                 content = ReplaceWithLink(Strings.ChannelAddedBy, "un1", fromUser, entities);
                             }
-                            else
+                            else if (message.Chat?.Type is ChatTypeSupergroup)
                             {
                                 content = ReplaceWithLink(Strings.MegaAddedBy, "un1", fromUser, entities);
+                            }
+                            else
+                            {
+                                content = ReplaceWithLink(Strings.ActionAddUserYou, "un1", fromUser, entities);
                             }
                         }
                         else
                         {
-                            content = ReplaceWithLink(Strings.ActionAddUserYou, "un1", fromUser, entities);
+                            content = ReplaceWithLink(Strings.ActionAddUser, "un1", fromUser, entities);
+                            content = ReplaceWithLink(content, "un2", whoUser, entities);
                         }
+                    }
+                }
+                else
+                {
+                    if (message.IsOutgoing)
+                    {
+                        content = ReplaceWithLink(Strings.ActionYouAddUser, "un2", chatAddMembers.MemberUserIds, message.ClientService, entities);
                     }
                     else
                     {
                         content = ReplaceWithLink(Strings.ActionAddUser, "un1", fromUser, entities);
-                        content = ReplaceWithLink(content, "un2", whoUser, entities);
+                        content = ReplaceWithLink(content, "un2", chatAddMembers.MemberUserIds, message.ClientService, entities);
                     }
                 }
             }
-            else
+            catch
             {
-                if (message.IsOutgoing)
-                {
-                    content = ReplaceWithLink(Strings.ActionYouAddUser, "un2", chatAddMembers.MemberUserIds, message.ClientService, entities);
-                }
-                else
-                {
-                    content = ReplaceWithLink(Strings.ActionAddUser, "un1", fromUser, entities);
-                    content = ReplaceWithLink(content, "un2", chatAddMembers.MemberUserIds, message.ClientService, entities);
-                }
+                Logger.Info(message.Content);
             }
 
             return (content, entities);

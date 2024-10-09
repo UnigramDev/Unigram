@@ -47,13 +47,19 @@ namespace Telegram.Common
 
         public static bool TryUnlockFeature(string featureId)
         {
-            //var featureId = "com.microsoft.windows.applicationwindow";
-            var token = GenerateTokenFromFeatureId(featureId);
-            var attestation = GenerateAttestation(featureId);
-            var accessResult = LimitedAccessFeatures.TryUnlockFeature(featureId, token, attestation);
+            try
+            {
+                var token = GenerateTokenFromFeatureId(featureId);
+                var attestation = GenerateAttestation(featureId);
+                var accessResult = LimitedAccessFeatures.TryUnlockFeature(featureId, token, attestation);
 
-            return accessResult.Status == LimitedAccessFeatureStatus.Available
-                || accessResult.Status == LimitedAccessFeatureStatus.AvailableWithoutToken;
+                return accessResult.Status == LimitedAccessFeatureStatus.Available
+                    || accessResult.Status == LimitedAccessFeatureStatus.AvailableWithoutToken;
+            }
+            catch
+            {
+                return false;
+            }
         }
     }
 }

@@ -145,8 +145,15 @@ namespace Telegram.Common
                 return DeviceAccessStatus.Allowed;
             }
 
-            var access = DeviceAccessInformation.CreateFromDeviceClass(deviceClass);
-            return access.CurrentStatus;
+            try
+            {
+                var access = DeviceAccessInformation.CreateFromDeviceClass(deviceClass);
+                return access.CurrentStatus;
+            }
+            catch
+            {
+                return DeviceAccessStatus.Unspecified;
+            }
         }
     }
 }
