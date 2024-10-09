@@ -1505,6 +1505,7 @@ namespace Telegram.Controls.Messages
             catch
             {
                 Logger.Info(message.Content);
+                throw;
             }
 
             return (content, entities);
