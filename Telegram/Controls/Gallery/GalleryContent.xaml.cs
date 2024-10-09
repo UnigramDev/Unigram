@@ -378,7 +378,7 @@ namespace Telegram.Controls.Gallery
                 _fileId = file.Id;
 
                 // Always recreate HLS player for now, try to reuse native one
-                if (item.IsHls() && ChromiumWebPresenter.IsSupported())
+                if ((SettingsService.Current.Diagnostics.ForceWebView2 || item.IsHls()) && ChromiumWebPresenter.IsSupported())
                 {
                     Video = new WebVideoPlayer();
                 }
