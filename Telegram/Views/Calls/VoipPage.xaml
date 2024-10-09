@@ -62,7 +62,8 @@
                         <controls:ProfilePicture x:Name="Photo"
                                                  Width="280"
                                                  Height="280"
-                                                 Shape="None" />
+                                                 Shape="None"
+                                                 IsEnabled="False" />
                     </Grid>
                 </Grid>
             </Border>
