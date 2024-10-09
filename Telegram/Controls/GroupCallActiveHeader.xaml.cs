@@ -52,16 +52,7 @@ namespace Telegram.Controls
                 newPrivateCall.MediaStateChanged += OnMediaStateChanged;
                 newPrivateCall.AudioLevelUpdated += OnAudioLevelUpdated;
 
-                if (PowerSavingPolicy.AreMaterialsEnabled && ApiInfo.CanAnimatePaths)
-                {
-                    _curveVisual.StartAnimating();
-                }
-                else
-                {
-                    _curveVisual.StopAnimating();
-                    _curveVisual.Clear();
-                }
-
+                StartAnimating();
                 UpdateCurveColors(newPrivateCall.AudioState == VoipAudioState.Muted);
 
                 Audio.Visibility = Visibility.Visible;
@@ -85,16 +76,7 @@ namespace Telegram.Controls
                 newGroupCall.MutedChanged += OnMutedChanged;
                 newGroupCall.AudioLevelsUpdated += OnAudioLevelsUpdated;
 
-                if (PowerSavingPolicy.AreMaterialsEnabled && ApiInfo.CanAnimatePaths)
-                {
-                    _curveVisual.StartAnimating();
-                }
-                else
-                {
-                    _curveVisual.StopAnimating();
-                    _curveVisual.Clear();
-                }
-
+                StartAnimating();
                 UpdateCurveColors(newGroupCall.IsMuted);
 
                 Audio.Visibility = Visibility.Visible;
@@ -208,10 +190,24 @@ namespace Telegram.Controls
         private void Curve_SizeChanged(object sender, SizeChangedEventArgs e)
         {
             _curveVisual.ActualSize = e.NewSize.ToVector2();
+            StartAnimating();
+        }
+
+        private void StartAnimating()
+        {
+            if (_curveVisual.ActualSize.X == 0 || _curveVisual.ActualSize.Y == 0)
+            {
+                return;
+            }
 
             if (PowerSavingPolicy.AreMaterialsEnabled && ApiInfo.CanAnimatePaths)
             {
                 _curveVisual.StartAnimating();
+            }
+            else
+            {
+                _curveVisual.StopAnimating();
+                _curveVisual.Clear();
             }
         }
     }

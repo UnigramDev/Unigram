@@ -76,8 +76,9 @@ namespace Telegram.Controls.Chats
         {
             var visible = true;
             var activeCallId = ViewModel.VoipService.ActiveCall is VoipGroupCall groupCall ? groupCall.Id : 0;
+            var joined = call.ScheduledStartDate > 0 ? call.Id == activeCallId : call.IsJoined || call.NeedRejoin;
 
-            if (call != null && chat.VideoChat.GroupCallId == call.Id && chat.VideoChat.GroupCallId != activeCallId && (chat.VideoChat.HasParticipants || call.ScheduledStartDate > 0))
+            if (call != null && chat.VideoChat.GroupCallId == call.Id && !joined && (call.IsActive || call.ScheduledStartDate > 0))
             {
                 ShowHide(true);
 
