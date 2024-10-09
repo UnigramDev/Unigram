@@ -15,12 +15,11 @@
             <RowDefinition />
             <RowDefinition />
         </Grid.RowDefinitions>
-        <Border Background="{ThemeResource SettingsItemBackground}"
-                CornerRadius="8,0,0,0" />
+        <Border x:Name="RootGrid"
+                Background="{ThemeResource SettingsItemBackground}" />
 
         <Border x:Name="Curve"
                 SizeChanged="Curve_SizeChanged"
-                CornerRadius="8,0,0,0"
                 Grid.RowSpan="2" />
 
         <HyperlinkButton Click="Title_Click"

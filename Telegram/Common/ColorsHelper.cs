@@ -6,12 +6,31 @@
 //
 using System;
 using Windows.UI;
+using Windows.UI.Xaml.Media;
 
 namespace Telegram.Common
 {
     // ColorHelper is a set of color conversion utilities
     public static class ColorsHelper
     {
+        public static LinearGradientBrush LinearGradient(params uint[] colorStops)
+        {
+            var linear = new LinearGradientBrush();
+            linear.StartPoint = new Windows.Foundation.Point(0, 0);
+            linear.EndPoint = new Windows.Foundation.Point(1, 0);
+
+            for (int i = 0; i < colorStops.Length; i++)
+            {
+                linear.GradientStops.Add(new GradientStop
+                {
+                    Offset = i / (colorStops.Length - 1f),
+                    Color = ColorEx.FromHex(colorStops[i])
+                });
+            }
+
+            return linear;
+        }
+
         public static Color Mix(Color x, Color y, double amount)
         {
             static double Mix(double x, double y, double f)

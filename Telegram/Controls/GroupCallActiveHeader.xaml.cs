@@ -14,6 +14,7 @@ using Telegram.Services.Calls;
 using Telegram.Td.Api;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Media;
 
 namespace Telegram.Controls
 {
@@ -96,13 +97,27 @@ namespace Telegram.Controls
         private void UpdateCurveColors(bool muted)
         {
             // TODO: there are multiple states to be supported: connecting, active, speaking, can't speak, late
-            if (muted)
+            if (PowerSavingPolicy.AreMaterialsEnabled && ApiInfo.CanAnimatePaths)
             {
-                _curveVisual.SetColorStops(0xFF59c7f8, 0xFF0078ff);
+                if (muted)
+                {
+                    _curveVisual.SetColorStops(0xFF59c7f8, 0xFF0078ff);
+                }
+                else
+                {
+                    _curveVisual.SetColorStops(0xFF0078ff, 0xFF33c659);
+                }
             }
             else
             {
-                _curveVisual.SetColorStops(0xFF0078ff, 0xFF33c659);
+                if (muted)
+                {
+                    RootGrid.Background = ColorsHelper.LinearGradient(0xFF59c7f8, 0xFF0078ff);
+                }
+                else
+                {
+                    RootGrid.Background = ColorsHelper.LinearGradient(0xFF0078ff, 0xFF33c659);
+                }
             }
         }
 
