@@ -185,5 +185,11 @@ namespace Telegram.Controls
         {
             Closed?.Invoke(this, EventArgs.Empty);
         }
+
+        public event TypedEventHandler<VideoPlayerBase, EventArgs> TreeUpdated;
+        protected void OnTreeUpdated()
+        {
+            TreeUpdated?.Invoke(this, EventArgs.Empty);
+        }
     }
 }

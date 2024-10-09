@@ -59,6 +59,14 @@ namespace Telegram.Controls
             Video.Close();
         }
 
+        private void OnSizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            if (e.NewSize.Width != 0 && e.NewSize.Height != 0 && IsConnected)
+            {
+                OnTreeUpdated();
+            }
+        }
+
         public override void Play(GalleryMedia video, double position)
         {
             _video = video;

@@ -37,7 +37,7 @@ namespace Telegram.Controls.Gallery
 
             _viewModel = viewModel;
             _player = player;
-            _player.SizeChanged += OnVideoSizeChanged;
+            _player.TreeUpdated += OnTreeUpdated;
 
             Presenter.Constraint = media.Constraint;
             Presenter.Children.Insert(0, player);
@@ -54,13 +54,13 @@ namespace Telegram.Controls.Gallery
             visual.Opacity = 0;
         }
 
-        private void OnVideoSizeChanged(object sender, SizeChangedEventArgs e)
+        private void OnTreeUpdated(VideoPlayerBase sender, EventArgs args)
         {
-            if (sender is VideoPlayerBase player && e.NewSize.Width != 0 && e.NewSize.Height != 0)
-            {
-                player.IsUnloadedExpected = false;
-                player.SizeChanged -= OnVideoSizeChanged;
-            }
+            // Hopefully this is always triggered after Unloaded/Loaded
+            // And even if the events are raced and triggered in the opposite order
+            // Not causing Disconnected/Connected to be triggered.
+            sender.IsUnloadedExpected = false;
+            sender.TreeUpdated -= OnTreeUpdated;
         }
 
         private void OnUnloaded(object sender, RoutedEventArgs e)
@@ -140,7 +140,7 @@ namespace Telegram.Controls.Gallery
         {
             _viewModel = viewModel;
             _player = player;
-            _player.SizeChanged += OnVideoSizeChanged;
+            _player.TreeUpdated += OnTreeUpdated;
 
             Presenter.Children.RemoveAt(0);
             Presenter.Children.Insert(0, player);
@@ -182,6 +182,9 @@ namespace Telegram.Controls.Gallery
             }
             else
             {
+                // Reset the state so that hopefully the window gets the right size/position
+                AppWindow.ClearPersistedState("Gallery");
+
                 var appWindow = await AppWindow.TryCreateAsync();
                 appWindow.PersistedStateId = "Gallery";
                 appWindow.TitleBar.ExtendsContentIntoTitleBar = true;

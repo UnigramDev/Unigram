@@ -21,14 +21,6 @@ namespace Telegram.Controls
         public NativeVideoPlayer()
         {
             InitializeComponent();
-
-            Connected += OnConnected;
-            Disconnected += OnDisconnected;
-        }
-
-        private void OnConnected(object sender, RoutedEventArgs e)
-        {
-            IsUnloadedExpected = false;
         }
 
         private bool _isUnloadedExpected;
@@ -36,6 +28,11 @@ namespace Telegram.Controls
         {
             get => Video.IsUnloadedExpected;
             set => Video.IsUnloadedExpected = value;
+        }
+
+        private void OnConnected(object sender, RoutedEventArgs e)
+        {
+            IsUnloadedExpected = false;
         }
 
         private void OnDisconnected(object sender, RoutedEventArgs e)
@@ -61,6 +58,14 @@ namespace Telegram.Controls
             }
 
             UpdateManager.Unsubscribe(this, ref _bufferedToken);
+        }
+
+        private void OnSizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            if (e.NewSize.Width != 0 && e.NewSize.Height != 0 && IsConnected)
+            {
+                OnTreeUpdated();
+            }
         }
 
         public override void Play(GalleryMedia video, double position)

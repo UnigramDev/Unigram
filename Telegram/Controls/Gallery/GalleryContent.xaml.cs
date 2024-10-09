@@ -429,17 +429,16 @@ namespace Telegram.Controls.Gallery
                 var video = Panel.Child as VideoPlayerBase;
                 if (video != null)
                 {
-                    video.SizeChanged -= OnVideoSizeChanged;
+                    video.TreeUpdated -= OnTreeUpdated;
                     video.FirstFrameReady -= OnFirstFrameReady;
                     video.Closed -= OnClosed;
                 }
 
                 if (value != null)
                 {
-                    value.SizeChanged += OnVideoSizeChanged;
+                    value.TreeUpdated += OnTreeUpdated;
                     value.FirstFrameReady += OnFirstFrameReady;
                     value.Closed += OnClosed;
-                    value.IsTabStop = false;
                 }
 
                 Panel.Child = value;
@@ -464,13 +463,13 @@ namespace Telegram.Controls.Gallery
             UpdateManager.Unsubscribe(this, ref _thumbnailToken, true);
         }
 
-        private void OnVideoSizeChanged(object sender, SizeChangedEventArgs e)
+        private void OnTreeUpdated(VideoPlayerBase sender, EventArgs e)
         {
-            if (sender is VideoPlayerBase player && e.NewSize.Width != 0 && e.NewSize.Height != 0)
-            {
-                player.IsUnloadedExpected = false;
-                player.SizeChanged -= OnVideoSizeChanged;
-            }
+            // Hopefully this is always triggered after Unloaded/Loaded
+            // And even if the events are raced and triggered in the opposite order
+            // Not causing Disconnected/Connected to be triggered.
+            sender.IsUnloadedExpected = false;
+            sender.TreeUpdated -= OnTreeUpdated;
         }
 
         private void OnFirstFrameReady(VideoPlayerBase sender, EventArgs args)

@@ -7,10 +7,14 @@
                        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
                        mc:Ignorable="d"
                        d:DesignHeight="300"
-                       d:DesignWidth="400">
+                       d:DesignWidth="400"
+                       Connected="OnConnected"
+                       Disconnected="OnDisconnected"
+                       IsTabStop="False">
 
     <vlc:VideoView x:Name="Video"
                    IsTabStop="False"
-                   Initialized="OnInitialized" />
+                   Initialized="OnInitialized"
+                   SizeChanged="OnSizeChanged" />
 
 </local:VideoPlayerBase>
