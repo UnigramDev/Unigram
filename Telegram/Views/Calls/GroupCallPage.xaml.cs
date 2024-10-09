@@ -780,7 +780,7 @@ namespace Telegram.Views.Calls
 
         public void Update(VoipGroupCall call, GroupCallParticipant currentUser)
         {
-            if (_disposed || call.IsClosed)
+            if (call.IsClosed)
             {
                 Close();
                 return;

@@ -148,28 +148,25 @@ namespace Telegram.Services.Calls
                 return aliases.TotalCount > 1;
             }
 
-            var tsc = _availableAliasesTask;
-            if (tsc != null)
+            if (_availableAliasesTask != null)
             {
-                var response = await tsc.Task;
+                var response = await _availableAliasesTask.Task;
                 return response?.TotalCount > 1;
             }
 
-            tsc = _availableAliasesTask = new TaskCompletionSource<MessageSenders>();
+            _availableAliasesTask = new TaskCompletionSource<MessageSenders>();
 
-            var result = await CanChooseAliasAsyncInternal(tsc, Chat.Id);
-            tsc.TrySetResult(result);
-
+            var result = await CanChooseAliasAsyncInternal(Chat.Id);
             return result?.TotalCount > 1;
         }
 
-        private async Task<MessageSenders> CanChooseAliasAsyncInternal(TaskCompletionSource<MessageSenders> tsc, long chatId)
+        private async Task<MessageSenders> CanChooseAliasAsyncInternal(long chatId)
         {
             var response = await ClientService.SendAsync(new GetVideoChatAvailableParticipants(chatId));
             if (response is MessageSenders senders)
             {
                 _availableAliases = senders;
-                tsc.TrySetResult(senders);
+                _availableAliasesTask.TrySetResult(senders);
                 return senders;
             }
 
@@ -221,36 +218,18 @@ namespace Telegram.Services.Calls
 
         public async Task RejoinAsync(XamlRoot xamlRoot)
         {
-            var chat = _chat;
-
-            if (chat == null)
+            var available = await CanChooseAliasAsyncInternal(_chat.Id);
+            if (available != null)
             {
-                return;
-            }
-
-            var alias = await PickAliasAsync(xamlRoot, chat, true);
-            if (alias != null)
-            {
-                Rejoin(alias);
-            }
-        }
-
-        private async Task<MessageSender> PickAliasAsync(XamlRoot xamlRoot, Chat chat, bool darkTheme)
-        {
-            var available = await CanChooseAliasAsync();
-            if (available && _availableAliases != null)
-            {
-                var popup = new VideoChatAliasesPopup(ClientService, chat, false, _availableAliases.Senders.ToArray());
-                popup.RequestedTheme = darkTheme ? ElementTheme.Dark : ElementTheme.Default;
+                var popup = new VideoChatAliasesPopup(ClientService, _chat, false, _availableAliases.Senders.ToArray());
+                popup.RequestedTheme = ElementTheme.Dark;
 
                 var confirm = await popup.ShowQueuedAsync(xamlRoot);
-                if (confirm == ContentDialogResult.Primary)
+                if (confirm == ContentDialogResult.Primary && (IsJoined || NeedRejoin))
                 {
-                    return popup.SelectedSender;
+                    Rejoin(popup.SelectedSender);
                 }
             }
-
-            return null;
         }
 
         private void Rejoin(MessageSender alias)

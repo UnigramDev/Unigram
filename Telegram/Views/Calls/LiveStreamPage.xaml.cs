@@ -31,9 +31,6 @@ namespace Telegram.Views.Calls
 {
     public sealed partial class LiveStreamPage : WindowEx
     {
-        private readonly IClientService _clientService;
-        private readonly IEventAggregator _aggregator;
-
         private VoipGroupCall _call;
 
         private readonly VoipVideoOutputSink _unifiedVideo;
@@ -191,11 +188,11 @@ namespace Telegram.Views.Calls
                 _transportUnavailable = true;
                 ShowHideTransport(true);
 
-                if (_clientService.TryGetSupergroup(_call.Chat, out Supergroup supergroup))
+                if (_call.ClientService.TryGetSupergroup(_call.Chat, out Supergroup supergroup))
                 {
                     TextBlockHelper.SetMarkdown(NoStream, supergroup.Status is ChatMemberStatusCreator ? Strings.NoRtmpStreamFromAppOwner : string.Format(Strings.NoRtmpStreamFromAppViewer, _call.Chat.Title));
                 }
-                else if (_clientService.TryGetBasicGroup(_call.Chat, out BasicGroup basicGroup))
+                else if (_call.ClientService.TryGetBasicGroup(_call.Chat, out BasicGroup basicGroup))
                 {
                     TextBlockHelper.SetMarkdown(NoStream, basicGroup.Status is ChatMemberStatusCreator ? Strings.NoRtmpStreamFromAppOwner : string.Format(Strings.NoRtmpStreamFromAppViewer, _call.Chat.Title));
                 }
@@ -264,7 +261,7 @@ namespace Telegram.Views.Calls
                 return;
             }
 
-            TitleInfo.Text = call.Title.Length > 0 ? call.Title : _clientService.GetTitle(_call.Chat);
+            TitleInfo.Text = call.Title.Length > 0 ? call.Title : _call.ClientService.GetTitle(_call.Chat);
 
             if (call.ScheduledStartDate != 0)
             {
@@ -427,7 +424,7 @@ namespace Telegram.Views.Calls
 
             //flyout.CreateFlyoutItem(ShareInviteLink, Strings.VoipGroupShareInviteLink, Icons.Link);
 
-            if (_call.Chat.Type is ChatTypeSupergroup && _clientService.TryGetSupergroup(_call.Chat, out Supergroup supergroup))
+            if (_call.Chat.Type is ChatTypeSupergroup && _call.ClientService.TryGetSupergroup(_call.Chat, out Supergroup supergroup))
             {
                 if (supergroup.Status is ChatMemberStatusCreator)
                 {
@@ -435,7 +432,7 @@ namespace Telegram.Views.Calls
                     flyout.CreateFlyoutItem(StreamWith, Strings.VoipStreamWith, Icons.Live);
                 }
             }
-            else if (_call.Chat.Type is ChatTypeBasicGroup && _clientService.TryGetBasicGroup(_call.Chat, out BasicGroup basicGroup))
+            else if (_call.Chat.Type is ChatTypeBasicGroup && _call.ClientService.TryGetBasicGroup(_call.Chat, out BasicGroup basicGroup))
             {
                 if (basicGroup.Status is ChatMemberStatusCreator)
                 {
@@ -458,7 +455,7 @@ namespace Telegram.Views.Calls
 
         private async void StreamWith()
         {
-            var popup = new VideoChatStreamsPopup(_clientService, _call.Chat.Id, false);
+            var popup = new VideoChatStreamsPopup(_call.ClientService, _call.Chat.Id, false);
             popup.RequestedTheme = ElementTheme.Dark;
 
             await popup.ShowQueuedAsync(XamlRoot);
@@ -479,7 +476,7 @@ namespace Telegram.Views.Calls
             var confirm = await input.ShowQueuedAsync(XamlRoot);
             if (confirm == ContentDialogResult.Primary)
             {
-                _clientService.Send(new SetGroupCallTitle(_call.Id, input.Text));
+                _call.ClientService.Send(new SetGroupCallTitle(_call.Id, input.Text));
             }
         }
 
@@ -491,7 +488,7 @@ namespace Telegram.Views.Calls
             var confirm = await input.ShowQueuedAsync(XamlRoot);
             if (confirm == ContentDialogResult.Primary)
             {
-                _clientService.Send(new StartGroupCallRecording(_call.Id, input.FileName, input.RecordVideo, input.UsePortraitOrientation));
+                _call.ClientService.Send(new StartGroupCallRecording(_call.Id, input.FileName, input.RecordVideo, input.UsePortraitOrientation));
             }
         }
 
@@ -507,13 +504,13 @@ namespace Telegram.Views.Calls
             var confirm = await popup.ShowQueuedAsync(XamlRoot);
             if (confirm == ContentDialogResult.Primary)
             {
-                _clientService.Send(new EndGroupCallRecording(_call.Id));
+                _call.ClientService.Send(new EndGroupCallRecording(_call.Id));
             }
         }
 
         private async void ShareInviteLink()
         {
-            await this.ShowPopupAsync(_clientService.SessionId, new ChooseChatsPopup(), new ChooseChatsConfigurationGroupCall(_call.Id));
+            await this.ShowPopupAsync(_call.ClientService.SessionId, new ChooseChatsPopup(), new ChooseChatsConfigurationGroupCall(_call.Id));
         }
 
         private readonly ScrollViewer _scrollingHost;

@@ -69,6 +69,20 @@ namespace Telegram.Views.Calls
 
             InitializeBlob();
 
+            _durationTimer = new DispatcherTimer
+            {
+                Interval = TimeSpan.FromSeconds(1)
+            };
+
+            _durationTimer.Tick += Duration_Tick;
+
+            _discardedTimer = new DispatcherTimer
+            {
+                Interval = TimeSpan.FromSeconds(2)
+            };
+
+            _discardedTimer.Tick += Discarded_Tick;
+
             _localVideo = new VoipVideoOutput(LocalVideo, true);
             _remoteVideo = new VoipVideoOutput(RemoteVideo, false);
 
@@ -108,20 +122,6 @@ namespace Telegram.Views.Calls
             }
 
             ElementCompositionPreview.SetIsTranslationEnabled(DetailRoot, true);
-
-            _durationTimer = new DispatcherTimer
-            {
-                Interval = TimeSpan.FromSeconds(1)
-            };
-
-            _durationTimer.Tick += Duration_Tick;
-
-            _discardedTimer = new DispatcherTimer
-            {
-                Interval = TimeSpan.FromSeconds(2)
-            };
-
-            _discardedTimer.Tick += Discarded_Tick;
 
             var durationRoot = ElementComposition.GetElementVisual(DurationRoot);
             durationRoot.Opacity = 0;
