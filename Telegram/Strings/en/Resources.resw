@@ -965,6 +965,15 @@ Your prize is **{0} Stars**.</value>
   <data name="AppName" xml:space="preserve">
     <value>Telegram</value>
   </data>
+  <data name="ApproveNewMembers" xml:space="preserve">
+    <value>Request Admin Approval</value>
+  </data>
+  <data name="ApproveNewMembersDescription" xml:space="preserve">
+    <value>Turn this on if you want users to join only after they are approved by an admin.</value>
+  </data>
+  <data name="ApproveNewMembersDescriptionFrozen" xml:space="preserve">
+    <value>You can&apos;t enable admin approval for links that require a monthly fee.</value>
+  </data>
   <data name="AppsTab" xml:space="preserve">
     <value>Apps</value>
   </data>
@@ -3874,6 +3883,12 @@ You can always switch back to the default Telegram theme here.</value>
   <data name="Days_other" xml:space="preserve">
     <value>{0} days</value>
   </data>
+  <data name="DaysLeft_one" xml:space="preserve">
+    <value>{0} day left</value>
+  </data>
+  <data name="DaysLeft_other" xml:space="preserve">
+    <value>{0} days left</value>
+  </data>
   <data name="Deactivate" xml:space="preserve">
     <value>DELETE NOW</value>
   </data>
@@ -3915,6 +3930,12 @@ You can always switch back to the default Telegram theme here.</value>
   </data>
   <data name="DeleteAllFromUsers" xml:space="preserve">
     <value>Delete all from users</value>
+  </data>
+  <data name="DeleteAllRevokedLinkHelp" xml:space="preserve">
+    <value>This will delete all revoked links.</value>
+  </data>
+  <data name="DeleteAllRevokedLinks" xml:space="preserve">
+    <value>Delete All Revoked Links</value>
   </data>
   <data name="DeleteAndExit" xml:space="preserve">
     <value>Delete and Leave Group</value>
@@ -3969,6 +3990,12 @@ You can always switch back to the default Telegram theme here.</value>
   </data>
   <data name="DeleteGroupForAll" xml:space="preserve">
     <value>Delete the group for all members</value>
+  </data>
+  <data name="DeleteLink" xml:space="preserve">
+    <value>Delete Link</value>
+  </data>
+  <data name="DeleteLinkHelp" xml:space="preserve">
+    <value>This will delete link.</value>
   </data>
   <data name="DeleteLocalization" xml:space="preserve">
     <value>Delete localization?</value>
@@ -4371,7 +4398,7 @@ Anyone from the channel will be able to see messages in this group.</value>
     <value>Edit Information</value>
   </data>
   <data name="EditLink" xml:space="preserve">
-    <value>Edit link</value>
+    <value>Edit Link</value>
   </data>
   <data name="EditMessageError" xml:space="preserve">
     <value>Sorry, you can&apos;t edit this message.</value>
@@ -5010,6 +5037,9 @@ Duration: {1}</value>
   </data>
   <data name="ExperimentalSettingsHint" xml:space="preserve">
     <value>Warning! These are experimental settings. Some may not work. Others may break the app. Any of them may disappear in the next version without a trace. Use at your own risk.</value>
+  </data>
+  <data name="ExpireAfter" xml:space="preserve">
+    <value>Expire After</value>
   </data>
   <data name="Expired" xml:space="preserve">
     <value>Expired</value>
@@ -6290,8 +6320,20 @@ You can change your language back at any time in Settings.</value>
   <data name="Likes_other" xml:space="preserve">
     <value>{0} likes</value>
   </data>
+  <data name="LimitByPeriod" xml:space="preserve">
+    <value>Limit by time period</value>
+  </data>
+  <data name="LimitByPeriodCustom" xml:space="preserve">
+    <value>Custom</value>
+  </data>
   <data name="LimitFree" xml:space="preserve">
     <value>Free</value>
+  </data>
+  <data name="LimitNumberOfUses" xml:space="preserve">
+    <value>Limit by number of users</value>
+  </data>
+  <data name="LimitNumberOfUsesCustom" xml:space="preserve">
+    <value>Custom</value>
   </data>
   <data name="LimitPremium" xml:space="preserve">
     <value>Premium</value>
@@ -6391,6 +6433,9 @@ Upgrade to **Telegram Premium** to increase this limit to **{1}**.</value>
   <data name="LinkCopiedPrivate" xml:space="preserve">
     <value>Link copied to clipboard. This link will only work for members of this chat.</value>
   </data>
+  <data name="LinkCreatedeBy" xml:space="preserve">
+    <value>Link created by</value>
+  </data>
   <data name="LinkedChannel" xml:space="preserve">
     <value>Linked Channel</value>
   </data>
@@ -6405,6 +6450,15 @@ Upgrade to **Telegram Premium** to increase this limit to **{1}**.</value>
   </data>
   <data name="LinkMediaSmaller" xml:space="preserve">
     <value>Shrink Photo</value>
+  </data>
+  <data name="LinkName" xml:space="preserve">
+    <value>Link Name</value>
+  </data>
+  <data name="LinkNameHelp" xml:space="preserve">
+    <value>Only you and other admins will see this name.</value>
+  </data>
+  <data name="LinkNameHint" xml:space="preserve">
+    <value>Link Name (Optional)</value>
   </data>
   <data name="LinkNotFound" xml:space="preserve">
     <value>Unfortunately, you can&apos;t access this message. You aren&apos;t a member of the chat where it was posted.</value>
@@ -6594,6 +6648,15 @@ Upgrade to **Telegram Premium** to increase this limit to **{1}**.</value>
   </data>
   <data name="ManageGroupMenu" xml:space="preserve">
     <value>Manage group</value>
+  </data>
+  <data name="ManageInviteLinks" xml:space="preserve">
+    <value>Manage Invite Links</value>
+  </data>
+  <data name="ManageLinksInfoHelp" xml:space="preserve">
+    <value>You can create additional invite links that have a limited time or number of uses.</value>
+  </data>
+  <data name="ManageLinksInfoHelpPaid" xml:space="preserve">
+    <value>You can create additional invite links that have a limited time, number of uses or require a paid subscription.</value>
   </data>
   <data name="Map" xml:space="preserve">
     <value>Map</value>
@@ -7067,6 +7130,9 @@ to unlock up to {0} similar channels.</value>
   <data name="NewGroup" xml:space="preserve">
     <value>New Group</value>
   </data>
+  <data name="NewLink" xml:space="preserve">
+    <value>New Link</value>
+  </data>
   <data name="NewMembersBySourceChartTitle" xml:space="preserve">
     <value>New members by source</value>
   </data>
@@ -7142,11 +7208,17 @@ to unlock up to {0} similar channels.</value>
   <data name="NoEmojiPack" xml:space="preserve">
     <value>No emoji pack</value>
   </data>
+  <data name="NoLimit" xml:space="preserve">
+    <value>No limit</value>
+  </data>
   <data name="NoMessages" xml:space="preserve">
     <value>No messages here yet...</value>
   </data>
   <data name="NoMessagesGreetingsDescription" xml:space="preserve">
     <value>Send a message or tap the greeting below.</value>
+  </data>
+  <data name="NoOneJoined" xml:space="preserve">
+    <value>No one joined</value>
   </data>
   <data name="NoPublicStoriesTitle" xml:space="preserve">
     <value>No public stories</value>
@@ -7753,6 +7825,18 @@ messages from multiple devices.</value>
 
 Payments will go directly to the developer of {0}. Telegram cannot provide any guarantees, so proceed at your own risk. In case of problems, please contact the developer of {0} or your bank.</value>
   </data>
+  <data name="PeopleJoined_one" xml:space="preserve">
+    <value>{0} person joined</value>
+  </data>
+  <data name="PeopleJoined_other" xml:space="preserve">
+    <value>{1} people joined</value>
+  </data>
+  <data name="PeopleJoinedRemaining_one" xml:space="preserve">
+    <value>{0} remaining</value>
+  </data>
+  <data name="PeopleJoinedRemaining_other" xml:space="preserve">
+    <value>{0} remaining</value>
+  </data>
   <data name="PeopleNearby" xml:space="preserve">
     <value>People Nearby</value>
   </data>
@@ -8271,6 +8355,12 @@ Payments will go directly to the developer of {0}. Telegram cannot provide any g
   </data>
   <data name="PricePerYear" xml:space="preserve">
     <value>{0}/year</value>
+  </data>
+  <data name="PrimaryLinkHelp" xml:space="preserve">
+    <value>Anyone on Telegram will be able to join your group by following this link.</value>
+  </data>
+  <data name="PrimaryLinkHelpChannel" xml:space="preserve">
+    <value>Anyone on Telegram will be able to join your channel by following this link.</value>
   </data>
   <data name="PrivacyAdvanced" xml:space="preserve">
     <value>Advanced</value>
@@ -8912,6 +9002,24 @@ Payments will go directly to the developer of {0}. Telegram cannot provide any g
   <data name="RequestToJoinSent" xml:space="preserve">
     <value>Join request sent</value>
   </data>
+  <data name="RequireMonthlyFee" xml:space="preserve">
+    <value>Require Monthly Fee</value>
+  </data>
+  <data name="RequireMonthlyFeeInfo" xml:space="preserve">
+    <value>Charge a subscription fee from people who join your channel via this link.</value>
+  </data>
+  <data name="RequireMonthlyFeeInfoFrozen" xml:space="preserve">
+    <value>To change the subscription fee, create a new invite link with a different price.</value>
+  </data>
+  <data name="RequireMonthlyFeeInfoLink" xml:space="preserve">
+    <value>https://telegram.org/tos/stars</value>
+  </data>
+  <data name="RequireMonthlyFeePrice" xml:space="preserve">
+    <value>~{0}/month</value>
+  </data>
+  <data name="RequireMonthlyFeePriceHint" xml:space="preserve">
+    <value>Star amount per month</value>
+  </data>
   <data name="ResendCode" xml:space="preserve">
     <value>Resend Code</value>
   </data>
@@ -9057,6 +9165,9 @@ Payments will go directly to the developer of {0}. Telegram cannot provide any g
   </data>
   <data name="Revoked" xml:space="preserve">
     <value>Revoked</value>
+  </data>
+  <data name="RevokedLinks" xml:space="preserve">
+    <value>Revoked Links</value>
   </data>
   <data name="RevokeLink" xml:space="preserve">
     <value>Revoke Link</value>
@@ -10489,6 +10600,9 @@ in mini apps on Telegram.</value>
   <data name="ThisIsYou" xml:space="preserve">
     <value>this is you</value>
   </data>
+  <data name="TimeLimitHelp" xml:space="preserve">
+    <value>You can make the link expire after a certain time.</value>
+  </data>
   <data name="TimerPeriodDoNotDelete" xml:space="preserve">
     <value>Do Not Delete</value>
   </data>
@@ -11184,6 +11298,12 @@ However, it is currently available for purchase. **Learn more…**</value>
   </data>
   <data name="Users_other" xml:space="preserve">
     <value>{0} users</value>
+  </data>
+  <data name="UsesLimitHelp" xml:space="preserve">
+    <value>You can make the link work only for a certain number of users.</value>
+  </data>
+  <data name="UsesLimitHint" xml:space="preserve">
+    <value>Enter Custom Limit</value>
   </data>
   <data name="UseSystemProxySettings" xml:space="preserve">
     <value>Use System Proxy Settings</value>

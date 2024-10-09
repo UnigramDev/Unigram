@@ -116,7 +116,7 @@ namespace Telegram
                 typeof(SupergroupEditRestrictedViewModel),
                 typeof(SupergroupEditLinkedChatViewModel),
                 typeof(SupergroupChooseMemberViewModel),
-                typeof(ChatInviteLinkViewModel),
+                typeof(ChatInviteLinksViewModel),
                 typeof(SupergroupAdministratorsViewModel),
                 typeof(SupergroupBannedViewModel),
                 typeof(SupergroupPermissionsViewModel),

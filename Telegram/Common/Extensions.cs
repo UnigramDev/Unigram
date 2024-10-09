@@ -497,9 +497,9 @@ namespace Telegram.Common
             return connection.SendMessageAsync(new ValueSet { { message, parameter ?? true } });
         }
 
-        public static string GetDuration(this TimeSpan duration)
+        public static string ToDuration(this TimeSpan duration, bool hours = false)
         {
-            if (duration.TotalHours >= 1)
+            if (duration.TotalHours >= 1 || hours)
             {
                 return duration.ToString("h\\:mm\\:ss");
             }

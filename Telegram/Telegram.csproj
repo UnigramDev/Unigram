@@ -223,6 +223,9 @@
     <Compile Include="Controls\Cells\PaidReactorCell.xaml.cs">
       <DependentUpon>PaidReactorCell.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\Cells\ChatInviteLinkCell.xaml.cs">
+      <DependentUpon>ChatInviteLinkCell.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Controls\Cells\Revenue\StarSubscriptionCell.xaml.cs">
       <DependentUpon>StarSubscriptionCell.xaml</DependentUpon>
     </Compile>
@@ -962,6 +965,7 @@
     <Compile Include="ViewModels\Stars\PayViewModel.cs" />
     <Compile Include="ViewModels\Stars\StarsViewModel.cs" />
     <Compile Include="ViewModels\Stars\BuyViewModel.cs" />
+    <Compile Include="ViewModels\Chats\ChatInviteLinksViewModel.cs" />
     <Compile Include="ViewModels\Supergroups\SupergroupProfileColorViewModel.cs" />
     <Compile Include="ViewModels\Settings\SettingsProfileColorViewModel.cs" />
     <Compile Include="ViewModels\Settings\SettingsProxyViewModel.cs" />
@@ -1085,6 +1089,9 @@
     <Compile Include="Views\Chats\ChatStoriesPage.xaml.cs">
       <DependentUpon>ChatStoriesPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\Chats\Popups\ChatInviteLinkInfoPopup.xaml.cs">
+      <DependentUpon>ChatInviteLinkInfoPopup.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\Chats\Popups\ChatBoostFeaturesPopup.xaml.cs">
       <DependentUpon>ChatBoostFeaturesPopup.xaml</DependentUpon>
     </Compile>
@@ -1096,6 +1103,9 @@
     </Compile>
     <Compile Include="Views\ChatBusinessRepliesPage.xaml.cs">
       <DependentUpon>ChatBusinessRepliesPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Chats\Popups\ChatInviteLinkPopup.xaml.cs">
+      <DependentUpon>ChatInviteLinkPopup.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\ChatThreadPage.xaml.cs">
       <DependentUpon>ChatThreadPage.xaml</DependentUpon>
@@ -1183,6 +1193,9 @@
     </Compile>
     <Compile Include="Views\Popups\ReportChatPopup.xaml.cs">
       <DependentUpon>ReportChatPopup.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Popups\ChooseDateTimeToast.xaml.cs">
+      <DependentUpon>ChooseDateTimeToast.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Premium\Popups\ChangePrivacyPopup.xaml.cs">
       <DependentUpon>ChangePrivacyPopup.xaml</DependentUpon>
@@ -1314,6 +1327,9 @@
     <Compile Include="Views\Stars\Popups\SubscriptionPopup.xaml.cs">
       <DependentUpon>SubscriptionPopup.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\Chats\ChatInviteLinksPage.xaml.cs">
+      <DependentUpon>ChatInviteLinksPage.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\Tabbed\WebBrowserPage.xaml.cs">
       <DependentUpon>WebBrowserPage.xaml</DependentUpon>
     </Compile>
@@ -1404,7 +1420,6 @@
     <Compile Include="ViewModels\CallsViewModel.cs" />
     <Compile Include="ViewModels\Create\NewChannelViewModel.cs" />
     <Compile Include="ViewModels\Chats\ChatGalleryViewModel.cs" />
-    <Compile Include="ViewModels\Chats\ChatInviteLinkViewModel.cs" />
     <Compile Include="ViewModels\Chats\ChatPhotosViewModel.cs" />
     <Compile Include="ViewModels\Chats\ChatSearchViewModel.cs" />
     <Compile Include="ViewModels\Chats\ChatStatisticsViewModel.cs" />
@@ -1498,9 +1513,6 @@
     </Compile>
     <Compile Include="Views\ChatScheduledPage.xaml.cs">
       <DependentUpon>ChatScheduledPage.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\Chats\ChatInviteLinkPage.xaml.cs">
-      <DependentUpon>ChatInviteLinkPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Chats\ChatStatisticsPage.xaml.cs">
       <DependentUpon>ChatStatisticsPage.xaml</DependentUpon>
@@ -2011,6 +2023,7 @@
     <Content Include="Assets\Animations\EmptyCalls.tgs" />
     <Content Include="Assets\Animations\ReportText.tgs" />
     <Content Include="Assets\Animations\EmptyContacts.tgs" />
+    <Content Include="Assets\Animations\ChatInviteLinks.tgs" />
     <None Include="Assets\i420.hlsl" />
     <Content Include="Assets\Images\Reply.scale-100.png" />
     <Content Include="Assets\Images\Reply.scale-125.png" />
@@ -2282,6 +2295,10 @@
     <Page Include="Controls\Cells\PaidReactorCell.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\Cells\ChatInviteLinkCell.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="Controls\Cells\Revenue\StarSubscriptionCell.xaml">
       <Generator>MSBuild:Compile</Generator>
@@ -2887,6 +2904,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="Views\Chats\Popups\ChatInviteLinkInfoPopup.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Views\Chats\Popups\ChatBoostFeaturesPopup.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -2902,6 +2923,10 @@
     <Page Include="Views\ChatBusinessRepliesPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\Chats\Popups\ChatInviteLinkPopup.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\ChatThreadPage.xaml">
       <SubType>Designer</SubType>
@@ -3014,6 +3039,10 @@
     <Page Include="Views\Popups\ReportChatPopup.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Popups\ChooseDateTimeToast.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="Views\Premium\Popups\ChangePrivacyPopup.xaml">
       <Generator>MSBuild:Compile</Generator>
@@ -3187,6 +3216,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="Views\Chats\ChatInviteLinksPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Views\Tabbed\WebBrowserPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -3224,10 +3257,6 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\ChatScheduledPage.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Views\Chats\ChatInviteLinkPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

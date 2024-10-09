@@ -82,6 +82,8 @@ namespace Telegram.Controls
 
         public bool ShrinkOut { get; set; } = true;
 
+        public bool Mirror { get; set; } = false;
+
         protected override void OnApplyTemplate()
         {
             _ellipse.Radius = new Vector2((float)Radius);
@@ -106,7 +108,7 @@ namespace Telegram.Controls
 
         private void OnLoaded(object sender, RoutedEventArgs e)
         {
-            if (_spinning is false && Value is > 0 and < 1)
+            if (_spinning is false && Value is > 0 and < 1 && Spin)
             {
                 _spinning = true;
                 _visual.StartAnimation("RotationAngleInDegrees", _foreverAnimation);
@@ -143,10 +145,16 @@ namespace Telegram.Controls
 
         private void OnValueChanged(float oldValue, float newValue)
         {
-            if (_spinning is false && newValue is > 0 and < 1)
+            if (_spinning is false && newValue is > 0 and < 1 && Spin)
             {
                 _spinning = true;
                 _visual.StartAnimation("RotationAngleInDegrees", _foreverAnimation);
+            }
+
+            if (Mirror)
+            {
+                oldValue = 1 - oldValue;
+                newValue = 1 - newValue;
             }
 
             var diff = Math.Abs(oldValue - newValue);
@@ -154,8 +162,8 @@ namespace Telegram.Controls
             {
                 if (newValue > 0 && newValue < 1)
                 {
-                    _ellipse.TrimStart = 0;
-                    _ellipse.TrimEnd = newValue;
+                    _ellipse.TrimStart = Mirror ? newValue : 0;
+                    _ellipse.TrimEnd = Mirror ? 0 : newValue;
                 }
                 else
                 {
@@ -190,8 +198,8 @@ namespace Telegram.Controls
                     trimStart.InsertKeyFrame(1, 0, linear);
                     trimEnd.InsertKeyFrame(1, newValue, linear);
 
-                    _ellipse.StartAnimation("TrimStart", trimStart);
-                    _ellipse.StartAnimation("TrimEnd", trimEnd);
+                    _ellipse.StartAnimation(Mirror ? "TrimEnd" : "TrimStart", trimStart);
+                    _ellipse.StartAnimation(Mirror ? "TrimStart" : "TrimEnd", trimEnd);
                 }
                 else
                 {
@@ -210,8 +218,8 @@ namespace Telegram.Controls
                         Completed?.Invoke(this, EventArgs.Empty);
                     };
 
-                    _ellipse.StartAnimation("TrimStart", trimStart);
-                    _ellipse.StartAnimation("TrimEnd", trimEnd);
+                    _ellipse.StartAnimation(Mirror ? "TrimEnd" : "TrimStart", trimStart);
+                    _ellipse.StartAnimation(Mirror ? "TrimStart" : "TrimEnd", trimEnd);
 
                     batch.End();
                 }

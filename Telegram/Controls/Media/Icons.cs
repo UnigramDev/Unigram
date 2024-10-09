@@ -13,6 +13,7 @@ namespace Telegram.Controls.Media
 {
     public partial class Icons
     {
+        public const string BulletSpace = "\u2022 ";
         public const string RTL = "\u200F";
         public const string LTR = "\u200E";
         public const string ZWJ = "\u200D";
@@ -35,8 +36,9 @@ namespace Telegram.Controls.Media
 
         public const string ArrowSync = "\uE981";
 
-        public const string LinkSide = "\uE9F8";
-        public const string LinkSideBroken = "\uE9F7";
+        public const string TicketDiagonal = "\uEA9D";
+        public const string LinkDiagonal = "\uE9F8";
+        public const string LinkDiagonalBroken = "\uE9F7";
 
         public const string ArrowMinimize = "\uE965";
         public const string ArrowMaximize = "\uE966";

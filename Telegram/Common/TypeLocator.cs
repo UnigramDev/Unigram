@@ -402,8 +402,8 @@ namespace Telegram.Views
                         _clientService,
                         _settingsService,
                         _eventAggregator);
-                case "Telegram.ViewModels.Chats.ChatInviteLinkViewModel":
-                    return (T)(object)new Telegram.ViewModels.Chats.ChatInviteLinkViewModel(
+                case "Telegram.ViewModels.Chats.ChatInviteLinksViewModel":
+                    return (T)(object)new Telegram.ViewModels.Chats.ChatInviteLinksViewModel(
                         _clientService,
                         _settingsService,
                         _eventAggregator);

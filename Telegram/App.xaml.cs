@@ -449,7 +449,7 @@ namespace Telegram
 
                 PaymentFormPage => TypeResolver.Current.Resolve<PaymentFormViewModel>(sessionId),
                 MessageStatisticsPage => TypeResolver.Current.Resolve<MessageStatisticsViewModel>(sessionId),
-                ChatInviteLinkPage => TypeResolver.Current.Resolve<ChatInviteLinkViewModel>(sessionId),
+                ChatInviteLinksPage => TypeResolver.Current.Resolve<ChatInviteLinksViewModel>(sessionId),
                 ChatStatisticsPage => TypeResolver.Current.Resolve<ChatStatisticsViewModel>(sessionId),
                 ChatRevenuePage => TypeResolver.Current.Resolve<ChatRevenueViewModel>(sessionId),
                 ChatStarsPage => TypeResolver.Current.Resolve<ChatStarsViewModel>(sessionId),

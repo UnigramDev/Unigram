@@ -33,7 +33,11 @@ namespace Telegram.Common
 
         public static Color AlphaBlend(Color color1, Color color2, byte alpha)
         {
-            float factor = alpha / 255f;
+            return AlphaBlend(color1, color2, alpha / 255f);
+        }
+
+        public static Color AlphaBlend(Color color1, Color color2, float factor)
+        {
             byte red = (byte)(color1.R * (1 - factor) + color2.R * factor);
             byte green = (byte)(color1.G * (1 - factor) + color2.G * factor);
             byte blue = (byte)(color1.B * (1 - factor) + color2.B * factor);

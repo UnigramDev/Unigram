@@ -54,8 +54,8 @@ namespace Telegram.Controls.Cells
                 ? Strings.UsernameProfileLinkActive
                 : Strings.UsernameProfileLinkInactive;
             BadgeIcon.Text = value
-                ? Icons.LinkSide
-                : Icons.LinkSideBroken;
+                ? Icons.LinkDiagonal
+                : Icons.LinkDiagonalBroken;
 
             Handle.Visibility = value ? Visibility.Visible : Visibility.Collapsed;
         }

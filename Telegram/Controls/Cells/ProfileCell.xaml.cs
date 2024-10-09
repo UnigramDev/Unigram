@@ -138,6 +138,38 @@ namespace Telegram.Controls.Cells
             args.Handled = true;
         }
 
+        public void UpdateChatInviteLinkMember(IClientService clientService, ContainerContentChangingEventArgs args, TypedEventHandler<ListViewBase, ContainerContentChangingEventArgs> callback)
+        {
+            var member = args.Item as ChatInviteLinkMember;
+
+            var user = clientService.GetUser(member.UserId);
+            if (user == null)
+            {
+                return;
+            }
+
+            if (args.Phase == 0)
+            {
+                TitleLabel.Text = user.FullName();
+            }
+            else if (args.Phase == 1)
+            {
+                SubtitleLabel.Text = LastSeenConverter.GetLabel(user, true);
+            }
+            else if (args.Phase == 2)
+            {
+                Photo.SetUser(clientService, user, 36);
+                Identity.SetStatus(clientService, user);
+            }
+
+            if (args.Phase < 2)
+            {
+                args.RegisterUpdateCallback(callback);
+            }
+
+            args.Handled = true;
+        }
+
         public void UpdateSupergroupMember(IClientService clientService, ContainerContentChangingEventArgs args, TypedEventHandler<ListViewBase, ContainerContentChangingEventArgs> callback)
         {
             args.ItemContainer.Tag = args.Item;

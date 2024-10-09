@@ -57,6 +57,7 @@ namespace Telegram.Navigation.Services
         Task<ViewLifetimeControl> OpenAsync(ViewServiceOptions parameters);
         Task<ViewLifetimeControl> OpenAsync(Type page, object parameter = null, string title = null, Size size = default);
         Task<ContentDialogResult> ShowPopupAsync(ContentPopup popup, object parameter = null, ElementTheme requestedTheme = ElementTheme.Default);
+        void ShowPopup(ContentPopup popup, object parameter = null, ElementTheme requestedTheme = ElementTheme.Default);
 
         Task<ContentDialogResult> ShowPopupAsync(string message, string title = null, string primary = null, string secondary = null, bool destructive = false, ElementTheme requestedTheme = ElementTheme.Default);
         //Task<ContentDialogResult> ShowPopupAsync(FrameworkElement target, string message, string title = null, string primary = null, string secondary = null, bool destructive = false, ElementTheme requestedTheme = ElementTheme.Default);
@@ -412,6 +413,11 @@ namespace Telegram.Navigation.Services
         {
             Logger.Info($"Page: {page}, Parameter: {parameter}, Title: {title}, Size: {size}");
             return viewService.OpenAsync(page, parameter, title, size, SessionId);
+        }
+
+        public void ShowPopup(ContentPopup popup, object parameter = null, ElementTheme requestedTheme = ElementTheme.Default)
+        {
+            _ = ShowPopupAsync(popup, parameter, requestedTheme);
         }
 
         public Task<ContentDialogResult> ShowPopupAsync(ContentPopup popup, object parameter = null, ElementTheme requestedTheme = ElementTheme.Default)

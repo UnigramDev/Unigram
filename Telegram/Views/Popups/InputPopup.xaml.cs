@@ -69,6 +69,8 @@ namespace Telegram.Views.Popups
 
         public int MaxLength { get; set; } = int.MaxValue;
         public int MinLength { get; set; } = 1;
+
+        public double Minimum { get; set; } = 0;
         public double Maximum { get; set; } = double.MaxValue;
 
         public InputScopeNameValue InputScope { get; set; }
@@ -142,6 +144,7 @@ namespace Telegram.Views.Popups
                     Number.NumberFormatter = Formatter;
                 }
 
+                Number.Minimum = Minimum;
                 Number.Maximum = Maximum;
                 Number.Value = Value;
 
@@ -149,7 +152,7 @@ namespace Telegram.Views.Popups
 
                 if (_type == InputPopupType.Stars)
                 {
-                    Number.Padding = new Thickness(28, Number.Padding.Top, Number.Padding.Right, Number.Padding.Bottom);
+                    Number.Padding = new Thickness(36, Number.Padding.Top, Number.Padding.Right, Number.Padding.Bottom);
                     FindName(nameof(StarCount));
                 }
             }
@@ -235,7 +238,7 @@ namespace Telegram.Views.Popups
 
         private void Number_ValueChanged(NumberBox sender, NumberBoxValueChangedEventArgs args)
         {
-            IsPrimaryButtonEnabled = args.NewValue >= 0 && args.NewValue <= Maximum;
+            IsPrimaryButtonEnabled = args.NewValue >= Minimum && args.NewValue <= Maximum;
         }
 
         #region Static methods

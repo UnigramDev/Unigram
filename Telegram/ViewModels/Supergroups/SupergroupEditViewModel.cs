@@ -82,9 +82,16 @@ namespace Telegram.ViewModels.Supergroups
             new SettingsOptionItem<bool>(false, Strings.ChatHistoryHidden)
         };
 
+        private int _inviteLinksCount;
+        public int InviteLinksCount
+        {
+            get => _inviteLinksCount;
+            set => Set(ref _inviteLinksCount, value);
+        }
+
         #region Initialize
 
-        protected override Task OnNavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
+        protected override async Task OnNavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
         {
             var chatId = (long)parameter;
 
@@ -93,7 +100,7 @@ namespace Telegram.ViewModels.Supergroups
             var chat = _chat;
             if (chat == null)
             {
-                return Task.CompletedTask;
+                return;
             }
 
             Delegate?.UpdateChat(chat);
@@ -131,7 +138,11 @@ namespace Telegram.ViewModels.Supergroups
                 }
             }
 
-            return Task.CompletedTask;
+            var response = await ClientService.SendAsync(new GetChatInviteLinks(chatId, ClientService.Options.MyId, false, 0, string.Empty, 1));
+            if (response is ChatInviteLinks inviteLinks)
+            {
+                InviteLinksCount = inviteLinks.TotalCount;
+            }
         }
 
         public override void Subscribe()
@@ -336,11 +347,19 @@ namespace Telegram.ViewModels.Supergroups
             }
         }
 
-        public void Links()
+        public void InviteLinks()
         {
             if (_chat is Chat chat)
             {
-                NavigationService.Navigate(typeof(ChatInviteLinkPage), chat.Id);
+                NavigationService.Navigate(typeof(ChatInviteLinksPage), chat.Id);
+            }
+        }
+
+        public void Statistics()
+        {
+            if (_chat is Chat chat)
+            {
+                NavigationService.Navigate(typeof(RevenuePage), chat.Id);
             }
         }
 
