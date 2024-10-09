@@ -578,6 +578,20 @@ namespace Telegram.ViewModels
 
                 //NavigationService.GoBack();
             }
+            else if (_configuration is ChooseChatsConfigurationPostLink postLink && postLink.InternalLink != null)
+            {
+                var response = await ClientService.SendAsync(new GetInternalLink(postLink.InternalLink, true));
+                if (response is HttpUrl httpUrl)
+                {
+                    var formatted = new FormattedText(httpUrl.Url, Array.Empty<TextEntity>());
+
+                    foreach (var chat in chats)
+                    {
+                        SelectedTopics.TryGetValue(chat.Id, out long messageThreadId);
+                        ClientService.Send(new SendMessage(chat.Id, messageThreadId, null, null, null, new InputMessageText(formatted, null, false)));
+                    }
+                }
+            }
             else if (ShareLink != null)
             {
                 var formatted = new FormattedText(ShareLink.Url, Array.Empty<TextEntity>());

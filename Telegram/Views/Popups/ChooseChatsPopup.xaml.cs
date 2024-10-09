@@ -491,6 +491,11 @@ namespace Telegram.Views.Popups
             Text = text;
         }
 
+        public ChooseChatsConfigurationPostText(string text)
+        {
+            Text = new FormattedText(text, Array.Empty<TextEntity>());
+        }
+
         public FormattedText Text { get; }
     }
 
@@ -553,7 +558,14 @@ namespace Telegram.Views.Popups
             Url = url;
         }
 
+        public ChooseChatsConfigurationPostLink(InternalLinkType internalLink)
+        {
+            InternalLink = internalLink;
+        }
+
         public HttpUrl Url { get; }
+
+        public InternalLinkType InternalLink { get; }
     }
 
     public partial class ChooseChatsConfigurationPostMessage : ChooseChatsConfiguration
