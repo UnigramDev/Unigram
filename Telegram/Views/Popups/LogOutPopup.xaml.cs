@@ -8,6 +8,7 @@ using Telegram.Controls;
 using Telegram.ViewModels;
 using Telegram.Views.Host;
 using Windows.UI.Xaml;
+using Windows.UI.Xaml.Controls;
 
 namespace Telegram.Views
 {
@@ -26,6 +27,16 @@ namespace Telegram.Views
             if (TypeResolver.Current.Count < 3)
             {
                 FindName(nameof(AddAccount));
+            }
+
+            Closed += OnClosed;
+        }
+
+        private void OnClosed(ContentDialog sender, ContentDialogClosedEventArgs args)
+        {
+            if (args.Result == ContentDialogResult.Primary)
+            {
+                ViewModel.Logout();
             }
         }
 
@@ -61,11 +72,6 @@ namespace Telegram.Views
         {
             Hide();
             ViewModel.Ask();
-        }
-
-        private void ContentPopup_PrimaryButtonClick(Windows.UI.Xaml.Controls.ContentDialog sender, Windows.UI.Xaml.Controls.ContentDialogButtonClickEventArgs args)
-        {
-            ViewModel.Logout();
         }
     }
 }

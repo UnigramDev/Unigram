@@ -8,7 +8,6 @@
                        mc:Ignorable="d"
                        DefaultButton="None"
                        PrimaryButtonStyle="{StaticResource DangerButtonStyle}"
-                       PrimaryButtonClick="ContentPopup_PrimaryButtonClick"
                        Padding="0,24,0,12">
 
     <Grid>
