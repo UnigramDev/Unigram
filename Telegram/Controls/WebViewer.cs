@@ -423,7 +423,19 @@ postEvent: function(eventType, eventData) {
 
         private void OnWebMessageReceived(WebView2 sender, CoreWebView2WebMessageReceivedEventArgs args)
         {
-            if (JsonArray.TryParse(args.WebMessageAsJson, out JsonArray message) && message.Count == 2)
+            static string TryGetWebMessageAsString(CoreWebView2WebMessageReceivedEventArgs args)
+            {
+                try
+                {
+                    return args.TryGetWebMessageAsString();
+                }
+                catch
+                {
+                    return string.Empty;
+                }
+            }
+
+            if (JsonArray.TryParse(TryGetWebMessageAsString(args), out JsonArray message) && message.Count == 2)
             {
                 var eventName = message.GetStringAt(0);
                 var eventData = message.GetStringAt(1);

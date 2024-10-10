@@ -362,7 +362,19 @@ namespace Telegram.Controls
 
         private void OnWebMessageReceived(CoreWebView2 sender, CoreWebView2WebMessageReceivedEventArgs args)
         {
-            if (JsonObject.TryParse(args.WebMessageAsJson, out JsonObject data))
+            static string TryGetWebMessageAsString(CoreWebView2WebMessageReceivedEventArgs args)
+            {
+                try
+                {
+                    return args.TryGetWebMessageAsString();
+                }
+                catch
+                {
+                    return string.Empty;
+                }
+            }
+
+            if (JsonObject.TryParse(TryGetWebMessageAsString(args), out JsonObject data))
             {
                 var eventName = data.GetNamedString("event", string.Empty);
                 var eventData = data.GetNamedObject("data", new JsonObject());
