@@ -76,9 +76,11 @@ namespace Telegram.Controls.Chats
         {
             var visible = true;
             var activeCallId = ViewModel.VoipService.ActiveCall is VoipGroupCall groupCall ? groupCall.Id : 0;
-            var joined = call.ScheduledStartDate > 0 ? call.Id == activeCallId : call.IsJoined || call.NeedRejoin;
+            var joined = call != null && (call.ScheduledStartDate > 0 ? call.Id == activeCallId : (call.IsJoined || call.NeedRejoin));
 
-            if (call != null && chat.VideoChat.GroupCallId == call.Id && !joined && (call.IsActive || call.ScheduledStartDate > 0))
+            // TODO: there's currently a bug in TDLib that reports incorrect participant_count while leaving the call.
+
+            if (chat.VideoChat.GroupCallId == call.Id && !joined && (call.ParticipantCount > 0 || call.ScheduledStartDate > 0))
             {
                 ShowHide(true);
 
