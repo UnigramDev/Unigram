@@ -57,6 +57,7 @@ namespace Telegram.Views
         // TODO: constructor should take a function and URL should be loaded asynchronously
         public WebAppPage(IClientService clientService, User botUser, string url, long launchId = 0, AttachmentMenuBot menuBot = null, Chat sourceChat = null)
         {
+            RequestedTheme = SettingsService.Current.Appearance.GetCalculatedElementTheme();
             InitializeComponent();
 
             _clientService = clientService;
@@ -93,6 +94,7 @@ namespace Telegram.Views
 
         public WebAppPage(IClientService clientService, User botUser, string url, string title, long gameChatId = 0, long gameMessageId = 0)
         {
+            RequestedTheme = SettingsService.Current.Appearance.GetCalculatedElementTheme();
             InitializeComponent();
 
             _clientService = clientService;

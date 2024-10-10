@@ -1,6 +1,7 @@
 ﻿using Microsoft.UI.Xaml.Controls;
 using System;
 using Telegram.Navigation;
+using Telegram.Services;
 using Windows.ApplicationModel.Core;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -31,6 +32,7 @@ namespace Telegram.Views.Host
     {
         public TabbedPage(TabViewItem newTab, bool forWebApps)
         {
+            RequestedTheme = SettingsService.Current.Appearance.GetCalculatedElementTheme();
             InitializeComponent();
 
             Window.Current.SetTitleBar(Footer);
