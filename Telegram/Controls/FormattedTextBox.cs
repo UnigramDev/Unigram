@@ -382,7 +382,7 @@ namespace Telegram.Controls
             clone.StartOf(TextRangeUnit.Link, true);
             var mention = TryGetUserId(clone, out long userId);
 
-            flyout.CreateFlyoutItem(Document.CanUndo(), ContextUndo_Click, Strings.Undo, Icons.ArrowUndo, VirtualKey.Z);
+            flyout.CreateFlyoutItem(Document.CanUndo(), ContextUndo_Click, Strings.TextUndo, Icons.ArrowUndo, VirtualKey.Z);
             flyout.CreateFlyoutItem(Document.CanRedo(), ContextRedo_Click, Strings.Redo, Icons.ArrowRedo, VirtualKey.Y);
             flyout.CreateFlyoutSeparator();
             flyout.CreateFlyoutItem(length && Document.CanCopy(), ContextCut_Click, Strings.Cut, Icons.Cut, VirtualKey.X);
