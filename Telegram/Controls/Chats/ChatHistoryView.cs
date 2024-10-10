@@ -529,7 +529,7 @@ namespace Telegram.Controls.Chats
 
         private void Recognizer_Tapped(GestureRecognizer sender, TappedEventArgs args)
         {
-            if (args.TapCount == 2 && args.PointerDeviceType == PointerDeviceType.Mouse)
+            if (args.TapCount == 2)
             {
                 _raised = true;
                 sender.TryCompleteGesture();
