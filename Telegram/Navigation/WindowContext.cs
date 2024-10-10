@@ -67,6 +67,7 @@ namespace Telegram.Navigation
             Current = this;
             Dispatcher = new DispatcherContext(window.CoreWindow.DispatcherQueue);
             Id = ApplicationView.GetApplicationViewIdForWindow(window.CoreWindow);
+            Bounds = window.Bounds;
 
             var scaling = SettingsService.Current.Appearance.Scaling;
             if (scaling is >= 100 and <= 250 && !SettingsService.Current.Appearance.UseDefaultScaling)
@@ -291,12 +292,14 @@ namespace Telegram.Navigation
 
         private void OnSizeChanged(object sender, WindowSizeChangedEventArgs e)
         {
+            Bounds = _window.Bounds;
             SizeChanged?.Invoke(sender, e);
         }
 
         private void OnResizeStarted(CoreWindow sender, object args)
         {
             Logger.Debug(sender.Bounds);
+            Bounds = sender.Bounds;
 
             if (_window.Content is FrameworkElement element)
             {
@@ -310,6 +313,7 @@ namespace Telegram.Navigation
         private void OnResizeCompleted(CoreWindow sender, object args)
         {
             Logger.Debug(sender.Bounds);
+            Bounds = sender.Bounds;
 
             if (_window.Content is FrameworkElement element)
             {
@@ -449,7 +453,7 @@ namespace Telegram.Navigation
             set => ApplicationView.GetForCurrentView().Title = value;
         }
 
-        public Rect Bounds => _window.Bounds;
+        public Rect Bounds { get; private set; }
 
         public void SetTitleBar(UIElement element)
         {
@@ -488,6 +492,27 @@ namespace Telegram.Navigation
         {
             try
             {
+                if (args is ShareTargetActivatedEventArgs shareTarget && state is not AuthorizationStateReady)
+                {
+                    var options = new Windows.System.LauncherOptions();
+                    options.TargetApplicationPackageFamilyName = Package.Current.Id.FamilyName;
+
+                    try
+                    {
+                        await Windows.System.Launcher.LaunchUriAsync(new Uri("tg:"), options);
+                    }
+                    catch
+                    {
+                        // It's too early?
+                    }
+                    finally
+                    {
+                        shareTarget.ShareOperation.ReportCompleted();
+                    }
+
+                    return;
+                }
+
                 switch (state)
                 {
                     case AuthorizationStateReady:

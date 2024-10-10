@@ -195,11 +195,11 @@ namespace Telegram
 
             _ = Task.Run(() => OnStartSync(startKind, navService, update));
 
-            if (startKind != StartKind.Launch)
+            if (startKind != StartKind.Launch && WindowContext.Current.IsInMainView)
             {
                 var view = ApplicationView.GetForCurrentView();
                 await ApplicationViewSwitcher.TryShowAsStandaloneAsync(view.Id);
-                view.TryResizeView(Window.Current.Bounds.ToSize());
+                view.TryResizeView(WindowContext.Current.Bounds.ToSize());
             }
         }
 
