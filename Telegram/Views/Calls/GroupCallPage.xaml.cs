@@ -39,9 +39,9 @@ namespace Telegram.Views.Calls
 {
     public sealed partial class GroupCallPage : WindowEx, IGroupCallDelegate
     {
-        private VoipGroupCall _call;
-
         private bool _disposed;
+
+        private readonly VoipGroupCall _call;
 
         private readonly Dictionary<string, GroupCallParticipantGridCell> _prevGrid = new();
         private readonly Dictionary<string, GroupCallParticipantGridCell> _gridCells = new();
@@ -778,7 +778,7 @@ namespace Telegram.Views.Calls
             }
         }
 
-        public void Update(VoipGroupCall call, GroupCallParticipant currentUser)
+        private void Update(VoipGroupCall call, GroupCallParticipant currentUser)
         {
             if (call.IsClosed)
             {

@@ -31,7 +31,7 @@ namespace Telegram.Views.Calls
 {
     public sealed partial class LiveStreamPage : WindowEx
     {
-        private VoipGroupCall _call;
+        private readonly VoipGroupCall _call;
 
         private readonly VoipVideoOutputSink _unifiedVideo;
 
@@ -61,14 +61,10 @@ namespace Telegram.Views.Calls
             _call = call;
             _call.NetworkStateUpdated += OnNetworkStateUpdated;
             _call.AvailableStreamsChanged += OnAvailableStreamsChanged;
+            _call.PropertyChanged += OnPropertyChanged;
             _call.AddIncomingVideoOutput("unified", _unifiedVideo = VoipVideoOutput.CreateSink(Viewport, false));
 
             Window.Current.SetTitleBar(TitleArea);
-
-            if (call != null)
-            {
-                Update(call, call.CurrentUser);
-            }
 
             ElementCompositionPreview.SetIsTranslationEnabled(Viewport, true);
             //ElementCompositionPreview.SetIsTranslationEnabled(PinnedInfo, true);
@@ -76,6 +72,7 @@ namespace Telegram.Views.Calls
             //ViewportAspect.Constraint = new Size(16, 9);
 
             OnAvailableStreamsChanged();
+            OnPropertyChanged();
         }
 
         protected override void OnPointerMoved(PointerRoutedEventArgs e)
@@ -230,6 +227,7 @@ namespace Telegram.Views.Calls
 
             _call.NetworkStateUpdated -= OnNetworkStateUpdated;
             _call.AvailableStreamsChanged -= OnAvailableStreamsChanged;
+            _call.PropertyChanged -= OnPropertyChanged;
         }
 
         private void OnSizeChanged(object sender, SizeChangedEventArgs e)
@@ -253,19 +251,24 @@ namespace Telegram.Views.Calls
             }
         }
 
-        public void Update(VoipGroupCall call, GroupCallParticipant currentUser)
+        private void OnPropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
-            if (call.IsClosed)
+            this.BeginOnUIThread(() => OnPropertyChanged());
+        }
+
+        private void OnPropertyChanged()
+        {
+            if (_call.IsClosed)
             {
                 Close();
                 return;
             }
 
-            TitleInfo.Text = call.Title.Length > 0 ? call.Title : _call.ClientService.GetTitle(_call.Chat);
+            TitleInfo.Text = _call.Title.Length > 0 ? _call.Title : _call.ClientService.GetTitle(_call.Chat);
 
-            if (call.ScheduledStartDate != 0)
+            if (_call.ScheduledStartDate != 0)
             {
-                var date = Formatter.ToLocalTime(call.ScheduledStartDate);
+                var date = Formatter.ToLocalTime(_call.ScheduledStartDate);
                 var duration = date - DateTime.Now;
 
                 if (duration.TotalDays < 1)
@@ -281,8 +284,8 @@ namespace Telegram.Views.Calls
                 SubtitleInfo.Text = _call.IsChannel ? Strings.VoipChannelScheduledVoiceChat : Strings.VoipGroupScheduledVoiceChat;
                 ParticipantsPanel.Visibility = Visibility.Collapsed;
                 ScheduledInfo.Text = duration < TimeSpan.Zero ? Strings.VoipChatLateBy : Strings.VoipChatStartsIn;
-                StartsAt.Text = call.GetStartsAt();
-                StartsIn.Text = call.GetStartsIn();
+                StartsAt.Text = _call.GetStartsAt();
+                StartsIn.Text = _call.GetStartsIn();
 
                 Menu.Visibility = Visibility.Collapsed;
                 Resize.Visibility = Visibility.Collapsed;
@@ -299,24 +302,14 @@ namespace Telegram.Views.Calls
                 Menu.Visibility = Visibility.Visible;
                 Resize.Visibility = Visibility.Visible;
 
-                SubtitleInfo.Text = Locale.Declension(Strings.R.Participants, call.ParticipantCount);
+                SubtitleInfo.Text = Locale.Declension(Strings.R.Participants, _call.ParticipantCount);
                 ParticipantsPanel.Visibility = Visibility.Visible;
             }
-
-            UpdateNetworkState(call, currentUser, _call.IsConnected);
         }
 
         private void OnNetworkStateUpdated(VoipGroupCall sender, VoipGroupCallNetworkStateChangedEventArgs args)
         {
-            this.BeginOnUIThread(() =>
-            {
-                if (_call != null)
-                {
-                    UpdateNetworkState(_call, _call.CurrentUser, args.IsConnected);
-                }
-
-                OnAvailableStreamsChanged();
-            });
+            this.BeginOnUIThread(() => OnAvailableStreamsChanged());
         }
 
         private async void Leave_Click(object sender, RoutedEventArgs e)
@@ -360,11 +353,6 @@ namespace Telegram.Views.Calls
                 _call.Discard(true);
                 Close();
             }
-        }
-
-        private void UpdateNetworkState(VoipGroupCall call, GroupCallParticipant currentUser, bool? connected = null)
-        {
-
         }
 
         private void Menu_ContextRequested(object sender, RoutedEventArgs e)
