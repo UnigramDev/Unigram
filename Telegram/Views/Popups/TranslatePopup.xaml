@@ -1,14 +1,12 @@
 ﻿<controls:ContentPopup x:Class="Telegram.Views.Popups.TranslatePopup"
                        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-                       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-                       xmlns:local="using:Telegram.Views.Popups"
-                       xmlns:controls="using:Telegram.Controls"
                        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                       xmlns:controls="using:Telegram.Controls"
                        mc:Ignorable="d"
-                       Title="TITLE"
-                       PrimaryButtonText="Button1"
-                       PrimaryButtonClick="ContentDialog_PrimaryButtonClick">
+                       PrimaryButtonClick="ContentDialog_PrimaryButtonClick"
+                       Padding="0,12,0,0">
 
     <controls:ContentPopup.Resources>
         <Style TargetType="controls:LoadingTextBlock">
@@ -60,14 +58,14 @@
 
         <TextBlock x:Name="Subtitle"
                    Style="{StaticResource InfoBodyTextBlockStyle}"
-                   Margin="0,-12,0,0" />
+                   Margin="24,0,24,0" />
 
-        <ScrollViewer VerticalScrollBarVisibility="Auto"
+        <ScrollViewer x:Name="ScrollingHost"
+                      VerticalScrollBarVisibility="Auto"
                       VerticalScrollMode="Auto"
-                      Margin="-24,0"
-                      Padding="0,8,0,16"
                       Grid.Row="1">
-            <StackPanel x:Name="Presenter">
+            <StackPanel x:Name="Presenter"
+                        Margin="0,8,0,24">
                 <StackPanel.ChildrenTransitions>
                     <TransitionCollection>
                         <RepositionThemeTransition />
@@ -75,5 +73,9 @@
                 </StackPanel.ChildrenTransitions>
             </StackPanel>
         </ScrollViewer>
+
+        <controls:ScrollViewerScrim ScrollingHost="{x:Bind ScrollingHost}"
+                                    Background="{ThemeResource ContentDialogBackground}"
+                                    Grid.Row="1" />
     </Grid>
 </controls:ContentPopup>
