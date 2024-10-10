@@ -3385,6 +3385,21 @@ public static class CoreWebView2HttpRequestHeaders_stub
         }
     }
 }
+public static class CoreWebView2WebMessageReceivedEventArgs_stub
+{
+    public static string TryGetWebMessageAsString_stub(this Microsoft.Web.WebView2.Core.CoreWebView2WebMessageReceivedEventArgs sender)
+    {
+        try
+        {
+            return sender.TryGetWebMessageAsString();
+        }
+        catch (Exception ex)
+        {
+            Logger.Error(Environment.StackTrace);
+            throw new RuntimeException(ex);
+        }
+    }
+}
 public static class CoreWebView2WebResourceRequestedEventArgs_stub
 {
     public static Windows.Foundation.Deferral GetDeferral_stub(this Microsoft.Web.WebView2.Core.CoreWebView2WebResourceRequestedEventArgs sender)
@@ -7832,6 +7847,21 @@ public static class ViewModePreferences_stub
         try
         {
             return Windows.UI.ViewManagement.ViewModePreferences.CreateDefault(mode);
+        }
+        catch (Exception ex)
+        {
+            Logger.Error(Environment.StackTrace);
+            throw new RuntimeException(ex);
+        }
+    }
+}
+public static class AppWindow_stub
+{
+    public static void ClearPersistedState_stub(string key)
+    {
+        try
+        {
+            Windows.UI.WindowManagement.AppWindow.ClearPersistedState(key);
         }
         catch (Exception ex)
         {
