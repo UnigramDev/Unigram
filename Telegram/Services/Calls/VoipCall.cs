@@ -731,7 +731,8 @@ namespace Telegram.Services.Calls
                     screen.Paused -= OnPaused;
                 }
 
-                _manager.SetVideoCapture(null);
+                // Manager may be null if the call is not connected
+                _manager?.SetVideoCapture(null);
 
                 _camera.FatalErrorOccurred -= OnFatalErrorOccurred;
 
