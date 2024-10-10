@@ -41,7 +41,9 @@ namespace Telegram.Views.Settings.Popups
             }
 
             Title.Text = session.DeviceModel;
-            Subtitle.Text = Formatter.DateExtended(session.LastActiveDate);
+            Subtitle.Text = session.IsCurrent
+                ? Strings.Online
+                : Formatter.DateAt(session.LastActiveDate);
 
             Application.Badge = string.Format("{0} {1}", session.ApplicationName, session.ApplicationVersion);
 
@@ -67,8 +69,9 @@ namespace Telegram.Views.Settings.Popups
                 ? Visibility.Collapsed
                 : Visibility.Visible;
 
-            PrimaryButtonText = Strings.Terminate;
-            SecondaryButtonText = Strings.Done;
+            PrimaryButtonText = session.IsCurrent
+                ? string.Empty
+                : Strings.Terminate;
         }
 
         public bool CanAcceptCalls => AcceptCalls.IsChecked == true;

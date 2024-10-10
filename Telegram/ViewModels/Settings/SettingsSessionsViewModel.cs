@@ -195,13 +195,13 @@ namespace Telegram.ViewModels.Settings
             var confirm = await ShowPopupAsync(dialog);
             if (confirm != ContentDialogResult.Primary)
             {
-                if (session.CanAcceptCalls != dialog.CanAcceptCalls && confirm == ContentDialogResult.Secondary)
+                if (session.CanAcceptCalls != dialog.CanAcceptCalls)
                 {
                     session.CanAcceptCalls = dialog.CanAcceptCalls;
                     ClientService.Send(new ToggleSessionCanAcceptCalls(session.Id, dialog.CanAcceptCalls));
                 }
 
-                if (session.CanAcceptSecretChats != dialog.CanAcceptSecretChats && confirm == ContentDialogResult.Secondary)
+                if (session.CanAcceptSecretChats != dialog.CanAcceptSecretChats)
                 {
                     session.CanAcceptSecretChats = dialog.CanAcceptSecretChats;
                     ClientService.Send(new ToggleSessionCanAcceptSecretChats(session.Id, dialog.CanAcceptSecretChats));

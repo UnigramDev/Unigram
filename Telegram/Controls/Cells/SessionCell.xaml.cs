@@ -58,6 +58,7 @@ namespace Telegram.Controls.Cells
                 SessionTypeBrave => ("", Color.FromArgb(0xFF, 0xFF, 0x95, 0x00), null),
                 SessionTypeVivaldi => ("", Color.FromArgb(0xFF, 0xFF, 0x3C, 0x30), null),
                 SessionTypeSafari => ("\uE974", Color.FromArgb(0xFF, 0x00, 0x79, 0xFF), "Safari"),
+                SessionTypeApple => ("\uE974", Color.FromArgb(0xFF, 0x00, 0x79, 0xFF), "Safari"),
                 SessionTypeFirefox => ("\uE96F", Color.FromArgb(0xFF, 0xFF, 0x95, 0x00), "Firefox"),
                 SessionTypeOpera => ("", Color.FromArgb(0xFF, 0xFF, 0x3C, 0x30), null),
                 SessionTypeAndroid => ("\uE96C", Color.FromArgb(0xFF, 0x35, 0xC7, 0x59), "Android"),
