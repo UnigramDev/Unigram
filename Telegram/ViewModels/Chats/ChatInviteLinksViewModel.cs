@@ -85,8 +85,7 @@ namespace Telegram.ViewModels.Chats
                                 InviteLink = MeUrlPrefixConverter.Convert(ClientService, username)
                             };
                         }
-
-                        if (ClientService.TryGetSupergroupFull(chat, out SupergroupFullInfo supergroupFullInfo))
+                        else if (ClientService.TryGetSupergroupFull(chat, out SupergroupFullInfo supergroupFullInfo))
                         {
                             InviteLink = supergroupFullInfo.InviteLink;
                         }
