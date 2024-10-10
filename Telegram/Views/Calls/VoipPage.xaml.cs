@@ -332,9 +332,19 @@ namespace Telegram.Views.Calls
                 _discardedTimer.Start();
             }
 
-            Title.Text = discarded != null
-                ? Strings.VoipCallEnded2
-                : Strings.VoipCallFailed2;
+            if (discarded != null)
+            {
+                Title.Text = discarded.Reason switch
+                {
+                    CallDiscardReasonDeclined => Strings.VoipCallBusy2,
+                    CallDiscardReasonMissed => Strings.VoipCallBusy2,
+                    _ => Strings.VoipCallEnded2
+                };
+            }
+            else
+            {
+                Title.Text = Strings.VoipCallFailed2;
+            }
 
             _localVideo.SetState(VoipVideoState.Inactive);
             _remoteVideo.SetState(VoipVideoState.Inactive);

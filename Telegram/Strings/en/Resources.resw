@@ -11434,6 +11434,9 @@ However, it is currently available for purchase. **Learn more…**</value>
   <data name="VoipBusy" xml:space="preserve">
     <value>Line busy</value>
   </data>
+  <data name="VoipCallBusy2" xml:space="preserve">
+    <value>Busy</value>
+  </data>
   <data name="VoipCallEncryptionEndToEnd" xml:space="preserve">
     <value>This call is end-to-end encrypted</value>
   </data>
