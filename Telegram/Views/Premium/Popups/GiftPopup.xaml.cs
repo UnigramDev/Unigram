@@ -152,7 +152,7 @@ namespace Telegram.Views.Premium.Popups
             {
                 if (gift.TotalCount > 0 && gift.RemainingCount == 0)
                 {
-                    ToastPopup.Show(XamlRoot, string.Format("**{0}**\n{1}", Strings.Gift2SoldOutTitle, Locale.Declension(Strings.R.Gift2SoldOut, gift.TotalCount)), new DelayedFileSource(_clientService, gift.Sticker));
+                    ToastPopup.Show(XamlRoot, string.Format("**{0}**\n{1}", Strings.Gift2SoldOutTitle, Locale.Declension(Strings.R.Gift2SoldOutHint, gift.TotalCount)), new DelayedFileSource(_clientService, gift.Sticker));
                 }
                 else
                 {

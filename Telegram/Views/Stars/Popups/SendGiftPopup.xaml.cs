@@ -214,7 +214,7 @@ namespace Telegram.Views.Stars.Popups
             {
                 if (error.Message == "STARGIFT_USAGE_LIMITED")
                 {
-                    ToastPopup.Show(XamlRoot, string.Format("**{0}**\n{1}", Strings.Gift2SoldOutTitle, Locale.Declension(Strings.R.Gift2SoldOut, _gift.TotalCount)), new DelayedFileSource(_clientService, _gift.Sticker));
+                    ToastPopup.Show(XamlRoot, string.Format("**{0}**\n{1}", Strings.Gift2SoldOutTitle, Locale.Declension(Strings.R.Gift2SoldOutHint, _gift.TotalCount)), new DelayedFileSource(_clientService, _gift.Sticker));
                 }
                 else
                 {

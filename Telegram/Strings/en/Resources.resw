@@ -5697,10 +5697,10 @@ This action cannot be undone. This will permanently destroy the gift.</value>
   <data name="Gift2SoldOut" xml:space="preserve">
     <value>sold out</value>
   </data>
-  <data name="Gift2SoldOut_one" xml:space="preserve">
+  <data name="Gift2SoldOutHint_one" xml:space="preserve">
     <value>All {0} gifts were already sold.</value>
   </data>
-  <data name="Gift2SoldOut_other" xml:space="preserve">
+  <data name="Gift2SoldOutHint_other" xml:space="preserve">
     <value>All {0} gifts were already sold.</value>
   </data>
   <data name="Gift2SoldOutTitle" xml:space="preserve">
@@ -6458,7 +6458,7 @@ Upgrade to **Telegram Premium** to increase this limit to **{1}**.</value>
     <value>Link Name</value>
   </data>
   <data name="LinkNameHelp" xml:space="preserve">
-    <value>Only you and other admins will see this name.</value>
+    <value>Only admins will see this name.</value>
   </data>
   <data name="LinkNameHint" xml:space="preserve">
     <value>Link Name (Optional)</value>
@@ -6656,7 +6656,7 @@ Upgrade to **Telegram Premium** to increase this limit to **{1}**.</value>
     <value>Manage Invite Links</value>
   </data>
   <data name="ManageLinksInfoHelp" xml:space="preserve">
-    <value>You can create additional invite links that have a limited time or number of uses.</value>
+    <value>You can create additional invite links that have a limited time or number of users.</value>
   </data>
   <data name="ManageLinksInfoHelpPaid" xml:space="preserve">
     <value>You can create additional invite links that have a limited time, number of uses or require a paid subscription.</value>
@@ -7832,7 +7832,7 @@ Payments will go directly to the developer of {0}. Telegram cannot provide any g
     <value>{0} person joined</value>
   </data>
   <data name="PeopleJoined_other" xml:space="preserve">
-    <value>{1} people joined</value>
+    <value>{0} people joined</value>
   </data>
   <data name="PeopleJoinedRemaining_one" xml:space="preserve">
     <value>{0} remaining</value>
