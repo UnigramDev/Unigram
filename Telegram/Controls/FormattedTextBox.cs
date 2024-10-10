@@ -108,7 +108,7 @@ namespace Telegram.Controls
             CreateKeyboardAccelerator(VirtualKey.N, VirtualKeyModifiers.Control | VirtualKeyModifiers.Shift);
 
             // Overridden but not used
-            CreateKeyboardAccelerator(VirtualKey.E);
+            ProcessKeyboardAccelerators += OnProcessKeyboardAccelerators;
 
             Loaded += OnLoaded;
             Unloaded += OnUnloaded;
@@ -118,6 +118,19 @@ namespace Telegram.Controls
             TextChanged += OnTextChanged;
 
             SelectionChanged += OnSelectionChanged;
+        }
+
+        private void OnProcessKeyboardAccelerators(UIElement sender, ProcessKeyboardAcceleratorEventArgs args)
+        {
+            if (args.Modifiers == (VirtualKeyModifiers.Control | VirtualKeyModifiers.Shift))
+            {
+                args.Handled = args.Key is VirtualKey.A or VirtualKey.L;
+                args.Handled |= (int)args.Key is 188 or 190;
+            }
+            else if (args.Modifiers == VirtualKeyModifiers.Control)
+            {
+                args.Handled = args.Key is VirtualKey.E or VirtualKey.L or VirtualKey.R or VirtualKey.J;
+            }
         }
 
         private void OnCopyingToClipboard(RichEditBox sender, TextControlCopyingToClipboardEventArgs args)
