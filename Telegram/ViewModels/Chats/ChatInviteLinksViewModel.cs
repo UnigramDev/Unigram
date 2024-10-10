@@ -22,7 +22,7 @@ using Windows.UI.Xaml.Navigation;
 
 namespace Telegram.ViewModels.Chats
 {
-    public partial class ChatInviteLinksViewModel : ViewModelBase, IIncrementalCollectionOwner
+    public partial class ChatInviteLinksViewModel : ViewModelBase, IIncrementalCollectionOwner, IHandle
     {
         private LinksCollection _inviteLinks;
         private LinkCountsCollection _linkCounts;
@@ -48,6 +48,9 @@ namespace Telegram.ViewModels.Chats
 
         private long _chatId;
         private long _creatorUserId;
+
+        private long _supergroupId;
+        private long _basicGroupId;
 
         private bool _channel;
         private bool _canCreateJoinRequests;
@@ -82,16 +85,56 @@ namespace Telegram.ViewModels.Chats
                                 InviteLink = MeUrlPrefixConverter.Convert(ClientService, username)
                             };
                         }
+
+                        if (ClientService.TryGetSupergroupFull(chat, out SupergroupFullInfo supergroupFullInfo))
+                        {
+                            InviteLink = supergroupFullInfo.InviteLink;
+                        }
+                        else
+                        {
+                            ClientService.Send(new GetSupergroupFullInfo(supergroup.Id));
+                        }
                     }
                     else
                     {
                         _channel = false;
                         _canCreateJoinRequests = true;
+
+                        if (ClientService.TryGetBasicGroupFull(chat, out BasicGroupFullInfo basicGroupFullInfo))
+                        {
+                            InviteLink = basicGroupFullInfo.InviteLink;
+                        }
+                        else
+                        {
+                            ClientService.Send(new GetBasicGroupFullInfo(supergroup.Id));
+                        }
                     }
                 }
             }
 
             return Task.CompletedTask;
+        }
+
+        public override void Subscribe()
+        {
+            Aggregator.Subscribe<UpdateSupergroupFullInfo>(this, Handle)
+                .Subscribe<UpdateBasicGroupFullInfo>(Handle);
+        }
+
+        private void Handle(UpdateSupergroupFullInfo update)
+        {
+            if (update.SupergroupId == _supergroupId)
+            {
+                BeginOnUIThread(() => InviteLink = update.SupergroupFullInfo.InviteLink);
+            }
+        }
+
+        private void Handle(UpdateBasicGroupFullInfo update)
+        {
+            if (update.BasicGroupId == _basicGroupId)
+            {
+                BeginOnUIThread(() => InviteLink = update.BasicGroupFullInfo.InviteLink);
+            }
         }
 
         public Task<LoadMoreItemsResult> LoadMoreItemsAsync(uint count)
@@ -162,7 +205,15 @@ namespace Telegram.ViewModels.Chats
 
                     for (int i = inviteLinks.InviteLinks.Count - 1; i >= 0; i--)
                     {
-                        RevokedLinks.Insert(0, inviteLinks.InviteLinks[i]);
+                        var newLink = inviteLinks.InviteLinks[i];
+                        if (newLink.IsRevoked)
+                        {
+                            RevokedLinks.Insert(0, newLink);
+                        }
+                        else if (newLink.IsPrimary)
+                        {
+                            InviteLink = newLink;
+                        }
                     }
                 }
             }
@@ -255,13 +306,9 @@ namespace Telegram.ViewModels.Chats
                         _offsetDate = item.Date;
                         _offsetInviteLink = item.InviteLink;
 
-                        if (item.IsPrimary && (_viewModel == null || _viewModel._canCreateJoinRequests))
+                        if (item.IsPrimary && (_viewModel.InviteLink == null || _viewModel.InviteLink.InviteLink == item.InviteLink))
                         {
-                            if (_viewModel != null && _owner == null)
-                            {
-                                _viewModel.InviteLink = item;
-                            }
-
+                            _viewModel.InviteLink = item;
                             continue;
                         }
 

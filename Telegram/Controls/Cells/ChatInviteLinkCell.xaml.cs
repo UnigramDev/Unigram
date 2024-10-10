@@ -93,7 +93,7 @@ namespace Telegram.Controls.Cells
                     return false;
                 }
             }
-            else if (inviteLink.MemberCount < inviteLink.MemberLimit)
+            else if (inviteLink.MemberCount < inviteLink.MemberLimit && inviteLink.ExpirationDate == 0)
             {
                 StatusText.Text = string.Empty;
             }
@@ -170,13 +170,7 @@ namespace Telegram.Controls.Cells
                 }
 
                 var diff = inviteLink.ExpirationDate - DateTime.Now.ToTimestamp();
-                if (diff > 0)
-                {
-                }
-                else if (inviteLink.MemberCount < inviteLink.MemberLimit)
-                {
-                }
-                else
+                if (diff < 0 || inviteLink.MemberCount == inviteLink.MemberLimit)
                 {
                     expired = true;
                 }
