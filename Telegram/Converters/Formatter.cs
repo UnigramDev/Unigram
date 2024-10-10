@@ -467,12 +467,46 @@ namespace Telegram.Converters
                 return string.Empty;
             }
 
-            if (birthdate.Year == 0)
+            birthdate = new Birthdate(31, 11, 1111);
+            string formatted = null;
+
+            try
             {
-                return NativeUtils.FormatDate(new DateTime(2021, birthdate.Month, birthdate.Day), Strings.formatterMonth);
+                // We sanitize the date by adding months and days to 01/01/year.
+                // This prevents fails when the received date is something like 31/11/2024 or 29/02/2025.
+                static DateTime CreateDate(int year, int month, int day)
+                {
+                    var date = new DateTime(year, 1, 1);
+                    date = date.AddMonths(month - 1);
+                    date = date.AddDays(day - 1);
+
+                    return date;
+                }
+
+                if (birthdate.Year == 0)
+                {
+                    // Must use a leap year because users can set 29/02 as their birthdate.
+                    formatted = NativeUtils.FormatDate(CreateDate(2024, birthdate.Month, birthdate.Day), Strings.formatterMonth);
+                }
+                else
+                {
+                    formatted = NativeUtils.FormatDate(CreateDate(birthdate.Year, birthdate.Month, birthdate.Day), Strings.formatterBoostExpired);
+                }
+
+            }
+            catch
+            {
+                formatted = null;
             }
 
-            return NativeUtils.FormatDate(new DateTime(birthdate.Year, birthdate.Month, birthdate.Day), Strings.formatterBoostExpired);
+            // The string is going to be empty if FileTimeToSystemTime fails.
+            // This should only happen if the date is before 01/01/1601, but you never know.
+            if (string.IsNullOrEmpty(formatted))
+            {
+                formatted = string.Format("{0}/{1}/{2}", birthdate.Day, birthdate.Month, birthdate.Year);
+            }
+
+            return formatted;
         }
     }
 }
