@@ -682,17 +682,21 @@ namespace Telegram.Common
 
         public static Color ToColor(this int color, bool alpha = false)
         {
+            byte a;
             if (alpha)
             {
-                byte a = (byte)((color & 0xff000000) >> 24);
-                byte r = (byte)((color & 0x00ff0000) >> 16);
-                byte g = (byte)((color & 0x0000ff00) >> 8);
-                byte b = (byte)(color & 0x000000ff);
-
-                return Color.FromArgb(a, r, g, b);
+                a = (byte)((color & 0xff000000) >> 24);
+            }
+            else
+            {
+                a = 255;
             }
 
-            return Color.FromArgb(0xFF, (byte)((color >> 16) & 0xFF), (byte)((color >> 8) & 0xFF), (byte)(color & 0xFF));
+            byte r = (byte)((color & 0x00ff0000) >> 16);
+            byte g = (byte)((color & 0x0000ff00) >> 8);
+            byte b = (byte)(color & 0x000000ff);
+
+            return Color.FromArgb(a, r, g, b);
         }
 
         public static int ToValue(this Color color, bool alpha = false)
