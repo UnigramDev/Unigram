@@ -118,7 +118,7 @@ namespace Telegram.ViewModels
         {
             var text = Regex.Replace(Strings.AskAQuestionInfo, "<!\\[CDATA\\[(.*?)\\]\\]>", "$1");
 
-            var confirm = await ShowPopupAsync(text, Strings.AskAQuestion, Strings.AskButton, Strings.Cancel);
+            var confirm = await ShowPopupAsync(text, Strings.AskAQuestion, Strings.AskButton, tertiary: Strings.Cancel);
             if (confirm == ContentDialogResult.Primary)
             {
                 var response = await ClientService.SendAsync(new GetSupportUser());

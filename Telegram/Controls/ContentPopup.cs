@@ -13,6 +13,7 @@ using Telegram.Services;
 using Telegram.Views.Host;
 using Windows.UI;
 using Windows.UI.Composition;
+using Windows.UI.Core;
 using Windows.UI.Input;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Automation.Peers;
@@ -58,6 +59,22 @@ namespace Telegram.Controls
 
             Connected += OnLoaded;
             Disconnected += OnUnloaded;
+
+            CloseButtonClick += OnCloseButtonClick;
+        }
+
+        private void OnCloseButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
+        {
+            // For some weird reason, there's no ContentDialogResult.Close, so we hack it around.
+
+            var result = CloseButtonResult;
+            if (result == ContentDialogResult.None)
+            {
+                return;
+            }
+
+            _ = Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () => Hide(result));
+            args.Cancel = true;
         }
 
         private void OnSizeChanged(object sender, SizeChangedEventArgs e)
@@ -91,7 +108,7 @@ namespace Telegram.Controls
             var clip = compositor.CreateInsetClip();
             content.Clip = clip;
 
-            var redirect = compositor.CreateRedirectVisual(CommandSpace, Vector2.Zero, CommandSpace.ActualSize);
+            var redirect = compositor.CreateRedirectVisual(CommandSpace, Vector2.Zero, new Vector2(CommandSpace.ActualSize.X, CommandSpace.ActualSize.Y * 2));
             redirect.Offset = new Vector3(point.X, 0, 0);
 
             var translate = compositor.CreateScalarKeyFrameAnimation();
@@ -393,6 +410,19 @@ namespace Telegram.Controls
                 }
             }
         }
+
+        #endregion
+
+        #region CloseButtonResult
+
+        public ContentDialogResult CloseButtonResult
+        {
+            get { return (ContentDialogResult)GetValue(CloseButtonResultProperty); }
+            set { SetValue(CloseButtonResultProperty, value); }
+        }
+
+        public static readonly DependencyProperty CloseButtonResultProperty =
+            DependencyProperty.Register("CloseButtonResult", typeof(ContentDialogResult), typeof(ContentPopup), new PropertyMetadata(ContentDialogResult.None));
 
         #endregion
 

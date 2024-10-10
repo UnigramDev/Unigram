@@ -19,6 +19,7 @@ namespace Telegram.Views.Calls.Popups
     {
         private readonly IClientService _clientService;
         private readonly bool _canSchedule;
+        private readonly bool _channel;
 
         public VideoChatAliasesPopup(IClientService clientService, Chat chat, bool canSchedule, IList<MessageSender> senders)
         {
@@ -26,29 +27,30 @@ namespace Telegram.Views.Calls.Popups
 
             _clientService = clientService;
             _canSchedule = canSchedule;
+            _channel = chat.Type is ChatTypeSupergroup super && super.IsChannel;
+
+            CloseButtonClick += Schedule_Click;
 
             var already = senders.FirstOrDefault(x => x.AreTheSame(chat.VideoChat.DefaultParticipantId));
-            var channel = chat.Type is ChatTypeSupergroup super && super.IsChannel;
 
             Title = chat.VideoChat.GroupCallId != 0
                 ? Strings.VoipGroupDisplayAs
-                : channel
+                : _channel
                 ? Strings.StartVoipChannelTitle
                 : Strings.StartVoipChatTitle;
 
-            MessageLabel.Text = channel
+            MessageLabel.Text = _channel
                 ? Strings.VoipGroupStartAsInfo
                 : Strings.VoipGroupStartAsInfoGroup;
 
-            Schedule.Content = channel
-                ? Strings.VoipChannelScheduleVoiceChat
-                : Strings.VoipGroupScheduleVoiceChat;
+            if (canSchedule)
+            {
+                CloseButtonText = _channel
+                    ? Strings.VoipChannelScheduleVoiceChat
+                    : Strings.VoipGroupScheduleVoiceChat;
+            }
 
-            Schedule.Visibility = canSchedule
-                ? Visibility.Visible
-                : Visibility.Collapsed;
-
-            Start.Content = channel
+            PrimaryButtonText = _channel
                 ? Strings.VoipChannelStartVoiceChat
                 : Strings.VoipGroupStartVoiceChat;
 
@@ -114,35 +116,29 @@ namespace Telegram.Views.Calls.Popups
             {
                 if (_clientService.TryGetUser(messageSender, out User user))
                 {
-                    Start.Content = string.Format(Strings.VoipGroupContinueAs, user.FullName());
+                    PrimaryButtonText = string.Format(Strings.VoipGroupContinueAs, user.FullName());
                 }
                 else if (_clientService.TryGetChat(messageSender, out Chat chat))
                 {
-                    Start.Content = string.Format(Strings.VoipGroupContinueAs, _clientService.GetTitle(chat));
+                    PrimaryButtonText = string.Format(Strings.VoipGroupContinueAs, _clientService.GetTitle(chat));
                 }
 
-                Start.IsEnabled = true;
+                IsPrimaryButtonEnabled = true;
             }
             else
             {
-                Start.IsEnabled = false;
+                IsPrimaryButtonEnabled = false;
             }
         }
 
-        private void Schedule_Click(object sender, RoutedEventArgs e)
+        private  void Schedule_Click(ContentDialog sender, ContentDialogButtonClickEventArgs args)
         {
             IsScheduleSelected = true;
-            Hide(ContentDialogResult.Primary);
         }
 
         private void StartWith_Click(object sender, TextUrlClickEventArgs e)
         {
             IsStartWithSelected = true;
-            Hide(ContentDialogResult.Primary);
-        }
-
-        private void Start_Click(object sender, RoutedEventArgs e)
-        {
             Hide(ContentDialogResult.Primary);
         }
     }

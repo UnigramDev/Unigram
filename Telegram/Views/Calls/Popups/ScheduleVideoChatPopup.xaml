@@ -15,9 +15,12 @@
                    Style="{StaticResource BodyTextBlockStyle}" />
 
         <CalendarDatePicker x:Name="Date"
+                            DateChanged="Date_DateChanged"
                             Margin="0,12,0,12"
                             HorizontalAlignment="Stretch" />
         <TimePicker x:Name="Time"
+                    TimeChanged="Time_TimeChanged"
+                    BorderBrush="{ThemeResource ButtonBorderBrush}"
                     HorizontalAlignment="Stretch" />
     </StackPanel>
 </controls:ContentPopup>

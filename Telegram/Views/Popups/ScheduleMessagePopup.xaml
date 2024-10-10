@@ -5,8 +5,6 @@
                        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
                        xmlns:controls="using:Telegram.Controls"
                        mc:Ignorable="d"
-                       Title="UserRestrictionsUntil"
-                       PrimaryButtonText="OK"
                        PrimaryButtonClick="ContentDialog_PrimaryButtonClick"
                        SecondaryButtonClick="ContentDialog_SecondaryButtonClick">
 
@@ -15,7 +13,7 @@
                             Margin="0,12,0,12"
                             HorizontalAlignment="Stretch" />
         <TimePicker x:Name="Time"
-                    Background="{ThemeResource ButtonBorderBrush}"
+                    BorderBrush="{ThemeResource ButtonBorderBrush}"
                     HorizontalAlignment="Stretch" />
 
         <HyperlinkButton x:Name="Online"

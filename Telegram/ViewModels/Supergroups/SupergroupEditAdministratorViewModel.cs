@@ -563,7 +563,7 @@ namespace Telegram.ViewModels.Supergroups
                     builder.AppendLine(Strings.EditAdminTransferAlertText3);
                 }
 
-                var confirm = await ShowPopupAsync(null, builder.ToString(), Strings.EditAdminTransferAlertTitle, primary, Strings.Cancel);
+                var confirm = await ShowPopupAsync(builder.ToString(), Strings.EditAdminTransferAlertTitle, primary, Strings.Cancel);
                 if (confirm == ContentDialogResult.Primary && canTransfer is CanTransferOwnershipResultPasswordNeeded)
                 {
                     NavigationService.NavigateToPassword();
@@ -571,7 +571,7 @@ namespace Telegram.ViewModels.Supergroups
             }
             else if (canTransfer is CanTransferOwnershipResultOk)
             {
-                var confirm = await ShowPopupAsync(null, string.Format(Strings.EditAdminTransferReadyAlertText, chat.Title, user.FullName()), supergroup.IsChannel ? Strings.EditAdminChannelTransfer : Strings.EditAdminGroupTransfer, Strings.EditAdminTransferChangeOwner, Strings.Cancel);
+                var confirm = await ShowPopupAsync(string.Format(Strings.EditAdminTransferReadyAlertText, chat.Title, user.FullName()), supergroup.IsChannel ? Strings.EditAdminChannelTransfer : Strings.EditAdminGroupTransfer, Strings.EditAdminTransferChangeOwner, Strings.Cancel);
                 if (confirm != ContentDialogResult.Primary)
                 {
                     return;

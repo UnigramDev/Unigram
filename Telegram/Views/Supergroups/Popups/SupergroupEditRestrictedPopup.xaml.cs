@@ -26,6 +26,9 @@ namespace Telegram.Views.Supergroups.Popups
         {
             InitializeComponent();
             Title = Strings.UserRestrictions;
+
+            PrimaryButtonText = Strings.Done;
+            SecondaryButtonText = Strings.Cancel;
         }
 
         #region Binding
@@ -70,7 +73,7 @@ namespace Telegram.Views.Supergroups.Popups
         {
             if (member.Status is ChatMemberStatusRestricted restricted)
             {
-                DismissButton.Visibility = Visibility.Visible;
+                CloseButtonText = Strings.UserRestrictionsBlock;
 
                 if (restricted.RestrictedUntilDate != 0)
                 {
@@ -83,7 +86,6 @@ namespace Telegram.Views.Supergroups.Popups
             }
             else
             {
-                DismissButton.Visibility = Visibility.Collapsed;
                 InsertDuration(int.MaxValue);
             }
 

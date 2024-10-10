@@ -422,7 +422,7 @@ namespace Telegram.ViewModels.Settings
         {
             if (Popup == null)
             {
-                return await ShowPopupAsync(message, title, primary, secondary, destructive);
+                return await ShowPopupAsync(message, title, primary, secondary, null, destructive);
             }
 
             if (Popup != null)

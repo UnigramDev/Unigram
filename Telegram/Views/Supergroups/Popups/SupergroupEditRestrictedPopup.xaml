@@ -6,14 +6,12 @@
                        xmlns:controls="using:Telegram.Controls"
                        xmlns:cells="using:Telegram.Controls.Cells"
                        mc:Ignorable="d"
+                       PrimaryButtonClick="{x:Bind ViewModel.Continue}"
+                       CloseButtonClick="{x:Bind ViewModel.Dismiss}"
+                       CloseButtonStyle="{StaticResource DangerTextButtonStyle}"
                        Padding="0,24,0,0">
 
     <Grid>
-        <Grid.RowDefinitions>
-            <RowDefinition />
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="Auto" />
-        </Grid.RowDefinitions>
         <ScrollViewer x:Name="ScrollingHost"
                       VerticalScrollBarVisibility="Auto"
                       VerticalScrollMode="Auto">
@@ -107,32 +105,5 @@
 
         <controls:ScrollViewerScrim ScrollingHost="{x:Bind ScrollingHost}"
                                     Background="{ThemeResource ContentDialogBackground}" />
-
-        <Grid Margin="24,0,24,24"
-              ColumnSpacing="4"
-              Grid.Row="1">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition />
-                <ColumnDefinition />
-            </Grid.ColumnDefinitions>
-            <Button Click="{x:Bind ViewModel.Continue}"
-                    Content="{CustomResource Done}"
-                    Style="{StaticResource AccentButtonStyle}"
-                    HorizontalAlignment="Stretch" />
-            <Button Click="Cancel_Click"
-                    Content="{CustomResource Cancel}"
-                    HorizontalAlignment="Stretch"
-                    Grid.Column="1" />
-        </Grid>
-
-        <Button x:Name="DismissButton"
-                Click="{x:Bind ViewModel.Dismiss}"
-                Content="{CustomResource UserRestrictionsBlock}"
-                Style="{StaticResource DangerTextButtonStyle}"
-                HorizontalAlignment="Stretch"
-                FontWeight="SemiBold"
-                Margin="24,-16,24,12"
-                Visibility="Collapsed"
-                Grid.Row="2" />
     </Grid>
 </controls:ContentPopup>
