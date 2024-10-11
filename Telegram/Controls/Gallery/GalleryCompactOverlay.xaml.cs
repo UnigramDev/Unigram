@@ -129,6 +129,7 @@ namespace Telegram.Controls.Gallery
             {
                 var prevId = CoreAppWindowPreview.GetIdFromWindow(_window);
                 var nextId = ApplicationView.GetForCurrentView().Id;
+                await ApplicationViewSwitcher.TryShowAsStandaloneAsync(nextId);
                 await ApplicationViewSwitcher.SwitchAsync(nextId, prevId);
             }
 
@@ -153,6 +154,11 @@ namespace Telegram.Controls.Gallery
             _player?.Pause();
         }
 
+        private void Close()
+        {
+            _ = _window.CloseAsync();
+        }
+
         public static void Pause()
         {
             if (_current != null && _current.Dispatcher.HasThreadAccess)
@@ -161,14 +167,7 @@ namespace Telegram.Controls.Gallery
             }
             else if (_current != null)
             {
-                try
-                {
-                    _ = _current.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, Pause);
-                }
-                catch
-                {
-                    // May throw
-                }
+                _current.BeginOnUIThread(Pause);
             }
         }
 
@@ -176,14 +175,14 @@ namespace Telegram.Controls.Gallery
         {
             // TODO: there is a problem when creating the overlay from a secondary window
             // as the AppWindow will be destroyed as soon as the secondary window gets closed.
-            // TODO: there's also a problem when compact overlay was created from a different window
-            // from the one trying to play the video, but I feel this is quite an edge case.
-            if (_current is GalleryCompactOverlay window)
+            if (_current?.Dispatcher.HasThreadAccess == true)
             {
-                window.Play(viewModel, player);
+                _current.Play(viewModel, player);
             }
             else
             {
+                _current?.BeginOnUIThread(_current.Close);
+
                 // Reset the state so that hopefully the window gets the right size/position
                 AppWindow.ClearPersistedState("Gallery");
 
