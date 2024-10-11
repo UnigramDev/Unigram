@@ -166,7 +166,7 @@ namespace Telegram.Services.Calls
             if (response is MessageSenders senders)
             {
                 _availableAliases = senders;
-                _availableAliasesTask.TrySetResult(senders);
+                _availableAliasesTask?.TrySetResult(senders);
                 return senders;
             }
 
@@ -619,7 +619,7 @@ namespace Telegram.Services.Calls
 
             _alias = null;
             _availableAliases = null;
-            _availableAliasesTask = null;
+            _availableAliasesTask?.TrySetResult(null);
 
             Participants?.Dispose();
             Participants = null;
