@@ -1,4 +1,5 @@
 ﻿using Microsoft.UI.Xaml.Controls;
+using System.ComponentModel;
 using Telegram.Common;
 using Telegram.Controls.Cells;
 using Telegram.Controls.Media;
@@ -8,6 +9,7 @@ using Telegram.ViewModels.Folders;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Input;
+using Windows.UI.Xaml.Navigation;
 
 namespace Telegram.Views.Business
 {
@@ -19,6 +21,24 @@ namespace Telegram.Views.Business
         {
             InitializeComponent();
             Title = Strings.BusinessAway;
+        }
+
+        protected override void OnNavigatedTo(NavigationEventArgs e)
+        {
+            ViewModel.PropertyChanged += OnPropertyChanged;
+        }
+
+        protected override void OnNavigatedFrom(NavigationEventArgs e)
+        {
+            ViewModel.PropertyChanged -= OnPropertyChanged;
+        }
+
+        private void OnPropertyChanged(object sender, PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName == "REPLIES_MISSING")
+            {
+                VisualUtilities.ShakeView(CreateRoot);
+            }
         }
 
         #region Binding

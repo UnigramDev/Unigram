@@ -4304,6 +4304,15 @@ namespace Telegram.Views
                     ChatTitle = ViewModel.ClientService.GetTitle(savedChat);
                 }
             }
+            else if (ViewModel.Type == DialogType.BusinessReplies && ViewModel.QuickReplyShortcut is QuickReplyShortcut shortcut)
+            {
+                ChatTitle = shortcut.Name switch
+                {
+                    "away" => Strings.BusinessAway,
+                    "hello" => Strings.BusinessGreet,
+                    _ => shortcut.Name
+                };
+            }
             else if (chat.Type is ChatTypeSecret)
             {
                 ChatTitle = Icons.LockClosedFilled14 + "\u00A0" + ViewModel.ClientService.GetTitle(chat);

@@ -55,6 +55,11 @@ namespace Telegram.ViewModels.Business
 
                 UpdateRecipients(settings.Recipients);
             }
+            else if (mode == NavigationMode.Back)
+            {
+                IsEnabled = true;
+                Replies = ClientService.GetQuickReplyShortcut("hello");
+            }
 
             return Task.CompletedTask;
         }
@@ -74,7 +79,8 @@ namespace Telegram.ViewModels.Business
 
         public void Create()
         {
-            NavigationService.Navigate(typeof(ChatBusinessRepliesPage), new ChatBusinessRepliesIdNavigationArgs(ClientService.Options.MyId, "hello"));
+            _completed = true;
+            NavigationService.Navigate(typeof(ChatBusinessRepliesPage), new ChatBusinessRepliesIdNavigationArgs("hello"));
         }
 
         public override bool HasChanged => !_cached.AreTheSame(GetSettings());
@@ -82,6 +88,12 @@ namespace Telegram.ViewModels.Business
         public override async void Continue()
         {
             _completed = true;
+
+            if (IsEnabled && Replies == null)
+            {
+                RaisePropertyChanged("REPLIES_MISSING");
+                return;
+            }
 
             var settings = GetSettings();
             if (settings.AreTheSame(_cached))

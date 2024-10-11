@@ -41,7 +41,7 @@
 
                 <controls:SettingsPanel IsFooter="True"
                                         Visibility="{x:Bind ViewModel.IsEnabled, Mode=OneWay}">
-                    <controls:HeaderedControl>
+                    <controls:HeaderedControl x:Name="CreateRoot">
                         <controls:BadgeButton Click="{x:Bind ViewModel.Create}"
                                               Visibility="{x:Bind ViewModel.Replies, Mode=OneWay, Converter={StaticResource NullToVisibilityConverter}, ConverterParameter=invert}"
                                               Content="{CustomResource BusinessAwayCreate}"

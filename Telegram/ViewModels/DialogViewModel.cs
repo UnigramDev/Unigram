@@ -68,13 +68,10 @@ namespace Telegram.ViewModels
 
     public partial class ChatBusinessRepliesIdNavigationArgs
     {
-        public ChatBusinessRepliesIdNavigationArgs(long chatId, string quickReplyShortcut)
+        public ChatBusinessRepliesIdNavigationArgs(string quickReplyShortcut)
         {
-            ChatId = chatId;
             QuickReplyShortcut = quickReplyShortcut;
         }
-
-        public long ChatId { get; }
 
         public string QuickReplyShortcut { get; }
     }
@@ -2071,7 +2068,7 @@ namespace Telegram.ViewModels
             {
                 QuickReplyShortcut = ClientService.GetQuickReplyShortcut(businessRepliesIdArgs.QuickReplyShortcut);
                 QuickReplyShortcut ??= new QuickReplyShortcut(-1, businessRepliesIdArgs.QuickReplyShortcut, null, 0);
-                parameter = businessRepliesIdArgs.ChatId;
+                parameter = ClientService.Options.MyId;
             }
 
             var chat = ClientService.GetChat((long)parameter);
@@ -3214,7 +3211,12 @@ namespace Telegram.ViewModels
                 return;
             }
 
-            if (chat.Id == ClientService.Options.RepliesBotChatId || chat.Id == ClientService.Options.VerificationCodesBotChatId || Type == DialogType.EventLog)
+            if (chat.Id == ClientService.Options.RepliesBotChatId
+                || chat.Id == ClientService.Options.VerificationCodesBotChatId
+                || Type == DialogType.EventLog
+                || Type == DialogType.Pinned
+                || Type == DialogType.BusinessReplies
+                || Type == DialogType.ScheduledMessages)
             {
                 return;
             }
