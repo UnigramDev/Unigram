@@ -467,9 +467,7 @@ namespace Telegram.Converters
                 return string.Empty;
             }
 
-            birthdate = new Birthdate(31, 11, 1111);
             string formatted = null;
-
             try
             {
                 // We sanitize the date by adding months and days to 01/01/year.
