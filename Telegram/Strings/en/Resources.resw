@@ -7996,6 +7996,24 @@ Payments will go directly to the developer of {0}. Telegram cannot provide any g
   <data name="PleaseReEnterPassword" xml:space="preserve">
     <value>Re-enter your password</value>
   </data>
+  <data name="PmEditedDateTimeAt" xml:space="preserve">
+    <value>edited {0} at {1}</value>
+  </data>
+  <data name="PmEditedTodayAt" xml:space="preserve">
+    <value>edited at {0}</value>
+  </data>
+  <data name="PmEditedYesterdayAt" xml:space="preserve">
+    <value>edited yesterday at {0}</value>
+  </data>
+  <data name="PmFwdOriginalDateTimeAt" xml:space="preserve">
+    <value>original {0} at {1}</value>
+  </data>
+  <data name="PmFwdOriginalTodayAt" xml:space="preserve">
+    <value>original at {0}</value>
+  </data>
+  <data name="PmFwdOriginalYesterdayAt" xml:space="preserve">
+    <value>original yesterday at {0}</value>
+  </data>
   <data name="PmRead" xml:space="preserve">
     <value>read</value>
   </data>

@@ -384,6 +384,8 @@ namespace Telegram.Controls.Media
 
         public const string Clock = "\uEA34";
         public const string ClockFilled = "\uEA33";
+        public const string ClockEdit = "\uEA9E";
+        public const string ClockArrowForward = "\uEA9F";
 
         public const string Multiplier2xFilled = "\uE9BA";
         public const string PlayCircleFilled = "\uE9AE";

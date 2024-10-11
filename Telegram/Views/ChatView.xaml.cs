@@ -2571,6 +2571,12 @@ namespace Telegram.Views
                 flyout.CreateFlyoutItem(MessageSendNow_Loaded, ViewModel.SendNowMessage, message, Strings.MessageScheduleSend, Icons.Send);
                 flyout.CreateFlyoutItem(MessageReschedule_Loaded, ViewModel.RescheduleMessage, message, Strings.MessageScheduleEditTime, Icons.CalendarClock);
 
+                var bot = false;
+                if (message.ClientService.TryGetUser(message.SenderId, out User senderUser))
+                {
+                    bot = senderUser.Type is UserTypeBot;
+                }
+
                 if (CanGetMessageReadDate(message, properties))
                 {
                     LoadMessageReadDate(message, properties, flyout);
@@ -2578,6 +2584,26 @@ namespace Telegram.Views
                 else if (CanGetMessageViewers(message, properties))
                 {
                     LoadMessageViewers(message, properties, flyout);
+                }
+                else if (message.EditDate != 0 && message.ViaBotUserId == 0 && !bot && message.ReplyMarkup is not ReplyMarkupInlineKeyboard && !message.IsOutgoing)
+                {
+                    var placeholder = new MenuFlyoutItem();
+                    placeholder.Text = Formatter.EditDate(message.EditDate);
+                    placeholder.FontSize = 12;
+                    placeholder.Icon = MenuFlyoutHelper.CreateIcon(Icons.ClockEdit);
+
+                    flyout.Items.Add(placeholder);
+                    flyout.CreateFlyoutSeparator();
+                }
+                else if (message.ForwardInfo != null && !message.IsSaved && !message.IsVerificationCode)
+                {
+                    var placeholder = new MenuFlyoutItem();
+                    placeholder.Text = Formatter.ForwardDate(message.ForwardInfo.Date);
+                    placeholder.FontSize = 12;
+                    placeholder.Icon = MenuFlyoutHelper.CreateIcon(Icons.ClockArrowForward);
+
+                    flyout.Items.Add(placeholder);
+                    flyout.CreateFlyoutSeparator();
                 }
 
                 MessageQuote quote = null;
@@ -2934,19 +2960,15 @@ namespace Telegram.Views
             var played = message.Content is MessageVoiceNote or MessageVideoNote;
             var placeholder = new MenuFlyoutReadDateItem();
             placeholder.Text = "...";
-            placeholder.Icon = new FontIcon
-            {
-                Glyph = played ? Icons.Play : Icons.Seen,
-                FontSize = 20,
-                FontFamily = BootStrapper.Current.Resources["TelegramThemeFontFamily"] as FontFamily,
-            };
+            placeholder.FontSize = 12;
+            placeholder.Icon = MenuFlyoutHelper.CreateIcon(played ? Icons.Play : Icons.Seen);
+
+            // Width must be fixed because viewers are loaded asynchronously
+            placeholder.Width = 200;
 
             flyout.Items.Add(placeholder);
             flyout.CreateFlyoutSeparator();
 
-            // Width must be fixed because viewers are loaded asynchronously
-            placeholder.FontSize = 12;
-            placeholder.Width = 200;
 
             var readDate = await GetMessageReadDateAsync(message, properties);
             if (readDate is MessageReadDateRead readDateRead)

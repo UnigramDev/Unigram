@@ -317,6 +317,38 @@ namespace Telegram.Converters
             return string.Format(Strings.PmReadDateTimeAt, Date(dateTime), Time(dateTime));
         }
 
+        public static string EditDate(int value)
+        {
+            var dateTime = ToLocalTime(value);
+
+            if (dateTime.Date == DateTime.Now.Date)
+            {
+                return string.Format(Strings.PmEditedTodayAt, Time(dateTime));
+            }
+            else if (dateTime.Date == DateTime.Now.Date.AddDays(-1))
+            {
+                return string.Format(Strings.PmEditedYesterdayAt, Time(dateTime));
+            }
+
+            return string.Format(Strings.PmEditedDateTimeAt, Date(dateTime), Time(dateTime));
+        }
+
+        public static string ForwardDate(int value)
+        {
+            var dateTime = ToLocalTime(value);
+
+            if (dateTime.Date == DateTime.Now.Date)
+            {
+                return string.Format(Strings.PmFwdOriginalTodayAt, Time(dateTime));
+            }
+            else if (dateTime.Date == DateTime.Now.Date.AddDays(-1))
+            {
+                return string.Format(Strings.PmFwdOriginalYesterdayAt, Time(dateTime));
+            }
+
+            return string.Format(Strings.PmFwdOriginalDateTimeAt, Date(dateTime), Time(dateTime));
+        }
+
         public static string DateExtended(int value)
         {
             var dateTime = ToLocalTime(value);
