@@ -76,6 +76,7 @@
             <views:SearchChatsView x:Name="SearchPanel"
                                    x:Load="False"
                                    DataContext="{x:Bind ViewModel.SearchChats}"
+                                   AreTabsVisible="False"
                                    ItemClick="ListView_ItemClick"
                                    Margin="12,0" />
 

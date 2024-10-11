@@ -61,6 +61,14 @@ namespace Telegram.Controls.Views
 
         public ListView Root => ScrollingHost;
 
+        public bool AreTabsVisible
+        {
+            get => ChatFolders.Visibility == Visibility.Visible;
+            set => ChatFolders.Visibility = value
+                ? Visibility.Visible
+                : Visibility.Collapsed;
+        }
+
         #region Recycle
 
         private void OnChoosingItemContainer(ListViewBase sender, ChoosingItemContainerEventArgs args)
