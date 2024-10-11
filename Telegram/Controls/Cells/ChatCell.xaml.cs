@@ -1797,6 +1797,10 @@ namespace Telegram.Controls.Cells
                 chatView.Unloaded += handler;
             }
 
+            var background = new ChatBackgroundControl();
+            background.Update(_clientService, null);
+
+            grid.Children.Add(background);
             grid.Children.Add(frame);
             grid.CornerRadius = new CornerRadius(8);
 

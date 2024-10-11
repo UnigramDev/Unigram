@@ -560,12 +560,6 @@
             <RowDefinition x:Name="KeyboardPlaceholder"
                            Height="Auto" />
         </Grid.RowDefinitions>
-
-        <chats:ChatBackgroundControl x:Name="BackgroundControl"
-                                     x:Load="False"
-                                     Canvas.ZIndex="-1"
-                                     Grid.RowSpan="5" />
-
         <Grid Padding="0,0,0,8"
               VerticalAlignment="Bottom"
               Grid.RowSpan="4">

@@ -176,6 +176,8 @@ namespace Telegram.Controls.Gallery
         {
             // TODO: there is a problem when creating the overlay from a secondary window
             // as the AppWindow will be destroyed as soon as the secondary window gets closed.
+            // TODO: there's also a problem when compact overlay was created from a different window
+            // from the one trying to play the video, but I feel this is quite an edge case.
             if (_current is GalleryCompactOverlay window)
             {
                 window.Play(viewModel, player);

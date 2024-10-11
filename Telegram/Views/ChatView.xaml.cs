@@ -67,8 +67,6 @@ namespace Telegram.Views
         private DialogViewModel _viewModel;
         public DialogViewModel ViewModel => _viewModel ??= DataContext as DialogViewModel;
 
-        private readonly bool _myPeople;
-
         private readonly DispatcherTimer _slowModeTimer;
 
         private readonly Visual _rootVisual;
@@ -122,13 +120,6 @@ namespace Telegram.Views
             AddStrategy(ChatHistoryViewItemType.ServiceGift, ServiceMessageGiftedTemplate);
 
             _focusState = new DebouncedProperty<FocusState>(100, FocusText, CanFocusText);
-
-            if (WindowContext.Current.ContactPanel != null)
-            {
-                _myPeople = true;
-                WindowContext.Current.ContactPanel.LaunchFullAppRequested += ContactPanel_LaunchFullAppRequested;
-                WatchDog.TrackEvent("ContactPanel");
-            }
 
             Messages.Delegate = this;
             Messages.ItemsSource = _messages;
@@ -281,36 +272,8 @@ namespace Telegram.Views
             _focusState.Set(FocusState.Programmatic);
         }
 
-        private void ContactPanel_LaunchFullAppRequested(Windows.ApplicationModel.Contacts.ContactPanel sender, Windows.ApplicationModel.Contacts.ContactPanelLaunchFullAppRequestedEventArgs args)
-        {
-            sender.ClosePanel();
-            args.Handled = true;
-
-            this.BeginOnUIThread(async () =>
-            {
-                var chat = ViewModel.Chat;
-                if (chat == null)
-                {
-                    return;
-                }
-
-                if (chat.Type is ChatTypePrivate privata)
-                {
-                    var options = new Windows.System.LauncherOptions();
-                    options.TargetApplicationPackageFamilyName = Package.Current.Id.FamilyName;
-
-                    await Windows.System.Launcher.LaunchUriAsync(new Uri("ms-contact-profile://meh?ContactRemoteIds=u" + privata.UserId), options);
-                }
-            });
-        }
-
         private ChatBackgroundControl FindBackgroundControl()
         {
-            if (BackgroundControl != null)
-            {
-                return BackgroundControl;
-            }
-
             var masterDetailPanel = this.GetParent<MasterDetailPanel>();
             if (masterDetailPanel != null)
             {
@@ -448,9 +411,6 @@ namespace Telegram.Views
 
                 Canvas.SetZIndex(background, 2);
                 LayoutRoot.Children.Insert(0, background);
-
-                FindName(nameof(BackgroundControl));
-                BackgroundControl.Update(ViewModel.ClientService, ViewModel.Aggregator);
             }
         }
 
@@ -781,13 +741,6 @@ namespace Telegram.Views
             ViewVisibleMessages();
 
             TrySetFocusState(FocusState.Programmatic, true);
-
-            if (WindowContext.Current.ContactPanel != null)
-            {
-                Header.Visibility = Visibility.Collapsed;
-                FindName(nameof(BackgroundControl));
-                BackgroundControl.Update(ViewModel.ClientService, ViewModel.Aggregator);
-            }
         }
 
         private void OnUnloaded(object sender, RoutedEventArgs e)
@@ -832,7 +785,6 @@ namespace Telegram.Views
             FilledState = null;
             SidebarState = null;
             KeyboardPlaceholder = null;
-            BackgroundControl = null;
             Header = null;
             ClipperOuter = null;
             ContentPanel = null;
@@ -3302,7 +3254,7 @@ namespace Telegram.Views
 
         private bool MessageSelect_Loaded(MessageViewModel message)
         {
-            if (_myPeople || ViewModel.Type == DialogType.EventLog || message.IsService)
+            if (ViewModel.Type == DialogType.EventLog || message.IsService)
             {
                 return false;
             }
@@ -4143,7 +4095,7 @@ namespace Telegram.Views
 
         private bool StillValid(Chat chat)
         {
-            return chat?.Id == ViewModel?.Chat?.Id;
+            return chat?.Id == ViewModel?.Chat?.Id && !_fromPreview;
         }
 
         #region UI delegate

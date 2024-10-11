@@ -476,18 +476,6 @@ namespace Telegram.Navigation
 
         #region Legacy code
 
-        public ContactPanel ContactPanel { get; private set; }
-
-        public void SetContactPanel(ContactPanel panel)
-        {
-            ContactPanel = panel;
-        }
-
-        public bool IsContactPanel()
-        {
-            return ContactPanel != null;
-        }
-
         public async void Activate(IActivatedEventArgs args, INavigationService service, AuthorizationState state)
         {
             try
@@ -638,33 +626,6 @@ namespace Telegram.Navigation
                     // It's too early?
                 }
             }
-            else if (args is ContactPanelActivatedEventArgs contact)
-            {
-                SetContactPanel(contact.ContactPanel);
-
-                if (Application.Current.Resources.TryGet("PageHeaderBackgroundBrush", out SolidColorBrush backgroundBrush))
-                {
-                    contact.ContactPanel.HeaderColor = backgroundBrush.Color;
-                }
-
-                var contactId = await ContactsService.GetContactIdAsync(contact.Contact.Id);
-                if (contactId is long userId)
-                {
-                    var response = await _lifetime.ActiveItem.ClientService.SendAsync(new CreatePrivateChat(userId, false));
-                    if (response is Chat chat)
-                    {
-                        service.NavigateToChat(chat);
-                    }
-                    else
-                    {
-                        ContactPanelFallback(service);
-                    }
-                }
-                else
-                {
-                    ContactPanelFallback(service);
-                }
-            }
             else if (args is ProtocolActivatedEventArgs protocol)
             {
                 if (service?.Frame?.Content is MainPage page)
@@ -744,35 +705,6 @@ namespace Telegram.Navigation
                 service.NavigateToMain(arguments);
             }
         }
-
-        private void ContactPanelFallback(INavigationService service)
-        {
-            if (service == null)
-            {
-                return;
-            }
-
-            var hyper = new Hyperlink();
-            hyper.NavigateUri = new Uri("ms-settings:privacy-contacts");
-            hyper.Inlines.Add(new Run { Text = "Settings" });
-
-            var text = new TextBlock();
-            text.Padding = new Thickness(12);
-            text.VerticalAlignment = VerticalAlignment.Center;
-            text.TextWrapping = TextWrapping.Wrap;
-            text.TextAlignment = TextAlignment.Center;
-            text.Inlines.Add(new Run { Text = "This app is not able to access your contacts. Go to " });
-            text.Inlines.Add(hyper);
-            text.Inlines.Add(new Run { Text = " to check the contacts privacy settings." });
-
-            var page = new ContentControl();
-            page.VerticalAlignment = VerticalAlignment.Center;
-            page.HorizontalContentAlignment = HorizontalAlignment.Stretch;
-            page.Content = text;
-
-            service.Frame.Content = page;
-        }
-
 
         /// <summary>
         /// Update the Title and Status Bars colors.

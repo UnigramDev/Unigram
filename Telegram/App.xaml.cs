@@ -213,20 +213,10 @@ namespace Telegram
 
             var sessionId = TypeResolver.Current.Lifetime.ActiveItem.Id;
 
-            if (e is ContactPanelActivatedEventArgs /*|| (e is ProtocolActivatedEventArgs protocol && protocol.Uri.PathAndQuery.Contains("domain=telegrampassport", StringComparison.OrdinalIgnoreCase))*/)
-            {
-                var navigationFrame = new Frame { FlowDirection = LocaleService.Current.FlowDirection };
-                var navigationService = NavigationServiceFactory(window, BackButton.Ignore, navigationFrame, sessionId, $"Main{sessionId}", false) as NavigationService;
+            var navigationFrame = new Frame();
+            var navigationService = NavigationServiceFactory(window, BackButton.Ignore, navigationFrame, sessionId, $"{sessionId}", true) as NavigationService;
 
-                return navigationFrame;
-            }
-            else
-            {
-                var navigationFrame = new Frame();
-                var navigationService = NavigationServiceFactory(window, BackButton.Ignore, navigationFrame, sessionId, $"{sessionId}", true) as NavigationService;
-
-                return new RootPage(window, navigationService) { FlowDirection = LocaleService.Current.FlowDirection };
-            }
+            return new RootPage(window, navigationService) { FlowDirection = LocaleService.Current.FlowDirection };
         }
 
         public override UIElement CreateRootElement(INavigationService navigationService)
