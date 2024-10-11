@@ -1802,6 +1802,33 @@ namespace Telegram.Td.Api
             return years;
         }
 
+        public static bool AreTheSame(this ChatFolder x, ChatFolder y)
+        {
+            if (x == null || y == null)
+            {
+                return x == y;
+            }
+
+            var xIcon = x.Icon?.Name ?? string.Empty;
+            var yIcon = y.Icon?.Name ?? string.Empty;
+
+            return xIcon == yIcon
+                && x.ColorId == y.ColorId
+                && x.Title == y.Title
+                && x.IsShareable == y.IsShareable
+                && x.ExcludeArchived == y.ExcludeArchived
+                && x.ExcludeMuted == y.ExcludeMuted
+                && x.ExcludeRead == y.ExcludeRead
+                && x.IncludeBots == y.IncludeBots
+                && x.IncludeChannels == y.IncludeChannels
+                && x.IncludeContacts == y.IncludeContacts
+                && x.IncludeGroups == y.IncludeGroups
+                && x.IncludeNonContacts == y.IncludeNonContacts
+                && x.ExcludedChatIds.SequenceEqual(y.ExcludedChatIds)
+                && x.IncludedChatIds.SequenceEqual(y.IncludedChatIds)
+                && x.PinnedChatIds.SequenceEqual(y.PinnedChatIds);
+        }
+
         public static InputBusinessStartPage ToInput(this BusinessStartPage x)
         {
             if (x == null)

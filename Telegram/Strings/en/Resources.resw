@@ -5170,6 +5170,21 @@ Duration: {1}</value>
   <data name="FilterDeleteItem" xml:space="preserve">
     <value>Delete folder</value>
   </data>
+  <data name="FilterDiscardAlert" xml:space="preserve">
+    <value>You have edited this folder. Apply changes?</value>
+  </data>
+  <data name="FilterDiscardNewAlert" xml:space="preserve">
+    <value>You have not finished creating the folder yet. Create now?</value>
+  </data>
+  <data name="FilterDiscardNewSave" xml:space="preserve">
+    <value>Create</value>
+  </data>
+  <data name="FilterDiscardNewTitle" xml:space="preserve">
+    <value>Create Folder</value>
+  </data>
+  <data name="FilterDiscardTitle" xml:space="preserve">
+    <value>Unsaved Changes</value>
+  </data>
   <data name="FilterEdit" xml:space="preserve">
     <value>Edit folder</value>
   </data>
@@ -7660,6 +7675,9 @@ messages from multiple devices.</value>
   </data>
   <data name="PasscodePIN" xml:space="preserve">
     <value>PIN</value>
+  </data>
+  <data name="PassportDiscard" xml:space="preserve">
+    <value>Discard</value>
   </data>
   <data name="PasswordAsHintError" xml:space="preserve">
     <value>Hint must be different from your password</value>

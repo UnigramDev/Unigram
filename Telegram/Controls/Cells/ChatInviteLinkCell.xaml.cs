@@ -244,7 +244,7 @@ namespace Telegram.Controls.Cells
 
             TitleText.Text = inviteLink.Name.Length > 0
                 ? inviteLink.Name
-                : inviteLink.InviteLink;
+                : inviteLink.InviteLink.Replace("https://", string.Empty);
             SubtitleText.Text = Locale.Declension(Strings.R.FilterInviteChats, inviteLink.ChatIds.Count);
         }
     }

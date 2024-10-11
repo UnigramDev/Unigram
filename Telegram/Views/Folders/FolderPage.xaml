@@ -21,8 +21,9 @@
 
     <local:HostedPage.Action>
         <Button Content="{CustomResource Done}"
-                Command="{x:Bind ViewModel.SendCommand}"
-                Style="{StaticResource AccentButtonStyle}" />
+                Click="{x:Bind ViewModel.Continue}"
+                Style="{StaticResource AccentButtonStyle}"
+                Visibility="{x:Bind ViewModel.HasChanged, Mode=OneWay}" />
     </local:HostedPage.Action>
 
     <Grid Background="{ThemeResource SettingsPageBackground}">

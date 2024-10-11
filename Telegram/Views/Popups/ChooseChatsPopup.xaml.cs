@@ -917,30 +917,30 @@ namespace Telegram.Views.Popups
                 {
                     if (include)
                     {
-                        flags.Add(new FolderFlag { Flag = ChatListFolderFlags.NewChats });
-                        flags.Add(new FolderFlag { Flag = ChatListFolderFlags.IncludeContacts });
-                        flags.Add(new FolderFlag { Flag = ChatListFolderFlags.IncludeNonContacts });
+                        flags.Add(new FolderFlag(ChatListFolderFlags.NewChats));
+                        flags.Add(new FolderFlag(ChatListFolderFlags.IncludeContacts));
+                        flags.Add(new FolderFlag(ChatListFolderFlags.IncludeNonContacts));
                     }
                     else
                     {
-                        flags.Add(new FolderFlag { Flag = ChatListFolderFlags.ExistingChats });
-                        flags.Add(new FolderFlag { Flag = ChatListFolderFlags.IncludeContacts });
-                        flags.Add(new FolderFlag { Flag = ChatListFolderFlags.IncludeNonContacts });
+                        flags.Add(new FolderFlag(ChatListFolderFlags.ExistingChats));
+                        flags.Add(new FolderFlag(ChatListFolderFlags.IncludeContacts));
+                        flags.Add(new FolderFlag(ChatListFolderFlags.IncludeNonContacts));
                     }
                 }
                 else if (include)
                 {
-                    flags.Add(new FolderFlag { Flag = ChatListFolderFlags.IncludeContacts });
-                    flags.Add(new FolderFlag { Flag = ChatListFolderFlags.IncludeNonContacts });
-                    flags.Add(new FolderFlag { Flag = ChatListFolderFlags.IncludeGroups });
-                    flags.Add(new FolderFlag { Flag = ChatListFolderFlags.IncludeChannels });
-                    flags.Add(new FolderFlag { Flag = ChatListFolderFlags.IncludeBots });
+                    flags.Add(new FolderFlag(ChatListFolderFlags.IncludeContacts));
+                    flags.Add(new FolderFlag(ChatListFolderFlags.IncludeNonContacts));
+                    flags.Add(new FolderFlag(ChatListFolderFlags.IncludeGroups));
+                    flags.Add(new FolderFlag(ChatListFolderFlags.IncludeChannels));
+                    flags.Add(new FolderFlag(ChatListFolderFlags.IncludeBots));
                 }
                 else
                 {
-                    flags.Add(new FolderFlag { Flag = ChatListFolderFlags.ExcludeMuted });
-                    flags.Add(new FolderFlag { Flag = ChatListFolderFlags.ExcludeRead });
-                    flags.Add(new FolderFlag { Flag = ChatListFolderFlags.ExcludeArchived });
+                    flags.Add(new FolderFlag(ChatListFolderFlags.ExcludeMuted));
+                    flags.Add(new FolderFlag(ChatListFolderFlags.ExcludeRead));
+                    flags.Add(new FolderFlag(ChatListFolderFlags.ExcludeArchived));
                 }
 
                 var header = new MultipleListView();
@@ -990,7 +990,7 @@ namespace Telegram.Views.Popups
                 popup.Header = panel;
                 popup.IsPrimaryButtonEnabled = true;
 
-                var confirm = await popup.PickAsync(navigationService.XamlRoot, target.OfType<FolderChat>().Select(x => x.Chat.Id).ToArray(), ChooseChatsOptions.All);
+                var confirm = await popup.PickAsync(navigationService.XamlRoot, target.OfType<FolderChat>().Select(x => x.ChatId).ToArray(), ChooseChatsOptions.All);
                 if (confirm != ContentDialogResult.Primary)
                 {
                     return null;
@@ -1010,7 +1010,7 @@ namespace Telegram.Views.Popups
                         continue;
                     }
 
-                    target.Add(new FolderChat { Chat = chat });
+                    target.Add(new FolderChat(chat.Id));
                 }
 
                 return target;
@@ -1025,7 +1025,7 @@ namespace Telegram.Views.Popups
                 popup.ViewModel.Folders.Clear();
                 popup.IsPrimaryButtonEnabled = true;
 
-                var confirm = await popup.PickAsync(navigationService.XamlRoot, target.OfType<FolderChat>().Select(x => x.Chat.Id).ToArray(), ChooseChatsOptions.All);
+                var confirm = await popup.PickAsync(navigationService.XamlRoot, target.OfType<FolderChat>().Select(x => x.ChatId).ToArray(), ChooseChatsOptions.All);
                 if (confirm != ContentDialogResult.Primary)
                 {
                     return null;
@@ -1040,7 +1040,7 @@ namespace Telegram.Views.Popups
                         continue;
                     }
 
-                    target.Add(new FolderChat { Chat = chat });
+                    target.Add(new FolderChat(chat.Id));
                 }
 
                 return target;

@@ -999,11 +999,11 @@ namespace Telegram.Controls.Cells
         {
             UpdateStyleNoSubtitle();
 
-            if (element is FolderChat chat)
+            if (element is FolderChat folderChat && clientService.TryGetChat(folderChat.ChatId, out Chat chat))
             {
-                TitleLabel.Text = clientService.GetTitle(chat.Chat);
-                Photo.SetChat(clientService, chat.Chat, 36);
-                Identity.SetStatus(clientService, chat.Chat);
+                TitleLabel.Text = clientService.GetTitle(chat);
+                Photo.SetChat(clientService, chat, 36);
+                Identity.SetStatus(clientService, chat);
             }
             else if (element is FolderFlag flag)
             {
