@@ -4,11 +4,13 @@
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+using Rg.DiffUtils;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
+using Telegram.Collection;
 using Telegram.Collections;
 using Telegram.Common;
 using Telegram.Controls.Media;
@@ -23,13 +25,13 @@ using Windows.UI.Xaml.Navigation;
 
 namespace Telegram.ViewModels.Folders
 {
-    public partial class FolderViewModel : ViewModelBase
+    public partial class FolderViewModel : ViewModelBase, IDiffHandler<ChatFolderElement>
     {
         public FolderViewModel(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator)
             : base(clientService, settingsService, aggregator)
         {
-            Include = new MvxObservableCollection<ChatFolderElement>();
-            Exclude = new MvxObservableCollection<ChatFolderElement>();
+            Include = new BatchedObservableCollection<ChatFolderElement>(8, this, Constants.DiffOptions);
+            Exclude = new BatchedObservableCollection<ChatFolderElement>(8, this, Constants.DiffOptions);
 
             AvailableColors = new ObservableCollection<NameColor>(ClientService.GetAvailableAccentColors()
                 .Where(x => x.Id == x.BuiltInAccentColorId)
@@ -41,6 +43,25 @@ namespace Telegram.ViewModels.Folders
             Exclude.CollectionChanged += OnCollectionChanged;
 
             SendCommand = new RelayCommand(SendExecute, SendCanExecute);
+        }
+
+        public bool CompareItems(ChatFolderElement oldItem, ChatFolderElement newItem)
+        {
+            if (oldItem is FolderFlag oldFlag && newItem is FolderFlag newFlag)
+            {
+                return oldFlag.Flag == newFlag.Flag;
+            }
+            else if (oldItem is FolderChat oldChat && newItem is FolderChat newChat)
+            {
+                return oldChat.Chat.Id == newChat.Chat.Id;
+            }
+
+            return false;
+        }
+
+        public void UpdateItem(ChatFolderElement oldItem, ChatFolderElement newItem)
+        {
+            
         }
 
         private void OnCollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
@@ -112,27 +133,18 @@ namespace Telegram.ViewModels.Folders
             if (folder.ExcludeRead) Exclude.Add(new FolderFlag { Flag = ChatListFolderFlags.ExcludeRead });
             if (folder.ExcludeArchived) Exclude.Add(new FolderFlag { Flag = ChatListFolderFlags.ExcludeArchived });
 
-            foreach (var chatId in folder.PinnedChatIds.Union(folder.IncludedChatIds))
+            foreach (var chat in ClientService.GetChats(folder.PinnedChatIds.Union(folder.IncludedChatIds)))
             {
-                var chat = ClientService.GetChat(chatId);
-                if (chat == null)
-                {
-                    continue;
-                }
-
                 Include.Add(new FolderChat { Chat = chat });
             }
 
-            foreach (var chatId in folder.ExcludedChatIds)
+            foreach (var chat in ClientService.GetChats(folder.ExcludedChatIds))
             {
-                var chat = ClientService.GetChat(chatId);
-                if (chat == null)
-                {
-                    continue;
-                }
-
                 Exclude.Add(new FolderChat { Chat = chat });
             }
+
+            Include.SynchronizeHead();
+            Exclude.SynchronizeHead();
 
             UpdateIcon();
             UpdateLinks();
@@ -207,8 +219,8 @@ namespace Telegram.ViewModels.Folders
 
         private IList<long> _pinnedChatIds = Array.Empty<long>();
 
-        public MvxObservableCollection<ChatFolderElement> Include { get; private set; }
-        public MvxObservableCollection<ChatFolderElement> Exclude { get; private set; }
+        public BatchedObservableCollection<ChatFolderElement> Include { get; private set; }
+        public BatchedObservableCollection<ChatFolderElement> Exclude { get; private set; }
 
         public MvxObservableCollection<ChatFolderInviteLink> Links { get; private set; }
 
@@ -244,7 +256,8 @@ namespace Telegram.ViewModels.Folders
                     return int.MaxValue;
                 });
 
-                Include.ReplaceWith(flags.Union(chats));
+                Include.ReplaceDiff(flags.Union(chats));
+                Exclude.SynchronizeHead();
             }
         }
 
@@ -268,19 +281,22 @@ namespace Telegram.ViewModels.Folders
                     }
                 }
 
-                Exclude.ReplaceWith(result);
+                Include.SynchronizeHead();
+                Exclude.ReplaceDiff(result);
             }
         }
 
         public void RemoveIncluded(ChatFolderElement chat)
         {
             Include.Remove(chat);
+            Include.SynchronizeHead();
             UpdateIcon();
         }
 
         public void RemoveExcluded(ChatFolderElement chat)
         {
             Exclude.Remove(chat);
+            Exclude.SynchronizeHead();
             UpdateIcon();
         }
 

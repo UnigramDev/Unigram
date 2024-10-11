@@ -236,5 +236,16 @@ namespace Telegram.Controls.Cells
             Photo.SetUser(clientService, user, 36);
             Identity.SetStatus(clientService, user);
         }
+
+        public void UpdateInviteLink(ChatFolderInviteLink inviteLink)
+        {
+            Badge.Style = BootStrapper.Current.Resources["AccentCaptionBorderStyle"] as Style;
+            BadgeIcon.Text = Icons.LinkDiagonal;
+
+            TitleText.Text = inviteLink.Name.Length > 0
+                ? inviteLink.Name
+                : inviteLink.InviteLink;
+            SubtitleText.Text = Locale.Declension(Strings.R.FilterInviteChats, inviteLink.ChatIds.Count);
+        }
     }
 }

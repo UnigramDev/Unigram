@@ -5233,6 +5233,9 @@ Duration: {1}</value>
   <data name="FilterInviteHeaderNo" xml:space="preserve">
     <value>There are no chats in this folder that you can share with others.</value>
   </data>
+  <data name="FilterInviteLinksHintNew" xml:space="preserve">
+    <value>Share access to some of this folder’s groups and channels with others.</value>
+  </data>
   <data name="FilterMuted" xml:space="preserve">
     <value>Muted</value>
   </data>
@@ -5274,6 +5277,12 @@ Duration: {1}</value>
   </data>
   <data name="FilterShare" xml:space="preserve">
     <value>Share Folder</value>
+  </data>
+  <data name="FilterShowMoreChats_one" xml:space="preserve">
+    <value>Show {0} More Chat</value>
+  </data>
+  <data name="FilterShowMoreChats_other" xml:space="preserve">
+    <value>Show {0} More Chats</value>
   </data>
   <data name="FinalResults" xml:space="preserve">
     <value>Final Results</value>

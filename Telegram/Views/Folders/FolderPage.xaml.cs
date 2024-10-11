@@ -4,8 +4,8 @@
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
-using Microsoft.UI.Xaml.Controls;
 using Telegram.Common;
+using Telegram.Controls;
 using Telegram.Controls.Cells;
 using Telegram.Controls.Media;
 using Telegram.Td;
@@ -34,14 +34,6 @@ namespace Telegram.Views.Folders
             TitleField.Focus(FocusState.Keyboard);
         }
 
-        private void OnElementPrepared(ItemsRepeater sender, ItemsRepeaterElementPreparedEventArgs args)
-        {
-            var content = args.Element as ProfileCell;
-            var element = content.DataContext as ChatFolderElement;
-
-            content.UpdateChatFolder(ViewModel.ClientService, element);
-        }
-
         private void Include_ContextRequested(UIElement sender, ContextRequestedEventArgs args)
         {
             var viewModel = ViewModel;
@@ -50,8 +42,7 @@ namespace Telegram.Views.Folders
                 return;
             }
 
-            var element = sender as FrameworkElement;
-            var chat = element.DataContext as ChatFolderElement;
+            var chat = IncludeHost.ItemFromContainer(sender) as ChatFolderElement;
 
             var flyout = new MenuFlyout();
             flyout.CreateFlyoutItem(viewModel.RemoveIncluded, chat, Strings.StickersRemove, Icons.Delete);
@@ -66,8 +57,7 @@ namespace Telegram.Views.Folders
                 return;
             }
 
-            var element = sender as FrameworkElement;
-            var chat = element.DataContext as ChatFolderElement;
+            var chat = ExcludeHost.ItemFromContainer(sender) as ChatFolderElement;
 
             var flyout = new MenuFlyout();
             flyout.CreateFlyoutItem(viewModel.RemoveExcluded, chat, Strings.StickersRemove, Icons.Delete);
@@ -118,25 +108,17 @@ namespace Telegram.Views.Folders
             return Icons.FolderToGlyph(icon).Item1;
         }
 
+        private string ConvertRemanining(int count)
+        {
+            return Locale.Declension(Strings.R.FilterShowMoreChats, count);
+        }
+
         private Visibility ConvertExcludeVisibility(int linksCount)
         {
             return linksCount > 0 ? Visibility.Collapsed : Visibility.Visible;
         }
 
         #endregion
-
-        private void Link_ElementPrepared(ItemsRepeater sender, ItemsRepeaterElementPreparedEventArgs args)
-        {
-            var button = args.Element as Button;
-            var link = button.DataContext as ChatFolderInviteLink;
-
-            var content = button.Content as Grid;
-            var title = content.Children[1] as TextBlock;
-            var subtitle = content.Children[2] as TextBlock;
-
-            title.Text = string.IsNullOrEmpty(link.Name) ? link.InviteLink : link.Name;
-            subtitle.Text = Locale.Declension(Strings.R.FilterInviteChats, link.ChatIds.Count);
-        }
 
         private void Link_ContextRequested(UIElement sender, ContextRequestedEventArgs args)
         {
@@ -146,14 +128,6 @@ namespace Telegram.Views.Folders
         private void Share_Click(object sender, RoutedEventArgs e)
         {
 
-        }
-
-        private void Link_Click(object sender, RoutedEventArgs e)
-        {
-            if (sender is Button button && button.DataContext is ChatFolderInviteLink link)
-            {
-                ViewModel.OpenLink(link);
-            }
         }
 
         private void NameColor_SizeChanged(object sender, SizeChangedEventArgs e)
@@ -229,6 +203,57 @@ namespace Telegram.Views.Folders
         private void Purchase_Click(object sender, RoutedEventArgs e)
         {
             ViewModel.NavigationService.ShowPromo(new PremiumSourceFeature(new PremiumFeatureAdvancedChatManagement()));
+        }
+
+        private void OnChoosingItemContainer(ListViewBase sender, ChoosingItemContainerEventArgs args)
+        {
+            if (args.ItemContainer == null)
+            {
+                args.ItemContainer = new TableListViewItem();
+                args.ItemContainer.Style = sender.ItemContainerStyle;
+                args.ItemContainer.ContentTemplate = sender.ItemTemplate;
+
+                if (sender == IncludeHost)
+                {
+                    args.ItemContainer.ContextRequested += Include_ContextRequested;
+                }
+                else if (sender == ExcludeHost)
+                {
+                    args.ItemContainer.ContextRequested += Exclude_ContextRequested;
+                }
+                else
+                {
+                    args.ItemContainer.ContextRequested += Link_ContextRequested;
+                }
+            }
+
+            args.IsContainerPrepared = true;
+        }
+
+        private void OnContainerContentChanging(ListViewBase sender, ContainerContentChangingEventArgs args)
+        {
+            if (args.InRecycleQueue)
+            {
+                return;
+            }
+            else if (args.ItemContainer.ContentTemplateRoot is ProfileCell profileCell && args.Item is ChatFolderElement element)
+            {
+                profileCell.UpdateChatFolder(ViewModel.ClientService, element);
+                args.Handled = true;
+            }
+            else if (args.ItemContainer.ContentTemplateRoot is ChatInviteLinkCell chatInviteLinkCell && args.Item is ChatFolderInviteLink inviteLink)
+            {
+                chatInviteLinkCell.UpdateInviteLink(inviteLink);
+                args.Handled = true;
+            }
+        }
+
+        private void OnItemClick(object sender, ItemClickEventArgs e)
+        {
+            if (e.ClickedItem is ChatFolderInviteLink link)
+            {
+                ViewModel.OpenLink(link);
+            }
         }
     }
 }
