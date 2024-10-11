@@ -456,7 +456,7 @@ namespace Telegram.Controls.Cells
                 if (SubtitleLabel.Text.StartsWith($"@{result.Query}", StringComparison.OrdinalIgnoreCase))
                 {
                     var highligher = new TextHighlighter();
-                    highligher.Foreground = new SolidColorBrush(Colors.Red);
+                    highligher.Foreground = new SolidColorBrush(Theme.Accent);
                     highligher.Background = new SolidColorBrush(Colors.Transparent);
                     highligher.Ranges.Add(new TextRange { StartIndex = 1, Length = result.Query.Length });
 

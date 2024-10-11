@@ -76,7 +76,7 @@ namespace Telegram.Collections
 
         private void Insert(IKeyedCollection collection, int newStartingIndex, IList newItems)
         {
-            if (newStartingIndex == 0 && newItems.Count == collection.Count && collection.Count > 0)
+            if (newStartingIndex == 0 && newItems.Count == collection.Count && collection.Count > 0 && collection.Key != null)
             {
                 Insert(collection.Index, collection);
             }
@@ -95,7 +95,7 @@ namespace Telegram.Collections
                 RemoveAt(collection.TotalIndex + i);
             }
 
-            if (collection.Count == 0 && oldItemsCount > 0)
+            if (collection.Count == 0 && oldItemsCount > 0 && collection.Key != null)
             {
                 RemoveAt(collection.Index);
             }
