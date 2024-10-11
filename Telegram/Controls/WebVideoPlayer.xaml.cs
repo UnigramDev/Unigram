@@ -362,19 +362,13 @@ namespace Telegram.Controls
 
         private void OnWebMessageReceived(CoreWebView2 sender, CoreWebView2WebMessageReceivedEventArgs args)
         {
-            static string TryGetWebMessageAsString(CoreWebView2WebMessageReceivedEventArgs args)
-            {
-                try
-                {
-                    return args.TryGetWebMessageAsString();
-                }
-                catch
-                {
-                    return string.Empty;
-                }
-            }
+            // TODO: some clear nonsense from WebView2 here:
+            // The JSON string received from mini apps (WebViewer.cs)
+            // fails to be parsed by JsonArray.TryParse if retrieved using WebMessageAsJson.
+            // The JSON string received from HLS player (WebVideoPlayer.xaml.cs)
+            // throws a random exception if retrieved using TryGetWebMessageAsString.
 
-            if (JsonObject.TryParse(TryGetWebMessageAsString(args), out JsonObject data))
+            if (JsonObject.TryParse(args.WebMessageAsJson, out JsonObject data))
             {
                 var eventName = data.GetNamedString("event", string.Empty);
                 var eventData = data.GetNamedObject("data", new JsonObject());

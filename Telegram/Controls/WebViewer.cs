@@ -423,6 +423,12 @@ postEvent: function(eventType, eventData) {
 
         private void OnWebMessageReceived(WebView2 sender, CoreWebView2WebMessageReceivedEventArgs args)
         {
+            // TODO: some clear nonsense from WebView2 here:
+            // The JSON string received from mini apps (WebViewer.cs)
+            // fails to be parsed by JsonArray.TryParse if retrieved using WebMessageAsJson.
+            // The JSON string received from HLS player (WebVideoPlayer.xaml.cs)
+            // throws a random exception if retrieved using TryGetWebMessageAsString.
+
             static string TryGetWebMessageAsString(CoreWebView2WebMessageReceivedEventArgs args)
             {
                 try
