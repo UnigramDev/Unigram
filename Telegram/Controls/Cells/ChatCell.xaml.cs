@@ -1744,6 +1744,8 @@ namespace Telegram.Controls.Cells
 
         public void ShowPreview(HoldingEventArgs args)
         {
+            Logger.Info();
+
             var tooltip = new MenuFlyoutContent();
 
             var flyout = new MenuFlyout();
@@ -1785,6 +1787,8 @@ namespace Telegram.Controls.Cells
             {
                 void handler(object sender, RoutedEventArgs e)
                 {
+                    Logger.Info("Unloaded");
+
                     chatView.Unloaded -= handler;
                     chatView.ViewModel.NavigatedFrom(null, false);
                     chatView.Deactivate(false);
