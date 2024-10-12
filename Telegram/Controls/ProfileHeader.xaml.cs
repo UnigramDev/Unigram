@@ -1743,5 +1743,10 @@ namespace Telegram.Controls
 
             return null;
         }
+
+        private void Identity_Click(object sender, RoutedEventArgs e)
+        {
+            ViewModel.ShowPromo();
+        }
     }
 }

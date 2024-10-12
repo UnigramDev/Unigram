@@ -116,10 +116,14 @@
                            Style="{StaticResource SubtitleTextBlockStyle}"
                            FontFamily="{ThemeResource EmojiThemeFontFamily}" />
 
-                <controls:IdentityIcon x:Name="Identity"
-                                       VerticalAlignment="Bottom"
-                                       Margin="4,0,0,4"
-                                       Grid.Column="1" />
+                <HyperlinkButton x:Name="IdentityRoot"
+                                 Click="Identity_Click"
+                                 Style="{StaticResource EmptyHyperlinkButtonStyle}"
+                                 VerticalAlignment="Bottom"
+                                 Margin="4,0,0,4"
+                                 Grid.Column="1">
+                    <controls:IdentityIcon x:Name="Identity" />
+                </HyperlinkButton>
             </Grid>
             <Grid x:Name="SubtitleRoot"
                   HorizontalAlignment="Center"

@@ -10545,6 +10545,21 @@ Here’s what is now unlocked.</value>
   <data name="TelegramPremiumSubtitle" xml:space="preserve">
     <value>Go **beyond the limits** and **unlock dozens of exclusive** features by subscribing to **Telegram Premium**.</value>
   </data>
+  <data name="TelegramPremiumUserDialogSubtitle" xml:space="preserve">
+    <value>Owners of **Telegram Premium** accounts have exclusive access to multiple additional features.</value>
+  </data>
+  <data name="TelegramPremiumUserDialogTitle" xml:space="preserve">
+    <value>**{0}** is a subscriber of Telegram Premium.</value>
+  </data>
+  <data name="TelegramPremiumUserStatusDefaultDialogTitle" xml:space="preserve">
+    <value>This is {0}&apos;s current status.</value>
+  </data>
+  <data name="TelegramPremiumUserStatusDialogSubtitle" xml:space="preserve">
+    <value>Emoji statuses are a premium feature. Other features included in **Telegram Premium**:</value>
+  </data>
+  <data name="TelegramPremiumUserStatusDialogTitle" xml:space="preserve">
+    <value>This is {0}&apos;s current status from {1}.</value>
+  </data>
   <data name="TelegramStars" xml:space="preserve">
     <value>Telegram Stars</value>
   </data>

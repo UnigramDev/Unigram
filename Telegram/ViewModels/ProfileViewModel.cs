@@ -986,6 +986,28 @@ namespace Telegram.ViewModels
             ClientService.Send(new JoinChat(chat.Id));
         }
 
+        public async void ShowPromo()
+        {
+            if (Chat?.EmojiStatus != null)
+            {
+                var response = await ClientService.SendAsync(new GetCustomEmojiStickers(new[] { Chat.EmojiStatus.CustomEmojiId }));
+                if (response is Stickers stickers)
+                {
+                    var second = await ClientService.SendAsync(new GetStickerSet(stickers.StickersValue[0].SetId));
+                    if (second is StickerSet stickerSet)
+                    {
+                        NavigationService.ShowPopup(new PromoPopup(ClientService, Chat, stickerSet));
+                        return;
+                    }
+                }
+            }
+
+            if (ClientService.TryGetUser(Chat, out User user) && user.IsPremium)
+            {
+                NavigationService.ShowPopup(new PromoPopup(ClientService, Chat, null));
+            }
+        }
+
         public async void DeleteChat()
         {
             var chat = _chat;
