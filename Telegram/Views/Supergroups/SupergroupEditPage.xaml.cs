@@ -82,9 +82,11 @@ namespace Telegram.Views.Supergroups
 
             ViewModel.Title = chat.Title;
 
-            Photo.IsEnabled = group.CanChangeInfo();
             TitleLabel.IsReadOnly = !group.CanChangeInfo();
             About.IsReadOnly = !group.CanChangeInfo();
+            SetNewPhoto.Visibility = group.CanChangeInfo()
+                ? Visibility.Visible
+                : Visibility.Collapsed;
 
             ChatType.Content = group.IsChannel ? Strings.ChannelType : Strings.GroupType;
             ChatType.Glyph = group.IsChannel ? Icons.Megaphone : Icons.People;
@@ -196,9 +198,11 @@ namespace Telegram.Views.Supergroups
             ViewModel.IsAllHistoryAvailable = 1;
 
 
-            //Photo.IsEnabled = group.CanChangeInfo();
-            //Title.IsReadOnly = !group.CanChangeInfo();
-            //About.IsReadOnly = !group.CanChangeInfo();
+            TitleLabel.IsReadOnly = !group.CanChangeInfo();
+            About.IsReadOnly = !group.CanChangeInfo();
+            SetNewPhoto.Visibility = group.CanChangeInfo()
+                ? Visibility.Visible
+                : Visibility.Collapsed;
 
             ChatType.Glyph = Icons.People;
             ChatType.Content = Strings.GroupType;
