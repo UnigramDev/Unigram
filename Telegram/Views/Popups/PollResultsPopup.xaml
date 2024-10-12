@@ -8,11 +8,8 @@
                        xmlns:cells="using:Telegram.Controls.Cells"
                        xmlns:local="using:Telegram.Views.Popups"
                        mc:Ignorable="d"
-                       Background="{ThemeResource PageBackgroundDarkBrush}"
-                       PrimaryButtonText="Button1"
-                       PrimaryButtonClick="ContentDialog_PrimaryButtonClick"
-                       SecondaryButtonClick="ContentDialog_SecondaryButtonClick"
-                       Padding="0,12,0,0">
+                       Padding="0,12,0,0"
+                       IsDismissButtonVisible="True">
 
     <Grid>
         <Grid.RowDefinitions>
@@ -20,9 +17,8 @@
             <RowDefinition />
         </Grid.RowDefinitions>
         <TextBlock x:Name="Subtitle"
-                   Foreground="{ThemeResource SystemControlForegroundBaseMediumBrush}"
-                   Style="{StaticResource CaptionTextBlockStyle}"
-                   Margin="24,0,0,2" />
+                   Style="{StaticResource InfoBodyTextBlockStyle}"
+                   Margin="24,0,12,0" />
 
         <muxc:ItemsRepeaterScrollHost Grid.Row="1">
             <ScrollViewer x:Name="ScrollingHost">
@@ -32,33 +28,59 @@
                                     Margin="0,0,0,24">
                     <muxc:ItemsRepeater.ItemTemplate>
                         <DataTemplate x:DataType="local:PollResultViewModel">
-                            <controls:HeaderedControl Style="{StaticResource FooteredControlStyle}">
+                            <Grid Margin="0,0,0,4">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition />
+                                    <RowDefinition Height="Auto" />
+                                </Grid.RowDefinitions>
+                                <RichTextBlock Style="{StaticResource BaseRichTextBlockStyle}"
+                                               FontFamily="{StaticResource EmojiThemeFontFamily}"
+                                               Margin="24,12,24,2">
+                                    <Paragraph>
+                                        <Span />
+                                        <Run />
+                                    </Paragraph>
+                                </RichTextBlock>
+                                <TextBlock Style="{StaticResource InfoCaptionTextBlockStyle}"
+                                           TextAlignment="Right"
+                                           VerticalAlignment="Bottom"
+                                           Margin="24,12,24,2"/>
+                                
                                 <muxc:ItemsRepeater Layout="{StaticResource ThreadStackLayout}"
                                                     ItemsSource="{x:Bind Items}"
-                                                    ElementPrepared="OnElementPrepared">
+                                                    ElementPrepared="OnElementPrepared"
+                                                    Grid.Row="1">
                                     <muxc:ItemsRepeater.ItemTemplate>
                                         <DataTemplate>
-                                            <Button Style="{StaticResource EmptyButtonStyle}">
-                                                <cells:ProfileCell />
+                                            <Button Style="{StaticResource ListEmptyButtonStyle}"
+                                                    BorderBrush="Transparent"
+                                                    BorderThickness="2"
+                                                    CornerRadius="4"
+                                                    Margin="12,0">
+                                                <cells:ProfileCell Margin="-2" />
                                             </Button>
                                         </DataTemplate>
 
                                     </muxc:ItemsRepeater.ItemTemplate>
                                 </muxc:ItemsRepeater>
 
-                                <controls:BadgeButton Command="{x:Bind LoadMoreCommand}"
-                                                      Content="{x:Bind LoadMoreLabel, Mode=OneWay}"
-                                                      Visibility="{x:Bind LoadMoreVisibility, Mode=OneWay}"
-                                                      Foreground="{ThemeResource SystemControlForegroundAccentBrush}" />
-                            </controls:HeaderedControl>
+                                <Button Command="{x:Bind LoadMoreCommand}"
+                                        Content="{x:Bind LoadMoreLabel, Mode=OneWay}"
+                                        Visibility="{x:Bind LoadMoreVisibility, Mode=OneWay}"
+                                        Style="{StaticResource AccentTextButtonStyle}"
+                                        HorizontalAlignment="Stretch"
+                                        Margin="24,0"
+                                        Grid.Row="2" />
+                            </Grid>
                         </DataTemplate>
                     </muxc:ItemsRepeater.ItemTemplate>
                 </muxc:ItemsRepeater>
             </ScrollViewer>
         </muxc:ItemsRepeaterScrollHost>
 
-        <controls:ScrollViewerScrim Background="{ThemeResource PageBackgroundDarkBrush}"
-                                    ScrollingHost="{x:Bind ScrollingHost}"
+        <controls:ScrollViewerScrim ScrollingHost="{x:Bind ScrollingHost}"
+                                    Background="{ThemeResource ContentDialogBackground}"
                                     Grid.Row="1" />
     </Grid>
 </controls:ContentPopup>

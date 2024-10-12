@@ -16,6 +16,7 @@ using Telegram.ViewModels.Delegates;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Automation;
 using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Documents;
 
 namespace Telegram.Views.Popups
 {
@@ -34,23 +35,14 @@ namespace Telegram.Views.Popups
             Title = Strings.PollResults;
             Subtitle.Text = Locale.Declension(poll.Type is PollTypeQuiz ? Strings.R.Answer : Strings.R.Vote, poll.TotalVoterCount);
 
-            PrimaryButtonText = Strings.OK;
-
             var options = new List<PollResultViewModel>();
+
             foreach (var option in poll.Options)
             {
                 options.Add(new PollResultViewModel(chatId, messageId, poll, option, clientService, settingsService, aggregator));
             }
 
             Repeater.ItemsSource = options;
-        }
-
-        private void ContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
-        {
-        }
-
-        private void ContentDialog_SecondaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
-        {
         }
 
         private void OnElementPrepared(Microsoft.UI.Xaml.Controls.ItemsRepeater sender, Microsoft.UI.Xaml.Controls.ItemsRepeaterElementPreparedEventArgs args)
@@ -75,10 +67,19 @@ namespace Telegram.Views.Popups
             }
             else if (item is PollResultViewModel option)
             {
-                var headered = args.Element as HeaderedControl;
-                headered.Header = $"{option.Text.Text} — {option.VotePercentage}%";
-                headered.Footer = Locale.Declension(option.Type is PollTypeQuiz ? Strings.R.Answer : Strings.R.Vote, option.VoterCount);
-                headered.Visibility = option.VoterCount > 0 ? Visibility.Visible : Visibility.Collapsed;
+                var content = args.Element as Grid;
+                var header = content.Children[0] as RichTextBlock;
+                var footer = content.Children[1] as TextBlock;
+
+                var paragraph = header.Blocks[0] as Paragraph;
+                var span = paragraph.Inlines[0] as Span;
+                var run = paragraph.Inlines[1] as Run;
+
+                CustomEmojiIcon.Add(header, span.Inlines, _clientService, option.Text);
+
+                run.Text = $" — {option.VotePercentage}%";
+                footer.Text = Locale.Declension(option.Type is PollTypeQuiz ? Strings.R.Answer : Strings.R.Vote, option.VoterCount);
+                content.Visibility = option.VoterCount > 0 ? Visibility.Visible : Visibility.Collapsed;
             }
         }
 
