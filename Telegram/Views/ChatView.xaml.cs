@@ -41,7 +41,6 @@ using Telegram.ViewModels.Stories;
 using Telegram.Views.Business;
 using Telegram.Views.Popups;
 using Telegram.Views.Settings;
-using Windows.ApplicationModel;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.Foundation;
 using Windows.UI.Composition;
@@ -3747,6 +3746,8 @@ namespace Telegram.Views
                     ButtonDelete.Visibility = Visibility.Visible;
                     ButtonReport.Visibility = Visibility.Collapsed;
                 }
+
+                ViewModel.RaisePropertyChanged(nameof(ViewModel.SelectedCount));
 
                 ViewModel.SaveDraft(true);
                 ShowHideComposerHeader(false);
