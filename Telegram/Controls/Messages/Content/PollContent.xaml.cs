@@ -245,11 +245,11 @@ namespace Telegram.Controls.Messages.Content
         {
             if (_message.ClientService.TryGetUser(sender, out User user))
             {
-                photo.SetUser(_message.ClientService, user, 20);
+                photo.SetUser(_message.ClientService, user, 18);
             }
             else if (_message.ClientService.TryGetChat(sender, out Chat chat))
             {
-                photo.SetChat(_message.ClientService, chat, 20);
+                photo.SetChat(_message.ClientService, chat, 18);
             }
             else
             {
