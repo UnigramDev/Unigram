@@ -604,8 +604,8 @@ namespace Telegram.Controls.Messages
                     {
                         if (Photo == null)
                         {
-                            Photo = GetTemplateChild(nameof(Photo)) as ProfilePicture;
                             PhotoRoot = GetTemplateChild(nameof(PhotoRoot)) as HyperlinkButton;
+                            Photo = GetTemplateChild(nameof(Photo)) as ProfilePicture;
                             PhotoRoot.Click += Photo_Click;
                         }
 
@@ -3005,8 +3005,8 @@ namespace Telegram.Controls.Messages
 
             if (Photo == null)
             {
-                Photo = GetTemplateChild(nameof(Photo)) as ProfilePicture;
                 PhotoRoot = GetTemplateChild(nameof(PhotoRoot)) as HyperlinkButton;
+                Photo = GetTemplateChild(nameof(Photo)) as ProfilePicture;
                 PhotoRoot.Click += Photo_Click;
             }
 
