@@ -175,6 +175,9 @@ namespace LibVLCSharp.Platforms.Windows
                 return;
             }
 
+            // TODO: this whole code and player doesn't support device loss
+            // This means that device loss CAN'T be recovered without creating a new
+            // LibVLC/MediaPlayer instance and everything else associated.
             SharpDX.DXGI.Factory2 dxgiFactory = null;
             try
             {
