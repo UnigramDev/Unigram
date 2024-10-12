@@ -2729,7 +2729,7 @@ namespace Telegram.Controls.Messages
                     }
                     else
                     {
-                        entities.Add(new TextEntity(start, name.Length, new TextEntityTypeTextUrl(id)));
+                        entities.Add(new TextEntity(start, name.Length, new TextEntityTypeBold()));
                     }
                 }
             }
