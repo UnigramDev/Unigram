@@ -1189,14 +1189,14 @@ namespace Telegram.Common
                         {
                             action();
                         }
-                        catch (InvalidComObjectException)
+                        catch
                         {
-
+                            // Most likely Excep_InvalidComObject_NoRCW_Wrapper, so we can just ignore it
                         }
                     });
                 }
             }
-            catch (InvalidComObjectException)
+            catch
             {
                 // Most likely Excep_InvalidComObject_NoRCW_Wrapper, so we can just ignore it
             }
