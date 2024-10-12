@@ -28,6 +28,7 @@ namespace Telegram.Controls
     public enum ToastPopupIcon
     {
         None,
+        AntiSpam,
         Archived,
         AutoNightOff,
         AutoRemoveOff,

@@ -8982,11 +8982,17 @@ Payments will go directly to the developer of {0}. Telegram cannot provide any g
   <data name="ReportChatPornography" xml:space="preserve">
     <value>Pornography</value>
   </data>
+  <data name="ReportChatSent" xml:space="preserve">
+    <value>Report sent.</value>
+  </data>
   <data name="ReportChatSpam" xml:space="preserve">
     <value>Spam</value>
   </data>
   <data name="ReportChatViolence" xml:space="preserve">
     <value>Violence</value>
+  </data>
+  <data name="Reported2" xml:space="preserve">
+    <value>Telegram moderators will review your report. Thank you!</value>
   </data>
   <data name="ReportFalsePositive" xml:space="preserve">
     <value>Report False Positive</value>

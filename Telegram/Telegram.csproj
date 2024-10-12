@@ -2201,6 +2201,7 @@
     <Content Include="Assets\Toasts\Mute.tgs" />
     <Content Include="Assets\Toasts\MuteFor.tgs" />
     <Content Include="Assets\Toasts\Ban.tgs" />
+    <Content Include="Assets\Toasts\AntiSpam.tgs" />
     <None Include="Assets\Toasts\Pin.tgs" />
     <Content Include="Assets\Toasts\StarsSent.tgs" />
     <Content Include="Assets\Toasts\Unmute.tgs" />

@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Numerics;
+using Telegram.Common;
 using Telegram.Controls;
+using Telegram.Navigation.Services;
 using Telegram.Services;
 using Telegram.Td.Api;
 using Windows.UI.Composition;
@@ -15,6 +17,8 @@ namespace Telegram.Views.Popups
 
     public sealed partial class ReportStoryPopup : ContentPopup
     {
+        private bool _collapsed = true;
+
         private readonly IClientService _clientService;
         private readonly long _storySenderChatId;
         private readonly int _storyId;
@@ -22,9 +26,10 @@ namespace Telegram.Views.Popups
         private readonly Stack<ReportStorySelection> _history = new();
         private ReportStorySelection _selection;
 
-        public ReportStoryPopup(IClientService clientService, long storySenderChatId, int storyId, ReportOption option, string text)
+        public ReportStoryPopup(IClientService clientService, INavigationService navigationService, long storySenderChatId, int storyId, ReportOption option, string text)
         {
             InitializeComponent();
+            XamlRoot = navigationService.XamlRoot;
 
             _clientService = clientService;
             _storySenderChatId = storySenderChatId;
@@ -62,6 +67,12 @@ namespace Telegram.Views.Popups
             _selection = selection;
             Title.Text = selection.Option.Text;
 
+            if (_collapsed && selection.Result is not ReportChatResultOk)
+            {
+                _collapsed = false;
+                _ = this.ShowQueuedAsync(XamlRoot);
+            }
+
             if (selection.Result is ReportStoryResultOptionRequired optionRequired)
             {
                 OptionRoot.Visibility = Visibility.Visible;
@@ -88,6 +99,7 @@ namespace Telegram.Views.Popups
             else if (selection.Result is ReportStoryResultOk)
             {
                 Hide();
+                ToastPopup.Show(XamlRoot, string.Format("**{0}**\n{1}", Strings.ReportChatSent, Strings.Reported2), ToastPopupIcon.AntiSpam);
             }
 
             ShowHideBackButton(_history.Count > 0);

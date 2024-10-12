@@ -182,7 +182,7 @@ namespace Telegram.ViewModels.Stories
 
         public async Task ReportStoryAsync(StoryViewModel story)
         {
-            await ShowPopupAsync(new ReportStoryPopup(ClientService, story.ChatId, story.StoryId, null, string.Empty)
+            await ShowPopupAsync(new ReportStoryPopup(ClientService, NavigationService, story.ChatId, story.StoryId, null, string.Empty)
             {
                 RequestedTheme = ElementTheme.Dark
             });

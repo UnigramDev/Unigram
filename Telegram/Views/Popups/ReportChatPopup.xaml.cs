@@ -1,7 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Numerics;
+using System.Threading.Tasks;
+using Telegram.Common;
 using Telegram.Controls;
+using Telegram.Navigation.Services;
 using Telegram.Services;
 using Telegram.Td.Api;
 using Windows.UI.Composition;
@@ -15,15 +18,19 @@ namespace Telegram.Views.Popups
 
     public sealed partial class ReportChatPopup : ContentPopup
     {
+        private readonly TaskCompletionSource<ReportChatSelection> _task = new();
+        private bool _collapsed = true;
+
         private readonly IClientService _clientService;
         private readonly long _chatId;
 
         private readonly Stack<ReportChatSelection> _history = new();
         private ReportChatSelection _selection;
 
-        public ReportChatPopup(IClientService clientService, long chatId, ReportOption option, IList<long> messageIds, string text)
+        public ReportChatPopup(IClientService clientService, INavigationService navigationService, long chatId, ReportOption option, IList<long> messageIds, string text)
         {
             InitializeComponent();
+            XamlRoot = navigationService.XamlRoot;
 
             _clientService = clientService;
             _chatId = chatId;
@@ -35,7 +42,10 @@ namespace Telegram.Views.Popups
             Continue(option, messageIds, text);
         }
 
-        public ReportChatSelection Selection => _selection;
+        public Task<ReportChatSelection> ReportAsync()
+        {
+            return _task.Task;
+        }
 
         private async void Continue(ReportOption option, IList<long> messageIds, string text)
         {
@@ -61,6 +71,12 @@ namespace Telegram.Views.Popups
         {
             _selection = selection;
             Title.Text = selection.Option.Text;
+
+            if (_collapsed && selection.Result is not ReportChatResultMessagesRequired and not ReportChatResultOk)
+            {
+                _collapsed = false;
+                _ = this.ShowQueuedAsync(XamlRoot);
+            }
 
             if (selection.Result is ReportChatResultOptionRequired optionRequired)
             {
@@ -111,7 +127,13 @@ namespace Telegram.Views.Popups
             }
             else if (selection.Result is ReportChatResultMessagesRequired or ReportChatResultOk)
             {
+                _task.TrySetResult(selection);
                 Hide();
+
+                if (selection.Result is ReportChatResultOk)
+                {
+                    ToastPopup.Show(XamlRoot, string.Format("**{0}**\n{1}", Strings.ReportChatSent, Strings.Reported2), ToastPopupIcon.AntiSpam);
+                }
             }
 
             ShowHideBackButton(_history.Count > 0);
@@ -210,6 +232,11 @@ namespace Telegram.Views.Popups
             visual1.StartAnimation("Scale", scale);
             visual1.StartAnimation("Opacity", opacity);
             batch.End();
+        }
+
+        private void OnClosed(ContentDialog sender, ContentDialogClosedEventArgs args)
+        {
+            _task.TrySetResult(null);
         }
     }
 }

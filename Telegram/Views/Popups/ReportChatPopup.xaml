@@ -7,7 +7,8 @@
                        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
                        mc:Ignorable="d"
                        Padding="0"
-                       IsDismissButtonVisible="True">
+                       IsDismissButtonVisible="True"
+                       Closed="OnClosed">
 
     <Grid>
         <Grid.RowDefinitions>

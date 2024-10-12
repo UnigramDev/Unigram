@@ -3836,18 +3836,17 @@ namespace Telegram.ViewModels
             ReportChatPopup popup;
             if (IsReportingMessages is ReportChatSelection selection)
             {
-                popup = new ReportChatPopup(ClientService, chat.Id, IsReportingMessages?.Option, messages, selection.Text);
+                popup = new ReportChatPopup(ClientService, NavigationService, chat.Id, IsReportingMessages?.Option, messages, selection.Text);
             }
             else
             {
-                popup = new ReportChatPopup(ClientService, chat.Id, null, messages, string.Empty);
+                popup = new ReportChatPopup(ClientService, NavigationService, chat.Id, null, messages, string.Empty);
             }
 
-            await ShowPopupAsync(popup);
-
-            if (popup.Selection?.Result is ReportChatResultMessagesRequired)
+            var report = await popup.ReportAsync();
+            if (report?.Result is ReportChatResultMessagesRequired)
             {
-                ShowHideSelection(true, popup.Selection);
+                ShowHideSelection(true, report);
             }
             else if (IsReportingMessages != null)
             {
