@@ -27,7 +27,6 @@
                 Grid.RowSpan="2" />
 
         <controls:ProfilePicture x:Name="Photo"
-                                 IsEnabled="False"
                                  Width="24"
                                  Height="24"
                                  HorizontalAlignment="Left"

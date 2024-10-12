@@ -2896,7 +2896,6 @@ namespace Telegram.Views
                     var picture = new ProfilePicture();
                     picture.Width = 24;
                     picture.Height = 24;
-                    picture.IsEnabled = false;
                     picture.SetUser(message.ClientService, user, 24);
                     picture.Margin = new Thickness(pictures.Children.Count > 0 ? -10 : 0, -2, 0, -2);
 
@@ -4349,7 +4348,6 @@ namespace Telegram.Views
                 {
                     UnloadObject(Icon);
                     Photo.Source = PlaceholderImage.GetGlyph(Icons.ArrowReplyFilled, 5);
-                    Photo.IsEnabled = false;
                 }
             }
             else if (ViewModel.Type == DialogType.SavedMessagesTopic)
@@ -4369,14 +4367,12 @@ namespace Telegram.Views
                 else if (ViewModel.SavedMessagesTopic?.Type is SavedMessagesTopicTypeSavedFromChat savedFromChat && ViewModel.ClientService.TryGetChat(savedFromChat.ChatId, out Chat savedChat))
                 {
                     Photo.SetChat(ViewModel.ClientService, savedChat, 36);
-                    Photo.IsEnabled = true;
                 }
             }
             else
             {
                 UnloadObject(Icon);
                 Photo.SetChat(ViewModel.ClientService, chat, 36);
-                Photo.IsEnabled = true;
             }
         }
 
@@ -5701,7 +5697,6 @@ namespace Telegram.Views
                     var picture = new ProfilePicture();
                     picture.Width = 36;
                     picture.Height = 36;
-                    picture.IsEnabled = false;
                     picture.Margin = new Thickness(-4, -2, 0, -2);
 
                     var item = new MenuFlyoutProfile();

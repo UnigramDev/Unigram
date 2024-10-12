@@ -97,8 +97,7 @@
                     <ColumnDefinition />
                     <ColumnDefinition Width="Auto" />
                 </Grid.ColumnDefinitions>
-                <controls:ProfilePicture IsEnabled="False"
-                                         Width="28"
+                <controls:ProfilePicture Width="28"
                                          Height="28"
                                          Margin="10,0,10,0" />
                 <Rectangle x:Name="SelectionIndicator"
@@ -209,7 +208,6 @@
                           Grid.Column="2" />
 
                 <controls:ProfilePicture x:Name="Photo"
-                                         Click="Photo_Click"
                                          Margin="0,0,12,0"
                                          Width="48"
                                          Height="48" />

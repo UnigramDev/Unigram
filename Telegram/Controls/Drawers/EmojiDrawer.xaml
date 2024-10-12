@@ -6,7 +6,6 @@
              xmlns:common="using:Telegram.Common"
              xmlns:controls="using:Telegram.Controls"
              xmlns:selectors="using:Telegram.Selectors"
-             xmlns:viewModels="using:Telegram.ViewModels.Drawers"
              mc:Ignorable="d"
              d:DesignHeight="300"
              d:DesignWidth="400">
@@ -455,8 +454,7 @@
                         </selectors:StickerSetTemplateSelector.ItemTemplate>
                         <selectors:StickerSetTemplateSelector.GroupTemplate>
                             <DataTemplate>
-                                <controls:ProfilePicture Margin="6"
-                                                         IsEnabled="False" />
+                                <controls:ProfilePicture Margin="6" />
                             </DataTemplate>
                         </selectors:StickerSetTemplateSelector.GroupTemplate>
                         <selectors:StickerSetTemplateSelector.RecentsTemplate>

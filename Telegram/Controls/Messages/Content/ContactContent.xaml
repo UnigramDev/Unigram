@@ -1,9 +1,9 @@
 <ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-                    xmlns:local="using:Telegram.Controls.Messages.Content"
-                    xmlns:controls="using:Telegram.Controls"
                     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                    xmlns:controls="using:Telegram.Controls"
+                    xmlns:local="using:Telegram.Controls.Messages.Content"
                     mc:Ignorable="d"
                     d:DesignHeight="300"
                     d:DesignWidth="400">
@@ -25,9 +25,14 @@
                             <RowDefinition Height="Auto" />
                             <RowDefinition Height="Auto" />
                         </Grid.RowDefinitions>
-                        <controls:ProfilePicture x:Name="Photo"
-                                                 Width="48"
-                                                 Height="48" />
+                        <HyperlinkButton x:Name="PhotoRoot"
+                                         Style="{StaticResource EmptyHyperlinkButtonStyle}"
+                                         Width="48"
+                                         Height="48">
+                            <controls:ProfilePicture x:Name="Photo"
+                                                     Width="48"
+                                                     Height="48" />
+                        </HyperlinkButton>
 
                         <StackPanel Margin="8,0,0,2"
                                     VerticalAlignment="Center"

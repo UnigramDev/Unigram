@@ -1252,11 +1252,6 @@ namespace Telegram.Views.Host
                 }
             }
         }
-
-        private void Photo_Click(object sender, RoutedEventArgs e)
-        {
-            IsPaneOpen = false;
-        }
     }
 
     public interface IRootContentPage

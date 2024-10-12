@@ -1,12 +1,11 @@
 ﻿<UserControl x:Class="Telegram.Controls.Stories.StoryContent"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:local="using:Telegram.Controls.Stories"
-             xmlns:controls="using:Telegram.Controls"
-             xmlns:common="using:Telegram.Common"
-             xmlns:vlc="using:LibVLCSharp.Platforms.Windows"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vlc="using:LibVLCSharp.Platforms.Windows"
+             xmlns:controls="using:Telegram.Controls"
+             xmlns:local="using:Telegram.Controls.Stories"
              mc:Ignorable="d"
              d:DesignHeight="300"
              d:DesignWidth="400"
@@ -113,14 +112,18 @@
                     <ColumnDefinition Width="Auto" />
                 </Grid.ColumnDefinitions>
 
-                <controls:ProfilePicture x:Name="Photo"
-                                         Click="Photo_Click"
-                                         AutomationProperties.Name="{CustomResource AccDescrProfilePicture}"
-                                         Width="32"
-                                         Height="32"
-                                         HorizontalAlignment="Center"
-                                         Margin="8,0,8,0"
-                                         Canvas.ZIndex="1" />
+                <HyperlinkButton Click="Photo_Click"
+                                 Style="{StaticResource EmptyHyperlinkButtonStyle}"
+                                 AutomationProperties.Name="{CustomResource AccDescrProfilePicture}"
+                                 Width="32"
+                                 Height="32"
+                                 HorizontalAlignment="Center"
+                                 Margin="8,0,8,0"
+                                 Canvas.ZIndex="1">
+                    <controls:ProfilePicture x:Name="Photo"
+                                             Width="32"
+                                             Height="32" />
+                </HyperlinkButton>
 
                 <Grid Grid.Column="1"
                       VerticalAlignment="Center"
@@ -290,7 +293,6 @@
                                                     Width="48"
                                                     Height="48">
                         <controls:ProfilePicture x:Name="PhotoMini"
-                                                 IsEnabled="False"
                                                  Width="48"
                                                  Height="48" />
                     </controls:ActiveStoriesSegments>

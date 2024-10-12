@@ -27,7 +27,7 @@ namespace Telegram.Controls
         Superellipse
     }
 
-    public partial class ProfilePicture : HyperlinkButton
+    public partial class ProfilePicture : Control
     {
         private long _fileToken;
         private int? _fileId;

@@ -118,7 +118,6 @@ namespace Telegram.Views.Supergroups.Popups
                     Width = 28,
                     Height = 28,
                     Margin = new Thickness(0, -4, 8, 0),
-                    IsEnabled = false
                 };
 
                 photo.SetUser(_clientService, sender, 28);

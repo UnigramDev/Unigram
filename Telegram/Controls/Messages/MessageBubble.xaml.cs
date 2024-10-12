@@ -120,6 +120,7 @@ namespace Telegram.Controls.Messages
 
         // Lazy loaded
         private ProfilePicture Photo;
+        private HyperlinkButton PhotoRoot;
 
         private Border BackgroundPanel;
         private Border CrossPanel;
@@ -604,7 +605,8 @@ namespace Telegram.Controls.Messages
                         if (Photo == null)
                         {
                             Photo = GetTemplateChild(nameof(Photo)) as ProfilePicture;
-                            Photo.Click += Photo_Click;
+                            PhotoRoot = GetTemplateChild(nameof(PhotoRoot)) as HyperlinkButton;
+                            PhotoRoot.Click += Photo_Click;
                         }
 
                         _photoId = message.Id;
@@ -630,7 +632,7 @@ namespace Telegram.Controls.Messages
                 if (Photo != null)
                 {
                     _photoId = null;
-                    UnloadObject(ref Photo);
+                    UnloadObject(ref PhotoRoot);
                 }
 
                 if (PhotoColumn.Width.IsAbsolute)
@@ -1352,7 +1354,6 @@ namespace Telegram.Controls.Messages
                     var picture = new ProfilePicture();
                     picture.Width = 24;
                     picture.Height = 24;
-                    picture.IsEnabled = false;
 
                     if (message.ClientService.TryGetUser(sender, out User senderUser))
                     {
@@ -3005,7 +3006,8 @@ namespace Telegram.Controls.Messages
             if (Photo == null)
             {
                 Photo = GetTemplateChild(nameof(Photo)) as ProfilePicture;
-                Photo.Click += Photo_Click;
+                PhotoRoot = GetTemplateChild(nameof(PhotoRoot)) as HyperlinkButton;
+                PhotoRoot.Click += Photo_Click;
             }
 
             Photo.Visibility = Visibility.Visible;

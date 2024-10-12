@@ -3,13 +3,12 @@
                         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
                         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-                        xmlns:local="using:Telegram.Views"
                         xmlns:icons="using:Telegram.Assets.Icons"
                         xmlns:common="using:Telegram.Common"
                         xmlns:controls="using:Telegram.Controls"
                         xmlns:chats="using:Telegram.Controls.Chats"
                         xmlns:messages="using:Telegram.Controls.Messages"
-                        xmlns:selectors="using:Telegram.Selectors"
+                        xmlns:local="using:Telegram.Views"
                         mc:Ignorable="d"
                         Connected="OnLoaded"
                         Disconnected="OnUnloaded"
@@ -209,7 +208,6 @@
                                                     Height="120"
                                                     Margin="0,10,0,12">
                         <controls:ProfilePicture x:Name="Photo"
-                                                 IsEnabled="False"
                                                  Width="120"
                                                  Height="120" />
                     </controls:ActiveStoriesSegments>
@@ -606,7 +604,6 @@
                                                 AutomationProperties.Name="{CustomResource AccDescrProfilePicture}"
                                                 Grid.Column="1">
                     <controls:ProfilePicture x:Name="Photo"
-                                             IsEnabled="False"
                                              Width="36"
                                              Height="36" />
                 </controls:ActiveStoriesSegments>
@@ -1141,7 +1138,6 @@
                                          Margin="0,8,0,8"
                                          Grid.Row="1">
                         <controls:ProfilePicture x:Name="PhotoMore"
-                                                 IsEnabled="False"
                                                  Width="32"
                                                  Height="32" />
                     </controls:MenuButton>

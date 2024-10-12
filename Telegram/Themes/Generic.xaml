@@ -4325,6 +4325,8 @@
     </Style>
 
     <Style TargetType="local:ProfilePicture">
+        <Setter Property="IsTabStop"
+                Value="False" />
         <Setter Property="UseSystemFocusVisuals"
                 Value="{StaticResource UseSystemFocusVisuals}" />
         <Setter Property="FocusVisualMargin"

@@ -752,7 +752,12 @@ namespace Telegram.Controls.Stories
 
         private void Photo_Click(object sender, RoutedEventArgs e)
         {
-
+            var parent = this.GetParent<StoriesWindow>();
+            if (parent != null)
+            {
+                parent.TryHide(ContentDialogResult.Primary);
+                parent.ViewModel.NavigationService.NavigateToChat(ViewModel.Chat);
+            }
         }
 
 

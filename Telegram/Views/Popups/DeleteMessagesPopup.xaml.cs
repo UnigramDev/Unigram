@@ -262,7 +262,6 @@ namespace Telegram.Views.Popups
                     Width = 28,
                     Height = 28,
                     Margin = new Thickness(0, -4, 8, 0),
-                    IsEnabled = false
                 };
 
                 photo.SetMessageSender(_clientService, sender, 28);
