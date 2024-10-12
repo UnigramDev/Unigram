@@ -17,6 +17,7 @@
 #include <winrt/Microsoft.Graphics.Canvas.h>
 #include <winrt/Microsoft.Graphics.Canvas.Effects.h>
 #include <winrt/Windows.Storage.h>
+#include <winrt/Windows.System.h>
 
 #include <winrt/Windows.UI.Xaml.h>
 
@@ -86,7 +87,30 @@ struct VoipVideoOutput : public rtc::VideoSinkInterface<webrtc::VideoFrame>
     }
 
     CanvasDevice m_canvasDevice;
+    CompositionSurfaceBrush m_brush{ nullptr };
     CompositionDrawingSurface m_surface{ nullptr };
+
+    void UpdateBrushSurface()
+    {
+        winrt::slim_lock_guard const guard(m_lock);
+        m_brush.Surface(m_surface);
+    }
+
+    void HandleDeviceLost()
+    {
+        if (m_canvasDevice.IsDeviceLost())
+        {
+            ReleaseShader();
+
+            m_canvasDevice = CanvasDevice();
+
+            auto compositor = m_brush.Compositor();
+            auto compositionGraphicsDevice = CanvasComposition::CreateCompositionGraphicsDevice(compositor, m_canvasDevice);
+
+            m_surface = compositionGraphicsDevice.CreateDrawingSurface({ 0, 0 }, DirectXPixelFormat::B8G8R8A8UIntNormalized, DirectXAlphaMode::Premultiplied);
+            m_brush.DispatcherQueue().TryEnqueue({ this, &VoipVideoOutput::UpdateBrushSurface });
+        }
+    }
 
     VoipVideoOutput(SpriteVisual visual, bool mirrored)
     {
@@ -94,16 +118,15 @@ struct VoipVideoOutput : public rtc::VideoSinkInterface<webrtc::VideoFrame>
         m_mirrored = mirrored;
 
         auto compositor = visual.Compositor();
-
         auto compositionGraphicsDevice = CanvasComposition::CreateCompositionGraphicsDevice(compositor, m_canvasDevice);
+
         m_surface = compositionGraphicsDevice.CreateDrawingSurface({ 0, 0 }, DirectXPixelFormat::B8G8R8A8UIntNormalized, DirectXAlphaMode::Premultiplied);
+        m_brush = compositor.CreateSurfaceBrush(m_surface);
+        m_brush.HorizontalAlignmentRatio(.5);
+        m_brush.VerticalAlignmentRatio(.5);
+        m_brush.Stretch(winrt::Windows::UI::Composition::CompositionStretch::Uniform);
 
-        auto brush = compositor.CreateSurfaceBrush(m_surface);
-        brush.HorizontalAlignmentRatio(.5);
-        brush.VerticalAlignmentRatio(.5);
-        brush.Stretch(winrt::Windows::UI::Composition::CompositionStretch::Uniform);
-
-        visual.Brush(brush);
+        visual.Brush(m_brush);
     }
 
     ~VoipVideoOutput()
@@ -228,7 +251,7 @@ struct VoipVideoOutput : public rtc::VideoSinkInterface<webrtc::VideoFrame>
         }
         catch (...)
         {
-            ReleaseShader();
+            HandleDeviceLost();
         }
     }
 };
