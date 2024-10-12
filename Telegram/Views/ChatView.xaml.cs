@@ -2577,15 +2577,7 @@ namespace Telegram.Views
                     bot = senderUser.Type is UserTypeBot;
                 }
 
-                if (CanGetMessageReadDate(message, properties))
-                {
-                    LoadMessageReadDate(message, properties, flyout);
-                }
-                else if (CanGetMessageViewers(message, properties))
-                {
-                    LoadMessageViewers(message, properties, flyout);
-                }
-                else if (message.EditDate != 0 && message.ViaBotUserId == 0 && !bot && message.ReplyMarkup is not ReplyMarkupInlineKeyboard && !message.IsOutgoing)
+                if (message.EditDate != 0 && message.ViaBotUserId == 0 && !bot && message.ReplyMarkup is not ReplyMarkupInlineKeyboard && !message.IsOutgoing)
                 {
                     var placeholder = new MenuFlyoutItem();
                     placeholder.Text = Formatter.EditDate(message.EditDate);
@@ -2595,7 +2587,7 @@ namespace Telegram.Views
                     flyout.Items.Add(placeholder);
                     flyout.CreateFlyoutSeparator();
                 }
-                else if (message.ForwardInfo != null && !message.IsSaved && !message.IsVerificationCode)
+                else if (message.ForwardInfo != null && !message.IsSaved && !message.IsVerificationCode && !message.IsOutgoing)
                 {
                     var placeholder = new MenuFlyoutItem();
                     placeholder.Text = Formatter.ForwardDate(message.ForwardInfo.Date);
@@ -2606,6 +2598,15 @@ namespace Telegram.Views
                     flyout.CreateFlyoutSeparator();
                 }
 
+                if (CanGetMessageReadDate(message, properties))
+                {
+                    LoadMessageReadDate(message, properties, flyout);
+                }
+                else if (CanGetMessageViewers(message, properties))
+                {
+                    LoadMessageViewers(message, properties, flyout);
+                }
+                
                 MessageQuote quote = null;
                 if (selectionEnd - selectionStart > 0)
                 {
