@@ -264,7 +264,7 @@ namespace Telegram.Views.Calls
                 return;
             }
 
-            TitleInfo.Text = _call.Title.Length > 0 ? _call.Title : _call.ClientService.GetTitle(_call.Chat);
+            TitleInfo.Text = _call.GetTitle();
 
             if (_call.ScheduledStartDate != 0)
             {
@@ -412,7 +412,7 @@ namespace Telegram.Views.Calls
 
             //flyout.CreateFlyoutItem(ShareInviteLink, Strings.VoipGroupShareInviteLink, Icons.Link);
 
-            if (_call.Chat.Type is ChatTypeSupergroup && _call.ClientService.TryGetSupergroup(_call.Chat, out Supergroup supergroup))
+            if (_call.ClientService.TryGetSupergroup(_call.Chat, out Supergroup supergroup))
             {
                 if (supergroup.Status is ChatMemberStatusCreator)
                 {
@@ -420,7 +420,7 @@ namespace Telegram.Views.Calls
                     flyout.CreateFlyoutItem(StreamWith, Strings.VoipStreamWith, Icons.Live);
                 }
             }
-            else if (_call.Chat.Type is ChatTypeBasicGroup && _call.ClientService.TryGetBasicGroup(_call.Chat, out BasicGroup basicGroup))
+            else if (_call.ClientService.TryGetBasicGroup(_call.Chat, out BasicGroup basicGroup))
             {
                 if (basicGroup.Status is ChatMemberStatusCreator)
                 {

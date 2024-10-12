@@ -786,7 +786,7 @@ namespace Telegram.Views.Calls
                 return;
             }
 
-            TitleInfo.Text = call.Title.Length > 0 ? call.Title : _call.ClientService.GetTitle(_call.Chat);
+            TitleInfo.Text = call.GetTitle();
 
             RecordingInfo.Visibility = call.RecordDuration > 0 ? Visibility.Visible : Visibility.Collapsed;
 

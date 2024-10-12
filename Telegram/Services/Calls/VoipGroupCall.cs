@@ -860,6 +860,16 @@ namespace Telegram.Services.Calls
             }
         }
 
+        public string GetTitle()
+        {
+            if (string.IsNullOrEmpty(Title) && ClientService.TryGetChat(Chat.Id, out Chat chat))
+            {
+                return chat.Title;
+            }
+
+            return Title;
+        }
+
         public Chat Chat => _chat;
         public bool IsChannel => IsRtmpStream is true || (_chat?.Type is ChatTypeSupergroup super && super.IsChannel);
         //public GroupCall Call => _call;

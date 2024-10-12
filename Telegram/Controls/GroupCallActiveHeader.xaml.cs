@@ -83,7 +83,7 @@ namespace Telegram.Controls
                 Audio.Visibility = Visibility.Visible;
                 Dismiss.Visibility = Visibility.Visible;
 
-                TitleInfo.Text = newGroupCall.Title.Length > 0 ? newGroupCall.Title : newGroupCall.ClientService.GetTitle(newGroupCall.Chat);
+                TitleInfo.Text = newGroupCall.GetTitle();
                 Audio.IsChecked = !newGroupCall.IsMuted;
                 Automation.SetToolTip(Audio, newGroupCall.IsMuted ? Strings.VoipGroupUnmute : Strings.VoipGroupMute);
             }
