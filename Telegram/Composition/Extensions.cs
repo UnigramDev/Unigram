@@ -20,6 +20,18 @@ namespace Windows.UI.Xaml.Hosting
 
             return ElementCompositionPreview.GetElementVisual(element);
         }
+
+        public static void SetElementChildVisual(UIElement element, Visual visual)
+        {
+            try
+            {
+                ElementCompositionPreview.SetElementChildVisual(element, visual);
+            }
+            catch
+            {
+                // TODO
+            }
+        }
     }
 }
 

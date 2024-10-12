@@ -240,10 +240,10 @@ namespace Telegram.Controls
 
             _label.Text = newValue;
 
-            if (_hasContainer && (clearContainer || !animate))
+            if (_hasContainer && (clearContainer || !animate) && this.IsConnected())
             {
                 _hasContainer = false;
-                ElementCompositionPreview.SetElementChildVisual(RootGrid, null);
+                ElementComposition.SetElementChildVisual(RootGrid, null);
             }
         }
 
