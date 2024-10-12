@@ -23,7 +23,7 @@ namespace Telegram.Collections
         private readonly object _sender;
 
         private readonly DisposableMutex _mutex = new();
-        private CancellationTokenSource _token;
+        private CancellationTokenSource _cancellation;
 
         private TSource _source;
         private ISupportIncrementalLoading _incrementalSource;
@@ -47,7 +47,13 @@ namespace Telegram.Collections
         public string Query
         {
             get => _query;
-            set => _query.Set(value);
+            set
+            {
+                _cancellation?.Cancel();
+                _cancellation = new();
+
+                _query.Set(value, _cancellation.Token);
+            }
         }
 
         public TSource Source => _source;
@@ -61,46 +67,37 @@ namespace Telegram.Collections
         public void UpdateQuery(string value)
         {
             _query.Value = value;
-
             Update(_factory(_sender ?? this, value));
-            OnPropertyChanged(new PropertyChangedEventArgs(nameof(Query)));
+            //OnPropertyChanged(new PropertyChangedEventArgs(nameof(Query)));
         }
 
         public async void Update(TSource source)
         {
-            _token?.Cancel();
-
             if (source is ISupportIncrementalLoading incremental && incremental.HasMoreItems)
             {
-                var token = new CancellationTokenSource();
-
-                _token = token;
+                var token = _cancellation;
 
                 _source = source;
                 _incrementalSource = incremental;
 
                 if (_initialized)
                 {
-                    using (await _mutex.WaitAsync())
+                    await incremental.LoadMoreItemsAsync(0);
+                    var diff = await Task.Run(() => DiffUtil.CalculateDiff(this, source, DefaultDiffHandler, DefaultOptions));
+
+                    if (token.IsCancellationRequested)
                     {
-                        await incremental.LoadMoreItemsAsync(0);
+                        return;
+                    }
 
-                        // 100% redundant
-                        if (token.IsCancellationRequested)
-                        {
-                            return;
-                        }
+                    ReplaceDiff(diff);
+                    UpdateEmpty();
 
-                        var diff = await Task.Run(() => DiffUtil.CalculateDiff(this, source, DefaultDiffHandler, DefaultOptions));
-                        ReplaceDiff(diff);
-                        UpdateEmpty();
-
-                        if (Count < 1 && incremental.HasMoreItems)
-                        {
-                            // This is 100% illegal and will cause a lot
-                            // but really a lot of problems for sure.
-                            Add(default);
-                        }
+                    if (Count < 1 && incremental.HasMoreItems)
+                    {
+                        // This is 100% illegal and will cause a lot
+                        // but really a lot of problems for sure.
+                        Add(default);
                     }
                 }
             }
@@ -110,29 +107,26 @@ namespace Telegram.Collections
         {
             return AsyncInfo.Run(async _ =>
             {
-                using (await _mutex.WaitAsync())
+                _initialized = true;
+                _cancellation?.Cancel();
+
+                var token = _cancellation = new CancellationTokenSource();
+                var result = await _incrementalSource?.LoadMoreItemsAsync(count);
+
+                if (result.Count > 0 && !token.IsCancellationRequested)
                 {
-                    _initialized = true;
-                    _token?.Cancel();
+                    var diff = await Task.Run(() => DiffUtil.CalculateDiff(this, _source, DefaultDiffHandler, DefaultOptions));
 
-                    var token = _token = new CancellationTokenSource();
-                    var result = await _incrementalSource?.LoadMoreItemsAsync(count);
-
-                    // 100% redundant
                     if (token.IsCancellationRequested)
                     {
                         return result;
                     }
 
-                    if (result.Count > 0)
-                    {
-                        var diff = await Task.Run(() => DiffUtil.CalculateDiff(this, _source, DefaultDiffHandler, DefaultOptions));
-                        ReplaceDiff(diff);
-                        UpdateEmpty();
-                    }
-
-                    return result;
+                    ReplaceDiff(diff);
+                    UpdateEmpty();
                 }
+
+                return result;
             });
         }
 

@@ -225,8 +225,13 @@ namespace Telegram.Services.Settings
                 var aggregator = TypeResolver.Current.Resolve<IEventAggregator>();
                 var clientService = TypeResolver.Current.Resolve<IClientService>();
 
-                var dark = theme == ElementTheme.Dark;
-                aggregator.Publish(new UpdateDefaultBackground(dark, clientService.GetDefaultBackground(dark)));
+                if (aggregator != null && clientService != null)
+                {
+                    var dark = theme == ElementTheme.Dark;
+                    var background = clientService.GetDefaultBackground(dark);
+
+                    aggregator.Publish(new UpdateDefaultBackground(dark, background));
+                }
             }
         }
 
