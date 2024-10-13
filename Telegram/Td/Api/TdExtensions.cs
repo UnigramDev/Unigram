@@ -2491,21 +2491,31 @@ namespace Telegram.Td.Api
             return basicGroup.Status is ChatMemberStatusCreator || basicGroup.Status is ChatMemberStatusAdministrator administrator && administrator.Rights.CanDeleteMessages;
         }
 
-        public static bool CanChangeInfo(this BasicGroup basicGroup)
+        public static bool CanChangeInfo(this BasicGroup basicGroup, Chat chat)
         {
             if (basicGroup.Status == null)
             {
                 return false;
             }
 
+            if (basicGroup.Status is ChatMemberStatusMember)
+            {
+                return chat.Permissions.CanChangeInfo;
+            }
+
             return basicGroup.Status is ChatMemberStatusCreator || basicGroup.Status is ChatMemberStatusAdministrator administrator && administrator.Rights.CanChangeInfo;
         }
 
-        public static bool CanChangeInfo(this Supergroup supergroup)
+        public static bool CanChangeInfo(this Supergroup supergroup, Chat chat)
         {
             if (supergroup.Status == null)
             {
                 return false;
+            }
+
+            if (supergroup.Status is ChatMemberStatusMember)
+            {
+                return chat.Permissions.CanChangeInfo;
             }
 
             return supergroup.Status is ChatMemberStatusCreator || supergroup.Status is ChatMemberStatusAdministrator administrator && administrator.Rights.CanChangeInfo;

@@ -83,12 +83,16 @@ namespace Telegram.Views.Supergroups
 
         public void UpdateSupergroup(Chat chat, Supergroup group)
         {
-            AntiSpam.Visibility = group.CanDeleteMessages() && !group.IsChannel ? Visibility.Visible : Visibility.Collapsed;
-            ChannelSignMessages.Visibility = group.CanChangeInfo() && group.IsChannel ? Visibility.Visible : Visibility.Collapsed;
+            var canDeleteMessages = group.CanDeleteMessages();
+            var canChangeInfo = group.CanChangeInfo(chat);
+            var canPromoteMembers = group.CanPromoteMembers();
+
+            AntiSpam.Visibility = canDeleteMessages && !group.IsChannel ? Visibility.Visible : Visibility.Collapsed;
+            ChannelSignMessages.Visibility = canChangeInfo && group.IsChannel ? Visibility.Visible : Visibility.Collapsed;
 
             EventLog.Visibility = Visibility.Visible;
-            AddNew.Visibility = group.CanPromoteMembers() ? Visibility.Visible : Visibility.Collapsed;
-            Footer.Visibility = group.CanPromoteMembers() ? Visibility.Visible : Visibility.Collapsed;
+            AddNew.Visibility = canPromoteMembers ? Visibility.Visible : Visibility.Collapsed;
+            Footer.Visibility = canPromoteMembers ? Visibility.Visible : Visibility.Collapsed;
             Footer.Text = group.IsChannel ? Strings.ChannelAdminsInfo : Strings.MegaAdminsInfo;
 
             HeaderPanel.Visibility = Visibility.Visible;
@@ -106,13 +110,15 @@ namespace Telegram.Views.Supergroups
 
         public void UpdateBasicGroup(Chat chat, BasicGroup group)
         {
+            var canPromoteMembers = group.CanPromoteMembers();
+
             HeaderPanel.Footer = string.Empty;
             AntiSpam.Visibility = Visibility.Collapsed;
             ChannelSignMessages.Visibility = Visibility.Collapsed;
 
             EventLog.Visibility = Visibility.Collapsed;
-            AddNew.Visibility = group.CanPromoteMembers() ? Visibility.Visible : Visibility.Collapsed;
-            Footer.Visibility = group.CanPromoteMembers() ? Visibility.Visible : Visibility.Collapsed;
+            AddNew.Visibility = canPromoteMembers ? Visibility.Visible : Visibility.Collapsed;
+            Footer.Visibility = canPromoteMembers ? Visibility.Visible : Visibility.Collapsed;
             Footer.Text = Strings.MegaAdminsInfo;
 
             HeaderPanel.Visibility = EventLog.Visibility == Visibility.Visible || AddNew.Visibility == Visibility.Visible

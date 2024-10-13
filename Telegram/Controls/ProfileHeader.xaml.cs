@@ -1184,7 +1184,7 @@ namespace Telegram.Controls
             var basicGroup = chat.Type is ChatTypeBasicGroup basicGroupType ? ViewModel.ClientService.GetBasicGroup(basicGroupType.BasicGroupId) : null;
             var supergroup = chat.Type is ChatTypeSupergroup supergroupType ? ViewModel.ClientService.GetSupergroup(supergroupType.SupergroupId) : null;
 
-            if ((user != null && user.Type is not UserTypeBot) || (basicGroup != null && basicGroup.CanChangeInfo()) || (supergroup != null && supergroup.CanChangeInfo()))
+            if ((user != null && user.Type is not UserTypeBot) || (basicGroup != null && basicGroup.CanChangeInfo(chat)) || (supergroup != null && supergroup.CanChangeInfo(chat)))
             {
                 var icon = chat.MessageAutoDeleteTime switch
                 {
@@ -1354,7 +1354,10 @@ namespace Telegram.Controls
                     flyout.CreateFlyoutItem(ViewModel.Invite, Strings.AddMember, Icons.PersonAdd);
                 }
 
-                flyout.CreateFlyoutItem(ViewModel.OpenMembers, Strings.SearchMembers, Icons.Search);
+                if (basicGroup.Status is ChatMemberStatusMember or ChatMemberStatusRestricted)
+                {
+                    flyout.CreateFlyoutItem(ViewModel.DeleteChat, Strings.DeleteAndExit, Icons.Delete, destructive: true);
+                }
             }
 
             //flyout.CreateFlyoutItem(null, Strings.AddShortcut, Icons.Pin);
