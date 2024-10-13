@@ -27,7 +27,7 @@
                                          Width="64" />
             </HyperlinkButton>
 
-            <TextBlock Text="{CustomResource NewChannel}"
+            <TextBlock Text="{CustomResource NewGroup}"
                        Style="{StaticResource PopupTextBlockStyle}"
                        VerticalAlignment="Center"
                        Margin="12,0,0,0"

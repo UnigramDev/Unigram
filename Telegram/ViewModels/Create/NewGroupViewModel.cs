@@ -96,13 +96,13 @@ namespace Telegram.ViewModels.Create
             new SettingsOptionItem<int>(60 * 60 * 24 * 7 * 1, Locale.FormatTtl(60 * 60 * 24 * 7)),
             new SettingsOptionItem<int>(60 * 60 * 24 * 7 * 2, Locale.FormatTtl(60 * 60 * 24 * 7 * 2)),
             new SettingsOptionItem<int>(60 * 60 * 24 * 7 * 3, Locale.FormatTtl(60 * 60 * 24 * 7 * 3)),
-            new SettingsOptionItem<int>(60 * 60 * 24 * 7 * 31 * 1, Locale.FormatTtl(60 * 60 * 24 * 7 * 31)),
-            new SettingsOptionItem<int>(60 * 60 * 24 * 7 * 31 * 2, Locale.FormatTtl(60 * 60 * 24 * 7 * 31 * 2)),
-            new SettingsOptionItem<int>(60 * 60 * 24 * 7 * 31 * 3, Locale.FormatTtl(60 * 60 * 24 * 7 * 31 * 3)),
-            new SettingsOptionItem<int>(60 * 60 * 24 * 7 * 31 * 4, Locale.FormatTtl(60 * 60 * 24 * 7 * 31 * 4)),
-            new SettingsOptionItem<int>(60 * 60 * 24 * 7 * 31 * 5, Locale.FormatTtl(60 * 60 * 24 * 7 * 31 * 5)),
-            new SettingsOptionItem<int>(60 * 60 * 24 * 7 * 31 * 5, Locale.FormatTtl(60 * 60 * 24 * 7 * 31 * 6)),
-            new SettingsOptionItem<int>(60 * 60 * 24 * 7 * 365, Locale.FormatTtl(60 * 60 * 24 * 7 * 365)),
+            new SettingsOptionItem<int>(60 * 60 * 24 * 30, Locale.FormatTtl(60 * 60 * 24 * 31)),
+            new SettingsOptionItem<int>(60 * 60 * 24 * 30 * 2, Locale.FormatTtl(60 * 60 * 24 * 31 * 2)),
+            new SettingsOptionItem<int>(60 * 60 * 24 * 30 * 3, Locale.FormatTtl(60 * 60 * 24 * 31 * 3)),
+            new SettingsOptionItem<int>(60 * 60 * 24 * 30 * 4, Locale.FormatTtl(60 * 60 * 24 * 31 * 4)),
+            new SettingsOptionItem<int>(60 * 60 * 24 * 30 * 5, Locale.FormatTtl(60 * 60 * 24 * 31 * 5)),
+            new SettingsOptionItem<int>(60 * 60 * 24 * 30 * 6, Locale.FormatTtl(60 * 60 * 24 * 31 * 6)),
+            new SettingsOptionItem<int>(60 * 60 * 24 * 365, Locale.FormatTtl(60 * 60 * 24 * 365)),
         };
 
         public bool CanCreate => !string.IsNullOrWhiteSpace(Title);
