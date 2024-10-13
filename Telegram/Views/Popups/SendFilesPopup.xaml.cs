@@ -73,10 +73,10 @@ namespace Telegram.Views.Popups
             {
                 if (IsMediaSelected)
                 {
-                    return Items.Count > 1 && Items.Count <= 10 && Items.All(x => (x is StoragePhoto || x is StorageVideo) && x.Ttl == null);
+                    return Items.Count > 1 && Items.All(x => (x is StoragePhoto || x is StorageVideo) && x.Ttl == null);
                 }
 
-                return Items.Count is > 1 and <= 10;
+                return Items.Count > 1;
             }
         }
         public bool IsTtlAvailable { get; }
@@ -1087,8 +1087,8 @@ namespace Telegram.Views.Popups
         public const double MAX_WIDTH = 320 + ITEM_MARGIN;
         public const double MAX_HEIGHT = 420 + ITEM_MARGIN;
 
-        private (Rect[], Size) _positions;
-        private ((Rect, MosaicItemPosition)[], Size)? _positionsBase;
+        private List<(Rect[], Size)> _positions;
+        private List<((Rect, MosaicItemPosition)[], Size)> _positionsBase;
 
         public List<Size> Sizes;
 
@@ -1101,30 +1101,53 @@ namespace Telegram.Views.Popups
             }
 
             var positions = GetPositionsForWidth(availableSize.Width);
+            var i = 0;
 
-            for (int i = 0; i < Math.Min(positions.Item1.Length, Children.Count); i++)
+            var w = 0d;
+            var h = 0d;
+
+            foreach (var group in positions)
             {
-                Children[i].Measure(positions.Item1[i].ToSize());
+                foreach (var item in group.Item1)
+                {
+                    Children[i++].Measure(item.ToSize());
+                }
+
+                w = Math.Max(w, group.Item2.Width);
+                h += group.Item2.Height + 12;
             }
 
             _positions = positions;
-            return positions.Item2;
+            return new Size(w, h);
         }
 
         protected override Size ArrangeOverride(Size finalSize)
         {
             var positions = _positions;
-            if (positions.Item1 == null || positions.Item1.Length == 1)
+            var i = 0;
+
+            var w = 0d;
+            var h = 0d;
+
+            if (positions == null || (positions.Count == 1 && positions[0].Item1.Length == 1))
             {
                 return base.ArrangeOverride(finalSize);
             }
 
-            for (int i = 0; i < Math.Min(positions.Item1.Length, Children.Count); i++)
+            var y = 0d;
+
+            foreach (var group in positions)
             {
-                Children[i].Arrange(positions.Item1[i]);
+                foreach (var item in group.Item1)
+                {
+                    Children[i++].Arrange(new Rect(item.X, item.Y + h, item.Width, item.Height));
+                }
+
+                w = Math.Max(w, group.Item2.Width);
+                h += group.Item2.Height + 12;
             }
 
-            return positions.Item2;
+            return new Size(w, h);
         }
 
         public void Invalidate()
@@ -1135,10 +1158,35 @@ namespace Telegram.Views.Popups
             InvalidateArrange();
         }
 
-        private (Rect[], Size) GetPositionsForWidth(double w)
+        private List<(Rect[], Size)> GetPositionsForWidth(double w)
         {
-            var positions = _positionsBase ??= MosaicAlbumLayout.chatMessageBubbleMosaicLayout(new Size(MAX_WIDTH, MAX_HEIGHT), Sizes);
+            List<((Rect, MosaicItemPosition)[], Size)> positions;
+            List<(Rect[], Size)> results = new();
 
+            if (_positionsBase == null)
+            {
+                positions = new List<((Rect, MosaicItemPosition)[], Size)>();
+
+                foreach (var grouping in Sizes.ToChunks(10))
+                {
+                    positions.Add(MosaicAlbumLayout.chatMessageBubbleMosaicLayout(new Size(MAX_WIDTH, MAX_HEIGHT), grouping));
+                }
+            }
+            else
+            {
+                positions = _positionsBase;
+            }
+
+            foreach (var item in positions)
+            {
+                results.Add(GetPositionsForWidth(item, w));
+            }
+
+            return results;
+        }
+
+        private (Rect[], Size) GetPositionsForWidth(((Rect, MosaicItemPosition)[], Size) positions, double w)
+        {
             var ratio = w / MAX_WIDTH;
             var rects = new Rect[positions.Item1.Length];
 

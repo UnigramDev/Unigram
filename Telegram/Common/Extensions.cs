@@ -129,6 +129,18 @@ namespace Telegram.Common
             });
         }
 
+        public static IEnumerable<IList<T>> ToChunks<T>(this List<T> enumerable, int chunkSize)
+        {
+            int itemsReturned = 0;
+            int count = enumerable.Count;
+            while (itemsReturned < count)
+            {
+                int currentChunkSize = Math.Min(chunkSize, count - itemsReturned);
+                yield return enumerable.GetRange(itemsReturned, currentChunkSize);
+                itemsReturned += currentChunkSize;
+            }
+        }
+
         public static void ForEach<T>(this ListViewBase listView, Action<SelectorItem, T> handler) where T : class
         {
             int lastCacheIndex;
