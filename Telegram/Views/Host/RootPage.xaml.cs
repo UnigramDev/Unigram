@@ -855,6 +855,8 @@ namespace Telegram.Views.Host
                 disposable.Dispose();
             }
 
+            element.XamlRoot = XamlRoot;
+
             Transition.Child = element;
             Navigation.Visibility = element != null
                 ? Visibility.Collapsed

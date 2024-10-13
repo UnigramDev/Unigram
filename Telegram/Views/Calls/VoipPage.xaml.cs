@@ -1376,10 +1376,18 @@ namespace Telegram.Views.Calls
 
         public async void Close()
         {
-            if (XamlRoot?.Content is RootPage root)
+            try
             {
-                root.PresentContent(null);
-                return;
+                if (XamlRoot.Content is RootPage root)
+                {
+                    root.PresentContent(null);
+                    return;
+                }
+            }
+            catch
+            {
+                // XamlRoot.Content seems to throw a NullReferenceException
+                // whenever corresponding window has been already closed.
             }
 
             await WindowContext.Current.ConsolidateAsync();
