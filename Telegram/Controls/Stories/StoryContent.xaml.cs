@@ -143,7 +143,7 @@ namespace Telegram.Controls.Stories
 
         public void Update(ActiveStoriesViewModel activeStories, bool open, int index)
         {
-            Logger.Info();
+            Logger.Info("Start");
 
             _viewModel = activeStories;
             _index = index;
