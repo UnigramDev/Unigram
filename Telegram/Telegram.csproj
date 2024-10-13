@@ -1125,6 +1125,7 @@
       <DependentUpon>ShareFolderPopup.xaml</DependentUpon>
     </Compile>
     <Compile Include="Common\MultiValueDictionary.cs" />
+    <Compile Include="Views\HostedPage.cs" />
     <Compile Include="Views\Host\TabbedPage.xaml.cs">
       <DependentUpon>TabbedPage.xaml</DependentUpon>
     </Compile>

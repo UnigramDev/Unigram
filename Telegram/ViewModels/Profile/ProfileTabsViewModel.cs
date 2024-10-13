@@ -186,7 +186,10 @@ namespace Telegram.ViewModels.Profile
 
             Aggregator.Subscribe<UpdateDeleteMessages>(this, Handle);
 
-            await UpdateTabsAsync(Chat);
+            if (Items.Empty())
+            {
+                await UpdateTabsAsync(Chat);
+            }
         }
 
         private int[] _sharedCount = new int[] { 0, 0, 0, 0, 0, 0 };

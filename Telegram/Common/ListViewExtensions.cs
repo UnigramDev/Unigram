@@ -181,6 +181,17 @@ namespace Telegram.Common
             return listViewBase.GetChild<ScrollViewer>();
         }
 
+        public static bool ChangeView(this ListViewBase listViewBase, double? horizontalOffset, double? verticalOffset, float? zoomFactor, bool disableAnimation = false)
+        {
+            var scrollViewer = listViewBase.GetScrollViewer();
+            if (scrollViewer != null)
+            {
+                return scrollViewer.ChangeView(horizontalOffset, verticalOffset, zoomFactor, disableAnimation);
+            }
+
+            return false;
+        }
+
         public static void SetVerticalPadding(this ScrollViewer scrollViewer, double padding)
         {
             var scrollBar = scrollViewer.GetChild<ScrollBar>(x => x.Orientation == Orientation.Vertical);

@@ -71,6 +71,7 @@ namespace Telegram.Controls
                 service.Frame.DataContext = new object();
                 service.FrameFacade.BackRequested += OnBackRequested;
                 service.BackStackChanged += OnBackStackChanged;
+                service.Navigated += OnNavigated;
             }
 
             Initialize(service, parent, viewModel, true);
@@ -96,16 +97,12 @@ namespace Telegram.Controls
             {
                 NavigationService.FrameFacade.BackRequested -= OnBackRequested;
                 NavigationService.BackStackChanged -= OnBackStackChanged;
+                NavigationService.Navigated -= OnNavigated;
             }
 
             if (AdaptivePanel != null)
             {
                 AdaptivePanel.ViewStateChanged -= OnViewStateChanged;
-            }
-
-            if (DetailFrame != null)
-            {
-                DetailFrame.Navigated -= OnNavigated;
             }
 
             if (DetailHeaderPresenter != null)
@@ -360,12 +357,14 @@ namespace Telegram.Controls
                 //Grid.SetRow(DetailFrame, 1);
                 try
                 {
-                    DetailFrame.Navigated += OnNavigated;
                     DetailPresenter.Children.Add(DetailFrame);
 
-                    if (DetailFrame.Content is Page)
+                    if (DetailFrame.Content is Page page)
                     {
-                        OnNavigated(DetailFrame, null);
+                        OnNavigated(null, new NavigatedEventArgs
+                        {
+                            Content = page
+                        });
                     }
 
                     if (HasMaster)
@@ -417,9 +416,9 @@ namespace Telegram.Controls
             }
         }
 
-        private void OnNavigated(object sender, NavigationEventArgs e)
+        private void OnNavigated(object sender, NavigatedEventArgs e)
         {
-            if (DetailFrame.Content is HostedPage hosted)
+            if (e.Content is HostedPage hosted)
             {
                 DetailFooter = hosted.Action;
 
@@ -437,7 +436,15 @@ namespace Telegram.Controls
                         _backStack.ReplaceWith(BuildBackStack(hosted.NavigationMode == HostedNavigationMode.Root || (hosted.NavigationMode == HostedNavigationMode.RootWhenParameterless && e.Parameter == null)));
                     }
 
-                    SetScrollingHost(_showDetailHeader);
+                    if (e.NavigationMode == NavigationMode.Back)
+                    {
+                        SetScrollingHost(_showDetailHeader, e.VerticalOffset);
+                    }
+                    else
+                    {
+                        SetScrollingHost(_showDetailHeader, 0);
+                    }
+
                     ShowHideDetailHeader(true, hosted.ShowHeaderBackground);
 
                     //if (AutomationPeer.ListenerExists(AutomationEvents.LiveRegionChanged))
@@ -539,7 +546,7 @@ namespace Telegram.Controls
             visual1.StartAnimation("Opacity", fadeIn);
         }
 
-        private void SetScrollingHost(bool animate)
+        private void SetScrollingHost(bool animate, double offset)
         {
             if (_properties == null)
             {
@@ -555,7 +562,7 @@ namespace Telegram.Controls
                 };
 
                 var animation = _properties.Compositor.CreateScalarKeyFrameAnimation();
-                animation.InsertKeyFrame(1, 0);
+                animation.InsertKeyFrame(1, -Math.Min((float)offset, 32));
                 animation.Duration = Constants.FastAnimation;
 
                 _properties.StartAnimation("Translation.Y", animation);

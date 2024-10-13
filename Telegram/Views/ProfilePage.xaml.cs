@@ -55,6 +55,29 @@ namespace Telegram.Views
             InitializeScrolling();
         }
 
+        public override HostedPagePositionBase GetPosition()
+        {
+            ViewModel.Delegate = null;
+            return new HostedPageListViewPosition(DataContext, ScrollingHost.VerticalOffset);
+        }
+
+        public override void SetPosition(HostedPagePositionBase position)
+        {
+            if (position is HostedPageListViewPosition listViewPosition)
+            {
+                DataContext = listViewPosition.DataContext;
+                ViewModel.Delegate = this;
+
+                void handler(object sender, RoutedEventArgs e)
+                {
+                    ScrollingHost.Loaded -= handler;
+                    ScrollingHost.ChangeView(null, listViewPosition.VerticalOffset, null, true);
+                }
+
+                ScrollingHost.Loaded += handler;
+            }
+        }
+
         private void InitializeScrolling()
         {
             var properties = ElementCompositionPreview.GetScrollViewerManipulationPropertySet(ScrollingHost);
