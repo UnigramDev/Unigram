@@ -211,7 +211,6 @@ namespace Telegram.Controls.Gallery
                 _player.DurationChanged -= OnDurationChanged;
                 _player.IsPlayingChanged -= OnIsPlayingChanged;
                 _player.LevelsChanged -= OnLevelsChanged;
-                _player.Closed -= OnStopped;
             }
 
             if (_unloaded)
@@ -230,7 +229,6 @@ namespace Telegram.Controls.Gallery
                 _player.DurationChanged += OnDurationChanged;
                 _player.IsPlayingChanged += OnIsPlayingChanged;
                 _player.LevelsChanged += OnLevelsChanged;
-                _player.Closed += OnStopped;
 
                 OnPositionChanged(_player, new VideoPlayerPositionChangedEventArgs(_player.Position));
                 OnBufferedChanged(_player, new VideoPlayerBufferedChangedEventArgs(_player.Buffered));
@@ -315,16 +313,6 @@ namespace Telegram.Controls.Gallery
                     _request = null;
                 }
             }
-        }
-
-        private void OnStopped(VideoPlayerBase sender, EventArgs args)
-        {
-            //var source = _player == null || _player.State == VLCState.Stopped;
-            //Visibility = source
-            //    ? Visibility.Collapsed
-            //    : Visibility.Visible;
-
-            Visibility = Visibility.Collapsed;
         }
 
         private void OnPositionChanged(VideoPlayerBase sender, VideoPlayerPositionChangedEventArgs args)
