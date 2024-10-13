@@ -28,7 +28,7 @@ namespace Telegram.Views.Settings.LoginEmail
 
         public EmailAddressAuthenticationCodeInfo CodeInfo { get; private set; }
 
-        private async void ContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
+        private async void OnPrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
         {
             var address = PrimaryInput.Text;
 
@@ -63,10 +63,6 @@ namespace Telegram.Views.Settings.LoginEmail
             }
 
             deferral.Complete();
-        }
-
-        private void ContentDialog_SecondaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
-        {
         }
 
         private void PrimaryInput_KeyDown(object sender, Windows.UI.Xaml.Input.KeyRoutedEventArgs e)

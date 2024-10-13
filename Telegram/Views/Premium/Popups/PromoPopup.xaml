@@ -47,16 +47,14 @@
                                             Margin="0,24,0,8" />
                     <TextBlock x:Name="PremiumTitle"
                                Text="{x:Bind ConvertTitle(ViewModel.IsPremium, x:True), Mode=OneWay}"
-                               FontSize="20"
-                               FontFamily="XamlAutoFontFamily"
-                               FontWeight="SemiBold"
+                               Style="{StaticResource PopupTextBlockStyle}"
                                TextAlignment="Center"
                                VerticalAlignment="Top"
                                Grid.Row="1" />
                     <RichTextBlock x:Name="ChatTitle"
                                    Visibility="Collapsed"
                                    FontSize="20"
-                                   FontFamily="XamlAutoFontFamily"
+                                   FontFamily="{StaticResource EmojiThemeFontFamily}"
                                    FontWeight="SemiBold"
                                    TextAlignment="Center"
                                    VerticalAlignment="Top"

@@ -149,6 +149,8 @@
             <Style x:Key="BaseTextBlockStyle"
                    TargetType="TextBlock"
                    BasedOn="{StaticResource BaseTextBlockStyle}">
+                <Setter Property="FontFamily"
+                        Value="{ThemeResource EmojiThemeFontFamily}" />
                 <Setter Property="Foreground"
                         Value="{ThemeResource SystemControlForegroundBaseHighBrush}" />
             </Style>
@@ -156,6 +158,8 @@
             <Style x:Key="BodyTextBlockStyle"
                    TargetType="TextBlock"
                    BasedOn="{StaticResource BodyTextBlockStyle}">
+                <Setter Property="FontFamily"
+                        Value="{ThemeResource EmojiThemeFontFamily}" />
                 <Setter Property="Foreground"
                         Value="{ThemeResource SystemControlForegroundBaseHighBrush}" />
             </Style>
@@ -167,6 +171,8 @@
             <Style x:Key="CaptionRichTextBlockStyle"
                    TargetType="RichTextBlock"
                    BasedOn="{StaticResource BaseRichTextBlockStyle}">
+                <Setter Property="FontFamily"
+                        Value="{ThemeResource EmojiThemeFontFamily}" />
                 <Setter Property="FontSize"
                         Value="12" />
                 <Setter Property="FontWeight"
@@ -225,6 +231,28 @@
                              Color="#549CDD" />
             <SolidColorBrush x:Key="Placeholder6Brush"
                              Color="#F2749A" />
+
+            <Style x:Key="PopupTextBlockStyle"
+                   TargetType="TextBlock"
+                   BasedOn="{StaticResource BaseTextBlockStyle}">
+                <Setter Property="FontFamily"
+                        Value="{ThemeResource EmojiThemeFontFamily}" />
+                <Setter Property="FontSize"
+                        Value="20" />
+                <Setter Property="FontWeight"
+                        Value="SemiBold" />
+            </Style>
+
+            <Style x:Key="CaptionTextBlockStyle"
+                   TargetType="TextBlock"
+                   BasedOn="{StaticResource CaptionTextBlockStyle}">
+                <Setter Property="FontFamily"
+                        Value="{ThemeResource EmojiThemeFontFamily}" />
+                <Setter Property="FontSize"
+                        Value="12" />
+                <Setter Property="FontWeight"
+                        Value="Normal" />
+            </Style>
 
             <Style x:Key="ReplyBaseTextBlockStyle"
                    TargetType="TextBlock"

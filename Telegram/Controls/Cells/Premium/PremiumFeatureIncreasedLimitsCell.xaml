@@ -21,9 +21,7 @@
                         <RowDefinition Height="Auto" />
                     </Grid.RowDefinitions>
                     <TextBlock Text="{CustomResource DoubledLimits}"
-                               FontSize="20"
-                               FontFamily="XamlAutoFontFamily"
-                               FontWeight="SemiBold"
+                               Style="{StaticResource PopupTextBlockStyle}"
                                TextAlignment="Center"
                                VerticalAlignment="Top"
                                Margin="12,24,12,16" />

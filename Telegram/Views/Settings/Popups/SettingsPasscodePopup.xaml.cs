@@ -18,13 +18,5 @@ namespace Telegram.Views.Settings.Popups
             PrimaryButtonText = Strings.Enable;
             SecondaryButtonText = Strings.Cancel;
         }
-
-        private void ContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
-        {
-        }
-
-        private void ContentDialog_SecondaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
-        {
-        }
     }
 }

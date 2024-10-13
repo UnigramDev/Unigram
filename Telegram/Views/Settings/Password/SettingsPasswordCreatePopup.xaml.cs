@@ -35,7 +35,7 @@ namespace Telegram.Views.Settings.Password
 
         public string Password { get; private set; }
 
-        private void ContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
+        private void OnPrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
         {
             var password1 = Field1.Password;
             var password2 = Field2.Password;
@@ -62,10 +62,6 @@ namespace Telegram.Views.Settings.Password
             }
 
             Password = password1;
-        }
-
-        private void ContentDialog_SecondaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
-        {
         }
 
         private void Password_KeyDown(object sender, KeyRoutedEventArgs e)

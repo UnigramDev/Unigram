@@ -28,9 +28,7 @@
             </HyperlinkButton>
 
             <TextBlock Text="{CustomResource NewChannel}"
-                       FontSize="20"
-                       FontFamily="XamlAutoFontFamily"
-                       FontWeight="SemiBold"
+                       Style="{StaticResource PopupTextBlockStyle}"
                        VerticalAlignment="Center"
                        Margin="12,0,0,0"
                        Grid.Column="1" />

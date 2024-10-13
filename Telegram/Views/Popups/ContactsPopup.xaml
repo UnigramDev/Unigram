@@ -3,7 +3,6 @@
                        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
                        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-                       xmlns:icons="using:Telegram.Assets.Icons"
                        xmlns:controls="using:Telegram.Controls"
                        xmlns:cells="using:Telegram.Controls.Cells"
                        xmlns:contacts="using:Telegram.Controls.Contacts"
@@ -173,9 +172,7 @@
                                     Margin="0,0,0,12" />
 
             <TextBlock Text="{CustomResource NoContactsYet}"
-                       FontSize="20"
-                       FontFamily="XamlAutoFontFamily"
-                       FontWeight="SemiBold"
+                       Style="{StaticResource PopupTextBlockStyle}"
                        TextAlignment="Center"
                        TextWrapping="WrapWholeWords"
                        VerticalAlignment="Top"

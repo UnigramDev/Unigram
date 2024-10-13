@@ -14,7 +14,7 @@
         <StackPanel>
             <TextBlock x:Name="Title"
                        FontSize="28"
-                       FontFamily="XamlAutoFontFamily"
+                       FontFamily="{StaticResource EmojiThemeFontFamily}"
                        FontWeight="SemiBold"
                        TextWrapping="Wrap"
                        TextAlignment="Center">

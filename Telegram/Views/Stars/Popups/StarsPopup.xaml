@@ -45,9 +45,7 @@
                                                         Height="120"
                                                         Margin="0,24,0,8" />
                                 <TextBlock Text="{CustomResource TelegramStars}"
-                                           FontSize="20"
-                                           FontFamily="XamlAutoFontFamily"
-                                           FontWeight="SemiBold"
+                                           Style="{StaticResource PopupTextBlockStyle}"
                                            TextAlignment="Center"
                                            VerticalAlignment="Top"
                                            Grid.Row="1" />

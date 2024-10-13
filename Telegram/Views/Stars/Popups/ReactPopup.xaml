@@ -53,9 +53,7 @@
             </Grid>
 
             <TextBlock Text="{CustomResource StarsReactionTitle}"
-                       FontSize="20"
-                       FontFamily="XamlAutoFontFamily"
-                       FontWeight="SemiBold"
+                       Style="{StaticResource PopupTextBlockStyle}"
                        TextAlignment="Center"
                        VerticalAlignment="Top"
                        Margin="0,24,0,8"

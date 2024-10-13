@@ -34,9 +34,7 @@
                     <ColumnDefinition Width="Auto" />
                 </Grid.ColumnDefinitions>
                 <TextBlock x:Name="Title"
-                           FontSize="20"
-                           FontFamily="XamlAutoFontFamily"
-                           FontWeight="SemiBold"
+                           Style="{StaticResource PopupTextBlockStyle}"
                            TextAlignment="Center"
                            VerticalAlignment="Bottom" />
                 <controls:IdentityIcon x:Name="Identity"
