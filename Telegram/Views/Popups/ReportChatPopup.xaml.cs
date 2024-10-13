@@ -132,7 +132,7 @@ namespace Telegram.Views.Popups
 
                 if (selection.Result is ReportChatResultOk)
                 {
-                    ToastPopup.Show(XamlRoot, string.Format("**{0}**\n{1}", Strings.ReportChatSent, Strings.Reported2), ToastPopupIcon.AntiSpam);
+                    ToastPopup.Show(XamlRoot, Strings.Reported2, ToastPopupIcon.AntiSpam);
                 }
             }
 

@@ -99,7 +99,7 @@ namespace Telegram.Views.Popups
             else if (selection.Result is ReportStoryResultOk)
             {
                 Hide();
-                ToastPopup.Show(XamlRoot, string.Format("**{0}**\n{1}", Strings.ReportChatSent, Strings.Reported2), ToastPopupIcon.AntiSpam);
+                ToastPopup.Show(XamlRoot, Strings.Reported2, ToastPopupIcon.AntiSpam);
             }
 
             ShowHideBackButton(_history.Count > 0);
