@@ -562,7 +562,14 @@ namespace Telegram.Services
 
         public async void Play(MessageWithOwner message, long threadId, long savedMessagesTopicId)
         {
-            _transport ??= WM.SystemMediaTransportControls.GetForCurrentView();
+            try
+            {
+                _transport ??= WM.SystemMediaTransportControls.GetForCurrentView();
+            }
+            catch
+            {
+                // All the remote procedure calls must be wrapped in a try-catch block
+            }
 
             if (message == null)
             {
