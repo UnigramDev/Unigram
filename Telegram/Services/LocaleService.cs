@@ -207,6 +207,11 @@ namespace Telegram.Services
             var values = GetLanguagePack(_languageCode);
             if (values.TryGetValue(selector, out string value))
             {
+                if (string.IsNullOrEmpty(value))
+                {
+                    values.TryGetValue(key + "_other", out value);
+                }
+
                 return value;
             }
 
@@ -220,21 +225,22 @@ namespace Telegram.Services
                 values[key + "_many"] = pluralized.ManyValue;
                 values[key + "_other"] = pluralized.OtherValue;
 
-                switch (quantity)
+                value = quantity switch
                 {
-                    case QUANTITY_ZERO:
-                        return pluralized.ZeroValue;
-                    case QUANTITY_ONE:
-                        return pluralized.OneValue;
-                    case QUANTITY_TWO:
-                        return pluralized.TwoValue;
-                    case QUANTITY_FEW:
-                        return pluralized.FewValue;
-                    case QUANTITY_MANY:
-                        return pluralized.ManyValue;
-                    default:
-                        return pluralized.OtherValue;
+                    QUANTITY_ZERO => pluralized.ZeroValue,
+                    QUANTITY_ONE => pluralized.OneValue,
+                    QUANTITY_TWO => pluralized.TwoValue,
+                    QUANTITY_FEW => pluralized.FewValue,
+                    QUANTITY_MANY => pluralized.ManyValue,
+                    _ => pluralized.OtherValue
+                };
+
+                if (string.IsNullOrEmpty(value))
+                {
+                    value = pluralized.OtherValue;
                 }
+
+                return value;
             }
 
 #if zDEBUG
