@@ -218,8 +218,6 @@ namespace Telegram.Views.Premium.Popups
                     return CreateLimit(type, clientService.Options.ChatFolderChosenChatCountMax);
                 case PremiumLimitTypeChatFolderCount:
                     return CreateLimit(type, clientService.Options.ChatFolderCountMax);
-                case PremiumLimitTypeCreatedPublicChatCount:
-                    return CreateLimit(type, 500);
                 case PremiumLimitTypePinnedSavedMessagesTopicCount:
                     return CreateLimit(type, clientService.Options.PinnedSavedMessagesTopicCountMax);
                 case PremiumLimitTypePinnedArchivedChatCount:
@@ -228,8 +226,10 @@ namespace Telegram.Views.Premium.Popups
                     return CreateLimit(type, clientService.Options.PinnedChatCountMax);
                 case PremiumLimitTypeShareableChatFolderCount:
                     return CreateLimit(type, clientService.Options.AddedShareableChatFolderCountMax);
-                case PremiumLimitTypeSupergroupCount:
+                case PremiumLimitTypeCreatedPublicChatCount:
                     return CreateLimit(type, 10);
+                case PremiumLimitTypeSupergroupCount:
+                    return CreateLimit(type, 500);
                 case PremiumLimitTypeConnectedAccounts:
                     return CreateLimit(type, 4);
             }
