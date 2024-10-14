@@ -978,6 +978,18 @@ public static class CanvasDevice_stub
             throw new RuntimeException(ex);
         }
     }
+    public static Microsoft.Graphics.Canvas.CanvasDevice GetSharedDevice_stub(bool forceSoftwareRenderer)
+    {
+        try
+        {
+            return Microsoft.Graphics.Canvas.CanvasDevice.GetSharedDevice(forceSoftwareRenderer);
+        }
+        catch (Exception ex)
+        {
+            Logger.Error(Environment.StackTrace);
+            throw new RuntimeException(ex);
+        }
+    }
 }
 public static class CanvasDrawingSession_stub
 {
@@ -2429,21 +2441,6 @@ public static class ContactManager_stub
         try
         {
             Windows.ApplicationModel.Contacts.ContactManager.ShowContactCard(contact, selection);
-        }
-        catch (Exception ex)
-        {
-            Logger.Error(Environment.StackTrace);
-            throw new RuntimeException(ex);
-        }
-    }
-}
-public static class ContactPanel_stub
-{
-    public static void ClosePanel_stub(this Windows.ApplicationModel.Contacts.ContactPanel sender)
-    {
-        try
-        {
-            sender.ClosePanel();
         }
         catch (Exception ex)
         {
