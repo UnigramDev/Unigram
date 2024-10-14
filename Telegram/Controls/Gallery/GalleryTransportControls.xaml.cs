@@ -537,7 +537,7 @@ namespace Telegram.Controls.Gallery
 
             if (_request != null)
             {
-                _request.RequestRelease();
+                _request.TryRequestRelease();
                 _request = null;
             }
         }

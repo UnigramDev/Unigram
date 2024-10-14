@@ -318,7 +318,7 @@ namespace Telegram.Controls.Chats
                         if (_request == null)
                         {
                             _request = new DisplayRequest();
-                            _request.RequestActive();
+                            _request.TryRequestActive();
                         }
                     }
                     catch { }
@@ -346,12 +346,8 @@ namespace Telegram.Controls.Chats
 
                     if (_request != null)
                     {
-                        try
-                        {
-                            _request.RequestRelease();
-                            _request = null;
-                        }
-                        catch { }
+                        _request.TryRequestRelease();
+                        _request = null;
                     }
                 });
             }
