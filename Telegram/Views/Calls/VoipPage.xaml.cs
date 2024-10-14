@@ -1,5 +1,4 @@
-﻿using Microsoft.Graphics.Canvas;
-using Microsoft.Graphics.Canvas.Geometry;
+﻿using Microsoft.Graphics.Canvas.Geometry;
 using Microsoft.UI.Xaml.Controls;
 using System;
 using System.Numerics;
@@ -135,7 +134,7 @@ namespace Telegram.Views.Calls
 
         private void InitializeBlob()
         {
-            var device = CanvasDevice.GetSharedDevice();
+            var device = ElementComposition.GetSharedDevice();
             var outerClip = CanvasGeometry.CreateRectangle(device, 0, 0, 280, 280);
             var innerClip = CanvasGeometry.CreateEllipse(device, 140, 140, 63, 63);
             var blob = ElementComposition.GetElementVisual(Blob);

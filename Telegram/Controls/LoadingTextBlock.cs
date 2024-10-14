@@ -4,7 +4,6 @@
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
-using Microsoft.Graphics.Canvas;
 using Microsoft.Graphics.Canvas.Geometry;
 using System;
 using System.Collections.Generic;
@@ -186,7 +185,7 @@ namespace Telegram.Controls
             var width = MathF.Max(actualWidth - left, actualHeight - top);
             var diaginal = MathF.Sqrt((width * width) + (width * width));
 
-            var device = CanvasDevice.GetSharedDevice();
+            var device = ElementComposition.GetSharedDevice();
 
             var rect1 = CanvasGeometry.CreateRectangle(device, 0, 0, show ? 0 : actualWidth, show ? 0 : actualHeight);
 
@@ -271,7 +270,7 @@ namespace Telegram.Controls
                 return finalSize;
             }
 
-            var device = CanvasDevice.GetSharedDevice();
+            var device = ElementComposition.GetSharedDevice();
             var list = new List<CanvasGeometry>();
 
             var left = (float)Padding.Left;

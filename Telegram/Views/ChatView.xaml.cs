@@ -4,7 +4,6 @@
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
-using Microsoft.Graphics.Canvas;
 using Microsoft.Graphics.Canvas.Geometry;
 using Microsoft.UI.Xaml.Controls;
 using System;
@@ -2881,7 +2880,7 @@ namespace Telegram.Views
                 var pictures = new StackPanel();
                 pictures.Orientation = Orientation.Horizontal;
 
-                var device = CanvasDevice.GetSharedDevice();
+                var device = ElementComposition.GetSharedDevice();
                 var rect1 = CanvasGeometry.CreateRectangle(device, 0, 0, 24, 24);
                 var elli1 = CanvasGeometry.CreateEllipse(device, -2, 12, 14, 14);
                 var group1 = CanvasGeometry.CreateGroup(device, new[] { elli1, rect1 }, CanvasFilledRegionDetermination.Alternate);

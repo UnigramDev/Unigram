@@ -5,7 +5,6 @@
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
 using LibVLCSharp.Shared;
-using Microsoft.Graphics.Canvas;
 using Microsoft.Graphics.Canvas.Geometry;
 using Microsoft.UI.Xaml.Controls;
 using System;
@@ -670,7 +669,7 @@ namespace Telegram.Controls.Stories
 
             visual.StartAnimation("Scale", scale);
 
-            var device = CanvasDevice.GetSharedDevice();
+            var device = ElementComposition.GetSharedDevice();
             var rect1 = CanvasGeometry.CreateRoundedRectangle(device, 0, 0, ActualSize.X, ActualSize.Y, 8, 8);
             var rect2 = CanvasGeometry.CreateRoundedRectangle(device, 0, 0, ActualSize.X, ActualSize.Y, 8 * 2.5f, 8 * 2.5f);
 

@@ -110,7 +110,7 @@ namespace Telegram.Controls
             //var back = compositor.CreateEllipseGeometry();
             //var fore = compositor.CreateEllipseGeometry();
 
-            var device = CanvasDevice.GetSharedDevice();
+            var device = ElementComposition.GetSharedDevice();
             var rect1 = CanvasGeometry.CreateRectangle(device, 0, 0, 48, 48);
 
             var elli1 = CanvasGeometry.CreateCircle(device, 24, 24, 24);
