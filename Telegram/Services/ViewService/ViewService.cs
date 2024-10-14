@@ -76,6 +76,11 @@ namespace Telegram.Services
             _mainWindowCreated.TrySetResult(true);
         }
 
+        public static Task WaitForMainWindowAsync()
+        {
+            return _mainWindowCreated.Task;
+        }
+
         public Task<ViewLifetimeControl> OpenAsync(ViewServiceOptions options)
         {
             if (ApiInfo.HasMultipleViews)
