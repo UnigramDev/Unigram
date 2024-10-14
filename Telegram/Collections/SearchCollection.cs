@@ -71,6 +71,12 @@ namespace Telegram.Collections
             //OnPropertyChanged(new PropertyChangedEventArgs(nameof(Query)));
         }
 
+        public void Cancel()
+        {
+            _cancellation?.Cancel();
+            _cancellation = new();
+        }
+
         public async void Update(TSource source)
         {
             if (source is ISupportIncrementalLoading incremental && incremental.HasMoreItems)

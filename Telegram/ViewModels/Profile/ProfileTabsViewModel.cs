@@ -361,8 +361,10 @@ namespace Telegram.ViewModels.Profile
             }
         }
 
-        private void UpdateDeleteMessages(IList<MessageWithOwner> target, HashSet<long> table)
+        private void UpdateDeleteMessages(SearchCollection<MessageWithOwner, MediaCollection> target, HashSet<long> table)
         {
+            target.Cancel();
+
             for (int i = 0; i < target.Count; i++)
             {
                 var message = target[i];
