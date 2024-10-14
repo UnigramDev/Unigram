@@ -715,23 +715,25 @@ namespace Telegram.Services.Calls
                     _manager.SetVideoCapture(null);
 
                     _manager.Stop();
-                    _manager = null;
+
+                    // TODO: Exp. see if it helps
+                    //_manager = null;
                 }
             }
         }
 
+        // This method expects _managerLock to be locked
         private void DisposeCamera()
         {
-            // This method expects _managerLock to be locked
             if (_camera != null)
             {
+                // Manager may be null if the call is not connected
+                _manager?.SetVideoCapture(null);
+
                 if (_camera is VoipScreenCapture screen)
                 {
                     screen.Paused -= OnPaused;
                 }
-
-                // Manager may be null if the call is not connected
-                _manager?.SetVideoCapture(null);
 
                 _camera.FatalErrorOccurred -= OnFatalErrorOccurred;
 
