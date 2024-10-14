@@ -9,7 +9,6 @@ using Telegram.Common;
 using Telegram.Navigation;
 using Telegram.ViewModels.Gallery;
 using Windows.UI;
-using Windows.UI.Core;
 using Windows.UI.Core.Preview;
 using Windows.UI.ViewManagement;
 using Windows.UI.WindowManagement;

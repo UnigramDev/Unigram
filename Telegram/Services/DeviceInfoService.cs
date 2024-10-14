@@ -92,8 +92,21 @@ namespace Telegram.Services
             }
         }
 
-        public string SystemLanguageCode => GlobalizationPreferences.Languages.Count > 0
-            ? GlobalizationPreferences.Languages[0].ToLower()
-            : "en";
+        public string SystemLanguageCode
+        {
+            get
+            {
+                try
+                {
+                    return GlobalizationPreferences.Languages.Count > 0
+                        ? GlobalizationPreferences.Languages[0].ToLower()
+                        : "en";
+                }
+                catch
+                {
+                    return "en";
+                }
+            }
+        }
     }
 }

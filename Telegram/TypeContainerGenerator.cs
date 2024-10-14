@@ -10,7 +10,6 @@ using System.Diagnostics;
 using System.Linq;
 using Telegram.Services;
 using Telegram.Services.Factories;
-using Telegram.Services.ViewService;
 using Telegram.ViewModels;
 using Telegram.ViewModels.Authorization;
 using Telegram.ViewModels.Business;

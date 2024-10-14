@@ -154,8 +154,8 @@ namespace Telegram.ViewModels.Payments
                 var args = _date.Split('/');
                 if (args.Length == 2)
                 {
-                    month = int.Parse(args[0]);
-                    year = int.Parse(args[1]);
+                    int.TryParse(args[0], out month);
+                    int.TryParse(args[1], out year);
                 }
             }
 

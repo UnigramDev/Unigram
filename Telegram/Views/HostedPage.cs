@@ -120,7 +120,7 @@ namespace Telegram.Views
                 {
                     void handler(object sender, RoutedEventArgs e)
                     {
-                        scrollingHost.Loaded-= handler;
+                        scrollingHost.Loaded -= handler;
                         scrollingHost.ChangeView(null, scrollViewerPosition.VerticalOffset, null, true);
                     }
 

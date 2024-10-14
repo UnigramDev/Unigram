@@ -11,7 +11,6 @@ using Telegram.Controls.Media;
 using Telegram.Converters;
 using Telegram.Native.Calls;
 using Telegram.Navigation;
-using Telegram.Services;
 using Telegram.Services.Calls;
 using Telegram.Td.Api;
 using Telegram.Views.Calls.Popups;

@@ -131,7 +131,7 @@ namespace Telegram.Views.Calls.Popups
             }
         }
 
-        private  void Schedule_Click(ContentDialog sender, ContentDialogButtonClickEventArgs args)
+        private void Schedule_Click(ContentDialog sender, ContentDialogButtonClickEventArgs args)
         {
             IsScheduleSelected = true;
         }

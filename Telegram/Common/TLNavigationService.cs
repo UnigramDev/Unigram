@@ -13,7 +13,6 @@ using Telegram.Controls;
 using Telegram.Navigation;
 using Telegram.Navigation.Services;
 using Telegram.Services;
-using Telegram.Services.ViewService;
 using Telegram.Td.Api;
 using Telegram.ViewModels;
 using Telegram.ViewModels.Payments;

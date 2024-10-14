@@ -15,7 +15,6 @@ using Telegram.Controls.Media;
 using Telegram.Navigation;
 using Telegram.Navigation.Services;
 using Telegram.Services;
-using Telegram.Services.ViewService;
 using Telegram.Td;
 using Telegram.Td.Api;
 using Telegram.Views.Host;

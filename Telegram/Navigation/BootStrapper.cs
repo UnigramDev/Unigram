@@ -12,7 +12,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Telegram.Common;
 using Telegram.Navigation.Services;
-using Telegram.Services.ViewService;
+using Telegram.Services;
 using Windows.ApplicationModel;
 using Windows.ApplicationModel.Activation;
 using Windows.System;

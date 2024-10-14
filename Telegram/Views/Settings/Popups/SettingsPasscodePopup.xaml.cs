@@ -5,7 +5,6 @@
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
 using Telegram.Controls;
-using Windows.UI.Xaml.Controls;
 
 namespace Telegram.Views.Settings.Popups
 {

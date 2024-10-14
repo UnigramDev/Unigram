@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 using Telegram.Common;
 using Telegram.Controls;
 using Telegram.Controls.Gallery;
-using Telegram.Services.ViewService;
+using Telegram.Services;
 using Telegram.Td;
 using Telegram.Td.Api;
 using Telegram.ViewModels.Gallery;
@@ -304,7 +304,7 @@ namespace Telegram.Navigation.Services
                     return x.Equals(y);
                 }
 
-                if (entry.Position != null && e.Content is HostedPage page && ParameterEquals(entry.Parameter, e.Parameter) && entry.SourcePageType == page.GetType() )
+                if (entry.Position != null && e.Content is HostedPage page && ParameterEquals(entry.Parameter, e.Parameter) && entry.SourcePageType == page.GetType())
                 {
                     page.SetPosition(entry.Position);
                 }

@@ -26,7 +26,7 @@ namespace Telegram.Views
         private Telegram.Services.ILocationService _locationService;
         private Telegram.Services.IThemeService _themeService;
         private Telegram.Services.Factories.IMessageFactory _messageFactory;
-        private Telegram.Services.ViewService.IViewService _viewService;
+        private Telegram.Services.IViewService _viewService;
         private Telegram.Services.IStorageService _storageService;
         private Telegram.Services.ITranslateService _translateService;
         private Telegram.Services.IProfilePhotoService _profilePhotoService;
@@ -947,8 +947,8 @@ namespace Telegram.Views
                     return (T)(_messageFactory ??= new Telegram.Services.Factories.MessageFactory(
                         _clientService,
                         _playbackService));
-                case "Telegram.Services.ViewService.IViewService":
-                    return (T)(_viewService ??= new Telegram.Services.ViewService.ViewService());
+                case "Telegram.Services.IViewService":
+                    return (T)(_viewService ??= new Telegram.Services.ViewService());
                 case "Telegram.Services.IStorageService":
                     return (T)(_storageService ??= new Telegram.Services.StorageService(_clientService));
                 case "Telegram.Services.ITranslateService":

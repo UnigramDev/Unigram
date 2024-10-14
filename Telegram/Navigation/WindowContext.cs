@@ -16,7 +16,6 @@ using Telegram.Native;
 using Telegram.Navigation.Services;
 using Telegram.Services;
 using Telegram.Services.Keyboard;
-using Telegram.Services.ViewService;
 using Telegram.Td.Api;
 using Telegram.Views;
 using Telegram.Views.Authorization;
@@ -25,7 +24,6 @@ using Telegram.Views.Host;
 using Telegram.Views.Popups;
 using Windows.ApplicationModel;
 using Windows.ApplicationModel.Activation;
-using Windows.ApplicationModel.Contacts;
 using Windows.ApplicationModel.Core;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.Foundation;
@@ -35,8 +33,6 @@ using Windows.UI.Core;
 using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Documents;
-using Windows.UI.Xaml.Media;
 
 namespace Telegram.Navigation
 {

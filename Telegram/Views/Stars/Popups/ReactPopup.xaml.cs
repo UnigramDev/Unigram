@@ -254,19 +254,6 @@ namespace Telegram.Views.Stars.Popups
             return button;
         }
 
-        class PaidReactorEqualityComparer : IEqualityComparer<PaidReactor>
-        {
-            public bool Equals(PaidReactor x, PaidReactor y)
-            {
-                throw new NotImplementedException();
-            }
-
-            public int GetHashCode(PaidReactor obj)
-            {
-                throw new NotImplementedException();
-            }
-        }
-
         public bool CompareItems(PaidReactor oldItem, PaidReactor newItem)
         {
             return oldItem == newItem;

@@ -2605,7 +2605,7 @@ namespace Telegram.Views
                 {
                     LoadMessageViewers(message, properties, flyout);
                 }
-                
+
                 MessageQuote quote = null;
                 if (selectionEnd - selectionStart > 0)
                 {

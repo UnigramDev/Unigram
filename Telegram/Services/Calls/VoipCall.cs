@@ -5,7 +5,6 @@ using System.Threading.Tasks;
 using Telegram.Common;
 using Telegram.Native.Calls;
 using Telegram.Navigation;
-using Telegram.Services.ViewService;
 using Telegram.Td.Api;
 using Telegram.Views;
 using Telegram.Views.Calls;

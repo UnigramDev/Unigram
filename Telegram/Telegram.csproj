@@ -1425,7 +1425,6 @@
     <Compile Include="ViewModels\Chats\ChatPhotosViewModel.cs" />
     <Compile Include="ViewModels\Chats\ChatSearchViewModel.cs" />
     <Compile Include="ViewModels\Chats\ChatStatisticsViewModel.cs" />
-    <Compile Include="ViewModels\ChatViewModel.cs" />
     <Compile Include="ViewModels\Delegates\IBackgroundDelegate.cs" />
     <Compile Include="ViewModels\Delegates\IBasicAndSupergroupDelegate.cs" />
     <Compile Include="ViewModels\Delegates\IDelegable.cs" />

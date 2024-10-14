@@ -269,8 +269,6 @@ namespace Telegram.ViewModels.Business
 
         public override bool HasChanged => !_cached.AreTheSame(GetSettings());
 
-        public bool HasMoreItems => throw new System.NotImplementedException();
-
         public override async void Continue()
         {
             _completed = true;

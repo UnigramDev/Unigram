@@ -296,15 +296,7 @@ namespace LibVLCSharp.Platforms.Windows
             catch (Exception ex)
             {
                 DestroySwapChain();
-
-                if (ex is SharpDXException)
-                {
-                    throw new VLCException("SharpDX operation failed, see InnerException for details", ex);
-                }
-                else
-                {
-                    throw;
-                }
+                Telegram.Logger.Error(ex.ToString());
             }
         }
 

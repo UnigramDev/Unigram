@@ -7,7 +7,6 @@
 using Rg.DiffUtils;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Telegram.Collections;
@@ -15,7 +14,6 @@ using Telegram.Collections.Handlers;
 using Telegram.Common;
 using Telegram.Navigation;
 using Telegram.Services;
-using Telegram.Td;
 using Telegram.Td.Api;
 using Telegram.Views.Popups;
 using Windows.UI.Xaml.Controls;
