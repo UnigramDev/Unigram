@@ -184,6 +184,9 @@
   <data name="AccDescrMentionDown" xml:space="preserve">
     <value>Go to next mention</value>
   </data>
+  <data name="AccDescrMentionReaction" xml:space="preserve">
+    <value>With new reaction</value>
+  </data>
   <data name="AccDescrMiniPlayer" xml:space="preserve">
     <value>Mini player</value>
   </data>

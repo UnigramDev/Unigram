@@ -547,6 +547,12 @@ namespace Telegram.Controls.Cells
                 builder.Append(", ");
             }
 
+            if (chat.UnreadReactionCount > 0)
+            {
+                builder.Append(Strings.AccDescrMentionReaction);
+                builder.Append(", ");
+            }
+
             if (message == null)
             {
                 //AutomationProperties.SetName(this, builder.ToString());

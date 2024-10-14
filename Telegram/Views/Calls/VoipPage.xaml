@@ -121,6 +121,8 @@
                 Height="40" />
 
         <controls:GlyphButton Click="More_ContextRequested"
+                              ToolTipService.ToolTip="{CustomResource VoipSettings}"
+                              AutomationProperties.Name="{CustomResource VoipSettings}"
                               Glyph="&#xE713;"
                               HorizontalAlignment="Left"
                               VerticalAlignment="Top" />
