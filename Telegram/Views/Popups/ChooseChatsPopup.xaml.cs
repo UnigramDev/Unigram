@@ -753,22 +753,33 @@ namespace Telegram.Views.Popups
 
             _legacyNavigated = true;
 
-            IsPrimaryButtonSplit = ViewModel.IsSendAsCopyEnabled;
             EmojiPanel.DataContext = EmojiDrawerViewModel.Create(ViewModel.SessionId);
             ViewModel.PropertyChanged += OnPropertyChanged;
-
-            if (ViewModel.SelectionMode == ListViewSelectionMode.None)
-            {
-                PrimaryButtonText = string.Empty;
-            }
-            else
-            {
-                PrimaryButtonText = ViewModel.PrimaryButtonText;
-            }
 
             if (ViewModel.Options.Mode == ChooseChatsMode.Contacts)
             {
                 ChatFolders.Visibility = Visibility.Collapsed;
+            }
+
+            if (ViewModel.IsCommentEnabled)
+            {
+                CommentPanel.Visibility = Visibility.Visible;
+                Scrim.BottomInset = 0;
+
+                PrimaryButtonText = string.Empty;
+                SecondaryButtonText = string.Empty;
+                IsDismissButtonVisible = true;
+            }
+            else
+            {
+                CommentPanel.Visibility = Visibility.Collapsed;
+                Scrim.BottomInset = 32;
+
+                PrimaryButtonText = ViewModel.SelectionMode != ListViewSelectionMode.None
+                    ? ViewModel.PrimaryButtonText
+                    : string.Empty;
+                SecondaryButtonText = Strings.Cancel;
+                IsDismissButtonVisible = false;
             }
         }
 
@@ -779,22 +790,19 @@ namespace Telegram.Views.Popups
                 OnNavigatedTo(null);
             }
 
-            var button = GetTemplateChild("PrimarySplitButton") as Button;
-            if (button != null && IsPrimaryButtonSplit)
-            {
-                button.Click += PrimaryButton_ContextRequested;
-            }
-
             base.OnApplyTemplate();
         }
 
-        private void PrimaryButton_ContextRequested(object sender, RoutedEventArgs args)
+        private void Send_ContextRequested(object sender, ContextRequestedEventArgs args)
         {
-            var flyout = new MenuFlyout();
-            flyout.CreateFlyoutItem(() => { ViewModel.SendAsCopy = true; Hide(ContentDialogResult.Primary); }, Strings.HideSenderNames, Icons.DocumentCopy);
-            flyout.CreateFlyoutItem(() => { ViewModel.RemoveCaptions = true; Hide(ContentDialogResult.Primary); }, Strings.HideCaption, Icons.Block);
+            if (ViewModel.IsSendAsCopyEnabled)
+            {
+                var flyout = new MenuFlyout();
+                flyout.CreateFlyoutItem(() => { ViewModel.SendAsCopy = true; Hide(ContentDialogResult.Primary); }, Strings.HideSenderNames, Icons.DocumentCopy);
+                flyout.CreateFlyoutItem(() => { ViewModel.RemoveCaptions = true; Hide(ContentDialogResult.Primary); }, Strings.HideCaption, Icons.Block);
 
-            flyout.ShowAt(sender as DependencyObject, FlyoutPlacementMode.BottomEdgeAlignedRight);
+                flyout.ShowAt(sender as UIElement, FlyoutPlacementMode.TopEdgeAlignedRight);
+            }
         }
 
         private void OnPropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
@@ -1321,6 +1329,11 @@ namespace Telegram.Views.Popups
 
         private bool ConvertButtonEnabled(bool allowEmpty, int count)
         {
+            if (Send != null)
+            {
+                return Send.IsEnabled = allowEmpty || count > 0;
+            }
+
             return allowEmpty || count > 0;
         }
 
@@ -1553,7 +1566,7 @@ namespace Telegram.Views.Popups
         {
             // We don't want to unfocus the text are when the context menu gets opened
             EmojiPanel.ViewModel.Update();
-            EmojiFlyout.ShowAt(CaptionInput, new FlyoutShowOptions { ShowMode = FlyoutShowMode.Transient });
+            EmojiFlyout.ShowAt(CommentPanel, new FlyoutShowOptions { ShowMode = FlyoutShowMode.Transient });
         }
 
         private void Emoji_ItemClick(object sender, ItemClickEventArgs e)
@@ -1581,6 +1594,11 @@ namespace Telegram.Views.Popups
         }
 
         private void CaptionInput_Accept(FormattedTextBox sender, EventArgs args)
+        {
+            Accept();
+        }
+
+        private void Send_Click(object sender, RoutedEventArgs e)
         {
             Accept();
         }

@@ -514,11 +514,11 @@ namespace Telegram.ViewModels
 
             if (!string.IsNullOrEmpty(SendMessage?.Text))
             {
-                _isCommentEnabled = true;
-                _caption = SendMessage;
+                IsCommentEnabled = true;
+                Caption = SendMessage;
             }
 
-            if (_isCommentEnabled && !string.IsNullOrEmpty(_caption?.Text))
+            if (IsCommentEnabled && !string.IsNullOrEmpty(Caption?.Text))
             {
                 foreach (var chat in chats)
                 {

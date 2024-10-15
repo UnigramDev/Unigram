@@ -85,9 +85,7 @@
                                          Background="Transparent"
                                          Padding="24,0,0,0"
                                          BorderThickness="0"
-                                         MinHeight="48"
-                                         Grid.Row="1">
-                </controls:CaptionTextBox>
+                                         MinHeight="48" />
 
                 <messages:CustomEmojiCanvas x:Name="CustomEmoji"
                                             IsHitTestVisible="False"

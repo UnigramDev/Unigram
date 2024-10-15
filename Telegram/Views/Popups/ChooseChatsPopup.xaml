@@ -151,52 +151,78 @@
                     </ListView.ItemContainerTransitions>
                 </ListView>
 
-                <controls:ScrollViewerScrim Background="{ThemeResource ContentDialogBackground}"
+                <controls:ScrollViewerScrim x:Name="Scrim"
+                                            Background="{ThemeResource ContentDialogBackground}"
                                             ScrollingHost="{x:Bind ChatsPanel}"
-                                            Margin="0,2,0,0"
                                             Grid.Row="1" />
             </Grid>
         </Grid>
 
         <Grid x:Name="CommentPanel"
-              Padding="0,0,0,8"
-              Visibility="{x:Bind ViewModel.IsCommentEnabled, Mode=OneWay}"
+              Background="{ThemeResource TextControlBackground}"
+              Visibility="Collapsed"
+              Margin="-24,0"
               Grid.Row="2">
-            <controls:FormattedTextBox x:Name="CaptionInput"
-                                       Accept="CaptionInput_Accept"
-                                       Padding="10,6,36,5"
-                                       FontFamily="{ThemeResource EmojiThemeFontFamily}"
-                                       PlaceholderText="{CustomResource ShareComment}">
-                <FlyoutBase.AttachedFlyout>
-                    <Flyout x:Name="EmojiFlyout"
-                            Placement="Top"
-                            ShowMode="Transient">
-                        <Flyout.FlyoutPresenterStyle>
-                            <Style TargetType="FlyoutPresenter"
-                                   BasedOn="{StaticResource DefaultFlyoutPresenterStyle}">
-                                <Setter Property="Padding"
-                                        Value="0" />
-                            </Style>
-                        </Flyout.FlyoutPresenterStyle>
-                        <drawers:EmojiDrawer x:Name="EmojiPanel"
-                                             ItemClick="Emoji_ItemClick"
-                                             Width="300"
-                                             Height="360" />
-                    </Flyout>
-                </FlyoutBase.AttachedFlyout>
-            </controls:FormattedTextBox>
+            <FlyoutBase.AttachedFlyout>
+                <Flyout x:Name="EmojiFlyout"
+                        Placement="Top"
+                        ShowMode="Transient">
+                    <Flyout.FlyoutPresenterStyle>
+                        <Style TargetType="FlyoutPresenter">
+                            <Setter Property="Padding"
+                                    Value="0" />
+                            <Setter Property="CornerRadius"
+                                    Value="8" />
+                        </Style>
+                    </Flyout.FlyoutPresenterStyle>
+                    <drawers:EmojiDrawer x:Name="EmojiPanel"
+                                         ItemClick="Emoji_ItemClick"
+                                         Width="300"
+                                         Height="360" />
+                </Flyout>
+            </FlyoutBase.AttachedFlyout>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition />
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+            <controls:CaptionTextBox x:Name="CaptionInput"
+                                     Accept="CaptionInput_Accept"
+                                     InputScope="Chat"
+                                     FontFamily="{ThemeResource EmojiThemeFontFamily}"
+                                     PlaceholderText="{CustomResource ShareComment}"
+                                     Style="{StaticResource DefaultChatTextBoxStyle}"
+                                     Background="Transparent"
+                                     Padding="24,0,0,0"
+                                     BorderThickness="0"
+                                     MinHeight="48" />
+
+            <Border x:Name="CaptionBorder"
+                    BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                    BorderThickness="0,1,0,0"
+                    Grid.ColumnSpan="3" />
 
             <messages:CustomEmojiCanvas x:Name="CustomEmoji"
                                         IsHitTestVisible="False"
-                                        Margin="10,4,-2,-2" />
+                                        Margin="22,11,0,0" />
 
             <controls:GlyphButton Click="Emoji_Click"
                                   Glyph="&#xE76E;"
                                   AllowFocusOnInteraction="False"
                                   HorizontalAlignment="Right"
                                   VerticalAlignment="Bottom"
-                                  Width="36"
-                                  Height="32" />
+                                  FontSize="24"
+                                  Grid.Column="1" />
+
+            <controls:GlyphButton x:Name="Send"
+                                  Click="Send_Click"
+                                  ContextRequested="Send_ContextRequested"
+                                  Foreground="{ThemeResource TelegramBackgroundAccentBrush}"
+                                  VerticalAlignment="Bottom"
+                                  FontSize="24"
+                                  Glyph="&#xE919;"
+                                  Margin="-8,0,0,0"
+                                  Grid.Column="2" />
         </Grid>
     </Grid>
 </controls:ContentPopup>

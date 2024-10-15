@@ -923,7 +923,7 @@ namespace Telegram.Views.Popups
                 flyout.CreateFlyoutItem(() => { Silent = true; Hide(ContentDialogResult.Primary); }, Strings.SendWithoutSound, Icons.AlertOff);
                 flyout.CreateFlyoutItem(() => { Schedule = true; Hide(ContentDialogResult.Primary); }, self ? Strings.SetReminder : Strings.ScheduleMessage, Icons.CalendarClock);
 
-                flyout.ShowAt(sender as UIElement, args);
+                flyout.ShowAt(sender as UIElement, FlyoutPlacementMode.TopEdgeAlignedRight);
             }
         }
 

@@ -315,7 +315,6 @@
                 <RepositionThemeTransition />
             </TransitionCollection>
         </Grid.ChildrenTransitions>
-
         <Grid x:Name="CaptionPanel"
               Background="{ThemeResource TextControlBackground}"
               Grid.Row="{x:Bind ConvertCaptionRow(ShowCaptionAboveMedia), Mode=OneWay}">
@@ -356,9 +355,7 @@
                                      Background="Transparent"
                                      Padding="24,0,0,0"
                                      BorderThickness="0"
-                                     MinHeight="48"
-                                     Grid.Row="1">
-            </controls:CaptionTextBox>
+                                     MinHeight="48" />
 
             <Border x:Name="CaptionBorder"
                     BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
