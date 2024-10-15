@@ -124,12 +124,9 @@ namespace Telegram.ViewModels
                 var cache = ClientService.GetUserFull(privata.UserId);
 
                 Delegate?.UpdateUser(chat, item, false);
+                ClientService.Send(new GetUserFullInfo(privata.UserId));
 
-                if (cache == null)
-                {
-                    ClientService.Send(new GetUserFullInfo(privata.UserId));
-                }
-                else
+                if (cache != null)
                 {
                     Delegate?.UpdateUserFullInfo(chat, item, cache, false, false);
                 }
@@ -155,13 +152,11 @@ namespace Telegram.ViewModels
                 var cache = ClientService.GetUserFull(secretType.UserId);
 
                 Delegate?.UpdateSecretChat(chat, secret);
-                Delegate?.UpdateUser(chat, item, true);
 
-                if (cache == null)
-                {
-                    ClientService.Send(new GetUserFullInfo(secret.UserId));
-                }
-                else
+                Delegate?.UpdateUser(chat, item, true);
+                ClientService.Send(new GetUserFullInfo(secret.UserId));
+
+                if (cache != null)
                 {
                     Delegate?.UpdateUserFullInfo(chat, item, cache, true, false);
                 }
@@ -172,12 +167,9 @@ namespace Telegram.ViewModels
                 var cache = ClientService.GetBasicGroupFull(basic.BasicGroupId);
 
                 Delegate?.UpdateBasicGroup(chat, item);
+                ClientService.Send(new GetBasicGroupFullInfo(basic.BasicGroupId));
 
-                if (cache == null)
-                {
-                    ClientService.Send(new GetBasicGroupFullInfo(basic.BasicGroupId));
-                }
-                else
+                if (cache != null)
                 {
                     Delegate?.UpdateBasicGroupFullInfo(chat, item, cache);
                 }
@@ -188,12 +180,9 @@ namespace Telegram.ViewModels
                 var cache = ClientService.GetSupergroupFull(super.SupergroupId);
 
                 Delegate?.UpdateSupergroup(chat, item);
+                ClientService.Send(new GetSupergroupFullInfo(super.SupergroupId));
 
-                if (cache == null)
-                {
-                    ClientService.Send(new GetSupergroupFullInfo(super.SupergroupId));
-                }
-                else
+                if (cache != null)
                 {
                     Delegate?.UpdateSupergroupFullInfo(chat, item, cache);
                 }
