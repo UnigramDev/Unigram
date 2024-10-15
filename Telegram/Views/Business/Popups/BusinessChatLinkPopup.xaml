@@ -91,7 +91,7 @@
 
                 <messages:CustomEmojiCanvas x:Name="CustomEmoji"
                                             IsHitTestVisible="False"
-                                            Margin="10,4,-2,-2" />
+                                            Margin="22,11,0,0" />
 
                 <controls:GlyphButton Click="Emoji_Click"
                                       Glyph="&#xE76E;"

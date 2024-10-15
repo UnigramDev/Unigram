@@ -243,7 +243,7 @@ namespace Telegram.Controls.Media
         public const string Record = "\uE903";
 
         public const string AppsListDetails = "\uEA67";
-
+        public const string DeleteFilled24 = "\uEAA0";
         public const string Delete = "\uE74D";
         public const string Share = "\uE72D";
         public const string ShareFilled = "\uE914";
