@@ -41,7 +41,7 @@ namespace Telegram.ViewModels.Delegates
         void OpenThread(MessageViewModel message);
 
         void OpenFile(File file);
-        void OpenWebPage(LinkPreview linkPreview);
+        void OpenWebPage(MessageText text);
         void OpenSticker(Sticker sticker);
         void OpenLocation(Location location, string title);
         void OpenGame(MessageViewModel message);

@@ -191,15 +191,41 @@ namespace Telegram.ViewModels
 
         public bool IsAdministrator(MessageSender memberId) => _messageDelegate.IsAdministrator(memberId);
 
-        public void OpenWebPage(LinkPreview linkPreview)
+        public void OpenWebPage(MessageText text)
         {
-            if (linkPreview.InstantViewVersion != 0)
+            if (text.LinkPreview?.InstantViewVersion != 0)
             {
-                NavigationService.NavigateToInstant(linkPreview.Url);
+                var url = text.LinkPreview.Url;
+
+                foreach (var entity in text.Text.Entities)
+                {
+                    string compare;
+
+                    if (entity.Type is TextEntityTypeUrl)
+                    {
+                        compare = text.Text.Text.Substring(entity.Offset, entity.Length);
+                    }
+                    else if (entity.Type is TextEntityTypeTextUrl textUrl)
+                    {
+                        compare = textUrl.Url;
+                    }
+                    else
+                    {
+                        continue;
+                    }
+
+                    if (MessageHelper.AreTheSame(url, compare, out _))
+                    {
+                        url = compare;
+                        break;
+                    }
+                }
+
+                NavigationService.NavigateToInstant(url);
             }
-            else
+            else if (text.LinkPreview != null)
             {
-                MessageHelper.OpenUrl(ClientService, NavigationService, linkPreview.Url, !linkPreview.SkipConfirmation, new OpenUrlSourceChat(_chat.Id));
+                MessageHelper.OpenUrl(ClientService, NavigationService, text.LinkPreview.Url, !text.LinkPreview.SkipConfirmation, new OpenUrlSourceChat(_chat.Id));
             }
         }
 

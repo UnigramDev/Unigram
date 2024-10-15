@@ -266,7 +266,7 @@ namespace Telegram.ViewModels
         /// <summary>
         /// Only available when created through DialogViewModel
         /// </summary>
-        public virtual void OpenWebPage(LinkPreview linkPreview) { }
+        public virtual void OpenWebPage(MessageText text) { }
 
         /// <summary>
         /// Only available when created through DialogViewModel
@@ -447,7 +447,7 @@ namespace Telegram.ViewModels
 
         public override void OpenThread(MessageViewModel message) => _viewModel.OpenThread(message);
 
-        public override void OpenWebPage(LinkPreview linkPreview) => _viewModel.OpenWebPage(linkPreview);
+        public override void OpenWebPage(MessageText text) => _viewModel.OpenWebPage(text);
 
         public override void OpenSticker(Sticker sticker) => _viewModel.OpenSticker(sticker);
 

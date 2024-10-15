@@ -389,18 +389,11 @@ namespace Telegram.Controls.Messages.Content
         private void Button_Click(object sender, RoutedEventArgs e)
         {
             var text = GetContent(_message);
-            if (text == null)
+            if (text?.LinkPreview != null)
             {
-                return;
+                _message?.Delegate?.OpenWebPage(text);
             }
 
-            var linkPreview = text.LinkPreview;
-            if (linkPreview == null)
-            {
-                return;
-            }
-
-            _message?.Delegate?.OpenWebPage(linkPreview);
         }
 
         public void Mockup(LinkPreview linkPreview)

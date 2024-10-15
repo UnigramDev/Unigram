@@ -1971,6 +1971,26 @@ namespace Telegram.Controls.Messages
                 return;
             }
 
+            void OpenUrl(string url, bool trust)
+            {
+                if (message.Content is MessageText text && MessageHelper.AreTheSame(text.LinkPreview?.Url, url, out _))
+                {
+                    message.Delegate.OpenWebPage(text);
+                }
+                else
+                {
+                    message.Delegate.OpenUrl(url, trust);
+                }
+            }
+
+            if (e.Type is TextEntityTypeTextUrl textUrl)
+            {
+                OpenUrl(textUrl.Url, true);
+            }
+            else if (e.Type is TextEntityTypeUrl && e.Data is string url)
+            {
+                OpenUrl(url, false);
+            }
             if (e.Type is TextEntityTypeBotCommand && e.Data is string command)
             {
                 message.Delegate.SendBotCommand(command);
@@ -1994,14 +2014,6 @@ namespace Telegram.Controls.Messages
             else if (e.Type is TextEntityTypeMentionName mentionName)
             {
                 message.Delegate.OpenUser(mentionName.UserId);
-            }
-            else if (e.Type is TextEntityTypeTextUrl textUrl)
-            {
-                message.Delegate.OpenUrl(textUrl.Url, true);
-            }
-            else if (e.Type is TextEntityTypeUrl && e.Data is string url)
-            {
-                message.Delegate.OpenUrl(url, false);
             }
             else if (e.Type is TextEntityTypeBankCardNumber && e.Data is string cardNumber)
             {
