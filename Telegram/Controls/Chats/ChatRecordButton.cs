@@ -153,18 +153,20 @@ namespace Telegram.Controls.Chats
 
         private void OnLoaded(object sender, RoutedEventArgs e)
         {
-            _recorder.RecordingStarted += Current_RecordingStarted;
-            _recorder.RecordingStopped += Current_RecordingStopped;
-            _recorder.RecordingFailed += Current_RecordingStopped;
+            _recorder.RecordingStarting += OnRecordingStarting;
+            _recorder.RecordingStarted += OnRecordingStarted;
+            _recorder.RecordingStopped += OnRecordingStopped;
+            _recorder.RecordingFailed += OnRecordingStopped;
 
             _recorder.QuantumProcessed = amplitude => QuantumProcessed?.Invoke(this, amplitude);
         }
 
         private void OnUnloaded(object sender, RoutedEventArgs e)
         {
-            _recorder.RecordingStarted -= Current_RecordingStarted;
-            _recorder.RecordingStopped -= Current_RecordingStopped;
-            _recorder.RecordingFailed -= Current_RecordingStopped;
+            _recorder.RecordingStarting -= OnRecordingStarting;
+            _recorder.RecordingStarted -= OnRecordingStarted;
+            _recorder.RecordingStopped -= OnRecordingStopped;
+            _recorder.RecordingFailed -= OnRecordingStopped;
 
             _recorder.QuantumProcessed = null;
         }
@@ -227,7 +229,7 @@ namespace Telegram.Controls.Chats
             UpdateRecordingInterface();
         }
 
-        private void Current_RecordingStarted(object sender, EventArgs e)
+        private void OnRecordingStarting(object sender, EventArgs e)
         {
             if (!_recordingAudioVideo)
             {
@@ -241,7 +243,15 @@ namespace Telegram.Controls.Chats
             }
         }
 
-        private void Current_RecordingStopped(object sender, EventArgs e)
+        private void OnRecordingStarted(object sender, EventArgs e)
+        {
+            if (_recordingAudioVideo)
+            {
+                this.BeginOnUIThread(() => RecordingStarted?.Invoke(_recorder.MediaSource, EventArgs.Empty));
+            }
+        }
+
+        private void OnRecordingStopped(object sender, EventArgs e)
         {
             if (_recordingAudioVideo)
             {
@@ -309,7 +319,7 @@ namespace Telegram.Controls.Chats
                     VisualStateManager.GoToState(this, "Started", false);
 
                     ClickMode = ClickMode.Release;
-                    RecordingStarted?.Invoke(this, EventArgs.Empty);
+                    RecordingStarting?.Invoke(this, EventArgs.Empty);
 
                     Automation.SetToolTip(this, null);
 
@@ -629,6 +639,7 @@ namespace Telegram.Controls.Chats
             }
         }
 
+        public event EventHandler RecordingStarting;
         public event EventHandler RecordingStarted;
         public event EventHandler RecordingStopped;
         public event EventHandler RecordingLocked;
@@ -638,6 +649,7 @@ namespace Telegram.Controls.Chats
         public partial class Recorder
         {
             public event EventHandler RecordingFailed;
+            public event EventHandler RecordingStarting;
             public event EventHandler RecordingStarted;
             public event EventHandler RecordingStopped;
             public event EventHandler RecordingTooShort;
@@ -685,7 +697,7 @@ namespace Telegram.Controls.Chats
                         return;
                     }
 
-                    RecordingStarted?.Invoke(this, EventArgs.Empty);
+                    RecordingStarting?.Invoke(this, EventArgs.Empty);
 
                     try
                     {
@@ -729,6 +741,7 @@ namespace Telegram.Controls.Chats
                         }
 
                         await _recorder.m_mediaCapture.InitializeAsync(_recorder.settings);
+                        RecordingStarted?.Invoke(this, EventArgs.Empty);
 
                         Logger.Debug("Devices initialized, starting");
 
@@ -1134,6 +1147,8 @@ namespace Telegram.Controls.Chats
                 }
             }
 
+            public MediaCapture MediaSource => _recorder.m_mediaCapture;
+
             internal sealed class OpusRecorder
             {
                 private readonly bool m_isVideo;
@@ -1151,11 +1166,6 @@ namespace Telegram.Controls.Chats
 
                 //// Rotation Helper to simplify handling rotation compensation for the camera streams
                 //public CameraRotationHelper _rotationHelper;
-
-                public StorageFile File
-                {
-                    get { return m_file; }
-                }
 
                 public OpusRecorder(StorageFile file, bool video)
                 {
