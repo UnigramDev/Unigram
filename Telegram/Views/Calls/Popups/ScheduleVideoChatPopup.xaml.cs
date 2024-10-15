@@ -41,7 +41,7 @@ namespace Telegram.Views.Calls.Popups
             PrimaryButtonText = Strings.Schedule;
             SecondaryButtonText = Strings.Cancel;
 
-            Message.Text = string.Format(channel ? Strings.VoipChannelScheduleInfo : Strings.VoipGroupScheduleInfo, Locale.FormatTtl((int)(Value - DateTime.Now).TotalSeconds));
+            Message.Text = string.Format(channel ? Strings.VoipChannelScheduleInfo : Strings.VoipGroupScheduleInfo, Locale.FormatTtl((int)(Value - DateTime.UtcNow).TotalSeconds));
 
             DefaultButton = ContentDialogButton.Primary;
         }
@@ -81,12 +81,12 @@ namespace Telegram.Views.Calls.Popups
 
         private void Date_DateChanged(CalendarDatePicker sender, CalendarDatePickerDateChangedEventArgs args)
         {
-            Message.Text = string.Format(_channel ? Strings.VoipChannelScheduleVoiceChat : Strings.VoipGroupScheduleVoiceChat, Locale.FormatTtl((int)(Value - DateTime.Now).TotalSeconds));
+            Message.Text = string.Format(_channel ? Strings.VoipChannelScheduleVoiceChat : Strings.VoipGroupScheduleVoiceChat, Locale.FormatTtl((int)(Value - DateTime.UtcNow).TotalSeconds));
         }
 
         private void Time_TimeChanged(object sender, TimePickerValueChangedEventArgs e)
         {
-            Message.Text = string.Format(_channel ? Strings.VoipChannelScheduleVoiceChat : Strings.VoipGroupScheduleVoiceChat, Locale.FormatTtl((int)(Value - DateTime.Now).TotalSeconds));
+            Message.Text = string.Format(_channel ? Strings.VoipChannelScheduleVoiceChat : Strings.VoipGroupScheduleVoiceChat, Locale.FormatTtl((int)(Value - DateTime.UtcNow).TotalSeconds));
         }
     }
 }
