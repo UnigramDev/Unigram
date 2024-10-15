@@ -5754,11 +5754,11 @@ public static class NativeUtils_stub
             throw new RuntimeException(ex);
         }
     }
-    public static string FormatDate_stub(System.DateTimeOffset value, string format)
+    public static string FormatDate_stub(int year, int month, int day, string format)
     {
         try
         {
-            return Telegram.Native.NativeUtils.FormatDate(value, format);
+            return Telegram.Native.NativeUtils.FormatDate(year, month, day, format);
         }
         catch (Exception ex)
         {
