@@ -418,6 +418,11 @@ namespace Telegram.Controls
 
         private void OnNavigated(object sender, NavigatedEventArgs e)
         {
+            if (DetailFrame == null)
+            {
+                return;
+            }
+
             if (e.Content is HostedPage hosted)
             {
                 DetailFooter = hosted.Action;
