@@ -2938,7 +2938,19 @@ namespace Telegram.Views
             var muted = ViewModel.ClientService.Notifications.IsMuted(chat);
             var archived = chat.Positions.Any(x => x.List is ChatListArchive);
 
-            flyout.CreateFlyoutItem(DialogArchive_Loaded, viewModel.ArchiveChat, chat, archived ? Strings.Unarchive : Strings.Archive, archived ? Icons.Unarchive : Icons.Archive);
+            if (DialogArchive_Loaded(chat))
+            {
+                // Suggest to unarchive only when archive is open
+                if (viewModel.Items.ChatList is ChatListArchive && archived)
+                {
+                    flyout.CreateFlyoutItem(DialogArchive_Loaded, viewModel.ArchiveChat, chat, Strings.Unarchive);
+                }
+                else if (viewModel.Items.ChatList is not ChatListArchive && !archived)
+                {
+                    flyout.CreateFlyoutItem(DialogArchive_Loaded, viewModel.ArchiveChat, chat, Strings.Archive, Icons.Archive);
+                }
+            }
+
             flyout.CreateFlyoutItem(DialogPin_Loaded, viewModel.PinChat, chat, position.IsPinned ? Strings.UnpinFromTop : Strings.PinToTop, position.IsPinned ? Icons.PinOff : Icons.Pin);
 
             var chatLists = await ViewModel.ClientService.SendAsync(new GetChatListsToAddChat(chat.Id)) as ChatLists;
@@ -2952,6 +2964,12 @@ namespace Telegram.Views
 
                 foreach (var chatList in chatLists.ChatListsValue.OfType<ChatListFolder>())
                 {
+                    // Skip current folder from "Add to folder" list to avoid confusion
+                    if (chatList.AreTheSame(viewModel.Items.ChatList))
+                    {
+                        continue;
+                    }
+
                     if (folders.TryGetValue(chatList.ChatFolderId, out ChatFolderInfo folder))
                     {
                         var icon = Icons.ParseFolder(folder.Icon);
