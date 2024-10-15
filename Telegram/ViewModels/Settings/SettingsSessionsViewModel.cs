@@ -50,6 +50,7 @@ namespace Telegram.ViewModels.Settings
 
         private readonly int[] _sessionTtlIndexer = new[]
         {
+            7,
             30,
             90,
             180,
@@ -62,6 +63,7 @@ namespace Telegram.ViewModels.Settings
             new SettingsOptionItem<int>(30, Locale.Declension(Strings.R.Months, 1)),
             new SettingsOptionItem<int>(90, Locale.Declension(Strings.R.Months, 3)),
             new SettingsOptionItem<int>(180, Locale.Declension(Strings.R.Months, 6)),
+            new SettingsOptionItem<int>(365, Locale.Declension(Strings.R.Years, 1)),
         };
 
         private async Task UpdateSessionsAsync()
