@@ -71,23 +71,24 @@ namespace Telegram.Collections
             //OnPropertyChanged(new PropertyChangedEventArgs(nameof(Query)));
         }
 
-        public void Cancel()
+        public CancellationTokenSource Cancel()
         {
             _cancellation?.Cancel();
             _cancellation = new();
+            return _cancellation;
         }
 
         public async void Update(TSource source)
         {
             if (source is ISupportIncrementalLoading incremental && incremental.HasMoreItems)
             {
-                var token = _cancellation;
-
                 _source = source;
                 _incrementalSource = incremental;
 
                 if (_initialized)
                 {
+                    var token = Cancel();
+
                     await incremental.LoadMoreItemsAsync(0);
                     var diff = await Task.Run(() => DiffUtil.CalculateDiff(this, source, DefaultDiffHandler, DefaultOptions));
 
@@ -114,9 +115,8 @@ namespace Telegram.Collections
             return AsyncInfo.Run(async _ =>
             {
                 _initialized = true;
-                _cancellation?.Cancel();
 
-                var token = _cancellation = new CancellationTokenSource();
+                var token = Cancel();
                 var result = await _incrementalSource?.LoadMoreItemsAsync(count);
 
                 if (result.Count > 0 && !token.IsCancellationRequested)
