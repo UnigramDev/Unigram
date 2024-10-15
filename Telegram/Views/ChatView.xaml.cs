@@ -4557,7 +4557,7 @@ namespace Telegram.Views
                 readOnly = true;
                 return Strings.PlainTextRestrictedHint;
             }
-            else if (supergroup.Status is ChatMemberStatusCreator creator && creator.IsAnonymous || supergroup.Status is ChatMemberStatusAdministrator administrator && administrator.Rights.IsAnonymous)
+            else if (supergroup.Status is ChatMemberStatusCreator { IsAnonymous: true} || supergroup.Status is ChatMemberStatusAdministrator { Rights.IsAnonymous: true })
             {
                 return Strings.SendAnonymously;
             }
