@@ -127,7 +127,8 @@ namespace Telegram.Services.Calls
             }
         }
 
-        public event TypedEventHandler<VoipGroupCall, VoipGroupCallNetworkStateChangedEventArgs> NetworkStateUpdated;
+        public event TypedEventHandler<VoipGroupCall, VoipGroupCallNetworkStateChangedEventArgs> NetworkStateChanged;
+        public event TypedEventHandler<VoipGroupCall, VoipGroupCallJoinedStateChangedEventArgs> JoinedStateChanged;
 
         public event EventHandler AvailableStreamsChanged;
         public int AvailableStreamsCount => _availableStreamsCount;
@@ -504,7 +505,7 @@ namespace Telegram.Services.Calls
             //}
 
             _isConnected = args.IsConnected;
-            NetworkStateUpdated?.Invoke(this, new VoipGroupCallNetworkStateChangedEventArgs(args.IsConnected, args.IsTransitioningFromBroadcastToRtc));
+            NetworkStateChanged?.Invoke(this, new VoipGroupCallNetworkStateChangedEventArgs(args.IsConnected, args.IsTransitioningFromBroadcastToRtc));
         }
 
         private Dictionary<int, SpeakingParticipant> _speakingParticipants = new();
@@ -767,7 +768,9 @@ namespace Telegram.Services.Calls
         {
             closed = false;
 
-            var joined = IsJoined || NeedRejoin;
+            var isJoined = IsJoined;
+            var needRejoin = NeedRejoin;
+
             Duration = call.Duration;
             IsVideoRecorded = call.IsVideoRecorded;
             RecordDuration = call.RecordDuration;
@@ -799,11 +802,16 @@ namespace Telegram.Services.Calls
 
                 _isScheduled = call.ScheduledStartDate > 0;
             }
-            else if (call.IsJoined != joined)
+            else if (call.IsJoined != (isJoined || needRejoin))
             {
                 Dispose();
                 Discard();
                 closed = true;
+            }
+
+            if (isJoined != IsJoined || needRejoin != NeedRejoin)
+            {
+                JoinedStateChanged?.Invoke(this, new VoipGroupCallJoinedStateChangedEventArgs(IsJoined, NeedRejoin));
             }
 
             RaisePropertyChanged(nameof(Call));

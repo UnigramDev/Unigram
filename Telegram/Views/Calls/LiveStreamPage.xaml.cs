@@ -58,7 +58,8 @@ namespace Telegram.Views.Calls
             _scheduledTimer.Tick += OnTick;
 
             _call = call;
-            _call.NetworkStateUpdated += OnNetworkStateUpdated;
+            _call.NetworkStateChanged += OnNetworkStateChanged;
+            _call.JoinedStateChanged += OnJoinedStateChanged;
             _call.AvailableStreamsChanged += OnAvailableStreamsChanged;
             _call.PropertyChanged += OnPropertyChanged;
             _call.AddIncomingVideoOutput("unified", _unifiedVideo = VoipVideoOutput.CreateSink(Viewport, false));
@@ -224,7 +225,8 @@ namespace Telegram.Views.Calls
 
             _unifiedVideo?.Stop();
 
-            _call.NetworkStateUpdated -= OnNetworkStateUpdated;
+            _call.NetworkStateChanged -= OnNetworkStateChanged;
+            _call.JoinedStateChanged -= OnJoinedStateChanged;
             _call.AvailableStreamsChanged -= OnAvailableStreamsChanged;
             _call.PropertyChanged -= OnPropertyChanged;
         }
@@ -257,12 +259,6 @@ namespace Telegram.Views.Calls
 
         private void OnPropertyChanged()
         {
-            if (_call.IsClosed)
-            {
-                Close();
-                return;
-            }
-
             TitleInfo.Text = _call.GetTitle();
 
             if (_call.ScheduledStartDate != 0)
@@ -306,9 +302,17 @@ namespace Telegram.Views.Calls
             }
         }
 
-        private void OnNetworkStateUpdated(VoipGroupCall sender, VoipGroupCallNetworkStateChangedEventArgs args)
+        private void OnNetworkStateChanged(VoipGroupCall sender, VoipGroupCallNetworkStateChangedEventArgs args)
         {
             this.BeginOnUIThread(() => OnAvailableStreamsChanged());
+        }
+
+        private void OnJoinedStateChanged(VoipGroupCall sender, VoipGroupCallJoinedStateChangedEventArgs args)
+        {
+            if (sender.IsClosed)
+            {
+                this.BeginOnUIThread(() => Close());
+            }
         }
 
         private async void Leave_Click(object sender, RoutedEventArgs e)

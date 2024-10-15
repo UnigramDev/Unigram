@@ -42,6 +42,8 @@ namespace Telegram.Navigation
 
         private readonly Window _window;
 
+        private bool _consolidated;
+
         private readonly InputListener _inputListener;
         public InputListener InputListener => _inputListener;
 
@@ -144,6 +146,13 @@ namespace Telegram.Navigation
 
         public async Task ConsolidateAsync()
         {
+            if (_consolidated)
+            {
+                return;
+            }
+
+            _consolidated = true;
+
             var sender = ApplicationView.GetForCurrentView();
             if (await sender.TryConsolidateAsync())
             {
@@ -160,6 +169,7 @@ namespace Telegram.Navigation
 
         private void OnConsolidated(ApplicationView sender)
         {
+            _consolidated = true;
             _inputListener.Release();
             sender.Consolidated -= OnConsolidated;
 
