@@ -127,6 +127,7 @@ namespace Telegram.Views
 
             //ElementComposition.GetElementVisual(this).Clip = BootStrapper.Current.Compositor.CreateInsetClip();
             ElementCompositionPreview.SetIsTranslationEnabled(ButtonMore, true);
+            ElementCompositionPreview.SetIsTranslationEnabled(ButtonAlias, true);
             ElementCompositionPreview.SetIsTranslationEnabled(TextFieldPanel, true);
             ElementCompositionPreview.SetIsTranslationEnabled(btnAttach, true);
             ElementCompositionPreview.SetIsTranslationEnabled(ListAutocomplete, true);
@@ -582,7 +583,12 @@ namespace Telegram.Views
                     {
                         var bubble = owner.GetChild<MessageBubble>();
                         var reply = message.ReplyToState != MessageReplyToState.Hidden && message.ReplyTo != null;
-                        var more = ButtonMore.Visibility == Visibility.Visible ? 40 : 0;
+                        
+                        var more = Math.Max(ButtonMore.ActualSize.X, ButtonAlias.ActualSize.X);
+                        if (more > 0)
+                        {
+                            more += 8;
+                        }
 
                         var xOffset = content switch
                         {
@@ -822,7 +828,6 @@ namespace Telegram.Views
             ButtonScheduled = null;
             ButtonAttach = null;
             TextField = null;
-            PhotoMore = null;
             ComposerHeaderGlyph = null;
             ComposerHeaderUpload = null;
             ComposerHeaderCancel = null;
@@ -3632,7 +3637,7 @@ namespace Telegram.Views
                     ViewModel.SendMessage(insert);
                 }
 
-                ButtonMore.IsChecked = false;
+                TextField.IsMenuExpanded = false;
             }
             else if (e.ClickedItem is string hashtag && entity is AutocompleteEntity.Hashtag)
             {
@@ -4171,13 +4176,15 @@ namespace Telegram.Views
         {
             if (defaultMessageSenderId == null)
             {
-                ShowHideBotCommands(false);
+                if (chat.Type is not ChatTypePrivate)
+                {
+                    ShowHideSideButton(SideButton.None);
+                }
             }
             else
             {
-                PhotoMore.SetMessageSender(ViewModel.ClientService, defaultMessageSenderId, 32);
-                Automation.SetToolTip(ButtonMore, Strings.SendMessageAsTitle);
-                ShowHideBotCommands(true);
+                PhotoAlias.SetMessageSender(ViewModel.ClientService, defaultMessageSenderId, 32);
+                ShowHideSideButton(SideButton.Alias);
             }
         }
 
@@ -4756,7 +4763,8 @@ namespace Telegram.Views
         }
 
         private bool _composerHeaderCollapsed = true;
-        private bool _botCommandsCollapsed = true;
+        //private bool _botMenuButtonCollapsed = true;
+        //private bool _aliasButtonCollapsed = true;
         private bool _autocompleteCollapsed = true;
 
         private void ShowHideComposerHeader(bool show, bool sendout = false)
@@ -4883,17 +4891,52 @@ namespace Telegram.Views
             }
         }
 
-        private void ShowHideBotCommands(bool show)
+        enum SideButton
         {
-            if (_botCommandsCollapsed != show)
+            None,
+            BotMenu,
+            Alias
+        }
+
+        private SideButton _sideMenuCollapsed;
+
+        private async void ShowHideSideButton(SideButton next)
+        {
+            if (_sideMenuCollapsed == next)
             {
                 return;
             }
 
-            _botCommandsCollapsed = !show;
-            ButtonMore.Visibility = Visibility.Visible;
+            var alias1 = false;
+            var menu1 = false;
+            var none1 = _sideMenuCollapsed == SideButton.None;
+            var prev = _sideMenuCollapsed;
+
+            if (next == SideButton.Alias || _sideMenuCollapsed == SideButton.Alias)
+            {
+                alias1 = true;
+                ButtonAlias.Visibility = Visibility.Visible;
+            }
+
+            if (next == SideButton.BotMenu || _sideMenuCollapsed == SideButton.BotMenu)
+            {
+                menu1 = true;
+                ButtonMore.Visibility = Visibility.Visible;
+            }
+
+            _sideMenuCollapsed = next;
+
+            if (next == SideButton.BotMenu)
+            {
+                await ButtonMore.UpdateLayoutAsync();
+            }
+            else if (next == SideButton.Alias)
+            {
+                await ButtonAlias.UpdateLayoutAsync();
+            }
 
             var more = ElementComposition.GetElementVisual(ButtonMore);
+            var alias = ElementComposition.GetElementVisual(ButtonAlias);
             var field = ElementComposition.GetElementVisual(TextFieldPanel);
             var attach = ElementComposition.GetElementVisual(btnAttach);
 
@@ -4903,32 +4946,96 @@ namespace Telegram.Views
                 field.Properties.InsertVector3("Translation", Vector3.Zero);
                 attach.Properties.InsertVector3("Translation", Vector3.Zero);
 
-                if (_botCommandsCollapsed)
+                if (_sideMenuCollapsed != SideButton.BotMenu)
                 {
-                    ButtonMore.IsChecked = false;
+                    TextField.IsMenuExpanded = false;
                     ButtonMore.Visibility = Visibility.Collapsed;
+                }
+
+                if (_sideMenuCollapsed != SideButton.Alias)
+                {
+                    ButtonAlias.Visibility = Visibility.Collapsed;
                 }
 
                 UpdateTextAreaRadius();
             };
 
             var offset = BootStrapper.Current.Compositor.CreateVector3KeyFrameAnimation();
-            offset.InsertKeyFrame(show ? 0 : 1, new Vector3(-40, 0, 0));
-            offset.InsertKeyFrame(show ? 1 : 0, new Vector3());
+
+            if (next == SideButton.Alias)
+            {
+                if (prev == SideButton.BotMenu)
+                {
+                    offset.InsertKeyFrame(0, new Vector3(0, 0, 0));
+                    offset.InsertKeyFrame(1, new Vector3(ButtonAlias.ActualSize.X - ButtonMore.ActualSize.X, 0, 0));
+                }
+                else
+                {
+                    offset.InsertKeyFrame(0, new Vector3(-ButtonAlias.ActualSize.X - 8, 0, 0));
+                    offset.InsertKeyFrame(1, new Vector3());
+                }
+            }
+            else if (next == SideButton.BotMenu)
+            {
+                if (prev == SideButton.Alias)
+                {
+                    offset.InsertKeyFrame(0, new Vector3(ButtonAlias.ActualSize.X - ButtonMore.ActualSize.X, 0, 0));
+                    offset.InsertKeyFrame(1, new Vector3(0, 0, 0));
+                }
+                else
+                {
+                    offset.InsertKeyFrame(0, new Vector3(-ButtonMore.ActualSize.X - 8, 0, 0));
+                    offset.InsertKeyFrame(1, new Vector3());
+                }
+            }
+            else if (prev == SideButton.BotMenu)
+            {
+                offset.InsertKeyFrame(1, new Vector3(-ButtonMore.ActualSize.X - 8, 0, 0));
+                offset.InsertKeyFrame(0, new Vector3());
+            }
+            else if (prev == SideButton.Alias)
+            {
+                offset.InsertKeyFrame(1, new Vector3(-ButtonAlias.ActualSize.X - 8, 0, 0));
+                offset.InsertKeyFrame(0, new Vector3());
+            }
+
             offset.Duration = Constants.FastAnimation;
 
-            var scale = BootStrapper.Current.Compositor.CreateVector3KeyFrameAnimation();
-            scale.InsertKeyFrame(show ? 0 : 1, Vector3.Zero);
-            scale.InsertKeyFrame(show ? 1 : 0, Vector3.One);
-            scale.Duration = Constants.FastAnimation;
+            var scaleShow = BootStrapper.Current.Compositor.CreateVector3KeyFrameAnimation();
+            scaleShow.InsertKeyFrame(0, Vector3.Zero);
+            scaleShow.InsertKeyFrame(1, Vector3.One);
+            scaleShow.Duration = Constants.FastAnimation;
 
-            var opacity = BootStrapper.Current.Compositor.CreateScalarKeyFrameAnimation();
-            opacity.InsertKeyFrame(show ? 0 : 1, 0);
-            opacity.InsertKeyFrame(show ? 1 : 0, 1);
+            var opacityShow = BootStrapper.Current.Compositor.CreateScalarKeyFrameAnimation();
+            opacityShow.InsertKeyFrame(0, 0);
+            opacityShow.InsertKeyFrame(1, 1);
+            opacityShow.Duration = Constants.FastAnimation;
 
-            more.CenterPoint = new Vector3(20, 16, 0);
-            more.StartAnimation("Scale", scale);
-            more.StartAnimation("Opacity", opacity);
+            var scaleHide = BootStrapper.Current.Compositor.CreateVector3KeyFrameAnimation();
+            scaleHide.InsertKeyFrame(0, Vector3.One);
+            scaleHide.InsertKeyFrame(1, Vector3.Zero);
+            scaleHide.Duration = Constants.FastAnimation;
+
+            var opacityHide = BootStrapper.Current.Compositor.CreateScalarKeyFrameAnimation();
+            opacityHide.InsertKeyFrame(0, 1);
+            opacityHide.InsertKeyFrame(1, 0);
+            opacityHide.Duration = Constants.FastAnimation * 10;
+
+            more.CenterPoint = new Vector3(16, 16, 0);
+            alias.CenterPoint = new Vector3(16, 16, 0);
+
+            if (alias1)
+            {
+                alias.StartAnimation("Scale", next == SideButton.Alias ? scaleShow : scaleHide);
+                alias.StartAnimation("Opacity", next == SideButton.Alias ? opacityShow : opacityHide);
+            }
+
+            if (menu1)
+            {
+                more.StartAnimation("Scale", next == SideButton.BotMenu ? scaleShow : scaleHide);
+                more.StartAnimation("Opacity", next == SideButton.BotMenu ? opacityShow : opacityHide);
+            }
+
             field.StartAnimation("Translation", offset);
             attach.StartAnimation("Translation", offset);
 
@@ -4993,7 +5100,7 @@ namespace Telegram.Views
             var min = Math.Max(4, radius - 2);
             var max = ComposerHeader.Visibility == Visibility.Visible ? 4 : min;
 
-            ButtonAttach.CornerRadius = new CornerRadius(_botCommandsCollapsed ? max : 4, 4, 4, _botCommandsCollapsed ? min : 4);
+            ButtonAttach.CornerRadius = new CornerRadius(_sideMenuCollapsed == SideButton.None ? max : 4, 4, 4, _sideMenuCollapsed == SideButton.None ? min : 4);
             btnVoiceMessage.CornerRadius = new CornerRadius(4, max, min, 4);
             btnSendMessage.CornerRadius = new CornerRadius(4, max, min, 4);
             btnEdit.CornerRadius = new CornerRadius(4, max, min, 4);
@@ -5103,6 +5210,8 @@ namespace Telegram.Views
 
             if (fullInfo == null)
             {
+                ButtonMore.Content = Strings.BotsMenuTitle;
+
                 return;
             }
 
@@ -5161,19 +5270,27 @@ namespace Telegram.Views
                 ShowArea();
             }
 
-            if (fullInfo.BotInfo?.Commands.Count > 0)
+            if (fullInfo.BotInfo?.MenuButton != null)
             {
+                ButtonMore.Content = fullInfo.BotInfo.MenuButton.Text;
+
+                ViewModel.BotCommands = null;
+                ViewModel.HasBotCommands = false;
+                ShowHideSideButton(SideButton.BotMenu);
+            }
+            else if (fullInfo.BotInfo?.Commands.Count > 0)
+            {
+                ButtonMore.Content = Strings.BotsMenuTitle;
+
                 ViewModel.BotCommands = fullInfo.BotInfo.Commands.Select(x => new UserCommand(user.Id, x)).ToList();
                 ViewModel.HasBotCommands = false;
-                PhotoMore.Source = null;
-                Automation.SetToolTip(ButtonMore, Strings.AccDescrBotCommands);
-                ShowHideBotCommands(true);
+                ShowHideSideButton(SideButton.BotMenu);
             }
             else
             {
                 ViewModel.BotCommands = null;
                 ViewModel.HasBotCommands = false;
-                ShowHideBotCommands(false);
+                ShowHideSideButton(SideButton.None);
             }
 
             Automation.SetToolTip(Call, Strings.Call);
@@ -5663,7 +5780,22 @@ namespace Telegram.Views
             RemoveMessageEffect();
         }
 
-        private async void ButtonMore_Checked(object sender, RoutedEventArgs e)
+        private void ButtonMore_Click(object sender, RoutedEventArgs e)
+        {
+            if (ViewModel.ClientService.TryGetUserFull(ViewModel.Chat, out UserFullInfo fullInfo))
+            {
+                if (fullInfo.BotInfo?.MenuButton != null)
+                {
+                    ViewModel.OpenMiniApp(fullInfo.BotInfo.MenuButton.Url);
+                }
+                else
+                {
+                    TextField.IsMenuExpanded = !TextField.IsMenuExpanded;
+                }
+            }
+        }
+
+        private async void ButtonAlias_Click(object sender, RoutedEventArgs e)
         {
             var chat = ViewModel.Chat;
             if (chat == null || chat.Type is ChatTypePrivate or ChatTypeSecret)
@@ -5675,7 +5807,6 @@ namespace Telegram.Views
             flyout.Items.Add(new MenuFlyoutLabel { Text = Strings.SendMessageAsTitle });
             flyout.Closing += (s, args) =>
             {
-                ButtonMore.IsChecked = false;
                 _focusState.Set(FocusState.Programmatic);
             };
 
@@ -5728,7 +5859,7 @@ namespace Telegram.Views
                 }
             }
 
-            flyout.ShowAt(ButtonMore, FlyoutPlacementMode.TopEdgeAlignedLeft);
+            flyout.ShowAt(ButtonAlias, FlyoutPlacementMode.TopEdgeAlignedLeft);
         }
 
         private void InlineBotResults_Loaded(object sender, RoutedEventArgs e)

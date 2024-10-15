@@ -739,7 +739,7 @@ namespace Telegram.Common
             }
         }
 
-        private static async void NavigateToWebApp(IClientService clientService, INavigationService navigation, string botUsername, string startParameter, string webAppShortName, OpenUrlSource source)
+        public static async void NavigateToWebApp(IClientService clientService, INavigationService navigation, string botUsername, string startParameter, string webAppShortName, OpenUrlSource source)
         {
             var response = await clientService.SendAsync(new SearchPublicChat(botUsername));
             if (response is Chat chat && clientService.TryGetUser(chat, out User botUser))
@@ -1530,6 +1530,7 @@ namespace Telegram.Common
                     }
 
                     translate.Click += handler;
+                    translate.IsEnabled = true;
                 }
             }
         }

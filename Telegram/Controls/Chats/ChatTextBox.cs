@@ -791,7 +791,7 @@ namespace Telegram.Controls.Chats
         }
 
         private bool _isMenuExpanded;
-        public bool? IsMenuExpanded
+        public bool IsMenuExpanded
         {
             get => _isMenuExpanded;
             set
@@ -801,7 +801,7 @@ namespace Telegram.Controls.Chats
                     return;
                 }
 
-                _isMenuExpanded = value ?? false;
+                _isMenuExpanded = value;
                 OnSelectionChanged(this, false);
             }
         }

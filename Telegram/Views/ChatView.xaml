@@ -1129,19 +1129,33 @@
                                               Grid.Column="2" />
                     </Grid>
 
-                    <controls:MenuButton x:Name="ButtonMore"
-                                         Checked="ButtonMore_Checked"
-                                         AutomationProperties.Name="{CustomResource AccDescrBotCommands}"
-                                         ToolTipService.ToolTip="{CustomResource AccDescrBotCommands}"
-                                         VerticalAlignment="Bottom"
-                                         Visibility="Collapsed"
-                                         Margin="0,8,0,8"
-                                         Grid.Row="1">
-                        <controls:ProfilePicture x:Name="PhotoMore"
+                    <Button x:Name="ButtonMore"
+                            Click="ButtonMore_Click"
+                            Style="{StaticResource AccentButtonStyle}"
+                            BorderBrush="{ThemeResource AccentButtonBackground}"
+                            AutomationProperties.Name="{CustomResource AccDescrBotCommands}"
+                            ToolTipService.ToolTip="{CustomResource AccDescrBotCommands}"
+                            HorizontalAlignment="Left"
+                            VerticalAlignment="Bottom"
+                            Visibility="Collapsed"
+                            CornerRadius="16"
+                            Margin="8,8,0,8"
+                            Grid.Row="1" />
+
+                    <HyperlinkButton x:Name="ButtonAlias"
+                                     Click="ButtonAlias_Click"
+                                     Style="{StaticResource EmptyHyperlinkButtonStyle}"
+                                     AutomationProperties.Name="{CustomResource SendMessageAsTitle}"
+                                     ToolTipService.ToolTip="{CustomResource SendMessageAsTitle}"
+                                     HorizontalAlignment="Left"
+                                     VerticalAlignment="Bottom"
+                                     Visibility="Collapsed"
+                                     Margin="8,8,0,8"
+                                     Grid.Row="1">
+                        <controls:ProfilePicture x:Name="PhotoAlias"
                                                  Width="32"
                                                  Height="32" />
-                    </controls:MenuButton>
-
+                    </HyperlinkButton>
 
                     <Border x:Name="TextFieldPanel"
                             Grid.ColumnSpan="2"
@@ -1152,7 +1166,6 @@
                                            Background="Transparent"
                                            ControlledList="{x:Bind ListAutocomplete}"
                                            CreateLinkTarget="{x:Bind ButtonAttach}"
-                                           IsMenuExpanded="{x:Bind ButtonMore.IsChecked, Mode=OneWay}"
                                            AcceptsReturn="False"
                                            BorderThickness="0"
                                            TextWrapping="Wrap"

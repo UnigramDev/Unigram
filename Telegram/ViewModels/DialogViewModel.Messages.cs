@@ -1373,6 +1373,29 @@ namespace Telegram.ViewModels
             }
         }
 
+        public async void OpenMiniApp(string url)
+        {
+            var chat = _chat;
+            if (chat == null || !ClientService.TryGetUser(chat, out Td.Api.User botUser))
+            {
+                return;
+            }
+
+            var info = await ClientService.SendAsync(new GetInternalLinkType(url));
+            if (info is InternalLinkTypeWebApp webApp)
+            {
+                MessageHelper.NavigateToWebApp(ClientService, NavigationService, webApp.BotUsername, webApp.StartParameter, webApp.WebAppShortName, new OpenUrlSourceChat(chat.Id));
+            }
+            else
+            {
+                var response = await ClientService.SendAsync(new OpenWebApp(chat.Id, botUser.Id, url, Theme.Current.Parameters, Strings.AppName, ThreadId, null));
+                if (response is WebAppInfo webAppInfo)
+                {
+                    NavigationService.NavigateToWebApp(botUser, webAppInfo.Url, webAppInfo.LaunchId, null, chat);
+                }
+            }
+        }
+
         public async void OpenMiniApp(AttachmentMenuBot menuBot)
         {
             var chat = _chat;

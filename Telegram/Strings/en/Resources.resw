@@ -2230,6 +2230,9 @@ It will be able to access your **IP address** and basic device info.</value>
   <data name="BotShare" xml:space="preserve">
     <value>Share</value>
   </data>
+  <data name="BotsMenuTitle" xml:space="preserve">
+    <value>Menu</value>
+  </data>
   <data name="BotStarsAvailableBalance" xml:space="preserve">
     <value>Available balance</value>
   </data>
