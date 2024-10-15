@@ -23,6 +23,7 @@ using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
 using Windows.UI.Xaml.Hosting;
+using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Media.Animation;
 
 namespace Telegram.Views.Calls
@@ -1110,6 +1111,7 @@ namespace Telegram.Views.Calls
                         title.HorizontalAlignment = HorizontalAlignment.Center;
                         title.Margin = new Thickness(0, 0, 0, 12);
                         title.FontSize = 24;
+                        title.FontFamily = new FontFamily("ms-appx:///Assets/Emoji/apple.ttf#Segoe UI Emoji");
                         animation.TryStart(title);
                     }
                 }
