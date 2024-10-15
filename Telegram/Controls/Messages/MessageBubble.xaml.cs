@@ -600,25 +600,26 @@ namespace Telegram.Controls.Messages
             {
                 if (message.IsLast)
                 {
-                    if (message.Id != _photoId || Photo == null || Photo.Visibility == Visibility.Collapsed)
+                    if (message.Id != _photoId || PhotoRoot == null || PhotoRoot.Visibility == Visibility.Collapsed)
                     {
-                        if (Photo == null)
+                        if (PhotoRoot == null)
                         {
                             PhotoRoot = GetTemplateChild(nameof(PhotoRoot)) as HyperlinkButton;
-                            Photo = GetTemplateChild(nameof(Photo)) as ProfilePicture;
                             PhotoRoot.Click += Photo_Click;
+
+                            Photo = GetTemplateChild(nameof(Photo)) as ProfilePicture;
                         }
 
                         _photoId = message.Id;
-                        Photo.Visibility = Visibility.Visible;
+                        PhotoRoot.Visibility = Visibility.Visible;
                         Photo.SetMessage(message);
                     }
                 }
-                else if (Photo != null)
+                else if (PhotoRoot != null)
                 {
                     _photoId = null;
 
-                    Photo.Visibility = Visibility.Collapsed;
+                    PhotoRoot.Visibility = Visibility.Collapsed;
                     Photo.Clear();
                 }
 
@@ -629,9 +630,10 @@ namespace Telegram.Controls.Messages
             }
             else
             {
-                if (Photo != null)
+                if (PhotoRoot != null)
                 {
                     _photoId = null;
+                    Photo = null;
                     UnloadObject(ref PhotoRoot);
                 }
 
@@ -3003,14 +3005,15 @@ namespace Telegram.Controls.Messages
             HeaderPanel.Visibility = Visibility.Visible;
             HeaderLabel.Visibility = Visibility.Visible;
 
-            if (Photo == null)
+            if (PhotoRoot == null)
             {
                 PhotoRoot = GetTemplateChild(nameof(PhotoRoot)) as HyperlinkButton;
-                Photo = GetTemplateChild(nameof(Photo)) as ProfilePicture;
                 PhotoRoot.Click += Photo_Click;
+
+                Photo = GetTemplateChild(nameof(Photo)) as ProfilePicture;
             }
 
-            Photo.Visibility = Visibility.Visible;
+            PhotoRoot.Visibility = Visibility.Visible;
 
             if (obj is User user)
             {
