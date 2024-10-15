@@ -61,6 +61,7 @@
                                    IsTextSelectionEnabled="False"
                                    Grid.Row="1" />
                     <TextBlock x:Name="PremiumSubtitle"
+                               common:TextBlockHelper.Markdown="{x:Bind ConvertTitle(ViewModel.IsPremium, x:False), Mode=OneWay}"
                                Style="{StaticResource CaptionTextBlockStyle}"
                                TextAlignment="Center"
                                Margin="12,4,12,20"

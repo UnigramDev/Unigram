@@ -69,6 +69,7 @@
                                     <RowDefinition Height="Auto" />
                                     <RowDefinition Height="Auto" />
                                 </Grid.RowDefinitions>
+                                <controls:PremiumStarHeader Grid.RowSpan="3" />
                                 <controls:ProfilePicture x:Name="Photo"
                                                          Width="96"
                                                          Height="96"

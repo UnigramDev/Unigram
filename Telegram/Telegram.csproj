@@ -297,6 +297,7 @@
     <Compile Include="Controls\NativeVideoPlayer.xaml.cs">
       <DependentUpon>NativeVideoPlayer.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\PremiumStarHeader.cs" />
     <Compile Include="Controls\SlideTextBlock.cs" />
     <Compile Include="Controls\TableView.cs" />
     <Compile Include="Controls\VideoPlayerBase.cs" />
