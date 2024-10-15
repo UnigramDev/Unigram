@@ -499,38 +499,44 @@ namespace Telegram.Converters
                 return string.Empty;
             }
 
-            string formatted = null;
+            string formatted;
             try
             {
                 // We sanitize the date by adding months and days to 01/01/year.
                 // This prevents fails when the received date is something like 31/11/2024 or 29/02/2025.
                 static DateTime CreateDate(int year, int month, int day)
                 {
-                    var date = new DateTime(year, 1, 1);
+                    var date = new DateTime(year, 1, 1, 12, 0, 0, DateTimeKind.Local);
                     date = date.AddMonths(month - 1);
                     date = date.AddDays(day - 1);
 
                     return date;
                 }
 
-                if (birthdate.Year == 0)
+                DateTime date;
+                string format;
+
+                // GetDateFormatEx doesn't support dates earlier than 01/01/1601
+                if (birthdate.Year < 1601)
                 {
                     // Must use a leap year because users can set 29/02 as their birthdate.
-                    formatted = NativeUtils.FormatDate(CreateDate(2024, birthdate.Month, birthdate.Day), Strings.formatterMonth);
+                    date = CreateDate(2024, birthdate.Month, birthdate.Day);
+                    format = Strings.formatterMonth;
                 }
                 else
                 {
-                    formatted = NativeUtils.FormatDate(CreateDate(birthdate.Year, birthdate.Month, birthdate.Day), Strings.formatterBoostExpired);
+                    date = CreateDate(birthdate.Year, birthdate.Month, birthdate.Day);
+                    format = Strings.formatterBoostExpired;
                 }
 
+                formatted = NativeUtils.FormatDate(date.Year, date.Month, date.Day, format);
             }
             catch
             {
                 formatted = null;
             }
 
-            // The string is going to be empty if FileTimeToSystemTime fails.
-            // This should only happen if the date is before 01/01/1601, but you never know.
+            // The string is going to be empty if GetDateFormatEx fails.
             if (string.IsNullOrEmpty(formatted))
             {
                 formatted = string.Format("{0}/{1}/{2}", birthdate.Day, birthdate.Month, birthdate.Year);

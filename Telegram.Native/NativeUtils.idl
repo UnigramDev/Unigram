@@ -39,6 +39,7 @@ namespace Telegram.Native
         [default_overload]
         static String FormatDate(Int32 value, String format);
         static String FormatDate(Windows.Foundation.DateTime value, String format);
+        static String FormatDate(Int32 year, Int32 month, Int32 day, String format);
 
         [default_overload]
         static Boolean IsFileReadable(String path);

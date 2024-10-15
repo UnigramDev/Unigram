@@ -452,19 +452,19 @@ namespace winrt::Telegram::Native::implementation
                     return hstring(timeString);
                 }
 
-                switch (GetLastError())
-                {
-                case ERROR_INSUFFICIENT_BUFFER:
-                    return L"E_INSUFFICIENT_BUFFER";
-                case ERROR_INVALID_FLAGS:
-                    return L"E_INVALID_FLAGS";
-                case ERROR_INVALID_PARAMETER:
-                    return L"E_INVALID_PARAMETER";
-                case ERROR_OUTOFMEMORY:
-                    return L"E_OUTOFMEMORY";
-                default:
-                    return L"E_UNKNOWN";
-                }
+                //switch (GetLastError())
+                //{
+                //case ERROR_INSUFFICIENT_BUFFER:
+                //    return L"E_INSUFFICIENT_BUFFER";
+                //case ERROR_INVALID_FLAGS:
+                //    return L"E_INVALID_FLAGS";
+                //case ERROR_INVALID_PARAMETER:
+                //    return L"E_INVALID_PARAMETER";
+                //case ERROR_OUTOFMEMORY:
+                //    return L"E_OUTOFMEMORY";
+                //default:
+                //    return L"E_UNKNOWN";
+                //}
             }
         }
 
@@ -485,21 +485,24 @@ namespace winrt::Telegram::Native::implementation
                 {
                     return hstring(dateString);
                 }
-
-                switch (GetLastError())
-                {
-                case ERROR_INSUFFICIENT_BUFFER:
-                    return L"E_INSUFFICIENT_BUFFER";
-                case ERROR_INVALID_FLAGS:
-                    return L"E_INVALID_FLAGS";
-                case ERROR_INVALID_PARAMETER:
-                    return L"E_INVALID_PARAMETER";
-                case ERROR_OUTOFMEMORY:
-                    return L"E_OUTOFMEMORY";
-                default:
-                    return L"E_UNKNOWN";
-                }
             }
+        }
+
+        return hstring();
+    }
+
+    hstring NativeUtils::FormatDate(int year, int month, int day, hstring format)
+    {
+        SYSTEMTIME systemTime;
+        systemTime.wYear = year;
+        systemTime.wMonth = month;
+        systemTime.wDay = day;
+        systemTime.wHour = 12;
+
+        TCHAR dateString[256];
+        if (GetDateFormatEx(LOCALE_NAME_USER_DEFAULT, NULL, &systemTime, format.data(), dateString, 256, NULL))
+        {
+            return hstring(dateString);
         }
 
         return hstring();
@@ -523,20 +526,6 @@ namespace winrt::Telegram::Native::implementation
                 if (GetTimeFormatEx(LOCALE_NAME_USER_DEFAULT, TIME_NOSECONDS, &systemTime, nullptr, timeString, 128))
                 {
                     return hstring(timeString);
-                }
-
-                switch (GetLastError())
-                {
-                case ERROR_INSUFFICIENT_BUFFER:
-                    return L"E_INSUFFICIENT_BUFFER";
-                case ERROR_INVALID_FLAGS:
-                    return L"E_INVALID_FLAGS";
-                case ERROR_INVALID_PARAMETER:
-                    return L"E_INVALID_PARAMETER";
-                case ERROR_OUTOFMEMORY:
-                    return L"E_OUTOFMEMORY";
-                default:
-                    return L"E_UNKNOWN";
                 }
             }
         }
@@ -572,20 +561,6 @@ namespace winrt::Telegram::Native::implementation
                 if (GetDateFormatEx(LOCALE_NAME_USER_DEFAULT, NULL, &systemTime, format.data(), dateString, 256, NULL))
                 {
                     return hstring(dateString);
-                }
-
-                switch (GetLastError())
-                {
-                case ERROR_INSUFFICIENT_BUFFER:
-                    return L"E_INSUFFICIENT_BUFFER";
-                case ERROR_INVALID_FLAGS:
-                    return L"E_INVALID_FLAGS";
-                case ERROR_INVALID_PARAMETER:
-                    return L"E_INVALID_PARAMETER";
-                case ERROR_OUTOFMEMORY:
-                    return L"E_OUTOFMEMORY";
-                default:
-                    return L"E_UNKNOWN";
                 }
             }
         }
