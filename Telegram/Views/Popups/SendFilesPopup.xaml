@@ -215,7 +215,7 @@
                         VerticalAlignment="Center"
                         HorizontalAlignment="Center">
                     <TextBlock x:Name="Glyph"
-                               Text="&#xE768;"
+                               Text="&#xEA17;"
                                Foreground="{ThemeResource MessageMediaForegroundBrush}"
                                FontFamily="{StaticResource SymbolThemeFontFamily}"
                                FontSize="{StaticResource GlyphLargeFontSize}"
@@ -246,7 +246,8 @@
                                                 Height="36"
                                                 FontFamily="{StaticResource TelegramThemeFontFamily}"
                                                 FontSize="18"
-                                                CornerRadius="12,4,4,12" />
+                                                CornerRadius="12,4,4,12"
+                                                Margin="0,0,-8,0" />
 
                     <controls:GlyphToggleButton x:Name="Crop"
                                                 Click="Crop_Click"
@@ -376,6 +377,8 @@
 
             <controls:GlyphButton Click="Send_Click"
                                   ContextRequested="Send_ContextRequested"
+                                  AutomationProperties.Name="{CustomResource Send}"
+                                  ToolTipService.ToolTip="{CustomResource Send}"
                                   Foreground="{ThemeResource TelegramBackgroundAccentBrush}"
                                   VerticalAlignment="Bottom"
                                   FontSize="24"

@@ -67,19 +67,10 @@ namespace Telegram.Views.Popups
         private bool _documentAllowed;
 
         public bool IsMediaOnly => _mediaAllowed && _documentAllowed && Items.All(x => x is StoragePhoto or StorageVideo);
-        public bool IsAlbumAvailable
-        {
-            get
-            {
-                if (IsMediaSelected)
-                {
-                    return Items.Count > 0 && Items.All(x => (x is StoragePhoto || x is StorageVideo) && x.Ttl == null);
-                }
+        public bool IsAlbumAvailable => true;
 
-                return Items.Count > 0;
-            }
-        }
-        public bool IsTtlAvailable { get; }
+        private bool _ttlAllowed;
+        public bool IsTtlAvailable => _ttlAllowed && Items.Count == 1;
 
         public bool HasPaidMediaAllowed { get; set; }
 
@@ -209,7 +200,7 @@ namespace Telegram.Views.Popups
         public bool? Schedule { get; private set; }
         public bool? Silent { get; private set; }
 
-        public SendFilesPopup(ComposeViewModel viewModel, IEnumerable<StorageMedia> items, bool media, bool mediaAllowed, bool documentAllowed, bool ttl, bool schedule, bool savedMessages)
+        public SendFilesPopup(ComposeViewModel viewModel, IEnumerable<StorageMedia> items, bool media, bool mediaAllowed, bool documentAllowed, bool ttlAllowed, bool schedule, bool savedMessages)
         {
             InitializeComponent();
 
@@ -233,10 +224,10 @@ namespace Telegram.Views.Popups
 
             Logger.Info(builder);
 
-            IsTtlAvailable = ttl;
             IsSavedMessages = savedMessages;
             CanSchedule = schedule;
 
+            _ttlAllowed = ttlAllowed;
             _mediaAllowed = mediaAllowed;
             _documentAllowed = documentAllowed;
 
@@ -468,14 +459,11 @@ namespace Telegram.Views.Popups
             if (storage.Size > 0)
             {
                 subtitle.Text = FileSizeConverter.Convert((long)storage.Size);
+                subtitle.Visibility = Visibility.Visible;
             }
             else
             {
-                var width = storage.Width;
-                var height = storage.Height;
-                var approximate = (storage.Width * storage.Height * 4) * (1 - Math.Log(storage.Width * storage.Height, 100 * 1024 * 1024));
-
-                subtitle.Text = "~" + FileSizeConverter.Convert((long)approximate);
+                subtitle.Visibility = Visibility.Collapsed;
             }
         }
 
@@ -696,6 +684,8 @@ namespace Telegram.Views.Popups
 
             void UpdateSelectorItem(Grid content)
             {
+                UpdateTemplate(content, content.DataContext as StorageMedia);
+
                 var particles = content.FindName("Particles") as AnimatedImage;
                 if (particles != null)
                 {
@@ -1245,7 +1235,14 @@ namespace Telegram.Views.Popups
                 width = double.IsNaN(width) ? 0 : width;
                 height = double.IsNaN(height) ? 0 : height;
 
-                rects[i] = new Rect(rect.X * ratio, rect.Y * ratio, width, height);
+                if (rects.Length == 1)
+                {
+                    rects[i] = new Rect(rect.X * ratio, rect.Y * ratio, width, Math.Max(98, height));
+                }
+                else
+                {
+                    rects[i] = new Rect(rect.X * ratio, rect.Y * ratio, width, height);
+                }
             }
 
             var finalWidth = Math.Max(0, positions.Item2.Width * ratio);
@@ -1253,6 +1250,11 @@ namespace Telegram.Views.Popups
 
             finalWidth = double.IsNaN(finalWidth) ? 0 : finalWidth;
             finalHeight = double.IsNaN(finalHeight) ? 0 : finalHeight;
+
+            if (rects.Length == 1)
+            {
+                finalHeight = Math.Max(98, finalHeight);
+            }
 
             return (rects, new Size(finalWidth, finalHeight));
         }
