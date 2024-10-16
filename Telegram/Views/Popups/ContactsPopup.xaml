@@ -171,13 +171,17 @@
                                     Height="140"
                                     Margin="0,0,0,12" />
 
-            <TextBlock Text="{CustomResource NoContactsYet}"
+            <TextBlock Text="{CustomResource NoContactsYet2}"
                        Style="{StaticResource PopupTextBlockStyle}"
                        TextAlignment="Center"
-                       TextWrapping="WrapWholeWords"
                        VerticalAlignment="Top"
-                       Margin="48,0"
+                       Margin="0,0,0,8"
                        Grid.Row="1" />
+
+            <TextBlock Text="{CustomResource NoContactsYet2Sub}"
+                       Style="{StaticResource BodyTextBlockStyle}"
+                       TextAlignment="Center"
+                       Grid.Row="2" />
         </Grid>
     </Grid>
 </controls:ContentPopup>

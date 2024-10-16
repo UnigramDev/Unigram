@@ -7238,6 +7238,14 @@ to unlock up to {0} similar channels.</value>
   <data name="NoContactsYet" xml:space="preserve">
     <value>You have no contacts on Telegram yet</value>
   </data>
+  <data name="NoContactsYet2" xml:space="preserve">
+    <value>You have no contacts
+on Telegram yet</value>
+  </data>
+  <data name="NoContactsYet2Sub" xml:space="preserve">
+    <value>Invite friends to try Telegram or search
+people by username.</value>
+  </data>
   <data name="NoEmojiPack" xml:space="preserve">
     <value>No emoji pack</value>
   </data>
