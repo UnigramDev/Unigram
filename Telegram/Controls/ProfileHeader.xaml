@@ -272,7 +272,8 @@
 
                 <controls:HeaderedControl>
                     <Button Click="{x:Bind ViewModel.OpenLinkedChannel}"
-                            Style="{StaticResource EmptyButtonStyle}">
+                            Style="{StaticResource EmptyButtonStyle}"
+                            AutomationProperties.Name="{CustomResource ProfileChannel}">
                         <cells:ChatCell x:Name="PersonalChannel"
                                         Stroke="{ThemeResource ChatLastMessageStateBrush}" />
                     </Button>
