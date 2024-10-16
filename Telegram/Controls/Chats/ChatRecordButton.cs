@@ -713,31 +713,30 @@ namespace Telegram.Controls.Chats
                         _recorder = new OpusRecorder(file, mode == ChatRecordMode.Video);
 
                         _recorder.m_mediaCapture = new MediaCapture();
+                        _recorder.m_mediaCapture.Failed += OnFailed;
 
                         if (mode == ChatRecordMode.Video)
                         {
                             var cameraDevice = await _recorder.FindCameraDeviceByPanelAsync(Windows.Devices.Enumeration.Panel.Front);
-                            if (cameraDevice == null)
+                            if (cameraDevice != null)
                             {
-                                // TODO: ...
-                            }
+                                // Figure out where the camera is located
+                                if (cameraDevice.EnclosureLocation == null || cameraDevice.EnclosureLocation.Panel == Windows.Devices.Enumeration.Panel.Unknown)
+                                {
+                                    // No information on the location of the camera, assume it's an external camera, not integrated on the device
+                                    _recorder._externalCamera = true;
+                                }
+                                else
+                                {
+                                    // Camera is fixed on the device
+                                    _recorder._externalCamera = false;
 
-                            // Figure out where the camera is located
-                            if (cameraDevice.EnclosureLocation == null || cameraDevice.EnclosureLocation.Panel == Windows.Devices.Enumeration.Panel.Unknown)
-                            {
-                                // No information on the location of the camera, assume it's an external camera, not integrated on the device
-                                _recorder._externalCamera = true;
-                            }
-                            else
-                            {
-                                // Camera is fixed on the device
-                                _recorder._externalCamera = false;
+                                    // Only mirror the preview if the camera is on the front panel
+                                    _recorder._mirroringPreview = cameraDevice.EnclosureLocation.Panel == Windows.Devices.Enumeration.Panel.Front;
+                                }
 
-                                // Only mirror the preview if the camera is on the front panel
-                                _recorder._mirroringPreview = cameraDevice.EnclosureLocation.Panel == Windows.Devices.Enumeration.Panel.Front;
+                                _recorder.settings.VideoDeviceId = cameraDevice.Id;
                             }
-
-                            _recorder.settings.VideoDeviceId = cameraDevice.Id;
                         }
 
                         await _recorder.m_mediaCapture.InitializeAsync(_recorder.settings);
@@ -774,6 +773,11 @@ namespace Telegram.Controls.Chats
                         RecordingFailed?.Invoke(this, EventArgs.Empty);
                     }
                 });
+            }
+
+            private void OnFailed(MediaCapture sender, MediaCaptureFailedEventArgs errorEventArgs)
+            {
+                Logger.Debug(errorEventArgs.Message);
             }
 
             public async Task InitializeQuantumAsync()
@@ -829,7 +833,7 @@ namespace Telegram.Controls.Chats
             private unsafe void OnAudioFrameArrived(MediaFrameReader sender, MediaFrameArrivedEventArgs args)
             {
                 using var reference = sender.TryAcquireLatestFrame();
-                if (reference == null)
+                if (reference?.SourceKind != MediaFrameSourceKind.Audio)
                 {
                     return;
                 }
@@ -1037,6 +1041,7 @@ namespace Telegram.Controls.Chats
                         return;
                     }
 
+                    _recorder.m_mediaCapture.Failed -= OnFailed;
                     RecordingStopped?.Invoke(this, EventArgs.Empty);
 
                     Logger.Debug("stopping reader");
@@ -1242,15 +1247,8 @@ namespace Telegram.Controls.Chats
                     MediaCaptureStopResult result = null;
                     try
                     {
-                        if (m_lowLag != null)
-                        {
-                            result = await m_lowLag.StopWithResultAsync();
-                            await m_lowLag.FinishAsync();
-                        }
-                        else
-                        {
-                            result = await m_mediaCapture.StopRecordWithResultAsync();
-                        }
+                        result = await m_lowLag.StopWithResultAsync();
+                        await m_lowLag.FinishAsync();
                     }
                     catch { }
                     finally
