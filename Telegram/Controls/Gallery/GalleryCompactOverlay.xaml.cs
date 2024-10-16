@@ -126,10 +126,17 @@ namespace Telegram.Controls.Gallery
 
             if (FeatureTokenGenerator.TryUnlockFeature("com.microsoft.windows.applicationwindow"))
             {
-                var prevId = CoreAppWindowPreview.GetIdFromWindow(_window);
-                var nextId = ApplicationView.GetForCurrentView().Id;
-                await ApplicationViewSwitcher.TryShowAsStandaloneAsync(nextId);
-                await ApplicationViewSwitcher.SwitchAsync(nextId, prevId);
+                try
+                {
+                    var prevId = CoreAppWindowPreview.GetIdFromWindow(_window);
+                    var nextId = ApplicationView.GetForCurrentView().Id;
+                    await ApplicationViewSwitcher.TryShowAsStandaloneAsync(nextId);
+                    await ApplicationViewSwitcher.SwitchAsync(nextId, prevId);
+                }
+                catch
+                {
+                    // All the remote procedure calls must be wrapped in a try-catch block
+                }
             }
 
             _ = GalleryWindow.ShowAsync(WindowContext.Current.Content.XamlRoot, _viewModel, null, 0, _player);
