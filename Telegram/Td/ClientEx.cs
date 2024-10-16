@@ -149,35 +149,7 @@ namespace Telegram.Td
 
         public static string GetThemeParametersJsonString(ThemeParameters themeParameters)
         {
-            static int Reverse(int color)
-            {
-                var r = (byte)((color >> 16) & 0xFF);
-                var g = (byte)((color >> 8) & 0xFF);
-                var b = (byte)(color & 0xFF);
-
-                return (b << 16) + (g << 8) + r;
-            }
-
-            // TODO: remove as soon as this is fixed in TDLib.
-            var reverse = new ThemeParameters
-            {
-                BackgroundColor = Reverse(themeParameters.BackgroundColor),
-                SecondaryBackgroundColor = Reverse(themeParameters.SecondaryBackgroundColor),
-                BottomBarBackgroundColor = Reverse(themeParameters.BottomBarBackgroundColor),
-                TextColor = Reverse(themeParameters.TextColor),
-                ButtonColor = Reverse(themeParameters.ButtonColor),
-                ButtonTextColor = Reverse(themeParameters.ButtonTextColor),
-                HintColor = Reverse(themeParameters.HintColor),
-                LinkColor = Reverse(themeParameters.LinkColor),
-                AccentTextColor = Reverse(themeParameters.AccentTextColor),
-                DestructiveTextColor = Reverse(themeParameters.DestructiveTextColor),
-                HeaderBackgroundColor = Reverse(themeParameters.HeaderBackgroundColor),
-                SectionBackgroundColor = Reverse(themeParameters.SectionBackgroundColor),
-                SectionHeaderTextColor = Reverse(themeParameters.SectionHeaderTextColor),
-                SubtitleTextColor = Reverse(themeParameters.SubtitleTextColor),
-            };
-
-            var result = Client.Execute(new GetThemeParametersJsonString(reverse)) as Text;
+            var result = Client.Execute(new GetThemeParametersJsonString(themeParameters)) as Text;
             return result.TextValue;
         }
 

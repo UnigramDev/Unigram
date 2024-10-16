@@ -339,8 +339,26 @@ namespace Telegram.Common
             return null;
         }
 
+        public static bool AreTheSame(string bae, string url, out string fragment)
+        {
+            if (TryCreateUri(bae, out Uri current) && TryCreateUri(url, out Uri result))
+            {
+                fragment = result.Fragment.Length > 0 ? result.Fragment?.Substring(1) : null;
+                return fragment != null && Uri.Compare(current, result, UriComponents.Host | UriComponents.PathAndQuery, UriFormat.SafeUnescaped, StringComparison.OrdinalIgnoreCase) == 0;
+            }
+
+            fragment = null;
+            return false;
+        }
+
         public static bool TryCreateUri(string url, out Uri uri)
         {
+            if (url == null)
+            {
+                uri = null;
+                return false;
+            }
+
             if (!url.StartsWith("http://")
                 && !url.StartsWith("https://")
                 && !url.StartsWith("tg:")
@@ -348,7 +366,7 @@ namespace Telegram.Common
                 && !url.StartsWith("ftp:")
                 && !url.StartsWith("mailto:"))
             {
-                url = "http://" + url;
+                url = "https://" + url;
             }
 
             return Uri.TryCreate(url, UriKind.Absolute, out uri);
@@ -727,7 +745,7 @@ namespace Telegram.Common
             }
         }
 
-        private static async void NavigateToWebApp(IClientService clientService, INavigationService navigation, string botUsername, string startParameter, string webAppShortName, OpenUrlSource source)
+        public static async void NavigateToWebApp(IClientService clientService, INavigationService navigation, string botUsername, string startParameter, string webAppShortName, OpenUrlSource source)
         {
             var response = await clientService.SendAsync(new SearchPublicChat(botUsername));
             if (response is Chat chat && clientService.TryGetUser(chat, out User botUser))
@@ -1518,6 +1536,7 @@ namespace Telegram.Common
                     }
 
                     translate.Click += handler;
+                    translate.IsEnabled = true;
                 }
             }
         }

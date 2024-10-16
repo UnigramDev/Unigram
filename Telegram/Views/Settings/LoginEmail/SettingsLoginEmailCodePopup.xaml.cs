@@ -30,7 +30,7 @@ namespace Telegram.Views.Settings.LoginEmail
             SecondaryButtonText = Strings.Cancel;
         }
 
-        private async void ContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
+        private async void OnPrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
         {
             var code = PrimaryInput.Text;
             if (string.IsNullOrEmpty(code) || code.Length < _codeInfo.Length)
@@ -60,10 +60,6 @@ namespace Telegram.Views.Settings.LoginEmail
             }
 
             deferral.Complete();
-        }
-
-        private void ContentDialog_SecondaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
-        {
         }
 
         private void PrimaryInput_KeyDown(object sender, Microsoft.UI.Xaml.Input.KeyRoutedEventArgs e)

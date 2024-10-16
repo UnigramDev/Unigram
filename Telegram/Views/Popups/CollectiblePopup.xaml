@@ -1,10 +1,9 @@
 ﻿<controls:ContentPopup x:Class="Telegram.Views.Popups.CollectiblePopup"
                        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-                       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-                       xmlns:local="using:Telegram.Views.Popups"
-                       xmlns:controls="using:Telegram.Controls"
                        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                       xmlns:controls="using:Telegram.Controls"
                        mc:Ignorable="d"
                        Opened="OnOpened"
                        Padding="24,24,24,0"
@@ -33,9 +32,7 @@
             </Border>
 
             <TextBlock x:Name="Title"
-                       FontSize="20"
-                       FontFamily="XamlAutoFontFamily"
-                       FontWeight="SemiBold"
+                       Style="{StaticResource PopupTextBlockStyle}"
                        TextWrapping="Wrap"
                        TextAlignment="Center"
                        VerticalAlignment="Top"

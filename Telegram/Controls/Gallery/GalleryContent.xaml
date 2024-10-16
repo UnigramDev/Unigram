@@ -3,7 +3,6 @@
                      xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
                      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-                     xmlns:vlc="using:LibVLCSharp.Platforms.Windows"
                      xmlns:controls="using:Telegram.Controls"
                      mc:Ignorable="d"
                      Background="Transparent"
@@ -18,10 +17,7 @@
                          ManipulationMode="System"
                          Style="{StaticResource ImmersiveFileButtonStyle}" />
 
-    <Border x:Name="Panel">
-        <vlc:VideoView x:Name="Video"
-                       x:Load="False"
-                       IsTabStop="False"
-                       Initialized="OnInitialized" />
-    </Border>
+    <Border x:Name="Panel"
+            IsHitTestVisible="False" />
+
 </controls:AspectView>

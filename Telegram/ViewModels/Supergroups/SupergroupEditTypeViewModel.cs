@@ -10,6 +10,7 @@ using Telegram.Common;
 using Telegram.Navigation.Services;
 using Telegram.Services;
 using Telegram.Td.Api;
+using Telegram.Views.Chats;
 
 namespace Telegram.ViewModels.Supergroups
 {
@@ -58,6 +59,11 @@ namespace Telegram.ViewModels.Supergroups
                 JoinToSendMessages = supergroup.JoinToSendMessages;
                 JoinByRequest = supergroup.JoinByRequest;
             }
+        }
+
+        public void InviteLinks()
+        {
+            NavigationService.Navigate(typeof(ChatInviteLinksPage), Chat.Id);
         }
 
         public override async void Continue()

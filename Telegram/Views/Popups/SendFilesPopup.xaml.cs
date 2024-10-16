@@ -66,19 +66,10 @@ namespace Telegram.Views.Popups
         private bool _documentAllowed;
 
         public bool IsMediaOnly => _mediaAllowed && _documentAllowed && Items.All(x => x is StoragePhoto or StorageVideo);
-        public bool IsAlbumAvailable
-        {
-            get
-            {
-                if (IsMediaSelected)
-                {
-                    return Items.Count > 1 && Items.Count <= 10 && Items.All(x => (x is StoragePhoto || x is StorageVideo) && x.Ttl == null);
-                }
+        public bool IsAlbumAvailable => true;
 
-                return Items.Count is > 1 and <= 10;
-            }
-        }
-        public bool IsTtlAvailable { get; }
+        private bool _ttlAllowed;
+        public bool IsTtlAvailable => _ttlAllowed && Items.Count == 1;
 
         public bool HasPaidMediaAllowed { get; set; }
 
@@ -208,7 +199,7 @@ namespace Telegram.Views.Popups
         public bool? Schedule { get; private set; }
         public bool? Silent { get; private set; }
 
-        public SendFilesPopup(ComposeViewModel viewModel, IEnumerable<StorageMedia> items, bool media, bool mediaAllowed, bool documentAllowed, bool ttl, bool schedule, bool savedMessages)
+        public SendFilesPopup(ComposeViewModel viewModel, IEnumerable<StorageMedia> items, bool media, bool mediaAllowed, bool documentAllowed, bool ttlAllowed, bool schedule, bool savedMessages)
         {
             InitializeComponent();
 
@@ -232,13 +223,10 @@ namespace Telegram.Views.Popups
 
             Logger.Info(builder);
 
-            PrimaryButtonText = Strings.Send;
-            SecondaryButtonText = Strings.Cancel;
-
-            IsTtlAvailable = ttl;
             IsSavedMessages = savedMessages;
             CanSchedule = schedule;
 
+            _ttlAllowed = ttlAllowed;
             _mediaAllowed = mediaAllowed;
             _documentAllowed = documentAllowed;
 
@@ -427,12 +415,24 @@ namespace Telegram.Views.Popups
                 aspect.Constraint = new Size(storage.Width, storage.Height);
             }
 
-            var glyph = root.FindName("Glyph") as TextBlock;
-            glyph.Text = storage is StoragePhoto
-                ? Icons.ImageFilled24
-                : storage is StorageVideo
-                ? Icons.PlayFilled24
-                : Icons.DocumentFilled24;
+            var glyph = root.FindName("Glyph");
+            if (glyph is AnimatedGlyphButton animated)
+            {
+                animated.Tag = storage;
+                animated.Glyph = storage is StoragePhoto
+                    ? Icons.ImageFilled24
+                    : storage is StorageVideo
+                    ? Icons.PlayFilled24
+                    : Icons.DocumentFilled24;
+            }
+            else if (glyph is TextBlock text)
+            {
+                text.Text = storage is StoragePhoto
+                    ? Icons.ImageFilled24
+                    : storage is StorageVideo
+                    ? Icons.PlayFilled24
+                    : Icons.DocumentFilled24;
+            }
 
             var title = root.FindName("Title") as TextBlock;
             var titleTrim = root.FindName("TitleTrim") as TextBlock;
@@ -455,7 +455,53 @@ namespace Telegram.Views.Popups
                 titleTrim.Text = string.Empty;
             }
 
-            subtitle.Text = FileSizeConverter.Convert((long)storage.Size);
+            if (storage.Size > 0)
+            {
+                subtitle.Text = FileSizeConverter.Convert((long)storage.Size);
+                subtitle.Visibility = Visibility.Visible;
+            }
+            else
+            {
+                subtitle.Visibility = Visibility.Collapsed;
+            }
+        }
+
+        private void FileItem_PointerEntered(object sender, PointerRoutedEventArgs e)
+        {
+            var content = sender as Grid;
+            var storage = ScrollingHost.ItemFromContainer(content) as StorageMedia;
+
+            var glyph = content.FindName("Glyph") as AnimatedGlyphButton;
+            glyph.Glyph = Icons.DeleteFilled24;
+        }
+
+        private void FileItem_PointerExited(object sender, PointerRoutedEventArgs e)
+        {
+            var content = sender as Grid;
+            var storage = content.DataContext as StorageMedia;
+
+            var glyph = content.FindName("Glyph") as AnimatedGlyphButton;
+            glyph.Glyph = storage is StoragePhoto
+                ? Icons.ImageFilled24
+                : storage is StorageVideo
+                ? Icons.PlayFilled24
+                : Icons.DocumentFilled24;
+        }
+
+        private void MediaItem_PointerEntered(object sender, PointerRoutedEventArgs e)
+        {
+            var content = sender as Grid;
+            var rootGrid = content.FindName("RootGrid") as Grid;
+
+            rootGrid.Opacity = 1;
+        }
+
+        private void MediaItem_PointerExited(object sender, PointerRoutedEventArgs e)
+        {
+            var content = sender as Grid;
+            var rootGrid = content.FindName("RootGrid") as Grid;
+
+            rootGrid.Opacity = 0;
         }
 
         private void Grid_Loaded(object sender, RoutedEventArgs e)
@@ -590,7 +636,6 @@ namespace Telegram.Views.Popups
             catch { }
         }
 
-        private int _itemsState = -1;
         private int _panelState = -1;
 
         private void UpdateView()
@@ -638,6 +683,8 @@ namespace Telegram.Views.Popups
 
             void UpdateSelectorItem(Grid content)
             {
+                UpdateTemplate(content, content.DataContext as StorageMedia);
+
                 var particles = content.FindName("Particles") as AnimatedImage;
                 if (particles != null)
                 {
@@ -708,13 +755,6 @@ namespace Telegram.Views.Popups
                         UpdateSelectorItem(content);
                     }
                 }
-            }
-
-            var mediaState = IsMediaSelected ? 1 : 0;
-            if (mediaState != _itemsState && ScrollingHost != null)
-            {
-                _itemsState = mediaState;
-                ScrollingHost.ItemTemplate = Resources[mediaState == 1 ? "MediaItemTemplate" : "FileItemTemplate"] as DataTemplate;
             }
 
             if (StarCount > 0)
@@ -851,34 +891,29 @@ namespace Telegram.Views.Popups
             }
         }
 
-        protected override void OnApplyTemplate()
+        private void Send_Click(object sender, RoutedEventArgs e)
         {
-            IsPrimaryButtonSplit = CanSchedule;
-
-            var button = GetTemplateChild("PrimarySplitButton") as Button;
-            if (button != null && CanSchedule)
-            {
-                button.Click += PrimaryButton_ContextRequested;
-            }
-
-            base.OnApplyTemplate();
+            Accept();
         }
 
-        private void PrimaryButton_ContextRequested(object sender, RoutedEventArgs args)
+        private void Send_ContextRequested(object sender, ContextRequestedEventArgs args)
         {
-            var self = IsSavedMessages;
-
-            var flyout = new MenuFlyout();
-
-            if (IsAlbumAvailable)
+            if (CanSchedule)
             {
-                flyout.CreateFlyoutItem(() => { IsAlbum = false; Hide(ContentDialogResult.Primary); }, Strings.SendWithoutGrouping, "\uE90C");
+                var self = IsSavedMessages;
+
+                var flyout = new MenuFlyout();
+
+                if (IsAlbumAvailable)
+                {
+                    flyout.CreateFlyoutItem(() => { IsAlbum = false; Hide(ContentDialogResult.Primary); }, Strings.SendWithoutGrouping, "\uE90C");
+                }
+
+                flyout.CreateFlyoutItem(() => { Silent = true; Hide(ContentDialogResult.Primary); }, Strings.SendWithoutSound, Icons.AlertOff);
+                flyout.CreateFlyoutItem(() => { Schedule = true; Hide(ContentDialogResult.Primary); }, self ? Strings.SetReminder : Strings.ScheduleMessage, Icons.CalendarClock);
+
+                flyout.ShowAt(sender as UIElement, FlyoutPlacementMode.TopEdgeAlignedRight);
             }
-
-            flyout.CreateFlyoutItem(() => { Silent = true; Hide(ContentDialogResult.Primary); }, Strings.SendWithoutSound, Icons.AlertOff);
-            flyout.CreateFlyoutItem(() => { Schedule = true; Hide(ContentDialogResult.Primary); }, self ? Strings.SetReminder : Strings.ScheduleMessage, Icons.CalendarClock);
-
-            flyout.ShowAt(sender as DependencyObject, FlyoutPlacementMode.BottomEdgeAlignedRight);
         }
 
         private void OnLoaded(object sender, RoutedEventArgs e)
@@ -944,22 +979,18 @@ namespace Telegram.Views.Popups
         {
             // We don't want to unfocus the text are when the context menu gets opened
             EmojiPanel.ViewModel.Update();
-            EmojiFlyout.ShowAt(CaptionInput, new FlyoutShowOptions { ShowMode = FlyoutShowMode.Transient });
+            EmojiFlyout.ShowAt(CaptionPanel, new FlyoutShowOptions { ShowMode = FlyoutShowMode.Transient });
         }
 
         private void Emoji_ItemClick(object sender, ItemClickEventArgs e)
         {
             if (e.ClickedItem is EmojiData emoji)
             {
-                EmojiFlyout.Hide();
-
                 CaptionInput.InsertText(emoji.Value);
                 CaptionInput.Focus(FocusState.Programmatic);
             }
             else if (e.ClickedItem is StickerViewModel sticker)
             {
-                EmojiFlyout.Hide();
-
                 CaptionInput.InsertEmoji(sticker);
                 CaptionInput.Focus(FocusState.Programmatic);
             }
@@ -971,13 +1002,11 @@ namespace Telegram.Views.Popups
                 ? VerticalAlignment.Top
                 : VerticalAlignment.Bottom;
 
-            ListAutocomplete.Margin = new Thickness(24, above ? -8 : 0, 24, above ? 0 : -8);
+            ListAutocomplete.Margin = new Thickness(0);
             ListAutocomplete.BorderThickness = new Thickness(1, above ? 0 : 1, 1, above ? 1 : 0);
             ListAutocomplete.CornerRadius = new CornerRadius(above ? 0 : 2, above ? 0 : 2, above ? 2 : 0, above ? 2 : 0);
 
-            var visible = ListAutocomplete.ActualHeight > 0;
-
-            CaptionInput.CornerRadius = new CornerRadius(above ? 2 : visible ? 0 : 2, above ? 2 : visible ? 0 : 2, above ? visible ? 0 : 2 : 2, above ? visible ? 0 : 2 : 2);
+            CaptionBorder.BorderThickness = new Thickness(0, 1, 0, above ? 1 : 0);
 
             return above ? 0 : 2;
         }
@@ -1086,44 +1115,61 @@ namespace Telegram.Views.Popups
         public const double MAX_WIDTH = 320 + ITEM_MARGIN;
         public const double MAX_HEIGHT = 420 + ITEM_MARGIN;
 
-        private (Rect[], Size) _positions;
-        private ((Rect, MosaicItemPosition)[], Size)? _positionsBase;
+        private List<(Rect[], Size)> _positions;
+        private List<((Rect, MosaicItemPosition)[], Size)> _positionsBase;
 
         public List<Size> Sizes;
 
         protected override Size MeasureOverride(Size availableSize)
         {
             var sizes = Sizes;
-            if (sizes == null || sizes.Count == 1)
+            if (sizes?.Count == 0)
             {
                 return base.MeasureOverride(availableSize);
             }
 
-            var positions = GetPositionsForWidth(availableSize.Width);
+            var positions = GetPositionsForWidth(availableSize.Width - 16);
 
-            for (int i = 0; i < Math.Min(positions.Item1.Length, Children.Count); i++)
+            var h = 8d;
+            var i = 0;
+
+            foreach (var group in positions)
             {
-                Children[i].Measure(positions.Item1[i].ToSize());
+                foreach (var item in group.Item1)
+                {
+                    Children[i++].Measure(item.ToSize());
+                }
+
+                h += Math.Ceiling(group.Item2.Height + 6);
             }
 
             _positions = positions;
-            return positions.Item2;
+            return new Size(availableSize.Width, h);
         }
 
         protected override Size ArrangeOverride(Size finalSize)
         {
             var positions = _positions;
-            if (positions.Item1 == null || positions.Item1.Length == 1)
+
+            var h = 8d;
+            var i = 0;
+
+            if (positions?.Count == 0)
             {
                 return base.ArrangeOverride(finalSize);
             }
 
-            for (int i = 0; i < Math.Min(positions.Item1.Length, Children.Count); i++)
+            foreach (var group in positions)
             {
-                Children[i].Arrange(positions.Item1[i]);
+                foreach (var item in group.Item1)
+                {
+                    Children[i++].Arrange(new Rect(item.X + 8, item.Y + h, item.Width, item.Height));
+                }
+
+                h += Math.Ceiling(group.Item2.Height + 6);
             }
 
-            return positions.Item2;
+            return new Size(finalSize.Width, h);
         }
 
         public void Invalidate()
@@ -1134,11 +1180,48 @@ namespace Telegram.Views.Popups
             InvalidateArrange();
         }
 
-        private (Rect[], Size) GetPositionsForWidth(double w)
+        private List<(Rect[], Size)> GetPositionsForWidth(double w)
         {
-            var positions = _positionsBase ??= MosaicAlbumLayout.chatMessageBubbleMosaicLayout(new Size(MAX_WIDTH, MAX_HEIGHT), Sizes);
+            List<((Rect, MosaicItemPosition)[], Size)> positions;
+            List<(Rect[], Size)> results = new();
 
-            var ratio = w / MAX_WIDTH;
+            if (_positionsBase == null)
+            {
+                positions = new List<((Rect, MosaicItemPosition)[], Size)>();
+
+                foreach (var grouping in Sizes.ToChunks(10))
+                {
+                    if (grouping.Count > 1)
+                    {
+                        positions.Add(MosaicAlbumLayout.chatMessageBubbleMosaicLayout(new Size(MAX_WIDTH, MAX_WIDTH), grouping));
+                    }
+                    else
+                    {
+                        var size = Sizes[0];
+                        var rect = new Rect(0, 0, size.Width, size.Height);
+
+                        positions.Add((new[] { (rect, MosaicItemPosition.None) }, size));
+                    }
+                }
+
+                _positionsBase = positions;
+            }
+            else
+            {
+                positions = _positionsBase;
+            }
+
+            foreach (var item in positions)
+            {
+                results.Add(GetPositionsForWidth(item, w));
+            }
+
+            return results;
+        }
+
+        private (Rect[], Size) GetPositionsForWidth(((Rect, MosaicItemPosition)[], Size) positions, double w)
+        {
+            var ratio = w / positions.Item2.Width;
             var rects = new Rect[positions.Item1.Length];
 
             for (int i = 0; i < rects.Length; i++)
@@ -1151,7 +1234,14 @@ namespace Telegram.Views.Popups
                 width = double.IsNaN(width) ? 0 : width;
                 height = double.IsNaN(height) ? 0 : height;
 
-                rects[i] = new Rect(rect.X * ratio, rect.Y * ratio, width, height);
+                if (rects.Length == 1)
+                {
+                    rects[i] = new Rect(rect.X * ratio, rect.Y * ratio, width, Math.Max(98, height));
+                }
+                else
+                {
+                    rects[i] = new Rect(rect.X * ratio, rect.Y * ratio, width, height);
+                }
             }
 
             var finalWidth = Math.Max(0, positions.Item2.Width * ratio);
@@ -1159,6 +1249,11 @@ namespace Telegram.Views.Popups
 
             finalWidth = double.IsNaN(finalWidth) ? 0 : finalWidth;
             finalHeight = double.IsNaN(finalHeight) ? 0 : finalHeight;
+
+            if (rects.Length == 1)
+            {
+                finalHeight = Math.Max(98, finalHeight);
+            }
 
             return (rects, new Size(finalWidth, finalHeight));
         }

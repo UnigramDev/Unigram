@@ -44,7 +44,7 @@
                            TextLineBounds="TrimToCapHeight"
                            TextWrapping="NoWrap"
                            AutomationProperties.LiveSetting="Assertive"
-                           Foreground="{ThemeResource PageHeaderDisabledBrush}"
+                           Foreground="{ThemeResource PageHeaderForegroundBrush}"
                            Style="{StaticResource CaptionTextBlockStyle}"
                            IsHitTestVisible="False"
                            Margin="0,2,6,0" />
@@ -114,7 +114,7 @@
             </controls:MoreButton>
 
             <Button x:Name="HideButton"
-                    Click="{x:Bind Hide}"
+                    Click="HideButton_Click"
                     HorizontalAlignment="Right"
                     VerticalAlignment="Top"
                     Width="46"
@@ -161,7 +161,7 @@
 
                             <Path x:Name="ContentPresenter"
                                   Data="M0.5 0.5 L9.5 9.5 M0.5 9.5 L9.5 0.5"
-                                  Stroke="#000000"
+                                  Stroke="{ThemeResource TextFillColorPrimaryBrush}"
                                   StrokeStartLineCap="Round"
                                   StrokeEndLineCap="Round"
                                   HorizontalAlignment="Center"
@@ -178,6 +178,7 @@
 
         <controls:WebViewer x:Name="View"
                             Navigating="View_Navigating"
+                            Navigated="View_Navigated"
                             EventReceived="View_EventReceived"
                             NewWindowRequested="View_NewWindowRequested"
                             SizeChanged="View_SizeChanged"

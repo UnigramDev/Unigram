@@ -78,8 +78,11 @@ namespace Telegram.Controls.Messages.Content
                 var text = Locale.Declension(Strings.R.UnlockPaidContent, album.StarCount);
                 var index = text.IndexOf("\u2B50\uFE0F");
 
-                TextPart1.Text = text.Substring(0, index);
-                TextPart2.Text = text.Substring(index + 2);
+                if (index != -1)
+                {
+                    TextPart1.Text = text.Substring(0, index);
+                    TextPart2.Text = text.Substring(index + 2);
+                }
 
                 Button.Visibility = Visibility.Visible;
                 Overlay.Visibility = Visibility.Collapsed;

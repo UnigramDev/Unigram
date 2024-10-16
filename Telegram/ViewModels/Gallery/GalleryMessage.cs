@@ -4,6 +4,8 @@
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+using System;
+using System.Collections.Generic;
 using Telegram.Services;
 using Telegram.Td.Api;
 
@@ -19,10 +21,25 @@ namespace Telegram.ViewModels.Gallery
         {
             _message = message;
 
-            var chat = clientService.GetChat(message.ChatId);
-            if (chat != null)
+            if (clientService.TryGetChat(message.ChatId, out Chat chat))
             {
                 _hasProtectedContent = chat.Type is ChatTypeSecret || chat.HasProtectedContent;
+            }
+
+            File = _message.GetFile();
+
+            var thumbnail = _message.GetThumbnail();
+            if (thumbnail == null)
+            {
+                var photo = _message.GetPhoto();
+                if (photo != null)
+                {
+                    Thumbnail = photo.GetSmall()?.Photo;
+                }
+            }
+            else if (thumbnail?.Format is ThumbnailFormatJpeg)
+            {
+                Thumbnail = thumbnail.File;
             }
         }
 
@@ -31,34 +48,30 @@ namespace Telegram.ViewModels.Gallery
         {
         }
 
-        public Message Message => _message;
-
         public long ChatId => _message.ChatId;
         public long Id => _message.Id;
 
-        public override File GetFile()
+        public override bool IsHls()
         {
-            return _message.GetFile();
+            if (_message.Content is MessageVideo video)
+            {
+                return video.IsHls();
+            }
+
+            return false;
         }
 
-        public override File GetThumbnail()
+        public override IList<AlternativeVideo> AlternativeVideos
         {
-            var thumbnail = _message.GetThumbnail();
-            if (thumbnail == null)
+            get
             {
-                var photo = _message.GetPhoto();
-                if (photo != null)
+                if (_message.Content is MessageVideo video)
                 {
-                    return photo.GetSmall()?.Photo;
+                    return video.AlternativeVideos;
                 }
-            }
 
-            if (thumbnail?.Format is ThumbnailFormatJpeg)
-            {
-                return thumbnail.File;
+                return Array.Empty<AlternativeVideo>();
             }
-
-            return null;
         }
 
         public override object Constraint => _message.Content;
@@ -120,7 +133,7 @@ namespace Telegram.ViewModels.Gallery
             }
         }
 
-        public override bool IsLoop
+        public override bool IsLoopingEnabled
         {
             get
             {
@@ -169,9 +182,9 @@ namespace Telegram.ViewModels.Gallery
 
 
 
-        public override bool CanView => true;
-        public override bool CanCopy => CanSave && IsPhoto;
-        public override bool CanSave => !_hasProtectedContent && _message.Content switch
+        public override bool CanBeViewed => true;
+        public override bool CanBeCopied => CanBeSaved && IsPhoto;
+        public override bool CanBeSaved => !_hasProtectedContent && _message.Content switch
         {
             MessageAnimation animation => !animation.IsSecret,
             MessagePhoto photo => !photo.IsSecret,
@@ -180,9 +193,9 @@ namespace Telegram.ViewModels.Gallery
             _ => true
         };
 
-        public override bool CanShare => CanSave;
+        public override bool CanBeShared => CanBeSaved;
 
-        public override bool IsProtected => _hasProtectedContent || _message.Content switch
+        public override bool HasProtectedContent => _hasProtectedContent || _message.Content switch
         {
             MessageAnimation animation => animation.IsSecret,
             MessagePhoto photo => photo.IsSecret,

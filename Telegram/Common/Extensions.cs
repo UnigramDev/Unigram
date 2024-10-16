@@ -21,9 +21,9 @@ using System.Linq;
 using System.Net;
 using System.Numerics;
 using System.Runtime.CompilerServices;
-using System.Runtime.InteropServices;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Xml.Linq;
 using Telegram.Controls;
@@ -34,10 +34,12 @@ using Telegram.Navigation;
 using Telegram.Services;
 using Telegram.Td;
 using Telegram.Td.Api;
+using Telegram.ViewModels.Gallery;
 using Windows.ApplicationModel;
 using Windows.ApplicationModel.AppService;
 using Windows.ApplicationModel.Calls;
 using Windows.ApplicationModel.DataTransfer;
+using Windows.Data.Json;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
 using Windows.Storage;
@@ -124,6 +126,18 @@ namespace Telegram.Common
             {
                 Point = new Point(x, y),
             });
+        }
+
+        public static IEnumerable<IList<T>> ToChunks<T>(this List<T> enumerable, int chunkSize)
+        {
+            int itemsReturned = 0;
+            int count = enumerable.Count;
+            while (itemsReturned < count)
+            {
+                int currentChunkSize = Math.Min(chunkSize, count - itemsReturned);
+                yield return enumerable.GetRange(itemsReturned, currentChunkSize);
+                itemsReturned += currentChunkSize;
+            }
         }
 
         public static void ForEach<T>(this ListViewBase listView, Action<SelectorItem, T> handler) where T : class
@@ -404,6 +418,28 @@ namespace Telegram.Common
             return pointer.Offset - index;
         }
 
+        public static IEnumerable<AlternativeVideo> FindAlternatives(this GalleryMedia video, params string[] codecs)
+        {
+            var playlists = video.AlternativeVideos
+                .GroupBy(x => x.Codec)
+                .ToDictionary(x => x.Key);
+
+            foreach (var codec in codecs)
+            {
+                if (playlists.TryGetValue(codec, out var playlist))
+                {
+                    return playlist;
+                }
+            }
+
+            return Enumerable.Empty<AlternativeVideo>();
+        }
+
+        public static int GetNamedInt32(this JsonObject obj, string name, int defaultValue)
+        {
+            return (int)obj.GetNamedNumber(name);
+        }
+
         public static bool HasExtension(this IStorageFile file, params string[] extensions)
         {
             foreach (var ext in extensions)
@@ -428,6 +464,23 @@ namespace Telegram.Common
             }
 
             return false;
+        }
+
+        class TaskCompletion : TaskCompletionSource<bool>
+        {
+            public void SetCompleted(object state, bool timedOut)
+            {
+                TrySetResult(true);
+            }
+        }
+
+        public static Task WaitOneAsync(this WaitHandle waitHandle)
+        {
+            var tcs = new TaskCompletion();
+            var rwh = ThreadPool.RegisterWaitForSingleObject(waitHandle, tcs.SetCompleted, null, -1, true);
+            var t = tcs.Task;
+            t.ContinueWith((antecedent) => rwh.Unregister(null));
+            return t;
         }
 
         public static T Random<T>(this IList<T> source)
@@ -455,9 +508,9 @@ namespace Telegram.Common
             return connection.SendMessageAsync(new ValueSet { { message, parameter ?? true } });
         }
 
-        public static string GetDuration(this TimeSpan duration)
+        public static string ToDuration(this TimeSpan duration, bool hours = false)
         {
-            if (duration.TotalHours >= 1)
+            if (duration.TotalHours >= 1 || hours)
             {
                 return duration.ToString("h\\:mm\\:ss");
             }
@@ -640,17 +693,21 @@ namespace Telegram.Common
 
         public static Color ToColor(this int color, bool alpha = false)
         {
+            byte a;
             if (alpha)
             {
-                byte a = (byte)((color & 0xff000000) >> 24);
-                byte r = (byte)((color & 0x00ff0000) >> 16);
-                byte g = (byte)((color & 0x0000ff00) >> 8);
-                byte b = (byte)(color & 0x000000ff);
-
-                return Color.FromArgb(a, r, g, b);
+                a = (byte)((color & 0xff000000) >> 24);
+            }
+            else
+            {
+                a = 255;
             }
 
-            return Color.FromArgb(0xFF, (byte)((color >> 16) & 0xFF), (byte)((color >> 8) & 0xFF), (byte)(color & 0xFF));
+            byte r = (byte)((color & 0x00ff0000) >> 16);
+            byte g = (byte)((color & 0x0000ff00) >> 8);
+            byte b = (byte)(color & 0x000000ff);
+
+            return Color.FromArgb(a, r, g, b);
         }
 
         public static int ToValue(this Color color, bool alpha = false)
@@ -1143,14 +1200,14 @@ namespace Telegram.Common
                         {
                             action();
                         }
-                        catch (InvalidComObjectException)
+                        catch
                         {
-
+                            // Most likely Excep_InvalidComObject_NoRCW_Wrapper, so we can just ignore it
                         }
                     });
                 }
             }
-            catch (InvalidComObjectException)
+            catch
             {
                 // Most likely Excep_InvalidComObject_NoRCW_Wrapper, so we can just ignore it
             }

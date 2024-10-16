@@ -376,7 +376,7 @@
                                   Grid.Column="2"
                                   Canvas.ZIndex="1000">
                                 <chats:ChatRecordButton x:Name="btnVoiceMessage"
-                                                        RecordingStarted="ButtonRecord_Started"
+                                                        RecordingStarting="ButtonRecord_Started"
                                                         RecordingStopped="ButtonRecord_Stopped"
                                                         CornerRadius="4,4,13,4"
                                                         AllowFocusOnInteraction="False"

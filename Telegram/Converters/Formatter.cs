@@ -1,4 +1,4 @@
-//
+﻿//
 // Copyright Fela Ameghino 2015-2024
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
@@ -317,6 +317,38 @@ namespace Telegram.Converters
             return string.Format(Strings.PmReadDateTimeAt, Date(dateTime), Time(dateTime));
         }
 
+        public static string EditDate(int value)
+        {
+            var dateTime = ToLocalTime(value);
+
+            if (dateTime.Date == DateTime.Now.Date)
+            {
+                return string.Format(Strings.PmEditedTodayAt, Time(dateTime));
+            }
+            else if (dateTime.Date == DateTime.Now.Date.AddDays(-1))
+            {
+                return string.Format(Strings.PmEditedYesterdayAt, Time(dateTime));
+            }
+
+            return string.Format(Strings.PmEditedDateTimeAt, Date(dateTime), Time(dateTime));
+        }
+
+        public static string ForwardDate(int value)
+        {
+            var dateTime = ToLocalTime(value);
+
+            if (dateTime.Date == DateTime.Now.Date)
+            {
+                return string.Format(Strings.PmFwdOriginalTodayAt, Time(dateTime));
+            }
+            else if (dateTime.Date == DateTime.Now.Date.AddDays(-1))
+            {
+                return string.Format(Strings.PmFwdOriginalYesterdayAt, Time(dateTime));
+            }
+
+            return string.Format(Strings.PmFwdOriginalDateTimeAt, Date(dateTime), Time(dateTime));
+        }
+
         public static string DateExtended(int value)
         {
             var dateTime = ToLocalTime(value);
@@ -358,13 +390,35 @@ namespace Telegram.Converters
             }
         }
 
+        private static bool? _isTimeRightToLeft;
+        public static bool IsTimeRightToLeft => _isTimeRightToLeft is true;
+
         public static string Time(int value)
         {
+            // "۰۱:۵۹ ق.ظ"
+            if (_isTimeRightToLeft == null)
+            {
+                var time = NativeUtils.FormatTime(value);
+                var direction = NativeUtils.GetDirectionality(time);
+
+                _isTimeRightToLeft = direction == TextDirectionality.RightToLeft;
+                return time;
+            }
+
             return NativeUtils.FormatTime(value);
         }
 
         public static string Time(DateTime value)
         {
+            if (_isTimeRightToLeft == null)
+            {
+                var time = NativeUtils.FormatTime(value);
+                var direction = NativeUtils.GetDirectionality(time);
+
+                _isTimeRightToLeft = direction == TextDirectionality.RightToLeft;
+                return time;
+            }
+
             return NativeUtils.FormatTime(value);
         }
 
@@ -445,12 +499,50 @@ namespace Telegram.Converters
                 return string.Empty;
             }
 
-            if (birthdate.Year == 0)
+            string formatted;
+            try
             {
-                return NativeUtils.FormatDate(new DateTime(2021, birthdate.Month, birthdate.Day), Strings.formatterMonth);
+                // We sanitize the date by adding months and days to 01/01/year.
+                // This prevents fails when the received date is something like 31/11/2024 or 29/02/2025.
+                static DateTime CreateDate(int year, int month, int day)
+                {
+                    var date = new DateTime(year, 1, 1, 12, 0, 0, DateTimeKind.Local);
+                    date = date.AddMonths(month - 1);
+                    date = date.AddDays(day - 1);
+
+                    return date;
+                }
+
+                DateTime date;
+                string format;
+
+                // GetDateFormatEx doesn't support dates earlier than 01/01/1601
+                if (birthdate.Year < 1601)
+                {
+                    // Must use a leap year because users can set 29/02 as their birthdate.
+                    date = CreateDate(2024, birthdate.Month, birthdate.Day);
+                    format = Strings.formatterMonth;
+                }
+                else
+                {
+                    date = CreateDate(birthdate.Year, birthdate.Month, birthdate.Day);
+                    format = Strings.formatterBoostExpired;
+                }
+
+                formatted = NativeUtils.FormatDate(date.Year, date.Month, date.Day, format);
+            }
+            catch
+            {
+                formatted = null;
             }
 
-            return NativeUtils.FormatDate(new DateTime(birthdate.Year, birthdate.Month, birthdate.Day), Strings.formatterBoostExpired);
+            // The string is going to be empty if GetDateFormatEx fails.
+            if (string.IsNullOrEmpty(formatted))
+            {
+                formatted = string.Format("{0}/{1}/{2}", birthdate.Day, birthdate.Month, birthdate.Year);
+            }
+
+            return formatted;
         }
     }
 }

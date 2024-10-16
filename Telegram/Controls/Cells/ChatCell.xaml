@@ -73,8 +73,7 @@
                                                             IsClickEnabled="False">
                                 <controls:ProfilePicture x:Name="Photo"
                                                          Width="48"
-                                                         Height="48"
-                                                         IsEnabled="False" />
+                                                         Height="48" />
                             </controls:ActiveStoriesSegments>
 
                             <Border x:Name="OnlineBadge"

@@ -4,6 +4,7 @@
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+using Microsoft.UI.Xaml.Media;
 using System;
 using Windows.UI;
 
@@ -12,6 +13,24 @@ namespace Telegram.Common
     // ColorHelper is a set of color conversion utilities
     public static class ColorsHelper
     {
+        public static LinearGradientBrush LinearGradient(params uint[] colorStops)
+        {
+            var linear = new LinearGradientBrush();
+            linear.StartPoint = new Windows.Foundation.Point(0, 0);
+            linear.EndPoint = new Windows.Foundation.Point(1, 0);
+
+            for (int i = 0; i < colorStops.Length; i++)
+            {
+                linear.GradientStops.Add(new GradientStop
+                {
+                    Offset = i / (colorStops.Length - 1f),
+                    Color = ColorEx.FromHex(colorStops[i])
+                });
+            }
+
+            return linear;
+        }
+
         public static Color Mix(Color x, Color y, double amount)
         {
             static double Mix(double x, double y, double f)
@@ -33,7 +52,11 @@ namespace Telegram.Common
 
         public static Color AlphaBlend(Color color1, Color color2, byte alpha)
         {
-            float factor = alpha / 255f;
+            return AlphaBlend(color1, color2, alpha / 255f);
+        }
+
+        public static Color AlphaBlend(Color color1, Color color2, float factor)
+        {
             byte red = (byte)(color1.R * (1 - factor) + color2.R * factor);
             byte green = (byte)(color1.G * (1 - factor) + color2.G * factor);
             byte blue = (byte)(color1.B * (1 - factor) + color2.B * factor);

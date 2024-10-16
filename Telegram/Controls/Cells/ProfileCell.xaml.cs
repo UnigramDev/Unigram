@@ -138,6 +138,38 @@ namespace Telegram.Controls.Cells
             args.Handled = true;
         }
 
+        public void UpdateChatInviteLinkMember(IClientService clientService, ContainerContentChangingEventArgs args, TypedEventHandler<ListViewBase, ContainerContentChangingEventArgs> callback)
+        {
+            var member = args.Item as ChatInviteLinkMember;
+
+            var user = clientService.GetUser(member.UserId);
+            if (user == null)
+            {
+                return;
+            }
+
+            if (args.Phase == 0)
+            {
+                TitleLabel.Text = user.FullName();
+            }
+            else if (args.Phase == 1)
+            {
+                SubtitleLabel.Text = LastSeenConverter.GetLabel(user, true);
+            }
+            else if (args.Phase == 2)
+            {
+                Photo.SetUser(clientService, user, 36);
+                Identity.SetStatus(clientService, user);
+            }
+
+            if (args.Phase < 2)
+            {
+                args.RegisterUpdateCallback(callback);
+            }
+
+            args.Handled = true;
+        }
+
         public void UpdateSupergroupMember(IClientService clientService, ContainerContentChangingEventArgs args, TypedEventHandler<ListViewBase, ContainerContentChangingEventArgs> callback)
         {
             args.ItemContainer.Tag = args.Item;
@@ -424,7 +456,7 @@ namespace Telegram.Controls.Cells
                 if (SubtitleLabel.Text.StartsWith($"@{result.Query}", StringComparison.OrdinalIgnoreCase))
                 {
                     var highligher = new TextHighlighter();
-                    highligher.Foreground = new SolidColorBrush(Colors.Red);
+                    highligher.Foreground = new SolidColorBrush(Theme.Accent);
                     highligher.Background = new SolidColorBrush(Colors.Transparent);
                     highligher.Ranges.Add(new TextRange { StartIndex = 1, Length = result.Query.Length });
 
@@ -967,11 +999,11 @@ namespace Telegram.Controls.Cells
         {
             UpdateStyleNoSubtitle();
 
-            if (element is FolderChat chat)
+            if (element is FolderChat folderChat && clientService.TryGetChat(folderChat.ChatId, out Chat chat))
             {
-                TitleLabel.Text = clientService.GetTitle(chat.Chat);
-                Photo.SetChat(clientService, chat.Chat, 36);
-                Identity.SetStatus(clientService, chat.Chat);
+                TitleLabel.Text = clientService.GetTitle(chat);
+                Photo.SetChat(clientService, chat, 36);
+                Identity.SetStatus(clientService, chat);
             }
             else if (element is FolderFlag flag)
             {

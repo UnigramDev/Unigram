@@ -100,7 +100,7 @@ namespace Telegram.ViewModels.Settings
 
             if (_type is StickersType.Installed or StickersType.Masks or StickersType.Emoji)
             {
-                Items = new ItemsCollection(ClientService, StickerType);
+                Items ??= new ItemsCollection(ClientService, StickerType);
 
                 ClientService.Send(new GetArchivedStickerSets(StickerType, 0, 1), result =>
                 {
@@ -120,11 +120,11 @@ namespace Telegram.ViewModels.Settings
             }
             else if (_type is StickersType.Archived or StickersType.MasksArchived or StickersType.EmojiArchived)
             {
-                Items = new ArchivedCollection(ClientService, StickerType);
+                Items ??= new ArchivedCollection(ClientService, StickerType);
             }
             else if (_type == StickersType.Trending)
             {
-                Items = new TrendingCollection(ClientService, StickerType);
+                Items ??= new TrendingCollection(ClientService, StickerType);
             }
 
             return Task.CompletedTask;

@@ -124,6 +124,8 @@ namespace Telegram.ViewModels
                         threadId = fromChannel.MessageId;
                     }
 
+                    await ClientService.SendAsync(new GetMessage(chatId, threadId));
+
                     var response = await ClientService.SendAsync(new GetMessageThread(chatId, threadId));
                     if (response is not MessageThreadInfo)
                     {
@@ -170,6 +172,8 @@ namespace Telegram.ViewModels
                     messageId = threadId;
                 }
 
+                await ClientService.SendAsync(new GetMessage(chatId, threadId));
+
                 var properties = await ClientService.SendAsync(new GetMessageProperties(chatId, threadId)) as MessageProperties;
                 if (properties == null || !properties.CanGetMessageThread)
                 {
@@ -185,17 +189,43 @@ namespace Telegram.ViewModels
             }
         }
 
+        public bool IsAdministrator(MessageSender memberId) => _messageDelegate.IsAdministrator(memberId);
 
-
-        public void OpenWebPage(LinkPreview linkPreview)
+        public void OpenWebPage(MessageText text)
         {
-            if (linkPreview.InstantViewVersion != 0)
+            if (text.LinkPreview?.InstantViewVersion != 0)
             {
-                NavigationService.NavigateToInstant(linkPreview.Url);
+                var url = text.LinkPreview.Url;
+
+                foreach (var entity in text.Text.Entities)
+                {
+                    string compare;
+
+                    if (entity.Type is TextEntityTypeUrl)
+                    {
+                        compare = text.Text.Text.Substring(entity.Offset, entity.Length);
+                    }
+                    else if (entity.Type is TextEntityTypeTextUrl textUrl)
+                    {
+                        compare = textUrl.Url;
+                    }
+                    else
+                    {
+                        continue;
+                    }
+
+                    if (MessageHelper.AreTheSame(url, compare, out _))
+                    {
+                        url = compare;
+                        break;
+                    }
+                }
+
+                NavigationService.NavigateToInstant(url);
             }
-            else
+            else if (text.LinkPreview != null)
             {
-                MessageHelper.OpenUrl(ClientService, NavigationService, linkPreview.Url, !linkPreview.SkipConfirmation, new OpenUrlSourceChat(_chat.Id));
+                MessageHelper.OpenUrl(ClientService, NavigationService, text.LinkPreview.Url, !text.LinkPreview.SkipConfirmation, new OpenUrlSourceChat(_chat.Id));
             }
         }
 
@@ -445,11 +475,11 @@ namespace Telegram.ViewModels
                     GalleryMedia result = null;
                     if (x is PaidMediaPhoto photo)
                     {
-                        result = new GalleryPhoto(ClientService, photo.Photo, true);
+                        result = new GalleryPhoto(ClientService, photo.Photo, null, true);
                     }
                     else if (x is PaidMediaVideo video)
                     {
-                        result = new GalleryVideo(ClientService, video.Video, true);
+                        result = new GalleryVideo(ClientService, video.Video, null, true);
                     }
 
                     if (x == media)

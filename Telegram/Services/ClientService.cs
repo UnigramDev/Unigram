@@ -36,6 +36,7 @@ namespace Telegram.Services
 
         Task<BaseObject> CheckChatInviteLinkAsync(string inviteLink);
 
+        Task<File> GetFileAsync(int fileId);
         Task<StorageFile> GetFileAsync(File file, bool completed = true);
         Task<StorageFile> GetPermanentFileAsync(File file);
 
@@ -144,7 +145,6 @@ namespace Telegram.Services
         bool IsSavedMessages(User user);
         bool IsSavedMessages(Chat chat);
 
-        bool IsRepliesChat(Chat chat);
         bool IsForum(Chat chat);
 
         bool IsChatAccessible(Chat chat);
@@ -1278,6 +1278,10 @@ namespace Telegram.Services
                 {
                     return Strings.RepliesTitle;
                 }
+                else if (chat.Id == _options.VerificationCodesBotChatId)
+                {
+                    return Strings.VerifyCodesNotifications;
+                }
                 else if (tiny)
                 {
                     return user.FirstName;
@@ -1555,11 +1559,6 @@ namespace Telegram.Services
             }
 
             return false;
-        }
-
-        public bool IsRepliesChat(Chat chat)
-        {
-            return chat.Id == _options.RepliesBotChatId;
         }
 
         public bool IsForum(Chat chat)

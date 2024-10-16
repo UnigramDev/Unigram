@@ -1,20 +1,14 @@
-﻿using System;
-using System.Runtime.InteropServices;
-using LibVLCSharp.Shared;
+﻿using LibVLCSharp.Shared;
+using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Controls;
 using SharpDX;
 using SharpDX.Direct3D11;
 using SharpDX.DXGI;
 using SharpDX.Mathematics.Interop;
+using System;
+using System.Runtime.InteropServices;
 using Telegram.Controls;
-
-#if WINUI
-using Microsoft.UI.Xaml;
-using Microsoft.UI.Xaml.Controls;
-#else
-using Microsoft.UI.Xaml;
-using Microsoft.UI.Xaml.Controls;
 using Windows.ApplicationModel;
-#endif
 
 namespace LibVLCSharp.Platforms.Windows
 {
@@ -45,14 +39,23 @@ namespace LibVLCSharp.Platforms.Windows
             Disconnected += OnDisconnected;
         }
 
+        public bool IsUnloadedExpected { get; set; }
+
         private void OnConnected(object sender, RoutedEventArgs e)
         {
             //Application.Current.Suspending += OnSuspending;
+            IsUnloadedExpected = false;
         }
 
         private void OnDisconnected(object sender, RoutedEventArgs e)
         {
             //Application.Current.Suspending -= OnSuspending;
+
+            if (IsUnloadedExpected)
+            {
+                return;
+            }
+
             DestroySwapChain();
         }
 
@@ -69,7 +72,6 @@ namespace LibVLCSharp.Platforms.Windows
         /// </summary>
         protected override void OnApplyTemplate()
         {
-            base.OnApplyTemplate();
             _panel = (SwapChainPanel)GetTemplateChild(PartSwapChainPanelName);
 
 #if !WINUI
@@ -84,7 +86,7 @@ namespace LibVLCSharp.Platforms.Windows
 
         private void OnSizeChanged(object sender, SizeChangedEventArgs e)
         {
-            if (IsDisconnected)
+            if (IsDisconnected && !IsUnloadedExpected)
             {
                 DestroySwapChain();
             }
@@ -173,6 +175,9 @@ namespace LibVLCSharp.Platforms.Windows
                 return;
             }
 
+            // TODO: this whole code and player doesn't support device loss
+            // This means that device loss CAN'T be recovered without creating a new
+            // LibVLC/MediaPlayer instance and everything else associated.
             SharpDX.DXGI.Factory2 dxgiFactory = null;
             try
             {
@@ -291,15 +296,7 @@ namespace LibVLCSharp.Platforms.Windows
             catch (Exception ex)
             {
                 DestroySwapChain();
-
-                if (ex is SharpDXException)
-                {
-                    throw new VLCException("SharpDX operation failed, see InnerException for details", ex);
-                }
-                else
-                {
-                    throw;
-                }
+                Telegram.Logger.Error(ex.ToString());
             }
         }
 

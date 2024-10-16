@@ -9,7 +9,6 @@ using Microsoft.UI.Input;
 using Microsoft.UI.Windowing;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
-using Microsoft.UI.Xaml.Documents;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -20,14 +19,11 @@ using Telegram.Native;
 using Telegram.Navigation.Services;
 using Telegram.Services;
 using Telegram.Services.Keyboard;
-using Telegram.Services.ViewService;
 using Telegram.Td.Api;
 using Telegram.Views;
 using Telegram.Views.Authorization;
 using Telegram.Views.Calls;
 using Telegram.Views.Host;
-using Windows.ApplicationModel.Contacts;
-using Windows.ApplicationModel.Core;
 using Windows.Foundation;
 using Windows.UI;
 using Windows.UI.ViewManagement;
@@ -40,6 +36,8 @@ namespace Telegram.Navigation
         private readonly ILifetimeService _lifetime;
 
         private readonly Window _window;
+
+        private bool _consolidated;
 
         private readonly InputListener _inputListener;
         public InputListener InputListener => _inputListener;
@@ -64,6 +62,7 @@ namespace Telegram.Navigation
             Current = this;
             Dispatcher = new DispatcherContext(window.DispatcherQueue);
             //Id = ApplicationView.GetApplicationViewIdForWindow(window.CoreWindow);
+            Bounds = window.Bounds;
 
             var scaling = SettingsService.Current.Appearance.Scaling;
             if (scaling is >= 100 and <= 250 && !SettingsService.Current.Appearance.UseDefaultScaling)
@@ -144,6 +143,13 @@ namespace Telegram.Navigation
 
         public async Task ConsolidateAsync()
         {
+            if (_consolidated)
+            {
+                return;
+            }
+
+            _consolidated = true;
+
             var sender = ApplicationView.GetForCurrentView();
             if (await sender.TryConsolidateAsync())
             {
@@ -160,6 +166,7 @@ namespace Telegram.Navigation
 
         private void OnConsolidated(ApplicationView sender)
         {
+            _consolidated = true;
             _inputListener.Release();
             sender.Consolidated -= OnConsolidated;
 
@@ -292,12 +299,14 @@ namespace Telegram.Navigation
 
         private void OnSizeChanged(object sender, WindowSizeChangedEventArgs e)
         {
+            Bounds = _window.Bounds;
             SizeChanged?.Invoke(sender, e);
         }
 
         //private void OnResizeStarted(CoreWindow sender, object args)
         //{
         //    Logger.Debug(sender.Bounds);
+        //    Bounds = sender.Bounds;
 
         //    if (_window.Content is FrameworkElement element)
         //    {
@@ -311,6 +320,7 @@ namespace Telegram.Navigation
         //private void OnResizeCompleted(CoreWindow sender, object args)
         //{
         //    Logger.Debug(sender.Bounds);
+        //    Bounds = sender.Bounds;
 
         //    if (_window.Content is FrameworkElement element)
         //    {
@@ -460,7 +470,7 @@ namespace Telegram.Navigation
             set => _window.AppWindow.Title = value;
         }
 
-        public Rect Bounds => _window.Bounds;
+        public Rect Bounds { get; private set; }
 
         public void SetTitleBar(UIElement element)
         {
@@ -483,22 +493,31 @@ namespace Telegram.Navigation
 
         #region Legacy code
 
-        public ContactPanel ContactPanel { get; private set; }
-
-        public void SetContactPanel(ContactPanel panel)
-        {
-            ContactPanel = panel;
-        }
-
-        public bool IsContactPanel()
-        {
-            return ContactPanel != null;
-        }
-
         public async void Activate(LaunchActivatedEventArgs args, INavigationService service, AuthorizationState state)
         {
             try
             {
+                if (args is ShareTargetActivatedEventArgs shareTarget && state is not AuthorizationStateReady)
+                {
+                    var options = new Windows.System.LauncherOptions();
+                    options.TargetApplicationPackageFamilyName = Package.Current.Id.FamilyName;
+
+                    try
+                    {
+                        await Windows.System.Launcher.LaunchUriAsync(new Uri("tg:"), options);
+                    }
+                    catch
+                    {
+                        // It's too early?
+                    }
+                    finally
+                    {
+                        shareTarget.ShareOperation.ReportCompleted();
+                    }
+
+                    return;
+                }
+
                 switch (state)
                 {
                     case AuthorizationStateReady:
@@ -730,35 +749,6 @@ namespace Telegram.Navigation
                 service.NavigateToMain(arguments);
             }
         }
-
-        private void ContactPanelFallback(INavigationService service)
-        {
-            if (service == null)
-            {
-                return;
-            }
-
-            var hyper = new Hyperlink();
-            hyper.NavigateUri = new Uri("ms-settings:privacy-contacts");
-            hyper.Inlines.Add(new Run { Text = "Settings" });
-
-            var text = new TextBlock();
-            text.Padding = new Thickness(12);
-            text.VerticalAlignment = VerticalAlignment.Center;
-            text.TextWrapping = TextWrapping.Wrap;
-            text.TextAlignment = TextAlignment.Center;
-            text.Inlines.Add(new Run { Text = "This app is not able to access your contacts. Go to " });
-            text.Inlines.Add(hyper);
-            text.Inlines.Add(new Run { Text = " to check the contacts privacy settings." });
-
-            var page = new ContentControl();
-            page.VerticalAlignment = VerticalAlignment.Center;
-            page.HorizontalContentAlignment = HorizontalAlignment.Stretch;
-            page.Content = text;
-
-            service.Frame.Content = page;
-        }
-
 
         /// <summary>
         /// Update the Title and Status Bars colors.

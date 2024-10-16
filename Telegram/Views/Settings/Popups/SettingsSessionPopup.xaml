@@ -1,89 +1,103 @@
 ﻿<controls:ContentPopup x:Class="Telegram.Views.Settings.Popups.SettingsSessionPopup"
                        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-                       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-                       xmlns:local="using:Telegram.Views.Popups"
-                       xmlns:controls="using:Telegram.Controls"
                        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                       xmlns:controls="using:Telegram.Controls"
                        mc:Ignorable="d"
                        DefaultButton="None"
-                       PrimaryButtonText="OK"
                        PrimaryButtonStyle="{StaticResource DangerButtonStyle}"
-                       SecondaryButtonText="Cancel"
                        Opened="OnOpened"
-                       Background="{ThemeResource PageBackgroundDarkBrush}">
+                       Padding="0,24,0,16"
+                       IsDismissButtonVisible="True">
 
-    <controls:ContentPopup.Title>
-        <StackPanel>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+        <StackPanel Margin="0,0,0,12">
             <Border x:Name="IconBackground"
-                    CornerRadius="32"
-                    Width="64"
-                    Height="64">
+                    CornerRadius="48"
+                    Width="96"
+                    Height="96">
                 <controls:AnimatedImage x:Name="Icon"
                                         AutoPlay="False"
                                         IsCachingEnabled="False"
                                         LoopCount="1"
                                         HorizontalAlignment="Center"
                                         VerticalAlignment="Center"
-                                        FrameSize="50,50"
+                                        FrameSize="72,72"
                                         DecodeFrameType="Logical"
-                                        Width="50"
-                                        Height="50" />
+                                        Width="72"
+                                        Height="72" />
             </Border>
 
             <TextBlock x:Name="Title"
+                       Style="{StaticResource PopupTextBlockStyle}"
                        TextAlignment="Center"
-                       Margin="0,8,0,4" />
+                       TextTrimming="CharacterEllipsis"
+                       Margin="12,12,12,0" />
 
             <TextBlock x:Name="Subtitle"
                        TextAlignment="Center"
                        TextTrimming="CharacterEllipsis"
-                       Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"
-                       Style="{StaticResource BodyTextBlockStyle}"
+                       Style="{StaticResource InfoBodyTextBlockStyle}"
                        Grid.Column="1"
                        Grid.Row="2" />
-
         </StackPanel>
-    </controls:ContentPopup.Title>
 
-    <Grid Margin="-24,-12,-24,0">
-        <controls:HeaderedControl>
-            <controls:BadgeButton x:Name="Application"
-                                  Content="{CustomResource Application}"
-                                  Style="{StaticResource GlyphSubtitleBadgeButtonStyle}"
-                                  Glyph="&#xE975;" />
-            <controls:BadgeButton x:Name="Location"
-                                  Content="{CustomResource Location}"
-                                  Style="{StaticResource GlyphSubtitleBadgeButtonStyle}"
-                                  Glyph="&#xE1C4;" />
-            <controls:BadgeButton x:Name="Address"
-                                  Content="{CustomResource IpAddress}"
-                                  Style="{StaticResource GlyphSubtitleBadgeButtonStyle}"
-                                  Glyph="&#xE774;" />
+        <controls:BadgeButton x:Name="Application"
+                              Content="{CustomResource Application}"
+                              Style="{StaticResource GlyphSubtitleBadgeButtonStyle}"
+                              Glyph="&#xE975;"
+                              Background="Transparent"
+                              Grid.Row="1" />
+        <controls:BadgeButton x:Name="Location"
+                              Content="{CustomResource Location}"
+                              Style="{StaticResource GlyphSubtitleBadgeButtonStyle}"
+                              Glyph="&#xE1C4;"
+                              Background="Transparent"
+                              Grid.Row="2" />
+        <controls:BadgeButton x:Name="Address"
+                              Content="{CustomResource IpAddress}"
+                              Style="{StaticResource GlyphSubtitleBadgeButtonStyle}"
+                              Glyph="&#xE774;"
+                              Background="Transparent"
+                              Grid.Row="3" />
 
-            <controls:BadgeButton x:Name="AcceptCallsPanel"
-                                  Click="AcceptCallsPanel_Click"
-                                  Content="{CustomResource AcceptCalls}"
-                                  Style="{StaticResource GlyphBadgeButtonStyle}"
-                                  Glyph="&#xE717;">
-                <controls:BadgeButton.Badge>
-                    <CheckBox x:Name="AcceptCalls"
-                              MinWidth="0"
-                              Padding="0" />
-                </controls:BadgeButton.Badge>
-            </controls:BadgeButton>
+        <controls:BadgeButton x:Name="AcceptCallsPanel"
+                              Click="AcceptCallsPanel_Click"
+                              Content="{CustomResource AcceptCalls}"
+                              Style="{StaticResource GlyphBadgeButtonStyle}"
+                              Glyph="&#xE717;"
+                              Background="Transparent"
+                              Margin="0,0,12,0"
+                              Grid.Row="4">
+            <controls:BadgeButton.Badge>
+                <CheckBox x:Name="AcceptCalls"
+                          MinWidth="0"
+                          Padding="0" />
+            </controls:BadgeButton.Badge>
+        </controls:BadgeButton>
 
-            <controls:BadgeButton x:Name="AcceptSecretChatsPanel"
-                                  Click="AcceptSecretChatsPanel_Click"
-                                  Content="{CustomResource AcceptSecretChats}"
-                                  Style="{StaticResource GlyphBadgeButtonStyle}"
-                                  Glyph="&#xE72E;">
-                <controls:BadgeButton.Badge>
-                    <CheckBox x:Name="AcceptSecretChats"
-                              MinWidth="0"
-                              Padding="0" />
-                </controls:BadgeButton.Badge>
-            </controls:BadgeButton>
-        </controls:HeaderedControl>
+        <controls:BadgeButton x:Name="AcceptSecretChatsPanel"
+                              Click="AcceptSecretChatsPanel_Click"
+                              Content="{CustomResource AcceptSecretChats}"
+                              Style="{StaticResource GlyphBadgeButtonStyle}"
+                              Glyph="&#xE72E;"
+                              Background="Transparent"
+                              Margin="0,0,12,0"
+                              Grid.Row="5">
+            <controls:BadgeButton.Badge>
+                <CheckBox x:Name="AcceptSecretChats"
+                          MinWidth="0"
+                          Padding="0" />
+            </controls:BadgeButton.Badge>
+        </controls:BadgeButton>
     </Grid>
 </controls:ContentPopup>

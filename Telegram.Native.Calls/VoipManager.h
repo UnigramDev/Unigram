@@ -54,7 +54,7 @@ namespace winrt::Telegram::Native::Calls::implementation
 
         VoipManager() = default;
 
-        void Start(hstring version, VoipDescriptor descriptor);
+        void Start(VoipDescriptor descriptor);
         void Stop();
 
         bool IsMuted();
@@ -127,6 +127,14 @@ namespace winrt::Telegram::Native::Calls::implementation
 
         bool m_isMuted = false;
 
+        void OnStateUpdated(tgcalls::State state);
+        void OnSignalBarsUpdated(int signalBarCount);
+        void OnAudioLevelUpdated(float audioLevel);
+        void OnRemoteBatteryLevelIsLowUpdated(bool isLow);
+        void OnRemoteMediaStateUpdated(tgcalls::AudioState audio, tgcalls::VideoState video);
+        void OnRemotePrefferedAspectRadioUpdated(float ratio);
+        void OnSignalingDataEmitted(std::vector<uint8_t> data);
+
         winrt::event<Windows::Foundation::TypedEventHandler<
             winrt::Telegram::Native::Calls::VoipManager,
             VoipReadyState>> m_stateUpdatedEventSource;
@@ -135,7 +143,7 @@ namespace winrt::Telegram::Native::Calls::implementation
             int>> m_signalBarsUpdatedEventSource;
         winrt::event<Windows::Foundation::TypedEventHandler<
             winrt::Telegram::Native::Calls::VoipManager,
-            float>> m_audioLevelUpdated;
+            float>> m_audioLevelUpdatedEventSource;
         winrt::event<Windows::Foundation::TypedEventHandler<
             winrt::Telegram::Native::Calls::VoipManager,
             bool>> m_remoteBatteryLevelIsLowUpdatedEventSource;

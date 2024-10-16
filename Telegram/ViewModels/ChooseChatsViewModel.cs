@@ -514,11 +514,11 @@ namespace Telegram.ViewModels
 
             if (!string.IsNullOrEmpty(SendMessage?.Text))
             {
-                _isCommentEnabled = true;
-                _caption = SendMessage;
+                IsCommentEnabled = true;
+                Caption = SendMessage;
             }
 
-            if (_isCommentEnabled && !string.IsNullOrEmpty(_caption?.Text))
+            if (IsCommentEnabled && !string.IsNullOrEmpty(Caption?.Text))
             {
                 foreach (var chat in chats)
                 {
@@ -578,6 +578,20 @@ namespace Telegram.ViewModels
 
                 //NavigationService.GoBack();
             }
+            else if (_configuration is ChooseChatsConfigurationPostLink postLink && postLink.InternalLink != null)
+            {
+                var response = await ClientService.SendAsync(new GetInternalLink(postLink.InternalLink, true));
+                if (response is HttpUrl httpUrl)
+                {
+                    var formatted = new FormattedText(httpUrl.Url, Array.Empty<TextEntity>());
+
+                    foreach (var chat in chats)
+                    {
+                        SelectedTopics.TryGetValue(chat.Id, out long messageThreadId);
+                        ClientService.Send(new SendMessage(chat.Id, messageThreadId, null, null, null, new InputMessageText(formatted, null, false)));
+                    }
+                }
+            }
             else if (ShareLink != null)
             {
                 var formatted = new FormattedText(ShareLink.Url, Array.Empty<TextEntity>());
@@ -623,7 +637,7 @@ namespace Telegram.ViewModels
             }
             else if (_configuration is ChooseChatsConfigurationGroupCall groupCall)
             {
-                var response = await ClientService.SendAsync(new GetGroupCallInviteLink(groupCall.GroupCall.Id, false));
+                var response = await ClientService.SendAsync(new GetGroupCallInviteLink(groupCall.GroupCallId, false));
                 if (response is HttpUrl httpUrl)
                 {
                     var formatted = new FormattedText(string.Format(Strings.VoipGroupInviteText, httpUrl.Url), Array.Empty<TextEntity>());

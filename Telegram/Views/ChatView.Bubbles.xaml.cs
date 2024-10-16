@@ -684,6 +684,9 @@ namespace Telegram.Views
                         && TextArea.Visibility == Visibility.Visible);
 
                     checkbox.UpdateMessage(message, Messages, ViewModel.IsSelectionEnabled);
+                    checkbox.HorizontalAlignment = message.Date == 0 && message.Id == 0
+                        ? HorizontalAlignment.Center
+                        : HorizontalAlignment.Stretch;
 
                     content = checkbox.Content as FrameworkElement;
                 }
@@ -808,7 +811,7 @@ namespace Telegram.Views
                 {
                     return ChatHistoryViewItemType.ServiceGiftCode;
                 }
-                else if (message.Content is MessageGiftedPremium or MessageGiftedStars)
+                else if (message.Content is MessageGiftedPremium or MessageGiftedStars or MessageGift)
                 {
                     return ChatHistoryViewItemType.ServiceGift;
                 }

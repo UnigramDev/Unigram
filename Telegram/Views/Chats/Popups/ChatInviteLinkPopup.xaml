@@ -1,0 +1,123 @@
+﻿<controls:ContentPopup x:Class="Telegram.Views.Chats.Popups.ChatInviteLinkPopup"
+                       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                       xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                       xmlns:controls="using:Telegram.Controls"
+                       mc:Ignorable="d"
+                       Padding="0,24,0,0">
+
+    <Grid>
+        <ScrollViewer x:Name="ScrollingHost"
+                      VerticalScrollBarVisibility="Auto"
+                      HorizontalScrollMode="Auto"
+                      Padding="24,0,24,0">
+            <StackPanel Margin="0,0,0,24">
+                <StackPanel>
+                    <TextBlock Text="{CustomResource LinkName}" />
+                    <TextBox x:Name="LinkName"
+                             PlaceholderText="{CustomResource LinkNameHint}"
+                             MaxLength="32"
+                             Margin="0,8" />
+
+                    <TextBlock Text="{CustomResource LinkNameHelp}"
+                               Style="{StaticResource InfoCaptionTextBlockStyle}" />
+                </StackPanel>
+
+                <StackPanel x:Name="RequireMonthlyFeeRoot"
+                            BorderBrush="{ThemeResource SettingsItemBorderBrush}"
+                            BorderThickness="0,1,0,0"
+                            Margin="0,16,0,0"
+                            Padding="0,12,0,0">
+                    <CheckBox x:Name="RequireMonthlyFee"
+                              Checked="RequireMonthlyFee_Checked"
+                              Unchecked="RequireMonthlyFee_Checked"
+                              Content="{CustomResource RequireMonthlyFee}" />
+
+                    <Grid x:Name="RequireMonthlyFeeValue"
+                          Visibility="Collapsed"
+                          Margin="0,4,0,8">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="36" />
+                            <ColumnDefinition />
+                        </Grid.ColumnDefinitions>
+                        <TextBox x:Name="RequireMonthlyFeeNumber"
+                                 BeforeTextChanging="RequireMonthlyFeeNumber_BeforeTextChanging"
+                                 TextChanged="RequireMonthlyFeeNumber_TextChanged"
+                                 PlaceholderText="{CustomResource RequireMonthlyFeePriceHint}"
+                                 Style="{StaticResource NoDeleteTextBoxStyle}"
+                                 Padding="36,5,6,6"
+                                 Grid.ColumnSpan="2" />
+
+                        <controls:PremiumStarCount HorizontalAlignment="Center"
+                                                   VerticalAlignment="Center"
+                                                   Width="24"
+                                                   Height="24" />
+
+                        <TextBlock x:Name="RequireMonthlyFeeConversion"
+                                   Style="{StaticResource InfoCaptionTextBlockStyle}"
+                                   HorizontalAlignment="Right"
+                                   VerticalAlignment="Center"
+                                   IsHitTestVisible="False"
+                                   Margin="0,0,8,0"
+                                   Grid.ColumnSpan="2" />
+                    </Grid>
+
+                    <TextBlock x:Name="RequireMonthlyFeeInfo"
+                               Text="{CustomResource RequireMonthlyFeeInfo}"
+                               Style="{StaticResource InfoCaptionTextBlockStyle}" />
+                </StackPanel>
+
+                <StackPanel x:Name="CreatesJoinRequestRoot"
+                            BorderBrush="{ThemeResource SettingsItemBorderBrush}"
+                            BorderThickness="0,1,0,0"
+                            Margin="0,16,0,0"
+                            Padding="0,12,0,0">
+                    <CheckBox x:Name="CreatesJoinRequest"
+                              Checked="CreatesJoinRequest_Checked"
+                              Unchecked="CreatesJoinRequest_Checked"
+                              Content="{CustomResource ApproveNewMembers}" />
+
+                    <TextBlock x:Name="CreatesJoinRequestInfo"
+                               Text="{CustomResource ApproveNewMembersDescription}"
+                               Style="{StaticResource InfoCaptionTextBlockStyle}" />
+                </StackPanel>
+
+                <StackPanel x:Name="LimitByPeriodRoot"
+                            BorderBrush="{ThemeResource SettingsItemBorderBrush}"
+                            BorderThickness="0,1,0,0"
+                            Margin="0,16,0,0"
+                            Padding="0,12,0,0">
+                    <TextBlock Text="{CustomResource LimitByPeriod}" />
+                    <ComboBox x:Name="LimitByPeriod"
+                              SelectionChanged="LimitByPeriod_SelectionChanged"
+                              DisplayMemberPath="Text"
+                              HorizontalAlignment="Stretch"
+                              Margin="0,8" />
+
+                    <TextBlock Text="{CustomResource TimeLimitHelp}"
+                               Style="{StaticResource InfoCaptionTextBlockStyle}" />
+                </StackPanel>
+
+                <StackPanel x:Name="LimitNumberOfUsesRoot"
+                            BorderBrush="{ThemeResource SettingsItemBorderBrush}"
+                            BorderThickness="0,1,0,0"
+                            Margin="0,16,0,0"
+                            Padding="0,12,0,0">
+                    <TextBlock Text="{CustomResource LimitNumberOfUses}" />
+                    <ComboBox x:Name="LimitNumberOfUses"
+                              SelectionChanged="LimitNumberOfUses_SelectionChanged"
+                              DisplayMemberPath="Text"
+                              HorizontalAlignment="Stretch"
+                              Margin="0,8" />
+                    <TextBlock Text="{CustomResource UsesLimitHelp}"
+                               Style="{StaticResource InfoCaptionTextBlockStyle}" />
+                </StackPanel>
+
+            </StackPanel>
+        </ScrollViewer>
+
+        <controls:ScrollViewerScrim ScrollingHost="{x:Bind ScrollingHost}"
+                                    Background="{ThemeResource ContentDialogBackground}" />
+    </Grid>
+</controls:ContentPopup>

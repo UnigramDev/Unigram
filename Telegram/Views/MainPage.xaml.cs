@@ -40,7 +40,6 @@ using Telegram.Td.Api;
 using Telegram.ViewModels;
 using Telegram.ViewModels.Delegates;
 using Telegram.ViewModels.Drawers;
-using Telegram.ViewModels.Profile;
 using Telegram.Views.Create;
 using Telegram.Views.Host;
 using Telegram.Views.Popups;
@@ -607,8 +606,6 @@ namespace Telegram.Views
             this.BeginOnUIThread(() =>
             {
                 var call = ViewModel.VoipService.ActiveCall;
-                var groupCall = ViewModel.VoipGroupService.Call;
-
                 if (call != null)
                 {
                     UpdatePlaybackHidden(true);
@@ -616,21 +613,13 @@ namespace Telegram.Views
 
                     CallBanner.Update(call);
                 }
-                else if (groupCall != null)
-                {
-                    UpdatePlaybackHidden(true);
-                    FindName(nameof(CallBanner));
-
-                    CallBanner.Update(ViewModel.VoipGroupService);
-                }
                 else
                 {
                     UpdatePlaybackHidden(false);
 
                     if (CallBanner != null)
                     {
-                        CallBanner.Update(null as IVoipGroupService);
-                        CallBanner.Update(null as VoipCall);
+                        CallBanner.Update(null);
                         UnloadObject(CallBanner);
                     }
                 }
@@ -2141,14 +2130,11 @@ namespace Telegram.Views
             }
             else if (destination == RootDestination.MyProfile)
             {
-                MasterDetail.NavigationService.Navigate(typeof(ProfilePage), new ProfileMyArgs());
+                ViewModel.NavigateToMyProfile(false);
             }
             else if (destination == RootDestination.SavedMessages)
             {
-                if (ViewModel.ClientService.TryGetChat(ViewModel.ClientService.Options.MyId, out Chat chat))
-                {
-                    MasterDetail.NavigationService.NavigateToChat(chat, force: false);
-                }
+                ViewModel.NavigateToMyProfile(true);
             }
             else if (destination == RootDestination.Tips && Uri.TryCreate(Strings.TelegramFeaturesUrl, UriKind.Absolute, out Uri tipsUri))
             {
@@ -2943,8 +2929,58 @@ namespace Telegram.Views
             var muted = ViewModel.ClientService.Notifications.IsMuted(chat);
             var archived = chat.Positions.Any(x => x.List is ChatListArchive);
 
-            flyout.CreateFlyoutItem(DialogArchive_Loaded, viewModel.ArchiveChat, chat, archived ? Strings.Unarchive : Strings.Archive, archived ? Icons.Unarchive : Icons.Archive);
+            if (DialogArchive_Loaded(chat))
+            {
+                // Suggest to unarchive only when archive is open
+                if (viewModel.Items.ChatList is ChatListArchive && archived)
+                {
+                    flyout.CreateFlyoutItem(DialogArchive_Loaded, viewModel.ArchiveChat, chat, Strings.Unarchive);
+                }
+                else if (viewModel.Items.ChatList is not ChatListArchive && !archived)
+                {
+                    flyout.CreateFlyoutItem(DialogArchive_Loaded, viewModel.ArchiveChat, chat, Strings.Archive, Icons.Archive);
+                }
+            }
+
             flyout.CreateFlyoutItem(DialogPin_Loaded, viewModel.PinChat, chat, position.IsPinned ? Strings.UnpinFromTop : Strings.PinToTop, position.IsPinned ? Icons.PinOff : Icons.Pin);
+
+            var chatLists = await ViewModel.ClientService.SendAsync(new GetChatListsToAddChat(chat.Id)) as ChatLists;
+            if (chatLists != null && chatLists.ChatListsValue.Count > 0)
+            {
+                var folders = ViewModel.ClientService.ChatFolders.ToDictionary(x => x.Id);
+
+                var item = new MenuFlyoutSubItem();
+                item.Text = Strings.FilterAddTo;
+                item.Icon = MenuFlyoutHelper.CreateIcon(Icons.FolderAdd);
+
+                foreach (var chatList in chatLists.ChatListsValue.OfType<ChatListFolder>())
+                {
+                    // Skip current folder from "Add to folder" list to avoid confusion
+                    if (chatList.AreTheSame(viewModel.Items.ChatList))
+                    {
+                        continue;
+                    }
+
+                    if (folders.TryGetValue(chatList.ChatFolderId, out ChatFolderInfo folder))
+                    {
+                        var icon = Icons.ParseFolder(folder.Icon);
+                        var glyph = Icons.FolderToGlyph(icon);
+
+                        item.CreateFlyoutItem(viewModel.AddToFolder, (folder.Id, chat), folder.Title, glyph.Item1);
+                    }
+                }
+
+                if (folders.Count < 10 && item.Items.Count > 0)
+                {
+                    item.CreateFlyoutSeparator();
+                    item.CreateFlyoutItem(viewModel.CreateFolder, chat, Strings.CreateNewFilter, Icons.Add);
+                }
+
+                if (item.Items.Count > 0)
+                {
+                    flyout.Items.Add(item);
+                }
+            }
 
             if (viewModel.Items.ChatList is ChatListFolder chatListFolder)
             {
@@ -2956,41 +2992,6 @@ namespace Telegram.Views
                     if (response.Any())
                     {
                         flyout.CreateFlyoutItem(viewModel.RemoveFromFolder, (chatListFolder.ChatFolderId, chat), Strings.FilterRemoveFrom, Icons.FolderMove);
-                    }
-                }
-            }
-            else
-            {
-                var response = await ViewModel.ClientService.SendAsync(new GetChatListsToAddChat(chat.Id)) as ChatLists;
-                if (response != null && response.ChatListsValue.Count > 0)
-                {
-                    var folders = ViewModel.ClientService.ChatFolders;
-
-                    var item = new MenuFlyoutSubItem();
-                    item.Text = Strings.FilterAddTo;
-                    item.Icon = MenuFlyoutHelper.CreateIcon(Icons.FolderAdd);
-
-                    foreach (var chatList in response.ChatListsValue.OfType<ChatListFolder>())
-                    {
-                        var folder = folders.FirstOrDefault(x => x.Id == chatList.ChatFolderId);
-                        if (folder != null)
-                        {
-                            var icon = Icons.ParseFolder(folder.Icon);
-                            var glyph = Icons.FolderToGlyph(icon);
-
-                            item.CreateFlyoutItem(viewModel.AddToFolder, (folder.Id, chat), folder.Title, glyph.Item1);
-                        }
-                    }
-
-                    if (folders.Count < 10 && item.Items.Count > 0)
-                    {
-                        item.CreateFlyoutSeparator();
-                        item.CreateFlyoutItem(viewModel.CreateFolder, chat, Strings.CreateNewFilter, Icons.Add);
-                    }
-
-                    if (item.Items.Count > 0)
-                    {
-                        flyout.Items.Add(item);
                     }
                 }
             }
@@ -3642,78 +3643,5 @@ namespace Telegram.Views
             LogoPremium = null;
             LogoEmoji = null;
         }
-    }
-
-    public enum HostedNavigationMode
-    {
-        Child,
-        Root,
-        RootWhenParameterless,
-    }
-
-    public partial class HostedPage : PageEx
-    {
-        #region ShowHeader
-
-        public bool ShowHeader
-        {
-            get { return (bool)GetValue(HasHeaderProperty); }
-            set { SetValue(HasHeaderProperty, value); }
-        }
-
-        public static readonly DependencyProperty HasHeaderProperty =
-            DependencyProperty.Register("ShowHeader", typeof(bool), typeof(HostedPage), new PropertyMetadata(true));
-
-        #endregion
-
-        #region ShowHeaderBackground
-
-        public bool ShowHeaderBackground
-        {
-            get { return (bool)GetValue(ShowHeaderBackgroundProperty); }
-            set { SetValue(ShowHeaderBackgroundProperty, value); }
-        }
-
-        public static readonly DependencyProperty ShowHeaderBackgroundProperty =
-            DependencyProperty.Register("ShowHeaderBackground", typeof(bool), typeof(HostedPage), new PropertyMetadata(true));
-
-        #endregion
-
-        #region Action
-
-        public UIElement Action
-        {
-            get { return (UIElement)GetValue(ActionProperty); }
-            set { SetValue(ActionProperty, value); }
-        }
-
-        public static readonly DependencyProperty ActionProperty =
-            DependencyProperty.Register("Action", typeof(UIElement), typeof(HostedPage), new PropertyMetadata(null));
-
-        #endregion
-
-        #region Title
-
-        public string Title
-        {
-            get { return (string)GetValue(TitleProperty); }
-            set { SetValue(TitleProperty, value); }
-        }
-
-        public static readonly DependencyProperty TitleProperty =
-            DependencyProperty.Register("Title", typeof(string), typeof(HostedPage), new PropertyMetadata(null));
-
-        public virtual string GetTitle()
-        {
-            return Title;
-        }
-
-        #endregion
-
-        #region NavigationMode
-
-        public HostedNavigationMode NavigationMode { get; set; }
-
-        #endregion
     }
 }

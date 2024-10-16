@@ -20,7 +20,6 @@ using Telegram.Navigation;
 using Telegram.Services;
 using Telegram.Td.Api;
 using Windows.UI;
-using WinRT;
 
 namespace Telegram.Controls.Chats
 {

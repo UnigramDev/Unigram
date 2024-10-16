@@ -1,11 +1,9 @@
 ﻿<UserControl x:Class="Telegram.Controls.Cells.Premium.PremiumFeatureBusinessCell"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:local="using:Telegram.Views"
-             xmlns:common="using:Telegram.Common"
-             xmlns:controls="using:Telegram.Controls"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:controls="using:Telegram.Controls"
              mc:Ignorable="d"
              Padding="0">
 
@@ -22,9 +20,7 @@
                         <RowDefinition Height="Auto" />
                     </Grid.RowDefinitions>
                     <TextBlock Text="{CustomResource TelegramBusiness}"
-                               FontSize="20"
-                               FontFamily="XamlAutoFontFamily"
-                               FontWeight="SemiBold"
+                               Style="{StaticResource PopupTextBlockStyle}"
                                TextAlignment="Center"
                                VerticalAlignment="Top"
                                Margin="0,24,0,4"

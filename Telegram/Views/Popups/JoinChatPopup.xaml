@@ -1,10 +1,9 @@
 <controls:ContentPopup x:Class="Telegram.Views.Popups.JoinChatPopup"
                        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-                       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-                       xmlns:local="using:Telegram.Views.Popups"
-                       xmlns:controls="using:Telegram.Controls"
                        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                       xmlns:controls="using:Telegram.Controls"
                        Title="{x:Null}"
                        TitleTemplate="{x:Null}"
                        Padding="24,0,24,24"
@@ -27,7 +26,6 @@
             <controls:ProfilePicture x:Name="Photo"
                                      Width="96"
                                      Height="96"
-                                     IsEnabled="False"
                                      Margin="0,24,0,8" />
             <Grid HorizontalAlignment="Center"
                   Grid.Row="1">
@@ -36,9 +34,7 @@
                     <ColumnDefinition Width="Auto" />
                 </Grid.ColumnDefinitions>
                 <TextBlock x:Name="Title"
-                           FontSize="20"
-                           FontFamily="XamlAutoFontFamily"
-                           FontWeight="SemiBold"
+                           Style="{StaticResource PopupTextBlockStyle}"
                            TextAlignment="Center"
                            VerticalAlignment="Bottom" />
                 <controls:IdentityIcon x:Name="Identity"
@@ -76,8 +72,7 @@
                     <StackPanel>
                         <controls:ProfilePicture Width="48"
                                                  Height="48"
-                                                 Margin="8,0"
-                                                 IsEnabled="False" />
+                                                 Margin="8,0" />
                         <TextBlock Margin="0,8,0,0"
                                    FontSize="10"
                                    TextAlignment="Center"

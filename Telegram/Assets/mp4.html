@@ -1,0 +1,160 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        html, body {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            width: 100%;
+            overflow: hidden;
+        }
+
+        #videoPlayer {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            width: 100%;
+            object-fit: fill;
+        }
+    </style>
+    <script type="text/javascript">
+        function postPlayerEvent(eventName, eventData) {
+            window.chrome.webview.postMessage({ 'event': eventName, 'data': eventData });
+        };
+
+        var video;
+
+        var isFirstFrameReady = false;
+
+        var currentTimeUpdateTimeout = null;
+
+        function playerInitialize(params) {
+            video = document.getElementById('videoPlayer');
+
+            video.addEventListener('loadeddata', (event) => {
+                if (!isFirstFrameReady) {
+                    isFirstFrameReady = true;
+                    refreshPlayerStatus();
+                }
+            });
+            video.addEventListener("playing", function () {
+                refreshPlayerStatus();
+            });
+            video.addEventListener("pause", function () {
+                refreshPlayerStatus();
+            });
+            video.addEventListener("seeking", function () {
+                refreshPlayerStatus();
+            });
+            video.addEventListener("waiting", function () {
+                refreshPlayerStatus();
+            });
+            video.addEventListener("durationchange", function () {
+                refreshPlayerStatus();
+            });
+            video.addEventListener('canplay', function () {
+                refreshPlayerStatus();
+            });
+
+            video.src = 'video.mp4';
+        }
+
+        function playerLoad(initialLevelIndex) {
+            hls.startLevel = initialLevelIndex;
+            hls.startLoad(startPosition = -1);
+        }
+
+        function playerPlay() {
+            video.play();
+        }
+
+        function playerPause() {
+            video.pause();
+        }
+
+        function playerToggle() {
+            if (video.paused) {
+                video.play();
+            } else {
+                video.pause();
+            }
+        }
+
+        function playerSetBaseRate(value) {
+            video.playbackRate = value;
+        }
+
+        function playerSetLevel(level) {
+            // do nothing
+        }
+
+        function playerSeek(value) {
+            video.currentTime = value;
+        }
+
+        function playerSetIsMuted(value) {
+            video.muted = value;
+        }
+
+        function playerSetVolume(value) {
+            video.volume = value;
+        }
+
+        function refreshPlayerStatus() {
+            var isPlaying = false;
+            if (!video.paused && !video.ended && video.readyState > 2) {
+                isPlaying = true;
+            }
+
+            postPlayerEvent('playerStatus', {
+                'isReady': video.canplay,
+                'isFirstFrameReady': isFirstFrameReady,
+                'isPlaying': !video.paused,
+                'rate': isPlaying ? video.playbackRate : 0.0,
+                'defaultRate': video.playbackRate,
+                'volume': video.volume,
+                'duration': video.duration || 0
+            });
+
+            refreshPlayerCurrentTime();
+
+            if (isPlaying) {
+                if (currentTimeUpdateTimeout == null) {
+                    currentTimeUpdateTimeout = setTimeout(() => {
+                        refreshPlayerCurrentTime();
+                    }, 200);
+                }
+            } else {
+                if (currentTimeUpdateTimeout != null) {
+                    clearTimeout(currentTimeUpdateTimeout);
+                    currentTimeUpdateTimeout = null;
+                }
+            }
+        }
+
+        function playerBufferedEnd() {
+            for (var i = 0; i < video.buffered.length; i++) {
+                if (video.currentTime >= video.buffered.start(i) && video.currentTime <= video.buffered.end(i)) {
+                    return video.buffered.end(i);
+                }
+            }
+
+            return 0;
+        }
+
+        function refreshPlayerCurrentTime() {
+            postPlayerEvent('playerCurrentTime', {
+                'value': video.currentTime,
+                'buffered': playerBufferedEnd()
+            });
+            currentTimeUpdateTimeout = setTimeout(() => {
+                refreshPlayerCurrentTime()
+            }, 200);
+        }
+    </script>
+</head>
+<body>
+    <video id="videoPlayer" playsinline></video>
+</body>
+</html>

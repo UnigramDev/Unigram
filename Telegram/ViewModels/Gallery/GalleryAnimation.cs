@@ -15,34 +15,18 @@ namespace Telegram.ViewModels.Gallery
         private readonly Animation _animation;
         private readonly FormattedText _caption;
 
-        public GalleryAnimation(IClientService clientService, Animation animation)
+        public GalleryAnimation(IClientService clientService, Animation animation, FormattedText caption = null)
             : base(clientService)
         {
             _animation = animation;
-        }
+            _caption = caption ?? new FormattedText(string.Empty, Array.Empty<TextEntity>());
 
-        public GalleryAnimation(IClientService clientService, Animation animation, FormattedText caption)
-            : base(clientService)
-        {
-            _animation = animation;
-            _caption = caption;
-        }
+            File = _animation.AnimationValue;
 
-        //public long Id => _animation.Id;
-
-        public override File GetFile()
-        {
-            return _animation.AnimationValue;
-        }
-
-        public override File GetThumbnail()
-        {
             if (_animation.Thumbnail is { Format: ThumbnailFormatJpeg })
             {
-                return _animation.Thumbnail.File;
+                Thumbnail = _animation.Thumbnail.File;
             }
-
-            return null;
         }
 
         public override object Constraint => _animation;
@@ -50,10 +34,10 @@ namespace Telegram.ViewModels.Gallery
         public override FormattedText Caption => _caption;
 
         public override bool IsVideo => true;
-        public override bool IsLoop => true;
+        public override bool IsLoopingEnabled => true;
 
-        public override bool CanSave => true;
-        public override bool CanShare => true;
+        public override bool CanBeSaved => true;
+        public override bool CanBeShared => true;
 
         public override int Duration => _animation.Duration;
 

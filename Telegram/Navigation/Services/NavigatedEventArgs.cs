@@ -26,5 +26,7 @@ namespace Telegram.Navigation.Services
         public Type SourcePageType { get; set; }
         public object Parameter { get; set; }
         public Page Content { get; set; }
+
+        public double VerticalOffset { get; set; }
     }
 }

@@ -34,7 +34,7 @@ namespace Telegram.Controls.Cells
         private SpriteVisual _pausedVisual;
         private CompositionEffectBrush _pausedBrush;
 
-        private readonly VoipVideoOutputSink _sink;
+        private VoipVideoOutputSink _sink;
         private readonly bool _screenSharing;
 
         public GroupCallParticipantGridCell(IClientService clientService, GroupCallParticipant participant, GroupCallParticipantVideoInfo videoInfo, bool screenSharing)
@@ -42,7 +42,6 @@ namespace Telegram.Controls.Cells
             InitializeComponent();
             UpdateGroupCallParticipant(clientService, participant, videoInfo);
 
-            _sink = VoipVideoOutput.CreateSink(CanvasRoot, false);
             _screenSharing = screenSharing;
 
             if (screenSharing)
@@ -59,7 +58,19 @@ namespace Telegram.Controls.Cells
             return participant != null && participant.ParticipantId.AreTheSame(ParticipantId) && _videoInfo.EndpointId == _videoInfo.EndpointId;
         }
 
-        public VoipVideoOutputSink Sink => _sink;
+        public VoipVideoOutputSink Connect(bool mirrored)
+        {
+            _sink?.Stop();
+            _sink = VoipVideoOutput.CreateSink(CanvasRoot, mirrored);
+
+            return _sink;
+        }
+
+        public void Disconnect()
+        {
+            _sink?.Stop();
+            _sink = null;
+        }
 
         public VoipVideoChannelQuality Quality => ActualHeight switch
         {
@@ -86,6 +97,8 @@ namespace Telegram.Controls.Cells
         public string EndpointId => _videoInfo.EndpointId;
 
         public bool IsScreenSharing => _screenSharing;
+
+        public bool IsConnected => _sink != null;
 
         public bool IsSelected { get; set; }
 
@@ -124,7 +137,7 @@ namespace Telegram.Controls.Cells
 
             if (participant.IsSpeaking)
             {
-                Speaking.BorderBrush = new SolidColorBrush { Color = Color.FromArgb(0xFF, 0x33, 0xc6, 0x59) };
+                Speaking.BorderBrush = new SolidColorBrush(Color.FromArgb(0xFF, 0x33, 0xc6, 0x59));
                 Glyph.Text = Icons.MicOn;
             }
             else

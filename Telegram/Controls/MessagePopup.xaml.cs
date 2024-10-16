@@ -84,14 +84,15 @@ namespace Telegram.Controls
             IsPrimaryButtonEnabled = !_isCheckedRequired || CheckBox.IsChecked is true;
         }
 
-        public static Task<ContentDialogResult> ShowAsync(XamlRoot xamlRoot, string message, string title = null, string primary = null, string secondary = null, bool destructive = false, ElementTheme requestedTheme = ElementTheme.Default)
+        public static Task<ContentDialogResult> ShowAsync(XamlRoot xamlRoot, string message, string title = null, string primary = null, string secondary = null, string tertiary = null, bool destructive = false, ElementTheme requestedTheme = ElementTheme.Default)
         {
             var popup = new MessagePopup
             {
                 Title = title ?? Strings.AppName,
                 Message = message,
                 PrimaryButtonText = primary ?? Strings.OK,
-                SecondaryButtonText = secondary ?? string.Empty
+                SecondaryButtonText = secondary ?? string.Empty,
+                CloseButtonText = tertiary ?? string.Empty,
             };
 
             if (requestedTheme != ElementTheme.Default)
@@ -108,14 +109,15 @@ namespace Telegram.Controls
             return popup.ShowQueuedAsync(xamlRoot);
         }
 
-        public static Task<ContentDialogResult> ShowAsync(XamlRoot xamlRoot, FormattedText message, string title = null, string primary = null, string secondary = null, bool destructive = false, ElementTheme requestedTheme = ElementTheme.Default)
+        public static Task<ContentDialogResult> ShowAsync(XamlRoot xamlRoot, FormattedText message, string title = null, string primary = null, string secondary = null, string tertiary = null, bool destructive = false, ElementTheme requestedTheme = ElementTheme.Default)
         {
             var popup = new MessagePopup
             {
                 Title = title ?? Strings.AppName,
                 FormattedMessage = message,
                 PrimaryButtonText = primary ?? Strings.OK,
-                SecondaryButtonText = secondary ?? string.Empty
+                SecondaryButtonText = secondary ?? string.Empty,
+                CloseButtonText = tertiary ?? string.Empty
             };
 
             if (requestedTheme != ElementTheme.Default)

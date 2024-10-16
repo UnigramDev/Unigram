@@ -3,7 +3,6 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             xmlns:muxc="using:Microsoft.UI.Xaml.Media"
              xmlns:controls="using:Telegram.Controls"
              xmlns:cells="using:Telegram.Controls.Cells"
              mc:Ignorable="d"
@@ -87,8 +86,7 @@
                                                 VerticalAlignment="Bottom">
                     <controls:ProfilePicture x:Name="Photo"
                                              Width="140"
-                                             Height="140"
-                                             IsEnabled="False" />
+                                             Height="140" />
                 </controls:ActiveStoriesSegments>
             </Grid>
             <Border Height="140"
@@ -118,10 +116,14 @@
                            Style="{StaticResource SubtitleTextBlockStyle}"
                            FontFamily="{ThemeResource EmojiThemeFontFamily}" />
 
-                <controls:IdentityIcon x:Name="Identity"
-                                       VerticalAlignment="Bottom"
-                                       Margin="4,0,0,4"
-                                       Grid.Column="1" />
+                <HyperlinkButton x:Name="IdentityRoot"
+                                 Click="Identity_Click"
+                                 Style="{StaticResource EmptyHyperlinkButtonStyle}"
+                                 VerticalAlignment="Bottom"
+                                 Margin="4,0,0,4"
+                                 Grid.Column="1">
+                    <controls:IdentityIcon x:Name="Identity" />
+                </HyperlinkButton>
             </Grid>
             <Grid x:Name="SubtitleRoot"
                   HorizontalAlignment="Center"
@@ -270,7 +272,8 @@
 
                 <controls:HeaderedControl>
                     <Button Click="{x:Bind ViewModel.OpenLinkedChannel}"
-                            Style="{StaticResource EmptyButtonStyle}">
+                            Style="{StaticResource EmptyButtonStyle}"
+                            AutomationProperties.Name="{CustomResource ProfileChannel}">
                         <cells:ChatCell x:Name="PersonalChannel"
                                         Stroke="{ThemeResource ChatLastMessageStateBrush}" />
                     </Button>

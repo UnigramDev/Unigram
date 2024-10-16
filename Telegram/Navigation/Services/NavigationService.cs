@@ -14,7 +14,7 @@ using System.Threading.Tasks;
 using Telegram.Common;
 using Telegram.Controls;
 using Telegram.Controls.Gallery;
-using Telegram.Services.ViewService;
+using Telegram.Services;
 using Telegram.Td;
 using Telegram.Td.Api;
 using Telegram.ViewModels.Gallery;
@@ -38,7 +38,7 @@ namespace Telegram.Navigation.Services
 
         bool Navigate(Type page, object parameter = null, NavigationState state = null, NavigationTransitionInfo infoOverride = null, bool navigationStackEnabled = true);
 
-        event EventHandler<NavigatingEventArgs> Navigating;
+        event EventHandler<NavigatedEventArgs> Navigated;
 
         bool CanGoBack { get; }
         bool CanGoForward { get; }
@@ -57,13 +57,14 @@ namespace Telegram.Navigation.Services
         Task<ViewLifetimeControl> OpenAsync(ViewServiceOptions parameters);
         Task<ViewLifetimeControl> OpenAsync(Type page, object parameter = null, string title = null, Size size = default);
         Task<ContentDialogResult> ShowPopupAsync(ContentPopup popup, object parameter = null, ElementTheme requestedTheme = ElementTheme.Default);
+        void ShowPopup(ContentPopup popup, object parameter = null, ElementTheme requestedTheme = ElementTheme.Default);
 
-        Task<ContentDialogResult> ShowPopupAsync(string message, string title = null, string primary = null, string secondary = null, bool destructive = false, ElementTheme requestedTheme = ElementTheme.Default);
+        Task<ContentDialogResult> ShowPopupAsync(string message, string title = null, string primary = null, string secondary = null, string tertiary = null, bool destructive = false, ElementTheme requestedTheme = ElementTheme.Default);
         //Task<ContentDialogResult> ShowPopupAsync(FrameworkElement target, string message, string title = null, string primary = null, string secondary = null, bool destructive = false, ElementTheme requestedTheme = ElementTheme.Default);
-        Task<ContentDialogResult> ShowPopupAsync(FormattedText message, string title = null, string primary = null, string secondary = null, bool destructive = false, ElementTheme requestedTheme = ElementTheme.Default);
+        Task<ContentDialogResult> ShowPopupAsync(FormattedText message, string title = null, string primary = null, string secondary = null, string tertiary = null, bool destructive = false, ElementTheme requestedTheme = ElementTheme.Default);
         ////Task<ContentDialogResult> ShowPopupAsync(FrameworkElement target, FormattedText message, string title = null, string primary = null, string secondary = null, bool destructive = false, ElementTheme requestedTheme = ElementTheme.Default);
-        void ShowPopup(string message, string title = null, string primary = null, string secondary = null, bool destructive = false, ElementTheme requestedTheme = ElementTheme.Default);
-        void ShowPopup(FormattedText message, string title = null, string primary = null, string secondary = null, bool destructive = false, ElementTheme requestedTheme = ElementTheme.Default);
+        void ShowPopup(string message, string title = null, string primary = null, string secondary = null, string tertiary = null, bool destructive = false, ElementTheme requestedTheme = ElementTheme.Default);
+        void ShowPopup(FormattedText message, string title = null, string primary = null, string secondary = null, string tertiary = null, bool destructive = false, ElementTheme requestedTheme = ElementTheme.Default);
         Task<InputPopupResult> ShowInputAsync(InputPopupType type, string message, string title = null, string placeholderText = null, string primary = null, string secondary = null, bool destructive = false, ElementTheme requestedTheme = ElementTheme.Default);
         //Task<InputPopupResult> ShowInputAsync(FrameworkElement target, InputPopupType type, string message, string title = null, string placeholderText = null, string primary = null, string secondary = null, bool destructive = false, ElementTheme requestedTheme = ElementTheme.Default)
 
@@ -102,7 +103,17 @@ namespace Telegram.Navigation.Services
             SourcePageType = sourcePageType;
             Parameter = parameter;
             Title = title;
+            Position = null;
             Mode = mode;
+        }
+
+        public NavigationStackItem(Type sourcePageType, object parameter, HostedPage page)
+        {
+            SourcePageType = sourcePageType;
+            Parameter = parameter;
+            Title = page.GetTitle();
+            Position = page.GetPosition();
+            Mode = page.NavigationMode;
         }
 
         public Type SourcePageType { get; }
@@ -117,6 +128,8 @@ namespace Telegram.Navigation.Services
         }
 
         public HostedNavigationMode Mode { get; }
+
+        public HostedPagePositionBase Position { get; }
 
         public override string ToString()
         {
@@ -222,23 +235,18 @@ namespace Telegram.Navigation.Services
                 return;
             }
 
-            var page = FrameFacade.Content as Page;
-            if (page != null)
+            if (FrameFacade.Content is Page page)
             {
                 if (e.NavigationMode is NavigationMode.New or NavigationMode.Forward)
                 {
                     if (page is HostedPage hosted)
                     {
-                        BackStack.Add(new NavigationStackItem(CurrentPageType, CurrentPageParam, hosted.GetTitle(), hosted.NavigationMode));
+                        BackStack.Add(new NavigationStackItem(CurrentPageType, CurrentPageParam, hosted));
                     }
                     else
                     {
                         BackStack.Add(new NavigationStackItem(CurrentPageType, CurrentPageParam, null, HostedNavigationMode.Child));
                     }
-                }
-                else if (e.NavigationMode is NavigationMode.Back && BackStack.Count > 0)
-                {
-                    BackStack.RemoveAt(BackStack.Count - 1);
                 }
 
                 // call navagable override (navigating)
@@ -273,11 +281,42 @@ namespace Telegram.Navigation.Services
                 }
             }
 
+            if (e.NavigationMode is NavigationMode.Back && BackStack.Count > 0)
+            {
+                var entry = BackStack[^1];
+                BackStack.Remove(entry);
+
+                // This is solely used by MasterDetailView for the animation
+                e.VerticalOffset = entry.Position switch
+                {
+                    HostedPageScrollViewerPosition scrollViewerPosition => scrollViewerPosition.VerticalOffset,
+                    HostedPageListViewPosition listViewPosition => listViewPosition.VerticalOffset,
+                    _ => 0
+                };
+
+                bool ParameterEquals(object x, object y)
+                {
+                    if (x == null || y == null)
+                    {
+                        return x == y;
+                    }
+
+                    return x.Equals(y);
+                }
+
+                if (entry.Position != null && e.Content is HostedPage page && ParameterEquals(entry.Parameter, e.Parameter) && entry.SourcePageType == page.GetType())
+                {
+                    page.SetPosition(entry.Position);
+                }
+            }
+
             var parameter = e.Parameter;
             if (parameter is string cacheKey && e.SourcePageType == typeof(ChatPage))
             {
                 parameter = CacheKeyToChatId[cacheKey];
             }
+
+            Navigated?.Invoke(this, e);
 
             try
             {
@@ -414,6 +453,11 @@ namespace Telegram.Navigation.Services
             return viewService.OpenAsync(page, parameter, title, size, SessionId);
         }
 
+        public void ShowPopup(ContentPopup popup, object parameter = null, ElementTheme requestedTheme = ElementTheme.Default)
+        {
+            _ = ShowPopupAsync(popup, parameter, requestedTheme);
+        }
+
         public Task<ContentDialogResult> ShowPopupAsync(ContentPopup popup, object parameter = null, ElementTheme requestedTheme = ElementTheme.Default)
         {
             if (requestedTheme != ElementTheme.Default)
@@ -452,14 +496,14 @@ namespace Telegram.Navigation.Services
             return popup.ShowQueuedAsync(XamlRoot);
         }
 
-        public Task<ContentDialogResult> ShowPopupAsync(string message, string title = null, string primary = null, string secondary = null, bool destructive = false, ElementTheme requestedTheme = ElementTheme.Default)
+        public Task<ContentDialogResult> ShowPopupAsync(string message, string title = null, string primary = null, string secondary = null, string tertiary = null, bool destructive = false, ElementTheme requestedTheme = ElementTheme.Default)
         {
             if (ContentPopup.IsAnyPopupOpen(XamlRoot))
             {
-                return MessagePopup.ShowAsync(XamlRoot, target: null, message, title, primary, secondary, destructive, requestedTheme);
+                return MessagePopup.ShowAsync(XamlRoot, target: null, message, title, primary, secondary ?? tertiary, destructive, requestedTheme);
             }
 
-            return MessagePopup.ShowAsync(XamlRoot, message, title, primary, secondary, destructive, requestedTheme);
+            return MessagePopup.ShowAsync(XamlRoot, message, title, primary, secondary, tertiary, destructive, requestedTheme);
         }
 
         //public Task<ContentDialogResult> ShowPopupAsync(FrameworkElement target, string message, string title = null, string primary = null, string secondary = null, bool destructive = false, ElementTheme requestedTheme = ElementTheme.Default)
@@ -467,9 +511,9 @@ namespace Telegram.Navigation.Services
         //    return MessagePopup.ShowAsync(target, message, title, primary, secondary, destructive, requestedTheme);
         //}
 
-        public Task<ContentDialogResult> ShowPopupAsync(FormattedText message, string title = null, string primary = null, string secondary = null, bool destructive = false, ElementTheme requestedTheme = ElementTheme.Default)
+        public Task<ContentDialogResult> ShowPopupAsync(FormattedText message, string title = null, string primary = null, string secondary = null, string tertiary = null, bool destructive = false, ElementTheme requestedTheme = ElementTheme.Default)
         {
-            return MessagePopup.ShowAsync(XamlRoot, message, title, primary, secondary, destructive, requestedTheme);
+            return MessagePopup.ShowAsync(XamlRoot, message, title, primary, secondary, tertiary, destructive, requestedTheme);
         }
 
         ////public Task<ContentDialogResult> ShowPopupAsync(FrameworkElement target, FormattedText message, string title = null, string primary = null, string secondary = null, bool destructive = false, ElementTheme requestedTheme = ElementTheme.Default)
@@ -477,19 +521,19 @@ namespace Telegram.Navigation.Services
         ////    return MessagePopup.ShowAsync(target, message, title, primary, secondary, destructive, requestedTheme);
         ////}
 
-        public void ShowPopup(string message, string title = null, string primary = null, string secondary = null, bool destructive = false, ElementTheme requestedTheme = ElementTheme.Default)
+        public void ShowPopup(string message, string title = null, string primary = null, string secondary = null, string tertiary = null, bool destructive = false, ElementTheme requestedTheme = ElementTheme.Default)
         {
             if (ContentPopup.IsAnyPopupOpen(XamlRoot))
             {
-                _ = MessagePopup.ShowAsync(XamlRoot, target: null, message, title, primary, secondary, destructive, requestedTheme);
+                _ = MessagePopup.ShowAsync(XamlRoot, target: null, message, title, primary, secondary ?? tertiary, destructive, requestedTheme);
             }
 
-            _ = MessagePopup.ShowAsync(XamlRoot, message, title, primary, secondary, destructive, requestedTheme);
+            _ = MessagePopup.ShowAsync(XamlRoot, message, title, primary, secondary, tertiary, destructive, requestedTheme);
         }
 
-        public void ShowPopup(FormattedText message, string title = null, string primary = null, string secondary = null, bool destructive = false, ElementTheme requestedTheme = ElementTheme.Default)
+        public void ShowPopup(FormattedText message, string title = null, string primary = null, string secondary = null, string tertiary = null, bool destructive = false, ElementTheme requestedTheme = ElementTheme.Default)
         {
-            _ = MessagePopup.ShowAsync(XamlRoot, message, title, primary, secondary, destructive, requestedTheme);
+            _ = MessagePopup.ShowAsync(XamlRoot, message, title, primary, secondary, tertiary, destructive, requestedTheme);
         }
 
         public Task<InputPopupResult> ShowInputAsync(InputPopupType type, string message, string title = null, string placeholderText = null, string primary = null, string secondary = null, bool destructive = false, ElementTheme requestedTheme = ElementTheme.Default)
@@ -504,22 +548,22 @@ namespace Telegram.Navigation.Services
 
         public ToastPopup ShowToast(string text, ElementTheme requestedTheme = ElementTheme.Dark, TimeSpan? dismissAfter = null)
         {
-            return ToastPopup.Show(XamlRoot, ClientEx.ParseMarkdown(text), null, TeachingTipPlacementMode.Center, requestedTheme, dismissAfter);
+            return ToastPopup.Show(XamlRoot, ClientEx.ParseMarkdown(text), null, requestedTheme, dismissAfter);
         }
 
         public ToastPopup ShowToast(string text, ToastPopupIcon icon, ElementTheme requestedTheme = ElementTheme.Dark, TimeSpan? dismissAfter = null)
         {
-            return ToastPopup.Show(XamlRoot, ClientEx.ParseMarkdown(text), icon, TeachingTipPlacementMode.Center, requestedTheme, dismissAfter);
+            return ToastPopup.Show(XamlRoot, ClientEx.ParseMarkdown(text), icon, requestedTheme, dismissAfter);
         }
 
         public ToastPopup ShowToast(FormattedText text, ElementTheme requestedTheme = ElementTheme.Dark, TimeSpan? dismissAfter = null)
         {
-            return ToastPopup.Show(XamlRoot, text, null, TeachingTipPlacementMode.Center, requestedTheme, dismissAfter);
+            return ToastPopup.Show(XamlRoot, text, null, requestedTheme, dismissAfter);
         }
 
         public ToastPopup ShowToast(FormattedText text, ToastPopupIcon icon, ElementTheme requestedTheme = ElementTheme.Dark, TimeSpan? dismissAfter = null)
         {
-            return ToastPopup.Show(XamlRoot, text, icon, TeachingTipPlacementMode.Center, requestedTheme, dismissAfter);
+            return ToastPopup.Show(XamlRoot, text, icon, requestedTheme, dismissAfter);
         }
 
         public void ShowGallery(GalleryViewModelBase parameter, FrameworkElement closing = null, long timestamp = 0)
@@ -528,7 +572,7 @@ namespace Telegram.Navigation.Services
             _ = GalleryWindow.ShowAsync(XamlRoot, parameter, closing, timestamp);
         }
 
-        public event EventHandler<NavigatingEventArgs> Navigating;
+        public event EventHandler<NavigatedEventArgs> Navigated;
 
         public bool Navigate(Type page, object parameter = null, NavigationState state = null, NavigationTransitionInfo infoOverride = null, bool navigationStackEnabled = true)
         {
@@ -563,12 +607,6 @@ namespace Telegram.Navigation.Services
                 {
                     pageState[item.Key] = item.Value;
                 }
-            }
-
-            var handler = Navigating;
-            if (handler != null)
-            {
-                handler(this, new NavigatingEventArgs(page, parameter, state, null));
             }
 
             if (page == typeof(ChatPage))

@@ -5,8 +5,6 @@
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
 
-using System;
-
 namespace Telegram.Services.Settings
 {
     public partial class DiagnosticsSettings : SettingsServiceBase
@@ -100,24 +98,6 @@ namespace Telegram.Services.Settings
             set => AddOrUpdateValue(ref _useStorageOptimizer, "UseStorageOptimizer", value);
         }
 
-        private bool? _lastCrashWasLayoutCycle;
-        public bool LastCrashWasLayoutCycle
-        {
-            get => _lastCrashWasLayoutCycle ??= GetValueOrDefault("LastCrashWasLayoutCycle", false);
-            set => AddOrUpdateValue(ref _lastCrashWasLayoutCycle, "LastCrashWasLayoutCycle", value);
-        }
-
-        private DateTime? _lasCrashReported;
-        public DateTime LastCrashReported
-        {
-            get => _lasCrashReported ??= DateTime.FromFileTimeUtc(GetValueOrDefault("LastCrashReported", 2650467743999999999 /* DateTime.MaxValue */));
-            set
-            {
-                _lasCrashReported = value;
-                AddOrUpdateValue("LastCrashReported", value.ToFileTimeUtc());
-            }
-        }
-
         private bool? _hidePhoneNumber;
         public bool HidePhoneNumber
         {
@@ -151,6 +131,13 @@ namespace Telegram.Services.Settings
         {
             get => _forceEdgeHtml ??= GetValueOrDefault("ForceEdgeHtml", false);
             set => AddOrUpdateValue(ref _forceEdgeHtml, "ForceEdgeHtml", value);
+        }
+
+        private bool? _forceWebView2;
+        public bool ForceWebView2
+        {
+            get => _forceWebView2 ??= GetValueOrDefault("ForceWebView2", false);
+            set => AddOrUpdateValue(ref _forceWebView2, "ForceWebView2", value);
         }
 
         private bool? _disablePackageManager;

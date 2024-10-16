@@ -17,7 +17,6 @@ using Telegram.Controls;
 using Telegram.Navigation;
 using Telegram.Navigation.Services;
 using Telegram.Services;
-using Telegram.Services.ViewService;
 using Telegram.Td.Api;
 using Telegram.ViewModels;
 using Telegram.ViewModels.Payments;
@@ -215,7 +214,7 @@ namespace Telegram.Common
                     var nav = BootStrapper.Current.NavigationServiceFactory(WindowContext.Current, BootStrapper.BackButton.Ignore, SessionId, "Payments" + Guid.NewGuid(), false);
                     nav.Navigate(typeof(PaymentFormPage), new PaymentFormArgs(inputInvoice, paymentForm, content));
 
-                    return BootStrapper.Current.CreateRootElement(nav);
+                    return nav.Frame;
 
                 }
             };
@@ -250,7 +249,7 @@ namespace Telegram.Common
                     var nav = BootStrapper.Current.NavigationServiceFactory(WindowContext.Current, BootStrapper.BackButton.Ignore, SessionId, "Payments" + Guid.NewGuid(), false);
                     nav.Navigate(typeof(PaymentFormPage), paymentReceipt);
 
-                    return BootStrapper.Current.CreateRootElement(nav);
+                    return nav.Frame;
 
                 }
             };

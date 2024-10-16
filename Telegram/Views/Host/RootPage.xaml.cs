@@ -5,7 +5,6 @@
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
 using LinqToVisualTree;
-using Microsoft.Graphics.Canvas;
 using Microsoft.Graphics.Canvas.Geometry;
 using Microsoft.UI.Composition;
 using Microsoft.UI.Xaml;
@@ -44,7 +43,13 @@ namespace Telegram.Views.Host
         void Disconnect(TeachingTip toast);
     }
 
-    public sealed partial class RootPage : Page, IToastHost
+    public interface IPopupHost
+    {
+        void PopupOpened();
+        void PopupClosed();
+    }
+
+    public sealed partial class RootPage : Page, IPopupHost, IToastHost
     {
         private readonly ILifetimeService _lifetime;
         private readonly WindowContext _context;
@@ -848,6 +853,8 @@ namespace Telegram.Views.Host
                 disposable.Dispose();
             }
 
+            element.XamlRoot = XamlRoot;
+
             Transition.Child = element;
             Navigation.Visibility = element != null
                 ? Visibility.Collapsed
@@ -954,7 +961,7 @@ namespace Telegram.Views.Host
                 var width = MathF.Max(actualWidth - point.X, actualHeight - point.Y);
                 var diaginal = MathF.Sqrt((width * width) + (width * width));
 
-                var device = CanvasDevice.GetSharedDevice();
+                var device = ElementComposition.GetSharedDevice();
                 var expand = false; // ActualTheme == ElementTheme.Dark;
 
                 var rect1 = CanvasGeometry.CreateRectangle(device, 0, 0, expand ? 0 : actualWidth, expand ? 0 : actualHeight);
@@ -1244,11 +1251,6 @@ namespace Telegram.Views.Host
                     InitializeSessions(SettingsService.Current.IsAccountsSelectorExpanded, _lifetime.Items);
                 }
             }
-        }
-
-        private void Photo_Click(object sender, RoutedEventArgs e)
-        {
-            IsPaneOpen = false;
         }
     }
 

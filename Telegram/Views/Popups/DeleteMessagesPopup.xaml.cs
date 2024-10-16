@@ -262,7 +262,6 @@ namespace Telegram.Views.Popups
                     Width = 28,
                     Height = 28,
                     Margin = new Thickness(0, -4, 8, 0),
-                    IsEnabled = false
                 };
 
                 photo.SetMessageSender(_clientService, sender, 28);
@@ -296,7 +295,7 @@ namespace Telegram.Views.Popups
 
         private void ReportSpam_Checked(object sender, RoutedEventArgs e)
         {
-            if (sender == ReportSpamCheck)
+            if ((CheckBox)sender == ReportSpamCheck)
             {
                 _reportSpam = Toggle(ReportSpamCheck.IsChecked == true, ReportSpamRoot, ReportSpamCount, ReportSpam_Checked);
             }
@@ -308,7 +307,7 @@ namespace Telegram.Views.Popups
 
         private void DeleteAll_Checked(object sender, RoutedEventArgs e)
         {
-            if (sender == DeleteAllCheck)
+            if ((CheckBox)sender == DeleteAllCheck)
             {
                 _deleteAll = Toggle(DeleteAllCheck.IsChecked == true, DeleteAllRoot, DeleteAllCount, DeleteAll_Checked);
             }
@@ -317,18 +316,21 @@ namespace Telegram.Views.Popups
                 _deleteAll = UpdateSelection(DeleteAllRoot, DeleteAllCount, DeleteAllCheck, DeleteAll_Checked);
             }
 
-            if (_messagesCount > 0)
+            if (_deleteAllCount > 0 && DeleteAllCheck.IsChecked == true)
             {
-                var count = DeleteAllCheck.IsChecked == true ? _deleteAllCount : _messagesCount;
-                Title = count == 1
+                Title = string.Format(Strings.DeleteMessagesTitle, Locale.Declension(Strings.R.messages, _deleteAllCount));
+            }
+            else if (_messagesCount > 0)
+            {
+                Title = _messagesCount == 1
                     ? Strings.DeleteSingleMessagesTitle
-                    : string.Format(Strings.DeleteMessagesTitle, Locale.Declension(Strings.R.messages, count));
+                    : string.Format(Strings.DeleteMessagesTitle, Locale.Declension(Strings.R.messages, _messagesCount));
             }
         }
 
         private void BanUser_Checked(object sender, RoutedEventArgs e)
         {
-            if (sender == BanUserCheck)
+            if ((CheckBox)sender == BanUserCheck)
             {
                 _banUser = Toggle(BanUserCheck.IsChecked == true, BanUserRoot, BanUserCount, BanUser_Checked);
             }

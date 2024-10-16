@@ -34,9 +34,12 @@ namespace Telegram.Composition
             _maxLevel = maxLevel;
 
             var compositor = BootStrapper.Current.Compositor;
+            var owner = ElementCompositionPreview.GetElementVisual(element);
 
             var size = new Vector2(width, height);
             var halfSize = size / 2;
+
+            owner.CenterPoint = new Vector3(halfSize, 0);
 
             var gradient = compositor.CreateRectangleGeometry();
             var small = compositor.CreateEllipseGeometry();

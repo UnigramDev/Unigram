@@ -1089,7 +1089,7 @@ namespace Telegram.Views
             var galleryItem = new GalleryVideo(ViewModel.ClientService, block.Video, block.Caption.ToFormattedText());
             ViewModel.Gallery.Items.Add(galleryItem);
 
-            var message = CreateMessage(new MessageVideo(block.Video, null, false, false, false));
+            var message = CreateMessage(new MessageVideo(block.Video, Array.Empty<AlternativeVideo>(), null, false, false, false));
             var element = new StackPanel { Style = Resources["BlockVideoStyle"] as Style };
 
             var content = new VideoContent(message);
@@ -1235,7 +1235,7 @@ namespace Telegram.Views
                     var galleryItem = new GalleryVideo(ViewModel.ClientService, videoBlock.Video, block.Caption.ToFormattedText());
                     ViewModel.Gallery.Items.Add(galleryItem);
 
-                    var message = CreateMessage(new MessageVideo(videoBlock.Video, null, false, false, false));
+                    var message = CreateMessage(new MessageVideo(videoBlock.Video, Array.Empty<AlternativeVideo>(), null, false, false, false));
 
                     var content = new VideoContent(message);
                     content.Tag = galleryItem;
@@ -1748,21 +1748,9 @@ namespace Telegram.Views
             //await ApplicationViewSwitcher.SwitchAsync(WindowContext.Main.Id);
         }
 
-        private async void Hyperlink_Click(RichTextPhoneNumber phoneNumber)
+        private void Hyperlink_Click(RichTextPhoneNumber phoneNumber)
         {
 
-        }
-
-        private bool IsCurrentPage(string bae, string url, out string fragment)
-        {
-            if (Uri.TryCreate(bae, UriKind.Absolute, out Uri current) && Uri.TryCreate(url, UriKind.Absolute, out Uri result))
-            {
-                fragment = result.Fragment.Length > 0 ? result.Fragment?.Substring(1) : null;
-                return fragment != null && Uri.Compare(current, result, UriComponents.Host | UriComponents.PathAndQuery, UriFormat.SafeUnescaped, StringComparison.OrdinalIgnoreCase) == 0;
-            }
-
-            fragment = null;
-            return false;
         }
 
         private void Header_GoBackClicked(object sender, RoutedEventArgs e)

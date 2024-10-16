@@ -5,6 +5,7 @@
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
 using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Controls;
 using Telegram.Controls;
 using Telegram.ViewModels;
 using Telegram.Views.Host;
@@ -26,6 +27,16 @@ namespace Telegram.Views
             if (TypeResolver.Current.Count < 3)
             {
                 FindName(nameof(AddAccount));
+            }
+
+            Closed += OnClosed;
+        }
+
+        private void OnClosed(ContentDialog sender, ContentDialogClosedEventArgs args)
+        {
+            if (args.Result == ContentDialogResult.Primary)
+            {
+                ViewModel.Logout();
             }
         }
 
@@ -61,11 +72,6 @@ namespace Telegram.Views
         {
             Hide();
             ViewModel.Ask();
-        }
-
-        private void ContentPopup_PrimaryButtonClick(Microsoft.UI.Xaml.Controls.ContentDialog sender, Microsoft.UI.Xaml.Controls.ContentDialogButtonClickEventArgs args)
-        {
-            ViewModel.Logout();
         }
     }
 }

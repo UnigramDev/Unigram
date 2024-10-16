@@ -27,7 +27,7 @@ namespace Telegram.Controls
         Superellipse
     }
 
-    public partial class ProfilePicture : HyperlinkButton
+    public partial class ProfilePicture : Control
     {
         private long _fileToken;
         private int? _fileId;
@@ -372,11 +372,11 @@ namespace Telegram.Controls
 
             shape = ProfilePictureShape.Ellipse;
 
-            if (clientService.IsSavedMessages(chat))
+            if (chat.Id == clientService.Options.MyId)
             {
                 return PlaceholderImage.GetGlyph(Icons.BookmarkFilled, 5);
             }
-            else if (clientService.IsRepliesChat(chat))
+            else if (chat.Id == clientService.Options.RepliesBotChatId)
             {
                 return PlaceholderImage.GetGlyph(Icons.ArrowReplyFilled, 5);
             }
@@ -620,7 +620,7 @@ namespace Telegram.Controls
 
         public void SetMessage(MessageViewModel message)
         {
-            if (message.IsSaved)
+            if (message.IsSaved || message.IsVerificationCode)
             {
                 if (message.ForwardInfo?.Origin is MessageOriginUser fromUser && message.ClientService.TryGetUser(fromUser.SenderUserId, out User fromUserUser))
                 {

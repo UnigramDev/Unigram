@@ -1,5 +1,4 @@
-﻿using Microsoft.Graphics.Canvas;
-using Microsoft.Graphics.Canvas.Geometry;
+﻿using Microsoft.Graphics.Canvas.Geometry;
 using Microsoft.UI;
 using Microsoft.UI.Composition;
 using Microsoft.UI.Xaml;
@@ -68,6 +67,20 @@ namespace Telegram.Views.Calls
 
             InitializeBlob();
 
+            _durationTimer = new DispatcherTimer
+            {
+                Interval = TimeSpan.FromSeconds(1)
+            };
+
+            _durationTimer.Tick += Duration_Tick;
+
+            _discardedTimer = new DispatcherTimer
+            {
+                Interval = TimeSpan.FromSeconds(2)
+            };
+
+            _discardedTimer.Tick += Discarded_Tick;
+
             _localVideo = new VoipVideoOutput(LocalVideo, true);
             _remoteVideo = new VoipVideoOutput(RemoteVideo, false);
 
@@ -108,20 +121,6 @@ namespace Telegram.Views.Calls
 
             ElementCompositionPreview.SetIsTranslationEnabled(DetailRoot, true);
 
-            _durationTimer = new DispatcherTimer
-            {
-                Interval = TimeSpan.FromSeconds(1)
-            };
-
-            _durationTimer.Tick += Duration_Tick;
-
-            _discardedTimer = new DispatcherTimer
-            {
-                Interval = TimeSpan.FromSeconds(2)
-            };
-
-            _discardedTimer.Tick += Discarded_Tick;
-
             var durationRoot = ElementComposition.GetElementVisual(DurationRoot);
             durationRoot.Opacity = 0;
 
@@ -134,7 +133,7 @@ namespace Telegram.Views.Calls
 
         private void InitializeBlob()
         {
-            var device = CanvasDevice.GetSharedDevice();
+            var device = ElementComposition.GetSharedDevice();
             var outerClip = CanvasGeometry.CreateRectangle(device, 0, 0, 280, 280);
             var innerClip = CanvasGeometry.CreateEllipse(device, 140, 140, 63, 63);
             var blob = ElementComposition.GetElementVisual(Blob);
@@ -331,9 +330,19 @@ namespace Telegram.Views.Calls
                 _discardedTimer.Start();
             }
 
-            Title.Text = discarded != null
-                ? Strings.VoipCallEnded2
-                : Strings.VoipCallFailed2;
+            if (discarded != null)
+            {
+                Title.Text = discarded.Reason switch
+                {
+                    CallDiscardReasonDeclined => Strings.VoipCallBusy2,
+                    CallDiscardReasonMissed => Strings.VoipCallBusy2,
+                    _ => Strings.VoipCallEnded2
+                };
+            }
+            else
+            {
+                Title.Text = Strings.VoipCallFailed2;
+            }
 
             _localVideo.SetState(VoipVideoState.Inactive);
             _remoteVideo.SetState(VoipVideoState.Inactive);
@@ -402,6 +411,8 @@ namespace Telegram.Views.Calls
                 LocalVideoOff.ShowHide(false, LocalVideoPanel);
 
                 Emoji.Visibility = Visibility.Collapsed;
+
+                ShowHideWealNetwork(false);
             }
         }
 
@@ -795,7 +806,7 @@ namespace Telegram.Views.Calls
 
         private void OnVideoFailed()
         {
-            _ = MediaDeviceWatcher.CheckAccessAsync(XamlRoot, true);
+            _ = MediaDevicePermissions.CheckAccessAsync(XamlRoot, MediaDeviceAccess.Video, PopupTheme);
         }
 
         private void OnSignalBarsUpdated(VoipCallSignalBarsUpdatedEventArgs args)
@@ -1011,18 +1022,28 @@ namespace Telegram.Views.Calls
             _call.Discard();
         }
 
-        private void Mute_Click(object sender, RoutedEventArgs e)
+        private async void Mute_Click(object sender, RoutedEventArgs e)
         {
-            _call.AudioState = Mute.IsChecked == false
-                ? VoipAudioState.Muted
-                : VoipAudioState.Active;
+            if (Mute.IsChecked == false)
+            {
+                _call.AudioState = VoipAudioState.Muted;
+            }
+            else if (await MediaDevicePermissions.CheckAccessAsync(XamlRoot, MediaDeviceAccess.Audio, PopupTheme))
+            {
+                _call.AudioState = VoipAudioState.Active;
+            }
         }
 
-        private void Camera_Click(object sender, RoutedEventArgs e)
+        private async void Camera_Click(object sender, RoutedEventArgs e)
         {
-            _call.VideoState = Camera.IsChecked == false
-                ? VoipVideoState.Active
-                : VoipVideoState.Inactive;
+            if (Camera.IsChecked == true)
+            {
+                _call.VideoState = VoipVideoState.Inactive;
+            }
+            else if (await MediaDevicePermissions.CheckAccessAsync(XamlRoot, MediaDeviceAccess.Video, PopupTheme))
+            {
+                _call.VideoState = VoipVideoState.Active;
+            }
         }
 
         private async void Screen_Click(object sender, RoutedEventArgs e)
@@ -1088,6 +1109,7 @@ namespace Telegram.Views.Calls
                         title.HorizontalAlignment = HorizontalAlignment.Center;
                         title.Margin = new Thickness(0, 0, 0, 12);
                         title.FontSize = 24;
+                        title.FontFamily = new FontFamily("ms-appx:///Assets/Emoji/apple.ttf#Segoe UI Emoji");
                         animation.TryStart(title);
                     }
                 }
@@ -1102,16 +1124,14 @@ namespace Telegram.Views.Calls
                     {
                         var animation = service.PrepareToAnimate("Emoji", title);
                         animation.Configuration = new DirectConnectedAnimationConfiguration();
-                        animation.TryStart(Emoji, new[] { popup });
+                        animation.TryStart(Emoji);
                     }
                 }
 
                 popup.Loading += loading;
                 popup.Closing += closing;
 
-                popup.RequestedTheme = _maximizedVideo == VoipVideoActiveState.None
-                    ? ElementTheme.Light
-                    : ElementTheme.Dark;
+                popup.RequestedTheme = PopupTheme;
 
                 if (Resources.TryGet("TeachingTip", out TeachingTip cached))
                 {
@@ -1122,6 +1142,10 @@ namespace Telegram.Views.Calls
             }
         }
 
+        private ElementTheme PopupTheme => _maximizedVideo == VoipVideoActiveState.None
+            ? ElementTheme.Light
+            : ElementTheme.Dark;
+
         private void More_ContextRequested(object sender, RoutedEventArgs e)
         {
             var flyout = new MenuFlyout();
@@ -1130,13 +1154,26 @@ namespace Telegram.Views.Calls
             var inputId = _call.AudioInputId;
             var outputId = _call.AudioOutputId;
 
-            if (MediaDeviceCoordinator.HasVideoInput)
-            {
-                var video = new MenuFlyoutSubItem();
-                video.Text = Strings.VoipDeviceCamera;
-                video.Icon = MenuFlyoutHelper.CreateIcon(Icons.Camera);
+            var video = new MenuFlyoutSubItem();
+            video.Text = Strings.VoipDeviceCamera;
+            video.Icon = MenuFlyoutHelper.CreateIcon(Icons.Camera);
 
-                foreach (var device in MediaDeviceCoordinator.VideoInput)
+            var input = new MenuFlyoutSubItem();
+            input.Text = Strings.VoipDeviceInput;
+            input.Icon = MenuFlyoutHelper.CreateIcon(Icons.MicOn);
+
+            var output = new MenuFlyoutSubItem();
+            output.Text = Strings.VoipDeviceOutput;
+            output.Icon = MenuFlyoutHelper.CreateIcon(Icons.Speaker3);
+
+            flyout.Items.Add(video);
+            flyout.Items.Add(input);
+            flyout.Items.Add(output);
+
+            var hasVideo = _call.Devices.HasDevices(MediaDeviceClass.VideoInput);
+            if (hasVideo is true)
+            {
+                foreach (var device in _call.Devices.GetDevices(MediaDeviceClass.VideoInput))
                 {
                     var deviceItem = new ToggleMenuFlyoutItem();
                     deviceItem.Text = device.Name;
@@ -1148,26 +1185,16 @@ namespace Telegram.Views.Calls
 
                     video.Items.Add(deviceItem);
                 }
-
-                flyout.Items.Add(video);
+            }
+            else
+            {
+                video.CreateFlyoutItem(null, hasVideo.HasValue ? Strings.NotFoundCamera : Strings.Loading);
             }
 
-            if (MediaDeviceCoordinator.HasAudioInput)
+            var hasInput = _call.Devices.HasDevices(MediaDeviceClass.AudioInput);
+            if (hasInput is true)
             {
-                var defaultInput = new ToggleMenuFlyoutItem();
-                defaultInput.Text = Strings.Default;
-                defaultInput.IsChecked = inputId == string.Empty;
-                defaultInput.Click += (s, args) =>
-                {
-                    _call.AudioInputId = string.Empty;
-                };
-
-                var input = new MenuFlyoutSubItem();
-                input.Text = Strings.VoipDeviceInput;
-                input.Icon = MenuFlyoutHelper.CreateIcon(Icons.MicOn);
-                input.Items.Add(defaultInput);
-
-                foreach (var device in MediaDeviceCoordinator.AudioInput)
+                foreach (var device in _call.Devices.GetDevices(MediaDeviceClass.AudioInput))
                 {
                     var deviceItem = new ToggleMenuFlyoutItem();
                     deviceItem.Text = device.Name;
@@ -1179,26 +1206,16 @@ namespace Telegram.Views.Calls
 
                     input.Items.Add(deviceItem);
                 }
-
-                flyout.Items.Add(input);
+            }
+            else
+            {
+                input.CreateFlyoutItem(null, hasInput.HasValue ? Strings.NotFoundMicrophone : Strings.Loading);
             }
 
-            if (MediaDeviceCoordinator.HasAudioOutput)
+            var hasOutput = _call.Devices.HasDevices(MediaDeviceClass.AudioOutput);
+            if (hasOutput is true)
             {
-                var defaultOutput = new ToggleMenuFlyoutItem();
-                defaultOutput.Text = Strings.Default;
-                defaultOutput.IsChecked = outputId == string.Empty;
-                defaultOutput.Click += (s, args) =>
-                {
-                    _call.AudioOutputId = string.Empty;
-                };
-
-                var output = new MenuFlyoutSubItem();
-                output.Text = Strings.VoipDeviceOutput;
-                output.Icon = MenuFlyoutHelper.CreateIcon(Icons.Speaker3);
-                output.Items.Add(defaultOutput);
-
-                foreach (var device in MediaDeviceCoordinator.AudioOutput)
+                foreach (var device in _call.Devices.GetDevices(MediaDeviceClass.AudioOutput))
                 {
                     var deviceItem = new ToggleMenuFlyoutItem();
                     deviceItem.Text = device.Name;
@@ -1210,14 +1227,13 @@ namespace Telegram.Views.Calls
 
                     output.Items.Add(deviceItem);
                 }
-
-                flyout.Items.Add(output);
             }
-
-            if (flyout.Items.Count > 0)
+            else
             {
-                flyout.ShowAt(sender as Button, FlyoutPlacementMode.BottomEdgeAlignedLeft);
+                output.CreateFlyoutItem(null, hasOutput.HasValue ? Strings.NotFoundSpeakers : Strings.Loading);
             }
+
+            flyout.ShowAt(sender as Button, FlyoutPlacementMode.BottomEdgeAlignedLeft);
         }
 
         // TODO: this feature is not fundamental
@@ -1359,10 +1375,18 @@ namespace Telegram.Views.Calls
 
         public async void Close()
         {
-            if (XamlRoot.Content is RootPage root)
+            try
             {
-                root.PresentContent(null);
-                return;
+                if (XamlRoot.Content is RootPage root)
+                {
+                    root.PresentContent(null);
+                    return;
+                }
+            }
+            catch
+            {
+                // XamlRoot.Content seems to throw a NullReferenceException
+                // whenever corresponding window has been already closed.
             }
 
             await WindowContext.Current.ConsolidateAsync();

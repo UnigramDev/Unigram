@@ -4,7 +4,6 @@
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
-using LibVLCSharp.Shared;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Hosting;
@@ -15,7 +14,6 @@ using System.Numerics;
 using Telegram.Common;
 using Telegram.Navigation;
 using Telegram.Services;
-using Telegram.Streams;
 using Telegram.Td.Api;
 using Telegram.ViewModels.Delegates;
 using Telegram.ViewModels.Gallery;
@@ -65,7 +63,7 @@ namespace Telegram.Controls.Gallery
 
         private void MediaOpened()
         {
-            if (_item is GalleryMessage message && message.IsProtected)
+            if (_item is GalleryMessage message && message.HasProtectedContent)
             {
                 UpdateManager.Unsubscribe(this, ref _fileToken);
 
@@ -166,7 +164,7 @@ namespace Telegram.Controls.Gallery
 
             //ScrollingHost.ChangeView(0, 0, 1, true);
 
-            var file = item?.GetFile();
+            var file = item?.File;
             if (file == null)
             {
                 return;
@@ -191,7 +189,7 @@ namespace Telegram.Controls.Gallery
                 Constraint = item.Constraint;
             }
 
-            var thumbnail = item.GetThumbnail();
+            var thumbnail = item.Thumbnail;
             if (thumbnail != null && (item.IsVideo || (item.IsPhoto && !file.Local.IsDownloadingCompleted)))
             {
                 UpdateThumbnail(item, thumbnail, null, true);
@@ -208,7 +206,7 @@ namespace Telegram.Controls.Gallery
 
         private void UpdateFile(GalleryMedia item, File file)
         {
-            var reference = item?.GetFile();
+            var reference = item?.File;
             if (reference == null || reference.Id != file.Id)
             {
                 return;
@@ -328,7 +326,7 @@ namespace Telegram.Controls.Gallery
                 return;
             }
 
-            var file = item.GetFile();
+            var file = item.File;
             if (file == null)
             {
                 return;
@@ -355,9 +353,6 @@ namespace Telegram.Controls.Gallery
             }
         }
 
-        private AsyncMediaPlayer _player;
-
-        private RemoteFileStream _fileStream;
         private GalleryTransportControls _controls;
 
         private bool _stopped;
@@ -365,9 +360,7 @@ namespace Telegram.Controls.Gallery
         private bool _unloaded;
         private int _fileId;
 
-        private long _initialPosition;
-
-        public void Play(GalleryMedia item, long position, GalleryTransportControls controls)
+        public void Play(GalleryMedia item, double position, GalleryTransportControls controls)
         {
             if (_unloaded)
             {
@@ -376,7 +369,7 @@ namespace Telegram.Controls.Gallery
 
             try
             {
-                var file = item.GetFile();
+                var file = item.File;
                 if (file.Id == _fileId || (!file.Local.IsDownloadingCompleted && !SettingsService.Current.IsStreamingEnabled))
                 {
                     return;
@@ -384,44 +377,72 @@ namespace Telegram.Controls.Gallery
 
                 _fileId = file.Id;
 
+                // Always recreate HLS player for now, try to reuse native one
+                if ((SettingsService.Current.Diagnostics.ForceWebView2 || item.IsHls()) && ChromiumWebPresenter.IsSupported())
+                {
+                    Video = new WebVideoPlayer();
+                }
+                else if (Video is not NativeVideoPlayer)
+                {
+                    Video = new NativeVideoPlayer();
+                }
+
                 controls.Attach(item, file);
+                controls.Attach(Video);
 
-                if (_player == null)
-                {
-                    _controls = controls;
-                    _fileStream = new RemoteFileStream(item.ClientService, file);
-                    _initialPosition = position;
-                    FindName(nameof(Video));
-                }
-                else
-                {
-                    controls.Attach(_player);
-
-                    _fileStream = null;
-                    _controls = null;
-                    _player.Play(new RemoteFileStream(item.ClientService, file));
-                    _player.Time = position;
-                }
+                Video.Play(item, position);
             }
             catch { }
         }
 
-        private void OnInitialized(object sender, LibVLCSharp.Platforms.Windows.InitializedEventArgs e)
+        public void Play(VideoPlayerBase player, GalleryMedia item, GalleryTransportControls controls)
         {
-            _player = new AsyncMediaPlayer(DispatcherQueue, e.SwapChainOptions);
-            _player.Buffering += OnBuffering;
-            _player.Stopped += OnStopped;
+            if (_unloaded)
+            {
+                return;
+            }
 
-            var stream = _fileStream;
-            var position = _initialPosition;
+            try
+            {
+                var file = item.File;
+                if (file.Id == _fileId || (!file.Local.IsDownloadingCompleted && !SettingsService.Current.IsStreamingEnabled))
+                {
+                    return;
+                }
 
-            _controls.Attach(_player);
-            _player.Play(stream);
-            _player.Time = position;
+                _fileId = file.Id;
 
-            _controls = null;
-            _fileStream = null;
-            _initialPosition = 0;
+                Video = player;
+                //Video.IsUnloadedExpected = false;
+
+                controls.Attach(item, file);
+                controls.Attach(Video);
+            }
+            catch { }
+        }
+
+        public VideoPlayerBase Video
+        {
+            get => Panel.Child as VideoPlayerBase;
+            set
+            {
+                var video = Panel.Child as VideoPlayerBase;
+                if (video != null)
+                {
+                    video.TreeUpdated -= OnTreeUpdated;
+                    video.FirstFrameReady -= OnFirstFrameReady;
+                    video.Closed -= OnClosed;
+                }
+
+                if (value != null)
+                {
+                    value.TreeUpdated += OnTreeUpdated;
+                    value.FirstFrameReady += OnFirstFrameReady;
+                    value.Closed += OnClosed;
+                }
+
+                Panel.Child = value;
+            }
         }
 
         public void Unload()
@@ -435,29 +456,28 @@ namespace Telegram.Controls.Gallery
 
             if (Video != null)
             {
-                Video.Initialized -= OnInitialized;
-            }
-
-            if (_player != null)
-            {
-                _player.Buffering -= OnBuffering;
-                _player.Stopped -= OnStopped;
-                _player.Close();
+                Video.Stop();
             }
 
             UpdateManager.Unsubscribe(this, ref _fileToken);
             UpdateManager.Unsubscribe(this, ref _thumbnailToken, true);
         }
 
-        private void OnBuffering(AsyncMediaPlayer sender, MediaPlayerBufferingEventArgs args)
+        private void OnTreeUpdated(VideoPlayerBase sender, EventArgs e)
         {
-            if (args.Cache == 100)
-            {
-                MediaOpened();
-            }
+            // Hopefully this is always triggered after Unloaded/Loaded
+            // And even if the events are raced and triggered in the opposite order
+            // Not causing Disconnected/Connected to be triggered.
+            sender.IsUnloadedExpected = false;
+            sender.TreeUpdated -= OnTreeUpdated;
         }
 
-        private void OnStopped(object sender, EventArgs e)
+        private void OnFirstFrameReady(VideoPlayerBase sender, EventArgs args)
+        {
+            MediaOpened();
+        }
+
+        private void OnClosed(VideoPlayerBase sender, EventArgs e)
         {
             if (_stopped)
             {
@@ -466,15 +486,15 @@ namespace Telegram.Controls.Gallery
             }
         }
 
-        public void Stop(out int fileId, out long position)
+        public void Stop(out int fileId, out double position)
         {
-            if (_player != null && !_unloaded)
+            if (Video != null && !_unloaded)
             {
                 fileId = _fileId;
-                position = _player.Time;
+                position = Video.Position;
 
                 _stopped = true;
-                _player.Stop();
+                Video.Stop();
             }
             else
             {

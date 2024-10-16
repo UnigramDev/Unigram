@@ -302,7 +302,7 @@ namespace Telegram.Controls.Messages
 
                 Visibility = Visibility.Visible;
             }
-            else if (message.ForwardInfo != null && (!message.IsSaved || !message.ForwardInfo.HasSameOrigin()))
+            else if (message.ForwardInfo != null && !message.IsVerificationCode && (!message.IsSaved || !message.ForwardInfo.HasSameOrigin()))
             {
                 string line1;
                 string line2 = null;

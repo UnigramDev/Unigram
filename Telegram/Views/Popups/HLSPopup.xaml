@@ -1,0 +1,36 @@
+﻿<controls:ContentPopup x:Class="Telegram.Views.Popups.HLSPopup"
+                       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                       xmlns:local="using:Telegram.Views.Popups"
+                       xmlns:controls="using:Telegram.Controls"
+                       xmlns:gallery="using:Telegram.Controls.Gallery"
+                       xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                       xmlns:vlc="using:LibVLCSharp.Platforms.Windows"
+                       xmlns:muxc="using:Microsoft.UI.Xaml.Controls"
+                       mc:Ignorable="d"
+                       Title="TITLE"
+                       PrimaryButtonClick="ContentDialog_PrimaryButtonClick"
+                       SecondaryButtonClick="ContentDialog_SecondaryButtonClick"
+                       Padding="0">
+
+    <controls:ContentPopup.Resources>
+
+    </controls:ContentPopup.Resources>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition />
+        </Grid.RowDefinitions>
+        <Button x:Name="Quality"
+                Click="Button_Click" />
+        <muxc:WebView2 x:Name="WebView"
+                       Width="440"
+                       Height="440" />
+
+        <gallery:GalleryTransportControls x:Name="Transport"
+                                          VerticalAlignment="Bottom"
+                                          HorizontalAlignment="Center" />
+    </Grid>
+</controls:ContentPopup>

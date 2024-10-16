@@ -528,7 +528,7 @@ namespace Telegram.Controls.Chats
 
         private void Recognizer_Tapped(GestureRecognizer sender, TappedEventArgs args)
         {
-            if (args.TapCount == 2 && args.PointerDeviceType == PointerDeviceType.Mouse)
+            if (args.TapCount == 2)
             {
                 _raised = true;
                 sender.TryCompleteGesture();
@@ -747,7 +747,7 @@ namespace Telegram.Controls.Chats
                 return;
             }
 
-            if (ViewModel.SelectedItems.Count < 1)
+            if (ViewModel.SelectedItems.Count < 1 && ViewModel.IsReportingMessages == null)
             {
                 IsSelectionEnabled = false;
             }

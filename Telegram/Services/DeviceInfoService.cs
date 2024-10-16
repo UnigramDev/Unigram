@@ -71,21 +71,6 @@ namespace Telegram.Services
             }
         }
 
-        public string FullSystemVersion
-        {
-            get
-            {
-                string deviceFamilyVersion = AnalyticsInfo.VersionInfo.DeviceFamilyVersion;
-                ulong version = ulong.Parse(deviceFamilyVersion);
-                ulong major = (version & 0xFFFF000000000000L) >> 48;
-                ulong minor = (version & 0x0000FFFF00000000L) >> 32;
-                ulong build = (version & 0x00000000FFFF0000L) >> 16;
-                ulong revision = version & 0x000000000000FFFFL;
-
-                return $"Windows {major}.{minor}.{build}.{revision}";
-            }
-        }
-
         public string ApplicationVersion
         {
             get
@@ -94,17 +79,34 @@ namespace Telegram.Services
                 PackageId packageId = package.Id;
                 PackageVersion version = packageId.Version;
 
+                var revision = version.Revision > 0
+                    ? string.Format(" ({0})", version.Revision)
+                    : string.Empty;
+
                 if (version.Build > 0)
                 {
-                    return string.Format("{0}.{1}.{2} ({3})", version.Major, version.Minor, version.Build, version.Revision);
+                    return string.Format("{0}.{1}.{2}{3}", version.Major, version.Minor, version.Build, revision);
                 }
 
-                return string.Format("{0}.{1} ({2})", version.Major, version.Minor, version.Revision);
+                return string.Format("{0}.{1}{2}", version.Major, version.Minor, revision);
             }
         }
 
-        public string SystemLanguageCode => GlobalizationPreferences.Languages.Count > 0
-            ? GlobalizationPreferences.Languages[0].ToLower()
-            : "en";
+        public string SystemLanguageCode
+        {
+            get
+            {
+                try
+                {
+                    return GlobalizationPreferences.Languages.Count > 0
+                        ? GlobalizationPreferences.Languages[0].ToLower()
+                        : "en";
+                }
+                catch
+                {
+                    return "en";
+                }
+            }
+        }
     }
 }

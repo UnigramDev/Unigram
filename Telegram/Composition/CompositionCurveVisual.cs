@@ -3,18 +3,20 @@ using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Hosting;
 using System;
 using System.Numerics;
+using Telegram.Common;
 using Telegram.Navigation;
-using Windows.UI;
 
 namespace Telegram.Composition
 {
     public partial class CompositionCurveVisual
     {
-        private readonly ShapeVisual _visual;
+        private readonly ContainerVisual _visual;
 
         private readonly CompositionCurveShape _smallCurve;
         private readonly CompositionCurveShape _mediumCurve;
         private readonly CompositionCurveShape _largeCurve;
+
+        private readonly CompositionLinearGradientBrush _gradient;
 
         private readonly CompositionVSync _vsync = new(30);
 
@@ -41,16 +43,38 @@ namespace Telegram.Composition
             var mediumShape = compositor.CreateSpriteShape(medium);
             var largeShape = compositor.CreateSpriteShape(large);
 
-            _visual = compositor.CreateShapeVisual();
-            _visual.Size = size;
+            var smallVisual = compositor.CreateShapeVisual();
+            smallVisual.Size = size;
 
-            _visual.Shapes.Add(mediumShape);
-            _visual.Shapes.Add(largeShape);
-            _visual.Shapes.Add(smallShape);
+            var mediumVisual = compositor.CreateShapeVisual();
+            mediumVisual.Size = size;
+            mediumVisual.Opacity = 0.55f;
+
+            var largeVisual = compositor.CreateShapeVisual();
+            largeVisual.Size = size;
+            largeVisual.Opacity = 0.35f;
+
+            smallVisual.Shapes.Add(smallShape);
+            mediumVisual.Shapes.Add(mediumShape);
+            largeVisual.Shapes.Add(largeShape);
 
             _smallCurve = new CompositionCurveShape(smallShape, size, 8, 1, 1.3f, 0.9f, 3.2f, 0, 0);
             _mediumCurve = new CompositionCurveShape(mediumShape, size, 8, 1.2f, 1.5f, 1, 4.4f, 0.1f, 0.55f);
             _largeCurve = new CompositionCurveShape(largeShape, size, 8, 1, 1.7f, 1, 5.8f, 0.1f, 1.0f);
+
+            _gradient = compositor.CreateLinearGradientBrush();
+            _gradient.ColorStops.Add(compositor.CreateColorGradientStop(0, Colors.Red));
+            _gradient.ColorStops.Add(compositor.CreateColorGradientStop(1, Colors.Blue));
+
+            _smallCurve.FillBrush = _gradient;
+            _mediumCurve.FillBrush = _gradient;
+            _largeCurve.FillBrush = _gradient;
+
+            _visual = compositor.CreateContainerVisual();
+            _visual.Size = new Vector2(width, height);
+            _visual.Children.InsertAtTop(smallVisual);
+            _visual.Children.InsertAtTop(mediumVisual);
+            _visual.Children.InsertAtTop(largeVisual);
 
             ElementCompositionPreview.SetElementChildVisual(element, _visual);
         }
@@ -64,20 +88,13 @@ namespace Telegram.Composition
             _largeCurve.Level = _presentationAudioLevel;
         }
 
-        private Color _fillColor;
-        public Color FillColor
+        public void SetColorStops(params uint[] colorStops)
         {
-            get => _fillColor;
-            set
-            {
-                if (_fillColor != value)
-                {
-                    _fillColor = value;
+            _gradient.ColorStops.Clear();
 
-                    _smallCurve.FillColor = Color.FromArgb(0xFF, value.R, value.G, value.B);
-                    _mediumCurve.FillColor = Color.FromArgb(0x8C, value.R, value.G, value.B); // 0.55 alpha
-                    _largeCurve.FillColor = Color.FromArgb(0x59, value.R, value.G, value.B); // 0.35 alpha
-                }
+            for (int i = 0; i < colorStops.Length; i++)
+            {
+                _gradient.ColorStops.Add(_gradient.Compositor.CreateColorGradientStop(i / (colorStops.Length - 1f), ColorEx.FromHex(colorStops[i])));
             }
         }
 
@@ -90,6 +107,11 @@ namespace Telegram.Composition
                 _smallCurve.Size = value;
                 _mediumCurve.Size = value;
                 _largeCurve.Size = value;
+
+                foreach (var child in _visual.Children)
+                {
+                    child.Size = value;
+                }
             }
         }
 
@@ -212,7 +234,7 @@ namespace Telegram.Composition
                 {
                     var lv = _minOffset + (_maxOffset - _minOffset) * value;
                     var animation = BootStrapper.Current.Compositor.CreateScalarKeyFrameAnimation();
-                    animation.InsertKeyFrame(1, -14 + lv * 16.0f);
+                    animation.InsertKeyFrame(1, lv * 12.0f);
                     _shape.StartAnimation("Offset.Y", animation);
                 }
 
@@ -245,22 +267,12 @@ namespace Telegram.Composition
             _maxOffset = maxOffset;
 
             _smoothness = 0.35f;
-
-            _shape.Offset = new Vector2(0, -14);
         }
 
-        private Color _fillColor;
-        public Color FillColor
+        public CompositionBrush FillBrush
         {
-            get => _fillColor;
-            set
-            {
-                if (_fillColor != value)
-                {
-                    _fillColor = value;
-                    _shape.FillBrush = _shape.Compositor.CreateColorBrush(value);
-                }
-            }
+            get => _shape.FillBrush;
+            set => _shape.FillBrush = value;
         }
 
         private Vector2 _size;
@@ -340,7 +352,7 @@ namespace Telegram.Composition
 
             for (int i = 0; i < _pointsCount; i++)
             {
-                points[i] = new Vector2(curve[i].X * size.X, 18 + curve[i].Y * 12);
+                points[i] = new Vector2(curve[i].X * size.X, 40 + curve[i].Y * 12);
             }
 
             return points;

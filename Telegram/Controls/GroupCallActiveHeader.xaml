@@ -9,20 +9,24 @@
              d:DesignHeight="300"
              d:DesignWidth="400">
 
-    <Grid Background="{ThemeResource SettingsItemBackground}"
-          Margin="0,0,8,8"
-          CornerRadius="8"
-          Height="40">
+    <Grid Margin="0,0,0,-40"
+          Height="80">
+        <Grid.RowDefinitions>
+            <RowDefinition />
+            <RowDefinition />
+        </Grid.RowDefinitions>
+        <Border x:Name="RootGrid"
+                Background="{ThemeResource SettingsItemBackground}" />
+
         <Border x:Name="Curve"
                 SizeChanged="Curve_SizeChanged"
-                BorderBrush="{ThemeResource NavigationViewContentGridBorderBrush}"
-                BorderThickness="1"
-                CornerRadius="8" />
+                Grid.RowSpan="2" />
 
         <HyperlinkButton Click="Title_Click"
                          Style="{StaticResource EmptyHyperlinkButtonStyle}"
                          HorizontalAlignment="Stretch"
-                         VerticalAlignment="Stretch">
+                         VerticalAlignment="Stretch"
+                         RequestedTheme="Dark">
             <Border>
                 <TextBlock x:Name="TitleInfo"
                            Style="{StaticResource BaseTextBlockStyle}"
@@ -33,11 +37,12 @@
 
         <controls:AnimatedGlyphToggleButton x:Name="Audio"
                                             Click="Audio_Click"
-                                            Glyph="&#xE610;"
-                                            CheckedGlyph="&#xE720;"
+                                            Glyph="&#xEA98;"
+                                            CheckedGlyph="&#xEA9A;"
                                             IsOneWay="True"
                                             Width="48"
-                                            Height="40" />
+                                            Height="40"
+                                            RequestedTheme="Dark" />
 
         <controls:GlyphButton x:Name="Dismiss"
                               Click="Dismiss_Click"
@@ -46,6 +51,7 @@
                               Grid.Column="7"
                               HorizontalAlignment="Right"
                               AutomationProperties.Name="{CustomResource VoipGroupLeave}"
-                              ToolTipService.ToolTip="{CustomResource VoipGroupLeave}" />
+                              ToolTipService.ToolTip="{CustomResource VoipGroupLeave}"
+                              RequestedTheme="Dark" />
     </Grid>
 </UserControl>

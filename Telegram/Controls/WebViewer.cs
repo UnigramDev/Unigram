@@ -32,6 +32,16 @@ namespace Telegram.Controls
         }
     }
 
+    public partial class WebViewerNavigatedEventArgs : EventArgs
+    {
+        public string Url { get; }
+
+        public WebViewerNavigatedEventArgs(string url)
+        {
+            Url = url;
+        }
+    }
+
     public partial class WebViewerNewWindowRequestedEventArgs : CancelEventArgs
     {
         public string Url { get; }
@@ -63,6 +73,7 @@ namespace Telegram.Controls
             }
 
             _presenter.Navigating += OnNavigating;
+            _presenter.Navigated += OnNavigated;
             _presenter.EventReceived += OnEventReceived;
             _presenter.NewWindowRequested += OnNewWindowRequested;
 
@@ -84,16 +95,15 @@ namespace Telegram.Controls
             }
 
             _presenter.Navigating -= OnNavigating;
+            _presenter.Navigated -= OnNavigated;
             _presenter.EventReceived -= OnEventReceived;
             _presenter.NewWindowRequested -= OnNewWindowRequested;
 
-            //_presenter = new EdgeWebPresenter();
-            //_presenter.Navigating += OnNavigating;
-            //_presenter.EventReceived += OnEventReceived;
-            //_presenter.NewWindowRequested += OnNewWindowRequested;
-
-            // TODO: not supported presenter
-            _presenter = null;
+            _presenter = new EdgeWebPresenter();
+            _presenter.Navigating += OnNavigating;
+            _presenter.Navigated += OnNavigated;
+            _presenter.EventReceived += OnEventReceived;
+            _presenter.NewWindowRequested += OnNewWindowRequested;
 
             Content = _presenter;
 
@@ -105,12 +115,17 @@ namespace Telegram.Controls
             }
 
         Cleanup:
-            return !_closed && _presenter is ChromiumWebPresenter;
+            return !_closed && _presenter is not null;
         }
 
         private void OnNavigating(object sender, WebViewerNavigatingEventArgs e)
         {
             Navigating?.Invoke(this, e);
+        }
+
+        private void OnNavigated(object sender, WebViewerNavigatedEventArgs e)
+        {
+            Navigated?.Invoke(this, e);
         }
 
         private void OnEventReceived(object sender, WebViewerEventReceivedEventArgs e)
@@ -124,6 +139,8 @@ namespace Telegram.Controls
         }
 
         public event EventHandler<WebViewerNavigatingEventArgs> Navigating;
+
+        public event EventHandler<WebViewerNavigatedEventArgs> Navigated;
 
         public event EventHandler<WebViewerEventReceivedEventArgs> EventReceived;
 
@@ -198,6 +215,8 @@ namespace Telegram.Controls
 
         public event EventHandler<WebViewerNavigatingEventArgs> Navigating;
 
+        public event EventHandler<WebViewerNavigatedEventArgs> Navigated;
+
         public event EventHandler<WebViewerNewWindowRequestedEventArgs> NewWindowRequested;
 
         public abstract void Navigate(string uri);
@@ -222,10 +241,15 @@ namespace Telegram.Controls
             return args.Cancel;
         }
 
+        protected void OnNavigated(string url)
+        {
+            Navigated?.Invoke(this, new WebViewerNavigatedEventArgs(url));
+        }
+
         protected bool OnNewWindowRequested(string url)
         {
-            var args = new WebViewerNavigatingEventArgs(url);
-            Navigating?.Invoke(this, args);
+            var args = new WebViewerNewWindowRequestedEventArgs(url);
+            NewWindowRequested?.Invoke(this, args);
             return args.Cancel;
         }
     }
@@ -245,6 +269,7 @@ namespace Telegram.Controls
 
             View = GetTemplateChild(nameof(View)) as WebView;
             View.NavigationStarting += OnNavigationStarting;
+            View.NavigationCompleted += OnNavigationCompleted;
             View.Unloaded += OnUnloaded;
 
             Initialize(true);
@@ -254,6 +279,11 @@ namespace Telegram.Controls
         {
             sender.AddWebAllowedObject("TelegramWebviewProxy", new TelegramWebviewProxy(ReceiveEvent));
             args.Cancel = OnNavigating(args.Uri?.ToString() ?? string.Empty);
+        }
+
+        private void OnNavigationCompleted(WebView sender, WebViewNavigationCompletedEventArgs args)
+        {
+            OnNavigating(args.Uri?.ToString() ?? string.Empty);
         }
 
         private void OnUnloaded(object sender, RoutedEventArgs e)
@@ -340,6 +370,7 @@ namespace Telegram.Controls
             View = GetTemplateChild(nameof(View)) as WebView2;
             View.CoreWebView2Initialized += OnCoreWebView2Initialized;
             View.NavigationStarting += OnNavigationStarting;
+            View.NavigationCompleted += OnNavigationCompleted;
             View.WebMessageReceived += OnWebMessageReceived;
 
             await View.EnsureCoreWebView2Async();
@@ -375,6 +406,11 @@ postEvent: function(eventType, eventData) {
             args.Cancel = OnNavigating(args.Uri);
         }
 
+        private void OnNavigationCompleted(WebView2 sender, CoreWebView2NavigationCompletedEventArgs args)
+        {
+            OnNavigated(sender.CoreWebView2.Source);
+        }
+
         private void OnCoreWebView2Initialized(WebView2 sender, CoreWebView2InitializedEventArgs args)
         {
             if (args.Exception != null)
@@ -385,9 +421,25 @@ postEvent: function(eventType, eventData) {
 
         private void OnWebMessageReceived(WebView2 sender, CoreWebView2WebMessageReceivedEventArgs args)
         {
-            var json = args.TryGetWebMessageAsString();
+            // TODO: some clear nonsense from WebView2 here:
+            // The JSON string received from mini apps (WebViewer.cs)
+            // fails to be parsed by JsonArray.TryParse if retrieved using WebMessageAsJson.
+            // The JSON string received from HLS player (WebVideoPlayer.xaml.cs)
+            // throws a random exception if retrieved using TryGetWebMessageAsString.
 
-            if (JsonArray.TryParse(json, out JsonArray message))
+            static string TryGetWebMessageAsString(CoreWebView2WebMessageReceivedEventArgs args)
+            {
+                try
+                {
+                    return args.TryGetWebMessageAsString();
+                }
+                catch
+                {
+                    return string.Empty;
+                }
+            }
+
+            if (JsonArray.TryParse(TryGetWebMessageAsString(args), out JsonArray message) && message.Count == 2)
             {
                 var eventName = message.GetStringAt(0);
                 var eventData = message.GetStringAt(1);

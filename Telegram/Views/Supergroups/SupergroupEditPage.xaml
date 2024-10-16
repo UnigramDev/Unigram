@@ -1,10 +1,10 @@
 <local:HostedPage x:Class="Telegram.Views.Supergroups.SupergroupEditPage"
                   xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-                  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-                  xmlns:local="using:Telegram.Views"
-                  xmlns:controls="using:Telegram.Controls"
                   xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                   xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                  xmlns:controls="using:Telegram.Controls"
+                  xmlns:local="using:Telegram.Views"
                   mc:Ignorable="d">
 
     <Page.Transitions>
@@ -38,7 +38,6 @@
                               Width="96"
                               Margin="0,0,12,0">
                             <controls:ProfilePicture x:Name="Photo"
-                                                     IsEnabled="False"
                                                      Height="96"
                                                      Width="96" />
                         </Grid>
@@ -50,7 +49,8 @@
                                  VerticalAlignment="Center"
                                  Grid.Column="1" />
                     </Grid>
-                    <controls:BadgeButton Content="{CustomResource ChatSetNewPhoto}"
+                    <controls:BadgeButton x:Name="SetNewPhoto"
+                                          Content="{CustomResource ChatSetNewPhoto}"
                                           Style="{StaticResource GlyphBadgeButtonStyle}"
                                           Glyph="&#xE9FE;">
                         <Button.Flyout>
@@ -119,17 +119,6 @@
                     </controls:BadgeButton>
                 </controls:HeaderedControl>
 
-                <controls:HeaderedControl x:Name="InviteLinkPanel"
-                                          Header="{CustomResource ChannelInviteLinkTitle}">
-                    <TextBox x:Name="InviteLink"
-                             IsReadOnly="True"
-                             Padding="12,11,6,12" />
-
-                    <controls:BadgeButton x:Name="RevokeLink"
-                                          Content="{CustomResource RevokeLink}"
-                                          Click="{x:Bind ViewModel.Links}" />
-                </controls:HeaderedControl>
-
                 <controls:HeaderedControl x:Name="GroupMembersPanel">
                     <controls:BadgeButton x:Name="Reactions"
                                           Content="{CustomResource Reactions}"
@@ -137,6 +126,14 @@
                                           Style="{StaticResource GlyphBadgeButtonStyle}"
                                           IsChevronVisible="True"
                                           Glyph="&#xE987;" />
+
+                    <controls:BadgeButton x:Name="InviteLinks"
+                                          Content="{CustomResource InviteLinks}"
+                                          Click="{x:Bind ViewModel.InviteLinks}"
+                                          Badge="{x:Bind ViewModel.InviteLinksCount, Mode=OneWay}"
+                                          Style="{StaticResource GlyphBadgeButtonStyle}"
+                                          IsChevronVisible="True"
+                                          Glyph="&#xE9F8;" />
 
                     <controls:BadgeButton x:Name="Permissions"
                                           Content="{CustomResource ChannelPermissions}"
@@ -165,6 +162,14 @@
                                           Style="{StaticResource GlyphBadgeButtonStyle}"
                                           IsChevronVisible="True"
                                           Glyph="&#xF166;" />
+
+                    <controls:BadgeButton x:Name="Statistics"
+                                          Visibility="Collapsed"
+                                          Content="{CustomResource Statistics}"
+                                          Click="{x:Bind ViewModel.Statistics}"
+                                          Style="{StaticResource GlyphBadgeButtonStyle}"
+                                          IsChevronVisible="True"
+                                          Glyph="&#xE9D9;" />
 
                     <controls:BadgeButton x:Name="EventLog"
                                           Content="{CustomResource EventLog}"

@@ -12,10 +12,8 @@ using System.Numerics;
 using Telegram.Common;
 using Telegram.Composition;
 using Telegram.Native.Calls;
-using Telegram.Services;
 using Telegram.Services.Calls;
 using Telegram.Td.Api;
-using Windows.UI;
 
 namespace Telegram.Controls
 {
@@ -23,8 +21,7 @@ namespace Telegram.Controls
     {
         private readonly CompositionCurveVisual _curveVisual;
 
-        private VoipCall _service;
-        private IVoipGroupService _groupService;
+        private VoipCallBase _call;
 
         public GroupCallActiveHeader()
         {
@@ -32,42 +29,38 @@ namespace Telegram.Controls
 
             // This should be used as a mask to apply a gradient to another visual
             _curveVisual = new CompositionCurveVisual(Curve, 0, 0, 1.5f);
+            _curveVisual.SetColorStops(0xFF59c7f8, 0xFF0078ff);
         }
 
-        public void Update(VoipCall value)
+        public void Update(VoipCallBase value)
         {
-#if ENABLE_CALLS
-            if (_service != null)
+            if (_call is VoipCall oldPrivateCall)
             {
-                _service.MediaStateChanged -= OnMediaStateChanged;
-                _service.AudioLevelUpdated -= OnAudioLevelUpdated;
+                oldPrivateCall.MediaStateChanged -= OnMediaStateChanged;
+                oldPrivateCall.AudioLevelUpdated -= OnAudioLevelUpdated;
+            }
+            else if (_call is VoipGroupCall oldGroupCall)
+            {
+                oldGroupCall.MutedChanged -= OnMutedChanged;
+                oldGroupCall.AudioLevelsUpdated -= OnAudioLevelsUpdated;
             }
 
-            _service = value;
+            _call = value;
 
-            if (_service != null)
+            if (_call is VoipCall newPrivateCall)
             {
-                _service.MediaStateChanged += OnMediaStateChanged;
-                _service.AudioLevelUpdated += OnAudioLevelUpdated;
+                newPrivateCall.MediaStateChanged += OnMediaStateChanged;
+                newPrivateCall.AudioLevelUpdated += OnAudioLevelUpdated;
 
-                if (PowerSavingPolicy.AreMaterialsEnabled && ApiInfo.CanAnimatePaths)
-                {
-                    _curveVisual.StartAnimating();
-                }
-                else
-                {
-                    _curveVisual.StopAnimating();
-                    _curveVisual.Clear();
-                }
+                StartAnimating();
+                UpdateCurveColors(newPrivateCall.AudioState == VoipAudioState.Muted);
 
-                UpdateCurveColors(_service.AudioState == VoipAudioState.Muted);
-
-                Audio.Visibility = Visibility.Collapsed;
-                Dismiss.Visibility = Visibility.Collapsed;
+                Audio.Visibility = Visibility.Visible;
+                Dismiss.Visibility = Visibility.Visible;
 
                 try
                 {
-                    if (value.ClientService.TryGetUser(value.UserId, out User user))
+                    if (newPrivateCall.ClientService.TryGetUser(newPrivateCall.UserId, out User user))
                     {
                         TitleInfo.Text = user.FullName();
                     }
@@ -78,48 +71,20 @@ namespace Telegram.Controls
                     // Try-catching until the code is actually properly refactored.
                 }
             }
-            else
+            else if (_call is VoipGroupCall newGroupCall)
             {
-                _curveVisual.StopAnimating();
-                _curveVisual.Clear();
-            }
-#endif
-        }
+                newGroupCall.MutedChanged += OnMutedChanged;
+                newGroupCall.AudioLevelsUpdated += OnAudioLevelsUpdated;
 
-        public void Update(IVoipGroupService value)
-        {
-#if ENABLE_CALLS
-            if (_groupService != null)
-            {
-                _groupService.MutedChanged -= OnMutedChanged;
-                _groupService.AudioLevelsUpdated -= OnAudioLevelsUpdated;
-            }
-
-            _groupService = value;
-
-            if (_groupService?.Chat != null && _groupService?.Call != null)
-            {
-                _groupService.MutedChanged += OnMutedChanged;
-                _groupService.AudioLevelsUpdated += OnAudioLevelsUpdated;
-
-                if (PowerSavingPolicy.AreMaterialsEnabled && ApiInfo.CanAnimatePaths)
-                {
-                    _curveVisual.StartAnimating();
-                }
-                else
-                {
-                    _curveVisual.StopAnimating();
-                    _curveVisual.Clear();
-                }
-
-                UpdateCurveColors(_groupService.IsMuted);
+                StartAnimating();
+                UpdateCurveColors(newGroupCall.IsMuted);
 
                 Audio.Visibility = Visibility.Visible;
                 Dismiss.Visibility = Visibility.Visible;
 
-                TitleInfo.Text = _groupService.Call.Title.Length > 0 ? _groupService.Call.Title : _groupService.ClientService.GetTitle(_groupService.Chat);
-                Audio.IsChecked = !_groupService.IsMuted;
-                Automation.SetToolTip(Audio, _groupService.IsMuted ? Strings.VoipGroupUnmute : Strings.VoipGroupMute);
+                TitleInfo.Text = newGroupCall.GetTitle();
+                Audio.IsChecked = !newGroupCall.IsMuted;
+                Automation.SetToolTip(Audio, newGroupCall.IsMuted ? Strings.VoipGroupUnmute : Strings.VoipGroupMute);
             }
             else
             {
@@ -131,14 +96,33 @@ namespace Telegram.Controls
         private void UpdateCurveColors(bool muted)
         {
             // TODO: there are multiple states to be supported: connecting, active, speaking, can't speak, late
-            _curveVisual.FillColor = muted
-                ? Color.FromArgb(0xFF, 0x00, 0x78, 0xff)
-                : Color.FromArgb(0xFF, 0x33, 0xc6, 0x59);
+            if (PowerSavingPolicy.AreMaterialsEnabled && ApiInfo.CanAnimatePaths)
+            {
+                if (muted)
+                {
+                    _curveVisual.SetColorStops(0xFF59c7f8, 0xFF0078ff);
+                }
+                else
+                {
+                    _curveVisual.SetColorStops(0xFF0078ff, 0xFF33c659);
+                }
+            }
+            else
+            {
+                if (muted)
+                {
+                    RootGrid.Background = ColorsHelper.LinearGradient(0xFF59c7f8, 0xFF0078ff);
+                }
+                else
+                {
+                    RootGrid.Background = ColorsHelper.LinearGradient(0xFF0078ff, 0xFF33c659);
+                }
+            }
         }
 
         private void OnMutedChanged(object sender, EventArgs e)
         {
-            if (sender is VoipGroupManager groupService && groupService.IsMuted is bool groupMuted)
+            if (sender is VoipGroupCall groupCall && groupCall.IsMuted is bool groupMuted)
             {
                 this.BeginOnUIThread(() =>
                 {
@@ -155,7 +139,7 @@ namespace Telegram.Controls
             this.BeginOnUIThread(() => UpdateCurveColors(args.Audio == VoipAudioState.Muted));
         }
 
-        private void OnAudioLevelsUpdated(object sender, IList<VoipGroupParticipant> args)
+        private void OnAudioLevelsUpdated(VoipGroupCall sender, IList<VoipGroupParticipant> args)
         {
             if (PowerSavingPolicy.AreMaterialsEnabled && ApiInfo.CanAnimatePaths)
             {
@@ -165,7 +149,7 @@ namespace Telegram.Controls
                 {
                     if (level.AudioSource == 0)
                     {
-                        if (_groupService.IsMuted)
+                        if (sender.IsMuted)
                         {
                             average = MathF.Max(average, 0);
                         }
@@ -190,46 +174,55 @@ namespace Telegram.Controls
             {
                 _curveVisual.UpdateLevel(args.AudioLevel);
             }
-#endif
         }
 
 
         private void Audio_Click(object sender, RoutedEventArgs e)
         {
-#if ENABLE_CALLS
-            var service = _groupService;
-            if (service != null)
+            if (_call is VoipCall privateCall)
             {
-                service.IsMuted = !service.IsMuted;
+                privateCall.AudioState = privateCall.AudioState == VoipAudioState.Muted
+                    ? VoipAudioState.Active
+                    : VoipAudioState.Muted;
             }
-#endif
-        }
-
-        private async void Dismiss_Click(object sender, RoutedEventArgs e)
-        {
-            var service = _groupService;
-            if (service != null)
+            else if (_call is VoipGroupCall groupCall)
             {
-                await service.ConsolidateAsync();
-                await service.LeaveAsync();
+                groupCall.IsMuted = !groupCall.IsMuted;
             }
         }
 
-        private async void Title_Click(object sender, RoutedEventArgs e)
+        private void Dismiss_Click(object sender, RoutedEventArgs e)
         {
-            if (_groupService != null)
-            {
-                await _groupService.ShowAsync();
-            }
-            else if (_service != null)
-            {
-                _service.Show();
-            }
+            _call?.Discard();
+        }
+
+        private void Title_Click(object sender, RoutedEventArgs e)
+        {
+            _call?.Show();
         }
 
         private void Curve_SizeChanged(object sender, SizeChangedEventArgs e)
         {
             _curveVisual.ActualSize = e.NewSize.ToVector2();
+            StartAnimating();
+        }
+
+        private void StartAnimating()
+        {
+            if (_curveVisual.ActualSize.X == 0 || _curveVisual.ActualSize.Y == 0)
+            {
+                return;
+            }
+
+            if (PowerSavingPolicy.AreMaterialsEnabled && ApiInfo.CanAnimatePaths)
+            {
+                _curveVisual.StartAnimating();
+            }
+            else
+            {
+                _curveVisual.StopAnimating();
+                _curveVisual.Clear();
+            }
         }
     }
 }

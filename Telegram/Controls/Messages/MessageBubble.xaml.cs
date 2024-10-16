@@ -117,6 +117,7 @@ namespace Telegram.Controls.Messages
 
         // Lazy loaded
         private ProfilePicture Photo;
+        private HyperlinkButton PhotoRoot;
 
         private Border BackgroundPanel;
         private Border CrossPanel;
@@ -596,24 +597,26 @@ namespace Telegram.Controls.Messages
             {
                 if (message.IsLast)
                 {
-                    if (message.Id != _photoId || Photo == null || Photo.Visibility == Visibility.Collapsed)
+                    if (message.Id != _photoId || PhotoRoot == null || PhotoRoot.Visibility == Visibility.Collapsed)
                     {
-                        if (Photo == null)
+                        if (PhotoRoot == null)
                         {
+                            PhotoRoot = GetTemplateChild(nameof(PhotoRoot)) as HyperlinkButton;
+                            PhotoRoot.Click += Photo_Click;
+
                             Photo = GetTemplateChild(nameof(Photo)) as ProfilePicture;
-                            Photo.Click += Photo_Click;
                         }
 
                         _photoId = message.Id;
-                        Photo.Visibility = Visibility.Visible;
+                        PhotoRoot.Visibility = Visibility.Visible;
                         Photo.SetMessage(message);
                     }
                 }
-                else if (Photo != null)
+                else if (PhotoRoot != null)
                 {
                     _photoId = null;
 
-                    Photo.Visibility = Visibility.Collapsed;
+                    PhotoRoot.Visibility = Visibility.Collapsed;
                     Photo.Clear();
                 }
 
@@ -624,10 +627,11 @@ namespace Telegram.Controls.Messages
             }
             else
             {
-                if (Photo != null)
+                if (PhotoRoot != null)
                 {
                     _photoId = null;
-                    UnloadObject(ref Photo);
+                    Photo = null;
+                    UnloadObject(ref PhotoRoot);
                 }
 
                 if (PhotoColumn.Width.IsAbsolute)
@@ -645,26 +649,9 @@ namespace Telegram.Controls.Messages
                 return;
             }
 
-            if (message.IsSaved)
+            if (message.IsSaved || message.IsVerificationCode)
             {
-                if (message.ForwardInfo?.Origin is MessageOriginUser fromUser)
-                {
-                    message.Delegate.OpenUser(fromUser.SenderUserId);
-                }
-                else if (message.ForwardInfo?.Origin is MessageOriginChat fromChat)
-                {
-                    message.Delegate.OpenChat(fromChat.SenderChatId, true);
-                }
-                else if (message.ForwardInfo?.Origin is MessageOriginChannel fromChannel)
-                {
-                    // TODO: verify if this is sufficient
-                    message.Delegate.OpenChat(fromChannel.ChatId);
-                }
-                else if (message.ForwardInfo?.Origin is MessageOriginHiddenUser)
-                {
-                    ToastPopup.Show(XamlRoot, Strings.HidAccount);
-                    //await MessagePopup.ShowAsync(Strings.HidAccount, Strings.AppName, Strings.OK);
-                }
+                FwdFrom_Click(null, null);
             }
             else if (message.ClientService.TryGetChat(message.SenderId, out Chat senderChat))
             {
@@ -714,9 +701,21 @@ namespace Telegram.Controls.Messages
                     ? Locale.Declension(Strings.R.Comments, info.ReplyCount)
                     : Strings.LeaveAComment);
             }
-            else if (message.ChatId == message.ClientService.Options.RepliesBotChatId && Action != null)
+            else if (message.ChatId == message.ClientService.Options.RepliesBotChatId)
             {
-                Action.Visibility = Visibility.Collapsed;
+                if (light)
+                {
+                    FindAction(outgoing);
+
+                    ActionButton.Glyph = Icons.ChatEmptyFilled16;
+                    Action.Visibility = Visibility.Visible;
+
+                    Automation.SetToolTip(ActionButton, Strings.ViewInChat);
+                }
+                else if (Action != null)
+                {
+                    Action.Visibility = Visibility.Collapsed;
+                }
             }
             else if (message.IsSaved)
             {
@@ -793,6 +792,10 @@ namespace Telegram.Controls.Messages
             {
                 message.Delegate.OpenThread(message);
             }
+            else if (message.ChatId == message.ClientService.Options.RepliesBotChatId)
+            {
+                message.Delegate.OpenThread(message);
+            }
             else if (message.IsSaved)
             {
                 if (message.ForwardInfo?.Origin is MessageOriginUser or MessageOriginChat && message.ForwardInfo.Source != null)
@@ -849,7 +852,7 @@ namespace Telegram.Controls.Messages
             var header = false;
             var forward = false;
 
-            if (!light && message.IsFirst && message.IsSaved && !outgoing)
+            if (!light && message.IsFirst && (message.IsSaved || message.IsVerificationCode) && !outgoing)
             {
                 var title = string.Empty;
                 var foreground = default(SolidColorBrush);
@@ -973,7 +976,7 @@ namespace Telegram.Controls.Messages
 
                 ForwardHeader.UpdateMessage(message, light);
             }
-            else if (message.ForwardInfo != null && (!message.IsSaved || !message.ForwardInfo.HasSameOrigin()))
+            else if (message.ForwardInfo != null && !message.IsVerificationCode && (!message.IsSaved || !message.ForwardInfo.HasSameOrigin()))
             {
                 LoadForwardLabel();
                 forward = true;
@@ -1179,7 +1182,7 @@ namespace Telegram.Controls.Messages
                 return;
             }
 
-            if (message.IsSaved)
+            if (message.IsSaved || message.IsVerificationCode)
             {
                 FwdFrom_Click(sender, args);
             }
@@ -1350,7 +1353,6 @@ namespace Telegram.Controls.Messages
                     var picture = new ProfilePicture();
                     picture.Width = 24;
                     picture.Height = 24;
-                    picture.IsEnabled = false;
 
                     if (message.ClientService.TryGetUser(sender, out User senderUser))
                     {
@@ -1966,6 +1968,26 @@ namespace Telegram.Controls.Messages
                 return;
             }
 
+            void OpenUrl(string url, bool trust)
+            {
+                if (message.Content is MessageText text && MessageHelper.AreTheSame(text.LinkPreview?.Url, url, out _))
+                {
+                    message.Delegate.OpenWebPage(text);
+                }
+                else
+                {
+                    message.Delegate.OpenUrl(url, trust);
+                }
+            }
+
+            if (e.Type is TextEntityTypeTextUrl textUrl)
+            {
+                OpenUrl(textUrl.Url, true);
+            }
+            else if (e.Type is TextEntityTypeUrl && e.Data is string url)
+            {
+                OpenUrl(url, false);
+            }
             if (e.Type is TextEntityTypeBotCommand && e.Data is string command)
             {
                 message.Delegate.SendBotCommand(command);
@@ -1989,14 +2011,6 @@ namespace Telegram.Controls.Messages
             else if (e.Type is TextEntityTypeMentionName mentionName)
             {
                 message.Delegate.OpenUser(mentionName.UserId);
-            }
-            else if (e.Type is TextEntityTypeTextUrl textUrl)
-            {
-                message.Delegate.OpenUrl(textUrl.Url, true);
-            }
-            else if (e.Type is TextEntityTypeUrl && e.Data is string url)
-            {
-                message.Delegate.OpenUrl(url, false);
             }
             else if (e.Type is TextEntityTypeBankCardNumber && e.Data is string cardNumber)
             {
@@ -3000,13 +3014,15 @@ namespace Telegram.Controls.Messages
             HeaderPanel.Visibility = Visibility.Visible;
             HeaderLabel.Visibility = Visibility.Visible;
 
-            if (Photo == null)
+            if (PhotoRoot == null)
             {
+                PhotoRoot = GetTemplateChild(nameof(PhotoRoot)) as HyperlinkButton;
+                PhotoRoot.Click += Photo_Click;
+
                 Photo = GetTemplateChild(nameof(Photo)) as ProfilePicture;
-                Photo.Click += Photo_Click;
             }
 
-            Photo.Visibility = Visibility.Visible;
+            PhotoRoot.Visibility = Visibility.Visible;
 
             if (obj is User user)
             {

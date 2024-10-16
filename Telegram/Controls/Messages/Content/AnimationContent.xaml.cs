@@ -325,7 +325,7 @@ namespace Telegram.Controls.Messages.Content
             }
             else if (_message.Content is MessageText text && text.LinkPreview.HasText())
             {
-                _message.Delegate.OpenWebPage(text.LinkPreview);
+                _message.Delegate.OpenWebPage(text);
             }
             else
             {

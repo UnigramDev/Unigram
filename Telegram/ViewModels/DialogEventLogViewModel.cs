@@ -12,18 +12,18 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Telegram.Common;
+using Telegram.Controls;
 using Telegram.Converters;
 using Telegram.Services;
 using Telegram.Services.Factories;
 using Telegram.Td.Api;
-using Telegram.Views.Popups;
 
 namespace Telegram.ViewModels
 {
     public partial class DialogEventLogViewModel : DialogViewModel
     {
-        public DialogEventLogViewModel(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator, ILocationService locationService, INotificationsService pushService, IPlaybackService playbackService, IVoipService voipService, IVoipGroupService voipGroupService, INetworkService networkService, IStorageService storageService, ITranslateService translateService, IMessageFactory messageFactory)
-            : base(clientService, settingsService, aggregator, locationService, pushService, playbackService, voipService, voipGroupService, networkService, storageService, translateService, messageFactory)
+        public DialogEventLogViewModel(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator, ILocationService locationService, INotificationsService pushService, IPlaybackService playbackService, IVoipService voipService, INetworkService networkService, IStorageService storageService, ITranslateService translateService, IMessageFactory messageFactory)
+            : base(clientService, settingsService, aggregator, locationService, pushService, playbackService, voipService, networkService, storageService, translateService, messageFactory)
         {
         }
 
@@ -85,9 +85,9 @@ namespace Telegram.ViewModels
                 return;
             }
 
-            var popup = new SupergroupEventLogFiltersPopup();
+            var popup = new SupergroupEventLogFiltersPopup(ClientService, NavigationService, supergroup.Id, _filters, _userIds);
 
-            var confirm = await popup.ShowAsync(ClientService, NavigationService, supergroup.Id, _filters, _userIds);
+            var confirm = await ShowPopupAsync(popup);
             if (confirm == ContentDialogResult.Primary)
             {
                 Filters = popup.Filters;
@@ -880,6 +880,39 @@ namespace Telegram.ViewModels
             }
 
             return string.Empty;
+        }
+
+        public void BanMember(MessageSender memberId)
+        {
+            ClientService.Send(new SetChatMemberStatus(Chat.Id, memberId, new ChatMemberStatusBanned()));
+
+            if (ClientService.TryGetUser(memberId, out User user))
+            {
+                ToastPopup.Show(XamlRoot, string.Format(Strings.UserRemovedFromChatHint, user.FullName(), Chat.Title), ToastPopupIcon.Ban);
+            }
+            else if (ClientService.TryGetChat(memberId, out Chat chat))
+            {
+                ToastPopup.Show(XamlRoot, string.Format(Strings.UserRemovedFromChatHint, chat.Title, Chat.Title), ToastPopupIcon.Ban);
+            }
+        }
+
+        public void RestrictMember(MessageSender memberId)
+        {
+            ClientService.Send(new SetChatMemberStatus(Chat.Id, memberId, new ChatMemberStatusRestricted
+            {
+                IsMember = true,
+                RestrictedUntilDate = 0,
+                Permissions = new ChatPermissions(false, false, false, false, false, false, false, false, false, false, false, false, false, false)
+            }));
+
+            if (ClientService.TryGetUser(memberId, out User user))
+            {
+                ToastPopup.Show(XamlRoot, string.Format(Strings.RestrictedParticipantSending, user.FullName()), ToastPopupIcon.Ban);
+            }
+            else if (ClientService.TryGetChat(memberId, out Chat chat))
+            {
+                ToastPopup.Show(XamlRoot, string.Format(Strings.RestrictedParticipantSending, chat.Title), ToastPopupIcon.Ban);
+            }
         }
     }
 }

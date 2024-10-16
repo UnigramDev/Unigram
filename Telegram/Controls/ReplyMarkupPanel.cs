@@ -176,6 +176,9 @@ namespace Telegram.Controls
                         case InlineKeyboardButtonTypeWebApp:
                             button.Glyph = Icons.Window16;
                             break;
+                        case InlineKeyboardButtonTypeCopyText:
+                            button.Glyph = Icons.CopyFilled16;
+                            break;
                     }
 
                     var topLeft = 4d;

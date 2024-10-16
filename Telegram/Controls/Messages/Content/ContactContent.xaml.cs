@@ -31,6 +31,7 @@ namespace Telegram.Controls.Messages.Content
         #region InitializeComponent
 
         private ProfilePicture Photo;
+        private HyperlinkButton PhotoRoot;
         private TextBlock Title;
         private TextBlock Subtitle;
         private Button Button;
@@ -39,11 +40,12 @@ namespace Telegram.Controls.Messages.Content
         protected override void OnApplyTemplate()
         {
             Photo = GetTemplateChild(nameof(Photo)) as ProfilePicture;
+            PhotoRoot = GetTemplateChild(nameof(PhotoRoot)) as HyperlinkButton;
             Title = GetTemplateChild(nameof(Title)) as TextBlock;
             Subtitle = GetTemplateChild(nameof(Subtitle)) as TextBlock;
             Button = GetTemplateChild(nameof(Button)) as Button;
 
-            Photo.Click += Photo_Click;
+            PhotoRoot.Click += Photo_Click;
             Button.Click += Button_Click;
 
             _templateApplied = true;

@@ -115,7 +115,7 @@ namespace Telegram.Views.Settings.Password
 
         public EmailAddressAuthenticationCodeInfo RecoveryEmailAddressCodeInfo { get; private set; }
 
-        private async void ContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
+        private async void OnPrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
         {
             try
             {
@@ -152,10 +152,6 @@ namespace Telegram.Views.Settings.Password
             }
 
             IsPrimaryButtonEnabled = true;
-        }
-
-        private void ContentDialog_SecondaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
-        {
         }
 
         private void Password_KeyDown(object sender, KeyRoutedEventArgs e)

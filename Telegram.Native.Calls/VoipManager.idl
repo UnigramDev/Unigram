@@ -11,7 +11,7 @@ namespace Telegram.Native.Calls
         static Telegram.Td.Api.CallProtocol Protocol{ get; };
 
         VoipManager();
-        void Start(String version, VoipDescriptor descriptor);
+        void Start(VoipDescriptor descriptor);
         void Stop();
 
         Boolean IsMuted;

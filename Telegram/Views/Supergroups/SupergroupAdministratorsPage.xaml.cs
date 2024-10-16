@@ -83,13 +83,16 @@ namespace Telegram.Views.Supergroups
 
         public void UpdateSupergroup(Chat chat, Supergroup group)
         {
-            HeaderPanel.Footer = group.CanDeleteMessages() && !group.IsChannel ? Strings.ChannelAntiSpamInfo : string.Empty;
-            AntiSpam.Visibility = group.CanDeleteMessages() && !group.IsChannel ? Visibility.Visible : Visibility.Collapsed;
-            ChannelSignMessages.Visibility = group.CanChangeInfo() && group.IsChannel ? Visibility.Visible : Visibility.Collapsed;
+            var canDeleteMessages = group.CanDeleteMessages();
+            var canChangeInfo = group.CanChangeInfo(chat);
+            var canPromoteMembers = group.CanPromoteMembers();
+
+            AntiSpam.Visibility = canDeleteMessages && !group.IsChannel ? Visibility.Visible : Visibility.Collapsed;
+            ChannelSignMessages.Visibility = canChangeInfo && group.IsChannel ? Visibility.Visible : Visibility.Collapsed;
 
             EventLog.Visibility = Visibility.Visible;
-            AddNew.Visibility = group.CanPromoteMembers() ? Visibility.Visible : Visibility.Collapsed;
-            Footer.Visibility = group.CanPromoteMembers() ? Visibility.Visible : Visibility.Collapsed;
+            AddNew.Visibility = canPromoteMembers ? Visibility.Visible : Visibility.Collapsed;
+            Footer.Visibility = canPromoteMembers ? Visibility.Visible : Visibility.Collapsed;
             Footer.Text = group.IsChannel ? Strings.ChannelAdminsInfo : Strings.MegaAdminsInfo;
 
             HeaderPanel.Visibility = Visibility.Visible;
@@ -102,17 +105,20 @@ namespace Telegram.Views.Supergroups
         {
             ViewModel.UpdateIsAggressiveAntiSpamEnabled(fullInfo.HasAggressiveAntiSpamEnabled);
             AntiSpam.Visibility = fullInfo.CanToggleAggressiveAntiSpam ? Visibility.Visible : Visibility.Collapsed;
+            HeaderPanel.Footer = fullInfo.CanToggleAggressiveAntiSpam ? Strings.ChannelAntiSpamInfo : string.Empty;
         }
 
         public void UpdateBasicGroup(Chat chat, BasicGroup group)
         {
+            var canPromoteMembers = group.CanPromoteMembers();
+
             HeaderPanel.Footer = string.Empty;
             AntiSpam.Visibility = Visibility.Collapsed;
             ChannelSignMessages.Visibility = Visibility.Collapsed;
 
             EventLog.Visibility = Visibility.Collapsed;
-            AddNew.Visibility = group.CanPromoteMembers() ? Visibility.Visible : Visibility.Collapsed;
-            Footer.Visibility = group.CanPromoteMembers() ? Visibility.Visible : Visibility.Collapsed;
+            AddNew.Visibility = canPromoteMembers ? Visibility.Visible : Visibility.Collapsed;
+            Footer.Visibility = canPromoteMembers ? Visibility.Visible : Visibility.Collapsed;
             Footer.Text = Strings.MegaAdminsInfo;
 
             HeaderPanel.Visibility = EventLog.Visibility == Visibility.Visible || AddNew.Visibility == Visibility.Visible
@@ -124,6 +130,7 @@ namespace Telegram.Views.Supergroups
         {
             ViewModel.UpdateIsAggressiveAntiSpamEnabled(false);
             AntiSpam.Visibility = fullInfo.CanToggleAggressiveAntiSpam ? Visibility.Visible : Visibility.Collapsed;
+            HeaderPanel.Footer = fullInfo.CanToggleAggressiveAntiSpam ? Strings.ChannelAntiSpamInfo : string.Empty;
         }
 
         private string ConvertSignMessagesFooter(bool showMessageSender)

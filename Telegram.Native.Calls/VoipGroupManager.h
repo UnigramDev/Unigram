@@ -6,6 +6,7 @@
 #include "rtc_base/synchronization/mutex.h"
 
 #include <winrt/Telegram.Td.Api.h>
+#include <mutex>
 
 using namespace winrt::Microsoft::Graphics::Canvas::UI::Xaml;
 using namespace winrt::Telegram::Td::Api;
@@ -17,7 +18,7 @@ namespace winrt::Telegram::Native::Calls::implementation
     {
         VoipGroupManager(VoipGroupDescriptor descriptor);
 
-        void Close();
+        void Stop();
 
         void SetConnectionMode(VoipGroupConnectionMode connectionMode, bool keepBroadcastIfWasEnabled, bool isUnifiedBroadcast);
 
@@ -64,9 +65,17 @@ namespace winrt::Telegram::Native::Calls::implementation
 
     private:
         std::unique_ptr<tgcalls::GroupInstanceCustomImpl> m_impl = nullptr;
+        std::mutex m_lock;
 
         bool m_isMuted = true;
         bool m_isNoiseSuppressionEnabled = true;
+
+        void OnNetworkStateUpdated(tgcalls::GroupNetworkState state);
+        void OnAudioLevelsUpdated(tgcalls::GroupLevelsUpdate const& levels);
+        std::shared_ptr<tgcalls::BroadcastPartTask> OnRequestCurrentTime(std::function<void(int64_t)> done);
+        std::shared_ptr<tgcalls::BroadcastPartTask> OnRequestVideoBroadcastPart(int64_t time, int64_t period, int32_t channel, tgcalls::VideoChannelDescription::Quality quality, std::function<void(tgcalls::BroadcastPart&&)> done);
+        std::shared_ptr<tgcalls::BroadcastPartTask> OnRequestAudioBroadcastPart(int64_t time, int64_t period, std::function<void(tgcalls::BroadcastPart&&)> done);
+        std::shared_ptr<tgcalls::RequestMediaChannelDescriptionTask> OnRequestMediaChannelDescriptions(const std::vector<uint32_t>& ssrcs, std::function<void(std::vector<tgcalls::MediaChannelDescription>&&)> done);
 
         winrt::event<Windows::Foundation::TypedEventHandler<
             winrt::Telegram::Native::Calls::VoipGroupManager,

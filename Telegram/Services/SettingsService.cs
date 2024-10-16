@@ -62,7 +62,6 @@ namespace Telegram.Services
         bool IsSendByEnterEnabled { get; set; }
         bool IsReplaceEmojiEnabled { get; set; }
         bool IsContactsSyncEnabled { get; set; }
-        bool IsContactsSyncRequested { get; set; }
         bool IsContactsSortedByEpoch { get; set; }
         bool IsSecretPreviewsEnabled { get; set; }
         bool AutoPlayAnimations { get; set; }
@@ -513,15 +512,8 @@ namespace Telegram.Services
         private bool? _isContactsSyncEnabled;
         public bool IsContactsSyncEnabled
         {
-            get => _isContactsSyncEnabled ??= GetValueOrDefault("IsContactsSyncEnabled", true);
+            get => _isContactsSyncEnabled ??= GetValueOrDefault("IsContactsSyncEnabled", false);
             set => AddOrUpdateValue(ref _isContactsSyncEnabled, "IsContactsSyncEnabled", value);
-        }
-
-        private bool? _isContactsSyncRequested;
-        public bool IsContactsSyncRequested
-        {
-            get => _isContactsSyncRequested ??= GetValueOrDefault("IsContactsSyncRequested", false);
-            set => AddOrUpdateValue(ref _isContactsSyncRequested, "IsContactsSyncRequested", value);
         }
 
         private bool? _isContactsSortedByEpoch;

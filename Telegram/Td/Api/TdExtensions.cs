@@ -16,7 +16,9 @@ using System.Text;
 using System.Threading;
 using Telegram.Common;
 using Telegram.Controls.Chats;
+using Telegram.Converters;
 using Telegram.Native;
+using Telegram.Services.Calls;
 using Telegram.Td.Api;
 using Telegram.ViewModels;
 using Windows.UI;
@@ -56,6 +58,43 @@ namespace Telegram.Td.Api
             }
 
             return last >= 24 * 60 * 7 - 1;
+        }
+
+        public static bool IsHls(this MessageVideo video)
+        {
+            if (video.Video.Duration == 0 || video.AlternativeVideos.Count == 0)
+            {
+                return false;
+            }
+
+            foreach (var alternative in video.AlternativeVideos)
+            {
+                if (alternative.Width == 0 || alternative.Height == 0)
+                {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
+        public static string TotalText(this Gift gift)
+        {
+            if (gift.TotalCount >= 10000)
+            {
+                return Formatter.ShortNumber(gift.TotalCount);
+            }
+
+            return gift.TotalCount.ToString();
+        }
+
+        public static string RemainingText(this Gift gift)
+        {
+            return gift.RemainingCount switch
+            {
+                0 => string.Format(Strings.Gift2AvailabilityValueNone, gift.TotalCount),
+                _ => Locale.Declension(Strings.R.Gift2Availability4Value, gift.RemainingCount, gift.TotalCount)
+            };
         }
 
         public static int CountUnread(this ChatActiveStories activeStories, out bool closeFriends)
@@ -1763,6 +1802,33 @@ namespace Telegram.Td.Api
             return years;
         }
 
+        public static bool AreTheSame(this ChatFolder x, ChatFolder y)
+        {
+            if (x == null || y == null)
+            {
+                return x == y;
+            }
+
+            var xIcon = x.Icon?.Name ?? string.Empty;
+            var yIcon = y.Icon?.Name ?? string.Empty;
+
+            return xIcon == yIcon
+                && x.ColorId == y.ColorId
+                && x.Title == y.Title
+                && x.IsShareable == y.IsShareable
+                && x.ExcludeArchived == y.ExcludeArchived
+                && x.ExcludeMuted == y.ExcludeMuted
+                && x.ExcludeRead == y.ExcludeRead
+                && x.IncludeBots == y.IncludeBots
+                && x.IncludeChannels == y.IncludeChannels
+                && x.IncludeContacts == y.IncludeContacts
+                && x.IncludeGroups == y.IncludeGroups
+                && x.IncludeNonContacts == y.IncludeNonContacts
+                && x.ExcludedChatIds.SequenceEqual(y.ExcludedChatIds)
+                && x.IncludedChatIds.SequenceEqual(y.IncludedChatIds)
+                && x.PinnedChatIds.SequenceEqual(y.PinnedChatIds);
+        }
+
         public static InputBusinessStartPage ToInput(this BusinessStartPage x)
         {
             if (x == null)
@@ -2118,7 +2184,7 @@ namespace Telegram.Td.Api
             return Converters.Formatter.DateAt(messageVideoChatScheduled.StartDate);
         }
 
-        public static string GetStartsAt(this GroupCall groupCall)
+        public static string GetStartsAt(this VoipGroupCall groupCall)
         {
             var date = Converters.Formatter.ToLocalTime(groupCall.ScheduledStartDate);
             if (date.Date == DateTime.Today)
@@ -2190,6 +2256,29 @@ namespace Telegram.Td.Api
         }
 
         public static string GetStartsIn(this GroupCall groupCall)
+        {
+            var date = Converters.Formatter.ToLocalTime(groupCall.ScheduledStartDate);
+            var duration = date - DateTime.Now;
+
+            if (Math.Abs(duration.TotalDays) >= 7)
+            {
+                return Locale.Declension(Strings.R.Weeks, 1);
+            }
+            if (Math.Abs(duration.TotalDays) >= 1)
+            {
+                return Locale.Declension(Strings.R.Days, (int)Math.Round(duration.TotalSeconds / (24 * 60 * 60.0f)));
+            }
+            else if (Math.Abs(duration.TotalHours) >= 1)
+            {
+                return (duration.TotalSeconds < 0 ? "-" : "") + duration.ToString("h\\:mm\\:ss");
+            }
+            else
+            {
+                return (duration.TotalSeconds < 0 ? "-" : "") + duration.ToString("mm\\:ss");
+            }
+        }
+
+        public static string GetStartsIn(this VoipGroupCall groupCall)
         {
             var date = Converters.Formatter.ToLocalTime(groupCall.ScheduledStartDate);
             var duration = date - DateTime.Now;
@@ -2402,21 +2491,31 @@ namespace Telegram.Td.Api
             return basicGroup.Status is ChatMemberStatusCreator || basicGroup.Status is ChatMemberStatusAdministrator administrator && administrator.Rights.CanDeleteMessages;
         }
 
-        public static bool CanChangeInfo(this BasicGroup basicGroup)
+        public static bool CanChangeInfo(this BasicGroup basicGroup, Chat chat)
         {
             if (basicGroup.Status == null)
             {
                 return false;
             }
 
+            if (basicGroup.Status is ChatMemberStatusMember)
+            {
+                return chat.Permissions.CanChangeInfo;
+            }
+
             return basicGroup.Status is ChatMemberStatusCreator || basicGroup.Status is ChatMemberStatusAdministrator administrator && administrator.Rights.CanChangeInfo;
         }
 
-        public static bool CanChangeInfo(this Supergroup supergroup)
+        public static bool CanChangeInfo(this Supergroup supergroup, Chat chat)
         {
             if (supergroup.Status == null)
             {
                 return false;
+            }
+
+            if (supergroup.Status is ChatMemberStatusMember)
+            {
+                return chat.Permissions.CanChangeInfo;
             }
 
             return supergroup.Status is ChatMemberStatusCreator || supergroup.Status is ChatMemberStatusAdministrator administrator && administrator.Rights.CanChangeInfo;

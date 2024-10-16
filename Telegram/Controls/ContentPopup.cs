@@ -29,6 +29,7 @@ namespace Telegram.Controls
     {
         private ContentDialogResult _result;
 
+        private Grid LayoutRoot;
         private Border AnimationElement;
         private Border BackgroundElement;
         private Border BorderElement;
@@ -59,7 +60,21 @@ namespace Telegram.Controls
             Connected += OnLoaded;
             Disconnected += OnUnloaded;
 
-            ElementCompositionPreview.SetIsTranslationEnabled(this, true);
+            CloseButtonClick += OnCloseButtonClick;
+        }
+
+        private void OnCloseButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
+        {
+            // For some weird reason, there's no ContentDialogResult.Close, so we hack it around.
+
+            var result = CloseButtonResult;
+            if (result == ContentDialogResult.None)
+            {
+                return;
+            }
+
+            _ = Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () => Hide(result));
+            args.Cancel = true;
         }
 
         private void OnSizeChanged(object sender, SizeChangedEventArgs e)
@@ -73,7 +88,7 @@ namespace Telegram.Controls
             AnimationElement.Width = e.NewSize.Width;
             AnimationElement.Height = e.NewSize.Height;
 
-            if (e.PreviousSize.Height == 0 || e.NewSize.Height == 0 || e.PreviousSize.Height == e.NewSize.Height)
+            if (e.PreviousSize.Height == 0 || e.NewSize.Height == 0 || e.PreviousSize.Height == e.NewSize.Height || VerticalContentAlignment == VerticalAlignment.Stretch)
             {
                 return;
             }
@@ -85,7 +100,7 @@ namespace Telegram.Controls
             var transform = CommandSpace.TransformToVisual(ContentElement);
             var point = transform.TransformVector2();
 
-            var visual = ElementComposition.GetElementVisual(this);
+            var visual = ElementComposition.GetElementVisual(LayoutRoot);
             var content = ElementComposition.GetElementVisual(ContentElement);
             var background = ElementComposition.GetElementVisual(BackgroundElement);
             var border = ElementComposition.GetElementVisual(BorderElement);
@@ -93,7 +108,7 @@ namespace Telegram.Controls
             var clip = compositor.CreateInsetClip();
             content.Clip = clip;
 
-            var redirect = compositor.CreateRedirectVisual(CommandSpace, Vector2.Zero, CommandSpace.ActualSize);
+            var redirect = compositor.CreateRedirectVisual(CommandSpace, Vector2.Zero, new Vector2(CommandSpace.ActualSize.X, CommandSpace.ActualSize.Y * 2));
             redirect.Offset = new Vector3(point.X, 0, 0);
 
             var translate = compositor.CreateScalarKeyFrameAnimation();
@@ -115,7 +130,7 @@ namespace Telegram.Controls
             var batch = compositor.CreateScopedBatch(CompositionBatchTypes.Animation);
             batch.Completed += Batch_Completed;
 
-            visual.StartAnimation("Translation.Y", translate);
+            visual.StartAnimation("Offset.Y", translate);
             background.StartAnimation("Scale.Y", scale);
             border.StartAnimation("Scale.Y", scale);
             redirect.StartAnimation("Offset.Y", offset);
@@ -150,9 +165,9 @@ namespace Telegram.Controls
 
         private void OnLoaded(object sender, RoutedEventArgs e)
         {
-            if (XamlRoot.Content is RootPage root)
+            if (XamlRoot.Content is IPopupHost host)
             {
-                root.PopupOpened();
+                host.PopupOpened();
             }
 
             var context = WindowContext.ForXamlRoot(this);
@@ -183,9 +198,9 @@ namespace Telegram.Controls
         {
             try
             {
-                if (XamlRoot.Content is RootPage root)
+                if (XamlRoot.Content is IPopupHost host)
                 {
-                    root.PopupClosed();
+                    host.PopupClosed();
                 }
             }
             catch
@@ -254,12 +269,18 @@ namespace Telegram.Controls
             AnimationElement = GetTemplateChild(nameof(AnimationElement)) as Border;
             BackgroundElement = GetTemplateChild(nameof(BackgroundElement)) as Border;
             BorderElement = GetTemplateChild(nameof(BorderElement)) as Border;
-
             ContentElement = GetTemplateChild(nameof(ContentElement)) as Border;
+            LayoutRoot = GetTemplateChild(nameof(LayoutRoot)) as Grid;
 
             if (ContentElement != null)
             {
                 ContentElement.SizeChanged += OnSizeChanged;
+            }
+
+
+            if (LayoutRoot != null)
+            {
+                ElementCompositionPreview.SetIsTranslationEnabled(LayoutRoot, true);
             }
         }
 
@@ -389,6 +410,19 @@ namespace Telegram.Controls
                 }
             }
         }
+
+        #endregion
+
+        #region CloseButtonResult
+
+        public ContentDialogResult CloseButtonResult
+        {
+            get { return (ContentDialogResult)GetValue(CloseButtonResultProperty); }
+            set { SetValue(CloseButtonResultProperty, value); }
+        }
+
+        public static readonly DependencyProperty CloseButtonResultProperty =
+            DependencyProperty.Register("CloseButtonResult", typeof(ContentDialogResult), typeof(ContentPopup), new PropertyMetadata(ContentDialogResult.None));
 
         #endregion
 

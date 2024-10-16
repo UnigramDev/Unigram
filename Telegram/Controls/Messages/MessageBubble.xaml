@@ -1,9 +1,9 @@
 <ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-                    xmlns:local="using:Telegram.Controls.Messages"
-                    xmlns:controls="using:Telegram.Controls"
                     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                    xmlns:controls="using:Telegram.Controls"
+                    xmlns:local="using:Telegram.Controls.Messages"
                     mc:Ignorable="d">
 
     <Style TargetType="local:MessageBubble">
@@ -143,13 +143,18 @@
                                 </VisualState>
                             </VisualStateGroup>
                         </VisualStateManager.VisualStateGroups>
-                        <controls:ProfilePicture x:Name="Photo"
-                                                 x:Load="False"
-                                                 IsTabStop="False"
-                                                 HorizontalAlignment="Left"
-                                                 VerticalAlignment="Bottom"
-                                                 Width="30"
-                                                 Height="30" />
+                        <HyperlinkButton x:Name="PhotoRoot"
+                                         x:Load="False"
+                                         Style="{StaticResource EmptyHyperlinkButtonStyle}"
+                                         IsTabStop="False"
+                                         HorizontalAlignment="Left"
+                                         VerticalAlignment="Bottom"
+                                         Width="30"
+                                         Height="30">
+                            <controls:ProfilePicture x:Name="Photo"
+                                                     Width="30"
+                                                     Height="30" />
+                        </HyperlinkButton>
 
                         <Grid x:Name="ContentPanel"
                               Background="{ThemeResource MessageBackgroundBrush}"

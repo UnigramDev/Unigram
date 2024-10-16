@@ -24,7 +24,7 @@ namespace Telegram.Views.Host
         }
     }
 
-    public sealed partial class StandalonePage : Page, IToastHost
+    public sealed partial class StandalonePage : Page, IPopupHost, IToastHost
     {
         private readonly INavigationService _navigationService;
         private readonly IShortcutsService _shortcutsService;
@@ -79,6 +79,16 @@ namespace Telegram.Views.Host
                     _navigationService.Frame.Resources.Remove("TeachingTip");
                 }
             }
+        }
+
+        public void PopupOpened()
+        {
+            NavigationService.Window.SetTitleBar(null);
+        }
+
+        public void PopupClosed()
+        {
+            NavigationService.Window.SetTitleBar(TitleBarHandle);
         }
 
         private void OnNavigating(object sender, NavigatingEventArgs e)

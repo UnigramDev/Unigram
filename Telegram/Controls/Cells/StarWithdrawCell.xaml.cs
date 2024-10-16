@@ -87,7 +87,7 @@ namespace Telegram.Controls.Cells
 
             if (diff > TimeSpan.Zero)
             {
-                TransferCountdown.Text = Icons.LockClosedFilled12 + Icons.Spacing + diff.GetDuration();
+                TransferCountdown.Text = Icons.LockClosedFilled12 + Icons.Spacing + diff.ToDuration();
                 TransferCountdown.Visibility = Visibility.Visible;
                 TransferText.Margin = new Thickness(0, -4, 0, 0);
             }

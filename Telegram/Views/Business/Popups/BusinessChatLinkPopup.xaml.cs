@@ -33,6 +33,7 @@ namespace Telegram.Views.Business.Popups
 
             EmojiPanel.DataContext = EmojiDrawerViewModel.Create(viewModel.SessionId);
             CaptionInput.DataContext = viewModel;
+            CaptionInput.CustomEmoji = CustomEmoji;
             CaptionInput.SetText(chatLink.Text);
         }
 

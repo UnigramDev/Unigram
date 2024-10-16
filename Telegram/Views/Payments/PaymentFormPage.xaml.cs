@@ -9,12 +9,13 @@ using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media;
 using Telegram.Common;
 using Telegram.Converters;
+using Telegram.Navigation;
 using Telegram.Td.Api;
 using Telegram.ViewModels.Payments;
 
 namespace Telegram.Views.Payments
 {
-    public sealed partial class PaymentFormPage : HostedPage
+    public sealed partial class PaymentFormPage : Page
     {
         public PaymentFormViewModel ViewModel => DataContext as PaymentFormViewModel;
 
@@ -23,6 +24,13 @@ namespace Telegram.Views.Payments
             InitializeComponent();
 
             VisualUtilities.DropShadow(BuyShadow);
+
+            Window.Current.SetTitleBar(TitleBar);
+
+            var coreWindow = (IInternalCoreWindowPhone)(object)Window.Current.CoreWindow;
+            var navigationClient = (IApplicationWindowTitleBarNavigationClient)coreWindow.NavigationClient;
+
+            navigationClient.TitleBarPreferredVisibilityMode = AppWindowTitleBarVisibility.AlwaysHidden;
         }
 
         private string ConvertTitle(bool receipt, bool test)
@@ -106,5 +114,47 @@ namespace Telegram.Views.Payments
                 args.Handled = true;
             }
         }
+
+        private void HideButton_Click(object sender, RoutedEventArgs e)
+        {
+            Close();
+        }
+
+        public async void Close()
+        {
+            if (XamlRoot?.Content is RootPage root)
+            {
+                root.PresentContent(null);
+                return;
+            }
+
+            await WindowContext.Current.ConsolidateAsync();
+        }
+
+        #region Title
+
+
+        //public string Title
+        //{
+        //    get { return (string)GetValue(TitleProperty); }
+        //    set { SetValue(TitleProperty, value); }
+        //}
+
+        //// Using a DependencyProperty as the backing store for Title.  This enables animation, styling, binding, etc...
+        //public static readonly DependencyProperty TitleProperty =
+        //    DependencyProperty.Register("Title", typeof(string), typeof(PaymentFormPage), new PropertyMetadata(string.Empty, OnTitleChanged));
+
+        //private static void OnTitleChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        //{
+        //    ((PaymentFormPage)d).OnTitleChanged((string)e.NewValue, (string)e.OldValue);
+        //}
+
+        //private void OnTitleChanged(string newValue, string oldValue)
+        //{
+        //    TitleText.Text = newValue;
+        //    WindowContext.Current.Title = newValue;
+        //}
+
+        #endregion
     }
 }

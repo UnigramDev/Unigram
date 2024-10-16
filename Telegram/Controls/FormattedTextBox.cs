@@ -44,7 +44,8 @@ namespace Telegram.Controls
         Spoiler = 32,
         Quote = 64,
         TextUrl = 128,
-        All = Bold | Italic | Underline | Strikethrough | Mono | Spoiler | Quote | TextUrl
+        CustomEmoji = 256,
+        All = Bold | Italic | Underline | Strikethrough | Mono | Spoiler | Quote | TextUrl | CustomEmoji
     }
 
     public partial class FormattedTextBox : RichEditBox
@@ -107,7 +108,7 @@ namespace Telegram.Controls
             CreateKeyboardAccelerator(VirtualKey.N, VirtualKeyModifiers.Control | VirtualKeyModifiers.Shift);
 
             // Overridden but not used
-            CreateKeyboardAccelerator(VirtualKey.E);
+            ProcessKeyboardAccelerators += OnProcessKeyboardAccelerators;
 
             Loaded += OnLoaded;
             Unloaded += OnUnloaded;
@@ -117,6 +118,19 @@ namespace Telegram.Controls
             TextChanged += OnTextChanged;
 
             SelectionChanged += OnSelectionChanged;
+        }
+
+        private void OnProcessKeyboardAccelerators(UIElement sender, ProcessKeyboardAcceleratorEventArgs args)
+        {
+            if (args.Modifiers == (VirtualKeyModifiers.Control | VirtualKeyModifiers.Shift))
+            {
+                args.Handled = args.Key is VirtualKey.A or VirtualKey.L;
+                args.Handled |= (int)args.Key is 188 or 190;
+            }
+            else if (args.Modifiers == VirtualKeyModifiers.Control)
+            {
+                args.Handled = args.Key is VirtualKey.E or VirtualKey.L or VirtualKey.R or VirtualKey.J;
+            }
         }
 
         private void OnCopyingToClipboard(RichEditBox sender, TextControlCopyingToClipboardEventArgs args)
@@ -380,7 +394,7 @@ namespace Telegram.Controls
             clone.StartOf(TextRangeUnit.Link, true);
             var mention = TryGetUserId(clone, out long userId);
 
-            flyout.CreateFlyoutItem(Document.CanUndo(), ContextUndo_Click, Strings.Undo, Icons.ArrowUndo, VirtualKey.Z);
+            flyout.CreateFlyoutItem(Document.CanUndo(), ContextUndo_Click, Strings.TextUndo, Icons.ArrowUndo, VirtualKey.Z);
             flyout.CreateFlyoutItem(Document.CanRedo(), ContextRedo_Click, Strings.Redo, Icons.ArrowRedo, VirtualKey.Y);
             flyout.CreateFlyoutSeparator();
             flyout.CreateFlyoutItem(length && Document.CanCopy(), ContextCut_Click, Strings.Cut, Icons.Cut, VirtualKey.X);

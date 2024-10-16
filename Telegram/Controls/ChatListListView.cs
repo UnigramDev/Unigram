@@ -463,6 +463,11 @@ namespace Telegram.Controls
             _recognizer = new GestureRecognizer();
             _recognizer.GestureSettings = GestureSettings.HoldWithMouse;
 
+            AddHandler(PointerPressedEvent, new PointerEventHandler(OnPointerPressed), true);
+            AddHandler(PointerMovedEvent, new PointerEventHandler(OnPointerMoved), true);
+            AddHandler(PointerCanceledEvent, new PointerEventHandler(OnPointerCanceled), true);
+            AddHandler(PointerReleasedEvent, new PointerEventHandler(OnPointerReleased), true);
+
             Connected += OnLoaded;
             Disconnected += OnUnloaded;
         }
@@ -527,28 +532,24 @@ namespace Telegram.Controls
             }
         }
 
-        protected override void OnPointerPressed(PointerRoutedEventArgs e)
+        private void OnPointerPressed(object sender, PointerRoutedEventArgs e)
         {
             _recognizer.TryProcessDownEvent(e.GetCurrentPoint(this));
-            base.OnPointerPressed(e);
         }
 
-        protected override void OnPointerMoved(PointerRoutedEventArgs e)
+        private void OnPointerMoved(object sender, PointerRoutedEventArgs e)
         {
             _recognizer.TryProcessMoveEvents(e.GetIntermediatePoints(this));
-            base.OnPointerMoved(e);
         }
 
-        protected override void OnPointerCanceled(PointerRoutedEventArgs e)
+        private void OnPointerCanceled(object sender, PointerRoutedEventArgs e)
         {
             _recognizer.TryCompleteGesture();
-            base.OnPointerCanceled(e);
         }
 
-        protected override void OnPointerReleased(PointerRoutedEventArgs e)
+        private void OnPointerReleased(object sender, PointerRoutedEventArgs e)
         {
             _recognizer.TryProcessUpEvent(e.GetCurrentPoint(this));
-            base.OnPointerReleased(e);
         }
     }
 

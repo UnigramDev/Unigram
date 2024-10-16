@@ -102,7 +102,7 @@ namespace Telegram.Views.Settings.Password
 
         public PasswordState PasswordState { get; private set; }
 
-        private async void ContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
+        private async void OnPrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
         {
             try
             {
@@ -155,10 +155,6 @@ namespace Telegram.Views.Settings.Password
             }
 
             IsPrimaryButtonEnabled = true;
-        }
-
-        private void ContentDialog_SecondaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
-        {
         }
 
         private void Field_TextChanged(object sender, TextChangedEventArgs e)

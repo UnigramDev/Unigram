@@ -21,17 +21,20 @@ using Telegram.Converters;
 using Telegram.Entities;
 using Telegram.Native;
 using Telegram.Services;
+using Telegram.Streams;
 using Telegram.Td;
 using Telegram.Td.Api;
 using Telegram.ViewModels.Chats;
 using Telegram.Views.Chats;
 using Telegram.Views.Popups;
+using Telegram.Views.Stars.Popups;
 using Telegram.Views.Users;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.Foundation;
 using Windows.Storage.Streams;
 using Windows.System;
 using static Telegram.Services.GenerationService;
+using User = Telegram.Td.Api.User;
 
 namespace Telegram.ViewModels
 {
@@ -1294,6 +1297,10 @@ namespace Telegram.ViewModels
                     NavigationService.NavigateToWebApp(botUser, webAppInfo.Url, webAppInfo.LaunchId, null, chat);
                 }
             }
+            else if (inline.Type is InlineKeyboardButtonTypeCopyText copyText)
+            {
+                MessageHelper.CopyText(XamlRoot, copyText.Text);
+            }
         }
 
         public async void KeyboardButtonExecute(MessageViewModel message, KeyboardButton keyboardButton)
@@ -1363,6 +1370,29 @@ namespace Telegram.ViewModels
             else if (keyboardButton.Type is KeyboardButtonTypeRequestChat requestChat)
             {
                 await NavigationService.ShowPopupAsync(new ChooseChatsPopup(), new ChooseChatsConfigurationRequestChat(requestChat));
+            }
+        }
+
+        public async void OpenMiniApp(string url)
+        {
+            var chat = _chat;
+            if (chat == null || !ClientService.TryGetUser(chat, out Td.Api.User botUser))
+            {
+                return;
+            }
+
+            var info = await ClientService.SendAsync(new GetInternalLinkType(url));
+            if (info is InternalLinkTypeWebApp webApp)
+            {
+                MessageHelper.NavigateToWebApp(ClientService, NavigationService, webApp.BotUsername, webApp.StartParameter, webApp.WebAppShortName, new OpenUrlSourceChat(chat.Id));
+            }
+            else
+            {
+                var response = await ClientService.SendAsync(new OpenWebApp(chat.Id, botUser.Id, url, Theme.Current.Parameters, Strings.AppName, ThreadId, null));
+                if (response is WebAppInfo webAppInfo)
+                {
+                    NavigationService.NavigateToWebApp(botUser, webAppInfo.Url, webAppInfo.LaunchId, null, chat);
+                }
             }
         }
 
@@ -1624,7 +1654,7 @@ namespace Telegram.ViewModels
             }
             else if (message.Content is MessageVideoChatStarted or MessageVideoChatScheduled)
             {
-                await _voipGroupService.JoinAsync(XamlRoot, message.ChatId);
+                _voipService.JoinGroupCall(NavigationService, message.ChatId);
             }
             else if (message.Content is MessagePaymentSuccessful)
             {
@@ -1682,7 +1712,7 @@ namespace Telegram.ViewModels
 
                     if (sameBackground && (userFull == null || userFull.SetChatBackground))
                     {
-                        var confirm = await ShowPopupAsync(Strings.RemoveWallpaperMessage, Strings.RemoveWallpaperTitle, Strings.RemoveWallpaperAction, Strings.Cancel, true);
+                        var confirm = await ShowPopupAsync(Strings.RemoveWallpaperMessage, Strings.RemoveWallpaperTitle, Strings.RemoveWallpaperAction, Strings.Cancel, destructive: true);
                         if (confirm == ContentDialogResult.Primary)
                         {
                             ClientService.Send(new DeleteChatBackground(message.ChatId, true));
@@ -1701,6 +1731,44 @@ namespace Telegram.ViewModels
             else if (message.Content is MessageGiveawayCompleted giveawayCompleted)
             {
                 await LoadMessageSliceAsync(message.Id, giveawayCompleted.GiveawayMessageId);
+            }
+            else if (message.Content is MessageGift gift && ClientService.TryGetUser(message.Chat, out User user))
+            {
+                var senderUserId = message.SenderId is MessageSenderUser senderUser ? senderUser.UserId : 0;
+                var userId = senderUserId == user.Id ? ClientService.Options.MyId : user.Id;
+
+                var userGift = new UserGift(senderUserId, gift.Text, gift.IsPrivate, gift.IsSaved, message.Date, gift.Gift, message.Id, gift.SellStarCount);
+
+                var confirm = await ShowPopupAsync(new ReceiptPopup(ClientService, NavigationService, userGift, userId));
+                if (confirm == ContentDialogResult.Primary)
+                {
+                    var response = await ClientService.SendAsync(new ToggleGiftIsSaved(userGift.SenderUserId, userGift.MessageId, !userGift.IsSaved));
+                    if (response is Ok)
+                    {
+                        if (userGift.IsSaved)
+                        {
+                            ToastPopup.Show(XamlRoot, string.Format("**{0}**\n{1}", Strings.Gift2MadePrivateTitle, Strings.Gift2MadePrivate), new DelayedFileSource(ClientService, userGift.Gift.Sticker));
+                        }
+                        else
+                        {
+                            ToastPopup.Show(XamlRoot, string.Format("**{0}**\n{1}", Strings.Gift2MadePublicTitle, Strings.Gift2MadePublic), new DelayedFileSource(ClientService, userGift.Gift.Sticker));
+                        }
+                    }
+                }
+            }
+            else if (message.Content is MessageGiftedStars giftedStars)
+            {
+                StarTransactionPartner partner;
+                if (message.SenderId is MessageSenderUser senderUser)
+                {
+                    partner = new StarTransactionPartnerUser(senderUser.UserId, new UserTransactionPurposeGiftedStars(giftedStars.Sticker));
+                }
+                else
+                {
+                    return;
+                }
+
+                await ShowPopupAsync(new Views.Stars.Popups.ReceiptPopup(ClientService, NavigationService, new StarTransaction(giftedStars.TransactionId, giftedStars.StarCount, false, message.Date, partner)));
             }
         }
 

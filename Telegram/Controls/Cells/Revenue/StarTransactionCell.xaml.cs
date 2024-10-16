@@ -116,6 +116,8 @@ namespace Telegram.Controls.Cells.Revenue
 
                 MediaPreview.Visibility = Visibility.Visible;
 
+                Photo.Source = null;
+
                 UpdateMedia(clientService, sourceBusiness.Media[0], Media1, ref _media1Token);
 
                 if (sourceBusiness.Media.Count > 1)
@@ -131,15 +133,31 @@ namespace Telegram.Controls.Cells.Revenue
             }
             else if (transaction.Partner is StarTransactionPartnerUser sourceUser && clientService.TryGetUser(sourceUser.UserId, out User user))
             {
-                Title.Text = transaction.StarCount < 0
-                    ? Strings.StarsGiftSent
-                    : Strings.StarsGiftReceived;
-                Subtitle.Text = user.FullName();
                 Subtitle.Visibility = Visibility.Visible;
-
                 Photo.SetUser(clientService, user, 36);
-
                 MediaPreview.Visibility = Visibility.Collapsed;
+
+                if (sourceUser.Purpose is UserTransactionPurposeGiftedStars giftedStars)
+                {
+                    Title.Text = transaction.StarCount < 0
+                        ? Strings.StarsGiftSent
+                        : Strings.StarsGiftReceived;
+                    Subtitle.Text = user.FullName();
+                }
+                else if (sourceUser.Purpose is UserTransactionPurposeGiftSell giftSell)
+                {
+                    Title.Text = user.FullName();
+                    Subtitle.Text = transaction.StarCount < 0
+                        ? Strings.Gift2TransactionRefundedConverted
+                        : Strings.Gift2TransactionConverted;
+                }
+                else if (sourceUser.Purpose is UserTransactionPurposeGiftSend giftSend)
+                {
+                    Title.Text = user.FullName();
+                    Subtitle.Text = transaction.StarCount < 0
+                        ? Strings.Gift2TransactionSent
+                        : Strings.Gift2TransactionRefundedSent;
+                }
             }
             else if (transaction.Partner is StarTransactionPartnerChat sourceChat && clientService.TryGetChat(sourceChat.ChatId, out Chat chat))
             {

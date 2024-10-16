@@ -5,6 +5,7 @@
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
 using Microsoft.Graphics.Canvas;
+using Microsoft.UI.Xaml.Hosting;
 using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Media.Imaging;
 using System;
@@ -568,7 +569,7 @@ namespace Telegram.Common
 
         public static async Task<IRandomAccessStream> DrawStrokesAsync(SoftwareBitmap file, IReadOnlyList<SmoothPathBuilder> strokes, Rect rectangle, BitmapRotation rotation, BitmapFlip flip)
         {
-            var device = CanvasDevice.GetSharedDevice();
+            var device = ElementComposition.GetSharedDevice();
             var bitmap = CanvasBitmap.CreateFromSoftwareBitmap(device, file);
             var canvas1 = new CanvasRenderTarget(device, (float)bitmap.Size.Width, (float)bitmap.Size.Height, bitmap.Dpi);
             var canvas2 = new CanvasRenderTarget(device, (float)bitmap.Size.Width, (float)bitmap.Size.Height, bitmap.Dpi);
@@ -668,7 +669,7 @@ namespace Telegram.Common
 
         public static async Task<StorageFile> DrawStrokesAsync(StorageFile file, IReadOnlyList<SmoothPathBuilder> strokes, Rect rectangle, BitmapRotation rotation, BitmapFlip flip)
         {
-            var device = CanvasDevice.GetSharedDevice();
+            var device = ElementComposition.GetSharedDevice();
             var bitmap = await CanvasBitmap.LoadAsync(device, file.Path);
             var canvas1 = new CanvasRenderTarget(device, (float)bitmap.Size.Width, (float)bitmap.Size.Height, bitmap.Dpi);
             var canvas2 = new CanvasRenderTarget(device, (float)bitmap.Size.Width, (float)bitmap.Size.Height, bitmap.Dpi);

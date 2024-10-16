@@ -7,7 +7,6 @@
 using Microsoft.UI.Xaml;
 using System.Linq;
 using Telegram.Controls.Media;
-using Telegram.Converters;
 using Telegram.Td.Api;
 using Telegram.ViewModels.Delegates;
 using Telegram.ViewModels.Supergroups;
@@ -83,13 +82,20 @@ namespace Telegram.Views.Supergroups
 
             ViewModel.Title = chat.Title;
 
-            Photo.IsEnabled = group.CanChangeInfo();
-            TitleLabel.IsReadOnly = !group.CanChangeInfo();
-            About.IsReadOnly = !group.CanChangeInfo();
+            var canChangeInfo = group.CanChangeInfo(chat);
+            var canInviteUsers = group.CanInviteUsers();
+            var canRestrictMembers = group.CanRestrictMembers();
+            var hasActiveUsername = group.HasActiveUsername();
+
+            TitleLabel.IsReadOnly = !canChangeInfo;
+            About.IsReadOnly = !canChangeInfo;
+            SetNewPhoto.Visibility = canChangeInfo
+                ? Visibility.Visible
+                : Visibility.Collapsed;
 
             ChatType.Content = group.IsChannel ? Strings.ChannelType : Strings.GroupType;
             ChatType.Glyph = group.IsChannel ? Icons.Megaphone : Icons.People;
-            ChatType.Badge = group.HasActiveUsername()
+            ChatType.Badge = hasActiveUsername
                 ? group.IsChannel
                     ? Strings.TypePublic
                     : Strings.TypePublicGroup
@@ -101,11 +107,15 @@ namespace Telegram.Views.Supergroups
                         ? Strings.TypePrivateGroupRestrictedForwards
                         : Strings.TypePrivateGroup;
 
-            ChatHistory.Visibility = group.CanChangeInfo() && !group.HasActiveUsername() && !group.IsChannel ? Visibility.Visible : Visibility.Collapsed;
+            ChatHistory.Visibility = canChangeInfo && !hasActiveUsername && !group.IsChannel
+                ? Visibility.Visible
+                : Visibility.Collapsed;
 
-            InviteLinkPanel.Visibility = group.CanInviteUsers() ? Visibility.Visible : Visibility.Collapsed;
+            InviteLinks.Visibility = canInviteUsers && !hasActiveUsername
+                ? Visibility.Visible
+                : Visibility.Collapsed;
 
-            if (group.CanChangeInfo())
+            if (canChangeInfo)
             {
                 if (ViewModel.IsPremiumAvailable)
                 {
@@ -128,7 +138,7 @@ namespace Telegram.Views.Supergroups
             ChatLinked.Badge = group.HasLinkedChat ? string.Empty : Strings.DiscussionInfo;
 
             Permissions.Badge = string.Format("{0}/{1}", chat.Permissions.Count(), chat.Permissions.Total());
-            Permissions.Visibility = group.IsChannel || !group.CanRestrictMembers() ? Visibility.Collapsed : Visibility.Visible;
+            Permissions.Visibility = group.IsChannel || !canRestrictMembers ? Visibility.Collapsed : Visibility.Visible;
 
             DeletePanel.Visibility = group.Status is ChatMemberStatusCreator ? Visibility.Visible : Visibility.Collapsed;
 
@@ -165,41 +175,15 @@ namespace Telegram.Views.Supergroups
             Members.Badge = fullInfo.MemberCount;
             Blacklist.Badge = fullInfo.BannedCount;
 
-            if (group.CanInviteUsers())
-            {
-                if (group.HasActiveUsername(out string username))
-                {
-                    InviteLink.Text = MeUrlPrefixConverter.Convert(ViewModel.ClientService, group.ActiveUsername());
-                    RevokeLink.Visibility = Visibility.Collapsed;
-                    InviteLinkPanel.Visibility = Visibility.Visible;
-                }
-                else if (fullInfo.InviteLink != null)
-                {
-                    InviteLink.Text = fullInfo.InviteLink?.InviteLink;
-                    RevokeLink.Visibility = Visibility.Visible;
-                    InviteLinkPanel.Visibility = Visibility.Visible;
-                }
-                else
-                {
-                    InviteLinkPanel.Visibility = Visibility.Collapsed;
-                    ViewModel.ClientService.Send(new CreateChatInviteLink(chat.Id, string.Empty, 0, 0, false));
-                }
-            }
-            else
-            {
-                InviteLinkPanel.Visibility = Visibility.Collapsed;
-            }
-
             ChatBasicPanel.Visibility = ChatType.Visibility == Visibility.Visible
                 || ChatHistory.Visibility == Visibility.Visible
                 || ChatLinked.Visibility == Visibility.Visible
                     ? Visibility.Visible
                     : Visibility.Collapsed;
 
-            if (fullInfo.StickerSetId == 0 || !fullInfo.CanSetStickerSet)
-            {
-                return;
-            }
+            Statistics.Visibility = fullInfo.CanGetStatistics
+                ? Visibility.Visible
+                : Visibility.Collapsed;
         }
 
 
@@ -218,10 +202,14 @@ namespace Telegram.Views.Supergroups
             ViewModel.Title = chat.Title;
             ViewModel.IsAllHistoryAvailable = 1;
 
+            var canChangeInfo = group.CanChangeInfo(chat);
+            var canInviteUsers = group.CanInviteUsers();
 
-            //Photo.IsEnabled = group.CanChangeInfo();
-            //Title.IsReadOnly = !group.CanChangeInfo();
-            //About.IsReadOnly = !group.CanChangeInfo();
+            TitleLabel.IsReadOnly = !canChangeInfo;
+            About.IsReadOnly = !canChangeInfo;
+            SetNewPhoto.Visibility = canChangeInfo
+                ? Visibility.Visible
+                : Visibility.Collapsed;
 
             ChatType.Glyph = Icons.People;
             ChatType.Content = Strings.GroupType;
@@ -230,7 +218,9 @@ namespace Telegram.Views.Supergroups
 
             ChatHistory.Visibility = group.Status is ChatMemberStatusCreator ? Visibility.Visible : Visibility.Collapsed;
 
-            InviteLinkPanel.Visibility = group.CanInviteUsers() ? Visibility.Visible : Visibility.Collapsed;
+            InviteLinks.Visibility = canInviteUsers
+                ? Visibility.Visible
+                : Visibility.Collapsed;
             ChatLinked.Visibility = Visibility.Collapsed;
             ChannelColor.Visibility = Visibility.Collapsed;
 
@@ -252,25 +242,6 @@ namespace Telegram.Views.Supergroups
             Admins.Badge = fullInfo.Members.Count(x => x.Status is ChatMemberStatusCreator or ChatMemberStatusAdministrator);
             Members.Badge = fullInfo.Members.Count;
             Blacklist.Badge = 0;
-
-            if (group.CanInviteUsers())
-            {
-                if (fullInfo.InviteLink == null)
-                {
-                    InviteLinkPanel.Visibility = Visibility.Collapsed;
-                    ViewModel.ClientService.Send(new CreateChatInviteLink(chat.Id, string.Empty, 0, 0, false));
-                }
-                else
-                {
-                    InviteLink.Text = fullInfo.InviteLink?.InviteLink;
-                    RevokeLink.Visibility = Visibility.Visible;
-                    InviteLinkPanel.Visibility = Visibility.Visible;
-                }
-            }
-            else
-            {
-                InviteLinkPanel.Visibility = Visibility.Collapsed;
-            }
 
             ChatBasicPanel.Visibility = ChatType.Visibility == Visibility.Visible
                 || ChatHistory.Visibility == Visibility.Visible

@@ -11,7 +11,6 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Text.RegularExpressions;
 using System.Threading;
-using Telegram.Streams;
 using Windows.Foundation;
 using Windows.Storage;
 
@@ -62,7 +61,7 @@ namespace Telegram.Common
             //_player.EndReached += OnEndReached;
         }
 
-        public void Play(RemoteFileStream input)
+        public void Play(MediaInput input)
         {
             Write(valid => PlayImpl(input, valid));
         }
@@ -196,7 +195,7 @@ namespace Telegram.Common
 
         #region Events
 
-        public event TypedEventHandler<AsyncMediaPlayer, MediaPlayerVoutEventArgs> Vout;
+        public event TypedEventHandler<AsyncMediaPlayer, EventArgs> Vout;
         public event TypedEventHandler<AsyncMediaPlayer, MediaPlayerESSelectedEventArgs> ESSelected;
         public event TypedEventHandler<AsyncMediaPlayer, EventArgs> EndReached;
         public event TypedEventHandler<AsyncMediaPlayer, MediaPlayerBufferingEventArgs> Buffering;
@@ -210,47 +209,47 @@ namespace Telegram.Common
 
         private void OnVout(object sender, MediaPlayerVoutEventArgs e)
         {
-            Dispatch(() => Vout?.Invoke(this, e));
+            _dispatcherQueue.Dispatch(() => Vout?.Invoke(this, EventArgs.Empty));
         }
 
         private void OnESSelected(object sender, MediaPlayerESSelectedEventArgs e)
         {
-            Dispatch(() => ESSelected?.Invoke(this, e));
+            _dispatcherQueue.Dispatch(() => ESSelected?.Invoke(this, e));
         }
 
         private void OnEndReached(object sender, EventArgs e)
         {
-            Dispatch(() => EndReached?.Invoke(this, e));
+            _dispatcherQueue.Dispatch(() => EndReached?.Invoke(this, EventArgs.Empty));
         }
 
         private void OnBuffering(object sender, MediaPlayerBufferingEventArgs e)
         {
-            Dispatch(() => Buffering?.Invoke(this, e));
+            _dispatcherQueue.Dispatch(() => Buffering?.Invoke(this, e));
         }
 
         private void OnTimeChanged(object sender, MediaPlayerTimeChangedEventArgs e)
         {
-            Dispatch(() => TimeChanged?.Invoke(this, e));
+            _dispatcherQueue.Dispatch(() => TimeChanged?.Invoke(this, e));
         }
 
         private void OnLengthChanged(object sender, MediaPlayerLengthChangedEventArgs e)
         {
-            Dispatch(() => LengthChanged?.Invoke(this, e));
+            _dispatcherQueue.Dispatch(() => LengthChanged?.Invoke(this, e));
         }
 
         private void OnPlaying(object sender, EventArgs e)
         {
-            Dispatch(() => Playing?.Invoke(this, e));
+            _dispatcherQueue.Dispatch(() => Playing?.Invoke(this, EventArgs.Empty));
         }
 
         private void OnPaused(object sender, EventArgs e)
         {
-            Dispatch(() => Paused?.Invoke(this, e));
+            _dispatcherQueue.Dispatch(() => Paused?.Invoke(this, EventArgs.Empty));
         }
 
         private void OnStopped(object sender, EventArgs e)
         {
-            Dispatch(() => Stopped?.Invoke(this, e));
+            _dispatcherQueue.Dispatch(() => Stopped?.Invoke(this, EventArgs.Empty));
         }
 
         private void OnVolumeChanged(object sender, MediaPlayerVolumeChangedEventArgs e)
@@ -260,27 +259,7 @@ namespace Telegram.Common
 
         private void OnEncounteredError(object sender, EventArgs e)
         {
-            Dispatch(() => EncounteredError?.Invoke(this, e));
-        }
-
-        [DebuggerNonUserCode]
-        public void Dispatch(DispatcherQueueHandler action, DispatcherQueuePriority priority = DispatcherQueuePriority.Normal)
-        {
-            if (_dispatcherQueue.HasThreadAccess && priority == DispatcherQueuePriority.Normal)
-            {
-                action();
-            }
-            else
-            {
-                try
-                {
-                    _dispatcherQueue.TryEnqueue(priority, action);
-                }
-                catch
-                {
-                    // Most likey Excep_InvalidComObject_NoRCW_Wrapper, so we can just ignore it
-                }
-            }
+            _dispatcherQueue.Dispatch(() => EncounteredError?.Invoke(this, EventArgs.Empty));
         }
 
         #endregion

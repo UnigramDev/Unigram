@@ -50,6 +50,7 @@ namespace Telegram.Controls
 
             Votes.Maximum = results ? Math.Max(poll.Options.Max(x => x.VoterCount), 1) : 1;
             Votes.Value = results ? option.VoterCount : 0;
+            VotesLine.Opacity = results ? 0 : 0.3;
 
             Loading.IsActive = option.IsBeingChosen;
 

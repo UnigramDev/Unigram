@@ -448,12 +448,12 @@ namespace Telegram.Views.Popups
 
     public partial class ChooseChatsConfigurationGroupCall : ChooseChatsConfiguration
     {
-        public ChooseChatsConfigurationGroupCall(GroupCall call)
+        public ChooseChatsConfigurationGroupCall(int groupCallId)
         {
-            GroupCall = call;
+            GroupCallId = groupCallId;
         }
 
-        public GroupCall GroupCall { get; }
+        public int GroupCallId { get; }
     }
 
     public partial class ChooseChatsConfigurationDataPackage : ChooseChatsConfiguration
@@ -487,6 +487,11 @@ namespace Telegram.Views.Popups
         public ChooseChatsConfigurationPostText(FormattedText text)
         {
             Text = text;
+        }
+
+        public ChooseChatsConfigurationPostText(string text)
+        {
+            Text = new FormattedText(text, Array.Empty<TextEntity>());
         }
 
         public FormattedText Text { get; }
@@ -551,7 +556,14 @@ namespace Telegram.Views.Popups
             Url = url;
         }
 
+        public ChooseChatsConfigurationPostLink(InternalLinkType internalLink)
+        {
+            InternalLink = internalLink;
+        }
+
         public HttpUrl Url { get; }
+
+        public InternalLinkType InternalLink { get; }
     }
 
     public partial class ChooseChatsConfigurationPostMessage : ChooseChatsConfiguration
@@ -739,22 +751,33 @@ namespace Telegram.Views.Popups
 
             _legacyNavigated = true;
 
-            IsPrimaryButtonSplit = ViewModel.IsSendAsCopyEnabled;
             EmojiPanel.DataContext = EmojiDrawerViewModel.Create(ViewModel.SessionId);
             ViewModel.PropertyChanged += OnPropertyChanged;
-
-            if (ViewModel.SelectionMode == ListViewSelectionMode.None)
-            {
-                PrimaryButtonText = string.Empty;
-            }
-            else
-            {
-                PrimaryButtonText = ViewModel.PrimaryButtonText;
-            }
 
             if (ViewModel.Options.Mode == ChooseChatsMode.Contacts)
             {
                 ChatFolders.Visibility = Visibility.Collapsed;
+            }
+
+            if (ViewModel.IsCommentEnabled)
+            {
+                CommentPanel.Visibility = Visibility.Visible;
+                Scrim.BottomInset = 0;
+
+                PrimaryButtonText = string.Empty;
+                SecondaryButtonText = string.Empty;
+                IsDismissButtonVisible = true;
+            }
+            else
+            {
+                CommentPanel.Visibility = Visibility.Collapsed;
+                Scrim.BottomInset = 32;
+
+                PrimaryButtonText = ViewModel.SelectionMode != ListViewSelectionMode.None
+                    ? ViewModel.PrimaryButtonText
+                    : string.Empty;
+                SecondaryButtonText = Strings.Cancel;
+                IsDismissButtonVisible = false;
             }
         }
 
@@ -765,22 +788,19 @@ namespace Telegram.Views.Popups
                 OnNavigatedTo(null);
             }
 
-            var button = GetTemplateChild("PrimarySplitButton") as Button;
-            if (button != null && IsPrimaryButtonSplit)
-            {
-                button.Click += PrimaryButton_ContextRequested;
-            }
-
             base.OnApplyTemplate();
         }
 
-        private void PrimaryButton_ContextRequested(object sender, RoutedEventArgs args)
+        private void Send_ContextRequested(object sender, ContextRequestedEventArgs args)
         {
-            var flyout = new MenuFlyout();
-            flyout.CreateFlyoutItem(() => { ViewModel.SendAsCopy = true; Hide(ContentDialogResult.Primary); }, Strings.HideSenderNames, Icons.DocumentCopy);
-            flyout.CreateFlyoutItem(() => { ViewModel.RemoveCaptions = true; Hide(ContentDialogResult.Primary); }, Strings.HideCaption, Icons.Block);
+            if (ViewModel.IsSendAsCopyEnabled)
+            {
+                var flyout = new MenuFlyout();
+                flyout.CreateFlyoutItem(() => { ViewModel.SendAsCopy = true; Hide(ContentDialogResult.Primary); }, Strings.HideSenderNames, Icons.DocumentCopy);
+                flyout.CreateFlyoutItem(() => { ViewModel.RemoveCaptions = true; Hide(ContentDialogResult.Primary); }, Strings.HideCaption, Icons.Block);
 
-            flyout.ShowAt(sender as DependencyObject, FlyoutPlacementMode.BottomEdgeAlignedRight);
+                flyout.ShowAt(sender as UIElement, FlyoutPlacementMode.TopEdgeAlignedRight);
+            }
         }
 
         private void OnPropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
@@ -903,30 +923,30 @@ namespace Telegram.Views.Popups
                 {
                     if (include)
                     {
-                        flags.Add(new FolderFlag { Flag = ChatListFolderFlags.NewChats });
-                        flags.Add(new FolderFlag { Flag = ChatListFolderFlags.IncludeContacts });
-                        flags.Add(new FolderFlag { Flag = ChatListFolderFlags.IncludeNonContacts });
+                        flags.Add(new FolderFlag(ChatListFolderFlags.NewChats));
+                        flags.Add(new FolderFlag(ChatListFolderFlags.IncludeContacts));
+                        flags.Add(new FolderFlag(ChatListFolderFlags.IncludeNonContacts));
                     }
                     else
                     {
-                        flags.Add(new FolderFlag { Flag = ChatListFolderFlags.ExistingChats });
-                        flags.Add(new FolderFlag { Flag = ChatListFolderFlags.IncludeContacts });
-                        flags.Add(new FolderFlag { Flag = ChatListFolderFlags.IncludeNonContacts });
+                        flags.Add(new FolderFlag(ChatListFolderFlags.ExistingChats));
+                        flags.Add(new FolderFlag(ChatListFolderFlags.IncludeContacts));
+                        flags.Add(new FolderFlag(ChatListFolderFlags.IncludeNonContacts));
                     }
                 }
                 else if (include)
                 {
-                    flags.Add(new FolderFlag { Flag = ChatListFolderFlags.IncludeContacts });
-                    flags.Add(new FolderFlag { Flag = ChatListFolderFlags.IncludeNonContacts });
-                    flags.Add(new FolderFlag { Flag = ChatListFolderFlags.IncludeGroups });
-                    flags.Add(new FolderFlag { Flag = ChatListFolderFlags.IncludeChannels });
-                    flags.Add(new FolderFlag { Flag = ChatListFolderFlags.IncludeBots });
+                    flags.Add(new FolderFlag(ChatListFolderFlags.IncludeContacts));
+                    flags.Add(new FolderFlag(ChatListFolderFlags.IncludeNonContacts));
+                    flags.Add(new FolderFlag(ChatListFolderFlags.IncludeGroups));
+                    flags.Add(new FolderFlag(ChatListFolderFlags.IncludeChannels));
+                    flags.Add(new FolderFlag(ChatListFolderFlags.IncludeBots));
                 }
                 else
                 {
-                    flags.Add(new FolderFlag { Flag = ChatListFolderFlags.ExcludeMuted });
-                    flags.Add(new FolderFlag { Flag = ChatListFolderFlags.ExcludeRead });
-                    flags.Add(new FolderFlag { Flag = ChatListFolderFlags.ExcludeArchived });
+                    flags.Add(new FolderFlag(ChatListFolderFlags.ExcludeMuted));
+                    flags.Add(new FolderFlag(ChatListFolderFlags.ExcludeRead));
+                    flags.Add(new FolderFlag(ChatListFolderFlags.ExcludeArchived));
                 }
 
                 var header = new MultipleListView();
@@ -976,7 +996,7 @@ namespace Telegram.Views.Popups
                 popup.Header = panel;
                 popup.IsPrimaryButtonEnabled = true;
 
-                var confirm = await popup.PickAsync(navigationService.XamlRoot, target.OfType<FolderChat>().Select(x => x.Chat.Id).ToArray(), ChooseChatsOptions.All);
+                var confirm = await popup.PickAsync(navigationService.XamlRoot, target.OfType<FolderChat>().Select(x => x.ChatId).ToArray(), ChooseChatsOptions.All);
                 if (confirm != ContentDialogResult.Primary)
                 {
                     return null;
@@ -996,7 +1016,7 @@ namespace Telegram.Views.Popups
                         continue;
                     }
 
-                    target.Add(new FolderChat { Chat = chat });
+                    target.Add(new FolderChat(chat.Id));
                 }
 
                 return target;
@@ -1011,7 +1031,7 @@ namespace Telegram.Views.Popups
                 popup.ViewModel.Folders.Clear();
                 popup.IsPrimaryButtonEnabled = true;
 
-                var confirm = await popup.PickAsync(navigationService.XamlRoot, target.OfType<FolderChat>().Select(x => x.Chat.Id).ToArray(), ChooseChatsOptions.All);
+                var confirm = await popup.PickAsync(navigationService.XamlRoot, target.OfType<FolderChat>().Select(x => x.ChatId).ToArray(), ChooseChatsOptions.All);
                 if (confirm != ContentDialogResult.Primary)
                 {
                     return null;
@@ -1026,7 +1046,7 @@ namespace Telegram.Views.Popups
                         continue;
                     }
 
-                    target.Add(new FolderChat { Chat = chat });
+                    target.Add(new FolderChat(chat.Id));
                 }
 
                 return target;
@@ -1307,6 +1327,11 @@ namespace Telegram.Views.Popups
 
         private bool ConvertButtonEnabled(bool allowEmpty, int count)
         {
+            if (Send != null)
+            {
+                return Send.IsEnabled = allowEmpty || count > 0;
+            }
+
             return allowEmpty || count > 0;
         }
 
@@ -1530,7 +1555,7 @@ namespace Telegram.Views.Popups
         {
             // We don't want to unfocus the text are when the context menu gets opened
             EmojiPanel.ViewModel.Update();
-            EmojiFlyout.ShowAt(CaptionInput, new FlyoutShowOptions { ShowMode = FlyoutShowMode.Transient });
+            EmojiFlyout.ShowAt(CommentPanel, new FlyoutShowOptions { ShowMode = FlyoutShowMode.Transient });
         }
 
         private void Emoji_ItemClick(object sender, ItemClickEventArgs e)
@@ -1558,6 +1583,11 @@ namespace Telegram.Views.Popups
         }
 
         private void CaptionInput_Accept(FormattedTextBox sender, EventArgs args)
+        {
+            Accept();
+        }
+
+        private void Send_Click(object sender, RoutedEventArgs e)
         {
             Accept();
         }

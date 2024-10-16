@@ -61,9 +61,19 @@
             </ListView.GroupStyle>
             <ListView.Header>
                 <controls:SettingsPanel>
-                    <Grid>
-                        <controls:HeaderedControl Header="{CustomResource CurrentSession}"
-                                                  Footer="{CustomResource ClearOtherSessionsHelp}">
+                    <StackPanel>
+                        <TextBlock Style="{StaticResource BaseTextBlockStyle}"
+                                   MaxWidth="1000"
+                                   Margin="24,16,24,8">
+                            <Run Text="{CustomResource CurrentSession}" />
+                            <Run Text="&#x2022;" />
+                            <Hyperlink Click="{x:Bind ViewModel.Rename}"
+                                       UnderlineStyle="None">
+                                <Run Text="{CustomResource Rename}" />
+                            </Hyperlink>
+                        </TextBlock>
+                        <controls:HeaderedControl Footer="{CustomResource ClearOtherSessionsHelp}"
+                                                  Padding="0">
                             <Button Click="{x:Bind ViewModel.TerminateCurrent}"
                                     Style="{StaticResource EmptyButtonStyle}">
                                 <cells:SessionCell Session="{x:Bind ViewModel.Current, Mode=OneWay}"
@@ -76,12 +86,7 @@
                                                   Foreground="{ThemeResource DangerButtonBackground}"
                                                   Glyph="&#xE98B;" />
                         </controls:HeaderedControl>
-                        <HyperlinkButton Content="{CustomResource Rename}"
-                                         Click="{x:Bind ViewModel.Rename}"
-                                         VerticalAlignment="Top"
-                                         HorizontalAlignment="Right"
-                                         Margin="12,10" />
-                    </Grid>
+                    </StackPanel>
                 </controls:SettingsPanel>
             </ListView.Header>
             <ListView.ItemTemplate>

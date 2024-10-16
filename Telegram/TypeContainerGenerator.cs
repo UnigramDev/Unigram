@@ -10,7 +10,6 @@ using System.Diagnostics;
 using System.Linq;
 using Telegram.Services;
 using Telegram.Services.Factories;
-using Telegram.Services.ViewService;
 using Telegram.ViewModels;
 using Telegram.ViewModels.Authorization;
 using Telegram.ViewModels.Business;
@@ -63,7 +62,6 @@ namespace Telegram
                 ( typeof(ISettingsSearchService), typeof(SettingsSearchService) ),
                 ( typeof(ICloudUpdateService), typeof(CloudUpdateService) ),
                 ( typeof(IShortcutsService), typeof(ShortcutsService) ),
-                ( typeof(IVoipGroupService), typeof(VoipGroupService) ),
                 ( typeof(IDeviceInfoService), typeof(DeviceInfoService) ),
                 ( typeof(IEventAggregator), typeof(EventAggregator) ),
                 ( typeof(ILocationService), typeof(LocationService) ),
@@ -107,6 +105,7 @@ namespace Telegram
                 typeof(ProfileMembersTabViewModel),
                 typeof(ProfileGroupsTabViewModel),
                 typeof(ProfileChannelsTabViewModel),
+                typeof(ProfileGiftsTabViewModel),
                 typeof(ProfileSavedChatsTabViewModel),
                 typeof(UserEditViewModel),
                 typeof(SupergroupEditViewModel),
@@ -116,7 +115,7 @@ namespace Telegram
                 typeof(SupergroupEditRestrictedViewModel),
                 typeof(SupergroupEditLinkedChatViewModel),
                 typeof(SupergroupChooseMemberViewModel),
-                typeof(ChatInviteLinkViewModel),
+                typeof(ChatInviteLinksViewModel),
                 typeof(SupergroupAdministratorsViewModel),
                 typeof(SupergroupBannedViewModel),
                 typeof(SupergroupPermissionsViewModel),
@@ -125,6 +124,7 @@ namespace Telegram
                 typeof(ChatStatisticsViewModel),
                 typeof(ChatBoostsViewModel),
                 typeof(ChatRevenueViewModel),
+                typeof(ChatStarsViewModel),
                 typeof(MessageStatisticsViewModel),
                 typeof(NewContactViewModel),
                 typeof(NewChannelViewModel),

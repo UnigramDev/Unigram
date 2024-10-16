@@ -52,9 +52,9 @@
 
                                     <controls:RecentUserHeads x:Name="RecentVoters"
                                                               BorderBrush="{ThemeResource MessageBackgroundBrush}"
-                                                              ItemSize="20"
+                                                              ItemSize="18"
                                                               ItemOverlap="6"
-                                                              Margin="0,-2,0,-6" />
+                                                              Margin="0,0,0,-6" />
                                 </StackPanel>
                             </StackPanel>
 
@@ -88,23 +88,32 @@
 
                         <TextBlock x:Name="Votes"
                                    Foreground="{ThemeResource MessageSubtleForegroundBrush}"
+                                   FontWeight="SemiBold"
                                    TextAlignment="Center"
-                                   Margin="0,8,0,4" />
+                                   Margin="0,12,0,4" />
 
                         <Button x:Name="Submit"
-                                Style="{StaticResource EmptyButtonStyle}">
+                                Style="{StaticResource ListEmptyButtonStyle}"
+                                HorizontalAlignment="Center"
+                                CornerRadius="4"
+                                Margin="0,8,0,0">
                             <TextBlock Text="{CustomResource PollSubmitVotes}"
                                        Foreground="{ThemeResource MessageSubtleForegroundBrush}"
+                                       FontWeight="SemiBold"
                                        TextAlignment="Center"
-                                       Margin="0,8,0,4" />
+                                       Margin="8,4,8,4" />
                         </Button>
 
                         <Button x:Name="View"
-                                Style="{StaticResource EmptyButtonStyle}">
+                                Style="{StaticResource ListEmptyButtonStyle}"
+                                HorizontalAlignment="Center"
+                                CornerRadius="4"
+                                Margin="0,8,0,0">
                             <TextBlock Text="{CustomResource PollViewResults}"
                                        Foreground="{ThemeResource MessageSubtleForegroundBrush}"
+                                       FontWeight="SemiBold"
                                        TextAlignment="Center"
-                                       Margin="0,8,10,4" />
+                                       Margin="8,4,8,4" />
                         </Button>
                     </StackPanel>
                 </ControlTemplate>

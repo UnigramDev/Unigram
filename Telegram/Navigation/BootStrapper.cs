@@ -16,7 +16,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Telegram.Common;
 using Telegram.Navigation.Services;
-using Telegram.Services.ViewService;
+using Telegram.Services;
 using Windows.System;
 using Windows.UI.ViewManagement;
 

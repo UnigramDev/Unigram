@@ -1,0 +1,138 @@
+<controls:ContentPopup x:Class="Telegram.Views.Supergroups.Popups.SupergroupEventLogFiltersPopup"
+                       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                       xmlns:local="using:Telegram.Views.Popups"
+                       xmlns:controls="using:Telegram.Controls"
+                       xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                       mc:Ignorable="d"
+                       PrimaryButtonClick="ContentPopup_PrimaryButtonClick"
+                       Padding="0,24,0,0">
+
+    <Grid>
+        <ScrollViewer x:Name="ScrollingHost"
+                      VerticalScrollBarVisibility="Auto"
+                      VerticalScrollMode="Auto">
+            <StackPanel Margin="24,0,24,16">
+                <StackPanel x:Name="BasicRoot"
+                            Visibility="Collapsed">
+                    <TextBlock x:Name="Message"
+                               Style="{StaticResource BodyTextBlockStyle}" />
+
+                    <CheckBox x:Name="RevokeCheck"
+                              FontFamily="{ThemeResource EmojiThemeFontFamily}"
+                              Margin="0,16,0,-8" />
+                </StackPanel>
+                <StackPanel x:Name="AdditionalRoot">
+                    <TextBlock Text="{CustomResource EventLogFilterByActions}"
+                               Style="{StaticResource BaseTextBlockStyle}"
+                               Margin="0,0,0,4" />
+                    <controls:SettingsExpander Background="Transparent"
+                                               MinHeight="32"
+                                               Margin="0,0,-16,0">
+                        <controls:SettingsExpander.Header>
+                            <Grid Margin="0,0,-12,0">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition />
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+                                <CheckBox x:Name="MembersAndAdminsCheck"
+                                          Checked="MembersAndAdmins_Checked"
+                                          Unchecked="MembersAndAdmins_Checked" />
+
+                                <controls:AnimatedTextBlock x:Name="MembersAndAdminsCount"
+                                                            TextStyle="{StaticResource BaseTextBlockStyle}"
+                                                            VerticalAlignment="Center"
+                                                            Grid.Column="2" />
+                            </Grid>
+                        </controls:SettingsExpander.Header>
+                        <StackPanel x:Name="MembersAndAdminsRoot"
+                                    Margin="8,0,0,0">
+                            <CheckBox x:Name="MemberPromotions"
+                                      Content="{CustomResource EventLogFilterSectionAdmin}" />
+                            <CheckBox x:Name="MemberRestrictions" />
+                            <CheckBox x:Name="MemberJoins" />
+                            <CheckBox x:Name="MemberLeaves" />
+                        </StackPanel>
+                    </controls:SettingsExpander>
+
+                    <controls:SettingsExpander Background="Transparent"
+                                               MinHeight="32"
+                                               Margin="0,0,-16,0">
+                        <controls:SettingsExpander.Header>
+                            <Grid Margin="0,0,-12,0">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition />
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+                                <CheckBox x:Name="ChatSettingsCheck"
+                                          Checked="ChatSettings_Checked"
+                                          Unchecked="ChatSettings_Checked" />
+
+                                <controls:AnimatedTextBlock x:Name="ChatSettingsCount"
+                                                            TextStyle="{StaticResource BaseTextBlockStyle}"
+                                                            VerticalAlignment="Center"
+                                                            Grid.Column="2" />
+                            </Grid>
+                        </controls:SettingsExpander.Header>
+                        <StackPanel x:Name="ChatSettingsRoot"
+                                    Margin="8,0,0,0">
+                            <CheckBox x:Name="InfoChanges" />
+                            <CheckBox x:Name="InviteLinkChanges"
+                                      Content="{CustomResource EventLogFilterInvites}" />
+                            <CheckBox x:Name="VideoChatChanges"
+                                      Content="{CustomResource EventLogFilterCalls}" />
+                        </StackPanel>
+                    </controls:SettingsExpander>
+
+                    <controls:SettingsExpander Background="Transparent"
+                                               MinHeight="32"
+                                               Margin="0,0,-16,0">
+                        <controls:SettingsExpander.Header>
+                            <Grid Margin="0,0,-12,0">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition />
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+                                <CheckBox x:Name="MessagesCheck"
+                                          Content="{CustomResource EventLogFilterSectionMessages}"
+                                          Checked="Messages_Checked"
+                                          Unchecked="Messages_Checked" />
+
+                                <controls:AnimatedTextBlock x:Name="MessagesCount"
+                                                            TextStyle="{StaticResource BaseTextBlockStyle}"
+                                                            VerticalAlignment="Center"
+                                                            Grid.Column="2" />
+                            </Grid>
+                        </controls:SettingsExpander.Header>
+                        <StackPanel x:Name="MessagesRoot"
+                                    Margin="8,0,0,0">
+                            <CheckBox x:Name="MessageDeletions"
+                                      Content="{CustomResource EventLogFilterDeletedMessages}" />
+                            <CheckBox x:Name="MessageEdits"
+                                      Content="{CustomResource EventLogFilterEditedMessages}" />
+                            <CheckBox x:Name="MessagePins"
+                                      Content="{CustomResource EventLogFilterPinnedMessages}" />
+                        </StackPanel>
+                    </controls:SettingsExpander>
+
+                    <TextBlock Text="{CustomResource EventLogFilterByAdmins}"
+                               Style="{StaticResource BaseTextBlockStyle}"
+                               Margin="0,12,0,4" />
+
+                    <CheckBox x:Name="AdminsCheck"
+                              Content="{CustomResource EventLogFilterByAdminsAll}" />
+                    <StackPanel x:Name="AdminsRoot"
+                                Margin="24,0,0,0">
+                    </StackPanel>
+                </StackPanel>
+            </StackPanel>
+        </ScrollViewer>
+
+        <controls:ScrollViewerScrim ScrollingHost="{x:Bind ScrollingHost}"
+                                    Background="{ThemeResource ContentDialogBackground}" />
+    </Grid>
+</controls:ContentPopup>

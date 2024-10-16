@@ -15,7 +15,7 @@ using Windows.ApplicationModel.Core;
 using Windows.Foundation;
 using Windows.UI.ViewManagement;
 
-namespace Telegram.Services.ViewService
+namespace Telegram.Services
 {
     public interface IViewService
     {
@@ -76,6 +76,11 @@ namespace Telegram.Services.ViewService
         internal static void OnWindowLoaded()
         {
             _mainWindowCreated.TrySetResult(true);
+        }
+
+        public static Task WaitForMainWindowAsync()
+        {
+            return _mainWindowCreated.Task;
         }
 
         public Task<ViewLifetimeControl> OpenAsync(ViewServiceOptions options)

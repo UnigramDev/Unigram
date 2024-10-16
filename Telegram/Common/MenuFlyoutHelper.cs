@@ -453,15 +453,5 @@ namespace Telegram.Common
             items.Add(flyoutItem);
             return flyoutItem;
         }
-
-        public static FontIcon Icon(string glyph)
-        {
-            return new FontIcon
-            {
-                Glyph = glyph,
-                FontFamily = BootStrapper.Current.Resources["TelegramThemeFontFamily"] as FontFamily,
-                Margin = new Thickness(-2)
-            };
-        }
     }
 }

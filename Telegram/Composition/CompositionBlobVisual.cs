@@ -33,9 +33,12 @@ namespace Telegram.Composition
             _maxLevel = maxLevel;
 
             var compositor = BootStrapper.Current.Compositor;
+            var owner = ElementCompositionPreview.GetElementVisual(element);
 
             var size = new Vector2(width, height);
             var halfSize = size / 2;
+
+            owner.CenterPoint = new Vector3(halfSize, 0);
 
             var small = compositor.CreateEllipseGeometry();
             var medium = compositor.CreatePathGeometry();
@@ -193,6 +196,7 @@ namespace Telegram.Composition
             animation.InsertKeyFrame(0, new Vector3(1));
             animation.InsertKeyFrame(1, new Vector3(0));
 
+            _visual.CenterPoint = new Vector3(_visual.Size / 2, 0);
             _visual.StartAnimation("Scale", animation);
 
             UpdateBlobsState();

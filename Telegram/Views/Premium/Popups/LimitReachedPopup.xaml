@@ -14,7 +14,7 @@
                   ItemClick="OnItemClick"
                   ContainerContentChanging="OnContainerContentChanging"
                   SelectionMode="None"
-                  Padding="12,0,12,72">
+                  Padding="12,0,12,56">
             <ListView.Header>
                 <StackPanel Margin="12,0,12,0">
                     <Grid x:Name="LimitHeader"

@@ -64,11 +64,12 @@ namespace Telegram.Common
                 xamlAutoFontFamilyValue = "Segoe UI";
             }
 
-            // TODO: for now we're not including Segoe UI, because it breaks  keycap emoji
-            if (xamlAutoFontFamilyValue == "Segoe UI")
-            {
-                xamlAutoFontFamilyValue = string.Empty;
-            }
+            // TODO: including Segoe UI breaks keycap emoji,
+            // not including it breaks persian numerals.
+            //if (xamlAutoFontFamilyValue == "Segoe UI")
+            //{
+            //    xamlAutoFontFamilyValue = string.Empty;
+            //}
 
             var xamlAutoFontFamily = new StringBuilder(xamlAutoFontFamilyValue);
             var comma = ", ";

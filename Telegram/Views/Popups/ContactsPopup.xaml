@@ -3,7 +3,6 @@
                        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
                        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-                       xmlns:icons="using:Telegram.Assets.Icons"
                        xmlns:controls="using:Telegram.Controls"
                        xmlns:cells="using:Telegram.Controls.Cells"
                        xmlns:contacts="using:Telegram.Controls.Contacts"
@@ -121,7 +120,9 @@
                     </DataTemplate>
                 </ListView.ItemTemplate>
                 <ListView.Header>
-                    <StackPanel Margin="4,0">
+                    <StackPanel x:Name="ScrollingHeader"
+                                SizeChanged="ScrollingHeader_SizeChanged"
+                                Margin="4,0">
                         <controls:BadgeButton Content="{CustomResource NewGroup}"
                                               Click="NewGroup_Click"
                                               Style="{StaticResource GlyphBadgeButtonPopupStyle}"
@@ -135,7 +136,7 @@
                                               Style="{StaticResource GlyphBadgeButtonPopupStyle}"
                                               Glyph="&#xE789;" />
 
-                        <contacts:ContactsSortedByHeader />
+                        <contacts:ContactsSortedByHeader Visibility="{x:Bind ViewModel.IsEmpty, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}, ConverterParameter=invert}" />
                     </StackPanel>
                 </ListView.Header>
                 <ListView.ItemsPanel>
@@ -151,6 +152,7 @@
 
         <Grid x:Name="EmptyState"
               x:Load="{x:Bind ViewModel.IsEmpty, Mode=OneWay}"
+              Loaded="EmptyState_Loaded"
               VerticalAlignment="Center"
               Margin="0,-96,0,0"
               Grid.Row="1">
@@ -159,7 +161,7 @@
                 <RowDefinition Height="Auto" />
                 <RowDefinition />
             </Grid.RowDefinitions>
-            <controls:AnimatedImage Source="ms-appx:///Assets/Animations/EmptyCalls.tgs"
+            <controls:AnimatedImage Source="ms-appx:///Assets/Animations/EmptyContacts.tgs"
                                     IsCachingEnabled="False"
                                     AutoPlay="True"
                                     FrameSize="140,140"
@@ -169,16 +171,14 @@
                                     Height="140"
                                     Margin="0,0,0,12" />
 
-            <TextBlock Text="{CustomResource NoRecentCalls}"
-                       FontSize="20"
-                       FontFamily="XamlAutoFontFamily"
-                       FontWeight="SemiBold"
+            <TextBlock Text="{CustomResource NoContactsYet2}"
+                       Style="{StaticResource PopupTextBlockStyle}"
                        TextAlignment="Center"
                        VerticalAlignment="Top"
                        Margin="0,0,0,8"
                        Grid.Row="1" />
 
-            <TextBlock Text="{CustomResource NoRecentCallsInfo}"
+            <TextBlock Text="{CustomResource NoContactsYet2Sub}"
                        Style="{StaticResource BodyTextBlockStyle}"
                        TextAlignment="Center"
                        Grid.Row="2" />

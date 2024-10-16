@@ -38,15 +38,13 @@ namespace Telegram.ViewModels
         public IProfileDelegate Delegate { get; set; }
 
         private readonly IVoipService _voipService;
-        private readonly IVoipGroupService _voipGroupService;
         private readonly INotificationsService _notificationsService;
         private readonly ITranslateService _translateService;
 
-        public ProfileViewModel(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator, IPlaybackService playbackService, IVoipService voipService, IVoipGroupService voipGroupService, INotificationsService notificationsService, IStorageService storageService, ITranslateService translateService)
+        public ProfileViewModel(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator, IPlaybackService playbackService, IVoipService voipService, INotificationsService notificationsService, IStorageService storageService, ITranslateService translateService)
             : base(clientService, settingsService, storageService, aggregator, playbackService)
         {
             _voipService = voipService;
-            _voipGroupService = voipGroupService;
             _notificationsService = notificationsService;
             _translateService = translateService;
 
@@ -60,6 +58,7 @@ namespace Telegram.ViewModels
         public ProfileStoriesTabViewModel ArchivedStoriesTab => _archivedStoriesTabViewModel;
         public ProfileGroupsTabViewModel GroupsTab => _groupsTabViewModel;
         public ProfileChannelsTabViewModel ChannelsTab => _channelsTabViewModel;
+        public ProfileGiftsTabViewModel GiftsTab => _giftsTabViewModel;
         public SupergroupMembersViewModel MembersTab => _membersTabVieModel;
 
         protected ObservableCollection<ChatMember> _members;
@@ -125,12 +124,9 @@ namespace Telegram.ViewModels
                 var cache = ClientService.GetUserFull(privata.UserId);
 
                 Delegate?.UpdateUser(chat, item, false);
+                ClientService.Send(new GetUserFullInfo(privata.UserId));
 
-                if (cache == null)
-                {
-                    ClientService.Send(new GetUserFullInfo(privata.UserId));
-                }
-                else
+                if (cache != null)
                 {
                     Delegate?.UpdateUserFullInfo(chat, item, cache, false, false);
                 }
@@ -156,13 +152,11 @@ namespace Telegram.ViewModels
                 var cache = ClientService.GetUserFull(secretType.UserId);
 
                 Delegate?.UpdateSecretChat(chat, secret);
-                Delegate?.UpdateUser(chat, item, true);
 
-                if (cache == null)
-                {
-                    ClientService.Send(new GetUserFullInfo(secret.UserId));
-                }
-                else
+                Delegate?.UpdateUser(chat, item, true);
+                ClientService.Send(new GetUserFullInfo(secret.UserId));
+
+                if (cache != null)
                 {
                     Delegate?.UpdateUserFullInfo(chat, item, cache, true, false);
                 }
@@ -173,12 +167,9 @@ namespace Telegram.ViewModels
                 var cache = ClientService.GetBasicGroupFull(basic.BasicGroupId);
 
                 Delegate?.UpdateBasicGroup(chat, item);
+                ClientService.Send(new GetBasicGroupFullInfo(basic.BasicGroupId));
 
-                if (cache == null)
-                {
-                    ClientService.Send(new GetBasicGroupFullInfo(basic.BasicGroupId));
-                }
-                else
+                if (cache != null)
                 {
                     Delegate?.UpdateBasicGroupFullInfo(chat, item, cache);
                 }
@@ -189,12 +180,9 @@ namespace Telegram.ViewModels
                 var cache = ClientService.GetSupergroupFull(super.SupergroupId);
 
                 Delegate?.UpdateSupergroup(chat, item);
+                ClientService.Send(new GetSupergroupFullInfo(super.SupergroupId));
 
-                if (cache == null)
-                {
-                    ClientService.Send(new GetSupergroupFullInfo(super.SupergroupId));
-                }
-                else
+                if (cache != null)
                 {
                     Delegate?.UpdateSupergroupFullInfo(chat, item, cache);
                 }
@@ -887,7 +875,7 @@ namespace Telegram.ViewModels
             Call(true);
         }
 
-        private async void Call(bool video)
+        private void Call(bool video)
         {
             var chat = _chat;
             if (chat == null)
@@ -897,15 +885,15 @@ namespace Telegram.ViewModels
 
             if (chat.Type is ChatTypePrivate or ChatTypeSecret)
             {
-                _voipService.Start(NavigationService, chat, video);
+                _voipService.StartPrivateCall(NavigationService, chat, video);
             }
             else if (chat.VideoChat.GroupCallId == 0)
             {
-                await _voipGroupService.CreateAsync(XamlRoot, chat.Id);
+                _voipService.CreateGroupCall(NavigationService, chat.Id);
             }
             else
             {
-                await _voipGroupService.JoinAsync(XamlRoot, chat.Id);
+                _voipService.JoinGroupCall(NavigationService, chat.Id);
             }
         }
 
@@ -985,6 +973,28 @@ namespace Telegram.ViewModels
             }
 
             ClientService.Send(new JoinChat(chat.Id));
+        }
+
+        public async void ShowPromo()
+        {
+            if (Chat?.EmojiStatus != null)
+            {
+                var response = await ClientService.SendAsync(new GetCustomEmojiStickers(new[] { Chat.EmojiStatus.CustomEmojiId }));
+                if (response is Stickers stickers)
+                {
+                    var second = await ClientService.SendAsync(new GetStickerSet(stickers.StickersValue[0].SetId));
+                    if (second is StickerSet stickerSet)
+                    {
+                        NavigationService.ShowPopup(new PromoPopup(ClientService, Chat, stickerSet));
+                        return;
+                    }
+                }
+            }
+
+            if (ClientService.TryGetUser(Chat, out User user) && user.IsPremium)
+            {
+                NavigationService.ShowPopup(new PromoPopup(ClientService, Chat, null));
+            }
         }
 
         public async void DeleteChat()

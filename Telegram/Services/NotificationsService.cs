@@ -114,22 +114,8 @@ namespace Telegram.Services
             catch { }
         }
 
-        private void Handle(UpdateSpeedLimitNotification update)
+        private async void Handle(UpdateSpeedLimitNotification update)
         {
-            var window = WindowContext.Active ?? WindowContext.Main;
-            var dispatcher = window?.Dispatcher;
-
-            if (dispatcher == null)
-            {
-                return;
-            }
-
-            var navigationService = window.NavigationServices?.GetByFrameId($"Main{_clientService.SessionId}");
-            if (navigationService == null)
-            {
-                return;
-            }
-
             var text = update.IsUpload
                 ? string.Format("**{0}**\n{1}", Strings.UploadSpeedLimited, string.Format(Strings.UploadSpeedLimitedMessage, _clientService.Options.PremiumUploadSpeedup))
                 : string.Format("**{0}**\n{1}", Strings.DownloadSpeedLimited, string.Format(Strings.DownloadSpeedLimitedMessage, _clientService.Options.PremiumDownloadSpeedup));
@@ -140,8 +126,19 @@ namespace Telegram.Services
                 markdown.Entities[1].Type = new TextEntityTypeTextUrl();
             }
 
-            dispatcher.Dispatch(() =>
+            await ViewService.WaitForMainWindowAsync();
+
+            var window = WindowContext.Active ?? WindowContext.Main;
+            var dispatcher = window?.Dispatcher;
+
+            dispatcher?.Dispatch(() =>
             {
+                var navigationService = window.NavigationServices?.GetByFrameId($"Main{_clientService.SessionId}");
+                if (navigationService == null)
+                {
+                    return;
+                }
+
                 var toast = ToastPopup.Show(navigationService.XamlRoot, markdown, ToastPopupIcon.SpeedLimit);
                 void handler(object sender, TextUrlClickEventArgs e)
                 {
@@ -155,22 +152,10 @@ namespace Telegram.Services
 
         public async void Handle(UpdateTermsOfService update)
         {
-            var terms = update.TermsOfService;
-            if (terms == null)
+            if (update.TermsOfService.ShowPopup)
             {
-                return;
-            }
-
-            if (terms.ShowPopup)
-            {
-                async void DeleteAccount()
+                async void DeleteAccount(XamlRoot xamlRoot)
                 {
-                    var xamlRoot = WindowContext.Main?.Content?.XamlRoot;
-                    if (xamlRoot == null)
-                    {
-                        return;
-                    }
-
                     var decline = await MessagePopup.ShowAsync(xamlRoot, Strings.TosUpdateDecline, Strings.TermsOfService, Strings.DeclineDeactivate, Strings.Back);
                     if (decline != ContentDialogResult.Primary)
                     {
@@ -188,28 +173,32 @@ namespace Telegram.Services
                     _clientService.Send(new DeleteAccount("Decline ToS update", string.Empty));
                 }
 
-                await Task.Delay(2000);
-                BeginOnUIThread(async () =>
+                await ViewService.WaitForMainWindowAsync();
+
+                var window = WindowContext.Active ?? WindowContext.Main;
+                var dispatcher = window?.Dispatcher;
+
+                dispatcher?.Dispatch(async () =>
                 {
-                    var xamlRoot = WindowContext.Main?.Content?.XamlRoot;
+                    var xamlRoot = window.Content?.XamlRoot;
                     if (xamlRoot == null)
                     {
                         return;
                     }
 
-                    var confirm = await MessagePopup.ShowAsync(xamlRoot, terms.Text, Strings.PrivacyPolicyAndTerms, Strings.Agree, Strings.Cancel);
+                    var confirm = await MessagePopup.ShowAsync(xamlRoot, update.TermsOfService.Text, Strings.PrivacyPolicyAndTerms, Strings.Agree, Strings.Cancel);
                     if (confirm != ContentDialogResult.Primary)
                     {
-                        DeleteAccount();
+                        DeleteAccount(xamlRoot);
                         return;
                     }
 
-                    if (terms.MinUserAge > 0)
+                    if (update.TermsOfService.MinUserAge > 0)
                     {
-                        var age = await MessagePopup.ShowAsync(xamlRoot, string.Format(Strings.TosAgeText, terms.MinUserAge), Strings.TosAgeTitle, Strings.Agree, Strings.Cancel);
+                        var age = await MessagePopup.ShowAsync(xamlRoot, string.Format(Strings.TosAgeText, update.TermsOfService.MinUserAge), Strings.TosAgeTitle, Strings.Agree, Strings.Cancel);
                         if (age != ContentDialogResult.Primary)
                         {
-                            DeleteAccount();
+                            DeleteAccount(xamlRoot);
                             return;
                         }
                     }
@@ -219,15 +208,20 @@ namespace Telegram.Services
             }
         }
 
-        public void Handle(UpdateSuggestedActions update)
+        public async void Handle(UpdateSuggestedActions update)
         {
-            BeginOnUIThread(async () =>
+            await ViewService.WaitForMainWindowAsync();
+
+            var window = WindowContext.Active ?? WindowContext.Main;
+            var dispatcher = window?.Dispatcher;
+
+            dispatcher?.Dispatch(async () =>
             {
                 foreach (var action in update.AddedActions)
                 {
                     if (action is SuggestedActionEnableArchiveAndMuteNewChats)
                     {
-                        var xamlRoot = WindowContext.Main?.Content?.XamlRoot;
+                        var xamlRoot = window.Content?.XamlRoot;
                         if (xamlRoot == null)
                         {
                             return;
@@ -266,7 +260,9 @@ namespace Telegram.Services
 
             BeginOnUIThread(async () =>
             {
-                var xamlRoot = WindowContext.Main?.Content?.XamlRoot;
+                var window = WindowContext.Active ?? WindowContext.Main;
+
+                var xamlRoot = window?.Content?.XamlRoot;
                 if (xamlRoot == null)
                 {
                     return;
@@ -279,6 +275,10 @@ namespace Telegram.Services
                     {
                         _clientService.Send(new Destroy());
                     }
+                }
+                else if (ContentPopup.IsAnyPopupOpen(xamlRoot))
+                {
+                    await MessagePopup.ShowAsync(xamlRoot, target: null, text, Strings.AppName, Strings.OK);
                 }
                 else
                 {

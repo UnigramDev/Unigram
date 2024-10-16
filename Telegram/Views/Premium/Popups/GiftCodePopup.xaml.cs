@@ -5,6 +5,7 @@
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
 using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Documents;
 using Telegram.Common;
 using Telegram.Controls;
@@ -95,11 +96,10 @@ namespace Telegram.Views.Premium.Popups
             }
             else
             {
-                ToRow.Height = new GridLength(0, GridUnitType.Pixel);
-                ToLine.BorderThickness = new Thickness(0, 1, 0, 0);
+                To.Visibility = Visibility.Collapsed;
             }
 
-            Gift.Text = string.Format(Strings.BoostingTelegramPremiumFor, Locale.Declension(Strings.R.Months, info.MonthCount));
+            Gift.Content = string.Format(Strings.BoostingTelegramPremiumFor, Locale.Declension(Strings.R.Months, info.MonthCount));
 
             if (info.IsFromGiveaway)
             {
@@ -111,19 +111,17 @@ namespace Telegram.Views.Premium.Popups
                         : Strings.BoostingGiveaway
                 });
 
-                Reason.Inlines.Add(hyperlink);
+                var textBlock = new TextBlock();
+                textBlock.Inlines.Add(hyperlink);
+
+                Reason.Content = textBlock;
             }
             else
             {
-                Reason.Text = Strings.BoostingYouWereSelected;
+                Reason.Content = Strings.BoostingYouWereSelected;
             }
 
-            Date.Text = Formatter.DateAt(info.CreationDate);
-        }
-
-        private void PurchaseShadow_Loaded(object sender, RoutedEventArgs e)
-        {
-            VisualUtilities.DropShadow(PurchaseShadow);
+            Date.Content = Formatter.DateAt(info.CreationDate);
         }
 
         private async void Purchase_Click(object sender, RoutedEventArgs e)

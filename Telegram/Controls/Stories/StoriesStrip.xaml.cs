@@ -240,7 +240,7 @@ namespace Telegram.Controls.Stories
                     var transform = container.TransformToVisual(null);
                     var point = transform.TransformPoint(new Point());
 
-                    var origin = new Rect(point.X + 8 + 4, point.Y + 12 + 4, 40, 40);
+                    var origin = new Rect(point.X + 12 + 4, point.Y + 12 + 4, 40, 40);
 
                     ViewModel.OpenStory(activeStories, origin, GetOrigin);
                 }
@@ -261,7 +261,7 @@ namespace Telegram.Controls.Stories
                 var transform = container.TransformToVisual(null);
                 var point = transform.TransformPoint(new Point());
 
-                return new Rect(point.X + 8 + 4, point.Y + 12 + 4, 40, 40);
+                return new Rect(point.X + 12 + 4, point.Y + 12 + 4, 40, 40);
             }
 
             return Rect.Empty;

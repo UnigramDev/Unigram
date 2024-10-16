@@ -106,7 +106,7 @@ namespace Telegram.Controls.Messages
                     : Strings.BoostingCongratulations;
 
                 var animation = FindName("Animation") as AnimatedImage;
-                animation.Source = new DelayedFileSource(message.ClientService, premiumGiftCode.Sticker);
+                animation.Source = DelayedFileSource.FromSticker(message.ClientService, premiumGiftCode.Sticker);
             }
             else if (message.Content is MessageGiveawayPrizeStars giveawayPrizeStars)
             {
@@ -114,41 +114,130 @@ namespace Telegram.Controls.Messages
                 title.Text = Strings.ActionStarGiveawayPrizeTitle;
 
                 var animation = FindName("Animation") as AnimatedImage;
-                animation.Source = new DelayedFileSource(message.ClientService, giveawayPrizeStars.Sticker);
+                animation.Source = DelayedFileSource.FromSticker(message.ClientService, giveawayPrizeStars.Sticker);
+            }
+            else if (message.Content is MessageGift gift)
+            {
+                var title = FindName("Title") as TextBlock;
+                var subtitle = FindName("Subtitle") as FormattedTextBlock;
+                var view = FindName("View") as Border;
+                var button = FindName("ViewLabel") as TextBlock;
+                var ribbonRoot = FindName("RibbonRoot") as Grid;
+
+                var user = message.ClientService.GetUser(message.Chat);
+                var self = message.ClientService.GetUser(message.ClientService.Options.MyId);
+
+                if (user == null || self == null)
+                {
+                    return;
+                }
+
+                if (message.IsOutgoing)
+                {
+                    title.Text = gift.IsPrivate
+                        ? string.Format(Strings.Gift2ActionTitleInAnonymous, user.FirstName)
+                        : string.Format(Strings.Gift2ActionTitle, self.FirstName);
+
+                    if (gift.Text.Text.Length > 0)
+                    {
+                        subtitle.SetText(message.ClientService, gift.Text);
+                    }
+                    else
+                    {
+                        subtitle.SetText(message.ClientService, ClientEx.ParseMarkdown(Locale.Declension(Strings.R.Gift2ActionOutInfo, gift.SellStarCount, user.FirstName)));
+                    }
+
+                    view.Visibility = Visibility.Collapsed;
+                }
+                else
+                {
+                    title.Text = gift.IsPrivate
+                        ? Strings.Gift2ActionTitleAnonymous
+                        : string.Format(Strings.Gift2ActionTitle, user.FirstName);
+
+                    if (gift.Text.Text.Length > 0)
+                    {
+                        subtitle.SetText(message.ClientService, gift.Text);
+                    }
+                    else if (gift.IsSaved)
+                    {
+                        subtitle.SetText(message.ClientService, ClientEx.ParseMarkdown(Strings.Gift2ActionSavedInfo));
+                    }
+                    else
+                    {
+                        subtitle.SetText(message.ClientService, ClientEx.ParseMarkdown(gift.WasConverted
+                            ? Locale.Declension(Strings.R.Gift2ActionConvertedInfo, gift.SellStarCount)
+                            : Locale.Declension(Strings.R.Gift2ActionInfo, gift.SellStarCount)));
+                    }
+
+                    view.Visibility = Visibility.Visible;
+                    button.Text = Strings.ActionGiftPremiumView;
+                }
+
+                var animation = FindName("Animation") as AnimatedImage;
+                animation.LoopCount = 0;
+                animation.Source = new DelayedFileSource(message.ClientService, gift.Gift.Sticker);
+                animation.Margin = new Thickness(0, 0, 0, 8);
+
+                if (gift.Gift.TotalCount > 0)
+                {
+                    ribbonRoot.Visibility = Visibility.Visible;
+
+                    var ribbon = FindName("Ribbon") as TextBlock;
+                    ribbon.Text = string.Format(Strings.Gift2Limited1OfRibbon, gift.Gift.TotalText());
+                }
+                else
+                {
+                    ribbonRoot.Visibility = Visibility.Collapsed;
+                }
             }
             else if (message.Content is MessageGiftedPremium giftedPremium)
             {
                 var title = FindName("Title") as TextBlock;
-                var subtitle = FindName("Subtitle") as TextBlock;
+                var subtitle = FindName("Subtitle") as FormattedTextBlock;
+                var view = FindName("View") as Border;
                 var button = FindName("ViewLabel") as TextBlock;
+                var ribbonRoot = FindName("RibbonRoot") as Grid;
 
                 title.Text = Strings.ActionGiftPremiumTitle;
-                subtitle.Text = string.Format(Strings.ActionGiftPremiumSubtitle, Locale.Declension(Strings.R.Months, giftedPremium.MonthCount));
+                subtitle.SetText(message.ClientService, ClientEx.ParseMarkdown(string.Format(Strings.ActionGiftPremiumSubtitle, Locale.Declension(Strings.R.Months, giftedPremium.MonthCount))));
                 button.Text = Strings.ActionGiftPremiumView;
+                view.Visibility = Visibility.Visible;
 
                 var animation = FindName("Animation") as AnimatedImage;
-                animation.Source = new DelayedFileSource(message.ClientService, giftedPremium.Sticker);
+                animation.LoopCount = 1;
+                animation.Source = DelayedFileSource.FromSticker(message.ClientService, giftedPremium.Sticker);
+                animation.Margin = new Thickness(0, -20, 0, 12);
+
+                ribbonRoot.Visibility = Visibility.Collapsed;
             }
             else if (message.Content is MessageGiftedStars giftedStars)
             {
                 var title = FindName("Title") as TextBlock;
-                var subtitle = FindName("Subtitle") as TextBlock;
+                var subtitle = FindName("Subtitle") as FormattedTextBlock;
+                var view = FindName("View") as Border;
                 var button = FindName("ViewLabel") as TextBlock;
+                var ribbonRoot = FindName("RibbonRoot") as Grid;
 
                 title.Text = Locale.Declension(Strings.R.ActionGiftStarsTitle, giftedStars.StarCount);
                 button.Text = Strings.ActionGiftStarsView;
+                view.Visibility = Visibility.Visible;
 
-                if (message.ClientService.Options.MyId == giftedStars.ReceiverUserId)
+                if (giftedStars.ReceiverUserId == 0)
                 {
-                    subtitle.Text = Strings.ActionGiftStarsSubtitleYou;
+                    subtitle.SetText(message.ClientService, ClientEx.ParseMarkdown(Strings.ActionGiftStarsSubtitleYou));
                 }
                 else if (message.ClientService.TryGetUser(giftedStars.ReceiverUserId, out User receiver))
                 {
-                    TextBlockHelper.SetMarkdown(subtitle, string.Format(Strings.ActionGiftStarsSubtitle, receiver.FirstName));
+                    subtitle.SetText(message.ClientService, ClientEx.ParseMarkdown(string.Format(Strings.ActionGiftStarsSubtitle, receiver.FirstName)));
                 }
 
                 var animation = FindName("Animation") as AnimatedImage;
-                animation.Source = new DelayedFileSource(message.ClientService, giftedStars.Sticker);
+                animation.LoopCount = 1;
+                animation.Source = DelayedFileSource.FromSticker(message.ClientService, giftedStars.Sticker);
+                animation.Margin = new Thickness(0, -20, 0, 12);
+
+                ribbonRoot.Visibility = Visibility.Collapsed;
             }
             else if (message.Content is MessageChatChangePhoto chatChangePhoto)
             {
@@ -313,6 +402,7 @@ namespace Telegram.Controls.Messages
                 MessageForumTopicEdited forumTopicEdited => UpdateForumTopicEdited(message, forumTopicEdited, active),
                 MessageForumTopicIsClosedToggled forumTopicIsClosedToggled => UpdateForumTopicIsClosedToggled(message, forumTopicIsClosedToggled, active),
                 MessageGameScore gameScore => UpdateGameScore(message, gameScore, active),
+                MessageGift gift => UpdateGift(message, gift, active),
                 MessageGiftedPremium giftedPremium => UpdateGiftedPremium(message, giftedPremium, active),
                 MessageGiftedStars giftedStars => UpdateGiftedStars(message, giftedStars, active),
                 MessageGiveawayCreated giveawayCreated => UpdateGiveawayCreated(message, giveawayCreated, active),
@@ -1319,40 +1409,38 @@ namespace Telegram.Controls.Messages
             var content = string.Empty;
             var entities = active ? new List<TextEntity>() : null;
 
-            long singleUserId = 0;
-            if (singleUserId == 0 && chatAddMembers.MemberUserIds.Count == 1)
+            try
             {
-                singleUserId = chatAddMembers.MemberUserIds[0];
-            }
-
-            var fromUser = message.GetSender();
-
-            if (singleUserId != 0)
-            {
-                var whoUser = message.ClientService.GetUser(singleUserId);
-                if (message.SenderId is MessageSenderUser senderUser && singleUserId == senderUser.UserId)
+                long singleUserId = 0;
+                if (chatAddMembers.MemberUserIds.Count == 1)
                 {
-                    var chat = message.Chat;
-                    if (chat == null)
-                    {
-                        return (content, entities);
-                    }
+                    singleUserId = chatAddMembers.MemberUserIds[0];
+                }
 
-                    var supergroup = chat.Type as ChatTypeSupergroup;
-                    if (supergroup != null && supergroup.IsChannel)
+                var fromUser = message.GetSender();
+
+                if (singleUserId != 0)
+                {
+                    if (message.SenderId is MessageSenderUser senderUser && singleUserId == senderUser.UserId)
                     {
-                        if (singleUserId == message.ClientService.Options.MyId)
+                        var chat = message.Chat;
+                        if (chat == null)
                         {
-                            content = Strings.ChannelJoined;
+                            return (content, entities);
                         }
-                        else
+
+                        if (message.Chat?.Type is ChatTypeSupergroup { IsChannel: true })
                         {
-                            content = ReplaceWithLink(Strings.EventLogChannelJoined, "un1", fromUser, entities);
+                            if (singleUserId == message.ClientService.Options.MyId)
+                            {
+                                content = Strings.ChannelJoined;
+                            }
+                            else
+                            {
+                                content = ReplaceWithLink(Strings.EventLogChannelJoined, "un1", fromUser, entities);
+                            }
                         }
-                    }
-                    else
-                    {
-                        if (supergroup != null && !supergroup.IsChannel)
+                        else if (message.Chat?.Type is ChatTypeSupergroup)
                         {
                             if (singleUserId == message.ClientService.Options.MyId)
                             {
@@ -1372,51 +1460,53 @@ namespace Telegram.Controls.Messages
                             content = ReplaceWithLink(Strings.ActionAddUserSelf, "un1", fromUser, entities);
                         }
                     }
+                    else
+                    {
+                        var whoUser = message.ClientService.GetUser(singleUserId);
+
+                        if (message.IsOutgoing)
+                        {
+                            content = ReplaceWithLink(Strings.ActionYouAddUser, "un2", whoUser, entities);
+                        }
+                        else if (singleUserId == message.ClientService.Options.MyId)
+                        {
+                            if (message.Chat?.Type is ChatTypeSupergroup { IsChannel: true })
+                            {
+                                content = ReplaceWithLink(Strings.ChannelAddedBy, "un1", fromUser, entities);
+                            }
+                            else if (message.Chat?.Type is ChatTypeSupergroup)
+                            {
+                                content = ReplaceWithLink(Strings.MegaAddedBy, "un1", fromUser, entities);
+                            }
+                            else
+                            {
+                                content = ReplaceWithLink(Strings.ActionAddUserYou, "un1", fromUser, entities);
+                            }
+                        }
+                        else
+                        {
+                            content = ReplaceWithLink(Strings.ActionAddUser, "un1", fromUser, entities);
+                            content = ReplaceWithLink(content, "un2", whoUser, entities);
+                        }
+                    }
                 }
                 else
                 {
                     if (message.IsOutgoing)
                     {
-                        content = ReplaceWithLink(Strings.ActionYouAddUser, "un2", whoUser, entities);
-                    }
-                    else if (singleUserId == message.ClientService.Options.MyId)
-                    {
-                        var chat = message.Chat;
-                        var supergroup = chat.Type as ChatTypeSupergroup;
-                        if (supergroup != null)
-                        {
-                            if (supergroup.IsChannel)
-                            {
-                                content = ReplaceWithLink(Strings.ChannelAddedBy, "un1", fromUser, entities);
-                            }
-                            else
-                            {
-                                content = ReplaceWithLink(Strings.MegaAddedBy, "un1", fromUser, entities);
-                            }
-                        }
-                        else
-                        {
-                            content = ReplaceWithLink(Strings.ActionAddUserYou, "un1", fromUser, entities);
-                        }
+                        content = ReplaceWithLink(Strings.ActionYouAddUser, "un2", chatAddMembers.MemberUserIds, message.ClientService, entities);
                     }
                     else
                     {
                         content = ReplaceWithLink(Strings.ActionAddUser, "un1", fromUser, entities);
-                        content = ReplaceWithLink(content, "un2", whoUser, entities);
+                        content = ReplaceWithLink(content, "un2", chatAddMembers.MemberUserIds, message.ClientService, entities);
                     }
                 }
             }
-            else
+            catch
             {
-                if (message.IsOutgoing)
-                {
-                    content = ReplaceWithLink(Strings.ActionYouAddUser, "un2", chatAddMembers.MemberUserIds, message.ClientService, entities);
-                }
-                else
-                {
-                    content = ReplaceWithLink(Strings.ActionAddUser, "un1", fromUser, entities);
-                    content = ReplaceWithLink(content, "un2", chatAddMembers.MemberUserIds, message.ClientService, entities);
-                }
+                Logger.Info(message.Content);
+                throw;
             }
 
             return (content, entities);
@@ -1880,14 +1970,42 @@ namespace Telegram.Controls.Messages
             return (content, entities);
         }
 
+        private static (string, IList<TextEntity>) UpdateGift(MessageViewModel message, MessageGift gift, bool active)
+        {
+            var content = string.Empty;
+            var entities = active ? new List<TextEntity>() : null;
+
+            if (message.IsOutgoing)
+            {
+                content = ReplaceWithLink(Strings.ActionGiftOutbound, "un2", gift, entities);
+            }
+            else if (message.ChatId == message.ClientService.Options.TelegramServiceNotificationsChatId)
+            {
+                content = ReplaceWithLink(Strings.ActionGift2Received, "un2", gift, entities);
+            }
+            else if (message.ClientService.TryGetUser(message.SenderId, out User senderUser))
+            {
+                content = ReplaceWithLink(Strings.ActionGiftInbound, "un1", senderUser, entities);
+                content = ReplaceWithLink(content, "un2", gift, entities);
+            }
+
+            var formatted = ClientEx.ParseMarkdown(content, (IList<TextEntity>)entities ?? Array.Empty<TextEntity>());
+
+            return (formatted.Text, formatted.Entities);
+        }
+
         private static (string, IList<TextEntity>) UpdateGiftedPremium(MessageViewModel message, MessageGiftedPremium giftedPremium, bool active)
         {
             var content = string.Empty;
             var entities = active ? new List<TextEntity>() : null;
 
-            if (message.SenderId is MessageSenderUser user && user.UserId == message.ClientService.Options.MyId)
+            if (message.IsOutgoing)
             {
                 content = ReplaceWithLink(Strings.ActionGiftOutbound, "un2", giftedPremium, entities);
+            }
+            else if (message.ChatId == message.ClientService.Options.TelegramServiceNotificationsChatId)
+            {
+                content = ReplaceWithLink(Strings.ActionGift2Received, "un2", giftedPremium, entities);
             }
             else if (message.ClientService.TryGetUser(message.SenderId, out User senderUser))
             {
@@ -2570,6 +2688,11 @@ namespace Telegram.Controls.Messages
                     name = game.Title;
                     id = "tg-game://";
                 }
+                else if (obj is MessageGift gift)
+                {
+                    name = Locale.Declension(Strings.R.StarsCount, gift.Gift.StarCount);
+                    id = null;
+                }
                 else if (obj is MessageGiftedPremium giftedPremium)
                 {
                     name = Locale.FormatCurrency(giftedPremium.Amount, giftedPremium.Currency);
@@ -2607,7 +2730,7 @@ namespace Telegram.Controls.Messages
                     }
                     else
                     {
-                        entities.Add(new TextEntity(start, name.Length, new TextEntityTypeTextUrl(id)));
+                        entities.Add(new TextEntity(start, name.Length, new TextEntityTypeBold()));
                     }
                 }
             }

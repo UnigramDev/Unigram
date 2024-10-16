@@ -35,7 +35,7 @@ using Telegram.Views.Host;
 using Windows.UI.Core;
 using Windows.UI.ViewManagement;
 
-namespace Telegram.Services.ViewService
+namespace Telegram.Services
 {
     // A custom event that fires whenever the secondary view is ready to be closed. You should
     // clean up any state (including deregistering for events) then close the window in this handler

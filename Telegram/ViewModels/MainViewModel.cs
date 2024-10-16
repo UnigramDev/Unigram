@@ -21,6 +21,7 @@ using Telegram.Services.Updates;
 using Telegram.Td;
 using Telegram.Td.Api;
 using Telegram.ViewModels.Folders;
+using Telegram.ViewModels.Profile;
 using Telegram.ViewModels.Stories;
 using Telegram.Views;
 using Telegram.Views.Folders;
@@ -37,14 +38,13 @@ namespace Telegram.ViewModels
         private readonly ILifetimeService _lifetimeService;
         private readonly ISessionService _sessionService;
         private readonly IVoipService _voipService;
-        private readonly IVoipGroupService _voipGroupService;
         private readonly ICloudUpdateService _cloudUpdateService;
         private readonly IPlaybackService _playbackService;
         private readonly IShortcutsService _shortcutService;
 
         public bool Refresh { get; set; }
 
-        public MainViewModel(IClientService clientService, ISettingsService settingsService, IStorageService storageService, IEventAggregator aggregator, INotificationsService pushService, IContactsService contactsService, IPasscodeService passcodeService, ILifetimeService lifecycle, ISessionService session, IVoipService voipService, IVoipGroupService voipGroupService, ISettingsSearchService settingsSearchService, ICloudUpdateService cloudUpdateService, IPlaybackService playbackService, IShortcutsService shortcutService)
+        public MainViewModel(IClientService clientService, ISettingsService settingsService, IStorageService storageService, IEventAggregator aggregator, INotificationsService pushService, IContactsService contactsService, IPasscodeService passcodeService, ILifetimeService lifecycle, ISessionService session, IVoipService voipService, ISettingsSearchService settingsSearchService, ICloudUpdateService cloudUpdateService, IPlaybackService playbackService, IShortcutsService shortcutService)
             : base(clientService, settingsService, aggregator)
         {
             _contactsService = contactsService;
@@ -52,7 +52,6 @@ namespace Telegram.ViewModels
             _lifetimeService = lifecycle;
             _sessionService = session;
             _voipService = voipService;
-            _voipGroupService = voipGroupService;
             _cloudUpdateService = cloudUpdateService;
             _playbackService = playbackService;
             _shortcutService = shortcutService;
@@ -123,7 +122,6 @@ namespace Telegram.ViewModels
         public IShortcutsService ShortcutService => _shortcutService;
 
         public IVoipService VoipService => _voipService;
-        public IVoipGroupService VoipGroupService => _voipGroupService;
 
         public void ToggleArchive()
         {
@@ -370,9 +368,7 @@ namespace Telegram.ViewModels
             }
         }
 
-        private static bool _shown;
-
-        protected override async Task OnNavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
+        protected override Task OnNavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
         {
             //BeginOnUIThread(() => Calls.OnNavigatedToAsync(parameter, mode, state));
             //BeginOnUIThread(() => Settings.OnNavigatedToAsync(parameter, mode, state));
@@ -394,55 +390,7 @@ namespace Telegram.ViewModels
                 _ = Task.Run(() => _contactsService.JumpListAsync());
             }
 
-            if (ApiInfo.IsPackagedRelease && WatchDog.HasCrashedInLastSession && !_shown && DateTime.UtcNow.Date != SettingsService.Current.Diagnostics.LastCrashReported.Date)
-            {
-                _shown = true;
-
-                var layoutCycle = SettingsService.Current.Diagnostics.LastCrashWasLayoutCycle;
-                SettingsService.Current.Diagnostics.LastCrashWasLayoutCycle = false;
-
-                if (layoutCycle)
-                {
-                    var confirm = await ShowPopupAsync("The app terminated unexpectedly due to a layout cycle, please report this problem immediately.", "Something went wrong", "OK", "Cancel");
-                    if (confirm == ContentDialogResult.Primary)
-                    {
-                        var chat = await ClientService.SendAsync(new SearchPublicChat("unigraminsiders")) as Chat;
-                        if (chat != null)
-                        {
-                            var service = new DeviceInfoService();
-                            var payload = "Hi, I just had a layout cycle, can you please help me? My app version is {0}, running {1} on a {2}.";
-                            payload = string.Format(payload, service.ApplicationVersion, service.FullSystemVersion, service.DeviceModel);
-
-                            ClientService.Send(new SendMessage(chat.Id, 0, null, null, null, new InputMessageText(new FormattedText(payload, Array.Empty<TextEntity>()), null, false)));
-                            NavigationService.NavigateToChat(chat);
-                        }
-                    }
-                }
-                else
-                {
-                    // For now, we just ignore any other crash.
-                    return;
-
-                    var confirm = await ShowPopupAsync("It seems that the app terminated unexpectedly. Do you want to report this problem?", "Something went wrong", "OK", "Cancel");
-                    if (confirm == ContentDialogResult.Primary)
-                    {
-                        SettingsService.Current.Diagnostics.LastCrashReported = DateTime.UtcNow;
-
-                        var chat = await ClientService.SendAsync(new SearchPublicChat("unigraminsiders")) as Chat;
-                        if (chat != null)
-                        {
-                            var service = new DeviceInfoService();
-                            var payload = "Hi, I just had a crash, can you please help me? My app version is {0}, running {1} on a {2}.";
-                            payload = string.Format(payload, service.ApplicationVersion, service.FullSystemVersion, service.DeviceModel);
-
-                            ClientService.Send(new SendMessage(chat.Id, 0, null, null, null, new InputMessageText(new FormattedText(payload, Array.Empty<TextEntity>()), null, false)));
-                            NavigationService.NavigateToChat(chat);
-                        }
-                    }
-                }
-            }
-
-            //return base.OnNavigatedToAsync(parameter, mode, state);
+            return Task.CompletedTask;
         }
 
         public override void Subscribe()
@@ -639,6 +587,20 @@ namespace Telegram.ViewModels
         public void ArchiveSettings()
         {
             ShowPopup(new SettingsArchivePopup(ClientService));
+        }
+
+        public async void NavigateToMyProfile(bool savedMessages)
+        {
+            await ClientService.SendAsync(new CreatePrivateChat(ClientService.Options.MyId, true));
+
+            if (savedMessages)
+            {
+                NavigationService.NavigateToChat(ClientService.Options.MyId, force: false);
+            }
+            else
+            {
+                NavigationService.Navigate(typeof(ProfilePage), new ProfileMyArgs());
+            }
         }
     }
 

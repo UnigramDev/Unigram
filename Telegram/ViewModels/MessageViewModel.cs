@@ -93,6 +93,9 @@ namespace Telegram.ViewModels
         private bool? _isSaved;
         public bool IsSaved => _isSaved ??= _message.IsSaved(_clientService.Options.MyId);
 
+        private bool? _isVerificationCode;
+        public bool IsVerificationCode => _isVerificationCode ??= _message.ChatId == _clientService.Options.VerificationCodesBotChatId && _message.ForwardInfo != null;
+
         // TODO: BaseObject
         public object ReplyToItem { get; set; }
         public MessageReplyToState ReplyToState { get; set; } = MessageReplyToState.None;
@@ -251,7 +254,7 @@ namespace Telegram.ViewModels
                 return false;
             }
 
-            return Chat?.Type is ChatTypeSupergroup or ChatTypeBasicGroup;
+            return Chat?.Type is ChatTypeSupergroup or ChatTypeBasicGroup || _message.ChatId == _clientService.Options.VerificationCodesBotChatId;
         }
 
 

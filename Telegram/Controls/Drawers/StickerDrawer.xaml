@@ -199,8 +199,7 @@
                         <selectors:StickerSetTemplateSelector.GroupTemplate>
                             <DataTemplate>
                                 <Border>
-                                    <controls:ProfilePicture IsEnabled="False"
-                                                             Width="24"
+                                    <controls:ProfilePicture Width="24"
                                                              Height="24" />
                                 </Border>
                             </DataTemplate>

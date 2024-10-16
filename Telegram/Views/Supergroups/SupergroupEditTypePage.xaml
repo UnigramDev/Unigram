@@ -113,6 +113,13 @@
                                              x:Load="{x:Bind ConvertHeaderLoad(ViewModel.Items.Count), Mode=OneWay}"
                                              Text="{CustomResource UsernamesChannelHelp}" />
 
+                    <controls:HeaderedControl Footer="{CustomResource ManageInviteLinksHelp}">
+                        <controls:BadgeButton Click="{x:Bind ViewModel.InviteLinks}"
+                                              Content="{CustomResource ManageInviteLinks}"
+                                              Style="{StaticResource GlyphBadgeButtonStyle}"
+                                              Glyph="&#xE9F8;" />
+                    </controls:HeaderedControl>
+
                     <controls:HeaderedControl x:Name="JoinToSendMessages"
                                               Header="{CustomResource ChannelSettingsJoinTitle}"
                                               Footer="{x:Bind ConvertJoinToSendMessages(ViewModel.JoinToSendMessages), Mode=OneWay}">

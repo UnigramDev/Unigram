@@ -27,6 +27,11 @@ namespace Telegram.Views
             return View.ChatTitle;
         }
 
+        public override HostedPagePositionBase GetPosition()
+        {
+            return null;
+        }
+
         public void OnBackRequested(BackRequestedRoutedEventArgs args)
         {
             View.OnBackRequested(args);

@@ -1,0 +1,91 @@
+﻿<controls:ContentPopup x:Class="Telegram.Views.Calls.Popups.VideoChatStreamsPopup"
+                       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                       xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                       xmlns:controls="using:Telegram.Controls"
+                       mc:Ignorable="d"
+                       PrimaryButtonClick="ContentDialog_PrimaryButtonClick"
+                       SecondaryButtonClick="ContentDialog_SecondaryButtonClick"
+                       Opened="OnOpened">
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+        <controls:AnimatedImage Source="ms-appx:///Assets/Animations/StartLiveStream.tgs"
+                                IsCachingEnabled="False"
+                                AutoPlay="True"
+                                FrameSize="140,140"
+                                DecodeFrameType="Logical"
+                                Width="140"
+                                Height="140"
+                                Margin="0,0,0,12" />
+
+        <TextBlock Text="{CustomResource VoipStreamStart}"
+                   Style="{StaticResource BodyTextBlockStyle}"
+                   Grid.Row="1" />
+
+        <TextBlock Text="{CustomResource VoipChatStreamServerUrl}"
+                   Style="{StaticResource InfoCaptionTextBlockStyle}"
+                   Margin="0,12,0,4"
+                   Grid.Row="2" />
+
+
+        <Grid Grid.Row="3">
+            <Button Click="CopyServer_Click"
+                    HorizontalAlignment="Stretch"
+                    HorizontalContentAlignment="Left">
+                <controls:LoadingTextBlock x:Name="ServerField"
+                                           PlaceholderText="rtmps://dc4-1.rtmp.t.me/s/"
+                                           PlaceholderBrush="Transparent"
+                                           IsTextSelectionEnabled="False"
+                                           Margin="-4" />
+            </Button>
+            <!--<TextBlock Text="&#xE8C8;"
+                       FontFamily="{StaticResource SymbolThemeFontFamily}"
+                       FontSize="20"
+                       Foreground="{ThemeResource AccentButtonBackground}"
+                       HorizontalAlignment="Right"
+                       VerticalAlignment="Center"
+                       Margin="8,0"
+                       IsHitTestVisible="False" />-->
+        </Grid>
+
+        <TextBlock Text="{CustomResource VoipChatStreamKey}"
+                   Style="{StaticResource InfoCaptionTextBlockStyle}"
+                   Margin="0,12,0,4"
+                   Grid.Row="4" />
+
+        <Grid Grid.Row="5">
+            <Button Click="CopyKey_Click"
+                    HorizontalAlignment="Stretch"
+                    HorizontalContentAlignment="Left">
+                <controls:LoadingTextBlock x:Name="StreamKeyField"
+                                           PlaceholderText="1471070970:_hTkPyitg8sw8kimE7v3FQ"
+                                           PlaceholderBrush="Transparent"
+                                           IsTextSelectionEnabled="False"
+                                           Margin="-4" />
+            </Button>
+            <!--<TextBlock Text="&#xE8C8;"
+                       FontFamily="{StaticResource SymbolThemeFontFamily}"
+                       FontSize="20"
+                       Foreground="{ThemeResource AccentButtonBackground}"
+                       HorizontalAlignment="Right"
+                       VerticalAlignment="Center"
+                       Margin="8,0"
+                       IsHitTestVisible="False" />-->
+        </Grid>
+
+        <TextBlock Text="{CustomResource VoipChatStreamWithAnotherAppDescription}"
+                   Style="{StaticResource BodyTextBlockStyle}"
+                   Margin="0,12"
+                   Grid.Row="6" />
+    </Grid>
+</controls:ContentPopup>

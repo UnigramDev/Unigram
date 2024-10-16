@@ -59,6 +59,7 @@
 
                     <controls:GlyphButton Click="Emoji_Click"
                                           Glyph="&#xE76E;"
+                                          IsTabStop="False"
                                           AllowFocusOnInteraction="False"
                                           HorizontalAlignment="Right"
                                           VerticalAlignment="Bottom"
@@ -109,6 +110,7 @@
 
                                     <controls:GlyphButton Click="Emoji_Click"
                                                           Glyph="&#xE76E;"
+                                                          IsTabStop="False"
                                                           AllowFocusOnInteraction="False"
                                                           HorizontalAlignment="Right"
                                                           VerticalAlignment="Bottom"

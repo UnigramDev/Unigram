@@ -1,6 +1,8 @@
 ﻿using Microsoft.UI;
 using Microsoft.UI.Composition;
 using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Controls.Primitives;
 using Microsoft.UI.Xaml.Hosting;
 using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Media;
@@ -11,6 +13,8 @@ using Telegram.Composition;
 using Telegram.Controls.Media;
 using Telegram.Navigation;
 using Telegram.Td.Api;
+using Windows.Media.Capture;
+using Windows.UI;
 
 namespace Telegram.Controls.Chats
 {
@@ -24,6 +28,9 @@ namespace Telegram.Controls.Chats
         private readonly Visual _rootVisual;
 
         private readonly CompositionBlobVisual _blobVisual;
+
+        private Popup _videoPopup;
+        //private CaptureElement _videoElement;
 
         public ChatRecordBar()
         {
@@ -84,7 +91,7 @@ namespace Telegram.Controls.Chats
             ControlledButton.StopRecording(true);
         }
 
-        private void VoiceButton_QuantumProcessed(object sender, float amplitude)
+        private void OnQuantumProcessed(object sender, float amplitude)
         {
             _blobVisual.UpdateLevel(amplitude * 40);
         }
@@ -110,14 +117,60 @@ namespace Telegram.Controls.Chats
 
             _controlledButton = value;
 
-            _controlledButton.RecordingStarted += VoiceButton_RecordingStarted;
-            _controlledButton.RecordingStopped += VoiceButton_RecordingStopped;
-            _controlledButton.RecordingLocked += VoiceButton_RecordingLocked;
-            _controlledButton.QuantumProcessed += VoiceButton_QuantumProcessed;
-            _controlledButton.ManipulationDelta += VoiceButton_ManipulationDelta;
+            _controlledButton.RecordingStarting += OnRecordingStarting;
+            _controlledButton.RecordingStarted += OnRecordingStarted;
+            _controlledButton.RecordingStopped += OnRecordingStopped;
+            _controlledButton.RecordingLocked += OnRecordingLocked;
+            _controlledButton.QuantumProcessed += OnQuantumProcessed;
+            _controlledButton.ManipulationDelta += OnManipulationDelta;
         }
 
-        private void VoiceButton_RecordingStarted(object sender, EventArgs e)
+        private void OnRecordingStarted(object sender, EventArgs e)
+        {
+            if (sender is not MediaCapture mediaCapture || mediaCapture.MediaCaptureSettings.StreamingCaptureMode == StreamingCaptureMode.Audio)
+            {
+                return;
+            }
+
+            //_videoElement = new CaptureElement
+            //{
+            //    Source = mediaCapture,
+            //    Stretch = Stretch.UniformToFill,
+            //    Width = 272,
+            //    Height = 272,
+            //    RenderTransformOrigin = new Windows.Foundation.Point(0.5, 0.5),
+            //    RenderTransform = new ScaleTransform
+            //    {
+            //        ScaleX = -1
+            //    }
+            //};
+
+            _videoPopup = new Popup
+            {
+                XamlRoot = XamlRoot,
+                Child = new Border
+                {
+                    Width = XamlRoot.Size.Width,
+                    Height = XamlRoot.Size.Height,
+                    Background = new SolidColorBrush(ActualTheme == ElementTheme.Light
+                            ? Color.FromArgb(0x99, 0xFF, 0xFF, 0xFF)
+                            : Color.FromArgb(0x99, 0x00, 0x00, 0x00)),
+                    Child = new Border
+                    {
+                        Width = 272,
+                        Height = 272,
+                        Background = new SolidColorBrush(Colors.Black),
+                        CornerRadius = new CornerRadius(272 / 2),
+                        //Child = _videoElement
+                    }
+                }
+            };
+
+            _videoPopup.IsOpen = true;
+            _ = mediaCapture.StartPreviewAsync();
+        }
+
+        private void OnRecordingStarting(object sender, EventArgs e)
         {
             // TODO: video message
             Visibility = Visibility.Visible;
@@ -131,6 +184,15 @@ namespace Telegram.Controls.Chats
             else
             {
                 _blobVisual.Clear();
+            }
+
+            if (_videoPopup != null)
+            {
+                _videoPopup.IsOpen = false;
+                _videoPopup = null;
+
+                _videoElement.Source = null;
+                _videoElement = null;
             }
 
             ChatRecordPopup.IsOpen = true;
@@ -184,7 +246,7 @@ namespace Telegram.Controls.Chats
         public event EventHandler<ChatAction> StartTyping;
         public event EventHandler CancelTyping;
 
-        private void VoiceButton_RecordingStopped(object sender, EventArgs e)
+        private void OnRecordingStopped(object sender, EventArgs e)
         {
             //if (btnVoiceMessage.IsLocked)
             //{
@@ -194,6 +256,15 @@ namespace Telegram.Controls.Chats
             //}
 
             _blobVisual.StopAnimating();
+
+            if (_videoPopup != null)
+            {
+                _videoPopup.IsOpen = false;
+                _videoPopup = null;
+
+                _videoElement.Source = null;
+                _videoElement = null;
+            }
 
             AttachExpression();
 
@@ -269,7 +340,7 @@ namespace Telegram.Controls.Chats
             CancelTyping?.Invoke(this, EventArgs.Empty);
         }
 
-        private void VoiceButton_RecordingLocked(object sender, EventArgs e)
+        private void OnRecordingLocked(object sender, EventArgs e)
         {
             ChatRecordGlyph.Text = Icons.SendFilled;
 
@@ -302,7 +373,7 @@ namespace Telegram.Controls.Chats
             pause.StartAnimation("Scale", scale);
         }
 
-        private void VoiceButton_ManipulationDelta(object sender, ManipulationDeltaRoutedEventArgs e)
+        private void OnManipulationDelta(object sender, ManipulationDeltaRoutedEventArgs e)
         {
             Vector3 point;
             if (ControlledButton.IsLocked || !ControlledButton.IsRecording)

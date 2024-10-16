@@ -156,7 +156,7 @@ namespace Telegram.ViewModels.Stories
 
             if (SelectedItem != null)
             {
-                Logger.Info("LoadAsync");
+                Logger.Info("LoadAsync " + ChatId);
                 await SelectedItem.LoadAsync();
             }
 

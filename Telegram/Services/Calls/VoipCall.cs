@@ -1,13 +1,11 @@
 ﻿using Microsoft.UI.Xaml;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.Threading.Tasks;
 using Telegram.Common;
 using Telegram.Native.Calls;
 using Telegram.Navigation;
-using Telegram.Services.ViewService;
 using Telegram.Td.Api;
 using Telegram.Views;
 using Telegram.Views.Calls;
@@ -18,7 +16,7 @@ using Windows.Graphics.Capture;
 
 namespace Telegram.Services.Calls
 {
-    public partial class VoipCall : ServiceBase
+    public partial class VoipCall : VoipCallBase
     {
         public bool IsVideo { get; private set; }
 
@@ -63,8 +61,10 @@ namespace Telegram.Services.Calls
             }
         }
 
+        public MediaDeviceTracker Devices => _devices;
+
         private string _videoInputId = "";
-        public string VideoInputId
+        public override string VideoInputId
         {
             get
             {
@@ -77,6 +77,8 @@ namespace Telegram.Services.Calls
             {
                 lock (_managerLock)
                 {
+                    _devices.Track(MediaDeviceClass.VideoInput, value);
+
                     if (_camera is VoipVideoCapture camera)
                     {
                         camera.SwitchToDevice(_videoInputId = value);
@@ -86,7 +88,7 @@ namespace Telegram.Services.Calls
         }
 
         private string _audioInputId = "";
-        public string AudioInputId
+        public override string AudioInputId
         {
             get
             {
@@ -99,13 +101,14 @@ namespace Telegram.Services.Calls
             {
                 lock (_managerLock)
                 {
+                    _devices.Track(MediaDeviceClass.AudioInput, value);
                     _manager?.SetAudioInputDevice(_audioInputId = value);
                 }
             }
         }
 
         private string _audioOutputId = "";
-        public string AudioOutputId
+        public override string AudioOutputId
         {
             get
             {
@@ -118,6 +121,7 @@ namespace Telegram.Services.Calls
             {
                 lock (_managerLock)
                 {
+                    _devices.Track(MediaDeviceClass.AudioOutput, value);
                     _manager?.SetAudioOutputDevice(_audioOutputId = value);
                 }
             }
@@ -130,6 +134,8 @@ namespace Telegram.Services.Calls
         private DateTime? _readyTime;
 
         private readonly object _stateLock = new();
+
+        private readonly MediaDeviceTracker _devices = new();
 
         private VoipVideoState _videoState = VoipVideoState.Inactive;
         private VoipAudioState _audioState = VoipAudioState.Active;
@@ -313,7 +319,7 @@ namespace Telegram.Services.Calls
             }
             else
             {
-                var permissions = await MediaDeviceWatcher.CheckAccessAsync(xamlRoot, IsVideo);
+                var permissions = await MediaDevicePermissions.CheckAccessAsync(xamlRoot, IsVideo ? MediaDeviceAccess.AudioAndVideo : MediaDeviceAccess.Audio, ElementTheme.Light);
                 if (permissions == false)
                 {
                     ClientService.Send(new DiscardCall(Id, false, 0, false, 0));
@@ -325,7 +331,7 @@ namespace Telegram.Services.Calls
             }
         }
 
-        public void Discard()
+        public override void Discard()
         {
             // TODO: dismiss reason
             ClientService.Send(new DiscardCall(Id, false, Duration, IsVideo, 0));
@@ -350,7 +356,6 @@ namespace Telegram.Services.Calls
         {
             if (_state >= state)
             {
-                Debugger.Break();
                 return;
             }
 
@@ -500,10 +505,39 @@ namespace Telegram.Services.Calls
             ClientService.Send(new SendCallSignalingData(Id, args.Data));
         }
 
+        private void OnDeviceChanged(object sender, MediaDeviceChangedEventArgs e)
+        {
+            switch (e.DeviceClass)
+            {
+                case MediaDeviceClass.VideoInput:
+                    lock (_managerLock)
+                    {
+                        if (_camera is VoipVideoCapture camera)
+                        {
+                            camera.SwitchToDevice(_videoInputId = e.DeviceId);
+                        }
+                    }
+                    break;
+                case MediaDeviceClass.AudioInput:
+                    lock (_managerLock)
+                    {
+                        _manager?.SetAudioInputDevice(_audioInputId = e.DeviceId);
+                    }
+                    break;
+                case MediaDeviceClass.AudioOutput:
+                    lock (_managerLock)
+                    {
+                        _manager?.SetAudioOutputDevice(_audioOutputId = e.DeviceId);
+                    }
+                    break;
+            }
+        }
+
         private void TransitionToRequestingOrRinging()
         {
             if (ClientService.TryGetUser(UserId, out User user))
             {
+                Logger.Info("Waiting for call creation");
                 InitializeSystemCallAsync(user, IsOutgoing).Wait();
             }
 
@@ -540,14 +574,14 @@ namespace Telegram.Services.Calls
             var call_packet_timeout_ms = ClientService.Options.CallPacketTimeoutMs;
             var call_connect_timeout_ms = ClientService.Options.CallConnectTimeoutMs;
 
-            var version = ready.Protocol.LibraryVersions[0];
             var descriptor = new VoipDescriptor
             {
+                Version = ready.Protocol.LibraryVersions[0],
+                CustomParameters = ready.CustomParameters,
                 InitializationTimeout = call_packet_timeout_ms / 1000.0,
                 ReceiveTimeout = call_connect_timeout_ms / 1000.0,
                 Servers = ready.Servers,
                 EncryptionKey = ready.EncryptionKey,
-                CustomParameters = ready.CustomParameters,
                 IsOutgoing = IsOutgoing,
                 EnableP2p = ready.Protocol.UdpP2p && ready.AllowP2p,
                 VideoCapture = _camera,
@@ -562,7 +596,7 @@ namespace Telegram.Services.Calls
             manager.RemoteMediaStateUpdated += OnRemoteMediaStateUpdated;
             manager.RemoteBatteryLevelIsLowUpdated += OnRemoteBatteryLevelIsLowUpdated;
             manager.SignalingDataEmitted += OnSignalingDataEmitted;
-            manager.Start(version, descriptor);
+            manager.Start(descriptor);
 
             lock (_managerLock)
             {
@@ -574,6 +608,8 @@ namespace Telegram.Services.Calls
                     _manager.ReceiveSignalingData(data);
                 }
             }
+
+            _devices.Changed += OnDeviceChanged;
 
             _coordinator?.TryNotifyMutedChanged(manager.IsMuted);
         }
@@ -615,10 +651,11 @@ namespace Telegram.Services.Calls
                     : ViewServiceMode.CompactOverlay,
             };
 
-            service.OpenAsync(options).Wait();
+            Logger.Info("Waiting for window creation");
+            _ = service.OpenAsync(options);
         }
 
-        private VoipPage CreatePresentation(ViewLifetimeControl control)
+        private UIElement CreatePresentation(ViewLifetimeControl control)
         {
             // Initialize video now, so that permissions are asked on the right window
             // TODO: this won't work for now, because WebRTC always initializes MediaCapture on the main thread
@@ -637,7 +674,7 @@ namespace Telegram.Services.Calls
             return new VoipPage(this);
         }
 
-        public void Show/*Window*/()
+        public override void Show()
         {
             WindowContext.Activate("Call");
         }
@@ -659,6 +696,9 @@ namespace Telegram.Services.Calls
                 _coordinator = null;
             }
 
+            _devices.Changed -= OnDeviceChanged;
+            _devices.Stop();
+
             lock (_managerLock)
             {
                 DisposeCamera();
@@ -675,16 +715,21 @@ namespace Telegram.Services.Calls
                     _manager.SetVideoCapture(null);
 
                     _manager.Stop();
-                    _manager = null;
+
+                    // TODO: Exp. see if it helps
+                    //_manager = null;
                 }
             }
         }
 
+        // This method expects _managerLock to be locked
         private void DisposeCamera()
         {
-            // This method expects _managerLock to be locked
             if (_camera != null)
             {
+                // Manager may be null if the call is not connected
+                _manager?.SetVideoCapture(null);
+
                 if (_camera is VoipScreenCapture screen)
                 {
                     screen.Paused -= OnPaused;
@@ -724,6 +769,8 @@ namespace Telegram.Services.Calls
             {
                 if (_camera == sender)
                 {
+                    DisposeCamera();
+
                     if (_videoState != VoipVideoState.Inactive)
                     {
                         _videoState = VoipVideoState.Inactive;
@@ -734,8 +781,6 @@ namespace Telegram.Services.Calls
                     {
                         VideoFailed?.Invoke(this, EventArgs.Empty);
                     }
-
-                    DisposeCamera();
                 }
             }
         }

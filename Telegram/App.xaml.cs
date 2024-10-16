@@ -14,7 +14,6 @@ using Telegram.Navigation;
 using Telegram.Navigation.Services;
 using Telegram.Services;
 using Telegram.Services.Updates;
-using Telegram.Services.ViewService;
 using Telegram.ViewModels;
 using Telegram.ViewModels.Authorization;
 using Telegram.ViewModels.Business;
@@ -191,11 +190,11 @@ namespace Telegram
 
             _ = Task.Run(() => OnStartSync(startKind, navService, update));
 
-            if (startKind != StartKind.Launch)
+            if (startKind != StartKind.Launch && WindowContext.Current.IsInMainView)
             {
                 var view = ApplicationView.GetForCurrentView();
                 await ApplicationViewSwitcher.TryShowAsStandaloneAsync(view.Id);
-                view.TryResizeView(Window.Current.Bounds.ToSize());
+                view.TryResizeView(WindowContext.Current.Bounds.ToSize());
             }
         }
 
@@ -209,20 +208,10 @@ namespace Telegram
 
             var sessionId = TypeResolver.Current.Lifetime.ActiveItem.Id;
 
-            //if (e is ContactPanelActivatedEventArgs /*|| (e is ProtocolActivatedEventArgs protocol && protocol.Uri.PathAndQuery.Contains("domain=telegrampassport", StringComparison.OrdinalIgnoreCase))*/)
-            //{
-            //    var navigationFrame = new Frame { FlowDirection = LocaleService.Current.FlowDirection };
-            //    var navigationService = NavigationServiceFactory(BackButton.Ignore, navigationFrame, sessionId, $"Main{sessionId}", false) as NavigationService;
+            var navigationFrame = new Frame();
+            var navigationService = NavigationServiceFactory(window, BackButton.Ignore, navigationFrame, sessionId, $"{sessionId}", true) as NavigationService;
 
-            //    return navigationFrame;
-            //}
-            //else
-            {
-                var navigationFrame = new Frame();
-                var navigationService = NavigationServiceFactory(window, BackButton.Ignore, navigationFrame, sessionId, $"{sessionId}", true) as NavigationService;
-
-                return new RootPage(window, navigationService) { FlowDirection = LocaleService.Current.FlowDirection };
-            }
+            return new RootPage(window, navigationService) { FlowDirection = LocaleService.Current.FlowDirection };
         }
 
         public override UIElement CreateRootElement(INavigationService navigationService)
@@ -413,7 +402,7 @@ namespace Telegram
 
                 PaymentFormPage => TypeResolver.Current.Resolve<PaymentFormViewModel>(sessionId),
                 MessageStatisticsPage => TypeResolver.Current.Resolve<MessageStatisticsViewModel>(sessionId),
-                ChatInviteLinkPage => TypeResolver.Current.Resolve<ChatInviteLinkViewModel>(sessionId),
+                ChatInviteLinksPage => TypeResolver.Current.Resolve<ChatInviteLinksViewModel>(sessionId),
                 ChatStatisticsPage => TypeResolver.Current.Resolve<ChatStatisticsViewModel>(sessionId),
                 ChatRevenuePage => TypeResolver.Current.Resolve<ChatRevenueViewModel>(sessionId),
                 ChatStarsPage => TypeResolver.Current.Resolve<ChatStarsViewModel>(sessionId),

@@ -1,0 +1,86 @@
+﻿<local:ProfileTabPage x:Class="Telegram.Views.Profile.ProfileGiftsTabPage"
+                      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                      xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                      xmlns:common="using:Telegram.Common"
+                      xmlns:controls="using:Telegram.Controls"
+                      xmlns:messages="using:Telegram.Controls.Messages"
+                      xmlns:selectors="using:Telegram.Selectors"
+                      xmlns:cells="using:Telegram.Controls.Cells"
+                      xmlns:local="using:Telegram.Views.Profile"
+                      mc:Ignorable="d">
+
+    <Grid>
+        <controls:SelectGridView x:Name="ScrollingHost"
+                                 ItemsSource="{x:Bind ViewModel.GiftsTab.Items, Mode=OneWay}"
+                                 IsItemClickEnabled="True"
+                                 ItemClick="OnItemClick"
+                                 SelectionMode="None"
+                                 ChoosingItemContainer="OnChoosingItemContainer"
+                                 ContainerContentChanging="OnContainerContentChanging"
+                                 Padding="24,0,20,8"
+                                 common:FluidGridView.MaxLength="1008">
+            <!--<common:SelectedItemsBinder.Attached>
+                <common:SelectedItemsBinder SelectionMode="Auto"
+                                            SelectedItems="{x:Bind ViewModel.SelectedItems}" />
+            </common:SelectedItemsBinder.Attached>-->
+            <common:FluidGridView.Triggers>
+                <common:FluidGridViewTrigger MinLength="0"
+                                             RowsOrColumns="2" />
+                <common:FluidGridViewTrigger MinLength="360"
+                                             RowsOrColumns="3" />
+                <common:FluidGridViewTrigger MinLength="600"
+                                             RowsOrColumns="4" />
+                <common:FluidGridViewTrigger MinLength="800"
+                                             RowsOrColumns="5" />
+            </common:FluidGridView.Triggers>
+            <GridView.Template>
+                <ControlTemplate TargetType="GridView">
+                    <Border BorderBrush="{TemplateBinding BorderBrush}"
+                            Background="{TemplateBinding Background}"
+                            BorderThickness="{TemplateBinding BorderThickness}"
+                            CornerRadius="{TemplateBinding CornerRadius}">
+                        <ItemsPresenter Header="{TemplateBinding Header}"
+                                        HeaderTemplate="{TemplateBinding HeaderTemplate}"
+                                        HeaderTransitions="{TemplateBinding HeaderTransitions}"
+                                        Footer="{TemplateBinding Footer}"
+                                        FooterTemplate="{TemplateBinding FooterTemplate}"
+                                        FooterTransitions="{TemplateBinding FooterTransitions}"
+                                        Padding="{TemplateBinding Padding}" />
+                    </Border>
+                </ControlTemplate>
+            </GridView.Template>
+            <GridView.ItemContainerStyle>
+                <Style TargetType="GridViewItem"
+                       BasedOn="{StaticResource DefaultGridViewItemStyle}">
+                    <Setter Property="Margin"
+                            Value="0,4,4,0" />
+                    <Setter Property="Padding"
+                            Value="0" />
+                    <Setter Property="HorizontalContentAlignment"
+                            Value="Stretch" />
+                    <Setter Property="VerticalContentAlignment"
+                            Value="Stretch" />
+                </Style>
+            </GridView.ItemContainerStyle>
+            <GridView.Header>
+                <Border Height="{x:Bind ViewModel.HeaderHeight, Mode=OneWay}" />
+            </GridView.Header>
+            <GridView.Footer>
+                <Border Height="60" />
+            </GridView.Footer>
+            <GridView.ItemTemplate>
+                <DataTemplate>
+                    <cells:UserGiftCell />
+                </DataTemplate>
+            </GridView.ItemTemplate>
+            <GridView.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <ItemsWrapGrid Orientation="Horizontal"
+                                   MaxWidth="1008" />
+                </ItemsPanelTemplate>
+            </GridView.ItemsPanel>
+        </controls:SelectGridView>
+    </Grid>
+</local:ProfileTabPage>

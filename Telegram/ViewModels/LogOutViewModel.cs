@@ -67,7 +67,7 @@ namespace Telegram.ViewModels
         }
         public void OpenPasscode()
         {
-            NavigationService.Navigate(typeof(SettingsPasscodePage));
+            NavigationService.NavigateToPasscode();
         }
 
         public void OpenStorage()

@@ -7,7 +7,7 @@
 using System;
 using System.Threading;
 
-namespace Telegram.Services.ViewService
+namespace Telegram.Services
 {
     class SecondaryViewSynchronizationContextDecorator : SynchronizationContext
     {

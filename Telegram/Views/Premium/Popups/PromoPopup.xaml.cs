@@ -4,14 +4,19 @@
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Documents;
 using Microsoft.UI.Xaml.Media;
 using System;
 using Telegram.Common;
 using Telegram.Controls;
 using Telegram.Controls.Media;
+using Telegram.Services;
+using Telegram.Streams;
 using Telegram.Td.Api;
 using Telegram.ViewModels.Premium;
+using Telegram.Views.Popups;
 using Windows.UI;
 
 namespace Telegram.Views.Premium.Popups
@@ -23,6 +28,119 @@ namespace Telegram.Views.Premium.Popups
         public PromoPopup()
         {
             InitializeComponent();
+        }
+
+        private readonly StickerSet _stickerSet;
+
+        public PromoPopup(IClientService clientService, Chat chat, StickerSet stickerSet)
+        {
+            InitializeComponent();
+
+            _stickerSet = stickerSet;
+
+            string title;
+            if (clientService.TryGetUser(chat, out User user))
+            {
+                title = user.FirstName;
+            }
+            else
+            {
+                title = chat.Title;
+            }
+
+            if (chat.EmojiStatus != null && stickerSet != null)
+            {
+                Animated.Visibility = Visibility.Collapsed;
+                Identity.Visibility = Visibility.Visible;
+
+                Identity.Source = new CustomEmojiFileSource(clientService, chat.EmojiStatus.CustomEmojiId);
+
+                var player = new CustomEmojiIcon();
+                player.LoopCount = 0;
+                player.Source = new DelayedFileSource(clientService, stickerSet.GetThumbnail());
+
+                player.HorizontalAlignment = HorizontalAlignment.Left;
+                player.FlowDirection = FlowDirection.LeftToRight;
+                player.Margin = new Thickness(0, -2, 0, -6);
+
+                player.FrameSize = new Windows.Foundation.Size(24, 24);
+                player.Width = 24;
+                player.Height = 24;
+
+                var inline = new InlineUIContainer();
+                inline.Child = player;
+
+                var hyperlink = new Hyperlink();
+                hyperlink.Click += StickerSet_Click;
+                hyperlink.UnderlineStyle = UnderlineStyle.None;
+                hyperlink.Inlines.Add($" {stickerSet.Name}");
+
+                var text = string.Format(Strings.TelegramPremiumUserStatusDialogTitle, title, "{0}");
+                var index = text.IndexOf("{0}");
+
+                var prefix = text.Substring(0, index);
+                var suffix = text.Substring(index + 3);
+
+                var paragraph = new Paragraph();
+                paragraph.Inlines.Add(prefix);
+                paragraph.Inlines.Add(inline);
+                paragraph.Inlines.Add(hyperlink);
+                paragraph.Inlines.Add(suffix);
+
+                ChatTitle.Blocks.Add(paragraph);
+                TextBlockHelper.SetMarkdown(ChatSubtitle, Strings.TelegramPremiumUserStatusDialogSubtitle);
+            }
+            else if (chat.EmojiStatus != null)
+            {
+                Animated.Visibility = Visibility.Collapsed;
+                Identity.Visibility = Visibility.Visible;
+
+                Identity.Source = new CustomEmojiFileSource(clientService, chat.EmojiStatus.CustomEmojiId);
+
+                var text = string.Format(Strings.TelegramPremiumUserStatusDefaultDialogTitle, title);
+
+                var paragraph = new Paragraph();
+                paragraph.Inlines.Add(text);
+
+                ChatTitle.Blocks.Add(paragraph);
+                TextBlockHelper.SetMarkdown(ChatSubtitle, Strings.TelegramPremiumUserStatusDialogSubtitle);
+            }
+            else
+            {
+                var hyperlink = new Hyperlink();
+                hyperlink.UnderlineStyle = UnderlineStyle.None;
+                hyperlink.Inlines.Add(title);
+
+                var text = Strings.TelegramPremiumUserDialogTitle.Replace("**", string.Empty);
+                var index = text.IndexOf("{0}");
+
+                var prefix = text.Substring(0, index);
+                var suffix = text.Substring(index + 3);
+
+                var paragraph = new Paragraph();
+                paragraph.Inlines.Add(prefix);
+                paragraph.Inlines.Add(hyperlink);
+                paragraph.Inlines.Add(suffix);
+
+                ChatTitle.Blocks.Add(paragraph);
+                TextBlockHelper.SetMarkdown(ChatSubtitle, Strings.TelegramPremiumUserDialogSubtitle);
+            }
+
+            ChatTitle.Visibility = Visibility.Visible;
+            ChatSubtitle.Visibility = Visibility.Visible;
+
+            PremiumTitle.Visibility = Visibility.Collapsed;
+            PremiumSubtitle.Visibility = Visibility.Collapsed;
+        }
+
+        private void StickerSet_Click(Hyperlink sender, HyperlinkClickEventArgs args)
+        {
+            Hide();
+
+            if (_stickerSet != null)
+            {
+                StickersPopup.ShowAsync(ViewModel.NavigationService, _stickerSet);
+            }
         }
 
         private async void OnItemClick(object sender, ItemClickEventArgs e)

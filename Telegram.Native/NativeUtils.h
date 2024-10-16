@@ -32,6 +32,7 @@ namespace winrt::Telegram::Native::implementation
 
         static hstring FormatTime(winrt::Windows::Foundation::DateTime value);
         static hstring FormatDate(winrt::Windows::Foundation::DateTime value, hstring format);
+        static hstring FormatDate(int year, int month, int day, hstring format);
 
         static hstring FormatTime(int value);
         static hstring FormatDate(int value, hstring format);

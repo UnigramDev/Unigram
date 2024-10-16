@@ -97,6 +97,9 @@
     <Filter Include="InternalsRT">
       <UniqueIdentifier>{2a54e86b-aff6-450a-81af-2d98899ae281}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Detours">
+      <UniqueIdentifier>{fa873c42-155d-4565-92ce-cb208010b179}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp" />
@@ -753,6 +756,36 @@
     <ClCompile Include="Composition\DirectRectangleClip2.cpp">
       <Filter>Composition</Filter>
     </ClCompile>
+    <ClCompile Include="..\Libraries\CoreWindowCustomDPI\InternalsRT.Detours\creatwth.cpp">
+      <Filter>Detours</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Libraries\CoreWindowCustomDPI\InternalsRT.Detours\detours.cpp">
+      <Filter>Detours</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Libraries\CoreWindowCustomDPI\InternalsRT.Detours\disasm.cpp">
+      <Filter>Detours</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Libraries\CoreWindowCustomDPI\InternalsRT.Detours\disolarm.cpp">
+      <Filter>Detours</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Libraries\CoreWindowCustomDPI\InternalsRT.Detours\disolarm64.cpp">
+      <Filter>Detours</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Libraries\CoreWindowCustomDPI\InternalsRT.Detours\disolia64.cpp">
+      <Filter>Detours</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Libraries\CoreWindowCustomDPI\InternalsRT.Detours\disolx64.cpp">
+      <Filter>Detours</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Libraries\CoreWindowCustomDPI\InternalsRT.Detours\disolx86.cpp">
+      <Filter>Detours</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Libraries\CoreWindowCustomDPI\InternalsRT.Detours\image.cpp">
+      <Filter>Detours</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Libraries\CoreWindowCustomDPI\InternalsRT.Detours\modules.cpp">
+      <Filter>Detours</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />
@@ -1189,6 +1222,18 @@
     </ClInclude>
     <ClInclude Include="Composition\DirectRectangleClip2.h">
       <Filter>Composition</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Libraries\CoreWindowCustomDPI\InternalsRT.Detours\detours.h">
+      <Filter>Detours</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Libraries\CoreWindowCustomDPI\InternalsRT.Detours\detver.h">
+      <Filter>Detours</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Libraries\CoreWindowCustomDPI\InternalsRT.Detours\MemoryApi.h">
+      <Filter>Detours</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Libraries\CoreWindowCustomDPI\InternalsRT.Detours\MissingImports.h">
+      <Filter>Detours</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

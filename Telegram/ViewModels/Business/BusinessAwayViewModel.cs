@@ -75,6 +75,11 @@ namespace Telegram.ViewModels.Business
 
                 UpdateRecipients(settings.Recipients);
             }
+            else if (mode == NavigationMode.Back)
+            {
+                IsEnabled = true;
+                Replies = ClientService.GetQuickReplyShortcut("away");
+            }
 
             return Task.CompletedTask;
         }
@@ -94,7 +99,8 @@ namespace Telegram.ViewModels.Business
 
         public void Create()
         {
-            NavigationService.Navigate(typeof(ChatBusinessRepliesPage), new ChatBusinessRepliesIdNavigationArgs(ClientService.Options.MyId, "away"));
+            _completed = true;
+            NavigationService.Navigate(typeof(ChatBusinessRepliesPage), new ChatBusinessRepliesIdNavigationArgs("away"));
         }
 
         public bool IsAlwaysSend
@@ -203,6 +209,12 @@ namespace Telegram.ViewModels.Business
 
         public override async void Continue()
         {
+            if (IsEnabled && Replies == null)
+            {
+                RaisePropertyChanged("REPLIES_MISSING");
+                return;
+            }
+
             _completed = true;
 
             var settings = GetSettings();

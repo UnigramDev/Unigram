@@ -5,7 +5,6 @@
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
 using LibVLCSharp.Shared;
-using Microsoft.Graphics.Canvas;
 using Microsoft.Graphics.Canvas.Geometry;
 using Microsoft.UI;
 using Microsoft.UI.Composition;
@@ -143,7 +142,7 @@ namespace Telegram.Controls.Stories
 
         public void Update(ActiveStoriesViewModel activeStories, bool open, int index)
         {
-            Logger.Info();
+            Logger.Info("Start");
 
             _viewModel = activeStories;
             _index = index;
@@ -670,7 +669,7 @@ namespace Telegram.Controls.Stories
 
             visual.StartAnimation("Scale", scale);
 
-            var device = CanvasDevice.GetSharedDevice();
+            var device = ElementComposition.GetSharedDevice();
             var rect1 = CanvasGeometry.CreateRoundedRectangle(device, 0, 0, ActualSize.X, ActualSize.Y, 8, 8);
             var rect2 = CanvasGeometry.CreateRoundedRectangle(device, 0, 0, ActualSize.X, ActualSize.Y, 8 * 2.5f, 8 * 2.5f);
 
@@ -752,7 +751,12 @@ namespace Telegram.Controls.Stories
 
         private void Photo_Click(object sender, RoutedEventArgs e)
         {
-
+            var parent = this.GetParent<StoriesWindow>();
+            if (parent != null)
+            {
+                parent.TryHide(ContentDialogResult.Primary);
+                parent.ViewModel.NavigationService.NavigateToChat(ViewModel.Chat);
+            }
         }
 
 
@@ -1222,7 +1226,7 @@ namespace Telegram.Controls.Stories
             }
         }
 
-        private void OnVout(AsyncMediaPlayer sender, MediaPlayerVoutEventArgs e)
+        private void OnVout(AsyncMediaPlayer sender, EventArgs e)
         {
             _loading = false;
             ElementCompositionPreview.SetElementChildVisual(ActiveRoot, BootStrapper.Current.Compositor.CreateSpriteVisual());

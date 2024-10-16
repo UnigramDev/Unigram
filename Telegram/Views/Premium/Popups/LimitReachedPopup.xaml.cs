@@ -166,6 +166,10 @@ namespace Telegram.Views.Premium.Popups
                 {
                     LoadAdminedPublicChannels();
                 }
+                else
+                {
+                    Header.Visibility = Visibility.Collapsed;
+                }
             }
         }
 
@@ -176,13 +180,9 @@ namespace Telegram.Views.Premium.Popups
             {
                 var result = new List<Chat>();
 
-                foreach (var id in chats.ChatIds)
+                foreach (var chat in _clientService.GetChats(chats.ChatIds))
                 {
-                    var chat = _clientService.GetChat(id);
-                    if (chat != null)
-                    {
-                        result.Add(chat);
-                    }
+                    result.Add(chat);
                 }
 
                 Header.Visibility = Visibility.Visible;
@@ -217,21 +217,23 @@ namespace Telegram.Views.Premium.Popups
                     return CreateLimit(type, clientService.Options.ChatFolderChosenChatCountMax);
                 case PremiumLimitTypeChatFolderCount:
                     return CreateLimit(type, clientService.Options.ChatFolderCountMax);
-                case PremiumLimitTypeCreatedPublicChatCount:
-                    return CreateLimit(type, 500);
                 case PremiumLimitTypePinnedSavedMessagesTopicCount:
                     return CreateLimit(type, clientService.Options.PinnedSavedMessagesTopicCountMax);
                 case PremiumLimitTypePinnedArchivedChatCount:
                     return CreateLimit(type, clientService.Options.PinnedArchivedChatCountMax);
                 case PremiumLimitTypePinnedChatCount:
                     return CreateLimit(type, clientService.Options.PinnedChatCountMax);
-                case PremiumLimitTypeSupergroupCount:
+                case PremiumLimitTypeShareableChatFolderCount:
+                    return CreateLimit(type, clientService.Options.AddedShareableChatFolderCountMax);
+                case PremiumLimitTypeCreatedPublicChatCount:
                     return CreateLimit(type, 10);
+                case PremiumLimitTypeSupergroupCount:
+                    return CreateLimit(type, 500);
                 case PremiumLimitTypeConnectedAccounts:
                     return CreateLimit(type, 4);
             }
 
-            return null;
+            return Task.FromResult<BaseObject>(null);
         }
 
         private void ContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)

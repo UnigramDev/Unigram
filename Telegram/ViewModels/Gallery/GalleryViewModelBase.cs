@@ -134,12 +134,12 @@ namespace Telegram.ViewModels.Gallery
                 return;
             }
 
-            if (item.IsProtected && !_hasProtectedContent)
+            if (item.HasProtectedContent && !_hasProtectedContent)
             {
                 _hasProtectedContent = true;
                 NavigationService.Window.DisableScreenCapture(GetHashCode());
             }
-            else if (_hasProtectedContent && !item.IsProtected)
+            else if (_hasProtectedContent && !item.HasProtectedContent)
             {
                 _hasProtectedContent = false;
                 NavigationService.Window.EnableScreenCapture(GetHashCode());
@@ -168,7 +168,7 @@ namespace Telegram.ViewModels.Gallery
         {
             get
             {
-                if (SelectedItem is GalleryMessage message && message.IsProtected)
+                if (SelectedItem is GalleryMessage message && message.HasProtectedContent)
                 {
                     return false;
                 }
@@ -198,7 +198,7 @@ namespace Telegram.ViewModels.Gallery
                 }
                 else
                 {
-                    var file = _selectedItem.GetFile();
+                    var file = _selectedItem.File;
                     if (file == null)
                     {
                         return;
@@ -214,7 +214,7 @@ namespace Telegram.ViewModels.Gallery
             FirstItem = null;
 
             var message = _selectedItem as GalleryMessage;
-            if (message == null || !message.CanView)
+            if (message == null || !message.CanBeViewed)
             {
                 return;
             }
@@ -247,12 +247,12 @@ namespace Telegram.ViewModels.Gallery
         public async void Copy()
         {
             var item = _selectedItem;
-            if (item == null || !item.CanCopy)
+            if (item == null || !item.CanBeCopied)
             {
                 return;
             }
 
-            var file = item.GetFile();
+            var file = item.File;
             if (file == null)
             {
                 return;
@@ -270,12 +270,12 @@ namespace Telegram.ViewModels.Gallery
         public virtual async void Save()
         {
             var item = _selectedItem;
-            if (item == null || !item.CanSave)
+            if (item == null || !item.CanBeSaved)
             {
                 return;
             }
 
-            var file = item.GetFile();
+            var file = item.File;
             if (file != null)
             {
                 await _storageService.SaveFileAsAsync(file);
@@ -290,7 +290,7 @@ namespace Telegram.ViewModels.Gallery
                 return;
             }
 
-            var file = item.GetFile();
+            var file = item.File;
             if (file != null)
             {
                 await _storageService.OpenFileWithAsync(file);

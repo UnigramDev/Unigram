@@ -5,9 +5,6 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:common="using:Telegram.Common"
              xmlns:controls="using:Telegram.Controls"
-             xmlns:chats="using:Telegram.Controls.Chats"
-             xmlns:messages="using:Telegram.Controls.Messages"
-             xmlns:primitives="using:Microsoft.UI.Xaml.Controls.Primitives"
              mc:Ignorable="d"
              Padding="0">
 
@@ -91,8 +88,7 @@
                     </controls:ActiveStoriesSegments.RenderTransform>
                     <controls:ProfilePicture x:Name="Photo"
                                              Width="140"
-                                             Height="140"
-                                             IsEnabled="False" />
+                                             Height="140" />
                 </controls:ActiveStoriesSegments>
             </Grid>
 

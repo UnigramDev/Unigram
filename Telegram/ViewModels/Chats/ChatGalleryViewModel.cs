@@ -208,7 +208,7 @@ namespace Telegram.ViewModels.Chats
             FirstItem = null;
 
             var message = _selectedItem as GalleryMessage;
-            if (message == null || !message.CanView)
+            if (message == null || !message.CanBeViewed)
             {
                 return;
             }

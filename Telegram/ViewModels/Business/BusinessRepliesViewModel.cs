@@ -99,7 +99,7 @@ namespace Telegram.ViewModels.Business
             var confirm = await ShowPopupAsync(popup);
             if (confirm == ContentDialogResult.Primary)
             {
-                NavigationService.Navigate(typeof(ChatBusinessRepliesPage), new ChatBusinessRepliesIdNavigationArgs(ClientService.Options.MyId, popup.Text));
+                NavigationService.Navigate(typeof(ChatBusinessRepliesPage), new ChatBusinessRepliesIdNavigationArgs(popup.Text));
             }
         }
 
@@ -147,7 +147,7 @@ namespace Telegram.ViewModels.Business
 
         public void Open(QuickReplyShortcut shortcut)
         {
-            NavigationService.Navigate(typeof(ChatBusinessRepliesPage), new ChatBusinessRepliesIdNavigationArgs(ClientService.Options.MyId, shortcut.Name));
+            NavigationService.Navigate(typeof(ChatBusinessRepliesPage), new ChatBusinessRepliesIdNavigationArgs(shortcut.Name));
         }
     }
 }

@@ -52,6 +52,8 @@ namespace Telegram.Controls
 
         private long _titleToken;
 
+        private bool _templateApplied;
+
         public MasterDetailView()
         {
             DefaultStyleKey = typeof(MasterDetailView);
@@ -70,6 +72,7 @@ namespace Telegram.Controls
                 service.Frame.DataContext = new object();
                 service.FrameFacade.BackRequested += OnBackRequested;
                 service.BackStackChanged += OnBackStackChanged;
+                service.Navigated += OnNavigated;
             }
 
             Initialize(service, parent, viewModel, true);
@@ -95,16 +98,12 @@ namespace Telegram.Controls
             {
                 NavigationService.FrameFacade.BackRequested -= OnBackRequested;
                 NavigationService.BackStackChanged -= OnBackStackChanged;
+                NavigationService.Navigated -= OnNavigated;
             }
 
             if (AdaptivePanel != null)
             {
                 AdaptivePanel.ViewStateChanged -= OnViewStateChanged;
-            }
-
-            if (DetailFrame != null)
-            {
-                DetailFrame.Navigated -= OnNavigated;
             }
 
             if (DetailHeaderPresenter != null)
@@ -331,6 +330,8 @@ namespace Telegram.Controls
             DetailHeaderPresenter.Visibility = _backgroundType == BackgroundKind.Material ? Visibility.Visible : Visibility.Collapsed;
             BackButton.Visibility = _backgroundType == BackgroundKind.Material && _showDetailHeader ? Visibility.Visible : Visibility.Collapsed;
 
+            _templateApplied = true;
+
             ElementCompositionPreview.SetIsTranslationEnabled(DetailAction, true);
             ElementCompositionPreview.SetIsTranslationEnabled(BackButton, true);
 
@@ -359,12 +360,14 @@ namespace Telegram.Controls
                 //Grid.SetRow(DetailFrame, 1);
                 try
                 {
-                    DetailFrame.Navigated += OnNavigated;
                     DetailPresenter.Children.Add(DetailFrame);
 
-                    if (DetailFrame.Content is Page)
+                    if (DetailFrame.Content is Page page)
                     {
-                        OnNavigated(DetailFrame, null);
+                        OnNavigated(null, new NavigatedEventArgs
+                        {
+                            Content = page
+                        });
                     }
 
                     if (HasMaster)
@@ -416,9 +419,15 @@ namespace Telegram.Controls
             }
         }
 
-        private void OnNavigated(object sender, NavigationEventArgs e)
+        private void OnNavigated(object sender, NavigatedEventArgs e)
         {
-            if (DetailFrame.Content is HostedPage hosted)
+            // OnNavigated is then manually invoked in OnApplyTemplate
+            if (!_templateApplied)
+            {
+                return;
+            }
+
+            if (e.Content is HostedPage hosted)
             {
                 DetailFooter = hosted.Action;
 
@@ -436,14 +445,13 @@ namespace Telegram.Controls
                         _backStack.ReplaceWith(BuildBackStack(hosted.NavigationMode == HostedNavigationMode.Root || (hosted.NavigationMode == HostedNavigationMode.RootWhenParameterless && e.Parameter == null)));
                     }
 
-                    var scrollingHost = hosted.FindName("ScrollingHost");
-                    if (scrollingHost is ListViewBase list)
+                    if (e.NavigationMode == NavigationMode.Back)
                     {
-                        list.Loaded += SetScrollingHost;
+                        SetScrollingHost(_showDetailHeader, e.VerticalOffset);
                     }
-                    else if (scrollingHost is ScrollViewer scroll)
+                    else
                     {
-                        SetScrollingHost(scroll);
+                        SetScrollingHost(_showDetailHeader, 0);
                     }
 
                     ShowHideDetailHeader(true, hosted.ShowHeaderBackground);
@@ -499,25 +507,10 @@ namespace Telegram.Controls
                 : Visibility.Collapsed;
         }
 
-        private void SetScrollingHost(object sender, RoutedEventArgs e)
-        {
-            if (sender is ListViewBase list)
-            {
-                var scroller = list.GetScrollViewer();
-                if (scroller != null)
-                {
-                    SetScrollingHost(scroller);
-                }
-            }
-        }
+        private CompositionPropertySet _properties;
 
-        private void SetScrollingHost(ScrollViewer scroller)
+        private void InitializeScrollingHostAnimation()
         {
-            if (scroller == null)
-            {
-                return;
-            }
-
             var visual1 = ElementComposition.GetElementVisual(DetailHeaderBackground);
             var visual2 = ElementComposition.GetElementVisual(DetailHeaderPresenter);
             var visual3 = ElementComposition.GetElementVisual(DetailAction);
@@ -529,7 +522,10 @@ namespace Telegram.Controls
             // min in:  1
             // max in:  1.714
 
-            var properties = ElementCompositionPreview.GetScrollViewerManipulationPropertySet(scroller);
+            _properties = visual1.Compositor.CreatePropertySet();
+            _properties.InsertVector3("Translation", new Vector3(0, 32, 0));
+
+            var properties = _properties;
 
             var expOut = "clamp(1 - ((-scrollViewer.Translation.Y / 32) * 0.417), 0.583, 1)";
             var slideOut = visual1.Compositor.CreateExpressionAnimation($"vector3({expOut}, {expOut}, 1)");
@@ -557,6 +553,83 @@ namespace Telegram.Controls
             fadeIn.SetReferenceParameter("scrollViewer", properties);
 
             visual1.StartAnimation("Opacity", fadeIn);
+        }
+
+        private void SetScrollingHost(bool animate, double offset)
+        {
+            if (_properties == null)
+            {
+                InitializeScrollingHostAnimation();
+            }
+
+            if (animate)
+            {
+                var batch = _properties.Compositor.CreateScopedBatch(CompositionBatchTypes.Animation);
+                batch.Completed += (s, args) =>
+                {
+                    SetScrollingHost();
+                };
+
+                var animation = _properties.Compositor.CreateScalarKeyFrameAnimation();
+                animation.InsertKeyFrame(1, -Math.Min((float)offset, 32));
+                animation.Duration = Constants.FastAnimation;
+
+                _properties.StartAnimation("Translation.Y", animation);
+
+                batch.End();
+            }
+            else
+            {
+                SetScrollingHost();
+            }
+        }
+
+        private void SetScrollingHost()
+        {
+            var hosted = DetailFrame.Content as HostedPage;
+            var scrollingHost = hosted?.FindName("ScrollingHost");
+            if (scrollingHost is ListViewBase listView)
+            {
+                var scrollViewer = listView.GetScrollViewer();
+                if (scrollViewer == null)
+                {
+                    listView.Loaded += SetScrollingHost;
+                }
+                else
+                {
+                    SetScrollingHost(scrollViewer);
+                }
+            }
+            else if (scrollingHost is ScrollViewer scroll)
+            {
+                SetScrollingHost(scroll);
+            }
+        }
+
+        private void SetScrollingHost(object sender, RoutedEventArgs e)
+        {
+            if (sender is ListViewBase list)
+            {
+                var scroller = list.GetScrollViewer();
+                if (scroller != null)
+                {
+                    SetScrollingHost(scroller);
+                }
+            }
+        }
+
+        private void SetScrollingHost(ScrollViewer scroller)
+        {
+            if (scroller == null)
+            {
+                return;
+            }
+
+            var properties = ElementCompositionPreview.GetScrollViewerManipulationPropertySet(scroller);
+            var animation = _properties.Compositor.CreateExpressionAnimation("scrollViewer.Translation");
+            animation.SetReferenceParameter("scrollViewer", properties);
+
+            _properties.StartAnimation("Translation", animation);
         }
 
         private void OnTitleChanged(DependencyObject sender, DependencyProperty dp)

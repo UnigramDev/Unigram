@@ -258,7 +258,6 @@ namespace Telegram.Controls
         private UIElement CreateContainer(object item)
         {
             var picture = new ProfilePicture();
-            picture.IsEnabled = false;
             picture.Width = _itemSize;
             picture.Height = _itemSize;
 

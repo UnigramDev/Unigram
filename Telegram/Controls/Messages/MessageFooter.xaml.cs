@@ -97,7 +97,14 @@ namespace Telegram.Controls.Messages
         {
             if (Label != null)
             {
-                Label.Text = _effectGlyph + _pinnedGlyph + _repliesLabel + _viewsLabel + _editedLabel + _authorLabel + _dateLabel + _stateLabel;
+                if (Formatter.IsTimeRightToLeft)
+                {
+                    Label.Text = _effectGlyph + _pinnedGlyph + _repliesLabel + _viewsLabel + _editedLabel + _authorLabel + Icons.LTR + Icons.RTL + _dateLabel + _stateLabel;
+                }
+                else
+                {
+                    Label.Text = _effectGlyph + _pinnedGlyph + _repliesLabel + _viewsLabel + _editedLabel + _authorLabel + _dateLabel + _stateLabel;
+                }
             }
         }
 
@@ -454,7 +461,7 @@ namespace Telegram.Controls.Messages
                     _ticksHash = messageHash;
 
                     // TODO: 
-                    return Icons.LTR + "\u00A0failed"; // Failed
+                    return "\u00A0failed"; // Failed
                 }
                 else if (message.SendingState is MessageSendingStatePending)
                 {
@@ -463,7 +470,7 @@ namespace Telegram.Controls.Messages
                     _ticksState = MessageTicksState.Pending;
                     _ticksHash = messageHash;
 
-                    return Icons.LTR + "\u00A0\uEA06"; // Pending
+                    return "\u00A0\uEA06"; // Pending
                 }
                 else if (message.Id <= maxId)
                 {
@@ -472,7 +479,7 @@ namespace Telegram.Controls.Messages
                     _ticksState = MessageTicksState.Read;
                     _ticksHash = messageHash;
 
-                    return Icons.LTR + "\u00A0\uEA07"; // Read
+                    return "\u00A0\uEA07"; // Read
                 }
 
                 UpdateTicks(true, false, _ticksState == MessageTicksState.Pending && _ticksHash == messageHash);
@@ -480,7 +487,7 @@ namespace Telegram.Controls.Messages
                 _ticksState = MessageTicksState.Sent;
                 _ticksHash = messageHash;
 
-                return Icons.LTR + "\u00A0\uEA07"; // Unread
+                return "\u00A0\uEA07"; // Unread
             }
 
             UpdateTicks(false, null);
@@ -512,7 +519,7 @@ namespace Telegram.Controls.Messages
                 var date = Formatter.LongDate.Format(dateTime);
                 var time = Formatter.LongTime.Format(dateTime);
 
-                text = $"{date} {time}";
+                text = string.Format(Strings.formatDateAtTime, date, time);
             }
             else if (message.SchedulingState is MessageSchedulingStateSendWhenOnline)
             {
@@ -524,7 +531,7 @@ namespace Telegram.Controls.Messages
                 var date = Formatter.LongDate.Format(dateTime);
                 var time = Formatter.LongTime.Format(dateTime);
 
-                text = $"{date} {time}";
+                text = string.Format(Strings.formatDateAtTime, date, time);
             }
 
             var bot = false;
@@ -535,25 +542,11 @@ namespace Telegram.Controls.Messages
 
             if (message.EditDate != 0 && message.ViaBotUserId == 0 && !bot && message.ReplyMarkup is not ReplyMarkupInlineKeyboard)
             {
-                var edit = Formatter.ToLocalTime(message.EditDate);
-                var editDate = Formatter.LongDate.Format(edit);
-                var editTime = Formatter.LongTime.Format(edit);
-
-                text += $"\r\n{Strings.EditedMessage}: {editDate} {editTime}";
+                text += "\r\n" + Formatter.EditDate(message.EditDate);
             }
-
-            DateTime? original = null;
-            if (message.ForwardInfo != null)
+            else if (message.ForwardInfo != null && !message.IsSaved && !message.IsVerificationCode)
             {
-                original = Formatter.ToLocalTime(message.ForwardInfo.Date);
-            }
-
-            if (original != null)
-            {
-                var originalDate = Formatter.LongDate.Format(original.Value);
-                var originalTime = Formatter.LongTime.Format(original.Value);
-
-                text += $"\r\n{Strings.CropOriginal}: {originalDate} {originalTime}";
+                text += Environment.NewLine + Formatter.ForwardDate(message.ForwardInfo.Date);
             }
 
             tooltip.Content = text;

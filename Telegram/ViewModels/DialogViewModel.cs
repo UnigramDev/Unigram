@@ -68,13 +68,10 @@ namespace Telegram.ViewModels
 
     public partial class ChatBusinessRepliesIdNavigationArgs
     {
-        public ChatBusinessRepliesIdNavigationArgs(long chatId, string quickReplyShortcut)
+        public ChatBusinessRepliesIdNavigationArgs(string quickReplyShortcut)
         {
-            ChatId = chatId;
             QuickReplyShortcut = quickReplyShortcut;
         }
-
-        public long ChatId { get; }
 
         public string QuickReplyShortcut { get; }
     }
@@ -102,7 +99,6 @@ namespace Telegram.ViewModels
         protected readonly INotificationsService _notificationsService;
         protected readonly IPlaybackService _playbackService;
         protected readonly IVoipService _voipService;
-        protected readonly IVoipGroupService _voipGroupService;
         protected readonly INetworkService _networkService;
         protected readonly IStorageService _storageService;
         protected readonly ITranslateService _translateService;
@@ -114,19 +110,20 @@ namespace Telegram.ViewModels
 
         public ITranslateService TranslateService => _translateService;
 
+        public IVoipService VoipService => _voipService;
+
         public DialogUnreadMessagesViewModel Mentions => _mentions;
         public DialogUnreadMessagesViewModel Reactions => _reactions;
 
         public IDialogDelegate Delegate { get; set; }
 
-        public DialogViewModel(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator, ILocationService locationService, INotificationsService pushService, IPlaybackService playbackService, IVoipService voipService, IVoipGroupService voipGroupService, INetworkService networkService, IStorageService storageService, ITranslateService translateService, IMessageFactory messageFactory)
+        public DialogViewModel(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator, ILocationService locationService, INotificationsService pushService, IPlaybackService playbackService, IVoipService voipService, INetworkService networkService, IStorageService storageService, ITranslateService translateService, IMessageFactory messageFactory)
             : base(clientService, settingsService, aggregator)
         {
             _locationService = locationService;
             _notificationsService = pushService;
             _playbackService = playbackService;
             _voipService = voipService;
-            _voipGroupService = voipGroupService;
             _networkService = networkService;
             _storageService = storageService;
             _translateService = translateService;
@@ -461,9 +458,15 @@ namespace Telegram.ViewModels
         public bool IsSelectionEnabled
         {
             get => _isSelectionEnabled;
-            set
+            set => ShowHideSelection(value);
+        }
+
+        public void ShowHideSelection(bool value, ReportChatSelection report = null)
+        {
+            if (_isSelectionEnabled != value)
             {
-                Set(ref _isSelectionEnabled, value);
+                Set(ref _isReportingMessages, report, nameof(IsReportingMessages));
+                Set(ref _isSelectionEnabled, value, nameof(IsSelectionEnabled));
 
                 if (value)
                 {
@@ -808,39 +811,52 @@ namespace Telegram.ViewModels
                 goto AddDate;
             }
 
-            var fullInfo = ClientService.GetUserFull(user.Id);
-            fullInfo ??= await ClientService.SendAsync(new GetUserFullInfo(user.Id)) as UserFullInfo;
-
-            if (fullInfo != null && fullInfo.BotInfo?.Description.Length > 0)
+            if (chat.Id == ClientService.Options.VerificationCodesBotChatId)
             {
-                var entities = ClientEx.GetTextEntities(fullInfo.BotInfo.Description);
+                var entities = ClientEx.GetTextEntities(Strings.VerifyChatInfo);
+                var text = new FormattedText(Strings.VerifyChatInfo, entities);
 
-                foreach (var entity in entities)
-                {
-                    entity.Offset += Strings.BotInfoTitle.Length + Environment.NewLine.Length;
-                }
-
-                entities.Add(new TextEntity(0, Strings.BotInfoTitle.Length, new TextEntityTypeBold()));
-
-                var message = $"{Strings.BotInfoTitle}{Environment.NewLine}{fullInfo.BotInfo.Description}";
-                var text = new FormattedText(message, entities);
-
-                MessageContent content;
-                if (fullInfo.BotInfo.Animation != null)
-                {
-                    content = new MessageAnimation(fullInfo.BotInfo.Animation, text, false, false, false);
-                }
-                else if (fullInfo.BotInfo.Photo != null)
-                {
-                    content = new MessagePhoto(fullInfo.BotInfo.Photo, text, false, false, false);
-                }
-                else
-                {
-                    content = new MessageText(text, null, null);
-                }
+                var content = new MessageText(text, null, null);
 
                 messages.Add(new Message(0, new MessageSenderUser(user.Id), chat.Id, null, null, false, false, false, false, false, false, false, false, 0, 0, null, null, null, null, null, null, 0, 0, null, 0, 0, 0, 0, 0, string.Empty, 0, 0, false, string.Empty, content, null));
                 return;
+            }
+            else
+            {
+                var fullInfo = ClientService.GetUserFull(user.Id);
+                fullInfo ??= await ClientService.SendAsync(new GetUserFullInfo(user.Id)) as UserFullInfo;
+
+                if (fullInfo != null && fullInfo.BotInfo?.Description.Length > 0)
+                {
+                    var entities = ClientEx.GetTextEntities(fullInfo.BotInfo.Description);
+
+                    foreach (var entity in entities)
+                    {
+                        entity.Offset += Strings.BotInfoTitle.Length + Environment.NewLine.Length;
+                    }
+
+                    entities.Add(new TextEntity(0, Strings.BotInfoTitle.Length, new TextEntityTypeBold()));
+
+                    var message = $"{Strings.BotInfoTitle}{Environment.NewLine}{fullInfo.BotInfo.Description}";
+                    var text = new FormattedText(message, entities);
+
+                    MessageContent content;
+                    if (fullInfo.BotInfo.Animation != null)
+                    {
+                        content = new MessageAnimation(fullInfo.BotInfo.Animation, text, false, false, false);
+                    }
+                    else if (fullInfo.BotInfo.Photo != null)
+                    {
+                        content = new MessagePhoto(fullInfo.BotInfo.Photo, text, false, false, false);
+                    }
+                    else
+                    {
+                        content = new MessageText(text, null, null);
+                    }
+
+                    messages.Add(new Message(0, new MessageSenderUser(user.Id), chat.Id, null, null, false, false, false, false, false, false, false, false, 0, 0, null, null, null, null, null, null, 0, 0, null, 0, 0, 0, 0, 0, string.Empty, 0, 0, false, string.Empty, content, null));
+                    return;
+                }
             }
 
         AddDate:
@@ -2000,7 +2016,7 @@ namespace Telegram.ViewModels
                         }
                         else if (story.Content is StoryContentVideo video)
                         {
-                            message.GeneratedContent = new MessageVideo(new Video((int)video.Video.Duration, video.Video.Width, video.Video.Height, "video.mp4", "video/mp4", video.Video.HasStickers, true, video.Video.Minithumbnail, video.Video.Thumbnail, video.Video.Video), null, false, false, false);
+                            message.GeneratedContent = new MessageVideo(new Video((int)video.Video.Duration, video.Video.Width, video.Video.Height, "video.mp4", "video/mp4", video.Video.HasStickers, true, video.Video.Minithumbnail, video.Video.Thumbnail, video.Video.Video), Array.Empty<AlternativeVideo>(), null, false, false, false);
                         }
                     }
                     else
@@ -2052,7 +2068,7 @@ namespace Telegram.ViewModels
             {
                 QuickReplyShortcut = ClientService.GetQuickReplyShortcut(businessRepliesIdArgs.QuickReplyShortcut);
                 QuickReplyShortcut ??= new QuickReplyShortcut(-1, businessRepliesIdArgs.QuickReplyShortcut, null, 0);
-                parameter = businessRepliesIdArgs.ChatId;
+                parameter = ClientService.Options.MyId;
             }
 
             var chat = ClientService.GetChat((long)parameter);
@@ -2327,7 +2343,6 @@ namespace Telegram.ViewModels
             LastPinnedMessage = null;
             LockedPinnedMessageId = 0;
 
-            DisposeSearch();
             IsSelectionEnabled = false;
 
             ClientService.Send(new CloseChat(chat.Id));
@@ -3102,7 +3117,7 @@ namespace Telegram.ViewModels
                 return;
             }
 
-            ClientService.Send(new ReportChat(chat.Id, Array.Empty<long>(), reason, string.Empty));
+            Report();
 
             if (chat.Type is ChatTypeBasicGroup or ChatTypeSupergroup)
             {
@@ -3196,7 +3211,12 @@ namespace Telegram.ViewModels
                 return;
             }
 
-            if (ClientService.IsRepliesChat(chat))
+            if (chat.Id == ClientService.Options.RepliesBotChatId
+                || chat.Id == ClientService.Options.VerificationCodesBotChatId
+                || Type == DialogType.EventLog
+                || Type == DialogType.Pinned
+                || Type == DialogType.BusinessReplies
+                || Type == DialogType.ScheduledMessages)
             {
                 return;
             }
@@ -3288,7 +3308,7 @@ namespace Telegram.ViewModels
             Call(true);
         }
 
-        public async void Call(bool video)
+        public void Call(bool video)
         {
             var chat = _chat;
             if (chat == null)
@@ -3298,11 +3318,11 @@ namespace Telegram.ViewModels
 
             if (chat.Type is ChatTypePrivate or ChatTypeSecret)
             {
-                _voipService.Start(NavigationService, chat, video);
+                _voipService.StartPrivateCall(NavigationService, chat, video);
             }
             else
             {
-                await _voipGroupService.JoinAsync(XamlRoot, chat.Id);
+                _voipService.JoinGroupCall(NavigationService, chat.Id);
             }
         }
 
@@ -3793,6 +3813,13 @@ namespace Telegram.ViewModels
 
         #region Report Chat
 
+        private ReportChatSelection _isReportingMessages;
+        public ReportChatSelection IsReportingMessages
+        {
+            get => _isReportingMessages;
+            set => Set(ref _isReportingMessages, value);
+        }
+
         public async void Report()
         {
             await ReportAsync(Array.Empty<long>());
@@ -3806,10 +3833,24 @@ namespace Telegram.ViewModels
                 return;
             }
 
-            var form = await GetReportFormAsync(NavigationService);
-            if (form.Reason != null)
+            ReportChatPopup popup;
+            if (IsReportingMessages is ReportChatSelection selection)
             {
-                ClientService.Send(new ReportChat(chat.Id, messages, form.Reason, form.Text));
+                popup = new ReportChatPopup(ClientService, NavigationService, chat.Id, IsReportingMessages?.Option, messages, selection.Text);
+            }
+            else
+            {
+                popup = new ReportChatPopup(ClientService, NavigationService, chat.Id, null, messages, string.Empty);
+            }
+
+            var report = await popup.ReportAsync();
+            if (report?.Result is ReportChatResultMessagesRequired)
+            {
+                ShowHideSelection(true, report);
+            }
+            else if (IsReportingMessages != null)
+            {
+                ShowHideSelection(false);
             }
         }
 
@@ -3977,7 +4018,7 @@ namespace Telegram.ViewModels
                 {
                     DeleteChat();
                 }
-                else if (ClientService.IsRepliesChat(chat))
+                else if (chat.Id == ClientService.Options.RepliesBotChatId || chat.Id == ClientService.Options.VerificationCodesBotChatId)
                 {
                     ToggleMute();
                 }
@@ -4069,7 +4110,7 @@ namespace Telegram.ViewModels
 
         #region Group calls
 
-        public async void JoinGroupCall()
+        public void JoinGroupCall()
         {
             var chat = _chat;
             if (chat == null)
@@ -4077,7 +4118,7 @@ namespace Telegram.ViewModels
                 return;
             }
 
-            await _voipGroupService.JoinAsync(XamlRoot, chat.Id);
+            _voipService.JoinGroupCall(NavigationService, chat.Id);
         }
 
         #endregion
@@ -4530,7 +4571,7 @@ namespace Telegram.ViewModels
 
         private static bool AreTogether(MessageViewModel message1, MessageViewModel message2)
         {
-            if (message1.IsService || message2.IsService)
+            if (message1.IsService || message2.IsService || message1.ChatId == message1.ClientService.Options.VerificationCodesBotChatId)
             {
                 return false;
             }

@@ -1186,7 +1186,7 @@ namespace Telegram.Controls
             var basicGroup = chat.Type is ChatTypeBasicGroup basicGroupType ? ViewModel.ClientService.GetBasicGroup(basicGroupType.BasicGroupId) : null;
             var supergroup = chat.Type is ChatTypeSupergroup supergroupType ? ViewModel.ClientService.GetSupergroup(supergroupType.SupergroupId) : null;
 
-            if ((user != null && user.Type is not UserTypeBot) || (basicGroup != null && basicGroup.CanChangeInfo()) || (supergroup != null && supergroup.CanChangeInfo()))
+            if ((user != null && user.Type is not UserTypeBot) || (basicGroup != null && basicGroup.CanChangeInfo(chat)) || (supergroup != null && supergroup.CanChangeInfo(chat)))
             {
                 var icon = chat.MessageAutoDeleteTime switch
                 {
@@ -1282,9 +1282,9 @@ namespace Telegram.Controls
                         }
                     }
 
-                    if (ViewModel.IsPremium && fullInfo.PremiumGiftOptions.Count > 0)
+                    if (user.Type is UserTypeRegular && ViewModel.IsPremiumAvailable)
                     {
-                        flyout.CreateFlyoutItem(ViewModel.GiftPremium, Strings.GiftPremium, Icons.GiftPremium);
+                        flyout.CreateFlyoutItem(ViewModel.GiftPremium, Strings.SendAGift, Icons.GiftPremium);
                     }
 
                     if (user.Type is UserTypeRegular
@@ -1356,7 +1356,10 @@ namespace Telegram.Controls
                     flyout.CreateFlyoutItem(ViewModel.Invite, Strings.AddMember, Icons.PersonAdd);
                 }
 
-                flyout.CreateFlyoutItem(ViewModel.OpenMembers, Strings.SearchMembers, Icons.Search);
+                if (basicGroup.Status is ChatMemberStatusMember or ChatMemberStatusRestricted)
+                {
+                    flyout.CreateFlyoutItem(ViewModel.DeleteChat, Strings.DeleteAndExit, Icons.Delete, destructive: true);
+                }
             }
 
             //flyout.CreateFlyoutItem(null, Strings.AddShortcut, Icons.Pin);
@@ -1711,7 +1714,10 @@ namespace Telegram.Controls
                     .Where(x => x.Emoji is /*"\U0001F389" or "\U0001F386" or*/ "\U0001F388" or "\U0001F973")
                     .ToList();
 
-                return stickers[_effect++ % stickers.Count];
+                if (stickers.Count > 0)
+                {
+                    return stickers[_effect++ % stickers.Count];
+                }
             }
 
             return null;
@@ -1741,6 +1747,11 @@ namespace Telegram.Controls
             }
 
             return null;
+        }
+
+        private void Identity_Click(object sender, RoutedEventArgs e)
+        {
+            ViewModel.ShowPromo();
         }
     }
 }

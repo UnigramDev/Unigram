@@ -13,6 +13,7 @@ namespace Telegram.Controls.Media
 {
     public partial class Icons
     {
+        public const string BulletSpace = "\u2022 ";
         public const string RTL = "\u200F";
         public const string LTR = "\u200E";
         public const string ZWJ = "\u200D";
@@ -35,8 +36,9 @@ namespace Telegram.Controls.Media
 
         public const string ArrowSync = "\uE981";
 
-        public const string LinkSide = "\uE9F8";
-        public const string LinkSideBroken = "\uE9F7";
+        public const string TicketDiagonal = "\uEA9D";
+        public const string LinkDiagonal = "\uE9F8";
+        public const string LinkDiagonalBroken = "\uE9F7";
 
         public const string ArrowMinimize = "\uE965";
         public const string ArrowMaximize = "\uE966";
@@ -115,6 +117,7 @@ namespace Telegram.Controls.Media
 
         public const string Payment16 = "\uE9AB";
         public const string Window16 = "\uE9AA";
+        public const string CopyFilled16 = "\uEA97";
 
         public const string NumberSymbolFilled16 = "\uE9FB";
 
@@ -240,7 +243,7 @@ namespace Telegram.Controls.Media
         public const string Record = "\uE903";
 
         public const string AppsListDetails = "\uEA67";
-
+        public const string DeleteFilled24 = "\uEAA0";
         public const string Delete = "\uE74D";
         public const string Share = "\uE72D";
         public const string ShareFilled = "\uE914";
@@ -381,6 +384,8 @@ namespace Telegram.Controls.Media
 
         public const string Clock = "\uEA34";
         public const string ClockFilled = "\uEA33";
+        public const string ClockEdit = "\uEA9E";
+        public const string ClockArrowForward = "\uEA9F";
 
         public const string Multiplier2xFilled = "\uE9BA";
         public const string PlayCircleFilled = "\uE9AE";

@@ -15,23 +15,29 @@
 
         <Grid Margin="0,12,0,0"
               VerticalAlignment="Top">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="36" />
+                <ColumnDefinition />
+            </Grid.ColumnDefinitions>
             <TextBox x:Name="Label"
                      x:Load="False"
                      TextChanged="Label_TextChanged"
-                     KeyDown="Label_KeyDown" />
+                     KeyDown="Label_KeyDown"
+                     Grid.ColumnSpan="2" />
             <PasswordBox x:Name="Password"
                          x:Load="False"
                          PasswordChanged="Label_PasswordChanged"
-                         KeyDown="Label_KeyDown" />
+                         KeyDown="Label_KeyDown"
+                         Grid.ColumnSpan="2" />
             <muxc:NumberBox x:Name="Number"
                             x:Load="False"
                             ValueChanged="Number_ValueChanged"
-                            KeyDown="Label_KeyDown" />
+                            KeyDown="Label_KeyDown"
+                            Grid.ColumnSpan="2" />
 
             <controls:PremiumStarCount x:Name="StarCount"
                                        x:Load="False"
-                                       Margin="4,0,0,0"
-                                       HorizontalAlignment="Left"
+                                       HorizontalAlignment="Center"
                                        VerticalAlignment="Center"
                                        Width="24"
                                        Height="24" />
