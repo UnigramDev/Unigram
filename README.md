@@ -26,7 +26,7 @@ For feature requests, make sure to have read our [contributing guidelines](/CONT
 
 <a name="changelog"></a>
 ## Changelog
-Changelogs are provided both in [Unigram News channel](https://t.me/unigram) and in the [Releases section of our GitHub project](https://github.com/UnigramDev/Unigram/releases).
+Changelogs are provided on [our website](https://unigramdev.github.io), [Unigram News channel](https://t.me/unigram) and in the [releases section of our GitHub project](https://github.com/UnigramDev/Unigram/releases).
 
 <a name="screenshots"></a>
 ## Screenshots
