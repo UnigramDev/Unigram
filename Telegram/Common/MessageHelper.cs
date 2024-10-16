@@ -353,6 +353,12 @@ namespace Telegram.Common
 
         public static bool TryCreateUri(string url, out Uri uri)
         {
+            if (url == null)
+            {
+                uri = null;
+                return false;
+            }
+
             if (!url.StartsWith("http://")
                 && !url.StartsWith("https://")
                 && !url.StartsWith("tg:")
