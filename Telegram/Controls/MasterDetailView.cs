@@ -53,6 +53,8 @@ namespace Telegram.Controls
 
         private long _titleToken;
 
+        private bool _templateApplied;
+
         public MasterDetailView()
         {
             DefaultStyleKey = typeof(MasterDetailView);
@@ -329,6 +331,8 @@ namespace Telegram.Controls
             DetailHeaderPresenter.Visibility = _backgroundType == BackgroundKind.Material ? Visibility.Visible : Visibility.Collapsed;
             BackButton.Visibility = _backgroundType == BackgroundKind.Material && _showDetailHeader ? Visibility.Visible : Visibility.Collapsed;
 
+            _templateApplied = true;
+
             ElementCompositionPreview.SetIsTranslationEnabled(DetailAction, true);
             ElementCompositionPreview.SetIsTranslationEnabled(BackButton, true);
 
@@ -418,7 +422,8 @@ namespace Telegram.Controls
 
         private void OnNavigated(object sender, NavigatedEventArgs e)
         {
-            if (DetailFrame == null)
+            // OnNavigated is then manually invoked in OnApplyTemplate
+            if (!_templateApplied)
             {
                 return;
             }
