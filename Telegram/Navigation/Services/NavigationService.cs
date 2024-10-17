@@ -289,8 +289,8 @@ namespace Telegram.Navigation.Services
                 // This is solely used by MasterDetailView for the animation
                 e.VerticalOffset = entry.Position switch
                 {
-                    HostedPageScrollViewerPosition scrollViewerPosition => scrollViewerPosition.VerticalOffset,
-                    HostedPageListViewPosition listViewPosition => listViewPosition.VerticalOffset,
+                    HostedPageScrollViewerPosition scrollViewerPosition => scrollViewerPosition.ScrollPosition,
+                    HostedPageListViewPosition listViewPosition => listViewPosition.ScrollPosition,
                     _ => 0
                 };
 
