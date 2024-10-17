@@ -19,6 +19,7 @@ using Telegram.Navigation;
 using Telegram.Navigation.Services;
 using Telegram.Services;
 using Telegram.Td.Api;
+using Telegram.Views.Folders;
 using Telegram.Views.Folders.Popups;
 using Telegram.Views.Popups;
 using Windows.UI.Xaml.Controls;
@@ -88,16 +89,16 @@ namespace Telegram.ViewModels.Folders
                 folder.PinnedChatIds = new List<long>();
                 folder.IncludedChatIds = new List<long>();
                 folder.ExcludedChatIds = new List<long>();
+
+                if (parameter is FolderPageCreateArgs createArgs)
+                {
+                    folder.IncludedChatIds.Add(createArgs.IncludeChatId);
+                }
             }
 
             if (folder == null)
             {
                 return;
-            }
-
-            if (state != null && state.TryGet("included_chat_id", out long includedChatId))
-            {
-                folder.IncludedChatIds.Add(includedChatId);
             }
 
             _pinnedChatIds = folder.PinnedChatIds;

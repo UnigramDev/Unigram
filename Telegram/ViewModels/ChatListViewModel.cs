@@ -569,7 +569,7 @@ namespace Telegram.ViewModels
 
         public void CreateFolder(Chat chat)
         {
-            NavigationService.Navigate(typeof(FolderPage), state: new NavigationState { { "included_chat_id", chat.Id } });
+            NavigationService.Navigate(typeof(FolderPage), new FolderPageCreateArgs(chat.Id));
         }
 
         #endregion

@@ -20,6 +20,8 @@ using Windows.UI.Xaml.Media;
 
 namespace Telegram.Views.Folders
 {
+    public record FolderPageCreateArgs(long IncludeChatId);
+
     public sealed partial class FolderPage : HostedPage
     {
         public FolderViewModel ViewModel => DataContext as FolderViewModel;
