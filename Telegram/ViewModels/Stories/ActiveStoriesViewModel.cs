@@ -36,7 +36,7 @@ namespace Telegram.ViewModels.Stories
 
         public ChatActiveStories Item => _activeStories;
 
-        public ActiveStoriesViewModel(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator, ChatActiveStories activeStories)
+        public ActiveStoriesViewModel(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator, ChatActiveStories activeStories, Chat chat)
             : base(clientService, settingsService, aggregator)
         {
             _clientService = clientService;
@@ -45,7 +45,7 @@ namespace Telegram.ViewModels.Stories
             _activeStories = activeStories;
             _task = new TaskCompletionSource<bool>();
 
-            Chat = clientService.GetChat(activeStories.ChatId);
+            Chat = chat;
             IsMyStory = Chat.Type is ChatTypePrivate privata && privata.UserId == clientService.Options.MyId;
 
             _messageDelegate = new ChatMessageDelegate(this, Chat);

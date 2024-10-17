@@ -197,9 +197,9 @@ namespace Telegram.ViewModels.Stories
             }
         }
 
-        protected ActiveStoriesViewModel Create(ChatActiveStories activeStories)
+        protected ActiveStoriesViewModel Create(ChatActiveStories activeStories, Chat chat)
         {
-            return new ActiveStoriesViewModel(ClientService, Settings, Aggregator, activeStories)
+            return new ActiveStoriesViewModel(ClientService, Settings, Aggregator, activeStories, chat)
             {
                 NavigationService = NavigationService
             };
@@ -291,14 +291,14 @@ namespace Telegram.ViewModels.Stories
                             {
                                 // TODO: is this redundant?
                                 var next = NextIndexOf(activeStories.ChatId, order);
-                                if (next >= 0)
+                                if (next >= 0 && _clientService.TryGetChat(activeStories.ChatId, out Chat chat))
                                 {
                                     if (_chats.TryGetValue(activeStories.ChatId, out var prev))
                                     {
                                         Remove(prev);
                                     }
 
-                                    var item = _viewModel.Create(activeStories);
+                                    var item = _viewModel.Create(activeStories, chat);
 
                                     _chats[activeStories.ChatId] = item;
                                     Insert(Math.Min(Count, next), item);
@@ -376,9 +376,9 @@ namespace Telegram.ViewModels.Stories
                         item.Update(activeStories);
                         await _viewModel.Dispatcher.DispatchAsync(() => UpdateChatOrder(item, order, lastMessage));
                     }
-                    else
+                    else if (_clientService.TryGetChat(activeStories.ChatId, out Chat chat))
                     {
-                        item = _viewModel.Create(activeStories);
+                        item = _viewModel.Create(activeStories, chat);
                         await _viewModel.Dispatcher.DispatchAsync(() => UpdateChatOrder(item, order, lastMessage));
                     }
                 }

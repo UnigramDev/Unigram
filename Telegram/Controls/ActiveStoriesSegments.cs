@@ -75,7 +75,7 @@ namespace Telegram.Controls
                 var settings = TypeResolver.Current.Resolve<ISettingsService>(clientService.SessionId);
                 var aggregator = TypeResolver.Current.Resolve<IEventAggregator>(clientService.SessionId);
 
-                var activeStories = new ActiveStoriesViewModel(clientService, settings, aggregator, chatActiveStories);
+                var activeStories = new ActiveStoriesViewModel(clientService, settings, aggregator, chatActiveStories, chat);
                 await activeStories.Wait;
 
                 if (activeStories.Items.Count > 0 && activeStories.SelectedItem != null)

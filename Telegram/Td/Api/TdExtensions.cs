@@ -989,7 +989,7 @@ namespace Telegram.Td.Api
                         LinkPreviewTypeSupergroupBoost supergroupBoost => (supergroupBoost.Photo?.GetFile(), null, null),
                         LinkPreviewTypeUser user => (user.Photo?.GetFile(), null, null),
                         LinkPreviewTypeVideoChat videoChat => (videoChat.Photo?.GetFile(), null, null),
-                        LinkPreviewTypeWebApp webApp => (webApp.Photo.GetFile(), null, null),
+                        LinkPreviewTypeWebApp webApp => (webApp.Photo?.GetFile(), null, null),
                         _ => (null, null, null)
                     };
                 case MessageVideo video:
@@ -1030,7 +1030,7 @@ namespace Telegram.Td.Api
                 LinkPreviewTypeSupergroupBoost supergroupBoost => supergroupBoost.Photo?.Minithumbnail,
                 LinkPreviewTypeUser user => user.Photo?.Minithumbnail,
                 LinkPreviewTypeVideoChat videoChat => videoChat.Photo?.Minithumbnail,
-                LinkPreviewTypeWebApp webApp => webApp.Photo.Minithumbnail,
+                LinkPreviewTypeWebApp webApp => webApp.Photo?.Minithumbnail,
                 _ => null
             };
         }
@@ -1185,7 +1185,7 @@ namespace Telegram.Td.Api
                         LinkPreviewTypeSupergroupBoost supergroupBoost => supergroupBoost.Photo?.GetFile(),
                         LinkPreviewTypeUser user => user.Photo?.GetFile(),
                         LinkPreviewTypeVideoChat videoChat => videoChat.Photo?.GetFile(),
-                        LinkPreviewTypeWebApp webApp => webApp.Photo.GetFile(),
+                        LinkPreviewTypeWebApp webApp => webApp.Photo?.GetFile(),
                         _ => null
                     };
                 case MessageVideo video:
