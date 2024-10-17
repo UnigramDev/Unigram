@@ -15,6 +15,7 @@ using Telegram.Td.Api;
 using Telegram.ViewModels;
 using Windows.UI.Composition;
 using Windows.UI.Xaml;
+using Windows.UI.Xaml.Automation;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Hosting;
 using Windows.UI.Xaml.Media;
@@ -94,6 +95,8 @@ namespace Telegram.Controls.Chats
                     TitleLabel.Text = call.ScheduledStartDate > 0 && call.Title.Length > 0 ? call.Title : call.ScheduledStartDate != 0 ? Strings.VoipGroupScheduledVoiceChat : Strings.VoipGroupVoiceChat;
                     ServiceLabel.Text = call.ParticipantCount > 0 ? Locale.Declension(Strings.R.Participants, call.ParticipantCount) : Strings.MembersTalkingNobody;
                 }
+
+                AutomationProperties.SetName(this, Label.Text);
 
                 if (call.ScheduledStartDate != 0)
                 {
