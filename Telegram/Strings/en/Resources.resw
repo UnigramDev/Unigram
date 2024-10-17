@@ -3733,7 +3733,7 @@ Minimum length is 5 characters.</value>
     <value>Contact joined Telegram</value>
   </data>
   <data name="ContactNotRegistered" xml:space="preserve">
-    <value>{0} is not on Telegram yet, would you like to invite them to join?</value>
+    <value>{0} is not on Telegram yet.</value>
   </data>
   <data name="Contacts" xml:space="preserve">
     <value>Contacts</value>

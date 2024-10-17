@@ -109,24 +109,16 @@ namespace Telegram.ViewModels.Create
             {
                 if (imported.UserIds.Count > 0)
                 {
-                    var create = await ClientService.SendAsync(new CreatePrivateChat(imported.UserIds[0], false));
-                    if (create is Chat chat)
-                    {
-                        NavigationService.NavigateToChat(chat);
-                    }
-                    else
-                    {
-                        await ShowPopupAsync(Strings.ContactNotRegistered, Strings.AppName, Strings.Invite, Strings.Cancel);
-                    }
+                    NavigationService.NavigateToUser(imported.UserIds[0]);
                 }
                 else
                 {
-                    await ShowPopupAsync(Strings.ContactNotRegistered, Strings.AppName, Strings.Invite, Strings.Cancel);
+                    await ShowPopupAsync(string.Format(Strings.ContactNotRegistered, _firstName), Strings.AppName, Strings.OK);
                 }
             }
             else
             {
-                await ShowPopupAsync(Strings.ContactNotRegistered, Strings.AppName, Strings.Invite, Strings.Cancel);
+                await ShowPopupAsync(string.Format(Strings.ContactNotRegistered, _firstName), Strings.AppName, Strings.OK);
             }
         }
     }
