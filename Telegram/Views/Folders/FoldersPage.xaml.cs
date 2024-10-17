@@ -90,26 +90,9 @@ namespace Telegram.Views.Folders
             ViewModel.Edit(e.ClickedItem as ChatFolderInfo);
         }
 
-        private void Recommended_ElementPrepared(Microsoft.UI.Xaml.Controls.ItemsRepeater sender, Microsoft.UI.Xaml.Controls.ItemsRepeaterElementPreparedEventArgs args)
-        {
-            var content = args.Element as Grid;
-            var folder = content.DataContext as RecommendedChatFolder;
-
-            var button = content.Children[0] as BadgeButton;
-            var add = content.Children[1] as Button;
-
-            var icon = Icons.ParseFolder(folder.Folder);
-
-            button.Glyph = Icons.FolderToGlyph(icon).Item1;
-            button.Content = folder.Folder.Title;
-            button.Badge = folder.Description;
-
-            add.CommandParameter = folder;
-        }
-
         private void AddRecommended_Click(object sender, RoutedEventArgs e)
         {
-            if (sender is Button button && button.CommandParameter is RecommendedChatFolder folder)
+            if (sender is Button { CommandParameter: RecommendedChatFolder folder })
             {
                 ViewModel.AddRecommended(folder);
             }
@@ -149,42 +132,60 @@ namespace Telegram.Views.Folders
             {
                 return;
             }
-            else if (args.ItemContainer.ContentTemplateRoot is Grid content && args.Item is ChatFolderInfo folder)
+            else if (args.ItemContainer.ContentTemplateRoot is Grid content)
             {
-                AutomationProperties.SetName(args.ItemContainer, folder.Title);
-
-                var glyph = content.Children[0] as TextBlock;
-                var presenter = content.Children[1] as ContentPresenter;
-                var badge = content.Children[2] as ContentControl;
-                var plate = content.Children[3] as Ellipse;
-                var chevron = content.Children[4];
-
-                var icon = Icons.ParseFolder(folder.Icon);
-                var index = args.ItemIndex;
-
-                if (index > ViewModel.ClientService.MainChatListPosition)
+                if (args.Item is ChatFolderInfo folder)
                 {
-                    index--;
+                    AutomationProperties.SetName(args.ItemContainer, folder.Title);
+
+                    var glyph = content.Children[0] as TextBlock;
+                    var presenter = content.Children[1] as ContentPresenter;
+                    var badge = content.Children[2] as ContentControl;
+                    var plate = content.Children[3] as Ellipse;
+                    var chevron = content.Children[4];
+
+                    var icon = Icons.ParseFolder(folder.Icon);
+                    var index = args.ItemIndex;
+
+                    if (index > ViewModel.ClientService.MainChatListPosition)
+                    {
+                        index--;
+                    }
+
+                    plate.Fill = ViewModel.ClientService.GetAccentBrush(folder.ColorId);
+                    glyph.Text = Icons.FolderToGlyph(icon).Item1;
+                    presenter.Content = folder.Title;
+                    badge.Content = index >= ViewModel.ClientService.Options.ChatFolderCountMax
+                        ? Icons.LockClosed
+                        : folder.HasMyInviteLinks ? Icons.Link : string.Empty;
+
+                    var visual1 = ElementComposition.GetElementVisual(plate);
+                    var visual2 = ElementComposition.GetElementVisual(chevron);
+                    var tags = ViewModel.ClientService.AreTagsEnabled
+                        && ViewModel.ClientService.IsPremium
+                        && folder.ColorId != -1;
+
+                    visual1.CenterPoint = new Vector3(6);
+                    visual1.Scale = new Vector3(tags ? 1 : 0);
+
+                    visual2.CenterPoint = new Vector3(8);
+                    visual2.Scale = new Vector3(tags ? 0 : 1);
                 }
+                else if (args.Item is RecommendedChatFolder recommended)
+                {
+                    AutomationProperties.SetName(args.ItemContainer, recommended.Folder.Title + ", " + recommended.Description);
 
-                plate.Fill = ViewModel.ClientService.GetAccentBrush(folder.ColorId);
-                glyph.Text = Icons.FolderToGlyph(icon).Item1;
-                presenter.Content = folder.Title;
-                badge.Content = index >= ViewModel.ClientService.Options.ChatFolderCountMax
-                    ? Icons.LockClosed
-                    : folder.HasMyInviteLinks ? Icons.Link : string.Empty;
+                    var icon = content.Children[0] as TextBlock;
+                    var title = content.Children[1] as TextBlock;
+                    var subtitle = content.Children[2] as TextBlock;
+                    var add = content.Children[3] as Button;
 
-                var visual1 = ElementComposition.GetElementVisual(plate);
-                var visual2 = ElementComposition.GetElementVisual(chevron);
-                var tags = ViewModel.ClientService.AreTagsEnabled
-                    && ViewModel.ClientService.IsPremium
-                    && folder.ColorId != -1;
+                    icon.Text = Icons.FolderToGlyph(Icons.ParseFolder(recommended.Folder)).Item1;
+                    title.Text = recommended.Folder.Title;
+                    subtitle.Text = recommended.Description;
 
-                visual1.CenterPoint = new Vector3(6);
-                visual1.Scale = new Vector3(tags ? 1 : 0);
-
-                visual2.CenterPoint = new Vector3(8);
-                visual2.Scale = new Vector3(tags ? 0 : 1);
+                    add.CommandParameter = recommended;
+                }
 
                 args.Handled = true;
             }

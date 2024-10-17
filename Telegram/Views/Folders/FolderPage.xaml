@@ -150,7 +150,6 @@
 
                                         <TextBlock Text="{CustomResource FilterIncludeInfo}"
                                                    Style="{StaticResource InfoCaptionTextBlockStyle}"
-                                                   MaxWidth="1000"
                                                    Margin="24,6,24,0" />
                                     </StackPanel>
 
@@ -207,7 +206,6 @@
 
                                 <TextBlock Text="{CustomResource FilterExcludeInfo}"
                                            Style="{StaticResource InfoCaptionTextBlockStyle}"
-                                           MaxWidth="1000"
                                            Margin="24,6,24,0" />
                             </StackPanel>
 
@@ -396,7 +394,6 @@
                 <controls:SettingsPanel IsFooter="True">
                     <TextBlock Text="{CustomResource FilterInviteLinksHintNew}"
                                Style="{StaticResource InfoCaptionTextBlockStyle}"
-                               MaxWidth="1000"
                                Margin="24,6,24,0" />
                 </controls:SettingsPanel>
             </ListView.Footer>
