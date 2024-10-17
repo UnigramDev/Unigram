@@ -12,6 +12,7 @@ using Telegram.Navigation.Services;
 using Telegram.Services;
 using Telegram.Td.Api;
 using Telegram.ViewModels.Delegates;
+using Telegram.Views.Create;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
 
@@ -308,6 +309,37 @@ namespace Telegram.ViewModels.Supergroups
             else
             {
 
+            }
+        }
+
+        public async void Create()
+        {
+            var chat = _chat;
+            if (chat == null)
+            {
+                return;
+            }
+
+            var completion = new TaskCompletionSource<Chat>();
+
+            var confirm = await ShowPopupAsync(new NewGroupPopup(completion, string.Format(Strings.GroupCreateDiscussionDefaultName, chat.Title)));
+            if (confirm == ContentDialogResult.Primary)
+            {
+                var linkedChat = await completion.Task;
+                if (linkedChat != null)
+                {
+                    if (linkedChat.Type is ChatTypeSupergroup supergroup)
+                    {
+                        await ClientService.SendAsync(new ToggleSupergroupIsAllHistoryAvailable(supergroup.SupergroupId, true));
+                    }
+
+                    var response = await ClientService.SendAsync(new SetChatDiscussionGroup(chat.Id, linkedChat.Id));
+                    if (response is Ok)
+                    {
+                        NavigationService.GoBack();
+                        NavigationService.Frame.ForwardStack.Clear();
+                    }
+                }
             }
         }
     }

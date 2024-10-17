@@ -7,6 +7,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Telegram.Common;
 using Telegram.Navigation;
 using Telegram.Services;
@@ -140,6 +141,24 @@ namespace Telegram.ViewModels.Create
             else
             {
 
+            }
+        }
+
+        public async void Create(TaskCompletionSource<Chat> completion)
+        {
+            var response = await ClientService.SendAsync(new CreateNewSupergroupChat(_title, false, false, string.Empty, null, _ttl, false));
+            if (response is Chat chat)
+            {
+                if (_inputPhoto != null)
+                {
+                    ClientService.Send(new SetChatPhoto(chat.Id, _inputPhoto));
+                }
+
+                completion.TrySetResult(chat);
+            }
+            else
+            {
+                completion.TrySetResult(null);
             }
         }
 

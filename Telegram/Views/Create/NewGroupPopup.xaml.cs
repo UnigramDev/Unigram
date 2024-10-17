@@ -4,9 +4,11 @@
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+using System.Threading.Tasks;
 using Telegram.Common;
 using Telegram.Controls;
 using Telegram.Controls.Media;
+using Telegram.Td.Api;
 using Telegram.ViewModels.Create;
 using Telegram.ViewModels.Drawers;
 using Telegram.Views.Popups;
@@ -21,11 +23,23 @@ namespace Telegram.Views.Create
     {
         public NewGroupViewModel ViewModel => DataContext as NewGroupViewModel;
 
-        public NewGroupPopup()
+        private readonly TaskCompletionSource<Chat> _completion;
+        private readonly string _defaultTitle;
+
+        public NewGroupPopup(TaskCompletionSource<Chat> completion = null, string defaultTitle = "")
         {
             InitializeComponent();
 
-            //Title = Strings.NewGroup;
+            _completion = completion;
+            _defaultTitle = defaultTitle;
+
+            PrimaryButtonText = Strings.OK;
+            SecondaryButtonText = Strings.Cancel;
+        }
+
+        public NewGroupPopup()
+        {
+            InitializeComponent();
 
             PrimaryButtonText = Strings.OK;
             SecondaryButtonText = Strings.Cancel;
@@ -34,6 +48,8 @@ namespace Telegram.Views.Create
         public override void OnNavigatedTo(object parameter)
         {
             EmojiPanel.DataContext = EmojiDrawerViewModel.Create(ViewModel.SessionId, EmojiDrawerMode.Text);
+
+            ViewModel.Title = _defaultTitle;
         }
 
         private void Title_Loaded(object sender, RoutedEventArgs e)
@@ -90,14 +106,21 @@ namespace Telegram.Views.Create
 
         private async void OnPrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
         {
-            var users = await ChooseChatsPopup.PickUsersAsync(ViewModel.ClientService, ViewModel.NavigationService, Strings.SelectContacts, allowEmptySelection: true);
-            if (users == null)
+            if (_completion != null)
             {
-                await this.ShowQueuedAsync(XamlRoot);
-                return;
+                ViewModel.Create(_completion);
             }
+            else
+            {
+                var users = await ChooseChatsPopup.PickUsersAsync(ViewModel.ClientService, ViewModel.NavigationService, Strings.SelectContacts, allowEmptySelection: true);
+                if (users == null)
+                {
+                    await this.ShowQueuedAsync(XamlRoot);
+                    return;
+                }
 
-            ViewModel.Create(users);
+                ViewModel.Create(users);
+            }
         }
     }
 }

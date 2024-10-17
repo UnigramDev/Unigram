@@ -5866,6 +5866,9 @@ about Telegram?</value>
   <data name="GroupContacts" xml:space="preserve">
     <value>Contacts in this group</value>
   </data>
+  <data name="GroupCreateDiscussionDefaultName" xml:space="preserve">
+    <value>{0} chat</value>
+  </data>
   <data name="GroupDeletedUndo" xml:space="preserve">
     <value>Group deleted</value>
   </data>

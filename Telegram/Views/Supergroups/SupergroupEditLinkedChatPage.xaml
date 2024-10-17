@@ -43,7 +43,8 @@
 
                     <controls:HeaderedControl x:Name="Create"
                                               Margin="0,0,0,2">
-                        <controls:BadgeButton Content="{CustomResource DiscussionCreateGroup}"
+                        <controls:BadgeButton Click="{x:Bind ViewModel.Create}"
+                                              Content="{CustomResource DiscussionCreateGroup}"
                                               Style="{StaticResource GlyphBadgeButtonStyle}"
                                               Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}"
                                               Glyph="&#xE716;" />
