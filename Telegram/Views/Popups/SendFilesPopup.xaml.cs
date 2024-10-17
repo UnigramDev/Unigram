@@ -747,17 +747,6 @@ namespace Telegram.Views.Popups
                 panel.Invalidate();
             }
 
-            if (ScrollingHost?.ItemsPanelRoot is ItemsStackPanel panel2)
-            {
-                foreach (var item in panel2.Children)
-                {
-                    if (item is SelectorItem selector && selector.ContentTemplateRoot is Grid content)
-                    {
-                        UpdateSelectorItem(content);
-                    }
-                }
-            }
-
             if (StarCount > 0)
             {
                 var text = Locale.Declension(Strings.R.UnlockPaidContent, StarCount);
