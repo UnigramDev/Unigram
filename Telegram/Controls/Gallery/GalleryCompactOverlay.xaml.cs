@@ -64,6 +64,8 @@ namespace Telegram.Controls.Gallery
 
         private void OnUnloaded(object sender, RoutedEventArgs e)
         {
+            Logger.Info();
+
             Controls.Unload();
 
             _player = null;
@@ -112,6 +114,8 @@ namespace Telegram.Controls.Gallery
 
         private async void Controls_CompactClick(object sender, RoutedEventArgs e)
         {
+            Logger.Info();
+
             // TODO: WinUI - Rewrite
             if (_current == null)
             {
@@ -162,6 +166,8 @@ namespace Telegram.Controls.Gallery
 
         private void Close()
         {
+            Logger.Info("Closing");
+
             _ = _window.CloseAsync();
         }
 
@@ -183,10 +189,14 @@ namespace Telegram.Controls.Gallery
             // as the AppWindow will be destroyed as soon as the secondary window gets closed.
             if (_current?.Dispatcher.HasThreadAccess == true)
             {
+                Logger.Info("Exists on the current thread");
+
                 _current.Play(viewModel, player);
             }
             else
             {
+                Logger.Info("Does not exist, or different thread, create");
+
                 _current?.BeginOnUIThread(_current.Close);
 
                 // Reset the state so that hopefully the window gets the right size/position

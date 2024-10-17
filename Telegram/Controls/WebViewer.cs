@@ -417,7 +417,7 @@ postEvent: function(eventType, eventData) {
         {
             if (args.Exception != null)
             {
-                Logger.Error(args.Exception);
+                Logger.Error(args.Exception.ToString());
             }
         }
 

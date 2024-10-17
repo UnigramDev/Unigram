@@ -115,6 +115,8 @@ namespace Telegram.Services
 
         private async void Handle(UpdateSpeedLimitNotification update)
         {
+            Logger.Info("UpdateSpeedLimitNotification");
+
             var text = update.IsUpload
                 ? string.Format("**{0}**\n{1}", Strings.UploadSpeedLimited, string.Format(Strings.UploadSpeedLimitedMessage, _clientService.Options.PremiumUploadSpeedup))
                 : string.Format("**{0}**\n{1}", Strings.DownloadSpeedLimited, string.Format(Strings.DownloadSpeedLimitedMessage, _clientService.Options.PremiumDownloadSpeedup));
@@ -151,6 +153,8 @@ namespace Telegram.Services
 
         public async void Handle(UpdateTermsOfService update)
         {
+            Logger.Info("UpdateTermsOfService");
+
             if (update.TermsOfService.ShowPopup)
             {
                 async void DeleteAccount(XamlRoot xamlRoot)
@@ -209,6 +213,8 @@ namespace Telegram.Services
 
         public async void Handle(UpdateSuggestedActions update)
         {
+            Logger.Info("UpdateSuggestedActions");
+
             await ViewService.WaitForMainWindowAsync();
 
             var window = WindowContext.Active ?? WindowContext.Main;
@@ -218,14 +224,14 @@ namespace Telegram.Services
             {
                 foreach (var action in update.AddedActions)
                 {
+                    var xamlRoot = window.Content?.XamlRoot;
+                    if (xamlRoot == null)
+                    {
+                        return;
+                    }
+
                     if (action is SuggestedActionEnableArchiveAndMuteNewChats)
                     {
-                        var xamlRoot = window.Content?.XamlRoot;
-                        if (xamlRoot == null)
-                        {
-                            return;
-                        }
-
                         var confirm = await MessagePopup.ShowAsync(xamlRoot, Strings.HideNewChatsAlertText, Strings.HideNewChatsAlertTitle, Strings.OK, Strings.Cancel);
                         if (confirm == ContentDialogResult.Primary)
                         {
@@ -243,8 +249,10 @@ namespace Telegram.Services
             });
         }
 
-        public void Handle(UpdateServiceNotification update)
+        public async void Handle(UpdateServiceNotification update)
         {
+            Logger.Info("UpdateServiceNotification");
+
             var caption = update.Content.GetCaption();
             if (caption == null)
             {
@@ -257,11 +265,14 @@ namespace Telegram.Services
                 return;
             }
 
-            BeginOnUIThread(async () =>
-            {
-                var window = WindowContext.Active ?? WindowContext.Main;
+            await ViewService.WaitForMainWindowAsync();
 
-                var xamlRoot = window?.Content?.XamlRoot;
+            var window = WindowContext.Active ?? WindowContext.Main;
+            var dispatcher = window?.Dispatcher;
+
+            dispatcher?.Dispatch(async () =>
+            {
+                var xamlRoot = window.Content?.XamlRoot;
                 if (xamlRoot == null)
                 {
                     return;
@@ -859,27 +870,6 @@ namespace Telegram.Services
             }
 
             return string.Empty;
-        }
-
-        private void BeginOnUIThread(Windows.System.DispatcherQueueHandler action, Action fallback = null)
-        {
-            var dispatcher = WindowContext.Main?.Dispatcher;
-            if (dispatcher != null)
-            {
-                dispatcher.Dispatch(action);
-            }
-            else if (fallback != null)
-            {
-                fallback();
-            }
-            else
-            {
-                //try
-                //{
-                //    action();
-                //}
-                //catch { }
-            }
         }
 
         public void SetMuteFor(Chat chat, int value, XamlRoot xamlRoot)
