@@ -3767,14 +3767,14 @@
       <Version>3.3.7</Version>
     </PackageReference>
     <PackageReference Include="Win2D.uwp">
-      <Version>1.27.1</Version>
+      <Version>1.28.0</Version>
     </PackageReference>
     <!-- Used by AppCenter -->
     <PackageReference Include="SQLitePCLRaw.bundle_winsqlite3">
       <Version>2.1.10</Version>
     </PackageReference>
     <PackageReference Include="System.Reflection.Metadata">
-      <Version>8.0.0</Version>
+      <Version>8.0.1</Version>
     </PackageReference>
   </ItemGroup>
   <ItemGroup>
