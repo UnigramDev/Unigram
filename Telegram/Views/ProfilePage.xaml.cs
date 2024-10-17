@@ -58,7 +58,7 @@ namespace Telegram.Views
         public override HostedPagePositionBase GetPosition()
         {
             ViewModel.Delegate = null;
-            return new HostedPageListViewPosition(DataContext, ScrollingHost.VerticalOffset);
+            return new HostedPageListViewPosition(DataContext, ScrollingHost.VerticalOffset, string.Empty);
         }
 
         public override void SetPosition(HostedPagePositionBase position)
@@ -71,7 +71,7 @@ namespace Telegram.Views
                 void handler(object sender, RoutedEventArgs e)
                 {
                     ScrollingHost.Loaded -= handler;
-                    ScrollingHost.ChangeView(null, listViewPosition.VerticalOffset, null, true);
+                    ScrollingHost.ChangeView(null, listViewPosition.ScrollPosition, null, true);
                 }
 
                 ScrollingHost.Loaded += handler;

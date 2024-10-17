@@ -4,9 +4,12 @@
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+using System.Runtime.InteropServices.WindowsRuntime;
+using System.Threading.Tasks;
 using Telegram.Common;
 using Telegram.Controls;
 using Telegram.ViewModels.Delegates;
+using Windows.Foundation;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 
@@ -21,9 +24,9 @@ namespace Telegram.Views
 
     public record HostedPagePositionBase;
 
-    public record HostedPageScrollViewerPosition(double VerticalOffset) : HostedPagePositionBase;
+    public record HostedPageScrollViewerPosition(double ScrollPosition) : HostedPagePositionBase;
 
-    public record HostedPageListViewPosition(object DataContext, double VerticalOffset) : HostedPagePositionBase;
+    public record HostedPageListViewPosition(object DataContext, double ScrollPosition, string RelativeScrollPosition) : HostedPagePositionBase;
 
     public partial class HostedPage : PageEx
     {
@@ -93,7 +96,7 @@ namespace Telegram.Views
         public virtual HostedPagePositionBase GetPosition()
         {
             var scrollingHost = FindName("ScrollingHost");
-            if (scrollingHost is ScrollViewer scrollViewer)
+            if (scrollingHost is ScrollViewer scrollViewer && scrollViewer.VerticalOffset != 0)
             {
                 return new HostedPageScrollViewerPosition(scrollViewer.VerticalOffset);
             }
@@ -101,10 +104,10 @@ namespace Telegram.Views
             {
                 scrollViewer = listView.GetScrollViewer();
 
-                if (scrollViewer != null)
+                if (scrollViewer != null && scrollViewer.VerticalOffset != 0)
                 {
                     AssignDelegate(null);
-                    return new HostedPageListViewPosition(DataContext, scrollViewer.VerticalOffset);
+                    return new HostedPageListViewPosition(DataContext, scrollViewer.VerticalOffset, GetRelativeScrollPosition(listView));
                 }
             }
 
@@ -121,7 +124,7 @@ namespace Telegram.Views
                     void handler(object sender, RoutedEventArgs e)
                     {
                         scrollingHost.Loaded -= handler;
-                        scrollingHost.ChangeView(null, scrollViewerPosition.VerticalOffset, null, true);
+                        scrollingHost.ChangeView(null, scrollViewerPosition.ScrollPosition, null, true);
                     }
 
                     scrollingHost.Loaded += handler;
@@ -135,15 +138,59 @@ namespace Telegram.Views
                 var scrollingHost = FindName("ScrollingHost") as ListViewBase;
                 if (scrollingHost != null)
                 {
-                    void handler(object sender, RoutedEventArgs e)
+                    void handler(object sender, object e)
                     {
                         scrollingHost.Loaded -= handler;
-                        scrollingHost.ChangeView(null, listViewPosition.VerticalOffset, null, true);
+
+                        if (string.IsNullOrEmpty(listViewPosition.RelativeScrollPosition))
+                        {
+                            scrollingHost.ChangeView(null, listViewPosition.ScrollPosition, null, true);
+                        }
+                        else
+                        {
+                            SetRelativeScrollPosition(scrollingHost, listViewPosition.ScrollPosition, listViewPosition.RelativeScrollPosition);
+                        }
                     }
 
                     scrollingHost.Loaded += handler;
                 }
             }
+        }
+
+        private string GetRelativeScrollPosition(ListViewBase listView)
+        {
+            string GetRelativeScrollPosition(object item)
+            {
+                var index = listView.Items.IndexOf(item);
+                if (index != -1)
+                {
+                    return index.ToString();
+                }
+
+                return string.Empty;
+            }
+
+            return ListViewPersistenceHelper.GetRelativeScrollPosition(listView, GetRelativeScrollPosition);
+        }
+
+        private void SetRelativeScrollPosition(ListViewBase listView, double scrollPosition, string relativeScrollPosition)
+        {
+            IAsyncOperation<object> SetRelativeScrollPosition(string key)
+            {
+                return AsyncInfo.Run(token =>
+                {
+                    object item = null;
+                    if (int.TryParse(key, out var index) && index < listView.Items.Count)
+                    {
+                        item = listView.Items[index];
+                    }
+
+                    return Task.FromResult(item);
+                });
+            }
+
+            // TODO: this doesn't seem to work in FoldersPage when there are no folders available
+            _ = ListViewPersistenceHelper.SetRelativeScrollPositionAsync(listView, relativeScrollPosition, SetRelativeScrollPosition);
         }
 
         private void AssignDelegate(object content)
