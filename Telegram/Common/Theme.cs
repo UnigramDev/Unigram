@@ -347,13 +347,13 @@ namespace Telegram.Common
 
                 var themeParameters = new Dictionary<string, int>
                 {
-                    { "ContentDialogBackground", 0 },
-                    { "ContentDialogForeground", 0 },
+                    { "CardBackgroundFillColorDefaultBrush", 0 },
+                    { "CardBackgroundFillColorSecondaryBrush", 0 },
+                    { "TextFillColorPrimaryBrush", 0 },
                     { "AccentButtonBackground", 0 },
                     { "AccentButtonForeground", 0 },
                     { "SystemControlDisabledChromeDisabledLowBrush", 0 },
-                    { "SystemControlForegroundBaseLowBrush", 0 },
-                    { "HyperlinkForeground", 0 },
+                    { "CardStrokeColorDefaultSolidBrush", 0 },
                     { "DangerButtonBackground", 0xD13438 }
                 };
 
@@ -446,21 +446,21 @@ namespace Telegram.Common
 
                 _parameters[requested == TelegramTheme.Light ? ElementTheme.Light : ElementTheme.Dark] = new ThemeParameters
                 {
-                    BackgroundColor = themeParameters["ContentDialogBackground"],
-                    SecondaryBackgroundColor = themeParameters["ContentDialogBackground"],
-                    BottomBarBackgroundColor = themeParameters["ContentDialogBackground"],
-                    TextColor = themeParameters["ContentDialogForeground"],
+                    BackgroundColor = themeParameters["CardBackgroundFillColorDefaultBrush"],
+                    SecondaryBackgroundColor = themeParameters["CardBackgroundFillColorSecondaryBrush"],
+                    BottomBarBackgroundColor = themeParameters["CardBackgroundFillColorDefaultBrush"],
+                    TextColor = themeParameters["TextFillColorPrimaryBrush"],
                     ButtonColor = themeParameters["AccentButtonBackground"],
                     ButtonTextColor = themeParameters["AccentButtonForeground"],
                     HintColor = themeParameters["SystemControlDisabledChromeDisabledLowBrush"],
-                    LinkColor = themeParameters["HyperlinkForeground"],
+                    LinkColor = themeParameters["AccentButtonBackground"],
                     AccentTextColor = themeParameters["AccentButtonBackground"],
                     DestructiveTextColor = themeParameters["DangerButtonBackground"],
-                    HeaderBackgroundColor = themeParameters["ContentDialogBackground"],
-                    SectionBackgroundColor = themeParameters["ContentDialogBackground"],
-                    SectionHeaderTextColor = themeParameters["ContentDialogForeground"],
+                    HeaderBackgroundColor = themeParameters["CardBackgroundFillColorDefaultBrush"],
+                    SectionBackgroundColor = themeParameters["CardBackgroundFillColorDefaultBrush"],
+                    SectionHeaderTextColor = themeParameters["TextFillColorPrimaryBrush"],
                     SubtitleTextColor = themeParameters["SystemControlDisabledChromeDisabledLowBrush"],
-                    SectionSeparatorColor = themeParameters["SystemControlForegroundBaseLowBrush"],
+                    SectionSeparatorColor = themeParameters["CardStrokeColorDefaultSolidBrush"],
                 };
             }
             catch (UnauthorizedAccessException)

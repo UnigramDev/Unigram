@@ -12,11 +12,8 @@
         <ResourceDictionary>
             <ResourceDictionary.ThemeDictionaries>
                 <ResourceDictionary x:Key="Default">
-                    <Color x:Key="SystemChromeMediumHighColor">#FF323232</Color>
-
-                    <SolidColorBrush x:Key="TelegramSeparatorBrush"
-                                     Color="Transparent" />
-                    <!--<StaticResource x:Key="TelegramSeparatorBrush" ResourceKey="SystemControlForegroundBaseLowBrush"/>-->
+                    <SolidColorBrush x:Key="TitleBarButtonBackgroundPointerOver">#19FFFFFF</SolidColorBrush>
+                    <SolidColorBrush x:Key="TitleBarButtonBackgroundPressed">#33FFFFFF</SolidColorBrush>
 
                     <StaticResource x:Key="SettingsItemBorderBrush"
                                     ResourceKey="CardStrokeColorDefaultBrush" />
@@ -36,9 +33,6 @@
                                         FallbackColor="#2C2C2C"
                                         BackgroundSource="Backdrop" />
 
-                    <StaticResource x:Key="UndoViewBackgroundBrush"
-                                    ResourceKey="SystemControlChromeMediumAcrylicElementMediumBrush" />
-
                     <LinearGradientBrush x:Key="SystemGradientColorCriticalBrush"
                                          StartPoint="0,0"
                                          EndPoint="1,0">
@@ -51,11 +45,8 @@
                     </LinearGradientBrush>
                 </ResourceDictionary>
                 <ResourceDictionary x:Key="Light">
-                    <Color x:Key="SystemChromeMediumHighColor">#FFE6E6E6</Color>
-
-                    <SolidColorBrush x:Key="TelegramSeparatorBrush"
-                                     Color="Transparent" />
-                    <!--<StaticResource x:Key="TelegramSeparatorBrush" ResourceKey="SystemControlForegroundBaseLowBrush"/>-->
+                    <SolidColorBrush x:Key="TitleBarButtonBackgroundPointerOver">#19000000</SolidColorBrush>
+                    <SolidColorBrush x:Key="TitleBarButtonBackgroundPressed">#33000000</SolidColorBrush>
 
                     <StaticResource x:Key="SettingsItemBorderBrush"
                                     ResourceKey="CardStrokeColorDefaultBrush" />
@@ -74,9 +65,6 @@
                                         TintLuminosityOpacity="1"
                                         FallbackColor="#F9F9F9"
                                         BackgroundSource="Backdrop" />
-
-                    <StaticResource x:Key="UndoViewBackgroundBrush"
-                                    ResourceKey="SystemControlChromeMediumAcrylicElementMediumBrush" />
 
                     <LinearGradientBrush x:Key="SystemGradientColorCriticalBrush"
                                          StartPoint="0,0"
