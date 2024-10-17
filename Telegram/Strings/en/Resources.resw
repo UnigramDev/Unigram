@@ -127,6 +127,9 @@
   <data name="AccDescrClosePlayer" xml:space="preserve">
     <value>Close audio player</value>
   </data>
+  <data name="AccDescrCloseSearch" xml:space="preserve">
+    <value>Close search</value>
+  </data>
   <data name="AccDescrCollapsePanel" xml:space="preserve">
     <value>Collapse panel</value>
   </data>
@@ -6228,6 +6231,9 @@ This setting does not affect group chats.</value>
   </data>
   <data name="JoinToGroupErrorNotExist" xml:space="preserve">
     <value>Sorry, this chat doesn&apos;t seem to exist.</value>
+  </data>
+  <data name="JumpToDate" xml:space="preserve">
+    <value>Jump to Date</value>
   </data>
   <data name="KeepMedia" xml:space="preserve">
     <value>Keep Media</value>
