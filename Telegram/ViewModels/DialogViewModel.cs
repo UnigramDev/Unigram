@@ -1248,7 +1248,7 @@ namespace Telegram.ViewModels
                     {
                         //if (maxId == 0)
                         //{
-                        if (_thread != null)
+                        if (_thread != null && alignment == VerticalAlignment.Top)
                         {
                             ScrollToTop();
                         }
