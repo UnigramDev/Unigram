@@ -69,6 +69,8 @@ namespace Telegram.Views.Popups
         public bool IsMediaOnly => _mediaAllowed && _documentAllowed && Items.All(x => x is StoragePhoto or StorageVideo);
         public bool IsAlbumAvailable => true;
 
+        private bool _editing;
+
         private bool _ttlAllowed;
         public bool IsTtlAvailable => _ttlAllowed && Items.Count == 1;
 
@@ -200,7 +202,7 @@ namespace Telegram.Views.Popups
         public bool? Schedule { get; private set; }
         public bool? Silent { get; private set; }
 
-        public SendFilesPopup(ComposeViewModel viewModel, IEnumerable<StorageMedia> items, bool media, bool mediaAllowed, bool documentAllowed, bool ttlAllowed, bool schedule, bool savedMessages)
+        public SendFilesPopup(ComposeViewModel viewModel, IEnumerable<StorageMedia> items, bool media, bool mediaAllowed, bool documentAllowed, bool ttlAllowed, bool schedule, bool savedMessages, bool editing)
         {
             InitializeComponent();
 
@@ -227,6 +229,7 @@ namespace Telegram.Views.Popups
             IsSavedMessages = savedMessages;
             CanSchedule = schedule;
 
+            _editing = editing;
             _ttlAllowed = ttlAllowed;
             _mediaAllowed = mediaAllowed;
             _documentAllowed = documentAllowed;
@@ -614,7 +617,16 @@ namespace Telegram.Views.Popups
                     var photo = await StorageMedia.CreateAsync(cache);
                     if (photo != null)
                     {
-                        Items.Add(photo);
+                        photo.IsScreenshot = true;
+
+                        if (_editing)
+                        {
+                            Items.ReplaceWith(new[] { photo });
+                        }
+                        else
+                        {
+                            Items.Add(photo);
+                        }
 
                         UpdatePanel();
                         UpdateView();
@@ -625,9 +637,13 @@ namespace Telegram.Views.Popups
                     var items = await package.GetStorageItemsAsync();
                     var results = await StorageMedia.CreateAsync(items);
 
-                    foreach (var item in results)
+                    if (_editing)
                     {
-                        Items.Add(item);
+                        Items.ReplaceWith(results.Take(1));
+                    }
+                    else
+                    {
+                        Items.AddRange(results);
                     }
 
                     UpdatePanel();

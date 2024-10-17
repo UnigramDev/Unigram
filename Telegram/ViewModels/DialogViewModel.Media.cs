@@ -127,38 +127,36 @@ namespace Telegram.ViewModels
                             destination.GetOutputStreamAt(0));
                     }
 
-                    var media = await StorageMedia.CreateAsync(cache);
-                    if (media == null)
+                    var photo = await StorageMedia.CreateAsync(cache);
+                    if (photo != null)
                     {
-                        return;
-                    }
+                        photo.IsScreenshot = true;
 
-                    media.IsScreenshot = true;
-
-                    var header = _composerHeader;
-                    if (header?.EditingMessage != null)
-                    {
-                        await EditMediaAsync(media);
-                    }
-                    else
-                    {
-                        var captionElements = new List<string>();
-
-                        if (package.AvailableFormats.Contains(StandardDataFormats.Text))
+                        var header = _composerHeader;
+                        if (header?.EditingMessage != null)
                         {
-                            var text = await package.GetTextAsync();
-                            captionElements.Add(text);
+                            await EditMediaAsync(photo);
                         }
-
-                        FormattedText caption = null;
-                        if (captionElements.Count > 0)
+                        else
                         {
-                            var resultCaption = string.Join(Environment.NewLine, captionElements);
-                            caption = new FormattedText(resultCaption, Array.Empty<TextEntity>())
-                                .Substring(0, ClientService.Options.MessageCaptionLengthMax);
-                        }
+                            var captionElements = new List<string>();
 
-                        SendFileExecute(new[] { media }, caption);
+                            if (package.AvailableFormats.Contains(StandardDataFormats.Text))
+                            {
+                                var text = await package.GetTextAsync();
+                                captionElements.Add(text);
+                            }
+
+                            FormattedText caption = null;
+                            if (captionElements.Count > 0)
+                            {
+                                var resultCaption = string.Join(Environment.NewLine, captionElements);
+                                caption = new FormattedText(resultCaption, Array.Empty<TextEntity>())
+                                    .Substring(0, ClientService.Options.MessageCaptionLengthMax);
+                            }
+
+                            SendFileExecute(new[] { photo }, caption);
+                        }
                     }
                 }
                 else if (package.AvailableFormats.Contains(StandardDataFormats.WebLink))
@@ -331,7 +329,7 @@ namespace Telegram.ViewModels
             var mediaAllowed = header.EditingMessage.Content is not MessageDocument;
 
             var items = new[] { storage };
-            var popup = new SendFilesPopup(this, items, mediaAllowed, mediaAllowed, true, false, false, false);
+            var popup = new SendFilesPopup(this, items, mediaAllowed, mediaAllowed, true, false, false, false, true);
             popup.ShowCaptionAboveMedia = header.EditingMessage.ShowCaptionAboveMedia();
             popup.Caption = formattedText
                 .Substring(0, ClientService.Options.MessageCaptionLengthMax);
@@ -345,6 +343,8 @@ namespace Telegram.ViewModels
                 TextField?.SetText(formattedText);
                 return;
             }
+
+            storage = popup.Items[0];
 
             var captionAboveMedia = popup.ShowCaptionAboveMedia;
             var hasSpoiler = popup.SendWithSpoiler && !popup.IsFilesSelected;
