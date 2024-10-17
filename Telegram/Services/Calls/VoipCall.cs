@@ -715,9 +715,7 @@ namespace Telegram.Services.Calls
                     _manager.SetVideoCapture(null);
 
                     _manager.Stop();
-
-                    // TODO: Exp. see if it helps
-                    //_manager = null;
+                    _manager = null;
                 }
             }
         }
