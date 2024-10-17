@@ -159,8 +159,17 @@ namespace Telegram.Views
             PostEvent("invoice_closed", "{ slug: \"" + update.Slug + "\", status: " + update.Status + "}");
         }
 
+        private bool _closed;
+
         private async void Close()
         {
+            if (_closed)
+            {
+                return;
+            }
+
+            _closed = true;
+
             if (WindowContext.Current != null)
             {
                 await WindowContext.Current.ConsolidateAsync();
