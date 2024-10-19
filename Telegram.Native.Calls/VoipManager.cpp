@@ -239,6 +239,7 @@ namespace winrt::Telegram::Native::Calls::implementation
         if (m_impl)
         {
             m_impl->stop([](tgcalls::FinalState) {});
+            m_impl.reset();
         }
     }
 
