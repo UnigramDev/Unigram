@@ -13,7 +13,7 @@
                        Title="{x:Null}"
                        PrimaryButtonText="Button1"
                        SecondaryButtonText="Button2"
-                       PrimaryButtonClick="{x:Bind ViewModel.Send}"
+                       PrimaryButtonClick="ContentDialog_PrimaryButtonClick"
                        IsPrimaryButtonEnabled="{x:Bind ConvertEnabled(ViewModel.SelectedBackground, ViewModel.SelectedForeground), Mode=OneWay}"
                        Closing="OnClosing"
                        VerticalContentAlignment="Stretch"
