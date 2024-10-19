@@ -91,7 +91,14 @@ namespace Telegram.Controls
 
         protected override void OnAccept()
         {
-            View?.Accept();
+            if (View != null)
+            {
+                View?.Accept();
+            }
+            else
+            {
+                base.OnAccept();
+            }
         }
 
         private void OnSelectionChanged(object sender, RoutedEventArgs e)

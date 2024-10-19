@@ -1327,14 +1327,16 @@ namespace Telegram.Views.Popups
 
         #region Binding
 
+        private bool _primaryButtonEnabled;
+
         private bool ConvertButtonEnabled(bool allowEmpty, int count)
         {
             if (Send != null)
             {
-                return Send.IsEnabled = allowEmpty || count > 0;
+                return Send.IsEnabled = _primaryButtonEnabled = allowEmpty || count > 0;
             }
 
-            return allowEmpty || count > 0;
+            return _primaryButtonEnabled = allowEmpty || count > 0;
         }
 
         #endregion
@@ -1488,12 +1490,12 @@ namespace Telegram.Views.Popups
             return false;
         }
 
-        private void OnOpened(ContentDialog sender, ContentDialogOpenedEventArgs args)
+        private void OnLoaded(object sender, RoutedEventArgs args)
         {
             Window.Current.CoreWindow.CharacterReceived += OnCharacterReceived;
         }
 
-        private void OnClosing(ContentDialog sender, ContentDialogClosingEventArgs args)
+        private void OnUnloaded(object sender, RoutedEventArgs args)
         {
             ViewModel.PropertyChanged -= OnPropertyChanged;
             Window.Current.CoreWindow.CharacterReceived -= OnCharacterReceived;
@@ -1523,7 +1525,7 @@ namespace Telegram.Views.Popups
                     CaptionInput.Focus(FocusState.Keyboard);
                     CaptionInput.PasteFromClipboard();
                 }
-                else if (character == "\r" && IsPrimaryButtonEnabled && (SearchPanel == null || SearchPanel.Visibility == Visibility.Collapsed))
+                else if (character == "\r" && _primaryButtonEnabled && (SearchPanel == null || SearchPanel.Visibility == Visibility.Collapsed))
                 {
                     Accept();
                 }

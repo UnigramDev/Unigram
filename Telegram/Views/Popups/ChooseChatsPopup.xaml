@@ -17,8 +17,8 @@
                        SecondaryButtonText="Cancel"
                        VerticalContentAlignment="Stretch"
                        Padding="24,20,24,0"
-                       Opened="OnOpened"
-                       Closing="OnClosing">
+                       Loaded="OnLoaded"
+                       Unloaded="OnUnloaded">
 
     <Grid>
         <Grid.RowDefinitions>
