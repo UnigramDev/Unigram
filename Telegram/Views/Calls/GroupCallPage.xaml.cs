@@ -1048,7 +1048,7 @@ namespace Telegram.Views.Calls
             }
             else
             {
-                _call.StartScreenSharing();
+                _call.StartScreenSharing(XamlRoot);
             }
 
             UpdateScreen();
@@ -1357,7 +1357,12 @@ namespace Telegram.Views.Calls
                 }
                 else
                 {
-                    flyout.CreateFlyoutItem(_call.StartScreenSharing, Strings.VoipChatStartScreenCapture, Icons.ShareScreenStart);
+                    void StartScreenSharing()
+                    {
+                        _call.StartScreenSharing(XamlRoot);
+                    }
+
+                    flyout.CreateFlyoutItem(StartScreenSharing, Strings.VoipChatStartScreenCapture, Icons.ShareScreenStart);
                 }
             }
 

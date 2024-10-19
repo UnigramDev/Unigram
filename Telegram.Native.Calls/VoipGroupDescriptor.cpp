@@ -55,4 +55,14 @@ namespace winrt::Telegram::Native::Calls::implementation
     {
         m_isNoiseSuppressionEnabled = value;
     }
+
+    int64_t VoipGroupDescriptor::AudioProcessId()
+    {
+        return m_audioProcessId;
+    }
+
+    void VoipGroupDescriptor::AudioProcessId(int64_t value)
+    {
+        m_audioProcessId = value;
+    }
 }

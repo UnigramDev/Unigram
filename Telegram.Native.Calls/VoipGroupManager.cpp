@@ -87,11 +87,39 @@ namespace winrt::Telegram::Native::Calls::implementation
         }
 
         m_impl = std::make_unique<tgcalls::GroupInstanceCustomImpl>(std::move(impl));
+
+        if (VoipVideoContentType::Screencast == descriptor.VideoContentType())
+        {
+            auto audioProcessId = descriptor.AudioProcessId();
+            if (audioProcessId == 0)
+            {
+                return;
+            }
+
+            m_loopback.SetOutputSink([weakThis{ get_weak() }](std::vector<uint8_t>&& samples) {
+                if (auto strongThis = weakThis.get())
+                {
+                    strongThis->AddExternalAudioSamples(std::move(samples));
+                }
+                });
+
+            if (audioProcessId == -1)
+            {
+                m_loopback.StartCaptureAsync(GetCurrentProcessId(), false);
+            }
+            else
+            {
+                m_loopback.StartCaptureAsync(audioProcessId, true);
+            }
+
+            m_impl->setIsMuted(false);
+        }
     }
 
     void VoipGroupManager::Stop()
     {
-        m_impl->stop();
+        m_loopback.StopCaptureAsync();
+
         if (m_impl)
         {
             m_impl->stop();

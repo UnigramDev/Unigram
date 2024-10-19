@@ -786,6 +786,9 @@
     <ClCompile Include="..\Libraries\CoreWindowCustomDPI\InternalsRT.Detours\modules.cpp">
       <Filter>Detours</Filter>
     </ClCompile>
+    <ClCompile Include="Composition\WindowVisual.cpp">
+      <Filter>Composition</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />
@@ -1235,6 +1238,15 @@
     <ClInclude Include="..\Libraries\CoreWindowCustomDPI\InternalsRT.Detours\MissingImports.h">
       <Filter>Detours</Filter>
     </ClInclude>
+    <ClInclude Include="Composition\WindowVisual.h">
+      <Filter>Composition</Filter>
+    </ClInclude>
+    <ClInclude Include="Composition\DwmThumbnail.h">
+      <Filter>Composition</Filter>
+    </ClInclude>
+    <ClInclude Include="Composition\dcomp.local.h">
+      <Filter>Composition</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="Telegram.Native.def" />
@@ -1276,6 +1288,9 @@
     <Midl Include="ParticlesAnimation.idl" />
     <Midl Include="TextFormat.idl" />
     <Midl Include="Composition\DirectRectangleClip2.idl">
+      <Filter>Composition</Filter>
+    </Midl>
+    <Midl Include="Composition\WindowVisual.idl">
       <Filter>Composition</Filter>
     </Midl>
   </ItemGroup>

@@ -5,6 +5,8 @@
 
 #include "rtc_base/synchronization/mutex.h"
 
+#include "LoopbackCapture.h"
+
 #include <winrt/Telegram.Td.Api.h>
 #include <mutex>
 
@@ -66,6 +68,8 @@ namespace winrt::Telegram::Native::Calls::implementation
     private:
         std::unique_ptr<tgcalls::GroupInstanceCustomImpl> m_impl = nullptr;
         std::mutex m_lock;
+
+        CLoopbackCapture m_loopback;
 
         bool m_isMuted = true;
         bool m_isNoiseSuppressionEnabled = true;

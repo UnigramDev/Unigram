@@ -23,12 +23,16 @@ namespace winrt::Telegram::Native::Calls::implementation
         bool IsNoiseSuppressionEnabled();
         void IsNoiseSuppressionEnabled(bool value);
 
+        int64_t AudioProcessId();
+        void AudioProcessId(int64_t value);
+
     private:
         hstring m_audioInputId{ L"" };
         hstring m_audioOutputId{ L"" };
         VoipVideoContentType m_videoContentType{ VoipVideoContentType::Generic };
         VoipCaptureBase m_videoCapture{ nullptr };
         bool m_isNoiseSuppressionEnabled{ true };
+        int64_t m_audioProcessId{ 0 };
     };
 }
 

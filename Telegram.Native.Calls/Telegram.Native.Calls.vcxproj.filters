@@ -175,6 +175,7 @@
       <Filter>tgcalls\v2</Filter>
     </ClCompile>
     <ClCompile Include="VoipVideoOutputSink.cpp" />
+    <ClCompile Include="LoopbackCapture.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />
@@ -394,6 +395,7 @@
     </ClInclude>
     <ClInclude Include="VoipVideoOutputSink.h" />
     <ClInclude Include="VoipVideoOutput.h" />
+    <ClInclude Include="LoopbackCapture.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="VoipManager.rc" />
@@ -457,5 +459,8 @@
     <Filter Include="tgcalls\utils">
       <UniqueIdentifier>{ac972e92-c547-4d44-9376-7044e6f1a914}</UniqueIdentifier>
     </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <Natvis Include="$(MSBuildThisFileDirectory)..\..\natvis\wil.natvis" />
   </ItemGroup>
 </Project>

@@ -21,7 +21,6 @@ using Telegram.Views.Calls.Popups;
 using Windows.ApplicationModel.Calls;
 using Windows.Data.Json;
 using Windows.Foundation;
-using Windows.Graphics.Capture;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 
@@ -326,22 +325,20 @@ namespace Telegram.Services.Calls
 
         public bool IsScreenSharing => _screenManager != null && _screenCapturer != null;
 
-        public async void StartScreenSharing()
+        public async void StartScreenSharing(XamlRoot xamlRoot)
         {
             if (_manager == null || _screenManager != null || !VoipScreenCapture.IsSupported())
             {
                 return;
             }
 
-            var picker = new GraphicsCapturePicker();
-            var item = await picker.PickSingleItemAsync();
-
+            var item = await CaptureSessionManager.ChooseAsync(xamlRoot, true);
             if (item == null || _manager == null || _screenManager != null)
             {
                 return;
             }
 
-            _screenCapturer = new VoipScreenCapture(item);
+            _screenCapturer = new VoipScreenCapture(item.CaptureItem);
             _screenCapturer.FatalErrorOccurred += OnFatalErrorOccurred;
 
             // TODO: currently Paused is triggered when frames are dropped as well.
@@ -354,7 +351,8 @@ namespace Telegram.Services.Calls
             var descriptor = new VoipGroupDescriptor
             {
                 VideoContentType = VoipVideoContentType.Screencast,
-                VideoCapture = _screenCapturer
+                VideoCapture = _screenCapturer,
+                AudioProcessId = item.ProcessId
             };
 
             _screenManager = new VoipGroupManager(descriptor);

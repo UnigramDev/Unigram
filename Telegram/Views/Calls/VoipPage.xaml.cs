@@ -13,7 +13,6 @@ using Telegram.Services.Calls;
 using Telegram.Td.Api;
 using Telegram.Views.Host;
 using Windows.Foundation;
-using Windows.Graphics.Capture;
 using Windows.System.Display;
 using Windows.UI;
 using Windows.UI.Composition;
@@ -1058,15 +1057,13 @@ namespace Telegram.Views.Calls
                 }
                 else
                 {
-                    var picker = new GraphicsCapturePicker();
-
-                    var item = await picker.PickSingleItemAsync();
+                    var item = await CaptureSessionManager.ChooseAsync(XamlRoot, false);
                     if (item == null)
                     {
                         return;
                     }
 
-                    _call.ShareScreen(item);
+                    _call.ShareScreen(item.CaptureItem);
                 }
             }
             catch

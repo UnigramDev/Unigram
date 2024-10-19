@@ -316,11 +316,14 @@
     <ClInclude Include="Composition\CompositionDevice.h">
       <DependentUpon>Composition\CompositionDevice.idl</DependentUpon>
     </ClInclude>
+    <ClInclude Include="Composition\dcomp.local.h" />
     <ClInclude Include="Composition\dcompex.h" />
     <ClInclude Include="Composition\DirectRectangleClip.h">
       <DependentUpon>Composition\DirectRectangleClip.idl</DependentUpon>
     </ClInclude>
     <ClInclude Include="Composition\DirectRectangleClip2.h" />
+    <ClInclude Include="Composition\DwmThumbnail.h" />
+    <ClInclude Include="Composition\WindowVisual.h" />
     <ClInclude Include="DebugUtils.h" />
     <ClInclude Include="FatalError.h">
       <DependentUpon>FatalError.idl</DependentUpon>
@@ -967,6 +970,7 @@
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="Composition\DirectRectangleClip2.cpp" />
+    <ClCompile Include="Composition\WindowVisual.cpp" />
     <ClCompile Include="FatalError.cpp">
       <DependentUpon>FatalError.idl</DependentUpon>
       <SubType>Code</SubType>
@@ -1239,6 +1243,7 @@
     <Midl Include="Composition\CompositionDevice.idl" />
     <Midl Include="Composition\DirectRectangleClip.idl" />
     <Midl Include="Composition\DirectRectangleClip2.idl" />
+    <Midl Include="Composition\WindowVisual.idl" />
     <Midl Include="FatalError.idl">
       <SubType>Designer</SubType>
     </Midl>
