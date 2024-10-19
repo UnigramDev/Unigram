@@ -63,6 +63,8 @@ namespace Telegram.Controls.Drawers
         private readonly AnimatedListHandler _handler;
         private readonly AnimatedListHandler _toolbarHandler;
 
+        private readonly EventDebouncer<TextChangedEventArgs> _typing;
+
         private readonly Dictionary<StickerViewModel, Grid> _itemIdToContent = new();
         private long _selectedSetId;
 
@@ -112,8 +114,8 @@ namespace Telegram.Controls.Drawers
                 UpdateView();
             }
 
-            var debouncer = new EventDebouncer<TextChangedEventArgs>(Constants.TypingTimeout, handler => SearchField.TextChanged += new TextChangedEventHandler(handler));
-            debouncer.Invoked += async (s, args) =>
+            _typing = new EventDebouncer<TextChangedEventArgs>(Constants.TypingTimeout, handler => SearchField.TextChanged += new TextChangedEventHandler(handler));
+            _typing.Invoked += async (s, args) =>
             {
                 if (string.IsNullOrWhiteSpace(SearchField.Text))
                 {
@@ -171,6 +173,8 @@ namespace Telegram.Controls.Drawers
             _isActive = false;
             _handler.UnloadItems();
             _toolbarHandler.UnloadItems();
+
+            _typing.Cancel();
 
             // This is called only right before XamlMarkupHelper.UnloadObject
             // so we can safely clean up any kind of anything from here.

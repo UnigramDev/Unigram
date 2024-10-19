@@ -43,6 +43,8 @@ namespace Telegram.Controls.Drawers
 
         private readonly AnimatedListHandler _toolbarHandler;
 
+        private readonly EventDebouncer<TextChangedEventArgs> _typing;
+
         private readonly Dictionary<StickerViewModel, Grid> _itemIdToContent = new();
         private long _selectedSetId;
 
@@ -54,6 +56,9 @@ namespace Telegram.Controls.Drawers
 
             this.CreateInsetClip();
 
+            var header = VisualUtilities.DropShadow(Separator);
+            header.Clip = header.Compositor.CreateInsetClip(0, 40, 0, -40);
+
             _handler = new AnimatedListHandler(List, AnimatedListType.Stickers);
             _toolbarHandler = new AnimatedListHandler(Toolbar, AnimatedListType.Stickers);
 
@@ -63,13 +68,10 @@ namespace Telegram.Controls.Drawers
             _zoomer.DownloadFile = fileId => ViewModel.ClientService.DownloadFile(fileId, 32);
             _zoomer.SessionId = () => ViewModel.ClientService.SessionId;
 
-            var header = VisualUtilities.DropShadow(Separator);
-            header.Clip = header.Compositor.CreateInsetClip(0, 40, 0, -40);
-
-            var debouncer = new EventDebouncer<TextChangedEventArgs>(Constants.TypingTimeout, handler => SearchField.TextChanged += new TextChangedEventHandler(handler));
-            debouncer.Invoked += async (s, args) =>
+            _typing = new EventDebouncer<TextChangedEventArgs>(Constants.TypingTimeout, handler => SearchField.TextChanged += new TextChangedEventHandler(handler));
+            _typing.Invoked += async (s, args) =>
             {
-                var items = ViewModel.SearchStickers as SearchStickerSetsCollection;
+                var items = ViewModel?.SearchStickers as SearchStickerSetsCollection;
                 if (items != null && string.Equals(SearchField.Text, items.Query))
                 {
                     await items.LoadMoreItemsAsync(1);
@@ -105,6 +107,8 @@ namespace Telegram.Controls.Drawers
             _isActive = false;
             _handler.UnloadItems();
             _toolbarHandler.UnloadItems();
+
+            _typing.Cancel();
 
             // This is called only right before XamlMarkupHelper.UnloadObject
             // so we can safely clean up any kind of anything from here.

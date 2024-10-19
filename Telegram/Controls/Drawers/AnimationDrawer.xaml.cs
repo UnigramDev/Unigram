@@ -51,11 +51,18 @@ namespace Telegram.Controls.Drawers
         private readonly AnimatedListHandler _handler;
         private readonly ZoomableListHandler _zoomer;
 
+        private readonly EventDebouncer<TextChangedEventArgs> _typing;
+
         private bool _isActive;
 
         public AnimationDrawer()
         {
             InitializeComponent();
+
+            this.CreateInsetClip();
+
+            var header = VisualUtilities.DropShadow(Separator);
+            header.Clip = header.Compositor.CreateInsetClip(0, 40, 0, -40);
 
             _handler = new AnimatedListHandler(List, AnimatedListType.Animations);
 
@@ -65,13 +72,8 @@ namespace Telegram.Controls.Drawers
             _zoomer.DownloadFile = fileId => ViewModel.ClientService.DownloadFile(fileId, 32);
             _zoomer.SessionId = () => ViewModel.ClientService.SessionId;
 
-            this.CreateInsetClip();
-
-            var header = VisualUtilities.DropShadow(Separator);
-            header.Clip = header.Compositor.CreateInsetClip(0, 40, 0, -40);
-
-            var debouncer = new EventDebouncer<TextChangedEventArgs>(Constants.TypingTimeout, handler => SearchField.TextChanged += new TextChangedEventHandler(handler));
-            debouncer.Invoked += (s, args) =>
+            _typing = new EventDebouncer<TextChangedEventArgs>(Constants.TypingTimeout, handler => SearchField.TextChanged += new TextChangedEventHandler(handler));
+            _typing.Invoked += (s, args) =>
             {
                 ViewModel?.Search(SearchField.Text);
             };
@@ -101,6 +103,8 @@ namespace Telegram.Controls.Drawers
         {
             _isActive = false;
             _handler.UnloadItems();
+
+            _typing.Cancel();
 
             // This is called only right before XamlMarkupHelper.UnloadObject
             // so we can safely clean up any kind of anything from here.
