@@ -17,6 +17,8 @@ namespace Telegram.Entities
         public Rect Rectangle { get; set; } = new Rect(0, 0, 1, 1);
         public BitmapProportions Proportions { get; set; } = BitmapProportions.Custom;
 
+        public int MinimumSize { get; set; }
+
         public IReadOnlyList<SmoothPathBuilder> Strokes { get; set; }
 
         public BitmapRotation Rotation { get; set; } = BitmapRotation.None;

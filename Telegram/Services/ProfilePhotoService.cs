@@ -104,6 +104,8 @@ namespace Telegram.Services
 
         private async Task<InputChatPhoto> EditPhotoAsync(INavigationService navigation, StorageMedia file)
         {
+            file.EditState.MinimumSize = 160;
+
             InputChatPhoto inputPhoto = null;
             if (file is StorageVideo media)
             {
