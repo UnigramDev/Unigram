@@ -63,13 +63,6 @@ namespace Telegram.Services.Settings
             set => AddOrUpdateValue(ref _lastUpdateVersion, "LastUpdateVersion", value);
         }
 
-        private int? _lastUpdateTime;
-        public int LastUpdateTime
-        {
-            get => _lastUpdateTime ??= GetValueOrDefault("LastUpdateTime", 0);
-            set => AddOrUpdateValue(ref _lastUpdateTime, "LastUpdateTime", value);
-        }
-
         private bool? _enableWebViewDevTools;
         public bool EnableWebViewDevTools
         {

@@ -135,17 +135,24 @@ namespace Telegram.Controls
             }
 
             var value = newValue.Value;
-            var difference = value - DateTime.Now;
 
+            var difference = value - DateTime.Now;
             var seconds = (float)difference.TotalSeconds;
 
-            var easing = BootStrapper.Current.Compositor.CreateLinearEasingFunction();
-            var angleAnimation = BootStrapper.Current.Compositor.CreateScalarKeyFrameAnimation();
-            angleAnimation.InsertKeyFrame(0, 1f - (seconds / (Maximum ?? 0)));
-            angleAnimation.InsertKeyFrame(1, 1f, easing);
-            angleAnimation.Duration = difference;
+            if (difference.TotalMilliseconds >= 1 && difference.TotalHours < 8)
+            {
+                var easing = BootStrapper.Current.Compositor.CreateLinearEasingFunction();
+                var angleAnimation = BootStrapper.Current.Compositor.CreateScalarKeyFrameAnimation();
+                angleAnimation.InsertKeyFrame(0, 1f - (seconds / (Maximum ?? 0)));
+                angleAnimation.InsertKeyFrame(1, 1f, easing);
+                angleAnimation.Duration = difference;
 
-            _ellipse.StartAnimation("TrimStart", angleAnimation);
+                _ellipse.StartAnimation("TrimStart", angleAnimation);
+            }
+            else
+            {
+                _ellipse.TrimStart = 1f - (seconds / (Maximum ?? 0));
+            }
 
             //double value;
             ////if (oldValue > 0.0 && oldValue < 1.0 && newValue == 0.0)

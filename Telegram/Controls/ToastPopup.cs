@@ -212,6 +212,12 @@ namespace Telegram.Controls
         {
             Logger.Info();
 
+            if (xamlRoot == null)
+            {
+                Logger.Info("XamlRoot is null");
+                return null;
+            }
+
             var label = new TextBlock
             {
                 TextWrapping = TextWrapping.Wrap,
@@ -241,6 +247,7 @@ namespace Telegram.Controls
                 HorizontalContentAlignment = HorizontalAlignment.Stretch,
                 VerticalContentAlignment = VerticalAlignment.Stretch,
                 MinWidth = 0,
+                XamlRoot = xamlRoot
             };
 
             if (requestedTheme != ElementTheme.Default)

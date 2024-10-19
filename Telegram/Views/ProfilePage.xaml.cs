@@ -487,6 +487,8 @@ namespace Telegram.Views
         {
             if (Navigation.SelectedItem is ProfileTabItem page && (page.Parameter != null || page.Type != MediaFrame.Content?.GetType()))
             {
+                Logger.Info(page.Type);
+
                 NavigationTransitionInfo transition = _prevSelectedIndex == -1
                     ? new SuppressNavigationTransitionInfo()
                     : new SlideNavigationTransitionInfo

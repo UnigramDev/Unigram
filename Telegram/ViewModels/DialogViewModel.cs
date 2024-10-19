@@ -806,7 +806,7 @@ namespace Telegram.ViewModels
             }
 
             var user = ClientService.GetUser(chat);
-            if (user == null || user.Type is not UserTypeBot)
+            if (user?.Type is not UserTypeBot)
             {
                 goto AddDate;
             }
@@ -826,7 +826,7 @@ namespace Telegram.ViewModels
                 var fullInfo = ClientService.GetUserFull(user.Id);
                 fullInfo ??= await ClientService.SendAsync(new GetUserFullInfo(user.Id)) as UserFullInfo;
 
-                if (fullInfo != null && fullInfo.BotInfo?.Description.Length > 0)
+                if (fullInfo?.BotInfo?.Description.Length > 0)
                 {
                     var entities = ClientEx.GetTextEntities(fullInfo.BotInfo.Description);
 

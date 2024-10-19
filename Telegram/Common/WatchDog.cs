@@ -78,6 +78,8 @@ namespace Telegram
         private static string _lastSessionErrorReportId;
         private static bool _lastSessionTerminatedUnexpectedly;
 
+        private static DateTime _launchTime;
+
         static WatchDog()
         {
             _crashLog = Path.Combine(ApplicationData.Current.LocalFolder.Path, "crash.log");
@@ -98,6 +100,7 @@ namespace Telegram
                 return;
             }
 
+            _launchTime = DateTime.UtcNow;
             Read();
 
             TaskScheduler.UnobservedTaskException += (s, args) =>
@@ -336,23 +339,23 @@ namespace Telegram
             var version = VersionLabel.GetVersion();
             var language = LocaleService.Current.Id;
 
-            var next = DateTime.Now.ToTimestamp();
-            var prev = SettingsService.Current.Diagnostics.LastUpdateTime;
+            var next = DateTime.UtcNow - _launchTime;
+            var diff = next.ToDuration();
 
             var count = SettingsService.Current.Diagnostics.UpdateCount;
 
             var memoryUsage = FileSizeConverter.Convert((long)MemoryManager.AppMemoryUsage);
+            var memoryUsageExpected = FileSizeConverter.Convert((long)MemoryManager.ExpectedAppMemoryUsageLimit);
             var memoryUsageLimit = FileSizeConverter.Convert((long)MemoryManager.AppMemoryUsageLimit);
 
             var info =
                 $"Current version: {version}\n" +
                 $"Current language: {language}\n" +
+                $"Current duration: {diff}\n" +
                 $"Memory usage: {memoryUsage}\n" +
-                $"Memory usage level: {MemoryManager.AppMemoryUsageLevel}\n" +
+                $"Memory usage expected: {memoryUsageExpected}\n" +
                 $"Memory usage limit: {memoryUsageLimit}\n" +
-                $"Time since last update: {next - prev}s\n" +
-                $"Update count: {count}\n" +
-                $"Tabs on the left: {SettingsService.Current.IsLeftTabsEnabled}\n";
+                $"Update count: {count}\n";
 
             if (WindowContext.Current != null)
             {

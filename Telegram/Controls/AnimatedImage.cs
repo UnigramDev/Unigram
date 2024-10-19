@@ -1597,6 +1597,8 @@ namespace Telegram.Controls
         private readonly DispatcherQueue _dispatcherQueue;
         private readonly WindowContext _window;
 
+        private bool _closed;
+
         private AnimatedImageLoader()
         {
             _dispatcherQueue = DispatcherQueue.GetForCurrentThread();
@@ -1607,7 +1609,14 @@ namespace Telegram.Controls
 
         public static void Release()
         {
-            _current = null;
+            if (_current?._rendering != null)
+            {
+                _current._closed = true;
+            }
+            else
+            {
+                _current = null;
+            }
         }
 
         private event EventHandler<object> _rendering;
@@ -1629,6 +1638,11 @@ namespace Telegram.Controls
                 if (_rendering == null)
                 {
                     Windows.UI.Xaml.Media.CompositionTarget.Rendering -= OnRendering;
+
+                    if (_closed)
+                    {
+                        _current = null;
+                    }
                 }
             }
         }

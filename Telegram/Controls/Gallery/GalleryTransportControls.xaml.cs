@@ -423,7 +423,11 @@ namespace Telegram.Controls.Gallery
             value = Math.Clamp(value, 0.5, 2);
             SettingsService.Current.Playback.VideoSpeed = value;
 
-            _player.Rate = value;
+            if (_player != null)
+            {
+                _player.Rate = value;
+            }
+
             SpeedText.Text = string.Format("{0:N1}x", value);
             SpeedButton.Badge = string.Format("{0:N1}x", value);
         }

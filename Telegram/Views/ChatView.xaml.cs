@@ -1459,7 +1459,7 @@ namespace Telegram.Views
                         {
                             EditingMessage = embedded.EditingMessage,
                             ReplyToMessage = embedded.ReplyToMessage,
-                            ReplyToQuote = embedded?.ReplyToQuote,
+                            ReplyToQuote = embedded.ReplyToQuote,
                         };
                     }
                 }
@@ -1505,7 +1505,7 @@ namespace Telegram.Views
                             {
                                 EditingMessage = embedded.EditingMessage,
                                 ReplyToMessage = embedded.ReplyToMessage,
-                                ReplyToQuote = embedded?.ReplyToQuote,
+                                ReplyToQuote = embedded.ReplyToQuote,
                             };
                         }
                     }

@@ -79,7 +79,6 @@ namespace Telegram
 
             if (SettingsService.Current.Diagnostics.LastUpdateVersion < Constants.BuildNumber)
             {
-                SettingsService.Current.Diagnostics.LastUpdateTime = DateTime.Now.ToTimestamp();
                 SettingsService.Current.Diagnostics.LastUpdateVersion = Constants.BuildNumber;
                 SettingsService.Current.Diagnostics.UpdateCount++;
             }
