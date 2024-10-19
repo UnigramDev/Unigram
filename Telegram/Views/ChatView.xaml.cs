@@ -583,7 +583,7 @@ namespace Telegram.Views
                     {
                         var bubble = owner.GetChild<MessageBubble>();
                         var reply = message.ReplyToState != MessageReplyToState.Hidden && message.ReplyTo != null;
-                        
+
                         var more = Math.Max(ButtonMore.ActualSize.X, ButtonAlias.ActualSize.X);
                         if (more > 0)
                         {
@@ -4564,7 +4564,7 @@ namespace Telegram.Views
                 readOnly = true;
                 return Strings.PlainTextRestrictedHint;
             }
-            else if (supergroup.Status is ChatMemberStatusCreator { IsAnonymous: true} || supergroup.Status is ChatMemberStatusAdministrator { Rights.IsAnonymous: true })
+            else if (supergroup.Status is ChatMemberStatusCreator { IsAnonymous: true } || supergroup.Status is ChatMemberStatusAdministrator { Rights.IsAnonymous: true })
             {
                 return Strings.SendAnonymously;
             }

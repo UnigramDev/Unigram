@@ -35,6 +35,8 @@ namespace Telegram.Common
 
         public static Task<bool> CheckAccessAsync(XamlRoot xamlRoot, MediaDeviceAccess requestedAccess, ElementTheme requestedTheme = ElementTheme.Default)
         {
+            //var test = await AppCapability.RequestAccessForCapabilitiesAsync(new[] { "microphone", "webcam" });
+
             var captureMode = requestedAccess switch
             {
                 MediaDeviceAccess.Audio => StreamingCaptureMode.Audio,

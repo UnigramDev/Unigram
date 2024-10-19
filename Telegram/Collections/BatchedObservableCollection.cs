@@ -13,7 +13,7 @@ using Telegram.Common;
 namespace Telegram.Collection
 {
     // TODO: This is not the best solution ever, but I am lazy
-    public class BatchedObservableCollection<T> : DiffObservableCollection<T>
+    public partial class BatchedObservableCollection<T> : DiffObservableCollection<T>
     {
         private readonly int _headSize;
 

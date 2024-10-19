@@ -15,7 +15,6 @@ using Telegram.Collections;
 using Telegram.Common;
 using Telegram.Controls;
 using Telegram.Navigation;
-using Telegram.Navigation.Services;
 using Telegram.Services;
 using Telegram.Td.Api;
 using Telegram.ViewModels.Delegates;

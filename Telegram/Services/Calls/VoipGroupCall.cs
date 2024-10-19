@@ -609,7 +609,7 @@ namespace Telegram.Services.Calls
         private void Dispose()
         {
             //_call = null;
-            _chat = null;
+            //_chat = null;
 
             _isScheduled = false;
             _isConnected = false;
@@ -867,9 +867,9 @@ namespace Telegram.Services.Calls
 
         public string GetTitle()
         {
-            if (string.IsNullOrEmpty(Title) && ClientService.TryGetChat(Chat.Id, out Chat chat))
+            if (string.IsNullOrEmpty(Title))
             {
-                return chat.Title;
+                return _chat.Title;
             }
 
             return Title;

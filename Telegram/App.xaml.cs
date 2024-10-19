@@ -66,7 +66,7 @@ namespace Telegram
 
         public static ConcurrentDictionary<long, DataPackageView> DataPackages { get; } = new ConcurrentDictionary<long, DataPackageView>();
 
-        private ExtendedExecutionSession _extendedSession;
+        private static ExtendedExecutionSession _extendedSession;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="App"/> class.
