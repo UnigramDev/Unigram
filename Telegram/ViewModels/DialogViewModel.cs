@@ -2563,17 +2563,28 @@ namespace Telegram.ViewModels
                             ReplyToMessage = CreateMessage(message),
                             ReplyToQuote = replyToMessage.Quote
                         };
-                    }
-                    else
-                    {
-                        ComposerHeader = null;
+
+                        goto UpdateText;
                     }
                 }
-                else
+                else if (draft.ReplyTo is InputMessageReplyToExternalMessage replyToExternalMessage)
                 {
-                    ComposerHeader = null;
+                    var response = await ClientService.SendAsync(new GetMessage(replyToExternalMessage.ChatId, replyToExternalMessage.MessageId));
+                    if (response is Message message)
+                    {
+                        ComposerHeader = new MessageComposerHeader(ClientService)
+                        {
+                            ReplyToMessage = CreateMessage(message),
+                            ReplyToQuote = replyToExternalMessage.Quote
+                        };
+
+                        goto UpdateText;
+                    }
                 }
 
+                ComposerHeader = null;
+
+            UpdateText:
                 if (draft.InputMessageText is InputMessageText text)
                 {
                     SetText(text.Text);
@@ -2683,6 +2694,7 @@ namespace Telegram.ViewModels
                 draft = new DraftMessage(inputReply, 0, new InputMessageText(formattedText, null, false), 0);
             }
 
+            _draft = draft;
             ClientService.Send(new SetChatDraftMessage(_chat.Id, ThreadId, draft));
         }
 
