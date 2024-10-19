@@ -346,11 +346,11 @@ namespace Telegram.Views.Premium.Popups
             {
                 void handler(object sender, object e)
                 {
-                    host.Disconnect(popup);
+                    host.ToastClosed(popup);
                     popup.Closed -= handler;
                 }
 
-                host.Connect(popup);
+                host.ToastOpened(popup);
                 popup.Closed += handler;
             }
 

@@ -169,11 +169,11 @@ namespace Telegram.Controls
 
             popup.Closed += (s, args) =>
             {
-                host.Disconnect(s);
+                host.ToastClosed(s);
                 tsc.TrySetResult(ContentDialogResult.Secondary);
             };
 
-            host.Connect(popup);
+            host.ToastOpened(popup);
             popup.IsOpen = true;
             return tsc.Task;
         }
@@ -213,11 +213,11 @@ namespace Telegram.Controls
 
             popup.Closed += (s, args) =>
             {
-                host.Disconnect(s);
+                host.ToastClosed(s);
                 tsc.TrySetResult(ContentDialogResult.Secondary);
             };
 
-            host.Connect(popup);
+            host.ToastOpened(popup);
             popup.IsOpen = true;
             return tsc.Task;
         }

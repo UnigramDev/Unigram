@@ -4,6 +4,7 @@
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+using Microsoft.UI.Xaml.Controls;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -21,6 +22,7 @@ using Telegram.Streams;
 using Telegram.Td.Api;
 using Telegram.ViewModels.Delegates;
 using Telegram.Views.Calls.Popups;
+using Telegram.Views.Host;
 using Telegram.Views.Popups;
 using Windows.Foundation;
 using Windows.System;
@@ -37,7 +39,7 @@ using Point = Windows.Foundation.Point;
 
 namespace Telegram.Views.Calls
 {
-    public sealed partial class GroupCallPage : WindowEx, IGroupCallDelegate
+    public sealed partial class GroupCallPage : WindowEx, IGroupCallDelegate, IPopupHost, IToastHost
     {
         private bool _disposed;
 
@@ -103,6 +105,33 @@ namespace Telegram.Views.Calls
             //ElementCompositionPreview.SetIsTranslationEnabled(PinnedInfo, true);
             //ElementCompositionPreview.SetIsTranslationEnabled(PinnedGlyph, true);
             //ViewportAspect.Constraint = new Size(16, 9);
+        }
+
+        public void ToastOpened(TeachingTip toast)
+        {
+            Resources.Remove("TeachingTip");
+            Resources.Add("TeachingTip", toast);
+        }
+
+        public void ToastClosed(TeachingTip toast)
+        {
+            if (Resources.TryGetValue("TeachingTip", out object cached))
+            {
+                if (cached == toast)
+                {
+                    Resources.Remove("TeachingTip");
+                }
+            }
+        }
+
+        public void PopupOpened()
+        {
+            Window.Current.SetTitleBar(null);
+        }
+
+        public void PopupClosed()
+        {
+            Window.Current.SetTitleBar(TitleArea);
         }
 
         public DispatcherQueue DispatcherQueue => _dispatcherQueue;

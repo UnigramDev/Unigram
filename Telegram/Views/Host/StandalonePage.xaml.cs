@@ -62,7 +62,7 @@ namespace Telegram.Views.Host
 
         public INavigationService NavigationService => _navigationService;
 
-        public void Connect(TeachingTip toast)
+        public void ToastOpened(TeachingTip toast)
         {
             if (_navigationService?.Frame != null)
             {
@@ -71,7 +71,7 @@ namespace Telegram.Views.Host
             }
         }
 
-        public void Disconnect(TeachingTip toast)
+        public void ToastClosed(TeachingTip toast)
         {
             if (_navigationService?.Frame != null && _navigationService.Frame.Resources.TryGetValue("TeachingTip", out object cached))
             {

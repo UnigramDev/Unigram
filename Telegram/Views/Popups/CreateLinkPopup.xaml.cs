@@ -103,11 +103,11 @@ namespace Telegram.Views.Popups
             {
                 sender.Closed -= handler;
 
-                host.Disconnect(sender);
+                host.ToastClosed(sender);
                 tsc.SetResult(IsValid);
             }
 
-            host.Connect(this);
+            host.ToastOpened(this);
             Closed += handler;
             IsOpen = true;
 

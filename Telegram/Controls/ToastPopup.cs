@@ -259,11 +259,11 @@ namespace Telegram.Controls
             {
                 void handler(object sender, object e)
                 {
-                    host.Disconnect(toast);
+                    host.ToastClosed(toast);
                     toast.Closed -= handler;
                 }
 
-                host.Connect(toast);
+                host.ToastOpened(toast);
                 toast.Closed += handler;
             }
 

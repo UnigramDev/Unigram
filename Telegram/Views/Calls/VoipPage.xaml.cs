@@ -34,7 +34,7 @@ namespace Telegram.Views.Calls
         Remote,
     }
 
-    public sealed partial class VoipPage : WindowEx, IToastHost
+    public sealed partial class VoipPage : WindowEx, IToastHost, IPopupHost
     {
         private static readonly int[] _pendingGradient = new[] { 0x568FD6, 0x626ED5, 0xA667D5, 0x7664DA };
         private static readonly int[] _readyGradient = new[] { 0xACBD65, 0x459F8D, 0x53A4D1, 0x3E917A };
@@ -132,6 +132,33 @@ namespace Telegram.Views.Calls
             SystemNavigationManagerPreview.GetForCurrentView().CloseRequested += OnCloseRequested;
         }
 
+        public void ToastOpened(TeachingTip toast)
+        {
+            Resources.Remove("TeachingTip");
+            Resources.Add("TeachingTip", toast);
+        }
+
+        public void ToastClosed(TeachingTip toast)
+        {
+            if (Resources.TryGetValue("TeachingTip", out object cached))
+            {
+                if (cached == toast)
+                {
+                    Resources.Remove("TeachingTip");
+                }
+            }
+        }
+
+        public void PopupOpened()
+        {
+            Window.Current.SetTitleBar(null);
+        }
+
+        public void PopupClosed()
+        {
+            Window.Current.SetTitleBar(TitleBar);
+        }
+
         private void InitializeBlob()
         {
             var device = ElementComposition.GetSharedDevice();
@@ -168,27 +195,6 @@ namespace Telegram.Views.Calls
                 visual.CenterPoint = new Vector3(point.X / 2, point.Y + 4, 0);
             }
         }
-
-        #region IToastHost
-
-        public void Connect(TeachingTip toast)
-        {
-            Resources.Remove("TeachingTip");
-            Resources.Add("TeachingTip", toast);
-        }
-
-        public void Disconnect(TeachingTip toast)
-        {
-            if (Resources.TryGetValue("TeachingTip", out object cached))
-            {
-                if (cached == toast)
-                {
-                    Resources.Remove("TeachingTip");
-                }
-            }
-        }
-
-        #endregion
 
         #region Thread switch
 

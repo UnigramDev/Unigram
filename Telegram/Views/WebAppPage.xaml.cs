@@ -34,7 +34,7 @@ using Windows.UI.Xaml.Media;
 
 namespace Telegram.Views
 {
-    public sealed partial class WebAppPage : UserControlEx, IToastHost
+    public sealed partial class WebAppPage : UserControlEx, IToastHost, IPopupHost
     {
         private readonly IClientService _clientService;
         private readonly IEventAggregator _aggregator;
@@ -126,13 +126,13 @@ namespace Telegram.Views
 
         #region IToastHost
 
-        public void Connect(TeachingTip toast)
+        public void ToastOpened(TeachingTip toast)
         {
             Resources.Remove("TeachingTip");
             Resources.Add("TeachingTip", toast);
         }
 
-        public void Disconnect(TeachingTip toast)
+        public void ToastClosed(TeachingTip toast)
         {
             if (Resources.TryGetValue("TeachingTip", out object cached))
             {
@@ -141,6 +141,16 @@ namespace Telegram.Views
                     Resources.Remove("TeachingTip");
                 }
             }
+        }
+
+        public void PopupOpened()
+        {
+            Window.Current.SetTitleBar(null);
+        }
+
+        public void PopupClosed()
+        {
+            Window.Current.SetTitleBar(TitleBar);
         }
 
         #endregion

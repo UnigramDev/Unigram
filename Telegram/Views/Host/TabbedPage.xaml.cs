@@ -70,13 +70,13 @@ namespace Telegram.Views.Host
             }
         }
 
-        public void Connect(TeachingTip toast)
+        public void ToastOpened(TeachingTip toast)
         {
             Resources.Remove("TeachingTip");
             Resources.Add("TeachingTip", toast);
         }
 
-        public void Disconnect(TeachingTip toast)
+        public void ToastClosed(TeachingTip toast)
         {
             if (Resources.TryGetValue("TeachingTip", out object cached))
             {

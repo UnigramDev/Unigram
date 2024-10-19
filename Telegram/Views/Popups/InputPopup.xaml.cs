@@ -288,10 +288,10 @@ namespace Telegram.Views.Popups
 
             popup.Closed += (s, args) =>
             {
-                host.Disconnect(s);
+                host.ToastClosed(s);
             };
 
-            host.Connect(popup);
+            host.ToastOpened(popup);
 
             var confirm = await popup.ShowAsync();
             return new InputPopupResult(confirm, popup.Text, popup.Value);
