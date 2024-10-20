@@ -1592,7 +1592,10 @@ namespace Telegram.Controls.Cells
                 {
                     if (fromUser.Id == clientService.Options.MyId)
                     {
-                        return string.Format(format, Strings.FromYou);
+                        if (fromUser.Id != chat.Id)
+                        {
+                            return string.Format(format, Strings.FromYou);
+                        }
                     }
                     else if (!string.IsNullOrEmpty(fromUser.FirstName))
                     {
@@ -1622,10 +1625,11 @@ namespace Telegram.Controls.Cells
 
         public static bool ShowFrom(IClientService clientService, Chat chat, Message message, out User senderUser, out Chat senderChat)
         {
+            senderUser = null;
+            senderChat = null;
+
             if (message.IsService())
             {
-                senderUser = null;
-                senderChat = null;
                 return false;
             }
 
@@ -1636,18 +1640,10 @@ namespace Telegram.Controls.Cells
                     || clientService.TryGetChat(message.SenderId, out senderChat);
             }
 
-            if (chat?.Type is ChatTypeBasicGroup)
+            if (chat?.Type is not ChatTypePrivate and not ChatTypeSecret)
             {
                 senderChat = null;
-                return clientService.TryGetUser(message.SenderId, out senderUser);
-            }
-
-            if (chat?.Type is ChatTypeSupergroup supergroup)
-            {
-                senderUser = null;
-                senderChat = null;
-                return !supergroup.IsChannel
-                    && clientService.TryGetUser(message.SenderId, out senderUser)
+                return clientService.TryGetUser(message.SenderId, out senderUser)
                     || clientService.TryGetChat(message.SenderId, out senderChat);
             }
 
