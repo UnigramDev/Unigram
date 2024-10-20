@@ -197,7 +197,7 @@ namespace Telegram.ViewModels.Chats
                 var currentIndex = Items.IndexOf(_selectedItem);
 
                 var position = _firstPosition + (firstIndex - currentIndex);
-                return _isMirrored ? position : TotalItems - position;
+                return _isMirrored ? position + 1 : TotalItems - position;
             }
         }
 
