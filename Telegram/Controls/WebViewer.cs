@@ -392,6 +392,8 @@ postEvent: function(eventType, eventData) {
 }");
 
                 View.CoreWebView2.Settings.IsStatusBarEnabled = false;
+                View.CoreWebView2.Settings.IsSwipeNavigationEnabled = false;
+                View.CoreWebView2.Settings.AreBrowserAcceleratorKeysEnabled = false;
                 View.CoreWebView2.Settings.AreDefaultContextMenusEnabled = SettingsService.Current.Diagnostics.EnableWebViewDevTools;
                 View.CoreWebView2.Settings.AreDevToolsEnabled = SettingsService.Current.Diagnostics.EnableWebViewDevTools;
 
