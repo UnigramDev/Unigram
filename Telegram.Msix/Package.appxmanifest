@@ -105,7 +105,7 @@
     <uap:Capability Name="contacts" />
     <uap3:Capability Name="backgroundMediaPlayback" />
     <uap6:Capability Name="graphicsCapture" />
-    <uap11:Capability Name="graphicsCaptureProgrammatic"/>
+    <uap11:Capability Name="graphicsCaptureProgrammatic" />
     <rescap:Capability Name="runFullTrust" />
     <rescap:Capability Name="oneProcessVoIP" />
     <rescap:Capability Name="confirmAppClose" />

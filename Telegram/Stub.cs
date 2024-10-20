@@ -226,6 +226,33 @@ public static class Message_stub
         }
     }
 }
+public static class AppCapability_stub
+{
+    public static Windows.Security.Authorization.AppCapabilityAccess.AppCapabilityAccessStatus CheckAccess_stub(this Windows.Security.Authorization.AppCapabilityAccess.AppCapability sender)
+    {
+        try
+        {
+            return sender.CheckAccess();
+        }
+        catch (Exception ex)
+        {
+            Logger.Error(Environment.StackTrace);
+            throw new RuntimeException(ex);
+        }
+    }
+    public static Windows.Security.Authorization.AppCapabilityAccess.AppCapability Create_stub(string capabilityName)
+    {
+        try
+        {
+            return Windows.Security.Authorization.AppCapabilityAccess.AppCapability.Create(capabilityName);
+        }
+        catch (Exception ex)
+        {
+            Logger.Error(Environment.StackTrace);
+            throw new RuntimeException(ex);
+        }
+    }
+}
 public static class LimitedAccessFeatures_stub
 {
     public static Windows.ApplicationModel.LimitedAccessFeatureRequestResult TryUnlockFeature_stub(string featureId, string token, string attestation)
@@ -939,6 +966,18 @@ public static class CanvasBitmap_stub
             throw new RuntimeException(ex);
         }
     }
+    public static Microsoft.Graphics.Canvas.CanvasBitmap CreateFromDirect3D11Surface_stub(Microsoft.Graphics.Canvas.ICanvasResourceCreator resourceCreator, Windows.Graphics.DirectX.Direct3D11.IDirect3DSurface surface)
+    {
+        try
+        {
+            return Microsoft.Graphics.Canvas.CanvasBitmap.CreateFromDirect3D11Surface(resourceCreator, surface);
+        }
+        catch (Exception ex)
+        {
+            Logger.Error(Environment.StackTrace);
+            throw new RuntimeException(ex);
+        }
+    }
     public static Microsoft.Graphics.Canvas.CanvasBitmap CreateFromSoftwareBitmap_stub(Microsoft.Graphics.Canvas.ICanvasResourceCreator resourceCreator, Windows.Graphics.Imaging.SoftwareBitmap sourceBitmap)
     {
         try
@@ -1189,6 +1228,111 @@ public static class CanvasRenderTarget_stub
         }
     }
 }
+public static class Direct3D11CaptureFramePool_stub
+{
+    public static Windows.Graphics.Capture.GraphicsCaptureSession CreateCaptureSession_stub(this Windows.Graphics.Capture.Direct3D11CaptureFramePool sender, Windows.Graphics.Capture.GraphicsCaptureItem item)
+    {
+        try
+        {
+            return sender.CreateCaptureSession(item);
+        }
+        catch (Exception ex)
+        {
+            Logger.Error(Environment.StackTrace);
+            throw new RuntimeException(ex);
+        }
+    }
+    public static Windows.Graphics.Capture.Direct3D11CaptureFramePool CreateFreeThreaded_stub(Windows.Graphics.DirectX.Direct3D11.IDirect3DDevice device, Windows.Graphics.DirectX.DirectXPixelFormat pixelFormat, int numberOfBuffers, Windows.Graphics.SizeInt32 size)
+    {
+        try
+        {
+            return Windows.Graphics.Capture.Direct3D11CaptureFramePool.CreateFreeThreaded(device, pixelFormat, numberOfBuffers, size);
+        }
+        catch (Exception ex)
+        {
+            Logger.Error(Environment.StackTrace);
+            throw new RuntimeException(ex);
+        }
+    }
+    public static void Dispose_stub(this Windows.Graphics.Capture.Direct3D11CaptureFramePool sender)
+    {
+        try
+        {
+            sender.Dispose();
+        }
+        catch (Exception ex)
+        {
+            Logger.Error(Environment.StackTrace);
+            throw new RuntimeException(ex);
+        }
+    }
+    public static Windows.Graphics.Capture.Direct3D11CaptureFrame TryGetNextFrame_stub(this Windows.Graphics.Capture.Direct3D11CaptureFramePool sender)
+    {
+        try
+        {
+            return sender.TryGetNextFrame();
+        }
+        catch (Exception ex)
+        {
+            Logger.Error(Environment.StackTrace);
+            throw new RuntimeException(ex);
+        }
+    }
+}
+public static class GraphicsCaptureItem_stub
+{
+    public static Windows.Graphics.Capture.GraphicsCaptureItem TryCreateFromDisplayId_stub(Windows.Graphics.DisplayId displayId)
+    {
+        try
+        {
+            return Windows.Graphics.Capture.GraphicsCaptureItem.TryCreateFromDisplayId(displayId);
+        }
+        catch (Exception ex)
+        {
+            Logger.Error(Environment.StackTrace);
+            throw new RuntimeException(ex);
+        }
+    }
+    public static Windows.Graphics.Capture.GraphicsCaptureItem TryCreateFromWindowId_stub(Windows.UI.WindowId windowId)
+    {
+        try
+        {
+            return Windows.Graphics.Capture.GraphicsCaptureItem.TryCreateFromWindowId(windowId);
+        }
+        catch (Exception ex)
+        {
+            Logger.Error(Environment.StackTrace);
+            throw new RuntimeException(ex);
+        }
+    }
+}
+public static class GraphicsCaptureSession_stub
+{
+    public static void Dispose_stub(this Windows.Graphics.Capture.GraphicsCaptureSession sender)
+    {
+        try
+        {
+            sender.Dispose();
+        }
+        catch (Exception ex)
+        {
+            Logger.Error(Environment.StackTrace);
+            throw new RuntimeException(ex);
+        }
+    }
+    public static void StartCapture_stub(this Windows.Graphics.Capture.GraphicsCaptureSession sender)
+    {
+        try
+        {
+            sender.StartCapture();
+        }
+        catch (Exception ex)
+        {
+            Logger.Error(Environment.StackTrace);
+            throw new RuntimeException(ex);
+        }
+    }
+}
 public static class MediaCapture_stub
 {
     public static void Dispose_stub(this Windows.Media.Capture.MediaCapture sender)
@@ -1208,6 +1352,33 @@ public static class MediaCapture_stub
         try
         {
             return Windows.Media.Capture.MediaCapture.FindAllVideoProfiles(videoDeviceId);
+        }
+        catch (Exception ex)
+        {
+            Logger.Error(Environment.StackTrace);
+            throw new RuntimeException(ex);
+        }
+    }
+}
+public static class CanvasComposition_stub
+{
+    public static Windows.UI.Composition.CompositionGraphicsDevice CreateCompositionGraphicsDevice_stub(Windows.UI.Composition.Compositor compositor, Microsoft.Graphics.Canvas.CanvasDevice canvasDevice)
+    {
+        try
+        {
+            return Microsoft.Graphics.Canvas.UI.Composition.CanvasComposition.CreateCompositionGraphicsDevice(compositor, canvasDevice);
+        }
+        catch (Exception ex)
+        {
+            Logger.Error(Environment.StackTrace);
+            throw new RuntimeException(ex);
+        }
+    }
+    public static Microsoft.Graphics.Canvas.CanvasDrawingSession CreateDrawingSession_stub(Windows.UI.Composition.CompositionDrawingSurface drawingSurface)
+    {
+        try
+        {
+            return Microsoft.Graphics.Canvas.UI.Composition.CanvasComposition.CreateDrawingSession(drawingSurface);
         }
         catch (Exception ex)
         {
@@ -1337,6 +1508,21 @@ public static class DirectRectangleClip2_stub
         try
         {
             sender.SetInset(left, top, right, bottom);
+        }
+        catch (Exception ex)
+        {
+            Logger.Error(Environment.StackTrace);
+            throw new RuntimeException(ex);
+        }
+    }
+}
+public static class WindowVisual_stub
+{
+    public static Telegram.Native.Composition.WindowVisual Create_stub(Windows.UI.WindowId windowId)
+    {
+        try
+        {
+            return Telegram.Native.Composition.WindowVisual.Create(windowId);
         }
         catch (Exception ex)
         {
@@ -1480,6 +1666,21 @@ public static class CompositionCapabilities_stub
         }
     }
 }
+public static class CompositionDrawingSurface_stub
+{
+    public static void Resize_stub(this Windows.UI.Composition.CompositionDrawingSurface sender, Windows.Graphics.SizeInt32 sizePixels)
+    {
+        try
+        {
+            sender.Resize(sizePixels);
+        }
+        catch (Exception ex)
+        {
+            Logger.Error(Environment.StackTrace);
+            throw new RuntimeException(ex);
+        }
+    }
+}
 public static class CompositionEffectBrush_stub
 {
     public static void SetSourceParameter_stub(this Windows.UI.Composition.CompositionEffectBrush sender, string name, Windows.UI.Composition.CompositionBrush source)
@@ -1502,6 +1703,21 @@ public static class CompositionEffectFactory_stub
         try
         {
             return sender.CreateBrush();
+        }
+        catch (Exception ex)
+        {
+            Logger.Error(Environment.StackTrace);
+            throw new RuntimeException(ex);
+        }
+    }
+}
+public static class CompositionGraphicsDevice_stub
+{
+    public static Windows.UI.Composition.CompositionDrawingSurface CreateDrawingSurface_stub(this Windows.UI.Composition.CompositionGraphicsDevice sender, Windows.Foundation.Size sizePixels, Windows.Graphics.DirectX.DirectXPixelFormat pixelFormat, Windows.Graphics.DirectX.DirectXAlphaMode alphaMode)
+    {
+        try
+        {
+            return sender.CreateDrawingSurface(sizePixels, pixelFormat, alphaMode);
         }
         catch (Exception ex)
         {
@@ -2523,18 +2739,6 @@ public static class WebView2_stub
             throw new RuntimeException(ex);
         }
     }
-    public static void Reload_stub(this Microsoft.UI.Xaml.Controls.WebView2 sender)
-    {
-        try
-        {
-            sender.Reload();
-        }
-        catch (Exception ex)
-        {
-            Logger.Error(Environment.StackTrace);
-            throw new RuntimeException(ex);
-        }
-    }
 }
 public static class CalendarView_stub
 {
@@ -2974,6 +3178,21 @@ public static class ListViewBase_stub
         }
     }
 }
+public static class ListViewPersistenceHelper_stub
+{
+    public static string GetRelativeScrollPosition_stub(Windows.UI.Xaml.Controls.ListViewBase listViewBase, Windows.UI.Xaml.Controls.ListViewItemToKeyHandler itemToKeyHandler)
+    {
+        try
+        {
+            return Windows.UI.Xaml.Controls.ListViewPersistenceHelper.GetRelativeScrollPosition(listViewBase, itemToKeyHandler);
+        }
+        catch (Exception ex)
+        {
+            Logger.Error(Environment.StackTrace);
+            throw new RuntimeException(ex);
+        }
+    }
+}
 public static class MenuFlyout_stub
 {
     public static void ShowAt_stub(this Windows.UI.Xaml.Controls.MenuFlyout sender, Windows.UI.Xaml.UIElement targetElement, Windows.Foundation.Point point)
@@ -3308,6 +3527,18 @@ public static class CoreWebView2_stub
         try
         {
             sender.NavigateToString(htmlContent);
+        }
+        catch (Exception ex)
+        {
+            Logger.Error(Environment.StackTrace);
+            throw new RuntimeException(ex);
+        }
+    }
+    public static void Reload_stub(this Microsoft.Web.WebView2.Core.CoreWebView2 sender)
+    {
+        try
+        {
+            sender.Reload();
         }
         catch (Exception ex)
         {
@@ -3980,6 +4211,21 @@ public static class XamlDirect_stub
         try
         {
             sender.SetStringProperty(xamlDirectObject, propertyIndex, value);
+        }
+        catch (Exception ex)
+        {
+            Logger.Error(Environment.StackTrace);
+            throw new RuntimeException(ex);
+        }
+    }
+}
+public static class DisplayServices_stub
+{
+    public static Windows.Graphics.DisplayId[] FindAll_stub()
+    {
+        try
+        {
+            return Windows.Graphics.Display.DisplayServices.FindAll();
         }
         catch (Exception ex)
         {
@@ -7886,6 +8132,21 @@ public static class AppWindowPresenter_stub
         try
         {
             return sender.RequestPresentation(presentationKind);
+        }
+        catch (Exception ex)
+        {
+            Logger.Error(Environment.StackTrace);
+            throw new RuntimeException(ex);
+        }
+    }
+}
+public static class WindowServices_stub
+{
+    public static System.Collections.Generic.IReadOnlyList<Windows.UI.WindowId> FindAllTopLevelWindowIds_stub()
+    {
+        try
+        {
+            return Windows.UI.WindowManagement.WindowServices.FindAllTopLevelWindowIds();
         }
         catch (Exception ex)
         {
