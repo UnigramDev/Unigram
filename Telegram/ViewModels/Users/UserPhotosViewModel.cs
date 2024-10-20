@@ -37,7 +37,26 @@ namespace Telegram.ViewModels.Users
             //    Items.Add(new GalleryChatPhoto(clientService, user, userFull.PublicPhoto, 0, false, true));
             //}
 
-            if (userFull.Photo != null)
+            if (userFull.Photo != null && user.ProfilePhoto?.Id == userFull.Photo.Id)
+            {
+                var photo = new ChatPhoto()
+                {
+                    Id = userFull.Photo.Id,
+                    AddedDate = userFull.Photo.AddedDate,
+                    Minithumbnail = userFull.Photo.Minithumbnail,
+                    Sizes = new[]
+                    {
+                        new PhotoSize("x", user.ProfilePhoto.Small, 160, 160, Array.Empty<int>()),
+                        new PhotoSize("y", user.ProfilePhoto.Big, 640, 640, Array.Empty<int>())
+                    },
+                    Animation = userFull.Photo.Animation,
+                    SmallAnimation = userFull.Photo.SmallAnimation,
+                    Sticker = userFull.Photo.Sticker
+                };
+
+                Items.Add(new GalleryChatPhoto(clientService, user, photo));
+            }
+            else if (userFull.Photo != null)
             {
                 Items.Add(new GalleryChatPhoto(clientService, user, userFull.Photo));
             }
