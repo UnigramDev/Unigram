@@ -144,9 +144,30 @@ namespace Telegram.Controls.Chats
                 }
             };
 
+            var videoRoot = new Grid
+            {
+                Width = 272,
+                Height = 272,
+                Background = new SolidColorBrush(Colors.Black),
+                CornerRadius = new CornerRadius(272 / 2)
+            };
+
+            videoRoot.Children.Add(_videoElement);
+            videoRoot.Children.Add(new SelfDestructTimer
+            {
+                Width = 272,
+                Height = 272,
+                Center = 272 / 2,
+                Radius = 272 / 2 - 3,
+                Background = new SolidColorBrush(Colors.Transparent),
+                Maximum = 60,
+                Value = DateTime.Now.AddMinutes(1)
+            });
+
             _videoPopup = new Popup
             {
                 XamlRoot = XamlRoot,
+                IsHitTestVisible = false,
                 Child = new Border
                 {
                     Width = XamlRoot.Size.Width,
@@ -154,14 +175,7 @@ namespace Telegram.Controls.Chats
                     Background = new SolidColorBrush(ActualTheme == ElementTheme.Light
                             ? Color.FromArgb(0x99, 0xFF, 0xFF, 0xFF)
                             : Color.FromArgb(0x99, 0x00, 0x00, 0x00)),
-                    Child = new Border
-                    {
-                        Width = 272,
-                        Height = 272,
-                        Background = new SolidColorBrush(Colors.Black),
-                        CornerRadius = new CornerRadius(272 / 2),
-                        Child = _videoElement
-                    }
+                    Child = videoRoot
                 }
             };
 
