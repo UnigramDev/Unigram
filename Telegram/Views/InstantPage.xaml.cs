@@ -353,8 +353,8 @@ namespace Telegram.Views
         private FrameworkElement ProcessTable(PageBlockTable table)
         {
             var grid = new Grid();
-            grid.BorderThickness = new Thickness(table.IsBordered ? 1 : 0, table.IsBordered ? 1 : 0, 0, 0);
-            grid.BorderBrush = new SolidColorBrush(Colors.Green);
+
+            var thickness = table.IsBordered ? 1 : 0;
 
             var columns = table.Cells.Max(x => x.Count);
             var rows = table.Cells.Count;
@@ -415,11 +415,10 @@ namespace Telegram.Views
                     ProcessRichText(cell.Text, span, textBlock);
 
                     var border = new Border();
-                    border.Background = cell.IsHeader || (table.IsStriped && row % 2 == 0) ? new SolidColorBrush(Colors.LightGray) : null;
-                    border.BorderThickness = new Thickness(0, 0, table.IsBordered ? 1 : 0, table.IsBordered ? 1 : 0);
-                    border.BorderBrush = new SolidColorBrush(Colors.Green);
-                    border.Child = textBlock;
+                    border.Style = Resources[cell.IsHeader || (table.IsStriped && row % 2 == 0) ? "BlockTableHeaderStyle" : "BlockTableCellStyle"] as Style;
+                    border.BorderThickness = new Thickness(column == 0 ? thickness : 0, row == 0 ? thickness : 0, thickness, thickness);
                     border.Padding = new Thickness(8, 4, 8, 4);
+                    border.Child = textBlock;
 
                     Grid.SetRow(border, row);
                     Grid.SetRowSpan(border, cell.Rowspan);

@@ -209,6 +209,20 @@
                TargetType="RichTextBlock"
                BasedOn="{StaticResource BaseRichTextBlockStyle}" />
 
+        <Style x:Key="BlockTableCellStyle"
+               TargetType="Border">
+            <Setter Property="BorderBrush"
+                    Value="{ThemeResource CardStrokeColorDefaultBrush}" />
+        </Style>
+
+        <Style x:Key="BlockTableHeaderStyle"
+               TargetType="Border">
+            <Setter Property="Background"
+                    Value="{ThemeResource CardBackgroundFillColorDefaultBrush}" />
+            <Setter Property="BorderBrush"
+                    Value="{ThemeResource CardStrokeColorDefaultBrush}" />
+        </Style>
+
         <!--<DataTemplate x:Key="ChannelItemTemplate" x:DataType="tl:TLChannel">
              <Grid>
              <Grid.ColumnDefinitions>

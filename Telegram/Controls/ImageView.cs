@@ -403,7 +403,7 @@ namespace Telegram.Controls
 
                 if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive)
                 {
-                    clientService.DownloadFile(file.Id, 1);
+                    clientService.DownloadFile(file.Id, 16);
                 }
             }
 
