@@ -40,8 +40,6 @@ namespace Telegram.Controls.Media
         public const string LinkDiagonal = "\uE9F8";
         public const string LinkDiagonalBroken = "\uE9F7";
 
-        public const string ArrowMinimize = "\uE965";
-        public const string ArrowMaximize = "\uE966";
         public const string ArrowMinimizeFilled24 = "\uEA94";
         public const string ArrowMaximizeFilled24 = "\uEA95";
 

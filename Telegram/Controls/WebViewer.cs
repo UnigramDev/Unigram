@@ -488,7 +488,7 @@ postEvent: function(eventType, eventData) {
 
         public override void Reload()
         {
-            View?.Reload();
+            View?.CoreWebView2?.Reload();
         }
 
         public override void Close()

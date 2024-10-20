@@ -160,7 +160,11 @@ namespace Telegram.ViewModels
         {
             if (entry is SettingsSearchPage page && page.Page != null)
             {
-                if (page.Page == typeof(SettingsPasscodePage))
+                if (page.Page == typeof(SettingsPasswordPage))
+                {
+                    NavigationService.NavigateToPassword();
+                }
+                else if (page.Page == typeof(SettingsPasscodePage))
                 {
                     NavigationService.NavigateToPasscode();
                 }
