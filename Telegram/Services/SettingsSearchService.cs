@@ -126,11 +126,11 @@ namespace Telegram.Services
                             cicci.Add(new SettingsSearchPage(null, title, new Assets.Icons.FAQ(), items.ToArray()));
                         }
                     }
-                    else if (block is PageBlockParagraph para)
+                    else if (block is PageBlockTitle blockTitle)
                     {
-                        title = para.Text.ToPlainText();
+                        title = blockTitle.Title.ToPlainText();
                     }
-                    else if (block is PageBlockDivider)
+                    else if (block is PageBlockAnchor)
                     {
                         break;
                     }
