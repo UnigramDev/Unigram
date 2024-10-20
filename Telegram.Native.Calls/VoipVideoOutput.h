@@ -35,10 +35,10 @@ namespace ABI
 
 using namespace winrt::Microsoft::Graphics::Canvas;
 using namespace winrt::Microsoft::Graphics::Canvas::Effects;
+using namespace winrt::Microsoft::Graphics::Canvas::UI::Composition;
 using namespace winrt::Windows::Foundation::Numerics;
 using namespace winrt::Windows::Graphics::DirectX;
 using namespace winrt::Windows::UI::Composition;
-using namespace winrt::Microsoft::Graphics::Canvas::UI::Composition;
 
 struct VoipVideoOutput : public rtc::VideoSinkInterface<webrtc::VideoFrame>
 {

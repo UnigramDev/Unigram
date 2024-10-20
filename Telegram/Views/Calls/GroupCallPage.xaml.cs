@@ -28,6 +28,7 @@ using Windows.Foundation;
 using Windows.System;
 using Windows.System.Display;
 using Windows.UI;
+using Windows.UI.Composition;
 using Windows.UI.Text;
 using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
@@ -39,15 +40,24 @@ using Point = Windows.Foundation.Point;
 
 namespace Telegram.Views.Calls
 {
+    public record VoipVideoOutputReference(VoipVideoOutputSink Sink, CompositionSurfaceBrush Brush)
+    {
+        public void Stop()
+        {
+            Sink.Stop();
+            Brush.Dispose();
+        }
+    }
+
     public sealed partial class GroupCallPage : WindowEx, IGroupCallDelegate, IPopupHost, IToastHost
     {
         private bool _disposed;
 
         private readonly VoipGroupCall _call;
 
-        private readonly Dictionary<string, GroupCallParticipantGridCell> _prevGrid = new();
+        private readonly Dictionary<string, VoipVideoOutputReference> _sinks = new();
+
         private readonly Dictionary<string, GroupCallParticipantGridCell> _gridCells = new();
-        private readonly Dictionary<string, GroupCallParticipantGridCell> _prevList = new();
         private readonly Dictionary<string, GroupCallParticipantGridCell> _listCells = new();
 
         private readonly CompositionVoiceBlobVisual _visual;
@@ -268,29 +278,13 @@ namespace Telegram.Views.Calls
             _call.MutedChanged -= OnMutedChanged;
             _call.PropertyChanged -= OnParticipantsChanged;
 
-            _prevGrid.Clear();
-            _prevList.Clear();
+            _sinks.Values.ForEach(x => x.Stop());
+            _sinks.Clear();
 
             _listCells.Clear();
             _gridCells.Clear();
 
-            RemoveChildren(false);
-            RemoveChildren(true);
-
             _visual.StopAnimating();
-        }
-
-        private void RemoveChildren(bool list)
-        {
-            var collection = list ? ListViewport.Children : Viewport.Children;
-
-            for (int i = 0; i < collection.Count; i++)
-            {
-                if (collection[i] is GroupCallParticipantGridCell cell)
-                {
-                    cell.Disconnect();
-                }
-            }
         }
 
         private void OnSizeChanged(object sender, SizeChangedEventArgs e)
@@ -518,11 +512,7 @@ namespace Telegram.Views.Calls
             }
             else
             {
-                _prevList.Clear();
-
                 _listCells.Clear();
-
-                RemoveChildren(true);
                 ListViewport.Children.Clear();
 
                 ShowHideParticipantsWithVideo(true);
@@ -1813,7 +1803,6 @@ namespace Telegram.Views.Calls
 
         private void RemoveItem(GroupCallParticipantGridCell cell, bool list)
         {
-            var prev = list ? _prevList : _prevGrid;
             var cells = list ? _listCells : _gridCells;
             var viewport = list ? ListViewport.Children : Viewport.Children;
 
@@ -1822,10 +1811,7 @@ namespace Telegram.Views.Calls
                 _selectedEndpointId = null;
             }
 
-            prev.Remove(cell.EndpointId);
             cells.Remove(cell.EndpointId);
-
-            cell.Disconnect();
             viewport.Remove(cell);
 
             if (_mode == ParticipantsGridMode.Compact)
@@ -2052,8 +2038,16 @@ namespace Telegram.Views.Calls
 
             if (_selectedEndpointId != null || Viewport.Mode != ParticipantsGridMode.Compact)
             {
-                gridFirst = 0;
-                gridLast = Viewport.Children.Count - 1;
+                if (_selectedEndpointId != null && _gridCells.TryGetValue(_selectedEndpointId, out GroupCallParticipantGridCell cell))
+                {
+                    gridFirst = Viewport.Children.IndexOf(cell);
+                    gridLast = gridFirst;
+                }
+                else
+                {
+                    gridFirst = 0;
+                    gridLast = Viewport.Children.Count - 1;
+                }
 
                 listFirst = (int)Math.Truncate(_scrollingHost.VerticalOffset / (ListViewport.ActualWidth / 16 * 9));
                 listLast = (int)Math.Ceiling((_scrollingHost.VerticalOffset + _scrollingHost.ViewportHeight) / (ListViewport.ActualWidth / 16 * 9));
@@ -2069,86 +2063,70 @@ namespace Telegram.Views.Calls
                 gridLast = Math.Min(gridLast - 1, Viewport.Children.Count - 1);
             }
 
-            UpdateVisibleParticipants(gridFirst, gridLast, false);
-            UpdateVisibleParticipants(listFirst, listLast, true);
+            var next = new HashSet<string>();
 
-            UpdateRequestedVideos();
-        }
+            UpdateVisibleParticipants(gridFirst, gridLast, false, next);
+            UpdateVisibleParticipants(listFirst, listLast, true, next);
 
-        private void UpdateVisibleParticipants(int first, int last, bool list)
-        {
-            var prev = list ? _prevList : _prevGrid;
-            var viewport = list ? ListViewport.Children : Viewport.Children;
-
-            var next = new Dictionary<string, GroupCallParticipantGridCell>();
-
-            if (last < viewport.Count && first <= last && first >= 0)
+            foreach (var sink in _sinks.ToArray())
             {
-                for (int i = first; i <= last; i++)
-                {
-                    var child = viewport[i] as GroupCallParticipantGridCell;
-                    var participant = child.Participant;
-
-                    if (_selectedEndpointId != null && _selectedEndpointId != child.EndpointId && !list)
-                    {
-                        continue;
-                    }
-
-                    next[child.EndpointId] = child;
-
-                    if (child.IsConnected)
-                    {
-                        continue;
-                    }
-
-                    // Check if already playing
-                    //if (tokens.TryGetValue(child.EndpointId, out var token))
-                    //{
-                    //    if (token.Matches(child.EndpointId, child.VisualId))
-                    //    {
-                    //        token.Stretch = child.GetStretch(_mode, list);
-                    //        continue;
-                    //    }
-                    //}
-
-                    //child.Surface = new CanvasControl();
-                    //child.VisualId = Guid.NewGuid();
-
-                    if (participant.ScreenSharingVideoInfo?.EndpointId == child.EndpointId && participant.IsCurrentUser && _call.IsScreenSharing)
-                    {
-                        _call.AddScreenSharingVideoOutput(child.EndpointId, child.Connect(false));
-                    }
-                    else
-                    {
-                        _call.AddIncomingVideoOutput(child.VideoInfo.EndpointId, child.Connect(participant.IsCurrentUser));
-                    }
-
-                    //child.Sink.Stretch = child.GetStretch(_mode, list);
-                    //tokens[child.EndpointId] = future;
-                }
-            }
-
-            foreach (var item in prev.Keys.ToArray())
-            {
-                if (next.ContainsKey(item))
+                if (next.Contains(sink.Key))
                 {
                     continue;
                 }
 
-                //if (tokens.TryRemove(item, out var token))
-                //{
-                //    // Wait for token to be disposed to avoid
-                //    // a race condition in CanvasControl.
-                //    token.Stop();
-                //}
-
-                prev[item].Disconnect();
-                prev.Remove(item);
+                _sinks.Remove(sink.Key);
+                sink.Value.Stop();
             }
 
-            foreach (var item in next)
+            UpdateRequestedVideos();
+        }
+
+        private void ConnectVisual(GroupCallParticipantGridCell cell, string endpointId, bool mirrored, Action<string, VoipVideoOutputSink> connect)
+        {
+            if (_sinks.TryGetValue(endpointId, out VoipVideoOutputReference reference))
             {
-                prev[item.Key] = item.Value;
+                cell.Visual.Brush = reference.Brush;
+            }
+            else
+            {
+                var sink = new VoipVideoOutputSink(cell.Visual, mirrored);
+                reference = new VoipVideoOutputReference(sink, cell.Visual.Brush as CompositionSurfaceBrush);
+
+                _sinks[endpointId] = reference;
+                connect(endpointId, sink);
+            }
+        }
+
+        private void UpdateVisibleParticipants(int first, int last, bool list, HashSet<string> next)
+        {
+            var viewport = list ? ListViewport.Children : Viewport.Children;
+
+            if (last < viewport.Count && first <= last && first >= 0)
+            {
+                for (int i = 0; i < viewport.Count; i++)
+                {
+                    var child = viewport[i] as GroupCallParticipantGridCell;
+                    var participant = child.Participant;
+
+                    if (i >= first && i <= last)
+                    {
+                        next.Add(child.EndpointId);
+
+                        if (participant.ScreenSharingVideoInfo?.EndpointId == child.EndpointId && participant.IsCurrentUser && _call.IsScreenSharing)
+                        {
+                            ConnectVisual(child, child.EndpointId, false, _call.AddScreenSharingVideoOutput);
+                        }
+                        else
+                        {
+                            ConnectVisual(child, child.EndpointId, participant.IsCurrentUser, _call.AddIncomingVideoOutput);
+                        }
+                    }
+                    else
+                    {
+                        child.Visual.Brush = null;
+                    }
+                }
             }
         }
 

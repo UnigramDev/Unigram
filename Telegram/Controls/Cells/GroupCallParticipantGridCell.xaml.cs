@@ -11,7 +11,6 @@ using Telegram.Controls.Media;
 using Telegram.Native.Calls;
 using Telegram.Navigation;
 using Telegram.Services;
-using Telegram.Services.Calls;
 using Telegram.Td.Api;
 using Telegram.Views.Calls;
 using Windows.Foundation;
@@ -34,7 +33,8 @@ namespace Telegram.Controls.Cells
         private SpriteVisual _pausedVisual;
         private CompositionEffectBrush _pausedBrush;
 
-        private VoipVideoOutputSink _sink;
+        private readonly SpriteVisual _visual;
+
         private readonly bool _screenSharing;
 
         public GroupCallParticipantGridCell(IClientService clientService, GroupCallParticipant participant, GroupCallParticipantVideoInfo videoInfo, bool screenSharing)
@@ -51,6 +51,10 @@ namespace Telegram.Controls.Cells
 
             var header = ElementComposition.GetElementVisual(Header);
             header.Opacity = 0;
+
+            _visual = BootStrapper.Current.Compositor.CreateSpriteVisual();
+            _visual.RelativeSizeAdjustment = Vector2.One;
+            ElementCompositionPreview.SetElementChildVisual(CanvasRoot, _visual);
         }
 
         public bool Matches(GroupCallParticipant participant, GroupCallParticipantVideoInfo videoInfo)
@@ -58,19 +62,7 @@ namespace Telegram.Controls.Cells
             return participant != null && participant.ParticipantId.AreTheSame(ParticipantId) && _videoInfo.EndpointId == _videoInfo.EndpointId;
         }
 
-        public VoipVideoOutputSink Connect(bool mirrored)
-        {
-            _sink?.Stop();
-            _sink = VoipVideoOutput.CreateSink(CanvasRoot, mirrored);
-
-            return _sink;
-        }
-
-        public void Disconnect()
-        {
-            _sink?.Stop();
-            _sink = null;
-        }
+        public SpriteVisual Visual => _visual;
 
         public VoipVideoChannelQuality Quality => ActualHeight switch
         {
@@ -97,8 +89,6 @@ namespace Telegram.Controls.Cells
         public string EndpointId => _videoInfo.EndpointId;
 
         public bool IsScreenSharing => _screenSharing;
-
-        public bool IsConnected => _sink != null;
 
         public bool IsSelected { get; set; }
 
