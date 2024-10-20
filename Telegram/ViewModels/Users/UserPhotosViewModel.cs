@@ -95,6 +95,19 @@ namespace Telegram.ViewModels.Users
             }
         }
 
+        public override int Position
+        {
+            get
+            {
+                if (Items.Count > 0 && Items[0].IsPersonal)
+                {
+                    return base.Position - 1;
+                }
+
+                return base.Position;
+            }
+        }
+
         protected override async void LoadNext()
         {
             using (await _loadMoreLock.WaitAsync())
