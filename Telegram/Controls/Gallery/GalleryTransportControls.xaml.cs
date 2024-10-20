@@ -560,6 +560,11 @@ namespace Telegram.Controls.Gallery
                 TogglePlaybackState();
                 args.Handled = true;
             }
+            else if (args.VirtualKey is VirtualKey.M && args.OnlyKey)
+            {
+                Volume_Click(null, null);
+                args.Handled = true;
+            }
             else if (args.VirtualKey is VirtualKey.Up && args.OnlyKey)
             {
                 VolumeSlider.Value += 10;
