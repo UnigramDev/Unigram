@@ -7,6 +7,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using Telegram.Common;
@@ -1494,7 +1495,7 @@ namespace Telegram.Controls
                 plain.Delete(TextRangeUnit.Hidden, 1);
             }
 
-            range.SetText(TextSetOptions.None, $"{emoji};{customEmojiId}\uEA4F");
+            range.SetText(TextSetOptions.None, $"{emoji};{customEmojiId:X16}\uEA4F");
             range.SetRange(range.StartPosition, range.EndPosition - 1);
             range.CharacterFormat.Hidden = FormatEffect.On;
 
@@ -1638,12 +1639,27 @@ namespace Telegram.Controls
 
         private bool IsCustomEmoji(ITextRange range, out string emoji, out long customEmojiId)
         {
-            var split = range.Text.Split(';');
-
-            emoji = split[0];
+            emoji = range.Text;
             customEmojiId = 0;
 
-            return split.Length == 2 && long.TryParse(split[1], out customEmojiId);
+            var index = emoji.IndexOf(';');
+            if (index == -1)
+            {
+                return false;
+            }
+
+            var customEmoji = emoji.Substring(index + 1);
+            if (customEmoji.Length < 16)
+            {
+                return false;
+            }
+
+            range.EndPosition -= customEmoji.Length - 16;
+
+            emoji = emoji.Substring(0, index);
+            customEmoji = customEmoji.Substring(0, 16);
+
+            return long.TryParse(customEmoji, NumberStyles.HexNumber, CultureInfo.InvariantCulture, out customEmojiId);
         }
 
         private void UpdateFormat()
@@ -1661,10 +1677,13 @@ namespace Telegram.Controls
                 {
                     range.Expand(TextRangeUnit.Hidden);
 
-                    var follow = Document.GetRange(range.EndPosition, range.EndPosition);
-                    if (follow.Character != '\uEA4F' && IsCustomEmoji(range, out _, out _))
+                    if (IsCustomEmoji(range, out _, out _))
                     {
-                        range.Delete(TextRangeUnit.Hidden, 1);
+                        var follow = Document.GetRange(range.EndPosition, range.EndPosition);
+                        if (follow.Character != '\uEA4F')
+                        {
+                            range.Delete(TextRangeUnit.Hidden, 1);
+                        }
                     }
                 }
 
