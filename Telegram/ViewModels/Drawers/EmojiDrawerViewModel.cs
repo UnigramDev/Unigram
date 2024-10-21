@@ -479,11 +479,11 @@ namespace Telegram.ViewModels.Drawers
             return Array.Empty<StickerSetViewModel>();
         }
 
-        public async Task<List<(AvailableReaction, Sticker)>> UpdateReactions(AvailableReactions available)
+        public async Task<IList<(AvailableReaction, Sticker)>> UpdateReactions(AvailableReactions available)
         {
             if (available == null)
             {
-                return null;
+                return Array.Empty<(AvailableReaction, Sticker)>();
             }
 
             var sum = available.TopReactions.Count
@@ -540,7 +540,7 @@ namespace Telegram.ViewModels.Drawers
                 var response = await ClientService.SendAsync(new GetCustomEmojiStickers(missingEmoji.ToArray()));
                 if (response is not Stickers stickers)
                 {
-                    return null;
+                    return Array.Empty<(AvailableReaction, Sticker)>();
                 }
 
                 assets = stickers.StickersValue.ToDictionary(x => x.FullType is StickerFullTypeCustomEmoji customEmoji ? customEmoji.CustomEmojiId : 0);
