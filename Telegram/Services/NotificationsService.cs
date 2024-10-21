@@ -878,7 +878,7 @@ namespace Telegram.Services
             {
                 var settings = chat.NotificationSettings.Clone();
 
-                var useDefault = value == scope.MuteFor || value > 366 * 24 * 60 * 60 && scope.MuteFor > 366 * 24 * 60 * 60;
+                var useDefault = value == scope.MuteFor || (value >= 366 * 24 * 60 * 60 && scope.MuteFor >= 366 * 24 * 60 * 60);
                 if (useDefault)
                 {
                     value = scope.MuteFor;
@@ -898,7 +898,7 @@ namespace Telegram.Services
                 {
                     ToastPopup.Show(xamlRoot, Strings.NotificationsUnmutedHint, ToastPopupIcon.Unmute);
                 }
-                else if (value >= 632053052)
+                else if (value >= 366 * 24 * 60 * 60)
                 {
                     ToastPopup.Show(xamlRoot, Strings.NotificationsMutedHint, ToastPopupIcon.Mute);
                 }
