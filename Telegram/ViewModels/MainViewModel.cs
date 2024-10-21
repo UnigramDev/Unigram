@@ -175,11 +175,6 @@ namespace Telegram.ViewModels
             IsUpdateAvailable = update?.File != null;
         }
 
-        public void Handle(UpdateServiceNotification update)
-        {
-
-        }
-
         public void Handle(UpdateUnreadMessageCount update)
         {
             if (update.ChatList is ChatListMain)
@@ -195,13 +190,16 @@ namespace Telegram.ViewModels
 
         public void Handle(UpdateUnreadChatCount update)
         {
-            foreach (var folder in _folders)
+            BeginOnUIThread(() =>
             {
-                if (folder.ChatList is ChatListFolder && folder.ChatList.AreTheSame(update.ChatList))
+                foreach (var folder in _folders)
                 {
-                    BeginOnUIThread(() => folder.UpdateCount(update));
+                    if (folder.ChatList is ChatListFolder && folder.ChatList.AreTheSame(update.ChatList))
+                    {
+                        folder.UpdateCount(update);
+                    }
                 }
-            }
+            });
         }
 
         public void Handle(UpdateDeleteMessages update)
@@ -396,8 +394,7 @@ namespace Telegram.ViewModels
 
         public override void Subscribe()
         {
-            Aggregator.Subscribe<UpdateServiceNotification>(this, Handle)
-                .Subscribe<UpdateUnreadMessageCount>(Handle)
+            Aggregator.Subscribe<UpdateUnreadMessageCount>(this, Handle)
                 .Subscribe<UpdateUnreadChatCount>(Handle)
                 .Subscribe<UpdateDeleteMessages>(Handle)
                 .Subscribe<UpdateChatFolders>(Handle)
