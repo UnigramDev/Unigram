@@ -1530,6 +1530,42 @@ public static class WindowVisual_stub
             throw new RuntimeException(ex);
         }
     }
+    public static Windows.UI.WindowId GetCurrentWindowId_stub()
+    {
+        try
+        {
+            return Telegram.Native.Composition.WindowVisual.GetCurrentWindowId();
+        }
+        catch (Exception ex)
+        {
+            Logger.Error(Environment.StackTrace);
+            throw new RuntimeException(ex);
+        }
+    }
+    public static uint GetWindowProcessId_stub(Windows.UI.WindowId windowId)
+    {
+        try
+        {
+            return Telegram.Native.Composition.WindowVisual.GetWindowProcessId(windowId);
+        }
+        catch (Exception ex)
+        {
+            Logger.Error(Environment.StackTrace);
+            throw new RuntimeException(ex);
+        }
+    }
+    public static bool IsValid_stub(Windows.UI.WindowId windowId, out string title)
+    {
+        try
+        {
+            return Telegram.Native.Composition.WindowVisual.IsValid(windowId, out title);
+        }
+        catch (Exception ex)
+        {
+            Logger.Error(Environment.StackTrace);
+            throw new RuntimeException(ex);
+        }
+    }
 }
 public static class AnimationController_stub
 {
