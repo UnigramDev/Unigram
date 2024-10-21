@@ -38,43 +38,6 @@ namespace Telegram.ViewModels
             SelectedItems = new MvxObservableCollection<Chat>();
 
             SendCommand = new RelayCommand(SendExecute, () => SelectedItems?.Count > 0);
-
-            ChatList chatList = ClientService.MainChatListPosition > 0 && ClientService.ChatFolders.Count > 0
-                ? new ChatListFolder(ClientService.ChatFolders[0].Id)
-                : new ChatListMain();
-
-            if (ClientService.ChatFolders.Count > 0)
-            {
-                var folders = ClientService.ChatFolders.ToList();
-                var index = Math.Min(ClientService.MainChatListPosition, folders.Count);
-
-                folders.Insert(index, new ChatFolderInfo { Id = Constants.ChatListMain, Title = Strings.FilterAllChats, Icon = new ChatFolderIcon("All") });
-
-                Folders = new ObservableCollection<ChatFolderViewModel>(folders.Select(x => new ChatFolderViewModel(x)));
-
-                foreach (var folder in Folders)
-                {
-                    if (folder.ChatList is ChatListMain)
-                    {
-                        continue;
-                    }
-
-                    var unreadCount = ClientService.GetUnreadCount(folder.ChatList);
-                    if (unreadCount == null)
-                    {
-                        continue;
-                    }
-
-                    folder.UpdateCount(unreadCount.UnreadChatCount);
-                }
-
-                // Important not to raise SelectedFolder setter
-                Set(ref _selectedFolder, Folders.FirstOrDefault());
-            }
-            else
-            {
-                Folders = new ObservableCollection<ChatFolderViewModel>();
-            }
         }
 
         public SearchChatsViewModel SearchChats { get; }
@@ -260,9 +223,16 @@ namespace Telegram.ViewModels
                 IsCommentEnabled = false;
                 IsChatSelection = false;
 
-                Title = configurationRequestUsers.MaxQuantity != 1
-                    ? Strings.ChooseUsers
-                    : Strings.ChooseUsers;
+                if (configurationRequestUsers.RestrictUserIsBot && configurationRequestUsers.UserIsBot)
+                {
+                    Title = Strings.ChooseBot;
+                }
+                else
+                {
+                    Title = configurationRequestUsers.MaxQuantity != 1
+                        ? Strings.ChooseUsers
+                        : Strings.ChooseUser;
+                }
             }
             else if (parameter is ChooseChatsConfigurationRequestChat configurationRequestChat)
             {
@@ -278,8 +248,54 @@ namespace Telegram.ViewModels
 
             #endregion
 
+            if (IsCommentEnabled)
+            {
+                LoadFolders();
+            }
+
             LoadChats();
             return Task.CompletedTask;
+        }
+
+        private void LoadFolders()
+        {
+            ChatList chatList = ClientService.MainChatListPosition > 0 && ClientService.ChatFolders.Count > 0
+                ? new ChatListFolder(ClientService.ChatFolders[0].Id)
+                : new ChatListMain();
+
+            if (ClientService.ChatFolders.Count > 0)
+            {
+                var folders = ClientService.ChatFolders.ToList();
+                var index = Math.Min(ClientService.MainChatListPosition, folders.Count);
+
+                folders.Insert(index, new ChatFolderInfo { Id = Constants.ChatListMain, Title = Strings.FilterAllChats, Icon = new ChatFolderIcon("All") });
+
+                Folders = new ObservableCollection<ChatFolderViewModel>(folders.Select(x => new ChatFolderViewModel(x)));
+
+                foreach (var folder in Folders)
+                {
+                    if (folder.ChatList is ChatListMain)
+                    {
+                        continue;
+                    }
+
+                    var unreadCount = ClientService.GetUnreadCount(folder.ChatList);
+                    if (unreadCount == null)
+                    {
+                        continue;
+                    }
+
+                    folder.UpdateCount(unreadCount.UnreadChatCount);
+                }
+
+                // Important not to raise SelectedFolder setter
+                Set(ref _selectedFolder, Folders.FirstOrDefault());
+            }
+            else
+            {
+                Folders = new ObservableCollection<ChatFolderViewModel>();
+            }
+
         }
 
         private async void LoadChats()
@@ -456,7 +472,7 @@ namespace Telegram.ViewModels
 
         public MvxObservableCollection<Chat> Items { get; private set; }
 
-        public ObservableCollection<ChatFolderViewModel> Folders { get; }
+        public ObservableCollection<ChatFolderViewModel> Folders { get; private set; }
 
         public Dictionary<long, long> SelectedTopics = new();
 
