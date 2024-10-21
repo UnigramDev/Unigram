@@ -424,13 +424,16 @@
                       ItemsSource="{x:Bind Items}"
                       ItemTemplate="{StaticResource MediaItemTemplate}"
                       ItemsPanel="{StaticResource AlbumPanelTemplate}"
+                      IsItemClickEnabled="True"
+                      ItemClick="Album_ItemClick"
                       ContainerContentChanging="OnContainerContentChanging"
                       SelectionMode="None"
                       DragEnter="ListView_DragEnter"
                       Drop="ListView_Drop"
                       AllowDrop="True">
                 <ListView.ItemContainerStyle>
-                    <Style TargetType="ListViewItem">
+                    <Style TargetType="ListViewItem"
+                           BasedOn="{StaticResource DefaultListViewItemStyle}">
                         <Setter Property="HorizontalContentAlignment"
                                 Value="Stretch" />
                         <Setter Property="VerticalContentAlignment"

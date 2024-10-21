@@ -748,7 +748,7 @@ namespace Telegram.Views.Popups
 
                 foreach (var item in Items)
                 {
-                    layout.Add(new Size(item.Width, item.Height));
+                    layout.Add(new Size(item.ActualWidth, item.ActualHeight));
                 }
 
                 foreach (var item in panel.Children)
@@ -884,6 +884,26 @@ namespace Telegram.Views.Popups
                 if (confirm == ContentDialogResult.Primary)
                 {
                     media.Refresh();
+
+                    UpdateView();
+                    UpdatePanel();
+                }
+            }
+        }
+
+        private async void Album_ItemClick(object sender, ItemClickEventArgs e)
+        {
+            if (e.ClickedItem is StorageMedia media)
+            {
+                var popup = new EditMediaPopup(media);
+
+                var confirm = await popup.ShowAsync(XamlRoot);
+                if (confirm == ContentDialogResult.Primary)
+                {
+                    media.Refresh();
+
+                    UpdateView();
+                    UpdatePanel();
                 }
             }
         }

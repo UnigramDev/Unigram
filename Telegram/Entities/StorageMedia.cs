@@ -104,6 +104,32 @@ namespace Telegram.Entities
         public virtual int Width { get; }
         public virtual int Height { get; }
 
+        public double ActualWidth
+        {
+            get
+            {
+                if (_editState is BitmapEditState editState && !editState.IsEmpty)
+                {
+                    return editState.Rectangle.Width * Width;
+                }
+
+                return Width;
+            }
+        }
+
+        public double ActualHeight
+        {
+            get
+            {
+                if (_editState is BitmapEditState editState && !editState.IsEmpty)
+                {
+                    return editState.Rectangle.Height * Height;
+                }
+
+                return Height;
+            }
+        }
+
         protected BitmapEditState _editState;
         public BitmapEditState EditState
         {
