@@ -1592,7 +1592,7 @@ namespace Telegram.Controls.Cells
                 {
                     if (fromUser.Id == clientService.Options.MyId)
                     {
-                        if (fromUser.Id != chat.Id)
+                        if (fromUser.Id != chat?.Id)
                         {
                             return string.Format(format, Strings.FromYou);
                         }
@@ -1631,6 +1631,14 @@ namespace Telegram.Controls.Cells
             if (message.IsService())
             {
                 return false;
+            }
+
+            if (message.SavedMessagesTopicId != 0 && clientService.TryGetSavedMessagesTopic(message.SavedMessagesTopicId, out SavedMessagesTopic topic))
+            {
+                if (topic.Type is SavedMessagesTopicTypeMyNotes or SavedMessagesTopicTypeAuthorHidden)
+                {
+                    return false;
+                }
             }
 
             if (message.IsOutgoing || message.ChatId == clientService.Options.MyId || message.ChatId == clientService.Options.VerificationCodesBotChatId)
