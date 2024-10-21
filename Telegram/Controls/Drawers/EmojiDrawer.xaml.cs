@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
+using Telegram.Collections;
 using Telegram.Common;
 using Telegram.Services;
 using Telegram.Services.Settings;
@@ -115,7 +116,7 @@ namespace Telegram.Controls.Drawers
             }
 
             _typing = new EventDebouncer<TextChangedEventArgs>(Constants.TypingTimeout, handler => SearchField.TextChanged += new TextChangedEventHandler(handler));
-            _typing.Invoked += async (s, args) =>
+            _typing.Invoked += (s, args) =>
             {
                 if (string.IsNullOrWhiteSpace(SearchField.Text))
                 {
@@ -123,7 +124,7 @@ namespace Telegram.Controls.Drawers
                 }
                 else if (ViewModel != null)
                 {
-                    List.ItemsSource = await Emoji.SearchAsync(ViewModel.ClientService, SearchField.Text, _selected, _mode);
+                    List.ItemsSource = new SearchEmojiCollection(ViewModel.ClientService, SearchField.Text, _selected, _mode);
                 }
             };
         }

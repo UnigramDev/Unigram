@@ -12,7 +12,7 @@ namespace Telegram.Common
 {
     public static partial class Emoji
     {
-        partial class EmojiGroupInternal
+        public partial class EmojiGroupInternal
         {
             public static readonly HashSet<string> _skinEmojis = new()
             {
