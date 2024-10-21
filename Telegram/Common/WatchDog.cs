@@ -334,6 +334,27 @@ namespace Telegram
             File.WriteAllText(GetErrorReportPath(reportId), report);
         }
 
+        [StructLayout(LayoutKind.Sequential)]
+        private class MEMORYSTATUSEX
+        {
+            public uint dwLength;
+            public uint dwMemoryLoad;
+            public ulong ullTotalPhys;
+            public ulong ullAvailPhys;
+            public ulong ullTotalPageFile;
+            public ulong ullAvailPageFile;
+            public ulong ullTotalVirtual;
+            public ulong ullAvailVirtual;
+            public ulong ullAvailExtendedVirtual;
+            public MEMORYSTATUSEX()
+            {
+                dwLength = (uint)Marshal.SizeOf<MEMORYSTATUSEX>();
+            }
+        }
+        [DllImport("kernelbase.dll", SetLastError = true)]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        private static extern bool GlobalMemoryStatusEx([In, Out] MEMORYSTATUSEX lpBuffer);
+
         public static string BuildReport(Exception exception)
         {
             var version = VersionLabel.GetVersion();
@@ -344,17 +365,20 @@ namespace Telegram
 
             var count = SettingsService.Current.Diagnostics.UpdateCount;
 
+            var status = new MEMORYSTATUSEX();
+            GlobalMemoryStatusEx(status);
+
             var memoryUsage = FileSizeConverter.Convert((long)MemoryManager.AppMemoryUsage);
-            var memoryUsageExpected = FileSizeConverter.Convert((long)MemoryManager.ExpectedAppMemoryUsageLimit);
-            var memoryUsageLimit = FileSizeConverter.Convert((long)MemoryManager.AppMemoryUsageLimit);
+            var memoryUsageAvailable = FileSizeConverter.Convert((long)status.ullAvailPhys);
+            var memoryUsageTotal = FileSizeConverter.Convert((long)status.ullTotalPhys);
 
             var info =
                 $"Current version: {version}\n" +
                 $"Current language: {language}\n" +
                 $"Current duration: {diff}\n" +
                 $"Memory usage: {memoryUsage}\n" +
-                $"Memory usage expected: {memoryUsageExpected}\n" +
-                $"Memory usage limit: {memoryUsageLimit}\n" +
+                $"Memory usage available: {memoryUsageAvailable}\n" +
+                $"Memory usage total: {memoryUsageTotal}\n" +
                 $"Update count: {count}\n";
 
             if (WindowContext.Current != null)
