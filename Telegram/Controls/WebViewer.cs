@@ -375,6 +375,8 @@ namespace Telegram.Controls
             View.NavigationCompleted += OnNavigationCompleted;
             View.WebMessageReceived += OnWebMessageReceived;
 
+            View.PointerPressed += OnPointerPressed;
+
             await View.EnsureCoreWebView2Async();
 
             if (View.CoreWebView2 != null)
@@ -402,6 +404,15 @@ postEvent: function(eventType, eventData) {
             else
             {
                 Initialize(false);
+            }
+        }
+
+        private void OnPointerPressed(object sender, Windows.UI.Xaml.Input.PointerRoutedEventArgs e)
+        {
+            var pointer = e.GetCurrentPoint(this);
+            if (pointer.Properties.IsXButton1Pressed || pointer.Properties.IsXButton2Pressed)
+            {
+                e.Handled = true;
             }
         }
 
