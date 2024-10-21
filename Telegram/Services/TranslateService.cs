@@ -105,8 +105,6 @@ namespace Telegram.Services
 
             if (entireChat)
             {
-                // We always exclude the current UI language when translating whole chat
-                exclude.Add(LocaleService.Current.Id);
                 exclude.Add(LANG_UND);
             }
 
