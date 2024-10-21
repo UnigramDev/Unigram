@@ -1484,6 +1484,7 @@ namespace Telegram.Controls
         public void InsertEmoji(ITextRange range, string emoji, long customEmojiId)
         {
             BeginUndoGroup();
+            Document.BatchDisplayUpdates();
 
             var plain = range.GetClone();
             plain.Move(TextRangeUnit.Hidden, -1);
@@ -1497,6 +1498,7 @@ namespace Telegram.Controls
             range.SetRange(range.StartPosition, range.EndPosition - 1);
             range.CharacterFormat.Hidden = FormatEffect.On;
 
+            Document.ApplyDisplayUpdates();
             EndUndoGroup();
         }
 
