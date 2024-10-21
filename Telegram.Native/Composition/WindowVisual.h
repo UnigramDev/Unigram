@@ -15,7 +15,11 @@ namespace winrt::Telegram::Native::Composition::implementation
 {
     struct WindowVisual : WindowVisualT<WindowVisual>
     {
+        static bool IsValid(WindowId windowId, hstring& title);
         static winrt::Telegram::Native::Composition::WindowVisual Create(WindowId windowId);
+
+        static uint32_t GetWindowProcessId(WindowId windowId);
+        static WindowId GetCurrentWindowId();
 
         WindowVisual(HWND window, HTHUMBNAIL thumbnail, Visual visual, float3 size);
         ~WindowVisual();
@@ -27,8 +31,6 @@ namespace winrt::Telegram::Native::Composition::implementation
 
     private:
         static HRESULT GetScaledWindowSize(HWND window, float3* size, DWM_THUMBNAIL_PROPERTIES& thumb);
-
-        static HMODULE GetDwmApi();
 
         HWND m_window;
         HTHUMBNAIL m_thumbnail;
