@@ -370,6 +370,7 @@ namespace Telegram.ViewModels.Folders
             var response = await SendAsync();
             if (response is ChatFolderInfo)
             {
+                _completed = true;
                 NavigationService.GoBack();
             }
         }
