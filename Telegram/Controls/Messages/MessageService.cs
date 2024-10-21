@@ -2185,17 +2185,15 @@ namespace Telegram.Controls.Messages
             var content = string.Empty;
             var entities = active ? new List<TextEntity>() : null;
 
-            var channel = message.Chat.Type is ChatTypeSupergroup { IsChannel: true };
-
             if (giveawayCreated.StarCount > 0)
             {
-                content = Locale.Declension(channel
+                content = Locale.Declension(message.IsChannelPost
                     ? Strings.R.BoostingStarsGiveawayJustStarted
                     : Strings.R.BoostingStarsGiveawayJustStartedGroup, giveawayCreated.StarCount, message.Chat.Title);
             }
             else
             {
-                content = string.Format(channel
+                content = string.Format(message.IsChannelPost
                     ? Strings.BoostingGiveawayJustStarted
                     : Strings.BoostingGiveawayJustStartedGroup, message.Chat.Title);
             }

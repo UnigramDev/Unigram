@@ -1555,6 +1555,11 @@ namespace Telegram.Controls.Cells
         {
             if (message.IsService())
             {
+                if (chat == null && clientService.TryGetChat(message.ChatId, out chat))
+                {
+                    clientService.TryGetChat(message.ChatId, out chat);
+                }
+
                 return MessageService.GetText(new MessageViewModel(clientService, null, null, chat, message));
             }
 
