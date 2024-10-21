@@ -117,12 +117,14 @@ namespace Telegram.Controls.Gallery
             Logger.Info();
 
             // TODO: WinUI - Rewrite
-            if (_current == null)
+            var window = _window;
+            if (window == null || _current == null)
             {
                 // Button was already pressed
                 return;
             }
 
+            _window = null;
             _current = null;
 
             _player.IsUnloadedExpected = true;
@@ -132,7 +134,7 @@ namespace Telegram.Controls.Gallery
             {
                 try
                 {
-                    var prevId = CoreAppWindowPreview.GetIdFromWindow(_window);
+                    var prevId = CoreAppWindowPreview.GetIdFromWindow(window);
                     var nextId = ApplicationView.GetForCurrentView().Id;
                     await ApplicationViewSwitcher.TryShowAsStandaloneAsync(nextId);
                     await ApplicationViewSwitcher.SwitchAsync(nextId, prevId);
@@ -144,7 +146,7 @@ namespace Telegram.Controls.Gallery
             }
 
             _ = GalleryWindow.ShowAsync(WindowContext.Current.Content.XamlRoot, _viewModel, null, 0, _player);
-            _ = _window.CloseAsync();
+            _ = window.CloseAsync();
         }
 
         private void Play(GalleryViewModelBase viewModel, VideoPlayerBase player)
