@@ -62,6 +62,10 @@ namespace Telegram.Services
                         {
                             _haveFullStoryList[storyList] = true;
                         }
+                        else
+                        {
+                            return null;
+                        }
                     }
 
                     // Chats have already been received through updates, let's retry request

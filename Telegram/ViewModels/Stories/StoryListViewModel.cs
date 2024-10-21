@@ -10,6 +10,7 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
+using System.Threading;
 using System.Threading.Tasks;
 using Telegram.Common;
 using Telegram.Controls.Stories;
@@ -222,7 +223,7 @@ namespace Telegram.ViewModels.Stories
             private readonly IClientService _clientService;
             private readonly IEventAggregator _aggregator;
 
-            private readonly DisposableMutex _loadMoreLock = new();
+            private CancellationTokenSource _token = new();
             private readonly Dictionary<long, ActiveStoriesViewModel> _chats = new();
 
             private readonly StoryListViewModel _viewModel;
@@ -252,22 +253,22 @@ namespace Telegram.ViewModels.Stories
                 _ = LoadMoreItemsAsync(0);
             }
 
-            public async Task ReloadAsync(StoryList storyList)
+            public Task ReloadAsync(StoryList storyList)
             {
-                using (await _loadMoreLock.WaitAsync())
-                {
-                    _aggregator.Unsubscribe(this);
+                _token?.Cancel();
+                _token = new CancellationTokenSource();
 
-                    _lastChatId = 0;
-                    _lastOrder = 0;
+                _aggregator.Unsubscribe(this);
 
-                    _storyList = storyList;
+                _lastChatId = 0;
+                _lastOrder = 0;
 
-                    _chats.Clear();
-                    Clear();
-                }
+                _storyList = storyList;
 
-                await LoadMoreItemsAsync();
+                _chats.Clear();
+                Clear();
+
+                return LoadMoreItemsAsync();
             }
 
             public IAsyncOperation<LoadMoreItemsResult> LoadMoreItemsAsync(uint count)
@@ -277,55 +278,56 @@ namespace Telegram.ViewModels.Stories
 
             private async Task<LoadMoreItemsResult> LoadMoreItemsAsync()
             {
-                using (await _loadMoreLock.WaitAsync())
+                Logger.Info();
+
+                var token = _token;
+                var totalCount = 0u;
+
+                var response = await _clientService.GetStoryListAsync(_storyList, Count, 20);
+                if (response is Telegram.Td.Api.Chats chats && !token.IsCancellationRequested)
                 {
-                    var response = await _clientService.GetStoryListAsync(_storyList, Count, 20);
-                    if (response is Telegram.Td.Api.Chats chats)
+                    foreach (var activeStories in _clientService.GetActiveStorieses(chats.ChatIds))
                     {
-                        var totalCount = 0u;
-
-                        foreach (var activeStories in _clientService.GetActiveStorieses(chats.ChatIds))
+                        var order = activeStories.Order;
+                        if (order != 0)
                         {
-                            var order = activeStories.Order;
-                            if (order != 0)
+                            // TODO: is this redundant?
+                            var next = NextIndexOf(activeStories.ChatId, order);
+                            if (next >= 0 && _clientService.TryGetChat(activeStories.ChatId, out Chat chat))
                             {
-                                // TODO: is this redundant?
-                                var next = NextIndexOf(activeStories.ChatId, order);
-                                if (next >= 0 && _clientService.TryGetChat(activeStories.ChatId, out Chat chat))
+                                if (_chats.TryGetValue(activeStories.ChatId, out var prev))
                                 {
-                                    if (_chats.TryGetValue(activeStories.ChatId, out var prev))
-                                    {
-                                        Remove(prev);
-                                    }
-
-                                    var item = _viewModel.Create(activeStories, chat);
-
-                                    _chats[activeStories.ChatId] = item;
-                                    Insert(Math.Min(Count, next), item);
-
-                                    totalCount++;
+                                    Remove(prev);
                                 }
 
-                                _lastChatId = activeStories.ChatId;
-                                _lastOrder = order;
+                                var item = _viewModel.Create(activeStories, chat);
+
+                                _chats[activeStories.ChatId] = item;
+                                Insert(Math.Min(Count, next), item);
+
+                                totalCount++;
                             }
+
+                            _lastChatId = activeStories.ChatId;
+                            _lastOrder = order;
                         }
-
-                        IsEmpty = Count == 0;
-
-                        _hasMoreItems = chats.ChatIds.Count > 0;
-                        Subscribe();
-
-                        if (_hasMoreItems == false)
-                        {
-                            OnPropertyChanged(new PropertyChangedEventArgs("HasMoreItems"));
-                        }
-
-                        return new LoadMoreItemsResult { Count = totalCount };
                     }
 
-                    return new LoadMoreItemsResult { Count = 0 };
+                    IsEmpty = Count == 0;
+
+                    _hasMoreItems = chats.ChatIds.Count > 0;
+                    Subscribe();
+
+                    if (_hasMoreItems == false)
+                    {
+                        OnPropertyChanged(new PropertyChangedEventArgs("HasMoreItems"));
+                    }
                 }
+
+                return new LoadMoreItemsResult
+                {
+                    Count = totalCount
+                };
             }
 
             private void Subscribe()
@@ -341,13 +343,15 @@ namespace Telegram.ViewModels.Stories
 
             public void Handle(UpdateChatActiveStories update)
             {
+                Logger.Info(string.Format("{0}, {1}", update.ActiveStories.ChatId, update.ActiveStories.Order));
+
                 if ((update.ActiveStories.List is StoryListMain && _storyList is StoryListMain) || (update.ActiveStories.List is StoryListArchive && _storyList is StoryListArchive))
                 {
-                    Handle(update.ActiveStories, update.ActiveStories.Order, true);
+                    _viewModel.BeginOnUIThread(() => UpdateChatOrder(update.ActiveStories, update.ActiveStories.Order));
                 }
                 else
                 {
-                    Handle(update.ActiveStories, 0, true);
+                    _viewModel.BeginOnUIThread(() => UpdateChatOrder(update.ActiveStories, 0));
                 }
             }
 
@@ -367,20 +371,17 @@ namespace Telegram.ViewModels.Stories
                 }
             }
 
-            private async void Handle(ChatActiveStories activeStories, long order, bool lastMessage)
+            private void UpdateChatOrder(ChatActiveStories activeStories, long order)
             {
-                using (await _loadMoreLock.WaitAsync())
+                if (_chats.TryGetValue(activeStories.ChatId, out var item))
                 {
-                    if (_chats.TryGetValue(activeStories.ChatId, out var item))
-                    {
-                        item.Update(activeStories);
-                        await _viewModel.Dispatcher.DispatchAsync(() => UpdateChatOrder(item, order, lastMessage));
-                    }
-                    else if (_clientService.TryGetChat(activeStories.ChatId, out Chat chat))
-                    {
-                        item = _viewModel.Create(activeStories, chat);
-                        await _viewModel.Dispatcher.DispatchAsync(() => UpdateChatOrder(item, order, lastMessage));
-                    }
+                    item.Update(activeStories);
+                    UpdateChatOrder(item, order, true);
+                }
+                else if (order != 0 && _clientService.TryGetChat(activeStories.ChatId, out Chat chat))
+                {
+                    item = _viewModel.Create(activeStories, chat);
+                    UpdateChatOrder(item, order, true);
                 }
             }
 

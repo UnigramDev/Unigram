@@ -10,6 +10,7 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
+using System.Threading;
 using System.Threading.Tasks;
 using Telegram.Collections;
 using Telegram.Common;
@@ -586,7 +587,7 @@ namespace Telegram.ViewModels
             private readonly IClientService _clientService;
             private readonly IEventAggregator _aggregator;
 
-            private readonly DisposableMutex _loadMoreLock = new();
+            private CancellationTokenSource _token = new();
             private readonly HashSet<long> _chats = new();
 
             private readonly ChatListViewModel _viewModel;
@@ -606,8 +607,6 @@ namespace Telegram.ViewModels
                 _aggregator = aggregator;
 
                 _viewModel = viewModel;
-                _viewModel.IsLoading = true;
-
                 _chatList = chatList;
 
 #if MOCKUP
@@ -619,26 +618,24 @@ namespace Telegram.ViewModels
 
             public async Task ReloadAsync(ChatList chatList)
             {
-                _viewModel.IsLoading = true;
+                _token?.Cancel();
+                _token = new CancellationTokenSource();
 
-                using (await _loadMoreLock.WaitAsync())
+                _aggregator.Unsubscribe(this);
+
+                _lastChatId = 0;
+                _lastOrder = 0;
+
+                _chatList = chatList;
+
+                if (_viewModel.Delegate != null)
                 {
-                    _aggregator.Unsubscribe(this);
-
-                    _lastChatId = 0;
-                    _lastOrder = 0;
-
-                    _chatList = chatList;
-
-                    if (_viewModel.Delegate != null)
-                    {
-                        // Exp: does this affect layout cycles?
-                        await _viewModel.Delegate.UpdateLayoutAsync();
-                    }
-
-                    _chats.Clear();
-                    Clear();
+                    // Exp: does this affect layout cycles?
+                    await _viewModel.Delegate.UpdateLayoutAsync();
                 }
+
+                _chats.Clear();
+                Clear();
 
                 await LoadMoreItemsAsync();
             }
@@ -650,11 +647,13 @@ namespace Telegram.ViewModels
 
             private async Task<LoadMoreItemsResult> LoadMoreItemsAsync()
             {
-                using var guard = await _loadMoreLock.WaitAsync();
+                Logger.Info();
+
+                var token = _token;
                 var totalCount = 0u;
 
                 var response = await _clientService.GetChatListAsync(_chatList, Count, 20);
-                if (response is Telegram.Td.Api.Chats chats)
+                if (response is Telegram.Td.Api.Chats chats && !token.IsCancellationRequested)
                 {
                     if (_viewModel.Delegate != null)
                     {
@@ -697,7 +696,6 @@ namespace Telegram.ViewModels
                     _hasMoreItems = chats.ChatIds.Count > 0;
                     Subscribe();
 
-                    _viewModel.IsLoading = false;
                     _viewModel.Delegate?.SetSelectedItems(_viewModel.SelectedItems);
                 }
 
