@@ -630,6 +630,12 @@ namespace Telegram.ViewModels
 
                     _chatList = chatList;
 
+                    if (_viewModel.Delegate != null)
+                    {
+                        // Exp: does this affect layout cycles?
+                        await _viewModel.Delegate.UpdateLayoutAsync();
+                    }
+
                     _chats.Clear();
                     Clear();
                 }
