@@ -102,24 +102,11 @@ struct VoipVideoOutput : public rtc::VideoSinkInterface<webrtc::VideoFrame>
         {
             ReleaseShader();
 
-            try
-            {
-                m_canvasDevice = CanvasDevice();
-            }
-            catch (...)
-            {
-                m_canvasDevice = nullptr;
-                m_surface = nullptr;
-            }
+            m_canvasDevice = CanvasDevice();
+            auto compositor = m_brush.Compositor();
+            auto compositionGraphicsDevice = CanvasComposition::CreateCompositionGraphicsDevice(compositor, m_canvasDevice);
 
-            if (m_canvasDevice)
-            {
-                auto compositor = m_brush.Compositor();
-                auto compositionGraphicsDevice = CanvasComposition::CreateCompositionGraphicsDevice(compositor, m_canvasDevice);
-
-                m_surface = compositionGraphicsDevice.CreateDrawingSurface({ 0, 0 }, DirectXPixelFormat::B8G8R8A8UIntNormalized, DirectXAlphaMode::Premultiplied);
-            }
-
+            m_surface = compositionGraphicsDevice.CreateDrawingSurface({ 0, 0 }, DirectXPixelFormat::B8G8R8A8UIntNormalized, DirectXAlphaMode::Premultiplied);
             m_brush.DispatcherQueue().TryEnqueue({ this, &VoipVideoOutput::UpdateBrushSurface });
         }
     }
