@@ -103,10 +103,6 @@ namespace Telegram.Controls.Chats
                     CreateButton(Strings.ReportSpamAndLeave, ViewModel.ReportSpam, new ReportReasonSpam(), danger: true);
                 }
             }
-            else if (chat.ActionBar is ChatActionBarReportUnrelatedLocation)
-            {
-                CreateButton(Strings.ReportSpamLocation, ViewModel.ReportSpam, new ReportReasonUnrelatedLocation(), danger: true);
-            }
             else if (chat.ActionBar is ChatActionBarSharePhoneNumber)
             {
                 CreateButton(Strings.ShareMyPhone, ViewModel.ShareMyContact);

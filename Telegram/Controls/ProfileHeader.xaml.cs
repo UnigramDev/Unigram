@@ -1705,7 +1705,7 @@ namespace Telegram.Controls
 
         private async Task<Sticker> GetEffectAsync()
         {
-            var response = await ViewModel.ClientService.SendAsync(new SearchStickerSet("EmojiAnimations"));
+            var response = await ViewModel.ClientService.SendAsync(new SearchStickerSet("EmojiAnimations", false));
             if (response is StickerSet stickerSet)
             {
                 var stickers = stickerSet.Stickers
@@ -1723,7 +1723,7 @@ namespace Telegram.Controls
 
         private async Task<IList<Sticker>> GetDigitsAsync(int years)
         {
-            var response = await ViewModel.ClientService.SendAsync(new SearchStickerSet("FestiveFontEmoji"));
+            var response = await ViewModel.ClientService.SendAsync(new SearchStickerSet("FestiveFontEmoji", false));
             if (response is StickerSet stickerSet)
             {
                 var text = years.ToString();

@@ -41,7 +41,7 @@ namespace Telegram.ViewModels
             }
             else if (parameter is string name)
             {
-                UpdateStickerSet(await ClientService.SendAsync(new SearchStickerSet(name)));
+                UpdateStickerSet(await ClientService.SendAsync(new SearchStickerSet(name, false)));
             }
             else if (parameter is StickerSet stickerSet)
             {
