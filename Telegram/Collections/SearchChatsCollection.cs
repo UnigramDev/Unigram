@@ -5,7 +5,6 @@
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
 using Telegram.Controls.Media;
-using Telegram.Converters;
 using Telegram.Services;
 using Telegram.Td.Api;
 
@@ -73,38 +72,38 @@ namespace Telegram.Collections
         };
     }
 
-    public partial class SearchChatsFilterDateRange : ISearchChatsFilter
-    {
-        private readonly DateRange _range;
+    //public partial class SearchChatsFilterDateRange : ISearchChatsFilter
+    //{
+    //    private readonly DateRange _range;
 
-        public SearchChatsFilterDateRange(DateRange range)
-        {
-            _range = range;
-        }
+    //    public SearchChatsFilterDateRange(DateRange range)
+    //    {
+    //        _range = range;
+    //    }
 
-        public int EndDate => _range.EndDate;
-        public int StartDate => _range.StartDate;
+    //    public int EndDate => _range.EndDate;
+    //    public int StartDate => _range.StartDate;
 
-        public string Text
-        {
-            get
-            {
-                var start = Formatter.ToLocalTime(_range.StartDate);
-                var end = Formatter.ToLocalTime(_range.EndDate);
+    //    public string Text
+    //    {
+    //        get
+    //        {
+    //            var start = Formatter.ToLocalTime(_range.StartDate);
+    //            var end = Formatter.ToLocalTime(_range.EndDate);
 
-                if (start.DayOfYear == end.DayOfYear)
-                {
-                    return Formatter.DayMonthFullYear.Format(start);
-                }
-                else if (start.Month == end.Month)
-                {
-                    return Formatter.MonthAbbreviatedYear.Format(start);
-                }
+    //            if (start.DayOfYear == end.DayOfYear)
+    //            {
+    //                return Formatter.DayMonthFullYear.Format(start);
+    //            }
+    //            else if (start.Month == end.Month)
+    //            {
+    //                return Formatter.MonthAbbreviatedYear.Format(start);
+    //            }
 
-                return start.Year.ToString();
-            }
-        }
+    //            return start.Year.ToString();
+    //        }
+    //    }
 
-        public string Glyph => Icons.Calendar;
-    }
+    //    public string Glyph => Icons.Calendar;
+    //}
 }

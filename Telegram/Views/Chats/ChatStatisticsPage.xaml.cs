@@ -34,10 +34,7 @@ namespace Telegram.Views.Chats
 
         private string ConvertPeriod(int startDate, int endDate)
         {
-            var start = Formatter.ToLocalTime(startDate);
-            var end = Formatter.ToLocalTime(endDate);
-
-            return string.Format("{0} - {1}", Formatter.ShortDate.Format(start), Formatter.ShortDate.Format(end));
+            return string.Format("{0} - {1}", Formatter.Date(startDate), Formatter.Date(endDate));
         }
 
         private string ConvertShowMore(int count)

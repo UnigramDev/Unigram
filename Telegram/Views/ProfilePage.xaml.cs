@@ -429,11 +429,11 @@ namespace Telegram.Views
             var container = scrollingHost.Items[index];
             if (container is MessageWithOwner message)
             {
-                DateHeaderLabel.Text = Formatter.MonthGrouping(message.Date);
+                DateHeaderLabel.Text = Formatter.Date(message.Date, Strings.formatterMonthYear);
             }
             else if (container is StoryViewModel story)
             {
-                DateHeaderLabel.Text = Formatter.MonthGrouping(story.Date);
+                DateHeaderLabel.Text = Formatter.Date(story.Date, Strings.formatterMonthYear);
             }
             else
             {

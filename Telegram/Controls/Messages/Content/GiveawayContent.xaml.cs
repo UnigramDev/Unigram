@@ -318,13 +318,13 @@ namespace Telegram.Controls.Messages.Content
                 message1 += "\n\n" + string.Format(additional, giveaway.WinnerCount, boostedChat.Title, giveaway.Parameters.PrizeDescription);
             }
 
-            var selectionDate = Formatter.DayMonthFull.Format(Formatter.ToLocalTime(selectionTimeStamp));
+            var selectionDate = Formatter.Date(selectionTimeStamp, Strings.formatterGiveawayMonthDay);
 
             string message2;
             if (giveaway.Parameters.OnlyNewMembers)
             {
                 var creationTime = Formatter.Time(creationTimeStamp);
-                var creationDate = Formatter.DayMonthFull.Format(Formatter.ToLocalTime(creationTimeStamp));
+                var creationDate = Formatter.Date(creationTimeStamp, Strings.formatterGiveawayMonthDay);
 
                 if (giveaway.Parameters.AdditionalChatIds.Count > 0)
                 {

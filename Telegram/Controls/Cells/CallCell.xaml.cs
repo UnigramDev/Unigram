@@ -51,10 +51,10 @@ namespace Telegram.Controls.Cells
             var tooltip = sender as ToolTip;
             if (tooltip != null && _call != null)
             {
-                var date = Formatter.ToLocalTime(_call.Message.Date);
-                var text = $"{Formatter.LongDate.Format(date)} {Formatter.LongTime.Format(date)}";
+                var date = Formatter.Date(_call.Message.Date, "DATE_LONGDATE");
+                var time = Formatter.Time(_call.Message.Date);
 
-                tooltip.Content = text;
+                tooltip.Content = string.Format(Strings.formatDateAtTime, date, time);
             }
         }
     }

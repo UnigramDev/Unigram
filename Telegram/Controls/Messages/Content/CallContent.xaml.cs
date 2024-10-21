@@ -103,10 +103,10 @@ namespace Telegram.Controls.Messages.Content
             var tooltip = sender as ToolTip;
             if (tooltip != null && _message != null)
             {
-                var date = Formatter.ToLocalTime(_message.Date);
-                var text = $"{Formatter.LongDate.Format(date)} {Formatter.LongTime.Format(date)}";
+                var date = Formatter.Date(_message.Date, "DATE_LONGDATE");
+                var time = Formatter.Time(_message.Date);
 
-                tooltip.Content = text;
+                tooltip.Content = string.Format(Strings.formatDateAtTime, date, time);
             }
         }
 

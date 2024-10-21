@@ -140,7 +140,7 @@ namespace Telegram.Charts.DataView
             }
             else
             {
-                Time.Text = FormatData(Formatter.ToLocalTime(date / 1000));
+                Time.Text = FormatDate((int)(date / 1000));
                 //if (useHour) hourTime.Text = hourFormat.format(date);
             }
 
@@ -197,11 +197,11 @@ namespace Telegram.Charts.DataView
             //}
         }
 
-        private string FormatData(DateTime date)
+        private string FormatDate(int date)
         {
             //if (useHour) return capitalize(format2.format(date));
             //return capitalize(format.format(date)) + capitalize(format2.format(date));
-            return Formatter.DayMonthFullYear.Format(date);
+            return Formatter.Date(date, Strings.chatFullDate);
         }
 
         public string FormatWholeNumber(int v)

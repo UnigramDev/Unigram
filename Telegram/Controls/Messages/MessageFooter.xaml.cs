@@ -514,9 +514,8 @@ namespace Telegram.Controls.Messages
             string text;
             if (message.SchedulingState is MessageSchedulingStateSendAtDate sendAtTime)
             {
-                var dateTime = Formatter.ToLocalTime(sendAtTime.SendDate);
-                var date = Formatter.LongDate.Format(dateTime);
-                var time = Formatter.LongTime.Format(dateTime);
+                var date = Formatter.Date(sendAtTime.SendDate, "DATE_LONGDATE");
+                var time = Formatter.Time(sendAtTime.SendDate);
 
                 text = string.Format(Strings.formatDateAtTime, date, time);
             }
@@ -526,9 +525,8 @@ namespace Telegram.Controls.Messages
             }
             else
             {
-                var dateTime = Formatter.ToLocalTime(message.Date);
-                var date = Formatter.LongDate.Format(dateTime);
-                var time = Formatter.LongTime.Format(dateTime);
+                var date = Formatter.Date(message.Date, "DATE_LONGDATE");
+                var time = Formatter.Time(message.Date);
 
                 text = string.Format(Strings.formatDateAtTime, date, time);
             }

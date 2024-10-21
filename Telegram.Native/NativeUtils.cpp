@@ -471,6 +471,33 @@ namespace winrt::Telegram::Native::implementation
         return hstring();
     }
 
+    inline static hstring GetDateFormatEx(CONST SYSTEMTIME* lpDate, hstring format)
+    {
+        DWORD flags = NULL;
+        LPCWSTR formatData = NULL;
+
+        if (format == L"DATE_LONGDATE")
+        {
+            flags = DATE_LONGDATE;
+        }
+        else if (format == L"DATE_SHORTDATE")
+        {
+            flags = DATE_SHORTDATE;
+        }
+        else
+        {
+            formatData = format.data();
+        }
+
+        TCHAR dateString[256];
+        if (GetDateFormatEx(LOCALE_NAME_USER_DEFAULT, flags, lpDate, formatData, dateString, 256, NULL))
+        {
+            return hstring(dateString);
+        }
+
+        return hstring();
+    }
+
     hstring NativeUtils::FormatDate(winrt::Windows::Foundation::DateTime value, hstring format)
     {
         FILETIME fileTime = winrt::clock::to_file_time(value);
@@ -480,11 +507,7 @@ namespace winrt::Telegram::Native::implementation
             SYSTEMTIME systemTime;
             if (FileTimeToSystemTime(&localFileTime, &systemTime))
             {
-                TCHAR dateString[256];
-                if (GetDateFormatEx(LOCALE_NAME_USER_DEFAULT, NULL, &systemTime, format.data(), dateString, 256, NULL))
-                {
-                    return hstring(dateString);
-                }
+                return GetDateFormatEx(&systemTime, format);
             }
         }
 
@@ -499,13 +522,7 @@ namespace winrt::Telegram::Native::implementation
         systemTime.wDay = day;
         systemTime.wHour = 12;
 
-        TCHAR dateString[256];
-        if (GetDateFormatEx(LOCALE_NAME_USER_DEFAULT, NULL, &systemTime, format.data(), dateString, 256, NULL))
-        {
-            return hstring(dateString);
-        }
-
-        return hstring();
+        return GetDateFormatEx(&systemTime, format);
     }
 
     hstring NativeUtils::FormatTime(int value)
@@ -549,19 +566,7 @@ namespace winrt::Telegram::Native::implementation
             SYSTEMTIME systemTime;
             if (FileTimeToSystemTime(&localFileTime, &systemTime))
             {
-                //SYSTEMTIME todayTime;
-                //GetSystemTime(&todayTime);
-
-                //int difference = abs(systemTime.wMonth - todayTime.wMonth + 12 * (systemTime.wYear - todayTime.wYear));
-                //DWORD flags = difference >= 11
-                //    ? DATE_LONGDATE
-                //    : DATE_MONTHDAY;
-
-                TCHAR dateString[256];
-                if (GetDateFormatEx(LOCALE_NAME_USER_DEFAULT, NULL, &systemTime, format.data(), dateString, 256, NULL))
-                {
-                    return hstring(dateString);
-                }
+                return GetDateFormatEx(&systemTime, format);
             }
         }
 

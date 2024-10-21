@@ -3387,11 +3387,17 @@ Minimum length is 5 characters.</value>
   <data name="ChatCamera" xml:space="preserve">
     <value>Camera</value>
   </data>
+  <data name="chatDate" xml:space="preserve">
+    <value>MMMM d</value>
+  </data>
   <data name="ChatDeletedUndo" xml:space="preserve">
     <value>Chat deleted.</value>
   </data>
   <data name="ChatDocument" xml:space="preserve">
     <value>File</value>
+  </data>
+  <data name="chatFullDate" xml:space="preserve">
+    <value>MMMM d, yyyy</value>
   </data>
   <data name="ChatHintsDeleteAlert" xml:space="preserve">
     <value>Are you sure you want to remove **{0}** from suggestions?</value>
@@ -5467,8 +5473,17 @@ Duration: {1}</value>
   <data name="formatterBoostExpired" xml:space="preserve">
     <value>MMM dd, yyyy</value>
   </data>
+  <data name="formatterGiveawayMonthDay" xml:space="preserve">
+    <value>MMMM dd</value>
+  </data>
   <data name="formatterMonth" xml:space="preserve">
     <value>MMM dd</value>
+  </data>
+  <data name="formatterMonthYear" xml:space="preserve">
+    <value>MMMM yyyy</value>
+  </data>
+  <data name="formatterWeek" xml:space="preserve">
+    <value>ddd</value>
   </data>
   <data name="formatterYear" xml:space="preserve">
     <value>dd.MM.yy</value>

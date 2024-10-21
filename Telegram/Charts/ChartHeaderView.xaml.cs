@@ -26,11 +26,11 @@ namespace Telegram.Charts
 
             if (Dispatcher.HasThreadAccess)
             {
-                Label1.Text = string.Format("{0} - {1}", Formatter.ShortDate.Format(start), Formatter.ShortDate.Format(end));
+                Label1.Text = string.Format("{0} - {1}", Formatter.Date(start), Formatter.Date(end));
             }
             else
             {
-                _ = Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () => Label1.Text = string.Format("{0} - {1}", Formatter.ShortDate.Format(start), Formatter.ShortDate.Format(end)));
+                _ = Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () => Label1.Text = string.Format("{0} - {1}", Formatter.Date(start), Formatter.Date(end)));
             }
         }
 
