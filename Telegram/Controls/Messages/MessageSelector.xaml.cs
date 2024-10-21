@@ -216,7 +216,7 @@ namespace Telegram.Controls.Messages
         {
             base.OnPointerPressed(e);
 
-            if (e.OriginalSource as Grid == RootGrid)
+            if (e.OriginalSource as Grid == RootGrid || e.OriginalSource is TextBlock { Name: "Label" })
             {
                 _owner?.OnPointerPressed(this, e);
             }
@@ -226,7 +226,7 @@ namespace Telegram.Controls.Messages
         {
             base.OnPointerEntered(e);
 
-            if (e.OriginalSource as Grid == RootGrid)
+            if (e.OriginalSource as Grid == RootGrid || e.OriginalSource is TextBlock { Name: "Label" })
             {
                 _owner?.OnPointerEntered(this, e);
             }
@@ -236,7 +236,7 @@ namespace Telegram.Controls.Messages
         {
             base.OnPointerMoved(e);
 
-            if (e.OriginalSource as Grid == RootGrid)
+            if (e.OriginalSource as Grid == RootGrid || e.OriginalSource is TextBlock { Name: "Label" })
             {
                 _owner?.OnPointerMoved(this, e);
             }
@@ -246,7 +246,7 @@ namespace Telegram.Controls.Messages
         {
             base.OnPointerReleased(e);
 
-            if (e.OriginalSource as Grid == RootGrid)
+            if (e.OriginalSource as Grid == RootGrid || e.OriginalSource is TextBlock { Name: "Label" })
             {
                 _owner?.OnPointerReleased(this, e);
             }
@@ -256,7 +256,7 @@ namespace Telegram.Controls.Messages
         {
             base.OnPointerCanceled(e);
 
-            if (e.OriginalSource as Grid == RootGrid)
+            if (e.OriginalSource as Grid == RootGrid || e.OriginalSource is TextBlock { Name: "Label" })
             {
                 _owner?.OnPointerCanceled(this, e);
             }
