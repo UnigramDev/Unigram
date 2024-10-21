@@ -77,7 +77,7 @@ namespace Telegram.ViewModels.Users
         {
             using (await _loadMoreLock.WaitAsync())
             {
-                var response = await ClientService.SendAsync(new GetUserProfilePhotos(_user.Id, 0, 20));
+                var response = await ClientService.SendAsync(new GetUserProfilePhotos(_user.Id, _additionalPhotos, 20));
                 if (response is ChatPhotos photos)
                 {
                     TotalItems = photos.TotalCount + _additionalPhotos;
