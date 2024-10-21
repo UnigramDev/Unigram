@@ -3799,7 +3799,7 @@ namespace Telegram.Views
         private async void Date_Click(object sender, RoutedEventArgs e)
         {
             var button = sender as Button;
-            if (button.Tag is int messageDate)
+            if (button.Tag is int messageDate && ViewModel.Type is DialogType.History or DialogType.Thread)
             {
                 var date = Formatter.ToLocalTime(messageDate);
 
