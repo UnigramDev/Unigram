@@ -841,7 +841,7 @@ namespace Telegram.Services
             }
 
             var brief = ChatCell.UpdateBriefLabel(chat, message.Content, message.IsOutgoing, false, true, out _);
-            var clean = brief.ReplaceSpoilers();
+            var clean = brief.ReplaceSpoilers(false);
 
             var content = ChatCell.UpdateFromLabel(_clientService, chat, message) + clean.Text;
 
