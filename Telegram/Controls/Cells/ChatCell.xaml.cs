@@ -1646,22 +1646,16 @@ namespace Telegram.Controls.Cells
                 }
             }
 
-            if (message.IsOutgoing || message.ChatId == clientService.Options.MyId || message.ChatId == clientService.Options.VerificationCodesBotChatId)
+            if (chat?.Type is ChatTypeBasicGroup or ChatTypeSupergroup
+                || message.ChatId == clientService.Options.MyId
+                || message.ChatId == clientService.Options.RepliesBotChatId
+                || message.ChatId == clientService.Options.VerificationCodesBotChatId)
             {
                 senderChat = null;
                 return clientService.TryGetUser(message.SenderId, out senderUser)
                     || clientService.TryGetChat(message.SenderId, out senderChat);
             }
 
-            if (chat?.Type is not ChatTypePrivate and not ChatTypeSecret)
-            {
-                senderChat = null;
-                return clientService.TryGetUser(message.SenderId, out senderUser)
-                    || clientService.TryGetChat(message.SenderId, out senderChat);
-            }
-
-            senderUser = null;
-            senderChat = null;
             return false;
         }
 
