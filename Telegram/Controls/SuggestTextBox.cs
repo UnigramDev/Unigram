@@ -37,9 +37,10 @@ namespace Telegram.Controls
         {
             if (e.Key == VirtualKey.Down && ControlledList != null)
             {
-                if (ControlledList.SelectedIndex < ControlledList.Items.Count - 1)
+                var nextIndex = Math.Max(ControlledList.SelectedIndex + 1, StartingIndex);
+                if (nextIndex < ControlledList.Items.Count)
                 {
-                    ControlledList.SelectedIndex = Math.Max(ControlledList.SelectedIndex + 1, StartingIndex);
+                    ControlledList.SelectedIndex = nextIndex;
                     ControlledList.ScrollIntoView(ControlledList.SelectedItem);
                 }
 
