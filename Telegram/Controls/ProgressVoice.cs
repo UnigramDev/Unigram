@@ -36,7 +36,7 @@ namespace Telegram.Controls
             ProgressBarIndicator.Data = _group1 = new GeometryGroup();
             HorizontalTrackRect.Data = _group2 = new GeometryGroup();
 
-            if (_deferred != null && _deferred.Duration != 0)
+            if (_deferred != null && _deferred.Duration != -1)
             {
                 UpdateWaveform(_deferred);
                 //_deferred = null;
@@ -47,7 +47,7 @@ namespace Telegram.Controls
 
         protected override Size ArrangeOverride(Size finalSize)
         {
-            if (_deferred != null && _deferred.Duration == 0)
+            if (_deferred != null && _deferred.Duration == -1)
             {
                 UpdateWaveform(_deferred.Waveform, 0, finalSize.Width);
             }
@@ -67,7 +67,7 @@ namespace Telegram.Controls
                 return;
             }
 
-            if (voiceNote.Duration == 0)
+            if (voiceNote.Duration == -1)
             {
                 // Recording
                 InvalidateArrange();
@@ -81,10 +81,11 @@ namespace Telegram.Controls
                 var minVoiceWidth = 72.0;
                 var maxVoiceWidth = 226.0;
 
+
                 var calcDuration = Math.Max(minVoiceLength, Math.Min(maxVoiceLength, voiceNote.Duration));
                 var waveformWidth = minVoiceWidth + (maxVoiceWidth - minVoiceWidth) * (calcDuration - minVoiceLength) / (maxVoiceLength - minVoiceLength);
 
-                UpdateWaveform(voiceNote.Waveform, voiceNote.Duration, waveformWidth);
+                UpdateWaveform(voiceNote.Waveform, calcDuration, waveformWidth);
             }
         }
 

@@ -475,7 +475,7 @@ namespace Telegram.Controls.Chats
 
                 WaveformLabel.Text = result.Duration.ToString("m\\:ss");
                 Waveform.Visibility = Visibility.Visible;
-                Waveform.UpdateWaveform(new VoiceNote(0, result.Waveform, string.Empty, null, null));
+                Waveform.UpdateWaveform(new VoiceNote(-1, result.Waveform, string.Empty, null, null));
 
                 var compositor = BootStrapper.Current.Compositor;
                 var ellipse = compositor.CreateRoundedRectangleGeometry();
