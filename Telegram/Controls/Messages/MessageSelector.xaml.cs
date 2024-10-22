@@ -188,7 +188,7 @@ namespace Telegram.Controls.Messages
 
             if (_message != null)
             {
-                UpdateMessage(_message, _owner, _selectionEnabled);
+                UpdateMessage(_message, _owner, _message.Delegate.IsSelectionEnabled);
             }
         }
 
@@ -214,52 +214,36 @@ namespace Telegram.Controls.Messages
 
         protected override void OnPointerPressed(PointerRoutedEventArgs e)
         {
-            base.OnPointerPressed(e);
-
-            if (e.OriginalSource as Grid == RootGrid || e.OriginalSource is TextBlock { Name: "Label" })
+            if (e.OriginalSource is Grid { Name: "RootGrid" } || e.OriginalSource is TextBlock { Name: "Label" })
             {
                 _owner?.OnPointerPressed(this, e);
             }
+
+            base.OnPointerPressed(e);
         }
 
         protected override void OnPointerEntered(PointerRoutedEventArgs e)
         {
+            _owner?.OnPointerEntered(this, e);
             base.OnPointerEntered(e);
-
-            if (e.OriginalSource as Grid == RootGrid || e.OriginalSource is TextBlock { Name: "Label" })
-            {
-                _owner?.OnPointerEntered(this, e);
-            }
         }
 
         protected override void OnPointerMoved(PointerRoutedEventArgs e)
         {
+            _owner?.OnPointerMoved(this, e);
             base.OnPointerMoved(e);
-
-            if (e.OriginalSource as Grid == RootGrid || e.OriginalSource is TextBlock { Name: "Label" })
-            {
-                _owner?.OnPointerMoved(this, e);
-            }
         }
 
         protected override void OnPointerReleased(PointerRoutedEventArgs e)
         {
+            _owner?.OnPointerReleased(this, e);
             base.OnPointerReleased(e);
-
-            if (e.OriginalSource as Grid == RootGrid || e.OriginalSource is TextBlock { Name: "Label" })
-            {
-                _owner?.OnPointerReleased(this, e);
-            }
         }
 
         protected override void OnPointerCanceled(PointerRoutedEventArgs e)
         {
+            _owner?.OnPointerCanceled(this, e);
             base.OnPointerCanceled(e);
-
-            if (e.OriginalSource as Grid == RootGrid || e.OriginalSource is TextBlock { Name: "Label" })
-            {
-                _owner?.OnPointerCanceled(this, e);
-            }
         }
 
         public void UpdateMessage(MessageViewModel message, ChatHistoryView owner, bool selectionEnabled)
@@ -274,67 +258,22 @@ namespace Telegram.Controls.Messages
 
             message.UpdateSelectionCallback(UpdateSelection);
 
-            var selected = selectionEnabled && message.Delegate.SelectedItems.ContainsKey(message.Id);
-            if (selected == _selected && selectionEnabled == _selectionEnabled)
-            {
-                return;
-            }
-
-            _selectionEnabled = selectionEnabled;
-
-            IsChecked = _selected = selected;
-            Presenter.IsHitTestVisible = !_selectionEnabled || IsAlbum;
-
-            CreateIcon();
-            UpdateIcon(IsChecked is true, false);
-
-            if (Icon != null)
-            {
-                var icon = ElementComposition.GetElementVisual(Icon);
-                icon.Properties.InsertVector3("Translation", new Vector3(_selectionEnabled ? 0 : -36, 0, 0));
-            }
-
-            if (IsAlbumChild)
-            {
-                if (Icon != null)
-                {
-                    if (_message.Content is MessagePhoto or MessageVideo)
-                    {
-                        Icon.VerticalAlignment = VerticalAlignment.Top;
-                        Icon.HorizontalAlignment = HorizontalAlignment.Right;
-                        Icon.Margin = new Thickness(0, 4, 6, 0);
-                    }
-                    else
-                    {
-                        Icon.VerticalAlignment = VerticalAlignment.Bottom;
-                        Icon.HorizontalAlignment = HorizontalAlignment.Left;
-                        Icon.Margin = new Thickness(28, 0, 0, 0);
-                    }
-
-                    Grid.SetColumn(Icon, 1);
-                }
-            }
-            else
-            {
-                var presenter = ElementComposition.GetElementVisual(Presenter);
-                presenter.Offset = new Vector3(_selectionEnabled && (message.IsChannelPost || !message.IsOutgoing) ? 36 : 0, 0, 0);
-            }
+            UpdateSelectionEnabled(selectionEnabled, false);
         }
 
         private bool _selectionEnabled;
 
         public void UpdateSelectionEnabled(bool value, bool animate)
         {
-            if (_selectionEnabled == value)
-            {
-                return;
-            }
-
-            _selectionEnabled = value;
-
-            if (_message is MessageViewModel message)
+            if (_message is MessageViewModel message && _templateApplied)
             {
                 var selected = value && message.Delegate.SelectedItems.ContainsKey(message.Id);
+                if (selected == _selected && value == _selectionEnabled)
+                {
+                    return;
+                }
+
+                _selectionEnabled = value;
 
                 IsChecked = _selected = selected;
                 Presenter.IsHitTestVisible = !value || IsAlbum;
@@ -350,19 +289,23 @@ namespace Telegram.Controls.Messages
                     offset.InsertKeyFrame(0, value ? -36 : 0);
                     offset.InsertKeyFrame(1, value ? 0 : -36);
 
-                    var scale = BootStrapper.Current.Compositor.CreateVector3KeyFrameAnimation();
-                    scale.InsertKeyFrame(0, value ? Vector3.Zero : Vector3.One);
-                    scale.InsertKeyFrame(1, value ? Vector3.One : Vector3.Zero);
-
                     if (Icon != null)
                     {
                         UpdateIcon(IsChecked is true, true);
+
+                        var scale = BootStrapper.Current.Compositor.CreateVector3KeyFrameAnimation();
+                        scale.InsertKeyFrame(0, value ? Vector3.Zero : Vector3.One);
+                        scale.InsertKeyFrame(1, value ? Vector3.One : Vector3.Zero);
 
                         var icon = ElementComposition.GetElementVisual(Icon);
                         icon.CenterPoint = new Vector3(12, 12, 0);
                         icon.StartAnimation("Scale", scale);
 
-                        if (!IsAlbumChild)
+                        if (IsAlbumChild)
+                        {
+                            icon.Properties.InsertVector3("Translation", new Vector3());
+                        }
+                        else
                         {
                             icon.StartAnimation("Translation.X", offset);
                         }
@@ -387,13 +330,25 @@ namespace Telegram.Controls.Messages
                         UpdateIcon(IsChecked is true, false);
 
                         var icon = ElementComposition.GetElementVisual(Icon);
-                        icon.Properties.InsertVector3("Translation", new Vector3(value && !IsAlbumChild ? 0 : -36, 0, 0));
                         icon.Scale = value ? Vector3.One : Vector3.Zero;
+
+                        if (IsAlbumChild)
+                        {
+                            icon.Properties.InsertVector3("Translation", new Vector3());
+                        }
+                        else
+                        {
+                            icon.Properties.InsertVector3("Translation", new Vector3(value ? 0 : -36, 0, 0));
+                        }
                     }
 
-                    if (!IsAlbumChild)
+                    if (!outgoing && !IsAlbumChild)
                     {
-                        presenter.Offset = new Vector3(value && outgoing ? 0 : 36, 0, 0);
+                        presenter.Offset = new Vector3(value ? 36 : 0, 0, 0);
+                    }
+                    else
+                    {
+                        presenter.Offset = Vector3.Zero;
                     }
                 }
             }
@@ -410,16 +365,21 @@ namespace Telegram.Controls.Messages
             if (message != null && _templateApplied)
             {
                 bool selected;
-                if (message.Content is MessageAlbum album)
+                if (_selectionEnabled)
                 {
-                    selected = album.Messages.All(x => message.Delegate.SelectedItems.ContainsKey(x.Id));
+                    if (message.Content is MessageAlbum album)
+                    {
+                        selected = album.Messages.All(x => message.Delegate.SelectedItems.ContainsKey(x.Id));
+                    }
+                    else
+                    {
+                        selected = message.Delegate.SelectedItems.ContainsKey(message.Id);
+                    }
                 }
                 else
                 {
-                    selected = message.Delegate.SelectedItems.ContainsKey(message.Id);
+                    selected = false;
                 }
-
-                selected = _selectionEnabled && selected;
 
                 if (selected != _selected)
                 {

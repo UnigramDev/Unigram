@@ -677,33 +677,31 @@ namespace Telegram.Views
 
                 _updateThemeTask?.TrySetResult(true);
 
-                if (content is MessageSelector checkbox)
+                if (content is MessageService service)
+                {
+                    service.UpdateMessage(args.Item as MessageViewModel);
+                    args.Handled = true;
+                }
+                else if (content is MessageSelector checkbox)
                 {
                     // TODO: are there chances that at this point TextArea is not up to date yet?
                     checkbox.PrepareForItemOverride(message,
                         _viewModel.Type is DialogType.History or DialogType.Thread or DialogType.ScheduledMessages
                         && TextArea.Visibility == Visibility.Visible);
 
+                    if (checkbox.Content is MessageBubble bubble)
+                    {
+                        bubble.UpdateQuery(ViewModel.Search?.Query);
+                        bubble.UpdateMessage(args.Item as MessageViewModel);
+
+                        args.RegisterUpdateCallback(2, RegisterEvents);
+                        args.Handled = true;
+                    }
+
                     checkbox.UpdateMessage(message, Messages, ViewModel.IsSelectionEnabled);
                     checkbox.HorizontalAlignment = message.Date == 0 && message.Id == 0
                         ? HorizontalAlignment.Center
                         : HorizontalAlignment.Stretch;
-
-                    content = checkbox.Content as FrameworkElement;
-                }
-
-                if (content is MessageBubble bubble)
-                {
-                    bubble.UpdateQuery(ViewModel.Search?.Query);
-                    bubble.UpdateMessage(args.Item as MessageViewModel);
-
-                    args.RegisterUpdateCallback(2, RegisterEvents);
-                    args.Handled = true;
-                }
-                else if (content is MessageService service)
-                {
-                    service.UpdateMessage(args.Item as MessageViewModel);
-                    args.Handled = true;
                 }
             }
         }
