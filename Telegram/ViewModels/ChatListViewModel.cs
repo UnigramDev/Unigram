@@ -692,7 +692,7 @@ namespace Telegram.ViewModels
 
                     IsEmpty = Count == 0;
 
-                    _hasMoreItems = chats.ChatIds.Count > 0;
+                    _hasMoreItems = chats.TotalCount >= 0;
                     Subscribe();
 
                     _viewModel.Delegate?.SetSelectedItems(_viewModel.SelectedItems);

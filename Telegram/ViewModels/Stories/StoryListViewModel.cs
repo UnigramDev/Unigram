@@ -325,7 +325,7 @@ namespace Telegram.ViewModels.Stories
 
                     IsEmpty = Count == 0;
 
-                    _hasMoreItems = chats.ChatIds.Count > 0;
+                    _hasMoreItems = chats.TotalCount >= 0;
                     Subscribe();
 
                     if (_hasMoreItems == false)

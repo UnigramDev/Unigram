@@ -46,10 +46,12 @@ namespace Telegram.Services
             var count = offset + limit;
             var sorted = _storyList[storyList];
 
+            var haveFullList = _haveFullStoryList[storyList];
+
 #if MOCKUP
             _haveFullStoryList[index] = true;
 #else
-            if (!_haveFullStoryList[storyList] && count > sorted.Count && !reentrancy)
+            if (count > sorted.Count && !haveFullList && !reentrancy)
             {
                 Monitor.Exit(_storyList);
 
@@ -95,8 +97,10 @@ namespace Telegram.Services
                 }
             }
 
+            haveFullList &= count >= sorted.Count;
+
             Monitor.Exit(_storyList);
-            return new Chats(0, result);
+            return new Chats(haveFullList ? -1 : 0, result);
         }
 
         private readonly struct OrderedActiveStories : IComparable<OrderedActiveStories>

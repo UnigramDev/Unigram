@@ -51,10 +51,12 @@ namespace Telegram.Services
             var count = offset + limit;
             var sorted = _chatList[chatList];
 
+            var haveFullList = _haveFullChatList[chatList];
+
 #if MOCKUP
             _haveFullChatList[index] = true;
 #else
-            if (!_haveFullChatList[chatList] && count > sorted.Count && !reentrancy)
+            if (!haveFullList && count > sorted.Count && !reentrancy)
             {
                 Monitor.Exit(_chatList);
 
@@ -100,8 +102,10 @@ namespace Telegram.Services
                 }
             }
 
+            haveFullList &= count >= sorted.Count;
+
             Monitor.Exit(_chatList);
-            return new Chats(0, result);
+            return new Chats(haveFullList ? -1 : 0, result);
         }
 
         private readonly struct OrderedChat : IComparable<OrderedChat>
