@@ -4048,21 +4048,6 @@ public static class DataTransferManager_stub
         }
     }
 }
-public static class DateTimeFormatter_stub
-{
-    public static string Format_stub(this Windows.Globalization.DateTimeFormatting.DateTimeFormatter sender, System.DateTimeOffset value)
-    {
-        try
-        {
-            return sender.Format(value);
-        }
-        catch (Exception ex)
-        {
-            Logger.Error(Environment.StackTrace);
-            throw new RuntimeException(ex);
-        }
-    }
-}
 public static class PackageManager_stub
 {
     public static Windows.Foundation.IAsyncOperationWithProgress<Windows.Management.Deployment.DeploymentResult, Windows.Management.Deployment.DeploymentProgress> AddPackageAsync_stub(this Windows.Management.Deployment.PackageManager sender, System.Uri packageUri, System.Collections.Generic.IEnumerable<System.Uri> dependencyPackageUris, Windows.Management.Deployment.DeploymentOptions deploymentOptions)
@@ -6025,6 +6010,18 @@ public static class NativeUtils_stub
         }
     }
     public static string FormatDate_stub(int value, string format)
+    {
+        try
+        {
+            return Telegram.Native.NativeUtils.FormatDate(value, format);
+        }
+        catch (Exception ex)
+        {
+            Logger.Error(Environment.StackTrace);
+            throw new RuntimeException(ex);
+        }
+    }
+    public static string FormatDate_stub(System.DateTimeOffset value, string format)
     {
         try
         {
