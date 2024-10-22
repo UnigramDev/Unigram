@@ -212,12 +212,6 @@ namespace Telegram.Controls
         {
             Logger.Info();
 
-            if (xamlRoot == null)
-            {
-                Logger.Info("XamlRoot is null");
-                return null;
-            }
-
             var label = new TextBlock
             {
                 TextWrapping = TextWrapping.Wrap,
@@ -255,16 +249,24 @@ namespace Telegram.Controls
                 toast.RequestedTheme = requestedTheme;
             }
 
-            if (xamlRoot.Content is IToastHost host)
+            try
             {
-                void handler(object sender, object e)
+                if (xamlRoot.Content is IToastHost host)
                 {
-                    host.ToastClosed(toast);
-                    toast.Closed -= handler;
-                }
+                    void handler(object sender, object e)
+                    {
+                        host.ToastClosed(toast);
+                        toast.Closed -= handler;
+                    }
 
-                host.ToastOpened(toast);
-                toast.Closed += handler;
+                    host.ToastOpened(toast);
+                    toast.Closed += handler;
+                }
+            }
+            catch
+            {
+                Logger.Info("XamlRoot.Content thrown");
+                return null;
             }
 
             if ((target == null || dismissAfter.HasValue) && (dismissAfter == null || dismissAfter.Value.TotalSeconds > 0))
