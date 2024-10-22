@@ -2318,6 +2318,11 @@ namespace Telegram.Views.Calls
 
             finalWidth = Math.Max(0, finalWidth);
 
+            static Size SafeSize(double width, double height)
+            {
+                return new Size(Math.Max(0, width), Math.Max(0, height));
+            }
+
             for (int row = 0; row < rows; row++)
             {
                 var rowColumns = columns;
@@ -2335,11 +2340,11 @@ namespace Telegram.Views.Calls
                             finalHeight = finalWidth / 4 * 2;
                         }
 
-                        Children[index].Measure(new Size(finalWidth, finalHeight));
+                        Children[index].Measure(SafeSize(finalWidth, finalHeight));
                     }
                     else
                     {
-                        Children[index].Measure(new Size(finalWidth / (_mode == ParticipantsGridMode.Compact ? rowColumns : columns), finalHeight / rows));
+                        Children[index].Measure(SafeSize(finalWidth / (_mode == ParticipantsGridMode.Compact ? rowColumns : columns), finalHeight / rows));
                     }
 
                     index++;
@@ -2412,14 +2417,19 @@ namespace Telegram.Views.Calls
                     x = 0;
                 }
 
+                static Size SafeSize(double width, double height)
+                {
+                    return new Size(Math.Max(0, width), Math.Max(0, height));
+                }
+
                 for (int column = 0; column < rowColumns; column++)
                 {
-                    var size = new Size(finalWidth / (_mode == ParticipantsGridMode.Compact ? rowColumns : columns), finalHeight / rows);
+                    var size = SafeSize(finalWidth / (_mode == ParticipantsGridMode.Compact ? rowColumns : columns), finalHeight / rows);
                     var point = new Point(x + column * size.Width, row * size.Height);
 
                     if (Children[index] is GroupCallParticipantGridCell cell && cell.IsSelected)
                     {
-                        size = new Size(finalWidth, _mode == ParticipantsGridMode.Compact ? finalWidth / 4 * 2 : finalHeight);
+                        size = SafeSize(finalWidth, _mode == ParticipantsGridMode.Compact ? finalWidth / 4 * 2 : finalHeight);
                         point = new Point(0, 0);
                         pinned = true;
                     }
