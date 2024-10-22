@@ -22,9 +22,9 @@
                          Background="{ThemeResource PageHeaderBorderBrush}"
                          CornerRadius="8">
         <Border x:Name="CanvasRoot"
-                CornerRadius="8">
-            <!--<xaml:CanvasControl/>-->
-        </Border>
+                CornerRadius="8" />
+
+        <Border x:Name="OverlayBlur" />
 
         <Grid x:Name="Header"
               VerticalAlignment="Top">
@@ -83,14 +83,18 @@
             </Grid>
         </Grid>
 
-        <StackPanel x:Name="PausedRoot"
+        <StackPanel x:Name="OverlayRoot"
                     VerticalAlignment="Center"
                     Visibility="Collapsed">
-            <TextBlock Text="&#xE769;"
+            <TextBlock x:Name="OverlayGlyph"
+                       Text="&#xEA18;"
                        TextAlignment="Center"
+                       Foreground="{ThemeResource SystemControlForegroundBaseHighBrush}"
                        FontFamily="{StaticResource SymbolThemeFontFamily}"
-                       FontSize="24" />
-            <TextBlock Text="{CustomResource VoipVideoOnPause}"
+                       FontSize="24"
+                       Margin="0,4,0,0" />
+            <TextBlock x:Name="OverlayTitle"
+                       Text="{CustomResource VoipVideoOnPause}"
                        Style="{StaticResource BaseTextBlockStyle}"
                        TextAlignment="Center" />
         </StackPanel>

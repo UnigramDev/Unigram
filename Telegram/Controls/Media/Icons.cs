@@ -291,6 +291,7 @@ namespace Telegram.Controls.Media
         public const string MicOnFilled24 = "\uE9D7";
         public const string VideoOffFilled = "\uE963";
         public const string SmallScreencastFilled = "\uE910";
+        public const string ShareScreenStartFilled24 = "\uEA5E";
         public const string ShareScreenFilled = "\uE956";
         public const string ShareScreenStopFilled = "\uE955";
         public const string Camera = "\uE722";

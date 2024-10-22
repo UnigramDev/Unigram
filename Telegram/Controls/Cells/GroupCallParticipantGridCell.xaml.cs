@@ -46,6 +46,13 @@ namespace Telegram.Controls.Cells
 
             if (screenSharing)
             {
+                if (participant.IsCurrentUser)
+                {
+                    OverlayRoot.Visibility = Visibility.Visible;
+                    OverlayGlyph.Text = Icons.ShareScreenStartFilled24;
+                    OverlayTitle.Text = Strings.VoipVideoScreenSharing;
+                }
+
                 ScreenSharing.Text = Icons.SmallScreencastFilled;
             }
 
@@ -204,7 +211,7 @@ namespace Telegram.Controls.Cells
 
             if (show)
             {
-                var paused = ElementComposition.GetElementVisual(PausedRoot);
+                var paused = ElementComposition.GetElementVisual(OverlayRoot);
 
                 var graphicsEffect = new GaussianBlurEffect
                 {
@@ -224,8 +231,8 @@ namespace Telegram.Controls.Cells
                 _pausedVisual.Size = ActualSize;
                 _pausedVisual.Brush = effectBrush;
 
-                ElementCompositionPreview.SetElementChildVisual(CanvasRoot, _pausedVisual);
-                PausedRoot.Visibility = Visibility.Visible;
+                ElementCompositionPreview.SetElementChildVisual(OverlayBlur, _pausedVisual);
+                OverlayRoot.Visibility = Visibility.Visible;
                 Scrim.Visibility = Visibility.Collapsed;
 
                 //var blur = BootStrapper.Current.Compositor.CreateScalarKeyFrameAnimation();
@@ -241,8 +248,12 @@ namespace Telegram.Controls.Cells
             }
             else
             {
-                ElementCompositionPreview.SetElementChildVisual(CanvasRoot, null);
-                PausedRoot.Visibility = Visibility.Collapsed;
+                if (_pausedVisual != null)
+                {
+                    _pausedVisual.Brush = null;
+                }
+
+                OverlayRoot.Visibility = Visibility.Collapsed;
                 Scrim.Visibility = Visibility.Visible;
 
                 _pausedBrush = null;

@@ -2115,7 +2115,7 @@ namespace Telegram.Views.Calls
 
                         if (participant.ScreenSharingVideoInfo?.EndpointId == child.EndpointId && participant.IsCurrentUser && _call.IsScreenSharing)
                         {
-                            ConnectVisual(child, child.EndpointId, false, _call.AddScreenSharingVideoOutput);
+                            //ConnectVisual(child, child.EndpointId, false, _call.AddScreenSharingVideoOutput);
                         }
                         else
                         {

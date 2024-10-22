@@ -11984,6 +11984,9 @@ in your streaming app.</value>
   <data name="VoipVideoOnPause" xml:space="preserve">
     <value>Video on Pause</value>
   </data>
+  <data name="VoipVideoScreenSharing" xml:space="preserve">
+    <value>You are sharing your screen</value>
+  </data>
   <data name="VoipWaiting" xml:space="preserve">
     <value>Waiting</value>
   </data>
