@@ -160,7 +160,7 @@ namespace Telegram.Views
             if (update.WebAppLaunchId == _launchId)
             {
                 _closeNeedConfirmation = false;
-                Close();
+                this.BeginOnUIThread(Close);
             }
         }
 
